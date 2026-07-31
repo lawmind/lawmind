@@ -79,12 +79,18 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
 
 ## 6. PROJECT HARD RULES (add to global Section 7)
 
-- Citations carry one of five states: `verified_internal`, `verified_external`,
-  `verified_human`, `unverified`, `overruled`. An unverified citation may be
-  shown. It may never be shown as confirmed, and it may never be silently
-  dropped. Silent-drop rate is tracked with a zero threshold.
+- Citations carry **three independent fields, never one enum**:
+  `verification_state` (`verified`|`unverified`|`failed`) · `verified_by_source`
+  (`corpus`|`public_x2`|`ecourts`|`none`) · `overruled_status`
+  (`none`|`set_aside`|`partly_set_aside`|`doubted`, on `judgments`).
+  **A judgment can be verified and overruled at once** — different questions,
+  different sources. The five badge states are DERIVED from these, never stored.
+  An unverified citation may be shown. It may never be shown as confirmed, and it
+  may never be silently dropped. Silent-drop rate is tracked with a zero threshold.
 - Render citation fields FROM THE DATABASE ROW, never from model output.
-- Overruled judgments always display overruled status, in every surface.
+- Overruled judgments always display overruled status, in every surface, in all
+  three states. `set_aside` disables add-to-matter — the one case where Lawmind
+  refuses to let an authority be used.
 - Never bypass the eCourts CAPTCHA. Pre-fill the search, let the advocate solve
   it, cache the result permanently.
 - Route by data sensitivity. Uploaded document content is sensitive-class:

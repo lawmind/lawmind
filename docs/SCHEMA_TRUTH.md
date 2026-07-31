@@ -15,10 +15,20 @@ without updating this file in the same commit.
 `id` uuid pk · `case_title` text · `neutral_citation` text null ·
 `reporter_citations` text[] · `court` text · `bench` text null ·
 `judgment_date` date · `full_text` text · `language` enum (en|hi) ·
-`source_url` text · `is_overruled` bool default false ·
-`overruled_by_judgment_id` uuid null fk→judgments · `created_at` timestamptz
+`source_url` text · `overruled_status` enum
+(none|set_aside|partly_set_aside|doubted) default none ·
+`overruled_by_judgment_id` uuid null fk→judgments ·
+`overruled_paras` int[] null — the affected paragraphs, required when
+`partly_set_aside` · `overruled_note` text null · `created_at` timestamptz
 
 Index: gin on to_tsvector(full_text); btree on judgment_date, court.
+
+`overruled_status` replaces the former `is_overruled` bool. A boolean cannot
+carry the three states in `design/screens/IMPLEMENTATION.md` §9.3, where
+`set_aside` **disables add-to-matter**, `partly_set_aside` must name the affected
+paragraphs, and `doubted` shows no banner at all. Overruledness is a property of
+the judgment, answered by a different source than verification — see
+`CITATION_HARNESS.md`.
 
 ## judgment_chunks
 `id` uuid pk · `judgment_id` uuid fk→judgments cascade · `chunk_index` int ·
@@ -84,8 +94,8 @@ Every call writes a row. No exceptions. Cost control and DPDP audit trail.
 ## citation_checks
 `id` uuid pk · `search_id` uuid null fk→searches · `document_id` uuid null fk→documents ·
 `citation_claimed` text · `judgment_id_matched` uuid null fk→judgments ·
-`state` enum (verified_internal|verified_external|verified_human|unverified|overruled) ·
-`verified_by_source` enum (corpus|indiankanoon|aws_s3|ecourts|none) ·
+`verification_state` enum (verified|unverified|failed) ·
+`verified_by_source` enum (corpus|indiankanoon|aws_s3|public_x2|ecourts|none) ·
 `match_confidence` numeric(4,3) null — fuzzy title similarity where used ·
 `shown_to_user` bool — was it rendered, and in what state ·
 `created_at` timestamptz
@@ -93,16 +103,43 @@ Every call writes a row. No exceptions. Cost control and DPDP audit trail.
 `shown_to_user` measures silent-drop rate. A stripped citation with no unverified
 state shown is a harness failure.
 
+### The badge is derived, not stored
+The five visual badge states are **computed from three fields answering three
+different questions**, never persisted as one enum:
+
+| Field | Lives on | Question it answers |
+|---|---|---|
+| `verification_state` | `citation_checks`, `verification_cache` | Does this authority exist? |
+| `verified_by_source` | `citation_checks`, `verification_cache` | Who confirmed it? |
+| `overruled_status` | `judgments` | Is it still good law? |
+
+| Badge | Condition |
+|---|---|
+| `VERIFIED` | `verification_state = verified` · source `corpus` |
+| `VERIFIED ×2` | `verification_state = verified` · source `public_x2` |
+| `VERIFIED BY YOU` | `verification_state = verified` · source `ecourts` |
+| `NOT CONFIRMED` | `verification_state` in (`unverified`, `failed`) |
+| `LAW MOVED` | `overruled_status != none` — **independent of verification** |
+
+A judgment can be verified **and** overruled; those are different questions
+answered by different sources, so folding them into one enum was wrong.
+`public_x2` is the value tier 2 writes when IndianKanoon and the AWS S3 datasets
+**agree** — the per-source values remain for partial and diagnostic records where
+only one matched.
+
 ## verification_cache
 Permanent. A case confirmed once is never re-verified.
 
 `id` uuid pk · `citation_text` text · `normalised_citation` text ·
-`judgment_id` uuid null fk→judgments · `state` enum (as above) ·
-`source` enum (as above) · `match_confidence` numeric(4,3) null ·
+`judgment_id` uuid null fk→judgments ·
+`verification_state` enum (verified|unverified|failed) ·
+`verified_by_source` enum (as above) · `match_confidence` numeric(4,3) null ·
 `confirmed_by_user_id` uuid null fk→users — set for eCourts human confirmation ·
 `raw_response` jsonb · `created_at` timestamptz
 
 Unique on `normalised_citation`. Index on `judgment_id`.
+Overruledness is **never cached here** — it lives on `judgments` and changes when
+a later judgment moves the law, so a permanent cache would go stale silently.
 
 ## ocr_jobs
 `id` uuid pk · `user_id` uuid fk→users · `matter_id` uuid null fk→matters ·
@@ -126,3 +163,85 @@ Pseudonymisation map. **Local scope. Never leaves our infrastructure.**
 `token` text — e.g. `[ACCUSED_1]` · `created_at` timestamptz
 
 Deleting a matter deletes these rows. Cascade is mandatory.
+
+## audit_log
+**Append-only.** Every privileged admin action writes exactly one row. No UPDATE,
+no DELETE — enforce with a revoked grant and a `BEFORE UPDATE OR DELETE` trigger
+that raises. Kill switches without an audit trail is a governance failure.
+
+`id` uuid pk · `actor_user_id` uuid fk→users · `actor_role` text ·
+`action` text — dotted verb, e.g. `platform.kill_switch.toggle`,
+`enrolment.approve`, `dispute.uphold`, `template.override_gate` ·
+`target_type` text · `target_id` text null ·
+`before` jsonb null · `after` jsonb null · `reason` text null ·
+`ip` inet null · `created_at` timestamptz default now()
+
+Index: btree on (created_at desc); btree on (actor_user_id, created_at desc);
+btree on (target_type, target_id).
+
+`before`/`after` are the changed fields only, not whole rows. A founder override
+of a template gate (`template.override_gate`) is mandatory-reason.
+
+## cause_list_syncs
+Per-court scrape health. A parser that silently returns an empty list is worse
+than an outage, because briefings still go out with stale dates.
+
+`id` uuid pk · `court` text · `list_date` date · `started_at` timestamptz ·
+`completed_at` timestamptz null · `item_count` int ·
+`status` enum (ok|empty|stale|failed) · `retry_count` int default 0 ·
+`escalated_at` timestamptz null · `error` text null
+
+Unique: (court, list_date). Index: btree on (list_date desc, status).
+
+Escalation is fixed: retry once → mark affected briefings
+`dates_not_confirmed` → notify affected advocates directly. An unconfirmed
+listing is **never** presented as confirmed — the same rule as citations.
+
+## citation_disputes
+The trust feedback loop. Outranks everything else in the admin.
+
+`id` uuid pk · `reported_by_user_id` uuid fk→users ·
+`citation_check_id` uuid null fk→citation_checks ·
+`judgment_id` uuid null fk→judgments · `claim` text — what the advocate says is wrong ·
+`status` enum (open|upheld|rejected) default open ·
+`resolved_by_user_id` uuid null fk→users · `resolved_at` timestamptz null ·
+`correction` jsonb null — the field-level fix written to the corpus ·
+`reverification_job_id` uuid null · `affected_saved_count` int null ·
+`affected_filed_count` int null · `created_at` timestamptz
+
+Index: btree on (status, created_at); btree on judgment_id.
+
+Upholding is a **fan-out write**, not a status change — see `API_CONTRACTS.md`.
+Drives the **false-verified rate**, whose target is zero: disputes upheld where
+`verification_state` was `verified` ÷ total verified citations shown.
+
+## draft_templates
+`id` uuid pk · `document_type` enum (as `documents.document_type`) ·
+`version` int · `prompt` text · `language` enum (en|hi) ·
+`golden_set_size` int · `score` numeric(5,2) null ·
+`gate_results` jsonb null — court-format compliance · no invented citations ·
+no overruled authority cited as good law · AI mark present · Hindi parity ·
+`status` enum (draft|live|retired) · `published_by_user_id` uuid null fk→users ·
+`override_reason` text null · `created_at` timestamptz
+
+Unique: (document_type, language, version). Partial unique: one `live` row per
+(document_type, language).
+
+**Nothing ships below 90 without a founder override**, and the override writes
+`template.override_gate` to `audit_log` with `override_reason` non-null.
+
+## data_requests
+DPDP Act obligations with a visible clock per request.
+
+`id` uuid pk · `user_id` uuid fk→users ·
+`kind` enum (export|correction|erasure) · `status` enum
+(received|in_progress|completed|refused) · `due_at` timestamptz ·
+`completed_at` timestamptz null · `refusal_reason` text null ·
+`artefact_storage_key` text null · `created_at` timestamptz
+
+Index: btree on (status, due_at).
+
+Pseudonymisation coverage is **measured, not asserted** — computed from
+`pii_entities` against detected-entity counts, and reported as a number
+(currently 99.2%). The residual is disclosed to the advocate, never hidden.
+See `PRIVACY_PII.md` — we never claim complete PII removal.

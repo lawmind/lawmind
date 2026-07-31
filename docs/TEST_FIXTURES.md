@@ -8,7 +8,11 @@ between runs is not a fixture.
 - 5 criminal, pre-July-2024 (IPC regime)
 - 5 criminal, post-July-2024 (BNS regime)
 - 5 civil
-- 3 with `is_overruled = true`, each pointing at a real overruling judgment
+- 3 overruled, **one per state** — `set_aside` · `partly_set_aside` · `doubted` —
+  each pointing at a real overruling judgment. The `partly_set_aside` fixture must
+  populate `overruled_paras`. Three states means three fixtures: a boolean fixture
+  cannot exercise the `set_aside` add-to-matter block or the `doubted` no-banner
+  case.
 - 2 Hindi-language
 
 SQL seed file. Checked in. Never regenerated.

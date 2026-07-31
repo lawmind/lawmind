@@ -32,6 +32,13 @@ Search-in-Hindi and draft-in-Hindi are different quality bars. Drafting carries
 far more risk — a bad draft gets filed. Decide whether S4 ships both or
 search-only first.
 
+**Still open.** Hindi is now drawn at full parity — search *and* drafting — in
+canvas `9a` and `design/screens/renders/36-hindi-parity@2x.png`, with the
+citations-stay-English rule applied. **Designed ahead of the decision.** The
+drawings do not settle OD-5; they mean the design cost of shipping both is already
+paid, not that the quality bar for Hindi drafting has been cleared. If OD-5
+resolves search-only, `9a` is held, not deleted.
+
 ## OD-6 — LLM provider for sensitive-class data · BLOCKS any upload feature
 Routing was originally split by task complexity, sending most volume to the
 cheapest model. Correct for public judgment search. **Not correct once uploaded
@@ -45,6 +52,23 @@ public judgments; not for a document naming a minor.
 Needs: a decision on which provider handles sensitive-class calls, on written
 data-processing terms — not marketing copy. See `docs/PRIVACY_PII.md`.
 Until resolved: no feature sends uploaded document content to any model.
+
+### Design gap — recorded 31 July 2026, going to Claude Design
+The admin's model routing is keyed **per feature** (`search`, `briefing`, `draft`,
+…) — canvas `1ab`, `design/screens/renders/14-admin-llm-spend.png`. **A feature
+cannot express a data-class rule**, because one feature handles both kinds of
+data: a draft is generated from public judgment text *and* from uploaded case
+documents naming accused persons, witnesses and minors. Routing "draft" to a
+provider therefore routes sensitive-class content there too, which is exactly what
+OD-6 exists to prevent.
+
+`llm_calls.data_class` (public|sensitive) already exists in `SCHEMA_TRUTH.md`, and
+`GET /admin/llm-costs` already returns `byDataClass` — so the *reporting* axis is
+there and only the *routing control* is missing. The strings `data-class`,
+`dataClass` and `sensitive` appear **zero times** in the admin canvas.
+
+Not resolved here. Sent to Claude Design as a routing-surface gap.
+See `docs/ADMIN_SURFACE.md` §7.
 
 ## OD-7 — OCR engine · BLOCKS scanned intake
 PaddleOCR (better layout and table handling, heavier) vs Tesseract (lighter,

@@ -9,9 +9,12 @@ change · KNOW/INFER/GUESS, never silent guessing · 3 failed cycles = STOP ·
 done = OBSERVED not inferred.
 
 LAWMIND NON-NEGOTIABLE:
-- Citations: 5 states (verified_internal/external/human, unverified, overruled).
+- Citations: THREE fields, not one enum. verification_state (verified|unverified|
+  failed) · verified_by_source (corpus|public_x2|ecourts|none) · overruled_status
+  (none|set_aside|partly_set_aside|doubted, on judgments). A judgment can be
+  verified AND overruled. The 5 badge states are DERIVED, never stored.
   Render FROM THE DB ROW. Never show unverified as confirmed. NEVER silently
-  drop one. docs/CITATION_HARNESS.md
+  drop one. set_aside disables add-to-matter. docs/CITATION_HARNESS.md
 - Never bypass the eCourts CAPTCHA. Human confirms, cache forever.
 - Route by DATA SENSITIVITY not task difficulty. Uploaded docs = sensitive:
   pseudonymise first. OD-6 blocks upload features. docs/PRIVACY_PII.md

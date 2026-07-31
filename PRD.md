@@ -14,7 +14,9 @@ Not technical. Works on a phone. Often works in Hindi. Pays for themselves.
 ### F1. Court decision search, verified citations
 Plain-language or Hindi query. Five judgments with title, citation, court, date,
 two-sentence holding, operative paragraph. Filters: court, date, case type.
-Three-tier verification, five citation states, overruled always flagged.
+Three-tier verification. Each citation carries three independent fields —
+`verification_state` · `verified_by_source` · `overruled_status` — from which the
+five badge states are derived. Overruled always flagged, in three states.
 `docs/CITATION_HARNESS.md`.
 
 ### F2. 24-hour hearing briefing — the wedge
@@ -45,8 +47,26 @@ Rs.1L+ MRR. 10+ paying advocates. 15 of 20 beta users opening 3+ times in their
 final beta week. **Zero citation failures reaching a user.**
 
 ## Pricing
-Starter Rs.799 · Professional Rs.1,999 · Expert Rs.3,499 · Firm 10-seat
-Rs.15,000 · Enterprise Rs.75,000+.
-Solo tiers through store IAP. Firm and Enterprise invoiced via Razorpay,
-activated by redemption code — multi-seat organisational licensing sits outside
-the IAP requirement. Enrol in Apple Small Business Program day one (15% not 30%).
+
+Shown in the app, monthly:
+
+| Tier | Price | Purchase |
+|---|---|---|
+| Starter | ₹799 | store IAP |
+| Professional | ₹1,999 | store IAP |
+| Expert | ₹3,499 | store IAP |
+| Firm | **contact us** — no buy button | invoiced off-app |
+| Enterprise | **contact us** — no buy button | invoiced off-app |
+
+Solo tiers go through store IAP. **Firm and Enterprise show no price and no buy
+button in the app** — they are contact-us, invoiced off-app via Razorpay and
+activated by redemption code. Multi-seat organisational licensing sits outside the
+IAP requirement, which is what makes off-app invoicing permissible.
+
+Indicative figures for those two, held internally and not displayed: Firm 10-seat
+≈ Rs.15,000 · Enterprise Rs.75,000+.
+
+Enrol in Apple Small Business Program day one (15% not 30%).
+The paywall **never blocks on a hearing day** — on a day with a listed hearing the
+search limit becomes advisory rather than hard, and the limit is still displayed.
+Billing terms for Android remain subject to **OD-3**.

@@ -41,9 +41,16 @@ Neutral citations and reporter citations are different and both appear. Store
 both. Never construct a citation string by pattern — render only what is stored.
 
 ## Overruled judgments
-`is_overruled` and `overruled_by_judgment_id` on every judgment. An advocate
+`overruled_status` and `overruled_by_judgment_id` on every judgment. An advocate
 citing overruled law is nearly as damaged as one citing a fake case. Overruled
 status renders wherever the judgment renders.
+
+**Three states, never a boolean:** `set_aside` · `partly_set_aside` · `doubted`
+(plus `none`). Indian practice distinguishes them and the consequences differ —
+`set_aside` means the authority cannot be relied on at all, `partly_set_aside`
+means specified paragraphs fell while the rest stands, and `doubted` is still
+binding. Collapsing them to a boolean is a correctness bug, not a simplification.
+`overruled_paras` records which paragraphs fell. See `docs/SCHEMA_TRUTH.md`.
 
 ## Language
 Legal Hindi is not conversational Hindi. Compound formal terms, specific forms of

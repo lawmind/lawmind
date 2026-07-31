@@ -158,6 +158,12 @@ Shared geometry, identical across all five states: rectangle, **radius 2px**,
 | `unverified` | **dashed** | `NOT CONFIRMED` | border `#8A8578`, label `#5A6478` |
 | `overruled` | solid, **white fill** | `LAW MOVED` | `#B4690E` / text `#8A5109` |
 
+These five are **visual state names, not stored values.** They are derived at
+render time from three database fields — `verification_state` ·
+`verified_by_source` · `overruled_status`. `LAW MOVED` is independent of the other
+four: a judgment can be verified *and* overruled. Derivation table:
+`docs/CITATION_HARNESS.md`.
+
 The three verified states are **one family** — same border, colour, icon and
 leading word; the only difference is a qualifier span after a hairline divider.
 All five are distinguishable **with colour removed** (proof:
@@ -251,7 +257,13 @@ Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the acti
 5. **The admin desk still runs the v2 palette** (dark sidebar, oxblood accents)
    and does not yet match §Colour. §8a states aligning it is "a separate pass, not
    started" — so the admin renders are authoritative for **layout only**.
-6. **Render numbering collides across versions.** Both `design/screens/renders/14-admin-enrolment-queue.png`
-   (v1) and `design/screens/renders/16-admin-enrolment-queue.png` (new) exist, as do
-   `design/screens/renders/16-admin-llm-spend-routing.png` (v1) and `design/screens/renders/14-admin-llm-spend.png` (new) — the
-   numbers 14 and 16 swapped meaning between versions. Not normalised.
+6. ~~Render numbering collides across versions.~~ **Resolved 31 July 2026.** The
+   numbers 14 and 16 each meant two different things across bundle versions. The
+   two superseded files were given a `v1-` prefix rather than renaming the current
+   ones, so every reference in `design/screens/IMPLEMENTATION.md` still resolves.
+   Retired *14-admin-enrolment-queue.png* is now
+   `design/screens/renders/v1-14-admin-enrolment-queue.png`; retired
+   *16-admin-llm-spend-routing.png* is now
+   `design/screens/renders/v1-16-admin-llm-spend-routing.png`.
+   Current files are unchanged: `design/screens/renders/14-admin-llm-spend.png`
+   and `design/screens/renders/16-admin-enrolment-queue.png`.

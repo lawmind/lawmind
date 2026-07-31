@@ -1,6 +1,20 @@
 # LAWMIND — DEPLOYMENT
 
-## Railway — one project, all services
+## Repository layout — read before cloning or configuring CI
+
+This repository is **nested inside another git repository.** `~/Documents` is
+itself a repo on branch `main`, and this directory sits inside it as untracked
+(the parent reports it as `?? Lawmind/`, quoting git's own output). This is deliberate and left as-is.
+
+Consequences:
+- Running `git` from a parent directory operates on the **outer** repo. Always
+  confirm with `git rev-parse --show-toplevel` before committing.
+- Do not run `git add` from `~/Documents` — it would absorb this repo as a
+  gitlink or, worse, as loose files.
+- CI and deploy tooling must clone **this** repo directly, not the parent.
+- No remote is configured yet. `git remote -v` returns empty by design.
+
+Branch: `main`.
 Record the generated project name here on creation: `________________`
 
 | Service | Purpose | Port |

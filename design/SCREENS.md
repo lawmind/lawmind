@@ -86,9 +86,9 @@ Build order matches sprint order. CX1 scaffolds navigation for all in S0.
 25. ❌ **NOT YET DESIGNED** — Subscription: tiers, current plan, upgrade.
     §5 maps the paywall/tiers screen to `1aa`, which does not exist. The *policy*
     is settled and drawn as a decision card in `3d` ("paywall never blocks on a
-    hearing day"), and prices appear in prose only
-    (`design/screens/CLAUDE_CODE_BRIEF.md`: Starter ₹799 · Professional ₹1,999 ·
-    Expert ₹3,499 · Firm = contact us). No purchase screen is drawn.
+    hearing day"), and the tiers are now canonical in `PRD.md` — Starter ₹799 ·
+    Professional ₹1,999 · Expert ₹3,499 · Firm and Enterprise contact-us with no
+    buy button, invoiced off-app. No purchase screen is drawn.
 26. ✅ Settings — notifications, data, privacy, sign out · `1y` ·
     `design/screens/renders/20-settings-switches.png` *(v1 — layout only)*
 
@@ -191,18 +191,44 @@ before/after.
   `design/screens/LawMind Prototype.dc.html`
 
 ## Open questions raised by the designs
-1. **Items 12 and 25 point at canvas id `1aa`, which does not exist** — and did not
-   exist in the previous bundle either. Were the unverified-citation detail and the
-   paywall/tiers screen drawn and dropped, or never drawn?
-2. **Admin LLM routing is per feature, not per data-class**, while
-   `docs/API_CONTRACTS.md` returns `byDataClass` and **OD-6** turns on routing
-   sensitive-class data to a specific provider.
-3. **Hindi is drawn at full parity** (`9a`, `36-hindi-parity@2x`), which presumes
-   **OD-5** (Hindi launch scope) resolved in favour of shipping search *and*
-   drafting in S4.
-4. **`docs/SCHEMA_TRUTH.md` cannot express the badge.** It has `is_overruled bool`,
-   but the shipped badge has five states and overruled has three sub-states with
-   different behaviour each.
-5. **The four new admin sections have no API contract.** Cause list sync, disputed
-   citations, draft templates and data & deletion all imply endpoints and tables
-   that `docs/API_CONTRACTS.md` and `docs/SCHEMA_TRUTH.md` do not carry.
+
+### OQ-1 — canvas id `1aa` does not exist · OPEN
+`design/screens/IMPLEMENTATION.md` §5 maps two screens to canvas id `1aa`:
+**item 12** (citation verification failed / unverified citation detail) and
+**item 25** (paywall / subscription tiers). The canvas has 60 options and none is
+`1aa` — and none was in the previous bundle either, so this is not a regression
+introduced by the refresh.
+
+Were these drawn and dropped, or never drawn? **Not invented here.** Both stay
+`❌ NOT YET DESIGNED` until you say which. The underlying *rules* for both are
+settled — the `unverified` badge state and its disclosure sentence are fully
+specified in §Badge and drawn in `7a`–`7d`; the paywall policy is decided in `3d`
+("never blocks on a hearing day") and priced in `PRD.md`. What is missing is the
+screen.
+
+### OQ-2 — Hindi designed ahead of OD-5 · OPEN
+Hindi is drawn at full parity (`9a`,
+`design/screens/renders/36-hindi-parity@2x.png`). This does **not** settle **OD-5**
+— it means the design cost is paid, not that the quality bar for Hindi drafting is
+cleared. Recorded in `docs/OPEN_DECISIONS.md`.
+
+### OQ-3 — admin routing cannot express a data class · OPEN
+Routing is keyed per *feature*, but one feature handles both public judgment text
+and uploaded documents. Recorded as a design gap under **OD-6** in
+`docs/OPEN_DECISIONS.md`; going to Claude Design. See `docs/ADMIN_SURFACE.md` §7.
+
+### OQ-4 — does gilt survive at all? · OPEN
+`design/screens/renders/30-system-refined@2x.png` carries a struck swatch reading
+"no gold — struck — do not reintroduce", while `design/screens/IMPLEMENTATION.md` §Gilt keeps
+three permitted placements. See `design/DESIGN_SYSTEM.md` **Known contradictions**
+item 0.
+
+### Closed by the 31 July reconciliation
+- ~~`docs/SCHEMA_TRUTH.md` cannot express the badge.~~ Resolved: the badge is now
+  **derived** from `verification_state` · `verified_by_source` ·
+  `overruled_status`, and `is_overruled bool` is gone. See `docs/CITATION_HARNESS.md`.
+- ~~The four new admin sections have no API contract.~~ Resolved: contracted in
+  `docs/API_CONTRACTS.md` and `docs/ADMIN_SURFACE.md`, with tables in
+  `docs/SCHEMA_TRUTH.md`. `audit_log` and `GET /admin/audit` added.
+- ~~Render numbering collides on 14- and 16-.~~ Resolved: superseded files carry a
+  `v1-` prefix.
