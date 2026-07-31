@@ -15,6 +15,9 @@ LAWMIND NON-NEGOTIABLE:
   verified AND overruled. The 5 badge states are DERIVED, never stored.
   Render FROM THE DB ROW. Never show unverified as confirmed. NEVER silently
   drop one. set_aside disables add-to-matter. docs/CITATION_HARNESS.md
+- overruled_status is NEVER cached. Verification is permanent; good-law status is
+  not. Read it live at render on EVERY surface. Stale-overruled rate threshold 0 —
+  a VERIFIED badge on overruled law is as severe as a hallucination.
 - Never bypass the eCourts CAPTCHA. Human confirms, cache forever.
 - Route by DATA SENSITIVITY not task difficulty. Uploaded docs = sensitive:
   pseudonymise first. OD-6 blocks upload features. docs/PRIVACY_PII.md

@@ -20,6 +20,10 @@ nobody improvises at 2am.
 | LLM spend spike | `llm_calls` daily total climbs | Alert at $50/day. Check for a retry loop before assuming growth |
 | Devanagari renders as boxes | Hindi draft shows □□□ | Font not bundled in that surface. Check the PDF export path specifically — most often missed |
 | Overruled rendered without badge | Silent | Harness catches it. Threshold zero. Severity high |
+| **Stale overruled status — VERIFIED badge on law that has since moved** | Silent, and the citation looks perfect | **Page immediately.** Same severity as a hallucination. `overruled_status` is read live, never cached — `CITATION_HARNESS.md`. Check the 22:30 re-check completed, then whether a render path cached it |
+| Overruled re-check does not complete | Briefings may carry stale authorities | Alert at 22:50, before the 23:00 sweep. Sweep still runs; affected authorities render with their as-of date, never as current. Manual re-run, then root cause |
+| Citation fan-out partially completes | Corpus says overruled, advocate never told | Should be impossible — one transaction, and failure rolls the whole thing back. If it happens, the transaction boundary was broken. Severity high; reconcile from `citation_fanouts` where `status = 'failed'` |
+| Kill switch thrown with no ledger row | Unreconstructable incident | Should be impossible — the audit write shares the config write's transaction. If a switch moved without a row, the transaction boundary was broken. Severity high |
 | Store rejects build | Submission blocked | Almost always legal-advice framing. Research tool for licensed practitioners |
 
 ## Escalation

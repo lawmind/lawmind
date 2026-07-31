@@ -79,6 +79,119 @@ An unverified citation may be shown. It may never be shown as confirmed, and it
 may never be silently removed. `set_aside` additionally **disables add-to-matter**
 — the only case where Lawmind refuses to let an authority be used.
 
+## Overruled status is never cached — binding
+
+**Verification is permanent. Overruledness is not.** A case that existed still
+exists, so a confirmed verification can be cached forever. Whether that case is
+still good law changes the moment a later judgment moves it — so caching it
+produces a badge asserting confidence the system no longer has.
+
+The failure this prevents, stated concretely because it is the worst output this
+product can produce:
+
+> An advocate searches in January, finds a case, verified, not overruled, and
+> saves it to a matter. In February the Supreme Court overrules it. In March they
+> draft a bail application citing it. With a cached overruled status that draft
+> carries a **VERIFIED** badge on overruled law — worse than an unverified
+> citation, because the badge asserts a confidence we do not have, and the
+> document is filed in open court.
+
+Three binding rules:
+
+1. **`overruled_status` is read live at render time, on every surface** — search
+   results, judgment detail, briefing authorities, draft citation stamps, matter
+   authority lists, exports. It is **never** served from `verification_cache`,
+   never denormalised onto `citation_checks`, and never carried in a client cache
+   across sessions. Offline surfaces render the status they last read **with its
+   as-of date shown**; they never present a stale status as current.
+2. **A background re-check runs** for every judgment referenced by an active
+   matter or an exported draft — see `API_CONTRACTS.md` §Overruled re-check.
+3. **A flip triggers the citation fan-out** — the same operation as upholding a
+   dispute, not a second one.
+
+### Metric — stale-overruled rate. Threshold zero.
+
+Any citation rendered with a `VERIFIED` badge whose live `overruled_status` is not
+`none`, over total citations rendered.
+
+**Threshold 0.0%. This is a failure of the same severity as a hallucination** and
+escalates the same way: immediately, blocking release. A hallucinated citation
+tells an advocate something false about a case that does not exist; a stale
+overruled badge tells them something false about a case that does, which is
+harder to catch because everything else about the citation checks out.
+
+Harness assertion: for every fixture with `overruled_status != none`, render each
+surface and assert the badge is `LAW MOVED`. The `set_aside` fixture must
+additionally assert add-to-matter is disabled.
+
+## When the law moves — what the advocate is told
+
+Notification severity follows the three overruled states, matching how each state
+renders (§9.3): `set_aside` replaces the header in danger red, `partly_set_aside`
+carries a caution band, `doubted` shows no band at all. A notification that
+shouted equally for all three would train advocates to ignore it.
+
+| State | Exported in a draft | Saved to a matter only |
+|---|---|---|
+| `set_aside` | Push + in-app + email, immediately | In-app |
+| `partly_set_aside` | Push + in-app, naming the paragraphs | In-app |
+| `doubted` | In-app only — **never push** | In-app |
+
+`doubted` is still binding law. Waking someone at night for it would be crying
+wolf, and the app deliberately shows it no band.
+
+**Push — `set_aside`, already exported**
+> **A case in your filed draft has been overruled**
+> Ramesh v. State of Haryana was set aside on 14 March. You cited it in a bail
+> application on 2 March.
+
+**In-app — `set_aside`, already exported**
+> ### The law moved on a case you cited
+>
+> On **14 March 2026** the Supreme Court set aside
+> **Ramesh v. State of Haryana (2019) 4 SCC 221**.
+>
+> You cited it in **Bail application — State v. Yadav**, which you exported on
+> **2 March 2026**.
+>
+> When you cited it, that judgment was good law and our record showed it as
+> verified. It is not good law now. We are telling you because that document has
+> already left this app, and we cannot know whether it has been filed.
+>
+> **What replaced it —** Suresh v. State of Punjab (2026) 2 SCC 88
+> [Read the holding]
+>
+> [Open the draft] [See what changed]
+>
+> We re-check every authority in your matters and exported drafts daily.
+
+**In-app — `partly_set_aside`, already exported**
+> ### Part of a case you cited has been set aside
+>
+> On **14 March 2026** the Supreme Court set aside **paragraphs 14–19** of
+> **Ramesh v. State of Haryana (2019) 4 SCC 221**. The rest of the judgment
+> stands.
+>
+> You cited it in **Bail application — State v. Yadav**, exported **2 March 2026**.
+>
+> **What still stands —** the finding on parity at paragraph 22, which is what
+> your draft relies on. [See the paragraphs that fell]
+>
+> [Open the draft]
+
+**In-app — `doubted`, saved only**
+> ### A case in your matter has been doubted
+>
+> **Ramesh v. State of Haryana (2019) 4 SCC 221** was doubted by a coordinate
+> bench on 14 March 2026. It remains binding, and you can still rely on it — but
+> expect it to be contested. [Read the referring judgment]
+
+Copy rules, binding: never imply the advocate erred — the law moved, they did not
+misread it. Never hedge the fact, and never soften it to protect us: if we showed
+a verified badge and the law has since moved, say so plainly. Always name what
+replaced it, because the advocate's next action is finding the substitute. Never
+send a notification with no action attached.
+
 ## The harness — run before any gate
 
 Fixed set, 30 queries with known-correct answers: criminal (10), civil (10),

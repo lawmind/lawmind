@@ -123,16 +123,32 @@ outward-facing; requires an explicit confirm step and an audience-count preview
 before send.
 **Endpoint:** none.
 
-## 11 · Platform controls `❌`
-**Does:** maintenance mode, **5 kill switches**, feature flags with percentage
-rollout.
-**Reads:** platform config.
+## 11 · Platform controls `✅`
+**Does:** maintenance mode, **5 kill switches** (`search` · `drafting` ·
+`briefings` · `ocr_intake` · `signups`), feature flags with percentage rollout.
+**Reads:** `platform_config`.
 **Privileged action:** every control on the page →
 `platform.maintenance.toggle`, `platform.kill_switch.toggle`,
 `platform.flag.set`.
-**Endpoint:** none. **This is the highest-risk gap.** Kill switches without an
-audit trail is a governance failure — `audit_log` and `GET /admin/audit` are now
-contracted, and no control here ships before they exist.
+**Endpoint:** `GET /admin/platform`, `POST /admin/platform/maintenance`,
+`POST /admin/platform/kill-switches/:key`, `POST /admin/platform/flags/:key`.
+
+Contracted ahead of S6 because this is the one admin surface where an unrecorded
+action cannot be tolerated. A kill switch changes what every advocate can do, and
+*who turned off drafting, and when* must be answerable months later.
+
+Three rules that are not optional:
+- **`reason` is mandatory** on every kill-switch toggle, enforced by a check
+  constraint on `platform_config`, and written to the ledger. A switch thrown at
+  3am with no reason is unreconstructable by whoever decides at 4am whether to
+  throw it back.
+- **The ledger write is in the same transaction as the config write.** If the
+  audit row fails, the control does not move.
+- **Kill-switch keys are a fixed set.** An unknown key is a 400, never an implicit
+  create — a typo must not produce a switch nobody is watching.
+
+A disabled feature returns the app's honest unavailable state, never a stale
+cached answer. Propagation ≤60s, no deploy.
 
 ## 12 · Staff & audit `✅`
 **Does:** roles and permissions; the append-only audit ledger.
@@ -177,18 +193,39 @@ unconfirmed listing as confirmed** — the same rule as citations.
 **Endpoint:** `GET /admin/disputes`, `GET /admin/disputes/:id`,
 `POST /admin/disputes/:id/uphold`, `POST /admin/disputes/:id/reject`.
 
-**Uphold is a fan-out write, not a status change.** One transaction must:
+**Uphold is a fan-out write, not a status change.** It calls the shared
+`applyOverruledChange` operation — **the same one the nightly overruled re-check
+calls.** One transaction:
 1. write the correction to the corpus (`judgments`);
 2. enqueue re-verification for **every** `citation_checks` row referencing that
    judgment — everyone who saved it;
 3. queue a notice to **every advocate who exported it in a draft** — it is already
    in a filed document.
 
-Idempotent on `disputeId`: a double-uphold must not double-notify. Partial
-completion is not acceptable — if the fan-out cannot be enqueued the uphold fails
-and the dispute stays open. Tracks the **false-verified rate**, whose target is
-**zero**: disputes upheld where `verification_state` was `verified`, over total
-verified citations shown.
+Idempotent on `sha256(judgmentId || toStatus || trigger || triggerRef)`, enforced
+by a unique constraint on `citation_fanouts`: a double-uphold, or an uphold racing
+the nightly re-check, must not notify anyone twice. Partial completion is not
+acceptable — if the fan-out cannot be enqueued the uphold fails and the dispute
+stays open. Tracks the **false-verified rate**, whose target is **zero**.
+
+**Do not build a second fan-out.** An admin upholding a dispute and a scheduled
+job noticing the same flip require identical work; two implementations would
+drift, and the one that drifts is the one that stops notifying.
+
+## 15a · Overruled re-check `✅` (scheduled, no UI of its own)
+**Does:** re-checks `overruled_status` for every judgment referenced by an active
+matter or an exported draft. Overruled status is **never cached** —
+`CITATION_HARNESS.md`.
+**Reads:** `judgments`, `citation_checks`, `matters`, `documents`,
+`overruled_rechecks`.
+**Privileged action:** manual trigger → `overruled.recheck.run`. Flips call
+`applyOverruledChange`.
+**Endpoint:** `GET /admin/overruled-rechecks`,
+`POST /admin/overruled-rechecks/run`.
+**Schedule:** daily 22:30 IST on the `cron` service — **before** briefing
+generation at 23:00, so tonight's briefings cannot carry overruled authorities —
+plus event-driven on corpus ingest. Surfaces in the Citation monitor and in
+"needs a human today" when a run fails.
 
 ## 16 · Draft templates `✅`
 **Does:** 10 document types, each prompt **versioned** and scored against a
@@ -225,4 +262,5 @@ Blocked by **OD-2** (DPDP data residency) for public launch, not for build.
 | | |
 |---|---|
 | **`GET /admin/ocr-queue` is contracted but no OCR review queue is designed** | Consistent with **OD-7** blocking scanned intake. `design/SCREENS.md` item 33. |
-| **11 of 17 sections have no write endpoint** | Overview, Briefings, Corpus, Subscriptions, Support, Push, Platform controls, Analytics have none at all; Enrolment, Advocates and LLM routing are read-only or partial. |
+| **10 of 17 sections have no write endpoint** | Overview, Briefings, Corpus, Subscriptions, Support, Push and Analytics have none at all; Enrolment, Advocates and LLM routing are read-only or partial. Platform controls was in this list and is now contracted. |
+| **The overruled re-check has no designed surface** | It runs on `cron` and reports into Citation monitor and "needs a human today". If it deserves its own panel, that is a design question — not resolved here. |

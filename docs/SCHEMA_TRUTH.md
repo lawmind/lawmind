@@ -182,6 +182,23 @@ btree on (target_type, target_id).
 `before`/`after` are the changed fields only, not whole rows. A founder override
 of a template gate (`template.override_gate`) is mandatory-reason.
 
+## platform_config
+Maintenance mode, the five kill switches, and feature flags. One row per key —
+current state only; history lives in `audit_log`, which is the point.
+
+`key` text pk · `kind` enum (maintenance|kill_switch|flag) ·
+`enabled` bool default false · `rollout_percent` int null — flags only, 0–100 ·
+`message` text null — maintenance only · `reason` text null ·
+`updated_by_user_id` uuid null fk→users · `updated_at` timestamptz
+
+Kill-switch keys are a **fixed set**: `search` · `drafting` · `briefings` ·
+`ocr_intake` · `signups`. An unknown key is rejected, never implicitly created —
+a typo must not silently produce a switch nobody is watching.
+
+`reason` is **NOT NULL for `kind = 'kill_switch'`**, enforced by a check
+constraint. Every write here writes `audit_log` in the same transaction; if the
+ledger write fails the config does not move.
+
 ## cause_list_syncs
 Per-court scrape health. A parser that silently returns an empty list is worse
 than an outage, because briefings still go out with stale dates.
@@ -206,14 +223,56 @@ The trust feedback loop. Outranks everything else in the admin.
 `status` enum (open|upheld|rejected) default open ·
 `resolved_by_user_id` uuid null fk→users · `resolved_at` timestamptz null ·
 `correction` jsonb null — the field-level fix written to the corpus ·
-`reverification_job_id` uuid null · `affected_saved_count` int null ·
-`affected_filed_count` int null · `created_at` timestamptz
+`fanout_id` uuid null fk→citation_fanouts · `created_at` timestamptz
 
 Index: btree on (status, created_at); btree on judgment_id.
 
-Upholding is a **fan-out write**, not a status change — see `API_CONTRACTS.md`.
-Drives the **false-verified rate**, whose target is zero: disputes upheld where
-`verification_state` was `verified` ÷ total verified citations shown.
+Upholding is a **fan-out write**, not a status change — it creates a
+`citation_fanouts` row. Drives the **false-verified rate**, whose target is zero:
+disputes upheld where `verification_state` was `verified` ÷ total verified
+citations shown.
+
+## overruled_rechecks
+One row per scheduled run. Overruled status is **never cached** — see
+`CITATION_HARNESS.md`.
+
+`id` uuid pk · `started_at` timestamptz · `completed_at` timestamptz null ·
+`judgments_checked` int · `flipped` int — how many changed status ·
+`status` enum (running|complete|failed) · `error` text null
+
+Index: btree on (started_at desc).
+
+Scope is every judgment referenced by an **active matter** or an **exported
+draft**. The run compares live `judgments.overruled_status` against the status
+last rendered; each flip creates a `citation_fanouts` row. It does **not** re-run
+verification tiers 1–3 — existence is permanent, only good-law status moves.
+
+## citation_fanouts
+**One fan-out, two triggers.** When a judgment's overruled status changes, the
+required work is identical whether an admin upheld a dispute or the nightly
+re-check found it. Do not build a second implementation.
+
+`id` uuid pk · `judgment_id` uuid fk→judgments ·
+`trigger` enum (dispute_upheld|recheck|admin_correction) ·
+`trigger_ref` uuid null — dispute id or recheck id ·
+`from_status` text · `to_status` text ·
+`status` enum (pending|complete|failed) default pending ·
+`saved_count` int null · `filed_count` int null · `notified_count` int null ·
+`idempotency_key` text · `created_at` timestamptz ·
+`completed_at` timestamptz null
+
+**Unique on `idempotency_key`** — `sha256(judgment_id || to_status || trigger ||
+trigger_ref)`. This is what makes a double-uphold or an overlapping re-check
+run safe: the second insert loses to the unique constraint and no advocate is
+notified twice.
+
+Index: btree on (status, created_at); btree on judgment_id.
+
+The three writes are one transaction, and **partial completion is not
+acceptable** — if the fan-out cannot be enqueued the whole operation fails, the
+dispute stays open, and the re-check run is marked `failed` for retry. A
+half-completed fan-out is the worst state: the corpus says overruled while the
+advocate who filed it was never told.
 
 ## draft_templates
 `id` uuid pk · `document_type` enum (as `documents.document_type`) ·

@@ -113,6 +113,40 @@ Read-only. **There is no write endpoint and no delete endpoint** — rows are
 written server-side inside the same transaction as the privileged action, so an
 action cannot succeed while its audit row fails. See `SCHEMA_TRUTH.md#audit_log`.
 
+### Platform controls — maintenance, kill switches, feature flags
+```
+GET  /admin/platform                  → { maintenance, killSwitches, flags }
+POST /admin/platform/maintenance      { enabled, message? }
+     → { maintenance }
+POST /admin/platform/kill-switches/:key  { enabled, reason }
+     → { killSwitch }
+POST /admin/platform/flags/:key       { enabled, rolloutPercent }
+     → { flag }
+```
+
+Five kill switches, fixed set — `search` · `drafting` · `briefings` ·
+`ocr_intake` · `signups`. `:key` is validated against that set; an unknown key is
+a 400, never an implicit create. A disabled feature returns the app's honest
+unavailable state, **never a stale cached answer** — the same rule as an AI
+outage.
+
+**`reason` is mandatory on every kill-switch toggle** and is written to the
+ledger. A switch thrown at 3am with no reason is unreconstructable by the person
+who has to decide at 4am whether to throw it back.
+
+Every call here writes `audit_log` **in the same transaction as the config
+write** — `platform.maintenance.toggle`, `platform.kill_switch.toggle`,
+`platform.flag.set`, each with `before`/`after`. If the ledger write fails the
+control does not move. This is the one admin surface where an unrecorded action
+is unacceptable: a kill switch changes what every advocate can do, and "who
+turned off drafting, and when" must be answerable months later.
+
+`rolloutPercent` is 0–100 and bucketed by a stable hash of `user_id`, so a user
+does not flip in and out of a cohort between requests.
+
+Propagation is ≤60s with no deploy, matching model routing. Config is read
+through a cached accessor, never a per-request DB hit.
+
 ### Cause list sync
 ```
 GET  /admin/cause-lists          ?date&court&status → { syncs, staleCourts }
@@ -132,13 +166,63 @@ POST /admin/disputes/:id/uphold  { correction, reason }
      → { corrected: true, reverificationJobId, affectedSaved, affectedFiled, notified }
 POST /admin/disputes/:id/reject  { reason } → { dispute }
 ```
-**Uphold is a fan-out write, not a status change.** In one transaction it must:
-write the correction to `judgments`; enqueue re-verification for every
-`citation_checks` row referencing that judgment; and queue a notice to every
-advocate who exported it in a draft. Idempotent on `disputeId` — a double-uphold
-must not double-notify. Partial completion is not acceptable: if the fan-out
-cannot be enqueued, the uphold fails and the dispute stays open. Drives
+**Uphold is a fan-out write, not a status change.** It creates a
+`citation_fanouts` row and runs the shared operation below. Drives
 `falseVerifiedRate`, **target zero**.
+
+### The citation fan-out — one operation, two triggers
+Called by **dispute uphold** and by the **overruled re-check**. Do not implement
+it twice.
+
+```
+applyOverruledChange({ judgmentId, fromStatus, toStatus, trigger, triggerRef })
+  → { fanoutId, savedCount, filedCount, notifiedCount }
+```
+In one transaction:
+1. write the corrected `overruled_status` (+ `overruled_paras`, `overruled_note`,
+   `overruled_by_judgment_id`) to `judgments`;
+2. enqueue re-verification for **every** `citation_checks` row referencing that
+   judgment — everyone who saved it;
+3. queue a notice to **every advocate who exported it in a draft**, at the
+   severity in `CITATION_HARNESS.md` §When the law moves.
+
+**Idempotent** on `sha256(judgmentId || toStatus || trigger || triggerRef)`,
+enforced by a unique constraint — a double-uphold or an overlapping re-check must
+not notify anyone twice. **Partial completion is not acceptable:** if the fan-out
+cannot be enqueued the whole operation fails, the dispute stays open and the
+re-check run is marked `failed`. Never leave the corpus saying overruled while
+the advocate who filed it was not told.
+
+### Overruled re-check — scheduled
+```
+GET  /admin/overruled-rechecks        → { runs, lastRun, flippedLast30d }
+POST /admin/overruled-rechecks/run    → { recheckId }   // manual trigger
+```
+Runs on the `cron` service. Scope: every judgment referenced by an active matter
+or an exported draft. Compares live `judgments.overruled_status` against the
+status last rendered; each flip calls `applyOverruledChange` with
+`trigger: 'recheck'`.
+
+**It does not re-run verification tiers 1–3.** Existence is permanent and stays
+cached; only good-law status moves. The run is therefore an indexed corpus read,
+not an external API spend — cost is bounded by corpus size, not user count.
+
+**Frequency — recommended: daily at 22:30 IST, immediately before the nightly
+hearing sweep, plus event-driven on corpus ingest.**
+
+The event-driven path is what actually delivers freshness: when ingestion sets
+`overruled_status` on any judgment, fan out for that judgment at once. The daily
+run is the safety net that catches statuses changed by another path — a manual
+admin correction, or an upheld dispute whose fan-out failed and was retried.
+
+The tradeoff: hourly buys nothing, because overrulings are published at a court's
+pace and the binding latency is **corpus ingest lag**, not re-check frequency —
+re-checking hourly against a corpus that syncs daily just re-reads the same rows
+at twelve times the cost. Slower than daily is unsafe for one specific reason:
+briefings carry authorities, so a re-check that has not run since the last ingest
+can put overruled law into tonight's briefing. **22:30 is chosen so the re-check
+always completes before briefing generation at 23:00** — that ordering is the
+requirement, not the clock time.
 
 ### Draft templates
 ```
