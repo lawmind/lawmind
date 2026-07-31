@@ -17,9 +17,15 @@ without updating this file in the same commit.
 `judgment_date` date · `full_text` text · `language` enum (en|hi) ·
 `source_url` text · `overruled_status` enum
 (none|set_aside|partly_set_aside|doubted) default none ·
+`overruled_status_changed_at` timestamptz null — when the status last moved ·
 `overruled_by_judgment_id` uuid null fk→judgments ·
 `overruled_paras` int[] null — the affected paragraphs, required when
 `partly_set_aside` · `overruled_note` text null · `created_at` timestamptz
+
+`overruled_status_changed_at` is what makes the stale-overruled rate measurable:
+without it there is no way to tell a badge that was **wrong when rendered** from
+one the world invalidated afterwards. Set it in the same write as any
+`overruled_status` change, including inside `applyOverruledChange`.
 
 Index: gin on to_tsvector(full_text); btree on judgment_date, court.
 
@@ -98,10 +104,17 @@ Every call writes a row. No exceptions. Cost control and DPDP audit trail.
 `verified_by_source` enum (corpus|indiankanoon|aws_s3|public_x2|ecourts|none) ·
 `match_confidence` numeric(4,3) null — fuzzy title similarity where used ·
 `shown_to_user` bool — was it rendered, and in what state ·
+`overruled_status_shown` text null — the status the server sent for this render ·
+`surface` enum (search|judgment_detail|briefing|draft|matter) null ·
 `created_at` timestamptz
 
 `shown_to_user` measures silent-drop rate. A stripped citation with no unverified
 state shown is a harness failure.
+
+`overruled_status_shown` measures the **stale-overruled rate**. One row already
+exists per citation per surface, so stamping the status the server sent adds two
+columns and **no new write volume** — see `CITATION_HARNESS.md` §How
+stale-overruled is measured.
 
 ### The badge is derived, not stored
 The five visual badge states are **computed from three fields answering three
@@ -232,6 +245,32 @@ Upholding is a **fan-out write**, not a status change — it creates a
 disputes upheld where `verification_state` was `verified` ÷ total verified
 citations shown.
 
+## citation_copies
+**The advocate at highest risk.** "Copy citation" is an action on every judgment
+card. An advocate who copies a citation into their own Word document has taken it
+out of the app entirely — they saw the badge, they may file it, and without this
+record **no notification can ever reach them.** Plausibly a large share of early
+users: the ones who trust the search but not yet the drafting.
+
+`id` uuid pk · `user_id` uuid fk→users · `judgment_id` uuid fk→judgments ·
+`matter_id` uuid null fk→matters ·
+`citation_check_id` uuid null fk→citation_checks — the render it was copied from ·
+`overruled_status_at_copy` text · `surface` enum
+(search|judgment_detail|briefing|draft|matter) · `copied_at` timestamptz
+
+Index: btree on judgment_id — the fan-out reads by judgment;
+btree on (user_id, copied_at desc).
+
+Copy works offline, so the write **queues through the outbox** with an idempotency
+key like every other local-first write. A copy that never syncs is a citation we
+cannot warn about — count outbox age here, do not assume delivery.
+
+**Privacy.** This records what an advocate copied and when. It exists solely to
+warn them later, it is their own activity about public judgments, and it contains
+no third-party personal data. It is still tracking, so it is **disclosed in the
+privacy disclosure**, not silent — `PRIVACY_PII.md`. Deleted on account deletion
+and through the DPDP erasure path (`data_requests`).
+
 ## overruled_rechecks
 One row per scheduled run. Overruled status is **never cached** — see
 `CITATION_HARNESS.md`.
@@ -257,7 +296,8 @@ re-check found it. Do not build a second implementation.
 `trigger_ref` uuid null — dispute id or recheck id ·
 `from_status` text · `to_status` text ·
 `status` enum (pending|complete|failed) default pending ·
-`saved_count` int null · `filed_count` int null · `notified_count` int null ·
+`saved_count` int null · `filed_count` int null · `copied_count` int null ·
+`notified_count` int null ·
 `idempotency_key` text · `created_at` timestamptz ·
 `completed_at` timestamptz null
 

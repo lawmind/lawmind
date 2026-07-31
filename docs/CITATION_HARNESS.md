@@ -124,6 +124,69 @@ Harness assertion: for every fixture with `overruled_status != none`, render eac
 surface and assert the badge is `LAW MOVED`. The `set_aside` fixture must
 additionally assert add-to-matter is disabled.
 
+### How stale-overruled is measured
+
+A zero threshold nobody can compute is decoration. The mechanism is deliberately
+the cheapest thing that detects the failure, not the most complete.
+
+**No new event stream.** `citation_checks` already writes one row per citation per
+surface, so the render is already recorded — it needs two columns, not a pipeline:
+`overruled_status_shown` (what the server sent) and `surface`. Write volume does
+not change. `judgments.overruled_status_changed_at` supplies the other half.
+
+Detection is then a query, not a service:
+
+```sql
+SELECT count(*) FILTER (WHERE stale)::numeric / nullif(count(*),0) AS stale_rate
+FROM (
+  SELECT cc.shown_to_user
+     AND cc.verification_state = 'verified'
+     AND cc.overruled_status_shown = 'none'
+     AND j.overruled_status <> 'none'
+     AND j.overruled_status_changed_at <= cc.created_at   -- already moved when we rendered
+       AS stale
+  FROM citation_checks cc
+  JOIN judgments j ON j.id = cc.judgment_id_matched
+  WHERE cc.shown_to_user
+) t;
+```
+
+The `overruled_status_changed_at <= created_at` clause is the whole point: it
+separates **a badge that was wrong when we drew it** from one the world
+invalidated afterwards. Only the first is staleness. The second is the world
+moving, which the fan-out handles, and counting it would make the metric
+unfixable and therefore ignored.
+
+Runs on every harness execution and continuously in the Citation monitor.
+
+### What this mechanism cannot catch
+
+Stated plainly, because a metric implying total coverage is worse than one with
+known blind spots.
+
+1. **Offline renders.** The client renders cached matters and briefings with no
+   server round-trip, so no `citation_checks` row is written and nothing is
+   measured. The as-of date rule bounds the harm; it does not measure it. This is
+   the largest blind spot and it is structural — measuring it would require
+   client telemetry the local-first design deliberately avoids.
+2. **Anything after a copy leaves the app.** Once a citation is in someone's Word
+   document we cannot observe a render at all. `citation_copies` lets us *notify*;
+   it does not let us *measure*.
+3. **Long-lived screens.** The row records when the server sent the payload, not
+   when the pixel was painted. A search results screen left open for an hour shows
+   a badge an hour older than its row claims.
+4. **A corpus that never learned.** If `judgments.overruled_status` is `none`
+   because ingestion never ingested the overruling judgment, both sides of the
+   comparison agree and this metric reads **0.0% while advocates see stale
+   badges.** This measures render-versus-corpus consistency, **not truth.** Corpus
+   completeness is a different failure with different owners — disputed citations
+   (an advocate tells us) and corpus coverage (`ADMIN_SURFACE.md` §6). Do not let
+   a green stale-overruled rate be read as evidence the corpus is current.
+5. **It is retrospective.** This detects after the fact and gates releases; it
+   does not prevent a bad render at runtime. The runtime guard is the separate
+   contract rule that a citation payload missing its three fields renders "not
+   confirmed" and reports itself.
+
 ## When the law moves — what the advocate is told
 
 Notification severity follows the three overruled states, matching how each state
@@ -131,11 +194,16 @@ renders (§9.3): `set_aside` replaces the header in danger red, `partly_set_asid
 carries a caution band, `doubted` shows no band at all. A notification that
 shouted equally for all three would train advocates to ignore it.
 
-| State | Exported in a draft | Saved to a matter only |
+| State | Exported in a draft · **or copied out** | Saved to a matter only |
 |---|---|---|
 | `set_aside` | Push + in-app + email, immediately | In-app |
 | `partly_set_aside` | Push + in-app, naming the paragraphs | In-app |
 | `doubted` | In-app only — **never push** | In-app |
+
+**A copy is treated exactly as an export.** In both cases the citation has left
+the app and we cannot know where it went — that identical problem gets identical
+severity. It is not the lesser case; it is the worse one, because with a draft we
+can at least name the document.
 
 `doubted` is still binding law. Waking someone at night for it would be crying
 wolf, and the app deliberately shows it no band.
@@ -178,6 +246,37 @@ wolf, and the app deliberately shows it no band.
 > your draft relies on. [See the paragraphs that fell]
 >
 > [Open the draft]
+
+**Push — `set_aside`, copied out of the app**
+> **A case you copied has been overruled**
+> Ramesh v. State of Haryana was set aside on 14 March. You copied it on 2 March.
+
+**In-app — `set_aside`, copied out of the app**
+
+The one variant where we cannot name a document, so the copy says so rather than
+implying we know more than we do.
+
+> ### The law moved on a case you copied
+>
+> On **14 March 2026** the Supreme Court set aside
+> **Ramesh v. State of Haryana (2019) 4 SCC 221**.
+>
+> You copied this citation on **2 March 2026**, from a search for *"parity in
+> bail, co-accused"*. It showed as verified then, and it was.
+>
+> We do not know where it went — that is the point of a copy. If it went into a
+> document you have filed or are about to file, it needs replacing.
+>
+> **What replaced it —** Suresh v. State of Punjab (2026) 2 SCC 88
+> [Read the holding] · [Copy the new citation]
+>
+> We check every authority you copy or save, every day.
+
+Naming the search that produced the copy is the only handle we have for jogging
+memory — an advocate will not recall "2 March" but will recall what they were
+working on. Never guess beyond that: do not name a matter unless `matter_id` was
+recorded on the copy, and never say "your bail application" when we only know a
+citation left the app.
 
 **In-app — `doubted`, saved only**
 > ### A case in your matter has been doubted

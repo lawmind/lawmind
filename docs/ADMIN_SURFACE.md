@@ -200,7 +200,9 @@ calls.** One transaction:
 2. enqueue re-verification for **every** `citation_checks` row referencing that
    judgment — everyone who saved it;
 3. queue a notice to **every advocate who exported it in a draft** — it is already
-   in a filed document.
+   in a filed document;
+4. queue a notice to **every advocate who copied it out of the app**
+   (`citation_copies`), at the same severity as an export.
 
 Idempotent on `sha256(judgmentId || toStatus || trigger || triggerRef)`, enforced
 by a unique constraint on `citation_fanouts`: a double-uphold, or an uphold racing

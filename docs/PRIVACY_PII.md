@@ -43,7 +43,21 @@ Indian names, transliteration variants and Devanagari make NER materially harder
 than English benchmarks suggest. Evaluate on real Indian court documents before
 trusting any off-the-shelf model.
 
+## Copied citations are recorded — and disclosed
+Every "Copy citation" tap writes a `citation_copies` row: which judgment, when,
+and the matter if there was one. It exists for one reason — when a judgment is
+later overruled, that record is the **only** way to warn an advocate who took the
+citation out of the app. Without it they see a verified badge, file the case, and
+nothing can reach them.
+
+It is their own activity about public judgments and holds no third-party personal
+data, so it is not sensitive-class. It is still tracking, and we do not do silent
+tracking: it is **named in the in-product privacy disclosure**, in the same plain
+terms as everything else. Deleted on account deletion and through the DPDP erasure
+path. `SCHEMA_TRUTH.md#citation_copies`.
+
 ## Retention
+- Copied-citation records: deleted with the account or on erasure request.
 - Pseudonymisation maps: local only, deleted with the matter.
 - Prompt logs: store pseudonymised text, never the original.
 - Embeddings of sensitive documents: same DPDP treatment as source text. An

@@ -45,7 +45,21 @@ bug: the client renders "not confirmed" and reports it.
 GET /judgments/:id → { judgment with fullText }
 POST /verify/ecourts { citationText } → { ecourtsUrl, prefilledQuery }
 POST /verify/confirm { citationText, judgmentId } → { cached: true }
+
+POST /citations/copies
+  { judgmentId, matterId?, citationCheckId?, surface, copiedAt, clientKey }
+  → { ok }
 ```
+**Every "Copy citation" tap writes a copy record.** An advocate who copies a
+citation into their own document is otherwise invisible to the fan-out — they saw
+a verified badge, they may file it, and no notification could ever reach them.
+That is the user at highest risk, and plausibly a large share of early users: the
+ones who trust the search but not yet the drafting.
+
+Copy works offline, so this **queues through the outbox** with `clientKey` as the
+idempotency key, like every other local-first write. Never block the copy on the
+request — the clipboard write happens immediately and the record syncs after.
+Retention and disclosure: `SCHEMA_TRUTH.md#citation_copies`, `PRIVACY_PII.md`.
 
 ## Matters — LCC owns
 ```
@@ -176,15 +190,22 @@ it twice.
 
 ```
 applyOverruledChange({ judgmentId, fromStatus, toStatus, trigger, triggerRef })
-  → { fanoutId, savedCount, filedCount, notifiedCount }
+  → { fanoutId, savedCount, filedCount, copiedCount, notifiedCount }
 ```
 In one transaction:
-1. write the corrected `overruled_status` (+ `overruled_paras`, `overruled_note`,
-   `overruled_by_judgment_id`) to `judgments`;
+1. write the corrected `overruled_status` (+ `overruled_status_changed_at`,
+   `overruled_paras`, `overruled_note`, `overruled_by_judgment_id`) to `judgments`;
 2. enqueue re-verification for **every** `citation_checks` row referencing that
    judgment — everyone who saved it;
 3. queue a notice to **every advocate who exported it in a draft**, at the
-   severity in `CITATION_HARNESS.md` §When the law moves.
+   severity in `CITATION_HARNESS.md` §When the law moves;
+4. queue a notice to **every advocate who copied it out of the app**
+   (`citation_copies`), at the **same severity as an export** — in both cases the
+   citation has left and we cannot know where it went.
+
+Step 4 reaches the only population that has no other route back to us. Omitting it
+leaves the highest-risk user silently uncovered, which is why it is part of the
+one shared operation rather than a follow-up.
 
 **Idempotent** on `sha256(judgmentId || toStatus || trigger || triggerRef)`,
 enforced by a unique constraint — a double-uphold or an overlapping re-check must
