@@ -593,6 +593,202 @@ a{color:#5E1A2B}a:hover{color:#45121E}
 </div>
 </sc-if>
 
+<sc-if value="{{ isCauselist }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="background:#FBEFEF;border:1px solid rgba(158,42,51,.3);border-left:3px solid #9E2A33;border-radius:10px;padding:16px 20px;display:flex;gap:16px;align-items:flex-start">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9E2A33" stroke-width="2" style="flex:none;margin-top:2px"><path d="M12 9v4M12 17h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+<div style="flex:1">
+<div style="font:600 14px Inter;color:#9E2A33">DRT-II Delhi has returned nothing for two days</div>
+<div style="font:400 13px/1.6 Inter;color:#5A6478;margin-top:6px">The site changed layout on 28 July and the parser now returns an empty list. <strong style="color:#141B2D">Three advocates have a hearing there this week and their briefings will be built from stale dates.</strong> This is the failure mode that loses us a customer permanently.</div>
+<div style="display:flex;gap:9px;margin-top:13px">
+<div style="height:36px;padding:0 14px;border-radius:7px;background:#9E2A33;color:#fff;display:flex;align-items:center;font:600 12.5px Inter;cursor:pointer">Notify the 3 advocates</div>
+<div style="height:36px;padding:0 14px;border-radius:7px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;font:600 12.5px Inter;cursor:pointer">Assign to engineering</div>
+<div style="height:36px;padding:0 14px;border-radius:7px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;font:600 12.5px Inter;cursor:pointer">Fall back to manual entry</div>
+</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">COURTS TRACKED</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">64</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">18 High Courts · 46 district</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">SYNCED TODAY</div><div style="font:600 25px Inter;color:#1F6F4A;margin-top:9px;letter-spacing:-.02em">61</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">Last run 06:31 IST</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">PARTIAL OR STALE</div><div style="font:600 25px Inter;color:#B4690E;margin-top:9px;letter-spacing:-.02em">2</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">Allahabad · NCLT Mumbai</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">FAILED</div><div style="font:600 25px Inter;color:#9E2A33;margin-top:9px;letter-spacing:-.02em">1</div><div style="font:500 11.5px Inter;color:#9E2A33;margin-top:6px">2 days · 3 advocates affected</div></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1.65fr 1fr;gap:14px;margin-top:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:16px 20px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center">
+<div style="font:600 14px Inter;color:#141B2D">Today's pull · by court</div>
+<div style="font:400 12px JetBrains Mono;color:#5A6478">runs 06:00 daily</div>
+</div>
+<div style="display:grid;grid-template-columns:1.5fr 62px 68px 1fr;gap:10px;padding:10px 20px;border-bottom:1px solid #E3E0D8;background:#FBFAF7;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478">
+<span>COURT</span><span>PULL</span><span>ITEMS</span><span>STATUS</span>
+</div>
+<sc-for list="{{ courts }}" as="c" hint-placeholder-count="10">
+<div style="display:grid;grid-template-columns:1.5fr 62px 68px 1fr;gap:10px;padding:12px 20px;border-bottom:1px solid #F0EEE8;align-items:center;background:{{ c.rowBg }}">
+<div style="display:flex;align-items:center;gap:9px"><span style="width:7px;height:7px;border-radius:9999px;background:{{ c.dot }};flex:none"></span><span style="font:500 13px Inter;color:#141B2D">{{ c.court }}</span></div>
+<span style="font:400 12px JetBrains Mono;color:#5A6478">{{ c.pull }}</span>
+<span style="font:400 12px JetBrains Mono;color:#141B2D">{{ c.items }}</span>
+<div><div style="font:600 9.5px JetBrains Mono;letter-spacing:.1em;color:{{ c.labelFg }}">{{ c.label }}</div><div style="font:400 11.5px/1.45 Inter;color:#5A6478;margin-top:3px">{{ c.note }}</div></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Advocates hit by the DRT-II failure</div>
+<div style="font:400 12px/1.6 Inter;color:#5A6478;margin-top:6px">These briefings would go out with dates we cannot confirm.</div>
+<div style="display:flex;flex-direction:column;gap:1px;margin-top:14px;background:#E3E0D8;border:1px solid #E3E0D8;border-radius:8px;overflow:hidden">
+<sc-for list="{{ affected }}" as="v" hint-placeholder-count="3">
+<div style="background:#fff;padding:12px 14px"><div style="font:500 13px Inter;color:#141B2D">{{ v.adv }}</div><div style="font:400 12px Inter;color:#5A6478;margin-top:3px">{{ v.matter }}</div><div style="font:600 11.5px JetBrains Mono;color:#9E2A33;margin-top:5px">{{ v.when }}</div></div>
+</sc-for>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Escalation policy</div>
+<div style="display:flex;flex-direction:column;gap:11px;margin-top:14px;font:400 12.5px/1.6 Inter;color:#5A6478">
+<div style="display:flex;gap:10px"><span style="font:600 11px JetBrains Mono;color:#5A6478;width:44px;flex:none;padding-top:2px">1 RUN</span><div>Retry at 09:00. No user-facing action.</div></div>
+<div style="display:flex;gap:10px"><span style="font:600 11px JetBrains Mono;color:#8A5109;width:44px;flex:none;padding-top:2px">2 RUNS</span><div>Briefings for that court are marked <strong style="color:#141B2D">"dates not confirmed today"</strong> rather than sent silently.</div></div>
+<div style="display:flex;gap:10px"><span style="font:600 11px JetBrains Mono;color:#9E2A33;width:44px;flex:none;padding-top:2px">3 RUNS</span><div>Affected advocates are notified directly and told to check the board.</div></div>
+</div>
+<div style="margin-top:14px;padding-top:13px;border-top:1px solid #E3E0D8;font:400 12px/1.6 Inter;color:#5A6478">We never present an unconfirmed listing as confirmed. The same rule as citations.</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDisputes }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">OPEN DISPUTES</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">5</div><div style="font:500 11.5px Inter;color:#9E2A33;margin-top:6px">2 critical</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">UPHELD THIS MONTH</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">7</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">Badge was wrong — corpus corrected</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">FALSE-VERIFIED RATE</div><div style="font:600 25px Inter;color:#9E2A33;margin-top:9px;letter-spacing:-.02em">0.04%</div><div style="font:500 11.5px Inter;color:#9E2A33;margin-top:6px">Target zero. Never acceptable.</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">MEDIAN TIME TO RESOLVE</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">6 h</div><div style="font:500 11.5px Inter;color:#1F6F4A;margin-top:6px">SLA 24 h for critical</div></div>
+</div>
+
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:16px 20px;border-bottom:1px solid #E3E0D8">
+<div style="font:600 14px Inter;color:#141B2D">Reported by advocates</div>
+<div style="font:400 12px/1.6 Inter;color:#5A6478;margin-top:5px">A wrongly verified citation is the one failure that ends a customer relationship permanently. Everything in this queue outranks everything else in this admin.</div>
+</div>
+<sc-for list="{{ disputes }}" as="d" hint-placeholder-count="5">
+<div style="padding:16px 20px;border-bottom:1px solid #F0EEE8;display:flex;gap:18px;align-items:flex-start">
+<div style="flex:1">
+<div style="display:flex;align-items:center;gap:10px">
+<span style="font:600 9px JetBrains Mono;letter-spacing:.1em;color:{{ d.sevFg }};background:{{ d.sevBg }};padding:3px 7px;border-radius:4px">{{ d.sevLabel }}</span>
+<span style="font:400 11.5px JetBrains Mono;color:#5A6478">{{ d.cite }}</span>
+<span style="font:400 11.5px Inter;color:#5A6478">· badge showed</span>
+<span style="font:600 9.5px JetBrains Mono;letter-spacing:.06em;color:#141B2D;border:1px solid #C3BEB2;padding:2px 6px;border-radius:3px">{{ d.was }}</span>
+</div>
+<div style="font:500 15px Inter;color:#141B2D;margin-top:9px">{{ d.name }}</div>
+<div style="font:400 13px/1.6 Inter;color:#5A6478;margin-top:5px">{{ d.claim }}</div>
+<div style="font:400 11.5px JetBrains Mono;color:#5A6478;margin-top:8px">{{ d.by }} · {{ d.age }} ago</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;flex:none;width:168px">
+<div style="height:34px;border-radius:7px;background:#5E1A2B;color:#fff;display:flex;align-items:center;justify-content:center;font:600 12.5px Inter;cursor:pointer">Uphold — fix corpus</div>
+<div style="height:34px;border-radius:7px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;justify-content:center;font:600 12.5px Inter;cursor:pointer">Badge was correct</div>
+<div style="height:34px;border-radius:7px;background:#fff;border:1px solid #E3E0D8;color:#5A6478;display:flex;align-items:center;justify-content:center;font:500 12.5px Inter;cursor:pointer">Open the record</div>
+</div>
+</div>
+</sc-for>
+<div style="padding:14px 20px;background:#FBFAF7;font:400 12px/1.6 Inter;color:#5A6478">Upholding a dispute writes a correction to the corpus, re-runs verification for every advocate who saved that citation, and pushes a notice to anyone who put it in a filed draft.</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTemplates }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:16px 20px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center">
+<div><div style="font:600 14px Inter;color:#141B2D">Ten document types</div><div style="font:400 12px Inter;color:#5A6478;margin-top:4px">Score is against a 200-item golden set reviewed by a practising advocate</div></div>
+<div style="height:34px;padding:0 13px;border-radius:7px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;font:600 12.5px Inter;cursor:pointer">Run evaluation</div>
+</div>
+<div style="display:grid;grid-template-columns:1.7fr 52px 1fr 74px 66px;gap:10px;padding:10px 20px;border-bottom:1px solid #E3E0D8;background:#FBFAF7;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478">
+<span>TEMPLATE</span><span>VER</span><span>SCORE</span><span>30-DAY</span><span>USES</span>
+</div>
+<sc-for list="{{ templates }}" as="t" hint-placeholder-count="10">
+<div style="display:grid;grid-template-columns:1.7fr 52px 1fr 74px 66px;gap:10px;padding:11px 20px;border-bottom:1px solid #F0EEE8;align-items:center;background:{{ t.rowBg }}">
+<span style="font:500 13px Inter;color:#141B2D">{{ t.name }}</span>
+<span style="font:400 12px JetBrains Mono;color:#5A6478">{{ t.ver }}</span>
+<div style="display:flex;align-items:center;gap:9px"><div style="flex:1;height:6px;border-radius:4px;background:#EFEDE7;overflow:hidden"><div style="width:{{ t.barW }};height:100%;background:{{ t.barBg }}"></div></div><span style="font:600 12px JetBrains Mono;color:{{ t.scoreFg }}">{{ t.score }}</span></div>
+<span style="font:500 12px JetBrains Mono;color:{{ t.driftFg }}">{{ t.drift }}</span>
+<span style="font:400 12px JetBrains Mono;color:#5A6478">{{ t.uses }}</span>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="background:#FDF7EC;border:1px solid rgba(180,105,14,.3);border-radius:10px;padding:18px 20px">
+<div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#8A5109">REGRESSION DETECTED</div>
+<div style="font:600 15px Inter;color:#141B2D;margin-top:10px">Writ petition v6 dropped 4.1 points</div>
+<div style="font:400 12.5px/1.65 Inter;color:#5A6478;margin-top:8px">Since the v6 prompt change on 21 July, the golden set shows the model omitting the statement of facts in Article 226 petitions where relief is sought against a statutory body. 311 drafts generated since.</div>
+<div style="display:flex;gap:9px;margin-top:14px">
+<div style="height:34px;padding:0 13px;border-radius:7px;background:#141B2D;color:#fff;display:flex;align-items:center;font:600 12.5px Inter;cursor:pointer">Roll back to v5</div>
+<div style="height:34px;padding:0 13px;border-radius:7px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;font:600 12.5px Inter;cursor:pointer">Diff v5 → v6</div>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Every template is checked for</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+<div style="display:flex;gap:10px;align-items:flex-start"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F6F4A" stroke-width="2.8" style="flex:none;margin-top:2px"><path d="m20 6-11 11-5-5"></path></svg><div style="font:400 12.5px/1.55 Inter;color:#5A6478"><strong style="color:#141B2D">Court format compliance</strong> — cause title, prayer clause, verification</div></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F6F4A" stroke-width="2.8" style="flex:none;margin-top:2px"><path d="m20 6-11 11-5-5"></path></svg><div style="font:400 12.5px/1.55 Inter;color:#5A6478"><strong style="color:#141B2D">No invented citations</strong> — every authority resolves to the corpus</div></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F6F4A" stroke-width="2.8" style="flex:none;margin-top:2px"><path d="m20 6-11 11-5-5"></path></svg><div style="font:400 12.5px/1.55 Inter;color:#5A6478"><strong style="color:#141B2D">No overruled authority</strong> cited as good law</div></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F6F4A" stroke-width="2.8" style="flex:none;margin-top:2px"><path d="m20 6-11 11-5-5"></path></svg><div style="font:400 12.5px/1.55 Inter;color:#5A6478"><strong style="color:#141B2D">AI mark present</strong> and not removable by the template itself</div></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F6F4A" stroke-width="2.8" style="flex:none;margin-top:2px"><path d="m20 6-11 11-5-5"></path></svg><div style="font:400 12.5px/1.55 Inter;color:#5A6478"><strong style="color:#141B2D">Hindi parity</strong> — Devanagari body, citations left in English</div></div>
+</div>
+<div style="margin-top:15px;padding-top:13px;border-top:1px solid #E3E0D8;font:400 12px/1.6 Inter;color:#5A6478">A template cannot ship below 90 unless a founder overrides, and the override is written to the audit ledger.</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPrivacy }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:16px 20px;border-bottom:1px solid #E3E0D8">
+<div style="font:600 14px Inter;color:#141B2D">Open requests</div>
+<div style="font:400 12px/1.6 Inter;color:#5A6478;margin-top:5px">DPDP Act: 30 days to respond, and the clock does not stop for a blocked dependency.</div>
+</div>
+<div style="display:grid;grid-template-columns:1.2fr 84px 70px 96px 1fr;gap:10px;padding:10px 20px;border-bottom:1px solid #E3E0D8;background:#FBFAF7;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478">
+<span>ADVOCATE</span><span>TYPE</span><span>FILED</span><span>DUE</span><span>STATE</span>
+</div>
+<sc-for list="{{ privacyReqs }}" as="p" hint-placeholder-count="4">
+<div style="padding:13px 20px;border-bottom:1px solid #F0EEE8;background:{{ p.rowBg }}">
+<div style="display:grid;grid-template-columns:1.2fr 84px 70px 96px 1fr;gap:10px;align-items:center">
+<span style="font:500 13px Inter;color:#141B2D">{{ p.who }}</span>
+<span style="font:400 12px Inter;color:#5A6478">{{ p.kind }}</span>
+<span style="font:400 12px JetBrains Mono;color:#5A6478">{{ p.filed }}</span>
+<span style="font:600 11.5px JetBrains Mono;color:{{ p.dueFg }}">{{ p.due }}</span>
+<span style="font:600 10px JetBrains Mono;letter-spacing:.08em;color:{{ p.stateFg }};background:{{ p.stateBg }};padding:4px 8px;border-radius:4px;justify-self:start">{{ p.state }}</span>
+</div>
+<div style="font:400 12px Inter;color:#5A6478;margin-top:7px">{{ p.note }}</div>
+</div>
+</sc-for>
+<div style="padding:14px 20px;background:#FBFAF7;font:400 12px/1.6 Inter;color:#5A6478">An erasure removes matters, notes, drafts and briefings. It does <strong style="color:#141B2D">not</strong> remove the audit ledger or billing records — the advocate is told this before they confirm, not after.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Retention — what we keep and for how long</div>
+<div style="display:flex;flex-direction:column;gap:1px;margin-top:14px;background:#E3E0D8;border:1px solid #E3E0D8;border-radius:8px;overflow:hidden">
+<sc-for list="{{ retention }}" as="r" hint-placeholder-count="5">
+<div style="background:#fff;padding:12px 14px;display:flex;gap:11px;align-items:flex-start"><span style="width:6px;height:6px;border-radius:9999px;background:{{ r.c }};flex:none;margin-top:6px"></span><div><div style="font:500 12.5px Inter;color:#141B2D">{{ r.label }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">{{ r.value }}</div></div></div>
+</sc-for>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Pseudonymisation coverage</div>
+<div style="font:400 12px/1.6 Inter;color:#5A6478;margin-top:6px">Share of outbound model calls where every detected identifier was stripped before sending.</div>
+<div style="display:flex;align-items:baseline;gap:10px;margin-top:14px"><span style="font:600 32px Inter;color:#141B2D;letter-spacing:-.02em">99.2%</span><span style="font:500 12px Inter;color:#1F6F4A">+0.3 this month</span></div>
+<div style="height:8px;border-radius:5px;background:#EFEDE7;overflow:hidden;margin-top:10px"><div style="width:99.2%;height:100%;background:#1F6F4A"></div></div>
+<div style="margin-top:14px;padding-top:13px;border-top:1px solid #E3E0D8;font:400 12px/1.6 Inter;color:#5A6478">The remaining 0.8% are free-text fact descriptions where no identifier pattern matched. We disclose this limitation in the app rather than claiming full anonymity.</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{ isAnalytics }}" hint-placeholder-val="{{ false }}">
 <div style="animation:ad-in 220ms ease-out">
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
@@ -641,13 +837,17 @@ const SECTIONS = [
   { id: 'queue', label: 'Enrolment queue', title: 'Enrolment verification queue', sub: 'Bar Council rolls have no public API — a person checks every number', path: 'M9 11l2 2 4-4M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z' },
   { id: 'users', label: 'Advocates', title: 'Advocates', sub: '1,284 accounts · 812 verified · 23 pending · 14 rejected', path: 'M16 20v-2a4 4 0 0 0-8 0v2M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z' },
   { id: 'briefings', label: 'Briefings', title: 'Briefing engine', sub: 'The wedge. Generated nightly at 21:00 for every listed hearing', path: 'M12 3l7 4v5c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V7z' },
+  { id: 'causelist', label: 'Cause list sync', title: 'Cause list synchronisation', sub: 'Every briefing depends on this. A silent scraper failure is the worst outage we can have', path: 'M3 5h18v16H3zM8 3v4M16 3v4M3 10h18M8 14h2M14 14h2M8 18h2' },
   { id: 'citations', label: 'Citation monitor', title: 'Citation monitor', sub: 'Verification failure rate is our most important health metric', path: 'M12 9v4M12 17h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z' },
+  { id: 'disputes', label: 'Disputed citations', title: 'Disputed citations', sub: 'An advocate told us a verification badge was wrong. Nothing matters more than this queue', path: 'M12 3l7 4v5c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V7zM12 8v4M12 15h.01' },
   { id: 'corpus', label: 'Corpus & ingestion', title: 'Corpus and ingestion', sub: 'What we have indexed, how fresh it is, and where the gaps are', path: 'M4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 7c0 1.7 3.6 3 8 3s8-1.3 8-3-3.6-3-8-3-8 1.3-8 3z' },
+  { id: 'templates', label: 'Draft templates', title: 'Draft templates and prompt versions', sub: 'Ten document types. Each prompt is versioned, scored against a golden set, and rollback-able', path: 'M14 3v5h5M5 5a2 2 0 0 1 2-2h7l6 6v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2zM9 13h6M9 17h4' },
   { id: 'spend', label: 'LLM spend & routing', title: 'LLM spend and model routing', sub: 'Spot a runaway cost the same day it happens', path: 'M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' },
   { id: 'billing', label: 'Subscriptions', title: 'Subscriptions and billing', sub: 'Starter Rs.799 · Professional Rs.1,999 · Expert Rs.3,499 · Firm on invoice', path: 'M3 10h18M5 6h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z' },
   { id: 'support', label: 'Support inbox', title: 'Support inbox', sub: 'Every ticket arrives with the advocate\u2019s context already attached', path: 'M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' },
   { id: 'push', label: 'Push campaigns', title: 'Push campaigns', sub: 'Product news only — briefing pushes are transactional and automatic', path: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0' },
   { id: 'controls', label: 'Platform controls', title: 'Platform controls', sub: 'Maintenance mode, kill switches and feature flags — all immediate', path: 'M18.4 12a6.4 6.4 0 0 0 0-1l2-1.5-2-3.5-2.4 1a6.4 6.4 0 0 0-.9-.5L14.7 4h-4l-.4 2.5a6.4 6.4 0 0 0-.9.5l-2.4-1-2 3.5L7 11a6.4 6.4 0 0 0 0 1l-2 1.5 2 3.5 2.4-1c.3.2.6.4.9.5l.4 2.5h4l.4-2.5c.3-.1.6-.3.9-.5l2.4 1 2-3.5z' },
+  { id: 'privacy', label: 'Data & deletion', title: 'Data and deletion requests', sub: 'DPDP Act obligations. Export, correction and erasure — with a clock on each one', path: 'M12 3l8 4v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V7zM9 12l2 2 4-4' },
   { id: 'staff', label: 'Staff & audit', title: 'Staff, roles and audit ledger', sub: 'Every privileged action is written down, permanently', path: 'M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 8v6M22 11h-6' },
   { id: 'analytics', label: 'Analytics', title: 'Analytics', sub: 'Retention, activation and the one metric that predicts both', path: 'M4 20V10M10 20V4M16 20v-7M22 20H2' }
 ];
@@ -723,6 +923,10 @@ class Component extends DCLogic {
       isUsers: s.section === 'users',
       isBriefings: s.section === 'briefings',
       isCitations: s.section === 'citations',
+      isCauselist: s.section === 'causelist',
+      isDisputes: s.section === 'disputes',
+      isTemplates: s.section === 'templates',
+      isPrivacy: s.section === 'privacy',
       isCorpus: s.section === 'corpus',
       isSpend: s.section === 'spend',
       isBilling: s.section === 'billing',
@@ -1035,6 +1239,85 @@ class Component extends DCLogic {
         { at: '30 Jul 03:10:52', tag: 'DEPLOY', tagFg: '#8A5109', tagBg: '#FBF0DF', what: 'briefing-worker 1.4.2 — suspected retry regression', who: 'CI' },
         { at: '29 Jul 22:40:11', tag: 'CORPUS', tagFg: '#5A6478', tagBg: '#EFEDE7', what: 'SCC OnLine sync failed — auth token expired', who: 'system' },
         { at: '29 Jul 18:40:03', tag: 'ENROLMENT', tagFg: '#fff', tagBg: red, what: 'Rejected RAJ/1188/2015 — number belongs to another person', who: 'S. Bhatt' }
+      ],
+
+      courts: [
+        { court: 'Delhi High Court', pull: '06:02', items: '412', status: 'ok', note: 'Complete' },
+        { court: 'Patiala House (Dist.)', pull: '06:04', items: '1,180', status: 'ok', note: 'Complete' },
+        { court: 'Saket Family Court', pull: '06:04', items: '96', status: 'ok', note: 'Complete' },
+        { court: 'Bombay High Court', pull: '06:11', items: '703', status: 'ok', note: 'Complete' },
+        { court: 'DRT-II Delhi', pull: '—', items: '0', status: 'fail', note: 'Site layout changed 28 Jul — parser returns empty' },
+        { court: 'Allahabad HC (Lucknow)', pull: '06:22', items: '318', status: 'warn', note: 'Partial — 3 courtrooms missing' },
+        { court: 'Madras High Court', pull: '06:19', items: '588', status: 'ok', note: 'Complete' },
+        { court: 'Kerala High Court', pull: '06:25', items: '241', status: 'ok', note: 'Complete' },
+        { court: 'Karnataka HC (Bengaluru)', pull: '06:31', items: '474', status: 'ok', note: 'Complete' },
+        { court: 'NCLT Mumbai', pull: '05:58', items: '61', status: 'warn', note: 'Stale — same list as yesterday' }
+      ].map((c) => ({
+        court: c.court, pull: c.pull, items: c.items, note: c.note,
+        dot: c.status === 'ok' ? green : c.status === 'warn' ? amber : red,
+        label: c.status === 'ok' ? 'SYNCED' : c.status === 'warn' ? 'PARTIAL' : 'FAILED',
+        labelFg: c.status === 'ok' ? green : c.status === 'warn' ? '#8A5109' : red,
+        rowBg: c.status === 'fail' ? '#FBEFEF' : c.status === 'warn' ? '#FDF7EC' : '#fff',
+        isFail: c.status === 'fail'
+      })),
+      affected: [
+        { adv: 'Adv. Sharma', matter: 'Mehta v. Union Bank of India', when: 'Tomorrow 2:15 PM' },
+        { adv: 'Adv. Iyer', matter: 'Sundaram Finance v. Rao', when: 'Tomorrow 11:00 AM' },
+        { adv: 'Adv. Qureshi', matter: 'Bank of Baroda v. Nigam', when: 'Fri 10:30 AM' }
+      ],
+
+      disputes: [
+        { cite: '2019 SCC OnLine Del 9424', name: 'Rani Devi v. State (NCT of Delhi)', claim: 'Advocate says this citation does not exist. Reported by 3 advocates.', was: 'NOT CONFIRMED', sev: 'high', age: '4 h', by: '3 reports' },
+        { cite: '(2021) 4 SCC 1', name: 'Mohd. Arif v. State of U.P.', claim: 'Marked verified but the reporter volume is wrong — should be (2021) 4 SCC 11.', was: 'VERIFIED', sev: 'high', age: '11 h', by: 'Adv. Nair' },
+        { cite: '(2017) 8 SCC 746', name: 'Rajesh Sharma v. State of U.P.', claim: 'Shown as fully set aside; only paras 19–20 were.', was: 'LAW MOVED', sev: 'med', age: '1 d', by: 'Adv. Bhatt' },
+        { cite: '2020 SCC OnLine Ker 118', name: 'Suresh v. Kerala SRTC', claim: 'Verified externally but both sources trace to the same aggregator.', was: 'VERIFIED ×2', sev: 'med', age: '2 d', by: 'Internal audit' },
+        { cite: '(2011) 1 SCC 694', name: 'Sanjay Chandra v. CBI', claim: 'Holding summary attributes a proposition to the wrong paragraph.', was: 'VERIFIED', sev: 'low', age: '3 d', by: 'Adv. Menon' }
+      ].map((d) => ({
+        cite: d.cite, name: d.name, claim: d.claim, was: d.was, age: d.age, by: d.by,
+        sevLabel: d.sev === 'high' ? 'CRITICAL' : d.sev === 'med' ? 'REVIEW' : 'MINOR',
+        sevFg: d.sev === 'high' ? '#fff' : d.sev === 'med' ? '#8A5109' : '#5A6478',
+        sevBg: d.sev === 'high' ? red : d.sev === 'med' ? '#FBF0DF' : '#EFEDE7',
+        isHigh: d.sev === 'high'
+      })),
+
+      templates: [
+        { name: 'Bail application (s. 439)', ver: 'v14', score: '96', uses: '1,204', drift: '+1.2', ok: true },
+        { name: 'Anticipatory bail (s. 438)', ver: 'v11', score: '94', uses: '806', drift: '+0.4', ok: true },
+        { name: 'Legal notice', ver: 'v9', score: '97', uses: '1,988', drift: '0.0', ok: true },
+        { name: 'Reply to legal notice', ver: 'v7', score: '93', uses: '742', drift: '−0.8', ok: true },
+        { name: 'Writ petition (Art. 226)', ver: 'v6', score: '88', uses: '311', drift: '−4.1', ok: false },
+        { name: 'RTI application', ver: 'v5', score: '98', uses: '520', drift: '+0.2', ok: true },
+        { name: 'Plaint (O.VII r.1)', ver: 'v8', score: '91', uses: '466', drift: '−1.0', ok: true },
+        { name: 'Written statement', ver: 'v8', score: '90', uses: '398', drift: '−0.6', ok: true },
+        { name: 'Affidavit', ver: 'v4', score: '99', uses: '1,102', drift: '+0.1', ok: true },
+        { name: 'Vakalatnama', ver: 'v3', score: '99', uses: '1,640', drift: '0.0', ok: true }
+      ].map((t) => ({
+        name: t.name, ver: t.ver, score: t.score, uses: t.uses, drift: t.drift,
+        scoreFg: t.ok ? green : red,
+        driftFg: t.drift.indexOf('−') === 0 ? (t.ok ? '#8A5109' : red) : green,
+        rowBg: t.ok ? '#fff' : '#FBEFEF',
+        barW: t.score + '%',
+        barBg: t.ok ? green : red
+      })),
+
+      privacyReqs: [
+        { who: 'Adv. P. Nair', kind: 'Erasure', filed: '26 Jul', due: '3 days', state: 'In progress', urgent: false, note: '2 matters, 4 drafts, 11 briefings' },
+        { who: 'Adv. K. Menon', kind: 'Export', filed: '28 Jul', due: '5 days', state: 'Ready to send', urgent: false, note: 'JSON + PDF bundle, 84 MB' },
+        { who: 'Adv. R. Qureshi', kind: 'Correction', filed: '22 Jul', due: 'Overdue 1 day', state: 'Blocked', urgent: true, note: 'Enrolment number correction — needs Bar Council confirmation' },
+        { who: 'Adv. S. Karthikeyan', kind: 'Erasure', filed: '29 Jul', due: '6 days', state: 'Queued', urgent: false, note: 'Account closed 29 Jul' }
+      ].map((p) => ({
+        who: p.who, kind: p.kind, filed: p.filed, due: p.due, state: p.state, note: p.note,
+        dueFg: p.urgent ? red : '#5A6478',
+        stateFg: p.urgent ? '#fff' : '#141B2D',
+        stateBg: p.urgent ? red : '#EFEDE7',
+        rowBg: p.urgent ? '#FBEFEF' : '#fff'
+      })),
+      retention: [
+        { label: 'Matter data, notes, briefings', value: 'Kept until the advocate deletes it', c: green },
+        { label: 'Search queries (pseudonymised)', value: 'Purged after 90 days', c: green },
+        { label: 'Prompts sent to the model vendor', value: 'Not retained by us · vendor 30 days', c: amber },
+        { label: 'Audit ledger of privileged actions', value: 'Kept 7 years — cannot be deleted', c: ink },
+        { label: 'Billing records', value: 'Kept 8 years — statutory', c: ink }
       ],
 
       analyticsKpis: [

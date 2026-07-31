@@ -2,146 +2,208 @@
 
 Feed to Claude Design first. Every screen prompt assumes it.
 
-> **Source of truth.** This file describes the designs in `design/screens/`.
-> Where prose and pixels disagree, the pixels win — specifically
-> `design/screens/renders/23-paper-system.png` for the system,
-> `design/screens/IMPLEMENTATION.md` for the written rules, and the inline styles
-> in `design/screens/LawMind Screens.dc.html`.
-> Unresolved contradictions inside those sources are listed at the bottom under
-> **Known contradictions** — they are not resolved here.
+> **Source of truth.** This file describes the designs in `design/screens/`,
+> reconciled 31 July 2026 against the refined bundle (`LawMind mobile app design`).
+> The written rules live in `design/screens/IMPLEMENTATION.md`; the authoritative
+> pixels are **renders 30–43**. Renders `00-29` are superseded v1/v2
+> — their layout is often still valid, their colour and serif are not.
+> Contradictions remaining inside those sources are listed at the bottom under
+> **Known contradictions**; they are not resolved here.
 
 ## Direction: paper and ink, not dashboard
 Lawmind is used in court corridors by people carrying physical files. It should
 read as a well-made legal instrument — authoritative, quiet, unfashionable in the
 way a good court document is unfashionable. Not fintech, not crypto, not SaaS.
 
-Reference feel: a clean printed judgment, a barrister's brief.
-Anti-reference: neon gradients, dark-by-default, trading apps.
-Glass is permitted, but only as floating chrome — see **Depth**.
+Reference feel: a clean printed judgment, a barrister's brief, a bound reporter.
+Anti-reference: neon gradients, glassmorphism, dark-by-default, trading apps.
 
 ## Why this matters commercially
 SupremeToday.AI looks like 1996 software and advocates tolerate it because the
 data is good. If we look like a toy, senior advocates will not take us seriously
 regardless of output quality. Credibility is a design requirement.
 
-## Palette — paper, ink and gilt
-
-**There is no accent colour.** Ink carries every action; gilt carries authority.
-Long-form serif on a dark ground is measurably harder to read, and reading
-judgments is the app's core act — so paper is the ground.
+## Palette — paper, ink, one accent
 
 | Token | Hex | Use |
 |---|---|---|
-| `paper` | `#FBFAF7` | Page ground — warm off-white |
-| `paper-raised` | `#FFFFFF` | Cards, opaque |
-| `ink` | `#141B2D` | Primary text **and every primary action** |
-| `ink-muted` | `#5A6478` | Secondary text, metadata |
-| `rule` | `#E3E0D8` | All 1px borders resting; `ink` when focused |
-| `gilt` | `#C9A227` | Authority only — verified ring, briefing seal, section rules, inline text actions |
-| `gilt-on-ink` | `#E8C86A` | Solid button fill on an ink surface only |
-| `gilt-wash` | `#FDF3DC` | Gilt-adjacent wash, hero shimmer at 8% |
-| `verified` | `#1F6F4A` | Verified tick disc, ringed in gilt |
-| `caution` | `#B4690E` | Partly set aside, AI mark, enrolment pending. Text on paper darkens to `#8A5109` |
-| `danger` | `#9E2A33` | Set aside, validation errors, destructive |
+| `paper` | `#FBFAF7` | Page ground, with tooth (see Material) |
+| `paper-desk` | `#F2EFE8` | Ground behind a document sheet — draft view only |
+| `card` | `#FFFFFF` | Card and sheet fill |
+| `ink` | `#141B2D` | Primary text, secondary buttons, 1px section rules |
+| `ink-muted` | `#5A6478` | Body secondary, supporting copy |
+| `ink-faint` | `#8A8578` | Citations, dates, metadata, eyebrows |
+| `rule` | `#DAD6CB` | Card edges, section divisions |
+| `hairline` | `#E8E4DA` | Between list items |
+| `oxblood` | `#5E1A2B` | **The only accent.** Primary action + one earned emphasis |
 
-`seal` `#8B2E2E` (brick) and `#5E1A2B` (oxblood) are **retired**. They must not
-appear in the app. The admin canvas has not yet been migrated off oxblood — see
-**Known contradictions**.
+States — these three only:
 
-State colours are the only semantic colours. They render as a tinted paper card
-with a 1px border at ~30% of the state colour — never a dark card:
-verified wash `#EAF2ED` · caution wash `#FBF0DF` · danger wash `#F7E9EA`.
-
-### The button rule depends on the surface underneath
-
-| Surface | Primary action | Label |
+| State | Hex | Notes |
 |---|---|---|
-| Paper (`#FBFAF7` / `#FFFFFF`) | solid `ink` `#141B2D` | `#FBFAF7` |
-| Ink (briefing card, any dark hero) | solid `gilt-on-ink` `#E8C86A` | `#141B2D` |
+| `verified` | `#1F6F4A` | Badge stroke and tick |
+| `caution` | `#B4690E` | Stamp border; text darkens to `#8A5109` on paper; card wash `#FBF0DF` |
+| `danger` | `#9E2A33` | Validation errors, destructive confirmation |
 
-Never a gilt button on paper. Never an ink button on ink.
-**Text actions are gilt on both surfaces** — "Add to matter", "See what replaced
-it", "Read holding" — findable at 13px where ink would sink into body copy.
+**The restraint rule.** Oxblood appears **at most twice per screen** — once for the
+primary action, once where emphasis is genuinely earned. Three or more accent
+moments is a defect, not a preference. Everything else is ink, ink-muted,
+ink-faint and rule. Most emphasis should come from a rule or from space.
 
-### Gold — the rule
-Gilt marks authority the app has established; it is not a generic action colour.
-Four placements: the briefing seal · the verified tick ring · the record line on
-ink headers (CNR, next hearing date) · the identity. Budget: Today 3 marks ·
-briefing takeover 4 · one per verified citation · matters, settings and forms
-**zero**.
-Never: a gold button on paper, gold body text, gold on paper below 14px.
+### Gilt — ornament only
+`gilt` `#C9A227` is deliberately **not in the token table**: it never carries
+information — never text, never a rule that must be read, never a state, never on
+anything tappable. The test is one sentence: **remove the gilt entirely and check
+whether anything became unknowable.** If yes, it was load-bearing and must be ink.
+
+Three permitted placements: **1.** the briefing seal ring (ink card only) ·
+**2.** the verified tick ring, 2px around a `#1F6F4A` disc — *only where a disc
+badge is used, which is currently nowhere, since the shipped badge is a rectangle*
+· **3.** identity (logo, splash, letterhead, admin sidebar mark).
+
+Forbidden without exception: gilt text a user must read · a gilt rule dividing
+content · a gilt button or gilt on any tappable surface · gilt on paper at body
+size · gilt as a state, status or badge colour · a second accent beyond oxblood ·
+the gavel recoloured to red.
+
+**The record line is not a gilt placement.** It was, and it was wrong: a CNR and a
+next-hearing date are the two things an advocate scans a header for, which makes
+them load-bearing by definition. They render in ink, or `parchment` on an ink
+header.
+
+Budget: at most 2 gilt marks per screen; most screens have none. Matters,
+settings, search input, drafting forms and every admin section have **zero**.
 
 Dark mode: v2. Advocates work in daylight.
 
+## Material — paper with tooth
+Flat `#FBFAF7` read unfinished. The ground carries a two-layer stipple at ~2%:
+
+```css
+background-color: #FBFAF7;
+background-image:
+  radial-gradient(rgba(20,27,45,.022) .5px, transparent .5px),
+  radial-gradient(rgba(20,27,45,.016) .5px, transparent .5px);
+background-size: 3px 3px, 7px 7px;
+background-position: 0 0, 2px 3px;
+```
+
+On native, tile a 1×-density noise PNG at the same effective opacity. The test: a
+user must not be able to describe the texture, but a screenshot should feel
+printed rather than rendered. It disappears under sunlight washout — correct.
+
 ## Type
-- UI: **Inter**. 13 / 15 / 17 / 20 / 24 / 32. Weights 400/500/600.
-- Judgment and draft body: **Lora** (serif). Legal text in serif reads as
-  authoritative and matches what advocates see on paper.
-- Records — citations, CNR, timestamps, IDs: **JetBrains Mono** 11.5–13. Also the
-  eyebrow label: `600 10px, letter-spacing .18em, uppercase`.
-- Hindi: **Noto Sans Devanagari** UI, **Noto Serif Devanagari** body. Devanagari
-  needs ≥1.6 line-height — use 1.65–1.72. Latin spacing clips matras.
-  Correctness, not taste.
-- Minimum body 15px. Many users are over 50, reading in bad light.
+**Source Serif 4** carries all legal content — judgments, holdings, drafts, case
+names, briefing prose. It replaces **Lora**, which loses its terminals at 17px on
+a mid-range screen outdoors. **Inter** for app chrome, **JetBrains Mono** for
+citations, CNR/FIR numbers and eyebrows, **Noto Serif/Sans Devanagari** for Hindi.
+
+| Role | Size / leading | Face |
+|---|---|---|
+| Case name, detail | 32 / 1.24 | Source Serif 4 500 |
+| Card title, briefing subject | 23 / 1.32 | Source Serif 4 500 |
+| Long-form document body | 18 / 1.7 | Source Serif 4 400 |
+| Holding, card body | 17 / 1.68 | Source Serif 4 400 |
+| Screen title | 28 / 1.16, −0.022em | Inter 600 |
+| UI body **minimum** | 16 / 1.6 | Inter 400 |
+| Metadata, citation | 11–12 | JetBrains Mono 400 |
+| Section eyebrow | 10–11, 0.18em, upper | JetBrains Mono 600 |
+| Devanagari body | 16–17 / 1.72 | Noto Serif Devanagari 400 |
+| Devanagari UI | 15–16 / 1.7 | Noto Sans Devanagari 400 |
+
+**Measure never exceeds 72 characters**, target 60–68. **Body minimum is 16px,
+not 15.** Devanagari sits one point smaller than Latin with more leading — matched
+by optical weight, not nominal size. Hindi eyebrows drop the letterspaced-uppercase
+treatment; Devanagari has no case distinction and letterspacing breaks conjuncts.
 
 ## Spacing and shape
-8px base: 8 · 16 · 24 · 32 · 48 · 64. Radius 10px cards, 8px inputs and buttons,
-6px badges, 16px sheets (top corners) and glass chrome. No full pills except
-status.
+8px base. **Radii are 2px (3px maximum)** — soft corners were doing most of the
+"startup toy" work, and a bound reporter has square corners. The only exceptions
+are sheets (12px, top corners only) and genuinely circular elements.
 
-## Elevation
-Almost none. One shadow on raised cards: `0 1px 3px rgba(20,27,45,0.08)`.
-Ink surfaces may use `0 6px 22px rgba(20,27,45,.22)`.
-Depth comes from the rule colour, not shadow stacks.
+**Buttons: 2px radius, 52px tall.** Primary = solid `oxblood`, white label.
+Secondary = `card` fill with a 1px `ink` border. Tertiary = `card` fill with a 1px
+`rule` border. Disabled = flat `rule`-toned fill, `ink-faint` label. One accent per
+card: the action. Citation, date and verification line are all `ink-faint` — they
+are reference, not emphasis.
 
-## Depth — glass floats above paper
-Glass is strictly **floating chrome**: nav bars, modals, toasts, sheets.
-Recipe: ultraThin material + paper tint `#FBFAF7` + blur 24 / saturate 1.4, a 1px
-gradient stroke from `rgba(201,162,39,.4)` top-leading to clear, radius 16.
-**Content cards stay opaque** — a card behind a scrolling list must be legible at
-every scroll position, which glass cannot guarantee.
+## Depth — rules and edges, not shadows
+**No shadows on cards.** Structure is carried by hairlines and by spacing, the way
+it is on a printed page. Shadow appears only on genuinely floating cases — never on
+a resting card, button or header. The only permitted blur is a sticky bar over
+scrolling content: `rgba(251,250,247,.94)` + `blur(16px)`.
+
+| Weight | Colour | Use |
+|---|---|---|
+| 1px | `#E8E4DA` | Between list items |
+| 1px | `#DAD6CB` | Card edges, section divisions |
+| 1px | `#141B2D` | Under a section heading; closing a masthead |
+| 2px | `#5E1A2B` | One per screen, on the thing that matters |
+
+## The verification badge — the registry stamp
+The most important component in the product: it is what lets an advocate put a
+citation into a document they file in court. Full build spec, including per-state
+geometry and SVG paths, is `design/screens/IMPLEMENTATION.md` §Badge — do not
+improvise any part of it.
+
+Shared geometry, identical across all five states: rectangle, **radius 2px**,
+**1.5px** border (never 1px — it must survive 2x on a low-DPI panel), padding
+`3px 6px`, JetBrains Mono 600 label at 10px / 0.06em, 11px icon box, 20px tall at 1x.
+
+| State | Border | Label | Colour |
+|---|---|---|---|
+| `verified_internal` | solid | `VERIFIED` | `#1F6F4A` |
+| `verified_external` | solid | `VERIFIED` ⏐ `×2` | `#1F6F4A` |
+| `verified_human` | solid | `VERIFIED` ⏐ `BY YOU` | `#1F6F4A` |
+| `unverified` | **dashed** | `NOT CONFIRMED` | border `#8A8578`, label `#5A6478` |
+| `overruled` | solid, **white fill** | `LAW MOVED` | `#B4690E` / text `#8A5109` |
+
+The three verified states are **one family** — same border, colour, icon and
+leading word; the only difference is a qualifier span after a hairline divider.
+All five are distinguishable **with colour removed** (proof:
+`design/screens/renders/43-badge-greyscale.png`) because they differ by *shape*:
+solid edge · dashed edge · filled block. Shape is the only property that survives
+sunlight washout, a dirty screen and colour-vision deficiency.
+
+`unverified` is the state that matters most. It must never use red, an alert
+triangle, or the word "failed" — those say *the product is broken*. Dashed neutral
+ink says *open, nothing was impressed here*. `overruled` gets the amber card wash
+in addition to the stamp; amber, never red — the case is real, the law has moved.
+
+Contrast: `#1F6F4A` on white 5.31:1 · `#8A5109` on `#FBF0DF` 5.02:1 · `#5A6478` on
+white 6.05:1 — all clear AA.
 
 ## Motion
-Motion is not optional; nothing cuts. Every animation answers where an element
-came from, where it is going, and what it weighs.
+Motion is not optional; nothing cuts. Two curves:
 
-Two curves only:
 ```
 standard:    cubic-bezier(.2, .8, .3, 1)
 seal spring: cubic-bezier(.2, 1.2, .3, 1)
 ```
+
 Durations: 130 press · 180 fade · 260 push · 380 sheet. Nothing exceeds 420ms.
-
-Three spring configs only:
-
-| Name | Response | Damping | Use |
-|---|---|---|---|
-| default | 0.38 | 0.72 | Screen pushes, card entry |
-| snappy | 0.25 | 0.80 | Press states, tab indicator, toggles |
-| gentle | 0.50 | 0.78 | Layout changes, sheets |
+Three spring configs only — default (.38/.72) · snappy (.25/.80) · gentle (.50/.78).
 
 - List entry staggers `index × 55ms`, capped at index 7.
 - Every tappable scales to `0.965` with −3% brightness plus a `.light` haptic.
-- Loading is a **shimmer**, never a spinner — 1.8s gradient sweep,
-  `rgba(201,162,39,.04)` → `rgba(201,162,39,.12)`, siblings offset 200ms.
-- Confirmation ritual: `.heavy` haptic, circle settles, checkmark draws with
-  overshoot, gilt shimmer fades over 600ms.
-- `matchedGeometryEffect` is mandatory for list → detail and the briefing seal.
-- Haptics: light 8ms · medium 14ms · success · warning · selection. One haptic
-  per gesture; never the only signal; none on scroll or incoming push.
-- **Reduce Motion**: drop every transform, keep opacity. The seal still stamps,
-  without scale. Shimmer becomes a static tint.
+- Loading is a **shimmer**, never a spinner.
+- Haptics: light 8ms · medium 14ms · success · warning · selection. One haptic per
+  gesture; never the only signal; none on scroll or incoming push.
+- **Reduce Motion**: drop every transform, keep opacity.
 
-Full choreography table: `design/screens/IMPLEMENTATION.md` §3.
+**Interruptibility** and a **performance floor** are specified in
+`design/screens/IMPLEMENTATION.md` §Interruptibility and §Performance floor — the
+target device is a mid-range Android, not a laptop.
 
 ## Touch and ergonomics
 Minimum target 44×44. Primary actions in the bottom third — one-handed while
 holding a file. Tab bar (4 tabs), not a hamburger. High contrast: sunlight, cheap
-Android.
+Android. **The sunlight test is a design gate, not a checkbox** — every component
+is checked at contrast 0.5 / brightness 1.3
+(`design/screens/renders/38-stress-sunlight@2x.png`).
 
 ## Iconography
-Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the active
-tab.
+Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the active tab.
 
 ## Non-negotiable UI rules
 1. A citation always renders with its verification state visible. Never a bare
@@ -154,40 +216,42 @@ tab.
    muted line). Binary is a correctness bug in Indian practice.
 4. Every AI draft shows "AI-assisted draft — verify before filing" until the
    advocate removes it through two confirmations plus a typed `REMOVE`. Removal
-   is logged.
+   is logged. The mark is a **header band**, not a diagonal watermark.
 5. OCR-extracted fields always show as pending confirmation before save.
 6. Never a bare spinner on search — skeleton results keep the screen's shape.
-7. Offline is a requirement, not an edge case. Cached matters, briefings and
-   drafts stay readable and editable; writes queue.
-8. When the AI is unavailable, say so plainly. Never serve a stale cached answer
-   as fresh.
+7. Offline is a requirement, not an edge case.
+8. When the AI is unavailable, say so plainly. Never serve a stale cached answer.
 9. Nothing blocks on Bar Council enrolment — "verification pending" is a state,
    never a gate.
+10. **The admin consumes the same `tokens.ts` as the app.** No admin-only hex, no
+    second palette, no second type scale. Density may differ; values may not.
 
 ## Known contradictions — unresolved, do not silently pick
-1. **`danger` hex.** `design/screens/IMPLEMENTATION.md` §2 palette says `#A32D2D`; its own state
-   table and `design/screens/CLAUDE_CODE_BRIEF.md` say `#9E2A33`. The canvases contain `#9E2A33`
-   29 times and `#A32D2D` zero times, so `#9E2A33` is used above.
-2. **Token names in `design/screens/renders/23-paper-system.png`** invert their meaning:
-   `obsidian` = `#FBFAF7` (the page ground) and `parchment` = `#141B2D` (text).
-   The names above follow `design/screens/IMPLEMENTATION.md` §2 (`paper` / `ink`) instead.
-   That render also introduces `elevated` `#EFEDE7`, which §2 does not define.
-3. **Glass opacity.** `design/screens/IMPLEMENTATION.md` §2 says paper tint at 78%; render 23
-   says 60%.
-4. **Content card fill.** §2 says opaque `#FFFFFF`; render 23 says a
-   `#141B2D → #fff` linear gradient at max 15% shift.
-5. **Card border.** §2 says `rule` `#E3E0D8`; render 23 says a gilt-tinted 1px
-   border at .18 alpha resting, .45 active.
-6. **Gilt as CTA.** Render 23 labels the gilt swatch "CTA · active · key icons",
-   which contradicts the gold rule ("never something you tap") in
-   `design/screens/IMPLEMENTATION.md` §3b. The gold rule is followed above.
-7. **`design/screens/IMPLEMENTATION.md` §3b is stale**: it still states "Seal red remains the
-   only action colour", contradicting §2 ("no accent colour"). The component
-   inventory in §4 likewise still specifies a `seal` token for the eyebrow,
-   timeline dot, switch-on state and active tab.
-8. **Obsidian leftovers.** §2 Motion still describes "a gilt fill sweep on an
-   obsidian track" and an "obsidian base" parallax layer, from the dark-ground
-   exploration (canvas turn `5a`–`5f`) that the paper renders superseded.
-9. **`design/screens/CLAUDE_CODE_BRIEF.md` points Phase 0 at `design/screens/renders/02-design-system.png`,
-   which is the retired oxblood system** (`seal #5E1A2B`). The current system
-   render is `design/screens/renders/23-paper-system.png`.
+0. **Does gilt still exist at all?** The authoritative system render
+   `design/screens/renders/30-system-refined@2x.png` carries a struck-through
+   swatch labelled **"no gold — struck — do not reintroduce"**, with no gilt value
+   in the palette. But `design/screens/IMPLEMENTATION.md` §Colour keeps
+   "gilt `#C9A227` as ornament only" and §Gilt specifies three permitted
+   placements. The spec's own reading is that what was struck is gold *as
+   load-bearing text and rules*, not gold as ornament — but the render states it
+   flatly. **This is the single highest-value thing to settle**, because placement
+   1 (the briefing seal ring) and placement 3 (identity/logo) are both still drawn.
+1. **§9.1 is stale.** "Settled decisions" still says the badge is *variant D, a
+   tick with a gilt ring* — but §Badge ships the **registry stamp** (a rectangle,
+   no disc, no ring) and §4 says variants A–D are history, "do not build them".
+2. **§9.2 is stale.** It still settles the briefing as *the full-screen dark
+   takeover (`1g`)*, while §8b item 12 records "the dark briefing takeover is
+   gone" and §5 maps the briefing to `8b`, calling `1g`/`1h` retired.
+3. **`1aa` still does not exist.** §5 maps "Citation verification failed ·
+   paywall/tiers" to canvas id `1aa`; the canvas has 60 options and none is `1aa`.
+   Unchanged from the previous bundle.
+4. **Gilt placement 2 is currently unreachable** — self-acknowledged in §Gilt:
+   the shipped badge is a rectangle, so there is no disc to ring. Gilt in the app
+   is placements 1 and 3 only.
+5. **The admin desk still runs the v2 palette** (dark sidebar, oxblood accents)
+   and does not yet match §Colour. §8a states aligning it is "a separate pass, not
+   started" — so the admin renders are authoritative for **layout only**.
+6. **Render numbering collides across versions.** Both `design/screens/renders/14-admin-enrolment-queue.png`
+   (v1) and `design/screens/renders/16-admin-enrolment-queue.png` (new) exist, as do
+   `design/screens/renders/16-admin-llm-spend-routing.png` (v1) and `design/screens/renders/14-admin-llm-spend.png` (new) — the
+   numbers 14 and 16 swapped meaning between versions. Not normalised.

@@ -49,65 +49,210 @@ Hindi. It must read as a legal instrument, not a startup dashboard.
 
 ## 2. Design tokens
 
-### Colour — paper, ink and gilt
+### Colour — paper, ink, one accent
 
-Paper is the ground. The app's core act is reading legal prose — judgments,
-orders and drafts set in serif at 17px — and long-form serif on a dark ground is
-measurably harder to read. A legal tool that tires the eye is not premium.
+Seven values plus three states, plus **gilt `#C9A227` as ornament only** — four
+permitted placements, defined in §Gilt below. Gilt is not in the table because it
+never carries information: never text, never a rule that must be read, never a
+state, never on anything tappable.
 
-There is **no accent colour.** Ink carries every action; gilt carries authority.
+What was struck was gold as *load-bearing* text and rules. That fails in direct
+sunlight on a mid-range Android, and dark-plus-metallic reads luxury-consumer
+rather than senior counsel. Ornament that carries no meaning does not have that
+problem — if it washes out, no information is lost.
 
 | Token | Hex | Use |
 |---|---|---|
-| `paper` | `#FBFAF7` | Page ground |
-| `paper-raised` | `#FFFFFF` | Cards, opaque |
-| `ink` | `#141B2D` | Primary text **and every primary action** |
-| `ink-muted` | `#5A6478` | Secondary text |
-| `rule` | `#E3E0D8` | All 1px borders resting; `ink` when focused |
-| `gilt` | `#C9A227` | Authority only — verified ring, briefing seal, section rules |
-| `gilt-wash` | `#FDF3DC` | Gilt-adjacent wash, hero shimmer at 8% |
-| `verified` | `#1F6F4A` | Verified tick disc, ringed in gilt |
-| `caution` | `#B4690E` | Partly set aside |
-| `danger` | `#A32D2D` | Set aside, errors |
+| `paper` | `#FBFAF7` | Page ground, with tooth (below) |
+| `paper-desk` | `#F2EFE8` | Ground behind a document sheet (draft view only) |
+| `card` | `#FFFFFF` | Card and sheet fill |
+| `ink` | `#141B2D` | Primary text, secondary buttons, 1px section rules |
+| `ink-muted` | `#5A6478` | Body secondary, supporting copy |
+| `ink-faint` | `#8A8578` | Citations, dates, metadata, eyebrows |
+| `rule` | `#DAD6CB` | Card edges, section divisions |
+| `hairline` | `#E8E4DA` | Between list items |
+| `oxblood` | `#5E1A2B` | **The only accent.** Primary action + one earned emphasis |
 
-**The button rule depends on the surface underneath:**
+States — these three only:
 
-| Surface | Primary action | Label |
+| State | Hex | Notes |
 |---|---|---|
-| Paper (`#FBFAF7` / `#FFFFFF`) | solid `ink` `#141B2D` | `#FBFAF7` |
-| Ink (the briefing card, any dark hero) | solid `gilt` `#E8C86A` | `#141B2D` |
+| `verified` | `#1F6F4A` | Badge stroke and tick |
+| `caution` | `#B4690E` | Stamp border; text darkens to `#8A5109` on paper; card wash `#FBF0DF` |
+| `danger` | `#9E2A33` | Validation errors, destructive confirmation |
 
-An ink button on an ink card disappears, and a paper button on an ink card reads
-as a cancel. Gilt is legible, warm, and on an ink surface it is unmistakably the
-thing to press — this is the one place a gilt fill is correct, because gilt there
-is still marking the app's most valuable object rather than a generic action.
-Never put a gilt button on paper.
+**The restraint rule.** Oxblood appears **at most twice per screen** — once for the
+primary action, once where emphasis is genuinely earned. Three or more accent
+moments is a defect, not a preference. Everything else is ink, ink-muted,
+ink-faint and rule. Most emphasis should come from a rule or from space.
 
-**Text actions are gilt on both surfaces** — "Add to matter", "See what replaced
-it", "Read holding". They need to be findable in a dense card without competing
-with the case name, and gilt does that at 13px where ink would disappear into the
-body copy. So the full rule is: gilt marks authority *and* carries inline text
-actions; solid fills follow the surface (ink on paper, gilt on ink).
+### Material — paper with tooth
 
-### State colours
+`#FBFAF7` flat is what made earlier passes feel unfinished. The ground carries a
+two-layer stipple at ~2% opacity:
 
-| State | Hex | Where |
+```css
+background-color: #FBFAF7;
+background-image:
+  radial-gradient(rgba(20,27,45,.022) .5px, transparent .5px),
+  radial-gradient(rgba(20,27,45,.016) .5px, transparent .5px);
+background-size: 3px 3px, 7px 7px;
+background-position: 0 0, 2px 3px;
+```
+
+On native, use a tiled 1×-density noise PNG at the same effective opacity. The
+test: a user must not be able to describe the texture, but a screenshot should
+feel printed rather than rendered. It disappears entirely under sunlight washout,
+which is correct — it is the first thing that should go.
+
+### Depth — rules and edges, not shadows
+
+**No shadows on cards.** Structure is carried by hairlines and by spacing, the way
+it is on a printed page. Radii are **2px** (3px maximum) — soft corners were doing
+most of the "startup toy" work; a bound reporter and a cause list have square
+corners — the only exceptions are sheets (12px, top corners only) and genuinely
+circular elements. The only permitted blur is a sticky bar over scrolling content
+(`rgba(251,250,247,.94)` + `blur(16px)`). Shadow appears only on the three
+floating cases tabulated in §Spacing — never on a resting card, button or header.
+
+Rule weights:
+
+| Weight | Colour | Use |
 |---|---|---|
-| verified / success | `#1F6F4A` | Verified tick disc (ringed in gilt), success confirmations, "filed" and "sent" states |
-| caution / warning | `#B4690E` | Partly set aside, AI-assisted draft mark, enrolment pending, overdue work. Text on paper darkens to `#8A5109` for contrast. |
-| danger / error | `#9E2A33` | Set aside, validation errors, destructive confirmations |
+| 1px | `#E8E4DA` | Between list items |
+| 1px | `#DAD6CB` | Card edges, section divisions |
+| 1px | `#141B2D` | Under a section heading; closing a masthead |
+| 2px | `#5E1A2B` | One per screen, on the thing that matters |
 
-These three are the **only** semantic colours. They appear on paper cards with a
-tinted wash (`#EAF2ED`, `#FBF0DF`, `#F7E9EA`) and a 1px border at ~30% of the
-state colour — never as a dark card, which fails to read against a paper app.
+### Typography
 
-### Depth — glass floats above paper
+**Source Serif 4** for all legal content — judgments, holdings, drafts, case names,
+briefing prose. Chosen over Literata (wider per character, costs lines on a 402px
+phone) and over Lora (calligraphic stress and soft terminals drop out at 17px on a
+mid-range screen outdoors). Its optical-size axis lets one family carry a 32px case
+name and a 17px holding without either looking wrong.
 
-Glass is strictly floating chrome: nav bars, modals, toasts, sheets. Recipe:
-`.ultraThinMaterial` + paper tint (`#FBFAF7` at 78%) + blur 24 saturate 1.4, a
-1px stroke from `rgba(201,162,39,.4)` top-leading to clear, radius 16pt.
-**Content cards stay opaque** — a card behind a scrolling list must be legible at
-every scroll position, which glass cannot guarantee.
+**Inter** for app chrome. **JetBrains Mono** for citations, CNR/FIR numbers and
+eyebrows. **Noto Serif Devanagari** / **Noto Sans Devanagari** for Hindi.
+
+| Role | Size / leading | Face |
+|---|---|---|
+| Case name, detail | 32 / 1.24 | Source Serif 4 500 |
+| Card title, briefing subject | 23 / 1.32 | Source Serif 4 500 |
+| Long-form document body | 18 / 1.7 | Source Serif 4 400 |
+| Holding, card body | 17 / 1.68 | Source Serif 4 400 |
+| Screen title | 28 / 1.16, −0.022em | Inter 600 |
+| UI body **minimum** | 16 / 1.6 | Inter 400 |
+| Metadata, citation | 11–12 | JetBrains Mono 400 |
+| Section eyebrow | 10–11, 0.18em, upper | JetBrains Mono 600 |
+| Devanagari body | 16–17 / 1.72 | Noto Serif Devanagari 400 |
+| Devanagari UI | 15–16 / 1.7 | Noto Sans Devanagari 400 |
+
+**Measure never exceeds 72 characters**, target 60–68. **Body minimum is 16px, not
+15** — a large share of users are over fifty and reading in bad light. Devanagari
+sits one point smaller than Latin with more leading: matched by optical weight,
+not nominal size, because conjuncts and matras need the vertical room. Hindi
+eyebrows drop the letterspaced-uppercase treatment — Devanagari has no case
+distinction and letterspacing breaks conjuncts.
+
+### The verification badge — the registry stamp
+
+The most important component in the product. It is what lets an advocate put a
+citation into a document they file in court, so it is specified exactly.
+
+#### Shared geometry — identical across all five states
+
+| Property | Value |
+|---|---|
+| Shape | Rectangle, **radius 2px** |
+| Border width | **1.5px** (never 1px — it must survive 2x on a low-DPI panel) |
+| Padding | `3px 6px` at 1x standard; `4px 8px` at the 1x large variant |
+| Layout | `inline-flex`, `align-items:center`, `gap:5px`, `flex:none` |
+| Label face | **JetBrains Mono 600** |
+| Label size | **10px** standard · 9.5px compact · 10.5px large |
+| Letter-spacing | **0.06em** standard · 0.08em large |
+| Icon box | **11px** standard · 11px compact · 13px large |
+| Icon stroke | 3.2 (tick) · 2.4 (info) · 2.6 (strike-lines), `stroke-linecap:round` |
+| Box height at 1x | **20px** standard · 19px compact · 24px large |
+| Vertical align, inline | `vertical-align: 1px` when set inside serif body text |
+| Qualifier divider | 1px vertical rule at 35% of the border colour, `padding-left:5px` |
+
+The qualifier is a second mono span inside the same box, never a second badge.
+
+#### Per-state specification
+
+| Property | `verified_internal` | `verified_external` | `verified_human` | `unverified` | `overruled` |
+|---|---|---|---|---|---|
+| **Border treatment** | solid | solid | solid | **dashed** | solid |
+| **Border weight** | 1.5px | 1.5px | 1.5px | 1.5px | 1.5px |
+| **Border colour** | `verified` `#1F6F4A` | `verified` `#1F6F4A` | `verified` `#1F6F4A` | `ink-faint` `#8A8578` | `caution` `#B4690E` |
+| **Fill** | none (transparent) | none | none | none | **`card` `#FFFFFF`** — the stamp stays white while the card behind it is washed `#FBF0DF` |
+| **Radius** | 2px | 2px | 2px | 2px | 2px |
+| **Label text** | `VERIFIED` | `VERIFIED` ⏐ `×2` | `VERIFIED` ⏐ `BY YOU` | `NOT CONFIRMED` | `LAW MOVED` |
+| **Label face / size** | JetBrains Mono 600 / 10px | same | same | same | same |
+| **Label colour** | `#1F6F4A` | `#1F6F4A` | `#1F6F4A` | **`ink-muted` `#5A6478`** (not `#8A8578` — the border is faint, the word is not) | `caution-text` `#8A5109` |
+| **Icon** | tick `m20 6-11 11-5-5` | tick (same) | tick (same) | info circle: `circle r9` + `M12 8v5` + `M12 16.5h.01` | strike-lines: `M4 6h16M4 12h16M4 18h16` |
+| **Icon colour** | `#1F6F4A` | `#1F6F4A` | `#1F6F4A` | `#8A8578` | `#8A5109` |
+| **Box size at 1x** | 20 × 74px | 20 × 100px | 20 × 128px | 20 × 118px | 20 × 92px |
+| **Min legible size** | 19 × 70px (9.5px label) | collapses to `verified_internal` | collapses to `verified_internal` | 19 × 112px — **never collapses**, the full phrase is the point | 19 × 88px — never collapses |
+| **Card treatment** | none | none | none | dashed 1px `#DAD6CB` divider + disclosure sentence + "Check on eCourts" | **card wash `#FBF0DF`, border `rgba(180,105,14,.32)`**, footer rule `rgba(180,105,14,.3)` |
+| **Blocks "add to matter"** | no | no | no | no | **only when `set_aside`** (see §9.3) |
+
+Widths are measured, not nominal — they will shift ±4px with the shipped font
+metrics. Never hard-code them; let the box size to its content with `flex:none`.
+
+#### The family claim — verified, not asserted
+
+**The three verified states are one family.** They share border treatment, border
+weight, border colour, fill, radius, icon, icon colour, label face, label size and
+the leading word `VERIFIED`. The *only* difference is the presence of a qualifier
+span after a hairline divider. An advocate who does not care which flavour of
+verified they are looking at never has to parse one.
+
+**All five are distinguishable with colour removed.** Proof:
+`renders/43-badge-greyscale.png` is the badge sheet rendered at `grayscale(1)`.
+The discriminators that survive are all non-chromatic:
+
+| State | Non-chromatic discriminator |
+|---|---|
+| `verified_internal` | solid edge, one word |
+| `verified_external` | solid edge, divider + `×2` |
+| `verified_human` | solid edge, divider + `BY YOU` |
+| `unverified` | **dashed edge** — a shape difference, visible at any size |
+| `overruled` | **filled block** against a washed card — the only value shift in the set |
+
+One caveat found in the greyscale test and worth knowing: `overruled`'s white fill
+against the card wash is a **subtle** value difference in greyscale. It is carried
+by the strike-lines icon and by the card wash, not by the fill alone. Do not drop
+either.
+
+**Why this form.** It carries a *word*, so it needs no legend. It differentiates by
+**shape** — solid edge, dashed edge, filled block — and shape is the only property
+that survives sunlight washout, a dirty screen, and colour-vision deficiency. The
+three verified states share one border, one colour and one icon, with the qualifier
+set off by a hairline; an advocate who does not care about the distinction never
+has to parse it.
+
+**`unverified` is the state that matters most.** It must never use red, an alert
+triangle, or the word "failed" — those say *the product is broken*. Dashed neutral
+ink says *open, nothing was impressed here*. The card expands with one sentence in
+the language of disclosure — "We found this reference but could not confirm it
+against a reported record" — and one action, "Check on eCourts". This is a
+competence signal, not an error.
+
+**`overruled` gets the amber card wash** in addition to the stamp, borrowed from
+the margin-endorsement approach. The stamp alone can be skimmed past; the wash
+cannot. It is amber, never red — the case is real and confirmed, the law has simply
+moved.
+
+**Behaviour at small size.** The stamp never goes below 9.5px label / 11px icon.
+Below ~340px of available card width, drop the qualifier (`×2`, `BY YOU`) and keep
+`VERIFIED` — the family reading survives, the flavour is available on tap. Never
+reduce to an icon alone; the word is the component.
+
+**Contrast.** `#1F6F4A` on white is 5.31:1; `#8A5109` on `#FBF0DF` is 5.02:1;
+`#5A6478` on white is 6.05:1 — all clear AA at these sizes. Stamp borders are
+1.5px so they survive at 2x on a low-DPI panel.
 
 ### Motion — motion as material
 
@@ -126,35 +271,45 @@ is it going, and what does it weigh? Nothing cuts.
 delayed by `index × 55ms`, **capped at index 7** so long lists never feel slow.
 
 **Press micro-interaction** — every tappable surface scales to `0.965` with −3%
-brightness on the snappy spring, paired with a `.light` haptic on press-down.
+brightness on the snappy spring, paired with a `tap` haptic on press-down.
 No element may feel dead on tap.
 
 **Haptic choreography** — haptic and visual fire as a single event, never
 independently:
 
-| Event | Haptic | Visual |
-|---|---|---|
-| Press-down | `.light` | scale 0.965, −3% brightness |
-| Confirm / submit | `.medium` | success animation, same frame |
-| Error | double `.rigid`, 80ms apart | red tint pulse on the element |
-| Completion ritual | `.heavy` | radial gilt shimmer expanding outward, fading over 600ms |
+Haptics are named **semantically, by what happened** — never by platform impact
+weight. A build agent must never choose an impact style itself; it calls the
+semantic name and `haptics.ts` owns the mapping. This is the whole reason the module
+exists: it keeps the mapping in one file so it can be retuned per device without
+touching a screen.
 
-**The completion ritual** (Apple Pay's "done" is the benchmark): the circle
+| Semantic name | Fires when | Visual, same frame | iOS | Android |
+|---|---|---|---|---|
+| `tap` | Any pressable receives press-down | scale .965, −3% brightness | `.light` impact | `vibrate(10)` |
+| `commit` | An action succeeds — draft generated, matter added, checklist item ticked | success animation | `.medium` impact | `vibrate(18)` |
+| `ritual` | A high-stakes act completes — draft exported, notice sent, AI mark removed | completion ritual (below) | `.heavy` impact | `vibrate([0,12,40,22])` |
+| `shift` | Selection changes without committing — tab change, filter, segmented control | icon dip, indicator slide | `UISelectionFeedbackGenerator` | `vibrate(8)` |
+| `reject` | Validation fails or an action is refused | tint pulse on the offending element | double `.rigid`, 80ms apart | `vibrate([0,14,80,14])` |
+
+There are exactly five. Do not add a sixth without changing this table.
+
+**The completion ritual** (`ritual` haptic; Apple Pay's "done" is the benchmark): the circle
 settles, the checkmark draws itself with a spring overshoot, then the whole
 surface breathes out to resting. Use it for every high-stakes confirmation —
 draft exported, notice sent, AI mark removed, matter filed.
 
 **State-driven transitions** — the UI is a pure function of state:
 - Status chips morph in place, crossfading text over 200ms. Never slide or pop.
-- Progress states animate as a horizontal gilt fill sweep on an obsidian track.
+- Progress states animate as a horizontal `oxblood` fill sweep on a `rule` track.
 - Numbers count up/down over 0.6s ease-out. They never jump.
-- Loading is a **shimmer**, never a spinner: a 1.8s looping gradient sweep from
-  `rgba(201,162,39,.04)` to `rgba(201,162,39,.12)`. Offset sibling skeletons by
+- Loading is a **shimmer**, never a spinner: a **1.8s** looping gradient sweep from
+  `rgba(20,27,45,.03)` to `rgba(20,27,45,.07)`. Offset sibling skeletons by
   200ms so a list reads as one wave.
 
-**Scroll depth and parallax** — obsidian base static · card layer 1× · floating
-nav 0.3× (sticky drift before locking) · gilt glow 0.7× · cards exiting the top
-compress toward `scale .97` (Apple Wallet stack).
+**Scroll depth and parallax** — paper ground static · card layer 1× · sticky bar
+0.3× (drift before locking) · cards exiting the top compress toward `scale .97`
+(Apple Wallet stack). There is no parallax glow layer — that was an obsidian-era
+device and does not survive on paper.
 
 **Card physicality** — long-press lifts the card (shadow radius springs 4→18,
 opacity .15→.35, scale 1.02) · swipe actions rubber-band with 12pt overshoot,
@@ -168,35 +323,109 @@ dismiss. Tab switches crossfade content over 250ms while the indicator slides on
 the snappy spring. `matchedGeometryEffect` is **mandatory** for list → detail,
 icon → expanded state, and the briefing seal wherever it travels.
 
-**Ambient motion** — the app is alive when untouched, barely: hero gilt border
-rotates on an 8s loop · live dots pulse scale 1→1.3→1 and opacity 1→.5→1 on a 2s
-loop · empty-state illustrations float y 0→−6→0 over 4s. No autoplaying video, no
-particles, nothing that competes with the task.
+**Ambient motion** — the app is alive when untouched, barely: live dots pulse
+scale 1→1.3→1 and opacity 1→.5→1 on a 2s loop · empty-state illustrations float
+y 0→−6→0 over 4s. That is the whole list. No autoplaying video, no particles,
+nothing that competes with the task.
+
+The rotating gilt hero border is **retired** — it was an obsidian-era device, it
+put gilt on a moving decorative edge, and on paper it read as a novelty.
 
 **Four states, always** — resting · pressed (scale .965, −3% brightness,
-`.light`) · loading (shimmer or custom gilt spinner, never system
-`ProgressView`) · done (ritual, then resting).
+`tap` haptic) · **loading (shimmer, always — there is no spinner in this product,
+custom or system)** · done (ritual, then resting).
+
+The single exception is the AI mark animation (`assets/lawmind-ai.json`), used
+while a search runs at 32px inline and while a draft generates at 120px centred.
+It is a brand mark that happens to move, not a progress indicator, and it is the
+only animated loading affordance permitted besides shimmer.
+
+### Interruptibility — the difference between good and expensive
+
+**Every animation is interruptible at every frame.** An animation the user cannot
+interrupt is a modal they did not ask for, and it is the single clearest tell of a
+cheaply built app. Non-negotiable:
+
+- **Gesture takeover.** A gesture that begins mid-animation takes over from the
+  element's **current position and current velocity** — never from its start or end
+  state, and never after waiting for the animation to finish. Reanimated gives you
+  this for free if you drive from shared values and never from a timed sequence.
+- **Velocity-driven dismissal.** A sheet or a back-swipe resolves on **velocity**,
+  not distance alone. Threshold: dismiss if velocity exceeds **500 px/s** in the
+  dismiss direction, *or* if travel exceeds **40%** of the element's dimension.
+  A fast flick with 15% travel dismisses; a slow drag to 35% springs back.
+- **Continuous reversal.** Reverse mid-flight from the current value with no jump
+  and no restart. A user who half-opens a sheet and changes their mind must see it
+  fall back from where it is.
+- **`matchedGeometryEffect` runs both directions and is interruptible in both.**
+  If the user starts a back gesture while the forward transition is still settling,
+  the shared element reverses from its interpolated position.
+- **Never block input during a transition.** No `pointerEvents: none` blanket, no
+  `isAnimating` guard that swallows taps. If a tap during a transition would be
+  ambiguous, make it resolve to the most likely intent — usually "finish and act".
+
+Test: start every transition in the app, and half-way through, do the opposite
+thing. Nothing should jump, freeze, or ignore you.
+
+### Performance floor — the target device is not your laptop
+
+The design assumes a **~₹12,000 Android, Redmi Note class, 4GB RAM, mid-tier GPU,
+in a courtroom corridor on 3G.** That is the device the product lives or dies on.
+
+- **60fps floor, 120 where the panel allows.** A dropped frame during the briefing
+  arrival or a result-list stagger is a defect, not a nitpick.
+- **All animation runs in Reanimated worklets on the UI thread.** Nothing that
+  animates may depend on a JS-thread round trip. No `setState` in an animation
+  frame, no layout animation driven from React state.
+- **Lists use FlashList with stable keys** — never `index` as key, never
+  `ScrollView` for a citation list. A search result list is unbounded; a matter
+  list is not, but both use the same component.
+- **The 55ms stagger caps at index 7** for a reason: beyond that the perceived
+  wait grows without adding legibility, and on a slow device the tail of a long
+  stagger arrives after the user has already started scrolling. Items past index 7
+  appear at the index-7 delay.
+- **Lottie is pre-warmed at app start.** Both `lawmind-gavel.json` and
+  `lawmind-ai.json` are parsed and cached during the splash, so the first search
+  does not pay parse cost. Never mount a Lottie for the first time inside a
+  transition.
+- **Shimmer is a single animated gradient per skeleton**, driven by one shared
+  value for the whole list with per-sibling phase offset — not N independent
+  animations.
+- **Profile on the target device, not the simulator.** The acceptance bar is: cold
+  launch to Today under 2.5s, search submit to first skeleton under 100ms, briefing
+  open under 400ms, all on the Redmi-class device over 3G.
 
 ### Type
 
-- **UI:** Inter — 13 / 15 / 17 / 20 / 24 / 32. Weights 400/500/600.
-- **Legal body** (holdings, orders, drafts, judgment text): **Lora**. Serif reads
-  as authoritative and matches paper.
+- **UI:** Inter — 16 / 17 / 20 / 23 / 28 / 32. Weights 400/500/600. Sizes below 16
+  are permitted only for mono metadata and eyebrows (11–13), which are reference
+  labels, not body text.
+- **Legal body** (holdings, orders, drafts, judgment text): **Source Serif 4**.
+  Drawn for screen reading, narrow enough for a 68-character measure on a 402px
+  phone, with an optical-size axis. **Lora is not used anywhere** — see §Typography.
 - **Records** (citations, CNR, timestamps, IDs): **JetBrains Mono** at 11.5–13.
   Also used for the eyebrow labels (`600 10px, letter-spacing .18em, uppercase`).
 - **Hindi:** Noto Sans Devanagari (UI) / Noto Serif Devanagari (body).
   **Line-height ≥ 1.6, use 1.65–1.72.** Latin spacing clips matras — this is a
   correctness bug, not a taste call.
-- **Minimum body size 15px.** Never smaller, anywhere.
+- **Minimum body size 16px.** Never smaller, anywhere. Enforced in `Text.tsx`,
+  which throws in development if a caller passes below 16.
 
 ### Spacing, shape, elevation
 
 - 8px base scale: 8 · 16 · 24 · 32 · 48 · 64.
-- Radius: cards 10, inputs/buttons 8, badges 6, sheets 16 (top corners only),
-  status pills 9999.
-- One shadow only: `0 1px 3px rgba(20,27,45,.08)` on raised cards.
-  Ink surfaces may use `0 6px 22px rgba(20,27,45,.22)`. Depth comes from `rule`,
-  not shadow stacks.
+- **Radius: 2px, 3px maximum.** The only exceptions are sheets (12px, top corners
+  only) and genuinely circular elements — avatars, status dots, the switch track.
+  There are no 6/8/10/16px radii in this product; those were the v1 values.
+- **No shadow on any resting surface.** Not on cards, not on buttons, not on ink
+  surfaces. Depth comes from 1px rules and from spacing, as on a printed page.
+  Shadow appears in exactly three places, and only while the element is genuinely
+  floating above content:
+  | Where | Value |
+  |---|---|
+  | Sticky bar over scrolling content | `0 -8px 24px rgba(20,27,45,.06)` |
+  | Modal sheet | `0 -18px 44px rgba(20,27,45,.16)` |
+  | Card lifted by long-press | radius springs 4→18, opacity .15→.35 (transient) |
 - Touch targets ≥ 44×44. Primary actions in the bottom third of the screen.
 - Tab bar (4 tabs), never a hamburger.
 
@@ -206,103 +435,113 @@ particles, nothing that competes with the task.
 
 Two curves. Nothing else.
 
+The **three springs above are canonical.** The two CSS curves below exist only
+because the `.dc.html` designs are CSS, which has no spring primitive — they are
+approximations of the springs, for web only:
+
 ```
-standard:    cubic-bezier(.2, .8, .3, 1)     // everything
-seal spring: cubic-bezier(.2, 1.2, .3, 1)    // briefing arrival, ticks, tab dip
+standard:    cubic-bezier(.2, .8, .3, 1)     // approximates default (.38/.72)
+seal spring: cubic-bezier(.2, 1.2, .3, 1)    // approximates snappy (.25/.80),
+                                             // with overshoot for ticks and stamps
 ```
+
+In React Native, **use the springs, not these curves.** The mapping is:
+`standard` → `default`, `seal spring` → `snappy`, and anything described as
+"rises", "settles" or a layout change → `gentle`. The durations in the table below
+are the *observed* settle times of those springs; do not implement them as timed
+easings.
 
 Durations: **130** press · **180** fade · **260** push · **380** sheet.
 Nothing exceeds 420ms.
 
 | Moment | What moves | Duration | Curve | Haptic |
 |---|---|---|---|---|
-| App launch | Gavel strikes once, block settles, wordmark tracks in | 900ms cap | seal spring | — |
-| Briefing arrives | Card scales from .94, gilt ring expands + fades, gilt sweep once | 420ms | seal spring | success |
-| Open briefing | Takeover rises 40px, ink header settles, body fades | 380ms | standard | heavy impact |
-| Result → judgment | Push from right 26px, outgoing list dips 4% opacity | 260ms | standard | medium |
-| Search running | Skeleton shimmer L→R, 55ms stagger, shape never changes | 1.25s loop | linear | — |
-| Results land | Cards fade up 10px, 55ms apart, verified stamp last | 380ms | standard | light (first card) |
-| Checklist tick | Box pops to 1.16 then settles, label greys + strikes | 300ms | seal spring | medium (tick) / light (untick) |
-| Button press | Scale .972, shadow contracts — press is felt, not release | 130ms | standard | light |
-| Tab change | Icon dips to .9 and fills, label weight steps up | 130ms | seal spring | selection |
-| Draft generating | Ring spins 800ms; document assembles per streamed paragraph | stream | linear | light per paragraph |
-| AI mark removed | Hatched margin wipes left, footer stamp fades to audit line | 260ms | standard | warning |
+| App launch | Gavel strikes once, block settles, wordmark tracks in | 900ms cap | snappy | — |
+| Briefing arrives | Card scales from .94, **gilt ring** expands + fades once (placement 1 — ornament) | 420ms | snappy | `commit` |
+| Open briefing | Takeover rises 40px, masthead settles, body fades | 380ms | gentle | `ritual` |
+| Result → judgment | Push from right **30px**, outgoing screen scales to .95 and fades | 260ms | default | `commit` |
+| Search running | Skeleton shimmer L→R, 200ms offset per sibling, shape never changes | **1.8s** loop | linear | — |
+| Results land | Cards fade up **18px**, 55ms apart (cap index 7), verified stamp last | 380ms | default | `tap` (first card only) |
+| Checklist tick | Box pops to 1.16 then settles, label greys + strikes | 300ms | snappy | `commit` (tick) / `tap` (untick) |
+| Button press | Scale **.965** and −3% brightness — press is felt, not release | 130ms | snappy | `tap` |
+| Tab change | Icon dips to .9 and fills, label weight steps up | 130ms | snappy | `shift` |
+| Draft generating | **AI mark animation** (`lawmind-ai.json`, 120px centred); document assembles per streamed paragraph | stream | — | none — a stream is not an event |
+| AI mark removed | Header band wipes up, footer stamp fades to audit line | 260ms | default | `reject` |
 | Went offline | Amber strip slides from under status bar, pushes content 40px | 180ms | standard | warning (once) |
 
 **`prefers-reduced-motion` / "Reduce Motion":** drop every transform, keep
 opacity. The seal still stamps, without scale. Shimmer becomes a static tint.
 
-### Haptics
+### Haptics — `haptics.ts`
 
-| Name | Android pattern | iOS |
-|---|---|---|
-| light (8ms) | `vibrate(8)` | `UIImpactFeedbackGenerator(.light)` |
-| medium (14ms) | `vibrate(14)` | `UIImpactFeedbackGenerator(.medium)` |
-| success | `vibrate([0,10,40,18])` | `UINotificationFeedbackGenerator(.success)` |
-| warning | `vibrate([0,30,60,30])` | `UINotificationFeedbackGenerator(.warning)` |
-| selection | `vibrate(8)` | `UISelectionFeedbackGenerator` |
+The five semantic names in §Motion are the entire public surface. Screens import
+`haptics.tap()`, `haptics.commit()`, `haptics.ritual()`, `haptics.shift()`,
+`haptics.reject()` and nothing else. **No screen may call expo-haptics directly**,
+and no screen names an impact weight.
 
-Rules: respect the system haptics setting; never use haptics as the only signal
-for a state change; never fire more than one haptic per gesture; no haptics on
-scroll, on incoming pushes, or during the nightly briefing generation.
+Rules: respect the system haptics setting · never use a haptic as the *only* signal
+for a state change · never fire more than one per gesture · no haptics on scroll, on
+incoming pushes, or during nightly briefing generation · `reject` is the only
+double-pulse and it always accompanies a visible tint pulse.
 
----
+### Gilt — the rule
 
-## 3b. Identity and animation assets
+**Gilt `#C9A227` appears in exactly three places.** It is ornament marking authority
+the app has already established. It **never carries information** — never text a
+user must read, never a rule that must be read, never a state, and never on anything
+tappable. Any other use is a defect.
 
-The logo is **your Lottie file, used directly** — no redrawn approximation exists
-anywhere in the designs.
+The test is single-sentence: **remove the gilt entirely and check whether anything
+became unknowable.** If yes, it was load-bearing and must be ink. All three
+placements below pass that test — each is a ring or a mark sitting beside
+information that is already fully stated in ink.
 
-| Asset | File | Use |
-|---|---|---|
-| Gavel mark, animated | `assets/lawmind-gavel.json` | Splash (once, ≤900ms), pull-to-refresh, "briefing being prepared" |
-| Gavel mark, static | same file at `frame="34"` | App icon, tab bar, admin sidebar, PDF letterhead |
-| Static SVG export | `assets/lawmind-mark.svg` | Anywhere a Lottie runtime is unavailable |
-| AI mark, animated | `assets/lawmind-ai.json` | Search running (32px inline), draft generating (120px centred), admin corpus/routing work |
-| Player | `lottie-mark.js` | `<lottie-mark src loop autoplay frame tint duotone speed>` |
+| # | Placement | Exact use | Surface |
+|---|---|---|---|
+| 1 | **Briefing seal ring** | The ring around the seal glyph, stamped once on arrival | Ink card only |
+| 2 | **Verified tick ring** | 2px ring around the `#1F6F4A` tick disc — **only where a disc badge is used** | Any |
+| 3 | **Identity** | Logo, splash, letterhead, admin sidebar mark | Any |
 
-Static placements render the **last frame of the animation file**, so the icon and
-the animation can never drift apart. `tint` + `duotone` retints every fill,
-stroke and gradient stop while preserving relative luminance — that is how the AI
-animation becomes seal-red, gilt or ink without a second export. The player honours
-`prefers-reduced-motion` by rendering a still frame.
+Forbidden without exception: gilt text a user must read · a gilt rule dividing
+content · a gilt button or gilt on any tappable surface · gilt on paper at body
+size · gilt as a state, status or badge colour · a second accent beyond oxblood ·
+the gavel recoloured to red.
 
-### Gold — the rule
+**Placement 2 does not currently appear anywhere.** The shipped badge is the
+registry stamp (§Badge), which is a rectangle with no disc — so there is no ring to
+gild. Placement 2 is retained in this table only because a disc form may return in
+a compact context (a dense matter list, a notification). If it does, the ring is
+gilt; until then, gilt in the app appears at placement 1 and 3 only.
 
-**Gilt marks authority the app has established. It is never something you tap.**
-Seal red remains the only action colour. Four placements, roughly one per screen:
+The **record line is not a gilt placement.** It was, and it was wrong: a CNR and a
+next-hearing date are the two things an advocate scans a header for, which makes
+them the definition of load-bearing. They render in ink or in `parchment` on an ink
+header. Gilt did nothing there except make a critical value the first thing to wash
+out in sunlight.
 
-1. **The briefing seal** — gilt ring stamps once on arrival, gilt eyebrow, gilt
-   hairline on the CTA inside the ink card.
-2. **The verified tick** — green tick with a 2px gilt ring. The ring is what makes
-   a verified citation read as *certified* rather than merely checked.
-3. **The record line** — on ink headers only, the CNR and the next hearing date
-   sit in gilt. Gold doing wayfinding, not ornament.
-4. **The identity** — splash, sign-in, tab-bar mark, letterhead, admin sidebar.
-
-Budget: Today 3 marks · briefing takeover 4 · results and drafts 1 per verified
-citation · matters, settings and forms **zero**. Most screens have none, which is
-what makes the briefing feel like an occasion.
-
-Never: a gold button, gold body text, gold on paper at any size below 14px, or the
-gavel recoloured to red.
+Budget: **at most 2 gilt marks per screen**, and most screens have none. Today has
+one when a briefing is waiting (the seal ring). The briefing has one. A result list
+has one per verified citation, which is the tick ring and is part of the badge, not
+an additional mark. Matters, settings, search input, drafting forms and every admin
+section have **zero**.
 
 ## 4. Component inventory
 
 Build these once; every screen is composed of them.
 
-- **Eyebrow** — mono 10px, `.18em`, uppercase, `seal` or `ink-muted`.
+- **Eyebrow** — mono 10–11px, `.18em`, uppercase, `oxblood` or `ink-faint`. In Hindi
+  it drops the letterspaced-uppercase treatment (§Typography).
 - **SectionRule** — eyebrow + 1px `rule` filling remaining width.
-- **JudgmentCard** — citation (mono) + court/date, title in Lora 19/1.32,
+- **JudgmentCard** — citation (mono) + court/date, title in Source Serif 4 19/1.34,
   two-sentence holding, footer strip with verification badge + one action.
   Optional caution header band (`caution-soft`, `caution-text`).
-- **VerificationBadge** — **variant D, settled.** A 17px green disc with a white
-  tick and a 2px gilt ring (`box-shadow: 0 0 0 2px rgba(232,200,106,.6)`), set
-  inline immediately before the citation string in mono. Because it binds to the
-  citation and not the card, it survives being quoted inside a draft, a briefing,
-  a result list and a copied citation. Card footers carry only the plain line
-  "Verified against the reported record" plus the action — never a second badge.
-  Variants A–C are recorded in `1k` as exploration only; do not build them.
+- **VerificationBadge** — the **registry stamp**, five states. Full build spec in
+  §Badge; do not improvise any part of it. It binds to the citation, not the card,
+  so it survives being quoted inside a draft, a briefing, a result list and a
+  copied citation. Card footers carry only the plain line "Verified against the
+  reported record" plus the action — never a second badge. Earlier explorations
+  (the seal, the margin endorsement, and v1 variants A–D) are recorded on the
+  canvas as history only; do not build them.
 - **CautionBanner** — full-bleed band, white text, **replaces** the header (it does
   not sit above it). `danger` for `set_aside`, `caution` for `partly_set_aside`,
   and **absent** for `doubted`. Carries the replacing or referring judgment as an
@@ -313,13 +552,15 @@ Build these once; every screen is composed of them.
   body in four numbered blocks: 01 where the matter stands · 02 pending before
   the court · 03 authorities on the live issue · 04 before you go in (checklist).
 - **HearingRow / DayGroup** — day column (44px) + one card per listing.
-- **MatterCard** — next-date pill, CNR (mono), title in Lora, court/client,
+- **MatterCard** — next-date pill, CNR (mono), title in Source Serif 4, court/client,
   chip row (briefing ready · N drafts · N events).
-- **TimelineEvent** — 9px dot on a 1.5px rail; current event uses a 13px `seal`
-  dot with a paper ring. Order text renders in Lora italic inside a quote card.
-- **DraftPage** — `paper-sunken` ground, white page, 26px hatched margin carrying
-  the AI mark, Lora 15/1.75 body, inline citation chips (verified = green
-  underline + tick; unverified = dotted grey + info dot).
+- **TimelineEvent** — 9px dot on a 1.5px rail; current event uses a 13px `oxblood`
+  dot with a paper ring. Order text renders in Source Serif 4 italic inside a quote card.
+- **DraftPage** — `desk` `#F2EFE8` ground, white page, **AI-mark header band**
+  (`#FBF0DF`, 1px `caution` bottom border) carrying
+  "AI-ASSISTED DRAFT — VERIFY BEFORE FILING" plus "Only you can remove this mark",
+  Source Serif 4 16/1.75 body, inline citation stamps per §Badge. The diagonal
+  watermark and the hatched side margin are **both retired** — see §8b item 7.
 - **AIMarkBar** — sticky footer: "N of M citations verified" + Review mark.
 - **SkeletonCard** — mirrors JudgmentCard's exact geometry including footer strip.
 - **Switch** — one geometry, used on every screen and in the admin desk. Track
@@ -328,7 +569,7 @@ Build these once; every screen is composed of them.
   The knob is **absolutely positioned** at `top:50%; left:inset` and moved with
   `transform: translate3d(travel,-50%,0)` — never by switching `justify-content`,
   which cannot animate and drifts off centre. Track colour animates over 180ms,
-  knob over 200ms, both on the standard curve. On = `seal` in the app,
+  knob over 200ms, both on the standard curve. On = `oxblood` in the app,
   `verified` green in admin kill switches; off = `#D9D5CB` (or `danger` when off
   means a service is down). Optional `ON`/`OFF` mono label sits inside the track
   at 8.5px; a `LIVE`/`OFF` label may sit outside in a fixed `34px` right-aligned
@@ -338,9 +579,11 @@ Build these once; every screen is composed of them.
   flex-end`). Every control — switch, value text, chevron — therefore terminates
   on one right-hand axis regardless of type, and rows with and without a subtitle
   keep the same optical centre. This is the fix for the misaligned toggles.
-- **TabBar** — 4 tabs, active = `seal` + filled icon (`seal-soft` fill), 30px
-  bottom padding for the home indicator.
-- **Toast** — ink pill, 10px radius, bottom 104px, 2.4s, one line max.
+- **TabBar** — 4 tabs, active = `oxblood` 2px top rule + `ink` filled icon + `ink`
+  label; inactive `ink-faint`. 30px bottom padding for the home indicator.
+  (The old `seal` / `seal-soft` token names are retired — use `oxblood`.)
+- **Toast** — ink bar, **2px radius**, bottom 104px, 2.4s, one line max. (It was a
+  10px pill in v1; the radius rule in §Spacing governs.)
 - **EmptyState** — icon circle, 19–20px title, one paragraph, then **actions that
   name the next thing to do**. Never "nothing here".
 
@@ -356,33 +599,33 @@ canvas (`LawMind Screens.dc.html`).
 
 | # | Screen | Where |
 |---|---|---|
-| — | Design system reference | `1a` |
-| — | Logo, app icons, gilt palette | `2a` |
-| — | Motion + haptics spec | `2c` |
+| — | Design system reference | `6c` (current), `1a` (v1) |
+| — | Logo, app icons | `3a` (current), `2a` |
+| — | Motion + haptics spec | `5b` (current), `2c` (v1) |
 | 1–2 | Splash / sign-in · magic link sent | `2b` (current), `1w` |
 | 3–5 | Identity + enrolment · language · first matter | `1x` |
-| 6 | Today — 3 directions (week-grouped, briefing-ready, editorial) | `1b` `1c` `1d` |
+| 6 | Today | `6a` (current); `1b` `1c` `1d` are v1 directions |
 | 6 | Today — no hearings this week · first run | `1e` |
 | 7 | Search input, filters, language toggle | `1i` |
-| 10 | Search results (5 judgments, one overruled) | `1j` |
-| 10 | Verification badge variants A–D | `1k` |
+| 10 | Search results — mixed list, all five badge states | `8a` (current), `1j` (v1) |
+| 10 | Verification badge — three approaches × five states | `7a` `7b` `7c` `7d` (current); `1k` is the retired v1 A–D set |
 | 10 | Skeleton · no results · Hindi results | `1l` |
 | 11 | Judgment detail · partly set aside | `1m` `1n` |
 | 11 | Overruled: set_aside · doubted · all three compared | `3e` |
-| 15 | Briefing takeover · memo alternative | `1g` `1h` |
+| 15 | Hearing briefing | `8b` (current); `1g` `1h` are the retired dark takeover and memo variants |
 | 16 | Briefing push notification (lock screen) | `1f` |
 | 17 | Document type picker | `1o` |
 | 18 | Draft input form | `1p` |
-| 19 | Draft output · AI-mark alternatives · Hindi output | `1q` `1r` `1s` |
+| 19 | Draft output · Hindi output | `8c` and `9a` (current); `1q` `1r` `1s` are v1 |
 | 8 | Matters list | `1t` |
 | 12 | Matter detail (timeline) | `1u` |
 | 13–14 | Add matter (CNR + manual) · add event sheet | `1v` |
 | 20–22 | Profile · settings | `1y` |
-| 23 | Empty states | `1e`, `1l`, `1z` |
-| 24 | Offline | `1z` |
-| 25 | AI unavailable | `1z` |
+| 23 | Empty states | `9b` (current); `1e` `1l` `1z` (v1) |
+| 24 | Offline | `9b` (current), `1z` (v1) |
+| 25 | AI unavailable | `9b` (current), `1z` (v1) |
 | — | Citation verification failed · paywall/tiers | `1aa` |
-| 26–28 | Admin (dashboard, citation monitor, user management) | `LawMind Admin.dc.html` |
+| 26–28 | Admin — 17 sections | `LawMind Admin.dc.html` |
 
 Working prototype of the four core flows: `LawMind Prototype.dc.html`.
 
@@ -469,7 +712,8 @@ and reports it.
 
 ## 8. Admin desk (web, desktop)
 
-`LawMind Admin.dc.html` — 1440px, ink sidebar with the gilt mark, 13 sections,
+`LawMind Admin.dc.html` — 1440px, ink sidebar with the gilt mark, **17 sections**
+(see §8a for the four added),
 all interactive in the prototype:
 
 1. **Overview** — KPIs, 14-day product health, "needs a human today", live activity.
@@ -497,6 +741,67 @@ all interactive in the prototype:
 Every privileged action writes to the audit ledger with actor, time and before/after.
 
 ---
+
+## 8a. Admin desk — seventeen sections
+
+**The admin consumes the same `tokens.ts` as the app.** No admin-only hex values,
+no second palette, no second type scale. Its dark sidebar is `ink` `#141B2D` with
+`parchment` `#FBFAF7` text at 100% for the active item and 55% for the rest; the
+content area is `paper` with `card` panels, `rule` borders, `ink-faint` metadata
+and `oxblood` for primary actions. The three state colours are the same three.
+
+Two consequences that are not optional:
+
+1. **The verification badge renders identically in admin and app** — same component,
+   same five states, same geometry per §Badge. An admin triaging a disputed citation
+   must see exactly what the advocate saw; a divergent rendering would make the
+   disputed-citations queue worthless as evidence.
+2. **Density may differ; values may not.** Admin panels use a tighter vertical
+   rhythm and 10px panel radii because it is a data tool read at desk distance.
+   That is a documented density variant of the same tokens — never a new value. A
+   hex that is not in `tokens.ts` is a defect.
+
+The admin's *currently rendered* colour is a v2 palette predating the refined
+system. Build from `tokens.ts` and the renders' **layout**, not their colour.
+
+Four were added beyond the original brief, each because it closes a failure mode
+the app cannot recover from on its own.
+
+| Section | Why it exists |
+|---|---|
+| **Cause list sync** | Every briefing is built from a scraped cause list. A parser that silently returns an empty list is worse than an outage, because briefings still go out — with stale dates. Per-court pull time, item count and status, with an escalation policy: retry once, then mark briefings "dates not confirmed today", then notify affected advocates directly. **We never present an unconfirmed listing as confirmed** — the same rule as citations. |
+| **Disputed citations** | The trust feedback loop. An advocate reports that a badge was wrong; upholding writes a correction to the corpus, re-runs verification for everyone who saved that citation, and pushes a notice to anyone who put it in a filed draft. Tracks a **false-verified rate** whose target is zero. This queue outranks everything else in the admin. |
+| **Draft templates** | Ten document types, each prompt versioned and scored against a 200-item golden set reviewed by a practising advocate. Catches quality regressions that no error rate would surface — a template can drift for weeks while returning 200s. Gates: court-format compliance, no invented citations, no overruled authority cited as good law, AI mark present, Hindi parity. **Nothing ships below 90 without a founder override, and the override is written to the audit ledger.** |
+| **Data & deletion** | DPDP Act obligations with a visible clock per request — export, correction, erasure. Also states retention plainly and tracks **pseudonymisation coverage** (99.2%), the number behind the privacy disclosure the app shows the advocate. The remaining 0.8% is disclosed rather than hidden. |
+
+Existing sections retained: Overview, Enrolment queue, Advocates, Briefings,
+Citation monitor, Corpus & ingestion, LLM spend & routing, Subscriptions, Support
+inbox, Push campaigns, Platform controls, Staff & audit, Analytics.
+
+**Note on styling.** The admin desk still runs the earlier palette (dark sidebar,
+oxblood accents). It is an indoor desk tool, so the sunlight argument that killed
+dark in the app does not apply to it — but it does not yet match the refined
+system in §Colour. Aligning it is a separate pass, not started.
+
+## 8b. Decisions I made that you did not explicitly approve
+
+Flagged for review before any of this becomes code. Each is a real choice with a
+plausible alternative, not a detail.
+
+| # | Decision | Where | Why | If you disagree |
+|---|---|---|---|---|
+| 1 | **Source Serif 4 over Literata** | everywhere | Narrower per character, so 68 chars fit a 402px phone at 17px; optical-size axis carries 32px and 17px in one family | Swap to Literata — one token change, but expect ~8% more lines per screen |
+| 2 | **Radii cut from 10–12px to 2px** | everywhere | Soft corners were doing most of the "startup toy" work; reporters and cause lists have square corners | Raise to 4px; above 6px the register shifts back |
+| 3 | **Shadows removed entirely** from cards | everywhere | Depth from rules and space, as on a printed page | One 0 1px 2px shadow on cards only; never on the sheet |
+| 4 | **Paper tooth at ~2% stipple** | all grounds | Flat #FBFAF7 read unfinished | Remove — costs nothing structurally |
+| 5 | **Badge label wording**: `NOT CONFIRMED` not `UNVERIFIED` | badge | "Unverified" reads as a verdict on the case; "not confirmed" reads as a statement about *us* | Both tested the same width |
+| 6 | **`overruled` labelled `LAW MOVED`** | badge | "Overruled" is legally narrower than the states we actually cover (set aside, partly set aside, doubted) | `SUPERSEDED` is the alternative; "overruled" alone would be inaccurate |
+| 7 | **Draft AI mark is a header band**, not a diagonal watermark | draft output | A watermark across serif body made the page look unusable; the band is prominent and leaves the document filable | Watermark returns only if you accept the legibility cost |
+| 8 | **Draft view sits on `#F2EFE8`**, not paper | draft output | Makes the white sheet read as a document on a desk | Flatten to `#FBFAF7` |
+| 9 | **Sunlight test is a design gate**, not a checkbox | all | Every component was checked at contrast 0.5 / brightness 1.3 | — |
+| 10 | **Citations stay English inside Hindi drafts** | Hindi | Reporters are English-only; a transliterated citation is returned at the filing counter | Already settled in §9.6, restated here because it is visible in `9a` |
+| 11 | **Hindi eyebrows drop letterspaced uppercase** | Hindi | Devanagari has no case distinction; letterspacing breaks conjuncts | — |
+| 12 | **The dark briefing takeover is gone** | briefing | Your corridor-at-midday case beat my occasion-feel case | Say so and it returns as the single dark surface |
 
 ## 9. Decisions — settled, do not reopen
 
@@ -539,7 +844,8 @@ with less surface area won.
 7. **Paywall — never blocks on a hearing day.** On a day with a listed hearing the
    search limit becomes advisory rather than hard. The limit is still displayed.
    An advocate blocked mid-preparation churns and tells the bar.
-8. **Notes vs court record — two weights.** Record renders in Lora on a quote card;
+8. **Notes vs court record — two weights.** Record renders in Source Serif 4 on a
+   quote card;
    private notes render in Inter, indented, muted, prefixed "Your note". Under a
    firm plan the record is shared and notes are not, by default, with no setting.
 
@@ -552,10 +858,45 @@ assets/lawmind-gavel.json    Your logo animation (used for the mark, animated an
 assets/lawmind-ai.json       Your AI animation (thinking states)
 assets/lawmind-mark.svg      Static mark exported from the same paths
 LawMind Prototype.dc.html    Tappable flow: Today → briefing → search → judgment → draft
-LawMind Admin.dc.html        Admin desk, 13 sections, interactive
+LawMind Admin.dc.html        Admin desk, 17 sections, interactive
 ios-frame.jsx                Device bezel used by the canvas and prototype
-renders/                     Golden PNGs (2x) of every key screen
+renders/                     Golden PNGs. **30-43 are current** (2x/3x, refined
+                             system, Source Serif 4). 00-29 are superseded v1/v2
+                             — layout is often still valid, colour and serif are
+                             not. See §Render index.
 IMPLEMENTATION.md            This file
+CLAUDE_CODE_BRIEF.md         Paste-ready build instructions for Claude Code
+```
+
+## 10a. Render index — which PNGs are authoritative
+
+**Build from these. They are the refined system: paper ground, oxblood accent,
+Source Serif 4, registry-stamp badge.**
+
+| File | Contents |
+|---|---|
+| `30-system-refined@2x.png` | Palette, type scale, rule weights, buttons, inputs, card anatomy |
+| `31-today@2x.png` | Today |
+| `32-badge-family@3x.png` | Badge — five states, in card, sunlight |
+| `33-search-mixed-list@2x.png` | Search results, all five badge states in one list |
+| `34-briefing@2x.png` | Hearing briefing |
+| `35-draft-output@2x.png` | Draft output |
+| `36-hindi-parity@2x.png` | Hindi — Today, search, draft, side by side |
+| `37-honest-states@2x.png` | Offline · AI down · privacy disclosure · empty |
+| `38-stress-sunlight@2x.png` | Sunlight sim + messy real case data |
+| `39-42-admin-*.png` | The four added admin sections |
+| `43-badge-greyscale.png` | Badge family with colour removed — the shape proof |
+| `00-logo-real-mark.png` | Logo, animated and static, at four sizes |
+| `19-overruled-three-states.png` | All three overruled states (layout current) |
+| `10-onboarding.png`, `18-splash-signin.png` | Onboarding and splash (layout current) |
+
+**Superseded — layout often still valid, colour and serif are not.** `01-09`,
+`11-17`, `20-29`. Two specifically: `12-verification-badges.png` and
+`12-verification-badge-d.png` are the retired v1 badge exploration, and
+`02-design-system.png` is the v1 system sheet. Do not build from any of them.
+
+```
+(end of file list)
 CLAUDE_CODE_BRIEF.md         Paste-ready build instructions for Claude Code
 uploads/                     Original brief: DESIGN_SYSTEM.md, SCREENS.md, prompts, logo
 ```
