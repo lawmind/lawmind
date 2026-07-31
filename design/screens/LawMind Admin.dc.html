@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#0B0F1A;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#5E1A2B}a:hover{color:#45121E}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(20,27,45,.2);border-radius:6px}
+@keyframes ad-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes ad-pulse{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes ad-sweep{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes ad-spin{to{transform:rotate(360deg)}}
+</style><script src="./lottie-mark.js"></script></helmet>
+
+<div style="display:flex;min-height:940px;width:1440px;background:#F7F5F0">
+
+<div style="width:232px;flex:none;background:#0F1524;display:flex;flex-direction:column;position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;background:radial-gradient(80% 40% at 0% 0%,rgba(232,200,106,.09),transparent 60%)"></div>
+<div style="position:relative;padding:20px 16px 18px;border-bottom:1px solid rgba(251,250,247,.1)">
+<div style="display:flex;align-items:center;gap:11px">
+<lottie-mark src="assets/lawmind-gavel.json" frame="34" style="display:block;width:36px;height:36px;flex:none"></lottie-mark>
+<div><div style="font:600 12.5px JetBrains Mono,monospace;letter-spacing:.22em;color:#FBFAF7">LAWMIND</div><div style="font:500 9.5px JetBrains Mono;letter-spacing:.2em;color:rgba(232,200,106,.75);margin-top:4px">ADMIN DESK</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:7px;margin-top:14px;padding:7px 10px;border-radius:7px;background:rgba(31,111,74,.16);border:1px solid rgba(31,111,74,.4)">
+<span style="width:7px;height:7px;border-radius:9999px;background:#4FBF8B;animation:ad-pulse 1.8s ease-in-out infinite"></span>
+<span style="font:600 10.5px JetBrains Mono;letter-spacing:.1em;color:#8FD3AE">PRODUCTION · HEALTHY</span>
+</div>
+</div>
+
+<div style="position:relative;flex:1;padding:12px 10px;overflow:auto">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="14">
+<div onClick="{{ n.go }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;margin-bottom:2px;background:{{ n.bg }};border-left:2px solid {{ n.edge }};transition:background 140ms" style-hover="background:rgba(251,250,247,.07)">
+<span style="width:16px;flex:none;display:flex;align-items:center;justify-content:center;color:{{ n.icon }}">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="{{ n.path }}"></path></svg>
+</span>
+<span style="flex:1;font:{{ n.font }};color:{{ n.fg }}">{{ n.label }}</span>
+<sc-if value="{{ n.hasBadge }}" hint-placeholder-val="{{ false }}">
+<span style="font:600 10px JetBrains Mono;color:#fff;background:{{ n.badgeBg }};border-radius:9999px;padding:2px 7px;flex:none">{{ n.badge }}</span>
+</sc-if>
+</div>
+</sc-for>
+</div>
+
+<div style="position:relative;padding:14px 16px 18px;border-top:1px solid rgba(251,250,247,.1);display:flex;align-items:center;gap:10px">
+<div style="width:30px;height:30px;border-radius:9999px;background:rgba(251,250,247,.12);display:flex;align-items:center;justify-content:center;font:600 11.5px Inter;color:#FBFAF7;flex:none">RN</div>
+<div style="flex:1;min-width:0"><div style="font:600 12.5px Inter;color:#FBFAF7">R. Nambiar</div><div style="font:400 10.5px Inter;color:rgba(251,250,247,.5)">Founder · full access</div></div>
+</div>
+</div>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+<div style="background:#fff;border-bottom:1px solid #E3E0D8;padding:16px 26px;display:flex;align-items:center;gap:18px">
+<div style="flex:1;min-width:0">
+<div style="font:600 19px Inter;color:#141B2D;letter-spacing:-.01em">{{ sectionTitle }}</div>
+<div style="font:400 12.5px Inter;color:#5A6478;margin-top:4px">{{ sectionSub }}</div>
+</div>
+<div style="display:flex;align-items:center;gap:9px;border:1px solid #E3E0D8;border-radius:8px;padding:9px 12px;width:290px;background:#FBFAF7">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5A6478" stroke-width="1.7"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4.3-4.3"></path></svg>
+<span style="font:400 13px Inter;color:rgba(20,27,45,.42)">Search advocates, matters, queries…</span>
+<span style="font:500 10.5px JetBrains Mono;color:#5A6478;border:1px solid #E3E0D8;border-radius:4px;padding:2px 5px;background:#fff">⌘K</span>
+</div>
+<sc-if value="{{ maintenanceOn }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:8px;background:#FBF0DF;border:1px solid rgba(180,105,14,.4);border-radius:8px;padding:9px 12px">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B4690E" stroke-width="2"><path d="M12 9v4M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg>
+<span style="font:600 12px Inter;color:#8A5109">Maintenance mode is ON</span>
+</div>
+</sc-if>
+<div onClick="{{ toggleIncident }}" style="cursor:pointer;display:flex;align-items:center;gap:8px;border:1px solid {{ incidentEdge }};background:{{ incidentBg }};border-radius:8px;padding:9px 13px;transition:transform 140ms" style-active="transform:scale(.97)">
+<span style="width:7px;height:7px;border-radius:9999px;background:{{ incidentDot }}"></span>
+<span style="font:600 12px Inter;color:{{ incidentFg }}">{{ incidentLabel }}</span>
+</div>
+</div>
+
+<div style="flex:1;padding:22px 26px 34px;overflow:auto">
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px">
+<div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">{{ k.label }}</div>
+<div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">{{ k.value }}</div>
+<div style="font:500 11.5px Inter;color:{{ k.deltaColor }};margin-top:6px">{{ k.delta }}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:600 14px Inter;color:#141B2D">Product health · last 14 days</div><div style="display:flex;gap:12px;font:400 11px Inter;color:#5A6478"><span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#141B2D"></span>Briefings delivered</span><span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#7A2438"></span>Searches</span></div></div>
+<div style="display:flex;align-items:flex-end;gap:6px;height:196px;margin-top:18px;border-bottom:1px solid #E3E0D8">
+<sc-for list="{{ healthBars }}" as="b" hint-placeholder-count="14">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px">
+<div style="height:{{ b.a }};background:#7A2438;border-radius:2px 2px 0 0"></div>
+<div style="height:{{ b.b }};background:#141B2D"></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;font:400 10.5px JetBrains Mono;color:#5A6478;margin-top:8px"><span>17 JUL</span><span>23 JUL</span><span>30 JUL</span></div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Needs a human today</div>
+<div style="display:flex;flex-direction:column;gap:9px;margin-top:14px">
+<sc-for list="{{ actions }}" as="a" hint-placeholder-count="4">
+<div onClick="{{ a.go }}" style="cursor:pointer;border:1px solid {{ a.edge }};background:{{ a.bg }};border-radius:9px;padding:12px 13px;display:flex;justify-content:space-between;align-items:center;transition:transform 150ms" style-active="transform:scale(.985)">
+<div><div style="font:600 13.5px Inter;color:#141B2D">{{ a.title }}</div><div style="font:400 12px Inter;color:#5A6478;margin-top:3px">{{ a.sub }}</div></div>
+<span style="font:600 16px Inter;color:{{ a.countColor }};flex:none">{{ a.count }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center"><div style="font:600 14px Inter;color:#141B2D">Live activity</div><div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:9999px;background:#4FBF8B;animation:ad-pulse 1.8s ease-in-out infinite"></span><span style="font:500 11.5px Inter;color:#5A6478">streaming</span></div></div>
+<sc-for list="{{ activity }}" as="e" hint-placeholder-count="6">
+<div style="padding:11px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:78px 128px 1fr 130px;gap:14px;align-items:center">
+<span style="font:400 11.5px JetBrains Mono;color:#5A6478">{{ e.time }}</span>
+<span style="font:600 11px Inter;color:{{ e.tagFg }};background:{{ e.tagBg }};border-radius:5px;padding:3px 8px;justify-self:start">{{ e.tag }}</span>
+<span style="font:400 13px Inter;color:#141B2D">{{ e.text }}</span>
+<span style="font:400 12px Inter;color:#5A6478">{{ e.who }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isQueue }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:14px;animation:ad-in 220ms ease-out">
+<div style="width:340px;flex:none;background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:14px 16px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center"><div style="font:600 13.5px Inter;color:#141B2D">Pending {{ queueCount }}</div><span style="font:500 11.5px Inter;color:#5A6478">oldest first</span></div>
+<sc-for list="{{ queue }}" as="q" hint-placeholder-count="5">
+<div onClick="{{ q.select }}" style="cursor:pointer;padding:13px 16px;border-bottom:1px solid #F0EEE8;background:{{ q.bg }};border-left:3px solid {{ q.edge }}">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 14px Inter;color:#141B2D">{{ q.name }}</span><span style="font:400 11px Inter;color:#5A6478">{{ q.age }}</span></div>
+<div style="font:400 11.5px JetBrains Mono;color:#5A6478;margin-top:5px">{{ q.enrol }} · {{ q.state }}</div>
+</div>
+</sc-for>
+<sc-if value="{{ queueEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:34px 20px;text-align:center"><div style="font:600 14px Inter;color:#141B2D">Queue clear</div><div style="font:400 12.5px/1.55 Inter;color:#5A6478;margin-top:6px">Every advocate awaiting verification has been dealt with. New submissions appear here within a minute.</div></div>
+</sc-if>
+</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px">
+<sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:20px 22px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid #E3E0D8">
+<div style="display:flex;gap:14px;align-items:center">
+<div style="width:48px;height:48px;border-radius:9999px;background:#141B2D;display:flex;align-items:center;justify-content:center;font:600 16px Inter;color:#FBFAF7;flex:none">{{ selInitials }}</div>
+<div><div style="font:600 20px Inter;color:#141B2D">{{ selName }}</div><div style="font:400 12.5px Inter;color:#5A6478;margin-top:4px">{{ selMeta }}</div></div>
+</div>
+<span style="font:600 11.5px Inter;color:#8A5109;background:#FBF0DF;border:1px solid rgba(180,105,14,.3);border-radius:9999px;padding:5px 11px;flex:none">Pending {{ selAge }}</span>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1.2fr;gap:22px;margin-top:18px">
+<div>
+<div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">CLAIMED ENROLMENT</div>
+<div style="font:600 22px JetBrains Mono;color:#141B2D;margin-top:10px">{{ selEnrol }}</div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #E3E0D8">
+<sc-for list="{{ selFacts }}" as="f" hint-placeholder-count="4">
+<div style="display:flex;justify-content:space-between;font:400 12.5px Inter;color:#5A6478"><span>{{ f.k }}</span><span style="color:{{ f.color }};font-weight:500">{{ f.v }}</span></div>
+</sc-for>
+</div>
+</div>
+<div>
+<div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">CORROBORATING SIGNALS</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+<sc-for list="{{ selSignals }}" as="g" hint-placeholder-count="3">
+<div style="display:flex;gap:9px;align-items:flex-start"><span style="width:14px;height:14px;border-radius:9999px;background:{{ g.dot }};flex:none;margin-top:3px"></span><span style="font:400 12.5px/1.5 Inter;color:#141B2D">{{ g.text }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+<div style="display:flex;gap:10px;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid #E3E0D8">
+<div onClick="{{ approve }}" style="cursor:pointer;height:42px;border-radius:8px;background:#1F6F4A;color:#fff;display:flex;align-items:center;justify-content:center;font:600 13.5px Inter;padding:0 20px;transition:transform 140ms" style-active="transform:scale(.97)">Approve — mark verified</div>
+<div onClick="{{ requestDoc }}" style="cursor:pointer;height:42px;border-radius:8px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;justify-content:center;font:600 13.5px Inter;padding:0 18px" style-active="transform:scale(.97)">Ask for a document</div>
+<div onClick="{{ reject }}" style="cursor:pointer;height:42px;border-radius:8px;background:#fff;border:1px solid rgba(158,42,51,.5);color:#9E2A33;display:flex;align-items:center;justify-content:center;font:600 13.5px Inter;padding:0 18px" style-active="transform:scale(.97)">Reject</div>
+<div style="flex:1"></div>
+<span style="font:400 11.5px Inter;color:#5A6478">A approve · R reject · J/K move</span>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:16px 20px;margin-top:14px">
+<div style="font:600 13px Inter;color:#141B2D">Decision log</div>
+<div style="display:flex;flex-direction:column;margin-top:10px">
+<sc-for list="{{ decisions }}" as="d" hint-placeholder-count="3">
+<div style="padding:9px 0;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:150px 1fr 120px;gap:12px;font:400 12.5px Inter;color:#141B2D"><span style="font-family:JetBrains Mono;font-size:11.5px;color:#5A6478">{{ d.at }}</span><span>{{ d.text }}</span><span style="color:#5A6478">{{ d.by }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isUsers }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<sc-for list="{{ userKpis }}" as="k" hint-placeholder-count="4">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">{{ k.label }}</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">{{ k.value }}</div><div style="font:500 11.5px Inter;color:{{ k.deltaColor }};margin-top:6px">{{ k.delta }}</div></div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:13px 20px;border-bottom:1px solid #E3E0D8;display:flex;gap:8px;align-items:center">
+<sc-for list="{{ userFilters }}" as="f" hint-placeholder-count="5">
+<span onClick="{{ f.pick }}" style="cursor:pointer;font:600 11.5px Inter;color:{{ f.fg }};background:{{ f.bg }};border:1px solid {{ f.edge }};border-radius:9999px;padding:6px 12px">{{ f.label }}</span>
+</sc-for>
+<div style="flex:1"></div>
+<span style="font:500 11.5px Inter;color:#5A6478">{{ userRowsLabel }}</span>
+</div>
+<div style="display:grid;grid-template-columns:1.5fr 1.1fr .8fr .9fr .8fr .8fr 90px;padding:10px 20px;background:#FDFCFA;border-bottom:1px solid #E3E0D8;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478">
+<span>ADVOCATE</span><span>ENROLMENT</span><span>PLAN</span><span>MATTERS</span><span>SEARCHES</span><span>LAST SEEN</span><span></span>
+</div>
+<sc-for list="{{ users }}" as="u" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:1.5fr 1.1fr .8fr .9fr .8fr .8fr 90px;padding:12px 20px;border-bottom:1px solid #F0EEE8;align-items:center;font:400 13px Inter;color:#141B2D">
+<div><div style="font-weight:500">{{ u.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:2px">{{ u.email }}</div></div>
+<div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:9999px;background:{{ u.dot }};flex:none"></span><span style="font:400 11.5px JetBrains Mono;color:#5A6478">{{ u.enrol }}</span></div>
+<span style="font:600 11px Inter;color:{{ u.planFg }};background:{{ u.planBg }};border-radius:5px;padding:3px 8px;justify-self:start">{{ u.plan }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px">{{ u.matters }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px">{{ u.searches }}</span>
+<span style="color:#5A6478;font-size:12px">{{ u.seen }}</span>
+<span style="font:600 12px Inter;color:#5E1A2B;justify-self:end;cursor:pointer">Manage</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCitations }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<div style="background:#fff;border:1px solid rgba(180,105,14,.45);border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">FAILURE RATE TODAY</div><div style="font:600 25px Inter;color:#B4690E;margin-top:9px">3.4%</div><div style="font:500 11.5px Inter;color:#9E2A33;margin-top:6px">▲ from 1.1% on 26 Jul</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">CITATIONS CHECKED</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">6,880</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">234 failed today</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">MEDIAN CHECK</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">840 ms</div><div style="font:500 11.5px Inter;color:#1F6F4A;margin-top:6px">Within SLA</div></div>
+<div style="background:#fff;border:1px solid rgba(158,42,51,.45);border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#9E2A33">ALREADY EXPORTED</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">{{ exportedCount }}</div><div onClick="{{ notifyAffected }}" style="cursor:pointer;font:600 11.5px Inter;color:#9E2A33;margin-top:6px;text-decoration:underline">Notify affected advocates</div></div>
+</div>
+
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px;margin-top:14px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:600 14px Inter;color:#141B2D">Failure rate · rolling 14 days</div><span style="font:500 11.5px Inter;color:#B4690E">alert threshold 2.5%</span></div>
+<div style="position:relative;height:180px;margin-top:18px;border-bottom:1px solid #E3E0D8">
+<div style="position:absolute;left:0;right:0;top:56%;border-top:1.5px dashed rgba(180,105,14,.6)"></div>
+<div style="position:absolute;inset:0;display:flex;align-items:flex-end;gap:8px">
+<sc-for list="{{ failBars }}" as="f" hint-placeholder-count="14">
+<div style="flex:1;height:{{ f.h }};background:{{ f.color }};border-radius:2px 2px 0 0"></div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center"><div style="font:600 14px Inter;color:#141B2D">Failing queries</div><div onClick="{{ assignCorpus }}" style="cursor:pointer;font:600 12px Inter;color:#fff;background:#141B2D;border-radius:7px;padding:8px 12px" style-active="transform:scale(.97)">Assign all to corpus team</div></div>
+<div style="display:grid;grid-template-columns:2.4fr 1.5fr 1fr .8fr .6fr 96px;padding:10px 20px;background:#FDFCFA;border-bottom:1px solid #E3E0D8;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478"><span>QUERY</span><span>CITATION RETURNED</span><span>CAUSE</span><span>SURFACE</span><span>N</span><span></span></div>
+<sc-for list="{{ failing }}" as="f" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:2.4fr 1.5fr 1fr .8fr .6fr 96px;padding:12px 20px;border-bottom:1px solid #F0EEE8;align-items:center;font:400 12.5px Inter;color:#141B2D">
+<span>{{ f.query }}</span><span style="font-family:JetBrains Mono;font-size:11.5px;color:#5A6478">{{ f.cite }}</span>
+<span style="font-weight:500;color:{{ f.causeColor }}">{{ f.cause }}</span><span style="color:#5A6478">{{ f.surface }}</span><span style="font-family:JetBrains Mono">{{ f.n }}</span>
+<span onClick="{{ f.act }}" style="font:600 12px Inter;color:#5E1A2B;justify-self:end;cursor:pointer">{{ f.action }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSpend }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">TODAY</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">Rs.18,420</div><div style="font:500 11.5px Inter;color:#9E2A33;margin-top:6px">▲ 64% vs 7-day average</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">MONTH TO DATE</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">Rs.3.42L</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">86% of Rs.4.00L cap</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">COST PER ADVOCATE</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">Rs.412</div><div style="font:500 11.5px Inter;color:#1F6F4A;margin-top:6px">▼ 8% — within target</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">GROSS MARGIN</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">71%</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">Target 75% by S6</div></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Cost by day · by feature</div>
+<div style="display:flex;align-items:flex-end;gap:6px;height:210px;margin-top:18px;border-bottom:1px solid #E3E0D8">
+<sc-for list="{{ spendBars }}" as="b" hint-placeholder-count="14">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end">
+<div style="height:{{ b.c }};background:#C9A227"></div>
+<div style="height:{{ b.b }};background:{{ b.briefColor }}"></div>
+<div style="height:{{ b.a }};background:#141B2D"></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:14px;margin-top:12px;font:400 11px Inter;color:#5A6478"><span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#141B2D"></span>Search</span><span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#7A2438"></span>Briefings</span><span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#C9A227"></span>Drafting</span></div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="display:flex;align-items:center;gap:8px"><lottie-mark src="assets/lawmind-ai.json" loop autoplay tint="#141B2D" duotone style="display:block;width:26px;height:26px;flex:none;margin-left:-4px"></lottie-mark><div style="font:600 14px Inter;color:#141B2D">Model routing — live</div></div>
+<div style="font:400 12px/1.55 Inter;color:#5A6478;margin-top:6px">Change the model a feature uses. Applies within 60 seconds, no deploy.</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+<sc-for list="{{ routing }}" as="r" hint-placeholder-count="4">
+<div style="border:1px solid #E3E0D8;border-radius:9px;padding:12px 13px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 13px Inter;color:#141B2D">{{ r.feature }}</span><span style="font:400 11.5px JetBrains Mono;color:#5A6478">{{ r.cost }}</span></div>
+<div style="display:flex;gap:6px;margin-top:10px">
+<sc-for list="{{ r.options }}" as="o" hint-placeholder-count="3">
+<span onClick="{{ o.pick }}" style="cursor:pointer;font:600 11.5px JetBrains Mono;color:{{ o.fg }};background:{{ o.bg }};border:1px solid {{ o.edge }};border-radius:6px;padding:6px 9px">{{ o.name }}</span>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:14px;background:#FBF0DF;border:1px solid rgba(180,105,14,.3);border-radius:8px;padding:11px 12px;font:400 12px/1.5 Inter;color:#8A5109">Briefing cost per document rose Rs.9.80 → Rs.13.84 after the 03:10 deploy. Suspected retry loop on empty cause-list responses.</div>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;font:600 14px Inter;color:#141B2D">Budget caps and throttles</div>
+<sc-for list="{{ caps }}" as="c" hint-placeholder-count="3">
+<div style="padding:14px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:1.4fr 1fr 1.6fr 120px;gap:16px;align-items:center">
+<div><div style="font:600 13px Inter;color:#141B2D">{{ c.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">{{ c.sub }}</div></div>
+<span style="font:600 14px JetBrains Mono;color:#141B2D">{{ c.value }}</span>
+<div style="height:8px;border-radius:5px;background:#EFEDE7;overflow:hidden"><div style="width:{{ c.pct }};height:100%;background:{{ c.color }}"></div></div>
+<span onClick="{{ c.edit }}" style="font:600 12px Inter;color:#5E1A2B;cursor:pointer;justify-self:end">Edit cap</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBriefings }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">TONIGHT'S RUN</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">1,284</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">scheduled for 21:00 IST</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">DELIVERED ON TIME</div><div style="font:600 25px Inter;color:#1F6F4A;margin-top:9px">98.6%</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">last 7 nights</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">OPENED WITHIN 12 H</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">81%</div><div style="font:500 11.5px Inter;color:#1F6F4A;margin-top:6px">▲ 6 pts since notification copy change</div></div>
+<div style="background:#fff;border:1px solid rgba(158,42,51,.4);border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#9E2A33">FAILED LAST NIGHT</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">{{ failedBriefings }}</div><div onClick="{{ retryAll }}" style="cursor:pointer;font:600 11.5px Inter;color:#9E2A33;margin-top:6px;text-decoration:underline">Retry all now</div></div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center"><div style="font:600 14px Inter;color:#141B2D">Generation runs</div><div onClick="{{ runNow }}" style="cursor:pointer;font:600 12px Inter;color:#fff;background:#5E1A2B;border-radius:7px;padding:8px 12px" style-active="transform:scale(.97)">Run generation now</div></div>
+<div style="display:grid;grid-template-columns:110px 1.4fr .9fr .9fr .8fr 110px;padding:10px 20px;background:#FDFCFA;border-bottom:1px solid #E3E0D8;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478"><span>NIGHT</span><span>SCOPE</span><span>GENERATED</span><span>FAILED</span><span>COST</span><span>STATUS</span></div>
+<sc-for list="{{ runs }}" as="r" hint-placeholder-count="5">
+<div style="padding:12px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:110px 1.4fr .9fr .9fr .8fr 110px;gap:12px;align-items:center;font:400 13px Inter;color:#141B2D">
+<span style="font-family:JetBrains Mono;font-size:11.5px;color:#5A6478">{{ r.night }}</span><span>{{ r.scope }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px">{{ r.gen }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px;color:{{ r.failColor }}">{{ r.failed }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px">{{ r.cost }}</span>
+<span style="font:600 11px Inter;color:{{ r.statusFg }};background:{{ r.statusBg }};border-radius:5px;padding:3px 8px;justify-self:start">{{ r.status }}</span>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Briefing composition — what goes in</div>
+<div style="font:400 12px/1.55 Inter;color:#5A6478;margin-top:6px">Turning a block off removes it from tonight's run for every advocate. Use for incident containment, not experiments.</div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px">
+<sc-for list="{{ blocks }}" as="b" hint-placeholder-count="4">
+<div onClick="{{ b.toggle }}" style="cursor:pointer;border:1px solid {{ b.edge }};background:{{ b.bg }};border-radius:9px;padding:13px 14px;display:flex;justify-content:space-between;align-items:center">
+<div><div style="font:600 13px Inter;color:#141B2D">{{ b.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">{{ b.sub }}</div></div>
+<div style="display:flex;align-items:center;gap:12px;flex:none">
+<span style="width:34px;flex:none;text-align:right;font:600 11px JetBrains Mono;letter-spacing:.06em;color:{{ b.stateFg }}">{{ b.state }}</span>
+<div style="position:relative;flex:none;width:46px;height:28px;border-radius:9999px;background:{{ b.trackBg }};box-shadow:inset 0 0 0 1px rgba(20,27,45,.06);transition:background 180ms cubic-bezier(.2,.8,.3,1)"><div style="position:absolute;top:50%;left:3px;width:22px;height:22px;border-radius:9999px;background:#fff;box-shadow:0 1px 3px rgba(20,27,45,.28),0 0 0 .5px rgba(20,27,45,.06);transform:translate3d({{ b.knobX }},-50%,0);transition:transform 200ms cubic-bezier(.2,.8,.3,1)"></div></div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCorpus }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">JUDGMENTS INDEXED</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">4.21L</div><div style="font:500 11.5px Inter;color:#1F6F4A;margin-top:6px">+1,840 this week</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">2026 COVERAGE</div><div style="font:600 25px Inter;color:#B4690E;margin-top:9px">87%</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">the gap driving today's failures</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">OVERRULED FLAGS</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">11,204</div><div style="font:500 11.5px Inter;color:#5A6478;margin-top:6px">3 states: set aside · partly · doubted</div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">LAST FULL REINDEX</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px">6 d</div><div onClick="{{ reindex }}" style="cursor:pointer;font:600 11.5px Inter;color:#5E1A2B;margin-top:6px;text-decoration:underline">{{ reindexLabel }}</div></div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;font:600 14px Inter;color:#141B2D">Sources and ingestion</div>
+<div style="display:grid;grid-template-columns:1.5fr 1fr 1fr .8fr 1fr 110px;padding:10px 20px;background:#FDFCFA;border-bottom:1px solid #E3E0D8;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478"><span>SOURCE</span><span>LAST SYNC</span><span>NEW DOCS</span><span>LAG</span><span>HEALTH</span><span></span></div>
+<sc-for list="{{ sources }}" as="s" hint-placeholder-count="6">
+<div style="padding:12px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:1.5fr 1fr 1fr .8fr 1fr 110px;gap:12px;align-items:center;font:400 13px Inter;color:#141B2D">
+<div><div style="font-weight:500">{{ s.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:2px">{{ s.kind }}</div></div>
+<span style="font-family:JetBrains Mono;font-size:11.5px;color:#5A6478">{{ s.sync }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px">{{ s.docs }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px;color:{{ s.lagColor }}">{{ s.lag }}</span>
+<span style="font:600 11px Inter;color:{{ s.healthFg }};background:{{ s.healthBg }};border-radius:5px;padding:3px 8px;justify-self:start">{{ s.health }}</span>
+<span onClick="{{ s.sync2 }}" style="font:600 12px Inter;color:#5E1A2B;cursor:pointer;justify-self:end">Sync now</span>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Coverage by court</div>
+<div style="display:flex;flex-direction:column;gap:11px;margin-top:14px">
+<sc-for list="{{ coverage }}" as="c" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:200px 1fr 60px;gap:14px;align-items:center">
+<span style="font:400 13px Inter;color:#141B2D">{{ c.court }}</span>
+<div style="height:8px;border-radius:5px;background:#EFEDE7;overflow:hidden"><div style="width:{{ c.pct }};height:100%;background:{{ c.color }}"></div></div>
+<span style="font:600 12.5px JetBrains Mono;color:#141B2D;justify-self:end">{{ c.pct }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+<sc-for list="{{ billingKpis }}" as="k" hint-placeholder-count="5">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">{{ k.label }}</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">{{ k.value }}</div><div style="font:500 11.5px Inter;color:{{ k.deltaColor }};margin-top:6px">{{ k.delta }}</div></div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin-top:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;font:600 14px Inter;color:#141B2D">Plans and pricing — live</div>
+<sc-for list="{{ plans }}" as="p" hint-placeholder-count="4">
+<div style="padding:14px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:1fr 90px 90px 90px 90px;gap:12px;align-items:center">
+<div><div style="font:600 13.5px Inter;color:#141B2D">{{ p.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">{{ p.limits }}</div></div>
+<span style="font:600 13.5px JetBrains Mono;color:#141B2D">{{ p.price }}</span>
+<span style="font:400 12.5px Inter;color:#5A6478">{{ p.subs }} subs</span>
+<span style="font:400 12.5px Inter;color:{{ p.churnColor }}">{{ p.churn }}</span>
+<span onClick="{{ p.edit }}" style="font:600 12px Inter;color:#5E1A2B;cursor:pointer;justify-self:end">Edit</span>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Coupons and trials</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+<sc-for list="{{ coupons }}" as="c" hint-placeholder-count="3">
+<div style="border:1px solid #E3E0D8;border-radius:9px;padding:12px 13px;display:flex;justify-content:space-between;align-items:center">
+<div><div style="font:600 13px JetBrains Mono;color:#141B2D">{{ c.code }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">{{ c.detail }}</div></div>
+<div onClick="{{ c.toggle }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;flex:none">
+<span style="width:34px;flex:none;text-align:right;font:600 11px JetBrains Mono;letter-spacing:.06em;color:{{ c.stateFg }}">{{ c.state }}</span>
+<div style="position:relative;flex:none;width:46px;height:28px;border-radius:9999px;background:{{ c.trackBg }};box-shadow:inset 0 0 0 1px rgba(20,27,45,.06);transition:background 180ms cubic-bezier(.2,.8,.3,1)"><div style="position:absolute;top:50%;left:3px;width:22px;height:22px;border-radius:9999px;background:#fff;box-shadow:0 1px 3px rgba(20,27,45,.28),0 0 0 .5px rgba(20,27,45,.06);transform:translate3d({{ c.knobX }},-50%,0);transition:transform 200ms cubic-bezier(.2,.8,.3,1)"></div></div>
+</div>
+</div>
+</sc-for>
+<div onClick="{{ newCoupon }}" style="cursor:pointer;border:1px dashed rgba(94,26,43,.5);border-radius:9px;padding:12px;text-align:center;font:600 12.5px Inter;color:#5E1A2B">+ New coupon</div>
+</div>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;font:600 14px Inter;color:#141B2D">Recent payments</div>
+<div style="display:grid;grid-template-columns:110px 1.4fr .9fr .8fr .9fr 110px;padding:10px 20px;background:#FDFCFA;border-bottom:1px solid #E3E0D8;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478"><span>WHEN</span><span>ADVOCATE</span><span>PLAN</span><span>AMOUNT</span><span>METHOD</span><span>STATE</span></div>
+<sc-for list="{{ payments }}" as="p" hint-placeholder-count="5">
+<div style="padding:12px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:110px 1.4fr .9fr .8fr .9fr 110px;gap:12px;align-items:center;font:400 13px Inter;color:#141B2D">
+<span style="font-family:JetBrains Mono;font-size:11.5px;color:#5A6478">{{ p.when }}</span><span>{{ p.who }}</span><span style="color:#5A6478">{{ p.plan }}</span>
+<span style="font-family:JetBrains Mono;font-size:12.5px">{{ p.amount }}</span><span style="color:#5A6478;font-size:12px">{{ p.method }}</span>
+<span style="font:600 11px Inter;color:{{ p.stateFg }};background:{{ p.stateBg }};border-radius:5px;padding:3px 8px;justify-self:start">{{ p.state }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSupport }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:14px;animation:ad-in 220ms ease-out">
+<div style="width:360px;flex:none;background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:13px 16px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center"><div style="font:600 13.5px Inter;color:#141B2D">Open tickets {{ ticketCount }}</div><span style="font:500 11.5px Inter;color:#5A6478">by age</span></div>
+<sc-for list="{{ tickets }}" as="t" hint-placeholder-count="5">
+<div onClick="{{ t.select }}" style="cursor:pointer;padding:13px 16px;border-bottom:1px solid #F0EEE8;background:{{ t.bg }};border-left:3px solid {{ t.edge }}">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 13.5px Inter;color:#141B2D">{{ t.subject }}</span><span style="font:400 11px Inter;color:#5A6478">{{ t.age }}</span></div>
+<div style="font:400 12px Inter;color:#5A6478;margin-top:5px">{{ t.who }} · {{ t.plan }}</div>
+</div>
+</sc-for>
+</div>
+<div style="flex:1;background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:20px 22px;display:flex;flex-direction:column">
+<div style="padding-bottom:14px;border-bottom:1px solid #E3E0D8">
+<div style="font:600 18px Inter;color:#141B2D">{{ ticketSubject }}</div>
+<div style="font:400 12.5px Inter;color:#5A6478;margin-top:5px">{{ ticketMeta }}</div>
+</div>
+<div style="font:400 14.5px/1.7 Lora,serif;color:#141B2D;margin-top:16px">{{ ticketBody }}</div>
+<div style="margin-top:16px;background:#FBFAF7;border:1px solid #E3E0D8;border-radius:9px;padding:13px 14px">
+<div style="font:600 11.5px Inter;color:#5A6478">CONTEXT PULLED AUTOMATICALLY</div>
+<div style="display:flex;gap:18px;margin-top:9px;font:400 12.5px Inter;color:#141B2D"><span>Plan: {{ ticketPlan }}</span><span>Matters: 12</span><span>Last briefing: opened 9:31 PM</span><span>App: 1.0.0 (Android 11)</span></div>
+</div>
+<div style="flex:1"></div>
+<div style="margin-top:16px;border:1px solid #E3E0D8;border-radius:9px;padding:13px 14px;min-height:82px;font:400 13.5px Inter;color:rgba(20,27,45,.42)">Reply to {{ ticketFirstName }}…</div>
+<div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+<div onClick="{{ resolveTicket }}" style="cursor:pointer;height:40px;border-radius:8px;background:#141B2D;color:#fff;display:flex;align-items:center;justify-content:center;font:600 13px Inter;padding:0 18px" style-active="transform:scale(.97)">Send and resolve</div>
+<div style="height:40px;border-radius:8px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;justify-content:center;font:600 13px Inter;padding:0 16px">Grant 20 free searches</div>
+<div style="height:40px;border-radius:8px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;justify-content:center;font:600 13px Inter;padding:0 16px">Escalate to engineering</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPush }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:14px;animation:ad-in 220ms ease-out">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:20px 22px">
+<div style="font:600 15px Inter;color:#141B2D">Compose a push</div>
+<div style="font:400 12.5px/1.55 Inter;color:#5A6478;margin-top:6px">Transactional briefing pushes are automatic. This is for product news — one a week at most, and never during court hours.</div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:18px">
+<div><div style="font:600 12px Inter;color:#141B2D;margin-bottom:6px">Audience</div><div style="display:flex;flex-wrap:wrap;gap:7px">
+<sc-for list="{{ audiences }}" as="a" hint-placeholder-count="5">
+<span onClick="{{ a.pick }}" style="cursor:pointer;font:600 12px Inter;color:{{ a.fg }};background:{{ a.bg }};border:1px solid {{ a.edge }};border-radius:7px;padding:8px 11px">{{ a.label }}</span>
+</sc-for>
+</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:8px">Reaches {{ audienceSize }} advocates</div></div>
+<div><div style="font:600 12px Inter;color:#141B2D;margin-bottom:6px">Title</div><div style="border:1px solid #E3E0D8;border-radius:8px;padding:12px 13px;font:400 14px Inter;color:#141B2D">Hindi drafting is live</div></div>
+<div><div style="font:600 12px Inter;color:#141B2D;margin-bottom:6px">Body</div><div style="border:1px solid #E3E0D8;border-radius:8px;padding:12px 13px;min-height:70px;font:400 14px/1.6 Inter;color:#141B2D">Bail applications, notices and affidavits can now be generated in Hindi, with citations left in English as reported.</div></div>
+<div style="display:flex;gap:12px">
+<div style="flex:1"><div style="font:600 12px Inter;color:#141B2D;margin-bottom:6px">Send at</div><div style="border:1px solid #E3E0D8;border-radius:8px;padding:12px 13px;font:400 14px Inter;color:#141B2D">Tonight, 8:30 PM IST</div></div>
+<div style="flex:1"><div style="font:600 12px Inter;color:#141B2D;margin-bottom:6px">Opens app at</div><div style="border:1px solid #E3E0D8;border-radius:8px;padding:12px 13px;font:400 14px Inter;color:#141B2D">Drafts → language</div></div>
+</div>
+</div>
+<div style="display:flex;gap:10px;margin-top:18px">
+<div onClick="{{ sendPush }}" style="cursor:pointer;height:44px;border-radius:8px;background:#5E1A2B;color:#fff;display:flex;align-items:center;justify-content:center;font:600 14px Inter;padding:0 20px" style-active="transform:scale(.97)">{{ pushCta }}</div>
+<div style="height:44px;border-radius:8px;background:#fff;border:1px solid #E3E0D8;color:#141B2D;display:flex;align-items:center;justify-content:center;font:600 14px Inter;padding:0 18px">Send to staff only</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="background:#0F1524;border-radius:10px;padding:20px 22px">
+<div style="font:600 9.5px JetBrains Mono;letter-spacing:.16em;color:rgba(232,200,106,.8)">LOCK SCREEN PREVIEW</div>
+<div style="margin-top:14px;border-radius:16px;background:rgba(255,255,255,.13);border:.5px solid rgba(255,255,255,.16);padding:13px 15px">
+<div style="display:flex;align-items:center;gap:9px"><div style="width:20px;height:20px;border-radius:5px;background:#5E1A2B;display:flex;align-items:center;justify-content:center;flex:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E8C86A" stroke-width="2"><path d="M12 3l7 4v5c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V7z"></path></svg></div><span style="font:600 12px Inter;color:rgba(255,255,255,.9);letter-spacing:.02em;flex:1">LAWMIND</span><span style="font:400 12px Inter;color:rgba(255,255,255,.6)">8:30 pm</span></div>
+<div style="font:600 15px/1.35 Inter;color:#fff;margin-top:9px">Hindi drafting is live</div>
+<div style="font:400 14px/1.5 Inter;color:rgba(255,255,255,.78);margin-top:4px">Bail applications, notices and affidavits can now be generated in Hindi, with citations left in English as reported.</div>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:13px 18px;border-bottom:1px solid #E3E0D8;font:600 13.5px Inter;color:#141B2D">Recent campaigns</div>
+<sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="4">
+<div style="padding:12px 18px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:1.5fr .7fr .7fr;gap:10px;align-items:center;font:400 12.5px Inter;color:#141B2D"><div><div style="font-weight:500">{{ c.title }}</div><div style="font:400 11px Inter;color:#5A6478;margin-top:2px">{{ c.when }}</div></div><span style="font-family:JetBrains Mono;font-size:12px">{{ c.sent }}</span><span style="font-family:JetBrains Mono;font-size:12px;color:#1F6F4A">{{ c.open }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isControls }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="background:#0F1524;border-radius:10px;padding:20px 22px;position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;background:radial-gradient(70% 120% at 100% 0%,rgba(158,42,51,.35),transparent 60%)"></div>
+<div style="position:relative;display:flex;justify-content:space-between;align-items:flex-start">
+<div><div style="font:600 9.5px JetBrains Mono;letter-spacing:.16em;color:rgba(232,200,106,.8)">PLATFORM MODE</div><div style="font:500 21px/1.3 Lora,serif;color:#FBFAF7;margin-top:10px">{{ modeHeadline }}</div><div style="font:400 12.5px/1.6 Inter;color:rgba(251,250,247,.66);margin-top:8px;max-width:64ch">Maintenance mode shows a plain notice in the app, keeps every cached briefing and matter readable offline, and queues writes until you switch back. It never signs anyone out.</div></div>
+<div onClick="{{ toggleMaintenance }}" style="cursor:pointer;flex:none;border:1px solid {{ maintEdge }};background:{{ maintBg }};border-radius:9px;padding:14px 18px;text-align:center;transition:transform 150ms" style-active="transform:scale(.97)">
+<div style="font:600 13px Inter;color:{{ maintFg }}">{{ maintCta }}</div>
+<div style="font:400 11px Inter;color:{{ maintSubFg }};margin-top:4px">{{ maintSub }}</div>
+</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8"><div style="font:600 14px Inter;color:#141B2D">Kill switches</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">Immediate. No deploy. Logged with your name.</div></div>
+<sc-for list="{{ kills }}" as="k" hint-placeholder-count="5">
+<div style="padding:14px 20px;border-bottom:1px solid #F0EEE8;display:flex;justify-content:space-between;align-items:center">
+<div><div style="font:600 13.5px Inter;color:#141B2D">{{ k.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">{{ k.sub }}</div></div>
+<div onClick="{{ k.toggle }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;flex:none">
+<span style="width:34px;flex:none;text-align:right;font:600 11px JetBrains Mono;letter-spacing:.06em;color:{{ k.stateFg }}">{{ k.state }}</span>
+<div style="position:relative;flex:none;width:46px;height:28px;border-radius:9999px;background:{{ k.trackBg }};box-shadow:inset 0 0 0 1px rgba(20,27,45,.06);transition:background 180ms cubic-bezier(.2,.8,.3,1)"><div style="position:absolute;top:50%;left:3px;width:22px;height:22px;border-radius:9999px;background:#fff;box-shadow:0 1px 3px rgba(20,27,45,.28),0 0 0 .5px rgba(20,27,45,.06);transform:translate3d({{ k.knobX }},-50%,0);transition:transform 200ms cubic-bezier(.2,.8,.3,1)"></div></div>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8"><div style="font:600 14px Inter;color:#141B2D">Feature flags</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">Percentage rollout, staff-first.</div></div>
+<sc-for list="{{ flags }}" as="f" hint-placeholder-count="6">
+<div style="padding:13px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:1fr 96px 120px;gap:12px;align-items:center">
+<div><div style="font:600 13px Inter;color:#141B2D">{{ f.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:3px">{{ f.sub }}</div></div>
+<div style="height:8px;border-radius:5px;background:#EFEDE7;overflow:hidden"><div style="width:{{ f.pct }};height:100%;background:#5E1A2B"></div></div>
+<div style="display:flex;gap:6px;justify-self:end">
+<span onClick="{{ f.down }}" style="cursor:pointer;width:28px;height:28px;border-radius:6px;border:1px solid #E3E0D8;display:flex;align-items:center;justify-content:center;font:600 13px Inter;color:#141B2D">−</span>
+<span style="width:44px;text-align:center;font:600 12.5px JetBrains Mono;color:#141B2D;line-height:28px">{{ f.pct }}</span>
+<span onClick="{{ f.up }}" style="cursor:pointer;width:28px;height:28px;border-radius:6px;border:1px solid #E3E0D8;display:flex;align-items:center;justify-content:center;font:600 13px Inter;color:#141B2D">+</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isStaff }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center"><div style="font:600 14px Inter;color:#141B2D">Staff and roles</div><div onClick="{{ inviteStaff }}" style="cursor:pointer;font:600 12px Inter;color:#fff;background:#141B2D;border-radius:7px;padding:8px 12px" style-active="transform:scale(.97)">Invite staff</div></div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr 1.6fr .9fr 90px;padding:10px 20px;background:#FDFCFA;border-bottom:1px solid #E3E0D8;font:600 9.5px JetBrains Mono;letter-spacing:.12em;color:#5A6478"><span>PERSON</span><span>ROLE</span><span>CAN DO</span><span>LAST ACTIVE</span><span></span></div>
+<sc-for list="{{ staff }}" as="s" hint-placeholder-count="5">
+<div style="padding:13px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:1.3fr 1fr 1.6fr .9fr 90px;gap:12px;align-items:center;font:400 13px Inter;color:#141B2D">
+<div><div style="font-weight:500">{{ s.name }}</div><div style="font:400 11.5px Inter;color:#5A6478;margin-top:2px">{{ s.email }}</div></div>
+<span style="font:600 11px Inter;color:{{ s.roleFg }};background:{{ s.roleBg }};border-radius:5px;padding:3px 8px;justify-self:start">{{ s.role }}</span>
+<span style="font-size:12.5px;color:#5A6478">{{ s.perms }}</span>
+<span style="font-size:12px;color:#5A6478">{{ s.active }}</span>
+<span style="font:600 12px Inter;color:#5E1A2B;cursor:pointer;justify-self:end">Edit</span>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;margin-top:14px;overflow:hidden">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E0D8;display:flex;justify-content:space-between;align-items:center"><div style="font:600 14px Inter;color:#141B2D">Audit ledger</div><span style="font:500 11.5px Inter;color:#5A6478">append-only · exportable · 7-year retention</span></div>
+<sc-for list="{{ audit }}" as="a" hint-placeholder-count="8">
+<div style="padding:11px 20px;border-bottom:1px solid #F0EEE8;display:grid;grid-template-columns:150px 130px 1fr 130px;gap:14px;align-items:center;font:400 12.5px Inter;color:#141B2D">
+<span style="font-family:JetBrains Mono;font-size:11.5px;color:#5A6478">{{ a.at }}</span>
+<span style="font:600 11px Inter;color:{{ a.tagFg }};background:{{ a.tagBg }};border-radius:5px;padding:3px 8px;justify-self:start">{{ a.tag }}</span>
+<span>{{ a.what }}</span>
+<span style="color:#5A6478">{{ a.who }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAnalytics }}" hint-placeholder-val="{{ false }}">
+<div style="animation:ad-in 220ms ease-out">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<sc-for list="{{ analyticsKpis }}" as="k" hint-placeholder-count="4">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px"><div style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">{{ k.label }}</div><div style="font:600 25px Inter;color:#141B2D;margin-top:9px;letter-spacing:-.02em">{{ k.value }}</div><div style="font:500 11.5px Inter;color:{{ k.deltaColor }};margin-top:6px">{{ k.delta }}</div></div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">Retention by cohort — weeks since signup</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-top:16px">
+<sc-for list="{{ cohorts }}" as="c" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:74px repeat(6,1fr);gap:5px;align-items:center">
+<span style="font:400 11.5px JetBrains Mono;color:#5A6478">{{ c.label }}</span>
+<sc-for list="{{ c.cells }}" as="v" hint-placeholder-count="6">
+<div style="height:30px;border-radius:4px;background:{{ v.bg }};display:flex;align-items:center;justify-content:center;font:600 10.5px JetBrains Mono;color:{{ v.fg }}">{{ v.label }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:18px 20px">
+<div style="font:600 14px Inter;color:#141B2D">What advocates actually do</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+<sc-for list="{{ usage }}" as="u" hint-placeholder-count="6">
+<div>
+<div style="display:flex;justify-content:space-between;font:400 12.5px Inter;color:#141B2D"><span>{{ u.label }}</span><span style="font-family:JetBrains Mono;color:#5A6478">{{ u.value }}</span></div>
+<div style="height:8px;border-radius:5px;background:#EFEDE7;overflow:hidden;margin-top:6px"><div style="width:{{ u.pct }};height:100%;background:{{ u.color }}"></div></div>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:16px;padding-top:14px;border-top:1px solid #E3E0D8;font:400 12.5px/1.6 Inter;color:#5A6478">Advocates who open two briefings in their first week retain at 78% in month three. Everything else correlates weakly. That is the metric to move.</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const SECTIONS = [
+  { id: 'overview', label: 'Overview', title: 'Overview', sub: 'Wednesday 30 July 2026 · production · all times IST', path: 'M4 13h6V4H4zM14 20h6V9h-6zM4 20h6v-4H4zM14 6h6V4h-6z' },
+  { id: 'queue', label: 'Enrolment queue', title: 'Enrolment verification queue', sub: 'Bar Council rolls have no public API — a person checks every number', path: 'M9 11l2 2 4-4M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z' },
+  { id: 'users', label: 'Advocates', title: 'Advocates', sub: '1,284 accounts · 812 verified · 23 pending · 14 rejected', path: 'M16 20v-2a4 4 0 0 0-8 0v2M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z' },
+  { id: 'briefings', label: 'Briefings', title: 'Briefing engine', sub: 'The wedge. Generated nightly at 21:00 for every listed hearing', path: 'M12 3l7 4v5c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V7z' },
+  { id: 'citations', label: 'Citation monitor', title: 'Citation monitor', sub: 'Verification failure rate is our most important health metric', path: 'M12 9v4M12 17h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z' },
+  { id: 'corpus', label: 'Corpus & ingestion', title: 'Corpus and ingestion', sub: 'What we have indexed, how fresh it is, and where the gaps are', path: 'M4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 7c0 1.7 3.6 3 8 3s8-1.3 8-3-3.6-3-8-3-8 1.3-8 3z' },
+  { id: 'spend', label: 'LLM spend & routing', title: 'LLM spend and model routing', sub: 'Spot a runaway cost the same day it happens', path: 'M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' },
+  { id: 'billing', label: 'Subscriptions', title: 'Subscriptions and billing', sub: 'Starter Rs.799 · Professional Rs.1,999 · Expert Rs.3,499 · Firm on invoice', path: 'M3 10h18M5 6h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z' },
+  { id: 'support', label: 'Support inbox', title: 'Support inbox', sub: 'Every ticket arrives with the advocate\u2019s context already attached', path: 'M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' },
+  { id: 'push', label: 'Push campaigns', title: 'Push campaigns', sub: 'Product news only — briefing pushes are transactional and automatic', path: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0' },
+  { id: 'controls', label: 'Platform controls', title: 'Platform controls', sub: 'Maintenance mode, kill switches and feature flags — all immediate', path: 'M18.4 12a6.4 6.4 0 0 0 0-1l2-1.5-2-3.5-2.4 1a6.4 6.4 0 0 0-.9-.5L14.7 4h-4l-.4 2.5a6.4 6.4 0 0 0-.9.5l-2.4-1-2 3.5L7 11a6.4 6.4 0 0 0 0 1l-2 1.5 2 3.5 2.4-1c.3.2.6.4.9.5l.4 2.5h4l.4-2.5c.3-.1.6-.3.9-.5l2.4 1 2-3.5z' },
+  { id: 'staff', label: 'Staff & audit', title: 'Staff, roles and audit ledger', sub: 'Every privileged action is written down, permanently', path: 'M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 8v6M22 11h-6' },
+  { id: 'analytics', label: 'Analytics', title: 'Analytics', sub: 'Retention, activation and the one metric that predicts both', path: 'M4 20V10M10 20V4M16 20v-7M22 20H2' }
+];
+
+const QUEUE = [
+  { id: 1, name: 'Ananya Sharma', enrol: 'D/1842/2013', state: 'Delhi', age: '2 days', email: 'ananya.sharma@advocate.in', phone: '+91 98110 24417', joined: '28 Jul 2026' },
+  { id: 2, name: 'Vikram Iyer', enrol: 'MAH/9921/2009', state: 'Bombay', age: '2 days', email: 'vikram.iyer@lawmail.in', phone: '+91 98204 11902', joined: '28 Jul 2026' },
+  { id: 3, name: 'Rehana Qureshi', enrol: 'UP/04412/2018', state: 'Allahabad', age: '3 days', email: 'rehana.q@gmail.com', phone: '+91 94150 77321', joined: '27 Jul 2026' },
+  { id: 4, name: 'S. Karthikeyan', enrol: 'TN/1188/2021', state: 'Madras', age: '3 days', email: 's.karthikeyan@advocate.in', phone: '+91 90031 44218', joined: '27 Jul 2026' },
+  { id: 5, name: 'Pooja Nair', enrol: 'KER/2290/2016', state: 'Kerala', age: '4 days', email: 'pooja.nair@chambers.in', phone: '+91 98470 33110', joined: '26 Jul 2026' },
+  { id: 6, name: 'Devendra Patil', enrol: 'MAH/3310/2004', state: 'Bombay', age: '4 days', email: 'd.patil@patilassociates.in', phone: '+91 98220 55471', joined: '26 Jul 2026' }
+];
+
+const TICKETS = [
+  { id: 1, subject: 'Briefing did not arrive last night', who: 'Vikram Iyer', plan: 'Professional', age: '40 m', first: 'Vikram',
+    body: 'I had a bail matter listed this morning at the Bombay City Civil and Sessions Court and no briefing came. I checked at 6 am and again at 8. The matter is over now. This is the second time this month and I rely on it.' },
+  { id: 2, subject: 'Citation in my draft could not be verified', who: 'Rehana Qureshi', plan: 'Starter', age: '2 h', first: 'Rehana',
+    body: 'The draft returned a case I cannot find in SCC. I removed it, but I want to know how this happened before I use the drafting feature again.' },
+  { id: 3, subject: 'Hindi draft clipped the matras when I exported PDF', who: 'Pooja Nair', plan: 'Expert', age: '5 h', first: 'Pooja',
+    body: 'On export to PDF the Devanagari text loses the upper matras on two lines. On screen it is correct. Attaching the file.' },
+  { id: 4, subject: 'Refund for duplicate charge', who: 'S. Karthikeyan', plan: 'Professional', age: '1 d', first: 'Karthikeyan',
+    body: 'I was charged twice on 12 July, Rs.1,999 each. One of them should be reversed.' },
+  { id: 5, subject: 'Can I add my junior to my account?', who: 'Devendra Patil', plan: 'Expert', age: '2 d', first: 'Devendra',
+    body: 'My junior prepares first drafts. Can he log in under my subscription, or do we need the firm plan?' }
+];
+
+class Component extends DCLogic {
+  state = {
+    section: 'overview', selected: 1, queueOut: [], decided: [],
+    maintenance: false, incident: false, ticket: 1, userFilter: 'all',
+    kills: { search: true, drafting: true, briefings: true, cnr: false, signup: true },
+    flags: { hindiDrafts: 40, cnrLookup: 15, firmPlan: 5, voiceNotes: 0, threeStates: 100, offlineDrafts: 70 },
+    blocks: { lastOrder: true, pending: true, authorities: true, checklist: true },
+    coupons: { LAUNCH50: true, BARCOUNCIL: true, WINBACK: false },
+    routing: { search: 'haiku', briefings: 'sonnet', drafting: 'sonnet', verify: 'haiku' },
+    audiences: ['professional'], exported: 12, failedBriefings: 18, pushSent: false, reindexing: false
+  };
+
+  go(id) { this.setState({ section: id }); }
+
+  renderVals() {
+    const s = this.state;
+    const seal = '#5E1A2B', ink = '#141B2D', green = '#1F6F4A', amber = '#B4690E', red = '#9E2A33', mutedFg = 'rgba(251,250,247,.66)';
+    const sec = SECTIONS.filter((x) => x.id === s.section)[0] || SECTIONS[0];
+    const queue = QUEUE.filter((q) => s.queueOut.indexOf(q.id) === -1);
+    const sel = queue.filter((q) => q.id === s.selected)[0] || queue[0];
+    const ticket = TICKETS.filter((t) => t.id === s.ticket)[0] || TICKETS[0];
+    const badges = { queue: queue.length, support: TICKETS.length, citations: s.exported };
+    const audienceSizes = { all: '1,284', professional: '612', starter: '498', expert: '174', unverified: '23' };
+
+    const heights = [42, 48, 54, 61, 58, 66, 44, 38, 70, 74, 78, 66, 52, 88];
+
+    return {
+      nav: SECTIONS.map((x) => {
+        const active = x.id === s.section;
+        const badge = badges[x.id];
+        return {
+          label: x.label, path: x.path, go: () => this.go(x.id),
+          bg: active ? 'rgba(251,250,247,.11)' : 'transparent',
+          edge: active ? '#E8C86A' : 'transparent',
+          fg: active ? '#FBFAF7' : 'rgba(251,250,247,.68)',
+          icon: active ? '#E8C86A' : 'rgba(251,250,247,.55)',
+          font: active ? '600 12.5px Inter' : '500 12.5px Inter',
+          hasBadge: !!badge, badge: badge ? String(badge) : '',
+          badgeBg: x.id === 'citations' ? red : seal
+        };
+      }),
+      sectionTitle: sec.title,
+      sectionSub: sec.sub,
+
+      isOverview: s.section === 'overview',
+      isQueue: s.section === 'queue',
+      isUsers: s.section === 'users',
+      isBriefings: s.section === 'briefings',
+      isCitations: s.section === 'citations',
+      isCorpus: s.section === 'corpus',
+      isSpend: s.section === 'spend',
+      isBilling: s.section === 'billing',
+      isSupport: s.section === 'support',
+      isPush: s.section === 'push',
+      isControls: s.section === 'controls',
+      isStaff: s.section === 'staff',
+      isAnalytics: s.section === 'analytics',
+
+      maintenanceOn: s.maintenance,
+      toggleMaintenance: () => this.setState({ maintenance: !s.maintenance }),
+      modeHeadline: s.maintenance ? 'Lawmind is in maintenance mode' : 'Lawmind is live and serving advocates',
+      maintCta: s.maintenance ? 'Return to live' : 'Enter maintenance mode',
+      maintSub: s.maintenance ? 'Writes are queued' : 'Reads stay available',
+      maintBg: s.maintenance ? '#1F6F4A' : 'rgba(251,250,247,.1)',
+      maintEdge: s.maintenance ? '#1F6F4A' : 'rgba(251,250,247,.28)',
+      maintFg: '#FBFAF7',
+      maintSubFg: 'rgba(251,250,247,.7)',
+
+      incident: s.incident,
+      toggleIncident: () => this.setState({ incident: !s.incident }),
+      incidentLabel: s.incident ? 'Incident open · citation failures' : 'No open incidents',
+      incidentBg: s.incident ? '#FBF0DF' : '#fff',
+      incidentEdge: s.incident ? 'rgba(180,105,14,.45)' : '#E3E0D8',
+      incidentFg: s.incident ? '#8A5109' : '#5A6478',
+      incidentDot: s.incident ? amber : '#4FBF8B',
+
+      kpis: [
+        { label: 'ACTIVE ADVOCATES', value: '1,284', delta: '▲ 82 this week', deltaColor: green },
+        { label: 'BRIEFINGS TONIGHT', value: '1,284', delta: 'run starts 21:00', deltaColor: '#5A6478' },
+        { label: 'SEARCHES TODAY', value: '4,204', delta: '▲ 11% vs last Wed', deltaColor: green },
+        { label: 'CITATION FAILURES', value: '3.4%', delta: '▲ above 2.5% threshold', deltaColor: red },
+        { label: 'MRR', value: 'Rs.18.4L', delta: '▲ 9% MoM', deltaColor: green }
+      ],
+      healthBars: heights.map((h) => ({ a: Math.round(h * 0.62) + 'px', b: Math.round(h * 1.15) + 'px' })),
+      actions: [
+        { title: 'Enrolment numbers awaiting a human', sub: 'Oldest has waited 4 days', count: String(queue.length), countColor: seal, edge: 'rgba(94,26,43,.3)', bg: '#F3E7EA', go: () => this.go('queue') },
+        { title: 'Unverified citations already exported', sub: 'These left the building in drafts', count: String(s.exported), countColor: red, edge: 'rgba(158,42,51,.3)', bg: '#FBF0DF', go: () => this.go('citations') },
+        { title: 'Briefings that failed last night', sub: 'Retry before this evening\u2019s run', count: String(s.failedBriefings), countColor: amber, edge: '#E3E0D8', bg: '#fff', go: () => this.go('briefings') },
+        { title: 'Support tickets open', sub: 'One is about a missed briefing', count: String(TICKETS.length), countColor: ink, edge: '#E3E0D8', bg: '#fff', go: () => this.go('support') }
+      ],
+      activity: [
+        { time: '11:42:08', tag: 'BRIEFING', tagFg: '#fff', tagBg: ink, text: 'Briefing opened 41 s after push · State v. Yadav', who: 'A. Sharma' },
+        { time: '11:41:55', tag: 'VERIFY FAIL', tagFg: '#fff', tagBg: red, text: '2026 INSC 411 not found in corpus · surfaced in search', who: 'system' },
+        { time: '11:40:12', tag: 'DRAFT', tagFg: '#8A5109', tagBg: '#FBF0DF', text: 'AI mark removed after two confirmations · bail application', who: 'V. Iyer' },
+        { time: '11:38:04', tag: 'SIGNUP', tagFg: '#fff', tagBg: green, text: 'New advocate · enrolment KER/3301/2019 queued', who: 'M. Thomas' },
+        { time: '11:36:47', tag: 'MATTER', tagFg: '#fff', tagBg: ink, text: 'CNR lookup resolved 9 of 12 past dates', who: 'R. Qureshi' },
+        { time: '11:35:19', tag: 'BILLING', tagFg: '#fff', tagBg: green, text: 'Upgrade Starter → Professional · UPI', who: 'S. Karthikeyan' }
+      ],
+
+      queue: queue.map((q) => ({
+        name: q.name, enrol: q.enrol, state: q.state, age: q.age,
+        bg: q.id === (sel ? sel.id : 0) ? '#F3E7EA' : '#fff',
+        edge: q.id === (sel ? sel.id : 0) ? seal : 'transparent',
+        select: () => this.setState({ selected: q.id })
+      })),
+      queueCount: queue.length,
+      queueEmpty: queue.length === 0,
+      hasSelection: !!sel,
+      selName: sel ? sel.name : '',
+      selInitials: sel ? sel.name.split(' ').map((w) => w[0]).join('').slice(0, 2) : '',
+      selMeta: sel ? sel.email + ' · ' + sel.phone + ' · joined ' + sel.joined : '',
+      selEnrol: sel ? sel.enrol : '',
+      selAge: sel ? sel.age : '',
+      selFacts: sel ? [
+        { k: 'State bar council', v: sel.state, color: ink },
+        { k: 'Year of enrolment', v: sel.enrol.split('/')[2], color: ink },
+        { k: 'Format check', v: 'Valid for ' + sel.state, color: green },
+        { k: 'Duplicate in system', v: sel.name === 'Pooja Nair' ? 'Possible match' : 'None', color: sel.name === 'Pooja Nair' ? amber : green }
+      ] : [],
+      selSignals: [
+        { dot: green, text: '12 matters added, all consistent with the claimed jurisdiction' },
+        { dot: green, text: 'CNR lookups resolved for 9 of 12 matters — appears as counsel on 7' },
+        { dot: '#C9C5B9', text: 'No ID document uploaded — optional at signup' }
+      ],
+      approve: () => this.setState({
+        queueOut: s.queueOut.concat([sel ? sel.id : 0]),
+        decided: [{ at: '30 Jul 11:44', text: 'Approved ' + (sel ? sel.name : '') + ' · ' + (sel ? sel.enrol : ''), by: 'R. Nambiar' }].concat(s.decided)
+      }),
+      reject: () => this.setState({
+        queueOut: s.queueOut.concat([sel ? sel.id : 0]),
+        decided: [{ at: '30 Jul 11:44', text: 'Rejected ' + (sel ? sel.name : '') + ' · access retained, badge withheld', by: 'R. Nambiar' }].concat(s.decided)
+      }),
+      requestDoc: () => this.setState({
+        decided: [{ at: '30 Jul 11:44', text: 'Requested ID document from ' + (sel ? sel.name : ''), by: 'R. Nambiar' }].concat(s.decided)
+      }),
+      decisions: s.decided.length ? s.decided : [
+        { at: '30 Jul 09:12', text: 'Approved Meera Thomas · KER/3301/2019', by: 'R. Nambiar' },
+        { at: '29 Jul 18:40', text: 'Rejected A. Prasad · number belongs to another person', by: 'S. Bhatt' },
+        { at: '29 Jul 15:02', text: 'Requested ID document from N. Gill', by: 'S. Bhatt' }
+      ],
+
+      userKpis: [
+        { label: 'ACCOUNTS', value: '1,284', delta: '▲ 82 this week', deltaColor: green },
+        { label: 'VERIFIED', value: '812', delta: '63% of accounts', deltaColor: '#5A6478' },
+        { label: 'WEEKLY ACTIVE', value: '58%', delta: '▲ 4 pts', deltaColor: green },
+        { label: 'CHURNED 30 D', value: '31', delta: '2.4% monthly', deltaColor: amber }
+      ],
+      userFilters: ['all', 'verified', 'pending', 'trial', 'churn risk'].map((f) => ({
+        label: f === 'all' ? 'All advocates' : f.charAt(0).toUpperCase() + f.slice(1),
+        pick: () => this.setState({ userFilter: f }),
+        fg: s.userFilter === f ? '#fff' : '#5A6478',
+        bg: s.userFilter === f ? ink : '#FBFAF7',
+        edge: s.userFilter === f ? ink : '#E3E0D8'
+      })),
+      userRowsLabel: 'Showing 8 of 1,284 · ' + (s.userFilter === 'all' ? 'no filter' : s.userFilter),
+      users: [
+        { name: 'Ananya Sharma', email: 'ananya.sharma@advocate.in', enrol: 'D/1842/2013', dot: amber, plan: 'Professional', planFg: '#fff', planBg: ink, matters: '12', searches: '148', seen: '2 m ago' },
+        { name: 'Vikram Iyer', email: 'vikram.iyer@lawmail.in', enrol: 'MAH/9921/2009', dot: amber, plan: 'Professional', planFg: '#fff', planBg: ink, matters: '31', searches: '286', seen: '18 m ago' },
+        { name: 'Meera Thomas', email: 'meera@thomaslaw.in', enrol: 'KER/3301/2019', dot: '#1F6F4A', plan: 'Expert', planFg: '#fff', planBg: seal, matters: '44', searches: '512', seen: '1 h ago' },
+        { name: 'S. Karthikeyan', email: 's.karthikeyan@advocate.in', enrol: 'TN/1188/2021', dot: amber, plan: 'Professional', planFg: '#fff', planBg: ink, matters: '9', searches: '61', seen: '3 h ago' },
+        { name: 'Rehana Qureshi', email: 'rehana.q@gmail.com', enrol: 'UP/04412/2018', dot: amber, plan: 'Starter', planFg: '#5A6478', planBg: '#EFEDE7', matters: '4', searches: '40', seen: '5 h ago' },
+        { name: 'Devendra Patil', email: 'd.patil@patilassociates.in', enrol: 'MAH/3310/2004', dot: amber, plan: 'Expert', planFg: '#fff', planBg: seal, matters: '58', searches: '390', seen: 'yesterday' },
+        { name: 'Pooja Nair', email: 'pooja.nair@chambers.in', enrol: 'KER/2290/2016', dot: amber, plan: 'Expert', planFg: '#fff', planBg: seal, matters: '22', searches: '204', seen: 'yesterday' },
+        { name: 'Harish Bhandari', email: 'hbhandari@lawmail.in', enrol: 'RAJ/0912/2011', dot: '#1F6F4A', plan: 'Starter', planFg: '#5A6478', planBg: '#EFEDE7', matters: '2', searches: '8', seen: '9 d ago' }
+      ],
+
+      exportedCount: s.exported,
+      notifyAffected: () => this.setState({ exported: 0, incident: true }),
+      assignCorpus: () => this.go('corpus'),
+      failBars: [16, 20, 14, 22, 18, 24, 21, 26, 29, 34, 44, 56, 72, 84].map((h) => ({
+        h: h + '%', color: h > 70 ? red : h > 44 ? amber : h > 40 ? seal : ink
+      })),
+      failing: [
+        { query: 'recovery memo without independent witness bail', cite: '(1997) 10 SCC 675', cause: 'Page mismatch', causeColor: amber, surface: 'Draft', n: '18', action: 'Fix record', act: () => this.go('corpus') },
+        { query: 'default bail chargesheet without FSL report', cite: '2026 INSC 411', cause: 'Not in corpus', causeColor: red, surface: 'Search', n: '41', action: 'Ingest', act: () => this.go('corpus') },
+        { query: 'maintenance quantum where wife is earning', cite: '2026 SCC OnLine Del 3902', cause: 'Not in corpus', causeColor: red, surface: 'Search', n: '33', action: 'Ingest', act: () => this.go('corpus') },
+        { query: 'anticipatory bail duration after chargesheet', cite: '(2020) 5 SCC 1', cause: 'Para not found', causeColor: amber, surface: 'Briefing', n: '22', action: 'Re-parse', act: () => this.go('corpus') },
+        { query: '498A quashing against married sister-in-law', cite: '2026 SCC OnLine SC 88', cause: 'Not in corpus', causeColor: red, surface: 'Search', n: '19', action: 'Ingest', act: () => this.go('corpus') }
+      ],
+
+      spendBars: heights.map((h, i) => ({
+        a: Math.round(h * 0.5) + 'px', b: Math.round(h * (i === 13 ? 1.5 : 0.62)) + 'px', c: Math.round(h * 0.3) + 'px',
+        briefColor: i === 13 ? red : '#7A2438'
+      })),
+      routing: [
+        { key: 'search', feature: 'Search synthesis', cost: 'Rs.0.98 / query' },
+        { key: 'briefings', feature: 'Briefing generation', cost: 'Rs.13.84 / doc' },
+        { key: 'drafting', feature: 'Draft generation', cost: 'Rs.24.80 / draft' },
+        { key: 'verify', feature: 'Citation verification', cost: 'Rs.0.10 / citation' }
+      ].map((r) => ({
+        feature: r.feature, cost: r.cost,
+        options: ['haiku', 'sonnet', 'opus'].map((m) => ({
+          name: m, pick: () => {
+            const next = Object.assign({}, s.routing); next[r.key] = m; this.setState({ routing: next });
+          },
+          fg: s.routing[r.key] === m ? '#fff' : '#5A6478',
+          bg: s.routing[r.key] === m ? ink : '#FBFAF7',
+          edge: s.routing[r.key] === m ? ink : '#E3E0D8'
+        }))
+      })),
+      caps: [
+        { name: 'Monthly LLM budget', sub: 'Hard stop, then degrade to cached search', value: 'Rs.4.00L', pct: '86%', color: amber, edit: () => {} },
+        { name: 'Per-advocate daily searches', sub: 'Above plan limit, abuse guard', value: '120', pct: '34%', color: ink, edit: () => {} },
+        { name: 'Briefing retries', sub: 'The runaway from this morning', value: '3', pct: '100%', color: red, edit: () => {} }
+      ],
+
+      failedBriefings: s.failedBriefings,
+      retryAll: () => this.setState({ failedBriefings: 0 }),
+      runNow: () => this.setState({ failedBriefings: 0 }),
+      runs: [
+        { night: '29 → 30 Jul', scope: 'All listed hearings, 30 Jul', gen: '1,266', failed: '18', failColor: red, cost: 'Rs.11,240', status: 'Completed', statusFg: '#8A5109', statusBg: '#FBF0DF' },
+        { night: '28 → 29 Jul', scope: 'All listed hearings, 29 Jul', gen: '1,204', failed: '2', failColor: '#5A6478', cost: 'Rs.9,840', status: 'Clean', statusFg: '#fff', statusBg: green },
+        { night: '27 → 28 Jul', scope: 'All listed hearings, 28 Jul', gen: '1,188', failed: '0', failColor: '#5A6478', cost: 'Rs.9,610', status: 'Clean', statusFg: '#fff', statusBg: green },
+        { night: '26 → 27 Jul', scope: 'Monday lists, 27 Jul', gen: '1,402', failed: '4', failColor: '#5A6478', cost: 'Rs.11,020', status: 'Clean', statusFg: '#fff', statusBg: green },
+        { night: '25 → 26 Jul', scope: 'Sunday — HC vacation benches', gen: '164', failed: '0', failColor: '#5A6478', cost: 'Rs.1,340', status: 'Clean', statusFg: '#fff', statusBg: green }
+      ],
+      blocks: [
+        { key: 'lastOrder', name: 'Last order and current posture', sub: 'Pulled from the matter timeline' },
+        { key: 'pending', name: 'Pending applications', sub: 'What is awaiting the court' },
+        { key: 'authorities', name: 'Authorities on live issues', sub: 'Each with verification state' },
+        { key: 'checklist', name: 'Preparation checklist', sub: 'Syncs back to the matter' }
+      ].map((b) => ({
+        name: b.name, sub: b.sub,
+        toggle: () => { const n = Object.assign({}, s.blocks); n[b.key] = !n[b.key]; this.setState({ blocks: n }); },
+        bg: s.blocks[b.key] ? '#fff' : '#FBF0DF',
+        edge: s.blocks[b.key] ? '#E3E0D8' : 'rgba(180,105,14,.4)',
+        trackBg: s.blocks[b.key] ? green : '#D9D5CB',
+        knobX: (s.blocks[b.key] ? 20 : 0) + 'px',
+        state: s.blocks[b.key] ? 'ON' : 'OFF',
+        stateFg: s.blocks[b.key] ? green : '#5A6478'
+      })),
+
+      reindexing: s.reindexing,
+      reindexLabel: s.reindexing ? 'Reindex running…' : 'Start full reindex',
+      reindex: () => this.setState({ reindexing: true }),
+      sources: [
+        { name: 'eCourts district services', kind: 'CNR, cause lists, order sheets', sync: '11:38 today', docs: '4,120', lag: '22 m', lagColor: '#5A6478', health: 'Healthy', healthFg: '#fff', healthBg: green, sync2: () => {} },
+        { name: 'Supreme Court judgments', kind: 'Reported and neutral citations', sync: '09:02 today', docs: '38', lag: '2 h', lagColor: '#5A6478', health: 'Healthy', healthFg: '#fff', healthBg: green, sync2: () => {} },
+        { name: 'High Court portals (24)', kind: 'Daily orders and judgments', sync: '06:14 today', docs: '612', lag: '5 h', lagColor: amber, health: '3 lagging', healthFg: '#8A5109', healthBg: '#FBF0DF', sync2: () => {} },
+        { name: 'SCC OnLine feed', kind: 'Licensed reporter citations', sync: 'yesterday 22:40', docs: '204', lag: '13 h', lagColor: red, health: 'Auth failing', healthFg: '#fff', healthBg: red, sync2: () => {} },
+        { name: 'Tribunals (NCLT, DRT, NGT)', kind: 'Orders', sync: '08:20 today', docs: '96', lag: '3 h', lagColor: '#5A6478', health: 'Healthy', healthFg: '#fff', healthBg: green, sync2: () => {} },
+        { name: 'Overruled / citator graph', kind: 'Set aside · partly · doubted', sync: '10:50 today', docs: '48', lag: '1 h', lagColor: '#5A6478', health: 'Healthy', healthFg: '#fff', healthBg: green, sync2: () => {} }
+      ],
+      coverage: [
+        { court: 'Supreme Court', pct: '99%', color: green },
+        { court: 'Delhi High Court', pct: '97%', color: green },
+        { court: 'Bombay High Court', pct: '94%', color: green },
+        { court: 'Allahabad High Court', pct: '86%', color: amber },
+        { court: 'District courts (Delhi)', pct: '78%', color: amber },
+        { court: 'District courts (rest of India)', pct: '41%', color: red }
+      ],
+
+      billingKpis: [
+        { label: 'MRR', value: 'Rs.18.4L', delta: '▲ 9% MoM', deltaColor: green },
+        { label: 'ARPU', value: 'Rs.1,434', delta: '▲ Rs.62', deltaColor: green },
+        { label: 'PAID CONVERSION', value: '41%', delta: 'from 14-day trial', deltaColor: '#5A6478' },
+        { label: 'FAILED PAYMENTS', value: '18', delta: 'UPI mandate lapses', deltaColor: amber },
+        { label: 'NET CHURN', value: '2.4%', delta: '▼ 0.6 pts', deltaColor: green }
+      ],
+      plans: [
+        { name: 'Starter', limits: '40 searches · 3 drafts · 5 matters · no briefings', price: 'Rs.799', subs: '498', churn: '4.1% churn', churnColor: amber, edit: () => {} },
+        { name: 'Professional', limits: '300 searches · 15 drafts · unlimited matters · briefings', price: 'Rs.1,999', subs: '612', churn: '1.8% churn', churnColor: green, edit: () => {} },
+        { name: 'Expert', limits: 'Unlimited · priority verification · 2 juniors', price: 'Rs.3,499', subs: '174', churn: '1.1% churn', churnColor: green, edit: () => {} },
+        { name: 'Firm (off-app)', limits: '5+ advocates · shared matters · invoiced', price: 'On invoice', subs: '11', churn: 'contract', churnColor: '#5A6478', edit: () => {} }
+      ],
+      coupons: ['LAUNCH50', 'BARCOUNCIL', 'WINBACK'].map((code) => ({
+        code: code,
+        detail: code === 'LAUNCH50' ? '50% off first 3 months · 214 redemptions' : code === 'BARCOUNCIL' ? 'Free month for verified enrolment · 88 redemptions' : 'Win-back, 40% off · paused',
+        toggle: () => { const n = Object.assign({}, s.coupons); n[code] = !n[code]; this.setState({ coupons: n }); },
+        trackBg: s.coupons[code] ? green : '#D9D5CB',
+        knobX: (s.coupons[code] ? 20 : 0) + 'px',
+        state: s.coupons[code] ? 'LIVE' : 'OFF',
+        stateFg: s.coupons[code] ? green : '#5A6478'
+      })),
+      newCoupon: () => {},
+      payments: [
+        { when: '30 Jul 11:36', who: 'S. Karthikeyan', plan: 'Professional', amount: 'Rs.1,999', method: 'UPI', state: 'Captured', stateFg: '#fff', stateBg: green },
+        { when: '30 Jul 10:04', who: 'Meera Thomas', plan: 'Expert', amount: 'Rs.3,499', method: 'Card', state: 'Captured', stateFg: '#fff', stateBg: green },
+        { when: '30 Jul 08:51', who: 'Harish Bhandari', plan: 'Starter', amount: 'Rs.799', method: 'UPI mandate', state: 'Failed', stateFg: '#fff', stateBg: red },
+        { when: '29 Jul 21:18', who: 'Devendra Patil', plan: 'Expert', amount: 'Rs.3,499', method: 'NetBanking', state: 'Captured', stateFg: '#fff', stateBg: green },
+        { when: '29 Jul 19:02', who: 'Pooja Nair', plan: 'Expert', amount: 'Rs.3,499', method: 'Card', state: 'Refunded', stateFg: '#8A5109', stateBg: '#FBF0DF' }
+      ],
+
+      tickets: TICKETS.map((t) => ({
+        subject: t.subject, who: t.who, plan: t.plan, age: t.age,
+        bg: t.id === ticket.id ? '#F3E7EA' : '#fff',
+        edge: t.id === ticket.id ? seal : 'transparent',
+        select: () => this.setState({ ticket: t.id })
+      })),
+      ticketCount: TICKETS.length,
+      ticketSubject: ticket.subject,
+      ticketMeta: ticket.who + ' · ' + ticket.plan + ' · opened ' + ticket.age + ' ago',
+      ticketBody: ticket.body,
+      ticketPlan: ticket.plan,
+      ticketFirstName: ticket.first,
+      resolveTicket: () => this.setState({ ticket: ticket.id === TICKETS.length ? 1 : ticket.id + 1 }),
+
+      audiences: [
+        { key: 'all', label: 'Everyone' }, { key: 'professional', label: 'Professional' },
+        { key: 'starter', label: 'Starter' }, { key: 'expert', label: 'Expert' }, { key: 'unverified', label: 'Unverified enrolment' }
+      ].map((a) => ({
+        label: a.label,
+        pick: () => this.setState({ audiences: [a.key] }),
+        fg: s.audiences[0] === a.key ? '#fff' : '#5A6478',
+        bg: s.audiences[0] === a.key ? seal : '#FBFAF7',
+        edge: s.audiences[0] === a.key ? seal : '#E3E0D8'
+      })),
+      audienceSize: audienceSizes[s.audiences[0]] || '1,284',
+      pushCta: s.pushSent ? 'Scheduled for 8:30 PM' : 'Schedule campaign',
+      sendPush: () => this.setState({ pushSent: true }),
+      campaigns: [
+        { title: 'Offline briefings are on by default', when: '24 Jul · Professional + Expert', sent: '786', open: '62%' },
+        { title: 'CNR lookup is in beta', when: '18 Jul · verified only', sent: '812', open: '54%' },
+        { title: 'Three overruled states now shown', when: '11 Jul · everyone', sent: '1,204', open: '48%' },
+        { title: 'Welcome to Lawmind', when: 'transactional · on signup', sent: '1,284', open: '91%' }
+      ],
+
+      kills: [
+        { key: 'search', name: 'Case law search', sub: 'Turning off shows the honest unavailable state' },
+        { key: 'drafting', name: 'Draft generation', sub: 'Existing drafts stay readable and editable' },
+        { key: 'briefings', name: 'Nightly briefing run', sub: 'Cached briefings remain available offline' },
+        { key: 'cnr', name: 'CNR lookup', sub: 'Manual matter entry is unaffected' },
+        { key: 'signup', name: 'New signups', sub: 'Existing advocates unaffected' }
+      ].map((k) => ({
+        name: k.name, sub: k.sub,
+        toggle: () => { const n = Object.assign({}, s.kills); n[k.key] = !n[k.key]; this.setState({ kills: n }); },
+        state: s.kills[k.key] ? 'LIVE' : 'OFF',
+        stateFg: s.kills[k.key] ? green : red,
+        trackBg: s.kills[k.key] ? green : red,
+        knobX: (s.kills[k.key] ? 20 : 0) + 'px'
+      })),
+      flags: [
+        { key: 'hindiDrafts', name: 'Hindi draft generation', sub: 'Devanagari body, English citations' },
+        { key: 'cnrLookup', name: 'CNR auto-import', sub: 'Pulls past dates and orders' },
+        { key: 'firmPlan', name: 'Firm plan in-app', sub: 'Currently sold off-app only' },
+        { key: 'voiceNotes', name: 'Voice notes on events', sub: 'Hindi dictation on hearing outcome' },
+        { key: 'threeStates', name: 'Three overruled states', sub: 'Set aside · partly set aside · doubted' },
+        { key: 'offlineDrafts', name: 'Offline draft editing', sub: 'Queued writes, sync on signal' }
+      ].map((f) => ({
+        name: f.name, sub: f.sub, pct: s.flags[f.key] + '%',
+        up: () => { const n = Object.assign({}, s.flags); n[f.key] = Math.min(100, n[f.key] + 5); this.setState({ flags: n }); },
+        down: () => { const n = Object.assign({}, s.flags); n[f.key] = Math.max(0, n[f.key] - 5); this.setState({ flags: n }); }
+      })),
+
+      inviteStaff: () => {},
+      staff: [
+        { name: 'R. Nambiar', email: 'rn@lawmind.in', role: 'Founder', roleFg: '#fff', roleBg: seal, perms: 'Everything, including billing and kill switches', active: 'now' },
+        { name: 'S. Bhatt', email: 'sb@lawmind.in', role: 'Verifier', roleFg: '#fff', roleBg: ink, perms: 'Enrolment queue, support inbox', active: '12 m ago' },
+        { name: 'A. Deshpande', email: 'ad@lawmind.in', role: 'Engineer', roleFg: '#fff', roleBg: ink, perms: 'Flags, routing, corpus, spend (read)', active: '1 h ago' },
+        { name: 'K. Menon', email: 'km@lawmind.in', role: 'Corpus', roleFg: '#5A6478', roleBg: '#EFEDE7', perms: 'Ingestion, citator graph, re-parse', active: '3 h ago' },
+        { name: 'T. Fernandes', email: 'tf@lawmind.in', role: 'Support', roleFg: '#5A6478', roleBg: '#EFEDE7', perms: 'Support inbox, grant allowances', active: 'yesterday' }
+      ],
+      audit: [
+        { at: '30 Jul 11:44:02', tag: 'ENROLMENT', tagFg: '#fff', tagBg: green, what: 'Approved D/1842/2013 · Ananya Sharma', who: 'R. Nambiar' },
+        { at: '30 Jul 11:12:38', tag: 'ROUTING', tagFg: '#fff', tagBg: ink, what: 'Briefing model sonnet → sonnet (retry cap 5 → 3)', who: 'A. Deshpande' },
+        { at: '30 Jul 10:41:19', tag: 'FLAG', tagFg: '#fff', tagBg: ink, what: 'hindi_drafts rollout 30% → 40%', who: 'A. Deshpande' },
+        { at: '30 Jul 09:58:44', tag: 'SUPPORT', tagFg: '#5A6478', tagBg: '#EFEDE7', what: 'Granted 20 free searches to R. Qureshi', who: 'T. Fernandes' },
+        { at: '30 Jul 09:12:07', tag: 'ENROLMENT', tagFg: '#fff', tagBg: green, what: 'Approved KER/3301/2019 · Meera Thomas', who: 'R. Nambiar' },
+        { at: '30 Jul 03:10:52', tag: 'DEPLOY', tagFg: '#8A5109', tagBg: '#FBF0DF', what: 'briefing-worker 1.4.2 — suspected retry regression', who: 'CI' },
+        { at: '29 Jul 22:40:11', tag: 'CORPUS', tagFg: '#5A6478', tagBg: '#EFEDE7', what: 'SCC OnLine sync failed — auth token expired', who: 'system' },
+        { at: '29 Jul 18:40:03', tag: 'ENROLMENT', tagFg: '#fff', tagBg: red, what: 'Rejected RAJ/1188/2015 — number belongs to another person', who: 'S. Bhatt' }
+      ],
+
+      analyticsKpis: [
+        { label: 'ACTIVATED (2 BRIEFINGS WK 1)', value: '54%', delta: '▲ 7 pts since onboarding change', deltaColor: green },
+        { label: 'M3 RETENTION', value: '78%', delta: 'activated cohort', deltaColor: green },
+        { label: 'M3 RETENTION', value: '31%', delta: 'non-activated cohort', deltaColor: red },
+        { label: 'HINDI UI SHARE', value: '38%', delta: '▲ 5 pts', deltaColor: green }
+      ],
+      cohorts: [
+        { label: 'Feb 2026', vals: [100, 82, 74, 71, 69, 68] },
+        { label: 'Mar 2026', vals: [100, 84, 76, 72, 70, 69] },
+        { label: 'Apr 2026', vals: [100, 79, 68, 62, 60, 0] },
+        { label: 'May 2026', vals: [100, 86, 78, 74, 0, 0] },
+        { label: 'Jun 2026', vals: [100, 88, 81, 0, 0, 0] },
+        { label: 'Jul 2026', vals: [100, 91, 0, 0, 0, 0] }
+      ].map((c) => ({
+        label: c.label,
+        cells: c.vals.map((v) => ({
+          label: v ? v + '%' : '—',
+          bg: v === 0 ? '#F7F5F0' : v > 85 ? '#1F6F4A' : v > 75 ? 'rgba(31,111,74,.72)' : v > 65 ? 'rgba(31,111,74,.45)' : 'rgba(180,105,14,.35)',
+          fg: v === 0 ? '#C9C5B9' : v > 75 ? '#fff' : '#141B2D'
+        }))
+      })),
+      usage: [
+        { label: 'Opened a briefing', value: '81%', pct: '81%', color: '#5E1A2B' },
+        { label: 'Ran a search', value: '74%', pct: '74%', color: '#141B2D' },
+        { label: 'Added a matter manually', value: '68%', pct: '68%', color: '#141B2D' },
+        { label: 'Generated a draft', value: '39%', pct: '39%', color: '#141B2D' },
+        { label: 'Used CNR lookup', value: '16%', pct: '16%', color: '#C9A227' },
+        { label: 'Removed the AI mark', value: '11%', pct: '11%', color: '#C9A227' }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

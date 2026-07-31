@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#EFEDE7;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;align-items:flex-start;justify-content:center;padding:24px 0}
+a{color:#C9A227}a:hover{color:#8A6E14}
+@keyframes lm-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes lm-push{from{opacity:.4;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes lm-up{from{opacity:.5;transform:translateY(40px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes lm-seal{0%{opacity:0;transform:scale(.6) rotate(-14deg)}55%{opacity:1;transform:scale(1.1) rotate(3deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes lm-ring{0%{opacity:.7;transform:scale(.7)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes lm-spin{to{transform:rotate(360deg)}}
+@keyframes lm-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes lm-shimmer{0%{background-position:-260px 0}100%{background-position:320px 0}}
+@keyframes lm-pop{0%{transform:scale(.5)}60%{transform:scale(1.16)}100%{transform:scale(1)}}
+@keyframes lm-toast{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes lm-hap{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+@keyframes lm-gild{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes lm-stagger{from{opacity:0;transform:translate3d(0,18px,0)}to{opacity:1;transform:none}}
+@keyframes lm-shimmer{0%{background-position:-140% 0}100%{background-position:240% 0}}
+@keyframes lm-live{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:.5}}
+@keyframes lm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes lm-border-orbit{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes lm-draw{from{stroke-dashoffset:34}to{stroke-dashoffset:0}}
+@keyframes lm-ring-out{0%{transform:scale(.7);opacity:.55}100%{transform:scale(2.1);opacity:0}}
+.lm-press{transition:transform 160ms cubic-bezier(.22,1,.28,1),filter 160ms ease}
+.lm-press:active{transform:scale(.965);filter:brightness(.97)}
+.lm-stag{animation:lm-stagger .42s cubic-bezier(.22,1,.28,1) both}
+</style><script src="./lottie-mark.js"></script></helmet>
+
+<div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+<div style="display:flex;align-items:center;gap:12px">
+<svg width="30" height="30" viewBox="0 0 48 48" fill="none" style="flex:none"><rect x="1" y="1" width="46" height="46" rx="12" fill="#141B2D"></rect>
+<rect x="1" y="1" width="46" height="46" rx="12" stroke="rgba(232,200,106,.34)"></rect><g transform="translate(24 24) scale(0.0672) translate(-386 -296)"><path d="M175.7,446.3C175.7,446.3 385.5,446.3 385.5,446.3C383.1,438.5 375.9,432.8 367.3,432.8C367.3,432.8 193.9,432.8 193.9,432.8C185.3,432.8 178.1,438.5 175.7,446.3Z" fill="#F0D793"></path><path d="M392.3,458.3C392.3,458.3 168.9,458.3 168.9,458.3C165.6,458.3 162.9,455.6 162.9,452.3C162.9,452.3 162.9,451.7 162.9,451.7C162.9,434.7 176.8,420.8 193.9,420.8C193.9,420.8 367.3,420.8 367.3,420.8C384.4,420.8 398.3,434.7 398.3,451.7C398.3,451.7 398.3,452.3 398.3,452.3C398.3,455.6 395.6,458.3 392.3,458.3Z" fill="#F0D793"></path><path d="M208.1,420.8C208.1,420.8 353.1,420.8 353.1,420.8C350.7,413.0 343.5,407.3 334.9,407.3C334.9,407.3 226.2,407.3 226.2,407.3C217.7,407.3 210.5,413.0 208.1,420.8Z" fill="#F0D793"></path><path d="M359.9,432.8C359.9,432.8 201.3,432.8 201.3,432.8C198.0,432.8 195.3,430.1 195.3,426.8C195.3,426.8 195.3,426.3 195.3,426.3C195.3,409.2 209.2,395.3 226.2,395.3C226.2,395.3 334.9,395.3 334.9,395.3C352.0,395.3 365.9,409.2 365.9,426.3C365.9,426.3 365.9,426.8 365.9,426.8C365.9,430.1 363.2,432.8 359.9,432.8Z" fill="#F0D793"></path><path d="M392.3,452.3C392.3,452.3 168.9,452.3 168.9,452.3C168.9,452.3 168.9,451.7 168.9,451.7C168.9,438.0 180.1,426.8 193.9,426.8C193.9,426.8 367.3,426.8 367.3,426.8C381.1,426.8 392.3,438.0 392.3,451.7C392.3,451.7 392.3,452.3 392.3,452.3Z" fill="#E8C86A"></path><path d="M359.9,426.8C359.9,426.8 201.3,426.8 201.3,426.8C201.3,426.8 201.3,426.3 201.3,426.3C201.3,412.5 212.5,401.3 226.2,401.3C226.2,401.3 334.9,401.3 334.9,401.3C348.7,401.3 359.9,412.5 359.9,426.3C359.9,426.3 359.9,426.8 359.9,426.8Z" fill="#F0D793"></path><path d="M582.9,366.3C580.1,366.3 577.4,365.8 574.7,364.9C574.7,364.9 348.2,288.4 348.2,288.4C345.1,287.3 343.4,283.9 344.4,280.8C345.5,277.7 348.9,276.0 352.1,277.0C352.1,277.0 578.5,353.5 578.5,353.5C582.0,354.7 585.7,354.5 589.0,352.8C592.2,351.2 594.7,348.3 595.8,344.8C596.9,341.3 596.6,337.6 594.9,334.4C593.2,331.1 590.3,328.8 586.8,327.7C586.8,327.7 357.6,260.1 357.6,260.1C354.4,259.2 352.6,255.8 353.5,252.7C354.4,249.5 357.8,247.7 360.9,248.6C360.9,248.6 590.3,316.2 590.3,316.2C596.9,318.2 602.3,322.7 605.5,328.8C608.7,334.9 609.3,341.9 607.2,348.5C605.1,355.1 600.5,360.4 594.4,363.5C590.7,365.3 586.8,366.3 582.9,366.3Z" fill="#C9A227"></path><path d="M344.3,306.9C343.7,306.9 343.1,306.8 342.5,306.6C339.3,305.6 337.6,302.2 338.6,299.0C338.6,299.0 358.4,237.3 358.4,237.3C359.5,234.1 362.8,232.4 366.0,233.4C369.1,234.4 370.9,237.8 369.9,241.0C369.9,241.0 350.0,302.7 350.0,302.7C349.2,305.3 346.8,306.9 344.3,306.9Z" fill="#C9A227"></path><path d="M235.0,299.0C228.5,314.0 237.4,321.0 237.4,321.0C237.4,321.0 322.2,347.9 322.2,347.9C322.2,347.9 333.0,321.0 333.0,321.0C333.0,321.0 241.5,284.0 235.0,299.0Z" fill="#F0D793"></path><path d="M384.0,174.5C384.0,174.5 286.0,148.0 286.0,148.0C286.0,148.0 285.5,146.5 276.0,171.5C266.5,196.5 366.0,214.0 366.0,214.0C366.0,214.0 384.0,174.5 384.0,174.5Z" fill="#F0D793"></path><path d="M350.1,282.7C350.1,282.7 576.6,359.2 576.6,359.2C586.9,362.7 598.2,357.1 601.5,346.7C601.5,346.7 601.5,346.7 601.5,346.7C604.8,336.3 599.0,325.1 588.6,321.9C588.6,321.9 359.2,254.4 359.2,254.4C359.2,254.4 350.1,282.7 350.1,282.7Z" fill="#E8C86A"></path><path d="M241.6,279.1C241.6,279.1 249.5,291.9 249.5,291.9C249.5,291.9 330.8,319.0 330.8,319.0C330.8,319.0 344.3,300.9 344.3,300.9C344.3,300.9 364.1,239.1 364.1,239.1C364.1,239.1 363.7,216.7 363.7,216.7C363.7,216.7 282.2,190.2 282.2,190.2C282.2,190.2 268.3,195.9 268.3,195.9C268.3,195.9 241.6,279.1 241.6,279.1Z" fill="#E8C86A"></path></g></svg>
+<div><div style="font:600 12px JetBrains Mono,monospace;letter-spacing:.26em;color:#141B2D">LAWMIND</div><div style="font:400 10px Inter;color:rgba(20,27,45,.5);letter-spacing:.08em;margin-top:3px">TAPPABLE FLOW · TAP ANYTHING</div></div>
+<div style="display:flex;align-items:center;gap:6px;margin-left:8px;border:1px solid #E3E0D8;border-radius:9999px;padding:5px 10px;background:#fff">
+<sc-if value="{{ hapOn }}" hint-placeholder-val="{{ false }}">
+<span style="width:8px;height:8px;border-radius:9999px;background:#141B2D;animation:lm-hap 320ms ease-out"></span>
+</sc-if>
+<sc-if value="{{ hapOff }}" hint-placeholder-val="{{ true }}">
+<span style="width:8px;height:8px;border-radius:9999px;background:#D9D5CB"></span>
+</sc-if>
+<span style="font:600 9.5px JetBrains Mono;letter-spacing:.14em;color:#5A6478">HAPTIC</span>
+</div>
+</div>
+
+<div style="width:402px;height:874px;flex:none">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ frameW }}" height="{{ frameH }}" hint-size="402px,874px">
+<div style="min-height:100%;background:#FBFAF7;display:flex;flex-direction:column;position:relative">
+
+<sc-if value="{{ showToast }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:16px;right:16px;bottom:104px;z-index:40;background:#fff;border-radius:10px;padding:14px 16px;display:flex;gap:10px;align-items:center;box-shadow:0 8px 26px rgba(20,27,45,.34);animation:lm-toast 300ms cubic-bezier(.2,1.1,.3,1)">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E8C86A" stroke-width="2.2" style="flex:none"><path d="m20 6-11 11-5-5"></path></svg>
+<span style="font:500 14.5px/1.45 Inter;color:#141B2D;flex:1">{{ toast }}</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ showToday }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;flex-direction:column;animation:lm-in 180ms ease-out">
+<div style="padding:62px 20px 0;display:flex;justify-content:space-between;align-items:flex-start">
+<div>
+<div style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.18em;color:#C9A227;text-transform:uppercase">Wednesday, 29 July</div>
+<div style="font:600 27px/1.16 Inter;color:#141B2D;letter-spacing:-.02em;margin-top:8px">Good morning,<br>Adv. Sharma</div>
+</div>
+<div style="width:44px;height:44px;border-radius:9999px;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px Inter;color:#141B2D;flex:none;margin-top:4px">AS</div>
+</div>
+
+<div style="padding:20px 20px 0">
+<div class="lm-press" onClick="{{ openBriefing }}" style="cursor:pointer;position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#141B2D,#0F1626);box-shadow:0 8px 26px rgba(20,27,45,.28);transition:transform 180ms cubic-bezier(.2,.8,.3,1),box-shadow 180ms ease-out" style-hover="box-shadow:0 10px 30px rgba(20,27,45,.34);transform:translateY(-2px)" style-active="transform:scale(.985)">
+<div style="position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(232,200,106,.16),transparent 62%)"></div>
+<div style="position:absolute;top:-40%;left:-30%;width:60%;height:180%;background:linear-gradient(100deg,transparent,rgba(232,200,106,.13),transparent);transform:rotate(12deg);animation:lm-gild 5.5s ease-in-out infinite"></div>
+<div style="position:relative;padding:20px 20px 20px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start">
+<div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:9999px;background:#E8C86A"></span><div style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.2em;color:#E8C86A;text-transform:uppercase">Briefing · ready 9:12 pm</div></div>
+<div style="position:relative;width:36px;height:36px;flex:none">
+<div style="position:absolute;inset:-6px;border-radius:9999px;border:1.5px solid rgba(232,200,106,.7);animation:lm-ring 1.6s ease-out .3s"></div>
+<div style="width:36px;height:36px;border-radius:9999px;background:rgba(232,200,106,.14);border:1px solid rgba(232,200,106,.6);display:flex;align-items:center;justify-content:center;animation:lm-seal 420ms cubic-bezier(.2,1.2,.3,1)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8C86A" stroke-width="1.5"><path d="M12 3l7 4v5c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V7z"></path><path d="m9.2 12 2 2 3.6-3.8"></path></svg></div>
+</div>
+</div>
+<div style="font:500 23px/1.28 Lora,serif;color:#FBFAF7;margin:14px 0 8px;max-width:20ch">Tomorrow, 10:30 AM — bail application</div>
+<div style="font:400 15px/1.55 Inter;color:rgba(251,250,247,.7)">State v. Rakesh Yadav · Patiala House</div>
+<div style="height:52px;border-radius:9px;background:#E8C86A;color:#141B2D;display:flex;align-items:center;justify-content:center;gap:8px;font:600 16px Inter;margin-top:18px">Open briefing<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#141B2D" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"></path></svg></div>
+</div>
+</div>
+</div>
+
+<div style="padding:24px 20px 0">
+<div class="lm-press" onClick="{{ goSearch }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;height:50px;padding:0 14px;border:1px solid #E3E0D8;border-radius:8px;background:#fff" style-hover="border-color:#C9A227">
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4.3-4.3"></path></svg>
+<span style="font:400 16px Inter;color:rgba(20,27,45,.45)">Ask a question of the law…</span>
+</div>
+</div>
+
+<div style="padding:22px 20px 0">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><span style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.18em;color:rgba(20,27,45,.45);text-transform:uppercase">Next 7 days</span><span style="flex:1;height:1px;background:#E3E0D8"></span></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ hearings }}" as="h" hint-placeholder-count="3">
+<div class="lm-press" onClick="{{ h.open }}" style="cursor:pointer;background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:14px 16px;display:flex;gap:14px;align-items:baseline;transition:transform 160ms cubic-bezier(.2,.8,.3,1),border-color 160ms,box-shadow 160ms" style-hover="border-color:#C9C5B9;box-shadow:0 2px 10px #EFEDE7" style-active="transform:scale(.985)">
+<span style="font:600 13px Inter;color:#5A6478;width:58px;flex:none">{{ h.when }}</span>
+<div style="flex:1"><div style="font:500 16.5px/1.3 Lora,serif;color:#141B2D">{{ h.title }}</div><div style="font:400 13px Inter;color:#5A6478;margin-top:4px">{{ h.court }}</div></div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="flex:1;min-height:24px"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showSearch }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;animation:lm-in 180ms ease-out">
+<div style="padding:58px 20px 0">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font:600 22px Inter;color:#141B2D;letter-spacing:-.01em">Search the law</span>
+<div style="display:flex;background:#EFEDE7;border-radius:8px;padding:3px"><span style="font:600 13px Inter;color:#141B2D;background:#fff;border-radius:6px;padding:6px 12px">EN</span><span style="font:500 13px Inter;color:#5A6478;padding:6px 12px">हिं</span></div>
+</div>
+<div style="margin-top:18px;border:1.5px solid #C9A227;border-radius:10px;background:#fff;box-shadow:0 0 0 3px rgba(201,162,39,.09);padding:14px 15px;min-height:56px">
+<div style="font:400 16.5px/1.55 Inter;color:#141B2D">{{ query }}</div>
+</div>
+<div style="font:400 13px Inter;color:#5A6478;margin-top:9px">Tap a question to try it — this is a prototype, so the queries are canned.</div>
+<div style="display:flex;flex-direction:column;gap:9px;margin-top:16px">
+<sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+<div class="lm-press" onClick="{{ s.pick }}" style="cursor:pointer;background:#fff;border:1px solid #E3E0D8;border-radius:8px;padding:13px 14px;font:400 15px/1.5 Inter;color:#141B2D;transition:transform 150ms cubic-bezier(.2,.8,.3,1),border-color 150ms" style-hover="border-color:#C9A227" style-active="transform:scale(.985)">{{ s.text }}</div>
+</sc-for>
+</div>
+<div style="margin-top:20px;border-top:1px solid #E3E0D8;padding-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+<span style="font:500 13.5px Inter;color:#fff;background:#fff;border-radius:6px;padding:7px 11px">Criminal</span>
+<span style="font:500 13.5px Inter;color:#fff;background:#fff;border-radius:6px;padding:7px 11px">SC + HCs</span>
+<span style="font:500 13.5px Inter;color:#5A6478;background:#fff;border:1px solid #E3E0D8;border-radius:6px;padding:7px 11px">Any date</span>
+</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 20px 12px">
+<div class="lm-press" onClick="{{ runSearch }}" style="cursor:pointer;height:54px;border-radius:8px;background:#141B2D;color:#FBFAF7;display:flex;align-items:center;justify-content:center;font:600 16px Inter;box-shadow:0 4px 18px rgba(201,162,39,.22);transition:transform 140ms cubic-bezier(.2,.8,.3,1),box-shadow 140ms" style-active="transform:scale(.972);box-shadow:0 1px 4px rgba(201,162,39,.34)" style-hover="box-shadow:0 4px 14px rgba(201,162,39,.32)">Search</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showLoading }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1">
+<div style="padding:58px 20px 14px;border-bottom:1px solid #E3E0D8">
+<div style="font:400 15px/1.45 Inter;color:#141B2D">{{ query }}</div>
+<div style="display:flex;align-items:center;gap:9px;margin-top:6px"><lottie-mark src="assets/lawmind-ai.json" loop autoplay style="display:block;width:32px;height:32px;flex:none;margin-left:-5px"></lottie-mark><div style="height:2px;flex:1;background:#E3E0D8;border-radius:2px;overflow:hidden"><div style="width:46%;height:100%;background:#141B2D;animation:lm-pulse 900ms ease-in-out infinite"></div></div><span style="font:400 12.5px Inter;color:#5A6478">Reading 42 judgments</span></div>
+</div>
+<div style="padding:16px 20px 0;display:flex;flex-direction:column;gap:14px">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 17px 16px;background:linear-gradient(100deg,#fff 8%,#F4F1EA 30%,#fff 52%);background-size:520px 100%;animation:lm-shimmer 1.25s linear infinite"><div style="height:11px;width:44%;background:#EFEDE7;border-radius:3px"></div><div style="height:19px;width:76%;background:#EFEDE7;border-radius:3px;margin-top:12px"></div><div style="height:13px;width:100%;background:#EFEDE7;border-radius:3px;margin-top:14px"></div><div style="height:13px;width:90%;background:#EFEDE7;border-radius:3px;margin-top:7px"></div><div style="height:1px;background:#E3E0D8;margin:15px -17px 0"></div><div style="height:12px;width:110px;background:rgba(31,111,74,.2);border-radius:3px;margin-top:13px"></div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 17px 16px;opacity:.78;background:linear-gradient(100deg,#fff 8%,#F4F1EA 30%,#fff 52%);background-size:520px 100%;animation:lm-shimmer 1.25s linear .18s infinite"><div style="height:11px;width:38%;background:#EFEDE7;border-radius:3px"></div><div style="height:19px;width:66%;background:#EFEDE7;border-radius:3px;margin-top:12px"></div><div style="height:13px;width:100%;background:#EFEDE7;border-radius:3px;margin-top:14px"></div><div style="height:13px;width:82%;background:#EFEDE7;border-radius:3px;margin-top:7px"></div></div>
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 17px 16px;opacity:.5;background:linear-gradient(100deg,#fff 8%,#F4F1EA 30%,#fff 52%);background-size:520px 100%;animation:lm-shimmer 1.25s linear .36s infinite"><div style="height:11px;width:42%;background:#EFEDE7;border-radius:3px"></div><div style="height:19px;width:72%;background:#EFEDE7;border-radius:3px;margin-top:12px"></div><div style="height:13px;width:94%;background:#EFEDE7;border-radius:3px;margin-top:14px"></div></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showResults }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;animation:lm-in 180ms ease-out">
+<div style="position:sticky;top:0;z-index:5;background:rgba(251,250,247,.78);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid #E3E0D8;padding:58px 20px 14px;display:flex;gap:12px;align-items:flex-start">
+<svg onClick="{{ goSearch }}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141B2D" stroke-width="1.8" style="flex:none;margin-top:2px;cursor:pointer"><path d="M15 6l-6 6 6 6"></path></svg>
+<div style="flex:1"><div style="font:400 15px/1.45 Inter;color:#141B2D">{{ query }}</div><div style="font:400 12.5px Inter;color:#5A6478;margin-top:6px">{{ resultCount }} judgments · verified against the reported record</div></div>
+</div>
+<div style="padding:16px 20px 0;display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ results }}" as="r" hint-placeholder-count="4">
+<div class="lm-press" onClick="{{ r.open }}" style="cursor:pointer;background:#fff;border:1px solid #E3E0D8;border-radius:10px;box-shadow:0 1px 3px rgba(20,27,45,.08);overflow:hidden;transition:transform 170ms cubic-bezier(.2,.8,.3,1),border-color 170ms,box-shadow 170ms;animation:lm-in 380ms cubic-bezier(.2,.8,.3,1) both;animation-delay:{{ r.delay }}" style-hover="border-color:#C9C5B9;box-shadow:0 4px 16px #EFEDE7" style-active="transform:scale(.985)">
+<sc-if value="{{ r.overruled }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(180,105,14,.18);border-bottom:1px solid rgba(180,105,14,.28);padding:9px 17px;display:flex;gap:8px;align-items:center">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B4690E" stroke-width="2" style="flex:none"><path d="M12 9v4M12 17h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg>
+<span style="font:600 12.5px/1.35 Inter;color:#B4690E">{{ r.cautionText }}</span>
+</div>
+</sc-if>
+<div style="padding:15px 17px 16px">
+<div style="display:flex;justify-content:space-between;gap:10px"><span style="font:400 11.5px JetBrains Mono;color:#5A6478">{{ r.cite }}</span><span style="font:400 11.5px Inter;color:#5A6478">{{ r.court }}</span></div>
+<div style="font:500 19px/1.32 Lora,serif;color:#141B2D;margin:8px 0 8px">{{ r.title }}</div>
+<div style="font:400 15px/1.62 Inter;color:#5A6478">{{ r.holding }}</div>
+</div>
+<div style="border-top:1px solid #E3E0D8;background:#FDFCFA;padding:10px 17px;display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F6F4A" stroke-width="2"><path d="m20 6-11 11-5-5"></path></svg><span style="font:600 12px Inter;color:#1F6F4A">Citation verified</span></div>
+<span style="font:500 13px Inter;color:#C9A227">Read holding</span>
+</div>
+</div>
+</sc-for>
+<div style="height:24px"></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showJudgment }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;animation:lm-push 260ms cubic-bezier(.2,.8,.3,1)">
+<div style="position:sticky;top:0;z-index:5;background:rgba(251,250,247,.78);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid #E3E0D8;padding:58px 20px 12px;display:flex;justify-content:space-between;align-items:center">
+<svg onClick="{{ goResults }}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141B2D" stroke-width="1.8" style="cursor:pointer"><path d="M15 6l-6 6 6 6"></path></svg>
+<span style="font:500 14px Inter;color:#5A6478">Judgment</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141B2D" stroke-width="1.6"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M12 3v13M8 7l4-4 4 4"></path></svg>
+</div>
+
+<sc-if value="{{ judgmentOverruled }}" hint-placeholder-val="{{ false }}">
+<div style="background:#B4690E;padding:18px 24px 20px;display:flex;gap:11px;align-items:flex-start">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" style="flex:none;margin-top:1px"><path d="M12 9v4M12 17h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg>
+<div><div style="font:600 17px/1.35 Inter;color:#fff">These directions no longer hold</div><div style="font:400 15px/1.6 Inter;color:rgba(255,255,255,.92);margin-top:7px">{{ judgmentCaution }}</div></div>
+</div>
+</sc-if>
+
+<div style="padding:22px 24px 0">
+<div style="display:flex;align-items:center;gap:8px">
+<span style="width:18px;height:18px;border-radius:9999px;background:#1F6F4A;box-shadow:0 0 0 2px rgba(232,200,106,.6);display:flex;align-items:center;justify-content:center;flex:none"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4"><path d="m20 6-11 11-5-5"></path></svg></span>
+<span style="font:400 12px JetBrains Mono;color:#141B2D">{{ judgmentCite }}</span>
+<span style="font:400 12px Inter;color:#5A6478">· citation verified</span>
+</div>
+<div style="font:500 28px/1.22 Lora,serif;color:#141B2D;margin:14px 0 0">{{ judgmentTitle }}</div>
+<div style="font:400 13.5px/1.6 Inter;color:#5A6478;margin-top:12px;padding-bottom:18px;border-bottom:1.5px solid #141B2D">{{ judgmentBench }}</div>
+<div style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.18em;color:#C9A227;text-transform:uppercase;margin-top:22px">Holding</div>
+<div style="font:400 18px/1.72 Lora,serif;color:#141B2D;margin-top:12px">{{ judgmentHolding }}</div>
+<div style="margin-top:24px;background:#fff;border:1px solid #E3E0D8;border-left:3px solid #C9A227;border-radius:0 10px 10px 0;padding:18px">
+<div style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.16em;color:#C9A227;text-transform:uppercase">Operative paragraph</div>
+<div style="font:400 17px/1.78 Lora,serif;color:#141B2D;margin-top:12px;font-style:italic">{{ judgmentPara }}</div>
+</div>
+<div class="lm-press" onClick="{{ toggleFullText }}" style="cursor:pointer;margin-top:22px;border-top:1px solid #E3E0D8;padding:16px 0 0;display:flex;justify-content:space-between;align-items:center">
+<div><div style="font:600 16.5px Inter;color:#141B2D">Full text</div><div style="font:400 13px Inter;color:#5A6478;margin-top:2px">{{ fullTextMeta }}</div></div>
+<span style="font:600 14px Inter;color:#C9A227">{{ fullTextAction }}</span>
+</div>
+<sc-if value="{{ fullTextOpen }}" hint-placeholder-val="{{ false }}">
+<div style="font:400 16.5px/1.8 Lora,serif;color:#5A6478;margin-top:16px;animation:lm-in 160ms ease-out">1. Leave granted. The appellants are the brother-in-law and his wife, arrayed as accused nos. 3 and 4 in a complaint under Sections 498A and 34 IPC read with Sections 3 and 4 of the Dowry Prohibition Act, 1961…</div>
+</sc-if>
+<div style="height:110px"></div>
+</div>
+<div style="position:sticky;bottom:0;background:linear-gradient(to top,#FBFAF7 66%,rgba(13,15,26,0));padding:16px 24px 30px;display:flex;gap:10px">
+<div class="lm-press" onClick="{{ addToMatter }}" style="cursor:pointer;flex:1;height:54px;border-radius:8px;background:#141B2D;color:#FBFAF7;display:flex;align-items:center;justify-content:center;font:600 16px Inter;box-shadow:0 4px 18px rgba(201,162,39,.22)">Add to a matter</div>
+<div class="lm-press" onClick="{{ copyCitation }}" style="cursor:pointer;width:54px;height:54px;border-radius:8px;border:1px solid #E3E0D8;background:#fff;display:flex;align-items:center;justify-content:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141B2D" stroke-width="1.6"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h8"></path></svg></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showBriefing }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;background:#fff;animation:lm-up 380ms cubic-bezier(.2,.86,.3,1)">
+<div style="position:relative;overflow:hidden;padding:56px 24px 24px;border-bottom:1px solid rgba(20,27,45,.14)">
+<div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 100% 0%,rgba(201,162,39,.55),transparent 58%)"></div>
+<div style="position:relative">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span onClick="{{ goToday }}" style="cursor:pointer;font:500 15px Inter;color:rgba(20,27,45,.8)">Close</span>
+<div style="display:flex;align-items:center;gap:6px;border:1px solid rgba(232,200,106,.55);border-radius:9999px;padding:3px 9px;background:rgba(232,200,106,.1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E8C86A" stroke-width="2"><path d="m20 6-11 11-5-5"></path></svg><span style="font:500 11.5px Inter;color:#F0D793">Offline ready</span></div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;margin-top:20px">
+<div style="width:54px;height:54px;border-radius:9999px;background:#141B2D;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex:none;animation:lm-seal 280ms ease-out"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#141B2D" stroke-width="1.4"><path d="M12 3l7 4v5c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V7z"></path><path d="m9.2 12 2 2 3.6-3.8"></path></svg></div>
+<div><div style="font:500 24px/1.24 Lora,serif;color:#141B2D">State v. Rakesh Yadav</div><div style="font:400 12.5px JetBrains Mono;color:#5A6478;margin-top:8px">FIR 214/2024 · Item 14, Court 12</div></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(20,27,45,.14)">
+<div style="flex:1"><div style="font:400 11px Inter;color:rgba(20,27,45,.52)">Tomorrow</div><div style="font:600 16px Inter;color:#141B2D;margin-top:3px">10:30 AM</div></div>
+<div style="flex:1.4"><div style="font:400 11px Inter;color:rgba(20,27,45,.52)">Issue</div><div style="font:600 16px Inter;color:#141B2D;margin-top:3px">Bail u/s 439</div></div>
+<div style="flex:1"><div style="font:400 11px Inter;color:rgba(20,27,45,.52)">Read</div><div style="font:600 16px Inter;color:#141B2D;margin-top:3px">90 sec</div></div>
+</div>
+</div>
+</div>
+
+<div style="background:#FBFAF7;flex:1;padding:24px 24px 0">
+<div style="display:flex;align-items:center;gap:9px"><span style="width:14px;height:2px;background:#141B2D"></span><div style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.18em;color:#C9A227;text-transform:uppercase">01 · Where the matter stands</div></div>
+<div style="font:400 17px/1.72 Lora,serif;color:#141B2D;margin-top:12px">On 14 July the court declined to take the application on board for want of the IO's reply. The status report was filed on 24 July; it opposes bail on the recovery memo.</div>
+
+<div style="display:flex;align-items:center;gap:9px;margin-top:28px"><span style="width:14px;height:2px;background:#141B2D"></span><div style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.18em;color:#C9A227;text-transform:uppercase">02 · Authorities on the live issue</div></div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+<sc-for list="{{ briefingAuthorities }}" as="a" hint-placeholder-count="2">
+<div class="lm-press" onClick="{{ a.open }}" style="cursor:pointer;background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden;transition:transform 160ms cubic-bezier(.2,.8,.3,1),border-color 160ms,box-shadow 160ms" style-hover="border-color:#C9C5B9;box-shadow:0 3px 12px #EFEDE7" style-active="transform:scale(.985)">
+<div style="padding:14px 16px">
+<div style="font:400 11.5px JetBrains Mono;color:#5A6478">{{ a.cite }}</div>
+<div style="font:500 18px/1.3 Lora,serif;color:#141B2D;margin:6px 0 7px">{{ a.title }}</div>
+<div style="font:400 15px/1.6 Inter;color:#5A6478">{{ a.holding }}</div>
+</div>
+<div style="border-top:1px solid #E3E0D8;background:#FDFCFA;padding:9px 16px;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F6F4A" stroke-width="2"><path d="m20 6-11 11-5-5"></path></svg><span style="font:600 12px Inter;color:#1F6F4A">Citation verified</span></div><span style="font:500 13px Inter;color:#C9A227">Read holding</span></div>
+</div>
+</sc-for>
+</div>
+
+<div style="display:flex;align-items:center;gap:9px;margin-top:28px"><span style="width:14px;height:2px;background:#141B2D"></span><div style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.18em;color:#C9A227;text-transform:uppercase">03 · Before you go in — {{ checkedCount }} of 4 done</div></div>
+<div style="margin-top:12px;background:#fff;border:1px solid #E3E0D8;border-radius:10px;overflow:hidden">
+<sc-for list="{{ checklist }}" as="c" hint-placeholder-count="4">
+<div class="lm-press" onClick="{{ c.toggle }}" style="cursor:pointer;padding:14px 16px;display:flex;gap:12px;align-items:center;border-bottom:1px solid #E3E0D8;transition:background 150ms" style-hover="background:#FDFCFA" style-active="background:rgba(201,162,39,.1)">
+<sc-if value="{{ c.done }}" hint-placeholder-val="{{ false }}">
+<div style="width:22px;height:22px;border-radius:5px;background:#1F6F4A;display:flex;align-items:center;justify-content:center;flex:none;animation:lm-pop 300ms cubic-bezier(.2,1.3,.3,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="m20 6-11 11-5-5"></path></svg></div>
+</sc-if>
+<sc-if value="{{ c.todo }}" hint-placeholder-val="{{ true }}">
+<div style="width:22px;height:22px;border-radius:5px;border:1.5px solid #C9C5B9;flex:none"></div>
+</sc-if>
+<span style="font:400 15.5px/1.45 Inter;color:{{ c.color }};text-decoration:{{ c.strike }}">{{ c.label }}</span>
+</div>
+</sc-for>
+</div>
+<div style="height:110px"></div>
+</div>
+
+<div style="position:sticky;bottom:0;background:linear-gradient(to top,#FBFAF7 66%,rgba(13,15,26,0));padding:16px 24px 30px">
+<div class="lm-press" onClick="{{ markRead }}" style="cursor:pointer;height:54px;border-radius:8px;background:#141B2D;color:#FBFAF7;display:flex;align-items:center;justify-content:center;font:600 16px Inter;box-shadow:0 4px 18px rgba(201,162,39,.22);transition:transform 140ms cubic-bezier(.2,.8,.3,1),box-shadow 140ms" style-active="transform:scale(.972);box-shadow:0 1px 4px rgba(201,162,39,.34)" style-hover="box-shadow:0 4px 14px rgba(201,162,39,.32)">{{ briefingCta }}</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showMatters }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;animation:lm-in 180ms ease-out">
+<div style="padding:58px 20px 0;display:flex;justify-content:space-between;align-items:center">
+<span style="font:600 26px Inter;color:#141B2D;letter-spacing:-.02em">Matters</span>
+<div style="width:44px;height:44px;border-radius:8px;background:#141B2D;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></div>
+</div>
+<div style="padding:18px 20px 0;display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ matters }}" as="m" hint-placeholder-count="4">
+<div class="lm-press" onClick="{{ m.open }}" style="cursor:pointer;background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:15px 16px;transition:transform 160ms cubic-bezier(.2,.8,.3,1),border-color 160ms,box-shadow 160ms" style-hover="border-color:#C9C5B9;box-shadow:0 3px 12px #EFEDE7" style-active="transform:scale(.985)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><span style="font:600 11.5px Inter;color:#5A6478">{{ m.next }}</span><span style="font:400 11px JetBrains Mono;color:#5A6478">{{ m.cnr }}</span></div>
+<div style="font:500 19px/1.3 Lora,serif;color:#141B2D;margin:10px 0 7px">{{ m.title }}</div>
+<div style="font:400 13.5px/1.5 Inter;color:#5A6478">{{ m.court }} · {{ m.client }}</div>
+</div>
+</sc-for>
+<div style="height:24px"></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showMatter }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;animation:lm-in 180ms ease-out">
+<div style="background:#fff;padding:56px 22px 22px;position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;background:radial-gradient(110% 90% at 100% 0%,rgba(201,162,39,.4),transparent 62%)"></div>
+<div style="position:relative">
+<svg onClick="{{ goMatters }}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141B2D" stroke-width="1.8" style="cursor:pointer"><path d="M15 6l-6 6 6 6"></path></svg>
+<div style="font:500 25px/1.24 Lora,serif;color:#141B2D;margin-top:16px">{{ matterTitle }}</div>
+<div style="font:400 11.5px JetBrains Mono;color:rgba(232,200,106,.78);margin-top:9px">{{ matterCnr }}</div>
+<div style="display:flex;gap:14px;margin-top:18px;padding-top:16px;border-top:1px solid #D9D5CB">
+<div style="flex:1.3"><div style="font:400 11px Inter;color:rgba(232,200,106,.75)">Next hearing</div><div style="font:600 16px Inter;color:#F0D793;margin-top:3px">{{ matterNext }}</div></div>
+<div style="flex:1"><div style="font:400 11px Inter;color:rgba(20,27,45,.52)">Stage</div><div style="font:600 16px Inter;color:#141B2D;margin-top:3px">{{ matterStage }}</div></div>
+<div style="flex:1"><div style="font:400 11px Inter;color:rgba(20,27,45,.52)">Events</div><div style="font:600 16px Inter;color:#141B2D;margin-top:3px">{{ matterEvents }}</div></div>
+</div>
+</div>
+</div>
+<div style="padding:20px 22px 0">
+<div style="border-left:1.5px solid #E3E0D8;padding-left:20px;display:flex;flex-direction:column;gap:20px">
+<sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+<div style="position:relative">
+<div style="position:absolute;left:-25.5px;top:5px;width:9px;height:9px;border-radius:9999px;background:#C9C5B9"></div>
+<div style="font:600 11.5px JetBrains Mono;color:#5A6478">{{ t.date }}</div>
+<div style="font:600 16.5px Inter;color:#141B2D;margin-top:6px">{{ t.title }}</div>
+<div style="font:400 14.5px/1.6 Inter;color:#5A6478;margin-top:4px">{{ t.body }}</div>
+</div>
+</sc-for>
+</div>
+<div style="height:100px"></div>
+</div>
+<div style="position:sticky;bottom:0;background:linear-gradient(to top,#FBFAF7 66%,rgba(13,15,26,0));padding:16px 22px 30px">
+<div class="lm-press" onClick="{{ addEvent }}" style="cursor:pointer;height:54px;border-radius:8px;background:#141B2D;color:#FBFAF7;display:flex;align-items:center;justify-content:center;font:600 16px Inter;box-shadow:0 4px 18px rgba(201,162,39,.22);transition:transform 140ms cubic-bezier(.2,.8,.3,1),box-shadow 140ms" style-active="transform:scale(.972);box-shadow:0 1px 4px rgba(201,162,39,.34)" style-hover="box-shadow:0 4px 14px rgba(201,162,39,.32)">Add event</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showDrafts }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;animation:lm-in 180ms ease-out">
+<div style="padding:58px 20px 0"><div style="font:600 26px Inter;color:#141B2D;letter-spacing:-.02em">Drafts</div></div>
+<div style="padding:18px 20px 0">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><span style="font:600 10px/1 JetBrains Mono,monospace;letter-spacing:.18em;color:#C9A227;text-transform:uppercase">Start a document</span><span style="flex:1;height:1px;background:#E3E0D8"></span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ docTypes }}" as="d" hint-placeholder-count="6">
+<div class="lm-press" onClick="{{ d.pick }}" style="cursor:pointer;background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:14px;min-height:82px;display:flex;flex-direction:column;justify-content:space-between;transition:transform 150ms cubic-bezier(.2,.8,.3,1),border-color 150ms,box-shadow 150ms" style-hover="border-color:#C9A227;box-shadow:0 3px 12px rgba(201,162,39,.1)" style-active="transform:scale(.97)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5"><path d="M14 3v5h5"></path><path d="M5 5a2 2 0 0 1 2-2h7l6 6v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"></path></svg>
+<div style="font:600 15.5px/1.3 Inter;color:#141B2D">{{ d.name }}</div>
+</div>
+</sc-for>
+</div>
+<div style="height:24px"></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showGenerating }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px;text-align:center">
+<lottie-mark src="assets/lawmind-ai.json" loop autoplay style="display:block;width:150px;height:150px"></lottie-mark>
+<div style="font:500 21px/1.35 Lora,serif;color:#141B2D;margin-top:12px">Drafting your {{ draftTypeLower }}</div>
+<div style="font:400 14.5px/1.6 Inter;color:#5A6478;margin-top:10px">Pulling the facts from State v. Rakesh Yadav and verifying every citation before it reaches you.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showDraft }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;background:#EFEDE7;animation:lm-up 340ms cubic-bezier(.2,.86,.3,1)">
+<div style="position:sticky;top:0;z-index:5;background:rgba(251,250,247,.78);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid #E3E0D8;padding:58px 18px 12px;display:flex;justify-content:space-between;align-items:center">
+<span onClick="{{ goDrafts }}" style="cursor:pointer;font:500 15px Inter;color:#C9A227">Close</span>
+<span style="font:600 15px Inter;color:#141B2D">{{ draftType }}</span>
+<span style="font:500 15px Inter;color:#C9A227">Export</span>
+</div>
+<div style="padding:16px 14px 0">
+<div style="background:#fff;border:1px solid #E3E0D8;border-radius:6px;box-shadow:0 1px 3px rgba(20,27,45,.08);overflow:hidden;display:flex">
+<sc-if value="{{ markOn }}" hint-placeholder-val="{{ true }}">
+<div style="width:26px;flex:none;background:repeating-linear-gradient(135deg,#FBF0DF 0 6px,#F7E7CE 6px 12px);border-right:1px solid rgba(180,105,14,.28);display:flex;align-items:center;justify-content:center">
+<div style="font:600 8.5px JetBrains Mono;letter-spacing:.22em;color:#B4690E;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap">AI-ASSISTED DRAFT · VERIFY BEFORE FILING</div>
+</div>
+</sc-if>
+<div style="flex:1;padding:22px 18px 24px">
+<div style="text-align:center;font:500 13px/1.7 Lora,serif;color:#141B2D;text-transform:uppercase;letter-spacing:.06em;white-space:pre-line">{{ draftCourtLine }}</div>
+<div style="height:1px;background:#E3E0D8;margin:16px 0"></div>
+<div style="font:400 15px/1.75 Lora,serif;color:#141B2D">
+<div style="font-style:italic;white-space:pre-line;text-align:{{ draftPartiesAlign }}">{{ draftParties }}</div>
+<div style="text-align:center;font-weight:500;margin:18px 0 14px;letter-spacing:.02em;white-space:pre-line">{{ draftHeading }}</div>
+<sc-if value="{{ draftIsBail }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="margin-bottom:12px">1. The applicant is in judicial custody since 18.06.2026 in FIR No. 214/2024 registered at P.S. Tilak Marg for offences punishable under Sections 380 and 411 IPC.</div>
+<div style="margin-bottom:12px">2. The applicant was never arrested during investigation and appeared on every occasion in answer to notice under Section 41A CrPC. The case falls within Category B of <span style="background:rgba(31,111,74,.2);border-bottom:1.5px solid #1F6F4A;padding:1px 3px;border-radius:2px">Satender Kumar Antil v. CBI, (2022) 10 SCC 51</span>.</div>
+<div>3. The mandate of <span style="background:rgba(31,111,74,.2);border-bottom:1.5px solid #1F6F4A;padding:1px 3px;border-radius:2px">Arnesh Kumar v. State of Bihar, (2014) 8 SCC 273</span> was not complied with, no reasons having been recorded.</div>
+</div>
+</sc-if>
+<sc-if value="{{ draftIsNotice }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="margin-bottom:12px">1. That my client, Sh. Sunil Mehta, delivered goods to you against invoice no. 214 dated 12.03.2026 for a sum of Rs.14,20,000, receipt whereof stands admitted in your ledger.</div>
+<div style="margin-bottom:12px">2. That the cheque bearing no. 004521 drawn on Union Bank of India was returned unpaid with the endorsement "funds insufficient" on 02.07.2026.</div>
+<div>3. You are hereby called upon to pay the said sum within fifteen days of receipt hereof, failing which my client shall be constrained to initiate proceedings under Section 138 of the Negotiable Instruments Act, 1881, entirely at your risk and cost.</div>
+</div>
+</sc-if>
+<sc-if value="{{ draftIsPlaint }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="margin-bottom:12px">1. That the plaintiff carries on business at New Delhi and the defendant is a customer of long standing, within the territorial jurisdiction of this Hon'ble Court.</div>
+<div style="margin-bottom:12px">2. That a sum of Rs.14,20,000 remains due and payable by the defendant, the liability being admitted in writing on 18.04.2026.</div>
+<div>3. That the cause of action arose on 02.07.2026 when the cheque tendered in discharge of the said liability was dishonoured, and the suit is within limitation.</div>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+<div style="height:120px"></div>
+</div>
+<div style="position:sticky;bottom:0;background:linear-gradient(to top,#FBFAF7 66%,rgba(13,15,26,0));padding:14px 14px 26px">
+<div class="lm-press" onClick="{{ toggleMark }}" style="cursor:pointer;background:#fff;border:1px solid #E3E0D8;border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(20,27,45,.08)">
+<div><div style="font:600 13.5px Inter;color:#141B2D">{{ markTitle }}</div><div style="font:400 12px Inter;color:#5A6478;margin-top:2px">{{ markSub }}</div></div>
+<div style="font:600 13.5px Inter;color:#C9A227;border:1px solid rgba(201,162,39,.4);border-radius:7px;padding:9px 12px">{{ markAction }}</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<div style="position:sticky;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(251,250,247,.78);backdrop-filter:blur(24px) saturate(1.4);border-top:1px solid #E3E0D8;padding:10px 0 30px">
+<div class="lm-press" onClick="{{ goToday }}" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform 130ms cubic-bezier(.2,1.2,.3,1);color:{{ tabTodayColor }}" style-active="transform:scale(.9)"><svg width="23" height="23" viewBox="0 0 24 24" fill="{{ tabTodayFill }}" stroke="{{ tabTodayColor }}" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg><span style="font:600 11px Inter">Today</span></div>
+<div class="lm-press" onClick="{{ goSearch }}" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform 130ms cubic-bezier(.2,1.2,.3,1);color:{{ tabSearchColor }}" style-active="transform:scale(.9)"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ tabSearchColor }}" stroke-width="1.6"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4.3-4.3"></path></svg><span style="font:600 11px Inter">Search</span></div>
+<div class="lm-press" onClick="{{ goMatters }}" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform 130ms cubic-bezier(.2,1.2,.3,1);color:{{ tabMattersColor }}" style-active="transform:scale(.9)"><svg width="23" height="23" viewBox="0 0 24 24" fill="{{ tabMattersFill }}" stroke="{{ tabMattersColor }}" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span style="font:600 11px Inter">Matters</span></div>
+<div class="lm-press" onClick="{{ goDrafts }}" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform 130ms cubic-bezier(.2,1.2,.3,1);color:{{ tabDraftsColor }}" style-active="transform:scale(.9)"><svg width="23" height="23" viewBox="0 0 24 24" fill="{{ tabDraftsFill }}" stroke="{{ tabDraftsColor }}" stroke-width="1.6"><path d="M14 3v5h5"></path><path d="M5 5a2 2 0 0 1 2-2h7l6 6v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"></path><path d="M9 15h6"></path></svg><span style="font:600 11px Inter">Drafts</span></div>
+</div>
+
+</div>
+</x-import>
+</div>
+
+<div style="font:400 11.5px/1.6 Inter;color:rgba(20,27,45,.5);max-width:402px;text-align:center">Today → briefing → authority → back · Search a canned question → results → judgment → add to matter · Matters → timeline · Drafts → pick a type → generated draft, and clear the AI mark. Every tap fires a haptic (visible in the indicator above; real on device).</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:960}}">
+const JUDGMENTS = {
+  kausar: {
+    title: 'Kahkashan Kausar v. State of Bihar', cite: '(2022) SCC OnLine SC 162', court: 'SC · 11 Feb 2022',
+    holding: 'Omnibus allegations against a husband\u2019s relatives, unsupported by any specific instance of cruelty, cannot sustain a prosecution under s. 498A IPC. The High Court ought to have quashed.',
+    para: '"The complaint contains general allegations against the appellants without any specific role attributed to them. Permitting the prosecution to continue would result in an abuse of the process of law."',
+    bench: 'Supreme Court of India · 11 February 2022\nS. Abdul Nazeer & Krishna Murari, JJ · Crl. Appeal 195/2022',
+    full: '28 paragraphs · 4,120 words'
+  },
+  mehrotra: {
+    title: 'Geeta Mehrotra v. State of U.P.', cite: '(2012) 10 SCC 741', court: 'SC · 17 Oct 2012',
+    holding: 'Mere naming of a husband\u2019s brother and sister in a matrimonial FIR, without allegations of their direct involvement, does not justify their being put to trial.',
+    para: '"The allegations against the appellants, who are unmarried sister and brother of the complainant\u2019s husband, are general in nature and the criminal proceedings against them deserve to be quashed."',
+    bench: 'Supreme Court of India · 17 October 2012\nT.S. Thakur & Gyan Sudha Misra, JJ · Crl. Appeal 1674/2012',
+    full: '24 paragraphs · 3,480 words'
+  },
+  sharma: {
+    title: 'Rajesh Sharma v. State of U.P.', cite: '(2017) 8 SCC 746', court: 'SC · 27 Jul 2017',
+    holding: 'The Court\u2019s observations on misuse of s. 498A remain good law. The machinery it created \u2014 Family Welfare Committees screening complaints before arrest \u2014 was struck down as beyond the judicial function.',
+    para: '"In every district one or more Family Welfare Committees be constituted by the District Legal Services Authorities\u2026 no arrest should normally be effected till the report of the Committee is received."',
+    bench: 'Supreme Court of India · 27 July 2017\nA.K. Goel & U.U. Lalit, JJ · Crl. Appeal 1265/2017',
+    full: '22 paragraphs · 3,010 words',
+    overruled: true,
+    caution: 'Paras 19\u201320 (Family Welfare Committees) were set aside by a three-Judge Bench in Social Action Forum for Manav Adhikar v. Union of India, (2018) 10 SCC 443. The rest survives.'
+  },
+  preeti: {
+    title: 'Preeti Gupta v. State of Jharkhand', cite: '(2010) 7 SCC 667', court: 'SC · 13 Aug 2010',
+    holding: 'Courts must be cautious where relatives residing separately are implicated; exaggerated complaints have become a common feature of matrimonial litigation.',
+    para: '"A serious relook of the entire provision is warranted by the Legislature. It is a matter of common knowledge that exaggerated versions of the incident are reflected in a large number of complaints."',
+    bench: 'Supreme Court of India · 13 August 2010\nDalveer Bhandari & K.S. Radhakrishnan, JJ · Crl. Appeal 1512/2010',
+    full: '36 paragraphs · 5,220 words'
+  },
+  antil: {
+    title: 'Satender Kumar Antil v. CBI', cite: '(2022) 10 SCC 51', court: 'SC · 11 Jul 2022',
+    holding: 'Bail is the rule for offences where the accused was not arrested during investigation and has cooperated. The judgment sets out four categories of offence and the test applicable to each.',
+    para: '"Category B \u2014 offences punishable with death, imprisonment for life, or more than seven years: bail on appearance, after hearing the prosecution, on merits."',
+    bench: 'Supreme Court of India · 11 July 2022\nSanjay Kishan Kaul & M.M. Sundresh, JJ · SLP (Crl.) 5191/2021',
+    full: '104 paragraphs · 12,640 words'
+  },
+  arnesh: {
+    title: 'Arnesh Kumar v. State of Bihar', cite: '(2014) 8 SCC 273', court: 'SC · 02 Jul 2014',
+    holding: 'Arrest is not automatic on registration of a cognizable offence punishable up to seven years. The officer must record reasons under s. 41 and issue notice under s. 41A CrPC.',
+    para: '"All State Governments to instruct police officers not to automatically arrest when a case under Section 498A IPC is registered, but to first satisfy themselves about the necessity for arrest."',
+    bench: 'Supreme Court of India · 2 July 2014\nChandramauli Kr. Prasad & Pinaki Chandra Ghose, JJ · SLP (Crl.) 9127/2013',
+    full: '13 paragraphs · 2,180 words'
+  }
+};
+
+const QUERIES = {
+  q1: { text: 'bail in dowry harassment where accused is the husband\u2019s brother', results: ['kausar', 'mehrotra', 'sharma', 'preeti', 'arnesh'] },
+  q2: { text: 'default bail where chargesheet is filed without the FSL report', results: ['antil', 'arnesh', 'kausar'] },
+  q3: { text: 'quashing 498A against in-laws living separately', results: ['preeti', 'kausar', 'mehrotra'] }
+};
+
+class Component extends DCLogic {
+  state = {
+    screen: 'today', tab: 'today', queryKey: 'q1', resultKeys: [],
+    judgment: null, fullTextOpen: false, from: 'results',
+    checks: [true, false, false, false], read: false,
+    draftType: null, markOn: true, toast: null
+  };
+
+  // Haptics: light 8ms for navigation, 14ms for state changes, [10,40,18] for the
+  // briefing seal. Web preview shows the pulse indicator; native uses Haptic Feedback.
+  hap(weight) {
+    const p = weight === 'heavy' ? [10, 40, 18] : weight === 'medium' ? 14 : 8;
+    try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {}
+    this.setState({ hap: Date.now() });
+    clearTimeout(this._h);
+    this._h = setTimeout(() => this.setState({ hap: 0 }), 320);
+  }
+
+  set(patch, weight) { this.hap(weight || 'light'); this.setState(patch); }
+
+  flash(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: null }), 2400);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._s); clearTimeout(this._h); }
+
+  openJudgment(key, from) {
+    this.hap('medium');
+    this.setState({ screen: 'judgment', judgment: key, fullTextOpen: false, from: from });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const j = s.judgment ? JUDGMENTS[s.judgment] : null;
+    const q = QUERIES[s.queryKey];
+    const accent = '#C9A227', muted = '#5A6478';
+    const on = (name) => s.tab === name;
+
+    return {
+      frameW: 402,
+      frameH: 874,
+      hapOn: !!s.hap,
+      hapOff: !s.hap,
+      showToday: s.screen === 'today',
+      showSearch: s.screen === 'search',
+      showLoading: s.screen === 'loading',
+      showResults: s.screen === 'results',
+      showJudgment: s.screen === 'judgment',
+      showBriefing: s.screen === 'briefing',
+      showMatters: s.screen === 'matters',
+      showMatter: s.screen === 'matter',
+      showDrafts: s.screen === 'drafts',
+      showGenerating: s.screen === 'generating',
+      showDraft: s.screen === 'draft',
+
+      goToday: () => this.set({ screen: 'today', tab: 'today' }),
+      goSearch: () => this.set({ screen: 'search', tab: 'search' }),
+      goMatters: () => this.set({ screen: 'matters', tab: 'matters' }),
+      goDrafts: () => this.set({ screen: 'drafts', tab: 'drafts' }),
+      goResults: () => this.set({ screen: s.from === 'briefing' ? 'briefing' : 'results' }),
+      openBriefing: () => this.set({ screen: 'briefing', tab: 'today' }, 'heavy'),
+
+      tabTodayColor: on('today') ? accent : muted,
+      tabSearchColor: on('search') ? accent : muted,
+      tabMattersColor: on('matters') ? accent : muted,
+      tabDraftsColor: on('drafts') ? accent : muted,
+      tabTodayFill: on('today') ? '#141B2D' : 'none',
+      tabMattersFill: on('matters') ? '#141B2D' : 'none',
+      tabDraftsFill: on('drafts') ? '#141B2D' : 'none',
+
+      query: q.text,
+      resultCount: s.resultKeys.length || q.results.length,
+      suggestions: Object.keys(QUERIES).map((k) => ({
+        text: QUERIES[k].text, pick: () => this.set({ queryKey: k })
+      })),
+      runSearch: () => {
+        this.set({ screen: 'loading' }, 'medium');
+        clearTimeout(this._s);
+        this._s = setTimeout(() => this.setState({ screen: 'results', resultKeys: QUERIES[this.state.queryKey].results }), 1400);
+      },
+      results: (s.resultKeys.length ? s.resultKeys : q.results).map((k, i) => {
+        const d = JUDGMENTS[k];
+        return {
+          title: d.title, cite: d.cite, court: d.court, holding: d.holding,
+          delay: (i * 55) + 'ms',
+          overruled: !!d.overruled,
+          cautionText: d.overruled ? 'Directions set aside \u2014 do not rely on paras 19\u201320' : '',
+          open: () => this.openJudgment(k, 'results')
+        };
+      }),
+
+      judgmentTitle: j ? j.title : '',
+      judgmentCite: j ? j.cite : '',
+      judgmentBench: j ? j.bench : '',
+      judgmentHolding: j ? j.holding : '',
+      judgmentPara: j ? j.para : '',
+      judgmentOverruled: !!(j && j.overruled),
+      judgmentCaution: j && j.caution ? j.caution : '',
+      fullTextOpen: s.fullTextOpen,
+      fullTextMeta: j ? j.full : '',
+      fullTextAction: s.fullTextOpen ? 'Collapse' : 'Expand',
+      toggleFullText: () => this.set({ fullTextOpen: !s.fullTextOpen }),
+      addToMatter: () => this.hap('heavy') || this.flash('Added to State v. Rakesh Yadav, with the citation state attached.'),
+      copyCitation: () => this.hap('medium') || this.flash('Citation copied with its verification state.'),
+
+      hearings: [
+        { when: 'Thu 10:30', title: 'State v. Rakesh Yadav', court: 'Patiala House · Bail u/s 439', open: () => this.set({ screen: 'matter', tab: 'matters' }) },
+        { when: 'Thu 2:15', title: 'Mehta v. Union Bank of India', court: 'DRT-II, Delhi', open: () => this.set({ screen: 'matters', tab: 'matters' }) },
+        { when: 'Mon 11:00', title: 'Kaur v. Kaur', court: 'Family Court, Saket', open: () => this.set({ screen: 'matters', tab: 'matters' }) },
+        { when: 'Tue 10:15', title: 'Verma v. MCD', court: 'Delhi High Court', open: () => this.set({ screen: 'matters', tab: 'matters' }) }
+      ],
+
+      briefingAuthorities: ['antil', 'arnesh'].map((k) => {
+        const d = JUDGMENTS[k];
+        return { title: d.title, cite: d.cite, holding: d.holding, open: () => this.openJudgment(k, 'briefing') };
+      }),
+      checklist: ['Carry three sets of the status report', 'Confirm surety documents with the client\u2019s brother', 'Mark para 14 of the recovery memo', 'Print Antil paras 23\u201325'].map((label, i) => ({
+        label: label,
+        done: !!s.checks[i],
+        todo: !s.checks[i],
+        color: s.checks[i] ? '#5A6478' : '#141B2D',
+        strike: s.checks[i] ? 'line-through' : 'none',
+        toggle: () => {
+          const next = s.checks.slice();
+          next[i] = !next[i];
+          this.set({ checks: next }, next[i] ? 'medium' : 'light');
+        }
+      })),
+      checkedCount: s.checks.filter(Boolean).length,
+      briefingCta: s.read ? 'Marked as read \u00b7 saved offline' : 'Mark as read',
+      markRead: () => { this.hap('heavy'); this.setState({ read: true }); this.flash('Briefing marked read. Checklist syncs when you have signal.'); },
+
+      matters: [
+        { title: 'State v. Rakesh Yadav', next: 'Tomorrow, 10:30 AM', cnr: 'DLPH01-004521-2024', court: 'Patiala House, Ct 12', client: 'Rakesh Yadav', open: () => this.set({ screen: 'matter' }) },
+        { title: 'Mehta v. Union Bank of India', next: 'Tomorrow, 2:15 PM', cnr: 'DRT2-000188-2025', court: 'DRT-II, Delhi', client: 'Sunil Mehta', open: () => this.set({ screen: 'matter' }) },
+        { title: 'Kaur v. Kaur', next: 'Mon 3 Aug, 11:00 AM', cnr: 'DLST01-009901-2025', court: 'Family Court, Saket', client: 'Simran Kaur', open: () => this.set({ screen: 'matter' }) },
+        { title: 'Verma v. MCD', next: 'Tue 4 Aug, 10:15 AM', cnr: 'DLHC01-088420-2025', court: 'Delhi High Court', client: 'Anil Verma', open: () => this.set({ screen: 'matter' }) }
+      ],
+      matterTitle: 'State v. Rakesh Yadav',
+      matterCnr: 'DLPH01-004521-2024 · FIR 214/2024',
+      matterNext: 'Tomorrow 10:30',
+      matterStage: 'Bail',
+      matterEvents: '6',
+      timeline: [
+        { date: '30 JUL 2026 · LISTED', title: 'Consideration of bail', body: 'Item 14, Court 12. Briefing ready \u2014 ' + s.checks.filter(Boolean).length + ' of 4 checklist items done.' },
+        { date: '24 JUL 2026', title: 'Status report filed by State', body: 'Opposes bail on the recovery memo. 4 pages, uploaded.' },
+        { date: '14 JUL 2026 · ORDER', title: 'Adjourned for reply', body: '"Put up for consideration of bail on 30.07.2026. Status report be filed in the meanwhile."' },
+        { date: '02 JUL 2026 · FILED', title: 'Bail application u/s 439 CrPC', body: 'Drafted in Lawmind \u00b7 AI mark cleared before filing.' },
+        { date: '18 JUN 2026', title: 'Accused remanded to judicial custody', body: '' }
+      ],
+      addEvent: () => this.flash('Add event: outcome, order text and next date \u2014 see the sheet in the screens canvas.'),
+
+      docTypes: ['Bail application', 'Anticipatory bail', 'Legal notice', 'Reply to notice', 'Plaint', 'Written statement'].map((name) => ({
+        name: name,
+        pick: () => {
+          this.setState({ screen: 'generating', draftType: name, markOn: true });
+          clearTimeout(this._s);
+          this._s = setTimeout(() => this.setState({ screen: 'draft' }), 1600);
+        }
+      })),
+      draftType: s.draftType || 'Bail application',
+      draftIsNotice: s.draftType === 'Legal notice' || s.draftType === 'Reply to notice',
+      draftIsPlaint: s.draftType === 'Plaint' || s.draftType === 'Written statement',
+      draftIsBail: !s.draftType || s.draftType === 'Bail application' || s.draftType === 'Anticipatory bail',
+      draftCourtLine: (function () {
+        if (s.draftType === 'Legal notice' || s.draftType === 'Reply to notice') return 'By Registered Post A.D.\nChambers of Ananya Sharma, Advocate\n14 Bhagwan Das Road, New Delhi 110001';
+        if (s.draftType === 'Plaint' || s.draftType === 'Written statement') return 'In the Court of the\nDistrict Judge (Commercial),\nPatiala House Courts, New Delhi';
+        return 'In the Court of the\nAdditional Sessions Judge,\nPatiala House Courts, New Delhi';
+      })(),
+      draftParties: (function () {
+        if (s.draftType === 'Legal notice' || s.draftType === 'Reply to notice') return 'To,\nSh. R.K. Gupta, Director\nGupta Traders Pvt. Ltd., Karol Bagh, New Delhi';
+        if (s.draftType === 'Plaint' || s.draftType === 'Written statement') return 'Sunil Mehta … Plaintiff\nversus\nGupta Traders Pvt. Ltd. … Defendant';
+        return 'Rakesh Yadav … Applicant\nversus\nState (NCT of Delhi) … Respondent';
+      })(),
+      draftPartiesAlign: (s.draftType === 'Legal notice' || s.draftType === 'Reply to notice') ? 'left' : 'right',
+      draftHeading: (function () {
+        if (s.draftType === 'Legal notice') return 'LEGAL NOTICE UNDER SECTION 138\nOF THE NEGOTIABLE INSTRUMENTS ACT, 1881';
+        if (s.draftType === 'Reply to notice') return 'REPLY TO LEGAL NOTICE\nDATED 12 JULY 2026';
+        if (s.draftType === 'Plaint') return 'SUIT FOR RECOVERY OF Rs.14,20,000\nUNDER ORDER XXXVII CPC';
+        if (s.draftType === 'Written statement') return 'WRITTEN STATEMENT ON BEHALF\nOF DEFENDANT NO. 1';
+        if (s.draftType === 'Anticipatory bail') return 'APPLICATION FOR ANTICIPATORY BAIL\nUNDER SECTION 438 CrPC';
+        return 'APPLICATION FOR REGULAR BAIL\nUNDER SECTION 439 CrPC';
+      })(),
+      draftTypeLower: (s.draftType || 'Bail application').toLowerCase(),
+      markOn: s.markOn,
+      markTitle: s.markOn ? '3 of 4 citations verified' : 'Mark removed \u2014 this draft carries your name',
+      markSub: s.markOn ? 'AI-assisted mark stays until you clear it' : 'Removal logged at 8:41 PM, 29 Jul 2026',
+      markAction: s.markOn ? 'Review mark' : 'Restore',
+      toggleMark: () => {
+        const next = !s.markOn;
+        this.hap('heavy');
+        this.setState({ markOn: next });
+        this.flash(next ? 'AI-assisted mark restored.' : 'Mark removed. Two confirmations and a typed REMOVE would be required in the real flow.');
+      },
+
+      showToast: !!s.toast,
+      toast: s.toast || ''
+    };
+  }
+}
+
+</script>
+</body>
+</html>

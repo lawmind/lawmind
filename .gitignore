@@ -1,0 +1,18 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.expo/
+dist/
+build/
+*.log
+.DS_Store
+coverage/
+.turbo/
+*.tsbuildinfo
+__pycache__/
+*.pyc
+.venv/
+
+# Source archives — extracted content is tracked under design/screens/ and the repo root
+*.zip
