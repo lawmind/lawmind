@@ -130,3 +130,36 @@ Enrol in Apple Small Business Program day one (15% not 30%).
 The paywall **never blocks on a hearing day** — on a day with a listed hearing the
 search limit becomes advisory rather than hard, and the limit is still displayed.
 Billing terms for Android remain subject to **OD-3**.
+
+### The rationale — we are a switch, not a new spend
+
+A solo advocate **already allocates ₹30,000–50,000 a year** to research —
+₹2,500–4,200 a month. **Expert at ₹3,499 sits inside that budget, not on top of
+it.** SCC Online at roughly ₹5,000/month is the number to anchor against.
+
+That changes the sales question from *"is this worth ₹3,499?"* to *"is this better
+than what you already pay ₹5,000 for?"* — a comparison we win on the daily loop
+and lose on headnotes, which is exactly why we never lead with corpus size.
+
+Pricing is **not** set by cost-plus or by undercutting the free chatbots. It is
+set by the budget line we are displacing. `docs/COMPETITIVE.md`.
+
+### Launch — free for 90 days, capped at 5,000
+
+All tiers free for the first 90 days after launch, for anyone signing up in that
+window. **Firm and Enterprise excluded** — those are invoiced sales.
+
+Structured as a moat, not a discount:
+
+- **Granted per user, not per period.** The free cohort keeps a permanent
+  **"founding advocate" rate at 50%** afterwards, so the cohort converts instead of
+  churning.
+- **The free window fills the matter workspace.** Ninety days of accumulated
+  matters, briefings and drafts is switching cost no competitor can undo. **This is
+  a data-moat play, not a marketing spend.**
+- **Capped at the first 5,000 advocates** — urgency, and a hard bound on LLM cost.
+
+⚠️ **Cost exposure is modelled but not computed** — `docs/COMPETITIVE.md` carries
+the formula with its inputs marked `UNKNOWN`. Briefings dominate the cost, not
+searches, and briefings-per-user is unmeasured. **Do not commit to 90 days until
+that line is computed from real beta usage.**

@@ -5,7 +5,7 @@ endpoint exists. Designed in `design/screens/LawMind Admin.dc.html` — **17
 sections**, all interactive in the prototype. Screen numbering: `design/SCREENS.md`
 items 31–48.
 
-**Nothing here is built.** This file is the contract so CX2 can build against it and
+**Nothing here is built.** This file is the contract so LCC can implement to it, RCC can build against it, and
 so the gaps are visible. Endpoint shapes live in `API_CONTRACTS.md`; tables in
 `SCHEMA_TRUTH.md`.
 

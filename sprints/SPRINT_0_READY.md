@@ -1,8 +1,15 @@
 # SPRINT 0 — READY
 
+> ⚠️ **SUPERSEDED for lane structure.** This file was written for **four** lanes
+> (LCC/RCC/CX1/CX2). The build is now **two** lanes — LCC Server, RCC Client —
+> and the dispatch files are `sprints/SPRINT_0.md` … `SPRINT_7.md`.
+>
+> **Paste from `sprints/SPRINT_0.md`, not from here.** The "what is settled" and
+> "blocked" sections below remain accurate and are still worth reading; only the
+> four per-lane blocks are obsolete.
+
 Documentation is closed as of **1 August 2026**. Everything below is settled,
-blocked, or explicitly a lane's first move. Paste the relevant lane section into
-that agent's session.
+blocked, or explicitly a lane's first move.
 
 **Read before anything else, every lane, every session:**
 `PRODUCT_BRIEF.md` → `.ai/README.md` → `docs/OPEN_DECISIONS.md` →

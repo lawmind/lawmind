@@ -50,8 +50,9 @@ a preparation checklist. Delivered by push, readable offline, skimmable in ninet
 seconds standing in a corridor. **No competitor in India has this.**
 
 **3 · Drafting in English and Hindi.** Ten document types. Structured input →
-court-format draft → paragraph-level edit → export to Word or PDF. Every draft
-carries an AI-assisted mark until the advocate deliberately removes it.
+court-format draft → paragraph-level edit → export to Word or PDF. **The exported
+document carries no mark** — consent is taken once at onboarding (PD-8), and a
+watermark on a court filing is both patronising and a competitive disadvantage.
 
 **4 · The matter workspace — the moat.** Per-case history: drafts, research,
 briefings, notes, hearing timeline. Six months of an advocate's accumulated work
@@ -80,6 +81,29 @@ with a zero threshold.
 Full spec: `docs/CITATION_HARNESS.md`. Binding.
 
 ---
+
+## Position — one line
+
+**The only tool that turns tomorrow's listing into a prepared advocate — with
+citations that survive a misconduct challenge.**
+
+Not the biggest database. Not the cheapest chatbot. The daily working instrument.
+
+Three facts govern this, in full at `docs/COMPETITIVE.md`:
+
+1. **Raw judgments are commoditised.** e-SCR is free, fast and carries neutral
+   citations. **Never position on corpus size** — we lose to a government service
+   that costs nothing. The corpus is table stakes, not the product.
+2. **Everyone sells a database. Nobody sells a workflow.** Firms run ₹15-lakh
+   subscriptions as glorified citation lookup because nobody trained the juniors.
+   *The tool isn't the bottleneck. The workflow is.*
+3. **Verification is compliance now, not a feature.** India in 2026 has a Supreme
+   Court misconduct standard for unverified citations. **The mark is a shield, not
+   a warning** — not "we're checking on you", but "you're covered". Every piece of
+   verification copy is written from that framing.
+
+We sit **inside an existing budget line**: a solo already spends ₹30,000–50,000 a
+year on research. Expert at ₹3,499 is a **switch, not a new spend**.
 
 ## What makes it defensible
 
@@ -172,7 +196,8 @@ or more times in their final beta week. **Zero citation failures reaching a user
 ## The build
 
 Four disjoint agent lanes in parallel within a sprint, hard gate, then advance.
-LCC api/db · RCC auth/security/PII · CX1 Expo app · CX2 admin/cron/OCR.
+Two lanes: **LCC — Server** (db, API, ingest, retrieval, verification, cron,
+OCR) · **RCC — Client** (Expo app, admin web, auth integration).
 
 S0 scaffold · S1 corpus · **S2 citation gate — hard stop** · S3 briefing ·
 S4 drafting · S5 auth+billing · S6 admin+monitoring · S7 store + 20 beta advocates.

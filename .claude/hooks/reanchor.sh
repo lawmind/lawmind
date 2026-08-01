@@ -35,8 +35,13 @@ LAWMIND NON-NEGOTIABLE:
 - Hindi = Noto Sans Devanagari everywhere incl. PDF export.
 - Stack fixed: Expo · Hono · Railway PG + pgvector · Drizzle · better-auth.
   NOT Neon/Vercel/Qdrant/Clerk/Supabase. Ask before adding any vendor.
+- Ponytail ladder applies to every build decision. The best code is the code you
+  never wrote. EXEMPT: the citation verification pipeline is never simplified.
+- OSS FIRST: search for a maintained project before building anything
+  non-differentiating. MIT/Apache/BSD ok. AGPL is NOT. docs/OSS_STACK.md
 - Never resolve an OPEN_DECISION alone. docs/OPEN_DECISIONS.md
-- Write only inside your lane (LCC/RCC/CX1/CX2). BUILD_GUIDE.md
+- TWO lanes only: LCC=server, RCC=client. Write only inside yours. Contract
+  (docs/API_CONTRACTS.md) is FROZEN per sprint. BUILD_GUIDE.md
 
 If context was compacted: re-read docs/OPEN_DECISIONS.md, docs/SCHEMA_TRUTH.md,
 docs/CITATION_HARNESS.md before your next edit.

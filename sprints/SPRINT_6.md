@@ -69,7 +69,7 @@ privileged action it performs, and which still have no endpoint.
 
 1. **Admin UI aligned to current tokens.** The admin renders still show the **v2
    palette** — dark sidebar, oxblood accents — and `PD-11` records that this is
-   deliberate: admin is internal, CX2 builds from the live canvas, and capturing
+   deliberate: admin is internal, RCC builds from the live canvas, and capturing
    PNGs of the old palette is wasted work.
    **Build from the renders' layout, not their colour.** Same `tokens.ts` as the
    app. Density may differ; **values may not. A hex not in `tokens.ts` is a

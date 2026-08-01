@@ -39,7 +39,7 @@ search no results (`1l`) · 25 add matter CNR (`1v`) · 26 add matter manual (`1
 
 **The six admin sections with no render** are deliberate under **PD-11**:
 Advocates, Corpus & ingestion, Support inbox, Push campaigns, Staff & audit,
-Analytics. Admin is internal, CX2 builds from the live canvas, and capturing PNGs
+Analytics. Admin is internal, RCC builds from the live canvas, and capturing PNGs
 of the not-yet-aligned v2 palette is wasted work.
 
 ## Everything previously undesigned is now drawn

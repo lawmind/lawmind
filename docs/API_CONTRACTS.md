@@ -1,7 +1,7 @@
 # API CONTRACTS
 
-The seam between lanes. CX1 and CX2 build against this with mocks; they never
-wait on LCC. Shapes freeze for the sprint — a mid-sprint change requires telling
+The seam between the two lanes. **RCC builds against this with mocks and never
+waits on LCC; LCC implements to it.** Shapes freeze for the sprint — a mid-sprint change requires telling
 both consuming lanes.
 
 All responses: `{ ok: true, data: T }` or `{ ok: false, error: { code, message } }`.
@@ -108,7 +108,7 @@ A share grants the **court record** plus notes explicitly marked `shared`.
 A shared briefing names whose matter it is and carries no private notes — a junior
 may be appearing on it at a morning's notice.
 
-## Briefings — CX2 generates, LCC serves
+## Briefings — LCC owns
 ```
 GET  /briefings/:id             → { briefing }
 GET  /matters/:id/briefings     → { briefings }
@@ -148,7 +148,7 @@ volume. There is no threshold and no edit counter.
 **PD-11/§9b — `docx` is the default export**, PDF second. Styles must survive
 intact; citations export as plain text. A mangled export is worse than no export.
 
-## OCR — CX2 owns the service, LCC serves the API
+## OCR — LCC owns the service and the API
 ```
 POST /ocr/jobs         { storageKey, sourceType, matterId? } → { jobId, status }
 GET  /ocr/jobs/:id     → { status, extractedFields, confidenceOverall,
@@ -165,7 +165,7 @@ POST /court/lookup   { cnrNumber } → { matter fields } | { available: false }
 Manual implementation returns `{ available: false }`; client falls back to the
 manual form. Nothing above this endpoint changes when OD-1 resolves.
 
-## Admin — CX2 owns
+## Admin — LCC owns the endpoints, RCC owns the UI
 Full section-by-section surface, including which of the 17 designed sections have
 no endpoint yet: `ADMIN_SURFACE.md`.
 

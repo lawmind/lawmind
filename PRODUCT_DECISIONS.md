@@ -113,7 +113,7 @@ verified authorities · exclude set aside or doubted.
 — they are how a researcher searches for a document.
 
 ## PD-11 · Admin golden renders
-**Not captured.** Admin is internal; CX2 builds from the live canvas. Separately,
+**Not captured.** Admin is internal; RCC builds from the live canvas. Separately,
 admin still runs the v2 palette and needs an alignment pass — but capturing PNGs
 of the old palette is wasted work.
 

@@ -395,5 +395,5 @@ Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the acti
    **tomorrow**. PD-6 is authority and is what the contracts implement.
 7. **The admin desk still runs the v2 palette** (dark sidebar, oxblood accents)
    and does not yet match §Colour. PD-11 confirms this is deliberate — admin is
-   internal, CX2 builds from the live canvas, and capturing PNGs of the old
+   internal, RCC builds from the live canvas, and capturing PNGs of the old
    palette is wasted work. Admin renders are authoritative for **layout only**.
