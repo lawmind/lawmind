@@ -110,6 +110,21 @@ Recommendation pending measurement: PaddleOCR primary, Tesseract fallback.
 the same publisher failed audit with verifiable legal errors — `docs/DATASETS.md`.
 Assume the same until audited. Do not train on either first.
 
+## OD-9 — ASO tool selection · BLOCKS S7
+App store discovery is the primary acquisition channel and no keyword volume or
+difficulty data exists. Candidates: **AppTweak**, **Sensor Tower**, **App Radar**.
+All are paid subscriptions.
+
+Without one, every cluster in `docs/ASO.md` §3 stays `UNKNOWN` and the title,
+subtitle and keyword field cannot be ranked — only guessed. **Do not invent volume
+figures to unblock this.**
+
+Competitor teardown (`docs/ASO.md` §1) needs **no tool** and can start immediately;
+it also informs the screenshot narrative, which is a design input well before S7.
+
+Decide on: Indian store coverage depth first, price second. A tool with thin India
+data is worse than none, because it produces confident wrong rankings.
+
 ---
 
 ## Resolved — kept for provenance

@@ -76,6 +76,49 @@ numbers the same ground 1–15, which is a second scheme for one set.
 | PD-12 | Domain context | §9b preamble | — | — |
 | — | `.docx` default export | 11 | `11d` | `design/screens/renders/61-draft-editing@2x.png` |
 
+## Scope expansion — 1 Aug 2026 · all NOT YET DESIGNED
+
+Added by the scope revision. **None is drawn. Designing them is a Claude Design
+task, not a build task** — do not improvise screens for these.
+
+### Tier B — the daily loop (ships first)
+
+| # | Screen | Status | Notes |
+|---|---|---|---|
+| 88 | Daily cause list | ❌ **NOT YET DESIGNED** | Every matter listed today across all courts, one screen. The first thing checked each morning |
+| 89 | Client update share | ❌ **NOT YET DESIGNED** | One tap → clean matter summary over WhatsApp. **The viral loop** — carries our name to a client and to opposing counsel |
+| 90 | Adjournment capture | ❌ **NOT YET DESIGNED** | Three taps, standing in the courtroom, next date given orally |
+| 91 | Limitation and deadline alerts | ❌ **NOT YET DESIGNED** | Folds into the evening briefing rhythm, not a new notification surface |
+| 92 | Fee and appearance log | ❌ **NOT YET DESIGNED** | Billed vs appeared. Advocates keep this on paper today |
+
+### Tier A — library parity
+
+| # | Screen | Status | Notes |
+|---|---|---|---|
+| 93 | Bare acts library | ❌ **NOT YET DESIGNED** | 700+ Central and State Acts. BNS/BNSS/BSA first-class with IPC↔BNS mapping |
+| 94 | Bare act reading view | ❌ **NOT YET DESIGNED** | Likely shares structure with the judgment reading view (`11e`) — confirm before drawing twice |
+| 95 | Draft template library | ❌ **NOT YET DESIGNED** | Static standard formats, alongside the 10 AI-generated types |
+| 96 | Legal dictionary | ❌ **NOT YET DESIGNED** | Terms, Latin maxims, procedural vocabulary |
+| 97 | Court rules and practice directions | ❌ **NOT YET DESIGNED** | SC and per-High-Court |
+| 98 | Limitation calculator | ❌ **NOT YET DESIGNED** | **Highest-anxiety calculation an advocate makes** — missing a limitation period is malpractice. The result must state its basis, not just a date |
+| 99 | Court fee calculator | ❌ **NOT YET DESIGNED** | Per state, per suit value |
+
+### Superseded by the trust inversion
+
+| Screen | Was | Now |
+|---|---|---|
+| 23 · Verification badge — five states | `7a` `7d`, `design/screens/renders/32-badge-family@3x.png` | **Two states render.** The three verified variants are drawn but not built |
+| 36 · Draft output | AI-mark header band | **No mark.** Consent at onboarding instead (PD-8) |
+| 38 · AI-mark removal | `10b`, `design/screens/renders/46-seal-moment@2x.png` | **Screen removed.** There is nothing to remove |
+| 42 · Privacy disclosure | Shown in `9b` honest-states | **Moves to onboarding and settings.** Not shown during use |
+| — · Consent screen | did not exist | ❌ **NOT YET DESIGNED** — must be actively accepted; records timestamp + terms version |
+
+`design/screens/renders/32-badge-family@3x.png`, `design/screens/renders/43-badge-greyscale.png` and
+`design/screens/renders/33-search-mixed-list@2x.png` now **diverge from the product**: they show five
+marks where the app renders at most one. The renders were not edited — they are
+design deliverables and remain the geometry reference for the two marks that do
+render.
+
 ## Open questions
 
 ### OQ-1 — §10a render index does not cover renders 44–63 · OPEN

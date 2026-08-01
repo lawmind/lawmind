@@ -62,18 +62,41 @@ overruled at the same time.**
 identically to `unverified` (never as confirmed), but is separated so an outage
 does not masquerade as a corpus gap in the metrics.
 
-### The five badge states are derived
+### Rendering — verified is silent, the exception is loud
 
-| Badge | Condition |
+**Revised 1 Aug 2026. This changes the UI only. The pipeline, the three fields,
+the tiers, the fan-out, the never-cached rule and the zero thresholds are all
+unchanged and all still binding.**
+
+| Condition | Renders |
 |---|---|
-| `VERIFIED` | `verified` · `corpus` |
-| `VERIFIED ×2` | `verified` · `public_x2` |
-| `VERIFIED BY YOU` | `verified` · `ecourts` |
-| `NOT CONFIRMED` | `unverified` or `failed` |
-| `LAW MOVED` | `overruled_status != none`, **whatever the verification state** |
+| `verified` · any source | **nothing** |
+| `unverified` or `failed` | a visible, unmissable mark — "We could not confirm this reference" + the eCourts path |
+| `overruled_status != none` | the existing `LAW MOVED` treatment and its three sub-states, **whatever the verification state** |
 
-Render rules per state are in `design/screens/IMPLEMENTATION.md` §Badge and are a
-design deliverable — do not restate geometry here.
+**Verification is the expected state; decorating it is noise.** On a typical
+five-result list that is zero marks instead of five. Badges on every result made
+the product look defensive about the one thing it is supposed to be confident
+about.
+
+**Silence means "we verified this and are not decorating it." It never means "we
+removed something without saying so."** An unverified citation is always shown and
+always marked. **Silent-drop rate stays at 0.0%** and `citation_checks` still
+writes a row per citation per surface — the measurement is unchanged, only the
+pixels are.
+
+### Where verification stays visible — three places, all pull not push
+
+1. **Draft footer** — "4 of 4 citations verified", one line, in-app only.
+2. **On tap** — tapping a citation shows how it was verified and by which source.
+   This is what `verified_by_source` now drives; it no longer drives a badge
+   qualifier.
+3. **Admin citation monitor** — unchanged, full state visibility.
+
+Render rules for the two states that still draw are in
+`design/screens/IMPLEMENTATION.md` §Badge — geometry unchanged for those two.
+**The three verified variants of the stamp are no longer rendered anywhere in the
+app.** They remain in the design files; see `design/SCREENS.md` for the divergence.
 
 An unverified citation may be shown. It may never be shown as confirmed, and it
 may never be silently removed. `set_aside` additionally **disables add-to-matter**
@@ -111,18 +134,33 @@ Three binding rules:
 
 ### Metric — stale-overruled rate. Threshold zero.
 
-Any citation rendered with a `VERIFIED` badge whose live `overruled_status` is not
-`none`, over total citations rendered.
+Any citation rendered **without the `LAW MOVED` treatment** whose live
+`overruled_status` is not `none`, over total citations rendered.
+
+> Restated 1 Aug 2026. It previously read "rendered with a `VERIFIED` badge".
+> Under the silent-verified UI there is no such badge, and the metric had to be
+> re-keyed on the **absence of the exception** rather than the presence of a
+> reassurance. The SQL below was already written this way — it keys on
+> `overruled_status_shown`, not on a badge — so the measurement did not change.
 
 **Threshold 0.0%. This is a failure of the same severity as a hallucination** and
 escalates the same way: immediately, blocking release. A hallucinated citation
 tells an advocate something false about a case that does not exist; a stale
-overruled badge tells them something false about a case that does, which is
+overruled state tells them something false about a case that does, which is
 harder to catch because everything else about the citation checks out.
 
-Harness assertion: for every fixture with `overruled_status != none`, render each
-surface and assert the badge is `LAW MOVED`. The `set_aside` fixture must
-additionally assert add-to-matter is disabled.
+**The silent UI raises the stakes on this metric, not lowers them.** When every
+verified citation carried a badge, a missing badge was itself a signal. Now a
+clean citation and a citation whose `LAW MOVED` treatment failed to render look
+**identical on screen**. The metric is the only thing standing between those two
+cases, so it cannot be allowed to drift.
+
+Harness assertions:
+- every fixture with `overruled_status != none` renders `LAW MOVED` on **every**
+  surface; the `set_aside` fixture additionally asserts add-to-matter is disabled;
+- every `unverified` and `failed` fixture renders the unmissable mark;
+- every `verified` fixture with `overruled_status = none` renders **no mark at
+  all** — assert the absence, so a regression that reintroduces badges is caught.
 
 ### How stale-overruled is measured
 

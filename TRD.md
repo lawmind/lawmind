@@ -49,6 +49,26 @@ until settled.** `docs/PRIVACY_PII.md`.
 Every call rows into `llm_calls` with model, tokens, cost, latency, `data_class`,
 `pseudonymised`.
 
+### Model selection — revised 1 Aug 2026
+
+| Role | Model | Why |
+|---|---|---|
+| API workhorse — search, lookup, extraction | **DeepSeek V4 Flash** | Cheapest capable, MIT, 1M context |
+| Premium — drafting, briefings | **Claude Sonnet 4.6** | Unchanged |
+| **Fine-tune base** | **GLM-5.2** | 744B MoE / 40B active, 1M context, **MIT**, weights on Hugging Face, ~168 tok/s — roughly 3× DeepSeek V4 Pro and Kimi K3 throughput |
+| Evaluate later | Kimi K3 | 2.8T, weights released 27 Jul 2026, Modified MIT, 2–17× the token cost. Note only, not selected |
+
+**GLM-5.2 replaces Qwen3.6-35B-A3B as the fine-tune target.** Throughput is why:
+an advocate waiting on a draft feels tokens per second directly, and a 3×
+difference is the difference between a tool that feels instant and one that feels
+like it is thinking.
+
+Fine-tuning still does not start before **₹3L MRR**. The model choice is recorded
+now so the corpus is collected in a form that suits it, not so it is built.
+
+**Routing to a sensitive-class model remains blocked by OD-6** — the design half
+is closed, the countersigned DPA is not.
+
 ## Embeddings
 One-time corpus embedding as a batch job on rented GPU — not on Railway.
 Query-time embedding on Railway CPU is fast enough for single queries. OD-4.

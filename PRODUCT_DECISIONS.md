@@ -60,12 +60,42 @@ badge would assert something we no longer checked. Changing a citation goes
 through the picker, which re-verifies. Free-typing over a verified citation must
 be impossible.
 
-## PD-8 · Editing and the AI-assisted mark
-**Editing never affects it. Only explicit removal clears it.**
+## PD-8 · The AI-assisted mark — SUPERSEDED 1 Aug 2026
 
-The mark is about provenance, not about how much text changed. Auto-clearing
-above a threshold creates a gaming incentive and implies editing equals
-ownership. Ownership is an act. That removal is a signature moment.
+**The mark is removed from the document. Consent moves to onboarding.**
+
+The advocate must actively accept a consent screen covering AI assistance, the
+duty to verify before filing, and the terms of legal use. Acceptance is recorded
+with a **timestamp and terms version** in `users`.
+
+The exported document carries **no watermark and no hatched margin**. Two things
+are kept: a single line in the **export metadata**, and the one-line **citation
+summary in the draft footer** while in-app.
+
+**Why this supersedes the earlier decision.** An advocate who has explicitly
+accepted the terms is a professional operating under their own duty to the court.
+A watermark on a court filing is both patronising and a competitive disadvantage —
+it marks our output as provisional in a document that has to stand on its own at
+the filing counter.
+
+### What the earlier decision said, and what survives
+The original PD-8 held that *editing never affects the mark; only explicit removal
+clears it, and that removal is a signature moment.* Its reasoning was sound for a
+world where the mark existed: auto-clearing above a threshold creates a gaming
+incentive and implies editing equals ownership.
+
+That reasoning is now **moot rather than wrong** — there is no mark to clear.
+Consequences applied:
+
+- `documents.watermark_removed`, `watermark_removed_at`, `watermark_removed_by`
+  retired, as is `POST /documents/:id/clear-ai-mark`.
+- The two-checkbox-plus-typed-`REMOVE` flow is removed.
+- `design/screens/IMPLEMENTATION.md` §4 still specifies an `AIMarkBar` and a
+  `DraftPage` AI-mark header band. **Both are superseded and must not be built**;
+  that file is a design deliverable and was not edited.
+
+**PD-7 is unaffected.** Citations stay locked in editing, enforced server-side —
+that rule protects the verification chain, not the mark.
 
 ## PD-9 · Judgment reading view
 All six, in priority order: paragraph anchors (tappable, linkable) · jump to any

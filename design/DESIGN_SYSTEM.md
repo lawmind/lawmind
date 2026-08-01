@@ -45,7 +45,7 @@ States — these three only:
 
 | State | Hex | Notes |
 |---|---|---|
-| `verified` | `#1F6F4A` | Badge stroke and tick |
+| `verified` | `#1F6F4A` | **Renders nowhere in the app** — verified is silent. Retained for the admin citation monitor and the on-tap detail |
 | `caution` | `#B4690E` | Stamp border; text darkens to `#8A5109` on paper; card wash `#FBF0DF` |
 | `danger` | `#9E2A33` | Validation errors, destructive confirmation |
 
@@ -231,36 +231,55 @@ against paper cards.
 | 1px | `#141B2D` | Under a section heading; closing a masthead |
 | 2px | `#5E1A2B` | One per screen, on the thing that matters |
 
-## The verification badge — the registry stamp
-The most important component in the product: it is what lets an advocate put a
-citation into a document they file in court. Full build spec, including per-state
-geometry and SVG paths, is `design/screens/IMPLEMENTATION.md` §Badge — do not
+## The verification mark — verified is silent, the exception is loud
+
+**Revised 1 Aug 2026. The five-badge system is retired from the UI.** The data
+model, the three tiers and every zero-threshold metric are unchanged — this is a
+rendering decision only. See `docs/CITATION_HARNESS.md` §Rendering.
+
+**Verification is the expected state. Decorating it is noise, and decorating it on
+every result is what made these screens read as defensive about the one thing the
+product is supposed to be confident about.** On a five-result list this is zero
+marks instead of five.
+
+| Condition | Renders |
+|---|---|
+| `verified` · any source | **nothing at all** |
+| `unverified` or `failed` | dashed mark, `NOT CONFIRMED` — border `#8A8578`, label `#5A6478` |
+| `overruled_status != none` | solid, white fill, `LAW MOVED` — `#B4690E`, text `#8A5109`, on the amber card wash `#FBF0DF` |
+
+Geometry for the two that still render is unchanged and is in
+`design/screens/IMPLEMENTATION.md` §Badge — rectangle, radius 2px, **1.5px**
+border (never 1px, it must survive 2x on a low-DPI panel), padding `3px 6px`,
+JetBrains Mono 600 at 10px / 0.06em, 11px icon box, 20px tall at 1x. Do not
 improvise any part of it.
 
-Shared geometry, identical across all five states: rectangle, **radius 2px**,
-**1.5px** border (never 1px — it must survive 2x on a low-DPI panel), padding
-`3px 6px`, JetBrains Mono 600 label at 10px / 0.06em, 11px icon box, 20px tall at 1x.
+**The three verified variants — `VERIFIED`, `VERIFIED ×2`, `VERIFIED BY YOU` — are
+no longer rendered anywhere in the app.** They remain drawn in
+`design/screens/renders/32-badge-family@3x.png`, `design/screens/renders/43-badge-greyscale.png` and
+`design/screens/renders/33-search-mixed-list@2x.png`, which now diverge from the product on this point.
+`verified_by_source` still exists and still matters — it drives the **on-tap
+detail**, not a badge qualifier.
 
-| State | Border | Label | Colour |
-|---|---|---|---|
-| `verified_internal` | solid | `VERIFIED` | `#1F6F4A` |
-| `verified_external` | solid | `VERIFIED` ⏐ `×2` | `#1F6F4A` |
-| `verified_human` | solid | `VERIFIED` ⏐ `BY YOU` | `#1F6F4A` |
-| `unverified` | **dashed** | `NOT CONFIRMED` | border `#8A8578`, label `#5A6478` |
-| `overruled` | solid, **white fill** | `LAW MOVED` | `#B4690E` / text `#8A5109` |
+**Where verification stays visible** — three places, all of them the user asking
+rather than the product telling: the **draft footer** ("4 of 4 citations
+verified", in-app only) · **on tap**, showing how and by which source · the
+**admin citation monitor**, unchanged.
 
-These five are **visual state names, not stored values.** They are derived at
-render time from three database fields — `verification_state` ·
-`verified_by_source` · `overruled_status`. `LAW MOVED` is independent of the other
-four: a judgment can be verified *and* overruled. Derivation table:
-`docs/CITATION_HARNESS.md`.
+**Silence never means removal.** An unverified citation is always shown and always
+marked. Silent-drop rate stays at 0.0%.
 
-The three verified states are **one family** — same border, colour, icon and
-leading word; the only difference is a qualifier span after a hairline divider.
-All five are distinguishable **with colour removed** (proof:
-`design/screens/renders/43-badge-greyscale.png`) because they differ by *shape*:
-solid edge · dashed edge · filled block. Shape is the only property that survives
-sunlight washout, a dirty screen and colour-vision deficiency.
+What renders is **derived at render time, never stored** — from
+`verification_state` · `verified_by_source` · `overruled_status`. `LAW MOVED` is
+independent of verification: a judgment can be verified *and* overruled, and the
+mark appears either way.
+
+The two remaining marks are distinguishable **with colour removed** (proof:
+`design/screens/renders/43-badge-greyscale.png`) because they differ by *shape* —
+**dashed edge** versus **filled block**. Shape is the only property that survives
+sunlight washout, a dirty screen and colour-vision deficiency, and it is now
+carrying more weight than before: with verified silent, a mark's *presence* is the
+signal, so the two marks must never be confusable with each other.
 
 `unverified` is the state that matters most. It must never use red, an alert
 triangle, or the word "failed" — those say *the product is broken*. Dashed neutral
@@ -303,18 +322,26 @@ is checked at contrast 0.5 / brightness 1.3
 Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the active tab.
 
 ## Non-negotiable UI rules
-1. A citation always renders with its verification state visible. Never a bare
-   case name, anywhere — search, briefing, draft, matter.
-2. An unverified citation is shown honestly, never hidden and never dressed as
-   confirmed.
+1. **A verified citation renders no mark.** Verification is the expected state.
+   Its detail is available on tap and summarised once in the draft footer, never
+   asserted on every row.
+2. An unverified citation is shown honestly — **always visible, always marked**,
+   never hidden and never dressed as confirmed. Silence is reserved for verified;
+   it can never stand for removal.
 3. Overruled always shows its caution state, on every surface. **Three states,
    not one:** `set_aside` (danger band, primary action disabled) ·
    `partly_set_aside` (caution band, adds with a note) · `doubted` (no band, one
    muted line). Binary is a correctness bug in Indian practice.
-4. Every AI draft shows "AI-assisted draft — verify before filing" until the
-   advocate removes it through two confirmations plus a typed `REMOVE`. Removal
-   is logged. The mark is a **header band**, not a diagonal watermark.
-5. OCR-extracted fields always show as pending confirmation before save.
+4. **No AI-assisted mark on the document.** Consent is taken once, explicitly, at
+   onboarding — covering AI assistance, the duty to verify before filing, and the
+   terms of legal use. The exported document carries **no watermark and no hatched
+   margin**; a single line sits in the export metadata, and the citation summary
+   stays in the draft footer while in-app. An advocate who has accepted the terms
+   is a professional, and a watermark on a court filing is both patronising and a
+   competitive disadvantage.
+5. OCR-extracted fields show for confirmation before save — presented as a
+   **normal review step, not a warning**. It is a data-correctness step; drop the
+   cautionary language.
 6. Never a bare spinner on search — skeleton results keep the screen's shape.
 7. Offline is a requirement, not an edge case.
 8. When the AI is unavailable, say so plainly. Never serve a stale cached answer.

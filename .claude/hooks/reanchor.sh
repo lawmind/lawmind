@@ -12,12 +12,18 @@ LAWMIND NON-NEGOTIABLE:
 - Citations: THREE fields, not one enum. verification_state (verified|unverified|
   failed) · verified_by_source (corpus|public_x2|ecourts|none) · overruled_status
   (none|set_aside|partly_set_aside|doubted, on judgments). A judgment can be
-  verified AND overruled. The 5 badge states are DERIVED, never stored.
+  verified AND overruled. What renders is DERIVED at render time, never stored.
   Render FROM THE DB ROW. Never show unverified as confirmed. NEVER silently
   drop one. set_aside disables add-to-matter. docs/CITATION_HARNESS.md
 - overruled_status is NEVER cached. Verification is permanent; good-law status is
   not. Read it live at render on EVERY surface. Stale-overruled rate threshold 0 —
-  a VERIFIED badge on overruled law is as severe as a hallucination.
+  overruled law rendered WITHOUT the LAW MOVED mark is as severe as a hallucination.
+- UI: VERIFIED IS SILENT. No badge on a verified citation. Only two states render:
+  unverified (unmissable mark + eCourts path) and overruled (LAW MOVED, 3 states).
+  Silence = "verified, not decorated". Silence NEVER = "dropped". Detail on tap,
+  summary in the draft footer. Data model and pipeline UNCHANGED.
+- No AI-assisted mark on documents. Consent once at onboarding, recorded in users
+  (terms_accepted_at, terms_version). PD-8 superseded. No watermark on export.
 - Never bypass the eCourts CAPTCHA. Human confirms, cache forever.
 - Route by DATA SENSITIVITY not task difficulty. Uploaded docs = sensitive:
   pseudonymise first. OD-6 blocks upload features. docs/PRIVACY_PII.md

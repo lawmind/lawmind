@@ -15,7 +15,21 @@ POST /auth/refresh      { refreshToken }     → { accessToken, refreshToken }
 POST /auth/logout       —                    → { ok }
 GET  /me                —                    → { user }
 PATCH /me               { fullName?, preferredLanguage?, barEnrolmentNumber? } → { user }
+
+GET  /terms/current     —                    → { version, body }
+POST /me/accept-terms   { version }          → { termsAcceptedAt, termsVersion }
 ```
+
+**PD-8 — consent replaces the AI-assisted mark.** `POST /me/accept-terms` records
+the advocate actively accepting AI assistance, the duty to verify before filing,
+and the terms of legal use. It writes `terms_accepted_at` and `terms_version`
+together, rejects a `version` that is not the current one, and is **never
+inferred** from any other action. An account with no accepted terms cannot
+generate a draft — that is the one place this gates, and it gates nothing else.
+
+**Enrolment still never gates** (PD-2). Consent and enrolment are different
+things: consent is a condition of drafting, enrolment is a credential that is
+merely displayed.
 
 ## Search — LCC owns
 ```
@@ -110,9 +124,14 @@ PATCH /documents/:id            { paragraphs: [{ index, text }] } → { document
 POST /documents/:id/citations   { judgmentId, replacesCitationCheckId? }
                                 → { citationCheck }     // re-verifies
 DELETE /documents/:id/citations/:citationCheckId → { ok }
-POST /documents/:id/clear-ai-mark { confirmations[], typed:"REMOVE" } // audited
 POST /documents/:id/export      { format: 'docx'|'pdf' } → { storageKey, url }
 ```
+
+**`POST /documents/:id/clear-ai-mark` is removed** — PD-8 superseded. There is no
+mark on the document to clear. The export carries no watermark; a single line goes
+in the **export metadata**, and the citation summary ("4 of 4 citations verified")
+renders in the **draft footer in-app only**, derived from `citation_checks` at read
+time.
 
 **PD-7 — `PATCH` accepts paragraph prose only.** It no longer takes a whole
 `content` blob and **never takes `watermarkRemoved`**. The server re-extracts

@@ -9,7 +9,22 @@ without updating this file in the same commit.
 (unverified|verified|rejected) default unverified · `preferred_language` enum
 (en|hi) default en · `subscription_tier` enum
 (none|starter|professional|expert|firm|enterprise) default none ·
+`terms_accepted_at` timestamptz null · `terms_version` text null ·
 `created_at` timestamptz
+
+**PD-8 — consent replaces the AI-assisted mark.** `terms_accepted_at` and
+`terms_version` record the advocate actively accepting AI assistance, the duty to
+verify before filing, and the terms of legal use. Both are set together at
+onboarding and **never back-filled**: an unset pair means consent was not given,
+and that is a state the app must be able to see. Store the **version**, not a
+boolean — when the terms change, who accepted which text is the only thing that
+matters.
+
+`preferred_language` is a two-value enum today. **The i18n architecture stays
+multi-language** so a third locale is a migration, not a rewrite — but note that
+this enum, `judgments.language` and `documents.language` are the three places a
+new locale touches the database. Thailand is out of v1 (civil-law jurisdiction —
+the citation-verification moat does not transfer); revisit after ₹1Cr ARR.
 
 ## judgments
 `id` uuid pk · `case_title` text · `neutral_citation` text null ·
@@ -110,20 +125,17 @@ duplicate.
 `document_type` enum (bail|anticipatory_bail|plaint|written_statement|
 legal_notice|notice_reply|affidavit|vakalatnama|writ_petition|rti) ·
 `input_params` jsonb · `generated_content` text · `language` enum (en|hi) ·
-`storage_key` text null · `watermark_removed` bool default false ·
-`watermark_removed_at` timestamptz null · `watermark_removed_by` uuid null fk→users ·
-`created_at` timestamptz
+`storage_key` text null · `created_at` timestamptz
 
-**PD-8 — editing never clears the AI-assisted mark.** `watermark_removed` flips on
-**one path only**: the explicit removal flow (two confirmations plus a typed
-`REMOVE`), which writes all three columns together and an `audit_log` row. No
-amount of rewriting counts as reading.
+**PD-8 superseded 1 Aug 2026 — the AI-assisted mark is gone.**
+`watermark_removed`, `watermark_removed_at` and `watermark_removed_by` are
+**retired and must not be created**. Consent is taken once at onboarding and lives
+on `users` (`terms_accepted_at`, `terms_version`).
 
-There is deliberately **no edit counter and no changed-character threshold**.
-Auto-clearing above a threshold would create a gaming incentive and imply that
-editing equals ownership. Ownership is an act, and that removal is a signature
-moment. Any code path that sets `watermark_removed` from an edit handler is a
-defect.
+The exported document carries no watermark and no hatched margin. A single line
+sits in the **export metadata**; the citation summary — "4 of 4 citations
+verified" — is rendered in the **draft footer in-app only** and is derived at read
+time from `citation_checks`, not stored here.
 
 ## searches
 `id` uuid pk · `user_id` uuid fk→users · `matter_id` uuid null fk→matters ·

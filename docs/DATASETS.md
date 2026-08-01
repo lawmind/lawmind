@@ -84,3 +84,31 @@ permanent test asset.
 
 **Principle: primary sources only.** Judgments, statutes, official records. Never
 another model's commentary about them.
+
+---
+
+## What is actually licensable — read before valuing any of this
+
+**The asset is the verified corpus and the data flywheel. It is not the weights.**
+
+Frontier labs give weights away free — GLM-5.2 is MIT with weights on Hugging
+Face, DeepSeek V4 Flash is MIT, Kimi K3 is Modified MIT. A fine-tune of a free
+base model is not a moat, because anyone can start from the same base tomorrow.
+
+What nobody else can assemble is **2M+ advocate-validated query–response pairs on
+Indian law**: judgments verified against the reported record, citations confirmed
+through three tiers, drafts an advocate accepted, corrections an advocate made,
+and disputes an advocate raised and we upheld. That accumulates only by operating
+the product, and it compounds.
+
+Consequences for how we work:
+
+- Every verified citation, upheld dispute and accepted draft is **training data
+  being collected**, whether or not we ever train. Capture it cleanly from S1.
+- **Fine-tune base: GLM-5.2** (`TRD.md` §Model selection). Recorded now so the
+  corpus is collected in a shape that suits it.
+- **Fine-tuning does not start before ₹3L MRR.** The Sarvam-1 Colab pilot runs in
+  parallel at zero cost.
+- Never contaminate the flywheel with model-generated commentary. A corpus that
+  contains another model's opinion about a case is worth less than one that does
+  not, because its errors are unattributable.

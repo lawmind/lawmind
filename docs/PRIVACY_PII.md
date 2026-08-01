@@ -65,8 +65,27 @@ path. `SCHEMA_TRUTH.md#citation_copies`.
 - Deletion purges R2 objects, Postgres rows, embeddings and caches. A soft delete
   flag is not deletion.
 
-## What we tell advocates
-Plain language, in-product: what leaves the device, what is pseudonymised, what
-we cannot guarantee. Never "fully private" or "completely anonymous". Advocates
-are trained to distrust overclaims — an honest limitation builds more confidence
-than a false absolute.
+## What we tell advocates — and where
+
+Plain language: what leaves the device, what is pseudonymised, what we cannot
+guarantee. Never "fully private" or "completely anonymous". Advocates are trained
+to distrust overclaims — an honest limitation builds more confidence than a false
+absolute.
+
+**Where it appears — revised 1 Aug 2026.** The privacy disclosure lives in
+**onboarding** and on a **settings page**. It does **not** appear during use.
+
+This is the same principle as the silent-verified UI: state it once, plainly,
+where the advocate is deciding whether to trust the product — then get out of the
+way. A disclosure that reappears mid-task is not more honest, it is just noise,
+and noise is what gets dismissed without reading.
+
+**Nothing about the substance is softened.** Coverage is still ~80% and still
+described as partial. The consent taken at onboarding (PD-8) covers AI assistance,
+the duty to verify before filing, and the terms of legal use, and is recorded with
+a timestamp and terms version.
+
+**OCR field confirmation stays**, because it is a data-correctness step and not a
+warning — but it is presented as a **normal review**, not a caution. The advocate
+is checking extracted fields the way they would check a typed form, and the
+cautionary framing was doing nothing except making a routine step feel risky.

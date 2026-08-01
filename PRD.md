@@ -38,6 +38,66 @@ Photograph or upload a court order; OCR extracts court, case number, parties,
 date, body. Advocate confirms before saving. Most district court orders are
 scans — without this the product is unusable where most litigation happens.
 
+---
+
+# Scope — revised 1 Aug 2026
+
+**The goal is scope leadership, not minimum viability.** Target: the most
+data-rich, most useful legal application for Indian advocates.
+
+**The benchmark is Law4u** — 1M+ judgments, 701+ Acts, 11,000+ drafts, 18
+languages, a Legal AI beta, advocate finder, law dictionary. **We must match its
+library and beat it on the daily loop.**
+
+F1–F5 above remain the spine. Everything below is additive.
+
+## Tier A — library parity
+Table stakes. We cannot be smaller than Law4u on a feature-comparison page.
+
+| Feature | Notes |
+|---|---|
+| Bare acts library | 700+ Central and State Acts, full text, searchable. BNS / BNSS / BSA first-class with IPC↔BNS mapping |
+| Judgment corpus at scale | Target **1M+**. Beyond the 5-year SCI slice — all 25 High Courts and available District data |
+| Draft template library | The 10 AI-generated types **plus** a static library of standard formats |
+| Legal dictionary | Terms, Latin maxims, procedural vocabulary. Cheap, and expected |
+| Court rules and practice directions | Supreme Court and per-High-Court |
+| Limitation calculator | Cause-of-action date + relief → limitation period and deadline. **Missing a limitation period is malpractice — the highest-anxiety calculation an advocate makes** |
+| Court fee calculator | Per state, per suit value |
+
+## Tier B — the daily loop
+This is the addiction. Why the app gets opened every morning.
+
+| Feature | Why it drives daily opening |
+|---|---|
+| **Hearing briefing** | The existing wedge. Nightly. Unchanged |
+| **Daily cause list** | Every matter listed today, across all courts, one screen. The first thing an advocate checks each morning |
+| **Client update sharing** | One tap to share matter status as a clean summary over WhatsApp. **This is the viral loop** — every share carries our name to a client and to opposing counsel |
+| **Adjournment capture** | Next date given orally in court, entered in three taps while still in the courtroom |
+| **Limitation and deadline alerts** | Tied into the same evening briefing rhythm |
+| **Fee and appearance log** | What was billed, what was appeared in. Advocates track this on paper today |
+
+## Sequencing — Tier B ships before Tier A
+
+**The loop creates the habit; the library only prevents a feature-comparison
+loss.** An advocate does not open an app daily for a bare acts library. They open
+it to find out where they have to be this morning, and what happened to the matter
+they argued last week.
+
+Building Tier A first would produce a product that wins a comparison table and
+loses on retention — which is the more expensive failure, because retention is
+what the matter workspace moat is made of.
+
+## Geography — India only in v1
+
+**Thailand is out.** It is a civil-law jurisdiction: precedent is not binding, the
+Supreme Court is not bound by its own decisions, and pleadings are in Thai. Our
+citation-verification moat is a **common-law** product and does not transfer.
+Revisit after **₹1Cr ARR**.
+
+The i18n architecture stays multi-language so adding a locale later is a
+migration, not a rewrite — `docs/SCHEMA_TRUTH.md` names the three columns a new
+locale touches.
+
 ## Out of scope for v1
 Tamil and Bengali. Mock trial simulator. Team seats. Contract review.
 Multi-agent case analysis (roadmap — `docs/ROADMAP_MULTI_AGENT.md`).
