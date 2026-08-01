@@ -187,6 +187,39 @@ known blind spots.
    contract rule that a citation payload missing its three fields renders "not
    confirmed" and reports itself.
 
+## Citations are locked in editing — binding (PD-7)
+
+**A hand-edited citation breaks the verification chain.** The badge asserts that a
+specific `judgment_id` was resolved and checked. If free text can overwrite the
+citation string beside it, the badge now asserts something we never checked — which
+is the hallucination failure arriving by a different door, and harder to catch
+because the citation was genuinely verified once.
+
+**A citation may only be changed through the picker, which re-verifies.**
+Free text may never overwrite a verified citation.
+
+### This is enforced by the API, not the client
+
+The client draws a lock glyph beside the stamp and makes citation spans
+non-editable. **That is presentation, and presentation is not enforcement** — a
+replayed request, a stale build or a modified client bypasses it entirely.
+
+`PATCH /documents/:id` accepts **paragraph prose only**:
+
+1. The server holds the authoritative citation set for a document in
+   `citation_checks` (`document_id`), each bound to a `judgment_id`.
+2. On every write, the server re-extracts citation spans from the submitted body
+   and compares them against that set. **Any divergence — an altered citation
+   string, a removed span, an added one — is rejected `422`.** The document is not
+   partially saved.
+3. Changing an authority goes through `POST /documents/:id/citations`, which takes
+   a `judgmentId` and **runs the verification tiers again**, never a citation
+   string.
+4. Removal goes through the authority list, not the keyboard.
+
+The rule to hold in mind while implementing: **the body a client submits is
+untrusted prose; the citations are server state.** They meet only at render.
+
 ## When the law moves — what the advocate is told
 
 Notification severity follows the three overruled states, matching how each state

@@ -8,14 +8,22 @@ mandatory reading set.
 
 Session start, in this order, before Section 2 of the global file:
 
-1. `.ai/README.md` → loads the whole `.ai/` module set (11 files)
-2. `docs/OPEN_DECISIONS.md` → what is NOT settled; never silently decide one
-3. `docs/SCHEMA_TRUTH.md` → the only authority on data shapes
-4. `docs/CITATION_HARNESS.md` → the rule that can end this product
+1. **`PRODUCT_BRIEF.md`** → the north star. **Read first, every session.** If what
+   you are about to build does not serve one of its four features, stop and ask
+2. `.ai/README.md` → loads the whole `.ai/` module set (11 files)
+3. `docs/OPEN_DECISIONS.md` → what is NOT settled; never silently decide one
+4. **`PRODUCT_DECISIONS.md`** → PD-1…PD-12, **settled**. Do not silently reopen
+   one. Reasoning is recorded because the reasoning is what keeps the next
+   decision consistent
+5. `docs/SCHEMA_TRUTH.md` → the only authority on data shapes
+6. `docs/CITATION_HARNESS.md` → the rule that can end this product
 
-More than 20 turns deep, or context was compacted → re-read items 2–4 before your
+More than 20 turns deep, or context was compacted → re-read items 3–6 before your
 next edit. The `UserPromptSubmit` hook re-injects the core each turn; that core is
 a pointer, not a replacement for the files.
+
+`docs/OPEN_DECISIONS.md` and `PRODUCT_DECISIONS.md` are opposites and both binding: the
+first is what nobody may decide alone, the second is what nobody may re-decide.
 
 ## 1. WHAT LAWMIND IS
 

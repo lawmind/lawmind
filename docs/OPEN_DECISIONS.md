@@ -53,22 +53,46 @@ Needs: a decision on which provider handles sensitive-class calls, on written
 data-processing terms — not marketing copy. See `docs/PRIVACY_PII.md`.
 Until resolved: no feature sends uploaded document content to any model.
 
-### Design gap — recorded 31 July 2026, going to Claude Design
-The admin's model routing is keyed **per feature** (`search`, `briefing`, `draft`,
-…) — canvas `1ab`, `design/screens/renders/14-admin-llm-spend.png`. **A feature
-cannot express a data-class rule**, because one feature handles both kinds of
-data: a draft is generated from public judgment text *and* from uploaded case
-documents naming accused persons, witnesses and minors. Routing "draft" to a
-provider therefore routes sensitive-class content there too, which is exactly what
-OD-6 exists to prevent.
+### Design gap — CLOSED 1 August 2026. Commercial half still open.
 
-`llm_calls.data_class` (public|sensitive) already exists in `SCHEMA_TRUTH.md`, and
-`GET /admin/llm-costs` already returns `byDataClass` — so the *reporting* axis is
-there and only the *routing control* is missing. The strings `data-class`,
-`dataClass` and `sensitive` appear **zero times** in the admin canvas.
+The routing surface was redrawn **keyed by data class, not by feature** — canvas
+`10l`, `design/screens/renders/57-admin-routing@2x.png`. The design states the
+problem in its own words: *"a bail application from public case law is public; the
+same application built from an uploaded FIR is sensitive — that is the distinction
+feature-keyed routing could not express."*
 
-Not resolved here. Sent to Claude Design as a routing-surface gap.
-See `docs/ADMIN_SURFACE.md` §7.
+**The mechanism is fully specified and closes the design half of OD-6:**
+
+1. **Scan** — every outbound request is scanned for an attachment, a note
+   reference, and named-entity patterns.
+2. **Classify** — any hit means sensitive. **Ambiguity resolves to sensitive,
+   never to public.**
+3. **Route** — sensitive goes only to a provider with terms on file. **There is no
+   fallback to a cheaper one.**
+4. **Record** — class and provider are written to the audit ledger for every call,
+   kept **seven years**.
+
+The blocked state is drawn too: an operator attempting to route sensitive traffic
+to a provider with no DPA is **refused automatically and logged**, with
+*"no founder override available for this rule"*. That is the correct shape — this
+is the one control that must not have an override.
+
+**What is still yours to decide.** The render depicts sensitive traffic handled by
+a named provider under a signed India DPA. That is **mock state in a design file,
+not evidence of a signature.** OD-6 asks for a provider decision resting on
+*written data-processing terms, not marketing copy* — so what remains is
+commercial, not design:
+
+- Which provider actually handles sensitive-class calls.
+- A **countersigned** DPA on file, with zero-retention and no-training-on-inputs
+  terms, and a reviewed sub-processor list.
+- Confirmation that the chosen endpoint's region is defensible under **OD-2**.
+
+Until that exists, the rule the design enforces has nothing to point at: "a
+provider with terms on file" is an empty set. **No feature sends uploaded document
+content to any model until it is filled.**
+
+See `docs/ADMIN_SURFACE.md` §7 and `PRIVACY_PII.md`.
 
 ## OD-7 — OCR engine · BLOCKS scanned intake
 PaddleOCR (better layout and table handling, heavier) vs Tesseract (lighter,

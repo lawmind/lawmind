@@ -810,13 +810,21 @@ relitigate them. Governing principle: **a premium tool does fewer things, states
 them plainly, and never hedges.** Where a call could go either way, the option
 with less surface area won.
 
-1. **Verification badge — variant D.** The tick binds to the citation string, not
-   the card, with a gilt ring. It survives being quoted inside a draft, a briefing
-   and a copied citation. Variant C (loud header strip) is dropped entirely — a
-   first-run-only treatment is maintained forever for a week of benefit.
-2. **Briefing — the full-screen takeover (1g).** The only screen in the app that
-   changes colour, which is why arriving at it feels like an event. The memo
-   variant's dropped cap and "the one point to win" block are folded into block 01.
+1. **Verification badge — the registry stamp, five states.** A rectangle with a
+   1.5px border and a mono label, bound to the citation string rather than the
+   card, so it survives being quoted inside a draft, a briefing and a copied
+   citation. **There is no disc and therefore no gilt ring** — the v1 "variant D"
+   green disc is retired. States differentiate by *shape* (solid / dashed /
+   filled), the only property that survives sunlight and colour deficiency. Full
+   build spec in §Badge; the seal, the margin endorsement and v1 variants A–D are
+   history, not options.
+2. **Briefing — paper masthead, not a dark takeover.** The v1 full-screen ink
+   takeover (`1g`) is **retired**: an advocate reads a briefing in a courtyard at
+   midday, and a dark screen is the worst surface for that (§8b item 12). The
+   briefing is paper, opened by a 2px oxblood masthead rule with the gilt seal
+   ring beside it, four numbered blocks, and the checklist last — canvas `8b`.
+   The memo variant's dropped cap and "the one point to win" block are folded into
+   block 01. Arrival is carried by the seal press (`10a`), not by a colour change.
 3. **Overruled — three states, from day one.** All three are drawn in `3e`.
    - `set_aside` — **danger red** band replaces the header, title struck through,
      holding drops to muted ink, a replacement judgment is mandatory, and the
@@ -845,9 +853,69 @@ with less surface area won.
    search limit becomes advisory rather than hard. The limit is still displayed.
    An advocate blocked mid-preparation churns and tells the bar.
 8. **Notes vs court record — two weights.** Record renders in Source Serif 4 on a
-   quote card;
-   private notes render in Inter, indented, muted, prefixed "Your note". Under a
-   firm plan the record is shared and notes are not, by default, with no setting.
+   quote card; private notes render in Inter, indented, muted, prefixed "Your
+   note". Under a firm plan the record is shared and notes are not, by default,
+   with no setting.
+9. **No sound. Ever.** The app opens in courtrooms, and a device that makes a
+   noise there embarrasses its owner in front of a judge. Silence is a decision,
+   not an omission: **haptics carry every piece of feedback** (§Motion), and the
+   five semantic patterns exist precisely so nothing needs an audio cue. No
+   success chime, no error tone, no keyboard click, no in-app notification sound.
+   If a state cannot be communicated by a visual plus a haptic, redesign the
+   state.
+10. **Dark mode is v2, and that is deliberate.** Advocates work in daylight —
+    corridors, courtyards, chambers with windows — and the whole paper system is
+    tuned for sunlight legibility on a mid-range Android. Obsidian was built in
+    full and reverted after review (§8b item 12); shipping a dark theme now means
+    maintaining two palettes, two sets of state colours and two badge renderings
+    before the first is proven in production. Revisit once the corpus, the badge
+    and the briefing are settled. **Do not build a partial dark mode in the
+    meantime** — a half-themed legal app is worse than none.
+
+## 9b. Product decisions — answered by the founder, 1 Aug 2026
+
+These closed the seven screens that were marked NOT YET DESIGNED. Each is now
+drawn; the canvas id is given so the decision and the pixels stay attached.
+
+### Context that governs all of them
+
+- **A chamber is two to five people, not a firm.** The "Firm" tier is a senior
+  with juniors, not a corporate practice. No org chart, no roles, no admin
+  console — a list of names.
+- **A junior may appear for a senior at short notice, sometimes the same
+  morning.** A shared briefing must be readable by someone who has not read the
+  file. This is a copywriting requirement, not a permissions one.
+- **The physical file is still the source of truth.** We are the preparation
+  layer. Never design as though we replace the brief.
+- **Word is non-negotiable for filing.** `.docx` is the default export and must
+  survive with styles intact. A mangled export is worse than no export.
+- **Court connectivity is genuinely bad** — thick walls, basements, jammers.
+  Offline is a hard requirement.
+- **Next dates are given orally in open court** and written on the file, so
+  **manual date entry is first-class**, never a fallback path.
+- **Senior advocates are the buying decision and the most sceptical of AI.**
+  The product must read as an instrument, not a toy. This is the origin of the
+  paper-and-restraint direction and it is not negotiable for visual novelty.
+
+### The decisions
+
+| # | Decision | Canvas |
+|---|---|---|
+| 1 | **Sign-in is SMS OTP to any number they enter.** It need not match the Bar Council roll. Enrolment is verified separately, afterwards. Six tabular digits at 26px. | `11a` |
+| 2 | **Full access while enrolment is pending.** A quiet caution-amber band above the header, nothing withheld. It is a band rather than a card so it never competes with the briefing, and it disappears the moment verification lands. | `11a` |
+| 3 | **Sharing is per matter, by invitation.** The owner invites a named person by enrolment number or phone. There is no chamber-wide switch — you invite someone to a case, the way you hand over a file. | `11b` |
+| 4 | **Notes are private by default, shareable per note.** Reversible. A note about fees or a client's circumstances must never travel with a file by accident. Instruction-to-junior notes are why per-note sharing exists. | `11b` |
+| 5 | **A shared briefing names whose matter it is** and surfaces the shared instruction *above* the court record — the thing a stand-in most needs and least expects. It carries no private notes. | `11b` |
+| 6 | **Four alert triggers only:** an authority saved to a matter is set aside · an authority cited in a filed draft is set aside · a judgment lands in one of their matters · a matter is listed on a date they did not enter. The filed-draft trigger **cannot be disabled**. | `11c` |
+| 7 | **No subject-following alerts.** An alert that does not touch their own matters is engagement, not preparation. The refusal is written into the settings screen. | `11c` |
+| 8 | **Alerts batch into the evening briefing.** The briefing card grows a "since yesterday" block; the app does not grow a notifications tab. The single exception is an authority set aside that is cited in tomorrow's hearing — that pushes immediately, danger-tinted, never gilt. | `11c` |
+| 9 | **Editing is paragraph-level.** Tap a paragraph, edit its prose. Neighbours drop to 34% opacity. **Citations are locked** and carry a small lock glyph beside the stamp; removal happens through the authority list, not by keystroke. | `11d` |
+| 10 | **Editing never clears the AI-assisted mark.** No amount of rewriting counts as reading. Only explicit removal clears it, and that is logged. | `11d` |
+| 11 | **`.docx` is the default export**, PDF second, copy-text third. Styles intact, citations as plain text. | `11d` |
+| 12 | **Judgment reading view carries six things:** paragraph anchors in a fixed 22px gutter, in-text search that jumps between paragraphs, highlight-and-save to a matter, jump-to-cited-paragraph, reading progress per judgment including offline, and adjustable text size expressed as **words per screen**. | `11e` |
+| 13 | **Five search filters:** court and bench strength · date · subject · only verified · exclude set aside or doubted. **Judge and reporter were dropped** — a judge filter is a research tool, and reporter choice is a citation-format concern. | `11f` |
+| 14 | **A filter never hides a result silently.** Excluded results are named with a one-tap escape, and applied filters sit as ink chips beneath the query. | `11f` |
+| 15 | **The six uncaptured admin sections stay uncaptured.** Advocates, Corpus, Support, Push, Staff and Analytics are built and clickable in `LawMind Admin.dc.html`; the live file is the reference. No golden renders. | — |
 
 ## 10. Files
 

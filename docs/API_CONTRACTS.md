@@ -71,6 +71,29 @@ PATCH  /matters/:id            { ...partial } → { matter }
 POST   /matters/:id/events     { eventDate, eventType, orderText?, notes? } → { event }
 ```
 
+## Matter sharing — LCC owns · PD-3, PD-4
+```
+GET    /matters/:id/shares        → { shares: [ { id, invitedIdentifier,
+                                       invitedUserId?, grantedBy, grantedAt }] }
+POST   /matters/:id/shares        { identifier }   // enrolment number or phone
+                                  → { share }
+DELETE /matters/:id/shares/:shareId → { revokedAt }
+
+PATCH  /matters/:id/events/:eventId  { noteVisibility: 'private'|'shared' }
+                                  → { event }
+```
+**Per matter, by invitation. There is no chamber-wide endpoint and must not be** —
+a chamber of two to five is a list of names, not an org chart, and chamber-wide
+default sharing is a conflicts hazard.
+
+Revoke sets `revoked_at`; it never deletes the row. Who had sight of a matter and
+when is what a conflicts challenge asks later.
+
+A share grants the **court record** plus notes explicitly marked `shared`.
+`noteVisibility` defaults to `private` **in the column**, not in application code.
+A shared briefing names whose matter it is and carries no private notes — a junior
+may be appearing on it at a morning's notice.
+
 ## Briefings — CX2 generates, LCC serves
 ```
 GET  /briefings/:id             → { briefing }
@@ -83,9 +106,28 @@ POST /briefings/:id/opened      → { ok }
 GET  /documents/types           → { types: [ { type, label, requiredFields } ] }
 POST /documents                 { documentType, matterId?, language, inputParams }
                                 → { documentId, content, citations, unverifiedReferences }
-PATCH /documents/:id            { content?, watermarkRemoved? } → { document }
-POST /documents/:id/export      { format: 'pdf'|'docx' } → { storageKey, url }
+PATCH /documents/:id            { paragraphs: [{ index, text }] } → { document }
+POST /documents/:id/citations   { judgmentId, replacesCitationCheckId? }
+                                → { citationCheck }     // re-verifies
+DELETE /documents/:id/citations/:citationCheckId → { ok }
+POST /documents/:id/clear-ai-mark { confirmations[], typed:"REMOVE" } // audited
+POST /documents/:id/export      { format: 'docx'|'pdf' } → { storageKey, url }
 ```
+
+**PD-7 — `PATCH` accepts paragraph prose only.** It no longer takes a whole
+`content` blob and **never takes `watermarkRemoved`**. The server re-extracts
+citation spans and rejects `422` on any divergence from the authoritative set in
+`citation_checks`; the document is not partially saved. Changing an authority goes
+through `POST /documents/:id/citations`, which takes a `judgmentId` and re-runs
+the verification tiers — never a citation string. Enforcement is server-side; the
+client's lock glyph is presentation. See `CITATION_HARNESS.md` §Citations are
+locked in editing.
+
+**PD-8 — only `clear-ai-mark` clears the mark.** Editing never does, at any
+volume. There is no threshold and no edit counter.
+
+**PD-11/§9b — `docx` is the default export**, PDF second. Styles must survive
+intact; citations export as plain text. A mangled export is worse than no export.
 
 ## OCR — CX2 owns the service, LCC serves the API
 ```
@@ -213,6 +255,53 @@ not notify anyone twice. **Partial completion is not acceptable:** if the fan-ou
 cannot be enqueued the whole operation fails, the dispute stays open and the
 re-check run is marked `failed`. Never leave the corpus saying overruled while
 the advocate who filed it was not told.
+
+### Citator alerts — PD-5, PD-6
+```
+GET   /alerts            ?since   → { alerts, unreadCount }
+POST  /alerts/:id/read            → { ok }
+GET   /me/alert-settings          → { settings }
+PATCH /me/alert-settings   { savedAuthorityMoved?, ownMatterJudgment?,
+                             unknownListing? }  → { settings }
+```
+
+**Four triggers, and only four:**
+
+| # | Trigger | Produced by |
+|---|---|---|
+| 1 | An authority **saved to a matter** is set aside or overruled | the citation fan-out, `savedCount` |
+| 2 | An authority **cited in a filed draft** is set aside | the citation fan-out, `filedCount` + `copiedCount` |
+| 3 | A judgment **in one of the advocate's own matters** is uploaded | corpus ingest |
+| 4 | A matter is **listed on a date they did not enter** | cause list sync |
+
+**Triggers 1 and 2 are already implemented by `applyOverruledChange`.** They are
+listed here because they are alerts the advocate receives, **not because anything
+new is built** — the fan-out is the single producer, and a second path that
+notices the same flip would double-notify. Do not add one.
+
+**Trigger 2 cannot be disabled.** `PATCH /me/alert-settings` accepts no key for
+it; sending one is a `400`. An advocate who has filed a document citing law that
+has since moved does not get to opt out of being told.
+
+**Excluded by decision: no subject-following alerts.** New judgments on a
+frequently searched subject are discovery, not preparation — they belong in the
+app and never in a notification. There is no endpoint for it, and the refusal is
+stated on the settings screen rather than hidden.
+
+**Cadence — batched into the evening briefing.** Alerts accumulate into a "since
+yesterday" block on the briefing card. **The app does not grow a notifications
+tab.** A wrong cadence trains advocates to disable notifications permanently, and
+they do not come back.
+
+**Two standing exceptions push immediately:**
+1. `set_aside` on a citation in an **exported** draft — this is trigger 2, already
+   pushed by the fan-out at the severity in `CITATION_HARNESS.md`. Not
+   re-implemented here.
+2. A newly discovered listing for **tomorrow** — raised by cause list sync, not by
+   the fan-out. Danger-tinted, never gilt.
+
+> `design/screens/IMPLEMENTATION.md` §9b item 8 describes a *single* exception. `PRODUCT_DECISIONS.md`
+> PD-6 defines two, and PD-6 is authority. See `design/SCREENS.md` OQ-3.
 
 ### Overruled re-check — scheduled
 ```

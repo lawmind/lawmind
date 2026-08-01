@@ -66,6 +66,27 @@ Missed run alerts by 00:30 IST.
 better-auth, self-hosted. Email magic link via Postmark at launch; phone OTP via
 MSG91 phase 2. Rotating refresh tokens, 30-day sliding window.
 
+**PD-1 and PD-2 — what is settled, and what is a delivery detail.**
+
+PD-1 settles the *verification model*, not the channel: **the identifier is
+whatever number or address the advocate enters, and it need not match the Bar
+Council roll.** Bar Council rolls carry stale phone numbers, so gating signup on a
+roll match blocks legitimate users before they have seen any value.
+
+**The channel above stands** — magic link at launch, phone OTP in phase 2. PD-1's
+wording describes SMS OTP because that is what canvas `11a` /
+`design/screens/renders/58-signin-otp@2x.png` draws, and WhatsApp OTP is named
+there as a later channel swap. **A channel change is not a decision change**, and
+neither this file nor PD-1 should be "corrected" to match the other: the six-digit
+OTP screen is the drawn end state, the launch channel is a delivery choice.
+
+**PD-2 — enrolment never gates.** The enrolment number is captured, queued for
+manual review, and shown as a quiet caution-amber band above the header. Nothing
+is withheld while it is pending, and **rejection does not remove access**. There is
+no public Bar Council verification API, so gating would mean a manual queue on
+every signup; the number exists for positioning — a tool for licensed
+practitioners — not for security. Enforce this with a test, not a comment.
+
 ## Storage
 Cloudflare R2. Case documents in a dedicated bucket with its own access policy.
 AES-256 at rest. Deletion purges objects, rows, embeddings and caches.

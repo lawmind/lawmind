@@ -3,12 +3,16 @@
 Feed to Claude Design first. Every screen prompt assumes it.
 
 > **Source of truth.** This file describes the designs in `design/screens/`,
-> reconciled 31 July 2026 against the refined bundle (`LawMind mobile app design`).
+> reconciled **1 August 2026** against the final bundle (`LawMindfinal.zip`).
 > The written rules live in `design/screens/IMPLEMENTATION.md`; the authoritative
-> pixels are **renders 30–43**. Renders `00-29` are superseded v1/v2
-> — their layout is often still valid, their colour and serif are not.
-> Contradictions remaining inside those sources are listed at the bottom under
-> **Known contradictions**; they are not resolved here.
+> pixels are **renders 30–63**. Renders `00-29` are superseded v1/v2 — their
+> layout is often still valid, their colour and serif are not.
+> Per-screen inventory: `design/screens/SCREENS.md` (87 rows).
+> Product decisions PD-1…PD-12: `PRODUCT_DECISIONS.md`, settled.
+>
+> Where this file and `design/screens/IMPLEMENTATION.md` disagree, the newer
+> **render** governs — that is how the gilt and glass rules below were settled.
+> Remaining contradictions are listed at the bottom and are not resolved here.
 
 ## Direction: paper and ink, not dashboard
 Lawmind is used in court corridors by people carrying physical files. It should
@@ -50,29 +54,49 @@ primary action, once where emphasis is genuinely earned. Three or more accent
 moments is a defect, not a preference. Everything else is ink, ink-muted,
 ink-faint and rule. Most emphasis should come from a rule or from space.
 
-### Gilt — ornament only
+### Gilt — ornament, two placements
 `gilt` `#C9A227` is deliberately **not in the token table**: it never carries
 information — never text, never a rule that must be read, never a state, never on
-anything tappable. The test is one sentence: **remove the gilt entirely and check
-whether anything became unknowable.** If yes, it was load-bearing and must be ink.
+anything tappable. The test is one sentence: **remove all the gilt from a screen
+and ask whether anything became unknowable.** If yes, it was load-bearing and must
+be ink.
 
-Three permitted placements: **1.** the briefing seal ring (ink card only) ·
-**2.** the verified tick ring, 2px around a `#1F6F4A` disc — *only where a disc
-badge is used, which is currently nowhere, since the shipped badge is a rectangle*
-· **3.** identity (logo, splash, letterhead, admin sidebar mark).
+**Settled at two placements** (`design/screens/renders/55-gilt-two-placements@2x.png`):
 
-Forbidden without exception: gilt text a user must read · a gilt rule dividing
-content · a gilt button or gilt on any tappable surface · gilt on paper at body
-size · gilt as a state, status or badge colour · a second accent beyond oxblood ·
+| # | Placement | Exact use |
+|---|---|---|
+| 1 | **The briefing seal ring** | Today card, briefing masthead, lock-screen notification, offline saved card. Four instances, one meaning |
+| 2 | **Identity marks** | App icon, splash, letterhead on an exported PDF, admin sidebar mark. Nothing else |
+
+The gilt ring is the app icon's only distinguishing feature at 60pt, and the only
+thing separating the tile from a dark home screen.
+
+**Forbidden, without exception:** gilt text a user must read, at any size · a gilt
+rule that divides content · a gilt button, or gilt on anything tappable · **CNR or
+next-hearing date in gilt** — load-bearing, renders in ink · gilt on paper at body
+size · gilt as a state, status or badge colour · a gilt spinner, progress fill or
+shimmer tint · a rotating or continuously animated gilt border · **the verified
+tick ring — retired, the stamp has no disc** · a second accent beyond oxblood ·
 the gavel recoloured to red.
 
 **The record line is not a gilt placement.** It was, and it was wrong: a CNR and a
 next-hearing date are the two things an advocate scans a header for, which makes
 them load-bearing by definition. They render in ink, or `parchment` on an ink
-header.
+header. Gilt there only made a critical value the first thing to wash out in
+sunlight.
 
-Budget: at most 2 gilt marks per screen; most screens have none. Matters,
-settings, search input, drafting forms and every admin section have **zero**.
+**Budget — one is the maximum on any screen.**
+
+| Screen | Marks |
+|---|---|
+| Today, briefing waiting | 1 |
+| Briefing masthead | 1 |
+| Splash · sign-in | 1 |
+| Search · matters · drafts · settings · forms | 0 |
+| Every admin section | 0 |
+
+Most screens have none. The gilt hairline on glass chrome is a **glass**
+placement, not a gilt one, and does not count against this budget.
 
 Dark mode: v2. Advocates work in daylight.
 
@@ -116,6 +140,43 @@ not 15.** Devanagari sits one point smaller than Latin with more leading — mat
 by optical weight, not nominal size. Hindi eyebrows drop the letterspaced-uppercase
 treatment; Devanagari has no case distinction and letterspacing breaks conjuncts.
 
+## Micro-typography — six rules, enforced in code
+Individually invisible; together they are most of the distance between competent
+and beautiful. Extracted from
+`design/screens/renders/53-micro-typography@2x.png`, which shows the same content
+at the same sizes, before and after.
+
+| # | Rule | Implementation |
+|---|---|---|
+| 1 | **Hanging punctuation** | An opening quote sits outside the measure via `text-indent: -.4em`, so the text edge is true. Otherwise the first line is visibly pushed in |
+| 2 | **Optical baseline alignment** | Mono citation nudged **+1px** against a serif title — mono x-height sits higher than serif caps, so a shared baseline reads as misaligned |
+| 3 | **Tabular figures** | On every date, time and citation number. Proportional figures make a column of dates jitter as digits change |
+| 4 | **Widow control** | `text-wrap: pretty` **plus** a hard `&nbsp;` binding the last two words. Neither alone is sufficient |
+| 5 | **Correct dashes** | En dash in a citation range; hair-spaced em dash in prose. Never a hyphen for either |
+| 6 | **Typographic quotes and apostrophes** | Curly throughout — `husband's`, not `husband's` |
+
+Plus **non-breaking spaces after "section", "Procedure," and inside "Penal Code"**
+— a section number must never orphan from its section.
+
+### Devanagari and Latin on one line
+Appears on every Hindi screen, because citations stay in English (PD-12, §9.6).
+Nominal size matching is wrong: Source Serif's x-height is larger relative to
+Devanagari's baseline, so a Latin run at the same size reads heavier and sits high.
+
+**Optical weight match:** the Latin run drops to **15px**, rises **0.5px**, and
+takes **+0.004em** tracking. Devanagari quotes use the curly form `'…'`, not the
+straight one.
+
+### Enforced in code, not per screen
+All six live in the `Text` wrapper and **one `legalText()` formatter** — never in
+screen code. The formatter is the only place that touches judgment strings: it
+converts straight quotes and apostrophes, replaces hyphens between citation years
+with en dashes, binds section numbers and the final two words with non-breaking
+spaces, and applies hanging punctuation to any string starting with a quote.
+
+**A screen that hand-types a curly quote is a defect.** Corpus text arrives
+straight and must be transformed once, predictably.
+
 ## Spacing and shape
 8px base. **Radii are 2px (3px maximum)** — soft corners were doing most of the
 "startup toy" work, and a bound reporter has square corners. The only exceptions
@@ -130,8 +191,38 @@ are reference, not emphasis.
 ## Depth — rules and edges, not shadows
 **No shadows on cards.** Structure is carried by hairlines and by spacing, the way
 it is on a printed page. Shadow appears only on genuinely floating cases — never on
-a resting card, button or header. The only permitted blur is a sticky bar over
-scrolling content: `rgba(251,250,247,.94)` + `blur(16px)`.
+a resting card, button or header.
+
+## Glass — chrome floats, content stays legible
+That boundary is the whole rule, and here it is stricter than Apple's: a draft goes
+to court and a judgment is read in sunlight.
+
+```
+background: rgba(251,250,247,.94);   /* paper tint at 94% */
+backdrop-filter: blur(16px);          /* sheets: blur(24px) */
+box-shadow: inset 0 1px 0 rgba(201,162,39,.28);   /* bottom bar  */
+box-shadow: inset 1px 1px 0 rgba(201,162,39,.28); /* sheet       */
+```
+
+The hairline is on the **leading edge only**, so it catches light on one edge like
+a real bevel. It is a **glass** placement, not a gilt placement.
+
+**The tint is 94%, not 70%.** At 30% screen brightness a heavier glass collapses
+into the list beneath it and chrome stops reading as chrome.
+
+| Glass goes here | Glass never touches content |
+|---|---|
+| Tab bar · nav bar and sticky headers · bottom sheets and modals · toasts · a search field that floats over results · any toolbar over scrolling content | Not behind judgment text · not behind a draft · not behind a citation, a badge, a holding or an order quote · not behind a matter card |
+
+Content is **fully opaque on paper, always.** A draft is filed in court; a judgment
+is read in sunlight. **Translucency behind either is a correctness failure, not a
+taste one.**
+
+Behaviour: a card passing beneath chrome is softened, never obscured. A sheet
+blurs its background **proportionally to the drag** and de-blurs on interruptible
+dismissal — the sheet is chrome, the judgment underneath is content and stays
+opaque. **The toast is the one ink glass in the product**, because it must read
+against paper cards.
 
 | Weight | Colour | Use |
 |---|---|---|
@@ -232,38 +323,50 @@ Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the acti
 10. **The admin consumes the same `tokens.ts` as the app.** No admin-only hex, no
     second palette, no second type scale. Density may differ; values may not.
 
-## Known contradictions — unresolved, do not silently pick
-0. **Does gilt still exist at all?** The authoritative system render
-   `design/screens/renders/30-system-refined@2x.png` carries a struck-through
-   swatch labelled **"no gold — struck — do not reintroduce"**, with no gilt value
-   in the palette. But `design/screens/IMPLEMENTATION.md` §Colour keeps
-   "gilt `#C9A227` as ornament only" and §Gilt specifies three permitted
-   placements. The spec's own reading is that what was struck is gold *as
-   load-bearing text and rules*, not gold as ornament — but the render states it
-   flatly. **This is the single highest-value thing to settle**, because placement
-   1 (the briefing seal ring) and placement 3 (identity/logo) are both still drawn.
-1. **§9.1 is stale.** "Settled decisions" still says the badge is *variant D, a
+## Resolved by the final bundle — 1 August 2026
+- ~~Does gilt still exist at all?~~ **Resolved to two placements.**
+  `design/screens/renders/55-gilt-two-placements@2x.png` states it directly:
+  "Render 30 showed gilt struck while §Gilt kept three placements. Resolved to
+  two." The verified tick ring is **retired outright** — the stamp is a rectangle
+  and there was never a ring to gild — and moves into the forbidden list. Budget
+  drops to **one mark maximum on any screen**.
+- ~~Gilt placement 2 is unreachable.~~ Resolved by the same render: retired, not
+  reserved.
+- ~~`1aa` does not exist.~~ Resolved — the two screens it stood for are drawn
+  under new ids: **#12 unverified citation detail → `10i`** and **#25 subscription
+  → `10k`**. `1aa` was never a real id.
+- ~~Render numbering collides on 14- and 16-.~~ Re-applied after the final bundle
+  reverted it: retired *14-admin-enrolment-queue.png* →
+  `design/screens/renders/v1-14-admin-enrolment-queue.png`, retired
+  *16-admin-llm-spend-routing.png* →
+  `design/screens/renders/v1-16-admin-llm-spend-routing.png`. Current files
+  unchanged. **The bundle ships the unprefixed names — re-apply after any future
+  re-import.**
+
+## Known contradictions — still open, do not silently pick
+1. **`design/screens/IMPLEMENTATION.md` §Gilt is now stale.** It still says "exactly three
+   places", retains the tick ring as possibly returning, and budgets "at most 2
+   gilt marks per screen". Render 55 supersedes all three. This file follows the
+   render.
+2. **§9.1 is stale.** "Settled decisions" still says the badge is *variant D, a
    tick with a gilt ring* — but §Badge ships the **registry stamp** (a rectangle,
    no disc, no ring) and §4 says variants A–D are history, "do not build them".
-2. **§9.2 is stale.** It still settles the briefing as *the full-screen dark
+3. **§9.2 is stale.** It still settles the briefing as *the full-screen dark
    takeover (`1g`)*, while §8b item 12 records "the dark briefing takeover is
    gone" and §5 maps the briefing to `8b`, calling `1g`/`1h` retired.
-3. **`1aa` still does not exist.** §5 maps "Citation verification failed ·
-   paywall/tiers" to canvas id `1aa`; the canvas has 60 options and none is `1aa`.
-   Unchanged from the previous bundle.
-4. **Gilt placement 2 is currently unreachable** — self-acknowledged in §Gilt:
-   the shipped badge is a rectangle, so there is no disc to ring. Gilt in the app
-   is placements 1 and 3 only.
-5. **The admin desk still runs the v2 palette** (dark sidebar, oxblood accents)
-   and does not yet match §Colour. §8a states aligning it is "a separate pass, not
-   started" — so the admin renders are authoritative for **layout only**.
-6. ~~Render numbering collides across versions.~~ **Resolved 31 July 2026.** The
-   numbers 14 and 16 each meant two different things across bundle versions. The
-   two superseded files were given a `v1-` prefix rather than renaming the current
-   ones, so every reference in `design/screens/IMPLEMENTATION.md` still resolves.
-   Retired *14-admin-enrolment-queue.png* is now
-   `design/screens/renders/v1-14-admin-enrolment-queue.png`; retired
-   *16-admin-llm-spend-routing.png* is now
-   `design/screens/renders/v1-16-admin-llm-spend-routing.png`.
-   Current files are unchanged: `design/screens/renders/14-admin-llm-spend.png`
-   and `design/screens/renders/16-admin-enrolment-queue.png`.
+4. **§10a render index does not cover renders 44–63.** It still reads "30-43 are
+   current" and lists nothing beyond 43, so twenty new authoritative renders —
+   including every screen that closed a NOT YET DESIGNED item — are absent from
+   the index that declares which PNGs to build from. `design/SCREENS.md` carries
+   the mapping in the meantime.
+5. **§9b numbers its decisions 1–15**, while `PRODUCT_DECISIONS.md` numbers the
+   same ground **PD-1…PD-12**. Two schemes for one set. `PRODUCT_DECISIONS.md` is
+   authority; the mapping is in `design/SCREENS.md`.
+6. **§9b #8 says the immediate-push exception is "a set-aside authority cited in
+   tomorrow's hearing" (one exception); PD-6 says two** — `set_aside` on a
+   citation in an **exported** draft, and a newly discovered listing for
+   **tomorrow**. PD-6 is authority and is what the contracts implement.
+7. **The admin desk still runs the v2 palette** (dark sidebar, oxblood accents)
+   and does not yet match §Colour. PD-11 confirms this is deliberate — admin is
+   internal, CX2 builds from the live canvas, and capturing PNGs of the old
+   palette is wasted work. Admin renders are authoritative for **layout only**.

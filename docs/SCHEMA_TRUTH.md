@@ -62,10 +62,40 @@ Seeded from indiacode.nic.in. Never model-generated. See `DOMAIN_TRUTH.md`.
 
 Index: btree on (user_id, next_hearing_date) — the nightly sweep reads this.
 
+## matter_shares
+**PD-3 — sharing is per matter, by invitation.** The owner invites a named person
+to a specific case, the way a file is handed over. There is **no chamber-wide
+switch**: Indian chambers work case-by-case, and chamber-wide default sharing is a
+conflicts hazard — two advocates in one chamber can be on opposing sides of
+related matters.
+
+`id` uuid pk · `matter_id` uuid fk→matters cascade ·
+`invited_user_id` uuid null fk→users — null until the invitee has an account ·
+`invited_identifier` text — enrolment number or phone, as typed ·
+`granted_by_user_id` uuid fk→users · `granted_at` timestamptz ·
+`revoked_at` timestamptz null · `revoked_by_user_id` uuid null fk→users
+
+Unique partial: one live row per (`matter_id`, `invited_identifier`) where
+`revoked_at is null`. Index: btree on (`invited_user_id`, `revoked_at`).
+
+Revocation is a timestamp, never a delete — who had sight of a matter and when is
+exactly the question a conflicts challenge asks later. A share grants the **court
+record** and shared notes only; private notes never travel (PD-4).
+
 ## matter_events
 `id` uuid pk · `matter_id` uuid fk→matters cascade · `event_date` date ·
 `event_type` enum (hearing|order|filing|note) · `order_text` text null ·
-`notes` text null · `source` enum (manual|vendor|ocr) · `created_at` timestamptz
+`notes` text null ·
+`note_visibility` enum (private|shared) **default private** ·
+`source` enum (manual|vendor|ocr) · `created_at` timestamptz
+
+**PD-4 — notes are private by default, shareable per note, reversibly.** The court
+record is shared; what the advocate thinks about it is theirs until they say
+otherwise. A note about fees or a client's circumstances must never travel with a
+file by accident. The default is `private` at the column level, not in application
+code — a note that defaults to shared through a missed branch is the failure this
+prevents. `order_text` is the court record and is always visible to a share;
+`notes` obey `note_visibility`.
 
 ## briefings
 `id` uuid pk · `matter_id` uuid fk→matters cascade · `hearing_date` date ·
@@ -81,7 +111,19 @@ duplicate.
 legal_notice|notice_reply|affidavit|vakalatnama|writ_petition|rti) ·
 `input_params` jsonb · `generated_content` text · `language` enum (en|hi) ·
 `storage_key` text null · `watermark_removed` bool default false ·
+`watermark_removed_at` timestamptz null · `watermark_removed_by` uuid null fk→users ·
 `created_at` timestamptz
+
+**PD-8 — editing never clears the AI-assisted mark.** `watermark_removed` flips on
+**one path only**: the explicit removal flow (two confirmations plus a typed
+`REMOVE`), which writes all three columns together and an `audit_log` row. No
+amount of rewriting counts as reading.
+
+There is deliberately **no edit counter and no changed-character threshold**.
+Auto-clearing above a threshold would create a gaming incentive and imply that
+editing equals ownership. Ownership is an act, and that removal is a signature
+moment. Any code path that sets `watermark_removed` from an edit handler is a
+defect.
 
 ## searches
 `id` uuid pk · `user_id` uuid fk→users · `matter_id` uuid null fk→matters ·

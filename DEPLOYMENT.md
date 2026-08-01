@@ -30,10 +30,17 @@ gap. Documented, not solved. Counsel's written view required before public
 launch; migration path before May 2027.
 
 ### `cron` job order — the ordering is a requirement, not a preference
-1. **22:30 IST — overruled re-check.** Re-checks `overruled_status` for every
+1. **22:15 IST — cause list sync.** Per-court pull. Escalates on empty or stale;
+   a newly discovered listing for **tomorrow** pushes immediately (PD-6).
+2. **22:30 IST — overruled re-check.** Re-checks `overruled_status` for every
    judgment referenced by an active matter or an exported draft; each flip runs
    the citation fan-out. `docs/API_CONTRACTS.md` §Overruled re-check.
-2. **23:00 IST — nightly hearing sweep.** Generates tomorrow's briefings.
+3. **23:00 IST — nightly hearing sweep.** Generates tomorrow's briefings,
+   including the "since yesterday" alert block (PD-6). Alerts accumulated during
+   the day are delivered **here**, batched — not as they occur.
+
+Cause list sync runs first because the sweep needs confirmed dates; the re-check
+runs second because briefings carry authorities.
 
 The re-check runs **first and must complete first**, because briefings carry
 authorities: a sweep that runs against a stale overruled status puts overruled law
