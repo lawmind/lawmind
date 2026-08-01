@@ -28,12 +28,25 @@ Script running:
 
 ## Build discipline
 
-**ponytail** — MIT. Run at `full`.
+**ponytail** — installed 1 Aug 2026. Runs at `full` (its own default).
 
 ```
 /plugin marketplace add DietrichGebert/ponytail
 /plugin install ponytail@ponytail
 ```
+
+Verified at install, not taken on trust: **MIT** · **93,415 stars** · plugin
+**v4.8.4** · commit `16f2980` · last pushed 15 Jul 2026 · not archived.
+Hooks are three local Node scripts (SessionStart, SubagentStart,
+UserPromptSubmit) totalling 655 lines with **no network calls and no
+`exec`/`spawn`/`eval`** — only local writes for its own mode state.
+
+Its `UserPromptSubmit` hook runs **alongside** Lawmind's `reanchor.sh`; hooks
+compose, neither replaces the other.
+
+Commands: `/ponytail` · `/ponytail-review` · `/ponytail-audit` ·
+`/ponytail-debt` · `/ponytail-gain` · `/ponytail-help`.
+Levels: `lite` · `full` · `ultra`. Off only via "stop ponytail" / "normal mode".
 
 Stacks with caveman without overlap: **caveman shrinks what the agent says,
 ponytail shrinks what it builds.**
@@ -69,8 +82,10 @@ redundancy to a simplifier and are the entire product to us. The ladder's first
 question is "does this need to exist?"; for the harness the answer is permanently
 yes, and it is not re-asked per sprint.
 
-Recorded metrics are the founder's stated rationale, not measurements taken here:
+Benchmark figures are the founder's stated rationale, **not measured here**:
 −54% lines of code, −22% tokens, −20% cost, −27% time, 100% safety retained.
+The repo ships a `benchmarks/` directory — read it before quoting the numbers
+externally.
 
 Prefer capabilities over hardcoded implementations so tools can be swapped.
 
