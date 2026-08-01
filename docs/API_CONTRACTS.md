@@ -324,9 +324,14 @@ they do not come back.
 
 ### Overruled re-check — scheduled
 ```
-GET  /admin/overruled-rechecks        → { runs, lastRun, flippedLast30d }
-POST /admin/overruled-rechecks/run    → { recheckId }   // manual trigger
+POST /admin/overruled-rechecks/run    → { flipped, checked }   // manual trigger
 ```
+
+**There is no run-history endpoint and no `overruled_rechecks` table.** It was a
+job log with one consumer. "Did it run" is answered by the 22:50 alert; "what
+changed" by `citation_fanouts` where `trigger = 'recheck'`, which the Citation
+monitor already reads. The manual trigger returns its own result synchronously
+rather than a job id to poll.
 Runs on the `cron` service. Scope: every judgment referenced by an active matter
 or an exported draft. Compares live `judgments.overruled_status` against the
 status last rendered; each flip calls `applyOverruledChange` with

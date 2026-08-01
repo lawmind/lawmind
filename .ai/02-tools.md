@@ -41,7 +41,7 @@ Hooks are three local Node scripts (SessionStart, SubagentStart,
 UserPromptSubmit) totalling 655 lines with **no network calls and no
 `exec`/`spawn`/`eval`** — only local writes for its own mode state.
 
-Its `UserPromptSubmit` hook runs **alongside** Lawmind's `reanchor.sh`; hooks
+Its `UserPromptSubmit` hook runs **alongside** `.claude/hooks/reanchor.sh`; hooks
 compose, neither replaces the other.
 
 Commands: `/ponytail` · `/ponytail-review` · `/ponytail-audit` ·
@@ -84,8 +84,8 @@ yes, and it is not re-asked per sprint.
 
 Benchmark figures are the founder's stated rationale, **not measured here**:
 −54% lines of code, −22% tokens, −20% cost, −27% time, 100% safety retained.
-The repo ships a `benchmarks/` directory — read it before quoting the numbers
-externally.
+The ponytail repo ships a benchmarks directory — read it before quoting the
+numbers externally.
 
 Prefer capabilities over hardcoded implementations so tools can be swapped.
 

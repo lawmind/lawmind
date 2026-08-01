@@ -325,20 +325,30 @@ no third-party personal data. It is still tracking, so it is **disclosed in the
 privacy disclosure**, not silent — `PRIVACY_PII.md`. Deleted on account deletion
 and through the DPDP erasure path (`data_requests`).
 
-## overruled_rechecks
-One row per scheduled run. Overruled status is **never cached** — see
-`CITATION_HARNESS.md`.
+## ~~overruled_rechecks~~ — cut 1 Aug 2026, no table
 
-`id` uuid pk · `started_at` timestamptz · `completed_at` timestamptz null ·
-`judgments_checked` int · `flipped` int — how many changed status ·
-`status` enum (running|complete|failed) · `error` text null
+**The job stays; the table tracking its runs does not.** It was a job-run log with
+one consumer, and everything it recorded is already available:
 
-Index: btree on (started_at desc).
+| It answered | Now answered by |
+|---|---|
+| Did the run happen, and when | The cron platform + the **22:50 alert** in `docs/FAILURE_MODES.md` |
+| What changed | `citation_fanouts` rows where `trigger = 'recheck'` |
+| Did it fail | The alert, which is what anyone would act on anyway |
 
-Scope is every judgment referenced by an **active matter** or an **exported
-draft**. The run compares live `judgments.overruled_status` against the status
-last rendered; each flip creates a `citation_fanouts` row. It does **not** re-run
-verification tiers 1–3 — existence is permanent, only good-law status moves.
+**The re-check itself is unchanged and still mandatory** — `overruled_status` is
+never cached (`CITATION_HARNESS.md`), so the nightly run at **22:30, before the
+23:00 sweep**, is a correctness requirement, not telemetry.
+
+Scope is every judgment referenced by an **active matter**, an **exported draft**
+or a **copied citation**. It compares live `judgments.overruled_status` against
+`citation_checks.overruled_status_shown`; each flip calls `applyOverruledChange`,
+which writes a `citation_fanouts` row. It does **not** re-run verification tiers
+1–3 — existence is permanent, only good-law status moves.
+
+**What we gave up:** queryable run history in the admin. If an incident ever needs
+"show me the last 30 runs", the answer is logs, not SQL. Accepted — the alert is
+what actually gets acted on.
 
 ## citation_fanouts
 **One fan-out, two triggers.** When a judgment's overruled status changes, the

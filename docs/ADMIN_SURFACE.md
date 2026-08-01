@@ -219,11 +219,13 @@ drift, and the one that drifts is the one that stops notifying.
 matter or an exported draft. Overruled status is **never cached** —
 `CITATION_HARNESS.md`.
 **Reads:** `judgments`, `citation_checks`, `matters`, `documents`,
-`overruled_rechecks`.
+`citation_copies`.
 **Privileged action:** manual trigger → `overruled.recheck.run`. Flips call
 `applyOverruledChange`.
-**Endpoint:** `GET /admin/overruled-rechecks`,
-`POST /admin/overruled-rechecks/run`.
+**Endpoint:** `POST /admin/overruled-rechecks/run` only. **No run-history
+endpoint and no table** — "did it run" is the 22:50 alert, "what changed" is
+`citation_fanouts` where `trigger = 'recheck'`, which the Citation monitor
+already reads.
 **Schedule:** daily 22:30 IST on the `cron` service — **before** briefing
 generation at 23:00, so tonight's briefings cannot carry overruled authorities —
 plus event-driven on corpus ingest. Surfaces in the Citation monitor and in
