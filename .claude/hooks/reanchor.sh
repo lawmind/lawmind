@@ -1,8 +1,24 @@
 #!/usr/bin/env bash
 # UserPromptSubmit hook — re-injects the non-negotiable core on EVERY turn.
 # The only mechanism that survives context compaction. Keep it SHORT.
+#
+# Emits `additionalContext`, which lands as a system reminder rather than a
+# visible transcript entry — the core arrives without adding noise to every turn.
+#
+# ALWAYS EXITS 0. On UserPromptSubmit, exit 2 BLOCKS THE PROMPT AND ERASES IT,
+# so a bug here would be far worse than a missing re-anchor. Every failure path
+# below degrades to "emit something, exit clean".
+#
+# The text is factual statements about this project, not imperative system
+# commands. Out-of-band instruction framing is what prompt-injection defences are
+# built to catch, and the core reads as facts either way. Keep it that way.
+#
+# Output is capped at 10,000 characters by Claude Code. `make check` in this
+# directory is the length guard.
 
-cat <<'CORE'
+set -uo pipefail
+
+IFS='' read -r -d '' CORE <<'CORE_TEXT'
 <lawmind-core>
 PRIME (global CLAUDE.md): DONE/VERIFY before work · INTENT before any behavior
 change · KNOW/INFER/GUESS, never silent guessing · 3 failed cycles = STOP ·
@@ -20,13 +36,23 @@ LAWMIND NON-NEGOTIABLE:
   overruled law rendered WITHOUT the LAW MOVED mark is as severe as a hallucination.
 - UI: VERIFIED IS SILENT. No badge on a verified citation. Only two states render:
   unverified (unmissable mark + eCourts path) and overruled (LAW MOVED, 3 states).
-  Silence = "verified, not decorated". Silence NEVER = "dropped". Detail on tap,
-  summary in the draft footer. Data model and pipeline UNCHANGED.
+  `failed` renders EXACTLY as `unverified` — the advocate cannot act on the
+  difference, and an outage must not read as a corpus gap. verified_by_source
+  appears only in the on-tap detail and the admin monitor, never as a badge.
+  Silence = "verified, not decorated". Silence NEVER = "dropped".
+- Copy is licence protection, not an audit: "Safe to file", never "we verified
+  this"; "We could not confirm this exists", never "verification failed".
+- Amber #B4690E is RESERVED — it means THE LAW HAS MOVED and nothing else. Never
+  on drafts, OCR, or anything about our own confidence. Our uncertainty renders
+  as neutral ink with a dashed edge.
 - No AI-assisted mark on documents. Consent once at onboarding, recorded in users
   (terms_accepted_at, terms_version). PD-8 superseded. No watermark on export.
 - Never bypass the eCourts CAPTCHA. Human confirms, cache forever.
-- Route by DATA SENSITIVITY not task difficulty. Uploaded docs = sensitive:
-  pseudonymise first. OD-6 blocks upload features. docs/PRIVACY_PII.md
+- Route by DATA SENSITIVITY not task difficulty. Public = DeepSeek V4 Flash.
+  Sensitive = pseudonymise first, then Claude. Ambiguity resolves to sensitive,
+  never to public. ONE DOCUMENT PER CALL — mixing case files cross-contaminates
+  parties between matters. OD-6 resolved 2 Aug 2026; the countersigned DPA is
+  still owed before uploads ship. docs/PRIVACY_PII.md
 - Never claim complete PII removal. Coverage is partial. Say so.
 - OCR output is never trusted silently — advocate confirms fields before save.
 - Never train on a model's commentary about law. Primary sources only.
@@ -35,8 +61,13 @@ LAWMIND NON-NEGOTIABLE:
 - Hindi = Noto Sans Devanagari everywhere incl. PDF export.
 - Stack fixed: Expo · Hono · Railway PG + pgvector · Drizzle · better-auth.
   NOT Neon/Vercel/Qdrant/Clerk/Supabase. Ask before adding any vendor.
+- Four core features PLUS the daily loop. Tier B (the loop) ships before Tier A
+  (the library): the loop creates the habit, the library prevents a comparison
+  loss. PRODUCT_BRIEF.md
 - Ponytail ladder applies to every build decision. The best code is the code you
   never wrote. EXEMPT: the citation verification pipeline is never simplified.
+  A package with no direct import may still be a declared peer — check
+  peerDependencies before removing anything.
 - OSS FIRST: search for a maintained project before building anything
   non-differentiating. MIT/Apache/BSD ok. AGPL is NOT. docs/OSS_STACK.md
 - Never resolve an OPEN_DECISION alone. docs/OPEN_DECISIONS.md
@@ -46,4 +77,17 @@ LAWMIND NON-NEGOTIABLE:
 If context was compacted: re-read docs/OPEN_DECISIONS.md, docs/SCHEMA_TRUTH.md,
 docs/CITATION_HARNESS.md before your next edit.
 </lawmind-core>
-CORE
+CORE_TEXT
+
+# jq builds the JSON so quotes, backslashes and newlines escape correctly.
+# Hand-assembling this string is how one stray quote silently kills the hook.
+if command -v jq >/dev/null 2>&1; then
+  jq -n --arg ctx "$CORE" \
+    '{hookSpecificOutput:{hookEventName:"UserPromptSubmit",additionalContext:$ctx}}'
+else
+  # No jq on PATH: plain stdout is also accepted. Visible in the transcript
+  # rather than a system reminder, but the core still lands. Degraded, not lost.
+  printf '%s\n' "$CORE"
+fi
+
+exit 0

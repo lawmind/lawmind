@@ -5,7 +5,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/reanchor.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/reanchor.sh",
+            "args": [],
+            "timeout": 10
           }
         ]
       }
@@ -15,7 +17,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/session-start.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh",
+            "args": [],
+            "timeout": 10
           }
         ]
       }
