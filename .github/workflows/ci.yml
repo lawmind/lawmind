@@ -45,11 +45,15 @@ jobs:
 
       - run: pnpm lint
       - run: pnpm format
-      - run: pnpm --filter "@lawmind/*" typecheck
+      # Filter by PATH, never by the `@lawmind/*` name glob: the scope is shared
+      # across both lanes, so the glob also selects @lawmind/admin and
+      # @lawmind/mobile — whose dependencies the install step above deliberately
+      # skips. That mismatch is what made the first CI run red.
+      - run: pnpm --filter "./services/*" --filter "./packages/*" typecheck
 
       # Against a fresh database every run: proves the migrations apply on empty.
       - run: pnpm --filter @lawmind/db migrate
       # And that a second run is a no-op.
       - run: pnpm --filter @lawmind/db migrate
 
-      - run: pnpm --filter "@lawmind/*" test
+      - run: pnpm --filter "./services/*" --filter "./packages/*" test
