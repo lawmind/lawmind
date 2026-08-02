@@ -1,6 +1,6 @@
 # SPRINT 3 — THE DAILY LOOP
 
-**🔴 BLOCKED BY OD-1** — court monitoring vendor. Build proceeds behind the
+**🟡 OD-1 OPEN — trial pending, but S3 IS NOT BLOCKED.** Build proceeds behind the
 adapter interface; the manual path works fully with no vendor at all.
 
 **This is the sprint that creates the habit.** `PRD.md` §Sequencing: Tier B ships
@@ -16,7 +16,9 @@ library.
 
 **OWN:** `services/api/**`, `services/cron/**`, `packages/court-adapter/**`
 
-**BLOCK ON:** **OD-1** for live vendor data. The adapter, the manual path, matter
+**BLOCK ON:** nothing. OD-1 affects only live vendor data; `bharat-courts` (MIT)
+is available as a second implementation, though it does **not** return
+`next_hearing_date` — the field the briefing is built on. The adapter, the manual path, matter
 CRUD, the sweep and briefing generation are all buildable now.
 
 **TASK**

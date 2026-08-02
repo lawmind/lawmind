@@ -110,18 +110,35 @@ final beta week. **Zero citation failures reaching a user.**
 
 Shown in the app, monthly:
 
-| Tier | Price | Purchase |
-|---|---|---|
-| Starter | ₹799 | store IAP |
-| Professional | ₹1,999 | store IAP |
-| Expert | ₹3,499 | store IAP |
-| Firm | **contact us** — no buy button | invoiced off-app |
-| Enterprise | **contact us** — no buy button | invoiced off-app |
+**Renamed 2 Aug 2026 to match the live site** — `design/screens/IMPLEMENTATION.md`
+§9g. Starter / Professional are retired: the names are advocate language, not SaaS
+language.
 
-Solo tiers go through store IAP. **Firm and Enterprise show no price and no buy
-button in the app** — they are contact-us, invoiced off-app via Razorpay and
-activated by redemption code. Multi-seat organisational licensing sits outside the
-IAP requirement, which is what makes off-app invoicing permissible.
+| Tier | Price | Unit | Purchase |
+|---|---|---|---|
+| **Practice** | ₹799 | One advocate, starting out | store IAP |
+| **Chamber** | ₹1,999 | One advocate, full practice | store IAP |
+| **Expert** | ₹3,499 | One advocate, heavy volume | store IAP |
+| **Firm** | **Talk to us** — no price, no button | 5–10 advocates, shared matters | invoiced off-app |
+| **Enterprise** | Off-app, not shown in-app at all | Roadmap | invoiced off-app |
+
+The first three are **one advocate at three volumes.** Firm is the first tier where
+the *unit* changes, which is why it is also the first with no price.
+
+**The Chamber naming collision, resolved: Chamber stays the SOLO tier; the
+multi-seat tier is Firm.** Two reasons. The site is live with Chamber at ₹1,999,
+and renaming a published tier costs more than naming an unbuilt one. And the
+distinction is real in Indian practice — a solo advocate has *their* chamber;
+*firm* is what several advocates practising together call themselves. This does not
+contradict PD-3: sharing is still **per matter**, and a chamber of two to five
+people is still a list of names rather than an org chart.
+
+**Firm and Enterprise may never show an in-app purchase control.** This is an App
+Store rejection under **guideline 3.1.1**, not merely a pricing preference —
+and **a link to a web checkout page is the same violation.** "Talk to us" opens a
+**mail composer**. Do not add a price, a button, or a URL to either row. Multi-seat
+organisational licensing sits outside the IAP requirement, which is what makes
+off-app invoicing permissible at all.
 
 Indicative figures for those two, held internally and not displayed: Firm 10-seat
 ≈ Rs.15,000 · Enterprise Rs.75,000+.
@@ -129,7 +146,10 @@ Indicative figures for those two, held internally and not displayed: Firm 10-sea
 Enrol in Apple Small Business Program day one (15% not 30%).
 The paywall **never blocks on a hearing day** — on a day with a listed hearing the
 search limit becomes advisory rather than hard, and the limit is still displayed.
-Billing terms for Android remain subject to **OD-3**.
+**OD-3 resolved 2 Aug 2026: launch on standard store billing** (Play 15%, Apple
+15% via the Small Business Program — enrol day one). India alternative billing at
+11% is deferred to **OD-10**, revisited at 1,000 paying users. Firm and Enterprise
+stay invoiced off-app through Razorpay at ~2%, which is where the margin is.
 
 ### The rationale — we are a switch, not a new spend
 
@@ -145,6 +165,12 @@ Pricing is **not** set by cost-plus or by undercutting the free chatbots. It is
 set by the budget line we are displacing. `docs/COMPETITIVE.md`.
 
 ### Launch — free for 90 days, capped at 5,000
+
+> **Only the 50% founding rate is publishable today.** "Three months free" stays
+> off the paywall until briefing cost per user is computed from real beta usage —
+> it is an unbounded commitment against an unknown number of users, where the 50%
+> rate and the 5,000 cap are both bounded. `docs/COMPETITIVE.md` carries the
+> condition; PD-14 carries the decision.
 
 All tiers free for the first 90 days after launch, for anyone signing up in that
 window. **Firm and Enterprise excluded** — those are invoiced sales.

@@ -1,10 +1,12 @@
 # SPRINT 4 — DRAFTING AND TOOLS
 
-**🔴 OCR intake blocked by OD-7** (engine bake-off) **and OD-6** (no uploaded
-document content reaches a model until a countersigned DPA exists). **The rest of
-S4 proceeds.**
+**🟢 UNBLOCKED 2 Aug 2026 — OD-7 and OD-6 both resolved. OCR intake ships in v1.**
+PaddleOCR primary, Tesseract fallback; the bake-off is tuning, not selection.
+The countersigned DPA must be on file before uploads go live.
 
-**OD-5 sets the scope** — whether Hindi drafting ships here or in S5.
+**OD-5 resolved: Hindi drafting ships**, built in S5 and released only when the
+two Hindi law graduates approve the register on 20 sampled drafts. **English
+drafting is not gated by that review** — the two ship independently.
 
 **Read first:** `PRODUCT_DECISIONS.md` PD-7, PD-8, PD-9, PD-12 ·
 `docs/CITATION_HARNESS.md` §Citations are locked in editing.
@@ -15,7 +17,7 @@ S4 proceeds.**
 
 **OWN:** `services/api/**`, `services/ocr/**`, `packages/templates/**`
 
-**BLOCK ON:** **OD-7** and **OD-6** for OCR only.
+**BLOCK ON:** nothing. OCR engine and sensitive-class routing are both settled.
 
 **TASK**
 
@@ -88,7 +90,7 @@ S4 proceeds.**
    once. **Ships only if OD-5 resolves for both.**
 6. **Calculator UI** — limitation and court fee. Show the **basis**, not just the
    answer.
-7. **OCR intake UI** — blocked by OD-7. When unblocked, present field confirmation
+7. **OCR intake UI** — unblocked. Present field confirmation
    as a **normal review, not a warning** (`docs/PRIVACY_PII.md`) — it is a
    data-correctness step and the cautionary framing made a routine step feel risky.
 

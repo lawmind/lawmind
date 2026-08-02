@@ -18,7 +18,8 @@ unverified as confirmed. Never silently drop one. `docs/CITATION_HARNESS.md`.
 
 ## Sensitive data
 Uploaded documents are sensitive-class: pseudonymise before any model call.
-OD-6 blocks upload features until the provider question resolves.
+OD-6 resolved 2 Aug 2026 — pseudonymise, then Claude. Uploads ship once the
+countersigned DPA exists. One document per call, always.
 `docs/PRIVACY_PII.md`.
 
 ## Stack

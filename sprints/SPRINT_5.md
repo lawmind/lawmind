@@ -12,7 +12,10 @@
 
 **OWN:** `services/api/**`, `packages/auth/**`, `packages/billing/**`
 
-**BLOCK ON:** **OD-3** for final billing terms only. Auth and subscription
+**BLOCK ON:** nothing. **OD-3 resolved 2 Aug 2026: standard store billing** —
+Play 15%, Apple 15% via the Small Business Program (enrol day one), Firm and
+Enterprise invoiced off-app through Razorpay at ~2%. Alternative billing is
+deferred to OD-10. Auth and subscription
 plumbing proceed.
 
 **TASK**
@@ -34,7 +37,7 @@ plumbing proceed.
    accepted terms **cannot generate a draft** — that is the one thing it gates.
    Store the **version**, not a boolean: when the terms change, who accepted which
    text is the only thing that matters.
-5. **Subscriptions.** Tiers and prices from `PRD.md`: Starter ₹799 · Professional
+5. **Subscriptions.** Tiers and prices from `PRD.md` (PD-13): Practice ₹799 · Chamber
    ₹1,999 · Expert ₹3,499, all **store IAP**. Firm and Enterprise are
    **contact-us with no buy button**, invoiced off-app via Razorpay and activated
    by redemption code — multi-seat organisational licensing sits outside the IAP

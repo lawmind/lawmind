@@ -8,7 +8,7 @@ session. **Gate before S1.**
 `docs/CITATION_HARNESS.md`.
 
 **Blocked by nothing.** S0 touches no embeddings, court vendor, OCR engine or
-model routing. OD-4 blocks S1, not this.
+model routing. **All of those closed 2 Aug 2026 — nothing blocks S0 or S1.**
 
 **Ponytail is installed and runs at `full`.** The ladder applies to every task
 below: does this need to exist → already here → stdlib → native → installed dep →
@@ -28,9 +28,9 @@ per sprint.
 `searches` · `llm_calls` · `citation_checks` · `verification_cache` · `audit_log`
 
 **Defer (10):** `matter_shares`, `cause_list_syncs`, `citation_copies`,
-`citation_fanouts` → S3 · `ocr_jobs`, `pii_entities` → S4, **blocked on OD-7 and
-OD-6** · `draft_templates` → S4 · `platform_config`, `citation_disputes`,
-`data_requests` → S6, `data_requests` also blocked on OD-2.
+`citation_fanouts` → S3 · `ocr_jobs`, `pii_entities` → S4 — **OD-7 and OD-6 are
+now resolved, so these are simply not needed until S4** · `draft_templates` → S4 · `platform_config`, `citation_disputes`,
+`data_requests` → S6.
 
 `overruled_rechecks` was **cut entirely** — a job log with one consumer. The job
 stays; the table does not. 23 tables total, not 24.
@@ -220,8 +220,11 @@ Transcribed exactly from `design/DESIGN_SYSTEM.md`:
 
 **All thirteen, verified by running them. Then and only then: S1.**
 
-## Blocked before S1
-**OD-4 — embeddings provider.** Corpus ingest cannot start. Testable in an
-afternoon: embed 200 judgments with each candidate, run the 30 harness queries —
-**including the 5 Hindi ones**, which is what will actually decide it — score
-precision@5 and p95 latency.
+## Before S1
+**Nothing.** OD-4 closed 2 Aug 2026: corpus from AWS Open Data, embeddings from
+self-hosted BGE-M3. S1 can start the moment Gate S0 passes.
+
+Still worth doing early in S1, because it is cheap and decides chunking: embed 200
+judgments, run the 30 harness queries — **including the 5 Hindi ones, which is
+what will actually expose a problem** — and score precision@5 and p95 latency
+before committing to the full run.

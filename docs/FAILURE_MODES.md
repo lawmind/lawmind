@@ -28,6 +28,28 @@ nobody improvises at 2am.
 | Kill switch thrown with no ledger row | Unreconstructable incident | Should be impossible — the audit write shares the config write's transaction. If a switch moved without a row, the transaction boundary was broken. Severity high |
 | Store rejects build | Submission blocked | Almost always legal-advice framing. Research tool for licensed practitioners |
 
+## Targets to measure, not gates
+
+Recorded here because they are how the product fails quietly. **None of them is a
+gate.** A gate nobody can evaluate is worse than an honest target — it either
+gets waved through or blocks on a guess, and both teach the team to ignore it.
+
+| Target | Measure at | On what | Why it is not a gate yet |
+|---|---|---|---|
+| **Adjournment capture: under 4 seconds, lock screen → saved** | **S3** | A **Redmi-class mid-range Android**, airplane mode, cold app | Named in `design/screens/IMPLEMENTATION.md` §9d. It is the highest-frequency write in the product, and the one screen used standing up in a courtroom. Cannot be evaluated without the device — no simulator, laptop or CI run is evidence for this number |
+
+**How it fails if we miss it.** Not with an error. The advocate writes the date on
+the physical file instead, because that took two seconds, and never opens the
+screen again. The loop that was supposed to create the habit becomes the thing
+they route around — and nothing in the logs says so. **Measure it on the device
+or do not claim it.**
+
+Two conditions travel with the number: **offline** (court buildings have no
+signal, so any measurement on wifi is measuring the wrong thing) and **cold
+start** (the app will not already be open — it is being pulled out of a pocket).
+
+---
+
 ## Escalation
 Anything touching citation accuracy or silent drops escalates immediately and
 blocks release. Everything else follows the normal gate.

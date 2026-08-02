@@ -30,7 +30,11 @@ first is what nobody may decide alone, the second is what nobody may re-decide.
 AI research and drafting assistant for practising Indian advocates. Criminal and
 civil litigation. Native iOS + Android (Expo). Web is admin only.
 
-Four features, priority order:
+Four core features PLUS the daily loop (Tier B, approved 2 Aug 2026). **Tier B
+ships before Tier A** — the loop creates the habit, the library only prevents a
+feature-comparison loss. `PRODUCT_BRIEF.md`, `BUILD_GUIDE.md` §Sequencing rule.
+
+Tier A — the four core features, priority order:
 1. Court decision search with server-verified citations
 2. 24-hour hearing briefings (the wedge — no Indian competitor has it)
 3. Document drafting, English and Hindi
@@ -78,7 +82,8 @@ Explicitly NOT used: Neon, Vercel, Qdrant, Clerk, Supabase, Telegram bot.
 | Data class | Contents | Routing |
 |---|---|---|
 | Public | Judgments, statutes — already published | Cheapest capable. DeepSeek V4 Flash. |
-| Sensitive | Uploaded documents, matter notes, party names | Pseudonymise first. Provider with written data terms only. **OD-6 unresolved — no upload features until settled.** |
+| Sensitive | Uploaded documents, matter notes, party names, client detail | **Pseudonymise first, then Claude** (written data-processing terms). Ambiguity resolves to sensitive, never public. **ONE DOCUMENT PER CALL.** |
+| Never sent | A full client file with no legal reason to leave the device | Stays local |
 
 Within public class, route by task: search → DeepSeek V4 Flash · summarise/extract
 → Claude Haiku 4.5 · drafting/briefings → Claude Sonnet 4.6.
@@ -102,7 +107,12 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
 - Never bypass the eCourts CAPTCHA. Pre-fill the search, let the advocate solve
   it, cache the result permanently.
 - Route by data sensitivity. Uploaded document content is sensitive-class:
-  pseudonymise before any model call. OD-6 blocks upload features.
+  pseudonymise before any model call. **OD-6 resolved 2 Aug 2026** — the
+  countersigned DPA is still owed before uploads ship, and the admin surface
+  refuses to route sensitive traffic without one, with no founder override.
+- **Never mix documents in one prompt.** Multiple case files in one context makes
+  the model conflate parties between matters — a confidentiality breach between
+  two of the same advocate's clients, invisible in fluent output.
 - Never claim complete PII removal. Coverage is partial. Say so plainly, in
   product and in marketing.
 - OCR output is never trusted silently. The advocate confirms extracted fields

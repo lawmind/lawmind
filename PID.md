@@ -22,7 +22,7 @@ S5 auth+billing · S6 admin+monitoring · S7 store + 20 beta advocates.
 |---|---|---|
 | Fake or overruled citation reaches a filed document | Fatal | Three-tier verification, explicit unverified state, advocate QA gate, watermark |
 | Silent citation drop hides a miss from the advocate | High | Tracked metric, zero threshold, unverified state always shown |
-| Third-party PII sent to a provider with unclear terms | High | OD-6 blocks upload features; pseudonymise sensitive-class; route by data sensitivity |
+| Third-party PII sent to a provider with unclear terms | High | **OD-6 resolved 2 Aug 2026**: pseudonymise, then Claude; route by data sensitivity; one document per call. **Uploads ship once the countersigned DPA is on file** — the admin surface refuses to route sensitive traffic without one, with no founder override |
 | OCR error silently becomes a hearing date | High | Advocate confirms every extracted field before save |
 | Court data vendor unreliable or stale | High | OD-1 — trial two vendors on 20 real CNRs; manual path fully works without any vendor |
 | App Store rejects legal-advice framing | High | Research assistant for licensed practitioners; capture bar enrolment; never claim to advise |

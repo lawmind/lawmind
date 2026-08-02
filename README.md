@@ -29,4 +29,6 @@ briefing → S4 drafting → S5 auth+billing → S6 admin → S7 store + beta.
 
 ## Before writing any code
 Resolve OD-4 (embeddings), OD-6 (sensitive-data provider), OD-7 (OCR engine).
-OD-6 blocks every upload feature. OD-7 blocks scanned intake.
+OD-6 and OD-7 both resolved 2 Aug 2026 — sensitive traffic is pseudonymised then
+sent to Claude, and OCR ships in v1 on PaddleOCR. **Only OD-1 (court vendor)
+remains open, and it blocks nothing.**

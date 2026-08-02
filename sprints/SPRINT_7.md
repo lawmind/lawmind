@@ -1,10 +1,16 @@
 # SPRINT 7 — LAUNCH
 
-**🔴 BLOCKED BY OD-9** — ASO tool selection. Keyword ranking cannot be done by
-guessing, and `docs/ASO.md` §3 stays `UNKNOWN` without one.
+**🟡 OD-9 DEFERRED 2 Aug 2026 — S7 is not blocked.** Buy one month of AppTweak or
+App Radar ($50–100) just before launch and cancel after. The competitor teardown
+(`docs/ASO.md` §1) needs no tool and should already be done.
 
-**⚠️ OD-2** — DPDP data residency blocks **public launch**, not build. Counsel's
-written view on Singapore residency is needed before the store listing goes live.
+`docs/ASO.md` §3 stays `UNKNOWN` until the tool is bought. **Do not invent volume
+figures to unblock it** — a confident wrong ranking is worse than an admitted gap.
+
+**⚠️ OD-2 resolved on the founder's authority, but the paper is not on file.**
+DPDP residency affects **public launch**, not build. Counsel's written view on
+Singapore residency should exist before the store listing goes live — a residency
+position with no written opinion is thin exactly when it gets challenged.
 
 **Read first:** `docs/ASO.md` in full.
 

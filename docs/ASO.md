@@ -108,7 +108,9 @@ Thailand is out of v1 (`PRD.md` §Geography). No Thai listing.
 
 ## 5 · Dependencies
 
-- **OD-9 — ASO tool selection.** Blocks §3 entirely, and therefore §2. Nothing in
+- **OD-9 — DEFERRED 2 Aug 2026, no longer blocking.** Buy one month of AppTweak
+  or App Radar ($50–100) just before launch and cancel after. §3 stays UNKNOWN
+  until then, and §1 competitor teardown needs no tool — start it now. Nothing in
   this file can be ranked without it.
 - **S7** is the sprint that consumes this, but §1 competitor research needs no
   tool and no product — it can start today and should, because it informs the

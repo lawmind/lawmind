@@ -27,7 +27,7 @@ the fast path first.
   most valuable output — do not flatten it.
 - Progressive disclosure. Useful at thirty seconds, complete at eight minutes.
   Never an eight-minute blank spinner.
-- Expert tier only. Cost and latency make it wrong for Starter.
+- Expert tier only. Cost and latency make it wrong for Practice.
 - Sensitive-class routing applies to every agent.
 
 ## Sequencing

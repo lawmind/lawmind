@@ -49,20 +49,38 @@ under schedule pressure.
 `PID.md`: the practising advocate on retainer performs QA before **every** gate and
 **can block any gate. Engineering cannot overrule that.**
 
-## Blocked until resolved
+## Blocked until resolved — revised 2 August 2026
 
-| OD | Blocks |
-|---|---|
-| **OD-4** embeddings provider | **S1** — corpus ingest cannot start |
-| **OD-1** court vendor | **S3** — the daily loop has no data |
-| **OD-7** OCR engine | **OCR in S4** — scanned intake only; the rest of S4 proceeds |
-| **OD-6** sensitive-class provider | Any feature sending uploaded document content to a model |
-| **OD-9** ASO tool | **S7** — keyword ranking cannot be done by guessing |
-| **OD-3** Play billing terms | Finalising billing in S5 |
-| **OD-2** DPDP residency | Public launch, not build |
-| **OD-5** Hindi scope | S4 scope only |
+**Nothing blocks S1.** Eight of the nine original open decisions closed on
+2 Aug 2026. `docs/OPEN_DECISIONS.md` carries the reasoning for each.
 
-**S0 is blocked by nothing.**
+| OD | Status | Effect on the build |
+|---|---|---|
+| **OD-4** data sources + embeddings | **RESOLVED** — AWS Open Data (free, no account), self-hosted BGE-M3 | **S1 unblocked.** Ingest stages and budget in `docs/OSS_STACK.md` §1a |
+| **OD-7** OCR engine | **RESOLVED** — PaddleOCR primary, Tesseract fallback | **OCR ships in v1.** The S4 bake-off is tuning, not selection |
+| **OD-6** sensitive-class provider | **RESOLVED** — pseudonymise, then Claude | Upload features unblocked **once the countersigned DPA exists.** That is procurement, not engineering — see below |
+| **OD-5** Hindi scope | **RESOLVED** — Hindi drafting ships, **gated on law-graduate review** of 20 sampled drafts in S5. English drafting is not gated by it | S5 |
+| **OD-3** Play billing | **RESOLVED** — launch on standard store billing | S5 proceeds. **Enrol in Apple Small Business Program day one** |
+| **OD-2** DPDP residency | **RESOLVED** — counsel's view taken; Singapore with a migration path before 13 May 2027 | Public launch, not build |
+| **OD-8** nisaar dataset audit | **SUPERSEDED** — replaced by `docs/TRAINING_STRATEGY.md` | Dataset harvesting starts as a background workstream in **S1** |
+| **OD-9** ASO tool | **DEFERRED** — no longer blocking | Buy one month before launch. Competitor teardown needs no tool and can start now |
+| **OD-1** court vendor | **STILL OPEN — trial pending** | **Does not block S3.** The adapter ships with the manual path fully working; `bharat-courts` is a second implementation, a paid vendor a third |
+| **OD-10** alternative billing | **DEFERRED** to 1,000 paying users | Nothing |
+
+**S0 and S1 are blocked by nothing.**
+
+### The two things that are not engineering blockers but are still owed
+
+1. **The countersigned DPA** for sensitive-class routing — zero retention, no
+   training on inputs, reviewed sub-processor list, region defensible under OD-2.
+   The admin surface refuses to route sensitive traffic to a provider with no DPA
+   on file and **has no founder override**. Choosing the provider did not fill
+   that set; the signature does.
+2. **Counsel's written view on residency.** OD-2 is recorded as resolved on the
+   founder's authority, but the substance is not on file. A residency position
+   with no written opinion is thin exactly when it gets challenged.
+
+Neither stops a sprint. Both should stop a **launch**.
 
 ## Sequencing rule — Tier B before Tier A
 The daily loop ships before the library. **The loop creates the habit; the library

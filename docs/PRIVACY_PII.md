@@ -17,13 +17,39 @@ than our hosting-region gap (OD-2).
 
 | Data class | Contents | Routing |
 |---|---|---|
-| **Public** | Judgment text, statutes — already published | Any provider. Cheapest wins. |
-| **Sensitive** | Uploaded documents, matter notes, party names, client detail | Pseudonymise first. Provider must have written data-processing terms. |
-| **Never sent** | Full client files with no legal reason to leave the device | Stays local. Process what is needed, not the whole file. |
+| **Public** | Judgment text, statutes, bare acts — already published | **DeepSeek V4 Flash.** No privacy question; this text is public record |
+| **Sensitive** | Uploaded documents, matter notes, party names, client detail | **Pseudonymise first, then Claude** — Anthropic has written data-processing terms |
+| **Never sent** | Full client files with no legal reason to leave the device | **Stays local.** Process what is needed, not the whole file |
 
-**OD-6 records the provider decision.** DeepSeek's API terms are unclear on
-retention and training use. Acceptable for public judgment search. Not acceptable
-for a document naming a minor in a POCSO matter.
+**OD-6 resolved 2 Aug 2026.** DeepSeek's API terms are unclear on retention and
+training use: acceptable for public judgment search, **not acceptable for a
+document naming a minor in a POCSO matter.** That asymmetry is the whole reason
+routing keys off data class rather than task difficulty.
+
+**Ambiguity resolves to sensitive, never to public.** There is no fallback from a
+sensitive-class call to a cheaper provider — an outage means the feature is
+unavailable, not that the document goes somewhere else.
+
+**Still required, and not satisfied by the routing decision:** a **countersigned
+DPA** with zero-retention and no-training-on-inputs terms, plus a reviewed
+sub-processor list, on an endpoint whose region is defensible under OD-2. The
+admin surface refuses to route sensitive traffic to a provider with no DPA on
+file, with no founder override. **Until the signature exists, that set is empty.**
+
+## One document per call — hard rule
+
+**Never put more than one case document in a single prompt.**
+
+Multiple case files in one context creates **cross-contamination**: the model
+conflates parties between matters, and attributes a fact from one client's file to
+another's. That failure is invisible in the output — it reads as a fluent,
+confident answer about the wrong person — and it is a confidentiality breach
+between two of the same advocate's clients, which is professionally far worse than
+a wrong answer.
+
+This constrains batching. **Do not batch documents to save tokens.** If a feature
+needs to reason across two documents, that is a design question to answer
+deliberately, not something to let a prompt-builder do by accident.
 
 ## Pseudonymisation — before any sensitive-class call
 
@@ -39,9 +65,16 @@ Realistic coverage is around 80%. **That is not 100% and must never be described
 as such**, to an advocate or in marketing. Remaining risk is disclosed plainly;
 high-sensitivity matters get a manual review path.
 
+**Presidio (Microsoft, MIT) is the detection base, not the answer.** It supplies
+the framework, the recognisers and a re-identification story. It does not supply
+accuracy on our documents.
+
 Indian names, transliteration variants and Devanagari make NER materially harder
-than English benchmarks suggest. Evaluate on real Indian court documents before
-trusting any off-the-shelf model.
+than English benchmarks suggest. **Evaluate Presidio on real Indian court
+documents before trusting it** — a published F1 measured on English news text is
+not evidence about a Hindi bail order naming four transliterated surnames. Until
+that evaluation exists, the ~80% figure above is an estimate, not a measurement,
+and should be described that way internally too.
 
 ## Copied citations are recorded — and disclosed
 Every "Copy citation" tap writes a `citation_copies` row: which judgment, when,

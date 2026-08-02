@@ -8,7 +8,7 @@ without updating this file in the same commit.
 `email` text · `bar_enrolment_number` text null · `enrolment_status` enum
 (unverified|verified|rejected) default unverified · `preferred_language` enum
 (en|hi) default en · `subscription_tier` enum
-(none|starter|professional|expert|firm|enterprise) default none ·
+(none|practice|chamber|expert|firm|enterprise) default none ·
 `terms_accepted_at` timestamptz null · `terms_version` text null ·
 `created_at` timestamptz
 

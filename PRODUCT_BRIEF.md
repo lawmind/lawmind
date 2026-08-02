@@ -1,7 +1,8 @@
 # LAWMIND — PRODUCT BRIEF
 
 **Read this before any session. It is the north star. If something you are about
-to build does not serve one of the four features below, stop and ask.**
+to build does not serve one of the four core features or the daily loop below,
+stop and ask.**
 
 Helmor Pvt Ltd · lawmind.co · `co.lawmind.app` · Product #1 in ship order
 
@@ -38,7 +39,24 @@ nothing speaks Hindi properly.
 
 ---
 
-## The four features, in priority order
+## What the product is — two tiers
+
+> **The four features are what the product does. The daily loop is why an
+> advocate opens it every morning. Tier B ships before Tier A — the loop creates
+> the habit; the library only prevents a feature-comparison loss.**
+
+That sentence drives sequencing, so read it before planning a sprint. A library
+an advocate consults twice a month loses to a habit they touch every morning, and
+the habit is what makes the library get used at all.
+
+**Tier A — the four core features.** What we are.
+**Tier B — the daily loop, six screens.** Why they come back. Approved 2 Aug 2026;
+drawn as inventory rows 97–109, specified in `design/screens/IMPLEMENTATION.md`
+§9d.
+
+---
+
+## Tier A — the four features, in priority order
 
 **1 · Court decision search with verified citations.** Plain-language or Hindi
 query. Five judgments with title, citation, court, date, a two-sentence holding
@@ -57,6 +75,42 @@ watermark on a court filing is both patronising and a competitive disadvantage.
 **4 · The matter workspace — the moat.** Per-case history: drafts, research,
 briefings, notes, hearing timeline. Six months of an advocate's accumulated work
 is what stops them leaving.
+
+---
+
+## Tier B — the daily loop, six screens
+
+**Each replaces something an advocate already does daily on paper.** That is the
+test for admission to this list: not "would this be useful", but "what does it
+replace, and how often".
+
+| Screen | Replaces | Frequency |
+|---|---|---|
+| Daily cause list | Checking the board | Daily |
+| Adjournment capture | Writing the date on the file | Daily |
+| Client update share | A typed WhatsApp message | Daily |
+| Limitation calculator | Counting on a calendar | Weekly |
+| Bare acts reader | A shelf and three websites | Weekly |
+| Fee and appearance log | The register | Weekly |
+
+**Three of the six are used in a courtroom or a corridor** — cause list,
+adjournment, client update. All three work offline, none has a confirmation
+dialog, and every target in them is at least 52px. The constraint is not
+aesthetic: an advocate is standing up, holding a file, with one hand free and
+about thirty seconds.
+
+**Adjournment capture is the highest-frequency write in the product.** Its
+target — under four seconds from lock screen to saved, on a Redmi-class device
+with no signal — is recorded in `docs/FAILURE_MODES.md` as something to
+**measure at S3**, not a gate now. Nobody can evaluate it without the device.
+
+**The client card is the only Lawmind surface a non-user ever sees.** The
+advocate's name is prominent and ours is small. Reverse that and it becomes an
+advertisement, advocates stop sending it, and the one organic channel we have
+closes.
+
+Full specification and the rules governing the courtroom screens:
+`design/screens/IMPLEMENTATION.md` §9d.
 
 ---
 
@@ -204,3 +258,15 @@ S4 drafting · S5 auth+billing · S6 admin+monitoring · S7 store + 20 beta advo
 
 Gate S2 is the hard stop. If verification is not clean, nothing downstream
 matters. Do not proceed to keep momentum.
+
+**This sprint plan predates the daily loop and has not been re-sequenced.** It
+runs S1 corpus → S2 citation gate → S3 briefing, which is Tier A first — the
+opposite order to the framing above. The two are not yet reconciled: *"Tier B
+ships before Tier A"* and *"S1 corpus, S2 citation gate"* cannot both be
+followed. **Resolving it is a sprint-planning decision, not a build decision** —
+`BUILD_GUIDE.md` and `sprints/` are where it lands, and nobody should silently
+pick one while working a sprint.
+
+Gate S2 stays a hard stop wherever it ends up in the order. A daily loop built on
+citations that have not passed the gate is the same extinction risk as anything
+else that renders a citation.

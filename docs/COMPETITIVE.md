@@ -89,6 +89,34 @@ loop and lose on headnotes, which is why we never lead with corpus.
 **Founder's decision.** All tiers free for the first 90 days after launch, for
 anyone who signs up in that window.
 
+> ### What may be published now, and what may not — 2 Aug 2026
+>
+> **The offer is decided. Only half of it is publishable.**
+>
+> **Ships on the paywall now:** *"Founding advocates keep 50% off, permanently.
+> First 5,000 only."* Both the discount and the cap are **bounded**, so the
+> maximum exposure is known before anyone signs up.
+>
+> **Does NOT ship yet: "three months free."** The **briefing cost per user is not
+> computed**, and a free window is an **unbounded commitment against an unknown
+> number of users**. Briefings are the most expensive thing we generate per
+> advocate — a nightly generation per listed matter — and the formula below still
+> has `UNKNOWN` in three of its inputs.
+>
+> **The condition for publishing it:** compute briefing cost per user from **real
+> beta usage**, fill every `UNKNOWN` in the table below, and re-run the formula on
+> the provider's live pricing. Not from an estimate, and not from the placeholder
+> unit prices.
+>
+> **The design already leaves room.** The founding card is a stack, not a grid, so
+> *"and your first three months free"* appends as a fourth line under the progress
+> rule without moving anything below it — `design/screens/IMPLEMENTATION.md` §9g.
+> **Nothing has to be re-laid out when the number lands.**
+>
+> Related presentation rule: **a counter, never a countdown clock** — "1,204 of
+> 5,000". A clock reads as a growth tactic to a senior advocate; a counter is a
+> fact. PD-14.
+
 Structured to build a moat rather than buy downloads:
 
 - **Free access is granted per user, not per period.** Early users keep a permanent

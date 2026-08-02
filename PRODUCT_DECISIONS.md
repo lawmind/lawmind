@@ -124,3 +124,64 @@ readable by someone who did not prepare it. The physical file remains the source
 of truth. `.docx` export is non-negotiable. Court connectivity is genuinely bad.
 Next dates are given orally and written on the file, so manual entry must feel
 first-class.
+
+## PD-13 · Tier names — Practice · Chamber · Expert · Firm
+**Settled 2 Aug 2026.** Starter and Professional are retired. The site names win;
+the docs move.
+
+| Tier | Price | Unit | In-app purchase |
+|---|---|---|---|
+| **Practice** | ₹799/mo | One advocate, starting out | Yes |
+| **Chamber** | ₹1,999/mo | One advocate, full practice | Yes |
+| **Expert** | ₹3,499/mo | One advocate, heavy volume | Yes |
+| **Firm** | Talk to us | 5–10 advocates, shared matters | **Never** |
+| **Enterprise** | Off-app | Roadmap | **Never** — not shown in-app at all |
+
+Starter / Professional are SaaS language. An advocate does not describe themselves
+as being on a professional plan; they describe the size of their practice. The
+first three tiers are **one advocate at three volumes** — Firm is the first tier
+where the *unit* changes, which is why it is also the first with no price.
+
+### The Chamber collision, resolved
+**Chamber stays the solo tier. The multi-seat tier is Firm.**
+
+The obvious objection is that "chamber" sounds collective. It is not, in Indian
+practice: a solo advocate has *their* chamber, while *firm* is what several
+advocates practising together call themselves. The alternative — renaming the solo
+tier to Practice and shifting everything down — fails because **Practice is already
+the entry tier and the better word for it.**
+
+The deciding factor is cheaper than either argument: **the site is live with
+Chamber at ₹1,999, and renaming a published tier costs more than naming an unbuilt
+one.**
+
+**This does not reopen PD-3.** Sharing remains **per matter, by invitation**. A
+"Firm" tier is a billing unit, not an org chart — a chamber of two to five people
+is still a list of names.
+
+### Firm and Enterprise may never show an in-app purchase control
+Not a pricing preference — an **App Store rejection under guideline 3.1.1**. And
+**a link to a web checkout page is the same violation**: "Talk to us" opens a mail
+composer. No price, no button, no URL on either row, ever.
+
+## PD-14 · The founding offer
+**Settled 2 Aug 2026. "Founding advocates keep 50% off, permanently. First 5,000
+only."**
+
+Both the discount and the cap are **bounded**, which is the whole reason it can be
+published now.
+
+**No "three months free."** The briefing cost per user is not yet computed, and a
+free window is an **unbounded commitment against an unknown number of users** —
+briefings are the most expensive thing we generate per advocate. It ships only once
+that cost is measured from real beta usage. Condition recorded in
+`docs/COMPETITIVE.md`.
+
+**A counter, never a countdown clock** — "1,204 of 5,000". A clock reads as a
+growth tactic to a senior advocate; a counter is a fact about how many seats are
+gone.
+
+The card sits **above** the tiers, so the struck-through prices below are already
+explained by the time they are read. The layout is a **stack, not a grid**, so the
+free window can append as a fourth line under the progress rule without moving
+anything below it.

@@ -5,7 +5,9 @@ Expo app (iOS + Android) → Hono API on Railway → Railway Postgres + pgvector
 Admin and OCR are separate Railway services. One project, one bill.
 
 ## Client
-Expo SDK 52+, React Native, TypeScript. NativeWind. TanStack Query + Zustand.
+Expo SDK 52+, React Native, TypeScript. StyleSheet + `theme/tokens.ts` —
+**NativeWind was removed at the S0 ponytail review** (zero uses, 1.2 MB;
+`docs/OSS_STACK.md`). TanStack Query + Zustand.
 Expo SecureStore for tokens — never AsyncStorage. Expo push. EAS Build.
 
 ## API
@@ -19,7 +21,10 @@ Shapes in `docs/SCHEMA_TRUTH.md` — that file is authority.
 ## Retrieval
 Hybrid. Postgres full-text (sparse) + pgvector cosine (dense) → reciprocal rank
 fusion → cross-encoder rerank → top 5. Chunks ~800 tokens, 150 overlap.
-Corpus v1: Supreme Court last 5 years (~15K judgments) + full BNS/BNSS/BSA text.
+Corpus v1 (OD-4 staged ingest): **Supreme Court complete, 1950–2025** + full
+BNS/BNSS/BSA text and the IPC↔BNS mapping. High Courts last 10 years follow;
+historical HC is a post-launch background job. **Record the document count at
+each stage** — `docs/OSS_STACK.md` §1a.
 Scanned judgments pass through OCR first and carry `ocr_confidence`; retrieval
 down-ranks low-confidence text.
 
@@ -34,7 +39,7 @@ Spec: `docs/CITATION_HARNESS.md`. Binding.
 
 ## OCR
 Separate Railway service, Python + FastAPI, async queue. PaddleOCR primary,
-Tesseract fallback — **OD-7, settle by bake-off on real court scans.** Pipeline:
+Tesseract fallback — **OD-7 resolved 2 Aug 2026.** The S4 bake-off on real court scans is tuning, not selection. Pipeline:
 classify (skip if digital text layer) → preprocess/deskew → detect script →
 OCR → confidence score → field extraction → advocate confirms.
 `docs/OCR_PIPELINE.md`.
@@ -43,39 +48,56 @@ OCR → confidence score → field extraction → advocate confirms.
 Public class (judgments, statutes): cheapest capable, DeepSeek V4 Flash for
 search, Haiku 4.5 for structure, Sonnet 4.6 for drafting and briefings.
 Sensitive class (uploaded documents, matter notes): pseudonymise first, provider
-with written data-processing terms only. **OD-6 unresolved — no upload features
-until settled.** `docs/PRIVACY_PII.md`.
+with written data-processing terms only — **OD-6 resolved 2 Aug 2026: Claude.**
+Ambiguity resolves to sensitive. **One document per call.** The countersigned DPA
+is still owed before uploads ship. `docs/PRIVACY_PII.md`.
 
 Every call rows into `llm_calls` with model, tokens, cost, latency, `data_class`,
 `pseudonymised`.
 
-### Model selection — revised 1 Aug 2026
+### Model selection — revised 2 Aug 2026
 
 | Role | Model | Why |
 |---|---|---|
-| API workhorse — search, lookup, extraction | **DeepSeek V4 Flash** | Cheapest capable, MIT, 1M context |
-| Premium — drafting, briefings | **Claude Sonnet 4.6** | Unchanged |
-| **Fine-tune base** | **GLM-5.2** | 744B MoE / 40B active, 1M context, **MIT**, weights on Hugging Face, ~168 tok/s — roughly 3× DeepSeek V4 Pro and Kimi K3 throughput |
-| Evaluate later | Kimi K3 | 2.8T, weights released 27 Jul 2026, Modified MIT, 2–17× the token cost. Note only, not selected |
+| API workhorse — search, lookup, extraction | **DeepSeek V4 Flash** | Cheapest capable, MIT, 1M context. **Public class only** |
+| Premium — drafting, briefings | **Claude Sonnet 4.6** | Quality where it is filed in court. **Also the sensitive-class provider** — Anthropic has written data-processing terms |
+| Premium reasoning — API only | **GLM-5.2** | MIT, ~168 tok/s, roughly 3× DeepSeek V4 Pro and Kimi K3 throughput. Consumed via API; somebody else owns the serving footprint |
+| **Fine-tune target** | **Qwen3 32B** or **Gemma 4 26B A4B** | Actually trainable and servable. **~$12–20 per QLoRA run** |
+| Not selected | Kimi K3 | 2.8T, Modified MIT, 2–17× the token cost |
 
-**GLM-5.2 replaces Qwen3.6-35B-A3B as the fine-tune target.** Throughput is why:
-an advocate waiting on a draft feels tokens per second directly, and a 3×
-difference is the difference between a tool that feels instant and one that feels
-like it is thinking.
+**GLM-5.2 is no longer the fine-tune target — reversed 2 Aug 2026, with cause.**
+The 1 Aug entry chose it on throughput. That reasoning was right about *inference*
+and wrong about *training*: it compared tokens per second and never priced the
+serving footprint. **GLM-5.2 is 744B and needs roughly 8×H100 just to serve; Kimi
+K3 is 2.8T.** Neither can be QLoRA fine-tuned or self-hosted on this budget, at
+any throughput.
+
+**We do not fine-tune GLM-5.2 or Kimi K3. We consume them via API and fine-tune
+something we can afford to serve.** Full reasoning and the dataset workstream:
+`docs/TRAINING_STRATEGY.md`.
 
 Fine-tuning still does not start before **₹3L MRR**. The model choice is recorded
 now so the corpus is collected in a form that suits it, not so it is built.
 
-**Routing to a sensitive-class model remains blocked by OD-6** — the design half
-is closed, the countersigned DPA is not.
+Parameter counts and throughput figures above are **the founder's stated
+rationale, recorded as given — not independently benchmarked here.** Measure
+before quoting them externally.
+
+**Sensitive-class routing is resolved (OD-6): pseudonymise, then Claude.** The
+countersigned DPA is a **procurement artefact that must still exist** — the rule
+the admin surface enforces points at "a provider with terms on file", and that set
+is only non-empty once it is signed.
 
 ## Embeddings
 One-time corpus embedding as a batch job on rented GPU — not on Railway.
-Query-time embedding on Railway CPU is fast enough for single queries. OD-4.
+Query-time embedding on Railway CPU is fast enough for single queries.
+**OD-4 resolved 2 Aug 2026: self-hosted BGE-M3**, batch-embedded on a rented GPU
+(Lambda Labs or RunPod). Corpus from AWS Open Data, free and account-free —
+`docs/OSS_STACK.md` §1a.
 
 ## Court data
 Adapter interface, two implementations: manual entry (fully working, ships first)
-and vendor API (stub until OD-1). Nothing above the interface changes when the
+and vendor API (stub until OD-1, which is still open — trial pending). Nothing above the interface changes when the
 vendor lands. eCourts Tier 3 verification shares this interface.
 
 ## Jobs
@@ -101,7 +123,15 @@ neither this file nor PD-1 should be "corrected" to match the other: the six-dig
 OTP screen is the drawn end state, the launch channel is a delivery choice.
 
 **PD-2 — enrolment never gates.** The enrolment number is captured, queued for
-manual review, and shown as a quiet caution-amber band above the header. Nothing
+manual review, and shown as a quiet band above the header.
+
+> **CONFLICT — flagged, not resolved.** This band is drawn amber in canvas `11a` /
+> `renders/58-signin-otp@2x.png`, but the silence pass reserves caution `#B4690E`
+> for **the law has moved and nothing else** (`design/DESIGN_SYSTEM.md`
+> §Non-negotiable UI rules 3a). A pending enrolment is a fact about us, so by that
+> rule it should be neutral ink. **Do not repaint it in code** — it is a drawn
+> screen, and the next design pass owns the call.
+ Nothing
 is withheld while it is pending, and **rejection does not remove access**. There is
 no public Bar Council verification API, so gating would mean a manual queue on
 every signup; the number exists for positioning — a tool for licensed

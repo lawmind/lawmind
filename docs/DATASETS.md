@@ -39,9 +39,16 @@ applications would bake our core failure mode into the weights.
 
 ### nisaar/Articles_Constitution_3300_Instruction_Set
 ### nisaar/LLAMA2_Legal_Dataset_4.4k_Instructions
-**Not yet audited — OD-8.** Same publisher, same method. Assume the same defects
-until audited to the standard above. Do not train on either before that audit
-exists.
+**Never training data. OD-8 closed 2 Aug 2026 as superseded, not answered.**
+
+Same publisher, same method as the audited set above, so the same defects are
+assumed. The audit question dissolved rather than being resolved: the standing
+rule is **primary sources only**, so these were never candidates for training
+regardless of what an audit found.
+
+They stay what the audited set became — **adversarial evaluation material**. The
+real question, *what the training asset is and how it gets built*, is answered in
+`docs/TRAINING_STRATEGY.md`.
 
 ---
 
@@ -105,10 +112,14 @@ Consequences for how we work:
 
 - Every verified citation, upheld dispute and accepted draft is **training data
   being collected**, whether or not we ever train. Capture it cleanly from S1.
-- **Fine-tune base: GLM-5.2** (`TRD.md` §Model selection). Recorded now so the
-  corpus is collected in a shape that suits it.
+- **Fine-tune target: Qwen3 32B or Gemma 4 26B A4B** — revised 2 Aug 2026.
+  **GLM-5.2 is no longer the fine-tune base**: at 744B it needs roughly 8×H100
+  just to serve, so it cannot be QLoRA fine-tuned or self-hosted on this budget.
+  It stays in the stack as an **API** model. `docs/TRAINING_STRATEGY.md` §2.
 - **Fine-tuning does not start before ₹3L MRR.** The Sarvam-1 Colab pilot runs in
   parallel at zero cost.
+- Pairs live in `training/` as versioned JSONL, gitignored and backed to R2 —
+  **never in the app database.** `docs/TRAINING_STRATEGY.md` §4.
 - Never contaminate the flywheel with model-generated commentary. A corpus that
   contains another model's opinion about a case is worth less than one that does
   not, because its errors are unattributable.

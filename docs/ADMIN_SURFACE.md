@@ -265,6 +265,6 @@ Blocked by **OD-2** (DPDP data residency) for public launch, not for build.
 
 | | |
 |---|---|
-| **`GET /admin/ocr-queue` is contracted but no OCR review queue is designed** | Consistent with **OD-7** blocking scanned intake. `design/SCREENS.md` item 33. |
+| **`GET /admin/ocr-queue` is contracted; the review queue is drawn at `renders/56-admin-ocr-queue@2x.png`** | Consistent with **OD-7** blocking scanned intake. `design/SCREENS.md` item 33. |
 | **10 of 17 sections have no write endpoint** | Overview, Briefings, Corpus, Subscriptions, Support, Push and Analytics have none at all; Enrolment, Advocates and LLM routing are read-only or partial. Platform controls was in this list and is now contracted. |
 | **The overruled re-check has no designed surface** | It runs on `cron` and reports into Citation monitor and "needs a human today". If it deserves its own panel, that is a design question — not resolved here. |

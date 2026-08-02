@@ -1,8 +1,12 @@
 # SPRINT 1 — CORPUS
 
-**🔴 BLOCKED BY OD-4.** Corpus embedding cannot start until the provider is
-chosen. Do not begin ingest against a placeholder — re-embedding 1M documents is
-the most expensive mistake available in this sprint.
+**🟢 UNBLOCKED 2 Aug 2026 — OD-4 resolved.** Corpus from AWS Open Data (free,
+no account); embeddings are self-hosted BGE-M3, batch-embedded on a rented GPU.
+`docs/OSS_STACK.md` §1a carries the staged ingest and the budget.
+
+The standing caution still holds: **do not begin ingest against a placeholder.**
+Re-embedding 1M documents is the most expensive mistake available in this sprint,
+and it is now a self-inflicted one rather than a blocked decision.
 
 **Read first, both lanes:** `PRODUCT_BRIEF.md` · `docs/SCHEMA_TRUTH.md` ·
 `docs/DATASETS.md` · `docs/API_CONTRACTS.md`.
@@ -13,17 +17,20 @@ the most expensive mistake available in this sprint.
 
 **OWN:** `services/api/**`, `packages/db/**`, `services/ingest/**`
 
-**BLOCK ON:** **OD-4** — hard. Everything else in this block can be built and
-tested on a 1,000-document sample while OD-4 is open; only the full embed run is
-blocked.
+**BLOCK ON:** nothing. OD-4 closed 2 Aug 2026. Still worth building and testing
+on a 1,000-document sample before the full embed run — the sample is how you find
+out the chunking is wrong for ₹0 instead of $120.
 
 **TASK**
 
 1. **Ingest — target 1M+ judgments.** Sources are fixed by `docs/DATASETS.md` and
    **approved sources only**: AWS Open Data SCI + High Court judgments
    (CC-BY-4.0), indiacode.nic.in for statutes, IndianKanoon API.
-   Beyond the 5-year SCI slice: **all 25 High Courts**, plus available District
-   data. **Primary sources only — never another model's commentary.**
+   **Ingest in OD-4's stages, and record the count at each:** (1) Supreme Court
+   complete 1950–2025 — the citation backbone; (2) BNS/BNSS/BSA + the IPC↔BNS
+   mapping; (3) High Courts last 10 years; (4) historical HC as a post-launch
+   background job. **Stages 1 + 2 pass Gate S1 — do not attempt 15.9M now.**
+   **Primary sources only — never another model's commentary.**
 2. **Statutory text.** BNS / BNSS / BSA full text with **IPC↔BNS section
    mapping** into `statute_mappings`. Seeded from indiacode.nic.in and
    **never model-generated** — a wrong section mapping is a wrong answer about
@@ -51,10 +58,10 @@ blocked.
 
 **NEVER**
 - Train on, or ingest, `nisaar/*` — one set failed audit with fabricated dissents
-  and impossible bail applications; two are unaudited (**OD-8**). They are the
+  and impossible bail applications; two more are assumed to share them. They are the
   **adversarial evaluation set** for S2, not corpus
 - Model-generated section mappings or headnotes
-- Begin the full embed run before OD-4 resolves
+- Begin the full embed run before the 1,000-document sample looks right
 
 ---
 

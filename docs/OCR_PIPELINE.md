@@ -12,15 +12,24 @@ photographed order is not usable where most Indian litigation happens.
 | **PaddleOCR** | Apache 2.0 | Strong multilingual incl. Devanagari; good layout and table detection; actively developed | Heavier runtime; Python service |
 | **Tesseract** | Apache 2.0 | Mature; `hin`/`tam`/`ben` trained data; light; easy deploy | Weaker on complex layouts, tables, poor scans |
 
-**Recommendation: PaddleOCR primary, Tesseract fallback.** Court orders are
-layout-heavy — cause titles, party blocks, numbered paragraphs, seals — and
-layout handling is where the two diverge most.
+**RESOLVED 2 Aug 2026 (OD-7): PaddleOCR primary, Tesseract fallback.** Court
+orders are layout-heavy — cause titles, party blocks, numbered paragraphs, seals
+— and layout handling is where the two diverge most. Both are Apache 2.0, so
+there was never a licensing dimension to weigh.
 
-**OD-7: settle by bake-off, not reputation.** Neither engine's published
-benchmarks were measured on Indian court documents. Run both against 50 real
-scanned orders: good scans, bad photocopies, angled phone photographs,
-Hindi-language orders. **Measure field-extraction accuracy, not character
-accuracy** — 98% characters with a corrupted hearing date is a failure.
+**OCR intake ships in v1.** The product is a complete ecosystem: an advocate
+should never need a second app for a law-related task. Deferring scanned intake
+would have sent them elsewhere on exactly the documents that matter most, and an
+advocate who opens another app once opens it again.
+
+**The S4 bake-off still runs — as tuning, not selection.** Neither engine's
+published benchmarks were measured on Indian court documents, so the numbers that
+matter still have to be produced here. Run both against 50 real scanned orders:
+good scans, bad photocopies, angled phone photographs, Hindi-language orders.
+
+**Measure field-extraction accuracy, not character accuracy.** 98% characters with
+a corrupted hearing date is a failure — the one field that must be right is the
+one a character-level score is least sensitive to.
 
 ## Pipeline
 1. **Intake** — PDF (digital or scanned), image, or camera capture.
@@ -30,7 +39,7 @@ accuracy** — 98% characters with a corrupted hearing date is a failure.
    on camera input.
 4. **Detect script** — Devanagari, Latin, Tamil, Bengali. Mixed-script is common;
    a Hindi order routinely carries English case citations.
-5. **OCR** — engine per OD-7, language pack per detected script.
+5. **OCR** — PaddleOCR, Tesseract on fallback; language pack per detected script.
 6. **Confidence scoring** — per block. Low-confidence regions flagged in the UI,
    never silently accepted.
 7. **Structure extraction** — court, case number, parties, date, order body.
