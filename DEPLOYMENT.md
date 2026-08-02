@@ -12,10 +12,20 @@ Consequences:
 - Do not run `git add` from `~/Documents` — it would absorb this repo as a
   gitlink or, worse, as loose files.
 - CI and deploy tooling must clone **this** repo directly, not the parent.
-- No remote is configured yet. `git remote -v` returns empty by design.
+- Remote: `origin` → `https://github.com/lawmind/lawmind.git`, `main` tracking
+  `origin/main`. **This line previously read "no remote is configured yet, `git
+  remote -v` returns empty by design" and was stale as of 2 Aug 2026** — the
+  remote exists and is reachable. It matters because CI only runs once commits
+  reach GitHub, and because anything pushed here is published.
 
 Branch: `main`.
-Record the generated project name here on creation: `________________`
+Railway project: `lawmind` · id `9cb948ba-fc2d-4e70-bd98-d920f19e6337` · workspace
+`locklabs-org's Projects`. Created 2 Aug 2026.
+
+Build and deploy config is code: `railway.json` at the repo root. It is the
+**default** config path, so it applies to every source-built service. When `cron`
+and `ocr` arrive in S3/S4 each needs its own config file and its own
+`railwayConfigFile` setting — one root file cannot carry three start commands.
 
 | Service | Purpose | Port |
 |---|---|---|
@@ -56,6 +66,10 @@ verification tiers 1–3.
 `development` · `staging` · `production`. Separate databases, separate secrets.
 Never point staging at the production database.
 
+All three exist and each carries **its own Postgres instance**, so the separation
+is physical rather than a convention: `Postgres` (production) · `Postgres-NQ5a`
+(development) · `Postgres-fKqF` (staging). Railway generated the suffixes.
+
 ## Secrets — Railway environment variables only
 ```
 DATABASE_URL
@@ -77,6 +91,33 @@ RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET
 ```
 
 Never in the repo. Never in a commit. Rotate on any team change.
+
+### Not secrets, but read by the `api` service — same rule, no values in the repo
+```
+PORT                      # defaults to 3000
+NODE_ENV                  # development | production
+LOG_LEVEL                 # pino level, defaults to info
+RAILWAY_GIT_COMMIT_SHA    # set by Railway; reported by GET /health
+GITHUB_SHA                # set by Actions; the CI equivalent of the above
+GIT_SHA                   # manual override for either
+```
+
+`GET /health` falls back to `git rev-parse HEAD` when none of the three SHA
+variables is set, and reports `unknown` only when that also fails. A health check
+that cannot name its build cannot tell two deploys apart.
+
+**A `railway up` from a laptop must carry the SHA itself.** Railway sets
+`RAILWAY_GIT_COMMIT_SHA` only on git-triggered deploys, and `.railwayignore`
+excludes `.git`, so a CLI deploy reports `unknown` unless told otherwise:
+
+```
+railway variables --service api --set "GIT_SHA=$(git rev-parse HEAD)"
+railway up --service api
+```
+
+This is a stopgap. It disappears the moment a GitHub remote exists and deploys are
+git-triggered — the code already prefers `RAILWAY_GIT_COMMIT_SHA` over `GIT_SHA`,
+so nothing changes but the variable going stale and stopping being read.
 
 ## Mobile
 EAS Build both platforms. `co.lawmind.app`. TestFlight for iOS beta, internal

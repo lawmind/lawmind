@@ -1,0 +1,8 @@
+# Keep the deploy upload to the server lane. The design bundles and the marketing
+# site are large and no server build reads them.
+apps
+design
+website
+*.zip
+node_modules
+.git

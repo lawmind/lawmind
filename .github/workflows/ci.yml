@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  server:
+    name: server lane
+    runs-on: ubuntu-latest
+
+    services:
+      # Postgres 16 + pgvector, matching DEPLOYMENT.md. The migrations create the
+      # extension themselves and fail loudly if it is unavailable.
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lawmind
+          POSTGRES_PASSWORD: lawmind
+          POSTGRES_DB: lawmind_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lawmind"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://lawmind:lawmind@127.0.0.1:5432/lawmind_ci
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      # apps/** is RCC's lane and still carries npm lockfiles; installing it here
+      # would make this job red for reasons outside this lane. Flagged, not converged.
+      - run: pnpm install --frozen-lockfile --filter "!./apps/*"
+
+      - run: pnpm lint
+      - run: pnpm format
+      - run: pnpm --filter "@lawmind/*" typecheck
+
+      # Against a fresh database every run: proves the migrations apply on empty.
+      - run: pnpm --filter @lawmind/db migrate
+      # And that a second run is a no-op.
+      - run: pnpm --filter @lawmind/db migrate
+
+      - run: pnpm --filter "@lawmind/*" test
