@@ -1,0 +1,19 @@
+{
+  "name": "@lawmind/ingest",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "sci": "tsx src/cli.ts",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@lawmind/db": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "hyparquet": "1.27.1",
+    "postgres": "3.4.9",
+    "tsx": "4.23.1",
+    "unpdf": "1.8.0"
+  }
+}

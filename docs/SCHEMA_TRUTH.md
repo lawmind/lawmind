@@ -43,6 +43,25 @@ one the world invalidated afterwards. Set it in the same write as any
 `overruled_status` change, including inside `applyOverruledChange`.
 
 Index: gin on to_tsvector(full_text); btree on judgment_date, court.
+Unique: `source_url`.
+
+Two notes recorded in S1, when the first real corpus was ingested:
+
+**The unique on `source_url`** is what makes ingest resumable — killing a run and
+restarting must not duplicate, and that is enforced in the database rather than in
+application code. It deduplicates a judgment **within** a source, not **across**
+sources: the same judgment fetched from AWS Open Data and from IndianKanoon has
+two URLs and would produce two rows. Cross-source identity is a citation question
+and belongs to S2, not here.
+
+**The gin index takes an explicit `'english'` text-search configuration.** The
+one-argument `to_tsvector(full_text)` in the original line cannot be indexed —
+it is not IMMUTABLE, because it depends on `default_text_search_config`. So the
+index is on `to_tsvector('english', full_text)`. The consequence is real and
+should not be discovered later: Hindi judgments get English stemming and English
+stopwords in the sparse half of hybrid retrieval. Postgres ships no Hindi
+configuration; `'simple'` would drop stemming for English too. **Unresolved, and
+it is a retrieval decision, not a schema one.**
 
 `overruled_status` replaces the former `is_overruled` bool. A boolean cannot
 carry the three states in `design/screens/IMPLEMENTATION.md` §9.3, where

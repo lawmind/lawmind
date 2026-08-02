@@ -199,6 +199,12 @@ export const judgments = pgTable(
     index('judgments_full_text_idx').using('gin', sql`to_tsvector('english', ${t.fullText})`),
     index('judgments_judgment_date_idx').on(t.judgmentDate),
     index('judgments_court_idx').on(t.court),
+    // Ingest resumability, enforced by the database rather than by application
+    // code: re-running a killed ingest must not duplicate. `source_url` is the
+    // natural key of a judgment at its source (one canonical document per URL).
+    // NOTE this does NOT deduplicate the same judgment arriving from two
+    // different sources — that is citation-level identity and belongs to S2.
+    uniqueIndex('judgments_source_url_key').on(t.sourceUrl),
   ],
 );
 

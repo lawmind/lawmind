@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "judgments_source_url_key" ON "judgments" USING btree ("source_url");
