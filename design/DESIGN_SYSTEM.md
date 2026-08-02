@@ -3,12 +3,16 @@
 Feed to Claude Design first. Every screen prompt assumes it.
 
 > **Source of truth.** This file describes the designs in `design/screens/`,
-> reconciled **1 August 2026** against the final bundle (`LawMindfinal.zip`).
+> reconciled **2 August 2026** against the Turn 13 bundle (`lmfinal.zip`) — the
+> silence corrections (renders 33 and 34 re-rendered), pricing and tiers (§9g) and
+> the last three library screens. It carries Turn 12 (`bail.zip`) before it: the
+> silence pass (§9c), the daily loop (§9d), the launch assets (§9e).
 > The written rules live in `design/screens/IMPLEMENTATION.md`; the authoritative
-> pixels are **renders 30–63**. Renders `00-29` are superseded v1/v2 — their
+> pixels are **renders 30–77**. Renders `00-29` are superseded v1/v2 — their
 > layout is often still valid, their colour and serif are not.
-> Per-screen inventory: `design/screens/SCREENS.md` (87 rows).
-> Product decisions PD-1…PD-12: `PRODUCT_DECISIONS.md`, settled.
+> Per-screen inventory: `design/screens/SCREENS.md` (**119 rows**: 98 app, 18 admin
+> sections, 3 launch assets).
+> Product decisions **PD-1…PD-14**: `PRODUCT_DECISIONS.md`, settled.
 >
 > Where this file and `design/screens/IMPLEMENTATION.md` disagree, the newer
 > **render** governs — that is how the gilt and glass rules below were settled.
@@ -233,61 +237,149 @@ against paper cards.
 
 ## The verification mark — verified is silent, the exception is loud
 
-**Revised 1 Aug 2026. The five-badge system is retired from the UI.** The data
-model, the three tiers and every zero-threshold metric are unchanged — this is a
-rendering decision only. See `docs/CITATION_HARNESS.md` §Rendering.
+**Revised 2 Aug 2026 for the silence pass** (`design/screens/IMPLEMENTATION.md`
+§9c). The five-badge system and the per-result registry stamp are both retired
+from the UI. **The data model, the three tiers and every zero-threshold metric
+are unchanged** — this is a rendering and copy decision only. See
+`docs/CITATION_HARNESS.md` §Rendering.
 
 **Verification is the expected state. Decorating it is noise, and decorating it on
 every result is what made these screens read as defensive about the one thing the
 product is supposed to be confident about.** On a five-result list this is zero
-marks instead of five.
+marks instead of five. Verification did not become less important — it became the
+floor, and a product that decorates its floor has nothing left to say when the
+floor gives way.
+
+### What renders — two states, and only two
 
 | Condition | Renders |
 |---|---|
-| `verified` · any source | **nothing at all** |
-| `unverified` or `failed` | dashed mark, `NOT CONFIRMED` — border `#8A8578`, label `#5A6478` |
-| `overruled_status != none` | solid, white fill, `LAW MOVED` — `#B4690E`, text `#8A5109`, on the amber card wash `#FBF0DF` |
+| `verification_state = verified` · **any** `verified_by_source` | **nothing at all.** No badge, chip, tick, ring or colour |
+| `verification_state = unverified` **or** `failed` | **dashed ink card** — 1.5px dashed `#8A8578`, headline *"Do not file this without checking it"*, with the reason and the eCourts route inside the card |
+| `overruled_status != none` | **amber card** — `#FBF0DF` wash, `rgba(180,105,14,.35)` border, headline naming the affected paragraphs |
 
-Geometry for the two that still render is unchanged and is in
-`design/screens/IMPLEMENTATION.md` §Badge — rectangle, radius 2px, **1.5px**
-border (never 1px, it must survive 2x on a low-DPI panel), padding `3px 6px`,
-JetBrains Mono 600 at 10px / 0.06em, 11px icon box, 20px tall at 1x. Do not
-improvise any part of it.
+**`failed` renders identically to `unverified`.** The advocate cannot act on the
+difference, and a provider outage must never read as a gap in the corpus. The
+distinction is real in the data and is preserved there; it is not a distinction
+the UI has any way to make useful.
 
-**The three verified variants — `VERIFIED`, `VERIFIED ×2`, `VERIFIED BY YOU` — are
-no longer rendered anywhere in the app.** They remain drawn in
-`design/screens/renders/32-badge-family@3x.png`, `design/screens/renders/43-badge-greyscale.png` and
-`design/screens/renders/33-search-mixed-list@2x.png`, which now diverge from the product on this point.
-`verified_by_source` still exists and still matters — it drives the **on-tap
-detail**, not a badge qualifier.
+**A card, not a chip.** The unverified state was a 20px stamp; it is now a card
+that owns its own space. With verified silent, a mark's *presence* is the entire
+signal, so the exception gets the whole room rather than competing with four
+decorations of the ordinary.
 
-**Where verification stays visible** — three places, all of them the user asking
-rather than the product telling: the **draft footer** ("4 of 4 citations
-verified", in-app only) · **on tap**, showing how and by which source · the
-**admin citation monitor**, unchanged.
+### Copy — this is licence protection, not an audit
+
+The Supreme Court now treats an unverified citation as a matter of professional
+conduct and High Courts have made cost orders. **The app is not checking on a
+professional; it is standing between them and a cost order.** Every line is
+written from that position.
+
+| Retired | Ships |
+|---|---|
+| We verified this citation | **Safe to file** |
+| Verification failed | **We could not confirm this exists** |
+| Not confirmed | **Do not file this without checking it** |
+| 3 of 4 citations verified | **One citation could put you at risk** |
+
+The unverified state reads as *we are telling you before the court does*. Never as
+our failure, and never as an accusation. It must never use red, an alert triangle,
+or the word "failed" — those say *the product is broken*. Dashed neutral ink says
+*open, nothing was impressed here*.
+
+### Where verification stays visible — three places
+
+All three are the user asking rather than the product telling:
+
+1. **Draft footer**, in-app only. Clean: *"All 4 citations safe to file"*. With a
+   risk: the footer grows a dashed ink card naming it, and export drops to
+   secondary reading *"Export anyway"*. **Never blocked.**
+2. **On tap** — a sheet opening with *"Safe to file"*, then the sources checked
+   and when each was checked, closing with the nightly re-check promise.
+3. **Admin citation monitor** — unchanged.
+
+**`verified_by_source` appears only in 2 and 3.** It never qualifies a badge,
+because there is no badge to qualify.
+
+### Amber is reserved
+
+**Caution `#B4690E` means exactly one thing: the law has moved.** It does not
+appear on drafts, on OCR, on privacy notices, or on anything expressing our own
+confidence. When an advocate sees amber it is about the law, not about us.
+
+Anything expressing *our* uncertainty is **neutral ink with a dashed edge**. That
+rule is what keeps the two states distinguishable at a glance, and it is a
+correctness rule rather than a palette preference.
+
+### What is unchanged
 
 **Silence never means removal.** An unverified citation is always shown and always
 marked. Silent-drop rate stays at 0.0%.
 
 What renders is **derived at render time, never stored** — from
 `verification_state` · `verified_by_source` · `overruled_status`. `LAW MOVED` is
-independent of verification: a judgment can be verified *and* overruled, and the
-mark appears either way.
+independent of verification: a judgment can be verified *and* overruled, and it
+appears either way.
 
-The two remaining marks are distinguishable **with colour removed** (proof:
-`design/screens/renders/43-badge-greyscale.png`) because they differ by *shape* —
-**dashed edge** versus **filled block**. Shape is the only property that survives
-sunlight washout, a dirty screen and colour-vision deficiency, and it is now
-carrying more weight than before: with verified silent, a mark's *presence* is the
-signal, so the two marks must never be confusable with each other.
+The two rendered states are distinguishable **with colour removed** because they
+differ by *shape* — **dashed edge** versus **filled amber block**. Shape is the
+only property that survives sunlight washout, a dirty screen and colour-vision
+deficiency.
 
-`unverified` is the state that matters most. It must never use red, an alert
-triangle, or the word "failed" — those say *the product is broken*. Dashed neutral
-ink says *open, nothing was impressed here*. `overruled` gets the amber card wash
-in addition to the stamp; amber, never red — the case is real, the law has moved.
+Contrast: `#8A5109` on `#FBF0DF` 5.02:1 · `#5A6478` on white 6.05:1 — clear AA.
+`#1F6F4A` on white 5.31:1 applies to the admin monitor only.
 
-Contrast: `#1F6F4A` on white 5.31:1 · `#8A5109` on `#FBF0DF` 5.02:1 · `#5A6478` on
-white 6.05:1 — all clear AA.
+### Renders that diverge from the product — corrected 2 Aug 2026
+
+**`renders/33-search-mixed-list@2x.png` is fixed.** It was re-rendered in place on
+the silence rule and now carries **zero** verified-green pixels (measured: 4,767 →
+0). Verified cards carry nothing; the eye goes to the dashed card. It is the
+authoritative render for inventory row 15 and is safe for the marketing site.
+
+**`renders/34-briefing@2x.png` is fixed** (715 → 8 residual antialiasing px).
+
+**Still divergent, and these matter:**
+
+| Render | Cited by | Problem |
+|---|---|---|
+| `45-briefing@2x.png` | **row 31, Briefing view** | Byte-identical to the *old* badge-bearing 34. **715 verified-green px.** The re-render landed on 34; row 31 was never repointed |
+| `47-draft-output@2x.png` | **row 36, Draft output** | **927 verified-green px**, and its own note still reads "AI-mark header band; inline registry stamps" — both retired by §9c |
+| `32-badge-family@3x.png`, `43-badge-greyscale.png` | row 23 | Five marks. History, correctly labelled as such |
+
+The Turn 13 bundle states *"their earlier badge-bearing versions no longer exist
+on disk."* **That is not true of the briefing**: `45-briefing@2x.png` is that exact
+file under a different name, still on disk and still the authoritative pointer.
+**Do not take a marketing screenshot of the briefing or the draft from the
+authoritative render until 45 and 47 are re-rendered or rows 31 and 36 are
+repointed at 34 and a corrected draft render.**
+
+Also stale in the shipped `SCREENS.md`, flagged not edited: the header still lists
+"registry-stamp badge" as part of the current system; row 15's note still says "All
+five badge states in one list"; and line 230 asserts "Nothing is marked NOT YET
+DESIGNED" while row 3 (Magic link sent) still is.
+
+### Reconciliation — §9c state names vs the contract
+
+**The contract is frozen and correct. The design doc moves.**
+
+`design/screens/IMPLEMENTATION.md` §9c names the states
+`verified_internal` / `verified_external` / `verified_human`. That reads as **one
+enum** and **drops `failed` entirely**. The data model is three independent
+fields and always has been:
+
+- `verification_state` — `verified` | `unverified` | `failed`
+- `verified_by_source` — `corpus` | `public_x2` | `ecourts` | `none`
+- `overruled_status` — `none` | `set_aside` | `partly_set_aside` | `doubted`,
+  on `judgments`
+
+**After the silence pass the design does not need verified sub-states in list UI
+at all**, which is why this never required renaming anything: verified renders
+nothing, so the three sources have no surface to name. They key the on-tap detail
+and the admin monitor off `verified_by_source`, exactly as before.
+
+`docs/SCHEMA_TRUTH.md`, `docs/CITATION_HARNESS.md` and `docs/API_CONTRACTS.md`
+are authority. **§9c is flagged for correction in the next design pass** — it was
+not edited here, because it is a design deliverable.
 
 ## Motion
 Motion is not optional; nothing cuts. Two curves:
@@ -321,17 +413,37 @@ is checked at contrast 0.5 / brightness 1.3
 ## Iconography
 Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the active tab.
 
+**One icon library. Reicon was evaluated on 2 Aug 2026 and declined** — it was
+proposed to supply legal icons Lucide lacks, and **Lucide already has them**:
+gavel, stamp, landmark and scroll-text are all present in Lucide and all *absent*
+from Reicon. It would have cost the gavel and the stamp to gain `courthouse` and
+`judge`. Full evidence and the measured package facts: `docs/OSS_STACK.md`
+§Iconography.
+
+If a legal glyph is genuinely missing, take it as a **static SVG** into
+`apps/mobile/assets/icons/` under its licence — never a second icon package. Two
+icon libraries is two stroke systems, and stroke weight is the thing that makes a
+set read as one set.
+
 ## Non-negotiable UI rules
-1. **A verified citation renders no mark.** Verification is the expected state.
-   Its detail is available on tap and summarised once in the draft footer, never
-   asserted on every row.
+1. **A verified citation renders no mark** — no badge, chip, tick, ring or
+   colour. Verification is the expected state. Its detail is available on tap and
+   summarised once in the draft footer, never asserted on every row.
 2. An unverified citation is shown honestly — **always visible, always marked**,
    never hidden and never dressed as confirmed. Silence is reserved for verified;
-   it can never stand for removal.
+   it can never stand for removal. **`failed` renders exactly as `unverified`** —
+   the advocate cannot act on the difference, and an outage must not read as a
+   corpus gap.
 3. Overruled always shows its caution state, on every surface. **Three states,
    not one:** `set_aside` (danger band, primary action disabled) ·
    `partly_set_aside` (caution band, adds with a note) · `doubted` (no band, one
    muted line). Binary is a correctness bug in Indian practice.
+3a. **Amber is reserved.** `#B4690E` means the law has moved, and nothing else —
+   never on drafts, OCR, privacy, or anything about our own confidence. Our
+   uncertainty is neutral ink with a dashed edge.
+3b. **Copy is licence protection, not an audit.** "Safe to file", never "we
+   verified this". "We could not confirm this exists", never "verification
+   failed". Never an accusation, never our failure.
 4. **No AI-assisted mark on the document.** Consent is taken once, explicitly, at
    onboarding — covering AI assistance, the duty to verify before filing, and the
    terms of legal use. The exported document carries **no watermark and no hatched
@@ -340,8 +452,12 @@ Lucide, 1.5px stroke (1.6–1.7 in the tab bar). No filled icons except the acti
    is a professional, and a watermark on a court filing is both patronising and a
    competitive disadvantage.
 5. OCR-extracted fields show for confirmation before save — presented as a
-   **normal review step, not a warning**. It is a data-correctness step; drop the
-   cautionary language.
+   **normal review step, not a warning**. It is a data-correctness step, so drop
+   the cautionary language entirely: *"Check the details"*, not *"Confirm what we
+   read"*. An uncertain field is marked **worth a look**, in neutral ink.
+5a. **The privacy disclosure never appears during use.** It lives at onboarding
+   and in Settings. An app that repeats its privacy notice signals it does not
+   trust its own answer.
 6. Never a bare spinner on search — skeleton results keep the screen's shape.
 7. Offline is a requirement, not an edge case.
 8. When the AI is unavailable, say so plainly. Never serve a stale cached answer.

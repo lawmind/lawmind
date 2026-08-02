@@ -872,6 +872,172 @@ with less surface area won.
     and the briefing are settled. **Do not build a partial dark mode in the
     meantime** — a half-themed legal app is worse than none.
 
+## 9c. The silence pass — 1 Aug 2026
+
+The single biggest visual change since the dark direction was killed. Verification
+inverts: **the expected state renders nothing, only the exception is drawn.**
+
+### Why
+
+A badge on every result is the app clearing its throat before every sentence. It
+also inverts the signal — when the expected state is decorated, the exception has
+to shout to be heard above it. On a five-result list that is five badges competing
+with the two that matter. Silence gives the exception the whole room.
+
+Verification did not become less important. It became **the floor**, and a product
+that decorates its floor has nothing left to say when the floor gives way.
+
+### What renders
+
+| State | Renders | Treatment |
+|---|---|---|
+| `verified_internal` · `verified_external` · `verified_human` | **nothing** | Ordinary card. No badge, chip, tick, ring or colour. |
+| `unverified` | **dashed ink card** | 1.5px dashed `#8A8578` border, headline row *"Do not file this without checking it"*, reason and the eCourts route inside the card. |
+| `overruled` (3 sub-states) | **amber card** | Unchanged from §Badge — `#FBF0DF` wash, `rgba(180,105,14,.35)` border, headline naming the affected paragraphs. |
+
+The registry stamp is **retired as a per-result chip**. Its geometry survives only
+in the draft footer and in the on-tap sheet.
+
+### The three places verification stays visible
+
+1. **Draft footer** — one line, before export. Clean: *"All 4 citations safe to
+   file"*. Exception: the footer grows a dashed ink card naming the risk, and
+   export drops to secondary reading *"Export anyway"*. Never blocked.
+2. **On tap** — a sheet opening with *"Safe to file"*, then the three sources
+   checked and when each was checked, closing with the nightly re-check promise.
+3. **Admin citation monitor** — unchanged.
+
+### The copy reframe — this is licence protection, not an audit
+
+The Supreme Court now treats an unverified citation as a matter of professional
+conduct, and High Courts have made cost orders. The app is not checking on a
+professional; **it is standing between them and a cost order.** Every line is
+written from that position.
+
+| Retired | Ships |
+|---|---|
+| We verified this citation | **Safe to file** |
+| Verification failed | **We could not confirm this exists** |
+| Not confirmed | **Do not file this without checking it** |
+| 3 of 4 citations verified | **One citation could put you at risk** |
+
+The unverified state reads as *we are telling you before the court does*. Never as
+our failure, and never as an accusation.
+
+### The AI-assisted mark is removed from the document
+
+No watermark, no hatched margin, no header band, no inline stamps. **Nothing on the
+exported file.** It is replaced by an explicit consent screen at onboarding
+(canvas `12c`) — three numbered clauses in the legal serif, symmetrical: what we
+do, what you do, what neither of us does. Read once by a professional, with the
+acceptance recorded.
+
+The trade, stated plainly: a mark on every page protected *us*. A consent screen
+protects *them*, and the exposure moves to where it can act — a citation we could
+not confirm now stops the export with a named risk, which a watermark never did.
+
+### Everything else goes quiet
+
+- **Privacy disclosure** moves to onboarding and Settings. It never appears during
+  use. An app that repeats its privacy notice signals it does not trust its own
+  answer.
+- **OCR field confirmation** stays — that is data correctness, not a warning — but
+  loses all cautionary language. *"Check the details"*, not *"Confirm what we
+  read"*. The uncertain field is marked **worth a look** in neutral ink.
+- **Amber is now reserved.** Caution `#B4690E` means exactly one thing: **the law
+  has moved.** It no longer appears on drafts, OCR, or anything about our own
+  confidence. When an advocate sees amber, it is about the law, not about us.
+
+## 9d. The daily loop — six screens, 1 Aug 2026
+
+The library is why an advocate downloads Lawmind. **These six are why they open it
+tomorrow.** Each replaces something they already do daily on paper.
+
+| Screen | Canvas | Replaces | Frequency |
+|---|---|---|---|
+| Daily cause list | `12e` | Checking the board | Daily |
+| Adjournment capture | `12f` | Writing the date on the file | Daily |
+| Client update share | `12g` | A typed WhatsApp message | Daily |
+| Limitation calculator | `12h` | Counting on a calendar | Weekly |
+| Bare acts reader | `12i` | A shelf and three websites | Weekly |
+| Fee and appearance log | `12j` | The register | Weekly |
+
+**Three of the six are used in a courtroom or corridor** — cause list, adjournment,
+client update. All three work offline, none has a confirmation dialog, and every
+target in them is at least 52px.
+
+### Rules that govern the courtroom screens
+
+- **Adjournment capture is the highest-frequency write in the product.** Target:
+  **under four seconds** from lock screen to saved, on a Redmi-class device with no
+  signal. Four 64px targets in the lower half. Dates are *predicted* from the
+  court's real adjournment intervals, not typed. **No confirmation dialog** — a
+  wrong date is corrected by tapping the matter; an extra tap in a courtroom costs
+  more than an occasional correction. Reachable in one tap from the cause list row,
+  the matter, and the briefing.
+- **The cause list is grouped by court, not by time**, because that is how a morning
+  is planned. **Item number is the largest element on the row** — it is what an
+  advocate scans a board for and what decides whether they can leave for another
+  court. A court that has not published gets a dashed row, never a hidden one.
+- **The client card is the only Lawmind surface a non-user ever sees.** It is an
+  **image, not a link** — it renders in the thread, survives forwarding, and can be
+  shown across a desk. The advocate's name is prominent and ours is small: the
+  client is served by their advocate, who happens to use good tools. Reversing that
+  makes it an advertisement and advocates stop sending it. Rendered 1080×1350 at 3x,
+  legible as a thumbnail before it is opened. No case number in the filename.
+- **The limitation answer is an ink block — the only one in the app.** A date this
+  consequential must not look like a list row. The provision is quoted verbatim
+  directly beneath it, because an advocate will not trust a computed date without
+  seeing the article. Assumptions (s. 18 acknowledgement, s. 19 part payment) are
+  stated with a one-tap route to correct them. **Barred is danger red** and does not
+  soften — but the screen immediately offers the three things done next.
+- **Bare acts get the judgment reader's treatment exactly** — 26px number gutter,
+  current section in ink, neighbours at 50%, Source Serif 4 at 17/1.72. The three
+  new criminal codes sit above everything under an oxblood rule, and the **IPC↔BNS
+  mapping is a first-class card on the index**, not buried in search: "what is 302
+  now" is the most common lookup of this decade. The comparison view shades what is
+  new and answers which code applies.
+- **The fee log is a ledger, not an accounting product.** Three numbers, then a
+  dated list. Appearances with no fee still appear — it is a record of work as much
+  as of money. Nothing is ever sent: no invoices, no reminders, no tax. The entry
+  sheet is offered right after an outcome is recorded, the only moment an advocate
+  will reliably enter a fee.
+
+## 9e. Launch assets — 1 Aug 2026
+
+**Eight store screenshots, sequenced as a day, not as features.** Canvas `12k`.
+An advocate scrolling the store asks one question: *what is this like on a
+Tuesday?* Feature-by-feature listings convert worse than a day-in-the-life.
+
+Order: briefing arriving the night before → cause list in the morning → a real
+search → a draft → adjournment in the courtroom → client update → limitation →
+the matter accumulating.
+
+**One and two carry roughly 90% of the conversion decision**, so they are the only
+two on the oxblood field. One is the wedge — nothing else on the store does it.
+Two answers "would I open this tomorrow" before the advocate has to wonder.
+**Search is third, not first**, because every legal app leads with search and none
+of them get opened on a Tuesday.
+
+Caption rules: benefit as an advocate would say it to another advocate · no feature
+names · no "AI-powered" · no exclamation marks · second person, present tense,
+under nine words · legal serif for the caption, Inter for the supporting line.
+
+**Subtitle: "Prepared for every hearing"** — 26 characters. It is the daily loop,
+not the library: *every* implies recurrence, *prepared* is the state an advocate
+wants to be in. It says nothing about AI, search or documents, which is why it will
+still be true in two years.
+
+**The icon holds at listing size** (canvas `12l`). Against Law4u and LegalKart —
+both saturated brand colours with a letterform, the pattern for consumer legal
+services — oxblood with a gilt ring is the only tile that reads as an instrument
+rather than a service, and the gilt ring is the only bright element in the row.
+
+## 9f. Languages
+
+**English and Hindi only.** Thailand is out of v1 — no Thai in any language list,
+locale switcher, or copy. Confirmed absent from every file.
+
 ## 9b. Product decisions — answered by the founder, 1 Aug 2026
 
 These closed the seven screens that were marked NOT YET DESIGNED. Each is now
@@ -916,6 +1082,63 @@ drawn; the canvas id is given so the decision and the pixels stay attached.
 | 13 | **Five search filters:** court and bench strength · date · subject · only verified · exclude set aside or doubted. **Judge and reporter were dropped** — a judge filter is a research tool, and reporter choice is a citation-format concern. | `11f` |
 | 14 | **A filter never hides a result silently.** Excluded results are named with a one-tap escape, and applied filters sit as ink chips beneath the query. | `11f` |
 | 15 | **The six uncaptured admin sections stay uncaptured.** Advocates, Corpus, Support, Push, Staff and Analytics are built and clickable in `LawMind Admin.dc.html`; the live file is the reference. No golden renders. | — |
+
+## 9g. Pricing and tiers — 1 Aug 2026
+
+### The ladder
+
+| Tier | Price | Unit | In-app purchase |
+|---|---|---|---|
+| **Practice** | ₹799/mo | One advocate, starting out | Yes |
+| **Chamber** | ₹1,999/mo | One advocate, full practice | Yes |
+| **Expert** | ₹3,499/mo | One advocate, heavy volume | Yes |
+| **Firm** | Talk to us | 5–10 advocates, shared matters | **Never** |
+| **Enterprise** | Off-app | Roadmap | **Never** — not shown in-app at all |
+
+The first three are **one advocate at three volumes**. Firm is the first tier where
+the unit changes, which is why it is also the first one with no price. Names are
+advocate language, not SaaS language — Starter / Professional are retired.
+
+### The naming conflict, resolved
+
+**Chamber stays the solo tier. The multi-seat tier is Firm.** Two reasons: the site
+is live with Chamber ₹1,999, and renaming a published tier costs more than naming an
+unbuilt one. And the distinction is real in Indian practice — a solo advocate has
+*their* chamber; *firm* is what several advocates practising together call
+themselves. The alternative (renaming solo to Practice and shifting down) fails
+because Practice is already the entry tier and the better word for it.
+
+### No in-app purchase on Firm or Enterprise
+
+Both are invoiced off-app, so **neither may ever show an in-app purchase control.**
+This is an App Store rejection under guideline 3.1.1, not only a pricing choice.
+**"Talk to us" opens a mail composer** — a link to a web checkout page is the same
+violation. Do not add a price, a button, or a URL to either row.
+
+### The founding offer
+
+**Founding advocates keep 50% off, permanently. First 5,000 only.** Exactly that
+scope: both the discount and the cap are bounded, so they publish now.
+
+- **No "three months free."** The briefing cost per user is not computed, and a free
+  window is an unbounded commitment against an unknown number of users.
+- **A counter, never a countdown clock** — "1,204 of 5,000". A clock reads as a
+  growth tactic to a senior advocate; a counter is a fact.
+- The card sits **above** the tiers, so the struck-through prices below it are
+  already explained by the time they are read.
+- **Layout leaves room for the free window.** The founding card is a stack, not a
+  grid: a fourth line drops in under the progress rule without moving anything below
+  it. When cost per user is known, *"and your first three months free"* appends to
+  the existing sentence. Nothing re-lays out.
+
+### Admin routing — already drawn
+
+The data-class axis was built in canvas `10l` and is recorded in §8a. Confirmed:
+public and sensitive columns each with their own provider, one line stating which
+provider handles sensitive traffic, the four-step classification (scan → classify →
+route → record, with ambiguity resolving to sensitive), and the blocked state — a
+refused attempt to route sensitive traffic to a provider without written terms,
+logged, with no founder override available. Render `renders/57-admin-routing@2x.png`.
 
 ## 10. Files
 

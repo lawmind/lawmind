@@ -166,6 +166,85 @@ and recorded in IMPLEMENTATION.md §9b.
 | 86 | **Search filters — expanded** | `11f` | `renders/63-search-filters@2x.png` | Five sections; judge and reporter dropped |
 | 87 | **Filtered results** | `11f` | `renders/63-search-filters@2x.png` | Hidden results are named, never silent |
 
+## Turn 12 — the silence pass, the daily loop, launch assets
+
+`IMPLEMENTATION.md` §9c–9f records the reasoning for all of these.
+
+### Verification inverted — verified renders nothing
+
+| # | Screen | Canvas | Render |
+|---|---|---|---|
+| 88 | **Search results — before and after** | `12a` | `renders/64-verified-silent@2x.png` |
+| 89 | **Judgment detail — no badge** | `12b` | `renders/65-judgment-quiet@2x.png` |
+| 90 | **Verification on tap** | `12b` | `renders/65-judgment-quiet@2x.png` |
+| 91 | **Briefing authorities — quiet** | `12b` | `renders/65-judgment-quiet@2x.png` |
+| 92 | **Consent screen** | `12c` | `renders/66-consent-clean-draft@2x.png` |
+| 93 | **Draft output — no mark** | `12c` | `renders/66-consent-clean-draft@2x.png` |
+| 94 | **Draft footer — risk state** | `12c` | `renders/66-consent-clean-draft@2x.png` |
+| 95 | **Privacy at onboarding** | `12d` | `renders/67-privacy-ocr-quiet@2x.png` |
+| 96 | **OCR — normal review step** | `12d` | `renders/67-privacy-ocr-quiet@2x.png` |
+
+### The daily loop
+
+| # | Screen | Canvas | Render |
+|---|---|---|---|
+| 97 | **Daily cause list** | `12e` | `renders/68-cause-list@2x.png` |
+| 98 | **Cause list — outcome sheet** | `12e` | `renders/68-cause-list@2x.png` |
+| 99 | **Adjournment capture** | `12f` | `renders/69-adjournment@2x.png` |
+| 100 | **Adjournment — confirmation** | `12f` | `renders/69-adjournment@2x.png` |
+| 101 | **Client update — compose** | `12g` | `renders/70-client-share@2x.png` |
+| 102 | **The shared card in WhatsApp** | `12g` | `renders/70-client-share@2x.png` |
+| 103 | **Limitation calculator** | `12h` | `renders/71-limitation@2x.png` |
+| 104 | **Limitation — barred** | `12h` | `renders/71-limitation@2x.png` |
+| 105 | **Bare acts — index** | `12i` | `renders/72-bare-acts@2x.png` |
+| 106 | **Bare acts — reading BNS** | `12i` | `renders/72-bare-acts@2x.png` |
+| 107 | **IPC ↔ BNS comparison** | `12i` | `renders/72-bare-acts@2x.png` |
+| 108 | **Fee and appearance log** | `12j` | `renders/73-fee-log@2x.png` |
+| 109 | **Fee log — add entry** | `12j` | `renders/73-fee-log@2x.png` |
+
+### Launch assets
+
+| # | Asset | Canvas | Render |
+|---|---|---|---|
+| 110 | **Eight store screenshots + captions** | `12k` | `renders/74-store-screenshots@2x.png` |
+| 111 | **Icon in a real search result** | `12l` | `renders/75-store-listing@2x.png` |
+| 112 | **Subtitle, feature graphic, description** | `12l` | `renders/75-store-listing@2x.png` |
+
+## Turn 13 — silence corrections, pricing, the last library screens
+
+| # | Screen | Canvas | Render |
+|---|---|---|---|
+| 113 | **Search results — silence rule applied** | `13a` | `renders/33-search-mixed-list@2x.png` **(replacement)** |
+| 114 | **Briefing authorities — silence rule applied** | `13a` | `renders/34-briefing@2x.png` **(replacement)** |
+| 115 | **Paywall — Practice · Chamber · Expert · Firm** | `13b` | `renders/76-pricing@2x.png` |
+| 116 | **Founding offer** | `13b` | `renders/76-pricing@2x.png` |
+| 117 | **Legal dictionary** | `13c` | `renders/77-library-three@2x.png` |
+| 118 | **Court rules reader** | `13c` | `renders/77-library-three@2x.png` |
+| 119 | **Court fee calculator** | `13c` | `renders/77-library-three@2x.png` |
+
+Renders **33** and **34** were re-rendered in place on the silence rule, so they drop
+in as replacements wherever they are already referenced — including the marketing
+site. Their earlier badge-bearing versions no longer exist on disk.
+
+**Every screen in this file now has a canvas id and a render. Nothing is marked
+NOT YET DESIGNED.**
+
+---
+
+## Retired by the silence pass
+
+These were designed, shipped in earlier turns, and are now **superseded**. Their
+renders remain for reference but must not be built.
+
+| Retired | Superseded by |
+|---|---|
+| Per-result verification badges (`8a`, `33-search-mixed-list`) | `12a` — verified renders nothing |
+| The registry stamp as a per-result chip (`7a`, `32-badge-family`) | Survives only in the draft footer and the on-tap sheet |
+| AI-assisted header band on drafts (`8c`, `35-draft-output`) | `12c` — consent screen at onboarding |
+| Inline citation stamps inside drafts (`11d`, `61-draft-editing`) | `12c` — footer summary only |
+| Privacy card during use (`9b`) | `12d` — onboarding and Settings |
+| Cautionary OCR language (`10j`, `50-ocr-flow`) | `12d` — normal review step |
+
 ## Deliberately not built
 
 | Item | Why |
@@ -177,3 +256,6 @@ and recorded in IMPLEMENTATION.md §9b.
 | **Judge and reporter filters** | A judge filter is a research tool; reporter choice is a citation-format concern (§9b item 13) |
 | **Dark mode** | v2, deliberately. Advocates work in daylight (§9.10) |
 | **Sound** | Never. The app opens in courtrooms (§9.9) |
+| **Thai / Thailand** | Out of v1. English and Hindi only (§9f) |
+| **A verified badge on results** | The expected state renders nothing. Only the exception is drawn (§9c) |
+| **Any AI mark on an exported document** | Replaced by the consent screen at onboarding (§9c) |
