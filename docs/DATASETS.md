@@ -92,6 +92,27 @@ permanent test asset.
 **Principle: primary sources only.** Judgments, statutes, official records. Never
 another model's commentary about them.
 
+### AWS Open Data — Supreme Court, Stage 1 complete 4 Aug 2026
+
+**38,342 of 38,351 distinct judgments loaded, 1950–2026. Every year present.**
+
+The published metadata carries **43,532 rows**, which is not the corpus size: the
+same judgment is listed under two adjacent year partitions, so identity is
+`(row.year, path)` and the distinct count is **38,351**. Anyone auditing corpus
+completeness against 43,532 will conclude 5,190 judgments are missing. They are
+not; they are duplicates.
+
+**The nine that are absent are source-side defects, each checked individually:**
+
+| Cause | Count | What it means |
+|---|---|---|
+| HTTP 404 | 6 | Listed in metadata, PDF not in the bucket |
+| `InvalidPDFException` | 3 | PDF present but structurally corrupt and unparseable |
+
+None are ingest failures and none are recoverable by retrying — retried, and they
+fail identically. Recorded here so a later completeness audit does not re-open
+them as a bug.
+
 ### indiacode.nic.in — what it actually provides, verified 4 Aug 2026
 
 Checked directly against the site rather than assumed, because S1 depends on it.
