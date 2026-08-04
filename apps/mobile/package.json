@@ -49,7 +49,10 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "check:hex": "node scripts/check-hex.mjs",
-    "test": "jest"
+    "test": "jest",
+    "check:sunlight": "node scripts/check-sunlight.mjs",
+    "device:android": "eas build --profile preview --platform android",
+    "device:go": "expo start --tunnel"
   },
   "private": true
 }

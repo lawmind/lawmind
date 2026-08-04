@@ -24,8 +24,17 @@ module.exports = {
    * `jest/lucide-stub.js` for why the regex route was abandoned.
    */
   transformIgnorePatterns: expoPreset.transformIgnorePatterns,
+  /**
+   * ORDER MATTERS, AND OURS MUST COME FIRST.
+   *
+   * Jest applies `moduleNameMapper` in insertion order and takes the first
+   * match. The preset's `^react-native($|/.*)` also matches
+   * `react-native-reanimated` and `react-native-worklets`, so spreading the
+   * preset first silently swallows both of these and the suite dies inside
+   * the worklets runtime instead.
+   */
   moduleNameMapper: {
-    ...expoPreset.moduleNameMapper,
     '^lucide-react-native$': '<rootDir>/jest/lucide-stub.js',
+    ...expoPreset.moduleNameMapper,
   },
 };

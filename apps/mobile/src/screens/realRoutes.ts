@@ -39,4 +39,8 @@ export const REAL_ROUTES: Record<string, Href> = {
   'judgment-reading-view': '/judgment/jdg_mock_2?read=1',
   'judgment-reading-sheet': '/judgment/jdg_mock_2?read=1',
   'judgment-in-text-search': '/judgment/jdg_mock_2?read=1',
+
+  /* Statutes — a reader with no citation UI, because a statute has no citation */
+  'bare-acts-index': '/acts',
+  'bare-acts-reading-bns': '/acts/act_bns',
 };

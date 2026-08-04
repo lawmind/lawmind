@@ -1,4 +1,4 @@
-import type { JudgmentDetail, SearchResult } from './contract';
+import type { JudgmentDetail, SearchResult, Statute, StatuteSection } from './contract';
 
 /**
  * FIXTURES. INVENTED DATA IN A DEVELOPMENT FILE.
@@ -152,7 +152,12 @@ export const MOCK_RESULTS: SearchResult[] = [
     reporterCitations: [],
     court: 'Mock HC · 2023',
     judgmentDate: '2023-11-30',
-    holding: holding('Interim protection continued pending disposal.'),
+    /**
+     * EMPTY, as most of the real corpus is until a summarisation model is
+     * wired. The card must read as an ordinary result with no summary, never
+     * as a broken or half-loaded one.
+     */
+    holding: '',
     operativeParagraph: 'Fixture operative paragraph. Not law.',
     verificationState: 'failed',
     verifiedBySource: 'none',
@@ -163,15 +168,28 @@ export const MOCK_RESULTS: SearchResult[] = [
 ];
 
 /** Fixture subject and court tags, so the filter sheet has something to bite on. */
-export const MOCK_FACETS: Record<string, { court: 'sc' | 'hc'; subject: string; year: number }> = {
-  jdg_mock_1: { court: 'sc', subject: 'criminal', year: 2026 },
-  jdg_mock_2: { court: 'sc', subject: 'matrimonial', year: 2026 },
-  jdg_mock_3: { court: 'hc', subject: 'matrimonial', year: 2024 },
-  jdg_mock_4: { court: 'sc', subject: 'criminal', year: 2019 },
-  jdg_mock_5: { court: 'sc', subject: 'criminal', year: 2017 },
-  jdg_mock_6: { court: 'sc', subject: 'criminal', year: 2018 },
-  jdg_mock_7: { court: 'hc', subject: 'civil', year: 2021 },
-  jdg_mock_8: { court: 'hc', subject: 'civil', year: 2023 },
+type Facet = {
+  court: 'sc' | 'hc';
+  subject: string;
+  year: number;
+  /**
+   * Derived on the server from the official case number. `null` where the case
+   * number states no side — 139 of the 6,309 judgments in the corpus today.
+   * NEVER GUESSED. `jdg_mock_8` carries that case on purpose, so the exclusion
+   * path is exercised rather than assumed.
+   */
+  caseType: string | null;
+};
+
+export const MOCK_FACETS: Record<string, Facet> = {
+  jdg_mock_1: { court: 'sc', subject: 'criminal', year: 2026, caseType: 'criminal' },
+  jdg_mock_2: { court: 'sc', subject: 'matrimonial', year: 2026, caseType: 'criminal' },
+  jdg_mock_3: { court: 'hc', subject: 'matrimonial', year: 2024, caseType: 'criminal' },
+  jdg_mock_4: { court: 'sc', subject: 'criminal', year: 2019, caseType: 'criminal' },
+  jdg_mock_5: { court: 'sc', subject: 'criminal', year: 2017, caseType: 'criminal' },
+  jdg_mock_6: { court: 'sc', subject: 'criminal', year: 2018, caseType: 'criminal' },
+  jdg_mock_7: { court: 'hc', subject: 'civil', year: 2021, caseType: 'civil' },
+  jdg_mock_8: { court: 'hc', subject: 'civil', year: 2023, caseType: null },
 };
 
 /**
@@ -234,3 +252,98 @@ export const MOCK_JUDGMENTS: Record<string, JudgmentDetail> = Object.fromEntries
     } satisfies JudgmentDetail,
   ])
 );
+
+/* ------------------------------------------------------------------ statutes */
+
+/**
+ * The three new criminal codes, with their real enactment and enforcement
+ * dates from `DOMAIN_TRUTH.md`. These are facts about Indian law, not invented
+ * fixtures: BNS, BNSS and BSA were enacted 2023-12-25 and came into force
+ * 2024-07-01, replacing the IPC, CrPC and Evidence Act.
+ *
+ * SECTION TEXT IS NOT FIXTURED HERE. Government-published text is served
+ * verbatim from the corpus; typing an approximation of a live section into a
+ * mock is how a paraphrase ends up on a screen an advocate files from. The
+ * fixture sections below carry a placeholder that says exactly that, and the
+ * real text arrives from `GET /statutes/sections`.
+ */
+export const MOCK_STATUTES: Statute[] = [
+  {
+    statuteId: 'act_bns',
+    shortTitle: 'Bharatiya Nyaya Sanhita',
+    hindiTitle: 'भारतीय न्याय संहिता',
+    actNumber: '45',
+    actYear: 2023,
+    enactmentDate: '2023-12-25',
+    enforcementDate: '2024-07-01',
+    ministry: 'Ministry of Home Affairs',
+    sourceUrl: 'https://www.indiacode.nic.in/',
+    sectionCount: 358,
+  },
+  {
+    statuteId: 'act_bnss',
+    shortTitle: 'Bharatiya Nagarik Suraksha Sanhita',
+    hindiTitle: 'भारतीय नागरिक सुरक्षा संहिता',
+    actNumber: '46',
+    actYear: 2023,
+    enactmentDate: '2023-12-25',
+    enforcementDate: '2024-07-01',
+    ministry: 'Ministry of Home Affairs',
+    sourceUrl: 'https://www.indiacode.nic.in/',
+    sectionCount: 531,
+  },
+  {
+    statuteId: 'act_bsa',
+    shortTitle: 'Bharatiya Sakshya Adhiniyam',
+    hindiTitle: 'भारतीय साक्ष्य अधिनियम',
+    actNumber: '47',
+    actYear: 2023,
+    enactmentDate: '2023-12-25',
+    enforcementDate: '2024-07-01',
+    ministry: 'Ministry of Home Affairs',
+    sourceUrl: 'https://www.indiacode.nic.in/',
+    sectionCount: 170,
+  },
+];
+
+/**
+ * Fixture sections. `orderIndex` deliberately runs 1, 2, 3 while the section
+ * numbers run 2, 10, 63A — so any surface that sorts on `sectionNumber`
+ * instead of `orderIndex` shows itself immediately rather than in production.
+ */
+export const MOCK_SECTIONS: StatuteSection[] = [
+  {
+    sectionId: 'sec_mock_1',
+    statuteId: 'act_bns',
+    shortTitle: 'Bharatiya Nyaya Sanhita',
+    sectionNumber: '2',
+    heading: 'Definitions',
+    sectionText:
+      'Fixture placeholder. Government-published section text is served verbatim from the corpus and is never typed into a mock — a paraphrase of a live section is the one thing that must not reach a screen an advocate files from.',
+    footnote: null,
+    orderIndex: 1,
+    sourceUrl: 'https://www.indiacode.nic.in/',
+  },
+  {
+    sectionId: 'sec_mock_2',
+    statuteId: 'act_bns',
+    shortTitle: 'Bharatiya Nyaya Sanhita',
+    sectionNumber: '10',
+    heading: 'Punishment of person guilty of one of several offences',
+    sectionText: 'Fixture placeholder. Real text arrives from the corpus.',
+    footnote: null,
+    orderIndex: 2,
+    sourceUrl: 'https://www.indiacode.nic.in/',
+  },
+  {
+    sectionId: 'sec_mock_3',
+    statuteId: 'act_bns',
+    shortTitle: 'Bharatiya Nyaya Sanhita',
+    sectionNumber: '63A',
+    heading: 'Illustrative lettered section',
+    sectionText: 'Fixture placeholder. Real text arrives from the corpus.',
+    footnote: 'Fixture footnote.',
+    orderIndex: 3,
+    sourceUrl: 'https://www.indiacode.nic.in/',
+  },
+];

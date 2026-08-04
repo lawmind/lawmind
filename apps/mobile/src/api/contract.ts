@@ -38,7 +38,22 @@ export type SearchResult = {
   neutralCitation: string;
   reporterCitations: string[];
   court: string;
+  /**
+   * `YYYY-MM-DD`. A DATE, NOT A TIMESTAMP.
+   *
+   * Never hand this to `new Date()` for display: date-only strings parse as UTC
+   * midnight, so west of Greenwich a judgment delivered on the 11th renders as
+   * the 10th. A judgment date is a fact on a court record, and a product that
+   * shifts it by a day in some timezones is wrong about the record.
+   */
   judgmentDate: string;
+  /**
+   * MAY BE EMPTY ON REAL DATA. The two-sentence holding needs a summarisation
+   * model that is not wired yet, so the corpus returns `""` for most rows.
+   * That is a missing summary, NOT a broken judgment — every other field is
+   * present and the authority is real. Surfaces must render an empty holding as
+   * ordinary, never as an error or a loading state.
+   */
   holding: string;
   operativeParagraph: string;
   verificationState: VerificationState;
@@ -88,12 +103,77 @@ export type JudgmentDetail = SearchResult & {
   paragraphs: JudgmentParagraph[];
 };
 
+/* ------------------------------------------------------------------ statutes */
+
+/**
+ * `GET /statutes` and `GET /statutes/sections`.
+ *
+ * A STATUTE IS NOT A JUDGMENT. It carries no citation, no verification state
+ * and no overruled status, so NONE of the citation UI applies to it — there is
+ * nothing here to mark safe to file, and nothing to mark as moved.
+ *
+ * THAT IS A STATEMENT ABOUT OUR SCHEMA, NOT ABOUT THE LAW. Sections are
+ * amended, substituted and repealed constantly, and we do not yet store that
+ * status. So the absence of a mark here means "we hold no currency
+ * information", NOT "this section is in force". No surface may imply the
+ * second. An advocate who reads silence as a guarantee, on a section that was
+ * substituted last year, is exactly the failure the citation harness exists to
+ * prevent — arriving through a door the harness does not watch.
+ */
+export type Statute = {
+  statuteId: string;
+  shortTitle: string;
+  hindiTitle: string | null;
+  actNumber: string;
+  actYear: number;
+  enactmentDate: string;
+  /**
+   * THE ONE THAT MATTERS. Which regime applies to an offence turns on when the
+   * Act came into force, not when it was passed. BNS, BNSS and BSA were all
+   * enacted 2023-12-25 and came into force 2024-07-01 (`DOMAIN_TRUTH.md`).
+   */
+  enforcementDate: string | null;
+  ministry: string | null;
+  sourceUrl: string;
+  sectionCount: number;
+};
+
+export type StatuteSection = {
+  sectionId: string;
+  statuteId: string;
+  shortTitle: string;
+  /** TEXT, not a number — "63A" is a section number. Never sort on this. */
+  sectionNumber: string;
+  heading: string;
+  /**
+   * Government-published text, served verbatim from the database.
+   * NEVER summarised, never reformatted, never re-wrapped by the client. An
+   * advocate reads this and files from it; the only safe transformation is
+   * none.
+   */
+  sectionText: string;
+  footnote: string | null;
+  /** THE ONLY VALID SORT KEY. Lexical order on `sectionNumber` puts s.10 before s.2. */
+  orderIndex: number;
+  sourceUrl: string;
+};
+
 /** PD-10 — five filter sections. Judge and reporter were cut and have no key. */
 export type SearchFilters = {
   courts: ('sc' | 'hc' | 'district' | 'tribunal')[];
   bench: ('constitution' | 'three_plus')[];
   date: 'any' | 'last_10' | 'since_2020';
   subjects: string[];
+  /**
+   * Derived on the server from the official case number, never inferred.
+   *
+   * A MINORITY OF JUDGMENTS LEGITIMATELY STATE NO SIDE — 139 of the 6,309 in
+   * the corpus today. Those are excluded when this filter is set, and are never
+   * guessed into a category to make the count look complete. A filtered list
+   * that quietly invented a side for a judgment would be the search equivalent
+   * of a fabricated citation.
+   */
+  caseType?: string;
   /** "Hides anything we could not confirm." */
   onlyVerified: boolean;
   /** "Good law only." */
@@ -157,7 +237,15 @@ export type UnverifiedReference = { citationClaimed: string; reason: string };
 export type SearchResponse = {
   results: SearchResult[];
   unverifiedReferences: UnverifiedReference[];
-  searchId: string;
+  /**
+   * NULL UNTIL AUTH LANDS IN S5, and that is not an error.
+   *
+   * A search is recorded against a user; with no user there is nothing to
+   * record against. The key is always present, so treat `null` as "not
+   * recorded yet" and never as a failed response — a client that errors on it
+   * would break every search until S5.
+   */
+  searchId: string | null;
   /** Client assumption, flagged for LCC — see `HiddenResult`. */
   hidden?: HiddenResult[];
 };

@@ -11,6 +11,7 @@ import { Text } from '../../components/Text';
 import type { JudgmentDetail } from '../../api/contract';
 import { mockApi } from '../../api/mock';
 import { citationRender } from '../../citation/renderState';
+import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
 import { ReadingView } from './ReadingView';
 import { UnverifiedCitationScreen } from './UnverifiedCitationScreen';
@@ -226,7 +227,7 @@ export function JudgmentScreen({
           {judgment.caseTitle}
         </Text>
         <Text variant="ui" style={styles.bench}>
-          {judgment.court} · {judgment.judgmentDate}
+          {judgment.court} · {formatJudgmentDate(judgment.judgmentDate)}
         </Text>
         <Text variant="ui" style={styles.bench}>
           {judgment.bench}

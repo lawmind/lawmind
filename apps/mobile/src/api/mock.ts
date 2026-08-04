@@ -16,9 +16,17 @@ import type {
   SearchResponse,
   SearchResult,
   Session,
+  Statute,
+  StatuteSection,
   User,
 } from './contract';
-import { MOCK_FACETS, MOCK_JUDGMENTS, MOCK_RESULTS } from './fixtures';
+import {
+  MOCK_FACETS,
+  MOCK_JUDGMENTS,
+  MOCK_RESULTS,
+  MOCK_SECTIONS,
+  MOCK_STATUTES,
+} from './fixtures';
 
 /**
  * The mock server. RCC never waits on LCC.
@@ -51,6 +59,7 @@ export const DEFAULT_FILTERS: SearchFilters = {
   bench: [],
   date: 'any',
   subjects: [],
+  caseType: undefined,
   onlyVerified: false,
   excludeSetAsideOrDoubted: false,
 };
@@ -82,6 +91,14 @@ function applyFilters(
       hiddenBy = 'last 10 years';
     } else if (filters.date === 'since_2020' && facet && facet.year < 2020) {
       hiddenBy = 'since 2020';
+    } else if (filters.caseType && facet?.caseType !== filters.caseType) {
+      /**
+       * A judgment whose case number states no side is EXCLUDED, never guessed
+       * into one. `facet.caseType` is `null` for those — 139 of 6,309 on the
+       * real corpus — and `null !== 'criminal'`, so they fall out here and are
+       * named back to the advocate in `hidden` like any other exclusion.
+       */
+      hiddenBy = facet?.caseType ? `case type "${filters.caseType}"` : 'no side stated in the case number';
     } else if (filters.onlyVerified && r.verificationState !== 'verified') {
       hiddenBy = '"only verified authorities"';
     } else if (
@@ -144,7 +161,13 @@ export const mockApi = {
             },
           ]
         : [],
-      searchId: 'srch_mock',
+      /**
+       * NULL UNTIL AUTH LANDS IN S5. The key is always present; the value is
+       * not yet recordable against a user. The client must not read this as a
+       * failure — mocking it as null now is what makes that true before the
+       * real API can prove it.
+       */
+      searchId: null,
       hidden,
     });
   },
@@ -262,6 +285,47 @@ export const mockApi = {
             ecourtsUrl: 'https://services.ecourts.gov.in/',
             prefilledQuery: judgment?.neutralCitation ?? '',
           },
+      260
+    );
+  },
+
+  /* statutes — additions, nothing existing moved */
+
+  statutes: (): Promise<ApiResponse<{ statutes: Statute[] }>> =>
+    delay({ statutes: MOCK_STATUTES }),
+
+  /**
+   * `?actId=` reads an act in order, `?sectionNumber=` jumps to one,
+   * `?q=` searches across the codes. `limit` caps at 600 — enough for BNSS at
+   * 531 sections, so a whole act comes back in one call and the reader never
+   * paginates mid-Act.
+   *
+   * ORDERED BY `orderIndex`, NEVER BY `sectionNumber`. Section numbers are text
+   * and carry letters, so lexical sorting puts s.10 before s.2 — and an
+   * advocate scrolling a code in the wrong order will not assume the app is
+   * wrong, they will assume they misread the section.
+   */
+  statuteSections: (params: {
+    actId?: string;
+    sectionNumber?: string;
+    q?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<ApiResponse<{ sections: StatuteSection[]; total: number }>> => {
+    const limit = Math.min(params.limit ?? 600, 600);
+    let sections = MOCK_SECTIONS.filter((s) => !params.actId || s.statuteId === params.actId);
+    if (params.sectionNumber) {
+      sections = sections.filter((s) => s.sectionNumber === params.sectionNumber);
+    }
+    if (params.q) {
+      const q = params.q.toLowerCase();
+      sections = sections.filter(
+        (s) => s.heading.toLowerCase().includes(q) || s.sectionText.toLowerCase().includes(q)
+      );
+    }
+    const ordered = [...sections].sort((a, b) => a.orderIndex - b.orderIndex);
+    return delay(
+      { sections: ordered.slice(params.offset ?? 0, (params.offset ?? 0) + limit), total: ordered.length },
       260
     );
   },

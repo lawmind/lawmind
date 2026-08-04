@@ -115,9 +115,20 @@ export function ResultCard({
           {result.caseTitle}
         </Text>
 
-        <Text variant="legal" style={styles.holding}>
-          {result.holding}
-        </Text>
+        {/*
+          AN EMPTY HOLDING IS ORDINARY, NOT BROKEN.
+          Most of the real corpus has no summary until a summarisation model is
+          wired. The line is omitted entirely rather than filled with a
+          placeholder, a skeleton or "no summary available" — all three read as
+          a failure, and none of them is true. What remains is a citation, a
+          court and a case name, which is exactly what a printed reporter's
+          index entry gives an advocate.
+        */}
+        {result.holding ? (
+          <Text variant="legal" style={styles.holding}>
+            {result.holding}
+          </Text>
+        ) : null}
 
         {/* What still stands is stated FIRST — it is what the advocate is
             about to rely on. Leading with what fell buries the useful half. */}
