@@ -128,6 +128,67 @@ console.log(
     '\ncheckbox. A human confirms them against renders/38-stress-sunlight@2x.png.\n'
 );
 
+/* ------------------------------------------------------- OS text scaling */
+
+/**
+ * THE LEADING RATIO MUST SURVIVE THE OS TEXT SIZE.
+ *
+ * React Native scales `fontSize` when the reader raises their system text size
+ * and DOES NOT scale `lineHeight`. Every row of the scale computes leading as
+ * `fontSize x ratio` at the unscaled size, so without a correction the ratio
+ * collapses as the setting rises — and Devanagari matras clip against the line
+ * above, which changes the vowel and therefore the word.
+ *
+ * `Text.tsx` multiplies the resolved line height by `PixelRatio.getFontScale()`.
+ * This asserts the arithmetic that makes that correct at the three settings
+ * actually checked on a device.
+ */
+const DEVANAGARI_RATIO = 1.72;
+const LATIN_HOLDING_RATIO = 1.68;
+const SCALES = [1.0, 1.3, 2.0];
+
+console.log('OS TEXT SCALING — the leading ratio must not collapse\n');
+console.log(`${pad('Row', 30)}${pad('Scale', 8)}${pad('Font', 8)}${pad('Leading', 10)}${pad('Ratio', 8)}`);
+console.log('-'.repeat(64));
+
+let ratioFailures = 0;
+for (const [name, size, ratio] of [
+  ['Devanagari body', 17, DEVANAGARI_RATIO],
+  ['Holding (Latin)', 17, LATIN_HOLDING_RATIO],
+]) {
+  for (const scale of SCALES) {
+    // What React Native renders: it scales the font itself...
+    const renderedFont = size * scale;
+    // ...and the line height is what `Text.tsx` hands it, corrected by the same scale.
+    const renderedLeading = size * ratio * scale;
+    const actual = renderedLeading / renderedFont;
+    const ok = Math.abs(actual - ratio) < 0.001;
+    if (!ok) ratioFailures += 1;
+    console.log(
+      `${pad(name, 30)}${pad(`${scale}x`, 8)}${pad(renderedFont.toFixed(1), 8)}${pad(
+        renderedLeading.toFixed(1),
+        10
+      )}${pad(`${actual.toFixed(2)} ${ok ? 'ok' : 'FAIL'}`, 8)}`
+    );
+  }
+}
+
+/** What the bug looked like: the same rows WITHOUT the correction. */
+console.log('\nWithout the correction, for comparison:');
+for (const scale of SCALES) {
+  const uncorrected = (17 * DEVANAGARI_RATIO) / (17 * scale);
+  console.log(
+    `  Devanagari body at ${scale}x -> ratio ${uncorrected.toFixed(2)}` +
+      (uncorrected < 1 ? '  (line box SHORTER than the type — matras clip)' : '')
+  );
+}
+console.log();
+
+if (ratioFailures > 0) {
+  console.error(`${ratioFailures} leading ratio(s) collapse under OS text scaling.`);
+  process.exit(1);
+}
+
 if (failures > 0) {
   console.error(`${failures} pair(s) below WCAG AA at normal brightness.`);
   process.exit(1);

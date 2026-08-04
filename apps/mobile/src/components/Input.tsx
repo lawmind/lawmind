@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import {
-  StyleSheet,
-  TextInput,
-  type TextInputProps,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { PixelRatio, StyleSheet, TextInput, View, type StyleProp, type TextInputProps, type ViewStyle } from 'react-native';
 
 import { Text } from './Text';
 import { color, family, radius, size, space, state, type as typeScale } from '../theme/tokens';
@@ -54,6 +47,17 @@ export function Input({ label, error, containerStyle, style, ...rest }: InputPro
         style={[
           styles.field,
           {
+            /**
+             * THE FIELD GROWS WITH THE TYPE.
+             *
+             * `size.button` is 52px, sized for 16px text. React Native scales
+             * the text when the reader raises their system size but leaves the
+             * box alone, so at 2.0 a 32px line sits in a 52px well and the
+             * ascenders and descenders are cut. An advocate who cannot read
+             * small text is exactly the reader who cannot afford a clipped
+             * character in a case number.
+             */
+            height: size.button * PixelRatio.getFontScale(),
             fontFamily: devanagari ? family.devanagariSans : family.ui,
             fontSize: row.fontSize,
             borderColor: error ? state.danger : focused ? color.ink : color.rule,
@@ -73,7 +77,6 @@ export function Input({ label, error, containerStyle, style, ...rest }: InputPro
 const styles = StyleSheet.create({
   label: { marginBottom: space.xs },
   field: {
-    height: size.button,
     borderRadius: radius.base,
     borderWidth: 1,
     backgroundColor: color.card,

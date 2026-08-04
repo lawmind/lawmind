@@ -67,7 +67,15 @@ export function BareActsScreen({ onOpenAct }: { onOpenAct: (statuteId: string) =
         <Input
           label="Find an act"
           onChangeText={setQuery}
-          placeholder="Act name, or a section number"
+          /**
+           * SHORT ENOUGH TO SURVIVE 2.0x TEXT.
+           *
+           * A single-line input cannot wrap its placeholder, so a long hint is
+           * cut mid-word once the reader raises their system text size — and
+           * the reader who raised it is the one least able to guess the rest.
+           * The label above carries the full meaning; this is the hint.
+           */
+          placeholder="Act or section"
           value={query}
         />
       </View>

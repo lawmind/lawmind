@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from 'react';
 import {
+  PixelRatio,
   Platform,
   Text as RNText,
   type StyleProp,
@@ -270,10 +271,33 @@ export function Text({
     );
   }
 
+  /**
+   * LINE HEIGHT MUST SCALE WITH THE OS, OR THE RATIO COLLAPSES.
+   *
+   * React Native scales `fontSize` when the reader raises their system text
+   * size, and DOES NOT scale `lineHeight`. Every row of the scale computes its
+   * leading as `fontSize x ratio` at the UNSCALED size, so at 2.0x the glyphs
+   * double while the line box stays put — the ratio falls from 1.72 to roughly
+   * 0.86 and DEVANAGARI MATRAS CLIP against the line above.
+   *
+   * That is a correctness bug, not a taste one: the matra IS the vowel. A
+   * clipped one is a different word, and this app is read by people who will
+   * quote what they see into a filing.
+   *
+   * NO `maxFontSizeMultiplier` IS SET. Capping the reading surface would deny a
+   * partially-sighted advocate the text size they deliberately chose, which is
+   * a worse failure than a long page. The line box grows with the type instead.
+   *
+   * `getFontScale()` is read per render; React Native remounts on a font-scale
+   * configuration change, so a reader who changes the setting gets the new
+   * leading when they come back to the screen.
+   */
+  const fontScale = PixelRatio.getFontScale();
+
   const base: TextStyle = {
     fontFamily: resolved.fontFamily,
     fontSize: resolved.fontSize,
-    lineHeight: resolved.lineHeight,
+    lineHeight: resolved.lineHeight * fontScale,
     letterSpacing: resolved.letterSpacing,
     textTransform: resolved.textTransform,
     color: variant === 'record' || variant === 'eyebrow' ? color.inkFaint : color.ink,
