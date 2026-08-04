@@ -4,10 +4,14 @@ import { requestId } from 'hono/request-id';
 import { buildSha } from './build-info.ts';
 import { fail, ok } from './envelope.ts';
 import { logger } from './logger.ts';
+import { handleSearch, searchRequest, type SearchDeps } from './search/route.ts';
+import { validate } from './validate.ts';
 
 export type AppDeps = {
   /** Injected so the health check can be exercised without a live server. */
   ping: () => Promise<void>;
+  /** Absent in tests that do not exercise search. */
+  search?: SearchDeps | undefined;
 };
 
 export function createApp(deps: AppDeps) {
@@ -46,6 +50,13 @@ export function createApp(deps: AppDeps) {
       return fail(c, 'DATABASE_UNREACHABLE', `database is not reachable (build ${buildSha})`, 503);
     }
   });
+
+  const search = deps.search;
+  if (search) {
+    app.post('/search', validate('json', searchRequest), (c) =>
+      handleSearch(c, search, c.req.valid('json')),
+    );
+  }
 
   app.notFound((c) => fail(c, 'NOT_FOUND', `no route for ${c.req.method} ${c.req.path}`, 404));
 

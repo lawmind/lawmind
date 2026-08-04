@@ -4,3 +4,9 @@ packages:
   - 'packages/*'
 allowBuilds:
   esbuild: true
+  # onnxruntime-node fetches its native runtime in a postinstall; without it the
+  # embedding model cannot load at all. protobufjs and sharp are its siblings
+  # pulled in by @huggingface/transformers.
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true

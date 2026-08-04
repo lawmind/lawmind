@@ -42,8 +42,20 @@ without it there is no way to tell a badge that was **wrong when rendered** from
 one the world invalidated afterwards. Set it in the same write as any
 `overruled_status` change, including inside `applyOverruledChange`.
 
-Index: gin on to_tsvector(full_text); btree on judgment_date, court.
+`full_text_tsv` tsvector GENERATED ALWAYS AS `to_tsvector('english', full_text)`
+STORED — added S1, and the reason is a measured one, not a preference.
+
+Index: gin on `full_text_tsv`; btree on judgment_date, court.
 Unique: `source_url`.
+
+**Why the tsvector is stored rather than computed in an expression index.**
+Measured on 1,281 Supreme Court judgments: a query for a common term matched 1,241
+of them, so the planner correctly chose a sequential scan, and `ts_rank` then
+recomputed `to_tsvector` for every matching row — several of which are over 800KB
+of text. **20.8 seconds for one query.** A gin expression index cannot supply the
+vector back to `ts_rank`, so no amount of index tuning fixes it; the vector has to
+be stored. Gate S1 requires a known citation retrieved in under 3 seconds, and
+that is unreachable without this column. Cost is roughly double the text storage.
 
 Two notes recorded in S1, when the first real corpus was ingested:
 

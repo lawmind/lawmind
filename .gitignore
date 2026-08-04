@@ -16,3 +16,6 @@ __pycache__/
 
 # Source archives — extracted content is tracked under design/screens/ and the repo root
 *.zip
+
+# Embedding model weights — 569MB, fetched on demand, never committed.
+.models/

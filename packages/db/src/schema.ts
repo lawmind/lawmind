@@ -15,6 +15,7 @@ import { sql } from 'drizzle-orm';
 import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 import {
   boolean,
+  customType,
   date,
   index,
   inet,
@@ -29,6 +30,11 @@ import {
   uuid,
   vector,
 } from 'drizzle-orm/pg-core';
+
+/** Postgres `tsvector`. Drizzle has no built-in for it. */
+const tsvector = customType<{ data: string; driverData: string }>({
+  dataType: () => 'tsvector',
+});
 
 /* ------------------------------------------------------------------ enums -- */
 
@@ -194,9 +200,18 @@ export const judgments = pgTable(
     overruledParas: integer('overruled_paras').array(),
     overruledNote: text('overruled_note'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    /**
+     * Stored, not an expression index. An expression gin index cannot hand the
+     * vector back to `ts_rank`, which then recomputes `to_tsvector` per matching
+     * row — measured at 20.8s for one query over 1,281 judgments. See
+     * `docs/SCHEMA_TRUTH.md` §judgments.
+     */
+    fullTextTsv: tsvector('full_text_tsv').generatedAlwaysAs(
+      sql`to_tsvector('english', "full_text")`,
+    ),
   },
   (t) => [
-    index('judgments_full_text_idx').using('gin', sql`to_tsvector('english', ${t.fullText})`),
+    index('judgments_full_text_idx').using('gin', t.fullTextTsv),
     index('judgments_judgment_date_idx').on(t.judgmentDate),
     index('judgments_court_idx').on(t.court),
     // Ingest resumability, enforced by the database rather than by application

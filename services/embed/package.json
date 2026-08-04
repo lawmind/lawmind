@@ -1,0 +1,20 @@
+{
+  "name": "@lawmind/embed",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts",
+    "embed": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "postgres": "3.4.9",
+    "tsx": "4.23.1"
+  },
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
