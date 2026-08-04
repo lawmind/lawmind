@@ -102,22 +102,53 @@ export function ReadingView({
    */
   const jumpTarget = useRef<number | null>(null);
 
+  /**
+   * paragraph number → its measured y offset in the list.
+   *
+   * Filled by each row as it lays out. This is the only source of truth for
+   * where a paragraph actually is; everything else is an average pretending to
+   * be a position.
+   */
+  const offsets = useRef(new Map<number, number>());
+  /** A jump that had to use the estimate, waiting for its row to be measured. */
+  const pendingJump = useRef<number | null>(null);
+
+  const measure = useCallback((paragraphNumber: number, y: number) => {
+    offsets.current.set(paragraphNumber, y);
+    // The row the advocate asked for has now been measured — land on it exactly.
+    if (pendingJump.current === paragraphNumber) {
+      pendingJump.current = null;
+      listRef.current?.scrollToOffset({ offset: y, animated: false });
+    }
+  }, []);
+
   const jumpTo = useCallback(
     (paragraphNumber: number) => {
       const index = indexOfParagraph(paragraphNumber);
       if (index < 0) return;
       jumpTarget.current = paragraphNumber;
-      listRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0 });
+
       /**
-       * Re-assert once after layout. Paragraphs are variable height, so the
-       * first `scrollToIndex` is computed from estimates and lands a row short
-       * — which then reads back as "you were at ¶ 16" when the advocate asked
-       * for ¶ 17. The second call runs against measured rows.
+       * SCROLL BY MEASURED OFFSET, NOT BY INDEX.
+       *
+       * `scrollToIndex` on variable-height rows without `getItemLayout` is
+       * computed from an average, so it lands a row short and the advocate who
+       * asked for ¶ 17 gets ¶ 16 — in the header, in the URL and in the saved
+       * position. Retrying it just re-runs the same estimate.
+       *
+       * Every row reports its own offset through `onLayout`, so once a row has
+       * been laid out its position is a fact rather than an estimate. Where the
+       * fact exists we use it; where it does not — a jump far down a judgment
+       * the list has never rendered — we fall back to the estimate to get
+       * close, and the `onLayout` that follows corrects it.
        */
-      setTimeout(() => {
-        if (jumpTarget.current !== paragraphNumber) return;
-        listRef.current?.scrollToIndex({ index, animated: false, viewPosition: 0 });
-      }, 160);
+      const offset = offsets.current.get(paragraphNumber);
+      if (offset !== undefined) {
+        listRef.current?.scrollToOffset({ offset, animated: true });
+      } else {
+        listRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0 });
+        pendingJump.current = paragraphNumber;
+      }
       setCurrent(paragraphNumber);
       setProgress(judgment.judgmentId, paragraphNumber);
       onParagraphChange(paragraphNumber);
@@ -292,6 +323,7 @@ export function ReadingView({
             }
             highlighted={highlighted.has(item.number)}
             isCurrentHit={hits[hitIndex] === item}
+            onMeasure={measure}
             onLink={() => {
               haptics.commit();
               setSelected(item.number);
@@ -346,6 +378,7 @@ function Paragraph({
   onLink,
   onSaveToMatter,
   onOpenCited,
+  onMeasure,
 }: {
   paragraph: JudgmentParagraph;
   textSize: number;
@@ -356,9 +389,14 @@ function Paragraph({
   onLink: () => void;
   onSaveToMatter: () => void;
   onOpenCited?: () => void;
+  /** Reports this row's real y offset once the list has laid it out. */
+  onMeasure: (paragraphNumber: number, y: number) => void;
 }) {
   return (
-    <View style={styles.paragraphRow}>
+    <View
+      onLayout={(e) => onMeasure(paragraph.number, e.nativeEvent.layout.y)}
+      style={styles.paragraphRow}
+    >
       {/* The anchor. Fixed 22px gutter — see the note at the top of this file. */}
       <Pressable accessibilityLabel={`Paragraph ${paragraph.number}`} accessibilityRole="button" onPress={onLink}>
         <View style={styles.gutter}>
