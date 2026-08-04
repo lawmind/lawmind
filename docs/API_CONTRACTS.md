@@ -75,6 +75,39 @@ idempotency key, like every other local-first write. Never block the copy on the
 request — the clipboard write happens immediately and the record syncs after.
 Retention and disclosure: `SCHEMA_TRUTH.md#citation_copies`, `PRIVACY_PII.md`.
 
+## Bare acts — LCC owns · ADDED IN S1
+
+**These are additions, not changes.** No existing shape moved, so nothing already
+built against this contract breaks. `sprints/SPRINT_1.md` gives LCC the bare acts
+library and RCC a bare act reading view, and neither had an endpoint.
+
+```
+GET /statutes
+  → { statutes: [ { statuteId, shortTitle, hindiTitle, actNumber, actYear,
+                    enactmentDate, enforcementDate, ministry, sourceUrl,
+                    sectionCount } ] }
+
+GET /statutes/sections ?actId &sectionNumber &q &limit &offset
+  → { sections: [ { sectionId, statuteId, shortTitle, sectionNumber, heading,
+                    sectionText, footnote, orderIndex, sourceUrl } ],
+      total }
+```
+
+One read serves all three uses: `?actId=` reads an act in order for the reader,
+`?sectionNumber=103` jumps straight to a section, and `?q=` searches across the
+codes. `limit` caps at 600 so a whole act comes back in one call.
+
+**Order by `orderIndex`, never by `sectionNumber`.** Section numbers are text —
+they carry letters like `63A` — so lexical ordering puts s.10 before s.2.
+
+`enforcementDate` is separate from `enactmentDate` and is the one that matters:
+which regime applies to an offence turns on when the Act came into force, not when
+it was passed (`DOMAIN_TRUTH.md`). BNS, BNSS and BSA were all enacted 2023-12-25
+and came into force 2024-07-01.
+
+`sectionText` is government-published text served verbatim from the database. It
+is never generated, summarised or reformatted.
+
 ## Matters — LCC owns
 ```
 GET    /matters                → { matters }

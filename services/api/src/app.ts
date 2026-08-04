@@ -5,6 +5,7 @@ import { buildSha } from './build-info.ts';
 import { fail, ok } from './envelope.ts';
 import { logger } from './logger.ts';
 import { handleSearch, searchRequest, type SearchDeps } from './search/route.ts';
+import { listSections, listStatutes, sectionQuery } from './statutes/route.ts';
 import { validate } from './validate.ts';
 
 export type AppDeps = {
@@ -53,8 +54,14 @@ export function createApp(deps: AppDeps) {
 
   const search = deps.search;
   if (search) {
+    const sql = search.sql;
     app.post('/search', validate('json', searchRequest), (c) =>
       handleSearch(c, search, c.req.valid('json')),
+    );
+    // Bare acts. Additions to the frozen contract, not changes to it.
+    app.get('/statutes', (c) => listStatutes(c, sql));
+    app.get('/statutes/sections', validate('query', sectionQuery), (c) =>
+      listSections(c, sql, c.req.valid('query')),
     );
   }
 
