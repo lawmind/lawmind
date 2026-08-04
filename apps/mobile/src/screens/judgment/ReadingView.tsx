@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { ChevronLeft, Search, SlidersHorizontal, X } from 'lucide-react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
@@ -8,6 +14,7 @@ import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
 import type { JudgmentDetail, JudgmentParagraph } from '../../api/contract';
 import { useHighlightsFor, useReadingStore } from '../../state/reading';
+import { easing } from '../../theme/easing';
 import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
 import { ReadingSheet } from './ReadingSheet';
@@ -65,6 +72,30 @@ export function ReadingView({
     () => new Set(highlights.map((h) => h.paragraphNumber)),
     [highlights]
   );
+
+  /**
+   * The text-size dip — down over 120ms, back over 160ms.
+   *
+   * ASYMMETRIC ON PURPOSE, and the longer half is the return: going dim is the
+   * cost of the change and should be paid quickly, coming back is the advocate
+   * getting their judgment returned to them at the new size.
+   *
+   * Skipped on first render, or every judgment would open by fading in from
+   * half — the text size did not change, the screen did.
+   */
+  const dip = useSharedValue(1);
+  const knownTextSize = useRef(textSize);
+
+  useEffect(() => {
+    if (knownTextSize.current === textSize) return;
+    knownTextSize.current = textSize;
+    dip.value = withSequence(
+      withTiming(0.5, { duration: 120, easing: easing.out }),
+      withTiming(1, { duration: 160, easing: easing.out })
+    );
+  }, [textSize, dip]);
+
+  const dipStyle = useAnimatedStyle(() => ({ opacity: dip.value }));
 
   /**
    * A LINK WINS OVER A SAVED POSITION. If an advocate was sent "¶ 17 of this
@@ -304,7 +335,23 @@ export function ReadingView({
         </Text>
       </View>
 
-      <FlatList
+      {/*
+        THE TEXT-SIZE DIP.
+
+        `fontSize` is NOT animated, and must not be: it is neither a transform
+        nor an opacity, every frame reflows the entire judgment, and on a Redmi
+        that is a visible stutter through the one interaction whose whole
+        purpose is comfort. Instead the list dips to half opacity, the new size
+        lays out behind the dip where nobody can see it reflow, and it comes
+        back up. The advocate perceives a settle rather than a jump — and never
+        sees the text reflowing.
+
+        KEPT UNDER REDUCE MOTION. It is pure opacity and it aids comprehension:
+        without it the judgment silently changes size under the thumb, which is
+        more disorienting, not less.
+      */}
+      <Animated.View style={[styles.listHost, dipStyle]}>
+        <FlatList
         contentContainerStyle={styles.list}
         data={judgment.paragraphs}
         keyExtractor={(p) => String(p.number)}
@@ -348,7 +395,8 @@ export function ReadingView({
           />
         )}
         viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
-      />
+        />
+      </Animated.View>
 
       <Text variant="ui" style={styles.hint}>
         Paragraph numbers are anchors — tap one to link it.
@@ -474,6 +522,8 @@ const styles = StyleSheet.create({
   progressTrack: { flex: 1, height: 2, backgroundColor: color.hairline },
   progressFill: { height: 2, backgroundColor: color.oxblood },
 
+  /** The dip host must fill, or wrapping the list in it collapses the list. */
+  listHost: { flex: 1 },
   list: { paddingHorizontal: space.sm, paddingBottom: space.xxl },
   paragraphRow: {
     flexDirection: 'row',

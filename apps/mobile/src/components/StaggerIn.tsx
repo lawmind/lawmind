@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { easing } from '../theme/easing';
 import { duration, motion } from '../theme/tokens';
 
 /**
@@ -31,7 +32,17 @@ export function StaggerIn({
   useEffect(() => {
     progress.value = withDelay(
       Math.min(index, motion.staggerCap) * motion.staggerStep,
-      withTiming(1, { duration: duration.push })
+      /**
+       * `easing.out`: a card arrives fast and settles. On the default
+       * ease-in-out it crept in, and a list of results is the one place in the
+       * product where the advocate is watching the first frame.
+       *
+       * DELIBERATELY NOT `ReduceMotion.System`. That would disable the whole
+       * animation, opacity included, and the fade is the part that survives
+       * Reduce Motion — it is what says these cards are new. Only the rise is
+       * dropped, in the style below.
+       */
+      withTiming(1, { duration: duration.push, easing: easing.out })
     );
   }, [index, progress]);
 

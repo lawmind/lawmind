@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Check, ChevronLeft, CircleDot, X } from 'lucide-react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { Button } from '../../components/Button';
 import { CitationMark } from '../../components/CitationMark';
@@ -11,6 +16,8 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import type { CitationCheckDetail, JudgmentDetail, SourceCheck } from '../../api/contract';
 import { mockApi } from '../../api/mock';
+import { easing } from '../../theme/easing';
+import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
 
 /**
@@ -58,7 +65,34 @@ export function UnverifiedCitationScreen({
       </View>
 
       <ScrollView contentContainerStyle={styles.body}>
-        <CitationMark label="Not confirmed" tone="unconfirmed" />
+        {/*
+          THE HIGHEST-LEVERAGE MOMENT IN THE PRODUCT, and until now it changed
+          a label and disabled a button.
+
+          The advocate solved a captcha we are not allowed to bypass, read the
+          cause list themselves, and PERSONALLY VOUCHED for this authority. That
+          is Tier 3, it is cached permanently, and nobody in their chamber ever
+          has to do it again. It is rare and it is high-emotion, which is
+          exactly what earns a delight budget — the four-question gate that
+          rejects animation on a result card passes it here on frequency alone.
+
+          IT FADES OUT — IT DOES NOT SOLIDIFY. The audit proposed transitioning
+          the dashed edge to solid, and that collides with two settled rules.
+          Verified is silent: a confirmed citation carries no badge, and turning
+          our mark into a solid one would be decorating verification. Worse,
+          SOLID NEUTRAL IS ALREADY TAKEN — `moved-quiet` is a solid neutral mark
+          meaning "doubted · referred". A confirmed citation and a doubted one
+          would become the same shape in greyscale, which is the one
+          discriminator `CitationMark.test.tsx` exists to protect.
+
+          So the dashed edge stops being dashed by ceasing to exist. 260ms
+          `easing.out`, with the `commit` haptic on the same frame — the mark
+          the advocate has been looking at lifts off, and what is left is a
+          citation with nothing on it. Silence is the reward.
+        */}
+        <FadeOut gone={confirmed} onGone={haptics.commit}>
+          <CitationMark label="Not confirmed" tone="unconfirmed" />
+        </FadeOut>
 
         <Text variant="legal" scale="caseName">
           {judgment.caseTitle}
@@ -115,6 +149,39 @@ export function UnverifiedCitationScreen({
       </ScrollView>
     </Screen>
   );
+}
+
+/**
+ * The mark lifting off once the advocate has vouched for the citation.
+ *
+ * IT KEEPS ITS SPACE. Opacity only, no layout change — the reasons, the source
+ * rows and the buttons below it are what the advocate is reading, and reflowing
+ * the page under them to reclaim 20px would be moving content for style.
+ *
+ * The haptic fires in the same synchronous block as the animation, so the
+ * confirmation is felt on the frame the mark starts to go. Split them by even a
+ * tick and it stops reading as one event.
+ */
+function FadeOut({
+  gone,
+  onGone,
+  children,
+}: {
+  gone: boolean;
+  onGone?: () => void;
+  children: ReactNode;
+}) {
+  const progress = useSharedValue(1);
+
+  useEffect(() => {
+    if (!gone) return;
+    onGone?.();
+    progress.value = withTiming(0, { duration: 260, easing: easing.out });
+  }, [gone, onGone, progress]);
+
+  const style = useAnimatedStyle(() => ({ opacity: progress.value }));
+
+  return <Animated.View style={style}>{children}</Animated.View>;
 }
 
 function SourceRow({ source }: { source: SourceCheck }) {

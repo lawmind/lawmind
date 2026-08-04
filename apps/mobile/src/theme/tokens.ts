@@ -120,8 +120,17 @@ export const gilt = '#C9A227' as const;
  */
 export const glass = {
   tint: 'rgba(251,250,247,0.94)',
-  blur: 16,
-  sheetBlur: 24,
+  /**
+   * `expo-blur`'s `intensity` is a 0–100 scale, and these are that scale
+   * DIRECTLY. They used to be 16 and 24 multiplied by a magic ×4 at the call
+   * site, which produced 64 and 96 — and 96 sits where the blur has effectively
+   * saturated, so the sheet was paying for a radius nobody could see.
+   *
+   * 80 keeps the sheet unmistakably heavier than chrome while staying on the
+   * part of the curve where the value still means something.
+   */
+  blurIntensity: 64,
+  sheetBlurIntensity: 80,
   hairline: 'rgba(201,162,39,0.28)',
   /** The toast is the one ink glass in the product — it must read against paper cards. */
   inkTint: 'rgba(20,27,45,0.94)',
@@ -206,8 +215,16 @@ export const family = {
  * which are reference labels and not body text.
  */
 export const type = {
-  caseName: { fontSize: 32, lineHeight: 1.24, fontFamily: family.serifMedium },
-  cardTitle: { fontSize: 23, lineHeight: 1.32, fontFamily: family.serifMedium },
+  /**
+   * TRACKING IS SIZE-SPECIFIC. A face is drawn for one size and stretched to
+   * every other; at 32px the default spacing a font ships is visibly loose,
+   * because it was drawn to survive 16px. Tightening large display type is what
+   * separates a set page from a default one.
+   *
+   * Negative tracking is LATIN ONLY. See `devanagariBody` below.
+   */
+  caseName: { fontSize: 32, lineHeight: 1.24, letterSpacingEm: -0.015, fontFamily: family.serifMedium },
+  cardTitle: { fontSize: 23, lineHeight: 1.32, letterSpacingEm: -0.01, fontFamily: family.serifMedium },
   documentBody: { fontSize: 18, lineHeight: 1.7, fontFamily: family.serif },
   holding: { fontSize: 17, lineHeight: 1.68, fontFamily: family.serif },
   screenTitle: {
@@ -262,13 +279,74 @@ export const MIN_BODY_SIZE = 16;
  * Reduce Motion: drop every transform, keep opacity. The seal still stamps,
  * without scale. Shimmer becomes a static tint.
  */
+/**
+ * SPRINGS ARE STATED IN APPLE'S MODEL — `dampingRatio` + perceptual `duration`.
+ *
+ * These are passed verbatim to Reanimated's `withSpring`, which accepts exactly
+ * this pair (`animation/spring/springConfigs.d.ts`: `GentleSpringConfigWithDuration
+ * = { duration: 550, dampingRatio: 1 }`). The previous `{ damping: 0.38, mass:
+ * 0.72 }` matched NO spring API in existence — not Reanimated's physical
+ * `damping`/`mass`/`stiffness`, where damping is 10–120, and not Apple's ratio
+ * form either. It was never imported, which is the only reason nothing looked
+ * wrong.
+ *
+ * `dampingRatio` 1 is critically damped: fastest arrival with no overshoot.
+ * Below 1 the value crosses its target and comes back — a bounce.
+ *
+ * BOUNCE IS EARNED BY MOMENTUM. A sheet the advocate flung has velocity, and
+ * settling with a little overshoot is the physical consequence of that velocity.
+ * A fade-in has no momentum, so overshoot on one is decoration pretending to be
+ * physics — it reads as a toy, which is the one thing this product cannot look
+ * like.
+ *
+ * Add `velocity` at the call site, from the gesture. Never bake it into a token:
+ * the whole point is that it comes from the finger.
+ */
 export const spring = {
-  default: { damping: 0.38, mass: 0.72 },
-  snappy: { damping: 0.25, mass: 0.8 },
-  gentle: { damping: 0.5, mass: 0.78 },
+  /** Default. Critically damped, no overshoot. */
+  ui: { dampingRatio: 1.0, duration: 350 },
+  /** Sheets. Slight bounce, because a sheet is a thing with mass. */
+  drawer: { dampingRatio: 0.8, duration: 300 },
+  /** ONLY after a gesture that carried velocity. */
+  momentum: { dampingRatio: 0.8, duration: 400 },
 } as const;
 
-export const duration = { press: 130, fade: 180, push: 260, sheet: 380, max: 420 } as const;
+/**
+ * Easing control points, as plain bezier tuples.
+ *
+ * They are DATA here and become `Easing.bezier(...)` in `theme/easing.ts`,
+ * because this file imports nothing — `apps/admin` and the Expo config consume
+ * it, and neither can resolve a React Native import. Import `easing` from
+ * `theme/easing`, not these tuples, in any component.
+ *
+ * NEVER EASE-IN ON UI. An ease-in entrance ramps up slowly and delays the exact
+ * moment the user is watching: the frame where the thing appears. Everything
+ * entering or leaving takes `out`.
+ */
+export const easingCurve = {
+  /** Entering and exiting. The default. */
+  out: [0.23, 1, 0.32, 1],
+  /** Moving or morphing something already on screen. */
+  inOut: [0.77, 0, 0.175, 1],
+  /** Sheets. */
+  drawer: [0.32, 0.72, 0, 1],
+} as const;
+
+/**
+ * `press` is press-IN; `release` is the settle back.
+ *
+ * THE PRESS IS ASYMMETRIC ON PURPOSE. Pressing is a decision and lands hard;
+ * releasing is the finger leaving and settles. Symmetric in and out is the
+ * default every UI kit ships and the reason cheap apps feel rubbery.
+ */
+export const duration = {
+  press: 110,
+  release: 180,
+  fade: 180,
+  push: 260,
+  sheet: 380,
+  max: 420,
+} as const;
 
 export const motion = {
   /** Every tappable scales to 0.965 with −3% brightness. Press is felt, not release. */

@@ -2,18 +2,28 @@ import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated, {
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
 import { Glass } from './Glass';
 import { Text } from './Text';
+import { easing } from '../theme/easing';
 import { color, duration, radius, space } from '../theme/tokens';
 
 /** 2.4s, then gone. Long enough to read one line, short enough not to be dismissed. */
 const TOAST_MS = 2400;
 /** Clear of the tab bar. */
 const TOAST_BOTTOM = 104;
+/**
+ * The toast rises 8px as it fades in.
+ *
+ * A bar that fades in place has no origin — it is simply somewhere it was not
+ * before. 8px is enough to say it came UP from the bottom edge, and small
+ * enough that nobody consciously sees it move.
+ */
+const TOAST_RISE = 8;
 
 /**
  * The one ink glass in the product — it has to read against paper cards, which
@@ -24,18 +34,26 @@ const TOAST_BOTTOM = 104;
  * spacing rule governs.
  */
 export function Toast({ message, onDone }: { message: string | null; onDone?: () => void }) {
-  const opacity = useSharedValue(0);
-  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+  const progress = useSharedValue(0);
+  const reduceMotion = useReducedMotion();
+
+  /** Reduce Motion: keep the fade, drop the rise. */
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: progress.value,
+    transform: [{ translateY: reduceMotion ? 0 : TOAST_RISE * (1 - progress.value) }],
+  }));
 
   useEffect(() => {
     if (!message) return;
-    opacity.value = withTiming(1, { duration: duration.fade });
+    // `easing.out` BOTH DIRECTIONS. The exit is as watched as the entry — a
+    // toast that eases out slowly at the start reads as reluctant to leave.
+    progress.value = withTiming(1, { duration: duration.fade, easing: easing.out });
     const timer = setTimeout(() => {
-      opacity.value = withTiming(0, { duration: duration.fade });
+      progress.value = withTiming(0, { duration: duration.fade, easing: easing.out });
       onDone?.();
     }, TOAST_MS);
     return () => clearTimeout(timer);
-  }, [message, onDone, opacity]);
+  }, [message, onDone, progress]);
 
   if (!message) return null;
 

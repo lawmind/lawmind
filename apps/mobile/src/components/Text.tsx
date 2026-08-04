@@ -86,7 +86,22 @@ function resolveLatin(variant: TextVariant, scale: TextScale | undefined): Resol
             : scale === 'documentBody'
               ? typeScale.documentBody
               : typeScale.holding;
-      return { ...row, lineHeight: row.fontSize * row.lineHeight };
+      /**
+       * `letterSpacing` IS CONVERTED HERE, NOT SPREAD.
+       *
+       * The scale stores tracking in em because the spec is in em; React
+       * Native's `letterSpacing` is in px. A bare `{ ...row }` carries
+       * `letterSpacingEm` through into a style object that has no such
+       * property, so it is dropped without a warning — the tracking on
+       * `caseName` and `cardTitle` would silently do nothing and the tokens
+       * would look correct while the screen was not.
+       */
+      return {
+        fontFamily: row.fontFamily,
+        fontSize: row.fontSize,
+        lineHeight: row.fontSize * row.lineHeight,
+        letterSpacing: em('letterSpacingEm' in row ? row.letterSpacingEm : undefined, row.fontSize),
+      };
     }
     case 'record': {
       const row = typeScale.metadata;

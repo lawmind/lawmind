@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
+  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
 import { haptics } from '../theme/haptics';
+import { easing } from '../theme/easing';
 import { color, control, duration, radius, state } from '../theme/tokens';
 
 /**
@@ -40,9 +42,21 @@ export function Switch({
 
   useEffect(() => {
     const to = value ? 1 : 0;
-    // Knob 200ms, track 180ms — the colour lands first and the knob settles into it.
-    progress.value = withTiming(to, { duration: 200 });
-    trackProgress.value = withTiming(to, { duration: duration.fade });
+    /**
+     * Knob 200ms, track 180ms — the colour lands first and the knob settles
+     * into it.
+     *
+     * `ReduceMotion.System` on the KNOB only. The knob travelling is a position
+     * change, so under Reduce Motion it jumps to the end state; the track
+     * colour still crosses, because that fade is what tells a user with reduced
+     * motion that the switch responded at all.
+     */
+    progress.value = withTiming(to, {
+      duration: 200,
+      easing: easing.out,
+      reduceMotion: ReduceMotion.System,
+    });
+    trackProgress.value = withTiming(to, { duration: duration.fade, easing: easing.out });
   }, [progress, trackProgress, value]);
 
   const onColor = tone === 'kill-switch' ? state.verified : color.oxblood;

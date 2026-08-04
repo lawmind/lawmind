@@ -1,7 +1,8 @@
+import { useSegments } from 'expo-router';
 import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 
 import { Glass } from '../../src/components/Glass';
-import { TABS, TabButton, tabBarStyles } from '../../src/components/TabButton';
+import { TABS, TabActiveRule, TabButton, tabBarStyles } from '../../src/components/TabButton';
 
 /**
  * The four tabs. `expo-router/ui` rather than the default tab navigator,
@@ -11,13 +12,31 @@ import { TABS, TabButton, tabBarStyles } from '../../src/components/TabButton';
  * `TabList` sits DIRECTLY under `Tabs`: the router discovers triggers by
  * walking children and does not descend into a custom component. `asChild`
  * hands the row to `Glass` without an extra wrapping view.
+ *
+ * THE ACTIVE INDEX IS READ FROM THE ROUTE, not from the triggers. A trigger
+ * knows only whether IT is focused, and a rule that slides needs to know where
+ * it is sliding FROM as well as to — which only the bar can know. `useSegments`
+ * is the router's own answer to that and cannot drift from the actual route.
+ *
+ * The rule is an extra child of `TabList` alongside the four triggers. It is
+ * absolutely positioned, so it takes no space in the row, and it is not a
+ * `TabTrigger`, so the router's child walk simply passes over it.
  */
 export default function TabsLayout() {
+  const segments = useSegments();
+  // Falls back to the first tab before the route settles, which is where the
+  // rule already sits — so there is no opening slide from nowhere.
+  const activeIndex = Math.max(
+    0,
+    TABS.findIndex((tab) => segments.includes(tab.name as never))
+  );
+
   return (
     <Tabs>
       <TabSlot />
       <TabList asChild>
         <Glass edge="top" style={tabBarStyles.bar}>
+          <TabActiveRule activeIndex={activeIndex} />
           {TABS.map(({ name, href, label, Icon }) => (
             <TabTrigger asChild href={href} key={name} name={name}>
               <TabButton Icon={Icon} label={label} />

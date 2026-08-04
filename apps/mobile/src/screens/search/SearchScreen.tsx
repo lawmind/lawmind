@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { CircleAlert, SlidersHorizontal } from 'lucide-react-native';
 
 import { EmptyState } from '../../components/EmptyState';
+import { FadeRise } from '../../components/FadeRise';
 import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
 import { ResultCard } from '../../components/ResultCard';
@@ -34,6 +35,22 @@ import { FiltersSheet } from './FiltersSheet';
  */
 
 type Phase = 'idle' | 'loading' | 'done' | 'failed';
+
+/**
+ * The disclosure cards land ~80ms behind the first result.
+ *
+ * THESE TWO CARDS ARE THE ZERO-THRESHOLD SURFACES — the only places the product
+ * says what it is NOT showing: results a filter hid, and citations the model
+ * referenced that no tier confirmed. Silent-drop rate has a threshold of zero,
+ * and these cards are how that promise is kept on screen.
+ *
+ * Arriving with the results makes them read as part of the result set. Arriving
+ * just after makes them read as a CONSEQUENCE of the search — which is what
+ * they are, and it is the reading that gets them noticed rather than scrolled
+ * past. They are never conditional on the animation: the delay only affects
+ * when they are seen, never whether they render.
+ */
+const DISCLOSURE_DELAY = 80;
 
 /** Only the filters that can actually narrow a search — used to word the empty state honestly. */
 const hasActiveFilters = (f: SearchFilters): boolean =>
@@ -232,7 +249,7 @@ export function SearchScreen() {
                 they are not seeing.
               */}
               {hidden.length > 0 ? (
-                <View style={styles.hiddenCard}>
+                <FadeRise delay={DISCLOSURE_DELAY} style={styles.hiddenCard}>
                   <View style={styles.hiddenHead}>
                     <CircleAlert color={color.ink} size={18} strokeWidth={1.5} />
                     <Text variant="uiStrong" style={styles.hiddenTitle}>
@@ -257,7 +274,7 @@ export function SearchScreen() {
                       Show them anyway
                     </Text>
                   </Pressable>
-                </View>
+                </FadeRise>
               ) : null}
 
               {/*
@@ -266,7 +283,7 @@ export function SearchScreen() {
                 than dropped. Silent-drop rate has a zero threshold.
               */}
               {unverifiedRefs.length > 0 ? (
-                <View style={styles.hiddenCard}>
+                <FadeRise delay={DISCLOSURE_DELAY} style={styles.hiddenCard}>
                   <View style={styles.hiddenHead}>
                     <CircleAlert color={color.ink} size={18} strokeWidth={1.5} />
                     <Text variant="uiStrong" style={styles.hiddenTitle}>
@@ -283,7 +300,7 @@ export function SearchScreen() {
                       </Text>
                     </View>
                   ))}
-                </View>
+                </FadeRise>
               ) : null}
             </View>
           }

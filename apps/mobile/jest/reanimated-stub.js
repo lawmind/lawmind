@@ -38,6 +38,16 @@ const useAnimatedStyle = (factory) => {
 const useReducedMotion = () => false;
 const identity = (toValue) => toValue;
 
+/**
+ * `ReduceMotion`, mirroring the real enum's string values.
+ *
+ * It reaches the stub as a plain config key on `withTiming`/`withSpring`, which
+ * ignore their config here — but it must EXIST, because a component reading
+ * `ReduceMotion.System` off `undefined` throws at import time and takes the
+ * whole suite down with a module error rather than a useful failure.
+ */
+const ReduceMotion = { System: 'system', Always: 'always', Never: 'never' };
+
 const Animated = {
   View,
   Text,
@@ -54,11 +64,43 @@ module.exports = {
   useAnimatedStyle,
   useReducedMotion,
   useAnimatedRef: () => ({ current: null }),
+  /**
+   * `useEvent` IS FOR GESTURE-HANDLER, NOT FOR US.
+   *
+   * Nothing in the app calls it. `GestureDetector` does — it reaches into
+   * reanimated through its own wrapper — so the moment the Sheet became a real
+   * gesture the stub had to answer for a second consumer. Returning a no-op
+   * handler is enough: there are no touches in Node to dispatch into it.
+   */
+  useEvent: () => () => {},
+  useHandler: () => ({ context: {}, doDependenciesDiffer: false, useWeb: false }),
   withTiming: identity,
   withSpring: identity,
   withDelay: (_delay, value) => value,
   withRepeat: (value) => value,
+  /** The last value in a sequence is where it ends up, which is all a style assertion can see. */
+  withSequence: (...values) => values[values.length - 1],
+  cancelAnimation: () => {},
   runOnJS: (fn) => fn,
   runOnUI: (fn) => fn,
-  Easing: { linear: (t) => t, inOut: (fn) => fn, ease: (t) => t },
+  ReduceMotion,
+  /**
+   * `bezier` RETURNS A FUNCTION, because that is what the real one returns and
+   * what `theme/easing.ts` stores at module scope. Returning an object — which
+   * is what the library's own mock does — passes import but fails the moment
+   * anything treats the result as callable.
+   *
+   * The curve is not evaluated: no assertion in this suite reads an
+   * intermediate frame. What the stub must protect is that naming a curve does
+   * not crash a screen.
+   */
+  Easing: {
+    linear: (t) => t,
+    inOut: (fn) => fn,
+    out: (fn) => fn,
+    in: (fn) => fn,
+    ease: (t) => t,
+    bezier: () => (t) => t,
+    bezierFn: () => (t) => t,
+  },
 };

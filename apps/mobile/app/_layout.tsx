@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { useAppFonts } from '../src/theme/fonts';
@@ -42,20 +44,32 @@ export default function RootLayout() {
   // is a screen of missing-glyph boxes, and that is a product failure here.
   if (!fontsLoaded && !fontError) return null;
 
+  /**
+   * `GestureHandlerRootView` WRAPS EVERYTHING, and must be the outermost view.
+   *
+   * Without it a `Gesture.Pan()` silently never fires — no warning, no error,
+   * the sheet simply does not follow the finger. It is mounted here rather than
+   * per screen because gesture-handler resolves the root by walking up, and a
+   * second root nested inside the first breaks touch routing between them.
+   */
   return (
-    <QueryClientProvider client={queryClient}>
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: color.paper },
-          headerShadowVisible: false,
-          headerTintColor: color.ink,
-          headerTitleStyle: { fontFamily: family.uiMedium, fontSize: typeScale.body.fontSize },
-          contentStyle: { backgroundColor: color.paper },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-      </Stack>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <QueryClientProvider client={queryClient}>
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: color.paper },
+            headerShadowVisible: false,
+            headerTintColor: color.ink,
+            headerTitleStyle: { fontFamily: family.uiMedium, fontSize: typeScale.body.fontSize },
+            contentStyle: { backgroundColor: color.paper },
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({ root: { flex: 1 } });

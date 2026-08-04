@@ -2,7 +2,8 @@ import { forwardRef, type ReactNode } from 'react';
 import { StyleSheet, View, type ViewProps } from 'react-native';
 import { BlurView } from 'expo-blur';
 
-import { glass } from '../theme/tokens';
+import { useMotionPreferences } from '../hooks/useMotionPreferences';
+import { color, glass } from '../theme/tokens';
 
 /**
  * GLASS GOES ON FLOATING CHROME ONLY.
@@ -22,6 +23,14 @@ import { glass } from '../theme/tokens';
  * The hairline sits on the LEADING EDGE ONLY, so it catches light on one edge
  * like a real bevel. It is a GLASS placement, not a gilt one, and does not
  * count against the one-mark-per-screen gilt budget.
+ *
+ * REDUCE TRANSPARENCY REMOVES THE BLUR ENTIRELY.
+ *
+ * Not "reduces" it — removes it, and the tint goes fully opaque. Because the
+ * tint is already 94%, that is a six-percent visual change and a total change
+ * in legibility for the person who asked for it. The hairline stays: it is
+ * structure, telling the eye where chrome ends and content begins, and that
+ * question does not go away when the translucency does.
  */
 export type GlassEdge = 'top' | 'topLeft' | 'none';
 
@@ -38,17 +47,27 @@ export const Glass = forwardRef<View, GlassProps>(function Glass(
   { children, edge = 'top', sheet = false, ink = false, style, ...rest },
   ref
 ) {
+  const { reduceTransparency } = useMotionPreferences();
+
+  /** The 94% tints go to their fully opaque equivalents — same hue, no see-through. */
+  const fill = reduceTransparency
+    ? ink
+      ? color.ink
+      : color.paper
+    : ink
+      ? glass.inkTint
+      : glass.tint;
+
   return (
     <View {...rest} ref={ref} style={[styles.host, style]}>
-      <BlurView
-        intensity={sheet ? glass.sheetBlur * 4 : glass.blur * 4}
-        tint={ink ? 'dark' : 'light'}
-        style={StyleSheet.absoluteFill}
-      />
-      <View
-        pointerEvents="none"
-        style={[StyleSheet.absoluteFill, { backgroundColor: ink ? glass.inkTint : glass.tint }]}
-      />
+      {reduceTransparency ? null : (
+        <BlurView
+          intensity={sheet ? glass.sheetBlurIntensity : glass.blurIntensity}
+          tint={ink ? 'dark' : 'light'}
+          style={StyleSheet.absoluteFill}
+        />
+      )}
+      <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: fill }]} />
       {edge !== 'none' ? (
         <View pointerEvents="none" style={StyleSheet.absoluteFill}>
           <View style={styles.edgeTop} />

@@ -15,6 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { haptics } from '../theme/haptics';
+import { easing } from '../theme/easing';
 import { duration, motion, size } from '../theme/tokens';
 
 /**
@@ -62,12 +63,19 @@ export const Pressable = forwardRef<View, PressableProps>(function Pressable(
     <RNPressable
       {...rest}
       onPressIn={(e) => {
+        // The haptic and the animation dispatch in the SAME synchronous block,
+        // so the tap is felt on the frame the scale starts. Split them and the
+        // press stops feeling like one event.
         if (haptic) haptics.tap();
-        pressed.value = withTiming(1, { duration: duration.press });
+        pressed.value = withTiming(1, { duration: duration.press, easing: easing.out });
         onPressIn?.(e);
       }}
       onPressOut={(e) => {
-        pressed.value = withTiming(0, { duration: duration.press });
+        // ASYMMETRIC, DELIBERATELY. Press-in snaps at 110ms because pressing is
+        // a decision; the release settles over 180ms because it is the finger
+        // leaving, not a second decision. Matching the two — which is what the
+        // component did — is what makes a button feel rubbery.
+        pressed.value = withTiming(0, { duration: duration.release, easing: easing.out });
         onPressOut?.(e);
       }}
       ref={ref}

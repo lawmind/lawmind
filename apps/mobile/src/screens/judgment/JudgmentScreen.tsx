@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { ChevronLeft, Clock, Info, X } from 'lucide-react-native';
 
 import { Button } from '../../components/Button';
+import { FadeRise } from '../../components/FadeRise';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
@@ -379,10 +380,26 @@ export function JudgmentScreen({
           disabled={blocked}
           label={blocked ? 'Cannot be added to a matter' : 'Add to a matter'}
         />
+        {/*
+          THE REASON ARRIVES AFTER THE REFUSAL, by 60ms.
+
+          It appeared on the same frame as the disabled button, so the eye had
+          to choose between two things that changed at once and usually landed
+          on the paragraph — leaving the advocate reading an explanation before
+          they had registered what it was explaining. 60ms is below anyone's
+          threshold for "slow" and above the threshold where two events read as
+          one.
+
+          NEUTRAL INK, NO AMBER. This is our refusal to let an authority be
+          used, not a statement that the law has moved — amber means the second
+          thing and only the second thing.
+        */}
         {blocked ? (
-          <Text variant="ui" style={styles.blockedReason}>
-            This judgment was set aside, so it cannot be saved to a matter or cited in a draft.
-          </Text>
+          <FadeRise delay={60}>
+            <Text variant="ui" style={styles.blockedReason}>
+              This judgment was set aside, so it cannot be saved to a matter or cited in a draft.
+            </Text>
+          </FadeRise>
         ) : null}
       </ScrollView>
 

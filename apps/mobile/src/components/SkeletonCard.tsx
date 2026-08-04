@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
-  Easing,
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withDelay,
   withRepeat,
@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Card } from './Card';
+import { easing } from '../theme/easing';
 import { color, motion, radius, space } from '../theme/tokens';
 
 /**
@@ -22,9 +23,16 @@ import { color, motion, radius, space } from '../theme/tokens';
  * jumps at the moment the user starts reading.
  *
  * Reduce Motion: the sweep becomes a static tint.
+ *
+ * THAT IS READ HERE, NOT PASSED IN. It used to be a `reduceMotion` prop, and
+ * every one of the six call sites omitted it — so it defaulted to `false` and
+ * the sweep animated for exactly the users who had asked it not to. A prop that
+ * must be passed correctly six times to be correct once is not a setting, it is
+ * a defect waiting on a seventh call site.
  */
-export function SkeletonCard({ index = 0, reduceMotion = false }: { index?: number; reduceMotion?: boolean }) {
+export function SkeletonCard({ index = 0 }: { index?: number }) {
   const sweep = useSharedValue(0);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -37,7 +45,7 @@ export function SkeletonCard({ index = 0, reduceMotion = false }: { index?: numb
     sweep.value = withDelay(
       index * motion.shimmerSiblingOffset,
       withRepeat(
-        withTiming(1, { duration: motion.shimmerLoop, easing: Easing.linear }),
+        withTiming(1, { duration: motion.shimmerLoop, easing: easing.linear }),
         -1,
         false
       )
