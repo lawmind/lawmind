@@ -92,6 +92,37 @@ permanent test asset.
 **Principle: primary sources only.** Judgments, statutes, official records. Never
 another model's commentary about them.
 
+### indiacode.nic.in — what it actually provides, verified 4 Aug 2026
+
+Checked directly against the site rather than assumed, because S1 depends on it.
+
+**It does provide**, and this is enough for the statutory-text half of S1:
+
+- The Acts as records with real metadata. `handle/123456789/20062` is
+  **Bharatiya Nyaya Sanhita, 2023**, Act 45 of 2023, Ministry of Home Affairs,
+  enacted 2023-12-25, **enforcement date 1-7-2024** — matching `DOMAIN_TRUTH.md`.
+- English and Hindi PDFs per Act (`a202345.pdf`, `Hh202345.pdf`).
+- **Section-level records**: BNS enumerates **358 sections**, which is the correct
+  count, and each section has its own id and number behind `/show-data`. Section
+  63 returns **"Rape"**, which is correct for BNS.
+
+**It does NOT provide an IPC↔BNS section mapping.** There is no comparative or
+concordance table in the Act record, its Schedule, its Annexure or its Appendix.
+Section pages return the section title; the body loads separately.
+
+**Consequence, and it is a blocker rather than a preference.** `DOMAIN_TRUTH.md`
+says the mapping is "seeded from indiacode.nic.in", and that is not currently
+possible — indiacode carries both statutes but not the correspondence between
+them. The mapping cannot be derived here: `DOMAIN_TRUTH.md` states plainly that it
+must never be model-generated, and that mappings are **not always 1:1** because
+some sections split and some merge. Matching on section titles would be exactly
+the inference that rule forbids, and a wrong mapping is a wrong answer about which
+law applies to an accused person.
+
+**What would unblock it:** an official MHA comparative table, or another primary
+source that states the correspondence. Until one exists, `statute_mappings` stays
+empty rather than populated with derived rows.
+
 ---
 
 ## What is actually licensable — read before valuing any of this
