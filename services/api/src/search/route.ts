@@ -11,7 +11,7 @@ import type { Context } from 'hono';
 import { z } from 'zod';
 import type { Sql } from 'postgres';
 
-import { fail, ok } from '../envelope.ts';
+import { ok } from '../envelope.ts';
 import { hybridSearch, type SearchFilters } from './retrieve.ts';
 
 export const searchRequest = z.object({
@@ -45,23 +45,15 @@ export async function handleSearch(
   deps: SearchDeps,
   body: SearchRequest,
 ): Promise<Response> {
-  // `caseType` is in the frozen contract but `judgments` has no case_type column
-  // — it lives on `matters`. Filtering silently without applying it would hand an
-  // advocate a filtered-looking list that was never filtered, so this refuses
-  // instead. Raised for the founder and RCC rather than resolved here.
-  if (body.filters?.caseType) {
-    return fail(
-      c,
-      'FILTER_UNSUPPORTED',
-      'caseType cannot be applied to judgments yet — judgments carry no case type',
-      400,
-    );
-  }
-
+  // `caseType` now filters for real: it is derived at ingest from the official
+  // case number (`docs/SCHEMA_TRUTH.md` §judgments), not from the judgment's
+  // content. Judgments whose case number states no side are excluded rather than
+  // guessed into one.
   const filters: SearchFilters = {
     court: body.filters?.court,
     dateFrom: body.filters?.dateFrom,
     dateTo: body.filters?.dateTo,
+    caseType: body.filters?.caseType,
   };
 
   const queryVector = await deps.embedQuery(body.query);

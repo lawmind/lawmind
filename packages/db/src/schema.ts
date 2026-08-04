@@ -199,6 +199,13 @@ export const judgments = pgTable(
     ),
     overruledParas: integer('overruled_paras').array(),
     overruledNote: text('overruled_note'),
+    // The official case number as printed, e.g. `CRIMINAL APPEAL No. 19/1955`.
+    // Stored so the case_type derivation below is auditable.
+    caseNumber: text('case_number'),
+    // Derived mechanically from case_number, never from the judgment's content.
+    // Null where the case number states no side — those rows are excluded when
+    // the filter is applied rather than guessed into one.
+    caseType: caseTypeEnum('case_type'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     /**
      * Stored, not an expression index. An expression gin index cannot hand the

@@ -43,6 +43,13 @@
       "when": 1785851548584,
       "tag": "0005_statutes_and_sections",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785852603610,
+      "tag": "0006_judgments_case_type",
+      "breakpoints": true
     }
   ]
 }

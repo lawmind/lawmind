@@ -42,6 +42,25 @@ without it there is no way to tell a badge that was **wrong when rendered** from
 one the world invalidated afterwards. Set it in the same write as any
 `overruled_status` change, including inside `applyOverruledChange`.
 
+`case_number` text null — the official case number exactly as printed by the
+source, e.g. `CRIMINAL APPEAL No. 19/1955` · `case_type` enum (criminal|civil)
+null — **derived from `case_number`, never inferred from the judgment's content**.
+Both added S1.
+
+`case_type` exists because `docs/API_CONTRACTS.md` §Search offers a `caseType`
+filter and judgments carried nothing to filter on. The rule is mechanical: the
+case number contains `CRIMINAL` → criminal, else contains `CIVIL` → civil, else
+**null**. Indian Supreme Court case numbers state this themselves — `CIVIL
+APPEAL`, `CRIMINAL APPEAL`, `WRIT PETITION (CIVIL)`, `SPECIAL LEAVE PETITION
+(CRIMINAL)` — so this reads a published field rather than classifying a case.
+
+`case_number` is stored alongside so the derivation is **auditable**: anyone can
+see the string it came from. Categories that do not state a side —
+`ARBITRATION PETITION`, `MISCELLANEOUS APPLICATION`, bare diary numbers — are
+left null and are **excluded when the filter is applied**, rather than guessed
+into one side. A filter that silently mis-sorts a matter is worse than one that
+returns less.
+
 `full_text_tsv` tsvector GENERATED ALWAYS AS `to_tsvector('english', full_text)`
 STORED — added S1, and the reason is a measured one, not a preference.
 

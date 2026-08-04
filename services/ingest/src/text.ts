@@ -14,12 +14,36 @@ export async function fetchPdfText(url: string, signal?: AbortSignal): Promise<s
 }
 
 /**
+ * Strips byte sequences Postgres refuses in a `text` column.
+ *
+ * PDF text extraction yields NUL bytes and unpaired surrogates from judgments
+ * whose embedded fonts carry broken encodings. Postgres rejects both with
+ * SQLSTATE 22021, `invalid byte sequence for encoding "UTF8"`, and the error
+ * aborts the whole batch — which is what silently ended the 2023 run after
+ * 2020–2022 had loaded cleanly.
+ *
+ * Dropping these characters loses nothing readable: a NUL is not text, and an
+ * unpaired surrogate is a half-character that no renderer can draw.
+ */
+export function stripUnstorable(text: string): string {
+  return (
+    text
+      // NUL is rejected outright by Postgres text.
+      .replace(/\0/g, '')
+      // Unpaired surrogates: a high surrogate not followed by a low one, or a low
+      // one not preceded by a high one.
+      .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '')
+      .replace(/(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '')
+  );
+}
+
+/**
  * Column-extracted PDF text arrives with ragged spacing and hard-wrapped lines.
  * Collapsing it matters twice over: `to_tsvector` tokenises on it, and chunk
  * boundaries are measured in characters.
  */
 export function normaliseWhitespace(text: string): string {
-  return text
+  return stripUnstorable(text)
     .replace(/\r\n?/g, '\n')
     .replace(/[ \t]+/g, ' ')
     .replace(/ ?\n ?/g, '\n')

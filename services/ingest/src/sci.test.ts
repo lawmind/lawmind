@@ -6,13 +6,16 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
+  parseCaseNumber,
   pdfUrl,
   SCI_BUCKET,
   sourceUrlFor,
+  toCaseType,
   toIsoDate,
   toJudgment,
   type SciMetadataRow,
 } from './sci.ts';
+import { stripUnstorable } from './text.ts';
 
 /** A row shaped exactly like the published parquet schema. */
 function row(overrides: Partial<SciMetadataRow> = {}): SciMetadataRow {
@@ -132,5 +135,80 @@ describe('toJudgment', () => {
 
   it('propagates a bad date as a throw rather than a bad row', () => {
     assert.throws(() => toJudgment(row({ decision_date: 'n/a' }), 't'), /decision_date/);
+  });
+});
+
+describe('case type — read off the official case number', () => {
+  it('reads criminal and civil from the printed case number', () => {
+    assert.equal(toCaseType('CRIMINAL APPEAL No. 19/1955'), 'criminal');
+    assert.equal(toCaseType('CIVIL APPEAL No. 213/1953'), 'civil');
+  });
+
+  it('reads the side out of a parenthesised category', () => {
+    // These are the cases a naive prefix check gets wrong.
+    assert.equal(toCaseType('WRIT PETITION (CRIMINAL) No. 55/1954'), 'criminal');
+    assert.equal(toCaseType('WRIT PETITION (CIVIL) No. 189/1955'), 'civil');
+    assert.equal(toCaseType('SPECIAL LEAVE PETITION (CRIMINAL) No. 554/1975'), 'criminal');
+    assert.equal(toCaseType('SPECIAL LEAVE PETITION (CIVIL) No. 19963/1994'), 'civil');
+    assert.equal(toCaseType('CONTEMPT PETITION (CIVIL) No. 357/1993'), 'civil');
+  });
+
+  it('returns null where the case number states no side', () => {
+    // Guessing one of these into criminal or civil would mis-sort a matter.
+    for (const n of [
+      'ARBITRATION PETITION No. 5/2008',
+      'MISCELLANEOUS APPLICATION No. 3/2009',
+      'No. 7298/2022',
+      '',
+    ]) {
+      assert.equal(toCaseType(n), null, `guessed a side for ${JSON.stringify(n)}`);
+    }
+    assert.equal(toCaseType(null), null);
+  });
+
+  it('pulls the case number out of the scraped markup', () => {
+    const html =
+      `<strong>Decision Date :</strong><font color='green'> 03-10-2024</font>` +
+      `<span style='color:#212F3D'> Case No :</span><font color='green'> CRIMINAL APPEAL No. 2623/2014</font>`;
+    assert.equal(parseCaseNumber(html), 'CRIMINAL APPEAL No. 2623/2014');
+    assert.equal(parseCaseNumber(undefined), null);
+    assert.equal(parseCaseNumber('<p>no case number here</p>'), null);
+  });
+
+  it('puts both the number and the derived side on the judgment', () => {
+    const j = toJudgment(
+      row({ raw_html: `Case No :</span><font> CRIMINAL APPEAL No. 7/1955</font>` }),
+      't',
+    );
+    assert.equal(j.caseNumber, 'CRIMINAL APPEAL No. 7/1955');
+    assert.equal(j.caseType, 'criminal');
+  });
+
+  it('leaves both null when the markup carries no case number', () => {
+    const j = toJudgment(row({ raw_html: '<p>nothing</p>' }), 't');
+    assert.equal(j.caseNumber, null);
+    assert.equal(j.caseType, null);
+  });
+});
+
+describe('stripUnstorable', () => {
+  it('removes NUL, which Postgres rejects outright', () => {
+    assert.equal(stripUnstorable('Ramesh\0v.\0State'), 'Rameshv.State');
+  });
+
+  it('removes unpaired surrogates from broken PDF font encodings', () => {
+    assert.equal(stripUnstorable('bail \uD800granted'), 'bail granted');
+    assert.equal(stripUnstorable('bail \uDC00granted'), 'bail granted');
+  });
+
+  it('keeps valid surrogate pairs and Devanagari intact', () => {
+    // Dropping these would corrupt Hindi judgments, which is the whole point of
+    // being surgical rather than filtering to ASCII.
+    assert.equal(stripUnstorable('जमानत'), 'जमानत');
+    assert.equal(stripUnstorable('emoji \u{1F600} kept'), 'emoji \u{1F600} kept');
+  });
+
+  it('leaves ordinary text untouched', () => {
+    assert.equal(stripUnstorable('Section 302 IPC'), 'Section 302 IPC');
   });
 });

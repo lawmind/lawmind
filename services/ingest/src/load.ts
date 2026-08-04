@@ -17,9 +17,31 @@ export type LoadResult = { inserted: number; updated: number };
  * that S2 established would be the stale-overruled failure arriving through the
  * back door.
  */
+/**
+ * Rows per INSERT. A whole year is up to ~1,000 judgments of several hundred KB
+ * each, and a single statement carrying all of them is both a large parameter
+ * list and an all-or-nothing failure: one unstorable row loses the year.
+ *
+ * (The silent stop after 2022 was NOT this. It was SQLSTATE 22021 on invalid
+ * UTF-8 — see `stripUnstorable` in `text.ts`. Batching is kept because it bounds
+ * the blast radius of a bad row, not because it fixed that.)
+ */
+const INSERT_BATCH = 100;
+
 export async function upsertJudgments(sql: Sql, records: JudgmentRecord[]): Promise<LoadResult> {
   if (records.length === 0) return { inserted: 0, updated: 0 };
 
+  let inserted = 0;
+  let updated = 0;
+  for (let i = 0; i < records.length; i += INSERT_BATCH) {
+    const result = await upsertBatch(sql, records.slice(i, i + INSERT_BATCH));
+    inserted += result.inserted;
+    updated += result.updated;
+  }
+  return { inserted, updated };
+}
+
+async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadResult> {
   const rows = records.map((r) => ({
     case_title: r.caseTitle,
     neutral_citation: r.neutralCitation,
@@ -30,6 +52,8 @@ export async function upsertJudgments(sql: Sql, records: JudgmentRecord[]): Prom
     full_text: r.fullText,
     language: r.language,
     source_url: r.sourceUrl,
+    case_number: r.caseNumber,
+    case_type: r.caseType,
   }));
 
   // Columns are inferred from the object keys — every row is built by the same
@@ -44,7 +68,9 @@ export async function upsertJudgments(sql: Sql, records: JudgmentRecord[]): Prom
       bench              = EXCLUDED.bench,
       judgment_date      = EXCLUDED.judgment_date,
       full_text          = EXCLUDED.full_text,
-      language           = EXCLUDED.language
+      language           = EXCLUDED.language,
+      case_number        = EXCLUDED.case_number,
+      case_type          = EXCLUDED.case_type
     RETURNING (xmax = 0) AS inserted
   `;
 

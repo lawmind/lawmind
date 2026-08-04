@@ -124,17 +124,24 @@ describe('POST /search', () => {
     assert.equal(body.data?.searchId, null);
   });
 
-  it('refuses caseType rather than ignoring it', async () => {
+  it('applies caseType, returning only judgments of that side', async (t) => {
+    if (corpusSize === 0) return t.skip('no corpus loaded');
     const { status, body } = await post({
-      query: 'bail',
+      query: 'appeal',
       language: 'en',
       filters: { caseType: 'criminal' },
     });
-    // Silently returning unfiltered results for a filter the client believes was
-    // applied is the failure this guards.
-    assert.equal(status, 400);
-    assert.equal(body.ok, false);
-    assert.equal(body.error?.code, 'FILTER_UNSUPPORTED');
+    assert.equal(status, 200);
+
+    const ids = (body.data?.results ?? []).map((r) => r.judgmentId);
+    if (ids.length === 0) return t.skip('no criminal judgments matched');
+
+    // Verified against the column, not the response: a filter that silently
+    // mis-sorts a matter is worse than one that returns less.
+    const rows = await sql<{ case_type: string | null }[]>`
+      SELECT case_type FROM judgments WHERE id = ANY(${ids})
+    `;
+    for (const row of rows) assert.equal(row.case_type, 'criminal');
   });
 
   it('rejects a malformed body through the shared validator', async () => {

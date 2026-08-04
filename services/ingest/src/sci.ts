@@ -37,6 +37,8 @@ export type SciMetadataRow = {
   path: string;
   nc_display: string;
   year: string;
+  /** Scraped e-SCR markup. Carries the official case number. */
+  raw_html?: string;
 };
 
 /** What the loader writes. Shapes follow `docs/SCHEMA_TRUTH.md` §judgments. */
@@ -51,6 +53,10 @@ export type JudgmentRecord = {
   fullText: string;
   language: 'en';
   sourceUrl: string;
+  /** The official case number as printed, e.g. `CRIMINAL APPEAL No. 19/1955`. */
+  caseNumber: string | null;
+  /** Derived from `caseNumber` only. Null where it states no side. */
+  caseType: 'criminal' | 'civil' | null;
 };
 
 export function metadataUrl(year: number): string {
@@ -93,7 +99,35 @@ export function toIsoDate(ddmmyyyy: string): string {
 
 const blank = (v: string | null | undefined): boolean => !v || v.trim() === '';
 
+/** Pulls the official case number out of the scraped e-SCR markup. */
+export function parseCaseNumber(rawHtml: string | undefined): string | null {
+  if (!rawHtml) return null;
+  const m = /Case No\s*:<\/span>\s*<font[^>]*>([^<]+)/i.exec(rawHtml);
+  const value = m?.[1]?.replace(/\s+/g, ' ').trim();
+  return value && value.length > 0 ? value : null;
+}
+
+/**
+ * Reads the side off the official case number. Supreme Court case numbers state
+ * it themselves — CIVIL APPEAL, CRIMINAL APPEAL, WRIT PETITION (CIVIL), SPECIAL
+ * LEAVE PETITION (CRIMINAL) — so this is a published field, not a classification
+ * of the case.
+ *
+ * CRIMINAL is checked first because `SPECIAL LEAVE PETITION (CRIMINAL)` contains
+ * neither token in isolation and `WRIT PETITION (CRIMINAL)` must not fall through
+ * to civil. Anything that states no side stays null: ARBITRATION PETITION,
+ * MISCELLANEOUS APPLICATION, a bare diary number.
+ */
+export function toCaseType(caseNumber: string | null): 'criminal' | 'civil' | null {
+  if (!caseNumber) return null;
+  const upper = caseNumber.toUpperCase();
+  if (upper.includes('CRIMINAL')) return 'criminal';
+  if (upper.includes('CIVIL')) return 'civil';
+  return null;
+}
+
 export function toJudgment(row: SciMetadataRow, fullText: string): JudgmentRecord {
+  const caseNumber = parseCaseNumber(row.raw_html);
   return {
     caseTitle: row.title.trim().replace(/\s+/g, ' '),
     neutralCitation: blank(row.case_id) ? null : row.case_id.trim(),
@@ -108,6 +142,8 @@ export function toJudgment(row: SciMetadataRow, fullText: string): JudgmentRecor
     // Flagged in the S1 report; not decided here.
     language: 'en',
     sourceUrl: sourceUrlFor(row),
+    caseNumber,
+    caseType: toCaseType(caseNumber),
   };
 }
 

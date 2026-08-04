@@ -23,6 +23,12 @@ export type SearchFilters = {
   court?: string | undefined;
   dateFrom?: string | undefined;
   dateTo?: string | undefined;
+  /**
+   * Derived from the official case number at ingest. Judgments whose case number
+   * states no side carry null and are EXCLUDED when this filter is applied — a
+   * filter that silently mis-sorts a matter is worse than one that returns less.
+   */
+  caseType?: 'criminal' | 'civil' | undefined;
 };
 
 export type RetrievedJudgment = {
@@ -77,6 +83,7 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
       ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
     ORDER BY ts_rank(j.full_text_tsv, q) DESC
     LIMIT ${CANDIDATE_DEPTH}
   `;
@@ -97,6 +104,7 @@ async function dense(
       ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
     ORDER BY c.embedding <=> ${queryVector}::vector
     LIMIT ${CANDIDATE_DEPTH * 4}
   `;
@@ -135,7 +143,11 @@ export async function hybridSearch(
   // Final read: every rendered field comes from this row, including
   // overruled_status, read live at render time.
   const rows = await sql<JudgmentRow[]>`
-    SELECT id, case_title, neutral_citation, reporter_citations, court, judgment_date,
+    SELECT id, case_title, neutral_citation, reporter_citations, court,
+           -- ::text keeps this a calendar date. The column type is date; the
+           -- driver otherwise hydrates it to a Date and JSON renders a midnight
+           -- timestamp, so the client would show a time a judgment never had.
+           judgment_date::text AS judgment_date,
            overruled_status, overruled_by_judgment_id, overruled_paras, overruled_note
     FROM judgments WHERE id = ANY(${ids})
   `;
