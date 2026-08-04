@@ -108,6 +108,38 @@ export type SearchFilters = {
  * always knows what they are not seeing, because they cannot correct what they
  * were never shown.
  */
+/**
+ * "WHERE WE LOOKED" — one row per source, each with its own result and
+ * timestamp. `renders/49-unverified-citation@2x.png`, canvas `10i`.
+ *
+ * NOT IN `docs/API_CONTRACTS.md` — CLIENT ASSUMPTION, FLAGGED FOR LCC. The
+ * contract has `POST /verify/ecourts` and `POST /verify/confirm` but nothing
+ * that returns what each tier found. The screen the harness requires cannot be
+ * built without it: "each source checked with a result and a timestamp".
+ *
+ * `outcome` deliberately has no `failed` member. The language throughout is
+ * what we did and did not manage, never an accusation and never our failure.
+ */
+export type SourceCheck = {
+  /** "Our reported corpus", "Delhi High Court judgment portal", "eCourts services". */
+  source: string;
+  outcome: 'found' | 'not_found' | 'needs_you';
+  /** "No result for this case number." — what happened, in plain words. */
+  detail: string;
+  /** ISO. Rendered as "Checked 4 minutes ago". */
+  checkedAt: string;
+};
+
+export type CitationCheckDetail = {
+  judgmentId: string;
+  /** What we found, ending in what we could not do. */
+  whatWeFound: string;
+  sources: SourceCheck[];
+  /** The eCourts path, spelled out so checking takes a minute rather than ten. */
+  ecourtsUrl: string;
+  prefilledQuery: string;
+};
+
 export type HiddenResult = {
   /** The whole row, not just its name — "show it anyway" must render a real card. */
   result: SearchResult;

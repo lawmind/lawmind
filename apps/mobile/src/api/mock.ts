@@ -3,6 +3,7 @@ import type {
   AlertSettings,
   ApiResponse,
   Briefing,
+  CitationCheckDetail,
   CourtLookupResult,
   DocumentType,
   DraftDocument,
@@ -167,6 +168,57 @@ export const mockApi = {
       ecourtsUrl: 'https://services.ecourts.gov.in/',
       prefilledQuery: citationText,
     }),
+
+  /** Tier 3 — the advocate confirmed it themselves. Cached permanently. */
+  confirmVerified: (judgmentId: string) => delay({ judgmentId, cached: true }),
+
+  /**
+   * What each tier found. Shape flagged for LCC in `contract.ts`.
+   *
+   * The outcomes are deliberately mixed: one source that found a REFERENCE but
+   * not the judgment, two that found nothing, and eCourts needing the advocate.
+   * That combination is what the detail screen exists to explain — "two
+   * secondary sources describe it, nobody can open it" is a different situation
+   * from "nobody has heard of it", and only one of them is worth an advocate's
+   * minute.
+   */
+  citationCheck: (judgmentId: string): Promise<ApiResponse<CitationCheckDetail>> =>
+    delay(
+      {
+        judgmentId,
+        whatWeFound:
+          'A reference to this judgment appears in two secondary sources, both describing a quashing where the complaint named eleven relatives without particulars. We could not open the judgment itself.',
+        sources: [
+          {
+            source: 'Our reported corpus',
+            outcome: 'found',
+            detail: 'Found as a citation inside two other judgments. Not present as a judgment.',
+            checkedAt: new Date(Date.now() - 4 * 60_000).toISOString(),
+          },
+          {
+            source: 'Mock High Court judgment portal',
+            outcome: 'not_found',
+            detail: 'No result for this case number.',
+            checkedAt: new Date(Date.now() - 4 * 60_000).toISOString(),
+          },
+          {
+            source: 'Reporter index',
+            outcome: 'not_found',
+            detail: 'Citation number does not resolve. May be a reporting error in the source.',
+            checkedAt: new Date(Date.now() - 6 * 60_000).toISOString(),
+          },
+          {
+            source: 'eCourts services',
+            outcome: 'needs_you',
+            detail: 'Requires a captcha we cannot complete for you.',
+            checkedAt: new Date().toISOString(),
+          },
+        ],
+        ecourtsUrl: 'https://services.ecourts.gov.in/',
+        prefilledQuery: 'MOCK 2024 EXAMPLE 9424',
+      },
+      260
+    ),
 
   /* matters */
   matters: (): Promise<ApiResponse<Matter[]>> => delay([]),

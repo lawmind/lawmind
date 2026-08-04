@@ -1,6 +1,7 @@
-import { AlignJustify, CircleAlert } from 'lucide-react-native';
+import { CircleAlert } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 
+import { CitationMark } from './CitationMark';
 import { Pressable } from './Pressable';
 import { Text } from './Text';
 import type { SearchResult } from '../api/contract';
@@ -31,12 +32,19 @@ export function ResultCard({
   result,
   onPress,
   onConfirmOnEcourts,
+  statusAsOf,
 }: {
   result: SearchResult;
   onPress?: () => void;
   onConfirmOnEcourts?: () => void;
+  /**
+   * Pass only when this row is being drawn from a status that could not be
+   * re-read now. Absent means live, which is what the never-cached rule
+   * requires of every online surface.
+   */
+  statusAsOf?: string;
 }) {
-  const { existence, moved } = citationRender(result);
+  const { existence, moved } = citationRender({ ...result, statusAsOf });
   const unconfirmed = existence.kind === 'unconfirmed';
   const band = moved.kind === 'moved' ? moved.band : 'none';
 
@@ -65,35 +73,45 @@ export function ResultCard({
           </>
         ) : null}
 
-        {moved.kind === 'moved' && band !== 'none' ? (
-          <>
-            <View style={styles.markRow}>
-              <AlignJustify
-                color={band === 'danger' ? state.danger : state.cautionText}
-                size={18}
-                strokeWidth={1.5}
-              />
-              <Text
-                variant="uiStrong"
-                style={band === 'danger' ? styles.dangerHeadline : styles.cautionHeadline}
-              >
-                {moved.headline}
-              </Text>
-            </View>
-            <View style={band === 'danger' ? styles.dangerRule : styles.cautionRule} />
-          </>
-        ) : null}
-
         <View style={styles.recordRow}>
-          <Text opticalNudge variant="record" style={styles.citation}>
-            {result.neutralCitation}
-          </Text>
+          {/*
+            ALL THREE MOVED STATES CARRY A CHIP IN A LIST, including `doubted`.
+            "The state is legible from the list without opening anything."
+            renders/19-overruled-three-states.png, panel 3.
+          */}
+          {moved.kind === 'moved' ? (
+            <CitationMark
+              label={moved.chipLabel}
+              tone={
+                moved.band === 'danger'
+                  ? 'moved-danger'
+                  : moved.band === 'caution'
+                    ? 'moved'
+                    : 'moved-quiet'
+              }
+            />
+          ) : (
+            <Text opticalNudge variant="record" style={styles.citation}>
+              {result.neutralCitation}
+            </Text>
+          )}
           <Text opticalNudge variant="record" style={styles.court}>
             {result.court}
           </Text>
         </View>
 
-        <Text variant="legal" scale="cardTitle">
+        {moved.kind === 'moved' ? (
+          <Text opticalNudge variant="record">
+            {result.neutralCitation}
+          </Text>
+        ) : null}
+
+        {/* `set_aside` strikes the title wherever it appears. */}
+        <Text
+          variant="legal"
+          scale="cardTitle"
+          style={moved.kind === 'moved' && moved.strikeTitle ? styles.struck : undefined}
+        >
           {result.caseTitle}
         </Text>
 
@@ -101,11 +119,24 @@ export function ResultCard({
           {result.holding}
         </Text>
 
-        {/* `doubted` gets no band and one muted line. Binary is a correctness
-            bug in Indian practice: a doubted authority still binds. */}
-        {moved.kind === 'moved' && band === 'none' ? (
+        {/* What still stands is stated FIRST — it is what the advocate is
+            about to rely on. Leading with what fell buries the useful half. */}
+        {moved.kind === 'moved' && moved.whatStillStands ? (
+          <Text variant="ui" style={styles.stillStands}>
+            {moved.whatStillStands}
+          </Text>
+        ) : null}
+
+        {moved.kind === 'moved' && moved.band === 'none' ? (
           <Text variant="ui" style={styles.doubtedLine}>
             {moved.headline}
+          </Text>
+        ) : null}
+
+        {/* Never present a status read earlier as current. */}
+        {moved.kind === 'moved' && moved.asOf ? (
+          <Text variant="ui" style={styles.asOf}>
+            Good-law status as of {moved.asOf}
           </Text>
         ) : null}
 
@@ -156,18 +187,17 @@ const styles = StyleSheet.create({
 
   markRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   markHeadline: { flex: 1, color: color.ink },
-  cautionHeadline: { flex: 1, color: state.cautionText },
-  dangerHeadline: { flex: 1, color: state.danger },
 
   dashedRule: { height: 1, borderTopWidth: 1, borderStyle: 'dashed', borderColor: color.rule },
-  cautionRule: { height: 1, backgroundColor: state.caution, opacity: 0.35 },
-  dangerRule: { height: 1, backgroundColor: state.danger, opacity: 0.35 },
 
   recordRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   citation: { flex: 1 },
-  court: { textAlign: 'right' },
+  court: { flex: 1, textAlign: 'right' },
+  struck: { textDecorationLine: 'line-through', color: color.inkMuted },
   holding: { color: color.inkMuted },
+  stillStands: { color: color.ink },
   doubtedLine: { color: color.inkMuted },
+  asOf: { color: color.inkFaint },
   reason: { color: color.inkMuted },
   ecourts: { color: color.oxblood },
 });

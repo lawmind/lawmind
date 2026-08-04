@@ -5,6 +5,9 @@ import { FolderOpen } from 'lucide-react-native';
 
 import { Button } from '../src/components/Button';
 import { Card } from '../src/components/Card';
+import { CitationFooter } from '../src/components/CitationFooter';
+import { CitationMark } from '../src/components/CitationMark';
+import { MOCK_RESULTS } from '../src/api/fixtures';
 import { EmptyState } from '../src/components/EmptyState';
 import { Input } from '../src/components/Input';
 import { Screen } from '../src/components/Screen';
@@ -167,6 +170,24 @@ export default function Gallery() {
           icon={FolderOpen}
           title={hindi ? 'कोई मुक़दमा नहीं' : 'No matters yet'}
         />
+
+        {/*
+          The two marks that render, side by side, so the greyscale check is a
+          look rather than an archaeology exercise. They differ by SHAPE — a
+          dashed edge against a filled block — which is the only property that
+          survives sunlight washout and colour-vision deficiency.
+        */}
+        <SectionRule label="Citation marks" />
+        <View style={styles.stack}>
+          <CitationMark label="Not confirmed" tone="unconfirmed" />
+          <CitationMark label="Doubted · referred" tone="moved-quiet" />
+          <CitationMark label="Paras 19–20 set aside" tone="moved" />
+          <CitationMark label="Overruled" tone="moved-danger" />
+        </View>
+
+        <SectionRule label="Draft footer" />
+        <CitationFooter citations={MOCK_RESULTS.slice(0, 2)} />
+        <CitationFooter citations={MOCK_RESULTS.slice(0, 3)} />
 
         <SectionRule label="Chrome" />
         <Button

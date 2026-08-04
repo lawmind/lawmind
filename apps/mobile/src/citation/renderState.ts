@@ -33,17 +33,51 @@ export type ExistenceMark =
    */
   | { kind: 'unconfirmed'; headline: string; reason: string; ecourtsAction: string };
 
-/** What the card says about whether the law has MOVED. Independent of the above. */
+/**
+ * What the surface says about whether the law has MOVED. Independent of the above.
+ *
+ * THREE STATES, NOT ONE. Binary is a correctness bug in Indian practice: a
+ * partly set aside authority is still good on everything the appeal did not
+ * touch, and a doubted one still binds until the reference is decided.
+ *
+ * `renders/19-overruled-three-states.png` is the geometry authority.
+ */
 export type MovedMark =
   | { kind: 'none' }
   | {
       kind: 'moved';
       status: Exclude<OverruledStatus, 'none'>;
+      /** Detail-surface headline. The band, where there is one, carries this. */
       headline: string;
+      /**
+       * List-surface chip. ALL THREE STATES GET ONE — including `doubted`, whose
+       * chip is neutral. "The state is legible from the list without opening
+       * anything." A list that shows nothing for `doubted` makes the advocate
+       * open the judgment to find out, which is the opposite of the point.
+       */
+      chipLabel: string;
       /** `set_aside` is the one case where Lawmind refuses to let an authority be used. */
       blocksAddToMatter: boolean;
-      /** `doubted` gets no band — one muted line. Binary is a correctness bug in Indian practice. */
+      /** `doubted` gets no band at all — one muted line. Shouting equally for all three trains advocates to ignore it. */
       band: 'danger' | 'caution' | 'none';
+      /** `set_aside` only: the title is struck through wherever it appears. */
+      strikeTitle: boolean;
+      /** `set_aside` only: "cite this instead" is mandatory, not a nicety. */
+      requiresReplacement: boolean;
+      /**
+       * `partly_set_aside` only, and IT IS STATED FIRST.
+       *
+       * What survives is what the advocate is about to rely on. Leading with
+       * what fell buries the useful half under the alarming one.
+       */
+      whatStillStands?: string;
+      /**
+       * Set only when the status being rendered was read earlier and could not
+       * be re-read now. `docs/CITATION_HARNESS.md`: "Offline surfaces render the
+       * status they last read WITH ITS AS-OF DATE SHOWN; they never present a
+       * stale status as current."
+       */
+      asOf?: string;
     };
 
 export type CitationRender = { existence: ExistenceMark; moved: MovedMark };
@@ -88,42 +122,68 @@ function existenceMark(
   };
 }
 
-/**
- * Three states, not one. Binary is a correctness bug in Indian practice: a
- * partly set aside authority is still good on everything the appeal did not
- * touch, and a doubted one still binds.
- */
-function movedMark(status: OverruledStatus, note: string | undefined, paras: number[] | undefined): MovedMark {
+/** "paras 19–20", "para 19", or null when the server did not name any. */
+function affectedParagraphs(paras: number[] | undefined): string | null {
+  if (!paras?.length) return null;
+  if (paras.length === 1) return `para ${paras[0]}`;
+  return `paras ${paras[0]}–${paras[paras.length - 1]}`;
+}
+
+function movedMark(
+  status: OverruledStatus,
+  note: string | undefined,
+  paras: number[] | undefined,
+  asOf: string | undefined
+): MovedMark {
   if (status === 'none') return { kind: 'none' };
 
-  const affected = paras?.length
-    ? `paras ${paras.length === 1 ? paras[0] : `${paras[0]}–${paras[paras.length - 1]}`}`
-    : null;
+  const affected = affectedParagraphs(paras);
 
   switch (status) {
+    /**
+     * DANGER RED, NOT CAUTION AMBER. The band replaces the header, the title is
+     * struck through, and the primary action is disabled — the only state where
+     * Lawmind refuses to let an authority be used.
+     */
     case 'set_aside':
       return {
         kind: 'moved',
         status,
-        headline: note ?? 'This authority has been set aside.',
+        headline: 'This judgment is no longer good law',
+        chipLabel: 'Overruled',
         blocksAddToMatter: true,
         band: 'danger',
+        strikeTitle: true,
+        requiresReplacement: true,
+        asOf,
       };
+
     case 'partly_set_aside':
       return {
         kind: 'moved',
         status,
-        headline: affected ? `Do not rely on ${affected}` : 'Partly set aside.',
+        headline: affected ? `Part of it no longer holds — ${affected} set aside` : 'Part of it no longer holds',
+        chipLabel: affected ? `${affected[0]!.toUpperCase()}${affected.slice(1)} set aside` : 'Partly set aside',
         blocksAddToMatter: false,
         band: 'caution',
+        strikeTitle: false,
+        requiresReplacement: false,
+        whatStillStands: note,
+        asOf,
       };
+
+    /** No band at all. Still binding, so shouting would be wrong. */
     case 'doubted':
       return {
         kind: 'moved',
         status,
         headline: note ?? 'Doubted in a later judgment. Still binding.',
+        chipLabel: 'Doubted · referred',
         blocksAddToMatter: false,
         band: 'none',
+        strikeTitle: false,
+        requiresReplacement: false,
+        asOf,
       };
   }
 }
@@ -138,13 +198,16 @@ function movedMark(status: OverruledStatus, note: string | undefined, paras: num
  * §Search: "A citation missing them is a bug: the client renders 'not
  * confirmed' and reports it."
  */
-export function citationRender(result: {
-  verificationState?: SearchResult['verificationState'];
-  overruledStatus?: SearchResult['overruledStatus'];
-  overruledNote?: string;
-  overruledParas?: number[];
-  unconfirmedReason?: string;
-}): CitationRender {
+export function citationRender(
+  result: Partial<SearchResult> & {
+    /**
+     * Pass ONLY when this status could not be re-read now — an offline surface
+     * rendering what it last saw. Absent means the status is live, which is the
+     * normal case and the one the never-cached rule requires.
+     */
+    statusAsOf?: string;
+  }
+): CitationRender {
   const hasFields = result.verificationState !== undefined && result.overruledStatus !== undefined;
 
   if (!hasFields) {
@@ -156,7 +219,12 @@ export function citationRender(result: {
 
   return {
     existence: existenceMark(result.verificationState!, result.unconfirmedReason),
-    moved: movedMark(result.overruledStatus!, result.overruledNote, result.overruledParas),
+    moved: movedMark(
+      result.overruledStatus!,
+      result.overruledNote,
+      result.overruledParas,
+      result.statusAsOf
+    ),
   };
 }
 
