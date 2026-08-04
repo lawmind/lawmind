@@ -228,7 +228,23 @@ export function Text({
    * text, which is what `mixedScript` below handles.
    */
   const hasDevanagari = typeof children === 'string' && DEVANAGARI.test(children);
-  const devanagari = language === 'hi' || hasDevanagari;
+
+  /**
+   * A WHOLLY-LATIN STRING TAKES THE LATIN FACE, EVEN ON A HINDI SCREEN.
+   *
+   * Citations stay English (PD-12), and so do case names, party names and
+   * anything quoted from an English judgment — which on a Hindi screen is most
+   * of what an advocate actually reads. Resolving those to Noto Serif
+   * Devanagari renders them in that face's Latin coverage rather than in Source
+   * Serif 4, so the legal type system quietly changes the moment the locale
+   * does. Noto has the glyphs, so nothing looks broken; it just stops being the
+   * typeface the product is set in.
+   *
+   * Script follows the STRING. Locale only decides what to do when the string
+   * cannot say — a non-string child, or an empty one.
+   */
+  const devanagari =
+    typeof children === 'string' && children.length > 0 ? hasDevanagari : language === 'hi';
 
   const resolved = devanagari ? resolveDevanagari(variant, scale) : resolveLatin(variant, scale);
 

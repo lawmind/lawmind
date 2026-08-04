@@ -6,24 +6,24 @@ import type {
   CourtLookupResult,
   DocumentType,
   DraftDocument,
+  HiddenResult,
+  JudgmentDetail,
   Matter,
   MatterEvent,
+  SearchFilters,
   SearchRequest,
   SearchResponse,
+  SearchResult,
   Session,
   User,
 } from './contract';
+import { MOCK_FACETS, MOCK_JUDGMENTS, MOCK_RESULTS } from './fixtures';
 
 /**
  * The mock server. RCC never waits on LCC.
  *
- * Every fixture below is INVENTED DATA IN A DEVELOPMENT FILE and is labelled as
- * such on screen — `MOCK` in the neutral citation, a fake CNR. It exists so a
- * shell can be laid out against realistic shapes, not so anyone can mistake it
- * for a judgment. No real citation appears here: a plausible-looking fake
- * citation sitting in a repo is exactly the artefact this product exists to
- * prevent, and the first person to copy one out of a screenshot would be
- * copying a hallucination we typed ourselves.
+ * Fixtures live in `fixtures.ts` and are labelled there. No real citation
+ * appears in either file.
  *
  * Latency is deliberate. A mock that answers in 0ms hides every loading state,
  * and "never a bare spinner on search" is a rule you can only honour if the
@@ -32,8 +32,8 @@ import type {
 
 const LATENCY_MS = 450;
 
-const delay = <T>(data: T): Promise<ApiResponse<T>> =>
-  new Promise((resolve) => setTimeout(() => resolve({ ok: true, data }), LATENCY_MS));
+const delay = <T>(data: T, ms: number = LATENCY_MS): Promise<ApiResponse<T>> =>
+  new Promise((resolve) => setTimeout(() => resolve({ ok: true, data }), ms));
 
 const MOCK_USER: User = {
   id: 'usr_mock',
@@ -45,60 +45,70 @@ const MOCK_USER: User = {
   termsVersion: null,
 };
 
+export const DEFAULT_FILTERS: SearchFilters = {
+  courts: [],
+  bench: [],
+  date: 'any',
+  subjects: [],
+  onlyVerified: false,
+  excludeSetAsideOrDoubted: false,
+};
+
 /**
- * Three fields on every row, always. The mixed list is deliberate: a verified
- * authority, an unverified one, and one that is BOTH verified AND set aside —
- * the case a single-enum model cannot express and the one most likely to be got
- * wrong downstream.
+ * Filtering, mocked exactly as the server would do it — INCLUDING what it
+ * removed and why.
  *
- * What renders from these is derived at render time in S2. Nothing in S0 draws
- * a citation, and no badge is built for the verified row: verified is silent.
+ * A filter never hides something silently. The excluded rows come back named,
+ * so the results screen can offer the one-tap escape rather than quietly
+ * showing a shorter list.
  */
-const MOCK_RESULTS: SearchResponse['results'] = [
-  {
-    judgmentId: 'jdg_mock_1',
-    caseTitle: 'Mock Petitioner v. Mock State',
-    neutralCitation: 'MOCK 2026 EXAMPLE 1',
-    reporterCitations: ['MOCK (2026) 1 EX 1'],
-    court: 'Mock High Court',
-    judgmentDate: '2026-02-11',
-    holding: 'Placeholder holding. Fixture text, not law.',
-    operativeParagraph: 'Placeholder operative paragraph. Fixture text, not law.',
-    verificationState: 'verified',
-    verifiedBySource: 'corpus',
-    overruledStatus: 'none',
-  },
-  {
-    judgmentId: 'jdg_mock_2',
-    caseTitle: 'Mock Applicant v. Mock Respondent',
-    neutralCitation: 'MOCK 2026 EXAMPLE 2',
-    reporterCitations: [],
-    court: 'Mock District Court',
-    judgmentDate: '2026-01-04',
-    holding: 'Placeholder holding. Fixture text, not law.',
-    operativeParagraph: 'Placeholder operative paragraph. Fixture text, not law.',
-    verificationState: 'unverified',
-    verifiedBySource: 'none',
-    overruledStatus: 'none',
-  },
-  {
-    judgmentId: 'jdg_mock_3',
-    caseTitle: 'Mock Appellant v. Mock Union',
-    neutralCitation: 'MOCK 2025 EXAMPLE 3',
-    reporterCitations: ['MOCK (2025) 4 EX 88'],
-    court: 'Mock High Court',
-    judgmentDate: '2025-09-30',
-    holding: 'Placeholder holding. Fixture text, not law.',
-    operativeParagraph: 'Placeholder operative paragraph. Fixture text, not law.',
-    // Verified AND set aside. Different questions, different sources.
-    verificationState: 'verified',
-    verifiedBySource: 'public_x2',
-    overruledStatus: 'set_aside',
-    overruledByJudgmentId: 'jdg_mock_4',
-    overruledParas: [14, 15],
-    overruledNote: 'Fixture. Set aside in a later mock appeal.',
-  },
-];
+function applyFilters(
+  results: SearchResult[],
+  filters: SearchFilters
+): { kept: SearchResult[]; hidden: HiddenResult[] } {
+  const kept: SearchResult[] = [];
+  const hidden: HiddenResult[] = [];
+
+  for (const r of results) {
+    const facet = MOCK_FACETS[r.judgmentId];
+    let hiddenBy: string | null = null;
+
+    if (filters.courts.length && facet && !filters.courts.includes(facet.court)) {
+      hiddenBy = 'court';
+    } else if (filters.subjects.length && facet && !filters.subjects.includes(facet.subject)) {
+      hiddenBy = 'subject';
+    } else if (filters.date === 'last_10' && facet && facet.year < 2016) {
+      hiddenBy = 'last 10 years';
+    } else if (filters.date === 'since_2020' && facet && facet.year < 2020) {
+      hiddenBy = 'since 2020';
+    } else if (filters.onlyVerified && r.verificationState !== 'verified') {
+      hiddenBy = '"only verified authorities"';
+    } else if (
+      filters.excludeSetAsideOrDoubted &&
+      (r.overruledStatus === 'set_aside' ||
+        r.overruledStatus === 'partly_set_aside' ||
+        r.overruledStatus === 'doubted')
+    ) {
+      hiddenBy = '"good law only"';
+    }
+
+    if (hiddenBy) hidden.push({ result: r, hiddenBy });
+    else kept.push(r);
+  }
+
+  return { kept, hidden };
+}
+
+/** Naive fixture match. Real ranking is hybrid sparse + dense retrieval, LCC's lane. */
+function matches(r: SearchResult, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    r.caseTitle.toLowerCase().includes(q) ||
+    r.holding.toLowerCase().includes(q) ||
+    r.neutralCitation.toLowerCase().includes(q)
+  );
+}
 
 export const mockApi = {
   /* auth */
@@ -110,14 +120,52 @@ export const mockApi = {
     delay({ termsAcceptedAt: new Date().toISOString(), termsVersion: version }),
 
   /* search */
-  search: (_request: SearchRequest): Promise<ApiResponse<SearchResponse>> =>
-    delay({
-      results: MOCK_RESULTS,
-      // Never empty by omission. This one is the point of the fixture.
-      unverifiedReferences: [
-        { citationClaimed: 'MOCK 2024 EXAMPLE 9', reason: 'No tier confirmed this reference.' },
-      ],
+  search: (
+    request: SearchRequest & { filters?: SearchFilters }
+  ): Promise<ApiResponse<SearchResponse>> => {
+    const filters = (request.filters as SearchFilters | undefined) ?? DEFAULT_FILTERS;
+    const found = MOCK_RESULTS.filter((r) => matches(r, request.query));
+    const { kept, hidden } = applyFilters(found, filters);
+    return delay({
+      results: kept,
+      /**
+       * NEVER EMPTY BY OMISSION. Anything the model referenced that no tier
+       * confirmed appears here and is shown. Silent-drop rate is tracked with a
+       * zero threshold — a citation the advocate never sees is worse than one
+       * marked unconfirmed, because they cannot correct what they were not
+       * shown.
+       */
+      unverifiedReferences: request.query.trim()
+        ? [
+            {
+              citationClaimed: 'MOCK 2024 EXAMPLE 9',
+              reason: 'No tier confirmed this reference.',
+            },
+          ]
+        : [],
       searchId: 'srch_mock',
+      hidden,
+    });
+  },
+
+  judgment: (id: string): Promise<ApiResponse<JudgmentDetail>> => {
+    const judgment = MOCK_JUDGMENTS[id];
+    if (!judgment)
+      return Promise.resolve({
+        ok: false,
+        error: { code: 'not_found', message: `No judgment ${id} in the fixture corpus.` },
+      });
+    return delay(judgment, 260);
+  },
+
+  /**
+   * NEVER BYPASS THE eCOURTS CAPTCHA. The server pre-fills the search; the
+   * advocate solves the CAPTCHA; the confirmed result caches permanently.
+   */
+  ecourtsRoute: (citationText: string) =>
+    delay({
+      ecourtsUrl: 'https://services.ecourts.gov.in/',
+      prefilledQuery: citationText,
     }),
 
   /* matters */
@@ -133,7 +181,7 @@ export const mockApi = {
       subject: 'Fixture briefing',
       whereItStands: 'Fixture text.',
       pendingBeforeCourt: 'Fixture text.',
-      authorities: MOCK_RESULTS,
+      authorities: MOCK_RESULTS.slice(0, 3),
       checklist: [{ id: 'chk_1', label: 'Fixture checklist item', done: false }],
       datesNotConfirmed: false,
       generatedAt: new Date().toISOString(),
@@ -147,7 +195,7 @@ export const mockApi = {
       documentType: 'mock',
       language: 'en',
       paragraphs: [{ index: 0, text: 'Fixture paragraph.' }],
-      citations: MOCK_RESULTS,
+      citations: MOCK_RESULTS.slice(0, 3),
       unverifiedReferences: [],
     }),
 

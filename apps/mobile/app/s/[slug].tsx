@@ -2,6 +2,7 @@ import { Redirect, useLocalSearchParams } from 'expo-router';
 
 import { ScreenShell } from '../../src/screens/ScreenShell';
 import { APP_SCREENS } from '../../src/screens/manifest';
+import { REAL_ROUTES } from '../../src/screens/realRoutes';
 
 /**
  * Every app screen in the inventory, from one route.
@@ -25,6 +26,11 @@ export default function Route() {
   const screen = APP_SCREENS.find((s) => s.slug === slug);
 
   if (!screen) return <Redirect href="/+not-found" />;
+
+  // Built in a sprint since S0 — go to the real screen, not to a shell
+  // describing it. See `realRoutes.ts` for why several rows share one.
+  const real = REAL_ROUTES[screen.slug];
+  if (real) return <Redirect href={real} />;
 
   return <ScreenShell n={screen.n} />;
 }

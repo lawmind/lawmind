@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { useAppFonts } from '../src/theme/fonts';
+import { useReadingStore } from '../src/state/reading';
 import { color, family, type as typeScale } from '../src/theme/tokens';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -24,10 +25,18 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useAppFonts();
+  const hydrate = useReadingStore((s) => s.hydrate);
 
   useEffect(() => {
     if (fontsLoaded || fontError) SplashScreen.hideAsync().catch(() => {});
   }, [fontsLoaded, fontError]);
+
+  // Reading position and highlights come off the device before anything is
+  // drawn. Offline is a requirement, not an edge case: the moment an advocate
+  // most wants their place back is standing in a court building with no signal.
+  useEffect(() => {
+    void hydrate();
+  }, [hydrate]);
 
   // Nothing renders until the faces are in. A Hindi string in a fallback face
   // is a screen of missing-glyph boxes, and that is a product failure here.

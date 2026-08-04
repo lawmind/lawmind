@@ -47,6 +47,71 @@ export type SearchResult = {
   overruledByJudgmentId?: string;
   overruledParas?: number[];
   overruledNote?: string;
+  /**
+   * NOT IN `docs/API_CONTRACTS.md` — CLIENT ASSUMPTION, FLAGGED FOR LCC.
+   *
+   * The dashed card shows the reason inside itself ("two secondary sources
+   * describe it; the portal has no record"). The contract carries a `reason`
+   * on `unverifiedReferences` but not on a `results` row, and a result can be
+   * `unverified` while still being a resolved judgment. Without this the card
+   * falls back to a generic line, which is honest but tells the advocate less
+   * than the server already knows.
+   */
+  unconfirmedReason?: string;
+};
+
+/**
+ * `GET /judgments/:id` — the contract says only "{ judgment with fullText }".
+ *
+ * THE PARAGRAPH SHAPE BELOW IS A CLIENT ASSUMPTION AND IS FLAGGED FOR LCC.
+ * PD-9 makes paragraph anchors the first-priority feature of the reading view —
+ * advocates cite by paragraph, and without numbered paragraphs the view is
+ * decorative. A single `fullText` blob cannot carry an anchor, so the client
+ * needs paragraphs as rows with their court-assigned numbers.
+ *
+ * `number` is the number PRINTED IN THE REPORT, not an array index. They are
+ * not always contiguous and they do not always start at 1.
+ */
+export type JudgmentParagraph = {
+  number: number;
+  text: string;
+  /** Set where the paragraph cites another judgment we hold — drives the jump. */
+  citesJudgmentId?: string;
+  operative?: boolean;
+};
+
+export type JudgmentDetail = SearchResult & {
+  bench: string;
+  reliedOn: { judgmentId: string; caseTitle: string; neutralCitation: string }[];
+  holdingParagraphNumber: number;
+  operativeParagraphNumber: number;
+  paragraphs: JudgmentParagraph[];
+};
+
+/** PD-10 — five filter sections. Judge and reporter were cut and have no key. */
+export type SearchFilters = {
+  courts: ('sc' | 'hc' | 'district' | 'tribunal')[];
+  bench: ('constitution' | 'three_plus')[];
+  date: 'any' | 'last_10' | 'since_2020';
+  subjects: string[];
+  /** "Hides anything we could not confirm." */
+  onlyVerified: boolean;
+  /** "Good law only." */
+  excludeSetAsideOrDoubted: boolean;
+};
+
+/**
+ * A FILTER NEVER HIDES SOMETHING SILENTLY.
+ *
+ * Every result a filter removed is named back to the advocate with a one-tap
+ * escape. This is the same principle as `unverifiedReferences` — the advocate
+ * always knows what they are not seeing, because they cannot correct what they
+ * were never shown.
+ */
+export type HiddenResult = {
+  /** The whole row, not just its name — "show it anyway" must render a real card. */
+  result: SearchResult;
+  hiddenBy: string;
 };
 
 /**
@@ -61,6 +126,8 @@ export type SearchResponse = {
   results: SearchResult[];
   unverifiedReferences: UnverifiedReference[];
   searchId: string;
+  /** Client assumption, flagged for LCC — see `HiddenResult`. */
+  hidden?: HiddenResult[];
 };
 
 export type SearchRequest = {
