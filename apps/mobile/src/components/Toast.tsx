@@ -1,5 +1,10 @@
-import { useEffect, useRef } from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { Glass } from './Glass';
 import { Text } from './Text';
@@ -19,21 +24,15 @@ const TOAST_BOTTOM = 104;
  * spacing rule governs.
  */
 export function Toast({ message, onDone }: { message: string | null; onDone?: () => void }) {
-  const opacity = useRef(new Animated.Value(0)).current;
+  const opacity = useSharedValue(0);
+  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   useEffect(() => {
     if (!message) return;
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: duration.fade,
-      useNativeDriver: true,
-    }).start();
+    opacity.value = withTiming(1, { duration: duration.fade });
     const timer = setTimeout(() => {
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: duration.fade,
-        useNativeDriver: true,
-      }).start(onDone);
+      opacity.value = withTiming(0, { duration: duration.fade });
+      onDone?.();
     }, TOAST_MS);
     return () => clearTimeout(timer);
   }, [message, onDone, opacity]);
@@ -41,7 +40,7 @@ export function Toast({ message, onDone }: { message: string | null; onDone?: ()
   if (!message) return null;
 
   return (
-    <Animated.View pointerEvents="none" style={[styles.host, { opacity }]}>
+    <Animated.View pointerEvents="none" style={[styles.host, animatedStyle]}>
       <Glass edge="none" ink style={styles.bar}>
         <Text numberOfLines={1} variant="ui" style={styles.label}>
           {message}

@@ -1,17 +1,31 @@
-import type { ApiResponse, Statute, StatuteSection } from './contract';
+import type {
+  ApiResponse,
+  SearchFilters,
+  SearchResponse,
+  Statute,
+  StatuteSection,
+} from './contract';
 
 /**
- * THE REAL API. Statutes only, for now.
+ * THE REAL API.
  *
- * `GET /statutes` and `GET /statutes/sections` are live with all three criminal
- * codes complete — BNS 358 sections, BNSS 531, BSA 170, in force 2024-07-01,
- * real statutory text from indiacode.
+ * `POST /search` runs against all 38,341 Supreme Court judgments (1950–2026),
+ * and `GET /statutes` / `/statutes/sections` against BNS, BNSS and BSA complete.
  *
- * JUDGMENT SEARCH STAYS ON MOCKS. `POST /search` is live too, but the judgment
- * corpus is still loading, so it returns thin results and some queries return
- * nothing. That is the corpus filling, not a bug — and not something to design
- * around. Building a UI against a half-loaded corpus teaches the wrong lessons
- * about empty states.
+ * WHAT IS NOT HERE, AND WHY THE JUDGMENT DETAIL SCREEN IS STILL MOCKED:
+ * `GET /judgments/:id` does not exist on production — it answers
+ * `{"ok":false,"error":{"code":"NOT_FOUND","message":"no route for GET
+ * /judgments/…"}}`. Search returns real judgment ids that nothing can yet open,
+ * so the detail screen and the reading view stay on fixtures until that route
+ * lands. Flagged for LCC rather than worked around.
+ *
+ * TWO THINGS ABOUT TODAY'S RESULTS THAT ARE NOT BUGS AND MUST NOT BE DESIGNED
+ * AROUND:
+ *   · `holding` is `""` on every row — it needs a summarisation model that is
+ *     not wired. The card already treats an absent summary as ordinary.
+ *   · retrieval is LEXICAL ONLY until embeddings land, so a paraphrased query
+ *     underperforms exact legal terms. No ranking affordance is built against
+ *     that behaviour, because the behaviour is about to change.
  */
 
 const BASE_URL = 'https://api-production-1c0b4.up.railway.app';
@@ -19,13 +33,14 @@ const BASE_URL = 'https://api-production-1c0b4.up.railway.app';
 /** Court corridors have terrible connectivity; a request that never returns is worse than one that fails. */
 const TIMEOUT_MS = 15_000;
 
-async function get<T>(path: string): Promise<ApiResponse<T>> {
+async function request<T>(path: string, init?: RequestInit): Promise<ApiResponse<T>> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   try {
     const response = await fetch(`${BASE_URL}${path}`, {
-      headers: { accept: 'application/json' },
+      ...init,
+      headers: { accept: 'application/json', ...init?.headers },
       signal: controller.signal,
     });
 
@@ -53,7 +68,41 @@ async function get<T>(path: string): Promise<ApiResponse<T>> {
   }
 }
 
+const get = <T>(path: string) => request<T>(path);
+
+/**
+ * SERVER FILTERS GO TO THE SERVER; RELIABILITY FILTERS STAY HERE.
+ *
+ * The contract accepts `court`, `dateFrom`, `dateTo` and `caseType` — facts
+ * about the judgment, which the corpus can filter on. "Only verified
+ * authorities" and "good law only" are questions about the three citation
+ * fields, which come back on every row, so the client can apply them without a
+ * round trip AND — this is the part that matters — can still name every row it
+ * removed. A server-side reliability filter would return a shorter list with
+ * nothing to name.
+ */
+function serverFilters(filters?: SearchFilters) {
+  if (!filters) return undefined;
+  const out: Record<string, string> = {};
+  if (filters.caseType) out.caseType = filters.caseType;
+  if (filters.date === 'last_10') out.dateFrom = `${new Date().getFullYear() - 10}-01-01`;
+  if (filters.date === 'since_2020') out.dateFrom = '2020-01-01';
+  return Object.keys(out).length ? out : undefined;
+}
+
 export const api = {
+  /**
+   * p95 is 453 ms server-side. The skeleton still renders, because a search
+   * that lands in half a second still lands after the screen has been drawn —
+   * and on a court-corridor connection it is a great deal longer than that.
+   */
+  search: (query: string, language: 'en' | 'hi', filters?: SearchFilters) =>
+    request<SearchResponse>('/search', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ query, language, filters: serverFilters(filters) }),
+    }),
+
   statutes: () => get<{ statutes: Statute[] }>('/statutes'),
 
   /**

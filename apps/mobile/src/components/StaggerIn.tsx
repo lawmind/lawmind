@@ -1,5 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { Animated, type ViewProps } from 'react-native';
+import { useEffect } from 'react';
+import { type ViewProps } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { duration, motion } from '../theme/tokens';
 
@@ -18,36 +25,26 @@ export function StaggerIn({
   children,
   ...rest
 }: ViewProps & { index?: number }) {
-  const progress = useRef(new Animated.Value(0)).current;
+  const progress = useSharedValue(0);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    const animation = Animated.timing(progress, {
-      toValue: 1,
-      duration: duration.push,
-      delay: Math.min(index, motion.staggerCap) * motion.staggerStep,
-      useNativeDriver: true,
-    });
-    animation.start();
-    return () => animation.stop();
+    progress.value = withDelay(
+      Math.min(index, motion.staggerCap) * motion.staggerStep,
+      withTiming(1, { duration: duration.push })
+    );
   }, [index, progress]);
+
+  /** Reduce Motion: drop the rise, keep the fade. */
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: progress.value,
+    transform: [{ translateY: reduceMotion ? 0 : motion.listRise * (1 - progress.value) }],
+  }));
 
   return (
     <Animated.View
       {...rest}
-      style={[
-        {
-          opacity: progress,
-          transform: [
-            {
-              translateY: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [motion.listRise, 0],
-              }),
-            },
-          ],
-        },
-        rest.style,
-      ]}
+      style={[animatedStyle, rest.style]}
     >
       {children}
     </Animated.View>

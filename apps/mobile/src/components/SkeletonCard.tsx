@@ -1,5 +1,13 @@
-import { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { Card } from './Card';
 import { color, motion, radius, space } from '../theme/tokens';
@@ -16,23 +24,29 @@ import { color, motion, radius, space } from '../theme/tokens';
  * Reduce Motion: the sweep becomes a static tint.
  */
 export function SkeletonCard({ index = 0, reduceMotion = false }: { index?: number; reduceMotion?: boolean }) {
-  const sweep = useRef(new Animated.Value(0)).current;
+  const sweep = useSharedValue(0);
 
   useEffect(() => {
     if (reduceMotion) return;
-    const loop = Animated.loop(
-      Animated.timing(sweep, {
-        toValue: 1,
-        duration: motion.shimmerLoop,
-        delay: index * motion.shimmerSiblingOffset,
-        useNativeDriver: true,
-      })
+    /**
+     * Siblings are offset rather than synchronised, so a column of skeletons
+     * reads as a surface catching light rather than as three bars blinking in
+     * lockstep. `-1` repeats forever; the loop lives on the UI thread, so it
+     * keeps sweeping while the search request it is waiting for lands.
+     */
+    sweep.value = withDelay(
+      index * motion.shimmerSiblingOffset,
+      withRepeat(
+        withTiming(1, { duration: motion.shimmerLoop, easing: Easing.linear }),
+        -1,
+        false
+      )
     );
-    loop.start();
-    return () => loop.stop();
   }, [index, reduceMotion, sweep]);
 
-  const translateX = sweep.interpolate({ inputRange: [0, 1], outputRange: [-240, 240] });
+  const sweepStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: -240 + sweep.value * 480 }],
+  }));
 
   return (
     <Card style={styles.card}>
@@ -46,7 +60,7 @@ export function SkeletonCard({ index = 0, reduceMotion = false }: { index?: numb
         pointerEvents="none"
         style={[
           styles.sweep,
-          reduceMotion ? styles.sweepStatic : { transform: [{ translateX }] },
+          reduceMotion ? styles.sweepStatic : sweepStyle,
         ]}
       />
     </Card>

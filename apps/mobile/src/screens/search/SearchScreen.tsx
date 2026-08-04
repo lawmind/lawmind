@@ -12,7 +12,8 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { StaggerIn } from '../../components/StaggerIn';
 import type { HiddenResult, SearchFilters, SearchResult } from '../../api/contract';
-import { DEFAULT_FILTERS, mockApi } from '../../api/mock';
+import { api } from '../../api/client';
+import { DEFAULT_FILTERS } from '../../api/mock';
 import { attentionCount } from '../../citation/renderState';
 import { useLanguage, useLanguageStore } from '../../state/language';
 import { color, radius, space } from '../../theme/tokens';
@@ -32,7 +33,16 @@ import { FiltersSheet } from './FiltersSheet';
  * `renders/64-verified-silent@2x.png`, `renders/63-search-filters@2x.png`.
  */
 
-type Phase = 'idle' | 'loading' | 'done';
+type Phase = 'idle' | 'loading' | 'done' | 'failed';
+
+/** Only the filters that can actually narrow a search — used to word the empty state honestly. */
+const hasActiveFilters = (f: SearchFilters): boolean =>
+  Boolean(f.caseType) ||
+  f.date !== 'any' ||
+  f.courts.length > 0 ||
+  f.subjects.length > 0 ||
+  f.onlyVerified ||
+  f.excludeSetAsideOrDoubted;
 
 export function SearchScreen() {
   const router = useRouter();
@@ -48,22 +58,49 @@ export function SearchScreen() {
   );
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [failure, setFailure] = useState<string | null>(null);
 
   const run = useCallback(
     async (nextFilters: SearchFilters = filters, nextQuery: string = query) => {
       if (!nextQuery.trim()) return;
       setPhase('loading');
-      const response = await mockApi.search({
-        query: nextQuery,
-        language,
-        filters: nextFilters,
-      });
+      setFailure(null);
+
+      const response = await api.search(nextQuery, language, nextFilters);
+
+      /**
+       * A REACHABILITY FAILURE IS NOT AN EMPTY RESULT.
+       *
+       * "No judgments matched" tells an advocate the corpus does not have their
+       * authority. If we simply could not reach the corpus, that sentence is a
+       * lie with real consequences — they would stop looking. The two states are
+       * kept apart deliberately.
+       */
       if (!response.ok) {
-        setPhase('done');
+        setFailure(response.error.message);
+        setPhase('failed');
         return;
       }
-      setResults(response.data.results);
-      setHidden(response.data.hidden ?? []);
+
+      /**
+       * The reliability filters run here, against the three citation fields the
+       * server sends on every row — and every removal is NAMED. See
+       * `serverFilters` in the client for why these two do not go to the server.
+       */
+      const kept: SearchResult[] = [];
+      const removed: HiddenResult[] = [];
+      for (const r of response.data.results) {
+        if (nextFilters.onlyVerified && r.verificationState !== 'verified') {
+          removed.push({ result: r, hiddenBy: '"only verified authorities"' });
+        } else if (nextFilters.excludeSetAsideOrDoubted && r.overruledStatus !== 'none') {
+          removed.push({ result: r, hiddenBy: '"good law only"' });
+        } else {
+          kept.push(r);
+        }
+      }
+
+      setResults(kept);
+      setHidden(removed);
       setUnverifiedRefs(response.data.unverifiedReferences);
       setPhase('done');
     },
@@ -143,6 +180,14 @@ export function SearchScreen() {
             <SkeletonCard index={i} key={i} />
           ))}
         </View>
+      ) : phase === 'failed' ? (
+        <View style={styles.list}>
+          <EmptyState
+            actions={[{ label: 'Try again', onPress: () => void run() }]}
+            body={`${failure ?? 'Something went wrong.'} Your saved matters and anything you have already opened stay readable.`}
+            title="We could not reach the corpus"
+          />
+        </View>
       ) : phase === 'idle' ? (
         <View style={styles.list}>
           <EmptyState
@@ -153,8 +198,24 @@ export function SearchScreen() {
       ) : results.length === 0 ? (
         <View style={styles.list}>
           <EmptyState
-            actions={[{ label: 'Clear the filters', onPress: () => { setFilters(DEFAULT_FILTERS); void run(DEFAULT_FILTERS); } }]}
-            body={`Nothing matched “${query}”. The filters you have applied may be doing it — clearing them searches the whole corpus.`}
+            actions={
+              hasActiveFilters(filters)
+                ? [
+                    {
+                      label: 'Clear the filters',
+                      onPress: () => {
+                        setFilters(DEFAULT_FILTERS);
+                        void run(DEFAULT_FILTERS);
+                      },
+                    },
+                  ]
+                : []
+            }
+            body={
+              hasActiveFilters(filters)
+                ? `Nothing matched “${query}” with these filters. Clearing them searches all 38,341 judgments.`
+                : `Nothing matched “${query}”. Search currently matches the words in a judgment rather than their meaning, so exact legal terms find more than a paraphrase does.`
+            }
             title="No judgments matched"
           />
         </View>

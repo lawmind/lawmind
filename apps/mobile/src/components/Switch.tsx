@@ -1,5 +1,10 @@
-import { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { useEffect } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { haptics } from '../theme/haptics';
 import { color, control, duration, radius, state } from '../theme/tokens';
@@ -30,29 +35,26 @@ export function Switch({
   tone?: SwitchTone;
   accessibilityLabel?: string;
 }) {
-  const progress = useRef(new Animated.Value(value ? 1 : 0)).current;
-  const trackProgress = useRef(new Animated.Value(value ? 1 : 0)).current;
+  const progress = useSharedValue(value ? 1 : 0);
+  const trackProgress = useSharedValue(value ? 1 : 0);
 
   useEffect(() => {
     const to = value ? 1 : 0;
-    Animated.parallel([
-      // Knob 200ms, track 180ms — the colour lands first and the knob settles into it.
-      Animated.timing(progress, { toValue: to, duration: 200, useNativeDriver: true }),
-      Animated.timing(trackProgress, {
-        toValue: to,
-        duration: duration.fade,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Knob 200ms, track 180ms — the colour lands first and the knob settles into it.
+    progress.value = withTiming(to, { duration: 200 });
+    trackProgress.value = withTiming(to, { duration: duration.fade });
   }, [progress, trackProgress, value]);
 
   const onColor = tone === 'kill-switch' ? state.verified : color.oxblood;
   const offColor = tone === 'service' ? state.danger : control.switchOff;
 
-  const translateX = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, control.switchTravel],
-  });
+  const trackStyle = useAnimatedStyle(() => ({ opacity: trackProgress.value }));
+  const knobStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: -control.switchKnob / 2 },
+      { translateX: progress.value * control.switchTravel },
+    ],
+  }));
 
   return (
     <Pressable
@@ -71,10 +73,11 @@ export function Switch({
           style={[
             StyleSheet.absoluteFill,
             styles.trackFill,
-            { backgroundColor: onColor, opacity: trackProgress },
+            { backgroundColor: onColor },
+            trackStyle,
           ]}
         />
-        <Animated.View style={[styles.knob, { transform: [{ translateY: -control.switchKnob / 2 }, { translateX }] }]} />
+        <Animated.View style={[styles.knob, knobStyle]} />
       </View>
     </Pressable>
   );

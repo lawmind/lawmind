@@ -113,11 +113,25 @@ export function JudgmentScreen({
   const replacement = useReplacement(judgment?.overruledByJudgmentId);
 
   if (missing) {
+    /**
+     * NOT "that judgment is not in the corpus". IT ALMOST CERTAINLY IS — all
+     * 38,341 are — but `GET /judgments/:id` does not exist on production yet,
+     * so a real judgment id from search cannot be opened.
+     *
+     * The distinction is the whole point. Telling an advocate their authority
+     * is missing when the truth is that WE cannot open it would send them
+     * looking elsewhere for a judgment we hold. State our limitation, never
+     * imply a gap in the law.
+     */
     return (
       <Screen>
         <View style={styles.body}>
-          <Text variant="ui">That judgment is not in the corpus.</Text>
-          <Button label="Back" onPress={onBack} variant="secondary" />
+          <Text variant="uiStrong">We cannot open this judgment yet</Text>
+          <Text variant="ui" style={styles.muted}>
+            It is in the corpus — search found it. Reading the full text needs a route we have not
+            shipped, so for now the search result is all we can show you.
+          </Text>
+          <Button label="Back to results" onPress={onBack} variant="secondary" />
         </View>
       </Screen>
     );

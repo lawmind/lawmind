@@ -29,27 +29,16 @@ module.exports = {
    *
    * Jest applies `moduleNameMapper` in insertion order and takes the first
    * match, and the preset's `^react-native($|/.*)` matches every package whose
-   * name merely STARTS with `react-native` — `react-native-reanimated`,
-   * `react-native-worklets`, and this one. Spreading the preset first swallows
-   * them silently, which reads as a mysterious module failure rather than a
-   * config ordering bug.
+   * name merely STARTS with `react-native` — including this one. Spreading the
+   * preset first swallows it silently, which reads as a mysterious module
+   * failure rather than a config ordering bug.
+   *
+   * REANIMATED IS NOT MAPPED. It loads for real; `jest/setup.js` supplies the
+   * one thing it needs that Node cannot.
    */
   moduleNameMapper: {
     '^lucide-react-native$': '<rootDir>/jest/lucide-stub.js',
-    /**
-     * BOTH of these, and worklets is the one that actually throws. Mapping only
-     * `react-native-reanimated` leaves the runtime it depends on to load for
-     * real, which is what failed four times before.
-     */
-    '^react-native-reanimated$': '<rootDir>/node_modules/react-native-reanimated/mock.js',
-    /**
-     * `package.json` is deliberately NOT stubbed. Reanimated reads the worklets
-     * version from it at load and throws "Invalid version. Must be a string"
-     * when the stub answers instead — the runtime is what we are replacing, not
-     * the package's identity.
-     */
-    '^react-native-worklets$': '<rootDir>/jest/worklets-stub.js',
-    '^react-native-worklets/(?!package\\.json).*$': '<rootDir>/jest/worklets-stub.js',
+    '^react-native-reanimated$': '<rootDir>/jest/reanimated-stub.js',
     ...expoPreset.moduleNameMapper,
   },
 };

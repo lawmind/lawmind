@@ -1,7 +1,5 @@
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef } from 'react';
 import {
-  AccessibilityInfo,
-  Animated,
   Pressable as RNPressable,
   type PressableProps as RNPressableProps,
   type StyleProp,
@@ -9,6 +7,12 @@ import {
   type View,
   type ViewStyle,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { haptics } from '../theme/haptics';
 import { duration, motion, size } from '../theme/tokens';
@@ -16,15 +20,25 @@ import { duration, motion, size } from '../theme/tokens';
 /**
  * The press feel, in one place.
  *
- * Every tappable in Lawmind scales to 0.965 with −3% brightness and a light
- * haptic — ON PRESS-IN, because the press is felt and not the release. A
- * pressable that writes its own `onPressIn` animation is drifting from the rest
- * of the product.
+ * Every tappable in Lawmind scales to 0.965 with a light haptic — ON PRESS-IN,
+ * because the press is felt and not the release. A pressable that writes its
+ * own `onPressIn` animation is drifting from the rest of the product.
  *
- * Minimum target 44×44, enforced here rather than remembered per screen.
+ * Minimum target 44x44, enforced here rather than remembered per screen.
  *
- * Reduce Motion: drop every transform, keep opacity. The veil stays; the scale
- * goes. React Native has no brightness filter, so −3% is an ink veil at 3%.
+ * REANIMATED, NOT `Animated`. The value lives on the UI thread as a shared
+ * value and the style is computed in a worklet, so a press stays smooth while
+ * JavaScript is busy — and JavaScript is busiest exactly when a list of
+ * judgments is arriving, which is exactly when an advocate is tapping. RN's
+ * `Animated` hands work to native only after JS schedules it; under load the
+ * scheduling is what stutters, on the mid-range Android this is built for.
+ *
+ * `useReducedMotion` also replaces the per-instance `AccessibilityInfo`
+ * listener the old implementation registered — one subscription per pressable,
+ * on screens carrying forty of them.
+ *
+ * Reduce Motion: drop the transform, keep the veil. React Native has no
+ * brightness filter, so the darkening is an ink veil at 3%.
  */
 export type PressableProps = Omit<RNPressableProps, 'style'> & {
   style?: StyleProp<ViewStyle>;
@@ -36,52 +50,32 @@ export const Pressable = forwardRef<View, PressableProps>(function Pressable(
   { style, haptic = true, onPressIn, onPressOut, children, ...rest },
   ref
 ) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const veil = useRef(new Animated.Value(0)).current;
-  const reduceMotion = useRef(false);
+  const pressed = useSharedValue(0);
+  const reduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    let alive = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((on) => {
-      if (alive) reduceMotion.current = on;
-    });
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (on) => {
-      reduceMotion.current = on;
-    });
-    return () => {
-      alive = false;
-      sub.remove();
-    };
-  }, []);
-
-  const animate = (toScale: number, toVeil: number) =>
-    Animated.parallel([
-      Animated.timing(scale, {
-        toValue: reduceMotion.current ? 1 : toScale,
-        duration: duration.press,
-        useNativeDriver: true,
-      }),
-      Animated.timing(veil, { toValue: toVeil, duration: duration.press, useNativeDriver: true }),
-    ]).start();
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: reduceMotion ? 1 : 1 - pressed.value * (1 - motion.pressScale) }],
+  }));
+  const veilStyle = useAnimatedStyle(() => ({ opacity: pressed.value }));
 
   return (
     <RNPressable
       {...rest}
       onPressIn={(e) => {
         if (haptic) haptics.tap();
-        animate(motion.pressScale, 1);
+        pressed.value = withTiming(1, { duration: duration.press });
         onPressIn?.(e);
       }}
       onPressOut={(e) => {
-        animate(1, 0);
+        pressed.value = withTiming(0, { duration: duration.press });
         onPressOut?.(e);
       }}
       ref={ref}
       style={styles.target}
     >
-      <Animated.View style={[style, { transform: [{ scale }] }]}>
+      <Animated.View style={[style, animatedStyle]}>
         {children as React.ReactNode}
-        <Animated.View pointerEvents="none" style={[styles.veil, { opacity: veil }]} />
+        <Animated.View pointerEvents="none" style={[styles.veil, veilStyle]} />
       </Animated.View>
     </RNPressable>
   );
