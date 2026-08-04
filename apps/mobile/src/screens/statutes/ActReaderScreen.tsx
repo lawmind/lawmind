@@ -7,7 +7,7 @@ import { Screen } from '../../components/Screen';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import type { Statute, StatuteSection } from '../../api/contract';
-import { mockApi } from '../../api/mock';
+import { api } from '../../api/client';
 import { useReadingStore } from '../../state/reading';
 import { color, space } from '../../theme/tokens';
 
@@ -47,16 +47,19 @@ export function ActReaderScreen({
   const [sections, setSections] = useState<StatuteSection[] | null>(null);
   const [statute, setStatute] = useState<Statute | null>(null);
   const [current, setCurrent] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
   const textSize = useReadingStore((s) => s.textSize);
 
   useEffect(() => {
     let alive = true;
-    void mockApi.statutes().then((r) => {
+    void api.statutes().then((r) => {
       if (alive && r.ok) setStatute(r.data.statutes.find((s) => s.statuteId === statuteId) ?? null);
     });
     /** 600 covers BNSS at 531, so a whole Act arrives in one call. */
-    void mockApi.statuteSections({ actId: statuteId, limit: 600 }).then((r) => {
-      if (alive && r.ok) setSections(r.data.sections);
+    void api.statuteSections(statuteId, 600).then((r) => {
+      if (!alive) return;
+      if (r.ok) setSections(r.data.sections);
+      else setFailed(r.error.message);
     });
     return () => {
       alive = false;
@@ -90,11 +93,17 @@ export function ActReaderScreen({
         </Pressable>
         <Text variant="legal" style={styles.navTitle}>
           {statute?.shortTitle ?? 'Act'}
-          {statute ? `, ${statute.actYear}` : ''}
         </Text>
       </View>
 
-      {sections === null ? (
+      {failed ? (
+        <View style={styles.list}>
+          <Text variant="uiStrong">We could not load this Act</Text>
+          <Text variant="ui" style={styles.currency}>
+            {failed}
+          </Text>
+        </View>
+      ) : sections === null ? (
         <View style={styles.list}>
           <SkeletonCard index={0} />
         </View>

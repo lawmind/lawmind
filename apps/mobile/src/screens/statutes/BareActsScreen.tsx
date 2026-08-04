@@ -10,7 +10,7 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { StaggerIn } from '../../components/StaggerIn';
 import { Text } from '../../components/Text';
 import type { Statute } from '../../api/contract';
-import { mockApi } from '../../api/mock';
+import { api } from '../../api/client';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, space } from '../../theme/tokens';
 
@@ -34,12 +34,17 @@ import { color, space } from '../../theme/tokens';
  */
 export function BareActsScreen({ onOpenAct }: { onOpenAct: (statuteId: string) => void }) {
   const [statutes, setStatutes] = useState<Statute[] | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
     let alive = true;
-    void mockApi.statutes().then((r) => {
-      if (alive && r.ok) setStatutes(r.data.statutes);
+    void api.statutes().then((r) => {
+      if (!alive) return;
+      if (r.ok) setStatutes(r.data.statutes);
+      // WHEN WE CANNOT REACH THE CODES, SAY SO. Never an empty list dressed as
+      // "no acts" — an advocate would conclude we do not hold the BNS.
+      else setFailed(r.error.message);
     });
     return () => {
       alive = false;
@@ -67,7 +72,14 @@ export function BareActsScreen({ onOpenAct }: { onOpenAct: (statuteId: string) =
         />
       </View>
 
-      {statutes === null ? (
+      {failed ? (
+        <View style={styles.list}>
+          <Text variant="uiStrong">We could not load the codes</Text>
+          <Text variant="ui" style={styles.actMeta}>
+            {failed}
+          </Text>
+        </View>
+      ) : statutes === null ? (
         <View style={styles.list}>
           <SkeletonCard index={0} />
           <SkeletonCard index={1} />
@@ -95,11 +107,11 @@ export function BareActsScreen({ onOpenAct }: { onOpenAct: (statuteId: string) =
               <Pressable accessibilityRole="button" onPress={() => onOpenAct(item.statuteId)}>
                 <Card style={styles.act}>
                   <View style={styles.actHead}>
+                    {/* `shortTitle` already carries the year — "The Bharatiya
+                        Nyaya Sanhita, 2023". Appending `actYear` would print it
+                        twice. Government text is rendered as issued. */}
                     <Text variant="legal" scale="cardTitle" style={styles.actTitle}>
                       {item.shortTitle}
-                    </Text>
-                    <Text opticalNudge variant="record">
-                      {item.actYear}
                     </Text>
                   </View>
                   {item.hindiTitle ? (

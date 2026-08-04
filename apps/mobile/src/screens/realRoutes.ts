@@ -42,5 +42,10 @@ export const REAL_ROUTES: Record<string, Href> = {
 
   /* Statutes — a reader with no citation UI, because a statute has no citation */
   'bare-acts-index': '/acts',
-  'bare-acts-reading-bns': '/acts/act_bns',
+  /**
+   * The reader takes the Act's id from the index. On the live API that is a
+   * UUID, so there is nothing stable to hardcode here — and inventing one would
+   * be a link that 404s the day the corpus is reseeded.
+   */
+  'bare-acts-reading-bns': '/acts',
 };
