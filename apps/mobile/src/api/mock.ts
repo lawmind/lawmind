@@ -182,43 +182,89 @@ export const mockApi = {
    * from "nobody has heard of it", and only one of them is worth an advocate's
    * minute.
    */
-  citationCheck: (judgmentId: string): Promise<ApiResponse<CitationCheckDetail>> =>
-    delay(
-      {
-        judgmentId,
-        whatWeFound:
-          'A reference to this judgment appears in two secondary sources, both describing a quashing where the complaint named eleven relatives without particulars. We could not open the judgment itself.',
-        sources: [
-          {
-            source: 'Our reported corpus',
-            outcome: 'found',
-            detail: 'Found as a citation inside two other judgments. Not present as a judgment.',
-            checkedAt: new Date(Date.now() - 4 * 60_000).toISOString(),
+  citationCheck: (judgmentId: string): Promise<ApiResponse<CitationCheckDetail>> => {
+    const judgment = MOCK_JUDGMENTS[judgmentId];
+    const minutes = (n: number) => new Date(Date.now() - n * 60_000).toISOString();
+
+    /**
+     * THE CHECK MUST AGREE WITH THE ROW IT DESCRIBES.
+     *
+     * A fixture that returns "no result" for every source under a "Safe to
+     * file" heading is not a harmless placeholder — it is a screenshot of the
+     * product contradicting itself, and the next person to read it learns the
+     * wrong thing about how verification is meant to look.
+     */
+    const confirmed = judgment?.verificationState === 'verified';
+
+    return delay(
+      confirmed
+        ? {
+            judgmentId,
+            whatWeFound:
+              'The judgment resolves in our reported corpus and the case name matches the citation. The citator shows no later judgment disturbing it.',
+            sources: [
+              {
+                source: 'Our reported corpus',
+                outcome: 'found',
+                detail: 'Citation resolves · case name matches.',
+                checkedAt: minutes(2 * 24 * 60),
+              },
+              {
+                source: 'Reporter index',
+                outcome: 'found',
+                detail: 'Judgment text retrieved in full.',
+                checkedAt: minutes(2 * 24 * 60),
+              },
+              {
+                source: 'Citator',
+                outcome: 'found',
+                detail:
+                  judgment?.overruledStatus === 'none'
+                    ? 'Not overruled, doubted or referred.'
+                    : 'Status has moved — shown on the judgment.',
+                checkedAt: minutes(30),
+              },
+            ],
+            ecourtsUrl: 'https://services.ecourts.gov.in/',
+            prefilledQuery: judgment?.neutralCitation ?? '',
+          }
+        : {
+            judgmentId,
+            whatWeFound:
+              'A reference to this judgment appears in two secondary sources, both describing a quashing where the complaint named eleven relatives without particulars. We could not open the judgment itself.',
+            sources: [
+              {
+                source: 'Our reported corpus',
+                outcome: 'found',
+                detail:
+                  'Found as a citation inside two other judgments. Not present as a judgment.',
+                checkedAt: minutes(4),
+              },
+              {
+                source: 'Mock High Court judgment portal',
+                outcome: 'not_found',
+                detail: 'No result for this case number.',
+                checkedAt: minutes(4),
+              },
+              {
+                source: 'Reporter index',
+                outcome: 'not_found',
+                detail: 'Citation number does not resolve. May be a reporting error in the source.',
+                checkedAt: minutes(6),
+              },
+              {
+                source: 'eCourts services',
+                outcome: 'needs_you',
+                detail: 'Requires a captcha we cannot complete for you.',
+                checkedAt: minutes(0),
+              },
+            ],
+            ecourtsUrl: 'https://services.ecourts.gov.in/',
+            prefilledQuery: judgment?.neutralCitation ?? '',
           },
-          {
-            source: 'Mock High Court judgment portal',
-            outcome: 'not_found',
-            detail: 'No result for this case number.',
-            checkedAt: new Date(Date.now() - 4 * 60_000).toISOString(),
-          },
-          {
-            source: 'Reporter index',
-            outcome: 'not_found',
-            detail: 'Citation number does not resolve. May be a reporting error in the source.',
-            checkedAt: new Date(Date.now() - 6 * 60_000).toISOString(),
-          },
-          {
-            source: 'eCourts services',
-            outcome: 'needs_you',
-            detail: 'Requires a captcha we cannot complete for you.',
-            checkedAt: new Date().toISOString(),
-          },
-        ],
-        ecourtsUrl: 'https://services.ecourts.gov.in/',
-        prefilledQuery: 'MOCK 2024 EXAMPLE 9424',
-      },
       260
-    ),
+    );
+  },
 
   /* matters */
   matters: (): Promise<ApiResponse<Matter[]>> => delay([]),

@@ -30,6 +30,12 @@
       ],
       "@lawmind/screens": [
         "../mobile/src/screens/manifest.ts"
+      ],
+      "@lawmind/citation": [
+        "../mobile/src/citation/renderState.ts"
+      ],
+      "@lawmind/contract": [
+        "../mobile/src/api/contract.ts"
       ]
     }
   },
@@ -39,7 +45,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "../mobile/src/theme/tokens.ts",
-    "../mobile/src/screens/manifest.ts"
+    "../mobile/src/screens/manifest.ts",
+    "../mobile/src/citation/renderState.ts",
+    "../mobile/src/api/contract.ts"
   ],
   "exclude": [
     "node_modules"

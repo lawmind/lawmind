@@ -217,3 +217,137 @@ a {
   width: 28px;
   flex: none;
 }
+
+/* ------------------------------------------------- 60 · citation monitor */
+
+/* The desk is wider than a phone, so the metrics sit side by side. Density
+   differs from the app; values do not — every colour below is a token. */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.metric {
+  padding: 16px;
+}
+
+/*
+ * A BREACHED THRESHOLD IS DANGER, NOT CAUTION.
+ *
+ * Amber is reserved for one meaning — the law has moved — and a metric about
+ * our own pipeline is not that. Silent drop, false verified and stale overruled
+ * all sit at zero, and anything above zero is a defect in us.
+ */
+.metric-breached {
+  border-color: var(--danger);
+  border-left-width: 2px;
+}
+
+.metric-value {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 28px;
+  margin: 8px 0 0;
+}
+
+.metric-breached .metric-value {
+  color: var(--danger);
+}
+
+.metric-threshold {
+  color: var(--ink-muted);
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
+.metric-detail {
+  color: var(--ink-faint);
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+.section-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 32px 0 12px;
+}
+
+.breakdown {
+  padding: 16px;
+}
+
+.breakdown + .breakdown {
+  border-top: 1px solid var(--rule);
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.failing-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.failing-row:last-child {
+  border-bottom: none;
+}
+
+.failing-main {
+  flex: 1;
+}
+
+.failing-main .legal {
+  margin: 4px 0;
+}
+
+.failing-cause {
+  color: var(--ink-muted);
+  margin: 4px 0 0;
+}
+
+/* What the advocate actually saw. The queue is only evidence if it shows that. */
+.failing-shown {
+  color: var(--ink-faint);
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+.failing-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex: none;
+}
+
+.button-secondary {
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.button-secondary:disabled {
+  color: var(--ink-faint);
+  border-color: var(--rule);
+  cursor: default;
+}

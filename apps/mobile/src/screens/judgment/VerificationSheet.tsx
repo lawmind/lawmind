@@ -1,10 +1,13 @@
-import { Check } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { Check, CircleDot, X } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { Button } from '../../components/Button';
 import { Sheet } from '../../components/Sheet';
+import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
-import type { JudgmentDetail } from '../../api/contract';
+import type { CitationCheckDetail, JudgmentDetail } from '../../api/contract';
+import { mockApi } from '../../api/mock';
 import { citationRender, copy } from '../../citation/renderState';
 import { color, space, state } from '../../theme/tokens';
 
@@ -24,11 +27,16 @@ import { color, space, state } from '../../theme/tokens';
  * `verified_by_source` surfaces HERE and in the admin monitor, and nowhere else.
  * It no longer qualifies a badge, because there is no badge to qualify.
  *
+ * EVERY TIMESTAMP IS READ, NEVER WRITTEN HERE. A verification surface that
+ * states a check time which never happened is asserting confidence we do not
+ * have — the same class of error as a badge on unverified law, and harder to
+ * notice because it looks like diligence.
+ *
  * `renders/65-judgment-quiet@2x.png` panel 2.
  */
 
 const SOURCE_LABEL: Record<string, string> = {
-  corpus: 'Our corpus',
+  corpus: 'Our reported corpus',
   public_x2: 'Two public sources',
   ecourts: 'eCourts, confirmed by you',
   none: 'No source confirmed it',
@@ -45,6 +53,18 @@ export function VerificationSheet({
 }) {
   const { existence } = citationRender(judgment);
   const confirmed = existence.kind === 'silent';
+  const [check, setCheck] = useState<CitationCheckDetail | null>(null);
+
+  useEffect(() => {
+    if (!visible) return;
+    let alive = true;
+    void mockApi.citationCheck(judgment.judgmentId).then((r) => {
+      if (alive && r.ok) setCheck(r.data);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [judgment.judgmentId, visible]);
 
   return (
     <Sheet onDismiss={onDismiss} visible={visible}>
@@ -64,24 +84,47 @@ export function VerificationSheet({
               : ''}
         </Text>
 
-        <View style={styles.sources}>
-          <Row
-            detail={
-              confirmed ? 'Citation resolves · case name matches' : 'No matching record found'
-            }
-            label={SOURCE_LABEL[judgment.verifiedBySource] ?? judgment.verifiedBySource}
-            when="2 days ago"
-          />
-          <Row
-            detail={
-              judgment.overruledStatus === 'none'
-                ? 'Not overruled, doubted or referred'
-                : 'Status has moved — shown on the card'
-            }
-            label="Citator"
-            when="today"
-          />
-        </View>
+        {/*
+          Which TIER resolved it — `verified_by_source`, and the one place this
+          field surfaces in the app. Labelled, because bare it reads as a
+          repeat of the first source row below rather than a different fact.
+        */}
+        {confirmed ? (
+          <Text variant="ui" style={styles.source}>
+            Confirmed by: {SOURCE_LABEL[judgment.verifiedBySource] ?? judgment.verifiedBySource}
+          </Text>
+        ) : null}
+
+        {check ? (
+          <View style={styles.sources}>
+            {check.sources.map((s) => {
+              const Icon = s.outcome === 'found' ? Check : s.outcome === 'not_found' ? X : CircleDot;
+              return (
+                <View key={s.source} style={styles.row}>
+                  <Icon
+                    color={s.outcome === 'found' ? state.verified : color.inkFaint}
+                    size={16}
+                    strokeWidth={1.8}
+                  />
+                  <View style={styles.rowText}>
+                    <Text variant="uiStrong">{s.source}</Text>
+                    <Text variant="ui" style={styles.rowDetail}>
+                      {s.detail}
+                    </Text>
+                  </View>
+                  <Text opticalNudge variant="record">
+                    {new Date(s.checkedAt).toLocaleDateString(undefined, {
+                      day: 'numeric',
+                      month: 'short',
+                    })}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        ) : (
+          <SkeletonCard index={0} />
+        )}
 
         {/*
           Verification is permanent; good-law status is not. The re-check is the
@@ -98,26 +141,11 @@ export function VerificationSheet({
   );
 }
 
-function Row({ label, detail, when }: { label: string; detail: string; when: string }) {
-  return (
-    <View style={styles.row}>
-      <View style={styles.rowText}>
-        <Text variant="uiStrong">{label}</Text>
-        <Text variant="ui" style={styles.rowDetail}>
-          {detail}
-        </Text>
-      </View>
-      <Text opticalNudge variant="record">
-        {when}
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   body: { padding: space.sm, gap: space.sm },
   headRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   lede: { color: color.inkMuted },
+  source: { color: color.inkFaint },
   sources: { borderWidth: 1, borderColor: color.rule, borderRadius: 2 },
   row: {
     flexDirection: 'row',
