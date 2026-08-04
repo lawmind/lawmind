@@ -36,6 +36,13 @@
       "when": 1785847531162,
       "tag": "0004_judgments_stored_tsvector",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1785851548584,
+      "tag": "0005_statutes_and_sections",
+      "breakpoints": true
     }
   ]
 }

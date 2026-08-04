@@ -91,7 +91,45 @@ down-ranks low-confidence text
 Index: ivfflat on embedding vector_cosine_ops; btree on judgment_id.
 Unique: (judgment_id, chunk_index).
 
-## statute_mappings
+## statutes
+Added S1 for the bare acts library (`sprints/SPRINT_1.md` LCC task 3, which
+requires the shape recorded here **before** the migration). One row per Act.
+
+`id` uuid pk · `act_id` text unique — the source's own act identifier, which is
+what makes ingest resumable, exactly as `judgments.source_url` does ·
+`short_title` text · `hindi_title` text null · `act_number` text ·
+`act_year` int · `enactment_date` date null · `enforcement_date` date null ·
+`ministry` text null · `source_url` text · `created_at` timestamptz
+
+Unique: `act_id`.
+
+`enforcement_date` is separate from `enactment_date` and both matter: BNS was
+enacted 25 December 2023 and came into force 1 July 2024, and **which regime
+applies to an offence turns on the enforcement date, not the enactment date**
+(`DOMAIN_TRUTH.md`). Storing only one of them would make that question
+unanswerable.
+
+## statute_sections
+`id` uuid pk · `statute_id` uuid fk→statutes cascade ·
+`section_number` text — **text, not int**: sections carry letters (`63A`) and
+renumbering is common · `heading` text null · `section_text` text ·
+`footnote` text null · `order_index` int — the Act's own ordering, because
+`section_number` does not sort lexically · `source_url` text ·
+`full_text_tsv` tsvector GENERATED ALWAYS AS
+`to_tsvector('english', coalesce(heading,'') || ' ' || section_text)` STORED ·
+`created_at` timestamptz
+
+Unique: (`statute_id`, `section_number`). Index: gin on `full_text_tsv`;
+btree on (`statute_id`, `order_index`).
+
+The tsvector is **stored, not an expression index** — the same lesson already paid
+for on `judgments`, where an expression index left `ts_rank` recomputing
+`to_tsvector` per row at 20.8s a query. Applied here rather than re-learned.
+
+**No embedding column yet.** Statutory search is lexical first: an advocate looks
+up a section by number or by its exact term, and section text is short and
+precise, which is where sparse retrieval is strongest. A vector column is added
+when semantic statute search is actually built, not before.
 `id` uuid pk · `old_act` enum (ipc|crpc|evidence) · `old_section` text ·
 `new_act` enum (bns|bnss|bsa) · `new_section` text · `relationship` enum
 (exact|split|merged|no_equivalent) · `note` text null

@@ -244,6 +244,52 @@ export const judgmentChunks = pgTable(
   ],
 );
 
+/** One row per Act. `docs/SCHEMA_TRUTH.md` §statutes. */
+export const statutes = pgTable('statutes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  // The source's own identifier — makes ingest resumable the same way
+  // judgments.source_url does.
+  actId: text('act_id').notNull().unique(),
+  shortTitle: text('short_title').notNull(),
+  hindiTitle: text('hindi_title'),
+  actNumber: text('act_number').notNull(),
+  actYear: integer('act_year').notNull(),
+  enactmentDate: date('enactment_date'),
+  // Which regime applies to an offence turns on THIS date, not enactment:
+  // BNS was enacted 2023-12-25 and came into force 2024-07-01.
+  enforcementDate: date('enforcement_date'),
+  ministry: text('ministry'),
+  sourceUrl: text('source_url').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const statuteSections = pgTable(
+  'statute_sections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    statuteId: uuid('statute_id')
+      .notNull()
+      .references(() => statutes.id, { onDelete: 'cascade' }),
+    // Text, not int: sections carry letters (63A) and renumbering is common.
+    sectionNumber: text('section_number').notNull(),
+    heading: text('heading'),
+    sectionText: text('section_text').notNull(),
+    footnote: text('footnote'),
+    // The Act's own ordering — section_number does not sort lexically.
+    orderIndex: integer('order_index').notNull(),
+    sourceUrl: text('source_url').notNull(),
+    fullTextTsv: tsvector('full_text_tsv').generatedAlwaysAs(
+      sql`to_tsvector('english', coalesce("heading", '') || ' ' || "section_text")`,
+    ),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('statute_sections_statute_id_section_number_key').on(t.statuteId, t.sectionNumber),
+    index('statute_sections_full_text_idx').using('gin', t.fullTextTsv),
+    index('statute_sections_statute_id_order_idx').on(t.statuteId, t.orderIndex),
+  ],
+);
+
 export const statuteMappings = pgTable('statute_mappings', {
   id: uuid('id').primaryKey().defaultRandom(),
   oldAct: oldActEnum('old_act').notNull(),

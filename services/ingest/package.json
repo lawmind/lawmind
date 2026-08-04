@@ -6,7 +6,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "sci": "tsx src/cli.ts",
-    "test": "tsx --test src/*.test.ts"
+    "test": "tsx --test src/*.test.ts",
+    "statutes": "tsx src/statutes-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

@@ -10,3 +10,6 @@ allowBuilds:
   onnxruntime-node: true
   protobufjs: true
   sharp: true
+  # Native resolver binary; arrived transitively. Its postinstall fetches the
+  # platform build.
+  unrs-resolver: true
