@@ -54,7 +54,11 @@ async function main(): Promise<void> {
       SELECT j.id, j.full_text
       FROM judgments j
       WHERE NOT EXISTS (SELECT 1 FROM judgment_chunks c WHERE c.judgment_id = j.id)
-      ORDER BY j.judgment_date
+      -- RECENT FIRST. Advocates cite recent law, so if a long run is interrupted
+      -- the coverage we already have is the coverage that matters. Oldest-first
+      -- also front-loads the 1950s scans, which are both the least cited and the
+      -- most OCR-damaged text in the corpus (text_quality ~0.90 there).
+      ORDER BY j.judgment_date DESC
       LIMIT ${limit}
     `;
     console.log(`judgments needing chunks: ${pending.length}`);
