@@ -7,7 +7,8 @@
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/*.test.ts src/**/*.test.ts"
+    "test": "tsx --test src/*.test.ts src/**/*.test.ts",
+    "bench": "tsx src/search/bench.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",
