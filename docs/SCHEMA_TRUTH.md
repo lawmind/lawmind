@@ -104,8 +104,35 @@ the judgment, answered by a different source than verification — see
 ## judgment_chunks
 `id` uuid pk · `judgment_id` uuid fk→judgments cascade · `chunk_index` int ·
 `chunk_text` text · `embedding` vector(1024) · `token_count` int ·
-`ocr_confidence` numeric(4,3) null — set where source was a scan; retrieval
-down-ranks low-confidence text
+`ocr_confidence` numeric(4,3) null — **an OCR engine's own confidence, and only
+that.** Set where WE ran the OCR. Left null for text that arrived already
+extracted, because we did not run the engine and cannot report its confidence ·
+`text_quality` numeric(4,3) null — a **measured** proxy, added S1
+
+### Why these are two columns and not one
+
+`ocr_confidence` could not be populated from the corpus at all. AWS Open Data
+ships judgment PDFs whose pre-2010 text is a scan that somebody else OCR'd, with
+no confidence score attached — 1950 text reads `Oot. l't,` for "Oct. 17" and
+`SAIYID FAZL Au` for "FAZL ALI". Putting a number we invented into a column that
+means *engine confidence*, and then letting retrieval rank on it, would be
+fabricating data in the one place this product cannot afford it.
+
+`text_quality` is therefore a different question with an honest answer: **how
+damaged does this text look**, computed from the text itself. It is the share of
+alphabetic tokens with a plausible shape — tokens carrying interior punctuation or
+a lower-to-upper case flip mid-word are the signature of OCR damage. 1.000 is
+clean, lower is worse.
+
+**It is a proxy and must never be described as accuracy.** It cannot see a
+confidently-wrong character: an OCR engine reading `1985` as `1935` produces a
+perfectly well-shaped token and scores 1.000. It measures visible corruption, not
+correctness. Retrieval **down-ranks** on it and never excludes on it, because
+damaged text is still the judgment.
+
+When S4 runs our own OCR (`docs/OCR_PIPELINE.md`), that engine's real confidence
+lands in `ocr_confidence` and the two coexist: one is what the engine claimed,
+the other is what the text looks like.
 
 Index: ivfflat on embedding vector_cosine_ops; btree on judgment_id.
 Unique: (judgment_id, chunk_index).

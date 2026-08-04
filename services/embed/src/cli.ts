@@ -12,11 +12,29 @@ import postgres from 'postgres';
 
 import { chunkJudgment } from './chunk.ts';
 import { getEmbedder, toVectorLiteral } from './embed.ts';
+import { textQuality } from './quality.ts';
 
 function arg(flag: string, fallback: number): number {
   const i = process.argv.indexOf(flag);
   const v = i === -1 ? undefined : process.argv[i + 1];
   return v === undefined ? fallback : Number(v);
+}
+
+/** Scores chunks written before `text_quality` existed. Idempotent. */
+async function backfillQuality(sql: postgres.Sql): Promise<void> {
+  const rows = await sql<{ id: string; chunk_text: string }[]>`
+    SELECT id, chunk_text FROM judgment_chunks WHERE text_quality IS NULL
+  `;
+  console.log(`chunks missing text_quality: ${rows.length}`);
+  for (const row of rows) {
+    await sql`
+      UPDATE judgment_chunks SET text_quality = ${textQuality(row.chunk_text)} WHERE id = ${row.id}
+    `;
+  }
+  const [left] = await sql<{ n: string }[]>`
+    SELECT count(*)::text AS n FROM judgment_chunks WHERE text_quality IS NULL
+  `;
+  console.log(`still unscored (no Latin tokens to assess): ${left?.n}`);
 }
 
 async function main(): Promise<void> {
@@ -27,6 +45,11 @@ async function main(): Promise<void> {
   const sql = postgres(url, { max: 2 });
 
   try {
+    if (process.argv.includes('--backfill-quality')) {
+      await backfillQuality(sql);
+      return;
+    }
+
     const pending = await sql<{ id: string; full_text: string }[]>`
       SELECT j.id, j.full_text
       FROM judgments j
@@ -54,6 +77,7 @@ async function main(): Promise<void> {
         chunk_text: string;
         embedding: string;
         token_count: number;
+        text_quality: number | null;
       }[] = [];
 
       for (let i = 0; i < chunks.length; i += batchSize) {
@@ -68,9 +92,12 @@ async function main(): Promise<void> {
             chunk_text: chunk.text,
             embedding: toVectorLiteral(e.vector),
             token_count: e.tokenCount,
-            // ocr_confidence is deliberately not set. The source ships no
-            // confidence score and we did not run the OCR, so any number here
-            // would be invented — and this column down-ranks retrieval.
+            // Scored on exactly the text that gets embedded, overlap included —
+            // if the carried tail is damaged, the embedding carries that damage
+            // too, so the score should reflect it.
+            text_quality: textQuality(chunk.text),
+            // ocr_confidence stays unset: the source ships no engine confidence
+            // and we did not run the OCR, so any number here would be invented.
           });
         });
       }

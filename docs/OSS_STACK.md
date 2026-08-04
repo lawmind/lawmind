@@ -36,6 +36,41 @@ resolved on capability: court orders are layout-heavy, and layout handling is
 where the two diverge most. The S4 bake-off still runs, but as **tuning rather
 than selection** — `docs/OCR_PIPELINE.md`.
 
+### `baidu/Unlimited-OCR` — a third candidate for the S4 bake-off
+
+Proposed by the founder 4 Aug 2026. **Verified on Hugging Face, not taken on
+trust:** it exists, the licence is **MIT**, and it ships `safetensors` weights, so
+it is self-hosted like the other two. No vendor, no API, no data leaving our
+infrastructure — which is a hard requirement, because OCR input is
+sensitive-class under OD-6.
+
+**This does not reopen OD-7.** PaddleOCR stays primary and Tesseract stays
+fallback until the S4 bake-off says otherwise. This is recorded so the bake-off
+evaluates three engines instead of two.
+
+**One property has to be understood before it is adopted, and it cuts against
+this product specifically.** It is a vision-language model (`image-text-to-text`),
+not a classical OCR engine, and the two fail in opposite ways:
+
+| | Classical OCR (Paddle, Tesseract) | VLM OCR |
+|---|---|---|
+| Failure looks like | `Oot. l't,` — visibly broken | fluent, plausible, wrong |
+| Detectable by | a human glance, and by `text_quality` | nothing we currently have |
+
+A garbled date is obviously garbled. A **hallucinated** date is not, and
+`judgment_chunks.text_quality` scores invented-but-well-formed text as clean —
+that limitation is stated in `docs/SCHEMA_TRUTH.md` and is exactly the blind spot
+a VLM would sit in. For a product whose whole proposition is that nothing is
+fabricated, an OCR engine that can invent a hearing date is a different class of
+risk from one that mangles it.
+
+**Therefore, if it is adopted:** it must be scored in the S4 bake-off on
+**field-extraction accuracy against ground truth**, never on character accuracy or
+on how clean the output reads, and the advocate-confirms-every-field rule (OD-7)
+becomes load-bearing rather than a courtesy. Its per-character confidence, if it
+reports one at all, is not comparable to a classical engine's and must not be
+written to `ocr_confidence` as though it were.
+
 ---
 
 ## 1a · Corpus sources — free, no account, no credentials

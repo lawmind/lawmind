@@ -1,0 +1,1 @@
+ALTER TABLE "judgment_chunks" ADD COLUMN "text_quality" numeric(4, 3);

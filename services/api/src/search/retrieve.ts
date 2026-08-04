@@ -97,7 +97,13 @@ async function dense(
   filters: SearchFilters,
 ): Promise<{ ranked: Ranked[]; bestChunk: Map<string, string> }> {
   const rows = await sql<{ judgment_id: string; chunk_text: string; distance: number }[]>`
-    SELECT c.judgment_id, c.chunk_text, (c.embedding <=> ${queryVector}::vector) AS distance
+    SELECT c.judgment_id, c.chunk_text,
+           -- Down-ranked, never excluded: damaged text is still the judgment.
+           -- quality 1.0 leaves distance untouched; 0.5 costs it 50%. Unscored
+           -- chunks (no Latin tokens, e.g. Devanagari) are treated as clean
+           -- rather than penalised for being unassessable.
+           (c.embedding <=> ${queryVector}::vector)
+             * (2 - LEAST(COALESCE(c.text_quality, 1.0), 1.0)) AS distance
     FROM judgment_chunks c
     JOIN judgments j ON j.id = c.judgment_id
     WHERE TRUE
@@ -105,7 +111,8 @@ async function dense(
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
       ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
-    ORDER BY c.embedding <=> ${queryVector}::vector
+    ORDER BY (c.embedding <=> ${queryVector}::vector)
+             * (2 - LEAST(COALESCE(c.text_quality, 1.0), 1.0))
     LIMIT ${CANDIDATE_DEPTH * 4}
   `;
 

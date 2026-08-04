@@ -241,8 +241,13 @@ export const judgmentChunks = pgTable(
     chunkText: text('chunk_text').notNull(),
     embedding: vector('embedding', { dimensions: 1024 }).notNull(),
     tokenCount: integer('token_count').notNull(),
-    // Set where the source was a scan. Retrieval down-ranks low-confidence text.
+    // An OCR ENGINE's own confidence, and only that. Null for text that arrived
+    // already extracted — we did not run the engine, so we cannot report it.
     ocrConfidence: numeric('ocr_confidence', { precision: 4, scale: 3 }),
+    // A measured proxy for visible OCR damage, computed from the text itself.
+    // NOT accuracy: a confidently-wrong character scores a clean 1.000.
+    // Retrieval down-ranks on this and never excludes on it.
+    textQuality: numeric('text_quality', { precision: 4, scale: 3 }),
   },
   (t) => [
     index('judgment_chunks_embedding_idx').using('ivfflat', t.embedding.op('vector_cosine_ops')),

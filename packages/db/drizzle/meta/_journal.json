@@ -50,6 +50,13 @@
       "when": 1785852603610,
       "tag": "0006_judgments_case_type",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785859330797,
+      "tag": "0007_chunk_text_quality",
+      "breakpoints": true
     }
   ]
 }
