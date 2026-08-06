@@ -102,9 +102,19 @@ async function main(): Promise<void> {
         SELECT id, full_text FROM judgments WHERE id = ANY(${ids})
       `;
 
+      // Accumulate the whole batch, then write it in ONE transaction.
+      //
+      // A transaction per judgment costs a round trip per judgment, and over the
+      // public proxy that round trip — not the regex, not the resolve — is the
+      // bottleneck: 1.2 judgments/s, roughly 9 hours for the corpus. Batching the
+      // writes keeps the atomicity guarantee that matters (a judgment's edges all
+      // land or none do, because they are all in the same transaction) while
+      // cutting round trips by the batch size.
+      const batchRows: Row[] = [];
+
       for (const judgment of texts) {
         const found = extractCitations(judgment.full_text);
-        const rows: Row[] = [];
+        let emitted = 0;
 
         for (const c of found) {
           const target = index.get(c.normalised);
@@ -118,7 +128,7 @@ async function main(): Promise<void> {
           );
           if (citedId) resolved++;
           if (relationship !== 'cites') treatments++;
-          rows.push({
+          batchRows.push({
             citing_judgment_id: judgment.id,
             cited_judgment_id: citedId,
             citation_text: c.raw,
@@ -127,25 +137,37 @@ async function main(): Promise<void> {
             evidence: evidence || null,
             char_offset: c.offset,
           });
+          emitted++;
         }
 
-        // One transaction per judgment: all of its edges, or none. A sentinel row
-        // marks a judgment that genuinely cites nothing, so the resumable query
-        // does not re-scan it on every run.
+        // A sentinel marks a judgment that genuinely cites nothing, so the
+        // resumable query does not re-scan it on every run.
+        if (emitted === 0) {
+          batchRows.push({
+            citing_judgment_id: judgment.id,
+            cited_judgment_id: null,
+            citation_text: '',
+            normalised_citation: '',
+            relationship: 'cites',
+            evidence: null,
+            char_offset: 0,
+          });
+        }
+        edges += emitted;
+        done++;
+      }
+
+      if (batchRows.length > 0) {
         await sql.begin(async (tx) => {
-          if (rows.length > 0) {
-            await tx`INSERT INTO judgment_citations ${tx(rows)} ON CONFLICT DO NOTHING`;
-          } else {
-            await tx`
-              INSERT INTO judgment_citations
-                (citing_judgment_id, cited_judgment_id, citation_text,
-                 normalised_citation, relationship, char_offset)
-              VALUES (${judgment.id}, NULL, '', '', 'cites', 0)
-              ON CONFLICT DO NOTHING`;
+          // Chunked inside the transaction: a single INSERT with tens of
+          // thousands of rows exceeds the parameter limit, and a partial failure
+          // there would roll the whole batch back rather than corrupt it.
+          const INSERT_CHUNK = 2000;
+          for (let k = 0; k < batchRows.length; k += INSERT_CHUNK) {
+            const slice = batchRows.slice(k, k + INSERT_CHUNK);
+            await tx`INSERT INTO judgment_citations ${tx(slice)} ON CONFLICT DO NOTHING`;
           }
         });
-        edges += rows.length;
-        done++;
       }
 
       const secs = (Date.now() - started) / 1000;
