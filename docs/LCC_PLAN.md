@@ -62,9 +62,10 @@ Facts, each observed rather than assumed.
 | `overruled_status` | **22 moved** — 19 `set_aside`, 3 `doubted`. LAW MOVED renders |
 | Database | 5,979 MB of a 50 GB volume (`judgment_chunks` 4,438 MB) |
 | Postgres | 18.4, pgvector 0.8.5, container 24 GB / 24 cores |
+| Gate S1 | **PASS** — median 539 ms, p95 641 ms end to end on production, against 3 s |
 | Tests | 75 server-side |
-| Deployed | `05095aa` — verified by probing routes, not by the `/health` SHA |
-| TCP proxy | **open** — `reseau.proxy.rlwy.net:25800`. Close when the index work lands |
+| Deployed | `9a42bed` — verified by probing routes, not by the `/health` SHA |
+| TCP proxy | **closed** 6 Aug 2026. Recreate with `railway tcp-proxy create` when a run needs it, and delete it again after |
 
 ---
 
@@ -141,15 +142,36 @@ judgment_chunks_embedding_hnsw`, with no `Seq Scan`.
 Re-run after any material ingest: `scripts/measure-recall.mjs`. Recall is a
 property of the data, not of the setting.
 
-### D · Re-verify retrieval, with dense actually on
-Every latency number quoted today was lexical-only and is provisional.
-**Done when:** paraphrase and Hindi→English both return correct authorities, and
-p95 is measured against Gate S1's 3 s with `operativeParagraph` non-empty.
+### D · Re-verify retrieval, with dense actually on — **DONE, Gate S1 PASSES**
 
-### E · Close the TCP proxy
-`railway tcp-proxy delete`. It exposes production Postgres publicly and only ever
-existed for the embed.
-**Done when:** `tcp-proxy list` is empty.
+Measured against the deployed API, 8 queries × 2 passes, not against the database
+and not on this laptop:
+
+| | before the index | after |
+|---|---|---|
+| median | ~2,200 ms | **539 ms** |
+| p95 | — | **641 ms** (threshold 3,000 ms) |
+| `operativeParagraph` empty | 1 of 15 | **0 of 40** |
+
+Known-citation checks 3/3: *Sushila Aggarwal* for the English paraphrase of
+anticipatory bail, *Bhadresh Bipinbhai Sheth* for the same question asked in
+Hindi against an English corpus, *Puttaswamy* for privacy.
+
+**The empty-paragraph column is the interesting one.** Before the `ef_search`
+fix, production was returning results whose dense half had been truncated, so
+some judgments arrived from the lexical ranker alone with no operative paragraph
+to show. It looked like a rendering gap. It was recall.
+
+### E · Close the TCP proxy — **DONE 6 Aug 2026**
+`tcp-proxy list` is empty; the API is unaffected because it reaches Postgres over
+Railway's internal network, confirmed by re-running Gate S1 after the delete.
+
+**The password that rode over it still wants rotating.** It was in plaintext in a
+session transcript, and deleting the proxy does not un-expose it. Founder's, not
+mine — recorded in §4.
+
+Recreate with `railway tcp-proxy create` when a measurement run needs direct
+access, and delete it again afterwards. It should not be a standing hole.
 
 ### F · Citation extraction across the corpus
 ~9 h at 1.2 judgments/s. Deferred until A completes — they contend for the same
