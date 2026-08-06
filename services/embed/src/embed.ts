@@ -101,6 +101,29 @@ async function load(): Promise<Loaded> {
     ]);
     return { tokenizer, model };
   })();
+
+  /**
+   * **A failed load must not be cached forever.**
+   *
+   * `loading ??=` memoises the promise, which is right for the success case — the
+   * model is ~2.2GB and must load once per process. But a REJECTED promise is
+   * just as sticky: one transient failure at boot and every later call returns
+   * that same rejection, so dense retrieval can never recover without a restart.
+   *
+   * That is exactly what happened in production. The boot warm failed once while
+   * the cache directory was still empty, and search stayed lexical-only
+   * afterwards even though the model had since downloaded successfully and was
+   * sitting on disk. The next request could have fixed it and never got the
+   * chance.
+   *
+   * Clearing the slot on rejection makes the failure transient rather than
+   * terminal: the next caller retries, and a model that becomes reachable is
+   * used the moment it does.
+   */
+  loading.catch(() => {
+    loading = undefined;
+  });
+
   return loading;
 }
 
