@@ -55,13 +55,26 @@ export type SearchResult = {
    * ordinary, never as an error or a loading state.
    */
   holding: string;
+  /**
+   * VERBATIM SOURCE TEXT, NOT A PULL QUOTE.
+   *
+   * Measured on production: ~2,600 characters carrying running headers,
+   * marginal letters and hyphenated line breaks straight out of OCR. A surface
+   * that sets it in a display face with a rule down the side is presenting OCR
+   * wreckage as the court's own words.
+   */
   operativeParagraph: string;
   verificationState: VerificationState;
   verifiedBySource: VerifiedBySource;
   overruledStatus: OverruledStatus;
-  overruledByJudgmentId?: string;
-  overruledParas?: number[];
-  overruledNote?: string;
+  /**
+   * NULL, NOT ABSENT. The server sends an explicit `null` on every row that has
+   * no value, so the optional marker alone would be a lie the type tells and
+   * `?? undefined` would be scattered at every call site instead of once here.
+   */
+  overruledByJudgmentId?: string | null;
+  overruledParas?: number[] | null;
+  overruledNote?: string | null;
   /**
    * NOT IN `docs/API_CONTRACTS.md` — CLIENT ASSUMPTION, FLAGGED FOR LCC.
    *
@@ -106,11 +119,31 @@ export type JudgmentParagraph = {
   operative?: boolean;
 };
 
-export type JudgmentDetail = SearchResult & {
+/**
+ * FIVE FIELDS THE CONTRACT IMPLIES AND PRODUCTION DOES NOT SEND.
+ *
+ * Probed 6 August 2026. `GET /judgments/:id` answers 200 with `paragraphs`,
+ * `numberedShare`, `fullText`, `bench` and the three citation fields — and with
+ * no `holding`, `operativeParagraph`, `reliedOn`, `holdingParagraphNumber` or
+ * `operativeParagraphNumber`. Flagged for LCC.
+ *
+ * They are OPTIONAL here rather than left required, because a required field
+ * that arrives `undefined` is a type that lies: every screen compiles green
+ * while rendering an empty section, and the lie surfaces on a phone rather than
+ * in the build. Optional forces each surface to decide what absence means.
+ *
+ * "Relied on" is served from `GET /judgments/:id/authorities` instead, which
+ * answers the same question with a date behind every row.
+ */
+export type JudgmentDetail = Omit<SearchResult, 'holding' | 'operativeParagraph'> & {
+  /** Absent until the summarisation model is wired. Absence is normal, not an error. */
+  holding?: string;
+  /** Absent on this route. Present on search results, where it is raw OCR. */
+  operativeParagraph?: string;
   bench: string;
-  reliedOn: { judgmentId: string; caseTitle: string; neutralCitation: string }[];
-  holdingParagraphNumber: number;
-  operativeParagraphNumber: number;
+  reliedOn?: { judgmentId: string; caseTitle: string; neutralCitation: string }[];
+  holdingParagraphNumber?: number;
+  operativeParagraphNumber?: number;
   paragraphs: JudgmentParagraph[];
   /**
    * Share of paragraphs carrying a printed number, 0–1.
@@ -204,6 +237,89 @@ export type PrecedentGraph = {
   truncated: boolean;
 };
 
+/* ------------------------------------------------- authorities, point in time */
+
+/**
+ * WHAT THIS JUDGMENT RELIED ON, AND WHETHER THAT LAW WAS STANDING AT THE TIME —
+ * `GET /judgments/:id/authorities`.
+ *
+ * NOT IN `docs/API_CONTRACTS.md`. The endpoint is live and answers 200; the
+ * contract has no entry for it. Transcribed from the production response and
+ * flagged for LCC rather than guessed at, because a shape invented here is a
+ * client that compiles today and breaks the day the contract catches up.
+ *
+ * THE QUESTION THIS ANSWERS IS DIFFERENT FROM EVERY OTHER CITATION QUESTION WE
+ * ASK, and the difference is the reason the panel exists.
+ *
+ *   · `verificationState` asks whether the authority exists — answered once,
+ *     permanently.
+ *   · `overruledStatus` asks whether it is good law TODAY — answered live at
+ *     every render, because law moves under a saved citation.
+ *   · `standingWhenRelied` asks whether it was good law ON THE DAY THIS BENCH
+ *     RELIED ON IT — answered by two dates, and never changing again.
+ *
+ * The third is the only one that says something about the reasoning rather than
+ * about the record, which is exactly why it must never be allowed to sound like
+ * a verdict on that reasoning. See `citation/standing.ts`.
+ */
+export type AuthorityStanding = 'good_law_then' | 'already_moved' | 'moved_since' | 'unknown';
+
+export type PointInTimeAuthority = {
+  judgmentId: string;
+  caseTitle: string;
+  neutralCitation: string;
+  judgmentDate: string;
+  /** How the relying judgment used it — `cites` today; the extraction will widen. */
+  relationship: string;
+  standingWhenRelied: AuthorityStanding;
+  /**
+   * Days between the authority being set aside and this bench relying on it.
+   * Null whenever the server cannot date the move — and null is common, so no
+   * surface may assume a number is here.
+   */
+  daysAlreadyMoved: number | null;
+  overruledStatus: OverruledStatus;
+  overruledByJudgmentId: string | null;
+  /**
+   * WHEN OUR ROW CHANGED, NOT WHEN THE LAW MOVED.
+   *
+   * Measured on production: Kanhaiyalal was set aside by Tofan Singh on
+   * 2020-10-29 and this field reads `2026-08-06 15:32` — the back-fill run.
+   * It is a write timestamp and is useless for any temporal comparison about
+   * the law. Kept in the type so nobody re-derives it from the payload and
+   * assumes it means the other thing.
+   */
+  statusChangedAt: string | null;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  asOf: string;
+};
+
+export type AuthoritiesResponse = {
+  judgmentId: string;
+  caseTitle: string;
+  /** The relying judgment's own date — the fixed point every comparison is against. */
+  deliveredOn: string;
+  asOf: string;
+  counts: {
+    goodLawThen: number;
+    alreadyMoved: number;
+    movedSince: number;
+    unknown: number;
+  };
+  authorities: PointInTimeAuthority[];
+  /**
+   * How many cited authorities we could resolve to a judgment we hold.
+   *
+   * It is NOT the number of authorities the bench cited. A judgment cites
+   * statutes, foreign decisions and unreported matters we do not hold, and this
+   * counts only the ones we do — so a panel that presented it as "the
+   * authorities relied on" would understate the bench's reasoning and invite
+   * the advocate to think we had read the whole judgment for them.
+   */
+  resolvedAuthorities: number;
+};
+
 /* ---------------------------------------------------------- counter-arguments */
 
 /**
@@ -223,9 +339,14 @@ export type CounterAuthority = {
   judgmentId: string;
   caseTitle: string;
   neutralCitation: string;
+  court?: string;
+  judgmentDate?: string;
+  /** Verbatim source text, not a summary. Long, and often carrying OCR furniture. */
+  operativeParagraph?: string;
   verificationState: VerificationState;
   verifiedBySource: VerifiedBySource;
   overruledStatus: OverruledStatus;
+  overruledParas?: number[];
   asOf: string;
 };
 
@@ -235,11 +356,32 @@ export type CounterArgument = {
   authorities: CounterAuthority[];
 };
 
+/**
+ * S1 RETURNS AUTHORITIES ONLY, AND `arguments` IS ABSENT — not empty, absent.
+ *
+ * The contract at `docs/API_CONTRACTS.md:264` documents
+ * `{ arguments: [ { argument, rebuttal, authorities } ], … }`; production
+ * answers `{ position, asOf, authorities, excluded, unverifiedReferences }`.
+ * That divergence is deliberate on the server's side — argument and rebuttal
+ * prose needs generation that waits for S2 — and it is flagged rather than
+ * quietly matched, because the contract is the frozen document and this client
+ * is now building against something else.
+ *
+ * `arguments` is therefore OPTIONAL rather than removed. When generation lands
+ * the prose arrives around the authorities that are already rendering, and no
+ * screen has to be rewritten to receive it.
+ */
 export type CounterArgumentsResponse = {
-  arguments: CounterArgument[];
+  /** Echoed back so the panel can render what was asked, not what was typed. */
+  position?: string;
+  asOf?: string;
+  /** S1. Grounded authorities for the position, with no prose around them. */
+  authorities?: CounterAuthority[];
+  /** S2. Absent until generation lands. */
+  arguments?: CounterArgument[];
   /** Named and shown, never dropped. */
-  excluded: { judgmentId: string; caseTitle: string; neutralCitation?: string; reason: 'set_aside' }[];
-  unverifiedReferences: UnverifiedReference[];
+  excluded?: { judgmentId: string; caseTitle: string; neutralCitation?: string; reason: 'set_aside' }[];
+  unverifiedReferences?: UnverifiedReference[];
 };
 
 /* ---------------------------------------------------------------- compare */

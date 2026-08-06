@@ -31,34 +31,77 @@ the trap in "just put it on a drive".
 
 ## 2 · What was measured, including the thing that failed
 
-### Binary quantisation: 25x smaller, and not usable alone
+### The accuracy question, answered properly
 
-Built on the real corpus, not a benchmark set. `binary_quantize()` into
-`bit(1024)`, HNSW over `bit_hamming_ops`:
+**Compression does not have to cost accuracy. Measured, on this corpus, at 616,197
+vectors against exact sequential-scan ground truth.**
 
-| | fp32 | binary | ratio |
+Two things were being conflated and they need separating first:
+
+- **Citation accuracy** — never showing a fake or unverified citation as
+  confirmed. **Nothing on this page can affect it.** Citation fields render from
+  the database row and pass the three tiers of `CITATION_HARNESS.md`. A vector
+  index chooses *which* judgments to show; it cannot change what a judgment's
+  citation says.
+- **Retrieval recall** — whether the right authority is found at all. This is what
+  compression puts at risk, and it is what everything below measures.
+
+Storage, built on the real corpus rather than a benchmark set:
+
+| | table | index | total | vs fp32 |
+|---|---|---|---|---|
+| fp32 `vector(1024)` | 4,438 MB | 4,811 MB | 9,249 MB | — |
+| fp16 `halfvec(1024)` | — | — | **3,275 MB** | 2.8x |
+| binary `bit(1024)` | 117 MB | 255 MB | **362 MB** | **25.5x** |
+
+Binary builds in 2.4 minutes against 9.8 for fp32.
+
+**Asked to produce the final answer directly, binary fails.** Recall@50 is 57.3%
+at `ef_search` 100 and does not improve with more search — 57.8% at 200, 56.7% at
+400. The information is lost at quantisation, not at search time. Four authorities
+in ten missing is not a search product, and an earlier note in this repo claiming
+87.6% was never measured here.
+
+**But that is the wrong question.** In the tiered design binary never produces the
+answer — it produces *candidates*, which are then re-scored against exact fp32
+vectors. The final ranking is therefore **exact by construction**. The only thing
+that can be lost is a true neighbour that never reached the candidate list, and
+that is what oversampling buys:
+
+| candidates | oversample | binary `bit(1024)` | fp16 `halfvec` |
 |---|---|---|---|
-| table | 4,438 MB | **117 MB** | 38x |
-| index | 4,811 MB | **255 MB** | 19x |
-| build | 9.8 min | **2.4 min** | — |
+| 50 | 1x | 57.2% | 99.6% |
+| 200 | 4x | 91.1% | 99.7% |
+| 500 | 10x | **98.2%** | 99.9% |
+| 1000 | 20x | **99.8%** | 100.0% |
 
-Recall against the same exact ground truth the fp32 index was tuned on:
+*(Fraction of the exact fp32 top-50 present in the candidate list. Latency is ~1.7s
+in all cells because it is dominated by the round trip from this workstation to
+sfo, not by the index — server-side the fp32 index answers in 10.7 ms.)*
 
-| `ef_search` | recall@50 |
-|---|---|
-| 100 | 57.3% |
-| 200 | 57.8% |
-| 400 | 56.7% |
+**So the trade-off is not accuracy against storage. It is oversampling against
+storage, and oversampling is nearly free.** 25.5x smaller at 99.8% candidate
+recall and an exact final ranking.
 
-**57.8% is not a search product.** Four authorities in ten missing, and raising
-`ef_search` does not help — the information is gone at quantisation, not at search
-time. An earlier note in this repo put binary at 87.6%; that number was not
-measured on this corpus and should not be relied on.
+Two settings, both defensible, and the choice is about tier not about principle:
 
-So binary quantisation is a **candidate generator**, never an answer. That is also
-how everyone else uses it: Qdrant, MongoDB Atlas and OpenSearch all pair it with
-oversampling and a re-score against full-precision vectors, and Qdrant's published
-figure is 3x oversampling to reach 0.939 recall.
+- **fp16 `halfvec` — 99.6% at no oversampling, 2.8x smaller.** Use where recall
+  must be beyond argument and the corpus is small enough to afford it.
+- **binary + 20x oversample + exact re-score — 99.8%, 25.5x smaller.** Use for the
+  long tail, where the alternative is not having the judgment at all.
+
+This matches what the field does: Qdrant, MongoDB Atlas and OpenSearch all pair
+binary quantisation with oversampling and a full-precision re-score, and Qdrant
+publishes 3x oversampling for 0.939 recall. Our own curve is better than that
+because we oversample harder.
+
+**Better methods exist and are worth watching.** Extended RaBitQ reaches ~95%
+recall at 5 bits per dimension and ~99% at 7, *without* re-ranking, and it ships
+in Milvus, LanceDB and Weaviate — **not in pgvector**, which is why it is not the
+recommendation today. `pgvectorscale` (StreamingDiskANN + Statistical Binary
+Quantisation) is a Postgres extension and reports 99% recall on 50M vectors, but
+it needs a custom Postgres image on Railway, which is a production database
+migration and not a thing to do casually.
 
 ### Text compresses hard, because these documents are short
 

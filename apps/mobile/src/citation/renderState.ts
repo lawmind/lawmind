@@ -123,7 +123,7 @@ function existenceMark(
 }
 
 /** "paras 19–20", "para 19", or null when the server did not name any. */
-function affectedParagraphs(paras: number[] | undefined): string | null {
+function affectedParagraphs(paras: number[] | null | undefined): string | null {
   if (!paras?.length) return null;
   if (paras.length === 1) return `para ${paras[0]}`;
   return `paras ${paras[0]}–${paras[paras.length - 1]}`;
@@ -131,8 +131,9 @@ function affectedParagraphs(paras: number[] | undefined): string | null {
 
 function movedMark(
   status: OverruledStatus,
-  note: string | undefined,
-  paras: number[] | undefined,
+  /** `null` is what the server actually sends for "no note", not `undefined`. */
+  note: string | null | undefined,
+  paras: number[] | null | undefined,
   asOf: string | undefined
 ): MovedMark {
   if (status === 'none') return { kind: 'none' };
@@ -168,7 +169,7 @@ function movedMark(
         band: 'caution',
         strikeTitle: false,
         requiresReplacement: false,
-        whatStillStands: note,
+        whatStillStands: note ?? undefined,
         asOf,
       };
 

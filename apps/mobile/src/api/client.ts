@@ -1,5 +1,8 @@
 import type {
   ApiResponse,
+  AuthoritiesResponse,
+  CounterArgumentsResponse,
+  JudgmentDetail,
   PrecedentGraph,
   SearchFilters,
   SearchResponse,
@@ -12,22 +15,26 @@ import type {
  * THE REAL API.
  *
  * `POST /search` runs against all 38,341 Supreme Court judgments (1950–2026),
- * and `GET /statutes` / `/statutes/sections` against BNS, BNSS and BSA complete.
+ * fully embedded at 616,197 chunks, and `GET /statutes` / `/statutes/sections`
+ * against BNS, BNSS and BSA complete.
  *
- * WHAT IS NOT HERE, AND WHY THE JUDGMENT DETAIL SCREEN IS STILL MOCKED:
- * `GET /judgments/:id` does not exist on production — it answers
- * `{"ok":false,"error":{"code":"NOT_FOUND","message":"no route for GET
- * /judgments/…"}}`. Search returns real judgment ids that nothing can yet open,
- * so the detail screen and the reading view stay on fixtures until that route
- * lands. Flagged for LCC rather than worked around.
+ * `GET /judgments/:id` NOW EXISTS and the detail screen is off fixtures.
+ * Probed 6 August 2026: 200, with `paragraphs[]`, `numberedShare` and `asOf`.
  *
- * TWO THINGS ABOUT TODAY'S RESULTS THAT ARE NOT BUGS AND MUST NOT BE DESIGNED
- * AROUND:
+ * THREE THINGS ABOUT TODAY'S RESPONSES THAT ARE NOT BUGS AND MUST NOT BE
+ * DESIGNED AROUND:
  *   · `holding` is `""` on every row — it needs a summarisation model that is
  *     not wired. The card already treats an absent summary as ordinary.
- *   · retrieval is LEXICAL ONLY until embeddings land, so a paraphrased query
- *     underperforms exact legal terms. No ranking affordance is built against
- *     that behaviour, because the behaviour is about to change.
+ *   · `operativeParagraph` is now non-empty on every search result, but it is
+ *     ~2,600 characters of verbatim OCR carrying page furniture — running
+ *     headers, marginal letters, hyphenated line breaks. It is source text, not
+ *     a pull quote, and any surface that frames it as one is framing OCR
+ *     wreckage as the court's own words.
+ *   · `GET /judgments/:id` carries NO `operativeParagraph`, `holding`,
+ *     `reliedOn`, `holdingParagraphNumber` or `operativeParagraphNumber`, all
+ *     of which `docs/API_CONTRACTS.md` implies and the detail screen rendered
+ *     from fixtures. Flagged for LCC. "Relied on" is served instead from
+ *     `/judgments/:id/authorities`, which answers the same question and more.
  */
 
 const BASE_URL = 'https://api-production-1c0b4.up.railway.app';
@@ -130,6 +137,36 @@ export const api = {
     get<PrecedentGraph>(
       `/judgments/${encodeURIComponent(judgmentId)}/graph?depth=${depth}&limit=${limit}`
     ),
+
+  judgment: (judgmentId: string) =>
+    get<JudgmentDetail>(`/judgments/${encodeURIComponent(judgmentId)}`),
+
+  /**
+   * WHAT THIS JUDGMENT RELIED ON, AND WHETHER THAT LAW WAS STANDING AT THE TIME.
+   *
+   * Not in `docs/API_CONTRACTS.md` — live, 200, transcribed from the response
+   * and flagged. This is the only source for "Relied on": the detail payload
+   * carries no `reliedOn`, and this answers the same question with two dates
+   * behind each row.
+   *
+   * The response's own `counts` and `standingWhenRelied` are deliberately NOT
+   * used — see the measurement at the top of `citation/standing.ts`.
+   */
+  authorities: (judgmentId: string) =>
+    get<AuthoritiesResponse>(`/judgments/${encodeURIComponent(judgmentId)}/authorities`),
+
+  /**
+   * S1 RETURNS AUTHORITIES ONLY. `arguments` is absent from the response, not
+   * empty — generation waits for S2. `excluded` and `unverifiedReferences` are
+   * present and are rendered, because a reference removed without a visible
+   * state is a silent drop and that is measured at a zero threshold.
+   */
+  counterArguments: (position: string, language: 'en' | 'hi' = 'en', matterId?: string) =>
+    request<CounterArgumentsResponse>('/arguments/counter', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ position, language, ...(matterId ? { matterId } : {}) }),
+    }),
 
   statutes: () => get<{ statutes: Statute[] }>('/statutes'),
 

@@ -59,18 +59,36 @@ export function ReadingSheet({
           {textSize}px · about {wordsPerScreen(textSize)} words a screen
         </Text>
 
+        {/*
+          A ROW IS DRAWN ONLY WHERE THE SERVER NAMED THE PARAGRAPH.
+
+          `GET /judgments/:id` sends no `holdingParagraphNumber`,
+          `operativeParagraphNumber` or `reliedOn` today. Rendering them anyway
+          produces "¶ undefined" over a jump that goes nowhere — the same class
+          of defect as the "¶ 0 of 28" counter caught on a Galaxy S24, and the
+          same fix: a number we do not have is a row we do not draw.
+
+          Each returns on its own the moment the field lands, with no change
+          here.
+        */}
         <SectionRule label="In this judgment" />
-        <JumpRow
-          label="Holding"
-          onPress={() => onJumpToParagraph(judgment.holdingParagraphNumber)}
-          value={`¶ ${judgment.holdingParagraphNumber}`}
-        />
-        <JumpRow
-          label="Operative paragraph"
-          onPress={() => onJumpToParagraph(judgment.operativeParagraphNumber)}
-          value={`¶ ${judgment.operativeParagraphNumber}`}
-        />
-        <JumpRow label="Authorities relied on" value={String(judgment.reliedOn.length)} />
+        {judgment.holdingParagraphNumber ? (
+          <JumpRow
+            label="Holding"
+            onPress={() => onJumpToParagraph(judgment.holdingParagraphNumber!)}
+            value={`¶ ${judgment.holdingParagraphNumber}`}
+          />
+        ) : null}
+        {judgment.operativeParagraphNumber ? (
+          <JumpRow
+            label="Operative paragraph"
+            onPress={() => onJumpToParagraph(judgment.operativeParagraphNumber!)}
+            value={`¶ ${judgment.operativeParagraphNumber}`}
+          />
+        ) : null}
+        {judgment.reliedOn ? (
+          <JumpRow label="Authorities relied on" value={String(judgment.reliedOn.length)} />
+        ) : null}
         <JumpRow label="Your highlights" value={String(highlightCount)} />
 
         {progress ? (

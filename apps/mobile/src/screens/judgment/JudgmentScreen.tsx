@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, Clock, Info, X } from 'lucide-react-native';
 
 import { Button } from '../../components/Button';
@@ -9,11 +10,12 @@ import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
+import { api } from '../../api/client';
 import type { JudgmentDetail } from '../../api/contract';
-import { mockApi } from '../../api/mock';
 import { citationRender } from '../../citation/renderState';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
+import { AuthoritiesPanel, useAuthorities } from './AuthoritiesPanel';
 import { ReadingView } from './ReadingView';
 import { UnverifiedCitationScreen } from './UnverifiedCitationScreen';
 import { VerificationSheet } from './VerificationSheet';
@@ -43,7 +45,7 @@ import { VerificationSheet } from './VerificationSheet';
  * advocate reading "cite this instead: jdg_mock_7" has been told nothing and
  * shown our plumbing.
  */
-function useReplacement(judgmentId: string | undefined) {
+function useReplacement(judgmentId: string | null | undefined) {
   const [replacement, setReplacement] = useState<JudgmentDetail | null>(null);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ function useReplacement(judgmentId: string | undefined) {
       return;
     }
     let alive = true;
-    void mockApi.judgment(judgmentId).then((r) => {
+    void api.judgment(judgmentId).then((r) => {
       if (alive && r.ok) setReplacement(r.data);
     });
     return () => {
@@ -87,11 +89,24 @@ export function JudgmentScreen({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
 
+  /**
+   * THE LOADING AND MISSING BRANCHES CARRY NO NAV ROW, SO NOTHING WAS PUSHING
+   * THEM CLEAR OF THE STATUS BAR.
+   *
+   * Observed on a Galaxy S24: "We could not open this judgment" drew underneath
+   * the clock and the signal bars. The loaded screen never showed it because
+   * `styles.nav` happens to supply the gap — which is why this only appears in
+   * the two states nobody screenshots. Third time this class of overlap has
+   * been found on a device and never in a test.
+   */
+  const insets = useSafeAreaInsets();
+  const topInset = { paddingTop: insets.top + space.sm };
+
   useEffect(() => {
     let alive = true;
     setJudgment(null);
     setMissing(false);
-    void mockApi.judgment(judgmentId).then((r) => {
+    void api.judgment(judgmentId).then((r) => {
       if (!alive) return;
       if (r.ok) setJudgment(r.data);
       else setMissing(true);
@@ -100,6 +115,14 @@ export function JudgmentScreen({
       alive = false;
     };
   }, [judgmentId]);
+
+  /**
+   * "Relied on" comes from its own endpoint, not from the detail payload —
+   * `GET /judgments/:id` carries no `reliedOn` at all. Fetched here rather than
+   * inside the panel so the panel stays pure and testable, which is where the
+   * never-a-soundness-rating tests live.
+   */
+  const authorities = useAuthorities(judgmentId);
 
   /**
    * The judgment that moved the law, RESOLVED — never described.
@@ -118,22 +141,20 @@ export function JudgmentScreen({
 
   if (missing) {
     /**
-     * NOT "that judgment is not in the corpus". IT ALMOST CERTAINLY IS — all
-     * 38,341 are — but `GET /judgments/:id` does not exist on production yet,
-     * so a real judgment id from search cannot be opened.
+     * NOT "that judgment is not in the corpus". Telling an advocate their
+     * authority is missing when the truth is that WE could not fetch it would
+     * send them looking elsewhere for a judgment we hold.
      *
-     * The distinction is the whole point. Telling an advocate their authority
-     * is missing when the truth is that WE cannot open it would send them
-     * looking elsewhere for a judgment we hold. State our limitation, never
-     * imply a gap in the law.
+     * State our limitation, never imply a gap in the law. This is the same
+     * distinction the panel draws when it resolves no authorities.
      */
     return (
       <Screen>
-        <View style={styles.body}>
-          <Text variant="uiStrong">We cannot open this judgment yet</Text>
+        <View style={[styles.body, topInset]}>
+          <Text variant="uiStrong">We could not open this judgment</Text>
           <Text variant="ui" style={styles.muted}>
-            It is in the corpus — search found it. Reading the full text needs a route we have not
-            shipped, so for now the search result is all we can show you.
+            It is in the corpus — search found it. Something went wrong on our side fetching the
+            full text. The search result is still accurate.
           </Text>
           <Button label="Back to results" onPress={onBack} variant="secondary" />
         </View>
@@ -144,7 +165,7 @@ export function JudgmentScreen({
   if (!judgment) {
     return (
       <Screen>
-        <View style={styles.body}>
+        <View style={[styles.body, topInset]}>
           <SkeletonCard index={0} />
         </View>
       </Screen>
@@ -175,7 +196,7 @@ export function JudgmentScreen({
 
   return (
     <Screen>
-      <View style={styles.nav}>
+      <View style={[styles.nav, { paddingTop: insets.top + space.xs }]}>
         <Pressable accessibilityLabel="Back" accessibilityRole="button" onPress={onBack}>
           <ChevronLeft color={color.ink} size={22} strokeWidth={1.5} />
         </Pressable>
@@ -306,20 +327,37 @@ export function JudgmentScreen({
           `set_aside` — of historical interest only. The eyebrow says so, and
           the holding drops to muted ink so it cannot be skim-read as live law.
         */}
-        <SectionRule
-          accent={moved.kind === 'moved' && moved.band === 'danger'}
-          label={
-            moved.kind === 'moved' && moved.band === 'danger'
-              ? 'What it held — of historical interest only'
-              : 'Holding'
-          }
-        />
-        <Text
-          variant="legal"
-          style={moved.kind === 'moved' && moved.strikeTitle ? styles.muted : undefined}
-        >
-          {judgment.holding}
-        </Text>
+        {/*
+          THE HOLDING SECTION IS OMITTED ENTIRELY WHEN THERE IS NO HOLDING.
+
+          The two-sentence summary needs a model that is not wired, so the
+          corpus returns nothing for it on almost every judgment. A labelled
+          rule over empty space reads as a rendering fault and sends the
+          advocate looking for what broke; and filling it from the first
+          paragraph would be manufacturing a holding, which is the one thing
+          that must never happen on a page an advocate quotes from.
+
+          The full text is one tap below, which is where the holding actually
+          is.
+        */}
+        {judgment.holding ? (
+          <>
+            <SectionRule
+              accent={moved.kind === 'moved' && moved.band === 'danger'}
+              label={
+                moved.kind === 'moved' && moved.band === 'danger'
+                  ? 'What it held — of historical interest only'
+                  : 'Holding'
+              }
+            />
+            <Text
+              variant="legal"
+              style={moved.kind === 'moved' && moved.strikeTitle ? styles.muted : undefined}
+            >
+              {judgment.holding}
+            </Text>
+          </>
+        ) : null}
 
         {/*
           "CITE THIS INSTEAD" IS MANDATORY for a set-aside authority, not a
@@ -347,30 +385,41 @@ export function JudgmentScreen({
           </View>
         ) : null}
 
-        <View style={styles.operative}>
-          <Text variant="eyebrow">
-            Operative paragraph · {judgment.operativeParagraphNumber}
-          </Text>
-          <Text variant="legal" style={styles.operativeQuote}>
-            {judgment.operativeParagraph}
-          </Text>
-        </View>
+        {/*
+          THE OPERATIVE PARAGRAPH IS DRAWN ONLY WHEN THE SERVER NAMES ONE.
 
-        <SectionRule label="Relied on" />
-        {judgment.reliedOn.map((r) => (
-          <Pressable
-            accessibilityRole="button"
-            key={r.judgmentId}
-            onPress={() => onOpenJudgment(r.judgmentId)}
-          >
-            <View style={styles.reliedRow}>
-              <Text variant="legal">{r.caseTitle}</Text>
-              <Text opticalNudge variant="record">
-                {r.neutralCitation}
-              </Text>
-            </View>
-          </Pressable>
-        ))}
+          `GET /judgments/:id` sends neither the paragraph nor its number. The
+          field does arrive on search results, where it is ~2,600 characters of
+          raw OCR — running headers, marginal letters, mid-word hyphen breaks.
+          Setting that in a display face behind an oxblood rule would present
+          OCR wreckage as the court's own words, in the one place on the screen
+          designed to be quoted from. So the block waits for a paragraph the
+          server has actually identified.
+        */}
+        {judgment.operativeParagraph && judgment.operativeParagraphNumber ? (
+          <View style={styles.operative}>
+            <Text variant="eyebrow">
+              Operative paragraph · {judgment.operativeParagraphNumber}
+            </Text>
+            <Text variant="legal" style={styles.operativeQuote}>
+              {judgment.operativeParagraph}
+            </Text>
+          </View>
+        ) : null}
+
+        {/*
+          "Relied on", now with a date behind every row. Served from
+          `/judgments/:id/authorities` because the detail payload carries no
+          `reliedOn` — and because the endpoint answers the harder question:
+          not just what this bench cited, but whether that law was standing when
+          they cited it.
+        */}
+        <AuthoritiesPanel
+          data={authorities.data}
+          error={authorities.error}
+          onOpenJudgment={onOpenJudgment}
+          overrulings={authorities.overrulings}
+        />
 
         {/*
           "Relied on" looks backwards, at what this judgment cited. This looks

@@ -1,18 +1,32 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../../components/Text';
-import type { CounterArgumentsResponse } from '../../api/contract';
+import type { CounterArgumentsResponse, CounterAuthority } from '../../api/contract';
 import { color, radius, space } from '../../theme/tokens';
 
 /**
  * WHAT THE OTHER SIDE WILL LIKELY ARGUE — `FEATURE_PARITY.md` §2.9.
  *
- * THE EXCLUDED LIST IS THE POINT OF THIS COMPONENT.
+ * ── TWO SHAPES, ONE COMPONENT ───────────────────────────────────────────────
  *
- * A `set_aside` authority is not offered as a counter-argument — it cannot be
- * relied on, so proposing it would be proposing law that does not stand. But it
- * is NOT silently removed either. It is rendered, dimmed, struck through, with
- * the reason it was ruled out.
+ * S1 RETURNS AUTHORITIES AND NO PROSE. `POST /arguments/counter` answers
+ * `{ position, asOf, authorities, excluded, unverifiedReferences }` today;
+ * `arguments` is absent, not empty, because generating the argument and the
+ * rebuttal waits for S2.
+ *
+ * The two paths render differently ON PURPOSE, and the difference is not
+ * cosmetic. A list of authorities under the heading "the other side will likely
+ * argue" IS AN IMPLIED ARGUMENT — the advocate reads a claim into it that we
+ * never made and cannot source. So while the prose is missing the heading says
+ * what the list actually is, and one line says what it is not. When generation
+ * lands the prose arrives around these same rows and nothing else moves.
+ *
+ * ── THE EXCLUDED LIST IS THE POINT OF THIS COMPONENT ────────────────────────
+ *
+ * A `set_aside` authority is not offered — it cannot be relied on, so proposing
+ * it would be proposing law that does not stand. But it is NOT silently removed
+ * either. It is rendered, dimmed, struck through, with the reason it was ruled
+ * out.
  *
  * Two failures are avoided by showing it rather than dropping it:
  *
@@ -24,54 +38,88 @@ import { color, radius, space } from '../../theme/tokens';
  *      and would go looking for it themselves — which is the opposite of what
  *      the exclusion was for.
  *
- * The excluded block uses NEUTRAL INK WITH A DASHED EDGE, not amber. Amber
- * means the law has moved, which is a statement about the authority. This is a
- * statement about what WE did with it, and our own decisions are never amber.
+ * `excluded` IS NOT AN ERROR LIST. It is a worked decision with a reason
+ * attached, and it renders as one: neutral ink with a dashed edge, never amber.
+ * Amber means the law has moved, which is a statement about the authority. This
+ * is a statement about what WE did with it, and our own decisions are never
+ * amber.
  */
 export function CounterArguments({ data }: { data: CounterArgumentsResponse }) {
+  const generated = data.arguments ?? [];
+  const authorities = data.authorities ?? [];
+  const excluded = data.excluded ?? [];
+  const unverified = data.unverifiedReferences ?? [];
+
   return (
     <View style={styles.host}>
-      <Text variant="eyebrow">THE OTHER SIDE WILL LIKELY ARGUE</Text>
+      {generated.length ? (
+        <>
+          <Text variant="eyebrow">THE OTHER SIDE WILL LIKELY ARGUE</Text>
 
-      {data.arguments.map((arg, i) => (
-        <View key={`${i}-${arg.argument.slice(0, 24)}`} style={styles.card}>
-          <Text variant="uiStrong" style={styles.argument}>
-            {arg.argument}
-          </Text>
-
-          {arg.authorities.map((a) => (
-            <View key={a.judgmentId} style={styles.authority}>
-              <Text opticalNudge variant="record">
-                {a.caseTitle}, {a.neutralCitation}
+          {generated.map((arg, i) => (
+            <View key={`${i}-${arg.argument.slice(0, 24)}`} style={styles.card}>
+              <Text variant="uiStrong" style={styles.argument}>
+                {arg.argument}
               </Text>
 
-              {/*
-                Verified is silent. Only the exception draws, in neutral ink with
-                a dashed edge — our uncertainty, not the law moving.
-              */}
-              {a.verificationState !== 'verified' ? (
-                <View style={styles.unconfirmed}>
-                  <Text variant="uiStrong">We could not confirm this reference</Text>
-                  <Text variant="ui" style={styles.ecourts}>
-                    Check on eCourts
-                  </Text>
-                </View>
-              ) : null}
+              {arg.authorities.map((a) => (
+                <Authority authority={a} key={a.judgmentId} />
+              ))}
+
+              <View style={styles.rebuttal}>
+                <Text variant="eyebrow" style={styles.rebuttalLabel}>
+                  REBUTTAL
+                </Text>
+                <Text variant="ui" style={styles.rebuttalText}>
+                  {arg.rebuttal}
+                </Text>
+              </View>
             </View>
           ))}
+        </>
+      ) : (
+        <>
+          {/*
+            THE HEADING STATES WHAT THE LIST IS, NOT WHAT IT IMPLIES.
 
-          <View style={styles.rebuttal}>
-            <Text variant="eyebrow" style={styles.rebuttalLabel}>
-              REBUTTAL
-            </Text>
-            <Text variant="ui" style={styles.rebuttalText}>
-              {arg.rebuttal}
-            </Text>
-          </View>
-        </View>
-      ))}
+            "Authorities on this point" is checkable against the corpus.
+            "What the other side will argue", over a bare list, is a claim about
+            an opponent's case that nothing here supports.
+          */}
+          <Text variant="eyebrow">AUTHORITIES ON THIS POINT</Text>
 
-      {data.excluded.map((x) => (
+          {data.position ? (
+            <Text variant="ui" style={styles.position}>
+              {data.position}
+            </Text>
+          ) : null}
+
+          {authorities.length ? (
+            <View style={styles.card}>
+              {authorities.map((a) => (
+                <Authority authority={a} key={a.judgmentId} />
+              ))}
+            </View>
+          ) : (
+            <Text variant="ui" style={styles.muted}>
+              We found no authority in the corpus on this point.
+            </Text>
+          )}
+
+          {/*
+            SAID PLAINLY RATHER THAN LEFT TO BE INFERRED FROM A SHORT SCREEN.
+            An advocate who expects the argument and gets a list would otherwise
+            conclude the feature is broken, or worse, that these authorities ARE
+            the opposing case.
+          */}
+          <Text variant="ui" style={styles.muted}>
+            These are authorities on the point, not the argument against you. We do not draft the
+            opposing case yet.
+          </Text>
+        </>
+      )}
+
+      {excluded.map((x) => (
         <View key={x.judgmentId} style={styles.excluded}>
           <Text variant="ui" style={styles.excludedTitle}>
             {x.caseTitle}
@@ -94,7 +142,7 @@ export function CounterArguments({ data }: { data: CounterArgumentsResponse }) {
         Anything the model referenced that no tier confirmed is listed rather
         than stripped — `unverifiedReferences` is never empty-by-omission.
       */}
-      {data.unverifiedReferences.map((u) => (
+      {unverified.map((u) => (
         <View key={u.citationClaimed} style={styles.unconfirmed}>
           <Text variant="uiStrong">We could not confirm this reference</Text>
           <Text opticalNudge variant="record">
@@ -102,6 +150,29 @@ export function CounterArguments({ data }: { data: CounterArgumentsResponse }) {
           </Text>
         </View>
       ))}
+    </View>
+  );
+}
+
+function Authority({ authority }: { authority: CounterAuthority }) {
+  return (
+    <View style={styles.authority}>
+      <Text opticalNudge variant="record">
+        {authority.caseTitle}, {authority.neutralCitation}
+      </Text>
+
+      {/*
+        Verified is silent. Only the exception draws, in neutral ink with a
+        dashed edge — our uncertainty, not the law moving.
+      */}
+      {authority.verificationState !== 'verified' ? (
+        <View style={styles.unconfirmed}>
+          <Text variant="uiStrong">We could not confirm this reference</Text>
+          <Text variant="ui" style={styles.ecourts}>
+            Check on eCourts
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -117,6 +188,8 @@ const styles = StyleSheet.create({
     gap: space.xs,
   },
   argument: { color: color.ink },
+  position: { color: color.inkMuted },
+  muted: { color: color.inkFaint },
   authority: { gap: 4 },
   unconfirmed: {
     borderWidth: 1.5,
