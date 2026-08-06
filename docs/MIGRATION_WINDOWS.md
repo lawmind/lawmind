@@ -3,6 +3,33 @@
 Written 5 August 2026, on the Mac, as the last act before the move. Everything
 below was verified on that machine, not recalled.
 
+> ## MIGRATION COMPLETE — 6 August 2026
+>
+> **This file is now history.** It is kept for its reasoning, not its numbers.
+> Several of those numbers were superseded within hours of the move and are
+> corrected here rather than edited in place, so the record of what was believed
+> at the time survives.
+>
+> | Said here | Actually |
+> |---|---|
+> | RTX 4070 Ti | **RTX 4060 Ti, 8 GB** |
+> | 38,342 judgments | **38,341** — the asset table below was right, the Done section was not |
+> | 1,624 chunks embedded | **6,113** — a Railway CPU job kept running after the doc was written |
+> | ~383,000 chunks total | **~623,000**, measured from real text lengths |
+> | Embed "well under an hour" | **~10 hours** on this GPU at 0.05 s/chunk |
+> | "delete the chunks or measure fp16-vs-q8 agreement" | Both were too narrow — see below |
+>
+> **The q8 trap was worse than described.** This file frames it as a precision
+> mismatch between fp16 and q8. The real problem is that q8 is *dynamic*
+> quantisation: a chunk's vector depends on which chunks shared its batch **and
+> on which CPU computed it**. Measured on 48 real chunks — batch effect 0.976,
+> platform effect 0.977. No batching discipline could have fixed it. The corpus
+> and the query path are now **fp32**, which is bit-exact across batches, holds
+> 0.999709 minimum GPU-vs-Railway, and is *faster* at inference on CPU than fp16
+> because CPUs have no native fp16 arithmetic.
+>
+> **Current state lives in `docs/LCC_PLAN.md`**, not here.
+
 **Why:** the Mac sat at 96% disk (9.8 GiB free) and that constraint repeatedly
 cost real work — it killed an ingest run mid-flight, killed three CoreML probes,
 and forced local Postgres to be retired entirely. The Windows box has ~2 TB free

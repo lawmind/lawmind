@@ -4,8 +4,9 @@ Unresolved. **Never silently resolve one.** If your work touches an OD, surface 
 and stop.
 
 **Closed 2 August 2026.** Eight of the nine originals are resolved below under
-§Resolved, each with its reasoning. **One remains open (OD-1) and one is new and
-deferred (OD-10). Nothing blocks S1.**
+§Resolved, each with its reasoning. **OD-1 remains open, OD-10 is deferred, and
+OD-11 was added 6 Aug 2026 — it had been live in three documents for four days
+without being tracked here.**
 
 ---
 
@@ -60,6 +61,41 @@ The court adapter ships with the **manual path fully working**: the advocate typ
 the next date, which is what they do on paper today. `bharat-courts` becomes a
 second implementation behind the same interface; a paid vendor becomes a third if
 it wins. **Nothing above the interface changes.** `TRD.md` §Court data.
+
+---
+
+## OD-11 — Tier B before Tier A, or the sprint plan as written · OPEN
+
+**Added 6 August 2026, recorded rather than resolved.** RCC raised this twice
+across two sessions; it was live in three documents and tracked in none.
+
+**The conflict, in the documents' own words:**
+
+- `CLAUDE.md` §1 and `PRODUCT_BRIEF.md`: *"Tier B ships before Tier A — the loop
+  creates the habit, the library only prevents a feature-comparison loss."*
+  Approved 2 Aug 2026.
+- `PRODUCT_BRIEF.md` again, on the sprint plan: the two *"cannot both be
+  followed"*, and **"resolving it is a sprint-planning decision, not a build
+  decision."**
+- `sprints/SPRINT_1.md` has both lanes building **Tier A**.
+
+So the brief instructs Tier B first, names the contradiction itself, forbids
+either lane from settling it by building — and the sprint everyone is executing
+is Tier A.
+
+**Why it belongs here.** This file's stated job is *"what nobody may decide
+alone."* A decision that meets that description exactly, and is absent from the
+file, is the one most likely to be settled by accident — by whichever lane ships
+first.
+
+**What has already been built while it stayed open**, which narrows it: the
+corpus, hybrid retrieval, the citation graph, the reading view, and eleven
+feature-parity screens are all Tier A. Six daily-loop screens are designed
+(`7sc.zip`) and unbuilt. Tier A is now substantially ahead by execution, which is
+precisely the "settled by building" outcome the brief warned against.
+
+**Not for LCC or RCC to resolve.** Founder decision, and it lands in
+`BUILD_GUIDE.md` and `sprints/`.
 
 ---
 

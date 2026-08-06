@@ -94,7 +94,14 @@ another model's commentary about them.
 
 ### AWS Open Data — Supreme Court, Stage 1 complete 4 Aug 2026
 
-**38,342 of 38,351 distinct judgments loaded, 1950–2026. Every year present.**
+**38,341 of 38,351 distinct judgments loaded, 1950–2026. Every year present.**
+
+> **Corrected 6 Aug 2026: the database holds 38,341, not 38,342.** Counted
+> directly (`SELECT count(*) FROM judgments`), so ten are absent rather than the
+> nine itemised below. The tenth has not been traced to a cause and is recorded
+> as unexplained rather than folded into the 404/corrupt tally — the point of
+> that table is that each entry was checked individually, and an uninvestigated
+> row does not belong in it.
 
 The published metadata carries **43,532 rows**, which is not the corpus size: the
 same judgment is listed under two adjacent year partitions, so identity is

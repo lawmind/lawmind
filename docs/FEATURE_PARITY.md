@@ -99,6 +99,44 @@ Ours: PII pseudonymised before the call, coverage **measured not asserted**
 **The claim: the only Indian legal AI that tells you what it did with your client's
 name.**
 
+### 6a · Point-in-time good law — the one they cannot easily copy
+**Added 6 Aug 2026, built the same day. `GET /judgments/:id/authorities`.**
+
+IndianKanoon ship "Case Recast AI", which audits an order *"based on the legal
+context that existed up to the day the order was passed"* — now their third
+most-used tool. The framing is right and the hard part is temporal: current
+overruled status answers **is this good law now**, which is a different question
+from **was it good law then**, and only the second tells you whether a bench
+relied on something that had already fallen.
+
+We can answer it because `judgments.overruled_status_changed_at` exists.
+`SCHEMA_TRUTH.md` records it as separating "a badge that was wrong when rendered"
+from "one the world invalidated afterwards" — exactly the discriminator needed.
+A corpus holding only current status cannot reconstruct it.
+
+Four standings, and the honest ones matter as much as the alarming one:
+`good_law_then` · `already_moved` (with the gap in days) · `moved_since` — not a
+criticism of the bench, but what an advocate citing this judgment **today** needs
+— and `unknown`, said plainly where we hold no dated status.
+
+**What we deliberately do not copy.** Their tool ships traffic-light *soundness
+ratings* on a court's reasoning (🟢 Sound → 🔴 Vulnerable) and *"alternative
+holdings... including ones no party or judge ever argued"*. Both are the same
+class of unverifiable claim as outcome prediction: generated content sitting
+beside real citations, under a standard where the Supreme Court has held that
+**even a fragment of hallucinated material voids a decision**. Note they gate it
+behind a mandatory one-time notice and "verify everything before relying on it".
+
+Ours states a fact with two judgment ids behind it — *this judgment relied on X,
+which had already been overruled by Y, N days earlier* — and a test asserts the
+response can never contain `vulnerable`, `soundness`, `verdict`, `rating`,
+`score` or `confidence`.
+
+**One thing of theirs worth copying:** *"we store an analysis and it stays
+consistent across users."* If two advocates get different analyses of the same
+judgment, trust collapses. Any generative surface we ship should persist its
+output rather than re-roll it.
+
 ### 6 · Precedent graph — the one where we can be best in market
 CaseMine's case tree is the strongest single feature any competitor has, and the
 data to beat it is already in our schema: `overruled_by_judgment_id`,

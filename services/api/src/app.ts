@@ -9,6 +9,7 @@ import {
   deleteAnnotation,
   listAnnotations,
 } from './judgments/annotations.ts';
+import { getAuthoritiesAsAt } from './judgments/as-at.ts';
 import { getJudgment, judgmentParams } from './judgments/route.ts';
 import { getGraph, getTreatment, graphQuery, treatmentQuery } from './judgments/treatment.ts';
 import { logger } from './logger.ts';
@@ -79,6 +80,10 @@ export function createApp(deps: AppDeps) {
     app.get('/judgments/:id/graph', validate('query', graphQuery), (c) =>
       getGraph(c, sql, c.req.param('id'), c.req.valid('query')),
     );
+    // Was each authority this judgment relied on still good law ON THE DAY it
+    // was delivered? States facts with two judgment ids behind them, never a
+    // soundness rating.
+    app.get('/judgments/:id/authorities', (c) => getAuthoritiesAsAt(c, sql, c.req.param('id')));
     // Highlight and save, PD-9 item 3. Anchored on the PRINTED paragraph number,
     // never on position — a re-ingest that moves a paragraph must not silently
     // relocate an advocate's note.
