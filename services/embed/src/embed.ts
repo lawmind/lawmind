@@ -16,6 +16,7 @@
  * only `last_hidden_state` with dims [batch, tokens, 1024]. So pooling and
  * normalisation happen here.
  */
+import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { AutoModel, AutoTokenizer, env } from '@huggingface/transformers';
@@ -31,7 +32,24 @@ export const MODEL_ID = 'Xenova/bge-m3';
  * cold start.
  */
 const defaultCacheDir = fileURLToPath(new URL('../../../.models', import.meta.url));
-env.cacheDir = process.env['MODEL_CACHE_DIR'] ?? defaultCacheDir;
+const cacheDir = process.env['MODEL_CACHE_DIR'] ?? defaultCacheDir;
+
+/**
+ * Create the cache directory before handing it to transformers.js.
+ *
+ * **It does not create this itself, and the failure is silent and instant.** With
+ * a missing directory it throws "Unable to get model file path or buffer" in
+ * under a second — no download attempted, no mention of the path — which reads
+ * like a network or model-availability problem and is neither.
+ *
+ * This cost a production outage. `.models` used to be uploaded with every deploy,
+ * so the directory always happened to exist; excluding it from the deploy (right
+ * on its own merits — it is 3.8GB the container re-fetches anyway) removed the
+ * thing the loader was silently depending on. Dense retrieval then failed on
+ * every request while search quietly degraded to lexical-only.
+ */
+mkdirSync(cacheDir, { recursive: true });
+env.cacheDir = cacheDir;
 
 export type Embedded = {
   vector: Float32Array;
