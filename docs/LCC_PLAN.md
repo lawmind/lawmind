@@ -217,6 +217,46 @@ with real data.
 
 ---
 
+## 3a · BLOCKED — CI cannot get a runner
+
+**Every workflow run since 15:45 UTC on 6 Aug 2026 has been cancelled without
+executing.** GitHub's own annotation:
+
+> The job was not acquired by Runner of type hosted even after multiple attempts
+
+`runner_name` is empty on every job, both jobs cancel together at exactly 15m02s,
+and the run at 16:42 sat queued for 10 minutes with no runner assigned. The last
+run that actually executed was `05095aa` at 15:34.
+
+**This is not our code.** It is runner allocation on a private repo, and the two
+candidate causes are GitHub-hosted capacity or the account's Actions
+minutes/spending limit. I cannot tell which: the billing endpoint needs the
+`user` OAuth scope, and changing auth scopes on the founder's account is not
+mine to do.
+
+**Founder check, in order:** github.com/settings/billing → Actions minutes for
+private repos (free tier is 2,000/month), then any spending limit set to zero.
+
+**Why it matters more than it looks.** The gates added this week — the design-rule
+ratchet and the dense-retrieval plan tests — only gate anything if CI runs. Right
+now they are decoration.
+
+**A self-hosted runner on the Windows box is NOT a drop-in fix.** The `server
+lane` job uses a `services:` Postgres container and that machine has no Docker.
+The `design rules` job needs neither and could move today if this persists.
+
+### What is verified despite it
+
+- `pnpm lint`, `pnpm format`, `pnpm typecheck` — green locally, all packages.
+- The specific bug that had CI red is verified fixed against the live database:
+  `SHOW hnsw.ef_search` names its output column after the parameter, so the old
+  `row.v` read undefined; `SELECT current_setting('hnsw.ef_search') AS v` returns
+  the value, confirmed by direct query.
+- The DB-backed suite has NOT run. No Docker locally, no runner remotely. Saying
+  otherwise would be exactly the failure this plan exists to prevent.
+
+---
+
 ## 4 · Not mine, and not blocking
 
 Recorded so I stop re-raising them: the `sfo` vs Singapore region contradiction
