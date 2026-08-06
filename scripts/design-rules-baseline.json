@@ -1,0 +1,140 @@
+{
+  "note": "Violations that already existed when the gate landed. New ones still fail. Shrink this by fixing renders, never by regenerating to go green.",
+  "generated": "2026-08-06",
+  "known": {
+    "03-precedent-graph.dc.html": [
+      "03-precedent-graph.dc.html off-palette-hex #F5EDDC"
+    ],
+    "05-document-compare.dc.html": [
+      "05-document-compare.dc.html off-palette-hex #F5EDDC"
+    ],
+    "06-upload-chat.dc.html": [
+      "06-upload-chat.dc.html off-palette-hex #F5EDDC"
+    ],
+    "07-counter-arguments.dc.html": [
+      "07-counter-arguments.dc.html off-palette-hex #F5EDDC",
+      "07-counter-arguments.dc.html off-palette-hex #C3BEB2"
+    ],
+    "08-saved-search-feed.dc.html": [
+      "08-saved-search-feed.dc.html off-palette-hex #C3BEB2"
+    ],
+    "09-reading-view-controls.dc.html": [
+      "09-reading-view-controls.dc.html devanagari-tracking Devanagari in letterspaced JetBrains Mono",
+      "09-reading-view-controls.dc.html off-palette-hex #C3BEB2",
+      "09-reading-view-controls.dc.html off-palette-hex #F5EDDC"
+    ],
+    "10-draft-editor-precedent.dc.html": [
+      "10-draft-editor-precedent.dc.html retired-copy citations verified",
+      "10-draft-editor-precedent.dc.html off-palette-hex #EDE9E0",
+      "10-draft-editor-precedent.dc.html off-palette-hex #C3BEB2"
+    ],
+    "12-authorities-as-at.dc.html": [
+      "12-authorities-as-at.dc.html off-palette-hex #C3BEB2"
+    ],
+    "LawMind Admin.dc.html": [
+      "LawMind Admin.dc.html verified-green-in-app #1F6F4A",
+      "LawMind Admin.dc.html off-palette-hex #0B0F1A",
+      "LawMind Admin.dc.html off-palette-hex #45121E",
+      "LawMind Admin.dc.html off-palette-hex #F7F5F0",
+      "LawMind Admin.dc.html off-palette-hex #0F1524",
+      "LawMind Admin.dc.html off-palette-hex #4FBF8B",
+      "LawMind Admin.dc.html off-palette-hex #8FD3AE",
+      "LawMind Admin.dc.html off-palette-hex #E3E0D8",
+      "LawMind Admin.dc.html off-palette-hex #7A2438",
+      "LawMind Admin.dc.html off-palette-hex #F0EEE8",
+      "LawMind Admin.dc.html off-palette-hex #FDFCFA",
+      "LawMind Admin.dc.html off-palette-hex #EFEDE7",
+      "LawMind Admin.dc.html off-palette-hex #E8C86A",
+      "LawMind Admin.dc.html off-palette-hex #FBEFEF",
+      "LawMind Admin.dc.html off-palette-hex #C3BEB2",
+      "LawMind Admin.dc.html off-palette-hex #FDF7EC",
+      "LawMind Admin.dc.html off-palette-hex #F3E7EA",
+      "LawMind Admin.dc.html off-palette-hex #C9C5B9"
+    ],
+    "LawMind Prototype.dc.html": [
+      "LawMind Prototype.dc.html verified-green-in-app #1F6F4A",
+      "LawMind Prototype.dc.html retired-copy citations verified",
+      "LawMind Prototype.dc.html off-palette-hex #EFEDE7",
+      "LawMind Prototype.dc.html off-palette-hex #45121E",
+      "LawMind Prototype.dc.html off-palette-hex #F3E7EA",
+      "LawMind Prototype.dc.html off-palette-hex #E3E0D8",
+      "LawMind Prototype.dc.html off-palette-hex #0F1626",
+      "LawMind Prototype.dc.html off-palette-hex #C9C5B9",
+      "LawMind Prototype.dc.html off-palette-hex #F4F1EA",
+      "LawMind Prototype.dc.html off-palette-hex #FDFCFA",
+      "LawMind Prototype.dc.html off-palette-hex #F7E7CE",
+      "LawMind Prototype.dc.html stale-statute-regime IPC",
+      "LawMind Prototype.dc.html stale-statute-regime CrPC"
+    ],
+    "LawMind Screens.dc.html": [
+      "LawMind Screens.dc.html verified-green-in-app #1F6F4A",
+      "LawMind Screens.dc.html retired-copy We verified this citation",
+      "LawMind Screens.dc.html retired-copy Verification failed",
+      "LawMind Screens.dc.html retired-copy citations verified",
+      "LawMind Screens.dc.html retired-copy Safe to file",
+      "LawMind Screens.dc.html devanagari-tracking Devanagari in letterspaced JetBrains Mono",
+      "LawMind Screens.dc.html off-palette-hex #EFEDE7",
+      "LawMind Screens.dc.html off-palette-hex #45121E",
+      "LawMind Screens.dc.html off-palette-hex #C3BEB2",
+      "LawMind Screens.dc.html off-palette-hex #F5EDDC",
+      "LawMind Screens.dc.html off-palette-hex #ECE5DD",
+      "LawMind Screens.dc.html off-palette-hex #075E54",
+      "LawMind Screens.dc.html off-palette-hex #B8AFA2",
+      "LawMind Screens.dc.html off-palette-hex #4FC3F7",
+      "LawMind Screens.dc.html off-palette-hex #E3E0D8",
+      "LawMind Screens.dc.html off-palette-hex #F0EEE8",
+      "LawMind Screens.dc.html off-palette-hex #0B7DC4",
+      "LawMind Screens.dc.html off-palette-hex #1BA466",
+      "LawMind Screens.dc.html off-palette-hex #1A1F2E",
+      "LawMind Screens.dc.html off-palette-hex #221A1C",
+      "LawMind Screens.dc.html off-palette-hex #EDE9E0",
+      "LawMind Screens.dc.html off-palette-hex #EAE6DC",
+      "LawMind Screens.dc.html off-palette-hex #D8D2C4",
+      "LawMind Screens.dc.html off-palette-hex #25D366",
+      "LawMind Screens.dc.html off-palette-hex #3E3A33",
+      "LawMind Screens.dc.html off-palette-hex #0B4DA2",
+      "LawMind Screens.dc.html off-palette-hex #F5F3EE",
+      "LawMind Screens.dc.html off-palette-hex #1C1B22",
+      "LawMind Screens.dc.html off-palette-hex #0D0C11",
+      "LawMind Screens.dc.html off-palette-hex #1F1E24",
+      "LawMind Screens.dc.html off-palette-hex #9A96A2",
+      "LawMind Screens.dc.html off-palette-hex #EFEBE1",
+      "LawMind Screens.dc.html off-palette-hex #7DCCA4",
+      "LawMind Screens.dc.html off-palette-hex #B0ABA0",
+      "LawMind Screens.dc.html off-palette-hex #FDF7EC",
+      "LawMind Screens.dc.html off-palette-hex #FBEFEF",
+      "LawMind Screens.dc.html off-palette-hex #F7EFEF",
+      "LawMind Screens.dc.html off-palette-hex #FDFCFA",
+      "LawMind Screens.dc.html off-palette-hex #C9C5B9",
+      "LawMind Screens.dc.html off-palette-hex #E7E4DC",
+      "LawMind Screens.dc.html off-palette-hex #2E8B5E",
+      "LawMind Screens.dc.html off-palette-hex #8B2E2E",
+      "LawMind Screens.dc.html off-palette-hex #7A2438",
+      "LawMind Screens.dc.html off-palette-hex #F3E7EA",
+      "LawMind Screens.dc.html off-palette-hex #2A3550",
+      "LawMind Screens.dc.html off-palette-hex #F7F2EC",
+      "LawMind Screens.dc.html off-palette-hex #14483A",
+      "LawMind Screens.dc.html off-palette-hex #1F6350",
+      "LawMind Screens.dc.html off-palette-hex #E7EFEA",
+      "LawMind Screens.dc.html off-palette-hex #0F2A24",
+      "LawMind Screens.dc.html off-palette-hex #3E1D3C",
+      "LawMind Screens.dc.html off-palette-hex #5A2C55",
+      "LawMind Screens.dc.html off-palette-hex #EFE7EE",
+      "LawMind Screens.dc.html off-palette-hex #1C1526",
+      "LawMind Screens.dc.html off-palette-hex #0F1524",
+      "LawMind Screens.dc.html off-palette-hex #F4F2ED",
+      "LawMind Screens.dc.html off-palette-hex #B8901F",
+      "LawMind Screens.dc.html off-palette-hex #1B2337",
+      "LawMind Screens.dc.html off-palette-hex #0E1320",
+      "LawMind Screens.dc.html off-palette-hex #25161A",
+      "LawMind Screens.dc.html off-palette-hex #EAE7E0",
+      "LawMind Screens.dc.html off-palette-hex #DDD9D0",
+      "LawMind Screens.dc.html off-palette-hex #EAF2ED",
+      "LawMind Screens.dc.html off-palette-hex #2A1B1B",
+      "LawMind Screens.dc.html off-palette-hex #F7E7CE",
+      "LawMind Screens.dc.html off-palette-hex #F0C089",
+      "LawMind Screens.dc.html stale-statute-regime IPC",
+      "LawMind Screens.dc.html stale-statute-regime CrPC"
+    ]
+  }
+}
