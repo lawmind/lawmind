@@ -6,3 +6,11 @@ website
 *.zip
 node_modules
 .git
+
+# Embedding model weights. 3.8GB locally, and the server fetches its own copy on
+# first load — uploading them makes every `railway up` minutes longer and ships
+# nothing the container uses.
+.models
+
+# Training pairs live in R2, never in a deploy. `docs/TRAINING_STRATEGY.md` §4.
+training
