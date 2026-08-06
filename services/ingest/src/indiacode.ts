@@ -75,9 +75,36 @@ export function parseIndiaCodeDate(value: string): string | null {
   const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
   if (iso) return t;
   const dmy = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec(t);
-  if (!dmy) return null;
-  const [, d, m, y] = dmy;
-  return `${y}-${m!.padStart(2, '0')}-${d!.padStart(2, '0')}`;
+  if (dmy) {
+    const [, d, m, y] = dmy;
+    return `${y}-${m!.padStart(2, '0')}-${d!.padStart(2, '0')}`;
+  }
+  /**
+   * The browse index serves the month by name — `25-Mar-2016` — while an Act's
+   * own record page serves it numerically. Same site, two formats, and the
+   * numeric-only parser silently returned null for every row of the index.
+   */
+  const named = /^(\d{1,2})-([A-Za-z]{3,})-(\d{4})$/.exec(t);
+  if (!named) return null;
+  const [, d, monthName, y] = named;
+  const months = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+  ];
+  const idx = months.indexOf(monthName!.slice(0, 3).toLowerCase());
+  // An unrecognised month is a parse failure, never a guessed date.
+  if (idx === -1) return null;
+  return `${y}-${String(idx + 1).padStart(2, '0')}-${d!.padStart(2, '0')}`;
 }
 
 /** Reads the labelled metadata table on an Act record page. */
@@ -178,4 +205,62 @@ export function parseSectionContent(payload: unknown): { text: string; footnote:
   const text = stripTags(typeof body.content === 'string' ? body.content : '');
   const footnoteRaw = stripTags(typeof body.footnote === 'string' ? body.footnote : '');
   return { text, footnote: footnoteRaw.length > 0 ? footnoteRaw : null };
+}
+
+/**
+ * One Act as listed in the Central Acts browse index.
+ *
+ * Only what the index publishes. The full record — ministry, enforcement date,
+ * Hindi title — comes from the Act's own page via `parseActPage`, because the
+ * index does not carry it and inferring it would be inventing.
+ */
+export type ActListing = {
+  handle: string;
+  shortTitle: string;
+  actNumber: string | null;
+  dateIssued: string | null;
+};
+
+/** The Central Acts community. Its browse index is the only enumerable list. */
+export const CENTRAL_ACTS_HANDLE = '123456789/1362';
+
+/**
+ * Parse one page of the `browse?type=shorttitle` index.
+ *
+ * DSpace renders it as a table: date issued, act number, short title, and a
+ * "View..." link carrying the handle. The handle is the only durable identifier —
+ * short titles repeat across amendment Acts and act numbers restart every year.
+ */
+export function parseActListing(html: string): ActListing[] {
+  const out: ActListing[] = [];
+  // Rows are not newline-delimited in the served markup, so split on the row tag
+  // rather than on lines.
+  for (const row of html.split(/<tr[^>]*>/i)) {
+    const handle = /href="\/handle\/(123456789\/\d+)\?view_type=browse"/.exec(row)?.[1];
+    if (!handle) continue;
+    const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((m) =>
+      decodeEntities(m[1]!.replace(/<[^>]+>/g, ' '))
+        .replace(/\s+/g, ' ')
+        .trim(),
+    );
+    const [dateIssued, actNumber, shortTitle] = cells;
+    if (!shortTitle) continue;
+    out.push({
+      handle,
+      shortTitle,
+      actNumber: actNumber && actNumber.length > 0 ? actNumber : null,
+      dateIssued: dateIssued ? parseIndiaCodeDate(dateIssued) : null,
+    });
+  }
+  return out;
+}
+
+/** Total Acts the index reports, from its own "100 of 845" counter. */
+export function parseListingTotal(html: string): number | null {
+  const m = /(\d[\d,]*)\s+of\s+(\d[\d,]*)/.exec(html);
+  return m?.[2] ? Number(m[2].replace(/,/g, '')) : null;
+}
+
+export function actListingUrl(offset: number, perPage = 100): string {
+  return `${INDIA_CODE}/handle/${CENTRAL_ACTS_HANDLE}/browse?type=shorttitle&rpp=${perPage}&offset=${offset}`;
 }

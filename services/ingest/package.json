@@ -9,7 +9,8 @@
     "test": "tsx --test src/*.test.ts",
     "statutes": "tsx src/statutes-cli.ts",
     "citations": "tsx src/citations-cli.ts",
-    "overruled": "tsx src/overruled-cli.ts"
+    "overruled": "tsx src/overruled-cli.ts",
+    "acts": "tsx src/acts-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",
