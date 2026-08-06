@@ -64,6 +64,13 @@
                         "when":  1786015142259,
                         "tag":  "0008_judgment_citations",
                         "breakpoints":  true
+                    },
+                    {
+                        "idx":  9,
+                        "version":  "7",
+                        "when":  1786023763256,
+                        "tag":  "0009_annotations_and_saved_searches",
+                        "breakpoints":  true
                     }
                 ]
 }

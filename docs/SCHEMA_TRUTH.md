@@ -188,6 +188,51 @@ rather than treatments, and labelling them otherwise would overstate the record.
 authority, the other is whether that authority exists. A judgment can be
 `verified` and `overruled`, or `unverified` and `followed`.
 
+## judgment_annotations
+Added 6 Aug 2026 for PD-9 item 3 — highlight and save a passage.
+
+`id` uuid pk · `user_id` uuid fk→users cascade · `judgment_id` uuid fk→judgments
+cascade · `matter_id` uuid null fk→matters set null ·
+`paragraph_number` int null — **what the court printed**, the citable anchor ·
+`paragraph_index` int — position in the rendered array, never citable ·
+`quote` text · `note` text null · `created_at` timestamptz ·
+`deleted_at` timestamptz null
+
+Index: partial btree on (`user_id`, `judgment_id`) and on `matter_id`, both where
+`deleted_at is null`.
+
+**Two paragraph fields, and the reason is not tidiness.** A re-ingest can move a
+paragraph's position — a headnote parsed differently, reporter furniture stripped
+that was not stripped before — and an annotation that followed the index would
+silently relocate to a different passage of the same judgment. Nothing errors;
+the note is simply attached to the wrong law. `paragraph_number` is null on
+judgments that carry no numbering, which is every pre-1990s OCR'd scan, and
+`paragraph_index` exists so those annotations still land somewhere.
+
+Deletion is a timestamp, never a row removal — the same reasoning as
+`matter_shares.revoked_at`: what an advocate had marked, and when, is the question
+asked later.
+
+## saved_searches
+Added 6 Aug 2026. **The in-app feed only — never a notification.**
+
+`id` uuid pk · `user_id` uuid fk→users cascade · `query_text` text ·
+`query_language` enum-checked (en|hi) · `filters` jsonb null ·
+`last_seen_at` timestamptz · `created_at` timestamptz ·
+`deleted_at` timestamptz null
+
+Index: partial btree on `user_id` and on (`user_id`, `last_seen_at`), both where
+`deleted_at is null`.
+
+`last_seen_at` is what makes the feed a feed: anything newer is unseen. **There is
+deliberately no `notified_at` and no delivery state.** PD-5 excludes
+subject-following alerts from notifications entirely — *"that is discovery, not an
+alert; it belongs in the app, never in a notification"* — and a column for
+delivery would invite one to be built.
+
+**The table existing is not approval to build the surface.** `FEATURE_PARITY.md`
+§3 holds the client feed pending the founder's confirmation of the reframe.
+
 ## statutes
 Added S1 for the bare acts library (`sprints/SPRINT_1.md` LCC task 3, which
 requires the shape recorded here **before** the migration). One row per Act.

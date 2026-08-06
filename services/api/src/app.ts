@@ -3,6 +3,12 @@ import { requestId } from 'hono/request-id';
 
 import { buildSha } from './build-info.ts';
 import { fail, ok } from './envelope.ts';
+import {
+  annotationBody,
+  createAnnotation,
+  deleteAnnotation,
+  listAnnotations,
+} from './judgments/annotations.ts';
 import { getJudgment, judgmentParams } from './judgments/route.ts';
 import { getGraph, getTreatment, graphQuery, treatmentQuery } from './judgments/treatment.ts';
 import { logger } from './logger.ts';
@@ -72,6 +78,18 @@ export function createApp(deps: AppDeps) {
     );
     app.get('/judgments/:id/graph', validate('query', graphQuery), (c) =>
       getGraph(c, sql, c.req.param('id'), c.req.valid('query')),
+    );
+    // Highlight and save, PD-9 item 3. Anchored on the PRINTED paragraph number,
+    // never on position — a re-ingest that moves a paragraph must not silently
+    // relocate an advocate's note.
+    app.get('/judgments/:id/annotations', (c) =>
+      listAnnotations(c, sql, c.req.param('id'), search.userId),
+    );
+    app.post('/judgments/:id/annotations', validate('json', annotationBody), (c) =>
+      createAnnotation(c, sql, c.req.param('id'), search.userId, c.req.valid('json')),
+    );
+    app.delete('/annotations/:annotationId', (c) =>
+      deleteAnnotation(c, sql, c.req.param('annotationId'), search.userId),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));
