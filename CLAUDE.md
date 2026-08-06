@@ -12,7 +12,7 @@ Session start, in this order, before Section 2 of the global file:
    you are about to build does not serve one of its four features, stop and ask
 2. `.ai/README.md` → loads the whole `.ai/` module set (11 files)
 3. `docs/OPEN_DECISIONS.md` → what is NOT settled; never silently decide one
-4. **`PRODUCT_DECISIONS.md`** → PD-1…PD-12, **settled**. Do not silently reopen
+4. **`PRODUCT_DECISIONS.md`** → PD-1…PD-14, **settled**. Do not silently reopen
    one. Reasoning is recorded because the reasoning is what keeps the next
    decision consistent
 5. `docs/SCHEMA_TRUTH.md` → the only authority on data shapes

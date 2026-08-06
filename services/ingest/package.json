@@ -7,7 +7,8 @@
     "typecheck": "tsc --noEmit",
     "sci": "tsx src/cli.ts",
     "test": "tsx --test src/*.test.ts",
-    "statutes": "tsx src/statutes-cli.ts"
+    "statutes": "tsx src/statutes-cli.ts",
+    "citations": "tsx src/citations-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

@@ -59,6 +59,13 @@ export async function handleSearch(
   const queryVector = await deps.embedQuery(body.query);
   const retrieved = await hybridSearch(deps.sql, body.query, queryVector, filters, RESULT_LIMIT);
 
+  // `asOf` — the moment the SERVER read `overruled_status`, never the moment the
+  // client received it. `docs/CITATION_HARNESS.md` requires an offline surface to
+  // render a cached status "with its as-of date shown", and a client that has to
+  // invent that date is fabricating the one number the rule exists to make
+  // honest. Stamped once per request so every result in a response agrees.
+  const asOf = new Date().toISOString();
+
   // `searches.user_id` is NOT NULL (SCHEMA_TRUTH), and the contract authenticates
   // this endpoint with a Bearer token — but auth is S5 and RCC-owned, so in S1
   // there is no user to attribute a search to. Rather than invent one, the search
@@ -117,6 +124,7 @@ export async function handleSearch(
       overruledByJudgmentId: r.overruledByJudgmentId,
       overruledParas: r.overruledParas,
       overruledNote: r.overruledNote,
+      asOf,
     })),
     // Nothing can be dropped in S1: results ARE corpus rows, so there is no
     // model-claimed reference that failed to resolve. The field is always

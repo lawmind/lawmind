@@ -55,6 +55,22 @@ badge qualifier; `overruledStatus` answers whether it is still good law and is
 response carrying a citation must include all three. A citation missing them is a
 bug: the client renders "not confirmed" and reports it.
 
+**`asOf` — added 6 Aug 2026. Additive; no existing field moved.**
+
+Every payload carrying `overruledStatus` also carries `asOf`: an ISO-8601 UTC
+timestamp of **when the server read that status**. Not when the client received it,
+not when the row was written.
+
+Without it `CITATION_HARNESS.md`'s offline rule is unimplementable: *"Offline
+surfaces render the status they last read **with its as-of date shown**; they never
+present a stale status as current."* A client that has to invent that date is
+fabricating the one number the rule exists to make honest.
+
+It applies to `/search` results, `GET /judgments/:id`, briefing authorities, draft
+citations and matter authority lists — everywhere `overruledStatus` appears. The
+client renders it **only on a surface served from cache**; online renders are
+current by definition and showing a timestamp there is noise.
+
 ```
 GET /judgments/:id → { judgment with fullText }
 POST /verify/ecourts { citationText } → { ecourtsUrl, prefilledQuery }
@@ -107,6 +123,157 @@ and came into force 2024-07-01.
 
 `sectionText` is government-published text served verbatim from the database. It
 is never generated, summarised or reformatted.
+
+## Feature-parity endpoints — LCC owns · ADDED 6 Aug 2026
+
+**Additive only. No existing shape moved**, so nothing already built against this
+file breaks. These back the eleven screens in `design/screens/01…11` and the plan
+in `docs/FEATURE_PARITY.md`.
+
+Every response carrying a citation carries the three independent fields **and**
+`asOf`. Every endpoint that touches an uploaded document is sensitive-class:
+pseudonymise before any model call, **one document per call** (OD-6).
+
+### Treatment analysis — replaces outcome prediction
+```
+GET /judgments/:id/treatment ?limit=50 &cursor
+  → { judgmentId, asOf,
+      counts: { followed, distinguished, doubted, overruled },
+      treatments: [ { judgmentId, caseTitle, neutralCitation, court,
+                      judgmentDate, relationship: 'followed'|'distinguished'
+                                    |'doubted'|'overruled',
+                      paragraph,
+                      verificationState, verifiedBySource, overruledStatus,
+                      asOf } ],
+      total, returned, truncated, nextCursor }
+```
+**Every number is derived from real citation relationships in the corpus and is
+traceable to a judgment ID.** This endpoint states what courts *did*. It must never
+return a probability, a score, or a predicted outcome — that is the one competitor
+feature we decline (`FEATURE_PARITY.md` §4), because it cannot be sourced to a
+primary record and cannot be verified by any tier.
+
+`relationship` is a **different question** from `verificationState`. A judgment can
+be `verified` and `overruled`, or `unverified` and `followed`. Never fold them —
+and note that this is exactly why every row carries **all three** citation fields:
+a treatment row is a citation like any other, and a payload that asserts only
+`overruledStatus` forces the client to either render everything "not confirmed" or
+silently assume a verification the server never claimed.
+
+`counts` are computed over the **whole** treatment set, never over the truncated
+page — a count that shrank with pagination would misstate how the law has moved.
+
+### Precedent graph
+```
+GET /judgments/:id/graph ?depth=1|2 &limit=40
+  → { rootId, asOf,
+      nodes: [ { judgmentId, caseTitle, neutralCitation, court, judgmentDate,
+                 verificationState, verifiedBySource, overruledStatus,
+                 asOf, depth } ],
+      edges: [ { from, to, relationship } ],
+      totalNodes, returned, truncated }
+```
+`depth` caps at 2 and `limit` caps at 100, default 40.
+
+**`depth` bounds the walk; `limit` and `truncated` bound the payload — both are
+required.** A heavily-cited Supreme Court authority has hundreds of citing
+judgments at depth 1 alone, so depth alone leaves the response unbounded.
+
+**`truncated` is a correctness field, not a performance one.** A citation network
+rendered as though it were complete, when it is not, misrepresents how much law
+bears on the authority — the client must be able to say "showing 40 of 312" rather
+than implying 40 is all there is. Nodes are returned **most-cited first** so a
+truncated graph keeps the authorities that matter, and `totalNodes` is the true
+count before truncation.
+
+A citation network is unbounded and a phone is not — the client renders a ranked
+list by default and the graph on demand.
+
+### Document review and compare — sensitive class
+```
+POST /documents/:id/review
+  → { documentId, findings: [ { clauseIndex, span, category: 'standard'|'risk'
+                                |'negotiation', finding,
+                                authorities: [ { judgmentId, caseTitle,
+                                                 verificationState,
+                                                 verifiedBySource,
+                                                 overruledStatus, asOf } ] } ],
+      pseudonymisationCoverage, residual, measuredAt }
+
+POST /documents/compare   { aId, bId }
+  → { textChanges: [ { paragraphIndex, kind: 'added'|'removed'|'changed' } ],
+      citationChanges: [ { paragraphIndex, kind, before?, after?,
+                           verificationState, verifiedBySource,
+                           overruledStatus, asOf } ] }
+```
+`citationChanges` is **separate from `textChanges` on purpose**. A changed citation
+is a different event from changed prose and re-enters verification; a diff that
+renders them the same way hides the one change that matters.
+
+Coverage is **measured, not asserted**, and returned on every review so the client
+can state it. We never claim complete PII removal.
+
+### Upload and chat — one document, structurally
+```
+POST /uploads/:id/chat   { question }
+  → { answer, passages: [ { page, span, text } ], uploadId }
+```
+Scoped to a single `uploadId` in the path. **There is no endpoint that accepts two
+document ids**, and there must not be — mixing case files in one context makes the
+model conflate parties between matters, which is a confidentiality breach between
+two of the same advocate's clients and invisible in fluent output.
+
+Answers cite passages **from that document only**. This endpoint returns no
+judgment citations; authority questions go to `/search`.
+
+### Counter-arguments
+```
+POST /arguments/counter   { position, matterId?, judgmentIds? }
+  → { arguments: [ { argument, rebuttal,
+                     authorities: [ { judgmentId, caseTitle, neutralCitation,
+                                      verificationState, verifiedBySource,
+                                      overruledStatus, asOf } ] } ],
+      excluded: [ { judgmentId, caseTitle, reason: 'set_aside' } ],
+      unverifiedReferences: [ { citationClaimed, reason } ] }
+```
+Grounded only: the model references judgment IDs handed to it in context and never
+emits a citation from memory. `set_aside` authorities are **excluded and shown as
+excluded with the reason** — silently dropping them would be a silent drop, which
+is measured at a zero threshold.
+
+### Saved searches — in-app feed, never a push
+```
+GET    /saved-searches                → { savedSearches }
+POST   /saved-searches   { query, language, filters? } → { savedSearch }
+DELETE /saved-searches/:id            → { ok }
+GET    /saved-searches/:id/feed ?since → { results, unseenCount }
+```
+**No push, no badge, no notification of any kind.** PD-5 excluded subject-following
+alerts as *"discovery, not an alert — it belongs in the app, never in a
+notification"*, and PD-6 warns that a wrong cadence trains advocates to disable
+notifications permanently. `unseenCount` is for in-app ordering only and must not
+surface as a badge on the app icon or tab bar.
+
+**The endpoint existing is not approval to build the surface.** `FEATURE_PARITY.md`
+§3 holds this against PD-5 pending the founder's confirmation of the in-app-feed
+reframe. Shipped server-side so it is ready; **do not build the client surface
+until that is confirmed.**
+
+*Pagination note:* this is deliberately time-based (`?since`) while `/admin/audit`
+is cursor-based (`nextCursor`). A feed is read forward from where the advocate last
+looked; an audit ledger is paged through. Two idioms, chosen rather than drifted
+into — the graph and treatment endpoints use cursors, matching the ledger.
+
+### Annotations
+```
+GET    /judgments/:id/annotations                    → { annotations }
+POST   /judgments/:id/annotations  { paragraphIndex, span, note?, matterId? }
+                                                     → { annotation }
+DELETE /annotations/:annotationId                    → { ok }
+```
+Annotations are private to the user. When `matterId` is set they follow the
+matter's sharing rules (PD-3, PD-4) — a note is private by default and shareable
+per note, never shared implicitly by attaching it to a shared matter.
 
 ## Matters — LCC owns
 ```

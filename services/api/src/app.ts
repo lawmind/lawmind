@@ -3,6 +3,7 @@ import { requestId } from 'hono/request-id';
 
 import { buildSha } from './build-info.ts';
 import { fail, ok } from './envelope.ts';
+import { getJudgment, judgmentParams } from './judgments/route.ts';
 import { logger } from './logger.ts';
 import { handleSearch, searchRequest, type SearchDeps } from './search/route.ts';
 import { listSections, listStatutes, sectionQuery } from './statutes/route.ts';
@@ -57,6 +58,11 @@ export function createApp(deps: AppDeps) {
     const sql = search.sql;
     app.post('/search', validate('json', searchRequest), (c) =>
       handleSearch(c, search, c.req.valid('json')),
+    );
+    // The reading view's route. Without it a judgment found by search could not
+    // be opened, and the reading view could only be exercised against fixtures.
+    app.get('/judgments/:id', validate('param', judgmentParams), (c) =>
+      getJudgment(c, sql, c.req.valid('param').id),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));

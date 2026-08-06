@@ -75,9 +75,35 @@ pipeline is built, and enormous if it is retrofitted.
 
 ### S1 — harvest as we ingest
 
-The corpus pipeline already parses every judgment into **facts, issues, reasoning
-and holding**. Emit instruction pairs from that same pass. **Target: 50,000
-English pairs by the end of S1.**
+**STATUS, verified 6 Aug 2026: not started. 0 of 50,000 pairs.**
+
+> **Correction — this section described a pipeline that does not exist.** It read
+> *"the corpus pipeline already parses every judgment into facts, issues,
+> reasoning and holding."* It does not. `services/ingest` fetches PDFs, extracts
+> text, normalises whitespace and writes `judgments` rows with metadata. There is
+> no structural parse of a judgment into its parts, no `training/` directory, and
+> nothing emits instruction pairs. `.gitignore` did not cover `training/` either.
+>
+> This matters because the section's own argument is that the marginal cost is
+> near zero **if wired in as the pipeline is built** and enormous if retrofitted.
+> S1 is nearly complete and this was not wired in, so the cheap window is closing.
+
+The structural parse has to be built before pairs can be emitted from it. Two
+honest options, neither yet chosen:
+
+1. **Build the parse in S1's remainder.** Indian reported judgments carry usable
+   structure — headnote blocks, `Case Law Cited` lists, `[Paras N-M]` markers and
+   an operative portion. A conservative parser over that structure produces pairs
+   whose provenance is a span in a real judgment.
+2. **Defer to S2 and harvest the harness instead.** Smaller volume, higher
+   quality, and S2 produces advocate-reviewed pairs that are the ones impossible
+   to buy anyway.
+
+**Recommendation: option 2 for pairs, but capture the structure now.** The 50,000
+figure was never load-bearing — §1 says the asset is *advocate-validated* pairs,
+and un-validated pairs extracted mechanically from judgments are the lowest-value
+row in the whole strategy. What must not slip is the *capture*, which is cheap
+now and expensive later.
 
 ### S2 — the harness becomes gold data
 
@@ -113,6 +139,73 @@ that gates Hindi drafting release in OD-5.
 **Gated: the fine-tuned model must beat the RAG-only baseline on our own
 benchmark, or it does not ship.** A fine-tune that merely matches retrieval is a
 serving cost and a maintenance burden bought with nothing.
+
+---
+
+## 3a · The citation graph — a licensable asset in its own right
+
+**Added 6 Aug 2026.** `judgment_citations` (`SCHEMA_TRUTH.md`) holds extracted
+judgment-to-judgment edges: which authority cited which, where in the text, how
+the later bench treated it, and **the court's own phrase that justifies the
+treatment**.
+
+This is not an instruction dataset and should not be filed as one. It is
+**structured factual data about Indian case law**, and it is arguably more
+licensable than pairs, for three reasons:
+
+- **It is auditable.** Every edge carries `evidence` and `char_offset`, so any row
+  can be traced to the sentence that produced it. A licensee can verify the
+  dataset rather than trust it.
+- **It is model-agnostic and does not age.** A citation network is a fact about
+  what courts did. Instruction pairs are shaped by whatever a model needed at the
+  time they were written.
+- **Nobody has it cleanly for Indian law.** CaseMine sells a case tree as a
+  product feature; no one sells the underlying graph as data.
+
+**It carries the same discipline as everything else here.** Relationships come
+only from the court's own annotation — never from a proximity heuristic. A first
+implementation using a 400-character window produced **33 overrulings in 300
+judgments against 143 in the whole corpus**, a ~30x over-fire, and put a
+fabricated overruling on *N.P. Ponnuswami* (1952), which the same passage marked
+"referred to". That is precisely the contamination §1 forbids, and it arrived from
+our own code rather than from a model.
+
+**Standing rule out of that: no derived legal relationship enters the dataset
+without a sample verified against source text.** Machine-derived facts about what
+a court held are exactly as dangerous as a model's commentary, and are subject to
+the same bar.
+
+---
+
+## 3b · Licensing constraints on the corpus — unresolved
+
+**Recorded 6 Aug 2026 because selling API access to this data is a stated goal and
+these constraints have never been written down.**
+
+The corpus is **not ours outright**, and the terms differ by source:
+
+| Source | Licence | What it permits |
+|---|---|---|
+| AWS Open Data — SCI, High Courts | **CC-BY-4.0** | Commercial use and redistribution **with attribution**. Derived works allowed. |
+| indiacode.nic.in — BNS/BNSS/BSA | Government | Statutory text; unsettled whether attribution suffices for resale |
+| IndianKanoon API | Commercial licence | **Attribution mandatory.** Their terms indicate the API is *not* intended as raw extraction for building a competing database |
+| e-SCR | Government | Free, official |
+
+Three questions nobody has answered, all of which bear on an API business:
+
+1. **Does CC-BY-4.0 attribution survive into an API response?** Selling query
+   access to a derived index is not the same as redistributing the PDFs, and the
+   attribution obligation has to land somewhere a licensee can see.
+2. **Is the citation graph a derived work of the judgments, or an independent
+   database?** Facts are not copyrightable, but the extraction is ours. This
+   determines whether it can be licensed on our own terms.
+3. **Nothing derived from IndianKanoon may enter a licensable dataset** without
+   their agreement — which is sharper now that they ship Prism, a competing
+   product (`COMPETITIVE_TEARDOWN.md` §2). Keep Tier 2 verification results
+   separable from anything we intend to sell.
+
+**These need counsel, not an engineering decision.** Same posture as OD-2: record
+the gap plainly rather than let a default arrive by accident.
 
 ---
 

@@ -17,5 +17,11 @@ __pycache__/
 # Source archives — extracted content is tracked under design/screens/ and the repo root
 *.zip
 
-# Embedding model weights — 569MB, fetched on demand, never committed.
+# Embedding model weights — fetched on demand, never committed.
 .models/
+
+# Training pairs — versioned JSONL, backed to R2, never in the repo and never in
+# the app database. `docs/TRAINING_STRATEGY.md` §4: JSONL diffs are useless and
+# the repo becomes unclonable. Pairs derived from sensitive-class data carry the
+# same DPDP treatment as their source.
+training/

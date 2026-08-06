@@ -37,4 +37,28 @@ const app = createApp({
 
 serve({ fetch: app.fetch, port: env.port }, (info) => {
   logger.info({ port: info.port, env: env.nodeEnv }, 'api listening');
+
+  /**
+   * Warm the embedder in the background, after the port is open.
+   *
+   * fp32 BGE-M3 is a 2.16GB fetch on a cold container — `.models` is not on a
+   * volume, so it is re-fetched on every deploy — and roughly 15s to load once
+   * present. Left lazy, the FIRST search after a deploy pays all of it, which is
+   * both a poor first request and long enough to look like an outage.
+   *
+   * Deliberately after `serve` and deliberately not awaited: `/health` must stay
+   * answerable while this runs, or Railway's healthcheck fails the deploy and
+   * rolls back a container that was working. A failure here is logged and
+   * otherwise ignored — `embedQuery` already degrades to lexical-only, so a warm
+   * that does not complete costs latency, never correctness.
+   */
+  const started = Date.now();
+  getEmbedder()
+    .then((embedder) => embedder.embed(['anticipatory bail']))
+    .then(() => {
+      logger.info({ warm_ms: Date.now() - started }, 'embedder warm — dense retrieval ready');
+    })
+    .catch((error: unknown) => {
+      logger.error({ err: error }, 'embedder warm failed — search stays lexical-only');
+    });
 });

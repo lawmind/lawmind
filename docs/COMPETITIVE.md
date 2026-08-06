@@ -5,10 +5,17 @@
 
 ## The market as it actually is
 
+> **Feature-level teardown: `docs/COMPETITIVE_TEARDOWN.md`** (5 Aug 2026).
+> It carries the per-product detail, the accuracy claims in the market, and two
+> findings that bear on this file: **Prism's pricing undercuts the anchor used in
+> §Pricing below**, and **IndianKanoon is now both our verification Tier 2 supplier
+> and a competitor.** Neither is resolved.
+
 | Tier | Who | Price | What they sell |
 |---|---|---|---|
 | Institutional databases | SCC Online, Manupatra | SCC Online AI Pro ₹51,500/user/yr + 18% GST (~₹5,000/mo); Manupatra quote-only | Authority and comprehensiveness. **SCC headnotes are what judges prefer** |
 | Free government | e-SCR (Supreme Court) | Free | Neutral citations, court-formatted PDFs. **Genuinely good now** |
+| **AI over a free corpus** | **Prism (IndianKanoon)** | **₹500–1,500/mo, all tiers get every tool** | **8 AI tools over 30M+ judgments — research, 80+ draft templates, doc review, outcome prediction. No verification layer stated.** Also our Tier 2 supplier |
 | AI research | CaseMine (AMICUS), LegitQuest (iSearch/iDraf/iDigest), VIDUR AI, BharatLaw.AI, Jhana | Mid | Semantic search over Indian law |
 | Consumer apps | Law4u, Lawyyar, LegalKart | Free + IAP | Library breadth, 18 languages, advocate finder |
 | Case tracking | Notify Court Case Status, Provakil | Low | Cause lists, hearing reminders |
@@ -67,6 +74,7 @@ instrument.**
 |---|---|---|
 | **SCC Online / Manupatra** | ₹51,500/yr, desktop-first, no case tracking, no briefing | Mobile-first, ~1/15th the price, the daily loop they have no answer to |
 | **e-SCR** | Search only. No matters, no drafting, no alerts | **Never compete on corpus. Integrate it as a source** |
+| **Prism (IndianKanoon)** | No verification layer, no case tracking, no briefing, nothing accumulates. Their own reviews place them with *"practitioners not yet managing live matters at scale"* | The daily loop and the harness. **Do not fight on corpus — they have 30M+ judgments to our 38,341** |
 | **Law4u** | Huge library, no verification, no workflow, ad-supported feel | Verification-as-compliance + the daily loop |
 | **Notify Court Case Status** | Tracks listings, generates nothing | We turn a listing into a *prepared advocate* |
 | **CaseMine / LegitQuest** | Research only, no matter workspace | Research is **one tab of four** |
@@ -79,6 +87,11 @@ A solo advocate already allocates **₹30,000–50,000/year** for research
 (₹2,500–4,200/month). **Expert at ₹3,499 is inside that budget, not on top of it.**
 
 We are a **switch, not a new spend.** SCC Online at ~₹5,000/month is the anchor.
+
+> Market data point, recorded 5 Aug 2026: Prism (IndianKanoon) lists a full AI
+> toolset at ₹500–1,500/month. **PD-13 is settled and this does not reopen it** —
+> the competitive answer is feature depth and verification, not price.
+> `docs/FEATURE_PARITY.md`.
 
 This changes the sales conversation from *"is this worth ₹3,499?"* to *"is this
 better than what you already pay ₹5,000 for?"* — a comparison we win on the daily

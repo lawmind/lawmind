@@ -7,6 +7,10 @@
  * degrade every search. `docs/OSS_STACK.md` puts the batch run on a rented GPU and
  * query-time on Railway CPU — same code, same weights, different hardware.
  *
+ * "Different hardware" is why the dtype below is fp32. A quantised build does not
+ * survive the trip between those two machines: its vectors depend on the batch it
+ * was in and the CPU that computed it. The measurements are recorded at the dtype.
+ *
  * Verified against the model, not from memory: `config.json` gives hidden_size
  * 1024 and `1_Pooling/config.json` sets CLS pooling, and a forward pass returns
  * only `last_hidden_state` with dims [batch, tokens, 1024]. So pooling and
@@ -56,9 +60,26 @@ async function load(): Promise<Loaded> {
   loading ??= (async () => {
     const [tokenizer, model] = await Promise.all([
       AutoTokenizer.from_pretrained(MODEL_ID),
-      // q8: the CPU-servable build. Corpus and query must use the SAME dtype —
-      // see the note at the top of this file.
-      AutoModel.from_pretrained(MODEL_ID, { dtype: 'q8' }),
+      // fp32, not q8. Corpus and query must use the same dtype — see the note at
+      // the top of this file — and q8 turned out to be incapable of that.
+      //
+      // Measured on 48 real corpus chunks, cosine against the same text embedded
+      // the other way:
+      //   q8, batch 1 vs batch 8, same machine   0.976  <- batch composition
+      //   q8, Railway vs Windows, both batch 1   0.977  <- platform
+      //   fp16, batch 1 vs batch 4, same machine 0.9999998
+      // q8 here is DYNAMIC quantisation: onnxruntime derives activation scales
+      // from the observed tensor range at runtime, and that tensor spans the whole
+      // batch. So a chunk's vector depends on its neighbours, and on which CPU
+      // computed it. A query is embedded alone on Railway; the corpus is embedded
+      // in batches on the GPU box. Under q8 those two never agree.
+      //
+      // fp32 has neither problem and costs nothing at the gate: query-embedding
+      // p95 on the Railway CPU is 1200ms for fp32 against 1210ms for q8. fp16 was
+      // rejected for the CPU side — it hits a known onnxruntime graph-fusion crash
+      // (microsoft/onnxruntime#15531) and is slower than fp32 there anyway,
+      // because CPUs cast fp16 up to fp32 to compute (#25824).
+      AutoModel.from_pretrained(MODEL_ID, { dtype: 'fp32' }),
     ]);
     return { tokenizer, model };
   })();
@@ -113,6 +134,57 @@ export async function getEmbedder(): Promise<Embedder> {
           for (let t = 0; t < perRow; t++) tokenCount += Number(maskData[i * perRow + t] ?? 0);
         }
         return { vector, tokenCount };
+      });
+    },
+  };
+}
+
+/**
+ * Embedder backed by the GPU sidecar in `services/embed/gpu/server.py`.
+ *
+ * Used ONLY by the batch CLI, and only when `--embed-endpoint` is passed. It is
+ * deliberately not reachable from `getEmbedder()`: the API must never acquire a
+ * remote embedder by way of a stray environment variable, because a query
+ * embedded somewhere other than where the corpus was embedded is the failure this
+ * whole module exists to prevent.
+ *
+ * The sidecar returns vectors already CLS-pooled and L2-normalised. That it agrees
+ * with the path serving queries is verified, not assumed — `gpu/verify.py`.
+ */
+export function getRemoteEmbedder(endpoint: string): Embedder {
+  return {
+    dimensions: EMBEDDING_DIMENSIONS,
+    embed: async (texts: string[]): Promise<Embedded[]> => {
+      if (texts.length === 0) return [];
+      // Bounded, because an unbounded fetch is how a long run dies quietly: a
+      // socket that stalls without erroring leaves the promise pending forever
+      // and the process eventually exits with nothing written and no message.
+      // Generous enough for the largest judgment in the corpus — 2.9M characters
+      // is ~1,200 chunks, well under a minute on the GPU.
+      const response = await fetch(`${endpoint.replace(/\/$/, '')}/embed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts }),
+        signal: AbortSignal.timeout(Number(process.env['EMBED_TIMEOUT_MS'] ?? 300_000)),
+      });
+      if (!response.ok) {
+        throw new Error(
+          `embed sidecar ${response.status}: ${(await response.text()).slice(0, 200)}`,
+        );
+      }
+      const body = (await response.json()) as { vectors: number[][]; tokenCounts: number[] };
+      if (body.vectors.length !== texts.length) {
+        throw new Error(
+          `sidecar returned ${body.vectors.length} vectors for ${texts.length} texts`,
+        );
+      }
+      return body.vectors.map((vector, i) => {
+        if (vector.length !== EMBEDDING_DIMENSIONS) {
+          throw new Error(
+            `expected ${EMBEDDING_DIMENSIONS}-d vectors, sidecar gave ${vector.length}`,
+          );
+        }
+        return { vector: Float32Array.from(vector), tokenCount: body.tokenCounts[i] ?? 0 };
       });
     },
   };

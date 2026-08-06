@@ -137,6 +137,57 @@ the other is what the text looks like.
 Index: ivfflat on embedding vector_cosine_ops; btree on judgment_id.
 Unique: (judgment_id, chunk_index).
 
+## judgment_citations
+Added S1, 6 Aug 2026. **One row per citation found in a judgment's text.**
+
+`id` uuid pk · `citing_judgment_id` uuid fk→judgments cascade ·
+`cited_judgment_id` uuid null fk→judgments **set null** — null when the cited
+authority is not in the corpus · `citation_text` text — exactly as it appeared ·
+`normalised_citation` text — the comparison form · `relationship` text
+(`cites`|`followed`|`distinguished`|`doubted`|`overruled`) default `cites`,
+check-constrained · `evidence` text null — the phrase that justified a
+relationship other than `cites` · `char_offset` int — where in the citing text ·
+`created_at` timestamptz
+
+Unique: (`citing_judgment_id`, `normalised_citation`) — re-running extraction is
+idempotent. Index: btree on `citing_judgment_id`; partial btree on
+`cited_judgment_id` and on (`cited_judgment_id`, `relationship`) where the id is
+non-null; partial btree on `normalised_citation` where it is null.
+
+### Why this table had to exist
+`overruled_status` was `none` on all 38,341 judgments and
+`overruled_by_judgment_id` null on all of them, so **no surface in the product
+could ever show that the law had moved**. `CITATION_HARNESS.md` names this exact
+condition in its blind-spots section: a corpus that never learned an overruling
+reads 0.0% stale while advocates see stale badges, because both sides of the
+comparison agree. The edges have to be extracted before any of the overruled
+machinery has anything to act on.
+
+### `cited_judgment_id` is nullable, and that is the point
+A citation that does not resolve **exactly** against a stored `neutral_citation`
+or `reporter_citations` entry keeps its row with a null `cited_judgment_id`. It is
+never fuzzy-matched to the nearest candidate: a wrong edge is a fabricated
+statement about what one court said of another, which is the failure this product
+exists to prevent.
+
+Unresolved rows are kept rather than discarded because they **measure corpus
+coverage** — the share of cited authority we cannot yet resolve is a number worth
+knowing, and deleting the rows would hide it.
+
+### `relationship` defaults to `cites`, and `evidence` is why
+Whether a later bench *followed* or *overruled* an authority is a legal reading,
+not a string match. Where a signal phrase appears within 400 characters of the
+citation the relationship is recorded **together with the phrase that justified
+it**, so any row can be audited back to its own text. Where no phrase appears the
+value is `cites` — mechanically true and claiming nothing further.
+
+This is deliberately conservative. Most citations in a judgment are references
+rather than treatments, and labelling them otherwise would overstate the record.
+`relationship` answers a **different question** from
+`citation_checks.verification_state`: one is how a later court treated an
+authority, the other is whether that authority exists. A judgment can be
+`verified` and `overruled`, or `unverified` and `followed`.
+
 ## statutes
 Added S1 for the bare acts library (`sprints/SPRINT_1.md` LCC task 3, which
 requires the shape recorded here **before** the migration). One row per Act.
@@ -176,6 +227,8 @@ for on `judgments`, where an expression index left `ts_rank` recomputing
 up a section by number or by its exact term, and section text is short and
 precise, which is where sparse retrieval is strongest. A vector column is added
 when semantic statute search is actually built, not before.
+
+## statute_mappings
 `id` uuid pk · `old_act` enum (ipc|crpc|evidence) · `old_section` text ·
 `new_act` enum (bns|bnss|bsa) · `new_section` text · `relationship` enum
 (exact|split|merged|no_equivalent) · `note` text null
