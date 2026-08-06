@@ -4,6 +4,7 @@ import { requestId } from 'hono/request-id';
 import { buildSha } from './build-info.ts';
 import { fail, ok } from './envelope.ts';
 import { getJudgment, judgmentParams } from './judgments/route.ts';
+import { getGraph, getTreatment, graphQuery, treatmentQuery } from './judgments/treatment.ts';
 import { logger } from './logger.ts';
 import { handleSearch, searchRequest, type SearchDeps } from './search/route.ts';
 import { listSections, listStatutes, sectionQuery } from './statutes/route.ts';
@@ -63,6 +64,14 @@ export function createApp(deps: AppDeps) {
     // be opened, and the reading view could only be exercised against fixtures.
     app.get('/judgments/:id', validate('param', judgmentParams), (c) =>
       getJudgment(c, sql, c.req.valid('param').id),
+    );
+    // Treatment analysis and the precedent graph. Both read judgment_citations
+    // and state what courts DID — never what a court will do.
+    app.get('/judgments/:id/treatment', validate('query', treatmentQuery), (c) =>
+      getTreatment(c, sql, c.req.param('id'), c.req.valid('query')),
+    );
+    app.get('/judgments/:id/graph', validate('query', graphQuery), (c) =>
+      getGraph(c, sql, c.req.param('id'), c.req.valid('query')),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));
