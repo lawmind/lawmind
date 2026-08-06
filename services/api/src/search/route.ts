@@ -12,6 +12,7 @@ import { z } from 'zod';
 import type { Sql } from 'postgres';
 
 import { ok } from '../envelope.ts';
+import { logger } from '../logger.ts';
 import { hybridSearch, type SearchFilters } from './retrieve.ts';
 
 export const searchRequest = z.object({
@@ -87,8 +88,19 @@ export async function handleSearch(
   // exist without one. Gating it on `searchId` silently wrote nothing while
   // unauthenticated, which would have zeroed the silent-drop measurement the
   // harness depends on. `docs/CITATION_HARNESS.md` §How stale-overruled is measured.
+  /**
+   * The ids come back so each rendered citation carries a handle to its own
+   * check. Without one the client can render a badge but cannot answer "why does
+   * it say that" — which is exactly what left the verification sheet on a mock.
+   *
+   * A multi-row `INSERT ... VALUES` returns rows in the order they were supplied,
+   * so index alignment with `retrieved` holds. Asserted below rather than assumed,
+   * because a silent misalignment would attach one judgment's verification record
+   * to a different judgment's badge.
+   */
+  let checkIds: (string | null)[] = retrieved.map(() => null);
   if (retrieved.length > 0) {
-    await deps.sql`
+    const inserted = await deps.sql<{ id: string }[]>`
       INSERT INTO citation_checks ${deps.sql(
         retrieved.map((r) => ({
           search_id: searchId,
@@ -101,12 +113,26 @@ export async function handleSearch(
           surface: 'search',
         })),
       )}
+      RETURNING id
     `;
+    if (inserted.length === retrieved.length) {
+      checkIds = inserted.map((row) => row.id);
+    } else {
+      // Never guess an alignment. A wrong citationCheckId is worse than none:
+      // it would point the advocate at another judgment's verification record.
+      logger.error(
+        { inserted: inserted.length, results: retrieved.length },
+        'citation_checks insert returned a different row count — citationCheckId withheld',
+      );
+    }
   }
 
   return ok(c, {
-    results: retrieved.map((r) => ({
+    results: retrieved.map((r, i) => ({
       judgmentId: r.judgmentId,
+      // The handle for GET /citations/:id — what each tier did, and when.
+      // Null when alignment could not be guaranteed; never a guessed id.
+      citationCheckId: checkIds[i] ?? null,
       caseTitle: r.caseTitle,
       neutralCitation: r.neutralCitation,
       reporterCitations: r.reporterCitations,
@@ -117,6 +143,10 @@ export async function handleSearch(
       // rather than a snippet dressed up as a holding.
       holding: '',
       operativeParagraph: r.operativeParagraph,
+      // The number the COURT printed. Null means we cleaned the text but did not
+      // identify a paragraph — the client must not render that as the court's own
+      // words behind an authority rule.
+      operativeParagraphNumber: r.operativeParagraphNumber,
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
       // Read live from the row on every request. Never cached.

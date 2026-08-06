@@ -3,6 +3,7 @@ import { requestId } from 'hono/request-id';
 
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { buildSha } from './build-info.ts';
+import { getCitationCheck } from './citations/check.ts';
 import { fail, ok } from './envelope.ts';
 import {
   annotationBody,
@@ -110,6 +111,10 @@ export function createApp(deps: AppDeps) {
     app.post('/arguments/counter', validate('json', counterRequest), (c) =>
       handleCounter(c, { sql, embedQuery: search.embedQuery }, c.req.valid('json')),
     );
+    // What each verification tier did, and when. Unblocks the verification sheet
+    // and the unverified-citation screen, both of which were on a mock because
+    // nothing exposed per-tier results.
+    app.get('/citations/:id', (c) => getCitationCheck(c, sql, c.req.param('id')));
     // Saved searches — an in-app feed, never a notification. PD-5/PD-6: nothing
     // here emits anything, and `unseenCount` is for ordering, never a badge.
     app.get('/saved-searches', (c) => listSavedSearches(c, sql, search.userId));

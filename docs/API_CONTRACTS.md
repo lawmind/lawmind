@@ -133,6 +133,34 @@ ones. Measured across judgments from 1964 to 2023: 11 of 15 sampled were above
 fill the gap.
 
 ```
+GET /citations/:citationCheckId
+  → { citationCheckId, citationClaimed, checkedAt, surface, shownToUser,
+      verificationState, verifiedBySource, overruledStatus, overruledStatusShown,
+      matchConfidence, judgment: {...} | null,
+      tiers: [ { tier, source, status, detail, at } ],
+      coverage: { tiersImplemented, tiersDefined, note }, asOf }
+```
+**Added 7 Aug 2026.** The verification sheet and the unverified-citation screen
+were both on a mock because nothing returned per-tier results with timestamps.
+`citation_checks` held the rows; nothing exposed them.
+
+`status` is one of `confirmed` · `miss` · `not_attempted` · **`not_implemented`**,
+and the last one is the point. **`miss` and `not_implemented` are different facts
+and must never be collapsed.** `miss` says we queried an independent source and
+found nothing. `not_implemented` says Tiers 2 and 3 ship in S2 and have not run.
+Rendering the second as the first tells an advocate a citation failed independent
+verification that was never attempted — and it makes the harness agree with
+itself, reporting a confirmation rate computed over checks that never happened.
+
+`coverage` states this in words so the client is not left inferring it from an
+array. In S1: `tiersImplemented: 1` of `tiersDefined: 3`.
+
+**The handle comes from the search response.** Every result in `POST /search` and
+every authority in `POST /arguments/counter` carries `citationCheckId`. It is null
+only when row alignment could not be guaranteed — never a guessed id, because a
+wrong one points the advocate at another judgment's verification record.
+
+```
 POST /verify/ecourts { citationText } → { ecourtsUrl, prefilledQuery }
 POST /verify/confirm { citationText, judgmentId } → { cached: true }
 

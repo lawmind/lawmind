@@ -85,6 +85,7 @@ export async function handleCounter(
       court: r.court,
       judgmentDate: r.judgmentDate,
       operativeParagraph: r.operativeParagraph,
+      operativeParagraphNumber: r.operativeParagraphNumber,
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
       overruledStatus: r.overruledStatus,
