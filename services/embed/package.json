@@ -6,7 +6,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/*.test.ts",
-    "embed": "tsx src/cli.ts"
+    "embed": "tsx src/cli.ts",
+    "fetch-model": "tsx src/fetch-model.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "4.2.0",
