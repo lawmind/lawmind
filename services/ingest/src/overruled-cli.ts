@@ -64,6 +64,11 @@ async function main(): Promise<void> {
       FROM judgment_citations c
       JOIN judgments cited  ON cited.id  = c.cited_judgment_id
       JOIN judgments citing ON citing.id = c.citing_judgment_id
+      -- overruled_in_part is DELIBERATELY absent. It would map to
+      -- partly_set_aside, which SCHEMA_TRUTH requires overruled_paras for, and a
+      -- bare "overruled to an extent" does not say which paragraphs fell.
+      -- Mapping it to set_aside instead would disable add-to-matter on an
+      -- authority that is still good law for everything else.
       WHERE c.relationship IN ('overruled', 'doubted')
         AND c.cited_judgment_id IS NOT NULL
       ORDER BY c.cited_judgment_id,

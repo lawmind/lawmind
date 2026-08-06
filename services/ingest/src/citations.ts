@@ -33,7 +33,24 @@ export type ExtractedCitation = {
   offset: number;
 };
 
-export type Relationship = 'cites' | 'followed' | 'distinguished' | 'doubted' | 'overruled';
+export type Relationship =
+  | 'cites'
+  | 'followed'
+  | 'distinguished'
+  | 'doubted'
+  | 'overruled'
+  /**
+   * "overruled to an extent", "overruled in part", "partly overruled".
+   *
+   * Kept separate from `overruled` because the consequence differs sharply:
+   * `overruled` maps to `set_aside`, which is the ONE state that disables
+   * add-to-matter, and refusing an advocate an authority that is still partly
+   * good law is a real harm. `SCHEMA_TRUTH.md` requires `overruled_paras` for
+   * `partly_set_aside`, and a bare "to an extent" does not say which paragraphs
+   * fell — so this relationship is recorded and the status back-fill skips it
+   * rather than asserting a precision we do not have.
+   */
+  | 'overruled_in_part';
 
 export type TreatmentSignal = {
   relationship: Relationship;
@@ -129,6 +146,12 @@ export function extractCitations(text: string): ExtractedCitation[] {
  * is an explicit annotation or nothing.
  */
 const MARKERS: readonly { pattern: RegExp; relationship: Relationship }[] = [
+  // Must precede the bare `overruled` test, or "overruled to an extent" is read
+  // as a full overruling and the authority is wrongly disabled.
+  {
+    pattern: /overruled\s+(?:to an extent|in part)|partly\s+overruled/i,
+    relationship: 'overruled_in_part',
+  },
   { pattern: /overruled/i, relationship: 'overruled' },
   { pattern: /dissented\s+from/i, relationship: 'doubted' },
   { pattern: /doubted/i, relationship: 'doubted' },
@@ -146,7 +169,7 @@ const MARKER_WINDOW = 220;
 
 /** Matches the dash-and-marker that closes a Case Law Cited entry. */
 const MARKER_RE =
-  /[-–—]\s*(overruled|dissented\s+from|doubted|distinguished|relied\s+on|approved|followed|referred\s+to)\b/i;
+  /[-–—]\s*(overruled\s+(?:to an extent|in part)|partly\s+overruled|overruled|dissented\s+from|doubted|distinguished|relied\s+on|approved|followed|referred\s+to)\b/i;
 
 /**
  * Reads the court's annotation following a citation.
