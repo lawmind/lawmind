@@ -31,6 +31,7 @@ const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () =
 
 type Authority = {
   caseTitle: string;
+  overruledByJudgmentId: string | null;
   standingWhenRelied: string;
   daysAlreadyMoved: number | null;
   overruledOn: string | null;
@@ -73,7 +74,8 @@ describe('authorities as at delivery', () => {
     };
 
     const moved = body.data.authorities.filter(
-      (a) => a.overruledOn && a.overruledStatus !== 'none',
+      (a) =>
+        a.overruledOn && a.overruledStatus !== 'none' && a.standingWhenRelied !== 'overruled_here',
     );
     assert.ok(moved.length > 0, 'the fixture judgment must have at least one moved authority');
 
@@ -150,6 +152,40 @@ describe('authorities as at delivery', () => {
         `response carries a "${word}" field. This endpoint states what courts did; ` +
           'it does not grade reasoning.',
       );
+    }
+  });
+
+  it('never calls the overruling bench a bench that relied on dead law', async (t) => {
+    // Measured across the corpus: 22 of the 48 edges that DATE as already-moved
+    // are the overruling judgment citing the authority it overrules. Tofan Singh
+    // reciting Kanhaiyalal. Navtej Singh Johar reciting Suresh Kumar Koushal.
+    // Vidya Drolia, Sita Soren, Joseph Shine, Vineeta Sharma, Puttaswamy.
+    //
+    // Their dates are necessarily equal, so a pure date comparison lands them in
+    // `already_moved` — which says the bench relied on law that had already
+    // fallen, about the bench that made it fall. On the landmarks.
+    const rows = await sql<{ id: string }[]>`
+      SELECT DISTINCT citing.id
+      FROM judgment_citations c
+      JOIN judgments citing ON citing.id = c.citing_judgment_id
+      JOIN judgments cited  ON cited.id  = c.cited_judgment_id
+      WHERE cited.overruled_by_judgment_id = citing.id
+      LIMIT 5`;
+    if (rows.length === 0) return t.skip('needs a judgment that overrules something it cites');
+
+    for (const row of rows) {
+      const res = await app.request(`/judgments/${row.id}/authorities`);
+      const body = (await res.json()) as { data: { authorities: Authority[] } };
+      const self = body.data.authorities.filter((a) => a.overruledByJudgmentId === row.id);
+      for (const a of self) {
+        assert.equal(
+          a.standingWhenRelied,
+          'overruled_here',
+          `${a.caseTitle}: this judgment IS the one that overruled it. ` +
+            'Calling that already_moved says the bench relied on dead law it killed itself.',
+        );
+        assert.equal(a.daysAlreadyMoved, null, 'a gap of zero days is not a gap');
+      }
     }
   });
 });

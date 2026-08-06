@@ -293,7 +293,7 @@ Each entry in `authorities`:
 |---|---|
 | `judgmentId` · `caseTitle` · `neutralCitation` · `judgmentDate` | the cited authority |
 | `relationship` | how this judgment treated it — from the court's own printed annotation |
-| `standingWhenRelied` | `good_law_then` · `already_moved` · `moved_since` · `unknown` |
+| `standingWhenRelied` | `good_law_then` · `already_moved` · **`overruled_here`** · `moved_since` · `unknown` |
 | `daysAlreadyMoved` | days between the overruling judgment and this one. Null unless `already_moved` |
 | `overruledOn` | **the overruling judgment's own delivery date** |
 | `overruledByJudgmentId` · `overruledByCaseTitle` | which bench moved it |
@@ -312,6 +312,16 @@ bench that could not have known — unremarkable, and true of a great deal of go
 law. `already_moved` says the bench relied on an authority that had already
 fallen. Rendering the first where the second is true tells an advocate the
 opposite of the fact.
+
+**`overruled_here` means this judgment is the one that moved it** — added 7 Aug
+2026 after a corpus-wide cross-check. Of the 99 citations of a moved authority,
+48 date as "already moved" and **22 of those are the overruling judgment citing
+the authority it overrules**: *Tofan Singh* reciting *Kanhaiyalal*, *Navtej Singh
+Johar* reciting *Suresh Kumar Koushal*, *Vidya Drolia*, *Sita Soren*, *Joseph
+Shine*, *Vineeta Sharma*, *Puttaswamy*. Their dates are necessarily equal, so a
+pure date comparison lands them in `already_moved` — which says a bench relied on
+dead law, about the bench that killed it, on the landmarks an advocate is most
+likely to open. `daysAlreadyMoved` is null here: a gap of zero days is not a gap.
 
 `unknown` is a real state and must render as one: we hold a status but no dated
 overruling judgment, so the question cannot be answered. Never collapsed into

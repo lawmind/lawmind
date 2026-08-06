@@ -44,10 +44,22 @@
  *
  *   `good_law_then`   the authority stood when it was relied on
  *   `already_moved`   it had already fallen — the finding that matters
+ *   `overruled_here`  **this judgment is the one that moved it**
  *   `moved_since`     it stood then and has fallen since. NOT a criticism of the
  *                     bench; it is what an advocate citing this judgment today
  *                     needs to know
  *   `unknown`         we hold no dated status. Said plainly, never guessed
+ *
+ * `overruled_here` exists because of a measurement, not a hunch. Cross-checking
+ * every citation of a moved authority in the corpus — 99 edges — found that **22
+ * of the 48 that date as "already moved" are the overruling judgment citing the
+ * authority it overrules.** Tofan Singh reciting Kanhaiyalal. Navtej Singh Johar
+ * reciting Suresh Kumar Koushal. Vidya Drolia, Sita Soren, Joseph Shine, Vineeta
+ * Sharma, Puttaswamy — the landmarks, every one.
+ *
+ * Labelling those `already_moved` says a bench relied on dead law when the bench
+ * is the one that killed it. It is the most misleading answer available on
+ * exactly the judgments an advocate is most likely to open.
  */
 import type { Context } from 'hono';
 import type { Sql } from 'postgres';
@@ -96,11 +108,16 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
   const deliveredAt = new Date(subject.judgment_date).getTime();
 
   const authorities = rows.map((r) => {
-    let standing: 'good_law_then' | 'already_moved' | 'moved_since' | 'unknown';
+    let standing: 'good_law_then' | 'already_moved' | 'overruled_here' | 'moved_since' | 'unknown';
     let daysBefore: number | null = null;
 
     if (r.overruled_status === 'none') {
       standing = 'good_law_then';
+    } else if (r.overruled_by_judgment_id === subject.id) {
+      // This judgment IS the overruling one. Checked before any date comparison,
+      // because the dates are necessarily equal and would otherwise fall through
+      // to `already_moved` — see the module note.
+      standing = 'overruled_here';
     } else if (!r.overruled_on) {
       // The status moved but no overruling judgment is recorded, so we hold no
       // date for the legal event. Saying "already_moved" would assert a date we
@@ -159,6 +176,8 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
     counts: {
       goodLawThen: tally('good_law_then'),
       alreadyMoved: tally('already_moved'),
+      /** Authorities THIS judgment overruled. Not a criticism of it — its holding. */
+      overruledHere: tally('overruled_here'),
       movedSince: tally('moved_since'),
       unknown: tally('unknown'),
     },
