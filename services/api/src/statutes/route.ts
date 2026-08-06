@@ -53,6 +53,36 @@ export async function listStatutes(c: Context, sql: Sql): Promise<Response> {
     ORDER BY s.act_year DESC, s.act_number
   `;
 
+  /**
+   * How much of the source we actually hold.
+   *
+   * The client lane caught this rendering the library: `/statutes` returned 207
+   * Acts, and 206 on the call before, because the ingest was running live —
+   * and nothing in the response said so. **A library rendered as complete when it
+   * is not misstates what we hold**, and an advocate searching for an Act we have
+   * not reached yet concludes we do not have it.
+   *
+   * Same argument this codebase already accepted for `truncated` on the precedent
+   * graph and `resolvedAuthorities` on the point-in-time endpoint: a count
+   * without its denominator invites the reader to assume completeness.
+   *
+   * `held` is counted here, on every read, never cached — a stale count is the
+   * lie this exists to prevent. `sourceTotal` is what the SOURCE reports, and it
+   * is null until an enumeration has run: unknown is a state, not zero.
+   */
+  const [cov] = await sql<
+    {
+      source_total: number | null;
+      enumerated_at: string | null;
+      complete: boolean;
+      failed: number;
+    }[]
+  >`
+    SELECT source_total, enumerated_at::text AS enumerated_at, complete,
+           coalesce(array_length(failed_ids, 1), 0) AS failed
+    FROM corpus_coverage WHERE source = 'indiacode_central_acts'
+  `;
+
   return ok(c, {
     statutes: rows.map((r) => ({
       statuteId: r.id,
@@ -67,6 +97,27 @@ export async function listStatutes(c: Context, sql: Sql): Promise<Response> {
       sourceUrl: r.source_url,
       sectionCount: r.section_count,
     })),
+    coverage: {
+      held: rows.length,
+      /** Null means we have never enumerated the source, not that it is empty. */
+      sourceTotal: cov?.source_total ?? null,
+      /**
+       * True only when a full pass finished. **The client must not infer
+       * completeness from `held === sourceTotal`** — an ingest can reach the
+       * count with Acts that failed and were retried into place, and can equal it
+       * transiently mid-run.
+       */
+      complete: cov?.complete ?? false,
+      /** Acts the last pass could not fetch. Named in `corpus_coverage`. */
+      failedCount: cov?.failed ?? 0,
+      enumeratedAt: cov?.enumerated_at ?? null,
+      /**
+       * Set while a pass is in flight, so the library screen can say "still
+       * loading Acts" rather than presenting a partial set as the whole.
+       */
+      ingestInProgress: cov ? !cov.complete && cov.enumerated_at !== null : false,
+    },
+    asOf: new Date().toISOString(),
   });
 }
 

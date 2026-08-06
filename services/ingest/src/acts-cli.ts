@@ -77,6 +77,23 @@ async function main(): Promise<void> {
   const sql = postgres(url, { max: 2 });
 
   try {
+    /**
+     * Record the size of the source BEFORE ingesting, and mark the pass
+     * incomplete for its duration.
+     *
+     * Without this, `/statutes` returns a growing count with no denominator and
+     * the library screen has no way to tell an advocate whether it is looking at
+     * the whole library. A partial set presented as complete means an advocate
+     * searching for an Act we have not reached concludes we do not have it.
+     */
+    await sql`
+      INSERT INTO corpus_coverage (source, source_total, enumerated_at, complete, failed_ids)
+      VALUES ('indiacode_central_acts', ${acts.length}, now(), false, '{}')
+      ON CONFLICT (source) DO UPDATE
+        SET source_total = ${acts.length}, enumerated_at = now(),
+            complete = false, failed_ids = '{}', updated_at = now()
+    `;
+
     // Resume: an Act that already has sections is done. Counting sections rather
     // than rows in `statutes` matters — an Act whose metadata landed but whose
     // sections failed must be retried, not skipped.
@@ -131,6 +148,26 @@ async function main(): Promise<void> {
         );
       }
     }
+
+    /**
+     * Complete only if every Act in the index now carries sections AND nothing
+     * failed this pass. Reaching the count is not the same as completeness: a
+     * run can equal it transiently, or with Acts that failed and were retried
+     * into place by an earlier run.
+     */
+    const [held] = await sql<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM statutes s
+      WHERE EXISTS (SELECT 1 FROM statute_sections sec WHERE sec.statute_id = s.id)`;
+    const complete = failures.length === 0 && (held?.n ?? 0) >= acts.length;
+    await sql`
+      UPDATE corpus_coverage
+      SET complete = ${complete},
+          failed_ids = ${failures.map((f) => f.handle)},
+          updated_at = now()
+      WHERE source = 'indiacode_central_acts'`;
+    console.log(
+      `coverage: ${held?.n ?? 0} of ${acts.length} Acts hold sections — complete=${complete}`,
+    );
 
     const [counts] = await sql<{ acts: string; sections: string }[]>`
       SELECT (SELECT count(*) FROM statutes)::text AS acts,

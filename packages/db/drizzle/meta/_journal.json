@@ -85,6 +85,13 @@
             "when": 1786034106607,
             "tag": "0011_judgment_chunks_hnsw",
             "breakpoints": true
+        },
+        {
+            "idx": 12,
+            "version": "7",
+            "when": 1786050832812,
+            "tag": "0012_corpus_coverage",
+            "breakpoints": true
         }
     ]
 }
