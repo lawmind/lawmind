@@ -207,6 +207,59 @@ latency fits our budget.
 
 ---
 
+## 5a · What it costs — and why cost turns out not to decide it
+
+Published prices, 6 Aug 2026. Sizes are our own measurements divided out, not
+estimates.
+
+| | |
+|---|---|
+| Railway volume | **$0.15 / GB-month**, self-serve to 1 TB on Pro |
+| Cloudflare R2 | **$0.015 / GB-month**, zero egress, 10 GB free |
+| Amazon S3 Vectors | **$0.06 / GB-month**, $0.20/GB one-off write |
+
+Per-vector cost of a tier-2 row, measured: fp16 `halfvec` came to 5.31 KB each
+including its HNSW index (3,275 MB / 616,197), binary `bit(1024)` to 0.6 KB.
+
+| option | where tier 2 lives | recall | added $/month |
+|---|---|---|---|
+| **A — all Railway, fp16** | Postgres, ~107 GB | **99.6%**, no oversampling | **~$18** |
+| B — hybrid, S3 Vectors | AWS, ~80 GB exact fp32 | exact | ~$5.35 |
+| C — hybrid, binary + re-score | Postgres 17 GB + R2 115 GB | 99.8% after re-score | ~$5.18 |
+
+**The spread between them is about $13 a month — $150 a year.** That is not a
+number that should choose an architecture.
+
+**So the recommendation is A, on simplicity.** One vendor, one network in the read
+path, no cross-cloud hop, no oversample-and-re-score machinery to get wrong, and
+99.6% recall with no tuning knob at all. B and C save $150 a year and buy a second
+system in the hot path; at this stage that is a bad trade.
+
+**What made this affordable was the architecture, not the vendor.** The original
+5,369 GB — $805/month on Railway — collapses to ~107 GB because of three changes,
+none of which involve a cloud: one vector per judgment instead of ~16, fp16
+instead of fp32, and full text in object storage instead of in the database.
+Choosing AWS instead would have saved $13/month on a problem that was never about
+who hosts it.
+
+**Revisit B when tier 2 outgrows a single Railway volume.** The 1 TB self-serve
+ceiling is roughly 10x what this needs, so that is not close.
+
+### AWS credits — take them, but do not let them choose the design
+
+DPIIT-recognised startups get **$5,000 in AWS Activate credits** through Startup
+India, plus partner offers. Conditions: a Startup India Organizational ID,
+self-funded or pre-Series B, a functioning company website, founded within the
+last 10 years, and no equal-or-greater Activate credit already received. The
+self-serve Founders tier is up to $1,000; the larger Portfolio amounts come
+through a VC or accelerator.
+
+$5,000 would cover option B's AWS line for decades. **It should still not decide
+this.** Credits expire — typically one to two years — and the classic mistake is
+letting free credit pick a platform whose complexity outlives the credit. Take
+them and spend them on something that ends when they do: the batch embedding runs
+for tier 2, which are one-off GPU cost and a perfect fit.
+
 ## 6 · What this does NOT fix
 
 **Storage was never why High Court judgments are hard to cite.**
