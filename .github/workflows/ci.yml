@@ -4,10 +4,22 @@ on:
   push:
   pull_request:
 
+# Only the newest commit on a ref is worth building. Without this, a run per push
+# queues behind the last one and they all burn minutes proving something already
+# superseded — which matters on a private repo with a monthly minute budget, and
+# mattered on 6 Aug 2026 when runs stopped being allocated runners entirely.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   server:
     name: server lane
     runs-on: ubuntu-latest
+    # Fail fast rather than sitting in a queue. This job takes ~5 minutes when a
+    # runner picks it up; if it has not finished in 15 something is wrong with the
+    # infrastructure, not the code, and a stuck job should say so quickly.
+    timeout-minutes: 15
 
     services:
       # Postgres 16 + pgvector, matching DEPLOYMENT.md. The migrations create the
@@ -61,6 +73,7 @@ jobs:
   design-rules:
     name: design rules
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     # Deliberately its own job. It needs no database, no install and no lane, and
     # a delivered render should be checkable the moment it lands rather than
     # after somebody builds against it.
