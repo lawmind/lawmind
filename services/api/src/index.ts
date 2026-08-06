@@ -43,13 +43,47 @@ process.on('unhandledRejection', (reason) => {
 let embedderFailures = 0;
 const EMBEDDER_FAILURE_LIMIT = 3;
 
+/**
+ * Query embedding gets a hard time budget and never exceeds it.
+ *
+ * A failure is not the only way this hurts: a model that HANGS is worse than one
+ * that throws. On a cold container `getEmbedder` blocks fetching weights, and
+ * without this every `/search` waits on that download — measured at over 180s
+ * against a Gate S1 budget of 3s for the whole request. The circuit breaker below
+ * cannot help, because it counts failures and a hang never fails.
+ *
+ * So the race is the guarantee: dense retrieval either contributes within budget
+ * or it does not contribute at all. Losing the dense half costs recall; losing
+ * the response costs the product.
+ */
+const EMBED_TIMEOUT_MS = Number(process.env['EMBED_TIMEOUT_MS'] ?? 2000);
+
 const embedQuery = async (text: string): Promise<string | null> => {
   if (embedderFailures >= EMBEDDER_FAILURE_LIMIT) return null;
+
+  let timer: NodeJS.Timeout | undefined;
+  const budget = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), EMBED_TIMEOUT_MS);
+  });
+
   try {
-    const embedder = await getEmbedder();
-    const [embedded] = await embedder.embed([text]);
+    const embed = (async () => {
+      const embedder = await getEmbedder();
+      const [embedded] = await embedder.embed([text]);
+      return embedded ? toVectorLiteral(embedded.vector) : null;
+    })();
+
+    const vector = await Promise.race([embed, budget]);
+    if (vector === null) {
+      // Distinguish a timeout from an empty result: only a timeout counts toward
+      // the breaker, and only a timeout should be logged as degradation.
+      logger.warn(
+        { timeout_ms: EMBED_TIMEOUT_MS },
+        'query embedding exceeded its budget — this search is lexical-only',
+      );
+    }
     embedderFailures = 0;
-    return embedded ? toVectorLiteral(embedded.vector) : null;
+    return vector;
   } catch (error) {
     embedderFailures++;
     logger.error(
@@ -59,6 +93,8 @@ const embedQuery = async (text: string): Promise<string | null> => {
         : 'query embedding unavailable — falling back to lexical search',
     );
     return null;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 };
 

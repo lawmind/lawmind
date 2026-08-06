@@ -72,7 +72,42 @@ client renders it **only on a surface served from cache**; online renders are
 current by definition and showing a timestamp there is noise.
 
 ```
-GET /judgments/:id → { judgment with fullText }
+GET /judgments/:id
+  → { judgmentId, caseTitle, neutralCitation, reporterCitations, court, bench,
+      judgmentDate, caseNumber, caseType, language, sourceUrl, fullText,
+      paragraphs: [ { paragraphNumber: number | null, paragraphIndex, text } ],
+      numberedShare,
+      verificationState, verifiedBySource,
+      overruledStatus, overruledByJudgmentId, overruledParas, overruledNote,
+      asOf }
+**`paragraphs` — added 6 Aug 2026, because `fullText` alone cannot serve PD-9.**
+
+The reading view is built on paragraph anchors, and a client cannot split
+`fullText` without **inventing paragraph numbers**. It must not: `overruled_paras`
+is expressed in printed numbers, advocates cite by them, and an advocate told
+"see paragraph 22" has to land on the paragraph the court numbered 22.
+
+Segmentation is server-side because it needs the reporter's conventions. The text
+carries marginal letters (`A B C D E F G H` down the page edge), running page
+numbers and an unnumbered headnote, and lines opening with a digit are just as
+often section numbers, years or list items. A client regex fragments the judgment
+and misnumbers everything after.
+
+**Two fields, answering different questions:**
+
+- **`paragraphNumber`** — what the court PRINTED. **Nullable, and null is
+  common**: headnotes are never numbered and pre-1990s judgments arrive as OCR'd
+  scans whose numbering did not survive. This is the citable unit.
+- **`paragraphIndex`** — position in the array. Always present, never citable, a
+  rendering and scroll-targeting handle only.
+
+`numberedShare` is the fraction carrying a number. **A judgment at 0.0 can be
+displayed but not anchored** — the client hides anchors rather than showing broken
+ones. Measured across judgments from 1964 to 2023: 11 of 15 sampled were above
+0.5, and numbering was monotonic in every one. Never fabricate a 1..N sequence to
+fill the gap.
+
+```
 POST /verify/ecourts { citationText } → { ecourtsUrl, prefilledQuery }
 POST /verify/confirm { citationText, judgmentId } → { cached: true }
 

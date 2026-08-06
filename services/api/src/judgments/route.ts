@@ -14,6 +14,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
+import { numberedShare, segmentParagraphs } from './paragraphs.ts';
 
 export const judgmentParams = z.object({ id: z.string().uuid() });
 
@@ -54,6 +55,8 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
   // time. An offline surface renders the status it last read WITH this date.
   const asOf = new Date().toISOString();
 
+  const paragraphs = segmentParagraphs(row.full_text);
+
   // One citation_checks row per citation per surface. Written here for the same
   // reason it is written on search: silent-drop and stale-overruled are computed
   // from these rows, and a surface that renders a citation without recording it
@@ -80,6 +83,16 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
     language: row.language,
     sourceUrl: row.source_url,
     fullText: row.full_text,
+    // PD-9 anchors the reading view on paragraph numbers, and the client cannot
+    // derive them from `fullText` without inventing them. Segmented here, with
+    // access to the source, so an advocate told "see paragraph 22" lands on the
+    // paragraph the court numbered 22.
+    //
+    // `paragraphNumber` is null wherever the source carries no number — the
+    // headnote, and every pre-1990s OCR'd scan whose numbering did not survive.
+    // `numberedShare` lets the client hide anchors rather than show broken ones.
+    paragraphs,
+    numberedShare: numberedShare(paragraphs),
     // Tier 1 by construction: this row IS the corpus, so it resolves to itself.
     // Not a placeholder — `verified` / `corpus` is the honest value in S1.
     verificationState: 'verified' as const,
