@@ -57,3 +57,20 @@ jobs:
       - run: pnpm --filter @lawmind/db migrate
 
       - run: pnpm --filter "./services/*" --filter "./packages/*" test
+
+  design-rules:
+    name: design rules
+    runs-on: ubuntu-latest
+    # Deliberately its own job. It needs no database, no install and no lane, and
+    # a delivered render should be checkable the moment it lands rather than
+    # after somebody builds against it.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      # Four renders across two deliveries contradicted rules that were already
+      # written down, and three of the four were mechanically checkable. The
+      # client lane was catching them one at a time, downstream, after building.
+      # This is the gate that should have caught them at zero cost.
+      - run: node scripts/check-design-rules.mjs design/screens
