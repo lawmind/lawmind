@@ -134,19 +134,27 @@ describe('dense retrieval plan', () => {
     );
   });
 
-  it('applies hnsw.ef_search inside the transaction and does not leak it', async (t) => {
-    if (!hasHnsw) return t.skip('needs an hnsw index');
+  it('applies hnsw.ef_search inside the transaction and does not leak it', async () => {
+    // Deliberately unguarded. `hnsw.ef_search` is a pgvector GUC and exists
+    // wherever the extension is loaded, index or not — so this runs on CI's empty
+    // database too, where the plan assertions above correctly skip.
 
+    // `current_setting(...)`, NOT `SHOW hnsw.ef_search`. SHOW names its output
+    // column after the parameter — `hnsw.ef_search` — so reading `row.v` off it
+    // yields undefined, the equality fails against '77', and the leak assertion
+    // below passes vacuously because undefined is also not '77'. That is the exact
+    // shape of the one test that had CI red on main: a test that could only ever
+    // fail, guarding a property it never actually checked.
     const inside = await sql.begin(async (tx) => {
       await tx`SET LOCAL hnsw.ef_search = 77`;
-      const [row] = await tx<{ v: string }[]>`SHOW hnsw.ef_search`;
+      const [row] = await tx<{ v: string }[]>`SELECT current_setting('hnsw.ef_search') AS v`;
       return row?.v;
     });
     assert.equal(inside, '77', 'SET LOCAL must apply within the transaction');
 
     // The connection is pooled, so a leaked setting would silently change recall
     // for whatever request is served next.
-    const [after_] = await sql<{ v: string }[]>`SHOW hnsw.ef_search`;
+    const [after_] = await sql<{ v: string }[]>`SELECT current_setting('hnsw.ef_search') AS v`;
     assert.notEqual(after_?.v, '77', 'hnsw.ef_search must not outlive its transaction');
   });
 

@@ -250,7 +250,13 @@ export const judgmentChunks = pgTable(
     textQuality: numeric('text_quality', { precision: 4, scale: 3 }),
   },
   (t) => [
-    index('judgment_chunks_embedding_idx').using('ivfflat', t.embedding.op('vector_cosine_ops')),
+    // HNSW, not ivfflat. Measured on the finished 616,197-chunk corpus, the dense
+    // candidate stage runs in 10.7 ms median through this index against 1,100.5 ms
+    // scanning — and ivfflat's recall additionally decays on an append-only corpus,
+    // because its centroids are fixed at build time. `docs/LCC_PLAN.md` §2B.
+    // Build parameters live in migration 0011 and are NOT expressed here: drizzle
+    // has no `with` for index options, so the migration is the authority.
+    index('judgment_chunks_embedding_hnsw').using('hnsw', t.embedding.op('vector_cosine_ops')),
     index('judgment_chunks_judgment_id_idx').on(t.judgmentId),
     uniqueIndex('judgment_chunks_judgment_id_chunk_index_key').on(t.judgmentId, t.chunkIndex),
   ],
