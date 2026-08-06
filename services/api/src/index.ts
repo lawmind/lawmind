@@ -109,18 +109,34 @@ serve({ fetch: app.fetch, port: env.port }, (info) => {
   logger.info({ port: info.port, env: env.nodeEnv }, 'api listening');
 
   /**
-   * NO boot-time model warm. Removed after it crash-looped a deploy.
+   * Warm the embedder once, at boot, in the background.
    *
-   * The intent was sound — fp32 BGE-M3 is a large fetch on a cold container, so
-   * the first search after a deploy otherwise pays all of it. The implementation
-   * was not: transformers.js throws "Unable to get model file path or buffer"
-   * from inside its own async file loader, and that rejection escapes a
-   * `.catch()` on the chain and reaches the process. The API logged
-   * `api listening` and then died, repeatedly, without a single request.
+   * **This is what makes dense retrieval work at all.** Measured on the live
+   * container: fp32 takes ~19s to fetch and load cold, then embeds a query in
+   * 23ms. `embedQuery` allows each request 2s. Without a warm, every single
+   * search expires that budget against a load that has barely started, dense
+   * never contributes, and search is silently lexical-only forever — which is
+   * exactly what production did until this was added back.
    *
-   * Warming must not be able to take the process down. Until the model loads
-   * reliably on a cold container, `embedQuery` handles this correctly on its own:
-   * it catches its own failure and degrades to lexical-only, so an unreachable
-   * model is a worse search rather than an outage.
+   * It was removed once after appearing to crash-loop a deploy. The real cause
+   * was a rejection escaping from inside transformers.js's own async file
+   * loader, which the `unhandledRejection` handler above now absorbs. Warming
+   * can no longer take the process down.
+   *
+   * Deliberately after `serve` and deliberately not awaited: `/health` must stay
+   * answerable while this runs, or Railway fails the healthcheck and rolls back a
+   * container that was working.
    */
+  const warmStarted = Date.now();
+  void getEmbedder()
+    .then((embedder) => embedder.embed(['anticipatory bail']))
+    .then(() => {
+      logger.info(
+        { warm_ms: Date.now() - warmStarted },
+        'embedder warm — dense retrieval contributing',
+      );
+    })
+    .catch((error: unknown) => {
+      logger.error({ err: error }, 'embedder warm failed — search stays lexical-only');
+    });
 });
