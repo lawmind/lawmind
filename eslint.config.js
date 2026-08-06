@@ -28,4 +28,14 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
+  {
+    // Repo tooling: plain Node scripts, run by hand and by CI, never bundled.
+    // Without this `console`, `process` and `fetch` read as undefined globals and
+    // every script here is a lint error — which is exactly how the design-rules
+    // gate landed on main with `pnpm lint` red.
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: { console: 'readonly', process: 'readonly', fetch: 'readonly', URL: 'readonly' },
+    },
+  },
 );

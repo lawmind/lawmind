@@ -25,3 +25,7 @@ __pycache__/
 # the repo becomes unclonable. Pairs derived from sensitive-class data carry the
 # same DPDP treatment as their source.
 training/
+
+# Recall ground truth — regenerated from the corpus, large, and stale the moment
+# the corpus changes. `scripts/measure-recall.mjs` recaptures it when absent.
+scripts/recall-ground-truth.json

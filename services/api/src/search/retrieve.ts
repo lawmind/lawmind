@@ -2,7 +2,7 @@
  * Hybrid retrieval — sparse full-text AND dense vector, fused.
  *
  * Sparse runs against `judgments.full_text` through the gin index; dense runs
- * against `judgment_chunks.embedding` through ivfflat. The two are fused with
+ * against `judgment_chunks.embedding` through HNSW. The two are fused with
  * Reciprocal Rank Fusion, which needs no score calibration between two ranking
  * systems whose numbers are not comparable (ts_rank is unbounded, cosine distance
  * is 0..2).
@@ -91,20 +91,44 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
 }
 
 /**
- * How many lists ivfflat probes per search. The default is 1, which searches a
- * single centroid out of `lists` and throws away most of the recall the index
- * was built for. pgvector's own guidance is roughly sqrt(lists).
+ * How wide HNSW searches its graph. **pgvector's default is 40, and 40 is wrong
+ * here in two separate ways.**
+ *
+ * Measured against exact sequential-scan ground truth over 40 advocate queries,
+ * k=50, on the full 616,197-chunk corpus:
+ *
+ *   ef_search   recall@50   short candidate lists
+ *          40       76.5%   40 of 40   <- the default
+ *          64       92.7%   0
+ *         100       95.1%   0
+ *         200       96.9%   0
+ *         400       98.7%   0
+ *
+ * The recall column is the obvious failure: the default silently loses a quarter
+ * of the authorities an exact search would have found, and a missing authority
+ * looks exactly like one that does not exist.
+ *
+ * The right-hand column is the one that would not have been caught. **pgvector
+ * returns FEWER rows than LIMIT when `ef_search` is below it** — it does not
+ * error, it just stops early. `annDepth` below is 200, so anything under 200
+ * quietly halves the candidate list before RRF ever sees it, and no recall@50
+ * measurement taken at LIMIT 50 would reveal it. 200 is therefore a floor set by
+ * `annDepth`, not only by the recall curve.
+ *
+ * Server-side execution time at this setting: **10.7 ms median, 18.0 ms p95**,
+ * against 1,100.5 ms for the same query without the index.
  */
-const IVFFLAT_PROBES = Number(process.env['IVFFLAT_PROBES'] ?? 10);
+const HNSW_EF_SEARCH = Number(process.env['HNSW_EF_SEARCH'] ?? 200);
 
 /**
  * Dense half: nearest chunks by cosine distance, reduced to their judgments.
  *
- * Two-stage on purpose. ivfflat can only accelerate `ORDER BY embedding <=> $1`;
- * ordering by that distance MULTIPLIED by `text_quality` is a different
- * expression, and the planner falls back to scanning every vector. Measured on a
- * 20,000-row scratch table: 4.7 ms through the index against 109.7 ms scanning,
- * for identical results. The corpus is ~31x that size.
+ * Two-stage on purpose. A vector index can only accelerate
+ * `ORDER BY embedding <=> $1`; ordering by that distance MULTIPLIED by
+ * `text_quality` is a different expression, and the planner falls back to
+ * scanning every vector. That fallback is not theoretical — measured over the
+ * full 616,197-chunk corpus it costs **2.9 s median, 3.1 s p95** for the dense
+ * stage alone, against a 3 s budget for the entire request.
  *
  * So the ANN search runs alone inside a MATERIALIZED CTE — the fence matters,
  * because a plain subquery gets pulled up and the multiplier lands back in front
@@ -123,9 +147,28 @@ async function dense(
   const annDepth = CANDIDATE_DEPTH * (filtered ? 40 : 4);
 
   const rows = await sql.begin(async (tx) => {
-    // SET LOCAL, so this dies with the transaction instead of leaking into
+    // SET LOCAL, so these die with the transaction instead of leaking into
     // whatever the pooled connection serves next.
-    await tx`SET LOCAL ivfflat.probes = ${sql.unsafe(String(IVFFLAT_PROBES))}`;
+    await tx`SET LOCAL hnsw.ef_search = ${sql.unsafe(String(HNSW_EF_SEARCH))}`;
+    /**
+     * The safety net for a short candidate list, set unconditionally.
+     *
+     * A filtered search asks for 2,000 candidates while `ef_search` caps at
+     * 1,000, so a single graph pass cannot fill that LIMIT — measured: 1,000 rows
+     * returned for a LIMIT of 2,000, with no error. Iterative scan keeps
+     * searching until the LIMIT is met; the same measurement returns the full
+     * 2,000 in 1,483 ms.
+     *
+     * Unconditional rather than `if (filtered)` because the unfiltered path has
+     * `ef_search` exactly equal to `annDepth` — it fills today with no margin at
+     * all, and the failure mode of losing that margin is silent. This costs
+     * nothing when the LIMIT is already satisfied.
+     *
+     * `relaxed_order` rather than `strict_order`: the outer query re-sorts by the
+     * quality-weighted distance anyway, so exact index order would be bought and
+     * then thrown away.
+     */
+    await tx`SET LOCAL hnsw.iterative_scan = relaxed_order`;
     return tx<{ judgment_id: string; chunk_text: string; distance: number }[]>`
       WITH candidates AS MATERIALIZED (
         SELECT c.judgment_id, c.chunk_text, c.text_quality,

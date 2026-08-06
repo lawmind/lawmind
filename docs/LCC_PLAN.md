@@ -54,15 +54,17 @@ Facts, each observed rather than assumed.
 | | |
 |---|---|
 | Corpus | 38,341 judgments, 1,059 statute sections, 3 statutes |
-| Embedding | fp32, in flight — see §2 |
+| Embedding | fp32, **complete** — 616,197 chunks, every judgment covered |
 | Precision | q8 rejected: batch 0.976, platform 0.977. fp32 GPU-vs-Railway min 0.999709 |
-| ivfflat | **dropped** for the bulk load, not yet rebuilt |
-| `judgment_citations` | table live, 300 judgments extracted, ~38,000 to go |
-| `overruled_status` | `none` on all 38,341 — nothing has been back-filled yet |
+| Vector index | HNSW, `m=16 ef_construction=64`, built CONCURRENTLY — see §2B |
+| `judgment_citations` | **192,197 citations** across all 38,341 judgments; 44,785 resolve to a corpus row |
+| Treatment edges | 10,437 followed · 1,233 distinguished · 69 overruled · 19 overruled_in_part · 7 doubted |
+| `overruled_status` | **22 moved** — 19 `set_aside`, 3 `doubted`. LAW MOVED renders |
+| Database | 5,979 MB of a 50 GB volume (`judgment_chunks` 4,438 MB) |
+| Postgres | 18.4, pgvector 0.8.5, container 24 GB / 24 cores |
 | Tests | 75 server-side |
-| Deployed | `a420957` |
-| Volume | 50 GB, ~12% used |
-| TCP proxy | **open** — must be closed when the embed finishes |
+| Deployed | `05095aa` — verified by probing routes, not by the `/health` SHA |
+| TCP proxy | **open** — `reseau.proxy.rlwy.net:25800`. Close when the index work lands |
 
 ---
 
@@ -70,19 +72,74 @@ Facts, each observed rather than assumed.
 
 Each item states its own done-criterion. **Done means observed.**
 
-### A · Finish the corpus embed
-Running. ~625,000 chunks at 0.05 s/chunk.
-**Done when:** `judgments needing chunks` returns 0 and the chunk count is stable.
+### A · Finish the corpus embed — **DONE 6 Aug 2026**
+33,578 / 33,578 judgments, **616,197 chunks**, exit 0, `needing_chunks` = 0.
+6.8 h wall clock at 0.05 s/chunk on the local GPU.
 
-### B · Rebuild ivfflat
-`lists = rows/1000`, `maintenance_work_mem = 1GB`, then `ANALYZE`.
-**Done when:** `EXPLAIN` on the dense query shows `Index Scan using
-judgment_chunks_embedding_idx` and no `Seq Scan`.
+### B · Build the vector index — **HNSW, reversing this item**
 
-### C · Tune `probes` by measurement
-Current default of 10 is a rule of thumb, not a measurement. Compare against exact
-sequential-scan ground truth at probes 1/5/10/20/40/lists.
-**Done when:** the cheapest setting reaching ≥95% recall@50 is recorded and set.
+This said "rebuild ivfflat". It was written before two things were measured, and
+both of them change the answer.
+
+**The exact scan is 2.9 s median, 3.1 s p95 for the dense stage alone** — 40
+queries, k=50, over all 616,197 chunks. Gate S1 budgets 3 s for the *whole
+request*. The number quoted earlier in the day (2.2 s end to end) was taken
+before the corpus finished embedding; it is not a number this corpus can still
+produce. There is no version of this that ships without an index.
+
+**The container is 24 GB and 24 cores** (`/sys/fs/cgroup/memory.max`, `cpu.max`),
+6.8 GB in use. IVFFlat was chosen when the build budget was unknown — it is the
+cheaper index to *build*, not the better one to *serve*. And the corpus grows by
+append, which is precisely where IVFFlat decays: its centroids are fixed at build
+time and recall falls as new rows drift away from them. HNSW does not have that
+failure mode.
+
+`CREATE INDEX CONCURRENTLY`, not plain — a plain build takes ACCESS EXCLUSIVE and
+every `/search` blocks for its duration, with the client lane working against this
+same database.
+
+**Done when:** `indisvalid` is true and `EXPLAIN` shows an `Index Scan using
+judgment_chunks_embedding_hnsw` with no `Seq Scan`.
+
+### C · Tune `hnsw.ef_search` by measurement — **DONE, and the default was wrong twice**
+
+Index built CONCURRENTLY in **9.8 min**, `indisvalid = true`, **4,811 MB**.
+Measured against exact sequential-scan ground truth, 40 advocate queries, k=50:
+
+| `ef_search` | recall@50 | short candidate lists |
+|---|---|---|
+| 40 *(pgvector default)* | **76.5%** | **40 of 40** |
+| 64 | 92.7% | 0 |
+| 100 | 95.1% | 0 |
+| **200 — set** | **96.9%** | 0 |
+| 400 | 98.7% | 0 |
+
+**Two independent failures at the default, and only one of them is visible.**
+Recall of 76.5% means a quarter of the authorities an exact search would find are
+missing, and a missing authority is indistinguishable from one that does not
+exist. The second is worse: **pgvector returns fewer rows than LIMIT when
+`ef_search` is below it, and does not error.** `annDepth` is 200, so anything
+under 200 halves the candidate list before RRF ever sees it — and no recall@50
+measurement taken at LIMIT 50 can see a list truncated at 200.
+
+So 200 is a floor set by `annDepth`, not only by the recall curve.
+`hnsw.iterative_scan = relaxed_order` is set unconditionally as the safety net —
+the filtered path asks for 2,000 candidates against a 1,000 cap on `ef_search`,
+and measured, it returned exactly 1,000 until iterative scan was on.
+
+Server-side `Execution Time`, same query shape as `retrieve.ts`:
+
+| | median | p95 |
+|---|---|---|
+| Sequential scan (before) | 1,100.5 ms | 1,145.6 ms |
+| **HNSW, ef_search 200** | **10.7 ms** | **18.0 ms** |
+| HNSW, filtered (annDepth 2,000) | 96.1 ms | 117.5 ms |
+
+**102× on the dense stage.** The plan reads `Index Scan using
+judgment_chunks_embedding_hnsw`, with no `Seq Scan`.
+
+Re-run after any material ingest: `scripts/measure-recall.mjs`. Recall is a
+property of the data, not of the setting.
 
 ### D · Re-verify retrieval, with dense actually on
 Every latency number quoted today was lexical-only and is provisional.
@@ -131,6 +188,8 @@ with real data.
 | transformers.js does not create its cache dir | Fixed in `embed.ts`; never assume a library creates its own paths |
 | A rejection can escape `.catch()` | `unhandledRejection` handler is load-bearing, not defensive style |
 | ivfflat cannot index a multiplied expression | Two-stage query behind a `MATERIALIZED` fence |
+| `/dev/shm` on a Railway container is **61 MB**, against a 24 GB cgroup | Postgres *parallel* maintenance puts its workspace in shm, so `max_parallel_maintenance_workers > 0` dies with `could not resize shared memory segment` (53100) at any useful `maintenance_work_mem`. Build single-threaded; the 24 GB applies to backend-local memory, not shm |
+| A failed `CREATE INDEX CONCURRENTLY` leaves an **invalid** index | The planner ignores it while every write still maintains it, and it holds the name so `IF NOT EXISTS` silently no-ops the retry. Drop it before rebuilding |
 | pnpm auto-installs peers, masking undeclared ones | Three found in `apps/mobile` so far |
 | Machine-derived legal relationships | Never ship without a sample verified against source text |
 
