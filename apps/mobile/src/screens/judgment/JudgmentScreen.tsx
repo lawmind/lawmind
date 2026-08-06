@@ -67,6 +67,7 @@ function useReplacement(judgmentId: string | null | undefined) {
 
 export function JudgmentScreen({
   judgmentId,
+  citationCheckId,
   onBack,
   onOpenJudgment,
   onOpenTreatment,
@@ -75,6 +76,13 @@ export function JudgmentScreen({
   onSetReading,
 }: {
   judgmentId: string;
+  /**
+   * The verification-record handle, carried from the search result that led
+   * here. Undefined when the judgment was opened cold — from a link, from the
+   * authorities panel, from a relied-on row — and the verification surfaces
+   * state that rather than pretending to have looked.
+   */
+  citationCheckId?: string;
   onBack: () => void;
   onOpenJudgment: (id: string) => void;
   /** Opens the citation network — how later courts treated this authority. */
@@ -174,7 +182,11 @@ export function JudgmentScreen({
 
   if (showCheck) {
     return (
-      <UnverifiedCitationScreen judgment={judgment} onBack={() => setShowCheck(false)} />
+      <UnverifiedCitationScreen
+        citationCheckId={citationCheckId}
+        judgment={judgment}
+        onBack={() => setShowCheck(false)}
+      />
     );
   }
 
@@ -418,7 +430,6 @@ export function JudgmentScreen({
           data={authorities.data}
           error={authorities.error}
           onOpenJudgment={onOpenJudgment}
-          overrulings={authorities.overrulings}
         />
 
         {/*
@@ -468,6 +479,7 @@ export function JudgmentScreen({
       </ScrollView>
 
       <VerificationSheet
+        citationCheckId={citationCheckId}
         judgment={judgment}
         onDismiss={() => setSheetOpen(false)}
         visible={sheetOpen}

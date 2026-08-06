@@ -16,6 +16,7 @@ import type { SearchResult } from '../../api/contract';
 
 const base: SearchResult = {
   judgmentId: 'j1',
+  citationCheckId: null,
   caseTitle: 'Mock Verified v. State',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
   reporterCitations: [],
@@ -43,6 +44,7 @@ describe('PrecedentPanel', () => {
         suggestions={[
           make({
             judgmentId: 'j2',
+            citationCheckId: null,
             caseTitle: 'Mock Unverified v. State',
             verificationState: 'unverified',
           }),
@@ -59,6 +61,7 @@ describe('PrecedentPanel', () => {
         suggestions={[
           make({
             judgmentId: 'j3',
+            citationCheckId: null,
             caseTitle: 'Mock Failed v. State',
             verificationState: 'failed',
           }),
@@ -75,6 +78,7 @@ describe('PrecedentPanel', () => {
         suggestions={[
           make({
             judgmentId: 'j4',
+            citationCheckId: null,
             caseTitle: 'Mock SetAside v. State',
             overruledStatus: 'set_aside',
           }),

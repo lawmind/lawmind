@@ -20,6 +20,7 @@ import { useLanguageStore } from '../../state/language';
 import { easing } from '../../theme/easing';
 import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
+import { findInJudgment, matchLabel, stepMatch } from './findInJudgment';
 import { ReadingControls } from './ReadingControls';
 import { ReadingSheet } from './ReadingSheet';
 
@@ -171,12 +172,25 @@ export function ReadingView({
    * IN-TEXT SEARCH JUMPS BETWEEN PARAGRAPHS, NOT SCROLL POSITIONS. An advocate
    * looking for a word wants the next paragraph that argues it, not the next
    * pixel offset where the string happens to appear.
+   *
+   * The matching moved to `findInJudgment.ts` — a pure module — for three
+   * reasons the inline version got wrong:
+   *
+   *   · IT COUNTED PARAGRAPHS AND CALLED THEM MATCHES. A paragraph naming an
+   *     authority four times counted once, so "3 of 12" understated the
+   *     judgment and stepping skipped occurrences the advocate could see on
+   *     screen.
+   *   · A ONE-CHARACTER QUERY MATCHED ALMOST EVERY PARAGRAPH, dimmed nothing,
+   *     and offered a step through the alphabet.
+   *   · `.toLowerCase()` on the haystack is not length-preserving for every
+   *     input, so any future highlight built on those offsets would slice the
+   *     wrong characters — and in Devanagari, mid-grapheme.
    */
-  const hits = useMemo(() => {
-    const q = term.trim().toLowerCase();
-    if (!q) return [];
-    return judgment.paragraphs.filter((p) => p.text.toLowerCase().includes(q));
-  }, [judgment.paragraphs, term]);
+  const found = useMemo(() => findInJudgment(judgment.paragraphs, term), [judgment.paragraphs, term]);
+
+  /** Distinct paragraphs containing a match — what the dimming reads. */
+  const hitParagraphs = useMemo(() => new Set(found.paragraphIndexes), [found.paragraphIndexes]);
+  const currentHitParagraph = found.matches[hitIndex]?.paragraphIndex ?? null;
 
 
   /**
@@ -349,14 +363,24 @@ export function ReadingView({
     if (target && target !== first) jumpTo(target);
   }, [hydrated, judgment.judgmentId, judgment.paragraphs, jumpTo, openParagraph]);
 
-  const step = (delta: number) => {
-    if (!hits.length) return;
-    const next = (hitIndex + delta + hits.length) % hits.length;
-    const hit = hits[next];
-    if (!hit) return;
+  /**
+   * Steps to the next OCCURRENCE and jumps to the PARAGRAPH holding it.
+   *
+   * Two occurrences in one paragraph are two steps that land on the same row —
+   * correct, and the counter is what tells the advocate they moved. Stepping by
+   * paragraph instead would silently skip the second mention of an authority in
+   * the paragraph that discusses it most, which is the paragraph they were
+   * looking for.
+   */
+  const step = (delta: 1 | -1) => {
+    const total = found.matches.length;
+    if (!total) return;
+    const next = stepMatch(total, hitIndex, delta);
+    const match = found.matches[next];
+    if (!match) return;
     setHitIndex(next);
     haptics.shift();
-    jumpTo(hit.index);
+    jumpTo(match.paragraphIndex);
   };
 
   const readRatio = judgment.paragraphs.length
@@ -378,8 +402,15 @@ export function ReadingView({
 
   return (
     <Screen>
+      {/*
+        THE TOP CHROME CLEARS THE STATUS BAR, AND NOTHING WAS MAKING IT.
+        Observed on a Galaxy S24 on the judgment screen's loading state: the
+        app draws edge to edge, and a bar with only its own padding sits under
+        the clock. Same fix here, on both the nav row and the find bar, before
+        the same lesson has to be learned a fourth time.
+      */}
       {searching ? (
-        <View style={styles.searchBar}>
+        <View style={[styles.searchBar, { paddingTop: insets.top + space.xs }]}>
           <View style={styles.searchField}>
             <Input
               autoFocus
@@ -393,12 +424,22 @@ export function ReadingView({
             />
           </View>
           <View style={styles.searchControls}>
+            {/*
+              "NOT IN THIS JUDGMENT" IS A CLAIM ABOUT THE JUDGMENT, and it must
+              not be made about a query we declined to run. A single character
+              matches thousands of times in a judgment of this length, so it is
+              rejected rather than searched — and saying "not in this judgment"
+              there would be a false statement about the text in front of the
+              advocate.
+            */}
             <Text variant="ui" style={styles.hitCount}>
-              {hits.length === 0
+              {found.tooShort
                 ? term.trim()
-                  ? 'Not in this judgment'
+                  ? 'Keep typing'
                   : ''
-                : `${hitIndex + 1} of ${hits.length} in this judgment`}
+                : found.matches.length === 0
+                  ? 'Not in this judgment'
+                  : `${matchLabel(hitIndex, found.matches.length)} in this judgment`}
             </Text>
             <Pressable accessibilityRole="button" onPress={() => step(-1)}>
               <Text variant="uiStrong" style={styles.stepLabel}>
@@ -423,7 +464,7 @@ export function ReadingView({
           </View>
         </View>
       ) : (
-        <View style={styles.nav}>
+        <View style={[styles.nav, { paddingTop: insets.top + space.xs }]}>
           <Pressable accessibilityLabel="Back" accessibilityRole="button" onPress={onBack}>
             <ChevronLeft color={color.ink} size={22} strokeWidth={1.5} />
           </Pressable>
@@ -485,7 +526,21 @@ export function ReadingView({
         <FlatList
         contentContainerStyle={styles.list}
         data={judgment.paragraphs}
-        keyExtractor={(p) => String(p.number)}
+        /**
+         * KEYED ON THE INDEX, NOT THE PRINTED NUMBER.
+         *
+         * `String(p.number)` was correct while the number was required. It is
+         * not now: every unnumbered row keys to the string "null", so a
+         * judgment with two unnumbered paragraphs hands FlatList duplicate keys
+         * — rows are dropped, reused against the wrong content, and the
+         * measured heights `offsetOf` depends on are recorded against whichever
+         * row won. At `numberedShare` 0.5 that is half the judgment.
+         *
+         * Introduced by the nullable-number change and caught while reworking
+         * the search over the same rows. `index` is always present and unique,
+         * which is the whole reason it exists.
+         */
+        keyExtractor={(p) => String(p.index)}
         onScrollToIndexFailed={({ index, averageItemLength }) => {
           /**
            * RETRYING THE SAME CALL CANNOT WORK, AND USED TO BE WHAT THIS DID.
@@ -517,10 +572,14 @@ export function ReadingView({
           <Paragraph
             dimmed={
               // Non-matching paragraphs stay at 50% so the eye lands on the hit.
-              (term.trim().length > 0 && !hits.includes(item)) || (!term && item.index !== current)
+              // Compared by INDEX, never by object identity: a re-fetch of the
+              // same judgment produces equal rows that are not the same objects,
+              // and identity comparison would silently dim every paragraph.
+              (!found.tooShort && found.matches.length > 0 && !hitParagraphs.has(item.index)) ||
+              (!term && item.index !== current)
             }
             highlighted={item.number !== null && highlighted.has(item.number)}
-            isCurrentHit={hits[hitIndex] === item}
+            isCurrentHit={currentHitParagraph === item.index}
             onMeasure={measure}
             showAnchor={showAnchors && item.number !== null}
             onLink={() => {

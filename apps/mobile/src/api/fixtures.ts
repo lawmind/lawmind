@@ -26,6 +26,7 @@ const holding = (s: string) => s;
 export const MOCK_RESULTS: SearchResult[] = [
   {
     judgmentId: 'jdg_mock_1',
+    citationCheckId: null,
     caseTitle: 'Mock Petitioner v. Mock State',
     neutralCitation: 'MOCK 2026 EXAMPLE 1',
     reporterCitations: ['MOCK (2026) 1 EX 1'],
@@ -42,6 +43,7 @@ export const MOCK_RESULTS: SearchResult[] = [
   },
   {
     judgmentId: 'jdg_mock_2',
+    citationCheckId: null,
     caseTitle: 'Mock Applicant v. Mock Respondent',
     neutralCitation: 'MOCK 2026 EXAMPLE 2',
     reporterCitations: ['MOCK (2026) 2 EX 162'],
@@ -58,6 +60,7 @@ export const MOCK_RESULTS: SearchResult[] = [
   },
   {
     judgmentId: 'jdg_mock_3',
+    citationCheckId: null,
     caseTitle: 'Mock Complainant v. Mock Union',
     neutralCitation: 'MOCK 2024 EXAMPLE 9424',
     reporterCitations: [],
@@ -79,6 +82,7 @@ export const MOCK_RESULTS: SearchResult[] = [
   },
   {
     judgmentId: 'jdg_mock_4',
+    citationCheckId: null,
     caseTitle: 'Mock Appellant v. Mock Board',
     neutralCitation: 'MOCK 2019 EXAMPLE 273',
     reporterCitations: ['MOCK (2019) 8 EX 273'],
@@ -93,6 +97,7 @@ export const MOCK_RESULTS: SearchResult[] = [
   {
     /** Verified AND partly set aside — the case a single enum cannot express. */
     judgmentId: 'jdg_mock_5',
+    citationCheckId: null,
     caseTitle: 'Mock Directions v. Mock State of the Union',
     neutralCitation: 'MOCK 2017 EXAMPLE 746',
     reporterCitations: ['MOCK (2017) 8 EX 746'],
@@ -112,6 +117,7 @@ export const MOCK_RESULTS: SearchResult[] = [
   {
     /** Set aside. THE ONE CASE WHERE LAWMIND REFUSES TO LET AN AUTHORITY BE USED. */
     judgmentId: 'jdg_mock_6',
+    citationCheckId: null,
     caseTitle: 'Mock Review v. Mock State',
     neutralCitation: 'MOCK 2018 EXAMPLE 55',
     reporterCitations: ['MOCK (2018) 3 EX 55'],
@@ -128,6 +134,7 @@ export const MOCK_RESULTS: SearchResult[] = [
   {
     /** Doubted — no band, one muted line. Still binding. */
     judgmentId: 'jdg_mock_7',
+    citationCheckId: null,
     caseTitle: 'Mock Reference v. Mock Authority',
     neutralCitation: 'MOCK 2021 EXAMPLE 12',
     reporterCitations: [],
@@ -147,6 +154,7 @@ export const MOCK_RESULTS: SearchResult[] = [
      * outage must never read as a gap in the corpus.
      */
     judgmentId: 'jdg_mock_8',
+    citationCheckId: null,
     caseTitle: 'Mock Interim v. Mock Registrar',
     neutralCitation: 'MOCK 2023 EXAMPLE 404',
     reporterCitations: [],

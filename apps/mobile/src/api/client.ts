@@ -1,6 +1,8 @@
 import type {
   ApiResponse,
   AuthoritiesResponse,
+  CitationCheck,
+  CitationCopy,
   CounterArgumentsResponse,
   JudgmentDetail,
   PrecedentGraph,
@@ -166,6 +168,53 @@ export const api = {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ position, language, ...(matterId ? { matterId } : {}) }),
+    }),
+
+  /**
+   * WHERE WE LOOKED — one row per tier, each with a result and a timestamp.
+   *
+   * The handle comes off the search result or the counter-argument authority.
+   * It is never constructed here: a guessed id points the advocate at another
+   * judgment's verification record, which is worse than having none.
+   */
+  citationCheck: (citationCheckId: string) =>
+    get<CitationCheck>(`/citations/${encodeURIComponent(citationCheckId)}`),
+
+  /**
+   * EVERY "COPY CITATION" TAP.
+   *
+   * An advocate who copies a citation into their own document is otherwise
+   * invisible to the fan-out — they saw a verified result, they may file it, and
+   * no alert could reach them when that authority moves.
+   *
+   * FIRED WITHOUT BLOCKING THE COPY. The clipboard write happens regardless of
+   * whether this request lands; a failed analytics write must never cost the
+   * advocate the thing they asked for. `clientKey` makes the retry idempotent.
+   */
+  recordCitationCopy: (copy: CitationCopy) =>
+    request<{ ok: true }>('/citations/copies', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(copy),
+    }),
+
+  /**
+   * NEVER BYPASS THE CAPTCHA. This returns the eCourts URL with the search
+   * pre-filled; the advocate solves the captcha themselves. Their confirmation
+   * is Tier 3 and caches permanently, so nobody in their chamber does it twice.
+   */
+  verifyEcourts: (citationText: string) =>
+    request<{ ecourtsUrl: string; prefilledQuery: string }>('/verify/ecourts', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ citationText }),
+    }),
+
+  verifyConfirm: (citationText: string, judgmentId: string) =>
+    request<{ cached: true }>('/verify/confirm', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ citationText, judgmentId }),
     }),
 
   statutes: () => get<{ statutes: Statute[] }>('/statutes'),

@@ -8,13 +8,7 @@ import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { AuthoritiesResponse, PointInTimeAuthority } from '../../api/contract';
 import { citationRender } from '../../citation/renderState';
-import {
-  standingCopy,
-  standingCounts,
-  standingOf,
-  type OverrulingJudgment,
-  type StandingRender,
-} from '../../citation/standing';
+import { standingCopy, standingCounts, standingOf, type StandingRender } from '../../citation/standing';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
 
@@ -27,7 +21,7 @@ import { color, radius, space, state } from '../../theme/tokens';
  * next to the judgment it belongs to. "Relied on Kanhaiyalal, already set aside
  * 1,058 days earlier" is a statement about THIS bench's reasoning at ITS moment.
  * Lifted onto its own screen it becomes a free-floating verdict on a judgment —
- * which is the precise shape of the thing we are declining to build.
+ * the precise shape of the thing we are declining to build.
  *
  * So it sits under the heading that already existed. "Relied on" previously
  * listed authorities with no temporal claim at all; this is the same list with
@@ -35,77 +29,34 @@ import { color, radius, space, state } from '../../theme/tokens';
  *
  * ── WHAT IT SAYS AND DOES NOT SAY ───────────────────────────────────────────
  *
- * Every row is a fact with two judgment ids behind it. There is no rating, no
- * score and no colour that means "this judgment is weak" — see the reasoning
- * and the enforcing tests in `citation/standing.ts`.
+ * Every row is a fact with a named bench and a date behind it. No rating, no
+ * score, no colour meaning "this judgment is weak" — the reasoning and the
+ * enforcing tests are in `citation/standing.ts`.
  *
  * GOOD LAW THEN RENDERS SILENT, the same discipline as a verified citation. A
  * column of green ticks is a column the eye learns to skip, and the row that
  * matters is in it.
  *
- * ── THE ONE PIECE OF WORK THIS COMPONENT DOES ───────────────────────────────
+ * ── ONE ROUND TRIP, SINCE 7 AUG 2026 ────────────────────────────────────────
  *
- * `overruledByJudgmentId` is an internal id and must never reach a screen; an
- * advocate cannot cite a UUID. Each moved authority's overruling judgment is
- * fetched and resolved to a real case name — and resolving it is also what
- * yields the date the law actually moved, which is the only trustworthy input
- * to the standing question. Same pattern as `useReplacement` on the detail
- * screen, and for the same reason.
- */
-
-const MAX_RESOLUTIONS = 12;
-
-/**
- * Fetch, then resolve the handful of authorities that carry a moved status.
- *
- * The resolutions are a second round trip and are deliberately not blocking:
- * the rows render as soon as the list arrives, and each moved row shows
- * `unknown` until its overruling judgment lands. That order is chosen — a row
- * that says "we cannot date this yet" and then becomes specific is honest at
- * every frame, whereas holding the whole panel back would leave the advocate
- * looking at nothing while we fetch something most rows do not need.
+ * This panel used to fetch every moved authority's overruling judgment, purely
+ * to have a case name to print — an id can never reach a screen. The endpoint
+ * now sends `overruledByCaseTitle` and `overruledOn`, so that fan-out is gone.
+ * The ids are still carried, for the tap target only.
  */
 export function useAuthorities(judgmentId: string) {
   const [data, setData] = useState<AuthoritiesResponse | null>(null);
-  const [overrulings, setOverrulings] = useState<Record<string, OverrulingJudgment>>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
     setData(null);
-    setOverrulings({});
     setError(null);
 
     void api.authorities(judgmentId).then((res) => {
       if (!alive) return;
-      if (!res.ok) {
-        setError(res.error.message);
-        return;
-      }
-      setData(res.data);
-
-      const ids = Array.from(
-        new Set(
-          res.data.authorities
-            .filter((a) => a.overruledStatus !== 'none' && a.overruledByJudgmentId)
-            .map((a) => a.overruledByJudgmentId!)
-        )
-      ).slice(0, MAX_RESOLUTIONS);
-
-      for (const id of ids) {
-        void api.judgment(id).then((r) => {
-          if (!alive || !r.ok) return;
-          setOverrulings((prev) => ({
-            ...prev,
-            [id]: {
-              judgmentId: r.data.judgmentId,
-              caseTitle: r.data.caseTitle,
-              neutralCitation: r.data.neutralCitation,
-              judgmentDate: r.data.judgmentDate,
-            },
-          }));
-        });
-      }
+      if (res.ok) setData(res.data);
+      else setError(res.error.message);
     });
 
     return () => {
@@ -113,18 +64,15 @@ export function useAuthorities(judgmentId: string) {
     };
   }, [judgmentId]);
 
-  return { data, overrulings, error };
+  return { data, error };
 }
 
 export function AuthoritiesPanel({
   data,
-  overrulings,
   error,
   onOpenJudgment,
 }: {
   data: AuthoritiesResponse | null;
-  /** Keyed by `overruledByJudgmentId`. Missing means not resolved yet. */
-  overrulings: Record<string, OverrulingJudgment>;
   error: string | null;
   onOpenJudgment: (judgmentId: string) => void;
 }) {
@@ -156,13 +104,7 @@ export function AuthoritiesPanel({
 
   const rows = data.authorities.map((authority) => ({
     authority,
-    standing: standingOf({
-      authority,
-      deliveredOn: data.deliveredOn,
-      overruling: authority.overruledByJudgmentId
-        ? overrulings[authority.overruledByJudgmentId]
-        : null,
-    }),
+    standing: standingOf(authority),
   }));
 
   const counts = standingCounts(rows.map((r) => r.standing));
@@ -174,8 +116,9 @@ export function AuthoritiesPanel({
       {/*
         THE HEADLINE EXISTS ONLY WHEN THERE IS SOMETHING TO SAY.
         One sentence, one number, and only for the state that changes what an
-        advocate does. A four-tile dashboard here would read as a scorecard on
-        the judgment, which is the thing this panel refuses to be.
+        advocate does. A five-tile dashboard here would read as a scorecard on
+        the judgment, which is the thing this panel refuses to be — and it would
+        put `overruled_here`, which is not a problem at all, on the same shelf.
       */}
       {counts.already_moved > 0 ? (
         <View style={styles.headline}>
@@ -228,16 +171,18 @@ function AuthorityRow({
 }) {
   /**
    * The three citation fields are passed explicitly rather than spreading the
-   * row. `PointInTimeAuthority` carries `overruledByJudgmentId: string | null`
-   * and `standingWhenRelied`, neither of which belongs to the citation render —
-   * and the second of which this panel must never read. Naming the inputs is
-   * what stops it arriving by accident.
+   * row. `PointInTimeAuthority` carries `standingWhenRelied` and
+   * `statusRecordedAt`, neither of which belongs to the citation render — and
+   * the second of which must never reach a sentence. Naming the inputs is what
+   * stops one arriving by accident.
    */
   const { moved } = citationRender({
     verificationState: authority.verificationState,
     verifiedBySource: authority.verifiedBySource,
     overruledStatus: authority.overruledStatus,
   });
+
+  const movedAmber = standing.kind === 'already_moved' || standing.kind === 'moved_since';
 
   return (
     <View style={styles.row}>
@@ -266,8 +211,8 @@ function AuthorityRow({
         THE LIST-SURFACE CHIP, unchanged from every other list. "The state is
         legible from the list without opening anything" — including `doubted`,
         whose chip is neutral. This says what the authority's status is TODAY;
-        the block underneath says when it changed relative to this judgment.
-        Two different questions, kept apart on purpose.
+        the block underneath says when it changed relative to THIS judgment. Two
+        different questions, kept apart on purpose.
       */}
       {moved.kind === 'moved' ? (
         <View style={styles.chip}>
@@ -277,10 +222,8 @@ function AuthorityRow({
         </View>
       ) : null}
 
-      {/*
-        `good_law_then` DRAWS NOTHING AT ALL. Not a tick, not a word.
-      */}
-      {standing.kind === 'already_moved' || standing.kind === 'moved_since' ? (
+      {/* `good_law_then` DRAWS NOTHING AT ALL. Not a tick, not a word. */}
+      {movedAmber ? (
         <View style={styles.standing}>
           <Text variant="uiStrong" style={styles.standingHeadline}>
             {standing.headline}
@@ -288,15 +231,36 @@ function AuthorityRow({
           <Text variant="ui" style={styles.standingDetail}>
             {standing.detail}
           </Text>
-          <Pressable
-            accessibilityLabel={`Open ${standing.overruling.caseTitle}`}
-            accessibilityRole="button"
-            onPress={() => onOpenJudgment(standing.overruling.judgmentId)}
-          >
-            <Text variant="uiStrong" style={styles.link}>
-              Read {standing.overruling.neutralCitation}
-            </Text>
-          </Pressable>
+          {authority.overruledByJudgmentId ? (
+            <Pressable
+              accessibilityLabel="Read the judgment that set it aside"
+              accessibilityRole="button"
+              onPress={() => onOpenJudgment(authority.overruledByJudgmentId!)}
+            >
+              <Text variant="uiStrong" style={styles.link}>
+                Read the judgment that set it aside
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
+
+      {/*
+        `overruled_here` IS NEUTRAL INK. NO AMBER, NO BAND.
+
+        Amber means the law has moved under someone. Here the law moved BECAUSE
+        of this judgment — Tofan Singh reciting Kanhaiyalal — and an advocate
+        reading a landmark should not meet a caution block telling them the
+        bench relied on dead law. It is a plain line saying what this bench did.
+      */}
+      {standing.kind === 'overruled_here' ? (
+        <View style={styles.here}>
+          <Text variant="uiStrong" style={styles.hereHeadline}>
+            {standing.headline}
+          </Text>
+          <Text variant="ui" style={styles.muted}>
+            {standing.detail}
+          </Text>
         </View>
       ) : null}
 
@@ -360,6 +324,10 @@ const styles = StyleSheet.create({
   standingHeadline: { color: state.cautionText },
   standingDetail: { color: color.inkMuted },
   link: { color: color.oxblood },
+
+  /** Neutral. A left rule, no wash, no border — this is information, not a state. */
+  here: { borderLeftWidth: 2, borderLeftColor: color.rule, paddingLeft: space.sm, gap: 4 },
+  hereHeadline: { color: color.ink },
 
   unknown: {
     borderWidth: 1.5,

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Linking, ScrollView, StyleSheet, View } from 'react-native';
-import { Check, ChevronLeft, CircleDot, X } from 'lucide-react-native';
+import { Check, ChevronLeft, CircleDot, Clock, X } from 'lucide-react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -14,8 +14,9 @@ import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
-import type { CitationCheckDetail, JudgmentDetail, SourceCheck } from '../../api/contract';
-import { mockApi } from '../../api/mock';
+import { api } from '../../api/client';
+import type { CitationCheck, CitationTier, JudgmentDetail } from '../../api/contract';
+import { coverageLine, nothingIndependentRan, tierMark } from '../../citation/tiers';
 import { easing } from '../../theme/easing';
 import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
@@ -35,23 +36,33 @@ import { color, radius, space, state } from '../../theme/tokens';
  */
 export function UnverifiedCitationScreen({
   judgment,
+  citationCheckId,
   onBack,
 }: {
   judgment: JudgmentDetail;
+  /** From the search result that led here. Absent on a cold open. */
+  citationCheckId?: string;
   onBack: () => void;
 }) {
-  const [check, setCheck] = useState<CitationCheckDetail | null>(null);
+  const [check, setCheck] = useState<CitationCheck | null>(null);
   const [confirmed, setConfirmed] = useState(false);
+  const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
+    if (!citationCheckId) {
+      setUnavailable(true);
+      return;
+    }
     let alive = true;
-    void mockApi.citationCheck(judgment.judgmentId).then((r) => {
-      if (alive && r.ok) setCheck(r.data);
+    void api.citationCheck(citationCheckId).then((r) => {
+      if (!alive) return;
+      if (r.ok) setCheck(r.data);
+      else setUnavailable(true);
     });
     return () => {
       alive = false;
     };
-  }, [judgment.judgmentId]);
+  }, [citationCheckId]);
 
   return (
     <Screen>
@@ -108,25 +119,51 @@ export function UnverifiedCitationScreen({
 
         {check ? (
           <>
+            {/*
+              "WHAT WE FOUND" IS NOW THE HONEST HEADLINE, AND IN S1 IT IS
+              USUALLY NOT A FAILURE.
+
+              Two of the three tiers have not shipped. An unverified citation
+              has therefore, in almost every case, NOT been checked against an
+              independent source and failed — it has not been checked at all.
+              Saying "we could not confirm this" without saying that sends the
+              advocate hunting a problem that does not exist, and it lets the
+              harness compute a confirmation rate over checks that never ran.
+            */}
             <View style={styles.found}>
               <Text variant="eyebrow">What we found</Text>
-              <Text variant="legal">{check.whatWeFound}</Text>
+              <Text variant="legal">
+                {nothingIndependentRan(check)
+                  ? 'We hold no independent confirmation of this citation, because the sources that would give it have not shipped yet. It has not failed a check — no check has run.'
+                  : 'We queried the sources below and none of them held a record of this citation.'}
+              </Text>
+              <Text variant="ui" style={styles.muted}>
+                {coverageLine(check.coverage)}
+              </Text>
             </View>
 
             <SectionRule label="Where we looked" />
-            {check.sources.map((source) => (
-              <SourceRow key={source.source} source={source} />
+            {check.tiers.map((tier) => (
+              <SourceRow key={tier.tier} tier={tier} />
             ))}
 
             {/*
               NEVER BYPASS THE CAPTCHA. This opens eCourts with the search
               pre-filled; the advocate solves it. Their confirmation is Tier 3
               and caches permanently.
+
+              THE URL IS FETCHED ON TAP, NEVER CONSTRUCTED HERE. An eCourts path
+              assembled client-side would be a guess at another service's routing
+              — and a wrong one lands the advocate on a search for a different
+              case, which is worse than no link.
             */}
             <Button
               label={confirmed ? 'Marked as confirmed' : 'Open eCourts — about a minute'}
               onPress={() => {
-                void Linking.openURL(check.ecourtsUrl);
+                void api.verifyEcourts(judgment.neutralCitation).then((r) => {
+                  if (r.ok) void Linking.openURL(r.data.ecourtsUrl);
+                  else setUnavailable(true);
+                });
               }}
               variant="secondary"
             />
@@ -135,7 +172,7 @@ export function UnverifiedCitationScreen({
               label={confirmed ? 'You confirmed this' : 'I verified it — mark it'}
               onPress={() => {
                 setConfirmed(true);
-                void mockApi.confirmVerified(judgment.judgmentId);
+                void api.verifyConfirm(judgment.neutralCitation, judgment.judgmentId);
               }}
             />
             <Text variant="ui" style={styles.muted}>
@@ -143,6 +180,16 @@ export function UnverifiedCitationScreen({
               in your chamber has to check it twice.
             </Text>
           </>
+        ) : unavailable ? (
+          /*
+            The verification record is a separate row from the citation. Failing
+            to read it says nothing about the citation, and the screen says so
+            rather than leaving a skeleton that never resolves.
+          */
+          <Text variant="ui" style={styles.muted}>
+            We could not open the record of where we looked. That is our record failing to load, not
+            a finding about this citation.
+          </Text>
         ) : (
           <SkeletonCard index={0} />
         )}
@@ -184,29 +231,40 @@ function FadeOut({
   return <Animated.View style={style}>{children}</Animated.View>;
 }
 
-function SourceRow({ source }: { source: SourceCheck }) {
+function SourceRow({ tier }: { tier: CitationTier }) {
+  const mark = tierMark(tier);
+
   /**
-   * `needs_you` is NEUTRAL INK, not amber.
+   * OUR OWN LIMITATIONS ARE NEUTRAL INK, NOT AMBER.
    *
    * FLAGGED: `renders/49-unverified-citation@2x.png` draws this row's glyph in
    * amber. `design/DESIGN_SYSTEM.md` §3a reserves `#B4690E` for "the law has
    * moved, and nothing else — never on drafts, OCR, or anything about our own
-   * confidence", and a captcha we cannot solve is exactly our own limitation.
-   * Following the reserve rule, because diluting amber costs more than a design
-   * nit: an advocate who learns amber sometimes means "us" will read past it
-   * when it means the law moved.
+   * confidence", and a captcha we cannot solve, or a tier we have not shipped,
+   * is exactly our own limitation. Following the reserve rule, because diluting
+   * amber costs more than a design nit: an advocate who learns amber sometimes
+   * means "us" will read past it when it means the law moved.
+   *
+   * A CLOCK, NOT A CROSS, FOR A TIER THAT HAS NOT SHIPPED. The cross says an
+   * independent source was asked and had nothing. Giving both the cross is the
+   * collapse this screen exists to prevent.
    */
   const Icon =
-    source.outcome === 'found' ? Check : source.outcome === 'not_found' ? X : CircleDot;
-  const tint = source.outcome === 'found' ? state.verified : color.inkFaint;
+    mark.tone === 'found' ? Check : mark.tone === 'absent' ? X : mark.isCoverageGap ? Clock : CircleDot;
+  const tint = mark.tone === 'found' ? state.verified : color.inkFaint;
 
   return (
     <View style={styles.sourceRow}>
       <Icon color={tint} size={18} strokeWidth={1.8} />
       <View style={styles.sourceText}>
-        <Text variant="uiStrong">{source.source}</Text>
+        <Text variant="uiStrong">{mark.label}</Text>
         <Text variant="ui" style={styles.muted}>
-          {source.detail} {relativeTime(source.checkedAt)}
+          {/*
+            A TIME ONLY WHERE A CHECK RAN. "Checked 4 minutes ago" beside a tier
+            that never executed is asserting diligence we did not perform.
+          */}
+          {mark.detail}
+          {mark.at ? ` ${relativeTime(mark.at)}` : ''}
         </Text>
       </View>
     </View>

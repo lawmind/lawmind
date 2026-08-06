@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Check, CircleDot, X } from 'lucide-react-native';
+import { Check, CircleDot, Clock, X } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { Button } from '../../components/Button';
 import { Sheet } from '../../components/Sheet';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
-import type { CitationCheckDetail, JudgmentDetail } from '../../api/contract';
-import { mockApi } from '../../api/mock';
+import { api } from '../../api/client';
+import type { CitationCheck, JudgmentDetail } from '../../api/contract';
 import { citationRender, copy } from '../../citation/renderState';
+import { coverageLine, sourceLabel, tierMark } from '../../citation/tiers';
 import { color, space, state } from '../../theme/tokens';
 
 /**
@@ -35,36 +36,41 @@ import { color, space, state } from '../../theme/tokens';
  * `renders/65-judgment-quiet@2x.png` panel 2.
  */
 
-const SOURCE_LABEL: Record<string, string> = {
-  corpus: 'Our reported corpus',
-  public_x2: 'Two public sources',
-  ecourts: 'eCourts, confirmed by you',
-  none: 'No source confirmed it',
-};
-
 export function VerificationSheet({
   judgment,
+  citationCheckId,
   visible,
   onDismiss,
 }: {
   judgment: JudgmentDetail;
+  /** From the search result that led here. Absent on a cold open. */
+  citationCheckId?: string;
   visible: boolean;
   onDismiss: () => void;
 }) {
   const { existence } = citationRender(judgment);
   const confirmed = existence.kind === 'silent';
-  const [check, setCheck] = useState<CitationCheckDetail | null>(null);
+  const [check, setCheck] = useState<CitationCheck | null>(null);
+  const [unavailable, setUnavailable] = useState(false);
 
+  /**
+   * FETCHED ONLY WHEN THE SHEET IS OPEN. This is the user pulling; a
+   * verification record read on every judgment render would be the product
+   * telling, on a screen whose entire discipline is that verified stays silent.
+   */
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || !citationCheckId) return;
     let alive = true;
-    void mockApi.citationCheck(judgment.judgmentId).then((r) => {
-      if (alive && r.ok) setCheck(r.data);
+    setUnavailable(false);
+    void api.citationCheck(citationCheckId).then((r) => {
+      if (!alive) return;
+      if (r.ok) setCheck(r.data);
+      else setUnavailable(true);
     });
     return () => {
       alive = false;
     };
-  }, [judgment.judgmentId, visible]);
+  }, [citationCheckId, visible]);
 
   return (
     <Sheet onDismiss={onDismiss} visible={visible}>
@@ -91,37 +97,90 @@ export function VerificationSheet({
         */}
         {confirmed ? (
           <Text variant="ui" style={styles.source}>
-            Confirmed by: {SOURCE_LABEL[judgment.verifiedBySource] ?? judgment.verifiedBySource}
+            Confirmed by: {sourceLabel(judgment.verifiedBySource)}
           </Text>
         ) : null}
 
         {check ? (
-          <View style={styles.sources}>
-            {check.sources.map((s) => {
-              const Icon = s.outcome === 'found' ? Check : s.outcome === 'not_found' ? X : CircleDot;
-              return (
-                <View key={s.source} style={styles.row}>
-                  <Icon
-                    color={s.outcome === 'found' ? state.verified : color.inkFaint}
-                    size={16}
-                    strokeWidth={1.8}
-                  />
-                  <View style={styles.rowText}>
-                    <Text variant="uiStrong">{s.source}</Text>
-                    <Text variant="ui" style={styles.rowDetail}>
-                      {s.detail}
-                    </Text>
+          <>
+            <View style={styles.sources}>
+              {check.tiers.map((tier) => {
+                const mark = tierMark(tier);
+                /**
+                 * FOUR STATUSES, THREE ICONS, AND `not_implemented` GETS ITS OWN.
+                 * A clock says "has not happened yet"; a cross says "was asked
+                 * and had nothing". Giving both the cross is the collapse this
+                 * screen exists to avoid.
+                 */
+                const Icon =
+                  mark.tone === 'found' ? Check : mark.tone === 'absent' ? X : mark.isCoverageGap ? Clock : CircleDot;
+
+                return (
+                  <View key={tier.tier} style={styles.row}>
+                    <Icon
+                      color={mark.tone === 'found' ? state.verified : color.inkFaint}
+                      size={16}
+                      strokeWidth={1.8}
+                    />
+                    <View style={styles.rowText}>
+                      <Text variant="uiStrong">{mark.label}</Text>
+                      <Text variant="ui" style={styles.rowDetail}>
+                        {mark.detail}
+                      </Text>
+                    </View>
+                    {/*
+                      A TIMESTAMP ONLY WHERE A CHECK ACTUALLY RAN. Printing a
+                      date beside a tier that never executed is asserting
+                      diligence we did not perform — the same class of error as
+                      a badge on unverified law, and harder to notice because it
+                      looks like care.
+                    */}
+                    {mark.at ? (
+                      <Text opticalNudge variant="record">
+                        {new Date(mark.at).toLocaleDateString(undefined, {
+                          day: 'numeric',
+                          month: 'short',
+                        })}
+                      </Text>
+                    ) : null}
                   </View>
-                  <Text opticalNudge variant="record">
-                    {new Date(s.checkedAt).toLocaleDateString(undefined, {
-                      day: 'numeric',
-                      month: 'short',
-                    })}
-                  </Text>
-                </View>
-              );
-            })}
-          </View>
+                );
+              })}
+            </View>
+
+            {/*
+              COVERAGE IS STATED, NOT INFERRED FROM THE ROWS ABOVE. Without this
+              line "safe to file" reads as "confirmed by everything we have",
+              which is a promise we do not keep until the other two tiers ship.
+            */}
+            <Text variant="ui" style={styles.coverage}>
+              {coverageLine(check.coverage)} {check.coverage.note}
+            </Text>
+          </>
+        ) : !citationCheckId ? (
+          /*
+            NOT AN ERROR AT ALL, AND NOT THE SAME AS A FAILED READ.
+
+            A verification record belongs to a citation as it was SHOWN — which
+            result, on which search, at which moment. A judgment opened from a
+            link or from another judgment's authorities has no such moment
+            behind it, so there is nothing to fetch. Saying "we could not open
+            it" there would describe a failure that did not occur, and would
+            make the harness look flakier than it is.
+          */
+          <Text variant="ui" style={styles.rowDetail}>
+            We have no record of where we looked for this one — it was opened directly rather than
+            from a search. The status above is read live either way.
+          </Text>
+        ) : unavailable ? (
+          /*
+            The verification record is a separate row from the citation. Failing
+            to read it says nothing about the citation, and the three fields
+            above are unaffected.
+          */
+          <Text variant="ui" style={styles.rowDetail}>
+            We could not open the record of where we looked. The status above is unaffected.
+          </Text>
         ) : (
           <SkeletonCard index={0} />
         )}
@@ -157,5 +216,6 @@ const styles = StyleSheet.create({
   },
   rowText: { flex: 1, gap: 2 },
   rowDetail: { color: color.inkMuted },
+  coverage: { color: color.inkMuted },
   promise: { color: color.inkFaint },
 });

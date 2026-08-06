@@ -34,6 +34,15 @@ export type OverruledStatus = 'none' | 'set_aside' | 'partly_set_aside' | 'doubt
 
 export type SearchResult = {
   judgmentId: string;
+  /**
+   * THE HANDLE ON THIS ROW'S VERIFICATION RECORD — `GET /citations/:id`.
+   *
+   * NULL ONLY WHEN ROW ALIGNMENT COULD NOT BE GUARANTEED, and null is honest:
+   * a guessed id would point the advocate at another judgment's verification
+   * record, which is a worse failure than having none. Surfaces offer the
+   * "how this was checked" route only where it is present.
+   */
+  citationCheckId: string | null;
   caseTitle: string;
   neutralCitation: string;
   reporterCitations: string[];
@@ -135,11 +144,25 @@ export type JudgmentParagraph = {
  * "Relied on" is served from `GET /judgments/:id/authorities` instead, which
  * answers the same question with a date behind every row.
  */
-export type JudgmentDetail = Omit<SearchResult, 'holding' | 'operativeParagraph'> & {
+export type JudgmentDetail = Omit<
+  SearchResult,
+  'holding' | 'operativeParagraph' | 'citationCheckId'
+> & {
   /** Absent until the summarisation model is wired. Absence is normal, not an error. */
   holding?: string;
   /** Absent on this route. Present on search results, where it is raw OCR. */
   operativeParagraph?: string;
+  /**
+   * ABSENT ON THIS ROUTE BY DESIGN, not by omission.
+   *
+   * `docs/API_CONTRACTS.md`: "The handle comes from the search response." A
+   * verification record belongs to a citation as it was SHOWN on a surface —
+   * which result, on which search, at which time — and a judgment opened
+   * directly has no such moment behind it. So the id travels through the route
+   * as `?check=`, and where it is absent the verification surfaces say what
+   * they do not have rather than inventing a lookup.
+   */
+  citationCheckId?: string | null;
   bench: string;
   reliedOn?: { judgmentId: string; caseTitle: string; neutralCitation: string }[];
   holdingParagraphNumber?: number;
@@ -243,10 +266,9 @@ export type PrecedentGraph = {
  * WHAT THIS JUDGMENT RELIED ON, AND WHETHER THAT LAW WAS STANDING AT THE TIME —
  * `GET /judgments/:id/authorities`.
  *
- * NOT IN `docs/API_CONTRACTS.md`. The endpoint is live and answers 200; the
- * contract has no entry for it. Transcribed from the production response and
- * flagged for LCC rather than guessed at, because a shape invented here is a
- * client that compiles today and breaks the day the contract catches up.
+ * Documented in `docs/API_CONTRACTS.md` §Point-in-time good law on 7 Aug 2026,
+ * after it had shipped. These types were transcribed from the live response
+ * before that and now match the document.
  *
  * THE QUESTION THIS ANSWERS IS DIFFERENT FROM EVERY OTHER CITATION QUESTION WE
  * ASK, and the difference is the reason the panel exists.
@@ -262,34 +284,58 @@ export type PrecedentGraph = {
  * about the record, which is exactly why it must never be allowed to sound like
  * a verdict on that reasoning. See `citation/standing.ts`.
  */
-export type AuthorityStanding = 'good_law_then' | 'already_moved' | 'moved_since' | 'unknown';
+/**
+ * FIVE STATES. `overruled_here` IS NOT A SHADE OF `already_moved`.
+ *
+ * 22 of the 48 citations that date as "already moved" are the overruling
+ * judgment reciting the authority it overrules — Tofan Singh on Kanhaiyalal,
+ * Navtej Singh Johar on Suresh Kumar Koushal, Vidya Drolia, Sita Soren, Joseph
+ * Shine, Vineeta Sharma, Puttaswamy. Their dates are necessarily equal, so a
+ * pure date comparison files them under "this bench relied on dead law" — about
+ * the bench that killed it, on the landmarks an advocate is most likely to open.
+ */
+export type AuthorityStanding =
+  | 'good_law_then'
+  | 'already_moved'
+  | 'overruled_here'
+  | 'moved_since'
+  | 'unknown';
 
 export type PointInTimeAuthority = {
   judgmentId: string;
   caseTitle: string;
   neutralCitation: string;
   judgmentDate: string;
-  /** How the relying judgment used it — `cites` today; the extraction will widen. */
+  /** How the relying judgment used it — from the court's own printed annotation. */
   relationship: string;
   standingWhenRelied: AuthorityStanding;
   /**
-   * Days between the authority being set aside and this bench relying on it.
-   * Null whenever the server cannot date the move — and null is common, so no
-   * surface may assume a number is here.
+   * Days between the overruling judgment and this one. Null unless
+   * `already_moved` — and null on `overruled_here` deliberately, because a gap
+   * of zero days is not a gap.
    */
   daysAlreadyMoved: number | null;
   overruledStatus: OverruledStatus;
   overruledByJudgmentId: string | null;
+  /** THE OVERRULING JUDGMENT'S OWN DELIVERY DATE. A legal date. */
+  overruledOn: string | null;
+  /**
+   * The bench that moved it, NAMED. Supplied since 7 Aug 2026, which is what
+   * lets the panel say "Tofan Singh set this aside" without a second round trip
+   * per authority — an id can never reach a screen, and before this the client
+   * had to fetch each overruling judgment just to have something citable to
+   * print.
+   */
+  overruledByCaseTitle: string | null;
   /**
    * WHEN OUR ROW CHANGED, NOT WHEN THE LAW MOVED.
    *
-   * Measured on production: Kanhaiyalal was set aside by Tofan Singh on
-   * 2020-10-29 and this field reads `2026-08-06 15:32` — the back-fill run.
-   * It is a write timestamp and is useless for any temporal comparison about
-   * the law. Kept in the type so nobody re-derives it from the payload and
-   * assumes it means the other thing.
+   * Reads `2026-08-06 15:32` — the back-fill run — for an authority set aside in
+   * 2020. Deriving `standingWhenRelied` from it is exactly the bug that made
+   * `already_moved` read 0 corpus-wide. Kept in the type so nobody rediscovers
+   * it in the payload and assumes it means the other thing.
    */
-  statusChangedAt: string | null;
+  statusRecordedAt: string | null;
   verificationState: VerificationState;
   verifiedBySource: VerifiedBySource;
   asOf: string;
@@ -304,6 +350,7 @@ export type AuthoritiesResponse = {
   counts: {
     goodLawThen: number;
     alreadyMoved: number;
+    overruledHere?: number;
     movedSince: number;
     unknown: number;
   };
@@ -506,35 +553,93 @@ export type SearchFilters = {
  * were never shown.
  */
 /**
- * "WHERE WE LOOKED" — one row per source, each with its own result and
- * timestamp. `renders/49-unverified-citation@2x.png`, canvas `10i`.
+ * "WHERE WE LOOKED" — one row per tier, each with its own result and timestamp.
+ * `GET /citations/:citationCheckId`, documented 7 Aug 2026.
+ * `renders/49-unverified-citation@2x.png`, canvas `10i`.
  *
- * NOT IN `docs/API_CONTRACTS.md` — CLIENT ASSUMPTION, FLAGGED FOR LCC. The
- * contract has `POST /verify/ecourts` and `POST /verify/confirm` but nothing
- * that returns what each tier found. The screen the harness requires cannot be
- * built without it: "each source checked with a result and a timestamp".
+ * ── `miss` AND `not_implemented` ARE DIFFERENT FACTS AND MUST NEVER BE
+ *    COLLAPSED ────────────────────────────────────────────────────────────────
  *
- * `outcome` deliberately has no `failed` member. The language throughout is
- * what we did and did not manage, never an accusation and never our failure.
+ * `miss` says we queried an independent source and it had nothing.
+ * `not_implemented` says the tier ships in S2 and has not run at all.
+ *
+ * Rendering the second as the first tells an advocate their citation FAILED an
+ * independent check that was never attempted — which would send them chasing a
+ * problem that does not exist, and would make the harness agree with itself by
+ * computing a confirmation rate over checks that never happened. In S1 exactly
+ * one of three tiers runs, so this is the common case, not the edge.
+ *
+ * `not_attempted` is the third absence: the tier exists and was skipped for this
+ * row, usually because an earlier tier already confirmed it.
  */
-export type SourceCheck = {
-  /** "Our reported corpus", "Delhi High Court judgment portal", "eCourts services". */
-  source: string;
-  outcome: 'found' | 'not_found' | 'needs_you';
-  /** "No result for this case number." — what happened, in plain words. */
+export type CitationTierStatus = 'confirmed' | 'miss' | 'not_attempted' | 'not_implemented';
+
+export type CitationTier = {
+  /** 1 corpus · 2 public_x2 · 3 eCourts. */
+  tier: number;
+  source: VerifiedBySource;
+  status: CitationTierStatus;
+  /** What happened, in plain words. Never an accusation and never our failure. */
   detail: string;
-  /** ISO. Rendered as "Checked 4 minutes ago". */
-  checkedAt: string;
+  /** ISO, or null where the tier never ran — a check with no time did not happen. */
+  at: string | null;
 };
 
-export type CitationCheckDetail = {
+/**
+ * HOW MUCH OF THE HARNESS ACTUALLY RAN, STATED IN WORDS.
+ *
+ * The client is not left to infer coverage by counting an array. S1 is
+ * `tiersImplemented: 1` of `tiersDefined: 3`, and every surface that shows a
+ * verification result says so — otherwise "verified" reads as "verified by
+ * everything we have", which is a promise we do not keep until S2.
+ */
+export type CitationCoverage = {
+  tiersImplemented: number;
+  tiersDefined: number;
+  note: string;
+};
+
+export type CitationCheck = {
+  citationCheckId: string;
+  /** The citation as it was claimed, which may differ from what we resolved. */
+  citationClaimed: string;
+  checkedAt: string;
+  /** Where it was shown — `search`, `draft`, `briefing`. */
+  surface: string;
+  shownToUser: boolean;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  overruledStatus: OverruledStatus;
+  /** Whether the moved state was actually rendered. The silent-drop audit reads this. */
+  overruledStatusShown: boolean;
+  matchConfidence: number | null;
+  /** Null where nothing resolved — the citation was claimed and not found. */
+  judgment: SearchResult | null;
+  tiers: CitationTier[];
+  coverage: CitationCoverage;
+  asOf: string;
+};
+
+/**
+ * `POST /citations/copies` — every "Copy citation" tap.
+ *
+ * AN ADVOCATE WHO COPIES A CITATION INTO THEIR OWN DOCUMENT IS OTHERWISE
+ * INVISIBLE TO THE FAN-OUT. They saw a verified badge, they may file it, and no
+ * alert could ever reach them when that authority moves. That is the user at
+ * highest risk — and plausibly a large share of early users, the ones who trust
+ * the search but not yet the drafting.
+ *
+ * `clientKey` makes the write idempotent: a double tap, or a retry after a
+ * dropped connection, must not become two copy records and inflate the count
+ * the fan-out is measured against.
+ */
+export type CitationCopy = {
   judgmentId: string;
-  /** What we found, ending in what we could not do. */
-  whatWeFound: string;
-  sources: SourceCheck[];
-  /** The eCourts path, spelled out so checking takes a minute rather than ten. */
-  ecourtsUrl: string;
-  prefilledQuery: string;
+  matterId?: string;
+  citationCheckId?: string;
+  surface: string;
+  copiedAt: string;
+  clientKey: string;
 };
 
 export type HiddenResult = {

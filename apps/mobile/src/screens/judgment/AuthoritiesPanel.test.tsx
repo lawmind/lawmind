@@ -1,17 +1,16 @@
 import { render, screen } from '@testing-library/react-native';
 
 import type { AuthoritiesResponse, PointInTimeAuthority } from '../../api/contract';
-import type { OverrulingJudgment } from '../../citation/standing';
 import { AuthoritiesPanel } from './AuthoritiesPanel';
 
 /**
- * The fixture is the real production row, measured 6 August 2026: Balwinder
+ * The fixture is the real production row, measured 7 August 2026: Balwinder
  * Singh (Binda) v. NCB, delivered 2023-09-22, relying on Kanhaiyalal, which
  * Tofan Singh set aside on 2020-10-29.
  *
- * `standingWhenRelied` is left at the server's `moved_since` and
- * `statusChangedAt` at the back-fill timestamp — both wrong for this purpose.
- * The panel is expected to reach the opposite conclusion from the two dates.
+ * `statusRecordedAt` is the back-fill write timestamp, three years adrift of
+ * the legal date, and is left in on purpose — if it ever reaches the screen
+ * these tests are what notice.
  */
 const authority = (over: Partial<PointInTimeAuthority> = {}): PointInTimeAuthority => ({
   judgmentId: 'jdg-kanhaiyalal',
@@ -19,11 +18,13 @@ const authority = (over: Partial<PointInTimeAuthority> = {}): PointInTimeAuthori
   neutralCitation: '2008 INSC 25',
   judgmentDate: '2008-01-09',
   relationship: 'cites',
-  standingWhenRelied: 'moved_since',
-  daysAlreadyMoved: null,
+  standingWhenRelied: 'already_moved',
+  daysAlreadyMoved: 1058,
   overruledStatus: 'set_aside',
   overruledByJudgmentId: 'jdg-tofan-singh',
-  statusChangedAt: '2026-08-06 15:32:38.67999+00',
+  overruledOn: '2020-10-29',
+  overruledByCaseTitle: 'Tofan Singh v. State of Tamil Nadu',
+  statusRecordedAt: '2026-08-06 15:32:38.67999+00',
   verificationState: 'verified',
   verifiedBySource: 'corpus',
   asOf: '2026-08-06T19:15:12.741Z',
@@ -35,32 +36,22 @@ const response = (authorities: PointInTimeAuthority[]): AuthoritiesResponse => (
   caseTitle: 'Balwinder Singh (Binda) v. Narcotics Control Bureau',
   deliveredOn: '2023-09-22',
   asOf: '2026-08-06T19:15:12.741Z',
-  counts: { goodLawThen: 0, alreadyMoved: 0, movedSince: 1, unknown: 0 },
+  counts: { goodLawThen: 12, alreadyMoved: 1, movedSince: 0, unknown: 0 },
   authorities,
   resolvedAuthorities: authorities.length,
 });
-
-const TOFAN_SINGH: OverrulingJudgment = {
-  judgmentId: 'jdg-tofan-singh',
-  caseTitle: 'Tofan Singh v. State of Tamil Nadu',
-  neutralCitation: '2020 INSC 620',
-  judgmentDate: '2020-10-29',
-};
-
-const resolved = { 'jdg-tofan-singh': TOFAN_SINGH };
 
 const panel = (props: Partial<Parameters<typeof AuthoritiesPanel>[0]> = {}) => (
   <AuthoritiesPanel
     data={response([authority()])}
     error={null}
     onOpenJudgment={() => {}}
-    overrulings={resolved}
     {...props}
   />
 );
 
 describe('AuthoritiesPanel', () => {
-  it('states the sequence as two dated facts, against the server verdict', async () => {
+  it('states the sequence as one sentence, with the bench that moved it', async () => {
     await render(panel());
 
     expect(screen.getByText('Relied on after it was set aside')).toBeTruthy();
@@ -71,20 +62,49 @@ describe('AuthoritiesPanel', () => {
     ).toBeTruthy();
   });
 
-  it('names the judgment that moved the law and never shows its id', async () => {
+  it('never shows an id, and never the back-fill timestamp', async () => {
     await render(panel());
 
     expect(screen.queryByText(/jdg-tofan-singh/)).toBeNull();
-    expect(screen.getByText('Read 2020 INSC 620')).toBeTruthy();
+    expect(screen.queryByText(/2026-08-06/)).toBeNull();
+    expect(screen.getByText('Read the judgment that set it aside')).toBeTruthy();
+  });
+
+  /**
+   * THE CASE THAT MUST NOT READ AS AN ACCUSATION. Tofan Singh reciting the
+   * authority it overruled is not a bench relying on dead law, and an advocate
+   * opening a landmark must not meet a caution block saying it was.
+   */
+  it('renders overruled_here as a plain line, with no caution copy', async () => {
+    await render(
+      panel({
+        data: response([
+          authority({ standingWhenRelied: 'overruled_here', daysAlreadyMoved: null }),
+        ]),
+      })
+    );
+
+    expect(screen.getByText('This is the judgment that set it aside')).toBeTruthy();
+    expect(screen.getByText('It was good law until this judgment.')).toBeTruthy();
+    expect(screen.queryByText('Relied on after it was set aside')).toBeNull();
+    // And it is not counted in the headline, which is only for the state that
+    // changes what an advocate does.
+    expect(screen.queryByText(/had already been set aside/)).toBeNull();
   });
 
   it('renders nothing at all for an authority that has never moved', async () => {
     await render(
       panel({
         data: response([
-          authority({ overruledStatus: 'none', overruledByJudgmentId: null, standingWhenRelied: 'good_law_then' }),
+          authority({
+            standingWhenRelied: 'good_law_then',
+            overruledStatus: 'none',
+            overruledByJudgmentId: null,
+            overruledOn: null,
+            overruledByCaseTitle: null,
+            daysAlreadyMoved: null,
+          }),
         ]),
-        overrulings: {},
       })
     );
 
@@ -92,16 +112,13 @@ describe('AuthoritiesPanel', () => {
     // No tick, no chip, no "good law" line. Silent is the whole point.
     expect(screen.queryByText(/good law/i)).toBeNull();
     expect(screen.queryByText('Relied on after it was set aside')).toBeNull();
-    expect(screen.queryByText('Set aside after this judgment relied on it')).toBeNull();
   });
 
-  it('says it cannot date the move rather than guessing, while unresolved', async () => {
-    await render(panel({ overrulings: {} }));
+  it('says it cannot date the move rather than accusing a bench with nothing behind it', async () => {
+    await render(panel({ data: response([authority({ overruledByCaseTitle: null })]) }));
 
     expect(screen.getByText('We cannot date this against the judgment')).toBeTruthy();
     expect(screen.queryByText('Relied on after it was set aside')).toBeNull();
-    // And it must not fall back to the server's field, which says moved_since.
-    expect(screen.queryByText('Set aside after this judgment relied on it')).toBeNull();
   });
 
   it('states our limit rather than implying a gap in the bench reasoning', async () => {
@@ -133,15 +150,6 @@ describe('AuthoritiesPanel', () => {
   });
 });
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * NEVER A SOUNDNESS RATING — the rendered surface, not just the module.
- *
- * `citation/standing.ts` enforces this on the derivation. This enforces it on
- * what an advocate actually reads, because a verdict could be added in the
- * component without touching the module at all.
- * ─────────────────────────────────────────────────────────────────────────────
- */
 /** Every string the panel actually puts on screen, in render order. */
 function renderedText(node: unknown): string[] {
   if (typeof node === 'string') return [node];
@@ -152,6 +160,15 @@ function renderedText(node: unknown): string[] {
   return [];
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * NEVER A SOUNDNESS RATING — the rendered surface, not just the module.
+ *
+ * `citation/standing.ts` enforces this on the derivation. This enforces it on
+ * what an advocate actually reads, because a verdict could be added in the
+ * component without touching the module at all.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 describe('the panel never rates the judgment', () => {
   const EVALUATIVE =
     /\b(score|scored|rating|rated|grade|graded|rank|ranked|risk|risky|vulnerable|vulnerability|weak|weakened|weakness|unsound|unreliable|strength|confidence|reliability|percent)\b|%|\b\d+\s*\/\s*\d+\b/i;
@@ -161,7 +178,13 @@ describe('the panel never rates the judgment', () => {
       panel({
         data: response([
           authority(),
-          authority({ judgmentId: 'b', caseTitle: 'Ram Singh v. Central Bureau of Narcotics', overruledStatus: 'none', overruledByJudgmentId: null }),
+          authority({ judgmentId: 'b', standingWhenRelied: 'overruled_here' }),
+          authority({
+            judgmentId: 'c',
+            caseTitle: 'Ram Singh v. Central Bureau of Narcotics',
+            standingWhenRelied: 'good_law_then',
+            overruledStatus: 'none',
+          }),
         ]),
       })
     );
@@ -172,7 +195,9 @@ describe('the panel never rates the judgment', () => {
   });
 
   it('counts the state that changes what an advocate does, and only that', async () => {
-    await render(panel({ data: response([authority(), authority({ judgmentId: 'b' })]) }));
+    await render(
+      panel({ data: response([authority(), authority({ judgmentId: 'b' })]) })
+    );
 
     // A count of what needs attention. Never a tally of what passed, and never
     // a total the eye can turn into a fraction of the judgment.

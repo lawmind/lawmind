@@ -307,7 +307,26 @@ export function SearchScreen() {
           renderItem={({ index, item }) => (
             <StaggerIn index={index}>
               <ResultCard
-                onPress={() => router.push(`/judgment/${item.judgmentId}`)}
+                /**
+                 * THE VERIFICATION HANDLE TRAVELS WITH THE TAP.
+                 *
+                 * `citationCheckId` identifies the check behind THIS row on
+                 * THIS search — `GET /judgments/:id` has no such handle and
+                 * should not, because a verification record belongs to a
+                 * citation as it was shown rather than to a judgment in the
+                 * abstract. Carrying it in the route is what lets the
+                 * verification sheet show where we looked; without it the sheet
+                 * says it has no record rather than inventing a lookup.
+                 */
+                onPress={() =>
+                  router.push({
+                    pathname: '/judgment/[id]',
+                    params: {
+                      id: item.judgmentId,
+                      ...(item.citationCheckId ? { check: item.citationCheckId } : {}),
+                    },
+                  })
+                }
                 result={item}
               />
             </StaggerIn>

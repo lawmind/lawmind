@@ -17,6 +17,7 @@ import type { SearchResult } from '../api/contract';
 
 const base: SearchResult = {
   judgmentId: 'jdg_test',
+  citationCheckId: null,
   caseTitle: 'Mock Party v. Mock State',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
   reporterCitations: [],

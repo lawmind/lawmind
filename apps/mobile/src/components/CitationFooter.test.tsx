@@ -12,6 +12,7 @@ import type { SearchResult } from '../api/contract';
 
 const clean: SearchResult = {
   judgmentId: 'jdg_clean',
+  citationCheckId: null,
   caseTitle: 'Mock Party v. Mock State',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
   reporterCitations: [],
@@ -27,6 +28,7 @@ const clean: SearchResult = {
 const unconfirmed: SearchResult = {
   ...clean,
   judgmentId: 'jdg_unconfirmed',
+  citationCheckId: null,
   caseTitle: 'Mock Doubtful v. Mock Registrar',
   verificationState: 'unverified',
   verifiedBySource: 'none',
@@ -35,6 +37,7 @@ const unconfirmed: SearchResult = {
 const setAside: SearchResult = {
   ...clean,
   judgmentId: 'jdg_set_aside',
+  citationCheckId: null,
   caseTitle: 'Mock Overruled v. Mock State',
   overruledStatus: 'set_aside',
 };

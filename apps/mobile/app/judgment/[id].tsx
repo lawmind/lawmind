@@ -13,10 +13,18 @@ import { JudgmentScreen } from '../../src/screens/judgment/JudgmentScreen';
  */
 export default function Route() {
   const router = useRouter();
-  const { id, read, para } = useLocalSearchParams<{
+  const { id, read, para, check } = useLocalSearchParams<{
     id: string;
     read?: string;
     para?: string;
+    /**
+     * The verification-record handle, carried from the search result that led
+     * here. `GET /judgments/:id` does not return one and should not: a
+     * verification record belongs to a citation as it was SHOWN — which result,
+     * on which search — and a judgment opened cold has no such moment. Absent is
+     * a normal state and the verification surfaces say so.
+     */
+    check?: string;
   }>();
 
   /**
@@ -29,6 +37,7 @@ export default function Route() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <JudgmentScreen
+        citationCheckId={check}
         judgmentId={id}
         onBack={() => router.back()}
         onOpenJudgment={(next) => router.push({ pathname: '/judgment/[id]', params: { id: next } })}
