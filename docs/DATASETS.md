@@ -92,6 +92,74 @@ permanent test asset.
 **Principle: primary sources only.** Judgments, statutes, official records. Never
 another model's commentary about them.
 
+### AWS Open Data — High Courts, measured 6 Aug 2026. **Do not ingest as specified.**
+
+OD-4 stage 3 reads "High Courts, last 10 years". Before writing any ingest I
+measured the bucket. **Three numbers make the stage as written impossible, and a
+fourth makes most of it undesirable.**
+
+`s3://indian-high-court-judgments` is real, public, CC-BY-4.0, and laid out like
+the Supreme Court bucket except partitioned `year=/court=/bench=`. That much
+works. The problem is what is in it.
+
+**Scale.** Row counts read from parquet footers, every file, three years:
+
+| year | documents | courts |
+|---|---|---|
+| 2023 | 2,078,757 | 25 |
+| 2024 | 1,747,681 | 25 |
+| 2025 | 2,034,647 | 25 |
+
+**~1.95M per year.** At the cost this corpus actually measures — 38,341 judgments
+occupy 5,979 MB of data plus a 4,811 MB HNSW index, so 0.281 MB each:
+
+| span | documents | database | GPU-hours to embed |
+|---|---|---|---|
+| 1 year | 1.95M | **537 GB** | ~396 |
+| 10 years, as OD-4 specifies | 19.5M | **5,369 GB** | ~3,956 |
+
+The volume is 50 GB with 10.8 GB used. **One year is over 10x the entire volume**
+and 16 days of continuous GPU. Stage 3 as written is off by roughly two orders of
+magnitude, and no amount of tuning closes that.
+
+**And most of it is not an authority.** Measured, not assumed:
+
+- **0 of 9,604 metadata rows carry any citation.** There is no citation column;
+  the schema is court_code, title, description, judge, pdf_link, cnr,
+  date_of_registration, decision_date, disposal_nature, court, raw_html.
+- **0 of 30 PDFs across six High Courts carry a neutral citation** — Delhi,
+  Kerala, Bombay Original Side, Punjab & Haryana, Madras, Sikkim. High Courts
+  have issued neutral citations since 2023 and these judgments do not print them
+  where the extractor can see them.
+- Extracted text averages **2,223 characters for Punjab & Haryana** and 4,010 for
+  Bombay OS. A reasoned judgment is not two pages. 42% of the Sikkim file is
+  literally "Record of Proceedings".
+
+**Why the citation gap is the disqualifying one.** Every surface renders citation
+fields from the database row, and `CITATION_HARNESS.md` Tier 1 resolves a
+citation by matching a stored one. A judgment with no citation can be *found* by
+search but cannot be cited into a draft, cannot be added to a matter as an
+authority, and cannot appear as a cited node in the citation graph. Ingesting two
+million of them adds search noise and no authority.
+
+**`pdf_exists` is false on 100% of sampled rows and the flag is wrong.** Every
+PDF tested returned HTTP 200 at
+`data/pdf/year=/court=/bench=/<basename-of-pdf_link>`, 120–260 KB. Text
+availability is not the problem — do not let that flag stop a future run.
+
+**Recommendation, and it is a scope change so it is the founder's call, not
+mine.** Do not chase document count. `FEATURE_PARITY.md` §5 already argues
+feature parity does not require corpus parity; this is the measurement behind
+that argument. If High Courts are ingested at all, ingest a *filtered* subset —
+reasoned judgments only, by length and structure, from a few courts — and accept
+that they are searchable but largely uncitable until a citation source exists.
+
+**One consequence worth stating plainly.** "Prism has 30M+, we have 38,341" is
+not a like-for-like comparison if their count draws on this same corpus. Ours are
+38,341 citable Supreme Court judgments. A count that includes procedural orders
+with no citation is a different unit, and matching it is not a goal worth
+spending 5 TB and four months of GPU on.
+
 ### AWS Open Data — Supreme Court, Stage 1 complete 4 Aug 2026
 
 **38,341 of 38,351 distinct judgments loaded, 1950–2026. Every year present.**
