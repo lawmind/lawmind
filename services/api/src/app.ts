@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { requestId } from 'hono/request-id';
 
+import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { buildSha } from './build-info.ts';
 import { fail, ok } from './envelope.ts';
 import {
@@ -95,6 +96,11 @@ export function createApp(deps: AppDeps) {
     );
     app.delete('/annotations/:annotationId', (c) =>
       deleteAnnotation(c, sql, c.req.param('annotationId'), search.userId),
+    );
+    // Counter-arguments. Grounded in retrieved corpus authorities only; set_aside
+    // authorities are excluded AND named, never silently dropped.
+    app.post('/arguments/counter', validate('json', counterRequest), (c) =>
+      handleCounter(c, { sql, embedQuery: search.embedQuery }, c.req.valid('json')),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));
