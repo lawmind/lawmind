@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { PixelRatio, StyleSheet, View } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 
 import { Pressable } from './Pressable';
@@ -29,6 +29,26 @@ export function SettingsRow({
   control?: ReactNode;
   onPress?: () => void;
 }) {
+  /**
+   * THE COLUMN IS FIXED IN LAYOUT, NOT IN PIXELS.
+   *
+   * React Native scales `fontSize` with the OS text setting but nothing else,
+   * so a column sized in raw pixels stays put while the value text inside it
+   * doubles. At 2.0x the column was narrower than the word it held and
+   * "English" wrapped as "Engl / ish" — a mid-word break, observed on a Galaxy
+   * S24 at 2.0x.
+   *
+   * Scaling the column by the same factor keeps the single right-hand axis this
+   * component exists to enforce AND lets the value fit. A control node (a
+   * Switch) is a fixed-size object and does not scale, which is why the switch
+   * track remains the floor rather than the basis.
+   */
+  const fontScale = PixelRatio.getFontScale();
+  const controlColumnWidth = Math.max(
+    control.switchTrack.width,
+    size.settingsControlColumn * fontScale
+  );
+
   const body = (
     <View style={styles.row}>
       <View style={styles.labels}>
@@ -39,7 +59,7 @@ export function SettingsRow({
           </Text>
         ) : null}
       </View>
-      <View style={styles.controlColumn}>
+      <View style={[styles.controlColumn, { width: controlColumnWidth }]}>
         {controlNode ??
           (value ? (
             <Text variant="ui" style={styles.value}>
@@ -66,8 +86,8 @@ const styles = StyleSheet.create({
   },
   labels: { flex: 1, minWidth: 0 },
   subtitle: { color: color.inkMuted },
+  /** Width is applied per-render — it depends on the OS font scale. */
   controlColumn: {
-    width: Math.max(control.switchTrack.width, size.settingsControlColumn),
     alignItems: 'flex-end',
     justifyContent: 'center',
   },

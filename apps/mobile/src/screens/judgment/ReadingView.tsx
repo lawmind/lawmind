@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, Search, SlidersHorizontal, X } from 'lucide-react-native';
 import Animated, {
   useAnimatedStyle,
@@ -13,10 +14,13 @@ import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
 import type { JudgmentDetail, JudgmentParagraph } from '../../api/contract';
+import { useJudgmentSpeech } from '../../hooks/useJudgmentSpeech';
 import { useHighlightsFor, useReadingStore } from '../../state/reading';
+import { useLanguageStore } from '../../state/language';
 import { easing } from '../../theme/easing';
 import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
+import { ReadingControls } from './ReadingControls';
 import { ReadingSheet } from './ReadingSheet';
 
 /**
@@ -40,6 +44,22 @@ import { ReadingSheet } from './ReadingSheet';
  * `renders/62-judgment-reading@2x.png`, canvas `11e`. Inventory rows 83–85.
  */
 
+/**
+ * The control bar's own height: one 44px target plus the glass padding above
+ * and below it. Declared rather than measured because it is reserved BEFORE the
+ * bar lays out — content that reflows once the bar appears is the jump this
+ * clearance exists to prevent.
+ */
+const CONTROL_BAR_HEIGHT = 60;
+
+/**
+ * Below this share of numbered paragraphs the gutter is hidden entirely rather
+ * than shown half-empty. 0.5 is where LCC's measurement across 1964–2023 put
+ * the break: 11 of 15 judgments were above it, and numbering was monotonic in
+ * every one of those.
+ */
+const NUMBERED_SHARE_FLOOR = 0.5;
+
 type Props = {
   judgment: JudgmentDetail;
   onBack: () => void;
@@ -56,7 +76,15 @@ export function ReadingView({
   openParagraph,
   onParagraphChange,
 }: Props) {
+  const insets = useSafeAreaInsets();
   const listRef = useRef<FlatList<JudgmentParagraph>>(null);
+
+  /**
+   * Room reserved at the foot of the screen for the floating control bar.
+   * One control height plus its glass padding — the last paragraph and the
+   * anchor hint must both clear it, or the bar hides the thing it sits over.
+   */
+  const controlsClearance = CONTROL_BAR_HEIGHT + insets.bottom + space.md;
   const [sheetOpen, setSheetOpen] = useState(false);
   const [searching, setSearching] = useState(false);
   const [term, setTerm] = useState('');
@@ -103,9 +131,41 @@ export function ReadingView({
    * last week — and the saved position is still there when they come back
    * without the anchor.
    */
-  const [current, setCurrent] = useState(
-    openParagraph ?? progress?.paragraphNumber ?? judgment.paragraphs[0]?.number ?? 1
+  /**
+   * IDENTITY IS THE INDEX. THE PRINTED NUMBER IS FOR CITING.
+   *
+   * A printed paragraph number is nullable — a judgment's header block has
+   * none, and older OCR'd reports lose their numbering entirely. Keying the
+   * reading position on it means the view cannot address the rows that have no
+   * number, which includes the first row of every judgment the server returns.
+   *
+   * So everything internal — reading position, scroll target, progress, speech
+   * — runs on `index`, which is always present. The number is converted back at
+   * the two boundaries that genuinely need something citable: the URL anchor
+   * and a saved highlight.
+   */
+  const indexOfNumber = useCallback(
+    (n: number) => judgment.paragraphs.findIndex((p) => p.number === n),
+    [judgment.paragraphs]
   );
+
+  const [current, setCurrent] = useState(() => {
+    // A link wins over a saved position: an advocate sent "¶ 17" is opening it
+    // to read ¶ 17, not to resume last week. The saved position survives for
+    // when they return without the anchor.
+    if (openParagraph !== undefined) {
+      const i = judgment.paragraphs.findIndex((p) => p.number === openParagraph);
+      if (i >= 0) return i;
+    }
+    if (progress?.paragraphNumber !== undefined) {
+      const i = judgment.paragraphs.findIndex((p) => p.number === progress.paragraphNumber);
+      if (i >= 0) return i;
+    }
+    return 0;
+  });
+
+  /** The printed number of the row being read, or null where it has none. */
+  const currentNumber = judgment.paragraphs[current]?.number ?? null;
 
   /**
    * IN-TEXT SEARCH JUMPS BETWEEN PARAGRAPHS, NOT SCROLL POSITIONS. An advocate
@@ -118,10 +178,6 @@ export function ReadingView({
     return judgment.paragraphs.filter((p) => p.text.toLowerCase().includes(q));
   }, [judgment.paragraphs, term]);
 
-  const indexOfParagraph = useCallback(
-    (n: number) => judgment.paragraphs.findIndex((p) => p.number === n),
-    [judgment.paragraphs]
-  );
 
   /**
    * An explicit jump OUTRANKS the scroll position it causes.
@@ -140,52 +196,104 @@ export function ReadingView({
    * where a paragraph actually is; everything else is an average pretending to
    * be a position.
    */
-  const offsets = useRef(new Map<number, number>());
+  const heights = useRef(new Map<number, number>());
   /** A jump that had to use the estimate, waiting for its row to be measured. */
   const pendingJump = useRef<number | null>(null);
 
-  const measure = useCallback((paragraphNumber: number, y: number) => {
-    offsets.current.set(paragraphNumber, y);
-    // The row the advocate asked for has now been measured — land on it exactly.
-    if (pendingJump.current === paragraphNumber) {
+  /**
+   * ROW HEIGHTS, NOT ROW POSITIONS.
+   *
+   * `onLayout`'s `y` is measured against the view's PARENT, and inside a
+   * FlatList every row's parent is its own cell — so `y` is ~0 for every
+   * paragraph in the judgment. Storing it as a list offset made
+   * `scrollToOffset` a no-op that always scrolled to the top, which is why
+   * speech could reach ¶ 18 with the screen still showing ¶ 1.
+   *
+   * `height` is parent-independent and therefore correct. Offsets are the
+   * running sum of the heights before a row, which is exact for every row
+   * whose predecessors have all been laid out, and honestly absent otherwise.
+   */
+  const measure = useCallback((index: number, height: number) => {
+    heights.current.set(index, height);
+    if (pendingJump.current === index) {
       pendingJump.current = null;
-      listRef.current?.scrollToOffset({ offset: y, animated: false });
     }
   }, []);
 
-  const jumpTo = useCallback(
-    (paragraphNumber: number) => {
-      const index = indexOfParagraph(paragraphNumber);
-      if (index < 0) return;
-      jumpTarget.current = paragraphNumber;
+  /**
+   * Sums the heights of the rows before `index`. Returns undefined if any row in
+   * front of it has not been laid out — a partial sum would be a confident
+   * wrong number, which is what the previous implementation shipped.
+   */
+  const offsetOf = useCallback((index: number): number | undefined => {
+    let total = 0;
+    for (let i = 0; i < index; i += 1) {
+      const h = heights.current.get(i);
+      if (h === undefined) return undefined;
+      total += h;
+    }
+    return total;
+  }, []);
+
+  /**
+   * Moves the reading position to a row.
+   *
+   * `fromTap` distinguishes an advocate choosing a paragraph from speech
+   * walking through them: only the former writes the anchor into the URL, and
+   * only a row that HAS a printed number can be written there at all — an
+   * unnumbered header is not a citable location.
+   */
+  const goTo = useCallback(
+    (index: number, { fromTap }: { fromTap: boolean }) => {
+      const paragraph = judgment.paragraphs[index];
+      if (!paragraph) return;
+      jumpTarget.current = index;
 
       /**
-       * SCROLL BY MEASURED OFFSET, NOT BY INDEX.
+       * SCROLL BY SUMMED HEIGHT WHERE IT IS KNOWN, BY INDEX WHERE IT IS NOT.
        *
-       * `scrollToIndex` on variable-height rows without `getItemLayout` is
-       * computed from an average, so it lands a row short and the advocate who
-       * asked for ¶ 17 gets ¶ 16 — in the header, in the URL and in the saved
-       * position. Retrying it just re-runs the same estimate.
-       *
-       * Every row reports its own offset through `onLayout`, so once a row has
-       * been laid out its position is a fact rather than an estimate. Where the
-       * fact exists we use it; where it does not — a jump far down a judgment
-       * the list has never rendered — we fall back to the estimate to get
-       * close, and the `onLayout` that follows corrects it.
+       * The summed height is exact. `scrollToIndex` is computed from an average
+       * and lands close, and `onScrollToIndexFailed` widens the window so it can
+       * land at all — see the handler on the list.
        */
-      const offset = offsets.current.get(paragraphNumber);
+      const offset = offsetOf(index);
       if (offset !== undefined) {
         listRef.current?.scrollToOffset({ offset, animated: true });
       } else {
         listRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0 });
-        pendingJump.current = paragraphNumber;
+        pendingJump.current = index;
       }
-      setCurrent(paragraphNumber);
-      setProgress(judgment.judgmentId, paragraphNumber);
-      onParagraphChange(paragraphNumber);
+
+      setCurrent(index);
+      if (paragraph.number !== null) setProgress(judgment.judgmentId, paragraph.number);
+      if (fromTap && paragraph.number !== null) onParagraphChange(paragraph.number);
     },
-    [indexOfParagraph, judgment.judgmentId, onParagraphChange, setProgress]
+    [judgment.paragraphs, judgment.judgmentId, offsetOf, onParagraphChange, setProgress]
   );
+
+  const jumpTo = useCallback((index: number) => goTo(index, { fromTap: true }), [goTo]);
+
+  const language = useLanguageStore((s) => s.language);
+  const setLanguage = useLanguageStore((s) => s.setLanguage);
+
+  /**
+   * SPEECH FOLLOWS THE READER THROUGH THE SAME MACHINERY AS EVERYTHING ELSE.
+   *
+   * It moves `current`, scrolls by measured offset and saves progress — so the
+   * reading position, the dimming, the "¶ 11 of 28" counter and the resume
+   * point are all one state rather than a second highlight running alongside.
+   *
+   * IT DELIBERATELY DOES NOT CALL `onParagraphChange`. That writes the anchor
+   * into the URL, which is right for a tap — an advocate choosing a paragraph
+   * to link — and wrong for speech, which would rewrite the route dozens of
+   * times during one listen and bury the anchor they actually chose.
+   */
+  const followSpeech = useCallback((index: number) => goTo(index, { fromTap: false }), [goTo]);
+
+  const speech = useJudgmentSpeech({
+    paragraphs: judgment.paragraphs,
+    onParagraph: followSpeech,
+  });
 
   /** Keeps the stable callback below pointed at the current judgment. */
   const setProgressRef = useRef((n: number) => setProgress(judgment.judgmentId, n));
@@ -197,7 +305,9 @@ export function ReadingView({
    */
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: { item: JudgmentParagraph }[] }) => {
-      const visible = viewableItems.map((v) => v.item?.number).filter((n) => n !== undefined);
+      // Indices, not printed numbers — an unnumbered header is still a row the
+      // reading position has to be able to sit on.
+      const visible = viewableItems.map((v) => v.item?.index).filter((n) => n !== undefined);
       if (!visible.length) return;
 
       const target = jumpTarget.current;
@@ -246,13 +356,25 @@ export function ReadingView({
     if (!hit) return;
     setHitIndex(next);
     haptics.shift();
-    jumpTo(hit.number);
+    jumpTo(hit.index);
   };
 
-  const readIndex = indexOfParagraph(current);
   const readRatio = judgment.paragraphs.length
-    ? (readIndex + 1) / judgment.paragraphs.length
+    ? (current + 1) / judgment.paragraphs.length
     : 0;
+
+  /**
+   * ANCHORS ARE HIDDEN WHOLESALE WHEN THE JUDGMENT IS MOSTLY UNNUMBERED.
+   *
+   * A gutter of mostly-blank anchor slots reads as a rendering fault, and the
+   * few numbers that do survive invite citing by position — which is the exact
+   * error the nullable number exists to prevent. Below the threshold the
+   * judgment is still perfectly readable; it simply has nothing citable to
+   * offer, and saying so by omission is honest.
+   *
+   * Measured across 1964–2023, 11 of 15 judgments sat above 0.5.
+   */
+  const showAnchors = judgment.numberedShare >= NUMBERED_SHARE_FLOOR;
 
   return (
     <Screen>
@@ -330,8 +452,17 @@ export function ReadingView({
         <View style={styles.progressTrack}>
           <View style={[styles.progressFill, { width: `${Math.round(readRatio * 100)}%` }]} />
         </View>
+        {/*
+          THE PILCROW IS A CLAIM, SO IT ONLY APPEARS WITH A REAL NUMBER.
+          `¶ 0` is not a paragraph an advocate can cite or find — it was the
+          index leaking into a field that means "printed number". On an
+          unnumbered row the counter falls back to plain position, which is
+          honest about being a place in the document rather than a citation.
+        */}
         <Text opticalNudge variant="record">
-          ¶ {current} of {judgment.paragraphs.length}
+          {currentNumber === null
+            ? `${current + 1} of ${judgment.paragraphs.length}`
+            : `¶ ${currentNumber} of ${judgment.paragraphs.length}`}
         </Text>
       </View>
 
@@ -355,10 +486,30 @@ export function ReadingView({
         contentContainerStyle={styles.list}
         data={judgment.paragraphs}
         keyExtractor={(p) => String(p.number)}
-        onScrollToIndexFailed={({ index }) => {
-          // A judgment is long and rows are variable height; retry once the
-          // list has measured rather than dropping the jump on the floor.
-          setTimeout(() => listRef.current?.scrollToIndex({ index, animated: false }), 60);
+        onScrollToIndexFailed={({ index, averageItemLength }) => {
+          /**
+           * RETRYING THE SAME CALL CANNOT WORK, AND USED TO BE WHAT THIS DID.
+           *
+           * `scrollToIndex` fails when the row is outside the rendered window,
+           * and a judgment is long enough that most of it always is. Retrying
+           * fails identically, because nothing between the two attempts caused
+           * the row to render — so the jump was silently dropped.
+           *
+           * Observed with speech, which is where it actually bites: the voice
+           * reached ¶ 10 while the screen sat on ¶ 1, because each unrendered
+           * row failed to scroll, so no further rows rendered, so no further
+           * offsets were ever measured. A closed loop.
+           *
+           * `averageItemLength` is FlatList's own estimate at the moment of
+           * failure. Jumping to it renders rows around the target, which lets
+           * the exact `scrollToIndex` land on the retry — and `measure()` then
+           * records the true offset for next time.
+           */
+          listRef.current?.scrollToOffset({
+            offset: index * averageItemLength,
+            animated: false,
+          });
+          setTimeout(() => listRef.current?.scrollToIndex({ index, animated: false }), 80);
         }}
         onViewableItemsChanged={onViewableItemsChanged}
         ref={listRef}
@@ -366,31 +517,47 @@ export function ReadingView({
           <Paragraph
             dimmed={
               // Non-matching paragraphs stay at 50% so the eye lands on the hit.
-              (term.trim().length > 0 && !hits.includes(item)) || (!term && item.number !== current)
+              (term.trim().length > 0 && !hits.includes(item)) || (!term && item.index !== current)
             }
-            highlighted={highlighted.has(item.number)}
+            highlighted={item.number !== null && highlighted.has(item.number)}
             isCurrentHit={hits[hitIndex] === item}
             onMeasure={measure}
+            showAnchor={showAnchors && item.number !== null}
             onLink={() => {
+              /**
+               * ONLY A NUMBERED PARAGRAPH IS A LINK. An unnumbered header has
+               * no citable location, so tapping it moves the reading position
+               * without writing an anchor nobody could cite back.
+               */
               haptics.commit();
-              setSelected(item.number);
-              // Tapping the anchor puts it in the URL. That IS the link.
-              onParagraphChange(item.number);
+              setSelected(item.index);
+              if (item.number !== null) onParagraphChange(item.number);
             }}
             onOpenCited={
               item.citesJudgmentId ? () => onOpenJudgment(item.citesJudgmentId!) : undefined
             }
-            onSaveToMatter={() => {
-              haptics.commit();
-              addHighlight({
-                judgmentId: judgment.judgmentId,
-                paragraphNumber: item.number,
-                text: item.text,
-                savedAt: new Date().toISOString(),
-              });
-            }}
+            onSaveToMatter={
+              /**
+               * A HIGHLIGHT IS A CITATION, SO IT NEEDS A CITABLE PARAGRAPH.
+               * PD-9 item 3 saves a passage to a matter, where it is quoted with
+               * "¶ n". An unnumbered row has no n, and saving it under an index
+               * would put a fabricated paragraph reference into a matter file.
+               * The action is simply not offered there.
+               */
+              item.number === null
+                ? undefined
+                : () => {
+                    haptics.commit();
+                    addHighlight({
+                      judgmentId: judgment.judgmentId,
+                      paragraphNumber: item.number as number,
+                      text: item.text,
+                      savedAt: new Date().toISOString(),
+                    });
+                  }
+            }
             paragraph={item}
-            selected={selected === item.number}
+            selected={selected === item.index}
             textSize={textSize}
           />
         )}
@@ -398,9 +565,52 @@ export function ReadingView({
         />
       </Animated.View>
 
-      <Text variant="ui" style={styles.hint}>
+      <Text variant="ui" style={[styles.hint, { paddingBottom: controlsClearance }]}>
         Paragraph numbers are anchors — tap one to link it.
       </Text>
+
+      {/*
+        `box-none` so the host itself never swallows a tap meant for the
+        judgment underneath — only the bar's own controls are targets. Floating
+        chrome must not quietly steal a third of the reading surface.
+      */}
+      {/*
+        THE BAR SITS ABOVE THE SYSTEM NAV BAR, NOT ON IT.
+        A fixed bottom offset put the controls under Android's gesture/nav bar
+        and on top of the anchor hint — observed on a Galaxy S24. The inset is
+        the only honest source for how much room the system is taking, and it
+        differs per device, which is exactly why it cannot be a constant.
+      */}
+      <View
+        pointerEvents="box-none"
+        style={[styles.controlsHost, { bottom: insets.bottom + space.md }]}
+      >
+        <ReadingControls
+          language={language}
+          onAnnotate={
+            /**
+             * Same rule as the row action: a highlight is quoted as "¶ n", so
+             * an unnumbered row has nothing to save it under. The control is
+             * disabled there rather than saving under a position.
+             */
+            currentNumber === null
+              ? undefined
+              : () => {
+                  addHighlight({
+                    judgmentId: judgment.judgmentId,
+                    paragraphNumber: currentNumber,
+                    text: judgment.paragraphs[current]?.text ?? '',
+                    savedAt: new Date().toISOString(),
+                  });
+                }
+          }
+          onTextSize={() => setSheetOpen(true)}
+          onToggleLanguage={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+          onToggleListen={() => speech.toggle(current)}
+          speaking={speech.speaking}
+          speechAvailability={speech.availability}
+        />
+      </View>
 
       <ReadingSheet
         highlightCount={highlights.length}
@@ -427,6 +637,7 @@ function Paragraph({
   onSaveToMatter,
   onOpenCited,
   onMeasure,
+  showAnchor,
 }: {
   paragraph: JudgmentParagraph;
   textSize: number;
@@ -435,22 +646,39 @@ function Paragraph({
   highlighted: boolean;
   isCurrentHit: boolean;
   onLink: () => void;
-  onSaveToMatter: () => void;
+  /** Absent where the paragraph has no printed number to save it under. */
+  onSaveToMatter?: () => void;
   onOpenCited?: () => void;
-  /** Reports this row's real y offset once the list has laid it out. */
-  onMeasure: (paragraphNumber: number, y: number) => void;
+  /** Reports this row's measured HEIGHT once the list has laid it out. */
+  onMeasure: (index: number, height: number) => void;
+  /** False for an unnumbered row, or for a judgment that is mostly unnumbered. */
+  showAnchor: boolean;
 }) {
   return (
     <View
-      onLayout={(e) => onMeasure(paragraph.number, e.nativeEvent.layout.y)}
+      onLayout={(e) => onMeasure(paragraph.index, e.nativeEvent.layout.height)}
       style={styles.paragraphRow}
     >
-      {/* The anchor. Fixed 22px gutter — see the note at the top of this file. */}
-      <Pressable accessibilityLabel={`Paragraph ${paragraph.number}`} accessibilityRole="button" onPress={onLink}>
+      {/*
+        The anchor. Fixed 22px gutter — see the note at the top of this file.
+        THE GUTTER IS KEPT EVEN WHEN THE NUMBER IS NOT, so the text edge stays
+        true down the page; only the number is withheld. A column that shifts
+        left on unnumbered rows would wander exactly where a printed reporter
+        does not.
+      */}
+      <Pressable
+        accessibilityLabel={
+          paragraph.number === null ? 'Paragraph' : `Paragraph ${paragraph.number}`
+        }
+        accessibilityRole="button"
+        onPress={onLink}
+      >
         <View style={styles.gutter}>
-          <Text opticalNudge variant="record" style={styles.anchor}>
-            {paragraph.number}
-          </Text>
+          {showAnchor ? (
+            <Text opticalNudge variant="record" style={styles.anchor}>
+              {paragraph.number}
+            </Text>
+          ) : null}
         </View>
       </Pressable>
 
@@ -574,5 +802,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: space.sm,
     paddingBottom: space.xs,
+  },
+  /**
+   * Floating chrome, bottom third — this is read one-handed while holding a
+   * physical file. Inset rather than edge-to-edge so the judgment stays visible
+   * behind it and the bar reads as floating above the page rather than as a
+   * second footer attached to it.
+   */
+  /** `bottom` is applied per-render from the safe-area inset. */
+  controlsHost: {
+    position: 'absolute',
+    left: space.md,
+    right: space.md,
   },
 });

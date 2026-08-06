@@ -86,9 +86,20 @@ export type SearchResult = {
  *
  * `number` is the number PRINTED IN THE REPORT, not an array index. They are
  * not always contiguous and they do not always start at 1.
+ *
+ * IT IS NULLABLE, AND NULL IS NORMAL RATHER THAN AN ERROR.
+ *
+ * A judgment's header block carries no paragraph number, and older OCR'd
+ * judgments lose their numbering entirely. `null` says "this paragraph has
+ * nothing citable", which is a fact about the report — substituting the array
+ * position would manufacture a citation that looks exactly like a real one
+ * once it is in an advocate's note. `index` is the rendering handle for those
+ * rows: always present, never citable.
  */
 export type JudgmentParagraph = {
-  number: number;
+  number: number | null;
+  /** Zero-based position in the rendered array. Always present, never citable. */
+  index: number;
   text: string;
   /** Set where the paragraph cites another judgment we hold — drives the jump. */
   citesJudgmentId?: string;
@@ -101,6 +112,170 @@ export type JudgmentDetail = SearchResult & {
   holdingParagraphNumber: number;
   operativeParagraphNumber: number;
   paragraphs: JudgmentParagraph[];
+  /**
+   * Share of paragraphs carrying a printed number, 0–1.
+   *
+   * Below the threshold the reading view hides anchors ENTIRELY rather than
+   * showing a broken gutter: a column of mostly-blank anchor slots reads as a
+   * rendering fault, and the few numbers present invite citing by position.
+   * Measured across 1964–2023, 11 of 15 judgments were above 0.5.
+   */
+  numberedShare: number;
+};
+
+/* --------------------------------------------------- treatment and precedent */
+
+/**
+ * HOW LATER COURTS TREATED AN AUTHORITY — `GET /judgments/:id/treatment`.
+ *
+ * `relationship` is a DIFFERENT QUESTION from `verificationState`. One says what
+ * a later bench did with this authority; the other says whether the authority
+ * exists at all. A judgment can be `verified` and `overruled`, or `unverified`
+ * and `followed`. They are never folded together, and never share a colour —
+ * amber means the law moved, and nothing else.
+ *
+ * This endpoint states what courts DID. It never returns a probability, a score
+ * or a predicted outcome: `FEATURE_PARITY.md` §4 declines outcome prediction
+ * because it cannot be sourced to a primary record or verified by any tier.
+ */
+export type TreatmentRelationship = 'followed' | 'distinguished' | 'doubted' | 'overruled';
+
+export type Treatment = {
+  judgmentId: string;
+  caseTitle: string;
+  neutralCitation: string;
+  court: string;
+  judgmentDate: string;
+  relationship: TreatmentRelationship;
+  /** The paragraph of the treating judgment that did it, where known. */
+  paragraph?: number;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  overruledStatus: OverruledStatus;
+  asOf: string;
+};
+
+export type TreatmentResponse = {
+  judgmentId: string;
+  asOf: string;
+  counts: { followed: number; distinguished: number; doubted: number; overruled: number };
+  treatments: Treatment[];
+  total: number;
+  returned: number;
+  /** True when more treatments exist than were returned. Rendered, never hidden. */
+  truncated: boolean;
+  nextCursor?: string;
+};
+
+/**
+ * THE CITATION NETWORK — `GET /judgments/:id/graph`.
+ *
+ * `depth` bounds the walk; `limit` and `truncated` bound the payload. Both are
+ * required: a heavily-cited Supreme Court authority has hundreds of citing
+ * judgments at depth 1 alone.
+ *
+ * `truncated` IS A CORRECTNESS FIELD, NOT A PERFORMANCE ONE. A citation network
+ * drawn as complete when it is not misstates how much law bears on the
+ * authority — an advocate reading four nodes would conclude four judgments have
+ * considered it. It is always surfaced as "showing n of m".
+ */
+export type GraphNode = {
+  judgmentId: string;
+  caseTitle: string;
+  neutralCitation: string;
+  court: string;
+  judgmentDate: string;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  overruledStatus: OverruledStatus;
+  asOf: string;
+  depth: number;
+};
+
+export type GraphEdge = { from: string; to: string; relationship: TreatmentRelationship };
+
+export type PrecedentGraph = {
+  rootId: string;
+  asOf: string;
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  totalNodes: number;
+  returned: number;
+  truncated: boolean;
+};
+
+/* ---------------------------------------------------------- counter-arguments */
+
+/**
+ * `POST /arguments/counter` — what the other side will likely say.
+ *
+ * GROUNDED ONLY. The model references judgment IDs handed to it in retrieved
+ * context and never emits a citation from memory, exactly as search does.
+ *
+ * `excluded` IS THE IMPORTANT FIELD. A `set_aside` authority is not offered as
+ * a counter-argument, but it is NOT SILENTLY REMOVED either — it comes back
+ * named, with its reason, and is rendered as excluded. Dropping it quietly
+ * would be a silent drop, which is measured at a zero threshold, and it would
+ * also mislead: an advocate who knows that authority exists would assume we
+ * had not found it rather than that we had ruled it out.
+ */
+export type CounterAuthority = {
+  judgmentId: string;
+  caseTitle: string;
+  neutralCitation: string;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  overruledStatus: OverruledStatus;
+  asOf: string;
+};
+
+export type CounterArgument = {
+  argument: string;
+  rebuttal: string;
+  authorities: CounterAuthority[];
+};
+
+export type CounterArgumentsResponse = {
+  arguments: CounterArgument[];
+  /** Named and shown, never dropped. */
+  excluded: { judgmentId: string; caseTitle: string; neutralCitation?: string; reason: 'set_aside' }[];
+  unverifiedReferences: UnverifiedReference[];
+};
+
+/* ---------------------------------------------------------------- compare */
+
+/**
+ * `POST /documents/compare` — two versions of a draft.
+ *
+ * `citationChanges` IS SEPARATE FROM `textChanges` ON PURPOSE, and the client
+ * must keep them separate too.
+ *
+ * A changed citation is a different KIND of event from changed prose: it
+ * re-enters verification, it can introduce an authority that has since been
+ * overruled, and it is the one change in a diff that can put an advocate in
+ * front of a cost order. A diff that renders "submitted → respectfully
+ * submitted" and "added Satender Kumar Antil v. CBI" in the same grey
+ * strikethrough hides the second inside the first.
+ */
+export type TextChange = {
+  paragraphIndex: number;
+  kind: 'added' | 'removed' | 'changed';
+};
+
+export type CitationChange = {
+  paragraphIndex: number;
+  kind: 'added' | 'removed' | 'changed';
+  before?: string;
+  after?: string;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  overruledStatus: OverruledStatus;
+  asOf: string;
+};
+
+export type CompareResponse = {
+  textChanges: TextChange[];
+  citationChanges: CitationChange[];
 };
 
 /* ------------------------------------------------------------------ statutes */

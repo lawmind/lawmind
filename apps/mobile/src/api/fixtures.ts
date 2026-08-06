@@ -204,31 +204,52 @@ export const MOCK_FACETS: Record<string, Facet> = {
  */
 const paragraphs = (count: number, seed: string): JudgmentDetail['paragraphs'] =>
   Array.from({ length: count }, (_, i) => {
-    const n = i + 1;
+    /**
+     * INDEX 0 IS AN UNNUMBERED HEADER, MIRRORING REAL DATA.
+     *
+     * `GET /judgments/:id` returns the case header as paragraph index 0 with
+     * `paragraphNumber: null` — verified against 2019 INSC 1321, where 32 of 33
+     * paragraphs are numbered. A fixture where every row has a number would let
+     * a null-handling bug reach the device, which is exactly the class of
+     * failure the nullable type exists to surface.
+     */
+    if (i === 0)
+      return {
+        number: null,
+        index: i,
+        text: `${seed}\nMock Petitioner v. Mock State\n(Criminal Appeal No. 1 of 2026)`,
+      };
+
+    const n = i;
     if (n === 11)
       return {
         number: n,
+        index: i,
         text: 'Omnibus allegations against a spouse\'s relatives, unsupported by any specific instance of cruelty, cannot form the basis of a prosecution under section 498 of the Mock Code. This Court has repeatedly cautioned against the tendency to implicate every member of the family.',
       };
     if (n === 12)
       return {
         number: n,
+        index: i,
         text: 'In Mock Earlier v. Mock State, MOCK 2012 EXAMPLE 741, this Court observed that the mere naming of a spouse\'s siblings in a matrimonial complaint would not justify their being put to trial.',
         citesJudgmentId: 'jdg_mock_4',
       };
     if (n === 17)
       return {
         number: n,
+        index: i,
         text: 'Where omnibus allegations are levelled and no particulars are furnished, the proceeding is liable to be quashed.',
       };
     if (n === 23)
       return {
         number: n,
+        index: i,
         text: '"Permitting the prosecution to continue would result in an abuse of the process of law. The proceedings against the appellants are quashed."',
         operative: true,
       };
     return {
       number: n,
+      index: i,
       text: `Fixture paragraph ${n} of ${seed}. It carries enough prose to set a realistic measure at 17 on 1.68, so the reading view can be judged on the shape of a real column of text rather than on a single line. Sections 12-14 of the Mock Code were considered.`,
     };
   });
@@ -249,6 +270,11 @@ export const MOCK_JUDGMENTS: Record<string, JudgmentDetail> = Object.fromEntries
       operativeParagraphNumber: 23,
       holdingParagraphNumber: 11,
       paragraphs: paragraphs(28, r.neutralCitation),
+      /**
+       * 27 of 28 numbered — the header is not. Close to the 0.9697 measured on
+       * 2019 INSC 1321, and comfortably above the threshold, so anchors show.
+       */
+      numberedShare: 27 / 28,
     } satisfies JudgmentDetail,
   ])
 );

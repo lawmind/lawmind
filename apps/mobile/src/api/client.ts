@@ -1,9 +1,11 @@
 import type {
   ApiResponse,
+  PrecedentGraph,
   SearchFilters,
   SearchResponse,
   Statute,
   StatuteSection,
+  TreatmentResponse,
 } from './contract';
 
 /**
@@ -102,6 +104,32 @@ export const api = {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ query, language, filters: serverFilters(filters) }),
     }),
+
+  /**
+   * How later courts treated this authority. Ranked list, the default view.
+   *
+   * `limit` is passed so `truncated` and `total` come back meaningful — asking
+   * for everything and getting a silent subset is the failure this endpoint's
+   * paging exists to prevent.
+   */
+  treatment: (judgmentId: string, limit = 50, cursor?: string) =>
+    get<TreatmentResponse>(
+      `/judgments/${encodeURIComponent(judgmentId)}/treatment?limit=${limit}` +
+        (cursor ? `&cursor=${encodeURIComponent(cursor)}` : '')
+    ),
+
+  /**
+   * The citation network, on demand.
+   *
+   * Depth 1 and 40 nodes by default: the graph is the secondary view and a
+   * phone renders it at 60fps or not at all. `truncated` comes back with it and
+   * is always shown — see `PrecedentGraph` in the contract for why that is a
+   * correctness field rather than a performance one.
+   */
+  precedentGraph: (judgmentId: string, depth: 1 | 2 = 1, limit = 40) =>
+    get<PrecedentGraph>(
+      `/judgments/${encodeURIComponent(judgmentId)}/graph?depth=${depth}&limit=${limit}`
+    ),
 
   statutes: () => get<{ statutes: Statute[] }>('/statutes'),
 

@@ -67,6 +67,7 @@ export function JudgmentScreen({
   judgmentId,
   onBack,
   onOpenJudgment,
+  onOpenTreatment,
   reading,
   openParagraph,
   onSetReading,
@@ -74,6 +75,8 @@ export function JudgmentScreen({
   judgmentId: string;
   onBack: () => void;
   onOpenJudgment: (id: string) => void;
+  /** Opens the citation network — how later courts treated this authority. */
+  onOpenTreatment: () => void;
   /** Held in the URL, not in state — see the note in `app/judgment/[id].tsx`. */
   reading: boolean;
   openParagraph?: number;
@@ -368,6 +371,18 @@ export function JudgmentScreen({
             </View>
           </Pressable>
         ))}
+
+        {/*
+          "Relied on" looks backwards, at what this judgment cited. This looks
+          FORWARD, at what happened to it since — which is the question that
+          decides whether it can still be relied on today, and the one a
+          citation list cannot answer.
+        */}
+        <Button
+          label="How courts have treated this"
+          onPress={onOpenTreatment}
+          variant="secondary"
+        />
 
         <Button label="Read the judgment" onPress={() => onSetReading(true)} variant="secondary" />
 

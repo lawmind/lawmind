@@ -32,6 +32,7 @@ export default function Route() {
         judgmentId={id}
         onBack={() => router.back()}
         onOpenJudgment={(next) => router.push({ pathname: '/judgment/[id]', params: { id: next } })}
+        onOpenTreatment={() => router.push({ pathname: '/precedent/[id]', params: { id } })}
         onSetReading={(next, paragraphNumber) =>
           router.setParams({
             read: next ? '1' : undefined,
