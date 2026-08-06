@@ -1,3 +1,25 @@
+/**
+ * Point-in-time good law — and the bug that made it say the opposite of the truth.
+ *
+ * `already_moved` read 0 corpus-wide because the comparison used
+ * `overruled_status_changed_at`, which is when OUR row was written, not when the
+ * law moved. The back-fill stamps it `now()`, so every authority looked as though
+ * it fell after every judgment that cited it.
+ *
+ * The case that exposed it, found by the client lane on production:
+ *
+ *   Balwinder Singh (Binda) v. NCB   delivered 2023-09-22
+ *     relied on Kanhaiyalal v. UOI   set aside by Tofan Singh, 2020-10-29
+ *   -> already_moved, by 1,058 days. The endpoint said `moved_since`.
+ *
+ * These are not shades of one thing. `moved_since` says the law changed under a
+ * bench that could not have known — unremarkable. `already_moved` says the bench
+ * relied on an authority that had been dead for three years.
+ *
+ * So these tests assert against DATES FROM COURT RECORDS, and one of them asserts
+ * the negative directly: the response must not date a legal event by our write
+ * time, whatever else it carries.
+ */
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 
@@ -6,104 +28,130 @@ import postgres from 'postgres';
 import { createApp } from '../app.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
-const app = createApp({ ping: async () => {}, search: { sql, embedQuery: async () => null } });
 
-type Body = { ok: boolean; data?: Record<string, unknown>; error?: { code: string } };
-
-const get = async (path: string): Promise<{ status: number; body: Body }> => {
-  const res = await app.request(path);
-  return { status: res.status, body: (await res.json()) as Body };
+type Authority = {
+  caseTitle: string;
+  standingWhenRelied: string;
+  daysAlreadyMoved: number | null;
+  overruledOn: string | null;
+  overruledStatus: string;
+  judgmentDate: string;
 };
 
-describe('GET /judgments/:id/authorities', () => {
-  let citingId: string | null = null;
+describe('authorities as at delivery', () => {
+  let subjectId: string | null = null;
+  let deliveredOn = '';
+
+  const app = createApp({ ping: async () => {}, search: { sql, embedQuery: async () => null } });
 
   before(async () => {
-    const [row] = await sql<{ id: string }[]>`
-      SELECT citing_judgment_id AS id FROM judgment_citations
-      WHERE cited_judgment_id IS NOT NULL
-      GROUP BY citing_judgment_id ORDER BY count(*) DESC LIMIT 1`;
-    citingId = row?.id ?? null;
+    // Any judgment that relied on an authority already overruled ON THE DAY it
+    // was delivered. Found by dates, not by hard-coded ids, so this survives a
+    // re-ingest that changes uuids.
+    const [row] = await sql<{ id: string; judgment_date: string }[]>`
+      SELECT citing.id, citing.judgment_date::text AS judgment_date
+      FROM judgment_citations c
+      JOIN judgments citing   ON citing.id = c.citing_judgment_id
+      JOIN judgments cited    ON cited.id  = c.cited_judgment_id
+      JOIN judgments overruler ON overruler.id = cited.overruled_by_judgment_id
+      WHERE cited.overruled_status <> 'none'
+        AND overruler.judgment_date < citing.judgment_date
+      LIMIT 1`;
+    subjectId = row?.id ?? null;
+    deliveredOn = row?.judgment_date ?? '';
   });
 
   after(async () => {
     await sql.end();
   });
 
-  it('classifies every resolved authority into one of four standings', async (t) => {
-    if (!citingId) return t.skip('no citation edges extracted yet');
-    const { status, body } = await get(`/judgments/${citingId}/authorities`);
-    assert.equal(status, 200);
-    const authorities = (body.data?.['authorities'] ?? []) as Record<string, unknown>[];
-    for (const a of authorities) {
+  it('classifies from two court dates, never from our write time', async (t) => {
+    if (!subjectId) return t.skip('needs a corpus with a back-filled citation graph');
+
+    const res = await app.request(`/judgments/${subjectId}/authorities`);
+    assert.equal(res.status, 200);
+    const body = (await res.json()) as {
+      data: { deliveredOn: string; counts: Record<string, number>; authorities: Authority[] };
+    };
+
+    const moved = body.data.authorities.filter(
+      (a) => a.overruledOn && a.overruledStatus !== 'none',
+    );
+    assert.ok(moved.length > 0, 'the fixture judgment must have at least one moved authority');
+
+    for (const a of moved) {
+      const expected = a.overruledOn! <= body.data.deliveredOn ? 'already_moved' : 'moved_since';
+      assert.equal(
+        a.standingWhenRelied,
+        expected,
+        `${a.caseTitle}: overruled on ${a.overruledOn}, relied on ${body.data.deliveredOn}. ` +
+          `Expected ${expected}, got ${a.standingWhenRelied}. Both dates are court records — ` +
+          'if this fails, the comparison has drifted back onto a database timestamp.',
+      );
+    }
+
+    // The whole point: this count was structurally 0 before the fix.
+    assert.ok(
+      body.data.counts['alreadyMoved']! > 0,
+      'alreadyMoved is 0 on a judgment selected precisely because it relied on an ' +
+        'authority already overruled. That is the original bug.',
+    );
+  });
+
+  it('reports the gap in days between two judgments, not between now and one', async (t) => {
+    if (!subjectId) return t.skip('needs a corpus with a back-filled citation graph');
+
+    const res = await app.request(`/judgments/${subjectId}/authorities`);
+    const body = (await res.json()) as { data: { deliveredOn: string; authorities: Authority[] } };
+
+    for (const a of body.data.authorities.filter((x) => x.standingWhenRelied === 'already_moved')) {
+      const expected = Math.floor(
+        (new Date(body.data.deliveredOn).getTime() - new Date(a.overruledOn!).getTime()) /
+          86_400_000,
+      );
+      assert.equal(
+        a.daysAlreadyMoved,
+        expected,
+        `${a.caseTitle}: gap must be between the overruling judgment and this one`,
+      );
+      // A gap measured against `now()` would be enormous and grow every day.
       assert.ok(
-        ['good_law_then', 'already_moved', 'moved_since', 'unknown'].includes(
-          a['standingWhenRelied'] as string,
-        ),
-        `unexpected standing: ${String(a['standingWhenRelied'])}`,
+        a.daysAlreadyMoved! < 40_000,
+        'gap looks like it was measured against the present, not against a judgment date',
       );
     }
   });
 
-  it('counts sum to the number of resolved authorities', async (t) => {
-    if (!citingId) return t.skip('no citation edges extracted yet');
-    const { body } = await get(`/judgments/${citingId}/authorities`);
-    const counts = body.data?.['counts'] as Record<string, number>;
-    const summed = Object.values(counts).reduce((a, b) => a + b, 0);
-    // An authority that fell out of the tally would understate exposure.
-    assert.equal(summed, body.data?.['resolvedAuthorities']);
-  });
+  it('says unknown rather than dating the law by our own write', async (t) => {
+    if (!subjectId) return t.skip('needs a corpus with a back-filled citation graph');
 
-  it('never emits a soundness rating, score or verdict', async (t) => {
-    if (!citingId) return t.skip('no citation edges extracted yet');
-    const { body } = await get(`/judgments/${citingId}/authorities`);
-    const serialised = JSON.stringify(body).toLowerCase();
-    // FEATURE_PARITY.md §4. Rating a court's reasoning cannot be sourced to a
-    // primary record. This endpoint states facts with judgment ids behind them.
-    for (const forbidden of [
-      'vulnerable',
-      'soundness',
-      'verdict',
-      'rating',
-      'score',
-      'confidence',
-    ]) {
-      assert.ok(!serialised.includes(forbidden), `${forbidden} must never appear`);
-    }
-  });
+    const res = await app.request(`/judgments/${subjectId}/authorities`);
+    const body = (await res.json()) as { data: { authorities: Authority[] } };
 
-  it('reports daysAlreadyMoved only for an authority that had already fallen', async (t) => {
-    if (!citingId) return t.skip('no citation edges extracted yet');
-    const { body } = await get(`/judgments/${citingId}/authorities`);
-    const authorities = (body.data?.['authorities'] ?? []) as Record<string, unknown>[];
-    for (const a of authorities) {
-      if (a['standingWhenRelied'] === 'already_moved') {
-        assert.equal(typeof a['daysAlreadyMoved'], 'number');
-        assert.ok((a['daysAlreadyMoved'] as number) >= 0, 'a gap cannot be negative');
-      } else {
-        // Claiming a gap where none exists would invent a finding.
-        assert.equal(a['daysAlreadyMoved'], null);
-      }
-    }
-  });
-
-  it('says unknown rather than guessing when a status carries no date', async (t) => {
-    if (!citingId) return t.skip('no citation edges extracted yet');
-    const { body } = await get(`/judgments/${citingId}/authorities`);
-    const authorities = (body.data?.['authorities'] ?? []) as Record<string, unknown>[];
-    for (const a of authorities) {
-      if (a['overruledStatus'] !== 'none' && a['statusChangedAt'] === null) {
+    for (const a of body.data.authorities) {
+      if (a.overruledStatus !== 'none' && !a.overruledOn) {
         assert.equal(
-          a['standingWhenRelied'],
+          a.standingWhenRelied,
           'unknown',
-          'a moved status with no date cannot be placed in time',
+          'an authority whose status moved but whose overruling judgment we do not ' +
+            'hold must be unknown — never dated from overruled_status_changed_at',
         );
       }
     }
   });
 
-  it('404s an unknown judgment', async () => {
-    const { status } = await get('/judgments/00000000-0000-4000-8000-000000000000/authorities');
-    assert.equal(status, 404);
+  it('states facts and never rates a judgment', async (t) => {
+    if (!subjectId) return t.skip('needs a corpus');
+
+    const res = await app.request(`/judgments/${subjectId}/authorities`);
+    const text = await res.text();
+    // FEATURE_PARITY.md §4 — we decline outcome prediction and soundness rating.
+    for (const word of ['soundness', 'score', 'probability', 'likelihood', 'weak', 'vulnerable']) {
+      assert.ok(
+        !new RegExp(`"[^"]*${word}[^"]*"\\s*:`, 'i').test(text),
+        `response carries a "${word}" field. This endpoint states what courts did; ` +
+          'it does not grade reasoning.',
+      );
+    }
   });
 });

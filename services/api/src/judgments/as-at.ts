@@ -8,10 +8,31 @@
  * different question from *was it good law then*, and only the second one tells
  * you whether a bench relied on something that had already fallen.
  *
- * We can answer it because `judgments.overruled_status_changed_at` exists.
- * `docs/SCHEMA_TRUTH.md` records why it was added — to separate "a badge that was
- * wrong when rendered" from "one the world invalidated afterwards" — and that is
- * exactly the discriminator needed here.
+ * **The date this turns on is the OVERRULING JUDGMENT'S OWN DATE.** Both sides of
+ * the comparison are court records: the day this bench delivered, and the day the
+ * bench that overruled the authority delivered.
+ *
+ * > This module originally compared against `overruled_status_changed_at`, and
+ * > the comment here claimed that column was "exactly the discriminator needed".
+ * > **It was the wrong column and the claim was false.** That timestamp records
+ * > when *we* wrote the row — `overruled-cli.ts` sets it to `now()` during the
+ * > back-fill — so every authority appeared to have moved after every judgment
+ * > that cited it. `already_moved` was 0 corpus-wide and would have stayed 0.
+ * >
+ * > The client lane caught it on production: *Balwinder Singh (Binda) v. NCB*
+ * > (2023-09-22) relied on *Kanhaiyalal*, set aside by *Tofan Singh* on
+ * > 2020-10-29 — already gone by 1,058 days, and this endpoint called it
+ * > `moved_since`. **That is not a shade of the same thing.** `moved_since` says
+ * > the law changed under a bench that could not have known, which is
+ * > unremarkable and true of a great deal of good law. `already_moved` says the
+ * > bench relied on an authority that had been dead for three years. Rendering
+ * > the first where the second is true tells an advocate the opposite of the
+ * > fact.
+ *
+ * `overruled_status_changed_at` still exists and is still right for what
+ * `SCHEMA_TRUTH.md` added it for — telling a badge that was wrong when rendered
+ * from one the world invalidated afterwards. It is a fact about our database, not
+ * a fact about the law, and it must never be used to date a legal event.
  *
  * **This states facts, never a rating.** It does not score a judgment's soundness
  * or grade its reasoning: those cannot be sourced to a primary record and are the
@@ -42,6 +63,9 @@ type Row = {
   overruled_status: string;
   changed_at: string | null;
   overruled_by_judgment_id: string | null;
+  /** The overruling judgment's OWN delivery date. The fact this endpoint turns on. */
+  overruled_on: string | null;
+  overruled_by_title: string | null;
 };
 
 export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Promise<Response> {
@@ -56,9 +80,15 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
            cited.judgment_date::text AS judgment_date,
            c.relationship, cited.overruled_status,
            cited.overruled_status_changed_at::text AS changed_at,
-           cited.overruled_by_judgment_id
+           cited.overruled_by_judgment_id,
+           -- The overruling bench's own delivery date, not our write time.
+           overruler.judgment_date::text AS overruled_on,
+           overruler.case_title AS overruled_by_title
     FROM judgment_citations c
     JOIN judgments cited ON cited.id = c.cited_judgment_id
+    -- LEFT: an authority can carry a status with no overruling judgment
+    -- recorded, and that case must reach the unknown state rather than vanish.
+    LEFT JOIN judgments overruler ON overruler.id = cited.overruled_by_judgment_id
     WHERE c.citing_judgment_id = ${id} AND c.cited_judgment_id IS NOT NULL
     ORDER BY cited.judgment_date DESC
   `;
@@ -71,16 +101,18 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
 
     if (r.overruled_status === 'none') {
       standing = 'good_law_then';
-    } else if (!r.changed_at) {
-      // The status moved but we do not know when. Saying "already_moved" would
-      // assert a date we do not hold; saying "good_law_then" would hide a real
-      // change. Neither is honest, so this is its own state.
+    } else if (!r.overruled_on) {
+      // The status moved but no overruling judgment is recorded, so we hold no
+      // date for the legal event. Saying "already_moved" would assert a date we
+      // do not have; "good_law_then" would hide a real change. Neither is
+      // honest, so this is its own state — and NOT a fallback to
+      // `overruled_status_changed_at`, which would date the law by our write.
       standing = 'unknown';
     } else {
-      const movedAt = new Date(r.changed_at).getTime();
-      if (movedAt <= deliveredAt) {
+      const movedOn = new Date(r.overruled_on).getTime();
+      if (movedOn <= deliveredAt) {
         standing = 'already_moved';
-        daysBefore = Math.floor((deliveredAt - movedAt) / 86_400_000);
+        daysBefore = Math.floor((deliveredAt - movedOn) / 86_400_000);
       } else {
         standing = 'moved_since';
       }
@@ -97,7 +129,20 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
       daysAlreadyMoved: daysBefore,
       overruledStatus: r.overruled_status,
       overruledByJudgmentId: r.overruled_by_judgment_id,
-      statusChangedAt: r.changed_at,
+      /**
+       * The overruling judgment's own delivery date and title — the two facts
+       * `standingWhenRelied` is derived from, sent so the client can show the
+       * working rather than trust the label. Both are `judgments` rows.
+       */
+      overruledOn: r.overruled_on,
+      overruledByCaseTitle: r.overruled_by_title,
+      /**
+       * When OUR row changed, not when the law did. Kept for the stale-badge
+       * metric in `SCHEMA_TRUTH.md` and for nothing else. **Never date a legal
+       * event with this** — doing exactly that is what made `already_moved` read
+       * 0 corpus-wide.
+       */
+      statusRecordedAt: r.changed_at,
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
       asOf: new Date().toISOString(),
