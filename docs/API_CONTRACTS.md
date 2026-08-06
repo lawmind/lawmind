@@ -36,7 +36,8 @@ merely displayed.
 POST /search
   { query, language: 'en'|'hi', filters?: { court?, dateFrom?, dateTo?, caseType? }, matterId? }
   → { results: [ { judgmentId, caseTitle, neutralCitation, reporterCitations,
-                   court, judgmentDate, holding, operativeParagraph,
+                   court, judgmentDate, holding,
+                   operativeParagraph, operativeParagraphNumber,
                    verificationState: 'verified'|'unverified'|'failed',
                    verifiedBySource: 'corpus'|'public_x2'|'ecourts'|'none',
                    overruledStatus: 'none'|'set_aside'|'partly_set_aside'|'doubted',
@@ -54,6 +55,30 @@ badge qualifier; `overruledStatus` answers whether it is still good law and is
 **independent** — a judgment can be `verified` and `set_aside` at once. Any
 response carrying a citation must include all three. A citation missing them is a
 bug: the client renders "not confirmed" and reports it.
+
+**`operativeParagraph` is a paragraph the server identified, not the chunk it
+matched. `operativeParagraphNumber` — added 7 Aug 2026, additive.**
+
+Retrieval matches a *chunk*: a fixed-size window cut wherever the chunker landed,
+routinely opening mid-word and often spanning a paragraph boundary. The right unit
+to search and the wrong unit to show. The server maps it back to the printed
+paragraph containing it, strips reporter typesetting — marginal A–H reference
+letters, page pinpoints, running heads, words broken across hard wraps — and
+returns that.
+
+`operativeParagraphNumber` is **the number the court printed**, and null is a
+real, common answer: pre-1990s judgments arrive as scans that lost their
+numbering, and a headnote is never numbered. **Never invented.** An advocate told
+"see paragraph 22" must land on the paragraph the court numbered 22.
+
+**Null means we cleaned the text but did not identify a paragraph**, and the
+client must render it accordingly — not behind an authority rule as the court's
+own words. It is also how a failed segmentation surfaces: a located block over
+3,000 characters is treated as a failure rather than a very long paragraph,
+because that is what it is.
+
+An empty `operativeParagraph` is legitimate. A result matched by the lexical
+ranker alone has no dense chunk behind it and therefore no paragraph to show.
 
 **`asOf` — added 6 Aug 2026. Additive; no existing field moved.**
 
@@ -223,6 +248,56 @@ count before truncation.
 
 A citation network is unbounded and a phone is not — the client renders a ranked
 list by default and the graph on demand.
+
+### Point-in-time good law — was each authority still standing when relied on?
+```
+GET /judgments/:id/authorities → { judgmentId, caseTitle, deliveredOn, asOf,
+                                   counts, authorities, resolvedAuthorities }
+```
+**Added to this document 7 Aug 2026, after it had already shipped.** The client
+lane found it missing and transcribed its types from the response, which is a
+thing they should never have had to do — an undocumented endpoint is one the other
+lane has to reverse-engineer. Recorded rather than quietly corrected.
+
+Each entry in `authorities`:
+
+| field | meaning |
+|---|---|
+| `judgmentId` · `caseTitle` · `neutralCitation` · `judgmentDate` | the cited authority |
+| `relationship` | how this judgment treated it — from the court's own printed annotation |
+| `standingWhenRelied` | `good_law_then` · `already_moved` · `moved_since` · `unknown` |
+| `daysAlreadyMoved` | days between the overruling judgment and this one. Null unless `already_moved` |
+| `overruledOn` | **the overruling judgment's own delivery date** |
+| `overruledByJudgmentId` · `overruledByCaseTitle` | which bench moved it |
+| `statusRecordedAt` | when OUR row changed. **Never a legal date** — see below |
+| `overruledStatus` · `verificationState` · `verifiedBySource` | the three independent fields, from the row |
+
+**`standingWhenRelied` is derived from two court dates and nothing else**:
+`deliveredOn` and `overruledOn`. It was briefly derived from `statusRecordedAt`
+instead, which is when the back-fill wrote the row — so every authority appeared
+to have moved *after* every judgment that cited it, and `already_moved` read 0
+corpus-wide. `docs/LCC_PLAN.md` §3 and `services/api/src/judgments/as-at.ts` carry
+the full account.
+
+That distinction is the whole endpoint. `moved_since` says the law changed under a
+bench that could not have known — unremarkable, and true of a great deal of good
+law. `already_moved` says the bench relied on an authority that had already
+fallen. Rendering the first where the second is true tells an advocate the
+opposite of the fact.
+
+`unknown` is a real state and must render as one: we hold a status but no dated
+overruling judgment, so the question cannot be answered. Never collapsed into
+`good_law_then`.
+
+**States facts, never a rating.** No soundness score, no outcome prediction, no
+grade on a bench's reasoning — `FEATURE_PARITY.md` §4. Every number here is a
+count of days between two court records.
+
+*Client note, agreed with RCC:* this belongs in a panel under "Relied on", not on
+its own screen. Their reasoning, recorded because it is better than the original
+framing — *"`deliveredOn` is what makes this coherent, and it only means anything
+next to the judgment it belongs to. Lift it onto its own screen and it becomes a
+free-floating verdict, which is exactly the shape of the thing you're declining."*
 
 ### Document review and compare — sensitive class
 ```
