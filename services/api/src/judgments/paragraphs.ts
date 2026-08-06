@@ -43,8 +43,9 @@ const FURNITURE = [
   /^[A-H](\s+[A-H])*$/,
   // A bare page number.
   /^\d{1,5}$/,
-  // Reporter running heads.
-  /^SUPREME COURT REPORTS(\s+\[\d{4}\].*)?$/i,
+  // Reporter running heads, with or without the page number typeset onto the
+  // same line: "918 SUPREME COURT REPORTS [2023] 5 S.C.R."
+  /^\d{0,5}\s*SUPREME COURT REPORTS(\s+\[\d{4}\].*)?$/i,
   /^\[\d{4}\]\s+\d+\s+S\.?C\.?R\.?/i,
   /^\d{4}\s+INSC\s+\d+$/i,
 ];
@@ -53,6 +54,134 @@ function isFurniture(line: string): boolean {
   const t = line.trim();
   if (t.length === 0) return true;
   return FURNITURE.some((re) => re.test(t));
+}
+
+/**
+ * Reporter furniture that survives INSIDE a line, and hard wraps.
+ *
+ * `isFurniture` only rejects whole lines, which is enough to segment but not
+ * enough to show. The client lane found the gap by rendering it: the retrieved
+ * text came back as ~2,600 characters carrying marginal reference letters
+ * stranded at line ends, bracketed pinpoints, and words split across a hard wrap.
+ * Their verdict was right — *"non-empty isn't usable"* — and they declined to set
+ * it behind an oxblood rule as the court's own words. This is what makes it
+ * showable.
+ *
+ * **Conservative by construction.** Every rule here removes typesetting, never
+ * language. Where a rule could plausibly touch real text it is narrowed until it
+ * cannot: a marginal letter is only stripped from a line long enough to be
+ * wrapped prose, so a short line that genuinely ends in a capital — an initial, a
+ * clause label — is left alone.
+ */
+export function cleanExtractedText(text: string): string {
+  const lines = text.split('\n');
+  const kept: string[] = [];
+
+  for (const raw of lines) {
+    let line = raw.trim();
+    if (isFurniture(line)) continue;
+
+    // Marginal reference letters (A–H down the page edge) land at the end of a
+    // wrapped line: "…authority of Custom Officers D". Only on a line long
+    // enough to be prose, so "Shri A" or a bare label survives untouched.
+    if (line.length >= 30) line = line.replace(/\s+[A-H]$/, '');
+    // The same letters occasionally land at the start of a continuation line.
+    if (line.length >= 30) line = line.replace(/^[A-H]\s+(?=[a-z])/, '');
+
+    // Reporter pinpoints: "[Paras 63 and 64] [205,F; 205,D-E]". These address the
+    // printed page, not the judgment, and mean nothing on a phone.
+    line = line.replace(/\[\s*\d+\s*,\s*[A-H](\s*[-–]\s*[A-H])?\s*(;[^\]]*)?\]/g, '');
+    line = line.replace(/\[\s*Paras?\s+[\d\s,and-]+\]/gi, '');
+
+    // Stray extraction artefacts: a lone bracket or brace on its own.
+    if (/^[({[\]})\-{}|~]{1,3}$/.test(line)) continue;
+
+    line = line.replace(/\s{2,}/g, ' ').trim();
+    if (line.length > 0) kept.push(line);
+  }
+
+  return (
+    kept
+      .join('\n')
+      // A word broken across a hard wrap: "condi-\ntion" -> "condition". Requires
+      // lowercase both sides, so a genuine hyphenated compound at a line end
+      // ("Union-\nTerritory") is not silently welded.
+      .replace(/([a-z])-\n([a-z])/g, '$1$2')
+      // Remaining hard wraps inside a sentence become spaces; a line ending in
+      // sentence punctuation keeps its break.
+      .replace(/([^.!?:;"'\])])\n(?=[a-z(])/g, '$1 ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  );
+}
+
+/**
+ * Drop a partial sentence from the front of a retrieved chunk.
+ *
+ * A chunk begins wherever the chunker cut, which is routinely mid-word:
+ * *"ion to arrest without warrant…"*, *"riod of 90 days."* That is fine as a
+ * search unit and indefensible as a quotation — an advocate reading it cannot
+ * tell a truncation from the court's own phrasing.
+ *
+ * Only applied to the CHUNK fallback. A located paragraph begins where the court
+ * began it and must not be trimmed.
+ *
+ * Conservative: if no sentence boundary is found in the first quarter, the text
+ * is returned untouched rather than cut at a guess.
+ */
+export function trimToSentenceStart(text: string): string {
+  const window = text.slice(0, Math.max(200, Math.floor(text.length / 4)));
+  // A sentence end followed by a capital or an opening quote.
+  const m = /[.!?]["')\]]?\s+(?=["'(]?[A-Z0-9])/.exec(window);
+  if (!m) return text;
+  return text.slice(m.index + m[0].length).trim();
+}
+
+/**
+ * The printed paragraph that contains `chunk`, or null when it cannot be located.
+ *
+ * A retrieved chunk is a fixed-size window over the text. It starts and ends
+ * wherever the chunker happened to cut, which is usually mid-sentence and often
+ * across a paragraph boundary — so it is the right unit to SEARCH and the wrong
+ * unit to SHOW. This maps one back to the other.
+ *
+ * Returns null rather than guessing. A judgment whose numbering could not be read
+ * has no paragraph to point at, and inventing one is the failure this product
+ * exists to prevent: an advocate told "see paragraph 22" must land on the
+ * paragraph the court numbered 22.
+ */
+/**
+ * Above this, a "paragraph" is a segmentation failure rather than a long paragraph.
+ *
+ * Measured against the corpus: locating a match in *Sushila Aggarwal* returned a
+ * single block of 65,689 characters, and *Enforcement Directorate v. Kapil
+ * Wadhawan* one of 19,109. Neither is a paragraph. Both are what
+ * `segmentParagraphs` produces when it cannot read the printed numbering and
+ * falls back to one undifferentiated block — which it does honestly, and which is
+ * useless to show.
+ *
+ * Reported paragraphs run to a few thousand characters at the outside. So this is
+ * not a display truncation, it is a **detector**: over this length, we did not
+ * identify a paragraph, and saying so is the honest answer.
+ */
+const MAX_PARAGRAPH_CHARS = 3_000;
+
+export function locateParagraph(fullText: string, chunk: string): JudgmentParagraph | null {
+  // Match on a distinctive interior slice rather than the whole chunk: the ends
+  // are where furniture and hard wraps differ between the stored chunk and the
+  // segmented text, and the middle is stable.
+  const normalise = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase();
+  const needle = normalise(chunk);
+  if (needle.length < 40) return null;
+  const probe = needle.slice(Math.floor(needle.length / 4), Math.floor(needle.length / 4) + 60);
+
+  const paragraphs = segmentParagraphs(fullText);
+  for (const p of paragraphs) {
+    if (!normalise(p.text).includes(probe)) continue;
+    // Located, but only usable if it is actually a paragraph. See the note above.
+    return p.text.length <= MAX_PARAGRAPH_CHARS ? p : null;
+  }
+  return null;
 }
 
 /**

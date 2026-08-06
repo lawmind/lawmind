@@ -40,7 +40,6 @@ type Authority = {
 
 describe('authorities as at delivery', () => {
   let subjectId: string | null = null;
-  let deliveredOn = '';
 
   const app = createApp({ ping: async () => {}, search: { sql, embedQuery: async () => null } });
 
@@ -58,7 +57,6 @@ describe('authorities as at delivery', () => {
         AND overruler.judgment_date < citing.judgment_date
       LIMIT 1`;
     subjectId = row?.id ?? null;
-    deliveredOn = row?.judgment_date ?? '';
   });
 
   after(async () => {

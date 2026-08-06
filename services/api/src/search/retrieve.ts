@@ -13,6 +13,12 @@
  */
 import type { Sql } from 'postgres';
 
+import {
+  cleanExtractedText,
+  locateParagraph,
+  trimToSentenceStart,
+} from '../judgments/paragraphs.ts';
+
 /** Standard RRF constant. Damps the influence of any single ranker's top hit. */
 const RRF_K = 60;
 
@@ -42,8 +48,24 @@ export type RetrievedJudgment = {
   overruledByJudgmentId: string | null;
   overruledParas: number[] | null;
   overruledNote: string | null;
-  /** The chunk that actually matched, when dense retrieval contributed. */
+  /**
+   * The paragraph the match sits in, cleaned of reporter typesetting.
+   *
+   * **Not the raw chunk.** A chunk is a fixed-size window cut wherever the
+   * chunker happened to land — the right unit to search, the wrong unit to show.
+   * The client lane rendered the raw version on a device and reported it as
+   * ~2,600 characters carrying marginal reference letters, page pinpoints and
+   * words split across hard wraps. Non-empty was not usable.
+   */
   operativeParagraph: string;
+  /**
+   * The number the COURT printed on that paragraph, when it could be read.
+   *
+   * Null is common and honest: pre-1990s judgments arrive as scans that lost
+   * their numbering, and headnotes are never numbered. Never invented — an
+   * advocate told "see paragraph 22" must land on the court's paragraph 22.
+   */
+  operativeParagraphNumber: number | null;
 };
 
 type Ranked = { judgmentId: string; rank: number };
@@ -60,7 +82,19 @@ type JudgmentRow = {
   overruled_by_judgment_id: string | null;
   overruled_paras: number[] | null;
   overruled_note: string | null;
+  full_text: string | null;
 };
+
+/**
+ * Above this, the matched chunk is cleaned but not located.
+ *
+ * Locating a paragraph means segmenting the whole judgment, because printed
+ * numbering only makes sense read forward from the start. The corpus contains
+ * judgments of 2.9M characters, and segmenting one of those inside a request
+ * would blow the Gate S1 budget to return a paragraph number. Better to show
+ * clean text with an honest null number than to be slow.
+ */
+const LOCATE_MAX_CHARS = 400_000;
 
 function rrf(lists: Ranked[][]): Map<string, number> {
   const scores = new Map<string, number>();
@@ -234,7 +268,10 @@ export async function hybridSearch(
            -- driver otherwise hydrates it to a Date and JSON renders a midnight
            -- timestamp, so the client would show a time a judgment never had.
            judgment_date::text AS judgment_date,
-           overruled_status, overruled_by_judgment_id, overruled_paras, overruled_note
+           overruled_status, overruled_by_judgment_id, overruled_paras, overruled_note,
+           -- Fetched so the matched chunk can be mapped back to the paragraph the
+           -- court actually printed. Bounded: see LOCATE_MAX_CHARS.
+           left(full_text, ${LOCATE_MAX_CHARS}) AS full_text
     FROM judgments WHERE id = ANY(${ids})
   `;
 
@@ -243,6 +280,14 @@ export async function hybridSearch(
   for (const id of ids) {
     const r = byId.get(id);
     if (!r) continue;
+
+    // Chunk -> printed paragraph. Falls back to the cleaned chunk when the
+    // judgment is too large to segment in-request, or when the passage cannot be
+    // located: showing clean text with a null number is honest, and inventing a
+    // number is the one thing this must never do.
+    const chunk = denseResult.bestChunk.get(id) ?? '';
+    const located = chunk && r.full_text ? locateParagraph(r.full_text, chunk) : null;
+
     results.push({
       judgmentId: r.id,
       caseTitle: r.case_title,
@@ -254,7 +299,13 @@ export async function hybridSearch(
       overruledByJudgmentId: r.overruled_by_judgment_id,
       overruledParas: r.overruled_paras,
       overruledNote: r.overruled_note,
-      operativeParagraph: denseResult.bestChunk.get(id) ?? '',
+      // A located paragraph begins where the court began it. A chunk begins
+      // wherever the chunker cut, so its leading partial sentence is dropped —
+      // a mid-word start is indistinguishable from the court's own phrasing.
+      operativeParagraph: located
+        ? cleanExtractedText(located.text)
+        : trimToSentenceStart(cleanExtractedText(chunk)),
+      operativeParagraphNumber: located?.paragraphNumber ?? null,
     });
   }
   return results;

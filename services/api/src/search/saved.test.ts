@@ -53,11 +53,18 @@ describe('saved searches', () => {
       ['DELETE', '/saved-searches/00000000-0000-0000-0000-000000000000'],
       ['GET', '/saved-searches/00000000-0000-0000-0000-000000000000/feed'],
     ] as const) {
-      const res = await app.request(path, {
-        method,
-        headers: { 'content-type': 'application/json' },
-        body: method === 'POST' ? JSON.stringify({ query: 'bail', language: 'en' }) : undefined,
-      });
+      // Built conditionally rather than with `body: undefined` — under
+      // `exactOptionalPropertyTypes` an explicit undefined is not the same as an
+      // absent key, and RequestInit does not accept it.
+      const init: RequestInit =
+        method === 'POST'
+          ? {
+              method,
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ query: 'bail', language: 'en' }),
+            }
+          : { method };
+      const res = await app.request(path, init);
       const body = (await res.json()) as { ok: boolean; error?: { code: string } };
       assert.equal(res.status, 401, `${method} ${path} must not answer without a user`);
       assert.equal(body.error?.code, 'AUTH_REQUIRED');
