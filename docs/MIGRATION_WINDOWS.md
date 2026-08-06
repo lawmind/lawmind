@@ -237,3 +237,69 @@ These are settled. Violating one is a correctness failure, not a taste question.
 - **One document per model call**, pseudonymise sensitive class first.
 - **Primary sources only.** Never train on a model's commentary about law.
 - **Two lanes: LCC = server, RCC = client. Write only inside yours.**
+
+## The Android debug build, and the lockfile break underneath it
+
+**Investigated 7 Aug 2026. Not applied — and the reason it was not applied is the
+finding.**
+
+The Android debug build dies at:
+
+```
+CMAKE_OBJECT_PATH_MAX exceeded — react-native-worklets
+node_modules/.pnpm/react-native-worklets@0.10._1d58161994a2cb5506569829efcdb155/…
+ninja: error: manifest 'build.ninja' still dirty after 100 tries
+```
+
+**This is a Windows path-length limit, not a pnpm defect.** pnpm's
+content-addressed store puts a package hash in the path, CMake appends its own
+object paths, and the total exceeds `MAX_PATH`. Nothing in the native build can be
+shortened from our side. A flat `node_modules` — what npm and yarn produce, and
+what React Native's Gradle and CMake scripts assume — is the known-good fix.
+
+### The setting is `nodeLinker`, and it does NOT live in `.npmrc`
+
+I wrote `node-linker=hoisted` into a root `.npmrc` first. **pnpm v11 ignores it
+silently** — `pnpm config get node-linker` reads `undefined`. pnpm v10 moved these
+settings into `pnpm-workspace.yaml`. The working form is:
+
+```yaml
+nodeLinker: hoisted
+```
+
+Verified: with that line, `pnpm config get node-linker` reads `hoisted`. Worth
+recording because the wrong form looks applied and changes nothing.
+
+### Why it is still not applied
+
+Installing hoisted needs the **complete** dependency graph, and the graph does not
+resolve:
+
+```
+ERR_PNPM_LOCKFILE_MISSING_DEPENDENCY
+Broken lockfile: no entry for 'next@14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)'
+This issue is probably caused by a badly resolved merge conflict.
+```
+
+**`pnpm-lock.yaml` is already broken for `apps/admin`, and was before any of this.**
+It goes unnoticed because every install we run — locally and in CI — filters
+`!./apps/*`, and the symlinked layout never needs the missing entry. Hoisting does.
+
+So applying `nodeLinker: hoisted` requires re-resolving `apps/**` dependencies.
+That is the client lane, mid-build, in a shared tree, and **the outcome is only
+verifiable by running the Android build, which the server lane cannot do.**
+Reverted rather than left half-applied.
+
+### What has to happen, in order
+
+1. **Fix the lockfile** — `pnpm install --no-frozen-lockfile` with `apps/**`
+   included. This rewrites `pnpm-lock.yaml` and is a shared-tree change: agree it
+   before running it.
+2. Add `nodeLinker: hoisted` to `pnpm-workspace.yaml`.
+3. Clean install, then the Android build.
+4. `pnpm ci:local` afterwards — it proves in ~60s whether the server lane survived
+   the relink.
+
+Step 1 is worth doing on its own merits. A lockfile that cannot resolve is a
+`--frozen-lockfile` failure waiting for the first person who installs without the
+filter.
