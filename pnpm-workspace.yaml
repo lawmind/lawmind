@@ -2,6 +2,28 @@ packages:
   - 'apps/*'
   - 'services/*'
   - 'packages/*'
+
+# REACT NATIVE CANNOT BUILD FROM PNPM'S SYMLINKED STORE ON WINDOWS.
+#
+# The Android debug build dies at:
+#   CMAKE_OBJECT_PATH_MAX exceeded — react-native-worklets
+#   node_modules/.pnpm/react-native-worklets@0.10._1d58161994a2cb5506569829efcdb155/…
+#   ninja: error: manifest 'build.ninja' still dirty after 100 tries
+#
+# That is a Windows path-length limit, not a pnpm defect: the content-addressed
+# store puts a package hash in the path, CMake appends its own object paths on
+# top, and the total exceeds MAX_PATH. Nothing in the native build can be
+# shortened from our side. `hoisted` gives the flat layout npm and yarn produce,
+# which is what React Native's Gradle and CMake scripts assume — and what the
+# last working build on this machine had.
+#
+# IT LIVES HERE, NOT IN `.npmrc`. pnpm v11 ignores `node-linker=hoisted` in
+# `.npmrc` SILENTLY — `pnpm config get node-linker` reads `undefined` and the
+# tree stays symlinked, so the setting looks applied and changes nothing.
+# `docs/MIGRATION_WINDOWS.md` carries the full account.
+#
+# Reversible: delete this line and re-run `pnpm install`.
+nodeLinker: hoisted
 allowBuilds:
   esbuild: true
   # onnxruntime-node fetches its native runtime in a postinstall; without it the
