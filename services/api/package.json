@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "//exports": "Briefing assembly is domain logic the nightly sweep needs too. Exported rather than duplicated, and rather than moved to packages/ for one consumer — the ponytail ladder says the cheapest correct change wins.",
+  "exports": {
+    "./briefings/assemble": "./src/briefings/assemble.ts"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
