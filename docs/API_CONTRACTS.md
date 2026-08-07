@@ -7,6 +7,192 @@ both consuming lanes.
 All responses: `{ ok: true, data: T }` or `{ ok: false, error: { code, message } }`.
 Zod-validated inputs. Auth via `Authorization: Bearer <jwt>`.
 
+---
+
+## Implementation status
+
+**This file is a contract, not a description of the server.** Most of what follows
+does not exist yet. Read the status before calling anything.
+
+- **BUILT** — a route is mounted and serves it. Call it.
+- **SPECCED** — the shape is agreed and frozen; **no route exists and the call
+  404s.** Mock it, do not await it.
+
+**Measured 7 Aug 2026 against `services/api/src/app.ts`: 83 endpoints, 19 BUILT,
+64 SPECCED.** This is why `POST /citations/copies` 404'd — it was read as built
+because nothing here said otherwise.
+
+**The table is enforced, not maintained by hand.** `node
+scripts/check-contract-status.mjs` fails if a row disagrees with the routes
+`createApp` mounts, and it runs in `pnpm ci:local` and in CI. Mounting a route
+without moving its row is a failing build, and so is the reverse. Path parameter
+*names* are normalised away — the caller sends a value, never a name, so
+`GET /citations/:citationCheckId` and the mounted `/citations/:id` are one
+endpoint.
+
+<!-- BEGIN:status -->
+
+**Platform**
+
+| endpoint | status |
+|---|---|
+| `GET /health` | BUILT |
+
+**Auth — RCC owns**
+
+| endpoint | status |
+|---|---|
+| `POST /auth/magic-link` | SPECCED |
+| `POST /auth/verify` | SPECCED |
+| `POST /auth/refresh` | SPECCED |
+| `POST /auth/logout` | SPECCED |
+| `GET /me` | SPECCED |
+| `PATCH /me` | SPECCED |
+| `GET /terms/current` | SPECCED |
+| `POST /me/accept-terms` | SPECCED |
+
+**Search — LCC owns**
+
+| endpoint | status |
+|---|---|
+| `POST /search` | BUILT |
+| `GET /judgments/:id` | BUILT |
+| `GET /citations/:citationCheckId` | BUILT |
+| `POST /verify/ecourts` | BUILT |
+| `POST /verify/confirm` | BUILT |
+| `POST /citations/copies` | SPECCED |
+
+**Bare acts — LCC owns · ADDED IN S1**
+
+| endpoint | status |
+|---|---|
+| `GET /statutes` | BUILT |
+| `GET /statutes/sections` | BUILT |
+
+**Feature-parity endpoints — LCC owns · ADDED 6 Aug 2026**
+
+| endpoint | status |
+|---|---|
+| `GET /judgments/:id/treatment` | BUILT |
+| `GET /judgments/:id/graph` | BUILT |
+| `GET /judgments/:id/authorities` | BUILT |
+| `POST /documents/:id/review` | SPECCED |
+| `POST /documents/compare` | SPECCED |
+| `POST /uploads/:id/chat` | SPECCED |
+| `POST /arguments/counter` | BUILT |
+| `GET /saved-searches` | BUILT |
+| `POST /saved-searches` | BUILT |
+| `DELETE /saved-searches/:id` | BUILT |
+| `GET /saved-searches/:id/feed` | BUILT |
+| `GET /judgments/:id/annotations` | BUILT |
+| `POST /judgments/:id/annotations` | BUILT |
+| `DELETE /annotations/:annotationId` | BUILT |
+
+**Matters — LCC owns**
+
+| endpoint | status |
+|---|---|
+| `GET /matters` | SPECCED |
+| `POST /matters` | SPECCED |
+| `GET /matters/:id` | SPECCED |
+| `PATCH /matters/:id` | SPECCED |
+| `POST /matters/:id/events` | SPECCED |
+
+**Matter sharing — LCC owns · PD-3, PD-4**
+
+| endpoint | status |
+|---|---|
+| `GET /matters/:id/shares` | SPECCED |
+| `POST /matters/:id/shares` | SPECCED |
+| `DELETE /matters/:id/shares/:shareId` | SPECCED |
+| `PATCH /matters/:id/events/:eventId` | SPECCED |
+
+**Briefings — LCC owns**
+
+| endpoint | status |
+|---|---|
+| `GET /briefings/:id` | SPECCED |
+| `GET /matters/:id/briefings` | SPECCED |
+| `POST /briefings/:id/opened` | SPECCED |
+
+**Drafting — LCC owns**
+
+| endpoint | status |
+|---|---|
+| `GET /documents/types` | SPECCED |
+| `POST /documents` | SPECCED |
+| `PATCH /documents/:id` | SPECCED |
+| `POST /documents/:id/citations` | SPECCED |
+| `DELETE /documents/:id/citations/:citationCheckId` | SPECCED |
+| `POST /documents/:id/export` | SPECCED |
+
+**OCR — LCC owns the service and the API**
+
+| endpoint | status |
+|---|---|
+| `POST /ocr/jobs` | SPECCED |
+| `GET /ocr/jobs/:id` | SPECCED |
+| `POST /ocr/jobs/:id/confirm` | SPECCED |
+
+**Court adapter — LCC owns, vendor-agnostic**
+
+| endpoint | status |
+|---|---|
+| `POST /court/lookup` | SPECCED |
+
+**Admin — LCC owns the endpoints, RCC owns the UI**
+
+| endpoint | status |
+|---|---|
+| `GET /admin/llm-costs` | SPECCED |
+| `GET /admin/citations` | SPECCED |
+| `GET /admin/ocr-queue` | SPECCED |
+| `GET /admin/users` | SPECCED |
+| `PATCH /admin/users/:id/enrolment` | SPECCED |
+| `GET /admin/audit` | SPECCED |
+| `GET /admin/platform` | SPECCED |
+| `POST /admin/platform/maintenance` | SPECCED |
+| `POST /admin/platform/kill-switches/:key` | SPECCED |
+| `POST /admin/platform/flags/:key` | SPECCED |
+| `GET /admin/cause-lists` | BUILT |
+| `POST /admin/cause-lists/:id/retry` | BUILT |
+| `POST /admin/cause-lists/:id/escalate` | BUILT |
+| `GET /admin/disputes` | SPECCED |
+| `GET /admin/disputes/:id` | SPECCED |
+| `POST /admin/disputes/:id/uphold` | SPECCED |
+| `POST /admin/disputes/:id/reject` | SPECCED |
+| `GET /alerts` | SPECCED |
+| `POST /alerts/:id/read` | SPECCED |
+| `GET /me/alert-settings` | SPECCED |
+| `PATCH /me/alert-settings` | SPECCED |
+| `POST /admin/overruled-rechecks/run` | SPECCED |
+| `GET /admin/templates` | SPECCED |
+| `POST /admin/templates` | SPECCED |
+| `POST /admin/templates/:id/score` | SPECCED |
+| `POST /admin/templates/:id/publish` | SPECCED |
+| `GET /admin/data-requests` | SPECCED |
+| `POST /admin/data-requests/:id/complete` | SPECCED |
+| `POST /admin/data-requests/:id/refuse` | SPECCED |
+| `GET /admin/privacy/coverage` | SPECCED |
+
+<!-- END:status -->
+
+---
+
+## Platform — LCC owns
+
+```
+GET /health   —   → { status, sha, database: { reachable, latencyMs } }
+```
+
+**`sha` is what the build was told, not what is running.** It is an environment
+variable set at deploy time and it has reported a stale commit through a crashed
+deploy. **Never read it as proof of a deploy — probe the route whose behaviour
+changed.**
+
+Returns **503**, not 200, when the database is unreachable: a health check that
+stays green while the database is down keeps Railway routing traffic at it.
+
 ## Auth — RCC owns
 ```
 POST /auth/magic-link   { email }            → { sent: true }
@@ -624,13 +810,36 @@ through a cached accessor, never a per-request DB hit.
 
 ### Cause list sync
 ```
-GET  /admin/cause-lists          ?date&court&status → { syncs, staleCourts }
+GET  /admin/cause-lists          ?date&court&status → { syncs, staleCourts, asOf }
 POST /admin/cause-lists/:id/retry  → { sync }
 POST /admin/cause-lists/:id/escalate { notifyAdvocates: boolean }
-     → { briefingsMarked, advocatesNotified }
+     → { sync, briefingsMarked, advocatesNotified, notificationNote }
 ```
 Escalation marks affected briefings `dates_not_confirmed`. An unconfirmed listing
 is never presented as confirmed.
+
+**BUILT 7 Aug 2026.** Three notes RCC needs before building against these.
+
+**The two writes return `401` until auth ships.** `retry` and `escalate` change
+what advocates receive; an anonymous caller able to escalate could mark every
+briefing in the system unconfirmed. Same posture as `POST /verify/confirm`.
+
+**`advocatesNotified` is always `false` today, including when `notifyAdvocates`
+is `true`.** Direct notification is S3's and delivery does not exist, so the flag
+is accepted and the response says plainly that nobody was told. **Do not render it
+as "advocates informed"** — reporting an unsent notification as sent is the same
+class of failure as showing an unverified citation as confirmed. `notificationNote`
+carries the sentence to show.
+
+**`staleCourts[].lastConfirmedDate: null` means never pulled, not long ago.** A
+court we have never set up and a court that broke this morning are different
+problems, and collapsing them hides the first inside the second. A sync of `ok`
+**or `empty`** counts as confirmed — a court that published no listings has told
+us something.
+
+Escalating a sync whose status is `ok` or `empty` returns **`409
+NOTHING_TO_ESCALATE`** rather than obeying. A mark that can be applied to a
+healthy day teaches advocates that it means "somebody clicked a button".
 
 ### Disputed citations
 ```

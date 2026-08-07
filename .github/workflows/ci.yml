@@ -63,6 +63,13 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
+      # Before install, because it needs neither dependencies nor a database and
+      # a wrong contract is the cheapest failure here to find. The status column
+      # in docs/API_CONTRACTS.md must match the routes app.ts mounts — RCC reads
+      # that file as the description of the server, and once did so correctly
+      # about an endpoint that had never been built.
+      - run: node scripts/check-contract-status.mjs
+
       # apps/** is RCC's lane and still carries npm lockfiles; installing it here
       # would make this job red for reasons outside this lane. Flagged, not converged.
       - run: pnpm install --frozen-lockfile --filter "!./apps/*"
