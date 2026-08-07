@@ -291,6 +291,60 @@ mostly date math once the period and starting rule are known) is straightforward
 against `theme/hearingDate.ts` and is not the hard part.
 ---
 
+### [OPEN] `POST /documents` (drafting) and `POST /documents/:id/export` — three compounding gaps · LCC · 8 Aug 2026
+
+Traced before writing either endpoint, same discipline as the cause-list entry
+above. This is Tier A feature 3 — document drafting — and it is genuinely
+credential- and content-blocked, not engineering-blocked:
+
+1. **No LLM has ever been called from this codebase.** Grepped for OpenRouter,
+   `chat/completions`, any model call, anywhere in `services/`: zero results.
+   `llm_calls` exists as a table with nothing writing to it. Generation needs a
+   real OpenRouter client built from scratch — legitimate work, not the blocker
+   — but it needs `OPENROUTER_API_KEY` and, per CLAUDE.md §5's sensitivity
+   routing, `SENSITIVE_LLM_API_KEY` for the pseudonymised Claude path. **Neither
+   is in Railway** (checked: `railway variables --service api --kv`, both
+   absent).
+2. **No `draft_templates` row has ever been created.** `SCHEMA_TRUTH.md`: *"Nothing
+   ships below 90 without a founder override,"* and nothing has been scored,
+   because nothing has been written. A drafting template's prose is exactly the
+   kind of primary-sourced legal content CLAUDE.md's hard rules forbid inventing
+   from memory — a bail application template is not a fact I can look up in this
+   repo, and getting a BNS-era clause wrong is the failure this whole product
+   exists to prevent, aimed at itself. This is a content/legal-review task, not
+   a code one.
+3. **Export needs R2 and has none of it either.** No S3-compatible client exists
+   in the codebase, `R2_DOCUMENTS_BUCKET`/`R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY`
+   are all absent from Railway, and no docx-writing library is in the dependency
+   tree yet (OSS-first vetting owed before adding one).
+
+**What I did not do:** invent an honest-refusal response shape for `POST
+/documents` the way `court/lookup.ts`'s `available: false` does. The contract
+(`docs/API_CONTRACTS.md`) defines `{ documentId, content, citations,
+unverifiedReferences }` with no refusal variant, and adding one unilaterally is
+an API-contract decision, not an engineering judgment call — `API_CONTRACTS.md`
+is frozen per sprint for exactly this reason.
+
+**Cost if never resolved:** Tier A feature 3 (drafting) stays unbuilt. Nothing
+else in the sprint depends on it — S3 (matters) and the alerts surface shipped
+independently.
+
+**Where it plugs in, once unblocked:**
+- `OPENROUTER_API_KEY` + `SENSITIVE_LLM_API_KEY` → a new `services/api/src/llm/`
+  client, routed by `CLAUDE.md` §5 (public → DeepSeek V4 Flash, sensitive →
+  pseudonymise then Claude Sonnet 4.6), every call logged to `llm_calls`.
+- A reviewed, primary-sourced draft template (starting with `bail`, the
+  document type with the clearest structure) scored ≥90 against the gates in
+  `draft_templates.gate_results` — court-format compliance, no invented
+  citations, no overruled authority cited as good law, Hindi parity. This is
+  the part that needs either the founder or a legal reviewer's sign-off, not a
+  key.
+- R2 credentials → `packages/*` or a new `services/api/src/storage/` client,
+  `docx`-writing library chosen against `docs/OSS_STACK.md`'s MIT/Apache/BSD
+  rule before it's added.
+
+---
+
 # RESOLVED — kept for provenance
 
 ### [RESOLVED 7 Aug 2026] Resend sending domain
