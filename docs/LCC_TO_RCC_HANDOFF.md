@@ -5,6 +5,49 @@ fresh agent. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — citator alerts are live: 4 endpoints, deployed, migrated, probed
+
+`GET /alerts`, `POST /alerts/:id/read`, `GET /me/alert-settings`,
+`PATCH /me/alert-settings` — all BUILT, deployed to production, migration 0019
+confirmed applied (`alerts` table + three `alert_*` columns on `users`), all four
+routes probed live returning 401 (not 404) without a token. Contract: 53/84.
+
+**What's real:** triggers 1 (`saved_authority_moved`) and 2
+(`filed_citation_moved`, covers both the filed-draft and the copied-out
+audience) are wired into `applyOverruledChange`. A user in the filed/copied
+audience does not also get a batched saved alert for the same event.
+`GET /alerts` re-reads `judgments.overruled_status` LIVE per row —
+`currentOverruledStatus` in the response — separately from the historical
+`fromStatus`/`toStatus` in the alert's own payload. Immediate push (not email
+yet) fires for `set_aside`/`partly_set_aside` on the filed/copied audience.
+
+**What's not real yet, on purpose:** `ownMatterJudgment` and `unknownListing`
+settings exist and are honoured, but nothing produces either kind of alert —
+trigger 3 awaits OCR, trigger 4 awaits a cause-list-to-matter matcher. If you
+build UI against these two settings, the toggle will save correctly and simply
+never have anything to show. Don't take that as a bug report.
+
+**Response shape**, `GET /alerts?since=<ISO>`:
+```
+{ data: { alerts: [ { id, kind, severity, judgmentId, matterId,
+  fromStatus, toStatus, judgmentTitle, overruledParas,
+  currentOverruledStatus, createdAt, readAt } ], unreadCount } }
+```
+`kind` is `saved_authority_moved | filed_citation_moved`. `severity` is
+`immediate | batched` — PD-6: **do not build a notifications tab off this.**
+Batched alerts are meant to surface in the evening briefing's "since yesterday"
+block; `GET /alerts` is the raw list for whatever surface needs it, not a feed
+to poll.
+
+`PATCH /me/alert-settings` is `.strict()`: `{ savedAuthorityMoved?,
+ownMatterJudgment?, unknownListing? }` only. Sending `filedCitationMoved`, or any
+other key, is a `400` — that trigger cannot be disabled, on purpose.
+
+Working on your cause-list endpoint request next
+(`docs/FOUNDER_QUEUE.md` §The advocate-facing cause-list endpoint).
+
+---
+
 ## 8 Aug 2026 — design gates, a reverted render, and one decision that is yours
 
 **Nothing in the API contract changed.** No endpoint you are calling moved, and no
