@@ -852,3 +852,39 @@ export const citationFanouts = pgTable(
     index('citation_fanouts_judgment_id_idx').on(t.judgmentId),
   ],
 );
+
+/**
+ * **The advocate at highest risk.** Somebody who copies a citation into their own
+ * Word document has taken it out of the app entirely — they saw the badge, they
+ * may file it, and without this row **no notification can ever reach them** when
+ * the law moves.
+ *
+ * `client_key` is per TAP, not per citation. Copy works offline and queues
+ * through the outbox, so the same request can arrive twice; but the same citation
+ * copied a week apart is two real events an advocate may need warning about
+ * twice. A content hash would silently merge them and lose a warning.
+ */
+export const citationCopies = pgTable(
+  'citation_copies',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id),
+    matterId: uuid('matter_id').references(() => matters.id),
+    citationCheckId: uuid('citation_check_id').references(() => citationChecks.id),
+    /** TEXT, not the enum: a record of what was SHOWN must survive the enum growing. */
+    overruledStatusAtCopy: text('overruled_status_at_copy').notNull(),
+    surface: citationSurfaceEnum('surface').notNull(),
+    copiedAt: timestamp('copied_at', { withTimezone: true }).notNull().defaultNow(),
+    clientKey: text('client_key').notNull(),
+  },
+  (t) => [
+    uniqueIndex('citation_copies_user_client_key_unique').on(t.userId, t.clientKey),
+    index('citation_copies_judgment_id_idx').on(t.judgmentId),
+    index('citation_copies_user_copied_at_idx').on(t.userId, t.copiedAt.desc()),
+  ],
+);

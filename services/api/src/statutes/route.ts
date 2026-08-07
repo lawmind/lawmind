@@ -77,10 +77,19 @@ export async function listStatutes(c: Context, sql: Sql): Promise<Response> {
       enumerated_at: string | null;
       complete: boolean;
       failed: number;
+      failed_ids: string[] | null;
+      sectionless: number;
     }[]
   >`
     SELECT source_total, ${sql.unsafe(isoColumn('enumerated_at'))} AS enumerated_at, complete,
-           coalesce(array_length(failed_ids, 1), 0) AS failed
+           coalesce(array_length(failed_ids, 1), 0) AS failed,
+           failed_ids,
+           -- Acts we HOLD but whose sections never parsed. Distinct from the
+           -- failed list: the row exists, so a count of statutes overstates what
+           -- is actually searchable.
+           (SELECT count(*)::int FROM statutes st
+            WHERE NOT EXISTS (SELECT 1 FROM statute_sections ss WHERE ss.statute_id = st.id))
+             AS sectionless
     FROM corpus_coverage WHERE source = 'indiacode_central_acts'
   `;
 
@@ -109,8 +118,30 @@ export async function listStatutes(c: Context, sql: Sql): Promise<Response> {
        * transiently mid-run.
        */
       complete: cov?.complete ?? false,
-      /** Acts the last pass could not fetch. Named in `corpus_coverage`. */
+      /** Acts the last pass could not ingest. */
       failedCount: cov?.failed ?? 0,
+      /**
+       * **Named, never merely counted** — `SCHEMA_TRUTH.md` §corpus_coverage: "an
+       * unauditable gap is not a known gap." The client lane read `failedCount:
+       * 20` and correctly asked which twenty.
+       *
+       * All twenty handles return HTTP 200 at indiacode, so this is **not**
+       * source-side loss like the ten missing Supreme Court judgments. The pages
+       * exist and our section parser extracts nothing from them — old Acts, e.g.
+       * *The Broach and Kaira Incumbered Estates Act, 1877* ("MISSING 41"). That
+       * makes it **recoverable**: a parser that handles those page shapes reaches
+       * 845, and until one does, the library honestly sits at 825.
+       */
+      failedIds: cov?.failed_ids ?? [],
+      /**
+       * Acts we HOLD whose sections never parsed — the row exists, so counting
+       * statutes overstates what is actually searchable.
+       *
+       * Measured 8 Aug 2026: 825 Acts held, **821 with sections**. Four rows are
+       * present and empty, and they are NOT in `failedIds` because the fetch
+       * succeeded. Two different gaps; reporting one number would hide the other.
+       */
+      sectionlessCount: cov?.sectionless ?? 0,
       enumeratedAt: cov?.enumerated_at ?? null,
       /**
        * True while a pass is in flight, false when one has finished, **null when

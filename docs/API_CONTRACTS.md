@@ -60,7 +60,7 @@ endpoint.
 | `GET /citations/:citationCheckId` | BUILT |
 | `POST /verify/ecourts` | BUILT |
 | `POST /verify/confirm` | BUILT |
-| `POST /citations/copies` | SPECCED |
+| `POST /citations/copies` | BUILT |
 
 **Bare acts — LCC owns · ADDED IN S1**
 
@@ -402,6 +402,25 @@ request — the clipboard write happens immediately and the record syncs after.
 Retention and disclosure: `SCHEMA_TRUTH.md#citation_copies`, `PRIVACY_PII.md`.
 
 ## Bare acts — LCC owns · ADDED IN S1
+
+**`coverage` — added to, 8 Aug 2026.** Now carries `failedIds` and
+`sectionlessCount` alongside `failedCount`.
+
+**Named, never merely counted.** `SCHEMA_TRUTH.md`: *"an unauditable gap is not a
+known gap."* `failedIds` lists the indiacode handles the last pass could not
+ingest.
+
+**These are two different gaps and must not be added together.**
+`failedIds` are Acts we do not hold. `sectionlessCount` are Acts we DO hold whose
+sections never parsed — the row exists, so counting statutes overstates what is
+searchable. Measured 8 Aug 2026: **825 held, 821 with sections, 20 failed.**
+
+**`complete` will not flip to true at 825.** All twenty failed handles return HTTP
+200 at indiacode, so this is not source-side loss: the pages exist and our section
+parser extracts nothing from them (old Acts — *The Broach and Kaira Incumbered
+Estates Act, 1877*, "MISSING 41"). It is recoverable by a parser change, tracked as
+Track B, and **no sprint depends on it**. Render the library as 825 of 845 rather
+than as complete.
 
 **These are additions, not changes.** No existing shape moved, so nothing already
 built against this contract breaks. `sprints/SPRINT_1.md` gives LCC the bare acts

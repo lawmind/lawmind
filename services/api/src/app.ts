@@ -26,6 +26,7 @@ import { getBriefing, listMatterBriefings, markBriefingOpened } from './briefing
 import { courtLookupRequest, handleCourtLookup } from './court/lookup.ts';
 import { buildSha } from './build-info.ts';
 import { getCitationCheck } from './citations/check.ts';
+import { copyRequest, recordCopy } from './citations/copies.ts';
 import {
   confirmRequest,
   ecourtsRequest,
@@ -200,6 +201,13 @@ export function createApp(deps: AppDeps) {
     // and the unverified-citation screen, both of which were on a mock because
     // nothing exposed per-tier results.
     app.get('/citations/:id', (c) => getCitationCheck(c, sql, c.req.param('id')));
+    // The advocate at highest risk: somebody who copies a citation into Word has
+    // taken it out of the app, and without this row nothing can warn them when
+    // the authority moves. Offered in EVERY state including set_aside — refusing
+    // the copy would destroy the only record that could reach them.
+    app.post('/citations/copies', validate('json', copyRequest), async (c) =>
+      recordCopy(c, sql, await userFor(c), c.req.valid('json')),
+    );
     // Tier 3 — the eCourts door. We hand over a URL and the text to paste; the
     // advocate solves the CAPTCHA. Nothing here ever fetches from eCourts.
     app.post('/verify/ecourts', validate('json', ecourtsRequest), (c) =>
