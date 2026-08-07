@@ -41,11 +41,14 @@ import type { Sql } from 'postgres';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 
+type BriefingContent = { blocks?: { authorities?: { judgmentId: string }[] } };
+
 type BriefingRow = {
   id: string;
   matter_id: string;
   hearing_date: string;
-  content: { blocks?: { authorities?: { judgmentId: string }[] } } | null;
+  /** `jsonb`. May arrive parsed or as a string — always go through parseContent. */
+  content: unknown;
   generated_at: string;
   delivered_at: string | null;
   opened_at: string | null;
@@ -69,6 +72,34 @@ const BRIEFING_COLUMNS = `b.id, b.matter_id, b.hearing_date::text AS hearing_dat
 function requireUser(c: Context, userId: string | undefined): Response | null {
   if (userId) return null;
   return fail(c, 'AUTH_REQUIRED', 'a briefing belongs to an advocate — sign in to continue', 401);
+}
+
+/**
+ * `content` is `jsonb`, and the driver does not always hand it back parsed.
+ *
+ * **This shipped broken and a production probe caught it.** The column came back
+ * as a STRING, so `content?.blocks` was `undefined`, every block rendered as
+ * `null`, and — worse — the authorities list was empty, which meant the live
+ * status re-read had nothing to re-read. The one guarantee the whole feature
+ * exists to provide was silently absent, and it looked like a briefing with no
+ * authorities rather than like an error.
+ *
+ * Third time this session that assuming a driver's runtime representation has
+ * cost a defect. Normalised once, here, so no caller has to be right about it.
+ */
+function parseContent(raw: unknown): BriefingContent {
+  if (raw == null) return {};
+  if (typeof raw === 'string') {
+    try {
+      return JSON.parse(raw) as BriefingContent;
+    } catch {
+      // Unparseable content is a real state and must not masquerade as an empty
+      // briefing: `liveAuthorities` returns nothing, and a briefing with no
+      // blocks is visibly wrong rather than quietly thin.
+      return {};
+    }
+  }
+  return raw as BriefingContent;
 }
 
 /**
@@ -105,7 +136,7 @@ function dateConfidence(r: BriefingRow) {
  * **This is the whole point of the module.** The blob was written last night; the
  * Supreme Court does not consult our sweep schedule before overruling something.
  */
-async function liveAuthorities(sql: Sql, content: BriefingRow['content']) {
+async function liveAuthorities(sql: Sql, content: BriefingContent) {
   const ids = (content?.blocks?.authorities ?? [])
     .map((a) => a.judgmentId)
     .filter((id): id is string => typeof id === 'string');
@@ -183,6 +214,8 @@ export async function getBriefing(
   // Not-yours and does-not-exist answer identically, as everywhere else.
   if (!row) return fail(c, 'NOT_FOUND', 'no briefing with that id', 404);
 
+  const content = parseContent(row.content);
+
   return ok(c, {
     briefing: {
       briefingId: row.id,
@@ -194,8 +227,8 @@ export async function getBriefing(
       deliveredAt: row.delivered_at,
       openedAt: row.opened_at,
       dateConfidence: dateConfidence(row),
-      blocks: row.content?.blocks ?? null,
-      authorities: await liveAuthorities(sql, row.content),
+      blocks: content.blocks ?? null,
+      authorities: await liveAuthorities(sql, content),
     },
     /**
      * When the statuses above were read — this request, not last night's sweep.

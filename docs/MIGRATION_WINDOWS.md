@@ -303,3 +303,29 @@ Reverted rather than left half-applied.
 Step 1 is worth doing on its own merits. A lockfile that cannot resolve is a
 `--frozen-lockfile` failure waiting for the first person who installs without the
 filter.
+
+## The API test suite runs SERIALLY, and that is not a preference
+
+`services/api` runs `tsx --test --test-concurrency=1`.
+
+**Symptom when it was parallel:** `pnpm ci:local` reached `test` and never
+returned. `pg_stat_activity` showed a single client **idle for nine minutes** on
+`Client/ClientRead` after a completed statement, with **zero lock waits** — so
+neither the database nor a deadlock was responsible. The same file run alone
+passed 5/5 in 20 seconds.
+
+**Cause:** `node --test` runs test FILES in parallel, one process each. Every
+DB-backed suite opens its own `postgres` pool (`max: 2`–`3`), so the suite now
+asks for roughly twenty concurrent connections. Against a local container that is
+fine; through the single **Railway TCP proxy** used for `ci:local` it saturates,
+and the losing connections sit waiting rather than failing. The suite outgrew the
+proxy as DB-backed tests were added — nothing about any individual test changed.
+
+**Why serial rather than smaller pools:** a hang is far worse than a slow run. A
+failing test names itself; a wedged one burns ten minutes and looks like an
+infrastructure problem. Serial execution costs roughly a minute and is
+deterministic. Real CI gets its own pgvector container and is not proxy-bound, so
+this is a cheap insurance premium paid in the place that needed it.
+
+**If the suite gets slow enough to matter**, the fix is a connection *broker*
+shared across files, not raising concurrency again.
