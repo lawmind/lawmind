@@ -52,6 +52,38 @@ launch; migration path before May 2027.
 Cause list sync runs first because the sweep needs confirmed dates; the re-check
 runs second because briefings carry authorities.
 
+### Cron is configured in UTC, and the schedule must be read that way
+
+**Railway cron expressions are UTC. The job times above are IST.** The offset is
++05:30, so a schedule written from the IST time is wrong by five and a half hours
+— and wrong in the direction that generates tomorrow's briefing for today.
+
+| job | IST | **UTC cron** | config |
+|---|---|---|---|
+| cause list sync | 22:15 | `45 16 * * *` | not yet built |
+| overruled re-check | 22:30 | `00 17 * * *` | not yet built |
+| **nightly sweep** | **23:00** | **`30 17 * * *`** | `railway.cron.json` |
+
+`railway.cron.json` carries the sweep. `railway.json` is the DEFAULT config path
+and applies to every source-built service, so a second service needs its own file
+and its own `railwayConfigFile` setting — one root file cannot carry three start
+commands.
+
+`restartPolicyType: NEVER` because a cron job that restarts on failure runs the
+sweep again immediately, which is safe (the sweep is idempotent) but hides the
+failure behind a retry that looks like success. A failed night should stay failed
+and visible.
+
+**The sweep computes tomorrow in IST itself**, so it does not depend on the
+container's timezone — the schedule decides only *when* it runs, never *which day*
+it targets. That separation is deliberate: a mis-set `TZ` on the container then
+cannot silently change which advocates get a briefing.
+
+**Only the sweep exists.** The cause list sync and the overruled re-check are not
+built, so the ordering constraint above is currently documentation rather than
+something the system enforces. Do not read the table as describing a running
+system.
+
 The re-check runs **first and must complete first**, because briefings carry
 authorities: a sweep that runs against a stale overruled status puts overruled law
 into tonight's briefing, which the advocate reads standing outside court. If the
