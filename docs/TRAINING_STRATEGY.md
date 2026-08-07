@@ -188,7 +188,7 @@ The corpus is **not ours outright**, and the terms differ by source:
 |---|---|---|
 | AWS Open Data — SCI, High Courts | **CC-BY-4.0** | Commercial use and redistribution **with attribution**. Derived works allowed. |
 | indiacode.nic.in — BNS/BNSS/BSA | Government | Statutory text; unsettled whether attribution suffices for resale |
-| IndianKanoon API | Commercial licence | **Attribution mandatory.** Their terms indicate the API is *not* intended as raw extraction for building a competing database |
+| IndianKanoon API | Commercial licence | **Attribution mandatory** — the "powered by IKanoon" logo, prominent and unaltered. Their terms explicitly contemplate RAG and fine-tuning on that basis. See the correction below. |
 | e-SCR | Government | Free, official |
 
 Three questions nobody has answered, all of which bear on an API business:
@@ -199,7 +199,18 @@ Three questions nobody has answered, all of which bear on an API business:
 2. **Is the citation graph a derived work of the judgments, or an independent
    database?** Facts are not copyrightable, but the extraction is ours. This
    determines whether it can be licensed on our own terms.
-3. **Nothing derived from IndianKanoon may enter a licensable dataset** without
+3. **CORRECTED 7 Aug 2026.** This section previously read that IndianKanoon's
+   terms "indicate the API is *not* intended as raw extraction for building a
+   competing database". **That was never checked against the terms page and is
+   not in it.** The terms require attribution and explicitly contemplate RAG and
+   fine-tuning on that basis. `docs/DATA_SOURCES.md` §2 quotes the text. The wrong
+   reading had been steering us away from the largest source of Indian case law.
+
+   **The caution that survives is narrower and still binding: permitted-with-
+   attribution for our own product is not clean title to RESELL.** Keep anything
+   derived from IndianKanoon separable from anything we intend to license — free
+   to do now, impossible to retrofit. Nothing derived from IndianKanoon enters a
+   licensable dataset without
    their agreement — which is sharper now that they ship Prism, a competing
    product (`COMPETITIVE_TEARDOWN.md` §2). Keep Tier 2 verification results
    separable from anything we intend to sell.

@@ -84,7 +84,7 @@ permanent test asset.
 | AWS Open Data — SCI judgments | Corpus, verification Tier 2 | CC-BY-4.0 |
 | AWS Open Data — High Court judgments | Corpus, verification Tier 2 | CC-BY-4.0 |
 | indiacode.nic.in — BNS/BNSS/BSA | Statutory text, section mapping | Government |
-| IndianKanoon API | Live search, verification Tier 1–2 | Commercial licence |
+| IndianKanoon API | Live search, verification Tier 2, High Court citations | Commercial, **attribution mandatory** |
 | eCourts | Verification Tier 3, case tracking | Government, human-confirmed |
 | IndicCorp v2 (AI4Bharat) | Indian-language signal | CC-0 |
 | IndicTrans2 (AI4Bharat) | Translation for dataset expansion | MIT |
