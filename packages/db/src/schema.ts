@@ -170,6 +170,18 @@ export const verifiedBySourceEnum = pgEnum('verified_by_source', [
   'none',
 ]);
 
+export const citationFanoutTriggerEnum = pgEnum('citation_fanout_trigger', [
+  'dispute_upheld',
+  'recheck',
+  'admin_correction',
+]);
+
+export const citationFanoutStatusEnum = pgEnum('citation_fanout_status', [
+  'pending',
+  'complete',
+  'failed',
+]);
+
 export const citationSurfaceEnum = pgEnum('citation_surface', [
   'search',
   'judgment_detail',
@@ -789,5 +801,54 @@ export const ecourtsFetchLedger = pgTable(
   (t) => [
     index('ecourts_fetch_ledger_requested_at_idx').on(t.requestedAt.desc()),
     index('ecourts_fetch_ledger_court_requested_at_idx').on(t.court, t.requestedAt.desc()),
+  ],
+);
+
+/**
+ * The citation fan-out — **one implementation, two triggers.**
+ *
+ * When a judgment's overruled status changes, the work is identical whether an
+ * admin upheld a dispute or the nightly re-check noticed it. `ADMIN_SURFACE.md`
+ * §15: *"Do not build a second fan-out. Two implementations would drift, and the
+ * one that drifts is the one that stops notifying."*
+ *
+ * **The counts are nullable and that is load-bearing.** Null means the population
+ * was never enumerated; 0 means it was enumerated and was empty. `citation_copies`
+ * is still deferred, so `copiedCount` is null on every row written today — writing
+ * 0 would assert that nobody copied the citation out of the app, which is a claim
+ * nothing supports. An absent check is not a negative result.
+ */
+export const citationFanouts = pgTable(
+  'citation_fanouts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id),
+    trigger: citationFanoutTriggerEnum('trigger').notNull(),
+    /** The dispute or recheck id. Null for an ingest-time flip, which has none. */
+    triggerRef: uuid('trigger_ref'),
+    fromStatus: text('from_status').notNull(),
+    toStatus: text('to_status').notNull(),
+    status: citationFanoutStatusEnum('status').notNull().default('pending'),
+    saved: integer('saved_count'),
+    filed: integer('filed_count'),
+    copied: integer('copied_count'),
+    notified: integer('notified_count'),
+    /**
+     * `sha256(judgment_id || to_status || trigger || trigger_ref)`, unique.
+     *
+     * What makes a double-uphold, or an uphold racing the nightly re-check, safe:
+     * the second insert loses and nobody is told twice. Being told the same
+     * authority moved twice is how an advocate learns to ignore the notification
+     * that matters.
+     */
+    idempotencyKey: text('idempotency_key').notNull().unique(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('citation_fanouts_status_created_at_idx').on(t.status, t.createdAt),
+    index('citation_fanouts_judgment_id_idx').on(t.judgmentId),
   ],
 );

@@ -7,7 +7,7 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --test --test-concurrency=1 src/*.test.ts",
     "sweep": "tsx src/sweep-cli.ts",
-    "start": "tsx src/scheduler.ts"
+    "recheck": "tsx src/recheck-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
