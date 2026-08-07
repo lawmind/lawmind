@@ -136,7 +136,7 @@ export async function issueTokens(
   await sql`
     INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at)
     VALUES (${crypto.randomUUID()}, ${user.id}, ${hashRefreshToken(refreshToken)},
-            ${refreshExpiry(now)})
+            ${refreshExpiry(now).toISOString()}::timestamptz)
   `;
 
   return { accessToken, refreshToken, expiresIn: ACCESS_TOKEN_TTL_SECONDS };
@@ -177,7 +177,7 @@ export async function rotateRefreshToken(
     // Replay. Everything this advocate holds goes, not just this token — the
     // attacker's copy and the real client's copy are indistinguishable from here.
     await sql`
-      UPDATE refresh_tokens SET revoked_at = ${now}
+      UPDATE refresh_tokens SET revoked_at = ${now.toISOString()}::timestamptz
       WHERE user_id = ${row.user_id} AND revoked_at IS NULL
     `;
     return { ok: false, reason: 'reused' };
@@ -198,7 +198,7 @@ export async function rotateRefreshToken(
   // client that crashes mid-refresh holding nothing at all.
   await sql`
     UPDATE refresh_tokens
-       SET revoked_at = ${now}, replaced_by = ${hashRefreshToken(tokens.refreshToken)}
+       SET revoked_at = ${now.toISOString()}::timestamptz, replaced_by = ${hashRefreshToken(tokens.refreshToken)}
      WHERE id = ${row.id}
   `;
 
@@ -217,7 +217,7 @@ export async function revokeAllRefreshTokens(
   now: Date = new Date(),
 ): Promise<number> {
   const revoked = await sql<{ id: string }[]>`
-    UPDATE refresh_tokens SET revoked_at = ${now}
+    UPDATE refresh_tokens SET revoked_at = ${now.toISOString()}::timestamptz
     WHERE user_id = ${userId} AND revoked_at IS NULL
     RETURNING id
   `;

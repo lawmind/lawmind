@@ -25,7 +25,13 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { after, describe, it } from 'node:test';
 
-import { signAccessToken, verifyAccessToken } from '@lawmind/auth';
+import {
+  issueTokens,
+  revokeAllRefreshTokens,
+  rotateRefreshToken,
+  signAccessToken,
+  verifyAccessToken,
+} from '@lawmind/auth';
 import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
@@ -160,6 +166,104 @@ describe('access tokens', () => {
     for (const bad of ['', 'not.a.token', 'a.b.c']) {
       assert.equal(await verifyAccessToken(bad, SECRET), null);
     }
+  });
+});
+
+/**
+ * The refresh lifecycle, against a real database.
+ *
+ * **This suite existed and did not catch a 500 on production.** `issueTokens`
+ * passed a `Date` straight into a postgres template and the driver refused to
+ * bind it — `TypeError: The "string" argument must be ... Received an instance of
+ * Date`. Typecheck was green, the PD-2 tests were green, and the first real
+ * sign-in returned INTERNAL.
+ *
+ * The gap was that nothing exercised the token path against Postgres: every test
+ * above either signs a JWT in memory or reads rows somebody else wrote. **A
+ * database call that is never made in a test is a database call that is verified
+ * only by an advocate**, and this one would have been verified by the first one
+ * to try to sign in.
+ */
+describe('refresh tokens — round trip', () => {
+  const sqlLocal = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+
+  after(async () => {
+    await sqlLocal`DELETE FROM refresh_tokens WHERE user_id LIKE 'test-rt-%'`;
+    await sqlLocal`DELETE FROM auth_user WHERE id LIKE 'test-rt-%'`;
+    await sqlLocal.end();
+  });
+
+  async function seedIdentity() {
+    const id = `test-rt-${crypto.randomUUID()}`;
+    await sqlLocal`
+      INSERT INTO auth_user (id, name, email, email_verified)
+      VALUES (${id}, 'RT', ${`${id}@example.test`}, true)`;
+    return { id, email: `${id}@example.test` };
+  }
+
+  it('writes a token pair to the database', async () => {
+    const user = await seedIdentity();
+    const pair = await issueTokens(sqlLocal, user, SECRET);
+    assert.ok(pair.accessToken.length > 0);
+    assert.ok(pair.refreshToken.length > 0);
+
+    const [row] = await sqlLocal<{ token_hash: string }[]>`
+      SELECT token_hash FROM refresh_tokens WHERE user_id = ${user.id}`;
+    assert.ok(row, 'the refresh token must be persisted');
+    // Stored as a hash, never as the token. A readable table is a table whose
+    // leak is a working login for everyone in it.
+    assert.notEqual(row.token_hash, pair.refreshToken);
+  });
+
+  it('rotates, and refuses the same token a second time', async () => {
+    const user = await seedIdentity();
+    const first = await issueTokens(sqlLocal, user, SECRET);
+
+    const rotated = await rotateRefreshToken(sqlLocal, first.refreshToken, SECRET);
+    assert.equal(rotated.ok, true);
+    if (!rotated.ok) return;
+    assert.notEqual(
+      rotated.tokens.refreshToken,
+      first.refreshToken,
+      'rotation must issue a new one',
+    );
+
+    // Replay. The whole family goes — the attacker's copy and the real client's
+    // copy are indistinguishable from here.
+    const replayed = await rotateRefreshToken(sqlLocal, first.refreshToken, SECRET);
+    assert.equal(replayed.ok, false);
+    if (replayed.ok) return;
+    assert.equal(replayed.reason, 'reused');
+
+    const successorAfterReplay = await rotateRefreshToken(
+      sqlLocal,
+      rotated.tokens.refreshToken,
+      SECRET,
+    );
+    assert.equal(
+      successorAfterReplay.ok,
+      false,
+      'a replay must revoke the successor too, not only the token that was replayed',
+    );
+  });
+
+  it('refuses an unknown token', async () => {
+    const outcome = await rotateRefreshToken(sqlLocal, 'never-issued', SECRET);
+    assert.equal(outcome.ok, false);
+  });
+
+  it('revokes every live token on logout', async () => {
+    const user = await seedIdentity();
+    await issueTokens(sqlLocal, user, SECRET);
+    await issueTokens(sqlLocal, user, SECRET);
+
+    const revoked = await revokeAllRefreshTokens(sqlLocal, user.id);
+    assert.equal(revoked, 2, '"log me out" on a lost phone must mean every session');
+
+    const [live] = await sqlLocal<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM refresh_tokens
+      WHERE user_id = ${user.id} AND revoked_at IS NULL`;
+    assert.equal(live?.n, 0);
   });
 });
 
