@@ -112,10 +112,20 @@ export async function listStatutes(c: Context, sql: Sql): Promise<Response> {
       failedCount: cov?.failed ?? 0,
       enumeratedAt: cov?.enumerated_at ?? null,
       /**
-       * Set while a pass is in flight, so the library screen can say "still
-       * loading Acts" rather than presenting a partial set as the whole.
+       * True while a pass is in flight, false when one has finished, **null when
+       * we have never enumerated and therefore do not know.**
+       *
+       * Nullable because a boolean cannot say "unknown", and returning `false`
+       * for an absent row is a claim we cannot support. Caught in production:
+       * `/statutes` reported `ingestInProgress: false` with 548 Acts and an
+       * ingest actively running, because the pass predated this table. That is
+       * the same shape of error as reporting an unrun verification tier as a
+       * miss — an absent check is not a negative result.
+       *
+       * The client should read null as "we cannot tell you whether this library
+       * is complete", which is weaker than either boolean and honest.
        */
-      ingestInProgress: cov ? !cov.complete && cov.enumerated_at !== null : false,
+      ingestInProgress: cov?.enumerated_at ? !cov.complete : null,
     },
     asOf: new Date().toISOString(),
   });

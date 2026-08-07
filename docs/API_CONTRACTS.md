@@ -186,6 +186,34 @@ built against this contract breaks. `sprints/SPRINT_1.md` gives LCC the bare act
 library and RCC a bare act reading view, and neither had an endpoint.
 
 ```
+
+**`coverage` on `/statutes` — added 7 Aug 2026.**
+
+```
+coverage: { held, sourceTotal, complete, failedCount, enumeratedAt, ingestInProgress }
+```
+
+The client lane found the gap rendering the library: `/statutes` returned 207
+Acts, and 206 on the call before, because the ingest was running live — and
+nothing said so. **A library rendered as complete when it is not misstates what we
+hold**, and an advocate searching for an Act we have not reached concludes we do
+not have it. Same argument as `truncated` on the graph and `resolvedAuthorities`
+on the point-in-time endpoint.
+
+- `sourceTotal` is what the SOURCE reports (845, from the Central Acts index),
+  never a number anyone typed. **Null until an enumeration has run** — unknown is
+  a state, not zero.
+- `held` is counted on every read, never cached.
+- **Do not infer `complete` from `held === sourceTotal`.** A pass can equal the
+  count transiently, or with Acts that failed and were retried into place by an
+  earlier run. It is true only when a full pass finishes with no failures.
+- **`ingestInProgress` is `true | false | null`.** Null means we have never
+  enumerated and cannot tell you. It is nullable because a boolean cannot say
+  "unknown", and `false` for an absent record is a claim we cannot support —
+  caught in production reporting `false` with an ingest actively running.
+- `failedCount` counts Acts the last pass could not fetch; `corpus_coverage`
+  names them, so a gap is auditable.
+
 GET /statutes
   → { statutes: [ { statuteId, shortTitle, hindiTitle, actNumber, actYear,
                     enactmentDate, enforcementDate, ministry, sourceUrl,
