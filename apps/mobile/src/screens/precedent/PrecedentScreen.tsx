@@ -100,7 +100,7 @@ export function PrecedentScreen({
 
   if (error) {
     return (
-      <Screen>
+      <Screen topInset>
         {header}
         <View style={styles.centred}>
           <Text variant="legal" scale="cardTitle">
@@ -128,7 +128,9 @@ export function PrecedentScreen({
   }
 
   return (
-    <Screen>
+    // `app/precedent/[id].tsx` sets `headerShown: false`, so this screen owns
+    // its status-bar clearance — the same reason JudgmentScreen insets its nav.
+    <Screen topInset>
       {header}
 
       <View style={styles.root}>

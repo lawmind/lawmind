@@ -148,7 +148,9 @@ export function SearchScreen() {
   const attention = attentionCount(results);
 
   return (
-    <Screen>
+    // A tab route: `headerShown: false`, so the search field is the top of the
+    // screen and clears the status bar itself.
+    <Screen topInset>
       <View style={styles.head}>
         <Input
           label="Search"

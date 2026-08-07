@@ -25,6 +25,13 @@ module.exports = {
    */
   transformIgnorePatterns: expoPreset.transformIgnorePatterns,
   /**
+   * `useSafeAreaInsets` THROWS without a provider rather than returning zeroes,
+   * and the provider comes from expo-router's `ExpoRoot` — which does not exist
+   * under Jest. Registering the library's own mock here keeps that from
+   * surfacing as a mystery failure in whichever screen test gets written next.
+   */
+  setupFilesAfterEnv: [...(expoPreset.setupFilesAfterEnv ?? []), '<rootDir>/jest/safe-area.js'],
+  /**
    * ORDER MATTERS, AND OURS MUST COME FIRST.
    *
    * Jest applies `moduleNameMapper` in insertion order and takes the first

@@ -70,7 +70,10 @@ export function UnverifiedCitationScreen({
   }, [citationCheckId]);
 
   return (
-    <Screen>
+    // Rendered from JudgmentScreen, which is a `headerShown: false` route, so
+    // the nav here is the top of the screen and nothing above it clears the
+    // status bar.
+    <Screen topInset>
       <View style={styles.nav}>
         <Pressable accessibilityLabel="Back" accessibilityRole="button" onPress={onBack}>
           <ChevronLeft color={color.ink} size={22} strokeWidth={1.5} />

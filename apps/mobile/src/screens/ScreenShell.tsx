@@ -17,15 +17,20 @@ import { APP_SCREENS, screenByNumber } from './manifest';
  * improvised layout: improvising one is how a design decision gets made by
  * whoever happened to be building that afternoon, and undesigned screens in
  * this product are undesigned because a product question is still open.
+ *
+ * `topInset` is passed by the TAB routes and by nothing else. The same shell
+ * renders at `/s/[slug]`, which sits in the Stack and already has a header —
+ * insetting there would clear the status bar twice. The caller knows which it
+ * is; the shell cannot.
  */
-export function ScreenShell({ n }: { n: number }) {
+export function ScreenShell({ n, topInset = false }: { n: number; topInset?: boolean }) {
   const screen = screenByNumber(n);
 
   if (!screen) {
     // Unreachable from a generated route; kept because a hand-written route
     // with a wrong number should fail loudly rather than render an empty page.
     return (
-      <Screen>
+      <Screen topInset={topInset}>
         <View style={styles.body}>
           <Text variant="ui">No screen #{String(n)} in the inventory.</Text>
         </View>
@@ -34,7 +39,7 @@ export function ScreenShell({ n }: { n: number }) {
   }
 
   return (
-    <Screen>
+    <Screen topInset={topInset}>
       <Stack.Screen options={{ title: screen.title }} />
       <ScrollView contentContainerStyle={styles.body}>
         <Text variant="eyebrow">{screen.group}</Text>
