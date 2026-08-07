@@ -1,26 +1,43 @@
 {
-  "note": "Violations that already existed when the gate landed. New ones still fail. Shrink this by fixing renders, never by regenerating to go green.",
-  "tokenGapNote": "Two colours the design system uses consistently that tokens.ts never absorbed. Tracked once by hex rather than once per render, because a missing token is one decision, not a violation per canvas. Not forgiveness: the count prints on every run and the resolution is named. Every OTHER off-palette hex still fails.",
+  "note": "Violations that already existed when the gate landed. New ones still fail. Shrink this by fixing renders, never by regenerating to go green. #F5EDDC and #C3BEB2 are staying carried here, not becoming tokens: RCC's read (docs/RCC_TO_LCC_HANDOFF.md, 8 Aug 2026) is both already have an exact-job token in shipped code (parchment #F2EFE8, inkFaint #8A8578) a few points off, so the decision is 'name the replacement' in future canvases, not mint a near-duplicate. These renders predate that decision and are debt, same as everything else here.",
   "generated": "2026-08-08",
-  "tokenGap": {
-    "#F5EDDC": {
-      "role": "ink on the navy #141B2D surface — tokens.ts has no light-on-dark ink token",
-      "evidence": "26 uses across the canvas set; the dark surface itself is settled and appears throughout",
-      "resolution": "tokens.ts either adds it (suggested name: ink.onDark) or names the replacement. RCC's lane."
-    },
-    "#C3BEB2": {
-      "role": "the dashed edge on an unavailable/not-held card — the documented treatment for our own uncertainty",
-      "evidence": "9 of 9 dashed borders in the whole canvas set use exactly this hex — unanimous, so it is a token in practice",
-      "resolution": "tokens.ts either adds it (suggested name: border.uncertain) or names the replacement. RCC's lane."
-    }
-  },
   "known": {
+    "03-precedent-graph.dc.html": [
+      "03-precedent-graph.dc.html off-palette-hex #F5EDDC"
+    ],
+    "05-document-compare.dc.html": [
+      "05-document-compare.dc.html off-palette-hex #F5EDDC"
+    ],
+    "06-upload-chat.dc.html": [
+      "06-upload-chat.dc.html off-palette-hex #F5EDDC"
+    ],
+    "07-counter-arguments.dc.html": [
+      "07-counter-arguments.dc.html off-palette-hex #F5EDDC",
+      "07-counter-arguments.dc.html off-palette-hex #C3BEB2"
+    ],
+    "08-saved-search-feed.dc.html": [
+      "08-saved-search-feed.dc.html off-palette-hex #C3BEB2"
+    ],
     "09-reading-view-controls.dc.html": [
-      "09-reading-view-controls.dc.html devanagari-tracking Devanagari in letterspaced JetBrains Mono"
+      "09-reading-view-controls.dc.html devanagari-tracking Devanagari in letterspaced JetBrains Mono",
+      "09-reading-view-controls.dc.html off-palette-hex #C3BEB2",
+      "09-reading-view-controls.dc.html off-palette-hex #F5EDDC"
     ],
     "10-draft-editor-precedent.dc.html": [
       "10-draft-editor-precedent.dc.html retired-copy citations verified",
-      "10-draft-editor-precedent.dc.html off-palette-hex #EDE9E0"
+      "10-draft-editor-precedent.dc.html off-palette-hex #EDE9E0",
+      "10-draft-editor-precedent.dc.html off-palette-hex #C3BEB2"
+    ],
+    "12-authorities-as-at.dc.html": [
+      "12-authorities-as-at.dc.html off-palette-hex #C3BEB2"
+    ],
+    "14-court-rules-reader.dc.html": [
+      "14-court-rules-reader.dc.html off-palette-hex #F5EDDC",
+      "14-court-rules-reader.dc.html off-palette-hex #C3BEB2"
+    ],
+    "15-court-fee-calculator.dc.html": [
+      "15-court-fee-calculator.dc.html off-palette-hex #F5EDDC",
+      "15-court-fee-calculator.dc.html off-palette-hex #C3BEB2"
     ],
     "LawMind Admin.dc.html": [
       "LawMind Admin.dc.html verified-green-in-app #1F6F4A",
@@ -37,6 +54,7 @@
       "LawMind Admin.dc.html off-palette-hex #EFEDE7",
       "LawMind Admin.dc.html off-palette-hex #E8C86A",
       "LawMind Admin.dc.html off-palette-hex #FBEFEF",
+      "LawMind Admin.dc.html off-palette-hex #C3BEB2",
       "LawMind Admin.dc.html off-palette-hex #FDF7EC",
       "LawMind Admin.dc.html off-palette-hex #F3E7EA",
       "LawMind Admin.dc.html off-palette-hex #C9C5B9"
@@ -65,6 +83,8 @@
       "LawMind Screens.dc.html devanagari-tracking Devanagari in letterspaced JetBrains Mono",
       "LawMind Screens.dc.html off-palette-hex #EFEDE7",
       "LawMind Screens.dc.html off-palette-hex #45121E",
+      "LawMind Screens.dc.html off-palette-hex #C3BEB2",
+      "LawMind Screens.dc.html off-palette-hex #F5EDDC",
       "LawMind Screens.dc.html off-palette-hex #ECE5DD",
       "LawMind Screens.dc.html off-palette-hex #075E54",
       "LawMind Screens.dc.html off-palette-hex #B8AFA2",
