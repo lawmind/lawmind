@@ -73,6 +73,14 @@ from the advocate — which PD-12 says is first-class anyway. The wedge still wo
 
 ---
 
+### [OPEN] A physical Android device for the S1 device pass · RCC · 8 Aug 2026
+**Needs:** a Galaxy S24 (or equivalent) attached and visible to `adb devices`.
+**Why it is not a blocker:** every other S1 item is built and RCC keeps working.
+**Cost if never resolved:** four criteria stay unobserved and **Gate S1 cannot
+close**: 60fps `gfxinfo`, the sunlight gate on glass, offline reading progress,
+and the authorities panel. RCC correctly refuses to claim them.
+**Where it plugs in:** plug it in. Roughly forty minutes of observation.
+
 # DECISIONS ONLY THE FOUNDER CAN MAKE
 
 ### [OPEN] OD-11 — Tier B before Tier A, or the sprint plan as written · both lanes
@@ -91,6 +99,16 @@ sequencing is real.
 reasoning recorded. Flagged here so the founder sees it rather than discovering it.
 **Cost if never resolved:** S1 cannot close, and both lanes keep building forward
 into later sprints — which is exactly what has been happening.
+
+### [OPEN] Six screens need designing — prompts are written and ready · both lanes
+**Needs:** run the six briefs in `design/DESIGN_PROMPTS_S3.md` and drop the
+renders into `design/screens/`.
+**Why it is not a blocker:** each prompt is complete and carries the house rules a
+designer would otherwise break. Rows 88–92 plus the PD-8 consent screen.
+**Cost if never resolved:** the daily cause list, the client share (the viral
+loop), adjournment capture, limitation alerts and the fee log never ship — and
+**the consent screen is the legal basis for having no AI watermark on exported
+documents.** Without it that mark goes back onto every filing.
 
 ### [OPEN] Daily cause-list screen is NOT YET DESIGNED · RCC, blocks an LCC endpoint
 **Needs:** a design for `design/SCREENS.md` row 88 (plus rows 89, 90 — client

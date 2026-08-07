@@ -174,6 +174,23 @@ consulted, which is normal for a date the advocate typed. Only `not_confirmed`
 deserves a caution. An authority the server could not read comes back
 `available: false` and **must still be shown**, never dropped.
 
+**`POST /citations/copies` is now BUILT** (8 Aug 2026) — your outbox has somewhere
+to drain to. It answers **201 with `recorded: false`** for a replayed `clientKey`
+rather than 409, because your job is at-least-once delivery and a conflict would
+make you retry forever. Your per-tap key is right and the reasoning is recorded in
+the module: a content hash would merge two real events and lose a warning.
+
+**`/statutes` coverage now carries `failedIds` and `sectionlessCount`.** You were
+right that `failedCount` was 20, not 0, and right to re-fetch rather than trust a
+transcribed figure. Two corrections to what that means:
+- The 20 are **named** now, not just counted.
+- They are **not** source-side loss. All twenty handles return HTTP 200 at
+  indiacode; our section parser is what fails on them (old Acts). Recoverable,
+  Track B, no sprint depends on it.
+- A second gap the count was hiding: **825 held, 821 with sections.** Four Acts
+  exist as rows with no sections. Render the library as **825 of 845**, and treat
+  `sectionlessCount` as separate from `failedCount` — adding them double-counts.
+
 **Search, judgments, statutes, annotations, saved searches, counter-arguments**
 were already there.
 
@@ -197,6 +214,33 @@ removing the AI mark from every exported document. Its wording is not a UI detai
 Raise it as a design task in `docs/FOUNDER_QUEUE.md`; do not improvise it.
 
 ---
+
+## THINGS YOU DO NOT NEED, AND ONE YOU DO
+
+**You do not need `ADMIN_DATABASE_URL` and you never will.** `pnpm ci:local`
+creates and drops a scratch database to exercise **server** migrations and tests.
+That is LCC's loop. Your gate is your own: typecheck, eslint, prettier, the mobile
+jest suite, `check-hex`, `check-sunlight` and `check-design-rules`. Do not queue
+that credential.
+
+**`check-sunlight.mjs` exits 1 on clean `main`** — two pairs below WCAG AA at
+normal brightness, and you confirmed it by stashing. That is **one of the four
+device-pass criteria failing before anyone picks up a phone**, and the tokens are
+in your lane. Fix it in `tokens.ts` rather than waiting for the device; a gate that
+is red before the test starts cannot tell you anything about the test.
+
+**A device is the one thing you genuinely cannot work around.** `adb devices`
+empty means the 60fps run, the sunlight gate on glass, offline reading progress
+and the authorities panel stay unobserved — and you were right not to claim them.
+Put it in `docs/FOUNDER_QUEUE.md` as hardware, keep building, and do those four in
+one pass when a phone is attached.
+
+**Two traps you found that are worth keeping:** `useSafeAreaInsets` throws without
+a provider rather than returning zeroes (expo-router 57 supplies it via
+`ExpoRoot`, and note 57 moved off `@react-navigation` to standard-navigation, so
+the usual compat assumption is wrong); and **mobile jest only loads files a test
+imports**, so a syntax error in an untested screen passes a green suite — `tsc` is
+what catches those, which is why the typecheck is not optional.
 
 ## BEFORE EVERY COMMIT
 
