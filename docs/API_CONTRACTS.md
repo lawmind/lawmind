@@ -161,13 +161,37 @@ only when row alignment could not be guaranteed — never a guessed id, because 
 wrong one points the advocate at another judgment's verification record.
 
 ```
-POST /verify/ecourts { citationText } → { ecourtsUrl, prefilledQuery }
-POST /verify/confirm { citationText, judgmentId } → { cached: true }
+POST /verify/ecourts { citationText }
+  → { ecourtsUrl, prefilledQuery, captchaRequired: true, instructions }
+POST /verify/confirm { citationText, judgmentId }
+  → { cached: true, citationCheckId, verificationState, verifiedBySource,
+      overruledStatus, confirmedAt, asOf }
 
 POST /citations/copies
   { judgmentId, matterId?, citationCheckId?, surface, copiedAt, clientKey }
   → { ok }
 ```
+**Both built 7 Aug 2026.**
+
+**`prefilledQuery` is text to paste, not a URL parameter.** Verified against the
+live site: `judgments.ecourts.gov.in/pdfsearch/index.php` is a POST form carrying
+`app_token`, `searchOptions` and `captcha` — a session token and a challenge.
+**No query string pre-fills it.** The client must present the string for the
+advocate to copy, not imply the search box arrives filled. It is normalised for
+eCourts' matching, and **its digits are never reordered** — `(2019) 4 SCC 221`
+and `(2019) 4 SCC 212` are different cases.
+
+`captchaRequired: true` ships in the payload rather than being left for the client
+to remember. **Nothing on the server ever fetches from eCourts**, and a test
+asserts the module contains no HTTP client at all — the rule is enforced by an
+absence, and absences rot silently.
+
+**`/verify/confirm` requires a user, and will 401 until auth ships in S5.** A
+Tier 3 confirmation is cached permanently *for everyone*, so an anonymous caller
+able to assert one is a way to poison the harness. It also 404s a `judgmentId` we
+do not hold, and returns `overruledStatus` read live from the row — confirming
+that a judgment EXISTS says nothing about whether it is still good law.
+
 **Every "Copy citation" tap writes a copy record.** An advocate who copies a
 citation into their own document is otherwise invisible to the fan-out — they saw
 a verified badge, they may file it, and no notification could ever reach them.

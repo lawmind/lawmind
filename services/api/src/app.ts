@@ -4,6 +4,12 @@ import { requestId } from 'hono/request-id';
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { buildSha } from './build-info.ts';
 import { getCitationCheck } from './citations/check.ts';
+import {
+  confirmRequest,
+  ecourtsRequest,
+  handleConfirm,
+  handleEcourts,
+} from './citations/verify.ts';
 import { fail, ok } from './envelope.ts';
 import {
   annotationBody,
@@ -115,6 +121,14 @@ export function createApp(deps: AppDeps) {
     // and the unverified-citation screen, both of which were on a mock because
     // nothing exposed per-tier results.
     app.get('/citations/:id', (c) => getCitationCheck(c, sql, c.req.param('id')));
+    // Tier 3 — the eCourts door. We hand over a URL and the text to paste; the
+    // advocate solves the CAPTCHA. Nothing here ever fetches from eCourts.
+    app.post('/verify/ecourts', validate('json', ecourtsRequest), (c) =>
+      handleEcourts(c, c.req.valid('json')),
+    );
+    app.post('/verify/confirm', validate('json', confirmRequest), (c) =>
+      handleConfirm(c, sql, search.userId, c.req.valid('json')),
+    );
     // Saved searches — an in-app feed, never a notification. PD-5/PD-6: nothing
     // here emits anything, and `unseenCount` is for ordering, never a badge.
     app.get('/saved-searches', (c) => listSavedSearches(c, sql, search.userId));
