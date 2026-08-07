@@ -64,11 +64,16 @@ export async function runRecheck(sql: Sql): Promise<RecheckResult> {
            j.id                       AS judgment_id,
            j.case_title,
            cc.overruled_status_shown  AS shown,
-           j.overruled_status         AS live
+           j.overruled_status::text   AS live
     FROM citation_checks cc
     JOIN judgments j ON j.id = cc.judgment_id_matched
     WHERE cc.shown_to_user = true
-      AND cc.overruled_status_shown IS DISTINCT FROM j.overruled_status
+      -- CAST IS REQUIRED, NOT COSMETIC. citation_checks.overruled_status_shown is
+      -- TEXT (SCHEMA_TRUTH: it records what was RENDERED, which must survive an
+      -- enum gaining a value) while judgments.overruled_status is the enum.
+      -- Postgres has no text = overruled_status operator, and the whole job died
+      -- on it in production: "operator does not exist: text = overruled_status".
+      AND cc.overruled_status_shown IS DISTINCT FROM j.overruled_status::text
       AND (
         -- referenced by an ACTIVE matter …
         EXISTS (
