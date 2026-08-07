@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { type Context, Hono } from 'hono';
 import { requestId } from 'hono/request-id';
 
 import {
@@ -9,6 +9,19 @@ import {
   retryCauseList,
 } from './admin/cause-lists.ts';
 import { counterRequest, handleCounter } from './arguments/counter.ts';
+import { acceptTerms, acceptTermsBody, getTerms, patchMe, patchMeBody } from './auth/account.ts';
+import { authMiddleware, profileIdFor } from './auth/middleware.ts';
+import {
+  type AuthDeps,
+  handleLogout,
+  handleMagicLink,
+  handleMe,
+  handleRefresh,
+  handleVerify,
+  magicLinkRequest,
+  refreshRequest,
+  verifyRequest,
+} from './auth/routes.ts';
 import { buildSha } from './build-info.ts';
 import { getCitationCheck } from './citations/check.ts';
 import {
@@ -45,12 +58,19 @@ export type AppDeps = {
   ping: () => Promise<void>;
   /** Absent in tests that do not exercise search. */
   search?: SearchDeps | undefined;
+  /** Absent in tests that do not exercise authentication. */
+  auth?: AuthDeps | undefined;
 };
 
 export function createApp(deps: AppDeps) {
   const app = new Hono();
 
   app.use('*', requestId());
+
+  // Reads the bearer token and records who is calling. It never rejects — each
+  // route states its own requirement, because they genuinely differ and a central
+  // list of exempt paths is a list that silently gains entries.
+  if (deps.auth) app.use('*', authMiddleware(deps.auth.secret));
 
   // One log line per request, carrying request_id. Every later route inherits it.
   app.use('*', async (c, next) => {
@@ -84,9 +104,49 @@ export function createApp(deps: AppDeps) {
     }
   });
 
+  const auth = deps.auth;
+  if (auth) {
+    // Answers identically whether or not the address has an account: a different
+    // reply for a known email turns this into a membership oracle, and for this
+    // customer base the membership list is a client list.
+    app.post('/auth/magic-link', validate('json', magicLinkRequest), (c) =>
+      handleMagicLink(c, auth, c.req.valid('json')),
+    );
+    app.post('/auth/verify', validate('json', verifyRequest), (c) =>
+      handleVerify(c, auth, c.req.valid('json')),
+    );
+    app.post('/auth/refresh', validate('json', refreshRequest), (c) =>
+      handleRefresh(c, auth, c.req.valid('json')),
+    );
+    app.post('/auth/logout', (c) => handleLogout(c, auth, c.get('authId')));
+    app.get('/me', (c) => handleMe(c, auth, c.get('authId'), c.get('authEmail')));
+    // The call that turns a verified email into an advocate: it creates the
+    // `users` row, because it is the first point at which a name and a phone
+    // number exist. PD-2 — the enrolment number is captured and gates nothing.
+    app.patch('/me', validate('json', patchMeBody), (c) =>
+      patchMe(c, auth.sql, c.get('authId'), c.get('authEmail'), c.req.valid('json')),
+    );
+    // PD-8. Consent is recorded, never inferred, and the version is stored
+    // alongside the timestamp so that WHICH text was accepted stays answerable.
+    app.get('/terms/current', (c) => getTerms(c));
+    app.post('/me/accept-terms', validate('json', acceptTermsBody), (c) =>
+      acceptTerms(c, auth.sql, c.get('authId'), c.req.valid('json')),
+    );
+  }
+
   const search = deps.search;
   if (search) {
     const sql = search.sql;
+    /**
+     * The profile id for the caller, or undefined.
+     *
+     * Routes below own data that belongs to an advocate, not to an email address,
+     * so they resolve `users.id` rather than the identity id. An identity that
+     * has not finished onboarding has no profile and these correctly behave as
+     * signed out — there is no row to attach the write to.
+     */
+    const userFor = (c: Context) => profileIdFor(sql, c.get('authId'));
+
     app.post('/search', validate('json', searchRequest), (c) =>
       handleSearch(c, search, c.req.valid('json')),
     );
@@ -110,14 +170,14 @@ export function createApp(deps: AppDeps) {
     // Highlight and save, PD-9 item 3. Anchored on the PRINTED paragraph number,
     // never on position — a re-ingest that moves a paragraph must not silently
     // relocate an advocate's note.
-    app.get('/judgments/:id/annotations', (c) =>
-      listAnnotations(c, sql, c.req.param('id'), search.userId),
+    app.get('/judgments/:id/annotations', async (c) =>
+      listAnnotations(c, sql, c.req.param('id'), await userFor(c)),
     );
-    app.post('/judgments/:id/annotations', validate('json', annotationBody), (c) =>
-      createAnnotation(c, sql, c.req.param('id'), search.userId, c.req.valid('json')),
+    app.post('/judgments/:id/annotations', validate('json', annotationBody), async (c) =>
+      createAnnotation(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
-    app.delete('/annotations/:annotationId', (c) =>
-      deleteAnnotation(c, sql, c.req.param('annotationId'), search.userId),
+    app.delete('/annotations/:annotationId', async (c) =>
+      deleteAnnotation(c, sql, c.req.param('annotationId'), await userFor(c)),
     );
     // Counter-arguments. Grounded in retrieved corpus authorities only; set_aside
     // authorities are excluded AND named, never silently dropped.
@@ -133,24 +193,24 @@ export function createApp(deps: AppDeps) {
     app.post('/verify/ecourts', validate('json', ecourtsRequest), (c) =>
       handleEcourts(c, c.req.valid('json')),
     );
-    app.post('/verify/confirm', validate('json', confirmRequest), (c) =>
-      handleConfirm(c, sql, search.userId, c.req.valid('json')),
+    app.post('/verify/confirm', validate('json', confirmRequest), async (c) =>
+      handleConfirm(c, sql, await userFor(c), c.req.valid('json')),
     );
     // Saved searches — an in-app feed, never a notification. PD-5/PD-6: nothing
     // here emits anything, and `unseenCount` is for ordering, never a badge.
-    app.get('/saved-searches', (c) => listSavedSearches(c, sql, search.userId));
-    app.post('/saved-searches', validate('json', savedSearchBody), (c) =>
-      createSavedSearch(c, sql, search.userId, c.req.valid('json')),
+    app.get('/saved-searches', async (c) => listSavedSearches(c, sql, await userFor(c)));
+    app.post('/saved-searches', validate('json', savedSearchBody), async (c) =>
+      createSavedSearch(c, sql, await userFor(c), c.req.valid('json')),
     );
-    app.delete('/saved-searches/:id', (c) =>
-      deleteSavedSearch(c, sql, c.req.param('id'), search.userId),
+    app.delete('/saved-searches/:id', async (c) =>
+      deleteSavedSearch(c, sql, c.req.param('id'), await userFor(c)),
     );
-    app.get('/saved-searches/:id/feed', validate('query', feedQuery), (c) =>
+    app.get('/saved-searches/:id/feed', validate('query', feedQuery), async (c) =>
       getSavedSearchFeed(
         c,
         sql,
         c.req.param('id'),
-        search.userId,
+        await userFor(c),
         c.req.valid('query'),
         search.embedQuery,
       ),
@@ -162,11 +222,11 @@ export function createApp(deps: AppDeps) {
     app.get('/admin/cause-lists', validate('query', causeListQuery), (c) =>
       listCauseLists(c, sql, c.req.valid('query')),
     );
-    app.post('/admin/cause-lists/:id/retry', (c) =>
-      retryCauseList(c, sql, c.req.param('id'), search.userId),
+    app.post('/admin/cause-lists/:id/retry', async (c) =>
+      retryCauseList(c, sql, c.req.param('id'), await userFor(c)),
     );
-    app.post('/admin/cause-lists/:id/escalate', validate('json', escalateBody), (c) =>
-      escalateCauseList(c, sql, c.req.param('id'), search.userId, c.req.valid('json')),
+    app.post('/admin/cause-lists/:id/escalate', validate('json', escalateBody), async (c) =>
+      escalateCauseList(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));

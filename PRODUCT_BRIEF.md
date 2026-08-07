@@ -233,7 +233,7 @@ citation.
 ## Where it runs
 
 Expo iOS + Android. Hono API on Railway. Railway Postgres with pgvector. Drizzle.
-better-auth. Postmark. Cloudflare R2. OpenRouter. Sentry. PostHog. Expo push.
+better-auth. Resend. Cloudflare R2. OpenRouter. Sentry. PostHog. Expo push.
 Admin is a separate Railway service; web is admin only.
 
 Not used: Neon, Vercel, Qdrant, Clerk, Supabase.

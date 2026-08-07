@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server';
+import { createAuth, mailerFrom } from '@lawmind/auth';
 import { createDatabase } from '@lawmind/db';
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import { sql } from 'drizzle-orm';
@@ -98,11 +99,34 @@ const embedQuery = async (text: string): Promise<string | null> => {
   }
 };
 
+/**
+ * Authentication. better-auth owns identity and the magic-link lifecycle; we mint
+ * the token pair on top of it — `sprints/SPRINT_5.md`.
+ *
+ * `mailerFrom` throws rather than falling back to the console transport in
+ * production. A missing mail key must not become a service where every sign-in
+ * logs success and no advocate ever receives a link.
+ */
+const mailer = mailerFrom(
+  { resendApiKey: env.resendApiKey, mailFrom: env.mailFrom, nodeEnv: env.nodeEnv },
+  (line: string) => logger.info({ transport: 'console' }, line),
+);
+logger.info({ mail_transport: mailer.name }, 'mail transport selected');
+
+const authSecret = env.authSecret();
+const auth = createAuth({
+  sql: rawSql,
+  secret: authSecret,
+  baseUrl: env.authBaseUrl(),
+  mailer,
+});
+
 const app = createApp({
   ping: async () => {
     await db.execute(sql`SELECT 1`);
   },
   search: { sql: rawSql, embedQuery },
+  auth: { auth, sql: rawSql, secret: authSecret },
 });
 
 serve({ fetch: app.fetch, port: env.port }, (info) => {

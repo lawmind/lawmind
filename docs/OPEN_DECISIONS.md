@@ -388,7 +388,16 @@ saving, and already the plan.
 
 - Client: native Expo iOS + Android first, web admin only
 - Infra: Railway only, one bill. Neon, Vercel, Qdrant, Clerk dropped
-- Auth: better-auth self-hosted, Postmark magic link, MSG91 phone OTP phase 2
+- Auth: better-auth self-hosted, **Resend** magic link *(swapped from Postmark
+  7 Aug 2026, founder's call — a channel swap, not a decision change)*, MSG91
+  phone OTP phase 2. Chosen for self-serve signup with no sales call, 3,000
+  emails a month free which covers all of beta, and an API that is a single HTTP
+  POST — so it added no dependency. The provider sits behind an interface
+  (`packages/auth/src/mail.ts`), which makes **MSG91 the consolidation option
+  later**: it is already the approved vendor for phone OTP, and moving is now a
+  config change rather than a rewrite. No client data crosses this path — a magic
+  link carries an email address and a token, never a matter or a party name — so
+  the DPDP residency question that constrains model routing does not arise here.
 - Billing: IAP for solo tiers, Razorpay invoice + redemption code for firm and above
 - Fine-tuning: deferred until ₹3L MRR. Sarvam-1 Colab pilot runs in parallel at zero cost
 - Citation verification: three-tier with explicit unverified state — never silent drop

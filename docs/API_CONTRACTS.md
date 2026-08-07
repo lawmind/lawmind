@@ -42,14 +42,14 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `POST /auth/magic-link` | SPECCED |
-| `POST /auth/verify` | SPECCED |
-| `POST /auth/refresh` | SPECCED |
-| `POST /auth/logout` | SPECCED |
-| `GET /me` | SPECCED |
-| `PATCH /me` | SPECCED |
-| `GET /terms/current` | SPECCED |
-| `POST /me/accept-terms` | SPECCED |
+| `POST /auth/magic-link` | BUILT |
+| `POST /auth/verify` | BUILT |
+| `POST /auth/refresh` | BUILT |
+| `POST /auth/logout` | BUILT |
+| `GET /me` | BUILT |
+| `PATCH /me` | BUILT |
+| `GET /terms/current` | BUILT |
+| `POST /me/accept-terms` | BUILT |
 
 **Search — LCC owns**
 

@@ -72,7 +72,7 @@ Retrieval order: `.ai/03-retrieval-pipeline.md`.
 
 Expo (React Native, TypeScript) · Hono API on Railway · Railway Postgres +
 pgvector · Drizzle ORM · Railway cron · OCR service (Python/FastAPI) ·
-better-auth self-hosted · Postmark · Cloudflare R2 · OpenRouter · Sentry ·
+better-auth self-hosted · Resend · Cloudflare R2 · OpenRouter · Sentry ·
 PostHog · Expo push.
 
 Explicitly NOT used: Neon, Vercel, Qdrant, Clerk, Supabase, Telegram bot.

@@ -105,7 +105,7 @@ Railway cron, 23:00 IST. Tomorrow's listed hearings → briefing → store → p
 Missed run alerts by 00:30 IST.
 
 ## Auth
-better-auth, self-hosted. Email magic link via Postmark at launch; phone OTP via
+better-auth, self-hosted. Email magic link via Resend at launch (swapped from Postmark 7 Aug 2026); phone OTP via
 MSG91 phase 2. Rotating refresh tokens, 30-day sliding window.
 
 **PD-1 and PD-2 — what is settled, and what is a delivery detail.**

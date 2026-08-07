@@ -21,7 +21,7 @@ plumbing proceed.
 **TASK**
 
 1. **Auth endpoints.** better-auth self-hosted, JWT + rotating refresh, 30-day
-   sliding window. Postmark magic link at launch; phone OTP is a phase-2 **channel
+   sliding window. Resend magic link at launch (swapped from Postmark 7 Aug 2026); phone OTP is a phase-2 **channel
    swap, not a decision change** — `TRD.md` §Auth records why PD-1 and this file
    read differently and why neither should be "corrected" to match the other.
 2. **PD-1 — the identifier is whatever the advocate enters.** It need not match

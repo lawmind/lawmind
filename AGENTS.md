@@ -24,7 +24,7 @@ countersigned DPA exists. One document per call, always.
 
 ## Stack
 Expo · Hono on Railway · Railway Postgres + pgvector · Drizzle · OCR service ·
-better-auth · Postmark · R2 · OpenRouter · Sentry · PostHog.
+better-auth · Resend · R2 · OpenRouter · Sentry · PostHog.
 Not used: Neon, Vercel, Qdrant, Clerk, Supabase.
 
 ## Agent lanes — TWO, disjoint. Never write outside your lane

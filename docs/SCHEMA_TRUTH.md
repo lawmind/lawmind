@@ -685,3 +685,50 @@ Pseudonymisation coverage is **measured, not asserted** — computed from
 `pii_entities` against detected-entity counts, and reported as a number
 (currently 99.2%). The residual is disclosed to the advocate, never hidden.
 See `PRIVACY_PII.md` — we never claim complete PII removal.
+
+## auth_user · auth_session · auth_account · auth_verification
+**Added 7 Aug 2026, migration 0014.** better-auth's own tables. Their columns were
+read out of `getAuthTables()` in the installed library, **not written from its
+documentation** — a guessed schema for somebody else's library is a migration that
+applies cleanly and fails at the first login.
+
+Prefixed `auth_` because better-auth asks for models named `user`, `session`,
+`account` and `verification`, and those are generic names in a schema that already
+holds `users`. The drizzle adapter maps the model names back, so the library is
+unaffected and the database says where its tables came from.
+
+**IDENTITY IS NOT PROFILE.** `auth_user` records that an email address was proven
+reachable. `users` records that somebody is an advocate, with the name and phone
+number `users` requires NOT NULL and a magic link cannot supply. Verification
+creates the first; onboarding (`PATCH /me`) creates the second. **`users.auth_id`
+is the join and has been in the schema since S0 for exactly this.** An identity
+with no profile is a real state — somebody abandoned onboarding — and `GET /me`
+reports `profileComplete: false` rather than returning a half-filled user.
+
+`auth_account` is required by better-auth and unused: there is no OAuth provider
+and no password in this product, which is also why there is no password to reuse,
+leak or reset.
+
+## refresh_tokens
+**Added 7 Aug 2026, migration 0014.** Ours, not better-auth's. `SPRINT_5.md`
+specifies JWT plus a rotating refresh on a 30-day sliding window.
+
+`id` text pk · `user_id` text fk→auth_user cascade · `token_hash` text unique ·
+`expires_at` timestamptz · `created_at` timestamptz · `revoked_at` timestamptz null ·
+`replaced_by` text null
+
+Index: partial btree on (user_id) WHERE revoked_at IS NULL.
+
+**Stored as a SHA-256 hash, never as the token.** A readable refresh-token table
+is a table whose leak is a working login for every advocate in it.
+
+The access token is a short-lived JWT so the common path costs no database round
+trip. The refresh token is opaque rather than a JWT **because it must be
+revocable, and a stateless token cannot be withdrawn.**
+
+**Rotation with reuse detection.** Each refresh mints a successor and revokes its
+parent, with `replaced_by` making the family walkable. Presenting an
+already-rotated token means it was replayed or the client is buggy, and both are
+answered the same way: **every live token for that advocate is revoked.** Signing
+in again is a small cost; an attacker renewing a stolen token indefinitely
+alongside the real user is not.
