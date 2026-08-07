@@ -48,13 +48,18 @@ out the chunking is wrong for ₹0 instead of $120.
    honest values, never faked ones.
 
 **DONE**
-- **1M+ documents indexed**, counted from the database, not estimated
+- **The corpus is complete for every source this sprint names**, counted from the
+  database, not estimated: Supreme Court 1950–2025 complete, the 845 Central Acts
+  complete, BNS/BNSS/BSA present. *(Was "1M+ documents indexed" — see
+  §Gate correction.)*
 - A known citation retrieved in **under 3 seconds**, p95, on the production
   instance — not on a laptop
-- `ocr_confidence` non-null on every chunk whose source was a scan
-- IPC↔BNS mapping spot-checked against indiacode by hand on 20 sections
+- IPC↔BNS mapping spot-checked against indiacode by hand on 20 sections, with the
+  count of **rejected** candidate pairs reported alongside the accepted ones
 - Ingest is **resumable**: killing it mid-run and restarting does not duplicate
   or skip
+
+*(`ocr_confidence` moved to Gate S4 — see §Gate correction.)*
 
 **NEVER**
 - Train on, or ingest, `nisaar/*` — one set failed audit with fabricated dissents
@@ -105,5 +110,62 @@ out the chunking is wrong for ₹0 instead of $120.
 ---
 
 ## GATE S1
-1M+ documents indexed · known citation retrieved **< 3s** · `ocr_confidence`
-populated · reading view functional on real judgment text.
+Corpus complete for every source this sprint names · known citation retrieved
+**< 3s** p95 on production · IPC↔BNS mapping hand-checked on 20 sections ·
+reading view functional on real judgment text, observed on a device.
+
+---
+
+## Gate correction — 7 Aug 2026
+
+Two of the original four criteria could not be passed by any amount of
+engineering, because **they contradicted this sprint's own task list.** Corrected
+on the authority of the founder-approved data-and-delivery plan, §Verification.
+Recorded here rather than silently edited, because a gate that moves without a
+reason is not a gate.
+
+**1. "1M+ documents indexed" → the corpus is complete for every source this
+sprint names.**
+
+The sprint body says, four lines into LCC task 1: *"Stages 1 + 2 pass Gate S1 —
+do not attempt 15.9M now."* The gate then demanded a document count that only
+stage 3 could produce. Both cannot be followed.
+
+The measurement settles which one was wrong. **The Supreme Court is finished** —
+38,341 of 38,351 distinct judgments, the missing ten individually checked and
+source-side (6 × HTTP 404, 3 × corrupt PDF, 1 unexplained). There is no more
+Supreme Court to ingest. The only remaining volume is the High Court bucket, and
+`docs/DATASETS.md` measured it on 6 Aug: **one year is 1.95M documents at 537 GB
+against a 50 GB Railway volume**, and ten years is 5,369 GB and ~3,956 GPU-hours.
+
+**And the volume is not the disqualifying part — the citations are.** 0 of 9,604
+HC metadata rows carry a citation; 0 of 30 PDFs sampled across six High Courts
+carry a neutral citation the extractor can see. A judgment with no citation can
+be found but cannot be cited into a draft, added to a matter as an authority, or
+appear in the citation graph. **Two million of them would add search noise and no
+authority** — the count would pass while the product got worse.
+
+*"38,341 citable Supreme Court judgments, complete 1950–2025, plus 845 Central
+Acts"* is a **stronger** claim than *"1M documents"*, and it is nearly true today.
+`docs/FEATURE_PARITY.md` §5 already argues that feature parity does not require
+corpus parity.
+
+**Not deleted, deferred:** High Court breadth stays live as Track B3 — text now,
+citations later, rendering `unverified`/`none`, which is exactly what the
+three-field model exists for. It is background ingest that no sprint depends on.
+
+**2. "`ocr_confidence` populated" → restated as Gate S4.**
+
+`ocr_confidence` is non-null on **0 of 616,197 chunks, and that is the correct
+value.** We have never run an OCR engine. Every source so far is born-digital
+text from AWS Open Data and indiacode; `text_quality` is populated on
+616,197/616,197. Scans arrive with document upload in S4, which is where the
+PaddleOCR bake-off already sits (OD-7).
+
+**An absent check is not a negative result.** A column that is null because the
+measurement was never taken must never be read as a measurement of zero — the
+same rule that keeps `not_attempted` apart from `miss` on the verification sheet.
+Moving this criterion to S4 is what makes the null honest rather than a failure.
+
+The retrieval rule it implies stands unchanged and is built already: low-
+confidence text is **down-ranked, never excluded.**

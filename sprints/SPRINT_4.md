@@ -60,6 +60,15 @@ drafting is not gated by that review** — the two ship independently.
   viewer
 - A crafted `PATCH` attempting to alter a citation string is **rejected `422`**
 - Limitation calculator output states its statutory basis
+- **`ocr_confidence` non-null on every chunk whose source was a scan, and null on
+  every chunk whose source was not.** *Moved here from Gate S1 on 7 Aug 2026 —
+  see `sprints/SPRINT_1.md` §Gate correction.* S1 could not pass it because no
+  scan had ever entered the corpus: every source to that point was born-digital
+  text, and the column was correctly null on all 616,197 chunks. **S4 is the
+  first sprint in which a scan exists**, because it is the sprint that ships
+  document upload. Retrieval **down-ranks** low-confidence text rather than
+  excluding it. Null must continue to mean *never measured*, never *measured as
+  zero*.
 
 **NEVER**
 - Accept a whole-document `content` blob on `PATCH`
@@ -109,5 +118,6 @@ drafting is not gated by that review** — the two ship independently.
 
 ## GATE S4
 Advocate approves >90% of 50 drafts · `.docx` opens cleanly in Word · citations
-cannot be free-text edited · **law graduates approve the Hindi register** if Hindi
+cannot be free-text edited · `ocr_confidence` non-null on scanned sources and
+null on everything else · **law graduates approve the Hindi register** if Hindi
 ships here.
