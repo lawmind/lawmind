@@ -73,13 +73,36 @@ from the advocate — which PD-12 says is first-class anyway. The wedge still wo
 
 ---
 
-### [OPEN] A physical Android device for the S1 device pass · RCC · 8 Aug 2026
-**Needs:** a Galaxy S24 (or equivalent) attached and visible to `adb devices`.
-**Why it is not a blocker:** every other S1 item is built and RCC keeps working.
-**Cost if never resolved:** four criteria stay unobserved and **Gate S1 cannot
-close**: 60fps `gfxinfo`, the sunlight gate on glass, offline reading progress,
-and the authorities panel. RCC correctly refuses to claim them.
-**Where it plugs in:** plug it in. Roughly forty minutes of observation.
+### [MOSTLY RESOLVED 8 Aug 2026] A physical Android device for the S1 device pass · RCC
+**It was not a blocker and I should not have queued it.** No phone was attached,
+so I installed the Android emulator from the SDK manager — free, no account, one
+command — created a Redmi-class AVD (1080×2400 at 400dpi, 4 GB) and ran the pass
+on it. **Two of the four criteria are now observed and passing**, and three real
+defects came out of it that no test could see.
+
+**Observed passing, 8 Aug 2026:**
+- **Reading progress survives a restart with the network off.** Aeroplane mode
+  on, app force-stopped, cold-started from a deep link: the judgment rendered
+  from the device and the position came back at **¶ 8 of 22**, the exact
+  paragraph it was left at.
+- **The sunlight washout, computed and rendered.** Every shipped pair at
+  contrast 0.5 / brightness 1.3, on real screenshots. Ink, oxblood, the active
+  tab and the mono record values hold. One pair does not — see the `ink-faint`
+  entry below.
+
+**What an emulator genuinely cannot answer, and stays open:**
+- **60fps on a mid-range Android.** A software-rendered x86 emulator on a
+  workstation says nothing about a Redmi. `gfxinfo` here would be a number that
+  looks like evidence and is not.
+- **The sunlight gate ON GLASS.** The arithmetic is run; "is this readable at
+  noon in a court corridor" is a human judgement about a physical panel, which
+  is exactly what `DESIGN_SYSTEM.md` means by "a design gate, not a checkbox".
+- **The adjournment four-second target** (`docs/FAILURE_MODES.md`), which is
+  explicitly a Redmi-class measurement.
+
+**Where it plugs in:** `apps/mobile/android/app/build/outputs/apk/release/` — a
+release APK builds and installs in one command. Roughly twenty minutes with a
+phone.
 
 # DECISIONS ONLY THE FOUNDER CAN MAKE
 
@@ -116,13 +139,99 @@ before believing any `NOT YET DESIGNED` row in it.
 limitation ALERT block (row 91) or the limitation CALCULATOR (row 98). The
 filename does not distinguish them and only a human looking at the render can.
 
-### [OPEN] Daily cause-list screen is NOT YET DESIGNED · RCC, blocks an LCC endpoint
-**Needs:** a design for `design/SCREENS.md` row 88 (plus rows 89, 90 — client
-update share and adjournment capture).
-**Why it is not a blocker:** `SPRINT_3.md` says do not improvise it. The server
-side is deliberately unbuilt because the endpoint shape follows the screen.
-**Cost if never resolved:** the daily cause-list aggregation never ships, and it
-is the one screen `PRD.md` Tier B names directly.
+### [RESOLVED 8 Aug 2026] Daily cause-list screen is NOT YET DESIGNED · RCC
+**It was designed, and all three courtroom screens are now built.**
+`renders/68-cause-list@2x.png`, `renders/69-adjournment@2x.png` and
+`renders/70-client-share@2x.png` were on disk since 5 August, specified in
+`design/screens/IMPLEMENTATION.md` §9d, and marked `designed: true` in the
+generated manifest — while `design/SCREENS.md` rows 88–90 still said NOT YET
+DESIGNED. The same stale table as the retraction above.
+
+Built: `src/screens/causelist/`, `src/screens/adjournment/`,
+`src/screens/clientupdate/`, with the §9d rules carried in the code — grouped by
+court and not by time, item number the largest thing on the row, four 64px
+targets in the lower half, no confirmation dialog, the advocate's name above ours
+on the client card.
+
+**What is left is an ENDPOINT, not a design.** See below.
+
+### [OPEN] `ink-faint` is below WCAG AA, and it is a palette decision · RCC · 8 Aug 2026
+**Needs:** a founder/design ruling on `ink-faint` `#8A8578`.
+
+**The measurement**, from `apps/mobile/scripts/check-sunlight.mjs`, which has been
+exiting 1 on clean `main` since at least 7 August:
+
+| pair | normal | under washout | AA needs |
+|---|---|---|---|
+| `ink-faint` on `paper` | **3.53:1** | 2.15:1 | 4.5:1 |
+| `ink-faint` on `card` | **3.68:1** | 2.21:1 | 4.5:1 |
+
+Everything else in the palette passes. `ink-faint` carries **citations, dates,
+metadata and eyebrows** — the small text an advocate reads in a corridor — and
+`DESIGN_SYSTEM.md` cites contrast for `caution-text` and `ink-muted` ("clear AA")
+but never computed this pair.
+
+**Why it is not a blocker:** the app ships and reads well; body text is 16.4:1
+and the accent 12.1:1. Under the washout transform on a real device screenshot,
+ink, oxblood, the active tab and the mono values all hold; the `ink-faint`
+eyebrows are the only thing that visibly disappears.
+
+**Why RCC did not simply darken it:** `#8A8578` is the published design system,
+and the three ink levels are 16.4 / 5.7 / 3.5. Anything reaching 4.5:1 lands
+essentially on top of `ink-muted` and collapses a three-level hierarchy into two.
+That is a design decision with a visible cost either way, not a token typo.
+
+**Where it plugs in:** one line in `apps/mobile/src/theme/tokens.ts`, plus
+`design/DESIGN_SYSTEM.md` §Palette. `node scripts/check-sunlight.mjs` prints the
+whole table and goes green the moment it is decided.
+
+---
+
+### [OPEN] The client card as an IMAGE needs one native module · RCC · 8 Aug 2026
+**Needs:** approval to add **`react-native-view-shot`** (MIT, Expo-supported) to
+`apps/mobile`. It is a package rather than a vendor — no account, no bill, no
+service — but it adds a native module and touches the workspace lockfile, which
+is not my lane.
+
+**Why it is not a blocker:** the client update ships now. The card is composed
+and rendered in-app so the advocate sees exactly what their client will read, and
+it sends as text over WhatsApp carrying the same sentences in the same order.
+`src/screens/clientupdate/clientCard.ts` holds the words separately from the view
+for precisely this reason, so the image path is a render call and nothing else.
+
+**Cost if never resolved:** the card goes as text. `IMPLEMENTATION.md` §9d wants
+an image because it "renders in the thread, survives forwarding, and can be shown
+across a desk" — losing that is a **marketing** loss on the one organic channel
+we have, not an information one. The client still receives the whole update.
+
+**Where it plugs in:** `ClientUpdateScreen.tsx` — wrap the existing card view in
+a ref, `captureRef` at 1080×1350, share the file. The layout is already built.
+
+---
+
+### [FOR LCC, NOT THE FOUNDER — recorded here so it is not lost] The advocate-facing cause-list endpoint · 8 Aug 2026
+Not a founder item. Written down because the screen now exists, and the endpoint
+shape follows the screen — which is what the old entry above said it was waiting
+for.
+
+`GET /admin/cause-lists` is the operator's health view. The advocate's morning
+needs the **item number and the listed time per matter**, grouped by court:
+
+```
+GET /cause-list?date=YYYY-MM-DD
+  -> { courts: [ { court, published, publishedAt,
+                   items: [ { matterId, itemNumber, listedAt,
+                              courtRoom, purpose } ] } ] }
+```
+
+`published: false` with empty `items` is a NORMAL 200 and renders as a dashed
+row — a court that has not published is a fact an advocate plans around, and
+hiding the matter would tell them they have nothing there. `itemNumber` is
+nullable for the same reason: a guessed item number sends somebody to the wrong
+courtroom at the wrong hour.
+
+The screen is built and works today against `GET /matters` alone, rendering every
+listed matter as "not yet published". Nothing above it changes when this lands.
 
 ---
 
