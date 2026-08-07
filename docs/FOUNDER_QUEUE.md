@@ -100,15 +100,21 @@ reasoning recorded. Flagged here so the founder sees it rather than discovering 
 **Cost if never resolved:** S1 cannot close, and both lanes keep building forward
 into later sprints — which is exactly what has been happening.
 
-### [OPEN] Six screens need designing — prompts are written and ready · both lanes
-**Needs:** run the six briefs in `design/DESIGN_PROMPTS_S3.md` and drop the
-renders into `design/screens/`.
-**Why it is not a blocker:** each prompt is complete and carries the house rules a
-designer would otherwise break. Rows 88–92 plus the PD-8 consent screen.
-**Cost if never resolved:** the daily cause list, the client share (the viral
-loop), adjournment capture, limitation alerts and the fee log never ship — and
-**the consent screen is the legal basis for having no AI watermark on exported
-documents.** Without it that mark goes back onto every filing.
+### [RETRACTED 8 Aug 2026] "Six screens need designing" — they were already drawn
+**I was wrong and this entry is kept as the record of it.** `design/SCREENS.md`
+said "None is drawn" for rows 88–99; seven of them had renders on disk
+(`66-consent-clean-draft`, `68-cause-list`, `69-adjournment`, `70-client-share`,
+`71-limitation`, `72-bare-acts`, `73-fee-log`). The table was stale, I trusted it
+without listing the directory, and I wrote six design briefs for screens that
+already existed.
+
+**This is the failure already recorded as `check-the-directory-before-claiming-a-gap`.**
+SCREENS.md is now corrected and carries a warning to check the renders directory
+before believing any `NOT YET DESIGNED` row in it.
+
+**One real question remains:** `renders/71-limitation@2x.png` could be the
+limitation ALERT block (row 91) or the limitation CALCULATOR (row 98). The
+filename does not distinguish them and only a human looking at the render can.
 
 ### [OPEN] Daily cause-list screen is NOT YET DESIGNED · RCC, blocks an LCC endpoint
 **Needs:** a design for `design/SCREENS.md` row 88 (plus rows 89, 90 — client

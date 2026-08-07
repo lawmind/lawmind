@@ -76,26 +76,36 @@ numbers the same ground 1–15, which is a second scheme for one set.
 | PD-12 | Domain context | §9b preamble | — | — |
 | — | `.docx` default export | 11 | `11d` | `design/screens/renders/61-draft-editing@2x.png` |
 
-## Scope expansion — 1 Aug 2026 · all NOT YET DESIGNED
+## Scope expansion — 1 Aug 2026
 
-Added by the scope revision. **None is drawn. Designing them is a Claude Design
-task, not a build task** — do not improvise screens for these.
+Added by the scope revision. Designing these is a Claude Design task, not a build
+task — **do not improvise a screen that is genuinely undrawn.**
+
+> **STATUS CORRECTED 8 Aug 2026. The line here previously read "None is drawn"
+> and was stale by seven screens.** A later render bundle delivered 66 and 68–73
+> and this table was never updated. The error was live long enough that LCC
+> queued "six screens need designing" to the founder and wrote six design briefs
+> for screens that already existed.
+>
+> **Check `design/screens/renders/` before believing a `NOT YET DESIGNED` row
+> anywhere in this file.** Verified by listing the directory, not by reading this
+> table.
 
 ### Tier B — the daily loop (ships first)
 
 | # | Screen | Status | Notes |
 |---|---|---|---|
-| 88 | Daily cause list | ❌ **NOT YET DESIGNED** | Every matter listed today across all courts, one screen. The first thing checked each morning |
-| 89 | Client update share | ❌ **NOT YET DESIGNED** | One tap → clean matter summary over WhatsApp. **The viral loop** — carries our name to a client and to opposing counsel |
-| 90 | Adjournment capture | ❌ **NOT YET DESIGNED** | Three taps, standing in the courtroom, next date given orally |
-| 91 | Limitation and deadline alerts | ❌ **NOT YET DESIGNED** | Folds into the evening briefing rhythm, not a new notification surface |
-| 92 | Fee and appearance log | ❌ **NOT YET DESIGNED** | Billed vs appeared. Advocates keep this on paper today |
+| 88 | Daily cause list | ✅ `renders/68-cause-list@2x.png` | Every matter listed today across all courts, one screen. The first thing checked each morning |
+| 89 | Client update share | ✅ `renders/70-client-share@2x.png` | One tap → clean matter summary over WhatsApp. **The viral loop** — carries our name to a client and to opposing counsel |
+| 90 | Adjournment capture | ✅ `renders/69-adjournment@2x.png` | Three taps, standing in the courtroom, next date given orally |
+| 91 | Limitation and deadline alerts | ⚠️ `renders/71-limitation@2x.png` — **confirm whether this render is the ALERT block (91) or the CALCULATOR (98)**; the filename does not distinguish them | Folds into the evening briefing rhythm, not a new notification surface |
+| 92 | Fee and appearance log | ✅ `renders/73-fee-log@2x.png` | Billed vs appeared. Advocates keep this on paper today |
 
 ### Tier A — library parity
 
 | # | Screen | Status | Notes |
 |---|---|---|---|
-| 93 | Bare acts library | ❌ **NOT YET DESIGNED** | 700+ Central and State Acts. BNS/BNSS/BSA first-class with IPC↔BNS mapping |
+| 93 | Bare acts library | ✅ `renders/72-bare-acts@2x.png` | 700+ Central and State Acts. BNS/BNSS/BSA first-class with IPC↔BNS mapping |
 | 94 | Bare act reading view | ❌ **NOT YET DESIGNED** | Likely shares structure with the judgment reading view (`11e`) — confirm before drawing twice |
 | 95 | Draft template library | ❌ **NOT YET DESIGNED** | Static standard formats, alongside the 10 AI-generated types |
 | 96 | Legal dictionary | ❌ **NOT YET DESIGNED** | Terms, Latin maxims, procedural vocabulary |
@@ -111,7 +121,7 @@ task, not a build task** — do not improvise screens for these.
 | 36 · Draft output | AI-mark header band | **No mark.** Consent at onboarding instead (PD-8) |
 | 38 · AI-mark removal | `10b`, `design/screens/renders/46-seal-moment@2x.png` | **Screen removed.** There is nothing to remove |
 | 42 · Privacy disclosure | Shown in `9b` honest-states | **Moves to onboarding and settings.** Not shown during use |
-| — · Consent screen | did not exist | ❌ **NOT YET DESIGNED** — must be actively accepted; records timestamp + terms version |
+| — · Consent screen | did not exist | ✅ `renders/66-consent-clean-draft@2x.png` — **corrected 8 Aug 2026, it was drawn.** Must be actively accepted; records timestamp + terms version |
 
 `design/screens/renders/32-badge-family@3x.png`, `design/screens/renders/43-badge-greyscale.png` and
 `design/screens/renders/33-search-mixed-list@2x.png` now **diverge from the product**: they show five

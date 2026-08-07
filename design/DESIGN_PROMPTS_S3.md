@@ -1,11 +1,28 @@
-# DESIGN PROMPTS — the five undesigned S3 screens + the consent screen
+# DESIGN PROMPTS — RETRACTED IN PART, 8 Aug 2026
 
-Paste each block into Claude as its own request. They are written to be used
-independently; each carries the constraints it needs.
-
-**Every prompt inherits `design/DESIGN_SYSTEM.md`.** The non-negotiables repeated
-in each block are the ones a designer working from screenshots would otherwise get
-wrong, and they are product rules rather than taste.
+> **READ THIS FIRST. Most of what follows was unnecessary.**
+>
+> These prompts were written on the strength of `design/SCREENS.md` saying "None
+> is drawn" for rows 88–99. **That line was stale.** Listing
+> `design/screens/renders/` showed seven of those screens already had renders:
+> the cause list, client share, adjournment, limitation, fee log, bare acts and
+> the consent screen.
+>
+> **Do not commission these six.** They exist. SCREENS.md is corrected.
+>
+> **What is genuinely still undrawn**, verified against the renders directory:
+> - row 94 · bare act reading view (may share structure with the judgment reading
+>   view `11e` — confirm before drawing twice, as the row itself says)
+> - row 95 · draft template library
+> - row 96 · legal dictionary
+> - row 97 · court rules and practice directions
+> - row 99 · court fee calculator
+> - row 98 · limitation **calculator** — *unless* `71-limitation@2x.png` is it
+>   rather than the row 91 alert block. Somebody has to look.
+>
+> The house rules below are still correct and worth giving to any designer. The
+> six briefs are kept as a record of the mistake, and because their content
+> transfers if any of these screens is ever redrawn.
 
 ---
 
