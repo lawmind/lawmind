@@ -27,10 +27,26 @@
  * rows, and only a human looking at the image could have caught that. This
  * catches the mechanical half.
  */
+import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 
 const INVENTORY = 'design/screens/SCREENS.md';
 const RENDER_DIR = 'design/screens/renders';
+/**
+ * Renders that were deliberately corrected, pinned by hash.
+ *
+ * **Presence is not correctness.** The checks above prove a render a row names is
+ * on disk. They said nothing when a delivered bundle overwrote two corrected
+ * renders with their pre-correction copies — byte-identical to the versions that
+ * had been replaced *because they broke settled product rules* — and the revert
+ * was committed unnoticed. The file existed, so the gate was happy.
+ *
+ * A hash is the only thing that catches that. Only corrected renders are pinned,
+ * never all 87: design re-delivers renders legitimately all the time, and pinning
+ * every one would fail on ordinary work. These two were decided, so a change to
+ * them has to be decided too.
+ */
+const CORRECTED_FILE = 'design/screens/corrected-renders.json';
 
 if (!existsSync(INVENTORY)) {
   console.error(`${INVENTORY} is missing — the screen inventory is the design authority.`);
@@ -81,6 +97,29 @@ for (const [file, line] of canvasReferenced) {
   }
 }
 
+if (existsSync(CORRECTED_FILE)) {
+  const pinned = JSON.parse(readFileSync(CORRECTED_FILE, 'utf8')).renders ?? {};
+  for (const [file, meta] of Object.entries(pinned)) {
+    const path = `${RENDER_DIR}/${file}`;
+    if (!existsSync(path)) {
+      problems.push(`${file} was corrected in ${meta.corrected} and is now missing entirely`);
+      continue;
+    }
+    const actual = createHash('sha256').update(readFileSync(path)).digest('hex');
+    if (actual !== meta.sha256) {
+      problems.push(
+        `${file} has changed since it was corrected in ${meta.corrected}.\n` +
+          `      it was corrected because: ${meta.why}\n` +
+          `      expected sha256 ${meta.sha256}\n` +
+          `      found            ${actual}\n` +
+          `      If this is a deliberate new version, update the hash in ${CORRECTED_FILE} in the\n` +
+          `      same commit and say why. If it arrived in a delivered bundle, check whether the\n` +
+          `      bundle shipped the PRE-correction copy — that has happened, on this exact file.`,
+      );
+    }
+  }
+}
+
 /**
  * A row that claims to be undrawn while a plausibly-matching render exists.
  *
@@ -114,7 +153,8 @@ if (problems.length > 0) {
   console.error(`design inventory disagrees with ${RENDER_DIR}:\n`);
   for (const p of problems) console.error(`  ${p}`);
   console.error(
-    `\nThis has cost real work twice. Fix the row or add the render — do not ignore it.`,
+    `\nEach of these has cost real work at least once. Fix the row, add the render, or\n` +
+      `re-pin the hash deliberately — do not ignore it.`,
   );
   process.exit(1);
 }

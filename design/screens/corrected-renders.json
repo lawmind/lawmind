@@ -1,0 +1,15 @@
+{
+  "note": "Renders that were deliberately corrected. A bundle that overwrites one with its pre-correction copy is a silent product-rule regression — it happened once, on both files below, and no gate caught it because the file still EXISTED. Presence is not correctness. If design intends a new version of one of these, update the hash in the same commit and say why.",
+  "renders": {
+    "70-client-share@2x.png": {
+      "sha256": "26ae87375d1597993bee888dbb7c51def6305fd968f65896f3410e25d3ed9e45",
+      "corrected": "6a49b09",
+      "why": "replaced because the original broke a settled product rule; a later bundle shipped the pre-correction copy and it was committed unnoticed"
+    },
+    "73-fee-log@2x.png": {
+      "sha256": "840ab5834867fdaad582efe752e4a8b803447fe7716d9464d59ddb2d0b03179d",
+      "corrected": "6a49b09",
+      "why": "replaced because the original broke a settled product rule; a later bundle shipped the pre-correction copy and it was committed unnoticed"
+    }
+  }
+}
