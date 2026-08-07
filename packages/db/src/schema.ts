@@ -500,3 +500,154 @@ export const auditLog = pgTable(
     index('audit_log_target_type_target_id_idx').on(t.targetType, t.targetId),
   ],
 );
+
+/* ------------------------------------------ tables added after S0 (S1) -- */
+
+/**
+ * **These four were live in the database before they were declared here**, added
+ * through hand-written migrations 0008–0012 while the typed client stayed blind
+ * to them. That breaks this file's own rule at the top — *never add a table
+ * without updating that file in the same commit* — and it meant every query
+ * against them had to go through raw `postgres.js` SQL with no type checking.
+ * Transcribed from the migrations, which are the shipped truth.
+ */
+
+/**
+ * Judgment-to-judgment edges — the citation graph.
+ *
+ * `cited_judgment_id` is nullable **on purpose**. A citation that does not resolve
+ * EXACTLY against a stored `neutral_citation` or `reporter_citations` entry keeps
+ * its row unresolved rather than being fuzzy-matched to the nearest candidate: a
+ * wrong edge is a fabricated statement about what one court said of another.
+ * Unresolved rows are kept because they measure corpus coverage.
+ *
+ * `relationship` and `evidence` travel together. Where the court printed an
+ * annotation — "– overruled", "– relied on" — the relationship is recorded WITH
+ * the phrase that justifies it, so any row can be audited back to its own text.
+ * The check constraint lives in migrations 0008 and 0010, not in a pgEnum,
+ * because that is how it was shipped.
+ */
+export const judgmentCitations = pgTable(
+  'judgment_citations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    citingJudgmentId: uuid('citing_judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+    /** Null when the citation did not resolve. Never guessed. */
+    citedJudgmentId: uuid('cited_judgment_id').references(() => judgments.id, {
+      onDelete: 'set null',
+    }),
+    citationText: text('citation_text').notNull(),
+    normalisedCitation: text('normalised_citation').notNull(),
+    /** cites | followed | distinguished | doubted | overruled | overruled_in_part */
+    relationship: text('relationship').notNull().default('cites'),
+    /** The court's own phrase that justified the relationship. Auditable. */
+    evidence: text('evidence'),
+    charOffset: integer('char_offset').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('judgment_citations_unique_edge').on(t.citingJudgmentId, t.normalisedCitation),
+    index('judgment_citations_citing_idx').on(t.citingJudgmentId),
+    index('judgment_citations_cited_idx').on(t.citedJudgmentId),
+    index('judgment_citations_cited_relationship_idx').on(t.citedJudgmentId, t.relationship),
+    index('judgment_citations_unresolved_idx').on(t.normalisedCitation),
+  ],
+);
+
+/**
+ * Highlight and save, PD-9 item 3.
+ *
+ * Two paragraph fields because they answer different questions and diverge. A
+ * re-ingest can move a paragraph's POSITION, and an annotation that followed the
+ * index would silently relocate to a different passage of the same judgment —
+ * nothing errors, the note is simply attached to the wrong law.
+ */
+export const judgmentAnnotations = pgTable(
+  'judgment_annotations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+    matterId: uuid('matter_id').references(() => matters.id, { onDelete: 'set null' }),
+    /** What the court PRINTED. Null on every pre-1990s scan. The citable anchor. */
+    paragraphNumber: integer('paragraph_number'),
+    /** Position in the rendered array. Never citable. */
+    paragraphIndex: integer('paragraph_index').notNull(),
+    quote: text('quote').notNull(),
+    note: text('note'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    /** Soft delete: what an advocate had marked, and when, is asked later. */
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('judgment_annotations_user_judgment_idx').on(t.userId, t.judgmentId),
+    index('judgment_annotations_matter_idx').on(t.matterId),
+  ],
+);
+
+/**
+ * Subject following — an in-app feed, never a notification.
+ *
+ * **There is deliberately no `notified_at` and no delivery state.** PD-5 excludes
+ * subject-following from notifications entirely — *"that is discovery, not an
+ * alert; it belongs in the app, never in a notification"* — and a column for
+ * delivery would invite one to be built. PD-6 is why it matters: advocates who
+ * disable notifications lose their hearing reminders with them.
+ *
+ * `last_seen_at` is what makes a feed a feed: anything newer is unseen.
+ */
+export const savedSearches = pgTable(
+  'saved_searches',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    queryText: text('query_text').notNull(),
+    /** en | hi — check constraint in migration 0009. */
+    queryLanguage: text('query_language').notNull().default('en'),
+    filters: jsonb('filters'),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('saved_searches_user_idx').on(t.userId),
+    index('saved_searches_last_seen_idx').on(t.userId, t.lastSeenAt),
+  ],
+);
+
+/**
+ * What we hold, against what the source has. One row per source.
+ *
+ * A library rendered as complete when it is not **misstates what we hold**, and an
+ * advocate searching for an Act we have not reached concludes we do not have it.
+ * Same argument as `truncated` on the precedent graph.
+ *
+ * `source_total` is what the SOURCE reports — read from its own index at
+ * enumeration — never a number anyone typed, and **null until an enumeration has
+ * run**: unknown is a state, not zero. The count of what we hold is recomputed on
+ * read from the real tables and never cached here, because a stale count is
+ * exactly the lie this table exists to prevent.
+ */
+export const corpusCoverage = pgTable('corpus_coverage', {
+  source: text('source').primaryKey(),
+  /** Null until an enumeration has run. Unknown is a state, not zero. */
+  sourceTotal: integer('source_total'),
+  /** When the source was last enumerated — distinct from when rows were written. */
+  enumeratedAt: timestamp('enumerated_at', { withTimezone: true }),
+  /** True only when a full pass finished with no failures. */
+  complete: boolean('complete').notNull().default(false),
+  /** Named, never merely counted — an unauditable gap is not a known gap. */
+  failedIds: text('failed_ids')
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});

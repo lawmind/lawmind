@@ -65,7 +65,8 @@ const COLUMNS = `id, query_text, query_language, filters,
                  last_seen_at::text AS last_seen_at, created_at::text AS created_at`;
 
 /**
- * Auth ships in S5 and is RCC's. `saved_searches.user_id` is NOT NULL, correctly —
+ * Auth ships in S5 and is this lane's to build. `saved_searches.user_id` is NOT
+ * NULL, correctly —
  * a saved search belongs to somebody. Rather than invent a user or loosen the
  * column to paper over a sequencing gap, these routes answer honestly. Same
  * posture as `judgments/annotations.ts`.

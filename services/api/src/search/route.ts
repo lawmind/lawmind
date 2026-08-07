@@ -68,7 +68,7 @@ export async function handleSearch(
   const asOf = new Date().toISOString();
 
   // `searches.user_id` is NOT NULL (SCHEMA_TRUTH), and the contract authenticates
-  // this endpoint with a Bearer token — but auth is S5 and RCC-owned, so in S1
+  // this endpoint with a Bearer token — but auth is S5 and not yet built, so in S1
   // there is no user to attribute a search to. Rather than invent one, the search
   // row is written only when a user is present and `searchId` is null otherwise.
   // RCC: `searchId` can be null until auth lands.

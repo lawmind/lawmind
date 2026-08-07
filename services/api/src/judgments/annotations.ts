@@ -54,7 +54,9 @@ const shape = (r: Row) => ({
 });
 
 /**
- * Auth is S5 and RCC-owned. Until it lands there is no user to attribute an
+ * Auth ships in S5 and is THIS lane's — `sprints/SPRINT_5.md` gives LCC
+ * `packages/auth/**`; RCC owns only the mobile screens. Until it lands there is
+ * no user to attribute an
  * annotation to, and `judgment_annotations.user_id` is NOT NULL — correctly, an
  * annotation belongs to somebody. Rather than invent a user or make the column
  * nullable to work around a sequencing gap, these routes answer honestly.

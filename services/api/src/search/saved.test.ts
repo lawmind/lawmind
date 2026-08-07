@@ -43,7 +43,7 @@ describe('saved searches', () => {
   });
 
   it('refuses rather than inventing a user, because a saved search belongs to one', async () => {
-    // Auth is S5 and RCC's. `saved_searches.user_id` is NOT NULL, correctly. The
+    // Auth is S5 and unbuilt. `saved_searches.user_id` is NOT NULL, correctly. The
     // failure mode this guards is a sequencing gap being papered over with an
     // anonymous or shared user, which would make one advocate's feed visible to
     // another the moment auth landed.
