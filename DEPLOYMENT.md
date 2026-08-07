@@ -136,76 +136,72 @@ One-time batch on a rented GPU box. Embed, then load vectors into Railway
 Postgres. A 15K-document embed inside a Railway service will time out and cost
 more than the GPU hour.
 
-## Mail — Resend, and the one step that still needs a human
+## Mail — Resend, verified and sending
 
 Magic-link sign-in sends through **Resend** (swapped from Postmark, 7 Aug 2026 —
-`docs/OPEN_DECISIONS.md` §Auth). Two variables, both set in Railway and never in
-the repo:
+`docs/OPEN_DECISIONS.md` §Auth). Two variables, both in Railway, never in the repo:
 
 ```
-RESEND_API_KEY   # SEND-ONLY key. See below — the restriction is deliberate.
-MAIL_FROM        # currently "Lawmind <onboarding@resend.dev>"
+RESEND_API_KEY   # SEND-ONLY. The restriction is deliberate — see below.
+MAIL_FROM        # "Lawmind <no-reply@lawmind.co>"
 ```
 
-**The key is deliberately send-only.** The API needs exactly one capability: post
-an email. A full-access key can also create and delete domains and mint further
-keys, and none of that belongs in a web process that is reachable from the
-internet. If a send-only key leaks, the damage is somebody sending mail from our
-account; if a full-access key leaks, the damage is somebody taking the account.
+**`lawmind.co` was verified 7 Aug 2026** and delivery to an address that is *not*
+the Resend account owner was observed, which is the only test that proves it.
+Before that, `onboarding@resend.dev` — Resend's shared sender — delivered only to
+the account owner and refused everyone else with HTTP 403.
 
-The practical cost, worth knowing before it surprises somebody: **domain
-administration cannot be done from the API with this key.** It returns
-`401 restricted_api_key`. That is the restriction working, not a fault.
+### Two keys, on purpose
 
-### ⚠️ Beta cannot onboard anyone but the account owner until this is done
+| Key | Permission | Where it lives |
+|---|---|---|
+| `lawmind-api-send-only` | sending only | Railway `RESEND_API_KEY` |
+| `lawmind-api-production` | full access | **not** in Railway — administration only |
 
-`onboarding@resend.dev` is Resend's shared test sender and it **only delivers to
-the address that owns the Resend account.** Any other recipient is refused with
-HTTP 403, which `POST /auth/magic-link` correctly surfaces as
-`503 MAIL_UNAVAILABLE` rather than claiming a send it did not make.
+The API needs exactly one capability: post an email. A full-access key can also
+create and delete domains and mint further keys, and none of that belongs in a web
+process reachable from the internet. Leak the send-only key and somebody sends mail
+as us; leak a full-access key and somebody takes the account.
 
-**DNS for `lawmind.co` lives at Spaceship.** Nameservers are
-`launch1.spaceship.net` / `launch2.spaceship.net` — verified by lookup, not
-assumed. Managed either in the panel (Domains → `lawmind.co` → Advanced DNS) or
-through their API at `https://spaceship.dev/api/v1/dns/records/{domain}`, which
-takes `X-Api-Key` and `X-Api-Secret` headers and a `PUT` to write.
+Verified rather than assumed: the send-only key returns **200** on a send and
+**401 `restricted_api_key`** on `GET /domains`. If domain administration is ever
+needed again, use the admin key or flip permission in the dashboard — do not put a
+full-access key back into the service.
 
-The zone as of 7 Aug 2026 is three records: `A @` and `A www` (both
-`76.76.21.21`, a Vercel address serving the landing page) plus a Google
-site-verification `TXT` on the apex. **No MX and no DMARC**, so mail records
-collide with nothing. Every Resend record goes on a SUBDOMAIN (`send`,
-`resend._domainkey`) and Spaceship's editor wants the host only — entering
-`send.lawmind.co` produces `send.lawmind.co.lawmind.co`, which is the most common
-way this fails.
+### The DNS, and the trap in it
 
-**The DKIM value cannot be predicted or reused.** It is generated per domain when
-the domain is added in Resend, so the Resend step genuinely comes first; there is
-no correct set of records to pre-create. A **send-only** Resend key returns
-`401 restricted_api_key` for domain administration, so adding the domain needs
-either the dashboard or a full-access key.
+**DNS for `lawmind.co` is at Spaceship** — nameservers `launch1/launch2.spaceship.net`,
+confirmed by lookup. Manageable in the panel (Domains → `lawmind.co` → Advanced
+DNS) or via `https://spaceship.dev/api/v1/dns/records/{domain}` with `X-Api-Key`
+and `X-Api-Secret` headers; `PUT` writes, and **`force: false` adds without
+replacing the zone**.
 
-So a real advocate cannot currently sign in. The fix is entirely DNS and needs
-somebody with registrar access to **lawmind.co**:
+Three records were added, all on subdomains, leaving the apex untouched:
 
-1. In the Resend dashboard, **Domains → Add Domain → `lawmind.co`**.
-2. Create the DNS records it lists at the registrar — an MX and a TXT for the
-   bounce subdomain, a TXT DKIM record, and optionally a DMARC record.
-3. Wait for the dashboard to show **Verified**.
-4. Set `MAIL_FROM` in Railway to an address on the verified domain — suggest
-   `Lawmind <no-reply@lawmind.co>` — and redeploy the `api` service.
+| Type | Host | Value |
+|---|---|---|
+| `TXT` | `resend._domainkey` | DKIM public key (unique per domain) |
+| `TXT` | `send` | `v=spf1 include:amazonses.com ~all` |
+| `MX` | `send` | `feedback-smtp.us-east-1.amazonses.com`, priority 10 |
 
-Nothing in the code changes. The provider sits behind the `Mailer` interface in
-`packages/auth/src/mail.ts`, so `MAIL_FROM` is the whole of the change.
+**Spaceship wants the host, not the FQDN.** Resend returns names as
+`send.lawmind.co`; writing that verbatim yields `send.lawmind.co.lawmind.co`. The
+sync script strips the domain suffix for exactly this reason — it is the most
+common way this fails and it looks like a propagation problem for an afternoon.
 
-**Verify it worked by sending to an address that is not the account owner**, not
-by reading the dashboard. Until step 4 lands, treat sign-in as working for the
-Resend account owner only.
+**The DKIM value cannot be predicted or pre-created.** It is generated when the
+domain is added in Resend, which is why that step genuinely comes first. Region is
+`us-east-1`; the SPF and MX values follow from it, so a different region means
+different records.
+
+The apex still carries `A @` and `A www` → `76.76.21.21` (a Vercel address serving
+the landing page) and the Google site-verification `TXT`. None of them were
+touched. There is still **no DMARC** record — worth adding, not required.
 
 ### Why it fails loudly rather than quietly
 
 `mailerFrom` **refuses to start** in production when `RESEND_API_KEY` is unset.
-There is a console transport that prints the link instead of sending it, and it
-is available only outside production, because a service that fell back to it
-would log a successful sign-in for every advocate who never received an email.
-An API that cannot send mail should refuse to boot, not discover it at the first
-user.
+There is a console transport that prints the link instead of sending it, available
+only outside production, because a service that fell back to it would log a
+successful sign-in for every advocate who never received an email. An API that
+cannot send mail should refuse to boot, not discover it at the first user.
