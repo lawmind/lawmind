@@ -102,10 +102,10 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `GET /matters/:id/shares` | SPECCED |
-| `POST /matters/:id/shares` | SPECCED |
-| `DELETE /matters/:id/shares/:shareId` | SPECCED |
-| `PATCH /matters/:id/events/:eventId` | SPECCED |
+| `GET /matters/:id/shares` | BUILT |
+| `POST /matters/:id/shares` | BUILT |
+| `DELETE /matters/:id/shares/:shareId` | BUILT |
+| `PATCH /matters/:id/events/:eventId` | BUILT |
 
 **Briefings — LCC owns**
 

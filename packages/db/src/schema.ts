@@ -888,3 +888,35 @@ export const citationCopies = pgTable(
     index('citation_copies_user_copied_at_idx').on(t.userId, t.copiedAt.desc()),
   ],
 );
+
+/**
+ * **PD-3 — sharing is per matter, by invitation.** The owner invites a named
+ * person to a specific case, the way a file is handed over.
+ *
+ * There is no chamber-wide switch and there must never be one: Indian chambers
+ * work case-by-case, and chamber-wide default sharing is a conflicts hazard —
+ * two advocates in one chamber can be on opposing sides of related matters.
+ *
+ * **Revocation is a timestamp, never a delete.** "Who had sight of this matter,
+ * and when" is exactly what a conflicts challenge asks, possibly years later.
+ */
+export const matterShares = pgTable(
+  'matter_shares',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    matterId: uuid('matter_id')
+      .notNull()
+      .references(() => matters.id, { onDelete: 'cascade' }),
+    /** Null until the invitee has an account — the share survives that gap. */
+    invitedUserId: uuid('invited_user_id').references(() => users.id),
+    /** Enrolment number or phone, AS TYPED — what the owner believed they shared with. */
+    invitedIdentifier: text('invited_identifier').notNull(),
+    grantedByUserId: uuid('granted_by_user_id')
+      .notNull()
+      .references(() => users.id),
+    grantedAt: timestamp('granted_at', { withTimezone: true }).notNull().defaultNow(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    revokedByUserId: uuid('revoked_by_user_id').references(() => users.id),
+  },
+  (t) => [index('matter_shares_invited_user_idx').on(t.invitedUserId, t.revokedAt)],
+);

@@ -54,6 +54,14 @@ import {
   patchMatter,
   patchMatterBody,
 } from './matters/route.ts';
+import {
+  createShare,
+  eventVisibilityBody,
+  listShares,
+  revokeShare,
+  setEventVisibility,
+  shareBody,
+} from './matters/shares.ts';
 import { handleSearch, searchRequest, type SearchDeps } from './search/route.ts';
 import {
   createSavedSearch,
@@ -265,6 +273,31 @@ export function createApp(deps: AppDeps) {
     // inserts the SQL keyword DEFAULT, never a value chosen in application code.
     app.post('/matters/:id/events', validate('json', createEventBody), async (c) =>
       createMatterEvent(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // PD-3 — sharing is PER MATTER, BY INVITATION. There is no chamber-wide
+    // endpoint and there must never be one: chamber-wide default sharing is a
+    // conflicts hazard, since two advocates in one chamber can be on opposing
+    // sides of related matters. Revocation is a timestamp, never a delete.
+    app.get('/matters/:id/shares', async (c) =>
+      listShares(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.post('/matters/:id/shares', validate('json', shareBody), async (c) =>
+      createShare(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    app.delete('/matters/:id/shares/:shareId', async (c) =>
+      revokeShare(c, sql, c.req.param('id'), c.req.param('shareId'), await userFor(c)),
+    );
+    // PD-4 — per note, reversibly. The court record always travels; what the
+    // advocate thinks about it does not, until they say so.
+    app.patch('/matters/:id/events/:eventId', validate('json', eventVisibilityBody), async (c) =>
+      setEventVisibility(
+        c,
+        sql,
+        c.req.param('id'),
+        c.req.param('eventId'),
+        await userFor(c),
+        c.req.valid('json'),
+      ),
     );
     // The 24-hour briefing — the wedge. `overruled_status` is re-read LIVE on
     // every render and is never served from the cached content: a briefing is
