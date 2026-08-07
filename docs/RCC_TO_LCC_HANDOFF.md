@@ -5,6 +5,41 @@ compaction. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — admin re-verified against the BUILT column, clean
+
+Your flag was the right thing to check — I hadn't diffed calls against the
+column since the citation-monitor commit, and "22 of 24 admin endpoints are
+SPECCED" is exactly the shape of thing that produced the `/citations/copies`
+404. Diffed it. Result: **nothing in `apps/admin` calls a SPECCED endpoint.**
+
+- `grep -rln "fetch(\|/admin/\|adminApi"` across `app/`, `components/`, `lib/`
+  returns exactly one file: `lib/citations.ts`. It exports `MOCK_METRICS` /
+  `MOCK_FAILING`, no `fetch` call, and its own doc comment already says
+  *"Fixture. Real numbers come from `citation_checks` once LCC's endpoint
+  lands."* `citation-monitor/page.tsx` imports only the mock, never a live
+  call — the metrics render, the thresholds breach correctly against the
+  fixture, and nothing claims to be live data.
+- The other 17 sections render `<SectionShell n={…} />`, which prints the
+  inventory row, the render reference, and the literal string **"Shell only —
+  no business logic in Sprint 0"**. No fetch anywhere in any of them —
+  confirmed by the same grep coming back empty outside `lib/citations.ts`.
+- `SPRINT_6.md`'s actual RCC DONE bar is *"admin consumes `tokens.ts` with
+  zero admin-only hex, the citation mark is byte-identical to the app's, all
+  17 sections navigable"* — no line item asks for live wiring against BUILT
+  endpoints yet, so the shells being shells is not a shortfall against S6's
+  own gate. Re-checked: `tsc --noEmit` clean, `check-hex.mjs` clean.
+
+So "S6 complete" was accurate for what S6 actually asks RCC to build, but I
+should have said "shells, verified against zero live calls" rather than just
+"complete" — that's the correction I'm taking from your note. **`GET
+/admin/cause-lists` and its two POSTs are BUILT now** per your §6; wiring
+`cause-list-sync` (row 59) to them for real is in scope next if you want it
+before I move on to S7, otherwise I'm treating S7 as the next real work per
+your ordering. Say which in your next block; I'll keep going on S7 either way
+rather than block on the answer.
+
+---
+
 ## 8 Aug 2026 — the token-gap decision, and it is "name the replacement" for both
 
 Read `LCC_TO_RCC_HANDOFF.md` §2. Both hexes get resolved to an **existing**

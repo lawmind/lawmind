@@ -131,11 +131,28 @@ can degrade to AWS-only without losing the `public_x2` guarantee.
 | **LegitQuest** | large | iSearch | **iDraf** — suggests precedent as you write | no | no | not stated | mid |
 | **VIDUR AI** | curated | Q&A | some | no | no | knowledge sets human-reviewed, **not per answer** | mid |
 | **Jhana** | — | research | yes | no | no | citation accuracy **automated check** | mid |
-| **Law4u** | bare acts + judgments | chatbot | PDF export | no | no | none | free + IAP |
+| **Law4u** | bare acts + judgments, 1M+ judgments [vendor claim, Play listing] | chatbot ("Law AI Bot", "Judgment AI") | 3,200+ drafts [vendor claim], PDF export | no | no | none stated | free + IAP |
+| **Lawyyar** | not stated | "Law Hub" search + case-file upload/analyse ("Case Analyzer") | "Case Automation" — drafting, unscoped in listing | **yes** — "Case Nest": reminders, status updates | no | none stated | not verified [Play listing gives no price tier] |
+| **LegalKart Lawyer** | none — not a research app | none | none | **yes**, but as a **lead/practice-management tool** (client leads, invoicing, WhatsApp), not a court-record tracker | no | n/a | free [lead-gen model, take-rate not stated] |
+| **SupremeToday AI** | not stated | Boolean + "conceptual search", doc simplification, doc review/**compare** | not stated as a distinct feature | no | no | none stated — sells **endorsement** ("endorsed by various High Court and judicial officers"), not an accuracy number | not verified [Play listing gives no price tier] |
 | **e-SCR** | SC complete | keyword | no | no | no | it *is* the source | free |
 | **Provakil / Notify** | — | no | no | **yes** | no | n/a | low |
 | **Harvey** | no Indian court data | strong | strong | no | no | not stated | $1,000+/seat |
 | **Lawmind** (planned) | 38,341 SC + statutes | hybrid + dense | 10 templates | **yes** | **yes** | **three-tier, zero threshold** | ₹799–3,499/mo |
+
+**Lawyyar, LegalKart Lawyer and SupremeToday AI added 8 Aug 2026**, sourced from
+their own Play Store listings only (`docs/ASO.md` §1 has the full teardown,
+ratings and install counts) — **no pricing page, no hands-on testing**, so
+"not verified" above means exactly that and not "free." Two corrections to the
+assumption implicit in `docs/COMPETITIVE.md`'s single "Consumer apps: Law4u,
+Lawyyar, LegalKart" row: **LegalKart Lawyer is not a research or drafting
+competitor at all** — its own listing describes a lead-generation and
+practice-management tool for lawyers (accept client leads, invoice, WhatsApp
+clients), closer to a lightweight Clio than to Law4u. It competes with Lawmind's
+matter workspace at the edges, not with search or drafting. **Lawyyar is the
+closer analogue to Prism** at consumer scale — research, drafting automation and
+case tracking in one app — but with no stated verification and, per its Play
+listing, only 500+ installs, far behind Law4u's 1M+.
 
 ### What each does best — the honest list
 
@@ -275,5 +292,11 @@ comparison.
   and it is the same fixed query set we gate ourselves on.
 - **Prism's actual retrieval quality is unmeasured.** 30M judgments is a corpus
   claim, not a relevance claim.
-- **No pricing verified for CaseMine, LegitQuest, VIDUR, Jhana, Manupatra.**
-- **`docs/ASO.md` §1 competitor teardown** is a separate exercise and still open.
+- **No pricing verified for CaseMine, LegitQuest, VIDUR, Jhana, Manupatra, Lawyyar,
+  LegalKart Lawyer, or SupremeToday AI** — the last three's Play listings state no
+  price tier at all, which is itself worth re-checking hands-on before assuming
+  free.
+- **`docs/ASO.md` §1 competitor teardown is done, 8 Aug 2026**, Play Store side —
+  titles, short descriptions, ratings, installs for all five ASO-named apps
+  (Law4u, Notify Court Case Status, Lawyyar, LegalKart Lawyer, SupremeToday). iOS
+  side and screenshot narratives remain open, noted there.

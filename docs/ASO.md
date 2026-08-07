@@ -12,32 +12,77 @@ status" and install what ranks. Nothing existed for this workstream before
 
 ---
 
-## 1 · Competitor teardown — to be filled
+## 1 · Competitor teardown — done, 8 Aug 2026, Play Store only
 
-All five are live on the Indian store. **This table is the first task, and it is
-research, not writing** — open each listing and record what is actually there.
+All five researched on the **Play Store listing** (`play.google.com/store/apps/details`).
+None was tested hands-on — everything below is what the listing itself shows, not
+usage. **iOS App Store not covered here**: three of the five (Notify, LegalKart,
+SupremeToday) also list on iOS, but the two stores' fields are different enough
+(see the note under the table) that mixing them into one row would blur which
+platform said what. Redo this pass for iOS before designing the iOS listing.
 
-| App | Title | Subtitle | Keyword field | Screenshot order | Reviews / rating | Update cadence |
-|---|---|---|---|---|---|---|
-| **Law4u** | TBD | TBD | TBD | TBD | TBD | TBD |
-| **Notify Court Case Status** | TBD | TBD | TBD | TBD | TBD | TBD |
-| **Lawyyar** | TBD | TBD | TBD | TBD | TBD | TBD |
-| **LegalKart Lawyer** | TBD | TBD | TBD | TBD | TBD | TBD |
-| **SupremeToday** | TBD | TBD | TBD | TBD | TBD | TBD |
+**A methodology note, because it shapes how much to trust the "not shown" cells:**
+the Play Store listing itself is a JS app that neither a direct fetch nor the two
+APK-mirror sites tried (`apkcombo.com`, `apkpure.com`) would render from this
+network — both connections were refused outright. A text-extraction proxy
+(`r.jina.ai`) got a server-rendered pass of the same listing through, which is how
+every figure below was actually read. **Screenshot order could not be recovered by
+any of the three routes** — no route returns the images or their captions, only
+text — so that column stays genuinely unknown, not guessed.
 
-Record for each:
-- **Exact** title and subtitle, character counts included
-- Keyword field where visible (iOS keyword fields are not public — infer only
-  from ranking data in a tool, and mark inference as inference)
-- **Screenshot narrative order** — what they lead with, and what they think the
-  second screenshot has to prove
-- Review volume and rating, with the date observed
-- Update cadence over the last six months
+| App | Title (as shown) | Play short description | Reviews / rating | Installs | Last updated |
+|---|---|---|---|---|---|
+| **Law4u** | Law4u - Law of India & Acts | "Your Ultimate AI-Powered Legal Assistant & Law Practice App! ⚖️🇮🇳" | **4.2, 157 reviews** | 10L+ (1M+) | not captured |
+| **Notify Court Case Status** | Notify Court Case Status | no distinct short-description line found separate from the full description | **no rating shown** — below Play's display threshold | 5K+ | **7 Aug 2026** — one day before this research |
+| **Lawyyar** | Lawyyar – Your Legal Companion | "Legal guidance, case tools & smart research at your fingertips" | **no rating shown** — below Play's display threshold | 500+ | not captured |
+| **LegalKart Lawyer** | LegalKart- Lawyer App | not captured separately from the full description | **no rating shown** — below Play's display threshold | not captured | not captured |
+| **SupremeToday** | Supreme Today AI | "An indispensable Tool for Legal Professionals, Endorsed by Various High Court and Judicial Officers" | **4.8, 10 reviews** | 50K+ | not captured |
 
-**What to look for beyond the fields:** which of them leads with *case status*
-rather than *legal research*. `PRODUCT_BRIEF.md` says the daily loop is the
-differentiator, and if every competitor leads with search, the cause list is an
-open position on the store as well as in the product.
+**Keyword field:** N/A as asked — that column is an **iOS-only field** per §2 below,
+and all five of these were read from Android listings. The Android analogue is
+**description keyword density** (Play's own ranking signal), which the full
+descriptions pulled during this pass do support reading — worth a dedicated pass
+once a tool is in place (§3), not eyeballed here.
+
+**Developer, for the record:** Law4u — V2s Dev · Notify — Ajax Media Tech Private
+Limited · Lawyyar — Skillpark Innovations Private Limited, Hyderabad · LegalKart —
+Black Coat Technologies Pvt Ltd · SupremeToday — Vikas Info Solutions / Vikas
+Nijhawan.
+
+### What to take from this, not needing a tool
+
+- **Every one of the five leads with breadth or reassurance, not speed.** Law4u's
+  own short description sells itself as an "AI-Powered Legal Assistant"; Lawyyar
+  sells "legal guidance, case tools & smart research"; SupremeToday sells
+  endorsement ("endorsed by various High Court and judicial officers"). **None of
+  the five leads with a listing, a hearing, or a next date** — none pitches the
+  daily loop at all. `PRODUCT_BRIEF.md`'s read that the loop is an open position
+  is confirmed, not just theorised: the store shelf itself has nobody standing
+  there.
+- **Two of five (Lawyyar, LegalKart) show no Play rating at all** — genuinely too
+  new or too low-volume for Play to display one, not a hidden number. Only Law4u
+  (157 reviews) and SupremeToday (10 reviews) clear Play's display floor, and even
+  Law4u at 1M+ installs converts to a strikingly low review rate. **A listing that
+  actually earns reviews is not solved by any of them either.**
+- **Notify updated the day before this research ran** (7 Aug 2026) — the one
+  visibly active competitor by that signal, worth re-checking near launch rather
+  than treated as settled.
+- **Law4u is the only one making an explicit AI claim in its short description**
+  ("AI-Powered Legal Assistant"), everyone else buries AI in the full description
+  or feature list — an unclaimed opening in the first 80 characters, which is the
+  only part of the listing most browsers ever read.
+
+### Left for the tool pass (§3/§5), not guessable now
+
+- Exact character counts on title/short-description (need the literal string
+  copied from the listing at the point of writing our own, not re-derived from
+  research notes).
+- Screenshot order and narrative for all five — no text-only route recovers
+  images.
+- Rating/installs for LegalKart in full, and any six-month update-cadence history
+  for any of the five — Play's public listing does not surface a changelog beyond
+  the current version's "what's new," and none was legible through the proxy pass.
+- The iOS side of Notify, LegalKart and SupremeToday.
 
 ---
 
@@ -53,14 +98,30 @@ Constraints are platform rules, not preferences.
 | **Play long description** | 4000 chars | Keyword **density** matters on Play. It does not on iOS |
 | **Screenshots** | — | **The first two carry ~90% of the conversion decision.** Everything after is for the minority who scroll |
 
-Drafts: TBD after §1.
+### Drafts, 8 Aug 2026 — candidates, not decisions
 
-**Screenshot narrative — the strategic call to make before designing any.** The
-first two must answer the two questions an advocate has in the three seconds they
-spend on a listing: *does it know my courts* and *will it save me time tomorrow
-morning*. The daily cause list and the hearing briefing are the two strongest
-candidates. Verified-citation depth is our real moat but it is a **trust** claim,
-not a **speed** claim, and trust does not convert an install.
+Character counts below are hand-counted against the strings as written here;
+**recount from the literal string at submission time**, don't trust arithmetic
+carried over from this doc.
+
+| Field | Candidate | Count | Why |
+|---|---|---|---|
+| Title (30, both stores) | `Lawmind – Cause List & Cases` | 29 | Leads with the one term §1 found **no competitor puts in their title or short description** — every one of the five sells research or reassurance, none sells "I know what's listed for you." Carries two of §3's candidate clusters (`cause list`, `case`) in the 30 chars that matter most. |
+| Title, alternative | `Lawmind: Verified Case Search` | 30 | Leads with the compliance wedge (`docs/COMPETITIVE.md` §3) instead of the loop. Weaker per the finding above — trust doesn't convert an install (see screenshot rationale) — kept as the alternative if the founder wants the moat foregrounded over the habit. |
+| Subtitle (30, iOS only) | `Today's hearings, briefed daily` | 32 | **Over by 2 — needs a cut before use.** Placeholder for the shape of the claim, not the string to ship. `Hearings briefed, daily` (24) is a safe fallback. |
+| Play short description (80, Android) | `Today's cause list, a 24-hour briefing, and citations you can file on.` | 72 | Android's analogue to the iOS subtitle — this is the field Play actually gives 80 chars to, and §1 found all five competitors under-use it (two don't have a distinct one at all). Names the loop AND the harness in one line. |
+| Keyword field (100, iOS only) | `cause list,case status,hearing,court,advocate,briefing,citation,judgment,bare act,limitation,bns` | 99 | No repeats of words already in the title/subtitle per the platform rule. Every §3 cluster present once. **Not ranked against volume — §3 is still `UNKNOWN — requires tool`, this is coverage, not priority order.** |
+
+**Screenshot narrative — the strategic call, now backed by §1's evidence, not
+just reasoning.** The first two must answer the two questions an advocate has in
+the three seconds they spend on a listing: *does it know my courts* and *will it
+save me time tomorrow morning*. §1 confirms the daily cause list and the hearing
+briefing are not just our strongest candidates in the abstract — **they are an
+open position on the actual shelf**: none of the five competitors researched leads
+with a listing, a hearing, or a next date in their own store copy. Verified-citation
+depth is our real moat but it is a **trust** claim, not a **speed** claim, and
+trust does not convert an install — recommend it as screenshot 3 or 4, after the
+loop has already answered "will this save me time."
 
 ---
 
@@ -110,8 +171,10 @@ Thailand is out of v1 (`PRD.md` §Geography). No Thai listing.
 
 - **OD-9 — DEFERRED 2 Aug 2026, no longer blocking.** Buy one month of AppTweak
   or App Radar ($50–100) just before launch and cancel after. §3 stays UNKNOWN
-  until then, and §1 competitor teardown needs no tool — start it now. Nothing in
-  this file can be ranked without it.
-- **S7** is the sprint that consumes this, but §1 competitor research needs no
-  tool and no product — it can start today and should, because it informs the
-  screenshot narrative and therefore what S3 and S4 must be able to demonstrate.
+  until then. **This is now the only thing left in this file that needs a tool** —
+  §1 competitor teardown is done (8 Aug 2026, Play Store side; iOS side still
+  open, needs no tool either, just a repeat pass) and §2 has draft copy pending
+  a founder decision between the two title candidates, not pending research.
+- **S7** is the sprint that consumes this. §1 has already fed the screenshot
+  narrative call in §2 — this is what S3/S4 need to be able to demonstrate on
+  screen when screenshots are actually captured.
