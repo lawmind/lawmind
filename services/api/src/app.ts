@@ -1,6 +1,13 @@
 import { Hono } from 'hono';
 import { requestId } from 'hono/request-id';
 
+import {
+  causeListQuery,
+  escalateBody,
+  escalateCauseList,
+  listCauseLists,
+  retryCauseList,
+} from './admin/cause-lists.ts';
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { buildSha } from './build-info.ts';
 import { getCitationCheck } from './citations/check.ts';
@@ -147,6 +154,19 @@ export function createApp(deps: AppDeps) {
         c.req.valid('query'),
         search.embedQuery,
       ),
+    );
+    // Cause list sync health. Built now and useful before a single cause list
+    // exists: with the eCourts kill switch off, a retry is REFUSED and the
+    // refusal is written to the ledger, which is how the gate is demonstrated
+    // rather than asserted. The two privileged routes 401 until auth ships.
+    app.get('/admin/cause-lists', validate('query', causeListQuery), (c) =>
+      listCauseLists(c, sql, c.req.valid('query')),
+    );
+    app.post('/admin/cause-lists/:id/retry', (c) =>
+      retryCauseList(c, sql, c.req.param('id'), search.userId),
+    );
+    app.post('/admin/cause-lists/:id/escalate', validate('json', escalateBody), (c) =>
+      escalateCauseList(c, sql, c.req.param('id'), search.userId, c.req.valid('json')),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));

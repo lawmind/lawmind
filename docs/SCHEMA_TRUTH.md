@@ -328,10 +328,28 @@ prevents. `order_text` is the court record and is always visible to a share;
 ## briefings
 `id` uuid pk · `matter_id` uuid fk→matters cascade · `hearing_date` date ·
 `generated_at` timestamptz · `content` jsonb · `delivered_at` timestamptz null ·
-`opened_at` timestamptz null
+`opened_at` timestamptz null · `dates_confirmed_at` timestamptz null ·
+`dates_not_confirmed_at` timestamptz null · `dates_not_confirmed_reason` text null ·
+`hearing_date_source` enum (advocate|cause_list) null
 
 Unique: (matter_id, hearing_date). The sweep is idempotent — re-running must not
 duplicate.
+
+**Date confirmation — added 7 Aug 2026, migration 0013.** `cause_list_syncs`
+names `dates_not_confirmed` as its escalation target and no column carried it.
+**Three states, deliberately not a boolean:** both timestamps null = *nobody has
+checked*; `dates_confirmed_at` set = confirmed against a successful sync;
+`dates_not_confirmed_at` set = we tried and could not, and
+`dates_not_confirmed_reason` says how. A bool cannot say "we never looked", and
+that is a different thing to tell an advocate than "we looked and failed". The two
+timestamps are mutually exclusive by check constraint, and the reason is present
+exactly when the failure is.
+
+`hearing_date_source` records where the date came from. **A date the advocate
+typed is a first-class source (PD-12), not a fallback** — next dates are given
+orally in open court, and a date is not more trustworthy for having been scraped.
+The briefing assembly reads the same either way, which is what lets A4 ship
+whether or not the eCourts path is available.
 
 ## documents
 `id` uuid pk · `user_id` uuid fk→users · `matter_id` uuid null fk→matters ·
@@ -472,8 +490,23 @@ current state only; history lives in `audit_log`, which is the point.
 `updated_by_user_id` uuid null fk→users · `updated_at` timestamptz
 
 Kill-switch keys are a **fixed set**: `search` · `drafting` · `briefings` ·
-`ocr_intake` · `signups`. An unknown key is rejected, never implicitly created —
-a typo must not silently produce a switch nobody is watching.
+`ocr_intake` · `signups` · **`ecourts_harvest`** *(added 7 Aug 2026)*. An unknown
+key is rejected, never implicitly created — a typo must not silently produce a
+switch nobody is watching. The set is enforced by a check constraint, so adding a
+seventh is a migration.
+
+`ecourts_harvest` governs whether any code path may contact eCourts at all. It is
+created **off**, and off is not the only lock: the guard also requires the grant's
+conditions to be transcribed into
+`services/api/src/court/authorisation.ts`. **On plus terms-absent still refuses.**
+`CLAUDE.md`: *if the authorisation's terms are not in the repo, the switch stays
+off.*
+
+**Built in migration 0013, ahead of S6.** The write endpoint
+(`POST /admin/platform/kill-switches/:key`) is **not** built and stays SPECCED, so
+until S6 this row moves only by a hand-written statement — which is therefore
+**not** captured in `audit_log`, because the transaction that would write it does
+not exist yet. Recorded as a known gap rather than assumed away.
 
 `reason` is **NOT NULL for `kind = 'kill_switch'`**, enforced by a check
 constraint. Every write here writes `audit_log` in the same transaction; if the
@@ -493,6 +526,37 @@ Unique: (court, list_date). Index: btree on (list_date desc, status).
 Escalation is fixed: retry once → mark affected briefings
 `dates_not_confirmed` → notify affected advocates directly. An unconfirmed
 listing is **never** presented as confirmed — the same rule as citations.
+
+**Built 7 Aug 2026, migration 0013.** Three check constraints keep the statuses
+honest rather than trusting the writer: `ok` must have `item_count > 0`, `empty`
+must have `item_count = 0`, `failed` must carry an `error`. **A court genuinely
+publishes nothing some days, and that is not a parser failure** — collapsing the
+two is the same error class as confusing `miss` with `not_attempted`.
+
+## ecourts_fetch_ledger
+**Added 7 Aug 2026.** Every request made under the registrar's authorisation, and
+every one **refused**.
+
+`id` uuid pk · `requested_at` timestamptz · `court` text null · `endpoint` text ·
+`outcome` enum (ok|refused|error) · `http_status` int null ·
+`duration_ms` int null · `authorisation_reference` text null ·
+`refusal_reason` text null · `cause_list_sync_id` uuid null fk→cause_list_syncs
+
+Index: btree on (requested_at desc); btree on (court, requested_at desc).
+
+Permission arrives with conditions — volume, frequency, hours, attribution — and
+this is what makes *"did we stay inside the grant"* answerable **by query rather
+than by promise.** Refusals are rows too, because the ledger's other job is to
+show that the switch and the limiter actually held.
+
+`authorisation_reference` records **which transcription of the grant was in
+force**. If the registrar amends the conditions, requests made before and after
+must be distinguishable, or adherence can only be argued.
+
+Constraints: `refusal_reason` is present exactly when `outcome = 'refused'`; a
+refused row must carry **no** `http_status` and **no** `duration_ms`, because it
+never left the process. **The rate limiter counts only rows that reached the
+network** — a refusal must not consume the quota it just protected.
 
 ## citation_disputes
 The trust feedback loop. Outranks everything else in the admin.

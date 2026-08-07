@@ -72,6 +72,28 @@ export const overruledStatusEnum = pgEnum('overruled_status', [
   'doubted',
 ]);
 
+export const platformConfigKindEnum = pgEnum('platform_config_kind', [
+  'maintenance',
+  'kill_switch',
+  'flag',
+]);
+
+/**
+ * `ok` and `empty` are different facts, not degrees of the same one. A court
+ * genuinely publishes nothing some days; a parser that returned nothing is a
+ * failure. Collapsing them is how briefings go out with stale dates.
+ */
+export const causeListStatusEnum = pgEnum('cause_list_status', ['ok', 'empty', 'stale', 'failed']);
+
+export const ecourtsFetchOutcomeEnum = pgEnum('ecourts_fetch_outcome', ['ok', 'refused', 'error']);
+
+/**
+ * Where a hearing date came from. A date the advocate typed is a first-class
+ * source (PD-12), not a fallback — next dates are given orally in open court, and
+ * a date is not more trustworthy for having been scraped.
+ */
+export const hearingDateSourceEnum = pgEnum('hearing_date_source', ['advocate', 'cause_list']);
+
 export const oldActEnum = pgEnum('old_act', ['ipc', 'crpc', 'evidence']);
 export const newActEnum = pgEnum('new_act', ['bns', 'bnss', 'bsa']);
 export const statuteRelationshipEnum = pgEnum('statute_relationship', [
@@ -372,6 +394,23 @@ export const briefings = pgTable(
     content: jsonb('content').notNull(),
     deliveredAt: timestamp('delivered_at', { withTimezone: true }),
     openedAt: timestamp('opened_at', { withTimezone: true }),
+
+    /**
+     * The cause-list escalation target, added in migration 0013.
+     *
+     * **Three states, deliberately not a boolean.** A bool cannot say "nobody has
+     * looked", and that is a different thing to tell an advocate than "we looked
+     * and could not confirm it". Both null = never checked; `dates_confirmed_at`
+     * set = confirmed against a successful sync; `dates_not_confirmed_at` set =
+     * we tried and failed, and the reason says how.
+     *
+     * An unconfirmed listing is never presented as confirmed — the same rule as
+     * citations.
+     */
+    datesConfirmedAt: timestamp('dates_confirmed_at', { withTimezone: true }),
+    datesNotConfirmedAt: timestamp('dates_not_confirmed_at', { withTimezone: true }),
+    datesNotConfirmedReason: text('dates_not_confirmed_reason'),
+    hearingDateSource: hearingDateSourceEnum('hearing_date_source'),
   },
   // The sweep is idempotent — re-running must not duplicate.
   (t) => [uniqueIndex('briefings_matter_id_hearing_date_key').on(t.matterId, t.hearingDate)],
@@ -651,3 +690,97 @@ export const corpusCoverage = pgTable('corpus_coverage', {
     .default(sql`'{}'::text[]`),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/* ----------------------------------------- eCourts under the registrar's grant -- */
+
+/**
+ * Maintenance mode, the kill switches, and feature flags. One row per key —
+ * current state only; history lives in `audit_log`, which is the point.
+ *
+ * Created in migration 0013 rather than S0. It was one of SPRINT_0's ten deferred
+ * tables, and it is pulled forward because the eCourts adapter needs a switch that
+ * defaults off and the correct switch is the one the admin surface already
+ * specifies, not a second mechanism invented alongside it.
+ *
+ * **There is no write path in this sprint.** `POST /admin/platform/kill-switches/:key`
+ * is S6 and still SPECCED. Until it exists, this row moves only by a deliberate
+ * statement from someone with database access — which also means such a change is
+ * NOT in `audit_log`, because the transaction that would have written it does not
+ * exist yet. Stated rather than papered over.
+ */
+export const platformConfig = pgTable('platform_config', {
+  key: text('key').primaryKey(),
+  kind: platformConfigKindEnum('kind').notNull(),
+  enabled: boolean('enabled').notNull().default(false),
+  /** Flags only, 0–100. */
+  rolloutPercent: integer('rollout_percent'),
+  /** Maintenance only. */
+  message: text('message'),
+  /** NOT NULL for `kind = 'kill_switch'`, by check constraint. */
+  reason: text('reason'),
+  updatedByUserId: uuid('updated_by_user_id').references(() => users.id),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * Per-court cause-list scrape health.
+ *
+ * `ok` and `empty` are different facts and the check constraints keep them apart:
+ * a court genuinely has no listings some days, and reading that as a parser
+ * failure — or a parser failure as an empty day — is the same error class as
+ * confusing `miss` with `not_attempted` on the verification sheet.
+ */
+export const causeListSyncs = pgTable(
+  'cause_list_syncs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    court: text('court').notNull(),
+    listDate: date('list_date').notNull(),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    itemCount: integer('item_count').notNull().default(0),
+    status: causeListStatusEnum('status').notNull(),
+    retryCount: integer('retry_count').notNull().default(0),
+    escalatedAt: timestamp('escalated_at', { withTimezone: true }),
+    error: text('error'),
+  },
+  (t) => [
+    uniqueIndex('cause_list_syncs_court_list_date_key').on(t.court, t.listDate),
+    index('cause_list_syncs_list_date_status_idx').on(t.listDate.desc(), t.status),
+  ],
+);
+
+/**
+ * Every request made under the registrar's authorisation — and every one refused.
+ *
+ * Permission arrives with conditions: volume, frequency, hours, attribution. This
+ * table is what makes "did we stay inside the grant" answerable by query rather
+ * than by memory. Refusals are recorded too, because its other job is to show
+ * that the switch and the limiter actually held.
+ *
+ * The rate limiter counts rows here, not an in-memory counter: a restart must not
+ * hand us a fresh quota we were not granted.
+ */
+export const ecourtsFetchLedger = pgTable(
+  'ecourts_fetch_ledger',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    requestedAt: timestamp('requested_at', { withTimezone: true }).notNull().defaultNow(),
+    court: text('court'),
+    endpoint: text('endpoint').notNull(),
+    outcome: ecourtsFetchOutcomeEnum('outcome').notNull(),
+    httpStatus: integer('http_status'),
+    durationMs: integer('duration_ms'),
+    /** Which transcription of the grant was in force. Amendments must be distinguishable. */
+    authorisationReference: text('authorisation_reference'),
+    /** Set on `refused`, null otherwise: which lock stopped it. */
+    refusalReason: text('refusal_reason'),
+    causeListSyncId: uuid('cause_list_sync_id').references(() => causeListSyncs.id, {
+      onDelete: 'set null',
+    }),
+  },
+  (t) => [
+    index('ecourts_fetch_ledger_requested_at_idx').on(t.requestedAt.desc()),
+    index('ecourts_fetch_ledger_court_requested_at_idx').on(t.court, t.requestedAt.desc()),
+  ],
+);
