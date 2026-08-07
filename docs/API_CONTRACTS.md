@@ -138,7 +138,7 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `POST /court/lookup` | SPECCED |
+| `POST /court/lookup` | BUILT |
 
 **Admin — LCC owns the endpoints, RCC owns the UI**
 
@@ -750,6 +750,24 @@ POST /court/lookup   { cnrNumber } → { matter fields } | { available: false }
 ```
 Manual implementation returns `{ available: false }`; client falls back to the
 manual form. Nothing above this endpoint changes when OD-1 resolves.
+
+**BUILT 7 Aug 2026.** The full response is
+`{ available: false, reason, manualEntry: { expected, message } }`.
+
+**`available: false` is a normal 200, never an error.** Manual entry is
+first-class (PD-12) — next dates are given orally in open court and written on the
+file, so an advocate typing one is doing the ordinary thing. **Do not render this
+as a failure**; `manualEntry.message` carries copy that does not imply one.
+
+`reason` distinguishes `no_adapter_implemented` from `terms_not_on_file`,
+`kill_switch_off`, `court_not_permitted` and the rate-limit reasons. The client
+shows the same form for all of them; an operator reading a log needs to tell them
+apart, and collapsing them is the same mistake as collapsing `miss` into
+`not_attempted`.
+
+**It never answers from our own `matters` table.** A CNR is a public case number,
+so resolving one against our caseload would let anyone holding a CNR read another
+advocate's client name, party names and hearing date.
 
 ## Admin — LCC owns the endpoints, RCC owns the UI
 Full section-by-section surface, including which of the 17 designed sections have

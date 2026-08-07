@@ -23,6 +23,7 @@ import {
   verifyRequest,
 } from './auth/routes.ts';
 import { getBriefing, listMatterBriefings, markBriefingOpened } from './briefings/route.ts';
+import { courtLookupRequest, handleCourtLookup } from './court/lookup.ts';
 import { buildSha } from './build-info.ts';
 import { getCitationCheck } from './citations/check.ts';
 import {
@@ -269,6 +270,13 @@ export function createApp(deps: AppDeps) {
     );
     app.post('/briefings/:id/opened', async (c) =>
       markBriefingOpened(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    // The vendor-agnostic court adapter. Returns available:false today and the
+    // client falls back to the manual form — which is FIRST-CLASS (PD-12), not a
+    // fallback: next dates are given orally in open court. Nothing above this
+    // endpoint changes when OD-1 resolves.
+    app.post('/court/lookup', validate('json', courtLookupRequest), (c) =>
+      handleCourtLookup(c, sql, c.req.valid('json')),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));
