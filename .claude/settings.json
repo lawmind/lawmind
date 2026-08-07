@@ -5,9 +5,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/reanchor.sh",
-            "args": [],
-            "timeout": 10
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/reanchor.sh\"",
+            "shell": "bash",
+            "timeout": 10,
+            "statusMessage": "re-anchoring the Lawmind core"
           }
         ]
       }
@@ -17,9 +18,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh",
-            "args": [],
-            "timeout": 10
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh\"",
+            "shell": "bash",
+            "timeout": 10,
+            "statusMessage": "loading the Lawmind read order"
           }
         ]
       }
