@@ -79,6 +79,56 @@ export function tierMark(tier: CitationTier): TierMark {
 }
 
 /**
+ * POSTGRES TIMESTAMPS ARE NOT ISO-8601, AND HERMES IS STRICT ABOUT IT.
+ *
+ * `citation_checks.at` arrives as `2026-08-06 20:34:06.383686+00` — a space
+ * instead of `T`, microsecond precision, and a two-digit offset. V8 parses it
+ * anyway, so `new Date(at)` works in Node and in every test. Hermes, which is
+ * what actually runs on the phone, returns Invalid Date — and the sheet
+ * rendered the literal string "Invalid Date" beside "Safe to file", on the one
+ * surface whose entire job is to be trusted. Caught on a Galaxy S24, not in the
+ * suite, because the suite runs on Node.
+ *
+ * Returns null rather than a guess when the shape is unrecognised. A
+ * verification surface that states a check time it could not read is asserting
+ * diligence it cannot evidence — the same failure as a timestamp beside a tier
+ * that never ran, arriving through a different door.
+ */
+export function isoFromServerTimestamp(at: string | null): string | null {
+  if (!at) return null;
+
+  const m = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(\.\d+)?(Z|[+-]\d{2}(?::?\d{2})?)?$/.exec(
+    at.trim()
+  );
+  if (!m) return null;
+
+  const [, date, time, fraction, offset] = m;
+  // Milliseconds only: six fractional digits are valid ISO but not universally
+  // parsed, and nothing here is displayed below the day.
+  const ms = fraction ? `.${fraction.slice(1).padEnd(3, '0').slice(0, 3)}` : '';
+
+  let zone = 'Z';
+  if (offset && offset !== 'Z') {
+    zone = offset.length === 3 ? `${offset}:00` : offset.replace(/^([+-]\d{2})(\d{2})$/, '$1:$2');
+  }
+
+  return `${date}T${time}${ms}${zone}`;
+}
+
+/**
+ * "Checked 6 Aug" — or nothing at all where the time cannot be read.
+ *
+ * Never the string "Invalid Date", and never a fabricated date.
+ */
+export function tierDateLabel(at: string | null): string | null {
+  const iso = isoFromServerTimestamp(at);
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+}
+
+/**
  * "Checked against 1 of 3 sources" — STATED, NEVER LEFT TO BE COUNTED.
  *
  * Without this line "verified" reads as "verified by everything we have", which

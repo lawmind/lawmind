@@ -16,7 +16,12 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { CitationCheck, CitationTier, JudgmentDetail } from '../../api/contract';
-import { coverageLine, nothingIndependentRan, tierMark } from '../../citation/tiers';
+import {
+  coverageLine,
+  isoFromServerTimestamp,
+  nothingIndependentRan,
+  tierMark,
+} from '../../citation/tiers';
 import { easing } from '../../theme/easing';
 import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
@@ -264,16 +269,29 @@ function SourceRow({ tier }: { tier: CitationTier }) {
             that never executed is asserting diligence we did not perform.
           */}
           {mark.detail}
-          {mark.at ? ` ${relativeTime(mark.at)}` : ''}
+          {mark.at && relativeTime(mark.at) ? ` ${relativeTime(mark.at)}` : ''}
         </Text>
       </View>
     </View>
   );
 }
 
-/** "Checked 4 minutes ago". A timestamp an advocate has to decode is not a timestamp. */
-function relativeTime(iso: string): string {
-  const minutes = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60_000));
+/**
+ * "Checked 4 minutes ago". A timestamp an advocate has to decode is not a
+ * timestamp.
+ *
+ * RETURNS NULL RATHER THAN ARITHMETIC ON A BAD DATE. The server sends a
+ * Postgres timestamp that Hermes cannot parse, and `Date.now() - NaN` propagates
+ * all the way to "Checked NaN hours ago." — see `isoFromServerTimestamp`.
+ */
+function relativeTime(at: string): string | null {
+  const iso = isoFromServerTimestamp(at);
+  if (!iso) return null;
+
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return null;
+
+  const minutes = Math.max(0, Math.round((Date.now() - then) / 60_000));
   if (minutes < 1) return 'Checked just now.';
   if (minutes === 1) return 'Checked a minute ago.';
   if (minutes < 60) return `Checked ${minutes} minutes ago.`;

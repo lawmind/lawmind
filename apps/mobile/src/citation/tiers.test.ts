@@ -1,5 +1,12 @@
 import type { CitationCheck, CitationTier } from '../api/contract';
-import { coverageLine, nothingIndependentRan, sourceLabel, tierMark } from './tiers';
+import {
+  coverageLine,
+  isoFromServerTimestamp,
+  nothingIndependentRan,
+  sourceLabel,
+  tierDateLabel,
+  tierMark,
+} from './tiers';
 
 /**
  * THE RULE UNDER TEST: `miss` and `not_implemented` are different facts and are
@@ -126,6 +133,75 @@ describe('coverage', () => {
   it('does not count Tier 1 towards independence — the corpus is us', () => {
     // Tier 1 confirmed, tiers 2 and 3 unshipped: still nothing independent.
     expect(nothingIndependentRan(check())).toBe(true);
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE TIMESTAMP THAT SHIPPED "Invalid Date" ONTO THE VERIFICATION SHEET.
+ *
+ * `citation_checks.at` is a Postgres timestamp — `2026-08-06 20:34:06.383686+00`
+ * — with a space instead of `T`, microseconds, and a two-digit offset. V8 parses
+ * it, so `new Date(at)` works in Node and in this suite. HERMES DOES NOT, and
+ * the sheet rendered the literal string "Invalid Date" next to "Safe to file"
+ * on a Galaxy S24.
+ *
+ * These tests therefore assert the NORMALISED STRING, never that `new Date()`
+ * succeeded. A test written the obvious way — `expect(new Date(x).getTime()).not
+ * .toBeNaN()` — passes on Node against the raw value and ships the bug anyway.
+ * That is the whole lesson: the suite runs on a more forgiving engine than the
+ * phone.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('isoFromServerTimestamp', () => {
+  /** Strict ISO-8601. Hermes accepts this and nothing looser. */
+  const STRICT_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})$/;
+
+  it('normalises the exact production value to strict ISO-8601', () => {
+    const out = isoFromServerTimestamp('2026-08-06 20:34:06.383686+00');
+
+    expect(out).toBe('2026-08-06T20:34:06.383+00:00');
+    expect(out).toMatch(STRICT_ISO);
+  });
+
+  it('leaves an already-strict value usable', () => {
+    expect(isoFromServerTimestamp('2026-08-06T20:34:06.383Z')).toMatch(STRICT_ISO);
+    expect(isoFromServerTimestamp('2026-08-06T20:34:06Z')).toMatch(STRICT_ISO);
+  });
+
+  it('handles the offset forms Postgres emits', () => {
+    expect(isoFromServerTimestamp('2026-08-06 20:34:06+05:30')).toBe('2026-08-06T20:34:06+05:30');
+    expect(isoFromServerTimestamp('2026-08-06 20:34:06+0530')).toBe('2026-08-06T20:34:06+05:30');
+    expect(isoFromServerTimestamp('2026-08-06 20:34:06-04')).toBe('2026-08-06T20:34:06-04:00');
+  });
+
+  it('returns null rather than a guess for anything it does not recognise', () => {
+    expect(isoFromServerTimestamp(null)).toBeNull();
+    expect(isoFromServerTimestamp('')).toBeNull();
+    expect(isoFromServerTimestamp('6 August 2026')).toBeNull();
+    expect(isoFromServerTimestamp('not a date at all')).toBeNull();
+  });
+});
+
+describe('tierDateLabel', () => {
+  it('renders a date for a tier that ran', () => {
+    expect(tierDateLabel('2026-08-06 20:34:06.383686+00')).not.toBeNull();
+  });
+
+  /**
+   * The two ways a verification surface can assert a check it cannot evidence:
+   * a tier that never ran, and a time it could not read. Both render nothing.
+   */
+  it('renders nothing for a tier that never ran', () => {
+    expect(tierDateLabel(null)).toBeNull();
+  });
+
+  it('never returns the string "Invalid Date"', () => {
+    for (const bad of ['not a date', '', 'yesterday', '2026-13-45 99:99:99']) {
+      const out = tierDateLabel(bad);
+      expect(out).not.toBe('Invalid Date');
+      expect(out ?? '').not.toMatch(/invalid|nan/i);
+    }
   });
 });
 

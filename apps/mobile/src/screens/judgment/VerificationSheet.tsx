@@ -9,7 +9,7 @@ import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { CitationCheck, JudgmentDetail } from '../../api/contract';
 import { citationRender, copy } from '../../citation/renderState';
-import { coverageLine, sourceLabel, tierMark } from '../../citation/tiers';
+import { coverageLine, sourceLabel, tierDateLabel, tierMark } from '../../citation/tiers';
 import { color, space, state } from '../../theme/tokens';
 
 /**
@@ -135,12 +135,9 @@ export function VerificationSheet({
                       a badge on unverified law, and harder to notice because it
                       looks like care.
                     */}
-                    {mark.at ? (
+                    {tierDateLabel(mark.at) ? (
                       <Text opticalNudge variant="record">
-                        {new Date(mark.at).toLocaleDateString(undefined, {
-                          day: 'numeric',
-                          month: 'short',
-                        })}
+                        {tierDateLabel(mark.at)}
                       </Text>
                     ) : null}
                   </View>
