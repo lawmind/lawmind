@@ -145,6 +145,34 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
   knows them. `DOMAIN_TRUTH.md` or the fact does not exist.
 - Never invent a section number, citation format, or court hierarchy fact.
 
+## 6b. HOW TO WORK — continuous execution
+
+**Stated by the founder repeatedly, and binding on every agent in this repo.**
+
+**Work continuously.** Emitting prose ends the turn, so a status update *is* a
+stop. Keep calling tools until every task is done. Do not stop at a milestone, a
+green CI run, a successful deploy, or "a good place to check in". Batch reporting
+into one message when the work is actually finished.
+
+**Solve your own blockers.** Before declaring anything blocked, ask whether it is
+genuinely *a credential, an account, or money*. If not, it is yours:
+
+| looks like a blocker | it is not, because |
+|---|---|
+| a console/dashboard action | Railway, Resend and Spaceship all have a CLI or an API. Try it. Two "console only" items turned out to be one CLI call. |
+| a screen that is not designed | build the server side behind an **additive, documented, provisional** shape and mark it as such. The contract has absorbed additive endpoints before. |
+| a token you do not have | build the whole path behind an interface that works without it and **refuses honestly in production** — `packages/auth/src/mail.ts` is the pattern. Only the key is then outstanding. |
+| a long-running job | run it in the background and keep working. |
+
+**Stop only for:** an API key or secret you do not hold, an account that must
+exist under the founder's identity, or a paid service. Say it in one or two lines
+— having already built everything around it — and stop there.
+
+**This does not weaken anything in §6 or §7.** Verify by observation, never claim
+unverified work as done, never resolve an OPEN_DECISION alone, and stop after
+three failed attempts at the same thing. Continuous does not mean reckless: it
+means not handing the founder a decision they have already delegated.
+
 ## 7. SPRINT DISCIPLINE
 
 Four disjoint agent file-sets in parallel within a sprint. Hard gate. Then

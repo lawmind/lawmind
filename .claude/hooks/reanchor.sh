@@ -74,6 +74,22 @@ LAWMIND NON-NEGOTIABLE:
 - TWO lanes only: LCC=server, RCC=client. Write only inside yours. Contract
   (docs/API_CONTRACTS.md) is FROZEN per sprint. BUILD_GUIDE.md
 
+HOW TO WORK — the founder has asked for this repeatedly and it survives
+compaction, a new session, and a fresh agent:
+- WORK CONTINUOUSLY. Emitting prose ENDS THE TURN, so a status update IS a stop.
+  Keep calling tools until every task is done. Do not stop at a milestone, a green
+  CI run, or a successful deploy.
+- SOLVE YOUR OWN BLOCKERS. A console action is not a blocker — Railway, Resend and
+  Spaceship all have CLIs or APIs; try them. A missing design is not a blocker —
+  build the server side behind an additive, documented, provisional shape. A
+  missing token is not a blocker for the CODE — build the whole path behind an
+  interface that works without it and refuses honestly in production, as
+  packages/auth/src/mail.ts does.
+- STOP ONLY FOR: an API key or secret you do not have, an account that must be
+  created under the founder's identity, or something that costs money. State it in
+  one or two lines, having already built everything around it.
+- Batch reporting into ONE final message when the work is actually finished.
+
 If context was compacted: re-read docs/OPEN_DECISIONS.md, docs/SCHEMA_TRUTH.md,
 docs/CITATION_HARNESS.md before your next edit.
 </lawmind-core>
