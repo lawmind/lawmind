@@ -134,6 +134,13 @@
             "when": 1786184000000,
             "tag": "0018_matter_shares",
             "breakpoints": true
+        },
+        {
+            "idx": 19,
+            "version": "7",
+            "when": 1786220000000,
+            "tag": "0019_alerts",
+            "breakpoints": true
         }
     ]
 }

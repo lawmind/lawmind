@@ -25,6 +25,7 @@
  * and the one that drifts is the one that stops notifying.
  */
 import { applyOverruledChange } from '@lawmind/api/citations/fanout';
+import type { Pusher } from '@lawmind/api/push/expo';
 import type { Sql } from 'postgres';
 
 export type RecheckOutcome = {
@@ -47,7 +48,13 @@ export type RecheckResult = {
   finishedAt: string;
 };
 
-export async function runRecheck(sql: Sql): Promise<RecheckResult> {
+/**
+ * `pusher` is optional for the same reason `applyOverruledChange`'s is: omit
+ * it and the recheck still writes every alert row, it just does not push the
+ * two immediate exceptions. `recheck-cli.ts` passes one — this signature
+ * exists so a test can call `runRecheck` without standing up a transport.
+ */
+export async function runRecheck(sql: Sql, pusher?: Pusher): Promise<RecheckResult> {
   const startedAt = new Date().toISOString();
 
   /**
@@ -90,14 +97,18 @@ export async function runRecheck(sql: Sql): Promise<RecheckResult> {
 
   for (const row of diverged) {
     try {
-      const result = await applyOverruledChange(sql, {
-        judgmentId: row.judgment_id,
-        // The corpus is the authority here. The re-check does not decide that
-        // law moved — it notices that the corpus already says so and that
-        // somebody was shown otherwise.
-        toStatus: row.live as 'none' | 'set_aside' | 'partly_set_aside' | 'doubted',
-        trigger: 'recheck',
-      });
+      const result = await applyOverruledChange(
+        sql,
+        {
+          judgmentId: row.judgment_id,
+          // The corpus is the authority here. The re-check does not decide that
+          // law moved — it notices that the corpus already says so and that
+          // somebody was shown otherwise.
+          toStatus: row.live as 'none' | 'set_aside' | 'partly_set_aside' | 'doubted',
+          trigger: 'recheck',
+        },
+        pusher,
+      );
       outcomes.push({
         judgmentId: row.judgment_id,
         caseTitle: row.case_title,

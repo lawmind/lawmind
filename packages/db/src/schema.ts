@@ -190,6 +190,17 @@ export const citationSurfaceEnum = pgEnum('citation_surface', [
   'matter',
 ]);
 
+// Trigger 1 is always in-app only. Trigger 2 covers the filed-draft AND the
+// copied-out audience — identical severity by decision (CITATION_HARNESS.md
+// §When the law moves) — and is never togglable.
+export const alertKindEnum = pgEnum('alert_kind', [
+  'saved_authority_moved',
+  'filed_citation_moved',
+]);
+// immediate = pushed the moment the fan-out completes. batched = the evening
+// briefing's "since yesterday" block and nowhere else — PD-6.
+export const alertSeverityEnum = pgEnum('alert_severity', ['immediate', 'batched']);
+
 /* ----------------------------------------------------------------- tables -- */
 
 export const users = pgTable('users', {
@@ -214,6 +225,13 @@ export const users = pgTable('users', {
   // must be able to see that state.
   termsAcceptedAt: timestamp('terms_accepted_at', { withTimezone: true }),
   termsVersion: text('terms_version'),
+  // Citator alert settings — PD-5/PD-6. Default true: these are safety-relevant,
+  // so an advocate opts OUT of being told an authority moved, never opts in.
+  // There is no column for trigger 2 (filed_citation_moved): it cannot be
+  // disabled, and the API rejects any attempt to send a key for it.
+  alertSavedAuthorityMoved: boolean('alert_saved_authority_moved').notNull().default(true),
+  alertOwnMatterJudgment: boolean('alert_own_matter_judgment').notNull().default(true),
+  alertUnknownListing: boolean('alert_unknown_listing').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -886,6 +904,44 @@ export const citationCopies = pgTable(
     uniqueIndex('citation_copies_user_client_key_unique').on(t.userId, t.clientKey),
     index('citation_copies_judgment_id_idx').on(t.judgmentId),
     index('citation_copies_user_copied_at_idx').on(t.userId, t.copiedAt.desc()),
+  ],
+);
+
+/**
+ * Citator alerts — PD-5/PD-6. Only kinds 1 and 2 have a producer today
+ * (`applyOverruledChange`); triggers 3 (own-matter judgment, awaits OCR) and 4
+ * (unknown listing, awaits a cause-list-to-matter matcher) have no code that
+ * writes here yet. See `0019_alerts.sql` for why.
+ *
+ * `payload` stores FACTS about the event (fromStatus/toStatus at the time it
+ * happened), never composed copy and never the judgment's CURRENT status —
+ * `overruled_status` is never cached, so any surface rendering the judgment
+ * itself re-reads it live.
+ */
+export const alerts = pgTable(
+  'alerts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    kind: alertKindEnum('kind').notNull(),
+    severity: alertSeverityEnum('severity').notNull(),
+    judgmentId: uuid('judgment_id').references(() => judgments.id),
+    matterId: uuid('matter_id').references(() => matters.id),
+    fanoutId: uuid('fanout_id').references(() => citationFanouts.id),
+    payload: jsonb('payload').notNull(),
+    /** `sha256(fanoutId || kind || userId)` for kinds 1/2 — one alert per user per event. */
+    dedupeKey: text('dedupe_key').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    readAt: timestamp('read_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('alerts_user_dedupe_unique').on(t.userId, t.dedupeKey),
+    index('alerts_user_created_idx').on(t.userId, t.createdAt.desc()),
+    index('alerts_user_unread_idx')
+      .on(t.userId)
+      .where(sql`${t.readAt} IS NULL`),
   ],
 );
 

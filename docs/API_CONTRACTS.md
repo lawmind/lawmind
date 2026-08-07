@@ -162,10 +162,10 @@ endpoint.
 | `GET /admin/disputes/:id` | SPECCED |
 | `POST /admin/disputes/:id/uphold` | SPECCED |
 | `POST /admin/disputes/:id/reject` | SPECCED |
-| `GET /alerts` | SPECCED |
-| `POST /alerts/:id/read` | SPECCED |
-| `GET /me/alert-settings` | SPECCED |
-| `PATCH /me/alert-settings` | SPECCED |
+| `GET /alerts` | BUILT |
+| `POST /alerts/:id/read` | BUILT |
+| `GET /me/alert-settings` | BUILT |
+| `PATCH /me/alert-settings` | BUILT |
 | `POST /admin/overruled-rechecks/run` | SPECCED |
 | `GET /admin/templates` | SPECCED |
 | `POST /admin/templates` | SPECCED |
@@ -953,10 +953,23 @@ PATCH /me/alert-settings   { savedAuthorityMoved?, ownMatterJudgment?,
 | 3 | A judgment **in one of the advocate's own matters** is uploaded | corpus ingest |
 | 4 | A matter is **listed on a date they did not enter** | cause list sync |
 
-**Triggers 1 and 2 are already implemented by `applyOverruledChange`.** They are
-listed here because they are alerts the advocate receives, **not because anything
-new is built** — the fan-out is the single producer, and a second path that
-notices the same flip would double-notify. Do not add one.
+**Triggers 1 and 2 are implemented by `applyOverruledChange`** (8 Aug 2026 —
+`alerts` table, real audiences resolved from `citation_checks`/`documents`/
+`citation_copies`, immediate push for `set_aside`/`partly_set_aside`). The
+fan-out is the single producer; a second path that notices the same flip would
+double-notify. Do not add one.
+
+**Triggers 3 and 4 have no producer yet.** The endpoints are BUILT and the two
+settings keys are real and honoured — but nothing in the codebase writes an
+`ownMatterJudgment` or `unknownListing` alert today. Trigger 3 awaits the OCR
+pipeline (`POST /ocr/jobs`, still SPECCED); trigger 4 awaits a cause-list-to-
+matter matcher, which does not exist — `GET /admin/cause-lists` is per-court
+sync health, not per-matter, and `services/api/src/court/sync.ts`'s `escalate()`
+handles a *different* case (a confirmed date going unconfirmed after a scraper
+outage, already surfaced through the briefing's `dateConfidence`, not through
+this table). See `docs/FOUNDER_QUEUE.md` §The advocate-facing cause-list
+endpoint for the shape trigger 4 will need. Toggling either setting today is
+honest and inert, never a fabricated event.
 
 **Trigger 2 cannot be disabled.** `PATCH /me/alert-settings` accepts no key for
 it; sending one is a `400`. An advocate who has filed a document citing law that

@@ -8,6 +8,14 @@ import {
   listCauseLists,
   retryCauseList,
 } from './admin/cause-lists.ts';
+import {
+  alertsQuery,
+  alertSettingsBody,
+  getAlertSettings,
+  listAlerts,
+  markAlertRead,
+  patchAlertSettings,
+} from './alerts/route.ts';
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { acceptTerms, acceptTermsBody, getTerms, patchMe, patchMeBody } from './auth/account.ts';
 import { authMiddleware, profileIdFor } from './auth/middleware.ts';
@@ -307,6 +315,22 @@ export function createApp(deps: AppDeps) {
         await userFor(c),
         c.req.valid('json'),
       ),
+    );
+    // Citator alerts — PD-5/PD-6. The app does not grow a notifications tab:
+    // this feeds the briefing's "since yesterday" block, and `since` lets a
+    // client re-read a window it already saw. `overruled_status` is re-read
+    // LIVE per alert, same rule as the briefing below.
+    app.get('/alerts', validate('query', alertsQuery), async (c) =>
+      listAlerts(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    app.post('/alerts/:id/read', async (c) =>
+      markAlertRead(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    // Trigger 2 (filed_citation_moved) has no settings key and cannot be
+    // disabled — .strict() on the body schema rejects any attempt to send one.
+    app.get('/me/alert-settings', async (c) => getAlertSettings(c, sql, await userFor(c)));
+    app.patch('/me/alert-settings', validate('json', alertSettingsBody), async (c) =>
+      patchAlertSettings(c, sql, await userFor(c), c.req.valid('json')),
     );
     // The 24-hour briefing — the wedge. `overruled_status` is re-read LIVE on
     // every render and is never served from the cached content: a briefing is

@@ -9,6 +9,7 @@
  * Runs BEFORE the sweep, because briefings carry authorities and a sweep against
  * a stale status puts overruled law into tonight's briefing.
  */
+import { pusherFrom } from '@lawmind/api/push/expo';
 import postgres from 'postgres';
 
 import { runRecheck } from './recheck.ts';
@@ -21,7 +22,18 @@ if (!url) {
 
 const sql = postgres(url, { max: 4, onnotice: () => {} });
 try {
-  const r = await runRecheck(sql);
+  // Same pattern as sweep-cli.ts: real Expo push in production, a console
+  // transport everywhere else, so a misconfigured deploy cannot read as a
+  // working one. This is what makes "Push + in-app, immediately" on a
+  // set_aside/partly_set_aside real rather than aspirational.
+  const pusher = pusherFrom(
+    {
+      expoAccessToken: process.env['EXPO_ACCESS_TOKEN'],
+      nodeEnv: process.env['NODE_ENV'] ?? 'development',
+    },
+    (line) => console.log(line),
+  );
+  const r = await runRecheck(sql, pusher);
   console.log(`recheck: checked ${r.checked}, flipped ${r.flipped}, failed ${r.failed}`);
   for (const o of r.outcomes) {
     console.log(
