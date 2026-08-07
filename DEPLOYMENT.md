@@ -228,7 +228,34 @@ different records.
 
 The apex still carries `A @` and `A www` → `76.76.21.21` (a Vercel address serving
 the landing page) and the Google site-verification `TXT`. None of them were
-touched. There is still **no DMARC** record — worth adding, not required.
+touched.
+
+### DMARC — added 7 Aug 2026 at `p=none`, and that is deliberate
+
+```
+_dmarc  TXT  v=DMARC1; p=none; adkim=r; aspf=r; fo=1
+```
+
+**`p=none` is the correct posture and must not be tightened casually.** DMARC
+tells a receiving server what to do with mail that fails SPF *and* DKIM alignment.
+`p=reject` on a domain nobody has monitored rejects legitimate mail the instant a
+sender is missed — and the mail this domain sends is **sign-in links**, the one
+message the product cannot afford to lose. A rejected magic link looks to the
+advocate exactly like an app that does not work.
+
+`p=none` declares the policy, changes no delivery behaviour, and satisfies the
+"has DMARC" check that reputation systems apply.
+
+**Tightening to `quarantine` and then `reject` needs `rua` first**, which needs a
+destination for aggregate reports — a mailbox on the domain or a monitoring
+vendor. Neither exists, and a vendor costs money, so **that is a founder decision,
+not something to take by writing a bolder record.** The upgrade path is: add
+`rua`, watch a few weeks of reports, confirm every legitimate sender aligns, then
+move to `quarantine`, then `reject`.
+
+`fo=1` asks for a failure report whenever *either* SPF or DKIM fails rather than
+only when both do — useless until `ruf`/`rua` exists, harmless now, and one fewer
+edit later.
 
 ### Why it fails loudly rather than quietly
 
