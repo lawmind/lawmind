@@ -30,7 +30,11 @@ module.exports = {
    * under Jest. Registering the library's own mock here keeps that from
    * surfacing as a mystery failure in whichever screen test gets written next.
    */
-  setupFilesAfterEnv: [...(expoPreset.setupFilesAfterEnv ?? []), '<rootDir>/jest/safe-area.js'],
+  setupFilesAfterEnv: [
+    ...(expoPreset.setupFilesAfterEnv ?? []),
+    '<rootDir>/jest/safe-area.js',
+    '<rootDir>/jest/async-storage.js',
+  ],
   /**
    * ORDER MATTERS, AND OURS MUST COME FIRST.
    *

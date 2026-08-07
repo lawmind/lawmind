@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { useAppFonts } from '../src/theme/fonts';
+import { useOutbox } from '../src/state/outbox';
 import { useReadingStore } from '../src/state/reading';
 import { color, family, type as typeScale } from '../src/theme/tokens';
 
@@ -28,6 +29,8 @@ const queryClient = new QueryClient({
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useAppFonts();
   const hydrate = useReadingStore((s) => s.hydrate);
+  const hydrateOutbox = useOutbox((s) => s.hydrate);
+  const flushOutbox = useOutbox((s) => s.flush);
 
   useEffect(() => {
     if (fontsLoaded || fontError) SplashScreen.hideAsync().catch(() => {});
@@ -39,6 +42,19 @@ export default function RootLayout() {
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
+
+  /**
+   * PENDING COPY RECORDS GO OUT ON LAUNCH.
+   *
+   * A "Copy citation" tap made in a court building with no signal is queued on
+   * the device, and the next launch — usually somewhere with a connection — is
+   * the first chance to deliver it. Until it lands, that advocate is invisible
+   * to the overruled fan-out, so this is a correctness step and not telemetry.
+   * `SCHEMA_TRUTH.md#citation_copies`.
+   */
+  useEffect(() => {
+    void hydrateOutbox().then(() => flushOutbox());
+  }, [hydrateOutbox, flushOutbox]);
 
   // Nothing renders until the faces are in. A Hindi string in a fallback face
   // is a screen of missing-glyph boxes, and that is a product failure here.

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Clipboard from 'expo-clipboard';
 import { ChevronLeft, Clock, Info, X } from 'lucide-react-native';
 
 import { Button } from '../../components/Button';
@@ -13,6 +14,8 @@ import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { JudgmentDetail } from '../../api/contract';
 import { citationRender } from '../../citation/renderState';
+import { newClientKey, useOutbox } from '../../state/outbox';
+import { haptics } from '../../theme/haptics';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
 import { AuthoritiesPanel, useAuthorities } from './AuthoritiesPanel';
@@ -96,6 +99,8 @@ export function JudgmentScreen({
   const [missing, setMissing] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const enqueueCopy = useOutbox((s) => s.enqueue);
 
   /**
    * THE LOADING AND MISSING BRANCHES CARRY NO NAV ROW, SO NOTHING WAS PUSHING
@@ -204,6 +209,47 @@ export function JudgmentScreen({
 
   const { existence, moved } = citationRender(judgment);
   const blocked = moved.kind === 'moved' && moved.blocksAddToMatter;
+
+  /**
+   * WHAT LANDS ON THE CLIPBOARD IS TWO STORED FIELDS AND A COMMA.
+   *
+   * `DOMAIN_TRUTH.md`: "Never construct a citation string by pattern — render
+   * only what is stored." So this emits `caseTitle` and `neutralCitation`
+   * verbatim, exactly the two the screen is already showing, and invents no
+   * citation format around them. Reporter citations are deliberately left out:
+   * the screen does not show them here, and an advocate pasting a string they
+   * did not see on screen is the same class of surprise as a badge they did not
+   * ask for.
+   *
+   * Rendered from the resolved row, never from anything a model produced —
+   * `CITATION_HARNESS.md` step 8, which is the step most often skipped.
+   */
+  const citationText = `${judgment.caseTitle}, ${judgment.neutralCitation}`;
+
+  const copyLabel = copied ? 'Citation copied' : 'Copy citation';
+
+  const onCopyCitation = () => {
+    /**
+     * THE CLIPBOARD WRITE IS NOT AWAITED AGAINST THE NETWORK.
+     *
+     * The advocate asked for a string on their clipboard; they get it now, and
+     * offline. The record follows through the outbox — a court building with no
+     * signal is exactly where this is used, and making the paste wait on a
+     * write would trade what they asked for against what we want.
+     */
+    void Clipboard.setStringAsync(citationText);
+    haptics.tap();
+    setCopied(true);
+
+    void enqueueCopy({
+      judgmentId: judgment.judgmentId,
+      citationCheckId: citationCheckId ?? undefined,
+      // `SCHEMA_TRUTH.md#citation_copies` surface enum — not a free string.
+      surface: 'judgment_detail',
+      copiedAt: new Date().toISOString(),
+      clientKey: newClientKey(),
+    });
+  };
 
 
   return (
@@ -445,6 +491,25 @@ export function JudgmentScreen({
         />
 
         <Button label="Read the judgment" onPress={() => onSetReading(true)} variant="secondary" />
+
+        {/*
+          COPY CITATION — THE HIGHEST-RISK USER, AND THE ONLY HANDLE WE GET ON THEM.
+
+          `SCHEMA_TRUTH.md#citation_copies`: an advocate who copies a citation
+          into their own document "has taken it out of the app entirely — they
+          saw the badge, they may file it, and without this record NO
+          NOTIFICATION CAN EVER REACH THEM." The tap is the whole point of the
+          record, so the record is written on the tap and not on some later sync
+          we hope for.
+
+          IT IS OFFERED IN EVERY STATE, INCLUDING `set_aside`. Only
+          add-to-matter is refused (`CITATION_HARNESS.md`: "the ONE case where
+          Lawmind refuses to let an authority be used"), and refusing the copy
+          as well would be inventing a second refusal — while ALSO destroying
+          the only record that would let us warn them. Someone determined to
+          quote a set-aside case will retype it; better that we know.
+        */}
+        <Button label={copyLabel} onPress={onCopyCitation} variant="secondary" />
 
         {/*
           The label states the refusal rather than leaving a dead grey button
