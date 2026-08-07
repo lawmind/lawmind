@@ -101,9 +101,49 @@ export async function createAnnotation(
   const denied = requireUser(c, userId);
   if (denied) return denied;
 
-  const [judgment] = await sql<{ id: string }[]>`
-    SELECT id FROM judgments WHERE id = ${judgmentId}`;
+  const [judgment] = await sql<{ id: string; overruled_status: string; case_title: string }[]>`
+    -- Read LIVE, never cached. Verification is permanent; good-law status is not,
+    -- and a judgment that was fine to add last week may not be today.
+    SELECT id, overruled_status, case_title FROM judgments WHERE id = ${judgmentId}`;
   if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+
+  /**
+   * **`set_aside` disables add-to-matter — the one case where Lawmind refuses to
+   * let an authority be used.** Attaching an annotation to a `matterId` IS
+   * add-to-matter: it is how a passage becomes an authority in a case, and from
+   * there it reaches a draft and then a filing.
+   *
+   * Enforced on the server because the client's disabled button is presentation,
+   * not enforcement — the same reason citation locking lives in `PATCH
+   * /documents/:id`. A rule that only exists in the UI is a rule that a second
+   * client, a stale build, or a direct call does not have.
+   *
+   * **Saving the passage WITHOUT a matter is still allowed.** The refusal is
+   * about using it as an authority, not about reading it: an advocate has every
+   * reason to highlight the paragraph that was set aside, and blocking that would
+   * teach them the product is broken rather than careful.
+   *
+   * The response NAMES the judgment. "You cannot add this" with no reason sends
+   * the advocate to check manually, which is the work the product exists to save.
+   */
+  if (body.matterId && judgment.overruled_status === 'set_aside') {
+    const [overruler] = await sql<{ case_title: string; neutral_citation: string | null }[]>`
+      SELECT o.case_title, o.neutral_citation
+      FROM judgments j LEFT JOIN judgments o ON o.id = j.overruled_by_judgment_id
+      WHERE j.id = ${judgmentId} AND o.id IS NOT NULL`;
+    const displacedBy = overruler
+      ? ` It was set aside by ${overruler.case_title}${
+          overruler.neutral_citation ? ` ${overruler.neutral_citation}` : ''
+        }.`
+      : '';
+    return fail(
+      c,
+      'AUTHORITY_SET_ASIDE',
+      `${judgment.case_title} has been set aside and cannot be added to a matter.${displacedBy} ` +
+        'You can still save the passage on its own.',
+      409,
+    );
+  }
 
   const [row] = await sql<Row[]>`
     INSERT INTO judgment_annotations

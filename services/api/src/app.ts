@@ -41,6 +41,16 @@ import { getAuthoritiesAsAt } from './judgments/as-at.ts';
 import { getJudgment, judgmentParams } from './judgments/route.ts';
 import { getGraph, getTreatment, graphQuery, treatmentQuery } from './judgments/treatment.ts';
 import { logger } from './logger.ts';
+import {
+  createEventBody,
+  createMatter,
+  createMatterBody,
+  createMatterEvent,
+  getMatter,
+  listMatters,
+  patchMatter,
+  patchMatterBody,
+} from './matters/route.ts';
 import { handleSearch, searchRequest, type SearchDeps } from './search/route.ts';
 import {
   createSavedSearch,
@@ -227,6 +237,24 @@ export function createApp(deps: AppDeps) {
     );
     app.post('/admin/cause-lists/:id/escalate', validate('json', escalateBody), async (c) =>
       escalateCauseList(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // Matters — the retention moat, and what a briefing hangs off. Every
+    // statement scopes by user_id in its own WHERE clause rather than through a
+    // separate ownership lookup, so there is no path that forgets it. "Does not
+    // exist" and "is not yours" answer identically: a matter id that resolves is
+    // itself a fact about another advocate's caseload.
+    app.get('/matters', async (c) => listMatters(c, sql, await userFor(c)));
+    app.post('/matters', validate('json', createMatterBody), async (c) =>
+      createMatter(c, sql, await userFor(c), c.req.valid('json')),
+    );
+    app.get('/matters/:id', async (c) => getMatter(c, sql, c.req.param('id'), await userFor(c)));
+    app.patch('/matters/:id', validate('json', patchMatterBody), async (c) =>
+      patchMatter(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // PD-4 — note_visibility defaults to private IN THE COLUMN. An omitted field
+    // inserts the SQL keyword DEFAULT, never a value chosen in application code.
+    app.post('/matters/:id/events', validate('json', createEventBody), async (c) =>
+      createMatterEvent(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));

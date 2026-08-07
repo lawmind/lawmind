@@ -92,11 +92,11 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `GET /matters` | SPECCED |
-| `POST /matters` | SPECCED |
-| `GET /matters/:id` | SPECCED |
-| `PATCH /matters/:id` | SPECCED |
-| `POST /matters/:id/events` | SPECCED |
+| `GET /matters` | BUILT |
+| `POST /matters` | BUILT |
+| `GET /matters/:id` | BUILT |
+| `PATCH /matters/:id` | BUILT |
+| `POST /matters/:id/events` | BUILT |
 
 **Matter sharing — LCC owns · PD-3, PD-4**
 
