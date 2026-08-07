@@ -52,7 +52,23 @@ CRUD, the sweep and briefing generation are all buildable now.
    producer.** Trigger 2 (filed draft) **cannot be disabled**; the settings
    endpoint accepts no key for it. Batched into the evening briefing; **the app
    does not grow a notifications tab.** Two standing exceptions push immediately.
-8. **Push** via Expo push.
+
+   > **CORRECTION, 7 Aug 2026 — `applyOverruledChange` DOES NOT EXIST.** Grepped
+   > across `services/**` and `packages/**`: the only occurrence anywhere is a
+   > *comment* in `packages/db/src/schema.ts` describing what it should do.
+   > `citation_fanouts` is not created either.
+   >
+   > So the instruction above is not "reuse the existing producer" but **"build it,
+   > once"** — and it is the shared operation that the **nightly overruled
+   > re-check (22:30)** and the **dispute-uphold path in S6** must both call.
+   > Whoever builds it first fixes that shape for both.
+   >
+   > **This is why only the 23:00 sweep exists.** The 22:30 job has nothing to
+   > call, so the ordering in `DEPLOYMENT.md` is currently documentation rather
+   > than something the system enforces.
+8. **Push** via Expo push. **BUILT 7 Aug 2026** — `services/cron/src/deliver.ts`,
+   one push per advocate per evening. Expo needs **no credential**: the push API
+   accepts unauthenticated sends, and `EXPO_ACCESS_TOKEN` is optional.
 
 **DONE**
 - A briefing generates for a real matter and **opens with the network off**
