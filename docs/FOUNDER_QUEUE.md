@@ -233,6 +233,33 @@ courtroom at the wrong hour.
 The screen is built and works today against `GET /matters` alone, rendering every
 listed matter as "not yet published". Nothing above it changes when this lands.
 
+### [OPEN] Limitation and court-fee calculators need a sourced dataset · RCC · 8 Aug 2026
+**Needs:** the Limitation Act 1963 schedule (article → period → starting point,
+~180 rows) and the per-state Court Fees Act ad valorem tables, in a
+machine-readable form with provenance — the same standard `DOMAIN_TRUTH.md`
+holds BNS/BNSS/BSA to. indiacode.nic.in carries the bare Acts; nobody has yet
+turned them into the row-level table a calculator needs, the way LCC did for
+the IPC↔BNS mapping.
+
+**Why this is not a blocker RCC can route around:** `IMPLEMENTATION.md` §9d
+calls the limitation answer "the highest-anxiety calculation an advocate
+makes — missing a limitation period is malpractice" and requires the
+provision to be "quoted verbatim directly beneath it." `DOMAIN_TRUTH.md` and
+this file's own hard rules are explicit: never invent a section number or a
+legal fact from memory, primary sources only. Building either calculator
+without a sourced table is the exact failure class this product exists to
+prevent, on the two calculations where a wrong answer costs a client their
+case.
+
+**Cost if never resolved:** rows 98–99 (`SPRINT_3.md`/`SPRINT_4.md`,
+`IMPLEMENTATION.md` §9d) stay unbuilt. Both are Tier B weekly-use screens, not
+Tier A, so nothing else in the product depends on them.
+
+**Where it plugs in:** a `limitation_periods` / `court_fee_schedule` table,
+`packages/db` — LCC's lane once the source data exists, the same shape as
+`statute_mappings`. The client-side arithmetic (a limitation calculator is
+mostly date math once the period and starting rule are known) is straightforward
+against `theme/hearingDate.ts` and is not the hard part.
 ---
 
 # RESOLVED — kept for provenance
