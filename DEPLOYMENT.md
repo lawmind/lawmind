@@ -164,6 +164,26 @@ the address that owns the Resend account.** Any other recipient is refused with
 HTTP 403, which `POST /auth/magic-link` correctly surfaces as
 `503 MAIL_UNAVAILABLE` rather than claiming a send it did not make.
 
+**DNS for `lawmind.co` lives at Spaceship.** Nameservers are
+`launch1.spaceship.net` / `launch2.spaceship.net` — verified by lookup, not
+assumed. Managed either in the panel (Domains → `lawmind.co` → Advanced DNS) or
+through their API at `https://spaceship.dev/api/v1/dns/records/{domain}`, which
+takes `X-Api-Key` and `X-Api-Secret` headers and a `PUT` to write.
+
+The zone as of 7 Aug 2026 is three records: `A @` and `A www` (both
+`76.76.21.21`, a Vercel address serving the landing page) plus a Google
+site-verification `TXT` on the apex. **No MX and no DMARC**, so mail records
+collide with nothing. Every Resend record goes on a SUBDOMAIN (`send`,
+`resend._domainkey`) and Spaceship's editor wants the host only — entering
+`send.lawmind.co` produces `send.lawmind.co.lawmind.co`, which is the most common
+way this fails.
+
+**The DKIM value cannot be predicted or reused.** It is generated per domain when
+the domain is added in Resend, so the Resend step genuinely comes first; there is
+no correct set of records to pre-create. A **send-only** Resend key returns
+`401 restricted_api_key` for domain administration, so adding the domain needs
+either the dashboard or a full-access key.
+
 So a real advocate cannot currently sign in. The fix is entirely DNS and needs
 somebody with registrar access to **lawmind.co**:
 
