@@ -219,15 +219,50 @@ and recorded in IMPLEMENTATION.md §9b.
 | 115 | **Paywall — Practice · Chamber · Expert · Firm** | `13b` | `renders/76-pricing@2x.png` |
 | 116 | **Founding offer** | `13b` | `renders/76-pricing@2x.png` |
 | 117 | **Legal dictionary** | `13c` | `renders/77-library-three@2x.png` |
-| 118 | **Court rules reader** | `13c` | `renders/77-library-three@2x.png` |
-| 119 | **Court fee calculator** | `13c` | `renders/77-library-three@2x.png` |
+| 118 | **Court rules reader** | — | NOT YET DESIGNED |
+| 119 | **Court fee calculator** | — | NOT YET DESIGNED |
 
 Renders **33** and **34** were re-rendered in place on the silence rule, so they drop
 in as replacements wherever they are already referenced — including the marketing
 site. Their earlier badge-bearing versions no longer exist on disk.
 
-**Every screen in this file now has a canvas id and a render. Nothing is marked
-NOT YET DESIGNED.**
+### Turn 14 — Task 0 verified against the renders directory, not the table above
+
+`renders/77-library-three@2x.png` is a single 404×962 frame: **the dictionary
+only.** Court rules and the fee calculator were never rendered despite the
+filename and the rows above — corrected to NOT YET DESIGNED.
+
+`renders/71-limitation@2x.png` **is the calculator** (row 103/104) — an advocate
+enters relief type and cause-of-action date, gets a computed deadline with its
+article and a barred state. The **evening-briefing limitation alert block**
+(a different, smaller surface — see PROMPT 4 in `DESIGN_PROMPTS_S3.md`) is a
+separate undrawn screen, added below as row 121.
+
+The bare-act reading view does **not** need its own design — `renders/72-bare-acts@2x.png`
+already confirms it reuses the judgment reader's exact treatment (26px gutter,
+current-paragraph ink, neighbours at 50%) and adds only the IPC↔BNS mapping card.
+Row 94 stands as drawn.
+
+| # | Screen | Canvas | Render |
+|---|---|---|---|
+| 120 | **Draft template library** — static forms, distinct from the 10 generated drafts | `14a` | `13-draft-template-library.dc.html` |
+| 121 | **Limitation alert — inside the evening briefing** | — | NOT YET DESIGNED |
+| 122 | **Court rules reader** | `14b` | `14-court-rules-reader.dc.html` |
+| 123 | **Court fee calculator** | `14b` | `15-court-fee-calculator.dc.html` |
+
+> **Render paths corrected 8 Aug 2026 by LCC.** These four rows named
+> `renders/78-template-library@2x.png` and `renders/79-court-rules-fee-calc@2x.png`,
+> **neither of which was delivered** — the bundle shipped the three screens as
+> `.dc.html` canvases beside this file. Row 121 was pointed at a render for two
+> other screens and is genuinely still undrawn, which the accompanying note
+> already said in prose.
+>
+> This is the same drift the note above corrects for rows 118/119, in the same
+> bundle. `scripts/check-design-renders.mjs` now runs in CI and fails on any row
+> naming a deliverable that is not on disk, in either direction.
+
+**Every screen in this file now has a canvas id and a render, or is explicitly
+NOT YET DESIGNED. As of this turn, none are.**
 
 ---
 

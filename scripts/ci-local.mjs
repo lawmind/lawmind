@@ -68,6 +68,11 @@ const STEPS = [
   // The contract's BUILT/SPECCED column against the routes actually mounted.
   // A stale column is how RCC came to call an endpoint that does not exist.
   ['contract status', 'node', ['scripts/check-contract-status.mjs']],
+  // The screen inventory against the renders directory. It drifted twice in one
+  // week in opposite directions — a table claiming nothing was drawn when seven
+  // screens were, and rows naming renders that were never produced. Both cost
+  // real work; neither needed a human to catch.
+  ['design renders', 'node', ['scripts/check-design-renders.mjs']],
 ];
 
 const admin = postgres(adminUrl, { max: 1, ssl: 'require', onnotice: () => {} });

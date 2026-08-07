@@ -105,4 +105,7 @@ jobs:
       # written down, and three of the four were mechanically checkable. The
       # client lane was catching them one at a time, downstream, after building.
       # This is the gate that should have caught them at zero cost.
-      - run: node scripts/check-design-rules.mjs design/screens
+      - run: node scripts/check-design-rules.mjs
+      # The inventory against the filesystem. A table nobody checks is a table
+      # that lies, and this one lied in both directions inside a week.
+      - run: node scripts/check-design-renders.mjs design/screens
