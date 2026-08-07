@@ -76,7 +76,7 @@ DATABASE_URL
 OPENROUTER_API_KEY
 SENSITIVE_LLM_API_KEY     # separate provider per OD-6
 EMBEDDING_API_KEY
-POSTMARK_SERVER_TOKEN
+RESEND_API_KEY            # magic-link email. Swapped from Postmark 7 Aug 2026
 R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET
 R2_DOCUMENTS_BUCKET       # separate policy for case documents
 AUTH_SECRET
@@ -135,3 +135,57 @@ migration is written by hand and reviewed.
 One-time batch on a rented GPU box. Embed, then load vectors into Railway
 Postgres. A 15K-document embed inside a Railway service will time out and cost
 more than the GPU hour.
+
+## Mail — Resend, and the one step that still needs a human
+
+Magic-link sign-in sends through **Resend** (swapped from Postmark, 7 Aug 2026 —
+`docs/OPEN_DECISIONS.md` §Auth). Two variables, both set in Railway and never in
+the repo:
+
+```
+RESEND_API_KEY   # SEND-ONLY key. See below — the restriction is deliberate.
+MAIL_FROM        # currently "Lawmind <onboarding@resend.dev>"
+```
+
+**The key is deliberately send-only.** The API needs exactly one capability: post
+an email. A full-access key can also create and delete domains and mint further
+keys, and none of that belongs in a web process that is reachable from the
+internet. If a send-only key leaks, the damage is somebody sending mail from our
+account; if a full-access key leaks, the damage is somebody taking the account.
+
+The practical cost, worth knowing before it surprises somebody: **domain
+administration cannot be done from the API with this key.** It returns
+`401 restricted_api_key`. That is the restriction working, not a fault.
+
+### ⚠️ Beta cannot onboard anyone but the account owner until this is done
+
+`onboarding@resend.dev` is Resend's shared test sender and it **only delivers to
+the address that owns the Resend account.** Any other recipient is refused with
+HTTP 403, which `POST /auth/magic-link` correctly surfaces as
+`503 MAIL_UNAVAILABLE` rather than claiming a send it did not make.
+
+So a real advocate cannot currently sign in. The fix is entirely DNS and needs
+somebody with registrar access to **lawmind.co**:
+
+1. In the Resend dashboard, **Domains → Add Domain → `lawmind.co`**.
+2. Create the DNS records it lists at the registrar — an MX and a TXT for the
+   bounce subdomain, a TXT DKIM record, and optionally a DMARC record.
+3. Wait for the dashboard to show **Verified**.
+4. Set `MAIL_FROM` in Railway to an address on the verified domain — suggest
+   `Lawmind <no-reply@lawmind.co>` — and redeploy the `api` service.
+
+Nothing in the code changes. The provider sits behind the `Mailer` interface in
+`packages/auth/src/mail.ts`, so `MAIL_FROM` is the whole of the change.
+
+**Verify it worked by sending to an address that is not the account owner**, not
+by reading the dashboard. Until step 4 lands, treat sign-in as working for the
+Resend account owner only.
+
+### Why it fails loudly rather than quietly
+
+`mailerFrom` **refuses to start** in production when `RESEND_API_KEY` is unset.
+There is a console transport that prints the link instead of sending it, and it
+is available only outside production, because a service that fell back to it
+would log a successful sign-in for every advocate who never received an email.
+An API that cannot send mail should refuse to boot, not discover it at the first
+user.
