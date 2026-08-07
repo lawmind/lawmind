@@ -249,18 +249,24 @@ describe('set_aside disables add-to-matter', () => {
     matterId = ((await created.json()) as { data: { matter: { matterId: string } } }).data.matter
       .matterId;
 
-    const rows = await sql<{ id: string }[]>`SELECT id FROM judgments LIMIT 1`;
-    judgmentId = rows[0]?.id ?? null;
+    // A judgment this suite owns. Previously it grabbed a real one and mutated
+    // it, which made these tests skip on a fresh database — so the single
+    // refusal in the product was proved only by hand — and left genuine law one
+    // crashed process away from being marked set_aside.
+    const [j] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, reporter_citations, court, judgment_date,
+                             full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Set Aside Fixture', '{}', 'Test Court', '2000-01-01',
+              'synthetic fixture owned by matters/route.test.ts', 'en',
+              ${`test://matters/${crypto.randomUUID()}`}, 'none')
+      RETURNING id`;
+    judgmentId = j!.id;
   });
 
   after(async () => {
     if (judgmentId) {
-      // Put the corpus back. A test that leaves a real judgment marked set_aside
-      // would make every later run — and every later reader — believe the law
-      // moved when it did not.
-      await sql`UPDATE judgments SET overruled_status = 'none' WHERE id = ${judgmentId}`;
-      await sql`DELETE FROM judgment_annotations WHERE judgment_id = ${judgmentId}
-                AND user_id IN (SELECT id FROM users WHERE auth_id LIKE 'test-mat-%')`;
+      await sql`DELETE FROM judgment_annotations WHERE judgment_id = ${judgmentId}`;
+      await sql`DELETE FROM judgments WHERE id = ${judgmentId}`;
     }
     await sql`DELETE FROM matter_events WHERE matter_id IN
               (SELECT m.id FROM matters m JOIN users u ON u.id = m.user_id
@@ -272,11 +278,7 @@ describe('set_aside disables add-to-matter', () => {
     await sql.end();
   });
 
-  it('refuses to attach a set-aside authority to a matter, and names it', async (t) => {
-    // Needs a corpus. Skips on a fresh database exactly as the other
-    // corpus-dependent tests do, rather than passing vacuously.
-    if (!judgmentId) return t.skip('no judgments in this database');
-
+  it('refuses to attach a set-aside authority to a matter, and names it', async () => {
     await sql`UPDATE judgments SET overruled_status = 'set_aside' WHERE id = ${judgmentId}`;
 
     const res = await app.request(`/judgments/${judgmentId}/annotations`, {
@@ -301,8 +303,7 @@ describe('set_aside disables add-to-matter', () => {
     assert.equal(count?.n, 0, 'nothing may have been written');
   });
 
-  it('still allows saving the passage on its own', async (t) => {
-    if (!judgmentId) return t.skip('no judgments in this database');
+  it('still allows saving the passage on its own', async () => {
     await sql`UPDATE judgments SET overruled_status = 'set_aside' WHERE id = ${judgmentId}`;
 
     // The refusal is about USING it as an authority, not about reading it. An
@@ -320,8 +321,7 @@ describe('set_aside disables add-to-matter', () => {
     assert.equal(res.status, 200, 'a highlight with no matter must still be allowed');
   });
 
-  it('allows add-to-matter for a judgment that is merely doubted', async (t) => {
-    if (!judgmentId) return t.skip('no judgments in this database');
+  it('allows add-to-matter for a judgment that is merely doubted', async () => {
     // Three overruled states and only ONE of them refuses. `doubted` shows no
     // banner at all; treating it like set_aside would quietly withdraw authority
     // the courts have not withdrawn.
