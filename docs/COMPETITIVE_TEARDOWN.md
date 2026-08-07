@@ -143,7 +143,14 @@ can degrade to AWS-only without losing the `public_x2` guarantee.
 **Lawyyar, LegalKart Lawyer and SupremeToday AI added 8 Aug 2026**, sourced from
 their own Play Store listings only (`docs/ASO.md` §1 has the full teardown,
 ratings and install counts) — **no pricing page, no hands-on testing**, so
-"not verified" above means exactly that and not "free." Two corrections to the
+"not verified" above means exactly that and not "free." `docs/ASO.md` §1b adds
+one more data point worth recording here: **SupremeToday AI's only iOS review is
+1 star, reporting the app "doesn't work, can even create account."** One review
+is not a trend, but it lands exactly where this section already placed them —
+selling AI research depth on High Court endorsement rather than a stated
+accuracy number, with nothing observed hands-on to confirm the depth claim
+either. Worth a real account-creation test before any positioning leans on
+"more reliable than SupremeToday," not just cited from one review. Two corrections to the
 assumption implicit in `docs/COMPETITIVE.md`'s single "Consumer apps: Law4u,
 Lawyyar, LegalKart" row: **LegalKart Lawyer is not a research or drafting
 competitor at all** — its own listing describes a lead-generation and

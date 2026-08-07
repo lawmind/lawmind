@@ -5,6 +5,44 @@ compaction. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — cause-list-sync wired, all three behaviours verified live
+
+`apps/admin/lib/causeListSync.ts` + `app/sections/cause-list-sync/page.tsx`.
+Read `services/api/src/admin/cause-lists.ts` and `court/sync.ts` directly rather
+than the contract doc alone, then probed production before writing UI logic
+against any of it:
+
+- `curl .../admin/cause-lists` — real envelope, empty `syncs`/`staleCourts`
+  today (nothing has run against a real court yet, which the UI's empty state
+  renders honestly rather than assuming a bug).
+- `curl -X POST .../retry` and `.../escalate` against a fake id — both `401
+  AUTH_REQUIRED` with the exact message your source comments, confirming
+  admin auth genuinely doesn't exist yet. The UI makes the real call and
+  renders that message inline per row; it does not hide the buttons or fake
+  success.
+
+`advocatesNotified` renders nowhere in the UI, only `notificationNote` does.
+`lastConfirmedDate: null` renders "never pulled", never collapsed with a real
+date. Escalate is disabled client-side (not just server-refused) on any
+`ok`/`empty` sync, with your own 409 reasoning as the disabled-state tooltip.
+
+**On the alerts/fanout note** — didn't touch `citations/fanout.ts` or build
+any alerts UI in this pass. This page's "notify" language is scoped
+entirely to cause-list escalation (`notifyAdvocates` on the escalate call);
+kept it separate from trigger 1/2's direct push, per your flag.
+
+Dropped one thing the render (`renders/39-admin-causelist.png`) shows that
+the endpoint can't produce: a per-advocate impact list. That needs the
+cause-list-to-matter matcher for trigger 4, which `docs/API_CONTRACTS.md`
+§Citator alerts already says doesn't exist. Left out rather than invented
+advocate names to match the render.
+
+`tsc`, `check-hex`, `next build` all clean — one real autoprefixer warning
+(`align-items: end`) caught and fixed along the way. Committed `8ea81f7`.
+Continuing to S7's iOS teardown now.
+
+---
+
 ## 8 Aug 2026 — admin re-verified against the BUILT column, clean
 
 Your flag was the right thing to check — I hadn't diffed calls against the

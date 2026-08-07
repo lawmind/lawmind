@@ -16,10 +16,9 @@ status" and install what ranks. Nothing existed for this workstream before
 
 All five researched on the **Play Store listing** (`play.google.com/store/apps/details`).
 None was tested hands-on — everything below is what the listing itself shows, not
-usage. **iOS App Store not covered here**: three of the five (Notify, LegalKart,
-SupremeToday) also list on iOS, but the two stores' fields are different enough
-(see the note under the table) that mixing them into one row would blur which
-platform said what. Redo this pass for iOS before designing the iOS listing.
+usage. **iOS App Store covered separately, §1b** — all five list there too, and
+the two stores' fields are different enough (see the note under the table) that
+mixing them into one row would blur which platform said what.
 
 **A methodology note, because it shapes how much to trust the "not shown" cells:**
 the Play Store listing itself is a JS app that neither a direct fetch nor the two
@@ -79,10 +78,39 @@ Nijhawan.
   research notes).
 - Screenshot order and narrative for all five — no text-only route recovers
   images.
-- Rating/installs for LegalKart in full, and any six-month update-cadence history
-  for any of the five — Play's public listing does not surface a changelog beyond
-  the current version's "what's new," and none was legible through the proxy pass.
-- The iOS side of Notify, LegalKart and SupremeToday.
+- Six-month update-cadence history for any of the five — neither store's public
+  listing surfaces a changelog beyond the current version's "what's new."
+
+## 1b · iOS side, done 8 Aug 2026
+
+All five list on iOS. Same method as §1 (`r.jina.ai` proxy — Apple's listing
+page rendered cleanly through it, no truncation this time). iOS actually
+carries the field this file has been waiting on: a **real subtitle**, distinct
+from the title, which is the exact analogue §2's draft candidates are built
+against.
+
+| App | Title | Subtitle | Rating | Developer |
+|---|---|---|---|---|
+| **Law4u** | Law4u - Law of India & Acts | "Indian Laws & Legal Advisors" | not enough ratings to display | Vipul Saliya |
+| **Notify Court Case Status** | Notify Court Case Status | "Track your case." | 5.0, **1** rating | AJAX MEDIA TECH PRIVATE LIMITED |
+| **Lawyyar** | Lawyyar | "Lawyyar – Your Legal Companion" | not enough ratings to display | Lawyyar |
+| **LegalKart Lawyer** | Legalkart-Lawyer | "Lawyer's Practice Management" | 3.7, **20** ratings | Black Coat Technologies Pvt Ltd |
+| **SupremeToday AI** | Supreme Today AI | "AI @ Legal Research & Drafting" | **1.0, 1 rating** | Vikas Info Solutions |
+
+**The subtitles are markedly plainer than the Play short descriptions in §1** —
+"Track your case.", "Lawyer's Practice Management" — mostly literal, none
+making the loop claim either. Consistent with §1's finding, not a new one.
+
+**SupremeToday AI's one iOS review is a 1-star complaint that the app "doesn't
+work, can even create account."** One data point, not a trend, but it lands
+right where `COMPETITIVE_TEARDOWN.md` §1 already flagged them as the entrant
+selling AI research depth on endorsement rather than a stated accuracy number —
+worth a line there rather than over-reading a single review. Added.
+
+iOS review volume across the board is negligible (0–20 ratings on apps with
+Play installs in the thousands to millions) — Play is very likely where any of
+these five actually get discovered in India; worth confirming with a tool
+before assuming iOS ASO effort matches Android's.
 
 ---
 
@@ -108,7 +136,7 @@ carried over from this doc.
 |---|---|---|---|
 | Title (30, both stores) | `Lawmind – Cause List & Cases` | 29 | Leads with the one term §1 found **no competitor puts in their title or short description** — every one of the five sells research or reassurance, none sells "I know what's listed for you." Carries two of §3's candidate clusters (`cause list`, `case`) in the 30 chars that matter most. |
 | Title, alternative | `Lawmind: Verified Case Search` | 30 | Leads with the compliance wedge (`docs/COMPETITIVE.md` §3) instead of the loop. Weaker per the finding above — trust doesn't convert an install (see screenshot rationale) — kept as the alternative if the founder wants the moat foregrounded over the habit. |
-| Subtitle (30, iOS only) | `Today's hearings, briefed daily` | 32 | **Over by 2 — needs a cut before use.** Placeholder for the shape of the claim, not the string to ship. `Hearings briefed, daily` (24) is a safe fallback. |
+| Subtitle (30, iOS only) | `Hearings briefed, daily` | 24 | The 32-char first draft (`Today's hearings, briefed daily`) ran over; this is the corrected fit. §1b's real iOS subtitles ("Track your case.", "Lawyer's Practice Management") are all short and literal — ours can afford to be too, rather than reaching for a longer sell that would only just fit. |
 | Play short description (80, Android) | `Today's cause list, a 24-hour briefing, and citations you can file on.` | 72 | Android's analogue to the iOS subtitle — this is the field Play actually gives 80 chars to, and §1 found all five competitors under-use it (two don't have a distinct one at all). Names the loop AND the harness in one line. |
 | Keyword field (100, iOS only) | `cause list,case status,hearing,court,advocate,briefing,citation,judgment,bare act,limitation,bns` | 99 | No repeats of words already in the title/subtitle per the platform rule. Every §3 cluster present once. **Not ranked against volume — §3 is still `UNKNOWN — requires tool`, this is coverage, not priority order.** |
 
@@ -172,9 +200,9 @@ Thailand is out of v1 (`PRD.md` §Geography). No Thai listing.
 - **OD-9 — DEFERRED 2 Aug 2026, no longer blocking.** Buy one month of AppTweak
   or App Radar ($50–100) just before launch and cancel after. §3 stays UNKNOWN
   until then. **This is now the only thing left in this file that needs a tool** —
-  §1 competitor teardown is done (8 Aug 2026, Play Store side; iOS side still
-  open, needs no tool either, just a repeat pass) and §2 has draft copy pending
-  a founder decision between the two title candidates, not pending research.
+  §1 and §1b competitor teardown are both done (8 Aug 2026, Play and iOS) and §2
+  has draft copy pending a founder decision between the two title candidates, not
+  pending research.
 - **S7** is the sprint that consumes this. §1 has already fed the screenshot
   narrative call in §2 — this is what S3/S4 need to be able to demonstrate on
   screen when screenshots are actually captured.
