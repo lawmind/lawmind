@@ -202,6 +202,12 @@ async function readProfile(sql: Sql, userId: string) {
     enrolmentStatus: row!.enrolment_status,
     preferredLanguage: row!.preferred_language,
     subscriptionTier: row!.subscription_tier,
+    /**
+     * A boolean, never the token. The token is a device secret; nothing needs to
+     * read it back, and echoing it would put it in every client log and crash
+     * report that captures a profile response.
+     */
+    pushRegistered: row!.expo_push_token !== null,
     termsAcceptedAt: row!.terms_accepted_at,
     termsVersion: row!.terms_version,
   };

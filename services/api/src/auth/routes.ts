@@ -68,10 +68,11 @@ async function profileFor(sql: Sql, authId: string) {
       subscription_tier: string;
       terms_accepted_at: string | null;
       terms_version: string | null;
+      expo_push_token: string | null;
     }[]
   >`
     SELECT id, full_name, phone, email, bar_enrolment_number, enrolment_status,
-           preferred_language, subscription_tier,
+           preferred_language, subscription_tier, expo_push_token,
            ${sql.unsafe(isoColumn('terms_accepted_at'))} AS terms_accepted_at, terms_version
     FROM users WHERE auth_id = ${authId}
   `;
@@ -90,6 +91,8 @@ async function profileFor(sql: Sql, authId: string) {
     enrolmentStatus: row.enrolment_status,
     preferredLanguage: row.preferred_language,
     subscriptionTier: row.subscription_tier,
+    /** A boolean, never the token — it is a device secret. */
+    pushRegistered: row.expo_push_token !== null,
     termsAcceptedAt: row.terms_accepted_at,
     termsVersion: row.terms_version,
   };
