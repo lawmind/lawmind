@@ -111,9 +111,9 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `GET /briefings/:id` | SPECCED |
-| `GET /matters/:id/briefings` | SPECCED |
-| `POST /briefings/:id/opened` | SPECCED |
+| `GET /briefings/:id` | BUILT |
+| `GET /matters/:id/briefings` | BUILT |
+| `POST /briefings/:id/opened` | BUILT |
 
 **Drafting — LCC owns**
 

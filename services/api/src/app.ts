@@ -22,6 +22,7 @@ import {
   refreshRequest,
   verifyRequest,
 } from './auth/routes.ts';
+import { getBriefing, listMatterBriefings, markBriefingOpened } from './briefings/route.ts';
 import { buildSha } from './build-info.ts';
 import { getCitationCheck } from './citations/check.ts';
 import {
@@ -255,6 +256,19 @@ export function createApp(deps: AppDeps) {
     // inserts the SQL keyword DEFAULT, never a value chosen in application code.
     app.post('/matters/:id/events', validate('json', createEventBody), async (c) =>
       createMatterEvent(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // The 24-hour briefing — the wedge. `overruled_status` is re-read LIVE on
+    // every render and is never served from the cached content: a briefing is
+    // read standing outside court, which is the worst moment to be shown law
+    // that moved after last night's sweep.
+    app.get('/briefings/:id', async (c) =>
+      getBriefing(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.get('/matters/:id/briefings', async (c) =>
+      listMatterBriefings(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.post('/briefings/:id/opened', async (c) =>
+      markBriefingOpened(c, sql, c.req.param('id'), await userFor(c)),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));
