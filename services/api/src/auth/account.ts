@@ -57,6 +57,13 @@ export const patchMeBody = z
     phone: z.string().min(5).max(20).optional(),
     preferredLanguage: z.enum(['en', 'hi']).optional(),
     barEnrolmentNumber: z.string().max(60).nullable().optional(),
+    /**
+     * The device's Expo push token. Sent by the client after the OS prompt is
+     * accepted, and explicitly `null` when the advocate turns notifications off —
+     * which is why it is nullable rather than merely optional: omitted means "no
+     * change", null means "stop sending to this device".
+     */
+    expoPushToken: z.string().min(1).max(200).nullable().optional(),
   })
   .refine((v) => Object.keys(v).length > 0, { message: 'nothing to update' });
 
@@ -94,9 +101,9 @@ export async function patchMe(
     }
     const [created] = await sql<{ id: string }[]>`
       INSERT INTO users (auth_id, full_name, phone, email, bar_enrolment_number,
-                         enrolment_status, preferred_language)
+                         expo_push_token, enrolment_status, preferred_language)
       VALUES (${authId}, ${body.fullName}, ${body.phone}, ${email ?? ''},
-              ${body.barEnrolmentNumber ?? null},
+              ${body.barEnrolmentNumber ?? null}, ${body.expoPushToken ?? null},
               -- Captured, queued for manual review, and gating nothing. PD-2.
               'unverified', ${body.preferredLanguage ?? 'en'})
       RETURNING id
@@ -111,6 +118,9 @@ export async function patchMe(
       preferred_language   = coalesce(${body.preferredLanguage ?? null}, preferred_language),
       bar_enrolment_number = ${
         body.barEnrolmentNumber === undefined ? sql`bar_enrolment_number` : body.barEnrolmentNumber
+      },
+      expo_push_token = ${
+        body.expoPushToken === undefined ? sql`expo_push_token` : body.expoPushToken
       }
     WHERE id = ${existing.id}
   `;
@@ -175,10 +185,11 @@ async function readProfile(sql: Sql, userId: string) {
       subscription_tier: string;
       terms_accepted_at: string | null;
       terms_version: string | null;
+      expo_push_token: string | null;
     }[]
   >`
     SELECT id, full_name, phone, email, bar_enrolment_number, enrolment_status,
-           preferred_language, subscription_tier,
+           preferred_language, subscription_tier, expo_push_token,
            ${sql.unsafe(isoColumn('terms_accepted_at'))} AS terms_accepted_at, terms_version
     FROM users WHERE id = ${userId}
   `;

@@ -200,7 +200,8 @@ POST /auth/verify       { token }            → { accessToken, refreshToken, us
 POST /auth/refresh      { refreshToken }     → { accessToken, refreshToken }
 POST /auth/logout       —                    → { ok }
 GET  /me                —                    → { user }
-PATCH /me               { fullName?, preferredLanguage?, barEnrolmentNumber? } → { user }
+PATCH /me               { fullName?, phone?, preferredLanguage?, barEnrolmentNumber?,
+                          expoPushToken? } → { user }
 
 GET  /terms/current     —                    → { version, body }
 POST /me/accept-terms   { version }          → { termsAcceptedAt, termsVersion }
@@ -212,6 +213,17 @@ and the terms of legal use. It writes `terms_accepted_at` and `terms_version`
 together, rejects a `version` that is not the current one, and is **never
 inferred** from any other action. An account with no accepted terms cannot
 generate a draft — that is the one place this gates, and it gates nothing else.
+
+**`expoPushToken` — additive, 7 Aug 2026.** The device's Expo push token, sent
+after the OS prompt is accepted. **Nullable rather than merely optional:** omitted
+means "no change", explicit `null` means "stop sending to this device". The
+profile reports it back as `pushRegistered: boolean` and **never returns the token
+itself** — it is a device secret and nothing needs to read it back.
+
+Delivery is **batched into the evening briefing** (PD-6): one push per advocate
+covering all of tomorrow's hearings, never one per matter. Two things push
+immediately and nothing else ever does — `set_aside` on a citation in an exported
+draft, and a newly discovered listing for tomorrow.
 
 **Enrolment still never gates** (PD-2). Consent and enrolment are different
 things: consent is a condition of drafting, enrolment is a credential that is

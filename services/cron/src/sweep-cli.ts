@@ -9,8 +9,10 @@
  * only be observed by waiting until 23:00 is a job nobody debugs — and the first
  * time it matters is the night it fails.
  */
+import { pusherFrom } from '@lawmind/api/push/expo';
 import postgres from 'postgres';
 
+import { deliverBriefings } from './deliver.ts';
 import { runSweep, tomorrowIst } from './sweep.ts';
 
 const args = process.argv.slice(2);
@@ -54,9 +56,27 @@ try {
         : `  FAILED  ${o.caseTitle} — ${o.error}`,
     );
   }
+  // PD-6 — delivery is batched into the evening, one push per advocate covering
+  // all of their hearings. Runs even when some briefings failed: the advocates
+  // whose briefings DID generate should still be told.
+  const pusher = pusherFrom(
+    {
+      expoAccessToken: process.env['EXPO_ACCESS_TOKEN'],
+      nodeEnv: process.env['NODE_ENV'] ?? 'development',
+    },
+    (line) => console.log(line),
+  );
+  const delivery = await deliverBriefings(sql, pusher, result.hearingDate);
+  console.log(
+    `delivery via ${pusher.name}: ${delivery.advocates} advocate(s), ` +
+      `${delivery.delivered} briefing(s) delivered, ${delivery.skippedNoToken} with no device, ` +
+      `${delivery.failed} failed, ${delivery.tokensCleared} dead token(s) cleared`,
+  );
+
   // A partial night is a failure the operator must see in the exit code, not
-  // only in a line of output somebody has to read.
-  process.exit(result.failed > 0 ? 1 : 0);
+  // only in a line of output somebody has to read. Delivery failures count:
+  // a briefing nobody was told about is a briefing that did not happen.
+  process.exit(result.failed > 0 || delivery.failed > 0 ? 1 : 0);
 } finally {
   await sql.end();
 }

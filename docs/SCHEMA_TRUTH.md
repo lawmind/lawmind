@@ -10,7 +10,24 @@ without updating this file in the same commit.
 (en|hi) default en · `subscription_tier` enum
 (none|practice|chamber|expert|firm|enterprise) default none ·
 `terms_accepted_at` timestamptz null · `terms_version` text null ·
-`created_at` timestamptz
+`expo_push_token` text null · `created_at` timestamptz
+
+**`expo_push_token` — added 7 Aug 2026, migration 0015.** **Null means no device
+has registered**, which is an absence and never a refusal or a failure: an
+advocate who has not opened the app on a phone, or who declined the OS prompt, is
+a normal state, and the nightly delivery reports them as *skipped* rather than
+*failed*. An error rate that counts normal states is an error rate nobody reads.
+
+Cleared automatically when Expo answers `DeviceNotRegistered` — the app was
+removed or the token rotated, and retrying nightly forever is a permanent failure
+that hides real ones. A transport error never clears it: an outage must not look
+like an uninstall.
+
+`briefings.delivered_at` is written by the same job and had never been written
+before. **Generated, delivered and opened are three different facts in three
+columns** — collapsing any two makes the activation metric (two briefings opened
+in week one) meaningless. `delivered_at` means Expo *accepted* the message, which
+is not the same as the phone receiving it.
 
 **PD-8 — consent replaces the AI-assisted mark.** `terms_accepted_at` and
 `terms_version` record the advocate actively accepting AI assistance, the duty to

@@ -190,6 +190,13 @@ export const users = pgTable('users', {
   enrolmentStatus: enrolmentStatusEnum('enrolment_status').notNull().default('unverified'),
   preferredLanguage: languageEnum('preferred_language').notNull().default('en'),
   subscriptionTier: subscriptionTierEnum('subscription_tier').notNull().default('none'),
+  /**
+   * Expo push token. **Null means no device has registered** — an absence, not a
+   * refusal and not a failure. An advocate who has not opened the app on a phone,
+   * or who declined the OS prompt, is a normal state: the briefing is generated
+   * and simply not delivered.
+   */
+  expoPushToken: text('expo_push_token'),
   // PD-8 — consent replaces the AI-assisted mark. Set together at onboarding,
   // never back-filled. An unset pair means consent was not given, and the app
   // must be able to see that state.
