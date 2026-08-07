@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAppFonts } from '../src/theme/fonts';
 import { useOutbox } from '../src/state/outbox';
 import { useReadingStore } from '../src/state/reading';
+import { useSession } from '../src/state/session';
 import { color, family, type as typeScale } from '../src/theme/tokens';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -31,6 +33,7 @@ export default function RootLayout() {
   const hydrate = useReadingStore((s) => s.hydrate);
   const hydrateOutbox = useOutbox((s) => s.hydrate);
   const flushOutbox = useOutbox((s) => s.flush);
+  const hydrateSession = useSession((s) => s.hydrate);
 
   useEffect(() => {
     if (fontsLoaded || fontError) SplashScreen.hideAsync().catch(() => {});
@@ -56,6 +59,21 @@ export default function RootLayout() {
     void hydrateOutbox().then(() => flushOutbox());
   }, [hydrateOutbox, flushOutbox]);
 
+  /**
+   * THE SESSION COMES OFF THE KEYCHAIN BEFORE ANY SCREEN ASKS FOR IT.
+   *
+   * Every authenticated request reads the access token through the bridge in
+   * `state/session.ts`, which is registered at module load — so the token has to
+   * be in the store by the time the first screen mounts, or the first fetch of
+   * the session goes out unauthenticated, 401s, and triggers a refresh that was
+   * never needed. The cached profile is shown before the network is consulted:
+   * the app opens in court buildings, and a launch that blocks on `GET /me` puts
+   * a spinner exactly where one is useless.
+   */
+  useEffect(() => {
+    void hydrateSession();
+  }, [hydrateSession]);
+
   // Nothing renders until the faces are in. A Hindi string in a fallback face
   // is a screen of missing-glyph boxes, and that is a product failure here.
   if (!fontsLoaded && !fontError) return null;
@@ -70,6 +88,20 @@ export default function RootLayout() {
    */
   return (
     <GestureHandlerRootView style={styles.root}>
+      {/*
+        DARK GLYPHS. THE APP IS PAPER, EDGE TO EDGE, AND THE CLOCK WAS WHITE ON IT.
+        `edgeToEdgeEnabled` puts the app's own ground under the status bar, so the
+        system's default light content sat on `#FBFAF7` — observed unreadable on
+        a device 8 Aug 2026, on every screen, at every brightness. It never showed
+        up anywhere else: a screenshot in a test harness has no status bar, and
+        the simulator's is drawn by the OS rather than by us.
+
+        `style` here means the CONTENT colour, not the bar's — "dark" is dark
+        glyphs on our light ground. It is set once at the root because every
+        surface in this product is paper; a screen that ever needs otherwise sets
+        its own and says why.
+      */}
+      <StatusBar style="dark" />
       <QueryClientProvider client={queryClient}>
         <Stack
           screenOptions={{

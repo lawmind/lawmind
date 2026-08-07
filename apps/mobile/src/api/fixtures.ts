@@ -223,41 +223,41 @@ const paragraphs = (count: number, seed: string): JudgmentDetail['paragraphs'] =
      */
     if (i === 0)
       return {
-        number: null,
-        index: i,
+        paragraphNumber: null,
+        paragraphIndex: i,
         text: `${seed}\nMock Petitioner v. Mock State\n(Criminal Appeal No. 1 of 2026)`,
       };
 
     const n = i;
     if (n === 11)
       return {
-        number: n,
-        index: i,
+        paragraphNumber: n,
+        paragraphIndex: i,
         text: 'Omnibus allegations against a spouse\'s relatives, unsupported by any specific instance of cruelty, cannot form the basis of a prosecution under section 498 of the Mock Code. This Court has repeatedly cautioned against the tendency to implicate every member of the family.',
       };
     if (n === 12)
       return {
-        number: n,
-        index: i,
+        paragraphNumber: n,
+        paragraphIndex: i,
         text: 'In Mock Earlier v. Mock State, MOCK 2012 EXAMPLE 741, this Court observed that the mere naming of a spouse\'s siblings in a matrimonial complaint would not justify their being put to trial.',
         citesJudgmentId: 'jdg_mock_4',
       };
     if (n === 17)
       return {
-        number: n,
-        index: i,
+        paragraphNumber: n,
+        paragraphIndex: i,
         text: 'Where omnibus allegations are levelled and no particulars are furnished, the proceeding is liable to be quashed.',
       };
     if (n === 23)
       return {
-        number: n,
-        index: i,
+        paragraphNumber: n,
+        paragraphIndex: i,
         text: '"Permitting the prosecution to continue would result in an abuse of the process of law. The proceedings against the appellants are quashed."',
         operative: true,
       };
     return {
-      number: n,
-      index: i,
+      paragraphNumber: n,
+      paragraphIndex: i,
       text: `Fixture paragraph ${n} of ${seed}. It carries enough prose to set a realistic measure at 17 on 1.68, so the reading view can be judged on the shape of a real column of text rather than on a single line. Sections 12-14 of the Mock Code were considered.`,
     };
   });

@@ -17,10 +17,10 @@ import type { JudgmentParagraph } from './contract';
  * 1 would pass even if the code returned the index.
  */
 const paragraphs: JudgmentParagraph[] = [
-  { number: 14, index: 0, text: 'Fourteen.' },
-  { number: 15, index: 1, text: 'Fifteen.' },
-  { number: 22, index: 2, text: 'Twenty-two — the one an advocate would cite.' },
-  { number: 23, index: 3, text: 'Twenty-three.' },
+  { paragraphNumber: 14, paragraphIndex: 0, text: 'Fourteen.' },
+  { paragraphNumber: 15, paragraphIndex: 1, text: 'Fifteen.' },
+  { paragraphNumber: 22, paragraphIndex: 2, text: 'Twenty-two — the one an advocate would cite.' },
+  { paragraphNumber: 23, paragraphIndex: 3, text: 'Twenty-three.' },
 ];
 
 const span = { start: 0, end: 4 };
@@ -71,9 +71,9 @@ describe('resolveAnnotationParagraph', () => {
      * index 2 to index 1. The stored index is now stale; the number is not.
      */
     const reingested: JudgmentParagraph[] = [
-      { number: 14, index: 0, text: 'Fourteen.' },
-      { number: 22, index: 1, text: 'Twenty-two — the one an advocate would cite.' },
-      { number: 23, index: 2, text: 'Twenty-three.' },
+      { paragraphNumber: 14, paragraphIndex: 0, text: 'Fourteen.' },
+      { paragraphNumber: 22, paragraphIndex: 1, text: 'Twenty-two — the one an advocate would cite.' },
+      { paragraphNumber: 23, paragraphIndex: 2, text: 'Twenty-three.' },
     ];
 
     const found = resolveAnnotationParagraph(reingested, {
@@ -82,7 +82,7 @@ describe('resolveAnnotationParagraph', () => {
     });
 
     // Index 2 is now ¶ 23. Following it would move the advocate's note.
-    expect(found?.number).toBe(22);
+    expect(found?.paragraphNumber).toBe(22);
   });
 
   it('falls back to the index when the judgment has no printed numbering', () => {
@@ -91,7 +91,7 @@ describe('resolveAnnotationParagraph', () => {
       paragraphIndex: 3,
     });
 
-    expect(found?.number).toBe(23);
+    expect(found?.paragraphNumber).toBe(23);
   });
 
   it('returns undefined rather than a wrong paragraph when neither resolves', () => {

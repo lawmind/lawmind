@@ -1,6 +1,6 @@
-import { ScreenShell } from '../../src/screens/ScreenShell';
+import { MattersScreen } from '../../src/screens/matter/MattersScreen';
 
-// 11 · tab route
+/** 24 · tab route. The matter workspace list — the retention moat. */
 export default function Route() {
-  return <ScreenShell n={11} topInset />;
+  return <MattersScreen />;
 }

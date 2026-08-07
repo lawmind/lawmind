@@ -66,7 +66,7 @@ export function toWireAnnotation({
      * failure this whole product exists to prevent, and it would be
      * indistinguishable from a real one once it is in someone's note.
      */
-    paragraphNumber: paragraph.number ?? null,
+    paragraphNumber: paragraph.paragraphNumber ?? null,
     paragraphIndex,
     span,
     ...(note === undefined ? {} : { note }),
@@ -87,7 +87,7 @@ export function resolveAnnotationParagraph(
   annotation: Pick<AnnotationDraft, 'paragraphNumber' | 'paragraphIndex'>
 ): JudgmentParagraph | undefined {
   if (annotation.paragraphNumber !== null) {
-    const byNumber = paragraphs.find((p) => p.number === annotation.paragraphNumber);
+    const byNumber = paragraphs.find((p) => p.paragraphNumber === annotation.paragraphNumber);
     if (byNumber) return byNumber;
   }
   return paragraphs[annotation.paragraphIndex];

@@ -146,7 +146,7 @@ export function ReadingView({
    * and a saved highlight.
    */
   const indexOfNumber = useCallback(
-    (n: number) => judgment.paragraphs.findIndex((p) => p.number === n),
+    (n: number) => judgment.paragraphs.findIndex((p) => p.paragraphNumber === n),
     [judgment.paragraphs]
   );
 
@@ -155,18 +155,18 @@ export function ReadingView({
     // to read ¶ 17, not to resume last week. The saved position survives for
     // when they return without the anchor.
     if (openParagraph !== undefined) {
-      const i = judgment.paragraphs.findIndex((p) => p.number === openParagraph);
+      const i = judgment.paragraphs.findIndex((p) => p.paragraphNumber === openParagraph);
       if (i >= 0) return i;
     }
     if (progress?.paragraphNumber !== undefined) {
-      const i = judgment.paragraphs.findIndex((p) => p.number === progress.paragraphNumber);
+      const i = judgment.paragraphs.findIndex((p) => p.paragraphNumber === progress.paragraphNumber);
       if (i >= 0) return i;
     }
     return 0;
   });
 
   /** The printed number of the row being read, or null where it has none. */
-  const currentNumber = judgment.paragraphs[current]?.number ?? null;
+  const currentNumber = judgment.paragraphs[current]?.paragraphNumber ?? null;
 
   /**
    * IN-TEXT SEARCH JUMPS BETWEEN PARAGRAPHS, NOT SCROLL POSITIONS. An advocate
@@ -279,8 +279,8 @@ export function ReadingView({
       }
 
       setCurrent(index);
-      if (paragraph.number !== null) setProgress(judgment.judgmentId, paragraph.number);
-      if (fromTap && paragraph.number !== null) onParagraphChange(paragraph.number);
+      if (paragraph.paragraphNumber !== null) setProgress(judgment.judgmentId, paragraph.paragraphNumber);
+      if (fromTap && paragraph.paragraphNumber !== null) onParagraphChange(paragraph.paragraphNumber);
     },
     [judgment.paragraphs, judgment.judgmentId, offsetOf, onParagraphChange, setProgress]
   );
@@ -321,7 +321,7 @@ export function ReadingView({
     ({ viewableItems }: { viewableItems: { item: JudgmentParagraph }[] }) => {
       // Indices, not printed numbers — an unnumbered header is still a row the
       // reading position has to be able to sit on.
-      const visible = viewableItems.map((v) => v.item?.index).filter((n) => n !== undefined);
+      const visible = viewableItems.map((v) => v.item?.paragraphIndex).filter((n) => n !== undefined);
       if (!visible.length) return;
 
       const target = jumpTarget.current;
@@ -359,7 +359,7 @@ export function ReadingView({
     restored.current = true;
     const saved = useReadingStore.getState().progress[judgment.judgmentId]?.paragraphNumber;
     const target = openParagraph ?? saved;
-    const first = judgment.paragraphs[0]?.number;
+    const first = judgment.paragraphs[0]?.paragraphNumber;
     if (target && target !== first) jumpTo(target);
   }, [hydrated, judgment.judgmentId, judgment.paragraphs, jumpTo, openParagraph]);
 
@@ -529,7 +529,7 @@ export function ReadingView({
         /**
          * KEYED ON THE INDEX, NOT THE PRINTED NUMBER.
          *
-         * `String(p.number)` was correct while the number was required. It is
+         * `String(p.paragraphNumber)` was correct while the number was required. It is
          * not now: every unnumbered row keys to the string "null", so a
          * judgment with two unnumbered paragraphs hands FlatList duplicate keys
          * — rows are dropped, reused against the wrong content, and the
@@ -540,7 +540,7 @@ export function ReadingView({
          * the search over the same rows. `index` is always present and unique,
          * which is the whole reason it exists.
          */
-        keyExtractor={(p) => String(p.index)}
+        keyExtractor={(p) => String(p.paragraphIndex)}
         onScrollToIndexFailed={({ index, averageItemLength }) => {
           /**
            * RETRYING THE SAME CALL CANNOT WORK, AND USED TO BE WHAT THIS DID.
@@ -575,13 +575,13 @@ export function ReadingView({
               // Compared by INDEX, never by object identity: a re-fetch of the
               // same judgment produces equal rows that are not the same objects,
               // and identity comparison would silently dim every paragraph.
-              (!found.tooShort && found.matches.length > 0 && !hitParagraphs.has(item.index)) ||
-              (!term && item.index !== current)
+              (!found.tooShort && found.matches.length > 0 && !hitParagraphs.has(item.paragraphIndex)) ||
+              (!term && item.paragraphIndex !== current)
             }
-            highlighted={item.number !== null && highlighted.has(item.number)}
-            isCurrentHit={currentHitParagraph === item.index}
+            highlighted={item.paragraphNumber !== null && highlighted.has(item.paragraphNumber)}
+            isCurrentHit={currentHitParagraph === item.paragraphIndex}
             onMeasure={measure}
-            showAnchor={showAnchors && item.number !== null}
+            showAnchor={showAnchors && item.paragraphNumber !== null}
             onLink={() => {
               /**
                * ONLY A NUMBERED PARAGRAPH IS A LINK. An unnumbered header has
@@ -589,8 +589,8 @@ export function ReadingView({
                * without writing an anchor nobody could cite back.
                */
               haptics.commit();
-              setSelected(item.index);
-              if (item.number !== null) onParagraphChange(item.number);
+              setSelected(item.paragraphIndex);
+              if (item.paragraphNumber !== null) onParagraphChange(item.paragraphNumber);
             }}
             onOpenCited={
               item.citesJudgmentId ? () => onOpenJudgment(item.citesJudgmentId!) : undefined
@@ -603,20 +603,20 @@ export function ReadingView({
                * would put a fabricated paragraph reference into a matter file.
                * The action is simply not offered there.
                */
-              item.number === null
+              item.paragraphNumber === null
                 ? undefined
                 : () => {
                     haptics.commit();
                     addHighlight({
                       judgmentId: judgment.judgmentId,
-                      paragraphNumber: item.number as number,
+                      paragraphNumber: item.paragraphNumber as number,
                       text: item.text,
                       savedAt: new Date().toISOString(),
                     });
                   }
             }
             paragraph={item}
-            selected={selected === item.index}
+            selected={selected === item.paragraphIndex}
             textSize={textSize}
           />
         )}
@@ -715,7 +715,7 @@ function Paragraph({
 }) {
   return (
     <View
-      onLayout={(e) => onMeasure(paragraph.index, e.nativeEvent.layout.height)}
+      onLayout={(e) => onMeasure(paragraph.paragraphIndex, e.nativeEvent.layout.height)}
       style={styles.paragraphRow}
     >
       {/*
@@ -727,7 +727,7 @@ function Paragraph({
       */}
       <Pressable
         accessibilityLabel={
-          paragraph.number === null ? 'Paragraph' : `Paragraph ${paragraph.number}`
+          paragraph.paragraphNumber === null ? 'Paragraph' : `Paragraph ${paragraph.paragraphNumber}`
         }
         accessibilityRole="button"
         onPress={onLink}
@@ -735,7 +735,7 @@ function Paragraph({
         <View style={styles.gutter}>
           {showAnchor ? (
             <Text opticalNudge variant="record" style={styles.anchor}>
-              {paragraph.number}
+              {paragraph.paragraphNumber}
             </Text>
           ) : null}
         </View>
@@ -772,7 +772,7 @@ function Paragraph({
               </View>
             </Pressable>
             <View style={styles.actionGhost}>
-              <Text variant="ui">Copy ¶ {paragraph.number}</Text>
+              <Text variant="ui">Copy ¶ {paragraph.paragraphNumber}</Text>
             </View>
             <View style={styles.actionGhost}>
               <Text variant="ui">Link</Text>

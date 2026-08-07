@@ -15,6 +15,7 @@ import { api } from '../../api/client';
 import type { JudgmentDetail } from '../../api/contract';
 import { citationRender } from '../../citation/renderState';
 import { newClientKey, useOutbox } from '../../state/outbox';
+import { judgmentCacheKey, readCache, writeCache } from '../../state/offlineCache';
 import { haptics } from '../../theme/haptics';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
@@ -96,6 +97,14 @@ export function JudgmentScreen({
   onSetReading: (reading: boolean, paragraphNumber?: number) => void;
 }) {
   const [judgment, setJudgment] = useState<JudgmentDetail | null>(null);
+  /**
+   * SET ONLY WHEN THIS JUDGMENT CAME OFF THE DEVICE. It is the timestamp of the
+   * last successful read, and it is what makes an offline `overruled_status`
+   * honest — `docs/CITATION_HARNESS.md`: "Offline surfaces render the status
+   * they last read WITH ITS AS-OF DATE SHOWN; they never present a stale status
+   * as current." Null means live, which is the ordinary case.
+   */
+  const [statusAsOf, setStatusAsOf] = useState<string | null>(null);
   const [missing, setMissing] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
@@ -115,15 +124,59 @@ export function JudgmentScreen({
   const insets = useSafeAreaInsets();
   const topInset = { paddingTop: insets.top + space.sm };
 
+  /**
+   * ─────────────────────────────────────────────────────────────────────────
+   * READ THE DEVICE FIRST, THEN THE NETWORK.
+   *
+   * PD-9 item 6 is "reading progress across sessions, INCLUDING OFFLINE", and
+   * `state/reading.ts` has kept the position on the device since S1. Observed on
+   * a device 8 Aug 2026: the position survived perfectly and was useless,
+   * because the JUDGMENT was fetched fresh on every open. With the radio off the
+   * screen never got past "We could not open this judgment", so there was
+   * nothing for the saved paragraph to be restored into. A remembered place in a
+   * document you cannot open is not a feature.
+   *
+   * So the text is cached with the same 30-day entry the briefings use. What is
+   * NOT cached, ever, is whether the law has moved: `overruled_status` is read
+   * live at render on every surface, and where this screen is serving a cached
+   * copy it renders that status with `statusAsOf` — the date it was last read —
+   * rather than as current. That is the difference between an honest offline
+   * screen and a stale badge, and the stale-overruled threshold is zero.
+   * ─────────────────────────────────────────────────────────────────────────
+   */
   useEffect(() => {
     let alive = true;
     setJudgment(null);
+    setStatusAsOf(null);
     setMissing(false);
+
+    void readCache<JudgmentDetail>(judgmentCacheKey(judgmentId)).then((entry) => {
+      // A live response that has already landed always wins over the cache.
+      if (!alive || !entry) return;
+      setJudgment((current) => {
+        if (current) return current;
+        setStatusAsOf(entry.cachedAt);
+        return entry.value;
+      });
+    });
+
     void api.judgment(judgmentId).then((r) => {
       if (!alive) return;
-      if (r.ok) setJudgment(r.data);
-      else setMissing(true);
+      if (r.ok) {
+        setJudgment(r.data);
+        setStatusAsOf(null);
+        void writeCache(judgmentCacheKey(judgmentId), r.data);
+        return;
+      }
+      // Only a judgment we have never held is missing. One we hold a copy of is
+      // already on screen, and saying "we could not open this" over the top of
+      // it would be false.
+      setJudgment((current) => {
+        if (!current) setMissing(true);
+        return current;
+      });
     });
+
     return () => {
       alive = false;
     };
@@ -207,7 +260,15 @@ export function JudgmentScreen({
     );
   }
 
-  const { existence, moved } = citationRender(judgment);
+  /**
+   * `statusAsOf` is passed ONLY when this copy came off the device. Live reads
+   * pass nothing, which is what `citationRender` treats as current — the
+   * never-cached rule, expressed at the one call site that can know.
+   */
+  const { existence, moved } = citationRender({
+    ...judgment,
+    ...(statusAsOf ? { statusAsOf: formatJudgmentDate(statusAsOf.slice(0, 10)) } : {}),
+  });
   const blocked = moved.kind === 'moved' && moved.blocksAddToMatter;
 
   /**

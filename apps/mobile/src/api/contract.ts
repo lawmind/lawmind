@@ -118,10 +118,32 @@ export type SearchResult = {
  * once it is in an advocate's note. `index` is the rendering handle for those
  * rows: always present, never citable.
  */
+/**
+ * THE FIELD NAMES ARE THE SERVER'S, NOT SHORTER ONES.
+ *
+ * These were transcribed as `number` and `index` and shipped that way. The
+ * frozen contract (`docs/API_CONTRACTS.md` line 301) and the live response both
+ * say `paragraphNumber` and `paragraphIndex`, so every read of `p.index` was
+ * `undefined` — which TypeScript could not catch, because the type asserted a
+ * shape the wire never had.
+ *
+ * OBSERVED ON A DEVICE, 8 Aug 2026, and invisible everywhere else: the reading
+ * view keyed its list on `String(p.index)`, so all 22 paragraphs of a real
+ * judgment shared the key `"undefined"`, React logged a duplicate-key error per
+ * row, and THE PARAGRAPH ANCHORS NEVER RENDERED. Anchors are PD-9 item one —
+ * "first because advocates cite by paragraph; without them the reading view is
+ * decorative" — and they were decorative on live data while the suite was
+ * green, because the fixtures used the transcribed names too.
+ *
+ * The lesson, recorded rather than just fixed: a hand-transcribed type is an
+ * assertion about somebody else's wire format, and the compiler will defend the
+ * assertion rather than check it. Transcribe the names exactly.
+ */
 export type JudgmentParagraph = {
-  number: number | null;
+  /** What the court PRINTED. Nullable — a pre-numbering scan has none. */
+  paragraphNumber: number | null;
   /** Zero-based position in the rendered array. Always present, never citable. */
-  index: number;
+  paragraphIndex: number;
   text: string;
   /** Set where the paragraph cites another judgment we hold — drives the jump. */
   citesJudgmentId?: string;
@@ -694,6 +716,52 @@ export type User = {
 };
 
 export type Session = { accessToken: string; refreshToken: string; user: User };
+
+/**
+ * IDENTITY IS NOT PROFILE — and `GET /me` says so in its own shape.
+ *
+ * `POST /auth/verify` proves an email address is reachable. It does NOT create an
+ * advocate. Until `PATCH /me` supplies `fullName` and `phone`, `GET /me` answers
+ * `{ profileComplete: false, profile: null }`, and that is a real state to design
+ * for rather than an error: somebody abandoned onboarding halfway.
+ *
+ * `SCHEMA_TRUTH.md#auth_user`: "An identity with no profile is a real state and
+ * `GET /me` reports `profileComplete: false` rather than returning a half-filled
+ * user." So the client NEVER synthesises an empty `User` to keep a screen happy —
+ * a blank name rendered as though it were the advocate's is worse than a screen
+ * that asks for it.
+ *
+ * `pushRegistered` IS A BOOLEAN AND THE TOKEN NEVER COMES BACK. It is a device
+ * secret; nothing in the client needs to read it, and a shape that returned it
+ * would invite somebody to render it.
+ */
+export type Profile = User & {
+  email: string;
+  phone: string;
+  /** True once a device token has been registered. The token itself is never returned. */
+  pushRegistered: boolean;
+};
+
+export type MeResponse =
+  | { profileComplete: false; profile: null }
+  | { profileComplete: true; profile: Profile };
+
+/**
+ * `PATCH /me`. `expoPushToken` is NULLABLE RATHER THAN MERELY OPTIONAL: omitted
+ * means "no change", explicit `null` means "stop sending to this device". Those
+ * are different instructions and collapsing them silently keeps pushing at a
+ * phone the advocate signed out of.
+ */
+export type ProfilePatch = {
+  fullName?: string;
+  phone?: string;
+  preferredLanguage?: 'en' | 'hi';
+  barEnrolmentNumber?: string | null;
+  expoPushToken?: string | null;
+};
+
+/** `GET /terms/current` — PD-8. The version is stored, never a boolean. */
+export type CurrentTerms = { version: string; body: string };
 
 /* -------------------------------------------------------------------- matters */
 

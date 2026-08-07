@@ -96,12 +96,12 @@ export function findInJudgment(paragraphs: JudgmentParagraph[], rawQuery: string
      * citation break the search on a screen an advocate is relying on.
      */
     let at = hay.indexOf(needle);
-    if (at !== -1) paragraphIndexes.push(paragraph.index);
+    if (at !== -1) paragraphIndexes.push(paragraph.paragraphIndex);
 
     while (at !== -1) {
       matches.push({
-        paragraphIndex: paragraph.index,
-        paragraphNumber: paragraph.number,
+        paragraphIndex: paragraph.paragraphIndex,
+        paragraphNumber: paragraph.paragraphNumber,
         start: at,
         end: at + query.length,
       });

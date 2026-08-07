@@ -8,10 +8,10 @@ import { findInJudgment, matchLabel, MIN_QUERY, stepMatch } from './findInJudgme
  * bug that returns the array position pass every test.
  */
 const paragraphs: JudgmentParagraph[] = [
-  { index: 0, number: null, text: 'GURBAKSH SINGH SIBBIA v. STATE OF PUNJAB\nApril 9, 1980' },
-  { index: 1, number: 2, text: 'The question of anticipatory bail arises under Section 438.' },
-  { index: 2, number: 7, text: 'Anticipatory bail is not to be granted as a matter of course. Bail is the rule.' },
-  { index: 3, number: 15, text: 'अग्रिम जमानत के लिए शर्तें धारा 438 में दी गई हैं।' },
+  { paragraphIndex: 0, paragraphNumber: null, text: 'GURBAKSH SINGH SIBBIA v. STATE OF PUNJAB\nApril 9, 1980' },
+  { paragraphIndex: 1, paragraphNumber: 2, text: 'The question of anticipatory bail arises under Section 438.' },
+  { paragraphIndex: 2, paragraphNumber: 7, text: 'Anticipatory bail is not to be granted as a matter of course. Bail is the rule.' },
+  { paragraphIndex: 3, paragraphNumber: 15, text: 'अग्रिम जमानत के लिए शर्तें धारा 438 में दी गई हैं।' },
 ];
 
 describe('findInJudgment', () => {
@@ -83,7 +83,7 @@ describe('findInJudgment', () => {
    * reach, so "12 of 12" would never arrive.
    */
   it('does not double-count overlapping occurrences', () => {
-    const overlapping: JudgmentParagraph[] = [{ index: 0, number: 1, text: 'aaaa' }];
+    const overlapping: JudgmentParagraph[] = [{ paragraphIndex: 0, paragraphNumber: 1, text: 'aaaa' }];
     expect(findInJudgment(overlapping, 'aa').matches).toHaveLength(2);
   });
 
@@ -116,7 +116,7 @@ describe('findInJudgment', () => {
    */
   it('treats regex metacharacters as literal text', () => {
     const withMeta: JudgmentParagraph[] = [
-      { index: 0, number: 1, text: 'See s. 438(1) of the Code (as amended).' },
+      { paragraphIndex: 0, paragraphNumber: 1, text: 'See s. 438(1) of the Code (as amended).' },
     ];
 
     expect(findInJudgment(withMeta, '438(1)').matches).toHaveLength(1);
@@ -126,7 +126,7 @@ describe('findInJudgment', () => {
 
   it('handles the 79,000-character final block the corpus actually returns', () => {
     const huge: JudgmentParagraph[] = [
-      { index: 0, number: 1, text: `${'lorem ipsum '.repeat(6_500)}anticipatory bail` },
+      { paragraphIndex: 0, paragraphNumber: 1, text: `${'lorem ipsum '.repeat(6_500)}anticipatory bail` },
     ];
 
     const r = findInJudgment(huge, 'anticipatory bail');

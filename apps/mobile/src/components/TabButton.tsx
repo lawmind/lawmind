@@ -55,6 +55,13 @@ export const TabButton = forwardRef<RNView, TabButtonProps>(function TabButton(
         onPress?.(event);
       }}
       ref={ref}
+      /**
+       * `flex: 1` GOES ON THE HOST. The four tabs divide the bar between them,
+       * and that negotiation happens on the outer touch target — see the note
+       * on `hostStyle` in `Pressable.tsx` for the device observation that found
+       * this. Passing it in `style` put it on a child the row never measured.
+       */
+      hostStyle={styles.tabHost}
       style={styles.tab}
     >
       <Icon
@@ -119,7 +126,9 @@ export const tabBarStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  tab: { flex: 1, alignItems: 'center', paddingTop: space.xs, gap: 2 },
+  /** The share of the bar. Must be on the host — see `hostStyle`. */
+  tabHost: { flex: 1 },
+  tab: { alignItems: 'center', paddingTop: space.xs, gap: 2 },
   activeRule: {
     position: 'absolute',
     top: 0,

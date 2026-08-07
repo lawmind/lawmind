@@ -1,0 +1,270 @@
+import * as SecureStore from 'expo-secure-store';
+import { create } from 'zustand';
+
+import { api, registerAuthBridge } from '../api/client';
+import type { MeResponse, Profile } from '../api/contract';
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE SESSION — tokens, the two-phase identity, and one rule about replay.
+ *
+ * WHY SECURE-STORE AND NOT ASYNC-STORAGE. `state/reading.ts` argues the opposite
+ * way for a reading position, and both are right: a reading position is neither
+ * secret nor small, and a refresh token is both. `expo-secure-store` is the OS
+ * keychain — Keychain on iOS, EncryptedSharedPreferences on Android — capped at
+ * a couple of KB per value, which a token pair and a profile are comfortably
+ * under. A refresh token in plain AsyncStorage is a 30-day login sitting in a
+ * world-readable file on a rooted phone.
+ *
+ * IDENTITY IS NOT PROFILE. `POST /auth/verify` proves an email address is
+ * reachable; it does not make somebody an advocate. `GET /me` answers
+ * `profileComplete: false` until `PATCH /me` supplies a name and a phone number,
+ * and THAT IS A REAL STATE, not an error — somebody abandoned onboarding. The
+ * store models it as its own field rather than faking an empty profile, because
+ * a blank name rendered where the advocate's name belongs is worse than a screen
+ * that asks for it.
+ *
+ * A REPLAYED REFRESH TOKEN REVOKES EVERY SESSION. That is the server's rule
+ * (`SCHEMA_TRUTH.md#refresh_tokens`), and the client's half of it is: never
+ * retry a rejected refresh. Retrying turns one revocation into a loop, and the
+ * only correct response is to send the advocate to sign in.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+const TOKENS_KEY = 'lawmind.session.tokens.v1';
+const PROFILE_KEY = 'lawmind.session.profile.v1';
+
+type Tokens = { accessToken: string; refreshToken: string };
+
+export type SessionStatus =
+  /** Nothing read from the keychain yet. Draw nothing that depends on identity. */
+  | 'unknown'
+  /** No tokens. The advocate signs in. */
+  | 'signed_out'
+  /** Tokens held, but `GET /me` says there is no profile. Onboarding is unfinished. */
+  | 'identity_only'
+  /** Tokens and a profile. */
+  | 'signed_in';
+
+type SessionState = {
+  status: SessionStatus;
+  tokens: Tokens | null;
+  profile: Profile | null;
+  /**
+   * Set when the session ended because the SERVER rejected it rather than
+   * because the advocate asked. The sign-in screen says so — an advocate who was
+   * signed out mid-hearing deserves to know it was not their doing.
+   */
+  endedByServer: boolean;
+
+  hydrate: () => Promise<void>;
+  requestLink: (email: string) => Promise<{ ok: true } | { ok: false; message: string }>;
+  verify: (token: string) => Promise<{ ok: true } | { ok: false; message: string }>;
+  loadProfile: () => Promise<void>;
+  completeProfile: (input: {
+    fullName: string;
+    phone: string;
+    barEnrolmentNumber?: string | null;
+  }) => Promise<{ ok: true } | { ok: false; message: string }>;
+  registerPushToken: (token: string | null) => Promise<void>;
+  signOut: () => Promise<void>;
+};
+
+async function readJson<T>(key: string): Promise<T | null> {
+  try {
+    const raw = await SecureStore.getItemAsync(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    // A keychain that will not open is indistinguishable from an empty one for
+    // our purposes: the advocate signs in again. Crashing on launch is not an
+    // option in a court corridor.
+    return null;
+  }
+}
+
+async function writeJson(key: string, value: unknown | null): Promise<void> {
+  try {
+    if (value === null) await SecureStore.deleteItemAsync(key);
+    else await SecureStore.setItemAsync(key, JSON.stringify(value));
+  } catch {
+    // The session survives in memory for this run. Losing it at next launch
+    // costs one sign-in; taking the app down costs the hearing.
+  }
+}
+
+export const useSession = create<SessionState>((set, get) => ({
+  status: 'unknown',
+  tokens: null,
+  profile: null,
+  endedByServer: false,
+
+  hydrate: async () => {
+    const tokens = await readJson<Tokens>(TOKENS_KEY);
+    const profile = await readJson<Profile>(PROFILE_KEY);
+
+    if (!tokens) {
+      set({ status: 'signed_out', tokens: null, profile: null });
+      return;
+    }
+
+    /**
+     * THE CACHED PROFILE IS SHOWN BEFORE THE NETWORK IS ASKED.
+     *
+     * Court buildings have terrible connectivity and the app opens there. A
+     * launch that blocks on `GET /me` shows a spinner in the one place a spinner
+     * is useless. The cached profile is the advocate's own name and phone
+     * number, which do not change between launches; `loadProfile` corrects it
+     * when there is a signal.
+     */
+    set({
+      tokens,
+      profile,
+      status: profile ? 'signed_in' : 'identity_only',
+    });
+
+    void get().loadProfile();
+  },
+
+  requestLink: async (email) => {
+    const res = await api.requestMagicLink(email.trim().toLowerCase());
+    return res.ok ? { ok: true } : { ok: false, message: res.error.message };
+  },
+
+  verify: async (token) => {
+    const res = await api.verifyMagicLink(token);
+    if (!res.ok) return { ok: false, message: res.error.message };
+
+    const tokens = { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken };
+    await writeJson(TOKENS_KEY, tokens);
+    set({ tokens, endedByServer: false, status: 'identity_only' });
+
+    // The verify payload carries an identity, not necessarily a profile, so the
+    // status is settled by `GET /me` and never by the sign-in response.
+    await get().loadProfile();
+    return { ok: true };
+  },
+
+  loadProfile: async () => {
+    if (!get().tokens) return;
+
+    const res = await api.me();
+    if (!res.ok) {
+      /**
+       * OFFLINE IS NOT SIGNED OUT. A failed `GET /me` on a corridor connection
+       * must not clear the keychain — the advocate would be signed out by a
+       * thick wall. The session-lost path is driven by the server rejecting a
+       * REFRESH, which `onSessionLost` below handles, and by nothing else.
+       */
+      return;
+    }
+
+    const me: MeResponse = res.data;
+    if (!me.profileComplete) {
+      await writeJson(PROFILE_KEY, null);
+      set({ profile: null, status: 'identity_only' });
+      return;
+    }
+
+    await writeJson(PROFILE_KEY, me.profile);
+    set({ profile: me.profile, status: 'signed_in' });
+  },
+
+  completeProfile: async (input) => {
+    const res = await api.updateProfile({
+      fullName: input.fullName.trim(),
+      phone: input.phone.trim(),
+      // PD-2 — captured, never a gate. Omitted when blank rather than sent empty:
+      // an empty string is a value, and "not given" is not one.
+      ...(input.barEnrolmentNumber ? { barEnrolmentNumber: input.barEnrolmentNumber.trim() } : {}),
+    });
+    if (!res.ok) return { ok: false, message: res.error.message };
+
+    await writeJson(PROFILE_KEY, res.data.profile);
+    set({ profile: res.data.profile, status: 'signed_in' });
+    return { ok: true };
+  },
+
+  /**
+   * `null` MEANS "STOP SENDING TO THIS DEVICE" and is passed through as null.
+   * Omitting the key would mean "no change", which is a different instruction —
+   * and the difference is a phone that keeps buzzing after a sign-out.
+   */
+  registerPushToken: async (token) => {
+    if (!get().tokens) return;
+    const res = await api.updateProfile({ expoPushToken: token });
+    if (res.ok) {
+      await writeJson(PROFILE_KEY, res.data.profile);
+      set({ profile: res.data.profile });
+    }
+  },
+
+  signOut: async () => {
+    // Told, not asked: the local session is cleared whether or not the server
+    // is reachable. An advocate handing their phone to a clerk cannot be made to
+    // wait for a network round trip to be signed out.
+    void api.signOut();
+    await writeJson(TOKENS_KEY, null);
+    await writeJson(PROFILE_KEY, null);
+    set({ status: 'signed_out', tokens: null, profile: null, endedByServer: false });
+  },
+}));
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE BRIDGE, INSTALLED ONCE AT MODULE LOAD.
+ *
+ * `api` calls back into here for the access token and for a refresh. Registering
+ * at import time rather than inside a component means the very first request the
+ * app makes is already authenticated — a screen that fetches in its own mount
+ * effect would otherwise race the provider that installed the bridge.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+let refreshInFlight: Promise<boolean> | null = null;
+
+registerAuthBridge({
+  accessToken: () => useSession.getState().tokens?.accessToken ?? null,
+
+  refresh: async () => {
+    // Several screens fetch at once on launch, and all of them will see the same
+    // expired access token. Without this they would each present the same
+    // refresh token — which the server reads as a REPLAY and answers by revoking
+    // every session the advocate has.
+    if (refreshInFlight) return refreshInFlight;
+
+    refreshInFlight = (async () => {
+      const current = useSession.getState().tokens;
+      if (!current) return false;
+
+      const res = await api.refreshSession(current.refreshToken);
+      if (!res.ok) {
+        // Distinguish "the network is bad" from "this token is spent". Only the
+        // second ends the session; the first must leave the advocate signed in,
+        // because a court basement is not a security event.
+        if (res.error.code === 'REFRESH_INVALID' || res.error.code === 'AUTH_REQUIRED') {
+          useSession.setState({
+            status: 'signed_out',
+            tokens: null,
+            profile: null,
+            endedByServer: true,
+          });
+          void writeJson(TOKENS_KEY, null);
+          void writeJson(PROFILE_KEY, null);
+        }
+        return false;
+      }
+
+      const tokens = { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken };
+      await writeJson(TOKENS_KEY, tokens);
+      useSession.setState({ tokens });
+      return true;
+    })().finally(() => {
+      refreshInFlight = null;
+    });
+
+    return refreshInFlight;
+  },
+
+  onSessionLost: () => {
+    useSession.setState({ status: 'signed_out', tokens: null, profile: null, endedByServer: true });
+  },
+});

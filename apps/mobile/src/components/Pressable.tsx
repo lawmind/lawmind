@@ -43,12 +43,30 @@ import { duration, motion, size } from '../theme/tokens';
  */
 export type PressableProps = Omit<RNPressableProps, 'style'> & {
   style?: StyleProp<ViewStyle>;
+  /**
+   * LAYOUT THAT MUST APPLY TO THE TOUCH TARGET ITSELF — `flex`, `width`,
+   * `alignSelf`. Everything else belongs in `style`.
+   *
+   * `style` is applied to an INNER view, because the press transform and the
+   * ink veil both have to live on the thing that actually moves and be clipped
+   * to its bounds. That is right for padding, background and border — and
+   * silently wrong for anything that has to be negotiated with a PARENT,
+   * because the parent lays out the outer `RNPressable` and never sees it.
+   *
+   * OBSERVED ON A DEVICE, 8 Aug 2026: the tab bar passed `flex: 1` per tab in
+   * `style`. It landed one level too deep, so each tab sized to its own content,
+   * the four-tab row measured 1,287px inside a 1,080px screen, and BOTH END TABS
+   * WERE CLIPPED — "Today" cut off at x=0 and "Drafts" at x=1080. Confirmed by
+   * `uiautomator` bounds, not by eye. Nothing in the suite could see it: the
+   * style object was correct, it was merely attached to the wrong node.
+   */
+  hostStyle?: StyleProp<ViewStyle>;
   /** Set false on a control that carries its own haptic — a Switch, a tab. */
   haptic?: boolean;
 };
 
 export const Pressable = forwardRef<View, PressableProps>(function Pressable(
-  { style, haptic = true, onPressIn, onPressOut, children, ...rest },
+  { style, hostStyle, haptic = true, onPressIn, onPressOut, children, ...rest },
   ref
 ) {
   const pressed = useSharedValue(0);
@@ -79,7 +97,7 @@ export const Pressable = forwardRef<View, PressableProps>(function Pressable(
         onPressOut?.(e);
       }}
       ref={ref}
-      style={styles.target}
+      style={[styles.target, hostStyle]}
     >
       <Animated.View style={[style, animatedStyle]}>
         {children as React.ReactNode}

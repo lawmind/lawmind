@@ -1,13 +1,21 @@
 import type {
   ApiResponse,
   AuthoritiesResponse,
+  Briefing,
   CitationCheck,
   CitationCopy,
   CounterArgumentsResponse,
+  CurrentTerms,
   JudgmentDetail,
+  Matter,
+  MatterEvent,
+  MeResponse,
   PrecedentGraph,
+  Profile,
+  ProfilePatch,
   SearchFilters,
   SearchResponse,
+  Session,
   Statute,
   StatuteSection,
   TreatmentResponse,
@@ -44,14 +52,55 @@ const BASE_URL = 'https://api-production-1c0b4.up.railway.app';
 /** Court corridors have terrible connectivity; a request that never returns is worse than one that fails. */
 const TIMEOUT_MS = 15_000;
 
-async function request<T>(path: string, init?: RequestInit): Promise<ApiResponse<T>> {
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE AUTH BRIDGE — a hole in this module that `state/session.ts` fills.
+ *
+ * The session store needs `api` to sign in and to refresh; every authenticated
+ * call needs the session store's access token. Importing each from the other is
+ * a cycle, and Metro resolves a cycle by handing one side `undefined` at module
+ * init — which fails as a crash on the first call rather than at build time.
+ *
+ * So the direction of the import is one way (session → client) and the token
+ * arrives through a registration instead. The client knows nothing about how
+ * tokens are stored, and the store knows nothing about fetch.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+type AuthBridge = {
+  accessToken: () => string | null;
+  /** Rotates the refresh token. Resolves true when a new access token is in hand. */
+  refresh: () => Promise<boolean>;
+  /** The refresh itself was rejected: every session is now revoked server-side. */
+  onSessionLost: () => void;
+};
+
+let bridge: AuthBridge | null = null;
+
+export function registerAuthBridge(next: AuthBridge | null): void {
+  bridge = next;
+}
+
+type RequestOptions = RequestInit & {
+  /** Attach the access token, and refresh once on a 401. Default false. */
+  auth?: boolean;
+  /** Internal: this call IS the refresh, so it must never trigger another. */
+  isRefresh?: boolean;
+};
+
+async function once<T>(path: string, options?: RequestOptions): Promise<ApiResponse<T>> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
+  const token = options?.auth ? bridge?.accessToken() : null;
+
   try {
     const response = await fetch(`${BASE_URL}${path}`, {
-      ...init,
-      headers: { accept: 'application/json', ...init?.headers },
+      ...options,
+      headers: {
+        accept: 'application/json',
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+        ...options?.headers,
+      },
       signal: controller.signal,
     });
 
@@ -79,7 +128,46 @@ async function request<T>(path: string, init?: RequestInit): Promise<ApiResponse
   }
 }
 
-const get = <T>(path: string) => request<T>(path);
+/** The server's own code for "this access token is spent". */
+const AUTH_REQUIRED = 'AUTH_REQUIRED';
+/**
+ * The refresh token was already rotated. `SPRINT_5.md` and `SCHEMA_TRUTH.md#refresh_tokens`:
+ * presenting a spent refresh token means it was replayed or the client is buggy,
+ * and both are answered by revoking EVERY live token for that advocate.
+ * **So this is never retried.** Retrying a rejected refresh is how a client turns
+ * one revocation into a loop that burns the advocate's whole session on launch.
+ */
+const REFRESH_INVALID = 'REFRESH_INVALID';
+
+async function request<T>(path: string, options?: RequestOptions): Promise<ApiResponse<T>> {
+  const first = await once<T>(path, options);
+
+  const retryable =
+    options?.auth === true &&
+    options.isRefresh !== true &&
+    first.ok === false &&
+    first.error.code === AUTH_REQUIRED &&
+    bridge !== null;
+
+  if (!retryable) return first;
+
+  // A 15-minute access token expiring mid-session is the ORDINARY case, not an
+  // error worth showing anyone. Refresh once, replay once, and never loop.
+  const refreshed = await bridge!.refresh();
+  if (!refreshed) return first;
+
+  return once<T>(path, options);
+}
+
+const get = <T>(path: string, options?: RequestOptions) => request<T>(path, options);
+
+const send = <T>(path: string, body: unknown, options?: RequestOptions) =>
+  request<T>(path, {
+    method: 'POST',
+    ...options,
+    headers: { 'content-type': 'application/json', ...options?.headers },
+    body: JSON.stringify(body),
+  });
 
 /**
  * SERVER FILTERS GO TO THE SERVER; RELIABILITY FILTERS STAY HERE.
@@ -102,6 +190,189 @@ function serverFilters(filters?: SearchFilters) {
 }
 
 export const api = {
+  /* ------------------------------------------------------------------ auth */
+
+  /**
+   * MAGIC LINK BY EMAIL. The response is `{ sent: true }` whatever the address —
+   * an endpoint that answered differently for a known and an unknown email is an
+   * account-enumeration oracle, and this one deliberately does not.
+   */
+  requestMagicLink: (email: string) => send<{ sent: true }>('/auth/magic-link', { email }),
+
+  /**
+   * PROVES AN EMAIL. IT DOES NOT CREATE AN ADVOCATE.
+   *
+   * The session comes back complete, but `user` here is the identity — the
+   * profile may still be absent. Read `GET /me` before assuming a name exists.
+   */
+  verifyMagicLink: (token: string) => send<Session>('/auth/verify', { token }),
+
+  /** Rotates. The old token is revoked by the server as this returns. */
+  refreshSession: (refreshToken: string) =>
+    send<{ accessToken: string; refreshToken: string }>(
+      '/auth/refresh',
+      { refreshToken },
+      { isRefresh: true }
+    ),
+
+  signOut: () => send<{ ok: true }>('/auth/logout', {}, { auth: true }),
+
+  me: () => get<MeResponse>('/me', { auth: true }),
+
+  /**
+   * `expoPushToken` is passed through EXACTLY as given, including an explicit
+   * `null`. Do not normalise it away — omitted and null are different
+   * instructions to the server (`API_CONTRACTS.md` §Auth).
+   */
+  updateProfile: (patch: ProfilePatch) =>
+    request<{ profile: Profile }>('/me', {
+      method: 'PATCH',
+      auth: true,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(patch),
+    }),
+
+  currentTerms: () => get<CurrentTerms>('/terms/current'),
+
+  /**
+   * PD-8 — consent, recorded with its VERSION and never inferred from any other
+   * action. The version is sent back so the server can reject consent to text
+   * that is no longer current.
+   */
+  acceptTerms: (version: string) =>
+    send<{ termsAcceptedAt: string; termsVersion: string }>(
+      '/me/accept-terms',
+      { version },
+      { auth: true }
+    ),
+
+  /* --------------------------------------------------------------- matters */
+
+  matters: () => get<{ matters: Matter[] }>('/matters', { auth: true }),
+
+  matter: (matterId: string) =>
+    get<{
+      matter: Matter;
+      events: MatterEvent[];
+      documents: { id: string; documentType: string; createdAt: string }[];
+      briefings: Briefing[];
+    }>(`/matters/${encodeURIComponent(matterId)}`, { auth: true }),
+
+  createMatter: (matter: Omit<Matter, 'id'>) => send<{ matter: Matter }>('/matters', matter, { auth: true }),
+
+  /**
+   * `nextHearingDate: null` CLEARS IT. Omitting the key leaves it alone. The
+   * adjournment path depends on the difference, so the patch is passed through
+   * verbatim rather than being cleaned up on the way out.
+   */
+  updateMatter: (matterId: string, patch: Partial<Omit<Matter, 'id'>>) =>
+    request<{ matter: Matter }>(`/matters/${encodeURIComponent(matterId)}`, {
+      method: 'PATCH',
+      auth: true,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(patch),
+    }),
+
+  /**
+   * PD-4 — a note is private in the DATABASE COLUMN. This never sends a
+   * visibility it was not given: a default supplied here would be a default in
+   * application code, which is the exact failure the column default prevents.
+   */
+  addMatterEvent: (
+    matterId: string,
+    event: {
+      eventDate: string;
+      eventType: string;
+      orderText?: string;
+      notes?: string;
+      noteVisibility?: 'private' | 'shared';
+    }
+  ) => send<{ event: MatterEvent }>(`/matters/${encodeURIComponent(matterId)}/events`, event, { auth: true }),
+
+  /**
+   * PD-4 — FLIP ONE NOTE'S VISIBILITY. This is a PATCH on an existing event and
+   * never a new one: creating a second event to change a visibility would put a
+   * duplicate entry in the matter timeline, and the timeline is the one
+   * authoritative record of what the court did.
+   */
+  setNoteVisibility: (matterId: string, eventId: string, noteVisibility: 'private' | 'shared') =>
+    request<{ event: MatterEvent }>(
+      `/matters/${encodeURIComponent(matterId)}/events/${encodeURIComponent(eventId)}`,
+      {
+        method: 'PATCH',
+        auth: true,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ noteVisibility }),
+      }
+    ),
+
+  /* ------------------------------------------------- matter sharing · PD-3 */
+
+  matterShares: (matterId: string) =>
+    get<{
+      shares: {
+        id: string;
+        invitedIdentifier: string;
+        invitedUserId?: string;
+        grantedBy: string;
+        grantedAt: string;
+      }[];
+    }>(`/matters/${encodeURIComponent(matterId)}/shares`, { auth: true }),
+
+  /**
+   * `identifier` is an enrolment number OR a phone number, EXACTLY AS TYPED.
+   * There is no chamber-wide endpoint and there must not be one: a chamber of
+   * two to five is a list of names, and chamber-wide default sharing is a
+   * conflicts hazard — two advocates in one chamber can be on opposing sides of
+   * related matters.
+   */
+  inviteToMatter: (matterId: string, identifier: string) =>
+    send<{ share: { id: string; invitedIdentifier: string; grantedAt: string } }>(
+      `/matters/${encodeURIComponent(matterId)}/shares`,
+      { identifier },
+      { auth: true }
+    ),
+
+  /** Revoke sets `revoked_at`. It NEVER deletes the row — who had sight of a matter, and when, is what a conflicts challenge asks later. */
+  revokeMatterShare: (matterId: string, shareId: string) =>
+    request<{ revokedAt: string }>(
+      `/matters/${encodeURIComponent(matterId)}/shares/${encodeURIComponent(shareId)}`,
+      { method: 'DELETE', auth: true }
+    ),
+
+  /* ------------------------------------------------------------- briefings */
+
+  briefing: (briefingId: string) =>
+    get<{ briefing: Briefing }>(`/briefings/${encodeURIComponent(briefingId)}`, { auth: true }),
+
+  matterBriefings: (matterId: string) =>
+    get<{ briefings: Briefing[] }>(`/matters/${encodeURIComponent(matterId)}/briefings`, {
+      auth: true,
+    }),
+
+  /**
+   * ACTIVATION IS MEASURED ON THIS CALL — "two briefings opened in week one".
+   * `generated`, `delivered` and `opened` are three different facts in three
+   * columns (`SCHEMA_TRUTH.md#briefings`); collapsing any two makes the metric
+   * meaningless, so this fires on the open and nowhere else.
+   */
+  markBriefingOpened: (briefingId: string) =>
+    send<{ ok: true }>(`/briefings/${encodeURIComponent(briefingId)}/opened`, {}, { auth: true }),
+
+  /* ------------------------------------------------------------------ court */
+
+  /**
+   * `available: false` IS A NORMAL 200 AND MUST NOT RENDER AS A FAILURE (PD-12).
+   * Next dates are given orally in open court, so an advocate typing one is
+   * doing the ordinary thing — the manual form is the first-class path, not a
+   * fallback the product apologises for.
+   */
+  courtLookup: (cnrNumber: string) =>
+    send<
+      | { available: false; reason: string; manualEntry: { expected: string; message: string } }
+      | { available: true; matter: Omit<Matter, 'id'> }
+    >('/court/lookup', { cnrNumber }, { auth: true }),
+
   /**
    * p95 is 453 ms server-side. The skeleton still renders, because a search
    * that lands in half a second still lands after the screen has been drawn —
