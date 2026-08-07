@@ -242,6 +242,23 @@ the usual compat assumption is wrong); and **mobile jest only loads files a test
 imports**, so a syntax error in an untested screen passes a green suite — `tsc` is
 what catches those, which is why the typecheck is not optional.
 
+**Two colours are waiting on you, and they are one decision each, not twenty.**
+`check-design-rules.mjs` prints a `token gap` block: `#C3BEB2` appears in 9 of the
+18 canvases and is **9 of 9 dashed borders — unanimous**, and `#F5EDDC` appears in
+8. Neither is in `tokens.ts`. They were being carried per-file in the baseline,
+which grew by two lines every delivery and made a missing token look like a
+recurring mistake by the design lane. It isn't: both do a job the settled rules
+require — the navy `#141B2D` surface needs light ink, and "our own uncertainty is
+neutral ink with a **dashed edge**" needs an edge colour — and `tokens.ts` defines
+neither. Suggested names are in the baseline (`ink.onDark`, `border.uncertain`).
+
+**It is your call, and it is a real one:** absorb them as tokens, or name the
+replacements and let the design lane restate the renders. Either closes it. What
+does not close it is leaving them off-palette, because every render that uses them
+then reads as a rule violation forever. When you decide, delete the `tokenGap`
+block from `scripts/design-rules-baseline.json` — that file is LCC's lane, so say
+so in your commit message and LCC will remove it.
+
 ## BEFORE EVERY COMMIT
 
 `git add apps/` — pathspec, always. Run your tests. Then commit with a message

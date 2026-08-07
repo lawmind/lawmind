@@ -25,9 +25,22 @@ import { extname, join } from 'node:path';
 /** `apps/mobile/src/theme/tokens.ts` — the only hex allowed in a render. */
 const PALETTE = new Set(
   [
-    '#FBFAF7', '#F2EFE8', '#FFFFFF', '#141B2D', '#5A6478', '#8A8578',
-    '#DAD6CB', '#E8E4DA', '#5E1A2B', '#1F6F4A', '#B4690E', '#8A5109',
-    '#FBF0DF', '#9E2A33', '#C9A227', '#D9D5CB',
+    '#FBFAF7',
+    '#F2EFE8',
+    '#FFFFFF',
+    '#141B2D',
+    '#5A6478',
+    '#8A8578',
+    '#DAD6CB',
+    '#E8E4DA',
+    '#5E1A2B',
+    '#1F6F4A',
+    '#B4690E',
+    '#8A5109',
+    '#FBF0DF',
+    '#9E2A33',
+    '#C9A227',
+    '#D9D5CB',
   ].map((h) => h.toUpperCase()),
 );
 
@@ -97,7 +110,7 @@ const RULES = [
   {
     id: 'unverifiable-verdict',
     source: 'FEATURE_PARITY.md §4 — we decline outcome prediction and soundness rating',
-    why: 'a score or verdict on a court\'s reasoning cannot be sourced to a primary record.',
+    why: "a score or verdict on a court's reasoning cannot be sourced to a primary record.",
     test: (text) => {
       const words = ['probability', 'likelihood', 'winRate', 'soundness', 'vulnerable'];
       return words.filter((w) => new RegExp(`\\b${w}\\b`, 'i').test(text));
@@ -127,10 +140,32 @@ const BASELINE_FILE = 'scripts/design-rules-baseline.json';
 const dir = process.argv[2] ?? 'design/screens';
 const updating = process.argv.includes('--update-baseline');
 
+/**
+ * **A missing token is not twenty violations. It is one decision.**
+ *
+ * `#F5EDDC` and `#C3BEB2` were being carried per-file, and the baseline grew by
+ * two lines every time a canvas was delivered. That reads as twenty separate
+ * mistakes by the design lane. It is not. Counted across all 18 canvases:
+ * `#F5EDDC` is the ink on the navy `#141B2D` surface 26 times, and `#C3BEB2` is
+ * the dashed edge 9 times out of 9 — unanimous. Both do a job the settled rules
+ * REQUIRE (dark surfaces exist; "our own uncertainty is neutral ink with a
+ * dashed edge") and for which `tokens.ts` has no token at all.
+ *
+ * So they are tracked here instead: once, by hex, with the job each one does and
+ * the decision owed. This is deliberately NOT forgiveness — the count is printed
+ * on every run and the resolution is named. It closes when `tokens.ts` either
+ * absorbs them or names a replacement, which is RCC's lane, not this one.
+ *
+ * Every other off-palette hex still fails the build.
+ */
 let baseline = {};
+let tokenGap = {};
 if (existsSync(BASELINE_FILE)) {
-  baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf8')).known ?? {};
+  const parsed = JSON.parse(readFileSync(BASELINE_FILE, 'utf8'));
+  baseline = parsed.known ?? {};
+  tokenGap = parsed.tokenGap ?? {};
 }
+const gapHexes = new Set(Object.keys(tokenGap).map((h) => h.toUpperCase()));
 /** A violation's identity: which file, which rule, which exact finding. */
 const key = (file, ruleId, finding) => `${file} ${ruleId} ${finding}`;
 const known = new Set(Object.values(baseline).flat());
@@ -142,6 +177,8 @@ const files = readdirSync(dir)
 
 let fresh = 0;
 let carried = 0;
+/** hex → how many canvases use it, so the gap is reported by weight not by row. */
+const gapHits = new Map();
 const nextBaseline = {};
 console.log(`checking ${files.length} renders in ${dir}\n`);
 
@@ -149,8 +186,19 @@ for (const file of files) {
   const text = readFileSync(join(dir, file), 'utf8');
   const lines = [];
   for (const rule of RULES) {
-    const found = [...new Set(rule.test(text))];
+    let found = [...new Set(rule.test(text))];
     if (found.length === 0) continue;
+
+    // Pull the two known token-gap colours out before anything else, and count
+    // them by file. They are one open decision, not a violation per canvas.
+    if (rule.id === 'off-palette-hex') {
+      const gaps = found.filter((f) => gapHexes.has(f.toUpperCase()));
+      for (const g of gaps) {
+        gapHits.set(g.toUpperCase(), (gapHits.get(g.toUpperCase()) ?? 0) + 1);
+      }
+      found = found.filter((f) => !gapHexes.has(f.toUpperCase()));
+      if (found.length === 0) continue;
+    }
 
     const isNew = found.filter((f) => !known.has(key(file, rule.id, f)));
     const isOld = found.filter((f) => known.has(key(file, rule.id, f)));
@@ -180,10 +228,21 @@ if (updating) {
     ) + '\n',
   );
   const total = Object.values(nextBaseline).flat().length;
-  console.log(`wrote ${BASELINE_FILE} — ${total} known violation(s) across ${Object.keys(nextBaseline).length} file(s)`);
+  console.log(
+    `wrote ${BASELINE_FILE} — ${total} known violation(s) across ${Object.keys(nextBaseline).length} file(s)`,
+  );
   process.exit(0);
 }
 
+if (gapHits.size > 0) {
+  console.log('token gap — colours the design system uses that tokens.ts does not define:');
+  for (const [hex, files_] of [...gapHits].sort((a, b) => b[1] - a[1])) {
+    const meta = tokenGap[hex] ?? tokenGap[hex.toLowerCase()] ?? {};
+    console.log(`  ${hex}  in ${files_} canvas(es) — ${meta.role ?? 'role not recorded'}`);
+    if (meta.resolution) console.log(`     owed: ${meta.resolution}`);
+  }
+  console.log('  One decision each, not one per render. Closes in tokens.ts (RCC).\n');
+}
 if (carried > 0) {
   console.log(`${carried} known violation(s) carried in ${BASELINE_FILE} — debt, not permission.`);
 }
