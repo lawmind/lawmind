@@ -33,6 +33,15 @@ import {
   handleConfirm,
   handleEcourts,
 } from './citations/verify.ts';
+import {
+  addCitationBody,
+  addDocumentCitation,
+  getDocument,
+  patchDocument,
+  patchDocumentBody,
+  removeDocumentCitation,
+} from './documents/route.ts';
+import { listDocumentTypes } from './documents/types.ts';
 import { fail, ok } from './envelope.ts';
 import {
   annotationBody,
@@ -318,6 +327,30 @@ export function createApp(deps: AppDeps) {
     // endpoint changes when OD-1 resolves.
     app.post('/court/lookup', validate('json', courtLookupRequest), (c) =>
       handleCourtLookup(c, sql, c.req.valid('json')),
+    );
+    // Drafting. PD-7 — PATCH takes paragraph prose only and rejects 422 on any
+    // citation divergence: the client's lock glyph is presentation, this is the
+    // enforcement. A hand-edited citation is the hallucination failure arriving
+    // through a different door. Changing an authority goes through the citations
+    // route, which takes a judgmentId and never a string.
+    app.get('/documents/types', (c) => listDocumentTypes(c));
+    app.get('/documents/:id', async (c) =>
+      getDocument(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.patch('/documents/:id', validate('json', patchDocumentBody), async (c) =>
+      patchDocument(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    app.post('/documents/:id/citations', validate('json', addCitationBody), async (c) =>
+      addDocumentCitation(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    app.delete('/documents/:id/citations/:citationCheckId', async (c) =>
+      removeDocumentCitation(
+        c,
+        sql,
+        c.req.param('id'),
+        c.req.param('citationCheckId'),
+        await userFor(c),
+      ),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
     app.get('/statutes', (c) => listStatutes(c, sql));

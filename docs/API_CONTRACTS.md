@@ -119,11 +119,12 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `GET /documents/types` | SPECCED |
+| `GET /documents/types` | BUILT |
+| `GET /documents/:id` | BUILT |
 | `POST /documents` | SPECCED |
-| `PATCH /documents/:id` | SPECCED |
-| `POST /documents/:id/citations` | SPECCED |
-| `DELETE /documents/:id/citations/:citationCheckId` | SPECCED |
+| `PATCH /documents/:id` | BUILT |
+| `POST /documents/:id/citations` | BUILT |
+| `DELETE /documents/:id/citations/:citationCheckId` | BUILT |
 | `POST /documents/:id/export` | SPECCED |
 
 **OCR — LCC owns the service and the API**
@@ -734,7 +735,8 @@ POST /briefings/:id/opened      → { ok }
 
 ## Drafting — LCC owns
 ```
-GET  /documents/types           → { types: [ { type, label, requiredFields } ] }
+GET  /documents/types           → { types: [ { type, label, requiredFields } ], consentRequired }
+GET  /documents/:id             → { document }   // ADDITIVE, 8 Aug 2026
 POST /documents                 { documentType, matterId?, language, inputParams }
                                 → { documentId, content, citations, unverifiedReferences }
 PATCH /documents/:id            { paragraphs: [{ index, text }] } → { document }
