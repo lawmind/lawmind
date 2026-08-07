@@ -21,6 +21,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 
 export const annotationBody = z.object({
   /** What the court printed. Null on an unnumbered judgment — see the module note. */
@@ -82,7 +83,7 @@ export async function listAnnotations(
 
   const rows = await sql<Row[]>`
     SELECT id, judgment_id, matter_id, paragraph_number, paragraph_index,
-           quote, note, created_at::text AS created_at
+           quote, note, ${sql.unsafe(isoColumn('created_at'))} AS created_at
     FROM judgment_annotations
     WHERE user_id = ${userId!} AND judgment_id = ${judgmentId} AND deleted_at IS NULL
     ORDER BY paragraph_index, created_at
@@ -110,7 +111,7 @@ export async function createAnnotation(
     VALUES (${userId!}, ${judgmentId}, ${body.matterId ?? null},
             ${body.paragraphNumber}, ${body.paragraphIndex}, ${body.quote}, ${body.note ?? null})
     RETURNING id, judgment_id, matter_id, paragraph_number, paragraph_index,
-              quote, note, created_at::text AS created_at
+              quote, note, ${sql.unsafe(isoColumn('created_at'))} AS created_at
   `;
   return ok(c, { annotation: shape(row!) });
 }

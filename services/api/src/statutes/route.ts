@@ -14,6 +14,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 
 export const sectionQuery = z.object({
   actId: z.string().uuid().optional(),
@@ -78,7 +79,7 @@ export async function listStatutes(c: Context, sql: Sql): Promise<Response> {
       failed: number;
     }[]
   >`
-    SELECT source_total, enumerated_at::text AS enumerated_at, complete,
+    SELECT source_total, ${sql.unsafe(isoColumn('enumerated_at'))} AS enumerated_at, complete,
            coalesce(array_length(failed_ids, 1), 0) AS failed
     FROM corpus_coverage WHERE source = 'indiacode_central_acts'
   `;

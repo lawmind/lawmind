@@ -25,6 +25,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 import { hybridSearch, type SearchFilters } from './retrieve.ts';
 
 export const savedSearchBody = z.object({
@@ -62,7 +63,8 @@ const shape = (r: Row) => ({
 });
 
 const COLUMNS = `id, query_text, query_language, filters,
-                 last_seen_at::text AS last_seen_at, created_at::text AS created_at`;
+                 ${isoColumn('last_seen_at')} AS last_seen_at,
+                 ${isoColumn('created_at')} AS created_at`;
 
 /**
  * Auth ships in S5 and is this lane's to build. `saved_searches.user_id` is NOT

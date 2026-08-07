@@ -30,6 +30,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 
 /** What a tier did. Never collapsed — see the module note. */
 type TierStatus = 'confirmed' | 'miss' | 'not_attempted' | 'not_implemented';
@@ -86,7 +87,7 @@ export async function getCitationCheck(c: Context, sql: Sql, id: string): Promis
            cc.verification_state, cc.verified_by_source,
            cc.match_confidence::text AS match_confidence,
            cc.shown_to_user, cc.overruled_status_shown, cc.surface,
-           cc.created_at::text AS created_at,
+           ${sql.unsafe(isoColumn('cc.created_at'))} AS created_at,
            -- Rendered fields come from the JUDGMENT row, never from what a model
            -- typed. CITATION_HARNESS.md step 8, the one most often skipped.
            j.case_title, j.neutral_citation, j.court,

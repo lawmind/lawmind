@@ -21,6 +21,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 
 /** Verified reachable 7 Aug 2026. The judgment search, not the case-status portal. */
 export const ECOURTS_JUDGMENT_SEARCH = 'https://judgments.ecourts.gov.in/pdfsearch/index.php';
@@ -102,7 +103,7 @@ export async function handleConfirm(
        shown_to_user, overruled_status_shown, surface)
     VALUES (${body.citationText}, ${body.judgmentId}, 'verified', 'ecourts',
             true, ${judgment.overruled_status}, 'judgment_detail')
-    RETURNING id, created_at::text AS created_at
+    RETURNING id, ${sql.unsafe(isoColumn('created_at'))} AS created_at
   `;
 
   return ok(c, {

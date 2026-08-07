@@ -15,6 +15,8 @@
  */
 import type { Sql } from 'postgres';
 
+import { isoColumn } from '../iso-time.ts';
+
 import type { CauseListResult } from './ecourts.ts';
 
 export type SyncRow = {
@@ -56,8 +58,8 @@ export async function recordSync(
       error        = excluded.error,
       retry_count  = cause_list_syncs.retry_count + 1
     RETURNING id, court, list_date::text AS list_date, status, item_count, retry_count,
-              escalated_at::text AS escalated_at, error,
-              started_at::text AS started_at, completed_at::text AS completed_at
+              ${sql.unsafe(isoColumn('escalated_at'))} AS escalated_at, error,
+              ${sql.unsafe(isoColumn('started_at'))} AS started_at, ${sql.unsafe(isoColumn('completed_at'))} AS completed_at
   `;
   if (!row) throw new Error('cause_list_syncs upsert returned no row');
   return row;
@@ -121,8 +123,8 @@ export async function escalate(sql: Sql, row: SyncRow): Promise<SyncRow> {
     UPDATE cause_list_syncs SET escalated_at = now()
     WHERE id = ${row.id} AND escalated_at IS NULL
     RETURNING id, court, list_date::text AS list_date, status, item_count, retry_count,
-              escalated_at::text AS escalated_at, error,
-              started_at::text AS started_at, completed_at::text AS completed_at
+              ${sql.unsafe(isoColumn('escalated_at'))} AS escalated_at, error,
+              ${sql.unsafe(isoColumn('started_at'))} AS started_at, ${sql.unsafe(isoColumn('completed_at'))} AS completed_at
   `;
   // Already escalated is not an error — the sweep is idempotent, and re-running it
   // must not reset a mark a human is already acting on.

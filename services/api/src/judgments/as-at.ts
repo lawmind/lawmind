@@ -65,6 +65,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 
 type Row = {
   cited_id: string;
@@ -91,7 +92,7 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
     SELECT cited.id AS cited_id, cited.case_title, cited.neutral_citation,
            cited.judgment_date::text AS judgment_date,
            c.relationship, cited.overruled_status,
-           cited.overruled_status_changed_at::text AS changed_at,
+           ${sql.unsafe(isoColumn('cited.overruled_status_changed_at'))} AS changed_at,
            cited.overruled_by_judgment_id,
            -- The overruling bench's own delivery date, not our write time.
            overruler.judgment_date::text AS overruled_on,

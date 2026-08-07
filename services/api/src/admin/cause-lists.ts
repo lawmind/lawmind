@@ -20,6 +20,7 @@ import { z } from 'zod';
 import { fetchCauseList } from '../court/ecourts.ts';
 import { escalate, markDatesNotConfirmed, recordSync, type SyncRow } from '../court/sync.ts';
 import { fail, ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 
 /** The admin view is about what is wrong now; an unfiltered read shows the week. */
 const DEFAULT_WINDOW_DAYS = 7;
@@ -53,8 +54,8 @@ const shape = (row: SyncRow) => ({
 async function findSync(sql: Sql, id: string): Promise<SyncRow | undefined> {
   const [row] = await sql<SyncRow[]>`
     SELECT id, court, list_date::text AS list_date, status, item_count, retry_count,
-           escalated_at::text AS escalated_at, error,
-           started_at::text AS started_at, completed_at::text AS completed_at
+           ${sql.unsafe(isoColumn('escalated_at'))} AS escalated_at, error,
+           ${sql.unsafe(isoColumn('started_at'))} AS started_at, ${sql.unsafe(isoColumn('completed_at'))} AS completed_at
     FROM cause_list_syncs WHERE id = ${id}
   `;
   return row;
@@ -67,8 +68,8 @@ export async function listCauseLists(
 ): Promise<Response> {
   const rows = await sql<SyncRow[]>`
     SELECT id, court, list_date::text AS list_date, status, item_count, retry_count,
-           escalated_at::text AS escalated_at, error,
-           started_at::text AS started_at, completed_at::text AS completed_at
+           ${sql.unsafe(isoColumn('escalated_at'))} AS escalated_at, error,
+           ${sql.unsafe(isoColumn('started_at'))} AS started_at, ${sql.unsafe(isoColumn('completed_at'))} AS completed_at
     FROM cause_list_syncs
     WHERE ${
       query.date
@@ -183,8 +184,8 @@ export async function escalateCauseList(
     UPDATE cause_list_syncs SET escalated_at = coalesce(escalated_at, now())
     WHERE id = ${id}
     RETURNING id, court, list_date::text AS list_date, status, item_count, retry_count,
-              escalated_at::text AS escalated_at, error,
-              started_at::text AS started_at, completed_at::text AS completed_at
+              ${sql.unsafe(isoColumn('escalated_at'))} AS escalated_at, error,
+              ${sql.unsafe(isoColumn('started_at'))} AS started_at, ${sql.unsafe(isoColumn('completed_at'))} AS completed_at
   `;
 
   /**
