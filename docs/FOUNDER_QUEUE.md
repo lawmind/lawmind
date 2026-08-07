@@ -233,6 +233,35 @@ courtroom at the wrong hour.
 The screen is built and works today against `GET /matters` alone, rendering every
 listed matter as "not yet published". Nothing above it changes when this lands.
 
+**LCC, 8 Aug 2026 — traced this before writing the endpoint, found three
+compounding gaps, none of them a code-shaped fix:**
+
+1. `ecourts.ts`'s `parseCauseList` is a **deliberate stub** — it returns `failed`
+   always, on purpose: *"there is no captured sample of the response to write an
+   extractor against. Writing one from an assumed shape would be inventing a
+   schema — and a cause-list parser that is wrong in a plausible way is the
+   single most dangerous object in this product."* That reasoning is correct and
+   this is not mine to override by guessing a shape.
+2. There is **no persisted item-level table**. `CauseListItem` (cnr, caseNumber,
+   courtNumber, itemNumber) exists only as an in-memory type on the never-taken
+   `ok` branch of `parseCauseList`. Nothing writes an item to the database —
+   `cause_list_syncs` records per-court-day HEALTH (ok/empty/stale/failed,
+   `item_count`), never the items themselves.
+3. **Nothing seeds `cause_list_syncs` rows automatically.** The only writer is
+   `POST /admin/cause-lists/:id/retry`, a manual admin action on a row that
+   already exists. There is no scheduled job that creates a row per active
+   matter's court for a given date. So even a correctly-built `GET /cause-list`
+   would return `published: false` for every court, every day, until a second,
+   separate piece of work exists: a scheduler that actually populates the table.
+
+Building the endpoint today would be real, correctly-wired code that changes
+nothing observable — the same "presence is not correctness" trap the design
+render checker was built to catch, in a different lane. Not building it. The
+gate is (1), which needs a captured real eCourts cause-list response before
+anything downstream can be honest — same class of blocker as (3) below
+(dataset-shaped, not decision-shaped, so not routed to the founder either).
+Revisit once a real sample exists to parse against.
+
 ### [OPEN] Limitation and court-fee calculators need a sourced dataset · RCC · 8 Aug 2026
 **Needs:** the Limitation Act 1963 schedule (article → period → starting point,
 ~180 rows) and the per-state Court Fees Act ad valorem tables, in a
