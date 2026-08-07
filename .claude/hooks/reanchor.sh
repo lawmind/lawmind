@@ -85,9 +85,12 @@ compaction, a new session, and a fresh agent:
   missing token is not a blocker for the CODE — build the whole path behind an
   interface that works without it and refuses honestly in production, as
   packages/auth/src/mail.ts does.
-- STOP ONLY FOR: an API key or secret you do not have, an account that must be
-  created under the founder's identity, or something that costs money. State it in
-  one or two lines, having already built everything around it.
+- DO NOT STOP EVEN FOR THOSE. A key, an account, money, or a founder-only decision
+  goes into docs/FOUNDER_QUEUE.md and the lane KEEPS GOING. One list at the end of
+  the sprint run, never an interruption per item.
+- SEARCH BEFORE QUEUEING. Read docs/, sprints/ and PRODUCT_DECISIONS.md, then the
+  vendor's real documentation. Expo push needed no token and Railway services can
+  be made from the CLI — both were wrongly queued as blockers.
 - Batch reporting into ONE final message when the work is actually finished.
 
 If context was compacted: re-read docs/OPEN_DECISIONS.md, docs/SCHEMA_TRUTH.md,

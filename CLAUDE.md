@@ -164,9 +164,22 @@ genuinely *a credential, an account, or money*. If not, it is yours:
 | a token you do not have | build the whole path behind an interface that works without it and **refuses honestly in production** — `packages/auth/src/mail.ts` is the pattern. Only the key is then outstanding. |
 | a long-running job | run it in the background and keep working. |
 
-**Stop only for:** an API key or secret you do not hold, an account that must
-exist under the founder's identity, or a paid service. Say it in one or two lines
-— having already built everything around it — and stop there.
+**Do not stop even for those.** An API key, an account, money, or a decision only
+the founder can make goes into **`docs/FOUNDER_QUEUE.md`** and the lane KEEPS
+GOING. The founder has asked to be handed one list at the end of the sprint run,
+not interrupted per item. Write the entry — what is needed, what was built anyway,
+what stays broken without it, and where it plugs in — then move to the next task.
+
+That file survives compaction and a fresh agent. It is the only place a
+founder-blocked item is allowed to live; a blocker mentioned only in conversation
+is a blocker that gets lost.
+
+**When something looks blocked, search before you queue it.** Read our own docs
+first — `docs/`, `sprints/`, `PRODUCT_DECISIONS.md` — then the vendor's real
+documentation on the web. Two items queued as "needs a credential" this week were
+neither: Expo push needs no token, and Railway services can be created from the
+CLI. Assume the blocker is your ignorance until the vendor's own docs say
+otherwise.
 
 **This does not weaken anything in §6 or §7.** Verify by observation, never claim
 unverified work as done, never resolve an OPEN_DECISION alone, and stop after
