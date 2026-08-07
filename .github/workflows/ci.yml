@@ -1,13 +1,25 @@
 name: CI
 
+# **Deliberately NOT on every push.**
+#
+# This is a private repo on the free tier: 2,000 Actions minutes a month, and the
+# founder's decision is that we do not buy more. At ~5 minutes a run across two
+# jobs, pushing 20 times in a working day would spend the month in a week.
+#
+# What replaces it is `pnpm ci:local` — the same steps, the same order, against a
+# throwaway database, in about 60 seconds and for nothing. It has already caught
+# three real defects that would otherwise have gone to a queue: an unused
+# variable, a missing import, and a NUL byte in a source file. **Run it before
+# every push.** It is not a lesser check; it is the same check, earlier.
+#
+# So CI runs where a human is about to read the result — on a pull request, and on
+# demand — rather than on every commit to a branch only one agent is working on.
 on:
-  push:
   pull_request:
+  workflow_dispatch:
 
-# Only the newest commit on a ref is worth building. Without this, a run per push
-# queues behind the last one and they all burn minutes proving something already
-# superseded — which matters on a private repo with a monthly minute budget, and
-# mattered on 6 Aug 2026 when runs stopped being allocated runners entirely.
+# One run per ref. Without this a superseded push queues behind the run it
+# replaced and both bill.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
