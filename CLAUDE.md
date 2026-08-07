@@ -104,8 +104,26 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
 - Overruled judgments always display overruled status, in every surface, in all
   three states. `set_aside` disables add-to-matter — the one case where Lawmind
   refuses to let an authority be used.
-- Never bypass the eCourts CAPTCHA. Pre-fill the search, let the advocate solve
-  it, cache the result permanently.
+- **Corpus acquisition in bulk is permitted and encouraged.** AWS Open Data,
+  CC-BY-4.0, with attribution. **There is no copyright in a judgment** — Copyright
+  Act **s. 52(1)(q)(iv)**, and the exemption does not distinguish commercial use.
+  Take all of it. What IS protected is a reporter's *copy-edited* version —
+  headnotes, editorial numbering (*Eastern Book Company v. D.B. Modak*) — so use
+  raw court text and never a law report's edition of it.
+- **eCourts harvesting: PERMITTED under the registrar's written authorisation
+  granted 7 Aug 2026, and only within its stated conditions.** The conditions are
+  configuration, not folklore: the rate limiter enforces them and the fetch ledger
+  records every request with timestamp, endpoint and court, so "did we stay inside
+  the grant" is answerable by query rather than by memory. The kill switch defaults
+  OFF and flipping it requires a `reason`. **If the authorisation's terms are not
+  in the repo, the switch stays off** — an unbounded harvest under a bounded
+  permission is the fastest way to lose it.
+- **Never circumvent an access control, and never buy data from someone who did.**
+  That is why eCourtsIndia and similar scraper-resellers are out. Per-citation
+  Tier 3 verification is unchanged: we hand the advocate the eCourts URL and the
+  text to paste, and **the advocate solves the CAPTCHA.** Nothing on the server
+  ever solves one — `services/api/src/citations/verify.ts` contains no HTTP client
+  and a test asserts it.
 - Route by data sensitivity. Uploaded document content is sensitive-class:
   pseudonymise before any model call. **OD-6 resolved 2 Aug 2026** — the
   countersigned DPA is still owed before uploads ship, and the admin surface
