@@ -252,6 +252,27 @@ describe('refresh tokens — round trip', () => {
     assert.equal(outcome.ok, false);
   });
 
+  it('refuses an EXPIRED token', async () => {
+    // The branch that shipped broken. The first version compared
+    // `row.expires_at.getTime()` against the clock, which assumes the driver
+    // returns a Date — it does not always, and production answered
+    // "row.expires_at.getTime is not a function" on the first real refresh.
+    //
+    // Nothing exercised this path, because every other test used a token that
+    // was still live and therefore never reached the comparison. An untaken
+    // branch is an unverified branch.
+    const user = await seedIdentity();
+    const pair = await issueTokens(sqlLocal, user, SECRET);
+    await sqlLocal`
+      UPDATE refresh_tokens SET expires_at = now() - interval '1 day'
+      WHERE user_id = ${user.id}`;
+
+    const outcome = await rotateRefreshToken(sqlLocal, pair.refreshToken, SECRET);
+    assert.equal(outcome.ok, false);
+    if (outcome.ok) return;
+    assert.equal(outcome.reason, 'expired', 'an expired token is expired, not unknown');
+  });
+
   it('revokes every live token on logout', async () => {
     const user = await seedIdentity();
     await issueTokens(sqlLocal, user, SECRET);

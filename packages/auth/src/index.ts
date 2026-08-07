@@ -166,14 +166,28 @@ export async function rotateRefreshToken(
 ): Promise<RefreshOutcome> {
   const hash = hashRefreshToken(presented);
 
-  const [row] = await sql<
-    { id: string; user_id: string; expires_at: Date; revoked_at: Date | null }[]
-  >`
-    SELECT id, user_id, expires_at, revoked_at FROM refresh_tokens WHERE token_hash = ${hash}
+  /**
+   * **Expiry and revocation are decided in SQL, not in JavaScript.**
+   *
+   * The obvious version of this read `expires_at` and called `.getTime()` on it,
+   * which assumes the driver hands back a `Date`. It does not always, and
+   * production answered `row.expires_at.getTime is not a function` on the first
+   * real refresh — while the same code passed against the same driver locally.
+   *
+   * That is the second time in one day that assuming a timestamp's runtime
+   * representation has cost a production failure. Postgres knows whether a
+   * timestamp is in the past; asking it removes the assumption rather than
+   * handling it. Nothing here needs the value, only the answer.
+   */
+  const [row] = await sql<{ id: string; user_id: string; expired: boolean; revoked: boolean }[]>`
+    SELECT id, user_id,
+           (expires_at <= now())   AS expired,
+           (revoked_at IS NOT NULL) AS revoked
+    FROM refresh_tokens WHERE token_hash = ${hash}
   `;
   if (!row) return { ok: false, reason: 'unknown' };
 
-  if (row.revoked_at !== null) {
+  if (row.revoked) {
     // Replay. Everything this advocate holds goes, not just this token — the
     // attacker's copy and the real client's copy are indistinguishable from here.
     await sql`
@@ -183,9 +197,7 @@ export async function rotateRefreshToken(
     return { ok: false, reason: 'reused' };
   }
 
-  if (row.expires_at.getTime() <= now.getTime()) {
-    return { ok: false, reason: 'expired' };
-  }
+  if (row.expired) return { ok: false, reason: 'expired' };
 
   const [user] = await sql<{ id: string; email: string }[]>`
     SELECT id, email FROM auth_user WHERE id = ${row.user_id}
