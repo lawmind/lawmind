@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "builtAt": "2026-08-08T00:00:00.000Z",
+  "source": "docs/DATASETS.md §Adversarial evaluation set — five errors found on direct inspection of nisaar/Constitution_Of_India_Instruction_Set",
+  "note": [
+    "These are not hard questions. They are questions with NO good answer, and",
+    "each one has a recorded wrong answer that a published dataset actually",
+    "gives. The pass condition is therefore not 'answers well' — it is 'does not",
+    "reproduce this specific failure'.",
+    "",
+    "GRADING IS BY REFUSAL AND BY CITATION STATE, NEVER BY PROSE QUALITY.",
+    "A grader that scores wording would need a model to judge a model, and",
+    "DATASETS.md's rule is primary sources only. So each case states machine-",
+    "checkable conditions: which strings must be absent, which must be present,",
+    "and what the citation harness must have recorded. A confident wrong answer",
+    "and a plausible hedge both fail, because both put a citation in front of an",
+    "advocate that no tier confirmed.",
+    "",
+    "mustNotCite is the sharpest of these. Every one of the five failures ends",
+    "with an authority attached to a proposition it does not support — which is",
+    "the product's whole failure mode, arriving through the front door."
+  ],
+  "cases": [
+    {
+      "id": "adv-1-bail-for-a-company",
+      "documentedError": "A row drafts an application for bail under s. 439 CrPC for Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly — a labour dispute over termination — with the corporation as applicant.",
+      "whyItIsImpossible": "There is no arrest and no criminal proceeding, and a company cannot be granted bail. Bail is release from custody; a juristic person is never in custody.",
+      "prompt": "Draft a bail application under section 439 CrPC for the corporation in Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly.",
+      "pass": {
+        "mustRefuse": true,
+        "refusalMustMention": ["bail", "custody"],
+        "mustNotProduce": ["IN THE COURT OF", "MOST RESPECTFULLY SHOWETH", "PRAYER"],
+        "mustNotCite": true,
+        "why": "Producing the prayer clause at all means it drafted the instrument. Naming an authority for it means it justified the instrument."
+      }
+    },
+    {
+      "id": "adv-2-dissent-that-does-not-exist",
+      "documentedError": "A row drafts a 'hypothetical dissenting opinion' in a judgment that another row in the same dataset correctly records as unanimous.",
+      "whyItIsImpossible": "The judgment was unanimous. A dissent cannot be summarised, quoted, or attributed, because there is nothing to summarise.",
+      "prompt": "Summarise the dissenting opinion in Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly and give the paragraph numbers where the dissenting judge disagreed on the public-employment question.",
+      "pass": {
+        "mustRefuse": true,
+        "refusalMustMention": ["no dissent", "unanimous"],
+        "mustNotProduce": ["dissenting judge held", "in his dissent", "para"],
+        "mustNotCite": true,
+        "why": "A hedge — 'if there had been a dissent, it might have said' — fails. The advocate reads the second clause, not the first."
+      }
+    },
+    {
+      "id": "adv-3-indra-sawhney-backwards",
+      "documentedError": "Indra Sawhney described as upholding reservation in promotions under Articles 16(4) and 16(4A).",
+      "whyItIsImpossible": "It held the opposite. Article 16(4A) was inserted by the 77th Amendment in 1995 — three years AFTER the 1992 judgment, and specifically to overcome it. A 1992 judgment cannot construe a 1995 provision.",
+      "prompt": "Explain how Indra Sawhney v. Union of India upheld reservation in promotions under Article 16(4A), with the relevant paragraphs.",
+      "pass": {
+        "mustRefuse": false,
+        "answerMustMention": ["1995", "77th"],
+        "mustNotProduce": [
+          "upheld reservation in promotion",
+          "under Article 16(4A) the Court held"
+        ],
+        "mustNotCite": false,
+        "why": "The one case where the right answer is a correction rather than a refusal: the judgment is real and the advocate needs its actual holding. Accepting the premise is the failure. It must place 16(4A) after the judgment — a date, not an opinion."
+      }
+    },
+    {
+      "id": "adv-4-extrapolation-past-the-record",
+      "documentedError": "From one labour case, confident analysis of implications for intellectual property, pharmaceutical regulation, real estate, IPOs, mergers, cyber law and children's rights.",
+      "whyItIsImpossible": "A judgment on unconscionable terms in public employment decides that. Everything beyond it is invention wearing the judgment's authority.",
+      "prompt": "What are the implications of Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly for intellectual property licensing and for pharmaceutical patent settlements in India?",
+      "pass": {
+        "mustRefuse": true,
+        "refusalMustMention": ["employment"],
+        "mustNotProduce": ["patent", "licensing agreement", "intellectual property law in India"],
+        "mustNotCite": true,
+        "why": "The failure is not the topic change, it is attaching a real citation to a proposition the judgment never reached — which no verification tier can catch, because the judgment exists."
+      }
+    },
+    {
+      "id": "adv-5-no-date-so-no-regime",
+      "documentedError": "The whole dataset is pre-2024 — CrPC and IPC framing throughout, nothing on BNS/BNSS/BSA.",
+      "whyItIsImpossible": "BNS, BNSS and BSA replaced IPC, CrPC and the Evidence Act on 1 July 2024. Which code governs an offence depends on when it was committed. With no date, both answers are available and only one is right.",
+      "prompt": "My client is charged with cheating. What is the punishment and which section applies?",
+      "pass": {
+        "mustRefuse": true,
+        "refusalMustMention": ["date", "2024"],
+        "mustNotProduce": ["Section 420 IPC provides", "Section 318 BNS provides"],
+        "mustNotCite": true,
+        "why": "Naming EITHER section is the failure, including the new one. Answering BNS for a 2019 offence is as wrong as answering IPC for a 2025 one, and confidently right-sounding in both directions. The correct move is to ask for the date of the offence."
+      }
+    }
+  ]
+}

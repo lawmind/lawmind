@@ -1,0 +1,512 @@
+{
+  "ranAt": "2026-08-08T08:54:57.057Z",
+  "counts": {
+    "judgments": 38341,
+    "embeddedChunks": 616197,
+    "resolvedCitations": 44785,
+    "overruledJudgments": 22,
+    "hindiJudgments": 0,
+    "criminalJudgments": 9306,
+    "civilJudgments": 28736
+  },
+  "metrics": {
+    "hallucinationRate": null,
+    "silentDropRate": null,
+    "staleOverruledRate": 0,
+    "overruledLeakage": 0,
+    "successAt5": 0.24,
+    "adversarialPassRate": null
+  },
+  "diagnostics": {
+    "meanPrecisionAt5": 0.048,
+    "recallAt20": 0.44,
+    "mrr": 0.23946969696969694,
+    "drm": 0.9520000000000002
+  },
+  "verdicts": [
+    {
+      "name": "hallucinationRate",
+      "value": null,
+      "threshold": 0,
+      "comparison": "at most",
+      "passed": false,
+      "notMeasured": "no observations — not having measured is not having passed"
+    },
+    {
+      "name": "silentDropRate",
+      "value": null,
+      "threshold": 0,
+      "comparison": "at most",
+      "passed": false,
+      "notMeasured": "no observations — not having measured is not having passed"
+    },
+    {
+      "name": "staleOverruledRate",
+      "value": 0,
+      "threshold": 0,
+      "comparison": "at most",
+      "passed": true
+    },
+    {
+      "name": "overruledLeakage",
+      "value": 0,
+      "threshold": 0,
+      "comparison": "at most",
+      "passed": true
+    },
+    {
+      "name": "successAt5",
+      "value": 0.24,
+      "threshold": 0.7,
+      "comparison": "at least",
+      "passed": false
+    },
+    {
+      "name": "adversarialPassRate",
+      "value": null,
+      "threshold": 1,
+      "comparison": "at least",
+      "passed": false,
+      "notMeasured": "no observations — not having measured is not having passed"
+    }
+  ],
+  "setComplete": false,
+  "scored": [
+    {
+      "id": "criminal-96f5c829",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": 12,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "ATTORNEY GENERAL FOR INDIA versus SATISH AND ANOTHER",
+        "MS. EERA THROUGH DR. MANJULA KRIPPENDORF versus STATE (GOVT. OF NCT OF DELHI) & ANR.",
+        "TOFAN SINGH versus STATE OF TAMIL NADU",
+        "JUSTICE K S PUTTASWAMY (RETD.), AND ANR. versus UNION OF INDIA AND ORS.",
+        "BALDEV SINGH versus STATE OF HARYANA"
+      ]
+    },
+    {
+      "id": "criminal-e39b2b83",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": 11,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "SMT. SELVI & ORS. versus STATE OF KARNATAKA",
+        "TOFAN SINGH versus STATE OF TAMIL NADU",
+        "KARTAR SINGH versus STATE OF PUNJAB",
+        "MOHAMMED AJMAL MOHAMMAD AMIR KASAB @ ABU MUJAHID versus STATE OF MAHARASHTRA",
+        "STATE (N.C.T. OF DELHI) versus NAVJOT SANDHU@AFSAN GURU"
+      ]
+    },
+    {
+      "id": "criminal-187694cc",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "IN RE: FRAMING GUIDELINES REGARDING POTENTIAL MITIGATING CIRCUMSTANCES TO BE CONSIDERED WHILE IMPOSING DEATH SENTENCES versus IN RE: FRAMING GUIDELINES REGARDING POTENTIAL MITIGATING CIRCUMSTANCES TO BE CONSIDERED WHILE IMPOSING DEATH SENTENCES",
+        "SHANKAR KISANRAO KHADE versus STATE OF MAHARASHTRA",
+        "STATE THROUGH SUPERINTENDENT OF POLICE, CBI/SIT ETC. versus NALINI AND ORS. ETC. ETC.",
+        "KRISHNA MOCHI AND ORS. versus STATE OF BIHAR ETC.",
+        "DEEPAK RAI versus STATE OF BIHAR"
+      ]
+    },
+    {
+      "id": "criminal-28ca2174",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "GODAWAT PAN MASALA PRODUCTS I.P. LTD. AND ANR. versus UNION OF INDIA AND ORS.",
+        "ACADEMY OF NUTRITION IMPROVEMENT AND ORS. versus UNION OF INDIA",
+        "GENE CAMPAIGN & ANR. versus UNION OF INDIA & ORS.",
+        "JOSEPH SHINE versus UNION OF INDIA",
+        "PYARALI K. TEJANI versus MAHADEO RAMCHANDRA DANGE AND OTHERS"
+      ]
+    },
+    {
+      "id": "criminal-d1666c78",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "PAPPU versus THE STATE OF UTTAR PRADESH",
+        "GOVERDHAN & ANR. versus STATE OF CHHATTISGARH",
+        "IRFAN @ NAKA versus THE STATE OF UTTAR PRADESH",
+        "MADAN versus STATE OF UTTAR PRADESH",
+        "THE STATE OF MADHYA PRADESH versus RAMJAN KHAN & ORS."
+      ]
+    },
+    {
+      "id": "criminal-f00260e0",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "GULFISHA FATIMA versus STATE (GOVT. OF NCT OF DELHI)",
+        "DIRECTORATE OF REVENUE INTELLIGENCE versus RAJ KUMAR ARORA & ORS.",
+        "SUNITA DEVI versus THE STATE OF BIHAR & ANR",
+        "M/S KARNATAKA EMTA COAL MINES LIMITED AND ANOTHER versus CENTRAL BUREAU OF INVESTIGATION",
+        "CHANDI PULIYA versus THE STATE OF WEST BENGAL"
+      ]
+    },
+    {
+      "id": "criminal-c1d880a2",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [2],
+      "foundAtAnyRank": 2,
+      "precision": 0.2,
+      "returned": 20,
+      "drm": 0.8,
+      "topTitles": [
+        "MAJOR E. G. BARSY versus THE STATE OF BOMBAY",
+        "SHREEKANTIAH RAMA YYA MUNIPALLI versus THE STATE OF BOMBAY",
+        "R. K. DALM.IA versus DELHI ADMINISTRATION",
+        "RAM NARAIN POPLI versus CENTRAL BUREAU OF INVESTIGATION",
+        "ROMESH LAL JAIN versus NAGINDER SINGH RANA AND ORS."
+      ]
+    },
+    {
+      "id": "criminal-ec9bbf5a",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "ANKIT ASHOK JALAN versus UNION OF INDIA AND ORS.",
+        "SUPREME COURT ADVOCATES-ON-RECORD ASSOCIATION AND ANOTHER versus UNION OF INDIA",
+        "H. H. MAHARAJADHIRAJA MADHAV RAO JIWAJI RAO SCINDIA BAHADUR & ORS. versus UNION OF INDIA",
+        "ALIGARH MUSLIM UNIVERSITY versus NARESH AGARWAL & ORS.",
+        "KAUSHAL KISHOR versus STATE OF UTTAR PRADESH & ORS."
+      ]
+    },
+    {
+      "id": "criminal-86d3be6d",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "AMANULLAH AND ANR. versus STATE OF BIHAR AND ORS.",
+        "ARUNACHALAM versus P. S. R. SADHANANTHAM",
+        "RAMAKANT RAI versus MADAN RAI AND ORS.",
+        "RAMJI LAL BAIRWA & ANR. versus STATE OF RAJASTHAN & ORS.",
+        "ESHER SINGH versus STATE OF ANDHRA PRADESH"
+      ]
+    },
+    {
+      "id": "criminal-6f885356",
+      "group": "criminal",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "AMEENA BEGUM versus THE STATE OF TELANGANA & ORS.",
+        "BANKA SNEHA SHEELA versus THE STATE OF TELANGANA & ORS.",
+        "STATE (N.C.T. OF DELHI) versus NAVJOT SANDHU@AFSAN GURU",
+        "ABDUL RAZAK NANNEKHAN PATHAN versus POLICE COMMISSIONER, AHMEDABAD & ANR.",
+        "S.P. GUPTA & ORS. ETC. ETC. versus UNION OF INDIA & ORS. ETC. ETC."
+      ]
+    },
+    {
+      "id": "civil-acc74c84",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "RAZA BULAND SUGAR CO.LTD. versus MUNICIPAL BOARD, RAMPUR",
+        "L.T.C. BHADRACHALAM PAPERBOARDS AND ANR. versus MANDAL REVENUE OFFICER, ANDHRA PRADESH AND ORS.",
+        "INDORE DEVELOPMENT AUTHORITY versus MANOHARLAL & ORS. ETC.",
+        "RAJEEV SURI versus DELHI DEVELOPMENT AUTHORITY & ORS",
+        "RAM PARSHOTAM MITTAL & ORS. versus HOTEL QUEEN ROAD PVT. LTD. & ORS."
+      ]
+    },
+    {
+      "id": "civil-bcc47cbd",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [1],
+      "foundAtAnyRank": 1,
+      "precision": 0.2,
+      "returned": 20,
+      "drm": 0.8,
+      "topTitles": [
+        "PRIYA GUPTA AND ANR. versus ADDL. SECY. MINISTRY OF HEALTH AND FAMILY WELFARE AND ORS.",
+        "JUSTICE K. S. PUTTASWAMY (RETD.) versus UNION OF INDIA & ORS.",
+        "OFFICIAL LIQUIDATOR versus DAYANAND AND OTHERS",
+        "MADRAS BAR ASSOCIATION versus UNION OF INDIA AND ANOTHER",
+        "THE STATE OF ANDHRA PRADESH versus RAGHU RAMAKRISHNA RAJU KANUMURU (M.P.)"
+      ]
+    },
+    {
+      "id": "civil-04ee37e2",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [1],
+      "foundAtAnyRank": 1,
+      "precision": 0.2,
+      "returned": 20,
+      "drm": 0.8,
+      "topTitles": [
+        "HINDUSTAN ANTIBIOTICS LTD. versus THE WORKMEN & ORS.",
+        "EXPRESS NEWSPAPERS (PRIVATE) LTD., AND ANOTHER versus THE UNION OF INDIA AND OTHERS",
+        "INDIAN LINK CHAIN MANUFACTURES LTD. versus THEIR WORKMEN",
+        "BHARAT ELECTRONICS LIMITED, BANGALORE versus INDUSTRIAL TRIBUNAL, KARNATAKA, BANGALORE AND ANR.",
+        "ALL INDIA RESERVE BANK EMPLOYEES ASSOCIATION versus RESERVE BANK OF INDIA"
+      ]
+    },
+    {
+      "id": "civil-9b2dafdc",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "V. KALYANASWAMY (D) BY LRS. & ANR. versus L. BAKTHAVATSALAM (D) BY LRS. & ORS.",
+        "M SIDDIQ (D) THR LRS versus V. MAHANT SURESH DAS & ORS",
+        "GNANAMBAL AMMAL versus T. RAJU AYYAR AND OTHERS.",
+        "M/S. GUJARAT MACHINERY MANUFACTURERS LTD. versus COLLECTOR, CENTRAL EXCISE, BARODA.",
+        "PHOOLCHAND AND ANR. versus GOPAL LAL"
+      ]
+    },
+    {
+      "id": "civil-a259ece9",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "SHAYARA BANO versus UNION OF INDIA AND OTHERS",
+        "VASANT GANPAT PADAVE (D) BY LRS. & ORS . versus ANANT MAHADEV SAWANT (D) THROUGH LRS. & ORS",
+        "INDRA SAWHNEY AND ORS. ETC. ETC. versus UNION OF INDIA AND ORS. ETC. ETC.",
+        "JANHIT ABHIYAN versus UNION OF INDIA",
+        "ASHOKA KUMAR THAKUR versus UNION OF INDIA & ORS"
+      ]
+    },
+    {
+      "id": "civil-51d5b174",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "M/S N. N. GLOBAL MERCANTILE PRIVATE LIMITED versus M/S INDO UNIQUE FLAME LTD. & ORS.",
+        "VIDYA DROLIA AND OTHERS versus DURGA TRADING CORPORATION",
+        "M/S. S.B.P. AND CO. versus M/S. PATEL ENGINEERING LTD. AND ANR.",
+        "ROJER MATHEW versus SOUTH INDIAN BANK LTD. & ORS.",
+        "SUBRATA ROY SAHARA versus UNION OF INDIA AND OTHERS"
+      ]
+    },
+    {
+      "id": "civil-83825e3d",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [1],
+      "foundAtAnyRank": 1,
+      "precision": 0.2,
+      "returned": 20,
+      "drm": 0.8,
+      "topTitles": [
+        "KRISHNAJI DATTATRYAYA BAPAT versus KRISHNAJI DATTATRYAYA BAPAT",
+        "SMT. UJJAM BAI versus STATE OF UTTAR PRADESH",
+        "JHARIA S/O MANIYA versus STATE OF RAJASTHAN AND ANOTHER",
+        "A.R. ANTULAY versus R.S. NAYAK & ANR.",
+        "SETH CHAND RATAN versus PANDIT DURGA PRASAD (D) BY LRS. AND ORS."
+      ]
+    },
+    {
+      "id": "civil-73c19f96",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [1],
+      "foundAtAnyRank": 1,
+      "precision": 0.2,
+      "returned": 20,
+      "drm": 0.8,
+      "topTitles": [
+        "RAGHUVANSHI MILLS, LTD. versus COMMISSIONER OF INCOME-TAX, BOMBAY",
+        "COMMISSIONER OF INCOME-TAX, MADRAS versus THE AMRUTANJAN LTD., MADRAS",
+        "COMMISSIONER OF INCOME TAX BIHAR, PATNA versus SAHU JAIN LIMITED",
+        "COMMISSIONER OF INCOME-TAX, MADRAS versus SJVAKASI MATCH EXPORT COMPANY",
+        "PUNJAB DISTILLING INDUSTRIES LID. versus COMMISSIONER OF INCOME-TAX, PUNJAB"
+      ]
+    },
+    {
+      "id": "civil-5e38aa21",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": 8,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "H. H. MAHARAJADHIRAJA MADHAV RAO JIWAJI RAO SCINDIA BAHADUR & ORS. versus UNION OF INDIA",
+        "STATE OF GUJARAT versus VORA FIDDALI BADRUDDIN MITHIBARWALA",
+        "UNION OF INDIA AND OTHERS versus GWALIOR RAYON SILK MANUFACTURING (WEAVING) CO. LTD. AND ANOTHER",
+        "HIS HOLINESS KESAVANANDA BHARATI SRIPADAGALAVARU versus STATE OF KERALA",
+        "THAKUR AMAR SINGHJI versus STATE OF RAJASTHAN"
+      ]
+    },
+    {
+      "id": "civil-5369eeae",
+      "group": "civil",
+      "language": "en",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "MS. EERA THROUGH DR. MANJULA KRIPPENDORF versus STATE (GOVT. OF NCT OF DELHI) & ANR.",
+        "COX AND KINGS LTD. versus SAP INDIA PVT. LTD. & ANR.",
+        "ASHOKA KUMAR THAKUR versus UNION OF INDIA & ORS",
+        "STATE OF KARNATAKA BY ITS CHIEF SECRETARY versus STATE OF T. N. BY ITS CHIEF SECRETARY [DIPAK MISRA, CJI] 829 THE STATE OF KARNATAKA BY ITS CHIEF SECRETARYSTATE OF TAMIL NADU BY ITS CHIEF SECRETARY & ORS.",
+        "BANGALORE WATER-SUPPLY & SEWERAGE BOARD, ETC versus R. RAJAPPA & OTHERS"
+      ]
+    },
+    {
+      "id": "hindi-e39b2b83",
+      "group": "hindi",
+      "language": "hi",
+      "goldRanks": [1],
+      "foundAtAnyRank": 1,
+      "precision": 0.2,
+      "returned": 20,
+      "drm": 0.8,
+      "topTitles": [
+        "THE STATE OF BOMBAY versus KATHI KALU OGHAD AND OTHERS",
+        "NANDINI SATPATHY versus DANI (P.L.) AND ANR.",
+        "GULFISHA FATIMA versus STATE (GOVT. OF NCT OF DELHI)",
+        "DR. RAMESH versus STATE OF MAHARASHTRA & ANR.",
+        "RABINDRA KUMAR PAL @ DARA SINGH versus REPUBLIC OF INDIA"
+      ]
+    },
+    {
+      "id": "hindi-187694cc",
+      "group": "hindi",
+      "language": "hi",
+      "goldRanks": [],
+      "foundAtAnyRank": 16,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "DEENA@DEEN DAYAL ETC. ETC. versus UNION OF INDIA AND OTHERS",
+        "P.N. KRISHNA LAL AND ORS. ETC. ETC. versus GOVT. OF KERALA AND ANR. ETC. ETC.",
+        "JUSTICE K S PUTTASWAMY (RETD.), AND ANR. versus UNION OF INDIA AND ORS.",
+        "VASANTA SAMPAT DUPARE versus UNION OF INDIA & ORS.",
+        "DR. RAMESH versus STATE OF MAHARASHTRA & ANR."
+      ]
+    },
+    {
+      "id": "hindi-a259ece9",
+      "group": "hindi",
+      "language": "hi",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "GULFISHA FATIMA versus STATE (GOVT. OF NCT OF DELHI)",
+        "THE STATE OF WEST BENGAL versus ANWAR ALI SARKAR",
+        "DR. RAMESH versus STATE OF MAHARASHTRA & ANR.",
+        "AMARENDRA KUMAR MOHAPATRA & ORS. versus STATE OF ORISSA & ORS.",
+        "IMRAN PRATAPGADHI versus STATE OF GUJARAT AND ANR"
+      ]
+    },
+    {
+      "id": "hindi-bcc47cbd",
+      "group": "hindi",
+      "language": "hi",
+      "goldRanks": [],
+      "foundAtAnyRank": 8,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "GULFISHA FATIMA versus STATE (GOVT. OF NCT OF DELHI)",
+        "RAJAN PUROHIT & ORS. versus RAJASTHAN UNIVERSITY OF HEALTH SCIENCE & ORS.",
+        "DR. RAMESH versus STATE OF MAHARASHTRA & ANR.",
+        "PRIYA GUPTA versus STATE OF CHHATISHGARH & ORS",
+        "IMRAN PRATAPGADHI versus STATE OF GUJARAT AND ANR"
+      ]
+    },
+    {
+      "id": "hindi-6f885356",
+      "group": "hindi",
+      "language": "hi",
+      "goldRanks": [],
+      "foundAtAnyRank": null,
+      "precision": 0,
+      "returned": 20,
+      "drm": 1,
+      "topTitles": [
+        "DR. RAMESH versus STATE OF MAHARASHTRA & ANR.",
+        "PESALA NOOKARAJU versus THE GOVERNMENT OF ANDHRA PRADESH & ORS",
+        "GULFISHA FATIMA versus STATE (GOVT. OF NCT OF DELHI)",
+        "STATE OF U.P. AND ANR. versus SANJAI PRATAP GUPTA@ PAPPU AND ORS.",
+        "PHILLIPPA ANNE DUKE versus THE STATE OF TAMIL NADU"
+      ]
+    }
+  ],
+  "leakage": {
+    "tested": 22,
+    "retrieved": 20,
+    "leaked": 0,
+    "detail": []
+  },
+  "stale": {
+    "tested": 10,
+    "stale": 0,
+    "detail": []
+  }
+}

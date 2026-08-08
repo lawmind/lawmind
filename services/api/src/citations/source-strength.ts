@@ -20,13 +20,7 @@
 
 /** Every value the `verified_by_source` Postgres enum can hold. */
 export type DbVerifiedBySource =
-  | 'corpus'
-  | 'indiankanoon'
-  | 'aws_s3'
-  | 'public_x2'
-  | 'ecourts'
-  | 'ecourts_bulk'
-  | 'none';
+  'corpus' | 'indiankanoon' | 'aws_s3' | 'public_x2' | 'ecourts' | 'ecourts_bulk' | 'none';
 
 /**
  * What the API is permitted to emit. `docs/API_CONTRACTS.md`.

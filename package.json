@@ -14,7 +14,8 @@
     "format:write": "prettier --write \"{services,packages}/**/*.{ts,js,json}\" \"*.{json,js}\"",
     "test": "pnpm -r test",
     "check:design": "node scripts/check-design-rules.mjs design/screens",
-    "ci:local": "node scripts/ci-local.mjs"
+    "ci:local": "node scripts/ci-local.mjs",
+    "harness": "pnpm --filter @lawmind/harness harness"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

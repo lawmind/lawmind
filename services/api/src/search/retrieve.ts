@@ -107,6 +107,13 @@ function rrf(lists: Ranked[][]): Map<string, number> {
 }
 
 /** Sparse half: lexical match over the full text, through the gin index. */
+/**
+ * How few AND-matches means the AND was too strict. Below this, the OR pass
+ * runs. Not zero: a ranker contributing three candidates to a fusion that takes
+ * fifty is not contributing.
+ */
+const SPARSE_RELAX_BELOW = 10;
+
 async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
   // Reads the STORED tsvector. Computing it here instead cost 20.8s per query —
   // `docs/SCHEMA_TRUTH.md` §judgments records the measurement.
@@ -119,6 +126,70 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
       ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
     ORDER BY ts_rank(j.full_text_tsv, q) DESC
+    LIMIT ${CANDIDATE_DEPTH}
+  `;
+  if (rows.length >= SPARSE_RELAX_BELOW) {
+    return rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
+  }
+
+  const relaxed = await sparseAny(sql, query, filters);
+  return relaxed.length > rows.length
+    ? relaxed
+    : rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
+}
+
+/**
+ * The same search with OR instead of AND, run only when AND returned almost
+ * nothing.
+ *
+ * **Why this exists.** `plainto_tsquery` ANDs every lexeme. That is right for
+ * three or four words and silently catastrophic for more: the Gate S2 harness
+ * measured a 900-character passage matching **1 judgment out of 38,341**, so
+ * the sparse half of a hybrid search was contributing a single candidate to a
+ * fusion designed to take fifty. Reciprocal Rank Fusion cannot repair a ranker
+ * that returned nothing to rank, and nothing failed — search still answered,
+ * from the dense half alone, and looked like it was working.
+ *
+ * The same trap sits under short queries too, just shallower. *"bail
+ * anticipatory NDPS commercial quantity twin conditions section 37"* requires
+ * every one of those terms in one judgment; drop `twin` and the AND finds
+ * nothing while the case an advocate wants is plainly there.
+ *
+ * **AND first, OR only on failure**, rather than OR always. The AND pass is
+ * precise and fast and answers most real queries; the OR pass touches far more
+ * of the index and is worth paying for only when the alternative is an empty
+ * ranker. `ts_rank` then does the discriminating within the wider set — a
+ * judgment matching twelve of the terms outranks one matching two — which is
+ * the ordering the AND was crudely approximating by refusing the second
+ * judgment outright.
+ *
+ * Lexemes come from `to_tsvector`, so stopwords and inflections are already
+ * gone, and each is `quote_literal`'d before it reaches `to_tsquery` — a raw
+ * lexeme can carry an apostrophe or a colon, which are operators there.
+ */
+async function sparseAny(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
+  const rows = await sql<{ id: string }[]>`
+    WITH lex AS (
+      SELECT lexeme FROM unnest(to_tsvector('english', ${query}))
+      -- A cap, because a whole paragraph of terms turns the index scan into a
+      -- sequential one. Longest first is a weak proxy for rarest first, and it
+      -- is honest about being a proxy: "preventive" discriminates and "made"
+      -- does not, and in this corpus the long word is nearly always the rarer.
+      ORDER BY length(lexeme) DESC
+      LIMIT 40
+    ),
+    q AS (
+      SELECT to_tsquery('english', string_agg(quote_literal(lexeme), ' | ')) AS tsq FROM lex
+    )
+    SELECT j.id
+    FROM judgments j, q
+    WHERE q.tsq IS NOT NULL
+      AND j.full_text_tsv @@ q.tsq
+      ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
+      ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+      ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+    ORDER BY ts_rank(j.full_text_tsv, q.tsq) DESC
     LIMIT ${CANDIDATE_DEPTH}
   `;
   return rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));

@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "builtAt": "2026-08-08T00:00:00.000Z",
+  "note": [
+    "The ten queries the citation-edge method CANNOT produce, held separately so",
+    "a derived query and a hand-built one are never mistaken for each other.",
+    "",
+    "HINDI — five, and the corpus assumption behind them was WRONG.",
+    "LCC_MASTER_PLAN A1.3 says 'Hindi judgments exist in the corpus",
+    "(judgments.language = hi). Confirm there are enough to build 5 real",
+    "queries; if not, that is a finding, not a reason to write English queries",
+    "and call them Hindi.' Counted on 8 Aug 2026: ZERO of 38,341 judgments carry",
+    "language = 'hi'. A Hindi query set over a Hindi corpus is impossible today.",
+    "",
+    "That is the finding. What is built instead is not a workaround, it is the",
+    "case that actually occurs: a Hindi-speaking advocate types a Hindi question",
+    "and the authority they need is an English Supreme Court judgment. Every",
+    "Supreme Court judgment is delivered in English. So these five measure",
+    "CROSS-LINGUAL retrieval, which is what BGE-M3 is in the stack for, and they",
+    "are labelled that way rather than as 'Hindi retrieval'.",
+    "",
+    "Each Hindi query is a statement of the legal question at issue in one of the",
+    "derived queries, so THE GOLD ANSWER IS STILL A JUDGE'S. The English passage",
+    "was written by a court relying on that authority; only the language of the",
+    "asking changed. What we authored is the question, never the answer.",
+    "",
+    "BNS/BNSS/BSA — five, and they are NOT WRITTEN. They need statute_mappings,",
+    "which Workstream C1 fills and which holds no rows yet. Ground truth for",
+    "'what replaced IPC s. 302' is a mapping row or it is a guess, and a guess is",
+    "exactly what DOMAIN_TRUTH.md forbids: no frontier model knows these codes.",
+    "They are declared here as pending so the runner reports the set as",
+    "INCOMPLETE rather than scoring 25 queries and calling it 30."
+  ],
+  "queries": [
+    {
+      "id": "hindi-e39b2b83",
+      "group": "hindi",
+      "language": "hi",
+      "query": "क्या अभियुक्त से लिए गए हस्तलेख, हस्ताक्षर या अंगुली-छाप के नमूने अनुच्छेद 20(3) के अंतर्गत स्वयं के विरुद्ध साक्ष्य देने के लिए बाध्य करना माने जाएँगे? पुलिस अभिरक्षा में दिए गए कथन के संबंध में यह अनुमान नहीं लगाया जा सकता कि वह दबाव या यातना से प्राप्त किया गया था।",
+      "goldJudgmentIds": ["e39b2b83-c6e4-4597-b3bb-81a15c237a5c"],
+      "provenance": {
+        "method": "hindi-restatement-of-derived",
+        "derivedFrom": "criminal-e39b2b83",
+        "goldCase": "THE STATE OF BOMBAY versus KATHI KALU OGHAD AND OTHERS",
+        "goldCourt": "Supreme Court of India",
+        "goldDate": "1961-08-04",
+        "issue": "Article 20(3) — whether compelled handwriting and fingerprint specimens are testimonial compulsion",
+        "authored": "the question only; the gold answer remains the citation edge from the derived query"
+      }
+    },
+    {
+      "id": "hindi-187694cc",
+      "group": "hindi",
+      "language": "hi",
+      "query": "मृत्युदंड देने में न्यायालय का विवेकाधिकार किन सिद्धांतों से नियंत्रित होता है? क्या हत्या के मामले में आजीवन कारावास के स्थान पर मृत्युदंड का चयन करना, बिना किसी विधायी मार्गदर्शन के, अनुच्छेद 14 और अनुच्छेद 21 का उल्लंघन करता है?",
+      "goldJudgmentIds": ["187694cc-dfcc-4693-addd-c9c3092cae76"],
+      "provenance": {
+        "method": "hindi-restatement-of-derived",
+        "derivedFrom": "criminal-187694cc",
+        "goldCase": "JAGMOHAN SINGH versus THE STATE OF U. P.",
+        "goldCourt": "Supreme Court of India",
+        "goldDate": "1972-10-03",
+        "issue": "sentencing discretion in capital cases and its constitutional validity",
+        "authored": "the question only; the gold answer remains the citation edge from the derived query"
+      }
+    },
+    {
+      "id": "hindi-a259ece9",
+      "group": "hindi",
+      "language": "hi",
+      "query": "अनुच्छेद 14 के अंतर्गत युक्तियुक्त वर्गीकरण की कसौटी क्या है? क्या कोई विधि अभियुक्तों के दो वर्गों में इस आधार पर भेद कर सकती है कि उनमें से एक पुलिस अभिरक्षा में है, और क्या ऐसा वर्गीकरण समानता के अधिकार का उल्लंघन करता है?",
+      "goldJudgmentIds": ["a259ece9-fad9-4e11-9867-41e71bbda107"],
+      "provenance": {
+        "method": "hindi-restatement-of-derived",
+        "derivedFrom": "civil-a259ece9",
+        "goldCase": "STATE OF U.P. versus DEOMAN UPADHYAYA",
+        "goldCourt": "Supreme Court of India",
+        "goldDate": "1960-05-06",
+        "issue": "Article 14 reasonable classification, tested against a distinction drawn by the law of evidence",
+        "authored": "the question only; the gold answer remains the citation edge from the derived query"
+      }
+    },
+    {
+      "id": "hindi-bcc47cbd",
+      "group": "hindi",
+      "language": "hi",
+      "query": "क्या कोई न्यायालय, अधिकरण या अन्य प्राधिकारी उच्चतम न्यायालय द्वारा प्रतिपादित विधि की अवहेलना कर सकता है? प्रवेश कार्यक्रम के संबंध में इस न्यायालय द्वारा दिए गए निदेशों का उल्लंघन करने पर उत्तरदायी अधिकारियों के विरुद्ध क्या परिणाम होंगे?",
+      "goldJudgmentIds": ["bcc47cbd-6544-4d99-9a2b-f2f20b313e3f"],
+      "provenance": {
+        "method": "hindi-restatement-of-derived",
+        "derivedFrom": "civil-bcc47cbd",
+        "goldCase": "PRIYA GUPTA AND ANR. versus ADDL. SECY. MINISTRY OF HEALTH AND FAMILY WELFARE AND ORS.",
+        "goldCourt": "Supreme Court of India",
+        "goldDate": "2012-12-13",
+        "issue": "the binding force of this Court's directions on every court, tribunal and authority",
+        "authored": "the question only; the gold answer remains the citation edge from the derived query"
+      }
+    },
+    {
+      "id": "hindi-6f885356",
+      "group": "hindi",
+      "language": "hi",
+      "query": "निवारक निरोध के मामलों में 'लोक व्यवस्था' और 'विधि तथा व्यवस्था' के बीच क्या अंतर है? यदि यह दर्शाने के लिए कोई सामग्री नहीं है कि निरुद्ध व्यक्ति की गतिविधि से स्थानीय लोगों में आतंक फैला, तो निरोध आदेश की वैधता पर क्या प्रभाव पड़ेगा?",
+      "goldJudgmentIds": ["6f885356-662d-40db-b033-4d95e8cf1354"],
+      "provenance": {
+        "method": "hindi-restatement-of-derived",
+        "derivedFrom": "criminal-6f885356",
+        "goldCase": "SAHIBZADA SAIYED MUHAMMED AMIRABBAS ABBASI & OTHERS versus THE STATE OF MADHYA BHARAT & OTHERS",
+        "goldCourt": "Supreme Court of India",
+        "goldDate": "1960-02-26",
+        "issue": "preventive detention — public order distinguished from law and order, and the sufficiency of the material",
+        "authored": "the question only; the gold answer remains the citation edge from the derived query"
+      }
+    }
+  ],
+  "pending": [
+    {
+      "group": "bns",
+      "count": 5,
+      "blockedBy": "Workstream C1 — statute_mappings holds no rows",
+      "why": "Ground truth for a BNS/BNSS/BSA mapping question is a statute_mappings row or it is a guess. BNS/BNSS/BSA replaced IPC/CrPC/Evidence in July 2024 and no frontier model knows them (DOMAIN_TRUTH.md), so a hand-written gold answer here would be the exact failure the harness exists to detect, written into the harness.",
+      "unblocks": "LCC_MASTER_PLAN A1.2"
+    }
+  ]
+}

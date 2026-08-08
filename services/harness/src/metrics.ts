@@ -31,8 +31,12 @@ export const THRESHOLDS = {
   staleOverruledRate: 0,
   /** Count, not a rate — one leak is a failure. */
   overruledLeakage: 0,
-  /** The one metric with a floor rather than a ceiling. */
-  precisionAt5Min: 0.7,
+  /**
+   * The one metric with a floor rather than a ceiling. **0.7 is unchanged; what
+   * it is applied to was corrected on 8 Aug 2026, and the correction is
+   * arithmetic rather than a judgement call — see `successAt5` below.**
+   */
+  successAt5Min: 0.7,
   /** Reproducing any known-bad output is a fail. */
   adversarialPassRate: 1,
 } as const;
@@ -64,23 +68,94 @@ export const THRESHOLDS = {
  */
 export const PRECISION_AT_K = 5;
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE CORRECTION, 8 Aug 2026 — recorded rather than quietly applied
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The definition above is right and stays. The **threshold was attached to the
+ * wrong quantity**, and the first real run is what showed it.
+ *
+ * Ground truth is derived from a citation edge, so **each query has exactly one
+ * gold judgment**. Mean precision@5 over single-gold queries has a ceiling of
+ * **1/5 = 0.20**. A floor of 0.70 is therefore not a demanding target, it is
+ * unsatisfiable — no retriever, however perfect, could ever pass it. In the
+ * first run every query that succeeded scored exactly 0.20, which is the tell.
+ *
+ * What `SPRINT_2.md` means by "precision@5 ≥ 70%" can only be the standard
+ * single-gold measure: **the share of queries whose gold answer appears in the
+ * top five**. Success@5. That is also what an advocate experiences — either the
+ * authority is on the first screen or it is not.
+ *
+ * **This is not a threshold being weakened after seeing a number.** The number
+ * moves from 4.8% to 24.0% and the gate fails either way, by a wide margin. The
+ * rule in `SPRINT_2.md` NEVER — *"Weaken a threshold to pass a gate"* — is
+ * intact: 0.7 is untouched, nothing passes that did not pass before, and the
+ * old quantity is still computed and still reported on every run as
+ * `meanPrecisionAt5`, so the correction cannot hide a regression.
+ *
+ * The exclusions in the definition above apply unchanged to success@5.
+ */
+export const SUCCESS_AT_K = 5;
+
+/**
+ * Every metric is `number | null`, and the null is load-bearing.
+ *
+ * `rate()` below returns null over a zero denominator. If this type said
+ * `number`, the null would still arrive at runtime — the driver does not read
+ * type annotations — and `null <= 0` is **true** in JavaScript. A harness that
+ * measured nothing would report a passing hallucination rate. Typing the null
+ * is what forces `grade` to decide about it.
+ */
 export type HarnessMetrics = {
-  hallucinationRate: number;
-  silentDropRate: number;
-  staleOverruledRate: number;
-  overruledLeakage: number;
-  precisionAt5: number;
-  adversarialPassRate: number;
+  hallucinationRate: number | null;
+  silentDropRate: number | null;
+  staleOverruledRate: number | null;
+  overruledLeakage: number | null;
+  successAt5: number | null;
+  adversarialPassRate: number | null;
 };
 
 export type MetricVerdict = {
   name: keyof HarnessMetrics;
-  value: number;
+  value: number | null;
   threshold: number;
   /** `<=` for ceilings, `>=` for the one floor. */
   comparison: 'at most' | 'at least';
   passed: boolean;
+  /** Set when the metric could not be computed. Printed instead of the number. */
+  notMeasured?: string;
 };
+
+/**
+ * One metric, graded. **A null value fails**, whichever direction the threshold
+ * points, and it fails with a different message from a breach so nobody reads
+ * "not measured" as "measured and bad".
+ */
+function judge(
+  name: keyof HarnessMetrics,
+  value: number | null,
+  threshold: number,
+  comparison: 'at most' | 'at least',
+): MetricVerdict {
+  if (value === null) {
+    return {
+      name,
+      value: null,
+      threshold,
+      comparison,
+      passed: false,
+      notMeasured: 'no observations — not having measured is not having passed',
+    };
+  }
+  return {
+    name,
+    value,
+    threshold,
+    comparison,
+    passed: comparison === 'at most' ? value <= threshold : value >= threshold,
+  };
+}
 
 /**
  * Grade every metric. **Returns all six, always** — `SPRINT_2.md` DONE:
@@ -90,48 +165,12 @@ export type MetricVerdict = {
  */
 export function grade(m: HarnessMetrics): MetricVerdict[] {
   return [
-    {
-      name: 'hallucinationRate',
-      value: m.hallucinationRate,
-      threshold: THRESHOLDS.hallucinationRate,
-      comparison: 'at most',
-      passed: m.hallucinationRate <= THRESHOLDS.hallucinationRate,
-    },
-    {
-      name: 'silentDropRate',
-      value: m.silentDropRate,
-      threshold: THRESHOLDS.silentDropRate,
-      comparison: 'at most',
-      passed: m.silentDropRate <= THRESHOLDS.silentDropRate,
-    },
-    {
-      name: 'staleOverruledRate',
-      value: m.staleOverruledRate,
-      threshold: THRESHOLDS.staleOverruledRate,
-      comparison: 'at most',
-      passed: m.staleOverruledRate <= THRESHOLDS.staleOverruledRate,
-    },
-    {
-      name: 'overruledLeakage',
-      value: m.overruledLeakage,
-      threshold: THRESHOLDS.overruledLeakage,
-      comparison: 'at most',
-      passed: m.overruledLeakage <= THRESHOLDS.overruledLeakage,
-    },
-    {
-      name: 'precisionAt5',
-      value: m.precisionAt5,
-      threshold: THRESHOLDS.precisionAt5Min,
-      comparison: 'at least',
-      passed: m.precisionAt5 >= THRESHOLDS.precisionAt5Min,
-    },
-    {
-      name: 'adversarialPassRate',
-      value: m.adversarialPassRate,
-      threshold: THRESHOLDS.adversarialPassRate,
-      comparison: 'at least',
-      passed: m.adversarialPassRate >= THRESHOLDS.adversarialPassRate,
-    },
+    judge('hallucinationRate', m.hallucinationRate, THRESHOLDS.hallucinationRate, 'at most'),
+    judge('silentDropRate', m.silentDropRate, THRESHOLDS.silentDropRate, 'at most'),
+    judge('staleOverruledRate', m.staleOverruledRate, THRESHOLDS.staleOverruledRate, 'at most'),
+    judge('overruledLeakage', m.overruledLeakage, THRESHOLDS.overruledLeakage, 'at most'),
+    judge('successAt5', m.successAt5, THRESHOLDS.successAt5Min, 'at least'),
+    judge('adversarialPassRate', m.adversarialPassRate, THRESHOLDS.adversarialPassRate, 'at least'),
   ];
 }
 

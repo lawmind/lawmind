@@ -6,12 +6,16 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "tsx --test --test-concurrency=1 src/*.test.ts",
-    "harness": "tsx src/run-cli.ts"
+    "harness": "tsx src/run-cli.ts",
+    "corpus": "tsx src/corpus-cli.ts",
+    "build:queries": "tsx src/build-queries.ts",
+    "diagnose": "tsx src/diagnose-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
     "@lawmind/db": "workspace:*",
     "postgres": "3.4.9",
-    "tsx": "4.23.1"
+    "tsx": "4.23.1",
+    "@lawmind/embed": "workspace:*"
   }
 }

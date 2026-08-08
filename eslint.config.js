@@ -18,6 +18,14 @@ export default tseslint.config(
       'apps/**',
       'design/**',
       'website/**',
+      /**
+       * `*.local.*` is the agreed name for a throwaway an operator wrote to
+       * poke at something — `services/api/get-token.local.mjs` is one. They are
+       * untracked and never shipped, and having one in the tree currently
+       * breaks `pnpm lint` for everybody, which is a worse outcome than not
+       * linting a scratch file.
+       */
+      '**/*.local.*',
     ],
   },
   js.configs.recommended,
