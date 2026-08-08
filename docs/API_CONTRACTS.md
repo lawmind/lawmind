@@ -166,6 +166,9 @@ endpoint.
 | `POST /alerts/:id/read` | BUILT |
 | `GET /me/alert-settings` | BUILT |
 | `PATCH /me/alert-settings` | BUILT |
+| `GET /me/training-consent` | BUILT |
+| `POST /me/training-consent` | BUILT |
+| `DELETE /me/training-consent` | BUILT |
 | `POST /admin/overruled-rechecks/run` | BUILT |
 | `GET /admin/templates` | SPECCED |
 | `POST /admin/templates` | SPECCED |
@@ -965,6 +968,44 @@ not notify anyone twice. **Partial completion is not acceptable:** if the fan-ou
 cannot be enqueued the whole operation fails, the dispute stays open and the
 re-check run is marked `failed`. Never leave the corpus saying overruled while
 the advocate who filed it was not told.
+
+### Training consent — DPDP s. 6, ADDITIVE 9 Aug 2026
+
+**New endpoints. Additive to the frozen contract — RCC, this is a client-facing
+surface that needs a screen.**
+
+```
+GET    /me/training-consent  → { granted, grantedAt, version,
+                                 currentVersion, isCurrent }
+POST   /me/training-consent  { version }  → { granted, ... }
+DELETE /me/training-consent               → { granted: false, ... }
+```
+
+**This is NOT the PD-8 onboarding consent.** DPDP Act 2023 s. 6 requires consent
+to be specific to a stated purpose; accepting the terms is not agreeing that an
+advocate's own work may train the model. Two separate column pairs, two separate
+questions, and the onboarding screen must not silently collect both.
+
+**`DELETE` sits beside `POST` on purpose.** DPDP s. 6(4)–(6): withdrawal must be
+**as easy as granting**. One call, same path, nobody's approval, not a support
+ticket. It is **idempotent** — withdrawing when nothing was granted succeeds and
+reports the true state, because an advocate exercising a right should never meet
+an error telling them it was unnecessary.
+
+| field | meaning |
+|---|---|
+| `granted` | both columns set. **Never inferred from silence** |
+| `grantedAt` | null when never granted — an absence reported as an absence |
+| `version` | the notice actually agreed to |
+| `currentVersion` | what the app should be showing |
+| `isCurrent` | false when consent was given against a **superseded** notice |
+
+**`isCurrent` is separate from `granted` deliberately.** Consent to an old notice
+is real consent and is *not* consent to the current one. Collapsing them would
+let a notice change silently re-authorise everyone, or silently revoke everyone.
+`POST` with a version we do not recognise is a **409 `STALE_CONSENT_VERSION`**,
+never a coerced write — storing whatever string arrives would record agreement to
+a notice nobody can now produce.
 
 ### Citator alerts — PD-5, PD-6
 ```

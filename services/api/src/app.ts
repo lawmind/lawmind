@@ -48,6 +48,12 @@ import {
   markAlertRead,
   patchAlertSettings,
 } from './alerts/route.ts';
+import {
+  getTrainingConsent,
+  grantBody,
+  grantTrainingConsent,
+  withdrawTrainingConsent,
+} from './training/consent.ts';
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { acceptTerms, acceptTermsBody, getTerms, patchMe, patchMeBody } from './auth/account.ts';
 import { authMiddleware, profileIdFor } from './auth/middleware.ts';
@@ -442,6 +448,21 @@ export function createApp(deps: AppDeps) {
     app.get('/me/alert-settings', async (c) => getAlertSettings(c, sql, await userFor(c)));
     app.patch('/me/alert-settings', validate('json', alertSettingsBody), async (c) =>
       patchAlertSettings(c, sql, await userFor(c), c.req.valid('json')),
+    );
+    /**
+     * Training consent — SEPARATE from the PD-8 onboarding consent above, per
+     * DPDP Act 2023 s. 6's requirement that consent be specific to a purpose.
+     *
+     * **DELETE sits beside POST deliberately.** s. 6(4)-(6): withdrawal must be
+     * as easy as granting. It is one call on the same path, it needs nobody's
+     * approval, and it is not a support ticket.
+     */
+    app.get('/me/training-consent', async (c) => getTrainingConsent(c, sql, await userFor(c)));
+    app.post('/me/training-consent', validate('json', grantBody), async (c) =>
+      grantTrainingConsent(c, sql, await userFor(c), c.req.valid('json')),
+    );
+    app.delete('/me/training-consent', async (c) =>
+      withdrawTrainingConsent(c, sql, await userFor(c)),
     );
     // The 24-hour briefing — the wedge. `overruled_status` is re-read LIVE on
     // every render and is never served from the cached content: a briefing is

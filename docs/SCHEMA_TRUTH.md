@@ -11,6 +11,7 @@ without updating this file in the same commit.
 (en|hi) default en · `subscription_tier` enum
 (none|practice|chamber|expert|firm|enterprise) default none ·
 `terms_accepted_at` timestamptz null · `terms_version` text null ·
+`training_consent_at` timestamptz null · `training_consent_version` text null ·
 `expo_push_token` text null · `created_at` timestamptz
 
 **`expo_push_token` — added 7 Aug 2026, migration 0015.** **Null means no device
@@ -29,6 +30,37 @@ before. **Generated, delivered and opened are three different facts in three
 columns** — collapsing any two makes the activation metric (two briefings opened
 in week one) meaningless. `delivered_at` means Expo _accepted_ the message, which
 is not the same as the phone receiving it.
+
+**TRAINING CONSENT — added 9 Aug 2026, migration 0025. A SECOND, SEPARATE
+consent, and the separation is the point.**
+
+`training_consent_at` + `training_consent_version` record that an advocate
+agreed their own work may be used as training input. **This is not the PD-8 pair
+below**, and reusing that pair would have been one column cheaper and wrong:
+**DPDP Act 2023 s. 6** requires consent to be *free, specific, informed,
+unconditional and unambiguous*, given **for a specified purpose**. Accepting the
+terms is not agreeing that your drafting teaches the model.
+
+**An unset pair means NO** — no boolean, no default. A `boolean NOT NULL DEFAULT
+false` would make "never asked" and "asked and declined" indistinguishable, and
+only one of those is worth asking about again. A CHECK constraint
+(`training_consent_complete`) enforces **both or neither**, in the database,
+because this is exactly the kind of pair that drifts when only application code
+guards it.
+
+**Withdrawal sets both columns back to NULL.** There is deliberately no
+`training_consent_withdrawn_at`: a third column leaves two that can disagree and
+a question — *granted in March, withdrawn in August, what about the pairs
+emitted in May?* — that application code must re-answer forever. DPDP s. 6(6)
+requires processing to cease on withdrawal, and it does, because
+`services/api/src/training/extract.ts` **materialises nothing**: pairs are
+generated on demand and filtered by consent at generation time, so withdrawal is
+retroactive by construction and there is no deletion job to forget.
+
+**`training_consent_events`** (id · user_id fk→users cascade · action
+text CHECK in (granted|withdrawn) · version text null · created_at timestamptz)
+is the append-only history. Nothing updates a row; a correction is another row.
+It is what makes resetting the live columns to NULL lossless.
 
 **PD-8 — consent replaces the AI-assisted mark.** `terms_accepted_at` and
 `terms_version` record the advocate actively accepting AI assistance, the duty to

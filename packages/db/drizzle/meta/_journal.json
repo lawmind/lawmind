@@ -1,181 +1,188 @@
 {
-    "version": "7",
-    "dialect": "postgresql",
-    "entries": [
-        {
-            "idx": 0,
-            "version": "7",
-            "when": 1785685440308,
-            "tag": "0000_enable_extensions",
-            "breakpoints": true
-        },
-        {
-            "idx": 1,
-            "version": "7",
-            "when": 1785685459930,
-            "tag": "0001_initial_schema",
-            "breakpoints": true
-        },
-        {
-            "idx": 2,
-            "version": "7",
-            "when": 1785685484659,
-            "tag": "0002_audit_log_append_only",
-            "breakpoints": true
-        },
-        {
-            "idx": 3,
-            "version": "7",
-            "when": 1785688594165,
-            "tag": "0003_judgments_source_url_unique",
-            "breakpoints": true
-        },
-        {
-            "idx": 4,
-            "version": "7",
-            "when": 1785847531162,
-            "tag": "0004_judgments_stored_tsvector",
-            "breakpoints": true
-        },
-        {
-            "idx": 5,
-            "version": "7",
-            "when": 1785851548584,
-            "tag": "0005_statutes_and_sections",
-            "breakpoints": true
-        },
-        {
-            "idx": 6,
-            "version": "7",
-            "when": 1785852603610,
-            "tag": "0006_judgments_case_type",
-            "breakpoints": true
-        },
-        {
-            "idx": 7,
-            "version": "7",
-            "when": 1785859330797,
-            "tag": "0007_chunk_text_quality",
-            "breakpoints": true
-        },
-        {
-            "idx": 8,
-            "version": "7",
-            "when": 1786015142259,
-            "tag": "0008_judgment_citations",
-            "breakpoints": true
-        },
-        {
-            "idx": 9,
-            "version": "7",
-            "when": 1786023763256,
-            "tag": "0009_annotations_and_saved_searches",
-            "breakpoints": true
-        },
-        {
-            "idx": 10,
-            "version": "7",
-            "when": 1786029646384,
-            "tag": "0010_overruled_in_part",
-            "breakpoints": true
-        },
-        {
-            "idx": 11,
-            "version": "7",
-            "when": 1786034106607,
-            "tag": "0011_judgment_chunks_hnsw",
-            "breakpoints": true
-        },
-        {
-            "idx": 12,
-            "version": "7",
-            "when": 1786050832812,
-            "tag": "0012_corpus_coverage",
-            "breakpoints": true
-        },
-        {
-            "idx": 13,
-            "version": "7",
-            "when": 1786096938580,
-            "tag": "0013_ecourts_and_cause_lists",
-            "breakpoints": true
-        },
-        {
-            "idx": 14,
-            "version": "7",
-            "when": 1786104512000,
-            "tag": "0014_auth",
-            "breakpoints": true
-        },
-        {
-            "idx": 15,
-            "version": "7",
-            "when": 1786128900000,
-            "tag": "0015_push_tokens",
-            "breakpoints": true
-        },
-        {
-            "idx": 16,
-            "version": "7",
-            "when": 1786133400000,
-            "tag": "0016_citation_fanouts",
-            "breakpoints": true
-        },
-        {
-            "idx": 17,
-            "version": "7",
-            "when": 1786180000000,
-            "tag": "0017_citation_copies",
-            "breakpoints": true
-        },
-        {
-            "idx": 18,
-            "version": "7",
-            "when": 1786184000000,
-            "tag": "0018_matter_shares",
-            "breakpoints": true
-        },
-        {
-            "idx": 19,
-            "version": "7",
-            "when": 1786220000000,
-            "tag": "0019_alerts",
-            "breakpoints": true
-        },
-        {
-            "idx": 20,
-            "version": "7",
-            "when": 1786230000000,
-            "tag": "0020_disputes_and_ocr_jobs",
-            "breakpoints": true
-        },
-        {
-            "idx": 21,
-            "version": "7",
-            "when": 1786240000000,
-            "tag": "0021_data_requests",
-            "breakpoints": true
-        },
-        {
-            "idx": 22,
-            "version": "7",
-            "when": 1786250000000,
-            "tag": "0022_ecourts_bulk_source",
-            "breakpoints": true
-        },
-        {
-            "idx": 23,
-            "version": "7",
-            "when": 1786260000000,
-            "tag": "0023_harvest",
-            "breakpoints": true
-        },
-        {
-            "idx": 24,
-            "version": "7",
-            "when": 1786261000000,
-            "tag": "0024_licensed_source",
-            "breakpoints": true
-        }
-    ]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1785685440308,
+      "tag": "0000_enable_extensions",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785685459930,
+      "tag": "0001_initial_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785685484659,
+      "tag": "0002_audit_log_append_only",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785688594165,
+      "tag": "0003_judgments_source_url_unique",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1785847531162,
+      "tag": "0004_judgments_stored_tsvector",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1785851548584,
+      "tag": "0005_statutes_and_sections",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785852603610,
+      "tag": "0006_judgments_case_type",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785859330797,
+      "tag": "0007_chunk_text_quality",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786015142259,
+      "tag": "0008_judgment_citations",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1786023763256,
+      "tag": "0009_annotations_and_saved_searches",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1786029646384,
+      "tag": "0010_overruled_in_part",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1786034106607,
+      "tag": "0011_judgment_chunks_hnsw",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1786050832812,
+      "tag": "0012_corpus_coverage",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1786096938580,
+      "tag": "0013_ecourts_and_cause_lists",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1786104512000,
+      "tag": "0014_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1786128900000,
+      "tag": "0015_push_tokens",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1786133400000,
+      "tag": "0016_citation_fanouts",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1786180000000,
+      "tag": "0017_citation_copies",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1786184000000,
+      "tag": "0018_matter_shares",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1786220000000,
+      "tag": "0019_alerts",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1786230000000,
+      "tag": "0020_disputes_and_ocr_jobs",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1786240000000,
+      "tag": "0021_data_requests",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1786250000000,
+      "tag": "0022_ecourts_bulk_source",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1786260000000,
+      "tag": "0023_harvest",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1786261000000,
+      "tag": "0024_licensed_source",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1786262000000,
+      "tag": "0025_training_consent",
+      "breakpoints": true
+    }
+  ]
 }

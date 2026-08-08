@@ -274,6 +274,19 @@ export const users = pgTable('users', {
   // must be able to see that state.
   termsAcceptedAt: timestamp('terms_accepted_at', { withTimezone: true }),
   termsVersion: text('terms_version'),
+  /**
+   * Training consent — **a second, separate consent, and deliberately not the
+   * PD-8 pair above.** DPDP Act 2023 s. 6 requires consent to be specific to a
+   * stated purpose; accepting the terms is not agreeing that an advocate's own
+   * work may teach the model.
+   *
+   * **An unset pair means NO.** There is no boolean default, because that would
+   * make "never asked" and "asked and declined" indistinguishable. Withdrawal
+   * sets both back to NULL — the history lives in `trainingConsentEvents`.
+   * Migration `0025` carries the reasoning and a CHECK enforcing both-or-neither.
+   */
+  trainingConsentAt: timestamp('training_consent_at', { withTimezone: true }),
+  trainingConsentVersion: text('training_consent_version'),
   // Citator alert settings — PD-5/PD-6. Default true: these are safety-relevant,
   // so an advocate opts OUT of being told an authority moved, never opts in.
   // There is no column for trigger 2 (filed_citation_moved): it cannot be
@@ -1121,4 +1134,32 @@ export const matterShares = pgTable(
     revokedByUserId: uuid('revoked_by_user_id').references(() => users.id),
   },
   (t) => [index('matter_shares_invited_user_idx').on(t.invitedUserId, t.revokedAt)],
+);
+
+/**
+ * Training-consent history — **append-only, and the reason the live columns on
+ * `users` are allowed to be reset to NULL on withdrawal.**
+ *
+ * Grants and withdrawals both land here. "Did this advocate ever consent, to
+ * what version, and when did they change their mind" is answerable by query
+ * rather than by memory — while the *current* answer stays a single column pair
+ * with two states rather than three columns with six.
+ *
+ * Nothing updates a row here. A correction is another row.
+ */
+export const trainingConsentEvents = pgTable(
+  'training_consent_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    /** `granted` | `withdrawn`. A CHECK constraint in migration 0025 is the authority. */
+    action: text('action').notNull(),
+    /** Null on withdrawal — you withdraw from whatever you had, and naming a version there
+     *  would invent a fact. */
+    version: text('version'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('training_consent_events_user_idx').on(t.userId, t.createdAt)],
 );
