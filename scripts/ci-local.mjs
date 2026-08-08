@@ -73,6 +73,11 @@ const STEPS = [
   // screens were, and rows naming renders that were never produced. Both cost
   // real work; neither needed a human to catch.
   ['design renders', 'node', ['scripts/check-design-renders.mjs']],
+  // SCHEMA_TRUTH.md calls itself the only authority on data shapes, and three
+  // tables it described had never been created — each found separately, each
+  // only when a test hit real Postgres. TypeScript cannot catch it: a SQL
+  // string is a string. Mechanical, therefore a gate.
+  ['schema truth', 'node', ['scripts/check-schema-truth.mjs']],
 ];
 
 const admin = postgres(adminUrl, { max: 1, ssl: 'require', onnotice: () => {} });

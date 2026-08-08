@@ -69,6 +69,10 @@ jobs:
       # that file as the description of the server, and once did so correctly
       # about an endpoint that had never been built.
       - run: node scripts/check-contract-status.mjs
+      # Every table SCHEMA_TRUTH.md describes must exist in a migration. Three
+      # did not, and all three typechecked clean before failing on real
+      # Postgres. Runs before install: needs neither deps nor a database.
+      - run: node scripts/check-schema-truth.mjs
 
       # apps/** is RCC's lane and still carries npm lockfiles; installing it here
       # would make this job red for reasons outside this lane. Flagged, not converged.
