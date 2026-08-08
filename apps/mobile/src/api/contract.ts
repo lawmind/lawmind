@@ -876,13 +876,37 @@ export type CourtLookupResult =
 
 /* --------------------------------------------------------------------- alerts */
 
-/** PD-5 — four triggers, and only four. There is no subject-following trigger. */
+/**
+ * PD-5, PD-6 — four triggers, and only four; there is no subject-following
+ * trigger. Shape corrected 8 Aug 2026 against LCC's live probe
+ * (`docs/LCC_TO_RCC_HANDOFF.md`), not the aspirational version this type
+ * held before — that version invented a `trigger`/`body` shape and two
+ * `kind` values (`filed_draft_moved`, `own_matter_judgment`,
+ * `unknown_listing`) that were never real. Only two `kind`s exist on the
+ * wire today; triggers 3 and 4 have settings keys (`AlertSettings` below)
+ * but no producer yet, so no alert with those kinds is ever emitted.
+ *
+ * `severity: 'batched'` surfaces in the evening briefing's "since
+ * yesterday" block, per PD-6 — never a notifications tab.
+ * `severity: 'immediate'` is the one push exception (`set_aside`/
+ * `partly_set_aside` on a filed or copied-out citation) and needs no
+ * additional in-app surface beyond what the OS already shows for the push.
+ *
+ * `currentOverruledStatus` is read LIVE by the server at response time,
+ * separate from `fromStatus`/`toStatus` (the historical values at the
+ * moment the alert fired) — never cache one in place of the other.
+ */
 export type Alert = {
   id: string;
-  trigger: 'saved_authority_moved' | 'filed_draft_moved' | 'own_matter_judgment' | 'unknown_listing';
+  kind: 'saved_authority_moved' | 'filed_citation_moved';
+  severity: 'immediate' | 'batched';
+  judgmentId: string;
   matterId: string | null;
-  judgmentId: string | null;
-  body: string;
+  fromStatus: OverruledStatus;
+  toStatus: OverruledStatus;
+  judgmentTitle: string;
+  overruledParas: number[] | null;
+  currentOverruledStatus: OverruledStatus;
   createdAt: string;
   readAt: string | null;
 };

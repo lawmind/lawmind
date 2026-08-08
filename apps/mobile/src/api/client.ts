@@ -1,4 +1,6 @@
 import type {
+  Alert,
+  AlertSettings,
   Annotation,
   AnnotationDraft,
   ApiResponse,
@@ -392,6 +394,40 @@ export const api = {
       | { available: false; reason: string; manualEntry: { expected: string; message: string } }
       | { available: true; matter: Omit<Matter, 'id'> }
     >('/court/lookup', { cnrNumber }, { auth: true }),
+
+  /* ------------------------------------------------------- alerts · PD-5, PD-6 */
+
+  /**
+   * `since` is a timestamp the caller supplies (the last time it looked),
+   * matching the saved-searches feed's own time-based idiom rather than a
+   * cursor — an alerts feed is read forward from where the advocate last
+   * looked, not paged through. `unreadCount` is for in-app ordering only;
+   * PD-6 — never a badge on the app icon or tab bar.
+   */
+  alerts: (since?: string) =>
+    get<{ alerts: Alert[]; unreadCount: number }>(
+      since ? `/alerts?since=${encodeURIComponent(since)}` : '/alerts',
+      { auth: true }
+    ),
+
+  markAlertRead: (alertId: string) =>
+    send<{ ok: true }>(`/alerts/${encodeURIComponent(alertId)}/read`, {}, { auth: true }),
+
+  alertSettings: () => get<{ settings: AlertSettings }>('/me/alert-settings', { auth: true }),
+
+  /**
+   * `.strict()` server-side — sending `filedCitationMoved` (trigger 2) is a
+   * `400`. That key does not exist on `AlertSettings` for the same reason:
+   * an advocate who filed a document citing law that has since moved does
+   * not get to opt out of being told.
+   */
+  updateAlertSettings: (patch: Partial<AlertSettings>) =>
+    request<{ settings: AlertSettings }>('/me/alert-settings', {
+      method: 'PATCH',
+      auth: true,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(patch),
+    }),
 
   /**
    * p95 is 453 ms server-side. The skeleton still renders, because a search

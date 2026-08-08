@@ -11,6 +11,8 @@ import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
+import type { Alert } from '../../api/contract';
+import { useAlerts } from '../../state/alerts';
 import { describeCacheAge } from '../../state/offlineCache';
 import { useSession } from '../../state/session';
 import {
@@ -62,9 +64,29 @@ export function TodayScreen() {
   const hydrate = usePractice((s) => s.hydrate);
   const loadBriefings = usePractice((s) => s.loadBriefings);
 
+  const alerts = useAlerts((s) => s.alerts);
+  const fetchAlerts = useAlerts((s) => s.fetch);
+  const markAlertRead = useAlerts((s) => s.markRead);
+
   useEffect(() => {
     if (status === 'signed_in') void hydrate();
   }, [status, hydrate]);
+
+  /**
+   * ONCE ON MOUNT, NEVER POLLED. PD-6: batched, arrives with the briefing —
+   * this is not a feed, and there is no re-fetch interval to accidentally
+   * turn it into one.
+   */
+  useEffect(() => {
+    if (status === 'signed_in') void fetchAlerts();
+  }, [status, fetchAlerts]);
+
+  /**
+   * `severity: 'immediate'` alerts already reached the advocate as a push —
+   * showing them again here would be the same event twice. This block is
+   * the batched half only, PD-6's "since yesterday."
+   */
+  const batched = useMemo(() => alerts.filter((a) => a.severity === 'batched'), [alerts]);
 
   const today = useMemo(() => todayCivil(), []);
   const listed = useMemo(() => listedToday(matters, today), [matters, today]);
@@ -183,6 +205,23 @@ export function TodayScreen() {
           <SkeletonCard />
         ) : null}
 
+        {/* Since yesterday — PD-6, batched with the briefing, never a notifications tab. */}
+        {batched.length > 0 ? (
+          <Card style={styles.alertsCard}>
+            <Text variant="eyebrow">Since yesterday</Text>
+            {batched.map((alert) => (
+              <AlertRow
+                key={alert.id}
+                alert={alert}
+                onPress={() => {
+                  markAlertRead(alert.id);
+                  router.push({ pathname: '/judgment/[id]', params: { id: alert.judgmentId } });
+                }}
+              />
+            ))}
+          </Card>
+        ) : null}
+
         {/* 3 · the rest of the week */}
         {week.length > 0 ? (
           <View style={styles.block}>
@@ -242,6 +281,36 @@ export function TodayScreen() {
   );
 }
 
+/**
+ * Only the two `kind`s that actually exist on the wire — see `contract.ts`'s
+ * `Alert` type note. Copy mirrors the alert-settings labels so the same
+ * event reads the same way in both places.
+ */
+function alertLine(alert: Alert): string {
+  const authority = alert.judgmentTitle;
+  if (alert.kind === 'saved_authority_moved') {
+    return `${authority} — an authority you saved is now ${overruledLabel(alert.currentOverruledStatus)}.`;
+  }
+  return `${authority} — an authority you filed is now ${overruledLabel(alert.currentOverruledStatus)}.`;
+}
+
+function overruledLabel(status: Alert['currentOverruledStatus']): string {
+  if (status === 'set_aside') return 'set aside';
+  if (status === 'partly_set_aside') return 'partly set aside';
+  if (status === 'doubted') return 'doubted';
+  return 'good law again';
+}
+
+function AlertRow({ alert, onPress }: { alert: Alert; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={styles.alertRow}>
+      <Text variant="ui" style={alert.readAt === null ? styles.alertUnread : styles.muted}>
+        {alertLine(alert)}
+      </Text>
+    </Pressable>
+  );
+}
+
 function HearingRow({ row, onPress }: { row: ListedMatter; onPress: () => void }) {
   return (
     <Pressable onPress={onPress} style={styles.row}>
@@ -284,4 +353,9 @@ const styles = StyleSheet.create({
    */
   notConfirmed: { color: color.inkMuted },
   freshness: { color: color.inkMuted, paddingTop: space.sm },
+
+  alertsCard: { gap: space.xs },
+  alertRow: { paddingVertical: space.xs },
+  /** Neutral ink, never amber — amber means the law moved on a CITATION surface; this is a summary line about it. */
+  alertUnread: { color: color.ink },
 });
