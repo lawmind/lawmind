@@ -35,6 +35,7 @@ ships before Tier A** — the loop creates the habit, the library only prevents 
 feature-comparison loss. `PRODUCT_BRIEF.md`, `BUILD_GUIDE.md` §Sequencing rule.
 
 Tier A — the four core features, priority order:
+
 1. Court decision search with server-verified citations
 2. 24-hour hearing briefings (the wedge — no Indian competitor has it)
 3. Document drafting, English and Hindi
@@ -55,16 +56,16 @@ Full mechanism: `docs/CITATION_HARNESS.md`. Spec, not guidance.
 
 ## 3. ADDITIONAL TOOL LAYER (adds to global Section 4 — does not replace it)
 
-| Operation | Use | Notes |
-|---|---|---|
-| Symbol-level navigation, rename/reference | AFT + tree-sitter | Faster than graph for single-symbol questions |
-| Pre-invocation context compression | Context Mode | Before every model invocation, per `.ai/07-context.md` |
-| Episodic memory | `memory_recall()` / `memory_store()` | Interface from global §2. Backed by agentmemory (:3111). Map in `.ai/06-memory.md` |
-| Structural / architecture queries | codebase-memory-mcp | Unchanged from global |
-| Semantic snapshot | Understand-Anything | Session start only, once |
-| Shell compression | RTK | **Homebrew only** — never cargo, crates.io name collision |
-| Node script running | nub | Universal runner |
-| Dedup / fallback | sqz | When RTK unavailable |
+| Operation                                 | Use                                  | Notes                                                                              |
+| ----------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------- |
+| Symbol-level navigation, rename/reference | AFT + tree-sitter                    | Faster than graph for single-symbol questions                                      |
+| Pre-invocation context compression        | Context Mode                         | Before every model invocation, per `.ai/07-context.md`                             |
+| Episodic memory                           | `memory_recall()` / `memory_store()` | Interface from global §2. Backed by agentmemory (:3111). Map in `.ai/06-memory.md` |
+| Structural / architecture queries         | codebase-memory-mcp                  | Unchanged from global                                                              |
+| Semantic snapshot                         | Understand-Anything                  | Session start only, once                                                           |
+| Shell compression                         | RTK                                  | **Homebrew only** — never cargo, crates.io name collision                          |
+| Node script running                       | nub                                  | Universal runner                                                                   |
+| Dedup / fallback                          | sqz                                  | When RTK unavailable                                                               |
 
 Retrieval order: `.ai/03-retrieval-pipeline.md`.
 
@@ -79,11 +80,11 @@ Explicitly NOT used: Neon, Vercel, Qdrant, Clerk, Supabase, Telegram bot.
 
 ## 5. LLM ROUTING — by data sensitivity, not task difficulty
 
-| Data class | Contents | Routing |
-|---|---|---|
-| Public | Judgments, statutes — already published | Cheapest capable. DeepSeek V4 Flash. |
-| Sensitive | Uploaded documents, matter notes, party names, client detail | **Pseudonymise first, then Claude** (written data-processing terms). Ambiguity resolves to sensitive, never public. **ONE DOCUMENT PER CALL.** |
-| Never sent | A full client file with no legal reason to leave the device | Stays local |
+| Data class | Contents                                                     | Routing                                                                                                                                        |
+| ---------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public     | Judgments, statutes — already published                      | Cheapest capable. DeepSeek V4 Flash.                                                                                                           |
+| Sensitive  | Uploaded documents, matter notes, party names, client detail | **Pseudonymise first, then Claude** (written data-processing terms). Ambiguity resolves to sensitive, never public. **ONE DOCUMENT PER CALL.** |
+| Never sent | A full client file with no legal reason to leave the device  | Stays local                                                                                                                                    |
 
 Within public class, route by task: search → DeepSeek V4 Flash · summarise/extract
 → Claude Haiku 4.5 · drafting/briefings → Claude Sonnet 4.6.
@@ -107,8 +108,8 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
 - **Corpus acquisition in bulk is permitted and encouraged.** AWS Open Data,
   CC-BY-4.0, with attribution. **There is no copyright in a judgment** — Copyright
   Act **s. 52(1)(q)(iv)**, and the exemption does not distinguish commercial use.
-  Take all of it. What IS protected is a reporter's *copy-edited* version —
-  headnotes, editorial numbering (*Eastern Book Company v. D.B. Modak*) — so use
+  Take all of it. What IS protected is a reporter's _copy-edited_ version —
+  headnotes, editorial numbering (_Eastern Book Company v. D.B. Modak_) — so use
   raw court text and never a law report's edition of it.
 - **eCourts harvesting: PERMITTED under the registrar's written authorisation
   granted 7 Aug 2026, and only within its stated conditions.** The conditions are
@@ -118,12 +119,28 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
   OFF and flipping it requires a `reason`. **If the authorisation's terms are not
   in the repo, the switch stays off** — an unbounded harvest under a bounded
   permission is the fastest way to lose it.
-- **Never circumvent an access control, and never buy data from someone who did.**
-  That is why eCourtsIndia and similar scraper-resellers are out. Per-citation
-  Tier 3 verification is unchanged: we hand the advocate the eCourts URL and the
-  text to paste, and **the advocate solves the CAPTCHA.** Nothing on the server
-  ever solves one — `services/api/src/citations/verify.ts` contains no HTTP client
-  and a test asserts it.
+- **The CAPTCHA rule changed 8 Aug 2026, on the founder's authority: the grant
+  expressly permits bypassing it.** The old rule ("never bypass, the advocate
+  always solves it") existed for one reason — unauthorised access under IT Act
+  ss. 43/66 — and **written authorisation removes that reason.** What replaces it
+  is narrower and mechanical, not a matter of anyone's memory:
+  - Bypass is permitted **only while `AUTHORISATION` is non-null and unexpired**.
+    It is a field ON the grant (`captchaBypassPermitted`), so it **expires with
+    the grant automatically**. The grant runs to **January 2029**, after which the
+    registrar requires payment to continue — a lapsed grant must revert the
+    behaviour on its own, never by anyone remembering to.
+  - Bypass lives **only in `services/api/src/court/ecourts.ts`**, the one module
+    permitted an HTTP client. `services/api/src/citations/verify.ts` still contains
+    no HTTP client and the test asserting that **stays** — Tier 3 per-citation
+    confirmation and bulk cause-list harvesting are different acts under different
+    parts of the grant, and collapsing them is how a bounded permission becomes an
+    unbounded one.
+  - Every bypassed request still writes the fetch ledger and still passes the rate
+    limiter. Permission to bypass is not permission to flood.
+- **Never circumvent an access control you have NOT been authorised to, and never
+  buy data from someone who did.** That is why eCourtsIndia and similar
+  scraper-resellers remain out: their access was never authorised, and buying it
+  launders someone else's offence into our corpus.
 - Route by data sensitivity. Uploaded document content is sensitive-class:
   pseudonymise before any model call. **OD-6 resolved 2 Aug 2026** — the
   countersigned DPA is still owed before uploads ship, and the admin surface
@@ -149,20 +166,20 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
 
 **Stated by the founder repeatedly, and binding on every agent in this repo.**
 
-**Work continuously.** Emitting prose ends the turn, so a status update *is* a
+**Work continuously.** Emitting prose ends the turn, so a status update _is_ a
 stop. Keep calling tools until every task is done. Do not stop at a milestone, a
 green CI run, a successful deploy, or "a good place to check in". Batch reporting
 into one message when the work is actually finished.
 
 **Solve your own blockers.** Before declaring anything blocked, ask whether it is
-genuinely *a credential, an account, or money*. If not, it is yours:
+genuinely _a credential, an account, or money_. If not, it is yours:
 
-| looks like a blocker | it is not, because |
-|---|---|
-| a console/dashboard action | Railway, Resend and Spaceship all have a CLI or an API. Try it. Two "console only" items turned out to be one CLI call. |
-| a screen that is not designed | build the server side behind an **additive, documented, provisional** shape and mark it as such. The contract has absorbed additive endpoints before. |
-| a token you do not have | build the whole path behind an interface that works without it and **refuses honestly in production** — `packages/auth/src/mail.ts` is the pattern. Only the key is then outstanding. |
-| a long-running job | run it in the background and keep working. |
+| looks like a blocker          | it is not, because                                                                                                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| a console/dashboard action    | Railway, Resend and Spaceship all have a CLI or an API. Try it. Two "console only" items turned out to be one CLI call.                                                               |
+| a screen that is not designed | build the server side behind an **additive, documented, provisional** shape and mark it as such. The contract has absorbed additive endpoints before.                                 |
+| a token you do not have       | build the whole path behind an interface that works without it and **refuses honestly in production** — `packages/auth/src/mail.ts` is the pattern. Only the key is then outstanding. |
+| a long-running job            | run it in the background and keep working.                                                                                                                                            |
 
 **Do not stop even for those.** An API key, an account, money, or a decision only
 the founder can make goes into **`docs/FOUNDER_QUEUE.md`** and the lane KEEPS

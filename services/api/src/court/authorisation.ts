@@ -48,6 +48,36 @@ export type EcourtsAuthorisation = {
   minIntervalMs: number;
   maxRequestsPerHour: number;
   maxRequestsPerDay: number;
+  /**
+   * Whether the grant expressly permits solving/bypassing the CAPTCHA.
+   *
+   * **A field on the grant, deliberately — not a global constant and not an
+   * environment variable.** The old standing rule was "never bypass", and its
+   * whole reason was unauthorised access under IT Act ss. 43/66. Written
+   * authorisation removes that reason, but only for as long as the
+   * authorisation exists. Modelling it here means the permission **expires
+   * with the grant automatically** (January 2029, after which the registrar
+   * requires payment): a lapsed grant reverts the behaviour on its own rather
+   * than depending on somebody remembering to turn it off.
+   *
+   * `false` is the safe reading. A grant that does not say we may bypass has
+   * not said it — silence is never permission, the same rule the rate limits
+   * follow.
+   *
+   * **Scope, and it is narrow:** this authorises the bulk cause-list path in
+   * `ecourts.ts` only. Tier 3 per-citation confirmation still hands the
+   * advocate the door — `citations/verify.ts` holds no HTTP client and the
+   * test asserting that stays. Two different acts under two different parts of
+   * the grant; collapsing them turns a bounded permission into an unbounded one.
+   */
+  captchaBypassPermitted: boolean;
+  /**
+   * What happens at `expiresOn`. The January 2029 grant converts to a paid
+   * arrangement rather than simply lapsing, and "we forgot to renew" must not
+   * be discovered by an advocate seeing an empty cause list. Recorded so the
+   * renewal is a diarised commercial decision, not an outage.
+   */
+  onExpiry: 'lapses' | 'renewable_for_payment';
 };
 
 /**
@@ -57,6 +87,29 @@ export type EcourtsAuthorisation = {
  * change can quietly fill in wrongly, and `null` cannot be partially right.
  */
 export const AUTHORISATION: EcourtsAuthorisation | null = null;
+
+/**
+ * The ONLY way any code may ask "are we allowed to bypass the CAPTCHA?"
+ *
+ * Never read `AUTHORISATION.captchaBypassPermitted` directly. Three conditions
+ * have to hold together and a caller checking one of them is a caller who will
+ * eventually check only one:
+ *
+ *   1. a grant exists at all;
+ *   2. it has not expired — the permission cannot outlive the authorisation,
+ *      which is the entire point of putting it on the grant;
+ *   3. it expressly permits the bypass.
+ *
+ * Returns false for all three failures on purpose. A caller does not need to
+ * know *why* it may not bypass — it needs to not bypass. `decide()` already
+ * produces the distinguishable reason for the ledger.
+ */
+export function captchaBypassAllowed(at: Date = new Date()): boolean {
+  const grant = AUTHORISATION;
+  if (!grant) return false;
+  if (at.toISOString().slice(0, 10) > grant.expiresOn) return false;
+  return grant.captchaBypassPermitted;
+}
 
 /**
  * India Standard Time is UTC+05:30 — a half-hour offset, which is exactly the

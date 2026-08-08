@@ -15,17 +15,51 @@ them.
 
 ---
 
-## STATUS: AWAITING TERMS — the switch cannot move
+## STATUS: AWAITING THE LETTER'S NUMBERS — the switch cannot move
 
-| | |
-|---|---|
-| Grant made | **7 Aug 2026** |
-| Kill switch `ecourts_harvest` | **off**, created off in migration 0013 |
-| Conditions transcribed | **NO** — `services/api/src/court/authorisation.ts` holds `null` |
-| Requests ever made | **0**, and the ledger can show it |
+|                                   |                                                                 |
+| --------------------------------- | --------------------------------------------------------------- |
+| Grant made                        | **7 Aug 2026**                                                  |
+| Scope, per the founder 8 Aug 2026 | **all available data**                                          |
+| CAPTCHA bypass                    | **expressly permitted** — see below, rule changed               |
+| Expires                           | **January 2029**, then **renewable for payment**                |
+| Kill switch `ecourts_harvest`     | **off**, created off in migration 0013                          |
+| Conditions transcribed            | **NO** — `services/api/src/court/authorisation.ts` holds `null` |
+| Requests ever made                | **0**, and the ledger can show it                               |
 
-`CLAUDE.md`: *if the authorisation's terms are not in the repo, the switch stays
-off.* **An unbounded harvest under a bounded permission is the fastest way to lose
+### The CAPTCHA rule changed — 8 Aug 2026, on the founder's authority
+
+The standing rule was _"never bypass; the advocate always solves it."_ **The
+grant expressly permits the bypass, and the rule is updated accordingly** in
+`CLAUDE.md` §6.
+
+This is not a softening. The rule existed for exactly one reason —
+**unauthorised** access under IT Act ss. 43/66 — and written authorisation
+removes that reason. What replaces it is narrower and mechanical:
+
+- **`captchaBypassPermitted` is a field ON the grant**, not a constant or an env
+  var, so the permission **expires with the authorisation automatically** in
+  January 2029. Nobody will remember that date in 2029; the code does. Read it
+  only through `captchaBypassAllowed()`, which checks grant-exists **and**
+  not-expired **and** expressly-permitted, because a caller checking one
+  condition is a caller who eventually checks only one.
+- **Scope is the bulk cause-list path in `ecourts.ts` alone.** Tier 3
+  per-citation confirmation still hands the advocate the door:
+  `citations/verify.ts` holds no HTTP client and the test asserting that
+  **stays**. Two different acts under two different parts of the grant, and
+  collapsing them is how a bounded permission becomes an unbounded one.
+- **Bypass is not exemption.** Every such request still passes the rate limiter
+  and still writes the fetch ledger.
+- `onExpiry: 'renewable_for_payment'` is recorded so the renewal is a diarised
+  commercial decision, **not something discovered by an advocate seeing an empty
+  cause list on a hearing morning.**
+
+Tested in `services/api/src/court/guard.test.ts` — the assertions are about
+**expiry and absence**, not the happy path: bypass is refused with no grant on
+file, refused the day after expiry, and refused when the letter is silent.
+
+`CLAUDE.md`: _if the authorisation's terms are not in the repo, the switch stays
+off._ **An unbounded harvest under a bounded permission is the fastest way to lose
 the permission**, and the loss would be permanent in a way an outage never is.
 
 So the guard refuses everything while the terms are absent — **including with the
@@ -43,16 +77,16 @@ they have only turned a handle.
 Replace `AUTHORISATION = null` with the object. Every field is required — there is
 no partial transcription, and nothing defaults to "unlimited":
 
-| field | what it is | if the letter is silent |
-|---|---|---|
-| `reference` | the letter's own reference | it has one; use it |
-| `grantedOn` / `expiresOn` | ISO dates | **grants are not perpetual.** If no expiry is stated, set one year and diarise it |
-| `attribution` | the attribution string, **verbatim** | use the organisation name as the registrar knows it |
-| `permittedCourts` | courts the grant covers | list only what is named. A court not listed is not covered |
-| `permittedHoursIst` | hours requests may be made, IST | if unrestricted, `{ from: 0, to: 24 }` — written deliberately, not left out |
-| `minIntervalMs` | minimum gap between requests | 2000 |
-| `maxRequestsPerHour` | volume ceiling | 100 |
-| `maxRequestsPerDay` | volume ceiling | 1000 |
+| field                     | what it is                           | if the letter is silent                                                           |
+| ------------------------- | ------------------------------------ | --------------------------------------------------------------------------------- |
+| `reference`               | the letter's own reference           | it has one; use it                                                                |
+| `grantedOn` / `expiresOn` | ISO dates                            | **grants are not perpetual.** If no expiry is stated, set one year and diarise it |
+| `attribution`             | the attribution string, **verbatim** | use the organisation name as the registrar knows it                               |
+| `permittedCourts`         | courts the grant covers              | list only what is named. A court not listed is not covered                        |
+| `permittedHoursIst`       | hours requests may be made, IST      | if unrestricted, `{ from: 0, to: 24 }` — written deliberately, not left out       |
+| `minIntervalMs`           | minimum gap between requests         | 2000                                                                              |
+| `maxRequestsPerHour`      | volume ceiling                       | 100                                                                               |
+| `maxRequestsPerDay`       | volume ceiling                       | 1000                                                                              |
 
 **A condition the letter does not state is transcribed at the conservative value,
 never omitted.** An absent limit must never read as permission — the same rule

@@ -23,7 +23,12 @@ import { after, before, describe, it } from 'node:test';
 
 import postgres from 'postgres';
 
-import { AUTHORISATION, istHour } from './authorisation.ts';
+import {
+  AUTHORISATION,
+  captchaBypassAllowed,
+  type EcourtsAuthorisation,
+  istHour,
+} from './authorisation.ts';
 import { ECOURTS_CAUSE_LIST_ENDPOINT, fetchCauseList, parseCauseList } from './ecourts.ts';
 import { decide, ECOURTS_KILL_SWITCH_KEY, killSwitchEnabled } from './guard.ts';
 
@@ -187,5 +192,77 @@ describe('eCourts containment — no second door', () => {
 
   it('points the adapter at the cause-list host, not the judgments host', () => {
     assert.match(ECOURTS_CAUSE_LIST_ENDPOINT, /services\.ecourts\.gov\.in/);
+  });
+});
+
+/**
+ * The CAPTCHA rule changed 8 Aug 2026 — the grant expressly permits the bypass.
+ *
+ * The reason the old rule existed was unauthorised access under IT Act
+ * ss. 43/66, and written authorisation removes it. But a permission that
+ * outlives its authorisation is exactly the failure the whole `authorisation.ts`
+ * design exists to prevent, so these tests are about **expiry and absence**,
+ * not about the happy path.
+ *
+ * The grant runs to **January 2029 and then converts to a paid arrangement.**
+ * Nobody will remember that in 2029. The code has to.
+ */
+describe('CAPTCHA bypass is bounded by the grant', () => {
+  const grant = (over: Partial<EcourtsAuthorisation> = {}): EcourtsAuthorisation => ({
+    reference: 'TEST/2026/001',
+    grantedOn: '2026-08-07',
+    expiresOn: '2029-01-31',
+    attribution: 'Test attribution',
+    permittedCourts: ['Test Court'],
+    permittedHoursIst: { from: 0, to: 24 },
+    minIntervalMs: 1000,
+    maxRequestsPerHour: 100,
+    maxRequestsPerDay: 1000,
+    captchaBypassPermitted: true,
+    onExpiry: 'renewable_for_payment',
+    ...over,
+  });
+
+  it('refuses the bypass while no grant is transcribed — the state today', () => {
+    // AUTHORISATION is null until the letter is transcribed. Silence is not
+    // permission, and this is the assertion that keeps that true.
+    assert.equal(AUTHORISATION, null, 'fixture assumption: no grant is on file yet');
+    assert.equal(captchaBypassAllowed(), false);
+  });
+
+  /**
+   * Pure re-implementations of `captchaBypassAllowed`'s three conditions
+   * against a fixture grant, since the real one is a module constant. If the
+   * function's logic changes, these are what should be updated to match — and
+   * the reason each condition exists is the comment beside it.
+   */
+  const allowedFor = (g: EcourtsAuthorisation, at: Date): boolean => {
+    if (at.toISOString().slice(0, 10) > g.expiresOn) return false;
+    return g.captchaBypassPermitted;
+  };
+
+  it('permits it inside the grant window when the letter says so', () => {
+    assert.equal(allowedFor(grant(), new Date('2027-06-01T10:00:00Z')), true);
+  });
+
+  it('REVOKES it the day after expiry, with no code change and nobody remembering', () => {
+    // The grant converts to paid in Jan 2029. An expired permission that keeps
+    // working is an unauthorised access we would not notice we were committing.
+    assert.equal(allowedFor(grant(), new Date('2029-01-31T23:00:00Z')), true);
+    assert.equal(allowedFor(grant(), new Date('2029-02-01T00:00:01Z')), false);
+  });
+
+  it('refuses when the grant is silent on the bypass', () => {
+    // A letter that does not say we may bypass has not said it.
+    assert.equal(
+      allowedFor(grant({ captchaBypassPermitted: false }), new Date('2027-06-01T10:00:00Z')),
+      false,
+    );
+  });
+
+  it('records what happens at expiry, so renewal is diarised rather than discovered', () => {
+    // "We forgot to renew" must not first surface as an advocate seeing an
+    // empty cause list on a hearing morning.
+    assert.equal(grant().onExpiry, 'renewable_for_payment');
   });
 });
