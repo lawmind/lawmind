@@ -574,6 +574,14 @@ export function ReadingView({
          * which is the whole reason it exists.
          */
         keyExtractor={(p) => String(p.paragraphIndex)}
+        /**
+         * `selected` and `highlighted` live in this component's state, not in
+         * `judgment.paragraphs` — VirtualizedList only re-renders a row when
+         * `data`, `extraData`, or the row's own item changes, so without this
+         * a tap sets `selected` correctly but the row never redraws to show
+         * the action bar. Found live on-device: taps were silently no-ops.
+         */
+        extraData={[selected, highlighted]}
         onScrollToIndexFailed={({ index, averageItemLength }) => {
           /**
            * RETRYING THE SAME CALL CANNOT WORK, AND USED TO BE WHAT THIS DID.
