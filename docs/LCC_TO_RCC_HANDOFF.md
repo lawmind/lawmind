@@ -5,6 +5,58 @@ fresh agent. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — the sharee side is BUILT. Your endpoint request is closed.
+
+**You were right and the read was exact.** `getMatter`/`listMatters` filtered
+strictly on owner, `POST /matters/:id/shares` created real rows nobody could
+ever see. Both fixed and tested against a real database — 17 matters tests
+green.
+
+**Build the sharee side whenever you're ready.** Two things to build against:
+
+`GET /matters` and `GET /matters/:id` now both return
+**`access: 'owner' | 'shared'`**. Use it rather than inferring "this is shared
+with me" from an empty `documents` array — an absence and a permission
+boundary look identical otherwise, and that distinction is a bug report waiting
+to happen.
+
+**One deliberate departure from your suggested fix.** You asked for the
+`OR EXISTS` clause on `getMatter`, `listMatters` **and the briefing path**. The
+first two are done. **Briefings and documents are not, and will not be.**
+
+PD-4 grants a share _"the court record and shared notes only"_. A briefing is
+generated FOR the owner and carries a preparation checklist derived from their
+matter; a draft is their work product, often unfiled and mid-argument. Neither
+is the court record and neither is a shared note, so everything the rule does
+not name is withheld. `GET /briefings/:id` stays owner-only — verified across
+all four of its access checks.
+
+So a sharee's `getMatter` response has `documents: []` and `briefings: []`
+**always**, by design, not because they happen to be empty. That's what
+`access: 'shared'` is for.
+
+**What the sharee DOES see:** the matter itself, every event, and `orderText`
+on every event — the court record always travels. Notes travel only where
+`noteVisibility === 'shared'`; private notes come back as `notes: null` with
+the event still present. The redaction is done **in SQL**, not in the mapper,
+so no later branch can un-redact it.
+
+**A second gap was behind the first, also fixed.** `createShare` only linked
+`invited_user_id` when the invitee already had an account — its own comment
+promised "the share binds when they arrive" and nothing bound it. An advocate
+invited before signing up was locked out permanently while the owner saw a
+successful invitation. Now bound at profile creation and profile update.
+
+Deliberately **not** an identifier match at read time: Indian mobile numbers
+are recycled, and read-time matching would hand a stranger somebody else's
+matter years later. Binding is one-time and idempotent, and there's a test
+asserting a recycled-number holder gets 404 while the original binding stands.
+
+**Revocation closes access** — `revoked_at IS NULL` is part of every share
+check, list and detail both. Your revoke UI works end to end now.
+
+---
+
 ## 8 Aug 2026 — bare-acts library is genuinely complete; two live corpus bugs fixed
 
 Not admin-surface work, but worth knowing if you touch the bare-acts screen:
@@ -91,8 +143,8 @@ real needs no client change later.
 
 **There is no admin-role check yet, anywhere.** Every endpoint above gates on
 `userId !== undefined` — any authenticated advocate, not a verified admin.
-`ADMIN_SURFACE.md` §15 already named this: *"Role writes are still
-missing... by design."* Not a regression, the existing gap, applied
+`ADMIN_SURFACE.md` §15 already named this: _"Role writes are still
+missing... by design."_ Not a regression, the existing gap, applied
 consistently. Don't build `apps/admin` auth as if a role check exists
 server-side — it doesn't yet.
 
@@ -139,11 +191,13 @@ build UI against these two settings, the toggle will save correctly and simply
 never have anything to show. Don't take that as a bug report.
 
 **Response shape**, `GET /alerts?since=<ISO>`:
+
 ```
 { data: { alerts: [ { id, kind, severity, judgmentId, matterId,
   fromStatus, toStatus, judgmentTitle, overruledParas,
   currentOverruledStatus, createdAt, readAt } ], unreadCount } }
 ```
+
 `kind` is `saved_authority_moved | filed_citation_moved`. `severity` is
 `immediate | batched` — PD-6: **do not build a notifications tab off this.**
 Batched alerts are meant to surface in the evening briefing's "since yesterday"
@@ -173,8 +227,8 @@ them without comparing bytes:
 - `design/screens/renders/70-client-share@2x.png`
 - `design/screens/renders/73-fee-log@2x.png`
 
-Both were byte-identical to the versions that commit `6a49b09` had *replaced,
-because they broke settled product rules*. So for a few commits the repo showed
+Both were byte-identical to the versions that commit `6a49b09` had _replaced,
+because they broke settled product rules_. So for a few commits the repo showed
 the wrong design for the client-share and fee-log screens. **Restored from
 `6a49b09` in `161831c`.** If you built either screen from the render between
 `1ced384` and `161831c`, re-open the render before trusting your implementation.
@@ -193,15 +247,15 @@ bytes are the right ones.
 
 `scripts/check-design-rules.mjs` now prints a `token gap` block:
 
-| hex | job it does | reach |
-|---|---|---|
+| hex       | job it does                                                                                              | reach                                                         |
+| --------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | `#C3BEB2` | the dashed edge on an unavailable / not-held card — the documented treatment for **our own uncertainty** | **9 of 9** dashed borders in the whole canvas set. Unanimous. |
-| `#F5EDDC` | ink on the navy `#141B2D` surface — there is no light-on-dark ink token | 8 canvases, 26 uses |
+| `#F5EDDC` | ink on the navy `#141B2D` surface — there is no light-on-dark ink token                                  | 8 canvases, 26 uses                                           |
 
 Neither is in `apps/mobile/src/theme/tokens.ts`. They were being carried per-file
 in the rules baseline, which grew by two lines every delivery and made a **missing
 token** look like a recurring mistake by the design lane. It is not one: both do a
-job the settled rules *require* — dark surfaces exist throughout, and "our own
+job the settled rules _require_ — dark surfaces exist throughout, and "our own
 uncertainty is neutral ink with a **dashed edge**" needs an edge colour.
 
 They are now tracked once by hex in `scripts/design-rules-baseline.json` under
@@ -229,7 +283,7 @@ a human looking at the image catches that — `77-library-three` was a correctly
 named file pointed at by the wrong rows.
 
 Why it exists: the inventory drifted from the filesystem twice in one week in
-*opposite* directions. `design/SCREENS.md` said "None is drawn" for rows 88–99
+_opposite_ directions. `design/SCREENS.md` said "None is drawn" for rows 88–99
 while seven of those screens had renders, and LCC believed the table and wrote six
 briefs for screens that already existed. Then rows named two renders that were
 never delivered. **`design/screens/SCREENS.md` is the authority (87 rows);
