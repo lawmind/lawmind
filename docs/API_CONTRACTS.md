@@ -255,6 +255,35 @@ badge qualifier; `overruledStatus` answers whether it is still good law and is
 response carrying a citation must include all three. A citation missing them is a
 bug: the client renders "not confirmed" and reports it.
 
+**`verifiedBySource` gains a fifth value: `'ecourts_bulk'`. Added 8 Aug 2026 —
+additive, provisional, and nothing writes it yet.**
+
+The Postgres enum has seven values and this contract now has five. That gap was
+real and unguarded before today: `GET /citations/:id` and `GET /documents/:id`
+read the column and handed it to the client, which types the field as a closed
+union and looks its label up in a `Record`. Nothing broke only because nothing
+had ever written a diagnostic value. Both routes now go through
+`services/api/src/citations/source-strength.ts`, whose mapping is exhaustive
+over the column — adding an eighth database value is a compile error rather than
+a blank label on an advocate's screen. `indiankanoon` and `aws_s3` map to
+`'none'`: one public source matching is not a confirmation under
+`CITATION_HARNESS.md` step 5, and such a row is `unverified` regardless.
+
+`'ecourts_bulk'` means **the registry answered us directly under the registrar's
+grant** — authoritative, automated, and *not* a human confirmation. It exists so
+bulk CNR resolution cannot quietly wear the authority of `'ecourts'`, which
+means a named advocate personally vouched.
+
+> **Client requirement, before bulk resolution ships.** `VerifiedBySource` in
+> `apps/mobile/src/api/contract.ts` and the label map in
+> `apps/mobile/src/citation/tiers.ts` both need the value. Suggested label:
+> *"eCourts record"* — distinct from Tier 3's *"You confirmed it"*. Two rules
+> hold in the meantime and afterwards: an **unrecognised** source must degrade
+> to silent-verified and never to a blank or a crash, and `'ecourts_bulk'` must
+> **never** render the Tier-3 wording. Server-side nothing emits the value
+> today, so there is no live exposure — the client change simply has to land
+> before the resolver does.
+
 **`operativeParagraph` is a paragraph the server identified, not the chunk it
 matched. `operativeParagraphNumber` — added 7 Aug 2026, additive.**
 

@@ -166,7 +166,23 @@ export const verifiedBySourceEnum = pgEnum('verified_by_source', [
   'indiankanoon',
   'aws_s3',
   'public_x2',
+  /** A named human solved the CAPTCHA and vouched. The strongest assertion. */
   'ecourts',
+  /**
+   * The registry answered us directly, under the registrar's grant — added
+   * 8 Aug 2026, migration 0022.
+   *
+   * Deliberately NOT `ecourts`. That value means a human vouched, which is why
+   * it caches permanently and why the harness falls back to it. Bulk resolution
+   * writing the same value would degrade the product's strongest assertion to
+   * "a machine said so" while still spelling it `ecourts`, with no test
+   * failing. Different acts, different weight.
+   *
+   * May be upgraded to `ecourts` if an advocate later confirms. Never
+   * downgraded, and a bulk pass must never overwrite an `ecourts` row — a
+   * human's word is not superseded by a machine re-reading the same page.
+   */
+  'ecourts_bulk',
   'none',
 ]);
 

@@ -46,6 +46,19 @@ structural.
    > would silently degrade to "a bot said so" — and it would still be spelled
    > `ecourts` in the database. `citations/verify.ts` therefore holds no HTTP
    > client and a test asserts it.
+   >
+   > **What bulk resolution writes instead: `verified_by_source =
+   > 'ecourts_bulk'`** (migration `0022`, 8 Aug 2026). Same door, different act,
+   > different weight. Strength order, strongest first:
+   >
+   > | `ecourts` | `public_x2` | `ecourts_bulk` | `corpus` |
+   > | --------- | ----------- | -------------- | -------- |
+   > | a human vouched | two independent sources agreed | the registry answered | we hold it |
+   >
+   > `ecourts_bulk` ranks below `public_x2` because independence is what catches
+   > a systematic error at the source; one authoritative source answering
+   > cannot. **A row may be upgraded and never downgraded**, and a bulk pass may
+   > never overwrite an `ecourts` row — `citations/source-strength.ts`.
 
 7. **Tier 4 — say so plainly.** If no tier confirms, render an explicit
    `unverified` state: we found this reference but could not confirm it exists.
@@ -68,7 +81,7 @@ overruled at the same time.**
 | Field                | Values                                                | Question                   | Source                  |
 | -------------------- | ----------------------------------------------------- | -------------------------- | ----------------------- |
 | `verification_state` | `verified` · `unverified` · `failed`                  | Does this authority exist? | Tiers 1–3               |
-| `verified_by_source` | `corpus` · `public_x2` · `ecourts` · `none`           | Who confirmed it?          | whichever tier resolved |
+| `verified_by_source` | `corpus` · `public_x2` · `ecourts` · `ecourts_bulk` · `none` | Who confirmed it?   | whichever tier resolved |
 | `overruled_status`   | `none` · `set_aside` · `partly_set_aside` · `doubted` | Is it still good law?      | `judgments`, step 9     |
 
 `failed` means the check itself could not run — a tier was unreachable. It renders

@@ -423,7 +423,7 @@ Every call writes a row. No exceptions. Cost control and DPDP audit trail.
 `id` uuid pk · `search_id` uuid null fk→searches · `document_id` uuid null fk→documents ·
 `citation_claimed` text · `judgment_id_matched` uuid null fk→judgments ·
 `verification_state` enum (verified|unverified|failed) ·
-`verified_by_source` enum (corpus|indiankanoon|aws_s3|public_x2|ecourts|none) ·
+`verified_by_source` enum (corpus|indiankanoon|aws_s3|public_x2|ecourts|ecourts_bulk|none) ·
 `match_confidence` numeric(4,3) null — fuzzy title similarity where used ·
 `shown_to_user` bool — was it rendered, and in what state ·
 `overruled_status_shown` text null — the status the server sent for this render ·
@@ -462,6 +462,40 @@ answered by different sources, so folding them into one enum was wrong.
 `public_x2` is the value tier 2 writes when IndianKanoon and the AWS S3 datasets
 **agree** — the per-source values remain for partial and diagnostic records where
 only one matched.
+
+#### The seven column values, and the five on the wire
+
+The column carries more values than the API emits, and the gap is deliberate.
+
+| Value          | Meaning                                        | Strength | On the wire    |
+| -------------- | ---------------------------------------------- | -------- | -------------- |
+| `ecourts`      | a named human solved the CAPTCHA and vouched   | 4        | `ecourts`      |
+| `public_x2`    | two INDEPENDENT public sources agreed          | 3        | `public_x2`    |
+| `ecourts_bulk` | the registry answered us directly, under grant | 2        | `ecourts_bulk` |
+| `corpus`       | we hold the judgment ourselves                 | 1        | `corpus`       |
+| `indiankanoon` | one public source matched, the other did not   | 0        | `none`         |
+| `aws_s3`       | one public source matched, the other did not   | 0        | `none`         |
+| `none`         | nobody confirmed it                            | 0        | `none`         |
+
+`ecourts_bulk` was added 8 Aug 2026 (migration `0022`) when the registrar's
+grant made bulk automated resolution lawful. It is **not** `ecourts`: that value
+means a human vouched, which is why it caches permanently and why the harness
+falls back to it. Bulk resolution writing the same value would degrade the
+product's strongest assertion to "a machine said so" while still spelling it
+`ecourts` in the database, with no test failing.
+
+It sits **below** `public_x2` because independence is what catches a systematic
+error at the source, and **above** `corpus` because the registry is the
+registry.
+
+**A row may climb this table and never fall.** A bulk pass must never overwrite
+an `ecourts` row; an advocate confirming a bulk-resolved citation upgrades it.
+Enforced in `services/api/src/citations/source-strength.ts`, tested beside it.
+
+The two diagnostic values collapse to `none` at the boundary because that is
+what they honestly mean to a reader: one source matching is not a confirmation
+under the step-5 rule, and such a row's `verification_state` is `unverified`
+anyway.
 
 ## verification_cache
 

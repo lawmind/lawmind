@@ -36,6 +36,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
+import { toWireSourceUnsafe } from '../citations/source-strength.ts';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 
@@ -314,7 +315,7 @@ async function readDocument(sql: Sql, documentId: string) {
       judgmentId: cc.judgment_id_matched,
       caseTitle: cc.case_title,
       verificationState: cc.verification_state,
-      verifiedBySource: cc.verified_by_source,
+      verifiedBySource: toWireSourceUnsafe(cc.verified_by_source),
       overruledStatus: cc.overruled_status,
     })),
     /**

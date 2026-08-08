@@ -1,0 +1,47 @@
+-- `ecourts_bulk` — a distinct verification source, so bulk resolution cannot
+-- quietly wear the authority of a human confirmation.
+--
+-- Approved by the founder 8 Aug 2026.
+--
+-- ─────────────────────────────────────────────────────────────────────────────
+-- THE PROBLEM THIS PREVENTS
+-- ─────────────────────────────────────────────────────────────────────────────
+--
+-- `verified_by_source = 'ecourts'` has always carried one specific meaning:
+-- **a named human personally solved the CAPTCHA and vouched for this
+-- citation.** That is why it caches permanently, and why it is the tier the
+-- harness falls back to when Tiers 1 and 2 disagree. It is the strongest
+-- assertion in the product.
+--
+-- The registrar's grant now permits bulk, authorised, automated resolution.
+-- That is enormously valuable — `docs/DATA_ADVANTAGE.md` §2b: it is what turns
+-- the 17.8M-judgment long tail from findable into *citable*. But if bulk
+-- resolution wrote `'ecourts'`, the strongest assertion in the product would
+-- silently degrade to "a machine said so", **still spelled `ecourts` in the
+-- database**, with no test failing and nothing looking wrong.
+--
+-- So the two get different values. Same door, different acts, different weight.
+--
+-- ─────────────────────────────────────────────────────────────────────────────
+-- ORDERING, WHICH IS THE POINT
+-- ─────────────────────────────────────────────────────────────────────────────
+--
+-- Strength, strongest first:
+--   ecourts       — a human looked and vouched
+--   public_x2     — two independent public sources agreed
+--   ecourts_bulk  — the registry answered us directly, under the grant
+--   corpus        — we hold the judgment ourselves
+--
+-- `ecourts_bulk` sits BELOW `public_x2` deliberately. Two independent sources
+-- agreeing is a stronger claim than one authoritative source answering, because
+-- independence is what catches a systematic error at the source. It sits ABOVE
+-- `corpus` because the registry is the registry.
+--
+-- **A `ecourts_bulk` row may be upgraded to `ecourts` if an advocate later
+-- confirms it. It must never be downgraded, and `ecourts` must never be
+-- overwritten by a bulk pass** — a human's word is not superseded by a machine
+-- re-reading the same page.
+--
+-- Additive: no existing row changes meaning, and nothing needs backfilling.
+
+ALTER TYPE "verified_by_source" ADD VALUE IF NOT EXISTS 'ecourts_bulk' AFTER 'ecourts';

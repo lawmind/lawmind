@@ -388,3 +388,54 @@ endpoint that had never been built.
 I will post the exact response shapes here when the endpoints are mounted and
 probed. Do not code against the shapes in `API_CONTRACTS.md` until the column says
 BUILT.
+
+---
+
+## `verifiedBySource` gains a fifth value — `'ecourts_bulk'` · 8 Aug 2026 · additive
+
+**Nothing emits it yet. This is not urgent, but it must land before bulk CNR
+resolution does, and that work has started.**
+
+The registrar's grant permits bulk, authorised, automated eCourts resolution.
+That could not write `verified_by_source = 'ecourts'`, because that value has
+always meant one specific thing — **a named human personally solved the CAPTCHA
+and vouched** — which is why it caches permanently and why it is the tier the
+harness falls back to. Bulk resolution wearing it would degrade the product's
+strongest assertion to "a machine said so", still spelled `ecourts` in the
+database, with no test failing. So it gets its own value (founder approved,
+migration `0022`).
+
+Strength, strongest first: `ecourts` > `public_x2` > `ecourts_bulk` > `corpus`.
+`ecourts_bulk` ranks below `public_x2` because independence is what catches a
+systematic error at the source; it ranks above `corpus` because the registry is
+the registry.
+
+**What the client needs:**
+
+1. `VerifiedBySource` in `apps/mobile/src/api/contract.ts` — add `'ecourts_bulk'`.
+2. The label map in `apps/mobile/src/citation/tiers.ts` — suggested wording
+   **"eCourts record"**. It must read as *distinct from* Tier 3's
+   "you confirmed it". Yours to word; the one rule is that it must never
+   suggest a person looked.
+3. **An unrecognised source must degrade to silent-verified, never to a blank or
+   a crash.** `tiers.ts` currently does a `Record` lookup, which returns
+   `undefined` for anything new. This is the actual bug: it is not specific to
+   `ecourts_bulk` — it would have fired on `indiankanoon` or `aws_s3` too.
+
+**On (3), the server side is already fixed and you inherit less risk than the
+above implies.** `GET /citations/:id` and `GET /documents/:id` were handing the
+raw column out; the enum has seven values and the contract had four. Both now go
+through `services/api/src/citations/source-strength.ts`, a single exhaustive
+boundary — `indiankanoon` and `aws_s3` map to `'none'` (one public source
+matching is not a confirmation under `CITATION_HARNESS.md` step 5, and such a
+row is `unverified` anyway), and an eighth database value becomes a compile
+error rather than a blank label on an advocate's screen. So the wire is closed
+at five values today, and stays that way. Point (3) is still worth doing as
+defence in depth.
+
+Badge behaviour is unchanged: under the revised rendering rule verified is
+silent, so `corpus`, `public_x2` and `ecourts_bulk` all render as nothing. Only
+`ecourts` carries its qualifier.
+
+Full account: `docs/API_CONTRACTS.md` §`POST /search`, `docs/SCHEMA_TRUTH.md`
+§citation_checks, `docs/CITATION_HARNESS.md` step 6.

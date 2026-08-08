@@ -31,6 +31,7 @@ import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { toWireSourceUnsafe } from './source-strength.ts';
 
 /** What a tier did. Never collapsed — see the module note. */
 type TierStatus = 'confirmed' | 'miss' | 'not_attempted' | 'not_implemented';
@@ -112,7 +113,9 @@ export async function getCitationCheck(c: Context, sql: Sql, id: string): Promis
 
     // The three independent fields, from the row. Never one enum.
     verificationState: r.verification_state,
-    verifiedBySource: r.verified_by_source,
+    // Through the boundary, never straight from the column: the enum has seven
+    // values and the contract has five. `citations/source-strength.ts`.
+    verifiedBySource: toWireSourceUnsafe(r.verified_by_source),
     overruledStatus: r.overruled_status ?? r.overruled_status_shown,
     /** What the server sent when this was rendered — the stale-overruled metric. */
     overruledStatusShown: r.overruled_status_shown,

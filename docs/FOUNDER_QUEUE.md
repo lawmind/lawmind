@@ -640,9 +640,11 @@ purchase action stubbed and honestly disabled until this is resolved.
 
 ---
 
-### [OPEN] `verified_by_source` — bulk eCourts resolution needs its own value · LCC · 8 Aug 2026
+# RESOLVED — kept for provenance
 
-**Needs:** a yes/no on adding `ecourts_bulk` to the `verified_by_source` enum.
+### [RESOLVED 8 Aug 2026] `verified_by_source` — bulk eCourts resolution gets its own value
+
+**Was:** a yes/no on adding `ecourts_bulk` to the `verified_by_source` enum.
 
 **Why it is not mine to decide:** `CITATION_HARNESS.md` is a binding spec and
 this changes what a stored value _means_. Today `verified_by_source = 'ecourts'`
@@ -672,10 +674,29 @@ quietly dilutes the one signal an advocate relies on most.
 enum in `packages/db`, plus the tier ordering in `CITATION_HARNESS.md`.
 Additive — no existing row changes meaning.
 
+**Founder's answer, 8 Aug 2026: approved as recommended.** Built the same day.
+
+- `packages/db/drizzle/0022_ecourts_bulk_source.sql` — `ALTER TYPE ... ADD VALUE
+  'ecourts_bulk'`, additive, no backfill.
+- `services/api/src/citations/source-strength.ts` — strength ordering
+  (`ecourts` > `public_x2` > `ecourts_bulk` > `corpus`), the
+  upgrade-never-downgrade rule, and the single wire boundary. 9 tests.
+- Docs: `SCHEMA_TRUTH.md`, `CITATION_HARNESS.md`, `API_CONTRACTS.md`.
+
+**One thing the question surfaced that was not part of it.** Auditing where the
+column reaches a client found that `GET /citations/:id` and `GET /documents/:id`
+handed the raw column straight out, while the client types the field as a closed
+four-value union and looks its label up in a `Record`. The two diagnostic values
+(`indiankanoon`, `aws_s3`) would have produced a blank label. Nothing had broken
+because nothing had ever written them — an absent check, not a negative result.
+Both routes now go through the boundary, which is exhaustive over the column.
+
+**Still owed by RCC before bulk resolution ships:** `VerifiedBySource` in
+`apps/mobile/src/api/contract.ts` and the label map in
+`apps/mobile/src/citation/tiers.ts` need the fifth value. Logged in
+`docs/LCC_TO_RCC_HANDOFF.md`. No live exposure meanwhile — nothing emits it yet.
+
 ---
-
-# RESOLVED — kept for provenance
-
 ### [RESOLVED 7 Aug 2026] Resend sending domain
 
 `lawmind.co` verified; DNS written via the Spaceship API; delivery to a non-owner
