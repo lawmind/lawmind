@@ -10,7 +10,8 @@
     "statutes": "tsx src/statutes-cli.ts",
     "citations": "tsx src/citations-cli.ts",
     "overruled": "tsx src/overruled-cli.ts",
-    "acts": "tsx src/acts-cli.ts"
+    "acts": "tsx src/acts-cli.ts",
+    "harvest:probe": "tsx src/harvest/probe-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

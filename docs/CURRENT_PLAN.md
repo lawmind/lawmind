@@ -36,13 +36,20 @@ is not spent building scaffolding.
 - [x] **Pacing engine** — `services/ingest/src/harvest/pace.ts`, AIMD, 15 tests
 - [x] **Supreme Today client** — session + circuit breaker, 12 tests
 - [x] **Indian Kanoon client** — metered, budget-guarded, 11 tests
-- [ ] **Raw archive + fetch ledger** — content-hashed, immutable, records refusals
-- [ ] **Resumable, de-duplicated work queue** — the same document must never be
-      fetched twice; a duplicate is money spent on nothing
-- [ ] **The licensed `verified_by_source` value** — decided *before* the first row
-- [ ] **A display gate** — perpetual retention is **not** perpetual display. Until
-      the written terms are confirmed, their headnote is held as signal and
-      **never rendered**, enforced by a flag rather than by everyone remembering
+- [x] **Raw archive + fetch ledger** — migration `0023`, `harvest_fetches`.
+      Content-hashed, immutable, records refusals. Three constraints close the
+      ways a ledger could lie
+- [x] **Resumable, de-duplicated work queue** — `harvest_queue`, UNIQUE
+      (source, item_key). 9 store tests observed against real Postgres
+- [x] **The licensed `verified_by_source` value** — migration `0024`.
+      `ecourts > public_x2 > ecourts_bulk > licensed > corpus`
+- [x] **A display gate** — `licensedDisplayPermitted()`, **default false**, opens
+      only on an exact `LICENSED_DISPLAY_PERMITTED=true`. A withheld headnote is
+      **null, never a truncated version of theirs**
+- [x] **Day-one probe** — `pnpm --filter @lawmind/ingest harvest:probe`. Refuses
+      honestly without credentials and prints a completion date and total cost
+
+**§1 IS COMPLETE.** The account can be used the day it exists.
 
 **Day-one script, in order:** what does the account actually see · what is the
 real sustained rate · how big is the overlap between our 38,341 citations and

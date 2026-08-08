@@ -11,6 +11,8 @@ import { test } from 'node:test';
 import {
   type DbVerifiedBySource,
   isUpgrade,
+  licensedDisplayPermitted,
+  renderableLicensedText,
   strengthOf,
   toWireSource,
   toWireSourceUnsafe,
@@ -117,4 +119,34 @@ test('a value we cannot name throws rather than guessing `none`', () => {
   // written by code we have not read is the silent degradation this prevents.
   assert.throws(() => toWireSourceUnsafe('ecourts_v2'), /unknown verified_by_source/);
   assert.equal(toWireSourceUnsafe('public_x2'), 'public_x2');
+});
+
+test('licensed content does not render until the terms say it may', () => {
+  // Perpetual retention is not perpetual display. Until someone can point at
+  // the clause, a licensed headnote is a signal and never a surface.
+  delete process.env['LICENSED_DISPLAY_PERMITTED'];
+  assert.equal(licensedDisplayPermitted(), false, 'the default must be no');
+  assert.equal(renderableLicensedText('their headnote'), null);
+});
+
+test('the gate opens only on an exact opt-in, never on a truthy value', () => {
+  // 'yes', '1' and 'TRUE' are all things someone types when they are guessing.
+  // A permission nobody can point at a clause for should not be reachable by a
+  // near miss.
+  for (const v of ['1', 'yes', 'TRUE', 'True', '']) {
+    process.env['LICENSED_DISPLAY_PERMITTED'] = v;
+    assert.equal(licensedDisplayPermitted(), false, `"${v}" opened the gate`);
+  }
+  process.env['LICENSED_DISPLAY_PERMITTED'] = 'true';
+  assert.equal(licensedDisplayPermitted(), true);
+  assert.equal(renderableLicensedText('their headnote'), 'their headnote');
+  delete process.env['LICENSED_DISPLAY_PERMITTED'];
+});
+
+test('a withheld headnote is null, never a truncated version of theirs', () => {
+  // A shortened headnote is still their expression, and "we only showed a bit
+  // of it" is not a defence anyone wants to make.
+  delete process.env['LICENSED_DISPLAY_PERMITTED'];
+  assert.equal(renderableLicensedText(null), null);
+  assert.equal(renderableLicensedText('a very long headnote '.repeat(50)), null);
 });

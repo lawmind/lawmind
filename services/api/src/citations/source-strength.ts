@@ -144,3 +144,41 @@ export function toWireSourceUnsafe(source: string): WireVerifiedBySource {
   }
   return toWireSource(source as DbVerifiedBySource);
 }
+
+/* ------------------------------------------------ the licensed display gate -- */
+
+/**
+ * **May licensed content be shown to a user?**
+ *
+ * Perpetual retention is not perpetual display, and the two are separate clauses
+ * in any publisher's terms. We may end up entitled to HOLD a headnote — to index
+ * it, to rank on it, to fill the citator from it — without being entitled to put
+ * it on an advocate's screen.
+ *
+ * **Default false, and deliberately so.** Until the written terms say otherwise,
+ * licensed content is a signal and never a surface. A flag enforces that; a
+ * convention does not, because the person who renders it in four months will not
+ * have read this file.
+ *
+ * `LICENSED_DISPLAY_PERMITTED=true` turns it on, and it should be set **only**
+ * when someone can point at the clause. Same discipline as the eCourts
+ * conditions: a permission that is not written down does not exist, and an
+ * absent term must never read as consent.
+ */
+export function licensedDisplayPermitted(): boolean {
+  return process.env['LICENSED_DISPLAY_PERMITTED'] === 'true';
+}
+
+/**
+ * What a caller may do with a piece of licensed text right now.
+ *
+ * Returns the text when display is permitted, and **null when it is not** —
+ * never a truncated or paraphrased version. A shortened headnote is still their
+ * expression, and "we only showed a bit of it" is not a defence anybody wants to
+ * make. Null forces the caller to render our own row instead, which is what
+ * `CITATION_HARNESS.md` step 8 requires anyway.
+ */
+export function renderableLicensedText(text: string | null): string | null {
+  if (text === null) return null;
+  return licensedDisplayPermitted() ? text : null;
+}
