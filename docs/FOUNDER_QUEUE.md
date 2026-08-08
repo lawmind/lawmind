@@ -946,3 +946,103 @@ they verified?
 **Cost if never resolved:** we hold the only per-citation verification pipeline in
 the market and ship it as an invisible internal detail, in the month the Supreme
 Court made it a professional obligation.
+
+---
+
+### [OPEN] A lay-facing explainer — outside the four features, and it needs counsel · LCC · 8 Aug 2026
+
+**Needs:** (a) a decision to build outside `PRODUCT_BRIEF.md`'s four features, and
+(b) counsel's written view before any lay-facing surface ships.
+
+**Why it is not mine:** `PRODUCT_BRIEF.md`'s own rule — if what you are about to
+build does not serve one of the four features, stop and ask. A product for
+non-lawyers serves none of them. And the regulatory read below is mine, not a
+lawyer's.
+
+**The demand is real and the founder's examples are the right ones:** *how do I
+recover money I lent a friend* · *how do I fight someone illegally occupying my
+land*. Millions of people have a legal problem, no idea of the pathway, and
+nobody to ask.
+
+**The risk, verified 8 Aug 2026.** BCI Rule 36 prohibits soliciting work
+"directly or indirectly, whether by circulars, advertisements, **touts**…". In
+2024–25 the BCI ordered violating advertisements withdrawn, **banned influencer
+promotion of legal services**, and **warned digital platforms** they risk formal
+complaints. A complaint is already on file against **Vakilsearch** for soliciting
+and advertising. Consultation platforms defend themselves by presenting as
+neutral connectors where the relationship starts on engagement — a defence, not
+an immunity.
+
+**The safe ground is marked, though.** Publishing educational material explaining
+legal concepts, rights and procedure is widely treated as **distinct** from
+prohibited advertising.
+
+**So the recommendation is narrow: build the explainer, never the marketplace.**
+Give the pathway, sourced — demand notice, s. 138 NI Act where a cheque is
+involved, Order XXXVII CPC summary suit, limitation, which court by pecuniary
+jurisdiction — every step traceable to a statute or judgment in our corpus and
+rendered from the database row like every other citation. Three hard lines: **no
+routing to a named advocate ever**; **procedure and law, never advice on
+outcome**; and **it ends by telling them to take it to an advocate**.
+
+**Why it is worth doing although it earns nothing directly.** It is demand-pull
+into the advocate product. A client walking in saying *"Lawmind says this is an
+Order XXXVII suit"* has recommended us to an advocate, free, at the moment that
+advocate is deciding how to proceed. It is also the answer to Supreme Today's
+field sales that needs no field sales force — they sell one advocate at a time,
+and a 58-year-old publisher whose brand is the profession's will not follow us to
+the public.
+
+**What was built anyway:** nothing, deliberately. This is the one item this week
+where building first would be wrong.
+
+**Cost if never resolved:** we concede the top of the funnel and keep buying
+advocates one corridor at a time, which is the game the incumbent is already
+better resourced to play.
+
+**Do not ship on my reading.** Counsel is already owed a written residency view
+(OD-2); this belongs in the same conversation.
+
+---
+
+### [OPEN] Distribution — the corridor is the channel, and we have no plan for it · LCC · 8 Aug 2026
+
+**Needs:** a decision on which channel to try first, and whether a bar
+association can be contracted with at all.
+
+**Why it is not mine:** it is spend and partnerships.
+
+**The founder's ground observation is the most valuable research input this
+week:** Supreme Today's salespeople walk court to court and activate the plan on
+the buyer's phone there and then. `docs/COMPETITIVE.md` has pricing and a launch
+offer and **no distribution plan at all** — nothing about how an advocate first
+hears of us. That gap is now written up in `docs/GTM_INDIA.md`.
+
+**Market shape:** ~**2.01M** enrolled advocates (UP 400,016 · Maharashtra & Goa
+191,394 · Delhi 149,655), **1,000+** district and subordinate court complexes.
+Supreme Today's **50,000+ installs against 10 ratings** is what being sold in
+person and never opened looks like.
+
+**Four channels, cheapest-to-first-customer first,** with the full reasoning in
+`GTM_INDIA.md` §2:
+
+1. **The bar association**, at a per-member rate — one conversation reaches a few
+   hundred advocates, and it is the unit their field sales must work through one
+   advocate at a time. They cannot easily match it without undercutting their own
+   ₹20,000 individual subscription.
+2. **The advocate's clerk** — the person whose whole job is the diary, the cause
+   list and tomorrow's date, which is exactly Tier B. `ASO.md` §1 found no
+   competitor leads with a listing or a hearing. Unclaimed, and the cheapest
+   wedge we have.
+3. **Law students** — free tier, negligible cost (no listed matters, so no
+   briefings), buys the next cohort. A publisher has no reason to do this.
+4. **Tele-Law / CSC** — Department of Justice, DISHA scheme: **50 lakh
+   consultations delivered**, expanding to all **2.65 lakh Gram Panchayats**,
+   target one crore. Not a competitor — the last mile. The founder already
+   participates in one government scheme (the eCourts grant to Jan 2029), so the
+   credibility exists.
+
+**First thing to find out, and it costs one phone call:** can a district bar
+association contract at all, what would it charge, and who decides.
+
+**Cost if never resolved:** the product is ready and nobody hears about it.
