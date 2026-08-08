@@ -1421,3 +1421,72 @@ on this list.
 Expert tier — not a demanding bar. But it is also 30 of their own seats, and the
 same ₹6L buys a self-hosted OCR GPU, or the LLM key, or a first salesperson —
 each with a clearer path to a number than the licence has today.
+
+---
+
+### [CREDENTIALS NEEDED] Everything the lane is waiting on, in one list · LCC · 8 Aug 2026
+
+**Nothing here blocks the lane.** Every path is built and refuses honestly
+without its credential — the `packages/auth/src/mail.ts` pattern. This is the
+handover list, not an interruption.
+
+#### Set these as Railway variables (or send them and I will)
+
+| Variable | For | State without it |
+| --- | --- | --- |
+| `SUPREMETODAY_USERNAME` / `SUPREMETODAY_PASSWORD` | The account you buy tomorrow | Client built, 12 tests. Refuses before touching the network |
+| `SUPREMETODAY_MAX_REQUESTS_PER_DAY` | **The contract's per-account ceiling** | **Defaults to 500 — a PLACEHOLDER, not an estimate.** An absent limit must never read as permission |
+| `INDIANKANOON_API_TOKEN` | Their ₹500 signup credit | Client built, 11 tests. Refuses before spending |
+| `INDIANKANOON_BUDGET_PAISE` | Ceiling in paise | Defaults to 50000 (= ₹500) |
+| `OPENROUTER_API_KEY` | Three unmeasured Gate S2 metrics | Harness reports NOT MEASURED and **grades them as failures**, which is correct |
+
+#### Ask Supreme Today, before the harvest starts
+
+1. **The per-account request ceiling — daily, monthly, and any burst limit.**
+   This is the single number that decides the total cost, and it moves it by
+   **more than 30×**: 200,000 documents is ~2.2 months at 1,000/day and under
+   three days at one request every three seconds. **If they will not state one,
+   negotiate a written minimum** — an unstated limit that turns out to be 200/day
+   converts a two-month project into a two-year subscription.
+2. **May we DISPLAY their headnotes, or only hold them?** Perpetual retention is
+   not perpetual display. Until this is answered in writing their content is
+   **held as signal and never rendered**, enforced by a flag rather than by
+   everyone remembering.
+3. **What attribution is required, and where?**
+4. **Which surfaces does the licensed account unlock** — citation search,
+   Authority Check, headnote view, cited-by, significant paragraphs, disposition?
+   Day one maps this anyway, but a list saves requests.
+
+#### Day one, when the account exists
+
+**Measurement, not harvest.** `pnpm --filter @lawmind/ingest harvest:probe` runs
+it: what the account can see · the sustained rate the pace controller settles at
+· **the overlap between our 38,341 citations and their resolvable set** · and one
+archived page to build the parser against **offline**. Never iterate a parser
+against the live service — that is paying for our own bugs.
+
+The probe writes a completion date and a total cost. **Commit to that many months
+and not one more.**
+
+#### Money, when you want it
+
+- **One Supreme Today seat** for lawful manual benchmarking — may fold into the
+  licence talks.
+- **A GPU for self-hosted OCR.** Qwen3-VL-8B is Apache-2.0 and runs on one 24 GB
+  card. The strategic part is not accuracy: **self-hosted means the document
+  never leaves**, which is better than pseudonymisation because nothing is sent,
+  and it is a claim no competitor routing to a frontier API can make.
+- **An advocate to review 20 outputs** — Gate S2's human half. `PID.md` gives
+  them a veto engineering cannot overrule.
+
+#### Counsel — one instruction, three questions
+
+1. **SCR official headnotes on e-SCR** — free, ~34,000 judgments, SCR 1950–2017
+   digitised by the Court's own Editorial Section. s. 52(1)(q)(iv) vs *EBC v.
+   D.B. Modak*, and an official headnote is a **government work** rather than a
+   private reporter's edition. **If this is permitted it is the single best
+   answer to the incumbent's moat, and it is free forever where a licence is
+   not.**
+2. **The lay-facing explainer** — BCI Rule 36, touting, and where educational
+   material ends and solicitation begins.
+3. **OD-2's written residency view**, still outstanding.
