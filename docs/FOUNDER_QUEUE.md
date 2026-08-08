@@ -712,3 +712,63 @@ for opt-in enhanced security. Delivery is built and tested.
 Assumed to be a console action; it was not. `railway add` plus
 `serviceInstanceUpdate` over the GraphQL API created and configured both the
 `cron` and `recheck` services, and each was proved by running it.
+
+---
+
+### [OPEN] An LLM key — three Gate S2 metrics cannot be measured without one · LCC · 8 Aug 2026
+
+**Needs:** an `OPENROUTER_API_KEY` on the `api` service (and for the harness).
+
+**Why it is not mine to solve:** it is a credential and a spend decision. Every
+other blocker this week turned out to be a CLI call; this one is not.
+
+**What it blocks, precisely.** Gate S2 turns on six metrics. Three of them —
+`hallucinationRate`, `silentDropRate` and `adversarialPassRate` — measure what
+happens when a MODEL produces a citation. With no key the model path cannot run,
+so the harness reports them as **NOT MEASURED and grades them as failures**.
+
+That is deliberate and it is the right behaviour: a citation gate that has never
+asked a model for a citation has not tested the thing it exists to test.
+Reporting them as 0.0% would be worse than useless — every ceiling is zero, so
+an unmeasured metric would read as a perfect score.
+
+**What was built anyway.** Everything except the call itself:
+- the five-case adversarial set, with machine-checkable pass conditions per case
+  (`services/harness/src/fixtures/adversarial.json`) — refusal wording, forbidden
+  strings, and whether any citation may be attached at all;
+- the whole harness, which measures the three retrieval-side metrics today and
+  fails honestly on the three it cannot reach.
+
+**Cost estimate:** the adversarial set is 5 prompts and the fixed query set 30.
+A full gate run is well under ₹100 at Sonnet rates, and the routing rules
+(`CLAUDE.md` §5) put most of it on cheaper models. This is not a budget item; it
+is an account.
+
+**Where it plugs in:** `services/api/src/index.ts` reads it; the harness reads
+`OPENROUTER_API_KEY` directly and switches the three metrics on the moment it is
+present. No code change needed when the key arrives.
+
+---
+
+### [OPEN] Gate S2's human half — an advocate must review 20 outputs · LCC · 8 Aug 2026
+
+**Needs:** a practising advocate to review 20 search outputs for relevance.
+
+**Why it is not mine:** `PID.md` gives the reviewing advocate the power to block
+the gate, and engineering cannot overrule it. That is the correct arrangement and
+it is not something I can stand in for.
+
+**Why it matters more after this week's numbers.** The automated half now reports
+success@5 = 24.0% against a floor of 70%. The harness can tell you the judgment a
+court actually cited was not in the top five. It cannot tell you whether the five
+judgments it DID return were useful — an advocate might find four of them
+perfectly good authority for the same proposition, in which case the product is
+better than the metric says. Or they might find them irrelevant, in which case it
+is worse. **Both readings are consistent with 24%,** and only a lawyer can settle
+which is true.
+
+**What was built anyway:** the automated half runs, and `HARNESS_JSON=<path> pnpm
+harness` writes every query, its top five titles, and the gold answer to JSON —
+which is the review packet, ready to hand over.
+
+**Not blocking:** the automated half does not wait for this.

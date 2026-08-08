@@ -29,3 +29,6 @@ training/
 # Recall ground truth — regenerated from the corpus, large, and stale the moment
 # the corpus changes. `scripts/measure-recall.mjs` recaptures it when absent.
 scripts/recall-ground-truth.json
+
+# Operator scratch files — never shipped, never committed. eslint ignores these too.
+*.local.*

@@ -80,6 +80,35 @@ const STEPS = [
   ['schema truth', 'node', ['scripts/check-schema-truth.mjs']],
 ];
 
+/**
+ * Gate S2 — appended only when a populated corpus is reachable.
+ *
+ * **Not a normal step, and it must not become one.** Every other step above
+ * runs against the scratch database this script creates, which holds a schema
+ * and no judgments. The harness would refuse there, and rightly: it grades
+ * retrieval, and there is nothing to retrieve. Wiring it in unconditionally
+ * would produce a red pipeline that means nothing, which is how a gate gets
+ * ignored.
+ *
+ * It also takes minutes rather than seconds, and it is run on demand far more
+ * often than CI runs. `pnpm harness` is the primary way in; this is the belt.
+ *
+ * `CORPUS_DATABASE_URL` is passed through EXPLICITLY rather than inherited,
+ * because the loop below overrides `DATABASE_URL` with the scratch database and
+ * the harness falls back to `DATABASE_URL` when the corpus variable is absent.
+ * Without this line the harness would silently grade the empty scratch database
+ * — refusing, but for a reason nobody would understand.
+ */
+if (process.env['CORPUS_DATABASE_URL']) {
+  STEPS.push(['gate s2 harness', 'pnpm', ['harness']]);
+} else {
+  console.log(
+    'gate s2 harness      SKIPPED — CORPUS_DATABASE_URL is not set.\n' +
+      '                     The gate grades retrieval and needs the real corpus.\n' +
+      '                     Run it directly: CORPUS_DATABASE_URL=... pnpm harness\n',
+  );
+}
+
 const admin = postgres(adminUrl, { max: 1, ssl: 'require', onnotice: () => {} });
 const results = [];
 let failed = false;
@@ -100,7 +129,15 @@ try {
     const out = spawnSync([cmd, ...args.map((a) => `"${a}"`)].join(' '), {
       stdio: 'pipe',
       shell: true,
-      env: { ...process.env, DATABASE_URL: withSsl },
+      env: {
+        ...process.env,
+        DATABASE_URL: withSsl,
+        // See the harness step above: without this the corpus variable would be
+        // shadowed by the scratch database for the one step that needs it.
+        ...(process.env['CORPUS_DATABASE_URL']
+          ? { CORPUS_DATABASE_URL: process.env['CORPUS_DATABASE_URL'] }
+          : {}),
+      },
       encoding: 'utf8',
     });
     const ok = out.status === 0;

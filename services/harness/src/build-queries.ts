@@ -480,6 +480,23 @@ async function main() {
     process.exit(2);
   }
   const dry = process.argv.includes('--dry');
+  /**
+   * `--eval` builds a much larger set, written to a different file and NEVER
+   * read by the gate.
+   *
+   * The reason is statistical rather than aspirational. The gate set is 30
+   * queries because `SPRINT_2.md` fixes it there, and on 30 queries one
+   * additional hit moves success@5 by 4 percentage points — so a change that
+   * genuinely improves retrieval by a few points is indistinguishable from
+   * noise, and so is one that makes it worse. The first reranker measurement
+   * landed exactly there: 24.0% to 28.0%, which is one query.
+   *
+   * A decision like "does the cross-encoder ship" cannot be taken on that. This
+   * set exists to take those decisions; the gate set stays exactly as specified,
+   * and the two files never mix.
+   */
+  const evalMode = process.argv.includes('--eval');
+  const perGroup = evalMode ? 50 : 10;
   const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 3 });
 
   try {
@@ -488,9 +505,9 @@ async function main() {
       const seen = new Set<string>();
       // Over-fetch: redaction rejects candidates, and one query per cited
       // judgment means duplicates are dropped rather than replaced.
-      const candidates = await fetchCandidates(sql, group, 4000);
+      const candidates = await fetchCandidates(sql, group, evalMode ? 20000 : 4000);
       for (const c of candidates) {
-        if (out.filter((q) => q.group === group).length >= 10) break;
+        if (out.filter((q) => q.group === group).length >= perGroup) break;
         if (seen.has(c.cited_judgment_id)) continue;
         const q = toQuery(c, group);
         if (!q) continue;
@@ -514,7 +531,7 @@ async function main() {
     };
 
     for (const g of ['criminal', 'civil'] as const) {
-      console.log(`${g}: ${out.filter((q) => q.group === g).length} of 10`);
+      console.log(`${g}: ${out.filter((q) => q.group === g).length} of ${perGroup}`);
     }
 
     if (dry) {
@@ -526,9 +543,15 @@ async function main() {
       return;
     }
 
-    const path = new URL('./fixtures/queries.derived.json', import.meta.url);
+    const path = new URL(
+      evalMode ? './fixtures/queries.eval.json' : './fixtures/queries.derived.json',
+      import.meta.url,
+    );
     writeFileSync(path, `${JSON.stringify(doc, null, 2)}\n`);
-    console.log(`\nwrote ${out.length} queries → src/fixtures/queries.derived.json`);
+    console.log(
+      `\nwrote ${out.length} queries → src/fixtures/` +
+        `${evalMode ? 'queries.eval.json' : 'queries.derived.json'}`,
+    );
   } finally {
     await sql.end();
   }

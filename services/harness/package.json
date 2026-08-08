@@ -9,7 +9,8 @@
     "harness": "tsx src/run-cli.ts",
     "corpus": "tsx src/corpus-cli.ts",
     "build:queries": "tsx src/build-queries.ts",
-    "diagnose": "tsx src/diagnose-cli.ts"
+    "diagnose": "tsx src/diagnose-cli.ts",
+    "ab": "tsx src/ab-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",

@@ -94,6 +94,32 @@ try {
       console.log(
         `        gold best chunk distance ${goldDist?.d === undefined ? 'NO EMBEDDED CHUNKS' : Number(goldDist.d).toFixed(3)}`,
       );
+
+      /**
+       * **Crowding.** `dense()` takes 200 CHUNKS and then keeps the best chunk
+       * per judgment, so the number of distinct judgments it can offer the
+       * fusion is whatever survives that de-duplication — not 200. The corpus
+       * averages sixteen chunks per judgment, and a long judgment whose every
+       * section is near the query can occupy dozens of the 200 slots, pushing
+       * other judgments out of the candidate list entirely.
+       *
+       * This prints both numbers so the gap is visible: how many distinct
+       * judgments the chunk-level list actually yields, and where the gold
+       * would sit if de-duplication happened in SQL instead.
+       */
+      const [crowding] = await sql<{ chunks: number; judgments: number }[]>`
+        WITH top AS (
+          SELECT judgment_id FROM judgment_chunks
+           WHERE embedding IS NOT NULL
+           ORDER BY embedding <=> ${vector}::vector
+           LIMIT 200
+        )
+        SELECT count(*)::int AS chunks, count(DISTINCT judgment_id)::int AS judgments FROM top
+      `;
+      console.log(
+        `        crowding: top ${crowding?.chunks ?? 0} chunks cover only ` +
+          `${crowding?.judgments ?? 0} distinct judgments`,
+      );
     }
   }
 } finally {

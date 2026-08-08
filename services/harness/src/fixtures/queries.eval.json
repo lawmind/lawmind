@@ -1,0 +1,2309 @@
+{
+  "version": 1,
+  "builtAt": "2026-08-08T09:22:18.201Z",
+  "method": "citation-edge (CLERC-style; see build-queries.ts header)",
+  "selection": {
+    "MIN_INBOUND": 2,
+    "MAX_INBOUND": 60,
+    "WINDOW": 700,
+    "MIN_QUERY_CHARS": 200,
+    "MAX_QUERY_CHARS": 900
+  },
+  "queries": [
+    {
+      "id": "criminal-96f5c829",
+      "group": "criminal",
+      "language": "en",
+      "query": "(2) For the purposes of this section, a fact is said to be proved only when the Special Court believes it to exist beyond reasonable doubt and not merely when its existence is established by a preponderance of probability. Explanation. – In this section, “culpable mental state” includes intention, motive, knowledge of a fact and the belief in, or reason to believe, a fact.” 52. This Court in its decision in […] v. Union of India & Anr. reported in […] held that the preamble to the POCSO recognizes and mandates that the Act and its provisions ought to operate and be interpreted in a manner that would be in the best interest and well-being of the child. It should i) ensure that the sexual exploitation and abuse of children are addressed effectively and ii) induce a healthy physical, emotional, intellectual and social development of the child.",
+      "goldJudgmentIds": ["96f5c829-4e71-452f-9e09-78a3b696f78f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "59eafa04-e373-4dfd-8bc1-6083c14ab7a4",
+        "citingCase": "JUST RIGHTS FOR CHILDREN ALLIANCE & ANR. versus S. HARISH & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-09-23",
+        "relationship": "cites",
+        "citedCase": "INDEPENDENT THOUGHT versus UNION OF INDIA & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2017-10-11",
+        "inboundCitations": 5,
+        "redacted": ["citation_text:2017 INSC 1030", "title-word:INDEPENDENT", "title-word:THOUGHT"]
+      }
+    },
+    {
+      "id": "criminal-e39b2b83",
+      "group": "criminal",
+      "language": "en",
+      "query": "In Indian law, there is no automatic presumption that the custodial statements have been extracted through compulsion. In short, there is no requirement of additional diligence akin to the administration of Miranda [16 L Ed 2d 694 : 384 US 436 (1965)] warnings. However, in circumstances where it is shown that a person was indeed compelled to make statements while in custody, relying on such testimony as well as its derivative use will offend Article 20(3). 135. The relationship between Section 27 of the Evidence Act and Article 20(3) of the Constitution was clarified in […] [AIR 1961 SC 1808 : (1961) 2 Cri LJ 856 : […] ]. It was observed in the majority opinion by Jagannadhadas, J., at SCR pp. 33-34: (AIR pp. 1815-16, para 13) “13.",
+      "goldJudgmentIds": ["e39b2b83-c6e4-4597-b3bb-81a15c237a5c"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "84e9d4d9-0967-4d83-879a-483cb95516dd",
+        "citingCase": "ASHISH JAIN versus MAKRAND SINGH AND ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2019-01-14",
+        "relationship": "cites",
+        "citedCase": "THE STATE OF BOMBAY versus KATHI KALU OGHAD AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1961-08-04",
+        "inboundCitations": 21,
+        "redacted": [
+          "citation_text:(1962) 3 SCR\n10",
+          "title-word:KATHI",
+          "title-word:KALU",
+          "title-word:OGHAD"
+        ]
+      }
+    },
+    {
+      "id": "criminal-187694cc",
+      "group": "criminal",
+      "language": "en",
+      "query": "The next questions that we are called upon to consider are, as to whether the present case falls in the category of rarest of rare cases, and as to whether on the facts of the present case, the capital punishment imposed on appellant-Madan deserves to be maintained or not? 51. The Constitution Bench in the case of Bachan […] v. State of Punjab13, observed thus: “164. Attuned to the legislative policy delineated in Sections 354(3) and 235(2), propositions (iv)(a) and (v)(b) in […] [(1973) 1 SCC 20 : 1973 SCC (Cri) 169 : […] ] shall have to be recast and may be stated as below: “(a) The normal rule is that the offence of murder shall be punished with the sentence of life imprisonment. The court can depart from that rule and impose the sentence of death only if there are special reasons for doing so. Such reasons must be recorded in writing before imposing the death sentence.",
+      "goldJudgmentIds": ["187694cc-dfcc-4693-addd-c9c3092cae76"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "279553e5-742e-4da0-b52e-03328caf0ffa",
+        "citingCase": "MADAN versus STATE OF UTTAR PRADESH",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2023-11-09",
+        "relationship": "cites",
+        "citedCase": "JAGMOHAN SINGH versus THE STATE OF U. P.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1972-10-03",
+        "inboundCitations": 18,
+        "redacted": ["citation_text:(1973) 2 SCR 541", "title-word:JAGMOHAN", "title-word:SINGH"]
+      }
+    },
+    {
+      "id": "criminal-28ca2174",
+      "group": "criminal",
+      "language": "en",
+      "query": "The legislation is on the Topic 'Adulteration of Food Stuffs and other Goods' [Entry 18 list III Seventh Schedule]. It is enacted to curb the wide spread evil of food adulteration and is a legislative measure for social-defence. It is intended to suppress a social and economic mischief-an evil which attemps to poison, for monetary gains, the very sources of sustenance of life and the well-being of the community. The evil of adulteration of food and its effects on the health of the community are assuming alarming proportions. The offence of adul- teration is a socio-economic offence. In Municipal Corpn. v. […] Mal, […] (4) Sarkaria, J. said: \"The Act has been enacted to curb and remedy the wide- spread evil of food-adulteration, and to ensure the sale of wholesome food to the pl!ople.",
+      "goldJudgmentIds": ["28ca2174-cc6c-4dfc-85e1-9f5f3056822d"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "04d7ed2b-2d39-4d91-9baf-568f69122a7d",
+        "citingCase": "DINESHCHANDRA JAMNADAS GANDHI versus STATE OF GUJARAT AND ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1989-01-17",
+        "relationship": "cites",
+        "citedCase": "MUNICIPAL CORPORATION OF DELHI versus KACHEROO MAL",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1975-09-29",
+        "inboundCitations": 6,
+        "redacted": ["citation_text:[1976] 2 SCR 1", "title-word:KACHEROO"]
+      }
+    },
+    {
+      "id": "criminal-d1666c78",
+      "group": "criminal",
+      "language": "en",
+      "query": "(ii) Whether the previous or subsequent conduct of the accused, established on record, can be treated as a circumstance against the accused in view of Section 8 of the Evidence Act. (iii) Whether the FIR or Bayan Tahriri can be said to be proved as a piece of reliable prosecution evidence and if so, what would be the position of law on the issue of treating the FIR or Bayan Tahriri as the Dying Declaration. (iv) Whether the testimony of CW1 (an old feeble, rustic, illiterate lady and mother of the deceased and an eyewitness of the incident), who [2023] 11 S.C.R. 403 : 2023 INSC 738 403 * Ed.Note: Subsequent judgment reported in […] may also be referred to. 404 SUPREME COURT REPORTS [2023] 11 S.C.R.",
+      "goldJudgmentIds": ["d1666c78-5b1b-451a-8f72-92f2cd774be9"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "642be448-0243-47e8-9df4-bc766e7307aa",
+        "citingCase": "HARENDRA RAI versus THE STATE OF BIHAR & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2023-08-18",
+        "relationship": "cites",
+        "citedCase": "HARENDRA RAI versus THE STATE OF BIHAR AND ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2023-09-01",
+        "inboundCitations": 2,
+        "redacted": ["citation_text:[2023] 11 SCR 583"]
+      }
+    },
+    {
+      "id": "criminal-f00260e0",
+      "group": "criminal",
+      "language": "en",
+      "query": "He submitted that more than hundred applications have been filed out of which many are under Section 207 Cr.P.C. These applications have been filed only for the purpose of delaying the trial. It is submitted that though in view of the law laid down by this Court in the case of P. Ponnusamy v. State of Tamil Nadu,2 such applications could have been filed only after framing of the charges, the same have been intentionally filed at a pre-charge stage of the trial, so as to delay the framing of the charges. He submitted that though the appellant 2 [2022] 15 SCR 265 : 2022 SCC OnLine SC 1543 : […] 1070 [2024] 8 S.C.R.Digital Supreme Court Reports is entitled to file an application for discharge, the same has not been filed only in order to protract the trial. He submitted that the totality of the circumstances would reveal that it is the appellant who has been protracting the trial.",
+      "goldJudgmentIds": ["f00260e0-a0f7-4f99-8962-3a29b0e19044"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "1f799abc-adca-42b7-bfb7-0a7548f7237a",
+        "citingCase": "MANISH SISODIA versus DIRECTORATE OF ENFORCEMENT",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-08-09",
+        "relationship": "cites",
+        "citedCase": "JANHIT ABHIYAN versus UNION OF INDIA",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2022-11-07",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:2022 INSC 1175"]
+      }
+    },
+    {
+      "id": "criminal-c1d880a2",
+      "group": "criminal",
+      "language": "en",
+      "query": "The two cases relied upon by the appellants support their contention. In […] 's case( 2 ), three persons were convicted Oil.several charges under s. 409 read with s. 34 I.P.C. for committing criminal breach of trust of certain goods entrusted to them as government servants in charge of the stores depot _ (I) L.R. 52 I.A. 40. (2) […] . 1964 Shiv Praltlll Chunllal Y. Stat• of M.m. rashtra Raghubar D111al I. 926 SUPREME COURT REPORTS 1964 at Dehu Road near Poona. The stores had illegally passed Shiv PraMd out of the depot and were handed over to a person who was Chuni1411 not authorised to get them from the depot. It was alleged Stat• 0/· Maha- that those accused had conspired to defraud the Government rashtra of those properties and that it was in pursuance of that llaghubar Dayal J. conspiracy that they had arranged to sell the goods to the other person. Accused No.",
+      "goldJudgmentIds": ["c1d880a2-223f-4b74-b461-f3e3dd7cbb24"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "9dd232b6-5fbe-47b9-a2d3-51b746e28efd",
+        "citingCase": "SHIV PRASAD CHUNILAL JAIN versus THE STATE OF MAHARASHTRA",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1964-02-26",
+        "relationship": "cites",
+        "citedCase": "SHREEKANTIAH RAMA YYA MUNIPALLI versus THE STATE OF BOMBAY",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1954-12-12",
+        "inboundCitations": 9,
+        "redacted": ["citation_text:[1955] 1 S.C.R. 1177", "title-word:SHREEKANTIAH"]
+      }
+    },
+    {
+      "id": "criminal-ec9bbf5a",
+      "group": "criminal",
+      "language": "en",
+      "query": "Any apparent conflict, as contended by the appellant, stands resolved, and both sets of judgments operate symbiotically and harmoniously within the said Act, without there existing any tension between them. The mandate to wait for the decision of the Advisory Board, as per the […] Judgment, would apply to the central Government, however, the detaining authority, being independent of the Government, can pass its decision without the decision of he Advisory Board. Since no conflict exists, the need to refer the point of law to a Larger Bench also ceases. [Paras 31, 33-35][811- G-H; 813-F-G; 814-A-D; 815-B-D] […] Chakraborty And Ors. v. State of […] (1969) 3 SCC 400 : […] ; K.M. Abdulla Kunhi & B.L. Abdul Khader v. Union Of India & Ors. (1991) 1 SCC 476 : [1991] 1 SCR 102 – discussed. 3.",
+      "goldJudgmentIds": ["ec9bbf5a-c2f9-4d21-a66a-004b5648b395"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "1d52903d-f926-49de-b38f-993e455c5f41",
+        "citingCase": "PRAMOD SINGLA versus UNION OF INDIA & ORS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2023-04-10",
+        "relationship": "cites",
+        "citedCase": "PANKAJ KUMAR CHAKRABARTY AND ORS. versus STATE OF WEST BENGAL",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1969-05-01",
+        "inboundCitations": 9,
+        "redacted": [
+          "citation_text:[1970] 1 SCR 543",
+          "title-word:PANKAJ",
+          "title-word:KUMAR",
+          "title-word:WEST",
+          "title-word:BENGAL"
+        ]
+      }
+    },
+    {
+      "id": "criminal-86d3be6d",
+      "group": "criminal",
+      "language": "en",
+      "query": "CR 765])…….” 5. A doubt has been raised about the competence of a private party, as distinguished from the State, to invoke the jurisdiction of this Court under Article 136 of the Constitution against a judgment of acquittal by the High Court. We do not see any substance in the doubt. Appellate power vested in the Supreme Court under Article 136 of the Constitution is not to be confused with ordinary appellate power exercised by appellate courts and Appellate Tribunals under specific statutes.As we said earlier, it is a plenary power, ‘exercisable outside the purview of ordinary law’ to meet the pressing demands of justice (vide […] v. […] [AIR 1954 SC 520 : […] : 1954 SCJ 723]). Article 136 of the Constitution neither confers on anyone the right to invoke the jurisdiction of the Supreme Court nor inhibits anyone from invoking the Court’s jurisdiction.",
+      "goldJudgmentIds": ["86d3be6d-051a-4a75-82d4-0a774530f76d"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "753d6300-d7fd-4585-bff5-654a8db31702",
+        "citingCase": "M/S KARNATAKA EMTA COAL MINES LIMITED AND ANOTHER versus CENTRAL BUREAU OF INVESTIGATION",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-08-23",
+        "relationship": "cites",
+        "citedCase": "DURGA SHANKAR MEHTA versus THAKUR RAGHURAJ SINGH AND OTHERS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1954-05-19",
+        "inboundCitations": 22,
+        "redacted": [
+          "citation_text:[1955] 1 SCR 267",
+          "title-word:DURGA",
+          "title-word:SHANKAR",
+          "title-word:MEHTA",
+          "title-word:THAKUR",
+          "title-word:RAGHURAJ",
+          "title-word:SINGH"
+        ]
+      }
+    },
+    {
+      "id": "criminal-6f885356",
+      "group": "criminal",
+      "language": "en",
+      "query": "There is, however, nothing to show that in that case the activity of the detenu created panic amongst the local people and thereby disturbed the normal avocation of life in the area. As such, the petitioner, in our opinion, cannot derive much help from that authority. · Another contention advanced by Mr. Narayana Rao is that the names of all the associates of the petitioner were not mentioned in the .11rounds of detention and as such the grounds should be held to be vague. There is no force in this contention. Perusal of the grounds (I) [19731 I SCR 546. (!) […] . 792 SUPREME COURT REPORTS [1974] 3 s.c.R. of detention shows that the date, time and place of the incidents were specified. Particulars were also given regarding the nature of the acti- vities of the petitioner.",
+      "goldJudgmentIds": ["6f885356-662d-40db-b033-4d95e8cf1354"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "26cc22b0-ef3a-4410-896d-2b2530005bcc",
+        "citingCase": "MILAN BANIK versus THE STATE OF WEST BENGAL & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1974-03-26",
+        "relationship": "cites",
+        "citedCase": "SAHIBZADA SAIYED MUHAMMED AMIRABBAS ABBASI & OTHERS versus THE STATE OF MADHYA BHARAT & OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-02-26",
+        "inboundCitations": 3,
+        "redacted": ["citation_text:[1960) 3 SCR 138"]
+      }
+    },
+    {
+      "id": "criminal-f89cf4d4",
+      "group": "criminal",
+      "language": "en",
+      "query": "In the present context, the power of arrest is provided in Section 104(1) of the Customs Act. For ease of reference, we have provided a tabular comparison between Section 19(1) of the PML Act, envisaging the DoE’s power of arrest, and Section 104(1) of the Customs Act, envisaging the customs officer’s power of arrest: 45 The doctrine of proportionality has been expounded by this Court in a line of decisions, including the recent judgment of […] of […] and Another v. Union of India and Others, […] .",
+      "goldJudgmentIds": ["f89cf4d4-c0ee-454b-bc0d-85bc8d0bad8f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "6a9b492b-d245-4117-9656-6d1bc7109048",
+        "citingCase": "RADHIKA AGARWAL versus UNION OF INDIA AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-02-27",
+        "relationship": "cites",
+        "citedCase": "ASSOCIATION FOR DEMOCRATIC REFORMS & ANR. versus UNION OF INDIA & ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2024-02-15",
+        "inboundCitations": 11,
+        "redacted": [
+          "citation_text:2024\nINSC 113",
+          "title-word:ASSOCIATION",
+          "title-word:DEMOCRATIC",
+          "title-word:REFORMS"
+        ]
+      }
+    },
+    {
+      "id": "criminal-702ed8be",
+      "group": "criminal",
+      "language": "en",
+      "query": "Once stay is granted, disposal of a petition before the High Court takes long time. Consideration of the challenge against an order of framing charge may not require meticulous examination of voluminous material which may be in the nature of a mini trial. Still, the Court is at times called upon to do so inspite of law being clear that at the stage of charge the Court has only to see as to whether material on record reasonably connects the accused with the crime. [Paras 30-32] [1073-E-G; 1074-A-B] […] v. State of […] (2014) 3 SCC 92 : […] – followed. 1.4 If at the stage of charge, the High Court adopts the approach of weighing probabilities and re-appreciate the material, it may be certainly a time consuming exercise. The legislative policy of expeditious final disposal of the trial is thus, hampered.",
+      "goldJudgmentIds": ["702ed8be-1a5f-419a-96db-2d1f3a508f85"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "d153ea72-18a8-423c-bdb7-1815068d2d38",
+        "citingCase": "ASIAN RESURFACING OF ROAD AGENCY PVT. LTD. & ANR.V. CENTRAL BUREAU OF INVESTIGATION versus CENTRAL BUREAU OF INVESTIGATION",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2018-03-28",
+        "relationship": "followed",
+        "citedCase": "HARDEEP SINGH versus STATE OF PUNJAB & ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2014-01-10",
+        "inboundCitations": 47,
+        "redacted": [
+          "citation_text:[2014] 2 SCR 1",
+          "title-word:HARDEEP",
+          "title-word:SINGH",
+          "title-word:PUNJAB"
+        ]
+      }
+    },
+    {
+      "id": "criminal-07b9dcd5",
+      "group": "criminal",
+      "language": "en",
+      "query": "RTS [201515 S.C.R. Section 4 of the Central Excise Act read with Rufe 10-A of the Central Excise Rules and referred to the aforesaid passage \"the maxim is often a valuable servant, but a dangerous master ... \" and held that the rule is subservient to the basic principle that courts must endeavour to ascertain the legislative intent and purpose, and then adopt a rule of construction which effectuates rather than one that may defeat these. Moreover, the rule of prohibition by necessary implication could be applied only where a specified procedure is laid down for the performance of a duty. In the case of […] Coop. […] Ltd. v. […] Tran sport […] .",
+      "goldJudgmentIds": ["07b9dcd5-7575-420e-9980-9f6690692a68"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "5b988986-7242-48e4-bb98-8c7a633af50a",
+        "citingCase": "RAMDEV FOOD PRODUCTS PRIVATE LIMITED versus STATE OF GUJARAT",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2015-03-16",
+        "relationship": "cites",
+        "citedCase": "THE PARBHANI TRANSPORT CO-OPERATIVE SOCIETY LTD. versus THE REGIONAL TRANSPORT AUTHORITY, AURANGABAD AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-03-07",
+        "inboundCitations": 10,
+        "redacted": [
+          "citation_text:(1960)\n3 SCR 177",
+          "title-word:PARBHANI",
+          "title-word:TRANSPORT",
+          "title-word:SOCIETY",
+          "title-word:REGIONAL",
+          "title-word:AUTHORITY"
+        ]
+      }
+    },
+    {
+      "id": "criminal-2429d092",
+      "group": "criminal",
+      "language": "en",
+      "query": "This matter reminds us of the observations made by a seven-Judge Bench of this Court in the case of Keshav […] Co. Ltd. v. Commissioner of Income Tax, […] , Ahmedabad, (1965) 2 SCR 908 : AIR 1965 SC 1636. We quote the relevant observations:- “23. In dealing with the question as to whether the earlier decisions of this Court in the New […] case, […] , and the Petlad Co. Ltd. case, [1963] Supp, 1 S.C.R. 871, should be reconsidered and revised by us, we ought to be clear as to the approach which should be adopted in such cases. Mr. Palkhivala has not disputed the fact that in a proper case, this Court has inherent jurisdiction to reconsider and revise its earlier decisions, and so, the abstract question as to whether such a power vests in this Court or not need not detain us.",
+      "goldJudgmentIds": ["2429d092-e4c3-4d3b-b8ee-3341dbdac983"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "544ae922-0b50-4f30-8db7-127d75921b7d",
+        "citingCase": "RANJAN KUMAR CHADHA versus STATE OF HIMACHAL PRADESH",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2023-10-06",
+        "relationship": "cites",
+        "citedCase": "THE NEW JEHANGIR VAKIL MILLS LTD. versus THE COMMISSIONER OF INCOME-TAX, BOMBAY NORTH, KUTCH AND SAURASHTRA.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1959-05-12",
+        "inboundCitations": 5,
+        "redacted": [
+          "citation_text:[1960] 1 S.C.R. 249",
+          "title-word:JEHANGIR",
+          "title-word:MILLS",
+          "title-word:BOMBAY",
+          "title-word:NORTH"
+        ]
+      }
+    },
+    {
+      "id": "criminal-33238e81",
+      "group": "criminal",
+      "language": "en",
+      "query": "A large number of the other appeals are by the Municipal Corporation of Delhi for whom the Attorney General appeared assisted by Mr B.P. Maheshwari. Although a categorical stand was not taken on behalf of the appellants in these appeals as the one taken in the Kerala cases, eventually, the learned Attorney General did not seriously object to the course indicated by us. In the few Bombay appeals M/s V.S. Desai and M.N. Shroff showed their anxiety for obtaining ultimate convictions of the offenders, but we do not find sufficient reason for passing a different kind of order in the Bombay appeals. In similar situations in the case of State of […] v. […] [AIR 1960 SC 47 : […] : 1960 Cri LJ 150] this Court refused to exercise its discretionary jurisdiction under Article 136 of the Constitution and did not order the continuance of the criminal proceeding any further.",
+      "goldJudgmentIds": ["33238e81-505c-46ab-aea6-4dbf4ae19550"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "fb00d390-f451-49b4-baf0-65e772f2e598",
+        "citingCase": "DIRECTORATE OF REVENUE INTELLIGENCE versus RAJ KUMAR ARORA & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-04-17",
+        "relationship": "cites",
+        "citedCase": "THE STATE OF BIHAR versus HIRALAL KEJRIWAL AND ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1959-09-14",
+        "inboundCitations": 3,
+        "redacted": [
+          "citation_text:(1960) 1 SCR 726",
+          "title-word:BIHAR",
+          "title-word:HIRALAL",
+          "title-word:KEJRIWAL"
+        ]
+      }
+    },
+    {
+      "id": "criminal-5d27884b",
+      "group": "criminal",
+      "language": "en",
+      "query": "The complaint has reached the stage of cross examination of the complainants' witnesses by the petitioner. The transfer petition was filed on 12th January, 2021. He also points out that personal appearance of the petitioner during trial stood dispensed with by an order of the Madras High Court. It is also his submission that the case pending in the Salem Court has criminal elements, which ought not to be mixed up with the civil suit. Relying on a judgment of a Coordinate Bench in the case of Umesh Kumar Sharma v. State of Uttarakhand [2020 SCC OnLine SC 845] and an earlier decision of this Court in the case of […] Dass […] v. State of […] [ […] ], he has argued that to sustain allegation of lack of neutrality in trial as a ground for transfer, credible materials will have to be brought before the Court.",
+      "goldJudgmentIds": ["5d27884b-201b-406a-9b0b-09ccd5d9b17a"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "7fde5d4a-6e4a-4fcc-8b61-8fae5ad332b8",
+        "citingCase": "M/S SHRI SENDHUR AGRO & OIL INDUSTRIES versus KOTAK MAHINDRA BANK LTD.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-03-06",
+        "relationship": "cites",
+        "citedCase": "GURCHARAN DAS CHADHA versus STATE OF RAJASTHAN",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1965-11-24",
+        "inboundCitations": 7,
+        "redacted": [
+          "citation_text:(1966) 2 SCR 678",
+          "title-word:GURCHARAN",
+          "title-word:CHADHA",
+          "title-word:RAJASTHAN"
+        ]
+      }
+    },
+    {
+      "id": "criminal-7a77b148",
+      "group": "criminal",
+      "language": "en",
+      "query": "It is furthermore contended that the High Court had gone wrong in holding that G.O.M.S. Nos.158 dated 28.11.2014, 67 dated 01.06.2016, No.168 dated 05.12.2017 and dated 03.08.2018 extending the general consent as orders pertaining to the State of Andhra Pradesh only. 11. The learned counsel appearing for the first respondent in the appeals stoutly resisted the contentions raised on behalf of the appellant and submitted that the entire sequence of events including the trapping, registration of the FIRs, filing of the chargesheets and 1 […] : [1976] 2 SCR 115 : (1976) 3 SCC 242 [2025] 1 S.C.R. 139The State, Central Bureau of Investigation v. A. Satish Kumar & Ors. taking cognizance etc. were considered by the High Court ultimately to arrive at the conclusion that the registration of the FIRs as also filing of the chargesheets in the cases on hand, are vitiated by law.",
+      "goldJudgmentIds": ["7a77b148-f498-4631-b13d-add2fdd1afdd"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "0c44ee05-a005-41ee-831f-f6cc07686b7a",
+        "citingCase": "THE STATE, CENTRAL BUREAU OF INVESTIGATION versus A. SATISH KUMAR & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-01-01",
+        "relationship": "cites",
+        "citedCase": "STATE OF PUNJAB & ORS. versus BALBIR SINGH ETC. ETC.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1975-10-06",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:1975 INSC 238"]
+      }
+    },
+    {
+      "id": "criminal-fdc38f95",
+      "group": "criminal",
+      "language": "en",
+      "query": "SUPREME COURT REPORTS 701 Act makes the proceedings before the Income-tax Officer, judicial pr<>- ceedings for the purposes of s. 193 Indian Penal Code and these judicial proceedings must be treated as proceedings in any court for the purpose of s. 195 (l)(b) Code of Criminal Procedure. The High Court was right in allowing the revision application on the ground that the condition precedent prescribed by s. 195(1)(b) Code of Criminal Procedure had not been complied with as no complaint has been filed by the Income-tax Officer. […] v. State of […] , […] and Puran Chand Maneklal, in re: l.L.R. 38 Bom. 642, distinguished. Per Sarkar and Das Gupta JI. (dissenting) (i) From the nature of functions under the various provisions of the Income-tax Act it ii clear that the Income-tax Officer is a part and parcel of the executin organ of the State. The fact that for carrying out some of th.",
+      "goldJudgmentIds": ["fdc38f95-6330-471b-b4ef-6ffe39ecc8c4"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "8b7bcdc9-d533-4426-9eb3-e541a96a7c53",
+        "citingCase": "LALJI HARIDAS versus STATE OF MAHARASHTRA AND ANOTHER",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1964-02-07",
+        "relationship": "cites",
+        "citedCase": "JAGANNATH PRASAD versus THE STATE OF UTTAR PRADESH",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1962-05-03",
+        "inboundCitations": 5,
+        "redacted": [
+          "citation_text:[1963] 2 S.C.R. 850",
+          "title-word:JAGANNATH",
+          "title-word:PRASAD",
+          "title-word:UTTAR",
+          "title-word:PRADESH"
+        ]
+      }
+    },
+    {
+      "id": "criminal-cf0b1539",
+      "group": "criminal",
+      "language": "en",
+      "query": "The argument before the Full Bench was that r. 6 in Chapter XXVI of the Bombay High Court Appellate Side Rules (which are applicable to the proceedings in Gujarat High Court) was inconsistent with Chapter XXXI of the Code of Cri- minal Procedure, with the result that a joint appeal to the High Court by several persons convicted at a joint trial was not main- tainable. The Full Bench on an exhaustive discussion held such {I) [1960] 3. S.C.R. 578. (3) [1959] I S.C.R. 748. (5) I.L.R .37 All, 604 (P.C.). (2) […] . (4) [1962] 2 S.C.R. 558. (6) A.T.R. 1962 Gui. 125. 878 SUPREME COURT REPORTS [1970] 2 S.C.R. an appeal to be competent and did not consider r. 6 to be incon- A sistent with Chapter XXXI of the Code. The decision of this Court in Rabari Ghela Jadav v. State of Bombay(') was explained and distinguished.",
+      "goldJudgmentIds": ["cf0b1539-fb1c-4463-90ab-cc159f9c6eb9"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "1974b2ff-f386-4695-a728-d77e53463205",
+        "citingCase": "STATE OF GUJARAT versus RAMPRAKASH P. PURI AND ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1969-10-16",
+        "relationship": "cites",
+        "citedCase": "JAI KAUR & OTHERS versus SHER SINGH & OTHERS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-05-06",
+        "inboundCitations": 2,
+        "redacted": ["citation_text:[1960] 3 S.C.R. 975"]
+      }
+    },
+    {
+      "id": "criminal-790f58ce",
+      "group": "criminal",
+      "language": "en",
+      "query": "It was not necessary, in order to bind the workmen to the settlement arrived at before the conciliator, to show that they belonged to the union which took part in the conciliation pro- ceedings, since the policy underlying s. 18 of the Act is to give an extended operation to such a settlement. The Associated Cement Company Ltd., Porbandar v. Their Workmen, [1960] 3 S.C.R. 157 and M/s. New India […] (P) Ltd. v. K. T. […] , […] , referred to. Consequently, where the courts below, on an erroneous view of the law, acquitted certain workmen of the offence of subver- sive activity for joining an illegal strike under s. II of the West Bengal Security Act, 1950, on the ground that the rival union to which they belonged was not a party to the conciliation proceed- ings, such acquittal must be set aside. CRIMINAL APPELLATE JURISDICTION: Criminal Appeal No. 96 of 1959.",
+      "goldJudgmentIds": ["790f58ce-bd6c-4941-a4ed-b215108745c1"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "e034c8c0-540a-4799-8757-fe823b3287b4",
+        "citingCase": "RAMNAGAR CANE AND SUGAR CO. LTD. versus JATIN CHAKRAVORTY AND OTHERS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1960-05-05",
+        "relationship": "cites",
+        "citedCase": "M/S. NEW INDIA MOTORS (P) LTD. NEW DELHI versus K. T. MORRIS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-03-22",
+        "inboundCitations": 2,
+        "redacted": ["citation_text:[1960] 3 S.C.R. 350", "title-word:MOTORS", "title-word:MORRIS"]
+      }
+    },
+    {
+      "id": "criminal-7d2e80b6",
+      "group": "criminal",
+      "language": "en",
+      "query": "Section 531 of the Code reads as follows: “531. No finding, sentence or order of any criminal court shall be set aside merely on the ground that the inquiry, trial or other proceeding in the course of which it was arrived at or passed, took place in a wrong sessions division, district, sub-division or other local area, unless it appears that such error has in fact occasioned a failure of justice.” The section therefore relates to a defect of jurisdiction. As has been stated by this Court in Purushot- tamdas […] v. State of […] [ […] : AIR 1961 SC 1589 : (1961) 2 Cri LJ 728] there are two types of jurisdiction of a criminal court, namely, (1) the jurisdiction with respect to the power of the court to try particular kinds of offences, and (2) its territorial jurisdiction.",
+      "goldJudgmentIds": ["7d2e80b6-2c56-4dee-b2c6-90e4b72b73ab"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "9915dea5-8dc5-4d6c-84cd-1955838fb6e2",
+        "citingCase": "BHARAT SHER SINGH KALSIA versus STATE OF BIHAR & ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-01-31",
+        "relationship": "cites",
+        "citedCase": "PURUSHOTTAMDAS DALMIA versus THE STATE OF WEST BENGAL",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1961-04-19",
+        "inboundCitations": 7,
+        "redacted": [
+          "citation_text:(1962) 2 SCR 101",
+          "title-word:DALMIA",
+          "title-word:WEST",
+          "title-word:BENGAL"
+        ]
+      }
+    },
+    {
+      "id": "criminal-c8b7b718",
+      "group": "criminal",
+      "language": "en",
+      "query": "It was not necessary, in order to bind the […] to the settlement arrived at before the conciliator, to show that they belonged to the union which took part in the conciliation pro- ceedings, since the policy underlying s. 18 of the Act is to give an extended operation to such a settlement. The […] Company Ltd., Porbandar v. […] , […] and M/s. New India Motors (P) Ltd. v. K. T. Morris, [1960] 3 S.C.R. 350, referred to. Consequently, where the courts below, on an erroneous view of the law, acquitted certain […] of the offence of subver- sive activity for joining an illegal strike under s. II of the West Bengal Security Act, 1950, on the ground that the rival union to which they belonged was not a party to the conciliation proceed- ings, such acquittal must be set aside. CRIMINAL APPELLATE JURISDICTION: Criminal Appeal No. 96 of 1959.",
+      "goldJudgmentIds": ["c8b7b718-94de-4b26-b644-5d7aea2e7b9a"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "e034c8c0-540a-4799-8757-fe823b3287b4",
+        "citingCase": "RAMNAGAR CANE AND SUGAR CO. LTD. versus JATIN CHAKRAVORTY AND OTHERS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1960-05-05",
+        "relationship": "cites",
+        "citedCase": "THE ASSOCIATED CEMENT COMPANIES LTD. versus THEIR WORKMEN",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-03-03",
+        "inboundCitations": 3,
+        "redacted": [
+          "citation_text:[1960] 3 S.C.R. 157",
+          "title-word:ASSOCIATED",
+          "title-word:CEMENT",
+          "title-word:THEIR",
+          "title-word:WORKMEN"
+        ]
+      }
+    },
+    {
+      "id": "criminal-74e6dea7",
+      "group": "criminal",
+      "language": "en",
+      "query": "As held by this Court in V. Chandrasekaran & Anr. vs. Administrative Officer & Ors.4 “The judicial process cannot become an instrument of oppression or abuse, or a means in the process of the court to subvert justice, for the reason that the court exercises its jurisdiction, only in furtherance of justice. The interests of justice and public interest coalesce, and therefore, they are very often one and the same. A petition or an affidavit containing a misleading and/or an inaccurate statement, 2 Witness Protection in Criminal Trial in India by Girish Abhyankar & Asawari Abhyankar 3 […] : (2019) 14 SCC 615 4 [2012] 10 SCR 603 : 2012 12 SCC 133 804 [2024] 9 S.C.R.Digital Supreme Court Reports only to achieve an ulterior purpose, amounts to an abuse of process of the court.” 30.",
+      "goldJudgmentIds": ["74e6dea7-cdf8-4278-b60b-273c3c1f19e5"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "b3cc2073-ab7d-4e93-a560-6b550a404609",
+        "citingCase": "BHAGWAN SINGH versus STATE OF U.P. & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-09-20",
+        "relationship": "cites",
+        "citedCase": "MAHENDER CHAWLA & ORS. versus UNION OF INDIA & ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2018-12-05",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:[2018] 14 SCR 627"]
+      }
+    },
+    {
+      "id": "criminal-c9f93856",
+      "group": "criminal",
+      "language": "en",
+      "query": "The expression advisedly used is “in the course of the same transaction”. That expression is not akin to saying “in respect of the same subject-matter”. It is pertinent to point out that the same expression is employed in Section 220(1) of the Code also [corresponding to Section 235(1) of the old Code]. The meaning of the expression “in the course of the same transaction” used in Section 223 is not materially different from that expression used in Section 223(1) [sic 235(1)]. It is so understood by this Court in State of A.P. v. […] Rao [AIR 1963 SC 1850 : […] ] . The following observation in the said judgment is contextually quotable: “The series of acts which constitute a transaction must of necessity be connected with one another and if some of them stand out independently, they would not form part of the same transaction but would constitute a different transaction or transactions.",
+      "goldJudgmentIds": ["c9f93856-65b8-4b86-9678-169657b7fb52"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "6e6495e0-f60c-474c-9b41-d2d5076439a9",
+        "citingCase": "FULESHWAR GOPE versus UNION OF INDIA & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-09-23",
+        "relationship": "cites",
+        "citedCase": "STATE OF ANDHRA PRADESH versus CHEEMALAPATI GANESWARA RAO & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1963-04-23",
+        "inboundCitations": 13,
+        "redacted": [
+          "citation_text:(1964) 3 SCR 297",
+          "title-word:CHEEMALAPATI",
+          "title-word:GANESWARA"
+        ]
+      }
+    },
+    {
+      "id": "criminal-9664cde2",
+      "group": "criminal",
+      "language": "en",
+      "query": "If the occurrence had taken place at 2 or 3 p.m. as suggested on behalf of the accused-appellants, the mid-day meals usually taken by the villagers at about II a.m. would still be in their stomach and the same would not have been empty at the time of the post mortem examination. The fact that the stomach of each of the deceased parsons. was empty lends assurance to the prosecution version that the occurrence took place at about 5 p.m. Another argument which has been put forth on behalf of the H accused-appellants is that the assailants would not have spared Mann Dass if he had been present at the scene of occurrence. From the (1) A.1.R. 1957 S.C. 469. (2) […] . 570 SUPREME COURT REPORTS [1975) 1 S.C.J.t.",
+      "goldJudgmentIds": ["9664cde2-5836-427c-8a08-83e46d43bc99"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "78ae9ee3-8255-40ca-9c51-03b2b683131a",
+        "citingCase": "CHARAN SINGH & ORS. versus STATE OF PUNJAB",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1974-07-26",
+        "relationship": "cites",
+        "citedCase": "BHUPENDRA SINGH versus THE STATE OF PUNJAB",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1968-03-05",
+        "inboundCitations": 3,
+        "redacted": ["citation_text:[1968] 3 S.C.R. 404", "title-word:SINGH"]
+      }
+    },
+    {
+      "id": "criminal-8bd1a413",
+      "group": "criminal",
+      "language": "en",
+      "query": "We can do no better than to refe( to this aspect in the language of Hidayatullah, J. at p. 76 : _ \"An overall view of the obscene matter in the setting oTthe whole work would, of course, be necessary, but the obscene matter must be considered by itself and separately to find out whether it is so gross and its obscenity so decided that it is likely to deprave and corrupt those whose minds are open to influences of this sort and into whose hands the book is likely to fail.\" (I) […] . 84 SUPREME COURT REPORTS [1970]2 S.C.R. Referring to the attempt which our national and regional languages are making to strengthen themselves by new literary standards after a deadening period under the impact of English, it was further observed at p.",
+      "goldJudgmentIds": ["8bd1a413-0fb2-46dc-bd82-fae726cf322a"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "3b7a903a-f15b-4d18-b8a9-502eac435303",
+        "citingCase": "CHANDRAKANT KALYANDAS KAKODAR versus THE STATE OF MAHARASHTRA AND ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1969-08-25",
+        "relationship": "cites",
+        "citedCase": "RANJIT D. UDESHI versus STATE OF MAHARASHTRA",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1964-08-19",
+        "inboundCitations": 6,
+        "redacted": ["citation_text:(1965] 1 S.C.R. 65"]
+      }
+    },
+    {
+      "id": "criminal-6f056b4f",
+      "group": "criminal",
+      "language": "en",
+      "query": "(3) Such a power should be exercised very sparingly. If the allegations made in the FIR disclose commission of an offence, the Court shall not go beyond the same and pass an order in favour of the accused to hold absence of any mens rea or actus reus. [2024] 10 S.C.R. 267Just Rights for Children Alliance & Anr. v. S. Harish & Ors. (4) If the allegation discloses a civil dispute, the same by itself may not be a ground to hold that the criminal proceedings should not be allowed to continue.” (Emphasis supplied) 184. In a recent decision of this Court in Rathis […] v. The State (Govt. of NCT of […] ) & Anr. reported in […] it was held that when there is a statutory presumption, it would not be judicious of the quashing court to carry out a detailed enquiry on the facts alleged before first permitting the trial court to evaluate the evidence.",
+      "goldJudgmentIds": ["6f056b4f-cc7f-485f-b881-79f35243ba81"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "59eafa04-e373-4dfd-8bc1-6083c14ab7a4",
+        "citingCase": "JUST RIGHTS FOR CHILDREN ALLIANCE & ANR. versus S. HARISH & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-09-23",
+        "relationship": "cites",
+        "citedCase": "RATHISH BABU UNNIKRISHNAN versus THE STATE (GOVT. OF NCT OF DELHI) & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2022-04-26",
+        "inboundCitations": 2,
+        "redacted": [
+          "citation_text:2022 INSC\n480",
+          "title-word:BABU",
+          "title-word:UNNIKRISHNAN",
+          "title-word:DELHI"
+        ]
+      }
+    },
+    {
+      "id": "criminal-a259ece9",
+      "group": "criminal",
+      "language": "en",
+      "query": "Moreover, a confession must either admit in terms the offence, or at any rate substantially all the facts which constitute the offence. An admission of a gravely incriminating fact, even a conclusively incriminating fact, is not of itself a confession, e.g., an admission that the accused is the owner of and was in recent possession of the knife or revolver which caused a death with no explanation of any other man’s possession.” These observations received the approval of this Court in Palvinder Kaur v. State of Punjab (1), 1953 SCR 94 at p. 104; (AIR 1952 SC 354 at p. 357). In State of U. P. v. […] , […] at p. 21: (AIR 1960 SC 1125 at pp. 1128-1129). Shah, J., referred to a confession as a statement made by a person stating or suggesting the inference that he has committed a crime. 12.",
+      "goldJudgmentIds": ["a259ece9-fad9-4e11-9867-41e71bbda107"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "39715fc2-d037-4313-9a61-cd8e7d07375d",
+        "citingCase": "NARAYAN YADAV versus STATE OF CHHATTISGARH",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-08-04",
+        "relationship": "cites",
+        "citedCase": "STATE OF U.P. versus DEOMAN UPADHYAYA",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-05-06",
+        "inboundCitations": 25,
+        "redacted": ["citation_text:(1961) 1 SCR 14", "title-word:DEOMAN", "title-word:UPADHYAYA"]
+      }
+    },
+    {
+      "id": "criminal-dc524dc6",
+      "group": "criminal",
+      "language": "en",
+      "query": "Officer that he is not a court within the meaning of s. 1115 of the Code of Crimi.Dal Procedure. We would therefore allow the appeal, set aside the order passed by t!he High Court and direct that the Presidency Magistrate, Bombay, should now dispose of the case in accordance with law. ORDER In accordance with the opinion of the majority, this appeal fails and is dismissed. (!) […] .",
+      "goldJudgmentIds": ["dc524dc6-0941-44ec-ba21-d97234a66cfc"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "8b7bcdc9-d533-4426-9eb3-e541a96a7c53",
+        "citingCase": "LALJI HARIDAS versus STATE OF MAHARASHTRA AND ANOTHER",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1964-02-07",
+        "relationship": "cites",
+        "citedCase": "INDO-CHINA STEAM NAVIGATION CO. LID. versus JASJIT SINGH, ADDITIONAL COLLECTOR OF CUSTOM & ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1964-02-03",
+        "inboundCitations": 12,
+        "redacted": ["citation_text:(1964] 6 S.C.R. 594"]
+      }
+    },
+    {
+      "id": "criminal-b7a2675d",
+      "group": "criminal",
+      "language": "en",
+      "query": "Chapter XIV of the Code. It was, therefore, held by the majority that a confession recorded by an Excise Officer during an investigation into an excise offence could not reasona- bly be regarded as anything different from a confession to a police officer. […] Ram's(') case was distinguished on a number of grounds. One was that the excise officer did not exercise any judi- cial power just as the customs officer did under the Sea Customs Act 1878; secondly the customs officer was not deemed to be an officer-in-charge of a police station and, therefore, he could not exercise powers of such an officer under the Code of Criminal Procedure. Further, the customs officer could make an enquiry (1) […] . (2) [1964] 2 S.C.R. 752. 620 SUPREME COURT REPORTS . [1969] 2 S.C.R. but he had no power to investigate into an offence und.er s. 156 of . the Code.",
+      "goldJudgmentIds": ["b7a2675d-ccc4-495d-8d70-f953db5f8a45"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "0b8635fc-81bd-42c1-8a5f-824315477ae8",
+        "citingCase": "ILLIAS versus COLLECTOR OF CUSTOMS, MADRAS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1968-10-31",
+        "relationship": "cites",
+        "citedCase": "THE STATE OF PUNJAB versus BARKAT RAM",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1961-08-30",
+        "inboundCitations": 15,
+        "redacted": ["citation_text:[1962] 3 S.C.R. 338", "title-word:BARKAT"]
+      }
+    },
+    {
+      "id": "criminal-185b93f8",
+      "group": "criminal",
+      "language": "en",
+      "query": "The complainant was also deprived of his rightful share in the profits reaped after some of the plots had been sold. 24. They submitted that merely because the complainant has also availed civil remedy for the same grievances, that by itself cannot disentitle him from invoking jurisdiction of the criminal Court to prosecute the accused appellants for their fraudulent acts because the allegations set out in the complaint constitute both the civil wrong as well as criminal offences and thus parallel proceedings can continue. On these grounds, 1 [1990] Supp. 3 SCR 259 : 1992 Supp(1) SCC 335 2 [2006] Supp. 3 SCR 704 : (2006) 6 SCC 736 3 […] : (2019) 11 SCC 706 [2024] 5 S.C.R. 823C. Subbiah @ K a d a m b u r J a y a r a j a n d O t h e r s v .",
+      "goldJudgmentIds": ["185b93f8-0490-421d-9209-3caed36b323f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "9c185e63-2216-4896-a431-4ad630bb167d",
+        "citingCase": "C. SUBBIAH @ KADAMBUR JAYARAJ AND OTHERS versus THE SUPERINTENDENT OF POLICE AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-05-15",
+        "relationship": "cites",
+        "citedCase": "ANAND KUMAR MOHATTA AND ANR. versus STATE (GOVT. OF NCT OF DELHI) DEPARTMENT OF HOME AND ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2018-11-15",
+        "inboundCitations": 9,
+        "redacted": ["citation_text:[2018] 13 SCR 1028"]
+      }
+    },
+    {
+      "id": "criminal-b31691ea",
+      "group": "criminal",
+      "language": "en",
+      "query": "Shri Agrawal further submitted that it is also in the interest of the minor child Sugandha Das to stay with her father who is stationed in Delhi whereas respondent Nos. 5 and 6 are residing in a small village Belda in West Bengal. He submitted that the minor child Sugandha Das would also be deprived of the company of her biological brother. 7. Shri Agrawal, relying on various photographs, submitted that the minor child Sugandha Das has gelled well with the appellant, his son and his wife. The learned counsel therefore pressed for quashing and setting aside of the impugned order passed by the High Court with 1 [2019] 7 SCR 335 : (2019) 7 SCC 42 : […] 456 [2024] 8 S.C.R.Digital Supreme Court Reports a direction to the respondents to immediately hand over the custody of the minor child Sugandha Das to the appellant. 8. Shri Sharma, learned counsel appearing on behalf of respondent Nos.",
+      "goldJudgmentIds": ["b31691ea-203c-493c-83b9-3d3bf0cfc9a1"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "377beb35-114a-429a-9583-2e4d6c8fc642",
+        "citingCase": "GAUTAM KUMAR DAS versus NCT OF DELHI AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-08-20",
+        "relationship": "cites",
+        "citedCase": "TEJASWINI GAUD AND ORS. versus SHEKHAR JAGDISH PRASAD TEWARI AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2019-05-06",
+        "inboundCitations": 7,
+        "redacted": [
+          "citation_text:2019 INSC 630",
+          "title-word:SHEKHAR",
+          "title-word:JAGDISH",
+          "title-word:PRASAD",
+          "title-word:TEWARI"
+        ]
+      }
+    },
+    {
+      "id": "criminal-72c6b876",
+      "group": "criminal",
+      "language": "en",
+      "query": "Section 190 of the Code empowers “any magistrate of the first class” to take cognizance of “any offence” upon receiving a complaint, or police report or information or upon his own knowledge. Section 195 restricts such general powers of the magistrate, and the general right of a person to move the court with a complaint is to that extent curtailed. It is a well-recognised canon of interpretation that provision curbing the general jurisdiction of the court must normally receive strict interpretation unless the statute or the context requires otherwise ( […] v. […] [AIR 1966 SC 1718: […] ]). 8. That apart it is difficult to interpret Section 195(1) (b)(ii) as containing a bar against initiation of prosecution proceedings merely because the document concerned was produced in a court albeit the act of forgery was perpetrated prior to its production in the Court.",
+      "goldJudgmentIds": ["72c6b876-b0c9-4866-b27f-dff844611357"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "30912144-1895-4719-83ee-7668b0b709f2",
+        "citingCase": "BHIMA RAZU PRASAD versus STATE, REP. BY DEPUTY SUPERINTENDENT OF POLICE, CBI/SPE/ACU-II",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2021-03-12",
+        "relationship": "cites",
+        "citedCase": "ABDUL WAHEED KHAN versus BHAWANI AND ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1966-02-21",
+        "inboundCitations": 3,
+        "redacted": [
+          "citation_text:(1966) 3 SCR 617",
+          "title-word:ABDUL",
+          "title-word:WAHEED",
+          "title-word:KHAN",
+          "title-word:BHAWANI"
+        ]
+      }
+    },
+    {
+      "id": "criminal-84ca16e5",
+      "group": "criminal",
+      "language": "en",
+      "query": "Where a person has been convicted of an offence with which he has not been charged ( un- less allowed by exceptions) the prejudice is inherent in the absence of the charge itself and it is unnecessary to look any further. Where there is an illegality in the mode of trial as contemplated in ss. 233 to 239 it is an illegality which is not cured by the provisions of ss. 535 and 537. There is no difference in principle between a charge under s. 302 read with 34 and a charge under s. 302 read with 149 [See: Nanak Chand v. State of Punjab ([1955] 1 S.C.R. 1201), […] Pal. v. State of 71. P. ( […] ) ]. It is incorrect to say that the decision of the Privy Council in Subramania Iyer's case as to what is an illegality has been modified by the subse- 2S.C.R. SUPREME COURT REPORTS 1145 quent decisions of the Privy Council, and, in fact, in Babu!",
+      "goldJudgmentIds": ["84ca16e5-d15e-468e-b1fd-1c8ca36806ec"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "6c8379ec-7930-4849-bf39-fbcc687ee80f",
+        "citingCase": "WILLIE (WILLIAM) SLANEY versus THE STATE OF MADHYA PRADESH.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1955-10-31",
+        "relationship": "cites",
+        "citedCase": "SURAJ PAL versus THE STATE OF UTTAR PRADESH.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1955-03-01",
+        "inboundCitations": 3,
+        "redacted": ["citation_text:[1955] 1 S.C.R.\n1332", "title-word:SURAJ"]
+      }
+    },
+    {
+      "id": "criminal-fb7ddb41",
+      "group": "criminal",
+      "language": "en",
+      "query": "The whole purpose of communicating the “ground” to the detenu is to enable him to make a purposeful and effective representation. If the “grounds” are only verbally explained to the detenu and nothing in writing is left with him, in a language which he understands, then that purpose is not served, and the constitutional mandate in Article 22(5) is infringed. If any authority is needed on this point, which is so obvious from Article 22(5), reference may be made to the decisions of this Court in Harikisan v. State of Maharashtra [1962 Supp 2 SCR 918 : AIR 1962 SC 911 : (1962) 1 Cri LJ 797] and […] Das v. […] [ […] : AIR 1969 SC 43 : 1969 Cri LJ 274].” (emphasis supplied) ● State of Bombay v. Atma Ram Shridhar Vaidya, AIR 1951 SC 157 “10….The question has to be approached from another point of view also.",
+      "goldJudgmentIds": ["fb7ddb41-7443-46d8-9581-5990e6fe1bcb"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "fa4c6646-8511-4f76-bef3-b8bedd4b74c7",
+        "citingCase": "SARFARAZ ALAM versus UNION OF INDIA & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-01-04",
+        "relationship": "cites",
+        "citedCase": "HADIBANDHU DAS versus DISTRICT MAGISTRATE, CUTTACK & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1968-05-02",
+        "inboundCitations": 9,
+        "redacted": [
+          "citation_text:(1969) 1 SCR 227",
+          "title-word:HADIBANDHU",
+          "title-word:DISTRICT",
+          "title-word:MAGISTRATE"
+        ]
+      }
+    },
+    {
+      "id": "criminal-f521d9b1",
+      "group": "criminal",
+      "language": "en",
+      "query": "In the instant case the confessional statements were corroborated by independent evidences which clearly prove the guilt of the accused. [13SC-E] Per Shetty, J. I. Section 354(3) of the Code of Criminal Procedure, 1973 marks a significant shift in the legislative policy of awarding death sentence. • Now the normal sentence for murder is imprisonment for life and ' not sentence of death. The Court is required to give special reasons for awarding death sentence. Special reasons mean specific facts and circumstances obtained in the case justifying the extreme penalty. [202D] Bachan […] v. State of […] , [1980] 2 S.C.C. 684 and Machhi […] v. State of […] , […] , referred to. 2. In the instant case, the crime charged was not simply the murdering of the human being, but it was the crime of assassination of tne duly elected Prime Minister of the country.",
+      "goldJudgmentIds": ["f521d9b1-579b-4134-997c-129079819f9c"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "c41f2093-b4b4-4e53-9bd3-154874eb38d4",
+        "citingCase": "KEHAR SINGH & ORS. versus STATE (DELHI ADMN.)",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1988-08-03",
+        "relationship": "cites",
+        "citedCase": "MACHHL SINGH AND OTHERS versus STATE OF PUNJAB",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1983-07-20",
+        "inboundCitations": 29,
+        "redacted": ["citation_text:[1983] 3 S.C.R. 413", "title-word:SINGH", "title-word:PUNJAB"]
+      }
+    },
+    {
+      "id": "criminal-169512f8",
+      "group": "criminal",
+      "language": "en",
+      "query": "In order that an acitivity may be said to affect adversely the maintenance of public order, there must be material to show that there has been a feeling of insecurity among the general public. If any act of a person creates panic or fear in the minds of the members of the public upsetting the even tempo of life of the community, such act must be said to have a direc.t bearing on the question of maintenance of public order. h089H; 1090A-B] The Commission of an offence will not necessarily come within the purview of 'public order'. [I090B] […] v. State of […] , […] , relied on. In the instant case, the detaining authority has failed to sub- stantiate that the alleged anti-social activities of the petitioner adversely effect or are likely to .affect adversely the maintenance of public order.",
+      "goldJudgmentIds": ["169512f8-c20f-4268-a470-f0a416a4559f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "46887da4-e3ea-4e21-a784-05e435e02272",
+        "citingCase": "PIYUSH KANTILAL MEHTA versus COMMISSIONER OF POLICE, AHMEDABAD CITY AND ANOTHER",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1988-12-16",
+        "relationship": "cites",
+        "citedCase": "PUSHKAR MUKHERJEE & ORS. versus THE STATE OF WEST BENGAL",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1968-11-07",
+        "inboundCitations": 18,
+        "redacted": [
+          "citation_text:[1969] 2 S.C.R. 635",
+          "title-word:PUSHKAR",
+          "title-word:MUKHERJEE",
+          "title-word:WEST",
+          "title-word:BENGAL"
+        ]
+      }
+    },
+    {
+      "id": "criminal-0d4798a5",
+      "group": "criminal",
+      "language": "en",
+      "query": "The intention to commit an offence is different from the intention or knowledge requisite for constituting the act as that offence. The expression 'whoever attempts to commit an offence' in s. 511, can only mean 'who- ever intends to do a certain act with the intent or knowledge necessary for the commission of that offence'. The same is meant by the expression 'who- ever does an act with such intention or knowledge and under such circumstances that if he, by that act, . caused death, he would be guilty of murder' in s. 307. This simply means that the act must be done with the (r) […] . Z S.C.R. SUPREME COURT REPORTS 261 intent or knowledge requisite for the commission of the offence of murder. The expression 'by that act' does not mean that the immediate effect of the act committed must be death. Such a result must be the result of that act whether immediately or after a lapse of time.",
+      "goldJudgmentIds": ["0d4798a5-de8d-4769-96a7-6caf3deb463e"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "dc15172d-ed87-49b9-bba6-0d2313d9a984",
+        "citingCase": "OM PRAKASH versus THE STATE OF PUNJAB",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1961-04-24",
+        "relationship": "cites",
+        "citedCase": "ABHAYANAND MISHRA versus THE STATE OF BIHAR",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1961-04-24",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:[1962] 2 S.C.R. 241"]
+      }
+    },
+    {
+      "id": "criminal-3fe40860",
+      "group": "criminal",
+      "language": "en",
+      "query": "The High Court generally agreed with the finding regarding disproportionate assets and disbelieved the explanation offered by the appellant. Before we deal with the merits of the case, we shall take up two preliminary points raised by the learned counsel for the appellant, Mr. Chari. He urged that as sanction had not been given for prosecuting. L-ie appellant the whole trial was bad. He said that the search of the appellant's house took place on November 4, 1961, and on June 27, 1962, he was dismissed from service by the Commissioner of Income-tax. On July 30, 1962, charge-sheet was filed in the court of Special Judge. On (.!) [1963] Suppl. 2 S.C.R. 652. (2) […] 240 SUPREME COUIT J.EPORTS [1971]3 s.c.R. September 21, 1962, the appellant submitted an appeal to the President of India and the President was pleased to convert the order of dismissal into one of the removal.",
+      "goldJudgmentIds": ["3fe40860-c7be-4c5e-aedc-81aee4c29c60"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "9f3bf77e-a07f-46e4-94d1-80f9202777d8",
+        "citingCase": "C.R. BANSI versus STATE OF MAHARASHTRA",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1970-12-15",
+        "relationship": "cites",
+        "citedCase": "SURAJPAL SINGH versus THE STATE OF UTTAR PRADESH",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-12-07",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:[1961] 2 S.C.R. 971"]
+      }
+    },
+    {
+      "id": "criminal-d86f6fc7",
+      "group": "criminal",
+      "language": "en",
+      "query": "Where a person has been convicted of an offence with which he has not been charged ( un- less allowed by exceptions) the prejudice is inherent in the absence of the charge itself and it is unnecessary to look any further. Where there is an illegality in the mode of trial as contemplated in ss. 233 to 239 it is an illegality which is not cured by the provisions of ss. 535 and 537. There is no difference in principle between a charge under s. 302 read with 34 and a charge under s. 302 read with 149 [See: […] v. State of […] ( […] ), Suraj Pal. v. State of 71. P. ([1955] 1 S.C.R. 1332) ]. It is incorrect to say that the decision of the Privy Council in Subramania Iyer's case as to what is an illegality has been modified by the subse- 2S.C.R. SUPREME COURT REPORTS 1145 quent decisions of the Privy Council, and, in fact, in Babu!",
+      "goldJudgmentIds": ["d86f6fc7-b474-48b6-83b3-17943cc9a8f5"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "6c8379ec-7930-4849-bf39-fbcc687ee80f",
+        "citingCase": "WILLIE (WILLIAM) SLANEY versus THE STATE OF MADHYA PRADESH.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1955-10-31",
+        "relationship": "cites",
+        "citedCase": "NANAK CHAND versus THE STATE OF PUNJAB",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1955-01-25",
+        "inboundCitations": 6,
+        "redacted": [
+          "citation_text:[1955] 1 S.C.R.\n1201",
+          "title-word:NANAK",
+          "title-word:CHAND",
+          "title-word:PUNJAB"
+        ]
+      }
+    },
+    {
+      "id": "criminal-091590b9",
+      "group": "criminal",
+      "language": "en",
+      "query": "It is very easy to make allegations of bias against a person but it is difficult to substantiate the same. In the present case, neither there are any pleading nor any material to come to a conclusion that State functionaries including police functionaries are biased against the petitioner. Thus, the allegations of the bias made against the State and police functionaries had to be rejected and petitioner cannot be permitted in saying that the FIRs lodged against him are result of a bias of the State or police personnels. [Para 41] [869-G-H; 870-A-E, G-H; 871-A-B] […] v. Government of Uttar Pradesh & Ors. (2014) 2 SCC 1 : […] – followed. 4. For a victim the investigation in a case is of much significance.",
+      "goldJudgmentIds": ["091590b9-5556-4404-be37-6e8a4e93744d"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "4fa6288b-6950-478a-b3e7-f4c5025b35a6",
+        "citingCase": "BIMAL GURUNG versus UNION OF INDIA & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2018-03-16",
+        "relationship": "followed",
+        "citedCase": "LALITA KUMARI versus GOVT. OF U.P. AND ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2013-11-12",
+        "inboundCitations": 49,
+        "redacted": ["citation_text:[2013] 14 SCR 713", "title-word:LALITA", "title-word:KUMARI"]
+      }
+    },
+    {
+      "id": "criminal-15f08202",
+      "group": "criminal",
+      "language": "en",
+      "query": "In the end, I cannot resist quoting Benjamin Cardozo that “the great tides and currents which engulf the rest of men do not turn aside in their course and pass the judges by.” It is, therefore, no part of any judge’s duty to strain the plain words of a statute, beyond recognition and to the point of its destruction, thereby denying the cry of the times that children desperately need the assurance of a law designed to protect their autonomy and dignity, as POCSO does.” (Emphasis supplied) 198 [2024] 10 S.C.R.Digital Supreme Court Reports 55. Similarly in […] Dr. […] v. State (Govt. of NCT of […] ) & Anr. reported in […] , this Court observed that the POCSO had been brought with the purpose of protecting the children from sexual exploitation and harassment.",
+      "goldJudgmentIds": ["15f08202-d3e6-45fe-ba90-ecd050ae16ef"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "59eafa04-e373-4dfd-8bc1-6083c14ab7a4",
+        "citingCase": "JUST RIGHTS FOR CHILDREN ALLIANCE & ANR. versus S. HARISH & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-09-23",
+        "relationship": "cites",
+        "citedCase": "MS. EERA THROUGH DR. MANJULA KRIPPENDORF versus STATE (GOVT. OF NCT OF DELHI) & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2017-07-21",
+        "inboundCitations": 10,
+        "redacted": [
+          "citation_text:2017 INSC 658",
+          "title-word:EERA",
+          "title-word:THROUGH",
+          "title-word:MANJULA",
+          "title-word:KRIPPENDORF",
+          "title-word:DELHI"
+        ]
+      }
+    },
+    {
+      "id": "criminal-3f99b5c8",
+      "group": "criminal",
+      "language": "en",
+      "query": "According to the principles of English jurisprudence, which we have adopted, for the purposes of determining legal rights ‘there is no such thing as a firm known to the law as was said by James, L.J., in Ex parte Corbett : In re Shand [(1880) 14 Ch D 122, 126 : 42 LT 164 : 28 WR 569] . In these circumstances to import the definition of the word ‘person’ occurring in Section 3(42) of the General Clauses Act, 1897, into Section 4 of the Indian Partnership Act will, according to lawyers, English or Indian, be totally repugnant to the subject of partnership law as they know and understand it to be.” In […] [ […] v. […] , AIR 1966 SC 1300, 1303 : […] ] the view taken by this Court accords with the position above stated.” (emphasis supplied) 7.16 Finally, on this question, Krishna Iyer, J.",
+      "goldJudgmentIds": ["3f99b5c8-152a-4af7-8370-d8fadd900889"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "de922a1e-b5b5-406d-bba8-70ce17d39c53",
+        "citingCase": "DHANASINGH PRABHU versus CHANDRASEKAR & ANOTHER",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-07-14",
+        "relationship": "cites",
+        "citedCase": "ADDANKI NARAYANAPPA & ANR. versus BHASKARA KRISHTAPPA AND 13 ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1966-01-21",
+        "inboundCitations": 14,
+        "redacted": [
+          "citation_text:(1966) 3 SCR\n400",
+          "title-word:ADDANKI",
+          "title-word:NARAYANAPPA",
+          "title-word:BHASKARA",
+          "title-word:KRISHTAPPA"
+        ]
+      }
+    },
+    {
+      "id": "criminal-3ffd8b9a",
+      "group": "criminal",
+      "language": "en",
+      "query": "In a revealing judgment, Subba Rao, J., dissenting, in State of U.P. v. Deoman Upadhyaya, (1961) 1 SCR 14 at 34 further went on to state that whereas equality before law is a negative concept, the equal protection of the law has positive content. The early judgments of this Court referred to the “discrimination” aspect of Article 14, and evolved a rule by which subjects could be classified. If 347 the classification was “intelligible” having regard to the object sought to be achieved, it would pass muster under Article 14’s anti-discrimination aspect. Again, Subba Rao, J., dissenting, in […] Das v. State of […] , […] at 395, warned that: “50......Overemphasis on the doctrine of classification or an anxious and sustained attempt to discover some basis for classification may gradually and imperceptibly deprive the Article of its glorious content.",
+      "goldJudgmentIds": ["3ffd8b9a-2299-47e9-a0fd-d0ff9057ddd0"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "f6eed579-0385-4f41-9afa-92dec01f1da7",
+        "citingCase": "JOSEPH SHINE versus UNION OF INDIA",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2018-09-27",
+        "relationship": "cites",
+        "citedCase": "LACHHMAN DAS ON BEHALF OF FIRM TILAK RAM RAM BUX versus STATE OF PUNJAB AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1962-04-23",
+        "inboundCitations": 18,
+        "redacted": ["citation_text:(1963) 2 SCR 353", "title-word:LACHHMAN", "title-word:PUNJAB"]
+      }
+    },
+    {
+      "id": "criminal-e5de6bbd",
+      "group": "criminal",
+      "language": "en",
+      "query": "No matter is beyond the juris- diction of a superior court of record unless it is expressly showrt to be so, under the provisions of the Constitution. In the absence of any express provision in the Constitution, the Apex Court being a Court of record has jurisdiction in every matter and if there be any doubt, the Court has power to determine its jurisdiction. If such determination is made by the High Court, the same would be subject to appeal to this Court, but if the jurisdiction is determined by this Court it would be final. [988C-E] […] & Ors. v. State of […] & Ors., […] ; Special Reference No. I of 1964, [1965] l SCR 413 and Ganga Bishan v. Jai Narain, [1986] l SCC 75, referred to. 5.2 Since the Supreme Court has po.",
+      "goldJudgmentIds": ["e5de6bbd-2986-404c-aff8-91711d1180b6"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "e66b2582-2963-46a7-949c-04e4c287b823",
+        "citingCase": "DELHI JUDICIAL SERVICE ASSOCIATION TIS HAZARI COURT, DELHI ETC. ETC. versus STATE OF GUJARAT AND ORS. ETC. ETC.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1991-09-11",
+        "relationship": "cites",
+        "citedCase": "NARESH SHRIDHAR MIRAJKAR AND ORS. versus STATE OF MAHARASHTRA AND ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1966-03-03",
+        "inboundCitations": 42,
+        "redacted": [
+          "citation_text:[1966] 3 SCR 744",
+          "title-word:NARESH",
+          "title-word:SHRIDHAR",
+          "title-word:MIRAJKAR",
+          "title-word:MAHARASHTRA"
+        ]
+      }
+    },
+    {
+      "id": "criminal-d1de0dec",
+      "group": "criminal",
+      "language": "en",
+      "query": "(Per Chinnappa Reddy, J.) To attract the ninth exception to section 499, I.P.C. the imputations must be shown to have been made (1) in good faith and (2) for the protection of the person making it or of any other person or for the public good. The insistence of the section is upon the exercise of due care and attention. The standard of care and attention must depend on the circumstances of an individual case, the nature of imputation, the need and the opportunity for verification and so on. In every case it is a question of fact to be decided on its particular facts and circumstances. [631 A-Bl Harbhajan Stngh v. State of […] , [1965] 3 SCR 235 @ 244, […] Lal v. The State of […] @ 916 and 918. Several questior>s may arise for consideration depending on the stand taken by the accused at the trial and how the ·complainant proposed to demolish the defence.",
+      "goldJudgmentIds": ["d1de0dec-c42f-47df-b388-32288a8468ec"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "a7b99ff8-9d99-48bd-a9a6-a5b1cecf25ec",
+        "citingCase": "SEWAKRAM SOBHANI versus R.K. KARANJIA, CHIEF EDITOR, WEEKLY BLITZ & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1981-05-01",
+        "relationship": "cites",
+        "citedCase": "CHAMAN LAL versus THE STATE OF PUNJAB",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1970-03-06",
+        "inboundCitations": 2,
+        "redacted": ["citation_text:[1970] 3 SCR 913", "title-word:CHAMAN", "title-word:PUNJAB"]
+      }
+    },
+    {
+      "id": "criminal-a4f516d6",
+      "group": "criminal",
+      "language": "en",
+      "query": "My learned brother Wanchoo has held that the word 'migrate' means no more than to go from one place to another and that the element of an intention to acquire a domicile is not necessary. He has, however, given fostances of some cases in which going from one place to another would not be sufficient because either the going was involuntary or there was no intention to stay in the new place but to return. These instances, which I also adopt, show that migration is not bare physical movement from India to the territory now included in Pakistan but is such movement accompanied by an intention of some sort. What that intention should be is the matter in dispute. (l) […] : A.I.R. 1961 S.C. 58. 716 SUPREME COURT REPORTS [1966] 3 S.C.R. Articles 5* to 10 deal with who shall be regarded as a citizen of India and who shall not.",
+      "goldJudgmentIds": ["a4f516d6-f491-4103-bb30-2b964c55d642"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "763e0cf4-fee3-4724-9553-d964ea18961b",
+        "citingCase": "KULATHIL MAMMU versus THE STATE OF KERALA",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1966-03-02",
+        "relationship": "cites",
+        "citedCase": "SMT. SHANNO DEVI versus MANGAL SAIN",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-09-07",
+        "inboundCitations": 5,
+        "redacted": ["citation_text:(1961] 1 S.C.R. 576"]
+      }
+    },
+    {
+      "id": "criminal-78abfa25",
+      "group": "criminal",
+      "language": "en",
+      "query": "Nor should he allow himself to be dictated to by his administrative superiors to with- draw from the prosecution. The Court also indicated some instance Where withdrawal from prosecution might be resorted to independently of the merits of the case : \"Of course, the interests of public justice being the paramount consideration they may transcend and overflow (!) [19721 2 SCR 599. (2) [19771 1 SCR 335 at 340. (3) […] at 605 i-'' R. K. JAIN v. STATE (Chinnappa Reddy, !.) 995 the legal justice of the particular litigation. For instance, communal feuds which may have been ainicably settled should not re-erupt on account of one or two prosecutions pending. Labour disputes which, might have given rise to criminal cases, when settled, might probably be another ins- tance where the interests of public justice in the ·broader connotation may perhaps warrant withdrawal from the pro- secution.",
+      "goldJudgmentIds": ["78abfa25-6710-45c7-812c-24e2d571fcd4"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "0ed97c34-2e4d-44a3-aad0-f861df85b3a7",
+        "citingCase": "RAJENDRA KUMAR JAIN ETC. versus STATE THROUGH SPECIAL POLICE ESTABLISHMENT AND ORS. ETC. ETC.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1980-05-02",
+        "relationship": "cites",
+        "citedCase": "BALWANT SINGH & ORS. versus STATE OF BIHAR",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1977-10-04",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:[1978] 1 SCR 604"]
+      }
+    },
+    {
+      "id": "criminal-6f704259",
+      "group": "criminal",
+      "language": "en",
+      "query": "Despite that, we agree with the learned Sessions Judge that Mst. Punnan and Mst. Charni are to be believed regarding the main facts and that they correctly named all seven accused as the assailants. On that finding the conviction under section 302 read with section 149 can be sustained. We accordingly uphold these convictions. The acquittals in the other three cases will of course stand but the mere fact that these persons have, in our opinion, been wrongly acquitted cannot affect the conviction in other cases \". In that case although the High Court had acquitted three accused persons of an offence under s. 302 read (1) [1902] 2 K.B. 339. (2) […] . (3) [1954] S.C.R. 145· .. (2) S.C.R. SUPREME COURT REPORTS 7 withs. 149, Indian Penal Code, yet as in the opinion I959 of this Court the acquittal was wrongs.",
+      "goldJudgmentIds": ["6f704259-b854-42ab-99d7-d9d71ff4357f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "99d0986c-12b6-4b1b-9670-67e5996adce8",
+        "citingCase": "FAGUNA KANTA NATH versus THE STATE OF ASSAM",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1959-12-13",
+        "relationship": "cites",
+        "citedCase": "TOPANDAS versus THE STATE OF BOMBAY",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1955-10-14",
+        "inboundCitations": 6,
+        "redacted": ["citation_text:[1955] 2 S.C.R. 881"]
+      }
+    },
+    {
+      "id": "criminal-1652be89",
+      "group": "criminal",
+      "language": "en",
+      "query": "This pendency is putting an unprecedented strain on the judicial system as in some States, cases under Section 138 of the NI Act constitute nearly fifty per cent (50%) of the pendency in Trial Court (in Delhi Section 138 NI Act cases constitute 49.45% of total Trial Court pendency). 34. In P. Mohanraj and Others v. Shah Brothers Ispat Private Limited, (2021) 6 SCC 258, this Court while re-iterating the position of law with regard to the nature of offence under Section 138 of the NI Act, has held as under: “ 5 3 . A p e r u s a l o f t h e j u d g m e n t i n I s h w a r l a l […] [S.A.L. Narayan Row v. […] , […] : AIR 1965 SC 1818] would show that a civil proceeding is not necessarily a proceeding which begins with the filing of a suit and culminates in execution of a decree.",
+      "goldJudgmentIds": ["1652be89-c122-4eb3-bed6-ed8bafff9049"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "f4958ad3-b584-40ae-8f79-a53f1d6ec38e",
+        "citingCase": "SANJABIJ TARI versus KISHORE S. BORCAR & ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-09-25",
+        "relationship": "cites",
+        "citedCase": "COMMISSIONER OF INCOME-TAX, BOMBAY & ANOTHER versus ISHWARLAL BHAGWANDAS AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1965-05-07",
+        "inboundCitations": 6,
+        "redacted": [
+          "citation_text:(1966) 1 SCR 190",
+          "title-word:ISHWARLAL",
+          "title-word:BHAGWANDAS"
+        ]
+      }
+    },
+    {
+      "id": "civil-acc74c84",
+      "group": "civil",
+      "language": "en",
+      "query": "Such a tax may be challenged, not with reference to the manner of imposition but as an illegal impost. [958 A-DJ (ii) There can be no doubt that some of the provisions of ss. 131 to 134 of the Act are mandatory. But all of them are not of the same character. In the present case, as in Raza Buland Sugar Co. Ltd. and in […] Vanaspati, the provisions not observed were of a directory character and therefore the imposition had the protection of s. 135(3). [958 HJ Raza Buland Sugar Co. Ltd. v. Municipal Board, Rampur. [1965] l S.C.R. 970 and […] Swades/Ji Vanaspati v. Municipal […] , Com- mittee Sheogaon & Anr. […] , relied on. (iii) Mandatory provisions must be fully complied with, and directory provisions should be substantially complied with. In either case 1he agency for seeing to this compliance is the State Government.",
+      "goldJudgmentIds": ["acc74c84-39a3-40c6-86ae-5d27f476f650"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "67ef5670-44e1-433f-88e5-68e3fa6257d1",
+        "citingCase": "MUNICLPAL BOARD, HAPUR versus RAGHUVENDRA KRLPAL AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1965-09-23",
+        "relationship": "cites",
+        "citedCase": "THE BERAR SWADESHI VANASPATHI & OTHERS versus THE MUNICIPAL COMMITTEE, SHEGAON & ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1961-03-28",
+        "inboundCitations": 2,
+        "redacted": [
+          "citation_text:[1962] 1 S.C.R. 596",
+          "title-word:BERAR",
+          "title-word:SWADESHI",
+          "title-word:COMMITTEE"
+        ]
+      }
+    },
+    {
+      "id": "civil-bcc47cbd",
+      "group": "civil",
+      "language": "en",
+      "query": "No Court or Tribunal and for that matter any other authority can ignore the law stated by this Court. Such obedience would also be conducive to their smooth working, otherwise there would be confusion in the administration of law and the respect for law would irretrievably suffer. There can be no hesitation in holding that the law declared by the higher court in the State is binding on authorities and tribunals under its superintendence and they cannot ignore it. This Court also expressed the view that it had become necessary to reiterate that disrespect to the constitutional ethos and breach of discipline have a grave impact on the 31 [2012] 12 SCR 818 : (2013) 11 SCC 404 : […] [2024] 1 S.C.R. 1031The State o f H imachal P r a d e s h a n d O t h e r s v. Y o g e n d e r a M o h a n Sen […] a n d A n o t h e r credibility of judicial institution and encourages chance litigation.",
+      "goldJudgmentIds": ["bcc47cbd-6544-4d99-9a2b-f2f20b313e3f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "5b3587cf-a5f5-4e28-b863-926cd4a4edbb",
+        "citingCase": "STATE OF HIMACHAL PRADESH AND OTHERS versus YOGENDERA MOHAN SENGUPTA AND ANOTHER",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-01-11",
+        "relationship": "cites",
+        "citedCase": "PRIYA GUPTA AND ANR. versus ADDL. SECY. MINISTRY OF HEALTH AND FAMILY WELFARE AND ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2012-12-13",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:2012 INSC 601", "title-word:GUPTA"]
+      }
+    },
+    {
+      "id": "civil-04ee37e2",
+      "group": "civil",
+      "language": "en",
+      "query": "He was entitled to them whether he used them or not in connection with bis employment or his' work as a special correspondent. They Would however fall under the iaclusive part of the definition as 'allowances'. Since they were allowed to him to directly reduce the expenditure which would otherwise have gone into his family budget, they were items relevant in the fixation of fair wages and were properly regarded as part of the respondent's wages. Therefore, they should be taken into consideration for the calculation of gratuity payable to him. [196 H; 197 F-HJ […] Ltd. v. […] , […] 674-675, followed. CIVIL APPELLATE JURISDICTION; Civil Appeal No. 1702 of 1966. Appeal by special leave from the Award dated February 28, 1966 of the Labour Court, Delhi in W.J. No. 2 of 1964. G. B. Pai, 0. C. MaJhur and J.B. Dadachanji, for the appel- lant M. K. Ramamurthi, Shyamala Pappu, J. Rll!",
+      "goldJudgmentIds": ["04ee37e2-471a-4d88-ab2d-76b8e28f347c"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "816a3fe7-ce4b-4dde-bc75-e7efb6357ec4",
+        "citingCase": "BENNETT COLEMAN & CO. (P) LTD. versus PUNYA PRIYA DAS GUPTA",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1969-04-02",
+        "relationship": "cites",
+        "citedCase": "HINDUSTAN ANTIBIOTICS LTD. versus THE WORKMEN & ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1966-10-03",
+        "inboundCitations": 8,
+        "redacted": [
+          "citation_text:[1967) 1 S.C.R. 652",
+          "title-word:HINDUSTAN",
+          "title-word:ANTIBIOTICS",
+          "title-word:WORKMEN"
+        ]
+      }
+    },
+    {
+      "id": "civil-9b2dafdc",
+      "group": "civil",
+      "language": "en",
+      "query": "Mrs. […] and Other(')l. Bearing in mind the above principles we may now look at the will in question as a whole. This will is written in the urdu language. An official translation is placed on the record. From the contents of the will we find the background and the exact position of relationship of the parties set out earlier. Gokul was residing with Bhola Chaubey (1) [1950] SCR 949/955. (2) [1953] SCR 232/240. (3) [1963] Supp. 2 SCR 834/839/842. (4) […] /735. •, NAVNEET LAL v. GOKUL (Goswami, !.) 929 and Smt. Jarian. It may bear repetition that Gokul was held in great love and affection by the testator who was keenly anxious for the wel- fare both of his wife and of Gokul. There is yet another feature which is prominent in the will. The testator was apprehensive of his only brother, Ram Raj and his nephew, Kishnu, who \"might trouble his wife and Gokul after his death.",
+      "goldJudgmentIds": ["9b2dafdc-5837-4e69-87c9-fe7d7683b171"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "0d386469-fb81-4bd7-99cc-cf7f24c3ba84",
+        "citingCase": "NAVNEET LAL ALIAS RANGI versus GOKUL AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1975-12-09",
+        "relationship": "cites",
+        "citedCase": "RAMACHANDRA SHENOY AND ANOTHER. versus MRS. HILDA BRITE AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1963-04-01",
+        "inboundCitations": 4,
+        "redacted": [
+          "citation_text:[1964] 2 SCR 722",
+          "title-word:RAMACHANDRA",
+          "title-word:SHENOY",
+          "title-word:HILDA",
+          "title-word:BRITE"
+        ]
+      }
+    },
+    {
+      "id": "civil-a259ece9",
+      "group": "civil",
+      "language": "en",
+      "query": "Article 14 of the Constitution of India is a facet of equality of status and opportunity spoken of in the Preamble to the Constitution. The Article naturally divides itself into two parts—(1) equality before the law, and (2) the equal protection of the law. Judgments of this Court have referred to the fact that the equality before law concept has been derived from the law in the UK, and the equal protection of the laws has been borrowed from the 14th Amendment to the Constitution of the United States of America. In a revealing judgment, Subba Rao, J., dissenting, in State of U.P. v. […] [State of U.P. v. […] , […] : AIR 1960 SC 1125 : 1960 Cri LJ 1504] , AIR p. 1134 para 26 : SCR at p. 34 further went on to state that whereas equality before law is a negative concept, the equal protection of the law has positive content.",
+      "goldJudgmentIds": ["a259ece9-fad9-4e11-9867-41e71bbda107"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "ca318d2c-6053-4e86-8709-f618689e3190",
+        "citingCase": "RAM CHARAN & ORS. versus SUKHRAM & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-07-17",
+        "relationship": "cites",
+        "citedCase": "STATE OF U.P. versus DEOMAN UPADHYAYA",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-05-06",
+        "inboundCitations": 25,
+        "redacted": ["citation_text:(1961) 1 SCR 14", "title-word:DEOMAN", "title-word:UPADHYAYA"]
+      }
+    },
+    {
+      "id": "civil-51d5b174",
+      "group": "civil",
+      "language": "en",
+      "query": "In this connection reference may be made to the observations of this Court in Vasudev Dhanjibhai Modi v. Rajabhai Abdul Rehman and others, [1971] 1 SCR 66. · Having regard to all these factors, we are of the view that the High Court was right in dismissing the application in the manner it did. In Mis. […] Fundation v. M/s. […] and […] , […] , where this Court observed that interminable, time consuming, complex and expensive court procedures impelled jurists to search for an alternative forum, less formal, more effective and speedy for resolution of disputes avoiding procedural claptrap and this led them to the Arbitration Act. However, the way in which the pro- ceedings under the Act are conducted and without an exception challenged in Courts, has made lawyers laugh and legal philosophers weep.",
+      "goldJudgmentIds": ["51d5b174-91a3-454e-9e45-c89e85ddfef7"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "1e5daf64-fd73-4b63-90df-ce6b046bfe96",
+        "citingCase": "VAIDYA HARISHANKAR LAXMIRAM RAJYAGURU OF RAJKOT versus PRATAPRAY HARISHANKAR RAJYAGURU OF RAJKOT",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1988-04-13",
+        "relationship": "cites",
+        "citedCase": "GURU NANAK FOUNDATION versus RATTAN SINGH & SONS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1981-09-29",
+        "inboundCitations": 4,
+        "redacted": [
+          "citation_text:[1982] 1 SCR 842",
+          "title-word:GURU",
+          "title-word:NANAK",
+          "title-word:RATTAN",
+          "title-word:SINGH",
+          "title-word:SONS"
+        ]
+      }
+    },
+    {
+      "id": "civil-83825e3d",
+      "group": "civil",
+      "language": "en",
+      "query": "This Court, however, reversed the order of the High Court holding that even on the assumption that the order of the appellate court had not merged in the order of the Single Judge who had disposed of the revision petition, a writ peti- tion ought not to have been entertained by the High Court when the respondent had already chosen the remedy under section 115 of the Code of Civil Procedure and that if there are two modes of invoking the jurisdiction of the High Court and one of those modes has been chosen and exhausted it would not be proper and sound exercise of discretion to grant relief in the other set of proceedings in respect of (1) [1962] l S.C.R. 574. (2) […] . ·.-A. J CALICO PRINTING v. WORKMEN (Misra, J.) 221 the same order of the subordinate court.",
+      "goldJudgmentIds": ["83825e3d-479d-4115-957e-ee89bacb1f3e"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "382fe9d4-61f6-476d-875b-f894c86af958",
+        "citingCase": "AHMEDABAD MANUFACTURING & CALICO PRINTING CO. LTD. versus WORKMEN & ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1981-03-12",
+        "relationship": "cites",
+        "citedCase": "KRISHNAJI DATTATRYAYA BAPAT versus KRISHNAJI DATTATRYAYA BAPAT",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1969-04-16",
+        "inboundCitations": 9,
+        "redacted": ["citation_text:[1970] 1 S.C.R. 322"]
+      }
+    },
+    {
+      "id": "civil-73c19f96",
+      "group": "civil",
+      "language": "en",
+      "query": "During the assessment year, the company had not distri- buted dividends to the extent of 60% of its profits and an order under s. 23A(1) of the Act was passed by the Income-tax Officer. The question referred by the Tribunal to the High Court was whether at the relevant time the assessee company could be deemed to be a company in which the public were sub- stantially interested, i.e., held 25% of the voting power, was answered in the negative. Held, that the test that no holding by the Directors of a company could be regarded as one in which the public were sub- stantially interested was not the correct test to apply. The test as laid down in […] v. Commissioner of Income-tax, […] , would apply to this Case. Held, further, that the paramount condition in applying the proviso and the explanation of s. 23A(r) was that the public should be beneficially int.rested in 25% of the voting power.",
+      "goldJudgmentIds": ["73c19f96-643a-4280-845f-4d2a05ff68c7"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "49f06ba5-0ee5-48f0-9cd4-a6edde5f2a87",
+        "citingCase": "SHREE CHANGDEO SUGAR MILLS, LTD. versus THE COMMISSIONER OF INCOME TAX, BOMBAY",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1960-12-07",
+        "relationship": "cites",
+        "citedCase": "RAGHUVANSHI MILLS, LTD. versus COMMISSIONER OF INCOME-TAX, BOMBAY",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-12-07",
+        "inboundCitations": 3,
+        "redacted": [
+          "citation_text:[1961] 2 S.C.R. 978",
+          "title-word:RAGHUVANSHI",
+          "title-word:MILLS"
+        ]
+      }
+    },
+    {
+      "id": "civil-5e38aa21",
+      "group": "civil",
+      "language": "en",
+      "query": "There is no doubt that if that Article had not been there in the Covenant and if, for example, the Covenant provided that the new State would not assume the liabilities of the old State, the Court would not have come to the conclusion that there was recognition of the liabilities against the old State by the new State. In the present case we have nothing like Art. VI of the Covenant to lead us to the con: clusion that there was recognition of the liabilities of the old State by the new State. In the absence of such a provision it would not in our opinion be right to say that merely because the old Jaws were continued there was recognition of the liabilities of the old (1) […] . (2) [1959] S.C.R .. 729 361 SUPREME COURT REPORTS [ 1966) 1 S.C.R. .State by the new State.",
+      "goldJudgmentIds": ["5e38aa21-b19b-4ce1-bbe2-fe14ade10efb"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "c0df7625-bd72-4484-9317-20366a5c53f6",
+        "citingCase": "PEMA CHIBAR ALIAS PREMABHAI CHHIBABHAI TANGAL versus UNION OF INDIA AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1965-08-09",
+        "relationship": "cites",
+        "citedCase": "STATE OF RAJASTHAN versus SHYAM LAL",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1964-03-12",
+        "inboundCitations": 2,
+        "redacted": ["citation_text:[1964] 7 S.C.R. 174"]
+      }
+    },
+    {
+      "id": "civil-5369eeae",
+      "group": "civil",
+      "language": "en",
+      "query": "Since, at this stage, we are reminded of the decision in the case of Bangalore Electricity Supply Co. Ltd. v. E.S. Solar Power (P) Ltd.9, it would be apt to note what was observed. There occurs an interesting passage of what the Court should be minded about while gathering the intentions of the parties in a clause of the contract. It was observed: 17. The duty of the court is not to delve deep into the intricacies of human mind to explore the undisclosed intention, but only to take the meaning of words used i.e. to say expressed intentions [Kamla […] v. […] Land, […] : AIR 1964 SC 859]. In seeking to construe a clause in a contract, there is no scope for adopting either a liberal or a narrow approach, whatever that may mean. The exercise which has to be undertaken is to determine what the words used mean.",
+      "goldJudgmentIds": ["5369eeae-7e66-46b7-b16d-81103668605a"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "0f99e0c2-ead4-4bd2-80d9-49311130ce5c",
+        "citingCase": "M/S ALCHEMIST HOSPITALS LTD. versus M/S ICT HEALTH TECHNOLOGY SERVICES INDIA PVT. LTD.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-11-06",
+        "relationship": "cites",
+        "citedCase": "S.MT. KAMALA DEVI versus SETH TAKHATMAL AND ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1963-02-21",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:(1964) 2 SCR 152", "title-word:DEVI", "title-word:TAKHATMAL"]
+      }
+    },
+    {
+      "id": "civil-e03bac9d",
+      "group": "civil",
+      "language": "en",
+      "query": "We find no reason to deviate from this settled position of law and thus are unable to agree with the High Court’s reliance on the letters dated 21.07.2012 and 06.01.2014 to nullify the original award and allow fresh acquisition proceedings in respect of the first respondent’s land which had already been acquired and has been under the possession of the appellant since 11.06.2010. 19. Therefore, for the foregoing reasons, the appeals succeed and are accordingly allowed. The orders impugned herein are set aside. Pending applications, if any, shall stand disposed of. The parties shall bear their own costs. 2 1995 Supp (3) SCC 249. 3 (2004) 7 SCC 362. 4 AIR 1955 SC 298 : […] . 5 (2020) 8 SCC 129. Kalpana K. Tripathy Appeals allowed.",
+      "goldJudgmentIds": ["e03bac9d-5295-4cd5-9521-6b37eee324fb"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "d96be835-dcc0-495c-95cc-7bd65b0d0388",
+        "citingCase": "ASSAM INDUSTRIAL DEVELOPMENT CORPORATION LTD versus GILLAPUKRI TEA COMPANY LIMITED & ORS. ETC.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2021-01-28",
+        "relationship": "cites",
+        "citedCase": "THE COLLECTOR OF BOMBAY versus NUSSERWANJLRATTANJI MISTRI & OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1955-02-28",
+        "inboundCitations": 5,
+        "redacted": ["citation_text:(1955) 1 SCR 1311"]
+      }
+    },
+    {
+      "id": "civil-e95bf659",
+      "group": "civil",
+      "language": "en",
+      "query": "The auditors' report then said :- \"We estimate the net realisable value of the total stocks of tea as on January 5, 1952, to be in excess of their cost and, therefore, in our opinion, such stocks have been undervalued to the extent of the above reduction below cost.\" Relying on this report the Labour Appellate Tribunal added back Rs. 9,93,824 to the available surplus of Rs. 9,66,654 which the profit and loss account of the Indian business for the year 1951 showed. Adding the two figures the Labour Appellate Tribunal opined that the available surplus at the end of 1951 was Rs. 19,60,478. After deducting therefrom the (1) [1950) L.L.J. 1247. (2) […] . (2) S.C.R. SUPREME COURT REPORTS 161 legitimate prior charges on account of (a) rehabilita: tion, (b) a four per cent.",
+      "goldJudgmentIds": ["e95bf659-c08d-40cb-9871-b67a366457c3"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "bd8da6c1-31e0-4080-9002-4e9b7a651e12",
+        "citingCase": "M/S. LIPTON LIMITED AND ANOTHER versus THEIR EMPLOYEES",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1959-02-02",
+        "relationship": "cites",
+        "citedCase": "MUIR MILLS CO., LTD. versus SUTI MILLS MAZDOOR UNION, KANPUR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1954-11-19",
+        "inboundCitations": 7,
+        "redacted": ["citation_text:[1955) 1 S.C.R. 991"]
+      }
+    },
+    {
+      "id": "civil-cd7eb19c",
+      "group": "civil",
+      "language": "en",
+      "query": "The High Court had failed to notice that the respondent had. not filed any cross-objection in the second.appeal to challenge the correctness of the finding on issue No. 3 by the Courts below. Alternatively, if the appeal was only a revision preferred to the High Court by virtue of the proviso to Section 22(2), a the High Court had no jurisdiction to interfere with the concurrent findings of the Courts .below on issue No. 3 because the finding did not suffer from any error in the exercise of the jurisdiction vested in the Courts below. [424C-E) Gian Chand v. K.B. Lal, [1977) 2 SCR 324 at 332, referred to. […] v: […] , […] at 504, followed. 4. Another error which the High Court has committed is in draw- ing a conclusion of its own that even though no details regarding the length and width.",
+      "goldJudgmentIds": ["cd7eb19c-074e-4de3-8d83-7206c2785598"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "9e0f0c33-36bf-4e30-b662-6e25affbe5b6",
+        "citingCase": "FIRM SAGARMAL VISHNU BHAGWAN versus GAURI SHANKAR AND ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1988-10-05",
+        "relationship": "cites",
+        "citedCase": "RAGHUNATH & ORS. versus KEDAR NATH",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1969-02-03",
+        "inboundCitations": 2,
+        "redacted": [
+          "citation_text:[1969] 3 SCR 497",
+          "title-word:RAGHUNATH",
+          "title-word:KEDAR",
+          "title-word:NATH"
+        ]
+      }
+    },
+    {
+      "id": "civil-4ba977bf",
+      "group": "civil",
+      "language": "en",
+      "query": "Had the issue been so straightforward, unquestionably the High Courts' order would have had to be set aside, because it had re-appraised the cause shown by the respondent and condoned the delay under Section 5 of the 1963 Act. There is ample authority to hold that this could not be done under Section 115 of the Code [See: D.LF. […] & […] Company […] ltd., New […] v. […] & Others, […] Manindra Land and Building Corporation Ltd. v. Bhutnath Banerjee and Others, [1964] 3 SCR 495 and Pandurang Dhoni Chougule v. Maruti Hari Jadhav, [1966] 1 SCR 102. But was the Civil Judge's order dismissing the respondent's application under Section 5 at all revisable under Section 115 · of the Code or did an appeal lie from it under Section 39 of the Arbitration Act, 1940? The answer is of moment as the powers of an appellate Court are wider than those available under Section 115.",
+      "goldJudgmentIds": ["4ba977bf-a0fa-4034-9978-4b0b0b2399fd"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "8f64571a-4f4f-47df-a800-87f0bc659caf",
+        "citingCase": "M/S. ESSAR CONSTRUCTIONS versus N.P. RAMA KRISHNA REDDY",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2000-05-03",
+        "relationship": "cites",
+        "citedCase": "D.L.F HOUSING & CONSTRUCTION COMPANY PRIVATE LTD., NEW DELHI versus SARUP SINGH AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1969-09-12",
+        "inboundCitations": 7,
+        "redacted": [
+          "citation_text:[1970] 2 SCR 368",
+          "title-word:HOUSING",
+          "title-word:CONSTRUCTION",
+          "title-word:PRIVATE",
+          "title-word:DELHI",
+          "title-word:SARUP",
+          "title-word:SINGH"
+        ]
+      }
+    },
+    {
+      "id": "civil-1ed3b728",
+      "group": "civil",
+      "language": "en",
+      "query": "VANI 61 usual standard form of an agreement for leave and licence. The parties to the agreement were bound by the terms thereof. There was nothing to suggest that the agreement for leave and licence was merely a device to camouflage the real nature of the transaction, viz., creation of a tenancy, which would clearly be against the bye-laws of the society. The disputant, the licensor, was only a tenant co-partner member and all that she could do under the terms of the bye-laws was to create a licence with the permission of the society by making the licensee to be a nominal member thereof. The matter is directly covered by the decision of this Court in O.P. […] v. Smt. […] , […] . [67C-E] The Society was purely a tenant co-partnership type of housing society consisting only of tenant co-partner members and there were no tenant owner members in the society.",
+      "goldJudgmentIds": ["1ed3b728-c3e0-4356-8bf4-72c74fe5c736"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "a5905f42-efae-4011-bc21-e5b32895f989",
+        "citingCase": "SMT. KRISHNA RAJPAL BHATIA & ORS. versus MISS LEELA H. ADVANI & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1988-09-19",
+        "relationship": "cites",
+        "citedCase": "O. N. BHATNAGAR versus SMT. RUKIBAI NARSINDAS & ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1982-04-21",
+        "inboundCitations": 4,
+        "redacted": [
+          "citation_text:[1982]\n3 SCR 681",
+          "title-word:BHATNAGAR",
+          "title-word:RUKIBAI",
+          "title-word:NARSINDAS"
+        ]
+      }
+    },
+    {
+      "id": "civil-c808ad72",
+      "group": "civil",
+      "language": "en",
+      "query": "Neha “6. … If a statement is relevant, an accurate tape record of the statement is also relevant and admissible. The time and place and accuracy of the recording must be proved by a competent witness and the voices must be properly identified. One of the features of magnetic tape recording is the ability to erase and re-use the recording medium. Because of this facility of erasure and re-use, the evidence must be received with caution. The court must be satisfied beyond reasonable doubt that the record has not been tampered with.” (underlining by us) 9.4 In furtherance to the above view came the judgment of this Court in the case of R. M. […] vs. State of […] , […] (“R.M. […] ”), wherein the validity of a tape-recorded conversation was in question.",
+      "goldJudgmentIds": ["c808ad72-01d9-464d-9c29-d871d3b3275f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "9d5ecae6-1a89-4833-98e1-7fd8c0c44c38",
+        "citingCase": "VIBHOR GARG versus NEHA",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-07-14",
+        "relationship": "cites",
+        "citedCase": "R. M. MALKANI versus STATE OF MAHARASHTRA",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1972-09-22",
+        "inboundCitations": 5,
+        "redacted": [
+          "citation_text:(1973) 2 SCR 417",
+          "title-word:MALKANI",
+          "title-word:MAHARASHTRA"
+        ]
+      }
+    },
+    {
+      "id": "civil-b6589cd6",
+      "group": "civil",
+      "language": "en",
+      "query": "It follows that the impugned order was passed by a Court of competent jurisdiction under a valid law. Whether the High Court should have passed the order is another question. The propriety of the order cannot be challenged in a writ application under Art. 32. Until the order is set aside in appropriate proceedings, it conclusively negatives the right of the petitioners to publish reports of the deposition of Bhaichand Goda. The petitioners cannot, therefore, complain that their fundamental right under Art. 19 (I) (a) has been infringed. (1) [19501 S.C.R. 88, 101. (2) [19511S.C.R.451. (3) [1959] S.C.R. 12, 129-133. (4) […] , 690-691, (5) [1925] 1.L.R. 50 Bom. 275. M12Sup. C.1./66-6 810 SUPREME COURT REPORTS [1966] 3 S.C.R The High Court was competent to pass the impugned orders, but assuming that it exceeded its jurisdiction, the order does not infringe Art. 19 (I) (a).",
+      "goldJudgmentIds": ["b6589cd6-cb0b-4319-9d0f-03771fdc8ddc"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "e5de6bbd-2986-404c-aff8-91711d1180b6",
+        "citingCase": "NARESH SHRIDHAR MIRAJKAR AND ORS. versus STATE OF MAHARASHTRA AND ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1966-03-03",
+        "relationship": "cites",
+        "citedCase": "HAMDARD DAWAKHANA (WAKF) LAL KUAN, DELHI AND ANOTHER versus UNION OF INDIA AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1959-12-18",
+        "inboundCitations": 30,
+        "redacted": ["citation_text:[1960] 2 S.C.R. 671"]
+      }
+    },
+    {
+      "id": "civil-2d9c7393",
+      "group": "civil",
+      "language": "en",
+      "query": "Though no such saving clause appears in the General Clauses Act, their Lordships think that the principle involved is as applicable in India as it is in this country. It seems to be no less logical to hold that where certain provisions from an existing Act have been incorporated into a subsequent Act, no addition to the former Act, which is not expressly made applicable to the subsequent Act, can be deemed to be incorporated in it, at all events if it is possible for the subsequent Act to function effectually without the addition.” This Court in the […] of […] , […] v. […] [AIR 1962 SC 316 : […] , 830- 833 : (1962) 1 Cr LJ 364] considered the Privy Council decision in the Hindustan Cooperative Insurance Society Ltd. and distinguished that case and held the principle inapplicable to the facts of that case. 31.In State of Bihar v. S.K.",
+      "goldJudgmentIds": ["2d9c7393-4af0-4eed-bea9-d80922d5db20"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "d538c7af-08d0-4b70-ad09-44665a90963d",
+        "citingCase": "M/S. TVS MOTOR COMPANY LTD. versus THE STATE OF TAMIL NADU AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2018-10-12",
+        "relationship": "cites",
+        "citedCase": "THE COLLECTOR OF CUSTOMS, MADRAS versus NATHELLA SAMPATHU CHETTY AND ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1961-09-25",
+        "inboundCitations": 37,
+        "redacted": [
+          "citation_text:(1962) 3 SCR 786",
+          "title-word:COLLECTOR",
+          "title-word:CUSTOMS",
+          "title-word:MADRAS",
+          "title-word:NATHELLA",
+          "title-word:SAMPATHU",
+          "title-word:CHETTY"
+        ]
+      }
+    },
+    {
+      "id": "civil-a50436b4",
+      "group": "civil",
+      "language": "en",
+      "query": "Sections 2, 3 and 5 of the Act, 1962 respectively is not stand-alone but is restricted to achievement of the ultimate object of validation under clause (i) of Section 97. Any interpretation of the amended Sections 2, 3 and 5 arising from the retrospective application thereof, which is contrary to or not in furtherance of the Section 97(i) would not hold good in law. e) This Court in the case of Vivek Narayan v. Union of India reported in (2023) 3 SCC 1 has held that: “140. The principle of purposive interpretation has also been expounded through a catena of judgments of this Court. A Constitution Bench of this Court in M. […] v. […] [M. […] v. […] : AIR 1961 SC 1107] was considering a question, as to whether the term prescribed in Section 34 would apply to a member of a “deemed” committee under the provisions of the Hyderabad District Municipalities Act, 1956.",
+      "goldJudgmentIds": ["a50436b4-210a-4b89-89c0-73d2e222fc7e"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "4b648c95-d6b7-4087-a4d6-aafed4810902",
+        "citingCase": "COMMISSIONER OF CUSTOMS versus M/S CANON INDIA PVT. LTD.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-11-07",
+        "relationship": "cites",
+        "citedCase": "M. PENTIAH AND OTHERS versus MUDDALA VEERAMALLAPPA AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-11-07",
+        "inboundCitations": 21,
+        "redacted": [
+          "citation_text:(1961) 2 SCR 295",
+          "title-word:PENTIAH",
+          "title-word:MUDDALA",
+          "title-word:VEERAMALLAPPA"
+        ]
+      }
+    },
+    {
+      "id": "civil-b67239a8",
+      "group": "civil",
+      "language": "en",
+      "query": "In the aforesaid decision, this Court considered the earlier decision of this Court in […] v. […] (Mst.) (1974) 1 SCC 3, more particularly para 6, and thereafter summed up in para 17 and para 18. Paras 17 and 18 of that judgment are as under: “17. The principle enunciated by Lord Macmillan in the case of Manmohan Das [AIR 1931 PC 175 : 134 IC 66 9 : 1931 ALJ 550] has been followed by this Court in […] v. […] (Mst) [(1974) 1 SCC 3 : […] ] where Sarkaria, J., observed thus: (SCC p. 6, para 6) “It is well-settled that the burden of proving that a particular sale is benami and the apparent purchaser is not the real owner, always rests on the person asserting it to be so.",
+      "goldJudgmentIds": ["b67239a8-b6fe-4c61-bb0b-df95d8c0ad3e"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "10d1c300-87cc-4d31-b60e-8d00a99e2095",
+        "citingCase": "SMT. P. LEELAVATHI (D) BY LRS versus V. SHANKARNARAYANA RAO (D) BY LRS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2019-04-09",
+        "relationship": "cites",
+        "citedCase": "JAYDAYAL PODDAR (DECEASED) THROUGH HIS LRS AND ANOTHER versus MST. BIBI HAZRA AND ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1973-10-19",
+        "inboundCitations": 5,
+        "redacted": [
+          "citation_text:(1974) 2 SCR 90",
+          "title-word:JAYDAYAL",
+          "title-word:PODDAR",
+          "title-word:THROUGH",
+          "title-word:BIBI",
+          "title-word:HAZRA"
+        ]
+      }
+    },
+    {
+      "id": "civil-f14b2430",
+      "group": "civil",
+      "language": "en",
+      "query": "These in my opinion, are the pillars of our constitutional philosophy, the pillars therefore of the basic structure of the Constitu- tion.\" According to him, the pillars of the Coustitution are Sovereign Democratic Republic, Equality of Status and Opportunity, Secular- ism, Citizen's right to religious worship, and the Rule of Law. With H respect, I would add that the concept of social aud economic justice- to build a Welfare State-is equally a part of the basic structure or (I) […] . . • ) MSS Bll!M SINGH v. UNION (Sen, J.) 935 the foundation upon which the Constitution rests. The provlSlons of sub-ss. (!), (2) and (3) of s. 23 and the opening words \"subject to the provisions of sub-sections(!), (2) and (3)\" in s. 23(4) are the very antithesis of the idea of a Welfare State based on social and economic justice.",
+      "goldJudgmentIds": ["f14b2430-4397-4f82-bd9c-eb212284c18a"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "196e21e9-75b3-47ed-8243-3f0e5d2847a5",
+        "citingCase": "MAHARAO SAHIB SRI BHIM SINGHJI ETC. ETC versus UNION OF INDIA AND ORS. ETC. ETC.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1980-11-13",
+        "relationship": "cites",
+        "citedCase": "SMT. INDIRA NEHRU GANDHI versus SHRI RAJ NARAIN",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1975-11-07",
+        "inboundCitations": 38,
+        "redacted": ["citation_text:(1976] 2 SCR 347"]
+      }
+    },
+    {
+      "id": "civil-410a5e1e",
+      "group": "civil",
+      "language": "en",
+      "query": "There can be no doubt that if the goods were delivered pursuant to the contracts of sale outside the State of Andhra for the purpose of consumption in the State into which the goods were deliver- ed, the State of Andhra could have no right to tax those sales by virtue of the restriction imposed by Art. 286 ( 1)(a) read with the Explanation. The facts found by the taxing authorities clearly establish that property in the goods despatched by the appellant passed to the A.C.C. within the State of Andhra when the railway receipts were handed over to ilie agent of the A.C.C. against payment of price. The question still remains : were (I) [1961] 2 S.C.R. 106 (2) […] (3) [1961] 2 S.C.R. 219. SUPREME COURT REPORTS 1964 the transactions 'non-Explanation sales' i.e. falling outside Shr•• Bajrang the Explanation to Art. 286 ( 1)?",
+      "goldJudgmentIds": ["410a5e1e-5dec-4831-9268-0a690ca85e41"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "654bb4a5-4d4b-4236-b08d-04b4a96f45b7",
+        "citingCase": "SHREE BAJRANG JUTE MILLS LTD. versus STATE OF ANDHRA PRADESH",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1964-02-06",
+        "relationship": "cites",
+        "citedCase": "INDIAN COPPER CORPORATION LTD. versus THE STATE OF BIHAB, AND OTHERS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-11-07",
+        "inboundCitations": 4,
+        "redacted": ["citation_text:(1961] 2 S.C.R. 276"]
+      }
+    },
+    {
+      "id": "civil-e2b7bdab",
+      "group": "civil",
+      "language": "en",
+      "query": "In nection Coamlsaion, India v. Saka Venkata Subba Rao, [1953] S.C.R. 1144, 1150 this Court reiterated what had been held in the above case by the Judicial Committee and pointed out that the position with respect to the two other Chartered High Courts, namely, the High Courts of Calcutta and Bombay, was the same. As explained by this Court in Dwarltanath, […] P&llily v. Income-Tax […] , […] , Kanpqr, and Another […] , 540-41 Article 226 is designedly couched in· a wide language in order not to confine the power conferred by it only to the power to issue prerogative writs as understood in England, such wide language being used to enable the High Courts to reach injustice wherever found and to mould the reliefs to meet the peculiar and complicated requirements of this country.",
+      "goldJudgmentIds": ["e2b7bdab-90e8-4846-9a6a-0f477eec3660"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "d156ae99-1f1b-42be-9d89-0b04b73d226f",
+        "citingCase": "UMAJI KESHAO MESHRAM & ORS. versus RADHIKABAI W/O ANANDRAO BANAPURKAR & ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1986-03-14",
+        "relationship": "cites",
+        "citedCase": "DWARKANATH, HINDU UNDIVIDED FAMILY versus INCOME-TAX OFFICER, SPECIAL CIRCLE, KANPUR ANDANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1965-03-29",
+        "inboundCitations": 17,
+        "redacted": [
+          "citation_text:[1965]\n3 S.C.R. 536",
+          "title-word:HINDU",
+          "title-word:UNDIVIDED",
+          "title-word:OFFICER",
+          "title-word:SPECIAL",
+          "title-word:CIRCLE"
+        ]
+      }
+    },
+    {
+      "id": "civil-abece93e",
+      "group": "civil",
+      "language": "en",
+      "query": "Merit there is even among the reserved candidates and the small difference, that may be allowed at the stage of initial recruitment is bound to disappear in course of time. These members too will compete with and improve their efficiency along with others. 837. Having said this, we must append a note of clarification. In some cases arising under Article 15, this Court has upheld the removal of minimum qualifying marks, in the case of Scheduled Caste/Scheduled Tribe candidates, in the matter of admission to medical courses. For example, in State of M.P. v. […] [(1981) 4 SCC 296: […] ] admission to medical course was regulated by an entrance test (called Pre-Medical Test). For general candidates, the minimum qualifying marks were 50% in the aggregate and 33% in each subject. For Scheduled Caste/Scheduled Tribe candidates, however, it was 40% and 30% respectively.",
+      "goldJudgmentIds": ["abece93e-7ee3-4368-8e31-bd558a9d8c35"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "5fa4af7c-99b1-4c7f-8916-550f0de9a6c8",
+        "citingCase": "IN RE: RECRUITMENT OF VISUALLY IMPAIRED IN JUDICIAL SERVICES versus",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-03-02",
+        "relationship": "cites",
+        "citedCase": "STATE OF M.P. AND ANR. versus KUMARI NIVEDITA JAIN AND ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1981-09-22",
+        "inboundCitations": 8,
+        "redacted": ["citation_text:(1982) 1 SCR 759", "title-word:NIVEDITA", "title-word:JAIN"]
+      }
+    },
+    {
+      "id": "civil-1ec57eef",
+      "group": "civil",
+      "language": "en",
+      "query": "In the cases before us, the cess is no doubt calculated on the basis of the yield — for every kilogram of tea leaves produced in a tea estate, a particular cess is levied. But that is a well-accepted mode of levy of tax on land. The tax is upon the land — upon the “tea estate” which is classified as a separate category, as a separate unit, for the purpose of levy and assessment of the said cess quantified on the basis of the quantum of produce of the tea estate. It cannot be characterised as a tax on production for that reason. As pointed out in […] [ […] : AIR 1961 SC 552] — “a tax on land is assessed on the actual or potential productivity of the land sought to be taxed”. There cannot be uniform levy unrelated to the quality, character or income/yield of the land. Any such levy has been held to be arbitrary and discriminatory.” 35.",
+      "goldJudgmentIds": ["1ec57eef-fe16-4029-9a05-b8d1003f45bb"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "e38ba65f-a576-4c98-89b9-360a8f4cbb95",
+        "citingCase": "JALKAL VIBHAG NAGAR NIGAM & ORS. versus PRADESHIYA INDUSTRIAL AND INVESTMENT CORPORATION & ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2021-10-22",
+        "relationship": "cites",
+        "citedCase": "KUNNATHAT THATHUNNI MOOPIL NAIR versus THE STATE OF KERALA AND ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-12-09",
+        "inboundCitations": 44,
+        "redacted": ["citation_text:(1961) 3 SCR 77", "title-word:MOOPIL", "title-word:NAIR"]
+      }
+    },
+    {
+      "id": "civil-bd2cac6a",
+      "group": "civil",
+      "language": "en",
+      "query": "Therefore, even if the claim, in the case be- fore us. is considered as a customary or tradition&! bonus, this test will have to be satisfied and, as mentioned earlier, it is lack- ing in this case. I These two decisions were again adverted to by this Court in Mana1<ement of […] Co. ltd v. […] (') This Indus- \"trial Tribunal, whose award was under consideration, by this ---· (1) […] . ' • ' • 938 SGPREME COURT REPORTS [ 1969] I S.C.R. Court, in the said decision, had held that payment of bonus, as A an implied condition of service, need not be attached to any festi- val. This Court did not accept that proposition as correct.",
+      "goldJudgmentIds": ["bd2cac6a-7b4f-48df-8743-3afc00604f15"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "78dc3467-f834-4dad-86f2-96823bb1d9e4",
+        "citingCase": "MANAGEMENT OF CHURAKULAM TEA ESTATE (P) LTD. versus THE WORKMEN & ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1968-09-03",
+        "relationship": "cites",
+        "citedCase": "MANAGEMENT OF BOMBAY CO. LTD. versus WORKMEN",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1964-03-25",
+        "inboundCitations": 2,
+        "redacted": ["citation_text:[1964] 7 S.C.R. 477", "title-word:BOMBAY", "title-word:WORKMEN"]
+      }
+    },
+    {
+      "id": "civil-c0aa8375",
+      "group": "civil",
+      "language": "en",
+      "query": "(3) that where the finding of the Tribunal was that there was misconduct which merited dismissal under the Standing Orders and that the managerial inquiry was proper, the Tribunal was not justified in interfering with the action of the manage- ment unless it found unreasonable discrimination in the matter of taking back employees, or unfair labour practice or victimisa- tion against the employees. Indian Iron and Steel Co. Ltd. and Another v. […] , [1958] S.C.R. 667, followed. I. G. N. and […] Co. Ltd. v. […] , […] , distinguished. CIVIL APPELLATE JURISDICTION: Civil Appeals Nos. 32 and 33 of 1960. Appeals by special leave from the Award dated February 24, 1959, of the Industrial Tribunal, Bihar, Patna, in Reference nos. IO of 1959 and I of 1955. M. C. Setalvad, Attorney- […] for India, Nooni Coomar Chakravarti and B. P. Maheshwari, for the appellant. B. C. Ghose and P. K.",
+      "goldJudgmentIds": ["c0aa8375-3e0c-4b85-8d27-c7d0a0896859"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "6d000902-1184-482d-8533-fc6aa5ac355e",
+        "citingCase": "THE BAT A SHOE CO. (P) LTD. versus D. N. GANGULY & OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1960-12-15",
+        "relationship": "cites",
+        "citedCase": "INDIA GENERAL NAVIGATION AND RAILWAY CO. LTD. versus THEIR WORKMEN",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1959-10-14",
+        "inboundCitations": 2,
+        "redacted": [
+          "citation_text:[1960] 2\nS.C.R. 1",
+          "title-word:GENERAL",
+          "title-word:RAILWAY",
+          "title-word:THEIR",
+          "title-word:WORKMEN"
+        ]
+      }
+    },
+    {
+      "id": "civil-e62dcd40",
+      "group": "civil",
+      "language": "en",
+      "query": "Answering the question in the negative, the Court observed thus: “67. The question that is to be posed here is whether taking recourse to this doctrine for the purpose of advancing constitutional culture, can a court read a disqualification to the already expressed disqualifications provided under the Constitution and the 1951 Act. The answer has to be in the inevitable negative, for there are express provisions stating the disqualifications and second, it would tantamount to crossing the boundaries of judicial review.” 27 [2014] 9 SCR 965 : (2014) 9 SCC 1 : […] [2024] 1 S.C.R. 1013The State o f H imachal P r a d e s h a n d O t h e r s v. Y o g e n d e r a M o h a n Sengupta a n d A n o t h e r 68.",
+      "goldJudgmentIds": ["e62dcd40-2ee6-4091-bde6-6a7fd65865b0"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "5b3587cf-a5f5-4e28-b863-926cd4a4edbb",
+        "citingCase": "STATE OF HIMACHAL PRADESH AND OTHERS versus YOGENDERA MOHAN SENGUPTA AND ANOTHER",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-01-11",
+        "relationship": "cites",
+        "citedCase": "MANOJ NARULA versus UNION OF INDIA",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2014-08-27",
+        "inboundCitations": 23,
+        "redacted": ["citation_text:2014 INSC 568"]
+      }
+    },
+    {
+      "id": "civil-ca915357",
+      "group": "civil",
+      "language": "en",
+      "query": "The advertisements issued by various District Education Officers also provided the same qualifications. It can thus be seen that acquiring of 2 years Diploma in Elementary Education was a minimum qualification as prescribed under the statutory Rules. It will be apposite to refer to the following observations of this Court in the case of Employees’ State Insurance Corporation (supra), wherein this Court has referred to its earlier judgments including that of a Constitution Bench: “15. A Constitution Bench in […] Ram […] v. State of […] [ […] Ram […] v. State of […] , AIR 1967 SC 1910 : […] ] considered the applicability of the letters issued by the Government of India detailing the administrative practice for promotions, against the Indian Police Service (Regulation of Seniority) Rules, 1954. The Constitution Bench held that : (AIR p. 1914, para 7) “7.",
+      "goldJudgmentIds": ["ca915357-9aa3-433f-a75e-d5059d9e5669"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "18e31f16-0cf6-4e37-91a8-879243b4cde3",
+        "citingCase": "JAIVEER SINGH AND OTHERS versus THE STATE OF UTTARAKHAND AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2023-11-28",
+        "relationship": "cites",
+        "citedCase": "SANT RAM SHARMA versus STATE OF RAJASTHAN & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1967-08-07",
+        "inboundCitations": 25,
+        "redacted": [
+          "citation_text:(1968) 1 SCR 111",
+          "title-word:SANT",
+          "title-word:SHARMA",
+          "title-word:RAJASTHAN"
+        ]
+      }
+    },
+    {
+      "id": "civil-57afe38e",
+      "group": "civil",
+      "language": "en",
+      "query": "Ahmedabad Urban Development Authority,5 is relevant for our purposes here: “165. The term “consideration” however is broader. The plain meaning is a monetary payment, for something obtained, in the form of goods, or services. In CCE v. […] India (P) Ltd. [CCE v. […] India (P) Ltd., (2012) 9 SCC 332 : […] ] this Court explained the meaning of that term : (SCC pp. 360-61, paras 68-73) “68. … Consideration means something which is of value in the eye of the law, moving from the plaintiff, either of benefit to the plaintiff or of detriment to the defendant. In other words, it may consist either in some right, interest, profit or benefit accruing to the one party, or some forbearance, detriment, loss or responsibility, given, suffered or undertaken by the other, as observed in Currie v. Misa [Currie v. Misa, [L.R.] 10 Exch. 153]. 69.",
+      "goldJudgmentIds": ["57afe38e-378d-420b-aa11-e8deeaea3b18"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "6f58e202-928a-434c-afeb-19d519e39c5e",
+        "citingCase": "N.P. SASEENDRAN versus N.P. PONNAMMA & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-03-24",
+        "relationship": "cites",
+        "citedCase": "COMMISSIONER OF CENTRAL EXCISE, MUMBAI versus M/S. FIAT INDIA (P) LTD. & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2012-08-29",
+        "inboundCitations": 5,
+        "redacted": ["citation_text:(2012) 12 SCR 975", "title-word:FIAT"]
+      }
+    },
+    {
+      "id": "civil-4168d113",
+      "group": "civil",
+      "language": "en",
+      "query": "If the totality of circumstances satisfies the Court that the party v.isited wilh D adverse order has not suffered from denial of reasonable opportunity the Court will decline to be punctilious or fanatical as if the rules of natural justice were sacred scriptures. In the instant case, the Board cannot be anathematised as condemning the man without being heard. The respondent has, in the form of an appeal against the report of the Regional Inspector, sent his explanation to the Chairman of the Board. He .has thus been heard and compliance with Regulation 26 in the circumstances is complete. [909 G-H, 910 A-G] Tereaesai's case […] ; Management of DTU [1973] 2 S.C.R. E. 114; Tandon's case f!9741 4 SCC 374 referred to.",
+      "goldJudgmentIds": ["4168d113-99ae-4ef2-9f3a-1c99854bba8a"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "971bda24-b91e-4304-96e6-004d1a8aa3f9",
+        "citingCase": "CHAIRMAN, BOARD OF MINING EXAMINATION & ANOTHER versus RAMJEE",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1977-02-03",
+        "relationship": "cites",
+        "citedCase": "STATE OF GUJARAT versus R. G. TEREDESAI & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1969-04-10",
+        "inboundCitations": 3,
+        "redacted": ["citation_text:(1970] 1 S.C.R. 251"]
+      }
+    },
+    {
+      "id": "civil-3d84de6b",
+      "group": "civil",
+      "language": "en",
+      "query": "PREME COURT REPORTS [2019] 1 S.C.R. for supply was prior to Act, 1993. To hold that liability of buyer for payment shall arise only when agreement for supply was entered subsequent to enforcement of the Act, it shall be adding words to Section 3 which is not permissible under principles of statutory construction. Even if agreement of sale is entered prior to enforcement of the Act, liability to make payment under Section 3 and liability to make payment of interest under Section 4 shall arise if supplies are made subsequent to the enforcement of the Act. [Para 52][518-G-H; 519-A-D] […] and […] Private Limited v. […] State […] Board and another (2012) 7 SCC 462 : […] – Not correct law to the extent it held that the Act, 1993 shall be applicable only when supply order was entered subsequent to enforcement of the Act. […] Small Scale Industries Development Corp. Ltd. and others v. J.D.",
+      "goldJudgmentIds": ["3d84de6b-1138-4c42-8885-a70a6e9162b6"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "a8f15cae-f8e4-4a2f-8f57-046bdfef501f",
+        "citingCase": "M/S. SHANTI CONDUCTORS (P) LTD. & ANR. versus ASSAM STATE ELECTRICITY BOARD & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2019-01-23",
+        "relationship": "cites",
+        "citedCase": "M/S PURBANCHAL CABLES & CONDUCTORS PVT. LTD versus ASSAM STATE ELECTRICITY BOARD & ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2012-07-10",
+        "inboundCitations": 5,
+        "redacted": [
+          "citation_text:[2012] 6 SCR 905",
+          "title-word:PURBANCHAL",
+          "title-word:CABLES",
+          "title-word:CONDUCTORS",
+          "title-word:ASSAM",
+          "title-word:ELECTRICITY"
+        ]
+      }
+    },
+    {
+      "id": "civil-891b1cdf",
+      "group": "civil",
+      "language": "en",
+      "query": "Such a right may not be a right to property but it is a right against property and the husband has a personal obligation to maintain his wife and if he or the family has property, the female has the legal right to be maintained therefrom. If a charge is created for the maintenance of a female, the said right becomes a legally enforceable one. At any rate, even without a charge the claim for maintenance is doubtless a pre-existing right so that any transfer declaring or recognising such a right does not confer any new title but merely endorses or confirms the pre-existing right. (I) […] ' • • I • > > ' BAI VAJIA v. THAKORBHAI (Koshal, !.",
+      "goldJudgmentIds": ["891b1cdf-1e6e-4dba-8654-f712187493b8"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "5c9652be-1384-4c1b-80f5-29379447075e",
+        "citingCase": "BAI VAJIA (DEAD) BY L. RS . versus THAKORBHAI CHELABHAI AND ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1979-02-20",
+        "relationship": "cites",
+        "citedCase": "BADRI PERSHAD versus SMT. KANSO DEVI",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1969-08-26",
+        "inboundCitations": 9,
+        "redacted": ["citation_text:[1970] 2 S.C.R. 95"]
+      }
+    },
+    {
+      "id": "civil-2fb27bd1",
+      "group": "civil",
+      "language": "en",
+      "query": "If ever it was the case of the appellant that there was in fact no closure and there was really an illegal lock-out, the Teference would have been asked for and made not […] section 51 […] which it was made, but […] section 82. f132B, Dl 5. The propriety of or justification for the closure of a business in fact and truly effected, cannot raise an industrial dispute as contemplated by the State and Centrul Acts. [132 F] The […] of […] s Ltd. v. […] and […] Emp- loyed […] it and Others, […] , 548 referred to. CIVIL APPELLATE JURISDICTION : Civil Appeal Nos. 293-295 of c 1971. E From the Judgment and Order dated 30-4-1970 of the Madhya Pradesh High Court in M.P. No. 333/68 and 48 and 27 of 1969. Guiab Gupta and Vineet Kumar for the Appellant. V. M. Tarkunde, D. N. Misra and O.C.Mathur for the Respon- dent. The Judgment of the Court was delivered by CHANDRACHUD, C. J. The respondent, M/s.",
+      "goldJudgmentIds": ["2fb27bd1-720f-4236-8fcc-5e1dcddf88ee"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "f2281a07-5201-4937-b0ae-ecffd7d78ed0",
+        "citingCase": "POTTERY MAZDOOR PANCHAYAT versus THE PERFECT POTTERY CO. LTD. & ANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1978-10-19",
+        "relationship": "cites",
+        "citedCase": "THE MANAGEMENT OF NEWSPAPER EXPRESS LTD. versus WORKERS & STAFF EMPLOYED UNDER IT AND OTHERS .",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1962-08-02",
+        "inboundCitations": 4,
+        "redacted": [
+          "citation_text:[1963] 3 S.C.R. 540",
+          "title-word:MANAGEMENT",
+          "title-word:NEWSPAPER",
+          "title-word:EXPRESS",
+          "title-word:WORKERS",
+          "title-word:STAFF",
+          "title-word:EMPLOYED",
+          "title-word:UNDER"
+        ]
+      }
+    },
+    {
+      "id": "civil-2f6ad808",
+      "group": "civil",
+      "language": "en",
+      "query": "Before parting with the order, we are constrained to observe that the case in hand is a glaring example of casualness on the part of the State Authorities while dealing with the litigation. The issue could be resolved at the very first stage when a representation was made by the petitioner seeking promotion to the post of Tracer way back in the year 1991. The chapter could have been closed merely while responding to the same while referring to the relevant statutory 1979 Rules. To some extent it was done but false hopes are created in the minds of employees if some other similarly situated are granted the 10 2022 INSC 157 : 2022 SCC OnLine SC 151 11 […] : (2013) 14 SCC 81 858 [2025] 1 S.C.R.Supreme Court Reports benefit, which itself is contrary to the Rules.",
+      "goldJudgmentIds": ["2f6ad808-499d-4fc1-9366-23b3f9832357"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "c514b657-c7f1-4e53-bb97-ed7bc93856c9",
+        "citingCase": "JYOSTNAMAYEE MISHRA versus THE STATE OF ODISHA AND ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-01-20",
+        "relationship": "cites",
+        "citedCase": "BASAWARAJ & ANR. versus THE SPL. LAND ACQUISITION OFFICER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "2013-08-22",
+        "inboundCitations": 11,
+        "redacted": ["citation_text:2013 INSC 551"]
+      }
+    },
+    {
+      "id": "civil-250434b4",
+      "group": "civil",
+      "language": "en",
+      "query": "The reason is that in a writ petition for certiorari, the superior court does not sit in appeal, but exercises only supervisory jurisdiction, and therefore, does not enter into the question of sufficiency of evidence. There was, in our view, legal evidence before the Commissioner upon which he was entitled to rest his find- ing that the copies relied on by the appellant were not genuine.\" view taken in Bidyabhushan case has been repeatedly affirmed and reiterated in […] Board v. […] , […] at 552; O.P. Gupta case AIR 1970 SC 679 and Union of India v. Sardar Bahadur, [1972] 2 SCR 218. Any doubts as to the incapacity of the Court to review the merits of the penalty must vanish when we read the remarks of Mathew, J., in Sardar Bahadur's case (at 225): \"A disciplinary proceeding is not a criminal trial.",
+      "goldJudgmentIds": ["250434b4-d459-4a22-8eed-020c5234f4ff"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "338845eb-c9af-4b9d-932a-c04ef78be527",
+        "citingCase": "UNION OF INDIA ETC. versus PARMA NAND ETC.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1989-03-14",
+        "relationship": "cites",
+        "citedCase": "RAILWAY BOARD, REPRESENTING THE UNION OF INDIA, NEW DELHI AND ANR. versus NIRANJAN SINGH",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1969-02-04",
+        "inboundCitations": 6,
+        "redacted": [
+          "citation_text:[1969] 3\nSCR 548",
+          "title-word:RAILWAY",
+          "title-word:NIRANJAN",
+          "title-word:SINGH"
+        ]
+      }
+    },
+    {
+      "id": "civil-72c758f6",
+      "group": "civil",
+      "language": "en",
+      "query": "“where it is not possible to obtain evidence which conclusively establishes or rebuts the allegation, the case must be dealt with on reasonable probabilities and legal inferences arising from proved or admitted facts.” 16. The burden of proof is, however not static, and may shift during the course of the evidence. Thus while the burden initially rests on the party who would fail if no evidence is led at all after the evidence is recorded, it rests upon the party against whom judgment would be given if no further evidence were adduced by either side i.e. on the(evidence on record. As has been held by this Court in […] and Ors. v. The Union of India and Ors.",
+      "goldJudgmentIds": ["72c758f6-165e-4cf4-a162-0c516cf36f7f"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "c5cd97fd-20ed-4bc2-9b8b-d17ef042bf94",
+        "citingCase": "VINOD KUMAR DHALL versus DHARAMPAL DHALL (DECEASED)THROUGH HIS LRS. & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2018-04-26",
+        "relationship": "cites",
+        "citedCase": "KALWA DEVADATTAM AND TWO OTHERS versus THE UNION OF INDIA AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1963-04-19",
+        "inboundCitations": 8,
+        "redacted": ["citation_text:[1964] 3 SCR 191", "title-word:KALWA", "title-word:DEVADATTAM"]
+      }
+    },
+    {
+      "id": "civil-b15b7b12",
+      "group": "civil",
+      "language": "en",
+      "query": "We agree with Mr. Bobde when he submits that Hariprasad's case is not an authority for the proposition thats. 2(oo) only covers cases of discharge of surplus […] and staff. The Judg- ments in Sundara Money (supra) and the subsequent decisions in the line could not be held to be per incuriam inasmuch as in […] and Santhosh Gupta's cases, the Division Benches of this […] had referred to Hariprasad's case and rightly held that its ratio did not extend beyond a case of termination on the ground of closure and as such it would not be correct to say that the subsequent decisions ignored a binding precedent. In […] Ltd. v. The […] , […] , […] the question was whether termination of service by efflux of time was termination of service within the definition of retrenchment in section 2(oo) of the Act.",
+      "goldJudgmentIds": ["b15b7b12-858c-4980-8e23-49f526a9e1f0"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "0cd0e4a7-a241-498a-9eab-dc246a2cf3fb",
+        "citingCase": "PUNJAB LAND DEVELOPMENT AND RECLAMATION CORPORATION LTD., CHANDIGARH ETC. versus PRESIDING OFFICER, LABOUR COURT, CHANDIGARH ETC.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1990-05-04",
+        "relationship": "cites",
+        "citedCase": "HINDUSTAN STEEL LTD. versus THE PRESIDING OFFICER, LABOUR COURT, ORISSA AND ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1976-09-15",
+        "inboundCitations": 6,
+        "redacted": [
+          "citation_text:[1977] 1 SCR 586",
+          "title-word:HINDUSTAN",
+          "title-word:STEEL",
+          "title-word:PRESIDING",
+          "title-word:OFFICER",
+          "title-word:LABOUR",
+          "title-word:COURT"
+        ]
+      }
+    },
+    {
+      "id": "civil-38e6089c",
+      "group": "civil",
+      "language": "en",
+      "query": "Sree Meenakshi Mills Ltd. v. Their Workmen [1958] S.C.R. 878, referred to. Held further that it is well settled that a balance shert cannot be taken as proof of a claim as to what portion of reserves has actually betn used as working capital and that the utilization of a portion of reserves as working capital hag to be proved by the employer by evidence ,on affidavit or otherwise after giving opportunity to the workmen to contest the correc- tness of such evidence by cross-examination. In the present case no acceptable proof has been given and the method of proof was not proper. Petled […] Red Dye […] Lia. v. Dye and […] IVork•rs Union, […] , refered to. Held further, that the question whether investmcr ts have been actualiy used as working capital is a question of fact and it has to be proved by proper evidence.",
+      "goldJudgmentIds": ["38e6089c-e583-451e-9625-de6ce7c8e9e3"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "ef7c9957-eeb9-4656-98aa-6666b094f028",
+        "citingCase": "BENGAL KAGAZKAL MAZDOOR UNION & ANOTHER versus THE TITAGHUR PAPER MILLS CO. LTD.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1963-04-11",
+        "relationship": "cites",
+        "citedCase": "PETLAD TURKEY RED DYE WORKS LTD. versus DYES & CHEMICAL WORKERS UNION, PETLAD & ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-02-03",
+        "inboundCitations": 5,
+        "redacted": [
+          "citation_text:[1960] 2 S.C.R. 906",
+          "title-word:TURKEY",
+          "title-word:WORKS",
+          "title-word:CHEMICAL"
+        ]
+      }
+    },
+    {
+      "id": "civil-b5eddef3",
+      "group": "civil",
+      "language": "en",
+      "query": "But as pointed out in Syed Mohd. Salie Labbai v. Mohd. Hanifa [(1976) 4 SCC 780] the basic method to decide the question of res judicata is first to determine the case of the parties as put forward intheir respective pleadings of their previous suit and then to find out as to what had been decided by the judgment which operates as res judicata. It is risky to speculate about the pleadings merely by a summary of recitals of the allegations made in the pleadings mentioned in the judgment. The Constitution Bench in […] v. […] [AIR 1964 SC 1810 : […] ] placing on a par the plea of res judicata and the plea of estoppel under Order 2 Rule 2 of the Code of Civil Procedure, held that proof of the plaint in the previous suit which is set to create the bar, ought to be brought on record.",
+      "goldJudgmentIds": ["b5eddef3-7837-4b68-b682-777b06f743ae"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "e3b48d9f-adcc-4605-a814-9760c9e01a7e",
+        "citingCase": "SRIHARI HANUMANDAS TOTALA versus HEMANT VITHAL KAMAT & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2021-08-09",
+        "relationship": "cites",
+        "citedCase": "GURBUX SINGH versus BHOORALAL",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1964-04-22",
+        "inboundCitations": 11,
+        "redacted": [
+          "citation_text:(1964) 7\nSCR 831",
+          "title-word:GURBUX",
+          "title-word:SINGH",
+          "title-word:BHOORALAL"
+        ]
+      }
+    },
+    {
+      "id": "civil-b744c36c",
+      "group": "civil",
+      "language": "en",
+      "query": "With these glasses we must look at the Act as a whole and discover what each section, each clause, each phrase and each word is meant and designed to say as to fit into the scheme of the entire Act. No part of a statute and no word of a statute can be construed in isolation. Statutes have to be construed so that every word has a place and everything is in its place. It is by looking at the definition as a whole in the setting of the entire Act and by reference to what preceded the enactment and the reasonsfor it that the Court construed the expression “Prize Chit” in […] [(1980) 4 SCC 507 : […] : 51 Com Cas 464] and we find no reason to depart from the Court’s construction.” 17. The Government Letter dated 18.01.2021 further clarifies that SET must be in the concerned subject to become a Higher Secondary teacher.",
+      "goldJudgmentIds": ["b744c36c-cdd6-4439-849b-a8f7fdc00137"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "783aa5a2-0e95-425a-ac6d-11d750ad5e44",
+        "citingCase": "ZUBAIR. P versus STATE OF KERALA & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2026-02-13",
+        "relationship": "cites",
+        "citedCase": "SRINIVASA ENTERPRISES & ORS. versus UNION OF INDIA ETC.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1980-09-24",
+        "inboundCitations": 8,
+        "redacted": ["citation_text:(1981) 1 SCR 801", "title-word:SRINIVASA"]
+      }
+    },
+    {
+      "id": "civil-a609c383",
+      "group": "civil",
+      "language": "en",
+      "query": "As far as the nature of services provided in industrial areas are concerned, those are relevant factors taken into account by the State or Governor while issuing exemptions under municipal laws or proviso to Article 243Q (1). These, however, do not in any manner impact or undermine the fact that such industrial areas or estates are equally “local areas”. […] Ltd. and Ors. v. The State of […] and Ors […] . itself acknowledged that the word “local” means relating to or “pertaining to a place”. This Court also very pertinently held that a local area is one which is administered by municipal law, district board or a local board, union board, a panchayat or somebody constituted by the Government for the governance of local affairs of any part of the State.",
+      "goldJudgmentIds": ["a609c383-5fdd-434e-a670-380ea18c252c"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "d5b9de88-0463-4604-b41b-07db4ae6345f",
+        "citingCase": "M/S. OCL INDIA LTD versus STATE OF ORRISA AND ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2022-11-04",
+        "relationship": "cites",
+        "citedCase": "DIAMOND SUGAR MILLS LTD., AND ANOTHER versus THE STATE OF UTTAR PRADESH AND ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-12-13",
+        "inboundCitations": 19,
+        "redacted": [
+          "citation_text:[1961] 3 SCR 242",
+          "title-word:DIAMOND",
+          "title-word:SUGAR",
+          "title-word:MILLS",
+          "title-word:UTTAR",
+          "title-word:PRADESH"
+        ]
+      }
+    },
+    {
+      "id": "civil-31cb31c0",
+      "group": "civil",
+      "language": "en",
+      "query": "Rajmani and Others judgment of this Court on this aspect, in V.M. Salgaocar and Bros. v. Board of Trustees of Port of Mormugao and another15, wherein, it was held as follows: “20. The mandate of Section 3 of the Limitation Act is that it is the duty of the court to dismiss any suit instituted after the prescribed period of limitation irrespective of the fact that limitation has not been set up as a defence. If a suit is ex facie barred by the law of limitation, a court has no choice but to dismiss the same even if the defendant intentionally has not raised the plea of limitation. 21. This Court in […] & […] Corpn. Ltd. v.",
+      "goldJudgmentIds": ["31cb31c0-0685-4e8e-9d23-a7c026c86364"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "87adde26-9f5a-4744-8f8d-a9f143987868",
+        "citingCase": "R. NAGARAJ (DEAD) THROUGH LRS. AND ANOTHER versus RAJMANI AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2025-04-09",
+        "relationship": "cites",
+        "citedCase": "MANINDRA LAND AND BUILDING versus BHUTNATH BANERJEE AND OTHERS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1963-05-02",
+        "inboundCitations": 4,
+        "redacted": [
+          "citation_text:(1964) 3 SCR 495",
+          "title-word:MANINDRA",
+          "title-word:LAND",
+          "title-word:BUILDING",
+          "title-word:BHUTNATH",
+          "title-word:BANERJEE"
+        ]
+      }
+    },
+    {
+      "id": "civil-c46c823c",
+      "group": "civil",
+      "language": "en",
+      "query": "This construction of rule 62 (2) (b) was rightly rejected by the Tribunal. But neither rule 58 of the Central Rules nor rule 62 of the Bombay Rules con- tains anything to suggest that any officer of a trade union who is entitled to sign a settlement must be deemed to have had the authority to enter into this setttlement. The procedure prescribed by either rule 58 of the Central Rules or rule 62 of the Bombay Rules presupposes the existence of a valid settlement, and the ques- tion in this case is whether there was such a settlement. Another case relied on by the appellant is The […] Ltd. and others v. Government of […] and another.(1) The facts of that case (I) […] . J BROOKE BOND v. WORKMEN (Gupta, J.) 37 are that after the proceedings before the Tribunal had come to an end and the Tribunal had sent its award to government the parties concerned in the dispute came to a settlement.",
+      "goldJudgmentIds": ["c46c823c-d4c1-4d2b-8f39-d58b4c4d19b1"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "4a3e3ac5-42a9-4944-9929-80a75b860738",
+        "citingCase": "BROOKE BOND INDIA LTD. versus THE WORKMEN",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1981-07-22",
+        "relationship": "cites",
+        "citedCase": "THE SIRSILK LTD. AND OTHERS versus GOVERNMENT OF ANDHRA PRADESH & ANOTHER",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1963-03-20",
+        "inboundCitations": 5,
+        "redacted": [
+          "citation_text:[1964] 2 SCR 448",
+          "title-word:SIRSILK",
+          "title-word:ANDHRA",
+          "title-word:PRADESH"
+        ]
+      }
+    },
+    {
+      "id": "civil-3324310f",
+      "group": "civil",
+      "language": "en",
+      "query": "Rai [AIR 1963 SC 1203 : (1963) 1 SCR 456] this Court held that the High Court had no jurisdiction to entertain second appeal on findings of fact even if it was erroneous. In this connection, this Court observed as follows : (AIR pp. 1205-06, paras 5 & 7) ‘5. It is settled law that the High Court has no jurisdiction to entertain a second appeal on the ground of erroneous finding of fact. … *** 7. … As the two courts approached the evidence from a correct perspective and gave a concurrent finding of fact, the High Court had no jurisdiction to interfere with the said finding.’ To the same effect is another decision of this Court in V. Ramachandra A […] v. […] [AIR 1963 SC 302 : […] ] where the Court observed as follows : (AIR p. 306, para 12) ‘12.",
+      "goldJudgmentIds": ["3324310f-de6a-405f-9be1-229aa29f6570"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "926d99b2-ecf3-4749-add4-e2023ab8c820",
+        "citingCase": "LEHNA SINGH (D) BY LRS. versus GURNAM SINGH (D) BY LRS. & ORS.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2024-05-16",
+        "relationship": "cites",
+        "citedCase": "R. RAMACHANDRAN A YYAR 10-08-1962 versus RAMALINGAM CHETTIAR",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1962-08-10",
+        "inboundCitations": 7,
+        "redacted": [
+          "citation_text:(1963) 3 SCR 604",
+          "title-word:YYAR",
+          "title-word:RAMALINGAM",
+          "title-word:CHETTIAR"
+        ]
+      }
+    },
+    {
+      "id": "civil-a2ba332a",
+      "group": "civil",
+      "language": "en",
+      "query": "Once the integration of services in a newly formed State is finalized, there is no reason for a transitory, consequential or incidental provision like s. 84 of the Act to operate in perpetuity. For the reasons already stated, there is no basis for the submission that the supplemental, incidental or consequential provisions which the Parliament is competent to make while enacting a law under Articles 2 or 3 have an overriding effect for all times. On the plain words of ff Article 4 of the Constitution, a provision like s. 84 of the Act, or the directions issued thereunder are only supplemental incidental or con- (l) […] . • l • - ' SWARAN LATA v. UNION (Sen, J.) 961 sequential to the 'scheme of re-organiiation of services, which is con- A sequential upon the re-organisation of a State. They cannotoe given a wider effect than what is intended.",
+      "goldJudgmentIds": ["a2ba332a-33ee-454f-877e-c237b4fcccaa"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "1a26e1bb-a1ad-4da9-8d0a-589e99d6bae9",
+        "citingCase": "SWARAN LATA versus UNION OF INDIA & ORS .",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1979-01-16",
+        "relationship": "cites",
+        "citedCase": "UNION OF INDIA & ANR. versus P. K. ROY & ORS.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1967-11-09",
+        "inboundCitations": 18,
+        "redacted": ["citation_text:[1968]2 S.C.R. 186"]
+      }
+    },
+    {
+      "id": "civil-64de30b6",
+      "group": "civil",
+      "language": "en",
+      "query": "Shri Trivedi urged that facts in this case do not justify such a construction and the law does not warrant such an approach. We may say that Shri Trivedi mainly relied on the proposition that normally the Court has disregarded the separate legal entity of a Company only where the Company was formed or used to facilitate evasion of legal obligations. He referred us to the observations of this Court in […] Ltd. v. […] , […] & Anr., […] at 17. The facts of that case were, however, entirely different and it is useless to refer to them but at page 17 of the report, Chandrachud, C.J. speaking· for the Court quoted the observations in Andhra Pradesh State Road Transport Corpn. v. The I. T.O. & Anr.",
+      "goldJudgmentIds": ["64de30b6-4134-4f4d-b964-a175591fab8a"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "bb49f12a-c99e-4783-b3a6-65fc23cad306",
+        "citingCase": "STATE OF U.P. AND ORS. versus RENUSAGAR POWER CO. AND OTHERS",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1988-07-28",
+        "relationship": "cites",
+        "citedCase": "WESTERN COALFIELDS LTD. versus SPECIAL AREA DEVELOPMENT AUTHORITY, KORBA AND ANR.",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1981-11-26",
+        "inboundCitations": 8,
+        "redacted": [
+          "citation_text:[1982] 2\nSCR 1",
+          "title-word:WESTERN",
+          "title-word:COALFIELDS",
+          "title-word:SPECIAL",
+          "title-word:AREA",
+          "title-word:DEVELOPMENT",
+          "title-word:AUTHORITY",
+          "title-word:KORBA"
+        ]
+      }
+    },
+    {
+      "id": "civil-ffc1d859",
+      "group": "civil",
+      "language": "en",
+      "query": "The appellate court would normally not be justified in interfering with the exercise of discretion under appeal solely on the ground that if it had considered the matter at the trial stage it would have come to a contrary conclusion. If the discretion has been exercised by the trial court reasonably and in a judicial manner the fact that the appellate court would have taken a different view may not justify interference with the trial court’s exercise of discretion. After referring to these principles Gajendragadkar, J. in […] ( […] ) […] Ltd. v. […] [ […] : AIR 1960 SC 1156] : (SCR 721) “... These principles are well established, but as has been observed by Viscount Simon in Charles Osenton & Co. v. Jhanaton [1942 AC 130] ‘...",
+      "goldJudgmentIds": ["ffc1d859-4c38-40eb-b93a-df330a353c80"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "3317c21f-49a6-467f-97ba-44be7b2d3a3b",
+        "citingCase": "PUNJAB AND SIND BANK versus FRONTLINE CORPORATION LTD",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "2023-04-18",
+        "relationship": "cites",
+        "citedCase": "THE PRINTERS (MYSORE) PRIVATE LTD. versus POTHAN JOSEPH",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1960-04-27",
+        "inboundCitations": 11,
+        "redacted": [
+          "citation_text:(1960) 3 SCR 713",
+          "title-word:PRINTERS",
+          "title-word:MYSORE",
+          "title-word:PRIVATE",
+          "title-word:POTHAN",
+          "title-word:JOSEPH"
+        ]
+      }
+    },
+    {
+      "id": "civil-b079b6c7",
+      "group": "civil",
+      "language": "en",
+      "query": "We do not ihink that it is fair to pronounce a categorical opinion on such a matter before the evidence of the parties is taken so that its effects could be examined. In the case before us, the defendant had denied, inter alia, liability to pay anything to the plaintiff for an alleged supply of goods. It is only in cases where the defence is patently dishonest or so unreasonable that it could not reasonably be expected to succeed that the exercise of discretion by the Trial Court to grant leave unconditionally may be (I) (1901] 85 L.T. 262. (3) . A IR 1973. SC 76. (5) AIR 1965 SC 1698. (2) […] . (4) (1970] (2) SCR 368. ; '' I ) \\ • MECHELEC ENG. v. BASIC EQ. CORP. (Beg, J.) 1063 .questioned. · In the judgment of the High Court we are unable to find, A a ground' !if interference covered by Section 115 C.P.C. . In Smt. Kiranmoyee Dassi & Anr. v. Dr. J. Chatterjee('), Das. J.",
+      "goldJudgmentIds": ["b079b6c7-2c7d-4687-acc1-f56184a29cf2"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "f05b715f-f93e-45e8-9db5-d30afa46c077",
+        "citingCase": "MECHELEC ENGINEERS AND MANUFACTURCRS versus M/S. BASIC EQUIPMENT CORPORATION",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1976-11-01",
+        "relationship": "cites",
+        "citedCase": "M. L. SETHI versus R.P. KAPUR",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1972-07-19",
+        "inboundCitations": 6,
+        "redacted": ["citation_text:[1973] 1 S.C.R. 697"]
+      }
+    },
+    {
+      "id": "civil-8ac0dc06",
+      "group": "civil",
+      "language": "en",
+      "query": "V. Manchester Legal Aid Committee(') brought out the distinction between judicial and administrative acts very vividly in the following passage: \"The true view. as it seems to us, is that the duty to act judicially may ·arise in widely different circumstances which it would be impossible, and. indeed, inadvisable, to define exhaustively....... When, on the other hand, the decision is that of an administrative body and is actuat- ed in whole or in part by questions of policy. the duty to act judicially may arise in the course of arriving at that decision. Thus, if in order to arrive at the decision. the (') [1965] I S.C.R. 250. (') [1924] I K.B. 171. (') [1950] S.C.R. 621. (') […] . (') [193!] 2 K.B. 215. 1'1 [1952] 2 Q.ll. <13, 428. L/PlN)4SCf- 542 SUPREME COURT REPORTS Ll965) 3 8.0.B.",
+      "goldJudgmentIds": ["8ac0dc06-c765-4723-9882-03206a4076fd"],
+      "provenance": {
+        "method": "citation-edge",
+        "citingJudgmentId": "e2b7bdab-90e8-4846-9a6a-0f477eec3660",
+        "citingCase": "DWARKANATH, HINDU UNDIVIDED FAMILY versus INCOME-TAX OFFICER, SPECIAL CIRCLE, KANPUR ANDANR.",
+        "citingCourt": "Supreme Court of India",
+        "citingDate": "1965-03-29",
+        "relationship": "cites",
+        "citedCase": "P. J. IRANI versus THE STATE OF MADRAS",
+        "citedCourt": "Supreme Court of India",
+        "citedDate": "1961-04-21",
+        "inboundCitations": 19,
+        "redacted": ["citation_text:[1962] 2 S.C.R. 169"]
+      }
+    }
+  ]
+}

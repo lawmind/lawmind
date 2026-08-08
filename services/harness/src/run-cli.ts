@@ -14,7 +14,7 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 
-import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
+import { getEmbedder, getReranker, RERANKER_MODEL_ID, toVectorLiteral } from '@lawmind/embed';
 import postgres from 'postgres';
 
 import { assessReadiness, countCorpus, explainRefusal } from './corpus-readiness.ts';
@@ -88,9 +88,27 @@ async function main(): Promise<number> {
       return embedded ? toVectorLiteral(embedded.vector) : null;
     };
 
+    /**
+     * The reranker is OFF unless asked for, and that is the point of the flag.
+     *
+     * `docs/DATA_ADVANTAGE.md` §1d, written before any of it existed: build it
+     * behind the harness, not before it, and if it does not move the number on
+     * our own corpus it does not ship. A run with `HARNESS_RERANK=1` and a run
+     * without it differ in exactly one stage, so the difference between the two
+     * success@5 figures IS the reranker's contribution — not an impression of
+     * one.
+     */
+    const useGraph = process.env['HARNESS_GRAPH'] === '1';
+    if (useGraph) console.log('citation-graph expansion ON');
+    const useReranker = process.env['HARNESS_RERANK'] === '1';
+    const reranker = useReranker ? await getReranker() : null;
+    if (useReranker) console.log(`reranker ${RERANKER_MODEL_ID} (Apache-2.0)`);
+
     const scored: ScoredQuery[] = [];
     for (const q of queries) {
-      scored.push(await scoreQuery(sql, q, embedQuery));
+      scored.push(
+        await scoreQuery(sql, q, embedQuery, 20, reranker ? reranker.score : undefined, useGraph),
+      );
     }
 
     console.log('success@5 and precision@5, per query');

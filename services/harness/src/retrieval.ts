@@ -14,6 +14,7 @@
  * leakage — do go through the row-level path, in `harness-checks.ts`, because
  * those are about what is WRITTEN and rendered rather than about order.
  */
+import { expandByCitations } from '@lawmind/api/search/graph-expand';
 import { hybridSearch } from '@lawmind/api/search/retrieve';
 import type { Sql } from 'postgres';
 
@@ -81,13 +82,107 @@ export async function scoreQuery(
   q: HarnessQuery,
   embedQuery: (text: string) => Promise<string | null>,
   depth = 20,
+  rerank?: (query: string, passages: readonly string[]) => Promise<number[]>,
+  graph = false,
 ): Promise<ScoredQuery> {
   const vector = await embedQuery(q.query);
   const excluded = excludedFor(q);
   // Over-fetch by the number removed, so excluding the citing judgment does not
   // quietly shorten the list the advocate would have seen.
   const raw = await hybridSearch(sql, q.query, vector, {}, depth + excluded.size);
-  const results = raw.filter((r) => !excluded.has(r.judgmentId)).slice(0, depth);
+  let results = raw.filter((r) => !excluded.has(r.judgmentId)).slice(0, depth);
+
+  /**
+   * Citation-graph expansion, when asked for. **The only stage that can add a
+   * candidate**, which is why it is measured against `recallAt20` rather than
+   * against `successAt5`: if recall does not move, it did nothing, whatever
+   * success@5 says.
+   *
+   * **Suggestions take reserved slots; they are not appended.** The first
+   * attempt appended them and then truncated the list back to `depth`, so every
+   * suggestion was discarded before it was scored — the run came back bit-for-bit
+   * identical to the baseline, which is what a no-op looks like when it is
+   * indistinguishable from a null result. Worth recording: a change that
+   * measures as exactly zero is more often not running than not working.
+   *
+   * So the last `GRAPH_SLOTS` places of the candidate list are given to graph
+   * evidence, displacing the weakest text-similarity candidates. That is a real
+   * trade with a real cost, which is the point — if following citations is worth
+   * less than the 16th-ranked embedding match, the harness should say so.
+   *
+   * Entering at rank 16 cannot move success@5 on its own. **Graph and reranker
+   * are one combination, not two features**: expansion supplies an authority
+   * text similarity never found, and the cross-encoder is what can promote it
+   * into the top five. Measured together, and separately, against the baseline.
+   */
+  if (graph) {
+    const GRAPH_SLOTS = 5;
+    const suggestions = await expandByCitations(
+      sql,
+      results.map((r) => r.judgmentId),
+      GRAPH_SLOTS,
+    );
+    const known = new Set(results.map((r) => r.judgmentId));
+    const fresh = suggestions
+      .filter((s) => !known.has(s.judgmentId) && !excluded.has(s.judgmentId))
+      .slice(0, GRAPH_SLOTS);
+    if (fresh.length > 0) results = results.slice(0, Math.max(0, depth - fresh.length));
+    if (fresh.length > 0) {
+      const rows = await sql<
+        { id: string; case_title: string; operative: string | null; overruled_status: string }[]
+      >`
+        SELECT j.id, j.case_title, j.overruled_status::text AS overruled_status,
+               (SELECT c.chunk_text FROM judgment_chunks c
+                 WHERE c.judgment_id = j.id AND c.embedding IS NOT NULL
+                 ORDER BY c.chunk_index LIMIT 1) AS operative
+          FROM judgments j
+         WHERE j.id = ANY(${fresh.map((f) => f.judgmentId)})
+      `;
+      const byId = new Map(rows.map((r) => [r.id, r]));
+      for (const s of fresh) {
+        const row = byId.get(s.judgmentId);
+        if (!row) continue;
+        results.push({
+          judgmentId: row.id,
+          caseTitle: row.case_title,
+          neutralCitation: null,
+          reporterCitations: [],
+          court: '',
+          judgmentDate: '',
+          overruledStatus: row.overruled_status,
+          overruledByJudgmentId: null,
+          overruledParas: null,
+          overruledNote: null,
+          operativeParagraph: row.operative ?? row.case_title,
+          operativeParagraphNumber: null,
+        });
+      }
+      results = results.slice(0, depth);
+    }
+  }
+
+  /**
+   * Reranking reorders the SAME candidates. It cannot add one, which is why
+   * `recallAt20` is identical with and without it and `successAt5` is not —
+   * that pair of numbers is how the harness tells a reranking gain from a
+   * recall gain, and it is why both are reported.
+   *
+   * The passage handed to the cross-encoder is `operativeParagraph`: the
+   * paragraph the match sits in, cleaned of reporter typesetting. Not the whole
+   * judgment, which would be tens of thousands of tokens per candidate, and not
+   * the raw chunk, which carries marginal letters and hard-wrapped words that
+   * cost the model attention on noise.
+   */
+  if (rerank && results.length > 1) {
+    const scores = await rerank(
+      q.query,
+      results.map((r) => r.operativeParagraph),
+    );
+    results = results
+      .map((r, i) => ({ r, s: scores[i] ?? Number.NEGATIVE_INFINITY }))
+      .sort((a, b) => b.s - a.s)
+      .map((x) => x.r);
+  }
 
   const gold = new Set(q.goldJudgmentIds);
   const goldRanks: number[] = [];
