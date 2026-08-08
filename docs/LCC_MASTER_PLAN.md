@@ -240,6 +240,36 @@ missing is consent-gating and extraction, not instrumentation.
 
 ---
 
+# WORKSTREAM E2b — matter sharing binds only if the invitee already had an account
+
+**Found 8 Aug 2026 while fixing the sharee read path RCC caught.** The read
+path is fixed and shipped. This is the _second_ gap behind it, and it is not
+fixed:
+
+`createShare` resolves `invited_user_id` at invite time by matching the typed
+identifier against `users.bar_enrolment_number` or `users.phone`. If the
+invitee has no account yet it stores `null`, and the code comment says **"the
+share binds when they arrive."** Nothing binds it. Grepped: no path anywhere
+writes `invited_user_id` after insert.
+
+So: invite a colleague who has not signed up → they sign up → **they still
+cannot see the matter, permanently.** The invitation looks successful to the
+owner and does nothing.
+
+- [ ] **E2b.1** Bind pending shares at the moment a user gains an identifier —
+      `patchMe` in `auth/account.ts`, where `phone` and
+      `bar_enrolment_number` are set, and at profile creation.
+- [ ] **E2b.2** **Do NOT resolve access by identifier at read time.** It is the
+      tempting one-line fix and it is wrong: Indian mobile numbers are
+      reassigned, so a stranger who later receives that number would inherit
+      access to a matter. Bind once, at a precise auditable moment, and never
+      re-bind.
+- [ ] **E2b.3** Test: invite by phone before signup → sign up → access works.
+      And: binding happens once, so changing a phone number later does not
+      hand access to whoever receives the old one.
+
+---
+
 # WORKSTREAM C — Corpus completion
 
 ## C1 · IPC↔BNS mapping — the last open S1 criterion
