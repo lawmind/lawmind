@@ -142,6 +142,30 @@ export function classifyQuery(raw: string): ClassifiedQuery {
 }
 
 /**
+ * The comparison key for an exact citation lookup.
+ *
+ * **Deliberately cruder than `normaliseCitation`, and symmetric by
+ * construction:** everything that is not a letter or a digit is removed, on
+ * both sides of the comparison. `(2019) 4 S.C.C. 221`, `[2019] 4 SCC 221` and
+ * `(2019)4 SCC  221` all collapse to `20194SCC221`.
+ *
+ * **Why not reuse `normaliseCitation` here.** That function's rules — bracket
+ * conversion, whitespace collapsing, spacing after a closing paren — would have
+ * to be re-implemented in SQL to compare against a stored column, and a second
+ * implementation of a citation rule is exactly the drift `CLAUDE.md` forbids.
+ * One rule, expressible identically in JS and in Postgres, cannot drift.
+ *
+ * **Being more permissive is safe here and only here**, because the caller
+ * pins a result only when the lookup returns EXACTLY ONE row. A looser key that
+ * matches two judgments pins neither.
+ *
+ * Digits are untouched, so `221` and `212` remain different cases.
+ */
+export function citationLookupKey(citation: string): string {
+  return citation.toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+/**
  * Whether an exact lookup should be attempted BEFORE the hybrid pipeline runs.
  *
  * **A false answer here costs nothing** — the query falls through to the

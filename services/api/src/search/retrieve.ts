@@ -13,6 +13,8 @@
  */
 import type { Sql } from 'postgres';
 
+import { citationLookupKey, classifyQuery, warrantsExactLookup } from './query-shape.ts';
+
 import {
   cleanExtractedText,
   locateParagraph,
@@ -312,6 +314,55 @@ async function dense(
   return { ranked, bestChunk };
 }
 
+/**
+ * Exact citation lookup — the fast path a similarity pipeline should never own.
+ *
+ * When the query IS a citation there is exactly one right answer, and it lives
+ * in an indexed column. `docs/RETRIEVAL_ARCHITECTURE.md` §6b.2: embedding models
+ * are poor at digits, and `(2019) 4 SCC 221` and `(2019) 4 SCC 212` are
+ * different cases that sit almost on top of each other in vector space.
+ *
+ * **A miss costs nothing.** Returning null falls through to the hybrid pipeline
+ * that handles the query today, which is why the classifier is allowed to be
+ * strict. The asymmetry is the whole design: a missed citation is a slower
+ * correct answer, a wrongly-claimed one pins the wrong judgment at rank 1.
+ *
+ * Compared on the NORMALISED form, because `(2019) 4 S.C.C. 221` and
+ * `(2019) 4 SCC 221` are one citation typeset two ways —
+ * `@lawmind/ingest/citations` owns that rule and is not re-implemented here.
+ */
+async function exactCitation(
+  sql: Sql,
+  normalised: string,
+  filters: SearchFilters,
+): Promise<string | null> {
+  const key = citationLookupKey(normalised);
+  const rows = await sql<{ id: string }[]>`
+    SELECT j.id
+    FROM judgments j
+    WHERE (
+      upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = ${key}
+      OR EXISTS (
+        SELECT 1 FROM unnest(j.reporter_citations) AS rc
+        WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key}
+      )
+    )
+      ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
+      ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+      ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+    LIMIT 2
+  `;
+  /**
+   * **Two matches means we do not know**, so nothing is pinned. One citation
+   * resolving to two judgments is a corpus defect, and guessing which one the
+   * advocate meant is exactly the confident-wrong-answer this product cannot
+   * afford. Both still reach the advocate through the ordinary pipeline.
+   */
+  if (rows.length !== 1) return null;
+  return rows[0]!.id;
+}
+
 export async function hybridSearch(
   sql: Sql,
   query: string,
@@ -327,7 +378,30 @@ export async function hybridSearch(
     : { ranked: [] as Ranked[], bestChunk: new Map<string, string>() };
 
   const scores = rrf([sparseRanked, denseResult.ranked]);
-  const ordered = [...scores.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit);
+
+  /**
+   * A citation-shaped query pins its exact match at rank 1.
+   *
+   * Pinned rather than score-boosted: RRF scores are relative, and a boost large
+   * enough to guarantee rank 1 would be a magic number tuned against whatever
+   * the other rankers happened to return that day. An exact citation match is
+   * not "very relevant", it is **the answer**, and the code should say so.
+   *
+   * Everything else keeps its order and nothing is dropped — the pinned
+   * judgment is moved to the front of the list it was already in, or added to
+   * it. `CITATION_HARNESS.md`'s zero silent-drop threshold is untouched.
+   */
+  const shape = classifyQuery(query);
+  const pinned =
+    warrantsExactLookup(shape) && shape.citation !== null
+      ? await exactCitation(sql, shape.citation, filters)
+      : null;
+
+  const ordered = [...scores.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .filter(([id]) => id !== pinned)
+    .slice(0, pinned === null ? limit : Math.max(0, limit - 1));
+  if (pinned !== null) ordered.unshift([pinned, Number.POSITIVE_INFINITY]);
   if (ordered.length === 0) return [];
 
   const ids = ordered.map(([id]) => id);

@@ -7,7 +7,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { classifyQuery, warrantsExactLookup } from './query-shape.ts';
+import { citationLookupKey, classifyQuery, warrantsExactLookup } from './query-shape.ts';
 
 /* ------------------------------------------------------------- citations -- */
 
@@ -147,4 +147,28 @@ test('the classifier is pure — same input, same answer, no state carried', () 
   const q = '(2019) 4 SCC 221';
   assert.deepEqual(classifyQuery(q), classifyQuery(q));
   assert.deepEqual(classifyQuery(q), classifyQuery(q));
+});
+
+/* ------------------------------------------------- the exact-lookup key -- */
+
+test('every typesetting of one citation collapses to the same lookup key', () => {
+  const forms = ['(2019) 4 SCC 221', '(2019) 4 S.C.C. 221', '[2019] 4 SCC 221', '(2019)4 SCC  221'];
+  const keys = new Set(forms.map((f) => citationLookupKey(f)));
+  assert.equal(keys.size, 1, `one citation produced ${keys.size} keys: ${[...keys].join(' | ')}`);
+});
+
+test('the lookup key never merges two different cases', () => {
+  // The whole point. 221 and 212 must stay apart after any amount of stripping.
+  assert.notEqual(citationLookupKey('(2019) 4 SCC 221'), citationLookupKey('(2019) 4 SCC 212'));
+  assert.notEqual(citationLookupKey('AIR 1973 SC 1461'), citationLookupKey('AIR 1973 SC 1416'));
+});
+
+test('the key is exactly what Postgres computes — same rule, both sides', () => {
+  // The SQL runs upper(regexp_replace(x, '[^A-Za-z0-9]', '', 'g')). If this
+  // test and that expression ever disagree, exact lookup silently stops
+  // matching and every citation query quietly falls back to similarity.
+  const pg = (x: string) => x.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  for (const c of ['(2019) 4 S.C.C. 221', '2026 INSC 668', 'AIR 1973 SC 1461', '[1950] SCR 869']) {
+    assert.equal(citationLookupKey(c), pg(c), `${c} diverged from the SQL rule`);
+  }
 });
