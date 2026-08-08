@@ -77,12 +77,23 @@ our own bugs.
 
 `docs/TECHNICAL_MOAT.md` §5.
 
-- [ ] **Paragraph extraction for `overruled_in_part`** — unblocks 7 partial
-      overrulings (*Kharak Singh* ← *Puttaswamy*, *Danamma* ← *Vineeta Sharma*,
-      *Garware* ← *In Re Interplay*, *Queen's Educational* ← *New Noble*,
-      *National Insurance* ← *Mukund Dewangan*). **`partly_set_aside` is the state
-      a three-way classifier structurally cannot express.** Their Authority Check
-      may supply the paragraphs directly
+- [~] **Paragraph extraction for `overruled_in_part`** — extractor built, 20
+      tests, wired into the propagation. **It does NOT unblock the seven, and the
+      reason is a finding rather than a gap.**
+
+      It first found paragraphs for all seven and every one was wrong.
+      `[Para 129]` is the SCR headnote's own pinpoint into the **citing**
+      judgment; the overruling itself appears in a *Case Law Cited* list with
+      **no paragraph attribution at all**. We were one `--apply` from recording
+      *Vineeta Sharma*'s paragraph 129 as the dead paragraphs of *Danamma*.
+
+      Two refusals now catch that, and the corpus correctly returns **7 skipped**.
+      **The paragraphs are not in that region of the text.** They are either in
+      the body of the citing judgment where the overruling is actually reasoned —
+      which needs a different locator, not a wider window — or nowhere.
+
+      **Their Authority Check may supply them directly, which makes this a reason
+      to buy the licence rather than a reason to keep parsing.**
 - [ ] **The verification record** — 12+ months for anyone to copy, because it
       cannot be retrofitted onto logs that were never kept. Every field is already
       in `citation_checks` and **nothing renders it**
