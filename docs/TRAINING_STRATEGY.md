@@ -7,7 +7,33 @@ training asset actually is, and how it gets built.
 Binding on how data is captured from S1 onward, even though no training runs
 before ₹3L MRR.
 
+
 ---
+
+## CORRECTION — 8 Aug 2026: what a fine-tune will and will not buy
+
+**LegalCiteBench (arXiv 2605.10186) measured the thing this document assumes.**
+**SaulLM-54B is pretrained on legal text and still scores 3.77 / 100 on
+closed-book citation retrieval** — while topping the field on citation *error
+detection* at **75.59**. Across 21 models, closed-book retrieval never exceeds
+**6.80 / 100**, and **20 of 21 exceed a 94% Misleading Answer Rate** (a concrete
+citation offered instead of abstaining). Scale does not rescue it either:
+Llama-3.1-70B scores 3.82 against the 8B model's 1.47.
+
+**So the expected benefit of a fine-tune has to move columns.** It can improve
+how the model reads law, follows Indian drafting register, and judges whether a
+supplied citation supports a proposition — the thing SaulLM is genuinely best at.
+**It cannot make its citations real.** Only retrieval grounding does that, and
+`docs/CITATION_HARNESS.md` steps 2–3 already require the model to reference only
+judgment IDs handed to it.
+
+Nothing in the plan below is withdrawn. The claim that changes is the *reason* to
+do it: **a fine-tune is a quality-of-reasoning lever, never a citation-accuracy
+lever.** Anyone who reads this document as "fine-tuning will reduce
+hallucination" has read it wrong, and the benchmark is why.
+
+`docs/TECHNICAL_MOAT.md` §1 has the full numbers.
+
 
 ## 1 · The asset is the dataset, not the weights
 
