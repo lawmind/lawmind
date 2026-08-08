@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Clipboard from 'expo-clipboard';
 import { ChevronLeft, Search, SlidersHorizontal, X } from 'lucide-react-native';
 import Animated, {
   useAnimatedStyle,
@@ -13,14 +14,16 @@ import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
+import { Toast } from '../../components/Toast';
 import type { JudgmentDetail, JudgmentParagraph } from '../../api/contract';
 import { useJudgmentSpeech } from '../../hooks/useJudgmentSpeech';
-import { useHighlightsFor, useReadingStore } from '../../state/reading';
+import { useHighlightsFor, useReadingStore, type Highlight } from '../../state/reading';
 import { useLanguageStore } from '../../state/language';
 import { easing } from '../../theme/easing';
 import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
 import { findInJudgment, matchLabel, stepMatch } from './findInJudgment';
+import { MatterPicker } from './MatterPicker';
 import { ReadingControls } from './ReadingControls';
 import { ReadingSheet } from './ReadingSheet';
 
@@ -91,6 +94,8 @@ export function ReadingView({
   const [term, setTerm] = useState('');
   const [hitIndex, setHitIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
+  const [pickerFor, setPickerFor] = useState<JudgmentParagraph | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const textSize = useReadingStore((s) => s.textSize);
   const setProgress = useReadingStore((s) => s.setProgress);
@@ -100,6 +105,34 @@ export function ReadingView({
   const highlighted = useMemo(
     () => new Set(highlights.map((h) => h.paragraphNumber)),
     [highlights]
+  );
+
+  /**
+   * ONE PATH FOR EVERY SAVE, WHETHER OR NOT A MATTER WAS PICKED.
+   *
+   * `matterId` absent is always allowed — saving the passage on its own,
+   * `services/api/src/judgments/annotations.ts`'s own module note: "an
+   * advocate has every reason to highlight the paragraph that was set
+   * aside, and blocking that would teach them the product is broken rather
+   * than careful." Only the matter ATTACH can be refused, and the store
+   * reports that refusal here rather than swallowing it.
+   */
+  const saveHighlight = useCallback(
+    async (paragraph: JudgmentParagraph, matterId?: string) => {
+      if (paragraph.paragraphNumber === null) return;
+      haptics.commit();
+      const highlight: Highlight = {
+        judgmentId: judgment.judgmentId,
+        paragraphIndex: paragraph.paragraphIndex,
+        paragraphNumber: paragraph.paragraphNumber,
+        text: paragraph.text,
+        savedAt: new Date().toISOString(),
+        matterId,
+      };
+      const result = await addHighlight(highlight);
+      if (!result.ok) setToastMessage(result.message);
+    },
+    [addHighlight, judgment.judgmentId]
   );
 
   /**
@@ -595,6 +628,15 @@ export function ReadingView({
             onOpenCited={
               item.citesJudgmentId ? () => onOpenJudgment(item.citesJudgmentId!) : undefined
             }
+            onCopy={() => {
+              void Clipboard.setStringAsync(item.text);
+              setToastMessage('Copied.');
+            }}
+            onLinkCopy={() => {
+              void Clipboard.setStringAsync(`${judgment.caseTitle} ¶ ${item.paragraphNumber}`);
+              setToastMessage('Copied.');
+            }}
+            onPickMatter={item.paragraphNumber === null ? undefined : () => setPickerFor(item)}
             onSaveToMatter={
               /**
                * A HIGHLIGHT IS A CITATION, SO IT NEEDS A CITABLE PARAGRAPH.
@@ -602,18 +644,12 @@ export function ReadingView({
                * "¶ n". An unnumbered row has no n, and saving it under an index
                * would put a fabricated paragraph reference into a matter file.
                * The action is simply not offered there.
+               *
+               * NO MATTER ID HERE — this is the long-press shortcut, "save the
+               * passage on its own." The action row's own "Save to matter"
+               * button opens the picker (`onPickMatter`) instead.
                */
-              item.paragraphNumber === null
-                ? undefined
-                : () => {
-                    haptics.commit();
-                    addHighlight({
-                      judgmentId: judgment.judgmentId,
-                      paragraphNumber: item.paragraphNumber as number,
-                      text: item.text,
-                      savedAt: new Date().toISOString(),
-                    });
-                  }
+              item.paragraphNumber === null ? undefined : () => void saveHighlight(item)
             }
             paragraph={item}
             selected={selected === item.paragraphIndex}
@@ -655,12 +691,8 @@ export function ReadingView({
             currentNumber === null
               ? undefined
               : () => {
-                  addHighlight({
-                    judgmentId: judgment.judgmentId,
-                    paragraphNumber: currentNumber,
-                    text: judgment.paragraphs[current]?.text ?? '',
-                    savedAt: new Date().toISOString(),
-                  });
+                  const paragraph = judgment.paragraphs[current];
+                  if (paragraph) void saveHighlight(paragraph);
                 }
           }
           onTextSize={() => setSheetOpen(true)}
@@ -681,6 +713,16 @@ export function ReadingView({
         }}
         visible={sheetOpen}
       />
+
+      <MatterPicker
+        onDismiss={() => setPickerFor(null)}
+        onPick={(matterId) => {
+          if (pickerFor) void saveHighlight(pickerFor, matterId);
+        }}
+        visible={pickerFor !== null}
+      />
+
+      <Toast message={toastMessage} onDone={() => setToastMessage(null)} />
     </Screen>
   );
 }
@@ -694,6 +736,9 @@ function Paragraph({
   isCurrentHit,
   onLink,
   onSaveToMatter,
+  onPickMatter,
+  onCopy,
+  onLinkCopy,
   onOpenCited,
   onMeasure,
   showAnchor,
@@ -705,8 +750,12 @@ function Paragraph({
   highlighted: boolean;
   isCurrentHit: boolean;
   onLink: () => void;
-  /** Absent where the paragraph has no printed number to save it under. */
+  /** Absent where the paragraph has no printed number to save it under. Saves WITHOUT a matter. */
   onSaveToMatter?: () => void;
+  /** Opens the matter picker. Same nullability as `onSaveToMatter`. */
+  onPickMatter?: () => void;
+  onCopy: () => void;
+  onLinkCopy: () => void;
   onOpenCited?: () => void;
   /** Reports this row's measured HEIGHT once the list has laid it out. */
   onMeasure: (index: number, height: number) => void;
@@ -766,17 +815,21 @@ function Paragraph({
 
         {selected ? (
           <View style={styles.actions}>
-            <Pressable accessibilityRole="button" onPress={onSaveToMatter}>
+            <Pressable accessibilityRole="button" onPress={onPickMatter}>
               <View style={styles.actionSolid}>
                 <Text variant="ui">Save to matter</Text>
               </View>
             </Pressable>
-            <View style={styles.actionGhost}>
-              <Text variant="ui">Copy ¶ {paragraph.paragraphNumber}</Text>
-            </View>
-            <View style={styles.actionGhost}>
-              <Text variant="ui">Link</Text>
-            </View>
+            <Pressable accessibilityRole="button" onPress={onCopy}>
+              <View style={styles.actionGhost}>
+                <Text variant="ui">Copy ¶ {paragraph.paragraphNumber}</Text>
+              </View>
+            </Pressable>
+            <Pressable accessibilityRole="button" onPress={onLinkCopy}>
+              <View style={styles.actionGhost}>
+                <Text variant="ui">Link</Text>
+              </View>
+            </Pressable>
           </View>
         ) : null}
       </View>
