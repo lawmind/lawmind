@@ -858,3 +858,91 @@ value with no writer is how this gap was created in the first place.
 triggers and both PD-6 exceptions, run and observed. E1.1 is done and its FIRST
 VERSION PASSED WHILE TESTING NOTHING — caught only by an assertion that the
 simulated failure had actually occurred. E1.2 gets the same guard.
+
+---
+
+### [OPEN] Supreme Today prices at ₹5,000/yr for our exact user — and we have no answer there · LCC · 8 Aug 2026
+
+**Needs:** a decision on whether PD-13's tiers get a jurisdiction-scoped entry
+price, or whether we deliberately decline that segment.
+
+**Why it is not mine:** it is pricing, and PD-13 is settled. This does not reopen
+it — it reports that the ground under its justification moved twice.
+
+**The facts, verified from their own subscription page 8 Aug 2026:**
+
+| Supreme Today plan | Price/yr | AI? |
+| --- | --- | --- |
+| AI Legal Research & Writing (India) | ₹20,000 | yes, "unlimited" |
+| Keyword Search | ₹15,000 | no |
+| AI Combo State (SC + one HC) | ₹10,000 | yes |
+| **Keyword Combo State (SC + one HC)** | **₹5,000** | no |
+
+**₹5,000/yr is ₹417 a month.** A district practitioner who works in one High
+Court's jurisdiction gets the Supreme Court plus their own High Court, searchable,
+for that. `COMPETITIVE_TEARDOWN.md` §4 identifies solo and small-chamber
+practitioners in district and High Courts as exactly who we are for. Supreme Today
+has had a product priced for them for years, sold through legal booksellers.
+
+**And it is now two data points, not one.** `COMPETITIVE_TEARDOWN.md` §6 already
+flagged Prism Pro at ~₹1,250/mo effective against `COMPETITIVE.md`'s SCC Online
+anchor of ~₹5,000/mo. Supreme Today's AI plan is ₹1,667/mo. **The anchor for AI
+legal research specifically is now roughly 3–4× below what `COMPETITIVE.md`
+assumes**, and two independent incumbents sit there.
+
+**One thing that is not a pricing question and is worth acting on regardless:**
+their entire comparison asset — both screenshots the founder supplied — attacks
+**credit metering**. "Unlimited" is their headline against a credit-based rival.
+Whatever the tiers become, **a credit meter is a competitive liability in this
+market.**
+
+**What was built anyway:** nothing here needs a decision to proceed — the
+teardown, the verified pricing table and the strategy are in
+`docs/COMPETITOR_SUPREME_TODAY.md`, and the engineering items it produced
+(treatment propagation, the citator report) are done and committed.
+
+**Cost if never resolved:** we launch above the price the segment we designed for
+already pays, against an incumbent with thirty years of trust in it.
+
+---
+
+### [OPEN] Is the verification RECORD a product, or a feature? · LCC · 8 Aug 2026
+
+**Needs:** a yes/no on building a per-citation verification record an advocate can
+attach to a filing.
+
+**Why it is not mine:** it is not one of `PRODUCT_BRIEF.md`'s four features, and
+that file's own rule is that anything outside them is an ask, not a plan.
+
+**Why I am asking rather than dropping it.** *Pooja Ramesh Singh v. Jammu and
+Kashmir Bank Ltd.*, **2026 INSC 668, 2 July 2026** (Narasimha and Aradhe JJ) held
+that a decision resting on hallucinated material is *"no decision in the eyes of
+the law"* and must be set aside *"even if an iota"* of it entered, and that citing
+such judgments without verification *"is a misconduct on the part of an
+advocate."* Courts were directed to zero tolerance. On 13 Feb 2026 a separate
+bench put it plainly: *"You should have cross verified. That is the duty of the
+lawyer."*
+
+The standard is **verification per citation, by the advocate** — not "used a good
+database". **Nobody in this market, Supreme Today included, gives an advocate
+anything they could show a judge to demonstrate they verified.**
+
+**Every field is already stored.** `citation_checks` holds
+`verification_state`, `verified_by_source`, `shown_to_user`,
+`overruled_status_shown`, `surface`, `match_confidence`, `created_at` — and
+`verified_by_source = 'ecourts'` means a named human vouched. **Nothing renders
+any of it as a record.**
+
+**The strategic point:** their authority is institutional, ours would be
+evidential. Only one of those is what the Court asked for. It reframes what we
+sell from research to indemnity, which is the argument
+`COMPETITIVE_TEARDOWN.md` §4 already reaches on other grounds.
+
+**Two questions for the users who told you their citations are accurate**, because
+their answers decide whether this is a feature or the product: do they check the
+citation before filing, or trust the tool? And has a judge ever asked them how
+they verified?
+
+**Cost if never resolved:** we hold the only per-citation verification pipeline in
+the market and ship it as an invisible internal detail, in the month the Supreme
+Court made it a professional obligation.
