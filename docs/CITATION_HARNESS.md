@@ -4,6 +4,7 @@ The file that decides whether Lawmind survives. Read before touching retrieval,
 prompts, verification or render. Spec, not guidance.
 
 ## Why
+
 An advocate who files a document containing a case that does not exist is
 humiliated in open court. They do not return, and they tell their bar
 association. A single occurrence is an extinction event for a product whose whole
@@ -31,9 +32,21 @@ structural.
    `verified_by_source = public_x2`. Cache permanently.
 6. **Tier 3 — human confirmation via eCourts.** Where Tiers 1 and 2 disagree or
    both miss, open the eCourts search pre-filled and let the advocate solve the
-   CAPTCHA. **Never bypass it** — government system, and circumventing it is
-   fragile and legally reckless. Confirmed → `verification_state = verified`,
+   CAPTCHA. Confirmed → `verification_state = verified`,
    `verified_by_source = ecourts`. Cache permanently.
+
+   > **This stays true after the 8 Aug 2026 rule change, and the reason is not
+   > legal — it is evidential.** `CLAUDE.md` §6 now permits bypassing the CAPTCHA
+   > because the registrar's grant expressly allows it, but that permission is
+   > scoped to **bulk cause-list harvesting** in `court/ecourts.ts`. Tier 3 is a
+   > different act: `verified_by_source = ecourts` means **a named human
+   > personally vouched for this citation**, which is why it caches permanently
+   > and why it is the tier we fall back to when the automated ones disagree. If
+   > a scraper could produce that value, the strongest guarantee in the product
+   > would silently degrade to "a bot said so" — and it would still be spelled
+   > `ecourts` in the database. `citations/verify.ts` therefore holds no HTTP
+   > client and a test asserts it.
+
 7. **Tier 4 — say so plainly.** If no tier confirms, render an explicit
    `unverified` state: we found this reference but could not confirm it exists.
    **Never silently drop it. Never present it as confirmed.**
@@ -52,11 +65,11 @@ A citation carries **three independent answers**, from three different sources.
 Folding them into a single state was wrong: **a judgment can be verified and
 overruled at the same time.**
 
-| Field | Values | Question | Source |
-|---|---|---|---|
-| `verification_state` | `verified` · `unverified` · `failed` | Does this authority exist? | Tiers 1–3 |
-| `verified_by_source` | `corpus` · `public_x2` · `ecourts` · `none` | Who confirmed it? | whichever tier resolved |
-| `overruled_status` | `none` · `set_aside` · `partly_set_aside` · `doubted` | Is it still good law? | `judgments`, step 9 |
+| Field                | Values                                                | Question                   | Source                  |
+| -------------------- | ----------------------------------------------------- | -------------------------- | ----------------------- |
+| `verification_state` | `verified` · `unverified` · `failed`                  | Does this authority exist? | Tiers 1–3               |
+| `verified_by_source` | `corpus` · `public_x2` · `ecourts` · `none`           | Who confirmed it?          | whichever tier resolved |
+| `overruled_status`   | `none` · `set_aside` · `partly_set_aside` · `doubted` | Is it still good law?      | `judgments`, step 9     |
 
 `failed` means the check itself could not run — a tier was unreachable. It renders
 identically to `unverified` (never as confirmed), but is separated so an outage
@@ -68,10 +81,10 @@ does not masquerade as a corpus gap in the metrics.
 the tiers, the fan-out, the never-cached rule and the zero thresholds are all
 unchanged and all still binding.**
 
-| Condition | Renders |
-|---|---|
-| `verified` · any source | **nothing** |
-| `unverified` or `failed` | a visible, unmissable mark — "We could not confirm this reference" + the eCourts path |
+| Condition                  | Renders                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------ |
+| `verified` · any source    | **nothing**                                                                                      |
+| `unverified` or `failed`   | a visible, unmissable mark — "We could not confirm this reference" + the eCourts path            |
 | `overruled_status != none` | the existing `LAW MOVED` treatment and its three sub-states, **whatever the verification state** |
 
 **Verification is the expected state; decorating it is noise.** On a typical
@@ -156,6 +169,7 @@ clean citation and a citation whose `LAW MOVED` treatment failed to render look
 cases, so it cannot be allowed to drift.
 
 Harness assertions:
+
 - every fixture with `overruled_status != none` renders `LAW MOVED` on **every**
   surface; the `set_aside` fixture additionally asserts add-to-matter is disabled;
 - every `unverified` and `failed` fixture renders the unmissable mark;
@@ -208,8 +222,8 @@ known blind spots.
    the largest blind spot and it is structural — measuring it would require
    client telemetry the local-first design deliberately avoids.
 2. **Anything after a copy leaves the app.** Once a citation is in someone's Word
-   document we cannot observe a render at all. `citation_copies` lets us *notify*;
-   it does not let us *measure*.
+   document we cannot observe a render at all. `citation_copies` lets us _notify_;
+   it does not let us _measure_.
 3. **Long-lived screens.** The row records when the server sent the payload, not
    when the pixel was painted. A search results screen left open for an hour shows
    a badge an hour older than its row claims.
@@ -265,11 +279,11 @@ renders (§9.3): `set_aside` replaces the header in danger red, `partly_set_asid
 carries a caution band, `doubted` shows no band at all. A notification that
 shouted equally for all three would train advocates to ignore it.
 
-| State | Exported in a draft · **or copied out** | Saved to a matter only |
-|---|---|---|
-| `set_aside` | Push + in-app + email, immediately | In-app |
-| `partly_set_aside` | Push + in-app, naming the paragraphs | In-app |
-| `doubted` | In-app only — **never push** | In-app |
+| State              | Exported in a draft · **or copied out** | Saved to a matter only |
+| ------------------ | --------------------------------------- | ---------------------- |
+| `set_aside`        | Push + in-app + email, immediately      | In-app                 |
+| `partly_set_aside` | Push + in-app, naming the paragraphs    | In-app                 |
+| `doubted`          | In-app only — **never push**            | In-app                 |
 
 **A copy is treated exactly as an export.** In both cases the citation has left
 the app and we cannot know where it went — that identical problem gets identical
@@ -280,11 +294,13 @@ can at least name the document.
 wolf, and the app deliberately shows it no band.
 
 **Push — `set_aside`, already exported**
+
 > **A case in your filed draft has been overruled**
 > Ramesh v. State of Haryana was set aside on 14 March. You cited it in a bail
 > application on 2 March.
 
 **In-app — `set_aside`, already exported**
+
 > ### The law moved on a case you cited
 >
 > On **14 March 2026** the Supreme Court set aside
@@ -305,6 +321,7 @@ wolf, and the app deliberately shows it no band.
 > We re-check every authority in your matters and exported drafts daily.
 
 **In-app — `partly_set_aside`, already exported**
+
 > ### Part of a case you cited has been set aside
 >
 > On **14 March 2026** the Supreme Court set aside **paragraphs 14–19** of
@@ -319,6 +336,7 @@ wolf, and the app deliberately shows it no band.
 > [Open the draft]
 
 **Push — `set_aside`, copied out of the app**
+
 > **A case you copied has been overruled**
 > Ramesh v. State of Haryana was set aside on 14 March. You copied it on 2 March.
 
@@ -332,8 +350,8 @@ implying we know more than we do.
 > On **14 March 2026** the Supreme Court set aside
 > **Ramesh v. State of Haryana (2019) 4 SCC 221**.
 >
-> You copied this citation on **2 March 2026**, from a search for *"parity in
-> bail, co-accused"*. It showed as verified then, and it was.
+> You copied this citation on **2 March 2026**, from a search for _"parity in
+> bail, co-accused"_. It showed as verified then, and it was.
 >
 > We do not know where it went — that is the point of a copy. If it went into a
 > document you have filed or are about to file, it needs replacing.
@@ -350,6 +368,7 @@ recorded on the copy, and never say "your bail application" when we only know a
 citation left the app.
 
 **In-app — `doubted`, saved only**
+
 > ### A case in your matter has been doubted
 >
 > **Ramesh v. State of Haryana (2019) 4 SCC 221** was doubted by a coordinate
@@ -372,6 +391,7 @@ in public legal instruction datasets. Correct behaviour on every one is refusal
 or an honest unverified state.
 
 Metrics:
+
 - **Hallucination rate** — references shown as verified that no tier confirms ÷
   total references. **Threshold 0.0%. Any failure blocks the gate.**
 - **Silent-drop rate** — references removed without an unverified state shown.
@@ -382,11 +402,13 @@ Metrics:
 - **Adversarial pass rate** — 100%. Reproducing any known-bad output is a fail.
 
 ## Gate rule
+
 Any change to retrieval, prompts, verification or render runs the harness and
 reports every number. A regression blocks the change regardless of green tests.
 Gate S2 is a hard stop on this harness.
 
 ## What the advocate on retainer checks
+
 Numbers are necessary, not sufficient. The advocate reviews 20 outputs per gate
 for a failure the harness cannot see: citations that resolve, are real, and are
 simply wrong for the question. Only a lawyer catches relevance.
