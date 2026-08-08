@@ -42,6 +42,28 @@ Our daily loop — cause list → briefing → draft → share — is the thing 
 has. An incumbent can add a corpus; adding a workflow means changing what they
 sell.
 
+> **CORRECTED 8 Aug 2026 — "nobody sells a workflow" is no longer true.**
+>
+> **Bharat.Law sells exactly that**, and describes itself as *"the only AI legal
+> research tool built exclusively for Indian law that combines **live court
+> tracking** with **source-verified citations** in a single product"* — which is
+> Tier A and Tier B in one sentence. Their co-founder is an **Advocate-on-Record
+> at the Supreme Court**. `COMPETITIVE_TEARDOWN.md` §8 has the teardown.
+>
+> **What survives the correction, and it is most of the paragraph.** The
+> *incumbents* still sell databases: Supreme Today, SCC Online and Manupatra all
+> do, and for a 58-year-old publisher adding a workflow really does mean changing
+> what they sell. What has changed is that a **new entrant** arrived with the
+> workflow already in it, so "no incumbent has it" is now an argument about
+> incumbents rather than about the market.
+>
+> **The differentiator moved down a level.** It is no longer *having* a workflow;
+> it is what the workflow can prove. Bharat.Law's stated safe behaviour when a
+> citation cannot be verified is a *"not found"* response — a silent drop, which
+> `CITATION_HARNESS.md` forbids at a zero threshold. After *Pooja Ramesh Singh*
+> an advocate must **demonstrate** verification, and an absence demonstrates
+> nothing.
+
 ### 3 · Verification is now compliance, not a feature
 India in 2026 has a **Supreme Court misconduct standard for unverified
 citations**, and advocates are being cautioned about High Court cost orders.

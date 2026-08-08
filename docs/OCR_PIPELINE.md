@@ -58,3 +58,48 @@ ten-page order is not a synchronous request.
 The same pipeline processes scanned judgments during ingest. Some older High
 Court judgments in the AWS datasets are scans. Those pass through OCR before
 chunking and carry `ocr_confidence` so retrieval can down-rank uncertain text.
+
+---
+
+## CORRECTION — 8 Aug 2026: the engines named below are at the benchmark floor
+
+**arXiv 2606.29213 (2026), "Can OCR-VLMs Read Devanagari?"** benchmarked ten
+systems on **300 real printed scans**, and the result invalidates the basis for
+the choice recorded in this file:
+
+| System | chrF++ on REAL scans |
+| --- | --- |
+| Gemini 2.5 Flash | 86.3 |
+| Claude Opus 4.7 | 82.2 |
+| **Qwen3-VL-8B (open, Apache-2.0, one 24 GB GPU)** | **75.2** |
+| GPT-5.5 | 58.5 |
+| **EasyOCR (classical)** | **58.3** |
+| olmOCR-7B | 40.5 |
+
+**On clean rendered text all ten score 91–98.** On real scans **nine of ten
+collapse** and the field spreads **76 points**. `paddleocr` and `tesseract` are
+classical engines of the same family as EasyOCR, and every vendor demo — ours
+included, if we are not careful — is clean text.
+
+**The replacement, and the reason is privacy before accuracy.** `Qwen3-VL-8B` is
+Apache-2.0 and runs on a single 24 GB GPU. `CLAUDE.md` §5 routes uploaded
+documents as sensitive-class — pseudonymise, then Claude, one document per call —
+and OD-6's countersigned DPA is still owed before uploads ship. **A self-hosted
+OCR-VLM means the document never leaves at all**, which is better than
+pseudonymisation because nothing is sent, and it is a claim no competitor routing
+to a frontier API can make.
+
+`dots.ocr` (MIT) is explicitly stronger on Devanagari than Latin/CJK-trained
+models. **Surya's repo is Apache-2.0 but its weights have historically carried a
+separate commercial term — verify before use, do not assume the repo licence
+covers them.**
+
+**Two things this does not change.** `ocr_engine` stays an enum and gains a value
+rather than being repurposed — the `ecourts_bulk` lesson. And **OCR output is
+still never trusted silently**: the advocate confirms extracted fields before
+anything saves, because a silently wrong hearing date is a missed hearing. A
+better engine raises the ceiling; it does not remove the confirmation step.
+
+**Nothing has been rebuilt yet.** This records that the file's premise is wrong,
+so nobody builds on it. `docs/CURRENT_PLAN.md` §3 carries the work, and it must
+be **measured on real degraded scans, never on clean text**.
