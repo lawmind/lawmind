@@ -1193,3 +1193,107 @@ it **as a human**, and run our 30-query harness and five-case adversarial set
 against them by hand. Automated querying of their service would breach their
 terms and is the same idea in a lab coat. And the output is evidence for our
 decisions, not marketing — **cite the benchmark, never the competitor.**
+
+---
+
+### [PENDING — awaiting their quote] A LICENSED arrangement with Supreme Today · founder in talks · 8 Aug 2026
+
+**Status:** the founder asked Supreme Today directly whether we may route through
+them. **They are quoting a monthly rupee figure within a day.** If it lands inside
+budget, the founder will confirm.
+
+**This supersedes the refusal recorded above, and the distinction is the whole
+point.** What I declined was *unauthorised* proxying — using a per-seat
+subscription as an undeclared pipe. **A negotiated, paid, written licence is the
+opposite of that**, and it is the same shape as the eCourts grant: a bounded
+permission, in writing, from the party entitled to give it. The founder asking
+them was a better move than my analysis, which assumed the answer without asking.
+
+**None of the objections to the unlicensed version survive except one — and that
+one gets worse, not better.** Set out below so the contract can be negotiated
+against it rather than discovered afterwards.
+
+#### 1 · CHANGE THE ASK: bulk licence, not request routing
+
+**If we proxy live queries, Supreme Today sees every search our users make.**
+
+That hands our most direct incumbent competitor: our real user count and growth
+rate, our users' practice areas, and — the serious one — **individual advocates'
+research patterns, which reveal case strategy before it is filed.** An advocate
+researching anticipatory bail for a named section on a Tuesday is disclosing
+something about a live matter. `CLAUDE.md` §5 resolves ambiguity to
+sensitive-class, and a query is closer to a matter than to a judgment.
+
+**Ask instead for a data licence: a feed or periodic dump we ingest into our own
+corpus.** Same content, and they never see a single user. It also removes the
+latency of a third-party hop from a 3-second request budget, and it keeps working
+if their servers are down.
+
+**If they will only sell request routing, that is a materially worse product and
+should be priced as one.**
+
+#### 2 · The dependency is on a COMPETITOR, and it compounds
+
+`COMPETITIVE_TEARDOWN.md` §2 already flags the supplier-competitor conflict with
+IndianKanoon as an uncosted supply risk. This is that risk with the most direct
+incumbent in the market. Once our product depends on their feed, **they choose
+the renewal price**, and they can read our dependence from the invoice.
+
+Negotiate for it now, not at renewal: **a multi-year price cap or a fixed renewal
+formula**, and a **wind-down clause** — what we may keep and for how long if
+either side walks. `ecourts_bulk` exists because a permission that expires must
+revert behaviour automatically rather than by someone remembering; a licence
+needs the same property.
+
+#### 3 · What to buy, in order of what it is actually worth
+
+1. **The headnotes and Authority Check treatment data.** This is the moat
+   `COMPETITOR_SUPREME_TODAY.md` identified as uncopyable at speed — forty years
+   of editorial work. **A licence is the only lawful way to get it**, and it is
+   worth more than raw judgments, which we already have 38,341 of and can get
+   17.8M more of free from AWS Open Data.
+2. **Tribunal coverage** — NCLT, NCLAT, ITAT, CESTAT, DRT and the rest, where
+   `DATA_ADVANTAGE.md` §2g found the only alternatives are barred
+   scraper-resellers.
+3. Raw judgment text. **Worth close to nothing** — free from AWS and e-SCR. Do
+   not pay for it.
+
+**Ask explicitly whether the licence covers DISPLAY to our users, CACHING in our
+database, and DERIVED works** (embeddings, extraction, a citator built partly on
+their treatment data). A licence to *query* is not a licence to *store*, and our
+whole architecture renders from our own row.
+
+#### 4 · The schema consequence, and it is not optional
+
+Licensed content is **not** `corpus` (we do not hold it), **not** `ecourts` (no
+human vouched), and **not** `public_x2` (it is one source, not two agreeing).
+
+It needs **its own `verified_by_source` value**. This is exactly the
+`ecourts_bulk` lesson from this morning: give a new kind of assertion the same
+name as an existing one and the product's strongest guarantee degrades silently,
+spelled correctly, with no test failing. **One migration, before the first row is
+written, not after.**
+
+And a licensed source is a **third-party assertion**, so it ranks below
+`public_x2` — which is two independent sources agreeing — and above `corpus`
+only if their editorial process is genuinely stronger than our own holding. That
+ordering is a real decision and belongs in `CITATION_HARNESS.md`.
+
+#### 5 · What does NOT change
+
+- **Render from our own database row.** If we cache their content, we cache it
+  into our schema and render from there.
+- **Their headnote may only be shown if the licence says so, in writing.**
+- **Three independent tiers stay three.** A licensed feed is a new source, not a
+  replacement for cross-checking — a single curated database cannot catch a
+  systematic error inside itself, which is the whole reason tier 2 requires two
+  sources to agree.
+
+**What was built anyway:** nothing that assumes this. The `verified_by_source`
+boundary in `services/api/src/citations/source-strength.ts` is exhaustive over the
+column, so adding a licensed value is a compile error until it is handled —
+which is the behaviour we want.
+
+**Cost if it lands and we have not thought about it:** we pay monthly for raw
+judgments we already have free, hand a competitor our users' research patterns,
+and discover at renewal that we cannot leave.

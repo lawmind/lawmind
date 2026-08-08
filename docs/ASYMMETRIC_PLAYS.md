@@ -45,6 +45,27 @@ and they would be right to.
 > as a human, and benchmark them.** That is ordinary competitive research and it
 > is already on the build queue.
 
+> ### UPDATE, same day — the founder asked them, and they are quoting a price
+>
+> **Everything above applies to *unauthorised* proxying and only to that.** The
+> founder put the question to Supreme Today directly; they are quoting a monthly
+> figure. **A negotiated, paid, written licence is the opposite of the act
+> described above** — it is the same shape as the eCourts grant: a bounded
+> permission, in writing, from the party entitled to give it.
+>
+> Asking was the better move, and it is worth recording that it beat the
+> analysis: §0 reasoned carefully from the assumption that the answer was no,
+> and never tested it.
+>
+> **One objection survives the licence and gets worse under it.** If we route
+> live queries, they see every search our users make — user count, growth,
+> practice areas, and individual advocates' research patterns, which disclose
+> case strategy before filing. **Ask for a data licence, not request routing.**
+> Same content, and they never see a user.
+>
+> Full terms to negotiate against — what to buy, what it is worth, the schema
+> consequence, and the wind-down clause — are in `docs/FOUNDER_QUEUE.md`.
+
 ---
 
 ## 1 · THE BIG ONE — be the last step before filing, for everybody's users
