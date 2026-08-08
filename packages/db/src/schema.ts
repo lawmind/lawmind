@@ -201,6 +201,18 @@ export const alertKindEnum = pgEnum('alert_kind', [
 // briefing's "since yesterday" block and nowhere else — PD-6.
 export const alertSeverityEnum = pgEnum('alert_severity', ['immediate', 'batched']);
 
+export const disputeStatusEnum = pgEnum('dispute_status', ['open', 'upheld', 'rejected']);
+
+export const ocrSourceTypeEnum = pgEnum('ocr_source_type', ['pdf_scanned', 'image', 'camera']);
+export const ocrEngineEnum = pgEnum('ocr_engine', ['paddleocr', 'tesseract']);
+export const ocrJobStatusEnum = pgEnum('ocr_job_status', [
+  'queued',
+  'processing',
+  'complete',
+  'failed',
+  'needs_review',
+]);
+
 /* ----------------------------------------------------------------- tables -- */
 
 export const users = pgTable('users', {
@@ -942,6 +954,79 @@ export const alerts = pgTable(
     index('alerts_user_unread_idx')
       .on(t.userId)
       .where(sql`${t.readAt} IS NULL`),
+  ],
+);
+
+/**
+ * **The trust feedback loop. Outranks everything else in the admin.**
+ *
+ * Documented in `SCHEMA_TRUTH.md` and referenced throughout `ADMIN_SURFACE.md`
+ * and `API_CONTRACTS.md` since before this table existed — `citationFanouts`'s
+ * trigger enum carried `dispute_upheld` from its own first migration (0016).
+ * No migration ever created this table until `0020_disputes_and_ocr_jobs.sql`
+ * (8 Aug 2026), which `admin/disputes.ts` surfaced by being the first code to
+ * query it.
+ *
+ * Upholding is a FAN-OUT WRITE, not a status change: it calls the same
+ * `applyOverruledChange` the nightly re-check calls. This table only records
+ * the dispute's own lifecycle.
+ */
+export const citationDisputes = pgTable(
+  'citation_disputes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    reportedByUserId: uuid('reported_by_user_id')
+      .notNull()
+      .references(() => users.id),
+    citationCheckId: uuid('citation_check_id').references(() => citationChecks.id),
+    judgmentId: uuid('judgment_id').references(() => judgments.id),
+    claim: text('claim').notNull(),
+    status: disputeStatusEnum('status').notNull().default('open'),
+    resolvedByUserId: uuid('resolved_by_user_id').references(() => users.id),
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+    /** The field-level fix written to the corpus — jsonb, not typed columns. */
+    correction: jsonb('correction'),
+    fanoutId: uuid('fanout_id').references(() => citationFanouts.id),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('citation_disputes_status_created_at_idx').on(t.status, t.createdAt),
+    index('citation_disputes_judgment_id_idx').on(t.judgmentId),
+  ],
+);
+
+/**
+ * **"`confirmed_by_user` gates use. OCR output is never trusted silently."**
+ * Nothing derived from a job is written to a matter until
+ * `POST /ocr/jobs/:id/confirm` (still SPECCED) is called. Same history as
+ * `citationDisputes` above — documented since before it existed, created in
+ * `0020_disputes_and_ocr_jobs.sql`.
+ */
+export const ocrJobs = pgTable(
+  'ocr_jobs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    matterId: uuid('matter_id').references(() => matters.id),
+    sourceType: ocrSourceTypeEnum('source_type').notNull(),
+    storageKey: text('storage_key').notNull(),
+    engine: ocrEngineEnum('engine').notNull(),
+    detectedScript: text('detected_script').array(),
+    status: ocrJobStatusEnum('status').notNull(),
+    extractedText: text('extracted_text'),
+    extractedFields: jsonb('extracted_fields'),
+    confidenceOverall: numeric('confidence_overall', { precision: 4, scale: 3 }),
+    lowConfidenceBlocks: jsonb('low_confidence_blocks'),
+    confirmedByUser: boolean('confirmed_by_user').notNull().default(false),
+    error: text('error'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('ocr_jobs_user_id_status_idx').on(t.userId, t.status),
+    index('ocr_jobs_matter_id_idx').on(t.matterId),
   ],
 );
 

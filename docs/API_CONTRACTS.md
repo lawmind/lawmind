@@ -145,23 +145,23 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `GET /admin/llm-costs` | SPECCED |
-| `GET /admin/citations` | SPECCED |
-| `GET /admin/ocr-queue` | SPECCED |
-| `GET /admin/users` | SPECCED |
-| `PATCH /admin/users/:id/enrolment` | SPECCED |
-| `GET /admin/audit` | SPECCED |
-| `GET /admin/platform` | SPECCED |
-| `POST /admin/platform/maintenance` | SPECCED |
-| `POST /admin/platform/kill-switches/:key` | SPECCED |
-| `POST /admin/platform/flags/:key` | SPECCED |
+| `GET /admin/llm-costs` | BUILT |
+| `GET /admin/citations` | BUILT |
+| `GET /admin/ocr-queue` | BUILT |
+| `GET /admin/users` | BUILT |
+| `PATCH /admin/users/:id/enrolment` | BUILT |
+| `GET /admin/audit` | BUILT |
+| `GET /admin/platform` | BUILT |
+| `POST /admin/platform/maintenance` | BUILT |
+| `POST /admin/platform/kill-switches/:key` | BUILT |
+| `POST /admin/platform/flags/:key` | BUILT |
 | `GET /admin/cause-lists` | BUILT |
 | `POST /admin/cause-lists/:id/retry` | BUILT |
 | `POST /admin/cause-lists/:id/escalate` | BUILT |
-| `GET /admin/disputes` | SPECCED |
-| `GET /admin/disputes/:id` | SPECCED |
-| `POST /admin/disputes/:id/uphold` | SPECCED |
-| `POST /admin/disputes/:id/reject` | SPECCED |
+| `GET /admin/disputes` | BUILT |
+| `GET /admin/disputes/:id` | BUILT |
+| `POST /admin/disputes/:id/uphold` | BUILT |
+| `POST /admin/disputes/:id/reject` | BUILT |
 | `GET /alerts` | BUILT |
 | `POST /alerts/:id/read` | BUILT |
 | `GET /me/alert-settings` | BUILT |
@@ -836,11 +836,13 @@ POST /admin/platform/flags/:key       { enabled, rolloutPercent }
      → { flag }
 ```
 
-Five kill switches, fixed set — `search` · `drafting` · `briefings` ·
-`ocr_intake` · `signups`. `:key` is validated against that set; an unknown key is
-a 400, never an implicit create. A disabled feature returns the app's honest
-unavailable state, **never a stale cached answer** — the same rule as an AI
-outage.
+**Six** kill switches, fixed set — `search` · `drafting` · `briefings` ·
+`ocr_intake` · `signups` · `ecourts_harvest` *(joined the set 7 Aug 2026 —
+`SCHEMA_TRUTH.md#platform_config`, database CHECK constraint
+`platform_config_kill_switch_keys`)*. `:key` is validated against that set; an
+unknown key is a 400, never an implicit create. A disabled feature returns the
+app's honest unavailable state, **never a stale cached answer** — the same rule
+as an AI outage.
 
 **`reason` is mandatory on every kill-switch toggle** and is written to the
 ledger. A switch thrown at 3am with no reason is unreconstructable by the person

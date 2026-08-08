@@ -1,6 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { requestId } from 'hono/request-id';
 
+import { auditQuery, listAudit } from './admin/audit.ts';
 import {
   causeListQuery,
   escalateBody,
@@ -8,6 +9,28 @@ import {
   listCauseLists,
   retryCauseList,
 } from './admin/cause-lists.ts';
+import { citationsMonitorQuery, getCitationsMonitor } from './admin/citations.ts';
+import {
+  disputesQuery,
+  getDispute,
+  listDisputes,
+  reject,
+  rejectBody,
+  uphold,
+  upholdBody,
+} from './admin/disputes.ts';
+import { getLlmCosts, llmCostsQuery } from './admin/llm-costs.ts';
+import { listOcrQueue, ocrQueueQuery } from './admin/ocr-queue.ts';
+import {
+  flagBody,
+  getPlatform,
+  killSwitchBody,
+  maintenanceBody,
+  setFlag,
+  setKillSwitch,
+  setMaintenance,
+} from './admin/platform.ts';
+import { enrolmentBody, listUsers, patchEnrolment, usersQuery } from './admin/users.ts';
 import {
   alertsQuery,
   alertSettingsBody,
@@ -272,6 +295,62 @@ export function createApp(deps: AppDeps) {
     );
     app.post('/admin/cause-lists/:id/escalate', validate('json', escalateBody), async (c) =>
       escalateCauseList(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // Disputed citations — "the trust feedback loop. Outranks everything else
+    // in the admin." Uphold delegates to the SAME applyOverruledChange the
+    // nightly re-check calls; see admin/disputes.ts for why that must stay one
+    // implementation.
+    app.get('/admin/disputes', validate('query', disputesQuery), async (c) =>
+      listDisputes(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    app.get('/admin/disputes/:id', async (c) =>
+      getDispute(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.post('/admin/disputes/:id/uphold', validate('json', upholdBody), async (c) =>
+      uphold(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    app.post('/admin/disputes/:id/reject', validate('json', rejectBody), async (c) =>
+      reject(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // Platform controls — maintenance, kill switches (SIX, not five —
+    // admin/platform.ts's module note), feature flags. Every write here is an
+    // audit write first: config and ledger move in one transaction or neither
+    // does.
+    app.get('/admin/platform', async (c) => getPlatform(c, sql, await userFor(c)));
+    app.post('/admin/platform/maintenance', validate('json', maintenanceBody), async (c) =>
+      setMaintenance(c, sql, await userFor(c), c.req.valid('json')),
+    );
+    app.post('/admin/platform/kill-switches/:key', validate('json', killSwitchBody), async (c) =>
+      setKillSwitch(c, sql, c.req.param('key'), await userFor(c), c.req.valid('json')),
+    );
+    app.post('/admin/platform/flags/:key', validate('json', flagBody), async (c) =>
+      setFlag(c, sql, c.req.param('key'), await userFor(c), c.req.valid('json')),
+    );
+    // The audit ledger — read-only, append-only at the database level.
+    app.get('/admin/audit', validate('query', auditQuery), async (c) =>
+      listAudit(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    // The citation monitor — production aggregates of the harness metrics.
+    app.get('/admin/citations', validate('query', citationsMonitorQuery), async (c) =>
+      getCitationsMonitor(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    // No LLM has ever been called from this codebase — see the module note.
+    // This reports the true, empty state, not a placeholder.
+    app.get('/admin/llm-costs', validate('query', llmCostsQuery), async (c) =>
+      getLlmCosts(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    // POST /ocr/jobs is still SPECCED, so this queue is honestly empty today.
+    app.get('/admin/ocr-queue', validate('query', ocrQueueQuery), async (c) =>
+      listOcrQueue(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    // PD-2 — enrolment is a credential, not a gate. This endpoint moves
+    // enrolment_status and nothing else; nothing in this codebase reads that
+    // column to permit or deny a request.
+    app.get('/admin/users', validate('query', usersQuery), async (c) =>
+      listUsers(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    app.patch('/admin/users/:id/enrolment', validate('json', enrolmentBody), async (c) =>
+      patchEnrolment(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // Matters — the retention moat, and what a briefing hangs off. Every
     // statement scopes by user_id in its own WHERE clause rather than through a
