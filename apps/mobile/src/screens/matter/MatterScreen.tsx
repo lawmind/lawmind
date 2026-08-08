@@ -11,6 +11,7 @@ import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { Briefing, Matter, MatterEvent } from '../../api/contract';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
+import { AddEventSheet } from './AddEventSheet';
 import { usePractice } from '../../state/practice';
 import {
   describeHearingDate,
@@ -74,6 +75,8 @@ export function MatterScreen({
   const [bundle, setBundle] = useState<MatterBundle | null>(null);
   const [cachedAt, setCachedAt] = useState<string | null>(null);
   const [missing, setMissing] = useState(false);
+  const [addEventOpen, setAddEventOpen] = useState(false);
+  const [addEventError, setAddEventError] = useState<string | null>(null);
   const storeMatters = usePractice((s) => s.matters);
 
   useEffect(() => {
@@ -199,6 +202,7 @@ export function MatterScreen({
         </Card>
 
         <View style={styles.actions}>
+          <Button label="Add event" onPress={() => setAddEventOpen(true)} />
           <Button label="Send update to client" variant="secondary" onPress={onSendClientUpdate} />
           <Button label="Who can see this matter" variant="secondary" onPress={onShare} />
         </View>
@@ -233,12 +237,60 @@ export function MatterScreen({
           )}
         </View>
 
+        {/*
+          A NOTE IS A PROPERTY OF AN EVENT, NOT A SEPARATE THING SERVER-SIDE —
+          `matter_events.notes`, on any event type. This section is every
+          event carrying one, not only the dedicated "Note" type the add-event
+          form offers — a hearing can carry a private thought about it too,
+          and it belongs here as much as a standalone note does.
+        */}
+        {events.some((e) => e.notes) ? (
+          <View style={styles.section}>
+            <SectionRule label="Notes" />
+            {events
+              .filter((e) => e.notes)
+              .map((event) => (
+                <View key={event.id} style={styles.noteOnly}>
+                  <Text variant="record" style={styles.gutter}>
+                    {formatGutter(parseCivilDate(event.eventDate) ?? today)}
+                  </Text>
+                  <Text variant="ui" style={styles.rowBody}>
+                    {event.notes}
+                  </Text>
+                </View>
+              ))}
+          </View>
+        ) : null}
+
+        {addEventError ? (
+          <Text variant="ui" style={styles.error}>
+            {addEventError}
+          </Text>
+        ) : null}
+
         {cachedAt ? (
           <Text variant="ui" style={styles.freshness}>
             Showing what is saved on this phone · {describeCacheAge(cachedAt)}
           </Text>
         ) : null}
       </ScrollView>
+
+      <AddEventSheet
+        onDismiss={() => setAddEventOpen(false)}
+        onSubmit={async (draft) => {
+          const r = await api.addMatterEvent(matterId, draft);
+          if (r.ok) {
+            setAddEventOpen(false);
+            setAddEventError(null);
+            setBundle((current) =>
+              current ? { ...current, events: [r.data.event, ...current.events] } : current
+            );
+          } else {
+            setAddEventError(r.error.message);
+          }
+        }}
+        visible={addEventOpen}
+      />
     </Screen>
   );
 }
@@ -332,4 +384,12 @@ const styles = StyleSheet.create({
 
   muted: { color: color.inkMuted },
   freshness: { color: color.inkMuted, paddingTop: space.sm },
+  noteOnly: {
+    flexDirection: 'row',
+    gap: space.sm,
+    paddingVertical: space.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: color.hairline,
+  },
+  error: { color: color.oxblood },
 });

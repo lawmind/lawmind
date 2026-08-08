@@ -126,14 +126,11 @@ row by enrolment number or phone, a "what they see" explainer (court record +
 briefings, yes; private notes, no unless shared individually), explicit
 no-chamber-wide-switch copy.
 
-- [ ] Build the sharing screen off the render — list current shares
-      (`GET /matters/:id/shares`, revoked ones ARE returned, show them
-      distinctly — "who had sight of this, and when" is the point per
-      `shares.ts`'s own module comment), invite form, revoke action.
-- [ ] Entry point from `MatterScreen.tsx`.
-- [ ] Do not attempt to build anything for the invited advocate's side — see
-      "Removed from scope" above. If testing surfaces the dead end, that
-      confirms the `FOUNDER_QUEUE.md` entry, it doesn't mean try harder.
+**DONE, 8 Aug 2026 (commit `4cd5c60`).** Found and fixed a real bug first:
+`client.ts`'s share types said `id`, the wire field is `shareId` — a revoke
+button built against the old type would have called the endpoint with
+`undefined`. Fixed, then built `MatterSharingScreen.tsx` + entry point +
+route. Owner-side complete; sharee-side stays on `FOUNDER_QUEUE.md`.
 
 ## Workstream C — Matter note / event creation
 
@@ -283,5 +280,8 @@ Data/offline section, Sign out (`api.signOut` already exists and works).
 
 **Last updated 8 Aug 2026.** PREP done (`4dc93a7`). **Workstream A done**
 (`4dc93a7`, `cbb6719`) — one item left unverified, see Workstream A's own
-note (device pass on the real sign-in → save flow). Workstream B (matter
-shares, owner side) starting next. C through F not started.
+note (device pass on the real sign-in → save flow). **Workstream B done**
+(`4cd5c60`) — owner-side complete, sharee-side correctly left to LCC.
+Workstream C (note/event creation) starting next, same file
+(`MatterScreen.tsx`) as B so doing it right after is deliberate sequencing,
+not scope creep. D through F not started.
