@@ -110,6 +110,45 @@ function requireUser(c: Context, userId: string | undefined): Response | null {
   return fail(c, 'AUTH_REQUIRED', 'a matter belongs to an advocate — sign in to continue', 401);
 }
 
+/**
+ * How this advocate reaches this matter: as its owner, through a live share,
+ * or not at all.
+ *
+ * **PD-3 was half-built until 8 Aug 2026, and RCC found it.** `matter_shares`
+ * rows were being written correctly by the owner-side endpoints, and no read
+ * path ever consulted them — so an invited advocate could never open the
+ * matter they had been invited to. A file handed over that the recipient
+ * cannot open has not been handed over.
+ *
+ * `revoked_at IS NULL` is the whole of the access check on the share side.
+ * Revocation is a timestamp rather than a delete precisely so that "who had
+ * sight of this matter, and when" survives, which means every read must filter
+ * on it — a revoked share that still granted access would make revocation
+ * decorative.
+ */
+export type MatterAccess = 'owner' | 'shared' | 'none';
+
+export async function accessToMatter(
+  sql: Sql,
+  matterId: string,
+  userId: string,
+): Promise<MatterAccess> {
+  const [row] = await sql<{ access: MatterAccess }[]>`
+    SELECT CASE
+      WHEN m.user_id = ${userId} THEN 'owner'
+      WHEN EXISTS (
+        SELECT 1 FROM matter_shares s
+        WHERE s.matter_id = m.id
+          AND s.invited_user_id = ${userId}
+          AND s.revoked_at IS NULL
+      ) THEN 'shared'
+      ELSE 'none'
+    END AS access
+    FROM matters m WHERE m.id = ${matterId}
+  `;
+  return row?.access ?? 'none';
+}
+
 export async function listMatters(
   c: Context,
   sql: Sql,
@@ -118,15 +157,37 @@ export async function listMatters(
   const denied = requireUser(c, userId);
   if (denied) return denied;
 
-  const rows = await sql<MatterRow[]>`
-    SELECT ${sql.unsafe(MATTER_COLUMNS)} FROM matters
+  const rows = await sql<(MatterRow & { access: MatterAccess })[]>`
+    SELECT ${sql.unsafe(MATTER_COLUMNS)},
+           CASE WHEN user_id = ${userId!} THEN 'owner' ELSE 'shared' END AS access
+    FROM matters
     WHERE user_id = ${userId!}
+       -- PD-3: a matter shared WITH me belongs in my list. Without this the
+       -- invitation is recorded and invisible, which is what it was until now.
+       OR EXISTS (
+         SELECT 1 FROM matter_shares s
+         WHERE s.matter_id = matters.id
+           AND s.invited_user_id = ${userId!}
+           AND s.revoked_at IS NULL
+       )
     -- Soonest hearing first, and matters with no date last rather than first:
     -- the list exists to answer "what is coming", and a matter with no listed
     -- date is not what is coming.
     ORDER BY next_hearing_date ASC NULLS LAST, created_at DESC
   `;
-  return ok(c, { matters: rows.map(shapeMatter), asOf: new Date().toISOString() });
+  return ok(c, {
+    matters: rows.map((r) => ({
+      ...shapeMatter(r),
+      /**
+       * Stated, never inferred from a missing field. A shared matter is not
+       * the sharee's own caseload and the client should be able to say so
+       * without guessing — and without us deciding on their behalf that the
+       * distinction does not matter.
+       */
+      access: r.access,
+    })),
+    asOf: new Date().toISOString(),
+  });
 }
 
 export async function createMatter(
@@ -161,13 +222,17 @@ export async function getMatter(
   const denied = requireUser(c, userId);
   if (denied) return denied;
 
+  const access = await accessToMatter(sql, matterId, userId!);
+  // Same answer for "does not exist", "is not yours" and "your share was
+  // revoked". A distinguishable response would let anyone enumerate which
+  // matter ids are real, and a matter id that resolves is itself a fact about
+  // another advocate's caseload.
+  if (access === 'none') return fail(c, 'NOT_FOUND', 'no matter with that id', 404);
+  const isOwner = access === 'owner';
+
   const [matter] = await sql<MatterRow[]>`
-    SELECT ${sql.unsafe(MATTER_COLUMNS)} FROM matters
-    WHERE id = ${matterId} AND user_id = ${userId!}
+    SELECT ${sql.unsafe(MATTER_COLUMNS)} FROM matters WHERE id = ${matterId}
   `;
-  // Same answer for "does not exist" and "is not yours". A distinguishable
-  // response would let anyone enumerate which matter ids are real, and a matter
-  // id that resolves is itself a fact about another advocate's caseload.
   if (!matter) return fail(c, 'NOT_FOUND', 'no matter with that id', 404);
 
   const events = await sql<
@@ -182,7 +247,18 @@ export async function getMatter(
       created_at: string;
     }[]
   >`
-    SELECT id, event_date::text AS event_date, event_type, order_text, notes,
+    SELECT id, event_date::text AS event_date, event_type,
+           -- PD-4: "order_text is the court record and is always visible to a
+           -- share; notes obey note_visibility."
+           order_text,
+           -- **The redaction happens HERE, in the query, not in the mapper.**
+           -- A note about fees or a client's circumstances must never travel
+           -- with a file by accident, and the way that accident happens is a
+           -- later branch in application code that forgets to check. If this
+           -- row leaves the database already redacted, no downstream mistake
+           -- can un-redact it. Same reasoning that put PD-4's default on the
+           -- column rather than in a handler.
+           CASE WHEN ${isOwner} OR note_visibility = 'shared' THEN notes ELSE NULL END AS notes,
            note_visibility, source, ${sql.unsafe(isoColumn('created_at'))} AS created_at
     FROM matter_events WHERE matter_id = ${matterId}
     ORDER BY event_date DESC, created_at DESC
@@ -207,6 +283,10 @@ export async function getMatter(
            ${sql.unsafe(isoColumn('dates_not_confirmed_at'))} AS dates_not_confirmed_at,
            dates_not_confirmed_reason, hearing_date_source
     FROM briefings WHERE matter_id = ${matterId}
+      -- Same rule as documents. A briefing is generated FOR the owner and
+      -- carries a preparation checklist derived from their matter — it is
+      -- neither the court record nor a shared note.
+      AND ${isOwner}
     ORDER BY hearing_date DESC
   `;
 
@@ -215,11 +295,24 @@ export async function getMatter(
   >`
     SELECT id, document_type, language, ${sql.unsafe(isoColumn('created_at'))} AS created_at
     FROM documents WHERE matter_id = ${matterId}
+      -- PD-4 grants a share "the court record and shared notes only". A draft
+      -- is neither: it is the owner's work product, often unfiled and
+      -- mid-argument. Excluded for a sharee rather than included because the
+      -- join was easy — the rule names what a share grants, and everything it
+      -- does not name is withheld.
+      AND ${isOwner}
     ORDER BY created_at DESC
   `;
 
   return ok(c, {
     matter: shapeMatter(matter),
+    /**
+     * How the caller reaches this matter. Stated so the client never has to
+     * infer "this is shared with me" from an empty `documents` array — an
+     * absence and a permission boundary look identical otherwise, and one of
+     * those is a bug report waiting to happen.
+     */
+    access,
     events: events.map((e) => ({
       eventId: e.id,
       eventDate: e.event_date,

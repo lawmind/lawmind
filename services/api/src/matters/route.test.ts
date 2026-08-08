@@ -340,3 +340,157 @@ describe('set_aside disables add-to-matter', () => {
     assert.equal(res.status, 200, 'only set_aside disables add-to-matter');
   });
 });
+
+/**
+ * **PD-3 was half-built and RCC found it during their audit.** `matter_shares`
+ * rows were written correctly by the owner-side endpoints and **no read path
+ * ever consulted them**, so an invited advocate could never open the matter
+ * they had been invited to. A file handed over that the recipient cannot open
+ * has not been handed over.
+ *
+ * The naive fix — `OR EXISTS (share)` on the WHERE clause — is worse than the
+ * bug, because it hands the sharee the owner's PRIVATE notes. PD-4: a note
+ * about fees or a client's circumstances must never travel with a file by
+ * accident. These tests exist to keep that boundary, not merely to prove
+ * access works.
+ */
+describe('matter sharing — the sharee side, and what it must not see', () => {
+  let owner: Awaited<ReturnType<typeof seedAdvocate>>;
+  let sharee: Awaited<ReturnType<typeof seedAdvocate>>;
+  let stranger: Awaited<ReturnType<typeof seedAdvocate>>;
+  let shareeUserId = '';
+  let matterId = '';
+
+  before(async () => {
+    owner = await seedAdvocate('own');
+    sharee = await seedAdvocate('shr');
+    stranger = await seedAdvocate('str');
+
+    const [u] = await sql<{ id: string }[]>`
+      SELECT id FROM users WHERE auth_id = ${sharee.authId}`;
+    shareeUserId = u!.id;
+
+    const created = await app.request('/matters', {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify(body),
+    });
+    matterId = ((await created.json()) as { data: { matter: { matterId: string } } }).data.matter
+      .matterId;
+
+    // Two events: one shared, one private. The private one is the whole point.
+    await app.request(`/matters/${matterId}/events`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({
+        eventDate: '2026-09-01',
+        eventType: 'hearing',
+        orderText: 'Adjourned to 1 October. Costs reserved.',
+        notes: 'Junior to attend; client cannot travel.',
+        noteVisibility: 'shared',
+      }),
+    });
+    await app.request(`/matters/${matterId}/events`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({
+        eventDate: '2026-09-02',
+        eventType: 'note',
+        orderText: null,
+        notes: 'Client has not paid the second tranche. Do not file until cleared.',
+      }),
+    });
+
+    // Share it. The invitee already has an account, so createShare resolves
+    // invited_user_id at insert time.
+    const [me] = await sql<{ phone: string }[]>`
+      SELECT phone FROM users WHERE id = ${shareeUserId}`;
+    await sql`
+      INSERT INTO matter_shares (matter_id, invited_user_id, invited_identifier, granted_by_user_id)
+      SELECT ${matterId}, ${shareeUserId}, ${me!.phone}, id FROM users WHERE auth_id = ${owner.authId}`;
+  });
+
+  after(async () => {
+    await sql`DELETE FROM matter_shares WHERE matter_id = ${matterId}`;
+    await sql`DELETE FROM matter_events WHERE matter_id = ${matterId}`;
+    await sql`DELETE FROM matters WHERE id = ${matterId}`;
+    for (const a of [owner, sharee, stranger]) {
+      await sql`DELETE FROM users WHERE auth_id = ${a.authId}`;
+      await sql`DELETE FROM auth_user WHERE id = ${a.authId}`;
+    }
+  });
+
+  it('the sharee can open the matter at all — this was the bug', async () => {
+    const res = await app.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
+    assert.equal(res.status, 200, 'an invited advocate must be able to open the matter');
+    const b = (await res.json()) as { data: { access: string } };
+    assert.equal(b.data.access, 'shared', 'and must be told it is shared, not their own');
+  });
+
+  it("the matter appears in the sharee's list, marked shared", async () => {
+    const res = await app.request('/matters', { headers: auth(sharee.token) });
+    const b = (await res.json()) as { data: { matters: { matterId: string; access: string }[] } };
+    const found = b.data.matters.find((m) => m.matterId === matterId);
+    assert.ok(found, 'a shared matter belongs in the list — otherwise the invite is invisible');
+    assert.equal(found!.access, 'shared');
+  });
+
+  it('PD-4 — the sharee sees the COURT RECORD but NEVER the private note', async () => {
+    const res = await app.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
+    const b = (await res.json()) as {
+      data: { events: { eventType: string; orderText: string | null; notes: string | null }[] };
+    };
+
+    const hearing = b.data.events.find((e) => e.eventType === 'hearing')!;
+    assert.equal(
+      hearing.orderText,
+      'Adjourned to 1 October. Costs reserved.',
+      'order_text is the court record and always travels with a share',
+    );
+    assert.equal(hearing.notes, 'Junior to attend; client cannot travel.', 'a SHARED note travels');
+
+    const privateNote = b.data.events.find((e) => e.eventType === 'note')!;
+    assert.equal(
+      privateNote.notes,
+      null,
+      'a PRIVATE note must never travel — this is a confidentiality breach between two advocates',
+    );
+    // The event itself is still visible; it is the note text that is withheld.
+    assert.ok(privateNote, 'the event is not hidden, only its private note redacted');
+  });
+
+  it('the OWNER still sees their own private note', async () => {
+    const res = await app.request(`/matters/${matterId}`, { headers: auth(owner.token) });
+    const b = (await res.json()) as {
+      data: { access: string; events: { eventType: string; notes: string | null }[] };
+    };
+    assert.equal(b.data.access, 'owner');
+    const privateNote = b.data.events.find((e) => e.eventType === 'note')!;
+    assert.match(privateNote.notes ?? '', /second tranche/, 'redaction must not affect the owner');
+  });
+
+  it('a stranger still gets 404 — sharing did not open the door to everyone', async () => {
+    const res = await app.request(`/matters/${matterId}`, { headers: auth(stranger.token) });
+    assert.equal(res.status, 404);
+  });
+
+  it('a REVOKED share closes access, because revocation is a timestamp not a delete', async () => {
+    await sql`
+      UPDATE matter_shares SET revoked_at = now(), revoked_by_user_id = invited_user_id
+      WHERE matter_id = ${matterId}`;
+
+    const res = await app.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
+    assert.equal(res.status, 404, 'a revoked share that still granted access would be decorative');
+
+    const list = await app.request('/matters', { headers: auth(sharee.token) });
+    const b = (await list.json()) as { data: { matters: { matterId: string }[] } };
+    assert.equal(
+      b.data.matters.some((m) => m.matterId === matterId),
+      false,
+    );
+
+    // Restore for any later test.
+    await sql`UPDATE matter_shares SET revoked_at = NULL, revoked_by_user_id = NULL
+              WHERE matter_id = ${matterId}`;
+  });
+});
