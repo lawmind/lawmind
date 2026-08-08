@@ -108,7 +108,38 @@ traceable"*, *"15k+ Courts"*, *"10k+ Pages per matter"* — and **no statement o
 whether treatment is human-curated or computed.** For a company founded in 2023
 with no editorial desk, it is almost certainly computed.
 
-**Which makes it the wrong thing to take, twice over.** It is an algorithm's
+### And there is no model to take, either — NyaI is orchestration
+
+Read raw rather than through a summariser, the `/nyai` page lists NyaI's own
+properties and one of them is decisive: **"Model agnostic"**.
+
+**NyaI™ is not a trained model.** It is a retrieval-and-reasoning layer over
+third-party frontier models — which is the same architecture as ours, and which
+their own page says plainly beside *"Verifiable design"* and *"Litigation-scale
+context"*.
+
+So the word "distillation" does not even apply here the way it did to Supreme
+Today. **There are no weights to learn from and no editorial desk to buy.** There
+is a corpus of public judgments, an orchestration layer, and a product — and only
+the third is any good, which is exactly what §9 says.
+
+**Two more things worth recording from that page.**
+
+Their public accuracy claim is **"0 Hallucinated citations · Verifiable by
+construction"** and **"No hallucinations, ever."** That is the strongest claim in
+this market by a distance, and it is stated with **no methodology, no query set
+and no number** — which makes it unfalsifiable rather than impressive. **Our
+position is the opposite and better: a fixed 30-query set, relevance defined
+before measuring, and a number we publish even though it currently fails.**
+`TECHNICAL_MOAT.md` §1's rule holds — cite the benchmark, never the competitor —
+but the contrast is worth knowing.
+
+And their limitations section says NyaI *"signals uncertainty and escalates to
+qualified counsel"*, while their research page says an unverifiable proposition
+gets a **"not found"** response. Those are different things, and the second is
+the silent drop we forbid at a zero threshold.
+
+**Which makes their treatment data the wrong thing to take, twice over.** It is an algorithm's
 output over the same public judgments we already hold — so it is derivable by us
 rather than purchasable, and we already extract **11,765 treatment edges** with
 the citing court's own phrase as evidence. And training on it would be *another
