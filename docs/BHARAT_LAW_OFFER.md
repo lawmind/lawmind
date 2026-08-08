@@ -11,11 +11,29 @@ subscription is bought**, and asks whether it is worth it.
 
 ## 1 · The recommendation, first
 
-**Do not buy it for the data. Buy one month for ₹1,499 to USE it, and extract
-nothing.**
+**REVISED 8 August 2026 after reading all 87 pages, including both binding
+contracts.** The original recommendation was "buy one month at ₹1,499". Two
+things found on the second pass changed it.
 
-Three independent reasons, and any one of them would be enough. The third is the
-one that matters most.
+**Do three things, in this order:**
+
+1. **Start on their free tier today. ₹0.** *"Ask a question free · No signup. No
+   card."* Run *Kharak Singh* and *Danamma* — our seven unresolved judgments —
+   through it. That answers the only question worth paying for (**is their
+   treatment data curated or computed?**) for nothing. §8b.1
+2. **Send one email asking for written consent to benchmark**, naming the scope.
+   Their own contract says benchmarking is prohibited *"without our prior written
+   consent"* — **a consent requirement, not a ban.** Their verbal yes is exactly
+   what could satisfy it. §2b
+3. **Then buy one month of Pro at ₹1,499 — monthly, never annual — only if the
+   free tier will not show counter-authority depth.** §8
+
+**And still extract nothing.** That part has not changed and is not close.
+
+**But the purchase is the small question.** §8b is the important part of this
+document: **they are running a free consumer-intake funnel in ten languages that
+matches laypeople to advocates**, and **three "nobody" cells in our own
+`FEATURE_PARITY.md` were wrong.** Read §8b before §2.
 
 ---
 
@@ -48,6 +66,37 @@ seen**.
 **A verbal permission that contradicts a signed-up-to policy is not a permission
 we can rely on** — and the mention of *watermarking* in their own AUP says they
 have thought about exactly this.
+
+### 2b · But the binding contract has a door in it, and it is worth using
+
+**Both agreements are published, and I have now read both.** A self-serve account
+— which is what you would buy — is governed by the **Evaluation Terms**, not the
+Platform Agreement (that one is for organisations on an Order Form). The
+Evaluation Terms say:
+
+> *"use the Services to build a competing product or to **benchmark the Services
+> without our prior written consent**"*
+
+**That last clause is not an absolute prohibition. It is a consent requirement**,
+and their verbal yes is exactly the thing that could satisfy it in writing. The
+Platform Agreement uses the same wording — *"without Bharat.Law's prior written
+consent"* — so it is deliberate drafting, not an accident.
+
+**Which turns the recommendation from "do not" into "get one email".** Ask them
+to confirm in writing what is permitted, naming it specifically: *comparative
+evaluation of research output on a fixed query set, no bulk extraction, no
+training.* If they say yes in writing, that is a lawful benchmark. If they will
+not put it in writing, that is also an answer, and it costs nothing to find out.
+
+**Two more things from the binding terms, both better than I assumed:**
+
+- **Governing law is India**, arbitration at the **Delhi International
+  Arbitration Centre**, New Delhi courts — despite the Delaware incorporation.
+- **They do not take our content for training.** *"We do not use Customer Content
+  to train publicly available foundation models or to improve models for the
+  benefit of other customers, except where you have given specific, informed,
+  opt-in consent."* **So running our own harness queries through their product
+  does not feed them our query set** — which was a real risk worth checking.
 
 ---
 
@@ -217,6 +266,79 @@ on.
 
 ---
 
+## 8b · THE TWO FINDINGS THAT MATTER MORE THAN THE PURCHASE
+
+Read after the whole site rather than seven sampled pages. **Both outrank the
+buy/do-not-buy question, and the second contradicts something we have written
+down as settled.**
+
+### 8b.1 · It is free. There is nothing to buy in order to evaluate it.
+
+`/solutions/individuals`: **"Ask a question free · No signup. No card. About 5
+minutes."** `/resources/nyai-technology-stack`: *"Bharat.Law runs on a freemium
+model — free to start, no credit card required."*
+
+**So §8's ₹1,499 is not needed for most of what §8 wanted to learn.** Run
+*Kharak Singh* and *Danamma* — our seven unresolved judgments — through the free
+tier and the curated-vs-computed question is answered for **₹0**. Pay only if the
+free tier will not show counter-authority depth, and pay **monthly**.
+
+### 8b.2 · They are building a two-sided marketplace, and it aims at the
+### demand side we have not built
+
+This is the real finding. `/solutions/individuals` is not a marketing page for
+lawyers — it is **consumer intake**:
+
+> *"Describe it in plain Hindi, Tamil, Telugu, or 7 other Indian languages.
+> NyaI™ asks a few clarifying questions, explains the law, tells you what to do
+> next, **and matches you with a qualified lawyer the moment you need one.**"*
+
+Their Evaluation Terms confirm the other side of it: users may *"connect with
+**External Advocates**"*. Twelve consumer entry points are already written —
+cheque bounce, RERA possession, security deposit, SARFAESI, RWA, IT/GST notice,
+consumer, UPI fraud, employment, family, domestic violence, FIR — **plus a whole
+NRI section** (POA, FEMA repatriation, ancestral partition).
+
+**That is a demand funnel that feeds advocates, and it is worth more than any
+database.** An advocate joins the platform that brings them clients, and stays
+for reasons that have nothing to do with citation quality. It is also **exactly
+the "common man" market you asked me to research for `GTM_INDIA.md`** — they are
+already executing it, in ten languages, for free, with the NRI segment monetised
+first.
+
+**This is a strategic threat, not a data question, and buying a subscription does
+nothing about it.** `GTM_INDIA.md` needs to answer it directly.
+
+### 8b.3 · The wedge claim in our own docs is now false as written
+
+`/resources/nyai-technology-stack`, their words:
+
+> *"NyaI integrates live matter tracking across **15,000+ Indian courts**… Daily
+> digests, **cause-list matching**, CNR lookup, and **limitation risk alerts** run
+> continuously. **No competitor currently combines live tracking of 15,000+ courts
+> with AI-powered research in a single product.**"*
+
+`CLAUDE.md` §1 and `PRODUCT_BRIEF.md` §2 both call the 24-hour hearing briefing
+**"the wedge — no Indian competitor has it"**, and `FEATURE_PARITY.md` row 20
+scored it **"nobody"**. **That is no longer true**, and the row is corrected in
+this commit.
+
+**What survives, and it is narrower and worth stating precisely.** Theirs is a
+*digest and an alert* — court monitoring, pushed daily. Ours is a **briefing
+assembled per listed hearing**, and `services/api/src/briefings/assemble.ts`
+reads good-law status **live at assembly, never from its own cache**. Nothing on
+their site claims treatment status is re-checked at the moment of delivery.
+
+**So the differentiator moved down a level, the same way it did on workflow.** It
+is no longer *having* the daily loop. It is that ours cannot hand an advocate a
+briefing built on an authority that died last week. **That is a Gate S2 and
+citator argument, which is where `CURRENT_PLAN.md` already points.**
+
+**This needs your decision, not mine:** `CLAUDE.md` and `PRODUCT_BRIEF.md` are
+yours, and I have not edited either. The claim in both should change.
+
+---
+
 ## 9 · One more thing worth noticing
 
 **A company that invites a direct competitor to take its data does not believe
@@ -233,13 +355,18 @@ subscription to anybody accelerates.
 
 ## 10 · What I am NOT claiming
 
-- **I have not seen their Platform Agreement or Evaluation Terms**, which their
-  Service Terms say contain ownership, export, termination and governing law.
-  The AUP quotes above are from the published policy; the binding contract may
-  say more or less.
-- **The verbal permission may be real and may be honoured.** My objection is that
-  it contradicts their published policy and is not written down — and Supreme
-  Today shows what the written version looks like.
+- **~~I have not seen their Platform Agreement or Evaluation Terms~~ — CLEARED.**
+  Both are published and both are now read; §2b is written from them. The
+  correction matters: the AUP reads as an absolute ban, the binding terms read
+  as *"without our prior written consent"*, and **that difference is the whole
+  recommendation.**
+- **The verbal permission may be real and may be honoured.** My objection was
+  that it contradicts their published policy and is not written down — **§2b
+  narrows that to a single email**, because their own contract names written
+  consent as the cure.
+- **I have not seen the Data Processing Addendum or the AI Policy**, both
+  referenced by the terms and neither in the sitemap. Only relevant if we ever
+  put client data in, which §8 does not propose.
 - **"Almost certainly computed" is an inference**, not a fact. `/nyai` does not
   say, and one month's use would settle it — which is §8's point.
 - **No account was bought and nothing was tested hands-on.** Everything here is

@@ -112,6 +112,45 @@ The founder's examples are exactly right about demand: *how do I recover money I
 lent a friend* · *how do I fight someone illegally occupying my land*. Millions of
 people have a legal problem, no idea of the pathway, and no way to ask.
 
+### 3.0 · A competitor is already executing this, at scale, for free
+
+**Found 8 August 2026 on `bharat.law/solutions/individuals`.** This section was
+written as a strategy option. It is now also a competitive fact.
+
+> *"Describe it in plain Hindi, Tamil, Telugu, or 7 other Indian languages.
+> NyaI™ asks a few clarifying questions, explains the law, tells you what to do
+> next, **and matches you with a qualified lawyer the moment you need one.**"*
+> — *"Ask a question free · No signup. No card. About 5 minutes."*
+
+**Twelve consumer entry points are already live** — cheque bounce under s. 138,
+RERA s. 18 possession delay, security deposit, SARFAESI s. 13(2), RWA disputes,
+IT/GST notices, consumer commission, UPI fraud, employment dues, family and
+maintenance, PWDVA, FIR and custody — **plus a separate NRI/OCI section** on POA,
+FEMA repatriation and ancestral partition. Their Evaluation Terms confirm the
+supply side: users may *"connect with **External Advocates**"*.
+
+**Three consequences, and none of them is "hurry".**
+
+1. **This is a two-sided marketplace, and it is worth more than a corpus.** An
+   advocate joins the platform that brings them clients and stays for reasons
+   unrelated to citation quality. **It is a stronger moat than anything in
+   `TECHNICAL_MOAT.md`** and it is being built now, for free, in ten languages.
+2. **They are standing much closer to BCI Rule 36 than we planned to.** Everything
+   in §3 below applies to them: *matching* a layperson to a named advocate is the
+   act the Vakilsearch complaint is about. **That is their exposure, not an
+   invitation to copy it** — the rule does not become safe because someone else is
+   testing it first.
+3. **The NRI segment is the tell.** Diaspora matters are high-value, run on a
+   Power of Attorney, and are the easiest lay segment to monetise. If we ever
+   enter the consumer side, that is where the economics are — and it is the one
+   place we would meet them head-on.
+
+**Recommendation unchanged, and now better supported:** the four safe-ground moves
+in §3 hold. **Do not build referral matching**, and revisit only with counsel's
+written view — which is already queued. The reason is no longer only regulatory
+caution; it is that we would be entering a two-sided market from the weak side,
+with no consumer distribution, while Gate S2 is still failing.
+
 **But this segment carries a regulatory risk the advocate product does not, and
 it is the first thing to get right.**
 

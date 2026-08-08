@@ -1557,3 +1557,61 @@ now sit 3–5× below the anchor PD-13's justification rests on.**
 its data does not believe the data is its moat — and they are probably right.
 Which is the same conclusion `TECHNICAL_MOAT.md` reached about us: the corpus is
 not where this is won.
+
+---
+
+## FQ-BL1 · One email to Bharat.Law asking for written consent to benchmark
+
+**Needed from you:** send it. It is a founder-to-founder message, not a task I
+can do.
+
+**Why it is worth sending.** Their **Evaluation Terms** — the contract that
+governs a self-serve account — prohibit *"use the Services to build a competing
+product or to benchmark the Services **without our prior written consent**"*.
+The Platform Agreement uses the same phrase. **That is a consent requirement, not
+a prohibition**, and their verbal yes to you is exactly the thing that could
+satisfy it.
+
+**What to ask for, specifically** — a narrow ask is far likelier to be granted
+than a broad one:
+
+> Written confirmation that Bharat Technologies, Inc. consents to Lawmind
+> conducting a **comparative evaluation of research output on a fixed query set**
+> using a paid account, for internal product assessment. **No bulk extraction, no
+> redistribution, no use of Bharat.Law output as training data.**
+
+**What was built anyway:** nothing was needed. Their **free tier** (*"Ask a
+question free · No signup. No card."*) already answers the main question at ₹0 —
+see `BHARAT_LAW_OFFER.md` §1.
+
+**What stays broken without it:** nothing breaks. We simply cannot record a
+side-by-side comparison in writing, which is a nice-to-have, not a dependency.
+
+**Do NOT buy the annual plan.** Monthly at ₹1,499, or free. `BHARAT_LAW_OFFER.md`.
+
+---
+
+## FQ-BL2 · The "wedge" claim in `CLAUDE.md` and `PRODUCT_BRIEF.md` is now false
+
+**Needed from you:** a decision on wording. Both files are yours and I have not
+edited either.
+
+**Both say the 24-hour hearing briefing is "the wedge — no Indian competitor has
+it".** Bharat.Law's own page claims *"live matter tracking across 15,000+ Indian
+courts… daily digests, cause-list matching, CNR lookup, and limitation risk
+alerts"*, and asserts **no competitor combines tracking with AI research** — the
+mirror image of our claim.
+
+**What was built anyway:** `FEATURE_PARITY.md` §1b now records the correction and
+states what genuinely survives — theirs is a **daily digest**, ours is a briefing
+**assembled per listed hearing** that reads good-law status **live at assembly**
+(`services/api/src/briefings/assemble.ts`), which nothing they publish claims.
+
+**What stays broken without it:** a false claim in the north-star document is how
+a team argues from a premise that stopped being true. **It also must never reach
+marketing** — an overstated differentiator is the one claim a competitor can
+cheaply disprove in public.
+
+**Suggested wording:** *"24-hour hearing briefings — the wedge. Others push daily
+digests; ours is assembled per hearing and re-checks good-law status at the
+moment of delivery."*

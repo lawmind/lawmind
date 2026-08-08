@@ -58,11 +58,50 @@ differently and better · **DECLINE** deliberately not built, reason stated.
 | 16 | Bare acts library | Law4u, Prism | **HAVE** — live | S1 |
 | 17 | Moot court / exam prep | Prism Legal Sandbox | **DECLINE** — see §4 | — |
 | 18 | 30M+ judgment corpus | Prism | **See §5** | — |
-| 19 | Case tracking, cause lists | Provakil, Notify | **HAVE** — nobody else pairs it with research | S3 |
-| 20 | 24-hour hearing briefing | **nobody** | **HAVE** — the wedge | S3 |
-| 21 | Matter workspace | **nobody** | **HAVE** — the moat | S3 |
+| 19 | Case tracking, cause lists | Provakil, Notify, **Bharat.Law** | **HAVE** — ~~nobody else pairs it with research~~ **corrected, see §1b** | S3 |
+| 20 | 24-hour hearing briefing | ~~nobody~~ **Bharat.Law, partly** | **HAVE** — ~~the wedge~~ **narrower, see §1b** | S3 |
+| 21 | Matter workspace | ~~nobody~~ **Bharat.Law (Case Workspace)** | **HAVE** — the moat, **on retention not novelty** | S3 |
 
 **Net: we already have or have specced 8 of 21. Twelve are new build. One declined.**
+
+---
+
+## 1b · CORRECTION, 8 August 2026 — three "nobody" cells were wrong
+
+**Rows 19, 20 and 21 all said `nobody`. Bharat.Law has all three**, and their own
+`/resources/nyai-technology-stack` page says so:
+
+> *"NyaI integrates live matter tracking across 15,000+ Indian courts… Daily
+> digests, cause-list matching, CNR lookup, and limitation risk alerts run
+> continuously. **No competitor currently combines live tracking of 15,000+
+> courts with AI-powered research in a single product.**"*
+
+They also ship a shared **Case Workspace** — partners, associates and clerks on
+one matter spine — which is row 21.
+
+**This table was built against Prism, Law4u, Provakil and Notify. A 2023-founded
+entrant arrived with the whole shape already assembled**, and a parity table that
+is not re-run against new entrants ages into false comfort. That is the process
+lesson, and it is the second time this week: `COMPETITIVE.md`'s *"nobody sells a
+workflow"* fell the same way.
+
+**What actually survives, stated narrowly enough to be true:**
+
+- **Row 20.** Theirs is a *digest*, pushed daily. Ours is a briefing **assembled
+  per listed hearing**, and `services/api/src/briefings/assemble.ts` reads
+  good-law status **live at assembly, never from cache**. Nothing they publish
+  claims treatment is re-checked at delivery. **The differentiator is no longer
+  the loop — it is that ours cannot brief an advocate on an authority that died
+  last week.**
+- **Row 21.** The moat was never novelty; it is **retention**. An advocate's own
+  matters, notes and saved authorities are switching cost regardless of who else
+  ships a workspace.
+- **Row 19.** We hold a **written eCourts grant to January 2029**. Their page
+  states no authorisation at all. That is a durability difference, not a feature
+  difference — and it is the one worth defending.
+
+**None of this changes `CURRENT_PLAN.md`'s order.** It sharpens why Gate S2 and
+the citator are the priority: both surviving arguments are accuracy arguments.
 
 ---
 
