@@ -23,6 +23,7 @@ const ALL: DbVerifiedBySource[] = [
   'public_x2',
   'ecourts',
   'ecourts_bulk',
+  'licensed',
   'none',
 ];
 
@@ -41,7 +42,7 @@ test('the module knows every value the Postgres enum can hold', () => {
   const fromCreate = [...created[1]!.matchAll(/'([a-z_0-9]+)'/g)].map((m) => m[1]!);
 
   const added: string[] = [];
-  for (const n of ['0022_ecourts_bulk_source']) {
+  for (const n of ['0022_ecourts_bulk_source', '0024_licensed_source']) {
     const sqlText = readFileSync(
       new URL(`../../../../packages/db/drizzle/${n}.sql`, import.meta.url),
       'utf8',
@@ -77,8 +78,20 @@ test('a single public source is not a confirmation on the wire', () => {
 test('the strength order is the one CITATION_HARNESS records', () => {
   assert.ok(strengthOf('ecourts') > strengthOf('public_x2'));
   assert.ok(strengthOf('public_x2') > strengthOf('ecourts_bulk'));
-  assert.ok(strengthOf('ecourts_bulk') > strengthOf('corpus'));
+  assert.ok(strengthOf('ecourts_bulk') > strengthOf('licensed'));
+  assert.ok(strengthOf('licensed') > strengthOf('corpus'));
   assert.ok(strengthOf('corpus') > strengthOf('none'));
+});
+
+test('a licensed assertion never outranks the registry or a human', () => {
+  // A publisher's headnote is an editor's reading of a judgment: expert,
+  // valuable, and still one organisation's opinion. It must not be able to
+  // overwrite a confirmation somebody actually made.
+  assert.equal(isUpgrade('ecourts', 'licensed'), false);
+  assert.equal(isUpgrade('ecourts_bulk', 'licensed'), false);
+  assert.equal(isUpgrade('public_x2', 'licensed'), false);
+  // But it does carry editorial judgement our own row does not.
+  assert.equal(isUpgrade('corpus', 'licensed'), true);
 });
 
 test('a bulk pass cannot overwrite a human confirmation', () => {

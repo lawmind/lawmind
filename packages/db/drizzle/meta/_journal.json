@@ -162,6 +162,20 @@
             "when": 1786250000000,
             "tag": "0022_ecourts_bulk_source",
             "breakpoints": true
+        },
+        {
+            "idx": 23,
+            "version": "7",
+            "when": 1786260000000,
+            "tag": "0023_harvest",
+            "breakpoints": true
+        },
+        {
+            "idx": 24,
+            "version": "7",
+            "when": 1786261000000,
+            "tag": "0024_licensed_source",
+            "breakpoints": true
         }
     ]
 }

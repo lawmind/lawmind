@@ -6,7 +6,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "sci": "tsx src/cli.ts",
-    "test": "tsx --test src/*.test.ts",
+    "test": "tsx --test --test-concurrency=1 src/*.test.ts src/**/*.test.ts",
     "statutes": "tsx src/statutes-cli.ts",
     "citations": "tsx src/citations-cli.ts",
     "overruled": "tsx src/overruled-cli.ts",

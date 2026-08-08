@@ -1,0 +1,46 @@
+-- `licensed` — content that arrived under a commercial licence, so it cannot
+-- quietly wear the authority of a confirmation we made ourselves.
+--
+-- Separate migration from 0023 on purpose: `ALTER TYPE ... ADD VALUE` and the
+-- use of the new value cannot safely share a transaction on every supported
+-- Postgres, and a harvest table has no business depending on an enum change
+-- landing first.
+--
+-- ─────────────────────────────────────────────────────────────────────────────
+-- THE SAME LESSON AS `ecourts_bulk`, ONE DAY LATER
+-- ─────────────────────────────────────────────────────────────────────────────
+--
+-- Licensed content is **not** any of the values we already have:
+--
+--   corpus      we resolved it against a judgment WE hold. We did not.
+--   ecourts     a named human solved the CAPTCHA and vouched. Nobody did.
+--   public_x2   two INDEPENDENT public sources agreed. This is one source.
+--
+-- Reusing any of them would spell a third-party assertion with the name of a
+-- stronger one, and — as with `ecourts_bulk` — the database would read
+-- correctly, no test would fail, and the product's strongest guarantee would
+-- have quietly degraded.
+--
+-- ─────────────────────────────────────────────────────────────────────────────
+-- WHERE IT RANKS, AND WHY IT IS LOW
+-- ─────────────────────────────────────────────────────────────────────────────
+--
+-- Strength, strongest first:
+--
+--   ecourts       a human looked and vouched
+--   public_x2     two independent sources agreed
+--   ecourts_bulk  the registry answered us directly, under the grant
+--   licensed      a commercial publisher's editorial view, bought
+--   corpus        we hold the judgment ourselves
+--
+-- `licensed` sits BELOW `ecourts_bulk` because a publisher is not the registry:
+-- their headnote is an editor's reading of a judgment, which is expert and
+-- valuable and still one organisation's opinion. It sits ABOVE `corpus` only
+-- because it carries editorial judgement our own row does not.
+--
+-- **And it is the one value that can go stale by contract.** The others rest on
+-- facts. This one rests on an agreement that can end — so anything rendered
+-- from it must survive the licence lapsing, which is why the display gate is a
+-- flag rather than a convention.
+
+ALTER TYPE "verified_by_source" ADD VALUE IF NOT EXISTS 'licensed' AFTER 'ecourts_bulk';

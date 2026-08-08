@@ -423,7 +423,7 @@ Every call writes a row. No exceptions. Cost control and DPDP audit trail.
 `id` uuid pk · `search_id` uuid null fk→searches · `document_id` uuid null fk→documents ·
 `citation_claimed` text · `judgment_id_matched` uuid null fk→judgments ·
 `verification_state` enum (verified|unverified|failed) ·
-`verified_by_source` enum (corpus|indiankanoon|aws_s3|public_x2|ecourts|ecourts_bulk|none) ·
+`verified_by_source` enum (corpus|indiankanoon|aws_s3|public_x2|ecourts|ecourts_bulk|licensed|none) ·
 `match_confidence` numeric(4,3) null — fuzzy title similarity where used ·
 `shown_to_user` bool — was it rendered, and in what state ·
 `overruled_status_shown` text null — the status the server sent for this render ·
@@ -471,7 +471,8 @@ The column carries more values than the API emits, and the gap is deliberate.
 | -------------- | ---------------------------------------------- | -------- | -------------- |
 | `ecourts`      | a named human solved the CAPTCHA and vouched   | 4        | `ecourts`      |
 | `public_x2`    | two INDEPENDENT public sources agreed          | 3        | `public_x2`    |
-| `ecourts_bulk` | the registry answered us directly, under grant | 2        | `ecourts_bulk` |
+| `ecourts_bulk` | the registry answered us directly, under grant | 3        | `ecourts_bulk` |
+| `licensed`     | a commercial publisher's editorial view, bought | 2        | `licensed`     |
 | `corpus`       | we hold the judgment ourselves                 | 1        | `corpus`       |
 | `indiankanoon` | one public source matched, the other did not   | 0        | `none`         |
 | `aws_s3`       | one public source matched, the other did not   | 0        | `none`         |
@@ -496,6 +497,71 @@ The two diagnostic values collapse to `none` at the boundary because that is
 what they honestly mean to a reader: one source matching is not a confirmation
 under the step-5 rule, and such a row's `verification_state` is `unverified`
 anyway.
+
+
+## harvest_fetches
+
+Added S2, 8 Aug 2026, migration `0023`. **The raw archive and the fetch ledger,
+in one table.**
+
+`id` uuid pk · `source` text — `supreme_today` | `indian_kanoon`, text not enum
+because sources are commercial relationships that come and go and nothing
+branches on the value · `url` text · `method` text default `GET` ·
+`requested_at` timestamptz · `http_status` int null · `duration_ms` int null ·
+`outcome` text (`ok`|`refused`|`error`), check-constrained · `refusal_reason`
+text null · `cost_paise` int null — for metered sources; **null, never zero,
+where the source is not per-request priced, because zero would be a lie about a
+free call** · `body` text null · `body_sha256` text null · `bytes` int null ·
+`account_label` text null — an operator's nickname, **never a credential** ·
+`work_item_key` text null
+
+Index: (`source`, `requested_at` desc) · partial on (`source`, `work_item_key`)
+· partial on `body_sha256`.
+
+**Why one table and not two.** `docs/HARVEST_ENGINE.md` §1: archive the raw
+response first, parse afterwards, because the licence is perpetual on what we
+INGEST rather than on what we understood at the time. Every ledger row for a
+successful fetch has a body, and every archived body has a request behind it —
+two tables would be a join that is always one-to-one and a chance for them to
+disagree.
+
+Constraints, each closing a way the ledger could lie: a refusal must carry a
+reason · a refusal never reached the network, so it can have no status and no
+body · a body must carry its hash, or it cannot be de-duplicated or verified
+later.
+
+`ok` · `refused` · `error` are three different facts. **Collapsing them is how a
+refusal comes to read as an outage**, which is the same reason
+`cause_list_status` separates `empty` from `failed`.
+
+## harvest_queue
+
+Added S2, 8 Aug 2026, migration `0023`. Resumable, de-duplicated work list.
+
+`id` uuid pk · `source` text · `item_key` text — **OUR identifier, a judgment
+id, not theirs** · `citation` text null · `priority` int default 100, lower runs
+first · `state` text (`pending`|`in_flight`|`done`|`failed`|`skipped`),
+check-constrained · `attempts` int default 0 · `last_error` text null ·
+`claimed_at` timestamptz null · `completed_at` timestamptz null · `created_at`
+timestamptz
+
+**Unique: (`source`, `item_key`) — this is the whole guarantee.** A crash
+mid-run, a restarted process, or two operators starting the same job cannot
+produce a second fetch of the same page. **A duplicate is money spent on
+nothing.**
+
+Index: partial on (`source`, `priority`, `created_at`) where pending — the claim
+query · partial on `claimed_at` where in_flight, so a crashed worker's items can
+be found by age and returned.
+
+`item_key` is ours rather than theirs because `HARVEST_ENGINE.md` §11 makes our
+own corpus the index into a licensed source: the worklist is bounded by our
+corpus, and every row is a judgment we already care about. A crawler that
+discovers its own worklist can run away with the budget; this cannot.
+
+Constraints: a failure must carry a reason — **an item that failed silently is
+one nobody will ever look at again** — and a `done` item must carry its
+completion time.
 
 ## verification_cache
 

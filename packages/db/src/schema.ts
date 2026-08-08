@@ -183,6 +183,19 @@ export const verifiedBySourceEnum = pgEnum('verified_by_source', [
    * human's word is not superseded by a machine re-reading the same page.
    */
   'ecourts_bulk',
+  /**
+   * Content that arrived under a commercial licence — a publisher's editorial
+   * view, bought. Added 8 Aug 2026, migration 0024.
+   *
+   * Not `corpus` (we did not resolve it), not `ecourts` (nobody vouched), not
+   * `public_x2` (one source, not two agreeing). Ranks below `ecourts_bulk`
+   * because a publisher is not the registry: a headnote is an editor's reading,
+   * expert and valuable and still one organisation's opinion.
+   *
+   * **The one value that can go stale by contract.** The others rest on facts;
+   * this rests on an agreement that can end.
+   */
+  'licensed',
   'none',
 ]);
 

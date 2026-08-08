@@ -20,7 +20,14 @@
 
 /** Every value the `verified_by_source` Postgres enum can hold. */
 export type DbVerifiedBySource =
-  'corpus' | 'indiankanoon' | 'aws_s3' | 'public_x2' | 'ecourts' | 'ecourts_bulk' | 'none';
+  | 'corpus'
+  | 'indiankanoon'
+  | 'aws_s3'
+  | 'public_x2'
+  | 'ecourts'
+  | 'ecourts_bulk'
+  | 'licensed'
+  | 'none';
 
 /**
  * What the API is permitted to emit. `docs/API_CONTRACTS.md`.
@@ -30,7 +37,8 @@ export type DbVerifiedBySource =
  * is declared now so the boundary is exhaustive from the first line of that
  * work rather than retrofitted onto it.
  */
-export type WireVerifiedBySource = 'corpus' | 'public_x2' | 'ecourts' | 'ecourts_bulk' | 'none';
+export type WireVerifiedBySource =
+  'corpus' | 'public_x2' | 'ecourts' | 'ecourts_bulk' | 'licensed' | 'none';
 
 /**
  * Strength, strongest first. `docs/CITATION_HARNESS.md`.
@@ -49,9 +57,18 @@ export type WireVerifiedBySource = 'corpus' | 'public_x2' | 'ecourts' | 'ecourts
  * single match confirms nothing and they rank with `none`.
  */
 const STRENGTH: Readonly<Record<DbVerifiedBySource, number>> = {
-  ecourts: 4,
-  public_x2: 3,
-  ecourts_bulk: 2,
+  ecourts: 5,
+  public_x2: 4,
+  ecourts_bulk: 3,
+  /**
+   * A commercial publisher's editorial view, bought. Above `corpus` because it
+   * carries editorial judgement our own row does not; below `ecourts_bulk`
+   * because a publisher is not the registry.
+   *
+   * **The only value here that can go stale by contract.** Everything else
+   * rests on a fact; this rests on an agreement that can end.
+   */
+  licensed: 2,
   corpus: 1,
   indiankanoon: 0,
   aws_s3: 0,
@@ -99,6 +116,7 @@ export function toWireSource(source: DbVerifiedBySource): WireVerifiedBySource {
     case 'public_x2':
     case 'ecourts':
     case 'ecourts_bulk':
+    case 'licensed':
     case 'none':
       return source;
     case 'indiankanoon':
