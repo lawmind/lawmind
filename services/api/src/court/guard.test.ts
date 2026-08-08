@@ -216,12 +216,14 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
     expiresAt: '2029-01-01T06:30:00.000Z',
     attribution: 'Test attribution',
     permittedCourts: ['Test Court'],
+    permittedDataTypes: ['cause_list'],
     permittedHoursIst: { from: 0, to: 24 },
     minIntervalMs: 1000,
     maxRequestsPerHour: 100,
     maxRequestsPerDay: 1000,
     captchaBypassPermitted: true,
     onExpiry: 'renewable_for_payment',
+    renewalLeadTimeDays: 180,
     independentDisplayPermitted: true,
     trainingPermitted: true,
     ...over,
@@ -306,5 +308,78 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
     const silent = grant({ independentDisplayPermitted: false, trainingPermitted: false });
     assert.equal(silent.independentDisplayPermitted, false);
     assert.equal(silent.trainingPermitted, false);
+  });
+
+  it("covers every court via a sentinel, because an empty list would read as 'none'", () => {
+    const all = grant({ permittedCourts: 'ALL_COURTS' });
+    assert.equal(all.permittedCourts, 'ALL_COURTS');
+    // The distinction that matters: 'the grant covers everything' and 'the
+    // grant names nothing' are opposite facts and must not share a
+    // representation.
+    const named = grant({ permittedCourts: ['Delhi High Court'] });
+    assert.notEqual(named.permittedCourts, 'ALL_COURTS');
+  });
+
+  it('computes the renewal deadline rather than relying on anyone remembering 2029', () => {
+    const g = grant({ renewalLeadTimeDays: 180 });
+    const due = new Date(Date.parse(g.expiresAt) - g.renewalLeadTimeDays * 86_400_000);
+    // Six months before noon on 1 Jan 2029.
+    assert.equal(due.toISOString().slice(0, 10), '2028-07-05');
+  });
+});
+
+/**
+ * **The registrar required that the letter's identifying details stay out of
+ * the application and away from its users.** That is a confidentiality
+ * condition of the grant, so breaching it is not a bug — it is a breach of the
+ * thing the grant depends on.
+ *
+ * It is enforced by an ABSENCE: the reference is simply never put in a
+ * response. Absences rot, and this one is a single careless
+ * `detail: decision.detail` away from shipping. So it is swept at the source
+ * level, the same way the "no second door to eCourts" rule is.
+ */
+describe('the grant reference never reaches a user', () => {
+  const read = (rel: string): string => readFileSync(new URL(rel, import.meta.url), 'utf8');
+
+  it('is supplied by environment and never committed to source', () => {
+    const source = read('./authorisation.ts');
+    assert.match(
+      source,
+      /process\.env\['ECOURTS_GRANT_REFERENCE'\]/,
+      'the reference must come from the environment',
+    );
+    assert.match(source, /process\.env\['ECOURTS_GRANT_ATTRIBUTION'\]/);
+    // A transcribed literal would put the registrar's reference in git forever.
+    assert.ok(
+      !/reference:\s*'[^']+'/.test(source),
+      'the reference must not be transcribed as a literal in source',
+    );
+    assert.ok(!/attribution:\s*'[^']+'/.test(source));
+  });
+
+  it('is absent from the refusal details the guard produces', () => {
+    // `decide()` returns `detail` strings that an operator reads. If one of
+    // them interpolates the reference, the only thing standing between it and
+    // a user is nobody ever adding it to a response — which is not a control.
+    const guardSource = read('./guard.ts');
+    assert.ok(
+      !guardSource.includes('${grant.reference}'),
+      'guard.ts must not interpolate the grant reference into any detail string',
+    );
+  });
+
+  it('is not returned by the advocate-facing court lookup', () => {
+    // The one endpoint in this area a user actually calls.
+    const lookup = read('./lookup.ts');
+    assert.ok(!lookup.includes('reference'), 'lookup.ts must never surface the grant reference');
+    assert.ok(
+      !lookup.includes('attribution'),
+      'the registrar asked that the attribution not appear in the application',
+    );
+    assert.ok(
+      !lookup.includes('detail'),
+      'lookup.ts must return the reason enum only — `detail` is operator text and may name the grant',
+    );
   });
 });

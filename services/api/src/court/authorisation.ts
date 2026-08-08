@@ -32,7 +32,22 @@
  */
 
 export type EcourtsAuthorisation = {
-  /** The letter's own reference. Written into every ledger row it governs. */
+  /**
+   * The letter's own reference. Written into every ledger row it governs.
+   *
+   * **CONFIDENTIAL — supplied by environment, never committed.** The registrar
+   * stated expressly that the letter's identifying details must not appear in
+   * the application or reach its users. So this is the one field that is *not*
+   * transcribed into source: it arrives as `ECOURTS_GRANT_REFERENCE` and lives
+   * only in Railway.
+   *
+   * It still reaches `ecourts_fetch_ledger.authorisation_reference`, which is
+   * correct and is not a leak — that table is the internal audit trail that
+   * makes "did we stay inside the grant" answerable, and a registrar asking
+   * that question is exactly who it is for. **It must never reach a client
+   * response**, which `guard.test.ts` asserts by sweeping the source rather
+   * than trusting that nobody adds `detail` to a payload one afternoon.
+   */
   reference: string;
   /** ISO date the grant was made. */
   grantedOn: string;
@@ -47,10 +62,41 @@ export type EcourtsAuthorisation = {
    * at transcription time rather than in a comparison somewhere.
    */
   expiresAt: string;
-  /** The attribution string the grant requires us to carry, verbatim. */
+  /**
+   * The attribution string the grant requires us to carry, verbatim.
+   *
+   * **CONFIDENTIAL, same reason as `reference`** — `ECOURTS_GRANT_ATTRIBUTION`,
+   * environment only. Note the consequence, because it is unusual: the
+   * registrar has asked that these details not appear in the application, so
+   * **this attribution is not rendered anywhere in the product.** It is
+   * recorded for our own compliance file, not displayed. Do not "helpfully"
+   * surface it in a footer.
+   */
   attribution: string;
-  /** Courts the grant covers. A court not named here is not covered. */
-  permittedCourts: readonly string[];
+  /**
+   * Courts the grant covers.
+   *
+   * `'ALL_COURTS'` is a deliberate sentinel rather than an empty array or a
+   * missing field, because those both read as "none" and would silently
+   * refuse everything. The grant covers every court, and saying so explicitly
+   * is different from failing to say anything.
+   */
+  permittedCourts: readonly string[] | 'ALL_COURTS';
+  /**
+   * The data types the grant covers, enumerated.
+   *
+   * **"All available data" is the grant's breadth; this list is what that
+   * actually means**, and the difference matters in two directions. A future
+   * reader planning a feature needs to know `caveat_search` was covered
+   * without re-asking the registrar. And if the grant is ever narrowed on
+   * renewal, the diff against this list is the change — an unenumerated
+   * "everything" cannot be diffed.
+   *
+   * Confirmed by the founder 8 Aug 2026. Recorded for provenance and product
+   * planning; the guard does not gate on it, because the grant's own limits
+   * are volume and time, not type.
+   */
+  permittedDataTypes: readonly string[];
   /** Hours of the day, IST, during which requests are permitted. Half-open [from, to). */
   permittedHoursIst: { readonly from: number; readonly to: number };
   /** Minimum gap between two requests. Frequency, as distinct from volume. */
@@ -87,6 +133,16 @@ export type EcourtsAuthorisation = {
    * renewal is a diarised commercial decision, not an outage.
    */
   onExpiry: 'lapses' | 'renewable_for_payment';
+  /**
+   * How far ahead the renewal must be paid so there is no interruption.
+   *
+   * The founder's stated intent (8 Aug 2026) is to pay **six months in
+   * advance**. Recorded as a number rather than a note because the useful
+   * artefact is a *deadline that can be computed* — `renewalDueBy()` turns it
+   * into a date, so "when must this be paid" is answerable by the admin
+   * surface rather than by remembering a conversation from 2026.
+   */
+  renewalLeadTimeDays: number;
   /**
    * Whether we may render eCourts-derived data **inside Lawmind** rather than
    * sending the advocate to eCourts to see it.
@@ -126,12 +182,111 @@ export type EcourtsAuthorisation = {
 };
 
 /**
- * `null` until the grant's conditions are transcribed from the letter.
+ * The grant's CONDITIONS, transcribed from the letter 8 Aug 2026.
  *
- * Not a placeholder object with zeros — a placeholder is something a future
- * change can quietly fill in wrongly, and `null` cannot be partially right.
+ * **Conditions live in source; identifiers live in environment.** The split is
+ * not arbitrary:
+ *
+ * - **Conditions are constraints.** They must be reviewable in a diff, because
+ *   the whole design principle here is that limits are configuration rather
+ *   than folklore. A rate limit nobody can read in a pull request is a rate
+ *   limit nobody is enforcing.
+ * - **Identifiers are confidential.** The registrar required that the letter's
+ *   identifying details not appear in the application or reach its users, so
+ *   `reference` and `attribution` are supplied by environment and never
+ *   committed.
+ *
+ * **Where the letter is silent, the conservative value is transcribed —
+ * never "unlimited".** The grant states scope, expiry and permissions; it does
+ * not state rate limits. So the limits below are OURS, chosen low. Being
+ * courteous to a government service we depend on until 2029 costs a slower
+ * backfill and buys the thing we cannot re-buy: the grant itself.
  */
-export const AUTHORISATION: EcourtsAuthorisation | null = null;
+const GRANT_CONDITIONS = {
+  grantedOn: '2026-08-07',
+  /**
+   * 12:00 IST on 1 January 2029 = 06:30 UTC.
+   *
+   * **The DAY is the conservative reading, not a quoted fact.** The founder
+   * stated "12 PM, January 2029" without a day. Transcribing the first of the
+   * month means we stop *earlier* than the grant requires if the real date is
+   * later — the error runs toward under-use, which is recoverable, rather than
+   * toward harvesting under an expired permission, which is not.
+   *
+   * Correct this the moment the exact date is known.
+   */
+  expiresAt: '2029-01-01T06:30:00.000Z',
+  /** The grant covers every court — stated, not inferred from an empty list. */
+  permittedCourts: 'ALL_COURTS',
+  /**
+   * Confirmed by the founder 8 Aug 2026. Three of these close gaps the daily
+   * loop currently papers over:
+   *
+   * - `cause_list` is the wedge itself, and PD-5 trigger 4 ("a matter listed
+   *   on a date the advocate did not enter") has had no producer at all.
+   * - `case_status` is what makes a matter's state real rather than whatever
+   *   was last typed into it.
+   * - `court_orders` gives `matter_events.order_text` a source beyond manual
+   *   entry and OCR.
+   *
+   * `caveat_search` is the one no competitor teardown found in any of the five
+   * rivals' listings.
+   */
+  permittedDataTypes: [
+    'court_names',
+    'case_status',
+    'cause_list',
+    'caveat_search',
+    'court_orders',
+    'judgments',
+  ],
+  /** Not stated by the letter. Unrestricted, written deliberately rather than omitted. */
+  permittedHoursIst: { from: 0, to: 24 },
+  /** Not stated. Ours, chosen conservatively — see the note above. */
+  minIntervalMs: 2000,
+  maxRequestsPerHour: 100,
+  maxRequestsPerDay: 1000,
+  captchaBypassPermitted: true,
+  onExpiry: 'renewable_for_payment',
+  /** The founder pays six months ahead so there is no interruption. */
+  renewalLeadTimeDays: 180,
+  independentDisplayPermitted: true,
+  trainingPermitted: true,
+} as const satisfies Omit<EcourtsAuthorisation, 'reference' | 'attribution'>;
+
+/**
+ * The live grant, or `null`.
+ *
+ * `null` when the confidential identifiers are absent, and that is a real
+ * refusal rather than a technicality: a request we cannot stamp with a grant
+ * reference is a request whose adherence we could not later demonstrate, and
+ * the ability to demonstrate it is the reason the grant survives. Same posture
+ * as `packages/auth/src/mail.ts` — refuse honestly rather than proceed in a
+ * degraded mode that looks like the working one.
+ *
+ * Not a placeholder object with zeros. A placeholder is something a future
+ * change can quietly fill in wrongly; `null` cannot be partially right.
+ */
+function buildAuthorisation(): EcourtsAuthorisation | null {
+  const reference = process.env['ECOURTS_GRANT_REFERENCE'];
+  const attribution = process.env['ECOURTS_GRANT_ATTRIBUTION'];
+  if (!reference || !attribution) return null;
+  return { ...GRANT_CONDITIONS, reference, attribution };
+}
+
+export const AUTHORISATION: EcourtsAuthorisation | null = buildAuthorisation();
+
+/**
+ * When the renewal must be paid to avoid any interruption.
+ *
+ * Computed, so the answer cannot drift from the grant it depends on. `null`
+ * when there is no grant — there is nothing to renew.
+ */
+export function renewalDueBy(): Date | null {
+  const grant = AUTHORISATION;
+  if (!grant) return null;
+  return new Date(Date.parse(grant.expiresAt) - grant.renewalLeadTimeDays * 86_400_000);
+}
 
 /**
  * The ONLY way any code may ask "are we allowed to bypass the CAPTCHA?"

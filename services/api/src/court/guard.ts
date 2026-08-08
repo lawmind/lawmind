@@ -85,7 +85,11 @@ export async function decide(
     return {
       allowed: false,
       reason: 'authorisation_expired',
-      detail: `the grant ${grant.reference} expired at ${grant.expiresAt}`,
+      // Deliberately does NOT name the grant reference. The registrar required
+      // that the letter's identifying details stay out of the application, and
+      // `detail` is one `detail: decision.detail` away from a client payload.
+      // The reference is recorded where it belongs — the fetch ledger.
+      detail: `the grant expired at ${grant.expiresAt}`,
     };
   }
 
@@ -97,11 +101,14 @@ export async function decide(
     };
   }
 
-  if (!grant.permittedCourts.includes(court)) {
+  // 'ALL_COURTS' is the grant saying "every court", which is a different fact
+  // from an empty list — the latter reads as "none" and would refuse
+  // everything. Checked explicitly so the two can never be confused.
+  if (grant.permittedCourts !== 'ALL_COURTS' && !grant.permittedCourts.includes(court)) {
     return {
       allowed: false,
       reason: 'court_not_permitted',
-      detail: `${court} is not among the courts grant ${grant.reference} covers`,
+      detail: `${court} is not among the courts this grant covers`,
     };
   }
 
