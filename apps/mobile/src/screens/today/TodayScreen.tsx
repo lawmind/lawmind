@@ -6,6 +6,7 @@ import { CalendarDays } from 'lucide-react-native';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { EmptyState } from '../../components/EmptyState';
+import { EnrolmentBand } from '../../components/EnrolmentBand';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
@@ -128,6 +129,9 @@ export function TodayScreen() {
 
   return (
     <Screen topInset>
+      {profile?.enrolmentStatus === 'unverified' ? (
+        <EnrolmentBand barEnrolmentNumber={profile.barEnrolmentNumber} />
+      ) : null}
       <ScrollView contentContainerStyle={styles.body}>
         <Text variant="eyebrow">
           {weekdayName(today).toUpperCase()}, {formatGutter(today)}
