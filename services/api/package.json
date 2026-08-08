@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "//exports": "Briefing assembly is domain logic the nightly sweep needs too. Exported rather than duplicated, and rather than moved to packages/ for one consumer \u2014 the ponytail ladder says the cheapest correct change wins. recheck joined it 8 Aug 2026 for the same reason and one more: the API needs it for POST /admin/overruled-rechecks/run, and cron already depends on api rather than the reverse, so moving it HERE removed a cross-package import instead of adding a package.",
+  "//exports": "Briefing assembly is domain logic the nightly sweep needs too. Exported rather than duplicated, and rather than moved to packages/ for one consumer — the ponytail ladder says the cheapest correct change wins. recheck joined it 8 Aug 2026 for the same reason and one more: the API needs it for POST /admin/overruled-rechecks/run, and cron already depends on api rather than the reverse, so moving it HERE removed a cross-package import instead of adding a package.",
   "exports": {
     "./briefings/assemble": "./src/briefings/assemble.ts",
     "./push/expo": "./src/push/expo.ts",
@@ -17,7 +17,8 @@
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test --test-concurrency=1 src/*.test.ts src/**/*.test.ts",
-    "bench": "tsx src/search/bench.ts"
+    "bench": "tsx src/search/bench.ts",
+    "propagate": "tsx src/citations/propagate-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",

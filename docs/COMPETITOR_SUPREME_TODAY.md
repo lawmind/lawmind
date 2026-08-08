@@ -214,16 +214,43 @@ mention** — 10,437 `followed`, 1,233 `distinguished`, 69 `overruled`, 19
 `overruled_in_part`, 7 `doubted`, and 11,765 with the extracted phrase as
 `evidence`. We are not starting from nothing; extraction works.
 
-**And it is not reaching the surface. Measured today: 29 judgments are recorded
-in the citation graph as overruled or doubted, and 7 of them still read
-`overruled_status = 'none'` — so every surface renders them as good law.** The
-extraction ran; the propagation to `judgments` did not. `pnpm --filter
-@lawmind/harness citator` now reports this in one command.
+**And 7 of the 29 judgments with an inbound overruling edge still read
+`overruled_status = 'none'`, so every surface renders them as good law.** `pnpm
+--filter @lawmind/harness citator` reports it in one command; `pnpm --filter
+@lawmind/api propagate` names them.
 
-Seven is small and the mechanism is not. This is the stale-overruled failure
-arriving by the back door, and the harness cannot catch it —
-`staleOverruledRate` measures whether a status *change* reaches the next read,
-not whether a status that should exist was ever written.
+**The dry run corrected the diagnosis, and the correction is the useful part.**
+The first reading was "the extraction ran, the propagation did not." That is too
+broad. Every `overruled` and `doubted` edge HAS been applied — the 22 flagged
+judgments are exactly those. **All 7 unapplied are `overruled_in_part`, and they
+are unapplied because `SCHEMA_TRUTH.md` requires `overruled_paras` for
+`partly_set_aside` and the extractor records paragraph numbers for none of the
+38,341 judgments.**
+
+**The extraction itself is accurate.** Read the seven and they are all real,
+well-known partial overrulings, each with the citing court's own phrase:
+
+| Authority | Partly overruled by | evidence |
+| --- | --- | --- |
+| *Kharak Singh v. State of U.P.* | *K.S. Puttaswamy* (2017) | "partly overruled" |
+| *Danamma @ Suman Surpur* | *Vineeta Sharma v. Rakesh Sharma* (2020) | "partly overruled" |
+| *Garware Wall Ropes* | *In Re: Interplay between Arbitration Agreements…* (2023) | "overruled to an extent" |
+| *Queen's Educational Society* | *New Noble Educational Society* (2022) | "partly overruled" |
+| *National Insurance v. Annappa Irappa Nesaria* | *Mukund Dewangan* (2017) | "Partly overruled" |
+
+So the fix is not a propagation pipeline — that path works. **The fix is
+paragraph extraction**, and until it exists these seven cannot be surfaced
+without either lying about scope (`set_aside` disables add-to-matter and would
+tell an advocate the whole authority is gone) or rendering a banner naming no
+paragraphs, which `SCHEMA_TRUTH.md` forbids for the good reason that an advocate
+cannot act on it.
+
+Worth noting against Supreme Today: **`partly_set_aside` is the hardest state in
+this domain and the one their Authority Check's positive/negative/neutral
+classification cannot express either.** *Kharak Singh* is not bad law; part of it
+is. An advocate who is told either "fine" or "overruled" has been misled both
+ways. Getting this one state right is a narrower and more winnable fight than
+matching forty years of headnotes.
 
 **The honest comparison:** their citator is populated and ours effectively is not
 — 22 flagged judgments out of 38,341. Our advantage is that ours can be filled by
