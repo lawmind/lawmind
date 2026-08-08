@@ -106,6 +106,35 @@ number again. **If it does not move the number on our own corpus, it does not
 ship** — the same gate `TRAINING_STRATEGY.md` already puts on the first
 fine-tune.
 
+#### The sequence ran, 8 Aug 2026. Here is what it said.
+
+The harness exists, the baseline is recorded (`sprints/SPRINT_2.md`), and the
+reranker was built and measured against it. Two things the prediction above got
+wrong, both worth keeping.
+
+**The metric it named could not have moved.** `precision@5` over a set with one
+gold judgment per query caps at 0.20 — arithmetic, not tuning. The gate metric is
+now success@5, at the same 0.7 floor. This paragraph is left as written because
+being specific about the wrong quantity is exactly how the error was catchable.
+
+**The 15–30% figure did not appear.** On the 30-query gate set the cross-encoder
+moved success@5 from 24.0% to 28.0% — **one query**. Its ceiling was known in
+advance and is honest: recall@20 is 44%, so twenty points of gold answers sit in
+the 6–20 band it can reach, and it recovered a fraction of them.
+
+**The real lesson is about the measurement, not the model.** One hit on thirty
+queries is 3.3 points, so nothing in that range is distinguishable from noise —
+a genuine 5-point gain and a coin flip produce the same output. That is why
+`services/harness/src/ab-cli.ts` now exists: 100 derived queries, both arms in
+one process, paired differences with an interval. **No lever ships on a
+before/after pair of percentages again.**
+
+Citation-graph expansion (§1e) was built and measured the same way. Its first run
+returned bit-for-bit identical numbers, which turned out to mean it was not
+running — suggestions were appended past the depth cutoff and truncated before
+scoring. Worth recording as a general rule: **a change that measures as exactly
+zero is more often not running than not working.**
+
 ---
 
 ## 2 · BREADTH — what the grant actually unlocked

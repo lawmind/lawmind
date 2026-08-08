@@ -518,6 +518,45 @@ re-reading the contract doc line by line rather than skimming the endpoint list.
 **Where it plugs in:** `apps/mobile/src/screens/search/` — a "Saved" tab or
 similar, once confirmed. Zero client code exists; nothing to undo either way.
 
+
+---
+
+**UPDATE 8 Aug 2026 — the blocker above is solved, by observation.**
+
+The stopping point was: *"a first attempt at `browse?type=shorttitle&q=...`
+returned nothing — repealed Acts most likely live in a different index than the
+845-Act Central Acts browse, and I have not yet found which one."*
+
+They do, and here it is. India Code's own description is **"Contains all
+Enforced Central and State Acts"**, which is why an enforced-acts browse will
+never list IPC however carefully it is queried — the 845 are the enforced set,
+and the absence was correct rather than a parsing failure. The repealed Acts are
+still on the site as items; they are simply not in that index.
+
+Resolved against the site today, each confirmed by the title India Code itself
+returns:
+
+| Act | handle | title returned |
+| --- | --- | --- |
+| Indian Penal Code, 1860 | `123456789/11091` | `INDIAN PENAL CODE, 1860` |
+| Indian Evidence Act, 1872 | `123456789/4218` | `INDIAN-EVIDENCE-ACT-1872` |
+| Code of Criminal Procedure, 1973 | `123456789/4221` | `Criminal-Procedure-Code-CrPC-1973` |
+
+(`123456789/16225` appears in search results for the CrPC and is **invalid** —
+India Code answers "Invalid URL or Argument(s)". Recorded so nobody tries it
+twice.)
+
+**The caveat that changes the remaining work, and it is not small.** Those
+titles are filenames. These are PDF bitstream items, not the structured act
+pages `parseActPage` reads — the enforced acts have an HTML page with per-section
+links, and these do not. So ingesting them is not "add three handles to
+`CRIMINAL_CODE_HANDLES`"; it needs a PDF-to-sections path that does not exist
+yet. **That is now the whole of C1's first piece**, and it is a known quantity
+rather than an unknown one.
+
+Nothing else in the plan above changes: parse, then verify every candidate pair
+against primary text we hold, store only what checks out, hand-check 20.
+
 ---
 
 ### [RESOLVED 8 Aug 2026] Matter sharing only works one direction · RCC raised, LCC fixed
