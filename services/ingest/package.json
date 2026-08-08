@@ -11,7 +11,8 @@
     "citations": "tsx src/citations-cli.ts",
     "overruled": "tsx src/overruled-cli.ts",
     "acts": "tsx src/acts-cli.ts",
-    "harvest:probe": "tsx src/harvest/probe-cli.ts"
+    "harvest:probe": "tsx src/harvest/probe-cli.ts",
+    "repealed": "tsx src/repealed-acts-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",
