@@ -640,6 +640,40 @@ purchase action stubbed and honestly disabled until this is resolved.
 
 ---
 
+### [OPEN] `verified_by_source` — bulk eCourts resolution needs its own value · LCC · 8 Aug 2026
+
+**Needs:** a yes/no on adding `ecourts_bulk` to the `verified_by_source` enum.
+
+**Why it is not mine to decide:** `CITATION_HARNESS.md` is a binding spec and
+this changes what a stored value _means_. Today `verified_by_source = 'ecourts'`
+carries a specific guarantee — **a named human personally vouched for this
+citation**. That is why it caches permanently and why it is the fallback when
+Tiers 1 and 2 disagree.
+
+The grant now permits **bulk, authorised, automated** eCourts resolution. If
+that writes the same `'ecourts'` value, the strongest guarantee in the product
+silently degrades to "a machine said so" — and it would still read `ecourts` in
+the database. No test would fail. Nothing would look wrong.
+
+**Why it matters commercially, not just technically:** `CORPUS_TIERING.md` §6
+concluded that High Court judgments are hard to _cite_ rather than hard to
+_hold_ — 0 of 30 sampled PDFs carry a neutral citation — and that the long tail
+would therefore arrive `unverified` and become citable one advocate at a time.
+The grant changes that constraint: the tail can arrive **already citable**. That
+is the difference between holding 33M documents and holding 33M usable
+authorities, and it is the largest change to our data position since the corpus
+began. `docs/DATA_ADVANTAGE.md` §2 has the full account.
+
+**Cost if never resolved:** either bulk resolution does not happen (we keep a
+large, mostly-unciteable tail), or it happens under the existing value and
+quietly dilutes the one signal an advocate relies on most.
+
+**Where it plugs in:** `verified_by_source` in `docs/SCHEMA_TRUTH.md` and the
+enum in `packages/db`, plus the tier ordering in `CITATION_HARNESS.md`.
+Additive — no existing row changes meaning.
+
+---
+
 # RESOLVED — kept for provenance
 
 ### [RESOLVED 7 Aug 2026] Resend sending domain
