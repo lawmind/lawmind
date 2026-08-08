@@ -299,8 +299,20 @@ comparison.
   and it is the same fixed query set we gate ourselves on.
 - **Prism's actual retrieval quality is unmeasured.** 30M judgments is a corpus
   claim, not a relevance claim.
+- **SupremeToday AI: pricing now VERIFIED, and the framing in this file was
+  wrong.** ₹20,000/yr for the India AI plan, down to **₹5,000/yr for Supreme Court
+  plus one High Court** — which reaches our exact target user. More importantly they
+  are not a startup: **Vinod Publications 1968 → law journals from 1983 → the
+  *Supreme Today* daily journal from 1996 → Vikas Info Solutions (P) Ltd, ₹3.56 Cr
+  revenue FY24, unfunded.** They published the law reports, so their citation
+  accuracy is a publishing fact rather than a retrieval one, and they hold a
+  populated citator (Authority Check, headnotes, treatment, disposition). Full
+  teardown and the strategy against them: `docs/COMPETITOR_SUPREME_TODAY.md`.
+  That file also carries the exact case, citation and operative words behind §4's
+  zero-tolerance line — *Pooja Ramesh Singh v. Jammu and Kashmir Bank Ltd.*,
+  **2026 INSC 668**, 2 July 2026.
 - **No pricing verified for CaseMine, LegitQuest, VIDUR, Jhana, Manupatra, Lawyyar,
-  LegalKart Lawyer, or SupremeToday AI** — the last three's Play listings state no
+  or LegalKart Lawyer** — the last three's Play listings state no
   price tier at all, which is itself worth re-checking hands-on before assuming
   free.
 - **`docs/ASO.md` §1 competitor teardown is done, 8 Aug 2026**, Play Store side —

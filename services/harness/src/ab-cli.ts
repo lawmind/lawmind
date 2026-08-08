@@ -71,155 +71,186 @@ function mrr(rows: ScoredQuery[]): number {
   return rows.reduce((a, r) => a + (r.foundAtAnyRank ? 1 / r.foundAtAnyRank : 0), 0) / rows.length;
 }
 
-try {
-  const embedder = await getEmbedder();
-  const embedQuery = async (text: string): Promise<string | null> => {
-    const [e] = await embedder.embed([text]);
-    return e ? toVectorLiteral(e.vector) : null;
-  };
+/**
+ * Wrapped in a function rather than left as top-level await, because the fp32
+ * run taught the difference.
+ *
+ * It died at query 80 of 100 — the ONNX session aborted, almost certainly out of
+ * memory with a 2.2 GB cross-encoder alongside BGE-M3 — and the promise simply
+ * never settled. Node exited 13 with "Detected unsettled top-level await" and no
+ * mention of a model, which reads like a bug in this file. Two hours of compute
+ * produced a message pointing at the wrong place.
+ *
+ * Inside a function, the same failure surfaces as the error it is.
+ */
+async function main(): Promise<void> {
+  try {
+    const embedder = await getEmbedder();
+    const embedQuery = async (text: string): Promise<string | null> => {
+      const [e] = await embedder.embed([text]);
+      return e ? toVectorLiteral(e.vector) : null;
+    };
 
-  const wantsRerank = lever === 'rerank' || lever === 'both';
-  const wantsGraph = lever === 'graph' || lever === 'both';
-  const reranker = wantsRerank ? await getReranker() : null;
+    const wantsRerank = lever === 'rerank' || lever === 'both';
+    const wantsGraph = lever === 'graph' || lever === 'both';
+    const reranker = wantsRerank ? await getReranker() : null;
 
-  /**
-   * Latency, timed here because accuracy is only half the ship/no-ship
-   * question and the other half has a hard number attached.
-   *
-   * Gate S1 budgets **3 seconds for the whole search request**, and
-   * `services/api/src/index.ts` already caps query EMBEDDING at 2s because a
-   * model that hangs is worse than one that throws. A cross-encoder scoring 20
-   * candidates is twenty forward passes of a 568M-parameter model, on the
-   * Railway CPU that serves the request — not on the GPU that embedded the
-   * corpus.
-   *
-   * So a lever can be accurate and still not ship. Measuring this alongside the
-   * gain is what stops that being discovered in production.
-   */
-  const rerankMs: number[] = [];
-  const timedRerank = reranker
-    ? async (q: string, passages: readonly string[]) => {
-        const started = Date.now();
-        try {
-          return await reranker.score(q, passages);
-        } finally {
-          rerankMs.push(Date.now() - started);
-        }
-      }
-    : undefined;
-
-  console.log(`A/B: ${lever} · ${queries.length} queries · paired`);
-  console.log('='.repeat(70));
-
-  const control: ScoredQuery[] = [];
-  const treatment: ScoredQuery[] = [];
-
-  for (const [i, q] of queries.entries()) {
-    // Both arms in the same iteration, so a corpus that changed mid-run would
-    // affect both identically rather than showing up as a lever effect.
-    control.push(await scoreQuery(sql, q, embedQuery));
-    treatment.push(await scoreQuery(sql, q, embedQuery, 20, timedRerank, wantsGraph));
-    if ((i + 1) % 10 === 0) process.stdout.write(`  ${i + 1}/${queries.length}\r`);
-  }
-
-  /**
-   * Paired difference on the per-query hit indicator, which is what success@5
-   * averages. Its mean IS the change in success@5, and its spread is the thing
-   * a single before/after pair of percentages cannot show you.
-   */
-  const diffs = queries.map(
-    (_, i) =>
-      (treatment[i]!.goldRanks.length > 0 ? 1 : 0) - (control[i]!.goldRanks.length > 0 ? 1 : 0),
-  );
-  const mean = diffs.reduce((a, b) => a + b, 0) / diffs.length;
-  const variance = diffs.reduce((a, b) => a + (b - mean) ** 2, 0) / Math.max(diffs.length - 1, 1);
-  const stderr = Math.sqrt(variance / diffs.length);
-  const lo = mean - 1.96 * stderr;
-  const hi = mean + 1.96 * stderr;
-
-  const gained = diffs.filter((d) => d > 0).length;
-  const lost = diffs.filter((d) => d < 0).length;
-  const discordant = gained + lost;
-
-  /**
-   * **McNemar's exact test, which is the correct one for this data.**
-   *
-   * The normal-approximation interval above is kept because it states the
-   * effect SIZE in the units the gate cares about. It is not the right
-   * significance test, and the first real run showed why: 100 queries produced
-   * 11 gains, 5 losses and **84 unchanged**. An approximation over 100
-   * differences that are almost all zero is driven by 16 observations while
-   * presenting itself as 100.
-   *
-   * `stats.ts` holds the arithmetic and a test checks it against a value
-   * computed by hand. This is not a lower bar — on that run it gives p ≈ 0.21,
-   * the same verdict, reached honestly.
-   */
-  const mcnemarP = mcnemarExactP(gained, lost);
-
-  const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
-  console.log('');
-  console.log(`  success@5   ${pct(successAt5(control))} → ${pct(successAt5(treatment))}`);
-  console.log(`  recall@20   ${pct(recallAt20(control))} → ${pct(recallAt20(treatment))}`);
-  console.log(`  MRR         ${mrr(control).toFixed(3)} → ${mrr(treatment).toFixed(3)}`);
-  console.log('');
-  console.log(`  paired delta on success@5: ${pct(mean)}  (95% interval ${pct(lo)} to ${pct(hi)})`);
-  console.log(
-    `  ${gained} queries gained · ${lost} lost · ` +
-      `${diffs.length - discordant} unchanged (they carry no information)`,
-  );
-  console.log(
-    `  McNemar exact, two-sided, on the ${discordant} discordant pairs: ` +
-      `p = ${mcnemarP === null ? 'n/a' : mcnemarP.toFixed(3)}`,
-  );
-
-  /**
-   * How many queries it would take to settle it, when it is not settled.
-   *
-   * Reported because "not significant" and "no effect" are different findings
-   * and the difference is actionable: one says stop, the other says the run was
-   * too small. Rough — a normal-approximation sample size for a paired binary
-   * test at 80% power, using the discordance observed here.
-   */
-  if (mcnemarP !== null && mcnemarP > 0.05) {
     /**
-     * "Not significant" and "no effect" are different findings, and only one
-     * of them means stop. This says which.
+     * Latency, timed here because accuracy is only half the ship/no-ship
+     * question and the other half has a hard number attached.
+     *
+     * Gate S1 budgets **3 seconds for the whole search request**, and
+     * `services/api/src/index.ts` already caps query EMBEDDING at 2s because a
+     * model that hangs is worse than one that throws. A cross-encoder scoring 20
+     * candidates is twenty forward passes of a 568M-parameter model, on the
+     * Railway CPU that serves the request — not on the GPU that embedded the
+     * corpus.
+     *
+     * So a lever can be accurate and still not ship. Measuring this alongside the
+     * gain is what stops that being discovered in production.
      */
-    const need = queriesToSettle(gained, lost, diffs.length);
-    if (need !== null) {
-      console.log(
-        `  not settled. At this effect size ~${need} queries would settle it ` +
-          `(this run: ${diffs.length}).`,
-      );
-    }
-  }
+    const rerankMs: number[] = [];
+    const timedRerank = reranker
+      ? async (q: string, passages: readonly string[]) => {
+          const started = Date.now();
+          try {
+            return await reranker.score(q, passages);
+          } finally {
+            rerankMs.push(Date.now() - started);
+          }
+        }
+      : undefined;
 
-  if (rerankMs.length > 0) {
-    const sorted = [...rerankMs].sort((a, b) => a - b);
-    const mean = rerankMs.reduce((a, b) => a + b, 0) / rerankMs.length;
-    const p95 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95))]!;
+    console.log(`A/B: ${lever} · ${queries.length} queries · paired`);
+    console.log('='.repeat(70));
+
+    const control: ScoredQuery[] = [];
+    const treatment: ScoredQuery[] = [];
+
+    for (const [i, q] of queries.entries()) {
+      // Both arms in the same iteration, so a corpus that changed mid-run would
+      // affect both identically rather than showing up as a lever effect.
+      control.push(await scoreQuery(sql, q, embedQuery));
+      treatment.push(await scoreQuery(sql, q, embedQuery, 20, timedRerank, wantsGraph));
+      if ((i + 1) % 10 === 0) process.stdout.write(`  ${i + 1}/${queries.length}\r`);
+    }
+
+    /**
+     * Paired difference on the per-query hit indicator, which is what success@5
+     * averages. Its mean IS the change in success@5, and its spread is the thing
+     * a single before/after pair of percentages cannot show you.
+     */
+    const diffs = queries.map(
+      (_, i) =>
+        (treatment[i]!.goldRanks.length > 0 ? 1 : 0) - (control[i]!.goldRanks.length > 0 ? 1 : 0),
+    );
+    const mean = diffs.reduce((a, b) => a + b, 0) / diffs.length;
+    const variance = diffs.reduce((a, b) => a + (b - mean) ** 2, 0) / Math.max(diffs.length - 1, 1);
+    const stderr = Math.sqrt(variance / diffs.length);
+    const lo = mean - 1.96 * stderr;
+    const hi = mean + 1.96 * stderr;
+
+    const gained = diffs.filter((d) => d > 0).length;
+    const lost = diffs.filter((d) => d < 0).length;
+    const discordant = gained + lost;
+
+    /**
+     * **McNemar's exact test, which is the correct one for this data.**
+     *
+     * The normal-approximation interval above is kept because it states the
+     * effect SIZE in the units the gate cares about. It is not the right
+     * significance test, and the first real run showed why: 100 queries produced
+     * 11 gains, 5 losses and **84 unchanged**. An approximation over 100
+     * differences that are almost all zero is driven by 16 observations while
+     * presenting itself as 100.
+     *
+     * `stats.ts` holds the arithmetic and a test checks it against a value
+     * computed by hand. This is not a lower bar — on that run it gives p ≈ 0.21,
+     * the same verdict, reached honestly.
+     */
+    const mcnemarP = mcnemarExactP(gained, lost);
+
+    const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
+    console.log('');
+    console.log(`  success@5   ${pct(successAt5(control))} → ${pct(successAt5(treatment))}`);
+    console.log(`  recall@20   ${pct(recallAt20(control))} → ${pct(recallAt20(treatment))}`);
+    console.log(`  MRR         ${mrr(control).toFixed(3)} → ${mrr(treatment).toFixed(3)}`);
     console.log('');
     console.log(
-      `  rerank latency: mean ${mean.toFixed(0)}ms · p95 ${p95}ms · ` +
-        `${rerankMs.length} calls, 20 candidates each`,
+      `  paired delta on success@5: ${pct(mean)}  (95% interval ${pct(lo)} to ${pct(hi)})`,
     );
     console.log(
-      p95 > 3000
-        ? '  BUDGET BREACHED: Gate S1 allows 3s for the WHOLE search request. ' +
-            'Accuracy is moot until this fits — a GPU endpoint or a smaller ' +
-            'cross-encoder, measured again.'
-        : '  Within the 3s Gate S1 request budget, on this machine.',
+      `  ${gained} queries gained · ${lost} lost · ` +
+        `${diffs.length - discordant} unchanged (they carry no information)`,
     );
+    console.log(
+      `  McNemar exact, two-sided, on the ${discordant} discordant pairs: ` +
+        `p = ${mcnemarP === null ? 'n/a' : mcnemarP.toFixed(3)}`,
+    );
+
+    /**
+     * How many queries it would take to settle it, when it is not settled.
+     *
+     * Reported because "not significant" and "no effect" are different findings
+     * and the difference is actionable: one says stop, the other says the run was
+     * too small. Rough — a normal-approximation sample size for a paired binary
+     * test at 80% power, using the discordance observed here.
+     */
+    if (mcnemarP !== null && mcnemarP > 0.05) {
+      /**
+       * "Not significant" and "no effect" are different findings, and only one
+       * of them means stop. This says which.
+       */
+      const need = queriesToSettle(gained, lost, diffs.length);
+      if (need !== null) {
+        console.log(
+          `  not settled. At this effect size ~${need} queries would settle it ` +
+            `(this run: ${diffs.length}).`,
+        );
+      }
+    }
+
+    if (rerankMs.length > 0) {
+      const sorted = [...rerankMs].sort((a, b) => a - b);
+      const mean = rerankMs.reduce((a, b) => a + b, 0) / rerankMs.length;
+      const p95 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95))]!;
+      console.log('');
+      console.log(
+        `  rerank latency: mean ${mean.toFixed(0)}ms · p95 ${p95}ms · ` +
+          `${rerankMs.length} calls, 20 candidates each`,
+      );
+      console.log(
+        p95 > 3000
+          ? '  BUDGET BREACHED: Gate S1 allows 3s for the WHOLE search request. ' +
+              'Accuracy is moot until this fits — a GPU endpoint or a smaller ' +
+              'cross-encoder, measured again.'
+          : '  Within the 3s Gate S1 request budget, on this machine.',
+      );
+    }
+    console.log('');
+    console.log(
+      lo > 0
+        ? 'SHIPS: the interval excludes zero, so the gain is not noise.'
+        : hi < 0
+          ? 'DOES NOT SHIP: it makes retrieval measurably worse.'
+          : 'DOES NOT SHIP: the interval spans zero — this did not move the number.',
+    );
+  } finally {
+    await sql.end();
   }
-  console.log('');
-  console.log(
-    lo > 0
-      ? 'SHIPS: the interval excludes zero, so the gain is not noise.'
-      : hi < 0
-        ? 'DOES NOT SHIP: it makes retrieval measurably worse.'
-        : 'DOES NOT SHIP: the interval spans zero — this did not move the number.',
+}
+
+try {
+  await main();
+} catch (error) {
+  console.error('');
+  console.error('the A/B run FAILED — no verdict, and no partial verdict either.');
+  console.error(
+    'A run that stopped early is not a smaller run: the queries it did not reach ' +
+      'are not a random sample of the set, so the numbers from the ones it did ' +
+      'reach cannot be reported as a result.',
   );
-} finally {
-  await sql.end();
+  console.error('');
+  console.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
+  process.exit(1);
 }

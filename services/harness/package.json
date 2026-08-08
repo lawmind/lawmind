@@ -10,7 +10,8 @@
     "corpus": "tsx src/corpus-cli.ts",
     "build:queries": "tsx src/build-queries.ts",
     "diagnose": "tsx src/diagnose-cli.ts",
-    "ab": "tsx src/ab-cli.ts"
+    "ab": "tsx src/ab-cli.ts",
+    "citator": "tsx src/citator-report.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
