@@ -15,10 +15,12 @@ import { describe, it } from 'node:test';
 
 import {
   actListingUrl,
+  dedupeSectionRefs,
   parseActListing,
   parseActPage,
   parseIndiaCodeDate,
   parseListingTotal,
+  type SectionRef,
 } from './indiacode.ts';
 
 /** Real markup from `browse?type=shorttitle`, trimmed to four rows. */
@@ -151,6 +153,69 @@ ${metadataRow('Short Title', 'x')}
   it('still throws on incomplete metadata, regardless of actId', () => {
     const noTitle = `<script>var act_id='X';</script><table>${metadataRow('Act Number', '1')}</table>`;
     assert.throws(() => parseActPage(noTitle, '123456789/x'), /incomplete Act metadata/);
+  });
+});
+
+describe('dedupeSectionRefs', () => {
+  const ref = (overrides: Partial<SectionRef>): SectionRef => ({
+    sectionId: 'x',
+    sectionNumber: '1',
+    orderIndex: 0,
+    heading: null,
+    sourceUrl: 'https://example.test',
+    ...overrides,
+  });
+
+  it('passes through a normal Act with no duplicates untouched', () => {
+    const refs = [
+      ref({ sectionId: '1', sectionNumber: '1', orderIndex: 0 }),
+      ref({ sectionId: '2', sectionNumber: '2', orderIndex: 1 }),
+    ];
+    const { refs: out, duplicates } = dedupeSectionRefs(refs);
+    assert.equal(out.length, 2);
+    assert.deepEqual(duplicates, []);
+  });
+
+  it("keeps the lower orderIndex (the site's own first listing) on a real duplicate — s.79, Customs Act 1962", () => {
+    // Real shape: two sectionIds, same number, same heading, adjacent order.
+    const first = ref({
+      sectionId: '30973',
+      sectionNumber: '79',
+      orderIndex: 138,
+      heading: 'Bona fide baggage exempted from duty',
+    });
+    const second = ref({
+      sectionId: '30974',
+      sectionNumber: '79',
+      orderIndex: 139,
+      heading: 'Bona fide baggage exempted from duty',
+    });
+    const { refs: out, duplicates } = dedupeSectionRefs([first, second]);
+    assert.equal(out.length, 1);
+    assert.equal(out[0]?.sectionId, '30973', 'the lower orderIndex must win');
+    assert.deepEqual(duplicates, ['79']);
+  });
+
+  it('keeps the lower orderIndex regardless of which one arrives first', () => {
+    // parseSectionRefs returns document order, but nothing here should assume
+    // the lower orderIndex is always seen first.
+    const later = ref({ sectionId: 'b', sectionNumber: '5', orderIndex: 9 });
+    const earlier = ref({ sectionId: 'a', sectionNumber: '5', orderIndex: 3 });
+    const { refs: out } = dedupeSectionRefs([later, earlier]);
+    assert.equal(out.length, 1);
+    assert.equal(out[0]?.sectionId, 'a');
+  });
+
+  it('names every dropped duplicate rather than only counting them', () => {
+    // A triplicate must report the two dropped, not just flag "duplicate: yes".
+    const refs = [
+      ref({ sectionId: '1', sectionNumber: '9', orderIndex: 0 }),
+      ref({ sectionId: '2', sectionNumber: '9', orderIndex: 1 }),
+      ref({ sectionId: '3', sectionNumber: '9', orderIndex: 2 }),
+    ];
+    const { refs: out, duplicates } = dedupeSectionRefs(refs);
+    assert.equal(out.length, 1);
+    assert.deepEqual(duplicates, ['9', '9']);
   });
 });
 

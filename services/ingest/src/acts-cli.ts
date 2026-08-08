@@ -117,7 +117,7 @@ async function main(): Promise<void> {
         const { act, html } = await fetchAct(listing.handle);
         if (done.has(act.actId)) continue;
 
-        const { sections, missing } = await fetchSections(act.actId, html);
+        const { sections, missing, duplicateSections } = await fetchSections(act.actId, html);
         const { sections: written } = await upsertAct(sql, act, sections);
         ingested++;
         sectionsTotal += written;
@@ -125,7 +125,8 @@ async function main(): Promise<void> {
         console.log(
           `[${String(ingested).padStart(3)}] ${act.shortTitle.slice(0, 56).padEnd(56)} ` +
             `${String(written).padStart(4)} sections  ${mins}m` +
-            (missing.length > 0 ? `  MISSING ${missing.length}` : ''),
+            (missing.length > 0 ? `  MISSING ${missing.length}` : '') +
+            (duplicateSections.length > 0 ? `  DUPLICATE ${duplicateSections.length}` : ''),
         );
       } catch (error) {
         // Never abort the run for one Act. Named, counted, and carried to the end

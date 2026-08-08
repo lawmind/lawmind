@@ -19,7 +19,7 @@ async function main(): Promise<void> {
       const { act, html } = await fetchAct(handle);
       assertExpectedAct(act, expectTitle);
 
-      const { sections, missing } = await fetchSections(act.actId, html);
+      const { sections, missing, duplicateSections } = await fetchSections(act.actId, html);
       const { sections: written } = await upsertAct(sql, act, sections);
 
       console.log(
@@ -31,6 +31,11 @@ async function main(): Promise<void> {
       // (statute_id, section_number) makes that safe.
       if (missing.length > 0) {
         console.log(`  MISSING ${missing.length}: ${missing.slice(0, 40).join(', ')}`);
+      }
+      if (duplicateSections.length > 0) {
+        console.log(
+          `  DUPLICATE ${duplicateSections.length}: ${duplicateSections.slice(0, 40).join(', ')}`,
+        );
       }
     }
 

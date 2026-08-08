@@ -14,6 +14,7 @@ import type postgres from 'postgres';
 
 import {
   actUrl,
+  dedupeSectionRefs,
   parseActPage,
   parseSectionContent,
   parseSectionRefs,
@@ -89,7 +90,12 @@ export async function fetchAct(handle: string): Promise<{ act: ActRecord; html: 
   return { act: parseActPage(html, handle), html };
 }
 
-export type SectionFetch = { sections: SectionRecord[]; missing: string[] };
+export type SectionFetch = {
+  sections: SectionRecord[];
+  missing: string[];
+  /** Section numbers indiacode itself lists twice — see below. Never silent. */
+  duplicateSections: string[];
+};
 
 /**
  * Concurrency 2 by default: this is a government site serving a public good, and
@@ -98,13 +104,17 @@ export type SectionFetch = { sections: SectionRecord[]; missing: string[] };
  * A section that still fails after retries is reported in `missing`, never
  * silently omitted — a BNS with a hole in it is worse than one that failed to
  * load, because the hole is invisible to the advocate looking up that section.
+ *
+ * Duplicate section numbers are resolved before any of this runs — see
+ * `dedupeSectionRefs`'s own doc comment for why they exist and what "resolved"
+ * means here — so `refs` below is already one entry per section number.
  */
 export async function fetchSections(
   actId: string,
   actHtml: string,
   concurrency = 2,
 ): Promise<SectionFetch> {
-  const refs = parseSectionRefs(actHtml);
+  const { refs, duplicates: duplicateSections } = dedupeSectionRefs(parseSectionRefs(actHtml));
   const out: SectionRecord[] = new Array(refs.length);
   const missing: string[] = [];
 
@@ -137,7 +147,11 @@ export async function fetchSections(
     }
   });
   await Promise.all(workers);
-  return { sections: out.filter((s): s is SectionRecord => s !== undefined), missing };
+  return {
+    sections: out.filter((s): s is SectionRecord => s !== undefined),
+    missing,
+    duplicateSections,
+  };
 }
 
 export async function upsertAct(

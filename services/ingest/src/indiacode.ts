@@ -205,6 +205,41 @@ export function parseSectionRefs(html: string): SectionRef[] {
   return refs;
 }
 
+/**
+ * Some Acts list the same section number twice under two different
+ * `sectionId`s — indiacode's own duplicate listing, not two provisions that
+ * happen to share a number. The Customs Act 1962's s.79 and the Delhi
+ * Municipal Corporation Act 1957's s.271/s.282 are the confirmed cases: same
+ * heading, adjacent `orderIndex`, byte-identical section text (checked before
+ * writing this). `(statute_id, section_number)` is unique in
+ * `statute_sections`, so a batch containing both throws "ON CONFLICT DO
+ * UPDATE command cannot affect row a second time" and fails the WHOLE Act —
+ * this is what actually blocked these two, discovered only after fixing the
+ * separate `actId` bug let them get this far.
+ *
+ * Keeps the lower `orderIndex` — the site's own first listing — and names
+ * every dropped duplicate, never silently thinning the section count.
+ */
+export function dedupeSectionRefs(refs: SectionRef[]): {
+  refs: SectionRef[];
+  duplicates: string[];
+} {
+  const bySectionNumber = new Map<string, SectionRef>();
+  const duplicates: string[] = [];
+  for (const ref of refs) {
+    const existing = bySectionNumber.get(ref.sectionNumber);
+    if (!existing) {
+      bySectionNumber.set(ref.sectionNumber, ref);
+    } else if (ref.orderIndex < existing.orderIndex) {
+      bySectionNumber.set(ref.sectionNumber, ref);
+      duplicates.push(ref.sectionNumber);
+    } else {
+      duplicates.push(ref.sectionNumber);
+    }
+  }
+  return { refs: [...bySectionNumber.values()], duplicates };
+}
+
 /** `Section 63. Rape.` → `Rape`. Null when the label carries no heading. */
 export function parseHeading(label: string, sectionNumber: string): string | null {
   const escaped = sectionNumber.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
