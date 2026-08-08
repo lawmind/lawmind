@@ -48,7 +48,8 @@ const MOCK_USER: User = {
   fullName: 'Mock Advocate',
   preferredLanguage: 'en',
   barEnrolmentNumber: null,
-  enrolmentStatus: 'pending',
+  enrolmentStatus: 'unverified',
+  subscriptionTier: 'none',
   termsAcceptedAt: null,
   termsVersion: null,
 };

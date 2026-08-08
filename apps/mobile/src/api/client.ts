@@ -1,4 +1,6 @@
 import type {
+  Annotation,
+  AnnotationDraft,
   ApiResponse,
   AuthoritiesResponse,
   Briefing,
@@ -427,6 +429,36 @@ export const api = {
    */
   authorities: (judgmentId: string) =>
     get<AuthoritiesResponse>(`/judgments/${encodeURIComponent(judgmentId)}/authorities`),
+
+  /**
+   * PD-9 item 3 — highlight and save a passage. Shape verified against
+   * `services/api/src/judgments/annotations.ts`, 8 Aug 2026: `quote` is
+   * required (the paragraph's text), not the abbreviated line in
+   * `API_CONTRACTS.md`. Private to the user; shared only via `matterId`
+   * per the matter's own sharing rules.
+   */
+  annotations: (judgmentId: string) =>
+    get<{ annotations: Annotation[] }>(`/judgments/${encodeURIComponent(judgmentId)}/annotations`, {
+      auth: true,
+    }),
+
+  /**
+   * `matterId` set + the judgment `set_aside` returns `409
+   * AUTHORITY_SET_ASIDE` — the one refusal in this product, and it is about
+   * USING the passage as an authority, not about saving it. Retry without
+   * `matterId` to save the passage on its own.
+   */
+  createAnnotation: (judgmentId: string, draft: AnnotationDraft) =>
+    send<{ annotation: Annotation }>(`/judgments/${encodeURIComponent(judgmentId)}/annotations`, draft, {
+      auth: true,
+    }),
+
+  /** Soft delete — `deleted_at`, scoped to the owner server-side. */
+  deleteAnnotation: (annotationId: string) =>
+    request<{ deleted: true }>(`/annotations/${encodeURIComponent(annotationId)}`, {
+      method: 'DELETE',
+      auth: true,
+    }),
 
   /**
    * S1 RETURNS AUTHORITIES ONLY. `arguments` is absent from the response, not

@@ -23,11 +23,9 @@ const paragraphs: JudgmentParagraph[] = [
   { paragraphNumber: 23, paragraphIndex: 3, text: 'Twenty-three.' },
 ];
 
-const span = { start: 0, end: 4 };
-
 describe('toWireAnnotation', () => {
   it('stores the PRINTED number, not the array position', () => {
-    const wire = toWireAnnotation({ paragraphs, paragraph: paragraphs[2]!, span });
+    const wire = toWireAnnotation({ paragraphs, paragraph: paragraphs[2]! });
 
     // The whole point: ¶ 22 sits at index 2. These must not be confused.
     expect(wire.paragraphNumber).toBe(22);
@@ -36,15 +34,21 @@ describe('toWireAnnotation', () => {
   });
 
   it('does not renumber a judgment that starts at 14', () => {
-    const wire = toWireAnnotation({ paragraphs, paragraph: paragraphs[0]!, span });
+    const wire = toWireAnnotation({ paragraphs, paragraph: paragraphs[0]! });
 
     // Index 0 is ¶ 14. A client that "helpfully" numbered from 1 would say 1.
     expect(wire.paragraphNumber).toBe(14);
     expect(wire.paragraphIndex).toBe(0);
   });
 
+  it('carries the paragraph text as the quote — whole paragraph, not a range', () => {
+    const wire = toWireAnnotation({ paragraphs, paragraph: paragraphs[2]! });
+
+    expect(wire.quote).toBe('Twenty-two — the one an advocate would cite.');
+  });
+
   it('omits note and matterId rather than sending undefined', () => {
-    const wire = toWireAnnotation({ paragraphs, paragraph: paragraphs[1]!, span });
+    const wire = toWireAnnotation({ paragraphs, paragraph: paragraphs[1]! });
 
     expect('note' in wire).toBe(false);
     expect('matterId' in wire).toBe(false);
@@ -54,7 +58,6 @@ describe('toWireAnnotation', () => {
     const wire = toWireAnnotation({
       paragraphs,
       paragraph: paragraphs[1]!,
-      span,
       note: 'parity point',
       matterId: 'matter_1',
     });

@@ -1,4 +1,4 @@
-import type { JudgmentParagraph } from './contract';
+import type { AnnotationDraft, JudgmentParagraph } from './contract';
 
 /**
  * TWO FIELDS, BECAUSE THEY ANSWER DIFFERENT QUESTIONS AND DIVERGE.
@@ -23,17 +23,16 @@ import type { JudgmentParagraph } from './contract';
  * section, and carry sub-numbering. Treating position 11 as "¶ 11" puts an
  * advocate's note on a different paragraph than the one they marked, silently,
  * in a document they may quote into a filing.
+ *
+ * PARAGRAPH-LEVEL, NOT A CHARACTER RANGE — see the `Annotation` type's own
+ * comment in `contract.ts`. `quote` is the paragraph's full text, matching
+ * what `renders/62-judgment-reading@2x.png` actually shows: tap a paragraph,
+ * get an action bar for that whole paragraph. An earlier version of this file
+ * carried a `span: { start, end }` field toward sub-paragraph selection that
+ * the product never asked for and the server's `quote` field never existed to
+ * receive — found 8 Aug 2026 when the real endpoint turned out to require a
+ * field this module never sent.
  */
-
-export type AnnotationDraft = {
-  /** The printed number, or null where the judgment has no numbering to cite. */
-  paragraphNumber: number | null;
-  /** Position in the rendered array. Always present. */
-  paragraphIndex: number;
-  span: { start: number; end: number };
-  note?: string;
-  matterId?: string;
-};
 
 /**
  * Builds the wire payload for `POST /judgments/:id/annotations`.
@@ -45,14 +44,12 @@ export type AnnotationDraft = {
 export function toWireAnnotation({
   paragraphs,
   paragraph,
-  span,
   note,
   matterId,
 }: {
   paragraphs: JudgmentParagraph[];
-  /** The paragraph the advocate marked, as it appears in `paragraphs`. */
+  /** The paragraph the advocate tapped, as it appears in `paragraphs`. */
   paragraph: JudgmentParagraph;
-  span: { start: number; end: number };
   note?: string;
   matterId?: string;
 }): AnnotationDraft {
@@ -68,7 +65,7 @@ export function toWireAnnotation({
      */
     paragraphNumber: paragraph.paragraphNumber ?? null,
     paragraphIndex,
-    span,
+    quote: paragraph.text,
     ...(note === undefined ? {} : { note }),
     ...(matterId === undefined ? {} : { matterId }),
   };

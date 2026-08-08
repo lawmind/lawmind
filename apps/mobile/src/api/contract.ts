@@ -151,6 +151,36 @@ export type JudgmentParagraph = {
 };
 
 /**
+ * PD-9 item 3 — highlight and save a passage to a matter. Shape verified
+ * against the live route, `services/api/src/judgments/annotations.ts`, 8 Aug
+ * 2026 — not the summarised line in `API_CONTRACTS.md`, which omits `quote`
+ * even though the server requires it (`min(1).max(4000)`).
+ *
+ * PARAGRAPH-LEVEL, NOT A CHARACTER RANGE. `renders/62-judgment-reading@2x.png`
+ * shows the action bar attaching to a whole tapped paragraph — this is not
+ * Kindle-style arbitrary-range highlighting, and building toward that would be
+ * solving a harder problem than the product asks for.
+ */
+export type Annotation = {
+  annotationId: string;
+  judgmentId: string;
+  matterId: string | null;
+  paragraphNumber: number | null;
+  paragraphIndex: number;
+  quote: string;
+  note: string | null;
+  createdAt: string;
+};
+
+export type AnnotationDraft = {
+  paragraphNumber: number | null;
+  paragraphIndex: number;
+  quote: string;
+  note?: string;
+  matterId?: string;
+};
+
+/**
  * FIVE FIELDS THE CONTRACT IMPLIES AND PRODUCTION DOES NOT SEND.
  *
  * Probed 6 August 2026. `GET /judgments/:id` answers 200 with `paragraphs`,
@@ -703,13 +733,32 @@ export type SearchRequest = {
 
 /* ---------------------------------------------------------------------- auth */
 
+export type EnrolmentStatus = 'unverified' | 'verified' | 'rejected';
+
 export type User = {
   id: string;
   fullName: string;
   preferredLanguage: 'en' | 'hi';
   /** Captured for positioning; PD-2 — it NEVER gates access. */
   barEnrolmentNumber: string | null;
-  enrolmentStatus: 'pending' | 'verified';
+  /**
+   * THREE STATES, NOT TWO. `SCHEMA_TRUTH.md#users`: `unverified|verified|rejected`,
+   * default `unverified`. This type previously said `'pending' | 'verified'`,
+   * which does not contain the server's actual default value — found 8 Aug 2026
+   * by reading `services/api/src/auth/account.ts` and `auth.test.ts` directly
+   * (the latter asserts `enrolmentStatus === 'rejected'` on the wire). A screen
+   * checking for `'pending'` would never have matched a real unverified user.
+   *
+   * Display only, per PD-2 — never branch access on this value.
+   */
+  enrolmentStatus: EnrolmentStatus;
+  /**
+   * `unverified|verified|rejected|none|practice|chamber|expert|firm|enterprise`
+   * per `SCHEMA_TRUTH.md#users`, default `none`. Returned by `/me` today
+   * (`services/api/src/auth/account.ts`) but was missing from this type — added
+   * 8 Aug 2026 rather than left undeclared.
+   */
+  subscriptionTier: 'none' | 'practice' | 'chamber' | 'expert' | 'firm' | 'enterprise';
   /** PD-8 — consent, taken once at onboarding. Null means drafting is unavailable. */
   termsAcceptedAt: string | null;
   termsVersion: string | null;
