@@ -121,8 +121,26 @@ export function parseActPage(html: string, handle: string): ActRecord {
     );
   }
 
+  /**
+   * Three sources, in order of preference. The first two are the structured id
+   * indiacode's own JS uses to build `sectionContentUrl` — `AC_CEN_2_2_00042_
+   * 196252_...` — and are what nearly every Act carries. A cluster of older,
+   * sectionless Acts (`The Bengal Bonded Warehouse Association Act, 1854` was
+   * the one that surfaced this) has neither: no `act_id='...'` JS assignment
+   * and no `actid=` query param anywhere on the page, because the page has no
+   * section links to build those URLs for in the first place — confirmed
+   * against three of these pages, all zero `sectionId=` occurrences.
+   *
+   * All of them DO carry a plain "Act ID" row in the same metadata table
+   * `shortTitle`/`actNumber`/`actYear` already come from, e.g. `185405`. It
+   * cannot build a `sectionContentUrl` — it is not the same identifier
+   * namespace — but that is moot for an Act with no sections to fetch, and
+   * using it is strictly better than failing an Act indiacode does publish.
+   */
   const actId =
-    /act_id\s*=\s*'([^']+)'/.exec(html)?.[1] ?? /actid=([A-Za-z0-9_.-]+)/.exec(html)?.[1];
+    /act_id\s*=\s*'([^']+)'/.exec(html)?.[1] ??
+    /actid=([A-Za-z0-9_.-]+)/.exec(html)?.[1] ??
+    fields.get('Act ID');
   if (!actId) throw new Error(`no actid found on ${handle}`);
 
   const shortTitle = fields.get('Short Title');

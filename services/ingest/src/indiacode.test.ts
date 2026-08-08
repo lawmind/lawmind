@@ -16,6 +16,7 @@ import { describe, it } from 'node:test';
 import {
   actListingUrl,
   parseActListing,
+  parseActPage,
   parseIndiaCodeDate,
   parseListingTotal,
 } from './indiacode.ts';
@@ -77,6 +78,79 @@ describe('Central Acts index', () => {
     assert.match(actListingUrl(0), /offset=0/);
     assert.match(actListingUrl(100), /offset=100/);
     assert.match(actListingUrl(0), /type=shorttitle/);
+  });
+});
+
+describe('parseActPage', () => {
+  const metadataRow = (label: string, value: string) =>
+    `<tr><td class="metadataFieldLabel">${label}:&nbsp;</td><td class="metadataFieldValue">${value}</td></tr>`;
+
+  const normalPage = (actIdAssignment: string) => `
+<html><body>
+<script>var act_id=${actIdAssignment};</script>
+<table class="table itemDisplayTable">
+${metadataRow('Act ID', '195727')}
+${metadataRow('Act Number', '27')}
+${metadataRow('Enactment Date', '1957-09-12')}
+${metadataRow('Act Year', '1957')}
+${metadataRow('Short Title', 'The Normal Act, 1957')}
+</table>
+</body></html>`;
+
+  it('reads the JS-assigned act_id when the page has one', () => {
+    const r = parseActPage(normalPage("'AC_CEN_5_5_00028_195766_1517807321857'"), '123456789/x');
+    assert.equal(r.actId, 'AC_CEN_5_5_00028_195766_1517807321857');
+  });
+
+  /**
+   * Real markup from `123456789/19036` (`The Bengal Bonded Warehouse
+   * Association Act, 1854`), trimmed to the metadata table. This page — and
+   * 17 others like it, all old and sectionless — carries no `act_id='...'` JS
+   * assignment and no `actid=` query param anywhere: confirmed by fetching
+   * all 20 Acts the corpus-coverage endpoint named as failed and finding zero
+   * `sectionId=` occurrences on any of them, which is also why the fallback
+   * below is safe — there is no section-content URL to build for an Act with
+   * no sections.
+   */
+  const sectionlessPage = `
+<html><body>
+<table class="table itemDisplayTable">
+${metadataRow('Act ID', '185405')}
+${metadataRow('Act Number', '05')}
+${metadataRow('Enactment Date', '1854-02-10')}
+${metadataRow('Act Year', '1854')}
+${metadataRow('Short Title', 'The Bengal Bonded Warehouse Association Act, 1854')}
+${metadataRow('Hindi Title', '')}
+${metadataRow('Long Title', 'An Act to amend Act No. V. of 1838')}
+${metadataRow('Ministry', 'Ministry of Home Affairs')}
+${metadataRow('Department', 'Department of States')}
+${metadataRow('Enforcement Date', '10-02-1854')}
+</table>
+</body></html>`;
+
+  it('falls back to the "Act ID" metadata row when neither JS assignment nor query param is present', () => {
+    // This is the exact bug: 18 of the 20 Acts corpus-coverage named as
+    // failed threw "no actid found" here, though every one of them has this
+    // field sitting in the same table shortTitle/actNumber/actYear already
+    // come from.
+    const r = parseActPage(sectionlessPage, '123456789/19036');
+    assert.equal(r.actId, '185405');
+    assert.equal(r.shortTitle, 'The Bengal Bonded Warehouse Association Act, 1854');
+  });
+
+  it('still throws when even the metadata row is absent, rather than inventing an id', () => {
+    const noIdAtAll = `
+<table>
+${metadataRow('Act Number', '05')}
+${metadataRow('Act Year', '1854')}
+${metadataRow('Short Title', 'x')}
+</table>`;
+    assert.throws(() => parseActPage(noIdAtAll, '123456789/x'), /no actid found/);
+  });
+
+  it('still throws on incomplete metadata, regardless of actId', () => {
+    const noTitle = `<script>var act_id='X';</script><table>${metadataRow('Act Number', '1')}</table>`;
+    assert.throws(() => parseActPage(noTitle, '123456789/x'), /incomplete Act metadata/);
   });
 });
 
