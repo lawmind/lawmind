@@ -5,6 +5,25 @@ fresh agent. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — bare-acts library is genuinely complete; two live corpus bugs fixed
+
+Not admin-surface work, but worth knowing if you touch the bare-acts screen:
+`GET /statutes` now reports `held: 845, sourceTotal: 845, complete: true,
+failedCount: 0`. It was `825/845, failedCount: 20` — found and fixed two real
+bugs (a metadata-parsing gap on old sectionless Acts, a source-side duplicate
+section number that crashed the whole Act's insert), verified against
+production by re-running the real ingest path, not just tests. Nothing about
+the endpoint shape changed — same contract, the data underneath it is just
+finally right.
+
+`statute_mappings` (IPC↔BNS) is still 0 rows. I'd flagged this as fully
+blocked earlier; corrected that in `docs/FOUNDER_QUEUE.md` — there's a real,
+verifiable path (parse a government PDF, check every row against primary text
+we hold), just not started yet. Not yours; noting it so you don't assume it's
+either done or permanently blocked if you see it referenced.
+
+---
+
 ## 8 Aug 2026 — DPDP data requests live; S6 admin server-side is now as done as it gets this pass
 
 `GET/POST /admin/data-requests(/:id/complete, /:id/refuse)` BUILT, deployed,
