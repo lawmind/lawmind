@@ -310,15 +310,23 @@ export const api = {
 
   /* ------------------------------------------------- matter sharing · PD-3 */
 
+  /**
+   * Field is `shareId`, not `id` — matches `shape()` in
+   * `services/api/src/matters/shares.ts`, confirmed against the live source
+   * 8 Aug 2026 rather than assumed. Revoked shares are RETURNED, not
+   * filtered out — "who had sight of this matter, and when" is the point.
+   */
   matterShares: (matterId: string) =>
     get<{
       shares: {
-        id: string;
+        shareId: string;
         invitedIdentifier: string;
-        invitedUserId?: string;
+        invitedUserId: string | null;
         grantedBy: string;
         grantedAt: string;
+        revokedAt: string | null;
       }[];
+      asOf: string;
     }>(`/matters/${encodeURIComponent(matterId)}/shares`, { auth: true }),
 
   /**
@@ -327,13 +335,23 @@ export const api = {
    * two to five is a list of names, and chamber-wide default sharing is a
    * conflicts hazard — two advocates in one chamber can be on opposing sides of
    * related matters.
+   *
+   * `created: false` means the invite already existed and is live — the
+   * server answers idempotently rather than a 409, so a retrying client
+   * does not look broken.
    */
   inviteToMatter: (matterId: string, identifier: string) =>
-    send<{ share: { id: string; invitedIdentifier: string; grantedAt: string } }>(
-      `/matters/${encodeURIComponent(matterId)}/shares`,
-      { identifier },
-      { auth: true }
-    ),
+    send<{
+      share: {
+        shareId: string;
+        invitedIdentifier: string;
+        invitedUserId: string | null;
+        grantedBy: string;
+        grantedAt: string;
+        revokedAt: string | null;
+      };
+      created: boolean;
+    }>(`/matters/${encodeURIComponent(matterId)}/shares`, { identifier }, { auth: true }),
 
   /** Revoke sets `revoked_at`. It NEVER deletes the row — who had sight of a matter, and when, is what a conflicts challenge asks later. */
   revokeMatterShare: (matterId: string, shareId: string) =>

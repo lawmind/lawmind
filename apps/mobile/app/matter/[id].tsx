@@ -22,6 +22,12 @@ export default function Route() {
         onSendClientUpdate={() =>
           router.push({ pathname: '/client-update/[id]', params: { id } })
         }
+        onShare={() =>
+          // `as never`: new route, matches the pattern used elsewhere for a
+          // route the generated typed-route union has not been regenerated
+          // to include yet (see MattersScreen.tsx's `/sign-in` push).
+          router.push({ pathname: '/matter-sharing/[id]', params: { id } } as never)
+        }
       />
     </>
   );

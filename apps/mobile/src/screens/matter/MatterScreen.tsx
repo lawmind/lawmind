@@ -61,12 +61,15 @@ export function MatterScreen({
   onOpenBriefing,
   onRecordAdjournment,
   onSendClientUpdate,
+  onShare,
 }: {
   matterId: string;
   onBack: () => void;
   onOpenBriefing: (briefingId: string) => void;
   onRecordAdjournment: () => void;
   onSendClientUpdate: () => void;
+  /** PD-3 — "Who can see this matter". Owner-side only, see MatterSharingScreen's own note. */
+  onShare: () => void;
 }) {
   const [bundle, setBundle] = useState<MatterBundle | null>(null);
   const [cachedAt, setCachedAt] = useState<string | null>(null);
@@ -197,6 +200,7 @@ export function MatterScreen({
 
         <View style={styles.actions}>
           <Button label="Send update to client" variant="secondary" onPress={onSendClientUpdate} />
+          <Button label="Who can see this matter" variant="secondary" onPress={onShare} />
         </View>
 
         {briefings.length > 0 ? (
