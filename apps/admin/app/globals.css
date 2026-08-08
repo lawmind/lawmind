@@ -531,3 +531,138 @@ a {
 .causelist-stale-row:last-child {
   border-bottom: none;
 }
+
+/* ------------------------------------------------ 61 · disputed citations */
+
+.dispute-list {
+  padding: 8px 16px;
+}
+
+.dispute-empty {
+  padding: 16px 0;
+}
+
+.dispute-row {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.dispute-row:last-child {
+  border-bottom: none;
+}
+
+.dispute-row-head {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.dispute-claim {
+  margin: 4px 0;
+}
+
+.dispute-detail {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+}
+
+.dispute-form {
+  padding: 16px;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dispute-input {
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  width: 100%;
+}
+
+.dispute-form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ------------------------------------------------- 69 · platform controls */
+
+.platform-banner {
+  border-color: var(--rule);
+}
+
+.platform-killswitch-card {
+  padding: 0 16px 8px;
+}
+
+.platform-card-heading {
+  padding: 12px 8px 0;
+}
+
+.platform-card-subheading {
+  padding: 0 8px 8px;
+}
+
+.platform-new-flag {
+  margin-top: 12px;
+  padding: 0;
+}
+
+/* ------------------------------------------------------ 71 · staff & audit */
+
+.audit-json {
+  background: var(--paper-desk);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 10px;
+  margin: 4px 0 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------------------------------------- 56 · enrolment queue, 57 · advocates */
+
+.enrolment-list {
+  padding: 8px;
+}
+
+.enrolment-empty {
+  padding: 16px;
+}
+
+.enrolment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 8px;
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.enrolment-row:last-child {
+  border-bottom: none;
+}
+
+.enrolment-row-selected {
+  background: var(--paper-desk);
+}
+
+.enrolment-detail-row {
+  margin-top: 8px;
+}
