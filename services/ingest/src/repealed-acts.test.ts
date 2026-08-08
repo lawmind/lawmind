@@ -215,3 +215,50 @@ test('an already-ordered Act is unchanged by the ascending rule', () => {
     ['299', '300', '302', '304A'],
   );
 });
+
+/* ------- the two defects found by reading the real IPC PDF, 9 Aug 2026 ------- */
+
+test('a defining section whose heading opens with a quotation mark is found', () => {
+  // The IPC's entire definitions chapter looks like this. Requiring [A-Z]
+  // rejected every one of them, which is most of Chapter II.
+  const real =
+    '19. "Judge".--The word "Judge" denotes not only every person who\nis officially designated as a Judge.';
+  const s = parseSections(real);
+  assert.deepEqual(
+    s.map((x) => x.number),
+    ['19'],
+  );
+  assert.equal(s[0]!.heading, '"Judge"');
+});
+
+test('an amended section carrying its footnote marker before the number is found', () => {
+  // `4*[18. "India".--` — the amendment apparatus is printed inline, so the
+  // line does not begin with the section number.
+  const real =
+    '4*[18. "India".--"India" means the territory of India excluding\nthe State of Jammu and Kashmir.]';
+  const s = parseSections(real);
+  assert.deepEqual(
+    s.map((x) => x.number),
+    ['18'],
+  );
+});
+
+test('the two new prefixes did NOT loosen the ordinary-prose guard', () => {
+  // The whole reason the prefixes are narrow. If this ever fails, the fix has
+  // become a loosening and the corpus gets wrong offences.
+  const prose = `
+302. Punishment for murder.—Whoever commits murder shall be punished with death.
+The following applies. (2) Nothing in section 5 shall apply to this case.
+1. The accused was present at the scene.
+2. The witness deposed otherwise.
+`;
+  assert.deepEqual(
+    parseSections(prose).map((x) => x.number),
+    ['302'],
+  );
+});
+
+test('a bare bracket alone does not manufacture a section', () => {
+  assert.deepEqual(parseSections('[ not a section at all'), []);
+  assert.deepEqual(parseSections('4*[ still not a section'), []);
+});

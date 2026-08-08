@@ -119,10 +119,32 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       is what stops it firing on ordinary numbered prose, so relaxing it trades
       an incomplete corpus for a wrong one.**
 
-      **Next move is a different approach, not another tweak:** per-page
-      extraction with layout, so headings are recognised by POSITION rather than
-      punctuation — or a non-PDF source for these three codes. Stopped after four
-      cycles per the hard bound.
+      **RE-DIAGNOSED 9 Aug 2026, and the earlier diagnosis was wrong twice.**
+
+      **The layout hypothesis is dead.** Read the PDF's own text items: every
+      item sits at **x = 72.0**, one font, one size. There is no indentation, so
+      position carries no signal and "headings by POSITION" cannot work. The
+      line anchor was never the problem either.
+
+      **Both real misses were vocabulary, and both are now fixed:**
+      a defining section's heading opens with a **quotation mark**
+      (`19. "Judge".--`) which `[A-Z]` rejected — that is most of the
+      definitions chapter — and an amended section carries its **footnote marker
+      before the number** (`4*[18. "India".--`) so the line does not start with
+      the digit. **36 → 70 sections**, both prefixes narrow, and the
+      ordinary-numbered-prose guard still passes.
+
+      **And the denominator was wrong.** "36 of ~511" measured against a number
+      that is not in the file. India Code handle `123456789/11091` serves an
+      **INCOMPLETE IPC**: 58 pages running ss. 1–120B, then ss. 168–171H, then
+      s. 511. **Sections 121–510 are simply absent** — page 57 is s. 120B and
+      page 58 is s. 511. Every page has a text layer, so this is not an
+      extraction failure; the source itself is partial. **86 distinct sections
+      carry a body marker, and we now parse 70 of them.**
+
+      **So the next move is a SOURCE, not a parser.** No regex can recover
+      sections that are not in the file, and s. 302 — the one everybody checks —
+      is one of them.
 - [ ] Three metrics stay **NOT MEASURED** until an LLM key exists — founder-queued
 
 ---

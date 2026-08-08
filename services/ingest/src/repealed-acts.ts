@@ -114,9 +114,29 @@ export type ParsedSection = {
  * is what keeps this from firing on ordinary numbered prose**, which is
  * everywhere in a statute: "(2) Nothing in section 5 shall apply…" and
  * "1. The accused was present" both look like headings to a looser rule.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * TWO DEFECTS FOUND BY READING THE REAL PDF'S TEXT ITEMS, 9 Aug 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The line anchor was never the problem. **Both misses were vocabulary.**
+ *
+ * 1. **A defining section's heading opens with a quotation mark**, not a
+ *    capital: `19. "Judge".--The word "Judge" denotes…`. The IPC's whole
+ *    definitions chapter looks like that — `"India"`, `"Court of Justice"`,
+ *    `"Public servant"` — and `[A-Z]` rejected every one.
+ *
+ * 2. **An amended section carries its footnote marker BEFORE the number**:
+ *    `4*[18. "India".--"India" means…`. The `4*[` is the amendment apparatus,
+ *    printed inline, so the line does not begin with the section number.
+ *
+ * Both prefixes are **narrow and required to look like themselves** — a digit
+ * followed by asterisks, and/or an opening bracket. Ordinary numbered prose
+ * still cannot match, which the existing test asserts and which is the only
+ * reason this is a fix rather than a loosening.
  */
 const SECTION_HEADING =
-  /^[ \t]*(\d{1,3}[A-Z]{0,3})\.[ \t]+([A-Z][^\n]{2,150}?)\.[ \t]*(?:[—–-]{1,2}|\n)/gm;
+  /^[ \t]*(?:\d{1,2}\*+[ \t]*)?\[?[ \t]*(\d{1,3}[A-Z]{0,3})\.[ \t]+(["“]?[A-Z][^\n]{2,150}?)\.[ \t]*(?:[—–-]{1,2}|\n)/gm;
 
 /**
  * Amendment footnotes, which are the reason the first real parse produced

@@ -1658,3 +1658,39 @@ and **that is exactly what their AUP calls circumventing rate limits.** So a
 is tried. Rotation here separates unrelated work; it is not a throughput device.
 That is the difference between an evaluation they consented to and one they
 would terminate.
+
+---
+
+## FQ-C1 · The IPC source on India Code is incomplete — we need a different one
+
+**Needed from you:** nothing yet. This is a research task I am continuing, but it
+is recorded here because it **blocks the IPC↔BNS mapping**, which is the last S1
+criterion, and because the cause is a bad source rather than bad code.
+
+**What is wrong.** India Code handle `123456789/11091` — the one our own CLI
+verified by title — serves a **58-page PDF that is not the whole Indian Penal
+Code.** It runs sections **1–120B**, then **168–171H**, then **511**.
+**Sections 121 to 510 are absent.** Page 57 is s. 120B; page 58 is s. 511.
+
+Every page has a real text layer, so this is not an extraction failure and not a
+scan. **The file itself is partial.**
+
+**Why it matters:** s. 302 (murder), s. 300 (culpable homicide), s. 376 (rape),
+s. 420 (cheating) — the sections an advocate actually looks up, and the ones
+whose BNS equivalents matter most — are **all in the missing range.**
+
+**What was built anyway:** the splitter is fixed and better. Two real defects
+found by reading the PDF's own text items: a heading opening with a quotation
+mark (`19. "Judge".--`, most of the definitions chapter) and a footnote marker
+printed before the number (`4*[18. "India".--`). **36 → 70 sections**, 21 tests,
+and the guard against firing on ordinary numbered prose still passes.
+
+**What stays broken without a new source:** the IPC↔BNS mapping cannot be built
+for ss. 121–510, which is the part anyone would use it for. **No regex fixes
+this** — the text is not in the file.
+
+**Where I am looking next**, in order: another India Code handle or the
+consolidated "as amended" edition · the **BNS side** first, since the new codes
+are recent and may be published whole · a non-PDF source. **I will not relax the
+parser to compensate** — an incomplete corpus is recoverable and a wrong one is
+not.
