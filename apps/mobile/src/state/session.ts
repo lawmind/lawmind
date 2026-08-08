@@ -136,10 +136,20 @@ export const useSession = create<SessionState>((set, get) => ({
 
     const tokens = { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken };
     await writeJson(TOKENS_KEY, tokens);
-    set({ tokens, endedByServer: false, status: 'identity_only' });
+    /**
+     * `status` STAYS UNSET UNTIL `loadProfile` RESOLVES.
+     *
+     * This used to set `status: 'identity_only'` here, synchronously, before
+     * `GET /me` had been asked. `app/auth/verify.tsx`'s routing effect reacts
+     * to `status` on every render, so it fired on THIS interim value and sent
+     * every returning advocate — profile and all — back to onboarding, losing
+     * the race against the network call that would have said `signed_in`.
+     * Found live on device 8 Aug 2026: a fully onboarded account, signed in
+     * fresh, landed on the onboarding form again. `loadProfile` is the only
+     * source of truth for status now; it always resolves to the real answer.
+     */
+    set({ tokens, endedByServer: false });
 
-    // The verify payload carries an identity, not necessarily a profile, so the
-    // status is settled by `GET /me` and never by the sign-in response.
     await get().loadProfile();
     return { ok: true };
   },
@@ -158,15 +168,28 @@ export const useSession = create<SessionState>((set, get) => ({
       return;
     }
 
-    const me: MeResponse = res.data;
-    if (!me.profileComplete) {
+    /**
+     * `res.data.user`, NOT `res.data` — `GET /me` wraps under `user`.
+     *
+     * This was `const me: MeResponse = res.data; if (!me.profileComplete)`,
+     * reading a key that only ever existed one level down. `me.profileComplete`
+     * was `undefined` on every real response, `!undefined` is `true`, and every
+     * sign-in — including a fully onboarded account — took the "incomplete"
+     * branch and wrote `null` over a real cached profile. Found live on device
+     * 8 Aug 2026: `GET /me` curled directly returned `profileComplete: true`;
+     * the app still routed to `/onboarding` on every single sign-in, forever,
+     * not intermittently — a 100% reproducible bug, not the race it first
+     * looked like.
+     */
+    const { user } = res.data;
+    if (!user.profileComplete) {
       await writeJson(PROFILE_KEY, null);
       set({ profile: null, status: 'identity_only' });
       return;
     }
 
-    await writeJson(PROFILE_KEY, me.profile);
-    set({ profile: me.profile, status: 'signed_in' });
+    await writeJson(PROFILE_KEY, user.profile);
+    set({ profile: user.profile, status: 'signed_in' });
   },
 
   completeProfile: async (input) => {
@@ -179,8 +202,9 @@ export const useSession = create<SessionState>((set, get) => ({
     });
     if (!res.ok) return { ok: false, message: res.error.message };
 
-    await writeJson(PROFILE_KEY, res.data.profile);
-    set({ profile: res.data.profile, status: 'signed_in' });
+    // `PATCH /me` also wraps under `user` — `res.data.user`, not `res.data.profile`.
+    await writeJson(PROFILE_KEY, res.data.user);
+    set({ profile: res.data.user, status: 'signed_in' });
     return { ok: true };
   },
 
@@ -193,8 +217,8 @@ export const useSession = create<SessionState>((set, get) => ({
     if (!get().tokens) return;
     const res = await api.updateProfile({ expoPushToken: token });
     if (res.ok) {
-      await writeJson(PROFILE_KEY, res.data.profile);
-      set({ profile: res.data.profile });
+      await writeJson(PROFILE_KEY, res.data.user);
+      set({ profile: res.data.user });
     }
   },
 

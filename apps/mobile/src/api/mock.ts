@@ -10,6 +10,7 @@ import type {
   JudgmentDetail,
   Matter,
   MatterEvent,
+  Profile,
   SearchFilters,
   SearchRequest,
   SearchResponse,
@@ -44,7 +45,7 @@ const delay = <T>(data: T, ms: number = LATENCY_MS): Promise<ApiResponse<T>> =>
   new Promise((resolve) => setTimeout(() => resolve({ ok: true, data }), ms));
 
 const MOCK_USER: User = {
-  id: 'usr_mock',
+  userId: 'usr_mock',
   fullName: 'Mock Advocate',
   preferredLanguage: 'en',
   barEnrolmentNumber: null,
@@ -52,6 +53,13 @@ const MOCK_USER: User = {
   subscriptionTier: 'none',
   termsAcceptedAt: null,
   termsVersion: null,
+};
+
+const MOCK_PROFILE: Profile = {
+  ...MOCK_USER,
+  email: 'mock@lawmind.test',
+  phone: '9800000000',
+  pushRegistered: false,
 };
 
 export const DEFAULT_FILTERS: SearchFilters = {
@@ -132,7 +140,11 @@ export const mockApi = {
   /* auth */
   requestOtp: (_phone: string) => delay({ sent: true }),
   verifyOtp: (_token: string): Promise<ApiResponse<Session>> =>
-    delay({ accessToken: 'mock', refreshToken: 'mock', user: MOCK_USER }),
+    delay({
+      accessToken: 'mock',
+      refreshToken: 'mock',
+      user: { authId: 'auth_mock', email: 'mock@lawmind.test', profileComplete: true, profile: MOCK_PROFILE },
+    }),
   me: (): Promise<ApiResponse<User>> => delay(MOCK_USER),
   acceptTerms: (version: string) =>
     delay({ termsAcceptedAt: new Date().toISOString(), termsVersion: version }),

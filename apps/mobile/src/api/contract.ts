@@ -736,7 +736,8 @@ export type SearchRequest = {
 export type EnrolmentStatus = 'unverified' | 'verified' | 'rejected';
 
 export type User = {
-  id: string;
+  /** Wire field is `userId`, not `id` — `readProfile()`/`profileFor()` in `services/api/src/auth/*.ts` both return `userId: row.id`. */
+  userId: string;
   fullName: string;
   preferredLanguage: 'en' | 'hi';
   /** Captured for positioning; PD-2 — it NEVER gates access. */
@@ -764,7 +765,18 @@ export type User = {
   termsVersion: string | null;
 };
 
-export type Session = { accessToken: string; refreshToken: string; user: User };
+/**
+ * `POST /auth/verify`'s `user` is the identity shape (`authId`/`profileComplete`/
+ * `profile`), the same as `MeResponse.user` — not a flat `User`. Unused by
+ * `state/session.ts` today (status is settled by a separate `GET /me` call,
+ * deliberately, per that file's own comment), but typed correctly rather than
+ * left wrong because nothing currently reads it.
+ */
+export type Session = {
+  accessToken: string;
+  refreshToken: string;
+  user: { authId: string; email: string; profileComplete: boolean; profile: Profile | null };
+};
 
 /**
  * IDENTITY IS NOT PROFILE — and `GET /me` says so in its own shape.
@@ -791,9 +803,22 @@ export type Profile = User & {
   pushRegistered: boolean;
 };
 
-export type MeResponse =
-  | { profileComplete: false; profile: null }
-  | { profileComplete: true; profile: Profile };
+/**
+ * `GET /me` wraps everything under `user` — `handleMe()` in
+ * `services/api/src/auth/routes.ts` returns `ok(c, { user: {...} })`, not a
+ * flat object. This type was flat until 8 Aug 2026, which made
+ * `!me.profileComplete` true unconditionally (reading a key that only ever
+ * existed one level down) — every sign-in, including a fully onboarded
+ * account, was treated as profile-incomplete and sent back to onboarding.
+ * Found live on device: `GET /me` curled directly returned
+ * `profileComplete: true`, but the app still routed to `/onboarding` every
+ * time. `state/session.ts`'s `loadProfile` reads `res.data.user` now.
+ */
+export type MeResponse = {
+  user:
+    | { authId: string; email: string | null; profileComplete: false; profile: null }
+    | { authId: string; email: string | null; profileComplete: true; profile: Profile };
+};
 
 /**
  * `PATCH /me`. `expoPushToken` is NULLABLE RATHER THAN MERELY OPTIONAL: omitted
@@ -815,20 +840,35 @@ export type CurrentTerms = { version: string; body: string };
 /* -------------------------------------------------------------------- matters */
 
 export type Matter = {
-  id: string;
+  /**
+   * Wire field is `matterId`, not `id` — `shapeMatter()` in
+   * `services/api/src/matters/route.ts`, confirmed against the live source
+   * 8 Aug 2026 rather than assumed. Every screen that read `.id` before this
+   * was reading `undefined`; it went unnoticed because no matter existed to
+   * click through until tonight's device pass.
+   */
+  matterId: string;
   caseTitle: string;
   cnrNumber: string | null;
   court: string;
   caseType: string;
-  parties: string;
+  /**
+   * `matters.parties` is `jsonb` with no key spec anywhere in
+   * `docs/SCHEMA_TRUTH.md` — the server accepts and returns any object
+   * (`z.record(z.string(), z.unknown())`). Was typed `string` here, which
+   * would have rendered `{matter.parties}` as `[object Object]` (or thrown)
+   * the first time a real matter existed. `{ description }` is RCC's choice
+   * of shape, not a contract LCC enforces.
+   */
+  parties: { description: string };
   clientName: string;
   ourSide: string;
   nextHearingDate: string | null;
 };
 
 export type MatterEvent = {
-  id: string;
-  matterId: string;
+  /** Wire field is `eventId`, same drift as `Matter.matterId` above. */
+  eventId: string;
   eventDate: string;
   eventType: string;
   orderText: string | null;
@@ -872,7 +912,7 @@ export type DraftDocument = {
 /** Vendor-agnostic. OD-1 is open; the manual path returns `{ available: false }`. */
 export type CourtLookupResult =
   | { available: false }
-  | { available: true; matter: Omit<Matter, 'id'> };
+  | { available: true; matter: Omit<Matter, 'matterId'> };
 
 /* --------------------------------------------------------------------- alerts */
 

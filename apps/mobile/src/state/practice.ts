@@ -118,14 +118,14 @@ export const usePractice = create<PracticeState>((set, get) => ({
    */
   setNextHearingDate: async (matterId, iso) => {
     const optimistic = get().matters.map((m) =>
-      m.id === matterId ? { ...m, nextHearingDate: iso } : m
+      m.matterId === matterId ? { ...m, nextHearingDate: iso } : m
     );
     set({ matters: optimistic });
     void writeCache(MATTERS_KEY, optimistic);
 
     const res = await api.updateMatter(matterId, { nextHearingDate: iso });
     if (res.ok) {
-      const reconciled = get().matters.map((m) => (m.id === matterId ? res.data.matter : m));
+      const reconciled = get().matters.map((m) => (m.matterId === matterId ? res.data.matter : m));
       set({ matters: reconciled });
       void writeCache(MATTERS_KEY, reconciled);
     }
@@ -201,10 +201,10 @@ export function tomorrowsBriefing(
 ): { briefing: Briefing; matter: Matter; cachedAt: string } | null {
   for (const { matter, daysAway } of upcoming(matters, today)) {
     if (daysAway !== 1) continue;
-    const entry = briefings[matter.id];
+    const entry = briefings[matter.matterId];
     if (!entry) continue;
     const match = entry.value.find(
-      (b) => daysUntil(b.hearingDate, today) === 1 && b.matterId === matter.id
+      (b) => daysUntil(b.hearingDate, today) === 1 && b.matterId === matter.matterId
     );
     if (match) return { briefing: match, matter, cachedAt: entry.cachedAt };
   }

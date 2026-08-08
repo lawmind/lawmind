@@ -100,7 +100,7 @@ export function TodayScreen() {
    * and the screen only ever shows the 24-hour one.
    */
   const tomorrowIds = useMemo(
-    () => week.filter((m) => m.daysAway === 1).map((m) => m.matter.id),
+    () => week.filter((m) => m.daysAway === 1).map((m) => m.matter.matterId),
     [week]
   );
   useEffect(() => {
@@ -157,7 +157,7 @@ export function TodayScreen() {
           <View style={styles.block}>
             <SectionRule label={listed.length === 1 ? 'Listed today' : `Listed today · ${listed.length}`} accent />
             {listed.map((row) => (
-              <HearingRow key={row.matter.id} row={row} onPress={() => router.push({ pathname: '/matter/[id]', params: { id: row.matter.id } })} />
+              <HearingRow key={row.matter.matterId} row={row} onPress={() => router.push({ pathname: '/matter/[id]', params: { id: row.matter.matterId } })} />
             ))}
             <Pressable onPress={() => router.push('/cause-list' as never)} style={styles.causeListLink}>
               <Text variant="ui" style={styles.link}>
@@ -243,7 +243,7 @@ export function TodayScreen() {
           <View style={styles.block}>
             <SectionRule label="Also this week" />
             {week.map((row) => (
-              <HearingRow key={row.matter.id} row={row} onPress={() => router.push({ pathname: '/matter/[id]', params: { id: row.matter.id } })} />
+              <HearingRow key={row.matter.matterId} row={row} onPress={() => router.push({ pathname: '/matter/[id]', params: { id: row.matter.matterId } })} />
             ))}
           </View>
         ) : null}
@@ -254,8 +254,8 @@ export function TodayScreen() {
             <SectionRule label="No next date recorded" />
             {missed.map((row) => (
               <Pressable
-                key={row.matter.id}
-                onPress={() => router.push({ pathname: '/adjournment/[id]', params: { id: row.matter.id } })}
+                key={row.matter.matterId}
+                onPress={() => router.push({ pathname: '/adjournment/[id]', params: { id: row.matter.matterId } })}
                 style={styles.row}
               >
                 <Text variant="record" style={styles.gutter}>
@@ -278,7 +278,7 @@ export function TodayScreen() {
             icon={CalendarDays}
             title="No matters yet"
             body="Add a case and Lawmind prepares you the night before every hearing."
-            actions={[{ label: 'Add a matter', onPress: () => router.push('/matters' as never) }]}
+            actions={[{ label: 'Add a matter', onPress: () => router.push('/matter/new' as never) }]}
           />
         ) : null}
 

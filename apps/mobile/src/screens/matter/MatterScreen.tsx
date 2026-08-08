@@ -124,7 +124,7 @@ export function MatterScreen({
    * which is the exact moment they stop trusting the screen.
    */
   const liveDate =
-    storeMatters.find((m) => m.id === matterId)?.nextHearingDate ??
+    storeMatters.find((m) => m.matterId === matterId)?.nextHearingDate ??
     bundle?.matter.nextHearingDate ??
     null;
 
@@ -171,7 +171,7 @@ export function MatterScreen({
           {matter.caseTitle}
         </Text>
         <Text variant="ui" style={styles.muted}>
-          {matter.parties} · for the {matter.ourSide}
+          {matter.parties.description} · for the {matter.ourSide}
         </Text>
 
         {/* THE NEXT DATE IS PINNED — it is what the screen was opened for. */}
@@ -233,7 +233,9 @@ export function MatterScreen({
               Nothing recorded yet. The timeline holds what the court did.
             </Text>
           ) : (
-            events.map((event) => <TimelineEvent key={event.id} event={event} />)
+            events.map((event) => (
+              <TimelineEvent key={event.eventId} event={event} matterId={matterId} />
+            ))
           )}
         </View>
 
@@ -250,7 +252,7 @@ export function MatterScreen({
             {events
               .filter((e) => e.notes)
               .map((event) => (
-                <View key={event.id} style={styles.noteOnly}>
+                <View key={event.eventId} style={styles.noteOnly}>
                   <Text variant="record" style={styles.gutter}>
                     {formatGutter(parseCivilDate(event.eventDate) ?? today)}
                   </Text>
@@ -304,7 +306,7 @@ export function MatterScreen({
  * point — a screen where the two look the same is a screen where one gets
  * shared believing it was the other.
  */
-function TimelineEvent({ event }: { event: MatterEvent }) {
+function TimelineEvent({ event, matterId }: { event: MatterEvent; matterId: string }) {
   const [visibility, setVisibility] = useState(event.noteVisibility);
   const [saving, setSaving] = useState(false);
   const date = parseCivilDate(event.eventDate);
@@ -343,7 +345,7 @@ function TimelineEvent({ event }: { event: MatterEvent }) {
                    * "saved" toast: the position of the switch IS the state.
                    */
                   void api
-                    .setNoteVisibility(event.matterId, event.id, value)
+                    .setNoteVisibility(matterId, event.eventId, value)
                     .then((r) => {
                       setSaving(false);
                       if (!r.ok) setVisibility(event.noteVisibility);

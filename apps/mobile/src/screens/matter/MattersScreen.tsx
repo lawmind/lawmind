@@ -61,16 +61,26 @@ export function MattersScreen() {
   return (
     <Screen topInset>
       <ScrollView contentContainerStyle={styles.body}>
-        <Text variant="eyebrow">Your practice</Text>
-        <Text variant="uiStrong" scale="title">
-          Matters
-        </Text>
+        <View style={styles.header}>
+          <View>
+            <Text variant="eyebrow">Your practice</Text>
+            <Text variant="uiStrong" scale="title">
+              Matters
+            </Text>
+          </View>
+          <Pressable onPress={() => router.push('/matter/new' as never)} style={styles.addLink}>
+            <Text variant="ui" style={styles.link}>
+              + Add
+            </Text>
+          </Pressable>
+        </View>
 
         {matters.length === 0 && !loading ? (
           <EmptyState
             icon={FolderOpen}
             title="No matters yet"
             body="Add a case and Lawmind prepares you the night before every hearing."
+            actions={[{ label: 'Add a matter', onPress: () => router.push('/matter/new' as never) }]}
           />
         ) : null}
 
@@ -79,10 +89,10 @@ export function MattersScreen() {
             <SectionRule label="Listed" />
             {listed.map(({ matter, date }) => (
               <Row
-                key={matter.id}
+                key={matter.matterId}
                 gutter={formatGutter(date)}
                 matter={matter}
-                onPress={() => open(matter.id)}
+                onPress={() => open(matter.matterId)}
                 subtitle={`${describeHearingDate(matter.nextHearingDate!, today)} · ${matter.court}`}
               />
             ))}
@@ -94,10 +104,10 @@ export function MattersScreen() {
             <SectionRule label="No next date recorded" />
             {missed.map(({ matter, date }) => (
               <Row
-                key={matter.id}
+                key={matter.matterId}
                 gutter={formatGutter(date)}
                 matter={matter}
-                onPress={() => open(matter.id)}
+                onPress={() => open(matter.matterId)}
                 subtitle="The recorded date has passed — record the next one"
               />
             ))}
@@ -109,10 +119,10 @@ export function MattersScreen() {
             <SectionRule label="Awaiting a date" />
             {undated.map((matter) => (
               <Row
-                key={matter.id}
+                key={matter.matterId}
                 gutter="—"
                 matter={matter}
-                onPress={() => open(matter.id)}
+                onPress={() => open(matter.matterId)}
                 subtitle={matter.court}
               />
             ))}
@@ -157,6 +167,9 @@ function Row({
 
 const styles = StyleSheet.create({
   body: { padding: space.sm, gap: space.md, paddingBottom: space.xxl },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  addLink: { minHeight: 44, justifyContent: 'center' },
+  link: { color: color.oxblood },
   block: { gap: space.xs },
   row: { flexDirection: 'row', gap: space.sm, paddingVertical: space.xs },
   gutter: { width: 62, paddingTop: 3 },

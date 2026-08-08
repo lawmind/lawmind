@@ -46,7 +46,7 @@ export function ClientUpdateScreen({ matterId, onBack }: { matterId: string; onB
     void hydrate();
   }, [hydrate]);
 
-  const matter = useMemo(() => matters.find((m) => m.id === matterId), [matters, matterId]);
+  const matter = useMemo(() => matters.find((m) => m.matterId === matterId), [matters, matterId]);
 
   const update = useMemo(() => {
     if (!matter) return null;

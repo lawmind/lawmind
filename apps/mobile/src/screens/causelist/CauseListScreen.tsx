@@ -109,7 +109,7 @@ export function CauseListScreen() {
             </Text>
             {group.map((row, index) => (
               <CauseListRow
-                key={row.matter.id}
+                key={row.matter.matterId}
                 row={row}
                 /** The first matter of the day carries the oxblood rule — one accent, earned. */
                 first={groupIndex === 0 && index === 0}
@@ -135,7 +135,7 @@ export function CauseListScreen() {
               <Pressable
                 style={[styles.outcome, styles.outcomePrimary]}
                 onPress={() => {
-                  const id = open.matter.id;
+                  const id = open.matter.matterId;
                   setOpen(null);
                   router.push({ pathname: '/adjournment/[id]', params: { id } });
                 }}
@@ -151,7 +151,7 @@ export function CauseListScreen() {
               <Pressable
                 style={[styles.outcome, styles.outcomeSecondary]}
                 onPress={() => {
-                  const id = open.matter.id;
+                  const id = open.matter.matterId;
                   setOpen(null);
                   router.push({ pathname: '/matter/[id]', params: { id } });
                 }}
@@ -166,7 +166,7 @@ export function CauseListScreen() {
             <SheetLink
               label="Open the briefing"
               onPress={() => {
-                const id = open.matter.id;
+                const id = open.matter.matterId;
                 setOpen(null);
                 router.push({ pathname: '/matter/[id]', params: { id, briefing: '1' } });
               }}
@@ -174,7 +174,7 @@ export function CauseListScreen() {
             <SheetLink
               label="Open the matter"
               onPress={() => {
-                const id = open.matter.id;
+                const id = open.matter.matterId;
                 setOpen(null);
                 router.push({ pathname: '/matter/[id]', params: { id } });
               }}
@@ -182,7 +182,7 @@ export function CauseListScreen() {
             <SheetLink
               label="Send status to client"
               onPress={() => {
-                const id = open.matter.id;
+                const id = open.matter.matterId;
                 setOpen(null);
                 router.push({ pathname: '/client-update/[id]', params: { id } });
               }}

@@ -228,8 +228,13 @@ export const api = {
    * `null`. Do not normalise it away — omitted and null are different
    * instructions to the server (`API_CONTRACTS.md` §Auth).
    */
+  /**
+   * `PATCH /me` also wraps under `user`, plus a sibling `created` flag —
+   * `patchMe()` in `services/api/src/auth/account.ts` returns
+   * `{ user: <profile fields>, created: boolean }`, not `{ profile }`.
+   */
   updateProfile: (patch: ProfilePatch) =>
-    request<{ profile: Profile }>('/me', {
+    request<{ user: Profile; created: boolean }>('/me', {
       method: 'PATCH',
       auth: true,
       headers: { 'content-type': 'application/json' },
@@ -262,14 +267,15 @@ export const api = {
       briefings: Briefing[];
     }>(`/matters/${encodeURIComponent(matterId)}`, { auth: true }),
 
-  createMatter: (matter: Omit<Matter, 'id'>) => send<{ matter: Matter }>('/matters', matter, { auth: true }),
+  createMatter: (matter: Omit<Matter, 'matterId'>) =>
+    send<{ matter: Matter }>('/matters', matter, { auth: true }),
 
   /**
    * `nextHearingDate: null` CLEARS IT. Omitting the key leaves it alone. The
    * adjournment path depends on the difference, so the patch is passed through
    * verbatim rather than being cleaned up on the way out.
    */
-  updateMatter: (matterId: string, patch: Partial<Omit<Matter, 'id'>>) =>
+  updateMatter: (matterId: string, patch: Partial<Omit<Matter, 'matterId'>>) =>
     request<{ matter: Matter }>(`/matters/${encodeURIComponent(matterId)}`, {
       method: 'PATCH',
       auth: true,
@@ -392,7 +398,7 @@ export const api = {
   courtLookup: (cnrNumber: string) =>
     send<
       | { available: false; reason: string; manualEntry: { expected: string; message: string } }
-      | { available: true; matter: Omit<Matter, 'id'> }
+      | { available: true; matter: Omit<Matter, 'matterId'> }
     >('/court/lookup', { cnrNumber }, { auth: true }),
 
   /* ------------------------------------------------------- alerts · PD-5, PD-6 */

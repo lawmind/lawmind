@@ -37,10 +37,10 @@ export function MatterPicker({
         <ScrollView style={styles.list}>
           {matters.map((m) => (
             <MatterRow
-              key={m.id}
+              key={m.matterId}
               matter={m}
               onPress={() => {
-                onPick(m.id);
+                onPick(m.matterId);
                 onDismiss();
               }}
             />

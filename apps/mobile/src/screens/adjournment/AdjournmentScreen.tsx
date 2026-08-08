@@ -73,7 +73,7 @@ export function AdjournmentScreen({
     void hydrate();
   }, [hydrate]);
 
-  const matter = useMemo(() => matters.find((m) => m.id === matterId), [matters, matterId]);
+  const matter = useMemo(() => matters.find((m) => m.matterId === matterId), [matters, matterId]);
 
   const today = useMemo(() => todayCivil(), []);
   const offers = useMemo(() => predictedAdjournmentDates(today), [today]);
