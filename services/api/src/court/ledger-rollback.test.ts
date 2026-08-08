@@ -67,7 +67,9 @@ describe('the fetch ledger is not optional', () => {
   it('an unrecorded fetch never produces usable data', async () => {
     let fetchAttempted = false;
     let ledgerIsDown = false;
-    let outcome: 'threw' | 'returned' = 'returned';
+    // Widened deliberately: it is assigned inside a callback, and a literal
+    // union narrows to its initialiser at the comparison below.
+    let outcome: string = 'returned';
     let returned: unknown = null;
 
     try {

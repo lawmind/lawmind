@@ -81,6 +81,32 @@ try {
   const wantsGraph = lever === 'graph' || lever === 'both';
   const reranker = wantsRerank ? await getReranker() : null;
 
+  /**
+   * Latency, timed here because accuracy is only half the ship/no-ship
+   * question and the other half has a hard number attached.
+   *
+   * Gate S1 budgets **3 seconds for the whole search request**, and
+   * `services/api/src/index.ts` already caps query EMBEDDING at 2s because a
+   * model that hangs is worse than one that throws. A cross-encoder scoring 20
+   * candidates is twenty forward passes of a 568M-parameter model, on the
+   * Railway CPU that serves the request — not on the GPU that embedded the
+   * corpus.
+   *
+   * So a lever can be accurate and still not ship. Measuring this alongside the
+   * gain is what stops that being discovered in production.
+   */
+  const rerankMs: number[] = [];
+  const timedRerank = reranker
+    ? async (q: string, passages: readonly string[]) => {
+        const started = Date.now();
+        try {
+          return await reranker.score(q, passages);
+        } finally {
+          rerankMs.push(Date.now() - started);
+        }
+      }
+    : undefined;
+
   console.log(`A/B: ${lever} · ${queries.length} queries · paired`);
   console.log('='.repeat(70));
 
@@ -91,9 +117,7 @@ try {
     // Both arms in the same iteration, so a corpus that changed mid-run would
     // affect both identically rather than showing up as a lever effect.
     control.push(await scoreQuery(sql, q, embedQuery));
-    treatment.push(
-      await scoreQuery(sql, q, embedQuery, 20, reranker ? reranker.score : undefined, wantsGraph),
-    );
+    treatment.push(await scoreQuery(sql, q, embedQuery, 20, timedRerank, wantsGraph));
     if ((i + 1) % 10 === 0) process.stdout.write(`  ${i + 1}/${queries.length}\r`);
   }
 
@@ -124,6 +148,24 @@ try {
       `${diffs.filter((d) => d < 0).length} lost · ` +
       `${diffs.filter((d) => d === 0).length} unchanged`,
   );
+
+  if (rerankMs.length > 0) {
+    const sorted = [...rerankMs].sort((a, b) => a - b);
+    const mean = rerankMs.reduce((a, b) => a + b, 0) / rerankMs.length;
+    const p95 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95))]!;
+    console.log('');
+    console.log(
+      `  rerank latency: mean ${mean.toFixed(0)}ms · p95 ${p95}ms · ` +
+        `${rerankMs.length} calls, 20 candidates each`,
+    );
+    console.log(
+      p95 > 3000
+        ? '  BUDGET BREACHED: Gate S1 allows 3s for the WHOLE search request. ' +
+            'Accuracy is moot until this fits — a GPU endpoint or a smaller ' +
+            'cross-encoder, measured again.'
+        : '  Within the 3s Gate S1 request budget, on this machine.',
+    );
+  }
   console.log('');
   console.log(
     lo > 0
