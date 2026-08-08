@@ -146,12 +146,15 @@ from `Timeline`/`Documents`/`Briefings`** — four tabs, not three. `notes` is a
 property of an event, not a separate entity server-side, so the Notes tab is
 a client-side filter on `eventType === 'note'`.
 
-- [ ] Wire the "Add event" button and form into `MatterScreen.tsx`.
-- [ ] Add the fourth tab (`Notes`), filtering the same `events` array already
-      fetched — no new request.
-- [ ] Form: date, `eventType` selector, `orderText` (court record, shown to
-      any share) vs `notes` (private by default) as visually distinct
-      fields — same "different weight" the canvas's own flow-flag names.
+**DONE, 8 Aug 2026 (commit `a907e86`).** Built as a section, not a tab —
+`MatterScreen.tsx` is a flat scroll, not a tabbed screen (the render's
+4-tab structure doesn't match the shipped architecture, and rebuilding the
+whole screen as tabs to match one render was a bigger change than this gap
+warranted). One correction from the plan's own earlier text: the Notes
+section filters on `events.notes` being set, not on `eventType === 'note'`
+— `notes` is a field on any event type, and a hearing can carry a private
+thought about it too. `AddEventSheet.tsx` (new) adapts its field
+(`orderText` vs `notes`) to the selected type.
 
 ## Workstream D — Citator alerts in the evening briefing
 
@@ -282,6 +285,6 @@ Data/offline section, Sign out (`api.signOut` already exists and works).
 (`4dc93a7`, `cbb6719`) — one item left unverified, see Workstream A's own
 note (device pass on the real sign-in → save flow). **Workstream B done**
 (`4cd5c60`) — owner-side complete, sharee-side correctly left to LCC.
-Workstream C (note/event creation) starting next, same file
-(`MatterScreen.tsx`) as B so doing it right after is deliberate sequencing,
-not scope creep. D through F not started.
+**Workstream C done** (`a907e86`) — built as a section, not a tab; see its
+own note for why. Workstream D (citator alerts) starting next. E, F not
+started.
