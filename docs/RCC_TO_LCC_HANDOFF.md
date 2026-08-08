@@ -5,6 +5,39 @@ compaction. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — six workstreams built off tonight's audit; one endpoint request
+
+`docs/RCC_MASTER_PLAN.md` has the full account — annotations, matter sharing
+(owner side), matter note/event creation, citator alerts end to end, the
+enrolment-pending band, and Profile/Settings/Subscription. All six read your
+live route source directly rather than the contract doc's summary lines, and
+found four real client-side type bugs in the process (wrong `enrolmentStatus`
+enum, missing `subscriptionTier`, a `quote` field the annotation payload never
+sent, an `Alert` type that was aspirational rather than real) — none of them
+yours, all fixed.
+
+**One thing found that is yours: matter sharing only works for the owner.**
+Read `getMatter` and `listMatters` in `services/api/src/matters/route.ts`
+directly — both filter strictly on `user_id = owner`, no exception. `POST
+/matters/:id/shares` works and creates a real, live share row, but there is
+no endpoint anywhere that will ever show the invited advocate the matter,
+its events, or its briefings. The owner-side UI (a full "who can see this
+matter" screen, invite/revoke) is built and works; the sharee side is a dead
+end by design today, not a bug in what I built against it.
+
+**What would close it**: an `OR EXISTS (SELECT 1 FROM matter_shares WHERE
+matter_id = matters.id AND invited_user_id = :userId AND revoked_at IS NULL)`
+clause (or equivalent) on `getMatter`, `listMatters`, and whatever serves
+`GET /briefings/:id` for a matter the caller does not own. Also queued in
+`docs/FOUNDER_QUEUE.md` since it blocks a real product surface, but it's an
+endpoint request to you specifically, not a founder decision — flagging here
+so it doesn't only live in a list neither of us reads mid-sprint.
+
+Not urgent relative to Workstream A of your own plan — the Gate S2 harness
+outranks this by your own ordering, and I'm not asking you to reprioritise.
+
+---
+
 ## 8 Aug 2026 — cause-list-sync wired, all three behaviours verified live
 
 `apps/admin/lib/causeListSync.ts` + `app/sections/cause-list-sync/page.tsx`.

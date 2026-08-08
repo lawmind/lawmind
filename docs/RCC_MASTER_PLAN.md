@@ -209,8 +209,10 @@ SPRINT_5 item 3. Two DISTINCT surfaces in the renders, both real, build both:
 Depends on the `enrolmentStatus` fix already done — check for
 `'unverified'`, never `'pending'`.
 
-- [ ] Build the band component.
-- [ ] Determine and wire mount scope (see above).
+**DONE, 8 Aug 2026 (commit `939cec0`).** `EnrolmentBand.tsx` built, mounted
+on `Today` only — the render doesn't show it anywhere else, so scope
+wasn't assumed beyond that evidence. The Profile-screen dark card is a
+different, real treatment, built in Workstream F.
 
 ## Workstream F — Profile, Settings, Subscription screens
 
@@ -239,51 +241,63 @@ don't invent a counter.** Settings: Notifications (must wire to the REAL
 `/me/alert-settings` from Workstream D, not fabricate separate toggles),
 Data/offline section, Sign out (`api.signOut` already exists and works).
 
-- [ ] Scaffold `screens/settings/` and `screens/profile/`.
-- [ ] Profile screen — header, enrolment card, Practice section, Plan
-      section with real `subscriptionTier`. No usage-stats section.
-- [ ] Settings screen — Notifications wired to Workstream D's real settings
-      endpoint, Data/offline section, Sign out.
-- [ ] Surface `termsAcceptedAt`/`termsVersion` from `/me` somewhere in
-      Settings or Profile — closes SPRINT_5's DONE line honestly.
-- [ ] Routes for both, entry point from the Today header avatar circle
-      (shown in multiple renders as the "AS" initials circle, top right).
-- [ ] Subscription screen: tier comparison using PD-13's real names/prices.
-      Purchase action stubbed and honestly disabled/pending — real copy,
-      no fake button — until the `FOUNDER_QUEUE.md` IAP entry resolves.
-      Firm/Enterprise: `mailto:` only, per PD-13's explicit "never a link to
-      a web checkout page either" rule (App Store 3.1.1 applies to both).
-- [ ] Do NOT install `react-native-purchases` or any IAP library without an
-      explicit yes on the `FOUNDER_QUEUE.md` entry.
+**DONE, 8 Aug 2026 (commit `e4dc3ed`).** Two more render/schema mismatches
+found and correctly not built — see the commit message for the full
+account: Profile's "Practice" section (courts/areas) and "usage this
+month" have no backing field anywhere; Settings' seven controls (four
+notification toggles, three data/offline actions) match nothing real, and
+"Export my data" would need an advocate-facing `POST /data-requests` that
+does not exist (only the admin-side processing endpoints do). Both
+screens built small and honest instead of large and illustrative.
+Subscription uses PD-13's real names, purchase stubbed. Today's avatar
+entry point added, routes to Profile → Settings → Alerts, closing the loop
+Workstream D left open. IAP library was NOT installed — still waiting on
+the `FOUNDER_QUEUE.md` decision.
 
 ---
 
-## Verification, once the workstreams above are built
+## Verification — done, 8 Aug 2026
 
-- [ ] `tsc --noEmit`, `jest`, `check-hex.mjs`, `check-sunlight.mjs` across
-      every new/changed file.
-- [ ] Device/emulator pass on the genuinely new interactive flows —
-      annotation save (real, auth exists), add event, matter share invite,
-      alert settings toggle. Observed, not inferred; note in the report
-      which ones only got to a `401`/`403` boundary versus a real save,
-      same honesty standard as the cause-list-sync and admin work.
-- [ ] Commit in logical groups per workstream, not one giant commit.
-- [ ] `RCC_TO_LCC_HANDOFF.md`: the matter-sharing sharee-access gap
-      specifically needs LCC's attention — say so there, not just in
-      `FOUNDER_QUEUE.md`, since it's an endpoint request to them, not a
-      founder decision.
+- [x] `tsc --noEmit`, `jest` (23/23 suites, 198/198 tests), `check-hex.mjs`
+      clean across the whole diff, run again as one consolidated pass after
+      Workstream F rather than trusted from the per-workstream runs alone.
+      `check-sunlight.mjs`'s 2 failures reconfirmed as the pre-existing
+      `inkFaint` issue — unchanged by this session's work.
+- [x] Every new/changed endpoint call probed live against production
+      (`curl`), each returning the exact documented `401`/refusal — see
+      each workstream's own commit message for the specific probes.
+- [x] Committed in logical groups, one per workstream (`4dc93a7` PREP,
+      `cbb6719` A, `4cd5c60` B, `a907e86` C, `18b98fd` D, `939cec0` E,
+      `e4dc3ed` F), plus doc-sync commits after each.
+- [x] `RCC_TO_LCC_HANDOFF.md` updated with the matter-sharing sharee-access
+      gap, addressed to LCC specifically (an endpoint request, not a
+      founder decision) — separate from its `FOUNDER_QUEUE.md` entry.
+- [ ] **Not done — the one honest gap across all six workstreams.** No
+      physical device or emulator was booted this pass. Every new
+      interactive flow (annotation save, matter share invite, add event,
+      alert settings toggle) is verified only to the `401 AUTH_REQUIRED`
+      boundary against production — S5 auth is real, so each is expected
+      to complete once signed in, but that completion has not been
+      observed. This is the literal next action for whoever picks this up.
 
 ---
 
 ## Progress marker — update this line every session
 
-**Last updated 8 Aug 2026.** PREP done (`4dc93a7`). **Workstream A done**
-(`4dc93a7`, `cbb6719`) — one item left unverified, see Workstream A's own
-note (device pass on the real sign-in → save flow). **Workstream B done**
-(`4cd5c60`) — owner-side complete, sharee-side correctly left to LCC.
-**Workstream C done** (`a907e86`) — built as a section, not a tab; see its
-own note for why. **Workstream D done** (`18b98fd`). Workstream E
-(enrolment band) starting next, F (Settings/Profile/Subscription) after —
-E's Profile card and F's Settings screen are the natural home for the
-alert-settings entry point D left dangling, so doing them next closes that
-loop rather than leaving it open.
+**Last updated 8 Aug 2026. All six workstreams done** (PREP `4dc93a7`; A
+`cbb6719`; B `4cd5c60`; C `a907e86`; D `18b98fd`; E `939cec0`; F `e4dc3ed`).
+Four real bugs found and fixed before building on top of them
+(`enrolmentStatus` enum, missing `subscriptionTier`, missing `quote` on
+annotations, the aspirational `Alert` type) — see each workstream's own
+section above for the account. Three items intentionally not built, all in
+`docs/FOUNDER_QUEUE.md`: saved searches (needs founder confirmation), draft
+template library / court rules reader (no data source exists), and the IAP
+purchase mechanism itself (needs a vendor decision — display screens around
+it are built). One LCC-side gap flagged in `RCC_TO_LCC_HANDOFF.md`: matter
+sharing only works for the owner, `getMatter`/`listMatters` need a sharee
+path.
+
+**Next session's first action, if nothing else has changed: boot a device
+or emulator and run the sign-in → [annotation save / matter invite / add
+event / alert toggle] flows for real.** Everything else in this plan is
+closed.
