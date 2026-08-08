@@ -811,3 +811,50 @@ harness` writes every query, its top five titles, and the gold answer to JSON �
 which is the review packet, ready to hand over.
 
 **Not blocking:** the automated half does not wait for this.
+
+---
+
+### [FOR LCC, NOT THE FOUNDER — recorded so it is not lost] Two of PD-5's four alert triggers cannot fire · 8 Aug 2026
+
+Found while building E1.2, the alert drill S6 claimed had run and never had.
+Not a founder decision — it is my lane's work — but it is written here because
+this file survives compaction and a fresh agent, and a settings toggle that
+controls nothing is the kind of defect that survives a long time.
+
+**PD-5 names four triggers. Two exist.**
+
+| PD-5 trigger | alert kind | can it fire |
+| --- | --- | --- |
+| An authority saved to a matter is set aside or overruled | `saved_authority_moved` | yes |
+| An authority cited in a filed draft is set aside | `filed_citation_moved` | yes |
+| A judgment in one of the advocate's own matters is uploaded | **none** | **no** |
+| A matter is listed on a date they did not know about | **none** | **no** |
+
+`alert_kind` holds exactly two values and `citations/fanout.ts` is the only
+writer of `alerts`. There is no enum value and no code path for the other two.
+
+**The visible part is worse than the missing part.** `users` carries
+`alert_own_matter_judgment` and `alert_unknown_listing`, both defaulting to
+true, and `PATCH /me/alerts` accepts and persists them. So the app offers an
+advocate two switches that govern notifications the system cannot produce. They
+will turn one off, or leave it on, and either way nothing happens — and the
+first time they notice is when a hearing is missed and they check whether they
+had asked to be told.
+
+**PD-6 is affected too.** It names two standing exceptions that push
+immediately. `set_aside` on a citation in an exported draft works. **"A newly
+discovered listing for tomorrow" cannot fire at all** — it is trigger 4, and
+trigger 4 does not exist. That is the more serious of the two exceptions: it is
+the one about missing a hearing.
+
+**Why they are not simply built now.** Trigger 3 depends on document upload,
+which is behind the countersigned DPA (OD-6). Trigger 4 depends on cause-list
+ingest producing listings for matters the advocate did not enter by hand, which
+is the eCourts harvest path. Both are real dependencies, not excuses — but a
+third alert kind added today would have nothing to write rows from, and an enum
+value with no writer is how this gap was created in the first place.
+
+**What must happen before either ships:** the drill (E1.2) covering all four
+triggers and both PD-6 exceptions, run and observed. E1.1 is done and its FIRST
+VERSION PASSED WHILE TESTING NOTHING — caught only by an assertion that the
+simulated failure had actually occurred. E1.2 gets the same guard.

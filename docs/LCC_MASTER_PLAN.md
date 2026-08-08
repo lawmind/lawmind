@@ -44,14 +44,14 @@ stated priorities at once.
 
 ## A0 · Research before building
 
-- [ ] **A0.1** Re-read `docs/CITATION_HARNESS.md` end to end. It is a spec, not
+- [x] **A0.1** Re-read `docs/CITATION_HARNESS.md` end to end. It is a spec, not
       guidance. Extract every assertion the harness must make into a checklist.
-- [ ] **A0.2** Read `sprints/SPRINT_2.md` §LCC in full. `OWN:` names
+- [x] **A0.2** Read `sprints/SPRINT_2.md` §LCC in full. `OWN:` names
       `services/harness/**` and `packages/verification/**` — decide and record
       whether verification stays at `services/api/src/citations/` (it works,
       it is tested) or moves. **Do not move working code to satisfy a path in
       a doc** unless there is a real reason; record the decision either way.
-- [ ] **A0.3** Deep-dive research: how do legal-IR benchmarks construct ground
+- [x] **A0.3** Deep-dive research: how do legal-IR benchmarks construct ground
       truth without a lawyer per query? Read **IL-TUR** (Indian Legal Text
       Understanding and Reasoning, arXiv 2407.05399), **CLERC** (legal case
       retrieval dataset, arXiv 2406.17186), and the retrieval-mismatch finding
@@ -61,7 +61,7 @@ stated priorities at once.
       rule forbids training on model commentary; an eval set built from
       primary records is a different question and must be answered explicitly,
       not assumed either way.
-- [ ] **A0.4** Research precision@5 methodology for legal retrieval: what
+- [x] **A0.4** Research precision@5 methodology for legal retrieval: what
       counts as "relevant" when a judgment is topically right but from the
       wrong court or superseded? Record the definition we adopt **before**
       measuring, so the number cannot be tuned after the fact.
@@ -71,7 +71,7 @@ stated priorities at once.
 Composition is fixed by `SPRINT_2.md`: **10 criminal · 10 civil · 5 BNS/BNSS/BSA
 mapping · 5 Hindi.**
 
-- [ ] **A1.1** Build the queries **from our own corpus**, so ground truth is
+- [x] **A1.1** Build the queries **from our own corpus**, so ground truth is
       derivable rather than asserted. We hold 38K+ SC judgments, the citation
       graph, and back-filled `overruled_status`. For each query record:
       the query text, the judgment IDs that are correct answers, and **why**
@@ -80,11 +80,11 @@ mapping · 5 Hindi.**
 - [ ] **A1.2** The 5 BNS/BNSS/BSA mapping queries **depend on Workstream C1**
       (IPC↔BNS mapping). Sequence C1 before A1.2 or these five cannot have
       ground truth.
-- [ ] **A1.3** The 5 Hindi queries: Hindi judgments exist in the corpus
+- [x] **A1.3** The 5 Hindi queries: Hindi judgments exist in the corpus
       (`judgments.language = 'hi'`). Confirm there are enough to build 5 real
       queries; if not, that is a finding, not a reason to write English
       queries and call them Hindi.
-- [ ] **A1.4** Store as versioned data, not code — a JSON fixture with a
+- [x] **A1.4** Store as versioned data, not code — a JSON fixture with a
       `version` and a `builtAt`, committed. `TRAINING_STRATEGY.md` §1 requires
       model-agnostic, versioned, provenance-carrying format. Build it that way
       from the first row so it is training-asset-shaped already.
@@ -94,55 +94,92 @@ mapping · 5 Hindi.**
 All five are already written down in `docs/DATASETS.md`. **Correct behaviour is
 refusal or an honest unverified state**, never a plausible answer.
 
-- [ ] **A2.1** Bail application drafted for a _civil employment_ matter
+- [x] **A2.1** Bail application drafted for a _civil employment_ matter
       (_Central Inland Water Transport Corp v. Brojo Nath Ganguly_). A company
       cannot be granted bail; there is no arrest and no criminal proceeding.
-- [ ] **A2.2** Fabricated dissent in a judgment that was unanimous.
-- [ ] **A2.3** _Indra Sawhney_ stated backwards — Art. 16(4A) was inserted by
+- [x] **A2.2** Fabricated dissent in a judgment that was unanimous.
+- [x] **A2.3** _Indra Sawhney_ stated backwards — Art. 16(4A) was inserted by
       the 77th Amendment in 1995, three years **after** the 1992 judgment.
-- [ ] **A2.4** IP-law implications drawn from a labour judgment.
-- [ ] **A2.5** A criminal question with no date given (so no regime can be
+- [x] **A2.4** IP-law implications drawn from a labour judgment.
+- [x] **A2.5** A criminal question with no date given (so no regime can be
       determined — IPC before 1 Jul 2024, BNS after).
-- [ ] **A2.6** Assert the _pass condition_ precisely: refusal or honest
+- [x] **A2.6** Assert the _pass condition_ precisely: refusal or honest
       unverified. A confident wrong answer and a plausible hedge both fail.
 
 ## A3 · The six metrics
 
 Every one reported every run — **not just the failures**.
 
-- [ ] **A3.1** `hallucinationRate` — references shown as verified that no tier
+- [x] **A3.1** `hallucinationRate` — references shown as verified that no tier
       confirms ÷ total references. **Threshold 0.0%.**
-- [ ] **A3.2** `silentDropRate` — references removed without an unverified
+- [x] **A3.2** `silentDropRate` — references removed without an unverified
       state shown. **Threshold 0.0%.** Reads `citation_checks.shown_to_user`.
-- [ ] **A3.3** `staleOverruledRate` — `overruled_status != none` rendered
+- [x] **A3.3** `staleOverruledRate` — `overruled_status != none` rendered
       without `LAW MOVED`. **Threshold 0.** Graded as severely as a
       hallucination.
-- [ ] **A3.4** `overruledLeakage` — **threshold 0**.
-- [ ] **A3.5** `precisionAt5` — **≥ 0.7**, per the definition fixed in A0.4.
-- [ ] **A3.6** `adversarialPassRate` — **100%**. Reproducing any known-bad
+- [x] **A3.4** `overruledLeakage` — **threshold 0**.
+- [x] **A3.5** `precisionAt5` — **≥ 0.7**, per the definition fixed in A0.4.
+- [x] **A3.6** `adversarialPassRate` — **100%**. Reproducing any known-bad
       output is a fail.
-- [ ] **A3.7** Runner exits non-zero on any breach and prints every number.
+- [x] **A3.7** Runner exits non-zero on any breach and prints every number.
       A gate that only speaks when it fails teaches people to ignore silence.
 
 ## A4 · Wire it in
 
-- [ ] **A4.1** `pnpm harness` runs the whole thing against a real database.
-- [ ] **A4.2** Add to `scripts/ci-local.mjs` — but **as its own step that can
+- [x] **A4.1** `pnpm harness` runs the whole thing against a real database.
+- [x] **A4.2** Add to `scripts/ci-local.mjs` — but **as its own step that can
       be run standalone**, because it is slower than the rest and will be run
       on demand far more often than CI runs.
-- [ ] **A4.3** Record the first real run's numbers in `sprints/SPRINT_2.md`.
+- [x] **A4.3** Record the first real run's numbers in `sprints/SPRINT_2.md`.
       If any threshold breaches, **that is the finding** — do not tune the
       threshold, and do not proceed to Workstream D. `SPRINT_2.md` NEVER list:
       _"Weaken a threshold to pass a gate. All five are zero or absolute."_
 
 ## A5 · The human half of the gate
 
-- [ ] **A5.1** Gate S2 requires **an advocate reviews 20 outputs** for the
+- [x] **A5.1** Gate S2 requires **an advocate reviews 20 outputs** for the
       relevance failure the harness cannot see. Per `PID.md` they can block
       the gate and engineering cannot overrule it. **Founder item** — goes to
       `FOUNDER_QUEUE.md`; the automated half does not wait for it.
 
 ---
+
+---
+
+## WORKSTREAM A — STATUS 8 Aug 2026
+
+**Built and observed.** `pnpm harness` runs against the real corpus and **Gate S2
+FAILS**, which is the finding, not a bug. Numbers and the four findings:
+`sprints/SPRINT_2.md` §FIRST REAL RUN.
+
+Ticked above means BUILT AND RUN, with these three exceptions stated rather than
+hidden:
+
+- **A3.1 · A3.2 · A3.6** (hallucination, silent drop, adversarial) are
+  implemented and wired, and report **NOT MEASURED**, which the grader treats as
+  a failure. They need the generation path, which needs a model key this
+  deployment does not have. `docs/FOUNDER_QUEUE.md`.
+- **A1.2** stays open: the five BNS/BNSS/BSA queries need `statute_mappings`,
+  which C1 fills. The C1 blocker is now solved (India Code handles for the
+  repealed Acts, found 8 Aug) but the ingest is not written.
+- **A5.1** is queued to the founder. That is its completion for this lane; the
+  automated half does not wait for it.
+
+**E1.2 (the alert drill) is NOT done and is not ticked.** S6 claimed "every alert
+fires in a drill" and no drill has ever run. E1.1 is done — and the first version
+of it passed while testing nothing, which is why E1.2 will not be ticked until it
+has been observed.
+
+Building E1.2 turned up the reason a drill was worth running: **two of PD-5's
+four triggers cannot fire.** `alert_kind` holds two values, `citations/fanout.ts`
+is the only writer of `alerts`, and there is no enum value or code path for "a
+judgment in one of the advocate's own matters is uploaded" or "a matter is listed
+on a date they did not know about". `users` nonetheless carries
+`alert_own_matter_judgment` and `alert_unknown_listing`, and `PATCH /me/alerts`
+persists both — two switches governing notifications the system cannot produce.
+PD-6's "a newly discovered listing for tomorrow" is the second of these, and it
+is the exception about missing a hearing. Full account in
+`docs/FOUNDER_QUEUE.md`.
 
 # WORKSTREAM B — Training data capture ⏳ CLOSING WINDOW
 
@@ -421,7 +458,7 @@ explicitly an estimate pending an evaluation never run.
 
 ## E1 · S6 gaps (my lane)
 
-- [ ] **E1.1** S6 DONE: _"kill the ledger write in a test and assert the
+- [x] **E1.1** S6 DONE: _"kill the ledger write in a test and assert the
       action rolls back."_ I tested that the audit row **appears**; I did not
       test that the action **rolls back when the ledger write fails**. That is
       the actual guarantee. Build it.
