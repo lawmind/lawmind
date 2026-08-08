@@ -23,6 +23,7 @@
     "unpdf": "1.8.0"
   },
   "exports": {
-    "./paragraph-refs": "./src/paragraph-refs.ts"
+    "./paragraph-refs": "./src/paragraph-refs.ts",
+    "./citations": "./src/citations.ts"
   }
 }
