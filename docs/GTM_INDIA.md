@@ -258,3 +258,210 @@ forbids, and it cannot be made to pass the fetch ledger.
   (OD-2). **Do not ship a lay-facing surface on my reading alone.**
 - **No cost model for any channel.** A per-member bar rate and a field salesperson
   have very different unit economics and neither is computed here.
+
+---
+
+# EXPANSION — 8 Aug 2026
+
+Added after the founder's instruction to go deeper: *"the main goal is accuracy,
+correctness, user experience, and an extremely premium environment consisting of
+everything a lawyer wants… I have an extremely good marketing strategy on the
+ground, but for that the app should justify it."*
+
+That last clause is the brief. Everything below asks one question: **what has to
+be true of the product before a salesperson standing in a bar room is telling the
+truth?**
+
+---
+
+## 6 · The most winnable technical fight: degraded multilingual scans
+
+**Bharat.Law's founder named the hard problem in public** (Bar & Bench, Nimit
+Kumar): India's records are *"English pleadings, Hindi annexures, vernacular
+orders, degraded scans."* He is right, and naming it is the useful part — it is
+where every competitor is weakest, and the ceiling there is set by OCR rather
+than by lawyers.
+
+### The benchmark, and it is brutal
+
+**arXiv 2606.29213 (2026), "Can OCR-VLMs Read Devanagari?"** — ten systems, four
+synthetic degradation conditions, **300 real printed scans**:
+
+| System | chrF++ on REAL scans |
+| --- | --- |
+| Gemini 2.5 Flash | **86.3** |
+| Claude Opus 4.7 | 82.2 |
+| **Qwen3-VL-8B (open, Apache-2.0, one 24 GB GPU)** | **75.2** |
+| GPT-5.5 | 58.5 |
+| EasyOCR (classical) | 58.3 |
+| olmOCR-7B | 40.5 |
+
+Two findings that should change what we build:
+
+**On clean rendered text all ten score 91–98 chrF++.** Every vendor's demo is
+clean text. **On real scans nine of ten collapse and the field spreads 76
+points.** Any Devanagari OCR claim not measured on real degraded scans is
+meaningless — including one we might make.
+
+**Our documented stack is `paddleocr | tesseract` (`SCHEMA_TRUTH.md`
+`ocr_engine`) — both classical, and classical sits at the bottom of that table.**
+That is a live gap in `docs/OCR_PIPELINE.md`, not a future one.
+
+### Why this is ours to win, specifically
+
+**A self-hosted OCR-VLM means the document never leaves.** `CLAUDE.md` §5 routes
+uploaded documents as sensitive-class — pseudonymise, then Claude, one document
+per call — and OD-6's countersigned DPA is still owed before uploads ship.
+**Qwen3-VL-8B is Apache-2.0 and runs on a single 24 GB GPU**, beating GPT-5.5 on
+real Devanagari scans. Self-hosting is not a cost compromise here; it is *better
+than pseudonymisation*, because there is nothing to pseudonymise when nothing is
+sent.
+
+That is a sentence a salesperson can say in a bar room and mean: **your client's
+file never leaves our machines.** No competitor routing documents to a frontier
+API can say it.
+
+**Verified licences, 8 Aug 2026, from the GitHub and Hugging Face APIs:**
+
+| | Licence | Note |
+| --- | --- | --- |
+| **Qwen3-VL-8B-Instruct** | **apache-2.0** | 75.2 on real scans, single 24 GB GPU |
+| **dots.ocr** (`studio-dots-ai/dots.ocr`) | **MIT** | explicitly better on Devanagari than Latin/CJK-trained models |
+| **Surya** (`datalab-to/surya`) | Apache-2.0 (repo) | 83.3% olmOCR-bench at 650M params. **Weights have historically carried a separate commercial term — verify before use, do not assume the repo licence covers them** |
+
+**And OCR output is never trusted silently** — `CLAUDE.md`: the advocate confirms
+extracted fields before anything saves. A better engine raises the ceiling; it
+does not remove the confirmation step, because a silently wrong hearing date is a
+missed hearing.
+
+---
+
+## 7 · What "premium" means when the buyer is an advocate
+
+The generic legal-UX literature is not useful here — it says "consistency builds
+trust" and stops. What follows is drawn from the market's own stated pain points
+and from what this codebase has already decided.
+
+**Premium is not polish. It is the absence of doubt.** A ₹20,000 tool that
+returns a beautiful answer the advocate must independently re-check has sold them
+nothing. Five things follow, and each is measurable:
+
+**1 · Every claim traceable to a paragraph, not a document.** The market's own
+articulation of what High Court and Supreme Court litigators need is *"citation
+verifiability where every citation traces to a specific paragraph."* We already
+return `operativeParagraph` and `operativeParagraphNumber` — and the number is
+**null wherever the court's own numbering could not be read**, never invented. An
+advocate told "see paragraph 22" must land on the court's paragraph 22.
+
+**2 · Speed that survives a corridor.** Gate S1 budgets **3 seconds for the whole
+search request** on a bad connection. This is why the reranker's latency is
+measured beside its accuracy in `harness/src/ab-cli.ts` — a lever can be accurate
+and still not ship.
+
+**3 · Silence where there is nothing to say.** Verified citations carry no badge.
+`CITATION_HARNESS.md`'s rendering rule — verified is silent; only *unverified* and
+*the law has moved* render — is a premium decision, not a minimal one. A screen
+that decorates every correct answer trains the eye to ignore decoration, and then
+the one warning that matters is invisible.
+
+**4 · It says what it does not know.** `failed` renders exactly as `unverified`,
+because the advocate cannot act on the difference. Never "verification failed" —
+always *"we could not confirm this exists."* That is licence protection, and it is
+also what a senior practitioner recognises as competence.
+
+**5 · Nothing is ever silently dropped.** Measured at zero on every run. This is
+where we and Bharat.Law diverge: their stated safe behaviour is a *"not found"*
+response; ours is to show the citation in an explicit unverified state with the
+path to confirm it.
+
+### What a premium environment additionally requires, and does not yet exist
+
+- **The verification record.** Every field is already in `citation_checks` and
+  nothing renders it. After 2026 INSC 668 an advocate must be able to answer
+  *"did you verify this?"* — and no competitor gives them anything to answer
+  with. Queued.
+- **The citator, populated.** 22 flagged judgments out of 38,341 is not a
+  good-law service. `partly_set_aside` is the state that matters and the one
+  nobody expresses well; paragraph extraction is the unlock.
+- **Gate S2 passing, published with methodology.** In a market whose best claim is
+  89% and whose newest entrant publishes nothing, a measured number — fixed query
+  set, relevance defined before measuring — is an asset none of them can answer
+  quickly. **It currently fails at success@5 = 24.0%. It must be fixed before it
+  is published, not instead of.**
+
+---
+
+## 8 · Data acquisition — what to take, and in what order
+
+Cheapest and safest first. **Reach for a crawler only where there is no bulk
+source.**
+
+**1 · AWS Open Data — 17.8M judgments, CC-BY-4.0, no AWS account.**
+`DATA_ADVANTAGE.md` §2e. This is `aws s3 sync`, not scraping, and it is the
+largest lawful corpus available to anyone.
+
+**2 · e-SCR — the official law report, free, WITH OFFICIAL HEADNOTES.**
+The Supreme Court's own electronic Supreme Court Reports: **~34,000 judgments**,
+free of subscription, on the Court's website, its mobile app and the NJDG
+judgment portal. The Judges' Library and Editorial Section digitised **SCR
+1950–2017**. Head-noted judgments are those selected for publication in **the
+official law report**.
+
+**This is the most strategically interesting source on this list**, because
+`COMPETITOR_SUPREME_TODAY.md` identified editorial apparatus — headnotes — as the
+incumbent's deepest moat. For the Supreme Court, **an official headnote set
+exists and is free.**
+
+> **It is also the one item here I will not act on alone.** Whether SCR headnotes
+> may be reproduced is a genuine copyright question, not an obvious one.
+> `CLAUDE.md` §6 records that there is no copyright in a *judgment*
+> (s. 52(1)(q)(iv)) and that what *is* protected is a reporter's copy-edited
+> version — *Eastern Book Company v. D.B. Modak*. A headnote in the **official**
+> report is neither plainly the judgment nor plainly a private reporter's
+> edition: it is a government work prepared by the Court's own Editorial Section.
+> **Counsel decides this, not me.** Queued.
+
+**3 · The public court-data ecosystem — licences verified 8 Aug 2026:**
+
+| Repo | Licence | Use |
+| --- | --- | --- |
+| `vanga/indian-supreme-court-judgments` | **CC-BY-4.0** | Usable **with attribution** — a ready SC dataset |
+| `iamshouvikmitra/bharat-courts` | **MIT** | 700+ district courts, 25 HCs, SC |
+| `openjustice-in/ecourts` | **GPL-3.0** | Copyleft. Not AGPL, so a server we never distribute is arguably clear — **confirm before importing**, and prefer the MIT option |
+
+Two things from that ecosystem worth knowing, and one worth copying: **there is
+no official eCourts API** — the Supreme Court metadata endpoint these tools use
+was reverse-engineered from Android app traffic — and the most careful of them is
+**deliberately single-threaded, to avoid overloading eCourts servers that are
+already slow.**
+
+**That restraint is the floor we are held to, and we are held higher.** Our grant
+is bounded, the rate limiter enforces it, and the fetch ledger records every
+request including refusals. **A crawler that reaches a court site without passing
+`decide()` breaches the authorisation whatever its licence** — and unlike anyone
+else in that table, we have a written permission to lose.
+
+---
+
+## 9 · Sequencing — what must be true before the ground campaign starts
+
+The founder's marketing is ready and the app must justify it. In order, and each
+already tracked:
+
+1. **Gate S2 passes.** Not "improves" — passes. It is the claim the whole pitch
+   rests on, and it currently fails.
+2. **The citator is populated**, or good-law status is not mentioned in a sales
+   conversation. Paragraph extraction first.
+3. **The verification record exists** — the one thing no competitor has, and what
+   the Supreme Court asked for in July.
+4. **OCR measured on real degraded scans**, never clean text, before any claim
+   about Hindi or vernacular documents.
+5. **Then the corridor.** A bar association, a clerk, a student tier — none of
+   which needs a sales force to begin.
+
+**The risk of the wrong order is specific, not vague.** A field campaign against
+2 million advocates is a one-shot instrument. An advocate who tries a legal
+research tool, finds a citation they cannot rely on, and says so in the bar room
+has cost us that bar room permanently — `CITATION_HARNESS.md` opens with the same
+sentiment about a single fake case. **The ground game is an amplifier. It
+amplifies whatever is actually there.**

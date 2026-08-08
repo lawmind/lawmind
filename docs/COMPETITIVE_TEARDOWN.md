@@ -319,3 +319,102 @@ comparison.
   titles, short descriptions, ratings, installs for all five ASO-named apps
   (Law4u, Notify Court Case Status, Lawyyar, LegalKart Lawyer, SupremeToday). iOS
   side and screenshot narratives remain open, noted there.
+
+---
+
+## 8 · Bharat.Law — the direct threat, found 8 Aug 2026
+
+**Everything above this section was written before we knew they existed, and they
+are the only competitor selling our exact differentiator.** Not a database with
+AI on top, and not a consumer app. A litigation platform whose stated
+construction principle is per-citation verification.
+
+Their own words, from their product page:
+
+> *"Every citation NyaI™ generates is verified against Bharat.Law's curated
+> database of Indian case law and statutes before being returned."*
+>
+> *"If a proposition cannot be verified in the database, NyaI™ says so. A 'not
+> found' response is safer than a fabricated citation."*
+>
+> *"The system cannot return a citation it cannot verify — this is a construction
+> principle, not a marketing claim."*
+
+And the positioning line, which is `PRODUCT_BRIEF.md`'s Tier A + Tier B in one
+sentence:
+
+> *"the only AI legal research tool built exclusively for Indian law that combines
+> **live court tracking** with **source-verified citations** in a single product."*
+
+### Who they are
+
+| | |
+| --- | --- |
+| Entity | **Bharat Technologies, Inc.** — the *Inc.* suggests US incorporation, which usually means an intent to raise |
+| Founders | **Nimit Kumar** — IIT Kanpur, 20+ yrs fintech/enterprise/AI · **Dharitry Phookan** — **Advocate-on-Record, Supreme Court, 17+ yrs litigation** |
+| Coverage claim | Supreme Court + **all 25 High Courts**, plus NCLT, NCLAT, ITAT, SAT, CESTAT, DRT · **all judgments from 1950** · **24–48 hr indexing lag** |
+| Counter-authority | Surfaces **dissents from the same bench, overruling decisions from higher courts, and contrary views from coordinate benches** — automatically, per citation |
+| Pricing | Free entry point, no card. Litigation / In-House / Chambers tiers **not published** |
+| Accuracy claim | **None published** — consistent with §4: nobody publishes a number |
+
+**An Advocate-on-Record co-founder is a credential we do not have and cannot
+buy.** AoR is a restricted category — only AoRs may file in the Supreme Court.
+Every claim they make about what litigators need carries that signature.
+
+### Where they are genuinely ahead
+
+- **Counter-authority per citation** is more than our citator does today. We hold
+  192,197 edges with 11,765 carrying real treatment, and 22 judgments flagged.
+  Theirs surfaces dissents and contrary coordinate-bench views automatically.
+- **Tribunal coverage** — six named tribunal series. `DATA_ADVANTAGE.md` §2g found
+  the only tribunal APIs open to us are barred scraper-resellers.
+- **24–48 hour indexing lag**, published as a number. We have never stated ours.
+
+### Where the difference is real, and it is narrower than it looks
+
+**1 · "Verified against our own curated database" is single-source verification.**
+Mechanically that is the same assurance Supreme Today gives — *the citation is
+right because it is in our data* — with better words around it.
+`CITATION_HARNESS.md` requires **three independent tiers** and records **which
+one** resolved each citation in `verified_by_source`. One curated database cannot
+catch a systematic error inside itself; that is the entire reason tier 2 requires
+two independent public sources to **agree**.
+
+**2 · "A 'not found' response" is a silent drop, and we forbid it.**
+This is the sharpest difference and it runs the opposite way to intuition. Their
+safe behaviour is to return nothing. Ours is `verification_state = 'unverified'`,
+**shown** — an unmissable mark, the reason, and the eCourts path to confirm it —
+with a **zero silent-drop threshold** measured on every harness run. A citation
+that vanishes tells the advocate nothing; a citation marked *"we could not
+confirm this exists"* tells them exactly what to do next. **After 2026 INSC 668
+the advocate has to demonstrate verification, and an absence demonstrates
+nothing.**
+
+**3 · Nobody has published a number, including them.** §4 of this file already
+concluded that Gate S2's measured metrics would be the strongest marketing asset
+we could own. Bharat.Law's arrival makes that more urgent, not less: they have
+the same claim and no evidence, and **published methodology is the only way to
+distinguish a construction principle from a slogan.** Ours currently fails —
+success@5 24.0% — and that is precisely why it must be fixed before it is
+published, not instead of.
+
+**4 · They look like a web product for chambers.** Their segments are litigation
+teams, in-house, and chambers of 5–50. `COMPETITIVE_TEARDOWN.md` §5's conclusion
+stands: nobody has designed for an advocate in a corridor, one hand free, bad
+signal, bright daylight, over fifty. That is still ours.
+
+### What must change because of them
+
+- **`COMPETITIVE.md`'s "nobody sells a workflow" claim is now false.** Bharat.Law
+  sells exactly that. The doc needs correcting rather than supplementing.
+- **The verification RECORD (`COMPETITOR_SUPREME_TODAY.md` §6a, and the
+  `FOUNDER_QUEUE` item) moves from valuable to urgent.** Verified citations are no
+  longer differentiating on their own. *Evidence the advocate can put in front of a
+  judge* still is, and nobody — including Bharat.Law — offers it.
+- **Their founder's own Bar & Bench essay names the hard problem**, and it is one
+  we can win: *"India's multilingual records — English pleadings, Hindi annexures,
+  vernacular orders, degraded scans."* See `GTM_INDIA.md` §6 for why that is the
+  most winnable technical fight on the board.
+
+**Numbers from that essay, useful for sizing:** **48.7 million** cases pending in
+district courts, **6.4 million** in High Courts.

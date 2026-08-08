@@ -1046,3 +1046,67 @@ person and never opened looks like.
 association contract at all, what would it charge, and who decides.
 
 **Cost if never resolved:** the product is ready and nobody hears about it.
+
+---
+
+### [OPEN] May we reproduce the OFFICIAL SCR headnotes from e-SCR? · LCC · 8 Aug 2026
+
+**Needs:** counsel's view. Not a founder judgement call and definitely not mine.
+
+**Why it matters more than any other data question.**
+`docs/COMPETITOR_SUPREME_TODAY.md` concluded that the incumbent's deepest moat is
+editorial apparatus — headnotes, treatment, significant paragraphs — built by
+people reading judgments since 1983, and not copyable at speed.
+
+**For the Supreme Court, an official headnote set exists and is free.** The
+Court's own **e-SCR** gives ~34,000 judgments free of subscription, on the Court's
+site, its mobile app and the NJDG judgment portal; the Judges' Library and
+Editorial Section digitised **SCR 1950–2017**. Head-noted judgments are those
+selected for publication in **the official law report**.
+
+**Why I will not decide it.** `CLAUDE.md` §6 records two things that point in
+opposite directions here. There is **no copyright in a judgment** — Copyright Act
+**s. 52(1)(q)(iv)** — and what **is** protected is a reporter's *copy-edited*
+version, headnotes and editorial numbering included (*Eastern Book Company v.
+D.B. Modak*).
+
+A headnote in the **official** report is neither. It is not the judgment, and it
+is not a private reporter's edition — it is a **government work** prepared by the
+Supreme Court's own Editorial Section. Whether s. 52(1)(q) reaches it, and on what
+terms, is a real question with a real answer, and guessing it either way is
+expensive: guess restrictive and we leave the single best answer to the
+incumbent's moat on the table; guess permissive and we build on someone else's
+copyright.
+
+**What was built anyway:** nothing that touches headnotes. The raw judgment text
+underneath them is unambiguously free and already the basis of the corpus.
+
+**Where it plugs in:** `docs/DATA_SOURCES.md`, `docs/CORPUS_TIERING.md`, and the
+"what to take and in what order" list in `docs/GTM_INDIA.md` §8.
+
+**Same conversation as OD-2** (counsel's written residency view) and the
+lay-facing explainer above — one instruction to counsel, three questions.
+
+---
+
+### [FOR LCC, NOT THE FOUNDER — recorded so it is not lost] Our OCR stack is at the bottom of the 2026 Devanagari benchmark · 8 Aug 2026
+
+`SCHEMA_TRUTH.md` records `ocr_engine` as `paddleocr | tesseract`. Both are
+classical, and **arXiv 2606.29213 (2026)** measured ten systems on **300 real
+printed Devanagari scans**: classical EasyOCR collapses from 93.6 chrF++ on clean
+rendered text to **58.3** on real scans, and nine of the ten systems collapse
+similarly. The field spreads **76 points** on real scans while clustering at
+91–98 on synthetic ones.
+
+**Open and Apache-2.0: Qwen3-VL-8B scores 75.2 on one 24 GB GPU** — ahead of
+GPT-5.5 (58.5). `dots.ocr` (MIT) is explicitly stronger on Devanagari than
+Latin/CJK-trained models. Surya is Apache-2.0 at the repo but its **weights have
+historically carried a separate commercial term — verify, do not assume**.
+
+**The privacy consequence is the strategic one.** Uploaded documents are
+sensitive-class and OD-6's DPA is still owed. A **self-hosted** OCR-VLM means the
+document never leaves at all — better than pseudonymisation, because nothing is
+sent. That is a claim no competitor routing documents to a frontier API can make.
+
+Mine to build, not a founder decision. It belongs in `docs/OCR_PIPELINE.md` and it
+must be measured on real degraded scans, never clean text.
