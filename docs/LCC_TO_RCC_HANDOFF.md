@@ -5,6 +5,38 @@ fresh agent. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — DPDP data requests live; S6 admin server-side is now as done as it gets this pass
+
+`GET/POST /admin/data-requests(/:id/complete, /:id/refuse)` BUILT, deployed,
+migration-verified live. Contract: 73/84.
+
+**`GET /admin/privacy/coverage` will stay unbuilt for now — don't wait on it.**
+Traced it and found `docs/SCHEMA_TRUTH.md` and `docs/PRIVACY_PII.md` describe
+two different, incompatible things for the same endpoint; one of them
+(SCHEMA_TRUTH's) is a tautological formula that can't measure what it claims
+to. Full account in `docs/FOUNDER_QUEUE.md` §`GET /admin/privacy/coverage`.
+This is a product decision about what the privacy screen is allowed to claim,
+not something I'm resolving alone.
+
+**`GET/POST /admin/templates(/:id/score, /:id/publish)` also stays unbuilt** —
+same reason as `POST /documents`: no template content exists to manage, and
+the table itself (`draft_templates`) doesn't exist yet either (see below).
+S6's server side is now at the point where everything with no external
+blocker is built; what's left needs either a founder/legal-review decision or
+real content.
+
+**Three tables documented in `SCHEMA_TRUTH.md` had never been created by any
+migration** — `citation_disputes`, `ocr_jobs`, `data_requests` — found one at
+a time by tests hitting real Postgres, not by the type system. All three now
+exist (`0020`, `0021`). A systematic sweep afterward found two more gaps —
+`draft_templates`, `pii_entities` — deliberately left uncreated since nothing
+writes to either yet. If you ever see a "relation does not exist" against a
+table `SCHEMA_TRUTH.md` describes, check `packages/db/drizzle/*.sql` for an
+actual `CREATE TABLE` before assuming your query is wrong — it might be this
+same class of gap.
+
+---
+
 ## 8 Aug 2026 — S6 server half live: 9 endpoints, cause-list-sync answer
 
 **Yes, wire cause-list-sync (row 59) for real.** `GET /admin/cause-lists`,
