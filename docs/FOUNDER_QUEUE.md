@@ -1297,3 +1297,74 @@ which is the behaviour we want.
 **Cost if it lands and we have not thought about it:** we pay monthly for raw
 judgments we already have free, hand a competitor our users' research patterns,
 and discover at renewal that we cannot leave.
+
+---
+
+### [DECISION NEEDED] Supreme Today: bulk licence granted at ₹50,000/month · 8 Aug 2026
+
+**They said yes.** Bulk data licence, **2–3 accounts required for routing**,
+**₹50,000/month**, and **they have agreed to distillation.**
+
+**Full analysis: `docs/SUPREME_TODAY_LICENCE.md`. The four things that decide it:**
+
+**1 · There are two "distillations" and only one is allowed.**
+Training on their AI's **answers** is training on another model's commentary
+about law — forbidden by `CLAUDE.md` §6 and `DATASETS.md`, and the rule exists
+because an audit found fabricated dissents and *Indra Sawhney* stated backwards
+in exactly that kind of data. Their own manual documents **no hallucination
+safeguard**. Their permission does not make it a good idea.
+
+**Keeping which JUDGMENTS their AI cites is a different act and is already
+precedented** — `DATASETS.md` kept the instruction column of an LLM dataset while
+refusing its outputs. Resolve every cited judgment against our own corpus,
+discard what does not resolve, keep `(question → judgment IDs)`, store none of
+their prose. **Their hallucinations cannot enter, by construction.**
+
+**That asset is the one we are most missing.** The harness runs on 25 queries and
+fails at success@5 = 24.0%. Ten thousand verified question→authority pairs is
+training and evaluation data for the metric blocking everything else.
+
+**2 · Do not pay for what is free.** 17.8M judgments are free from AWS Open Data,
+and **e-SCR has ~34,000 Supreme Court judgments with OFFICIAL headnotes, free**.
+**The incremental value is High Courts and tribunals** — say so in the
+negotiation, because a large part of the Supreme Court value already exists in an
+official free form.
+
+**3 · One clause changes the price by an order of magnitude: what happens to
+ingested data when we stop paying.** A bulk archive is a one-time acquisition
+priced as a subscription. Keep it and twelve months for forty years of editorial
+work is cheap; lose it and we are renting from our most direct competitor, who
+can read our dependence off the invoice. Negotiate a **price cap or fixed renewal
+formula and a wind-down clause NOW.**
+
+**4 · Use the accounts for harvesting and benchmarking, not live user traffic.**
+Routing live queries still shows them user count, growth, practice areas and
+individual advocates' research patterns — case strategy before filing. Also ask
+the **per-account query ceiling**: three seats may not carry a ten-thousand
+question harvest.
+
+**RECOMMENDATION: buy one month, not twelve, and measure it.**
+
+₹50,000 is bounded and recoverable. Ingest the High Court and tribunal data,
+harvest the pointers, then run `pnpm --filter @lawmind/harness ab` over the
+283-query set and report the paired difference with a McNemar exact p.
+
+**Go if success@5 moves and the interval excludes zero. No-go if it is inside
+noise.** `DATA_ADVANTAGE.md` §1d's rule — *if it does not move the number on our
+own corpus, it does not ship* — was applied this morning to reject a **free**
+Apache-2.0 reranker at +6.0 points and p = 0.210. **A paid dependency on a
+competitor gets the same test, not a softer one.**
+
+**We are the only party in this market who can evaluate this deal properly**,
+because we have a fixed query set and a definition of relevance settled before
+measuring. That instrument was built this week. This is what it is for.
+
+**If they will only sell twelve months:** my recommendation is to spend the first
+₹50,000 on the LLM key and an advocate reviewer instead. Both unblock Gate S2,
+and Gate S2 gates the ground campaign, the marketing claim and every other item
+on this list.
+
+**Economics, for reference.** ₹6L/year ≈ **15 paying advocates** at PD-13's
+Expert tier — not a demanding bar. But it is also 30 of their own seats, and the
+same ₹6L buys a self-hosted OCR GPU, or the LLM key, or a first salesperson —
+each with a clearer path to a number than the licence has today.
