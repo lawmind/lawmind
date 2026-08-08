@@ -184,18 +184,14 @@ them saves correctly and simply never has anything to show yet (trigger 3
 awaits OCR, trigger 4 awaits the cause-list-to-matter matcher). Build the
 toggle honestly; do not imply either does something today.
 
-- [ ] Add `Alert`/`AlertSettings` types to `contract.ts`.
-- [ ] Add `alerts(since?)`, `markAlertRead(id)`, `alertSettings()`,
-      `updateAlertSettings(patch)` to `client.ts`.
-- [ ] Alerts state: fetch on `Today` mount, `since` = last-seen timestamp
-      persisted locally (new small store or fold into `state/practice.ts`).
-- [ ] `TodayScreen.tsx`: the "since yesterday" block under the briefing card.
-- [ ] **PD-6 compliance check before calling this done**: no tab, no app-icon
-      or tab-bar badge count anywhere. `severity: 'immediate'` needs no
-      client UI beyond what the OS already shows for a push — verify nothing
-      extra gets built for it.
-- [ ] Alert settings screen off panel 3 — four toggles, trigger 2 rendered
-      non-toggleable with the server's real refusal copy.
+**DONE, 8 Aug 2026 (commit `18b98fd`).** Found a fourth contract-drift bug
+first: `contract.ts` already had an `Alert` type, but it was aspirational
+(wrong field names, invented `body`, wrong `kind` values) — rewrote against
+LCC's actual live-probed shape. `state/alerts.ts` fetches once on `Today`
+mount, never polled. "Since yesterday" card renders only the two `kind`s
+that really exist — the render's other example rows (status report
+uploaded, unexpected listing) have no data source and were not built.
+`AlertSettingsScreen.tsx` built; no entry point yet, lands with F.
 
 ## Workstream E — Enrolment-pending band
 
@@ -286,5 +282,8 @@ Data/offline section, Sign out (`api.signOut` already exists and works).
 note (device pass on the real sign-in → save flow). **Workstream B done**
 (`4cd5c60`) — owner-side complete, sharee-side correctly left to LCC.
 **Workstream C done** (`a907e86`) — built as a section, not a tab; see its
-own note for why. Workstream D (citator alerts) starting next. E, F not
-started.
+own note for why. **Workstream D done** (`18b98fd`). Workstream E
+(enrolment band) starting next, F (Settings/Profile/Subscription) after —
+E's Profile card and F's Settings screen are the natural home for the
+alert-settings entry point D left dangling, so doing them next closes that
+loop rather than leaving it open.
