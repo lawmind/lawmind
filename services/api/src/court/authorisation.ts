@@ -36,8 +36,17 @@ export type EcourtsAuthorisation = {
   reference: string;
   /** ISO date the grant was made. */
   grantedOn: string;
-  /** ISO date it expires. Grants are not perpetual; the guard refuses past this. */
-  expiresOn: string;
+  /**
+   * **A full ISO instant, not a date.** The grant expires at **12:00 on a day
+   * in January 2029** — it carries a time, and a date-only comparison would
+   * hand us a free extra twelve hours of harvesting under an expired
+   * permission. That is precisely the kind of quiet overreach that loses a
+   * grant, so the type forces the instant and `decide()` compares instants.
+   *
+   * Stored as UTC. The registrar states IST; the conversion is done once, here,
+   * at transcription time rather than in a comparison somewhere.
+   */
+  expiresAt: string;
   /** The attribution string the grant requires us to carry, verbatim. */
   attribution: string;
   /** Courts the grant covers. A court not named here is not covered. */
@@ -72,12 +81,48 @@ export type EcourtsAuthorisation = {
    */
   captchaBypassPermitted: boolean;
   /**
-   * What happens at `expiresOn`. The January 2029 grant converts to a paid
+   * What happens at `expiresAt`. The January 2029 grant converts to a paid
    * arrangement rather than simply lapsing, and "we forgot to renew" must not
    * be discovered by an advocate seeing an empty cause list. Recorded so the
    * renewal is a diarised commercial decision, not an outage.
    */
   onExpiry: 'lapses' | 'renewable_for_payment';
+  /**
+   * Whether we may render eCourts-derived data **inside Lawmind** rather than
+   * sending the advocate to eCourts to see it.
+   *
+   * Granted 8 Aug 2026 under the government scheme the founder enrolled in.
+   * This is a **product** permission, distinct from the access permission: it
+   * is the difference between "we may read this" and "we may be the surface
+   * the user reads it on". Without it, Tier 3 must hand over a URL; with it,
+   * the data can be first-class in our own UI.
+   *
+   * Like every other field here it dies with the grant. If it lapses in 2029
+   * the product must fall back to handing over the link, not keep rendering
+   * data it is no longer licensed to surface.
+   */
+  independentDisplayPermitted: boolean;
+  /**
+   * Whether the grant permits using this data to **train models**.
+   *
+   * Granted 8 Aug 2026 under the same scheme. `docs/TRAINING_STRATEGY.md` is
+   * the governing document for what we then do with it — this field records
+   * only that the registrar permits it, never that it is a good idea.
+   *
+   * **Two limits survive this permission and are not the registrar's to
+   * waive**, both recorded here because this is where someone will come
+   * looking:
+   *
+   * 1. **`CLAUDE.md`: never train on another model's commentary about law.**
+   *    Primary sources only. eCourts records are primary; that is why this
+   *    permission is worth having.
+   * 2. **Personal data in court records belongs to the litigants, not the
+   *    registrar.** Judgments and orders are public record. A permission to
+   *    use "the data" is not a DPDP consent from a living third party whose
+   *    name appears in a cause list, and the two questions must not be
+   *    collapsed because the answer to one arrived first.
+   */
+  trainingPermitted: boolean;
 };
 
 /**
@@ -105,10 +150,42 @@ export const AUTHORISATION: EcourtsAuthorisation | null = null;
  * produces the distinguishable reason for the ledger.
  */
 export function captchaBypassAllowed(at: Date = new Date()): boolean {
+  return grantPermits('captchaBypassPermitted', at);
+}
+
+/**
+ * May we render eCourts data inside Lawmind, rather than sending the advocate
+ * to eCourts? Dies with the grant — see the field's own note.
+ */
+export function independentDisplayAllowed(at: Date = new Date()): boolean {
+  return grantPermits('independentDisplayPermitted', at);
+}
+
+/**
+ * May we use eCourts data as training input? **Necessary, not sufficient** —
+ * `docs/TRAINING_STRATEGY.md` and the DPDP position both still apply, and this
+ * only answers the registrar's half of the question.
+ */
+export function trainingOnEcourtsDataAllowed(at: Date = new Date()): boolean {
+  return grantPermits('trainingPermitted', at);
+}
+
+/**
+ * The one place a grant permission is evaluated. Every caller goes through
+ * here so that "does a grant exist" and "has it expired" can never be checked
+ * by one caller and forgotten by the next.
+ *
+ * The expiry comparison is on **instants**, because the grant expires at 12:00
+ * on its final day rather than at the end of it.
+ */
+function grantPermits(
+  permission: 'captchaBypassPermitted' | 'independentDisplayPermitted' | 'trainingPermitted',
+  at: Date,
+): boolean {
   const grant = AUTHORISATION;
   if (!grant) return false;
-  if (at.toISOString().slice(0, 10) > grant.expiresOn) return false;
-  return grant.captchaBypassPermitted;
+  if (at.getTime() >= Date.parse(grant.expiresAt)) return false;
+  return grant[permission];
 }
 
 /**

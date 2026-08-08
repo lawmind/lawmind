@@ -77,11 +77,15 @@ export async function decide(
     };
   }
 
-  if (at.toISOString().slice(0, 10) > grant.expiresOn) {
+  // Instants, not dates. The grant expires at 12:00 on its final day, and a
+  // date-only comparison would grant a free extra twelve hours of harvesting
+  // under an expired permission — small, silent, and exactly the kind of
+  // overreach that loses a grant.
+  if (at.getTime() >= Date.parse(grant.expiresAt)) {
     return {
       allowed: false,
       reason: 'authorisation_expired',
-      detail: `the grant ${grant.reference} expired on ${grant.expiresOn}`,
+      detail: `the grant ${grant.reference} expired at ${grant.expiresAt}`,
     };
   }
 

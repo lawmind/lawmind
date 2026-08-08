@@ -211,7 +211,9 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
   const grant = (over: Partial<EcourtsAuthorisation> = {}): EcourtsAuthorisation => ({
     reference: 'TEST/2026/001',
     grantedOn: '2026-08-07',
-    expiresOn: '2029-01-31',
+    // 12:00 IST = 06:30 UTC. The half-hour offset is the whole reason this is
+    // converted once at transcription rather than compared in local time.
+    expiresAt: '2029-01-01T06:30:00.000Z',
     attribution: 'Test attribution',
     permittedCourts: ['Test Court'],
     permittedHoursIst: { from: 0, to: 24 },
@@ -220,6 +222,8 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
     maxRequestsPerDay: 1000,
     captchaBypassPermitted: true,
     onExpiry: 'renewable_for_payment',
+    independentDisplayPermitted: true,
+    trainingPermitted: true,
     ...over,
   });
 
@@ -237,7 +241,7 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
    * the reason each condition exists is the comment beside it.
    */
   const allowedFor = (g: EcourtsAuthorisation, at: Date): boolean => {
-    if (at.toISOString().slice(0, 10) > g.expiresOn) return false;
+    if (at.getTime() >= Date.parse(g.expiresAt)) return false;
     return g.captchaBypassPermitted;
   };
 
@@ -245,11 +249,18 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
     assert.equal(allowedFor(grant(), new Date('2027-06-01T10:00:00Z')), true);
   });
 
-  it('REVOKES it the day after expiry, with no code change and nobody remembering', () => {
-    // The grant converts to paid in Jan 2029. An expired permission that keeps
-    // working is an unauthorised access we would not notice we were committing.
-    assert.equal(allowedFor(grant(), new Date('2029-01-31T23:00:00Z')), true);
-    assert.equal(allowedFor(grant(), new Date('2029-02-01T00:00:01Z')), false);
+  it('REVOKES it at NOON on the final day, not at the end of that day', () => {
+    // The grant expires at 12:00 IST, not at 23:59. A date-only comparison
+    // would hand us twelve free hours of harvesting under an expired
+    // permission — small, silent, and exactly how a grant gets lost.
+    const noonIst = Date.parse('2029-01-01T06:30:00.000Z');
+    assert.equal(allowedFor(grant(), new Date(noonIst - 1000)), true, 'one second before noon');
+    assert.equal(allowedFor(grant(), new Date(noonIst)), false, 'at noon exactly');
+    assert.equal(
+      allowedFor(grant(), new Date('2029-01-01T18:00:00.000Z')),
+      false,
+      'later the same day — a date-only check would wrongly allow this',
+    );
   });
 
   it('refuses when the grant is silent on the bypass', () => {
@@ -264,5 +275,36 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
     // "We forgot to renew" must not first surface as an advocate seeing an
     // empty cause list on a hearing morning.
     assert.equal(grant().onExpiry, 'renewable_for_payment');
+  });
+
+  /**
+   * The scheme grants two further permissions, and **both expire with it.**
+   * These are the ones most likely to be quietly assumed permanent, because
+   * unlike harvesting they leave no request in a ledger — a UI keeps
+   * rendering and a training set keeps being usable long after the paperwork
+   * stops saying they may.
+   */
+  it('independent display and training BOTH die with the grant', () => {
+    const live = new Date('2027-06-01T10:00:00Z');
+    const dead = new Date('2029-01-01T06:30:00.000Z');
+    const g = grant();
+
+    const permits = (p: keyof EcourtsAuthorisation, at: Date): boolean =>
+      at.getTime() >= Date.parse(g.expiresAt) ? false : (g[p] as boolean);
+
+    assert.equal(permits('independentDisplayPermitted', live), true);
+    assert.equal(permits('trainingPermitted', live), true);
+
+    // After noon on the expiry day, a product that keeps rendering eCourts
+    // data in its own UI is surfacing data it is no longer licensed to show,
+    // and a training run is using data it is no longer licensed to use.
+    assert.equal(permits('independentDisplayPermitted', dead), false);
+    assert.equal(permits('trainingPermitted', dead), false);
+  });
+
+  it('treats silence as refusal on the new permissions too', () => {
+    const silent = grant({ independentDisplayPermitted: false, trainingPermitted: false });
+    assert.equal(silent.independentDisplayPermitted, false);
+    assert.equal(silent.trainingPermitted, false);
   });
 });

@@ -1,0 +1,17 @@
+{
+  "name": "@lawmind/harness",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test --test-concurrency=1 src/*.test.ts",
+    "harness": "tsx src/run-cli.ts"
+  },
+  "dependencies": {
+    "@lawmind/api": "workspace:*",
+    "@lawmind/db": "workspace:*",
+    "postgres": "3.4.9",
+    "tsx": "4.23.1"
+  }
+}

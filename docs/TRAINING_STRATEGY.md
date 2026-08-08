@@ -40,12 +40,12 @@ model.** Build it accordingly:
 **GLM-5.2 is 744B parameters and needs roughly 8×H100 just to serve. Kimi K3 is
 2.8T. Neither can be QLoRA fine-tuned or self-hosted on this budget.**
 
-| Role | Model | Why |
-|---|---|---|
-| API inference — search, extraction | **DeepSeek V4 Flash** | Cheapest capable, MIT, 1M context |
-| API inference — drafting, briefings | **Claude Sonnet 4.6** | Quality where it is filed in court |
-| API inference — premium reasoning | **GLM-5.2 via API** | MIT, ~168 tok/s, roughly 3× the throughput of DeepSeek V4 Pro or Kimi K3 |
-| **Fine-tune target** | **Qwen3 32B** or **Gemma 4 26B A4B** | Actually trainable and servable. **~$12–20 per QLoRA run** |
+| Role                                | Model                                | Why                                                                      |
+| ----------------------------------- | ------------------------------------ | ------------------------------------------------------------------------ |
+| API inference — search, extraction  | **DeepSeek V4 Flash**                | Cheapest capable, MIT, 1M context                                        |
+| API inference — drafting, briefings | **Claude Sonnet 4.6**                | Quality where it is filed in court                                       |
+| API inference — premium reasoning   | **GLM-5.2 via API**                  | MIT, ~168 tok/s, roughly 3× the throughput of DeepSeek V4 Pro or Kimi K3 |
+| **Fine-tune target**                | **Qwen3 32B** or **Gemma 4 26B A4B** | Actually trainable and servable. **~$12–20 per QLoRA run**               |
 
 **Recorded explicitly: we do not fine-tune GLM-5.2 or Kimi K3. We consume them
 via API and fine-tune something we can afford to serve.**
@@ -54,7 +54,7 @@ via API and fine-tune something we can afford to serve.**
 
 `TRD.md` §Model selection recorded on 1 Aug 2026 that **GLM-5.2 replaces
 Qwen3.6-35B-A3B as the fine-tune target**, on throughput grounds. That reasoning
-was sound about *inference* and wrong about *training*: it compared tokens per
+was sound about _inference_ and wrong about _training_: it compared tokens per
 second and never priced the serving footprint. **A model we cannot afford to run
 is not a fine-tune target at any throughput.**
 
@@ -78,8 +78,8 @@ pipeline is built, and enormous if it is retrofitted.
 **STATUS, verified 6 Aug 2026: not started. 0 of 50,000 pairs.**
 
 > **Correction — this section described a pipeline that does not exist.** It read
-> *"the corpus pipeline already parses every judgment into facts, issues,
-> reasoning and holding."* It does not. `services/ingest` fetches PDFs, extracts
+> _"the corpus pipeline already parses every judgment into facts, issues,
+> reasoning and holding."_ It does not. `services/ingest` fetches PDFs, extracts
 > text, normalises whitespace and writes `judgments` rows with metadata. There is
 > no structural parse of a judgment into its parts, no `training/` directory, and
 > nothing emits instruction pairs. `.gitignore` did not cover `training/` either.
@@ -100,9 +100,9 @@ honest options, neither yet chosen:
    to buy anyway.
 
 **Recommendation: option 2 for pairs, but capture the structure now.** The 50,000
-figure was never load-bearing — §1 says the asset is *advocate-validated* pairs,
+figure was never load-bearing — §1 says the asset is _advocate-validated_ pairs,
 and un-validated pairs extracted mechanically from judgments are the lowest-value
-row in the whole strategy. What must not slip is the *capture*, which is cheap
+row in the whole strategy. What must not slip is the _capture_, which is cheap
 now and expensive later.
 
 ### S2 — the harness becomes gold data
@@ -166,7 +166,7 @@ licensable than pairs, for three reasons:
 only from the court's own annotation — never from a proximity heuristic. A first
 implementation using a 400-character window produced **33 overrulings in 300
 judgments against 143 in the whole corpus**, a ~30x over-fire, and put a
-fabricated overruling on *N.P. Ponnuswami* (1952), which the same passage marked
+fabricated overruling on _N.P. Ponnuswami_ (1952), which the same passage marked
 "referred to". That is precisely the contamination §1 forbids, and it arrived from
 our own code rather than from a model.
 
@@ -184,12 +184,59 @@ these constraints have never been written down.**
 
 The corpus is **not ours outright**, and the terms differ by source:
 
-| Source | Licence | What it permits |
-|---|---|---|
-| AWS Open Data — SCI, High Courts | **CC-BY-4.0** | Commercial use and redistribution **with attribution**. Derived works allowed. |
-| indiacode.nic.in — BNS/BNSS/BSA | Government | Statutory text; unsettled whether attribution suffices for resale |
-| IndianKanoon API | Commercial licence | **Attribution mandatory** — the "powered by IKanoon" logo, prominent and unaltered. Their terms explicitly contemplate RAG and fine-tuning on that basis. See the correction below. |
-| e-SCR | Government | Free, official |
+| Source                           | Licence                                                                                   | What it permits                                                                                                                                                                           |
+| -------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AWS Open Data — SCI, High Courts | **CC-BY-4.0**                                                                             | Commercial use and redistribution **with attribution**. Derived works allowed.                                                                                                            |
+| indiacode.nic.in — BNS/BNSS/BSA  | Government                                                                                | Statutory text; unsettled whether attribution suffices for resale                                                                                                                         |
+| IndianKanoon API                 | Commercial licence                                                                        | **Attribution mandatory** — the "powered by IKanoon" logo, prominent and unaltered. Their terms explicitly contemplate RAG and fine-tuning on that basis. See the correction below.       |
+| e-SCR                            | Government                                                                                | Free, official                                                                                                                                                                            |
+| **eCourts**                      | **Registrar's grant under a government scheme, 7 Aug 2026 — expires 12:00, January 2029** | **The broadest terms we hold, and the only ones with an end date.** Use of all available data · render it independently in our own UI · **train models on it** · CAPTCHA bypass. See §3c. |
+
+### 3c · The eCourts grant — our broadest licence, and the only expiring one
+
+Confirmed by the founder 8 Aug 2026: the registrar's grant, made under a
+government scheme the founder enrolled in, permits **using and owning all
+available eCourts data, displaying it independently inside Lawmind, and
+training models on it**, until **12:00 on a day in January 2029**, after which
+it is renewable for payment.
+
+That is a stronger grant than anything else in the table above. It is also the
+only one that **stops**, and that difference drives everything below.
+
+**Transcribed as machine-enforced fields**, not remembered:
+`independentDisplayPermitted` and `trainingPermitted` are fields on the grant in
+`services/api/src/court/authorisation.ts`, evaluated only through accessors that
+check grant-exists **and** not-expired **and** expressly-permitted. Both are
+tested to flip to `false` at noon on the expiry day. These two are the most
+likely of all the grant's permissions to be quietly assumed permanent, because
+unlike harvesting **they leave no request in a ledger** — a UI simply keeps
+rendering, and a training set simply keeps sitting on disk.
+
+**The question this raises that nobody has answered, and it is not an
+engineering one:**
+
+> **What happens to a model trained on eCourts data after the grant expires?**
+
+The training set is separable and can be quarantined. **Model weights are not.**
+A fine-tune is a derived work of its training data, and if the licence to use
+that data ends in January 2029, it is genuinely unclear whether a model trained
+under it may keep being served afterwards. The same question applies to an
+embedding fine-tune.
+
+This is the identical shape as §3b's IndianKanoon caution — _permitted for our
+own product is not clean title_ — with a clock attached. **Counsel, not an
+engineering decision**, and it wants answering **before** the first fine-tune
+rather than after, because the mitigation is cheap now and impossible later:
+
+- **Tag every training pair with its source at extraction time.** A pair derived
+  from eCourts data must be identifiable as such, so a 2029 decision can exclude
+  it, retrain without it, or seek renewal on informed terms. Retrofitting
+  provenance onto an un-tagged JSONL is not possible.
+- Keep eCourts-derived pairs **separable** from the licensable dataset, exactly
+  as IndianKanoon-derived material already must be.
+
+**Recorded, not resolved.** The permission is real and broad and worth having;
+the expiry is the part that needs a plan rather than optimism.
 
 Three questions nobody has answered, all of which bear on an API business:
 
@@ -200,7 +247,7 @@ Three questions nobody has answered, all of which bear on an API business:
    database?** Facts are not copyrightable, but the extraction is ours. This
    determines whether it can be licensed on our own terms.
 3. **CORRECTED 7 Aug 2026.** This section previously read that IndianKanoon's
-   terms "indicate the API is *not* intended as raw extraction for building a
+   terms "indicate the API is _not_ intended as raw extraction for building a
    competing database". **That was never checked against the terms page and is
    not in it.** The terms require attribution and explicitly contemplate RAG and
    fine-tuning on that basis. `docs/DATA_SOURCES.md` §2 quotes the text. The wrong
