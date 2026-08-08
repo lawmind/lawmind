@@ -107,6 +107,27 @@ defects came out of it that no test could see.
 - **The adjournment four-second target** (`docs/FAILURE_MODES.md`), which is
   explicitly a Redmi-class measurement.
 
+**Added 8 Aug 2026, found during the DONE-criteria audit — two more sprint DONE
+lines that were never actually measured, same root cause as the item above,
+listed separately because they are distinct claims, not the same one restated:**
+
+- **SPRINT_3.md RCC DONE: "Adjournment capture completes in three taps,
+  measured."** Built — the common-case flow is genuinely one tap (second date
+  offer preselected) plus Save, matching the code's own comment. **Never
+  timed or tap-counted on a device.** The sprint doc's own task text already
+  says this "is a thing to MEASURE at S3, not a gate — nobody can evaluate it
+  without the device," so the DONE line asserting it happened is itself the
+  error, not the build.
+- **SPRINT_5.md RCC DONE: "Whole onboarding flow under two minutes, timed."**
+  OTP entry, identity/enrolment and the consent step are built. **Never timed.**
+  No stopwatch measurement exists anywhere in the repo for this claim.
+
+Both are cosmetically small — a phone and five minutes closes them — but they
+are DONE lines currently marked as satisfied in the sprint docs' own commit
+history without ever being observed, which is exactly the failure mode Gate S2
+was found to have at a much larger scale. Noting so nobody reads "S3 DONE" /
+"S5 DONE" as "measured."
+
 **Where it plugs in:** `apps/mobile/android/app/build/outputs/apk/release/` — a
 release APK builds and installs in one command. Roughly twenty minutes with a
 phone.
