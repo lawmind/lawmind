@@ -272,32 +272,96 @@ the `FOUNDER_QUEUE.md` decision.
 - [x] `RCC_TO_LCC_HANDOFF.md` updated with the matter-sharing sharee-access
       gap, addressed to LCC specifically (an endpoint request, not a
       founder decision) — separate from its `FOUNDER_QUEUE.md` entry.
-- [ ] **Not done — the one honest gap across all six workstreams.** No
-      physical device or emulator was booted this pass. Every new
-      interactive flow (annotation save, matter share invite, add event,
-      alert settings toggle) is verified only to the `401 AUTH_REQUIRED`
-      boundary against production — S5 auth is real, so each is expected
-      to complete once signed in, but that completion has not been
-      observed. This is the literal next action for whoever picks this up.
+- [x] **Done, 9 Aug 2026 — the one honest gap is closed.** A real Samsung
+      device was booted (USB, then wireless ADB after the cable dropped) and
+      all five flows were observed for real, past the `401` boundary:
+      sign-in, annotation-save-to-matter, matter-invite, add-event, and
+      alert-settings-toggle. Maestro (mobile.dev, installed fresh this
+      session) proved far more reliable than raw `adb shell input tap` for
+      anything timing-sensitive; `uiautomator dump` was used throughout to
+      get exact element bounds rather than guessing screen-percentage taps.
+
+      **Five real bugs found and fixed by this device pass — code that
+      "looked right" and was not:**
+      - **The onboarding-loop bug, the most serious of the five.**
+        `GET /me` and `PATCH /me` both wrap their payload under a `user` key
+        server-side; `contract.ts`'s `MeResponse` type and `session.ts`'s
+        read site assumed a flat shape. Every sign-in of a previously
+        onboarded account read `user.profileComplete` one level too shallow
+        (always `undefined`), permanently overwrote the cached profile with
+        `null`, and dropped the advocate back into onboarding — 100%
+        reproducible, not intermittent, on every single returning sign-in.
+        Fixed in `contract.ts` (`MeResponse`, `Session`) and `session.ts`
+        (`loadProfile`, `completeProfile`, `registerPushToken`).
+      - **`Matter`/`MatterEvent`/`User` id-field naming**, systemic across
+        ~10 files: the client's own types said `id`, the server returns
+        `matterId`/`eventId`/`userId`. Every list, picker, and timeline that
+        compared or keyed on `.id` was silently broken. Fixed in
+        `contract.ts`, `client.ts`, `mock.ts`, `practice.ts`, and every
+        screen that touches a matter or event.
+      - **No matter-creation UI existed at all** — `MattersScreen`'s empty
+        state and `TodayScreen`'s "Add a matter" prompt both routed nowhere
+        real. Built `NewMatterScreen.tsx` + `app/matter/new.tsx` + wired
+        both entry points.
+      - **`Sheet.tsx`'s keyboard-avoidance bug**, found live: Android's
+        `Modal` does not participate in `windowSoftInputMode` resize, so the
+        Add-Event sheet's Save button was permanently hidden under the
+        keyboard with no non-destructive way to reach it (the hardware back
+        button dismissed the keyboard AND the whole sheet at once). Fixed
+        by wrapping the sheet content in `KeyboardAvoidingView`.
+      - **`ReadingView.tsx`'s `FlatList` had no `extraData`** — the bug that
+        made annotation-save look completely dead. `selected` and
+        `highlighted` are component state, not part of `judgment.paragraphs`,
+        so `VirtualizedList`'s cell memoization skipped re-rendering a row
+        when only that outside state changed: tapping a paragraph correctly
+        called `setSelected`, confirmed via temporary instrumentation
+        (`console.log` in `onLink` and in `Paragraph`'s render), but the
+        action row never appeared on screen because the row was never asked
+        to redraw. Fixed with `extraData={[selected, highlighted]}`. Once
+        fixed, the "Save to matter" flow was run end to end on a real
+        judgment paragraph (Saravanan v. State, ¶6): action row appeared,
+        matter picker opened over the real `usePractice` matters, saving to
+        "State v. Ramesh Kumar" produced the `cautionWash`-highlighted,
+        underlined paragraph style — confirmed still present after a full
+        app force-stop and relaunch, i.e. a real round trip through
+        `api.createAnnotation`, not just in-memory Zustand state.
+
+      **Also worth recording for whoever debugs this area next:** several
+      corpus judgments (e.g. "Frank Vitus v. Narcotics Control Bureau",
+      2024 INSC 479) render as a single unnumbered paragraph end to end —
+      preamble, headnotes, and body text all joined by literal `\n` inside
+      one `paragraphNumber: null` row, so Save-to-matter is correctly
+      unavailable on them by design (`onSaveToMatter`/`onPickMatter` are
+      `undefined` when `paragraphNumber === null`). This looks identical to
+      a broken UI from the outside; it is a corpus-parsing characteristic,
+      not a client bug. Worth flagging to whoever owns the ingestion
+      pipeline — these look like reporter-headnote-formatted judgments
+      (`Digital Supreme Court Reports` pagination visible in the text),
+      which per `CLAUDE.md` §6 should not be in the corpus in that form.
 
 ---
 
 ## Progress marker — update this line every session
 
-**Last updated 8 Aug 2026. All six workstreams done** (PREP `4dc93a7`; A
-`cbb6719`; B `4cd5c60`; C `a907e86`; D `18b98fd`; E `939cec0`; F `e4dc3ed`).
-Four real bugs found and fixed before building on top of them
-(`enrolmentStatus` enum, missing `subscriptionTier`, missing `quote` on
-annotations, the aspirational `Alert` type) — see each workstream's own
-section above for the account. Three items intentionally not built, all in
-`docs/FOUNDER_QUEUE.md`: saved searches (needs founder confirmation), draft
-template library / court rules reader (no data source exists), and the IAP
-purchase mechanism itself (needs a vendor decision — display screens around
-it are built). One LCC-side gap flagged in `RCC_TO_LCC_HANDOFF.md`: matter
-sharing only works for the owner, `getMatter`/`listMatters` need a sharee
-path.
+**Last updated 9 Aug 2026. All six workstreams done, and the one
+device-verification gap from 8 Aug is now closed.** PREP `4dc93a7`; A
+`cbb6719`; B `4cd5c60`; C `a907e86`; D `18b98fd`; E `939cec0`; F `e4dc3ed`.
+Nine real bugs found and fixed across the two sessions before/while building
+on top of them — the four contract-drift bugs from 8 Aug (`enrolmentStatus`
+enum, missing `subscriptionTier`, missing `quote` on annotations, the
+aspirational `Alert` type), plus the five found only by booting a real
+device on 9 Aug (the onboarding-loop `MeResponse`/`session.ts` bug, the
+`Matter`/`MatterEvent`/`User` id-field-naming family, the missing
+matter-creation UI, `Sheet.tsx`'s keyboard-avoidance bug, and
+`ReadingView.tsx`'s missing `extraData`). Three items intentionally not
+built, all in `docs/FOUNDER_QUEUE.md`: saved searches (needs founder
+confirmation), draft template library / court rules reader (no data source
+exists), and the IAP purchase mechanism itself (needs a vendor decision —
+display screens around it are built). One LCC-side gap flagged in
+`RCC_TO_LCC_HANDOFF.md`: matter sharing only works for the owner,
+`getMatter`/`listMatters` need a sharee path.
 
-**Next session's first action, if nothing else has changed: boot a device
-or emulator and run the sign-in → [annotation save / matter invite / add
-event / alert toggle] flows for real.** Everything else in this plan is
-closed.
+**Next session's first action:** run `tsc --noEmit` and the full `jest`
+suite — this pass edited types and state files across the two id-naming
+and onboarding fixes and neither has been re-run since. The device-side
+work above was observed live, not verified against the type-checker.
