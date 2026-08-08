@@ -270,3 +270,129 @@ budget-outranks-pace rule, same "answerable by `SELECT`" standard.
   wrong — which is why `CONDITIONS_VERSION` fingerprints what we enforce.
 - **No estimate of their head-noted count exists.** Priority 0 produces it. Every
   month-count in these documents is parametric until then.
+
+---
+
+# THE PLAN — corrected scope, and day one with one account
+
+**Founder's correction, 8 Aug 2026, and it changes §2 above:** the licence
+grants **automation and bulk search over what an ordinary account can already
+do** — the thing a normal account is forbidden. **It is not a data feed.** There
+is no export, no API key, no bulk dump.
+
+So §2's suggestion to *"ask them to export a list per court per year"* is
+probably dead: an export is not what they sold. **The index has to be built, not
+requested** — and §11 below says we may not need theirs at all.
+
+---
+
+## 11 · Our own corpus is the index into theirs
+
+**We hold 38,341 judgments with neutral and reporter citations. Their citation
+search takes exactly that as input.**
+
+So for every judgment we already have, we can ask them for their editorial layer
+directly — headnote, Authority Check treatment, cited-by, significant paragraphs
+— with **no crawl, no discovery, and no guessing at their internal IDs.** A
+finite worklist, ordered however we choose, that we own before the account is
+even bought.
+
+**It also inverts the main operational risk.** A crawler that discovers its own
+worklist can run away with the budget; a worklist drawn from our own database
+**cannot exceed the size of our own corpus**, and every row in it is a judgment
+we already care about.
+
+What this does not reach is judgments they hold and we do not. Those need
+discovery — and they are the *lowest* priority anyway, because **raw judgments
+are free from AWS Open Data**. What we are paying for is the **editorial layer on
+judgments we already hold**.
+
+`orderWorklist` in `supremetoday.ts` is that list. It is deliberately trivial
+code: the value is that the list exists and is bounded, not that it is clever.
+
+---
+
+## 12 · The failure that matters is losing the account
+
+Not a failed request. **One account, bought to test, from a company that is also
+our closest competitor and who knows exactly what we intend to do.** A suspension
+does not cost us a run — it costs us a licence the founder negotiated in person.
+
+`services/ingest/src/harvest/supremetoday.ts`, 12 tests, is built around that:
+
+- **Any 401 or 403 halts the whole run**, and the halt is **sticky** — nothing
+  resumes without a human. It does not retry. *Repeated authentication attempts
+  are indistinguishable from credential stuffing on their side of the wire*, and
+  "our client had a bug" is not a distinction visible in their logs.
+- **Authentication is attempted once, ever.** If the first login fails the
+  credentials are wrong, the account is suspended, or their login changed — all
+  three want a person, not a loop.
+- **We identify ourselves.** `Lawmind-Harvest/1.0 (licensed automation; contact:
+  …)` on every request. A licensed client should look licensed. **A permission
+  you hide behind a spoofed browser string is one you are not really relying
+  on** — the same principle as the eCourts attribution.
+- **A 5xx is retryable and does not halt.** Transient is not fatal, and treating
+  it as fatal would make the run impossible to finish.
+- **A 429 slows us; it does not stop us.** That is the pace controller's job.
+- **The daily ceiling is a stop, not a slow-down**, and says so in the message.
+
+### Cheap endpoints before expensive ones
+
+Their **editorial** pages — headnote, Authority Check, cited-by — are database
+reads. Their **AI** answers cost them GPU time.
+
+Taking the cheap ones first is better citizenship *and* self-interested: **a
+licensee who shows up as a cost centre is a licensee whose terms get
+reconsidered.** We want their editorial layer, not their inference, so this
+costs us nothing.
+
+---
+
+## 13 · Day one is measurement, not harvest
+
+With one account the first session should answer questions, not fill a database:
+
+1. **What does the account actually see?** Which of headnote, Authority Check,
+   cited-by, significant paragraphs and disposition are reachable, and at which
+   URLs.
+2. **What is the real rate?** Let the pace controller run against a small sample
+   and record where it settles. That number, and only that number, converts into
+   *how many months of ₹50,000*.
+3. **How many documents is the target?** Count the overlap between our 38,341
+   citations and what their citation search resolves. **The overlap is the
+   worklist**; the miss rate tells us how much of our corpus they cannot enrich.
+4. **What does one enriched judgment look like?** Archive one raw page and parse
+   it offline until the parser is right. **Never iterate a parser against the
+   live service** — that is spending money on our own bugs.
+
+**Then, and only then, plan the run.** `projectCompletion` in `pace.ts` turns the
+measured rate and the counted target into days and months.
+
+### The single number to get from them before the harvest starts
+
+**The per-account request ceiling — daily, monthly, and any burst limit.**
+`SUPREMETODAY_MAX_REQUESTS_PER_DAY` defaults to 500 in code and **that is a
+placeholder, not an estimate.** An absent limit must never read as permission —
+the same rule the eCourts grant conditions follow.
+
+---
+
+## 14 · What still has to be built before the first real run
+
+In order, and none of it is speculative — all of it is needed the day the account
+arrives:
+
+1. **The raw archive.** Content-hashed, immutable, keyed by URL and fetch time.
+   **This is the asset.** §1: a parser bug must be a re-run, never a repurchase.
+2. **The fetch ledger.** Every request — URL, account, status, duration, bytes,
+   outcome — including refusals, exactly as `ecourts_fetch_ledger` does it, so
+   *"did we stay inside the licence"* is a `SELECT`.
+3. **The resumable work queue.** Crash-safe, de-duplicated. **The same document
+   must never be fetched twice** — a duplicate is money spent on nothing.
+4. **The licensed `verified_by_source` value**, decided before the first row. Not
+   `corpus`, not `ecourts`, not `public_x2`. The boundary in
+   `citations/source-strength.ts` is exhaustive, so it is a compile error until
+   handled.
+5. **A display gate.** Perpetual retention is not perpetual display. Until the
+   written terms are confirmed, their headnote is **held and used as signal, and
+   never rendered** — enforced by a flag, not by everyone remembering.
