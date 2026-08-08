@@ -1300,7 +1300,60 @@ and discover at renewal that we cannot leave.
 
 ---
 
-### [DECISION NEEDED] Supreme Today: bulk licence granted at ₹50,000/month · 8 Aug 2026
+### [DECISION NEEDED] Supreme Today: licence granted at ₹50,000/month · 8 Aug 2026
+
+> **UPDATED after the founder answered four questions, same day. All four are the
+> favourable ones and they change the shape of the decision:**
+>
+> | | |
+> | --- | --- |
+> | Retention after we stop paying | **PERPETUAL — granted** |
+> | Form of access | **Query only, via the 2–3 accounts. No bulk dump.** |
+> | Target | **Everything they have** |
+> | Do they know we intend to extract and stop? | **Yes** |
+>
+> **The long argument below about distillation was answering a question the
+> founder was not asking.** He never proposed training on their prose. The plan
+> is to query for citations, record the real citations returned, and stop paying
+> once we hold them. **With perpetual retention granted and their knowledge of
+> the intent, there is no legal, contractual or ethical objection left.** It is
+> buying an archive in instalments.
+>
+> **The decision is now arithmetic: how many instalments?**
+>
+> `cost = (what we must pull) ÷ (how fast they let us pull) × ₹50,000`
+>
+> **The second term is the one number we do not have, and it moves the total by
+> more than 30×.** At 1,000 requests/account/day, 200,000 documents takes ~2.2
+> months (₹1.1L). At one request every three seconds sustained, under three days
+> (₹50,000). **Ask them the per-account daily and monthly ceiling, and any burst
+> limit, before signing** — and if they will not state one, negotiate a written
+> minimum. An unstated limit that turns out to be 200/day converts a two-month
+> project into a two-year subscription.
+>
+> **And the target is far smaller than "everything they have."** Their editorial
+> layer only exists for the judgments they HEAD-NOTED — the reportable selection,
+> not every order. Everything else in their holding is raw text we already get
+> free. Spend requests in this order: **(1) head-noted High Court judgments with
+> treatment, (2) tribunals, (3) Supreme Court headnotes only if requests are
+> cheap — e-SCR has official ones free, (4) never a single request on raw
+> judgment text.**
+>
+> **Revised recommendation: pay the first ₹50,000, spend week one enumerating and
+> measuring the real throughput, then commit to the computed number of months and
+> not one more.** If the full pull would exceed about ₹3,00,000, stop after
+> priorities 1 and 2 and take the rest free.
+>
+> Still to confirm in the written terms, and separable from retention: **may we
+> DISPLAY their headnotes or only hold them** (perpetual retention is not
+> perpetual display), and **what attribution is required, and where.**
+>
+> Full arithmetic and the build discipline: `docs/SUPREME_TODAY_LICENCE.md` §8–10.
+
+---
+
+#### Original analysis, kept for the reasoning it records
+
 
 **They said yes.** Bulk data licence, **2–3 accounts required for routing**,
 **₹50,000/month**, and **they have agreed to distillation.**

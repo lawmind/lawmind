@@ -190,3 +190,141 @@ not a softer one.
   both of which unblock Gate S2, which gates everything.
 - **No number here is measured.** The 15-advocate break-even uses PD-13's list
   price and assumes no discount, no churn and no tax.
+
+
+---
+
+# UPDATE — the founder's four answers, 8 Aug 2026
+
+Asked and answered. **All four are the favourable ones, and together they change
+this from a licensing question into an arithmetic one.**
+
+| | |
+| --- | --- |
+| Retention after we stop paying | **PERPETUAL — granted** |
+| Form of access | **Query only, through the 2–3 accounts. No bulk dump.** |
+| Target | **Everything they have** |
+| Do they know we intend to extract and stop? | **Yes** |
+
+**§2's long argument about distillation was answering a question the founder was
+not asking.** He never proposed training on their prose. The plan is: **query for
+citations, record the real citations returned, and stop paying once we have
+them.** With perpetual retention granted and their knowledge of the intent,
+**there is no legal, contractual or ethical objection left.** It is buying an
+archive in instalments.
+
+**So the only question that matters now is: how many instalments?**
+
+---
+
+## 8 · The arithmetic — what actually decides the cost
+
+**Cost = (what we must pull) ÷ (how fast they let us pull) × ₹50,000.**
+
+Everything else is detail. The second term is a number we do not have, and it is
+**the single most valuable thing to ask them for before signing.**
+
+### 8a · The target is far smaller than "everything they have"
+
+**Their editorial layer only exists for the judgments they head-noted.** A
+publisher head-notes the *reportable* selection, not every order — that is what
+makes it editorial work rather than a database dump. Everything else in their
+holding is raw judgment text, **which we can already get free**: 17.8M from AWS
+Open Data (CC-BY-4.0) and ~34,000 Supreme Court judgments from e-SCR with
+*official* headnotes.
+
+So although the licence says "everything", **what we should spend requests on is
+narrow**:
+
+| Priority | What | Why |
+| --- | --- | --- |
+| **1** | **Head-noted HIGH COURT judgments** — headnote, Authority Check treatment, significant paragraphs | The moat. No free substitute anywhere |
+| **2** | **Tribunal judgments** — NCLT, NCLAT, ITAT, CESTAT, SAT, DRT | Only alternatives are barred scraper-resellers |
+| **3** | Head-noted Supreme Court judgments | **Largely duplicated by e-SCR's official free headnotes.** Pull only if requests are cheap |
+| **4** | Raw judgment text, any court | **Do not spend a single request on this.** Free at 17.8M scale |
+
+**Pull in that order and the target is tens of thousands of documents, not
+millions.** That is the difference between one month and thirty.
+
+### 8b · The rate limit is the whole cost, and the range is 30×
+
+Illustrative, because their actual ceiling is unknown:
+
+| If 3 accounts allow… | Requests per month | 200,000 documents takes |
+| --- | --- | --- |
+| 1,000 requests/account/day | ~90,000 | **~2.2 months** |
+| 1 request/3s/account, sustained | ~2,600,000 | **under 3 days** |
+
+**₹1,00,000–₹2,00,000 total for forty years of editorial work is an excellent
+trade. ₹15,00,000 is not.** Same contract, same price per month — **the rate
+limit is the only variable, and it moves the total by more than an order of
+magnitude.**
+
+**Ask them, before signing: what is the per-account request ceiling, per day and
+per month, and is there a burst limit?** If they will not state one, negotiate a
+written minimum — an unstated limit that turns out to be 200/day converts a
+two-month project into a two-year subscription, which is presumably not what
+either side is agreeing to.
+
+### 8c · Measure it in week one, then decide
+
+**Do not commit to a horizon before measuring the real throughput.**
+
+Week one: enumerate what exists, pull a sample, and measure the sustained rate
+they actually permit. That produces a completion date and therefore a total cost,
+and only then is "how many months" answerable with a number rather than a hope.
+
+If the measured rate makes the full pull cost more than about **₹3,00,000**, stop
+at priority 1 and 2 and take the rest free from AWS and e-SCR.
+
+---
+
+## 9 · How to build it — and the discipline it inherits
+
+**Every request goes through a ledger, exactly like the eCourts harvest.**
+`CLAUDE.md` §6 requires that *"did we stay inside the grant"* is answerable by
+query rather than by memory, and `court/ledger-rollback.test.ts` now proves an
+unrecorded fetch cannot produce usable data. **A licensed extraction deserves the
+same treatment for the same reason**: if there is ever a dispute about what we
+pulled and when, the answer should be a `SELECT`, not a recollection.
+
+**Licensed content needs its own `verified_by_source` value, decided before the
+first row is written.** It is not `corpus` (we did not resolve it ourselves), not
+`ecourts` (no human vouched), and not `public_x2` (one source, not two agreeing).
+This is the `ecourts_bulk` lesson from this morning, and the boundary in
+`services/api/src/citations/source-strength.ts` is exhaustive over the column, so
+adding it will be a **compile error until it is handled** — which is what we
+want.
+
+**Two clauses still to confirm in the written terms, and they are separable from
+retention:**
+
+- **May we DISPLAY their headnote to our users, or only hold it?** Perpetual
+  retention is not perpetual display. If display is not granted, their headnotes
+  become an internal signal — useful for retrieval and for the citator — and
+  never a rendered surface.
+- **What attribution is required, and where?**
+
+**And the tooling is already chosen.** Query-only access means browser automation:
+`browser-use` (MIT), `Scrapling` (BSD-3), `Crawl4AI` (Apache-2.0) — all licence-
+verified 8 Aug. **Firecrawl remains out: AGPL-3.0.**
+
+---
+
+## 10 · Revised recommendation
+
+**The month-one pilot recommendation in §6 stands, but its purpose changes.**
+
+It is no longer *"is the data worth ₹6L a year"* — with perpetual retention that
+question is dead, because we are not paying ₹6L a year. It is now:
+
+> **Measure the throughput, compute the completion date, and let that number
+> decide the horizon.**
+
+Pay the first ₹50,000. Spend week one enumerating and measuring. Report a
+completion date and a total cost. **Then commit to that many months and not one
+more.**
+
+The harness A/B still runs — it tells us whether priority 3 and 4 are worth any
+requests at all — but it is no longer the go/no-go on the deal. **The deal is
+good. The only way to get it wrong now is to pay for months we did not need.**
