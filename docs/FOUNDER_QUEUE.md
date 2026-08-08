@@ -426,6 +426,63 @@ quote today, stated as an estimate, which is already the honest position.
 
 ---
 
+### [IN PROGRESS, NOT BLOCKED] IPC↔BNS mapping — real path exists, `statute_mappings` still 0 rows · LCC · 8 Aug 2026
+
+**Correcting my own earlier framing.** I had treated this as blocked-by-design,
+citing `DOMAIN_TRUTH.md`: _"never hardcode a mapping in application code, never
+let a model generate one."_ `docs/DATA_SOURCES.md` §4 (already in the repo,
+dated 7 Aug 2026, apparently written before I read it carefully) documents a
+methodology that satisfies that rule rather than being forbidden by it —
+**parse a real government PDF, then verify every candidate row against primary
+text we already hold, storing only what checks out.** That is verification,
+not generation, and it is the same discipline the citation graph already uses.
+
+**The plan, already written down:**
+
+1. Parse the UP Police comparative table (23 pages, BNS↔IPC, chapter by
+   chapter) — a real state-police-force publication, not the Gazette, and
+   `DATA_SOURCES.md` is explicit that this caveat "must not be laundered into
+   'official'."
+2. For each candidate pair, compare the BNS section text (already in our
+   corpus, 358 sections) against the IPC section text.
+3. Store only pairs whose text corresponds. Flag the rest. Never store a
+   guess.
+4. Hand-check 20, as `SPRINT_1.md` requires.
+
+**What's actually done today: nothing yet, and here is exactly where I stopped
+and why.** IPC, CrPC and the Indian Evidence Act are not in the corpus —
+confirmed via `GET /statutes`. They are repealed, and `services/ingest/src/
+statutes.ts`'s `CRIMINAL_CODE_HANDLES` only carries the three CURRENT codes,
+resolved against the site by hand after "a first guess had BNSS and BSA
+transposed." The same discipline applies to the repealed Acts: **their handles
+must be resolved against indiacode, not guessed**, and a first attempt at
+`browse?type=shorttitle&q=...` returned nothing — repealed Acts most likely
+live in a different index than the 845-Act "Central Acts" browse I already
+enumerated and fixed today (the `parseActPage`/`dedupeSectionRefs` fixes), and I
+have not yet found which one.
+
+**Why not built in this pass, given the plan is real:** three substantial,
+separable pieces of unstarted work — (a) finding the right indiacode index for
+repealed Acts and ingesting IPC/CrPC/Evidence through it, (b) fetching and
+parsing a 23-page two-column PDF table, (c) writing and validating a text-
+correspondence comparator, on the one number in this entire product where a
+wrong answer tells an advocate the wrong law applies to their client. That is
+worth a clear head and its own pass, not the tail end of an already very long
+session with alerts, nine other admin endpoints, and two live-verified corpus
+bugs behind it.
+
+**Cost if never resolved:** `statute_mappings` stays at 0 rows; an advocate
+searching an IPC section by number gets nothing rather than the BNS
+equivalent. Sprint 1 DONE criterion stays open.
+
+**Where it plugs in:** `services/ingest/src/statutes.ts` (repealed-Act
+handles, resolved the same way `CRIMINAL_CODE_HANDLES` was), a new PDF-parsing
+module for the UP Police table, and a new comparator writing to
+`statute_mappings` — schema and columns already specified in
+`SCHEMA_TRUTH.md#statute_mappings`.
+
+---
+
 # RESOLVED — kept for provenance
 
 ### [RESOLVED 7 Aug 2026] Resend sending domain
