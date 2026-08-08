@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Modal, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
@@ -208,7 +208,21 @@ export function Sheet({
 
   return (
     <Modal animationType="none" onRequestClose={onDismiss} transparent visible>
-      <View style={styles.backdrop}>
+      {/*
+        A `Modal` renders in its own native window and does not inherit the
+        Activity's `windowSoftInputMode` resize behaviour, on either platform.
+        Without this, the keyboard covers whatever sits below the focused
+        input — including the sheet's own Save button — with no way to
+        reach it that does not also dismiss the sheet (Android's back press
+        closes the `Modal` via `onRequestClose` on the same gesture that
+        would otherwise just drop the keyboard). Found live on device 8 Aug
+        2026: typing into `AddEventSheet`'s input left `Save` permanently
+        off-screen.
+      */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.backdrop}
+      >
         <View accessible={false} onTouchEnd={onDismiss} style={styles.backdropTap} />
         <GestureDetector gesture={pan}>
           <Animated.View
@@ -225,7 +239,7 @@ export function Sheet({
             </Glass>
           </Animated.View>
         </GestureDetector>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
