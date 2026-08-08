@@ -84,27 +84,34 @@ on `matterId` attach returns `409 AUTHORITY_SET_ASIDE` with the judgment name
 and the overruling case, and the save-without-a-matter path stays open — the
 refusal is about using it as an authority, not about reading it.
 
+**DONE, 8 Aug 2026 (commits `4dc93a7`, `cbb6719`).** All checkboxes below
+closed. One correction to this plan's own earlier text: `ReadingView.tsx`
+and `state/reading.ts` already had a full LOCAL highlight UI before this
+pass (long-press, action row, `ReadingSheet`'s highlight count) — the real
+gap was narrower than first assumed: no matter picker, no server sync at
+all, and Copy/Link were inert. See the commit message for the corrected
+account.
+
 - [x] `Annotation`/`AnnotationDraft` types added to `contract.ts`.
-- [x] `api/annotations.ts`'s `toWireAnnotation` rewritten: dropped the
-      unused `span` field, added `quote: paragraph.text`. In progress —
-      finish updating `annotations.test.ts` to match (drop `span` from test
-      fixtures, assert `quote` instead).
-- [ ] Add `listAnnotations(judgmentId)`, `createAnnotation(judgmentId, draft)`,
-      `deleteAnnotation(annotationId)` to `api/client.ts`, all `auth: true`.
-- [ ] `ReadingView.tsx`: long-press (or the existing paragraph-tap, check
-      which gesture is free) reveals an inline action bar under the
-      paragraph — `Save to matter` / `Copy` / `Link`, matching the render.
-- [ ] Matter picker for "Save to matter" — a lightweight list reusing
-      `MattersScreen`'s data, not a new fetch pattern.
-- [ ] Handle `409 AUTHORITY_SET_ASIDE` honestly: the "Save to matter" path
-      shows the server's real message; "save the passage on its own" (no
-      `matterId`) always stays available regardless of overruled status.
-- [ ] `ReadingSheet.tsx`: wire the real `Your highlights: N` count and list
-      from `GET /judgments/:id/annotations` (currently a static prop).
-- [ ] Update/extend `annotations.test.ts`. Probe the live endpoint (expect
-      `401` pre-auth on this session's test account, real save once signed
-      in — S5 auth is real, this is the one feature group that can be
-      verified genuinely end to end, not just to a 401).
+- [x] `api/annotations.ts`'s `toWireAnnotation` rewritten for `quote`.
+- [x] `listAnnotations`/`createAnnotation`/`deleteAnnotation` added to `client.ts`.
+- [x] `state/reading.ts`'s `addHighlight` now syncs to the server, local
+      write unchanged (instant, offline-safe). `AUTHORITY_SET_ASIDE`
+      strips the local `matterId`, keeps the highlight.
+- [x] `MatterPicker.tsx` (new) — Sheet over `usePractice`'s matters.
+      "Save to matter" opens it; long-press still saves without a matter.
+- [x] Copy/Link wired to `expo-clipboard` (already a dependency).
+- [x] `ReadingSheet.tsx`'s highlight count was already real, not static —
+      confirmed, no change needed.
+- [x] `state/reading.test.ts` (new), 6 tests on the sync/refusal properties.
+- [x] `tsc`, `jest` (198/198), `check-hex.mjs` clean. Endpoints probed live,
+      both return the documented `401`.
+
+**Left unverified — the one honest gap**: the full sign-in → highlight →
+server-confirmed flow was not run on a device/emulator this pass. S5 auth
+is real (unlike the admin-role-gated work), so this is expected to work
+end to end; it just has not been observed yet. Next device pass should
+include it.
 
 ## Workstream B — Matter sharing, owner side
 
@@ -274,7 +281,7 @@ Data/offline section, Sign out (`api.signOut` already exists and works).
 
 ## Progress marker — update this line every session
 
-**Last updated 8 Aug 2026.** Workstream A in progress (types done, wire
-helper rewritten, `annotations.test.ts` needs updating next — that's the
-literal next action). B through F not started. Both PREP bugs fixed and
-committed... *(commit hash goes here once made)*.
+**Last updated 8 Aug 2026.** PREP done (`4dc93a7`). **Workstream A done**
+(`4dc93a7`, `cbb6719`) — one item left unverified, see Workstream A's own
+note (device pass on the real sign-in → save flow). Workstream B (matter
+shares, owner side) starting next. C through F not started.
