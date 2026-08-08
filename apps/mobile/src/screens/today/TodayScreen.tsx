@@ -133,9 +133,21 @@ export function TodayScreen() {
         <EnrolmentBand barEnrolmentNumber={profile.barEnrolmentNumber} />
       ) : null}
       <ScrollView contentContainerStyle={styles.body}>
-        <Text variant="eyebrow">
-          {weekdayName(today).toUpperCase()}, {formatGutter(today)}
-        </Text>
+        <View style={styles.headRow}>
+          <Text variant="eyebrow">
+            {weekdayName(today).toUpperCase()}, {formatGutter(today)}
+          </Text>
+          <Pressable
+            accessibilityLabel="Profile"
+            accessibilityRole="button"
+            onPress={() => router.push('/profile' as never)}
+            style={styles.avatar}
+          >
+            <Text variant="uiStrong" style={styles.avatarLabel}>
+              {initials(profile?.fullName)}
+            </Text>
+          </Pressable>
+        </View>
         <Text variant="uiStrong" scale="title" style={styles.greeting}>
           {greeting}
         </Text>
@@ -315,6 +327,12 @@ function AlertRow({ alert, onPress }: { alert: Alert; onPress: () => void }) {
   );
 }
 
+function initials(name: string | undefined): string {
+  if (!name) return '';
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] ?? '') + (parts[parts.length - 1]?.[0] ?? '')).toUpperCase();
+}
+
 function HearingRow({ row, onPress }: { row: ListedMatter; onPress: () => void }) {
   return (
     <Pressable onPress={onPress} style={styles.row}>
@@ -333,6 +351,16 @@ function HearingRow({ row, onPress }: { row: ListedMatter; onPress: () => void }
 
 const styles = StyleSheet.create({
   body: { padding: space.sm, gap: space.md, paddingBottom: space.xxl },
+  headRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: color.ink,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarLabel: { color: color.card },
   greeting: { marginTop: space.xs },
   block: { gap: space.xs },
 
