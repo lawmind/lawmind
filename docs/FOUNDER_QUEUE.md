@@ -1110,3 +1110,86 @@ sent. That is a claim no competitor routing documents to a frontier API can make
 
 Mine to build, not a founder decision. It belongs in `docs/OCR_PIPELINE.md` and it
 must be measured on real degraded scans, never clean text.
+
+---
+
+### [OPEN] The free citation check — the strongest idea found, and outside the four features · LCC · 8 Aug 2026
+
+**Needs:** a decision to build outside `PRODUCT_BRIEF.md`'s four features, and a
+budget line of **one Supreme Today seat** (₹20,000/yr) for lawful benchmarking.
+
+**The idea:** an advocate pastes the citations from a draft and gets back, for
+each one — **does it exist**, **is it still good law**, and **does the paragraph
+say what it is cited for** — plus a record they can keep.
+
+**Why it is the strongest thing in this week's research: it asks nobody to
+switch.** Every other competitive move requires displacing SCC Online, Supreme
+Today or Bharat.Law inside an advocate's research habit. This one sits
+**downstream of all of them**. They research wherever they already research, and
+check here before filing. There is no switching cost because there is nothing to
+switch.
+
+**Why now.** *Pooja Ramesh Singh* (2026 INSC 668, 2 July 2026) made verification
+a professional obligation at a zero-tolerance standard, and a global tracker has
+logged **1,590+ AI-hallucination incidents** in legal proceedings by mid-2026.
+Every Indian advocate acquired a task in July that they have no tool for.
+
+**Nobody in India offers it.** The nearest is **CiteCheck AI** — US, freemium at
+five reports, and it checks only that citations are **real, existing cases**.
+Existence. **It will not tell you the case was set aside in 2017**, which is the
+failure that loses the matter rather than the one that embarrasses you.
+
+**It costs almost nothing to run.** It is the pipeline that already exists —
+three tiers, `overruled_status` read live, render from the database row. **No
+generation, therefore no model spend and no hallucination surface**: LegalCiteBench
+measures models at **67–96 on verification** against **under 7 on generation**.
+
+**What it earns:** it gives the verification record a reason to exist; it makes
+competitors our top of funnel by putting us at the last, highest-trust step
+before a filing; and it produces **real advocate citation data**, which the
+harness and `TRAINING_STRATEGY.md` both want and currently substitute with 25
+synthetic queries.
+
+**Build it in the safe order.** A **paste-the-citations** mode needs no upload,
+no OCR, no pseudonymisation and no DPA, and should ship first. Full document
+upload is sensitive-class and waits on OD-6 like everything else.
+
+**What was built anyway:** nothing — it is outside the four features, so by that
+file's rule it is an ask. Everything it depends on already exists and is tested.
+
+**Cost if never resolved:** the one move in this market that needs no switching
+cost goes unbuilt while we fight incumbency head-on.
+
+Full reasoning, and four further plays: `docs/ASYMMETRIC_PLAYS.md`.
+
+---
+
+### [ANSWERED — recorded so it is not re-proposed] Proxying a Supreme Today subscription · 8 Aug 2026
+
+**Asked:** buy a Supreme Today subscription and route our users' requests through
+it.
+
+**Answer: no, and this is the one idea I would decline to build.** Recorded here
+rather than only in conversation because it is a reasonable-sounding idea that
+will occur to someone again.
+
+- **It breaks `CLAUDE.md` §6 for the reason §6 exists** — *"never circumvent an
+  access control you have NOT been authorised to."* A per-seat subscription
+  resold through our product is the same act that keeps eCourtsIndia out.
+- **It would cost the eCourts grant.** Our authorisation runs to January 2029 and
+  is conditioned on us being an organisation that stays inside permissions —
+  which is why the rate limiter, the fetch ledger and a default-off kill switch
+  exist. **No competitor has that grant. It is worth more than their corpus.**
+- **The data is unusable anyway.** What is valuable in their output is the
+  editorial layer, and that layer is their copyright (*EBC v. D.B. Modak*). We
+  render from our own database row by rule; there is no surface where their
+  headnote could lawfully appear.
+- **It inverts what we sell.** We are asking advocates to trust us with *"did you
+  verify this?"* A product quietly reselling a competitor's seat cannot be that
+  product.
+
+**The lawful version is real and is on the build queue:** buy **one** seat, use
+it **as a human**, and run our 30-query harness and five-case adversarial set
+against them by hand. Automated querying of their service would breach their
+terms and is the same idea in a lab coat. And the output is evidence for our
+decisions, not marketing — **cite the benchmark, never the competitor.**
