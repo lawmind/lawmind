@@ -502,6 +502,103 @@ module for the UP Police table, and a new comparator writing to
 `statute_mappings` — schema and columns already specified in
 `SCHEMA_TRUTH.md#statute_mappings`.
 
+### [OPEN] Saved-search feed — confirm before RCC builds the client surface · RCC · 8 Aug 2026
+**Needs:** a yes/no on `FEATURE_PARITY.md` §3's proposed PD-5 reframe — "a
+saved-search feed inside the app, never a push."
+
+**Why it is not RCC's to just build:** `docs/API_CONTRACTS.md` says it in the
+endpoint's own doc: *"The endpoint existing is not approval to build the
+surface... do not build the client surface until that is confirmed."* All four
+endpoints (`GET/POST/DELETE /saved-searches`, `GET /saved-searches/:id/feed`)
+are BUILT server-side, unused client-side. This was flagged as an open item in
+`FEATURE_PARITY.md` §3/§7 on 5 Aug but never actually escalated here — found by
+re-reading the contract doc line by line rather than skimming the endpoint list.
+
+**Where it plugs in:** `apps/mobile/src/screens/search/` — a "Saved" tab or
+similar, once confirmed. Zero client code exists; nothing to undo either way.
+
+---
+
+### [OPEN] Matter sharing only works one direction — needs an LCC endpoint change · RCC · 8 Aug 2026
+**Needs:** LCC to add sharee visibility to `GET /matters`, `GET /matters/:id`,
+and the briefing-fetch path — an `OR EXISTS (SELECT 1 FROM matter_shares WHERE
+matter_id = matters.id AND invited_user_id = :userId AND revoked_at IS NULL)`
+clause, or equivalent.
+
+**Why it is not RCC's to route around:** read `services/api/src/matters/
+route.ts`'s `getMatter` and `listMatters` directly — both filter strictly on
+`user_id = owner`, no exception. An owner can create a `matter_shares` row
+(`POST /matters/:id/shares` is BUILT and works), but **the invited advocate has
+no endpoint that will ever show them the matter** — not the list, not the
+detail, not its briefings. The feature is real on the owner's side and a dead
+end on the sharee's side.
+
+**Cost if never resolved:** the render this sprint is built from
+(`renders/59-chamber-sharing@2x.png`, `60-citator-alerts@2x.png` panel 3 — "the
+junior's view... appearing at short notice") depicts exactly the flow this
+gap blocks. Building it client-side would produce a screen with nothing to
+show, ever, for the one user it's for.
+
+**Where it plugs in:** RCC is building the owner-side invite/list/revoke UI
+now regardless — that part is real and independent. The sharee-side "shared
+briefing" treatment (SPRINT_3 item 4) is written and ready to wire the moment
+the endpoint exists; flagging rather than blocking on it.
+
+---
+
+### [OPEN] Draft template library and court rules reader have no data source · RCC · 8 Aug 2026
+**Needs:** a founder call on whether these are in scope at all before content
+sourcing starts, same class of question as the fee/limitation datasets already
+queued.
+
+**What's actually missing:** `design/screens/SCREENS.md` rows 120 and 122 have
+real canvases (`13-draft-template-library.dc.html`, `14-court-rules-reader.dc.html`)
+but checked `docs/SCHEMA_TRUTH.md` directly — `draft_templates` is AI-generation
+prompts only (one `prompt` text field, golden-set scoring), not a static-forms
+table, and there is no `court_rules` table or dataset anywhere in `docs/DATASETS.md`.
+Row 120's own label calls it "static forms, distinct from the 10 generated
+drafts" — a genuinely different, unscoped feature, not a rendering task.
+
+**Cost if never resolved:** two designed screens stay unbuilt. Neither is on
+any sprint's RCC task list, so nothing currently depends on them.
+
+**Where it plugs in:** new schema (not `draft_templates`) plus real court-form
+and court-rules text, sourced the same way the fee schedule would need to be.
+
+---
+
+### [OPEN] In-app purchase — vendor pick and store account setup · RCC · 8 Aug 2026
+**Needs:** (1) approval to add `react-native-purchases` (RevenueCat) as a
+dependency — a new vendor, proprietary SaaS behind an MIT-licensed SDK, not
+covered by `docs/OSS_STACK.md`'s OSS-first default; (2) Apple Developer Program
+enrolment with the three subscription products created in App Store Connect;
+(3) the matching products in Google Play Console with billing configured;
+(4) a RevenueCat account (free tier covers this stage).
+
+**Why now:** re-reading `PRODUCT_DECISIONS.md` PD-13 and `docs/OPEN_DECISIONS.md`
+OD-10 together (not just the subscription render, which is stale on this exact
+point) shows the "Subscription" screen needs **real native in-app purchase**
+for Practice/Chamber/Expert — App Store guideline 3.1.1 — not the web checkout
+`renders/51-subscription@2x.png`'s own caption claims. OD-10 already settled
+"launch on standard store billing," which is this.
+
+**Researched, not guessed:** compared `react-native-purchases` 10.7.0,
+`expo-iap` 5.0.1 and `react-native-iap` 16.0.2 (`expo-in-app-purchases` is dead
+— no release since Oct 2023, gone from Expo's own docs). `expo-iap` and
+`react-native-iap` are now the same OSS project (OpenIAP monorepo) and would
+avoid the new vendor entirely, but push receipt validation, renewal sync, and
+reinstall/device-switch entitlement recovery onto us — real infrastructure, not
+a config choice. RevenueCat is free until $2,500 MTR then 1%, and is the
+faster, lower-risk path for a team this size. Recommending RevenueCat but not
+installing it without a yes, per "ask before adding any vendor."
+
+**Where it plugs in:** none of these libraries run in Expo Go — needs a dev
+client / prebuild either way, worth knowing before this lands.
+`apps/mobile/src/screens/settings/`, `apps/mobile/src/screens/subscription/`.
+**Not blocking:** the display-only Profile/Settings/tier-comparison screens
+build now, using PD-13's real names (Practice/Chamber/Expert/Firm), with the
+purchase action stubbed and honestly disabled until this is resolved.
+
 ---
 
 # RESOLVED — kept for provenance
