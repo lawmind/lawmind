@@ -66,9 +66,21 @@ our own bugs.
       citation-graph expansion re-scored
 - [ ] **Reranker at n=283** on q8, the only usable build. Needs ~334 queries to
       settle +6.0 pts
-- [ ] **C1 · IPC↔BNS mapping** — unblocks the five BNS queries and closes the last
+- [~] **C1 · IPC↔BNS mapping** — unblocks the five BNS queries and closes the last
       S1 criterion. Handles verified: **IPC `123456789/11091` · Evidence `4218` ·
-      CrPC `4221`**. They are PDF items, so this needs a PDF-to-sections path
+      CrPC `4221`**.
+
+      **Splitter built and STOPPED at an honest limit.** Measured on the real IPC
+      PDF: **36 sections of roughly 511**, range 1–120, 84 gaps. What it finds is
+      correct — s. 1 and s. 2 are the real ones — but the PDF text layer puts
+      most headings mid-line, and the heading rule is line-anchored. **The anchor
+      is what stops it firing on ordinary numbered prose, so relaxing it trades
+      an incomplete corpus for a wrong one.**
+
+      **Next move is a different approach, not another tweak:** per-page
+      extraction with layout, so headings are recognised by POSITION rather than
+      punctuation — or a non-PDF source for these three codes. Stopped after four
+      cycles per the hard bound.
 - [ ] Three metrics stay **NOT MEASURED** until an LLM key exists — founder-queued
 
 ---
@@ -110,9 +122,11 @@ our own bugs.
 
 ## 4 · STANDING CORRECTIONS OWED
 
-- [ ] `docs/COMPETITIVE.md`'s **"nobody sells a workflow" is now false** —
-      Bharat.Law sells exactly that (`COMPETITIVE_TEARDOWN.md` §8)
-- [ ] `docs/OCR_PIPELINE.md` still describes the classical stack
+- [x] `docs/COMPETITIVE.md`'s **"nobody sells a workflow"** — corrected 8 Aug.
+      Most of the paragraph survives: the *incumbents* still sell databases; what
+      changed is that a new entrant arrived with the workflow already in it
+- [x] `docs/OCR_PIPELINE.md` — correction recorded. Its premise is wrong and
+      nobody should build on it until the stack moves
 - [ ] **E1.2 alert drill is NOT done and must not be ticked.** `check-alert-
       coverage.mjs` is red at **2 of 4 PD-5 triggers** and deliberately unwired
       from `ci:local` until the violations are fixed
