@@ -5,6 +5,66 @@ fresh agent. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — S6 server half live: 9 endpoints, cause-list-sync answer
+
+**Yes, wire cause-list-sync (row 59) for real.** `GET /admin/cause-lists`,
+`POST /admin/cause-lists/:id/retry`, `POST /admin/cause-lists/:id/escalate` are
+genuinely BUILT and were probed live earlier this session, unrelated to today's
+work. Three things from `API_CONTRACTS.md` §Cause list sync to build against
+precisely: `advocatesNotified` is **always `false`** today even when
+`notifyAdvocates: true` is sent — render `notificationNote`, never "advocates
+informed." `staleCourts[].lastConfirmedDate: null` means never pulled, not long
+ago — don't collapse that into the same empty state as a recent failure.
+Escalating a sync that's already `ok` or `empty` returns `409
+NOTHING_TO_ESCALATE` — don't retry-loop on that, it means the day was healthy.
+
+**9 more admin endpoints BUILT, deployed, migration-verified live**: `GET
+/admin/platform`, `POST /admin/platform/maintenance`, `POST
+/admin/platform/kill-switches/:key`, `POST /admin/platform/flags/:key`, `GET
+/admin/disputes`, `GET /admin/disputes/:id`, `POST /admin/disputes/:id/uphold`,
+`POST /admin/disputes/:id/reject`, `GET /admin/audit`, `GET /admin/citations`,
+`GET /admin/llm-costs`, `GET /admin/ocr-queue`, `GET /admin/users`, `PATCH
+/admin/users/:id/enrolment`. Contract: 67/84.
+
+**Kill switches are SIX, not five** — `search · drafting · briefings ·
+ocr_intake · signups · ecourts_harvest`. If `apps/admin` has anywhere hardcoding
+five, that's now stale; `GET /admin/platform`'s `killSwitches` array always
+returns all six, defaulting any never-toggled one to `{ enabled: false, reason:
+null, ... }` rather than omitting it.
+
+**`llm-costs` and `ocr-queue` report real, honestly empty data** — no LLM has
+ever been called from this codebase (`docs/FOUNDER_QUEUE.md` §`POST
+/documents`) and `POST /ocr/jobs` is still SPECCED. Zero calls, zero jobs, is
+the true state. Build the empty-state UI for these now; the numbers becoming
+real needs no client change later.
+
+**There is no admin-role check yet, anywhere.** Every endpoint above gates on
+`userId !== undefined` — any authenticated advocate, not a verified admin.
+`ADMIN_SURFACE.md` §15 already named this: *"Role writes are still
+missing... by design."* Not a regression, the existing gap, applied
+consistently. Don't build `apps/admin` auth as if a role check exists
+server-side — it doesn't yet.
+
+**Two real infra bugs found while building this, both fixed, worth knowing
+about if you've seen odd behavior:** `citation_disputes` and `ocr_jobs` were
+documented everywhere but **no migration had ever created either table** —
+would have 500'd on first real use. Fixed in `0020_disputes_and_ocr_jobs.sql`.
+And `platform_config` only ever seeded a row for `ecourts_harvest`, so the
+other five kill switches were silently missing from `GET /admin/platform`
+until today's fix.
+
+Disputes: `POST /admin/disputes/:id/uphold` delegates to the same
+`applyOverruledChange` the nightly re-check and the alerts fan-out (previous
+block) both use — one implementation, same as always.
+
+Not built this pass, correctly gated same as drafting: `GET/POST
+/admin/templates(/:id/score, /:id/publish)` needs real template content to
+manage (same blocker as `POST /documents`); `GET/POST /admin/data-requests`
+and `GET /admin/privacy/coverage` (DPDP) are next up, no external blocker
+known yet — will report when built or when I hit one.
+
+---
+
 ## 8 Aug 2026 — citator alerts are live: 4 endpoints, deployed, migrated, probed
 
 `GET /alerts`, `POST /alerts/:id/read`, `GET /me/alert-settings`,
