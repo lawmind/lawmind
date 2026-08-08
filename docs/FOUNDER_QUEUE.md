@@ -1694,3 +1694,52 @@ consolidated "as amended" edition · the **BNS side** first, since the new codes
 are recent and may be published whole · a non-PDF source. **I will not relax the
 parser to compensate** — an incomplete corpus is recoverable and a wrong one is
 not.
+
+---
+
+## FQ-R1 · A fourth question the citation harness does not ask
+
+**Needed from you:** a decision, because this amends `docs/CITATION_HARNESS.md`,
+which is spec. I have not touched it.
+
+**The gap**, from your evidence-first document §35 and confirmed by current
+research:
+
+> Claim: *"The Supreme Court held X."* Citation: **correct case.** But the cited
+> passage says: *"The Court rejected X."*
+> Citation correctness: **PASS.** Legal support: **FAIL.**
+
+**Our three fields cannot catch that.** They ask *does this judgment exist*,
+*who confirmed it*, and *is it still good law*. **None asks whether the paragraph
+we point at says what we claim it says.** A citation can be verified, current,
+and completely misdescribed.
+
+The research literature calls this **"deceptive grounding"** and finds it
+*"undetectable by current frameworks by design"* — the response is fully
+faithful to retrieved documents, cites real sources, fabricates nothing, and
+**the failure is at the attribution level, which none of those frameworks
+inspect.**
+
+**Why it is worse for us than a fake citation, not better.** A fabricated
+citation dies immediately and publicly at the first check. A real citation that
+does not support the proposition **survives the check, gets filed, and fails in
+front of the judge** — which is exactly the humiliation `CLAUDE.md` §2 says ends
+the company.
+
+**What I propose, and it does NOT reopen the three fields.** A fourth question,
+answered **per claim** rather than per citation:
+`SUPPORTED · PARTIALLY_SUPPORTED · CONTRADICTED · INSUFFICIENT_EVIDENCE ·
+CONFLICTING_AUTHORITIES`. The mechanism is an entailment check of claim against
+cited paragraph — a small model, not a frontier one.
+
+**And it gives Gate S2 the metric that document argues is the most important:**
+`Unsupported Claim Rate = unsupported material claims / total material claims`.
+**Our six current metrics contain no member that would move if every citation
+were real, current, and misdescribed.** That is the hole, stated plainly.
+
+**What stays broken without a decision:** nothing regresses — this is a gap we
+have always had, not a new one. But it is the highest-value addition the
+document identifies, and it is squarely inside the one rule above all others.
+
+**What I have NOT done:** touched `CITATION_HARNESS.md`, added a fourth column,
+or changed any badge. Spec is yours.

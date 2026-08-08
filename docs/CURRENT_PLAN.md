@@ -103,9 +103,24 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
 
 ## 2 · GATE S2 — everything else is downstream of this
 
-- [ ] **Recall levers**, each measured through the A/B rig on the 283-query set:
-      late chunking · summary-augmented chunking (**DRM is 95.2%**) ·
-      citation-graph expansion re-scored
+- [ ] **Recall levers** — **REGROUPED 9 Aug 2026, because "blocked on $65" was
+      wrong for half of them.** `docs/RETRIEVAL_ARCHITECTURE.md` §0.
+
+      **Blocked on nothing but a live Postgres** (same thing the reranker run
+      needs — not money, not a key):
+      **citation-graph expansion**, which is *already built*
+      (`services/api/src/search/graph-expand.ts`, IDF-damped, harness-wired
+      behind `HARNESS_GRAPH`) and has simply **never been measured**. Measure it
+      **with the reranker and without** — that file's own note says graph and
+      reranker are one combination, since expansion enters at rank 16 and cannot
+      move success@5 alone.
+
+      **Blocked on the LLM key only** — these are *query-side*, so they need
+      **no re-chunking, no re-embedding, no reindexing**:
+      HyDE · multi-query / RAG-Fusion · query decomposition.
+
+      **Genuinely blocked on ~62 GPU-hours ≈ $65** because they change the index:
+      late chunking · summary-augmented chunking (**DRM is 95.2%**)
 - [ ] **Reranker at n=283** on q8, the only usable build. Needs ~334 queries to
       settle +6.0 pts
 - [~] **C1 · IPC↔BNS mapping** — unblocks the five BNS queries and closes the last
