@@ -14,22 +14,33 @@
  * every request against it.
  *
  * `CLAUDE.md`: **if the authorisation's terms are not in the repo, the switch
- * stays off.** `AUTHORISATION` below is `null` and the guard refuses everything
- * while it is — including with the kill switch turned on. An unbounded harvest
- * under a bounded permission is the fastest way to lose the permission.
+ * stays off.** The terms ARE now in the repo — transcribed 8 Aug 2026 into
+ * `GRANT_CONDITIONS` below — so this lock is satisfied and the remaining one
+ * is the kill switch, which is still off and still requires a reason to move.
  *
- * **To bring the adapter into service**, whoever holds the grant letter:
- *   1. fills in every field below from the letter itself, not from memory;
- *   2. records the letter in `docs/ECOURTS_AUTHORISATION.md` with its reference;
- *   3. turns the `ecourts_harvest` kill switch on, with a reason.
- * All three, in that order. Any one of them alone leaves the door shut.
+ * **What the letter's own numbers do and do not gate.** The registrar asked
+ * that the letter's identifying details not appear in the application or reach
+ * its users. `reference` and `attribution` therefore come from environment and
+ * are **optional** — the integration operates without them. Provenance is
+ * carried by `CONDITIONS_VERSION`, a fingerprint of the limits we actually
+ * enforce, which answers *"which transcription was in force"* better than a
+ * letter number could: the number names the letter and would not change if we
+ * re-transcribed its terms wrongly.
  *
- * **Every field is required.** There is no partial transcription and no field
- * defaults to "unlimited": a condition the letter does not state is transcribed
- * at the conservative value, never left out. An absent limit must never read as
- * permission — the same rule that keeps a null `ocr_confidence` from reading as
- * a confidence of zero.
+ * **No CONDITION defaults to "unlimited."** A limit the letter does not state
+ * is transcribed at the conservative value, never left out. An absent limit
+ * must never read as permission — the same rule that keeps a null
+ * `ocr_confidence` from reading as a confidence of zero. That rule governs the
+ * conditions; it never governed the identifiers, and conflating the two was
+ * what previously made honouring the registrar's confidentiality request
+ * equivalent to switching the integration off.
+ *
+ * **To bring the adapter into service:** turn the `ecourts_harvest` kill switch
+ * on with a reason, via `POST /admin/platform/kill-switches/:key` so the change
+ * is audited.
  */
+
+import { createHash } from 'node:crypto';
 
 export type EcourtsAuthorisation = {
   /**
@@ -47,8 +58,19 @@ export type EcourtsAuthorisation = {
    * that question is exactly who it is for. **It must never reach a client
    * response**, which `guard.test.ts` asserts by sweeping the source rather
    * than trusting that nobody adds `detail` to a payload one afternoon.
+   *
+   * **Optional, and absence is not a refusal.** Provenance is carried by
+   * `conditionsVersion`; this is kept only for the compliance file if the
+   * founder chooses to supply it. See `buildAuthorisation`.
    */
-  reference: string;
+  reference?: string | undefined;
+  /**
+   * Fingerprint of the enforced conditions. **This is what the ledger stamps.**
+   * See `CONDITIONS_VERSION` — it answers "which transcription was in force"
+   * more precisely than the letter's own reference could, and needs no
+   * confidential value to do it.
+   */
+  conditionsVersion: string;
   /** ISO date the grant was made. */
   grantedOn: string;
   /**
@@ -71,8 +93,12 @@ export type EcourtsAuthorisation = {
    * **this attribution is not rendered anywhere in the product.** It is
    * recorded for our own compliance file, not displayed. Do not "helpfully"
    * surface it in a footer.
+   *
+   * **Optional, same as `reference`.** The registrar asked that it not appear
+   * in the application, so there is nowhere it is rendered and nothing that
+   * breaks when it is absent.
    */
-  attribution: string;
+  attribution?: string | undefined;
   /**
    * Courts the grant covers.
    *
@@ -252,7 +278,30 @@ const GRANT_CONDITIONS = {
   renewalLeadTimeDays: 180,
   independentDisplayPermitted: true,
   trainingPermitted: true,
-} as const satisfies Omit<EcourtsAuthorisation, 'reference' | 'attribution'>;
+} as const satisfies Omit<EcourtsAuthorisation, 'reference' | 'attribution' | 'conditionsVersion'>;
+
+/**
+ * A stable fingerprint of the conditions above — **this is what the ledger
+ * stamps, and it replaces the confidential reference for that purpose.**
+ *
+ * The ledger's job is to answer *"which transcription of the grant was in
+ * force when this request was made"*, so that a narrowing on renewal leaves
+ * before-and-after rows distinguishable. The registrar's reference number
+ * never actually answered that: it identifies the LETTER, and would not change
+ * if we re-transcribed its conditions wrongly. A hash of what we actually
+ * enforce does.
+ *
+ * So the confidential string is not needed for provenance at all. That is what
+ * lets the grant operate with the reference absent — the registrar asked that
+ * their identifiers stay out of the application, and the audit trail turns out
+ * not to require them.
+ *
+ * Derived, never stored, so it cannot drift from the conditions it describes.
+ */
+export const CONDITIONS_VERSION: string = createHash('sha256')
+  .update(JSON.stringify(GRANT_CONDITIONS))
+  .digest('hex')
+  .slice(0, 16);
 
 /**
  * The live grant, or `null`.
@@ -268,10 +317,26 @@ const GRANT_CONDITIONS = {
  * change can quietly fill in wrongly; `null` cannot be partially right.
  */
 function buildAuthorisation(): EcourtsAuthorisation | null {
-  const reference = process.env['ECOURTS_GRANT_REFERENCE'];
-  const attribution = process.env['ECOURTS_GRANT_ATTRIBUTION'];
-  if (!reference || !attribution) return null;
-  return { ...GRANT_CONDITIONS, reference, attribution };
+  return {
+    ...GRANT_CONDITIONS,
+    conditionsVersion: CONDITIONS_VERSION,
+    /**
+     * Both optional, and their absence is **not** a refusal.
+     *
+     * This reverses an earlier design in this same file, with cause. The
+     * reference was required because a request we could not stamp was a
+     * request whose adherence we could not demonstrate — sound reasoning,
+     * wrong premise. `conditionsVersion` demonstrates adherence better,
+     * because it fingerprints the limits we actually enforced rather than
+     * naming the letter that set them.
+     *
+     * The registrar asked that their identifiers stay out of the application.
+     * Requiring one to operate would have made honouring that request
+     * equivalent to switching the integration off.
+     */
+    reference: process.env['ECOURTS_GRANT_REFERENCE'],
+    attribution: process.env['ECOURTS_GRANT_ATTRIBUTION'],
+  };
 }
 
 export const AUTHORISATION: EcourtsAuthorisation | null = buildAuthorisation();

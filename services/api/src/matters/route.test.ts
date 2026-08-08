@@ -355,22 +355,56 @@ describe('set_aside disables add-to-matter', () => {
  * access works.
  */
 describe('matter sharing — the sharee side, and what it must not see', () => {
-  let owner: Awaited<ReturnType<typeof seedAdvocate>>;
-  let sharee: Awaited<ReturnType<typeof seedAdvocate>>;
-  let stranger: Awaited<ReturnType<typeof seedAdvocate>>;
+  /**
+   * Its OWN connection, deliberately. The `set_aside` suite above ends the
+   * shared pool in its `after()` — correct for it, since it was the last
+   * suite when it was written — and a block appended afterwards inherits a
+   * closed connection and fails with CONNECTION_ENDED before its first
+   * assertion. Owning the connection here is the fix that does not require
+   * every future suite to know it must be appended in a particular place.
+   */
+  const shareSql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+
+  /**
+   * And its own `app`. The module-level one is wired to the module-level pool,
+   * so a suite that merely opens a second connection still routes every
+   * `app.request` through the closed one — which hangs rather than failing
+   * cleanly, because the request never settles.
+   */
+  const shareApp = createApp({
+    ping: async () => {},
+    search: { sql: shareSql, embedQuery: async () => null },
+    auth: { auth: null as never, sql: shareSql, secret: SECRET },
+  });
+
+  /** Same as the module-level helper, on this suite's own pool. */
+  async function seedOnOwnPool(tag: string) {
+    const authId = `test-mat-${tag}-${crypto.randomUUID()}`;
+    const email = `${authId}@example.test`;
+    await shareSql`INSERT INTO auth_user (id, name, email, email_verified)
+                   VALUES (${authId}, 'Adv', ${email}, true)`;
+    await shareSql`INSERT INTO users (auth_id, full_name, phone, email, enrolment_status)
+                   VALUES (${authId}, 'Adv', ${`+9199${Math.floor(Math.random() * 100000000)}`},
+                           ${email}, 'unverified')`;
+    return { authId, token: await signAccessToken({ sub: authId, email }, SECRET) };
+  }
+
+  let owner: Awaited<ReturnType<typeof seedOnOwnPool>>;
+  let sharee: Awaited<ReturnType<typeof seedOnOwnPool>>;
+  let stranger: Awaited<ReturnType<typeof seedOnOwnPool>>;
   let shareeUserId = '';
   let matterId = '';
 
   before(async () => {
-    owner = await seedAdvocate('own');
-    sharee = await seedAdvocate('shr');
-    stranger = await seedAdvocate('str');
+    owner = await seedOnOwnPool('own');
+    sharee = await seedOnOwnPool('shr');
+    stranger = await seedOnOwnPool('str');
 
-    const [u] = await sql<{ id: string }[]>`
+    const [u] = await shareSql<{ id: string }[]>`
       SELECT id FROM users WHERE auth_id = ${sharee.authId}`;
     shareeUserId = u!.id;
 
-    const created = await app.request('/matters', {
+    const created = await shareApp.request('/matters', {
       method: 'POST',
       headers: auth(owner.token),
       body: JSON.stringify(body),
@@ -379,7 +413,7 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
       .matterId;
 
     // Two events: one shared, one private. The private one is the whole point.
-    await app.request(`/matters/${matterId}/events`, {
+    await shareApp.request(`/matters/${matterId}/events`, {
       method: 'POST',
       headers: auth(owner.token),
       body: JSON.stringify({
@@ -390,7 +424,7 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
         noteVisibility: 'shared',
       }),
     });
-    await app.request(`/matters/${matterId}/events`, {
+    await shareApp.request(`/matters/${matterId}/events`, {
       method: 'POST',
       headers: auth(owner.token),
       body: JSON.stringify({
@@ -403,32 +437,33 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
 
     // Share it. The invitee already has an account, so createShare resolves
     // invited_user_id at insert time.
-    const [me] = await sql<{ phone: string }[]>`
+    const [me] = await shareSql<{ phone: string }[]>`
       SELECT phone FROM users WHERE id = ${shareeUserId}`;
-    await sql`
+    await shareSql`
       INSERT INTO matter_shares (matter_id, invited_user_id, invited_identifier, granted_by_user_id)
       SELECT ${matterId}, ${shareeUserId}, ${me!.phone}, id FROM users WHERE auth_id = ${owner.authId}`;
   });
 
   after(async () => {
-    await sql`DELETE FROM matter_shares WHERE matter_id = ${matterId}`;
-    await sql`DELETE FROM matter_events WHERE matter_id = ${matterId}`;
-    await sql`DELETE FROM matters WHERE id = ${matterId}`;
+    await shareSql`DELETE FROM matter_shares WHERE matter_id = ${matterId}`;
+    await shareSql`DELETE FROM matter_events WHERE matter_id = ${matterId}`;
+    await shareSql`DELETE FROM matters WHERE id = ${matterId}`;
     for (const a of [owner, sharee, stranger]) {
-      await sql`DELETE FROM users WHERE auth_id = ${a.authId}`;
-      await sql`DELETE FROM auth_user WHERE id = ${a.authId}`;
+      await shareSql`DELETE FROM users WHERE auth_id = ${a.authId}`;
+      await shareSql`DELETE FROM auth_user WHERE id = ${a.authId}`;
     }
+    await shareSql.end();
   });
 
   it('the sharee can open the matter at all — this was the bug', async () => {
-    const res = await app.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
+    const res = await shareApp.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
     assert.equal(res.status, 200, 'an invited advocate must be able to open the matter');
     const b = (await res.json()) as { data: { access: string } };
     assert.equal(b.data.access, 'shared', 'and must be told it is shared, not their own');
   });
 
   it("the matter appears in the sharee's list, marked shared", async () => {
-    const res = await app.request('/matters', { headers: auth(sharee.token) });
+    const res = await shareApp.request('/matters', { headers: auth(sharee.token) });
     const b = (await res.json()) as { data: { matters: { matterId: string; access: string }[] } };
     const found = b.data.matters.find((m) => m.matterId === matterId);
     assert.ok(found, 'a shared matter belongs in the list — otherwise the invite is invisible');
@@ -436,7 +471,7 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
   });
 
   it('PD-4 — the sharee sees the COURT RECORD but NEVER the private note', async () => {
-    const res = await app.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
+    const res = await shareApp.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
     const b = (await res.json()) as {
       data: { events: { eventType: string; orderText: string | null; notes: string | null }[] };
     };
@@ -460,7 +495,7 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
   });
 
   it('the OWNER still sees their own private note', async () => {
-    const res = await app.request(`/matters/${matterId}`, { headers: auth(owner.token) });
+    const res = await shareApp.request(`/matters/${matterId}`, { headers: auth(owner.token) });
     const b = (await res.json()) as {
       data: { access: string; events: { eventType: string; notes: string | null }[] };
     };
@@ -470,19 +505,19 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
   });
 
   it('a stranger still gets 404 — sharing did not open the door to everyone', async () => {
-    const res = await app.request(`/matters/${matterId}`, { headers: auth(stranger.token) });
+    const res = await shareApp.request(`/matters/${matterId}`, { headers: auth(stranger.token) });
     assert.equal(res.status, 404);
   });
 
   it('a REVOKED share closes access, because revocation is a timestamp not a delete', async () => {
-    await sql`
+    await shareSql`
       UPDATE matter_shares SET revoked_at = now(), revoked_by_user_id = invited_user_id
       WHERE matter_id = ${matterId}`;
 
-    const res = await app.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
+    const res = await shareApp.request(`/matters/${matterId}`, { headers: auth(sharee.token) });
     assert.equal(res.status, 404, 'a revoked share that still granted access would be decorative');
 
-    const list = await app.request('/matters', { headers: auth(sharee.token) });
+    const list = await shareApp.request('/matters', { headers: auth(sharee.token) });
     const b = (await list.json()) as { data: { matters: { matterId: string }[] } };
     assert.equal(
       b.data.matters.some((m) => m.matterId === matterId),
@@ -490,7 +525,7 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
     );
 
     // Restore for any later test.
-    await sql`UPDATE matter_shares SET revoked_at = NULL, revoked_by_user_id = NULL
+    await shareSql`UPDATE matter_shares SET revoked_at = NULL, revoked_by_user_id = NULL
               WHERE matter_id = ${matterId}`;
   });
 });

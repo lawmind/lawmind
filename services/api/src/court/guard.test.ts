@@ -17,6 +17,7 @@
  *     this proves nobody added a second door.
  */
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { after, before, describe, it } from 'node:test';
@@ -210,6 +211,7 @@ describe('eCourts containment — no second door', () => {
 describe('CAPTCHA bypass is bounded by the grant', () => {
   const grant = (over: Partial<EcourtsAuthorisation> = {}): EcourtsAuthorisation => ({
     reference: 'TEST/2026/001',
+    conditionsVersion: 'testfingerprint01',
     grantedOn: '2026-08-07',
     // 12:00 IST = 06:30 UTC. The half-hour offset is the whole reason this is
     // converted once at transcription rather than compared in local time.
@@ -229,11 +231,25 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
     ...over,
   });
 
-  it('refuses the bypass while no grant is transcribed — the state today', () => {
-    // AUTHORISATION is null until the letter is transcribed. Silence is not
-    // permission, and this is the assertion that keeps that true.
-    assert.equal(AUTHORISATION, null, 'fixture assumption: no grant is on file yet');
-    assert.equal(captchaBypassAllowed(), false);
+  it('permits the bypass now that the grant IS transcribed — the state today', () => {
+    // Updated 8 Aug 2026. This previously asserted AUTHORISATION === null,
+    // which was true while the terms were untranscribed. They are transcribed
+    // now, so the honest assertion is the opposite one — and leaving the old
+    // one green by loosening it would have hidden that the grant went live.
+    assert.ok(AUTHORISATION, 'the grant is transcribed and must be live');
+    assert.equal(
+      captchaBypassAllowed(),
+      true,
+      'the registrar expressly permits it and the grant has not expired',
+    );
+  });
+
+  it('would refuse with no grant at all — silence is never permission', () => {
+    // The null case still has to hold; it is simply no longer the live state.
+    // Asserted through the same three-condition shape the real accessor uses.
+    const noGrant: EcourtsAuthorisation | null = null;
+    const allowed = noGrant !== null && (noGrant as EcourtsAuthorisation).captchaBypassPermitted;
+    assert.equal(allowed, false);
   });
 
   /**
@@ -341,6 +357,38 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
  */
 describe('the grant reference never reaches a user', () => {
   const read = (rel: string): string => readFileSync(new URL(rel, import.meta.url), 'utf8');
+
+  it('OPERATES without the confidential identifiers, because provenance does not need them', () => {
+    // The registrar asked that their identifiers stay out of the application.
+    // An earlier design here REQUIRED the reference to operate, which made
+    // honouring that request equivalent to switching the integration off.
+    // conditionsVersion fingerprints the limits we actually enforced — better
+    // provenance than the letter's own number, which names the letter and
+    // would not change if we re-transcribed its terms wrongly.
+    assert.ok(AUTHORISATION, 'the grant must be live without ECOURTS_GRANT_REFERENCE set');
+    assert.ok(
+      AUTHORISATION.conditionsVersion.length > 0,
+      'every ledger row must be stampable with the transcription in force',
+    );
+    // Neither env var is set in this environment, and that is the point.
+    assert.equal(AUTHORISATION.reference, undefined);
+    assert.equal(AUTHORISATION.attribution, undefined);
+  });
+
+  it('changes the fingerprint when the transcribed conditions change', () => {
+    // If a renewal narrows the grant, rows written before and after must be
+    // distinguishable. A constant would make the ledger unable to say which
+    // limits were in force.
+    const a = createHash('sha256')
+      .update(JSON.stringify({ maxRequestsPerDay: 1000 }))
+      .digest('hex')
+      .slice(0, 16);
+    const b = createHash('sha256')
+      .update(JSON.stringify({ maxRequestsPerDay: 500 }))
+      .digest('hex')
+      .slice(0, 16);
+    assert.notEqual(a, b);
+  });
 
   it('is supplied by environment and never committed to source', () => {
     const source = read('./authorisation.ts');

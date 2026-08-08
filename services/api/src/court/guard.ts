@@ -189,7 +189,16 @@ export async function record(sql: Sql, entry: LedgerEntry): Promise<void> {
     VALUES (
       ${entry.court}, ${entry.endpoint}, ${entry.outcome},
       ${entry.httpStatus ?? null}, ${entry.durationMs ?? null},
-      ${AUTHORISATION?.reference ?? null}, ${entry.refusalReason ?? null},
+      -- The CONDITIONS fingerprint, not the letter's reference. It answers
+      -- "which transcription was in force" more precisely — the reference
+      -- names the letter and would not change if we re-transcribed its terms
+      -- wrongly, whereas this hashes the limits we actually enforced. It also
+      -- needs no confidential value, which is what lets the integration run
+      -- while honouring the registrar's request that their identifiers stay
+      -- out of the application. Falls back to the reference only if some
+      -- future grant has no conditions to fingerprint.
+      ${AUTHORISATION?.conditionsVersion ?? AUTHORISATION?.reference ?? null},
+      ${entry.refusalReason ?? null},
       ${entry.causeListSyncId ?? null}
     )
   `;
