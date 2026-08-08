@@ -213,6 +213,14 @@ export const ocrJobStatusEnum = pgEnum('ocr_job_status', [
   'needs_review',
 ]);
 
+export const dataRequestKindEnum = pgEnum('data_request_kind', ['export', 'correction', 'erasure']);
+export const dataRequestStatusEnum = pgEnum('data_request_status', [
+  'received',
+  'in_progress',
+  'completed',
+  'refused',
+]);
+
 /* ----------------------------------------------------------------- tables -- */
 
 export const users = pgTable('users', {
@@ -1028,6 +1036,30 @@ export const ocrJobs = pgTable(
     index('ocr_jobs_user_id_status_idx').on(t.userId, t.status),
     index('ocr_jobs_matter_id_idx').on(t.matterId),
   ],
+);
+
+/**
+ * DPDP Act obligations — "a visible clock per request." Same discovery as
+ * `citationDisputes`/`ocrJobs`: documented in `SCHEMA_TRUTH.md`, never created
+ * by any migration until `admin/data-requests.ts` (8 Aug 2026) queried it
+ * against real Postgres. Created in `0021_data_requests.sql`.
+ */
+export const dataRequests = pgTable(
+  'data_requests',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    kind: dataRequestKindEnum('kind').notNull(),
+    status: dataRequestStatusEnum('status').notNull(),
+    dueAt: timestamp('due_at', { withTimezone: true }).notNull(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    refusalReason: text('refusal_reason'),
+    artefactStorageKey: text('artefact_storage_key'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('data_requests_status_due_at_idx').on(t.status, t.dueAt)],
 );
 
 /**

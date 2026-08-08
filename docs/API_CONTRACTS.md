@@ -171,9 +171,9 @@ endpoint.
 | `POST /admin/templates` | SPECCED |
 | `POST /admin/templates/:id/score` | SPECCED |
 | `POST /admin/templates/:id/publish` | SPECCED |
-| `GET /admin/data-requests` | SPECCED |
-| `POST /admin/data-requests/:id/complete` | SPECCED |
-| `POST /admin/data-requests/:id/refuse` | SPECCED |
+| `GET /admin/data-requests` | BUILT |
+| `POST /admin/data-requests/:id/complete` | BUILT |
+| `POST /admin/data-requests/:id/refuse` | BUILT |
 | `GET /admin/privacy/coverage` | SPECCED |
 
 <!-- END:status -->

@@ -30,6 +30,14 @@ import {
   setKillSwitch,
   setMaintenance,
 } from './admin/platform.ts';
+import {
+  completeDataRequest,
+  completeRequestBody,
+  dataRequestsQuery,
+  listDataRequests,
+  refuseDataRequest,
+  refuseRequestBody,
+} from './admin/data-requests.ts';
 import { enrolmentBody, listUsers, patchEnrolment, usersQuery } from './admin/users.ts';
 import {
   alertsQuery,
@@ -351,6 +359,22 @@ export function createApp(deps: AppDeps) {
     );
     app.patch('/admin/users/:id/enrolment', validate('json', enrolmentBody), async (c) =>
       patchEnrolment(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // DPDP Act obligations — "a visible clock per request." No creation
+    // endpoint is specced or built; intake is out of this surface's scope.
+    // GET /admin/privacy/coverage is deliberately NOT here — see
+    // admin/data-requests.ts's module note and docs/FOUNDER_QUEUE.md.
+    app.get('/admin/data-requests', validate('query', dataRequestsQuery), async (c) =>
+      listDataRequests(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    app.post(
+      '/admin/data-requests/:id/complete',
+      validate('json', completeRequestBody),
+      async (c) =>
+        completeDataRequest(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    app.post('/admin/data-requests/:id/refuse', validate('json', refuseRequestBody), async (c) =>
+      refuseDataRequest(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // Matters — the retention moat, and what a briefing hangs off. Every
     // statement scopes by user_id in its own WHERE clause rather than through a

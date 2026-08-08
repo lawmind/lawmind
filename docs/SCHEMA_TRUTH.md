@@ -4,6 +4,7 @@ The only authority on data shapes. Never infer a column. Never add a table
 without updating this file in the same commit.
 
 ## users
+
 `id` uuid pk · `auth_id` text unique · `full_name` text · `phone` text ·
 `email` text · `bar_enrolment_number` text null · `enrolment_status` enum
 (unverified|verified|rejected) default unverified · `preferred_language` enum
@@ -15,8 +16,8 @@ without updating this file in the same commit.
 **`expo_push_token` — added 7 Aug 2026, migration 0015.** **Null means no device
 has registered**, which is an absence and never a refusal or a failure: an
 advocate who has not opened the app on a phone, or who declined the OS prompt, is
-a normal state, and the nightly delivery reports them as *skipped* rather than
-*failed*. An error rate that counts normal states is an error rate nobody reads.
+a normal state, and the nightly delivery reports them as _skipped_ rather than
+_failed_. An error rate that counts normal states is an error rate nobody reads.
 
 Cleared automatically when Expo answers `DeviceNotRegistered` — the app was
 removed or the token rotated, and retrying nightly forever is a permanent failure
@@ -26,7 +27,7 @@ like an uninstall.
 `briefings.delivered_at` is written by the same job and had never been written
 before. **Generated, delivered and opened are three different facts in three
 columns** — collapsing any two makes the activation metric (two briefings opened
-in week one) meaningless. `delivered_at` means Expo *accepted* the message, which
+in week one) meaningless. `delivered_at` means Expo _accepted_ the message, which
 is not the same as the phone receiving it.
 
 **PD-8 — consent replaces the AI-assisted mark.** `terms_accepted_at` and
@@ -44,6 +45,7 @@ new locale touches the database. Thailand is out of v1 (civil-law jurisdiction �
 the citation-verification moat does not transfer); revisit after ₹1Cr ARR.
 
 ## judgments
+
 `id` uuid pk · `case_title` text · `neutral_citation` text null ·
 `reporter_citations` text[] · `court` text · `bench` text null ·
 `judgment_date` date · `full_text` text · `language` enum (en|hi) ·
@@ -119,6 +121,7 @@ the judgment, answered by a different source than verification — see
 `CITATION_HARNESS.md`.
 
 ## judgment_chunks
+
 `id` uuid pk · `judgment_id` uuid fk→judgments cascade · `chunk_index` int ·
 `chunk_text` text · `embedding` vector(1024) · `token_count` int ·
 `ocr_confidence` numeric(4,3) null — **an OCR engine's own confidence, and only
@@ -132,7 +135,7 @@ extracted, because we did not run the engine and cannot report its confidence ·
 ships judgment PDFs whose pre-2010 text is a scan that somebody else OCR'd, with
 no confidence score attached — 1950 text reads `Oot. l't,` for "Oct. 17" and
 `SAIYID FAZL Au` for "FAZL ALI". Putting a number we invented into a column that
-means *engine confidence*, and then letting retrieval rank on it, would be
+means _engine confidence_, and then letting retrieval rank on it, would be
 fabricating data in the one place this product cannot afford it.
 
 `text_quality` is therefore a different question with an honest answer: **how
@@ -155,6 +158,7 @@ Index: ivfflat on embedding vector_cosine_ops; btree on judgment_id.
 Unique: (judgment_id, chunk_index).
 
 ## judgment_citations
+
 Added S1, 6 Aug 2026. **One row per citation found in a judgment's text.**
 
 `id` uuid pk · `citing_judgment_id` uuid fk→judgments cascade ·
@@ -172,6 +176,7 @@ idempotent. Index: btree on `citing_judgment_id`; partial btree on
 non-null; partial btree on `normalised_citation` where it is null.
 
 ### Why this table had to exist
+
 `overruled_status` was `none` on all 38,341 judgments and
 `overruled_by_judgment_id` null on all of them, so **no surface in the product
 could ever show that the law had moved**. `CITATION_HARNESS.md` names this exact
@@ -181,6 +186,7 @@ comparison agree. The edges have to be extracted before any of the overruled
 machinery has anything to act on.
 
 ### `cited_judgment_id` is nullable, and that is the point
+
 A citation that does not resolve **exactly** against a stored `neutral_citation`
 or `reporter_citations` entry keeps its row with a null `cited_judgment_id`. It is
 never fuzzy-matched to the nearest candidate: a wrong edge is a fabricated
@@ -192,7 +198,8 @@ coverage** — the share of cited authority we cannot yet resolve is a number wo
 knowing, and deleting the rows would hide it.
 
 ### `relationship` defaults to `cites`, and `evidence` is why
-Whether a later bench *followed* or *overruled* an authority is a legal reading,
+
+Whether a later bench _followed_ or _overruled_ an authority is a legal reading,
 not a string match. Where a signal phrase appears within 400 characters of the
 citation the relationship is recorded **together with the phrase that justified
 it**, so any row can be audited back to its own text. Where no phrase appears the
@@ -206,6 +213,7 @@ authority, the other is whether that authority exists. A judgment can be
 `verified` and `overruled`, or `unverified` and `followed`.
 
 ## judgment_annotations
+
 Added 6 Aug 2026 for PD-9 item 3 — highlight and save a passage.
 
 `id` uuid pk · `user_id` uuid fk→users cascade · `judgment_id` uuid fk→judgments
@@ -231,6 +239,7 @@ Deletion is a timestamp, never a row removal — the same reasoning as
 asked later.
 
 ## saved_searches
+
 Added 6 Aug 2026. **The in-app feed only — never a notification.**
 
 `id` uuid pk · `user_id` uuid fk→users cascade · `query_text` text ·
@@ -243,14 +252,15 @@ Index: partial btree on `user_id` and on (`user_id`, `last_seen_at`), both where
 
 `last_seen_at` is what makes the feed a feed: anything newer is unseen. **There is
 deliberately no `notified_at` and no delivery state.** PD-5 excludes
-subject-following alerts from notifications entirely — *"that is discovery, not an
-alert; it belongs in the app, never in a notification"* — and a column for
+subject-following alerts from notifications entirely — _"that is discovery, not an
+alert; it belongs in the app, never in a notification"_ — and a column for
 delivery would invite one to be built.
 
 **The table existing is not approval to build the surface.** `FEATURE_PARITY.md`
 §3 holds the client feed pending the founder's confirmation of the reframe.
 
 ## statutes
+
 Added S1 for the bare acts library (`sprints/SPRINT_1.md` LCC task 3, which
 requires the shape recorded here **before** the migration). One row per Act.
 
@@ -269,6 +279,7 @@ applies to an offence turns on the enforcement date, not the enactment date**
 unanswerable.
 
 ## statute_sections
+
 `id` uuid pk · `statute_id` uuid fk→statutes cascade ·
 `section_number` text — **text, not int**: sections carry letters (`63A`) and
 renumbering is common · `heading` text null · `section_text` text ·
@@ -291,6 +302,7 @@ precise, which is where sparse retrieval is strongest. A vector column is added
 when semantic statute search is actually built, not before.
 
 ## statute_mappings
+
 `id` uuid pk · `old_act` enum (ipc|crpc|evidence) · `old_section` text ·
 `new_act` enum (bns|bnss|bsa) · `new_section` text · `relationship` enum
 (exact|split|merged|no_equivalent) · `note` text null
@@ -298,6 +310,7 @@ when semantic statute search is actually built, not before.
 Seeded from indiacode.nic.in. Never model-generated. See `DOMAIN_TRUTH.md`.
 
 ## matters
+
 `id` uuid pk · `user_id` uuid fk→users · `case_title` text · `cnr_number` text null ·
 `court` text · `case_type` enum (criminal|civil) · `parties` jsonb ·
 `client_name` text · `our_side` enum
@@ -308,6 +321,7 @@ Seeded from indiacode.nic.in. Never model-generated. See `DOMAIN_TRUTH.md`.
 Index: btree on (user_id, next_hearing_date) — the nightly sweep reads this.
 
 ## matter_shares
+
 **PD-3 — sharing is per matter, by invitation.** The owner invites a named person
 to a specific case, the way a file is handed over. There is **no chamber-wide
 switch**: Indian chambers work case-by-case, and chamber-wide default sharing is a
@@ -328,6 +342,7 @@ exactly the question a conflicts challenge asks later. A share grants the **cour
 record** and shared notes only; private notes never travel (PD-4).
 
 ## matter_events
+
 `id` uuid pk · `matter_id` uuid fk→matters cascade · `event_date` date ·
 `event_type` enum (hearing|order|filing|note) · `order_text` text null ·
 `notes` text null ·
@@ -343,6 +358,7 @@ prevents. `order_text` is the court record and is always visible to a share;
 `notes` obey `note_visibility`.
 
 ## briefings
+
 `id` uuid pk · `matter_id` uuid fk→matters cascade · `hearing_date` date ·
 `generated_at` timestamptz · `content` jsonb · `delivered_at` timestamptz null ·
 `opened_at` timestamptz null · `dates_confirmed_at` timestamptz null ·
@@ -354,8 +370,8 @@ duplicate.
 
 **Date confirmation — added 7 Aug 2026, migration 0013.** `cause_list_syncs`
 names `dates_not_confirmed` as its escalation target and no column carried it.
-**Three states, deliberately not a boolean:** both timestamps null = *nobody has
-checked*; `dates_confirmed_at` set = confirmed against a successful sync;
+**Three states, deliberately not a boolean:** both timestamps null = _nobody has
+checked_; `dates_confirmed_at` set = confirmed against a successful sync;
 `dates_not_confirmed_at` set = we tried and could not, and
 `dates_not_confirmed_reason` says how. A bool cannot say "we never looked", and
 that is a different thing to tell an advocate than "we looked and failed". The two
@@ -369,6 +385,7 @@ The briefing assembly reads the same either way, which is what lets A4 ship
 whether or not the eCourts path is available.
 
 ## documents
+
 `id` uuid pk · `user_id` uuid fk→users · `matter_id` uuid null fk→matters ·
 `document_type` enum (bail|anticipatory_bail|plaint|written_statement|
 legal_notice|notice_reply|affidavit|vakalatnama|writ_petition|rti) ·
@@ -386,11 +403,13 @@ verified" — is rendered in the **draft footer in-app only** and is derived at 
 time from `citation_checks`, not stored here.
 
 ## searches
+
 `id` uuid pk · `user_id` uuid fk→users · `matter_id` uuid null fk→matters ·
 `query_text` text · `query_language` enum (en|hi) · `results_returned` int ·
 `model_used` text · `created_at` timestamptz
 
 ## llm_calls
+
 `id` uuid pk · `user_id` uuid null fk→users · `feature` enum
 (search|draft|briefing|extract|ocr_postprocess) · `model` text ·
 `input_tokens` int · `output_tokens` int · `cost_usd` numeric(10,6) ·
@@ -400,6 +419,7 @@ time from `citation_checks`, not stored here.
 Every call writes a row. No exceptions. Cost control and DPDP audit trail.
 
 ## citation_checks
+
 `id` uuid pk · `search_id` uuid null fk→searches · `document_id` uuid null fk→documents ·
 `citation_claimed` text · `judgment_id_matched` uuid null fk→judgments ·
 `verification_state` enum (verified|unverified|failed) ·
@@ -419,22 +439,23 @@ columns and **no new write volume** — see `CITATION_HARNESS.md` §How
 stale-overruled is measured.
 
 ### The badge is derived, not stored
+
 The five visual badge states are **computed from three fields answering three
 different questions**, never persisted as one enum:
 
-| Field | Lives on | Question it answers |
-|---|---|---|
+| Field                | Lives on                                | Question it answers        |
+| -------------------- | --------------------------------------- | -------------------------- |
 | `verification_state` | `citation_checks`, `verification_cache` | Does this authority exist? |
-| `verified_by_source` | `citation_checks`, `verification_cache` | Who confirmed it? |
-| `overruled_status` | `judgments` | Is it still good law? |
+| `verified_by_source` | `citation_checks`, `verification_cache` | Who confirmed it?          |
+| `overruled_status`   | `judgments`                             | Is it still good law?      |
 
-| Badge | Condition |
-|---|---|
-| `VERIFIED` | `verification_state = verified` · source `corpus` |
-| `VERIFIED ×2` | `verification_state = verified` · source `public_x2` |
-| `VERIFIED BY YOU` | `verification_state = verified` · source `ecourts` |
-| `NOT CONFIRMED` | `verification_state` in (`unverified`, `failed`) |
-| `LAW MOVED` | `overruled_status != none` — **independent of verification** |
+| Badge             | Condition                                                    |
+| ----------------- | ------------------------------------------------------------ |
+| `VERIFIED`        | `verification_state = verified` · source `corpus`            |
+| `VERIFIED ×2`     | `verification_state = verified` · source `public_x2`         |
+| `VERIFIED BY YOU` | `verification_state = verified` · source `ecourts`           |
+| `NOT CONFIRMED`   | `verification_state` in (`unverified`, `failed`)             |
+| `LAW MOVED`       | `overruled_status != none` — **independent of verification** |
 
 A judgment can be verified **and** overruled; those are different questions
 answered by different sources, so folding them into one enum was wrong.
@@ -443,6 +464,7 @@ answered by different sources, so folding them into one enum was wrong.
 only one matched.
 
 ## verification_cache
+
 Permanent. A case confirmed once is never re-verified.
 
 `id` uuid pk · `citation_text` text · `normalised_citation` text ·
@@ -457,6 +479,7 @@ Overruledness is **never cached here** — it lives on `judgments` and changes w
 a later judgment moves the law, so a permanent cache would go stale silently.
 
 ## ocr_jobs
+
 `id` uuid pk · `user_id` uuid fk→users · `matter_id` uuid null fk→matters ·
 `source_type` enum (pdf_scanned|image|camera) · `storage_key` text ·
 `engine` enum (paddleocr|tesseract) · `detected_script` text[] ·
@@ -469,6 +492,7 @@ a later judgment moves the law, so a permanent cache would go stale silently.
 `confirmed_by_user` gates use. OCR output is never trusted silently.
 
 ## pii_entities
+
 Pseudonymisation map. **Local scope. Never leaves our infrastructure.**
 
 `id` uuid pk · `document_id` uuid null fk→documents ·
@@ -480,6 +504,7 @@ Pseudonymisation map. **Local scope. Never leaves our infrastructure.**
 Deleting a matter deletes these rows. Cascade is mandatory.
 
 ## audit_log
+
 **Append-only.** Every privileged admin action writes exactly one row. No UPDATE,
 no DELETE — enforce with a revoked grant and a `BEFORE UPDATE OR DELETE` trigger
 that raises. Kill switches without an audit trail is a governance failure.
@@ -498,6 +523,7 @@ btree on (target_type, target_id).
 of a template gate (`template.override_gate`) is mandatory-reason.
 
 ## platform_config
+
 Maintenance mode, the five kill switches, and feature flags. One row per key —
 current state only; history lives in `audit_log`, which is the point.
 
@@ -507,7 +533,7 @@ current state only; history lives in `audit_log`, which is the point.
 `updated_by_user_id` uuid null fk→users · `updated_at` timestamptz
 
 Kill-switch keys are a **fixed set**: `search` · `drafting` · `briefings` ·
-`ocr_intake` · `signups` · **`ecourts_harvest`** *(added 7 Aug 2026)*. An unknown
+`ocr_intake` · `signups` · **`ecourts_harvest`** _(added 7 Aug 2026)_. An unknown
 key is rejected, never implicitly created — a typo must not silently produce a
 switch nobody is watching. The set is enforced by a check constraint, so adding a
 seventh is a migration.
@@ -516,8 +542,8 @@ seventh is a migration.
 created **off**, and off is not the only lock: the guard also requires the grant's
 conditions to be transcribed into
 `services/api/src/court/authorisation.ts`. **On plus terms-absent still refuses.**
-`CLAUDE.md`: *if the authorisation's terms are not in the repo, the switch stays
-off.*
+`CLAUDE.md`: _if the authorisation's terms are not in the repo, the switch stays
+off._
 
 **Built in migration 0013, ahead of S6.** The write endpoint
 (`POST /admin/platform/kill-switches/:key`) is **not** built and stays SPECCED, so
@@ -530,6 +556,7 @@ constraint. Every write here writes `audit_log` in the same transaction; if the
 ledger write fails the config does not move.
 
 ## cause_list_syncs
+
 Per-court scrape health. A parser that silently returns an empty list is worse
 than an outage, because briefings still go out with stale dates.
 
@@ -551,6 +578,7 @@ publishes nothing some days, and that is not a parser failure** — collapsing t
 two is the same error class as confusing `miss` with `not_attempted`.
 
 ## ecourts_fetch_ledger
+
 **Added 7 Aug 2026.** Every request made under the registrar's authorisation, and
 every one **refused**.
 
@@ -562,7 +590,7 @@ every one **refused**.
 Index: btree on (requested_at desc); btree on (court, requested_at desc).
 
 Permission arrives with conditions — volume, frequency, hours, attribution — and
-this is what makes *"did we stay inside the grant"* answerable **by query rather
+this is what makes _"did we stay inside the grant"_ answerable **by query rather
 than by promise.** Refusals are rows too, because the ledger's other job is to
 show that the switch and the limiter actually held.
 
@@ -576,6 +604,7 @@ never left the process. **The rate limiter counts only rows that reached the
 network** — a refusal must not consume the quota it just protected.
 
 ## citation_disputes
+
 The trust feedback loop. Outranks everything else in the admin.
 
 `id` uuid pk · `reported_by_user_id` uuid fk→users ·
@@ -594,6 +623,7 @@ disputes upheld where `verification_state` was `verified` ÷ total verified
 citations shown.
 
 ## citation_copies
+
 **The advocate at highest risk.** "Copy citation" is an action on every judgment
 card. An advocate who copies a citation into their own Word document has taken it
 out of the app entirely — they saw the badge, they may file it, and without this
@@ -624,11 +654,11 @@ and through the DPDP erasure path (`data_requests`).
 **The job stays; the table tracking its runs does not.** It was a job-run log with
 one consumer, and everything it recorded is already available:
 
-| It answered | Now answered by |
-|---|---|
+| It answered                  | Now answered by                                                    |
+| ---------------------------- | ------------------------------------------------------------------ |
 | Did the run happen, and when | The cron platform + the **22:50 alert** in `docs/FAILURE_MODES.md` |
-| What changed | `citation_fanouts` rows where `trigger = 'recheck'` |
-| Did it fail | The alert, which is what anyone would act on anyway |
+| What changed                 | `citation_fanouts` rows where `trigger = 'recheck'`                |
+| Did it fail                  | The alert, which is what anyone would act on anyway                |
 
 **The re-check itself is unchanged and still mandatory** — `overruled_status` is
 never cached (`CITATION_HARNESS.md`), so the nightly run at **22:30, before the
@@ -645,6 +675,7 @@ which writes a `citation_fanouts` row. It does **not** re-run verification tiers
 what actually gets acted on.
 
 ## citation_fanouts
+
 **One fan-out, two triggers.** When a judgment's overruled status changes, the
 required work is identical whether an admin upheld a dispute or the nightly
 re-check found it. Do not build a second implementation.
@@ -673,6 +704,7 @@ half-completed fan-out is the worst state: the corpus says overruled while the
 advocate who filed it was never told.
 
 ## draft_templates
+
 `id` uuid pk · `document_type` enum (as `documents.document_type`) ·
 `version` int · `prompt` text · `language` enum (en|hi) ·
 `golden_set_size` int · `score` numeric(5,2) null ·
@@ -688,6 +720,7 @@ Unique: (document_type, language, version). Partial unique: one `live` row per
 `template.override_gate` to `audit_log` with `override_reason` non-null.
 
 ## data_requests
+
 DPDP Act obligations with a visible clock per request.
 
 `id` uuid pk · `user_id` uuid fk→users ·
@@ -701,9 +734,18 @@ Index: btree on (status, due_at).
 Pseudonymisation coverage is **measured, not asserted** — computed from
 `pii_entities` against detected-entity counts, and reported as a number
 (currently 99.2%). The residual is disclosed to the advocate, never hidden.
+
+**8 Aug 2026 — this paragraph conflicts with `PRIVACY_PII.md` and was not built
+as written.** `pii_entities` stores only entities that WERE tokenised, so a
+ratio of it against itself cannot measure what got missed — it is tautological,
+not a real detection-recall figure. `PRIVACY_PII.md`'s ~80%, stated as an
+estimate pending an evaluation that has not been run, is the honest account.
+`GET /admin/privacy/coverage` was left unbuilt rather than implement the
+formula above. See `docs/FOUNDER_QUEUE.md` §`GET /admin/privacy/coverage`.
 See `PRIVACY_PII.md` — we never claim complete PII removal.
 
 ## auth_user · auth_session · auth_account · auth_verification
+
 **Added 7 Aug 2026, migration 0014.** better-auth's own tables. Their columns were
 read out of `getAuthTables()` in the installed library, **not written from its
 documentation** — a guessed schema for somebody else's library is a migration that
@@ -727,6 +769,7 @@ and no password in this product, which is also why there is no password to reuse
 leak or reset.
 
 ## refresh_tokens
+
 **Added 7 Aug 2026, migration 0014.** Ours, not better-auth's. `SPRINT_5.md`
 specifies JWT plus a rotating refresh on a 30-day sliding window.
 

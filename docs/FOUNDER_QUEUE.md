@@ -33,6 +33,7 @@ point here, so a fresh agent finds it without being told.
 # CREDENTIALS AND ACCOUNTS
 
 ### [OPEN] DMARC enforcement beyond `p=none` · LCC · 7 Aug 2026
+
 **Needs:** a destination for DMARC aggregate reports (`rua`) — a mailbox on
 `lawmind.co` or a monitoring vendor. **A vendor costs money.**
 **Why it is not a blocker:** `_dmarc.lawmind.co` is live at `p=none`, verified in
@@ -43,6 +44,7 @@ stays spoofable. Not urgent; matters more once we have real users.
 §Mail carries the upgrade path.
 
 ### [OPEN] Countersigned DPA before uploads ship · LCC · pre-existing (OD-6)
+
 **Needs:** a signed data-processing agreement with the sensitive-class model
 provider, with zero-retention and no-training terms, plus a reviewed
 sub-processor list.
@@ -53,6 +55,7 @@ override**.
 launch blocker, not a sprint blocker.
 
 ### [OPEN] Counsel's written residency view · LCC · pre-existing (OD-2)
+
 **Needs:** the written opinion behind the Singapore position, on file.
 **Why it is not a blocker:** OD-2 is resolved on the founder's authority and
 Railway has no India region regardless.
@@ -60,6 +63,7 @@ Railway has no India region regardless.
 exactly when it gets challenged, and the DPDP full-compliance date is 13 May 2027.
 
 ### [OPEN] eCourts grant conditions, transcribed · LCC · 7 Aug 2026
+
 **Needs:** the registrar's letter — reference, expiry, attribution string,
 permitted courts, permitted hours, rate limits — transcribed into
 `services/api/src/court/authorisation.ts`.
@@ -74,6 +78,7 @@ from the advocate — which PD-12 says is first-class anyway. The wedge still wo
 ---
 
 ### [MOSTLY RESOLVED 8 Aug 2026] A physical Android device for the S1 device pass · RCC
+
 **It was not a blocker and I should not have queued it.** No phone was attached,
 so I installed the Android emulator from the SDK manager — free, no account, one
 command — created a Redmi-class AVD (1080×2400 at 400dpi, 4 GB) and ran the pass
@@ -81,6 +86,7 @@ on it. **Two of the four criteria are now observed and passing**, and three real
 defects came out of it that no test could see.
 
 **Observed passing, 8 Aug 2026:**
+
 - **Reading progress survives a restart with the network off.** Aeroplane mode
   on, app force-stopped, cold-started from a deep link: the judgment rendered
   from the device and the position came back at **¶ 8 of 22**, the exact
@@ -91,6 +97,7 @@ defects came out of it that no test could see.
   entry below.
 
 **What an emulator genuinely cannot answer, and stays open:**
+
 - **60fps on a mid-range Android.** A software-rendered x86 emulator on a
   workstation says nothing about a Redmi. `gfxinfo` here would be a number that
   looks like evidence and is not.
@@ -107,6 +114,7 @@ phone.
 # DECISIONS ONLY THE FOUNDER CAN MAKE
 
 ### [OPEN] OD-11 — Tier B before Tier A, or the sprint plan as written · both lanes
+
 **Needs:** a decision recorded in `BUILD_GUIDE.md` and `sprints/`.
 **Why it is not a blocker:** both lanes are building Tier B (the daily loop) and
 it works. But `SPRINT_1.md` still puts both lanes on Tier A, so the plan and the
@@ -116,6 +124,7 @@ work disagree.
 sequencing is real.
 
 ### [OPEN] Gate S1's "1M+ documents" criterion — BLOCKER F-1 · LCC
+
 **Needs:** the founder to accept the re-specification.
 **Why it is not a blocker:** already corrected in `sprints/SPRINT_1.md`
 §Gate correction on the authority of the approved data-and-delivery plan, with the
@@ -124,6 +133,7 @@ reasoning recorded. Flagged here so the founder sees it rather than discovering 
 into later sprints — which is exactly what has been happening.
 
 ### [RETRACTED 8 Aug 2026] "Six screens need designing" — they were already drawn
+
 **I was wrong and this entry is kept as the record of it.** `design/SCREENS.md`
 said "None is drawn" for rows 88–99; seven of them had renders on disk
 (`66-consent-clean-draft`, `68-cause-list`, `69-adjournment`, `70-client-share`,
@@ -140,6 +150,7 @@ limitation ALERT block (row 91) or the limitation CALCULATOR (row 98). The
 filename does not distinguish them and only a human looking at the render can.
 
 ### [RESOLVED 8 Aug 2026] Daily cause-list screen is NOT YET DESIGNED · RCC
+
 **It was designed, and all three courtroom screens are now built.**
 `renders/68-cause-list@2x.png`, `renders/69-adjournment@2x.png` and
 `renders/70-client-share@2x.png` were on disk since 5 August, specified in
@@ -156,15 +167,16 @@ on the client card.
 **What is left is an ENDPOINT, not a design.** See below.
 
 ### [OPEN] `ink-faint` is below WCAG AA, and it is a palette decision · RCC · 8 Aug 2026
+
 **Needs:** a founder/design ruling on `ink-faint` `#8A8578`.
 
 **The measurement**, from `apps/mobile/scripts/check-sunlight.mjs`, which has been
 exiting 1 on clean `main` since at least 7 August:
 
-| pair | normal | under washout | AA needs |
-|---|---|---|---|
-| `ink-faint` on `paper` | **3.53:1** | 2.15:1 | 4.5:1 |
-| `ink-faint` on `card` | **3.68:1** | 2.21:1 | 4.5:1 |
+| pair                   | normal     | under washout | AA needs |
+| ---------------------- | ---------- | ------------- | -------- |
+| `ink-faint` on `paper` | **3.53:1** | 2.15:1        | 4.5:1    |
+| `ink-faint` on `card`  | **3.68:1** | 2.21:1        | 4.5:1    |
 
 Everything else in the palette passes. `ink-faint` carries **citations, dates,
 metadata and eyebrows** — the small text an advocate reads in a corridor — and
@@ -188,6 +200,7 @@ whole table and goes green the moment it is decided.
 ---
 
 ### [OPEN] The client card as an IMAGE needs one native module · RCC · 8 Aug 2026
+
 **Needs:** approval to add **`react-native-view-shot`** (MIT, Expo-supported) to
 `apps/mobile`. It is a package rather than a vendor — no account, no bill, no
 service — but it adds a native module and touches the workspace lockfile, which
@@ -210,6 +223,7 @@ a ref, `captureRef` at 1080×1350, share the file. The layout is already built.
 ---
 
 ### [FOR LCC, NOT THE FOUNDER — recorded here so it is not lost] The advocate-facing cause-list endpoint · 8 Aug 2026
+
 Not a founder item. Written down because the screen now exists, and the endpoint
 shape follows the screen — which is what the old entry above said it was waiting
 for.
@@ -237,10 +251,10 @@ listed matter as "not yet published". Nothing above it changes when this lands.
 compounding gaps, none of them a code-shaped fix:**
 
 1. `ecourts.ts`'s `parseCauseList` is a **deliberate stub** — it returns `failed`
-   always, on purpose: *"there is no captured sample of the response to write an
+   always, on purpose: _"there is no captured sample of the response to write an
    extractor against. Writing one from an assumed shape would be inventing a
    schema — and a cause-list parser that is wrong in a plausible way is the
-   single most dangerous object in this product."* That reasoning is correct and
+   single most dangerous object in this product."_ That reasoning is correct and
    this is not mine to override by guessing a shape.
 2. There is **no persisted item-level table**. `CauseListItem` (cnr, caseNumber,
    courtNumber, itemNumber) exists only as an in-memory type on the never-taken
@@ -263,6 +277,7 @@ anything downstream can be honest — same class of blocker as (3) below
 Revisit once a real sample exists to parse against.
 
 ### [OPEN] Limitation and court-fee calculators need a sourced dataset · RCC · 8 Aug 2026
+
 **Needs:** the Limitation Act 1963 schedule (article → period → starting point,
 ~180 rows) and the per-state Court Fees Act ad valorem tables, in a
 machine-readable form with provenance — the same standard `DOMAIN_TRUTH.md`
@@ -305,8 +320,18 @@ credential- and content-blocked, not engineering-blocked:
    routing, `SENSITIVE_LLM_API_KEY` for the pseudonymised Claude path. **Neither
    is in Railway** (checked: `railway variables --service api --kv`, both
    absent).
-2. **No `draft_templates` row has ever been created.** `SCHEMA_TRUTH.md`: *"Nothing
-   ships below 90 without a founder override,"* and nothing has been scored,
+2. **No `draft_templates` row has ever been created — and neither has the
+   table.** A systematic sweep (8 Aug 2026, prompted by finding the same gap
+   three times in a row on `citation_disputes`/`ocr_jobs`/`data_requests`)
+   found `draft_templates` and `pii_entities` are ALSO documented in
+   `SCHEMA_TRUTH.md` with no `CREATE TABLE` anywhere. Not created in this
+   pass, deliberately — `schema.ts`'s own rule: _"a deferred table created
+   'while you're in there' is exactly what that decision forbids."_ Whoever
+   builds `admin/templates.ts` or the pseudonymisation pipeline creates the
+   table THEN, as part of that work, checked against `SCHEMA_TRUTH.md`'s
+   column list before writing a migration.
+   `SCHEMA_TRUTH.md`: _"Nothing
+   ships below 90 without a founder override,"_ and nothing has been scored,
    because nothing has been written. A drafting template's prose is exactly the
    kind of primary-sourced legal content CLAUDE.md's hard rules forbid inventing
    from memory — a bail application template is not a fact I can look up in this
@@ -330,6 +355,7 @@ else in the sprint depends on it — S3 (matters) and the alerts surface shipped
 independently.
 
 **Where it plugs in, once unblocked:**
+
 - `OPENROUTER_API_KEY` + `SENSITIVE_LLM_API_KEY` → a new `services/api/src/llm/`
   client, routed by `CLAUDE.md` §5 (public → DeepSeek V4 Flash, sensitive →
   pseudonymise then Claude Sonnet 4.6), every call logged to `llm_calls`.
@@ -345,17 +371,75 @@ independently.
 
 ---
 
+### [OPEN] `GET /admin/privacy/coverage` — two docs disagree on what this endpoint reports · LCC · 8 Aug 2026
+
+Not a credential gap, and not decision-shaped in the usual sense either — this
+is a genuine conflict between two authoritative docs about a DPDP-facing
+compliance number, and I am not resolving it by picking the reading that is
+easier to build.
+
+**`docs/PRIVACY_PII.md`**: _"Realistic coverage is around 80%... Evaluate
+Presidio on real Indian court documents before trusting it... Until that
+evaluation exists, the ~80% figure above is an estimate, not a measurement, and
+should be described that way internally too."_ No evaluation has been run —
+there is no ground-truth/held-out dataset anywhere in this repo to run one
+against.
+
+**`docs/SCHEMA_TRUTH.md#data_requests`**: _"Pseudonymisation coverage is
+measured, not asserted — computed from `pii_entities` against detected-entity
+counts, and reported as a number (currently 99.2%)."_ This describes a formula
+I traced and could not make honest: `pii_entities` (`SCHEMA_TRUTH.md
+#pii_entities`) stores ONLY the entities that WERE tokenised — by construction,
+every row in it is a "detected" entity that got pseudonymised. A ratio of
+`pii_entities` count against itself is tautological and would read as ~100%
+regardless of how much real PII the detector actually missed. It does not
+measure what `GET /admin/privacy/coverage`'s contract description says it
+measures ("what fraction of real PII did we catch"), and shipping a
+confident-looking 99.2% built on a self-referential ratio is exactly the
+failure `CLAUDE.md` §6 names directly: _"Never claim complete PII removal.
+Coverage is partial. Say so plainly."_ A number that LOOKS measured but isn't
+is worse than the honest ~80% estimate PRIVACY_PII.md already gives.
+
+**Not building either version.** `GET/POST /admin/data-requests` (the other
+three endpoints in this contract section) are built and deployed — this is the
+one endpoint in that group left out, specifically.
+
+**Cost if never resolved:** the admin privacy screen has no live coverage
+number; `docs/PRIVACY_PII.md`'s ~80% estimate is the only figure anyone can
+quote today, stated as an estimate, which is already the honest position.
+
+**Where it plugs in:** whichever of these gets picked —
+
+1. Run the Presidio evaluation `PRIVACY_PII.md` calls for, against real (or
+   realistic synthetic) Indian court documents with human-labeled PII, and
+   store the RESULT somewhere queryable — a `pii_evaluation_runs` table or
+   similar, not a hardcoded number in code. Then `GET /admin/privacy/coverage`
+   reads the latest run.
+2. Or: redefine what this endpoint actually reports — e.g., a genuinely
+   computable operational metric like "% of sensitive-class documents that
+   went through pseudonymisation before any model call" (checkable from
+   `llm_calls.pseudonymised` once that pipeline exists) — which is a real,
+   honest number, but a DIFFERENT claim than "how much PII did we catch," and
+   the contract description and any UI copy would need to say so precisely.
+   Either is a product decision about what this screen is allowed to claim, not
+   an engineering one.
+
+---
+
 # RESOLVED — kept for provenance
 
 ### [RESOLVED 7 Aug 2026] Resend sending domain
+
 `lawmind.co` verified; DNS written via the Spaceship API; delivery to a non-owner
 address observed. Production holds a **send-only** key.
 
 ### [RESOLVED 7 Aug 2026] `EXPO_ACCESS_TOKEN` for push
+
 **Not needed.** Expo's push API accepts unauthenticated sends; the token is only
 for opt-in enhanced security. Delivery is built and tested.
 
 ### [RESOLVED 7 Aug 2026] Railway cron service creation
+
 Assumed to be a console action; it was not. `railway add` plus
 `serviceInstanceUpdate` over the GraphQL API created and configured both the
 `cron` and `recheck` services, and each was proved by running it.
