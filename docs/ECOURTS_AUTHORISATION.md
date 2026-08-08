@@ -104,11 +104,13 @@ SET enabled = true, reason = '<why, and referencing the grant>', updated_at = no
 WHERE key = 'ecourts_harvest';
 ```
 
-**Known gap, stated rather than papered over:** the admin write endpoint
-`POST /admin/platform/kill-switches/:key` is S6 and still SPECCED, so today this
-is a hand-written statement and **it therefore does not write `audit_log`.** The
-transaction that would pair the two does not exist yet. Until S6, the reason
-column and this document are the record.
+**Gap closed 8 Aug 2026.** `POST /admin/platform/kill-switches/:key` is now
+**BUILT**, so prefer it over the hand-written statement above: it validates the
+key against the fixed set of six, requires a `reason`, and writes
+`platform_config` **and** `audit_log` in one transaction — if the ledger write
+fails the switch does not move. Flipping `ecourts_harvest` by hand still works
+but leaves no audit row, which for this particular switch is exactly the
+provenance a registrar might later ask for.
 
 ---
 
