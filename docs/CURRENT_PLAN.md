@@ -59,6 +59,48 @@ our own bugs.
 
 ---
 
+## 1b · BHARAT.LAW — 2–3 accounts, founder decision 9 August 2026
+
+The founder has decided to buy **two or three accounts**. The client is built.
+**It refuses today, on purpose**, and the reason is not caution — it is that the
+permission is a different shape from Supreme Today's.
+
+- [x] **Account pool** — `services/ingest/src/harvest/bharatlaw.ts`, **30 tests**
+- [x] **The consent gate** — `AUTHORISATION` is **null**, exactly like
+      `court/authorisation.ts`. Every automated call refuses while it is null.
+      **`CLAUDE.md` §6's rule applied to a second vendor: if the authorisation's
+      terms are not in the repo, the switch stays off.**
+- [x] **Benchmark and extraction are separate permissions**, never one flag.
+      `extractionPermitted` is expected to stay **false permanently** —
+      `BHARAT_LAW_OFFER.md` §5
+- [x] **A 401/403 on ONE account halts the WHOLE POOL.** Tested by counting
+      network calls, not by inspecting a flag. **This is the rule that keeps
+      2–3 accounts from being ban-evasion** — answering a refusal with the next
+      credential is circumventing an access control, which their AUP names
+- [x] **Two ceilings, not one.** Each account carries its own credit
+      entitlement (Pro = **10,000/month**, their published meter) *and* the pool
+      carries a lower global daily ceiling, so **adding an account does not
+      silently multiply our traffic**
+- [x] **Consent overrides more accounts than it covers** → the pool refuses
+      rather than quietly using the covered subset
+
+**WHY IT IS OFF.** Supreme Today gave a **written licence**. Bharat.Law gave a
+**verbal yes** — and their Evaluation Terms permit benchmarking only *"without
+our prior written consent"*, which is a **consent requirement, not a ban**. One
+email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send.
+
+**ORDER OF OPERATIONS, and the first step costs nothing:**
+
+1. **Free tier first, ₹0, no signup.** Run *Kharak Singh* and *Danamma* through
+   it. **That settles curated-vs-computed before any money moves.**
+2. **Send FQ-BL1.** If they will not put it in writing, that is also an answer.
+3. **Then buy — monthly, never annual.** Transcribe the email into
+   `AUTHORISATION` and the pool opens by itself.
+
+**Nothing here is on the Gate S2 critical path.** §2 still outranks it.
+
+---
+
 ## 2 · GATE S2 — everything else is downstream of this
 
 - [ ] **Recall levers**, each measured through the A/B rig on the 283-query set:

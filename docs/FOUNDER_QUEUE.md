@@ -1615,3 +1615,46 @@ cheaply disprove in public.
 **Suggested wording:** *"24-hour hearing briefings — the wedge. Others push daily
 digests; ours is assembled per hearing and re-checks good-law status at the
 moment of delivery."*
+
+---
+
+## FQ-BL3 · Bharat.Law accounts — 2 or 3, and the order that saves money
+
+**Needed from you:** the accounts, and **FQ-BL1's email before they are used for
+anything automated.**
+
+**Do the free step first.** Their `/solutions/individuals` is *"Ask a question
+free · No signup. No card."* Run *Kharak Singh* and *Danamma* through it — the
+seven judgments our own extractor could not resolve. **If their counter-authority
+is right and specific, their treatment data is curated and worth respecting; if
+it is vague, it is computed and we can compute it too.** That is the whole
+question, and it costs ₹0.
+
+**Then buy monthly, never annual.** Pro is ₹1,499/month billed monthly against
+₹1,099/month billed annually. The ₹4,800/year saving is not worth a twelve-month
+commitment to a competitor's product we may stop using after one month.
+
+**What was built anyway:** `services/ingest/src/harvest/bharatlaw.ts`, **30
+tests, all green.** A 2–3 account pool with AIMD pacing, per-account credit
+budgets against their published 10,000/month Pro meter, a separate and lower
+pool-wide daily ceiling, and full attribution on every request.
+
+**What stays broken without it:** nothing breaks. **The pool refuses on purpose**
+and will keep refusing until two things are true: `BHARATLAW_ACCOUNTS` is set,
+and a written consent is transcribed into `AUTHORISATION`.
+
+**Set this when the accounts exist**, as a Railway env var and never in the repo:
+
+```
+BHARATLAW_ACCOUNTS=one:email1@…:password1
+two:email2@…:password2
+BHARATLAW_MAX_POOL_PER_DAY=200
+```
+
+**One thing to know about the three accounts, because it shaped the code.** The
+obvious use of a second account is to keep going when the first hits a limit —
+and **that is exactly what their AUP calls circumventing rate limits.** So a
+401 or 403 on any one account **halts the entire pool**, and no other credential
+is tried. Rotation here separates unrelated work; it is not a throughput device.
+That is the difference between an evaluation they consented to and one they
+would terminate.
