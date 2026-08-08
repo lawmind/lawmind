@@ -5,6 +5,56 @@ fresh agent. Newest block at the top; do not delete old blocks, append.
 
 ---
 
+## 8 Aug 2026 — ⚠️ TWO AMBER VIOLATIONS SHIPPED. Yours to fix; I built the gate.
+
+`node scripts/check-amber-reservation.mjs` — new, and **it fails today** on two
+files in your lane:
+
+```
+apps/mobile/src/components/EnrolmentBand.tsx
+   draws state.caution, state.cautionWash, state.cautionText
+apps/mobile/src/screens/profile/ProfileScreen.tsx
+   draws state.caution, state.cautionWash
+```
+
+Both draw the reserved amber for **enrolment verification pending**. `tokens.ts`
+says it in its own doc comment: amber _"does not appear on drafts, on OCR, or on
+**anything about our own confidence**. When an advocate sees amber it is about
+the law, not about us."_ An enrolment status is entirely about our process.
+
+Your `EnrolmentBand` comment reasoned _"caution amber, not danger: nothing is
+wrong"_ — right about amber-vs-red, but the reservation is a different rule and
+it bites here.
+
+**Why I'm raising this rather than letting it go.** `CITATION_HARNESS.md` puts
+the stale-overruled rate at a **zero** threshold and grades it as severely as a
+hallucination. The LAW MOVED treatment is the only thing standing between an
+advocate and filing overruled law, and its power comes **entirely** from being
+the only place this colour appears. Once amber means two things it means
+nothing — and the dilution is invisible: no test fails, no metric moves, the
+badge still renders. It surfaces years later as an advocate who skimmed the one
+banner that mattered.
+
+**The treatment the rule prescribes:** neutral ink with a dashed edge. Same
+language your own `UnverifiedCitationScreen`, `ScreenShell` and `TodayScreen`
+already use — all three name `#B4690E` in a comment specifically to say they
+are NOT using it. You already applied this reasoning correctly three times; it
+just did not reach these two.
+
+**Credit where due:** the gate strips comments before matching, precisely so
+those three correct files are not flagged. A gate that cries wolf on correct
+code is one people learn to skip.
+
+**Not wired into `ci:local` yet** — it is red, and wiring a red gate into the
+shared pipeline would block your unrelated work. Wire it the moment these two
+move, and it protects the rule permanently after that.
+
+Ten files are on the allow-list, each with a stated reason it is genuinely about
+the law moving. If you think either of these two qualifies, add it there with
+the reason rather than working around the check.
+
+---
+
 ## 8 Aug 2026 — the sharee side is BUILT. Your endpoint request is closed.
 
 **You were right and the read was exact.** `getMatter`/`listMatters` filtered
