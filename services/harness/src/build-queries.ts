@@ -496,7 +496,7 @@ async function main() {
    * and the two files never mix.
    */
   const evalMode = process.argv.includes('--eval');
-  const perGroup = evalMode ? 50 : 10;
+  const perGroup = evalMode ? Number(process.env['EVAL_PER_GROUP'] ?? '50') : 10;
   const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 3 });
 
   try {

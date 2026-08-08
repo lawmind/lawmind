@@ -42,6 +42,7 @@ import { getEmbedder, getReranker, toVectorLiteral } from '@lawmind/embed';
 import postgres from 'postgres';
 
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
+import { mcnemarExactP, queriesToSettle } from './stats.ts';
 
 const lever = (process.argv[2] ?? 'rerank') as 'rerank' | 'graph' | 'both';
 const limit = Number(process.env['AB_LIMIT'] ?? '100');
@@ -136,6 +137,26 @@ try {
   const lo = mean - 1.96 * stderr;
   const hi = mean + 1.96 * stderr;
 
+  const gained = diffs.filter((d) => d > 0).length;
+  const lost = diffs.filter((d) => d < 0).length;
+  const discordant = gained + lost;
+
+  /**
+   * **McNemar's exact test, which is the correct one for this data.**
+   *
+   * The normal-approximation interval above is kept because it states the
+   * effect SIZE in the units the gate cares about. It is not the right
+   * significance test, and the first real run showed why: 100 queries produced
+   * 11 gains, 5 losses and **84 unchanged**. An approximation over 100
+   * differences that are almost all zero is driven by 16 observations while
+   * presenting itself as 100.
+   *
+   * `stats.ts` holds the arithmetic and a test checks it against a value
+   * computed by hand. This is not a lower bar — on that run it gives p ≈ 0.21,
+   * the same verdict, reached honestly.
+   */
+  const mcnemarP = mcnemarExactP(gained, lost);
+
   const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
   console.log('');
   console.log(`  success@5   ${pct(successAt5(control))} → ${pct(successAt5(treatment))}`);
@@ -144,10 +165,35 @@ try {
   console.log('');
   console.log(`  paired delta on success@5: ${pct(mean)}  (95% interval ${pct(lo)} to ${pct(hi)})`);
   console.log(
-    `  ${diffs.filter((d) => d > 0).length} queries gained · ` +
-      `${diffs.filter((d) => d < 0).length} lost · ` +
-      `${diffs.filter((d) => d === 0).length} unchanged`,
+    `  ${gained} queries gained · ${lost} lost · ` +
+      `${diffs.length - discordant} unchanged (they carry no information)`,
   );
+  console.log(
+    `  McNemar exact, two-sided, on the ${discordant} discordant pairs: ` +
+      `p = ${mcnemarP === null ? 'n/a' : mcnemarP.toFixed(3)}`,
+  );
+
+  /**
+   * How many queries it would take to settle it, when it is not settled.
+   *
+   * Reported because "not significant" and "no effect" are different findings
+   * and the difference is actionable: one says stop, the other says the run was
+   * too small. Rough — a normal-approximation sample size for a paired binary
+   * test at 80% power, using the discordance observed here.
+   */
+  if (mcnemarP !== null && mcnemarP > 0.05) {
+    /**
+     * "Not significant" and "no effect" are different findings, and only one
+     * of them means stop. This says which.
+     */
+    const need = queriesToSettle(gained, lost, diffs.length);
+    if (need !== null) {
+      console.log(
+        `  not settled. At this effect size ~${need} queries would settle it ` +
+          `(this run: ${diffs.length}).`,
+      );
+    }
+  }
 
   if (rerankMs.length > 0) {
     const sorted = [...rerankMs].sort((a, b) => a - b);
