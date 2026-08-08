@@ -1490,3 +1490,70 @@ and not one more.**
 2. **The lay-facing explainer** — BCI Rule 36, touting, and where educational
    material ends and solicitation begins.
 3. **OD-2's written residency view**, still outstanding.
+
+---
+
+### [ANSWERED — recommendation, £1,499 decision] Bharat.Law's scraping offer · 8 Aug 2026
+
+**Founder reports Bharat.Law will allow scraping after a subscription is bought,
+and asks whether it is worth it.**
+
+**Recommendation: do not buy it for the data. Buy ONE month of Pro at ₹1,499 —
+monthly, not annual — to USE it, and extract nothing.** Full reading of all 87
+pages of their site: `docs/BHARAT_LAW_OFFER.md`.
+
+**Three reasons, and the second is the substantive one.**
+
+**1 · Their written policy prohibits exactly what the verbal permission grants.**
+Their Acceptable Use Policy forbids *"scrape, harvest, or otherwise extract data
+beyond entitlements purchased"*, *"circumvent rate limits, access controls, audit
+logging, watermarking"*, and — decisively for us — *"develop or train **a
+competing model or a benchmark of our model**"*. We are a competing product, and
+that clause bars even the benchmarking use I recommended for Supreme Today. A
+verbal yes against a published no is not a permission we can rely on, and the
+contrast is instructive: **Supreme Today gave us a written licence with perpetual
+retention and knowledge of the intent. This is a conversation.**
+
+**2 · There is no moat to buy.** Supreme Today was worth considering because they
+have been a publisher since 1968 with forty years of HUMAN editorial work.
+**Bharat.Law was founded in 2023.** Their judgments come from the same public
+sources we already hold free — AWS Open Data (17.8M, CC-BY-4.0), e-SCR (~34,000
+with OFFICIAL headnotes), our own 38,341. Their treatment data is the one thing
+we lack, and `/nyai` **does not say whether it is human-curated or computed**. For
+a 2023 company it is almost certainly computed — which makes it an algorithm's
+output over judgments we already have, derivable rather than purchasable, and
+*another model's commentary about law* if we trained on it.
+
+**3 · On court monitoring we are AHEAD of them.** Their own page says *"over
+14,000 district and subordinate courts connected via eCourts"* and **states no
+authorisation anywhere.** We hold a written grant to January 2029 with
+`ALL_COURTS`, independent display and training permitted. Buying their monitoring
+would be buying a weaker version of what we already have lawfully — and
+`CLAUDE.md` §6 forbids buying data from someone whose access was not authorised,
+which here we cannot even confirm.
+
+**Their public site needs no subscription at all.** `robots.txt` explicitly
+invites GPTBot, ClaudeBot and the rest — *"central to our AEO strategy"* — and
+they publish `llms-full.txt` as a machine-readable summary. A subscription buys
+`app.bharat.law` and nothing more.
+
+**What the ₹1,499 month is actually for**, and it is worth it: run **Kharak
+Singh** and **Danamma** — the seven judgments our own extractor could not resolve
+— through their counter-authority. **If their answer is right and specific, their
+treatment data is curated and worth respecting. If it is vague, it is computed and
+we can compute it too.** That single test is worth more than any amount of
+scraping, and it costs one month at monthly rates with no annual lock.
+
+**Pricing intelligence, which is the durable takeaway:** Plus ₹599/mo · **Pro
+₹1,099/mo** · Teams ₹2,999/mo, all annual, all **credit-metered** at
+5,000–10,000 AI credits a month. Two things follow. Their credit meter is exactly
+what Supreme Today's comparison material attacks with "unlimited", which
+strengthens the earlier conclusion that a credit meter is a liability in this
+market. And **the pricing anchor moves a third time**: SCC Online ~₹5,000/mo,
+Prism ~₹1,250, Supreme Today ₹1,667, Bharat.Law ₹1,099. **Four independent points
+now sit 3–5× below the anchor PD-13's justification rests on.**
+
+**One thing worth noticing.** A company that invites a direct competitor to take
+its data does not believe the data is its moat — and they are probably right.
+Which is the same conclusion `TECHNICAL_MOAT.md` reached about us: the corpus is
+not where this is won.
