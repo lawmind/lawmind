@@ -166,7 +166,7 @@ endpoint.
 | `POST /alerts/:id/read` | BUILT |
 | `GET /me/alert-settings` | BUILT |
 | `PATCH /me/alert-settings` | BUILT |
-| `POST /admin/overruled-rechecks/run` | SPECCED |
+| `POST /admin/overruled-rechecks/run` | BUILT |
 | `GET /admin/templates` | SPECCED |
 | `POST /admin/templates` | SPECCED |
 | `POST /admin/templates/:id/score` | SPECCED |

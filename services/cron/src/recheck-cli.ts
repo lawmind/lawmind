@@ -12,7 +12,7 @@
 import { pusherFrom } from '@lawmind/api/push/expo';
 import postgres from 'postgres';
 
-import { runRecheck } from './recheck.ts';
+import { runRecheck } from '@lawmind/api/citations/recheck';
 
 const url = process.env['DATABASE_URL'];
 if (!url) {

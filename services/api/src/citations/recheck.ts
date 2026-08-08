@@ -24,8 +24,8 @@
  * here, deliberately: `ADMIN_SURFACE.md` §15 warns that two implementations drift
  * and the one that drifts is the one that stops notifying.
  */
-import { applyOverruledChange } from '@lawmind/api/citations/fanout';
-import type { Pusher } from '@lawmind/api/push/expo';
+import { applyOverruledChange } from './fanout.ts';
+import type { Pusher } from '../push/expo.ts';
 import type { Sql } from 'postgres';
 
 export type RecheckOutcome = {

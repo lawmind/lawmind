@@ -21,6 +21,7 @@ import {
 } from './admin/disputes.ts';
 import { getLlmCosts, llmCostsQuery } from './admin/llm-costs.ts';
 import { listOcrQueue, ocrQueueQuery } from './admin/ocr-queue.ts';
+import { runOverruledRecheck } from './admin/rechecks.ts';
 import {
   flagBody,
   getPlatform,
@@ -341,6 +342,13 @@ export function createApp(deps: AppDeps) {
     // The citation monitor — production aggregates of the harness metrics.
     app.get('/admin/citations', validate('query', citationsMonitorQuery), async (c) =>
       getCitationsMonitor(c, sql, await userFor(c), c.req.valid('query')),
+    );
+    // The manual re-check. Synchronous — the contract chose a returned result
+    // over a job id to poll, because the job log would have had one consumer.
+    // No pusher: an operator reconciling at 3pm must not light up phones; the
+    // alert rows are still written, which is the durable truth either way.
+    app.post('/admin/overruled-rechecks/run', async (c) =>
+      runOverruledRecheck(c, sql, await userFor(c)),
     );
     // No LLM has ever been called from this codebase — see the module note.
     // This reports the true, empty state, not a placeholder.
