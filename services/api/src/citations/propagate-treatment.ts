@@ -38,12 +38,17 @@
  * WHAT IT REFUSES TO DO
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * **`overruled_in_part` is skipped, always.** `SCHEMA_TRUTH.md` requires
- * `overruled_paras` for `partly_set_aside`, and the extractor records no
- * paragraph numbers — 0 of 38,341 judgments carry them. "Partly set aside, we
- * will not say which part" renders a banner an advocate cannot act on. Applying
- * it as `set_aside` would be worse still: that disables add-to-matter and tells
- * them the whole authority is gone. So those edges are reported and left alone.
+ * **`overruled_in_part` needs its paragraphs, and skips without them.**
+ * `SCHEMA_TRUTH.md` requires `overruled_paras` for `partly_set_aside`, because
+ * "partly set aside, we will not say which part" renders a banner an advocate
+ * cannot act on.
+ *
+ * Until 8 Aug 2026 nothing extracted paragraph numbers, so every such edge was
+ * refused. `@lawmind/ingest/paragraph-refs` now reads them from the **citing
+ * court's own words** near the citation, and the refusal moved rather than
+ * disappeared: an edge whose paragraphs cannot be read with confidence is still
+ * reported and left alone. **It is never widened to `set_aside`** — that
+ * disables add-to-matter and tells an advocate the whole authority is gone.
  *
  * **Nothing is downgraded.** A judgment already carrying a status is never
  * touched, even by a stronger edge — an advocate or an admin may have set it
@@ -56,6 +61,8 @@
  */
 import type { Sql } from 'postgres';
 
+import { extractParagraphRefs, isTrustworthy } from '@lawmind/ingest/paragraph-refs';
+
 import { applyOverruledChange } from './fanout.ts';
 import type { Pusher } from '../push/expo.ts';
 
@@ -67,9 +74,21 @@ import type { Pusher } from '../push/expo.ts';
  * the type system can see; mapped-and-then-filtered is one a reader has to
  * find.
  */
-const STATUS_FOR: Readonly<Record<string, 'set_aside' | 'doubted'>> = {
+const STATUS_FOR: Readonly<Record<string, 'set_aside' | 'partly_set_aside' | 'doubted'>> = {
   overruled: 'set_aside',
   doubted: 'doubted',
+  /**
+   * Added 8 Aug 2026, once `paragraph-refs.ts` existed.
+   *
+   * It was deliberately absent before, because `SCHEMA_TRUTH.md` requires
+   * `overruled_paras` and nothing extracted them — and a mapping that produced
+   * a status the writer would then reject is a refusal a reader has to find.
+   *
+   * It is present now, and the refusal moved rather than disappeared: an edge
+   * whose paragraphs cannot be read **still skips**, and says so. The
+   * difference is that most of them now can be read.
+   */
+  overruled_in_part: 'partly_set_aside',
 };
 
 export type PropagationCandidate = {
@@ -80,8 +99,10 @@ export type PropagationCandidate = {
   citingTitle: string;
   citingDate: string;
   evidence: string | null;
+  /** Read from the citing judgment's own words. Null when nothing was legible. */
+  overruledParas: number[] | null;
   /** Null when the relationship has no safe mapping — reported, never applied. */
-  toStatus: 'set_aside' | 'doubted' | null;
+  toStatus: 'set_aside' | 'partly_set_aside' | 'doubted' | null;
   skipReason?: string;
 };
 
@@ -103,6 +124,8 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
       citing_title: string;
       citing_date: string;
       evidence: string | null;
+      char_offset: number;
+      citing_full_text: string;
     }[]
   >`
     SELECT DISTINCT ON (jc.cited_judgment_id)
@@ -112,7 +135,9 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
            jc.citing_judgment_id,
            citing.case_title              AS citing_title,
            citing.judgment_date::text     AS citing_date,
-           jc.evidence
+           jc.evidence,
+           jc.char_offset,
+           citing.full_text               AS citing_full_text
       FROM judgment_citations jc
       JOIN judgments cited  ON cited.id  = jc.cited_judgment_id
       JOIN judgments citing ON citing.id = jc.citing_judgment_id
@@ -132,7 +157,33 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
   `;
 
   return rows.map((r) => {
-    const toStatus = STATUS_FOR[r.relationship] ?? null;
+    let toStatus = STATUS_FOR[r.relationship] ?? null;
+    let skipReason: string | undefined;
+
+    /**
+     * `partly_set_aside` is the only status that needs more than the edge: it
+     * needs the paragraphs, read from the citing court's own words near the
+     * citation. Where they cannot be read the candidate is reported and left
+     * alone — never widened to `set_aside`, which would tell an advocate the
+     * whole authority is gone.
+     */
+    const finding =
+      toStatus === 'partly_set_aside'
+        ? extractParagraphRefs(r.citing_full_text, r.char_offset)
+        : null;
+
+    if (toStatus === 'partly_set_aside' && !isTrustworthy(finding)) {
+      toStatus = null;
+      skipReason =
+        'partly_set_aside requires the affected paragraphs and none could be read with ' +
+        'confidence near the citation. Reported rather than widened to set_aside: a wrong ' +
+        'paragraph tells an advocate a live passage is dead.';
+    }
+
+    if (toStatus === null && skipReason === undefined) {
+      skipReason = `no safe status mapping for relationship '${r.relationship}'`;
+    }
+
     return {
       judgmentId: r.judgment_id,
       caseTitle: r.case_title,
@@ -140,15 +191,10 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
       citingJudgmentId: r.citing_judgment_id,
       citingTitle: r.citing_title,
       citingDate: r.citing_date,
-      evidence: r.evidence,
+      evidence: finding === null ? r.evidence : `${r.evidence ?? ''} · ${finding.evidence}`.trim(),
+      overruledParas: finding?.paragraphs ?? null,
       toStatus,
-      ...(toStatus === null
-        ? {
-            skipReason:
-              'overruled_in_part needs the affected paragraph numbers, and the extractor ' +
-              'records none. SCHEMA_TRUTH requires them for partly_set_aside.',
-          }
-        : {}),
+      ...(skipReason === undefined ? {} : { skipReason }),
     };
   });
 }
@@ -227,6 +273,7 @@ export async function propagateTreatment(
            */
           trigger: 'recheck',
           overruledByJudgmentId: c.citingJudgmentId,
+          ...(c.overruledParas === null ? {} : { overruledParas: c.overruledParas }),
           overruledNote:
             c.evidence === null
               ? `Treated as ${c.relationship} in ${c.citingTitle} (${c.citingDate}).`

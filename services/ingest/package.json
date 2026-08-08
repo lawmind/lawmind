@@ -20,5 +20,8 @@
     "postgres": "3.4.9",
     "tsx": "4.23.1",
     "unpdf": "1.8.0"
+  },
+  "exports": {
+    "./paragraph-refs": "./src/paragraph-refs.ts"
   }
 }
