@@ -104,8 +104,13 @@ compaction, a new session, and a fresh agent:
   be made from the CLI — both were wrongly queued as blockers.
 - Batch reporting into ONE final message when the work is actually finished.
 
-If context was compacted: re-read docs/OPEN_DECISIONS.md, docs/SCHEMA_TRUTH.md,
-docs/CITATION_HARNESS.md before your next edit.
+THE PLAN LIVES IN docs/CURRENT_PLAN.md — the single ordered queue, what is done,
+what is next, and what is waiting on the founder. A plan held only in a todo tool
+does not survive compaction; that file does. Read it before choosing a task and
+update it when a queue item lands.
+
+If context was compacted: re-read docs/CURRENT_PLAN.md, docs/OPEN_DECISIONS.md,
+docs/SCHEMA_TRUTH.md, docs/CITATION_HARNESS.md before your next edit.
 </lawmind-core>
 CORE_TEXT
 

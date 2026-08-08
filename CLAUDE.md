@@ -15,6 +15,10 @@ Session start, in this order, before Section 2 of the global file:
 4. **`PRODUCT_DECISIONS.md`** → PD-1…PD-14, **settled**. Do not silently reopen
    one. Reasoning is recorded because the reasoning is what keeps the next
    decision consistent
+4b. **`docs/CURRENT_PLAN.md`** → **the single ordered queue, and what to pick
+   next.** It exists because a plan held only in a todo tool does not survive
+   compaction or a fresh agent. Read it before choosing any task; update it when
+   a queue item lands
 5. `docs/SCHEMA_TRUTH.md` → the only authority on data shapes
 6. `docs/CITATION_HARNESS.md` → the rule that can end this product
 
