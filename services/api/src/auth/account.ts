@@ -23,6 +23,7 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { bindPendingShares } from '../matters/shares.ts';
 
 /**
  * The terms an advocate is asked to accept.
@@ -108,6 +109,12 @@ export async function patchMe(
               'unverified', ${body.preferredLanguage ?? 'en'})
       RETURNING id
     `;
+    // An advocate invited to a matter BEFORE they signed up gets bound to it
+    // now. `createShare` stores the identifier and leaves `invited_user_id`
+    // null when no account exists yet; this is the moment that account starts
+    // existing. Without it the invitation stays recorded and invisible
+    // forever, which is what it did until 8 Aug 2026.
+    await bindPendingShares(sql, created!.id);
     return ok(c, { user: await readProfile(sql, created!.id), created: true });
   }
 
@@ -124,6 +131,12 @@ export async function patchMe(
       }
     WHERE id = ${existing.id}
   `;
+  // Also on update: an advocate who signs up first and adds their enrolment
+  // number later must pick up shares addressed to that number. Idempotent —
+  // `bindPendingShares` only touches rows where `invited_user_id IS NULL`, so
+  // running it on every profile write costs one indexed statement and can
+  // never re-point a share that is already bound to somebody.
+  await bindPendingShares(sql, existing.id);
   return ok(c, { user: await readProfile(sql, existing.id), created: false });
 }
 

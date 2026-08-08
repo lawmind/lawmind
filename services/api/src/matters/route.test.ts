@@ -509,6 +509,79 @@ describe('matter sharing — the sharee side, and what it must not see', () => {
     assert.equal(res.status, 404);
   });
 
+  it('binds a share created BEFORE the invitee had an account', async () => {
+    // createShare stores the identifier and leaves invited_user_id null when
+    // no account exists. Nothing bound it until 8 Aug 2026, so an advocate
+    // invited pre-signup stayed locked out permanently while the owner saw a
+    // successful invitation.
+    const phone = `+9198${Math.floor(Math.random() * 100000000)}`;
+    const [ownerRow] = await shareSql<{ id: string }[]>`
+      SELECT id FROM users WHERE auth_id = ${owner.authId}`;
+
+    // The invitation, addressed to somebody who does not exist yet.
+    await shareSql`
+      INSERT INTO matter_shares (matter_id, invited_user_id, invited_identifier, granted_by_user_id)
+      VALUES (${matterId}, NULL, ${phone}, ${ownerRow!.id})`;
+
+    // They arrive, and their profile carries that phone number.
+    const authId = `test-mat-late-${crypto.randomUUID()}`;
+    const email = `${authId}@example.test`;
+    await shareSql`INSERT INTO auth_user (id, name, email, email_verified)
+                   VALUES (${authId}, 'Adv', ${email}, true)`;
+    const token = await signAccessToken({ sub: authId, email }, SECRET);
+    const created = await shareApp.request('/me', {
+      method: 'PATCH',
+      headers: { ...auth(token), 'content-type': 'application/json' },
+      body: JSON.stringify({ fullName: 'Late Joiner', phone }),
+    });
+    assert.equal(created.status, 200);
+
+    const res = await shareApp.request(`/matters/${matterId}`, { headers: auth(token) });
+    assert.equal(res.status, 200, 'the share must bind the moment the account exists');
+
+    await shareSql`DELETE FROM matter_shares WHERE invited_identifier = ${phone}`;
+    await shareSql`DELETE FROM users WHERE auth_id = ${authId}`;
+    await shareSql`DELETE FROM auth_user WHERE id = ${authId}`;
+  });
+
+  it('NEVER re-points a bound share — a recycled phone number grants nothing', async () => {
+    // Indian mobile numbers are reassigned. Resolving access by identifier at
+    // READ time would silently hand somebody else's matter to whoever next
+    // receives that number. Binding is one-time and idempotent instead:
+    // invited_user_id IS NULL is the guard.
+    const [before] = await shareSql<{ invited_user_id: string | null }[]>`
+      SELECT invited_user_id FROM matter_shares WHERE matter_id = ${matterId} LIMIT 1`;
+    assert.ok(before?.invited_user_id, 'fixture: this share is already bound');
+
+    // A different advocate now holds the identifier the share was addressed to.
+    const [row] = await shareSql<{ invited_identifier: string }[]>`
+      SELECT invited_identifier FROM matter_shares WHERE matter_id = ${matterId} LIMIT 1`;
+    const authId = `test-mat-recycled-${crypto.randomUUID()}`;
+    const email = `${authId}@example.test`;
+    await shareSql`INSERT INTO auth_user (id, name, email, email_verified)
+                   VALUES (${authId}, 'Adv', ${email}, true)`;
+    const token = await signAccessToken({ sub: authId, email }, SECRET);
+    await shareApp.request('/me', {
+      method: 'PATCH',
+      headers: { ...auth(token), 'content-type': 'application/json' },
+      body: JSON.stringify({ fullName: 'Recycled Number', phone: row!.invited_identifier }),
+    });
+
+    const [after] = await shareSql<{ invited_user_id: string | null }[]>`
+      SELECT invited_user_id FROM matter_shares WHERE matter_id = ${matterId} LIMIT 1`;
+    assert.equal(
+      after?.invited_user_id,
+      before?.invited_user_id,
+      'a bound share must never be re-pointed by a later holder of the identifier',
+    );
+
+    const res = await shareApp.request(`/matters/${matterId}`, { headers: auth(token) });
+    assert.equal(res.status, 404, 'the recycled-number holder gets nothing');
+
+    await shareSql`DELETE FROM users WHERE auth_id = ${authId}`;
+    await shareSql`DELETE FROM auth_user WHERE id = ${authId}`;
+  });
+
   it('a REVOKED share closes access, because revocation is a timestamp not a delete', async () => {
     await shareSql`
       UPDATE matter_shares SET revoked_at = now(), revoked_by_user_id = invited_user_id

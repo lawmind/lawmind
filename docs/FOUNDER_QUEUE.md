@@ -503,12 +503,13 @@ module for the UP Police table, and a new comparator writing to
 `SCHEMA_TRUTH.md#statute_mappings`.
 
 ### [OPEN] Saved-search feed — confirm before RCC builds the client surface · RCC · 8 Aug 2026
+
 **Needs:** a yes/no on `FEATURE_PARITY.md` §3's proposed PD-5 reframe — "a
 saved-search feed inside the app, never a push."
 
 **Why it is not RCC's to just build:** `docs/API_CONTRACTS.md` says it in the
-endpoint's own doc: *"The endpoint existing is not approval to build the
-surface... do not build the client surface until that is confirmed."* All four
+endpoint's own doc: _"The endpoint existing is not approval to build the
+surface... do not build the client surface until that is confirmed."_ All four
 endpoints (`GET/POST/DELETE /saved-searches`, `GET /saved-searches/:id/feed`)
 are BUILT server-side, unused client-side. This was flagged as an open item in
 `FEATURE_PARITY.md` §3/§7 on 5 Aug but never actually escalated here — found by
@@ -519,7 +520,43 @@ similar, once confirmed. Zero client code exists; nothing to undo either way.
 
 ---
 
-### [OPEN] Matter sharing only works one direction — needs an LCC endpoint change · RCC · 8 Aug 2026
+### [RESOLVED 8 Aug 2026] Matter sharing only works one direction · RCC raised, LCC fixed
+
+**Both halves fixed and tested against a real database.** RCC's read of the
+source was exactly right and the endpoint request was the correct call.
+
+**One deliberate departure from the suggested fix, and it matters.** The
+request was to add the `OR EXISTS (share)` clause to `getMatter`,
+`listMatters` **and the briefing path**. The first two are done. Briefings are
+**not**, and neither are documents — PD-4 grants a share _"the court record and
+shared notes only"_, and a briefing is generated FOR the owner carrying a
+preparation checklist derived from their matter. Everything the rule does not
+name is withheld. `GET /briefings/:id` stays owner-only in all four of its
+access checks, verified.
+
+Also: the redaction is done **in SQL, not in the mapper**. A plain
+`OR EXISTS` would have handed the sharee the owner's PRIVATE notes — a
+confidentiality breach between two advocates, which is the exact hazard PD-3
+cites for refusing chamber-wide sharing.
+
+**A second gap was found behind the first**, and is also fixed:
+`createShare` only linked `invited_user_id` when the invitee already had an
+account, while its own comment promised _"the share binds when they arrive."_
+Nothing bound it — invite pre-signup and they were locked out permanently.
+`bindPendingShares` now binds at profile creation and profile update. It is
+one-time and idempotent (`invited_user_id IS NULL`), deliberately **not** an
+identifier match at read time: Indian mobile numbers are recycled, and read-time
+matching would hand a stranger somebody else's matter years later. Both cases
+are asserted.
+
+**RCC can now build the sharee side.** `GET /matters` and `GET /matters/:id`
+both return an `access: 'owner' | 'shared'` field so the client never has to
+infer "this is shared with me" from an empty documents array.
+
+---
+
+### [SUPERSEDED — see above] Matter sharing only works one direction · RCC · 8 Aug 2026
+
 **Needs:** LCC to add sharee visibility to `GET /matters`, `GET /matters/:id`,
 and the briefing-fetch path — an `OR EXISTS (SELECT 1 FROM matter_shares WHERE
 matter_id = matters.id AND invited_user_id = :userId AND revoked_at IS NULL)`
@@ -547,6 +584,7 @@ the endpoint exists; flagging rather than blocking on it.
 ---
 
 ### [OPEN] Draft template library and court rules reader have no data source · RCC · 8 Aug 2026
+
 **Needs:** a founder call on whether these are in scope at all before content
 sourcing starts, same class of question as the fee/limitation datasets already
 queued.
@@ -568,6 +606,7 @@ and court-rules text, sourced the same way the fee schedule would need to be.
 ---
 
 ### [OPEN] In-app purchase — vendor pick and store account setup · RCC · 8 Aug 2026
+
 **Needs:** (1) approval to add `react-native-purchases` (RevenueCat) as a
 dependency — a new vendor, proprietary SaaS behind an MIT-licensed SDK, not
 covered by `docs/OSS_STACK.md`'s OSS-first default; (2) Apple Developer Program

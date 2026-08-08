@@ -233,3 +233,58 @@ export async function setEventVisibility(
     },
   });
 }
+
+/**
+ * Bind any share that was created for this advocate **before they had an
+ * account**, at the moment they gain the identifier it was addressed to.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE GAP THIS CLOSES
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `createShare` resolves `invited_user_id` by matching the typed identifier
+ * against `users.bar_enrolment_number` or `users.phone`. A miss is deliberately
+ * not an error — inviting somebody who has not signed up yet is normal — and
+ * the comment there promised *"the share binds when they arrive."*
+ *
+ * **Nothing bound it.** Invite a colleague pre-signup, they sign up, and they
+ * stayed locked out permanently while the owner saw a successful invitation.
+ * Found 8 Aug 2026 while fixing the sharee read path RCC caught; the read path
+ * was only half the feature.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY BIND HERE AND NOT AT READ TIME
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The tempting one-line fix is to resolve access by identifier on every read —
+ * `WHERE invited_identifier = <my phone>`. **That is a confidentiality bug
+ * waiting to happen.** Indian mobile numbers are recycled, so the advocate who
+ * receives a reassigned number would silently inherit access to somebody
+ * else's matter, years later, with no action by anyone.
+ *
+ * Binding is therefore a **one-time, auditable event** at the moment the
+ * identifier is established, and `invited_user_id IS NULL` makes it
+ * idempotent — a share already bound to somebody is never re-pointed. Changing
+ * your phone number later does not hand your matters to the next holder of the
+ * old one.
+ */
+export async function bindPendingShares(sql: Sql, userId: string): Promise<number> {
+  const bound = await sql<{ id: string }[]>`
+    UPDATE matter_shares s
+    SET invited_user_id = ${userId}
+    FROM users u
+    WHERE u.id = ${userId}
+      -- Only shares nobody is bound to yet. Never re-point a live share.
+      AND s.invited_user_id IS NULL
+      AND s.revoked_at IS NULL
+      AND (
+        (u.bar_enrolment_number IS NOT NULL AND s.invited_identifier = u.bar_enrolment_number)
+        OR s.invited_identifier = u.phone
+      )
+      -- An owner cannot end up as their own sharee through a recycled
+      -- identifier; createShare refuses that case and so does this.
+      AND s.granted_by_user_id <> ${userId}
+    RETURNING s.id
+  `;
+  return bound.length;
+}
