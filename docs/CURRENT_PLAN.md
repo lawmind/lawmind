@@ -204,7 +204,40 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       rerank **mean 11,424 ms · p95 55,074 ms**, against Gate S1's **3 s for the
       entire search request**. *"Accuracy is moot until this fits."*
 
-- [x] **AND THE LATENCY IS FIXED — measured, 55× — 9 Aug 2026.**
+- [ ] **~~AND THE LATENCY IS FIXED — 55×~~ — WRONG. RETRACTED SAME DAY.**
+
+      **The 209 ms benchmark used ~50-character synthetic strings. Real
+      judgment passages are 2,169–2,641 characters (median 2,519) — roughly
+      **50× longer** — and cross-encoder attention cost grows with the SQUARE of
+      sequence length.
+
+      **Measured on real passages from the corpus:**
+
+      | reranker | 20 REAL candidates | 20 synthetic |
+      | --- | --- | --- |
+      | q8 on CPU | **11,424 ms** (A/B mean) | — |
+      | **fp32 on DirectML** | **30,539 ms** · 1,527 ms each | **126 ms** |
+
+      **fp32 on GPU is nearly 3× WORSE than q8 on CPU for the real workload**,
+      and it sits at **7.9 GB of 8.1 GB** — which is why the fp32 A/B crashed at
+      query ~210 with exit 13. The card cannot hold attention tensors for twenty
+      2,500-character passages.
+
+      **The latency breach is UNSOLVED.** Gate S1 allows 3 s for the whole
+      request; the best measured reranker is 11.4 s.
+
+      **Next hypothesis, untested and not yet a claim:** cross-encoders normally
+      truncate to **512 tokens**, and 2,500 characters is ~600+. If the
+      tokeniser is not truncating, we are paying full-length sequence cost for
+      passages the model was never meant to see whole. **Truncation is the first
+      thing to measure**, before any GPU endpoint is priced — it may cost
+      nothing and change everything.
+
+      **What stands from the earlier entry:** the fp32 weights really were
+      missing (`model.onnx_data`, 2.27 GB) and fp32 really does load now. Only
+      the speed claim was wrong.
+
+- [ ] **~~The 55× fix~~ — see above.** Retained for the record:
 
       | reranker | 20 candidates | verdict |
       | --- | --- | --- |
