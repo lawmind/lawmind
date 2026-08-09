@@ -38,6 +38,15 @@ export type ScoredQuery = {
    */
   drm: number;
   topTitles: string[];
+  /**
+   * The top-K results as EVIDENCE for the generation path — added 9 Aug 2026.
+   *
+   * Carried here rather than re-retrieved because the generation metrics must
+   * grade the answer produced from **the retrieval the gate actually scored**.
+   * A second retrieval pass could return a different set, and then
+   * `hallucinationRate` would describe an answer nobody was graded on.
+   */
+  retrieved: { judgmentId: string; caseTitle: string; passage: string }[];
 };
 
 export type HarnessQuery = {
@@ -217,5 +226,10 @@ export async function scoreQuery(
     returned: results.length,
     drm: topK.length === 0 ? 1 : (topK.length - hits) / topK.length,
     topTitles: topK.map((r) => r.caseTitle),
+    retrieved: topK.map((r) => ({
+      judgmentId: r.judgmentId,
+      caseTitle: r.caseTitle,
+      passage: r.operativeParagraph,
+    })),
   };
 }

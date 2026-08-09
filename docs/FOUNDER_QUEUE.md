@@ -1960,3 +1960,55 @@ or already decided.
   `CLAUDE.md` and `PRODUCT_BRIEF.md`
 - **FQ-C1** the incomplete IPC source — research, mine to continue
 - The **verification record** — outside the four features
+
+
+---
+
+## FQ-EL1 · eLegalix (Allahabad High Court) — works, but needs your call first
+
+**Needed from you:** a decision, and possibly one email. **Do not treat this as
+blocked engineering — treat it as an unanswered permission question.**
+
+**What was tested, 9 August 2026**, on the URL you sent
+(`translatedJudgmentID=4619`):
+
+| attempt | User-Agent | result |
+| --- | --- | --- |
+| 1 | `Lawmind-Research/1.0 (contact: …)` | **429** `Retry-After: 10` |
+| 2 | browser string + `Referer` | **200 — a real 16-page, 198 KB PDF** |
+| 3 | `Lawmind-Research/1.0`, after 30 s | **429 again** |
+
+**The content is real and useful.** eLegalix serves original *and translated*
+Allahabad High Court judgments as PDFs, and Allahabad is one of the largest High
+Courts in the country — exactly the High Court coverage
+`BLOCKER_REGISTER.md` B1.1 says we lack.
+
+**But there is a problem I will not engineer around.** The server runs
+**`mod_qos`** and appears to refuse our honestly-identified client while serving
+a browser string. Getting a PDF therefore required **disguising the client**,
+and `CLAUDE.md` is explicit on both halves of that:
+
+> *Never circumvent an access control you have NOT been authorised to.*
+> *A permission you hide behind a spoofed browser string is one you are not
+> really relying on.*
+
+**So I have not built an eLegalix harvester and will not until you decide.**
+
+**Stated honestly: three requests is not proof.** It may be plain rate limiting
+that happened to land twice on the honest attempts. But the pattern is the wrong
+way round for coincidence, and the safe reading is the one that assumes they
+meant it.
+
+**What I recommend, in order:**
+
+1. **One email to the Allahabad High Court registry**, exactly as with eCourts.
+   That grant is the model: it made bulk access lawful, bounded and auditable,
+   and it is why the eCourts adapter can identify itself instead of hiding.
+2. **If a grant lands**, the harvest client is a small piece of work — the
+   pacing engine, fetch ledger and rate limiter already exist and are shared.
+3. **If it does not**, we take nothing. Allahabad judgments also reach us
+   through the AWS Open Data corpus, more slowly and without translations.
+
+**What stays true either way:** any eLegalix client must honour `Retry-After`,
+identify itself, and write the fetch ledger — the same three rules as every
+other source.

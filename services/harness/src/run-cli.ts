@@ -18,6 +18,7 @@ import { getEmbedder, getReranker, RERANKER_MODEL_ID, toVectorLiteral } from '@l
 import postgres from 'postgres';
 
 import { assessReadiness, countCorpus, explainRefusal } from './corpus-readiness.ts';
+import { gradeReferences, generate } from './generate.ts';
 import { type HarnessMetrics, grade, rate } from './metrics.ts';
 import { measureOverruledLeakage, measureStaleOverruled } from './overruled-checks.ts';
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
@@ -228,26 +229,99 @@ async function main(): Promise<number> {
      * grades as `notMeasured`, which fails. That is the honest state and it is
      * supposed to be uncomfortable.
      */
-    const generationImplemented = false;
+    /**
+     * **The generation path, wired 9 Aug 2026.** Every query the gate scored is
+     * answered from ITS OWN top-5 as evidence, and the two metrics are computed
+     * from what the pipeline would show.
+     *
+     * `resolveReferences` never drops, so `silentDropRate` is a real
+     * observation of that invariant against real model output rather than an
+     * assumption about it.
+     */
+    const apiKey = process.env['OPENROUTER_API_KEY'];
+    let hallucinationRate: number | null = null;
+    let silentDropRate: number | null = null;
+    let generationCostUsd = 0;
+
     console.log('');
     console.log('generation');
     console.log('-'.repeat(78));
-    console.log('  No generation path exists in this package — no model is called.');
-    console.log('  hallucinationRate, silentDropRate and adversarialPassRate are NOT MEASURED,');
-    console.log('  and the gate fails on that. Not having measured is not having passed.');
-    console.log('  A model key being PRESENT is not a measurement, and used to be treated');
-    console.log('  as one here. See the note above.');
+
+    if (!apiKey) {
+      console.log('  OPENROUTER_API_KEY is absent — no model is called.');
+      console.log('  hallucinationRate and silentDropRate are NOT MEASURED, and the gate');
+      console.log('  fails on that. Not having measured is not having passed.');
+    } else {
+      let refs = 0;
+      let hallucinated = 0;
+      let dropped = 0;
+      let answered = 0;
+      let failed = 0;
+
+      for (const s of scored) {
+        if (s.retrieved.length === 0) continue;
+        const evidence = s.retrieved.map((r, i) => ({
+          id: `E${i + 1}`,
+          judgmentId: r.judgmentId,
+          caseTitle: r.caseTitle,
+          passage: r.passage,
+        }));
+        try {
+          const out = await generate(s.id, evidence);
+          const g = gradeReferences(out.references);
+          refs += g.total;
+          hallucinated += g.hallucinated;
+          // Observed, not assumed: every emitted ID must come back rendered.
+          dropped += out.citedIds.length - out.references.length;
+          generationCostUsd += out.usage.costUsd;
+          answered += 1;
+        } catch (error) {
+          /**
+           * A failed call is NOT a clean query. Counting it as zero references
+           * would let an outage improve the score, which is the same class of
+           * bug as a key standing in for a measurement.
+           */
+          failed += 1;
+          console.log(
+            `  ${s.id.padEnd(22)} CALL FAILED — ${(error as Error).message.slice(0, 60)}`,
+          );
+        }
+      }
+
+      console.log(
+        `  answered      ${answered} of ${scored.length} queries · ${failed} call failures`,
+      );
+      console.log(`  references    ${refs}`);
+      console.log(`  hallucinated  ${hallucinated}  (shown verified, nothing confirms)`);
+      console.log(`  dropped       ${dropped}  (emitted then not rendered)`);
+      console.log(`  cost          $${generationCostUsd.toFixed(6)}`);
+
+      if (failed > 0) {
+        console.log('  Calls failed, so neither rate is reported. A partial run is not a run.');
+      } else if (refs === 0) {
+        console.log('  The model cited NOTHING across every query. That is not a clean run —');
+        console.log('  it is a run with no observations, and it is reported as not measured.');
+      } else {
+        hallucinationRate = hallucinated / refs;
+        silentDropRate = dropped / refs;
+      }
+    }
 
     /* ---------------------------------------------------------------- grade -- */
 
     const metrics: HarnessMetrics = {
-      // Never a literal 0 from a flag. 0 is a MEASURED result and must be earned.
-      hallucinationRate: generationImplemented ? 0 : null,
-      silentDropRate: generationImplemented ? 0 : null,
+      // Measured above, or null. Never a literal 0 derived from a flag.
+      hallucinationRate,
+      silentDropRate,
       staleOverruledRate: rate(stale.stale, stale.tested),
       overruledLeakage: leakage.retrieved === 0 ? null : leakage.leaked,
       successAt5,
-      adversarialPassRate: generationImplemented ? 0 : null,
+      /**
+       * Still null: the adversarial set has no runner. `adversarial.json`
+       * grades by refusal against recorded wrong answers, which is a different
+       * harness from this one and is not written yet.
+       */
+      adversarialPassRate: null,
     };
 
     const verdicts = grade(metrics);
