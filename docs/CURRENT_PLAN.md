@@ -203,9 +203,46 @@ volume ceiling costs nothing until data fills it.
       column. A judgment ingested from this bucket is **searchable and not
       citable**. This survey does not soften that.
 - [ ] **A3.2** **High Courts, last 10 years first** — OD-4's stated order.
-- [ ] **A3.3** Measure PDF→text extraction on **1,000 real HC PDFs** and publish
-      an honest completion date. **Extraction is the cost, not download or
-      storage** — AWS sponsors the transfer.
+- [x] **A3.3 MEASURED 10 Aug 2026 — `docs/HC_EXTRACTION_COST.md`.** 1,000 PDFs,
+      40 from each of 25 courts, random offset into rotating parquet files, 2016+.
+      Same `unpdf` path the SC loader uses. `pnpm --filter @lawmind/ingest hc:extract`.
+
+      **EXTRACTION IS NOT THE BOTTLENECK.** 99.4% extracted · 0.2% need OCR ·
+      0.4% corrupt. **154 ms download + 32 ms extract = 186 ms per PDF**, so
+      15,771,566 documents is **4.2 days on eight workers** (33.9 on one).
+      **Download dominates extraction 5:1** — the lever is concurrency, not a
+      faster PDF library, and the bucket's tolerated rate is NOT measured.
+
+      **Text volume corroborates `CORPUS_TIERING.md`.** Mean 5,823 chars →
+      **96.4 GB raw** for the decade; the 37 GB brotli budget implies 2.9×
+      compression, entirely ordinary. **Two independent estimates agree and the
+      storage plan stands.**
+
+      **OCR burden 0.2% ≈ 31,700 documents** — a rounding error, not the feared
+      disaster. Not costed: paddleocr/tesseract are at the Devanagari floor.
+
+      **THE AGGREGATE HID THE IMPORTANT NUMBER, and this is the finding.** The
+      stratified sample reported `missing 0.0%`. Chasing the four Bombay failures
+      showed **Bombay 2023–2026 at 29.5% missing and 10% failed**, and HEAD-checks
+      per bench show it is **whole bench-years**: 2026 `newas` 0/12, 2026 `newos`
+      0/12, 2025 `newas` 1/12, 2023 `newos_spl` 0/12, while every 2024 bench is
+      12/12. **Metadata does not imply a PDF.** So: treat 404 as an expected
+      per-bench-year outcome, probe twelve HEADs before queueing thousands of
+      rows, and never trust a corpus-wide average for this — it averaged 0% over
+      a court sitting at 29.5%.
+
+      **Two exclusions fall out.** `bench=testcase` is a test fixture publishing
+      ~16,000 rows a year at Bombay. And **Bombay 2016–2017 is 16.0% `Invalid
+      PDF structure`** against a corpus-wide 0.4% — court-and-era specific.
+
+      **Per-court text length spreads 11× (Delhi 17,424 → Uttarakhand 1,519),
+      which retires a generalisation:** `DATASETS.md`'s *"2,223 chars for Punjab
+      & Haryana"* was a true number about two bottom-of-distribution courts read
+      as a corpus constant. 18% under 1,000 chars still stands.
+
+      **NOT settled and unchanged:** embedding still costs ~3,956 GPU-hours
+      (`DATASETS.md`), and **neither variant has a citation column — an ingested
+      HC judgment is searchable and not citable.** That remains the disqualifier.
 - [ ] **A3.4** Tier 2 rows for every judgment: metadata + one `bit(1024)` vector.
 - [ ] **A3.5** R2: brotli text + flat fp32 vectors. **PDFs are never copied** —
       the AWS bucket is public, permanent and CC-BY-4.0; we store a key.

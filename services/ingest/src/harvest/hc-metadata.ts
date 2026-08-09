@@ -167,6 +167,42 @@ export async function orderTypeTally(key: string): Promise<Map<string, number>> 
   });
 }
 
+/**
+ * Where a row's PDF lives. **Verified against the bucket, not inferred**, and
+ * the first two guesses were both wrong:
+ *
+ * - the bench in the metadata key is the bench in the PDF key — Delhi is
+ *   `bench=dhcdb`, not `bench=delhihc`, and a guessed bench 404s;
+ * - `pdf_link` is a *path* on the plain variant
+ *   (`court/cnrorders/<bench>/orders/<CNR>_1_<date>.pdf`) and a *bare filename*
+ *   on the mobile variant (`orders_2024_...pdf`). **Only the basename is
+ *   usable**, and the partition supplies the rest.
+ *
+ * `pdf_exists` in the metadata is false on rows whose PDF returns 200, so the
+ * column is not an availability oracle — `DATASETS.md` recorded that and it
+ * still holds. Ask the bucket.
+ */
+export function pdfUrlFor(
+  partitions: { year: number; courtCode: string; bench: string },
+  pdfLink: string,
+): string {
+  const base = pdfLink.split('/').pop() ?? pdfLink;
+  const { year, courtCode, bench } = partitions;
+  return `${HC_BUCKET}/data/pdf/year=${year}/court=${courtCode}/bench=${bench}/${base}`;
+}
+
+/** A window of real rows from one metadata file. Used for sampling, never for ingest. */
+export async function sampleRows<T = Record<string, unknown>>(
+  key: string,
+  rowStart: number,
+  rowEnd: number,
+): Promise<T[]> {
+  return withRetry(async () => {
+    const file = await asyncBufferFromUrl({ url: `${HC_BUCKET}/${key}` });
+    return (await parquetReadObjects({ file, rowStart, rowEnd })) as T[];
+  });
+}
+
 /** Runs `fn` over `items` with bounded concurrency. A 1,493-file survey must not open 1,493 sockets at once. */
 export async function mapConcurrent<T, R>(
   items: T[],

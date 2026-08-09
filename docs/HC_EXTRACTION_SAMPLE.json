@@ -1,0 +1,200 @@
+{
+  "generatedAt": "2026-08-09T21:09:30.156Z",
+  "variant": "plain",
+  "fromYear": 2023,
+  "sampled": 200,
+  "courtsCovered": 1,
+  "wallMs": 2784,
+  "concurrency": 8,
+  "outcomes": {
+    "extracted": 116,
+    "needs_ocr": 5,
+    "missing": 59,
+    "failed": 20
+  },
+  "perPdf": {
+    "downloadMsMean": 121.95867768595042,
+    "downloadMsP95": 249,
+    "extractMsMean": 21.834710743801654,
+    "extractMsP95": 62,
+    "bytesMean": 115335.62809917355,
+    "pagesMean": 3.7024793388429753
+  },
+  "textLength": {
+    "mean": 3054.4224137931033,
+    "median": 1291,
+    "p95": 8788,
+    "under1000": 41
+  },
+  "projection": {
+    "documents": 15771566,
+    "msPerDocument": 143.79338842975207,
+    "byWorkers": {
+      "1": {
+        "hours": 629.9574766620752,
+        "days": 26.248228194253134,
+        "perWorkerHours": 629.9574766620752
+      },
+      "8": {
+        "hours": 78.7446845827594,
+        "days": 3.2810285242816417,
+        "perWorkerHours": 629.9574766620752
+      },
+      "32": {
+        "hours": 19.68617114568985,
+        "days": 0.8202571310704104,
+        "perWorkerHours": 629.9574766620752
+      },
+      "128": {
+        "hours": 4.921542786422463,
+        "days": 0.2050642827676026,
+        "perWorkerHours": 629.9574766620752
+      }
+    }
+  },
+  "ocrShare": 0.04132231404958678,
+  "failures": [
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000392024_1_2024-10-04.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000162023_15_2024-03-22.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000142024_3_2024-04-12.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000562023_1_2024-12-06.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000232024_1_2024-04-19.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000332024_1_2025-01-10.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000242023_1_2024-08-16.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060001992012_9_2024-04-12.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000722018_1_2024-06-14.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000102023_17_2024-04-19.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000472024_1_2024-10-18.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000752024_1_2025-01-03.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000422024_1_2024-10-25.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000312020_1_2024-11-14.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000362020_1_2024-11-29.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000402021_48_2024-03-15.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000162024_1_2024-03-15.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000602023_1_2024-10-04.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000212022_15_2024-02-02.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos_spl/HCBM060000052024_1_2024-06-21.pdf",
+      "court": "Bombay High Court",
+      "error": "Invalid PDF structure."
+    }
+  ],
+  "needsOcrUrls": [
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=hcbgoa/HCBM050016092023_1_2024-03-21.pdf",
+      "court": "Bombay High Court",
+      "pages": 23,
+      "characters": 1620
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=hcbgoa/HCBM050032142010_1_2024-04-19.pdf",
+      "court": "Bombay High Court",
+      "pages": 5,
+      "characters": 455
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=27_1/bench=hcbgoa/HCBM050027072024_1_2025-07-01.pdf",
+      "court": "Bombay High Court",
+      "pages": 22,
+      "characters": 650
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=27_1/bench=hcbgoa/HCBM050041172024_1_2025-08-21.pdf",
+      "court": "Bombay High Court",
+      "pages": 18,
+      "characters": 1647
+    },
+    {
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=27_1/bench=hcbgoa/HCBM050030842010_1_2025-03-20.pdf",
+      "court": "Bombay High Court",
+      "pages": 30,
+      "characters": 973
+    }
+  ],
+  "perCourt": {
+    "Bombay High Court": {
+      "sampled": 200,
+      "extracted": 116,
+      "needsOcr": 5,
+      "missing": 59,
+      "failed": 20,
+      "meanChars": 3054.4224137931033
+    }
+  }
+}
