@@ -302,6 +302,9 @@ importers:
       '@lawmind/embed':
         specifier: workspace:*
         version: link:../embed
+      '@lawmind/ingest':
+        specifier: workspace:*
+        version: link:../ingest
       postgres:
         specifier: 3.4.9
         version: 3.4.9
