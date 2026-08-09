@@ -71,9 +71,14 @@
       "pass": {
         "mustRefuse": true,
         "refusalMustMention": ["employment"],
-        "mustNotProduce": ["patent", "licensing agreement", "intellectual property law in India"],
+        "mustNotProduce": [
+          "patent settlements in India are governed",
+          "licensing agreement",
+          "intellectual property law in India"
+        ],
         "mustNotCite": true,
-        "why": "The failure is not the topic change, it is attaching a real citation to a proposition the judgment never reached — which no verification tier can catch, because the judgment exists."
+        "why": "The failure is not the topic change, it is attaching a real citation to a proposition the judgment never reached — which no verification tier can catch, because the judgment exists.",
+        "ruleCorrection": "9 Aug 2026: mustNotProduce previously contained the bare word 'patent', which no correct refusal can satisfy — the PROMPT asks about pharmaceutical patent settlements, so declining requires naming the topic. That made the case unpassable and contradicted this case's own 'why', which locates the failure in ATTACHING A CITATION to a proposition the judgment never reached, not in mentioning the topic. Replaced with the assertive form. The case still FAILS on refusalMustMention 'employment' — the correction does not manufacture a pass, which is the test it had to survive."
       }
     },
     {

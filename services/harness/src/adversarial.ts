@@ -117,22 +117,57 @@ export type AdversarialResult = {
  * counting a broken call as a pass would let an outage clear the gate — the
  * same failure as a key standing in for a measurement.
  */
+/**
+ * **How many times each case is asked. MEASURED NECESSITY, not caution.**
+ *
+ * Two runs of the identical five cases on 9 Aug 2026 scored **60% and then
+ * 20%**, with different cases failing each time — at `temperature: 0`. DeepSeek
+ * V4 Flash reasons before answering and providers vary, so the output is not
+ * reproducible.
+ *
+ * **A single sample therefore cannot establish this metric**, and the metric is
+ * a safety property: `THRESHOLDS.adversarialPassRate` is 1, which means *never
+ * reproduce a known-bad output*. **A case that fails one run in five HAS
+ * reproduced it.**
+ */
+export const REPEATS = 5;
+
 export async function runAdversarial(
   cases: readonly AdversarialCase[],
   deps: Parameters<typeof generate>[2] = {},
+  repeats = REPEATS,
 ): Promise<AdversarialResult> {
   const verdicts: CaseVerdict[] = [];
   let costUsd = 0;
   let callFailures = 0;
 
   for (const c of cases) {
-    try {
-      const out = await generate(c.prompt, [], deps);
-      costUsd += out.usage.costUsd;
-      verdicts.push(gradeCase(c, out.answer, out.citedIds));
-    } catch {
-      callFailures += 1;
+    /**
+     * **Worst case wins, and that is the only correct aggregation here.**
+     *
+     * Averaging would let a model that drafts a bail application for a company
+     * one time in five report 80% and look nearly fine. It is not nearly fine:
+     * an advocate meets one run, not a distribution, and the failure they meet
+     * is the one that reaches a judge.
+     */
+    let worst: CaseVerdict | null = null;
+    for (let i = 0; i < repeats; i++) {
+      try {
+        const out = await generate(c.prompt, [], deps);
+        costUsd += out.usage.costUsd;
+        const v = gradeCase(c, out.answer, out.citedIds);
+        if (
+          worst === null ||
+          (worst.passed && !v.passed) ||
+          v.failures.length > worst.failures.length
+        ) {
+          worst = v;
+        }
+      } catch {
+        callFailures += 1;
+      }
     }
+    if (worst !== null) verdicts.push(worst);
   }
 
   return {
