@@ -67,12 +67,49 @@ export function getReranker(): Promise<Reranker> {
   return cached;
 }
 
+/**
+ * Execution provider for the cross-encoder. **Defaults to CPU.**
+ *
+ * The reranker is the heaviest CPU burst in an A/B run — it scores 50
+ * query-passage pairs per query — and moving it to DirectML both frees the CPU
+ * and may lift the memory ceiling: `CURRENT_PLAN` records that **fp32 OOMs**
+ * on this machine, and an 8 GB card is a different budget from the ONNX CPU
+ * arena.
+ *
+ * **Default stays CPU deliberately, and MEASUREMENT AGREES — 9 Aug 2026.**
+ *
+ * Two reasons, and the second was a surprise:
+ *
+ * 1. The recorded baseline — q8, +6.0 points, McNemar p = 0.210 — was measured
+ *    on CPU. A device change can move scores, and switching the default would
+ *    silently compare a new arm against an old control.
+ * 2. **q8 on DirectML is SLOWER, not faster: 230 ms per passage, 11.5 s to
+ *    score one query's 50 candidates.** Int8 kernels are poorly accelerated on
+ *    DML — the quantisation that makes this model fit on a CPU is exactly what
+ *    stops the GPU helping it. **The opposite of the embedder**, which is fp32
+ *    and gains 2.8× on the same card.
+ *
+ * **So the useful split is: embeddings on DML, reranking on CPU.** Set this to
+ * `dml` only alongside `RERANK_DTYPE=fp32`, and only after re-measuring.
+ *
+ * **fp32 does not currently load at all, and it is NOT the OOM `CURRENT_PLAN`
+ * records.** It fails on a missing `onnx/model.onnx_data` — the fp32 build uses
+ * ONNX external-data format and only `model.onnx` was ever cached. The
+ * companion file exists on the Hub and is fetchable; until it is fetched, fp32
+ * is untested rather than broken.
+ */
+export function rerankDevice(): 'cpu' | 'dml' | 'webgpu' {
+  const d = process.env['RERANK_DEVICE'];
+  return d === 'dml' || d === 'webgpu' ? d : 'cpu';
+}
+
 async function load(): Promise<Reranker> {
   const dtype = (process.env['RERANK_DTYPE'] ?? 'q8') as 'q8' | 'fp32' | 'fp16';
+  const device = rerankDevice();
 
   const [tokenizer, model] = await Promise.all([
     AutoTokenizer.from_pretrained(RERANKER_MODEL_ID),
-    AutoModelForSequenceClassification.from_pretrained(RERANKER_MODEL_ID, { dtype }),
+    AutoModelForSequenceClassification.from_pretrained(RERANKER_MODEL_ID, { dtype, device }),
   ]);
 
   return {
