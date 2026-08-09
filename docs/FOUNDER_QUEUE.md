@@ -2012,3 +2012,89 @@ meant it.
 **What stays true either way:** any eLegalix client must honour `Retry-After`,
 identify itself, and write the fetch ledger — the same three rules as every
 other source.
+
+
+---
+
+# ============================================================
+# WHAT I NEED FROM YOU — consolidated, end of 9 August 2026
+# ============================================================
+
+**Nothing here blocks me today.** Everything below is either a decision only you
+can make, or a service I cannot sign up for. The lane kept going regardless.
+
+---
+
+## A · THINGS THAT COST MONEY
+
+### A1 · A GPU inference endpoint for the reranker — **the only new spend, and not yet**
+
+**Do not buy this yet. I am telling you it is coming, not asking for it.**
+
+The reranker is the one component that cannot run inside Gate S1's 3-second
+budget on ordinary hardware **at full sequence length**. Measured today:
+
+| config | 20 candidates | inside 3 s? |
+| --- | --- | --- |
+| q8/CPU, `max_length` 512 | 4,205 ms | no |
+| **q8/CPU, `max_length` 256** | **1,557 ms** | **yes** |
+
+**If 256 tokens costs no accuracy, we need no GPU at all** — and that is exactly
+what the running A/B measures. **Wait for that number before spending anything.**
+
+If 256 *does* cost accuracy, the options are a GPU endpoint (roughly $30–60/mo
+for a small always-on instance, or per-second serverless) or a smaller
+cross-encoder. **I will cost both properly once the accuracy number exists.**
+
+**Railway has no GPU**, which is the whole reason this is a question.
+
+### A2 · Everything else that costs money is unchanged
+
+OpenRouter is funded and working (~$0.007 per full gate run). **Indian Kanoon is
+settled: no API.** Bharat.Law: free tier first, monthly if at all. **The $65 GPU
+re-embed line is struck** — it is an overnight job on your own machine.
+
+---
+
+## B · DECISIONS ONLY YOU CAN MAKE — no cost
+
+| | what | why it is yours |
+| --- | --- | --- |
+| **FQ-R1** | Claim-support verification — a 4th question the citation harness does not ask | Amends `CITATION_HARNESS.md`, which is spec |
+| **FQ-R1b** | The §34 product guarantee wording | It is a public claim |
+| **FQ-R2** | Paragraph-level evidence IDs | Corpus-wide re-derivation; recommend **after** Gate S2 |
+| **FQ-BL2** | *"no Indian competitor has it"* in `CLAUDE.md` + `PRODUCT_BRIEF.md` is **now false** | Your files. Must never reach marketing |
+| **FQ-EL1** | eLegalix — seek an Allahabad registry grant, or take nothing | Their server refused our honest client and served a browser string; I will not spoof |
+| **FQ-C1** | The incomplete IPC source | Research, mine to continue |
+
+---
+
+## C · ONE THING I NEED YOUR STEER ON, NEW TODAY
+
+**The adversarial prompt.** `adversarialPassRate` is **20.0%** worst-case. Two of
+the four failures look fixable by instructing the model to **ask for the missing
+FACT rather than the legal conclusion** — it currently answers *"tell me whether
+you are prosecuted under the IPC or the BNS"*, which asks the advocate to supply
+the answer they came for. The determining fact is the **date of the offence**.
+
+**You rejected that edit and I have not re-applied it.** The fair objection is
+that tuning the prompt against the very cases that grade it is overfitting.
+**Tell me which you want:**
+
+1. **Leave it.** The 20% stands as an honest measurement of the model as-is.
+2. **Fix the prompt generally** — ask for facts, and carry the BNS/BNSS/BSA
+   changeover date the model cannot know — then **re-measure on cases it has
+   never seen** so the improvement is not self-graded.
+3. Something else you have in mind.
+
+**My recommendation is (2)**, because the prompt is our product surface and the
+instruction is correct independent of any test. But it is your call and I have
+stopped rather than guess twice.
+
+---
+
+## D · WHAT I DO NOT NEED
+
+Railway (I have CLI access and open/close the DB proxy myself) · a GPU for
+embedding (DirectML on the 4060 Ti, vectors proven identical) · money for the
+re-embed · an Indian Kanoon API key.
