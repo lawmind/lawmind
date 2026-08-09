@@ -200,14 +200,65 @@ export async function scoreQuery(
    * cost the model attention on noise.
    */
   if (rerank && results.length > 1) {
+    /**
+     * ───────────────────────────────────────────────────────────────────────
+     * HOW MANY CANDIDATES TO RERANK — the only latency lever left
+     * ───────────────────────────────────────────────────────────────────────
+     *
+     * Measured 9 Aug 2026: 20 candidates at `max_length` 512 costs **4,136 ms
+     * mean**, and retrieval is p95 488 ms (`CORPUS_TIERING.md` §4), so Gate S1's
+     * 3,000 ms leaves **2,512 ms → about 12 candidates**. Cost is linear in the
+     * count; the padding lever is dead (93.5% of real passages already reach the
+     * 512 cap, ceiling 1.1%).
+     *
+     * **AND THE OBVIOUS IMPLEMENTATION WOULD DESTROY THE THING IT IS PROTECTING.**
+     * Graph suggestions take the LAST `GRAPH_SLOTS` places, ranks 16–20. A naive
+     * "rerank the top 12" never shows them to the cross-encoder — and the whole
+     * measured gain is the combination: graph alone moved success@5 by exactly
+     * zero with zero discordant pairs, while graph + reranker moved it +4.6 over
+     * 45. Cutting the pool from the bottom would silently delete the graph's
+     * only contribution to the gate metric.
+     *
+     * So the pool is taken from **both ends**: the strongest text candidates and
+     * every graph suggestion. What is dropped is the weak middle — the text
+     * matches ranked 8th to 15th, which are the least likely to belong in a top
+     * five and the ones the reranker was least often promoting.
+     *
+     * Default `20` keeps today's behaviour exactly, so this is inert until
+     * measured.
+     */
+    const pool = Number(process.env['RERANK_POOL'] ?? '20');
+    const graphSlots = graph ? 5 : 0;
+    /**
+     * `slice(-0)` returns the WHOLE array, because `-0 === 0`. With the graph
+     * off that made the pool 32 items instead of 12 — a latency experiment that
+     * silently reranked more than the control. Caught by `rerank-pool.test.ts`
+     * before it ever ran.
+     */
+    const tail = graphSlots > 0 ? results.slice(-graphSlots) : [];
+    const reranked =
+      pool >= results.length
+        ? results
+        : [...results.slice(0, Math.max(0, pool - graphSlots)), ...tail];
+    const untouched = results.filter((r) => !reranked.includes(r));
+
     const scores = await rerank(
       q.query,
-      results.map((r) => r.operativeParagraph),
+      reranked.map((r) => r.operativeParagraph),
     );
-    results = results
-      .map((r, i) => ({ r, s: scores[i] ?? Number.NEGATIVE_INFINITY }))
-      .sort((a, b) => b.s - a.s)
-      .map((x) => x.r);
+    results = [
+      ...reranked
+        .map((r, i) => ({ r, s: scores[i] ?? Number.NEGATIVE_INFINITY }))
+        .sort((a, b) => b.s - a.s)
+        .map((x) => x.r),
+      /**
+       * **Kept, never dropped.** They fall below everything reranked, which is
+       * the honest ordering — nothing scored them — but removing them would turn
+       * a latency change into a recall change and make `recallAt20` incomparable
+       * with every run before it.
+       */
+      ...untouched,
+    ];
   }
 
   const gold = new Set(q.goldJudgmentIds);
