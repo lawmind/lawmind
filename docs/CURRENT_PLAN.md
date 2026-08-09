@@ -151,6 +151,79 @@ volume ceiling costs nothing until data fills it.
       `corpus_coverage` exists. Silence about a gap does the same damage as a
       fabricated citation — both let an advocate rely on something absent.
 
+## A3b · TODO — Cloudflare R2, the storage lane
+
+**Was missing from this plan and should not have been.** R2 is already the
+approved vendor (`OD-4`, `CORPUS_TIERING.md` §3) and nothing works at 15.9M
+without it. The founder is supplying an account and API token.
+
+- [ ] **A3b.1** `packages/storage` behind an interface that **refuses honestly
+      without credentials**, exactly as `packages/auth/src/mail.ts` does. The
+      whole path builds and tests with no token; only the upload is outstanding.
+- [ ] **A3b.2** `judgments.storage_key` — a column, not a URL. **The PDF is never
+      copied**: the AWS bucket is public, permanent and CC-BY-4.0, so we store a
+      key into somebody else's CDN.
+- [ ] **A3b.3** Brotli text objects — measured at **2.0 KB per High Court
+      judgment**, 37 GB for the whole corpus.
+- [ ] **A3b.4** fp32 vector blobs with **ranged reads** — 500 candidates × 4 KB is
+      one 2 MB ranged GET. Zero egress is the property that makes the tiered
+      design viable on a read path.
+- [ ] **A3b.5** A cost ceiling and an alert. R2 is $0.015/GB/month with free
+      egress, but **Class A operations are $4.50/million** — a naive per-chunk
+      write pattern is where an object-storage bill actually goes wrong.
+- [ ] **A3b.6** Kill switch + fetch ledger, same discipline as the eCourts
+      adapter. Every credentialled integration in this repo is auditable.
+
+## A3c · TODO — THE CITATOR. Measured 9 Aug, and the gap is 161×
+
+**The founder's judgement that this is the real gap is confirmed by the data.**
+
+| | |
+| --- | --- |
+| Citation edges | **192,197**, of which **44,785 resolved (23.3%)** |
+| Classified `cites` — the generic bucket | **180,432 — 94% of all edges** |
+| `followed` · `distinguished` | 10,437 · 1,233 |
+| **`overruled` · `overruled_in_part` · `doubted`** | **69 · 19 · 7 — 95 edges in total** |
+| Judgments flagged `overruled_status != none` | **22 of 38,341** |
+| **Judgments whose text USES overruling language** | **3,549** |
+
+**Two separate bottlenecks, and they need different fixes:**
+
+**1 · Relationship extraction is nearly blind.** 94% of edges are the generic
+`cites`. Against 22 flagged judgments, **3,549 contain overruling language** —
+`stands overruled` 97 · `does not lay down the correct law` 283 · `per incuriam`
+339 · `impliedly overruled` 50 · `hereby overruled` 86, and 3,156 containing the
+stemmed word `overrule` at all. **Not all of those overrule anything** — many
+discuss an overruling made elsewhere, or reject the argument that something was
+overruled — so 3,549 is a ceiling on candidates, not a count. Even at a 10% true
+rate it is **~350 against 22**.
+
+**2 · Resolution is 23.3%.** Three-quarters of what the Supreme Court cites is
+not in our corpus — High Courts, Privy Council, and the specialist reporters the
+extractor cannot read. **Coverage (§A3) fixes this half directly**, and this is
+the sharpest available argument for the AWS ingest.
+
+- [ ] **A3c.1** Classify treatment from the text **around each citation offset** —
+      `judgment_citations.char_offset` already exists on every edge, so the
+      evidence is already joined to the citation. No new data, no purchase, no
+      OCR.
+- [ ] **A3c.2** **High-precision patterns first, never a model.** Reading the
+      court's own words is a primary source; a model's opinion about whether a
+      case was overruled is exactly the commentary `DATASETS.md` forbids.
+- [ ] **A3c.3** **PRECISION ABSOLUTELY OVER RECALL, and this is not a preference.**
+      `overruled_status` drives the LAW MOVED mark, and `set_aside` disables
+      add-to-matter. A false positive tells an advocate a good authority is dead
+      — the stale-overruled threshold is **0** for the same reason. Anything
+      uncertain goes to a **review queue, never to the column.**
+- [ ] **A3c.4** Distinguish *"we overrule X"* from *"X was overruled in Y"* and
+      from *"the contention that X is overruled is rejected"*. **The third reads
+      identically to a keyword matcher and means the opposite.** This is the
+      whole difficulty, and it is why the patterns must be tested against real
+      passages before anything is written.
+- [ ] **A3c.5** Report the candidate list with its evidence span for human
+      review. **A citator that flags 350 judgments nobody checked is worse than
+      one that flags 22 that were.**
+
 ## A4 · What each account and licence is actually for
 
 **They are four different things and only one of them is a bulk corpus.**
