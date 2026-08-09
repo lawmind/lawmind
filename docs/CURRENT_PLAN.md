@@ -292,6 +292,37 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       measure true unquantised accuracy locally today. Re-running `ab both` at
       fp32/DML now.
 
+- [x] **TRUNCATION TO 256 TOKENS: MEASURED AND REJECTED — 9 Aug 2026.**
+
+      **It fits the budget and makes retrieval measurably worse.**
+
+      | | 512 tokens | 256 tokens |
+      | --- | --- | --- |
+      | success@5 | **23.7%** | **13.8%** |
+      | recall@20 | 48.8% | 48.8% |
+      | MRR | 0.162 | 0.118 |
+      | rerank latency | 11,424 ms (pre-clip) | **2,104 ms · p95 2,255 ms** |
+
+      **paired delta −5.3%, 95% interval −10.0% to −0.6% — it does NOT span
+      zero. McNemar p = 0.040.** 16 gained, 31 lost across 47 discordant pairs.
+
+      **This is a real degradation, not noise**, and it is worse than doing
+      nothing: 13.8% is below the 19.1% control. **Half a paragraph is not
+      enough context for a cross-encoder to rank Indian judgments**, and the
+      cheap latency win costs more accuracy than the reranker was adding.
+
+      **So the trade-off is settled and the answer is no.** The rig's own
+      verdict: *"DOES NOT SHIP: it makes retrieval measurably worse."*
+
+      `RERANK_MAX_LENGTH` stays at **512**. It exists now as a measured knob
+      with a known cost, not an untried idea.
+
+- [ ] **THE LIVE QUESTION: 512 tokens WITH the clip.** The 11,424 ms above was
+      measured **before** the tokenisation fix. Benched at **4,205 ms** — only
+      **1.4× over** Gate S1's 3 s, against 3.8× before. **Running now.** If it
+      lands near 4.2 s, closing the gap needs something small (fewer candidates,
+      a lighter cross-encoder) rather than a GPU endpoint.
+
 - [ ] **Settle the reranker properly** — p = 0.072 needs ~577 queries. The
       query set is 283; the eval set would have to grow before this is decided.
 - [~] **C1 · IPC↔BNS mapping** — unblocks the five BNS queries and closes the last
