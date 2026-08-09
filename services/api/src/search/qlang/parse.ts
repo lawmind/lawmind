@@ -428,5 +428,19 @@ export function looksStructured(source: string): boolean {
   if (/\b(?:AND|OR|NOT)\b/.test(source)) return true; // case-sensitive: "or" in prose is not an operator
   if (/NEAR\/\d/i.test(source)) return true;
   if (/[()]/.test(source) && /"/.test(source)) return true;
+  /**
+   * **A MISSPELT FIELD NAME, caught by the quote that follows it.**
+   *
+   * `judgw:"Kania"` is not a valid field, so the rules above call it prose — and
+   * the advocate then gets a full-text search for the literal string `judgw:`,
+   * finds nothing, and reads that as *"there is no such judge"*. The parser
+   * would have told them the field name is wrong and listed the real ones.
+   *
+   * A bare colon cannot be the signal: ordinary judicial prose is full of them
+   * (*"Held: the appeal is allowed"*). **A colon followed immediately by a
+   * quote is not** — nobody writes that by accident, and it is exactly what a
+   * mistyped field query looks like.
+   */
+  if (/\b[A-Za-z]{2,20}:\s*"/.test(source)) return true;
   return false;
 }

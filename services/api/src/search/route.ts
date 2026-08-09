@@ -11,9 +11,10 @@ import type { Context } from 'hono';
 import { z } from 'zod';
 import type { Sql } from 'postgres';
 
-import { ok } from '../envelope.ts';
+import { fail, ok } from '../envelope.ts';
 import { logger } from '../logger.ts';
 import { hybridSearch, type SearchFilters } from './retrieve.ts';
+import { answerStructured } from './structured.ts';
 
 export const searchRequest = z.object({
   query: z.string().min(1).max(500),
@@ -56,6 +57,76 @@ export async function handleSearch(
     dateTo: body.filters?.dateTo,
     caseType: body.filters?.caseType,
   };
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * STRUCTURE DECIDES, SEMANTICS FILLS — and they are never blended
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * A structured query (`judge:"Kania" AND section:138`) is a FILTER. Every row
+   * either satisfies it or does not, so a semantic result mixed into that list
+   * would be a judgment the advocate did not ask for, presented as one they did.
+   *
+   * Zero structured matches therefore returns ZERO, with the interpretation
+   * echoed so they can see what was searched. The tempting fallback — quietly
+   * running a semantic search so something appears — is exactly the failure this
+   * refuses: three cheque cases by other judges do not read as "we guessed",
+   * they read as "these are the Kania cases".
+   *
+   * Ordinary prose falls straight through to the path below, untouched.
+   */
+  const structured = await answerStructured(deps.sql, body.query, RESULT_LIMIT);
+
+  if (structured.kind === 'invalid') {
+    return fail(
+      c,
+      'INVALID_QUERY',
+      structured.message,
+      400,
+      structured.validFields
+        ? { offset: structured.offset, validFields: structured.validFields }
+        : { offset: structured.offset },
+    );
+  }
+
+  if (structured.kind === 'no_match') {
+    return ok(c, {
+      results: [],
+      unverifiedReferences: [],
+      searchId: null,
+      parsed: structured.parsed,
+      total: 0,
+    });
+  }
+
+  if (structured.kind === 'matched') {
+    return ok(c, {
+      results: structured.hits.map((h) => ({
+        judgmentId: h.judgmentId,
+        citationCheckId: null,
+        caseTitle: h.caseTitle,
+        neutralCitation: h.neutralCitation,
+        reporterCitations: h.reporterCitations,
+        court: h.court,
+        judgmentDate: h.judgmentDate,
+        holding: '',
+        operativeParagraph: '',
+        operativeParagraphNumber: null,
+        verificationState: 'verified' as const,
+        verifiedBySource: 'corpus' as const,
+        // Read live from the row, never cached — CITATION_HARNESS.md.
+        overruledStatus: h.overruledStatus,
+        overruledByJudgmentId: null,
+        overruledParas: null,
+        overruledNote: null,
+        asOf: new Date().toISOString(),
+      })),
+      unverifiedReferences: [],
+      searchId: null,
+      parsed: structured.parsed,
+      total: structured.total,
+    });
+  }
 
   const queryVector = await deps.embedQuery(body.query);
   const retrieved = await hybridSearch(deps.sql, body.query, queryVector, filters, RESULT_LIMIT);

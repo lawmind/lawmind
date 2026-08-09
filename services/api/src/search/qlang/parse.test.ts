@@ -252,3 +252,26 @@ test('hasPositiveTerm is what refuses pure negation, and it is exported for reus
   assert.equal(hasPositiveTerm(parse('section:138')), true);
   assert.equal(hasPositiveTerm(parse('section:138 NOT party:"State"')), true);
 });
+
+test('A MISSPELT FIELD IS STRUCTURED, so the typo can be reported', () => {
+  /**
+   * `judgw:"Kania"` is not a valid field. Treated as prose it becomes a
+   * full-text search for the literal string, finds nothing, and reads as "there
+   * is no such judge" — when the real answer is "you typed the field name
+   * wrong, here are the ten valid ones".
+   */
+  assert.equal(looksStructured('judgw:"Kania"'), true);
+  assert.match(refuses('judgw:"Kania"').message, /Unknown field/);
+});
+
+test('a bare colon in prose is still NOT structured', () => {
+  // Judicial prose is full of colons. Only a colon followed immediately by a
+  // quote is evidence of a field query, because nobody writes that by accident.
+  for (const prose of [
+    'Held: the appeal is allowed',
+    'The question is this: whether bail may be limited',
+    'Case Law Reference: 2010 SCR 507 referred to',
+  ]) {
+    assert.equal(looksStructured(prose), false, `prose misread as structured: ${prose}`);
+  }
+});

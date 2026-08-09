@@ -287,6 +287,44 @@ means a named advocate personally vouched.
 > today, so there is no live exposure — the client change simply has to land
 > before the resolver does.
 
+**STRUCTURED SEARCH — additive, 9 August 2026.**
+
+`POST /search` now answers field, Boolean, citation, proximity and range queries
+in the same endpoint. **Existing callers are unaffected**: ordinary prose takes
+exactly the path it did before.
+
+```
+POST /search  { query: 'judge:"Kania" AND section:138 AND date:[2019 TO 2024]' }
+  → { results: [...], unverifiedReferences: [], searchId,
+      parsed: 'Judgments decided by a judge matching "Kania", and referring to
+               section 138, and decided between 2019 and 2024.',
+      total: 214 }
+```
+
+Fields: `party` · `judge` · `cite` · `caseno` · `court` · `date` · `act` ·
+`section` · `type` · `text`. Operators: `AND` `OR` `NOT`, parentheses,
+`"phrases"`, `NEAR/n`, `[from TO to]`, trailing `*` and `?`.
+
+**`parsed` must be displayed.** It is the server stating what it understood, and
+it is a correctness feature rather than a courtesy: a misparse produces
+*results*, not errors, so showing the interpretation is the only way an advocate
+can catch `a AND b OR c` being read as `a AND (b OR c)`. Absent for prose
+queries.
+
+**`total` is the full count, not the page length.** An advocate deciding whether
+to narrow a search needs to know whether it matched 5 judgments or 1,237.
+
+**ZERO MEANS ZERO.** A structured query matching nothing returns `results: []`
+with `parsed` set — **never a silent fallback to semantic search**. Three cheque
+cases by other judges do not read as *"we found nothing and guessed"*; they read
+as *"these are the Kania cases on section 138"*, and the advocate cannot tell the
+difference. Render it as "no judgment matches this".
+
+**A malformed query is a `400 INVALID_QUERY`** carrying `error.details.offset` —
+the character position of the mistake — and `error.details.validFields` when a
+field name was not recognised. `error.details` is additive; every other error
+shape is unchanged.
+
 **`operativeParagraph` is a paragraph the server identified, not the chunk it
 matched. `operativeParagraphNumber` — added 7 Aug 2026, additive.**
 
