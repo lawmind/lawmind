@@ -19,7 +19,7 @@ Last updated **8 August 2026**. Owner: **LCC (server lane)**. RCC's plan is
 
 | | |
 | --- | --- |
-| **Gate S2** | **FAILING.** success@5 = **24.0%** against a 0.70 floor |
+| **Gate S2** | **FAILING**, and as of 9 Aug **the exact number is unknown**: every measurement to date ran through a defect that pinned the wrong judgment at rank 1 on 13.1% of the eval set. Re-measuring. Last figure through the defect: 24.0% against a 0.70 floor |
 | Corpus | 38,341 judgments · 616,197 embedded chunks · 192,197 citation edges (44,785 resolved) |
 | Citator | **22 judgments flagged of 38,341.** 7 more are `overruled_in_part` and blocked on paragraph extraction |
 | Harness | 25 queries of 30. **All three previously unmeasurable metrics now produce numbers** — a generation path exists (`generate.ts`) and an adversarial runner exists (`adversarial.ts`). Until 9 Aug there was NO model call in the package, and `run-cli.ts` reported 0 (a PASS) the moment `OPENROUTER_API_KEY` merely existed |
@@ -317,11 +317,84 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       `RERANK_MAX_LENGTH` stays at **512**. It exists now as a measured knob
       with a known cost, not an untried idea.
 
-- [ ] **THE LIVE QUESTION: 512 tokens WITH the clip.** The 11,424 ms above was
-      measured **before** the tokenisation fix. Benched at **4,205 ms** — only
-      **1.4× over** Gate S1's 3 s, against 3.8× before. **Running now.** If it
-      lands near 4.2 s, closing the gap needs something small (fewer candidates,
-      a lighter cross-encoder) rather than a GPU endpoint.
+- [x] **512 tokens WITH the clip — MEASURED 9 Aug 2026.** **mean 4,136 ms ·
+      p95 4,263 ms**, against 11,424 / 55,074 before. success@5 reproduced
+      **exactly** at 23.7%, so the clip is score-neutral end to end and not only
+      in the unit test.
+
+      **It also closes the discrepancy §2 refused to paper over.** The bench said
+      4,205 ms and the live run says 4,136 — **within 1.7%**. The old 3× gap was
+      tokenising text the model then discarded; nothing else.
+
+      **1.38× over budget, not 3.8×.** The p95 collapsed by **12.9×**, and the
+      distribution is now tight (mean 4,136 vs p95 4,263) — that tightness is
+      itself evidence the clip removed the variance source.
+
+- [x] **The free latency lever is DEAD, measured not assumed.** `padding: true`
+      pads every pair to the longest in the batch, and padding is masked — so
+      length-bucketed batching would be **score-identical**, exactly like the
+      clip. Sampled 400 real operative paragraphs: **93.5% already hit the 512
+      cap**, min 351. There is almost no variance to exploit and the ceiling on
+      bucketing is **1.1%**. Five minutes of measurement instead of a day of
+      building.
+
+      **So the remaining 1,136 ms has no free fix.** Retrieval is p95 488 ms
+      (`CORPUS_TIERING.md` §4), leaving 2,512 ms for reranking → **12 candidates,
+      down from 20.** And that cut **must keep the 5 graph slots**: graph
+      suggestions enter at ranks 16–20, so a naive "rerank the top 12" would
+      never see them and the entire +4.6 combination would evaporate.
+
+- [x] **THE PIN DEFECT — 9 Aug 2026. It contaminated both arms of every A/B this
+      project has run.** `services/api/src/search/query-shape.ts`, fixed in
+      `c1bb164`.
+
+      `classifyQuery` returned `shape: 'citation'` whenever **any**
+      citation-shaped substring appeared *anywhere* in the text. Every eval query
+      is a 200–900-character passage of judicial reasoning, and redaction removes
+      only the *cited* judgment's own citations — up to three others are allowed
+      to survive. So:
+
+      | | |
+      | --- | --- |
+      | classified as `citation` | **140 of 283** |
+      | resolved to exactly one judgment → **pinned at rank 1** | **46** |
+      | **the pinned judgment was the WRONG case** | **37 = 13.1% of the set** |
+
+      **Pinning inserts a judgment at rank 1 and shifts everything below it down
+      one place**, so a gold answer sitting at rank 5 was pushed out of the top
+      five by a case the passage merely mentioned in passing.
+
+      **`warrantsExactLookup` had already written down the rule it was
+      violating:** *"a missed citation is a slower correct answer, while a
+      wrongly-claimed citation would pin the wrong judgment at rank 1."* The
+      classifier was simply not strict enough to honour it. **A citation must be
+      what the query is ABOUT, not merely present in it** — tested as the length
+      of what remains once the citation is removed.
+
+      **Verified on the real corpus rather than asserted:** wrong pins **37 → 0**,
+      while the live hard-negative suite still returns **25/25 real and 20/20
+      reporter citations resolving** and **279 near-misses resolving to nothing**.
+
+      **EVERY NUMBER ABOVE WAS MEASURED THROUGH THIS AND IS VOID** — 19.1%
+      control, 23.7% graph+reranker, 13.8% at 256 tokens. Re-measurement running.
+
+- [ ] **HyDE — built, wired as an A/B lever, not yet measured.**
+      `services/api/src/search/hyde.ts`, 14 tests.
+
+      It generates prose about law, which `CLAUDE.md` otherwise forbids, and is
+      acceptable only because of **where that prose is allowed to go**: it reaches
+      the embedder and nothing else, **citation-shaped spans and bare case names
+      are stripped before embedding** — the model has no retrieval, so every
+      citation it writes is invented, and an invented citation is *noise pointing
+      somewhere specific*, which is worse than noise — and **only the dense arm
+      uses it**, so BM25 keeps the advocate's literal words.
+
+      **Generation costs 2,519–4,916 ms against a 3,000 ms whole-request
+      budget**, so it fires only on `concept` queries, where the register gap it
+      exists to close actually is. **`dataClass` is required with no default**:
+      a user-typed query is ambiguous, ambiguity resolves to sensitive, and
+      sensitive is refused under OD-6 — so **HyDE over real user queries does not
+      ship until the DPA lands**, whatever it measures.
 
 - [ ] **Settle the reranker properly** — p = 0.072 needs ~577 queries. The
       query set is 283; the eval set would have to grow before this is decided.
