@@ -482,6 +482,21 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       filled.** `operativeParagraph` untouched; conflating display and ranking
       again is how this returns.
 
+      **AND THE LATENCY NUMBERS WERE FLATTERED BY IT TOO.** An empty string
+      tokenises to almost nothing, so **37.6% of the reranker's candidates were
+      nearly free**. Filling them means the cross-encoder now does work it was
+      silently skipping. The re-run's observed rate bears this out immediately:
+      **27 s/query against 15 s/query before.**
+
+      **Prediction, written before the run reports so it can be checked rather
+      than rationalised:** if cost is linear in non-empty candidates, the mean
+      goes from 4,136 ms to roughly **4,136 / (1 − 0.376) ≈ 6,600 ms**, plus one
+      `passagesForRerank` round trip per query. That would put reranking at
+      **~2.2× over the whole-request budget rather than 1.38×**, and it makes the
+      12-candidate cut necessary rather than optional. **Part of the observed
+      slowdown is the round trip over the Railway proxy, which production does
+      not pay — that share must be separated before the number is quoted.**
+
 - [x] **A VALIDITY CAVEAT ON THE WHOLE GATE, measured 9 Aug 2026.** The eval set
       exercises a **different retrieval path from the one advocates will use**.
 
