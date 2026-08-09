@@ -47,6 +47,12 @@ export type ScoredQuery = {
    * `hallucinationRate` would describe an answer nobody was graded on.
    */
   retrieved: { judgmentId: string; caseTitle: string; passage: string }[];
+  /**
+   * The query text itself. Carried because the generation path needs the actual
+   * QUESTION — an earlier version passed `id` by mistake and the model was
+   * handed `civil-a259ece9` as its prompt, which is why it cited almost nothing.
+   */
+  queryText: string;
 };
 
 export type HarnessQuery = {
@@ -225,6 +231,7 @@ export async function scoreQuery(
     precision: hits / PRECISION_AT_K,
     returned: results.length,
     drm: topK.length === 0 ? 1 : (topK.length - hits) / topK.length,
+    queryText: q.query,
     topTitles: topK.map((r) => r.caseTitle),
     retrieved: topK.map((r) => ({
       judgmentId: r.judgmentId,

@@ -238,6 +238,13 @@ async function main(): Promise<number> {
      * observation of that invariant against real model output rather than an
      * assumption about it.
      */
+    /**
+     * Below this, no rate is reported. Set at two per query on the reasoning
+     * that an answer grounded in a five-item evidence set should cite more than
+     * once, so anything less means the generation path is not really running.
+     */
+    const MIN_REFERENCES = scored.length * 2;
+
     const apiKey = process.env['OPENROUTER_API_KEY'];
     let hallucinationRate: number | null = null;
     let silentDropRate: number | null = null;
@@ -267,7 +274,7 @@ async function main(): Promise<number> {
           passage: r.passage,
         }));
         try {
-          const out = await generate(s.id, evidence);
+          const out = await generate(s.queryText, evidence);
           const g = gradeReferences(out.references);
           refs += g.total;
           hallucinated += g.hallucinated;
@@ -298,9 +305,19 @@ async function main(): Promise<number> {
 
       if (failed > 0) {
         console.log('  Calls failed, so neither rate is reported. A partial run is not a run.');
-      } else if (refs === 0) {
-        console.log('  The model cited NOTHING across every query. That is not a clean run —');
-        console.log('  it is a run with no observations, and it is reported as not measured.');
+      } else if (refs < MIN_REFERENCES) {
+        /**
+         * **A rate computed from one reference is not a measurement.**
+         *
+         * The first wired run produced ONE reference across 25 queries and
+         * reported hallucinationRate 0.0% PASS. That is the same failure as a
+         * key standing in for a measurement, arriving by arithmetic instead:
+         * 0/1 is a true fraction and a false reassurance. A floor is the fix,
+         * and it must sit above any number a broken run can plausibly reach.
+         */
+        console.log(`  Only ${refs} reference(s) across ${scored.length} queries — below the`);
+        console.log(`  floor of ${MIN_REFERENCES}. Reported as NOT MEASURED: a rate computed`);
+        console.log('  from almost no observations is a false reassurance, not a result.');
       } else {
         hallucinationRate = hallucinated / refs;
         silentDropRate = dropped / refs;

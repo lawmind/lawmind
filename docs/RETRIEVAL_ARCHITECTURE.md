@@ -428,6 +428,43 @@ experiments have already made look promising.
 
 ---
 
+## 6d · THE GPU CAN BE USED — DirectML, already bundled
+
+**Measured 9 August 2026, after the founder pointed out the GPU sat at 35%.**
+
+**First, what that 35% was: Windows.** `nvidia-smi` shows `explorer.exe`,
+`SearchHost`, `StartMenuExperienceHost`. **None of our work was on the GPU at
+all** — `onnxruntime-node` ships a CPU build and that is what `embed.ts` uses.
+
+**But the GPU is reachable without installing anything.**
+`ort.listSupportedBackends()` reports **`cpu`, `dml`, `webgpu` — all bundled**.
+No CUDA, and none needed: **DirectML drives the RTX 4060 Ti on Windows.**
+
+| device | per chunk | full 616,197-chunk corpus |
+| --- | --- | --- |
+| **DirectML (4060 Ti)** | **13.1 ms** | **≈ 2.2 hours** |
+| CPU, clean baseline | 36.6 ms | ≈ 6.3 hours |
+
+**Model load is also 5× faster on DML** (2.6 s against 12.1 s) — bge-m3 at fp32
+is ~2.2 GB and fits the 8 GB card with room for much larger batches than 16.
+
+**One caveat, and it is the reason this is not simply switched on.**
+`embed.ts` already documents that quantisation makes a chunk's vector depend on
+*"which CPU computed it"*. **A different execution provider can move vectors the
+same way.** Our 616,197 stored chunks were embedded on CPU fp32, and a query
+embedded on DML must land in the same space or retrieval silently degrades —
+which would look exactly like a bad week of relevance, with no error anywhere.
+
+**So the rule is:**
+
+- **Corpus re-embedding on DML: yes.** Every vector is recomputed together, so
+  internal consistency holds and 2.2 hours beats 6.3.
+- **The query path: NOT until vector agreement is measured.** Embed the same
+  text on both devices and compare cosine similarity. If it is not ~1.0, the
+  query path stays on CPU regardless of speed.
+
+---
+
 ## 7 · What I am NOT claiming
 
 - **The +0.250 and +0.125 recall figures are from general-corpus reports, not
