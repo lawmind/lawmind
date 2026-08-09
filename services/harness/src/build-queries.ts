@@ -84,7 +84,8 @@
  *
  * Run:  pnpm --filter @lawmind/harness build:queries [--dry]
  */
-import { writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 import postgres, { type Sql } from 'postgres';
 
@@ -473,6 +474,63 @@ function toQuery(c: Candidate, group: 'criminal' | 'civil'): BuiltQuery | null {
   };
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * GROWING THE SET MUST NEVER SILENTLY CHANGE IT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Every A/B number on record — success@5 **19.1%** control, **23.7%** with graph
+ * and reranker, **13.8%** at 256 tokens — was measured on one particular set of
+ * 283 queries, and paired McNemar compares outcomes **query by query**. If a
+ * rebuild quietly returns a different set, those numbers stop being comparable
+ * and nothing in the output says so: the file still holds well-formed queries
+ * with real provenance, the harness still runs, and the delta it reports is
+ * between two different populations.
+ *
+ * `ORDER BY md5(jc.id::text)` is deterministic, so raising `EVAL_PER_GROUP`
+ * *should* yield a strict superset — the loop simply stops later. **"Should" is
+ * not a check.** A re-ingest, a newly embedded judgment, or a changed filter all
+ * break it, and each is invisible.
+ *
+ * So a rebuild that would drop or alter an existing query **refuses**, naming
+ * every breach. `--rebuild` overrides it deliberately, and using it means the
+ * recorded baselines must be re-measured rather than compared against.
+ *
+ * Pure and exported so the rule is tested without a database.
+ */
+export function supersetBreaches(
+  previous: readonly BuiltQuery[],
+  next: readonly BuiltQuery[],
+): string[] {
+  const now = new Map(next.map((q) => [q.id, q]));
+  const breaches: string[] = [];
+  for (const old of previous) {
+    const fresh = now.get(old.id);
+    if (fresh === undefined) {
+      breaches.push(`DROPPED ${old.id} (${old.provenance.citedCase})`);
+      continue;
+    }
+    if (fresh.query !== old.query) {
+      breaches.push(`TEXT CHANGED ${old.id} — the query an advocate types is not the same string`);
+    }
+    const before = [...old.goldJudgmentIds].sort().join(',');
+    const after = [...fresh.goldJudgmentIds].sort().join(',');
+    if (before !== after) breaches.push(`GOLD CHANGED ${old.id} — ${before} → ${after}`);
+  }
+  return breaches;
+}
+
+/** Read an existing fixture, tolerating its absence. Never throws on a first build. */
+function readExisting(path: URL): BuiltQuery[] {
+  if (!existsSync(path)) return [];
+  try {
+    const doc = JSON.parse(readFileSync(path, 'utf8')) as { queries?: BuiltQuery[] };
+    return doc.queries ?? [];
+  } catch {
+    return [];
+  }
+}
+
 async function main() {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) {
@@ -497,6 +555,17 @@ async function main() {
    */
   const evalMode = process.argv.includes('--eval');
   const perGroup = evalMode ? Number(process.env['EVAL_PER_GROUP'] ?? '50') : 10;
+  /**
+   * How deep to fetch before filtering. **Raised from a hard-coded 20,000
+   * because the criminal group had exhausted it**: the 8 Aug build asked for 200
+   * criminal queries and returned **83**, meaning the loop ran off the end of
+   * the candidates rather than hitting its quota. Civil returned exactly its
+   * 200 and was quota-bound.
+   *
+   * So the two groups fail differently and one number cannot fix both — civil
+   * needs a higher `EVAL_PER_GROUP`, criminal needs more candidates to filter.
+   */
+  const candidateDepth = Number(process.env['EVAL_CANDIDATES'] ?? '20000');
   const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 3 });
 
   try {
@@ -505,14 +574,29 @@ async function main() {
       const seen = new Set<string>();
       // Over-fetch: redaction rejects candidates, and one query per cited
       // judgment means duplicates are dropped rather than replaced.
-      const candidates = await fetchCandidates(sql, group, evalMode ? 20000 : 4000);
+      const candidates = await fetchCandidates(sql, group, evalMode ? candidateDepth : 4000);
+      let exhausted = true;
       for (const c of candidates) {
-        if (out.filter((q) => q.group === group).length >= perGroup) break;
+        if (out.filter((q) => q.group === group).length >= perGroup) {
+          exhausted = false;
+          break;
+        }
         if (seen.has(c.cited_judgment_id)) continue;
         const q = toQuery(c, group);
         if (!q) continue;
         seen.add(c.cited_judgment_id);
         out.push(q);
+      }
+      /**
+       * **Which limit bound this group** — the difference decides what to change
+       * next, and without it a short group reads as "the corpus has no more"
+       * when it may only mean "we did not look far enough".
+       */
+      if (exhausted) {
+        console.log(
+          `  ${group}: CANDIDATE-BOUND — ran off the end of ${candidates.length} candidates. ` +
+            'Raise EVAL_CANDIDATES, not EVAL_PER_GROUP.',
+        );
       }
     }
 
@@ -547,6 +631,34 @@ async function main() {
       evalMode ? './fixtures/queries.eval.json' : './fixtures/queries.derived.json',
       import.meta.url,
     );
+
+    /**
+     * **The guard runs before the write, and a breach refuses.** Growing the set
+     * is safe precisely because it is additive; the moment it stops being
+     * additive, every recorded baseline silently becomes a comparison between
+     * two different populations.
+     */
+    const previous = readExisting(path);
+    if (previous.length > 0 && !process.argv.includes('--rebuild')) {
+      const breaches = supersetBreaches(previous, out);
+      if (breaches.length > 0) {
+        console.error(
+          `\nREFUSING TO WRITE. ${breaches.length} of ${previous.length} existing queries would ` +
+            'change, so this is not a superset and every A/B number measured on the old set ' +
+            'would stop being comparable — paired McNemar compares query by query.\n',
+        );
+        for (const b of breaches.slice(0, 20)) console.error(`  ${b}`);
+        if (breaches.length > 20) console.error(`  … and ${breaches.length - 20} more`);
+        console.error(
+          '\nPass --rebuild to replace the set deliberately. Doing so means the recorded ' +
+            'baselines (19.1% control · 23.7% graph+reranker · 13.8% at 256) must be ' +
+            're-measured, not compared against.',
+        );
+        process.exit(3);
+      }
+      console.log(`superset check: all ${previous.length} existing queries preserved unchanged`);
+    }
+
     writeFileSync(path, `${JSON.stringify(doc, null, 2)}\n`);
     console.log(
       `\nwrote ${out.length} queries → src/fixtures/` +
@@ -557,4 +669,13 @@ async function main() {
   }
 }
 
-await main();
+/**
+ * **Only when run as a script.** This module exports the redaction, the passage
+ * filters and {@link supersetBreaches} — all pure, all worth testing — and a
+ * bare top-level `await main()` made importing it open a database connection and
+ * `process.exit(2)` when `CORPUS_DATABASE_URL` was unset. That is why the file
+ * had no tests, not because the rules in it are unimportant.
+ */
+if (process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  await main();
+}
