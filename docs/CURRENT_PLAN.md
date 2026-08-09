@@ -376,7 +376,60 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       reporter citations resolving** and **279 near-misses resolving to nothing**.
 
       **EVERY NUMBER ABOVE WAS MEASURED THROUGH THIS AND IS VOID** — 19.1%
-      control, 23.7% graph+reranker, 13.8% at 256 tokens. Re-measurement running.
+      control, 23.7% graph+reranker, 13.8% at 256 tokens.
+
+      **RE-MEASURED at n=283, and the verdict changed.**
+
+      | | through the wrong pins | **corrected** |
+      | --- | --- | --- |
+      | success@5, control | 19.1% | **17.3%** |
+      | success@5, graph+reranker | 23.7% | **22.3%** |
+      | recall@20 | 40.6% → 48.8% | 38.9% → **48.1%** |
+      | MRR | 0.140 → 0.162 | 0.119 → **0.153** |
+      | paired delta | +4.6%, interval **−0.0 to 9.2** | +4.9%, interval **0.4 to 9.5** |
+      | McNemar | p = 0.072 — *not settled* | **p = 0.049 — SHIPS** |
+
+      **THE BASELINE FELL, AND THAT IS THE FIX WORKING RATHER THAN FAILING.**
+      Of the 46 pins, **9 were the gold judgment** — which can only mean the
+      passage still contained a citation resolving to its own answer, i.e.
+      **redaction had missed it**. The pin was converting that residual leakage
+      into a *guaranteed rank-1 hit*. Removing the pin removes the guarantee, and
+      about nine free hits with it. **So 19.1% was inflated by leakage on ~3.2%
+      of queries, and 17.3% is the honest number.**
+
+      Note what removing the pin does **not** do: the missed citation is still in
+      the query text, so BM25 can still match on it. **The leakage is reduced,
+      not eliminated** — see the redaction item below.
+
+      **And the combination now crosses the line: p = 0.049.** Stated plainly
+      rather than celebrated — that is *marginally* under 0.05 on the same 283
+      queries with one confound removed, not a replication. **Growing the set is
+      what would settle it.**
+
+      **The latency line from this run is contaminated and should be ignored:**
+      mean 4,320 ms · p95 5,169 ms, measured while typechecks and test suites
+      ran on the same CPU. The clean figure is the **4,136 ms · p95 4,263 ms**
+      from the uncontended run above.
+
+- [ ] **REDACTION MISSES CITATIONS THAT RESOLVE TO THE GOLD JUDGMENT** — found
+      9 Aug 2026 by the pin audit, not yet fixed.
+
+      `build-queries.ts` strips `citation_text`, the gold judgment's
+      `neutral_citation`, its `reporter_citations` and its distinctive title
+      words. **That is not the same as stripping every citation that resolves to
+      the gold judgment** — a format the corpus row does not carry survives, and
+      the query then contains its own answer.
+
+      The fix is mechanical: after redaction, resolve every remaining citation
+      through `citationLookupKey` and **reject any query still pointing at its
+      own gold**. Rejecting rather than redacting, because a one-sentence hole is
+      cheaper than a query nobody would type.
+
+      **It will DROP queries, so the superset guard will refuse it** — correctly,
+      and that is the guard doing its job rather than an obstacle. Doing it means
+      re-baselining deliberately with `--rebuild`, and every number above is
+      re-measured against the new set. **A decision to take between runs, never
+      in the middle of one.**
 
 - [x] **THE RERANKER WAS SCORING 37.6% OF CANDIDATES AGAINST AN EMPTY STRING —
       9 Aug 2026. This is larger than the pin defect.** `c6b7114`.
