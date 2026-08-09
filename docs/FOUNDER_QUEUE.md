@@ -754,7 +754,62 @@ Assumed to be a console action; it was not. `railway add` plus
 
 ---
 
-### [OPEN] An LLM key — three Gate S2 metrics cannot be measured without one · LCC · 8 Aug 2026
+### [RESOLVED 9 Aug 2026] An LLM key — three Gate S2 metrics cannot be measured without one · LCC · 8 Aug 2026
+
+**RESOLVED.** The founder supplied `OPENROUTER_API_KEY` and an Anthropic key on
+9 Aug. Both verified with live calls: DeepSeek V4 Flash at **$0.098 / $0.196 per
+million tokens** (one call cost **$0.0000029**) and Claude Haiku 4.5. The cost
+estimate above held — this was an account, not a budget item.
+
+**And the entry was wrong about one thing, which is why it is kept rather than
+deleted.** It said the harness *"switches the three metrics on the moment
+[the key] is present"* — and that was exactly the defect. `run-cli.ts` reported
+`hallucinationRate: generationReady ? 0 : null`, so **a key merely EXISTING made
+two metrics report a PASS**, with no model call anywhere in the package. Fixed
+9 Aug: there is now a real generation path (`generate.ts`) and a real adversarial
+runner (`adversarial.ts`), and the numbers are measured. `adversarialPassRate`
+came back at **20.0%** against a threshold of 1.0 — a genuine, honest failure,
+which is worth more than the fabricated pass it replaced.
+
+**Still owed, and now larger than it was:** the countersigned DPA. See below —
+it no longer gates only uploads.
+
+---
+
+### [OPEN] The DPA now gates a RETRIEVAL feature, not just uploads · LCC · 9 Aug 2026
+
+**Needs:** the countersigned data-processing agreement (OD-6, resolved 2 Aug —
+the decision is made, the signature is not).
+
+**What changed on 9 Aug.** HyDE is built and wired
+(`services/api/src/search/hyde.ts`). It asks a model to write the passage an
+answer would look like and embeds *that*, closing the register gap between how
+an advocate asks and how a judgment speaks. Reported effects in the literature
+are **+0.125 recall and +0.143 precision** — against a reranker that gives at
+best **+0.046** and does not fit the latency budget.
+
+**Why the DPA reaches it.** A published judgment is public data. **An advocate
+typing *"can I get bail for my client Rakesh, charged under section 302"* is
+not.** `CLAUDE.md` §5: ambiguity resolves to sensitive, never to public — and
+sensitive-class traffic is refused until the DPA exists, *with no founder
+override*. So `hydeText` takes `dataClass` as a required parameter and the
+routing layer refuses it for real user queries today.
+
+**Why it is not a blocker:** it measures on the harness, whose queries are
+extracted verbatim from published judgments and are public by construction. So
+we will know what HyDE is worth before the signature arrives — we just cannot
+give it to an advocate.
+
+**Cost if never resolved:** uploads never ship (already known), *and* the single
+most promising retrieval lever stays permanently off for real users. It would
+still work for the corpus-side work, so this does not stop Gate S2.
+
+**Where it plugs in:** `DPA_COUNTERSIGNED=true` on the `api` service. One
+environment variable, no code change — `services/api/src/llm/route.ts`.
+
+---
+
+### [SUPERSEDED — see above] An LLM key · LCC · 8 Aug 2026
 
 **Needs:** an `OPENROUTER_API_KEY` on the `api` service (and for the harness).
 
