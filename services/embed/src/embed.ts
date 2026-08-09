@@ -35,6 +35,33 @@ const defaultCacheDir = fileURLToPath(new URL('../../../.models', import.meta.ur
 const cacheDir = process.env['MODEL_CACHE_DIR'] ?? defaultCacheDir;
 
 /**
+ * Execution provider. **Defaults to CPU, and production must stay there** —
+ * Railway has no GPU, so the API's query path has no other option.
+ *
+ * `dml` (DirectML) drives a local GPU on Windows and is **bundled with
+ * `onnxruntime-node`** — `listSupportedBackends()` reports `cpu`, `dml`,
+ * `webgpu` with nothing to install. It is for the workstation: corpus
+ * re-embedding, harness runs, reranker experiments.
+ *
+ * **Measured 9 Aug 2026 on an RTX 4060 Ti:** 13.1 ms/chunk against 36.6 ms on
+ * CPU — **2.2 hours for all 616,197 chunks instead of 6.3.**
+ *
+ * **Safe because the vectors agree exactly.** The same three texts, including
+ * Devanagari, embedded on both devices at fp32 give **cosine 1.00000000**. That
+ * check is the whole reason this is a switch rather than a hazard: `embed.ts`
+ * already warns that quantisation makes a vector depend on which processor
+ * computed it, and a query landing in a different space from the corpus would
+ * degrade retrieval silently, with no error anywhere.
+ *
+ * **Re-run that comparison before ever changing `dtype` alongside this.** fp32
+ * agreement says nothing about fp16 or q8 agreement.
+ */
+export function embedDevice(): 'cpu' | 'dml' | 'webgpu' {
+  const d = process.env['EMBED_DEVICE'];
+  return d === 'dml' || d === 'webgpu' ? d : 'cpu';
+}
+
+/**
  * Create the cache directory before handing it to transformers.js.
  *
  * **It does not create this itself, and the failure is silent and instant.** With
@@ -97,7 +124,7 @@ async function load(): Promise<Loaded> {
       // rejected for the CPU side — it hits a known onnxruntime graph-fusion crash
       // (microsoft/onnxruntime#15531) and is slower than fp32 there anyway,
       // because CPUs cast fp16 up to fp32 to compute (#25824).
-      AutoModel.from_pretrained(MODEL_ID, { dtype: 'fp32' }),
+      AutoModel.from_pretrained(MODEL_ID, { dtype: 'fp32', device: embedDevice() }),
     ]);
     return { tokenizer, model };
   })();
