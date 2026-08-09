@@ -207,25 +207,47 @@ async function main(): Promise<number> {
      * gate that has never asked a model to produce a citation has not tested
      * the thing it exists to test. `docs/FOUNDER_QUEUE.md` holds the key item.
      */
-    const generationReady = Boolean(process.env['OPENROUTER_API_KEY']);
-    if (!generationReady) {
-      console.log('');
-      console.log('generation');
-      console.log('-'.repeat(78));
-      console.log('  OPENROUTER_API_KEY is absent — the model path cannot run.');
-      console.log('  hallucinationRate, silentDropRate and adversarialPassRate are NOT MEASURED,');
-      console.log('  and the gate fails on that. Not having measured is not having passed.');
-    }
+    /**
+     * **A KEY IS NOT A MEASUREMENT — fixed 9 Aug 2026, and this was live.**
+     *
+     * This block used to read `Boolean(process.env['OPENROUTER_API_KEY'])` and
+     * feed it into `generationReady ? 0 : null` below. **The moment a key
+     * existed, hallucinationRate and silentDropRate reported 0 — which passes
+     * their thresholds — without any model ever being called.**
+     *
+     * There is no generation path in this package. Grep it: no `fetch`, no
+     * `chat/completions`, nothing. So the key's presence was standing in for a
+     * measurement that has never once run, in the gate whose entire purpose is
+     * to catch fabricated citations.
+     *
+     * The comment above was already correct — *"a citation gate that has never
+     * asked a model to produce a citation has not tested the thing it exists to
+     * test"* — and only the code disagreed with it.
+     *
+     * **These stay null until a real generation observation exists.** Null
+     * grades as `notMeasured`, which fails. That is the honest state and it is
+     * supposed to be uncomfortable.
+     */
+    const generationImplemented = false;
+    console.log('');
+    console.log('generation');
+    console.log('-'.repeat(78));
+    console.log('  No generation path exists in this package — no model is called.');
+    console.log('  hallucinationRate, silentDropRate and adversarialPassRate are NOT MEASURED,');
+    console.log('  and the gate fails on that. Not having measured is not having passed.');
+    console.log('  A model key being PRESENT is not a measurement, and used to be treated');
+    console.log('  as one here. See the note above.');
 
     /* ---------------------------------------------------------------- grade -- */
 
     const metrics: HarnessMetrics = {
-      hallucinationRate: generationReady ? 0 : null,
-      silentDropRate: generationReady ? 0 : null,
+      // Never a literal 0 from a flag. 0 is a MEASURED result and must be earned.
+      hallucinationRate: generationImplemented ? 0 : null,
+      silentDropRate: generationImplemented ? 0 : null,
       staleOverruledRate: rate(stale.stale, stale.tested),
       overruledLeakage: leakage.retrieved === 0 ? null : leakage.leaked,
       successAt5,
-      adversarialPassRate: generationReady ? 0 : null,
+      adversarialPassRate: generationImplemented ? 0 : null,
     };
 
     const verdicts = grade(metrics);

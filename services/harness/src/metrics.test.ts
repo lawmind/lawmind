@@ -2,6 +2,7 @@
  * The grader's own failure modes. Every test here is about a way a gate can
  * report success without having asked a question.
  */
+import { readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
@@ -82,4 +83,60 @@ test('precision exactly at the floor passes; a hair under does not', () => {
   const under = grade({ ...perfect, successAt5: 0.6999 }).find((v) => v.name === 'successAt5')!;
   assert.equal(at.passed, true);
   assert.equal(under.passed, false);
+});
+
+/* ------------------------------------------------------------------------- */
+/* A KEY IS NOT A MEASUREMENT                                                 */
+/* ------------------------------------------------------------------------- */
+
+test('no Gate S2 metric is derived from the presence of an env var', async () => {
+  /**
+   * The regression this exists for, found live on 9 Aug 2026.
+   *
+   * `run-cli.ts` computed `generationReady = Boolean(process.env.OPENROUTER_API_KEY)`
+   * and then set `hallucinationRate: generationReady ? 0 : null`. The moment a
+   * key was added, hallucinationRate and silentDropRate reported 0 — a PASS —
+   * with no model ever called and no generation path in the package at all.
+   *
+   * Asserted against the SOURCE because that is where the mistake lives; a unit
+   * test of `grade()` cannot see it, and `grade()` was always correct.
+   */
+  const src = await readFile(new URL('./run-cli.ts', import.meta.url), 'utf8');
+
+  const metricNames = [
+    'hallucinationRate',
+    'silentDropRate',
+    'adversarialPassRate',
+    'staleOverruledRate',
+    'overruledLeakage',
+    'successAt5',
+  ];
+  for (const metric of metricNames) {
+    const assignment = new RegExp(`${metric}\s*:([^,\n]*)`).exec(src);
+    if (!assignment) continue;
+    assert.doesNotMatch(
+      assignment[1]!,
+      /process\.env|Ready\b/,
+      `${metric} is assigned from an environment flag — a key is not a measurement`,
+    );
+  }
+});
+
+test('an unimplemented generation path cannot be mistaken for a clean one', () => {
+  // Belt and braces, through the public surface. The three generation metrics
+  // are null while no model is called, and null must fail — otherwise "we never
+  // ran it" and "we ran it and found nothing wrong" are indistinguishable.
+  const verdicts = grade({
+    hallucinationRate: null,
+    silentDropRate: null,
+    staleOverruledRate: 0,
+    overruledLeakage: 0,
+    successAt5: 1,
+    adversarialPassRate: null,
+  });
+  for (const name of ['hallucinationRate', 'silentDropRate', 'adversarialPassRate']) {
+    const v = verdicts.find((x) => x.name === name)!;
+    assert.equal(v.passed, false, `${name} passed while unmeasured`);
+    assert.ok(v.notMeasured, `${name} did not report itself as not measured`);
+  }
 });
