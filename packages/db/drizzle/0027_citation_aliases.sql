@@ -59,3 +59,22 @@ CREATE UNIQUE INDEX IF NOT EXISTS judgment_citation_aliases_key
 
 CREATE INDEX IF NOT EXISTS judgment_citation_aliases_judgment_idx
   ON judgment_citation_aliases (judgment_id);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- act_key on judgment_statute_refs — one act, one key
+-- ─────────────────────────────────────────────────────────────────────────────
+--
+-- Added the same day 0026 created the table, before a single row was written,
+-- because the first full scan showed the corpus names one statute several ways:
+-- `Indian Penal Code, 1860` 10,677 times and `Indian Penal Code` 3,300; `Code of
+-- Criminal Procedure, 1973` 9,895, `Code of Criminal Procedure` 3,062 and
+-- `Criminal Procedure Code` 1,426.
+--
+-- Searching on `act_named` alone would show an advocate a third of the cases on
+-- CrPC s.482 with no way to know the rest existed. `act_named` stays — how a
+-- court named an act is itself searchable, and it is the evidence for improving
+-- the synonym map — and `act_key` is what a query matches on, exactly as
+-- `judge_key` sits beside `judge_name`.
+ALTER TABLE judgment_statute_refs ADD COLUMN IF NOT EXISTS act_key text;
+CREATE INDEX IF NOT EXISTS judgment_statute_refs_act_key_idx
+  ON judgment_statute_refs (act_key, section_number);

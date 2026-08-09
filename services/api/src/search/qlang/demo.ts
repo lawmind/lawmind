@@ -28,6 +28,9 @@ const QUERIES: readonly { q: string; expect: string }[] = [
   { q: 'party:"MANEKA" AND party:"GANDHI"', expect: 'implicit AND across two party terms' },
   { q: '"basic structure" NEAR/6 "constitution"', expect: 'proximity, not mere co-occurrence' },
   { q: 'caseno:"WRIT PETITION (CIVIL) No. 37/1950"', expect: 'the exact case number' },
+  { q: 'section:138 act:"NI Act"', expect: 'CHEQUE DISHONOUR — unanswerable this morning' },
+  { q: 'section:482 act:"CrPC"', expect: 'quashing — and CrPC has three spellings in the corpus' },
+  { q: 'section:302 act:"IPC" AND judge:"PASAYAT"', expect: 'section AND act AND judge, together' },
   { q: 'cite:"(2099) 9 SCC 9999"', expect: 'A CITATION THAT DOES NOT EXIST — must return ZERO' },
   { q: 'judge:"NOBODY AT ALL"', expect: 'A JUDGE WHO DOES NOT EXIST — must return ZERO' },
 ];

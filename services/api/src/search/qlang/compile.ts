@@ -32,6 +32,8 @@
  */
 import type { Sql } from 'postgres';
 
+import { canonicalAct } from '@lawmind/ingest/sections';
+
 import { citationLookupKey } from '../query-shape.ts';
 import type { Field, Node } from './parse.ts';
 
@@ -134,16 +136,50 @@ function fieldMatch(sql: Sql, field: Field, value: string, phrase: boolean, wild
         : sql`j.judgment_date = ${value}::date`;
 
     case 'act':
+      /**
+       * **Matched on `act_key`, not on the printed name.** The corpus names one
+       * statute several ways — measured over 97,806 references: `Indian Penal
+       * Code, 1860` 10,677 times and `Indian Penal Code` 3,300; `Code of
+       * Criminal Procedure, 1973` 9,895, `Code of Criminal Procedure` 3,062 and
+       * `Criminal Procedure Code` 1,426. Matching the printed name would show an
+       * advocate a third of the cases on CrPC s.482 with no way to know the rest
+       * existed.
+       *
+       * `canonicalAct` runs the same normalisation the ingest applied, so
+       * `act:"CrPC"`, `act:"Criminal Procedure Code"` and `act:"Code of Criminal
+       * Procedure, 1973"` all reach the same rows. The `act_named` fallback
+       * stays for statutes outside the synonym list.
+       */
       return sql`EXISTS (
         SELECT 1 FROM judgment_statute_refs r
          WHERE r.judgment_id = j.id
-           AND r.act_named ILIKE ${likePattern(value, wildcard)})`;
+           AND (r.act_key = ${canonicalAct(value)}
+                OR r.act_named ILIKE ${likePattern(value, wildcard)}))`;
 
     case 'section':
+      /**
+       * **The BNS bridge, and it is deliberately inert today.**
+       *
+       * BNS, BNSS and BSA replaced the IPC, CrPC and Evidence Act on 1 July
+       * 2024, so a search for BNS s.103 should also reach the pre-2024 judgments
+       * deciding IPC s.302 — that back-catalogue is the entire value of the
+       * corpus for a criminal practitioner.
+       *
+       * The join to `statute_mappings` is written and **currently resolves
+       * nothing, because that table is empty by design**: `statutes.ts` records
+       * that indiacode publishes no IPC↔BNS correspondence and `DOMAIN_TRUTH.md`
+       * forbids inventing one. This is the honest shape — the query works the
+       * moment a sourced mapping exists, and until then it returns exactly the
+       * sections the judgments actually cite, which is the truth.
+       */
       return sql`EXISTS (
         SELECT 1 FROM judgment_statute_refs r
          WHERE r.judgment_id = j.id
-           AND upper(r.section_number) = ${value.toUpperCase()})`;
+           AND (upper(r.section_number) = ${value.toUpperCase()}
+                OR EXISTS (
+                  SELECT 1 FROM statute_mappings m
+                   WHERE upper(m.new_section) = ${value.toUpperCase()}
+                     AND upper(m.old_section) = upper(r.section_number))))`;
 
     case 'text':
       return textMatch(sql, value, phrase, wildcard);
