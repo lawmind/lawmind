@@ -440,6 +440,22 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       **never averaged into the same number**, because a metric mixing two query
       populations reports on neither.
 
+      **The query half is now built** — `services/harness/src/issue-statements.ts`,
+      15 tests. Indian judgments state their question formulaically, and that
+      sentence is short, question-shaped and the court's own. **Measured on 300
+      real judgments: 18.0% yield one, 88 statements, median 134 characters.**
+
+      **The GOLD half is an open problem and is deliberately unsolved.** CLERC
+      works because the citation sits *at* the passage, so the link is the
+      judge's own. An issue statement carries no such link — the authorities
+      answering it are cited pages later, interleaved with those for every other
+      issue the judgment decides. The tempting rule, *"gold = every judgment this
+      one relied on"*, is available today and **weaker than it looks**: a
+      judgment deciding four issues would score a query about issue one correct
+      for retrieving an authority that answers issue three, inflating success@5
+      by an unknown amount in an unknown direction. **That is worse than not
+      measuring**, so the fixture is not built on it.
+
       The immediate consequence was a free latency win: the AND pass is skipped
       above 200 characters, since its match set is a strict subset of the OR
       pass's and the code already keeps whichever returned more. **Latency only —
