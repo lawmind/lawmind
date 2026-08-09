@@ -173,6 +173,24 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       `docs/RETRIEVAL_ARCHITECTURE.md` §6c. So: late chunking ·
       summary-augmented chunking (**DRM is 95.2%**) are **blocked on nothing but
       a night** — but still run the free query-side and graph levers first.
+
+      **AND THE FREE LEVER IS NOT DONE: HyDE is built and unmeasured**, so this
+      section's own sequencing rule says measure it before spending the night.
+
+      **The schema question, recorded before the six hours rather than after.**
+      Late chunking and SAC change the CHUNKS, not the model — so they are new
+      rows, not a new column, and `judgment_chunks` has
+      `UNIQUE (judgment_id, chunk_index)`. Two chunkings cannot coexist in it
+      without putting a strategy into that key, and doing so would also put both
+      strategies inside **one HNSW index**, so every ANN search would have to
+      over-fetch and filter — the exact cost `dense()` already pays for PD-10
+      filters.
+
+      **Recommendation: a separate table with its own HNSW index.** It leaves the
+      live index untouched, needs no filter on the hot path, and is deletable in
+      one statement if the new chunking loses. If it wins, it becomes the table.
+      **The reversible choice, for an experiment that may well be rejected** —
+      256-token truncation was.
 - [x] **GRAPH EXPANSION MEASURED at n=283, 9 Aug 2026 — the first time ever.**
 
       | | before | after |
