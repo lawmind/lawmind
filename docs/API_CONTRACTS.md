@@ -1043,6 +1043,26 @@ this table). See `docs/FOUNDER_QUEUE.md` §The advocate-facing cause-list
 endpoint for the shape trigger 4 will need. Toggling either setting today is
 honest and inert, never a fabricated event.
 
+**ADDITIVE, 9 August 2026 — `settings.unavailable`.** Inert was honest in the
+code and invisible in the product: an advocate could switch on *"tell me when a
+matter is listed on a date I did not know about"*, watch it save, and be told
+nothing ever. **They would find out by missing a hearing.** So both settings
+responses now carry an extra key:
+
+```
+{ settings: { savedAuthorityMoved, ownMatterJudgment, unknownListing,
+              unavailable: ["ownMatterJudgment", "unknownListing"] } }
+```
+
+**Additive and provisional.** A client that ignores it behaves exactly as
+before; a client that reads it can present the switch as not yet working rather
+than as working. **The list is DERIVED from the `alert_kind` enum, never
+written down** — so when a producer ships and the enum gains its value, the
+entry disappears by itself. A hard-coded list would be correct today and wrong,
+silently, the moment trigger 3 or 4 lands. Empty array when everything works;
+the key is always present, because an absent key means "server too old to know"
+and an empty one means "everything works".
+
 **Trigger 2 cannot be disabled.** `PATCH /me/alert-settings` accepts no key for
 it; sending one is a `400`. An advocate who has filed a document citing law that
 has since moved does not get to opt out of being told.

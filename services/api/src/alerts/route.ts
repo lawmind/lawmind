@@ -46,6 +46,7 @@
  * either setting today changes nothing observable, honestly, rather than
  * pretending a producer exists.
  */
+import { alertKindEnum } from '@lawmind/db/schema';
 import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
@@ -156,10 +157,51 @@ type SettingsRow = {
   alert_unknown_listing: boolean;
 };
 
-const shapeSettings = (r: SettingsRow) => ({
+/**
+ * Which `alert_kind` each toggle would produce.
+ *
+ * Two of these values **do not exist in the enum**, and that is the point. The
+ * columns exist, `PATCH /me/alerts` persists them, and the app shows a switch —
+ * so today an advocate can turn on *"tell me when a matter is listed on a date
+ * I did not know about"*, see it save, and be told nothing, ever. **They find
+ * out by missing a hearing.**
+ *
+ * `scripts/check-alert-coverage.mjs` has reported this since it was written:
+ * 2 of 4 PD-5 triggers can fire. What was missing was any way for the product
+ * to say so.
+ */
+const KIND_FOR_SETTING = {
+  savedAuthorityMoved: 'saved_authority_moved',
+  ownMatterJudgment: 'own_matter_judgment',
+  unknownListing: 'unknown_listing',
+} as const;
+
+/**
+ * Settings whose alert can never be produced, **derived from the enum rather
+ * than listed**.
+ *
+ * A hard-coded list would be correct today and wrong the moment a producer
+ * ships, and the failure would be silent in the worst direction: a working
+ * alert still announcing itself as unavailable, or — after someone "tidied" the
+ * list — a broken one announcing itself as working. Deriving it means adding
+ * the enum value is the *only* thing anyone has to remember.
+ */
+export function unavailableSettings(kinds: readonly string[]): string[] {
+  return Object.entries(KIND_FOR_SETTING)
+    .filter(([, kind]) => !kinds.includes(kind))
+    .map(([setting]) => setting);
+}
+
+const shapeSettings = (r: SettingsRow, unavailable: string[]) => ({
   savedAuthorityMoved: r.alert_saved_authority_moved,
   ownMatterJudgment: r.alert_own_matter_judgment,
   unknownListing: r.alert_unknown_listing,
+  /**
+   * **Additive and provisional**, per `CLAUDE.md` §6b: a client that ignores it
+   * behaves exactly as before. A client that reads it can stop presenting a
+   * switch that does nothing. `docs/API_CONTRACTS.md` records the shape.
+   */
+  unavailable,
 });
 
 export async function getAlertSettings(
@@ -175,7 +217,7 @@ export async function getAlertSettings(
     FROM users WHERE id = ${userId}`;
   if (!row) return fail(c, 'NOT_FOUND', 'no user with that id', 404);
 
-  return ok(c, { settings: shapeSettings(row) });
+  return ok(c, { settings: shapeSettings(row, unavailableSettings(alertKindEnum.enumValues)) });
 }
 
 export async function patchAlertSettings(
@@ -203,5 +245,5 @@ export async function patchAlertSettings(
   `;
   if (!row) return fail(c, 'NOT_FOUND', 'no user with that id', 404);
 
-  return ok(c, { settings: shapeSettings(row) });
+  return ok(c, { settings: shapeSettings(row, unavailableSettings(alertKindEnum.enumValues)) });
 }
