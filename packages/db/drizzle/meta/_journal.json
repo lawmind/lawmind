@@ -183,6 +183,13 @@
       "when": 1786262000000,
       "tag": "0025_training_consent",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1786290000000,
+      "tag": "0026_structured_search",
+      "breakpoints": true
     }
   ]
 }

@@ -1163,3 +1163,86 @@ export const trainingConsentEvents = pgTable(
   },
   (t) => [index('training_consent_events_user_idx').on(t.userId, t.createdAt)],
 );
+
+/**
+ * One row per judge per judgment — because `bench` is a LIST.
+ *
+ * Measured before building: 4,846 of 38,325 judgments name more than one judge
+ * in a single comma-delimited `bench` string, up to nine. A trigram index on
+ * that raw column filters correctly and makes **facets and counts wrong**:
+ * `D.Y. CHANDRACHUD` appears 572 times as a *sole* bench while having sat on
+ * many more, and `ARIJIT PASAYAT, S.B. SINHA` faces as a different judge from
+ * `ARIJIT PASAYAT`. The 1,717 distinct values are bench COMPOSITIONS, not
+ * judges — so "how many judgments did this judge decide" is unanswerable from
+ * that column, and advocates ask it constantly.
+ *
+ * Migration `0026_structured_search.sql` is the authority on the indexes.
+ */
+export const judgmentJudges = pgTable(
+  'judgment_judges',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+    /** As printed in `bench`, trimmed. Kept verbatim — the advocate should see the reporter's spelling. */
+    judgeName: text('judge_name').notNull(),
+    /**
+     * Upper-cased with punctuation and spacing removed: `S.K. DAS` and
+     * `S. K. DAS` both become `SKDAS`. **Matching only, never displayed.**
+     *
+     * Deliberately NOT an identity. Two spellings collapsing to one key is a
+     * match; deciding two different keys are the same person is a judgement
+     * about a human being, and this table does not make it. There is no
+     * `judge_id`, and adding one needs evidence rather than a similarity score.
+     */
+    judgeKey: text('judge_key').notNull(),
+    /** 0-based position in the printed bench; the presiding judge is listed first by convention. */
+    seatIndex: integer('seat_index').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('judgment_judges_judgment_key').on(t.judgmentId, t.judgeKey),
+    index('judgment_judges_judgment_id_idx').on(t.judgmentId),
+    index('judgment_judges_key_idx').on(t.judgeKey),
+  ],
+);
+
+/**
+ * Which statutory sections a judgment actually refers to.
+ *
+ * 845 acts and 34,928 sections are already ingested; this link was not, so
+ * *"cases on section 138 NI Act"* — the archetypal advocate query — had no
+ * answer at all.
+ *
+ * **`statuteId` is nullable on purpose and the rule is strict: a section
+ * reference with no identifiable act is NOT recorded.** A bare "section 5" is as
+ * likely to be a clause of a contract or of the judgment's own scheme as a
+ * statutory provision, and guessing a default act would put confident wrong rows
+ * into the index — worse than an empty one, because an empty index is visibly
+ * empty.
+ */
+export const judgmentStatuteRefs = pgTable(
+  'judgment_statute_refs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+    statuteId: uuid('statute_id').references(() => statutes.id, { onDelete: 'set null' }),
+    /** The act as named IN THE JUDGMENT, e.g. `NI Act`. Kept even when it resolves. */
+    actNamed: text('act_named').notNull(),
+    /** Text, not integer: sections carry letters (`302A`, `63A`). */
+    sectionNumber: text('section_number').notNull(),
+    /** A section mentioned once in passing and one the judgment turns on are different things. */
+    occurrences: integer('occurrences').notNull().default(1),
+    firstOffset: integer('first_offset').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('judgment_statute_refs_unique').on(t.judgmentId, t.actNamed, t.sectionNumber),
+    index('judgment_statute_refs_section_idx').on(t.sectionNumber),
+    index('judgment_statute_refs_statute_idx').on(t.statuteId),
+    index('judgment_statute_refs_judgment_idx').on(t.judgmentId),
+  ],
+);
