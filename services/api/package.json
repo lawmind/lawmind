@@ -11,7 +11,8 @@
     "./citations/recheck": "./src/citations/recheck.ts",
     "./search/retrieve": "./src/search/retrieve.ts",
     "./search/graph-expand": "./src/search/graph-expand.ts",
-    "./search/query-shape": "./src/search/query-shape.ts"
+    "./search/query-shape": "./src/search/query-shape.ts",
+    "./search/hyde": "./src/search/hyde.ts"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",

@@ -98,8 +98,50 @@ const SECTION_RE =
 const CASE_NAME_RE = /\S+\s+(?:v|vs|versus)\.?\s+\S+/i;
 
 /**
- * **A citation beats everything.** It is the most specific thing a query can
- * contain and the one with a single right answer, so it is tested first and
+ * How much non-citation text a query may carry and still be a citation LOOKUP.
+ *
+ * 80 characters is comfortably more than any natural wrapper an advocate puts
+ * around a citation — *"what did the Supreme Court hold in"* is 34 — and far
+ * below the 200-character floor `harness/build-queries.ts` puts on a passage of
+ * reasoning. The gap between those two numbers is wide enough that the exact
+ * threshold is not load-bearing.
+ */
+const MAX_NON_CITATION_CHARS = 80;
+
+/**
+ * Is this citation what the query is ABOUT, rather than something it mentions?
+ *
+ * Exported so the rule that stopped 37 wrong pins can be tested directly rather
+ * than inferred from a classification.
+ */
+export function citationIsTheQuery(text: string, citationRaw: string): boolean {
+  const remainder = text.replace(citationRaw, '').trim();
+  return remainder.length <= MAX_NON_CITATION_CHARS;
+}
+
+/**
+ * **CONTAINING a citation is not BEING a citation lookup.**
+ *
+ * Measured 9 August 2026, and it had been wrong since this file was written.
+ * Of the 283 evaluation queries — every one a passage of judicial reasoning
+ * 200–900 characters long — **140 classified as `citation`** because a residual
+ * citation survived redaction somewhere in the prose. 46 of those resolved to
+ * exactly one judgment and were therefore **pinned at rank 1**, and **37 of the
+ * pins were the wrong case**: 13.1% of the whole set, in *both arms of every
+ * A/B this project has run*.
+ *
+ * {@link warrantsExactLookup} already said which way to err — *"a missed
+ * citation is a slower correct answer, while a wrongly-claimed citation would
+ * pin the wrong judgment at rank 1"*. The classifier simply was not strict
+ * enough to honour it.
+ *
+ * So a citation must be **what the query is about**, not merely present in it.
+ * The test is the length of what remains once the citation is removed: `what
+ * did the court hold in (2019) 4 SCC 221` leaves 26 characters and is plainly a
+ * lookup; a paragraph discussing a doctrine that happens to cite an authority
+ * leaves hundreds and is plainly not.
+ *
+ * Among citation lookups the old precedence still holds and still
  * short-circuits — `Kesavananda Bharati (1973) 4 SCC 225` is a citation query
  * that happens to name a case, not a case-name query that happens to cite.
  *
@@ -113,7 +155,7 @@ export function classifyQuery(raw: string): ClassifiedQuery {
   if (text.length === 0) return empty;
 
   const citations = extractCitations(text);
-  if (citations.length > 0) {
+  if (citations.length > 0 && citationIsTheQuery(text, citations[0]!.raw)) {
     return {
       shape: 'citation',
       // The FIRST citation, by document order. A query carrying two is a

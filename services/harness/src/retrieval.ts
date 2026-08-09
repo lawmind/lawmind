@@ -99,8 +99,19 @@ export async function scoreQuery(
   depth = 20,
   rerank?: (query: string, passages: readonly string[]) => Promise<number[]>,
   graph = false,
+  hyde?: (query: string) => Promise<string>,
 ): Promise<ScoredQuery> {
-  const vector = await embedQuery(q.query);
+  /**
+   * **HyDE changes what is EMBEDDED, never what is SEARCHED lexically.**
+   *
+   * `hybridSearch` takes the query text and the query vector as separate
+   * arguments, so the sparse arm keeps the advocate's literal words — section
+   * numbers, the citation they typed, party names — while only the dense arm
+   * sees the hypothetical passage. A hypothetical that wanders off topic
+   * therefore cannot take BM25 with it, and the exact-citation pin is untouched.
+   */
+  const denseText = hyde ? await hyde(q.query) : q.query;
+  const vector = await embedQuery(denseText);
   const excluded = excludedFor(q);
   // Over-fetch by the number removed, so excluding the citing judgment does not
   // quietly shorten the list the advocate would have seen.

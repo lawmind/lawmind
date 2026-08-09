@@ -4,7 +4,7 @@
  * wants and the ones easiest to omit.
  */
 import assert from 'node:assert/strict';
-import { afterEach, test } from 'node:test';
+import { after, afterEach, before, test } from 'node:test';
 
 import type { Sql } from 'postgres';
 
@@ -26,6 +26,29 @@ const ok = (body: unknown) =>
 afterEach(() => {
   delete process.env['DPA_COUNTERSIGNED'];
   delete process.env['ANTHROPIC_DRAFTING_MODEL'];
+});
+
+/**
+ * **`callModel` falls back to `process.env` when a key is not passed**, so a
+ * developer with a real key in their shell tested a different code path from CI
+ * — and once the keys went live on 9 Aug 2026 the "no key" test started failing
+ * on this machine while passing everywhere it had ever run.
+ *
+ * Cleared for the whole file rather than in one test, because the failure mode
+ * is silent in the other direction too: a test that thinks it supplied a fake
+ * key would otherwise reach the real API with a real one.
+ */
+const REAL_KEYS = {
+  openRouter: process.env['OPENROUTER_API_KEY'],
+  anthropic: process.env['ANTHROPIC_API_KEY'],
+};
+before(() => {
+  delete process.env['OPENROUTER_API_KEY'];
+  delete process.env['ANTHROPIC_API_KEY'];
+});
+after(() => {
+  if (REAL_KEYS.openRouter !== undefined) process.env['OPENROUTER_API_KEY'] = REAL_KEYS.openRouter;
+  if (REAL_KEYS.anthropic !== undefined) process.env['ANTHROPIC_API_KEY'] = REAL_KEYS.anthropic;
 });
 
 test('a refused route sends nothing and writes NO ledger row', async () => {

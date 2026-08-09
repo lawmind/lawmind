@@ -39,12 +39,13 @@
 import { readFileSync } from 'node:fs';
 
 import { getEmbedder, getReranker, toVectorLiteral } from '@lawmind/embed';
+import { hydeText } from '@lawmind/api/search/hyde';
 import postgres from 'postgres';
 
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
 import { mcnemarExactP, queriesToSettle } from './stats.ts';
 
-const lever = (process.argv[2] ?? 'rerank') as 'rerank' | 'graph' | 'both';
+const lever = (process.argv[2] ?? 'rerank') as 'rerank' | 'graph' | 'both' | 'hyde' | 'all';
 const limit = Number(process.env['AB_LIMIT'] ?? '100');
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
@@ -91,9 +92,40 @@ async function main(): Promise<void> {
       return e ? toVectorLiteral(e.vector) : null;
     };
 
-    const wantsRerank = lever === 'rerank' || lever === 'both';
-    const wantsGraph = lever === 'graph' || lever === 'both';
+    const wantsRerank = lever === 'rerank' || lever === 'both' || lever === 'all';
+    const wantsGraph = lever === 'graph' || lever === 'both' || lever === 'all';
+    const wantsHyde = lever === 'hyde' || lever === 'all';
     const reranker = wantsRerank ? await getReranker() : null;
+
+    /**
+     * HyDE, when asked for. **Counted, not assumed.**
+     *
+     * `hydeText` falls back to the raw query on any refusal, failure or stunted
+     * completion — which is correct behaviour and a catastrophic thing to
+     * measure silently: a run where every call refused would report "HyDE does
+     * not help" while having never once run HyDE. The 512-token run already
+     * taught this lesson in another form, where a key merely EXISTING made two
+     * metrics report a pass.
+     *
+     * So the count is printed, and a run that generated nothing says so.
+     */
+    let hydeGenerated = 0;
+    let hydeFellBack = 0;
+    let hydeSkipped = 0;
+    const hydeMs: number[] = [];
+    const hyde = wantsHyde
+      ? async (query: string): Promise<string> => {
+          const started = Date.now();
+          const r = await hydeText(sql, query, 'public');
+          if (r.skipped) hydeSkipped++;
+          else {
+            hydeMs.push(Date.now() - started);
+            if (r.generated) hydeGenerated++;
+            else hydeFellBack++;
+          }
+          return r.text;
+        }
+      : undefined;
 
     /**
      * Latency, timed here because accuracy is only half the ship/no-ship
@@ -131,7 +163,7 @@ async function main(): Promise<void> {
       // Both arms in the same iteration, so a corpus that changed mid-run would
       // affect both identically rather than showing up as a lever effect.
       control.push(await scoreQuery(sql, q, embedQuery));
-      treatment.push(await scoreQuery(sql, q, embedQuery, 20, timedRerank, wantsGraph));
+      treatment.push(await scoreQuery(sql, q, embedQuery, 20, timedRerank, wantsGraph, hyde));
       if ((i + 1) % 10 === 0) process.stdout.write(`  ${i + 1}/${queries.length}\r`);
     }
 
@@ -227,6 +259,44 @@ async function main(): Promise<void> {
           : '  Within the 3s Gate S1 request budget, on this machine.',
       );
     }
+    /**
+     * **Did the lever actually run.** `hydeText` falls back to the raw query on
+     * every refusal and every failure, which is right for production and lethal
+     * for measurement: a run in which nothing generated is indistinguishable, in
+     * the numbers alone, from a run in which HyDE simply did not help.
+     */
+    if (wantsHyde) {
+      const total = hydeGenerated + hydeFellBack;
+      console.log('');
+      console.log(
+        `  HyDE: generated ${hydeGenerated}/${total} · fell back ${hydeFellBack} · ` +
+          `skipped by query shape ${hydeSkipped}`,
+      );
+      if (hydeMs.length > 0) {
+        const s = [...hydeMs].sort((a, b) => a - b);
+        const m = hydeMs.reduce((a, b) => a + b, 0) / hydeMs.length;
+        const p95 = s[Math.min(s.length - 1, Math.floor(s.length * 0.95))]!;
+        console.log(`  HyDE latency: mean ${m.toFixed(0)}ms · p95 ${p95}ms, on attempted calls`);
+        console.log(
+          p95 > 3000
+            ? '  BUDGET BREACHED on the attempted path. Gate S1 allows 3s for the WHOLE request — ' +
+                'this is generation alone, before retrieval or reranking.'
+            : '  Within the 3s Gate S1 request budget, before retrieval.',
+        );
+      }
+      if (hydeGenerated === 0) {
+        console.log(
+          '  NOT MEASURED: every call fell back, so the treatment arm was the control arm. ' +
+            'This is not evidence about HyDE.',
+        );
+      } else if (hydeFellBack > total * 0.1) {
+        console.log(
+          `  CAUTION: ${((hydeFellBack / total) * 100).toFixed(0)}% fell back, so the measured ` +
+            'effect is diluted — the true effect is larger in either direction.',
+        );
+      }
+    }
+
     console.log('');
     console.log(
       lo > 0

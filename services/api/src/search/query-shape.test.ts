@@ -7,7 +7,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { citationLookupKey, classifyQuery, warrantsExactLookup } from './query-shape.ts';
+import {
+  citationIsTheQuery,
+  citationLookupKey,
+  classifyQuery,
+  warrantsExactLookup,
+} from './query-shape.ts';
 
 /* ------------------------------------------------------------- citations -- */
 
@@ -171,4 +176,59 @@ test('the key is exactly what Postgres computes — same rule, both sides', () =
   for (const c of ['(2019) 4 S.C.C. 221', '2026 INSC 668', 'AIR 1973 SC 1461', '[1950] SCR 869']) {
     assert.equal(citationLookupKey(c), pg(c), `${c} diverged from the SQL rule`);
   }
+});
+
+/* ------------------------------- containing vs BEING a citation -- */
+
+test('A PARAGRAPH THAT MENTIONS A CITATION IS NOT A CITATION LOOKUP', () => {
+  /**
+   * The defect this rule exists for, measured 9 Aug 2026: 140 of 283 evaluation
+   * queries classified as `citation` because a residual citation survived
+   * somewhere in 200-900 characters of reasoning. 46 resolved to exactly one
+   * judgment and were pinned at rank 1; **37 of those pins were the wrong
+   * case** — 13.1% of the set, in both arms of every A/B run.
+   */
+  const passage =
+    'The question that arises is whether the protection granted to an accused ' +
+    'stands extinguished upon the expiry of a period fixed by the court below. ' +
+    'In (2019) 4 SCC 221 the position was considered at some length, and the ' +
+    'reasoning there proceeded on the footing that liberty once granted is not ' +
+    'to be withdrawn by efflux of time alone, absent fresh material.';
+  const c = classifyQuery(passage);
+  assert.equal(c.shape, 'concept', 'a reasoning passage was read as a citation lookup');
+  assert.equal(warrantsExactLookup(c), false, 'a paragraph would have pinned a judgment at rank 1');
+});
+
+test('a natural wrapper around a citation IS still a lookup', () => {
+  // The rule must not over-correct: an advocate rarely types the bare string.
+  for (const q of [
+    '(2019) 4 SCC 221',
+    'what did the court hold in (2019) 4 SCC 221',
+    'show me AIR 1963 SC 1295 please',
+    'Kesavananda Bharati (1973) 4 SCC 225',
+  ]) {
+    const c = classifyQuery(q);
+    assert.equal(c.shape, 'citation', `stopped being a lookup: ${q}`);
+    assert.equal(warrantsExactLookup(c), true);
+  }
+});
+
+test('the dominance rule is about the REMAINDER, not the ratio', () => {
+  // A long citation inside long prose must still fail; a short citation with
+  // almost nothing around it must still pass.
+  assert.equal(citationIsTheQuery('(2019) 4 SCC 221', '(2019) 4 SCC 221'), true);
+  assert.equal(citationIsTheQuery('in (2019) 4 SCC 221', '(2019) 4 SCC 221'), true);
+  assert.equal(
+    citationIsTheQuery(`${'the court considered the matter at length. '.repeat(4)}(2019) 4 SCC 221`, '(2019) 4 SCC 221'),
+    false,
+  );
+});
+
+test('a mentioned citation falls through to the shape it really is', () => {
+  // Falling out of `citation` must not fall out of classification entirely.
+  const withSection =
+    'The appellant contends that the ingredients of section 138 were not made out on these ' +
+    'facts, and relies on the discussion in (2019) 4 SCC 221 to support that reading of it.';
+  assert.equal(classifyQuery(withSection).shape, 'section');
+  assert.equal(classifyQuery(withSection).section, '138');
 });
