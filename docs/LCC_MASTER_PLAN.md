@@ -401,15 +401,37 @@ move is to close the gate rather than widen the breach.
 $0.28/1M output**, **5M free tokens on signup, no credit card**. A draft is
 ~3,500 in / 2,000 out ≈ **$0.001**. The free tokens cover ~1,400 drafts.
 
-- [ ] **D2.1** **Founder:** sign up, supply `OPENROUTER_API_KEY` (or DeepSeek
+- [x] **D2.1** ~~**Founder:** sign up, supply `OPENROUTER_API_KEY`~~ — **DONE
+      9 Aug 2026.** Key supplied and verified by a live call; DeepSeek V4 Flash
+      costs **$0.098/$0.196 per M tokens** and a full gate run is **$0.007**.
+      Original text: sign up, supply `OPENROUTER_API_KEY` (or DeepSeek
       direct). Also `SENSITIVE_LLM_API_KEY` for the pseudonymised path —
       routing is by **data sensitivity, not task difficulty**.
 - [ ] **D2.2** **Founder:** one `bail` template, reviewed by one advocate.
       **One, not ten.** Template prose is primary-sourced legal content
       neither agent may invent.
-- [ ] **D2.3** Build `services/api/src/llm/` — routed per `CLAUDE.md` §5,
-      **one document per call**, every call rows into `llm_calls` with
-      `data_class` and `pseudonymised`.
+- [x] **D2.3** **BUILT 9 Aug 2026** — `services/api/src/llm/`, 21 tests.
+      `route.ts` decides (pure, no network) and `call.ts` executes and ledgers.
+
+      **Three refusals, all of which had no enforcement anywhere before:**
+      - **Sensitive traffic is refused without a countersigned DPA** (OD-6),
+        **no founder override**. Defaults false; an unset or malformed value is
+        a refusal, not consent.
+      - **Sensitive traffic is refused even WITH the DPA**, because no
+        pseudonymiser exists. Sending raw client text while recording
+        `pseudonymised = true` would put a false claim in the audit ledger.
+      - **Drafting refuses rather than guessing a model id.** `CLAUDE.md` §5
+        names Sonnet 4.6; I have not verified an identifier, so
+        `ANTHROPIC_DRAFTING_MODEL` supplies it. The two ids that ARE hard-coded
+        were verified by live calls today.
+
+      **`assertOneDocument` is a guard the caller must pass**, not a convention
+      it must remember — mixing case files conflates parties between two of the
+      SAME advocate's clients and the output reads perfectly fluent.
+
+      **A failed call still writes its ledger row**; a refused route writes
+      none; and a ledger write failure never fails the call, because that would
+      double-spend.
 - [ ] **D2.4** `POST /documents` — the model receives **judgment IDs in
       context and may reference only them** (`CITATION_HARNESS.md` step 2).
 - [ ] **D2.5** `POST /documents/:id/export`. **Skip R2 for MVP** — stream the
