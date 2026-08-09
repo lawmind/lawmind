@@ -22,8 +22,24 @@ Last updated **8 August 2026**. Owner: **LCC (server lane)**. RCC's plan is
 | **Gate S2** | **FAILING.** success@5 = **24.0%** against a 0.70 floor |
 | Corpus | 38,341 judgments · 616,197 embedded chunks · 192,197 citation edges (44,785 resolved) |
 | Citator | **22 judgments flagged of 38,341.** 7 more are `overruled_in_part` and blocked on paragraph extraction |
-| Harness | 25 queries of 30. Three metrics **NOT MEASURED** — and **NOT because of a key.** There is **no generation path in the package at all**; `run-cli.ts` was reporting 0 (a PASS) the moment `OPENROUTER_API_KEY` merely existed. Fixed 9 Aug, `f0323f0` |
-| Reranker | q8 bge-reranker: **+6.0 pts, McNemar p = 0.210 — does not ship.** fp16 will not load. **~~fp32 OOMs~~ — WRONG, corrected 9 Aug 2026** |
+| Harness | 25 queries of 30. **All three previously unmeasurable metrics now produce numbers** — a generation path exists (`generate.ts`) and an adversarial runner exists (`adversarial.ts`). Until 9 Aug there was NO model call in the package, and `run-cli.ts` reported 0 (a PASS) the moment `OPENROUTER_API_KEY` merely existed |
+| Reranker | q8: **+6.0 pts alone, p = 0.210.** **With the graph: success@5 19.1% → 23.7%, p = 0.072 — trending, NOT settled** (needs ~577 queries; we have 283) |
+| Latency | **THE BINDING CONSTRAINT.** Gate S1 allows **3 s for the whole request**; reranking alone measured **11,424 ms mean** in the A/B. `max_length` is the lever: **512 → 3,613 ms · 256 → 1,647 ms · 128 → 786 ms** |
+
+**Where the three metrics actually stand, 9 Aug:**
+
+| metric | value | note |
+| --- | --- | --- |
+| hallucinationRate | **0 of 31 refs** | below the observation floor → reported NOT MEASURED |
+| silentDropRate | **0** | same |
+| **adversarialPassRate** | **20.0%** | worst-case over 25 calls. **Threshold 1.0 — FAILS** |
+| successAt5 | **24.0%** | the bottleneck everything else waits on |
+| staleOverruledRate · overruledLeakage | 0 · 0 | PASS |
+
+**Why the generation metrics are hard to measure at all:** at success@5 = 24%
+the retrieved evidence genuinely does not answer most questions, so the model
+abstains — correctly — and there are too few citations to compute a rate from.
+**Retrieval is upstream of everything.**
 
 **The fp32 reranker never OOMed.** It failed on a missing `onnx/model.onnx_data`
 — the fp32 build uses ONNX **external-data format**, so `model.onnx` is only the
