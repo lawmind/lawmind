@@ -224,6 +224,66 @@ the sharpest available argument for the AWS ingest.
       review. **A citator that flags 350 judgments nobody checked is worse than
       one that flags 22 that were.**
 
+## A3d · THE CONCORDANCE GAP — found 9 Aug by running the demo, and it is the one
+
+**This is why Supreme Today pinpoints a citation and we do not.** It is not a
+retrieval problem, a ranking problem or a model problem. It is a naming problem.
+
+**Every judgment in our corpus carries exactly one reporter citation, and it is
+always `S.C.R.`** — `[1973] SUPP. 1 S.C.R. 1` for *Kesavananda*. Measured across
+all 38,341 rows: **AIR 0 · SCC 0.** The resolved citation graph says the same:
+of 44,785 resolved edges, **AIR 0 · SCC 0 · SCR 43,858 · INSC 886**.
+
+**So an advocate typing the citation they actually use gets nothing.**
+`AIR 1973 SC 1461` and `(1973) 4 SCC 225` are how *Kesavananda* is cited in
+practice; we know it only as `1973 INSC 91`. A zero result reads as *"no such
+case"*, which is the worst possible failure for a product whose promise is that
+a citation is real.
+
+**It also retrospectively qualifies a test I trusted.** The live hard-negative
+suite reports 25/25 real citations resolving — but those citations were drawn
+*from our own corpus*, so every one was S.C.R. The test was non-vacuous for what
+it tested and **never touched the two formats advocates use.**
+
+### The prize, measured
+
+| unresolved edges | count | distinct strings |
+| --- | --- | --- |
+| total unresolved | **147,412** | |
+| **SCC** | **76,387** | **31,943** |
+| S.C.R. | 30,365 | |
+| **AIR** | **16,848** | **9,067** |
+| INSC · SCALE | 2,331 · 1,044 | |
+
+**41,010 distinct AIR and SCC strings sit in our own judgment text and resolve to
+nothing** — and many point at judgments we hold. `AIR 1952 SC 343` is cited **59
+times**; it is a 1952 Supreme Court judgment and **we have every Supreme Court
+judgment from 1950.** We own the case and do not know its name.
+
+### The fix — derive the concordance from the courts' own words
+
+- [ ] **A3d.1** For each unresolved AIR/SCC citation, take the text window around
+      its `char_offset` — **the offset is already stored on every edge** — and
+      extract the case name printed beside it. Courts write *"State of West
+      Bengal v. Anwar Ali Sarkar, AIR 1952 SC 343"*; the name is right there.
+- [ ] **A3d.2** Match that name against `judgments.case_title`, now
+      trigram-indexed, constrained by the **year in the citation** and the court.
+- [ ] **A3d.3** **Corroboration, not a single sighting.** `AIR 1952 SC 343`
+      appears 59 times, each beside a case name. Agreement across many citing
+      judgments is strong evidence; one occurrence is not. Record the count.
+- [ ] **A3d.4** **EXACTLY ONE candidate, or nothing.** Two matches record
+      nothing — the same rule `exactCitation` already applies. **A wrong alias is
+      worse than a missing one**: an advocate searching `AIR 1952 SC 343` and
+      receiving the wrong judgment may cite it, which is the failure this entire
+      product exists to prevent.
+- [ ] **A3d.5** Store in a **separate table with its evidence**, not merged into
+      `reporter_citations`. `cite:` searches both. Provenance must stay
+      answerable: *"who says this judgment is AIR 1952 SC 343"* has to have an
+      answer, and it is "fifty-nine Supreme Court judgments say so".
+- [ ] **A3d.6** This is **primary-source derivation, not a model's opinion** —
+      permitted where `DATASETS.md` forbids commentary. It also **removes a
+      reason to buy**: the concordance is part of what a licence sells.
+
 ## A4 · What each account and licence is actually for
 
 **They are four different things and only one of them is a bulk corpus.**
