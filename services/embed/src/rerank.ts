@@ -136,10 +136,40 @@ async function load(): Promise<Reranker> {
     async score(query, passages) {
       if (passages.length === 0) return [];
 
+      /**
+       * **Cut the STRING before the tokeniser sees it. This is free.**
+       *
+       * `truncation: true` discards everything past `MAX_LENGTH` tokens — but
+       * only AFTER tokenising the whole input. Measured 9 Aug 2026, 20
+       * candidates at `max_length` 512:
+       *
+       *   2,500 chars/passage → tokenise    846 ms · model 6,422 ms
+       *   8,000 chars/passage → tokenise  7,143 ms · model 5,868 ms
+       *  20,000 chars/passage → tokenise **54,620 ms** · model 4,236 ms
+       *
+       * **Model time is flat** — it always sees 512 tokens. All that growth is
+       * tokenising text that is then thrown away.
+       *
+       * That is the missing 3× in the A/B: a bench on 2,500-char chunks read
+       * 3,613 ms while the run reported a mean of 11,424 ms, because
+       * `operativeParagraph` can be a full court paragraph rather than a chunk.
+       * **The run's p95 of 55,074 ms matches the 20,000-char measurement of
+       * 54,620 ms almost exactly.**
+       *
+       * `CHARS_PER_TOKEN` is deliberately generous. Under-cutting would change
+       * what the model sees and therefore the ranking; over-cutting only leaves
+       * a little tokenising on the table. **Accuracy is identical by
+       * construction** — everything dropped here is dropped by `truncation`
+       * anyway.
+       */
+      const CHARS_PER_TOKEN = 6;
+      const budget = MAX_LENGTH * CHARS_PER_TOKEN;
+      const clipped = passages.map((p) => (p.length > budget ? p.slice(0, budget) : p));
+
       const inputs = tokenizer(
         passages.map(() => query),
         {
-          text_pair: passages as string[],
+          text_pair: clipped,
           padding: true,
           truncation: true,
           max_length: MAX_LENGTH,
