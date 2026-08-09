@@ -52,8 +52,28 @@ export const RERANKER_MODEL_ID = 'onnx-community/bge-reranker-v2-m3-ONNX';
  * Tokens per (query, passage) pair. The model accepts 8192; this is far lower
  * on purpose — a cross-encoder's cost is quadratic in sequence length, and the
  * candidate passages here are single paragraphs.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THIS IS THE DOMINANT LATENCY LEVER — MEASURED 9 Aug 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * On q8/CPU, scoring 20 candidates against a realistic 2,530-character passage:
+ *
+ *   max_length 512 → **3,613 ms**  (181 ms each) — over Gate S1's 3 s budget
+ *   max_length 256 → **1,647 ms**  ( 82 ms each) — inside
+ *   max_length 128 → **786 ms**    ( 39 ms each) — comfortably inside
+ *
+ * **Nothing else came close.** DirectML made it worse (fp32 on a 4060 Ti took
+ * 30,539 ms on real passages and nearly exhausted the card), and q8 on DML is
+ * slower still because int8 kernels are poorly accelerated there.
+ *
+ * **The default stays 512 because the ACCURACY cost of truncating is
+ * unmeasured.** A cross-encoder that sees half a paragraph may rank it worse,
+ * and reranking exists to be accurate — trading that away to hit a latency
+ * number would be optimising the wrong thing. **Run the A/B at 256 against the
+ * 512 baseline (success@5 23.7%) before changing this.**
  */
-const MAX_LENGTH = 512;
+const MAX_LENGTH = Number(process.env['RERANK_MAX_LENGTH'] ?? '512');
 
 export type Reranker = {
   /** One score per passage, in the order given. Higher is more relevant. */

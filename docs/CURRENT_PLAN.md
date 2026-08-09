@@ -226,12 +226,34 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       **The latency breach is UNSOLVED.** Gate S1 allows 3 s for the whole
       request; the best measured reranker is 11.4 s.
 
-      **Next hypothesis, untested and not yet a claim:** cross-encoders normally
-      truncate to **512 tokens**, and 2,500 characters is ~600+. If the
-      tokeniser is not truncating, we are paying full-length sequence cost for
-      passages the model was never meant to see whole. **Truncation is the first
-      thing to measure**, before any GPU endpoint is priced — it may cost
-      nothing and change everything.
+      **That hypothesis was WRONG and is closed.** `rerank.ts` already sets
+      `truncation: true, max_length: 512`, and already documents the quadratic
+      cost. Nothing was untruncated.
+
+      **But it led to the real lever. Measured on a realistic 2,530-character
+      passage, q8/CPU, 20 candidates:**
+
+      | `max_length` | 20 candidates | verdict |
+      | --- | --- | --- |
+      | **512** (current) | **3,613 ms** · 181 ms each | over the 3 s budget |
+      | **256** | **1,647 ms** · 82 ms each | **inside** |
+      | **128** | **786 ms** · 39 ms each | comfortably inside |
+
+      **Sequence length dominates everything else.** It also explains the whole
+      fp32 confusion: the 126 ms synthetic benchmark tokenised to ~15 tokens
+      while real passages pad to the full 512, and cost is quadratic.
+
+      **`RERANK_MAX_LENGTH` is now configurable, default UNCHANGED at 512**,
+      because **the accuracy cost of truncating is unmeasured**. A cross-encoder
+      that sees half a paragraph may rank it worse, and reranking exists to be
+      accurate. **The decisive experiment is `ab both` at 256 against the 512
+      baseline of success@5 = 23.7%** — it needs the corpus proxy reopened.
+
+      **One discrepancy I cannot yet explain and will not paper over:** this
+      bench measured **3,613 ms** at 512 tokens, while the `ab both` run
+      reported a **mean of 11,424 ms**. Candidate causes are per-call overhead,
+      varied real passage lengths, and CPU contention with the embedder. **Until
+      that is reconciled, treat 3,613 ms as a floor rather than the number.**
 
       **What stands from the earlier entry:** the fp32 weights really were
       missing (`model.onnx_data`, 2.27 GB) and fp32 really does load now. Only
