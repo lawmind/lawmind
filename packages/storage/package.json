@@ -1,0 +1,17 @@
+{
+  "name": "@lawmind/storage",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./r2": "./src/r2.ts",
+    "./sign": "./src/sign.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test --test-concurrency=1 src/*.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "4.23.1"
+  }
+}
