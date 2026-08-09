@@ -218,13 +218,20 @@ describe('citator alerts', () => {
           savedAuthorityMoved: boolean;
           ownMatterJudgment: boolean;
           unknownListing: boolean;
+          unavailable: string[];
         };
       };
     };
+    // `unavailable` is part of the documented shape — `docs/API_CONTRACTS.md`
+    // §settings.unavailable, additive 9 Aug 2026: *"the key is always present,
+    // because an absent key means 'server too old to know'"*. Asserted rather
+    // than tolerated, so this test guards the contract instead of merely
+    // surviving it.
     assert.deepEqual(body.data.settings, {
       savedAuthorityMoved: true,
       ownMatterJudgment: true,
       unknownListing: true,
+      unavailable: ['ownMatterJudgment', 'unknownListing'],
     });
   });
 

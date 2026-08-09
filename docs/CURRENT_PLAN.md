@@ -1077,6 +1077,31 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
 - [ ] **E1.2 alert drill is NOT done and must not be ticked.** `check-alert-
       coverage.mjs` is red at **2 of 4 PD-5 triggers** and deliberately unwired
       from `ci:local` until the violations are fixed
+- [x] **`alerts/route.test.ts` was red and is now green — 10 Aug 2026.** Commit
+      `20a929d` added `settings.unavailable` to the response and did not update
+      its own test, so the lane carried a red test for a deliberate change.
+
+      **INTENT: code returns `settings` including
+      `unavailable: ["ownMatterJudgment","unknownListing"]`; the failing test
+      expected exactly three boolean keys; `docs/API_CONTRACTS.md` §1084
+      specifies the key is ALWAYS present with that value.** Spec outranks
+      tests, so the test was stale, not the code. It now **asserts** the field
+      rather than tolerating it, so it guards the contract instead of surviving
+      it.
+- [ ] **`statutes/route.test.ts` is RED, and it is a DATA condition, not a code
+      defect — found 10 Aug 2026, deliberately NOT "fixed".** The test asserts
+      every act has sections. Measured against the live corpus: **22 of 845 acts
+      have zero sections** — *The Bengal Indigo Contracts Act, 1836*, *The
+      Bombay Rent-free Estates Act, 1851*, *The Deo Estate Act* and 19 more,
+      all obscure colonial-era acts.
+
+      **Two candidate fixes and they are not equivalent**, which is why this is
+      recorded rather than decided alone: either the ingest should backfill
+      those acts' section text (if indiacode publishes any), or the test should
+      accept that some acts legitimately have none. **Loosening the assertion
+      without checking indiacode would be weakening a test to make a suite
+      green**, which is the failure mode the judge pass exists to catch.
+      Nothing here was touched.
 
 ---
 
