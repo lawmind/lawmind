@@ -363,6 +363,77 @@ async function exactCitation(
   return rows[0]!.id;
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT THE CROSS-ENCODER IS ALLOWED TO SEE — never an empty string
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `operativeParagraph` is a **display** field, and the contract says so:
+ * *"An empty `operativeParagraph` is legitimate. A result matched by the lexical
+ * ranker alone has no dense chunk behind it and therefore no paragraph to show."*
+ * That is a correct decision about what to render.
+ *
+ * **It is a catastrophic decision about what to rank on**, and the two uses of
+ * the one field had quietly diverged. Measured 9 Aug 2026 over 500 candidates
+ * from 25 real queries: **37.6% carried an empty `operativeParagraph`** — every
+ * judgment BM25 found that the dense arm's top-50 did not. A cross-encoder
+ * scoring a query against `""` returns a low score, necessarily and every time,
+ * so **the reranker was systematically deleting two candidates in five from the
+ * top five** — and doing it to exactly the lexical matches that carry section
+ * numbers and citations.
+ *
+ * Graph suggestions had a quieter version of the same problem: they were handed
+ * `chunk_index 0`, which in an Indian judgment is the cause title, the coram and
+ * counsel's names. Nearly content-free for relevance, and handed to the model as
+ * if it were the reasoning.
+ *
+ * This resolves both with one mechanism: **for every candidate lacking a
+ * passage, the chunk of that judgment nearest the query vector**. One batched
+ * query, `DISTINCT ON` over the pgvector distance.
+ *
+ * **`operativeParagraph` is not touched.** The display contract is right; only
+ * the ranking input was wrong, and conflating them again is how this returns.
+ */
+export async function passagesForRerank(
+  sql: Sql,
+  results: readonly RetrievedJudgment[],
+  queryVector: string | null,
+): Promise<string[]> {
+  const missing = results
+    .map((r, i) => ({ i, id: r.judgmentId, empty: r.operativeParagraph.trim().length === 0 }))
+    .filter((x) => x.empty);
+  const passages = results.map((r) => r.operativeParagraph);
+  if (missing.length === 0) return passages;
+
+  const ids = missing.map((m) => m.id);
+  /**
+   * Without a query vector the embedder is cold. Fall back to the first chunk:
+   * weak, but a cause title still beats an empty string, and returning nothing
+   * here would silently keep the defect this function exists to remove.
+   */
+  const rows = queryVector
+    ? await sql<{ judgment_id: string; chunk_text: string }[]>`
+        SELECT DISTINCT ON (c.judgment_id) c.judgment_id, c.chunk_text
+          FROM judgment_chunks c
+         WHERE c.judgment_id = ANY(${ids}) AND c.embedding IS NOT NULL
+         ORDER BY c.judgment_id, c.embedding <=> ${queryVector}::vector`
+    : await sql<{ judgment_id: string; chunk_text: string }[]>`
+        SELECT DISTINCT ON (c.judgment_id) c.judgment_id, c.chunk_text
+          FROM judgment_chunks c
+         WHERE c.judgment_id = ANY(${ids}) AND c.embedding IS NOT NULL
+         ORDER BY c.judgment_id, c.chunk_index`;
+
+  const byId = new Map(rows.map((r) => [r.judgment_id, r.chunk_text]));
+  for (const m of missing) {
+    const text = byId.get(m.id);
+    // Still empty only when the judgment genuinely has no embedded chunk, which
+    // means it should not have been retrievable at all. Left as it is rather
+    // than papered over with the case title.
+    if (text) passages[m.i] = trimToSentenceStart(cleanExtractedText(text));
+  }
+  return passages;
+}
+
 export async function hybridSearch(
   sql: Sql,
   query: string,

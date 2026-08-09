@@ -15,7 +15,7 @@
  * those are about what is WRITTEN and rendered rather than about order.
  */
 import { expandByCitations } from '@lawmind/api/search/graph-expand';
-import { hybridSearch } from '@lawmind/api/search/retrieve';
+import { hybridSearch, passagesForRerank } from '@lawmind/api/search/retrieve';
 import type { Sql } from 'postgres';
 
 import { PRECISION_AT_K } from './metrics.ts';
@@ -158,9 +158,25 @@ export async function scoreQuery(
         { id: string; case_title: string; operative: string | null; overruled_status: string }[]
       >`
         SELECT j.id, j.case_title, j.overruled_status::text AS overruled_status,
+               /**
+                * **The chunk nearest the QUERY, not chunk zero.**
+                *
+                * Chunk zero of an Indian judgment is the cause title, the coram
+                * and counsel's names — nearly content-free for relevance. Handing
+                * that to the cross-encoder as if it were the reasoning was a
+                * quiet second version of the empty-string defect, and it hit
+                * exactly the candidates graph expansion exists to promote: the
+                * cross-encoder is the only thing that can lift a rank-16
+                * suggestion into the top five, and it was being asked to judge
+                * them on their letterhead.
+                */
                (SELECT c.chunk_text FROM judgment_chunks c
                  WHERE c.judgment_id = j.id AND c.embedding IS NOT NULL
-                 ORDER BY c.chunk_index LIMIT 1) AS operative
+                 ORDER BY ${
+                   vector
+                     ? sql`c.embedding <=> ${vector}::vector`
+                     : sql`c.chunk_index`
+                 } LIMIT 1) AS operative
           FROM judgments j
          WHERE j.id = ANY(${fresh.map((f) => f.judgmentId)})
       `;
@@ -242,10 +258,16 @@ export async function scoreQuery(
         : [...results.slice(0, Math.max(0, pool - graphSlots)), ...tail];
     const untouched = results.filter((r) => !reranked.includes(r));
 
-    const scores = await rerank(
-      q.query,
-      reranked.map((r) => r.operativeParagraph),
-    );
+    /**
+     * **Never an empty string.** `operativeParagraph` is a display field and is
+     * legitimately empty for a lexical-only match — 37.6% of candidates,
+     * measured 9 Aug 2026 over 500 from 25 real queries. Handing that to a
+     * cross-encoder scores the candidate against nothing and ranks it last,
+     * every time, so the reranker was deleting two candidates in five from the
+     * top five. `passagesForRerank` fills them from the chunk nearest the query.
+     */
+    const passages = await passagesForRerank(sql, reranked, vector);
+    const scores = await rerank(q.query, passages);
     results = [
       ...reranked
         .map((r, i) => ({ r, s: scores[i] ?? Number.NEGATIVE_INFINITY }))
