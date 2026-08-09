@@ -36,7 +36,7 @@ Last updated **8 August 2026**. Owner: **LCC (server lane)**. RCC's plan is
 | Training extraction | **6/6 live tests pass** against the real corpus. The SQL had never once executed before today |
 | Citation fast path | **VERIFIED on the real corpus**: 279 near-miss citations → **0** resolved to their source; 25/25 real and 20/20 reporter citations resolve |
 | Re-embed cost | **$65 line STRUCK.** Measured **36.6 ms/chunk on this machine's CPU** → 616,197 chunks ≈ **6.3 h** (12–19 h realistically). An overnight run, not a purchase |
-| Indian Kanoon | **STILL BLOCKED** — the accounts supplied are *website* logins; `api.indiankanoon.org` issues a separate API token |
+| Indian Kanoon | **NOT A BLOCKER — SETTLED.** No API: it is metered and the budget goes to Supreme Today instead. Website accounts only. The metered client stays built and refusing, permanently |
 
 ---
 

@@ -1855,26 +1855,25 @@ work.**
 
 ---
 
-## 3 · Indian Kanoon API — **₹0 to start. ₹500 free credit on signup.**
+## 3 · Indian Kanoon — **SETTLED: no API. Accounts only. ₹0.**
 
-**Verified from their own documentation and blog:**
+**Founder decision, restated 9 August 2026 after I wrongly carried it as a
+blocker.** This was decided before a context compaction and I lost it; recording
+it here so it cannot be lost again.
 
-- **₹500 free credit the moment you sign up.** No card, no fee.
-- **Pre-paid.** When the balance hits zero the API simply stops returning
-  results — it cannot overspend.
-- **~50 paise per search page.** Their own example: *"if you set up maxpages at
-  50 and you only get 7 pages… you will be charged Rs. 3.50"* — which is exactly
-  the 50 paise/page our client already assumes.
-- A 100-result search ≈ **₹5**.
-- Non-commercial use gets ₹10,000/month free, **but that is not us** — we are
-  commercial.
+**We are NOT buying the Indian Kanoon API.** The API is metered — roughly
+50 paise per search page — and **the money is going to Supreme Today instead.**
+Two paid legal data sources at once is not what an MVP needs, and Supreme Today
+is the one with the editorial layer we cannot rebuild.
 
-**What ₹500 buys:** roughly **1,000 search pages**, which is enough to measure
-how much of our 38,341-judgment corpus their API can resolve. **That measurement
-is the whole point** — it tells us whether paying them further is worth it.
+**What we use instead:** ordinary website accounts, for ordinary interactive
+use. Two are held.
 
-**Recommendation: sign up, spend the free ₹500, decide afterwards. Commit
-nothing.**
+**What this means for the code**: `services/ingest/src/harvest/indiankanoon.ts`
+stays built and stays refusing. It is budget-guarded and metered and costs
+nothing while `INDIANKANOON_API_TOKEN` is unset — which is now the permanent
+state, not a temporary one. **It is not a blocker and must not be listed as
+one.** If the decision ever reverses, the client is already there.
 
 ---
 
@@ -1939,7 +1938,7 @@ itself on that date — nobody has to remember.
 | --- | --- |
 | OpenRouter credit | **$5 ≈ ₹430** |
 | Railway DB proxy | **₹0** |
-| Indian Kanoon | **₹0** (₹500 free credit) |
+| Indian Kanoon | **₹0 — no API, settled. Accounts only** |
 | Bharat.Law free tier | **₹0** |
 | **Subtotal to unblock nearly all engineering** | **≈ ₹430** |
 | Bharat.Law Pro, one month, optional | ₹1,499 |
