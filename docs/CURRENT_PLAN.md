@@ -458,10 +458,25 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       excluded.** What stands is the qualitative finding: **specialist reporters
       are not extracted, at all.**
 
-      **Why it may matter less than it looks**, and this needs measuring before
-      anyone spends a day on it: an I.T.R. authority is only a lost graph edge if
-      that judgment is *in our corpus*, and the corpus is Supreme-Court-heavy.
-      **The edge count to check is resolvable misses, not raw misses.**
+      **MEASURED, AND IT COSTS NOTHING TODAY.** An I.T.R. authority is only a
+      lost graph edge if that judgment is in our corpus — so the number to check
+      is *resolvable* misses, not raw ones. Checked against all 38,341 rows:
+
+      | | |
+      | --- | --- |
+      | judgments in the corpus | 38,341 |
+      | **court = Supreme Court** | **38,341 — 100%** |
+      | carrying an I.T.R. reporter citation | **0** |
+      | carrying a Cri.L.J. reporter citation | **0** |
+
+      **A missed specialist-reporter citation cannot resolve to anything we
+      hold.** It would be an unresolved edge whether we extracted it or not, so
+      the gap has **zero present impact** and fixing it now would move no number.
+
+      **It becomes real the moment High Court data lands** — which is precisely
+      what the Supreme Today licence would buy and what eCourts harvesting would
+      add. **So this is a prerequisite of that ingest, not a defect of this one**,
+      and it belongs in the same piece of work rather than ahead of it.
 
 - [ ] **REDACTION MISSES CITATIONS THAT RESOLVE TO THE GOLD JUDGMENT** — found
       9 Aug 2026 by the pin audit, not yet fixed.
