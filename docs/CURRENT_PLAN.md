@@ -22,8 +22,21 @@ Last updated **8 August 2026**. Owner: **LCC (server lane)**. RCC's plan is
 | **Gate S2** | **FAILING.** success@5 = **24.0%** against a 0.70 floor |
 | Corpus | 38,341 judgments · 616,197 embedded chunks · 192,197 citation edges (44,785 resolved) |
 | Citator | **22 judgments flagged of 38,341.** 7 more are `overruled_in_part` and blocked on paragraph extraction |
-| Harness | 25 queries of 30. Three metrics **NOT MEASURED** (no LLM key) |
+| Harness | 25 queries of 30. Three metrics **NOT MEASURED** — and **NOT because of a key.** There is **no generation path in the package at all**; `run-cli.ts` was reporting 0 (a PASS) the moment `OPENROUTER_API_KEY` merely existed. Fixed 9 Aug, `f0323f0` |
 | Reranker | q8 bge-reranker: **+6.0 pts, McNemar p = 0.210 — does not ship.** fp16 will not load, fp32 OOMs |
+
+**Changed 9 August 2026 — keys and database are now LIVE:**
+
+| | |
+| --- | --- |
+| OpenRouter | **WORKING.** Verified call, cost **$0.0000029**. DeepSeek V4 Flash **$0.098/$0.196** per M tok. **It emits reasoning tokens — a small `max_tokens` returns EMPTY content** |
+| Claude API | **WORKING** (Haiku 4.5 verified) |
+| Database | **OPEN** via Railway TCP proxy `altaria.proxy.rlwy.net:40754`, proxy id `dc1959e1-…`. **DELETE IT WHEN DONE** |
+| Migration 0025 | **APPLIED** to production — it had never been run |
+| Training extraction | **6/6 live tests pass** against the real corpus. The SQL had never once executed before today |
+| Citation fast path | **VERIFIED on the real corpus**: 279 near-miss citations → **0** resolved to their source; 25/25 real and 20/20 reporter citations resolve |
+| Re-embed cost | **$65 line STRUCK.** Measured **36.6 ms/chunk on this machine's CPU** → 616,197 chunks ≈ **6.3 h** (12–19 h realistically). An overnight run, not a purchase |
+| Indian Kanoon | **STILL BLOCKED** — the accounts supplied are *website* logins; `api.indiankanoon.org` issues a separate API token |
 
 ---
 
