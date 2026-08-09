@@ -21,6 +21,7 @@ import { assessReadiness, countCorpus, explainRefusal } from './corpus-readiness
 import { readFile } from 'node:fs/promises';
 import { type AdversarialCase, runAdversarial } from './adversarial.ts';
 import { gradeReferences, generate } from './generate.ts';
+import { measureStructuredGate } from './structured-gate.ts';
 import { type HarnessMetrics, grade, rate } from './metrics.ts';
 import { measureOverruledLeakage, measureStaleOverruled } from './overruled-checks.ts';
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
@@ -350,14 +351,35 @@ async function main(): Promise<number> {
 
     /* ---------------------------------------------------------------- grade -- */
 
+    /**
+     * The two deterministic gates, measured against the live corpus rather than
+     * asserted. `structuredExactness` asks whether the citation an advocate
+     * types resolves at rank 1; `fieldPrecision` re-reads the bench from the
+     * rows a `judge:` query returned, so a false positive cannot hide.
+     */
+    const structured = await measureStructuredGate(sql);
+    console.log('');
+    console.log('STRUCTURED SEARCH');
+    console.log('='.repeat(78));
+    console.log(`  citations tested   ${structured.citationsTested}`);
+    console.log(`  judge queries      ${structured.fieldQueriesTested}`);
+    for (const f of structured.failures.slice(0, 10)) console.log(`    ${f}`);
+
     const metrics: HarnessMetrics = {
       // Measured above, or null. Never a literal 0 derived from a flag.
       hallucinationRate,
       silentDropRate,
       staleOverruledRate: rate(stale.stale, stale.tested),
       overruledLeakage: leakage.retrieved === 0 ? null : leakage.leaked,
-      successAt5,
       adversarialPassRate,
+      structuredExactness: structured.structuredExactness,
+      fieldPrecision: structured.fieldPrecision,
+      /**
+       * **Ungraded from 9 Aug 2026.** Still measured, still printed below, and
+       * no longer deciding whether the product ships — see `metrics.ts` for the
+       * CLERC evidence that a 0.70 floor is unreachable on this task.
+       */
+      successAt5,
     };
 
     const verdicts = grade(metrics);

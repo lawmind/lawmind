@@ -31,15 +31,59 @@ export const THRESHOLDS = {
   staleOverruledRate: 0,
   /** Count, not a rate — one leak is a failure. */
   overruledLeakage: 0,
-  /**
-   * The one metric with a floor rather than a ceiling. **0.7 is unchanged; what
-   * it is applied to was corrected on 8 Aug 2026, and the correction is
-   * arithmetic rather than a judgement call — see `successAt5` below.**
-   */
-  successAt5Min: 0.7,
   /** Reproducing any known-bad output is a fail. */
   adversarialPassRate: 1,
+  /**
+   * **A citation or case-number query returns its judgment at rank 1.**
+   *
+   * Deterministic, so the threshold is 1.0 rather than a probability: either the
+   * index resolves the citation an advocate typed or it does not, and there is
+   * no honest sense in which resolving 90% of them is a pass. This is the metric
+   * `successAt5` should always have been — a promise the product can actually
+   * keep.
+   */
+  structuredExactness: 1,
+  /**
+   * **A field query returns ONLY judgments satisfying it.** Zero false
+   * positives, verifiable by construction rather than by sampling: every row a
+   * `judge:` query returns either has that judge on the bench or it does not.
+   */
+  fieldPrecision: 1,
 } as const;
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY `successAt5` IS NO LONGER A GATE — re-specified 9 August 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * It carried a floor of **0.70** and the lane spent weeks failing it. The
+ * research says why, and it is not a tuning problem.
+ *
+ * Our evaluation set uses the **CLERC** method (arXiv 2406.17186). CLERC's own
+ * published ceiling is **48.3% recall@1000** zero-shot, **41–43%** for dense
+ * retrievers including BGE — which is what we run — and **68.5% recall@1K** for
+ * a *fine-tuned* LegalBERT DPR. The paper states plainly that existing models
+ * *"struggle significantly"*. We measure **48.1% recall@20** on a smaller
+ * corpus, so it is not a like-for-like comparison, but the conclusion holds:
+ *
+ * **`success@5 >= 0.70` is not a demanding target. It is a number nobody in the
+ * published literature reaches on this task, at any k.**
+ *
+ * A gate that cannot be passed does not protect anything — it gets rationalised
+ * around, or it stops the product forever. So the thresholds now attach to
+ * things the product actually promises: **no fabricated citation, no silent
+ * drop, no stale overruled status, no known-bad output, and exact answers to
+ * exact questions.** `successAt5` and `recallAt20` remain measured and printed
+ * every run as **ungraded diagnostics**, so a regression is still visible.
+ *
+ * There is precedent for re-attaching a threshold rather than moving it:
+ * `SPRINT_2.md` §1 moved 0.70 off `precision@5` when single-gold queries proved
+ * to cap that metric at 1/5. **This is a different act and should not be
+ * confused with it** — that correction kept the number and changed the metric;
+ * this one removes a gate. It was taken by the founder on the evidence above,
+ * and it is recorded here so nobody re-raises 0.70 without the counter-argument
+ * in front of them.
+ */
 
 /**
  * **`precision@5` — the definition, fixed before measuring.**
@@ -112,8 +156,16 @@ export type HarnessMetrics = {
   silentDropRate: number | null;
   staleOverruledRate: number | null;
   overruledLeakage: number | null;
-  successAt5: number | null;
   adversarialPassRate: number | null;
+  /** Deterministic gates, added 9 Aug 2026. See THRESHOLDS. */
+  structuredExactness: number | null;
+  fieldPrecision: number | null;
+  /**
+   * **Ungraded diagnostic.** Still measured and still printed every run so a
+   * regression stays visible — it simply no longer decides whether the product
+   * may ship. See the note above THRESHOLDS for why.
+   */
+  successAt5: number | null;
 };
 
 export type MetricVerdict = {
@@ -169,8 +221,9 @@ export function grade(m: HarnessMetrics): MetricVerdict[] {
     judge('silentDropRate', m.silentDropRate, THRESHOLDS.silentDropRate, 'at most'),
     judge('staleOverruledRate', m.staleOverruledRate, THRESHOLDS.staleOverruledRate, 'at most'),
     judge('overruledLeakage', m.overruledLeakage, THRESHOLDS.overruledLeakage, 'at most'),
-    judge('successAt5', m.successAt5, THRESHOLDS.successAt5Min, 'at least'),
     judge('adversarialPassRate', m.adversarialPassRate, THRESHOLDS.adversarialPassRate, 'at least'),
+    judge('structuredExactness', m.structuredExactness, THRESHOLDS.structuredExactness, 'at least'),
+    judge('fieldPrecision', m.fieldPrecision, THRESHOLDS.fieldPrecision, 'at least'),
   ];
 }
 

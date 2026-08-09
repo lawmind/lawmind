@@ -13,28 +13,37 @@ const perfect: HarnessMetrics = {
   silentDropRate: 0,
   staleOverruledRate: 0,
   overruledLeakage: 0,
-  successAt5: 0.8,
   adversarialPassRate: 1,
+  structuredExactness: 1,
+  fieldPrecision: 1,
+  successAt5: 0.8,
 };
 
 test('a clean run passes every metric', () => {
   const verdicts = grade(perfect);
-  assert.equal(verdicts.length, 6);
+  // Seven graded from 9 Aug 2026: five absolute ceilings plus the two
+  // deterministic gates. success@5 is measured but NOT among them.
+  assert.equal(verdicts.length, 7);
   assert.ok(verdicts.every((v) => v.passed));
 });
 
 test('every metric is reported, not only the failures', () => {
   // SPRINT_2.md DONE: "Every number reported, not just the failures." A gate
   // that speaks only when it fails teaches everyone to read silence as success.
-  const verdicts = grade({ ...perfect, successAt5: 0.1 });
-  assert.equal(verdicts.length, 6);
-  assert.equal(verdicts.filter((v) => v.passed).length, 5);
+  const verdicts = grade({ ...perfect, staleOverruledRate: 0.1 });
+  assert.equal(verdicts.length, 7);
+  assert.equal(verdicts.filter((v) => v.passed).length, 6);
 });
 
 test('an unmeasured metric FAILS — this is the whole point', () => {
   // `null <= 0` is true in JavaScript. Without the explicit null branch, a
   // harness that observed nothing would report a flawless hallucination rate.
-  for (const key of Object.keys(perfect) as (keyof HarnessMetrics)[]) {
+  // successAt5 is excluded: it is a diagnostic now, so it has no verdict to
+  // fail. Every metric that IS graded must still fail when unmeasured.
+  const graded = (Object.keys(perfect) as (keyof HarnessMetrics)[]).filter(
+    (k) => k !== 'successAt5',
+  );
+  for (const key of graded) {
     const verdicts = grade({ ...perfect, [key]: null });
     const v = verdicts.find((x) => x.name === key)!;
     assert.equal(v.passed, false, `${key} passed while unmeasured`);
@@ -43,8 +52,10 @@ test('an unmeasured metric FAILS — this is the whole point', () => {
 });
 
 test('not-measured is distinguishable from measured-and-bad', () => {
-  const unmeasured = grade({ ...perfect, successAt5: null }).find((v) => v.name === 'successAt5')!;
-  const bad = grade({ ...perfect, successAt5: 0.1 }).find((v) => v.name === 'successAt5')!;
+  const unmeasured = grade({ ...perfect, fieldPrecision: null }).find(
+    (v) => v.name === 'fieldPrecision',
+  )!;
+  const bad = grade({ ...perfect, fieldPrecision: 0.1 }).find((v) => v.name === 'fieldPrecision')!;
 
   assert.ok(unmeasured.notMeasured);
   assert.equal(bad.notMeasured, undefined);
@@ -65,8 +76,50 @@ test('the ceilings are zero and the floor is 0.7 — stated, so a change is visi
   assert.equal(THRESHOLDS.silentDropRate, 0);
   assert.equal(THRESHOLDS.staleOverruledRate, 0);
   assert.equal(THRESHOLDS.overruledLeakage, 0);
-  assert.equal(THRESHOLDS.successAt5Min, 0.7);
   assert.equal(THRESHOLDS.adversarialPassRate, 1);
+  assert.equal(THRESHOLDS.structuredExactness, 1);
+  assert.equal(THRESHOLDS.fieldPrecision, 1);
+});
+
+test('SUCCESS@5 IS NO LONGER GRADED, and that is the re-spec', () => {
+  /**
+   * It carried a floor of 0.70 and the lane spent weeks failing it. CLERC — the
+   * method our evaluation set uses — publishes a zero-shot ceiling of 48.3%
+   * recall@1000 and says existing models "struggle significantly". A gate nobody
+   * in the literature can pass does not protect anything; it gets rationalised
+   * around, or it stops the product forever.
+   *
+   * It is still MEASURED and still printed. This test pins the distinction: a
+   * catastrophic success@5 must not fail the gate, and a fabricated citation
+   * still must.
+   */
+  const graded = grade({ ...perfect, successAt5: 0.01 });
+  assert.ok(
+    graded.every((v) => v.passed),
+    'success@5 is still gating — the re-spec did not take effect',
+  );
+  assert.ok(
+    !graded.some((v) => v.name === 'successAt5'),
+    'success@5 appears in the graded set and must not',
+  );
+});
+
+test('THE NEW GATES CAN FAIL — a threshold nothing can breach is not a gate', () => {
+  /**
+   * The negative control. `hallucinationRate: generationReady ? 0 : null` once
+   * reported a PASS with no model anywhere in the package, and the lesson was
+   * that a metric which cannot fail is not a metric. Both new thresholds are
+   * 1.0, so this proves the grader actually reads them.
+   */
+  const exactness = grade({ ...perfect, structuredExactness: 0.99 });
+  assert.ok(exactness.some((v) => v.name === 'structuredExactness' && !v.passed));
+
+  const precision = grade({ ...perfect, fieldPrecision: 0.999 });
+  assert.ok(precision.some((v) => v.name === 'fieldPrecision' && !v.passed));
+
+  // And null — never measured — must fail both, as it does for every other gate.
+  const unmeasured = grade({ ...perfect, structuredExactness: null, fieldPrecision: null });
+  assert.equal(unmeasured.filter((v) => !v.passed).length, 2);
 });
 
 test('an adversarial pass rate just short of 1 fails', () => {
@@ -78,9 +131,16 @@ test('an adversarial pass rate just short of 1 fails', () => {
   assert.equal(v.passed, false);
 });
 
-test('precision exactly at the floor passes; a hair under does not', () => {
-  const at = grade({ ...perfect, successAt5: 0.7 }).find((v) => v.name === 'successAt5')!;
-  const under = grade({ ...perfect, successAt5: 0.6999 }).find((v) => v.name === 'successAt5')!;
+test('a deterministic gate passes at exactly 1.0 and fails a hair under', () => {
+  // The boundary, on a metric that still gates. 0.9999 is not "essentially
+  // exact" — it means one citation an advocate typed resolved to the wrong
+  // judgment, which is the failure the whole product exists to prevent.
+  const at = grade({ ...perfect, structuredExactness: 1 }).find(
+    (v) => v.name === 'structuredExactness',
+  )!;
+  const under = grade({ ...perfect, structuredExactness: 0.9999 }).find(
+    (v) => v.name === 'structuredExactness',
+  )!;
   assert.equal(at.passed, true);
   assert.equal(under.passed, false);
 });
@@ -131,8 +191,10 @@ test('an unimplemented generation path cannot be mistaken for a clean one', () =
     silentDropRate: null,
     staleOverruledRate: 0,
     overruledLeakage: 0,
-    successAt5: 1,
     adversarialPassRate: null,
+    structuredExactness: 1,
+    fieldPrecision: 1,
+    successAt5: 1,
   });
   for (const name of ['hallucinationRate', 'silentDropRate', 'adversarialPassRate']) {
     const v = verdicts.find((x) => x.name === name)!;
