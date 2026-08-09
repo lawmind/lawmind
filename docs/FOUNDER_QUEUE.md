@@ -1428,9 +1428,14 @@ refusing its outputs. Resolve every cited judgment against our own corpus,
 discard what does not resolve, keep `(question → judgment IDs)`, store none of
 their prose. **Their hallucinations cannot enter, by construction.**
 
-**That asset is the one we are most missing.** The harness runs on 25 queries and
-fails at success@5 = 24.0%. Ten thousand verified question→authority pairs is
-training and evaluation data for the metric blocking everything else.
+**That asset is the one we are most missing.** The gate runs on 30 queries and
+the A/B set on 283; success@5 is **17.3%** against a 0.70 floor (re-measured
+9 Aug — the earlier 24.0% was taken through a defect and was inflated by
+leakage). Ten thousand verified question→authority pairs is training **and
+evaluation** data for the metric blocking everything else — and today's findings
+make the evaluation half the more valuable of the two, because our own set is
+283 queries, exercises only one of two retrieval paths, and contains no short
+query at all.
 
 **2 · Do not pay for what is free.** 17.8M judgments are free from AWS Open Data,
 and **e-SCR has ~34,000 Supreme Court judgments with OFFICIAL headnotes, free**.
@@ -1459,9 +1464,24 @@ harvest the pointers, then run `pnpm --filter @lawmind/harness ab` over the
 
 **Go if success@5 moves and the interval excludes zero. No-go if it is inside
 noise.** `DATA_ADVANTAGE.md` §1d's rule — *if it does not move the number on our
-own corpus, it does not ship* — was applied this morning to reject a **free**
-Apache-2.0 reranker at +6.0 points and p = 0.210. **A paid dependency on a
-competitor gets the same test, not a softer one.**
+own corpus, it does not ship* — is unchanged. **A paid dependency on a competitor
+gets the same test, not a softer one.**
+
+> **CORRECTION, 9 August 2026 — the example this paragraph used no longer says
+> what it said.** It cited the rejection of a free Apache-2.0 reranker at +6.0
+> points and p = 0.210 as proof the bar is applied strictly. **That measurement
+> was taken through two defects found since**: a wrong judgment pinned at rank 1
+> on 13.1% of the query set, and — larger — **37.6% of the reranker's candidates
+> being scored against an empty string**. With the first removed, the graph and
+> reranker together measure **+4.9 points, interval 0.4 to 9.5, McNemar
+> p = 0.049**, and the rig's own verdict is **SHIPS**.
+>
+> **The rule stands and is vindicated, not weakened.** It refused to ship on a
+> number that turned out to be measured wrong, which is exactly what it is for.
+> But the story "we rejected a free reranker, so we will be tough on a paid
+> licence" should not be told as though the reranker were bad. **The instrument
+> was, and it is better now — which is the more useful thing to know before
+> spending ₹50,000 to test a hypothesis with it.**
 
 **We are the only party in this market who can evaluate this deal properly**,
 because we have a fixed query set and a definition of relevance settled before
