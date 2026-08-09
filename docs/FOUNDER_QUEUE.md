@@ -1802,3 +1802,162 @@ paragraph numbering is exactly where OCR damage and reporter numbering disagree
 
 **Recommendation: do not start it before Gate S2 passes.** It is the right
 foundation and the wrong thing to be doing while success@5 is 24%.
+
+---
+
+# ============================================================
+# WHAT YOU NEED TO BUY — one list, with prices, 9 August 2026
+# ============================================================
+
+Every figure below is either **verified from the vendor's own page** or **marked
+as an estimate**. Ordered by *value per rupee*, not by size.
+
+---
+
+## 1 · OpenRouter API key — **$5 (≈ ₹430) covers everything, probably forever**
+
+**This is the single highest-value item on the list and it is almost free.**
+
+It unblocks: **three unmeasured Gate S2 metrics** · proposition extraction ·
+HyDE · multi-query · query decomposition · Self-RAG · Corrective RAG. That is
+most of `docs/RETRIEVAL_ARCHITECTURE.md`.
+
+**Verified price**, DeepSeek V4 Flash on OpenRouter (our public-class model):
+**$0.098 per million input tokens · $0.196 per million output tokens.**
+
+**Estimated** cost of an actual harness run — my arithmetic, not a vendor quote:
+
+| run | tokens | cost |
+| --- | --- | --- |
+| 30-query harness, one full pass | ~450k in / 24k out | **≈ $0.05** |
+| 283-query eval set, one full pass | ~4.2M in / 230k out | **≈ $0.50** |
+| Twenty development runs | — | **≈ $1–2** |
+
+**So put $5 on it and stop thinking about it.** The blocker was never the money,
+it was that no account exists. **Minimum top-up on OpenRouter is $5.**
+
+---
+
+## 2 · Railway database access — **₹0. Already paid for.**
+
+Three finished pieces of work cannot be *verified* without a live Postgres:
+
+- **Graph expansion measured** — code written months ago, never measured
+- **Reranker at n=283** — the run that decides whether +6.0 pts ships
+- **`extract.live.test.ts`** — the training-extraction SQL has never executed
+
+**You are already paying for this database.** What is needed is the **public TCP
+proxy opened**, which is a Railway CLI call and costs nothing. `CLAUDE.md` says
+it is closed by default and must be deleted when done — that rule stands.
+
+**This is the cheapest unblock on the list and it releases the most finished
+work.**
+
+---
+
+## 3 · Indian Kanoon API — **₹0 to start. ₹500 free credit on signup.**
+
+**Verified from their own documentation and blog:**
+
+- **₹500 free credit the moment you sign up.** No card, no fee.
+- **Pre-paid.** When the balance hits zero the API simply stops returning
+  results — it cannot overspend.
+- **~50 paise per search page.** Their own example: *"if you set up maxpages at
+  50 and you only get 7 pages… you will be charged Rs. 3.50"* — which is exactly
+  the 50 paise/page our client already assumes.
+- A 100-result search ≈ **₹5**.
+- Non-commercial use gets ₹10,000/month free, **but that is not us** — we are
+  commercial.
+
+**What ₹500 buys:** roughly **1,000 search pages**, which is enough to measure
+how much of our 38,341-judgment corpus their API can resolve. **That measurement
+is the whole point** — it tells us whether paying them further is worth it.
+
+**Recommendation: sign up, spend the free ₹500, decide afterwards. Commit
+nothing.**
+
+---
+
+## 4 · Bharat.Law — **₹0 first. Then ₹1,499/month if at all.**
+
+**Verified from their pricing page.**
+
+- **Free tier first: ₹0.** *"Ask a question free · No signup. No card."* Run
+  *Kharak Singh* and *Danamma* through it. **That answers the only question
+  worth paying for** — is their treatment data human-curated or computed.
+- **Only if the free tier will not show counter-authority depth:** Pro at
+  **₹1,499/month billed monthly.**
+- **Do NOT take the annual plan** (₹1,099/month, ₹13,188/year). The ₹4,800/year
+  saving is not worth a twelve-month commitment to a competitor's product we may
+  drop after one month.
+
+**Also needed and free: one email** asking for written consent to benchmark
+(FQ-BL1). Their contract permits it *"with prior written consent"*.
+
+---
+
+## 5 · GPU for re-embedding — **≈ $65 (₹5,600), one-off**
+
+**From our own measurement** (`docs/DATA_ADVANTAGE.md`): 616,197 chunks ÷ 216M
+tokens/hour ≈ **62 GPU-hours ≈ $65, one-off.**
+
+Unblocks **late chunking** and **summary-augmented chunking** — the two recall
+levers that change the index.
+
+**Do not buy this yet.** Spend items 1 and 2 first: the query-side levers and the
+graph measurement cost almost nothing and may move success@5 far enough that
+this is unnecessary. **Buying it now would be paying to re-run an experiment we
+have not designed.**
+
+---
+
+## 6 · Supreme Today — **₹50,000/month. The one real decision.**
+
+Your figure, not mine. Everything is built and refuses honestly until an account
+exists (`pnpm --filter @lawmind/ingest harvest:probe`).
+
+**Day one is measurement, not harvest** — `docs/HARVEST_ENGINE.md` §13. The probe
+prints a projected completion date and total cost in ₹50,000 instalments, so
+*"how many months until we can stop paying"* becomes a number before the second
+instalment is due.
+
+**Start with ONE account, as you planned.**
+
+---
+
+## 7 · eCourts — **₹0 until January 2029.**
+
+The registrar's grant runs to **January 2029**, after which they have asked for
+payment to continue. **Nothing is owed now.** The code expires the permission by
+itself on that date — nobody has to remember.
+
+---
+
+## THE TOTAL, if you did everything today
+
+| item | cost |
+| --- | --- |
+| OpenRouter credit | **$5 ≈ ₹430** |
+| Railway DB proxy | **₹0** |
+| Indian Kanoon | **₹0** (₹500 free credit) |
+| Bharat.Law free tier | **₹0** |
+| **Subtotal to unblock nearly all engineering** | **≈ ₹430** |
+| Bharat.Law Pro, one month, optional | ₹1,499 |
+| GPU re-embedding, later, optional | ≈ ₹5,600 |
+| Supreme Today, your decision | ₹50,000/month |
+
+**Read the first four rows again: about ₹430 unblocks the great majority of the
+outstanding engineering work.** The expensive items are all optional, deferrable,
+or already decided.
+
+---
+
+## What costs nothing and is NOT a purchase — decisions only
+
+- **FQ-R1** claim-support verification — amends `CITATION_HARNESS.md`, spec
+- **FQ-R1b** the product-guarantee wording — a public claim
+- **FQ-R2** paragraph-level evidence IDs — recommend *after* Gate S2
+- **FQ-BL2** the "no Indian competitor has it" wedge claim, now false, in
+  `CLAUDE.md` and `PRODUCT_BRIEF.md`
+- **FQ-C1** the incomplete IPC source — research, mine to continue
+- The **verification record** — outside the four features
