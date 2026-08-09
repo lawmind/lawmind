@@ -298,3 +298,80 @@ assumption, and so the storage decision can be taken calmly later.
 The one thing worth doing early is **capturing CNR on every tier-2 row at ingest**.
 It costs nothing at write time and it is the only key that turns a long-tail
 judgment into a citable authority.
+
+---
+
+## 6 · Update, 9 August 2026 — a new cap, verified prices, and structured search
+
+Three things changed since this was written. **None of them breaks the design;
+one of them makes it cheaper still.**
+
+### 6a · Railway now caps the volume at 250 GB
+
+The founder reports Railway will not extend past **250 GB** without a
+prerequisite step, with 1 TB available after that. **This design never approaches
+either number.** Tier 1 is 10.8 GB and tier 2 is ~23 GB — **34 GB of a 250 GB
+ceiling for 19.5M judgments.** The cap is not a constraint on this plan, and the
+1 TB tier does not need to be bought.
+
+The trap it *would* have been a constraint on is the naive design: full text and
+tsvector for every judgment inside Postgres. That is where a 250 GB wall is real,
+and it is exactly what tiers 2 and 3 exist to avoid.
+
+### 6b · Prices verified rather than remembered
+
+| | rate | source |
+| --- | --- | --- |
+| Railway volume | **$0.15 / GB / month** | Railway pricing, checked 9 Aug 2026 |
+| Railway egress | $0.05 / GB outbound, inbound free | same |
+| Cloudflare R2 storage | **$0.015 / GB / month** | R2 pricing, checked 9 Aug 2026 |
+| Cloudflare R2 egress | **$0** | same |
+
+**R2 is exactly ten times cheaper per GB than the Railway volume, and Railway
+charges for outbound while R2 does not.** Both facts point the same way, and the
+§3 split already follows them. The §3 estimate of "~$2/month" for 115 GB checks
+out: 115 × $0.015 = **$1.73**.
+
+Running cost of the whole tiered corpus:
+
+| | |
+| --- | --- |
+| Postgres, 34 GB × $0.15 | **~$5.10 / month** |
+| R2, 115 GB × $0.015 | **~$1.73 / month** |
+| Original PDFs on AWS Open Data | **$0 — we store a key, not a file** |
+| **Total** | **under $7 / month** |
+
+### 6c · Structured search makes tier 2 more valuable than it was designed to be
+
+This file was written before the decision to build field and Boolean search. That
+decision changes what tier 2 is *for*, and improves the economics:
+
+**Tier 2's per-judgment row is already everything structured search needs.**
+Citation, party, judge, court, date, case number — all metadata, none of it
+requiring a vector, a chunk or a full-text index. Measured on the Supreme Court
+corpus, the metadata columns are **335 bytes per judgment stored**, which is
+within a third of this file's ~250-byte estimate and confirms the shape.
+
+So **field search over the entire 19.5M corpus is essentially free** — it rides
+on a tier that was going to be built anyway for semantic candidate generation.
+Two additions to the row budget, both small:
+
+- `judgment_judges` — ~1.16 judges per judgment measured, so ~23M rows at ~80 B
+  ≈ **2 GB**. Required because `bench` is a comma-delimited list and facets over
+  the raw string count bench *compositions* rather than judges.
+- `judgment_statute_refs` — the "cases on s.138 NI Act" index, a few rows per
+  judgment ≈ **6 GB**.
+
+Tier 2 therefore lands nearer **31 GB**, and the total nearer **42 GB of 250**.
+
+### 6d · One correction to a figure quoted elsewhere today
+
+An estimate of **274 GB** for full text at 15.9M judgments was derived by scaling
+this repository's *Supreme Court* average of 35 KB. **That is the wrong
+denominator.** §2 of this file measured 20 real High Court judgments at **6.8 KB
+raw and 2.0 KB brotli** — High Court judgments are roughly a fifth the length of
+Supreme Court ones, and the figure that stands is this file's **37 GB
+compressed**, not 274 GB.
+
+**Scaling a whole-database total by a row count is not analysis.** The per-column
+measurement is the one to trust, and it is already here.
