@@ -116,7 +116,36 @@ function rrf(lists: Ranked[][]): Map<string, number> {
  */
 const SPARSE_RELAX_BELOW = 10;
 
+/**
+ * Above this many characters, the AND pass is not attempted at all.
+ *
+ * **Measured 9 August 2026 over the first 30 evaluation queries** (200–900
+ * characters each, the CLERC-style citing passages):
+ *
+ * | | |
+ * | --- | --- |
+ * | AND-pass candidates | **median 1 of 38,341**, max 2, never near the cap of 50 |
+ * | queries falling below `SPARSE_RELAX_BELOW` | **30 of 30 — 100%** |
+ *
+ * So on this workload the AND pass runs, returns about one row, and is
+ * discarded every single time. It is not a fast path that occasionally misses;
+ * it is a guaranteed miss with a full index scan attached.
+ *
+ * **Skipping it cannot change a result.** The AND match set is a strict subset
+ * of the OR match set, and {@link sparse} already keeps whichever pass returned
+ * more — which, above this length, is always the OR pass. This is latency only.
+ *
+ * **Character count is a proxy for lexeme count, and it is honest about being
+ * one.** The real predictor is how many lexemes `plainto_tsquery` will AND
+ * together, but counting them costs the round trip this is trying to save. 200
+ * characters sits well above anything an advocate types — the longest query in
+ * `queries.hand.json` is far shorter — and well below the 200-character floor
+ * `harness/build-queries.ts` puts on a derived passage.
+ */
+const SPARSE_AND_MAX_CHARS = 200;
+
 async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
+  if (query.length > SPARSE_AND_MAX_CHARS) return sparseAny(sql, query, filters);
   // Reads the STORED tsvector. Computing it here instead cost 20.8s per query —
   // `docs/SCHEMA_TRUTH.md` §judgments records the measurement.
   const rows = await sql<{ id: string }[]>`
