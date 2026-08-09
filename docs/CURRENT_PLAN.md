@@ -181,9 +181,48 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
 
       **The combination is now the experiment**, not either half.
 
-- [ ] **Reranker at n=283** on q8 — and **`ab both`**, which is the real test:
-      the graph supplies the authority, the cross-encoder promotes it into the
-      top five. Running 9 Aug.
+- [x] **`ab both` MEASURED at n=283, 9 Aug 2026 — the combination DOES move the
+      number, and then latency overrode the whole question.**
+
+      | | before | after |
+      | --- | --- | --- |
+      | success@5 | 19.1% | **23.7%** |
+      | recall@20 | 40.6% | **48.8%** |
+      | MRR | 0.140 | 0.162 |
+
+      **29 gained · 16 lost · 238 unchanged. McNemar p = 0.072 — NOT SETTLED**,
+      95% interval −0.0% to 9.2%. **~577 queries would settle it; this run was
+      283.** So: promising, trending the right way, **not proven.**
+
+      **The graph+reranker hypothesis held.** Graph alone moved success@5 by
+      **zero** with 0 discordant pairs. Together they moved it **+4.6** with 45
+      discordant pairs. The graph supplies authorities text similarity never
+      found; the cross-encoder is what lifts them into the top five. Neither
+      half does it alone, exactly as `graph-expand.ts` predicted.
+
+      **BUT THE RUN BREACHED THE LATENCY BUDGET AND THE HARNESS SAID SO:**
+      rerank **mean 11,424 ms · p95 55,074 ms**, against Gate S1's **3 s for the
+      entire search request**. *"Accuracy is moot until this fits."*
+
+- [x] **AND THE LATENCY IS FIXED — measured, 55× — 9 Aug 2026.**
+
+      | reranker | 20 candidates | verdict |
+      | --- | --- | --- |
+      | q8 on CPU | **11,424 ms** | 4× over the whole request budget |
+      | q8 on DirectML | ~4,600 ms | int8 is poorly accelerated on DML |
+      | **fp32 on DirectML** | **209 ms** (10.4 ms each) | **fits, with room** |
+
+      **"q8 is the only usable build" was never true** — the fp32 weights were
+      simply never downloaded (`model.onnx_data`, 2.27 GB, external-data format).
+      fp32 is also **unquantised**, so its accuracy should be at least q8's.
+
+      **The caveat that decides whether this ships: Railway has no GPU.** This
+      makes the reranker viable *if* it is served on a GPU endpoint, and lets us
+      measure true unquantised accuracy locally today. Re-running `ab both` at
+      fp32/DML now.
+
+- [ ] **Settle the reranker properly** — p = 0.072 needs ~577 queries. The
+      query set is 283; the eval set would have to grow before this is decided.
 - [~] **C1 · IPC↔BNS mapping** — unblocks the five BNS queries and closes the last
       S1 criterion. Handles verified: **IPC `123456789/11091` · Evidence `4218` ·
       CrPC `4221`**.
