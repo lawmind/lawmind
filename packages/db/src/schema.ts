@@ -1246,3 +1246,47 @@ export const judgmentStatuteRefs = pgTable(
     index('judgment_statute_refs_judgment_idx').on(t.judgmentId),
   ],
 );
+
+/**
+ * The concordance — the citations advocates actually type.
+ *
+ * **Separate from `judgments.reporter_citations` on purpose.** That column is
+ * what the SOURCE published; every row in this corpus carries exactly one and it
+ * is always S.C.R., because that is what our source digitised. Appending derived
+ * aliases there would destroy the distinction between *"the reporter printed
+ * this"* and *"we worked this out"*, and once destroyed it cannot be recovered.
+ *
+ * Provenance has to stay answerable. *"Who says this judgment is AIR 1952 SC
+ * 343?"* has an answer here — **"at least two Supreme Court judgments printed it
+ * beside the S.C.R. citation we hold"** — which is a stronger claim than a
+ * column, and worth being able to make. Migration `0027` is the authority.
+ */
+export const judgmentCitationAliases = pgTable(
+  'judgment_citation_aliases',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+    /** As printed: `AIR 1973 SC 1461`. Shown to a human checking the derivation. */
+    alias: text('alias').notNull(),
+    /** Upper-cased, non-alphanumerics stripped — the same rule as `citationLookupKey`. */
+    aliasKey: text('alias_key').notNull(),
+    /** `AIR` | `SCC`. A CHECK constraint in migration 0027 is the authority. */
+    aliasReporter: text('alias_reporter').notNull(),
+    /**
+     * How many separate citing judgments printed the pairing. **Two is the
+     * floor**: one sighting could be a single OCR slip in a single judgment, and
+     * an alias nobody can trace is worse than no alias.
+     */
+    corroborations: integer('corroborations').notNull(),
+    /** The span that justified it. An alias whose evidence cannot be read is an assertion. */
+    evidence: text('evidence').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // ONE ALIAS, ONE JUDGMENT — a citation string names exactly one case.
+    uniqueIndex('judgment_citation_aliases_key').on(t.aliasKey),
+    index('judgment_citation_aliases_judgment_idx').on(t.judgmentId),
+  ],
+);

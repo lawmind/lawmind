@@ -88,11 +88,28 @@ function fieldMatch(sql: Sql, field: Field, value: string, phrase: boolean, wild
     case 'cite': {
       // The same normalisation as citationLookupKey, on both sides.
       const key = citationLookupKey(value);
+      /**
+       * **Three places a citation can be found, and the third is the one that
+       * makes this usable.**
+       *
+       * Our source digitised S.C.R., so every judgment carries an S.C.R.
+       * citation and nothing else — measured across all 38,341 rows: AIR 0,
+       * SCC 0. An advocate types `AIR 1973 SC 1461`, which is how *Kesavananda*
+       * is actually cited, and the first two clauses find nothing.
+       *
+       * `judgment_citation_aliases` holds the concordance derived from the
+       * courts' own text — 4,097 aliases, each printed beside the S.C.R.
+       * citation by at least two separate judgments. Without this clause the
+       * table would exist and change nothing.
+       */
       return sql`(
         upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = ${key}
         OR EXISTS (
           SELECT 1 FROM unnest(j.reporter_citations) AS rc
-           WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key}))`;
+           WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key})
+        OR EXISTS (
+          SELECT 1 FROM judgment_citation_aliases a
+           WHERE a.judgment_id = j.id AND a.alias_key = ${key}))`;
     }
 
     case 'caseno':

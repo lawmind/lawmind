@@ -19,8 +19,9 @@ import { parse } from './parse.ts';
 const sql = postgres(process.env['DATABASE_URL']!, { ssl: 'require', max: 3 });
 
 const QUERIES: readonly { q: string; expect: string }[] = [
-  { q: 'cite:"AIR 1973 SC 1461"', expect: 'Kesavananda Bharati — the basic-structure case' },
-  { q: 'cite:"(1997) 6 SCC 241"', expect: 'Vishaka — workplace harassment guidelines' },
+  { q: 'cite:"(1994) 3 SCC 1"', expect: 'AN SCC CITATION — impossible before the concordance' },
+  { q: 'cite:"AIR 1965 SC 845"', expect: 'AN AIR CITATION — impossible before the concordance' },
+  { q: 'cite:"(1972) 1 SCC 660"', expect: 'another SCC alias, derived from the courts own text' },
   { q: 'party:"KESAVANANDA"', expect: 'by party name, however it is cited' },
   { q: 'judge:"CHANDRACHUD" AND type:criminal', expect: 'a judge AND a side — deterministic' },
   { q: 'judge:"GAJENDRAGADKAR" AND date:[1960 TO 1962]', expect: 'judge and a period' },
