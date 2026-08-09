@@ -140,8 +140,33 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       `docs/RETRIEVAL_ARCHITECTURE.md` §6c. So: late chunking ·
       summary-augmented chunking (**DRM is 95.2%**) are **blocked on nothing but
       a night** — but still run the free query-side and graph levers first.
-- [ ] **Reranker at n=283** on q8, the only usable build. Needs ~334 queries to
-      settle +6.0 pts
+- [x] **GRAPH EXPANSION MEASURED at n=283, 9 Aug 2026 — the first time ever.**
+
+      | | before | after |
+      | --- | --- | --- |
+      | success@5 | 19.1% | **19.1%** |
+      | **recall@20** | 40.6% | **48.8%** |
+      | MRR | 0.140 | 0.144 |
+
+      **0 gained · 0 lost · 283 unchanged. McNemar: no discordant pairs at all.**
+      By the A/B rig's own rule: **DOES NOT SHIP** on success@5.
+
+      **But this is a success, not a null result, and `graph-expand.ts`
+      predicted it in writing months ago:** *"Entering at rank 16 cannot move
+      success@5 on its own. **Graph and reranker are one combination, not two
+      features**."*
+
+      **recall@20 moved +8.2 points.** The graph IS finding authorities that
+      text similarity never retrieved — which is exactly the 56% that
+      `BLOCKER_REGISTER` says no reranker can reach. They arrive below rank 5,
+      so success@5 cannot move. **Recall is the thing the graph was supposed to
+      fix, and it fixed it.**
+
+      **The combination is now the experiment**, not either half.
+
+- [ ] **Reranker at n=283** on q8 — and **`ab both`**, which is the real test:
+      the graph supplies the authority, the cross-encoder promotes it into the
+      top five. Running 9 Aug.
 - [~] **C1 · IPC↔BNS mapping** — unblocks the five BNS queries and closes the last
       S1 criterion. Handles verified: **IPC `123456789/11091` · Evidence `4218` ·
       CrPC `4221`**.
