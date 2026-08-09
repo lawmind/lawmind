@@ -19,12 +19,12 @@ Last updated **8 August 2026**. Owner: **LCC (server lane)**. RCC's plan is
 
 | | |
 | --- | --- |
-| **Gate S2** | **FAILING**, and as of 9 Aug **the exact number is unknown**: every measurement to date ran through a defect that pinned the wrong judgment at rank 1 on 13.1% of the eval set. Re-measuring. Last figure through the defect: 24.0% against a 0.70 floor |
+| **Gate S2** | **FAILING.** success@5 **17.3%** control · **22.3%** with graph + reranker, against a 0.70 floor. Both re-measured 9 Aug after a defect that pinned the wrong judgment at rank 1 on 13.1% of the set was removed — the old 19.1%/23.7% are void and were **inflated by leakage** |
 | Corpus | 38,341 judgments · 616,197 embedded chunks · 192,197 citation edges (44,785 resolved) |
 | Citator | **22 judgments flagged of 38,341.** 7 more are `overruled_in_part` and blocked on paragraph extraction |
 | Harness | 25 queries of 30. **All three previously unmeasurable metrics now produce numbers** — a generation path exists (`generate.ts`) and an adversarial runner exists (`adversarial.ts`). Until 9 Aug there was NO model call in the package, and `run-cli.ts` reported 0 (a PASS) the moment `OPENROUTER_API_KEY` merely existed |
-| Reranker | q8: **+6.0 pts alone, p = 0.210.** **With the graph: success@5 19.1% → 23.7%, p = 0.072 — trending, NOT settled** (needs ~577 queries; we have 283) |
-| Latency | **THE BINDING CONSTRAINT.** Gate S1 allows **3 s for the whole request**; reranking alone measured **11,424 ms mean** in the A/B. `max_length` is the lever: **512 → 3,613 ms · 256 → 1,647 ms · 128 → 786 ms** |
+| Reranker | **With the graph: 17.3% → 22.3%, delta +4.9%, interval 0.4 to 9.5, McNemar p = 0.049 — the rig says SHIPS**, marginally, on 283 queries. And it had **never once been measured on real passages**: 37.6% of candidates were being scored against an empty string until 9 Aug |
+| Latency | **STILL THE BINDING CONSTRAINT, but 1.38× over rather than 3.8×.** Reranking is **4,136 ms mean · p95 4,263 ms** against Gate S1's 3 s for the whole request. Truncating to 256 tokens fits and was **measured and rejected** — it costs more accuracy than the reranker adds. The free lever (padding) is **dead at a 1.1% ceiling**. What remains: **12 candidates instead of 20**, cut from both ends so the graph slots survive |
 
 **Where the three metrics actually stand, 9 Aug:**
 
