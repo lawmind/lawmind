@@ -4,7 +4,7 @@
 It exists because a plan held only in a todo tool does not survive compaction, a
 new session, or a fresh agent. **This file does.**
 
-Last updated **8 August 2026**. Owner: **LCC (server lane)**. RCC's plan is
+Last updated **9 August 2026**. **Read §A first — it supersedes §2's ordering.** Owner: **LCC (server lane)**. RCC's plan is
 `docs/RCC_MASTER_PLAN.md` and is not duplicated here.
 
 > **The ordering rule, and it is not negotiable.** `docs/GTM_INDIA.md` §9: Gate S2
@@ -72,6 +72,101 @@ reranking on CPU** is the split that works.
 | Indian Kanoon | **NOT A BLOCKER — SETTLED.** No API: it is metered and the budget goes to Supreme Today instead. Website accounts only. The metered client stays built and refusing, permanently |
 
 ---
+
+# A · THE PLAN FROM 9 AUGUST 2026 — structured search, then coverage
+
+**This section supersedes §2's ordering.** Founder-directed after the retrieval
+work was judged to be over-engineering that produced nothing usable. That
+judgement was correct and the research says why.
+
+## A0 · Why the number never moved
+
+Our eval set uses the **CLERC** method (arXiv 2406.17186). **CLERC's own
+published ceiling is 48.3% recall@1000** zero-shot, 41–43% for dense retrievers
+including BGE — which is what we run — and 68.5% recall@1K for a *fine-tuned*
+LegalBERT DPR. The paper states existing models *"struggle significantly"*.
+
+We measure **48.1% recall@20** on a 38,341-judgment corpus. Smaller haystack, so
+not like-for-like — but the conclusion stands: **`success@5 ≥ 0.70` is a number
+nobody in the published literature reaches on this task, at any k.** Gate S2 was
+mis-specified, and the lane spent weeks failing a test the field cannot pass.
+
+## A1 · The strategic error, which is larger
+
+Manupatra and SCC Online sell **Boolean, field, citation and faceted search** —
+party, judge, act, section, court, period, with nesting. That is what advocates
+are trained on and what they type. We built semantic search and four filters.
+**We were competing at the one thing the incumbents do not do, while missing the
+thing they do.**
+
+Meanwhile the market violently validated the original thesis: the public
+AI-hallucination sanctions tracker records **1,598 court cases** involving
+fabricated citations by June 2026, up from ~200 a year earlier — **~8 per day**,
+penalties to **$110,204**, multi-year suspensions.
+
+## A2 · TODO — structured search (in progress)
+
+- [x] **A2.1** Query language: tokenizer, recursive-descent parser, typed AST.
+      Fields · Boolean · `NEAR/n` · wildcards · ranges. **37 tests**, including a
+      3,000-case fuzz. `ccbebc8`
+- [x] **A2.2** `explain.ts` — renders the AST back to a sentence, echoed in the
+      response. **A correctness feature**: a misparse produces *results*, not
+      errors, so the only defence is stating the interpretation and letting the
+      advocate check it.
+- [x] **A2.3** Migration `0026` — `pg_trgm`, trigram indexes on title/case
+      number, normalised citation index matching `citationLookupKey` exactly,
+      `judgment_judges`, `judgment_statute_refs`. `56e25ad`
+- [ ] **A2.4** `compile.ts` — AST → parameterised SQL. Every value bound.
+- [ ] **A2.5** `judgment_statute_refs` extractor — **requires act context**; a
+      bare "section 5" is not recorded. BNS↔IPC expansion at query time.
+- [ ] **A2.6** Route + contract: `parsed` echo, facets, 400 with offset on parse
+      failure, all three citation fields preserved.
+- [ ] **A2.7** **THE SAFETY RULE** — structure decides, semantics fills, never
+      blended. Zero structured matches returns **zero**, with semantic
+      suggestions in a *separate* field. An advocate who asked for
+      `judge:Chandrachud` must never receive another judge's judgment.
+- [ ] **A2.8** Gate S2 re-spec: `structuredExactness` and `fieldPrecision` at
+      1.0; `successAt5`/`recallAt20` demoted to ungraded diagnostics; CLERC
+      evidence recorded in `sprints/SPRINT_2.md`. **Each new metric needs a
+      negative control proving it can fail.**
+
+## A3 · TODO — coverage. The AWS Open Data corpus
+
+**Storage is not the obstacle and never was.** See `docs/CORPUS_TIERING.md` §6,
+measured: **~42 GB in Postgres** and **~115 GB on R2** for the whole corpus,
+under **$8/month**. Railway bills **used** space, not provisioned, so raising the
+volume ceiling costs nothing until data fills it.
+
+- [ ] **A3.1** Query the bucket's **Parquet metadata first** and count judgments
+      per court per year. "15.9M" is a headline; **nobody has counted the working
+      set.**
+- [ ] **A3.2** **High Courts, last 10 years first** — OD-4's stated order.
+- [ ] **A3.3** Measure PDF→text extraction on **1,000 real HC PDFs** and publish
+      an honest completion date. **Extraction is the cost, not download or
+      storage** — AWS sponsors the transfer.
+- [ ] **A3.4** Tier 2 rows for every judgment: metadata + one `bit(1024)` vector.
+- [ ] **A3.5** R2: brotli text + flat fp32 vectors. **PDFs are never copied** —
+      the AWS bucket is public, permanent and CC-BY-4.0; we store a key.
+- [ ] **A3.6** **Publish coverage per court and per year in the product.**
+      `corpus_coverage` exists. Silence about a gap does the same damage as a
+      fabricated citation — both let an advocate rely on something absent.
+
+## A4 · What each account and licence is actually for
+
+**They are four different things and only one of them is a bulk corpus.**
+
+| Source | What it is for | What it is NOT |
+| --- | --- | --- |
+| **AWS Open Data** | **The bulk corpus.** ~17.8M judgments, CC-BY-4.0, free, no account, permanent | Not live data — it is a back catalogue |
+| **eCourts grant** (7 Aug 2026 → 1 Jan 2029) | **The daily loop.** Cause lists, case status, court orders, caveat search — *tomorrow's listings*, which is the wedge feature | **NOT a bulk corpus.** Capped at **1,000 requests/day**; the entire grant period yields ~876,000 requests. Harvesting 15.9M judgments this way would take **43 years** |
+| **Supreme Today** ₹50,000/mo | **Editorial layer we cannot get free**: High Court + tribunal **headnotes** and **Authority Check treatment** (which case overruled which). Also question→citation pairs | **Not raw judgments** — those are free at 17.8M scale. Not Supreme Court headnotes either: e-SCR gives ~34,000 official ones free |
+| **Bharat.Law** ₹1,499 one month | **Competitive research.** Does their treatment data actually resolve the seven `overruled_in_part` cases our extractor could not? Curated or computed? | **Extract nothing.** Their AUP forbids benchmarking in writing, and the data is either free elsewhere or a machine's opinion we may not train on |
+
+**The through-line: our citator is the gap.** 22 flagged judgments of 38,341,
+because a Supreme-Court-only corpus can only show the Supreme Court overruling
+itself. AWS gives coverage; Supreme Today gives treatment; eCourts gives today.
+Only the middle one costs real money, and `SUPREME_TODAY_LICENCE.md` says buy one
+month and measure it.
 
 ## 1 · TIME-CRITICAL — the Supreme Today account arrives tomorrow
 
