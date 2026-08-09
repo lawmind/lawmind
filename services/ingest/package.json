@@ -12,6 +12,8 @@
     "overruled": "tsx src/overruled-cli.ts",
     "acts": "tsx src/acts-cli.ts",
     "harvest:probe": "tsx src/harvest/probe-cli.ts",
+    "hc:count": "tsx src/harvest/hc-metadata-cli.ts",
+    "hc:ordertypes": "tsx src/harvest/hc-ordertype-cli.ts",
     "repealed": "tsx src/repealed-acts-cli.ts"
   },
   "dependencies": {

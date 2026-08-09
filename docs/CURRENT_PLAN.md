@@ -165,9 +165,43 @@ measured: **~42 GB in Postgres** and **~115 GB on R2** for the whole corpus,
 under **$8/month**. Railway bills **used** space, not provisioned, so raising the
 volume ceiling costs nothing until data fills it.
 
-- [ ] **A3.1** Query the bucket's **Parquet metadata first** and count judgments
-      per court per year. "15.9M" is a headline; **nobody has counted the working
-      set.**
+- [x] **A3.1 COUNTED 10 Aug 2026 — `docs/HC_CORPUS_SURVEY.md`.** 1,493 parquet
+      footers in 85 s, a few MB moved. `pnpm --filter @lawmind/ingest hc:count`.
+
+      **20,529,202 documents all years · 15,771,566 in the last 10 years**, so
+      the "15.9M" headline was fair. **The finding is what the total is made of.**
+
+      **The bucket publishes TWO metadata files per partition and they share
+      ZERO CNRs.** `metadata.parquet` (19,237,683 rows) and
+      `metadata-mobile.parquet` (1,291,519). Measured on one partition: 1,841
+      vs 53,753 rows, **0 CNRs in common**. The first pass skipped the mobile
+      files as unparseable keys. They carry **eighteen extra columns** —
+      `order_type`, `is_final`, `petitioner`, `respondent`, `pet_advocate`,
+      `case_type`, `bench_name` — and a **differently shaped `pdf_link`**, so
+      the variant decides how a PDF key is derived. Four of 25 courts publish it.
+
+      **Reconciles EXACTLY with `DATASETS.md`'s independent count** on 2023,
+      2024 and 2025 — to the digit. And that identity is the evidence the
+      earlier count silently included the mobile files without distinguishing
+      them.
+
+      **Document count is not judgment count, and the share is a RANGE:
+      0.75% – 18.64%.** A first pass matched `/judgment|judgement/` and reported
+      **18.64%; that was wrong** — `View Judgement/Order` (231,067 rows, 17.89%)
+      says *judgment OR order* and is almost the whole of it. Unambiguous
+      judgments are **9,678 = 0.75%**. Narrowing the range needs PDF text, which
+      is A3.3. **Caveat that governs the number: mobile variant only — 8% of the
+      corpus, disjoint from the other 92%. Never quote it as corpus-wide.**
+
+      **Ingest order falls out of it:** top five courts are **54%** of the last
+      decade (Allahabad 3.49M, Bombay 1.53M, Madras 1.51M, Punjab & Haryana
+      1.26M, Patna 1.07M); bottom five are 0.4%. **Delhi is 16th by document
+      count while being among the most cited** — document count is not
+      authority count and must not drive the order alone.
+
+      **Unchanged and still disqualifying:** neither variant has a citation
+      column. A judgment ingested from this bucket is **searchable and not
+      citable**. This survey does not soften that.
 - [ ] **A3.2** **High Courts, last 10 years first** — OD-4's stated order.
 - [ ] **A3.3** Measure PDF→text extraction on **1,000 real HC PDFs** and publish
       an honest completion date. **Extraction is the cost, not download or

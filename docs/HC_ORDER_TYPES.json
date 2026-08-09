@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-08-09T20:38:13.527Z",
+  "scope": "metadata-mobile.parquet only — 4 of 25 courts, disjoint from the plain files",
+  "filesRead": 104,
+  "failures": [],
+  "labelledRows": 1291519,
+  "judgmentRowsConfident": 9678,
+  "judgmentRowsAmbiguous": 231067,
+  "judgmentShareRange": [
+    0.007493501837758485,
+    0.18640453605405727
+  ],
+  "ambiguityNote": "`View Judgement/Order` does not distinguish the two. The range is that label; narrowing it needs PDF text, not metadata.",
+  "byType": {
+    "View Interim Order": 439844,
+    "View": 374531,
+    "View Judgement/Order": 231067,
+    "View Farad order": 186114,
+    "View APPOINT P.LIQUIDATOR": 42695,
+    "View Judgement": 9527,
+    "View Farad Order": 5075,
+    "View Speaking to minutes": 830,
+    "View Final/Oral Order": 721,
+    "View Registrar Order": 441,
+    "View Proof Of Service / publication": 317,
+    "View Order": 202,
+    "View Judgment": 151,
+    "View Lok Adalat Order": 4
+  },
+  "byCourt": {
+    "27_1": {
+      "View Interim Order": 439837,
+      "View Farad order": 186114,
+      "View Judgement": 9527,
+      "View Farad Order": 5075,
+      "View Speaking to minutes": 830,
+      "View Final/Oral Order": 721,
+      "View Registrar Order": 441,
+      "View Proof Of Service / publication": 317,
+      "View Order": 202,
+      "View Judgment": 151,
+      "View Lok Adalat Order": 4
+    },
+    "9_13": {
+      "View": 374531,
+      "View Judgement/Order": 231067
+    },
+    "23_23": {
+      "View APPOINT P.LIQUIDATOR": 42695
+    },
+    "2_5": {
+      "View Interim Order": 7
+    }
+  }
+}
