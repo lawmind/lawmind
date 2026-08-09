@@ -378,6 +378,61 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       **EVERY NUMBER ABOVE WAS MEASURED THROUGH THIS AND IS VOID** — 19.1%
       control, 23.7% graph+reranker, 13.8% at 256 tokens. Re-measurement running.
 
+- [x] **THE RERANKER WAS SCORING 37.6% OF CANDIDATES AGAINST AN EMPTY STRING —
+      9 Aug 2026. This is larger than the pin defect.** `c6b7114`.
+
+      `operativeParagraph` is filled from the **dense** arm's `bestChunk` map, so
+      a judgment BM25 found that the dense top-50 did not has no chunk and the
+      field is `''`. `retrieval.ts` handed that same field to the cross-encoder.
+
+      **Measured over 500 candidates from 25 real queries: 188 of them — 37.6% —
+      were empty.** A cross-encoder scoring a query against `""` returns a low
+      score necessarily and every time, so **the reranker was systematically
+      deleting two candidates in five from the top five** — and doing it to
+      exactly the lexical matches that carry section numbers and citations.
+
+      **This plausibly explains the reranker's whole disappointing record**:
+      +6.0 at p = 0.210 alone, and **16 queries LOST** when it was applied.
+
+      **`API_CONTRACTS.md` is not wrong** — it says an empty `operativeParagraph`
+      is legitimate because *"a result matched by the lexical ranker alone has no
+      dense chunk behind it and therefore no paragraph **to show**"*. That is a
+      correct decision about **display**. It was never a decision about
+      **ranking**, and the two uses of one field had quietly diverged.
+
+      Graph suggestions had a quieter version: `chunk_index 0`, which in an
+      Indian judgment is the cause title, the coram and counsel's names. **The
+      cross-encoder is the only thing that can lift a rank-16 graph suggestion
+      into the top five, and it was being asked to judge them on their
+      letterhead.**
+
+      Fixed by `passagesForRerank()` — the chunk nearest the query vector, one
+      batched `DISTINCT ON`. **Verified: empty passages 37.6% → 0.0%, all 188
+      filled.** `operativeParagraph` untouched; conflating display and ranking
+      again is how this returns.
+
+- [x] **A VALIDITY CAVEAT ON THE WHOLE GATE, measured 9 Aug 2026.** The eval set
+      exercises a **different retrieval path from the one advocates will use**.
+
+      `plainto_tsquery` ANDs every lexeme. Over the first 30 eval queries — each
+      a 200–900 character citing passage — the AND pass returned a **median of 1
+      candidate out of 38,341**, never more than 2, and fell below the relax
+      floor on **30 of 30**. The OR fallback therefore fires **100% of the
+      time**.
+
+      **Real advocate queries are short**, so production will mostly run the AND
+      path. **We are tuning a configuration our users will not hit.** This is
+      inherent to the CLERC method — a citing passage is long by construction —
+      and it is the price of ground truth with provenance. It is not a reason to
+      abandon the derived set; it is a reason that `queries.hand.json` (short,
+      hand-written, with its own provenance) is **not optional**, and that the
+      two must never be averaged into one number.
+
+      The immediate consequence was a free latency win: the AND pass is skipped
+      above 200 characters, since its match set is a strict subset of the OR
+      pass's and the code already keeps whichever returned more. **Latency only —
+      it cannot change a result.** `7dacc7a`.
+
 - [ ] **HyDE — built, wired as an A/B lever, not yet measured.**
       `services/api/src/search/hyde.ts`, 14 tests.
 
