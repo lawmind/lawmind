@@ -423,10 +423,22 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       **Real advocate queries are short**, so production will mostly run the AND
       path. **We are tuning a configuration our users will not hit.** This is
       inherent to the CLERC method — a citing passage is long by construction —
-      and it is the price of ground truth with provenance. It is not a reason to
-      abandon the derived set; it is a reason that `queries.hand.json` (short,
-      hand-written, with its own provenance) is **not optional**, and that the
-      two must never be averaged into one number.
+      and it is the price of ground truth with provenance.
+
+      **And the other fixture does not cover the gap.** `queries.hand.json` is
+      **five queries, all Hindi, 225–268 characters** — genuine research
+      questions rather than extracted passages, which is better, but still long
+      enough to take the same OR path. So:
+
+      > **No query anywhere in this harness is short, and none is a short
+      > English one. The query shape most advocates will actually type has zero
+      > coverage.**
+
+      That is not an argument against the derived set, which is the only thing
+      giving us ground truth with provenance. It is a gap that needs its own
+      fixture — short English queries, with provenance, held separately and
+      **never averaged into the same number**, because a metric mixing two query
+      populations reports on neither.
 
       The immediate consequence was a free latency win: the AND pass is skipped
       above 200 characters, since its match set is a strict subset of the OR
