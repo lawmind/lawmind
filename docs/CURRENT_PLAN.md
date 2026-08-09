@@ -429,6 +429,40 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       ran on the same CPU. The clean figure is the **4,136 ms · p95 4,263 ms**
       from the uncontended run above.
 
+- [ ] **THE CITATION EXTRACTOR COVERS FIVE FORMS, ALL SUPREME-COURT-CENTRIC** —
+      found 9 Aug 2026 while building the leak check. **Not fixed: the blast
+      radius reaches ingest, the citation graph and every caller of
+      `classifyQuery`, and it must not be changed mid-experiment.**
+
+      `@lawmind/ingest`'s `extractCitations` holds patterns for `INSC`, `SCC`
+      (either spelling, round brackets only), `AIR … SC`, `SCR` (**either**
+      bracket) and `SCALE`. **A specialist or High Court reporter is invisible to
+      it** — read directly off the corpus: `[1953] 24 I.T.R. 70`, `[1946] 14
+      I.T.R. 673`.
+
+      There is also a smaller inconsistency: `citationLookupKey`'s own docstring
+      promises `[2019] 4 SCC 221` collapses to the same key as the round-bracket
+      form, and `build-queries.ts` carries a square-bracket citation *shape* —
+      but the extractor never produces one for SCC, so the normalisation handles
+      a form nothing can find. Pinned as a failing expectation in
+      `build-queries.test.ts` rather than silently fixed.
+
+      **A CORRECTION TO MY OWN FIRST NUMBER, recorded because the method matters
+      more than the result.** The first measurement counted every square-bracket
+      span the extractor did not return and would have reported **1,561 missed
+      against 1,788 extracted — a 47% miss rate.** That was wrong twice: the SCR
+      pattern already takes either bracket, so most were never missed; and the
+      residual count is dominated by **`[2003] SUPP. 4`, a running page header
+      repeated dozens of times per judgment**, which is not a citation at all.
+      **No percentage should be quoted from this until the header artefact is
+      excluded.** What stands is the qualitative finding: **specialist reporters
+      are not extracted, at all.**
+
+      **Why it may matter less than it looks**, and this needs measuring before
+      anyone spends a day on it: an I.T.R. authority is only a lost graph edge if
+      that judgment is *in our corpus*, and the corpus is Supreme-Court-heavy.
+      **The edge count to check is resolvable misses, not raw misses.**
+
 - [ ] **REDACTION MISSES CITATIONS THAT RESOLVE TO THE GOLD JUDGMENT** — found
       9 Aug 2026 by the pin audit, not yet fixed.
 

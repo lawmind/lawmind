@@ -10,8 +10,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
+import type { Sql } from 'postgres';
+
 import {
   type BuiltQuery,
+  citationsPointingAtGold,
   looksOcrDamaged,
   passageLooksLikeReasoning,
   redact,
@@ -188,4 +191,101 @@ test('NULL rather than a fragment when no boundary is near', () => {
   // Returning the fragment would quietly re-admit exactly what this function
   // exists to remove, and no caller could tell the two apart.
   assert.equal(snapToSentences('s seeds affecting public order with no stop at all'), null);
+});
+
+/* ------------------------------ the leak redaction cannot see -- */
+
+/** Records whether the database was reached, and with what. */
+function spySql(rows: { key: string }[]): { sql: Sql; calls: number; last: unknown[] } {
+  const state = { calls: 0, last: [] as unknown[] };
+  const sql = ((_s: TemplateStringsArray, ...v: unknown[]) => {
+    state.calls++;
+    state.last = v;
+    return Promise.resolve(rows);
+  }) as unknown as Sql;
+  return {
+    sql,
+    get calls() {
+      return state.calls;
+    },
+    get last() {
+      return state.last;
+    },
+  };
+}
+
+test('NO CITATION LEFT means no database call — the common case stays free', async () => {
+  const spy = spySql([]);
+  const out = await citationsPointingAtGold(
+    spy.sql,
+    'The Court considered whether the protection continues after the period fixed.',
+    'gold-1',
+  );
+  assert.deepEqual(out, []);
+  assert.equal(spy.calls, 0);
+});
+
+test('A SURVIVING CITATION THAT RESOLVES TO THE GOLD IS REPORTED', async () => {
+  /**
+   * The leak the pin audit found: 46 queries pinned a judgment and 9 of them
+   * were the GOLD, which is only possible if a citation pointing at the answer
+   * survived redaction. Those nine scored as retrieval successes while being
+   * string lookups.
+   */
+  const spy = spySql([{ key: '20194SCC221' }]);
+  const out = await citationsPointingAtGold(
+    spy.sql,
+    'The rule in (2019) 4 SCC 221 was applied to these facts by the High Court below.',
+    'gold-1',
+  );
+  assert.deepEqual(out, ['20194SCC221']);
+  assert.equal(spy.calls, 1);
+});
+
+test('a citation resolving to some OTHER judgment is fine, and common', async () => {
+  // A judge distinguishing two authorities is exactly the reasoning we want in
+  // a query. Only a citation pointing at the ANSWER is a leak.
+  const spy = spySql([]);
+  const out = await citationsPointingAtGold(
+    spy.sql,
+    'The rule in (2019) 4 SCC 221 was distinguished on the facts before us today.',
+    'gold-1',
+  );
+  assert.deepEqual(out, []);
+  assert.equal(spy.calls, 1, 'it must still ask — "other judgment" is a DB answer, not a guess');
+});
+
+test('the key asked about carries no punctuation — symmetric with the SQL', async () => {
+  // Everything that is not a letter or a digit goes, on BOTH sides of the
+  // comparison. One rule, expressible identically in JS and in Postgres,
+  // cannot drift.
+  const spy = spySql([]);
+  await citationsPointingAtGold(spy.sql, 'see (2019) 4 SCC 221 for the position', 'gold-1');
+  const keys = spy.last[0] as string[];
+  assert.ok(Array.isArray(keys), 'nothing was extracted, so nothing was asked');
+  assert.deepEqual(keys, ['20194SCC221']);
+});
+
+test('SQUARE-BRACKET CITATIONS ARE INVISIBLE TO THE EXTRACTOR — a known gap', () => {
+  /**
+   * Pinned as a FAILING EXPECTATION rather than a passing assertion of correct
+   * behaviour, because it is not correct behaviour.
+   *
+   * `citationLookupKey`'s own docstring promises that `(2019) 4 S.C.C. 221`,
+   * `[2019] 4 SCC 221` and `(2019)4 SCC  221` all collapse to the same key, and
+   * `build-queries.ts` carries a citation SHAPE for the square-bracket form. But
+   * `@lawmind/ingest`'s `extractCitations` never produces one: measured 9 Aug
+   * 2026, `[2019] 4 SCC 221` and `(2019) 4 S.C.C. 221` both extract to NOTHING.
+   *
+   * So the normalisation handles forms the extractor cannot find. The blast
+   * radius reaches the citation graph and every caller of `classifyQuery`, which
+   * is why it is recorded here rather than fixed mid-experiment.
+   */
+  const spy = spySql([]);
+  return citationsPointingAtGold(spy.sql, 'see [2019] 4 SCC 221 for the position', 'gold-1').then(
+    (out) => {
+      assert.deepEqual(out, [], 'the gap closed — update this test and the note it carries');
+      assert.equal(spy.calls, 0, 'the extractor found nothing, so nothing was asked');
+    },
+  );
 });

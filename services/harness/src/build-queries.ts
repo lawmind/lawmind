@@ -87,6 +87,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
+import { extractCitations, normaliseCitation } from '@lawmind/ingest/citations';
 import postgres, { type Sql } from 'postgres';
 
 /** Bounds, stated before running so the set cannot be tuned toward a number. */
@@ -472,6 +473,64 @@ function toQuery(c: Candidate, group: 'criminal' | 'civil'): BuiltQuery | null {
       redacted: removed,
     },
   };
+}
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE LEAK REDACTION CANNOT SEE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * {@link redact} removes `citation_text`, the gold judgment's
+ * `neutral_citation`, its `reporter_citations` and its distinctive title words.
+ * **That is not the same as removing every citation that resolves to the gold
+ * judgment.** A judgment is cited in several formats and the corpus row carries
+ * only the ones ingest recorded; any other survives, and the query then contains
+ * its own answer.
+ *
+ * **Found by measurement on 9 August 2026, not by reading.** The exact-citation
+ * pin fired on 46 of these queries and **9 of them resolved to the gold
+ * judgment** — which is only possible if a citation pointing at the answer was
+ * still sitting in the "redacted" text. Those nine were scoring as retrieval
+ * successes while being string lookups, and removing the pin dropped the control
+ * from 19.1% to 17.3%.
+ *
+ * **Rejecting, not redacting.** These passages are already redacted once; a
+ * second hole makes them read less like something an advocate would type, and we
+ * have far more candidates than we need. Throwing the query away costs nothing
+ * and cannot leave a partial leak behind.
+ *
+ * **Not wired into the build yet, deliberately.** Turning it on drops queries,
+ * so {@link supersetBreaches} refuses the write — correctly. That is a
+ * re-baselining decision to take between runs, with `--rebuild`, never in the
+ * middle of an experiment.
+ */
+export async function citationsPointingAtGold(
+  sql: Sql,
+  redactedText: string,
+  goldJudgmentId: string,
+): Promise<string[]> {
+  const found = extractCitations(redactedText);
+  if (found.length === 0) return [];
+
+  const keys = [...new Set(found.map((c) => normaliseCitation(c.raw).replace(/[^A-Z0-9]/g, '')))];
+  /**
+   * One query for every surviving citation, and it asks the question directly —
+   * *does any of these resolve to the gold judgment* — rather than resolving
+   * each and comparing in application code. A citation resolving to some OTHER
+   * judgment is fine and common: a judge distinguishing two authorities is
+   * exactly the reasoning we want in a query.
+   */
+  const rows = await sql<{ key: string }[]>`
+    SELECT k.key
+      FROM unnest(${keys}::text[]) AS k(key)
+      JOIN judgments j
+        ON upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = k.key
+        OR EXISTS (
+             SELECT 1 FROM unnest(j.reporter_citations) AS rc
+              WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = k.key
+           )
+     WHERE j.id = ${goldJudgmentId}`;
+  return rows.map((r) => r.key);
 }
 
 /**

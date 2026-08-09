@@ -18,6 +18,7 @@
     "@lawmind/db": "workspace:*",
     "postgres": "3.4.9",
     "tsx": "4.23.1",
-    "@lawmind/embed": "workspace:*"
+    "@lawmind/embed": "workspace:*",
+    "@lawmind/ingest": "workspace:*"
   }
 }
