@@ -259,19 +259,67 @@ without it. The founder is supplying an account and API token.
 - [ ] **A3b.1** `packages/storage` behind an interface that **refuses honestly
       without credentials**, exactly as `packages/auth/src/mail.ts` does. The
       whole path builds and tests with no token; only the upload is outstanding.
-- [ ] **A3b.2** `judgments.storage_key` — a column, not a URL. **The PDF is never
-      copied**: the AWS bucket is public, permanent and CC-BY-4.0, so we store a
-      key into somebody else's CDN.
+- [x] **A3b.2 LANDED 10 Aug 2026 — migration `0028`, APPLIED to production and
+      verified against the live database.** `judgments.storage_key` text null,
+      partial index `WHERE storage_key IS NOT NULL`. A **key, not a URL**, so the
+      bucket, account and endpoint can change without rewriting 15.9M rows.
+      **Never the PDF** — `source_url` already points at the public CC-BY-4.0 AWS
+      bucket. **NULL means "not tiered out"**, a real and permanent state for the
+      38,341 hot Supreme Court rows, not a value to backfill.
 - [ ] **A3b.3** Brotli text objects — measured at **2.0 KB per High Court
       judgment**, 37 GB for the whole corpus.
 - [ ] **A3b.4** fp32 vector blobs with **ranged reads** — 500 candidates × 4 KB is
       one 2 MB ranged GET. Zero egress is the property that makes the tiered
       design viable on a read path.
-- [ ] **A3b.5** A cost ceiling and an alert. R2 is $0.015/GB/month with free
-      egress, but **Class A operations are $4.50/million** — a naive per-chunk
-      write pattern is where an object-storage bill actually goes wrong.
-- [ ] **A3b.6** Kill switch + fetch ledger, same discipline as the eCourts
-      adapter. Every credentialled integration in this repo is auditable.
+- [x] **A3b.5 LANDED 10 Aug 2026 — `packages/storage/src/spend.ts` +
+      `metered.ts`, 22 tests.** Prices verified against Cloudflare's own pricing
+      page the same day: **Class A $4.50/M · Class B $0.36/M · storage
+      $0.015/GB-month · egress free · `DeleteObject` FREE.**
+
+      **The number that justifies it:** one PUT per judgment across 15.77M is
+      **$71**. One PUT per *chunk* is not — the SC corpus already runs 616,197
+      chunks over 38,341 judgments, a **16:1 ratio**, which over the HC corpus is
+      ~253M objects and **$1,138 in PUTs** for data whose storage costs under
+      $2/month. **The failure mode is a per-chunk write pattern, not volume of
+      bytes**, and it looks harmless in review.
+
+      Charged **before** the operation and a refused write **never reaches the
+      network** (asserted by counting calls on a spy store, not by inspecting a
+      flag). Default ceiling **$25 — low enough that a wrong write pattern hits
+      it during the first test run**, not at the end of a 15M-object job. An
+      unparseable `R2_OP_BUDGET_USD` falls back to the default rather than NaN,
+      because `NaN > ceiling` is false and a NaN ceiling silently permits
+      everything — the single most dangerous way this could fail, so it has a test.
+
+      **A test caught a real defect:** a free `delete` was being refused once
+      accumulated spend passed the ceiling, which would lock an operator out of
+      deleting the objects that caused the overspend. Free operations are now
+      never refused on cost.
+- [x] **A3b.6 LANDED 10 Aug 2026 — migration `0028`, applied and verified.**
+      `r2_operation_ledger`, plus a halt switch reusing `platform_config` rather
+      than inventing a second mechanism.
+
+      **The ledger is AGGREGATED per run per window, and that is the design, not
+      a shortcut.** `ecourts_fetch_ledger` is per request because the grant is
+      *counted in requests* — 1,000/day — and answers *"did we stay inside the
+      grant"*. **R2's constraint is spend, not permission**: a per-operation
+      ledger would be tens of millions of rows auditing a two-figure dollar
+      number, and **the ledger would itself become the per-object write pattern
+      it exists to catch.** Written into the migration so nobody "fixes" it.
+
+      **The halt switch defaults to NOT halted, and that is not a weakening.**
+      eCourts' switch defaults OFF because the danger there is permission. Here
+      the danger is spend, the primary gate is the budget ceiling, and a storage
+      layer that refused until someone remembered a config row would be an ingest
+      that silently stores nothing — which `r2.ts` names as the worst outcome
+      available. **Reads are never halted**: taking the product down cannot save
+      $0.36 per million. Deletes *are*, because a halt exists to stop the corpus
+      changing.
+
+      **Verified against the live database, not asserted:** all three CHECK
+      constraints reject (window ordering, negative counts, negative cost) **and
+      a valid row is accepted** — the positive control matters, or a table that
+      rejected everything would have passed. Zero probe rows left behind.
 
 ## A3c · TODO — THE CITATOR. Measured 9 Aug, and the gap is 161×
 

@@ -327,6 +327,19 @@ export const judgments = pgTable(
     // Null where the case number states no side — those rows are excluded when
     // the filter is applied rather than guessed into one.
     caseType: caseTypeEnum('case_type'),
+    /**
+     * The R2 key holding this judgment's brotli-compressed TEXT — Tier 3 of
+     * `docs/CORPUS_TIERING.md` §3. **A key, never a URL**, so the bucket,
+     * account and endpoint can change without rewriting 15.9M rows.
+     *
+     * **Not the PDF.** `sourceUrl` already points at the public CC-BY-4.0 AWS
+     * bucket, which is permanent and paid for by somebody else; we store a
+     * pointer into it and never a copy of it.
+     *
+     * NULL means "not tiered out" — a real and permanent state for the 38,341
+     * Supreme Court judgments held hot in Postgres, not a missing value.
+     */
+    storageKey: text('storage_key'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     /**
      * Stored, not an expression index. An expression gin index cannot hand the
@@ -342,6 +355,9 @@ export const judgments = pgTable(
     index('judgments_full_text_idx').using('gin', t.fullTextTsv),
     index('judgments_judgment_date_idx').on(t.judgmentDate),
     index('judgments_court_idx').on(t.court),
+    // Partial: finding the tiered-out rows is the whole point, and the NULLs
+    // are the majority for as long as Tier 1 exists.
+    index('judgments_storage_key_idx').on(t.storageKey).where(sql`storage_key IS NOT NULL`),
     // Ingest resumability, enforced by the database rather than by application
     // code: re-running a killed ingest must not duplicate. `source_url` is the
     // natural key of a judgment at its source (one canonical document per URL).

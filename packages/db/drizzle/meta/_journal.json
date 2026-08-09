@@ -197,6 +197,13 @@
       "when": 1786300000000,
       "tag": "0027_citation_aliases",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1786310000000,
+      "tag": "0028_judgment_storage",
+      "breakpoints": true
     }
   ]
 }

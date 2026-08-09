@@ -86,7 +86,25 @@ the citation-verification moat does not transfer); revisit after ₹1Cr ARR.
 `overruled_status_changed_at` timestamptz null — when the status last moved ·
 `overruled_by_judgment_id` uuid null fk→judgments ·
 `overruled_paras` int[] null — the affected paragraphs, required when
-`partly_set_aside` · `overruled_note` text null · `created_at` timestamptz
+`partly_set_aside` · `overruled_note` text null · `storage_key` text null ·
+`created_at` timestamptz
+
+`storage_key` (migration `0028`) is the **R2 key holding this judgment's
+brotli-compressed text** — Tier 3 of `docs/CORPUS_TIERING.md` §3. Three things
+about it are load-bearing:
+
+- **A key, never a URL.** The bucket, account and endpoint must be able to change
+  without rewriting 15.9M rows; a URL would embed today's account id in all of
+  them.
+- **Never the PDF.** `source_url` already points at the public, permanent,
+  CC-BY-4.0 AWS bucket. We store a pointer into somebody else's CDN and never a
+  copy of it — `CORPUS_TIERING.md` §3 books that line at zero deliberately.
+- **NULL means "not tiered out"**, which is a real and permanent state for the
+  38,341 Supreme Court judgments held hot in Postgres. It is not a missing value
+  and must not be backfilled.
+
+Indexed partially, `WHERE storage_key IS NOT NULL` — the tiered-out rows are what
+anyone queries, and the NULLs are the majority for as long as Tier 1 exists.
 
 `overruled_status_changed_at` is what makes the stale-overruled rate measurable:
 without it there is no way to tell a badge that was **wrong when rendered** from
@@ -734,6 +752,42 @@ Constraints: `refusal_reason` is present exactly when `outcome = 'refused'`; a
 refused row must carry **no** `http_status` and **no** `duration_ms`, because it
 never left the process. **The rate limiter counts only rows that reached the
 network** — a refusal must not consume the quota it just protected.
+
+## r2_operation_ledger
+
+**Added 10 Aug 2026, migration `0028`.** Object-storage spend, **aggregated per
+run per window** — not per operation.
+
+`id` uuid pk · `run_label` text · `window_start` timestamptz ·
+`window_end` timestamptz · `class_a_count` bigint · `class_b_count` bigint ·
+`free_count` bigint · `bytes_written` bigint ·
+`operation_cost_usd` numeric(12,6) · `ceiling_usd` numeric(12,6) ·
+`refusal_reason` text null · `created_at` timestamptz
+
+Index: btree on (window_start desc).
+
+**Why this is aggregated where `ecourts_fetch_ledger` is per request, and it is
+not an inconsistency.** The eCourts grant is *counted in requests* — 1,000 a day
+— so the question it answers is "did we stay inside the grant", and only a row
+per request can answer that. **R2's constraint is spend, not permission.** Class
+A is $4.50 per million against a 15.77M-judgment corpus, so a per-operation
+ledger would be tens of millions of rows auditing a two-figure dollar number, and
+**the ledger would itself become the per-object write pattern it exists to
+catch.** A window counter is the right instrument for a budget; a per-request
+ledger is the right instrument for a licence.
+
+`operation_cost_usd` is computed by the application from the published
+per-million rates and **stored rather than derived**, so a future price change
+cannot silently rewrite what we believed we spent at the time. `ceiling_usd`
+records the limit that was in force for the same reason.
+
+`refusal_reason` is non-null when the budget ceiling or the halt switch stopped a
+run — a ledger recording only completed work would hide exactly the events worth
+reviewing. Enforcement lives in `packages/storage/src/spend.ts`, and the halt
+switch reuses `platform_config` rather than inventing a second mechanism.
+**No `platform_config` row is seeded**: for eCourts a missing row reads as OFF
+because the danger is permission, whereas here the danger is spend, the budget
+ceiling is the primary gate, and a missing row correctly reads as "not halted".
 
 ## citation_disputes
 
