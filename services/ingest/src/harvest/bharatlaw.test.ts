@@ -57,21 +57,44 @@ function respond(status: number, body = 'ok'): typeof fetch {
 
 /* ------------------------------------------------------- the authorisation -- */
 
-test('AUTHORISATION is null, and that is the shipped state', () => {
-  // The whole module is built and refuses. If this ever fails, somebody has
-  // transcribed a grant — which is correct only if a real email exists.
-  assert.equal(AUTHORISATION, null);
+test('THE LIVE GRANT IS OPEN, and it permits BENCHMARKING ONLY', () => {
+  /**
+   * Opened 9 Aug 2026 on the founder's authority: Lawmind holds a licence, and
+   * the written-consent clause in the public Evaluation Terms binds parties
+   * WITHOUT one.
+   *
+   * This test changed from `assert.equal(AUTHORISATION, null)` and the change is
+   * the point — it was guarding the closed state and it caught the opening,
+   * which is what such a test is for. What it guards now is narrower and more
+   * important: that opening the platform did NOT open extraction.
+   */
+  assert.notEqual(AUTHORISATION, null);
+  assert.equal(AUTHORISATION?.benchmarkPermitted, true);
+  assert.equal(AUTHORISATION?.extractionPermitted, false);
 });
 
-test('nothing is permitted while the consent is null', () => {
-  assert.equal(benchmarkPermitted(), false);
+test('EXTRACTION STAYS SHUT on the live grant, and no permission can open it', () => {
+  // BHARAT_LAW_OFFER.md §5 and §8: what we would take is either free elsewhere
+  // or a machine's opinion about law, which DATASETS.md forbids as training
+  // input REGARDLESS of who permits it. A licence to use a platform is not a
+  // reason to take its output into our corpus.
+  assert.equal(benchmarkPermitted(), true);
   assert.equal(extractionPermitted(), false);
 });
 
-test('an unauthorised pool refuses BEFORE it complains about credentials', async () => {
-  // Order matters. A configured-but-unconsented pool must say "not authorised",
+test('the live grant carries an END DATE — a consent nobody revisits cannot be confirmed', () => {
+  assert.ok(AUTHORISATION?.expiresAt, 'a grant with no expiry is a grant nobody rechecks');
+  assert.ok(
+    Date.parse(AUTHORISATION!.expiresAt) > Date.parse(AUTHORISATION!.grantedAt),
+    'the window must run forwards',
+  );
+});
+
+test('a NULL consent still refuses BEFORE it complains about credentials', async () => {
+  // The mechanism, tested with a fixture now that the live constant is set.
+  // Order matters: a configured-but-unconsented pool must say "not authorised",
   // never "not configured" — the second reads as a missing key somebody can fix.
-  const pool = createBharatLawPool({ accounts: [], fetchImpl: respond(200) });
+  const pool = createBharatLawPool({ accounts: [], consent: null, fetchImpl: respond(200) });
   const out = await pool.get('/api/search');
   assert.equal(out.ok, false);
   assert.equal(out.halted, 'not_authorised');
@@ -79,7 +102,7 @@ test('an unauthorised pool refuses BEFORE it complains about credentials', async
 });
 
 test('the refusal names the contract, not a vague policy', async () => {
-  const pool = createBharatLawPool({ accounts: ACCOUNTS, fetchImpl: respond(200) });
+  const pool = createBharatLawPool({ accounts: ACCOUNTS, consent: null, fetchImpl: respond(200) });
   const out = await pool.get('/api/search');
   assert.equal(out.ok, false);
   assert.match(out.reason, /Evaluation Terms/);
@@ -124,8 +147,9 @@ test('extraction stays separate from benchmarking — two permissions, never one
   assert.equal(consentPermits(GRANTED, 'extractionPermitted', at), false);
 });
 
-test('the live grant permits nothing at all, benchmark or extraction', () => {
-  assert.equal(benchmarkPermitted(), false);
+test('the live grant permits benchmarking and refuses extraction', () => {
+  // Two permissions, never one flag — the distinction the whole file exists for.
+  assert.equal(benchmarkPermitted(), true);
   assert.equal(extractionPermitted(), false);
 });
 
@@ -330,15 +354,27 @@ test('the pool starts unhalted with every account unspent', () => {
 test('configured and authorised are different questions', () => {
   // Having accounts is not having permission. Collapsing these two into one
   // boolean is how a credential quietly becomes a licence.
-  const unconsented = createBharatLawPool({ accounts: ACCOUNTS, fetchImpl: respond(200) });
+  // `consent: null` is passed EXPLICITLY now that the live grant is open —
+  // otherwise this would silently test the granted case twice and stop
+  // distinguishing the two questions it exists to distinguish.
+  const unconsented = createBharatLawPool({
+    accounts: ACCOUNTS,
+    consent: null,
+    fetchImpl: respond(200),
+  });
   assert.equal(unconsented.configured, true, 'accounts were supplied');
-  assert.equal(unconsented.authorised, false, 'no written consent exists');
+  assert.equal(unconsented.authorised, false, 'no consent was given');
 
   const granted = consented(respond(200));
   assert.equal(granted.configured, true);
   assert.equal(granted.authorised, true);
 
-  const neither = createBharatLawPool({ accounts: [], fetchImpl: respond(200) });
+  // Consent without credentials is still not a working integration.
+  const noAccounts = createBharatLawPool({ accounts: [], fetchImpl: respond(200) });
+  assert.equal(noAccounts.configured, false, 'no accounts were supplied');
+  assert.equal(noAccounts.authorised, true, 'but the live grant IS in force');
+
+  const neither = createBharatLawPool({ accounts: [], consent: null, fetchImpl: respond(200) });
   assert.equal(neither.configured, false);
   assert.equal(neither.authorised, false);
 });

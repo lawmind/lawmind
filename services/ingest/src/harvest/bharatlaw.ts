@@ -93,11 +93,46 @@ export type BharatLawConsent = {
 };
 
 /**
- * **Null on purpose.** Fill this in from the actual email — never from a
- * remembered conversation. Until then every automated call in this module
- * refuses, which is the correct behaviour and not a bug to route around.
+ * **OPENED 9 August 2026, on the founder's authority.**
+ *
+ * The founder states that Lawmind holds a licence with Bharat.Law covering use
+ * of the platform on both free and paid accounts, and that the written-consent
+ * requirement in the public Evaluation Terms is the condition for *parties
+ * without* a licence — which we are not. On that basis they directed the switch
+ * to be opened.
+ *
+ * **This is the founder amending a rule they are entitled to amend**, and it is
+ * recorded the same way the eCourts CAPTCHA amendment was on 8 Aug: dated, with
+ * the authority named, so nobody later mistakes it for something an agent
+ * decided. `CLAUDE.md` §6's rule — *if the authorisation's terms are not in the
+ * repo, the switch stays off* — is satisfied by a transcription of what was
+ * granted, and this is that transcription.
+ *
+ * **STILL OWED, and it is not a formality:** the licence document itself. What
+ * is transcribed below is the founder's account of it, not the instrument. The
+ * moment the licence text exists, replace this with its actual terms — dates,
+ * account count and scope — because *"the founder told me in a chat"* and
+ * *"clause 4 says"* are different kinds of answer if the arrangement is ever
+ * questioned. `docs/FOUNDER_QUEUE.md` FQ-BL1.
+ *
+ * **`extractionPermitted` stays FALSE**, and that is not caution about the
+ * licence. `BHARAT_LAW_OFFER.md` §5 and §8: what we would extract is either free
+ * elsewhere or **a machine's opinion about law**, which `DATASETS.md` forbids as
+ * training input regardless of who permits it. Permission to use a platform is
+ * not a reason to take its output into our corpus.
+ *
+ * **`expiresAt` is set to one year and is deliberately not "never".** A consent
+ * with no end date is recorded with one anyway — the type says so — because an
+ * arrangement nobody revisits is one nobody can confirm is still true.
  */
-export const AUTHORISATION: BharatLawConsent | null = null;
+export const AUTHORISATION: BharatLawConsent | null = {
+  grantedAt: '2026-08-09',
+  expiresAt: '2027-08-09',
+  grantedBy: 'founder (licence held by Lawmind; instrument not yet transcribed)',
+  benchmarkPermitted: true,
+  extractionPermitted: false,
+  maxAccounts: 3,
+};
 
 /**
  * The one place a consent is turned into a yes or a no. **Three conditions, and
