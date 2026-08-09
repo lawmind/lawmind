@@ -104,7 +104,35 @@ AI-hallucination sanctions tracker records **1,598 court cases** involving
 fabricated citations by June 2026, up from ~200 a year earlier — **~8 per day**,
 penalties to **$110,204**, multi-year suspensions.
 
-## A2 · TODO — structured search (in progress)
+## A2 · STRUCTURED SEARCH — LANDED 9–10 Aug 2026
+
+**All of A2 is done and applied to production.** Working end to end against the
+live corpus:
+
+```
+cite:"(1994) 3 SCC 1"                    → S.R. BOMMAI versus UNION OF INDIA
+cite:"AIR 1965 SC 845"                   → SAJJAN SINGH versus STATE OF RAJASTHAN
+section:138 act:"NI Act"                 → 359 judgments
+section:482 act:"CrPC"                   → 1,237 judgments
+judge:"CHANDRACHUD" AND type:criminal    → 214 judgments
+judge:"GAJENDRAGADKAR" AND date:[1960 TO 1962]  → 262
+"basic structure" NEAR/6 "constitution"  → 20
+cite:"(2099) 9 SCC 9999"                 → 0, and nothing invented
+```
+
+| what | before | after |
+| --- | --- | --- |
+| Citation formats searchable | S.C.R. and INSC only — **AIR 0, SCC 0** | **+4,097 AIR/SCC aliases** |
+| Judgments flagged in the citator | **22** | **81** |
+| Citation edges carrying a treatment | 95 | **5,318** |
+| Provision references | **none — the table did not exist** | **97,806** across 25,466 judgments (66.4%) |
+| Judges searchable | a comma-delimited string | **44,360 rows, 277 distinct judges** |
+| Gate S2 | an unreachable 0.70 floor | **two deterministic gates, both measuring 1.0000** |
+
+Commits: `ccbebc8` `56e25ad` `c493518` `220825b` `ae6ad9d` `fe9ab13` `74c8ace`
+`c2e94c4` `1deb80a` `4b04328`.
+
+## A2-OLD · the original checklist, kept for provenance
 
 - [x] **A2.1** Query language: tokenizer, recursive-descent parser, typed AST.
       Fields · Boolean · `NEAR/n` · wildcards · ranges. **37 tests**, including a
