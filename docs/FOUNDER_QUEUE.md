@@ -1805,6 +1805,70 @@ foundation and the wrong thing to be doing while success@5 is 24%.
 
 ---
 
+## FQ-T1 · Terms and Conditions — drafted in full, twelve facts only you have
+
+**Needs:** twelve items listed as Appendix B of `legal/TERMS_AND_CONDITIONS.md`,
+and then counsel review. The material ones, in the order they hurt if wrong:
+
+1. **Registered office address and CIN** of Helmor Pvt Ltd. `PID.md` says
+   "Gwalior, Madhya Pradesh" and nothing more; a T&C needs the full address.
+2. **GSTIN, and whether ₹799 / ₹1,999 / ₹3,499 are inclusive or exclusive of
+   GST.** PD-13 states the prices and is silent on tax. An ambiguous
+   inclusive/exclusive price in published terms is a consumer-law problem.
+3. **Jurisdiction and arbitration seat.** The draft states Gwalior, being the
+   registered office — the conservative default. Most comparable services pick a
+   metro seat. Your call, and counsel's.
+4. **Grievance Officer** name, designation and email. Required by the IT Act
+   rules and by DPDP. There is currently no such person named anywhere in the
+   repo.
+5. **Refund window for directly-invoiced Firm subscriptions.** Store refunds are
+   Apple's and Google's problem (OD-3), so the only refund promise we can
+   actually perform is on the Razorpay-invoiced tiers. Recommend pro-rata on
+   unused full months.
+6. **Liability cap.** Draft uses twelve months' fees paid — the standard
+   formulation, deliberately not a nominal figure.
+7. **`lawmind.in` vs `lawmind.co`.** The app's Firm enquiry link opens
+   `hello@lawmind.in` (`SubscriptionScreen.tsx:81`); verified outbound mail is
+   `no-reply@lawmind.co` (`DEPLOYMENT.md`). Two domains in a published legal
+   document reads as carelessness. Pick one.
+8. **Hindi translation of the terms — yes or no,** and which language governs.
+   We ship at genuine Hindi parity and publish English-only terms; that is
+   defensible but conspicuous.
+9. **Counsel's written data-residency view** (OD-2) must be on file before §11.5
+   is published. The clause discloses Singapore processing plainly rather than
+   burying it, which is the right call and the one that most needs backing.
+10. **The Privacy Policy** the terms reference does not exist as a published
+    document. Its substance is already fully written in `docs/PRIVACY_PII.md`.
+
+**Why it is not a blocker:** the whole document is written —
+`legal/TERMS_AND_CONDITIONS.md`, 17 clauses plus two appendices — and every
+substantive clause is derived from something already settled in this repo rather
+than from a template. Placeholders are marked `[FOUNDER — …]` inline so the
+document cannot be published half-filled by accident.
+
+**What it adds that the source template did not have,** because our failure modes
+are not Indian Kanoon's: an explicit limitation-calculator disclaimer (§9.3 — a
+barred claim is the single most expensive thing this product could cause), a
+briefings-are-not-your-diary clause (§9.2), a BNS/BNSS/BSA clause explaining that
+the applicable code turns on the offence date (§10.3), and a clause separating
+*"the judgment exists"* from *"the judgment supports your proposition"* (§7.5).
+Appendix A records the eight source clauses deliberately **not** carried over —
+including the "irrevocable waiver that you did not read this", the member
+directory, and the 48-hour refund we are structurally unable to perform.
+
+**Cost if never resolved:** we cannot launch. Store review asks for a terms URL,
+and DPDP requires a named Grievance Officer.
+
+**Where it plugs in:** publish at `lawmind.co/terms`. Then bump
+`CURRENT_TERMS_VERSION` in `services/api/src/auth/account.ts` from `'2026-08-07'`
+to the published version and update `CURRENT_TERMS_BODY` to reference the URL.
+**That bump forces every existing account to re-accept** — which is the designed
+behaviour, is harmless pre-launch, and is the reason we store a version rather
+than a boolean. I have not made that code change: pointing the in-app consent at
+a document counsel has not yet read would be worse than leaving it as it is.
+
+---
+
 # ============================================================
 # WHAT YOU NEED TO BUY — one list, with prices, 9 August 2026
 # ============================================================
