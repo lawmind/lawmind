@@ -135,6 +135,33 @@ export function gradeReferences(references: readonly Reference[]): {
 }
 
 function buildPrompt(question: string, evidence: readonly Evidence[]): string {
+  /**
+   * **No evidence means a different question is being asked.**
+   *
+   * The evidence-grounded prompt below tells the model to say the evidence does
+   * not answer the question — right when there IS evidence and it falls short.
+   * With an EMPTY evidence set the model dutifully says exactly that to
+   * everything, and an adversarial case then fails for giving a *generic*
+   * refusal rather than a reasoned one.
+   *
+   * **Measured 9 Aug 2026:** the first adversarial run scored 20%, entirely on
+   * `refusal never mentions X`, with **no forbidden text produced and nothing
+   * cited**. The model was refusing correctly and being graded on the wrong
+   * prompt. So an evidence-free request asks for legal judgement instead.
+   */
+  if (evidence.length === 0) {
+    return [
+      'You are assisting an Indian advocate.',
+      '',
+      'If the request cannot properly be met — because it is legally impossible,',
+      'because it misstates what a judgment held, or because a necessary fact is',
+      'missing — REFUSE, and explain specifically WHY in plain terms. Name the',
+      'legal reason. Do not produce the requested document. Do not cite anything.',
+      '',
+      `REQUEST: ${question}`,
+    ].join('\n');
+  }
+
   const block = evidence
     .map((e) => `[${e.id}] ${e.caseTitle}\n${e.passage.slice(0, 1200)}`)
     .join('\n\n');

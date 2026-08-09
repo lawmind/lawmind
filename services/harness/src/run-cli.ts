@@ -18,6 +18,8 @@ import { getEmbedder, getReranker, RERANKER_MODEL_ID, toVectorLiteral } from '@l
 import postgres from 'postgres';
 
 import { assessReadiness, countCorpus, explainRefusal } from './corpus-readiness.ts';
+import { readFile } from 'node:fs/promises';
+import { type AdversarialCase, runAdversarial } from './adversarial.ts';
 import { gradeReferences, generate } from './generate.ts';
 import { type HarnessMetrics, grade, rate } from './metrics.ts';
 import { measureOverruledLeakage, measureStaleOverruled } from './overruled-checks.ts';
@@ -324,6 +326,28 @@ async function main(): Promise<number> {
       }
     }
 
+    /**
+     * The adversarial set — five requests with no good answer, each paired with
+     * a recorded wrong answer a published dataset actually gives. Graded by
+     * refusal and by machine-checkable strings, never by prose quality.
+     */
+    let adversarialPassRate: number | null = null;
+    if (apiKey) {
+      const raw = await readFile(new URL('./fixtures/adversarial.json', import.meta.url), 'utf8');
+      const { cases } = JSON.parse(raw) as { cases: AdversarialCase[] };
+      const adv = await runAdversarial(cases);
+      adversarialPassRate = adv.passRate;
+
+      console.log('');
+      console.log('adversarial');
+      console.log('-'.repeat(78));
+      for (const v of adv.verdicts) {
+        console.log(`  ${(v.passed ? 'PASS' : 'FAIL').padEnd(5)} ${v.id}`);
+        for (const f of v.failures) console.log(`          ${f}`);
+      }
+      console.log(`  ${adv.callFailures} call failures · $${adv.costUsd.toFixed(6)}`);
+    }
+
     /* ---------------------------------------------------------------- grade -- */
 
     const metrics: HarnessMetrics = {
@@ -333,12 +357,7 @@ async function main(): Promise<number> {
       staleOverruledRate: rate(stale.stale, stale.tested),
       overruledLeakage: leakage.retrieved === 0 ? null : leakage.leaked,
       successAt5,
-      /**
-       * Still null: the adversarial set has no runner. `adversarial.json`
-       * grades by refusal against recorded wrong answers, which is a different
-       * harness from this one and is not written yet.
-       */
-      adversarialPassRate: null,
+      adversarialPassRate,
     };
 
     const verdicts = grade(metrics);
