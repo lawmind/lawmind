@@ -119,8 +119,14 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       **no re-chunking, no re-embedding, no reindexing**:
       HyDE · multi-query / RAG-Fusion · query decomposition.
 
-      **Genuinely blocked on ~62 GPU-hours ≈ $65** because they change the index:
-      late chunking · summary-augmented chunking (**DRM is 95.2%**)
+      **~~Blocked on ~62 GPU-hours ≈ $65~~ — STRUCK 9 Aug 2026, MEASURED.**
+      `Xenova/bge-m3` fp32 on this workstation's CPU runs at **36.6 ms/chunk**,
+      so all 616,197 chunks is **≈ 6.3 hours** (12–19 h realistically) — **an
+      overnight run on hardware we already own.** The $65 assumed a rented GPU
+      because Railway has none and nobody re-checked once a 4060 Ti existed.
+      `docs/RETRIEVAL_ARCHITECTURE.md` §6c. So: late chunking ·
+      summary-augmented chunking (**DRM is 95.2%**) are **blocked on nothing but
+      a night** — but still run the free query-side and graph levers first.
 - [ ] **Reranker at n=283** on q8, the only usable build. Needs ~334 queries to
       settle +6.0 pts
 - [~] **C1 · IPC↔BNS mapping** — unblocks the five BNS queries and closes the last

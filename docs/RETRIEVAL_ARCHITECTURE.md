@@ -371,6 +371,63 @@ probabilistic"* is a good statement of what we already do.
 
 ---
 
+## 6c · THE $65 GPU LINE WAS WRONG — measured 9 August 2026
+
+**The founder challenged it: "I don't understand GPU re-embedding because we
+already have an RTX 4060 on this machine." That challenge was correct, and the
+measurement settles it.**
+
+**Measured on this machine, today:** `Xenova/bge-m3` at fp32 through
+`onnxruntime-node`, batch of 16 → **36.6 ms per chunk**. Across all
+**616,197 chunks that is ≈ 6.3 hours**, on the **CPU**, without the GPU being
+touched at all.
+
+**So a full re-embed is an overnight run on hardware we already own, and the
+$65 line item is deleted.**
+
+### Why the estimate was wrong in the first place, stated plainly
+
+`services/embed/src/embed.ts` says it in a comment written months ago: *"A query
+is embedded alone on Railway; the corpus is embedded in batches **on the GPU
+box**."* **Railway has no GPU**, so "the GPU box" meant a rented one, and
+`DATA_ADVANTAGE.md` costed 62 GPU-hours at cloud rates. **Nobody re-checked the
+premise once a workstation with a 4060 Ti existed.** That is a planning failure,
+not an engineering one.
+
+### The GPU is still not being used, and that is fine for now
+
+`onnxruntime-node` 1.24.3 as installed is the **CPU build**. Using the
+**RTX 4060 Ti (8 GB)** would need the CUDA execution provider or a Python
+path. BGE-M3 is 568M parameters — about **1.1 GB at fp16**, so it fits with
+room for large batches, and fp16 is safe *on a GPU* even though
+`embed.ts` correctly rejects it on CPU (onnxruntime graph-fusion crash
+#15531, and CPUs cast fp16 up to fp32 anyway).
+
+**But 6.3 hours does not justify the work.** Wiring CUDA is only worth doing if
+we start re-embedding repeatedly.
+
+### Two honest caveats on the 6.3 hours
+
+- **The benchmark used one short sentence repeated 16 times.** Real chunks are
+  longer and varied, and attention cost grows with sequence length. **Expect
+  2–3× worse in practice — call it 12–19 hours.** Still one overnight run.
+- **It measures throughput, not the pipeline.** A real re-embed also reads
+  616,197 rows, writes 616,197 vectors and rebuilds an HNSW index over them.
+  The index build is likely to be the bigger share, and it is not measured here.
+
+### What this changes in the plan
+
+**"Blocked on ~62 GPU-hours ≈ $65" is struck.** Late chunking and
+summary-augmented chunking are now **blocked on nothing but a night** —
+they join the list of things needing no money.
+
+**The ordering advice survives and gets stronger.** Still measure the free
+query-side levers and the graph first: an overnight re-embed is cheap in money
+and expensive in wall-clock, and it should be spent on a hypothesis the cheap
+experiments have already made look promising.
+
+---
+
 ## 7 · What I am NOT claiming
 
 - **The +0.250 and +0.125 recall figures are from general-corpus reports, not
