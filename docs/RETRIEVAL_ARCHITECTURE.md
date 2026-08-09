@@ -34,6 +34,40 @@ measured.
 
 ---
 
+### Updated 9 August 2026 — the key arrived and HyDE is built
+
+`OPENROUTER_API_KEY` is live and verified. **HyDE is implemented**
+(`services/api/src/search/hyde.ts`, 14 tests) and wired into the A/B rig as its
+own lever. Three things measured while building it, each of which changes what
+to do next:
+
+**1. Generation costs 2,519–4,916 ms.** Against Gate S1's 3,000 ms for the whole
+request, that is a budget breach on its own — worse than the reranker's 4,136 ms.
+So HyDE fires **only on `concept` queries**, where the register gap it closes
+actually exists. A citation lookup is already pinned at rank 1 and a section
+number is the strongest lexical signal in the corpus; neither has anything to
+gain from a hypothetical, and both would pay several seconds for it.
+
+**2. The DPA reaches further than uploads.** A user-typed query may carry client
+detail, ambiguity resolves to sensitive, and sensitive is refused with no
+override. **HyDE cannot ship to real advocates until the DPA is countersigned**,
+however well it measures. It measures fine here — the harness's queries are
+extracted verbatim from published judgments.
+
+**3. Generated prose about law is safe here only because of where it may go.**
+It reaches the embedder and nothing else. Citation-shaped spans and bare case
+names are **stripped before embedding**: the model has no retrieval, so every
+citation it writes is invented by construction, and an invented citation in the
+embedded text is *noise pointing somewhere specific*, which is worse than noise.
+Only the dense arm uses it, so BM25 keeps the advocate's literal words.
+
+**Multi-query / RAG-Fusion and query decomposition remain unbuilt**, and both
+now carry the same 2.5–5 s per generation — decomposition worse, since it makes
+several calls. Measure HyDE first; if a single generation cannot be afforded,
+neither can three.
+
+---
+
 ## 1 · What the document confirms we already got right
 
 Worth stating, because it means the expensive parts do not need redoing.
