@@ -753,6 +753,68 @@ refused row must carry **no** `http_status` and **no** `duration_ms`, because it
 never left the process. **The rate limiter counts only rows that reached the
 network** — a refusal must not consume the quota it just protected.
 
+## corpus_coverage
+
+**Migration `0012`. Documented 11 Aug 2026 — it had been missing from this file
+since it was created**, which is the rule at the top of this document being
+broken by the commit that added it. Recorded now rather than quietly.
+
+`source` text pk · `source_total` int null · `enumerated_at` timestamptz null ·
+`complete` boolean default false · `failed_ids` text[] default `{}` ·
+`updated_at` timestamptz
+
+**One row per SOURCE**, holding enumeration state for that source as a whole —
+today `indiacode_central_acts`, 845 acts. It answers *"has this source been fully
+enumerated"*.
+
+`source_total` is **null until an enumeration has run**: unknown is a state, not
+zero. `complete` is true only when a full pass finished with no failures, and
+**a client must not infer completeness from `held === source_total`** — an ingest
+can reach the count with items that failed and were retried into place, and can
+equal it transiently mid-run. `failed_ids` names them, because **an unauditable
+gap is not a known gap**.
+
+## judgment_coverage
+
+**Added 11 Aug 2026, migration `0029`.** Coverage per court per year — what
+EXISTS at the source, against what we hold.
+
+`source` text · `court_code` text · `court_name` text · `year` int ·
+`source_documents` int · `enumerated_at` timestamptz ·
+`updated_at` timestamptz · **pk (source, court_code, year)**
+
+Index: btree on (source, court_name); btree on (source, year).
+Constraints: `source_documents >= 0`; `year BETWEEN 1800 AND 2200`.
+
+**A different GRAIN from `corpus_coverage`, not a replacement.** That table is
+keyed `source` and cannot express *"Allahabad, 2024"* without encoding two
+dimensions into one text key, which would make counting by court and counting by
+year both unanswerable. Both tables keep their jobs.
+
+**`source_documents` COUNTS DOCUMENTS, NOT JUDGMENTS**, and the column is named
+for what it counts. `docs/HC_CORPUS_SURVEY.md` §2 measured the judgment share of
+the AWS High Court bucket at a **range of 0.75%–18.64%** — the only published
+label, `order_type`, carries a `View Judgement/Order` value on 17.89% of rows
+that distinguishes neither. **A column named `source_judgments` would be a number
+nobody measured**, and rendering "0 of 3,493,695 judgments" is exactly the
+confident-wrong-figure this project keeps catching in itself. `GET
+/corpus/coverage` carries `judgmentShareUnknown: true` for the same reason, and a
+test asserts no field is ever named `sourceJudgments`.
+
+**What we HOLD is deliberately not stored.** It is derived at query time from
+`judgments`, exactly as `/statutes` derives `held`. A cached count drifts the
+moment an ingest writes a row, and a coverage figure stale in the **reassuring**
+direction is worse than none. The expensive half is the source enumeration —
+1,493 parquet footers — and that is the half worth persisting.
+
+**`enumerated_at` is when the SOURCE was counted**, not when the row was written.
+A coverage claim with no date is not checkable.
+
+Loaded by `pnpm --filter @lawmind/ingest coverage --apply`, **dry by default**.
+889 rows across 25 courts, 20,529,202 documents, as of the survey generated
+9 Aug 2026. Re-running is idempotent — `ON CONFLICT DO UPDATE`, observed to write
+889 rows twice rather than 1,778.
+
 ## r2_operation_ledger
 
 **Added 10 Aug 2026, migration `0028`.** Object-storage spend, **aggregated per
@@ -978,3 +1040,65 @@ already-rotated token means it was replayed or the client is buggy, and both are
 answered the same way: **every live token for that advocate is revoked.** Signing
 in again is a small cost; an attacker renewing a stolen token indefinitely
 alongside the real user is not.
+
+---
+
+# ACCESS PATHS — measured with `EXPLAIN (ANALYZE, BUFFERS)`, 11 August 2026
+
+`docs/CURRENT_PLAN.md` §Q1.6. Every path added by migrations `0026`–`0029`,
+planned against the real corpus rather than reasoned about.
+
+## THE FINDING: STATISTICS WERE A WEEK AND THREE MIGRATIONS STALE
+
+`pg_stat_user_tables` reported `judgments.last_analyze = NULL` and
+`last_autoanalyze = 4 Aug`. Migrations `0026`, `0027` and `0028` all landed
+after that, so **the planner had no statistics at all for `storage_key`** and was
+choosing plans for every new access path from week-old data.
+
+**One `ANALYZE` per table changed the plans, not just the timings:**
+
+| path | before ANALYZE | after | |
+| --- | --- | --- | --- |
+| `judgments WHERE storage_key IS NOT NULL` | **23.504 ms · Seq Scan** | **0.019 ms · Index Scan** | **1,237×** |
+| `judgment_statute_refs` by `act_key` + section | 1.606 ms | **0.040 ms** | 40× |
+| `judgment_citation_aliases` by `alias_key` | 0.976 ms | **0.038 ms** | 26× |
+| `judgment_judges` name filter | 15.343 ms | **2.127 ms** | 7× |
+| `/corpus/coverage` main query | 0.534 ms | **0.339 ms** | 1.6× |
+
+**The partial index was never the problem.** `judgments_storage_key_idx` existed
+and was correct; with no statistics on the column the planner assumed a default
+selectivity and preferred a sequential scan. **An index nobody has analysed is an
+index the planner will not use.**
+
+> **Run `ANALYZE` on every table a migration touches, as part of applying it.**
+> Autoanalyze fires on write volume, and a migration that adds a column or an
+> index changes the *plan space* without changing a single row — so autoanalyze
+> may not fire for days, and the new path is slow for exactly as long.
+
+**Why nobody would have noticed.** Over the Railway TCP proxy a request costs
+**~770 ms of round trip**. Every number in that table is under 24 ms. The whole
+range is invisible from the client and only shows up server-side — the same
+separation `CURRENT_PLAN.md` §2 insisted on when it refused to quote a reranker
+latency that had proxy time baked into it.
+
+## The paths, after ANALYZE
+
+| path | plan | exec |
+| --- | --- | --- |
+| `/corpus/coverage` | `Index Scan judgment_coverage_court_idx` + `Index Only Scan judgments_court_idx` | **0.339 ms** |
+| `cite:` alias lookup | `Index Scan judgment_citation_aliases_key` | **0.038 ms** |
+| `section:` + `act:` | `Index Scan judgment_statute_refs_act_key_idx` | **0.040 ms** |
+| `storage_key IS NOT NULL` | `Index Scan judgments_storage_key_idx` | **0.019 ms** |
+| `judge:` name filter | **Seq Scan on judgment_judges** | **2.127 ms** |
+
+**The judge filter still sequentially scans, and that is currently correct.**
+`judgment_judges_name_trgm` exists, but the query is `ILIKE '%name%'` over
+**44,360 rows** — the planner costs a full scan below a trigram lookup plus heap
+fetches, and at 2.1 ms it is right. **Recorded rather than fixed:** it is the
+`fieldPrecision` gate's path, so it grows with the corpus, and the moment High
+Court judges land it should be re-planned. Forcing the index now would be
+optimising against a measurement that says not to.
+
+**`/corpus/coverage`'s correlated subquery is fine.** `(SELECT count(*) FROM
+judgments WHERE court = cov.court_name)` runs once per court and resolves to an
+**Index Only Scan** — 25 index-only counts, not 25 table scans.

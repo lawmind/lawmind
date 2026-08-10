@@ -214,14 +214,47 @@ Q2.**
 `API_CONTRACTS.md` and in `services/**`. The handover doc's *"contract slot
 documented"* is wrong. Contract work is part of this item, not a precondition.
 
-### Q1.6 · `EXPLAIN ANALYZE` every new access path → `SCHEMA_TRUTH.md`
+### Q1.6 · `EXPLAIN ANALYZE` every new access path — ✅ LANDED 11 Aug 2026
 
-`DONE:` a plan recorded for the alias lookup, the judge filter, the section
-index, and the new `judgments_storage_key_idx`.
-`VERIFY:` the paths appear in `SCHEMA_TRUTH.md` with row counts and timings.
+**All five paths planned against the real corpus. `SCHEMA_TRUTH.md` §Access
+paths.**
 
-Owed under the repo's own rule and cheap — the corpus is live and every index
-exists.
+**THE FINDING: STATISTICS WERE A WEEK AND THREE MIGRATIONS STALE.**
+`judgments.last_analyze` was **NULL** and `last_autoanalyze` was **4 Aug** —
+before `0026`, `0027` and `0028` all landed. The planner had **no statistics at
+all for `storage_key`** and was choosing plans from week-old data.
+
+One `ANALYZE` per table changed the **plans**, not just the timings:
+
+| path | before | after | |
+| --- | --- | --- | --- |
+| `storage_key IS NOT NULL` | **23.504 ms · Seq Scan** | **0.019 ms · Index Scan** | **1,237×** |
+| `section:` + `act:` | 1.606 ms | **0.040 ms** | 40× |
+| `cite:` alias lookup | 0.976 ms | **0.038 ms** | 26× |
+| `judge:` name filter | 15.343 ms | **2.127 ms** | 7× |
+| `/corpus/coverage` | 0.534 ms | **0.339 ms** | 1.6× |
+
+**The partial index was never the problem** — `judgments_storage_key_idx`
+existed and was correct. **An index nobody has analysed is an index the planner
+will not use.** New standing rule recorded in `SCHEMA_TRUTH.md`: **run `ANALYZE`
+on every table a migration touches, as part of applying it.** Autoanalyze fires
+on write volume, and a migration that adds a column or an index changes the plan
+space without changing a row.
+
+**Why nobody would have seen it:** the Railway proxy costs **~770 ms per
+request** and every number above is under 24 ms. The whole range is invisible
+from the client — the same proxy-vs-server separation §2 insisted on before
+quoting a reranker latency.
+
+**Left as-is deliberately:** the `judge:` filter still sequentially scans.
+`judgment_judges_name_trgm` exists, but `ILIKE '%name%'` over 44,360 rows costs
+less as a full scan, and at **2.127 ms** the planner is right. **Re-plan when
+High Court judges land** — forcing the index now would be optimising against a
+measurement that says not to.
+
+**Also fixed while the file was open:** `corpus_coverage` (migration `0012`) had
+**never been documented in `SCHEMA_TRUTH.md`**, breaking that file's own opening
+rule. Documented now, along with `judgment_coverage`.
 
 ### Q1.7 · The verification record — §3 moat
 
