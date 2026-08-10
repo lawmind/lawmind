@@ -85,7 +85,40 @@ terms acceptance.
 
 ## 3 · YOUR QUEUE, IN ORDER
 
-### R1 · `SearchResult` — add `operativeParagraphNumber` and `asOf` · DO THIS FIRST
+### ✅ R1 AND R2 ARE DONE — verified by LCC against the route, 11 Aug 2026
+
+**Every server fact you built on was re-read in `services/api/src/search/route.ts`
+and holds.** Checked because you inferred them from the code rather than being
+told them, and an inference deserves the same scrutiny as a claim:
+
+| what you assumed | what `route.ts` actually does | verdict |
+| --- | --- | --- |
+| `total` exists | `total: 0` on `no_match`, `total: structured.total` on `matched` | **CORRECT** |
+| `parsed` on both found and not-found | sent on **both** branches | **CORRECT** |
+| `parsed?`/`total?` optional | the **semantic path sends neither** — so optional is exactly right, and required would have broken every prose search | **CORRECT** |
+| `asOf` required | stamped on **both** paths, always present | **CORRECT** |
+| `operativeParagraphNumber` nullable | `null` on the structured path, `r.operativeParagraphNumber` on the semantic one | **CORRECT** |
+| filters never touch the structured path | `answerStructured(sql, query, LIMIT)` — **no filters argument exists**; only `hybridSearch` takes them | **CORRECT — suppressing "Clear the filters" there was right** |
+
+**Three judgement calls worth keeping:**
+
+- **Not wiring `asOf` into `statusAsOf`.** Right, and for the right reason: that
+  prop means *"this status could not be re-read now"*, which is never true of a
+  live search result. Wiring it would have made every fresh result claim to be
+  stale. **`asOf` earns its place on the offline surface that does not exist
+  yet** — `CLAUDE.md` requires it to render *"last checked 08:14"*, never
+  silently as good law.
+- **"5 of 359 judgments".** Correct: `total` is the structured match count and
+  showing five without it implies five is everything.
+- **The zero-match copy** — *"the query was understood correctly, this is not a
+  search problem"* — is the right distinction. A structured zero is a **fact
+  about the corpus**; a prose zero is a fact about the words.
+
+**And the strengthened withdrawal copy is the better reading of the ask.** LCC
+asked for the two consents to be unconfusable; you made the *consequence* explicit
+rather than only the structure. That is what was wanted.
+
+### R1 · `SearchResult` — ~~add `operativeParagraphNumber` and `asOf`~~ · ✅ DONE
 
 Additive, safe, and **LCC has verified the server already sends both on every
 result** — confirmed against the deployed API, not just the repo. Nothing blocks
@@ -122,19 +155,48 @@ changes *when it works against production*, not whether you can build it.
 "contract slot documented" was wrong. **Do not build against a facets shape** —
 LCC will send it when it exists (`CURRENT_PLAN.md` §Q1.5).
 
-### R3 · Coverage — a shape is coming, do not invent it
+### R3 · Coverage — ✅ UNBLOCKED. The contract exists. **This is your next task.**
 
-LCC is building **coverage per court and per year** (`CURRENT_PLAN.md` §Q1.1).
-The fact it will carry is blunt: **we hold 0 of 15,771,566 High Court judgments**
-and every one of the 38,341 judgments in the corpus is Supreme Court.
+**Built and applied 11 Aug: `GET /corpus/coverage`.** Contract in
+`docs/API_CONTRACTS.md` §Corpus coverage. 889 court-year rows across 25 courts,
+loaded from the survey, 7 server tests green against the real database.
 
-**Why you will be asked to render it prominently:** `CLAUDE.md` — *silence about
-a gap does the same damage as a fabricated citation.* An advocate practising in a
-High Court currently gets a confident empty-feeling result set with no indication
-the corpus does not cover their court.
+```
+GET /corpus/coverage
 
-**Wait for the contract.** LCC will send the exact shape. Sketching against a
-guessed one is how a contract gets broken quietly.
+{ supremeCourt: { courtName, held, sourceDocuments: null },
+  highCourts: [ { courtName, courtCode, sourceDocuments, held,
+                  firstYear, lastYear } ],          // worst gap first
+  judgmentShareUnknown: true,
+  judgmentShareRange: [0.0075, 0.1864],
+  enumeratedAt }
+```
+
+**The fact it carries is blunt.** `SELECT court, count(*) FROM judgments` returns
+**one row — Supreme Court of India, 38,341**. We hold **0 of 3,493,695**
+Allahabad documents, 0 of 1,528,665 Bombay, 0 of 1,510,131 Madras. An advocate
+practising in a High Court searches, gets a confident-looking result set, and is
+told nothing. `CLAUDE.md`: **silence about a gap does the same damage as a
+fabricated citation** — and the fabricated one at least gets caught in open court.
+
+**THREE RULES ON RENDERING IT, and the first is the one to get right:**
+
+1. **`sourceDocuments` COUNTS DOCUMENTS. Never relabel it "judgments".**
+   `docs/HC_CORPUS_SURVEY.md` §2 measured the judgment share of that bucket at a
+   **range of 0.75%–18.64%** — the only published label carries a
+   `View Judgement/Order` value on 17.89% of rows that distinguishes neither.
+   `judgmentShareUnknown: true` says so on the wire. **"0 of 3,493,695 judgments"
+   states a number nobody measured**; a server test asserts no field is ever
+   named `sourceJudgments`, and the client should hold the same line.
+2. **`supremeCourt.sourceDocuments` is `null`, never `0`.** Unknown is a state.
+   Rendering `0` would say the source is empty — the opposite of the truth.
+   Render the Supreme Court as *present*, not as a gap.
+3. **This is our own uncertainty, so it is NOT amber.** `#B4690E` means THE LAW
+   HAS MOVED and nothing else. Coverage is a statement about *our corpus*, so it
+   renders as **neutral ink**, per the standing rule in §4.
+
+`enumeratedAt` is when the **source** was counted — show it, because a coverage
+claim with no date is not checkable.
 
 ---
 
@@ -169,10 +231,14 @@ guessed one is how a contract gets broken quietly.
 
 | item | blocked on | not blocked |
 | --- | --- | --- |
-| Any of this session's work being visible in the product | **the founder's push/deploy call** — `CURRENT_PLAN.md` §Q1.0 | building it |
-| Facets UI | LCC — the contract does not exist yet | R1 and R2 |
-| Coverage UI | LCC — shape coming in §Q1.1 | R1 and R2 |
+| Any of this work being visible in the product | **the founder's push/deploy call** — `CURRENT_PLAN.md` §Q1.0 | building it |
+| Facets UI | LCC — **the contract still does not exist** | R3 |
+| Coverage UI (R3) | **NOTHING — unblocked 11 Aug** | — |
 | Uploads / sensitive-class surfaces | the **countersigned DPA**, still owed (OD-6) | everything above |
 
-**Nothing in your queue is blocked by the deploy gap.** R1 and R2 can both be
-built and tested today.
+**Nothing in your queue is blocked by the deploy gap.** R3 can be built and
+tested today against the contract.
+
+**Still true and worth repeating: facets are NOT in the contract.** Zero
+occurrences of "facet" in `API_CONTRACTS.md` and zero in `services/**`, re-checked
+11 Aug. Do not build against a guessed shape.
