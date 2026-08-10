@@ -100,6 +100,45 @@ against the **repository and the database**, and the database is production, but
 **the API serving requests is 43 commits old**. Repo + DB ≠ deployed, and §Q0's
 own table repeats the conflation it was written to catch.
 
+### Q1.0b · RE-RUN THE CITATION RESOLVER — resolution DOUBLES for free · NEXT
+
+**Found 11 Aug 2026 while answering the founder's question about the AWS corpus.
+`docs/CITATION_STRATEGY.md` §0.** It is the largest available win in the product's
+core promise and it needs **no new data, no purchase, no GPU and no ingest.**
+
+`DONE:` `judgment_citations` resolution rises from 23.3% toward 49.1%, applying
+the exactly-one-candidate rule.
+`VERIFY:` `SELECT count(*) FROM judgment_citations WHERE cited_judgment_id IS NOT
+NULL` moves from **44,785** toward **94,390**; the **11 ambiguous** keys resolve
+to nothing.
+
+**Measured against production:**
+
+| | |
+| --- | --- |
+| unresolved edges | 147,412 |
+| **whose normalised key matches something we ALREADY HOLD** | **49,616** |
+| resolving to **exactly one** judgment — safe | **49,605** |
+| resolving to two or more — **must NOT resolve** | **11** |
+| resolution now → after | **23.3% → 49.1%** |
+
+**Two ordinary causes, not one exotic one.** The edges were resolved **before the
+concordance existed** — all 4,097 aliases landed 9–10 Aug, and **16,848 edges
+contain `AIR` and every one is unresolved**. And PDF-artefact normalisation:
+`"(2014)14 SCC\n664"`, `"(1991) 1SCC598"`, `"[2023] 12 S.C.R.806"` collapse to a
+key that matches; a stricter comparison does not.
+
+**Worked example rather than an aggregate:** `[2010] 7 S.C.R. 79` is unresolved,
+and *ADALAT PANDIT & ANR. versus STATE OF BIHAR* is in the corpus carrying it.
+
+**The 11 are the safety story.** `A3d.4` already governs: **exactly one
+candidate, or nothing** — a wrong alias is worse than a missing one. Resolving
+49,605 and refusing 11 is the correct outcome, not 49,616.
+
+**Also found: 13,834 unresolved edges carry an EMPTY `citation_text`** — 9.4% of
+all unresolved, which can never resolve by construction. A separate extraction
+defect, queued behind this.
+
 ### Q1.1 · Publish coverage per court and per year — A3.6 · ✅ LANDED 11 Aug 2026
 
 **Migration `0029` applied to production and verified. `GET /corpus/coverage`

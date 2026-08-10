@@ -9,6 +9,13 @@
             "shell": "bash",
             "timeout": 10,
             "statusMessage": "re-anchoring the Lawmind core"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/lane-bus.sh\"",
+            "shell": "bash",
+            "timeout": 10,
+            "statusMessage": "checking the lane bus"
           }
         ]
       }

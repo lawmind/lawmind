@@ -15,7 +15,9 @@
     "test": "pnpm -r test",
     "check:design": "node scripts/check-design-rules.mjs design/screens",
     "ci:local": "node scripts/ci-local.mjs",
-    "harness": "pnpm --filter @lawmind/harness harness"
+    "harness": "pnpm --filter @lawmind/harness harness",
+    "lane:send": "node scripts/lane-send.mjs",
+    "lane:inbox": "node scripts/lane-inbox.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
