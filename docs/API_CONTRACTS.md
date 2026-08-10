@@ -120,6 +120,7 @@ endpoint.
 
 | endpoint | status |
 |---|---|
+| `GET /documents` | BUILT — added 11 Aug 2026 |
 | `GET /documents/types` | BUILT |
 | `GET /documents/:id` | BUILT |
 | `POST /documents` | SPECCED |
@@ -472,6 +473,37 @@ Copy works offline, so this **queues through the outbox** with `clientKey` as th
 idempotency key, like every other local-first write. Never block the copy on the
 request — the clipboard write happens immediately and the record syncs after.
 Retention and disclosure: `SCHEMA_TRUTH.md#citation_copies`, `PRIVACY_PII.md`.
+
+## Drafts list — LCC owns · ADDED 11 August 2026
+
+**An ADDITION to the frozen contract.** The Drafts tab was the only route in the
+app still wired to a bare `ScreenShell`, and this is why: five draft screens are
+built and tested, but nothing could list what an advocate had already written —
+`GET /documents/:id` needs an id the client had no way to obtain.
+
+```
+GET /documents          (auth required)
+
+{ documents: [ { documentId, documentType, matterId, matterTitle,
+                 language, createdAt, citationCount, unverifiedCount } ] }
+```
+
+Newest first. **No `generatedContent`** — a list of twenty drafts would ship
+twenty full documents to render twenty titles, and that content is
+sensitive-class (`PRIVACY_PII.md`).
+
+**`unverifiedCount` counts `failed` together with `unverified`, deliberately.**
+`CITATION_HARNESS.md`: an advocate cannot act on the difference and an outage
+must not read as a corpus gap. **Copy it as "could not confirm", never
+"verification failed".**
+
+**`overruledStatus` is deliberately NOT summarised into this list.** It is read
+live at render on the surfaces that show a citation, never cached into a count
+that ages.
+
+**RCC:** this unblocks the Drafts tab. `app/(tabs)/drafts.tsx` is 6 lines of
+`ScreenShell`; `src/screens/draft/` already holds TemplatePicker, DocumentReview,
+CounterArguments, PrecedentPanel and CompareSummary.
 
 ## Corpus coverage — LCC owns · ADDED 11 August 2026
 

@@ -115,11 +115,38 @@ export type BharatLawConsent = {
  * *"clause 4 says"* are different kinds of answer if the arrangement is ever
  * questioned. `docs/FOUNDER_QUEUE.md` FQ-BL1.
  *
- * **`extractionPermitted` stays FALSE**, and that is not caution about the
- * licence. `BHARAT_LAW_OFFER.md` §5 and §8: what we would extract is either free
- * elsewhere or **a machine's opinion about law**, which `DATASETS.md` forbids as
- * training input regardless of who permits it. Permission to use a platform is
- * not a reason to take its output into our corpus.
+ * **`extractionPermitted` set TRUE on 10 Aug 2026, on the founder's
+ * instruction.** It was false, and the reason it was false has two halves that
+ * must not be confused now that one of them has gone.
+ *
+ * The first half was **permission** — their public Evaluation Terms condition
+ * this on written consent. The founder holds a licence, so that half is
+ * answered, and this flag is the right place to record it.
+ *
+ * **The second half is not about permission and is unchanged by a licence.**
+ * `CLAUDE.md` and `DATASETS.md`: *never train on another model's commentary
+ * about law — primary sources only.* That rule exists because an audit of such
+ * data found a **fabricated dissent in a unanimous judgment** and *Indra
+ * Sawhney* **stated backwards**. Bharat.Law's `/nyai` page does not disclose
+ * whether its treatment data is human-curated or computed, and for a company
+ * founded in 2023 with no editorial desk it is almost certainly computed.
+ *
+ * **So what this flag now unlocks, and what it does not:**
+ *
+ * - **Unlocked:** fetching, reading, comparing, and keeping **which JUDGMENTS
+ *   their system points at** — resolved against our own corpus, with anything
+ *   that fails to resolve discarded. `SUPREME_TODAY_LICENCE.md` §2b sets the
+ *   precedent: keeping the pointers is a different act from keeping the prose,
+ *   and `DATASETS.md` already kept the instruction column of a dataset while
+ *   refusing its outputs. **Their hallucinations cannot enter, by construction.**
+ * - **NOT unlocked:** storing their prose as ours, or using any of their
+ *   generated commentary as training input. No flag in this file can permit
+ *   that, because the rule forbidding it is about *what is true*, not about
+ *   *who consented*.
+ *
+ * The pool enforces the permission. **The standing rule is enforced by the
+ * people writing the ingest**, and it is written here so nobody reads an open
+ * flag as an open question.
  *
  * **`expiresAt` is set to one year and is deliberately not "never".** A consent
  * with no end date is recorded with one anyway — the type says so — because an

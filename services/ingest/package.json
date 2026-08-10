@@ -17,6 +17,8 @@
     "hc:extract": "tsx src/harvest/hc-extract-cli.ts",
     "coverage": "tsx src/coverage-cli.ts",
     "resolve": "tsx src/resolve-cli.ts",
+    "hc:yield": "tsx src/harvest/hc-yield-cli.ts",
+    "hc:citations": "tsx src/harvest/hc-citations-cli.ts",
     "repealed": "tsx src/repealed-acts-cli.ts"
   },
   "dependencies": {

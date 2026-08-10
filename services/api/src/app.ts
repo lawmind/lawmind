@@ -86,6 +86,7 @@ import {
   patchDocument,
   patchDocumentBody,
   removeDocumentCitation,
+  listDocuments,
 } from './documents/route.ts';
 import { listDocumentTypes } from './documents/types.ts';
 import { fail, ok } from './envelope.ts';
@@ -491,6 +492,10 @@ export function createApp(deps: AppDeps) {
     // through a different door. Changing an authority goes through the citations
     // route, which takes a judgmentId and never a string.
     app.get('/documents/types', (c) => listDocumentTypes(c));
+    // The advocate's drafts, newest first. ADDITIVE — the Drafts tab could not
+    // list anything because GET /documents/:id needs an id the client had no
+    // way to obtain.
+    app.get('/documents', async (c) => listDocuments(c, sql, await userFor(c)));
     app.get('/documents/:id', async (c) =>
       getDocument(c, sql, c.req.param('id'), await userFor(c)),
     );

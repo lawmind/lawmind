@@ -330,6 +330,82 @@ async function readDocument(sql: Sql, documentId: string) {
   };
 }
 
+/**
+ * The advocate's drafts, newest first.
+ *
+ * **The Drafts tab is the only route in the app still wired to a bare
+ * `ScreenShell`**, and this is why: five draft screens are built and tested —
+ * `TemplatePicker`, `DocumentReview`, `CounterArguments`, `PrecedentPanel`,
+ * `CompareSummary` — but nothing could list what an advocate had already
+ * written, because `GET /documents/:id` needs an id the client had no way to
+ * obtain. An ADDITION to the frozen contract, not a change.
+ *
+ * **It returns no `generated_content`.** A list of twenty drafts would ship
+ * twenty full documents to render twenty titles, and that content is
+ * sensitive-class — `PRIVACY_PII.md` — so the less of it that crosses the wire
+ * for a screen that cannot display it, the better.
+ *
+ * **`citationCount` is counted live, and `unverifiedCount` with it.** A draft
+ * carrying a citation we could not confirm is the one thing an advocate must see
+ * before filing, and computing it here means the list can say so without
+ * fetching every document. `overruled_status` is deliberately NOT summarised
+ * into this list: it is read live at render on the surfaces that show a
+ * citation, never cached into a count that ages.
+ */
+export async function listDocuments(
+  c: Context,
+  sql: Sql,
+  userId: string | undefined,
+): Promise<Response> {
+  if (!userId) return fail(c, 'AUTH_REQUIRED', 'sign in to continue', 401);
+
+  const rows = await sql<
+    {
+      id: string;
+      document_type: string;
+      matter_id: string | null;
+      matter_title: string | null;
+      language: string;
+      created_at: string;
+      citation_count: number;
+      unverified_count: number;
+    }[]
+  >`
+    SELECT d.id, d.document_type, d.matter_id,
+           m.title AS matter_title,
+           d.language,
+           ${sql.unsafe(isoColumn('d.created_at'))} AS created_at,
+           count(cc.id)::int AS citation_count,
+           count(cc.id) FILTER (
+             WHERE cc.verification_state <> 'verified'
+           )::int AS unverified_count
+    FROM documents d
+    LEFT JOIN matters m ON m.id = d.matter_id
+    LEFT JOIN citation_checks cc ON cc.document_id = d.id
+    WHERE d.user_id = ${userId}
+    GROUP BY d.id, m.title
+    ORDER BY d.created_at DESC`;
+
+  return ok(c, {
+    documents: rows.map((r) => ({
+      documentId: r.id,
+      documentType: r.document_type,
+      matterId: r.matter_id,
+      matterTitle: r.matter_title,
+      language: r.language,
+      createdAt: r.created_at,
+      citationCount: r.citation_count,
+      /**
+       * **Counts `failed` with `unverified`, deliberately.** `CITATION_HARNESS.md`:
+       * an advocate cannot act on the difference, and an outage must not read as
+       * a corpus gap. The list says "could not confirm", never "verification
+       * failed".
+       */
+      unverifiedCount: r.unverified_count,
+    })),
+  });
+}
+
 export async function getDocument(
   c: Context,
   sql: Sql,
