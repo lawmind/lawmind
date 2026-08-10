@@ -87,13 +87,30 @@ test('without a key the generator THROWS rather than returning an empty answer',
   // An empty answer cites nothing, and a run that cites nothing grades as
   // perfect on both generation metrics. Refusing loudly is the only safe
   // failure.
-  await assert.rejects(
-    generate('q', EVIDENCE, {
-      apiKey: undefined,
-      fetchImpl: (async () => new Response('')) as never,
-    }),
-    /refuses rather than returning/,
-  );
+  //
+  // THE ENVIRONMENT IS REMOVED, NOT JUST THE ARGUMENT. `apiKey: undefined` means
+  // *"fall back to the environment"* — which is the correct production
+  // behaviour — so on a machine with a real OPENROUTER_API_KEY this test used to
+  // sail past the refusal, reach the stubbed fetch, and fail with
+  // `SyntaxError: Unexpected end of JSON input`. **It passed only where no key
+  // was configured.**
+  //
+  // That is the same family as the defect this package already records —
+  // `run-cli.ts` reporting 0, a PASS, the moment `OPENROUTER_API_KEY` merely
+  // existed. A test whose result depends on a developer's `.env` is not a test.
+  const saved = process.env['OPENROUTER_API_KEY'];
+  delete process.env['OPENROUTER_API_KEY'];
+  try {
+    await assert.rejects(
+      generate('q', EVIDENCE, {
+        apiKey: undefined,
+        fetchImpl: (async () => new Response('')) as never,
+      }),
+      /refuses rather than returning/,
+    );
+  } finally {
+    if (saved !== undefined) process.env['OPENROUTER_API_KEY'] = saved;
+  }
 });
 
 test('max_tokens is generous, because reasoning tokens are spent first', () => {

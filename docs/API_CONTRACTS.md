@@ -68,6 +68,7 @@ endpoint.
 |---|---|
 | `GET /statutes` | BUILT |
 | `GET /statutes/sections` | BUILT |
+| `GET /corpus/coverage` | BUILT — added 11 Aug 2026 |
 
 **Feature-parity endpoints — LCC owns · ADDED 6 Aug 2026**
 
@@ -471,6 +472,55 @@ Copy works offline, so this **queues through the outbox** with `clientKey` as th
 idempotency key, like every other local-first write. Never block the copy on the
 request — the clipboard write happens immediately and the record syncs after.
 Retention and disclosure: `SCHEMA_TRUTH.md#citation_copies`, `PRIVACY_PII.md`.
+
+## Corpus coverage — LCC owns · ADDED 11 August 2026
+
+**An ADDITION to the frozen contract**, not a change to an existing shape, so it
+cannot break work already built against it — the same standing the bare-acts
+endpoints were given.
+
+```
+GET /corpus/coverage
+
+{ supremeCourt: { courtName, held, sourceDocuments: null },
+  highCourts: [ { courtName, courtCode, sourceDocuments, held,
+                  firstYear, lastYear } ],          // worst gap first
+  judgmentShareUnknown: true,
+  judgmentShareRange: [0.0075, 0.1864],
+  enumeratedAt }
+```
+
+**Why it exists.** `SELECT court, count(*) FROM judgments` returns **one row —
+Supreme Court of India, 38,341.** An advocate practising in a High Court searches,
+gets a confident-looking result set, and is told nothing about holding **0 of
+3,493,695** Allahabad documents. `CLAUDE.md`: **silence about a gap does the same
+damage as a fabricated citation** — both let an advocate rely on something
+absent, and the fabricated one at least gets caught in open court.
+
+**`sourceDocuments` COUNTS DOCUMENTS, NOT JUDGMENTS, and the client must not
+relabel it.** `docs/HC_CORPUS_SURVEY.md` §2 measured the judgment share of the
+AWS High Court bucket at a **range of 0.75%–18.64%**: the only published label,
+`order_type`, carries a `View Judgement/Order` value on 17.89% of rows that does
+not distinguish the two. `judgmentShareUnknown: true` and `judgmentShareRange`
+say so on the wire. **Rendering "0 of 3,493,695 judgments" states a number nobody
+measured.** A server test asserts no field is ever named `sourceJudgments`.
+
+**`supremeCourt.sourceDocuments` is `null`, never `0`.** That bucket has not been
+enumerated per year, and **unknown is a state, not zero** — `0` would say the
+source is empty, the opposite of the truth. Same rule as `corpus_coverage`'s
+`source_total`.
+
+**`held` is derived live at query time**, never stored, exactly as `/statutes`
+derives it. A cached coverage count drifts the moment an ingest writes a row, and
+a figure stale in the *reassuring* direction is worse than no figure.
+
+**`enumeratedAt` is when the SOURCE was counted**, not when the row was written.
+A coverage claim with no date is not checkable.
+
+**RCC:** this needs a surface. The gap is currently invisible, and an advocate
+finding out by searching their own High Court and getting nothing is the failure
+this endpoint exists to prevent. Sorted worst-first so the biggest hole is what
+you show. `docs/RCC_CONTINUATION_PROMPT.md` §R3.
 
 ## Bare acts — LCC owns · ADDED IN S1
 

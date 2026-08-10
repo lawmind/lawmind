@@ -24,6 +24,7 @@ import {
   numeric,
   pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -805,6 +806,48 @@ export const corpusCoverage = pgTable('corpus_coverage', {
     .default(sql`'{}'::text[]`),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Coverage per court per year — what EXISTS at the source, against what we hold.
+ *
+ * A different GRAIN from {@link corpusCoverage}, not a replacement. That table is
+ * keyed on `source` and answers *"has this source been fully enumerated"*; it
+ * cannot express *"Allahabad, 2024"* without encoding two dimensions into one
+ * text key, which would make counting by court and counting by year both
+ * unanswerable.
+ *
+ * **`sourceDocuments` counts DOCUMENTS, not judgments.** `docs/HC_CORPUS_SURVEY.md`:
+ * the judgment share of the AWS High Court bucket is a measured **range, 0.75%
+ * to 18.64%**, because the only available label — `order_type`, published by
+ * four of twenty-five courts — carries a `View Judgement/Order` value on 17.89%
+ * of rows that does not distinguish the two. **A column named `sourceJudgments`
+ * would be a number nobody measured.**
+ *
+ * **What we hold is NOT stored.** It is derived at query time from `judgments`,
+ * exactly as `/statutes` derives `held`. A cached count drifts the moment an
+ * ingest writes a row, and a coverage figure that is stale in the *reassuring*
+ * direction is worse than no figure at all.
+ */
+export const judgmentCoverage = pgTable(
+  'judgment_coverage',
+  {
+    source: text('source').notNull(),
+    /** The source's own code, e.g. `9_13` — the only stable join back to its partitions. */
+    courtCode: text('court_code').notNull(),
+    /** As published by the source. Stored so a rendered gap needs no mapping table. */
+    courtName: text('court_name').notNull(),
+    year: integer('year').notNull(),
+    sourceDocuments: integer('source_documents').notNull(),
+    /** When the SOURCE was counted — distinct from when this row was written. */
+    enumeratedAt: timestamp('enumerated_at', { withTimezone: true }).notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.source, t.courtCode, t.year] }),
+    index('judgment_coverage_court_idx').on(t.source, t.courtName),
+    index('judgment_coverage_year_idx').on(t.source, t.year),
+  ],
+);
 
 /* ----------------------------------------- eCourts under the registrar's grant -- */
 

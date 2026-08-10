@@ -15,6 +15,7 @@
     "hc:count": "tsx src/harvest/hc-metadata-cli.ts",
     "hc:ordertypes": "tsx src/harvest/hc-ordertype-cli.ts",
     "hc:extract": "tsx src/harvest/hc-extract-cli.ts",
+    "coverage": "tsx src/coverage-cli.ts",
     "repealed": "tsx src/repealed-acts-cli.ts"
   },
   "dependencies": {

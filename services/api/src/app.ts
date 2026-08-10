@@ -126,6 +126,7 @@ import {
   listSavedSearches,
   savedSearchBody,
 } from './search/saved.ts';
+import { getCorpusCoverage } from './corpus/coverage.ts';
 import { listSections, listStatutes, sectionQuery } from './statutes/route.ts';
 import { validate } from './validate.ts';
 
@@ -509,6 +510,11 @@ export function createApp(deps: AppDeps) {
       ),
     );
     // Bare acts. Additions to the frozen contract, not changes to it.
+    // Coverage per court — what we hold against what exists. An ADDITION to the
+    // frozen contract. `CLAUDE.md`: silence about a gap does the same damage as
+    // a fabricated citation, and today every judgment we hold is Supreme Court.
+    app.get('/corpus/coverage', (c) => getCorpusCoverage(c, sql));
+
     app.get('/statutes', (c) => listStatutes(c, sql));
     app.get('/statutes/sections', validate('query', sectionQuery), (c) =>
       listSections(c, sql, c.req.valid('query')),
