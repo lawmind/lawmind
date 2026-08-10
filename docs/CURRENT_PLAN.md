@@ -100,7 +100,7 @@ against the **repository and the database**, and the database is production, but
 **the API serving requests is 43 commits old**. Repo + DB ≠ deployed, and §Q0's
 own table repeats the conflation it was written to catch.
 
-### Q1.0b · RE-RUN THE CITATION RESOLVER — resolution DOUBLES for free · NEXT
+### Q1.0b · RE-RUN THE CITATION RESOLVER — ✅ APPLIED 11 Aug 2026 · 23.3% → 40.4%
 
 **Found 11 Aug 2026 while answering the founder's question about the AWS corpus.
 `docs/CITATION_STRATEGY.md` §0.** It is the largest available win in the product's
@@ -112,15 +112,39 @@ the exactly-one-candidate rule.
 NULL` moves from **44,785** toward **94,390**; the **11 ambiguous** keys resolve
 to nothing.
 
-**Measured against production:**
+**APPLIED. 32,815 edges resolved. 44,785 → 77,600, i.e. 23.3% → 40.4%.**
+
+**A CORRECTION TO THIS LANE'S OWN FIRST NUMBER, recorded because the method
+matters more than the result.** The first measurement said **49,605 resolvable
+and 49.1%**. It was wrong, and **the database caught it**: the first `--apply`
+died on `judgment_citations_no_self_citation`.
+
+**16,790 of those 49,605 were SELF-CITATIONS** — an Indian judgment prints its
+own citation in its header and headnote, the extractor sees it, and the key
+matches the judgment's own row. The constraint refused every one. **No number
+from that first pass should be quoted.**
 
 | | |
 | --- | --- |
-| unresolved edges | 147,412 |
-| **whose normalised key matches something we ALREADY HOLD** | **49,616** |
-| resolving to **exactly one** judgment — safe | **49,605** |
-| resolving to two or more — **must NOT resolve** | **11** |
-| resolution now → after | **23.3% → 49.1%** |
+| unresolved edges before | 147,412 |
+| key matches something we already hold | 49,616 |
+| **REFUSED: self-citation** | **16,790** |
+| REFUSED: two or more targets | 11 |
+| **RESOLVED** | **32,815** |
+| resolution before → after | **23.3% → 40.4%** |
+
+**Three guards, each of which refuses rather than guesses:** exactly one target
+(`A3d.4`), the **year guard** (`A3d.2`), and **never overwrite** an existing
+resolution. A fourth — self-citation — was added *because the database found it*,
+which is the constraint doing the job constraints exist for.
+
+**A second defect found and fixed in the same file:** the year pattern used
+`\d`, which **does not survive a JS tagged template through the driver into
+Postgres** — it matched nothing at all, silently, as an empty match set rather
+than an error. `[1950] 1 S.C.R. 806` yielded no year. Replaced with `[0-9]`,
+which contains no backslash and cannot be re-escaped, and verified directly:
+38,431 corpus years extracted. **A guard built on a silently-empty regex looks
+exactly like a guard that never needed to fire.**
 
 **Two ordinary causes, not one exotic one.** The edges were resolved **before the
 concordance existed** — all 4,097 aliases landed 9–10 Aug, and **16,848 edges
