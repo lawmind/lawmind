@@ -100,7 +100,37 @@ against the **repository and the database**, and the database is production, but
 **the API serving requests is 43 commits old**. Repo + DB ≠ deployed, and §Q0's
 own table repeats the conflation it was written to catch.
 
-### Q1.1 · Publish coverage per court and per year — A3.6 · NEXT
+### Q1.1 · Publish coverage per court and per year — A3.6 · ✅ LANDED 11 Aug 2026
+
+**Migration `0029` applied to production and verified. `GET /corpus/coverage`
+built, 7 tests green against the real database.** `dcda5b9`.
+
+**889 court-year rows across 25 courts, 20,529,202 documents**, loaded from the
+survey and matching its totals exactly. **Re-running writes 889 again, not
+1,778** — idempotency observed, not assumed. The gap is now queryable: **0 of
+3,493,695 at Allahabad**, 0 of 1,528,665 at Bombay, 0 of 1,510,131 at Madras.
+
+**A new table, not `corpus_coverage`.** That one is keyed `source PRIMARY KEY`
+and answers *"has this source been fully enumerated"*; it cannot express
+*"Allahabad, 2024"* without encoding two dimensions into one text key, which
+would make counting by court and by year both unanswerable. A different **grain**,
+not a replacement.
+
+**The word this feature refuses to say is "judgments".** The column is
+`source_documents`; the response carries `judgmentShareUnknown: true` and the
+measured range `[0.0075, 0.1864]`. **A test asserts no field is ever named
+`sourceJudgments`** — the negative control, because an endpoint checked only for
+HTTP 200 would pass over a response claiming we hold every judgment in India.
+
+`held` is **derived live**, never stored — a cached coverage count drifts the
+moment an ingest writes a row, and a figure stale in the *reassuring* direction
+is worse than none. `supremeCourt.sourceDocuments` is **null, not 0**: unknown is
+a state, and 0 would say the source is empty.
+
+**RCC needs the surface** — contract in `API_CONTRACTS.md` §Corpus coverage,
+briefed in `RCC_CONTINUATION_PROMPT.md` §R3.
+
+### Q1.1-OLD · the original entry, kept for provenance
 
 `DONE:` `corpus_coverage` holds a row per court per year for the AWS High Court
 buckets, and the judgments surface returns a `coverage` object beside results.
@@ -128,14 +158,18 @@ established additive shape to copy rather than invent.
 `DONE:` both green, or documented as a data finding.
 `VERIFY:` `npx tsx --test src/*.test.ts` in each package.
 
-- **`services/harness/src/generate.test.ts` — environment-dependent, a real
-  defect.** It passes `apiKey: undefined` expecting the env to be empty, then
-  falls through to the **real** `OPENROUTER_API_KEY` and fails with
-  `SyntaxError: Unexpected end of JSON input` instead of the refusal. **It passes
-  only on a machine with no key.** Same family as the bug this file already
-  records — *"`run-cli.ts` reported 0 (a PASS) the moment `OPENROUTER_API_KEY`
-  merely existed"*. A test whose result depends on a developer's `.env` is not a
-  test.
+- **✅ FIXED 11 Aug — `services/harness/src/generate.test.ts`.** It passed
+  `apiKey: undefined` expecting the env to be empty, but that means *"fall back
+  to the environment"* — the correct production behaviour — so with a real key
+  configured it sailed past the refusal into the stubbed fetch and died on
+  `SyntaxError: Unexpected end of JSON input`. **It passed only on a machine with
+  no key.**
+
+  **INTENT: the code was right and the test's way of simulating "no key" was
+  wrong**, so the test now removes the variable and restores it. **Verified
+  passing BOTH with a real key in the environment and under `env -u`** — one run
+  each, because a fix asserted in only one environment is the same defect wearing
+  a different hat. `services/harness` is now **101/101**.
 - **`services/api/src/statutes/route.test.ts` — a DATA condition, not a code
   defect.** 22 of 845 acts have zero sections. See §4; **do not loosen the
   assertion to go green.**
