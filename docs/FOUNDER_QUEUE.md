@@ -1953,7 +1953,15 @@ as an estimate**. Ordered by *value per rupee*, not by size.
 
 ---
 
-## 1 · OpenRouter API key — **$5 (≈ ₹430) covers everything, probably forever**
+## 1 · ~~OpenRouter API key~~ — **DONE. Nothing owed. Verified 10 Aug 2026.**
+
+**The key is set** (73 chars) and so is `ANTHROPIC_API_KEY` (108). A live call
+was verified 9 Aug at a cost of $0.0000029. **Do not buy anything for this.**
+The "three unmeasured Gate S2 metrics" below are no longer key-blocked — and
+they now sit under an *ungraded diagnostic* anyway, since the 0.70 floor was
+removed on 9 Aug. `CURRENT_PLAN.md` §Q0. Original entry kept below for the record.
+
+### original entry
 
 **This is the single highest-value item on the list and it is almost free.**
 
@@ -2034,7 +2042,14 @@ one.** If the decision ever reverses, the client is already there.
 
 ---
 
-## 5 · GPU for re-embedding — **≈ $65 (₹5,600), one-off**
+## 5 · ~~GPU for re-embedding~~ — **STRUCK 9 Aug 2026. Costs nothing.**
+
+**Measured on this workstation: 36.6 ms/chunk on CPU** → 616,197 chunks ≈ 6.3 h
+(12–19 h realistically). **An overnight run on hardware we already own, not a
+purchase.** The $65 assumed a rented GPU because Railway has none, and nobody
+re-checked once a 4060 Ti existed. Original entry kept below for the record.
+
+### original entry
 
 **From our own measurement** (`docs/DATA_ADVANTAGE.md`): 616,197 chunks ÷ 216M
 tokens/hour ≈ **62 GPU-hours ≈ $65, one-off.**

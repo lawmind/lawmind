@@ -237,21 +237,39 @@ dropped for contradiction** → 5,532 corroborated 2+ times → **4,097 written*
 
 ## 6 · TODO, IN ORDER
 
-1. **Wire R2 into ingest** — `judgments.storage_key`, brotli upload, ranged
-   reads, **cost ceiling + alert** (Class A ops are $4.50/M — that is where an
-   object-storage bill goes wrong), kill switch + fetch ledger.
-2. **Count the AWS Parquet metadata** per court per year **before downloading
-   anything**. "15.9M" is a headline; nobody has counted the working set.
-3. **Measure PDF→text extraction on 1,000 real HC PDFs**, publish an honest
-   completion date. **Extraction is the cost, not download or storage** — AWS
-   sponsors transfer. Scanned judgments need OCR and are far slower.
-4. **Ingest High Courts, last 10 years first** (OD-4's order). Resumable,
-   content-hashed, `harvest_queue` pattern.
-5. **Publish coverage per court/year in the product.** `corpus_coverage` exists.
-   **Silence about a gap does the same damage as a fabricated citation.**
-6. **Facets** on `POST /search` — contract slot documented, not built.
-7. **`EXPLAIN ANALYZE`** every new access path → `docs/SCHEMA_TRUTH.md`.
-8. **Delete the Railway TCP proxy** when runs finish (owed under `CLAUDE.md`).
+> **SUPERSEDED 10 August 2026 by `docs/CURRENT_PLAN.md` §Q — THE VERIFIED
+> QUEUE.** Every item there was checked against the running system: table counts
+> by query against production, module existence by `ls`, behaviour by running the
+> tests. **Read §Q first.** This list is kept because items 1–3 are done and the
+> record of what was asked for still matters — but **two of its statements were
+> wrong**, and correcting them at the source is the point of this note.
+
+1. ~~**Wire R2 into ingest**~~ — **PARTLY DONE 10 Aug.** `judgments.storage_key`,
+   cost ceiling + alert, kill switch + aggregated ledger all landed (migration
+   `0028`, applied). **Brotli upload and ranged vector reads are NOT done** —
+   brotli exists only inside `roundtrip.ts`, a smoke-test script. → §Q1.3
+2. ~~**Count the AWS Parquet metadata**~~ — **DONE 10 Aug.**
+   `docs/HC_CORPUS_SURVEY.md`. 20,529,202 all years, **15,771,566 in the last
+   decade**, per court per year. The bucket publishes **two metadata files per
+   partition sharing zero CNRs**, which this list did not know.
+3. ~~**Measure PDF→text extraction on 1,000 real HC PDFs**~~ — **DONE 10 Aug.**
+   `docs/HC_EXTRACTION_COST.md`. **4.2 days on eight workers**, OCR burden
+   **0.2%** — far smaller than "scanned judgments need OCR and are far slower"
+   implied. Download dominates extraction 5:1.
+4. **Ingest High Courts, last 10 years first** — **BLOCKED ON TWO FOUNDER
+   DECISIONS, not on work.** Citability (no citation column in either variant)
+   and embedding cost (~3,956 GPU-hours). → §Q1.4 and §Q2
+5. **Publish coverage per court/year in the product.** → §Q1.1, **and it is
+   next.** `corpus_coverage` exists but holds **exactly one row**
+   (`indiacode_central_acts`) and is keyed **per source, not per court per year**
+   — this list said only "exists".
+6. **Facets** on `POST /search` — ~~contract slot documented, not built~~.
+   **WRONG: there is no contract slot.** Zero occurrences of "facet" in
+   `docs/API_CONTRACTS.md` and zero in `services/**`. Not documented AND not
+   built. → §Q1.5
+7. **`EXPLAIN ANALYZE`** every new access path → `docs/SCHEMA_TRUTH.md`. → §Q1.6
+8. **Delete the Railway TCP proxy** when runs finish. **Still live** —
+   `hayabusa.proxy.rlwy.net:24909`, used to apply `0028`. → §Q1.8
 
 **Parked deliberately — do not resume without a stated reason:** reranker tuning ·
 corpus re-embed · HyDE (built; blocked on the DPA because a user query is

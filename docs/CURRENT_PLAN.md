@@ -15,13 +15,185 @@ Last updated **9 August 2026**. **Read §A first — it supersedes §2's orderin
 
 ---
 
+# Q · THE VERIFIED QUEUE — every open item, checked against the running system
+
+**Rebuilt 10 August 2026. Read this before §0 and before §A.** It exists because
+the previous drift began with a plan written from memory: a target nobody had
+checked was achievable, and claims that had quietly stopped being true.
+
+**Every line below was verified the day it was written** — table counts by query
+against production, module existence by `ls`, behaviour by running the tests.
+Nothing here is recalled. Where a claim could not be verified it says so.
+
+## Q0 · SEVEN CLAIMS IN THIS REPO THAT WERE FALSE OR STALE
+
+Found by checking, not by reading. **This is the reason to distrust an unticked
+box and go look.**
+
+| claim, as written | what is actually true |
+| --- | --- |
+| §0: *"Gate S2 FAILING, success@5 17.3% against a 0.70 floor"* | **The floor was removed on 9 Aug.** `successAt5` is an ungraded diagnostic; the gates are `structuredExactness` and `fieldPrecision` at 1.0. **The most dangerous sentence in this file, now corrected** |
+| §2: *"GATE S2 — everything else is downstream of this"* | Downstream of an **ungraded diagnostic**. The recall levers, HyDE measurement and reranker-settling under it are chasing a number that gates nothing |
+| A2.4–A2.8 unticked | **All landed.** `qlang/compile.ts`, `qlang/explain.ts`, `structured.ts` exist; `route.ts` echoes `parsed` at lines 97 and 126; `structuredExactness`/`fieldPrecision` are in `metrics.ts` |
+| A3c.1–5 and A3d.1–6 unticked | **All landed.** Verified in production: **4,097** rows in `judgment_citation_aliases` (SCC 3,877 · AIR 220), **81** flagged judgments, **13,389** treatment-carrying edges |
+| `CONTINUATION_PROMPT.md` §6.6: *"Facets — contract slot documented, not built"* | **There is no contract slot.** Zero occurrences of "facet" in `docs/API_CONTRACTS.md` and zero in `services/**`. Not documented AND not built |
+| §2: *"Three metrics stay NOT MEASURED until an LLM key exists — founder-queued"* | **`OPENROUTER_API_KEY` is set** (73 chars) and `ANTHROPIC_API_KEY` is set. `FOUNDER_QUEUE.md` §1 and §5 (the $65 GPU) are both stale — §5 was struck on 9 Aug when re-embedding was measured at 36.6 ms/chunk on local CPU |
+| A3b.1 unticked | **Landed.** `refusingStore` and `objectStoreFromEnv` exist in `packages/storage/src/r2.ts`, and production with no credentials refuses to start |
+
+## Q1 · THE QUEUE, in the order I would take it
+
+Each item carries the two artefacts `CLAUDE.md` demands, so nobody has to invent
+them later. **An item with no nameable VERIFY does not go in this list.**
+
+### Q1.1 · Publish coverage per court and per year — A3.6 · NEXT
+
+`DONE:` `corpus_coverage` holds a row per court per year for the AWS High Court
+buckets, and the judgments surface returns a `coverage` object beside results.
+`VERIFY:` `SELECT source, source_total FROM corpus_coverage` returns 25 courts;
+a search response carries `coverage`; contract updated in `API_CONTRACTS.md`.
+
+**Verified state:** `corpus_coverage` exists (migration `0012`, used by
+`statutes/route.ts`) and holds **exactly one row** — `indiacode_central_acts`,
+845 acts. Its columns are `source · source_total · enumerated_at · complete ·
+failed_ids · updated_at`, so it is keyed **per source, not per court per year**;
+this item either adds rows per court or needs a shape change, and that is the
+first decision inside it.
+
+**Why first.** `SELECT court, count(*) FROM judgments` returns **one row —
+Supreme Court of India, 38,341.** We hold **0 of 15,771,566** High Court
+judgments and the product says nothing. `CLAUDE.md`: *silence about a gap does
+the same damage as a fabricated citation.* The per-court numbers now exist
+(`docs/HC_METADATA_SURVEY.json`), it costs nothing, and it needs no decision
+from the founder. `/statutes` already returns
+`coverage: { held, sourceTotal, complete, failedCount, enumeratedAt }` — an
+established additive shape to copy rather than invent.
+
+### Q1.2 · Fix two red tests that are red for different reasons
+
+`DONE:` both green, or documented as a data finding.
+`VERIFY:` `npx tsx --test src/*.test.ts` in each package.
+
+- **`services/harness/src/generate.test.ts` — environment-dependent, a real
+  defect.** It passes `apiKey: undefined` expecting the env to be empty, then
+  falls through to the **real** `OPENROUTER_API_KEY` and fails with
+  `SyntaxError: Unexpected end of JSON input` instead of the refusal. **It passes
+  only on a machine with no key.** Same family as the bug this file already
+  records — *"`run-cli.ts` reported 0 (a PASS) the moment `OPENROUTER_API_KEY`
+  merely existed"*. A test whose result depends on a developer's `.env` is not a
+  test.
+- **`services/api/src/statutes/route.test.ts` — a DATA condition, not a code
+  defect.** 22 of 845 acts have zero sections. See §4; **do not loosen the
+  assertion to go green.**
+
+### Q1.3 · Finish the R2 tiering path — A3b.3, A3b.4, A3.4, A3.5
+
+`DONE:` a judgment's text round-trips to R2 as brotli through the metered store,
+`storage_key` is written, and a vector blob supports a ranged read.
+`VERIFY:` round-trip test against real R2; `SELECT count(*) FROM judgments WHERE
+storage_key IS NOT NULL` is non-zero; a ranged GET returns 206.
+
+**Verified state:** `getRange` exists and treats a 200 as an error. **Brotli
+exists only inside `packages/storage/src/roundtrip.ts`, a live smoke-test
+script** — there is no reusable codec module. **No `bit(` column exists anywhere**,
+so A3.4's Tier-2 `bit(1024)` vector is not started. R2 credentials **are set**
+(endpoint, bucket, access key), so this is testable today.
+
+**Deliberately after Q1.1.** This is infrastructure for an ingest nobody has
+decided to run, and storage was never the blocker — measured twice at under
+$8/month.
+
+### Q1.4 · Ingest High Courts — A3.2 · BLOCKED ON A FOUNDER DECISION, see Q2
+
+`DONE:` reasoned High Court judgments from the last 10 years in `judgments`,
+resumable and content-hashed.
+`VERIFY:` `SELECT court, count(*) FROM judgments GROUP BY court` returns more
+than one row; `corpus_coverage` moves.
+
+**Everything measurable about it is now measured** (`HC_CORPUS_SURVEY.md`,
+`HC_EXTRACTION_COST.md`): 15,771,566 documents, extraction 4.2 days on eight
+workers, OCR burden 0.2%, judgment share 0.75%–18.64%, PDF availability broken by
+whole bench-years. **What remains is not measurable — it is the two questions in
+Q2.**
+
+### Q1.5 · Facets on `POST /search` — A2.6 remainder
+
+`DONE:` a search response carries facet counts; the contract documents the shape.
+`VERIFY:` a `judge:` query returns counts by court and year that match a direct
+`GROUP BY`.
+
+**Verified state: NOT documented and NOT built** — zero "facet" hits in
+`API_CONTRACTS.md` and in `services/**`. The handover doc's *"contract slot
+documented"* is wrong. Contract work is part of this item, not a precondition.
+
+### Q1.6 · `EXPLAIN ANALYZE` every new access path → `SCHEMA_TRUTH.md`
+
+`DONE:` a plan recorded for the alias lookup, the judge filter, the section
+index, and the new `judgments_storage_key_idx`.
+`VERIFY:` the paths appear in `SCHEMA_TRUTH.md` with row counts and timings.
+
+Owed under the repo's own rule and cheap — the corpus is live and every index
+exists.
+
+### Q1.7 · The verification record — §3 moat
+
+`DONE:` an advocate can see why a citation is trusted.
+`VERIFY:` an endpoint returns the record for a judgment; a client can render it.
+
+**Verified state: `citation_checks` holds 1,951 rows** and is referenced only
+under `services/api/src/admin/**`. **Nothing advocate-facing renders it**, which
+is exactly what this file already claims — confirmed rather than assumed.
+
+### Q1.8 · Delete the Railway TCP proxy
+
+`DONE:` proxy removed. `VERIFY:` the host stops resolving.
+
+**Currently LIVE** — `hayabusa.proxy.rlwy.net:24909`, used on 10 Aug to apply
+migration `0028`. Owed under `CLAUDE.md`, but **Q1.1, Q1.2, Q1.3 and Q1.6 all
+need it**, so it is last on purpose.
+
+## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
+
+Neither is a credential. **Both are scope decisions only the founder can make**,
+and Q1.4 cannot start until they are answered.
+
+1. **Citability.** Neither AWS metadata variant has a citation column. A High
+   Court judgment ingested from that bucket is **searchable and not citable** —
+   it cannot enter a draft or a matter as an authority. Ship them behind honest
+   coverage, or hold until a citation source exists?
+2. **Embedding cost.** `DATASETS.md` costs 10 years at **~3,956 GPU-hours**.
+   Extraction is 4.2 days; embedding is the real bill. The alternative is a
+   filtered subset — `order_type` labels judgments for the four courts that
+   publish it, length and structure for the other twenty-one.
+
+**Related and already in the queue file:** `FOUNDER_QUEUE.md` **FQ-EL1**
+(eLegalix, Allahabad High Court — *"works, but needs your call first"*). Allahabad
+is **3,493,695 documents, 22% of the decade** and the largest single court, so
+that decision and Q1.4 are the same decision.
+
+## Q3 · PARKED, with the reason — do not resume without stating a new one
+
+Everything under §2 is **downstream of an ungraded diagnostic** and stays parked:
+reranker settling (needs ~577 queries, set is 283) · HyDE measurement (built,
+14 tests, and blocked on the DPA regardless because a user query is
+sensitive-class) · corpus re-embed · eval-set growth · citation-extractor
+widening (**measured at zero present impact** — every judgment is Supreme Court
+and the corpus holds 0 I.T.R. and 0 Cri.L.J. citations).
+
+**Genuinely not started, and honestly so:** OCR replacement (no `services/ocr`
+exists) · offline-first retrieval (no `sqlite-vec` or `op-sqlite` in any
+`package.json`) · IPC↔BNS mapping (**`statute_mappings` is 0 rows by design** —
+India Code's IPC handle serves an incomplete Act missing ss. 121–510, so **the
+next move is a source, not a parser**; `FOUNDER_QUEUE.md` FQ-C1).
+
+---
+
 ## 0 · STATE OF PLAY, in five numbers
 
 | | |
 | --- | --- |
-| **Gate S2** | **FAILING.** success@5 **17.3%** control · **22.3%** with graph + reranker, against a 0.70 floor. Both re-measured 9 Aug after a defect that pinned the wrong judgment at rank 1 on 13.1% of the set was removed — the old 19.1%/23.7% are void and were **inflated by leakage** |
-| Corpus | 38,341 judgments · 616,197 embedded chunks · 192,197 citation edges (44,785 resolved) |
-| Citator | **22 judgments flagged of 38,341.** 7 more are `overruled_in_part` and blocked on paragraph extraction |
+| **Gate S2** | **RE-SPECIFIED 9 Aug — the 0.70 floor is GONE and this row used to say otherwise.** The gates are now `structuredExactness` and `fieldPrecision`, both deterministic, threshold 1.0 (`services/harness/src/structured-gate.ts`, `metrics.ts`). **`successAt5` is an UNGRADED DIAGNOSTIC** — still measured and printed so a regression stays visible, but it gates nothing. Its last values were 17.3% control · 22.3% graph+reranker. **Anyone reading "Gate S2 is failing at 17.3% against 0.70" is reading a stale sentence and is about to repeat the drift that cost weeks.** |
+| Corpus | **Re-counted against production 10 Aug:** 38,341 judgments · 616,197 chunks · 192,197 citation edges (44,785 resolved, 23.3%) · 4,097 citation aliases · 44,360 judge rows · 97,806 statute refs · 0 statute_mappings · 0 rows with `storage_key` |
+| Citator | **81 judgments flagged of 38,341** — `set_aside` 57 · `doubted` 16 · `partly_set_aside` 8. **13,389 edges now carry a treatment**, not the 95 this file was written against: `followed` 11,723 · `distinguished` 1,517 · `overruled` 108 · `doubted` 21 · `overruled_in_part` 20. All counted live 10 Aug |
 | Harness | 25 queries of 30. **All three previously unmeasurable metrics now produce numbers** — a generation path exists (`generate.ts`) and an adversarial runner exists (`adversarial.ts`). Until 9 Aug there was NO model call in the package, and `run-cli.ts` reported 0 (a PASS) the moment `OPENROUTER_API_KEY` merely existed |
 | Reranker | **With the graph: 17.3% → 22.3%, delta +4.9%, interval 0.4 to 9.5, McNemar p = 0.049 — the rig says SHIPS**, marginally, on 283 queries. And it had **never once been measured on real passages**: 37.6% of candidates were being scored against an empty string until 9 Aug |
 | Latency | **STILL THE BINDING CONSTRAINT, but 1.38× over rather than 3.8×.** Reranking is **4,136 ms mean · p95 4,263 ms** against Gate S1's 3 s for the whole request. Truncating to 256 tokens fits and was **measured and rejected** — it costs more accuracy than the reranker adds. The free lever (padding) is **dead at a 1.1% ceiling**. What remains: **12 candidates instead of 20**, cut from both ends so the graph slots survive |
@@ -144,16 +316,16 @@ Commits: `ccbebc8` `56e25ad` `c493518` `220825b` `ae6ad9d` `fe9ab13` `74c8ace`
 - [x] **A2.3** Migration `0026` — `pg_trgm`, trigram indexes on title/case
       number, normalised citation index matching `citationLookupKey` exactly,
       `judgment_judges`, `judgment_statute_refs`. `56e25ad`
-- [ ] **A2.4** `compile.ts` — AST → parameterised SQL. Every value bound.
-- [ ] **A2.5** `judgment_statute_refs` extractor — **requires act context**; a
+- [x] **A2.4 VERIFIED LANDED 10 Aug** — `compile.ts` — AST → parameterised SQL. Every value bound.
+- [x] **A2.5 VERIFIED LANDED 10 Aug** (97,806 refs) — `judgment_statute_refs` extractor — **requires act context**; a
       bare "section 5" is not recorded. BNS↔IPC expansion at query time.
-- [ ] **A2.6** Route + contract: `parsed` echo, facets, 400 with offset on parse
+- [x] **A2.6 PARTLY LANDED** — `parsed` echoes at route.ts:97,126. **Facets are NOT built and NOT in the contract** → Q1.5. Original text: Route + contract: `parsed` echo, facets, 400 with offset on parse
       failure, all three citation fields preserved.
-- [ ] **A2.7** **THE SAFETY RULE** — structure decides, semantics fills, never
+- [x] **A2.7 VERIFIED LANDED 10 Aug** (structured.ts) — **THE SAFETY RULE** — structure decides, semantics fills, never
       blended. Zero structured matches returns **zero**, with semantic
       suggestions in a *separate* field. An advocate who asked for
       `judge:Chandrachud` must never receive another judge's judgment.
-- [ ] **A2.8** Gate S2 re-spec: `structuredExactness` and `fieldPrecision` at
+- [x] **A2.8 VERIFIED LANDED 10 Aug** (metrics.ts) — Gate S2 re-spec: `structuredExactness` and `fieldPrecision` at
       1.0; `successAt5`/`recallAt20` demoted to ungraded diagnostics; CLERC
       evidence recorded in `sprints/SPRINT_2.md`. **Each new metric needs a
       negative control proving it can fail.**
@@ -256,7 +428,7 @@ volume ceiling costs nothing until data fills it.
 approved vendor (`OD-4`, `CORPUS_TIERING.md` §3) and nothing works at 15.9M
 without it. The founder is supplying an account and API token.
 
-- [ ] **A3b.1** `packages/storage` behind an interface that **refuses honestly
+- [x] **A3b.1 VERIFIED LANDED 10 Aug** (refusingStore/objectStoreFromEnv) — `packages/storage` behind an interface that **refuses honestly
       without credentials**, exactly as `packages/auth/src/mail.ts` does. The
       whole path builds and tests with no token; only the upload is outstanding.
 - [x] **A3b.2 LANDED 10 Aug 2026 — migration `0028`, APPLIED to production and
@@ -350,24 +522,24 @@ not in our corpus — High Courts, Privy Council, and the specialist reporters t
 extractor cannot read. **Coverage (§A3) fixes this half directly**, and this is
 the sharpest available argument for the AWS ingest.
 
-- [ ] **A3c.1** Classify treatment from the text **around each citation offset** —
+- [x] **A3c.1 VERIFIED LANDED — 13,389 treatment edges live, counted 10 Aug** — Classify treatment from the text **around each citation offset** —
       `judgment_citations.char_offset` already exists on every edge, so the
       evidence is already joined to the citation. No new data, no purchase, no
       OCR.
-- [ ] **A3c.2** **High-precision patterns first, never a model.** Reading the
+- [x] **A3c.2 VERIFIED LANDED** (patterns, no model) — **High-precision patterns first, never a model.** Reading the
       court's own words is a primary source; a model's opinion about whether a
       case was overruled is exactly the commentary `DATASETS.md` forbids.
-- [ ] **A3c.3** **PRECISION ABSOLUTELY OVER RECALL, and this is not a preference.**
+- [x] **A3c.3 VERIFIED LANDED** (81 flagged, dry-by-default CLIs) — **PRECISION ABSOLUTELY OVER RECALL, and this is not a preference.**
       `overruled_status` drives the LAW MOVED mark, and `set_aside` disables
       add-to-matter. A false positive tells an advocate a good authority is dead
       — the stale-overruled threshold is **0** for the same reason. Anything
       uncertain goes to a **review queue, never to the column.**
-- [ ] **A3c.4** Distinguish *"we overrule X"* from *"X was overruled in Y"* and
+- [x] **A3c.4 VERIFIED LANDED** (negation per phrase, tested) — Distinguish *"we overrule X"* from *"X was overruled in Y"* and
       from *"the contention that X is overruled is rejected"*. **The third reads
       identically to a keyword matcher and means the opposite.** This is the
       whole difficulty, and it is why the patterns must be tested against real
       passages before anything is written.
-- [ ] **A3c.5** Report the candidate list with its evidence span for human
+- [x] **A3c.5 VERIFIED LANDED** (citator-report.ts) — Report the candidate list with its evidence span for human
       review. **A citator that flags 350 judgments nobody checked is worse than
       one that flags 22 that were.**
 
@@ -409,25 +581,25 @@ judgment from 1950.** We own the case and do not know its name.
 
 ### The fix — derive the concordance from the courts' own words
 
-- [ ] **A3d.1** For each unresolved AIR/SCC citation, take the text window around
+- [x] **A3d.1 VERIFIED LANDED — 4,097 aliases live, counted 10 Aug** — For each unresolved AIR/SCC citation, take the text window around
       its `char_offset` — **the offset is already stored on every edge** — and
       extract the case name printed beside it. Courts write *"State of West
       Bengal v. Anwar Ali Sarkar, AIR 1952 SC 343"*; the name is right there.
-- [ ] **A3d.2** Match that name against `judgments.case_title`, now
+- [x] **A3d.2 VERIFIED LANDED** (trigram + year guard) — Match that name against `judgments.case_title`, now
       trigram-indexed, constrained by the **year in the citation** and the court.
-- [ ] **A3d.3** **Corroboration, not a single sighting.** `AIR 1952 SC 343`
+- [x] **A3d.3 VERIFIED LANDED** (corroborations >= 2, DB CHECK) — **Corroboration, not a single sighting.** `AIR 1952 SC 343`
       appears 59 times, each beside a case name. Agreement across many citing
       judgments is strong evidence; one occurrence is not. Record the count.
-- [ ] **A3d.4** **EXACTLY ONE candidate, or nothing.** Two matches record
+- [x] **A3d.4 VERIFIED LANDED** (UNIQUE on alias_key) — **EXACTLY ONE candidate, or nothing.** Two matches record
       nothing — the same rule `exactCitation` already applies. **A wrong alias is
       worse than a missing one**: an advocate searching `AIR 1952 SC 343` and
       receiving the wrong judgment may cite it, which is the failure this entire
       product exists to prevent.
-- [ ] **A3d.5** Store in a **separate table with its evidence**, not merged into
+- [x] **A3d.5 VERIFIED LANDED** (judgment_citation_aliases + evidence) — Store in a **separate table with its evidence**, not merged into
       `reporter_citations`. `cite:` searches both. Provenance must stay
       answerable: *"who says this judgment is AIR 1952 SC 343"* has to have an
       answer, and it is "fifty-nine Supreme Court judgments say so".
-- [ ] **A3d.6** This is **primary-source derivation, not a model's opinion** —
+- [x] **A3d.6 VERIFIED LANDED** (primary-source derivation) — This is **primary-source derivation, not a model's opinion** —
       permitted where `DATASETS.md` forbids commentary. It also **removes a
       reason to buy**: the concordance is part of what a licence sells.
 
@@ -1028,7 +1200,7 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       **So the next move is a SOURCE, not a parser.** No regex can recover
       sections that are not in the file, and s. 302 — the one everybody checks —
       is one of them.
-- [ ] Three metrics stay **NOT MEASURED** until an LLM key exists — founder-queued
+- [x] **STALE — CORRECTED 10 Aug.** `OPENROUTER_API_KEY` is SET (73 chars) and `ANTHROPIC_API_KEY` is SET. The three metrics are **no longer key-blocked**; they are blocked on nothing but a run, and they sit under an ungraded diagnostic (Q3). `FOUNDER_QUEUE.md` §1 and §5 are stale with it — §5 (the $65 GPU) was struck 9 Aug when re-embedding measured 36.6 ms/chunk on local CPU
 
 ---
 
