@@ -39,11 +39,66 @@ box and go look.**
 | `CONTINUATION_PROMPT.md` §6.6: *"Facets — contract slot documented, not built"* | **There is no contract slot.** Zero occurrences of "facet" in `docs/API_CONTRACTS.md` and zero in `services/**`. Not documented AND not built |
 | §2: *"Three metrics stay NOT MEASURED until an LLM key exists — founder-queued"* | **`OPENROUTER_API_KEY` is set** (73 chars) and `ANTHROPIC_API_KEY` is set. `FOUNDER_QUEUE.md` §1 and §5 (the $65 GPU) are both stale — §5 was struck on 9 Aug when re-embedding was measured at 36.6 ms/chunk on local CPU |
 | A3b.1 unticked | **Landed.** `refusingStore` and `objectStoreFromEnv` exist in `packages/storage/src/r2.ts`, and production with no credentials refuses to start |
+| **This table's own wording: *"landed and applied to production"*** | **CORRECTED 11 Aug — it conflated three different things.** The **database** is production and was queried directly, so the row counts above are real. The **code** is not: `origin/main` is **43 commits behind** and the deployed API serves none of it. **Repo + DB ≠ deployed.** §Q1.0 |
 
 ## Q1 · THE QUEUE, in the order I would take it
 
 Each item carries the two artefacts `CLAUDE.md` demands, so nobody has to invent
 them later. **An item with no nameable VERIFY does not go in this list.**
+
+### Q1.0 · THE DEPLOY GAP — 43 commits unpushed · FOUNDER DECISION · outranks everything below
+
+**Found by RCC on 11 Aug and independently verified by LCC the same day. RCC was
+right on every point.**
+
+`DONE:` `origin/main` carries this work and the deployed API serves it.
+`VERIFY:` `git rev-list --left-right --count origin/main...main` reads `0 0`;
+`POST /search {"query":"cite:\"(1994) 3 SCC 1\"","language":"en"}` returns
+**S.R. BOMMAI** with a `parsed` field.
+
+**Verified state, measured against the live API, not inferred:**
+
+| check | result |
+| --- | --- |
+| `git rev-list --left-right --count origin/main...main` | **`0 43`** — origin is at `7bbde78`, 9 Aug 12:24 |
+| `POST /search` `cite:"(1994) 3 SCC 1"` in production | returns **KAUSHAL KISHOR**, not S.R. Bommai |
+| same response | **no `parsed`, no `total`** — structured search is not deployed |
+| `GET /me/training-consent` | **404** |
+| `GET /me/alert-settings` | **401** — route exists, auth rejects |
+
+**The 404-vs-401 split is the proof**, not the 404 alone: both were called
+unauthenticated, so a 401 means the route is deployed and a 404 means it is not.
+
+**THE PART THAT IS A PRODUCT-SAFETY ISSUE, not merely a stale deploy.** In
+production today an advocate typing `cite:"(1994) 3 SCC 1"` gets **a different
+case returned as an ordinary result**, with nothing saying the query was not
+understood. **This is precisely the failure A2.7 was written to prevent** —
+*"structure decides, semantics fills, NEVER blended; zero structured matches
+returns zero"* — and A2.7 is written, tested and **not deployed**. Nothing is
+fabricated: every row is a real judgment with real citations from the corpus.
+But *"these are the cheque cases"* is what a wrong-but-plausible result reads
+as, and that is the whole reason the rule exists.
+
+**Deploy safety was checked before recommending anything, and it is the safe
+direction:** all three unpushed migrations (`0026`, `0027`, `0028`) are **already
+applied to production**, along with the `ecourts_bulk` enum value and the
+training-consent columns. **The database is AHEAD of the code, never behind**, so
+a deploy finds the schema it expects. `@lawmind/storage` is a dependency of
+nothing, so its refuse-to-start-without-credentials guard **cannot** break the
+API boot.
+
+**Why LCC has not pushed.** A push is outward-facing and shared, and it deploys
+to the product an advocate uses. That is the founder's call, not an agent's.
+**Everything needed to make it is above.** The deploy *mechanism* is
+unverified — no Railway service is linked in this workspace and no doc records
+whether a push auto-deploys.
+
+**LCC's own correction, owed plainly.** This lane has been writing *"landed and
+applied to production"*. For **migration `0028` that is exact** — the schema was
+queried directly. For the **code** it was not: A2, A3c and A3d were verified
+against the **repository and the database**, and the database is production, but
+**the API serving requests is 43 commits old**. Repo + DB ≠ deployed, and §Q0's
+own table repeats the conflation it was written to catch.
 
 ### Q1.1 · Publish coverage per court and per year — A3.6 · NEXT
 
