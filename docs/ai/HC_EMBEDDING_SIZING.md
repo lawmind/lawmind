@@ -83,12 +83,51 @@ That is the honest cost. Three things make it acceptable rather than blocking:
   exactly the 40,980 — measured: 40,980 High Court and **1** Supreme Court
   judgment remain unembedded.
 
-**No selective subset is proposed.** `CORPUS_GAP_PLAN.md` §5 Stage 2 suggested
-embedding only cited judgments to stay inside pgvector's range — that reasoning
-was driven by the 41M figure and is unnecessary at 94k. Selecting a subset here
-would add a filtering mechanism, a coverage question and a "why is this judgment
-not dense-searchable" support burden, to save 1.38 GB. That is complexity bought
-for nothing.
+**No selective subset is proposed** *on storage grounds*.
+`CORPUS_GAP_PLAN.md` §5 Stage 2 suggested embedding only cited judgments to stay
+inside pgvector's range — that reasoning was driven by the 41M figure and is
+unnecessary at 94k. Selecting a subset to save 1.38 GB would add a filtering
+mechanism, a coverage question and a "why is this judgment not dense-searchable"
+support burden, for nothing.
+
+---
+
+## 3a · BUT DO NOT RUN IT YET — the corpus fails three upstream stages
+
+**Added after §3 was written, on measuring the corpus rather than only sizing
+it.** The canonical pipeline puts classification, deduplication and citation
+extraction **before** retrieval indexes, and the High Court corpus has been
+through none of them. Measured 11 Aug 2026:
+
+| check | result |
+| --- | --- |
+| duplicate rows | **925 redundant copies** (1,476 rows in 551 content-hash groups) |
+| duplicate groups materialized? | **yes — and nothing consumes them.** 1,476 of the 1,500 members in `document_duplicate_members` are High Court, and retrieval does not read that table at all |
+| classified judgment vs order? | **no.** `source_document_type` is NULL on all 40,980 — the source publishes none, and the measured judgment share is 0.75–18.64% |
+| documents under 500 chars | **131**, mean 313 — too short to be evidence of anything |
+| outbound citations | **0 of 40,980** |
+| cited by anything | **0 of 40,980** |
+| text quality | fine — 40,602 good, 377 fair, 1 poor |
+
+**Embedding now would build a retrieval index on unclassified, undeduplicated,
+uncitated raw data**, and would specifically:
+
+- spend part of a 20-hour job embedding **925 documents we already know are
+  duplicates**, then return each of them as a separate result in five slots;
+- make **131 sub-500-character fragments** dense-retrievable as though they were
+  authorities;
+- surface two-line adjournment orders indistinguishably from reasoned judgments,
+  because nothing records which is which.
+
+Text quality is the one stage that passes cleanly.
+
+**So the order is: classify → collapse duplicates in retrieval → extract
+citations → then index.** Doing it the other way round means paying the 20 hours
+twice, and the first payment ships duplicate authorities to advocates.
+
+**This supersedes §3's "no code change is needed, just run it."** The sizing
+conclusion stands — 94k vectors and 1.38 GB is affordable and no subset is
+needed for storage. The *readiness* conclusion is the opposite: not yet.
 
 ---
 
