@@ -407,6 +407,38 @@ established additive shape to copy rather than invent.
   defect.** 22 of 845 acts have zero sections. See §4; **do not loosen the
   assertion to go green.**
 
+  **✅ CLOSED 11 Aug 2026 — and NOT by loosening it.** The instruction above was
+  followed: the 22 were audited **at the source** before the test was touched,
+  then re-run through the full `acts` ingest. **22 Acts retried, 0 sections
+  gained.**
+  - **18 carry no section index on the indiacode Act page at all** (`sectionId=`
+    × 0) — the colonial Bengal/Bombay/Madras revenue Acts, plus the Wealth-tax
+    Act 1957 and the Gift-tax Act 1958.
+  - **4 carry an index but `SectionPageContent` answers `{}` for every section**
+    — Presidency-Towns Insolvency 1909 (130), Provincial Insolvency 1920 (87),
+    Broach and Kaira 1877 (41), National Anti-Doping 2022 (34). This one is
+    worth knowing: those are live insolvency provisions, and the index exists,
+    so the gap could close on indiacode's side without any change here.
+
+  `fetchSections` is behaving correctly on all 22 — it reports them `missing`
+  and writes nothing, because a statute with an invisible hole is worse than one
+  that visibly failed. The assertion now states the data condition instead of
+  contradicting it: such an Act is still **LISTED** with `sectionCount: 0`
+  (dropping it would be a silent drop — an advocate searching for the Wealth-tax
+  Act would conclude we do not hold it), and **22 is a ceiling**, so the ingest
+  breaking on Acts that DO have text still fails loudly.
+
+- **✅ ALSO CLOSED 11 Aug 2026 — two api tests that were pinned snapshots,
+  not defects.** `corpus/coverage.test.ts` asserted Allahabad `held === 0` and
+  Supreme Court `held === 38_341`. High Court ingest landed 6 Allahabad rows and
+  one more SC row, and both pins fired — correctly; the Allahabad one carried a
+  comment saying it should be updated deliberately when an ingest landed.
+  Replaced with the **invariants** rather than the next snapshot (coverage share
+  < 0.1%; an SC floor), because HC ingest is a running job and a hand-edited
+  number on a running job becomes an assertion people update reflexively.
+
+  **`services/api` is now 400/400 across 54 suites**, up from 385/388.
+
 ### Q1.3 · Finish the R2 tiering path — A3b.3, A3b.4, A3.4, A3.5
 
 `DONE:` a judgment's text round-trips to R2 as brotli through the metered store,
@@ -453,7 +485,56 @@ Q2.**
 
 </details>
 
+### Q1.4b · TWO P0s AND A P1 FROM THE CLIENT LANE — ✅ ALL LANDED 11 Aug 2026
+
+Not planned work; all three arrived from RCC or fell out of answering RCC, and
+all three were in front of advocates.
+
+- **`GET /documents` 500'd unconditionally** (RCC bus 0050, `c2da1b9`).
+  `listDocuments` selected `m.title`; `matters` has only `case_title`, and
+  Postgres rejects an unknown column at **plan time** — so the route failed on
+  every call for every user regardless of data. The Drafts tab shipped as R4 and
+  has listed nothing for anybody since; the client fails soft, so nothing looked
+  broken. **The typo is not the lesson: no test called `listDocuments` at all.**
+  Two now do.
+- **A matter's saved authorities carried no good-law status** (RCC bus 0048,
+  `dd9871b`). The one surface where an authority sits for months, and verified
+  is silent in our UI — so a bare row read as "this is fine". Now joins
+  `overruled_*` live on every read, never stored. Note for anyone reading bus
+  0048: `judgments` has no `verification_state`/`verified_by_source` columns
+  (they live on `citation_checks`/`verification_cache`), so those two are
+  `verified`/`corpus` **by construction**, as on every other corpus-row surface.
+- **`judgments.bench` held an S3 partition key on 51.3% of the corpus**
+  (`51bd5f8`, migration `0040`). Found while answering RCC's bench-filter
+  question. `harvest/hc-load.ts` wrote `bench: partitions.bench` — the AWS
+  bucket's `bench=patnahcucisdb94` path segment, which names the court
+  *establishment* — into the column the judgment screen renders as the **coram**.
+  40,980 rows, every High Court judgment held, zero with a `judgment_judges`
+  row. Opening any Patna judgment showed a database slug where the judges belong.
+  Moved to `source_bench_code`; `bench` is NULL there now, which is the honest
+  value — that metadata variant publishes no judge field.
+
+  **The ingest test asserted `r.bench === 'patnahcucisdb94'` and passed for
+  exactly as long as the bug lived.** A test that encodes the same mistake as
+  the code is not a check.
+
+  **Client consequence, sent as bus 0053:** `JudgmentDetail.bench` is typed
+  `string` and now answers null on every High Court judgment.
+
 ### Q1.5 · Facets on `POST /search` — A2.6 remainder
+
+**PARTIALLY LANDED 11 Aug 2026 — the court filter, not facet counts** (`1cefe6c`,
+RCC bus 0046). `POST /search` accepts `filters.courts` as category codes
+(`sc`/`hc`/`district`/`tribunal`) and expands them server-side; the response
+carries `unpopulatedCourtCategories`. Facet **counts** are still not built —
+that remains this item.
+
+Two filters bus 0046 asked for were **refused with measurements, not deferred**:
+`bench` strength needs a judge-count column that does not exist (see Q1.4b), and
+**`subjects` has no subject/topic/category/tag column anywhere in the schema** —
+an unbuilt feature, not a filter that does nothing.
+
+### Q1.5-OLD · the original entry, kept for provenance
 
 `DONE:` a search response carries facet counts; the contract documents the shape.
 `VERIFY:` a `judge:` query returns counts by court and year that match a direct
