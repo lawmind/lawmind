@@ -353,6 +353,43 @@ rather than treatments, and labelling them otherwise would overstate the record.
 authority, the other is whether that authority exists. A judgment can be
 `verified` and `overruled`, or `unverified` and `followed`.
 
+## document_duplicate_groups / document_duplicate_members
+
+Added migration `0036`, 11 Aug 2026 — `docs/ai/CANONICAL_IDENTITY.md` /
+`docs/ai/DEDUPLICATION.md`, Stage 3 of the data-moat program. A GROUP table,
+not a pairwise edge table: the largest exact-duplicate group found
+(`docs/ai/tasks/003-corpus-inventory.md`, a Gujarat 1993 batch judgment) has
+124 members, and a pairwise table would need C(124,2) = 7,626 rows to say
+what one group row says.
+
+`document_duplicate_groups`: `id` uuid pk · `relationship`
+(`exact_duplicate`|`near_duplicate`|`unknown`) · `method`
+(`content_hash`|`minhash_lsh`|`manual`) · `group_key` text — the value the
+method grouped on, the shared `content_hash` for the `content_hash` method ·
+`member_count` int — denormalised at write time, not a live `COUNT(*)` ·
+`evidence` text null · `detected_at` timestamptz.
+
+Unique: (`method`, `group_key`) — re-running the materialiser updates one row
+per group rather than duplicating it.
+
+`document_duplicate_members`: `group_id` uuid fk→document_duplicate_groups
+cascade · `judgment_id` uuid fk→judgments cascade · composite pk
+(`group_id`, `judgment_id`).
+
+**Never destroys provenance.** No column here can delete or merge a
+`judgments` row — `judgment_id`'s only FK action is CASCADE on the
+*membership* row, never the reverse. Each member keeps its own `cnr`,
+`case_number` and `source_url` exactly as ingested.
+
+**Populated by `services/ingest/src/dedup-materialize-cli.ts`
+(`pnpm --filter @lawmind/ingest run dedup:materialize [--confirm]`), which
+reads only the already-100%-populated `judgments.content_hash` — no PDF
+fetch, no full-text re-scan.** `near_duplicate` and cross-partition `unknown`
+relationships are designed but not computed at corpus scale —
+`docs/ai/DEDUPLICATION.md` §Near-duplicate detection states the cost and the
+reproducible sampling methodology, per the founder's instruction not to
+pretend an unmeasured limitation is solved.
+
 ## judgment_annotations
 
 Added 6 Aug 2026 for PD-9 item 3 — highlight and save a passage.

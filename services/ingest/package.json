@@ -23,7 +23,8 @@
     "backfill:provenance": "tsx src/backfill-provenance.ts",
     "backfill:cnr": "tsx src/backfill-cnr.ts",
     "corpus:report": "tsx src/corpus-report-cli.ts",
-    "hc:cnr-sample": "tsx src/harvest/hc-cnr-sample-cli.ts"
+    "hc:cnr-sample": "tsx src/harvest/hc-cnr-sample-cli.ts",
+    "dedup:materialize": "tsx src/dedup-materialize-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

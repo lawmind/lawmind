@@ -482,8 +482,25 @@ alongside this document.
     the Supreme Court year-boundary duplication that `AWS_CORPUS_INVENTORY.md`
     §3 found overstated the SC source count by 5,181 (one CASE, many
     SOURCE_ARTIFACTs). 11 new tests, `services/ingest` suite **315/315**,
-    `tsc --noEmit` clean. **This is the identity layer only — no relationship
-    is materialised against the live corpus yet.** That is Stage 3.
+    `tsc --noEmit` clean.
+11. **Deduplication — LANDED, 11 Aug 2026, Stage 3.** `docs/ai/DEDUPLICATION.md`.
+    Migration `0036` (`document_duplicate_groups`/`document_duplicate_members`,
+    a group table, not pairwise edges — the largest group has 124 members and
+    a pairwise table would need 7,626 rows to say what one group row says).
+    Applied to production, ANALYZEd. `services/ingest/src/dedup-
+    materialize-cli.ts` materialised the **563 exact-duplicate groups / 1,500
+    rows** already known from `content_hash` — verified twice, against the
+    corpus-quality dashboard's independent count and against the CLI's own
+    post-write query. **Two cheap SQL probes, not MinHash, established that
+    near-duplicate detection is not yet justified**: same-CNR-different-hash
+    (3 groups, read directly — all genuinely different orders on one case, not
+    duplicates) and same-(court, case_number, date)-different-hash (23 groups
+    — sampled rows are all genuinely different Supreme Court judgments sharing
+    one printed lead-appeal number, a real and previously unrecorded finding
+    that independently confirms why `CANONICAL_IDENTITY.md` ranks CNR above
+    `case_number`). MinHash/LSH cost quantified and deferred with a named
+    trigger, not built speculatively. No `judgments` row was merged, deleted,
+    or altered.
 
 ---
 

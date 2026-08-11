@@ -1424,3 +1424,69 @@ export const judgmentCitationAliases = pgTable(
     index('judgment_citation_aliases_judgment_idx').on(t.judgmentId),
   ],
 );
+
+/* -------------------------------------------------- document deduplication -- */
+
+/**
+ * `docs/ai/CANONICAL_IDENTITY.md` / `docs/ai/DEDUPLICATION.md` — Stage 3 of the
+ * DATA → RETRIEVAL EXECUTION PROGRAM. A GROUP, not a pairwise edge table: the
+ * largest exact-duplicate group found (`docs/ai/tasks/003-corpus-inventory.md`,
+ * the Gujarat 327-matter batch judgment) has 124 members, and a pairwise table
+ * would need C(124,2) = 7,626 rows to say the same thing one group row says.
+ *
+ * **Never destroys provenance.** No column here can cause a `judgments` row to
+ * be deleted or merged — `judgment_id`'s only foreign-key action is
+ * `ON DELETE CASCADE` on the group membership, never the reverse. Each member's
+ * own identity (`cnr`, `case_number`, `source_url`) is untouched.
+ */
+export const documentDuplicateRelationshipEnum = pgEnum('document_duplicate_relationship', [
+  'exact_duplicate',
+  'near_duplicate',
+  'unknown',
+]);
+
+export const documentDuplicateMethodEnum = pgEnum('document_duplicate_method', [
+  'content_hash',
+  'minhash_lsh',
+  'manual',
+]);
+
+export const documentDuplicateGroups = pgTable(
+  'document_duplicate_groups',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    relationship: documentDuplicateRelationshipEnum('relationship').notNull(),
+    method: documentDuplicateMethodEnum('method').notNull(),
+    /** The value the method grouped on — the shared `content_hash` for the
+     * `content_hash` method. Opaque for other methods; never re-derived from it. */
+    groupKey: text('group_key').notNull(),
+    /** Denormalised from `document_duplicate_members` at write time — an
+     * inserted count, not a live aggregate, so a query reporting "how big are
+     * duplicate groups" does not need to join and count every time. */
+    memberCount: integer('member_count').notNull(),
+    /** Human-readable justification, e.g. "content_hash match: <hash>". */
+    evidence: text('evidence'),
+    detectedAt: timestamp('detected_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // Idempotent re-runs: the same method finding the same key updates one row,
+    // never inserts a second group for text already grouped.
+    uniqueIndex('document_duplicate_groups_method_key_idx').on(t.method, t.groupKey),
+  ],
+);
+
+export const documentDuplicateMembers = pgTable(
+  'document_duplicate_members',
+  {
+    groupId: uuid('group_id')
+      .notNull()
+      .references(() => documentDuplicateGroups.id, { onDelete: 'cascade' }),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    primaryKey({ columns: [t.groupId, t.judgmentId] }),
+    index('document_duplicate_members_judgment_idx').on(t.judgmentId),
+  ],
+);

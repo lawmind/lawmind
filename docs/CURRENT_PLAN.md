@@ -876,6 +876,30 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     is next and is where a classification becomes a stored, provenance-
     preserving relationship.**
 
+14. **`docs/ai/DEDUPLICATION.md` — Stage 3 of the DATA → RETRIEVAL EXECUTION
+    PROGRAM, LANDED same day.** Migration `0036` applied to production and
+    `ANALYZE`d: `document_duplicate_groups`/`document_duplicate_members`, a
+    group table rather than pairwise edges (the largest group is 124 members
+    — `C(124,2)` = 7,626 pairwise rows to say what one group row says).
+    `dedup-materialize-cli.ts` materialised the 563 exact-duplicate
+    `content_hash` groups / 1,500 rows found in task 003, cross-checked
+    against `DATA_MOAT_PROGRAM.md` §6's independent dashboard count and its
+    own post-write query. **No `judgments` row touched — no merge, no
+    delete.** Before spending the cost of a MinHash/LSH pipeline, two cheap,
+    exact SQL probes tested whether near-duplicates are a real problem:
+    same-CNR-different-`content_hash` (3 groups, all read directly — genuinely
+    different orders on one ongoing case, e.g. a 2024 disposal and a 2026
+    "stands allowed" order under the same CNR) and same-(court, case_number,
+    judgment_date)-different-`content_hash` (23 groups — sampled rows are all
+    genuinely different Supreme Court judgments, distinct CNRs, distinct
+    source PDFs, sharing one printed lead-appeal number under India's
+    connected-matters practice). **Zero near-duplicates found by either
+    probe** — a real result, not an absence of looking, and it independently
+    confirms `CANONICAL_IDENTITY.md`'s design choice to rank CNR above
+    `case_number` with a concrete example rather than only a theoretical
+    ordering. MinHash/LSH cost is quantified (§3 of the doc) and deferred
+    with a named trigger, not built without calibration data.
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court
