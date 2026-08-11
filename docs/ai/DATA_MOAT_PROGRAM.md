@@ -5,9 +5,17 @@ documents, with every extracted claim checked against the source text before
 being believed. Code: `services/ingest/src/enrich.ts`, `enrich-cli.ts`,
 migration `0045_document_enrichments.sql` (applied to production).
 
-**Headline: 421 calls, 483,297 tokens, 335 claims verified against source text,
-8 rejected. Two of the four tasks returned a DO-NOT-SPEND verdict, and finding
-that out was the best money spent.**
+**Headline: 421 calls, 483,297 tokens, 232 documents, 335 claims verified
+against source text, 7 rejected. Two of the four tasks returned a DO-NOT-SPEND
+verdict, and finding that out was the best money spent.**
+
+**Two corrections to my own first draft, made by querying rather than
+recalling.** It said 8 rejections; the table says **7** (metadata 4, treatment
+3, citation extraction 0). And `document_enrichments` holds **150** metadata
+documents against the 100 this lane ran — a concurrent session ran the same task
+during the pilot, so the per-task figures in §2 are this lane's run and the
+totals here are the table's. `judgment_judges` still reads **44,360**, exactly
+its pre-pilot value: canonical data is untouched, verified by query.
 
 ---
 
