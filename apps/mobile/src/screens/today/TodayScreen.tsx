@@ -136,6 +136,31 @@ export function TodayScreen() {
     [matters, briefings, today]
   );
 
+  /**
+   * `identity_only` IS NOT `signed_out` — an advocate who verified a magic
+   * link and closed the app mid-onboarding has a valid session, not none.
+   * `state/session.ts`'s own doc: "a real state, not an error". Until this
+   * branch existed both collapsed into the same "Sign in" wall, so someone
+   * who was already signed in and relaunched the app was told to sign in
+   * again — the same class of thing bus 0058 found server-side in the
+   * `AUTH_REQUIRED` funnel, one layer up, and pre-existing rather than caused
+   * by that fix. `verify.tsx` already sends `identity_only` to `/onboarding`
+   * the moment it is set; this is the other path into the same state, on
+   * relaunch, that had nowhere to go.
+   */
+  if (status === 'identity_only') {
+    return (
+      <Screen topInset>
+        <EmptyState
+          icon={CalendarDays}
+          title="Finish setting up your account"
+          body="You're signed in — a name and enrolment number are all that's left before your day is here."
+          actions={[{ label: 'Finish setup', onPress: () => router.push('/onboarding' as never) }]}
+        />
+      </Screen>
+    );
+  }
+
   if (status !== 'signed_in') {
     return (
       <Screen topInset>

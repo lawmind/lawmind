@@ -43,6 +43,24 @@ export function MattersScreen() {
   const missed = useMemo(() => overdue(matters, today), [matters, today]);
   const undated = useMemo(() => matters.filter((m) => !m.nextHearingDate), [matters]);
 
+  /**
+   * `identity_only` — signed in, onboarding abandoned before a `users` row
+   * existed. Not `signed_out`: sent to `/onboarding`, not `/sign-in`, the
+   * same distinction `TodayScreen` makes and for the same reason.
+   */
+  if (status === 'identity_only') {
+    return (
+      <Screen topInset>
+        <EmptyState
+          icon={FolderOpen}
+          title="Finish setting up your account"
+          body="You're signed in — a name and enrolment number are all that's left before your matters are here."
+          actions={[{ label: 'Finish setup', onPress: () => router.push('/onboarding' as never) }]}
+        />
+      </Screen>
+    );
+  }
+
   if (status !== 'signed_in') {
     return (
       <Screen topInset>
