@@ -27,7 +27,7 @@ import {
   parseCivilDate,
   todayCivil,
 } from '../../theme/hearingDate';
-import { color, space } from '../../theme/tokens';
+import { color, radius, space } from '../../theme/tokens';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -420,6 +420,56 @@ export function MatterScreen({
         {authorities && authorities.some((a) => a.removedAt === null) ? (
           <View style={styles.section}>
             <SectionRule label="Authorities" />
+
+            {/*
+              ─────────────────────────────────────────────────────────────────
+              THIS LIST CANNOT YET SAY WHETHER AN AUTHORITY IS STILL GOOD LAW,
+              AND IT SAYS SO RATHER THAN STAYING SILENT.
+              ─────────────────────────────────────────────────────────────────
+
+              `GET /matters/:id/authorities` selects `a.id, a.judgment_id,
+              j.case_title, j.neutral_citation, a.added_by_user_id, a.added_at,
+              a.removed_at` — `AUTHORITY_COLUMNS` in
+              `services/api/src/matters/authorities.ts`. No `overruled_status`,
+              no verification fields. So this surface holds none of them.
+
+              WHY THAT IS SERIOUS HERE SPECIFICALLY. `CITATION_HARNESS.md`:
+              overruled status is never cached, is read live at render on EVERY
+              surface, and the stale-overruled threshold is ZERO — "overruled law
+              rendered without the LAW MOVED mark is as severe as a
+              hallucination". A matter file is the surface where an authority
+              sits for MONTHS. It is the likeliest place in the product for the
+              law to move underneath a citation, and the only one where the
+              advocate has already decided to rely on it.
+
+              AND SILENCE MEANS SOMETHING SPECIFIC IN THIS PRODUCT. Verified is
+              silent; a citation with no mark reads as "checked, not decorated".
+              Rendering these rows bare therefore does not read as "we do not
+              know" — it reads as "these are fine". That is the one thing we may
+              never say without having asked.
+
+              So the limit is stated, in neutral ink on a dashed edge, which is
+              how our own uncertainty renders everywhere. NOT AMBER: amber means
+              the law has moved, and we are not claiming it has — we are saying
+              we did not look.
+
+              The tap-through is named because it genuinely answers the question:
+              the judgment screen reads `overruled_status` live and bands
+              `set_aside` full width.
+
+              THIS LINE IS TEMPORARY BY DESIGN. The fix is three columns on the
+              server, sent to LCC on the bus rather than guessed at here — the
+              fields are not declared on `MatterAuthority` until they are really
+              on the wire, because a type that promises a field the server does
+              not send is the defect this sweep spent the day removing.
+            */}
+            <View style={styles.statusUnknown}>
+              <Text variant="ui" style={styles.statusUnknownText}>
+                This list does not yet show whether an authority is still good law. Open one to
+                check it.
+              </Text>
+            </View>
+
             {authorities
               .filter((a) => a.removedAt === null)
               .map((a) => {
@@ -646,6 +696,23 @@ const styles = StyleSheet.create({
     borderLeftColor: color.ink,
     paddingLeft: space.xs,
   },
+
+  /**
+   * OUR OWN LIMIT, SO: NEUTRAL INK, DASHED EDGE, NO AMBER AND NO WASH.
+   *
+   * Identical treatment to the unconfirmed-citation mark and to the `unknown`
+   * block in `AuthoritiesPanel`. Amber is reserved for the law having moved,
+   * which is a statement about the authority; this is a statement about what we
+   * did not ask.
+   */
+  statusUnknown: {
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: color.inkFaint,
+    borderRadius: radius.base,
+    padding: space.xs,
+  },
+  statusUnknownText: { color: color.inkMuted },
 
   /**
    * Oxblood, and set on its own line rather than as a trailing icon — the same

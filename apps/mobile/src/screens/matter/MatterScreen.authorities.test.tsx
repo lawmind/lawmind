@@ -265,3 +265,85 @@ describe('a saved authority we hold no citation for', () => {
     expect(screen.queryByText('null')).toBeNull();
   });
 });
+
+describe('good-law status, which this list does not hold', () => {
+  /*
+    `GET /matters/:id/authorities` sends no `overruled_status` and no
+    verification fields — `AUTHORITY_COLUMNS` in
+    `services/api/src/matters/authorities.ts` selects seven columns and none of
+    them is one. So this surface cannot answer "is this still good law".
+
+    IT MATTERS MORE HERE THAN ANYWHERE. A matter file is where an authority sits
+    for months, which makes it the likeliest place in the product for the law to
+    move underneath a citation, and the only one where the advocate has already
+    decided to rely on it. `CITATION_HARNESS.md` sets the stale-overruled
+    threshold at zero.
+
+    AND SILENCE IS NOT NEUTRAL IN THIS PRODUCT. Verified is silent, so a row with
+    no mark reads as "checked, not decorated" — which is a claim we have not
+    earned on these rows. The limit is therefore stated.
+  */
+  it('states that it cannot say, rather than rendering rows that read as fine', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: { authorities: [authority()], asOf: '2026-08-11T00:00:00.000Z' },
+    });
+
+    await draw();
+
+    expect(
+      await screen.findByText(/does not yet show whether an authority is still good law/)
+    ).toBeTruthy();
+  });
+
+  it('names the tap-through, because the judgment screen genuinely answers it', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: { authorities: [authority()], asOf: '2026-08-11T00:00:00.000Z' },
+    });
+
+    await draw();
+
+    expect(await screen.findByText(/Open one to check it/)).toBeTruthy();
+  });
+
+  it('never claims the law HAS moved — that would be amber, and this is not', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: { authorities: [authority()], asOf: '2026-08-11T00:00:00.000Z' },
+    });
+
+    await draw();
+    await screen.findByText('Mock Appellant v. Union of India');
+
+    /*
+      Amber is reserved for THE LAW HAS MOVED. We are not saying it has; we are
+      saying we did not look. Our own uncertainty renders as neutral ink on a
+      dashed edge, so none of the moved wording may appear on this surface.
+    */
+    expect(screen.queryByText(/law has moved/i)).toBeNull();
+    expect(screen.queryByText(/set aside/i)).toBeNull();
+    expect(screen.queryByText(/LAW MOVED/)).toBeNull();
+  });
+
+  it('says nothing at all when the matter has no live authorities', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: {
+        authorities: [authority({ removedAt: '2026-08-11T01:00:00.000Z' })],
+        asOf: '2026-08-11T00:00:00.000Z',
+      },
+    });
+
+    await draw();
+
+    /*
+      The caveat belongs to the list. With no list there is nothing to caveat,
+      and a standing disclaimer on an empty section is noise that trains the eye
+      to skip the section that will one day carry it.
+    */
+    await waitFor(() =>
+      expect(screen.queryByText(/does not yet show whether an authority/)).toBeNull()
+    );
+  });
+});
