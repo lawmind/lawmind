@@ -19,7 +19,7 @@ const base: SearchResult = {
   caseTitle: 'Mock Party v. Mock State',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
   reporterCitations: [],
-  court: 'Mock SC · 2026',
+  court: 'Mock Supreme Court',
   judgmentDate: '2026-01-01',
   holding: '',
   operativeParagraph: '',
@@ -33,7 +33,10 @@ it('renders the judgment normally when there is no holding', async () => {
   await render(<ResultCard result={base} />);
   expect(screen.getByText('Mock Party v. Mock State')).toBeTruthy();
   expect(screen.getByText('MOCK 2026 EXAMPLE 1')).toBeTruthy();
-  expect(screen.getByText('Mock SC · 2026')).toBeTruthy();
+  // Court AND year — `judgmentDate` is sent on every result and was rendered
+  // nowhere until 11 Aug 2026, which hid behind fixtures whose court string
+  // already read "Mock SC · 2026".
+  expect(screen.getByText('Mock Supreme Court · 2026')).toBeTruthy();
 });
 
 it('never fills the gap with an apology, a placeholder or a loading state', async () => {

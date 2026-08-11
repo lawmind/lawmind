@@ -32,7 +32,7 @@ const cited: SearchResult = {
   caseTitle: 'Mock Appellant v. Union of India',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
   reporterCitations: [],
-  court: 'Mock SC · 2026',
+  court: 'Mock Supreme Court',
   judgmentDate: '2026-01-01',
   holding: '',
   operativeParagraph: 'The considered view of this Court.',
@@ -49,7 +49,7 @@ const uncitable: SearchResult = {
   caseTitle: 'Mock Petitioner v. State of Bihar',
   neutralCitation: null,
   reporterCitations: [],
-  court: 'Patna High Court · 2019',
+  court: 'Patna High Court',
 };
 
 beforeEach(() => {

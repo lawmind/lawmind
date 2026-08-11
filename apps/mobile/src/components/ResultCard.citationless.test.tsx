@@ -24,7 +24,7 @@ const patna: SearchResult = {
   caseTitle: 'Mock Petitioner v. State of Bihar',
   neutralCitation: null,
   reporterCitations: [],
-  court: 'Patna High Court · 2019',
+  court: 'Patna High Court',
   judgmentDate: '2019-04-11',
   holding: '',
   operativeParagraph: '',
@@ -39,7 +39,7 @@ const reported: SearchResult = {
   judgmentId: 'jdg_sc',
   caseTitle: 'Mock Appellant v. Union of India',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
-  court: 'Mock SC · 2026',
+  court: 'Mock Supreme Court',
 };
 
 describe('a judgment with no citation', () => {
@@ -61,6 +61,9 @@ describe('a judgment with no citation', () => {
     await render(<ResultCard result={patna} />);
 
     expect(screen.getByText('Mock Petitioner v. State of Bihar')).toBeTruthy();
+    // The court name comes from the column; the year comes from `judgmentDate`,
+    // which the card renders separately rather than trusting a court string to
+    // carry it.
     expect(screen.getByText('Patna High Court · 2019')).toBeTruthy();
   });
 

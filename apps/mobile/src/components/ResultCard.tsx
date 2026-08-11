@@ -154,8 +154,30 @@ export function ResultCard({
               {citation.text}
             </Text>
           )}
+          {/*
+            THE COURT AND THE YEAR IT WAS DELIVERED.
+
+            `judgmentDate` is sent on every search result and was rendered
+            nowhere until 11 Aug 2026, so a result showed a court name and no
+            date at all — on a list an advocate scans to judge whether an
+            authority is current or ancient, which is the first thing they ask
+            of an unfamiliar case.
+
+            IT HID BEHIND A FIXTURE. `MOCK_RESULTS` sets `court: 'Mock SC ·
+            2026'`, a string that already looks like a court and a year. The
+            real column is a court NAME and nothing else.
+
+            THE YEAR ONLY, HERE. A full date is four more words on every row of
+            a scanning surface; the judgment screen gives the whole date, in
+            `formatJudgmentDate`, which splits the string rather than parsing
+            it — `new Date('2026-02-11')` is UTC midnight and renders as the
+            10th west of Greenwich. Slicing the ISO year is the same discipline:
+            no `Date`, no timezone.
+          */}
           <Text opticalNudge variant="record" style={styles.court}>
-            {result.court}
+            {result.judgmentDate
+              ? `${result.court} · ${result.judgmentDate.slice(0, 4)}`
+              : result.court}
           </Text>
         </View>
 

@@ -26,7 +26,7 @@ const base: SearchResult = {
   caseTitle: 'Mock Party v. Mock State',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
   reporterCitations: [],
-  court: 'Mock SC · 2026',
+  court: 'Mock Supreme Court',
   judgmentDate: '2026-01-01',
   holding: 'Fixture holding.',
   operativeParagraph: 'Fixture operative paragraph.',

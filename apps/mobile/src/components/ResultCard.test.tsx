@@ -21,7 +21,7 @@ const base: SearchResult = {
   caseTitle: 'Mock Party v. Mock State',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
   reporterCitations: [],
-  court: 'Mock SC · 2026',
+  court: 'Mock Supreme Court',
   judgmentDate: '2026-01-01',
   holding: 'Fixture holding.',
   operativeParagraph: 'Fixture operative paragraph.',
@@ -146,5 +146,54 @@ describe('the law has moved — all three states are legible in a list', () => {
       />
     );
     expect(screen.getByText('Good-law status as of 2 August 2026')).toBeTruthy();
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE YEAR THE JUDGMENT WAS DELIVERED.
+ *
+ * `judgmentDate` is sent on every search result and was rendered NOWHERE until
+ * 11 August 2026 — a result showed a court name and no date at all, on the list
+ * an advocate scans to judge whether an authority is current or ancient. That
+ * is the first question asked of an unfamiliar case.
+ *
+ * IT HID BEHIND A FIXTURE. Every mock set `court: 'Mock SC · 2026'`, a string
+ * that already looks like a court and a year. The real column holds a court
+ * NAME and nothing else, and the fixtures now say so too.
+ *
+ * NO `Date` ANYWHERE. `judgmentDate` is `YYYY-MM-DD`, and
+ * `new Date('2026-02-11')` is UTC midnight — west of Greenwich it formats as
+ * the 10th. The year is sliced off the string, the same discipline
+ * `theme/judgmentDate.ts` applies to the full date.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('the court and the year', () => {
+  it('names both, from two separate fields', async () => {
+    await render(
+      <ResultCard result={{ ...base, court: 'Patna High Court', judgmentDate: '2019-04-11' }} />
+    );
+
+    expect(screen.getByText('Patna High Court · 2019')).toBeTruthy();
+  });
+
+  it('takes the year from the date, never from the court string', async () => {
+    await render(
+      <ResultCard result={{ ...base, court: 'Supreme Court of India', judgmentDate: '1994-03-11' }} />
+    );
+
+    expect(screen.getByText('Supreme Court of India · 1994')).toBeTruthy();
+  });
+
+  /**
+   * A date-only string parsed as a `Date` shifts west of Greenwich. Slicing
+   * cannot, and this pins the boundary case that would expose it.
+   */
+  it('does not shift the year on a first-of-January judgment', async () => {
+    await render(
+      <ResultCard result={{ ...base, court: 'Mock Supreme Court', judgmentDate: '2020-01-01' }} />
+    );
+
+    expect(screen.getByText('Mock Supreme Court · 2020')).toBeTruthy();
   });
 });

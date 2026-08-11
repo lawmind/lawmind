@@ -30,7 +30,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Petitioner v. Mock State',
     neutralCitation: 'MOCK 2026 EXAMPLE 1',
     reporterCitations: ['MOCK (2026) 1 EX 1'],
-    court: 'Mock SC · 2026',
+    court: 'Mock Supreme Court',
     judgmentDate: '2026-02-11',
     holding: holding(
       'Bail is the rule where the accused was not arrested during the investigation and has cooperated throughout.'
@@ -48,7 +48,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Applicant v. Mock Respondent',
     neutralCitation: 'MOCK 2026 EXAMPLE 2',
     reporterCitations: ['MOCK (2026) 2 EX 162'],
-    court: 'Mock SC · 2026',
+    court: 'Mock Supreme Court',
     judgmentDate: '2026-01-04',
     holding: holding(
       'Omnibus allegations against a spouse\'s relatives, unsupported by any specific instance, cannot sustain a prosecution under section 498 of the Mock Code.'
@@ -66,7 +66,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Complainant v. Mock Union',
     neutralCitation: 'MOCK 2024 EXAMPLE 9424',
     reporterCitations: [],
-    court: 'Mock HC · 2024',
+    court: 'Mock High Court',
     judgmentDate: '2024-08-19',
     holding: holding(
       'Quashing where the complaint named eleven relatives without particulars.'
@@ -89,7 +89,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Appellant v. Mock Board',
     neutralCitation: 'MOCK 2019 EXAMPLE 273',
     reporterCitations: ['MOCK (2019) 8 EX 273'],
-    court: 'Mock SC · 2019',
+    court: 'Mock Supreme Court',
     judgmentDate: '2019-07-03',
     holding: holding('No automatic arrest; the statutory notice is mandatory.'),
     operativeParagraph: 'Fixture operative paragraph. Not law.',
@@ -106,7 +106,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Directions v. Mock State of the Union',
     neutralCitation: 'MOCK 2017 EXAMPLE 746',
     reporterCitations: ['MOCK (2017) 8 EX 746'],
-    court: 'Mock SC · 2017',
+    court: 'Mock Supreme Court',
     judgmentDate: '2017-07-27',
     holding: holding(
       'Directions on committee scrutiny before arrest, since modified on appeal.'
@@ -127,7 +127,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Review v. Mock State',
     neutralCitation: 'MOCK 2018 EXAMPLE 55',
     reporterCitations: ['MOCK (2018) 3 EX 55'],
-    court: 'Mock SC · 2018',
+    court: 'Mock Supreme Court',
     judgmentDate: '2018-09-14',
     holding: holding('Earlier committee directions set aside in their entirety.'),
     operativeParagraph: 'Fixture operative paragraph. Not law.',
@@ -145,7 +145,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Reference v. Mock Authority',
     neutralCitation: 'MOCK 2021 EXAMPLE 12',
     reporterCitations: [],
-    court: 'Mock HC · 2021',
+    court: 'Mock High Court',
     judgmentDate: '2021-03-02',
     holding: holding('Reference answered; the earlier view is questioned but not displaced.'),
     operativeParagraph: 'Fixture operative paragraph. Not law.',
@@ -166,7 +166,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     caseTitle: 'Mock Interim v. Mock Registrar',
     neutralCitation: 'MOCK 2023 EXAMPLE 404',
     reporterCitations: [],
-    court: 'Mock HC · 2023',
+    court: 'Mock High Court',
     judgmentDate: '2023-11-30',
     /**
      * EMPTY, as most of the real corpus is until a summarisation model is
