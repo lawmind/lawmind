@@ -10,6 +10,7 @@
     "./citations/fanout": "./src/citations/fanout.ts",
     "./citations/recheck": "./src/citations/recheck.ts",
     "./search/retrieve": "./src/search/retrieve.ts",
+    "./search/court-category": "./src/search/court-category.ts",
     "./search/graph-expand": "./src/search/graph-expand.ts",
     "./search/query-shape": "./src/search/query-shape.ts",
     "./search/hyde": "./src/search/hyde.ts",

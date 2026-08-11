@@ -19,6 +19,7 @@ import {
   hybridSearch,
   passagesForRerank,
   type RetrievalMode,
+  type SearchFilters,
 } from '@lawmind/api/search/retrieve';
 import type { Sql } from 'postgres';
 
@@ -110,6 +111,14 @@ export async function scoreQuery(
    * unchanged. `docs/ai/STAGES_9_20_PLAN.md` §10.
    */
   mode: RetrievalMode = 'hybrid',
+  /**
+   * Filters applied to the base search. Defaults to none, which is production.
+   *
+   * Stage 10 needs this to run a CONTROLLED comparison: sparse searches every
+   * judgment while dense can only reach what is embedded, so without a filter
+   * the two arms are not searching the same corpus at all. See `arms-cli.ts`.
+   */
+  filters: SearchFilters = {},
 ): Promise<ScoredQuery> {
   /**
    * **HyDE changes what is EMBEDDED, never what is SEARCHED lexically.**
@@ -125,7 +134,7 @@ export async function scoreQuery(
   const excluded = excludedFor(q);
   // Over-fetch by the number removed, so excluding the citing judgment does not
   // quietly shorten the list the advocate would have seen.
-  const raw = await hybridSearch(sql, q.query, vector, {}, depth + excluded.size, mode);
+  const raw = await hybridSearch(sql, q.query, vector, filters, depth + excluded.size, mode);
   let results = raw.filter((r) => !excluded.has(r.judgmentId)).slice(0, depth);
 
   /**
