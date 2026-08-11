@@ -3,6 +3,7 @@ import * as Clipboard from 'expo-clipboard';
 
 import { ReadingView } from './ReadingView';
 import { MOCK_JUDGMENTS } from '../../api/fixtures';
+import { useReadingStore } from '../../state/reading';
 import type { JudgmentDetail } from '../../api/contract';
 
 /**
@@ -193,5 +194,75 @@ describe('saving a passage from an unnumbered judgment', () => {
     await fireEvent.press(screen.getByText('A numbered paragraph.'));
 
     expect(screen.getByText('Save to matter')).toBeTruthy();
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * TAKING A HIGHLIGHT BACK OFF.
+ *
+ * `DELETE /annotations/:annotationId` had no caller and there was no local
+ * remove either, so a highlight was permanent once made — an advocate who
+ * marked the wrong paragraph had no way back.
+ *
+ * The action REPLACES "Save to matter" rather than sitting beside it: a
+ * paragraph is either marked or it is not, and offering both at once asks the
+ * advocate to work out which one applies.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('the highlight actions on a selected paragraph', () => {
+  beforeEach(() => {
+    useReadingStore.setState({ highlights: [], progress: {}, hydrated: true });
+  });
+
+  it('offers "Save to matter" while the paragraph is not highlighted', async () => {
+    await draw(judgmentWith([numbered]));
+
+    await fireEvent.press(screen.getByText('A numbered paragraph.'));
+
+    expect(screen.getByText('Save to matter')).toBeTruthy();
+    expect(screen.queryByText('Remove highlight')).toBeNull();
+  });
+
+  it('offers "Remove highlight" once it is, and not both at once', async () => {
+    useReadingStore.setState({
+      highlights: [
+        {
+          judgmentId: base.judgmentId,
+          paragraphIndex: 1,
+          paragraphNumber: 7,
+          text: 'A numbered paragraph.',
+          savedAt: '2026-08-11T00:00:00.000Z',
+          annotationId: 'ann-1',
+        },
+      ],
+    });
+
+    await draw(judgmentWith([numbered]));
+    await fireEvent.press(screen.getByText('A numbered paragraph.'));
+
+    expect(screen.getByText('Remove highlight')).toBeTruthy();
+    expect(screen.queryByText('Save to matter')).toBeNull();
+  });
+
+  /** Matched by index, the only key that is unique on an unnumbered judgment. */
+  it('offers removal on an unnumbered paragraph too', async () => {
+    useReadingStore.setState({
+      highlights: [
+        {
+          judgmentId: base.judgmentId,
+          paragraphIndex: 0,
+          paragraphNumber: null,
+          text: 'The headnote.',
+          savedAt: '2026-08-11T00:00:00.000Z',
+          annotationId: 'ann-2',
+        },
+      ],
+    });
+
+    await draw(judgmentWith([unnumbered]));
+    await fireEvent.press(screen.getByText('The headnote.'));
+
+    expect(screen.getByText('Remove highlight')).toBeTruthy();
   });
 });

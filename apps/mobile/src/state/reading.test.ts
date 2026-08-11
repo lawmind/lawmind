@@ -19,11 +19,12 @@ import { useReadingStore, type Highlight } from './reading';
  */
 
 jest.mock('../api/client', () => ({
-  api: { createAnnotation: jest.fn(), annotations: jest.fn() },
+  api: { createAnnotation: jest.fn(), annotations: jest.fn(), deleteAnnotation: jest.fn() },
 }));
 
 const createAnnotation = api.createAnnotation as jest.MockedFunction<typeof api.createAnnotation>;
 const listAnnotations = api.annotations as jest.MockedFunction<typeof api.annotations>;
+const deleteAnnotation = api.deleteAnnotation as jest.MockedFunction<typeof api.deleteAnnotation>;
 
 const highlight = (over: Partial<Highlight> = {}): Highlight => ({
   judgmentId: 'j-1',
@@ -39,6 +40,8 @@ beforeEach(async () => {
   useReadingStore.setState({ progress: {}, highlights: [], hydrated: false });
   createAnnotation.mockReset();
   listAnnotations.mockReset();
+  deleteAnnotation.mockReset();
+  deleteAnnotation.mockResolvedValue({ ok: true, data: { deleted: true } });
 });
 
 it('writes locally before the server call resolves', async () => {
@@ -339,5 +342,101 @@ describe('pulling highlights back from the server', () => {
     await useReadingStore.getState().syncAnnotations('j-1');
 
     expect(useReadingStore.getState().highlights).toHaveLength(1);
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * TAKING A HIGHLIGHT BACK OFF — `DELETE /annotations/:annotationId`.
+ *
+ * The route has existed as long as the write, with no caller and no local
+ * remove either, so a highlight was PERMANENT once made: an advocate who marked
+ * the wrong paragraph was stuck with it. The third write-only path on this
+ * feature, after the save that never synced back and the list that was never
+ * read.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('removing a highlight', () => {
+  it('takes it off locally and tells the server', async () => {
+    createAnnotation.mockResolvedValue({
+      ok: true,
+      data: {
+        annotation: {
+          annotationId: 'ann-9',
+          judgmentId: 'j-1',
+          matterId: null,
+          paragraphNumber: 11,
+          paragraphIndex: 10,
+          quote: 'A passage.',
+          note: null,
+          createdAt: '2026-08-11T00:00:00.000Z',
+        },
+      },
+    });
+    await useReadingStore.getState().addHighlight(highlight({ text: 'A passage.' }));
+
+    const saved = useReadingStore.getState().highlights[0]!;
+    await useReadingStore.getState().removeHighlight(saved);
+
+    expect(useReadingStore.getState().highlights).toHaveLength(0);
+    expect(deleteAnnotation).toHaveBeenCalledWith('ann-9');
+  });
+
+  /**
+   * A highlight with no `annotationId` never reached the server. Asking would
+   * 404 on an id we do not have.
+   */
+  it('asks the server nothing about a highlight that never synced', async () => {
+    createAnnotation.mockImplementation(() => new Promise(() => {}));
+    void useReadingStore.getState().addHighlight(highlight());
+
+    const pending = useReadingStore.getState().highlights[0]!;
+    await useReadingStore.getState().removeHighlight(pending);
+
+    expect(useReadingStore.getState().highlights).toHaveLength(0);
+    expect(deleteAnnotation).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Undoing the advocate's action because a request timed out is a worse
+   * answer than a row that stays removed and is re-deleted on the next attempt.
+   */
+  it('does not put it back when the server call fails', async () => {
+    createAnnotation.mockResolvedValue({
+      ok: true,
+      data: {
+        annotation: {
+          annotationId: 'ann-9',
+          judgmentId: 'j-1',
+          matterId: null,
+          paragraphNumber: 11,
+          paragraphIndex: 10,
+          quote: 'A passage.',
+          note: null,
+          createdAt: '2026-08-11T00:00:00.000Z',
+        },
+      },
+    });
+    await useReadingStore.getState().addHighlight(highlight({ text: 'A passage.' }));
+    deleteAnnotation.mockResolvedValue({
+      ok: false,
+      error: { code: 'network', message: 'offline' },
+    });
+
+    const saved = useReadingStore.getState().highlights[0]!;
+    await useReadingStore.getState().removeHighlight(saved);
+
+    expect(useReadingStore.getState().highlights).toHaveLength(0);
+  });
+
+  it('leaves every other highlight alone', async () => {
+    createAnnotation.mockImplementation(() => new Promise(() => {}));
+    void useReadingStore.getState().addHighlight(highlight({ paragraphIndex: 1, text: 'One.' }));
+    void useReadingStore.getState().addHighlight(highlight({ paragraphIndex: 2, text: 'Two.' }));
+
+    const first = useReadingStore.getState().highlights[0]!;
+    await useReadingStore.getState().removeHighlight(first);
+
+    expect(useReadingStore.getState().highlights.map((h) => h.text)).toEqual(['Two.']);
   });
 });

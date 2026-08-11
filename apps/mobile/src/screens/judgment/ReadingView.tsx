@@ -101,6 +101,7 @@ export function ReadingView({
   const setProgress = useReadingStore((s) => s.setProgress);
   const addHighlight = useReadingStore((s) => s.addHighlight);
   const syncAnnotations = useReadingStore((s) => s.syncAnnotations);
+  const removeHighlight = useReadingStore((s) => s.removeHighlight);
   const progress = useReadingStore((s) => s.progress[judgment.judgmentId]);
   const highlights = useHighlightsFor(judgment.judgmentId);
   /**
@@ -686,6 +687,17 @@ export function ReadingView({
               setToastMessage('Copied.');
             }}
             onPickMatter={() => setPickerFor(item)}
+            onRemoveHighlight={() => {
+              /*
+                The highlight to remove is the one on THIS paragraph, found by
+                index — the same key the highlighted Set uses, and the only one
+                that is unique on an unnumbered judgment.
+              */
+              const mark = highlights.find((h) => h.paragraphIndex === item.paragraphIndex);
+              if (!mark) return;
+              haptics.commit();
+              void removeHighlight(mark);
+            }}
             onSaveToMatter={
               /**
                * ─────────────────────────────────────────────────────────────
@@ -820,6 +832,7 @@ function Paragraph({
   onLink,
   onSaveToMatter,
   onPickMatter,
+  onRemoveHighlight,
   onCopy,
   onLinkCopy,
   onOpenCited,
@@ -837,6 +850,8 @@ function Paragraph({
   onSaveToMatter?: () => void;
   /** Opens the matter picker. Same nullability as `onSaveToMatter`. */
   onPickMatter?: () => void;
+  /** Takes the highlight back off. Drawn in place of "Save to matter". */
+  onRemoveHighlight: () => void;
   onCopy: () => void;
   onLinkCopy: () => void;
   onOpenCited?: () => void;
@@ -898,11 +913,30 @@ function Paragraph({
 
         {selected ? (
           <View style={styles.actions}>
-            <Pressable accessibilityRole="button" onPress={onPickMatter}>
-              <View style={styles.actionSolid}>
-                <Text variant="ui">Save to matter</Text>
-              </View>
-            </Pressable>
+            {/*
+              TAKING A HIGHLIGHT BACK OFF, offered only where there is one.
+
+              `DELETE /annotations/:annotationId` has existed as long as the
+              write and had no caller, and there was no local remove either —
+              so a highlight was PERMANENT once made, and an advocate who
+              marked the wrong paragraph had no way back. It replaces "Save to
+              matter" rather than sitting beside it: a paragraph is either
+              marked or it is not, and offering both at once asks the advocate
+              to work out which one applies.
+            */}
+            {highlighted ? (
+              <Pressable accessibilityRole="button" onPress={onRemoveHighlight}>
+                <View style={styles.actionGhost}>
+                  <Text variant="ui">Remove highlight</Text>
+                </View>
+              </Pressable>
+            ) : (
+              <Pressable accessibilityRole="button" onPress={onPickMatter}>
+                <View style={styles.actionSolid}>
+                  <Text variant="ui">Save to matter</Text>
+                </View>
+              </Pressable>
+            )}
             <Pressable accessibilityRole="button" onPress={onCopy}>
               <View style={styles.actionGhost}>
                 {/*
