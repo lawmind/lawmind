@@ -29,6 +29,7 @@ it here in the same commit.
 | Indian language translation | **IndicTrans2** (AI4Bharat) | MIT | |
 | Indian language corpus | **IndicCorp v2** (AI4Bharat) | CC-0 | |
 | Fine-tuning | **Unsloth** + HF PEFT + TRL | Apache 2.0 | Blocked until ₹3L MRR |
+| Rhetorical roles | **OpenNyAI `InRhetoricalRoles`** | **Apache 2.0** (weights) · MIT (library) | **Surveyed 11 Aug 2026, Stage 15 — do NOT build a classifier.** Indian-law-specific, 13 labels, authors report weighted F1 77.7. **The BUILD dataset is CC BY-SA 4.0 — using the pre-trained weights is clean, TRAINING on the dataset is a share-alike question nobody may answer alone.** `docs/ai/RHETORICAL_ROLES_STAGE15_SURVEY.md` |
 | Build discipline | **ponytail** | MIT | `.ai/02-tools.md` |
 
 Both OCR engines are Apache 2.0, so **OD-7 never had a licensing dimension.** It
