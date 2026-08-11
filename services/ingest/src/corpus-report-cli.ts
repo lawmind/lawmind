@@ -24,9 +24,28 @@ import postgres from 'postgres';
 type Report = {
   generatedAt: string;
   corpus: { total: number; supremeCourt: number; highCourt: number };
-  identity: { contentHashCoverage: number; cnrCoverage: number; duplicateGroups: number; duplicateRows: number };
+  identity: {
+    contentHashCoverage: number;
+    cnrCoverage: number;
+    duplicateGroups: number;
+    duplicateRows: number;
+    byCourtClass: {
+      court: 'Supreme Court' | 'High Court';
+      total: number;
+      contentHashCoverage: number;
+      cnrCoverage: number;
+      nativeTextCoverage: number;
+      nativeTextTrue: number;
+      nativeTextFalse: number;
+    }[];
+  };
   metadata: { sourceDocumentTypeCoverage: number; sourceDocumentTypeByCourt: { court: string; coverage: number }[] };
-  quality: { textQualityAvg: number | null; belowNinetyPercent: number; textQualityMissing: number };
+  quality: {
+    textQualityAvg: number | null;
+    belowNinetyPercent: number;
+    textQualityMissing: number;
+    byCourtClass: { court: 'Supreme Court' | 'High Court'; avg: number | null; below90: number }[];
+  };
   citationGraph: { edges: number; resolved: number; resolvedRate: number };
   treatment: Record<string, number>;
   language: Record<string, number>;
@@ -54,6 +73,22 @@ async function main(): Promise<void> {
         SELECT count(*) AS n FROM judgments WHERE content_hash IS NOT NULL
         GROUP BY content_hash HAVING count(*) > 1
       ) t`;
+    const byCourtClassRows = await sql<{
+      class: 'Supreme Court' | 'High Court';
+      total: string;
+      hash_cov: string;
+      cnr_cov: string;
+      native_true: string;
+      native_false: string;
+    }[]>`
+      SELECT
+        CASE WHEN court = 'Supreme Court of India' THEN 'Supreme Court' ELSE 'High Court' END AS class,
+        count(*)::text AS total,
+        count(content_hash)::text AS hash_cov,
+        count(cnr)::text AS cnr_cov,
+        count(*) FILTER (WHERE native_text = true)::text AS native_true,
+        count(*) FILTER (WHERE native_text = false)::text AS native_false
+      FROM judgments GROUP BY class`;
 
     const [docType] = await sql<{ cov: string; total: string }[]>`
       SELECT count(source_document_type)::text AS cov, count(*)::text AS total FROM judgments`;
@@ -68,6 +103,12 @@ async function main(): Promise<void> {
              count(*) FILTER (WHERE text_quality < 0.9)::text AS below90,
              count(*) FILTER (WHERE text_quality IS NULL)::text AS missing
       FROM judgments`;
+    const qualityByCourtClassRows = await sql<{ class: 'Supreme Court' | 'High Court'; avg: string | null; below90: string }[]>`
+      SELECT
+        CASE WHEN court = 'Supreme Court of India' THEN 'Supreme Court' ELSE 'High Court' END AS class,
+        avg(text_quality)::text AS avg,
+        count(*) FILTER (WHERE text_quality < 0.9)::text AS below90
+      FROM judgments GROUP BY class`;
 
     const [citations] = await sql<{ edges: string; resolved: string }[]>`
       SELECT count(*)::text AS edges, count(cited_judgment_id)::text AS resolved FROM judgment_citations`;
@@ -102,6 +143,20 @@ async function main(): Promise<void> {
         cnrCoverage: Number(identity?.cnr_cov ?? 0) / Math.max(1, Number(identity?.total ?? 1)),
         duplicateGroups: Number(dupes?.groups ?? 0),
         duplicateRows: Number(dupes?.rows ?? 0),
+        byCourtClass: byCourtClassRows.map((r) => {
+          const total = Number(r.total);
+          const nativeTrue = Number(r.native_true);
+          const nativeFalse = Number(r.native_false);
+          return {
+            court: r.class,
+            total,
+            contentHashCoverage: Number(r.hash_cov) / Math.max(1, total),
+            cnrCoverage: Number(r.cnr_cov) / Math.max(1, total),
+            nativeTextCoverage: (nativeTrue + nativeFalse) / Math.max(1, total),
+            nativeTextTrue: nativeTrue,
+            nativeTextFalse: nativeFalse,
+          };
+        }),
       },
       metadata: {
         sourceDocumentTypeCoverage: Number(docType?.cov ?? 0) / Math.max(1, Number(docType?.total ?? 1)),
@@ -114,6 +169,11 @@ async function main(): Promise<void> {
         textQualityAvg: quality?.avg ? Number(quality.avg) : null,
         belowNinetyPercent: Number(quality?.below90 ?? 0),
         textQualityMissing: Number(quality?.missing ?? 0),
+        byCourtClass: qualityByCourtClassRows.map((r) => ({
+          court: r.class,
+          avg: r.avg ? Number(r.avg) : null,
+          below90: Number(r.below90),
+        })),
       },
       citationGraph: {
         edges: Number(citations?.edges ?? 0),
@@ -143,7 +203,14 @@ async function main(): Promise<void> {
     console.log('Identity:');
     console.log(`  content_hash coverage: ${(report.identity.contentHashCoverage * 100).toFixed(1)}%`);
     console.log(`  cnr coverage:          ${(report.identity.cnrCoverage * 100).toFixed(1)}%`);
-    console.log(`  duplicate groups:      ${report.identity.duplicateGroups} (${report.identity.duplicateRows} rows, ${((report.identity.duplicateRows / report.corpus.total) * 100).toFixed(1)}%)\n`);
+    console.log(`  duplicate groups:      ${report.identity.duplicateGroups} (${report.identity.duplicateRows} rows, ${((report.identity.duplicateRows / report.corpus.total) * 100).toFixed(1)}%)`);
+    console.log('  by court class (content_hash / cnr / native_text coverage, ingested rows only):');
+    for (const c of report.identity.byCourtClass) {
+      console.log(
+        `    ${c.court.padEnd(15)} n=${c.total.toLocaleString().padStart(7)}  hash ${(c.contentHashCoverage * 100).toFixed(1).padStart(5)}%  cnr ${(c.cnrCoverage * 100).toFixed(1).padStart(5)}%  native_text ${(c.nativeTextCoverage * 100).toFixed(1).padStart(5)}% (true=${c.nativeTextTrue}, false=${c.nativeTextFalse})`,
+      );
+    }
+    console.log('');
 
     console.log('Metadata completeness:');
     console.log(`  source_document_type (corpus-wide): ${(report.metadata.sourceDocumentTypeCoverage * 100).toFixed(1)}%`);
@@ -156,7 +223,11 @@ async function main(): Promise<void> {
     console.log('Extraction quality (text_quality — visible damage proxy, NOT accuracy):');
     console.log(`  average: ${report.quality.textQualityAvg?.toFixed(3) ?? 'n/a'}`);
     console.log(`  below 0.90: ${report.quality.belowNinetyPercent.toLocaleString()} rows`);
-    console.log(`  missing (not yet computed): ${report.quality.textQualityMissing.toLocaleString()} rows\n`);
+    console.log(`  missing (not yet computed): ${report.quality.textQualityMissing.toLocaleString()} rows`);
+    for (const c of report.quality.byCourtClass) {
+      console.log(`    ${c.court.padEnd(15)} avg=${c.avg?.toFixed(3) ?? 'n/a'}  below 0.90: ${c.below90.toLocaleString()}`);
+    }
+    console.log('');
 
     console.log('Citation graph:');
     console.log(`  edges: ${report.citationGraph.edges.toLocaleString()}`);
@@ -184,8 +255,7 @@ async function main(): Promise<void> {
     console.log(`  IPC<->BNS etc. mappings: ${report.statutes.mappings.toLocaleString()} (0 by design — not yet sourced, REB §7)\n`);
 
     console.log('NOT measured here (see file header): paragraph-extraction quality');
-    console.log('(numberedShare) at corpus scale, native-vs-scanned classification,');
-    console.log('per-source freshness cursor.');
+    console.log('(numberedShare) at corpus scale, per-source freshness cursor.');
 
     const jsonPathIdx = process.argv.indexOf('--json');
     if (jsonPathIdx !== -1 && process.argv[jsonPathIdx + 1]) {

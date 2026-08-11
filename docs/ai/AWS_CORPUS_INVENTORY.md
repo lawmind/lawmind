@@ -370,10 +370,16 @@ today's findings:**
    real disk/DB cost, real judgment-share unknown outside the 8% sample),
    not an engineering default.
 5. **Verify whether the HC bucket has cross-partition duplication of its
-   own** (§1's open caveat) — the SC mechanism cannot recur for HC by
-   construction (`pdfUrlFor` keys off the partition, not a row field), but
-   that was reasoned, not measured. A real HC-side duplicate-listing check
-   was not performed this session.
+   own** (§1's open caveat) — **SAMPLED, 11 Aug 2026** (`docs/ai/
+   HC_CORPUS_CHARACTERIZATION.md` §8–9): 26 files / ~504,000 rows across the
+   highest-volume courts, both variants. Plain variant 99.9% within-file
+   distinct-CNR (negligible); mobile variant 72.3% average, 34.7%–99.8%
+   range, but that is real one-CNR-many-orders structure, not duplication.
+   **Cross-file collision remains `UNKNOWN`** — the sample deliberately does
+   not hold CNRs across files, since doing that properly means the same
+   full 1,493-file sweep this item exists to defer. The SC mechanism still
+   cannot recur for HC by construction, and the sample adds no evidence
+   against that reasoning either way.
 6. Everything already recorded in `DATA_MOAT_PROGRAM.md` §7 (Gazette
    ingest build, OpenNyAI/NyayaAnumana audit pending a concrete need,
    eCourts scope blocked on the founder) stands unchanged.

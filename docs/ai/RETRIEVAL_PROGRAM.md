@@ -35,7 +35,7 @@ block — see §DECISIONS).
 | learned sparse | — | **PLANNED** | P4 |
 | dense retrieval | `judgment_chunks`, 616,197 × 1024-dim, HNSW 4.7 GB | **IMPLEMENTED (SC only)** | 0 High Court chunks |
 | graph retrieval | `search/graph-expand.ts`, `judgment_citations` 227,478 edges / 97,876 resolved | **PARTIAL** | not a ranking signal yet |
-| fusion | `search/retrieve.ts` | **PARTIAL** | UNKNOWN whether RRF or ad-hoc; not inspected this session |
+| fusion | `search/retrieve.ts` | **IMPLEMENTED** | Reciprocal Rank Fusion, `rrf()`, `RRF_K = 60` — confirmed by reading the code 11 Aug (`docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md` §1). Corrects this table's earlier "UNKNOWN" entry, same day |
 | reranking | `rerank-passages.ts` | **PARTIAL** | UNKNOWN quality; unmeasured against alternatives |
 | proposition / evidence | — | **PLANNED** | P7 |
 | currentness / treatment | `overruled_status`, `judgments/as-at.ts`, `propagate-treatment.ts` | **IMPLEMENTED** | read live at render, never cached |
@@ -102,6 +102,14 @@ that explains a wrong result is worse than no signal.
    counts are not authority counts.**
 3. **004 — `ts_rank` vs real BM25 (P2).** Measure before replacing anything.
    Railway offers only `pg_trgm` and `vector`; no BM25 extension is installable.
+   **Design landed 11 Aug**, `docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md` — full
+   six-arm comparison (sparse/BM25/dense/hybrid/hybrid+rerank/hybrid+graph+
+   rerank) scoped against the real 283-query golden set, all Supreme-Court-
+   cited so it needs no new embedding job. Prerequisites identified, not yet
+   built: an isolated-arm mode on `hybridSearch` (today only fused), a
+   hand-rolled BM25 scorer over the existing GIN/`ts_stat()` path (no new
+   extension needed), nDCG@K (closed-form given single-gold queries), and
+   per-arm latency timing.
 4. **005 — citation graph as a ranking signal (P6/§H).** 97,876 edges. **Not
    citation count alone** — §H.
 5. **006 — proposition/evidence verification skeleton (P7/§I).**

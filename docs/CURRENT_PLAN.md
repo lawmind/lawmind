@@ -811,6 +811,44 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     keep source corpus size, ingested corpus size, unique canonical
     documents and unique cases from ever being conflated again.
 
+11. **`docs/ai/HC_CORPUS_CHARACTERIZATION.md` — the HC bucket characterized
+    before any full cross-partition dedup sweep, per the founder's HC CORPUS
+    CHARACTERIZATION directive, 11 Aug.** Row distribution by court/year:
+    full census, `docs/HC_METADATA_SURVEY.json` — Allahabad alone is 17% of
+    the last-10-year corpus; 94% of all HC rows are 2010 or later. Ingested-
+    row identity/quality broken out by court class for the first time
+    (`corpus-report-cli.ts` extended): `content_hash`/`cnr` both 100% for HC,
+    matching SC; `native_text` 0.0% for HC (expected — not backfillable
+    without re-fetching PDFs); `text_quality` averages 0.968 HC vs 0.987 SC,
+    a real ~30x gap in sub-0.90 rate, not previously measured this
+    granularly. **Source-side duplication — SAMPLED, not fully measured**:
+    new `hc-cnr-sample-cli.ts`, 26 files / ~504,000 rows. Plain variant 99.9%
+    within-file distinct-CNR (negligible); mobile variant 72.3% average,
+    34.7%-99.8% range — real one-CNR-many-orders structure, not a defect.
+    Cross-file collision stays `UNKNOWN`, deliberately not chased at full-
+    sweep cost given the sampled rate is low. **New finding**: the plain
+    variant's `disposal_nature` column (all 25 courts, unlike mobile-only
+    `order_type`) sampled as populated-when-disposed/blank-when-pending — a
+    candidate cheap, metadata-only judgment-density signal, named as the
+    next task, not built this session.
+12. **`docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md` — designed, not executed,
+    same directive.** Mapped the founder's six requested comparison arms
+    (lexical/BM25, PG text search, dense, hybrid, RRF, reranking) against
+    the real code. Corrected a stale `RETRIEVAL_PROGRAM.md` claim: fusion IS
+    RRF (`rrf()`, `RRF_K=60`), not "UNKNOWN" as previously recorded.
+    Reranking already exists and is already measured. BM25 does not exist
+    (Railway has no extension; scoped as a hand-rolled scorer over the
+    existing GIN index, not a new dependency). Neither lexical nor dense can
+    be scored in isolation today — `hybridSearch` always fuses; an isolated-
+    arm mode is the one real prerequisite. **The 283-query golden set
+    (`queries.eval.json`) is 100% Supreme-Court-cited**, so the full six-arm
+    bake-off needs zero new embeddings, directly satisfying the directive's
+    instruction not to start a massive embedding job first. Also found: three
+    harness entry points read three different query-fixture slices (25 for
+    CI, 100 of 283 by default for `ab-cli.ts`, 283 available) — a bake-off
+    must explicitly use the full 283, not silently inherit the smaller
+    defaults built for CI speed.
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court

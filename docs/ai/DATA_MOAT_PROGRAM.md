@@ -430,6 +430,38 @@ Task packets for items 1–2 (the two cheapest, most concretely scoped, and
 most directly blocking existing work) are being written to `docs/ai/tasks/`
 alongside this document.
 
+8. **HC corpus characterization — DONE, 11 Aug 2026, per the founder's HC
+   CORPUS CHARACTERIZATION directive.** `docs/ai/HC_CORPUS_CHARACTERIZATION.md`
+   — full census of row distribution by court and year (`docs/
+   HC_METADATA_SURVEY.json`, all 1,493 files); ingested-row identity/quality
+   coverage broken out by court class for the first time (`content_hash`/
+   `cnr` both 100% for HC same as SC; `native_text` 0.0% for HC — not yet
+   backfilled, expected; `text_quality` averages 0.968 HC vs 0.987 SC, a
+   real ~30× gap in sub-0.90 rate not previously measured this granularly).
+   **§5's open item — HC cross-partition duplication — SAMPLED, not fully
+   measured**: `services/ingest/src/harvest/hc-cnr-sample-cli.ts`, 26 files /
+   ~504,000 rows across the highest-volume courts and both variants. Plain
+   variant: 99.9% within-file distinct-CNR (negligible duplication). Mobile
+   variant: 72.3% average, 34.7%–99.8% range — real multiplicity (many
+   orders per case), not a defect. Cross-file collision remains `UNKNOWN`,
+   explicitly not chased at full-sweep cost given the sampled rate is low.
+   **New finding, not previously known**: the plain-variant `disposal_nature`
+   column (present on all 25 courts, unlike the mobile-only `order_type`) is
+   a candidate cheap, metadata-only judgment-density signal — sampled
+   pattern (populated when disposed, blank when pending) suggests a real
+   next task, named but not built.
+9. **Retrieval-scale benchmark — DESIGNED, not executed, 11 Aug 2026.**
+   `docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md`. Mapped the founder's six
+   requested comparison arms against the actual code: fusion is RRF
+   (corrects a stale `RETRIEVAL_PROGRAM.md` "UNKNOWN"), reranking already
+   measured, BM25 does not exist and is scoped (hand-rolled over the
+   existing GIN index, no new Railway extension), lexical/dense cannot be
+   scored in isolation today (`hybridSearch` always fuses). **The 283-query
+   golden set is 100% Supreme-Court-cited**, so the full six-arm bake-off
+   needs zero new embeddings — directly satisfying the founder's instruction
+   not to begin a massive embedding job before the evaluation architecture
+   justifies one.
+
 ---
 
 ## 8 · WHAT THIS DOCUMENT DOES NOT DO
