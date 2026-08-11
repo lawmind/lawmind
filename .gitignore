@@ -53,3 +53,4 @@ scripts/recall-ground-truth.json
 # they name a process id on one machine and are meaningless in the repo.
 *.pid
 hc-citations.err
+arms-run.log

@@ -491,20 +491,46 @@ export async function passagesForRerank(
   return passages;
 }
 
+/**
+ * Which ranker(s) a search runs. `hybrid` is production and the default —
+ * **nothing about the live search path changes by adding this.**
+ *
+ * `sparse` and `dense` exist for the Stage 10 bake-off
+ * (`docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md` §3, `docs/ai/STAGES_9_20_PLAN.md`).
+ * The design pass named this as the single concrete engineering gap in the way
+ * of a six-arm comparison: this function has always computed the two candidate
+ * lists separately and then fused them, with no way to ask for one alone, so
+ * "is the dense half earning its keep" was unanswerable by measurement.
+ *
+ * An **additive parameter, not a redesign** — the shape already supported it.
+ */
+export type RetrievalMode = 'hybrid' | 'sparse' | 'dense';
+
 export async function hybridSearch(
   sql: Sql,
   query: string,
   queryVector: string | null,
   filters: SearchFilters,
   limit: number,
+  mode: RetrievalMode = 'hybrid',
 ): Promise<RetrievedJudgment[]> {
-  const sparseRanked = await sparse(sql, query, filters);
+  // Each arm is skipped rather than computed-and-discarded: an isolated-arm
+  // measurement that still paid for the other half would report the fused
+  // system's latency and call it the arm's.
+  const sparseRanked = mode === 'dense' ? [] : await sparse(sql, query, filters);
   // A corpus with no embeddings yet still searches, lexically. Returning nothing
   // because half the pipeline is cold would be worse than returning less.
-  const denseResult = queryVector
-    ? await dense(sql, queryVector, filters)
-    : { ranked: [] as Ranked[], bestChunk: new Map<string, string>() };
+  const denseResult =
+    queryVector && mode !== 'sparse'
+      ? await dense(sql, queryVector, filters)
+      : { ranked: [] as Ranked[], bestChunk: new Map<string, string>() };
 
+  /**
+   * RRF over one list is not fusion, but it is order-preserving — `1/(k+rank)`
+   * is monotonically decreasing in rank — so an isolated arm keeps exactly the
+   * order its own ranker produced. Running the single list through the same
+   * function rather than around it means the two paths cannot drift apart.
+   */
   const scores = rrf([sparseRanked, denseResult.ranked]);
 
   /**
@@ -518,6 +544,15 @@ export async function hybridSearch(
    * Everything else keeps its order and nothing is dropped — the pinned
    * judgment is moved to the front of the list it was already in, or added to
    * it. `CITATION_HARNESS.md`'s zero silent-drop threshold is untouched.
+   */
+  /**
+   * Pinning runs in EVERY mode, deliberately.
+   *
+   * It is a third mechanism — exact lookup — and not part of either ranker, so
+   * it contributes the same result to all three arms and cannot bias a
+   * comparison between them. Suppressing it in isolated modes would measure a
+   * system nobody runs; leaving it in measures the real arms of the real
+   * pipeline. `docs/ai/STAGES_9_20_PLAN.md` §10.
    */
   const shape = classifyQuery(query);
   const pinned =

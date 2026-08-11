@@ -15,7 +15,11 @@
  * those are about what is WRITTEN and rendered rather than about order.
  */
 import { expandByCitations } from '@lawmind/api/search/graph-expand';
-import { hybridSearch, passagesForRerank } from '@lawmind/api/search/retrieve';
+import {
+  hybridSearch,
+  passagesForRerank,
+  type RetrievalMode,
+} from '@lawmind/api/search/retrieve';
 import type { Sql } from 'postgres';
 
 import { PRECISION_AT_K } from './metrics.ts';
@@ -100,6 +104,12 @@ export async function scoreQuery(
   rerank?: (query: string, passages: readonly string[]) => Promise<number[]>,
   graph = false,
   hyde?: (query: string) => Promise<string>,
+  /**
+   * Which ranker(s) the base search runs — Stage 10's six-arm bake-off.
+   * Defaults to `hybrid`, which is production, so every existing caller is
+   * unchanged. `docs/ai/STAGES_9_20_PLAN.md` §10.
+   */
+  mode: RetrievalMode = 'hybrid',
 ): Promise<ScoredQuery> {
   /**
    * **HyDE changes what is EMBEDDED, never what is SEARCHED lexically.**
@@ -115,7 +125,7 @@ export async function scoreQuery(
   const excluded = excludedFor(q);
   // Over-fetch by the number removed, so excluding the citing judgment does not
   // quietly shorten the list the advocate would have seen.
-  const raw = await hybridSearch(sql, q.query, vector, {}, depth + excluded.size);
+  const raw = await hybridSearch(sql, q.query, vector, {}, depth + excluded.size, mode);
   let results = raw.filter((r) => !excluded.has(r.judgmentId)).slice(0, depth);
 
   /**

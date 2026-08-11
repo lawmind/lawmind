@@ -11,6 +11,7 @@
     "build:queries": "tsx src/build-queries.ts",
     "diagnose": "tsx src/diagnose-cli.ts",
     "ab": "tsx src/ab-cli.ts",
+    "arms": "tsx src/arms-cli.ts",
     "citator": "tsx src/citator-report.ts",
     "deployed-safety": "tsx src/deployed-safety-cli.ts",
     "deployed-judgment-safety": "tsx src/deployed-judgment-safety-cli.ts"
