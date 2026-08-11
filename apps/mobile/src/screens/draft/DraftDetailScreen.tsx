@@ -10,6 +10,7 @@ import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { DraftCitation, DraftDocument } from '../../api/contract';
 import { citationRender } from '../../citation/renderState';
+import { useRecentItems } from '../../state/recentItems';
 import { color, space } from '../../theme/tokens';
 
 /**
@@ -50,13 +51,20 @@ export function DraftDetailScreen({
 }) {
   const [document, setDocument] = useState<DraftDocument | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const recordRecent = useRecentItems((s) => s.record);
 
   useEffect(() => {
     let alive = true;
     void api.document(documentId).then((r) => {
       if (!alive) return;
-      if (r.ok) setDocument(r.data.document);
-      else setLoadError(r.error.message);
+      if (r.ok) {
+        setDocument(r.data.document);
+        // No title on this response — DraftDocument carries no matterTitle,
+        // same reason the list screen falls back to it.
+        recordRecent({ kind: 'draft', id: documentId, title: humanize(r.data.document.documentType) });
+        return;
+      }
+      setLoadError(r.error.message);
     });
     return () => {
       alive = false;

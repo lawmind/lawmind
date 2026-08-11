@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { CalendarDays } from 'lucide-react-native';
+import { CalendarDays, Command } from 'lucide-react-native';
 
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
@@ -15,6 +15,7 @@ import { Text } from '../../components/Text';
 import type { Alert } from '../../api/contract';
 import { alertNarrative } from '../../citation/alertNarrative';
 import { useAlerts } from '../../state/alerts';
+import { useCommandPalette } from '../../state/commandPalette';
 import { describeCacheAge } from '../../state/offlineCache';
 import { useSession } from '../../state/session';
 import {
@@ -32,7 +33,7 @@ import {
   todayCivil,
   weekdayName,
 } from '../../theme/hearingDate';
-import { color, space } from '../../theme/tokens';
+import { color, size, space } from '../../theme/tokens';
 import { BriefingSeal } from './BriefingSeal';
 
 /**
@@ -59,6 +60,7 @@ export function TodayScreen() {
   const router = useRouter();
   const profile = useSession((s) => s.profile);
   const status = useSession((s) => s.status);
+  const openCommandPalette = useCommandPalette((s) => s.setOpen);
 
   const matters = usePractice((s) => s.matters);
   const briefings = usePractice((s) => s.briefings);
@@ -186,16 +188,34 @@ export function TodayScreen() {
           <Text variant="eyebrow">
             {weekdayName(today).toUpperCase()}, {formatGutter(today)}
           </Text>
-          <Pressable
-            accessibilityLabel="Profile"
-            accessibilityRole="button"
-            onPress={() => router.push('/profile' as never)}
-            style={styles.avatar}
-          >
-            <Text variant="uiStrong" style={styles.avatarLabel}>
-              {initials(profile?.fullName)}
-            </Text>
-          </Pressable>
+          <View style={styles.headActions}>
+            {/*
+              THE COMMAND PALETTE'S MOBILE ENTRY POINT — goldfinal.zip V2.2
+              `9_GLOBAL_COMMAND_CENTER.md`: "a prominent but compact global-
+              search trigger... do not occupy excessive screen space." Placed
+              on Today because it is the primary screen every session opens
+              on, not because the palette is Today-specific — desktop's entry
+              is Cmd/Ctrl+K, bound once at `app/_layout.tsx`.
+            */}
+            <Pressable
+              accessibilityLabel="Open command palette"
+              accessibilityRole="button"
+              onPress={() => openCommandPalette(true)}
+              style={styles.commandTrigger}
+            >
+              <Command color={color.inkMuted} size={18} strokeWidth={1.5} />
+            </Pressable>
+            <Pressable
+              accessibilityLabel="Profile"
+              accessibilityRole="button"
+              onPress={() => router.push('/profile' as never)}
+              style={styles.avatar}
+            >
+              <Text variant="uiStrong" style={styles.avatarLabel}>
+                {initials(profile?.fullName)}
+              </Text>
+            </Pressable>
+          </View>
         </View>
         <Text variant="uiStrong" scale="title" style={styles.greeting}>
           {greeting}
@@ -458,6 +478,13 @@ function HearingRow({ row, onPress }: { row: ListedMatter; onPress: () => void }
 const styles = StyleSheet.create({
   body: { padding: space.sm, gap: space.md, paddingBottom: space.xxl },
   headRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  headActions: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
+  commandTrigger: {
+    width: size.touch,
+    height: size.touch,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   avatar: {
     width: 36,
     height: 36,

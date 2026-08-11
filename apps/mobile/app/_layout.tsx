@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { CommandPalette } from '../src/components/CommandPalette';
 import { useAppFonts } from '../src/theme/fonts';
+import { useCommandPalette } from '../src/state/commandPalette';
 import { useOutbox } from '../src/state/outbox';
 import { useReadingStore } from '../src/state/reading';
 import { useSession } from '../src/state/session';
@@ -74,6 +76,26 @@ export default function RootLayout() {
     void hydrateSession();
   }, [hydrateSession]);
 
+  /**
+   * CMD/CTRL+K — THE COMMAND PALETTE, WEB ONLY. `9_GLOBAL_COMMAND_CENTER.md`:
+   * "Primary shortcut: Cmd/Ctrl + K." Native has no hardware keyboard to bind
+   * this to as a rule, so the phone's entry point is the tab-bar trigger in
+   * `(tabs)/_layout.tsx` instead — `Platform.OS === 'web'` here is the
+   * correct gate, not a temporary one.
+   */
+  const toggleCommandPalette = useCommandPalette((s) => s.toggle);
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        toggleCommandPalette();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [toggleCommandPalette]);
+
   // Nothing renders until the faces are in. A Hindi string in a fallback face
   // is a screen of missing-glyph boxes, and that is a product failure here.
   if (!fontsLoaded && !fontError) return null;
@@ -115,6 +137,8 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
+        {/* Mounted once, globally — a focused layer over whatever screen is live. */}
+        <CommandPalette />
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

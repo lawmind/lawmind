@@ -22,6 +22,7 @@ import { citationRender } from '../../citation/renderState';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { AddEventSheet } from './AddEventSheet';
 import { usePractice } from '../../state/practice';
+import { useRecentItems } from '../../state/recentItems';
 import {
   describeHearingDate,
   formatGutter,
@@ -147,6 +148,7 @@ export function MatterScreen({
   const [removeError, setRemoveError] = useState<string | null>(null);
   const [addEventError, setAddEventError] = useState<string | null>(null);
   const storeMatters = usePractice((s) => s.matters);
+  const recordRecent = useRecentItems((s) => s.record);
 
   useEffect(() => {
     let alive = true;
@@ -174,6 +176,7 @@ export function MatterScreen({
         setBundle(r.data);
         setCachedAt(null);
         void writeCache(matterCacheKey(matterId), r.data);
+        recordRecent({ kind: 'matter', id: matterId, title: r.data.matter.caseTitle });
         return;
       }
       setBundle((current) => {

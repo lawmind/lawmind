@@ -134,6 +134,14 @@ export const glass = {
   hairline: 'rgba(201,162,39,0.28)',
   /** The toast is the one ink glass in the product — it must read against paper cards. */
   inkTint: 'rgba(20,27,45,0.94)',
+  /**
+   * The dim behind a floating card that is NOT a bottom sheet — the command
+   * palette. `Sheet.tsx`'s own backdrop carries no colour because the sheet's
+   * glass does that work; a centred card needs the ground behind it dimmed
+   * instead, so the focused layer reads as floating above the screen rather
+   * than as a new screen.
+   */
+  scrim: 'rgba(20,27,45,0.28)',
 } as const;
 
 /**
@@ -421,6 +429,7 @@ export const cssVariables: Record<string, string> = {
   '--glass-tint': glass.tint,
   '--glass-ink-tint': glass.inkTint,
   '--glass-hairline': glass.hairline,
+  '--glass-scrim': glass.scrim,
   '--radius': `${radius.base}px`,
   '--radius-sheet': `${radius.sheet}px`,
   '--button-height': `${size.button}px`,

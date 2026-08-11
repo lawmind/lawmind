@@ -17,6 +17,7 @@ import { citationCopyText, citationDisplay } from '../../citation/citationDispla
 import { citationRender } from '../../citation/renderState';
 import { newClientKey, useOutbox } from '../../state/outbox';
 import { judgmentCacheKey, readCache, writeCache } from '../../state/offlineCache';
+import { useRecentItems } from '../../state/recentItems';
 import { haptics } from '../../theme/haptics';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
@@ -99,6 +100,7 @@ export function JudgmentScreen({
   onSetReading: (reading: boolean, paragraphNumber?: number) => void;
 }) {
   const [judgment, setJudgment] = useState<JudgmentDetail | null>(null);
+  const recordRecent = useRecentItems((s) => s.record);
   /**
    * SET ONLY WHEN THIS JUDGMENT CAME OFF THE DEVICE. It is the timestamp of the
    * last successful read, and it is what makes an offline `overruled_status`
@@ -186,6 +188,7 @@ export function JudgmentScreen({
         setJudgment(r.data);
         setStatusAsOf(null);
         void writeCache(judgmentCacheKey(judgmentId), r.data);
+        recordRecent({ kind: 'judgment', id: judgmentId, title: r.data.caseTitle });
         return;
       }
       // Only a judgment we have never held is missing. One we hold a copy of is
