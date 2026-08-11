@@ -757,11 +757,19 @@ change what we do next:
    *real citations with mischaracterised holdings* and *right quote, wrong
    procedural posture* as errors. **We do not look for either.** A genuine gap in
    our own design, not previously on any list.
-5. **eSCR (`digiscr.sci.gov.in`) is an official citation→judgment lookup**, free,
-   back to 1950, searchable by citation — strictly better than our 4,097
-   hand-built aliases. `judgments.ecourts.gov.in` is a free full-text SC+HC
-   search. **`eCourtsIndia.com` stays refused** (`CLAUDE.md` §6) and **ILDC is
-   non-commercial**, so neither is usable.
+5. ~~eSCR (`digiscr.sci.gov.in`) is an official citation→judgment lookup, strictly
+   better than our 4,097 hand-built aliases~~ — **RETRACTED 11 Aug 2026, LCC.**
+   That URL was never fetched and does not resolve — carried across three docs
+   without anyone running the one command that would have killed it, exactly
+   `FQ-V1`'s point. The real site, `https://scr.sci.gov.in/scrsearch/`, is
+   CAPTCHA-gated (built on the eCourts platform but outside our eCourts grant's
+   scope — a different portal) and its search form has no SCC/AIR field at
+   all, only S.C.R. and neutral citation, which we already hold at
+   100%/99.7%. It cannot close the SCC/AIR↔S.C.R. gap even if the CAPTCHA
+   were solved. Full account: `docs/RESEARCH_2026-08-11.md` §3a.
+   `judgments.ecourts.gov.in` is a free full-text SC+HC search — untouched by
+   this correction. **`eCourtsIndia.com` stays refused** (`CLAUDE.md` §6) and
+   **ILDC is non-commercial**, so neither is usable.
 
 ### Q1.13 · The Bharat.Law account was provisioned and unread — FIXED 11 Aug
 

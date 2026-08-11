@@ -108,6 +108,20 @@ and 4,100 rows. An external concordance loads into it, and
 `pnpm --filter @lawmind/ingest resolve --apply` converts the edges. One table,
 one existing CLI. `docs/ai/AUTHORITY_COVERAGE.md` §3a-3b carries the full study.
 
+**CORRECTION 11 Aug 2026, LCC — the one candidate free alternative was checked
+and does not work, on two independent grounds.** `RESEARCH_2026-08-11.md` had
+proposed eSCR (`digiscr.sci.gov.in`) as a free official substitute for a paid
+concordance. That URL was never actually fetched before being written down
+across three docs — it does not resolve. The real site,
+`https://scr.sci.gov.in/scrsearch/`, is (1) CAPTCHA-gated on the same
+`securimage` widget eCourts uses, outside our eCourts grant's scope, so
+automating it needs its own authorization decision, not a free pass, and (2)
+even with access, its search form has no SCC/AIR field at all — only S.C.R.
+and neutral citation, both of which we already hold at 100%/99.7%. It cannot
+resolve an SCC/AIR citation to anything. **This does not change what this
+entry needs — it removes the one option that looked like it might make the
+decision unnecessary.** Full account: `docs/RESEARCH_2026-08-11.md` §3a.
+
 
 ### [OPEN] DMARC enforcement beyond `p=none` · LCC · 7 Aug 2026
 

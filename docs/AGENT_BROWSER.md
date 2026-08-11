@@ -104,9 +104,14 @@ a site we are allowed to use — never a way to become allowed.
    Bharat.Law's free tier and see whether their counter-authority is specific or
    vague. No account, no automation, no AUP exposure — a browser reading a public
    free-tier answer.
-2. **eSCR (`digiscr.sci.gov.in`)** — official Supreme Court Reports back to 1950,
-   **searchable by citation**, free. A citation→judgment lookup better than our
-   4,097 hand-built aliases, and it is a form-driven site rather than an API.
+2. ~~**eSCR (`digiscr.sci.gov.in`)**~~ — **RETRACTED 11 Aug 2026, LCC.** That URL
+   never resolved and was never fetched before being written here. The real
+   site, `https://scr.sci.gov.in/scrsearch/`, is CAPTCHA-gated on the same
+   `securimage` widget eCourts uses — a form a browser could reach but not
+   automate without its own authorization — and its search form has no
+   SCC/AIR field, only S.C.R. and neutral citation, which we already hold at
+   100%/99.7%. Not a concordance source at any access level. Full account:
+   `docs/RESEARCH_2026-08-11.md` §3a.
 3. **`judgments.ecourts.gov.in`** — free full-text search across SC and all High
    Courts, no login. Useful as a **verification cross-check** that is neither our
    corpus nor a paid vendor.
