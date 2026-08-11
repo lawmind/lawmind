@@ -116,3 +116,95 @@ it('survives a restart — highlights are on the device, not in memory', async (
   expect(useReadingStore.getState().highlights).toHaveLength(1);
   expect(useReadingStore.getState().highlights[0]?.judgmentId).toBe('j-restart');
 });
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * AN UNNUMBERED JUDGMENT'S PASSAGES ARE SAVEABLE — corrected 11 August 2026.
+ *
+ * `Highlight.paragraphNumber` was typed `number`, and `ReadingView.saveHighlight`
+ * opened with `if (paragraph.paragraphNumber === null) return;` — a SILENT
+ * no-op. An advocate reading a pre-1990s scan, or a headnote, tapped save and
+ * nothing happened: no toast, no reason, indistinguishable from a broken
+ * button.
+ *
+ * `annotationBody` in `services/api/src/judgments/annotations.ts` types the
+ * field `.nullable()` and says why — "Null on an unnumbered judgment." The
+ * server has always accepted the write. Only the client refused to make it,
+ * and it refused it for exactly the judgments that also carry no citation.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('a passage with no paragraph number', () => {
+  it('sends the null through rather than refusing to save', async () => {
+    createAnnotation.mockResolvedValue({
+      ok: true,
+      data: {
+        annotation: {
+          annotationId: 'ann-1',
+          judgmentId: 'j-1',
+          matterId: null,
+          paragraphNumber: null,
+          paragraphIndex: 3,
+          quote: 'A passage from an unnumbered scan.',
+          note: null,
+          createdAt: '2026-08-11T00:00:00.000Z',
+        },
+      },
+    });
+
+    const result = await useReadingStore.getState().addHighlight(
+      highlight({ paragraphNumber: null, paragraphIndex: 3, text: 'A passage from an unnumbered scan.' })
+    );
+
+    expect(result.ok).toBe(true);
+    expect(createAnnotation).toHaveBeenCalledWith('j-1', {
+      paragraphNumber: null,
+      paragraphIndex: 3,
+      quote: 'A passage from an unnumbered scan.',
+      matterId: undefined,
+    });
+  });
+
+  it('keeps it locally, with its server id, exactly as a numbered one', async () => {
+    createAnnotation.mockResolvedValue({
+      ok: true,
+      data: {
+        annotation: {
+          annotationId: 'ann-2',
+          judgmentId: 'j-1',
+          matterId: null,
+          paragraphNumber: null,
+          paragraphIndex: 3,
+          quote: 'A passage from an unnumbered scan.',
+          note: null,
+          createdAt: '2026-08-11T00:00:00.000Z',
+        },
+      },
+    });
+
+    await useReadingStore.getState().addHighlight(highlight({ paragraphNumber: null, paragraphIndex: 3 }));
+
+    const saved = useReadingStore.getState().highlights;
+    expect(saved).toHaveLength(1);
+    expect(saved[0]?.paragraphNumber).toBeNull();
+    expect(saved[0]?.annotationId).toBe('ann-2');
+  });
+
+  /**
+   * THE INDEX IS THE IDENTITY WHEN THERE IS NO NUMBER. Two passages from the
+   * same unnumbered judgment are two highlights, not one — which is why
+   * `ReadingView` keys its highlighted Set on `paragraphIndex` and why the
+   * server stores both fields.
+   */
+  it('keeps two unnumbered passages apart, since both numbers are null', async () => {
+    createAnnotation.mockResolvedValue({
+      ok: false,
+      error: { code: 'network', message: 'offline' },
+    });
+
+    await useReadingStore.getState().addHighlight(highlight({ paragraphNumber: null, paragraphIndex: 3 }));
+    await useReadingStore.getState().addHighlight(highlight({ paragraphNumber: null, paragraphIndex: 9 }));
+
+    const indices = useReadingStore.getState().highlights.map((h) => h.paragraphIndex);
+    expect(indices).toEqual([3, 9]);
+  });
+});

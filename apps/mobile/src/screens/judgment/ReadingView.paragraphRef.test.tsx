@@ -145,3 +145,53 @@ describe('citation navigation — live 11 Aug 2026', () => {
     expect(screen.queryByText('Open the judgment cited here')).toBeNull();
   });
 });
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * SAVING A PASSAGE THE COURT NEVER NUMBERED.
+ *
+ * Both save actions were `undefined` on an unnumbered paragraph until
+ * 11 August 2026, so both did nothing at all — no toast, no reason. The
+ * reasoning given was that a highlight is a citation and needs a citable "¶ n".
+ *
+ * PD-9 says *"highlight and save a passage to a matter"* and requires no
+ * number; `annotationBody` types `paragraphNumber` `.nullable()` on both paths
+ * and its module note says blocking a save "would teach them the product is
+ * broken rather than careful". Nothing interpolates the number, so nothing
+ * fabricates one.
+ *
+ * These tests pin the ACTIONS. `state/reading.test.ts` pins what reaches the
+ * server.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('saving a passage from an unnumbered judgment', () => {
+  it('offers "Save to matter" on it, like any other paragraph', async () => {
+    await draw(judgmentWith([unnumbered]));
+
+    await fireEvent.press(screen.getByText('The headnote.'));
+
+    expect(screen.getByText('Save to matter')).toBeTruthy();
+  });
+
+  /**
+   * The number and the passage are different facts. "Link" stays withheld
+   * because there is no n to link to — that refusal is correct and unchanged —
+   * while the passage itself is perfectly saveable.
+   */
+  it('still withholds "Link", which is a different question', async () => {
+    await draw(judgmentWith([unnumbered]));
+
+    await fireEvent.press(screen.getByText('The headnote.'));
+
+    expect(screen.getByText('Save to matter')).toBeTruthy();
+    expect(screen.queryByText('Link')).toBeNull();
+  });
+
+  it('offers it on a numbered paragraph too — nothing narrowed', async () => {
+    await draw(judgmentWith([numbered]));
+
+    await fireEvent.press(screen.getByText('A numbered paragraph.'));
+
+    expect(screen.getByText('Save to matter')).toBeTruthy();
+  });
+});

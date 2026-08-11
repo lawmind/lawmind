@@ -26,7 +26,21 @@ import { api } from '../api/client';
 export type Highlight = {
   judgmentId: string;
   paragraphIndex: number;
-  paragraphNumber: number;
+  /**
+   * NULL IS A REAL, COMMON ANSWER — and this type said `number` until
+   * 11 Aug 2026, which made a whole class of judgment unsaveable.
+   *
+   * `annotationBody` in `services/api/src/judgments/annotations.ts` types it
+   * `.nullable()` and says why: "Null on an unnumbered judgment." Pre-1990s
+   * scans lost their numbering and a headnote never had one — the same
+   * population that carries no citation. The server has always accepted the
+   * write; the client refused to make it.
+   *
+   * `paragraphIndex` is what identifies the paragraph when there is no number,
+   * which is why the server takes both and why nothing here may key on the
+   * number alone.
+   */
+  paragraphNumber: number | null;
   /** The exact run the advocate marked, so it can be re-found if the text reflows. */
   text: string;
   savedAt: string;

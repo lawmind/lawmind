@@ -102,8 +102,17 @@ export function ReadingView({
   const addHighlight = useReadingStore((s) => s.addHighlight);
   const progress = useReadingStore((s) => s.progress[judgment.judgmentId]);
   const highlights = useHighlightsFor(judgment.judgmentId);
+  /**
+   * KEYED ON `paragraphIndex`, NOT ON THE PRINTED NUMBER.
+   *
+   * The number is null on every paragraph of an unnumbered judgment, so a Set
+   * of numbers would collapse all of them onto one key: highlight one
+   * paragraph and every other paragraph in the judgment would draw as
+   * highlighted too. The index is unique per paragraph and is what the server
+   * stores alongside the number for exactly this reason.
+   */
   const highlighted = useMemo(
-    () => new Set(highlights.map((h) => h.paragraphNumber)),
+    () => new Set(highlights.map((h) => h.paragraphIndex)),
     [highlights]
   );
 
@@ -119,7 +128,19 @@ export function ReadingView({
    */
   const saveHighlight = useCallback(
     async (paragraph: JudgmentParagraph, matterId?: string) => {
-      if (paragraph.paragraphNumber === null) return;
+      /**
+       * NO GUARD ON AN UNNUMBERED PARAGRAPH — removed 11 Aug 2026.
+       *
+       * This read `if (paragraph.paragraphNumber === null) return;` — a SILENT
+       * no-op. An advocate reading a pre-1990s scan, or a headnote, tapped save
+       * and nothing happened at all: no toast, no reason, indistinguishable
+       * from a broken button. Those are the same judgments that carry no
+       * citation, so the population least served by the corpus was also the one
+       * that could not keep a passage from it.
+       *
+       * `annotationBody` accepts `paragraphNumber: null` and always has. The
+       * server was built for this case; only the client refused it.
+       */
       haptics.commit();
       const highlight: Highlight = {
         judgmentId: judgment.judgmentId,
@@ -619,7 +640,9 @@ export function ReadingView({
               (!found.tooShort && found.matches.length > 0 && !hitParagraphs.has(item.paragraphIndex)) ||
               (!term && item.paragraphIndex !== current)
             }
-            highlighted={item.paragraphNumber !== null && highlighted.has(item.paragraphNumber)}
+            // By index, matching the Set above — an unnumbered paragraph can
+            // now be highlighted, so the number is no longer a usable key.
+            highlighted={highlighted.has(item.paragraphIndex)}
             isCurrentHit={currentHitParagraph === item.paragraphIndex}
             onMeasure={measure}
             showAnchor={showAnchors && item.paragraphNumber !== null}
@@ -644,20 +667,54 @@ export function ReadingView({
               void Clipboard.setStringAsync(`${judgment.caseTitle} ¶ ${item.paragraphNumber}`);
               setToastMessage('Copied.');
             }}
-            onPickMatter={item.paragraphNumber === null ? undefined : () => setPickerFor(item)}
+            onPickMatter={() => setPickerFor(item)}
             onSaveToMatter={
               /**
-               * A HIGHLIGHT IS A CITATION, SO IT NEEDS A CITABLE PARAGRAPH.
-               * PD-9 item 3 saves a passage to a matter, where it is quoted with
-               * "¶ n". An unnumbered row has no n, and saving it under an index
-               * would put a fabricated paragraph reference into a matter file.
-               * The action is simply not offered there.
+               * ─────────────────────────────────────────────────────────────
+               * BOTH SAVES ARE OFFERED ON AN UNNUMBERED PARAGRAPH TOO —
+               * corrected 11 Aug 2026, and this replaces a considered comment
+               * rather than an oversight, so the reasoning is set out in full.
+               * ─────────────────────────────────────────────────────────────
+               *
+               * WHAT STOOD HERE: *"A highlight is a citation, so it needs a
+               * citable paragraph. PD-9 item 3 saves a passage to a matter,
+               * where it is quoted with '¶ n'. An unnumbered row has no n, and
+               * saving it under an index would put a fabricated paragraph
+               * reference into a matter file."* Both actions were therefore
+               * `undefined`, so nothing happened when either was used.
+               *
+               * WHAT PD-9 ACTUALLY SAYS: *"highlight and save a passage to a
+               * matter."* It requires no printed number and mandates no "¶ n"
+               * quotation format. The requirement was an inference layered on
+               * the decision in this comment, not the decision itself — so
+               * removing it is not reopening PD-9.
+               *
+               * WHAT THE SERVER SAYS: `annotationBody` types `paragraphNumber`
+               * `.nullable()` — *"Null on an unnumbered judgment"* — on BOTH
+               * paths, with and without `matterId`. The module note goes
+               * further: *"an advocate has every reason to highlight the
+               * paragraph that was set aside, and blocking that would teach
+               * them the product is broken rather than careful."* The same
+               * sentence answers this case.
+               *
+               * AND NOTHING FABRICATES A NUMBER. `judgment_annotations` stores
+               * `paragraph_number` nullable, `assemble.ts` carries the null
+               * through to the briefing, and no surface interpolates it — the
+               * reader's own copy label was the last one that did, fixed the
+               * same day. The risk the old comment guarded against is real; it
+               * is simply not present.
+               *
+               * WHO THIS AFFECTED: every headnote, and every pre-1990s scan
+               * whose numbering did not survive OCR. The same judgments that
+               * carry no citation — so the population the corpus serves worst
+               * was also the one that could not keep a passage from it, and
+               * the button gave no reason at all.
                *
                * NO MATTER ID HERE — this is the long-press shortcut, "save the
                * passage on its own." The action row's own "Save to matter"
                * button opens the picker (`onPickMatter`) instead.
                */
-              item.paragraphNumber === null ? undefined : () => void saveHighlight(item)
+              () => void saveHighlight(item)
             }
             paragraph={item}
             selected={selected === item.paragraphIndex}
