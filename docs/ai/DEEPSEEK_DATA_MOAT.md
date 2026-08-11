@@ -82,9 +82,22 @@ short strings is a CPU loop, not a GPU job.
 ## 3 · WHAT WAS ADDED TO THE EXISTING INTEGRATION, AND WHY IT IS AN EXTENSION NOT A FORK
 
 - **`llm_feature` enum gained `concordance`** (migration `0044`) and
-  `route.ts`'s public-class switch was extended with one case routing it to
-  `DEEPSEEK_V4_FLASH` — the same rule (`CLAUDE.md` §5: public data, cheapest
-  capable model) applied to a new feature, not a new rule.
+  `route.ts`'s public-class switch routes it to `DEEPSEEK_V4_FLASH` — the same
+  rule (`CLAUDE.md` §5: public data, cheapest capable model) applied to a new
+  feature, not a new rule.
+
+  > **CORRECTED 12 Aug 2026. The sentence above was FALSE when first written**,
+  > and it is left visible rather than quietly rewritten because the way it was
+  > false is the useful part. The migration added the enum value; `route.ts`'s
+  > `Feature` union and its switch were **never extended**, while the comment
+  > over that union went on claiming *"Matches `llm_feature` in the schema"*.
+  > **Nothing was broken** — the concordance pass runs in `services/ingest` and
+  > writes `llm_calls` directly, never through `routeCall` — which is precisely
+  > why it survived: a drift that breaks nothing today is one nobody finds until
+  > the call that does route through it is written. Found by checking the claim
+  > against the code instead of believing the document. Both are now true, and
+  > `route.test.ts` asserts the union and the database enum agree, so the next
+  > drift fails a test rather than a reader.
 - **`services/ingest/src/inferx.ts`** is a second caller of the same
   `inferx.net` endpoint, in a different service (`services/ingest` cannot
   import `services/api`'s `src/`), with the one addition retry/backoff. It is

@@ -6,13 +6,47 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
 
+import { llmFeatureEnum } from '@lawmind/db';
+
 import {
+  ALL_FEATURES,
   CLAUDE_HAIKU_4_5,
   DEEPSEEK_V4_FLASH,
   assertOneDocument,
   dpaCountersigned,
   routeCall,
 } from './route.ts';
+
+/* ------------------------------------------- the enum this file must track -- */
+
+/**
+ * THE DRIFT THIS CATCHES ALREADY HAPPENED. Migration `0044` added
+ * `concordance` to `llm_feature` and `Feature` was never extended, while its
+ * own comment claimed the two matched — for a day, a false statement about
+ * production routing sat in the file that decides production routing. It broke
+ * nothing, because the concordance pass writes `llm_calls` from
+ * `services/ingest` without calling `routeCall`, and that is precisely why no
+ * one noticed.
+ *
+ * TypeScript cannot see the database, so it cannot catch this on its own. The
+ * assertion is deliberately two-directional: a feature in the enum and not in
+ * the code is an unrouted feature, and one in the code and not in the enum is a
+ * value that fails on INSERT.
+ */
+test('every llm_feature in the schema has a route, and vice versa', () => {
+  assert.deepEqual(
+    [...ALL_FEATURES].sort(),
+    [...llmFeatureEnum.enumValues].sort(),
+    'services/api/src/llm/route.ts and the llm_feature database enum disagree',
+  );
+});
+
+test('every feature routes or refuses for an explicit reason — none falls through', () => {
+  for (const f of ALL_FEATURES) {
+    const r = routeCall('public', f);
+    assert.ok(r.ok || r.reason.length > 0, `${f} produced neither a model nor a reason`);
+  }
+});
 
 afterEach(() => {
   delete process.env['DPA_COUNTERSIGNED'];
@@ -29,7 +63,9 @@ test('SENSITIVE TRAFFIC IS REFUSED with no DPA — and that is the shipped state
 });
 
 test('the refusal covers every sensitive feature, not just drafting', () => {
-  for (const f of ['search', 'draft', 'briefing', 'extract', 'ocr_postprocess'] as const) {
+  // Drawn from ALL_FEATURES, not a hand-written list — a hardcoded list here
+  // would have quietly stopped covering `concordance` the day it was added.
+  for (const f of ALL_FEATURES) {
     assert.equal(routeCall('sensitive', f).ok, false, `${f} was routed without a DPA`);
   }
 });

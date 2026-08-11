@@ -33,8 +33,33 @@
 /** `CLAUDE.md` §5. Two classes, and ambiguity is not one of them. */
 export type DataClass = 'public' | 'sensitive';
 
-/** Matches `llm_feature` in the schema. */
-export type Feature = 'search' | 'draft' | 'briefing' | 'extract' | 'ocr_postprocess';
+/**
+ * Every `llm_feature` the schema defines — and the agreement is load-bearing,
+ * not decorative. Migration `0044` added `concordance` to the database enum
+ * and this type was **not** extended with it, while the comment here went on
+ * claiming it matched. Nothing broke, because the concordance pass runs in
+ * `services/ingest` and writes `llm_calls` directly rather than through
+ * `routeCall` — which is exactly why it survived unnoticed. A drift that breaks
+ * nothing today is one nobody finds until the call that does route through here
+ * gets written.
+ *
+ * So the union is now DERIVED from this array rather than restated beside it:
+ * the two cannot disagree, because there is only one of them. `route.test.ts`
+ * asserts the array against the database enum, which is the half TypeScript
+ * cannot check. And the switch in `routeCall` has no `default`, so adding a
+ * feature without deciding its route is a COMPILE error rather than a silent
+ * fallthrough to whatever happens to be cheapest.
+ */
+export const ALL_FEATURES = [
+  'search',
+  'draft',
+  'briefing',
+  'extract',
+  'ocr_postprocess',
+  'concordance',
+] as const;
+
+export type Feature = (typeof ALL_FEATURES)[number];
 
 /**
  * **Verified by a live call on 9 Aug 2026.** Not transcribed from memory —
@@ -102,6 +127,13 @@ export function routeCall(dataClass: DataClass, feature: Feature): Route {
    */
   switch (feature) {
     case 'search':
+    /**
+     * Citation concordance reads judgments and citations — published law, so
+     * public class, so the cheapest capable model. `CLAUDE.md` §5. It reaches
+     * the model only to CHOOSE among candidates the corpus already produced,
+     * never to recall an authority, so nothing here creates canonical identity.
+     */
+    case 'concordance':
       return { ok: true, model: DEEPSEEK_V4_FLASH, pseudonymise: false };
     case 'extract':
     case 'ocr_postprocess':
