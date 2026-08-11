@@ -780,6 +780,23 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
    that this endpoint returns a nested `arguments: [{ authorities }]` shape;
    it has always been flat, confirmed against `counter.test.ts`.
 
+10. **`docs/ai/AWS_CORPUS_INVENTORY.md` — the source-vs-ingested scale
+    question, per the founder's DATA SCALE CONTINUATION directive, 11 Aug.**
+    Measured fresh, not assumed "~20M": **20,572,735 total source rows**
+    (43,532 SC + 20,529,203 HC, footer-counted against the live bucket) vs.
+    **79,321 ingested** — SC at 88.1% coverage, HC at **0.1996%**. Fixed the
+    `source_document_type` mystery from item 4 above for good: every held
+    row, for all 25 courts including the 4 that publish a mobile-variant
+    file, came from the plain variant, which structurally never carries the
+    field — not backfillable, because plain and mobile share zero CNRs and
+    describe different documents. Also found: the deterministic
+    native-vs-scanned classifier the founder asked for already exists
+    (`hc-extract.ts`'s `measureExtraction`, proven against real PDFs) and
+    only needs wiring into the production loader, not designing from
+    scratch. `DATA_MOAT_PROGRAM.md` §0 terminology corrected to keep source
+    corpus size, ingested corpus size, unique canonical documents and
+    unique cases from ever being conflated again.
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court

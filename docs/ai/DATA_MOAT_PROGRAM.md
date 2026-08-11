@@ -25,14 +25,33 @@ statutory time/versioning.
 
 ## 0 · CURRENT STATE, MEASURED LIVE — 11 Aug 2026, not the advertised numbers
 
+**Terminology — never conflated below or anywhere else in this document,
+per the founder's explicit instruction (DATA SCALE CONTINUATION, 11 Aug):**
+**source corpus size** (rows the AWS bucket's metadata actually contains,
+footer-counted) ≠ **ingested corpus size** (`judgments` rows) ≠ **unique
+canonical documents** (ingested, after `content_hash` dedup) ≠ **unique
+cases** (a case can produce several documents; not yet computed as its own
+figure). Full detail, the coverage matrix, and how each number was measured:
+**`docs/ai/AWS_CORPUS_INVENTORY.md`**, written the same day this section was
+first drafted, after the first draft was found to describe only the
+*ingested* corpus and risked being read as the whole one.
+
+**Source corpus, measured fresh via parquet footers, not assumed as "~20M"**:
+43,532 rows (Supreme Court, 77 year-files) + 20,529,203 rows (High Court,
+1,493 partition files, both metadata variants) = **20,572,735 total source
+rows** — and even that combined figure counts *metadata rows*, most of
+which are orders and procedural documents, not judgments
+(`AWS_CORPUS_INVENTORY.md` §2). Reproducible:
+`pnpm --filter @lawmind/ingest hc:count`.
+
 Queried against production directly, not recalled from an older doc (several
 of which are now stale on exactly this point):
 
 | | measured | source |
 | --- | --- | --- |
-| `judgments` total | **79,321** | `SELECT count(*) FROM judgments` |
-| — Supreme Court | 38,341 | `court = 'Supreme Court of India'` |
-| — High Court | 40,980 | everything else |
+| `judgments` (**ingested** corpus) total | **79,321** | `SELECT count(*) FROM judgments` |
+| — Supreme Court | 38,341 of 43,532 source rows (**88.1% coverage**) | `court = 'Supreme Court of India'` |
+| — High Court | 40,980 of 20,529,203 source rows (**0.1996% coverage**) | everything else |
 | `cnr` populated | **79,321 of 79,321 — 100%** | migration `0034` + `backfill-cnr.ts`, both run 11 Aug; task 007 |
 | `content_hash` populated | 79,321 of 79,321 | backfilled 11 Aug, `backfill-provenance.ts` |
 | — exact-duplicate groups | 937 groups / 1,500 rows (1.9%) | see `docs/ai/tasks/003-corpus-inventory.md` — consolidated/batch judgments, not confirmed mobile/plain duplication |
@@ -359,10 +378,13 @@ dry report should not casually trigger; native-vs-scanned classification
 Ranked by **legal value**, not document count, per the founder's explicit
 instruction:
 
-1. **Native-vs-scanned classification** (§2.1). Blocks trusting `text_quality`
-   as a real OCR-need signal rather than a damage proxy. Needed before any
-   OCR-pipeline investment decision. Medium effort — needs the extraction
-   path itself to report engine confidence, not a new source.
+1. **Native-vs-scanned classification** (§2.1) — **checked 11 Aug 2026: a
+   deterministic classifier already exists and is proven, just not wired to
+   persist a value per judgment.** `hc-extract.ts`'s `measureExtraction()`
+   already computes `characters_extracted / pages < 100 → needs_ocr`,
+   validated against real HC PDFs in the extraction-cost benchmark. Not a
+   new design — threading it into `toJudgmentRecord`/`load.ts` and adding a
+   column is the remaining work. `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
 2. ~~**CNR backfill investigation**~~ — **DONE, 11 Aug 2026, same session.**
    Feasible, cheap (≤76 SC year-files + 198 HC partitions, ~275 requests
    against the same public bucket), and executed: `services/ingest/src/
