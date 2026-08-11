@@ -200,10 +200,12 @@ const send = <T>(path: string, body: unknown, options?: RequestOptions) =>
  */
 function serverFilters(filters?: SearchFilters) {
   if (!filters) return undefined;
-  const out: Record<string, string> = {};
+  const out: Record<string, string | string[]> = {};
   if (filters.caseType) out.caseType = filters.caseType;
   if (filters.date === 'last_10') out.dateFrom = `${new Date().getFullYear() - 10}-01-01`;
   if (filters.date === 'since_2020') out.dateFrom = '2020-01-01';
+  // Category codes, expanded to court names server-side — bus 0046.
+  if (filters.courts.length > 0) out.courts = filters.courts;
   return Object.keys(out).length ? out : undefined;
 }
 

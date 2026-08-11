@@ -12,7 +12,7 @@ import { Screen } from '../../components/Screen';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { StaggerIn } from '../../components/StaggerIn';
-import type { HiddenResult, SearchFilters, SearchResult } from '../../api/contract';
+import type { CourtCategory, HiddenResult, SearchFilters, SearchResult } from '../../api/contract';
 import { api } from '../../api/client';
 import { DEFAULT_FILTERS } from '../../api/mock';
 import { attentionCount } from '../../citation/renderState';
@@ -79,8 +79,20 @@ const DISCLOSURE_DELAY = 80;
  * it sends the advocate to change the one thing that was not the problem.
  * Corrected 11 Aug 2026, alongside disabling those controls in `FiltersSheet`.
  */
+/** Matches `FiltersSheet`'s `COURTS` labels — one name per category, in one place. */
+const COURT_CATEGORY_LABEL: Record<CourtCategory, string> = {
+  sc: 'Supreme Court',
+  hc: 'High Court',
+  district: 'district court',
+  tribunal: 'tribunal',
+};
+
 const hasActiveFilters = (f: SearchFilters): boolean =>
-  Boolean(f.caseType) || f.date !== 'any' || f.onlyVerified || f.excludeSetAsideOrDoubted;
+  Boolean(f.caseType) ||
+  f.date !== 'any' ||
+  f.onlyVerified ||
+  f.excludeSetAsideOrDoubted ||
+  f.courts.length > 0;
 
 /**
  * WHERE A RESULT SHOULD OPEN — the one seam the desktop workspace needs.
@@ -145,6 +157,15 @@ export function SearchScreen({
    */
   const [parsed, setParsed] = useState<string | null>(null);
   const [total, setTotal] = useState<number | null>(null);
+  /**
+   * COURT CATEGORIES THE CORPUS HOLDS NOTHING IN — bus 0046. Absent on the
+   * structured path, where it stays `[]`: this state exists to tell "your
+   * query matched nothing" apart from "we hold none of this court", and a
+   * structured zero-match is already the trusted former case (A2.7).
+   */
+  const [unpopulatedCourtCategories, setUnpopulatedCourtCategories] = useState<CourtCategory[]>(
+    []
+  );
 
   const run = useCallback(
     async (nextFilters: SearchFilters = filters, nextQuery: string = query) => {
@@ -173,6 +194,7 @@ export function SearchScreen({
       // one must not keep showing a stale interpretation.
       setParsed(response.data.parsed ?? null);
       setTotal(response.data.total ?? null);
+      setUnpopulatedCourtCategories(response.data.unpopulatedCourtCategories ?? []);
 
       /**
        * The reliability filters run here, against the three citation fields the
@@ -365,9 +387,22 @@ export function SearchScreen({
             body={
               parsed
                 ? 'No judgment in the corpus matches this. The query was understood correctly — this is not a search problem.'
-                : hasActiveFilters(filters)
-                  ? `Nothing matched “${query}” with these filters. Clearing them searches all 38,341 judgments.`
-                  : `Nothing matched “${query}”. Search currently matches the words in a judgment rather than their meaning, so exact legal terms find more than a paraphrase does.`
+                : filters.courts.some((c) => unpopulatedCourtCategories.includes(c))
+                  ? /**
+                     * BUS 0046. A court-category filter matching nothing the
+                     * corpus holds looks identical to a query that matched
+                     * nothing — and it is not the same claim. "We hold no
+                     * district court judgments yet" tells the truer story;
+                     * saying "nothing matched" here would read as "we have no
+                     * case on this point" when we were never asked.
+                     */
+                    `We hold no ${filters.courts
+                      .filter((c) => unpopulatedCourtCategories.includes(c))
+                      .map((c) => COURT_CATEGORY_LABEL[c])
+                      .join(' or ')} judgments yet. Clearing that filter searches everything we hold.`
+                  : hasActiveFilters(filters)
+                    ? `Nothing matched “${query}” with these filters. Clearing them searches all 38,341 judgments.`
+                    : `Nothing matched “${query}”. Search currently matches the words in a judgment rather than their meaning, so exact legal terms find more than a paraphrase does.`
             }
             title="No judgments matched"
           />

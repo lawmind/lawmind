@@ -432,9 +432,18 @@ export function JudgmentScreen({
         <Text variant="ui" style={styles.bench}>
           {judgment.court} · {formatJudgmentDate(judgment.judgmentDate)}
         </Text>
-        <Text variant="ui" style={styles.bench}>
-          {judgment.bench}
-        </Text>
+        {/*
+          NULLABLE SINCE 11 AUG 2026 — every High Court row (51.3% of the
+          corpus) had a database partition slug here until LCC's `c2da1b9`
+          moved it to `source_bench_code` and this went `null`. Absent means
+          no coram was recorded, not that the row failed to load, so the line
+          is omitted rather than shown empty or printing a fabricated one.
+        */}
+        {judgment.bench ? (
+          <Text variant="ui" style={styles.bench}>
+            {judgment.bench}
+          </Text>
+        ) : null}
 
         {existence.kind === 'unconfirmed' ? (
           <Pressable accessibilityRole="button" onPress={() => setShowCheck(true)}>

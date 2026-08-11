@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import { SearchScreen } from './SearchScreen';
 import { api } from '../../api/client';
@@ -211,18 +211,14 @@ describe('SearchScreen — the operative paragraph is a route, not just text', (
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * THE EMPTY STATE MUST NOT BLAME FILTERS THAT WERE NEVER APPLIED.
+ * THE EMPTY STATE MUST NOT BLAME A FILTER THAT WAS NEVER APPLIED, OR HIDE ONE
+ * THAT WAS.
  *
- * `hasActiveFilters` counted `courts` and `subjects`, and neither reaches the
- * search: `searchRequest` accepts `court`/`dateFrom`/`dateTo`/`caseType` and
- * nothing else, `serverFilters` sends only date and case type, and this screen
- * applies only the two reliability filters locally. So an advocate who selected
- * a court and got nothing was told to clear filters that had not narrowed
- * anything — a remedy that could not have changed the result.
- *
- * The dead controls are now disabled in `FiltersSheet`, so the state they set
- * is no longer reachable at all. What is pinned here is the other half: with no
- * settable filter applied, an empty result must not offer a filter remedy.
+ * Court went live 11 Aug 2026 (bus 0046, LCC `1cefe6c`) — `filters.courts` now
+ * reaches the server, so it belongs in `hasActiveFilters` and its chip is
+ * tappable. Bench and subject are still dead, still disabled, and still
+ * excluded from `hasActiveFilters`: offering "Clear the filters" for a state
+ * the advocate could never have set would point at the wrong remedy.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 describe('why a search came back empty', () => {
@@ -241,19 +237,61 @@ describe('why a search came back empty', () => {
   });
 
   /**
-   * The three dead groups are drawn and untappable rather than removed — the
-   * design and PD-10 both name them, and the shapes stay in the contract for
-   * the day the server accepts them.
+   * Bench is still drawn and untappable — the design and PD-10 both name it,
+   * and the shape stays in the contract against a judge-count column that
+   * does not exist yet (bus 0046).
    */
-  it('draws the court chips as disabled, so the state cannot be set', async () => {
+  it('draws the bench chips as disabled, so the state cannot be set', async () => {
     search.mockResolvedValue({ ok: true, data: response() });
     await render(<SearchScreen />);
     await runSearch('anything');
     await fireEvent.press(screen.getByLabelText('Filters'));
 
-    const chip = await screen.findByText('Supreme Court');
-    expect(screen.getByText('Court and bench do not narrow a search yet. Everything below does.')).toBeTruthy();
+    const chip = await screen.findByText('Constitution Bench');
+    expect(
+      screen.getByText('Bench does not narrow a search yet. Everything else does.')
+    ).toBeTruthy();
     expect(chip).toBeTruthy();
+  });
+
+  it('lets a court chip be selected and sends the category to the search', async () => {
+    search.mockResolvedValue({ ok: true, data: response() });
+    await render(<SearchScreen />);
+    await runSearch('anything');
+    await fireEvent.press(screen.getByLabelText('Filters'));
+
+    await fireEvent.press(await screen.findByText('Supreme Court'));
+    // A search has already run, so the button counts rather than reads "Apply".
+    await fireEvent.press(screen.getByText('Show 0 judgments'));
+
+    await waitFor(() =>
+      expect(search).toHaveBeenLastCalledWith(
+        'anything',
+        'en',
+        expect.objectContaining({ courts: ['sc'] })
+      )
+    );
+  });
+
+  /**
+   * Bus 0046 — an empty result from a category the corpus holds nothing in
+   * must not read as "your query matched nothing". Correcting the mirror
+   * defect this same session found: a category that quietly returned zero
+   * results, wearing the same face as a real empty search.
+   */
+  it('says which court category the corpus holds nothing in, rather than blaming the query', async () => {
+    search.mockResolvedValue({
+      ok: true,
+      data: response({ unpopulatedCourtCategories: ['district'] }),
+    });
+    await render(<SearchScreen />);
+    await fireEvent.press(screen.getByLabelText('Filters'));
+    await fireEvent.press(await screen.findByText('District'));
+    await fireEvent.press(screen.getByText('Apply these filters'));
+
+    await runSearch('anything');
+
+    expect(await screen.findByText(/We hold no district court judgments yet/)).toBeTruthy();
   });
 });
 

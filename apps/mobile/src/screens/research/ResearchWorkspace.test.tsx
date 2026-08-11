@@ -155,7 +155,7 @@ describe('at desktop width', () => {
       empty state — the bench comes from `GET /judgments/:id`, not from the
       result row, so it can only be on screen if the reader mounted and fetched.
     */
-    expect(await screen.findByText(MOCK_JUDGMENTS[first.judgmentId]!.bench)).toBeTruthy();
+    expect(await screen.findByText(MOCK_JUDGMENTS[first.judgmentId]!.bench!)).toBeTruthy();
     expect(screen.getAllByText(first.caseTitle).length).toBeGreaterThan(1);
   });
 

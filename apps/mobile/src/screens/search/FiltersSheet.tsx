@@ -112,12 +112,18 @@ export function FiltersSheet({
 }) {
   const [draft, setDraft] = useState<SearchFilters>(filters);
 
-  /*
-    `toggle` lived here for the three multi-select groups and is removed with
-    them — it had no remaining call site, and a dead helper reads as a feature
-    somebody forgot to wire rather than one the server cannot serve yet. It is
-    eight lines to restore alongside the chips.
-  */
+  /**
+   * COURT IS LIVE — bus 0046, LCC `1cefe6c`. Bench and subject stay disabled
+   * (see the section below), so this is the one multi-select toggle that
+   * still needs wiring.
+   */
+  const toggleCourt = (key: SearchFilters['courts'][number]) =>
+    setDraft((prev) => ({
+      ...prev,
+      courts: prev.courts.includes(key)
+        ? prev.courts.filter((c) => c !== key)
+        : [...prev.courts, key],
+    }));
 
   const count = resultCount(draft);
 
@@ -137,48 +143,40 @@ export function FiltersSheet({
       <ScrollView contentContainerStyle={styles.body}>
         {/*
           ─────────────────────────────────────────────────────────────────────
-          COURT, BENCH AND SUBJECT DO NOT NARROW A SEARCH YET, AND SAY SO.
+          COURT NARROWS FOR REAL SINCE 11 AUG 2026. BENCH STILL DOES NOT.
           ─────────────────────────────────────────────────────────────────────
 
-          `POST /search` accepts `court`, `dateFrom`, `dateTo` and `caseType` —
-          nothing else (`searchRequest` in `services/api/src/search/route.ts`).
-          `serverFilters` in `api/client.ts` sends only date and case type, and
-          `SearchScreen` applies only the two reliability filters locally. So
-          selecting a court, a bench strength or a subject did NOTHING against
-          the real API.
+          Bus 0046. `POST /search` now accepts `filters.courts` — category
+          codes (`sc`/`hc`/`district`/`tribunal`), expanded server-side to the
+          court names `judgments.court` actually holds
+          (`search/court-category.ts`). Chosen over a client-side name mapping
+          deliberately: a wrong string returns zero results silently, and a
+          search that reports "nothing matched" when it never asked is the
+          same failure as a filter that does nothing, wearing a better face.
 
-          It looked like it worked because `api/mock.ts` applies all three
-          against `MOCK_FACETS`. Development narrowed; production did not.
-
-          THE COURT ONE MATTERS MOST RIGHT NOW. 40,980 High Court judgments
-          landed in the corpus this month, so "Supreme Court only" is exactly
-          the filter an advocate reaches for — and it was the one quietly doing
-          nothing.
-
-          DISABLED RATHER THAN DELETED. The design and PD-10 both name these,
-          the shapes are in the contract, and `draft` still carries them — the
-          day the server accepts them this reverts to one line. A control that
-          cannot act is disabled and explained; it is never left live and inert,
-          which is the same rule the reader follows for "Link" on an unnumbered
-          paragraph.
-
-          The server-side contract needed is recorded for LCC, not guessed at
-          here: `filters.court` is an exact `j.court = $1` match on a court
-          NAME, and the client's chips are categories. Mapping one to the other
-          means knowing the values that column holds, which is not a thing to
-          invent on a search that would silently return nothing.
+          BENCH STAYS DISABLED, and not provisionally. LCC measured it: bench
+          strength needs a judge-count column that does not exist. Half the
+          corpus's `bench` column was never about judges — an AWS ingest
+          partition slug, fixed the same day — and the other half is free
+          text with no count. There is no data to filter on, so the control
+          is disabled and explained rather than left live and inert.
         */}
         <SectionRule label="Court and bench" />
         <View style={styles.chips}>
           {COURTS.map((c) => (
-            <Chip disabled key={c.key} label={c.label} onPress={() => {}} selected={false} />
+            <Chip
+              key={c.key}
+              label={c.label}
+              onPress={() => toggleCourt(c.key)}
+              selected={draft.courts.includes(c.key)}
+            />
           ))}
           {BENCH.map((b) => (
             <Chip disabled key={b.key} label={b.label} onPress={() => {}} selected={false} />
           ))}
         </View>
         <Text variant="ui" style={styles.notYet}>
-          Court and bench do not narrow a search yet. Everything below does.
+          Bench does not narrow a search yet. Everything else does.
         </Text>
 
         <SectionRule label="Date" />
@@ -193,7 +191,12 @@ export function FiltersSheet({
           ))}
         </View>
 
-        {/* Same as court and bench: `searchRequest` accepts no subject. */}
+        {/*
+          Bus 0046: there is no subject, topic, category or tag column
+          anywhere in the schema. Not a filter that does nothing yet — an
+          unbuilt feature, so it stays disabled rather than sending a
+          parameter the server would have to invent an answer for.
+        */}
         <SectionRule label="Subject" />
         <View style={styles.chips}>
           {SUBJECTS.map((s) => (

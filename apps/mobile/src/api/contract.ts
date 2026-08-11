@@ -288,7 +288,17 @@ export type JudgmentDetail = Omit<
    * they do not have rather than inventing a lookup.
    */
   citationCheckId?: string | null;
-  bench: string;
+  /**
+   * NULLABLE SINCE 11 AUG 2026 (LCC `c2da1b9`/migration `0040`). `bench` used
+   * to hold `patnahcucisdb94`-shaped AWS S3 partition slugs on every High
+   * Court row — 51.3% of the corpus, 40,980 judgments — because the ingest
+   * script's `bench` and the column's `bench` named two different things: the
+   * establishment that PUBLISHED the file versus the judges who sat. The
+   * slugs moved to `source_bench_code` server-side; this column now goes
+   * `null` wherever no coram was recorded, which is every High Court row
+   * today. Render absence as absence — a fabricated coram is worse than none.
+   */
+  bench: string | null;
   /** `neutralCitation` is nullable here for the same reason it is on a result row. */
   reliedOn?: { judgmentId: string; caseTitle: string; neutralCitation: string | null }[];
   holdingParagraphNumber?: number;
@@ -882,9 +892,26 @@ export type StatuteSection = {
   sourceUrl: string;
 };
 
+/**
+ * CATEGORIES, NEVER COURT NAMES. `judgments.court` holds printed strings like
+ * `High Court  for State of Telangana`; expanding a category into the names
+ * it covers is server-side, in `search/court-category.ts` — RCC bus 0046. A
+ * client-side name mapping was refused deliberately: a wrong string returns
+ * zero results silently, which reads as "no case on this point" rather than
+ * "the filter was never applied".
+ */
+export type CourtCategory = 'sc' | 'hc' | 'district' | 'tribunal';
+
 /** PD-10 — five filter sections. Judge and reporter were cut and have no key. */
 export type SearchFilters = {
-  courts: ('sc' | 'hc' | 'district' | 'tribunal')[];
+  courts: CourtCategory[];
+  /**
+   * STILL DISABLED. Bus 0046: bench strength needs a judge-count column that
+   * does not exist. Half the corpus's `bench` was never about judges at all
+   * (an ingest partition slug, fixed 11 Aug — see `JudgmentDetail.bench`); the
+   * other half is free text with no count, and `judgment_judges` covers
+   * Supreme Court rows only. Not "not yet" — no data to filter on.
+   */
   bench: ('constitution' | 'three_plus')[];
   date: 'any' | 'last_10' | 'since_2020';
   subjects: string[];
@@ -1184,12 +1211,31 @@ export type SearchResponse = {
    * and the advocate has no way to tell the difference.
    */
   total?: number;
+  /**
+   * COURT CATEGORIES THE CORPUS HOLDS NO JUDGMENT FOR — `['district',
+   * 'tribunal']` today. Bus 0046, LCC `1cefe6c`. Present only on the ordinary
+   * (non-structured) search path, alongside `results`.
+   *
+   * An empty result from a category the corpus holds nothing in is
+   * indistinguishable on screen from "your query matched nothing" — the same
+   * silent-drop reasoning `CITATION_HARNESS.md` applies to a citation,
+   * applied to a filter. Additive: a client that ignores it behaves exactly
+   * as before.
+   */
+  unpopulatedCourtCategories?: CourtCategory[];
 };
 
 export type SearchRequest = {
   query: string;
   language: 'en' | 'hi';
-  filters?: { court?: string; dateFrom?: string; dateTo?: string; caseType?: string };
+  filters?: {
+    court?: string;
+    /** Category codes, expanded to court names server-side. Bus 0046. */
+    courts?: CourtCategory[];
+    dateFrom?: string;
+    dateTo?: string;
+    caseType?: string;
+  };
   matterId?: string;
 };
 
