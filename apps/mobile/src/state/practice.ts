@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { api } from '../api/client';
-import type { Briefing, Matter } from '../api/contract';
+import type { BriefingListItem, Matter } from '../api/contract';
 import {
   daysFromCivil,
   daysUntil,
@@ -48,7 +48,7 @@ type PracticeState = {
   refreshError: string | null;
 
   /** Briefings keyed by matter, so a matter detail and Today read the same rows. */
-  briefings: Record<string, Cached<Briefing[]>>;
+  briefings: Record<string, Cached<BriefingListItem[]>>;
 
   hydrate: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -95,7 +95,7 @@ export const usePractice = create<PracticeState>((set, get) => ({
   },
 
   loadBriefings: async (matterId) => {
-    const cached = await readCache<Briefing[]>(briefingsKey(matterId));
+    const cached = await readCache<BriefingListItem[]>(briefingsKey(matterId));
     if (cached) set({ briefings: { ...get().briefings, [matterId]: cached } });
 
     const res = await api.matterBriefings(matterId);
@@ -196,16 +196,27 @@ export function alsoThisWeek(matters: Matter[], today: CivilDate = todayCivil())
  */
 export function tomorrowsBriefing(
   matters: Matter[],
-  briefings: Record<string, Cached<Briefing[]>>,
+  briefings: Record<string, Cached<BriefingListItem[]>>,
   today: CivilDate = todayCivil()
-): { briefing: Briefing; matter: Matter; cachedAt: string } | null {
+): { briefing: BriefingListItem; matter: Matter; cachedAt: string } | null {
   for (const { matter, daysAway } of upcoming(matters, today)) {
     if (daysAway !== 1) continue;
     const entry = briefings[matter.matterId];
     if (!entry) continue;
-    const match = entry.value.find(
-      (b) => daysUntil(b.hearingDate, today) === 1 && b.matterId === matter.matterId
-    );
+    /**
+     * NO `matterId` COMPARISON, and its absence is the fix rather than a
+     * relaxation. `GET /matters/:id/briefings` does not send `matterId` — it
+     * is an index scoped to one matter and has no reason to repeat it — so
+     * `b.matterId === matter.matterId` compared `undefined` to a real id and
+     * was FALSE on every row.
+     *
+     * The effect was that Today never found tomorrow's briefing at all: the
+     * wedge feature's own card could not appear on the home screen, and it
+     * looked like there was simply nothing to show. The rows are already
+     * keyed by matter in this store, so the check was redundant even when it
+     * was harmless.
+     */
+    const match = entry.value.find((b) => daysUntil(b.hearingDate, today) === 1);
     if (match) return { briefing: match, matter, cachedAt: entry.cachedAt };
   }
   return null;

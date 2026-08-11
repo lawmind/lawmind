@@ -9,7 +9,14 @@ import { SectionRule } from '../../components/SectionRule';
 import { Switch } from '../../components/Switch';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
-import type { Briefing, Matter, MatterEvent } from '../../api/contract';
+import type {
+  Matter,
+  MatterAccess,
+  MatterAuthority,
+  MatterBundleBriefing,
+  MatterEvent,
+} from '../../api/contract';
+import { citationDisplay, NO_CITATION_MARK } from '../../citation/citationDisplay';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { AddEventSheet } from './AddEventSheet';
 import { usePractice } from '../../state/practice';
@@ -47,11 +54,35 @@ import { color, space } from '../../theme/tokens';
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+/**
+ * THE BUNDLE AS `GET /matters/:id` ACTUALLY SENDS IT, corrected 11 Aug 2026.
+ *
+ * `briefings` was typed `Briefing[]` — the detail route's shape — and the rows
+ * below read `b.id` and `b.subject`. The bundle sends `briefingId` and no
+ * subject at all, so both were `undefined`: every briefing row in a matter
+ * rendered a blank title, and its tap target carried an undefined id.
+ *
+ * `documents` said `id`; the route sends `documentId` and a `language`
+ * alongside it. Nothing renders that array yet, which is the only reason it
+ * cost nothing — the type was wrong in exactly the same way.
+ */
 type MatterBundle = {
   matter: Matter;
+  /**
+   * OWNER OR SHAREE, STATED BY THE SERVER — see `Matter.access`. Every write in
+   * `matters/route.ts` and `matters/authorities.ts` checks ownership directly:
+   * "a sharee can see the file but cannot add to it". Undeclared until
+   * 11 Aug 2026, so this screen offered a sharee four buttons that 404.
+   */
+  access: MatterAccess;
   events: MatterEvent[];
-  documents: { id: string; documentType: string; createdAt: string }[];
-  briefings: Briefing[];
+  documents: {
+    documentId: string;
+    documentType: string;
+    language: 'en' | 'hi';
+    createdAt: string;
+  }[];
+  briefings: MatterBundleBriefing[];
 };
 
 const matterCacheKey = (id: string) => `matter.${id}`;
@@ -60,6 +91,8 @@ export function MatterScreen({
   matterId,
   onBack,
   onOpenBriefing,
+  onOpenCounterArguments,
+  onOpenJudgment,
   onRecordAdjournment,
   onSendClientUpdate,
   onShare,
@@ -67,6 +100,18 @@ export function MatterScreen({
   matterId: string;
   onBack: () => void;
   onOpenBriefing: (briefingId: string) => void;
+  /**
+   * `POST /arguments/counter` against a position the advocate states, carrying
+   * this matter's id — an existing optional parameter on that endpoint.
+   *
+   * Opened from HERE because the matter is where an advocate already holds the
+   * position in their head. The screen still asks them to type it: deriving a
+   * proposition from a case title would be writing their argument for them and
+   * then answering it.
+   */
+  onOpenCounterArguments: () => void;
+  /** Opens a saved authority. The matter file is a route INTO the law, not a dead list. */
+  onOpenJudgment: (judgmentId: string) => void;
   onRecordAdjournment: () => void;
   onSendClientUpdate: () => void;
   /** PD-3 — "Who can see this matter". Owner-side only, see MatterSharingScreen's own note. */
@@ -76,6 +121,28 @@ export function MatterScreen({
   const [cachedAt, setCachedAt] = useState<string | null>(null);
   const [missing, setMissing] = useState(false);
   const [addEventOpen, setAddEventOpen] = useState(false);
+  /**
+   * THE AUTHORITIES SAVED TO THIS MATTER — `GET /matters/:id/authorities`.
+   *
+   * Added 11 Aug 2026, the day after the endpoint landed. Until then
+   * add-to-matter was WRITE-ONLY: an advocate could save an authority and had
+   * no surface anywhere that showed it back, so the matter workspace could not
+   * answer "what am I relying on in this case", which is the question it exists
+   * to answer.
+   *
+   * A separate request rather than part of the bundle, because the bundle comes
+   * from `GET /matters/:id` and that route does not carry authorities. Fetching
+   * it here keeps the client honest about which route owns what.
+   */
+  const [authorities, setAuthorities] = useState<MatterAuthority[] | null>(null);
+  /**
+   * Set while a removal is in flight, so the row cannot be tapped twice. The
+   * second tap would 404 — the server only removes a row whose `removed_at` is
+   * still null — and the advocate would read "no live authority with that id"
+   * about a judgment they had just successfully taken out.
+   */
+  const [removing, setRemoving] = useState<string | null>(null);
+  const [removeError, setRemoveError] = useState<string | null>(null);
   const [addEventError, setAddEventError] = useState<string | null>(null);
   const storeMatters = usePractice((s) => s.matters);
 
@@ -84,6 +151,11 @@ export function MatterScreen({
     setBundle(null);
     setCachedAt(null);
     setMissing(false);
+
+    setAuthorities(null);
+    void api.matterAuthorities(matterId).then((r) => {
+      if (alive && r.ok) setAuthorities(r.data.authorities);
+    });
 
     void readCache<MatterBundle>(matterCacheKey(matterId)).then((entry) => {
       if (!alive || !entry) return;
@@ -112,6 +184,37 @@ export function MatterScreen({
       alive = false;
     };
   }, [matterId]);
+
+  /**
+   * TAKE ONE AUTHORITY BACK OUT OF THE MATTER.
+   *
+   * The row is marked removed IN PLACE from the server's own `removedAt`
+   * rather than spliced out of the array, so the client holds the same shape
+   * the endpoint returns — removal is a timestamp, never a delete, and a
+   * client that quietly dropped the row would be modelling it as one.
+   *
+   * NOT OPTIMISTIC. An authority vanishing from a case file before the server
+   * agreed, and reappearing on the next fetch, is worse than a moment's wait:
+   * this list is the advocate's record of what they are relying on.
+   */
+  const removeAuthority = async (authorityId: string) => {
+    if (removing) return;
+    setRemoving(authorityId);
+    setRemoveError(null);
+
+    const r = await api.removeAuthorityFromMatter(matterId, authorityId);
+
+    if (r.ok) {
+      setAuthorities((current) =>
+        (current ?? []).map((a) =>
+          a.authorityId === authorityId ? { ...a, removedAt: r.data.removedAt } : a
+        )
+      );
+    } else {
+      setRemoveError(r.error.message);
+    }
+    setRemoving(null);
+  };
 
   const today = useMemo(() => todayCivil(), []);
 
@@ -155,6 +258,27 @@ export function MatterScreen({
   }
 
   const { matter, events, briefings } = bundle;
+  /**
+   * WHAT MAY BE OFFERED, NOT WHAT MAY BE READ.
+   *
+   * `access` comes from the server and is never inferred here. A sharee reads
+   * the whole file — that is what PD-3 grants — and can write none of it:
+   * `matters/authorities.ts` states the split plainly, "a sharee can see the
+   * file but cannot add to it", and every write checks `user_id` directly.
+   *
+   * Offering the buttons anyway is not a harmless extra: a sharee taps "Add
+   * event" in a courtroom, gets `no matter with that id` because the server
+   * answers a permission failure as a 404, and now believes the matter is
+   * gone. Hiding them is the honest reading of a boundary the server already
+   * draws.
+   *
+   * `?? 'owner'` for the cached-bundle case: a bundle written to disk before
+   * this field was declared has no `access`, and the reader is the person who
+   * cached it. A wrong guess here removes buttons from an owner rather than
+   * offering them to a sharee, and if the guess were the other way a stale
+   * cache would reintroduce the exact defect being fixed.
+   */
+  const isOwner = (bundle.access ?? 'owner') === 'owner';
   const nextDate = parseCivilDate(liveDate ?? '');
 
   return (
@@ -198,31 +322,178 @@ export function MatterScreen({
               </Text>
             </>
           )}
-          <Button label="Record the next date" onPress={onRecordAdjournment} />
+          {isOwner ? <Button label="Record the next date" onPress={onRecordAdjournment} /> : null}
         </Card>
 
         <View style={styles.actions}>
-          <Button label="Add event" onPress={() => setAddEventOpen(true)} />
-          <Button label="Send update to client" variant="secondary" onPress={onSendClientUpdate} />
-          <Button label="Who can see this matter" variant="secondary" onPress={onShare} />
+          {isOwner ? <Button label="Add event" onPress={() => setAddEventOpen(true)} /> : null}
+          {/*
+            NOT OWNER-GATED. `POST /arguments/counter` retrieves against the
+            corpus and takes `matterId` as an optional hint; it performs no
+            write and checks no ownership. A sharee researching the other
+            side's likely authorities is doing the thing the share was for.
+          */}
+          <Button
+            label="What will be said against you"
+            variant="secondary"
+            onPress={onOpenCounterArguments}
+          />
+          {isOwner ? (
+            <>
+              <Button
+                label="Send update to client"
+                variant="secondary"
+                onPress={onSendClientUpdate}
+              />
+              <Button label="Who can see this matter" variant="secondary" onPress={onShare} />
+            </>
+          ) : (
+            /*
+              SAID, NOT SILENTLY ABSENT. A sharee who finds fewer buttons than
+              they expect should know why — otherwise the file looks broken
+              rather than shared, and PD-3's whole point is that a share is a
+              deliberate, legible grant rather than a vague one.
+            */
+            <Text variant="ui" style={styles.muted}>
+              This matter was shared with you. You can read the file and its shared notes; only
+              the advocate who owns it can add to it.
+            </Text>
+          )}
         </View>
 
         {briefings.length > 0 ? (
           <View style={styles.section}>
             <SectionRule label="Briefings" />
             {briefings.map((b) => (
-              <Pressable key={b.id} onPress={() => onOpenBriefing(b.id)} style={styles.row}>
+              <Pressable
+                key={b.briefingId}
+                onPress={() => onOpenBriefing(b.briefingId)}
+                style={styles.row}
+              >
                 <Text variant="record" style={styles.gutter}>
                   {formatGutter(parseCivilDate(b.hearingDate) ?? today)}
                 </Text>
                 <View style={styles.rowBody}>
-                  <Text variant="uiStrong">{b.subject}</Text>
-                  <Text variant="ui" style={styles.muted}>
+                  {/*
+                    THE HEARING, NOT A SUBJECT. This read `b.subject`, which no
+                    route sends — the row's title was blank. The briefings of one
+                    matter are all the same case, so a case name would repeat down
+                    the list anyway; what distinguishes one row from another is
+                    the hearing it was prepared for.
+                  */}
+                  <Text variant="uiStrong">
                     {describeHearingDate(b.hearingDate, today)}
                   </Text>
+                  {/*
+                    AN UNCONFIRMED LISTING IS SAID HERE TOO, and from three
+                    states, not a boolean. `never_checked` — both timestamps
+                    null — is the ordinary case for a date the advocate typed
+                    and draws nothing.
+                  */}
+                  {b.datesConfirmedAt === null && b.datesNotConfirmedAt !== null ? (
+                    <Text variant="ui" style={styles.muted}>
+                      This listing is not confirmed against the cause list.
+                    </Text>
+                  ) : (
+                    <Text variant="ui" style={styles.muted}>
+                      {b.openedAt ? 'Opened' : 'Not opened yet'}
+                    </Text>
+                  )}
                 </View>
               </Pressable>
             ))}
+          </View>
+        ) : null}
+
+        {/*
+          THE AUTHORITIES SAVED TO THIS MATTER.
+          Placed above the timeline because "what am I relying on" is the
+          question an advocate opens a matter to answer, and below the actions
+          because it is a record rather than something to do.
+
+          REMOVED ROWS ARE STILL RETURNED by the endpoint — removal is a
+          timestamp, never a delete, exactly as `matter_shares` works. They are
+          not drawn: a matter file that shows what was taken out alongside what
+          is in would be a worse answer to the same question. The row survives
+          for the audit, which is where it belongs.
+        */}
+        {authorities && authorities.some((a) => a.removedAt === null) ? (
+          <View style={styles.section}>
+            <SectionRule label="Authorities" />
+            {authorities
+              .filter((a) => a.removedAt === null)
+              .map((a) => {
+                const citation = citationDisplay(a);
+                return (
+                  <Pressable
+                    key={a.authorityId}
+                    onPress={() => onOpenJudgment(a.judgmentId)}
+                    style={styles.row}
+                  >
+                    <View style={styles.rowBody}>
+                      <Text variant="legal" scale="holding">
+                        {a.caseTitle}
+                      </Text>
+                      {/*
+                        Through the one helper, like every other citation slot.
+                        A judgment saved from a High Court row carries none, and
+                        an empty line here would read as a rendering fault in
+                        the advocate's own case file.
+                      */}
+                      <Text opticalNudge variant="record" style={styles.muted}>
+                        {citation.text}
+                      </Text>
+                      {!citation.citable ? (
+                        <Text variant="ui" style={styles.uncitable}>
+                          {NO_CITATION_MARK}
+                        </Text>
+                      ) : null}
+
+                      {/*
+                        TAKING ONE OUT — `DELETE /matters/:id/authorities/:id`,
+                        live since 10 Aug and unreachable until now.
+
+                        The list landed first and could only grow: an advocate
+                        who saved the wrong judgment, or one they later decided
+                        against, had no way to take it back out of their own
+                        case file. That is the same write-only shape the list
+                        itself was built to fix, one level down.
+
+                        NO CONFIRMATION STEP, and that is deliberate — removal
+                        sets a timestamp rather than deleting, exactly as
+                        revoking a share does, and this screen follows the
+                        precedent `MatterSharingScreen` already set. Saving it
+                        again restores the same row; the server answers 201 for
+                        a judgment brought back after removal.
+                      */}
+                      {isOwner ? (
+                        <Pressable
+                          accessibilityLabel={`Remove ${a.caseTitle} from this matter`}
+                          disabled={removing === a.authorityId}
+                          onPress={() => void removeAuthority(a.authorityId)}
+                          style={styles.removeAuthority}
+                        >
+                          <Text variant="ui" style={styles.removeAuthorityLabel}>
+                            {removing === a.authorityId ? 'Removing…' : 'Remove from this matter'}
+                          </Text>
+                        </Pressable>
+                      ) : null}
+                    </View>
+                  </Pressable>
+                );
+              })}
+
+            {/*
+              A FAILED REMOVAL IS SAID, NEVER SWALLOWED. The row stays on
+              screen either way; without this the advocate taps, watches
+              nothing happen, and cannot tell a dead network from a judgment
+              that refused to leave.
+            */}
+            {removeError ? (
+              <Text variant="ui" style={styles.error}>
+                {removeError}
+              </Text>
+            ) : null}
           </View>
         ) : null}
 
@@ -368,6 +639,21 @@ const styles = StyleSheet.create({
   nextCard: { gap: space.xs, marginTop: space.xs },
   actions: { gap: space.xs },
   section: { gap: space.xs, marginTop: space.sm },
+  /** Ink weight and a solid rule, matching every other surface's mark. */
+  uncitable: {
+    color: color.ink,
+    borderLeftWidth: 2,
+    borderLeftColor: color.ink,
+    paddingLeft: space.xs,
+  },
+
+  /**
+   * Oxblood, and set on its own line rather than as a trailing icon — the same
+   * treatment `MatterSharingScreen` gives "Revoke", which is the same act on
+   * the same kind of record.
+   */
+  removeAuthority: { alignSelf: 'flex-start', marginTop: 4 },
+  removeAuthorityLabel: { color: color.oxblood },
 
   row: { flexDirection: 'row', gap: space.sm, paddingVertical: space.xs },
   event: {

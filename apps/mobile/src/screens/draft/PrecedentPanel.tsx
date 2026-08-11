@@ -4,6 +4,7 @@ import { Clock } from 'lucide-react-native';
 import { Pressable } from '../../components/Pressable';
 import { Text } from '../../components/Text';
 import type { SearchResult } from '../../api/contract';
+import { citationDisplay, NO_CITATION_MARK } from '../../citation/citationDisplay';
 import { color, radius, space } from '../../theme/tokens';
 
 /**
@@ -83,6 +84,30 @@ export function PrecedentPanel({
                 : 'This judgment has been doubted.'}
             </Text>
           ) : null}
+
+          {/*
+            THE UNCITABLE MARK, INLINE — `CITATION_HARNESS.md` §"The fourth
+            concern" requires it here by name: *"`PrecedentPanel` (draft
+            suggestions) stays enabled, carrying the same mark inline. An
+            uncitable judgment is not excluded from suggestions the way
+            `set_aside` judgments are — the current UNMARKED offering was the
+            danger, not the offering itself."*
+
+            This is the surface where text enters a document that gets filed, so
+            an unmarked suggestion here is the worst version of the
+            silence-means-safe problem: the advocate did not ask for this
+            authority, we proposed it, and they would have no way to know we
+            hold no citation for it until the draft was already written.
+
+            NOT A FILTER. Warn, not block — the founder decided that directly.
+            A judgment with no citation may be perfectly good law worth citing
+            the reasoning of, and excluding it would hide a real authority.
+          */}
+          {!citationDisplay(s).citable ? (
+            <Text variant="uiStrong" style={styles.uncitable}>
+              {NO_CITATION_MARK}
+            </Text>
+          ) : null}
         </Pressable>
       ))}
     </View>
@@ -112,4 +137,15 @@ const styles = StyleSheet.create({
   title: { color: color.ink },
   holding: { color: color.inkMuted },
   moved: { color: color.inkMuted },
+  /**
+   * Ink weight and a solid left rule, matching `ResultCard.uncitable`. No amber
+   * — the law has not moved — and no dashed edge, which is reserved for what we
+   * could not confirm. This is a fact about the record.
+   */
+  uncitable: {
+    color: color.ink,
+    borderLeftWidth: 2,
+    borderLeftColor: color.ink,
+    paddingLeft: space.xs,
+  },
 });

@@ -16,6 +16,15 @@ export default function Route() {
         onOpenBriefing={(briefingId) =>
           router.push({ pathname: '/briefing/[id]', params: { id: briefingId } })
         }
+        onOpenCounterArguments={() =>
+          // `as never` — same reason as `/matter-sharing` below: the typed-route
+          // union is generated from the file tree at dev-server start and has
+          // not seen this route yet.
+          router.push({ pathname: '/counter-arguments', params: { matterId: id } } as never)
+        }
+        onOpenJudgment={(judgmentId) =>
+          router.push({ pathname: '/judgment/[id]', params: { id: judgmentId } })
+        }
         onRecordAdjournment={() =>
           router.push({ pathname: '/adjournment/[id]', params: { id } })
         }

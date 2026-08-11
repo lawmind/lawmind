@@ -5,6 +5,7 @@ import { Pressable } from '../../components/Pressable';
 import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
+import { citationDisplay } from '../../citation/citationDisplay';
 import { api } from '../../api/client';
 import type { AuthoritiesResponse, PointInTimeAuthority } from '../../api/contract';
 import { citationRender } from '../../citation/renderState';
@@ -199,7 +200,7 @@ function AuthorityRow({
         </Text>
         <View style={styles.citationLine}>
           <Text opticalNudge variant="record">
-            {authority.neutralCitation}
+            {citationDisplay(authority).text}
           </Text>
           <Text variant="ui" style={styles.faint}>
             {formatJudgmentDate(authority.judgmentDate)}

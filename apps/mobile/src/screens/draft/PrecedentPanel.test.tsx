@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { PrecedentPanel } from './PrecedentPanel';
+import { NO_CITATION_MARK } from '../../citation/citationDisplay';
 import type { SearchResult } from '../../api/contract';
 
 /**
@@ -27,6 +28,7 @@ const base: SearchResult = {
   verificationState: 'verified',
   verifiedBySource: 'corpus',
   overruledStatus: 'none',
+  asOf: '2026-08-06T00:00:00.000Z',
 };
 
 const make = (over: Partial<SearchResult>): SearchResult => ({ ...base, ...over });
@@ -105,6 +107,71 @@ describe('PrecedentPanel', () => {
     await render(
       <PrecedentPanel onInsert={() => {}} suggestions={[make({ verificationState: 'unverified' })]} />
     );
+    expect(screen.toJSON()).toBeNull();
+  });
+});
+
+/**
+ * DRAFT INSERTION AND THE UNCITABLE JUDGMENT.
+ *
+ * `CITATION_HARNESS.md` §"The fourth concern" names this surface directly:
+ * *"`PrecedentPanel` (draft suggestions) stays enabled, carrying the same mark
+ * inline. An uncitable judgment is not excluded from suggestions the way
+ * `set_aside` judgments are — the current UNMARKED offering was the danger, not
+ * the offering itself."*
+ *
+ * This is the worst place for an unmarked citationless judgment. Everywhere else
+ * the advocate asked for the authority; here WE proposed it, into a document
+ * that gets filed, and silence in this product means verified-and-fine.
+ */
+describe('a suggestion we hold no citation for', () => {
+  const citationless = make({
+    judgmentId: 'j_hc',
+    caseTitle: 'Mock Petitioner v. State of Bihar',
+    neutralCitation: null,
+    reporterCitations: [],
+  });
+
+  it('is still offered — warn, not block', async () => {
+    await render(<PrecedentPanel onInsert={() => {}} suggestions={[citationless]} />);
+
+    expect(screen.getByText('Mock Petitioner v. State of Bihar')).toBeTruthy();
+  });
+
+  it('carries the uncitable mark inline, as the harness requires', async () => {
+    await render(<PrecedentPanel onInsert={() => {}} suggestions={[citationless]} />);
+
+    expect(screen.getByText(NO_CITATION_MARK)).toBeTruthy();
+  });
+
+  it('can still be inserted, and inserting it passes the judgment id', async () => {
+    const onInsert = jest.fn();
+    await render(<PrecedentPanel onInsert={onInsert} suggestions={[citationless]} />);
+
+    await fireEvent.press(screen.getByText('Mock Petitioner v. State of Bihar'));
+
+    expect(onInsert).toHaveBeenCalledWith('j_hc');
+  });
+
+  it('leaves a citable suggestion unmarked — verified stays silent', async () => {
+    await render(
+      <PrecedentPanel
+        onInsert={() => {}}
+        suggestions={[make({ judgmentId: 'j_ok', caseTitle: 'Mock Cited v. State' })]}
+      />
+    );
+
+    expect(screen.queryByText(NO_CITATION_MARK)).toBeNull();
+  });
+
+  it('still refuses a set-aside suggestion outright — the one exclusion', async () => {
+    await render(
+      <PrecedentPanel
+        onInsert={() => {}}
+        suggestions={[make({ overruledStatus: 'set_aside' })]}
+      />
+    );
+
     expect(screen.toJSON()).toBeNull();
   });
 });

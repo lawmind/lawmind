@@ -29,7 +29,15 @@ export type ApiResponse<T> =
  * upgraded to confirmed by absence.
  */
 export type VerificationState = 'verified' | 'unverified' | 'failed';
-export type VerifiedBySource = 'corpus' | 'public_x2' | 'ecourts' | 'none';
+/**
+ * `ecourts_bulk` added 8 Aug 2026 — bulk CNR resolution against the eCourts
+ * registry, `docs/CITATION_HARNESS.md` "`verifiedBySource` gains a fifth
+ * value". It is a MACHINE confirming against the registry, never a named
+ * advocate solving the captcha and vouching — that is `ecourts` alone, and
+ * the two must never share wording. Strength, strongest first: `ecourts` >
+ * `public_x2` > `ecourts_bulk` > `corpus`.
+ */
+export type VerifiedBySource = 'corpus' | 'public_x2' | 'ecourts' | 'ecourts_bulk' | 'none';
 export type OverruledStatus = 'none' | 'set_aside' | 'partly_set_aside' | 'doubted';
 
 export type SearchResult = {
@@ -44,7 +52,28 @@ export type SearchResult = {
    */
   citationCheckId: string | null;
   caseTitle: string;
-  neutralCitation: string;
+  /**
+   * NULL IS A REAL ANSWER, AND IT IS NOT A MISSING FIELD — IT IS A JUDGMENT
+   * THAT CARRIES NO CITATION AT ALL.
+   *
+   * This type said `string` until 11 Aug 2026 while every server route that
+   * carries a citation typed it `string | null` and passed it through verbatim
+   * (`services/api/src/search/retrieve.ts:45`, `judgments/route.ts:24`,
+   * `judgments/as-at.ts:73`, `judgments/treatment.ts:40`). The lie was
+   * invisible for the life of the project because every row in the corpus was a
+   * Supreme Court judgment with a citation. It stopped being invisible when
+   * 40,980 High Court judgments landed, 100% of them with no neutral citation
+   * and no reporter citation.
+   *
+   * A CITATIONLESS JUDGMENT IS NOT AN INVALID ONE. It is a real judgment of a
+   * real court, searchable and readable, that cannot be cited in a filing.
+   * That is a third thing, distinct from both "verified" and "unverified", and
+   * it is a fact about the CITATION FIELD rather than about verification — so
+   * it is deliberately NOT part of the three-field citation-state model, which
+   * this change does not touch.
+   */
+  neutralCitation: string | null;
+  /** Empty on every High Court row the AWS bucket supplies. Never synthesised. */
   reporterCitations: string[];
   court: string;
   /**
@@ -73,6 +102,16 @@ export type SearchResult = {
    * wreckage as the court's own words.
    */
   operativeParagraph: string;
+  /**
+   * THE NUMBER THE COURT PRINTED. Added 7 Aug 2026, additive — confirmed
+   * carried on every live `/search` result (`services/api/src/search/route.ts`)
+   * even though this type omitted it until 11 Aug. `null` is a real, common
+   * answer: pre-1990s judgments arrive as scans that lost their numbering, and
+   * a headnote is never numbered. **Never invented** — a client that guesses a
+   * number here would be presenting a position it made up as the court's own
+   * pagination, behind an authority rule.
+   */
+  operativeParagraphNumber?: number | null;
   verificationState: VerificationState;
   verifiedBySource: VerifiedBySource;
   overruledStatus: OverruledStatus;
@@ -95,6 +134,21 @@ export type SearchResult = {
    * than the server already knows.
    */
   unconfirmedReason?: string;
+  /**
+   * THE MOMENT THE SERVER READ `overruled_status` FOR THIS ROW. Added
+   * 11 Aug 2026, additive — confirmed carried on every live `/search` result,
+   * stamped once per request so every row in one response agrees.
+   *
+   * NOT a prop to pass as `ResultCard`'s `statusAsOf` on a live screen —
+   * `statusAsOf` means "this status could not be re-read now", and a freshly
+   * fetched search result is exactly the case that is live. This field exists
+   * for the surface that does not exist yet: an offline-cached result. When
+   * that surface is built, it renders "good-law status as of {asOf}" against
+   * THIS value rather than the moment the phone last had a signal — the
+   * never-cached rule requires the as-of date to be when the SERVER read the
+   * row, never when the client happened to receive it. `CITATION_HARNESS.md`.
+   */
+  asOf: string;
 };
 
 /**
@@ -145,9 +199,28 @@ export type JudgmentParagraph = {
   /** Zero-based position in the rendered array. Always present, never citable. */
   paragraphIndex: number;
   text: string;
-  /** Set where the paragraph cites another judgment we hold — drives the jump. */
+  /**
+   * The judgment this paragraph cites, where the citation resolves to a row we
+   * hold. Drives the jump in `ReadingView`.
+   *
+   * LIVE SINCE 11 Aug 2026 — `services/api/src/judgments/route.ts` calls
+   * `attachCitesJudgmentId`. It was dormant for most of the project's life:
+   * declared here, implemented in the reader, and never once sent, so the
+   * feature worked against fixtures and never in production. Requested on the
+   * bus (0028), built by LCC, and re-verified here by reading the route rather
+   * than the message announcing it.
+   *
+   * ABSENT IS A DELIBERATE ANSWER, NEVER A GAP. The server omits it when the
+   * paragraph cites nothing, when the citation resolves to zero judgments, when
+   * it resolves to MORE than one — a citation identifying two judgments
+   * identifies neither — and when the only match is the judgment already open,
+   * because a self-link is not navigation. The client must therefore render no
+   * link on absence and must never fall back to a search: that would turn an
+   * ambiguity the server refused to resolve into a guess the advocate cannot
+   * see, which is the exact failure `cite:` search exists to prevent.
+   */
   citesJudgmentId?: string;
-  operative?: boolean;
+
 };
 
 /**
@@ -216,9 +289,38 @@ export type JudgmentDetail = Omit<
    */
   citationCheckId?: string | null;
   bench: string;
-  reliedOn?: { judgmentId: string; caseTitle: string; neutralCitation: string }[];
+  /** `neutralCitation` is nullable here for the same reason it is on a result row. */
+  reliedOn?: { judgmentId: string; caseTitle: string; neutralCitation: string | null }[];
   holdingParagraphNumber?: number;
   operativeParagraphNumber?: number;
+  /**
+   * THE COURT'S OWN NUMBER FOR THE CASE — `CWJC 12345/2019`, `Crl.A. 221/2018`.
+   *
+   * Sent on every judgment (`services/api/src/judgments/route.ts` selects
+   * `case_number` and returns it) and declared here for the first time on
+   * 11 Aug 2026. Nullable, exactly as `packages/db/src/schema.ts:326` has it.
+   *
+   * IT IS NOT A CITATION AND MUST NEVER BE RENDERED AS ONE. A case number
+   * identifies a proceeding on a court's own register; a citation identifies a
+   * reported judgment. But it is the identifier `CITATION_HARNESS.md` §"The
+   * fourth concern" requires us to preserve — *"preserve case number, parties,
+   * court, date, source URL and paragraph information where available"* — and
+   * for the 40,980 High Court judgments carrying no citation at all, it is the
+   * only handle an advocate has for referring to the matter.
+   */
+  caseNumber?: string | null;
+  /** Derived by the server FROM `case_number`, never from the judgment's content. */
+  caseType?: 'criminal' | 'civil' | null;
+  /**
+   * WHERE THE COURT PUBLISHED IT. `notNull` in the schema and returned on every
+   * judgment, so this is not optional — it is the one link that lets an advocate
+   * check us against the court itself.
+   *
+   * NEVER CONSTRUCTED. A source URL assembled client-side would be a guess at
+   * another service's routing, and a wrong one sends an advocate to a different
+   * case while telling them it is this one.
+   */
+  sourceUrl: string;
   paragraphs: JudgmentParagraph[];
   /**
    * Share of paragraphs carrying a printed number, 0–1.
@@ -246,17 +348,62 @@ export type JudgmentDetail = Omit<
  * or a predicted outcome: `FEATURE_PARITY.md` §4 declines outcome prediction
  * because it cannot be sourced to a primary record or verified by any tier.
  */
-export type TreatmentRelationship = 'followed' | 'distinguished' | 'doubted' | 'overruled';
+/**
+ * WHAT A LATER BENCH DID TO THIS AUTHORITY — the six values
+ * `judgment_citations.relationship` actually stores
+ * (`packages/db/src/schema.ts:711`), not the four this type declared until
+ * 11 Aug 2026.
+ *
+ * `services/api/src/judgments/treatment.ts` applies NO filter on the column, so
+ * every value reaches the client. Two were missing here and both rendered as a
+ * blank label in `TreatmentCard`, because a lookup on an unknown key returns
+ * `undefined`:
+ *
+ *   · `overruled_in_part` — 20 rows in production. Worse than a blank label:
+ *     `lawMoved` tested `=== 'overruled'`, so a bench that overruled this
+ *     authority IN PART was not marked as the law moving at all.
+ *   · `cites` — a bare reference with no treatment. Common, and legitimately
+ *     quieter than the others, but it must still say what it is.
+ *
+ * A SEVENTH VALUE IS POSSIBLE. The column is not an enum server-side, so this
+ * union is the client's best current knowledge rather than a guarantee.
+ * Surfaces must render an unrecognised value honestly instead of blank —
+ * `TreatmentCard` does, and a test holds it there.
+ */
+export type TreatmentRelationship =
+  | 'cites'
+  | 'followed'
+  | 'distinguished'
+  | 'doubted'
+  | 'overruled'
+  | 'overruled_in_part';
 
 export type Treatment = {
   judgmentId: string;
   caseTitle: string;
-  neutralCitation: string;
+  /**
+   * NULLABLE FOR THE SAME REASON IT IS ON A SEARCH ROW — the server has always
+   * typed it `string | null` and 40,980 High Court judgments carry none. Render
+   * it through `citation/citationDisplay.ts`, never raw.
+   */
+  neutralCitation: string | null;
   court: string;
   judgmentDate: string;
   relationship: TreatmentRelationship;
   /** The paragraph of the treating judgment that did it, where known. */
   paragraph?: number;
+  /**
+   * THE PHRASE THE COURT PRINTED — sent on every row, undeclared until
+   * 11 Aug 2026, so the one thing that makes a treatment claim auditable was
+   * unreachable by the client.
+   *
+   * `treatment.ts`: "Present only for a real treatment, so any row claiming one
+   * can be audited back to its own text." Without it the card asserts that a
+   * later bench distinguished this authority and offers nothing to check that
+   * against — which is the shape of claim this product exists not to make.
+   * `null` where the extractor found no phrase.
+   */
+  evidence?: string | null;
   verificationState: VerificationState;
   verifiedBySource: VerifiedBySource;
   overruledStatus: OverruledStatus;
@@ -266,13 +413,30 @@ export type Treatment = {
 export type TreatmentResponse = {
   judgmentId: string;
   asOf: string;
-  counts: { followed: number; distinguished: number; doubted: number; overruled: number };
+  /**
+   * SIX KEYS, NOT FOUR — `judgment_citations.relationship` holds six values and
+   * `total` below sums all six. The client declared four until 11 Aug 2026, so
+   * a screen adding the counts it knew about and comparing them to `total`
+   * would find a gap it could not explain: 23 live `overruled_in_part` rows,
+   * plus every plain `cites` edge, silently uncounted.
+   *
+   * LCC added the two missing keys the same day (bus 0035 → `treatment.ts`).
+   */
+  counts: {
+    followed: number;
+    distinguished: number;
+    doubted: number;
+    overruled: number;
+    overruledInPart: number;
+    cites: number;
+  };
   treatments: Treatment[];
   total: number;
   returned: number;
   /** True when more treatments exist than were returned. Rendered, never hidden. */
   truncated: boolean;
-  nextCursor?: string;
+  /** `string | null` on the wire, never merely absent — `treatment.ts`. */
+  nextCursor?: string | null;
 };
 
 /**
@@ -290,7 +454,12 @@ export type TreatmentResponse = {
 export type GraphNode = {
   judgmentId: string;
   caseTitle: string;
-  neutralCitation: string;
+  /**
+   * NULLABLE FOR THE SAME REASON IT IS ON A SEARCH ROW — the server has always
+   * typed it `string | null` and 40,980 High Court judgments carry none. Render
+   * it through `citation/citationDisplay.ts`, never raw.
+   */
+  neutralCitation: string | null;
   court: string;
   judgmentDate: string;
   verificationState: VerificationState;
@@ -356,7 +525,12 @@ export type AuthorityStanding =
 export type PointInTimeAuthority = {
   judgmentId: string;
   caseTitle: string;
-  neutralCitation: string;
+  /**
+   * NULLABLE FOR THE SAME REASON IT IS ON A SEARCH ROW — the server has always
+   * typed it `string | null` and 40,980 High Court judgments carry none. Render
+   * it through `citation/citationDisplay.ts`, never raw.
+   */
+  neutralCitation: string | null;
   judgmentDate: string;
   /** How the relying judgment used it — from the court's own printed annotation. */
   relationship: string;
@@ -437,15 +611,48 @@ export type AuthoritiesResponse = {
 export type CounterAuthority = {
   judgmentId: string;
   caseTitle: string;
-  neutralCitation: string;
+  /**
+   * NULLABLE FOR THE SAME REASON IT IS ON A SEARCH ROW — the server has always
+   * typed it `string | null` and 40,980 High Court judgments carry none. Render
+   * it through `citation/citationDisplay.ts`, never raw.
+   */
+  neutralCitation: string | null;
   court?: string;
   judgmentDate?: string;
   /** Verbatim source text, not a summary. Long, and often carrying OCR furniture. */
   operativeParagraph?: string;
+  /**
+   * THE NUMBER THE COURT PRINTED, carried here exactly as it is on a search row.
+   * `services/api/src/arguments/counter.ts` maps it onto every authority; this
+   * type omitted it until 11 Aug 2026, so the panel had no anchor to offer.
+   * `null` is real and common — never invented.
+   */
+  operativeParagraphNumber?: number | null;
   verificationState: VerificationState;
   verifiedBySource: VerifiedBySource;
+  /**
+   * NOT ALWAYS `none` — AND THAT IS THE WHOLE POINT.
+   *
+   * `counter.ts` excludes only `set_aside`, so `doubted` and
+   * `partly_set_aside` authorities are RETURNED HERE and must render the LAW
+   * MOVED mark like every other surface. Stale-overruled carries a zero
+   * threshold; an authority proposed against the advocate's own position with
+   * its status hidden is the worst place to hide it.
+   */
   overruledStatus: OverruledStatus;
-  overruledParas?: number[];
+  /** `number[] | null` on the wire — `retrieve.ts:51`. Never merely absent. */
+  overruledParas?: number[] | null;
+  /**
+   * SENT SINCE 11 AUG 2026, and it is what makes the `partly_set_aside` case
+   * legible: `renderState.ts` puts the note in `whatStillStands`, the half the
+   * advocate is about to argue against, and states it FIRST.
+   *
+   * It was carried on `excluded[]` and not on `authorities[]` until this
+   * client's audit found the asymmetry — `retrieve.ts` had selected both on
+   * every row all along. LCC added them the same day (bus 0037 → counter.ts).
+   */
+  overruledNote?: string | null;
+  overruledByJudgmentId?: string | null;
   asOf: string;
 };
 
@@ -453,6 +660,38 @@ export type CounterArgument = {
   argument: string;
   rebuttal: string;
   authorities: CounterAuthority[];
+};
+
+/**
+ * AN AUTHORITY WE RULED OUT, NAMED — the row `excluded` carries.
+ *
+ * Was an inline shape declaring three of the six fields the server sends
+ * (`services/api/src/arguments/counter.ts`) until 11 Aug 2026. The two it
+ * omitted are the two the design asks for: `design/screens/07-counter-arguments.dc.html`
+ * writes the reason as *"The relevant directions in this authority were set
+ * aside in Social Action Forum (2018) — not offered as a counter-argument"*,
+ * and the case that did the setting aside can only come from the server.
+ * Undeclared meant unbuilt, so the card printed a generic sentence instead.
+ */
+export type ExcludedAuthority = {
+  judgmentId: string;
+  caseTitle: string;
+  /** Nullable for the same reason it is everywhere else — 40,980 rows carry none. */
+  neutralCitation: string | null;
+  reason: 'set_aside';
+  /**
+   * THE JUDGMENT THAT SET IT ASIDE. `null` when the corpus records the status
+   * but not the authority for it, which is common on older rows.
+   */
+  overruledByJudgmentId?: string | null;
+  /**
+   * THE COURT'S OWN NOTE ON WHAT WAS SET ASIDE, verbatim. Shown in place of our
+   * generic sentence when present — it says which directions fell and in which
+   * case, and we have no basis to write either ourselves.
+   */
+  overruledNote?: string | null;
+  /** When the server read `overruled_status` for this row. */
+  asOf?: string;
 };
 
 /**
@@ -479,7 +718,7 @@ export type CounterArgumentsResponse = {
   /** S2. Absent until generation lands. */
   arguments?: CounterArgument[];
   /** Named and shown, never dropped. */
-  excluded?: { judgmentId: string; caseTitle: string; neutralCitation?: string; reason: 'set_aside' }[];
+  excluded?: ExcludedAuthority[];
   unverifiedReferences?: UnverifiedReference[];
 };
 
@@ -536,6 +775,43 @@ export type CompareResponse = {
  * substituted last year, is exactly the failure the citation harness exists to
  * prevent — arriving through a door the harness does not watch.
  */
+/**
+ * HOW MUCH OF THE STATUTE LIBRARY WE ACTUALLY HOLD.
+ *
+ * Sent on every `GET /statutes` since the route was written, and read by
+ * nothing until 11 Aug 2026. The acts index therefore presented a list with no
+ * statement of what was missing from it — the same silence `CoverageScreen`
+ * exists to break for judgments: "silence about a gap does the same damage as
+ * a fabricated citation; both let an advocate rely on something that is not
+ * there."
+ *
+ * THREE OF THESE FIELDS ARE TRAPS, and the route's own comments name them:
+ *
+ *   · `complete` is authoritative. NEVER infer completeness from
+ *     `held === sourceTotal` — an ingest can equal the count transiently
+ *     mid-run, or reach it with Acts that failed and were retried into place.
+ *   · `sourceTotal: null` means we have never enumerated the source. It does
+ *     NOT mean zero, and it must never be rendered as a denominator.
+ *   · `ingestInProgress: null` means we cannot tell. It is nullable precisely
+ *     because a boolean cannot say "unknown", and `false` for an absent row is
+ *     a claim we cannot support.
+ *
+ * `failedCount` and `sectionlessCount` are TWO DIFFERENT GAPS: Acts we could
+ * not fetch, and Acts we hold whose sections never parsed. Reporting one number
+ * would hide the other.
+ */
+export type StatuteCoverage = {
+  held: number;
+  sourceTotal: number | null;
+  complete: boolean;
+  failedCount: number;
+  /** Named, never merely counted — "an unauditable gap is not a known gap". */
+  failedIds: string[];
+  sectionlessCount: number;
+  enumeratedAt: string | null;
+  ingestInProgress: boolean | null;
+};
+
 export type Statute = {
   statuteId: string;
   shortTitle: string;
@@ -560,7 +836,13 @@ export type StatuteSection = {
   shortTitle: string;
   /** TEXT, not a number — "63A" is a section number. Never sort on this. */
   sectionNumber: string;
-  heading: string;
+  /**
+   * NULLABLE — `SectionRow` in `services/api/src/statutes/route.ts` types it
+   * `string | null` and passes it through verbatim. A section with no marginal
+   * heading is ordinary in older Acts, not a parse failure, so the row renders
+   * without one rather than reserving space for a line that is not coming.
+   */
+  heading: string | null;
   /**
    * Government-published text, served verbatim from the database.
    * NEVER summarised, never reformatted, never re-wrapped by the client. An
@@ -651,6 +933,31 @@ export type CitationCoverage = {
   note: string;
 };
 
+/**
+ * WHAT RESOLVED, AND IT IS FIVE FIELDS — NOT A `SearchResult`.
+ *
+ * `services/api/src/citations/check.ts:124` builds this object by hand from
+ * the joined row: `judgmentId`, `caseTitle`, `neutralCitation`, `court`,
+ * `judgmentDate`. Nothing else. This was typed `SearchResult | null` until
+ * 11 Aug 2026, which promised ten fields the endpoint has never sent — and
+ * `tsc` would have accepted `check.judgment.overruledStatus` in any future
+ * screen, handing it `undefined` on a good-law question.
+ *
+ * THE THREE CITATION FIELDS ARE ON THE CHECK ITSELF, not on this object, and
+ * that is the right place for them: they describe what was found when the
+ * citation was checked. Reading them from here is the mistake this narrower
+ * type now makes impossible rather than merely inadvisable.
+ */
+export type CitationCheckJudgment = {
+  judgmentId: string;
+  caseTitle: string;
+  /** Nullable here for the same reason it is on every other surface. */
+  neutralCitation: string | null;
+  court: string;
+  /** `YYYY-MM-DD`. A date on a court record, never a timestamp. */
+  judgmentDate: string;
+};
+
 export type CitationCheck = {
   citationCheckId: string;
   /** The citation as it was claimed, which may differ from what we resolved. */
@@ -666,7 +973,7 @@ export type CitationCheck = {
   overruledStatusShown: boolean;
   matchConfidence: number | null;
   /** Null where nothing resolved — the citation was claimed and not found. */
-  judgment: SearchResult | null;
+  judgment: CitationCheckJudgment | null;
   tiers: CitationTier[];
   coverage: CitationCoverage;
   asOf: string;
@@ -692,6 +999,28 @@ export type CitationCopy = {
   surface: string;
   copiedAt: string;
   clientKey: string;
+};
+
+/**
+ * AN AUTHORITY SAVED TO A MATTER — `GET|POST|DELETE /matters/:id/authorities`,
+ * live 11 Aug 2026. Shape read from `services/api/src/matters/authorities.ts`,
+ * not from the summary of it.
+ *
+ * REMOVAL IS A TIMESTAMP, NEVER A DELETE, mirroring `matter_shares`: a removed
+ * row still comes back with `removedAt` set. A matter file that silently forgets
+ * an authority was ever saved is a matter file that cannot answer "what did I
+ * rely on in March", which is the question the workspace exists to answer.
+ */
+export type MatterAuthority = {
+  authorityId: string;
+  judgmentId: string;
+  caseTitle: string;
+  /** Nullable for the same reason it is everywhere else. Render via `citationDisplay`. */
+  neutralCitation: string | null;
+  addedBy: string;
+  addedAt: string;
+  /** Non-null once removed. The row is kept, not erased. */
+  removedAt: string | null;
 };
 
 export type HiddenResult = {
@@ -722,6 +1051,38 @@ export type SearchResponse = {
   searchId: string | null;
   /** Client assumption, flagged for LCC — see `HiddenResult`. */
   hidden?: HiddenResult[];
+  /**
+   * STRUCTURED SEARCH — additive, 9 Aug 2026. `docs/API_CONTRACTS.md` §Search.
+   *
+   * Present only when `query` parsed as a field/Boolean/citation/proximity/range
+   * expression (`judge:"Kania" AND section:138`); absent for ordinary prose,
+   * which takes the semantic path unchanged. `parsed` is the server's own
+   * plain-English echo of what it understood — e.g. *"Judgments decided by a
+   * judge matching 'Kania', and referring to section 138."*
+   *
+   * MUST BE SHOWN TO THE ADVOCATE WHENEVER PRESENT, never only on zero results.
+   * A misparse produces *results*, not an error — `a AND b OR c` read as
+   * `a AND (b OR c)` still returns real judgments, just not the ones asked for.
+   * Stating the interpretation and letting the advocate check it against what
+   * they typed is the only defence against that; hiding it when results look
+   * plausible is exactly when it is needed most.
+   */
+  parsed?: string;
+  /**
+   * THE FULL MATCH COUNT, NOT THE PAGE LENGTH. A structured query can match far
+   * more than the five rows in `results` (`section:138 act:"NI Act"` → 359),
+   * and an advocate deciding whether to narrow a search needs to know which.
+   * Present only alongside `parsed`.
+   *
+   * `total: 0` is a first-class, TRUSTED answer, never a fallback trigger.
+   * `docs/CITATION_HARNESS.md`/A2.7: structure decides, semantics fills, and the
+   * two are NEVER blended — a structured query that matches nothing renders
+   * "no judgment matches this", never a quiet retry against semantic search.
+   * `judge:"Kania" AND section:138` returning three cheque cases by other
+   * judges would read as "these are the Kania cases", not as "we guessed",
+   * and the advocate has no way to tell the difference.
+   */
+  total?: number;
 };
 
 export type SearchRequest = {
@@ -837,6 +1198,85 @@ export type ProfilePatch = {
 /** `GET /terms/current` — PD-8. The version is stored, never a boolean. */
 export type CurrentTerms = { version: string; body: string };
 
+/**
+ * `GET /corpus/coverage` — R3, additive, 11 Aug 2026. `docs/API_CONTRACTS.md`
+ * §Search. Public route, no auth.
+ *
+ * WHY THIS EXISTS: `SELECT court, count(*) FROM judgments` returns one row —
+ * Supreme Court of India, 38,341. An advocate practising in a High Court
+ * searches, gets a confident-looking (empty) result, and is told nothing about
+ * the fact that we hold 0 of 3,493,695 Allahabad documents. `CLAUDE.md`:
+ * silence about a gap does the same damage as a fabricated citation.
+ *
+ * THREE RULES, NOT COSMETIC:
+ *
+ * 1. `sourceDocuments` counts DOCUMENTS, never judgments, and no surface may
+ *    relabel it. `docs/HC_CORPUS_SURVEY.md` measured the judgment share of
+ *    the AWS High Court bucket at a RANGE, 0.75%-18.64% — the only published
+ *    label does not distinguish a judgment from an order on 17.89% of rows.
+ *    Rendering "0 of 3,493,695 judgments" states a number nobody measured.
+ * 2. `supremeCourt.sourceDocuments` is `null`, never `0` — that bucket was
+ *    never enumerated per year, and unknown is a state, not zero.
+ * 3. This is OUR uncertainty about coverage, never the advocate's authority
+ *    having moved. Renders in neutral ink. Amber is reserved for `overruledStatus`
+ *    and nothing else.
+ */
+export type CorpusCoverage = {
+  supremeCourt: {
+    courtName: string;
+    /** A real, live count of `judgments` rows — the Supreme Court bucket is complete, so this word is earned. */
+    held: number;
+    /** Always `null` — see rule 2 above. */
+    sourceDocuments: null;
+  };
+  /** Sorted worst-gap-first by the server, so the biggest hole is what renders first. */
+  highCourts: {
+    courtName: string;
+    courtCode: string;
+    /** DOCUMENTS. See the type-level note — never rendered as "judgments". */
+    sourceDocuments: number;
+    held: number;
+    firstYear: number;
+    lastYear: number;
+  }[];
+  /** True on every response today. States out loud that `sourceDocuments` is not a judgment count. */
+  judgmentShareUnknown: boolean;
+  /** `[0.0075, 0.1864]` — the measured range, never a point estimate. */
+  judgmentShareRange: [number, number];
+  /** When the SOURCE was counted, not when a row was written. Null only if the source was never enumerated. */
+  enumeratedAt: string | null;
+};
+
+/**
+ * `GET/POST/DELETE /me/training-consent` — DPDP Act 2023 s. 6. ADDITIVE,
+ * 9 Aug 2026. `docs/API_CONTRACTS.md` §Training consent.
+ *
+ * NOT THE PD-8 ONBOARDING CONSENT. `CurrentTerms`/`acceptTerms` cover AI
+ * assistance and the duty to verify. This answers a different, DPDP-specific
+ * question: may an advocate's own accepted search results, kept drafts and
+ * matter citations be used to train a future model? s. 6 requires that
+ * consent be free, specific, informed and — unlike the onboarding terms —
+ * withdrawable as easily as it was given. The two must never be collected
+ * together or inferred from one another.
+ */
+export type TrainingConsent = {
+  /** Both server-side columns set. Never inferred from silence. */
+  granted: boolean;
+  /** Null when never granted — an absence reported as an absence. */
+  grantedAt: string | null;
+  /** The notice actually agreed to. Null alongside `granted: false`. */
+  version: string | null;
+  /** What the app should show. Send this back on `POST`, not a client constant. */
+  currentVersion: string;
+  /**
+   * False when consent was given against a superseded notice — real consent,
+   * just not to what is on screen now. Distinct from `granted` on purpose:
+   * collapsing them would let a notice change silently re-authorise or
+   * silently revoke everyone.
+   */
+  isCurrent: boolean;
+};
+
 /* -------------------------------------------------------------------- matters */
 
 export type Matter = {
@@ -864,7 +1304,34 @@ export type Matter = {
   clientName: string;
   ourSide: string;
   nextHearingDate: string | null;
+  /**
+   * HOW THE CALLER REACHES THIS MATTER — sent on `GET /matters` per row and on
+   * `GET /matters/:id` at the top level, and read by nothing until 11 Aug 2026.
+   *
+   * The server states it rather than letting the client infer it, and says why:
+   * "an absence and a permission boundary look identical otherwise, and one of
+   * those is a bug report waiting to happen." A sharee's bundle comes back with
+   * `documents: []` and private notes nulled, which is indistinguishable from a
+   * matter that simply has neither.
+   *
+   * IT DECIDES WHAT MAY BE OFFERED, NOT WHAT MAY BE READ. `authorities.ts`:
+   * "a sharee can see the file but cannot add to it" — every write in
+   * `matters/route.ts` checks `user_id` directly. Without this field the
+   * workspace offered a sharee four buttons that answer 404.
+   *
+   * Optional because `POST /matters` and `PATCH /matters/:id` return a bare
+   * `shapeMatter()` with no `access` — the caller of those is the owner by
+   * construction.
+   */
+  access?: MatterAccess;
+  /** Sent by `shapeMatter()`, undeclared until 11 Aug 2026. Nothing reads them yet. */
+  status?: string;
+  source?: string;
+  createdAt?: string;
 };
+
+/** `owner` writes; `shared` reads. `none` never reaches a client — it 404s. */
+export type MatterAccess = 'owner' | 'shared';
 
 export type MatterEvent = {
   /** Wire field is `eventId`, same drift as `Matter.matterId` above. */
@@ -875,36 +1342,259 @@ export type MatterEvent = {
   notes: string | null;
   /** PD-4 — private by DEFAULT, in the column and not in application code. */
   noteVisibility: 'private' | 'shared';
+  /** Sent on every event, undeclared until 11 Aug 2026. Who recorded it. */
+  source?: string;
+  createdAt?: string;
 };
 
 /* ------------------------------------------------------------------ briefings */
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * REWRITTEN 11 AUG 2026 AGAINST `services/api/src/briefings/route.ts`. The type
+ * that stood here described a briefing NOBODY HAS EVER SENT.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * It declared `id`, `subject`, `whereItStands`, `pendingBeforeCourt`,
+ * `checklist: {id,label,done}[]` and `datesNotConfirmed: boolean`. The endpoint
+ * sends `briefingId`, `caseTitle`, `court`, `blocks` and `dateConfidence`, and
+ * has sent those since the route was written. `BriefingScreen` read the six
+ * invented fields and got `undefined` for every one — on the wedge feature,
+ * read standing outside a courtroom.
+ *
+ * TWO OF THE SIX WERE SAFETY FAILURES, NOT COSMETIC ONES:
+ *
+ *   · `datesNotConfirmed` COLLAPSED THREE STATES INTO TWO. `route.ts` is
+ *     explicit — "Three states, never a boolean. Both null means nobody has
+ *     checked this date; the client must not render that as confirmed." The
+ *     undeclared field read `undefined`, which is falsy, so an unconfirmed
+ *     listing rendered exactly like a confirmed one. An advocate misses a
+ *     hearing that way.
+ *   · `authorities: SearchResult[]` was wrong in kind. The wire type is a
+ *     union on `available`, and it carries NO `verificationState` — see
+ *     `BriefingAuthority`.
+ */
+export type BriefingBlocks = {
+  /** Block 01. `present: false` carries a `note` saying so, never an empty string. */
+  lastOrder: {
+    present: boolean;
+    eventId?: string;
+    eventDate?: string;
+    orderText?: string;
+    note?: string;
+  };
+  /** Block 02. */
+  pendingApplications: {
+    count: number;
+    items: { eventId: string; eventDate: string; description: string }[];
+    note?: string;
+  };
+  /**
+   * Block 03, AS STORED — ids only. The rendered authorities come from the
+   * top-level `authorities` array, whose status is re-read live on every
+   * request. Never render from here: that is the cached blob, and good-law
+   * status is the one thing the harness forbids caching.
+   */
+  authorities: { judgmentId: string; addedAt: string; paragraphNumber: number | null }[];
+  /**
+   * Block 04. `text` and `basis` — NOT `label`, and there is no `done`.
+   * Nothing server-side records a tick, so the tick is local to the session
+   * and this type must not imply otherwise.
+   */
+  checklist: { id: string; text: string; basis: string }[];
+};
+
+/**
+ * WHETHER THE LISTING ITSELF IS CONFIRMED — THREE STATES, NEVER A BOOLEAN.
+ *
+ * `never_checked` is deliberately not folded into `not_confirmed`: a date the
+ * advocate typed that no cause list has been consulted about is not a failed
+ * check, and marking it as one would cry wolf on every manually entered matter
+ * (PD-12 — manual entry is first-class, never a fallback).
+ */
+export type DateConfidence = {
+  source: string | null;
+  confirmedAt: string | null;
+  notConfirmedAt: string | null;
+  notConfirmedReason: string | null;
+  state: 'confirmed' | 'not_confirmed' | 'never_checked';
+};
+
+/**
+ * AN AUTHORITY ON A BRIEFING — a union on `available`, and NOT a `SearchResult`.
+ *
+ * The unavailable arm exists because `route.ts` refuses to drop an authority
+ * whose row could not be read: "an authority that vanishes from a briefing is
+ * indistinguishable from one that was never cited, which is the silent-drop
+ * failure wearing different clothes." It must be rendered, with its note.
+ *
+ * IT CARRIED NO `verificationState` UNTIL 11 AUG 2026, and the consequence was
+ * visible: `citationRender` treats a missing existence field as UNCONFIRMED —
+ * absence never upgrades to confirmed — so every briefing authority drew "Do
+ * not file this without checking it", including ones from the advocate's own
+ * verified matter. Reported rather than defaulted away (bus 0038); LCC sends
+ * both fields now, Tier 1 by construction, and the mark is silent again.
+ */
+export type BriefingAuthority =
+  | { judgmentId: string; available: false; note: string }
+  | {
+      judgmentId: string;
+      available: true;
+      caseTitle: string;
+      neutralCitation: string | null;
+      /**
+       * `'verified' | 'corpus'` by construction today — a briefing authority
+       * IS a corpus row, so it resolves to itself. Declared as the full unions
+       * anyway: the day a briefing can carry an authority resolved by another
+       * tier, this type does not have to change for the mark to stay honest.
+       */
+      verificationState: VerificationState;
+      verifiedBySource: VerifiedBySource;
+      /** Read live on this request. Never the value last night's sweep saw. */
+      overruledStatus: OverruledStatus;
+      overruledByJudgmentId: string | null;
+      /** The case name of the judgment that moved the law, joined server-side. */
+      overruledByTitle: string | null;
+      overruledParas: number[] | null;
+      overruledNote: string | null;
+      /** `set_aside` only. The one refusal in the product, decided server-side. */
+      addToMatterAllowed: boolean;
+    };
+
 export type Briefing = {
-  id: string;
+  briefingId: string;
   matterId: string;
+  caseTitle: string;
+  court: string;
+  /** `YYYY-MM-DD`. A date, never a timestamp. */
   hearingDate: string;
-  subject: string;
-  whereItStands: string;
-  pendingBeforeCourt: string;
-  authorities: SearchResult[];
-  checklist: { id: string; label: string; done: boolean }[];
-  /** Set by cause-list escalation. An unconfirmed listing is never shown as confirmed. */
-  datesNotConfirmed: boolean;
   generatedAt: string;
+  deliveredAt: string | null;
+  openedAt: string | null;
+  dateConfidence: DateConfidence;
+  /** `null` when the stored blob could not be parsed — every block then says so. */
+  blocks: BriefingBlocks | null;
+  authorities: BriefingAuthority[];
+};
+
+/**
+ * THE SAME BRIEFING AS A ROW IN A LIST — and it is a THIRD shape, because the
+ * two list routes do not agree with each other.
+ *
+ * `GET /matters/:id/briefings` sends `dateConfidence` as an object.
+ * `GET /matters/:id` (the matter bundle) sends the same facts FLAT, as
+ * `datesConfirmedAt` / `datesNotConfirmedAt` / `datesNotConfirmedReason` /
+ * `hearingDateSource` — see `MatterBundleBriefing`. Neither carries a subject
+ * or a case title. Reported to LCC; modelled separately here because modelling
+ * them as one would mean one of the two screens reading a field that is not
+ * there, which is the defect this whole section exists to correct.
+ */
+export type BriefingListItem = {
+  briefingId: string;
+  hearingDate: string;
+  generatedAt: string;
+  openedAt: string | null;
+  dateConfidence: DateConfidence;
+};
+
+/** The briefing rows carried inside `GET /matters/:id`. Flat date fields. */
+export type MatterBundleBriefing = {
+  briefingId: string;
+  hearingDate: string;
+  generatedAt: string;
+  openedAt: string | null;
+  datesConfirmedAt: string | null;
+  datesNotConfirmedAt: string | null;
+  datesNotConfirmedReason: string | null;
+  hearingDateSource: string | null;
 };
 
 /* ------------------------------------------------------------------- drafting */
 
 export type DocumentType = { type: string; label: string; requiredFields: string[] };
 
+/**
+ * ONE ARRAY, NOT TWO. `POST /documents`'s response carries a separate
+ * `unverifiedReferences`, but `GET /documents/:id` does not — an unresolved
+ * citation on a saved draft is just a row here with `judgmentId: null`, never
+ * a second bucket to remember to check. `citationClaimed` is the only text
+ * available for one of those; `caseTitle` is null alongside it.
+ *
+ * `overruledStatus` is null exactly when `judgmentId` is null — there is no
+ * judgment row to read a status from. Coerce to `'none'` before handing this
+ * to `citationRender()`, which expects the non-null union.
+ */
+export type DraftCitation = {
+  citationCheckId: string;
+  citationClaimed: string;
+  judgmentId: string | null;
+  caseTitle: string | null;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  overruledStatus: OverruledStatus | null;
+};
+
+/**
+ * `GET /documents/:id` → `{ document }`. Verified 11 Aug 2026 directly
+ * against `services/api/src/documents/route.ts`'s `readDocument()` — nothing
+ * on the client had ever called this route before, and the shape here
+ * replaces an earlier version of this type that invented `paragraphs` and a
+ * `SearchResult[]`-shaped `citations` neither of which the server has ever
+ * sent. `docs/API_CONTRACTS.md` §Drafting abbreviates the response as
+ * `{ document }` with no field list, so this was a client assumption that
+ * went unverified for as long as nothing exercised it.
+ */
 export type DraftDocument = {
   documentId: string;
   documentType: string;
+  matterId: string | null;
+  /**
+   * THE WHOLE GENERATED PROSE, AS ONE STRING — not split into paragraphs.
+   * `PATCH /documents/:id` takes `{ paragraphs: [{ index, text }] }` as
+   * INPUT for editing, but the read shape never sends that split; a surface
+   * that wants paragraph breaks splits `content` for DISPLAY ONLY, the same
+   * way `OnboardingScreen`'s terms body is broken on blank lines.
+   */
+  content: string;
   language: 'en' | 'hi';
-  /** Paragraph prose only. PD-7 — citations are locked, enforced server-side. */
-  paragraphs: { index: number; text: string }[];
-  citations: SearchResult[];
-  unverifiedReferences: UnverifiedReference[];
+  createdAt: string;
+  citations: DraftCitation[];
+  /**
+   * "4 of 4 citations verified" — derived at read time. `API_CONTRACTS.md`:
+   * renders in the draft footer IN-APP ONLY, never written into the document
+   * and never exported (PD-8). This is the one place "verified" is a number
+   * rather than a silent absence — the exception is documented, not a lapse
+   * in the verified-is-silent rule.
+   */
+  citationSummary: { total: number; verified: number };
+};
+
+/**
+ * `GET /documents` — the Drafts list. `docs/API_CONTRACTS.md` §Drafts list,
+ * added 11 Aug 2026. Auth required, newest first.
+ *
+ * NO `content` HERE. A list of twenty drafts would ship twenty full
+ * documents to render twenty titles, and that content is sensitive-class
+ * (`docs/PRIVACY_PII.md`).
+ *
+ * `unverifiedCount` counts `failed` TOGETHER WITH `unverified`, deliberately
+ * — `docs/CITATION_HARNESS.md`: an advocate cannot act on the difference,
+ * and an outage must not read as a corpus gap. Render it as "could not
+ * confirm", never "verification failed".
+ *
+ * `overruledStatus` is NOT summarised into this list, on purpose — it is
+ * read live at render on the surfaces that show a citation, never cached
+ * into a count that ages. Do not derive a LAW MOVED mark from this response.
+ */
+export type DraftListItem = {
+  documentId: string;
+  documentType: string;
+  matterId: string | null;
+  matterTitle: string | null;
+  language: 'en' | 'hi';
+  createdAt: string;
+  citationCount: number;
+  unverifiedCount: number;
 };
 
 /* ---------------------------------------------------------------------- court */
@@ -960,4 +1650,16 @@ export type AlertSettings = {
   savedAuthorityMoved: boolean;
   ownMatterJudgment: boolean;
   unknownListing: boolean;
+  /**
+   * ADDITIVE, 9 Aug 2026. Setting keys with no producer yet — the switch
+   * saves and the server honours it, but nothing today can ever write the
+   * alert it names, so flipping it on is inert.
+   *
+   * DERIVED server-side from the `alert_kind` enum, never hard-coded here:
+   * when a trigger ships, its key drops out of this list on its own. A
+   * client that hard-codes the two names today would be correct now and
+   * silently wrong the day trigger 3 or 4 lands. Always present — an empty
+   * array means everything toggleable currently works.
+   */
+  unavailable: string[];
 };

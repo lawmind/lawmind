@@ -30,6 +30,14 @@ import { FiltersSheet } from './FiltersSheet';
  * need your attention", never "3 verified" — pre-announcing the tally of what
  * passed leaves the list nothing to tell you.
  *
+ * STRUCTURED SEARCH — R2, 11 Aug 2026. `query` may parse as a field/Boolean/
+ * citation/proximity/range expression (`judge:"Kania" AND section:138`); when
+ * it does, the response carries `parsed` (the server's plain-English echo,
+ * shown always, not only on zero) and `total` (the full match count, since
+ * `results` is capped at five). ZERO STRUCTURED MATCHES RENDERS AS ZERO — a
+ * trusted answer, never a cue to try different wording, and never silently
+ * refilled from the semantic path. `docs/API_CONTRACTS.md` §Search, A2.7.
+ *
  * Rows 10, 15, 16, 17, 86, 87 of the inventory.
  * `renders/64-verified-silent@2x.png`, `renders/63-search-filters@2x.png`.
  */
@@ -76,6 +84,13 @@ export function SearchScreen() {
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
+  /**
+   * STRUCTURED SEARCH — present only when `query` parsed as a field/Boolean/
+   * citation query. `parsed` must be shown whenever it is set, not only on
+   * zero results — a misparse produces results, not an error.
+   */
+  const [parsed, setParsed] = useState<string | null>(null);
+  const [total, setTotal] = useState<number | null>(null);
 
   const run = useCallback(
     async (nextFilters: SearchFilters = filters, nextQuery: string = query) => {
@@ -98,6 +113,12 @@ export function SearchScreen() {
         setPhase('failed');
         return;
       }
+
+      // Present only for a structured query. `?? null` rather than leaving the
+      // previous search's value on screen — a prose query after a structured
+      // one must not keep showing a stale interpretation.
+      setParsed(response.data.parsed ?? null);
+      setTotal(response.data.total ?? null);
 
       /**
        * The reliability filters run here, against the three citation fields the
@@ -185,10 +206,34 @@ export function SearchScreen() {
 
         {phase === 'done' && results.length > 0 ? (
           <Text variant="ui" style={styles.count}>
-            {results.length === 1 ? '1 judgment' : `${results.length} judgments`}
+            {/*
+              `total` is the FULL match count, not the page length — a
+              structured query can match far more than the five rows in
+              `results` (`section:138 act:"NI Act"` → 359). Falling back to
+              `results.length` when `total` is absent covers the ordinary
+              semantic path, which never carries it.
+            */}
+            {total !== null && total > results.length
+              ? `${results.length} of ${total} judgments`
+              : results.length === 1
+                ? '1 judgment'
+                : `${results.length} judgments`}
             {attention > 0
               ? ` · ${attention === 1 ? '1 needs your attention' : `${attention} need your attention`}`
               : ''}
+          </Text>
+        ) : null}
+
+        {/*
+          `parsed` MUST BE SHOWN WHENEVER PRESENT, in both the zero-result and
+          the has-results case — never only as an explanation for an empty
+          list. A misparse produces real, plausible-looking results, so this is
+          the only chance an advocate has to catch `a AND b OR c` being read as
+          `a AND (b OR c)` before relying on what came back.
+        */}
+        {phase === 'done' && parsed ? (
+          <Text variant="ui" style={styles.parsed}>
+            {parsed}
           </Text>
         ) : null}
       </View>
@@ -217,8 +262,16 @@ export function SearchScreen() {
       ) : results.length === 0 ? (
         <View style={styles.list}>
           <EmptyState
-            actions={
-              hasActiveFilters(filters)
+            actions={[
+              /**
+               * `filters` (court/date/caseType/subjects/onlyVerified/
+               * excludeSetAsideOrDoubted) are never applied to a structured
+               * query server-side — `answerStructured` runs before `filters`
+               * enters the semantic path at all. Offering "Clear the filters"
+               * on a structured zero-match would be a dead end: nothing was
+               * filtered, so nothing would change.
+               */
+              ...(hasActiveFilters(filters) && !parsed
                 ? [
                     {
                       label: 'Clear the filters',
@@ -228,12 +281,39 @@ export function SearchScreen() {
                       },
                     },
                   ]
-                : []
-            }
+                : []),
+              /**
+               * R3 — `docs/RCC_CONTINUATION_PROMPT.md` §3. Every judgment in
+               * the corpus today is Supreme Court. A zero result reads as "we
+               * searched and found nothing" when the truer answer for a High
+               * Court query is "we do not hold this court yet" — an
+               * advocate cannot tell those apart from an empty list alone.
+               * Always offered here, never conditioned on which court was
+               * searched, because the app does not know which court the
+               * advocate practises in.
+               */
+              {
+                label: 'See what we hold',
+                onPress: () => router.push('/coverage' as never),
+                variant: 'secondary' as const,
+              },
+            ]}
+            /**
+             * A2.7 — STRUCTURE DECIDES, SEMANTICS FILLS, NEVER BLENDED. Zero
+             * structured matches is a TRUSTED answer — the corpus does not
+             * contain what was asked for — never a cue to suggest trying
+             * different wording, which is advice for the semantic path and
+             * would read as "we guessed and found nothing" about a query that
+             * was actually understood exactly. `parsed` is shown above
+             * regardless (it is set before this branch renders), so the
+             * advocate can already see the interpretation was right.
+             */
             body={
-              hasActiveFilters(filters)
-                ? `Nothing matched “${query}” with these filters. Clearing them searches all 38,341 judgments.`
-                : `Nothing matched “${query}”. Search currently matches the words in a judgment rather than their meaning, so exact legal terms find more than a paraphrase does.`
+              parsed
+                ? 'No judgment in the corpus matches this. The query was understood correctly — this is not a search problem.'
+                : hasActiveFilters(filters)
+                  ? `Nothing matched “${query}” with these filters. Clearing them searches all 38,341 judgments.`
+                  : `Nothing matched “${query}”. Search currently matches the words in a judgment rather than their meaning, so exact legal terms find more than a paraphrase does.`
             }
             title="No judgments matched"
           />
@@ -320,6 +400,27 @@ export function SearchScreen() {
                  * verification sheet show where we looked; without it the sheet
                  * says it has no record rather than inventing a lookup.
                  */
+                onOpenParagraph={(paragraphNumber) =>
+                  /**
+                   * THE PASSAGE OPENS WHERE IT CAME FROM — `?read=1&para=N`.
+                   *
+                   * PD-9 makes paragraph anchors linkable rather than local
+                   * state, so tapping the operative paragraph on a card lands
+                   * the advocate on that paragraph in the reading view instead
+                   * of at the top of a judgment they must then re-find it in.
+                   * The verification handle still travels, for the same reason
+                   * it does on the card tap.
+                   */
+                  router.push({
+                    pathname: '/judgment/[id]',
+                    params: {
+                      id: item.judgmentId,
+                      read: '1',
+                      para: String(paragraphNumber),
+                      ...(item.citationCheckId ? { check: item.citationCheckId } : {}),
+                    },
+                  })
+                }
                 onPress={() =>
                   router.push({
                     pathname: '/judgment/[id]',
@@ -377,6 +478,7 @@ const styles = StyleSheet.create({
   },
   filterLabel: { color: color.ink },
   count: { color: color.inkMuted },
+  parsed: { color: color.inkMuted, fontStyle: 'italic' },
   list: { padding: space.sm, gap: space.sm, paddingBottom: space.xxl },
   footer: { gap: space.sm, paddingTop: space.sm },
   hiddenCard: {

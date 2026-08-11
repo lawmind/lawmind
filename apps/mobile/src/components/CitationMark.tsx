@@ -31,6 +31,24 @@ import { color, radius, state } from '../theme/tokens';
  */
 export type CitationMarkTone = 'unconfirmed' | 'moved-quiet' | 'moved' | 'moved-danger';
 
+/**
+ * THE BAND-TO-TONE MAPPING, IN ONE PLACE.
+ *
+ * `renderState.ts` decides the three moved states and hands back a `band`;
+ * this turns that band into the mark's tone. It was written out inline on four
+ * separate surfaces — `ResultCard`, `CompareSummary`, `DocumentReview`,
+ * `DraftDetailScreen` — and the fifth was about to be written for
+ * `CounterArguments`, which is the moment to stop.
+ *
+ * `renderState.ts` states the reason better than this comment can: "a second
+ * place that decides what a citation looks like is a second place that can
+ * decide wrong". Four places had already agreed by hand; one of them differing
+ * by a single ternary is a `set_aside` authority drawn in caution amber, and
+ * nothing would have failed.
+ */
+export const movedTone = (band: 'danger' | 'caution' | 'none'): CitationMarkTone =>
+  band === 'danger' ? 'moved-danger' : band === 'caution' ? 'moved' : 'moved-quiet';
+
 export function CitationMark({
   label,
   tone,

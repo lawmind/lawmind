@@ -40,6 +40,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     verificationState: 'verified',
     verifiedBySource: 'corpus',
     overruledStatus: 'none',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
   {
     judgmentId: 'jdg_mock_2',
@@ -57,6 +58,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     verificationState: 'verified',
     verifiedBySource: 'public_x2',
     overruledStatus: 'none',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
   {
     judgmentId: 'jdg_mock_3',
@@ -79,6 +81,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     overruledStatus: 'none',
     unconfirmedReason:
       'We could not confirm this judgment exists. Two secondary sources describe it; the Mock High Court portal has no record.',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
   {
     judgmentId: 'jdg_mock_4',
@@ -90,9 +93,11 @@ export const MOCK_RESULTS: SearchResult[] = [
     judgmentDate: '2019-07-03',
     holding: holding('No automatic arrest; the statutory notice is mandatory.'),
     operativeParagraph: 'Fixture operative paragraph. Not law.',
+    operativeParagraphNumber: 12,
     verificationState: 'verified',
     verifiedBySource: 'corpus',
     overruledStatus: 'none',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
   {
     /** Verified AND partly set aside — the case a single enum cannot express. */
@@ -113,6 +118,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     overruledByJudgmentId: 'jdg_mock_6',
     overruledParas: [19, 20],
     overruledNote: 'The observations on misuse still stand.',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
   {
     /** Set aside. THE ONE CASE WHERE LAWMIND REFUSES TO LET AN AUTHORITY BE USED. */
@@ -130,6 +136,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     overruledStatus: 'set_aside',
     overruledByJudgmentId: 'jdg_mock_7',
     overruledNote: 'Set aside in Mock Larger Bench (2021).',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
   {
     /** Doubted — no band, one muted line. Still binding. */
@@ -146,6 +153,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     verifiedBySource: 'public_x2',
     overruledStatus: 'doubted',
     overruledNote: 'Doubted in a later coordinate bench. Still binding.',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
   {
     /**
@@ -172,6 +180,7 @@ export const MOCK_RESULTS: SearchResult[] = [
     overruledStatus: 'none',
     unconfirmedReason:
       'We could not confirm this judgment exists. The check could not be completed just now, so it is shown to you unconfirmed rather than left out.',
+    asOf: '2026-08-06T00:00:00.000Z',
   },
 ];
 
@@ -277,7 +286,18 @@ export const MOCK_JUDGMENTS: Record<string, JudgmentDetail> = Object.fromEntries
         })),
       operativeParagraphNumber: 23,
       holdingParagraphNumber: 11,
-      paragraphs: paragraphs(28, r.neutralCitation),
+      /**
+       * A real court's register number and a real published location, in the
+       * fixture's own MOCK namespace. The source URL points at the Supreme
+       * Court's own site because that is what the server sends for the corpus
+       * we hold — the client never assembles one.
+       */
+      caseNumber: `MOCK ${r.judgmentId.replace('jdg_', '').toUpperCase()}/2026`,
+      caseType: 'civil' as const,
+      sourceUrl: 'https://main.sci.gov.in/',
+      // The seed only varies fixture prose. A citationless row still needs one,
+      // and the judgment id is the identifier every row is guaranteed to carry.
+      paragraphs: paragraphs(28, r.neutralCitation ?? r.judgmentId),
       /**
        * 27 of 28 numbered — the header is not. Close to the 0.9697 measured on
        * 2019 INSC 1321, and comfortably above the threshold, so anchors show.

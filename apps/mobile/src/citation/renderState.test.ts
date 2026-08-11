@@ -33,11 +33,12 @@ const base: SearchResult = {
   verificationState: 'verified',
   verifiedBySource: 'corpus',
   overruledStatus: 'none',
+  asOf: '2026-08-06T00:00:00.000Z',
 };
 
 describe('verified is silent', () => {
   it('renders no mark for a verified, good-law citation — from any source', () => {
-    for (const source of ['corpus', 'public_x2', 'ecourts'] as const) {
+    for (const source of ['corpus', 'public_x2', 'ecourts', 'ecourts_bulk'] as const) {
       const { existence, moved } = citationRender({ ...base, verifiedBySource: source });
       expect(existence.kind).toBe('silent');
       expect(moved.kind).toBe('none');
@@ -201,7 +202,9 @@ describe('the fixture corpus covers every branch', () => {
    */
   it('uses only MOCK citations', () => {
     for (const r of MOCK_RESULTS) {
-      expect(r.neutralCitation.startsWith('MOCK ')).toBe(true);
+      // A fixture may legitimately carry no citation — the High Court rows do
+      // not — but any fixture that HAS one must keep it obviously fake.
+      if (r.neutralCitation !== null) expect(r.neutralCitation.startsWith('MOCK ')).toBe(true);
       expect(r.court.startsWith('Mock ')).toBe(true);
     }
   });

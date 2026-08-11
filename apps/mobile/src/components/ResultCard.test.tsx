@@ -28,6 +28,7 @@ const base: SearchResult = {
   verificationState: 'verified',
   verifiedBySource: 'corpus',
   overruledStatus: 'none',
+  asOf: '2026-08-06T00:00:00.000Z',
 };
 
 /** Every string the two rendered marks can produce. None may appear on a clean row. */
@@ -43,7 +44,7 @@ const MARK_STRINGS = [
 ];
 
 describe('a verified, good-law result renders no mark at all', () => {
-  it.each(['corpus', 'public_x2', 'ecourts'] as const)(
+  it.each(['corpus', 'public_x2', 'ecourts', 'ecourts_bulk'] as const)(
     'renders nothing for verified via %s',
     async (verifiedBySource) => {
       await render(

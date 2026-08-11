@@ -1,7 +1,10 @@
 import { StyleSheet, View } from 'react-native';
 
+import { CitationMark, movedTone } from '../../components/CitationMark';
 import { Text } from '../../components/Text';
-import type { CounterArgumentsResponse, CounterAuthority } from '../../api/contract';
+import { citationDisplay } from '../../citation/citationDisplay';
+import { citationRender } from '../../citation/renderState';
+import type { CounterArgumentsResponse, CounterAuthority, ExcludedAuthority } from '../../api/contract';
 import { color, radius, space } from '../../theme/tokens';
 
 /**
@@ -124,15 +127,16 @@ export function CounterArguments({ data }: { data: CounterArgumentsResponse }) {
           <Text variant="ui" style={styles.excludedTitle}>
             {x.caseTitle}
           </Text>
-          {x.neutralCitation ? (
-            <Text opticalNudge variant="record" style={styles.struck}>
-              {x.neutralCitation}
-            </Text>
-          ) : null}
+          {/* Routed through the one helper rather than a local truthiness
+              check, so an excluded authority with no citation says what it is
+              instead of quietly dropping the line. */}
+          <Text opticalNudge variant="record" style={styles.struck}>
+            {citationDisplay(x).text}
+          </Text>
           <View style={styles.excludedFoot}>
             <Text variant="eyebrow">EXCLUDED</Text>
             <Text variant="ui" style={styles.excludedReason}>
-              This authority has been set aside, so it is not offered as a counter-argument.
+              {exclusionReason(x)}
             </Text>
           </View>
         </View>
@@ -154,18 +158,61 @@ export function CounterArguments({ data }: { data: CounterArgumentsResponse }) {
   );
 }
 
+/**
+ * ONE AUTHORITY, WITH BOTH MARKS — and the second one was missing until
+ * 11 Aug 2026.
+ *
+ * `counter.ts` filters out `set_aside` and NOTHING ELSE, so a `doubted` or
+ * `partly_set_aside` authority arrives in this list like any other. This
+ * component drew only the existence mark, so those two rendered as ordinary
+ * good law: no chip, no headline, no amber. Every other surface that lists
+ * authorities — `ResultCard`, `DocumentReview`, `CompareSummary`,
+ * `DraftDetailScreen` — already drew it; this one was the gap.
+ *
+ * It is the worst surface to have had the gap. Elsewhere the advocate went
+ * looking for the authority and can weigh it. Here WE are proposing it as
+ * something the other side may run, and a partly set aside authority proposed
+ * without that fact reads as a threat that no longer exists — or, read the
+ * other way, gets relied on in the reply. The stale-overruled threshold is
+ * zero, and it makes no exception for a panel.
+ */
 function Authority({ authority }: { authority: CounterAuthority }) {
+  const { existence, moved } = citationRender(authority);
+
   return (
     <View style={styles.authority}>
       <Text opticalNudge variant="record">
-        {authority.caseTitle}, {authority.neutralCitation}
+        {authority.caseTitle}, {citationDisplay(authority).text}
       </Text>
+
+      {/*
+        ALL THREE MOVED STATES CARRY A CHIP IN A LIST, `doubted` included —
+        "the state is legible from the list without opening anything".
+      */}
+      {moved.kind === 'moved' ? (
+        <CitationMark label={moved.chipLabel} tone={movedTone(moved.band)} />
+      ) : null}
+
+      {/* What still stands is stated FIRST where the server gave us the note —
+          it is the half the advocate is about to argue against. */}
+      {moved.kind === 'moved' && moved.whatStillStands ? (
+        <Text variant="ui" style={styles.stillStands}>
+          {moved.whatStillStands}
+        </Text>
+      ) : null}
+
+      {/* `doubted` earns no band anywhere, so its headline carries the fact. */}
+      {moved.kind === 'moved' && moved.band === 'none' ? (
+        <Text variant="ui" style={styles.doubtedLine}>
+          {moved.headline}
+        </Text>
+      ) : null}
 
       {/*
         Verified is silent. Only the exception draws, in neutral ink with a
         dashed edge — our uncertainty, not the law moving.
       */}
-      {authority.verificationState !== 'verified' ? (
+      {existence.kind === 'unconfirmed' ? (
         <View style={styles.unconfirmed}>
           <Text variant="uiStrong">We could not confirm this reference</Text>
           <Text variant="ui" style={styles.ecourts}>
@@ -175,6 +222,29 @@ function Authority({ authority }: { authority: CounterAuthority }) {
       ) : null}
     </View>
   );
+}
+
+/**
+ * WHY THIS AUTHORITY WAS RULED OUT, IN THE COURT'S WORDS WHERE WE HAVE THEM.
+ *
+ * The design writes the reason as *"The relevant directions in this authority
+ * were set aside in Social Action Forum (2018) — not offered as a
+ * counter-argument"* (`design/screens/07-counter-arguments.dc.html`). Naming
+ * the case that did it is the difference between a decision the advocate can
+ * check and one they have to take on trust, and `overruled_note` is where that
+ * sentence lives. The server has always sent it; this client did not declare
+ * it, so the card printed the generic line to every row.
+ *
+ * THE FALLBACK IS NOT DECORATION. Plenty of rows carry the status and no note,
+ * and a sentence naming a judgment we do not hold would be exactly the
+ * fabrication the harness exists to prevent. Where the note is absent we say
+ * the smaller true thing.
+ */
+function exclusionReason(excluded: ExcludedAuthority): string {
+  const note = excluded.overruledNote?.trim();
+  return note
+    ? `${note} — not offered as a counter-argument.`
+    : 'This authority has been set aside, so it is not offered as a counter-argument.';
 }
 
 const styles = StyleSheet.create({
@@ -191,6 +261,9 @@ const styles = StyleSheet.create({
   position: { color: color.inkMuted },
   muted: { color: color.inkFaint },
   authority: { gap: 4 },
+  /** Same two lines the other four surfaces use, same inks. */
+  stillStands: { color: color.ink },
+  doubtedLine: { color: color.inkMuted },
   unconfirmed: {
     borderWidth: 1.5,
     borderStyle: 'dashed',

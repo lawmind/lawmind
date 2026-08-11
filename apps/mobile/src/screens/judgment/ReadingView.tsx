@@ -830,14 +830,38 @@ function Paragraph({
             </Pressable>
             <Pressable accessibilityRole="button" onPress={onCopy}>
               <View style={styles.actionGhost}>
-                <Text variant="ui">Copy ¶ {paragraph.paragraphNumber}</Text>
+                {/*
+                  THE LABEL NAMES THE NUMBER ONLY WHEN THERE IS ONE. It read
+                  "Copy ¶ null" on every unnumbered paragraph until 11 Aug 2026
+                  — the headnote of every judgment, and every pre-1990s scan
+                  whose numbering did not survive OCR. Copying the TEXT is still
+                  offered; it is the reference that cannot be named.
+                */}
+                <Text variant="ui">
+                  {paragraph.paragraphNumber === null
+                    ? 'Copy paragraph'
+                    : `Copy ¶ ${paragraph.paragraphNumber}`}
+                </Text>
               </View>
             </Pressable>
-            <Pressable accessibilityRole="button" onPress={onLinkCopy}>
-              <View style={styles.actionGhost}>
-                <Text variant="ui">Link</Text>
-              </View>
-            </Pressable>
+            {/*
+              "LINK" IS A CITABLE REFERENCE, SO IT NEEDS A CITABLE PARAGRAPH.
+              It copies "<case> ¶ n", and with no n it produced
+              "<case> ¶ null" on the clipboard — the same defect as the citation
+              copy, on the same surface, one paste from a filing.
+
+              Withheld rather than reworded, for the reason `onSaveToMatter`
+              already gives two blocks down: an unnumbered row has no n, and
+              referring to it by its array index would put a fabricated
+              paragraph reference into someone's document.
+            */}
+            {paragraph.paragraphNumber === null ? null : (
+              <Pressable accessibilityRole="button" onPress={onLinkCopy}>
+                <View style={styles.actionGhost}>
+                  <Text variant="ui">Link</Text>
+                </View>
+              </Pressable>
+            )}
           </View>
         ) : null}
       </View>

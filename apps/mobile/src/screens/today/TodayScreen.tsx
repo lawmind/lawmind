@@ -13,6 +13,7 @@ import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import type { Alert } from '../../api/contract';
+import { alertNarrative } from '../../citation/alertNarrative';
 import { useAlerts } from '../../state/alerts';
 import { describeCacheAge } from '../../state/offlineCache';
 import { useSession } from '../../state/session';
@@ -27,6 +28,7 @@ import {
 import {
   describeHearingDate,
   formatGutter,
+  parseCivilDate,
   todayCivil,
   weekdayName,
 } from '../../theme/hearingDate';
@@ -83,10 +85,32 @@ export function TodayScreen() {
   }, [status, fetchAlerts]);
 
   /**
-   * `severity: 'immediate'` alerts already reached the advocate as a push —
-   * showing them again here would be the same event twice. This block is
-   * the batched half only, PD-6's "since yesterday."
+   * ─────────────────────────────────────────────────────────────────────────
+   * IMMEDIATE ALERTS ARE RENDERED HERE TOO — corrected 11 Aug 2026.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * This block used to filter `severity === 'batched'` and drop the rest, on
+   * the stated reasoning that an immediate alert "already reached the advocate
+   * as a push, so showing it again would be the same event twice."
+   *
+   * THE PREMISE IS FALSE IN THE CODE THAT PRODUCES THEM.
+   * `services/api/src/citations/fanout.ts` pushes only
+   * `if (highSeverity === 'immediate' && row.expo_push_token)`. An advocate who
+   * declined notifications, or who has not registered a token yet, gets NO
+   * push — and the alert row exists in the API, rendered by nothing.
+   *
+   * What is dropped is the most severe alert in the product: an authority the
+   * advocate has FILED OR COPIED going `set_aside` or `partly_set_aside`.
+   * Silent-drop rate carries a zero threshold, and this was a silent drop of
+   * exactly the class the threshold exists for.
+   *
+   * They are drawn ABOVE "since yesterday" and under their own heading rather
+   * than merged into it — PD-6 keeps the batched block as the evening digest,
+   * and folding a filed-citation emergency into a digest is what the severity
+   * split exists to prevent. A duplicate of a push the advocate did receive is
+   * a far smaller cost than an alert they never see.
    */
+  const immediate = useMemo(() => alerts.filter((a) => a.severity === 'immediate'), [alerts]);
   const batched = useMemo(() => alerts.filter((a) => a.severity === 'batched'), [alerts]);
 
   const today = useMemo(() => todayCivil(), []);
@@ -180,11 +204,15 @@ export function TodayScreen() {
               </View>
             </View>
 
-            <Text variant="uiStrong">
-              Tomorrow — {ready.briefing.subject || ready.matter.caseTitle}
-            </Text>
+            {/*
+              THE CASE NAME FROM THE MATTER, which is where it lives. This read
+              `ready.briefing.subject` first — a field the briefing index has
+              never sent — so the `||` fallback was carrying the line every
+              time, and the "real" value was fiction.
+            */}
+            <Text variant="uiStrong">Tomorrow — {ready.matter.caseTitle}</Text>
             <Text variant="ui" style={styles.muted}>
-              {ready.matter.caseTitle} · {ready.matter.court}
+              {ready.matter.court}
             </Text>
 
             {/*
@@ -193,7 +221,7 @@ export function TodayScreen() {
               of them deserves a caution: `never_checked` means no cause list was
               consulted, which is NORMAL for a date the advocate typed (PD-12).
             */}
-            {ready.briefing.datesNotConfirmed ? (
+            {ready.briefing.dateConfidence.state === 'not_confirmed' ? (
               <Text variant="ui" style={styles.notConfirmed}>
                 We could not confirm this listing against the cause list. The date is the one you
                 recorded.
@@ -202,15 +230,32 @@ export function TodayScreen() {
 
             <View style={styles.briefingRule} />
 
+            {/*
+              NO COUNT OF AUTHORITIES OR CHECKLIST ITEMS HERE, because this card
+              is built from the briefing INDEX and the index carries neither.
+              `route.ts` says why it does not: re-reading every authority of
+              every briefing to render a list of dates is a lot of work to
+              produce something nobody reads.
+
+              The line that stood here read `.authorities.length` and
+              `.checklist.length` off a row that has neither — `undefined.length`,
+              which throws. It never fired only because a second defect kept
+              this whole card from rendering: `tomorrowsBriefing` compared a
+              `matterId` the index does not send, so it always returned null.
+              One bug was hiding the other.
+            */}
             <Text variant="ui" style={styles.muted}>
-              {ready.briefing.authorities.length}{' '}
-              {ready.briefing.authorities.length === 1 ? 'authority' : 'authorities'} ·{' '}
-              {ready.briefing.checklist.length} to prepare
+              Prepared {formatGutter(parseCivilDate(ready.briefing.generatedAt.slice(0, 10)) ?? today)}
             </Text>
 
             <Button
               label="Open briefing"
-              onPress={() => router.push({ pathname: '/briefing/[id]', params: { id: ready.briefing.id } })}
+              onPress={() =>
+                router.push({
+                  pathname: '/briefing/[id]',
+                  params: { id: ready.briefing.briefingId },
+                })
+              }
               style={styles.briefingAction}
             />
             <Text variant="ui" style={styles.savedLine}>
@@ -219,6 +264,34 @@ export function TodayScreen() {
           </Card>
         ) : loading && matters.length === 0 ? (
           <SkeletonCard />
+        ) : null}
+
+        {/*
+          AN AUTHORITY YOU HAVE ALREADY USED HAS MOVED.
+
+          Drawn above the digest and above the week, because it is the only
+          thing on this screen that concerns a document already filed. It is
+          NOT amber-banded as a group: amber belongs to the individual
+          authority's status, which each row states in its own words, and a
+          coloured container around a list would spend the reserved colour on
+          our own sense of urgency.
+        */}
+        {immediate.length > 0 ? (
+          <Card style={styles.alertsCard}>
+            <Text variant="eyebrow" style={styles.immediateEyebrow}>
+              An authority you have used has moved
+            </Text>
+            {immediate.map((alert) => (
+              <AlertRow
+                key={alert.id}
+                alert={alert}
+                onPress={() => {
+                  markAlertRead(alert.id);
+                  router.push({ pathname: '/judgment/[id]', params: { id: alert.judgmentId } });
+                }}
+              />
+            ))}
+          </Card>
         ) : null}
 
         {/* Since yesterday — PD-6, batched with the briefing, never a notifications tab. */}
@@ -302,27 +375,35 @@ export function TodayScreen() {
  * `Alert` type note. Copy mirrors the alert-settings labels so the same
  * event reads the same way in both places.
  */
-function alertLine(alert: Alert): string {
-  const authority = alert.judgmentTitle;
-  if (alert.kind === 'saved_authority_moved') {
-    return `${authority} — an authority you saved is now ${overruledLabel(alert.currentOverruledStatus)}.`;
-  }
-  return `${authority} — an authority you filed is now ${overruledLabel(alert.currentOverruledStatus)}.`;
-}
-
-function overruledLabel(status: Alert['currentOverruledStatus']): string {
-  if (status === 'set_aside') return 'set aside';
-  if (status === 'partly_set_aside') return 'partly set aside';
-  if (status === 'doubted') return 'doubted';
-  return 'good law again';
-}
-
+/**
+ * ONE ALERT. The narrative comes from `citation/alertNarrative.ts` — an alert
+ * is a report of a CHANGE, and this row used to render only the current status,
+ * which dropped the movement, dropped the paragraphs, and rendered a corpus
+ * reading of `none` as "good law again" — a claim that a court restored the
+ * authority, which nothing in the data says.
+ */
 function AlertRow({ alert, onPress }: { alert: Alert; onPress: () => void }) {
+  const { headline, movement, sinceThen } = alertNarrative(alert);
+
   return (
     <Pressable onPress={onPress} style={styles.alertRow}>
       <Text variant="ui" style={alert.readAt === null ? styles.alertUnread : styles.muted}>
-        {alertLine(alert)}
+        {headline}
       </Text>
+      <Text variant="ui" style={styles.muted}>
+        {movement}
+      </Text>
+      {/*
+        THE CORPUS HAS MOVED AGAIN SINCE THIS ALERT FIRED. Said, never used to
+        silently replace the alert's own subject — the advocate is the one who
+        has to decide which reading they act on, and they cannot do that if we
+        show them only one.
+      */}
+      {sinceThen ? (
+        <Text variant="ui" style={styles.alertSince}>
+          {sinceThen}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }
@@ -389,5 +470,7 @@ const styles = StyleSheet.create({
   alertsCard: { gap: space.xs },
   alertRow: { paddingVertical: space.xs },
   /** Neutral ink, never amber — amber means the law moved on a CITATION surface; this is a summary line about it. */
+  alertSince: { color: color.ink },
+  immediateEyebrow: { color: color.oxblood },
   alertUnread: { color: color.ink },
 });

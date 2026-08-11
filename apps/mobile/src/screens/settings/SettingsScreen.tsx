@@ -24,12 +24,25 @@ import { color, space } from '../../theme/tokens';
  * nothing an advocate can call to originate one. Building any of the seven
  * would mean inventing either the field or the request. This screen is
  * therefore small and real rather than large and illustrative.
+ *
+ * "Training data" — added 10 Aug 2026 — is real for the same reason the
+ * seven above are not: `GET/POST/DELETE /me/training-consent` exists
+ * (`TrainingConsentScreen.tsx`, DPDP Act s. 6), separate from the PD-8
+ * onboarding terms this screen does not otherwise touch.
+ *
+ * "Coverage" — added 11 Aug 2026 — R3. `GET /corpus/coverage` answers a
+ * question search itself cannot: an advocate who gets nothing from their own
+ * High Court needs to know that is a gap in the corpus, not a failed search.
  */
 export function SettingsScreen({
   onOpenAlerts,
+  onOpenCoverage,
+  onOpenTrainingConsent,
   onSignedOut,
 }: {
   onOpenAlerts: () => void;
+  onOpenCoverage: () => void;
+  onOpenTrainingConsent: () => void;
   onSignedOut: () => void;
 }) {
   const signOut = useSession((s) => s.signOut);
@@ -43,6 +56,17 @@ export function SettingsScreen({
 
         <Pressable onPress={onOpenAlerts} style={styles.row}>
           <Text variant="uiStrong">Alerts</Text>
+          <ChevronRight color={color.inkMuted} size={18} strokeWidth={1.5} />
+        </Pressable>
+
+        <Pressable onPress={onOpenCoverage} style={styles.row}>
+          <Text variant="uiStrong">Coverage — what we hold</Text>
+          <ChevronRight color={color.inkMuted} size={18} strokeWidth={1.5} />
+        </Pressable>
+
+        {/* DPDP s. 6 — separate from the onboarding terms. `TrainingConsentScreen`. */}
+        <Pressable onPress={onOpenTrainingConsent} style={styles.row}>
+          <Text variant="uiStrong">Training data</Text>
           <ChevronRight color={color.inkMuted} size={18} strokeWidth={1.5} />
         </Pressable>
 

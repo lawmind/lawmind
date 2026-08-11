@@ -16,6 +16,7 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { CitationCheck, CitationTier, JudgmentDetail } from '../../api/contract';
+import { citationDisplay } from '../../citation/citationDisplay';
 import {
   coverageLine,
   isoFromServerTimestamp,
@@ -49,6 +50,14 @@ export function UnverifiedCitationScreen({
   citationCheckId?: string;
   onBack: () => void;
 }) {
+  /**
+   * The citation slot and the string we actually hold — one helper, same
+   * semantics as every other surface. `stored` is what an API may be handed;
+   * `text` is what a person may be shown. They are never the same variable.
+   */
+  const citation = citationDisplay(judgment);
+  const citationStored = citation.stored;
+
   const [check, setCheck] = useState<CitationCheck | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
@@ -116,8 +125,12 @@ export function UnverifiedCitationScreen({
         <Text variant="legal" scale="caseName">
           {judgment.caseTitle}
         </Text>
-        <Text opticalNudge variant="record" style={styles.record}>
-          {judgment.neutralCitation}
+        <Text
+          opticalNudge
+          variant="record"
+          style={[styles.record, !citation.stored && styles.recordAbsent]}
+        >
+          {citation.text}
         </Text>
         <Text opticalNudge variant="record" style={styles.record}>
           {judgment.court}
@@ -165,28 +178,48 @@ export function UnverifiedCitationScreen({
               — and a wrong one lands the advocate on a search for a different
               case, which is worse than no link.
             */}
-            <Button
-              label={confirmed ? 'Marked as confirmed' : 'Open eCourts — about a minute'}
-              onPress={() => {
-                void api.verifyEcourts(judgment.neutralCitation).then((r) => {
-                  if (r.ok) void Linking.openURL(r.data.ecourtsUrl);
-                  else setUnavailable(true);
-                });
-              }}
-              variant="secondary"
-            />
-            <Button
-              disabled={confirmed}
-              label={confirmed ? 'You confirmed this' : 'I verified it — mark it'}
-              onPress={() => {
-                setConfirmed(true);
-                void api.verifyConfirm(judgment.neutralCitation, judgment.judgmentId);
-              }}
-            />
-            <Text variant="ui" style={styles.muted}>
-              Marking it records that you checked it yourself. We keep that permanently, so nobody
-              in your chamber has to check it twice.
-            </Text>
+            {/*
+              THE ECOURTS ROUTE NEEDS A CITATION TO SEARCH FOR, so it is offered
+              only when we hold one. Before 11 Aug 2026 these two calls took
+              `judgment.neutralCitation` straight, which was typed `string` while
+              the server had always sent `string | null` — a citationless row
+              would have sent `null` to the verification endpoint and shown the
+              advocate a route that could not work.
+
+              A judgment with no citation is not a dead end, it is a different
+              question: there is nothing to look up, and saying so is the honest
+              answer rather than a button that fails on tap.
+            */}
+            {citationStored ? (
+              <>
+                <Button
+                  label={confirmed ? 'Marked as confirmed' : 'Open eCourts — about a minute'}
+                  onPress={() => {
+                    void api.verifyEcourts(citationStored).then((r) => {
+                      if (r.ok) void Linking.openURL(r.data.ecourtsUrl);
+                      else setUnavailable(true);
+                    });
+                  }}
+                  variant="secondary"
+                />
+                <Button
+                  disabled={confirmed}
+                  label={confirmed ? 'You confirmed this' : 'I verified it — mark it'}
+                  onPress={() => {
+                    setConfirmed(true);
+                    void api.verifyConfirm(citationStored, judgment.judgmentId);
+                  }}
+                />
+                <Text variant="ui" style={styles.muted}>
+                  Marking it records that you checked it yourself. We keep that permanently, so
+                  nobody in your chamber has to check it twice.
+                </Text>
+              </>
+            ) : (
+              <Text variant="ui" style={styles.muted}>
+                {citation.note}
+              </Text>
+            )}
           </>
         ) : unavailable ? (
           /*
@@ -313,6 +346,8 @@ const styles = StyleSheet.create({
   navTitle: { flex: 1 },
   body: { padding: space.sm, gap: space.xs, paddingBottom: space.xxl },
   record: { color: color.inkFaint },
+  /** A fact about the record, not our uncertainty: no amber, no dashed edge. */
+  recordAbsent: { fontStyle: 'italic' },
   rule: { height: 1, backgroundColor: color.ink, marginVertical: space.xs },
   found: {
     borderWidth: 1,

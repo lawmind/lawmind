@@ -9,7 +9,7 @@ import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { StaggerIn } from '../../components/StaggerIn';
 import { Text } from '../../components/Text';
-import type { Statute } from '../../api/contract';
+import type { Statute, StatuteCoverage } from '../../api/contract';
 import { api } from '../../api/client';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, space } from '../../theme/tokens';
@@ -34,6 +34,7 @@ import { color, space } from '../../theme/tokens';
  */
 export function BareActsScreen({ onOpenAct }: { onOpenAct: (statuteId: string) => void }) {
   const [statutes, setStatutes] = useState<Statute[] | null>(null);
+  const [coverage, setCoverage] = useState<StatuteCoverage | null>(null);
   const [failed, setFailed] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
@@ -41,7 +42,10 @@ export function BareActsScreen({ onOpenAct }: { onOpenAct: (statuteId: string) =
     let alive = true;
     void api.statutes().then((r) => {
       if (!alive) return;
-      if (r.ok) setStatutes(r.data.statutes);
+      if (r.ok) {
+        setStatutes(r.data.statutes);
+        setCoverage(r.data.coverage);
+      }
       // WHEN WE CANNOT REACH THE CODES, SAY SO. Never an empty list dressed as
       // "no acts" — an advocate would conclude we do not hold the BNS.
       else setFailed(r.error.message);
@@ -104,11 +108,45 @@ export function BareActsScreen({ onOpenAct }: { onOpenAct: (statuteId: string) =
               about our coverage, so it is neutral ink — never amber, which
               means the law has moved and nothing else.
             */
-            <Text variant="ui" style={styles.currency}>
-              We hold each Act as published, with the date it came into force. We do not yet track
-              whether an individual section has since been amended, substituted or repealed — check
-              the source before you rely on one.
-            </Text>
+            <>
+              {/*
+                WHAT WE HOLD, SAID IN NUMBERS — `GET /statutes` has always sent
+                `coverage` and nothing read it until 11 Aug 2026, so this list
+                was presented with no statement of what was missing from it.
+                `CoverageScreen` breaks the same silence for judgments and gives
+                the reason: an advocate who searches and finds nothing needs to
+                know whether there was nothing to find or whether we simply do
+                not hold it.
+
+                THREE RULES, ALL FROM THE ROUTE'S OWN COMMENTS:
+                  · `complete` decides. Never `held === sourceTotal` — an ingest
+                    can equal that count transiently mid-run.
+                  · `sourceTotal: null` means never enumerated, NOT zero, so it
+                    is never printed as a denominator.
+                  · The two gaps stay two numbers. Acts we could not fetch and
+                    Acts we hold whose sections never parsed are different
+                    facts, and one number would hide the other.
+              */}
+              {coverage && !coverage.complete ? (
+                <Text variant="ui" style={styles.currency}>
+                  {coverage.sourceTotal === null
+                    ? `We hold ${coverage.held} Acts. We have not counted how many exist at the source, so we cannot tell you how much of it that is.`
+                    : `We hold ${coverage.held} of ${coverage.sourceTotal} Acts.`}
+                  {coverage.failedCount > 0
+                    ? ` ${coverage.failedCount} could not be read from the source.`
+                    : ''}
+                  {coverage.sectionlessCount > 0
+                    ? ` ${coverage.sectionlessCount} more are listed but have no sections yet, so searching will not find them.`
+                    : ''}
+                </Text>
+              ) : null}
+
+              <Text variant="ui" style={styles.currency}>
+                We hold each Act as published, with the date it came into force. We do not yet
+                track whether an individual section has since been amended, substituted or
+                repealed — check the source before you rely on one.
+              </Text>
+            </>
           }
           renderItem={({ index, item }) => (
             <StaggerIn index={index}>

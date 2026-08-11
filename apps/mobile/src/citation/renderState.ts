@@ -14,7 +14,7 @@ import type { OverruledStatus, SearchResult, VerificationState } from '../api/co
  * the client verbatim by the API:
  *
  *   verification_state  — does this authority exist?      verified|unverified|failed
- *   verified_by_source  — who confirmed it?               corpus|public_x2|ecourts|none
+ *   verified_by_source  — who confirmed it?               corpus|public_x2|ecourts|ecourts_bulk|none
  *   overruled_status    — is it still good law?           none|set_aside|partly_set_aside|doubted
  *
  * A JUDGMENT CAN BE `verified` AND `set_aside` AT ONCE. They answer different
@@ -209,23 +209,42 @@ export function citationRender(
     statusAsOf?: string;
   }
 ): CitationRender {
-  const hasFields = result.verificationState !== undefined && result.overruledStatus !== undefined;
-
-  if (!hasFields) {
-    return {
-      existence: existenceMark('unverified', 'This result arrived without its verification fields.'),
-      moved: { kind: 'none' },
-    };
-  }
-
+  /**
+   * THE TWO MARKS ARE DECIDED INDEPENDENTLY, because they are two questions
+   * from two sources — which is the reason there are three fields and not one
+   * enum, and the reason this function returns two marks and not one state.
+   *
+   * Until 11 Aug 2026 a single gate required BOTH fields and bailed to
+   * `moved: 'none'` if either was missing. That coupling had a live victim:
+   * `GET /briefings/:id` sends `overruledStatus` on every authority — read
+   * live, this request, never from the cached blob — and sends no
+   * `verificationState` at all. So a briefing authority that had been SET
+   * ASIDE drew no LAW MOVED mark, because a DIFFERENT field was absent.
+   *
+   * The briefing is read standing outside the courtroom, which `route.ts`
+   * itself calls "the worst possible moment to be shown law that moved". The
+   * stale-overruled threshold is zero.
+   *
+   * BOTH DEFAULTS STILL FAIL SAFE, and in opposite directions:
+   *   · no `verificationState` → UNCONFIRMED. Absence never upgrades to
+   *     confirmed (`API_CONTRACTS.md` §Search).
+   *   · no `overruledStatus`   → no moved mark, because we have not been told
+   *     the law moved and inventing one is its own false claim.
+   */
   return {
-    existence: existenceMark(result.verificationState!, result.unconfirmedReason),
-    moved: movedMark(
-      result.overruledStatus!,
-      result.overruledNote,
-      result.overruledParas,
-      result.statusAsOf
-    ),
+    existence:
+      result.verificationState === undefined
+        ? existenceMark('unverified', 'This result arrived without its verification fields.')
+        : existenceMark(result.verificationState, result.unconfirmedReason),
+    moved:
+      result.overruledStatus === undefined
+        ? { kind: 'none' }
+        : movedMark(
+            result.overruledStatus,
+            result.overruledNote,
+            result.overruledParas,
+            result.statusAsOf
+          ),
   };
 }
 

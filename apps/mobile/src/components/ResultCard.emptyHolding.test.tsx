@@ -26,6 +26,7 @@ const base: SearchResult = {
   verificationState: 'verified',
   verifiedBySource: 'corpus',
   overruledStatus: 'none',
+  asOf: '2026-08-06T00:00:00.000Z',
 };
 
 it('renders the judgment normally when there is no holding', async () => {

@@ -5,7 +5,7 @@ import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
 import { useSession } from '../../state/session';
-import { color, space, state } from '../../theme/tokens';
+import { color, space } from '../../theme/tokens';
 
 /**
  * PROFILE — inventory row 39, `renders/20-settings-switches.png` left panel.
@@ -145,7 +145,20 @@ const styles = StyleSheet.create({
   headerName: {},
   headerSub: { color: color.inkMuted },
 
-  pendingCard: { backgroundColor: state.cautionWash, gap: 2, padding: space.sm },
+  /**
+   * NEUTRAL INK, NOT AMBER — fixed 11 Aug 2026, `check-amber-reservation.mjs`.
+   * Amber means the law has moved, and enrolment verification is a fact
+   * about us, not about the law. Same dashed-edge treatment as
+   * `EnrolmentBand.tsx` and `ResultCard.cardUnconfirmed`.
+   */
+  pendingCard: {
+    backgroundColor: color.paper,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: color.inkFaint,
+    gap: 2,
+    padding: space.sm,
+  },
   pendingTitle: { color: color.oxblood },
   pendingBody: { color: color.inkMuted },
 

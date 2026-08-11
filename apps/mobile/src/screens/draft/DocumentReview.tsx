@@ -1,7 +1,10 @@
 import { StyleSheet, View } from 'react-native';
 
+import { CitationMark, movedTone } from '../../components/CitationMark';
 import { Text } from '../../components/Text';
 import type { CounterAuthority } from '../../api/contract';
+import { citationDisplay } from '../../citation/citationDisplay';
+import { citationRender } from '../../citation/renderState';
 import { color, radius, space, state } from '../../theme/tokens';
 
 /**
@@ -74,10 +77,7 @@ export function DocumentReview({
 
         return (
           <View key={category} style={styles.group}>
-            <Text
-              variant="eyebrow"
-              style={category === 'risk' ? styles.riskHeading : undefined}
-            >
+            <Text variant="eyebrow" style={category === 'risk' ? styles.riskHeading : undefined}>
               {LABEL[category]} · {group.length}
             </Text>
 
@@ -110,23 +110,59 @@ export function DocumentReview({
                   about your contract: the finding is traceable to a judgment,
                   and the judgment carries its own verification state.
                 */}
-                {f.authorities.map((a) => (
-                  <View key={a.judgmentId} style={styles.authority}>
-                    <Text variant="legal" style={styles.reliesOn}>
-                      Relies on: {a.caseTitle}, {a.neutralCitation}
-                    </Text>
-                    {a.verificationState !== 'verified' ? (
-                      <View style={styles.unconfirmed}>
-                        <Text variant="uiStrong">We could not confirm this reference</Text>
-                      </View>
-                    ) : null}
-                    {a.overruledStatus !== 'none' ? (
-                      <Text variant="ui" style={styles.moved}>
-                        The law has moved on this authority.
+                {f.authorities.map((a) => {
+                  const { moved } = citationRender(a);
+                  return (
+                    <View key={a.judgmentId} style={styles.authority}>
+                      <Text
+                        variant="legal"
+                        style={[
+                          styles.reliesOn,
+                          moved.kind === 'moved' && moved.strikeTitle ? styles.struck : null,
+                        ]}
+                      >
+                        Relies on: {a.caseTitle}, {citationDisplay(a).text}
                       </Text>
-                    ) : null}
-                  </View>
-                ))}
+                      {a.verificationState !== 'verified' ? (
+                        <View style={styles.unconfirmed}>
+                          <Text variant="uiStrong">We could not confirm this reference</Text>
+                        </View>
+                      ) : null}
+
+                      {/*
+                        THREE STATES, THREE TREATMENTS — `CITATION_HARNESS.md`
+                        §"When the law moves", and the same `CitationMark`
+                        mapping `ResultCard` uses. This surface used to draw one
+                        muted line, "The law has moved on this authority", for
+                        all three, which understated the state that matters
+                        most here: a risk finding that RELIES ON a judgment set
+                        aside in 2018 is not a caution, it is a finding with no
+                        authority under it, and it read identically to a
+                        doubted one.
+
+                        `set_aside` now strikes the case name and takes the
+                        danger chip, `partly_set_aside` the amber chip naming
+                        the paragraphs the server sent, `doubted` the neutral
+                        chip plus its sentence — it still binds.
+                      */}
+                      {moved.kind === 'moved' ? (
+                        <CitationMark label={moved.chipLabel} tone={movedTone(moved.band)} />
+                      ) : null}
+
+                      {moved.kind === 'moved' && moved.whatStillStands ? (
+                        <Text variant="ui" style={styles.stillStands}>
+                          {moved.whatStillStands}
+                        </Text>
+                      ) : null}
+
+                      {moved.kind === 'moved' && moved.band === 'none' ? (
+                        <Text variant="ui" style={styles.moved}>
+                          {moved.headline}
+                        </Text>
+                      ) : null}
+                    </View>
+                  );
+                })}
               </View>
             ))}
           </View>
@@ -161,7 +197,12 @@ const styles = StyleSheet.create({
   finding: { color: color.ink },
   authority: { gap: 4 },
   reliesOn: { color: color.inkMuted },
+  /** `set_aside` only — the case name is struck wherever it appears. */
+  struck: { textDecorationLine: 'line-through' },
+
+  /** `doubted`. One muted line, no band: still binding law. */
   moved: { color: state.cautionText },
+  stillStands: { color: color.ink },
   unconfirmed: {
     borderWidth: 1.5,
     borderStyle: 'dashed',

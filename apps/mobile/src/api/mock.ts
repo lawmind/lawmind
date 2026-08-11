@@ -132,7 +132,8 @@ function matches(r: SearchResult, query: string): boolean {
   return (
     r.caseTitle.toLowerCase().includes(q) ||
     r.holding.toLowerCase().includes(q) ||
-    r.neutralCitation.toLowerCase().includes(q)
+    // A citationless judgment is still searchable by everything else it has.
+    (r.neutralCitation?.toLowerCase().includes(q) ?? false)
   );
 }
 
@@ -234,8 +235,10 @@ export const mockApi = {
     }
     if (params.q) {
       const q = params.q.toLowerCase();
+      // `heading` is nullable on the wire — a section with no marginal heading
+      // is ordinary in an older Act, and searching one must not throw.
       sections = sections.filter(
-        (s) => s.heading.toLowerCase().includes(q) || s.sectionText.toLowerCase().includes(q)
+        (s) => (s.heading ?? '').toLowerCase().includes(q) || s.sectionText.toLowerCase().includes(q)
       );
     }
     const ordered = [...sections].sort((a, b) => a.orderIndex - b.orderIndex);
@@ -250,18 +253,83 @@ export const mockApi = {
   matterEvents: (_matterId: string): Promise<ApiResponse<MatterEvent[]>> => delay([]),
 
   /* briefings */
+  /**
+   * REBUILT 11 AUG 2026 TO MATCH `GET /briefings/:id`.
+   *
+   * The fixture that stood here is the reason the invented `Briefing` type
+   * survived: it supplied `subject`, `whereItStands`, `pendingBeforeCourt`,
+   * `checklist[].label` and `datesNotConfirmed` — six fields no route sends —
+   * so every screen reading them looked correct in development and rendered
+   * blank against production. A fixture that is easier than the wire is not a
+   * fixture, it is a second implementation of the server that always agrees
+   * with the client.
+   *
+   * `never_checked` is the deliberate default: it is the ordinary state for a
+   * date the advocate typed, and it is the one that must NOT draw a caution.
+   */
   briefing: (id: string): Promise<ApiResponse<Briefing>> =>
     delay({
-      id,
+      briefingId: id,
       matterId: 'mtr_mock',
+      caseTitle: 'Mock Appellant v. Mock State',
+      court: 'Mock High Court',
       hearingDate: '2026-08-02',
-      subject: 'Fixture briefing',
-      whereItStands: 'Fixture text.',
-      pendingBeforeCourt: 'Fixture text.',
-      authorities: MOCK_RESULTS.slice(0, 3),
-      checklist: [{ id: 'chk_1', label: 'Fixture checklist item', done: false }],
-      datesNotConfirmed: false,
       generatedAt: new Date().toISOString(),
+      deliveredAt: null,
+      openedAt: null,
+      dateConfidence: {
+        source: null,
+        confirmedAt: null,
+        notConfirmedAt: null,
+        notConfirmedReason: null,
+        state: 'never_checked',
+      },
+      blocks: {
+        lastOrder: {
+          present: true,
+          eventId: 'evt_mock_1',
+          eventDate: '2026-07-19',
+          orderText: 'Fixture order text, as the court recorded it.',
+        },
+        pendingApplications: {
+          count: 1,
+          items: [
+            {
+              eventId: 'evt_mock_2',
+              eventDate: '2026-07-02',
+              description: 'Fixture interim application',
+            },
+          ],
+        },
+        authorities: MOCK_RESULTS.slice(0, 3).map((r) => ({
+          judgmentId: r.judgmentId,
+          addedAt: '2026-07-20T00:00:00.000Z',
+          paragraphNumber: null,
+        })),
+        checklist: [
+          { id: 'chk_1', text: 'Fixture checklist item', basis: 'Fixture basis for the item' },
+        ],
+      },
+      /**
+       * `verified` / `corpus` BY CONSTRUCTION — a briefing authority is a
+       * corpus row, so it resolves to itself. The fixture carried neither
+       * until LCC shipped the fields on 11 Aug 2026 (bus 0038), which is
+       * exactly what made the unconfirmed mark visible in development.
+       */
+      authorities: MOCK_RESULTS.slice(0, 3).map((r) => ({
+        judgmentId: r.judgmentId,
+        available: true as const,
+        caseTitle: r.caseTitle,
+        neutralCitation: r.neutralCitation,
+        verificationState: 'verified' as const,
+        verifiedBySource: 'corpus' as const,
+        overruledStatus: r.overruledStatus,
+        overruledByJudgmentId: r.overruledByJudgmentId ?? null,
+        overruledByTitle: null,
+        overruledParas: r.overruledParas ?? null,
+        overruledNote: r.overruledNote ?? null,
+        addToMatterAllowed: r.overruledStatus !== 'set_aside',
+      })),
     }),
 
   /* drafting */
@@ -270,10 +338,27 @@ export const mockApi = {
     delay({
       documentId,
       documentType: 'mock',
+      matterId: null,
+      content: 'Fixture paragraph one.\n\nFixture paragraph two.',
       language: 'en',
-      paragraphs: [{ index: 0, text: 'Fixture paragraph.' }],
-      citations: MOCK_RESULTS.slice(0, 3),
-      unverifiedReferences: [],
+      createdAt: '2026-08-06T00:00:00.000Z',
+      citations: MOCK_RESULTS.slice(0, 3).map((r) => ({
+        citationCheckId: r.judgmentId,
+        /**
+         * The server never sends a null `citation_claimed` — it coalesces
+         * (`judgments/route.ts`: `neutral_citation ?? reporter_citations[0] ??
+         * case_title`) because the audit record must identify the row somehow.
+         * The mock coalesces identically, so a citationless fixture exercises
+         * the same shape the live API produces rather than an easier one.
+         */
+        citationClaimed: r.neutralCitation ?? r.reporterCitations[0] ?? r.caseTitle,
+        judgmentId: r.judgmentId,
+        caseTitle: r.caseTitle,
+        verificationState: r.verificationState,
+        verifiedBySource: r.verifiedBySource,
+        overruledStatus: r.overruledStatus,
+      })),
+      citationSummary: { total: 3, verified: 3 },
     }),
 
   /* court adapter — OD-1 is open, so the manual path is the only path */
@@ -284,5 +369,5 @@ export const mockApi = {
   alerts: (): Promise<ApiResponse<{ alerts: Alert[]; unreadCount: number }>> =>
     delay({ alerts: [], unreadCount: 0 }),
   alertSettings: (): Promise<ApiResponse<AlertSettings>> =>
-    delay({ savedAuthorityMoved: true, ownMatterJudgment: true, unknownListing: true }),
+    delay({ savedAuthorityMoved: true, ownMatterJudgment: true, unknownListing: true, unavailable: [] }),
 };

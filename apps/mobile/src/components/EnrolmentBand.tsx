@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from './Text';
-import { color, space, state } from '../theme/tokens';
+import { color, space } from '../theme/tokens';
 
 /**
  * "ENROLMENT VERIFICATION PENDING" — SPRINT_5 item 3, PD-2.
@@ -9,9 +9,16 @@ import { color, space, state } from '../theme/tokens';
  *
  * A BAND ABOVE THE HEADER, NOT A CARD IN THE FLOW — so it never competes
  * with the briefing and disappears the instant `enrolmentStatus` flips to
- * `verified`, per the render's own caption. Caution amber, not danger:
- * nothing is wrong. PD-2 — this withholds NOTHING; it is a credential note,
- * never a gate, and every screen behind it works identically either way.
+ * `verified`, per the render's own caption. PD-2 — this withholds NOTHING;
+ * it is a credential note, never a gate, and every screen behind it works
+ * identically either way.
+ *
+ * NEUTRAL INK, NOT AMBER — fixed 11 Aug 2026, `check-amber-reservation.mjs`.
+ * The render drew this in caution amber, and amber is reserved for exactly
+ * one fact: the law has moved. Whether a bar number has been checked is a
+ * fact about US, not about the law, so it takes the same dashed-edge
+ * treatment as every other expression of our own uncertainty —
+ * `CitationMark`'s `unconfirmed` tone, `ResultCard.cardUnconfirmed`.
  */
 export function EnrolmentBand({ barEnrolmentNumber }: { barEnrolmentNumber: string | null }) {
   return (
@@ -29,13 +36,14 @@ export function EnrolmentBand({ barEnrolmentNumber }: { barEnrolmentNumber: stri
 
 const styles = StyleSheet.create({
   band: {
-    backgroundColor: state.cautionWash,
-    borderBottomWidth: 1,
-    borderBottomColor: state.caution,
+    backgroundColor: color.paper,
+    borderBottomWidth: 1.5,
+    borderStyle: 'dashed',
+    borderBottomColor: color.inkFaint,
     paddingHorizontal: space.sm,
     paddingVertical: space.xs,
     gap: 2,
   },
-  title: { color: state.cautionText },
+  title: { color: color.ink },
   body: { color: color.inkMuted },
 });

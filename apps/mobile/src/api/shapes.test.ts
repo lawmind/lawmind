@@ -45,6 +45,29 @@ describe('searchId may be null until auth lands in S5', () => {
   });
 });
 
+describe('SearchResult carries operativeParagraphNumber and asOf — R1, 11 Aug 2026', () => {
+  /**
+   * `services/api/src/search/route.ts` sends both on every live `/search`
+   * result and this type omitted them until now — a client type narrower than
+   * the wire is a silent drop with no error to catch it. `asOf` is required
+   * (the server stamps it on every row); `operativeParagraphNumber` is
+   * `number | null` because a real result can legitimately carry either.
+   */
+  it('every fixture carries asOf', () => {
+    for (const r of MOCK_RESULTS) {
+      expect(typeof r.asOf).toBe('string');
+      expect(r.asOf.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('at least one fixture exercises a real operativeParagraphNumber, never invented for the rest', () => {
+    expect(MOCK_RESULTS.some((r) => typeof r.operativeParagraphNumber === 'number')).toBe(true);
+    // A result naming no paragraph is not an error — pre-1990s scans and
+    // headnotes both legitimately carry none.
+    expect(MOCK_RESULTS.some((r) => r.operativeParagraphNumber === undefined)).toBe(true);
+  });
+});
+
 describe('holding is empty on most real rows', () => {
   it('has a fixture with no holding, so the empty case is exercised', () => {
     expect(MOCK_RESULTS.some((r) => r.holding === '')).toBe(true);
@@ -54,7 +77,9 @@ describe('holding is empty on most real rows', () => {
     const empty = MOCK_RESULTS.find((r) => r.holding === '');
     expect(empty).toBeDefined();
     expect(empty?.caseTitle.length).toBeGreaterThan(0);
-    expect(empty?.neutralCitation.length).toBeGreaterThan(0);
+    // Nullable since 11 Aug 2026 — this fixture is a cited row, so it must
+    // still carry one, and asserting that keeps the fixture honest.
+    expect(empty?.neutralCitation?.length).toBeGreaterThan(0);
     expect(empty?.court.length).toBeGreaterThan(0);
     expect(empty?.judgmentDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });

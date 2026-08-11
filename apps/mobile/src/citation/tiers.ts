@@ -44,6 +44,14 @@ const SOURCE_LABEL: Record<string, string> = {
   corpus: 'Our reported corpus',
   public_x2: 'Two public sources',
   ecourts: 'eCourts services',
+  /**
+   * A REGISTRY LOOKUP, NOT A HUMAN'S BADGE. `ecourts` alone means a named
+   * advocate solved the captcha and personally vouched — Tier 3, "You
+   * confirmed this" in `UnverifiedCitationScreen`. `ecourts_bulk` is the
+   * registry answering a machine's query during bulk CNR resolution, and
+   * must never borrow that wording or that credit.
+   */
+  ecourts_bulk: 'eCourts record',
   none: 'No source confirmed it',
 };
 
@@ -51,6 +59,12 @@ const SOURCE_LABEL: Record<string, string> = {
  * `verified_by_source` in the one sentence where it surfaces to an advocate.
  * Used by the sheet's "Confirmed by:" line — a different question from the tier
  * rows below it, which is why it is labelled rather than left bare.
+ *
+ * AN UNRECOGNISED SOURCE FALLS BACK TO ITS RAW NAME, NEVER TO A BLANK LABEL
+ * OR A CRASH. Whether the citation reads as verified at all is decided
+ * upstream in `citation/renderState.ts`, which never inspects this field —
+ * a source this function has never heard of still renders silent-verified,
+ * exactly like every other source.
  */
 export function sourceLabel(source: string): string {
   return SOURCE_LABEL[source] ?? source;

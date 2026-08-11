@@ -6,12 +6,19 @@ import type {
   ApiResponse,
   AuthoritiesResponse,
   Briefing,
+  BriefingListItem,
+  MatterBundleBriefing,
   CitationCheck,
   CitationCopy,
+  CorpusCoverage,
   CounterArgumentsResponse,
   CurrentTerms,
+  DraftDocument,
+  DraftListItem,
   JudgmentDetail,
   Matter,
+  MatterAccess,
+  MatterAuthority,
   MatterEvent,
   MeResponse,
   PrecedentGraph,
@@ -21,7 +28,9 @@ import type {
   SearchResponse,
   Session,
   Statute,
+  StatuteCoverage,
   StatuteSection,
+  TrainingConsent,
   TreatmentResponse,
 } from './contract';
 
@@ -244,6 +253,12 @@ export const api = {
   currentTerms: () => get<CurrentTerms>('/terms/current'),
 
   /**
+   * `held` is derived live at query time server-side — never cached there, so
+   * this is never cached here either. Public route, no auth.
+   */
+  corpusCoverage: () => get<CorpusCoverage>('/corpus/coverage'),
+
+  /**
    * PD-8 — consent, recorded with its VERSION and never inferred from any other
    * action. The version is sent back so the server can reject consent to text
    * that is no longer current.
@@ -255,17 +270,96 @@ export const api = {
       { auth: true }
     ),
 
+  /**
+   * DPDP Act 2023 s. 6 — separate from `acceptTerms`/PD-8 above. `granted`,
+   * `grantedAt`, `version`, `currentVersion` and `isCurrent` all come back on
+   * every call, so a client never has to infer state from a bare boolean.
+   */
+  trainingConsent: () => get<TrainingConsent>('/me/training-consent', { auth: true }),
+
+  /** `version` is `currentVersion` off a prior read, echoed back — never a client constant, so a stale build cannot record agreement to a notice it never displayed. */
+  grantTrainingConsent: (version: string) =>
+    send<TrainingConsent>('/me/training-consent', { version }, { auth: true }),
+
+  /** s. 6(4)–(6): withdrawal must be as easy as granting. Idempotent — succeeds even where nothing was granted. */
+  withdrawTrainingConsent: () =>
+    request<TrainingConsent>('/me/training-consent', { method: 'DELETE', auth: true }),
+
   /* --------------------------------------------------------------- matters */
 
   matters: () => get<{ matters: Matter[] }>('/matters', { auth: true }),
 
+  /**
+   * THE BUNDLE'S BRIEFINGS ARE NOT THE DETAIL ROUTE'S BRIEFINGS, and this said
+   * they were until 11 Aug 2026. `GET /matters/:id` sends `briefingId` with the
+   * date facts FLAT; `GET /briefings/:id` sends `dateConfidence` as an object,
+   * plus blocks and authorities. Typing the bundle as `Briefing[]` promised the
+   * matter screen a subject and an id that have never been on that wire.
+   */
   matter: (matterId: string) =>
     get<{
       matter: Matter;
+      /**
+       * TOP-LEVEL ON THE BUNDLE, and it decides what the workspace may OFFER.
+       * A sharee reads the matter and can write nothing to it, so a client
+       * that did not read this drew four buttons that answer 404.
+       */
+      access: MatterAccess;
       events: MatterEvent[];
-      documents: { id: string; documentType: string; createdAt: string }[];
-      briefings: Briefing[];
+      documents: {
+        documentId: string;
+        documentType: string;
+        language: 'en' | 'hi';
+        createdAt: string;
+      }[];
+      briefings: MatterBundleBriefing[];
     }>(`/matters/${encodeURIComponent(matterId)}`, { auth: true }),
+
+  /**
+   * THE AUTHORITIES SAVED TO A MATTER. Live 11 Aug 2026.
+   *
+   * `POST` is IDEMPOTENT by design — `200` when the judgment is already saved,
+   * `201` when it is new or brought back after removal — so a double tap in a
+   * court corridor cannot create a duplicate.
+   *
+   * IT REFUSES `set_aside` WITH `409 AUTHORITY_SET_ASIDE`, server-side and
+   * unconditionally, and the message names the judgment that replaced it. The
+   * client refuses it too, from `citationRender().moved.blocksAddToMatter` —
+   * that is not a duplicated rule but the same rule enforced at both ends,
+   * because a replayed request or a stale build bypasses the client one.
+   */
+  matterAuthorities: (matterId: string) =>
+    get<{ authorities: MatterAuthority[]; asOf: string }>(
+      `/matters/${encodeURIComponent(matterId)}/authorities`,
+      { auth: true }
+    ),
+
+  /**
+   * NAMED ARGUMENTS, DELIBERATELY. `matterId` and `judgmentId` are both plain
+   * strings, so positionally TypeScript cannot tell them apart — and swapping
+   * them saves the wrong judgment into the wrong matter with no error anywhere.
+   * This was written positionally first and swapped on the first call site
+   * within a minute; an object makes that mistake unrepresentable.
+   */
+  addAuthorityToMatter: (args: {
+    matterId: string;
+    judgmentId: string;
+    citationCheckId?: string | undefined;
+  }) =>
+    send<{ authority: MatterAuthority }>(
+      `/matters/${encodeURIComponent(args.matterId)}/authorities`,
+      {
+        judgmentId: args.judgmentId,
+        ...(args.citationCheckId ? { citationCheckId: args.citationCheckId } : {}),
+      },
+      { auth: true }
+    ),
+
+  removeAuthorityFromMatter: (matterId: string, authorityId: string) =>
+    request<{ removedAt: string }>(
+      `/matters/${encodeURIComponent(matterId)}/authorities/${encodeURIComponent(authorityId)}`,
+      { method: 'DELETE', auth: true }
+    ),
 
   createMatter: (matter: Omit<Matter, 'matterId'>) =>
     send<{ matter: Matter }>('/matters', matter, { auth: true }),
@@ -373,8 +467,14 @@ export const api = {
   briefing: (briefingId: string) =>
     get<{ briefing: Briefing }>(`/briefings/${encodeURIComponent(briefingId)}`, { auth: true }),
 
+  /**
+   * THE INDEX, NOT THE BRIEFING. `route.ts` omits authorities deliberately:
+   * "this is an index, and re-reading every authority of every past briefing to
+   * render a list of dates would be a lot of work to produce something nobody
+   * reads." It also sends no `matterId` and no subject.
+   */
   matterBriefings: (matterId: string) =>
-    get<{ briefings: Briefing[] }>(`/matters/${encodeURIComponent(matterId)}/briefings`, {
+    get<{ briefings: BriefingListItem[] }>(`/matters/${encodeURIComponent(matterId)}/briefings`, {
       auth: true,
     }),
 
@@ -386,6 +486,21 @@ export const api = {
    */
   markBriefingOpened: (briefingId: string) =>
     send<{ ok: true }>(`/briefings/${encodeURIComponent(briefingId)}/opened`, {}, { auth: true }),
+
+  /* ---------------------------------------------------------------- drafting */
+
+  /** R4, 11 Aug 2026 — the Drafts list. Newest first, no `content` on any row. */
+  documents: () => get<{ documents: DraftListItem[] }>('/documents', { auth: true }),
+
+  /**
+   * First client caller of this route. `document.citations` is a flat
+   * `DraftCitation[]`, not `SearchResult[]` — see the type-level note on
+   * `DraftDocument` for why an earlier version of this file assumed wrong.
+   */
+  document: (documentId: string) =>
+    get<{ document: DraftDocument }>(`/documents/${encodeURIComponent(documentId)}`, {
+      auth: true,
+    }),
 
   /* ------------------------------------------------------------------ court */
 
@@ -580,7 +695,13 @@ export const api = {
       body: JSON.stringify({ citationText, judgmentId }),
     }),
 
-  statutes: () => get<{ statutes: Statute[] }>('/statutes'),
+  /**
+   * `coverage` HAS ALWAYS BEEN ON THIS RESPONSE and was undeclared until
+   * 11 Aug 2026, so the acts index showed a list with no statement of what was
+   * missing from it. See `StatuteCoverage` for the three fields that must not
+   * be read naively.
+   */
+  statutes: () => get<{ statutes: Statute[]; coverage: StatuteCoverage; asOf: string }>('/statutes'),
 
   /**
    * `limit` caps at 600 — enough for BNSS at 531, so a whole Act arrives in one

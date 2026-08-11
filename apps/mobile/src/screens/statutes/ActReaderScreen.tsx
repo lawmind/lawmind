@@ -124,9 +124,14 @@ export function ActReaderScreen({
                   </Text>
                 </View>
                 <View style={styles.sectionBody}>
-                  <Text variant="uiStrong" style={dimmed ? styles.dimmed : undefined}>
-                    {item.heading}
-                  </Text>
+                  {/* A section with no marginal heading is ordinary in an older
+                      Act. The line is omitted rather than left blank — an empty
+                      strong row reads as a heading that failed to load. */}
+                  {item.heading ? (
+                    <Text variant="uiStrong" style={dimmed ? styles.dimmed : undefined}>
+                      {item.heading}
+                    </Text>
+                  ) : null}
                   <Text
                     variant="legal"
                     style={[

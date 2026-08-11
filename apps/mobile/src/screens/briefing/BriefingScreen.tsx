@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { BriefingAuthorityRow } from './BriefingAuthorityRow';
 import { Button } from '../../components/Button';
 import { Pressable } from '../../components/Pressable';
-import { ResultCard } from '../../components/ResultCard';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { Briefing } from '../../api/contract';
-import { attentionCount } from '../../citation/renderState';
+import { citationRender } from '../../citation/renderState';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { haptics } from '../../theme/haptics';
 import { describeHearingDate, formatLong, parseCivilDate, todayCivil } from '../../theme/hearingDate';
@@ -18,7 +18,16 @@ import { BriefingSeal } from '../today/BriefingSeal';
 /**
  * ─────────────────────────────────────────────────────────────────────────────
  * THE 24-HOUR HEARING BRIEFING — inventory row 8, canvas `8b`,
- * `renders/45-briefing@2x.png`. **The wedge. No competitor in India has it.**
+ * `renders/45-briefing@2x.png`. **The wedge, and it APPEARS unclaimed** —
+ * researched 11 Aug 2026, `docs/FEATURE_PARITY.md` §5b. This line used to read
+ * "no competitor in India has it", which is a stronger claim than anything we
+ * checked supports: what was established is that the nearest competitor's
+ * advocate-facing pricing page names no cause list, hearing date, case tracking,
+ * digest or alert feature, and their cause-list product is sold to courts rather
+ * than to advocates. That is *absent from their public pages*, not *absent from
+ * their product* — their billing page would not render plan detail to a fetch.
+ * `FOUNDER_QUEUE.md` FQ-BL2 records what a "nobody has it" claim cost us once
+ * already. Their free tier costs ₹0, which is how to settle it properly.
  *
  * Read standing in a corridor, in ninety seconds, on a connection that may not
  * exist. Four numbered blocks, in this order and no other:
@@ -62,6 +71,17 @@ export function BriefingScreen({
   const [missing, setMissing] = useState(false);
   const [ticked, setTicked] = useState<Record<string, boolean>>({});
   const [read, setRead] = useState(false);
+  /**
+   * SAVING AN AUTHORITY INTO THIS BRIEFING'S MATTER, keyed by judgment.
+   *
+   * `POST /matters/:id/authorities` is idempotent — 200 when it is already
+   * saved, 201 when new or brought back after removal — so a double tap in a
+   * court corridor cannot create a duplicate. The state here exists to stop the
+   * row offering the action twice, not to protect the server.
+   */
+  const [saves, setSaves] = useState<
+    Record<string, { saving: boolean; saved: boolean; error: string | null }>
+  >({});
 
   useEffect(() => {
     let alive = true;
@@ -97,6 +117,33 @@ export function BriefingScreen({
     };
   }, [briefingId]);
 
+  /**
+   * SAVE ONE HIGHLIGHTED AUTHORITY INTO THE BRIEFING'S OWN MATTER.
+   *
+   * NO PICKER. A briefing belongs to exactly one matter, so asking which one
+   * would be asking a question the screen already knows the answer to — and
+   * `JudgmentScreen` needs its picker for the opposite reason, that a judgment
+   * opened from search belongs to none.
+   *
+   * NOT OPTIMISTIC, and the error is the server's own words. On `set_aside` the
+   * `409` names the replacement judgment, which is the actionable half of the
+   * refusal; rephrasing it would drop exactly that.
+   */
+  const saveAuthority = async (matterId: string, judgmentId: string) => {
+    if (saves[judgmentId]?.saving || saves[judgmentId]?.saved) return;
+    setSaves((s) => ({ ...s, [judgmentId]: { saving: true, saved: false, error: null } }));
+
+    const r = await api.addAuthorityToMatter({ matterId, judgmentId });
+
+    setSaves((s) => ({
+      ...s,
+      [judgmentId]: r.ok
+        ? { saving: false, saved: true, error: null }
+        : { saving: false, saved: false, error: r.error.message },
+    }));
+    if (r.ok) haptics.commit();
+  };
+
   const today = useMemo(() => todayCivil(), []);
 
   if (missing) {
@@ -126,7 +173,33 @@ export function BriefingScreen({
   }
 
   const hearing = parseCivilDate(briefing.hearingDate);
-  const needAttention = attentionCount(briefing.authorities);
+  const checklist = briefing.blocks?.checklist ?? [];
+  /**
+   * WHAT NEEDS ATTENTION, COUNTED OFF THE SAME MARKS THE ROWS DRAW.
+   *
+   * `attentionCount` takes `SearchResult[]` and a briefing authority is not
+   * one, so the count is derived here from `citationRender` — the same
+   * function, not a second opinion. An unavailable row counts: an authority we
+   * could not read is exactly something to look at before going in.
+   */
+  const needAttention = briefing.authorities.filter((a) => {
+    if (!a.available) return true;
+    const { existence, moved } = citationRender({
+      /**
+       * THE SAME INPUTS THE ROW DRAWS FROM, or the header and the list
+       * disagree. Omitting `verificationState` here would make every row
+       * count as needing attention while none of them drew the mark —
+       * "1 authority · 1 need your attention" over a card with nothing on it,
+       * which is worse than either state alone because neither is checkable.
+       */
+      verificationState: a.verificationState,
+      verifiedBySource: a.verifiedBySource,
+      overruledStatus: a.overruledStatus,
+      overruledNote: a.overruledNote,
+      overruledParas: a.overruledParas,
+    });
+    return existence.kind === 'unconfirmed' || moved.kind === 'moved';
+  }).length;
 
   return (
     <Screen>
@@ -153,26 +226,39 @@ export function BriefingScreen({
           </Text>
         </View>
 
+        {/*
+          THE CASE NAME AND THE COURT — what the endpoint actually sends. This
+          read `briefing.subject` until 11 Aug 2026, a field no route has ever
+          carried, so the wedge feature's headline rendered blank.
+        */}
         <Text variant="uiStrong" scale="title">
-          {briefing.subject}
+          {briefing.caseTitle}
         </Text>
 
         <View style={styles.factRows}>
+          <FactRow label="COURT" value={briefing.court} />
           <FactRow
             label={describeHearingDate(briefing.hearingDate, today).toUpperCase()}
             value={hearing ? formatLong(hearing) : briefing.hearingDate}
           />
           {/*
             AN UNCONFIRMED LISTING IS NEVER SHOWN AS CONFIRMED — the same rule as
-            a citation. Only `dates_not_confirmed` deserves a caution;
-            `never_checked` is normal for a date the advocate typed (PD-12) and
-            gets no line at all, because a caution on the ordinary case teaches
-            advocates to ignore cautions.
+            a citation, and THREE STATES rather than two. Only `not_confirmed`
+            deserves a line; `never_checked` is the ordinary case for a date the
+            advocate typed (PD-12) and gets nothing, because a caution on the
+            ordinary case teaches advocates to ignore cautions.
+
+            This was a boolean the server has never sent. `undefined` is falsy,
+            so a listing we had actively FAILED to confirm rendered exactly like
+            a confirmed one — and an advocate misses a hearing that way.
           */}
-          {briefing.datesNotConfirmed ? (
+          {briefing.dateConfidence.state === 'not_confirmed' ? (
             <Text variant="ui" style={styles.notConfirmed}>
               We could not confirm this listing against the cause list. This is the date you
               recorded.
+              {briefing.dateConfidence.notConfirmedReason
+                ? ` ${briefing.dateConfidence.notConfirmedReason}`
+                : ''}
             </Text>
           ) : null}
         </View>
@@ -180,11 +266,50 @@ export function BriefingScreen({
         <View style={styles.oxbloodRule} />
 
         <Block n="01" title="Where the matter stands">
-          <Text variant="legal">{briefing.whereItStands}</Text>
+          {/*
+            THE LAST ORDER, AND ITS ABSENCE IS A SENTENCE THE SERVER WROTE.
+            `assemble.ts`: "It never invents a block it has no data for. An
+            empty block says it is empty." So an absent order renders the
+            server's own note rather than a placeholder of ours — and where
+            even that is missing, the smaller true thing.
+          */}
+          {!briefing.blocks ? (
+            <Text variant="ui" style={styles.muted}>
+              This briefing could not be read. Nothing has been lost.
+            </Text>
+          ) : briefing.blocks.lastOrder.present ? (
+            <>
+              {briefing.blocks.lastOrder.eventDate ? (
+                <Text variant="eyebrow" style={styles.blockDate}>
+                  {briefing.blocks.lastOrder.eventDate}
+                </Text>
+              ) : null}
+              <Text variant="legal">
+                {briefing.blocks.lastOrder.orderText ?? 'An order was recorded with no text.'}
+              </Text>
+            </>
+          ) : (
+            <Text variant="ui" style={styles.muted}>
+              {briefing.blocks.lastOrder.note ?? 'No order has been recorded on this matter.'}
+            </Text>
+          )}
         </Block>
 
         <Block n="02" title="Pending before the court">
-          <Text variant="legal">{briefing.pendingBeforeCourt}</Text>
+          {!briefing.blocks || briefing.blocks.pendingApplications.count === 0 ? (
+            <Text variant="ui" style={styles.muted}>
+              {briefing.blocks?.pendingApplications.note ?? 'Nothing is recorded as pending.'}
+            </Text>
+          ) : (
+            briefing.blocks.pendingApplications.items.map((item) => (
+              <View key={item.eventId} style={styles.pending}>
+                <Text variant="eyebrow" style={styles.blockDate}>
+                  {item.eventDate}
+                </Text>
+                <Text variant="legal">{item.description}</Text>
+              </View>
+            ))
+          )}
         </Block>
 
         <Block n="03" title="Authorities on the live issue">
@@ -205,9 +330,9 @@ export function BriefingScreen({
                 {needAttention > 0 ? ` · ${needAttention} need your attention` : ''}
               </Text>
               {briefing.authorities.map((authority) => (
-                <ResultCard
+                <BriefingAuthorityRow
                   key={authority.judgmentId}
-                  result={authority}
+                  authority={authority}
                   /**
                    * THE NEVER-CACHED RULE, AT THE ONE CALL SITE THAT CAN KNOW.
                    * A briefing served from the device carries a good-law status
@@ -217,9 +342,21 @@ export function BriefingScreen({
                   {...(cachedAt
                     ? { statusAsOf: formatLong(parseCivilDate(cachedAt.slice(0, 10)) ?? today) }
                     : {})}
-                  onPress={() =>
-                    onOpenJudgment(authority.judgmentId, authority.citationCheckId ?? undefined)
+                  onOpen={() => onOpenJudgment(authority.judgmentId)}
+                  onSaveToMatter={
+                    /*
+                      OFFERED ONLY WHERE IT CAN SUCCEED. The unavailable arm has
+                      no judgment row behind it, so there is nothing to save —
+                      the row already says why, and adding a button that would
+                      404 on top of that explanation says less, not more.
+                    */
+                    authority.available
+                      ? () => void saveAuthority(briefing.matterId, authority.judgmentId)
+                      : undefined
                   }
+                  {...(saves[authority.judgmentId]
+                    ? { saveState: saves[authority.judgmentId]! }
+                    : {})}
                 />
               ))}
             </>
@@ -227,13 +364,20 @@ export function BriefingScreen({
         </Block>
 
         <Block n="04" title="Before you go in">
-          {briefing.checklist.length === 0 ? (
+          {checklist.length === 0 ? (
             <Text variant="ui" style={styles.muted}>
               Nothing to prepare.
             </Text>
           ) : (
-            briefing.checklist.map((item) => {
-              const done = ticked[item.id] ?? item.done;
+            checklist.map((item) => {
+              /**
+               * THE TICK IS LOCAL TO THIS SESSION, and the type now says so.
+               * Nothing server-side records one — `blocks.checklist` carries
+               * `{ id, text, basis }` and no `done`. The old type declared
+               * `done`, which promised a tick that survived closing the screen
+               * and never did.
+               */
+              const done = ticked[item.id] ?? false;
               return (
                 <Pressable
                   key={item.id}
@@ -252,9 +396,20 @@ export function BriefingScreen({
                       </Text>
                     ) : null}
                   </View>
-                  <Text variant="ui" style={done ? styles.checkDone : undefined}>
-                    {item.label}
-                  </Text>
+                  <View style={styles.checkBody}>
+                    <Text variant="ui" style={done ? styles.checkDone : undefined}>
+                      {item.text}
+                    </Text>
+                    {/*
+                      WHY THIS ITEM IS ON THE LIST. `assemble.ts` writes a
+                      `basis` for every item precisely so nothing on the
+                      checklist is an instruction with no source — "every item
+                      points at something the advocate can check".
+                    */}
+                    <Text variant="ui" style={styles.checkBasis}>
+                      {item.basis}
+                    </Text>
+                  </View>
                 </Pressable>
               );
             })
@@ -337,7 +492,12 @@ const styles = StyleSheet.create({
   blockHead: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   blockNumber: { color: color.inkMuted },
 
+  blockDate: { color: color.inkMuted },
+  pending: { gap: 2, paddingBottom: space.xs },
+
   checkRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs, minHeight: 52 },
+  checkBody: { flex: 1, gap: 2 },
+  checkBasis: { color: color.inkFaint },
   checkBox: {
     width: 22,
     height: 22,

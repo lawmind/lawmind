@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Pressable } from '../../components/Pressable';
 import { Text } from '../../components/Text';
 import type { GraphNode, PrecedentGraph, TreatmentRelationship } from '../../api/contract';
+import { citationRender } from '../../citation/renderState';
 import { color, radius, space, state } from '../../theme/tokens';
 
 /**
@@ -20,11 +21,53 @@ import { color, radius, space, state } from '../../theme/tokens';
  */
 
 const RELATIONSHIP_LABEL: Record<TreatmentRelationship, string> = {
+  cites: 'CITED',
   followed: 'FOLLOWED',
   distinguished: 'DISTINGUISHED',
   doubted: 'DOUBTED',
   overruled: 'OVERRULED',
+  overruled_in_part: 'OVERRULED IN PART',
 };
+
+/**
+ * An unrecognised relationship RENDERS ITSELF rather than nothing.
+ *
+ * `judgment_citations.relationship` is a text column server-side, not an enum,
+ * so a seventh value can appear without this union knowing. Until 11 Aug 2026 a
+ * lookup miss returned `undefined` and the eyebrow rendered BLANK — a treatment
+ * row with no stated relationship, which reads as "we have nothing to say about
+ * this" when the truth is "we did not recognise what the court did".
+ */
+const relationshipLabel = (relationship: TreatmentRelationship): string =>
+  RELATIONSHIP_LABEL[relationship] ?? String(relationship).replace(/_/g, ' ').toUpperCase();
+
+/**
+ * A NODE'S OWN GOOD-LAW STATUS, WEIGHTED BY STATE — the same three-state rule
+ * every other surface obeys, in the ink that already exists rather than a chip
+ * geometry invented for a graph.
+ *
+ * Until 11 Aug 2026 all three drew `state.cautionText`: the words differed, the
+ * weight did not, and a node that had itself been SET ASIDE sat in the network
+ * looking exactly like one that had merely been doubted.
+ * `CITATION_HARNESS.md` §"When the law moves" makes no exception for a node.
+ */
+const OWN_STATUS_INK = {
+  danger: state.danger,
+  caution: state.cautionText,
+  none: color.inkMuted,
+} as const;
+
+/**
+ * DID THIS BENCH MOVE THE LAW ON THE AUTHORITY ABOVE IT?
+ *
+ * `overruled_in_part` COUNTS. It tested `=== 'overruled'` until 11 Aug 2026, so
+ * a bench that overruled this authority in part was drawn as an ordinary
+ * citing judgment — no amber, no headline — while 20 such rows sat in
+ * production. Partly overruled is the law moving; it moves less far, which is
+ * what the wording says, not whether it is said at all.
+ */
+const movesTheLaw = (relationship?: TreatmentRelationship): boolean =>
+  relationship === 'overruled' || relationship === 'overruled_in_part';
 
 export function PrecedentSpine({
   graph,
@@ -67,7 +110,7 @@ export function PrecedentSpine({
 
       {children.map((node) => {
         const rel = relationshipTo.get(node.judgmentId);
-        const lawMoved = rel === 'overruled';
+        const lawMoved = movesTheLaw(rel);
         return (
           <View key={node.judgmentId} style={styles.segmentHost}>
             {/*
@@ -127,6 +170,8 @@ function Node({
   lawMoved: boolean;
   onOpen: () => void;
 }) {
+  const { moved } = citationRender(node);
+
   return (
     <Pressable onPress={onOpen} style={[styles.node, lawMoved && styles.nodeMoved]}>
       {relationship ? (
@@ -134,7 +179,7 @@ function Node({
           variant="eyebrow"
           style={{ color: lawMoved || relationship === 'doubted' ? state.cautionText : color.ink }}
         >
-          {RELATIONSHIP_LABEL[relationship]}
+          {relationshipLabel(relationship)}
         </Text>
       ) : null}
       <Text variant="legal" scale="holding" style={styles.nodeTitle}>
@@ -144,10 +189,19 @@ function Node({
         The node's OWN good-law status, independent of what it did to the root.
         Read live at render, never cached — a set-aside judgment must not sit in
         the network looking like any other node.
+
+        The wording is written out rather than derived from the enum: prose
+        assembled by `.replace(/_/g, ' ')` reads correctly today only because
+        the three values happen to be readable English, and a fourth value
+        would print itself into a sentence unreviewed.
       */}
-      {node.overruledStatus !== 'none' ? (
-        <Text variant="ui" style={styles.nodeStatus}>
-          This judgment has itself been {node.overruledStatus.replace(/_/g, ' ')}.
+      {moved.kind === 'moved' ? (
+        <Text variant="ui" style={[styles.nodeStatus, { color: OWN_STATUS_INK[moved.band] }]}>
+          {moved.status === 'set_aside'
+            ? 'This judgment has itself been set aside.'
+            : moved.status === 'partly_set_aside'
+              ? 'Part of this judgment has itself been set aside.'
+              : 'This judgment has itself been doubted.'}
         </Text>
       ) : null}
     </Pressable>

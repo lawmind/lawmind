@@ -21,8 +21,17 @@ import { color, space } from '../../theme/tokens';
  *
  * `ownMatterJudgment`/`unknownListing` genuinely save and are honoured —
  * they simply have no producer yet (trigger 3 awaits OCR, trigger 4 awaits
- * the cause-list-to-matter matcher). The toggle is real; what it turns on
- * is not built yet. Not a bug to hide, a fact to say plainly.
+ * the cause-list-to-matter matcher). Until 9 Aug 2026 this screen drew both
+ * as ordinary switches: an advocate could turn one on, watch it save, and be
+ * told nothing, ever — they would find out by missing a hearing.
+ *
+ * `settings.unavailable` (`docs/API_CONTRACTS.md` §Citator alerts) names
+ * every key with no producer. A row named there renders as NOT YET WORKING,
+ * never as an ordinary toggle — no switch, because a switch in the "off"
+ * position implies flipping it would turn the alert on, and that is exactly
+ * the false promise this key exists to remove. The list is read from the
+ * server on every load, never hard-coded: when trigger 3 or 4 ships, the key
+ * drops out and the row reverts to an ordinary switch on its own.
  */
 export function AlertSettingsScreen({ onBack }: { onBack: () => void }) {
   const [settings, setSettings] = useState<AlertSettings | null>(null);
@@ -96,12 +105,14 @@ export function AlertSettingsScreen({ onBack }: { onBack: () => void }) {
               body="Order or judgment uploaded to a case of yours"
               onValueChange={(v) => void toggle('ownMatterJudgment', v)}
               title="A judgment lands in my matter"
+              unavailable={settings.unavailable.includes('ownMatterJudgment')}
               value={settings.ownMatterJudgment}
             />
             <Row
               body="A date appears that you did not enter"
               onValueChange={(v) => void toggle('unknownListing', v)}
               title="A matter is listed unexpectedly"
+              unavailable={settings.unavailable.includes('unknownListing')}
               value={settings.unknownListing}
             />
           </View>
@@ -134,11 +145,14 @@ function Row({
   body,
   value,
   onValueChange,
+  unavailable,
 }: {
   title: string;
   body: string;
   value: boolean;
   onValueChange: (next: boolean) => void;
+  /** True where the server has no producer for this trigger yet — `AlertSettings.unavailable`. */
+  unavailable?: boolean;
 }) {
   return (
     <View style={styles.row}>
@@ -147,8 +161,25 @@ function Row({
         <Text variant="ui" style={styles.muted}>
           {body}
         </Text>
+        {unavailable ? (
+          <Text variant="ui" style={styles.notBuilt}>
+            Not built yet — this will not alert you even if you turn it on.
+          </Text>
+        ) : null}
       </View>
-      <Switch onValueChange={onValueChange} value={value} />
+      {/*
+        NO SWITCH FOR AN UNAVAILABLE TRIGGER. A switch reading "off" implies
+        turning it on would work; nothing here does, so a switch is a promise
+        this row cannot keep. `styles.notBuiltTag` is a static label, never a
+        control — see the header comment above.
+      */}
+      {unavailable ? (
+        <Text variant="eyebrow" style={styles.notBuiltTag}>
+          Soon
+        </Text>
+      ) : (
+        <Switch onValueChange={onValueChange} value={value} />
+      )}
     </View>
   );
 }
@@ -170,6 +201,8 @@ const styles = StyleSheet.create({
   },
   rowText: { flex: 1, gap: 4 },
   cannotDisable: { color: color.oxblood },
+  notBuilt: { color: color.inkFaint, fontStyle: 'italic' },
+  notBuiltTag: { color: color.inkFaint },
 
   footer: { gap: space.xs, marginTop: space.md },
   muted: { color: color.inkMuted },

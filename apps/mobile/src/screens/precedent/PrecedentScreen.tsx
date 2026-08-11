@@ -150,11 +150,25 @@ export function PrecedentScreen({
       {treatment && view === 'list' ? (
         <View style={styles.counts}>
           <Text variant="eyebrow">HOW COURTS HAVE TREATED THIS</Text>
+          {/*
+            SIX COUNTS, NOT FOUR. `judgment_citations.relationship` holds six
+            values and the server sums all six into `total`; this row showed
+            four until 11 Aug 2026, so 23 live `overruled_in_part` rows and
+            every plain citing edge were absent from a summary that reads as
+            complete. A count row that does not add up to the list beneath it
+            is worse than no count row.
+
+            `Overruled in part` sits beside `Overruled` because it is the same
+            fact at a smaller extent — separating them across the row would
+            invite reading the smaller number as the whole.
+          */}
           <View style={styles.countRow}>
+            <Count label="Cited" n={treatment.counts.cites} />
             <Count label="Followed" n={treatment.counts.followed} />
             <Count label="Distinguished" n={treatment.counts.distinguished} />
             <Count label="Doubted" n={treatment.counts.doubted} />
             <Count label="Overruled" n={treatment.counts.overruled} />
+            <Count label="Overruled in part" n={treatment.counts.overruledInPart} />
           </View>
           {/*
             THE LINE THAT KEEPS THIS OUT OF PREDICTION.

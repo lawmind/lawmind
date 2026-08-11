@@ -1,7 +1,12 @@
 import { render, screen } from '@testing-library/react-native';
 
 import { CounterArguments } from './CounterArguments';
-import type { CounterArgument, CounterArgumentsResponse, CounterAuthority } from '../../api/contract';
+import type {
+  CounterArgument,
+  CounterArgumentsResponse,
+  CounterAuthority,
+  ExcludedAuthority,
+} from '../../api/contract';
 
 /**
  * THE RULE UNDER TEST: an excluded authority is SHOWN, never silently dropped.
@@ -27,7 +32,7 @@ const authority: CounterAuthority = {
   asOf: '2026-08-06T00:00:00.000Z',
 };
 
-const excluded = [
+const excluded: ExcludedAuthority[] = [
   {
     judgmentId: 'j9',
     caseTitle: 'Mock SetAside v. State',
@@ -156,5 +161,141 @@ describe('CounterArguments — S2, once generation lands', () => {
     await render(<CounterArguments data={withStripped} />);
 
     expect(screen.getByText('Mock Ghost v. Nobody')).toBeTruthy();
+  });
+});
+
+/**
+ * THE STATE THIS PANEL COULD NOT SAY, until 11 Aug 2026.
+ *
+ * `services/api/src/arguments/counter.ts` filters `set_aside` and NOTHING
+ * ELSE — `usable = retrieved.filter((r) => r.overruledStatus !== 'set_aside')`.
+ * So `doubted` and `partly_set_aside` authorities are returned in
+ * `authorities`, and this component drew only the existence mark: they
+ * rendered as ordinary good law, with no chip, no headline and no amber.
+ *
+ * The stale-overruled threshold is zero and makes no exception for a panel.
+ * It is also the surface where hiding it costs most: elsewhere the advocate
+ * went looking and can weigh what they find, whereas here WE propose the
+ * authority as something the other side may run.
+ */
+describe('an authority whose law has moved', () => {
+  const withStatus = (over: Partial<CounterAuthority>) =>
+    render(<CounterArguments data={{ ...s1, authorities: [{ ...authority, ...over }] }} />);
+
+  it('marks a doubted authority, which the server returns and never filtered', async () => {
+    await withStatus({ overruledStatus: 'doubted' });
+
+    expect(screen.getByText('Doubted · referred')).toBeTruthy();
+  });
+
+  it('states in words that a doubted authority still binds', async () => {
+    await withStatus({ overruledStatus: 'doubted' });
+
+    expect(screen.getByText('Doubted in a later judgment. Still binding.')).toBeTruthy();
+  });
+
+  it('marks a partly set aside authority and names the paragraphs the server sent', async () => {
+    await withStatus({ overruledStatus: 'partly_set_aside', overruledParas: [19, 20] });
+
+    expect(screen.getByText('Paras 19–20 set aside')).toBeTruthy();
+  });
+
+  it('falls back to the unnumbered wording when the server named no paragraphs', async () => {
+    await withStatus({ overruledStatus: 'partly_set_aside', overruledParas: null });
+
+    expect(screen.getByText('Partly set aside')).toBeTruthy();
+  });
+
+  /**
+   * Rendered without the excluded list, whose own card legitimately says "set
+   * aside" — the assertion is about the AUTHORITY carrying no mark, and a
+   * screen-wide match would have been satisfied by the wrong element.
+   */
+  it('draws nothing at all on an authority that is still good law', async () => {
+    await render(
+      <CounterArguments data={{ ...s1, authorities: [authority], excluded: [] }} />
+    );
+
+    expect(screen.queryByText('Doubted · referred')).toBeNull();
+    expect(screen.queryByText(/set aside/i)).toBeNull();
+    expect(screen.queryByText('Overruled')).toBeNull();
+  });
+
+  /**
+   * `overruledNote` reached `authorities[]` on 11 Aug 2026, the same day this
+   * client's audit found it was carried on `excluded[]` and not here
+   * (bus 0037 → `counter.ts`). `renderState.ts` puts it in `whatStillStands`
+   * and states it FIRST — it is the half the advocate is about to argue
+   * against, and leading with what fell buries the useful half.
+   */
+  it('states what still stands, from the note the server now sends', async () => {
+    await withStatus({
+      overruledStatus: 'partly_set_aside',
+      overruledParas: [19, 20],
+      overruledNote: 'The directions on maintenance survive; only the arrest guidelines fell.',
+    });
+
+    expect(
+      screen.getByText('The directions on maintenance survive; only the arrest guidelines fell.')
+    ).toBeTruthy();
+  });
+
+  /**
+   * Verification and good-law status are different questions from different
+   * sources. An authority can be both, and the panel must not let one mark
+   * stand in for the other.
+   */
+  it('draws both marks on an authority that is unconfirmed AND doubted', async () => {
+    await withStatus({ verificationState: 'unverified', overruledStatus: 'doubted' });
+
+    expect(screen.getByText('We could not confirm this reference')).toBeTruthy();
+    expect(screen.getByText('Doubted · referred')).toBeTruthy();
+  });
+});
+
+/**
+ * WHY IT WAS RULED OUT, IN THE COURT'S WORDS WHERE WE HOLD THEM.
+ *
+ * `design/screens/07-counter-arguments.dc.html` writes the reason as naming
+ * the case that did the setting aside. `overruled_note` is where that sentence
+ * lives and the server has always sent it on an excluded row; this client's
+ * type declared three of the six fields, so the card printed one generic
+ * sentence to every row regardless of what we held.
+ */
+describe('the exclusion reason', () => {
+  const withNote = (overruledNote: string | null) =>
+    render(
+      <CounterArguments data={{ ...s1, excluded: [{ ...excluded[0]!, overruledNote }] }} />
+    );
+
+  it('names what was set aside and where, when the server sent the note', async () => {
+    await withNote('The relevant directions in this authority were set aside in Mock Social Action Forum (2018)');
+
+    expect(
+      screen.getByText(
+        'The relevant directions in this authority were set aside in Mock Social Action Forum (2018) — not offered as a counter-argument.'
+      )
+    ).toBeTruthy();
+  });
+
+  it('says the smaller true thing when there is no note, rather than naming a judgment we do not hold', async () => {
+    await withNote(null);
+
+    expect(
+      screen.getByText(
+        'This authority has been set aside, so it is not offered as a counter-argument.'
+      )
+    ).toBeTruthy();
+  });
+
+  /** A note that is present but blank is the same as none — never a bare dash. */
+  it('treats a whitespace-only note as no note', async () => {
+    await withNote('   ');
+
+    expect(
+      screen.getByText(
+        'This authority has been set aside, so it is not offered as a counter-argument.'
+      )
+    ).toBeTruthy();
   });
 });

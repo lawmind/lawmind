@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
 import { ChevronLeft, Clock, Info, X } from 'lucide-react-native';
@@ -13,6 +13,7 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { JudgmentDetail } from '../../api/contract';
+import { citationCopyText, citationDisplay } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
 import { newClientKey, useOutbox } from '../../state/outbox';
 import { judgmentCacheKey, readCache, writeCache } from '../../state/offlineCache';
@@ -20,6 +21,7 @@ import { haptics } from '../../theme/haptics';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
 import { AuthoritiesPanel, useAuthorities } from './AuthoritiesPanel';
+import { MatterPicker } from './MatterPicker';
 import { ReadingView } from './ReadingView';
 import { UnverifiedCitationScreen } from './UnverifiedCitationScreen';
 import { VerificationSheet } from './VerificationSheet';
@@ -109,6 +111,24 @@ export function JudgmentScreen({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const [copied, setCopied] = useState(false);
+  /**
+   * ADD-TO-MATTER. The endpoint landed 11 Aug 2026
+   * (`POST /matters/:id/authorities`); until then this screen's button had no
+   * `onPress` at all — a live-looking control that did nothing.
+   *
+   * `saved` is the confirmation, `saveError` the server's own words. The
+   * server refuses `set_aside` with `409 AUTHORITY_SET_ASIDE` and its message
+   * NAMES THE REPLACEMENT JUDGMENT, so it is rendered verbatim rather than
+   * replaced with a generic line — that name is the useful part.
+   *
+   * The client refuses it too, from `moved.blocksAddToMatter`. That is not a
+   * duplicated rule but one rule enforced at both ends: a replayed request or a
+   * stale build bypasses the client's copy, and the server's is the one that
+   * actually protects the matter file.
+   */
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const enqueueCopy = useOutbox((s) => s.enqueue);
 
   /**
@@ -272,6 +292,14 @@ export function JudgmentScreen({
   const blocked = moved.kind === 'moved' && moved.blocksAddToMatter;
 
   /**
+   * The citation slot and whether this authority can enter a filing —
+   * `citation/citationDisplay.ts`, the only place that decides it. Independent
+   * of `moved` and `existence` above: a judgment can be verified, good law, and
+   * carry no citation, which is exactly the 40,980 High Court rows.
+   */
+  const citation = citationDisplay(judgment);
+
+  /**
    * WHAT LANDS ON THE CLIPBOARD IS TWO STORED FIELDS AND A COMMA.
    *
    * `DOMAIN_TRUTH.md`: "Never construct a citation string by pattern — render
@@ -285,9 +313,26 @@ export function JudgmentScreen({
    * Rendered from the resolved row, never from anything a model produced —
    * `CITATION_HARNESS.md` step 8, which is the step most often skipped.
    */
-  const citationText = `${judgment.caseTitle}, ${judgment.neutralCitation}`;
+  /**
+   * WHAT LANDS ON THE CLIPBOARD, AND THE BUG THAT MADE THIS A FUNCTION.
+   *
+   * Until 11 Aug 2026 this was `` `${caseTitle}, ${neutralCitation}` `` — a
+   * template literal, which TypeScript is perfectly happy to fill with `null`.
+   * Against the 40,980 citationless High Court rows now in the corpus it put
+   *
+   *     "Mock Petitioner v. State of Bihar, null"
+   *
+   * on the clipboard, one paste from a filing. No compiler error, no test, and
+   * `neutralCitation` was typed `string` while the server had always sent
+   * `string | null`.
+   *
+   * Now: the case title alone when there is no citation. That is the whole
+   * remedy — the advocate gets what we actually hold, and nothing is invented
+   * around it. `DOMAIN_TRUTH.md`: render only what is stored.
+   */
+  const citationText = citationCopyText(judgment.caseTitle, citation);
 
-  const copyLabel = copied ? 'Citation copied' : 'Copy citation';
+  const copyLabel = copied ? 'Citation copied' : citation.citable ? 'Copy citation' : 'Copy case name';
 
   const onCopyCitation = () => {
     /**
@@ -364,8 +409,8 @@ export function JudgmentScreen({
 
       <ScrollView contentContainerStyle={styles.body}>
         <View style={styles.citationRow}>
-          <Text opticalNudge variant="record">
-            {judgment.neutralCitation}
+          <Text opticalNudge variant="record" style={!citation.citable ? styles.citationAbsent : undefined}>
+            {citation.text}
           </Text>
           {/* Silent until asked. This is the user pulling, never us pushing. */}
           <Pressable
@@ -492,8 +537,16 @@ export function JudgmentScreen({
                 onPress={() => onOpenJudgment(replacement.judgmentId)}
               >
                 <Text variant="legal">{replacement.caseTitle}</Text>
+                {/*
+                  THE REPLACEMENT'S OWN CITATION, THROUGH THE HELPER.
+                  This is the authority we are telling the advocate to use
+                  INSTEAD, so an empty slot here is worse than anywhere else on
+                  the screen — it is the one citation they came to this block to
+                  copy. Raw interpolation until 11 Aug 2026; caught by the
+                  adversarial source scan, not by a rendering test.
+                */}
                 <Text opticalNudge variant="record">
-                  {replacement.neutralCitation}
+                  {citationDisplay(replacement).text}
                 </Text>
               </Pressable>
             ) : (
@@ -504,7 +557,46 @@ export function JudgmentScreen({
           </View>
         ) : null}
 
-        {/*
+          {/*
+          ─────────────────────────────────────────────────────────────────────
+          THE IDENTIFIERS THE COURT ITSELF USES, AND THE LINK TO ITS OWN COPY.
+
+          `CITATION_HARNESS.md` §"The fourth concern" requires that an uncitable
+          judgment keep what it does have: *"preserve case number, parties,
+          court, date, source URL and paragraph information where available."*
+          The server has been sending `case_number` and `source_url` on every
+          judgment since S1; neither was declared on `JudgmentDetail` and
+          neither was ever rendered, so for the 40,980 High Court judgments with
+          no citation the screen showed no way to refer to the case at all.
+
+          A CASE NUMBER IS NOT A CITATION and is never presented as one. It
+          identifies a proceeding on a court's register — which is exactly what
+          an advocate needs to find the matter when no reporter ever numbered
+          it. It is labelled, so it cannot be mistaken for a citation.
+
+          THE SOURCE URL IS NEVER CONSTRUCTED, only opened. A path assembled
+          client-side would be a guess at a court's routing, and a wrong guess
+          sends an advocate to a different case while telling them it is this
+          one.
+        */}
+        <View style={styles.identifiers}>
+          {judgment.caseNumber ? (
+            <Text opticalNudge variant="record" style={styles.identifier}>
+              Case number · {judgment.caseNumber}
+            </Text>
+          ) : null}
+          <Pressable
+            accessibilityLabel="Open the court's own copy of this judgment"
+            accessibilityRole="link"
+            onPress={() => void Linking.openURL(judgment.sourceUrl)}
+          >
+            <Text variant="uiStrong" style={styles.sourceLink}>
+              Open the court's copy
+            </Text>
+          </Pressable>
+        </View>
+
+      {/*
           THE OPERATIVE PARAGRAPH IS DRAWN ONLY WHEN THE SERVER NAMES ONE.
 
           `GET /judgments/:id` sends neither the paragraph nor its number. The
@@ -573,14 +665,56 @@ export function JudgmentScreen({
         <Button label={copyLabel} onPress={onCopyCitation} variant="secondary" />
 
         {/*
+          FILE-READINESS IS STATED WHERE THE ADVOCATE ACTS ON IT, AND NOWHERE
+          ELSE — the client contract §7. The card and the header just say what
+          the record holds; this is the moment they are about to take the thing
+          out of the app, so this is where "you cannot cite this" belongs.
+
+          NOT A REFUSAL. Copy still works and add-to-matter still works: a
+          citationless judgment is a real judgment of a real court and is
+          perfectly usable for research. What it cannot do is go into a filing
+          as an authority, and only that is said.
+
+          Neutral ink. No amber — the law has not moved, and this is not our
+          uncertainty either; it is a fact about the record.
+        */}
+        {citation.note ? (
+          <Text variant="ui" style={styles.citationNote}>
+            {citation.note}
+          </Text>
+        ) : null}
+
+        {/*
           The label states the refusal rather than leaving a dead grey button
           the advocate taps twice before working out why nothing happened. This
           is the ONE case where Lawmind refuses to let an authority be used.
         */}
         <Button
-          disabled={blocked}
-          label={blocked ? 'Cannot be added to a matter' : 'Add to a matter'}
+          disabled={blocked || saved}
+          label={
+            blocked
+              ? 'Cannot be added to a matter'
+              : saved
+                ? 'Saved to the matter'
+                : 'Add to a matter'
+          }
+          onPress={blocked ? undefined : () => setPickerOpen(true)}
         />
+
+        {/*
+          THE SERVER'S REFUSAL, IN ITS OWN WORDS. `409 AUTHORITY_SET_ASIDE`
+          names the judgment that replaced this one, and that name is the part
+          an advocate can act on. Replacing it with a generic line would throw
+          away the only useful thing in the response.
+
+          Neutral ink: this is our refusal to let an authority be used, not a
+          statement that the law has moved. Amber means the second thing only.
+        */}
+        {saveError ? (
+          <Text variant="ui" style={styles.saveError}>
+            {saveError}
+          </Text>
+        ) : null}
         {/*
           THE REASON ARRIVES AFTER THE REFUSAL, by 60ms.
 
@@ -604,6 +738,32 @@ export function JudgmentScreen({
         ) : null}
       </ScrollView>
 
+      {/*
+        ONE PICKER, REUSED. `MatterPicker` already exists for saving a passage
+        from the reading view; saving the whole judgment asks the same question
+        ("into which matter?") and gets the same sheet rather than a second one.
+      */}
+      <MatterPicker
+        onDismiss={() => setPickerOpen(false)}
+        onPick={(matterId) => {
+          setPickerOpen(false);
+          setSaveError(null);
+          void api
+            .addAuthorityToMatter({ matterId, judgmentId: judgment.judgmentId, citationCheckId })
+            .then((r) => {
+              if (r.ok) {
+                setSaved(true);
+                haptics.commit();
+              } else {
+                // The server's message, verbatim — on `set_aside` it names the
+                // replacement judgment, which is the actionable part.
+                setSaveError(r.error.message);
+              }
+            });
+        }}
+        visible={pickerOpen}
+      />
+
       <VerificationSheet
         citationCheckId={citationCheckId}
         judgment={judgment}
@@ -625,6 +785,16 @@ const styles = StyleSheet.create({
   navTitle: { flex: 1 },
   body: { padding: space.sm, gap: space.sm, paddingBottom: space.xxl },
   citationRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
+  /** A fact about the record, not a warning: quieter ink, no amber, no dashes. */
+  citationAbsent: { color: color.inkFaint, fontStyle: 'italic' },
+  /** Sits with the actions, because that is where file-readiness is acted on. */
+  citationNote: { color: color.inkMuted },
+  /** The server's refusal, in neutral ink — our refusal, not the law moving. */
+  saveError: { color: color.ink },
+  identifiers: { gap: 4, paddingTop: space.xs },
+  /** Labelled, so a register number can never be read as a citation. */
+  identifier: { color: color.inkFaint },
+  sourceLink: { color: color.oxblood },
   bench: { color: color.inkMuted },
   muted: { color: color.inkMuted },
   unconfirmed: {

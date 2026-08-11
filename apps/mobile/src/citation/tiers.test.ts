@@ -210,6 +210,16 @@ describe('sourceLabel', () => {
     expect(sourceLabel('corpus')).toBe('Our reported corpus');
     expect(sourceLabel('public_x2')).toBe('Two public sources');
     expect(sourceLabel('ecourts')).toBe('eCourts services');
+    expect(sourceLabel('ecourts_bulk')).toBe('eCourts record');
     expect(sourceLabel('some_new_tier')).toBe('some_new_tier');
+  });
+
+  it('never gives ecourts_bulk the Tier-3 wording — a machine is not the advocate', () => {
+    // `ecourts` alone is the human-vouched label; a bulk-resolved citation
+    // must read differently, because "eCourts services"/"You confirmed this"
+    // would claim an advocate personally solved the captcha when a machine
+    // answered a registry query instead.
+    expect(sourceLabel('ecourts_bulk')).not.toBe(sourceLabel('ecourts'));
+    expect(sourceLabel('ecourts_bulk')).not.toMatch(/you confirmed/i);
   });
 });
