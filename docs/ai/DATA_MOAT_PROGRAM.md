@@ -71,7 +71,7 @@ from a primary source — never stored or rendered itself).
 | eCourts (per-citation, Tier 3) | **PRIMARY** (verification) | built, human-in-the-loop | registrar's written grant, 7 Aug 2026, CAPTCHA bypass narrowly permitted for bulk cause-lists only — `CLAUDE.md` §6 | `services/api/src/citations/verify.ts` |
 | eCourts (bulk cause-list harvest) | **PRIMARY** (freshness) | built, rate-limited | same grant, expires with it (Jan 2029 unless renewed) | `services/api/src/court/ecourts.ts` |
 | indiacode.nic.in | **PRIMARY** (statutes) | held, 845 Acts / 34,928 sections | Government of India, public | `docs/DATASETS.md` §"indiacode.nic.in" |
-| Official Gazette / e-Gazette | **PRIMARY** (commencement) | **not ingested** | Government, public | new — see §2.4 below |
+| Official Gazette / e-Gazette | **PRIMARY** (commencement) | surveyed 11 Aug, **not ingested** | Government, public, no bulk API | §2.4 |
 | IndianKanoon API | **ENRICHMENT** (Tier 2 verification + citation graph), explicitly **not** bulk PRIMARY | **not purchased** | Commercial, per-call, attribution mandatory | `docs/DATA_SOURCES.md` §2 — full pricing, the "do not buy to bulk-download" warning |
 | BharatLaw account | **ENRICHMENT** (benchmark) / extraction **DISABLED** | provisioned, `extractionPermitted: false` | Licensed, terms not yet fully cleared for extraction | `docs/CURRENT_PLAN.md` Q1.13, `services/ingest/src/harvest/bharatlaw.ts` |
 | Licensed teacher/competitor data (founder-authorised) | **TRAINING** / **EVALUATION** only, **never PRIMARY** | inventoried, gated | Founder confirmed agreements exist — CLOSED, not reopened here | `docs/DATASETS.md` §"AUDITED — DO NOT TRAIN" (three datasets, all instruction-style, none primary law) |
@@ -149,16 +149,43 @@ freshness signal back into `judgments` for HC judgments already held (a
 "this matter had activity" ping that could trigger a targeted re-check)
 rather than only using eCourts for verification lookups.
 
-### 2.4 · Official Gazette / notification sources — not started
+### 2.4 · Official Gazette / notification sources — surveyed, not built
 
-**Genuinely new territory, not previously surveyed in this repo** (confirmed
-by grep — no existing doc covers e-Gazette). Needed for: amendment
+**Was genuinely new territory this morning; surveyed 11 Aug 2026 via web
+research (WebSearch/WebFetch), not from memory.** Needed for: amendment
 commencement dates, delegated-legislation notifications, the exact gap
 `statute_mappings` (0 rows) needs closed before REB §7's point-in-time
-statute contract can be built honestly. Source: `egazette.gov.in` (Government
-of India, Press Information Bureau notifications, ministry-specific gazette
-sections). **Acquisition method unresearched — flagged as the P0 item with
-the least existing groundwork, see §7 task list.**
+statute contract can be built honestly.
+
+**What was confirmed**: `egazette.gov.in` is the official Government of
+India portal (Directorate of Printing, Ministry of Housing and Urban
+Affairs), publishing weekly. A 2016 PIB press release states gazette
+notifications are e-published there and **"users may download the e-gazette
+free of charge"** — public, no stated paywall. The Gazette is structured in
+fixed Parts/Sections (Part II §1: Acts, Ordinances, Regulations; Part II §3
+sub-§(i): General Statutory Rules) — a real, citable organisational
+structure, not ad-hoc. **No official bulk-download API is published** — the
+site is a search-and-download portal, not a data feed.
+
+**What was found, INFER not KNOW**: an existing open-source project,
+`sushant354/egazette` (GitHub, Apache 2.0), already scrapes the central
+gazette **and most state gazette portals** (Bihar, Karnataka, Maharashtra,
+Tamil Nadu, UP, West Bengal, and ~20 others), using BeautifulSoup4 + session
+cookies, no published CAPTCHA workaround mentioned in its own README. This
+is evidence the site is technically scrapeable without a CAPTCHA wall
+(unlike eCourts before its grant), but **not independently confirmed against
+the live site** — a WebFetch attempt against `egazette.gov.in` itself failed
+on a certificate-verification error from this environment, so the site's
+current behaviour was not directly observed this session. State that
+distinction plainly rather than treat the GitHub project's description as
+confirmed fact.
+
+**Recommendation, not yet executed**: before writing a new scraper, evaluate
+`sushant354/egazette` (Apache 2.0, permissive) as a technical reference or
+direct dependency — "OSS first" per `CLAUDE.md`. Central-gazette coverage
+alone (no state scraping needed yet) is the right first scope, matching
+`statute_mappings`' current focus on Central Acts. **Not started as a build
+— this is the survey only,** per this task's own scope in §7.
 
 ### 2.5 · P3 registry — evaluated once, not yet built out
 
@@ -354,9 +381,12 @@ instruction:
    `corpus-report-cli.ts`, run against production. Immediately found a real
    gap: `source_document_type` is 0.0% corpus-wide against a docs claim of
    "4 of 25 courts" — not yet root-caused, §6.
-5. **Official Gazette source survey** (§2.4) — genuinely unresearched;
-   needed before `statute_mappings`/point-in-time statute work (REB §7) can
-   start on real ground rather than a documented gap.
+5. ~~**Official Gazette source survey**~~ — **DONE, 11 Aug 2026, same
+   session, via real web research.** Public, no bulk API, no confirmed
+   CAPTCHA (via an existing OSS scraper's evidence, not independently
+   verified live). `sushant354/egazette` (Apache 2.0) is a real OSS-first
+   candidate to evaluate before building a new scraper. §2.4. Building the
+   actual ingest path is the next increment, not done here.
 6. ~~**eCourts scope check for district courts/tribunals**~~ — **CHECKED,
    11 Aug 2026: genuinely blocked, not unresearched.** `AUTHORISATION = null`
    — the grant letter has never been transcribed, so no scope claim (HC/SC
