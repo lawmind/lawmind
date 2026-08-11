@@ -826,11 +826,17 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     within-file distinct-CNR (negligible); mobile variant 72.3% average,
     34.7%-99.8% range — real one-CNR-many-orders structure, not a defect.
     Cross-file collision stays `UNKNOWN`, deliberately not chased at full-
-    sweep cost given the sampled rate is low. **New finding**: the plain
-    variant's `disposal_nature` column (all 25 courts, unlike mobile-only
-    `order_type`) sampled as populated-when-disposed/blank-when-pending — a
-    candidate cheap, metadata-only judgment-density signal, named as the
-    next task, not built this session.
+    sweep cost given the sampled rate is low. **New finding, confirmed at
+    scale**: the plain variant's `disposal_nature` column (all 25 courts,
+    unlike mobile-only `order_type`) is 99.7-100.0% populated across 12
+    files / 6 courts / years 2017 & 2019 (~1.14M rows), against 1.4% in a
+    mostly-pending 2026 file — a real disposed-vs-pending signal.
+    **Self-corrected same session**: the first draft proposed validating it
+    by cross-tabulating against the mobile variant's `order_type`, which is
+    not executable — plain and mobile share zero CNRs, no join key exists.
+    Corrected recommendation: combine `disposal_nature` with the case-type
+    token already visible in `title`/`description` into an actual
+    judgment-vs-order proxy, next task, not built this session.
 12. **`docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md` — designed, not executed,
     same directive.** Mapped the founder's six requested comparison arms
     (lexical/BM25, PG text search, dense, hybrid, RRF, reranking) against

@@ -445,11 +445,17 @@ alongside this document.
    variant: 72.3% average, 34.7%–99.8% range — real multiplicity (many
    orders per case), not a defect. Cross-file collision remains `UNKNOWN`,
    explicitly not chased at full-sweep cost given the sampled rate is low.
-   **New finding, not previously known**: the plain-variant `disposal_nature`
-   column (present on all 25 courts, unlike the mobile-only `order_type`) is
-   a candidate cheap, metadata-only judgment-density signal — sampled
-   pattern (populated when disposed, blank when pending) suggests a real
-   next task, named but not built.
+   **New finding, confirmed at scale, then self-corrected**: the
+   plain-variant `disposal_nature` column (present on all 25 courts, unlike
+   the mobile-only `order_type`) is 99.7–100.0% populated across a 12-file,
+   6-court, ~1.14M-row sample of settled years (2017/2019), against 1.4% in
+   a mostly-pending 2026 file — a real, corpus-wide disposed-vs-pending
+   signal. The first-draft plan to validate it by cross-tabulating against
+   the mobile variant's `order_type` was caught as not executable (plain
+   and mobile share zero CNRs, no join key) and corrected in the doc itself
+   before being repeated elsewhere: the real next task is combining
+   `disposal_nature` with the case-type token in `title`/`description` into
+   an actual judgment-vs-order proxy, named but not built.
 9. **Retrieval-scale benchmark — DESIGNED, not executed, 11 Aug 2026.**
    `docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md`. Mapped the founder's six
    requested comparison arms against the actual code: fusion is RRF

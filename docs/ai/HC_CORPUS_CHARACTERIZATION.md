@@ -109,8 +109,8 @@ restated from `AWS_CORPUS_INVENTORY.md` §2 (`order_type` column, mobile-only):
 structurally (`AWS_CORPUS_INVENTORY.md` §5). This has been the standing gap.
 
 **New this session — a candidate signal the plain variant DOES carry,
-SAMPLED, not previously checked:** `disposal_nature`. Sampled directly from
-two Allahabad plain-variant files:
+SAMPLED at two scales, not previously checked:** `disposal_nature`. First,
+two Allahabad plain-variant files, one recent, one old:
 
 | file | rows | populated | blank |
 | --- | ---: | ---: | ---: |
@@ -120,15 +120,28 @@ two Allahabad plain-variant files:
 The 2026 file's populated values, when non-blank, are real disposal outcomes
 (`Dismiss other than merit`, `Disposed off/Decided on merits`, `Allowed/
 Partly Allowed on merits`, etc.) — the same vocabulary a "was this case
-actually decided" question would need. **The pattern across the two samples
-is consistent with `disposal_nature` being populated once a case is disposed
-and blank while pending** — a 2026 file is mostly still-pending filings
-(hence 98.6% blank); the tiny 2015 sample under the same bench code is 100%
-populated, consistent with an old case being disposed by now. **This is
-SAMPLED on 2 files, not verified as a general rule, and not yet checked
-against `pdf_link`/case-type text for corroboration.** §7 below explains why
-this is the highest-value next step rather than something to chase further
-in this pass.
+actually decided" question would need. That two-file pattern (2026 mostly
+blank/pending, 2015 fully populated/disposed) was a hypothesis on too small
+a sample to trust, so it was **re-checked at real scale, same session**:
+6 courts (the same 6 sampled in §8–9) × 2 older years (2017, 2019), full
+`disposal_nature` column read, ~1,142,687 rows total:
+
+| court | 2017 | 2019 |
+| --- | --- | --- |
+| Allahabad (9_13) | 100.0% (n=1,951) | 99.8% (n=467,910) |
+| Bombay (27_1) | 99.7% (n=31,146) | 99.9% (n=27,806) |
+| Madras (33_10) | 100.0% (n=53,947) | 99.9% (n=80,299) |
+| Punjab & Haryana (3_22) | 100.0% (n=100,426) | 100.0% (n=120,442) |
+| Patna (10_8) | 100.0% (n=95,440) | 100.0% (n=115,597) |
+| Rajasthan (8_9) | 100.0% (n=59,748) | 100.0% (n=41,021) |
+
+**Confirmed, not just hypothesised: across 12 files / 6 courts / 2 years,
+`disposal_nature` is populated for 99.7–100.0% of rows in a settled (2017 or
+2019) year, against 1.4% in a mostly-still-pending 2026 file.** This is a
+real, at-scale, metadata-only signal, present on all 25 courts (unlike the
+mobile-only `order_type`), for distinguishing **disposed from pending** —
+not, on its own, **judgment from order** (§11 corrects an earlier overreach
+on this point).
 
 **No equivalent measurement exists, and cannot, for the Supreme Court bucket
 against this taxonomy** — restated from `AWS_CORPUS_INVENTORY.md` §2, not
@@ -253,16 +266,38 @@ the case-type token already visible in `title`/`description` (e.g.
 numbered section — both present in the two rows read this session, §3), it
 is a plausibly much cheaper first pass than opening every PDF.
 
-**Recommended next task, not started here** (characterization, not
-implementation, was this session's scope): measure `disposal_nature`
-population rate at real scale — a stratified sample across multiple courts
-and a spread of years old enough that most filings are disposed (2015–2020,
-not 2026) — and cross-tabulate against the mobile variant's `order_type`
-for the 4 courts where both exist, to see whether `disposal_nature != blank`
-usefully predicts `order_type == judgment`. If it does, that is a corpus-
-wide, metadata-only (no PDF fetch) prioritization signal for **all 25
-courts**, not just the 4 that publish the mobile variant — a meaningfully
-larger win than closing the dedup `UNKNOWN`.
+**Correction, same session, before this section was ever cited elsewhere:**
+the first draft of this recommendation proposed cross-tabulating
+`disposal_nature` against the mobile variant's `order_type` "for the 4
+courts where both exist," to check whether one predicts the other. **That
+check is not executable as stated** — `hc-metadata.ts`'s own header comment
+already establishes plain and mobile share **zero CNRs** (measured
+10 Aug 2026, restated `AWS_CORPUS_INVENTORY.md` §5): they are disjoint
+document sets from the same court, not two views of the same filing. There
+is no row-level join key to cross-tabulate on, and a court-year aggregate
+comparison would compare two populations with no established relationship
+to each other, which is not a validation, it is a coincidence waiting to be
+overread.
+
+**What `disposal_nature` actually establishes, confirmed at scale above:
+disposed vs pending, not judgment vs order.** A disposed interim
+application is still not a reportable judgment (`Dismiss other than merit
+(DD/Non Prosec./Abated)` is one of the most common populated values, §3 —
+exactly a disposed-but-not-decided-on-merits outcome). **Recommended next
+task, not started here**: combine `disposal_nature != blank` (disposed) with
+the case-type token already visible in `title`/`description` (e.g. `FAFOD`
+= First Appeal From Order Defective, `NA` = a numbered application — both
+observed directly in sampled rows, §3) to build an actual judgment-vs-order
+proxy, and validate THAT proxy — not `disposal_nature` alone — against the
+mobile variant's `order_type` **within the mobile variant's own rows**
+(mobile rows carry both `order_type` and, presumably, their own disposal/
+case-type fields — not confirmed this session which mobile columns exist
+beyond the 18 already named in `hc-metadata.ts`). This is corpus-wide,
+metadata-only (no PDF fetch), for **all 25 courts**, not just the 4 that
+publish the mobile variant — a meaningfully larger win than closing the
+dedup `UNKNOWN`, and now grounded in a validation path that is actually
+executable, not one this document accidentally proposed and could not do
+itself.
 
 ---
 
