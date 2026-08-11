@@ -488,9 +488,19 @@ export const api = {
    * `generated`, `delivered` and `opened` are three different facts in three
    * columns (`SCHEMA_TRUTH.md#briefings`); collapsing any two makes the metric
    * meaningless, so this fires on the open and nowhere else.
+   *
+   * `markBriefingOpened` in `route.ts` returns `openedAt` alongside `ok` — the
+   * first-open timestamp, `coalesce`d so a re-open never overwrites it. The
+   * type declared only `{ ok: true }` until the Task 7 sweep; nothing reads
+   * `openedAt` today, but an undeclared field is exactly the shape the sweep
+   * exists to catch before a caller needs it and finds it missing.
    */
   markBriefingOpened: (briefingId: string) =>
-    send<{ ok: true }>(`/briefings/${encodeURIComponent(briefingId)}/opened`, {}, { auth: true }),
+    send<{ ok: true; openedAt: string }>(
+      `/briefings/${encodeURIComponent(briefingId)}/opened`,
+      {},
+      { auth: true }
+    ),
 
   /* ---------------------------------------------------------------- drafting */
 

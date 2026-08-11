@@ -346,7 +346,10 @@ the `FOUNDER_QUEUE.md` decision.
 ### 11 Aug 2026 — the TASK 1–10 research ladder
 
 **Done: 1 (result-card actions), 2 (contract drift sweep), 3 (search workflow),
-4 (judgment reader audit).** Commits `b8b9558`, `e5763f8`, `434831b`, `0113bf7`.
+4 (judgment reader audit), 5 (desktop research workspace), 6 (matter
+authorities audit), 7 (briefing sweep).** Commits `b8b9558`, `e5763f8`,
+`434831b`, `0113bf7`, `0fb34ea`, `d6b8455`, and the briefing-sweep commit
+below.
 
 **Task 2 is finished and it was run mechanically, not by eye.** A script walks
 every `ok(c, {…})` the API returns, collects the object-literal keys and diffs
@@ -400,6 +403,34 @@ a wrong court string silently returns zero results.
 
 **Also outstanding:** bus 0048 — the three citation fields on
 `GET /matters/:id/authorities`.
+
+**TASK 7 (briefing sweep, mechanical method) — DONE.** `GET /briefings/:id`,
+`GET /matters/:id/briefings`, `GET /matters/:id` (bundle) and
+`POST /briefings/:id/opened` diffed key-for-key against `contract.ts`,
+`mock.ts` and every render site. The 11 Aug rewrite (bus 0038/0041) held: one
+real drift found, one narrow client type fixed.
+
+Fixed (client): `markBriefingOpened` was typed `{ ok: true }` against a route
+that also returns `openedAt` (`coalesce(b.opened_at, now())`). Nothing reads
+it yet — widened to match anyway, same standard as every other endpoint in
+`contract.ts`.
+
+Found, not client's to fix — **bus 0049**: `briefings/route.ts`
+`liveAuthorities()` and `matters/authorities.ts` `AUTHORITY_COLUMNS` both
+select `neutral_citation` and never `reporter_citations`, unlike every other
+citation-bearing route (`search/retrieve.ts`, `judgments/route.ts`,
+`search/qlang/compile.ts`). `citationDisplay()`'s citability rule is
+`neutralCitation === null AND reporterCitations.length === 0`
+(`CITATION_HARNESS.md` "the fourth concern") — so a judgment cited only by a
+reporter citation (most pre-~2013 Supreme Court judgments) draws
+"No citation on file — cannot be referenced in a filing" on a briefing
+authority row or a matter's saved authorities, wrong, because the field was
+never in the row. Two-line fix in each file, offered to ride along with bus
+0048 since it already touches `matters/authorities.ts`.
+
+Verified: `tsc` 0 · 50 suites / 546 tests · guards
+`design-rules:0 contract-status:0 design-renders:0 schema-truth:0
+amber-reservation:0 alert-coverage:1` (pre-existing, LCC's).
 
 ---
 
