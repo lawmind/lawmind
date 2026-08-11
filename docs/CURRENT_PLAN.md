@@ -1263,10 +1263,54 @@ needs a local Postgres this machine does not run. Guards: schema-truth,
 contract-status, design-rules and amber all green; `check-alert-coverage` stays
 red on **Q1.10**, which is unrelated and still needs its producers.
 
-**Highest-value next action, and the evaluation points straight at it:
-candidate generation, not the model.** 78% of real citations never produce a
-candidate set — 104 of 200 had no extractable case name, 51 no parseable year.
-Every approach, model or not, is capped at 22.0% until that changes.
+**5 · THE 22.0% CEILING WAS THREE PARSER BUGS, AND IT IS NOW 76.5%.** The
+evaluation named candidate generation as the bottleneck; chasing it found that
+the "ceiling" was not architectural at all. Each was found by classifying real
+failures, not by re-reading the code, and each is `e467037`/`b2ee6d9`:
+
+| | before | after |
+| --- | --- | --- |
+| gold, year parsed | 34.8% | **99.8%** |
+| **gold, REACH** | **22.0%** | **76.5%** |
+| target population, year parsed | 98.4% | **100.0%** |
+| truth is deterministic top-1 | 88.6% | **88.0%** |
+
+- **`yearFromCitationText` had no S.C.R. pattern at all** — the form all 38,342
+  Supreme Court judgments carry. 65.2% of real citations parsed to no year and
+  were dropped silently before candidate generation. **These are the same blind
+  spots `Q1.0c` fixed in `citations.ts`'s extractor** — square brackets,
+  year-first house style, OCR-mismatched brackets — reproduced one for one in a
+  second, independently written copy of the same idea.
+- **The parallel-citation blind spot, 91% of the rest.** Reports print
+  `A v. B [1999] 1 SCR 235 : (1999) 2 SCC 718`; the extractor records both, so
+  the second citation's window ends with the *first citation* rather than the
+  case name, and the name pattern is anchored at the end of the string.
+- **Capital `Vs.` never matched** — no case-insensitive flag on the verb, and
+  `Vs.` is the commonest form in Indian judgments.
+
+**The check that matters is that precision did not move**: 3.5× the input at
+**88.0%** deterministic top-1 against 88.6% before, truth among candidates
+95.2%. A loosened filter would have shown up as a fall there.
+
+**And the "22.0% ceiling" was never the target population's number.** The gold
+set is SC→SC (S.C.R.-formatted); the pipeline targets HC→SC (SCC/AIR), where
+year parsing was already 98.4%. Reporting a gold-set funnel loss as the
+pipeline's ceiling was the evaluation's own error, corrected in place.
+
+**A hazard found while running the suites, recorded because it nearly bit.**
+`services/ingest/src/harvest/store.test.ts` connects to whatever `DATABASE_URL`
+names and `INSERT`s and `DELETE`s in `harvest_fetches`/`harvest_queue` — so
+`pnpm test` with `.env` sourced runs it **against production**. It scopes itself
+to a `test_<uuid>` source and cleans up, and **both tables were verified empty
+afterwards**, so nothing was polluted. But the safety here is the test's own
+good manners, not a guard, and the next test written in that directory inherits
+no such protection. Worth a `DATABASE_URL`-host check before it matters.
+
+**Highest-value next action.** Reach is no longer the constraint. The open
+question the evaluation leaves is the deterministic path: `internal-concordance.ts`
+implements §3a's adversarially-filtered discipline and **has never been run with
+`--apply`**. That is the one route to canonical aliases this evidence supports,
+and it needs its own measured dry-run before any write.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 

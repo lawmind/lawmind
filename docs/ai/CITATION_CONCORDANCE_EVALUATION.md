@@ -93,8 +93,26 @@ parseable year, 1 with no candidate above zero overlap.
 > | | before | after |
 > | --- | --- | --- |
 > | gold population, year parsed | 34.8% | **99.8%** |
-> | **gold population, reach** | **22.0%** | **49.2%** |
+> | **gold population, reach** | **22.0%** | **76.5%** |
 > | target population, year parsed | 98.4% | **100.0%** |
+>
+> **Two further defects in name extraction accounted for the rest**, both found
+> the same way — by classifying the failures rather than re-reading the regex:
+>
+> - **The parallel-citation blind spot, 91% of the remaining loss.** Reports
+>   print `A v. B [1999] 1 SCR 235 : (1999) 2 SCC 718`, and the extractor
+>   records both citations. For the second, the window ends with *the first
+>   citation*, not the case name — and the name pattern is anchored at the end
+>   of the string. Of 304 failing windows, **277 contained a `v.`/`vs.` and had
+>   simply been separated from it** by a citation and its `:` or `=`.
+> - **Capital `Vs.` never matched at all.** The verb alternation carried no
+>   case-insensitive flag, and `Vs.` is the commonest form in Indian judgments.
+>   The two compounded: a window had to survive both to yield a name.
+>
+> **The check that matters is that quality did not move.** Widening the funnel
+> 3.5× left deterministic top-1 accuracy at **88.0%** against 88.6% before, and
+> the truth is among the generated candidates **95.2%** of the time. A filter
+> that had merely been loosened would have shown up as a fall there.
 >
 > **And the 22.0% was never the target population's number anyway.** The gold
 > set is Supreme Court → Supreme Court, which is S.C.R.-formatted; the pipeline
@@ -108,10 +126,16 @@ parseable year, 1 with no candidate above zero overlap.
 > 10.8% of the time when the answer is absent. It raises the value of fixing the
 > funnel and leaves the promotion decision exactly where §3 leaves it.
 
-**The bottleneck is now name extraction, not year parsing.** 50.8% of gold
-citations still produce no candidate because `nameBeforeCitation` cannot find a
-case name in the 400 characters before the citation. That is the next piece of
-work, and it bounds every approach, model or not.
+**Reach now stands at 76.5%, measured, up from 22.0%.** The residue is genuine:
+windows whose citation carries no case name at all — short forms like *"Ajay
+Hasia case"*, or a citation in a table of authorities with nothing beside it.
+Those are correctly left unresolved rather than guessed at.
+
+**All three fixes are in the deterministic candidate generator, which is the
+half this evaluation says to keep.** None of them changes the promotion verdict:
+they feed 3.5× more cases to an adjudicator that invents an authority 10.8% of
+the time when the answer is absent, which raises the value of the deterministic
+path and moves the decision in §3 not at all.
 
 ---
 
