@@ -2001,7 +2001,21 @@ email converts it. `FOUNDER_QUEUE.md` **FQ-BL1** holds the exact wording to send
       nobody should build on it until the stack moves
 - [ ] **E1.2 alert drill is NOT done and must not be ticked.** `check-alert-
       coverage.mjs` is red at **2 of 4 PD-5 triggers** and deliberately unwired
-      from `ci:local` until the violations are fixed
+      from `ci:local` until the violations are fixed. The two missing:
+      `own_matter_judgment`, `unknown_listing` (confirmed by name 11 Aug,
+      running the guard directly — `filed_citation_moved` is NOT one of the
+      two; it is already declared and already written by `fanout.ts:315`,
+      RCC bus 0042/0044). **`own_matter_judgment` is now concretely
+      buildable and was not before today**: `matters.cnrNumber` and
+      `judgments.cnr` are both real columns, and `judgments.cnr` reached
+      100% backfill coverage earlier the same session (task 007) — the join
+      key this trigger needs (a newly-ingested judgment's `cnr` matching an
+      existing matter's `cnrNumber`) now exists on both sides. Not built —
+      out of this session's scope (HC corpus characterization + retrieval
+      benchmark directive) — but the blocker that made it unbuildable is
+      gone, so this is next-pickup, not still-blocked. `unknown_listing`
+      remains genuinely blocked on OD-1 (court monitoring vendor, still
+      TRIAL PENDING) — it needs cause-list data LawMind does not yet have.
 - [x] **`alerts/route.test.ts` was red and is now green — 10 Aug 2026.** Commit
       `20a929d` added `settings.unavailable` to the response and did not update
       its own test, so the lane carried a red test for a deliberate change.
