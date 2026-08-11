@@ -1306,6 +1306,20 @@ afterwards**, so nothing was polluted. But the safety here is the test's own
 good manners, not a guard, and the next test written in that directory inherits
 no such protection. Worth a `DATABASE_URL`-host check before it matters.
 
+**6 · AN ORPHAN MIGRATION, found sitting untracked in the working tree.**
+`packages/db/drizzle/0033_generated_holding.sql` adds
+`judgments.generated_holding` / `generated_holding_at` — the two-sentence
+holding `PRODUCT_BRIEF.md` promises for feature #1, which `search/route.ts`
+still hardcodes as `holding: ''`. **It is not committed, not in
+`meta/_journal.json`, and neither column exists in production** — all three
+checked, not assumed.
+
+**Do not simply apply it.** The journal is at `0044`, so the `0033` slot is
+long taken; applying this file under its current number would collide with the
+applied sequence. It needs renumbering and its own task — generating a holding
+is a summarisation pass over 38,342 judgments, a separate piece of work from
+the concordance program, and it is queued rather than smuggled in here.
+
 **Highest-value next action.** Reach is no longer the constraint. The open
 question the evaluation leaves is the deterministic path: `internal-concordance.ts`
 implements §3a's adversarially-filtered discipline and **has never been run with
