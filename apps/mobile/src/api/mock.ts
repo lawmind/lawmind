@@ -361,9 +361,26 @@ export const mockApi = {
       citationSummary: { total: 3, verified: 3 },
     }),
 
-  /* court adapter — OD-1 is open, so the manual path is the only path */
+  /*
+    Court adapter — OD-1 is open, so the manual path is the only path.
+
+    THE TWO EXTRA FIELDS ARE MOCKED because the real endpoint always sends them
+    and a mock that does not is how a screen gets built against a payload that
+    does not exist. That is the fixture drift this sweep keeps finding: the
+    briefing, the search facets, the court-and-year string, all of them looked
+    right in development and misbehaved on the wire.
+  */
   courtLookup: (_cnr: string): Promise<ApiResponse<CourtLookupResult>> =>
-    delay({ available: false }),
+    delay({
+      available: false,
+      reason: 'no_adapter_implemented',
+      manualEntry: {
+        expected: true,
+        message:
+          'Enter the next date from your file. Dates given in open court are the ' +
+          'normal source and are treated exactly the same as one we looked up.',
+      },
+    }),
 
   /* alerts */
   alerts: (): Promise<ApiResponse<{ alerts: Alert[]; unreadCount: number }>> =>

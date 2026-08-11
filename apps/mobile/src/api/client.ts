@@ -12,6 +12,7 @@ import type {
   CitationCopy,
   CorpusCoverage,
   CounterArgumentsResponse,
+  CourtLookupResult,
   CurrentTerms,
   DraftDocument,
   DraftListItem,
@@ -514,11 +515,13 @@ export const api = {
    * doing the ordinary thing — the manual form is the first-class path, not a
    * fallback the product apologises for.
    */
+  /**
+   * ONE SHAPE, IN `contract.ts`. It was declared inline here and differently
+   * there — and the inline one typed `manualEntry.expected` as `string` against
+   * a server that sends the boolean `true`.
+   */
   courtLookup: (cnrNumber: string) =>
-    send<
-      | { available: false; reason: string; manualEntry: { expected: string; message: string } }
-      | { available: true; matter: Omit<Matter, 'matterId'> }
-    >('/court/lookup', { cnrNumber }, { auth: true }),
+    send<CourtLookupResult>('/court/lookup', { cnrNumber }, { auth: true }),
 
   /* ------------------------------------------------------- alerts · PD-5, PD-6 */
 

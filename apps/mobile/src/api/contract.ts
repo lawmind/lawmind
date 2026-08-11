@@ -1682,9 +1682,33 @@ export type DraftListItem = {
 
 /* ---------------------------------------------------------------------- court */
 
-/** Vendor-agnostic. OD-1 is open; the manual path returns `{ available: false }`. */
+/**
+ * Vendor-agnostic. OD-1 is open, so BOTH branches of `handleCourtLookup` return
+ * `available: false` today — one because the guard refused the fetch, one
+ * because no adapter is implemented.
+ *
+ * THE UNAVAILABLE BRANCH CARRIES TWO FIELDS AND THIS TYPE DECLARED NEITHER
+ * until 11 Aug 2026, while `client.ts` declared them inline with `expected`
+ * typed `string` against a server that sends the boolean `true`. Three
+ * descriptions of one endpoint, no two alike — and the mock was a fourth,
+ * returning the bare `{ available: false }` this type used to promise.
+ *
+ * `reason` is named rather than merely false because an operator reading a log
+ * needs to know WHICH refusal it was — nothing configured, the kill switch off,
+ * the grant's hours passed, or no adapter yet. It stays `string`: it is a value
+ * read back out, and a client that refused an unfamiliar reason would break the
+ * day one is added.
+ *
+ * `manualEntry` is the PD-12 sentence, written server-side so it cannot drift:
+ * typing the date from your own file is the ORDINARY path, not a fallback after
+ * a failure, and the copy must not suggest otherwise.
+ */
 export type CourtLookupResult =
-  | { available: false }
+  | {
+      available: false;
+      reason: string;
+      manualEntry: { expected: boolean; message: string };
+    }
   | { available: true; matter: Omit<Matter, 'matterId'> };
 
 /* --------------------------------------------------------------------- alerts */
