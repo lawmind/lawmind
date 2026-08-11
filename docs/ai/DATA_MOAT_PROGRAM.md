@@ -196,12 +196,26 @@ same legal authority or data format"). First pass, by suspected tractability
 | Consumer fora (NCDRC + state) | High advocate-facing volume, e-Daakhil portal exists | Portal, possibly structured | unresearched |
 | District courts | Largest volume, lowest per-document legal-authority weight for a citation product | eCourts umbrella, same portal family as HC | eCourts services already partially cover this — the highest-leverage next body to check, since infrastructure (`ecourts.ts`) already exists |
 
-**Recommended first move, not yet executed**: check whether the existing
-`ecourts.ts` client (built for HC/SC cause-lists) already reaches
-district-court and tribunal endpoints under the same registrar grant — this
-could be near-zero marginal engineering cost if the grant's scope covers it.
-**Verify the grant's actual scope before assuming** — `CLAUDE.md` §6: "if the
-authorisation's terms are not in the repo, the switch stays off."
+**Checked, 11 Aug 2026 — genuinely blocked, not merely unresearched.**
+`ecourts.ts`'s own comment confirms the cause-list endpoint
+(`services.ecourts.gov.in`) already **is** the district-court services host,
+not the judgments host — so the existing adapter's network target already
+touches district-court infrastructure for cause-list data specifically. That
+does **not** answer whether district-court or tribunal *judgments* are
+covered, because `docs/ECOURTS_AUTHORISATION.md` states plainly:
+**`AUTHORISATION = null`** — the grant letter has never been transcribed.
+`permittedCourts` (`"list only what is named. A court not listed is not
+covered"`) is the exact field that would answer this, and it does not exist
+yet. Per this repo's own binding rule (`CLAUDE.md` §6, restated in that
+file): **if the authorisation's terms are not in the repo, the switch stays
+off** — no scope claim can be made, for HC/SC or for district
+courts/tribunals, until the founder transcribes the letter.
+
+**Already on `docs/FOUNDER_QUEUE.md`** ("[OPEN] eCourts grant conditions,
+transcribed · LCC · 7 Aug 2026") — not a new blocker, confirmed still the
+gating one. Nothing here reopens or duplicates that entry; this section
+exists so a future data-moat pass does not re-ask the same question from
+zero.
 
 ---
 
@@ -343,9 +357,11 @@ instruction:
 5. **Official Gazette source survey** (§2.4) — genuinely unresearched;
    needed before `statute_mappings`/point-in-time statute work (REB §7) can
    start on real ground rather than a documented gap.
-6. **eCourts scope check for district courts/tribunals** (§3) — verify
-   whether the existing grant already reaches beyond HC/SC before scoping
-   any new acquisition work.
+6. ~~**eCourts scope check for district courts/tribunals**~~ — **CHECKED,
+   11 Aug 2026: genuinely blocked, not unresearched.** `AUTHORISATION = null`
+   — the grant letter has never been transcribed, so no scope claim (HC/SC
+   or district/tribunal) can be made per this repo's own binding rule.
+   Already on `docs/FOUNDER_QUEUE.md`, confirmed still the gating item. §3.
 7. **OpenNyAI / NyayaAnumana audit** (§2.5) — evaluate for EVALUATION-class
    use only; do not begin until a concrete evaluation need names what gap
    they would fill (the existing 283-query golden set, `RETRIEVAL_PROGRAM.md`
