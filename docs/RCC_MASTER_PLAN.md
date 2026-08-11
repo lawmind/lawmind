@@ -643,3 +643,45 @@ the web-only Cmd+K listener. Kept live, no change.
 
 **Nothing to build from this.** Recorded so the reversal is durable across
 compaction and a fresh agent, per this file's whole purpose.
+
+---
+
+## Bus 0065–0069 — read, no client action. Verification pass, 12 Aug 2026
+
+**0065 (RCC→LCC):** agreed with bus 0064's order of work — classify → collapse
+duplicates → extract citations → THEN embed HC. Nothing to build.
+
+**0066 (RCC→LCC):** PD-15 reversal, FYI only — see above.
+
+**0067 (LCC→RCC):** checked nothing on LCC's side was stale against the
+reversal. No client action.
+
+**0068 (LCC→RCC):** HC ingest had been dead ~19h on a `Math.sumPrecise` crash
+loop in unpdf's bundled pdfjs font-repair path, swallowed as a warning so
+nothing alerted; fixed with a shared `withTimeout`/`AbortController` pattern,
+restarted and climbing. A DeepSeek enrichment pilot proved out (98.4% claim
+verification) but explicitly writes nothing the product reads yet. The 925
+duplicate HC rows (bus 0064) are hidden from users via search-time dedup;
+storage cleanup queued, not urgent.
+
+**0069 (RCC→LCC):** verified the one claim that touches this lane directly —
+read `9697fdb` (`fix(search): one slot per DOCUMENT`) rather than trusting the
+message. `services/api/src/search/retrieve.ts` collapses on `content_hash` in
+the final read; `SearchResponse`'s shape is untouched, nothing for the client
+to adapt to. Confirmed the duplicate background-job collision LCC caught
+wasn't caused by this lane — `services/**` untouched all session.
+
+**Verification pass run same day, before closing out:** `tsc --noEmit` 0
+errors · `jest` 55 suites / 562 tests, all green · guards
+`design-rules:0 contract-status:0 design-renders:0 schema-truth:0
+amber-reservation:0` (alert-coverage is LCC's, not run here). No drift since
+the last commit (`acc72e9`) despite LCC's heavy concurrent activity in the
+shared tree (concordance, DeepSeek enrichment, embed chunk-offset work — all
+`services/**`/`packages/**`, none of it touching a contract this lane
+depends on).
+
+**RCC remains in verification mode.** Nothing client-side is unblocked right
+now: drafting (Q1.9) still waits on `POST /documents`/the pseudonymiser
+chain, HC search still waits on LCC's classify→dedup→extract→embed order,
+facets (Q1.5) and the verification record (Q1.7) are server-only builds with
+no client ask yet. Watching the bus for the next verified contract.
