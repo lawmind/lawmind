@@ -234,7 +234,10 @@ citation.
 
 Expo iOS + Android. Hono API on Railway. Railway Postgres with pgvector. Drizzle.
 better-auth. Resend. Cloudflare R2. OpenRouter. Sentry. PostHog. Expo push.
-Admin is a separate Railway service; web is admin only.
+Admin is a separate Railway service. **Web is no longer admin only** — PD-15,
+settled 11 Aug 2026 (`FQ-D9`): the Expo web target also carries a **desktop
+research workspace**, built inside `apps/mobile` behind a width breakpoint, with
+mobile unchanged and no separate app.
 
 Not used: Neon, Vercel, Qdrant, Clerk, Supabase.
 

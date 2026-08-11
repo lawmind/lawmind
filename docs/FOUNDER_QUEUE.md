@@ -230,7 +230,20 @@ phone.
 
 # DECISIONS ONLY THE FOUNDER CAN MAKE
 
-### [OPEN] FQ-D9 — the desktop research workspace contradicts the brief, and costs a tenth of what we assumed · RCC
+### [RESOLVED 11 Aug 2026] FQ-D9 — the desktop research workspace
+
+**ANSWERED: option 1. Yes — the brief is amended and web is no longer admin
+only.** Recorded as **PD-15** in `PRODUCT_DECISIONS.md`; the superseded lines in
+`CLAUDE.md` §1 and `PRODUCT_BRIEF.md` §Where it runs are amended to point at it.
+
+The founder's conditions, all carried into PD-15: mobile stays first-class and is
+not redesigned around desktop · build inside the existing `apps/mobile` Expo web
+target, no separate app unless that architecture genuinely cannot carry it ·
+responsive within the existing architecture where practical · reversible ·
+**no backend change for the desktop workspace alone** · and it must not block
+unrelated work.
+
+The original entry follows, kept for provenance.
 
 **Added 11 Aug 2026. One sentence from you unblocks it. It is NOT an engineering
 question — the engineering turned out to be small.**

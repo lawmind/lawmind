@@ -185,3 +185,44 @@ The card sits **above** the tiers, so the struck-through prices below are alread
 explained by the time they are read. The layout is a **stack, not a grid**, so the
 free window can append as a fourth line under the progress rule without moving
 anything below it.
+
+## PD-15 · Desktop research workspace — the web boundary moves
+**Settled 11 Aug 2026 by the founder, resolving `FQ-D9` in
+`docs/FOUNDER_QUEUE.md`. Web is no longer admin only.**
+
+The earlier rule — *"Native iOS + Android (Expo). Web is admin only"* in
+`CLAUDE.md` §1 and *"Admin is a separate Railway service; web is admin only"* in
+`PRODUCT_BRIEF.md` — is **superseded**. Those two lines predate the request and
+are amended rather than left to contradict this.
+
+**Mobile stays a first-class product and is not redesigned around desktop.** The
+constraint runs one way only: desktop is an additional shape for the same
+screens, never a reason to change what the phone does. An advocate in a corridor
+is still the primary user; the desktop user is the same advocate at their desk on
+a different evening.
+
+**No separate app.** It is built inside `apps/mobile`, which already targets web —
+`app.config.ts` carries a `web` block, `react-dom` and `react-native-web` are
+installed, and `pnpm web` builds today. A third app under `apps/` is permitted
+only if the existing Expo web architecture genuinely cannot carry the work, and
+"genuinely cannot" means demonstrated, not anticipated.
+
+**Reversible by construction.** The desktop layout is selected at a width
+breakpoint; below it, every screen renders exactly as it does now. Removing the
+workspace is removing a branch, not unwinding an app.
+
+**No backend change for the desktop workspace alone.** It calls the same
+`POST /search` and `GET /judgments/:id` the phone calls. A server change is
+permitted only where the desktop workflow genuinely requires one, and it goes
+through the normal lane contract, never as a desktop side-door.
+
+**What desktop is FOR — serious research, which is the one thing a phone cannot
+do.** Persistent search and results that survive opening a judgment · a reader
+pane beside them · the evidence passage · authority navigation · more than one
+authority in view · matters · citation and treatment context. Not a dashboard,
+not an admin surface, not a second design system.
+
+**The citation rules do not bend for a wider screen.** Verified stays silent,
+overruled status is still read live at render on every pane, amber still means
+only that the law has moved, and `set_aside` still disables add-to-matter. More
+room to draw is not permission to decorate.

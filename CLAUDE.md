@@ -32,7 +32,12 @@ first is what nobody may decide alone, the second is what nobody may re-decide.
 ## 1. WHAT LAWMIND IS
 
 AI research and drafting assistant for practising Indian advocates. Criminal and
-civil litigation. Native iOS + Android (Expo). Web is admin only.
+civil litigation. Native iOS + Android (Expo), **plus a desktop research
+workspace on the same Expo web target** — PD-15, settled 11 Aug 2026, resolving
+`FQ-D9`. The old "web is admin only" line is superseded: admin is still a
+separate service, and web is no longer admin alone. **Mobile is not redesigned
+around desktop**, no separate app is created, and the desktop layout is a width
+breakpoint inside `apps/mobile` that is removed by removing a branch.
 
 Four core features PLUS the daily loop (Tier B, approved 2 Aug 2026). **Tier B
 ships before Tier A** — the loop creates the habit, the library only prevents a
@@ -97,6 +102,43 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
 
 ## 6. PROJECT HARD RULES (add to global Section 7)
 
+## 6a. FOUNDER DATA AUTHORIZATION — CURRENT PROJECT STATE
+
+**Founder-declared and settled.** LawMind has valid agreements/permissions
+authorizing LawMind to use these named data sources:
+
+- **BharatLaw**
+- **Supreme AI**
+- **eCourts India**
+
+The founder has confirmed that these authorizations remain valid through
+**13 November 2029**.
+
+These three sources are therefore **AUTHORIZED** for the LawMind data program.
+Do not treat their authorization as an OPEN_DECISION, return them to
+`FOUNDER_QUEUE.md` as unresolved licensing blockers, or stop technical work
+waiting for another confirmation.
+
+The authorization covers the intended LawMind data-processing activities
+permitted by the applicable agreements, including ingestion, storage,
+normalization, OCR, metadata extraction, citation extraction/resolution,
+indexing, retrieval, evaluation, enrichment, embeddings, training, fine-tuning,
+distillation, and related processing.
+
+This supersedes earlier repository statements that classified any of these three
+named sources as unauthorized, permanently excluded, or unresolved.
+
+This does **not** authorize unrelated third-party sources. New sources not named
+above remain subject to the normal provenance/authorization process.
+
+Preserve source provenance and enforce source-specific operational constraints.
+Do not invent contract terms or silently broaden one source's permissions to
+another.
+
+**Naming rule:** `Supreme AI` and `Supreme Today` are different sources. Older
+`Supreme Today` entries are historical unless separately marked current.
+
+
 - Citations carry **three independent fields, never one enum**:
   `verification_state` (`verified`|`unverified`|`failed`) · `verified_by_source`
   (`corpus`|`public_x2`|`ecourts`|`none`) · `overruled_status`
@@ -142,9 +184,9 @@ Every call rows into `llm_calls` with `data_class` and `pseudonymised`.
   - Every bypassed request still writes the fetch ledger and still passes the rate
     limiter. Permission to bypass is not permission to flood.
 - **Never circumvent an access control you have NOT been authorised to, and never
-  buy data from someone who did.** That is why eCourtsIndia and similar
-  scraper-resellers remain out: their access was never authorised, and buying it
-  launders someone else's offence into our corpus.
+  buy data from someone who did.** This applies to unauthorized sources and
+  unauthorized scraper-resellers. It does **not** exclude the specifically
+  authorized LawMind sources recorded in §6a below.
 - Route by data sensitivity. Uploaded document content is sensitive-class:
   pseudonymise before any model call. **OD-6 resolved 2 Aug 2026** — the
   countersigned DPA is still owed before uploads ship, and the admin surface
@@ -204,8 +246,9 @@ otherwise.
 
 **This does not weaken anything in §6 or §7.** Verify by observation, never claim
 unverified work as done, never resolve an OPEN_DECISION alone, and stop after
-three failed attempts at the same thing. Continuous does not mean reckless: it
-means not handing the founder a decision they have already delegated.
+three failed attempts at the same thing. The founder data authorization in §6a is
+already settled and is not an OPEN_DECISION. Continuous does not mean reckless:
+it means not handing the founder a decision they have already delegated.
 
 ## 7. SPRINT DISCIPLINE
 
