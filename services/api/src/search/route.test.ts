@@ -155,4 +155,64 @@ describe('POST /search', () => {
     assert.equal(status, 400);
     assert.equal(body.error?.code, 'INVALID_REQUEST');
   });
+
+  /**
+   * Contract §4 P0's third outcome, over the WIRE — the unit-level proof lives
+   * in `structured.test.ts`; this proves the HTTP response actually carries
+   * `ambiguous: true` end to end. A synthetic fixture, not the real
+   * `2020 INSC 189` collision this was found from: real data can be corrected
+   * or re-ingested, and a permanent regression test must not depend on a
+   * source-data anomaly staying broken forever.
+   */
+  describe('a bare citation matching more than one judgment — ambiguous', () => {
+    const fakeCitation = `TEST AMBIGUOUS ${crypto.randomUUID().slice(0, 8)}`;
+    let idA: string;
+    let idB: string;
+
+    before(async () => {
+      const rows = await sql<{ id: string }[]>`
+        INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                               judgment_date, full_text, language, source_url)
+        VALUES
+          ('SYNTHETIC — Ambiguous Fixture A', ${fakeCitation}, '{}', 'Test Court',
+           '2024-01-01', 'synthetic fixture owned by route.test.ts', 'en',
+           ${`test://ambiguous/${crypto.randomUUID()}`}),
+          ('SYNTHETIC — Ambiguous Fixture B', ${fakeCitation}, '{}', 'Test Court',
+           '2024-01-01', 'synthetic fixture owned by route.test.ts', 'en',
+           ${`test://ambiguous/${crypto.randomUUID()}`})
+        RETURNING id`;
+      idA = rows[0]!.id;
+      idB = rows[1]!.id;
+    });
+
+    after(async () => {
+      await sql`DELETE FROM judgments WHERE id = ${idA} OR id = ${idB}`;
+    });
+
+    it('returns ambiguous: true with every real match, never a plain result list', async () => {
+      const { status, body } = await post({ query: `cite:"${fakeCitation}"`, language: 'en' });
+      assert.equal(status, 200);
+      assert.equal(body.ok, true);
+      const data = body.data as unknown as {
+        ambiguous?: boolean;
+        total: number;
+        results: { judgmentId: string }[];
+        parsed: string;
+      };
+      assert.equal(data.ambiguous, true, 'the wire must carry an explicit ambiguity flag');
+      assert.equal(data.total, 2);
+      const ids = data.results.map((r) => r.judgmentId).sort();
+      assert.deepEqual(ids, [idA, idB].sort(), 'both real judgments, nothing invented, nothing dropped');
+      assert.match(data.parsed, new RegExp(fakeCitation.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    });
+
+    it('a query for one of the two by title (not the shared citation) is unaffected', async () => {
+      // Ambiguity is scoped to the bare cite: term. A different query that
+      // happens to also match one of these rows through ordinary text search
+      // must not be caught up in the citation-specific branch.
+      const { body } = await post({ query: 'SYNTHETIC — Ambiguous Fixture A', language: 'en' });
+      const data = body.data as unknown as { ambiguous?: boolean };
+      assert.notEqual(data.ambiguous, true);
+    });
+  });
 });

@@ -38,7 +38,7 @@
  * outside.
  */
 
-export type ProbeExpectation = 'zero' | 'resolves';
+export type ProbeExpectation = 'zero' | 'resolves' | 'ambiguous';
 
 export type ProbeCase = {
   readonly id: string;
@@ -55,12 +55,11 @@ export type ProbeCase = {
 };
 
 /**
- * The fixed adversarial set for this gate — exactly the two queries that were
- * probed against production and used to state the P0, per
- * `docs/ai/tasks/001-p0-citation-query-safety.md` §CURRENT STATE. Not a sample:
- * these specific citations are the reproduction case, so this is the minimum
- * set that proves the regression is caught, and the set this task was scoped
- * to. Extending it is a future task, not this one.
+ * The fixed adversarial set for this gate — the two queries originally probed
+ * against production for task 001 (`docs/ai/tasks/001-p0-citation-query-safety.md`
+ * §CURRENT STATE), plus one added 11 Aug 2026 for task 001's follow-on:
+ * ambiguity. All three are real, reproducible cases against live data, not
+ * samples — extending further is a future task, not this one.
  */
 export const PROBE_CASES: readonly ProbeCase[] = [
   {
@@ -75,6 +74,14 @@ export const PROBE_CASES: readonly ProbeCase[] = [
     query: 'cite:"(1994) 3 SCC 1"',
     expectation: 'resolves',
     titleIncludes: 'BOMMAI',
+  },
+  {
+    id: 'insc-189-ambiguous',
+    description:
+      'a citation matching more than one real judgment must be flagged ambiguous, never silently ' +
+      'returned as an ordinary result list — verified live: three distinct SC judgments share this INSC number',
+    query: 'cite:"2020 INSC 189"',
+    expectation: 'ambiguous',
   },
 ];
 
@@ -216,6 +223,45 @@ async function runCase(fetchImpl: typeof fetch, baseUrl: string, c: ProbeCase): 
       query: c.query,
       passed: false,
       reason: `returned ${results.length} result(s) for a citation that cannot exist — ${titles}`,
+      httpStatus: status,
+      resultCount: results.length,
+      parsedPresent: true,
+    };
+  }
+
+  if (c.expectation === 'ambiguous') {
+    const ambiguousFlag = body.data['ambiguous'];
+    if (results.length < 2) {
+      return {
+        id: c.id,
+        query: c.query,
+        passed: false,
+        reason:
+          `expected more than one real match (ambiguity), got ${results.length} — ` +
+          'either the source data was corrected (fine, update the fixture) or the ambiguity branch regressed',
+        httpStatus: status,
+        resultCount: results.length,
+        parsedPresent: true,
+      };
+    }
+    if (ambiguousFlag !== true) {
+      return {
+        id: c.id,
+        query: c.query,
+        passed: false,
+        reason:
+          `${results.length} results returned for one citation with NO \`ambiguous: true\` flag — ` +
+          'this is the forbidden shape: a citation that fails to identify one judgment, presented as an ordinary answer',
+        httpStatus: status,
+        resultCount: results.length,
+        parsedPresent: true,
+      };
+    }
+    return {
+      id: c.id,
+      query: c.query,
+      passed: true,
+      reason: `${results.length} real matches, correctly flagged ambiguous: true`,
       httpStatus: status,
       resultCount: results.length,
       parsedPresent: true,

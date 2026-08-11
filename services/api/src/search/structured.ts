@@ -39,6 +39,7 @@ import type { Sql } from 'postgres';
 import { explainQuery } from './qlang/explain.ts';
 import { QueryError } from './qlang/lex.ts';
 import { type StructuredHit, countStructured, runStructured } from './qlang/compile.ts';
+import type { Node } from './qlang/parse.ts';
 import { looksStructured, parse } from './qlang/parse.ts';
 
 export type StructuredOutcome =
@@ -57,6 +58,29 @@ export type StructuredOutcome =
    * quietly running a different search.
    */
   | { readonly kind: 'no_match'; readonly parsed: string }
+  /**
+   * **A bare citation matched more than one judgment.** Contract §4 P0's third
+   * outcome, alongside exact match and zero — verified live against production
+   * data, not hypothetical: `cite:"2020 INSC 189"` resolves to three distinct
+   * Supreme Court judgments (same date, same court, different parties) in the
+   * corpus today. A citation is supposed to identify ONE judgment; when it does
+   * not, silently returning all matches as an ordinary `matched` list is
+   * indistinguishable from a confident, wrong single answer. Every row here is
+   * real — nothing invented, nothing dropped — but the caller MUST render this
+   * as an explicit disambiguation, never as a plain result list.
+   *
+   * Scoped narrowly to a **bare `cite:` term** — not a compound expression like
+   * `cite:"x" AND court:"y"` — because that is Contract §4's own example and the
+   * case this project has actually observed. A field like `judge:` or `party:`
+   * returning several rows is normal, expected behaviour, not ambiguity, and
+   * must never be routed through this branch.
+   */
+  | {
+      readonly kind: 'ambiguous';
+      readonly parsed: string;
+      readonly total: number;
+      readonly hits: StructuredHit[];
+    }
   /** Did not parse. Carries the offset so the client can point at the mistake. */
   | {
       readonly kind: 'invalid';
@@ -64,6 +88,11 @@ export type StructuredOutcome =
       readonly offset: number;
       readonly validFields?: readonly string[];
     };
+
+/** A single, bare `cite:"..."` term — not wrapped in AND/OR/NOT/range/near. */
+function isBareCitationTerm(node: Node): boolean {
+  return node.kind === 'term' && node.field === 'cite';
+}
 
 /**
  * Try to answer a query structurally.
@@ -103,5 +132,16 @@ export async function answerStructured(
   ]);
 
   if (total === 0) return { kind: 'no_match', parsed };
+
+  /**
+   * A bare citation resolving to more than one judgment is ambiguity, not an
+   * ordinary result list — Contract §4 P0's third outcome. Every other field
+   * returning several rows (`judge:`, `party:`, …) is normal and stays
+   * `matched`; this branch fires only for the narrow, safety-critical case.
+   */
+  if (total > 1 && isBareCitationTerm(ast)) {
+    return { kind: 'ambiguous', parsed, total, hits };
+  }
+
   return { kind: 'matched', parsed, total, hits };
 }

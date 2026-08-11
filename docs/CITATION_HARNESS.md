@@ -72,6 +72,34 @@ structural.
 Step 8 is most often skipped, and skipping it reintroduces the whole problem: a
 model can reference a real ID and still mistype the case name beside it.
 
+## Exact citation lookup is a different mechanism from Tiers 1–4 — binding
+
+**When an advocate types a citation directly** (`cite:"(1994) 3 SCC 1"`,
+`POST /search`), no model is in the loop at all. `search/qlang/` parses the
+query deterministically and `search/structured.ts` resolves it against
+`judgments` by exact, normalised match. This is the exact-citation resolver
+task 001 (11 Aug 2026) closed as a P0: **structure decides, semantics fills,
+never blended** — a citation-shaped query must never fall through to semantic
+search on a failed exact lookup, because a fuzzy match scoring above an exact
+one looks like a good result and is a wrong answer.
+
+**Three outcomes, not two.** A citation resolves to exactly one judgment
+(`matched`), to none (`no_match`, rendered as an explicit not-found, never as
+zero silently blended into a broader search), or — **found live in the
+corpus, not hypothetical** — to **more than one** judgment
+(`ambiguous`, added 11 Aug 2026). `cite:"2020 INSC 189"` resolves to three
+distinct real Supreme Court judgments today (same date, same court, different
+parties — a genuine source-numbering collision, not a corpus defect). All
+three outcomes carry every real matching row; nothing is ever invented to
+produce a single answer, and nothing is ever silently dropped to hide that
+more than one exists.
+
+**Ambiguity is scoped to a bare `cite:` term**, not to any field returning
+more than one row. `judge:"Chandrachud"` returning hundreds of judgments is
+ordinary filtering, not ambiguity — only a citation is supposed to identify
+one judgment by construction, so only its failure to do so is a citation-safety
+event. `services/api/src/search/structured.ts` — `isBareCitationTerm`.
+
 ## Three concerns, not one enum
 
 A citation carries **three independent answers**, from three different sources.

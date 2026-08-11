@@ -62,6 +62,23 @@ const correctedMatchResponse = () =>
     },
   });
 
+const correctedAmbiguousResponse = () =>
+  jsonResponse({
+    ok: true,
+    data: {
+      results: [
+        { judgmentId: 'ee64c180', caseTitle: 'SOBHA HIBISCUS CONDOMINIUM versus MANAGING DIRECTOR...' },
+        { judgmentId: 'baef360d', caseTitle: 'MONU KUMAR & ORS. versus M/S. METROMAX INFRASTRUCTURE PVT. LTD.' },
+        { judgmentId: 'c7ff7a4e', caseTitle: 'SUBHECHHA WELFARE SOCIETY versus M/S. EARTH INFRASTRUCTURE PVT. LTD.' },
+      ],
+      unverifiedReferences: [],
+      searchId: null,
+      parsed: 'Judgments reported as "2020 INSC 189".',
+      total: 3,
+      ambiguous: true,
+    },
+  });
+
 test('THE PRODUCTION P0 FAILS THE PROBE — the exact regression must be caught', async () => {
   const fetchImpl = (async () => productionBrokenResponse()) as unknown as typeof fetch;
   const report = await runDeployedSafetyProbe('http://fake', PROBE_CASES, fetchImpl);
@@ -72,17 +89,19 @@ test('THE PRODUCTION P0 FAILS THE PROBE — the exact regression must be caught'
   }
 });
 
-test('a corrected deployment PASSES — zero for the impossible citation', async () => {
+test('a corrected deployment PASSES — zero, exact-match, and ambiguity all handled correctly', async () => {
   const calls: string[] = [];
   const fetchImpl = (async (_url: unknown, init: unknown) => {
     const body = JSON.parse((init as { body: string }).body) as { query: string };
     calls.push(body.query);
-    return body.query.includes('9999') ? correctedZeroResponse() : correctedMatchResponse();
+    if (body.query.includes('9999')) return correctedZeroResponse();
+    if (body.query.includes('INSC 189')) return correctedAmbiguousResponse();
+    return correctedMatchResponse();
   }) as unknown as typeof fetch;
 
   const report = await runDeployedSafetyProbe('http://fake', PROBE_CASES, fetchImpl);
   assert.equal(report.passed, true, report.cases.map((c) => c.reason).join(' | '));
-  assert.equal(calls.length, 2, 'every case must be sent as its own request');
+  assert.equal(calls.length, 3, 'every case must be sent as its own request');
 });
 
 test('a citation that cannot exist returning even one result FAILS, however plausible', async () => {
@@ -119,6 +138,47 @@ test('a resolving citation returning a DIFFERENT case FAILS, never treated as cl
   );
   assert.equal(report.passed, false);
   assert.match(report.cases[0]!.reason, /different case/);
+});
+
+test('multiple real results with NO ambiguous flag FAILS — the exact forbidden shape', async () => {
+  // The tell of a citation-shaped query falling through to semantic search:
+  // several plausible rows, presented as an ordinary answer.
+  const fetchImpl = (async () =>
+    jsonResponse({
+      ok: true,
+      data: {
+        results: [
+          { judgmentId: 'a', caseTitle: 'CASE A' },
+          { judgmentId: 'b', caseTitle: 'CASE B' },
+        ],
+        parsed: 'Judgments reported as "2020 INSC 189".',
+        total: 2,
+        // no `ambiguous` flag
+      },
+    })) as unknown as typeof fetch;
+
+  const report = await runDeployedSafetyProbe('http://fake', [PROBE_CASES[2]!], fetchImpl);
+  assert.equal(report.passed, false);
+  assert.match(report.cases[0]!.reason, /NO `ambiguous: true` flag/);
+});
+
+test('only one result where ambiguity was expected FAILS loudly rather than silently passing', async () => {
+  // If the source data is ever corrected (the collision de-duplicated), this
+  // probe must say so explicitly rather than pass by accident — the fixture
+  // needs updating, not silent tolerance.
+  const fetchImpl = (async () =>
+    jsonResponse({
+      ok: true,
+      data: {
+        results: [{ judgmentId: 'a', caseTitle: 'CASE A' }],
+        parsed: 'Judgments reported as "2020 INSC 189".',
+        total: 1,
+      },
+    })) as unknown as typeof fetch;
+
+  const report = await runDeployedSafetyProbe('http://fake', [PROBE_CASES[2]!], fetchImpl);
+  assert.equal(report.passed, false);
+  assert.match(report.cases[0]!.reason, /source data was corrected/);
 });
 
 test('an explicit not-found for a real citation PASSES — honesty, not omniscience, is required', async () => {

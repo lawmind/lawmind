@@ -255,11 +255,22 @@ POST /search
                    overruledStatus: 'none'|'set_aside'|'partly_set_aside'|'doubted',
                    overruledByJudgmentId?, overruledParas?, overruledNote? } ],
       unverifiedReferences: [ { citationClaimed, reason } ],
-      searchId }
+      searchId,
+      parsed?, total?, ambiguous?: true }
 ```
 Every field from the `judgments` row. Never from model output.
 `unverifiedReferences` is never empty-by-omission — anything the model referenced
 that no tier confirmed appears here. See `CITATION_HARNESS.md`.
+
+**`ambiguous: true` — added 11 Aug 2026, task 001's follow-on.** Present only
+when a bare `cite:"..."` query resolves to **more than one** judgment —
+verified live in the corpus, not hypothetical: `cite:"2020 INSC 189"`
+resolves to three distinct Supreme Court judgments today (`CITATION_HARNESS.md`
+§Exact citation lookup). `results` still carries every real matching row when
+this flag is set — nothing invented, nothing dropped — and the client **must**
+render a disambiguation, never an ordinary result list, when this flag is
+present. Absent (not `false`) on every other response, matching `parsed` and
+`total`'s existing optionality on non-structured queries.
 
 **`neutralCitation: string | null` · `reporterCitations: string[]` (never
 null, may be empty). Stated explicitly 11 Aug 2026 — this contract was

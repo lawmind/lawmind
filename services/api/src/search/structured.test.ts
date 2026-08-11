@@ -106,3 +106,55 @@ test('the count is independent of the page, so "214 results" is not "5 results"'
   if (out.kind !== 'matched') return;
   assert.equal(out.total, 1237);
 });
+
+/**
+ * Contract §4 P0's third outcome. Verified live against production data
+ * before this test was written, not hypothetical: `cite:"2020 INSC 189"`
+ * resolves to three distinct Supreme Court judgments in the real corpus
+ * (same date, same court, different reporter pages — a genuine source
+ * numbering collision, not a data bug). A bare citation matching more than
+ * one judgment must never be silently rendered as an ordinary result list.
+ */
+test('A BARE CITATION MATCHING MORE THAN ONE JUDGMENT IS AMBIGUOUS, never "matched"', async () => {
+  const spy = fakeSql(3, [{ id: 'a' }, { id: 'b' }, { id: 'c' }]);
+  const out = await answerStructured(spy.sql, 'cite:"2020 INSC 189"', 5);
+  assert.equal(out.kind, 'ambiguous');
+  if (out.kind !== 'ambiguous') return;
+  assert.equal(out.total, 3);
+  assert.equal(out.hits.length, 3, 'every real match must be carried, nothing dropped');
+  assert.match(out.parsed, /2020 INSC 189/);
+});
+
+test('a bare citation matching EXACTLY ONE judgment stays "matched" — ambiguity needs >1', async () => {
+  const out = await answerStructured(fakeSql(1, [{ id: 'a' }]).sql, 'cite:"(1994) 3 SCC 1"', 5);
+  assert.equal(out.kind, 'matched', 'one match is an exact answer, not ambiguity');
+});
+
+/**
+ * THE SCOPING BOUNDARY. `judge:` and `party:` legitimately return many rows —
+ * a judge who has decided hundreds of cases is not "ambiguous", and treating
+ * every multi-row field query as ambiguous would make ordinary filtering
+ * unusable. Only a bare `cite:` term identifies (or fails to identify) ONE
+ * judgment by design, so only it can be ambiguous.
+ */
+test('judge: and party: returning many rows is ORDINARY, never ambiguous', async () => {
+  const manyRows = Array.from({ length: 50 }, (_, i) => ({ id: `j${i}` }));
+  const judgeOut = await answerStructured(fakeSql(214, manyRows).sql, 'judge:"CHANDRACHUD"', 5);
+  assert.equal(judgeOut.kind, 'matched', 'many judgments by one judge is normal, not ambiguous');
+
+  const partyOut = await answerStructured(fakeSql(83, manyRows).sql, 'party:"State"', 5);
+  assert.equal(partyOut.kind, 'matched', 'many cases naming a common party is normal, not ambiguous');
+});
+
+test('a COMPOUND citation query (cite: AND something) is never flagged ambiguous', async () => {
+  // Contract §4's example, and the case this project has actually observed,
+  // is a BARE cite: term. A compound expression already narrows the result
+  // with a second condition, which is a different, less safety-critical shape
+  // than an identity lookup resolving to more than one row on its own.
+  const out = await answerStructured(
+    fakeSql(2, [{ id: 'a' }, { id: 'b' }]).sql,
+    'cite:"2020 INSC 189" AND court:"Supreme Court of India"',
+    5,
+  );
+  assert.equal(out.kind, 'matched');
+});

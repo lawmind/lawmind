@@ -128,6 +128,44 @@ export async function handleSearch(
     });
   }
 
+  if (structured.kind === 'ambiguous') {
+    /**
+     * Contract §4 P0's third outcome. Every row here is real and verified —
+     * nothing invented — but rendered with `ambiguous: true` so the client
+     * MUST show a disambiguation rather than an ordinary result list. Verified
+     * live against production data: `cite:"2020 INSC 189"` resolves to three
+     * distinct Supreme Court judgments today. `CITATION_HARNESS.md` §The
+     * fourth concern's sibling gate — an exact-identity lookup that isn't
+     * exact must say so, never silently pick one reading for the advocate.
+     */
+    return ok(c, {
+      results: structured.hits.map((h) => ({
+        judgmentId: h.judgmentId,
+        citationCheckId: null,
+        caseTitle: h.caseTitle,
+        neutralCitation: h.neutralCitation,
+        reporterCitations: h.reporterCitations,
+        court: h.court,
+        judgmentDate: h.judgmentDate,
+        holding: '',
+        operativeParagraph: '',
+        operativeParagraphNumber: null,
+        verificationState: 'verified' as const,
+        verifiedBySource: 'corpus' as const,
+        overruledStatus: h.overruledStatus,
+        overruledByJudgmentId: null,
+        overruledParas: null,
+        overruledNote: null,
+        asOf: new Date().toISOString(),
+      })),
+      unverifiedReferences: [],
+      searchId: null,
+      parsed: structured.parsed,
+      total: structured.total,
+      ambiguous: true,
+    });
+  }
+
   const queryVector = await deps.embedQuery(body.query);
   const retrieved = await hybridSearch(deps.sql, body.query, queryVector, filters, RESULT_LIMIT);
 
