@@ -201,7 +201,7 @@ text").
 
 ---
 
-## 6 · NATIVE VS SCANNED — a deterministic classifier already exists, unwired
+## 6 · NATIVE VS SCANNED — DONE, wired same day
 
 **Did not need to be designed from zero — it was already built and measured
 against real HC PDFs**, just never wired to persist a value per judgment.
@@ -228,14 +228,23 @@ does not currently carry `pages` or the character/page ratio through to
 `JudgmentRecord` — the signal is computed and then discarded at measurement
 time, never at ingest time.
 
-**Next increment, not yet built**: thread `pages` and the computed
-`characters/pages` ratio (or just the boolean `needs_ocr` outcome) through
-`toJudgmentRecord`/`toJudgment` into `JudgmentRecord`, add a
-`judgments.native_text` (or similarly named) boolean/enum column, migration
-alongside `load.ts`'s `upsertBatch`. **Same shape as the `cnr` fix**: a
-signal already computed by existing, tested code, not yet carried to the
-column that would make it queryable. Scoped, not executed in this pass —
-recorded as the next concrete data task, §8.
+**Built, same day.** `OCR_CHARS_PER_PAGE_FLOOR` and a new `isNativeText`
+helper moved to `text.ts` (the module both extraction paths already share,
+so there is one definition, not two that could drift); `fetchPdfText` (the
+real SC ingest path) and `hc-load-cli.ts`'s inline extraction both now
+capture page count and compute it; `toJudgment`/`toJudgmentRecord` carry it
+into `JudgmentRecord`; `load.ts`'s `upsertBatch` writes it to the new
+`judgments.native_text` column (migration `0035`, applied to production,
+column verified directly). 12 new tests, 304/304 full ingest suite.
+
+**Not backfillable for the 79,321 existing rows** — unlike `content_hash`/
+`cnr`, this needs the source PDF's page count, which means re-fetching the
+PDF itself, not re-reading already-stored text or metadata. `native_text`
+is `NULL` on every row ingested before this migration; populates only on
+the next write to each. A dedicated backfill (re-fetching all 79,321 PDFs)
+is a real, larger, distinct future task — not attempted here, and
+materially bigger than the ~275-request CNR backfill this session already
+completed.
 
 ---
 

@@ -378,13 +378,13 @@ dry report should not casually trigger; native-vs-scanned classification
 Ranked by **legal value**, not document count, per the founder's explicit
 instruction:
 
-1. **Native-vs-scanned classification** (§2.1) — **checked 11 Aug 2026: a
-   deterministic classifier already exists and is proven, just not wired to
-   persist a value per judgment.** `hc-extract.ts`'s `measureExtraction()`
-   already computes `characters_extracted / pages < 100 → needs_ocr`,
-   validated against real HC PDFs in the extraction-cost benchmark. Not a
-   new design — threading it into `toJudgmentRecord`/`load.ts` and adding a
-   column is the remaining work. `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
+1. ~~**Native-vs-scanned classification**~~ — **DONE, 11 Aug 2026, same
+   session.** `isNativeText` (moved to `text.ts` so both extraction paths
+   share one definition) now wired into `fetchPdfText`, `hc-load-cli.ts`,
+   `toJudgment`/`toJudgmentRecord` and `load.ts`. `judgments.native_text`,
+   migration `0035`, applied. Populates on every future write; the 79,321
+   existing rows need a real (larger, distinct) backfill re-fetching every
+   PDF, not attempted here. `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
 2. ~~**CNR backfill investigation**~~ — **DONE, 11 Aug 2026, same session.**
    Feasible, cheap (≤76 SC year-files + 198 HC partitions, ~275 requests
    against the same public bucket), and executed: `services/ingest/src/
