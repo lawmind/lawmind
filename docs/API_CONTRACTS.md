@@ -427,7 +427,8 @@ current by definition and showing a timestamp there is noise.
 GET /judgments/:id
   → { judgmentId, caseTitle, neutralCitation, reporterCitations, court, bench,
       judgmentDate, caseNumber, caseType, language, sourceUrl, fullText,
-      paragraphs: [ { paragraphNumber: number | null, paragraphIndex, text } ],
+      paragraphs: [ { paragraphNumber: number | null, paragraphIndex, text,
+                       citesJudgmentId?: string } ],
       numberedShare,
       verificationState, verifiedBySource,
       overruledStatus, overruledByJudgmentId, overruledParas, overruledNote,
@@ -458,6 +459,19 @@ displayed but not anchored** — the client hides anchors rather than showing br
 ones. Measured across judgments from 1964 to 2023: 11 of 15 sampled were above
 0.5, and numbering was monotonic in every one. Never fabricate a 1..N sequence to
 fill the gap.
+
+**`citesJudgmentId` — added 11 Aug 2026, REB §14 / V2 §39.3, closing RCC bus
+0028's dormant citation-navigation UI.** Present only when the paragraph's
+first citation-shaped span resolves, through the same three-source match
+`cite:` search uses (`search/qlang/compile.ts`'s `citationMatchFragment` —
+neutral citation, reporter citations, the alias concordance), to **exactly
+one** judgment in the corpus, other than this one. Absent — never a guess —
+when the paragraph cites nothing, when a citation resolves to zero judgments,
+when it resolves to more than one (the same ambiguity-safety rule as
+`ambiguous` search results: a citation identifying more than one judgment
+identifies none of them), or when the only match is this judgment itself. One
+resolution per **distinct** citation string in the judgment, not per
+paragraph — an authority cited five times is one lookup, not five.
 
 ```
 GET /citations/:citationCheckId

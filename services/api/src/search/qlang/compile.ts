@@ -69,6 +69,42 @@ function textMatch(sql: Sql, value: string, phrase: boolean, wildcard: boolean):
 }
 
 /**
+ * Whether `j` (a `judgments` row aliased `j`) carries the citation identified
+ * by `key` — an already-normalised {@link citationLookupKey} value.
+ *
+ * **The one definition of "this judgment IS that citation".** Originally
+ * inline in `fieldMatch`'s `cite` case; extracted 11 Aug 2026 so
+ * `citesJudgmentId` paragraph resolution (`judgments/citations.ts`) can reuse
+ * the exact same three-source match — neutral citation, reporter citations,
+ * and the courts'-own-words alias concordance — rather than writing a second,
+ * driftable copy of it. This file's own header already names that drift as
+ * the failure mode worth guarding against.
+ *
+ * **Three places a citation can be found, and the third is the one that makes
+ * this usable.**
+ *
+ * Our source digitised S.C.R., so every judgment carries an S.C.R. citation
+ * and nothing else — measured across all 38,341 rows: AIR 0, SCC 0. An
+ * advocate types `AIR 1973 SC 1461`, which is how *Kesavananda* is actually
+ * cited, and the first two clauses find nothing.
+ *
+ * `judgment_citation_aliases` holds the concordance derived from the courts'
+ * own text — 4,097 aliases, each printed beside the S.C.R. citation by at
+ * least two separate judgments. Without this clause the table would exist and
+ * change nothing.
+ */
+export function citationMatchFragment(sql: Sql, key: string): Frag {
+  return sql`(
+    upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = ${key}
+    OR EXISTS (
+      SELECT 1 FROM unnest(j.reporter_citations) AS rc
+       WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key})
+    OR EXISTS (
+      SELECT 1 FROM judgment_citation_aliases a
+       WHERE a.judgment_id = j.id AND a.alias_key = ${key}))`;
+}
+
+/**
  * One field predicate.
  *
  * **`judge`, `act` and `section` are EXISTS sub-queries, not joins.** A join
@@ -87,32 +123,8 @@ function fieldMatch(sql: Sql, field: Field, value: string, phrase: boolean, wild
          WHERE jj.judgment_id = j.id
            AND jj.judge_name ILIKE ${likePattern(value, wildcard)})`;
 
-    case 'cite': {
-      // The same normalisation as citationLookupKey, on both sides.
-      const key = citationLookupKey(value);
-      /**
-       * **Three places a citation can be found, and the third is the one that
-       * makes this usable.**
-       *
-       * Our source digitised S.C.R., so every judgment carries an S.C.R.
-       * citation and nothing else — measured across all 38,341 rows: AIR 0,
-       * SCC 0. An advocate types `AIR 1973 SC 1461`, which is how *Kesavananda*
-       * is actually cited, and the first two clauses find nothing.
-       *
-       * `judgment_citation_aliases` holds the concordance derived from the
-       * courts' own text — 4,097 aliases, each printed beside the S.C.R.
-       * citation by at least two separate judgments. Without this clause the
-       * table would exist and change nothing.
-       */
-      return sql`(
-        upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = ${key}
-        OR EXISTS (
-          SELECT 1 FROM unnest(j.reporter_citations) AS rc
-           WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key})
-        OR EXISTS (
-          SELECT 1 FROM judgment_citation_aliases a
-           WHERE a.judgment_id = j.id AND a.alias_key = ${key}))`;
-    }
+    case 'cite':
+      return citationMatchFragment(sql, citationLookupKey(value));
 
     case 'caseno':
       return sql`j.case_number ILIKE ${likePattern(value, wildcard)}`;

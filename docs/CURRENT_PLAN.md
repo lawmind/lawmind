@@ -730,11 +730,20 @@ Executed in order, each verified against production, not just local tests:
    overruled judgments never report a stale status. Both PASS against
    production today.
 
+5. **`citesJudgmentId` — REB §14 / V2 §39.3, RCC bus 0028/0032, LANDED same
+   day.** `GET /judgments/:id`'s `paragraphs[]` now carries it. Resolved
+   through the same three-source citation match `cite:` search uses
+   (`citationMatchFragment`, extracted from `compile.ts` so there is one
+   definition, not a second copy that could drift) — absent, never guessed,
+   on zero matches, more than one match, or a self-citation. Verified against
+   real production data: S.R. BOMMAI resolves 5 of 31 paragraphs. RCC notified
+   on the bus (0033).
+
 Deferred, recorded, not forgotten: `generated_holding` (DeepSeek, migration
-0033 exists, unwired), `citesJudgmentId` (RCC bus 0028/0032, P2),
-statute point-in-time/concordance-quality (RCC bus 0032, P3, needs a source
-before an API). Branch protection, worktree separation, and a hidden
-adversarial benchmark are `docs/FOUNDER_QUEUE.md` items — none block P0.
+0033 exists, unwired), statute point-in-time/concordance-quality (RCC bus
+0032, P3, needs a source before an API). Branch protection, worktree
+separation, and a hidden adversarial benchmark are `docs/FOUNDER_QUEUE.md`
+items — none block P0.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 

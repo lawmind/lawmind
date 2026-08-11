@@ -14,6 +14,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
+import { attachCitesJudgmentId } from './citations.ts';
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
 
 export const judgmentParams = z.object({ id: z.string().uuid() });
@@ -55,7 +56,11 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
   // time. An offline surface renders the status it last read WITH this date.
   const asOf = new Date().toISOString();
 
-  const paragraphs = segmentParagraphs(row.full_text);
+  const segmented = segmentParagraphs(row.full_text);
+  // `citesJudgmentId` — REB §14 / V2 §39.3, RCC bus 0028/0032. Resolved through
+  // the same three-source match `cite:` search uses (`citations.ts`), never
+  // guessed on an ambiguous or self-referencing match.
+  const paragraphs = await attachCitesJudgmentId(sql, segmented, row.id);
 
   // One citation_checks row per citation per surface. Written here for the same
   // reason it is written on search: silent-drop and stale-overruled are computed
