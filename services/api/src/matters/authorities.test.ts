@@ -1,0 +1,235 @@
+/**
+ * Authorities saved to a matter — the endpoint RCC found missing entirely
+ * (bus 0027): no table, no route, and the client's "Add to a matter" button
+ * had never had an `onPress`. `docs/SCHEMA_TRUTH.md` §matter_authorities.
+ */
+import assert from 'node:assert/strict';
+import { after, before, describe, it } from 'node:test';
+
+import { signAccessToken } from '@lawmind/auth';
+import postgres from 'postgres';
+
+import { createApp } from '../app.ts';
+
+const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 3, onnotice: () => {} });
+const SECRET = 'test-secret-not-used-anywhere-real-0123456789';
+
+const app = createApp({
+  ping: async () => {},
+  search: { sql, embedQuery: async () => null },
+  auth: { auth: null as never, sql, secret: SECRET },
+});
+
+async function seedAdvocate(tag: string) {
+  const authId = `test-auth-${tag}-${crypto.randomUUID()}`;
+  const email = `${authId}@example.test`;
+  await sql`INSERT INTO auth_user (id, name, email, email_verified)
+            VALUES (${authId}, 'Adv', ${email}, true)`;
+  await sql`INSERT INTO users (auth_id, full_name, phone, email, enrolment_status)
+            VALUES (${authId}, 'Adv', ${`+9199${Math.floor(Math.random() * 100000000)}`},
+                    ${email}, 'unverified')`;
+  return { authId, token: await signAccessToken({ sub: authId, email }, SECRET) };
+}
+
+const matterBody = {
+  caseTitle: 'State v. Authorities Fixture',
+  court: 'Delhi High Court',
+  caseType: 'criminal' as const,
+  parties: { petitioner: 'State', respondent: 'Fixture' },
+  clientName: 'Fixture',
+  ourSide: 'accused' as const,
+};
+
+const auth = (t: string) => ({ authorization: `Bearer ${t}`, 'content-type': 'application/json' });
+
+describe('matter authorities', () => {
+  let owner: { authId: string; token: string };
+  let stranger: { authId: string; token: string };
+  let matterId: string;
+  let judgmentId: string;
+  let setAsideJudgmentId: string;
+
+  before(async () => {
+    owner = await seedAdvocate('own');
+    stranger = await seedAdvocate('str');
+
+    const created = await app.request('/matters', {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify(matterBody),
+    });
+    matterId = ((await created.json()) as { data: { matter: { matterId: string } } }).data.matter
+      .matterId;
+
+    const [j] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                             judgment_date, full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Authorities Fixture', 'FIX 2024 INSC 1', '{}', 'Test Court',
+              '2024-01-01', 'synthetic fixture owned by authorities.test.ts', 'en',
+              ${`test://authorities/${crypto.randomUUID()}`}, 'none')
+      RETURNING id`;
+    judgmentId = j!.id;
+
+    const [replacement] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                             judgment_date, full_text, language, source_url)
+      VALUES ('SYNTHETIC — Replacement Fixture', 'FIX 2025 INSC 2', '{}', 'Test Court',
+              '2025-01-01', 'synthetic fixture', 'en',
+              ${`test://authorities/${crypto.randomUUID()}`})
+      RETURNING id`;
+
+    const [sa] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, reporter_citations, court, judgment_date,
+                             full_text, language, source_url, overruled_status,
+                             overruled_by_judgment_id)
+      VALUES ('SYNTHETIC — Set Aside Fixture', '{}', 'Test Court', '2020-01-01',
+              'synthetic fixture', 'en', ${`test://authorities/${crypto.randomUUID()}`},
+              'set_aside', ${replacement!.id})
+      RETURNING id`;
+    setAsideJudgmentId = sa!.id;
+  });
+
+  after(async () => {
+    await sql`DELETE FROM matter_authorities WHERE matter_id = ${matterId}`;
+    await sql`DELETE FROM matters WHERE id = ${matterId}`;
+    await sql`DELETE FROM judgments WHERE id = ${judgmentId} OR id = ${setAsideJudgmentId}
+              OR case_title = 'SYNTHETIC — Replacement Fixture'`;
+    for (const a of [owner, stranger]) {
+      await sql`DELETE FROM users WHERE auth_id = ${a.authId}`;
+      await sql`DELETE FROM auth_user WHERE id = ${a.authId}`;
+    }
+    await sql.end();
+  });
+
+  it('refuses an anonymous caller on every verb', async () => {
+    assert.equal((await app.request(`/matters/${matterId}/authorities`)).status, 401);
+    assert.equal(
+      (
+        await app.request(`/matters/${matterId}/authorities`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ judgmentId }),
+        })
+      ).status,
+      401,
+    );
+  });
+
+  it('adds an authority and lists it back', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId }),
+    });
+    assert.equal(res.status, 201);
+    const a = ((await res.json()) as { data: { authority: Record<string, unknown> } }).data
+      .authority;
+    assert.equal(a['judgmentId'], judgmentId);
+    assert.equal(a['caseTitle'], 'SYNTHETIC — Authorities Fixture');
+    assert.equal(a['neutralCitation'], 'FIX 2024 INSC 1');
+    assert.equal(a['removedAt'], null);
+
+    const list = await app.request(`/matters/${matterId}/authorities`, { headers: auth(owner.token) });
+    const authorities = ((await list.json()) as { data: { authorities: { judgmentId: string }[] } })
+      .data.authorities;
+    assert.ok(authorities.some((x) => x.judgmentId === judgmentId));
+  });
+
+  it('re-adding the same judgment is idempotent, not an error', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId }),
+    });
+    assert.equal(res.status, 200, 'the second add is idempotent, not a fresh 201');
+
+    const [count] = await sql<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM matter_authorities
+      WHERE matter_id = ${matterId} AND judgment_id = ${judgmentId} AND removed_at IS NULL`;
+    assert.equal(count?.n, 1, 'no duplicate row was created');
+  });
+
+  it('removes an authority, as a timestamp, never a delete', async () => {
+    const list = await app.request(`/matters/${matterId}/authorities`, { headers: auth(owner.token) });
+    const authorityId = (
+      (await list.json()) as { data: { authorities: { authorityId: string; judgmentId: string }[] } }
+    ).data.authorities.find((a) => a.judgmentId === judgmentId)!.authorityId;
+
+    const res = await app.request(`/matters/${matterId}/authorities/${authorityId}`, {
+      method: 'DELETE',
+      headers: auth(owner.token),
+    });
+    assert.equal(res.status, 200);
+    assert.ok(((await res.json()) as { data: { removedAt: string } }).data.removedAt);
+
+    const [row] = await sql<{ removed_at: string | null }[]>`
+      SELECT removed_at FROM matter_authorities WHERE id = ${authorityId}`;
+    assert.ok(row?.removed_at, 'the row must still exist, only marked removed');
+  });
+
+  it('re-adding after removal is allowed — brought back onto the case', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId }),
+    });
+    assert.equal(res.status, 201, 'a fresh row, since the prior one is removed');
+  });
+
+  it('refuses to add a set-aside judgment, and NAMES what replaced it', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId: setAsideJudgmentId }),
+    });
+    assert.equal(res.status, 409, 'set_aside must refuse add-to-matter on the SERVER');
+    const err = ((await res.json()) as { error: { code: string; message: string } }).error;
+    assert.equal(err.code, 'AUTHORITY_SET_ASIDE');
+    assert.match(err.message, /set aside/i);
+    assert.match(err.message, /Replacement Fixture/, 'the response must name the replacement');
+
+    const [count] = await sql<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM matter_authorities WHERE judgment_id = ${setAsideJudgmentId}`;
+    assert.equal(count?.n, 0, 'nothing may have been written');
+  });
+
+  it("a stranger cannot add to another advocate's matter — not found, not forbidden", async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(stranger.token),
+      body: JSON.stringify({ judgmentId }),
+    });
+    assert.equal(res.status, 404, "not-yours and does-not-exist must be indistinguishable");
+  });
+
+  it('a stranger cannot even list authorities on a matter with no share', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, { headers: auth(stranger.token) });
+    assert.equal(res.status, 404);
+  });
+
+  it('404s a judgment id that does not exist', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId: crypto.randomUUID() }),
+    });
+    assert.equal(res.status, 404);
+  });
+
+  it('rejects a malformed body through the shared validator', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId: 'not-a-uuid' }),
+    });
+    assert.equal(res.status, 400);
+  });
+
+  it('404s removing an authority that was never added', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities/${crypto.randomUUID()}`, {
+      method: 'DELETE',
+      headers: auth(owner.token),
+    });
+    assert.equal(res.status, 404);
+  });
+});

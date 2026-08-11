@@ -218,6 +218,13 @@
       "when": 1786330000000,
       "tag": "0031_judgment_provenance",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1786340000000,
+      "tag": "0032_matter_authorities",
+      "breakpoints": true
     }
   ]
 }

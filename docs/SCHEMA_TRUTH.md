@@ -456,6 +456,44 @@ Revocation is a timestamp, never a delete — who had sight of a matter and when
 exactly the question a conflicts challenge asks later. A share grants the **court
 record** and shared notes only; private notes never travel (PD-4).
 
+## matter_authorities
+
+**Added migration `0032`, 11 Aug 2026.** Authorities saved to a matter —
+`matters/route.ts`'s own header comment already described this feature
+(*"`set_aside` disables add-to-matter... it NAMES the judgment that displaced
+it"*) with nothing behind it: no table, no route, and the client's
+"Add to a matter" button had never had an `onPress`. Found by RCC reading the
+code rather than the docs.
+
+`id` uuid pk · `matter_id` uuid fk→matters cascade · `judgment_id` uuid
+fk→judgments · `added_by_user_id` uuid fk→users · `citation_check_id` uuid
+null fk→citation_checks — the verification record this authority was added
+from, where the calling surface had one; null where it did not, never
+invented · `added_at` timestamptz · `removed_at` timestamptz null ·
+`removed_by_user_id` uuid null fk→users
+
+Unique partial: one live row per (`matter_id`, `judgment_id`) where
+`removed_at is null` — re-adding an already-saved judgment is idempotent, not
+an error, and re-adding one previously removed is allowed (same reasoning as
+`matter_shares`: advocates are brought back onto authorities). Index: btree
+on `judgment_id`.
+
+**Writes are owner-only**, matching `matters/route.ts`'s existing convention
+for `createMatterEvent` (`WHERE matter_id = ... AND user_id = ...`, not the
+shared-access check `accessToMatter` uses for reads) — a sharee can read a
+matter's saved authorities but not add to them.
+
+**Does not back `saved_authority_moved` (PD-5).** That alert's audience is
+derived from `citation_checks` joined through `searches`/`documents`,
+independent of this table — measured by reading `citations/fanout.ts`, not
+assumed. This table is a separate, real product surface: the matter
+workspace's per-case accumulated work (`PRODUCT_BRIEF.md` §4).
+
+**`set_aside` refuses the write, and names the replacement.** The one case
+Lawmind refuses to let an authority be used at all — enforced server-side so
+it cannot be styled away, per the header comment above that predated the
+implementation.
+
 ## matter_events
 
 `id` uuid pk · `matter_id` uuid fk→matters cascade · `event_date` date ·

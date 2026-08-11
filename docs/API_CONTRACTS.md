@@ -108,6 +108,14 @@ endpoint.
 | `DELETE /matters/:id/shares/:shareId` | BUILT |
 | `PATCH /matters/:id/events/:eventId` | BUILT |
 
+**Matter authorities — LCC owns · added 11 Aug 2026**
+
+| endpoint | status |
+|---|---|
+| `GET /matters/:id/authorities` | BUILT |
+| `POST /matters/:id/authorities` | BUILT |
+| `DELETE /matters/:id/authorities/:authorityId` | BUILT |
+
 **Briefings — LCC owns**
 
 | endpoint | status |
@@ -889,6 +897,47 @@ A share grants the **court record** plus notes explicitly marked `shared`.
 `noteVisibility` defaults to `private` **in the column**, not in application code.
 A shared briefing names whose matter it is and carries no private notes — a junior
 may be appearing on it at a morning's notice.
+
+## Matter authorities — LCC owns · added 11 Aug 2026
+```
+GET    /matters/:id/authorities  → { authorities: [ { authorityId, judgmentId,
+                                     caseTitle, neutralCitation, addedBy,
+                                     addedAt, removedAt } ], asOf }
+POST   /matters/:id/authorities  { judgmentId, citationCheckId? }
+                                  → { authority }
+DELETE /matters/:id/authorities/:authorityId → { removedAt }
+```
+**Was specced only in a comment before 11 Aug 2026.** `matters/route.ts`'s own
+header already described *"`set_aside` disables add-to-matter"* with no table
+and no route behind it — the client's "Add to a matter" button had never had
+an `onPress`. RCC found the gap reading the code; this closes it.
+
+**Distinct from `judgment_annotations`.** An annotation with a `matterId` saves
+a highlighted *passage* (PD-9 item 3) and requires a `quote`. This saves the
+*whole judgment* as an authority with nothing highlighted — a different action,
+not a duplicate of it. Both enforce the same `set_aside` refusal, independently
+— see below.
+
+**`set_aside` disables add-to-matter, and the response NAMES the replacement** —
+the one authority Lawmind refuses to let be used at all, enforced server-side
+(`409 AUTHORITY_SET_ASIDE`) exactly as `judgment_annotations` already does for
+the passage-level path.
+
+**Reads follow shared-matter access** (owner or a live share, same as
+`GET /matters/:id`); **writes are owner-only**, matching `POST
+/matters/:id/events` rather than the read path — a sharee can see what was
+saved but not add to it.
+
+**Re-adding is idempotent, not an error** — `200` with the existing row if the
+judgment is already a live authority, `201` if it is new or was previously
+removed. Removal sets `removedAt`; it never deletes the row, same reasoning as
+`matter_shares`.
+
+**Does not back `saved_authority_moved` (PD-5).** That alert's audience is
+derived from `citation_checks` joined through `searches`/`documents`,
+independent of this table — verified by reading `citations/fanout.ts`, not
+assumed. This is a separate, real product surface: the matter workspace's
+accumulated per-case work.
 
 ## Briefings — LCC owns
 ```

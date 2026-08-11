@@ -101,6 +101,12 @@ import { getJudgment, judgmentParams } from './judgments/route.ts';
 import { getGraph, getTreatment, graphQuery, treatmentQuery } from './judgments/treatment.ts';
 import { logger } from './logger.ts';
 import {
+  addAuthority,
+  addAuthorityBody,
+  listAuthorities,
+  removeAuthority,
+} from './matters/authorities.ts';
+import {
   createEventBody,
   createMatter,
   createMatterBody,
@@ -434,6 +440,19 @@ export function createApp(deps: AppDeps) {
         await userFor(c),
         c.req.valid('json'),
       ),
+    );
+    // Authorities saved to a matter. `set_aside` refuses the write and names
+    // the replacement — the one authority Lawmind refuses to let be used at
+    // all — enforced here so it cannot be styled away client-side.
+    // `docs/SCHEMA_TRUTH.md` §matter_authorities.
+    app.get('/matters/:id/authorities', async (c) =>
+      listAuthorities(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.post('/matters/:id/authorities', validate('json', addAuthorityBody), async (c) =>
+      addAuthority(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    app.delete('/matters/:id/authorities/:authorityId', async (c) =>
+      removeAuthority(c, sql, c.req.param('id'), c.req.param('authorityId'), await userFor(c)),
     );
     // Citator alerts — PD-5/PD-6. The app does not grow a notifications tab:
     // this feeds the briefing's "since yesterday" block, and `since` lets a

@@ -1209,6 +1209,39 @@ export const matterShares = pgTable(
 );
 
 /**
+ * Authorities saved to a matter. Migration `0032`, 11 Aug 2026 — the feature
+ * `matters/route.ts`'s own header comment already described without anything
+ * behind it. Mirrors `matterShares`: removal is a timestamp, never a delete.
+ */
+export const matterAuthorities = pgTable(
+  'matter_authorities',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    matterId: uuid('matter_id')
+      .notNull()
+      .references(() => matters.id, { onDelete: 'cascade' }),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id),
+    addedByUserId: uuid('added_by_user_id')
+      .notNull()
+      .references(() => users.id),
+    /** Null when the calling surface had no citation_checks row — never invented. */
+    citationCheckId: uuid('citation_check_id').references(() => citationChecks.id),
+    addedAt: timestamp('added_at', { withTimezone: true }).notNull().defaultNow(),
+    removedAt: timestamp('removed_at', { withTimezone: true }),
+    removedByUserId: uuid('removed_by_user_id').references(() => users.id),
+  },
+  (t) => [
+    // One live authority per (matter, judgment) — re-adding is idempotent.
+    uniqueIndex('matter_authorities_live_key')
+      .on(t.matterId, t.judgmentId)
+      .where(sql`removed_at IS NULL`),
+    index('matter_authorities_judgment_idx').on(t.judgmentId),
+  ],
+);
+
+/**
  * Training-consent history — **append-only, and the reason the live columns on
  * `users` are allowed to be reset to NULL on withdrawal.**
  *
