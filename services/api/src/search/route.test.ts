@@ -208,6 +208,82 @@ describe('POST /search', () => {
     assert.equal(body.error?.code, 'INVALID_REQUEST');
   });
 
+  it('a duplicated document CANNOT occupy more than one result slot', async () => {
+    // 1,476 High Court rows sit in content-hash duplicate groups, 925 of them
+    // redundant copies. Retrieval read that fact nowhere, so the same judgment
+    // could take several of the five slots an advocate reads and push distinct
+    // authorities off the page entirely.
+    //
+    // Three byte-identical rows, one distinctive phrase, asserted through the
+    // real route rather than against the collapse function — the defect was that
+    // nothing in the REQUEST PATH consulted the duplicate fact.
+    const text =
+      'SYNTHETIC duplicate authority concerning quixotic riparian easements ' +
+      'and the doctrine of perspicacious estoppel. '.repeat(12);
+    const ids: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const [row] = await sql<{ id: string }[]>`
+        INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                               judgment_date, full_text, language, source_url, overruled_status)
+        VALUES (${`SYNTHETIC — Duplicate Copy ${i}`}, ${`FIX 2024 DUP ${i}`}, '{}',
+                'Test Court', '2024-01-01', ${text}, 'en',
+                ${`test://dup/${crypto.randomUUID()}`}, 'none')
+        RETURNING id`;
+      ids.push(row!.id);
+    }
+    // The same sha256 on all three — what makes them one DOCUMENT, not three.
+    await sql`UPDATE judgments SET content_hash = 'synthetic-duplicate-hash-0001'
+              WHERE id = ANY(${ids})`;
+
+    try {
+      const { status, body } = await post({
+        query: 'quixotic riparian easements perspicacious estoppel',
+        language: 'en',
+      });
+      assert.equal(status, 200);
+      const returned = (body.data?.results ?? []).filter((r) => ids.includes(r.judgmentId));
+      assert.equal(
+        returned.length,
+        1,
+        `a document with three identical copies took ${returned.length} slots`,
+      );
+    } finally {
+      await sql`DELETE FROM citation_checks WHERE judgment_id_matched = ANY(${ids})`;
+      await sql`DELETE FROM judgments WHERE id = ANY(${ids})`;
+    }
+  });
+
+  it('does NOT collapse two different judgments that both lack a content hash', async () => {
+    // Absent is not equal. A null content_hash means "not yet computed", never
+    // "no duplicate", so nulls must never collapse into each other — that would
+    // be a real silent drop of distinct authorities.
+    const ids: string[] = [];
+    for (let i = 0; i < 2; i++) {
+      const [row] = await sql<{ id: string }[]>`
+        INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                               judgment_date, full_text, language, source_url, overruled_status)
+        VALUES (${`SYNTHETIC — Unhashed Distinct ${i}`}, ${`FIX 2024 UNH ${i}`}, '{}',
+                'Test Court', '2024-01-01',
+                ${`Distinct synthetic judgment ${i} on zygomorphic covenants and sublunary waivers. `.repeat(14)},
+                'en', ${`test://unhashed/${crypto.randomUUID()}`}, 'none')
+        RETURNING id`;
+      ids.push(row!.id);
+    }
+    await sql`UPDATE judgments SET content_hash = NULL WHERE id = ANY(${ids})`;
+
+    try {
+      const { body } = await post({
+        query: 'zygomorphic covenants sublunary waivers',
+        language: 'en',
+      });
+      const returned = (body.data?.results ?? []).filter((r) => ids.includes(r.judgmentId));
+      assert.equal(returned.length, 2, 'two distinct unhashed judgments must both survive');
+    } finally {
+      await sql`DELETE FROM citation_checks WHERE judgment_id_matched = ANY(${ids})`;
+      await sql`DELETE FROM judgments WHERE id = ANY(${ids})`;
+    }
+  });
+
   it('rejects a malformed body through the shared validator', async () => {
     const { status, body } = await post({ query: '', language: 'en' });
     assert.equal(status, 400);

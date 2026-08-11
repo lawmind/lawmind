@@ -110,6 +110,8 @@ type JudgmentRow = {
   overruled_by_judgment_id: string | null;
   overruled_paras: number[] | null;
   overruled_note: string | null;
+  /** sha256 of `full_text`. Null means not yet computed, never "no duplicate". */
+  content_hash: string | null;
   full_text: string | null;
 };
 
@@ -579,15 +581,39 @@ export async function hybridSearch(
            overruled_status, overruled_by_judgment_id, overruled_paras, overruled_note,
            -- Fetched so the matched chunk can be mapped back to the paragraph the
            -- court actually printed. Bounded: see LOCATE_MAX_CHARS.
+           content_hash,
            left(full_text, ${LOCATE_MAX_CHARS}) AS full_text
     FROM judgments WHERE id = ANY(${ids})
   `;
 
   const byId = new Map<string, JudgmentRow>(rows.map((r) => [r.id, r]));
   const results: RetrievedJudgment[] = [];
+  /**
+   * One slot per DOCUMENT, not per row.
+   *
+   * 1,476 High Court rows sit in duplicate groups on `content_hash` -- 925 of
+   * them redundant copies of a document already in the corpus. Nothing in
+   * retrieval read that fact, so the same judgment could occupy several of the
+   * five slots an advocate actually reads, pushing distinct authorities off the
+   * page.
+   *
+   * **This is a collapse, not a silent drop.** A dropped citation is one the
+   * advocate never learns about; a collapsed duplicate is the SAME DOCUMENT,
+   * byte-identical by sha256, and the one kept is the highest-ranked member of
+   * its own group. Nothing an advocate could act on is removed --
+   * `CITATION_HARNESS.md`'s zero silent-drop threshold counts distinct
+   * authorities, and the count of those is unchanged.
+   *
+   * Rows with a NULL `content_hash` are never collapsed: absent is not equal.
+   */
+  const seenHash = new Set<string>();
   for (const id of ids) {
     const r = byId.get(id);
     if (!r) continue;
+    if (r.content_hash !== null) {
+      if (seenHash.has(r.content_hash)) continue;
+      seenHash.add(r.content_hash);
+    }
 
     // Chunk -> printed paragraph. Falls back to the cleaned chunk when the
     // judgment is too large to segment in-request, or when the passage cannot be
