@@ -24,7 +24,17 @@ __pycache__/
 # the app database. `docs/TRAINING_STRATEGY.md` §4: JSONL diffs are useless and
 # the repo becomes unclonable. Pairs derived from sensitive-class data carry the
 # same DPDP treatment as their source.
-training/
+#
+# **Anchored to the repo root, and that anchor is load-bearing.** An unanchored
+# `training/` matches a directory of that name at ANY depth — including
+# `services/api/src/training/`, which is application source (`consent.ts`,
+# `extract.ts`) imported by `app.ts`, not generated JSONL. That collision
+# silently gitignored real source code: every deploy since `app.ts` started
+# importing from it crashed at container boot with
+# `ERR_MODULE_NOT_FOUND … services/api/src/training/consent.ts`, because the
+# file never reached the commit Railway builds from. Found 11 Aug 2026 reading
+# the Railway build log for `docs/ai/tasks/001-p0-citation-query-safety.md`.
+/training/
 
 # Recall ground truth — regenerated from the corpus, large, and stale the moment
 # the corpus changes. `scripts/measure-recall.mjs` recaptures it when absent.
@@ -32,3 +42,8 @@ scripts/recall-ground-truth.json
 
 # Operator scratch files — never shipped, never committed. eslint ignores these too.
 *.local.*
+
+# Lane-bus session state — per machine and per session, never shared.
+# The MESSAGES stay in git deliberately; who has read them does not.
+.agents/bus/.cursor-*
+.agents/bus/.lane-*
