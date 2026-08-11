@@ -43,13 +43,52 @@ function sh(cmd, args) {
   return execFileSync(cmd, args, { encoding: 'utf8' }).trim();
 }
 
+/**
+ * `spawnSync` with `shell:true` and an args ARRAY does not escape each
+ * element — it concatenates them, so an argument containing a space (a `-m`
+ * message, in particular) gets re-split by the shell into several arguments.
+ * `railway` is a `.cmd` shim on Windows, which is the whole reason `shell:true`
+ * is needed at all, so the fix is the one already established in
+ * `scripts/ci-local.mjs`: build ONE quoted command string ourselves. Args
+ * here are always literals this file constructs, never raw user input, so
+ * this is not the injection risk it would be for untrusted strings.
+ */
+function railway(args) {
+  return spawnSync(['railway', ...args.map((a) => `"${a}"`)].join(' '), {
+    stdio: 'inherit',
+    shell: true,
+  });
+}
+
 const gitSha = sh('git', ['rev-parse', 'HEAD']);
-const dirty = sh('git', ['status', '--porcelain', '--untracked-files=no']);
+
+/**
+ * Only the paths that actually reach the deployed image. LCC and RCC share
+ * one working tree (`docs/FOUNDER_QUEUE.md` — worktree separation is a
+ * pending, coordinated decision, not done yet), so `apps/**` and `docs/**`
+ * are routinely dirty with the OTHER lane's or this lane's own in-progress,
+ * deliberately-uncommitted work at any given moment — that is normal, not a
+ * reason to block. What must be clean is exactly what `railway.json`'s build
+ * command installs: `services/**`, `packages/**`, and the root workspace
+ * files. A dirty file outside that set cannot make the deployed sha lie.
+ */
+const dirty = sh('git', [
+  'status',
+  '--porcelain',
+  '--untracked-files=no',
+  '--',
+  'services',
+  'packages',
+  'package.json',
+  'pnpm-lock.yaml',
+  'pnpm-workspace.yaml',
+  'railway.json',
+]);
 if (dirty) {
   console.error(
-    'Working tree has uncommitted tracked changes. Deploying a sha that does ' +
-      'not match what is actually running would recreate the exact lie this ' +
-      'script exists to prevent. Commit or stash first.\n\n' +
+    'Uncommitted changes in a path that reaches the deployed image. Deploying ' +
+      'a sha that does not match what is actually running would recreate the ' +
+      'exact lie this script exists to prevent. Commit or stash first.\n\n' +
       dirty,
   );
   process.exit(1);
@@ -58,42 +97,34 @@ if (dirty) {
 const deployedAt = new Date().toISOString();
 
 console.log(`Setting GIT_SHA=${gitSha}`);
-const setSha = spawnSync(
-  'railway',
-  [
-    'variable',
-    'set',
-    `GIT_SHA=${gitSha}`,
-    '--service',
-    'api',
-    '--environment',
-    'production',
-    '--skip-deploys',
-    '--json',
-  ],
-  { stdio: 'inherit', shell: true },
-);
+const setSha = railway([
+  'variable',
+  'set',
+  `GIT_SHA=${gitSha}`,
+  '--service',
+  'api',
+  '--environment',
+  'production',
+  '--skip-deploys',
+  '--json',
+]);
 if (setSha.status !== 0) {
   console.error('Failed to set GIT_SHA — aborting before deploying a sha that would not match it.');
   process.exit(setSha.status ?? 1);
 }
 
 console.log(`Setting DEPLOYED_AT=${deployedAt}`);
-const setDeployedAt = spawnSync(
-  'railway',
-  [
-    'variable',
-    'set',
-    `DEPLOYED_AT=${deployedAt}`,
-    '--service',
-    'api',
-    '--environment',
-    'production',
-    '--skip-deploys',
-    '--json',
-  ],
-  { stdio: 'inherit', shell: true },
-);
+const setDeployedAt = railway([
+  'variable',
+  'set',
+  `DEPLOYED_AT=${deployedAt}`,
+  '--service',
+  'api',
+  '--environment',
+  'production',
+  '--skip-deploys',
+  '--json',
+]);
 if (setDeployedAt.status !== 0) {
   console.error('Failed to set DEPLOYED_AT — aborting.');
   process.exit(setDeployedAt.status ?? 1);
@@ -101,9 +132,14 @@ if (setDeployedAt.status !== 0) {
 
 const extraArgs = process.argv.slice(2);
 console.log(`Deploying ${gitSha.slice(0, 12)}...`);
-const up = spawnSync(
-  'railway',
-  ['up', '--detach', '--json', '--service', 'api', '--environment', 'production', ...extraArgs],
-  { stdio: 'inherit', shell: true },
-);
+const up = railway([
+  'up',
+  '--detach',
+  '--json',
+  '--service',
+  'api',
+  '--environment',
+  'production',
+  ...extraArgs,
+]);
 process.exit(up.status ?? 1);

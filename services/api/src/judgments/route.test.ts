@@ -20,6 +20,8 @@ type Body = {
     judgmentId: string;
     caseTitle: string;
     fullText: string;
+    neutralCitation: string | null;
+    reporterCitations: string[];
     verificationState: string;
     verifiedBySource: string;
     overruledStatus: string;
@@ -73,6 +75,27 @@ describe('GET /judgments/:id', () => {
     // cached overruled status renders with its as-of date.
     assert.ok(body.data?.asOf, 'asOf must be present on any payload carrying overruledStatus');
     assert.ok(!Number.isNaN(Date.parse(body.data.asOf)), 'asOf must be a parsable timestamp');
+  });
+
+  it('a judgment with no citation of any kind round-trips null/empty — task 002, never fabricated', async (t) => {
+    // Deterministic ID lookup, not a ranked search — the property under test is
+    // the server's fidelity to the row, and must not depend on whether the
+    // judgment happens to rank in a query's top results.
+    const [uncitable] = await sql<{ id: string }[]>`
+      SELECT id FROM judgments
+       WHERE neutral_citation IS NULL AND array_length(reporter_citations, 1) IS NULL
+       LIMIT 1`;
+    if (!uncitable) return t.skip('no uncitable judgment in this corpus — expected once the HC ingest resumes');
+
+    const { status, body } = await get(`/judgments/${uncitable.id}`);
+    assert.equal(status, 200);
+    // The whole point of task 002 (`docs/CITATION_HARNESS.md` §The fourth
+    // concern): the server never invents a citation and never drops the row
+    // for lacking one. `citationRender` (client) derives the fourth render
+    // state from exactly these two fields, so they must arrive exactly as
+    // stored — null and empty, never a placeholder string.
+    assert.equal(body.data?.neutralCitation, null);
+    assert.deepEqual(body.data?.reporterCitations, []);
   });
 
   it('writes a citation_checks row for the judgment_detail surface', async (t) => {
