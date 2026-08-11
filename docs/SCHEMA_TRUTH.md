@@ -215,6 +215,29 @@ than one that returns less.* **Bench strength needs a source that publishes the
 full coram, and until then it is not filterable and not reasonable-over
 (Stage 16).**
 
+`hc_document_class` text null · `hc_class_method` text null — added migration
+`0042`. **What KIND of document a High Court row is**, derived from
+`disposal_nature` and text length. `docs/ai/HC_CORPUS_QUALITY.md`.
+
+Kept separate from `source_document_type`, which stays verbatim-from-source and
+is NULL on all 40,980. Values: `bail_order` (23,194) · `procedural_disposal`
+(3,963) · `decided` (2,410) · `decided_brief` (453) · `reference_stub` (132).
+**NULL on 10,828, and that is a result rather than a default** — 10,654 of them
+carry `disposal_nature = 'DISPOSED'`, which covers a reasoned decision, a consent
+order and an infructuous closure alike, and guessing it into `decided` would
+inflate the authority count by 24% of the corpus.
+
+`hc_class_method` records which rule fired, including the reason a row was left
+unclassified — the same shape as `parties_extraction_method`. **0 rows carry a
+class with no method.** One rule, `text_bail_phrase` (6,477 rows), reads the
+prose rather than a source field and is the only inference among them.
+
+**It is a classification of documents, never a legal weight.** Whether a High
+Court order carries precedential authority is a question about ratio and
+reasoning, and nothing here decides it. The headline it produces: **40,980
+documents contain 2,249 unique candidate authorities, 5.5%** — of which 97.4%
+are Patna High Court and 95% are from 2026.
+
 `cnr` text null — the eCourts Case Number Record, added migration `0034`,
 11 Aug 2026. The canonical cross-source identity key (`docs/DATA_ADVANTAGE.md`:
 "CNR is what eCourts resolves"), and what `judgments_source_url_key`'s own

@@ -29,7 +29,8 @@
     "backfill:parties": "tsx src/backfill-parties.ts",
     "backfill:disposal-nature": "tsx src/backfill-disposal-nature.ts",
     "backfill:bench-code": "tsx src/backfill-source-bench-code.ts",
-    "statute:amendments": "tsx src/statute-amendments-cli.ts"
+    "statute:amendments": "tsx src/statute-amendments-cli.ts",
+    "hc:classify": "tsx src/hc-classify-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

@@ -335,6 +335,17 @@ export const judgments = pgTable(
      * a coram. NULL on Supreme Court rows, which have no such partition.
      */
     sourceBenchCode: text('source_bench_code'),
+    /**
+     * Migration `0042`. What KIND of document a High Court row is — DERIVED
+     * from `disposal_nature` and text length, never a legal weight and never a
+     * claim about precedential authority. NULL where no rule claimed it, which
+     * is 26.4% of the corpus and deliberate: `disposal_nature = 'DISPOSED'`
+     * covers a reasoned decision, a consent order and an infructuous closure
+     * alike. `docs/ai/HC_CORPUS_QUALITY.md`.
+     */
+    hcDocumentClass: text('hc_document_class'),
+    /** Which classification rule fired, including why a row was left unclassified. */
+    hcClassMethod: text('hc_class_method'),
     judgmentDate: date('judgment_date').notNull(),
     fullText: text('full_text').notNull(),
     language: languageEnum('language').notNull(),

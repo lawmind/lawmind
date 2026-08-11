@@ -281,6 +281,13 @@
       "when": 1786420000000,
       "tag": "0041_statute_amendments",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1786430000000,
+      "tag": "0042_hc_document_class",
+      "breakpoints": true
     }
   ]
 }
