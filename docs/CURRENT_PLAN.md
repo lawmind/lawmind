@@ -4,8 +4,17 @@
 It exists because a plan held only in a todo tool does not survive compaction, a
 new session, or a fresh agent. **This file does.**
 
-Last updated **9 August 2026**. **Read §A first — it supersedes §2's ordering.** Owner: **LCC (server lane)**. RCC's plan is
-`docs/RCC_MASTER_PLAN.md` and is not duplicated here.
+Last updated **9 August 2026**, annotated through **11 August 2026**. **Read
+§A first — it supersedes §2's ordering.** Owner: **LCC (server lane)**. RCC's
+plan is `docs/RCC_MASTER_PLAN.md` and is not duplicated here.
+
+**11 Aug 2026 — the two P0s that outranked this whole queue are closed.**
+Task 001 (citation-shaped queries falling through to semantic search) and
+task 002 (the uncitable-judgment state) are both resolved — server side
+complete for both, client-side implementation for 002 briefed to RCC. Current,
+live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
+and Q1.4 entries below are kept as the historical record with corrections
+layered on top, per this file's own convention, rather than rewritten.
 
 > **The ordering rule, and it is not negotiable.** `docs/GTM_INDIA.md` §9: Gate S2
 > passes **before** the ground campaign. A field campaign against 2 million
@@ -46,7 +55,20 @@ box and go look.**
 Each item carries the two artefacts `CLAUDE.md` demands, so nobody has to invent
 them later. **An item with no nameable VERIFY does not go in this list.**
 
-### Q1.0 · THE DEPLOY GAP — 43 commits unpushed · FOUNDER DECISION · outranks everything below
+### Q1.0 · THE DEPLOY GAP — 43 commits unpushed · RESOLVED 11 Aug 2026, task 001
+
+**CLOSED. Kept below as the historical record — the reasoning is what keeps
+the next incident consistent, and this one taught a real lesson.** The push
+this section held back on was made this session (`origin/main` had reached
+`0 0` with local before task 001 even began — that gap closed itself over the
+course of the day). What actually kept P0 live past that point was a second,
+separate defect: `.gitignore` and `.railwayignore` both silently excluded
+`services/api/src/training/*.ts`, real source `app.ts` imports, from every
+commit and every deploy upload since 9 Aug — so the deploy failed identically
+whether pushed or not. Diagnosed from `railway logs`, fixed in two commits,
+redeployed, verified against `/search` directly. Full account:
+`docs/ai/tasks/001-p0-citation-query-safety.md` §RESULT,
+`docs/ai/RETRIEVAL_PROGRAM.md` §BENCHMARK RESULTS step 6.
 
 **Found by RCC on 11 Aug and independently verified by LCC the same day. RCC was
 right on every point.**
@@ -163,6 +185,154 @@ candidate, or nothing** — a wrong alias is worse than a missing one. Resolving
 all unresolved, which can never resolve by construction. A separate extraction
 defect, queued behind this.
 
+> **CORRECTED 11 Aug 2026 — that sentence was wrong twice, and chasing it found
+> something much larger. See Q1.0c.**
+>
+> They are **not a defect**. They are **sentinels**: `citations-cli.ts` writes one
+> row with an empty `citation_text` to mark a judgment that cites nothing, so the
+> resumable pass does not re-scan it on every run. The code says so at the line
+> that writes them. Verified against production rather than read: **13,834 rows
+> over 13,834 distinct judgments**, every one with `normalised_citation = ''`,
+> `char_offset = 0`, unresolved — and **zero judgments carrying a sentinel beside
+> a real edge**.
+>
+> **And they were never in "all unresolved" to begin with.** Counting them there
+> understated citation resolution: **40.4% of all rows, 43.5% of real citation
+> edges (77,600 / 178,363).** Both are arithmetically true; only the second
+> answers *"of the citations we extracted, how many point at a judgment we
+> hold"*. `resolve-cli` now prints the denominator every time it prints the
+> percentage, so the figure cannot be lifted without the thing it is a
+> percentage of.
+
+### Q1.0c · THE EXTRACTOR WAS BLIND TO TWO CITATION FORMATS — 11 Aug 2026
+
+**Found by pulling on the 13,834 sentinels above.** The question that opened it
+was not *"is this a defect"* but *"is it plausible that 36.1% of Supreme Court
+judgments cite nothing at all"*. It was not.
+
+`DONE:` the extractor finds the citation forms the corpus actually contains.
+`VERIFY:` `citations.test.ts` covers each form with a string taken verbatim from
+a corpus judgment; `--rescan` reports the new edges before writing any.
+
+**The defect was one asymmetry, in `services/ingest/src/citations.ts`.** The SCR
+pattern accepted either bracket — `[[(](\d{4})[\])]` — and the SCC pattern
+accepted **only round parentheses**. So `[2000] 5 SCC 573` matched nothing.
+Neither pattern accepted the reports' own house style, **year first**:
+`1976 (1) SCR 906`, `1996 (4) SCC 362`.
+
+**The decade table is what made it undeniable**, and it also refuted the first
+theory. These are not simply old OCR'd pages:
+
+| decade | judgments citing NOTHING | share |
+| --- | --- | --- |
+| 1950 | 645 | 64.2% |
+| 1960 | 1,886 | 59.5% |
+| 1970 | 1,557 | 53.2% |
+| 1980 | 1,300 | 48.1% |
+| **1990** | **4,368** | **67.3%** |
+| 2000 | 3,886 | 42.8% |
+| 2010 | 192 | **2.4%** |
+| 2020 | 0 | **0.0%** |
+
+**The 1990s are worse than the 1950s and 2020 is perfect.** Age does not produce
+that shape; a text source that changed does. Modern judgments print
+`(2019) 4 SCC 221` and were never affected.
+
+**Two false trails, both killed by reading the data instead of the aggregate.**
+
+1. **92.7% of the zero-citation judgments contain a reporter abbreviation** —
+   which looked like a 92.7% recall hole and was nothing of the kind. 12,725 of
+   them contain `S.C.R.` because the **printed page header** reads
+   `S.C.R. SUPREME COURT REPORTS 807`. A running header is not a citation. There
+   is now a test asserting the extractor does not read one as such.
+2. **Widening to the pre-independence reporters would not have paid.** The
+   samples are full of `I.L.R. 25 Mad. 658`, `50 I.A. 227`, `5 A.C. 214` — Privy
+   Council, colonial High Court and House of Lords. **We hold none of them and
+   never will**, so those edges would resolve to nothing while inflating the
+   denominator. Measured before building, per §1.
+
+**The opportunity was measured before the fix was written**, on judgments that
+already carried edges: **+23.9% more citations found (1,301 on 800 judgments),
+48.5% of them resolving** to a judgment we hold. On the zero-citation population
+the recovery is smaller and the resolve rate lower — 689 citations from 1,200
+judgments, 16.4% resolving — because a judgment that cites nothing our corpus
+holds stays unresolved no matter how well it is read.
+
+**APPLIED 11 Aug 2026. The write matched the dry run exactly — 37,875 new edges,
+2,594 sentinels cleared, to the row.** That equality is the point of §1's rule:
+the dry run went through the same write path with the same guards, so there was
+nothing left for the constraints to catch.
+
+| | before | after |
+| --- | --- | --- |
+| rows in `judgment_citations` | 192,197 | **227,478** |
+| sentinels | 13,834 | **11,240** |
+| real citation edges | 178,363 | **216,238** |
+| **resolved** | **77,600** | **97,876** |
+| resolution, over citation edges | 43.5% | **45.3%** |
+
+**+20,276 resolved edges, a 26.1% increase.** 13,880 resolved at extraction
+against the in-memory index; the resolver then took another 6,396 using the alias
+concordance, refusing 16,790 self-citations and 11 ambiguous keys — the same
+guards, refusing the same way.
+
+**The percentage is the least interesting number here and would have been the
+easiest to oversell.** It moved 43.5% → 45.3% while the resolved count rose 26%,
+because widening the extractor grows the denominator too. A pass that found only
+resolvable citations would have looked better and been worse.
+
+**Where the recovery landed, which is where the defect predicted:**
+
+| decade | citing nothing, before | after |
+| --- | --- | --- |
+| 1990 | 67.3% | **54.4%** |
+| 2000 | 42.8% | **25.3%** |
+| 1980 | 48.1% | 44.6% |
+| 1950 | 64.2% | 64.1% |
+
+**The 1950s barely moved, and that is correct.** Their citations are `I.L.R. 25
+Mad. 658`, `50 I.A. 227`, `5 A.C. 214` — Privy Council and colonial High Court,
+which we do not hold. Widening to reach them would have manufactured
+unresolvable edges.
+
+**Precision was read, not counted.** Twelve resolved edges sampled at random from
+the 37,875 inserted, each printed with 180 characters of surrounding text: **12
+of 12 correct** — the citation appears verbatim in a Case Law Cited block and the
+target judgment's case title matches the name printed beside it, including the
+OCR-mangled `[1972) 4 SCC 600`. Twelve is a spot check and a lower bound, not a
+precision rate.
+
+**A pinned test caught the change, and it had been waiting for it.**
+`services/harness/src/build-queries.test.ts` carried a test literally named
+*"SQUARE-BRACKET CITATIONS ARE INVISIBLE TO THE EXTRACTOR — a known gap"*,
+pinned on 9 Aug as a failing expectation with the instruction *"the gap closed —
+update this test and the note it carries."* **Somebody found this blind spot two
+days earlier, recorded it precisely, and it stayed open.** The test is now an
+assertion of correct behaviour.
+
+**And half that note was wrong.** It recorded that `[2019] 4 SCC 221` *and*
+`(2019) 4 S.C.C. 221` both extracted to nothing. Re-run against the pre-11-Aug
+pattern set: the square bracket found **0**, the dotted form found **1**. The
+dotted form always worked. **A note that overstates a defect sends the next
+reader looking in the wrong place**, which is the same class of harm as
+understating one.
+
+**`ANALYZE judgment_citations` run after the write**, per the standing rule in
+`SCHEMA_TRUTH.md` §Access paths — 35,281 net new rows change the planner's
+selectivity estimates for every citation path.
+
+**One assumption was checked rather than assumed**, because it was load-bearing:
+the year-first rewrite added to `normaliseCitation` could have changed stored
+`normalised_citation` values, and `ON CONFLICT DO NOTHING` would then have
+double-inserted every citation in the corpus. `SELECT count(*) … WHERE
+normalised_citation ~ '^[0-9]{4} \([0-9]{1,3}\) '` returns **0 of 192,197**.
+
+**`--rescan` exists because `--reset` was the wrong tool.** Re-running the
+ordinary pass reaches nothing (every judgment already has rows, so the resume
+query skips it) and `--reset` would delete all 192,197 edges along with the
+77,600 resolutions three passes of the resolver produced. `--rescan` re-reads
+every judgment and inserts only what is new, and it is **dry by default**.
+
 ### Q1.1 · Publish coverage per court and per year — A3.6 · ✅ LANDED 11 Aug 2026
 
 **Migration `0029` applied to production and verified. `GET /corpus/coverage`
@@ -254,7 +424,21 @@ so A3.4's Tier-2 `bit(1024)` vector is not started. R2 credentials **are set**
 decided to run, and storage was never the blocker — measured twice at under
 $8/month.
 
-### Q1.4 · Ingest High Courts — A3.2 · BLOCKED ON A FOUNDER DECISION, see Q2
+### Q1.4 · Ingest High Courts — A3.2 · SUPERSEDED BY EVENTS, see below
+
+**This section is historical.** The ingest this item planned already ran:
+40,980 High Court rows landed in `judgments` (S1, 11 Aug), then were paused by
+LCC — not by this decision, but because the corpus had no citation state for
+what it was ingesting. That gap is task 002, now resolved (severity: warn,
+`CITATION_HARNESS.md` §The fourth concern). **Resuming the ingest itself is
+still separately blocked** — the autonomous-execution charter's §10 sets a
+higher bar (provenance, content hash, dedup status, extraction confidence per
+document) the current loader does not track. Current state:
+`docs/ai/RETRIEVAL_PROGRAM.md` §BLOCKED.
+
+<details><summary>Original planning entry, kept for provenance</summary>
+
+### Q1.4 (original) · Ingest High Courts — A3.2 · BLOCKED ON A FOUNDER DECISION, see Q2
 
 `DONE:` reasoned High Court judgments from the last 10 years in `judgments`,
 resumable and content-hashed.
@@ -266,6 +450,8 @@ than one row; `corpus_coverage` moves.
 workers, OCR burden 0.2%, judgment share 0.75%–18.64%, PDF availability broken by
 whole bench-years. **What remains is not measurable — it is the two questions in
 Q2.**
+
+</details>
 
 ### Q1.5 · Facets on `POST /search` — A2.6 remainder
 
@@ -336,6 +522,220 @@ is exactly what this file already claims — confirmed rather than assumed.
 migration `0028`. Owed under `CLAUDE.md`, but **Q1.1, Q1.2, Q1.3 and Q1.6 all
 need it**, so it is last on purpose.
 
+### Q1.9 · DRAFTING HAS NO CREATION PATH — core feature #3 · found 11 Aug 2026
+
+**Found while answering RCC's question "can I test `GET /documents/:id` against a
+real row".** They could not, and neither can anyone: **`SELECT count(*) FROM
+documents` returns 0**, and it will stay 0.
+
+`DONE:` an advocate can produce a draft.
+`VERIFY:` `POST /documents` returns a `documentId`; `SELECT count(*) FROM
+documents` is non-zero; the citations on it are rows in `citation_checks`.
+
+**There is no `POST /documents` in the API.** The routes that exist are
+`GET /documents/types`, `GET /documents`, `GET /documents/:id`,
+`PATCH /documents/:id`, `POST /documents/:id/citations` and
+`DELETE /documents/:id/citations/:checkId`. Confirmed from the other direction
+too: `generated_content` is written in **three files and all three are tests**.
+Nothing in production code creates a draft, and `PATCH` exists to edit a document
+that cannot be brought into existence.
+
+**The contract is not the blocker.** `API_CONTRACTS.md` line 892 already specs
+the shape and marks it `SPECCED`:
+
+```
+POST /documents { documentType, matterId?, language, inputParams }
+               → { documentId, content, citations, unverifiedReferences }
+```
+
+**THE CHAIN, in the order it actually binds — and the top of it is not the DPA.**
+
+1. `POST /documents` must call a model. Drafting is **sensitive-class** (party
+   names, facts, the matter), so `CLAUDE.md` §5 requires pseudonymisation first.
+2. **`callModel` refuses every sensitive call today**, deliberately and with the
+   reason written into the code: *"This call requires pseudonymisation and no
+   pseudonymiser exists yet. Refusing rather than sending raw sensitive text and
+   recording `pseudonymised = true`, which would put a false claim in the audit
+   ledger."* That refusal is correct and must not be routed around.
+3. **So the gate is the pseudonymiser, and it is code, not a credential.**
+   `PRIVACY_PII.md` §Pseudonymisation specs it: Presidio as the detection base,
+   stable per-document tokens, an encrypted `pii_entities` map that is never
+   transmitted, re-identification client-side.
+4. **And the pseudonymiser's own first step is a MEASUREMENT we cannot take
+   yet.** The spec is explicit: *"Evaluate Presidio on real Indian court
+   documents before trusting it — a published F1 measured on English news text is
+   not evidence about a Hindi bail order naming four transliterated surnames."*
+   We hold no such documents. The judgments corpus is public-class and carries no
+   client PII, so it cannot serve as the evaluation set.
+5. **The countersigned DPA (OD-6) is a SEPARATE gate**, owed by the founder, and
+   it binds *after* 2–4, not before. Fixing the DPA alone changes nothing here.
+
+**What is buildable today without touching any of that:** the half of
+`POST /documents` that needs no model — validating `inputParams` against
+`documents/types.ts` `requiredFields` and refusing when a field is missing. That
+module already states why it matters: *"a bail application drafted without the
+section charged is not a weaker draft — it is a wrong one, and the advocate
+cannot see what is missing because fluent prose fills the gap."* Shipping the
+refusal without the generation would be an endpoint whose only production
+behaviour is an error, so it is recorded here rather than built on its own.
+
+**RCC has been told to stop adding to drafts.** `DraftsListScreen` and
+`DraftDetailScreen` are built, tested and correct; they are waiting on this, not
+on themselves. Bus message 0007.
+
+### Q1.10 · TWO SETTLED ALERTS CANNOT FIRE — `scripts/check-alert-coverage.mjs` is RED
+
+**Not found by reading. Found by running the repo's own guard scripts, which
+nobody had run.** `check-alert-coverage.mjs` fails, and it is right to.
+
+`DONE:` every alert PD-5 and PD-6 promise can actually be produced.
+`VERIFY:` `node scripts/check-alert-coverage.mjs` exits 0.
+
+`alert_kind` holds **exactly two values** — `saved_authority_moved` and
+`filed_citation_moved` (`packages/db/src/schema.ts:226`). PD-5 and PD-6 require
+two more and neither exists:
+
+| promised | needs `alert_kind` | state |
+| --- | --- | --- |
+| a judgment lands in the advocate's own matter | `own_matter_judgment` | **does not exist** |
+| a matter is listed on a date they did not know about | `unknown_listing` | **does not exist** |
+
+**The switches are already in the product.** `users.alert_own_matter_judgment`
+and `users.alert_unknown_listing` are real columns and `PATCH /me/alerts`
+persists them, so **the app offers a toggle for a notification the system cannot
+send.** PD-6's immediate exception — *"a newly discovered listing for
+TOMORROW"* — is the one alert that exists to stop a missed hearing, and it
+cannot fire at all.
+
+**This is not a deferred feature; it is a settled decision the product silently
+does not implement**, and the advocate finds out by missing a hearing. The
+guard's own wording, and it is the right framing.
+
+**Why it is queued rather than started:** the enum values are a migration, but
+the producers are not. `own_matter_judgment` needs new judgments matched against
+matters; `unknown_listing` needs cause-list data, which is the eCourts harvest.
+Adding the enum values alone would make the guard green while changing nothing —
+**exactly the kind of fix §Q0 exists to catch**.
+
+### Q1.11 · Two more repo guards, one of which is RCC's
+
+Run all four before believing a green session — none of them is in the test
+suites, and three of four were failing:
+
+| guard | state |
+| --- | --- |
+| `check-design-rules.mjs` | ✅ |
+| `check-contract-status.mjs` | ✅ **FIXED 11 Aug** — the status cell must be exactly `BUILT` or `SPECCED`, and two rows read `BUILT — added 11 Aug 2026`. The annotation made the parser skip the row entirely, so both endpoints reported as *absent from the status table* rather than as badly formatted |
+| `check-alert-coverage.mjs` | ❌ Q1.10 |
+| `check-amber-reservation.mjs` | ❌ **RCC's lane** — `EnrolmentBand.tsx` and `ProfileScreen.tsx` draw `state.caution` / `cautionWash` / `cautionText`. Amber means THE LAW HAS MOVED and nothing else; an enrolment band is about *our* confidence, which renders as neutral ink with a dashed edge. Told to RCC on the bus |
+
+**The two red ones ran NOWHERE.** `check-contract-status` and
+`check-design-rules` are both in `scripts/ci-local.mjs` and in
+`.github/workflows/ci.yml`; **`check-alert-coverage` and
+`check-amber-reservation` were in neither, nor in any test suite.** The two
+guards that ran nowhere are exactly the two that were red — which is the whole
+argument, and it cost nothing to find because both were already written.
+
+**Both are now wired**, to `ci-local.mjs` and to the matching CI job (alerts to
+the server lane, amber to the client-lane job that needs no install).
+**`pnpm ci:local` is therefore RED until Q1.10 and the amber fix land**, and that
+is deliberate: a green gate that has stopped looking at two of the things it was
+written to look at is worse than a red one that has not.
+
+**A false alarm, recorded because the next agent will have it too.** GitHub
+Actions has not run since **7 August** despite `origin/main` being current at
+`6a437fa` (11 Aug, `0 0` against local). **That is not a broken CI.** `ci.yml`
+says so in its own header: `on: [pull_request, workflow_dispatch]` only, because
+the repo is on the free tier's 2,000 Actions minutes and the founder's decision
+is not to buy more. `pnpm ci:local` is the replacement and is meant to run before
+every push. **What it does mean is that `ci:local` was not being run** — the
+contract-status guard is in it and was red.
+
+### Q1.12 · RESEARCH, 11 Aug — five things that change the queue
+
+Full write-up with sources: **`docs/RESEARCH_2026-08-11.md`**. The five that
+change what we do next:
+
+1. **The GPU should not embed the corpus.** On legal passage retrieval **BM25 and
+   dense embeddings differ by 0.3 pp** (37.1% vs 36.8%), and dense retrieval's
+   effectiveness on legal case retrieval is published as *"limited"*. ~3,956
+   GPU-hours would buy the smaller half of a hybrid whose lexical half exists.
+   **Its real job is the pseudonymiser** — NER inference, the one blocker on core
+   feature #3, and nothing else can do it.
+2. **Citability is solved for 2023 onward, in the text.** High Courts print
+   neutral citations (`2023:DHC:2720`, `2023:KHC-D:1`) inside the judgment, so no
+   metadata column is needed. **This narrows §Q2's first question; it does not
+   resolve it** — the older years are still the founder's scope decision.
+   **The extractor had no pattern for the form and now does** — added before the
+   HC pass reaches 2023, because it records every document it reads and never
+   re-reads them, so the gap would have been permanent and silent.
+3. **Lexis+ AI hallucinates at 17% and Westlaw at 33%** (Stanford RegLab, *J.
+   Empirical Legal Studies*); multi-layer validation reaches **<1%**. The harness
+   is the product, and the target is reachable.
+4. **Our harness checks existence, not characterisation.** The same study counts
+   *real citations with mischaracterised holdings* and *right quote, wrong
+   procedural posture* as errors. **We do not look for either.** A genuine gap in
+   our own design, not previously on any list.
+5. **eSCR (`digiscr.sci.gov.in`) is an official citation→judgment lookup**, free,
+   back to 1950, searchable by citation — strictly better than our 4,097
+   hand-built aliases. `judgments.ecourts.gov.in` is a free full-text SC+HC
+   search. **`eCourtsIndia.com` stays refused** (`CLAUDE.md` §6) and **ILDC is
+   non-commercial**, so neither is usable.
+
+### Q1.13 · The Bharat.Law account was provisioned and unread — FIXED 11 Aug
+
+`BHARATLAW_EMAIL` and `BHARATLAW_PASSWORD` were set in the environment and
+**nothing in the repository read either name.** `accountsFromEnv` read only
+`BHARATLAW_ACCOUNTS`, the `label:username:password` pool form, and refused
+identically whether credentials were absent or merely named differently — so a
+real account sat dormant and looked exactly like an unprovisioned one.
+
+Single-pair fallback added, `BHARATLAW_ACCOUNTS` still authoritative so a real
+pool is never silently reduced to one. **Observed: `pool.configured = true`,
+`pool.authorised = true`.** `AUTHORISATION` was already filled in (granted 9 Aug,
+expires 2027-08-09, `benchmarkPermitted: true`, **`extractionPermitted: false`**).
+
+**No gate was weakened.** Reading a credential is not permission to use it: the
+consent email in **FQ-BL1** is still owed before anything automated, and
+**FQ-BL3's first step costs ₹0 and needs no account at all** — run *Kharak Singh*
+and *Danamma* through their free tier and see whether their counter-authority is
+specific or vague. That single answer decides whether their treatment data is
+curated and worth respecting, or computed and reproducible by us.
+
+### Q1.14 · V2/REB reconciliation — deploy integrity, then fail-closed citation safety · 11 Aug
+
+`docs/ai/V2_RECONCILIATION.md` audited the pasted Master Plan v2 against the
+repo; the founder then sent a REB directive refining the same priority ladder.
+Executed in order, each verified against production, not just local tests:
+
+1. **Citation ambiguity** — `cite:"2020 INSC 189"` matched three real Supreme
+   Court judgments and was silently returned as an ordinary result list.
+   `StructuredOutcome` gained an `ambiguous` kind; verified live.
+2. **`GIT_SHA` staleness** — every CLI (`railway up`) deploy since 8 Aug had
+   been reporting a hand-set variable from 8 Aug on `/health`, not the actual
+   deployed commit. `scripts/deploy-api.mjs` now sets `GIT_SHA`/`DEPLOYED_AT`
+   atomically as part of the deploy action itself; `GET /version` added.
+   Verified: `/version` in production now returns the exact HEAD sha.
+3. **Fail-closed startup preflight** — `services/api/src/preflight.ts`.
+   Every other degradation path in this API is deliberately fail-*open* (the
+   embedder falls back to lexical-only); citation correctness is the one
+   thing that must not survive silently broken. Boots refuse if the qlang
+   parser, required tables/columns/index, or the JS/SQL citation-key
+   normalisation pair have drifted. Verified against live production schema
+   before shipping — the first draft guessed two column names wrong and
+   would have hard-failed every future boot; caught before it shipped.
+4. **Judgment-detail live probes** — `services/harness/src/deployed-judgment-
+   safety.ts`, extending the existing `/search` probe pattern to
+   `GET /judgments/:id`: citationless judgments never fabricate a citation,
+   overruled judgments never report a stale status. Both PASS against
+   production today.
+
+Deferred, recorded, not forgotten: `generated_holding` (DeepSeek, migration
+0033 exists, unwired), `citesJudgmentId` (RCC bus 0028/0032, P2),
+statute point-in-time/concordance-quality (RCC bus 0032, P3, needs a source
+before an API). Branch protection, worktree separation, and a hidden
+adversarial benchmark are `docs/FOUNDER_QUEUE.md` items — none block P0.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
@@ -349,6 +749,34 @@ and Q1.4 cannot start until they are answered.
    Extraction is 4.2 days; embedding is the real bill. The alternative is a
    filtered subset — `order_type` labels judgments for the four courts that
    publish it, length and structure for the other twenty-one.
+
+> **BOTH REFRAMED 11 Aug 2026. Read `docs/CORPUS_GAP_PLAN.md` before acting on
+> either — the second one was costed wrong by everyone, including this lane.**
+>
+> **(1) has narrowed.** From 2023 the High Courts print a **neutral citation
+> inside the judgment text** (`2023:DHC:2720`, `2023:KHC-D:1`), so those years
+> need no metadata column to be citable. The extractor now has a pattern for the
+> form. Pre-2023 remains searchable-not-citable. The question is now *"ingest
+> 2023+ where citability is solved, or the whole decade behind honest
+> coverage"* — still the founder's, but a smaller question.
+>
+> **(2) was the wrong number.** GPU-hours are the cost of *creating* embeddings.
+> **The binding constraint is that they would not fit.** Measured on our own
+> database: `judgment_chunks_embedding_hnsw` is **4.7 GB for 616,197 vectors**;
+> `judgment_chunks` is **9.3 GB against 1.5 GB of judgments**, so **embeddings
+> are 7.2× the size of their text**. High Courts scale to **~41M vectors,
+> ~490 GB, wanting RAM**, against an **11 GB** database — and pgvector is
+> documented to stop scaling around **5–10M** vectors, four times below that.
+>
+> **And the gain is 0.3 points.** BM25 **37.1%** vs dense **36.8%** on legal
+> passage retrieval. **The plan is text first, no embeddings, lexical search —
+> then embed only what the citation pass proves is cited.** Only **15,218 of our
+> 38,341** judgments are cited by anything at all. `FOUNDER_QUEUE.md`
+> **FQ-CORPUS** carries the one yes/no this needs.
+>
+> **The third reason we hold 38,341, which was nobody's decision:** the loader
+> does not exist. `upsertJudgments` is generic and resumable and **only the
+> Supreme Court CLI calls it.** `hc-extract.ts` measures; it does not load.
 
 **Related and already in the queue file:** `FOUNDER_QUEUE.md` **FQ-EL1**
 (eLegalix, Allahabad High Court — *"works, but needs your call first"*). Allahabad
