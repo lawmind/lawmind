@@ -351,6 +351,17 @@ export const judgments = pgTable(
     fullTextTsv: tsvector('full_text_tsv').generatedAlwaysAs(
       sql`to_tsvector('english', "full_text")`,
     ),
+    // sha256 of full_text. Two rows sharing a hash are the same text under two
+    // different source_urls — source_url uniqueness cannot catch that.
+    // Migration 0031. NULL means not yet computed, not "no duplicate".
+    contentHash: text('content_hash'),
+    // The same measured proxy as judgment_chunks.textQuality, at the judgment
+    // level. Never accuracy — visible damage only. Migration 0031.
+    textQuality: numeric('text_quality', { precision: 4, scale: 3 }),
+    // Verbatim from the source's own order_type column, where the source
+    // publishes one. Never classified, never guessed — DOMAIN_TRUTH.md.
+    // Migration 0031.
+    sourceDocumentType: text('source_document_type'),
   },
   (t) => [
     index('judgments_full_text_idx').using('gin', t.fullTextTsv),
@@ -359,6 +370,8 @@ export const judgments = pgTable(
     // Partial: finding the tiered-out rows is the whole point, and the NULLs
     // are the majority for as long as Tier 1 exists.
     index('judgments_storage_key_idx').on(t.storageKey).where(sql`storage_key IS NOT NULL`),
+    // Partial: a dedup lookup is the only query this serves.
+    index('judgments_content_hash_idx').on(t.contentHash).where(sql`content_hash IS NOT NULL`),
     // Ingest resumability, enforced by the database rather than by application
     // code: re-running a killed ingest must not duplicate. `source_url` is the
     // natural key of a judgment at its source (one canonical document per URL).

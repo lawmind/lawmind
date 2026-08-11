@@ -78,6 +78,48 @@ const STEPS = [
   // only when a test hit real Postgres. TypeScript cannot catch it: a SQL
   // string is a string. Mechanical, therefore a gate.
   ['schema truth', 'node', ['scripts/check-schema-truth.mjs']],
+  // ───────────────────────────────────────────────────────────────────────────
+  // WIRED 11 Aug 2026, and both were RED the moment they were
+  // ───────────────────────────────────────────────────────────────────────────
+  //
+  // These two guards existed for days and ran nowhere — not here, not in
+  // `.github/workflows/ci.yml`, not in any test suite. Running them for the
+  // first time found two real defects, which is the whole argument for wiring
+  // them: a guard nobody runs is a guard that is not a guard.
+  //
+  // **They are added knowing `ci:local` goes red.** That is the honest state and
+  // the alternative is worse — a green gate that has stopped looking at two of
+  // the things it was written to look at. `CURRENT_PLAN.md` §Q1.10 and §Q1.11
+  // carry both fixes; neither is loosened to go green.
+  //
+  // Amber: the reserved colour. It means THE LAW HAS MOVED and nothing else, and
+  // its power comes entirely from being the only place it appears.
+  ['amber reservation', 'node', ['scripts/check-amber-reservation.mjs']],
+  // Alerts: `alert_kind` has two values and PD-5/PD-6 promise four. The app
+  // persists switches for notifications the system cannot produce, and the
+  // advocate finds out by missing a hearing.
+  ['alert coverage', 'node', ['scripts/check-alert-coverage.mjs']],
+  // ───────────────────────────────────────────────────────────────────────────
+  // WIRED 11 Aug 2026 — `docs/ai/tasks/001-p0-citation-query-safety.md`
+  // ───────────────────────────────────────────────────────────────────────────
+  //
+  // Every step above runs against the scratch database THIS SCRIPT JUST CREATED
+  // — none of them, and no gate this project has ever run, calls the actually
+  // DEPLOYED service. That gap is what let a citation-shaped query fall through
+  // to semantic search in production for three days after the fix was already
+  // on `origin/main`. This step calls `https://api-production-1c0b4.up.railway.app`
+  // over plain HTTP — no database, no scratch schema, nothing this script
+  // provisions — and fails if a citation that cannot exist returns a result, if
+  // a real citation resolves to a different case, or if a `cite:` query answers
+  // with no `parsed` field at all.
+  //
+  // **It is added knowing `ci:local` goes red**, exactly as the two guards
+  // above were. The production defect is real and current; a gate that reports
+  // green while it is live would be lying about the one thing this project
+  // cannot lie about. It goes green the moment the Railway deploy carries the
+  // fix already on `origin/main` — see `docs/ai/tasks/001-p0-citation-query-safety.md`
+  // §BLOCKED. Point it at a different build with `PROBE_BASE_URL=...`.
+  ['citation safety probe (deployed)', 'pnpm', ['citation-safety-probe']],
 ];
 
 /**

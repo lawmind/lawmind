@@ -41,14 +41,17 @@ afterEach(() => {
 const REAL_KEYS = {
   openRouter: process.env['OPENROUTER_API_KEY'],
   anthropic: process.env['ANTHROPIC_API_KEY'],
+  inferx: process.env['INFERX_API_KEY'],
 };
 before(() => {
   delete process.env['OPENROUTER_API_KEY'];
   delete process.env['ANTHROPIC_API_KEY'];
+  delete process.env['INFERX_API_KEY'];
 });
 after(() => {
   if (REAL_KEYS.openRouter !== undefined) process.env['OPENROUTER_API_KEY'] = REAL_KEYS.openRouter;
   if (REAL_KEYS.anthropic !== undefined) process.env['ANTHROPIC_API_KEY'] = REAL_KEYS.anthropic;
+  if (REAL_KEYS.inferx !== undefined) process.env['INFERX_API_KEY'] = REAL_KEYS.inferx;
 });
 
 test('a refused route sends nothing and writes NO ledger row', async () => {
@@ -169,6 +172,78 @@ test('a missing key refuses honestly rather than pretending', async () => {
   assert.ok(!res.ok);
   assert.match(res.reason, /No API key/);
   assert.equal(rows.length, 0);
+});
+
+test('a search call prefers inferx over OpenRouter when both keys are present', async () => {
+  const { sql, rows } = fakeSql();
+  const calledUrls: string[] = [];
+  const res = await callModel(
+    sql,
+    { dataClass: 'public', feature: 'search', prompt: 'x', userId: null },
+    {
+      openRouterKey: 'or-key',
+      inferxKey: 'ix-key',
+      fetchImpl: (async (url: unknown) => {
+        calledUrls.push(String(url));
+        return new Response(
+          JSON.stringify({ choices: [{ message: { content: 'hi' } }], usage: { prompt_tokens: 1, completion_tokens: 1 } }),
+          { status: 200 },
+        );
+      }) as unknown as typeof fetch,
+    },
+  );
+  assert.ok(res.ok);
+  assert.equal(calledUrls.length, 1);
+  assert.match(calledUrls[0]!, /inferx\.net/, 'inferx was not preferred over OpenRouter');
+  assert.equal(res.costUsd, 0, 'the free grant must never be billed');
+  // The recorded model stays the logical one routeCall chose — inferx is a
+  // delivery detail, not a different model.
+  assert.ok(String(rows[0]![2]).includes('deepseek'));
+});
+
+test('falls back to OpenRouter when no inferx key is configured', async () => {
+  const { sql } = fakeSql();
+  const calledUrls: string[] = [];
+  const res = await callModel(
+    sql,
+    { dataClass: 'public', feature: 'search', prompt: 'x', userId: null },
+    {
+      openRouterKey: 'or-key',
+      inferxKey: undefined,
+      fetchImpl: (async (url: unknown) => {
+        calledUrls.push(String(url));
+        return new Response(
+          JSON.stringify({ choices: [{ message: { content: 'hi' } }], usage: { prompt_tokens: 1, completion_tokens: 1, cost: 0.001 } }),
+          { status: 200 },
+        );
+      }) as unknown as typeof fetch,
+    },
+  );
+  assert.ok(res.ok);
+  assert.match(calledUrls[0]!, /openrouter\.ai/);
+  assert.equal(res.costUsd, 0.001);
+});
+
+test('inferx is never used for a model other than DeepSeek V4 Flash', async () => {
+  // Drafting routes to Claude Sonnet via ANTHROPIC_DRAFTING_MODEL — an inferx
+  // key present must not redirect an Anthropic-routed call anywhere near it.
+  process.env['ANTHROPIC_DRAFTING_MODEL'] = 'claude-sonnet-4-6-test';
+  const { sql } = fakeSql();
+  const calledUrls: string[] = [];
+  const res = await callModel(
+    sql,
+    { dataClass: 'public', feature: 'draft', prompt: 'x', userId: null },
+    {
+      anthropicKey: 'a-key',
+      inferxKey: 'ix-key',
+      fetchImpl: (async (url: unknown) => {
+        calledUrls.push(String(url));
+        return new Response(JSON.stringify({ content: [{ text: 'ok' }], usage: {} }), { status: 200 });
+      }) as unknown as typeof fetch,
+    },
+  );
+  assert.ok(res.ok);
+  assert.match(calledUrls[0]!, /anthropic\.com/);
 });
 
 test('sensitive data is refused even WITH a DPA, because no pseudonymiser exists', async () => {

@@ -73,6 +73,11 @@ jobs:
       # did not, and all three typechecked clean before failing on real
       # Postgres. Runs before install: needs neither deps nor a database.
       - run: node scripts/check-schema-truth.mjs
+      # PD-5 and PD-6 promise four alert kinds; `alert_kind` holds two. The app
+      # persists switches for notifications the system cannot produce. Added
+      # 11 Aug 2026 after this guard was found running NOWHERE — not here, not in
+      # ci-local, not in a test suite — and red the first time anyone ran it.
+      - run: node scripts/check-alert-coverage.mjs
 
       # apps/** is RCC's lane and still carries npm lockfiles; installing it here
       # would make this job red for reasons outside this lane. Flagged, not converged.
@@ -92,6 +97,18 @@ jobs:
       - run: pnpm --filter @lawmind/db migrate
 
       - run: pnpm --filter "./services/*" --filter "./packages/*" test
+
+      # docs/ai/tasks/001-p0-citation-query-safety.md — the gate every other
+      # step in this job cannot provide: it calls the DEPLOYED service over
+      # plain HTTP, never the scratch Postgres container above. Added 11 Aug
+      # 2026 after a citation-shaped query fell through to semantic search in
+      # production for three days while every other check here stayed green,
+      # because none of them had ever looked at the running service — a
+      # citation that cannot exist returned five real Supreme Court
+      # authorities and nothing said the query was not understood. Defaults to
+      # production (`PROBE_BASE_URL` to point elsewhere) and is deliberately
+      # red until the fix already on `origin/main` is deployed there.
+      - run: pnpm citation-safety-probe
 
   design-rules:
     name: design rules
@@ -113,3 +130,10 @@ jobs:
       # The inventory against the filesystem. A table nobody checks is a table
       # that lies, and this one lied in both directions inside a week.
       - run: node scripts/check-design-renders.mjs design/screens
+      # Amber #B4690E means THE LAW HAS MOVED and nothing else. Its power comes
+      # entirely from being the only place the colour appears — once it means two
+      # things it means nothing, and the dilution is invisible until it costs
+      # somebody a case. Added 11 Aug 2026, red on two files in apps/** the first
+      # time it was run. The stale-overruled threshold is zero; this is the
+      # colour that carries it.
+      - run: node scripts/check-amber-reservation.mjs

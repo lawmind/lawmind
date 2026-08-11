@@ -128,6 +128,109 @@ An unverified citation may be shown. It may never be shown as confirmed, and it
 may never be silently removed. `set_aside` additionally **disables add-to-matter**
 — the only case where Lawmind refuses to let an authority be used.
 
+## The fourth concern: can this judgment be cited at all — binding, added 11 Aug 2026
+
+**Task 002.** Added after the High Court ingest (40,980 rows, S1) proved the
+corpus can hold a judgment with **no neutral citation and no reporter
+citation at all** — every Supreme Court judgment held one for the life of the
+project, so nothing in the product had ever needed to ask this question.
+RCC's audit (bus 0019, reproduced by rendering the actual client, not by
+reading JSX): such a judgment currently renders **totally unmarked** — a
+verified, good-law Supreme Court authority and a Patna High Court order we
+hold no citation for are visually identical. **In this product unmarked
+means verified-and-fine**, so the product was asserting "safe to file" about
+something that cannot be filed, through the one channel — silence — that the
+harness does not watch.
+
+**Citability is a fourth, independent question, not a variant of any of the
+three above.** A judgment can be verified (Tier 1 — we hold the text, which
+is true) and simultaneously uncitable (we hold no printed citation to write
+in a petition). Verification asks *"does this authority exist"*; citability
+asks a different question a court asks separately: *"what do I write to
+refer to it."* Folding this into `verification_state` would make the same
+mistake `overruled_status` already corrected once.
+
+**Definition, derived, never stored:**
+
+> `citable = false` **iff** `neutralCitation === null AND
+> reporterCitations.length === 0`.
+
+No new column, no new wire field. `neutral_citation` and `reporter_citations`
+are already correct and already nullable/empty-capable server-side on every
+row (`SCHEMA_TRUTH.md` §judgments) and already carried on every payload that
+carries a citation (`API_CONTRACTS.md` §Search). This is the same
+architecture the other three concerns already use: **the server sends the
+raw truthful fields, the client derives the render state — never the
+reverse.** `citation/renderState.ts` gains a fourth input and a fourth output
+branch; it does not gain a new field to fetch.
+
+### Render rule — an unmissable mark, independent of the other three
+
+| Condition | Renders |
+| --- | --- |
+| `citable = false` | an unmissable mark — **"No citation on file — cannot be referenced in a filing"** |
+
+This mark is **additive to, and independent of,** the existing three-row
+table above: a citation-less judgment that is also `unverified` shows both
+marks; one that is also `overruled_status != none` shows both. Citability is
+checked whether or not the other three pass, exactly as `overruled_status`
+already is. It does **not** replace the silent-when-verified rule for the
+three existing concerns — a citable, verified, good-law judgment still
+renders nothing, unchanged.
+
+### Severity — warn, not block. Decided directly by the founder, 11 Aug 2026
+
+The alternative considered and rejected: treat it like `set_aside` and
+**disable add-to-matter.** Rejected because the reason is different — a
+`set_aside` judgment is bad law; a citation-less judgment may be perfectly
+good law we simply cannot yet write a pin cite for, and an advocate has
+legitimate uses for it (background reading, argument context, a case whose
+facts and reasoning matter even before its citation is confirmed). **Task
+002 §9 of the LCC autonomous-execution charter states the same principle
+directly: "absence of citation ≠ absence of legal evidence."**
+
+Binding as a result:
+
+- **Add-to-matter stays enabled.** The mark above renders; nothing is
+  disabled. This is the one place citability differs from `set_aside`'s
+  treatment, and the difference is deliberate, not an oversight.
+- **`PrecedentPanel` (draft suggestions) stays enabled**, carrying the same
+  mark inline. An uncitable judgment is not excluded from suggestions the way
+  `set_aside` judgments are — RCC's audit flagged the current unmarked
+  offering as the danger, not the offering itself.
+- The judgment **stays searchable** and **stays in the corpus** — task 002 §9:
+  *"keep the judgment searchable... preserve its primary-source evidence...
+  preserve case number, parties, court, date, source URL and paragraph
+  information where available."* Citability changes what is rendered, never
+  what is retrieved.
+
+### Copy — never a fabricated citation, never the literal string `null`
+
+`DOMAIN_TRUTH.md` §Citation formats, quoted rather than paraphrased: **"Never
+construct a citation string by pattern — render only what is stored."** This
+already settles what copy must do; it is not a new rule invented for task
+002, only the first case that makes it visible. Where `neutralCitation` is
+null, the citation segment is **omitted, not fabricated and not rendered as
+the string `null`.** A copy of a citation-less judgment carries the case
+title (and court/date, where the copy surface already includes them) and
+nothing purporting to be a citation. `citation_copies` still logs the copy
+— the mark on screen told the advocate what they were copying; the record
+that lets Lawmind warn them later is unaffected.
+
+### What this is not
+
+Not a new verification tier, not a new `citation_checks` value, not a
+database migration. It is a render rule keyed on two fields the server has
+always sent correctly. The defect was entirely client-side: `contract.ts`
+declared `neutralCitation: string` non-nullable on `SearchResult` ·
+`JudgmentDetail` · `PointInTimeAuthority` · `Treatment` · `GraphNode` ·
+`CounterAuthority`, so the TypeScript compiler could not have caught what
+`citationRender` never checked. Fixing those five declarations to
+`string | null` is expected to turn every uninstrumented interpolation site
+into a compile error — RCC's own words, "the compile errors ARE the
+inventory" — and that is the correct outcome, not a regression to work
+around.
+
 ## Overruled status is never cached — binding
 
 **Verification is permanent. Overruledness is not.** A case that existed still

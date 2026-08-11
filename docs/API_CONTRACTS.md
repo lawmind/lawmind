@@ -68,7 +68,7 @@ endpoint.
 |---|---|
 | `GET /statutes` | BUILT |
 | `GET /statutes/sections` | BUILT |
-| `GET /corpus/coverage` | BUILT — added 11 Aug 2026 |
+| `GET /corpus/coverage` | BUILT |
 
 **Feature-parity endpoints — LCC owns · ADDED 6 Aug 2026**
 
@@ -120,7 +120,7 @@ endpoint.
 
 | endpoint | status |
 |---|---|
-| `GET /documents` | BUILT — added 11 Aug 2026 |
+| `GET /documents` | BUILT |
 | `GET /documents/types` | BUILT |
 | `GET /documents/:id` | BUILT |
 | `POST /documents` | SPECCED |
@@ -252,6 +252,18 @@ POST /search
 Every field from the `judgments` row. Never from model output.
 `unverifiedReferences` is never empty-by-omission — anything the model referenced
 that no tier confirmed appears here. See `CITATION_HARNESS.md`.
+
+**`neutralCitation: string | null` · `reporterCitations: string[]` (never
+null, may be empty). Stated explicitly 11 Aug 2026 — this contract was
+silent on nullability and a client type declared both non-nullable for the
+life of the project**, which never once produced a type error because every
+Supreme Court judgment held one. It stopped being harmless the moment the
+High Court corpus landed: **40,980 rows hold neither.** `neutralCitation ===
+null && reporterCitations.length === 0` is the exact, sole definition of
+**citable = false** — task 002, `CITATION_HARNESS.md` §The fourth concern.
+This is the same shape as every other citation field on the wire: the server
+sends the raw truthful value, the client derives the render state from it —
+never the reverse.
 
 **Three independent fields, not one state.** `verificationState` answers whether
 the authority exists; `verifiedBySource` answers who confirmed it and drives the

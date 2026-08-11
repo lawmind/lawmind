@@ -1,6 +1,23 @@
+import { createHash } from 'node:crypto';
+
 import type { Sql } from 'postgres';
 
+import { textQuality } from '@lawmind/embed';
+
 import type { JudgmentRecord } from './sci.ts';
+
+/**
+ * Provenance, computed once here rather than by every loader — `hc-load.ts`
+ * and `sci.ts` both produce a `JudgmentRecord` and both write through this
+ * one function, so this is the single place both get it for free.
+ *
+ * `docs/SCHEMA_TRUTH.md` §judgments: `content_hash` is sha256 of `full_text`,
+ * `text_quality` is the same measured proxy `judgment_chunks` already
+ * carries. Migration `0031`.
+ */
+export function contentHash(fullText: string): string {
+  return createHash('sha256').update(fullText, 'utf8').digest('hex');
+}
 
 export type LoadResult = { inserted: number; updated: number };
 
@@ -54,6 +71,14 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
     source_url: r.sourceUrl,
     case_number: r.caseNumber,
     case_type: r.caseType,
+    // Migration 0031. Computed here, not by the caller — every loader gets it
+    // for free, and a loader that forgets to pass it cannot ship a null by
+    // accident the way an optional field on JudgmentRecord could.
+    content_hash: contentHash(r.fullText),
+    text_quality: textQuality(r.fullText),
+    // Never invented — undefined on `JudgmentRecord` (SC has no such field)
+    // resolves to `null` here rather than an empty string.
+    source_document_type: r.sourceDocumentType ?? null,
   }));
 
   // Columns are inferred from the object keys — every row is built by the same
@@ -61,16 +86,19 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
   const returned = await sql<{ inserted: boolean }[]>`
     INSERT INTO judgments ${sql(rows)}
     ON CONFLICT (source_url) DO UPDATE SET
-      case_title         = EXCLUDED.case_title,
-      neutral_citation   = EXCLUDED.neutral_citation,
-      reporter_citations = EXCLUDED.reporter_citations,
-      court              = EXCLUDED.court,
-      bench              = EXCLUDED.bench,
-      judgment_date      = EXCLUDED.judgment_date,
-      full_text          = EXCLUDED.full_text,
-      language           = EXCLUDED.language,
-      case_number        = EXCLUDED.case_number,
-      case_type          = EXCLUDED.case_type
+      case_title            = EXCLUDED.case_title,
+      neutral_citation      = EXCLUDED.neutral_citation,
+      reporter_citations    = EXCLUDED.reporter_citations,
+      court                 = EXCLUDED.court,
+      bench                 = EXCLUDED.bench,
+      judgment_date         = EXCLUDED.judgment_date,
+      full_text             = EXCLUDED.full_text,
+      language              = EXCLUDED.language,
+      case_number           = EXCLUDED.case_number,
+      case_type             = EXCLUDED.case_type,
+      content_hash          = EXCLUDED.content_hash,
+      text_quality          = EXCLUDED.text_quality,
+      source_document_type  = EXCLUDED.source_document_type
     RETURNING (xmax = 0) AS inserted
   `;
 

@@ -18,7 +18,13 @@
  */
 import type { Sql } from 'postgres';
 
-import { type DataClass, type Feature, assertOneDocument, routeCall } from './route.ts';
+import {
+  DEEPSEEK_V4_FLASH,
+  type DataClass,
+  type Feature,
+  assertOneDocument,
+  routeCall,
+} from './route.ts';
 
 export type CallRequest = {
   readonly dataClass: DataClass;
@@ -41,12 +47,35 @@ export type CallDeps = {
   readonly fetchImpl?: typeof fetch | undefined;
   readonly openRouterKey?: string | undefined;
   readonly anthropicKey?: string | undefined;
+  readonly inferxKey?: string | undefined;
   readonly now?: (() => number) | undefined;
 };
 
 /** Anthropic model ids are bare; OpenRouter ids carry a `vendor/` prefix. */
 function isOpenRouter(model: string): boolean {
   return model.includes('/');
+}
+
+/**
+ * inferx.net — an OpenAI-compatible endpoint carrying a free DeepSeek V4 Flash
+ * token grant, given to the founder 11 Aug 2026. Preferred over OpenRouter for
+ * exactly that one model, and only while a key is configured: this must never
+ * become a second, unverified path for anything else, and the grant is a free
+ * pool that could run out or change terms, so OpenRouter stays the fallback
+ * rather than being replaced.
+ *
+ * **Response shape verified by a live call, not assumed** — `curl` against
+ * `${INFERX_BASE_URL}/chat/completions` on 11 Aug 2026 returned the same
+ * `choices[0].message.content` / `usage.prompt_tokens` / `usage.completion_tokens`
+ * shape already parsed for OpenRouter below, so no new parsing branch is
+ * needed — only a new URL, key and always-zero cost (the grant is free).
+ */
+const INFERX_BASE_URL = process.env['INFERX_BASE_URL'] ?? 'https://model.inferx.net/endpoints/v1';
+/** inferx.net's own bare model name — not the OpenRouter `vendor/model` id. */
+const INFERX_MODEL = process.env['INFERX_MODEL'] ?? 'deepseek-v4-flash';
+
+function useInferx(model: string, key: string | undefined): boolean {
+  return model === DEEPSEEK_V4_FLASH && Boolean(key);
 }
 
 /**
@@ -130,10 +159,14 @@ export async function callModel(
   const doFetch = deps.fetchImpl ?? globalThis.fetch;
   const started = now();
 
-  const openRouter = isOpenRouter(route.model);
-  const key = openRouter
-    ? (deps.openRouterKey ?? process.env['OPENROUTER_API_KEY'])
-    : (deps.anthropicKey ?? process.env['ANTHROPIC_API_KEY']);
+  const inferxKey = deps.inferxKey ?? process.env['INFERX_API_KEY'];
+  const inferx = useInferx(route.model, inferxKey);
+  const openRouter = !inferx && isOpenRouter(route.model);
+  const key = inferx
+    ? inferxKey
+    : openRouter
+      ? (deps.openRouterKey ?? process.env['OPENROUTER_API_KEY'])
+      : (deps.anthropicKey ?? process.env['ANTHROPIC_API_KEY']);
   if (!key) {
     return {
       ok: false,
@@ -148,41 +181,53 @@ export async function callModel(
   let failure: string | null = null;
 
   try {
-    const res = openRouter
-      ? await doFetch('https://openrouter.ai/api/v1/chat/completions', {
+    const res = inferx
+      ? await doFetch(`${INFERX_BASE_URL}/chat/completions`, {
           method: 'POST',
           headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
           body: JSON.stringify({
-            model: route.model,
+            model: INFERX_MODEL,
             max_tokens: 2000,
             messages: [{ role: 'user', content: req.prompt }],
           }),
         })
-      : await doFetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'x-api-key': key,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: route.model,
-            max_tokens: 2000,
-            messages: [{ role: 'user', content: req.prompt }],
-          }),
-        });
+      : openRouter
+        ? await doFetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+            body: JSON.stringify({
+              model: route.model,
+              max_tokens: 2000,
+              messages: [{ role: 'user', content: req.prompt }],
+            }),
+          })
+        : await doFetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'x-api-key': key,
+              'anthropic-version': '2023-06-01',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: route.model,
+              max_tokens: 2000,
+              messages: [{ role: 'user', content: req.prompt }],
+            }),
+          });
 
     if (!res.ok) {
       failure = `http ${res.status}`;
     } else {
       const body = (await res.json()) as Record<string, unknown>;
-      if (openRouter) {
+      if (inferx || openRouter) {
         const choices = body['choices'] as { message?: { content?: string } }[] | undefined;
         const usage = body['usage'] as Record<string, number> | undefined;
         text = choices?.[0]?.message?.content ?? '';
         inputTokens = usage?.['prompt_tokens'] ?? 0;
         outputTokens = usage?.['completion_tokens'] ?? 0;
-        costUsd = usage?.['cost'] ?? 0;
+        // inferx.net's free grant carries no per-call cost; OpenRouter reports
+        // its own in `usage.cost` and that field is simply absent here.
+        costUsd = inferx ? 0 : (usage?.['cost'] ?? 0);
       } else {
         const content = body['content'] as { text?: string }[] | undefined;
         const usage = body['usage'] as Record<string, number> | undefined;

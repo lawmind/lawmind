@@ -19,10 +19,12 @@
     "resolve": "tsx src/resolve-cli.ts",
     "hc:yield": "tsx src/harvest/hc-yield-cli.ts",
     "hc:citations": "tsx src/harvest/hc-citations-cli.ts",
-    "repealed": "tsx src/repealed-acts-cli.ts"
+    "repealed": "tsx src/repealed-acts-cli.ts",
+    "backfill:provenance": "tsx src/backfill-provenance.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",
+    "@lawmind/embed": "workspace:*",
     "drizzle-orm": "0.45.2",
     "hyparquet": "1.27.1",
     "postgres": "3.4.9",

@@ -133,7 +133,38 @@ returns less.
 `full_text_tsv` tsvector GENERATED ALWAYS AS `to_tsvector('english', full_text)`
 STORED — added S1, and the reason is a measured one, not a preference.
 
-Index: gin on `full_text_tsv`; btree on judgment_date, court.
+`content_hash` text null — sha256 of `full_text`, added migration `0031`,
+11 Aug 2026. `source_url` uniqueness catches a re-fetch of the same document;
+it cannot catch the same underlying judgment arriving under two different
+URLs, which `HC_CORPUS_SURVEY.md` found is a real possibility — the AWS High
+Court bucket's two metadata variants (`metadata.parquet` and
+`metadata-mobile.parquet`) share **zero CNRs**, so nothing rules out both
+eventually holding the same text. Two rows sharing a hash are the same text;
+which one is canonical is still an ingest-design decision, not something this
+column answers. **Null means not yet computed**, not "no duplicate" —
+`services/ingest/src/backfill-provenance.ts` computes it for existing rows
+over text already in Postgres, no re-fetch required; new writes get it from
+`upsertJudgments` (`services/ingest/src/load.ts`) going forward.
+
+`text_quality` numeric(4,3) null — the same measured proxy already documented
+under `judgment_chunks` below, applied at the judgment level. Added alongside
+`content_hash`, same migration, same reasoning: a proxy for visible
+OCR/extraction damage, never accuracy. Computed by
+`services/embed/src/quality.ts`'s `textQuality()` — the existing function,
+not a new metric.
+
+`source_document_type` text null — verbatim from the source's own
+`order_type` column where the source publishes one (today: the AWS bucket's
+mobile variant only, 4 of 25 High Courts — `HC_CORPUS_SURVEY.md` §2). **Never
+classified, never guessed.** `View Judgement/Order` — an ambiguous label
+covering 17.89% of the labelled rows — is stored exactly as printed rather
+than resolved to `judgment` or `order`; resolving that ambiguity needs the
+PDF text, which this column does not read. Null on every Supreme Court row
+and on the 21 High Courts that publish no such column — an absent label, not
+a negative claim about the document.
+
+Index: gin on `full_text_tsv`; btree on judgment_date, court; partial btree on
+`content_hash` where not null.
 Unique: `source_url`.
 
 **Why the tsvector is stored rather than computed in an expression index.**
@@ -209,7 +240,10 @@ Unique: (judgment_id, chunk_index).
 
 ## judgment_citations
 
-Added S1, 6 Aug 2026. **One row per citation found in a judgment's text.**
+Added S1, 6 Aug 2026. **One row per citation found in a judgment's text — plus
+one SENTINEL row per judgment that contains no citation at all.** Documented
+11 Aug 2026, after that second half went unwritten for five days and was reported
+as an extraction defect on the strength of this line alone.
 
 `id` uuid pk · `citing_judgment_id` uuid fk→judgments cascade ·
 `cited_judgment_id` uuid null fk→judgments **set null** — null when the cited
@@ -234,6 +268,37 @@ condition in its blind-spots section: a corpus that never learned an overruling
 reads 0.0% stale while advocates see stale badges, because both sides of the
 comparison agree. The edges have to be extracted before any of the overruled
 machinery has anything to act on.
+
+### The SENTINEL row — `citation_text = ''` — is not a citation
+
+`citations-cli.ts` writes **one row with an empty `citation_text` and an empty
+`normalised_citation`** for a judgment in which the extractor found nothing. It
+exists so the resumable pass — *"skip any judgment that already has rows"* — does
+not re-scan the same judgment on every future run. Without it, the judgments that
+cite nothing would be re-read forever.
+
+**Measured against production, not assumed:** 13,834 sentinel rows over **13,834
+distinct judgments**, every one with `char_offset = 0`, `relationship = 'cites'`
+and `cited_judgment_id` null, and **zero judgments carrying a sentinel beside a
+real edge**. One per judgment is enforced by the unique index — two sentinels for
+the same judgment would collide on (`citing_judgment_id`, `''`).
+
+**Two consequences, and both have already been got wrong once.**
+
+1. **They are excluded from any denominator about citations.** Counting them as
+   unresolved citations understated resolution as **40.4%** when the figure over
+   real citation edges was **43.5%** (77,600 / 178,363). `resolve-cli` now prints
+   the denominator beside the percentage for exactly this reason.
+2. **They must be cleared when a judgment stops citing nothing.** A widened
+   extractor turns some of them into judgments with real edges, and a sentinel
+   left beside a real edge breaks the invariant the resume query stands on.
+   `citations-cli --rescan` deletes it in the same transaction that inserts the
+   edges.
+
+**No advocate-facing surface can render one.** Every read filters on
+`cited_judgment_id` being non-null or equal to a specific id, and a sentinel is
+always null — checked across `judgments/treatment.ts`, `judgments/as-at.ts`,
+`search/graph-expand.ts` and `citations/propagate-treatment.ts`.
 
 ### `cited_judgment_id` is nullable, and that is the point
 

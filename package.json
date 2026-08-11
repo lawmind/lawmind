@@ -16,6 +16,7 @@
     "check:design": "node scripts/check-design-rules.mjs design/screens",
     "ci:local": "node scripts/ci-local.mjs",
     "harness": "pnpm --filter @lawmind/harness harness",
+    "citation-safety-probe": "pnpm --filter @lawmind/harness deployed-safety",
     "lane:send": "node scripts/lane-send.mjs",
     "lane:inbox": "node scripts/lane-inbox.mjs"
   },

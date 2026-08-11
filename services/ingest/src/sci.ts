@@ -57,6 +57,14 @@ export type JudgmentRecord = {
   caseNumber: string | null;
   /** Derived from `caseNumber` only. Null where it states no side. */
   caseType: 'criminal' | 'civil' | null;
+  /**
+   * Verbatim from the source's own document-type label, where the source
+   * publishes one. Optional because the Supreme Court source never carries
+   * one; `undefined` and `null` are treated identically by the loader
+   * (`load.ts`) and both land as a database NULL. Never classified, never
+   * guessed — `docs/SCHEMA_TRUTH.md` §judgments `source_document_type`.
+   */
+  sourceDocumentType?: string | null;
 };
 
 export function metadataUrl(year: number): string {

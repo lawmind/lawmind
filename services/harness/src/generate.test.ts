@@ -98,19 +98,61 @@ test('without a key the generator THROWS rather than returning an empty answer',
   // That is the same family as the defect this package already records —
   // `run-cli.ts` reporting 0, a PASS, the moment `OPENROUTER_API_KEY` merely
   // existed. A test whose result depends on a developer's `.env` is not a test.
+  // Same reasoning extends to INFERX_API_KEY: it is now also consulted via
+  // the environment when `inferxKey` is not passed, so a machine with a real
+  // one configured (this one, since 11 Aug) would sail past the refusal the
+  // same way a real OPENROUTER_API_KEY once did.
   const saved = process.env['OPENROUTER_API_KEY'];
+  const savedInferx = process.env['INFERX_API_KEY'];
   delete process.env['OPENROUTER_API_KEY'];
+  delete process.env['INFERX_API_KEY'];
   try {
     await assert.rejects(
       generate('q', EVIDENCE, {
         apiKey: undefined,
+        inferxKey: undefined,
         fetchImpl: (async () => new Response('')) as never,
       }),
       /refuses rather than returning/,
     );
   } finally {
     if (saved !== undefined) process.env['OPENROUTER_API_KEY'] = saved;
+    if (savedInferx !== undefined) process.env['INFERX_API_KEY'] = savedInferx;
   }
+});
+
+test('inferx is preferred over OpenRouter for GENERATION_MODEL when both keys exist', async () => {
+  const calledUrls: string[] = [];
+  const fetchImpl = (async (url: unknown) => {
+    calledUrls.push(String(url));
+    return new Response(
+      JSON.stringify({ choices: [{ message: { content: '[E1]' } }], usage: { prompt_tokens: 1, completion_tokens: 1 } }),
+      { status: 200 },
+    );
+  }) as unknown as typeof fetch;
+
+  const g = await generate('q', EVIDENCE, { apiKey: 'or-key', inferxKey: 'ix-key', fetchImpl });
+  assert.match(calledUrls[0]!, /inferx\.net/);
+  assert.equal(g.usage.costUsd, 0, 'the free grant must never be billed');
+});
+
+test('a model override away from GENERATION_MODEL never routes to inferx', async () => {
+  const calledUrls: string[] = [];
+  const fetchImpl = (async (url: unknown) => {
+    calledUrls.push(String(url));
+    return new Response(
+      JSON.stringify({ choices: [{ message: { content: '[E1]' } }], usage: {} }),
+      { status: 200 },
+    );
+  }) as unknown as typeof fetch;
+
+  await generate('q', EVIDENCE, {
+    apiKey: 'or-key',
+    inferxKey: 'ix-key',
+    model: 'some/other-model',
+    fetchImpl,
+  });
+  assert.match(calledUrls[0]!, /openrouter\.ai/);
 });
 
 test('max_tokens is generous, because reasoning tokens are spent first', () => {

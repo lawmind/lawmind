@@ -182,9 +182,19 @@ function buildPrompt(question: string, evidence: readonly Evidence[]): string {
 
 export type GenerateDeps = {
   apiKey?: string | undefined;
+  inferxKey?: string | undefined;
   fetchImpl?: typeof fetch | undefined;
   model?: string | undefined;
 };
+
+/**
+ * inferx.net — the same free DeepSeek V4 Flash grant `services/api/src/llm/call.ts`
+ * prefers, given 11 Aug 2026. Preferred here for exactly the same reason: this
+ * harness path calls `GENERATION_MODEL` on every run, and the free grant means
+ * those runs stop being cost-gated. OpenRouter stays the fallback.
+ */
+const INFERX_BASE_URL = process.env['INFERX_BASE_URL'] ?? 'https://model.inferx.net/endpoints/v1';
+const INFERX_MODEL = process.env['INFERX_MODEL'] ?? 'deepseek-v4-flash';
 
 /**
  * One generation call. **Refuses honestly without a key** rather than returning
@@ -195,7 +205,10 @@ export async function generate(
   evidence: readonly Evidence[],
   deps: GenerateDeps = {},
 ): Promise<Generation> {
-  const apiKey = deps.apiKey ?? process.env['OPENROUTER_API_KEY'];
+  const model = deps.model ?? GENERATION_MODEL;
+  const inferxKey = deps.inferxKey ?? process.env['INFERX_API_KEY'];
+  const useInferx = model === GENERATION_MODEL && Boolean(inferxKey);
+  const apiKey = useInferx ? inferxKey : (deps.apiKey ?? process.env['OPENROUTER_API_KEY']);
   if (!apiKey) {
     throw new Error(
       'OPENROUTER_API_KEY is absent. The generation path refuses rather than returning ' +
@@ -204,16 +217,21 @@ export async function generate(
   }
   const doFetch = deps.fetchImpl ?? globalThis.fetch;
 
-  const res = await doFetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-    body: JSON.stringify({
-      model: deps.model ?? GENERATION_MODEL,
-      max_tokens: MAX_TOKENS,
-      temperature: 0,
-      messages: [{ role: 'user', content: buildPrompt(question, evidence) }],
-    }),
-  });
+  const res = await doFetch(
+    useInferx
+      ? `${INFERX_BASE_URL}/chat/completions`
+      : 'https://openrouter.ai/api/v1/chat/completions',
+    {
+      method: 'POST',
+      headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        model: useInferx ? INFERX_MODEL : model,
+        max_tokens: MAX_TOKENS,
+        temperature: 0,
+        messages: [{ role: 'user', content: buildPrompt(question, evidence) }],
+      }),
+    },
+  );
 
   if (!res.ok) {
     throw new Error(`generation failed: http ${res.status} ${(await res.text()).slice(0, 200)}`);
@@ -232,7 +250,8 @@ export async function generate(
     usage: {
       inputTokens: body.usage?.prompt_tokens ?? 0,
       outputTokens: body.usage?.completion_tokens ?? 0,
-      costUsd: body.usage?.cost ?? 0,
+      // inferx.net's free grant carries no per-call cost.
+      costUsd: useInferx ? 0 : (body.usage?.cost ?? 0),
     },
   };
 }
