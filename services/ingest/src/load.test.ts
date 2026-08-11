@@ -60,6 +60,7 @@ test('upsertJudgments writes content_hash, text_quality and source_document_type
     caseType: null,
     sourceDocumentType: 'View Judgement/Order',
     cnr: 'TESTCNR0000012024',
+    nativeText: true,
   };
 
   try {
@@ -73,8 +74,9 @@ test('upsertJudgments writes content_hash, text_quality and source_document_type
           text_quality: string | null;
           source_document_type: string | null;
           cnr: string | null;
+          native_text: boolean | null;
         }[]
-      >`SELECT content_hash, text_quality, source_document_type, cnr FROM judgments WHERE source_url = ${fakeUrl}`;
+      >`SELECT content_hash, text_quality, source_document_type, cnr, native_text FROM judgments WHERE source_url = ${fakeUrl}`;
 
       assert.equal(row?.content_hash, contentHash(record.fullText));
       // numeric(4,3) comes back as a string from postgres.js; clean text scores 1.000.
@@ -83,6 +85,8 @@ test('upsertJudgments writes content_hash, text_quality and source_document_type
       // Found dropped entirely until migration 0034 — present on both source
       // metadata schemas, read by neither mapper, for the whole corpus.
       assert.equal(row?.cnr, 'TESTCNR0000012024');
+      // Migration 0035 — the classifier already existed, only newly wired.
+      assert.equal(row?.native_text, true);
 
       throw new Rollback({ ok: true });
     });

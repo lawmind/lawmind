@@ -374,6 +374,18 @@ export const judgments = pgTable(
      * NULL rather than a fabricated value.
      */
     cnr: text('cnr'),
+    /**
+     * Whether the source PDF had a usable text layer, computed at fetch
+     * time from characters-extracted / page-count against a 100-char/page
+     * floor — `services/ingest/src/text.ts`'s `isNativeText`, the same
+     * classifier already proven against real High Court PDFs in the
+     * extraction-cost benchmark, only newly wired to persist. Migration
+     * `0035`. NULL means not computed — every row that predates this
+     * migration, since recovering it needs the source PDF re-fetched, not
+     * just re-read from already-stored text. Never guessed.
+     * `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
+     */
+    nativeText: boolean('native_text'),
   },
   (t) => [
     index('judgments_full_text_idx').using('gin', t.fullTextTsv),

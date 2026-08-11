@@ -154,12 +154,23 @@ describe('toJudgmentRecord', () => {
     assert.equal(r.sourceUrl, URL);
     assert.equal(r.language, 'en');
     assert.equal(r.cnr, 'BRHC011164592023');
+    // nativeText omitted here — defaults to null, asserted below.
+    assert.equal(r.nativeText, null);
   });
 
   it('is null, not undefined, when the row carries no cnr — found dropped entirely until migration 0034', () => {
     const out = toJudgmentRecord({ ...PATNA, cnr: null }, PARTS, text, URL);
     assert.ok(out.ok);
     assert.equal(out.record.cnr, null);
+  });
+
+  it('carries nativeText through when the caller supplies it', () => {
+    const withNative = toJudgmentRecord(PATNA, PARTS, text, URL, true);
+    assert.ok(withNative.ok);
+    assert.equal(withNative.record.nativeText, true);
+    const withoutNative = toJudgmentRecord(PATNA, PARTS, text, URL, false);
+    assert.ok(withoutNative.ok);
+    assert.equal(withoutNative.record.nativeText, false);
   });
 
   it('NEVER synthesises a reporter citation', () => {

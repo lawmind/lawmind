@@ -214,6 +214,7 @@ export function toJudgmentRecord(
   partitions: HcPartitions,
   text: string,
   sourceUrl: string,
+  nativeText?: boolean | null,
 ): MapOutcome {
   if (isTestFixture(partitions)) return { ok: false, reason: 'test_fixture_bench' };
   if (!row.pdf_link) return { ok: false, reason: 'no_pdf_link' };
@@ -252,6 +253,7 @@ export function toJudgmentRecord(
       caseType: caseTypeFrom(caseNumber),
       sourceDocumentType: row.order_type?.trim() || null,
       cnr: row.cnr?.trim() || null,
+      nativeText: nativeText ?? null,
     },
   };
 }

@@ -15,7 +15,7 @@ import {
   toJudgment,
   type SciMetadataRow,
 } from './sci.ts';
-import { stripUnstorable } from './text.ts';
+import { isNativeText, OCR_CHARS_PER_PAGE_FLOOR, stripUnstorable } from './text.ts';
 
 /** A row shaped exactly like the published parquet schema. */
 function row(overrides: Partial<SciMetadataRow> = {}): SciMetadataRow {
@@ -106,6 +106,13 @@ describe('toJudgment', () => {
     assert.equal(j.fullText, 'FULL TEXT');
     assert.equal(j.language, 'en');
     assert.equal(j.cnr, 'ESCR010000301950');
+    // nativeText omitted here — defaults to null, asserted below.
+    assert.equal(j.nativeText, null);
+  });
+
+  it('carries nativeText through when the caller supplies it', () => {
+    assert.equal(toJudgment(row(), 't', true).nativeText, true);
+    assert.equal(toJudgment(row(), 't', false).nativeText, false);
   });
 
   it('records a missing cnr as null, never an empty string — found dropped entirely until migration 0034', () => {
@@ -217,5 +224,36 @@ describe('stripUnstorable', () => {
 
   it('leaves ordinary text untouched', () => {
     assert.equal(stripUnstorable('Section 302 IPC'), 'Section 302 IPC');
+  });
+});
+
+describe('isNativeText', () => {
+  it('classifies a real judgment page density as native', () => {
+    // A real judgment page runs 1,500-3,000 characters — docs/ai/
+    // AWS_CORPUS_INVENTORY.md §6.
+    assert.equal(isNativeText(2000, 1), true);
+    assert.equal(isNativeText(20000, 10), true);
+  });
+
+  it('classifies a scan with no usable text layer as not native', () => {
+    assert.equal(isNativeText(50, 1), false);
+    assert.equal(isNativeText(0, 5), false);
+  });
+
+  it('is per-page, not per-document — a long scan and a short one classify the same way', () => {
+    // A 40-page scan yielding 40 characters total and a 1-page scan yielding
+    // 1 character both carry ~1 char/page — both scans, not "more text = native".
+    assert.equal(isNativeText(40, 40), false);
+    assert.equal(isNativeText(1, 1), false);
+  });
+
+  it('is exact at the floor', () => {
+    assert.equal(isNativeText(OCR_CHARS_PER_PAGE_FLOOR, 1), true);
+    assert.equal(isNativeText(OCR_CHARS_PER_PAGE_FLOOR - 1, 1), false);
+  });
+
+  it('treats a zero/negative page count as one page, never divides by zero', () => {
+    assert.equal(isNativeText(50, 0), false);
+    assert.doesNotThrow(() => isNativeText(50, 0));
   });
 });

@@ -12,7 +12,16 @@
  */
 import { extractText, getDocumentProxy } from 'unpdf';
 
-import { normaliseWhitespace } from '../text.ts';
+import { normaliseWhitespace, OCR_CHARS_PER_PAGE_FLOOR } from '../text.ts';
+
+/**
+ * Re-exported, not redefined — `docs/ai/AWS_CORPUS_INVENTORY.md` §6: this
+ * constant now lives in `../text.ts` so the real ingest path
+ * (`fetchPdfText`, `harvest/hc-load-cli.ts`) and this benchmark share the
+ * one definition. Re-exported here so existing imports of it from this
+ * module keep working.
+ */
+export { OCR_CHARS_PER_PAGE_FLOOR };
 
 /**
  * What one PDF cost, and what came out.
@@ -34,20 +43,6 @@ export type ExtractionSample = {
   extractMs: number;
   error?: string;
 };
-
-/**
- * Below this many characters per page, the PDF is a scan and the text layer is
- * absent or useless — it goes to OCR, which is a different and far slower
- * pipeline (`docs/CURRENT_PLAN.md` §3: paddleocr/tesseract are at the benchmark
- * floor on Devanagari).
- *
- * **100 is a deliberately conservative floor, not a quality bar.** A real
- * judgment page carries 1,500–3,000 characters; a page yielding under 100 has
- * no usable text at all. Anything between 100 and "a reasoned judgment" is a
- * short procedural order — genuinely extracted, genuinely not an authority —
- * and that is a corpus-composition question (§A3.1), not an extraction one.
- */
-export const OCR_CHARS_PER_PAGE_FLOOR = 100;
 
 /** Downloads and extracts one PDF, timing each half separately. Never writes to disk. */
 export async function measureExtraction(url: string, court: string): Promise<ExtractionSample> {

@@ -232,6 +232,13 @@
       "when": 1786350000000,
       "tag": "0034_judgment_cnr",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1786360000000,
+      "tag": "0035_judgment_native_text",
+      "breakpoints": true
     }
   ]
 }

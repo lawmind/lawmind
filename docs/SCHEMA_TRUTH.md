@@ -171,11 +171,23 @@ document, never the same underlying judgment arriving under two different
 URLs. **Found present in both source metadata schemas
 (`SciMetadataRow.cnr`, `HcMetadataRow.cnr`) and read by neither mapping
 function before this migration** — silently discarded for the whole corpus,
-Supreme Court and High Court alike. Verbatim from source, never derived. Not
-backfilled for existing rows — recovering it needs the original source
-metadata, which `content_hash`/`text_quality`'s backfill did not (those read
-only `full_text`, already in Postgres); a CNR backfill is a distinct,
-unbuilt task.
+Supreme Court and High Court alike. Verbatim from source, never derived.
+**Backfilled to 100% coverage the same day** — `services/ingest/src/
+backfill-cnr.ts` re-read the same public AWS metadata files (no re-fetch)
+and populated all 79,321 existing rows; `docs/ai/tasks/
+007-cnr-backfill-investigation.md`.
+
+`native_text` boolean null — whether the source PDF had a usable text
+layer, added migration `0035`, 11 Aug 2026. Computed at fetch time from
+characters-extracted / page-count against a 100-char/page floor
+(`services/ingest/src/text.ts`'s `isNativeText`) — the classifier already
+existed and was proven against real High Court PDFs in the extraction-cost
+benchmark (`docs/CURRENT_PLAN.md` §A3.3); this migration is what first
+wires it to persist a value per judgment. **Null on every one of the
+79,321 rows that predate this migration, and not backfillable the way
+`content_hash`/`cnr` were** — recovering it needs the source PDF's page
+count, which means re-fetching the PDF itself, not re-reading already-
+stored text or metadata. `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
 
 Index: gin on `full_text_tsv`; btree on judgment_date, court; partial btree on
 `content_hash` where not null; partial btree on `cnr` where not null.

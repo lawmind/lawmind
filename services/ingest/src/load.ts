@@ -82,6 +82,10 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
     // Migration 0034. Verbatim from source; undefined/null both resolve to a
     // database NULL, never guessed.
     cnr: r.cnr ?? null,
+    // Migration 0035. Computed by the caller from the source PDF's own page
+    // count (text.ts's isNativeText) — undefined/null means not computed,
+    // never a guess at scan-vs-native.
+    native_text: r.nativeText ?? null,
   }));
 
   // Columns are inferred from the object keys — every row is built by the same
@@ -102,7 +106,8 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       content_hash          = EXCLUDED.content_hash,
       text_quality          = EXCLUDED.text_quality,
       source_document_type  = EXCLUDED.source_document_type,
-      cnr                   = EXCLUDED.cnr
+      cnr                   = EXCLUDED.cnr,
+      native_text           = EXCLUDED.native_text
     RETURNING (xmax = 0) AS inserted
   `;
 

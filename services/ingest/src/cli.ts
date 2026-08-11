@@ -11,7 +11,7 @@ import postgres from 'postgres';
 
 import { existingSourceUrls, upsertJudgments } from './load.ts';
 import { readYearMetadata, sourceUrlFor, toJudgment, type JudgmentRecord } from './sci.ts';
-import { fetchPdfText } from './text.ts';
+import { fetchPdfText, isNativeText } from './text.ts';
 
 type Args = { from: number; to: number; limit: number; resume: boolean; concurrency: number };
 
@@ -102,8 +102,8 @@ async function main(): Promise<void> {
 
       const settled = await mapPool(pending, args.concurrency, async (row) => {
         // Same URL for fetch and for provenance, by construction.
-        const text = await fetchPdfText(sourceUrlFor(row));
-        return toJudgment(row, text);
+        const { text, pages } = await fetchPdfText(sourceUrlFor(row));
+        return toJudgment(row, text, isNativeText(text.length, pages));
       });
 
       const records: JudgmentRecord[] = [];

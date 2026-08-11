@@ -47,6 +47,7 @@ import postgres from 'postgres';
 
 import { existingSourceUrls, upsertJudgments } from '../load.ts';
 import type { JudgmentRecord } from '../sci.ts';
+import { isNativeText } from '../text.ts';
 import {
   type SkipReason,
   isTestFixture,
@@ -182,16 +183,19 @@ async function main(): Promise<void> {
 
       const records = await mapConcurrent(todo, CONCURRENCY, async (c) => {
         let text = '';
+        let pages = 1;
         try {
           const res = await fetch(c.url);
           if (!res.ok) return { skip: 'pdf_missing' as const };
           const bytes = new Uint8Array(await res.arrayBuffer());
           const pdf = await getDocumentProxy(bytes);
-          text = (await extractText(pdf, { mergePages: true })).text;
+          const extracted = await extractText(pdf, { mergePages: true });
+          text = extracted.text;
+          pages = extracted.totalPages || 1;
         } catch {
           return { skip: 'pdf_failed' as const };
         }
-        const out = toJudgmentRecord(c.row, file.p, text, c.url);
+        const out = toJudgmentRecord(c.row, file.p, text, c.url, isNativeText(text.length, pages));
         if (!out.ok) return { skip: out.reason };
         return { record: out.record };
       });

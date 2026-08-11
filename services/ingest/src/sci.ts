@@ -71,6 +71,15 @@ export type JudgmentRecord = {
    * `0034`. `docs/SCHEMA_TRUTH.md` §judgments `cnr`.
    */
   cnr?: string | null;
+  /**
+   * Whether the source PDF had a usable text layer — `text.ts`'s
+   * `isNativeText`, characters-per-page against a 100-char floor, computed
+   * at fetch time from the PDF's own page count. `null`/`undefined` means
+   * not computed (a row whose text arrived some other way than
+   * `fetchPdfText`), never a guess at scan-vs-native. Migration `0035`.
+   * `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
+   */
+  nativeText?: boolean | null;
 };
 
 export function metadataUrl(year: number): string {
@@ -140,7 +149,11 @@ export function toCaseType(caseNumber: string | null): 'criminal' | 'civil' | nu
   return null;
 }
 
-export function toJudgment(row: SciMetadataRow, fullText: string): JudgmentRecord {
+export function toJudgment(
+  row: SciMetadataRow,
+  fullText: string,
+  nativeText?: boolean | null,
+): JudgmentRecord {
   const caseNumber = parseCaseNumber(row.raw_html);
   return {
     caseTitle: row.title.trim().replace(/\s+/g, ' '),
@@ -159,6 +172,7 @@ export function toJudgment(row: SciMetadataRow, fullText: string): JudgmentRecor
     caseNumber,
     caseType: toCaseType(caseNumber),
     cnr: blank(row.cnr) ? null : row.cnr.trim(),
+    nativeText: nativeText ?? null,
   };
 }
 
