@@ -30,12 +30,15 @@ export function ReadingSheet({
   onDismiss,
   onJumpToParagraph,
   highlightCount,
+  onJumpToHighlight,
 }: {
   judgment: JudgmentDetail;
   visible: boolean;
   onDismiss: () => void;
   onJumpToParagraph: (paragraphNumber: number) => void;
   highlightCount: number;
+  /** Scrolls to the first highlighted paragraph. Absent when there are none. */
+  onJumpToHighlight?: () => void;
 }) {
   const textSize = useReadingStore((s) => s.textSize);
   const setTextSize = useReadingStore((s) => s.setTextSize);
@@ -89,7 +92,20 @@ export function ReadingSheet({
         {judgment.reliedOn ? (
           <JumpRow label="Authorities relied on" value={String(judgment.reliedOn.length)} />
         ) : null}
-        <JumpRow label="Your highlights" value={String(highlightCount)} />
+        {/*
+          DRAWN ONLY WHERE THERE IS SOMETHING TO GO TO, and tappable when it is.
+          This row drew unconditionally — "Your highlights · 0" — and had no
+          `onPress`, so it was the one dead row in a block whose own rule two
+          comments up is "a number we do not have is a row we do not draw".
+          Nothing to jump to is the same case.
+        */}
+        {highlightCount > 0 ? (
+          <JumpRow
+            label="Your highlights"
+            {...(onJumpToHighlight ? { onPress: onJumpToHighlight } : {})}
+            value={String(highlightCount)}
+          />
+        ) : null}
 
         {progress ? (
           <View style={styles.progressCard}>

@@ -802,10 +802,49 @@ export function ReadingView({
         highlightCount={highlights.length}
         judgment={judgment}
         onDismiss={() => setSheetOpen(false)}
+        /**
+         * A PRINTED NUMBER, CONVERTED — this passed `n` straight to
+         * `jumpTo`, which takes an INDEX.
+         *
+         * This file's own rule, twenty lines up: "IDENTITY IS THE INDEX. THE
+         * PRINTED NUMBER IS FOR CITING… the number is converted back at the two
+         * boundaries that genuinely need something citable." The sheet is a
+         * third boundary and was missed, so "Holding · ¶ 47" scrolled to array
+         * index 47 — a different paragraph, silently, off by however far the
+         * numbering diverges from the index. A headnote alone is enough to
+         * shift every one.
+         *
+         * DORMANT TODAY, NOT HARMLESS. `judgments/route.ts` sends neither
+         * `holdingParagraphNumber` nor `operativeParagraphNumber` (checked, not
+         * assumed), so neither row is drawn and the bug cannot fire. It fires
+         * the day LCC adds the field, on a screen nobody would think to re-test.
+         *
+         * A number the list does not contain returns `-1` and is refused
+         * rather than scrolled to.
+         */
         onJumpToParagraph={(n) => {
+          const index = indexOfNumber(n);
+          if (index < 0) return;
           setSheetOpen(false);
-          jumpTo(n);
+          jumpTo(index);
         }}
+        /**
+         * HIGHLIGHTS JUMP BY INDEX, with no conversion at all — a highlight on
+         * an unnumbered paragraph has no number to convert, and those are
+         * exactly the passages that became saveable today.
+         */
+        onJumpToHighlight={
+          highlights.length > 0
+            ? () => {
+                const first = [...highlights].sort(
+                  (a, b) => a.paragraphIndex - b.paragraphIndex
+                )[0];
+                if (!first) return;
+                setSheetOpen(false);
+                jumpTo(first.paragraphIndex);
+              }
+            : undefined
+        }
         visible={sheetOpen}
       />
 

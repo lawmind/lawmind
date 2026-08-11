@@ -266,3 +266,104 @@ describe('the highlight actions on a selected paragraph', () => {
     expect(screen.getByText('Remove highlight')).toBeTruthy();
   });
 });
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE SHEET'S JUMP ROWS: A PRINTED NUMBER IS NOT AN ARRAY INDEX.
+ *
+ * `ReadingView` states the rule itself — "IDENTITY IS THE INDEX. THE PRINTED
+ * NUMBER IS FOR CITING… the number is converted back at the two boundaries that
+ * genuinely need something citable." The sheet is a third boundary and was
+ * missed: `onJumpToParagraph` handed `n` straight to `jumpTo`, which takes an
+ * index. "Holding · ¶ 47" scrolled to array index 47 — a different paragraph,
+ * silently, and a headnote alone is enough to shift every one.
+ *
+ * DORMANT WHEN FOUND, NOT HARMLESS: `judgments/route.ts` sends neither
+ * `holdingParagraphNumber` nor `operativeParagraphNumber`, so neither row draws
+ * and the bug cannot fire — until the day that field lands, on a screen nobody
+ * would think to re-test. These tests supply the field the server does not, so
+ * the conversion is pinned before it matters.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('jumping from the reading sheet', () => {
+  /**
+   * Numbering that does not equal the index is the ordinary case, not a corner
+   * one: paragraph ¶ 7 sits at index 1 here because the headnote is index 0 and
+   * carries no number at all.
+   */
+  const offsetJudgment = (): JudgmentDetail => ({
+    ...judgmentWith([unnumbered, numbered]),
+    holdingParagraphNumber: 7,
+  });
+
+  /**
+   * THE COUNTER IS THE OBSERVABLE, not the rendered text — both paragraphs
+   * render either way in a two-row judgment, so asserting on the prose would
+   * pass whether or not the jump landed.
+   *
+   * ¶ 7 sits at INDEX 1: the headnote is index 0 and carries no number. So a
+   * correct conversion moves `current` to 1 and the counter reads "¶ 7 of 2".
+   * The raw pass-through set `current` to 7, `paragraphs[7]` is undefined, and
+   * the counter fell to its unnumbered branch — "8 of 2", a position outside
+   * the document.
+   */
+  it('scrolls to the paragraph the number names, not to that array index', async () => {
+    await draw(offsetJudgment());
+
+    await fireEvent.press(screen.getByLabelText('Reading options'));
+    await fireEvent.press(await screen.findByText('Holding'));
+
+    expect(await screen.findByText('¶ 7 of 2')).toBeTruthy();
+    expect(screen.queryByText('8 of 2')).toBeNull();
+  });
+
+  it('refuses a number the judgment does not contain rather than scrolling to -1', async () => {
+    await draw({ ...judgmentWith([unnumbered, numbered]), holdingParagraphNumber: 999 });
+
+    await fireEvent.press(screen.getByLabelText('Reading options'));
+    await fireEvent.press(await screen.findByText('Holding'));
+
+    // The sheet stays open — nothing was jumped to, and nothing crashed.
+    expect(screen.getByText('Holding')).toBeTruthy();
+  });
+});
+
+/**
+ * "Your highlights" drew unconditionally — including "0" — and had no onPress,
+ * the one dead row in a block whose own rule is "a number we do not have is a
+ * row we do not draw". Nothing to jump to is the same case.
+ */
+describe('the highlights row in the reading sheet', () => {
+  beforeEach(() => {
+    useReadingStore.setState({ highlights: [], progress: {}, hydrated: true });
+  });
+
+  it('is not drawn when there is nothing to go to', async () => {
+    await draw(judgmentWith([numbered]));
+
+    await fireEvent.press(screen.getByLabelText('Reading options'));
+
+    expect(screen.queryByText('Your highlights')).toBeNull();
+  });
+
+  it('is drawn once there is, and counts the merged list', async () => {
+    useReadingStore.setState({
+      highlights: [
+        {
+          judgmentId: base.judgmentId,
+          paragraphIndex: 0,
+          paragraphNumber: null,
+          text: 'The headnote.',
+          savedAt: '2026-08-11T00:00:00.000Z',
+          annotationId: 'ann-1',
+        },
+      ],
+    });
+
+    await draw(judgmentWith([unnumbered, numbered]));
+    await fireEvent.press(screen.getByLabelText('Reading options'));
+
+    expect(await screen.findByText('Your highlights')).toBeTruthy();
+    expect(screen.getByText('1')).toBeTruthy();
+  });
+});
