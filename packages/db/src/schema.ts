@@ -537,6 +537,71 @@ export const statuteSections = pgTable(
   ],
 );
 
+/**
+ * Amendment events, parsed out of `statute_sections.footnote` — migration
+ * `0041`, Stage 8's point-in-time foundation.
+ *
+ * The footnotes were ingested on the first pass and never read. 18,590 events
+ * across 9,064 footnoted sections; `docs/ai/STATUTE_TEMPORAL_STAGE8.md` holds
+ * the measurements and the extractor's rules.
+ *
+ * **Not a version history of the text.** indiacode publishes only the current
+ * wording; knowing a clause was substituted is not knowing what it said before.
+ * `substitutedText` is the fragment the note happens to quote, verbatim, and is
+ * never assembled into a reconstructed provision.
+ */
+export const statuteAmendments = pgTable(
+  'statute_amendments',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    statuteSectionId: uuid('statute_section_id')
+      .notNull()
+      .references(() => statuteSections.id, { onDelete: 'cascade' }),
+    /** The footnote's own printed number, so a row traces back to its note. */
+    ordinal: integer('ordinal').notNull(),
+    eventType: text('event_type').notNull(),
+    /** Verbatim, including a state prefix. NEVER resolved to a jurisdiction. */
+    amendingActRaw: text('amending_act_raw'),
+    amendingActNumber: integer('amending_act_number'),
+    amendingActYear: integer('amending_act_year'),
+    amendingSection: text('amending_section'),
+    /** NULL where the note states none — never the amending Act's year instead. */
+    effectiveDate: date('effective_date'),
+    substitutedText: text('substituted_text'),
+    ibidResolved: boolean('ibid_resolved').notNull().default(false),
+    /** Kept as a state. Reaching forward for an Act would be a wrong answer. */
+    ibidUnresolved: boolean('ibid_unresolved').notNull().default(false),
+    verbatim: text('verbatim').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('statute_amendments_section_ordinal_key').on(t.statuteSectionId, t.ordinal),
+    index('statute_amendments_effective_date_idx').on(t.effectiveDate),
+    index('statute_amendments_amending_act_idx').on(t.amendingActYear, t.amendingActNumber),
+  ],
+);
+
+/**
+ * A footnote entry the extractor could not read.
+ *
+ * 596 of them, and they are overwhelmingly editorial cross-references —
+ * *"See now the Arbitration Act, 1940"*. Recorded rather than dropped so that
+ * "how much did we fail to read" is a query: the silent-drop rule from
+ * `docs/CITATION_HARNESS.md`, applied to statutes.
+ */
+export const statuteAmendmentUnparsed = pgTable(
+  'statute_amendment_unparsed',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    statuteSectionId: uuid('statute_section_id')
+      .notNull()
+      .references(() => statuteSections.id, { onDelete: 'cascade' }),
+    verbatim: text('verbatim').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('statute_amendment_unparsed_section_idx').on(t.statuteSectionId)],
+);
+
 export const statuteMappings = pgTable('statute_mappings', {
   id: uuid('id').primaryKey().defaultRandom(),
   oldAct: oldActEnum('old_act').notNull(),

@@ -274,6 +274,13 @@
       "when": 1786410000000,
       "tag": "0040_judgment_source_bench_code",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1786420000000,
+      "tag": "0041_statute_amendments",
+      "breakpoints": true
     }
   ]
 }

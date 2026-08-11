@@ -28,7 +28,8 @@
     "quality:report": "tsx src/quality-report-cli.ts",
     "backfill:parties": "tsx src/backfill-parties.ts",
     "backfill:disposal-nature": "tsx src/backfill-disposal-nature.ts",
-    "backfill:bench-code": "tsx src/backfill-source-bench-code.ts"
+    "backfill:bench-code": "tsx src/backfill-source-bench-code.ts",
+    "statute:amendments": "tsx src/statute-amendments-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

@@ -524,6 +524,66 @@ up a section by number or by its exact term, and section text is short and
 precise, which is where sparse retrieval is strongest. A vector column is added
 when semantic statute search is actually built, not before.
 
+`footnote` is not decoration. It carries the Act's **own printed amendment
+history** — `Subs. by Act 45 of 1965, s. 8, for clause (a) (w.e.f. 1-4-1966)` —
+for **9,064 of 34,928 sections**, and it was ingested on the first `acts` run
+and never read until migration `0041`. See `statute_amendments` below.
+
+## statute_amendments
+
+**Added migration `0041`, 11 Aug 2026 — Stage 8's point-in-time foundation.**
+`docs/ai/STATUTE_TEMPORAL_STAGE8.md`.
+
+`id` uuid pk · `statute_section_id` uuid fk→statute_sections cascade ·
+`ordinal` int — the footnote's own printed number, so a row traces back to its
+note · `event_type` text CHECK in
+(inserted|substituted|omitted|renumbered|repealed|commenced) ·
+`amending_act_raw` text null · `amending_act_number` int null ·
+`amending_act_year` int null · `amending_section` text null ·
+`effective_date` date null · `substituted_text` text null ·
+`ibid_resolved` bool · `ibid_unresolved` bool · `verbatim` text ·
+`created_at` timestamptz
+
+Unique: (`statute_section_id`, `ordinal`) — the extractor is re-runnable, so
+improving the parser and re-running is the intended way to apply it. Indexed on
+`effective_date` (the "what changed between two dates" question) and on
+(`amending_act_year`, `amending_act_number`) — the citator question for statutes.
+
+**18,590 events extracted, 15,388 with a real effective date, 1,208 distinct
+dates spanning 1870–2026.** Everything below is a rule, not a preference:
+
+- **`effective_date` is NULL where the source states none** — 3,202 rows. It is
+  never the amending Act's year instead: those are different facts, and
+  conflating them dates a legal event by guess.
+- **`ibid_unresolved` is a state, not a failure to be tidied.** 1,994 rows.
+  `Subs. by s. 8, ibid.` means the Act named in the *preceding* entry;
+  resolution walks backwards within the same footnote only. Reaching forward to
+  an Act named later would be a confident wrong attribution, and a visible gap
+  beats an invisible error.
+- **`amending_act_raw` keeps state prefixes verbatim** (`Delhi Act 12 of 2011`,
+  `W.B. Act 18 of 1990`) and is **never resolved to a jurisdiction**. A Central
+  Act amended in one state does not read the same in another.
+- **This is NOT a version history of the text.** indiacode publishes only the
+  current wording. `substituted_text` is the fragment a note happens to quote
+  and is **never assembled into a reconstructed provision** — a partial
+  reconstruction served as the law as it stood is the statutory equivalent of a
+  fabricated citation.
+
+## statute_amendment_unparsed
+
+**Added migration `0041`.** `id` uuid pk · `statute_section_id` uuid
+fk→statute_sections cascade · `verbatim` text · `created_at` timestamptz
+
+596 footnote entries the extractor could not read, kept so that *"how much did
+we fail to read"* is a query rather than a silence — `CITATION_HARNESS.md`'s
+silent-drop rule, applied to statutes. They are overwhelmingly genuine
+non-events (*"See now the Arbitration Act, 1940"*), which must **not** be parsed
+as amendments because doing so would invent legal history.
+
+Rebuilt on each extraction pass rather than upserted: it records the state of
+THIS parser, and a stale "could not read" row after the parser improved would
+overstate the gap. That is how it fell from 960 to 596.
+
 ## statute_mappings
 
 `id` uuid pk · `old_act` enum (ipc|crpc|evidence) · `old_section` text ·
