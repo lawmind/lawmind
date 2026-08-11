@@ -225,6 +225,13 @@
       "when": 1786340000000,
       "tag": "0032_matter_authorities",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1786350000000,
+      "tag": "0034_judgment_cnr",
+      "breakpoints": true
     }
   ]
 }

@@ -163,8 +163,22 @@ PDF text, which this column does not read. Null on every Supreme Court row
 and on the 21 High Courts that publish no such column — an absent label, not
 a negative claim about the document.
 
+`cnr` text null — the eCourts Case Number Record, added migration `0034`,
+11 Aug 2026. The canonical cross-source identity key (`docs/DATA_ADVANTAGE.md`:
+"CNR is what eCourts resolves"), and what `judgments_source_url_key`'s own
+comment names as the unclosed gap: `source_url` catches a re-fetch of the same
+document, never the same underlying judgment arriving under two different
+URLs. **Found present in both source metadata schemas
+(`SciMetadataRow.cnr`, `HcMetadataRow.cnr`) and read by neither mapping
+function before this migration** — silently discarded for the whole corpus,
+Supreme Court and High Court alike. Verbatim from source, never derived. Not
+backfilled for existing rows — recovering it needs the original source
+metadata, which `content_hash`/`text_quality`'s backfill did not (those read
+only `full_text`, already in Postgres); a CNR backfill is a distinct,
+unbuilt task.
+
 Index: gin on `full_text_tsv`; btree on judgment_date, court; partial btree on
-`content_hash` where not null.
+`content_hash` where not null; partial btree on `cnr` where not null.
 Unique: `source_url`.
 
 **Why the tsvector is stored rather than computed in an expression index.**

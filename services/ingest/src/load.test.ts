@@ -59,6 +59,7 @@ test('upsertJudgments writes content_hash, text_quality and source_document_type
     caseNumber: null,
     caseType: null,
     sourceDocumentType: 'View Judgement/Order',
+    cnr: 'TESTCNR0000012024',
   };
 
   try {
@@ -67,13 +68,21 @@ test('upsertJudgments writes content_hash, text_quality and source_document_type
       assert.equal(result.inserted, 1);
 
       const [row] = await tx<
-        { content_hash: string | null; text_quality: string | null; source_document_type: string | null }[]
-      >`SELECT content_hash, text_quality, source_document_type FROM judgments WHERE source_url = ${fakeUrl}`;
+        {
+          content_hash: string | null;
+          text_quality: string | null;
+          source_document_type: string | null;
+          cnr: string | null;
+        }[]
+      >`SELECT content_hash, text_quality, source_document_type, cnr FROM judgments WHERE source_url = ${fakeUrl}`;
 
       assert.equal(row?.content_hash, contentHash(record.fullText));
       // numeric(4,3) comes back as a string from postgres.js; clean text scores 1.000.
       assert.equal(row?.text_quality, '1.000');
       assert.equal(row?.source_document_type, 'View Judgement/Order');
+      // Found dropped entirely until migration 0034 — present on both source
+      // metadata schemas, read by neither mapper, for the whole corpus.
+      assert.equal(row?.cnr, 'TESTCNR0000012024');
 
       throw new Rollback({ ok: true });
     });

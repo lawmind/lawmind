@@ -251,6 +251,7 @@ export function toJudgmentRecord(
       caseNumber,
       caseType: caseTypeFrom(caseNumber),
       sourceDocumentType: row.order_type?.trim() || null,
+      cnr: row.cnr?.trim() || null,
     },
   };
 }

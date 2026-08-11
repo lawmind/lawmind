@@ -737,13 +737,35 @@ Executed in order, each verified against production, not just local tests:
    definition, not a second copy that could drift) — absent, never guessed,
    on zero matches, more than one match, or a self-citation. Verified against
    real production data: S.R. BOMMAI resolves 5 of 31 paragraphs. RCC notified
-   on the bus (0033).
+   on the bus (0033), confirmed live (0034).
+6. **`treatment.counts.overruledInPart` — found and fixed same day, RCC bus
+   0035.** `judgment_citations.relationship` stores six values; `counts` only
+   exposed five, and `overruled_in_part` ranked with an ordinary `cites` in
+   the returned page instead of near `overruled`/`doubted`. 23 real rows in
+   production were silently uncounted even though `total` already summed
+   them. Both fixed and verified live; RCC notified (0036).
+
+Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
+(corpus identity/inventory/provenance/dedup):
+
+7. **`judgments.content_hash`/`text_quality` backfill — task 003's own
+   recorded remaining gap, closed.** `services/ingest/src/backfill-
+   provenance.ts` built and run with `--confirm` against all 79,321 rows.
+8. **`judgments.cnr` — found dropped for the entire corpus, both loaders.**
+   The eCourts Case Number Record is present in both source metadata schemas
+   (`SciMetadataRow.cnr`, `HcMetadataRow.cnr`) and was read by neither mapper
+   into `JudgmentRecord` — silently discarded before reaching the database,
+   Supreme Court and High Court alike, since ingest began. Migration `0034`
+   adds the column; both mappers and `load.ts` now carry it through for every
+   future write. Not backfilled for existing rows — that needs the original
+   source metadata, a distinct task from the content-hash backfill (which
+   only needed `full_text`, already in Postgres).
 
 Deferred, recorded, not forgotten: `generated_holding` (DeepSeek, migration
 0033 exists, unwired), statute point-in-time/concordance-quality (RCC bus
 0032, P3, needs a source before an API). Branch protection, worktree
 separation, and a hidden adversarial benchmark are `docs/FOUNDER_QUEUE.md`
-items — none block P0.
+items — none block P0/P1.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 

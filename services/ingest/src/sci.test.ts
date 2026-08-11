@@ -105,6 +105,13 @@ describe('toJudgment', () => {
     assert.equal(j.judgmentDate, '1950-10-17');
     assert.equal(j.fullText, 'FULL TEXT');
     assert.equal(j.language, 'en');
+    assert.equal(j.cnr, 'ESCR010000301950');
+  });
+
+  it('records a missing cnr as null, never an empty string — found dropped entirely until migration 0034', () => {
+    for (const blank of ['', '   ']) {
+      assert.equal(toJudgment(row({ cnr: blank }), 't').cnr, null);
+    }
   });
 
   it('collapses runs of whitespace in the title', () => {

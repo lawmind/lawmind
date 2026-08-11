@@ -153,6 +153,13 @@ describe('toJudgmentRecord', () => {
     assert.equal(r.judgmentDate, '2024-05-03');
     assert.equal(r.sourceUrl, URL);
     assert.equal(r.language, 'en');
+    assert.equal(r.cnr, 'BRHC011164592023');
+  });
+
+  it('is null, not undefined, when the row carries no cnr — found dropped entirely until migration 0034', () => {
+    const out = toJudgmentRecord({ ...PATNA, cnr: null }, PARTS, text, URL);
+    assert.ok(out.ok);
+    assert.equal(out.record.cnr, null);
   });
 
   it('NEVER synthesises a reporter citation', () => {

@@ -362,6 +362,18 @@ export const judgments = pgTable(
     // publishes one. Never classified, never guessed — DOMAIN_TRUTH.md.
     // Migration 0031.
     sourceDocumentType: text('source_document_type'),
+    /**
+     * The eCourts Case Number Record — the canonical cross-source identity
+     * key, and what eCourts itself resolves (`docs/DATA_ADVANTAGE.md`). Found
+     * present in BOTH source metadata schemas (`SciMetadataRow.cnr`,
+     * `HcMetadataRow.cnr`) and read by neither mapper into `JudgmentRecord`
+     * until migration 0034 — silently discarded for the entire corpus, SC
+     * and HC alike. Line 378's own note named the gap this column exists to
+     * close: "citation-level identity across sources... belongs to S2."
+     * Verbatim from source, never derived — a court that omits it leaves this
+     * NULL rather than a fabricated value.
+     */
+    cnr: text('cnr'),
   },
   (t) => [
     index('judgments_full_text_idx').using('gin', t.fullTextTsv),
@@ -372,6 +384,11 @@ export const judgments = pgTable(
     index('judgments_storage_key_idx').on(t.storageKey).where(sql`storage_key IS NOT NULL`),
     // Partial: a dedup lookup is the only query this serves.
     index('judgments_content_hash_idx').on(t.contentHash).where(sql`content_hash IS NOT NULL`),
+    // Partial, not unique: data quality across 25+ courts is not yet proven
+    // clean enough to enforce uniqueness without risking a rejected ingest
+    // write on a legitimate edge case — the same caution already applied to
+    // content_hash above.
+    index('judgments_cnr_idx').on(t.cnr).where(sql`cnr IS NOT NULL`),
     // Ingest resumability, enforced by the database rather than by application
     // code: re-running a killed ingest must not duplicate. `source_url` is the
     // natural key of a judgment at its source (one canonical document per URL).

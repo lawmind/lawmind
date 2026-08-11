@@ -79,6 +79,9 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
     // Never invented — undefined on `JudgmentRecord` (SC has no such field)
     // resolves to `null` here rather than an empty string.
     source_document_type: r.sourceDocumentType ?? null,
+    // Migration 0034. Verbatim from source; undefined/null both resolve to a
+    // database NULL, never guessed.
+    cnr: r.cnr ?? null,
   }));
 
   // Columns are inferred from the object keys — every row is built by the same
@@ -98,7 +101,8 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       case_type             = EXCLUDED.case_type,
       content_hash          = EXCLUDED.content_hash,
       text_quality          = EXCLUDED.text_quality,
-      source_document_type  = EXCLUDED.source_document_type
+      source_document_type  = EXCLUDED.source_document_type,
+      cnr                   = EXCLUDED.cnr
     RETURNING (xmax = 0) AS inserted
   `;
 

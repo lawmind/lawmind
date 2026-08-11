@@ -65,6 +65,12 @@ export type JudgmentRecord = {
    * guessed — `docs/SCHEMA_TRUTH.md` §judgments `source_document_type`.
    */
   sourceDocumentType?: string | null;
+  /**
+   * The eCourts Case Number Record. Present on `SciMetadataRow` and
+   * `HcMetadataRow` alike; verbatim from source, never derived — migration
+   * `0034`. `docs/SCHEMA_TRUTH.md` §judgments `cnr`.
+   */
+  cnr?: string | null;
 };
 
 export function metadataUrl(year: number): string {
@@ -152,6 +158,7 @@ export function toJudgment(row: SciMetadataRow, fullText: string): JudgmentRecor
     sourceUrl: sourceUrlFor(row),
     caseNumber,
     caseType: toCaseType(caseNumber),
+    cnr: blank(row.cnr) ? null : row.cnr.trim(),
   };
 }
 
