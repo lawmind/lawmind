@@ -75,6 +75,38 @@ if (apiKeys.length === 0) {
 
 const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
 
+/**
+ * A LONG RUN OUTLIVES A RAILWAY CONNECTION, and that must not end the run.
+ *
+ * Measured: both the 1,000-document metadata pass and the corruption scan died
+ * with `read ECONNRESET` partway through — the proxy drops idle-ish TLS
+ * connections and `postgres` reconnects, but the in-flight query has already
+ * thrown by then. No enrichment was lost either time, because every document is
+ * committed as it completes, but the LOOP stopped, and a worker that needs a
+ * human to restart it is not the resumable worker this pipeline is supposed to
+ * be.
+ *
+ * Retries only transient transport failures. A constraint violation or a bad
+ * column name is a real defect and is rethrown immediately — retrying those
+ * just repeats the same mistake more slowly, the same distinction `inferx.ts`
+ * draws between a 429 and a 400.
+ */
+const TRANSIENT = /ECONNRESET|ETIMEDOUT|EPIPE|ECONNREFUSED|CONNECTION_CLOSED|CONNECTION_ENDED|socket/i;
+
+async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await run();
+    } catch (err) {
+      const message = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
+      if (attempt >= 5 || !TRANSIENT.test(message)) throw err;
+      const waitMs = 1000 * 2 ** attempt;
+      console.log(`    db ${what} failed (${message.trim()}) — retry ${attempt + 1}/5 in ${waitMs / 1000}s`);
+      await new Promise((r) => setTimeout(r, waitMs));
+    }
+  }
+}
+
 /** Excerpt sizes per task — the fields each one wants cluster in different places. */
 const HEAD_CHARS = 4_000;
 const TREATMENT_BEFORE = 1_200;
@@ -254,11 +286,14 @@ for (const [i, u] of units.entries()) {
   const sourceHash = sha256(u.sourceText ?? '');
   const label = `[${i + 1}/${units.length}] ${(u.caseTitle ?? '').slice(0, 34).padEnd(34)}`;
 
-  const cached = await sql`
-    SELECT verification_state, verified_count, rejected_count FROM document_enrichments
-    WHERE judgment_id = ${u.judgmentId} AND task = ${TASK}
-      AND prompt_version = ${PROMPT_VERSION} AND input_hash = ${inputHash}
-    LIMIT 1`;
+  const cached = await withDbRetry(
+    'cache lookup',
+    () => sql`
+      SELECT verification_state, verified_count, rejected_count FROM document_enrichments
+      WHERE judgment_id = ${u.judgmentId} AND task = ${TASK}
+        AND prompt_version = ${PROMPT_VERSION} AND input_hash = ${inputHash}
+      LIMIT 1`,
+  );
   if (cached.length > 0) {
     cacheHits++;
     const r = cached[0]!;
@@ -288,11 +323,14 @@ for (const [i, u] of units.entries()) {
   calls++;
   inTok += result.inputTokens;
   outTok += result.outputTokens;
-  await sql`
-    INSERT INTO llm_calls (feature, model, input_tokens, output_tokens, cost_usd,
-                           latency_ms, data_class, pseudonymised)
-    VALUES ('concordance', ${ENRICH_MODEL}, ${result.inputTokens}, ${result.outputTokens}, 0,
-            ${latency}, 'public', false)`;
+  await withDbRetry(
+    'ledger write',
+    () => sql`
+      INSERT INTO llm_calls (feature, model, input_tokens, output_tokens, cost_usd,
+                             latency_ms, data_class, pseudonymised)
+      VALUES ('concordance', ${ENRICH_MODEL}, ${result.inputTokens}, ${result.outputTokens}, 0,
+              ${latency}, 'public', false)`,
+  );
 
   const parsed = parseJson(result.text);
   if (parsed === null) {
@@ -325,17 +363,25 @@ for (const [i, u] of units.entries()) {
 
   console.log(`${label} ${state.padEnd(10)} ${ok.length} verified / ${verdicts.length} claimed`);
 
-  await sql`
-    INSERT INTO document_enrichments (judgment_id, task, prompt_version, model, input_hash,
-      source_text_hash, raw_output, parsed_output, status, input_tokens, output_tokens,
-      latency_ms, verification_state, verified_count, rejected_count, rejection_reasons)
-    VALUES (${u.judgmentId}, ${TASK}, ${PROMPT_VERSION}, ${ENRICH_MODEL}, ${inputHash},
-            ${sourceHash}, ${result.text.slice(0, 8000)},
-            ${JSON.stringify({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) })}::jsonb,
-            'ok', ${result.inputTokens}, ${result.outputTokens}, ${latency},
-            ${state}, ${ok.length}, ${bad.length},
-            ${JSON.stringify(bad.map((b) => b.reason))}::jsonb)
-    ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO NOTHING`;
+  /**
+   * The checkpoint. Committed per document, so a dropped connection or a killed
+   * session costs at most the one call in flight — everything before it is
+   * cached and a restart replays it for free.
+   */
+  await withDbRetry(
+    'enrichment write',
+    () => sql`
+      INSERT INTO document_enrichments (judgment_id, task, prompt_version, model, input_hash,
+        source_text_hash, raw_output, parsed_output, status, input_tokens, output_tokens,
+        latency_ms, verification_state, verified_count, rejected_count, rejection_reasons)
+      VALUES (${u.judgmentId}, ${TASK}, ${PROMPT_VERSION}, ${ENRICH_MODEL}, ${inputHash},
+              ${sourceHash}, ${result.text.slice(0, 8000)},
+              ${JSON.stringify({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) })}::jsonb,
+              'ok', ${result.inputTokens}, ${result.outputTokens}, ${latency},
+              ${state}, ${ok.length}, ${bad.length},
+              ${JSON.stringify(bad.map((b) => b.reason))}::jsonb)
+      ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO NOTHING`,
+  );
 }
 
 /* ---------------------------------------------------------------- report -- */
