@@ -248,6 +248,16 @@ export type StructuredHit = {
   bench: string | null;
   /** Read LIVE from the row on every query — `CITATION_HARNESS.md`, never cached. */
   overruledStatus: string;
+  /**
+   * Found missing 11 Aug 2026: this query never selected these three, so
+   * `route.ts` hardcoded them to null for every structured-search result —
+   * meaning a `cite:`/`judge:`/etc. hit on a `partly_set_aside` judgment
+   * could show the LAW MOVED status but never which paragraphs fell or the
+   * note, unlike hybrid search (`retrieve.ts`), which already selects both.
+   */
+  overruledByJudgmentId: string | null;
+  overruledParas: number[] | null;
+  overruledNote: string | null;
 };
 
 /**
@@ -276,11 +286,15 @@ export async function runStructured(
       case_number: string | null;
       bench: string | null;
       overruled_status: string;
+      overruled_by_judgment_id: string | null;
+      overruled_paras: number[] | null;
+      overruled_note: string | null;
     }[]
   >`
     SELECT j.id, j.case_title, j.neutral_citation, j.reporter_citations,
            j.court, j.judgment_date::text AS judgment_date, j.case_number, j.bench,
-           j.overruled_status::text AS overruled_status
+           j.overruled_status::text AS overruled_status,
+           j.overruled_by_judgment_id, j.overruled_paras, j.overruled_note
       FROM judgments j
      WHERE ${compileWhere(sql, node)}
      ORDER BY j.judgment_date DESC
@@ -296,6 +310,9 @@ export async function runStructured(
     caseNumber: r.case_number,
     bench: r.bench,
     overruledStatus: r.overruled_status,
+    overruledByJudgmentId: r.overruled_by_judgment_id,
+    overruledParas: r.overruled_paras,
+    overruledNote: r.overruled_note,
   }));
 }
 

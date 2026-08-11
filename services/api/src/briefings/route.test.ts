@@ -42,6 +42,8 @@ type Authority = {
   available: boolean;
   overruledStatus?: string;
   addToMatterAllowed?: boolean;
+  verificationState?: string;
+  verifiedBySource?: string;
 };
 
 const auth = () => ({ authorization: `Bearer ${token}`, 'content-type': 'application/json' });
@@ -110,6 +112,15 @@ describe('briefing read path', () => {
     assert.notEqual(b.blocks, null, 'blocks must not be null — the jsonb was not parsed');
     assert.equal(b.authorities.length, 1, 'the stored authority must resolve');
     assert.equal(b.authorities[0]?.judgmentId, judgmentId);
+  });
+
+  it('carries verificationState and verifiedBySource, not undefined — RCC bus 0038', async () => {
+    // Found missing 11 Aug 2026: absence read as falsy client-side, so every
+    // briefing authority drew the unconfirmed mark even on a verified corpus
+    // judgment. Tier 1 by construction, same as every other corpus-row surface.
+    const b = await readBriefing();
+    assert.equal(b.authorities[0]?.verificationState, 'verified');
+    assert.equal(b.authorities[0]?.verifiedBySource, 'corpus');
   });
 
   it('re-reads good-law status LIVE, after the briefing was generated', async () => {

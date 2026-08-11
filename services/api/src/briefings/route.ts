@@ -181,6 +181,14 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
       available: true as const,
       caseTitle: r.case_title,
       neutralCitation: r.neutral_citation,
+      // Found missing 11 Aug 2026 (RCC bus 0038): the harness rule is
+      // "absence never upgrades to confirmed", so every briefing authority
+      // drew the unconfirmed mark on the wedge screen — including ones from
+      // the advocate's own verified matter. Tier 1 by construction, same as
+      // judgments/route.ts and every other corpus-row surface: this row IS
+      // the corpus, so it resolves to itself.
+      verificationState: 'verified' as const,
+      verifiedBySource: 'corpus' as const,
       /** Read live, this request. Never the value the sweep saw last night. */
       overruledStatus: r.overruled_status,
       overruledByJudgmentId: r.overruled_by_judgment_id,

@@ -116,9 +116,12 @@ export async function handleSearch(
         verifiedBySource: 'corpus' as const,
         // Read live from the row, never cached — CITATION_HARNESS.md.
         overruledStatus: h.overruledStatus,
-        overruledByJudgmentId: null,
-        overruledParas: null,
-        overruledNote: null,
+        // Found hardcoded null 11 Aug 2026: runStructured now selects all
+        // three (compile.ts), so a partly_set_aside hit here can finally
+        // name the affected paragraphs, matching hybrid search.
+        overruledByJudgmentId: h.overruledByJudgmentId,
+        overruledParas: h.overruledParas,
+        overruledNote: h.overruledNote,
         asOf: new Date().toISOString(),
       })),
       unverifiedReferences: [],
@@ -153,9 +156,9 @@ export async function handleSearch(
         verificationState: 'verified' as const,
         verifiedBySource: 'corpus' as const,
         overruledStatus: h.overruledStatus,
-        overruledByJudgmentId: null,
-        overruledParas: null,
-        overruledNote: null,
+        overruledByJudgmentId: h.overruledByJudgmentId,
+        overruledParas: h.overruledParas,
+        overruledNote: h.overruledNote,
         asOf: new Date().toISOString(),
       })),
       unverifiedReferences: [],

@@ -1022,10 +1022,41 @@ accumulated per-case work.
 
 ## Briefings — LCC owns
 ```
-GET  /briefings/:id             → { briefing }
+GET  /briefings/:id             → { briefing, asOf }
 GET  /matters/:id/briefings     → { briefings }
 POST /briefings/:id/opened      → { ok }
 ```
+**Documented at the field level 11 Aug 2026, after RCC's bus 0038 found the
+client's `Briefing` type had declared six fields no route here has ever sent
+— against a stub-only contract entry with nothing to audit against.**
+`GET /briefings/:id` → `briefing`:
+```
+{ briefingId, matterId, caseTitle, court, hearingDate, generatedAt,
+  deliveredAt, openedAt,
+  dateConfidence,   // three states — see `docs/CITATION_HARNESS.md`; never a boolean
+  blocks,           // lastOrder, pendingApplications, checklist[{ text, basis }], null if ungenerated
+  authorities: [
+    { judgmentId, available: false, note } |
+    { judgmentId, available: true, caseTitle, neutralCitation,
+      verificationState, verifiedBySource,   // added 11 Aug 2026, RCC bus 0038
+      overruledStatus, overruledByJudgmentId, overruledByTitle,
+      overruledParas, overruledNote, addToMatterAllowed }
+  ] }
+```
+**`verificationState`/`verifiedBySource` — added 11 Aug 2026, RCC bus 0038.**
+The harness rule is "absence never upgrades to confirmed" — every briefing
+authority (all Tier 1, corpus rows, `verified`/`corpus` by construction) drew
+the unconfirmed mark until this shipped, on authorities that came from the
+advocate's own verified matter. `overruledStatus` is read live, this request,
+never the value last night's sweep saw.
+
+`GET /matters/:id/briefings` sends the same `dateConfidence` object per row;
+`GET /matters/:id`'s bundle sends the same facts **flat** —
+`datesConfirmedAt`/`datesNotConfirmedAt`/`datesNotConfirmedReason`/
+`hearingDateSource` — a real shape divergence across three routes for one
+fact, not yet collapsed onto `dateConfidence` everywhere. Recorded, not
+blocking; RCC has modelled all three separately rather than assume they
+agree.
 
 ## Drafting — LCC owns
 ```

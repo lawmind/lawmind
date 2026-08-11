@@ -29,6 +29,9 @@ type Result = {
   verificationState: string;
   verifiedBySource: string;
   overruledStatus: string;
+  overruledByJudgmentId: string | null;
+  overruledParas: number[] | null;
+  overruledNote: string | null;
 };
 type Body = {
   ok: boolean;
@@ -213,6 +216,61 @@ describe('POST /search', () => {
       const { body } = await post({ query: 'SYNTHETIC — Ambiguous Fixture A', language: 'en' });
       const data = body.data as unknown as { ambiguous?: boolean };
       assert.notEqual(data.ambiguous, true);
+    });
+  });
+
+  /**
+   * Found 11 Aug 2026: `runStructured` never selected `overruled_by_judgment_id`
+   * / `overruled_paras` / `overruled_note`, so `route.ts` hardcoded them to
+   * null for every structured-search result — a `partly_set_aside` hit via
+   * `cite:`/`judge:`/etc. could show the LAW MOVED status but never which
+   * paragraphs fell, unlike hybrid search. Synthetic fixture, not real data:
+   * a permanent regression test must not depend on a real judgment's
+   * overruled status staying put.
+   */
+  describe('a structured-search hit that is partly_set_aside — REB, hybrid parity', () => {
+    const fakeCitation = `TEST OVERRULED-PARTS ${crypto.randomUUID().slice(0, 8)}`;
+    let replacementId: string;
+    let targetId: string;
+
+    before(async () => {
+      const [replacement] = await sql<{ id: string }[]>`
+        INSERT INTO judgments (case_title, reporter_citations, court, judgment_date,
+                               full_text, language, source_url)
+        VALUES ('SYNTHETIC — Replacement Fixture', '{}', 'Test Court', '2025-01-01',
+                'synthetic fixture owned by route.test.ts', 'en',
+                ${`test://overruled-parts/replacement/${crypto.randomUUID()}`})
+        RETURNING id`;
+      replacementId = replacement!.id;
+
+      const [target] = await sql<{ id: string }[]>`
+        INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                               judgment_date, full_text, language, source_url,
+                               overruled_status, overruled_by_judgment_id, overruled_paras,
+                               overruled_note, overruled_status_changed_at)
+        VALUES ('SYNTHETIC — Overruled-In-Part Fixture', ${fakeCitation}, '{}', 'Test Court',
+                '2020-01-01', 'synthetic fixture owned by route.test.ts', 'en',
+                ${`test://overruled-parts/target/${crypto.randomUUID()}`},
+                'partly_set_aside', ${replacementId}, ARRAY[5, 6],
+                'test fixture note — paragraphs 5 and 6 set aside', now())
+        RETURNING id`;
+      targetId = target!.id;
+    });
+
+    after(async () => {
+      await sql`DELETE FROM judgments WHERE id = ${targetId} OR id = ${replacementId}`;
+    });
+
+    it('carries overruledByJudgmentId, overruledParas and overruledNote, not null', async () => {
+      const { status, body } = await post({ query: `cite:"${fakeCitation}"`, language: 'en' });
+      assert.equal(status, 200);
+      const data = body.data as unknown as { results: Result[] };
+      const hit = data.results.find((r) => r.judgmentId === targetId);
+      assert.ok(hit, 'the fixture must be found by its own citation');
+      assert.equal(hit.overruledStatus, 'partly_set_aside');
+      assert.equal(hit.overruledByJudgmentId, replacementId);
+      assert.deepEqual(hit.overruledParas, [5, 6]);
+      assert.equal(hit.overruledNote, 'test fixture note — paragraphs 5 and 6 set aside');
     });
   });
 });
