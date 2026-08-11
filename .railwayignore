@@ -13,4 +13,14 @@ node_modules
 .models
 
 # Training pairs live in R2, never in a deploy. `docs/TRAINING_STRATEGY.md` §4.
-training
+#
+# **Anchored to the repo root — same bug as `.gitignore` had, found 11 Aug
+# 2026.** An unanchored `training` matches a directory of that name at ANY
+# depth, including `services/api/src/training/`, which is application source
+# (`consent.ts`, `extract.ts`) that `app.ts` imports. This is the actual file
+# `railway up` reads, so THIS was the one directly responsible for every
+# deploy crashing at container boot with
+# `ERR_MODULE_NOT_FOUND … services/api/src/training/consent.ts` — the
+# `.gitignore` fix alone was not enough, because `railway up` does not
+# consult `.gitignore` for what to upload.
+/training
