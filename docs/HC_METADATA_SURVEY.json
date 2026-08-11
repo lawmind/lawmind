@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-09T20:36:34.627Z",
+  "generatedAt": "2026-08-11T09:24:03.309Z",
   "bucket": "s3://indian-high-court-judgments",
   "method": "parquet footers only (parquetMetadataAsync) — no rows decoded except one per court for its name",
   "objectsListed": 1493,
@@ -13,26 +13,26 @@
   ],
   "totals": {
     "allYears": {
-      "plain": 19237683,
+      "plain": 19237684,
       "mobile": 1291519,
-      "combined": 20529202
+      "combined": 20529203
     },
     "last10Years": {
       "range": [
         2016,
         2026
       ],
-      "plain": 14480215,
+      "plain": 14480216,
       "mobile": 1291351,
-      "combined": 15771566
+      "combined": 15771567
     }
   },
   "perCourt": [
     {
       "code": "9_13",
       "name": "Allahabad High Court",
-      "allYears": 3493991,
-      "last10Years": 3493695,
+      "allYears": 3493992,
+      "last10Years": 3493696,
       "hasMobileVariant": true
     },
     {
@@ -1142,7 +1142,7 @@
       "2023": 534053,
       "2024": 264889,
       "2025": 487750,
-      "2026": 151423
+      "2026": 151424
     }
   }
 }

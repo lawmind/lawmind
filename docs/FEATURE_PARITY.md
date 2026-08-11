@@ -282,6 +282,88 @@ un-embedded corpus still finds it.
 
 ---
 
+## 5b · JHANA — researched 11 Aug 2026, on the founder's question *"are we building in the wrong direction?"*
+
+**The short answer: the direction is right and the ORDER may be wrong.** Detail
+and sources below; everything is from their own pages unless marked otherwise.
+
+### What they are
+
+Founded **2021 at Harvard**, Bengaluru/Chennai. **$1.6M seed** led by Together
+Fund (Girish Mathrubootham), with Razorpay's founders, Kunal Shah, and an OpenAI
+employee angel. Products: **Searcher · Paralegal · Suit** (doc intel) **·
+Courtroom** (judicial/registry APIs) **· PUBSEC** (government). Free tier, then
+about **₹3,300/month**.
+[jhana.ai](https://jhana.ai/) · [about](https://jhana.ai/about/) ·
+[PUBSEC](https://jhana.ai/pubsec/) ·
+[Inc42](https://inc42.com/buzz/jhana-ai-bags-funding-to-build-an-ai-powered-research-drafting-tool-for-lawyers/)
+
+### Where the founder's worry is JUSTIFIED — say this part first
+
+1. **They have 10,000+ users. We have zero.** The gap is distribution, not
+   technology.
+2. **They are inside the courts**: *"5+ High Courts & Tribunals"*, *"3+ Central
+   Government Ministries"*, **150+ judges and registrars**. If courts standardise
+   on their pipeline that is structural and years deep. We have no B2G motion and
+   should not pretend the citation harness answers it.
+3. **They claim all 25 High Courts. We hold 0.** Our corpus is 38,341 Supreme
+   Court judgments — **0.24%** of the ~16M they claim. An advocate searching their
+   own High Court gets nothing, which is why RCC had to build a coverage screen to
+   be honest about it.
+4. **The uncomfortable consequence.** Our differentiator is real, but it is
+   currently **a very good lock on a very small library**. The harness's value
+   scales with the corpus it protects, and §Q2's two open questions — citability
+   and embedding cost — have been open since 9 August. **They are the most
+   expensive open decisions in the project**, and this is the competitive reason
+   why.
+
+### Where we are genuinely ahead — and it is not a small thing
+
+1. **Their citation guarantee is an LLM loop; ours is a database read.** In their
+   own words: *"AI brute-forces research and reads citations till correct"* and
+   agents *"always cite their work."* That is the architecture Stanford RegLab
+   measured at **17% (Lexis+ AI) and 33% (Westlaw)**. Ours renders three
+   independent fields **from the stored row**, never from model output, with a
+   silent-drop threshold of zero. `docs/RESEARCH_2026-08-11.md` §2.
+2. **They publish no accuracy numbers.** Press coverage says they are *"the only
+   legal AI company in India that quantitatively tests and benchmarks its
+   technologies"* — **that claim does not appear on their own site, and no
+   benchmark figure appears anywhere on it.** Their PUBSEC verification is
+   described as *"Law-Verifiers… constructs logic graphs which detect
+   contradictions, forensic issues, and ontologies"*, which is a description of a
+   mechanism, not a measurement of one.
+3. **Nobody has a corpus moat.** Their *"national legal archive"* of 16M+
+   documents is the **AWS Open Data / eCourts public corpus**, CC-BY-4.0,
+   available to us on the same terms. *"Machine-enhanced"* is the differentiator
+   they are claiming, not the data.
+4. **The wedge appears intact.** Their cause-list work is real but sits in
+   **PUBSEC, sold to courts** — *"cause-list to dashboard, 15 minutes"* is a
+   registry workflow. **Their advocate-facing pricing page names no cause list,
+   hearing date, case tracking, digest or alert feature.** A 24-hour briefing
+   assembled per listed hearing, for the advocate, re-checking good-law status at
+   delivery, is still unclaimed.
+
+   **Stated as evidence, not as proof.** Their billing page did not render full
+   plan detail to a fetch, so this is *"absent from their public pages"*, not
+   *"absent from their product"*. **`FOUNDER_QUEUE.md` FQ-BL2 already records what
+   happens when we assert a "nobody has it" cell without checking.** Their free
+   tier costs ₹0 — that is how to settle it.
+
+### What this changes
+
+**It does not change what we are building.** It sharpens why the order matters:
+a harness protecting 0.24% of Indian case law is a smaller product than the same
+harness protecting a High Court decade, and the two questions gating that are
+sitting with the founder.
+
+**One thing it adds to our own design.** The Stanford study counts *real citations
+with mischaracterised holdings* and *right quote, wrong procedural posture* as
+errors. **We check existence, not characterisation** — and neither does Jhana, as
+far as anything they publish shows. That is an open field, not a gap to close in
+a hurry.
+
+---
+
 ## 6 · What this costs
 
 Rough scale, for planning only — not estimates to commit to.

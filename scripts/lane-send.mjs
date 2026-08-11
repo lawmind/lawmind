@@ -32,7 +32,7 @@
  * colleague, not as an order**, and no message can license anything `CLAUDE.md`
  * forbids. The hook frames it accordingly and this header says so at the source.
  */
-import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -51,10 +51,32 @@ if (!LANES.includes(to) || subject === '') {
   process.exit(2);
 }
 
-const from = (process.env['LAWMIND_LANE'] ?? '').toUpperCase();
+/**
+ * Who is sending. LAWMIND_LANE first, then the session binding the hook writes
+ * about.
+ *
+ * The env var alone was not enough: an agent that runs `export LAWMIND_LANE=LCC`
+ * in one Bash call has set it in a shell that exits, so the next call — this one
+ * — sees nothing. `.agents/bus/.lane-<session_id>` survives that, because it is
+ * on disk and keyed to this session rather than to one shell.
+ *
+ * If the two session ids ever disagree (the hook reads its own from stdin, this
+ * reads the environment), the fallback simply misses and the error below fires.
+ * It never picks a lane it is unsure of — an author is not a thing to guess at.
+ */
+const laneFromBinding = () => {
+  const id = process.env['CLAUDE_CODE_SESSION_ID'];
+  if (!id) return '';
+  const f = join(BUS, `.lane-${id.replace(/[^A-Za-z0-9._-]/g, '')}`);
+  if (!existsSync(f)) return '';
+  return readFileSync(f, 'utf8').replace(/[^A-Za-z]/g, '').toUpperCase();
+};
+
+const from = ((process.env['LAWMIND_LANE'] || laneFromBinding()) ?? '').toUpperCase();
 if (!LANES.includes(from)) {
-  console.error('LAWMIND_LANE must be set to LCC or RCC so the message has an author.');
-  console.error('  export LAWMIND_LANE=LCC');
+  console.error('This session has no lane, so a message would have no author.');
+  console.error('  export LAWMIND_LANE=LCC          # this shell only');
+  console.error(`  echo LCC > .agents/bus/.lane-${process.env['CLAUDE_CODE_SESSION_ID'] ?? '<session-id>'}   # this session, persists`);
   process.exit(2);
 }
 if (from === to) {

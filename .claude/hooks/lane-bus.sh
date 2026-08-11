@@ -9,9 +9,37 @@
 # so every failure path here degrades to "emit nothing, exit clean" — a missed
 # message is an inconvenience, a swallowed prompt is not.
 #
-# LAWMIND_LANE identifies this session. If it is unset the hook stays SILENT
-# rather than guessing: delivering RCC's mail to RCC would mark it read and lose
-# it for the lane that needed it.
+# ─────────────────────────────────────────────────────────────────────────────
+# HOW THIS SESSION LEARNS WHICH LANE IT IS — and why it is not just an env var
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# The first version identified the lane ONLY by LAWMIND_LANE. That looked fine
+# and delivered nothing for a whole session, because a hook inherits the
+# environment of the Claude Code PROCESS, not of the agent's shell: an agent
+# that runs `export LAWMIND_LANE=LCC` in its own Bash call has changed a child
+# process that exits immediately. Unless the founder exported the variable in
+# the terminal BEFORE launching, the hook saw nothing and — by design — stayed
+# silent. Silent is the right failure, but a bus that needs a step no agent can
+# perform for itself is a bus that is off.
+#
+# So the lane is resolved in two ways, strongest first:
+#
+#   1. LAWMIND_LANE in the environment — unchanged, and still correct.
+#   2. .agents/bus/.lane-<session_id>, a one-line file naming the lane. The
+#      session_id arrives on stdin with every hook invocation, so it identifies
+#      THIS session and nothing else — which matters, because both lanes share
+#      one working tree and a single shared marker file could not tell them
+#      apart.
+#
+# When neither resolves, the hook does NOT guess and does NOT go quiet: it
+# prints the exact command to bind, with the real session_id already filled in.
+# The agent runs one line and the bus is live. The notice repeats every prompt
+# until it is bound, which is the point — an unbound lane is a lane whose mail
+# is piling up.
+#
+# NEVER infer the lane from anything shared (cwd, a lone marker file, the git
+# branch). Delivering RCC's mail to LCC marks it read and loses it for the lane
+# that needed it, which is worse than delivering nothing at all.
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # THE MESSAGES ARE FRAMED AS DATA, DELIBERATELY
@@ -27,15 +55,56 @@ set -uo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 BUS="${PROJECT_DIR}/.agents/bus"
-LANE="$(printf '%s' "${LAWMIND_LANE:-}" | tr '[:lower:]' '[:upper:]')"
-
-# No lane, no delivery. Silence beats guessing wrong and consuming the message.
-case "$LANE" in
-  LCC|RCC) ;;
-  *) exit 0 ;;
-esac
 
 [ -d "$BUS" ] || exit 0
+
+# The payload is read whole and once — stdin is not seekable, and every later
+# read would get nothing.
+PAYLOAD="$(cat 2>/dev/null || true)"
+
+# session_id without jq, which is not installed on the founder's machine. The
+# value is then reduced to path-safe characters: it becomes part of a filename,
+# and a crafted field must not be able to walk out of the bus directory.
+SESSION_ID="$(printf '%s' "$PAYLOAD" \
+  | sed -n 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+  | head -1 \
+  | tr -cd 'A-Za-z0-9._-')"
+
+LANE="$(printf '%s' "${LAWMIND_LANE:-}" | tr '[:lower:]' '[:upper:]')"
+
+BIND_FILE=""
+if [ -n "$SESSION_ID" ]; then
+  BIND_FILE="${BUS}/.lane-${SESSION_ID}"
+  case "$LANE" in
+    LCC | RCC) ;;
+    *)
+      if [ -f "$BIND_FILE" ]; then
+        LANE="$(tr -cd 'A-Za-z' < "$BIND_FILE" | tr '[:lower:]' '[:upper:]')"
+      fi
+      ;;
+  esac
+fi
+
+# No lane, no delivery — but say how to fix it rather than going quiet, because
+# the silent version of this hook cost a full session of undelivered mail.
+case "$LANE" in
+  LCC | RCC) ;;
+  *)
+    [ -n "$SESSION_ID" ] || exit 0
+    printf '%s\n' "<lane-bus lane=\"UNBOUND\">
+This session has not been bound to a lane, so the LCC/RCC message bus is
+delivering nothing to it. Messages may be waiting. If you are LCC (server) or
+RCC (client), run the matching line ONCE — it binds this session id only:
+
+  echo LCC > .agents/bus/.lane-${SESSION_ID}
+  echo RCC > .agents/bus/.lane-${SESSION_ID}
+
+Then \`pnpm lane:inbox\` to see the whole thread. If you are neither lane,
+ignore this — it will keep appearing and that is harmless.
+</lane-bus>"
+    exit 0
+    ;;
+esac
 
 CURSOR_FILE="${BUS}/.cursor-$(printf '%s' "$LANE" | tr '[:upper:]' '[:lower:]')"
 CURSOR=0

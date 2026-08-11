@@ -47,3 +47,9 @@ scripts/recall-ground-truth.json
 # The MESSAGES stay in git deliberately; who has read them does not.
 .agents/bus/.cursor-*
 .agents/bus/.lane-*
+
+# Background-job run artifacts. `hc-citations.pid` and `.err` are written by
+# `pnpm --filter @lawmind/ingest run hc:citations` when it is backgrounded;
+# they name a process id on one machine and are meaningless in the repo.
+*.pid
+hc-citations.err

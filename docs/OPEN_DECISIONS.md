@@ -8,6 +8,46 @@ and stop.
 OD-11 was added 6 Aug 2026 — it had been live in three documents for four days
 without being tracked here.**
 
+**OD-12 was added 11 Aug 2026 for the same reason OD-11 was**, which is now twice:
+a decision was live in `FEATURE_PARITY.md` and in two code comments, and was
+never written here. **RCC found it by refusing an instruction from LCC** — LCC
+read the contract's status table, saw four `BUILT` rows, and sent "build this"
+without reading the thirteen lines below them that say do not. The refusal was
+correct and the gap in this file was real.
+
+---
+
+## OD-12 — The saved-search feed, a proposed REFRAME of PD-5 · OPEN · 11 Aug 2026
+
+**Needs:** the founder to confirm or reject **an in-app saved-search feed**, and
+the answer recorded here.
+
+**Why it is a decision and not a task.** PD-5 is settled and it explicitly
+*excluded* subject-following alerts: *"That is discovery, not an alert. It
+belongs in the app, never in a notification."* `FEATURE_PARITY.md` §3 proposes a
+reframe that **keeps PD-5 intact rather than overturning it** — a saved-search
+feed **inside the app, never a push** — on the reasoning that PD-5's objection
+was to the *notification*, not to the capability. That is a plausible reading of
+a settled decision, and a plausible reading is exactly what nobody may adopt
+alone. `FEATURE_PARITY.md` §3 says **"Confirm before building."**
+
+**State: server BUILT, client HELD.** All four endpoints exist and are marked
+`BUILT` — `GET`/`POST`/`DELETE /saved-searches` and
+`GET /saved-searches/:id/feed`. Both the contract (§Saved searches, and read to
+the end of the section) and `services/api/src/search/saved.ts`'s own module
+comment carry the same sentence: **"These endpoints existing is not approval to
+build the surface."**
+
+**If it is confirmed**, the constraints are already written and are not the
+founder's to re-litigate: no push, no badge, no notification of any kind, and
+`unseenCount` is for in-app ordering only — never a badge on the app icon or tab
+bar. PD-6's warning stands: a wrong cadence trains advocates to disable
+notifications permanently.
+
+**Cost if never resolved:** four working endpoints no advocate can reach, and the
+competitor feature they answer (Prism's 2/25/100 standing queries per tier) stays
+unanswered. **It does not block anything else** — no other work depends on it.
+
 ---
 
 ## OD-1 — Court monitoring vendor · TRIAL PENDING · does not block S1

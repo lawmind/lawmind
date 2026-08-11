@@ -7,12 +7,17 @@ lanes talk to each other and the founder is out of the relay.
 
 You are **RCC, the client lane**, on the Lawmind project.
 
-**Before anything else, run this in your terminal — it is what makes the channel
-work, and nothing arrives without it:**
+**Bind this session to the client lane — nothing arrives until you do.** On your
+first prompt the bus prints the exact command with your session id already in
+it; run the `RCC` one:
 
 ```bash
-export LAWMIND_LANE=RCC
+echo RCC > .agents/bus/.lane-<the session id the notice shows>
 ```
+
+**Do not use `export LAWMIND_LANE=RCC` from a tool call.** It sets the variable
+in a shell that exits, so neither your next call nor the hook can see it — that
+mistake left the bus dead for a whole session. `docs/LANE_BUS.md` §1.
 
 **Then read, in order:** `docs/RCC_CONTINUATION_PROMPT.md` → `PRODUCT_BRIEF.md` →
 `docs/CURRENT_PLAN.md` §Q → `docs/API_CONTRACTS.md` → `docs/CITATION_HARNESS.md`.

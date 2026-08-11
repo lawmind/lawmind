@@ -5,16 +5,49 @@ lanes. Every message is a file, in git, delivered by a hook.
 
 ---
 
-## 1 · ONE-TIME SETUP — set the lane, per terminal
+## 1 · SETUP — bind the session, and it takes one line you do not have to invent
 
-```bash
-export LAWMIND_LANE=LCC      # in the server-lane session
-export LAWMIND_LANE=RCC      # in the client-lane session
+**Do nothing.** On the first prompt of an unbound session the hook prints the
+exact command, with this session's id already filled in:
+
+```
+echo LCC > .agents/bus/.lane-<session_id>     # server lane
+echo RCC > .agents/bus/.lane-<session_id>     # client lane
 ```
 
-**Without it the bus stays silent rather than guessing.** Delivering RCC's mail
-into RCC's own session would mark it read and lose it for the lane that needed
-it, so silence is the safe failure.
+Run the matching one. That is the whole setup, and the notice repeats every
+prompt until it is done — an unbound lane is a lane whose mail is piling up.
+
+`export LAWMIND_LANE=LCC` still works and still wins, for a founder who prefers
+to set it in the terminal before launching.
+
+### Why not the environment variable alone — a real failure, on 11 August
+
+The first version identified the lane **only** by `LAWMIND_LANE`, and it
+delivered **nothing for an entire session**. Neither `.cursor-lcc` nor
+`.cursor-rcc` had ever been written, so no message had ever been handed over by
+the hook to either lane. The handover note claiming *"It works. It has been
+used — RCC read message 0001 and replied on 0002 without the founder touching
+anything"* was **wrong about the mechanism**: RCC had the message, but not from
+the hook.
+
+**A hook inherits the environment of the Claude Code process, not of the agent's
+shell.** An agent that runs `export LAWMIND_LANE=LCC` in a Bash call has set a
+variable in a child process that exits immediately — its own next call cannot
+see it, and the hook never could. So the one setup step the instructions gave
+was a step **no agent could perform for itself**, and the failure mode was
+silence, which looks identical to *"no mail today"*.
+
+**This is the §1 family again**: a component verified by reading it rather than
+by running it. `.cursor-*` not existing was observable from the first day and
+nobody looked.
+
+**The fix keeps the safe property and drops the useless one.** The lane is still
+never guessed — it is bound to a **`session_id`**, which arrives on stdin with
+every hook invocation and identifies this session and no other. That matters
+specifically because the two lanes **share one working tree**: a single shared
+marker file could not tell them apart, and any inference from `cwd` or the git
+branch would deliver RCC's mail into LCC's session, mark it read, and lose it.
 
 ---
 
@@ -90,7 +123,10 @@ loop.**
 | property | why it matters | verified |
 | --- | --- | --- |
 | Hook **always exits 0** | on `UserPromptSubmit`, exit 2 **blocks and erases the prompt** — a missed message is an inconvenience, a swallowed prompt is not | ✅ |
-| No `LAWMIND_LANE` → **silent** | guessing would consume another lane's mail | ✅ |
+| No lane resolved → **prints how to bind, never guesses** | guessing consumes the other lane's mail; **silence hid a dead bus for a whole session** — §1 | ✅ |
+| Lane bound to a **`session_id`**, not to the tree | both lanes share one working tree, so any shared marker would collide | ✅ |
+| `session_id` reduced to `[A-Za-z0-9._-]` before use | it becomes part of a filename; a crafted field must not walk out of `.agents/bus/` | ✅ |
+| Bindings and cursors are **git-ignored** | who has read what is per-machine state; the **messages** stay in git deliberately | ✅ |
 | A lane **never receives its own** messages | otherwise the sender burns its own cursor | ✅ |
 | Cursor advances **only after** the payload is built | a failure re-delivers rather than silently eating the message | ✅ |
 | Output **capped at 8,000 chars** and says when clipped | Claude Code truncates at 10,000; a silently clipped message is worse than one that admits it | ✅ |
