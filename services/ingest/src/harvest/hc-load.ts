@@ -244,7 +244,24 @@ export function toJudgmentRecord(
       // exact failure this product exists to prevent.
       reporterCitations: [],
       court: row.court?.trim() || partitions.courtCode,
-      bench: partitions.bench,
+      /**
+       * **NULL, and this line used to say `partitions.bench`.**
+       *
+       * `partitions.bench` is the S3 partition key — `bench=patnahcucisdb94` —
+       * which identifies the court ESTABLISHMENT that published the file.
+       * `judgments.bench` means the JUDGES WHO SAT; the API sends it and the
+       * judgment screen renders it as the coram. The word is the same in both
+       * places and means two different things, which is why this looked correct
+       * at every step and shipped 40,705 rows reading `patnahcucisdb94` where
+       * the judges belong (measured 11 Aug 2026, 51.3% of the whole corpus;
+       * zero of them had a matching `judgment_judges` row, so it was never a
+       * badly-formatted judge list — it was not a judge list).
+       *
+       * This variant publishes no judge field at all, so NULL is the honest
+       * value. The partition is kept below as what it actually is.
+       */
+      bench: null,
+      sourceBenchCode: partitions.bench,
       judgmentDate,
       fullText: text,
       language: 'en',

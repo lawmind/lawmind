@@ -149,7 +149,14 @@ describe('toJudgmentRecord', () => {
     assert.equal(r.caseNumber, 'CR. MISC./83783/2023');
     assert.equal(r.caseType, 'criminal');
     assert.equal(r.court, 'Patna High Court');
-    assert.equal(r.bench, 'patnahcucisdb94');
+    // The partition key is provenance, NOT the coram. This assertion used to
+    // read `r.bench === 'patnahcucisdb94'` and it passed for exactly as long as
+    // the bug lived — the test encoded the same mistake as the code, which is
+    // why 40,980 rows reached production showing a database slug where the
+    // judges belong. Migration 0040. This variant publishes no judge field, so
+    // `bench` is null and the source's code is kept as what it is.
+    assert.equal(r.bench, null, 'a court code is never a bench');
+    assert.equal(r.sourceBenchCode, 'patnahcucisdb94');
     assert.equal(r.judgmentDate, '2024-05-03');
     assert.equal(r.sourceUrl, URL);
     assert.equal(r.language, 'en');

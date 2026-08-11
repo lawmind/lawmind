@@ -76,6 +76,10 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       reporter_citations: r.reporterCitations,
       court: r.court,
       bench: r.bench,
+      // Migration 0040. The source's court-establishment code, kept as what it
+      // is rather than written into `bench` — which is what put a database slug
+      // in front of advocates on 40,705 rows. undefined/null both land as NULL.
+      source_bench_code: r.sourceBenchCode ?? null,
       judgment_date: r.judgmentDate,
       full_text: r.fullText,
       language: r.language,
@@ -118,6 +122,7 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       reporter_citations    = EXCLUDED.reporter_citations,
       court                 = EXCLUDED.court,
       bench                 = EXCLUDED.bench,
+      source_bench_code     = EXCLUDED.source_bench_code,
       judgment_date         = EXCLUDED.judgment_date,
       full_text             = EXCLUDED.full_text,
       language              = EXCLUDED.language,

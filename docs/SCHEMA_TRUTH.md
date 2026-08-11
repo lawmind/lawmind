@@ -79,7 +79,8 @@ the citation-verification moat does not transfer); revisit after ₹1Cr ARR.
 ## judgments
 
 `id` uuid pk · `case_title` text · `neutral_citation` text null ·
-`reporter_citations` text[] · `court` text · `bench` text null ·
+`reporter_citations` text[] · `court` text · `bench` text null — **the judges
+who sat, never a court code; see `source_bench_code` below** ·
 `judgment_date` date · `full_text` text · `language` enum (en|hi) ·
 `source_url` text · `overruled_status` enum
 (none|set_aside|partly_set_aside|doubted) default none ·
@@ -162,6 +163,31 @@ than resolved to `judgment` or `order`; resolving that ambiguity needs the
 PDF text, which this column does not read. Null on every Supreme Court row
 and on the 21 High Courts that publish no such column — an absent label, not
 a negative claim about the document.
+
+`source_bench_code` text null — added migration `0040`, 11 Aug 2026. **The
+source's own court-establishment code, verbatim** — the AWS High Court bucket's
+`bench=` path segment (`.../court=10_8/bench=patnahcucisdb94/...`). Provenance,
+and **never a coram**. NULL on every Supreme Court row, which has no such
+partition.
+
+It exists because `bench` held it. `services/ingest/src/harvest/hc-load.ts`
+mapped `bench: partitions.bench`, and the word means two different things in
+the two places: the partition names the court establishment that PUBLISHED the
+file, `judgments.bench` means the JUDGES WHO SAT, and `GET /judgments/:id`
+renders it as the coram. Measured against production: **40,980 rows — 51.3% of
+the corpus, every High Court judgment held** — showed `patnahcucisdb94`,
+`gujarathc`, `newos` where the bench belongs, and **zero of them had a matching
+`judgment_judges` row**, so it was never a badly-formatted judge list.
+
+`bench` is therefore **NULL on all 40,980**, plus the 16 that already were.
+That is the honest value, not a gap: the plain High Court metadata variant —
+the only one we hold — publishes no judge field at all. `judgment_judges`
+covers 38,325 Supreme Court judgments and no High Court one.
+
+**Bench strength is not derivable from this column** and RCC bus 0046's
+`bench: ('constitution' | 'three_plus')[]` filter has no data behind it — on
+half the corpus the column was never about judges, and on the other half it is
+a free-text list of names with no count.
 
 `cnr` text null — the eCourts Case Number Record, added migration `0034`,
 11 Aug 2026. The canonical cross-source identity key (`docs/DATA_ADVANTAGE.md`:

@@ -47,7 +47,18 @@ export type JudgmentRecord = {
   neutralCitation: string | null;
   reporterCitations: string[];
   court: string;
+  /** The judges who sat, verbatim. NULL where the source publishes none. **Never a court code.** */
   bench: string | null;
+  /**
+   * Migration `0040`. The source's own court-establishment code — the AWS High
+   * Court bucket's `bench=` partition key. Provenance, and never a coram.
+   *
+   * Optional because the Supreme Court source has no such partition;
+   * `undefined` and `null` both land as a database NULL. It exists because
+   * `hc-load.ts` wrote this value into `bench` for 40,705 rows, and losing it
+   * on the way out would have traded one wrong answer for a missing one.
+   */
+  sourceBenchCode?: string | null;
   /** ISO `YYYY-MM-DD`. */
   judgmentDate: string;
   fullText: string;

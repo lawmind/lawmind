@@ -81,6 +81,20 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
     neutralCitation: row.neutral_citation,
     reporterCitations: row.reporter_citations,
     court: row.court,
+    /**
+     * The judges who sat, or NULL where the source publishes none.
+     *
+     * **NULL is now the majority case and was always possible.** Migration
+     * `0040` moved 40,980 rows' worth of S3 partition key (`patnahcucisdb94`)
+     * out of this column, so every High Court judgment we hold answers NULL
+     * here — the plain metadata variant carries no judge field at all — and
+     * 16 rows already did before that. The client types this `string`, which
+     * was already a type that lies; RCC is told rather than left to find it.
+     *
+     * An absent coram must render as absent. It must NEVER render as a court
+     * code, which is what shipped: opening any Patna judgment, the largest
+     * court in our corpus, showed a database slug where the bench belongs.
+     */
     bench: row.bench,
     judgmentDate: row.judgment_date,
     caseNumber: row.case_number,

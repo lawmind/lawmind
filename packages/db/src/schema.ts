@@ -319,7 +319,22 @@ export const judgments = pgTable(
     neutralCitation: text('neutral_citation'),
     reporterCitations: text('reporter_citations').array().notNull(),
     court: text('court').notNull(),
+    /**
+     * The judges who sat, as the source printed them. NULL where the source
+     * publishes none — which is every High Court row we hold, the plain
+     * metadata variant carrying no judge field at all.
+     *
+     * **Never a court code.** Migration `0040` moved 40,705 rows' worth of
+     * S3 partition key out of here into `sourceBenchCode` below; until then
+     * half the corpus rendered `patnahcucisdb94` where the coram belongs.
+     */
     bench: text('bench'),
+    /**
+     * Migration `0040`. The source's own court-establishment code, verbatim —
+     * the AWS High Court bucket's `bench=` partition key. Provenance, and never
+     * a coram. NULL on Supreme Court rows, which have no such partition.
+     */
+    sourceBenchCode: text('source_bench_code'),
     judgmentDate: date('judgment_date').notNull(),
     fullText: text('full_text').notNull(),
     language: languageEnum('language').notNull(),

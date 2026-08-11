@@ -25,6 +25,7 @@ type Body = {
     verificationState: string;
     verifiedBySource: string;
     overruledStatus: string;
+    bench: string | null;
     asOf: string;
   };
   error?: { code: string };
@@ -96,6 +97,33 @@ describe('GET /judgments/:id', () => {
     // stored — null and empty, never a placeholder string.
     assert.equal(body.data?.neutralCitation, null);
     assert.deepEqual(body.data?.reporterCitations, []);
+  });
+
+  it('NEVER sends a court code where the coram belongs — migration 0040', async () => {
+    // What shipped: `harvest/hc-load.ts` mapped `bench: partitions.bench`, the
+    // AWS bucket's S3 path segment (`.../bench=patnahcucisdb94/...`), which
+    // names the court ESTABLISHMENT. `judgments.bench` means the JUDGES WHO
+    // SAT and this route renders it as the coram. 40,980 rows — 51.3% of the
+    // corpus, every High Court judgment we hold — showed a database slug on
+    // the judgment screen, and not one of them had a `judgment_judges` row.
+    //
+    // Asserted over the whole column rather than one fetched row: the defect
+    // was uniform across a court, so a single-row check would have passed
+    // against 39,445 broken Patna judgments by drawing a Supreme Court one.
+    const [bad] = await sql<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM judgments WHERE bench ~ '^[a-z0-9_]+$'`;
+    assert.equal(bad?.n, 0, 'a lowercase single-token bench is a court code, not a judge');
+
+    // And absence is a real answer, not an error: the plain High Court metadata
+    // variant publishes no judge field at all, so NULL is what honesty looks
+    // like here. The route must send it rather than substituting anything.
+    const [nulled] = await sql<{ id: string }[]>`
+      SELECT id FROM judgments WHERE bench IS NULL LIMIT 1`;
+    if (nulled) {
+      const { status, body } = await get(`/judgments/${nulled.id}`);
+      assert.equal(status, 200);
+      assert.equal(body.data?.bench, null, 'an absent coram renders as absent, never as a code');
+    }
   });
 
   it('writes a citation_checks row for the judgment_detail surface', async (t) => {
