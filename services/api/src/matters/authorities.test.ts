@@ -48,6 +48,10 @@ describe('matter authorities', () => {
   let matterId: string;
   let judgmentId: string;
   let setAsideJudgmentId: string;
+  /** Good law when saved, moved afterwards — the case RCC bus 0048 is about. */
+  let movesJudgmentId: string;
+  /** Pre-2013 shape: a reporter citation, no neutral one — RCC bus 0049. */
+  let reporterOnlyJudgmentId: string;
 
   before(async () => {
     owner = await seedAdvocate('own');
@@ -87,12 +91,31 @@ describe('matter authorities', () => {
               'set_aside', ${replacement!.id})
       RETURNING id`;
     setAsideJudgmentId = sa!.id;
+
+    const [moves] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                             judgment_date, full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Still Good Law For Now', 'FIX 2023 INSC 3', '{}', 'Test Court',
+              '2023-01-01', 'synthetic fixture', 'en',
+              ${`test://authorities/${crypto.randomUUID()}`}, 'none')
+      RETURNING id`;
+    movesJudgmentId = moves!.id;
+
+    const [reporterOnly] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, reporter_citations, court, judgment_date,
+                             full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Reporter Citation Only', '{"(2001) 3 SCC 111"}', 'Test Court',
+              '2001-01-01', 'synthetic fixture', 'en',
+              ${`test://authorities/${crypto.randomUUID()}`}, 'none')
+      RETURNING id`;
+    reporterOnlyJudgmentId = reporterOnly!.id;
   });
 
   after(async () => {
     await sql`DELETE FROM matter_authorities WHERE matter_id = ${matterId}`;
     await sql`DELETE FROM matters WHERE id = ${matterId}`;
     await sql`DELETE FROM judgments WHERE id = ${judgmentId} OR id = ${setAsideJudgmentId}
+              OR id = ${movesJudgmentId} OR id = ${reporterOnlyJudgmentId}
               OR case_title = 'SYNTHETIC — Replacement Fixture'`;
     for (const a of [owner, stranger]) {
       await sql`DELETE FROM users WHERE auth_id = ${a.authId}`;
@@ -231,5 +254,108 @@ describe('matter authorities', () => {
       headers: auth(owner.token),
     });
     assert.equal(res.status, 404);
+  });
+
+  /* ------------------------------------------ RCC bus 0048 — good-law status -- */
+
+  type WireAuthority = {
+    judgmentId: string;
+    neutralCitation: string | null;
+    reporterCitations: string[];
+    verificationState: string;
+    verifiedBySource: string;
+    overruledStatus: string;
+    overruledByJudgmentId: string | null;
+    overruledByTitle: string | null;
+    overruledParas: number[] | null;
+    overruledNote: string | null;
+  };
+
+  const listAuthority = async (wantedJudgmentId: string) => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      headers: auth(owner.token),
+    });
+    assert.equal(res.status, 200);
+    return ((await res.json()) as { data: { authorities: WireAuthority[] } }).data.authorities.find(
+      (a) => a.judgmentId === wantedJudgmentId,
+    );
+  };
+
+  it('the add response states good-law status on the way in', async () => {
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId: movesJudgmentId }),
+    });
+    assert.equal(res.status, 201);
+    const a = ((await res.json()) as { data: { authority: WireAuthority } }).data.authority;
+    // Tier 1 by construction: `judgment_id` is a FK into our own corpus.
+    assert.equal(a.verificationState, 'verified');
+    assert.equal(a.verifiedBySource, 'corpus');
+    assert.equal(a.overruledStatus, 'none');
+  });
+
+  it('an authority saved as good law says LAW MOVED once the law moves', async () => {
+    const saved = await listAuthority(movesJudgmentId);
+    assert.equal(saved?.overruledStatus, 'none', 'good law at the moment it was saved');
+
+    // The world changes underneath a citation that is already relied on. This is
+    // the whole of `CITATION_HARNESS.md`'s stale-overruled rule, and the reason
+    // the status may never be copied onto `matter_authorities` at save time.
+    const [replacement] = await sql<{ id: string }[]>`
+      SELECT id FROM judgments WHERE case_title = 'SYNTHETIC — Replacement Fixture'`;
+    await sql`
+      UPDATE judgments
+         SET overruled_status = 'doubted',
+             overruled_by_judgment_id = ${replacement!.id},
+             overruled_note = 'Doubted by a later coordinate bench.',
+             overruled_status_changed_at = now()
+       WHERE id = ${movesJudgmentId}`;
+
+    const after = await listAuthority(movesJudgmentId);
+    assert.ok(after, 'a moved authority is never silently dropped from the list');
+    assert.equal(after.overruledStatus, 'doubted', 'read LIVE, not as stored at save time');
+    assert.equal(after.overruledByJudgmentId, replacement!.id);
+    assert.equal(
+      after.overruledByTitle,
+      'SYNTHETIC — Replacement Fixture',
+      'the advocate is told WHAT moved it, not merely that something did',
+    );
+    assert.equal(after.overruledNote, 'Doubted by a later coordinate bench.');
+    // Verification and good-law status are independent questions: this row is
+    // still in our corpus, so it is still `verified`, and also `doubted`.
+    assert.equal(after.verificationState, 'verified');
+  });
+
+  it('carries the affected paragraphs so partly_set_aside renders as a half, not a headline', async () => {
+    await sql`
+      UPDATE judgments
+         SET overruled_status = 'partly_set_aside', overruled_paras = '{14,15}',
+             overruled_status_changed_at = now()
+       WHERE id = ${movesJudgmentId}`;
+
+    const a = await listAuthority(movesJudgmentId);
+    assert.equal(a?.overruledStatus, 'partly_set_aside');
+    assert.deepEqual(a?.overruledParas, [14, 15], 'without the paras there is no "what still stands"');
+  });
+
+  it('sends reporterCitations, so a pre-2013 authority is not called uncitable — RCC bus 0049', async () => {
+    // Citability is `neutralCitation === null AND reporterCitations.length === 0`
+    // — `docs/CITATION_HARNESS.md`'s rule, computed client-side. This route sent
+    // the first half and never the second, so a saved authority whose only
+    // citation is a reporter citation read as "No citation on file — cannot be
+    // referenced in a filing". It has one; we withheld it.
+    const added = await app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId: reporterOnlyJudgmentId }),
+    });
+    assert.equal(added.status, 201);
+    const fromAdd = ((await added.json()) as { data: { authority: WireAuthority } }).data.authority;
+    assert.deepEqual(fromAdd.reporterCitations, ['(2001) 3 SCC 111'], 'on the way in');
+
+    const fromList = await listAuthority(reporterOnlyJudgmentId);
+    assert.equal(fromList?.neutralCitation, null, 'the fixture has none, by design');
+    assert.deepEqual(fromList?.reporterCitations, ['(2001) 3 SCC 111'], 'and on the way back out');
   });
 });

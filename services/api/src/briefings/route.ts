@@ -147,6 +147,7 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
       id: string;
       case_title: string;
       neutral_citation: string | null;
+      reporter_citations: string[];
       overruled_status: string;
       overruled_by_judgment_id: string | null;
       overruled_paras: number[] | null;
@@ -154,7 +155,7 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
       overruled_by_title: string | null;
     }[]
   >`
-    SELECT j.id, j.case_title, j.neutral_citation, j.overruled_status,
+    SELECT j.id, j.case_title, j.neutral_citation, j.reporter_citations, j.overruled_status,
            j.overruled_by_judgment_id, j.overruled_paras, j.overruled_note,
            o.case_title AS overruled_by_title
     FROM judgments j
@@ -181,6 +182,16 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
       available: true as const,
       caseTitle: r.case_title,
       neutralCitation: r.neutral_citation,
+      /**
+       * RCC bus 0049, 11 Aug 2026. The client computes citability as
+       * `neutralCitation === null AND reporterCitations.length === 0`, which is
+       * `docs/CITATION_HARNESS.md`'s own rule. Sending the first half and not
+       * the second made every pre-neutral-citation Supreme Court authority
+       * (~before 2013) render on the WEDGE SCREEN as "No citation on file —
+       * cannot be referenced in a filing", on judgments that are perfectly
+       * citable by their reporter citation.
+       */
+      reporterCitations: r.reporter_citations,
       // Found missing 11 Aug 2026 (RCC bus 0038): the harness rule is
       // "absence never upgrades to confirmed", so every briefing authority
       // drew the unconfirmed mark on the wedge screen — including ones from

@@ -44,6 +44,8 @@ type Authority = {
   addToMatterAllowed?: boolean;
   verificationState?: string;
   verifiedBySource?: string;
+  neutralCitation?: string | null;
+  reporterCitations?: string[];
 };
 
 const auth = () => ({ authorization: `Bearer ${token}`, 'content-type': 'application/json' });
@@ -78,11 +80,16 @@ describe('briefing read path', () => {
     matterId = m!.id;
 
     // Synthetic, so this runs on any database and never writes to real law.
+    //
+    // Deliberately shaped like a pre-2013 Supreme Court judgment: a reporter
+    // citation and NO neutral citation. Neutral citations did not exist before
+    // then, and the client reads citability as "neither one nor the other" —
+    // so this is the fixture that catches a route sending only half of it.
     const [j] = await sql<{ id: string }[]>`
       INSERT INTO judgments (case_title, reporter_citations, court, judgment_date, full_text,
                              language, source_url, overruled_status)
-      VALUES ('SYNTHETIC — Render Fixture', '{}', 'Test Court', '2001-01-01', 'x', 'en',
-              ${`test://render/${crypto.randomUUID()}`}, 'none') RETURNING id`;
+      VALUES ('SYNTHETIC — Render Fixture', '{"(2001) 3 SCC 111"}', 'Test Court', '2001-01-01',
+              'x', 'en', ${`test://render/${crypto.randomUUID()}`}, 'none') RETURNING id`;
     judgmentId = j!.id;
 
     await sql`INSERT INTO judgment_annotations
@@ -121,6 +128,17 @@ describe('briefing read path', () => {
     const b = await readBriefing();
     assert.equal(b.authorities[0]?.verificationState, 'verified');
     assert.equal(b.authorities[0]?.verifiedBySource, 'corpus');
+  });
+
+  it('sends reporterCitations, so a pre-2013 authority is not called uncitable — RCC bus 0049', async () => {
+    // Citability is `neutralCitation === null AND reporterCitations.length === 0`
+    // — `docs/CITATION_HARNESS.md`'s rule, computed client-side. This route sent
+    // the first half and never the second, so every Supreme Court authority
+    // older than neutral citations rendered on the wedge screen as "No citation
+    // on file — cannot be referenced in a filing". It has one; we withheld it.
+    const b = await readBriefing();
+    assert.equal(b.authorities[0]?.neutralCitation ?? null, null, 'the fixture has none, by design');
+    assert.deepEqual(b.authorities[0]?.reporterCitations, ['(2001) 3 SCC 111']);
   });
 
   it('re-reads good-law status LIVE, after the briefing was generated', async () => {

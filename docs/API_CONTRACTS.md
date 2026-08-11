@@ -988,12 +988,47 @@ may be appearing on it at a morning's notice.
 ## Matter authorities — LCC owns · added 11 Aug 2026
 ```
 GET    /matters/:id/authorities  → { authorities: [ { authorityId, judgmentId,
-                                     caseTitle, neutralCitation, addedBy,
-                                     addedAt, removedAt } ], asOf }
+                                     caseTitle, neutralCitation,
+                                     reporterCitations,       // added 11 Aug 2026, RCC bus 0049
+                                     addedBy, addedAt, removedAt,
+                                     verificationState, verifiedBySource,
+                                     overruledStatus, overruledByJudgmentId,
+                                     overruledByTitle, overruledParas,
+                                     overruledNote           // all added 11 Aug 2026, RCC bus 0048
+                                   } ], asOf }
 POST   /matters/:id/authorities  { judgmentId, citationCheckId? }
-                                  → { authority }
+                                  → { authority }   // the same shape, same fields
 DELETE /matters/:id/authorities/:authorityId → { removedAt }
 ```
+**The citation-state fields — added 11 Aug 2026, RCC bus 0048 (P0).** This
+route shipped selecting seven columns, none of which said whether the law
+still stood. A matter is where an authority sits for MONTHS — the likeliest
+surface for the law to move underneath a citation, and the only one where the
+advocate has already committed to relying on it. `CITATION_HARNESS.md` sets
+the stale-overruled threshold at zero, and because verified is silent in our
+UI, a bare row here did not read as "we do not know"; it read as "this is
+fine".
+
+`overruledStatus` and the three fields that qualify it are joined from
+`judgments` **on every read** and never copied onto `matter_authorities` — a
+status stored at save time is exactly the cached value the harness forbids.
+`overruledByTitle` names what displaced it; `overruledParas` is what lets
+`partly_set_aside` render as a half rather than a headline.
+
+`verificationState`/`verifiedBySource` are **`verified`/`corpus` by
+construction**, not columns: `judgments` carries neither field (they live on
+`citation_checks`/`verification_cache` — `SCHEMA_TRUTH.md`), and
+`matter_authorities.judgment_id` is a NOT NULL foreign key into our own
+corpus, so the row resolves to itself. Same statement as
+`briefings/route.ts`, `judgments/route.ts`, `search/route.ts` and
+`search/saved.ts`.
+
+**`reporterCitations` — added 11 Aug 2026, RCC bus 0049.** The client reads
+citability as `neutralCitation === null AND reporterCitations.length === 0`,
+which is `CITATION_HARNESS.md`'s own rule. Sending the first half and not the
+second made every Supreme Court authority older than neutral citations
+(~2013) render as *"No citation on file — cannot be referenced in a filing"*
+— on judgments perfectly citable by their reporter citation.
 **Was specced only in a comment before 11 Aug 2026.** `matters/route.ts`'s own
 header already described *"`set_aside` disables add-to-matter"* with no table
 and no route behind it — the client's "Add to a matter" button had never had
@@ -1044,6 +1079,7 @@ client's `Briefing` type had declared six fields no route here has ever sent
   authorities: [
     { judgmentId, available: false, note } |
     { judgmentId, available: true, caseTitle, neutralCitation,
+      reporterCitations,                     // added 11 Aug 2026, RCC bus 0049
       verificationState, verifiedBySource,   // added 11 Aug 2026, RCC bus 0038
       overruledStatus, overruledByJudgmentId, overruledByTitle,
       overruledParas, overruledNote, addToMatterAllowed }
@@ -1055,6 +1091,14 @@ authority (all Tier 1, corpus rows, `verified`/`corpus` by construction) drew
 the unconfirmed mark until this shipped, on authorities that came from the
 advocate's own verified matter. `overruledStatus` is read live, this request,
 never the value last night's sweep saw.
+
+**`reporterCitations` — added 11 Aug 2026, RCC bus 0049**, the same omission
+found the same day on `GET /matters/:id/authorities`. Both routes selected
+`neutral_citation` alone while `search/retrieve.ts`, `search/qlang/compile.ts`
+and `judgments/route.ts` all send both. Citability is computed client-side as
+`neutralCitation === null AND reporterCitations.length === 0`, so a pre-2013
+Supreme Court authority read as uncitable **on the wedge screen** — because
+the field was never in the row, not because the judgment lacks a citation.
 
 `GET /matters/:id/briefings` sends the same `dateConfidence` object per row;
 `GET /matters/:id`'s bundle sends the same facts **flat** —
