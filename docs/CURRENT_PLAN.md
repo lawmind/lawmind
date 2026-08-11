@@ -769,6 +769,29 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
    source metadata, a distinct task from the content-hash backfill (which
    only needed `full_text`, already in Postgres).
 
+9. **`counter.ts` — `overruledByJudgmentId`/`overruledNote` missing from
+   `authorities[]`, RCC bus 0037.** Present on `excluded[]`, absent from
+   `authorities[]` though `retrieve.ts` selects both on every row — a
+   `partly_set_aside` authority rendered no "what still stands" line. Fixed,
+   tested, deployed. Also corrected a long-stale `API_CONTRACTS.md` claim
+   that this endpoint returns a nested `arguments: [{ authorities }]` shape;
+   it has always been flat, confirmed against `counter.test.ts`.
+
+**Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
+PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
+answer" and is explicit that it must be **evaluated on real Indian court
+documents before trusting it** — an English-benchmark F1 says nothing about
+a Hindi bail order naming four transliterated surnames. `llm/call.ts`
+correctly REFUSES every sensitive-class call today rather than fake the
+`pseudonymised` audit flag, and `pii_entities` does not exist in the schema
+yet — this is a from-zero build (schema, a detection service — Presidio is
+Python, this API is not, so it needs its own service or the existing OCR
+Python runtime — plus the evaluation the doc demands before any of it can
+be trusted) and its actual USE is separately gated by the DPA in Q2 below,
+founder-owned. Building it blind, without the evaluation, would risk
+exactly the "claimed complete when partial" failure `CLAUDE.md` names.
+Recorded as its own future task rather than rushed.
+
 Deferred, recorded, not forgotten: `generated_holding` (DeepSeek, migration
 0033 exists, unwired), statute point-in-time/concordance-quality (RCC bus
 0032, P3, needs a source before an API). Branch protection, worktree
