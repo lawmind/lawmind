@@ -1103,6 +1103,49 @@ indiacode publishes only the current wording.
 footnote establishes IPC→BNS equivalence, and same section number is not same
 legal substance. That remains a sourcing problem, and it is still open.
 
+### Q1.17 · THE CONCORDANCE DECISION — measured, and it is the founder's · 11 Aug 2026
+
+**`docs/ai/AUTHORITY_COVERAGE.md`.** The apparent High Court corpus gap is
+**mostly an identity problem, not an acquisition problem**, and that changes what
+should be bought.
+
+**The ledger, and no state collapses into another:**
+
+| state | HC citation targets |
+| --- | --- |
+| HELD | 514 |
+| MAPPED INTERNALLY (measured, **not yet written**) | ~155 |
+| AMBIGUOUS | ~222 |
+| KNOWN BUT UNMAPPED | ~897 |
+| GENUINELY MISSING | **unknown, and it stays unknown** |
+
+**Why the last row is blank on purpose.** 4,485 of 4,489 unresolved edges point
+at Supreme Court reporters. All 38,342 of our Supreme Court judgments carry
+S.C.R. citations and **zero carry SCC or AIR**. A High Court citing
+`(2006) 4 SCC 1` is very likely citing something already in our corpus under
+`[2006] X S.C.R. Y` — we simply cannot join them.
+
+**The internal-concordance study answered the "should we buy something" question
+before anyone asked for money.** Party name + year, extracted from the citing
+text, matches 28.0% of targets — but **adversarial validation destroys most of
+it**: 51.8% rest on ≤3 distinguishing tokens, and 17 same-reporter collisions
+are demonstrable errors (the *Arjun Panditrao* referral order and main judgment
+matched to the same row; *"Hindustan Times v State of U.P."* matched to two
+different judgments). **Safe yield: 12.1%.**
+
+**NEXT ACTION IS A FOUNDER DECISION**, and it is licensing rather than
+engineering: an external SCC/AIR↔SCR concordance would unlock up to 1,122 HC
+targets and a large share of 57,947 corpus-wide. No source has been researched,
+priced, contacted or ingested — that is the step *after* the decision.
+
+**Implementable without it:** the safe ~155 mappings. Cheap, reversible,
+multi-signal. Not yet written.
+
+**Blocked by the unresolved portion:** citator completeness, "cases citing this
+authority", authority ranking by citation count, any claim about High Court
+precedential coverage. **Not blocked:** search, verification and the citation
+harness, which key on judgments we hold.
+
 ### Q1.16 · Stages 9–20 — PLANNED, and 10 is running · 11 Aug 2026
 
 **The plan is `docs/ai/STAGES_9_20_PLAN.md`**, with each stage's DONE/VERIFY,

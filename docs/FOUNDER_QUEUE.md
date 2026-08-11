@@ -68,6 +68,47 @@ founder decision.
 
 # CREDENTIALS AND ACCOUNTS
 
+### [OPEN] An SCC/AIR ↔ S.C.R. citation concordance · LCC · 11 Aug 2026
+
+**Needs:** a **decision** on whether to obtain an external citation-concordance
+source — the table that says `(2006) 4 SCC 1` and `[2006] X S.C.R. Y` are the
+same judgment. Licensing, not engineering. **No source has been researched,
+priced or contacted**; that is the step after the decision, deliberately not
+taken first.
+
+**Why it is not a blocker:** everything that keys on judgments we hold works —
+search, verification, the citation harness, add-to-matter. The measured-safe
+internal mappings (~155 of 1,277 High Court targets, multi-signal) can be
+written without any external source, and the remaining edges stay honestly
+unresolved rather than guessed.
+
+**Why it cannot be solved internally — measured, not assumed:**
+all 38,342 of our Supreme Court judgments carry S.C.R. citations and **zero
+carry SCC or AIR**, while **4,485 of 4,489 unresolved High Court citation edges
+point at SCC/AIR**. Mining our own text for pairings courts print themselves
+(`concordance-cli`) has been re-run over the whole corpus including the 40,980
+new High Court documents and yielded **3 aliases**. Matching by party name and
+year reaches 28% of targets but **adversarial validation cuts it to 12.1%
+safe** — 51.8% rest on ≤3 distinguishing tokens, and 17 same-reporter
+collisions are demonstrable errors. Writing those would point advocates at the
+wrong case.
+
+**Cost if never resolved:** up to **1,122** High Court targets and a large share
+of **57,947** corpus-wide stay `KNOWN BUT UNMAPPED`. That blocks citator
+completeness (treatment and overruled status stop propagating at an unresolved
+edge), "cases citing this authority", authority ranking by citation count, and
+any defensible claim about High Court precedential coverage. **It also means we
+cannot say how much of our apparent corpus gap is real** — GENUINELY MISSING
+cannot be separated from KNOWN BUT UNMAPPED without it, so no acquisition
+decision should be taken before this one.
+
+**Where it plugs in:** `judgment_citation_aliases` already exists with the exact
+shape (judgment_id, alias, alias_key, alias_reporter, corroborations, evidence)
+and 4,100 rows. An external concordance loads into it, and
+`pnpm --filter @lawmind/ingest resolve --apply` converts the edges. One table,
+one existing CLI. `docs/ai/AUTHORITY_COVERAGE.md` §3a-3b carries the full study.
+
+
 ### [OPEN] DMARC enforcement beyond `p=none` · LCC · 7 Aug 2026
 
 **Needs:** a destination for DMARC aggregate reports (`rua`) — a mailbox on

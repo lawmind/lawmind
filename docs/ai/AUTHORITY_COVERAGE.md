@@ -6,6 +6,25 @@ corpus tell us we are missing?*
 
 ---
 
+## THE LEDGER — five states, and none of them collapses into another
+
+**High Court citation targets (1,791 distinct):**
+
+| state | targets | what it means |
+| --- | --- | --- |
+| **HELD** | **514** | resolved to a judgment in our corpus. Joinable today. |
+| **MAPPED INTERNALLY** | **~155** | resolvable from our own text at multiple signals — name + year, surviving adversarial validation. **Not yet written.** §3a |
+| **AMBIGUOUS** | **~222** | a candidate exists but the evidence is thin or contested. Refused, not guessed. |
+| **KNOWN BUT UNMAPPED** | **~897** | a valid reporter identifier naming a judgment we may well hold, with no way to join it. **The concordance gap.** |
+| **GENUINELY MISSING** | **unknown — and it must stay unknown** | cannot be separated from the row above without a concordance. Claiming a number here would be an invention. |
+
+**The bottom row is the point of this document.** We cannot currently say how
+much of our apparent corpus gap is a real corpus gap. What we can say is that
+**at least 897 targets are identity problems rather than acquisition problems**,
+and that no acquisition decision should be taken before that is settled.
+
+---
+
 ## The four states, kept distinct
 
 > **RAW DOCUMENT ≠ AUTHORITY ≠ RESOLVED AUTHORITY ≠ HELD AUTHORITY**
@@ -96,6 +115,95 @@ work here. Applied anyway; the yield is what it is.
 **This is the finding that decides the next move**: the remaining 1,274 targets
 cannot be resolved from text we already hold. They need either an external
 SCC/AIR↔SCR concordance, or acceptance that they stay unresolved.
+
+---
+
+## 3a · INTERNAL-CONCORDANCE FEASIBILITY STUDY
+
+**Run before recommending any external source.** Question: how much of the
+1,277-target gap can be closed using only evidence already inside our corpus?
+
+### The signal exists and is strong
+
+High Court judgments print the case name beside the citation, in a regular form
+read off real windows:
+
+    L. Hirday Narain v. ITO [(1970) 2 SCC 355: AIR 1971 SC 33]
+    Naushey Ali vs. State of U.P., reported in, (2025) 4 SCC 78
+    Commr. of Police, Bombay v. Gordhandas Bhanji, 1951 SCC 1088 : AIR 1952 SC 16
+
+We hold `case_title`, `judgment_date`, `petitioner`/`respondent` for all 38,342
+Supreme Court judgments. **Party name + year is a joinable pair.** Two of twelve
+sampled windows even print SCC and AIR together — a concordance the court itself
+asserted.
+
+### Method, and the outcomes
+
+Name extracted from the text window preceding each citation, tokenised with legal
+stopwords removed (`state`, `union`, `india`, `ors`, `anr`, …), matched by
+Jaccard ≥ 0.34 against Supreme Court titles **restricted to the citation year and
+the year before** (reporting lag). A near-tie (runner-up > 85% of the winner)
+is refused as ambiguous.
+
+| outcome | targets | share |
+| --- | --- | --- |
+| `RESOLVED_WITH_MULTIPLE_SIGNALS` (name + year) | 357 | 28.0% |
+| `AMBIGUOUS` (near-tie refused) | 20 | 1.6% |
+| `UNRESOLVED_NO_NAME` (no parseable name) | 292 | 22.9% |
+| `UNRESOLVED_NO_CANDIDATE` (no title match in year) | 608 | 47.6% |
+| `MALFORMED` | 0 | 0% |
+
+### Adversarial validation — and it is what decides this
+
+**The 28% does not survive.**
+
+**One judgment claimed by two or more citations — split by reporter, because the
+two cases are opposite:**
+
+| | |
+| --- | --- |
+| **cross-reporter** (`(1984) 4 SCC 635` + `AIR 1984 SC 1805` → one judgment) | **18 — legitimate.** This is exactly the SCC↔AIR concordance we want |
+| **same-reporter** (two SCC citations → one judgment) | **17 — genuine errors** |
+
+The same-reporter collisions are real failures, and reading them shows why:
+
+    (2020) 3 SCC 216 || (2020) 7 SCC 1      → Arjun Panditrao Khotkar
+      the referral order and the main judgment are different documents
+    (2024) 12 SCC 660 || 684 || 691 || AIR 2024 SC 4760   → one judgment
+    (1987) 2 SCC 555 || (1988) 4 SCC 534
+
+**Thin evidence: 185 of 357 = 51.8%** rest on ≤3 distinguishing tokens or a
+Jaccard below 0.45. Hand-reading fifteen accepted mappings found the failure mode
+directly: *"Hindustan Times v State of U.P."* was extracted for two different
+citations and matched to two different judgments — repeat litigants defeat a
+name+year join, and Indian public-law litigation is full of them.
+
+### The result
+
+> **Internal concordance can safely resolve ~155 of 1,277 targets — 12.1%.**
+
+Not the majority. And the unsafe 56% is not merely unusable — writing it to
+`cited_judgment_id` would point advocates at the wrong case, which is the
+failure this product exists to prevent.
+
+---
+
+## 3b · THE DECISION TABLE
+
+| | |
+| --- | --- |
+| **A · Can internal data resolve the majority safely?** | **No.** 28% match, 12.1% survive adversarial validation. |
+| **B · What remains genuinely unresolved?** | **~87.9%** of the 1,277 HC targets by internal means. Corpus-wide the same method would leave the bulk of 57,947 targets unresolved. |
+| **C · What would an external concordance unlock?** | Up to **1,122** remaining HC targets and a large share of **57,947** corpus-wide — converting *unknown* into *held* or *genuinely missing*. Exact yield unmeasurable without the source. |
+| **D · False-positive risk without one?** | **High and disqualifying.** 51.8% of accepted mappings rest on thin evidence; 17 same-reporter collisions are demonstrable errors. A wrong `cited_judgment_id` points an advocate at the wrong case. |
+| **E · What functionality is blocked?** | Citator completeness (treatment/overruled propagation stops at unresolved edges) · "cases citing this authority" · authority ranking by citation count · any claim about High Court precedential coverage. **Not blocked:** search, verification, the harness — those key on judgments we hold. |
+| **F · Cheapest/safest external solution?** | Unknown, and **deliberately not researched.** Identifying and evaluating sources is the step after the founder decides one is wanted. |
+
+**RECOMMENDATION: implement the safe 12.1% and stop.** 155 mappings at multiple
+signals is real, cheap and reversible. The other 87.9% is a founder decision
+about an external source — a licensing question, not an engineering one.
+
+**Nothing has been written to `cited_judgment_id` from this study.**
 
 ---
 
