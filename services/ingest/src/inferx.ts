@@ -23,6 +23,55 @@ export type InferxResult =
   | { readonly ok: true; readonly text: string; readonly inputTokens: number; readonly outputTokens: number }
   | { readonly ok: false; readonly reason: string };
 
+/**
+ * Every InferX grant configured, strongest-first by declaration order.
+ *
+ * The free pool is capacity-limited and returns HTTP 429 under load — measured,
+ * not assumed (`docs/ai/DEEPSEEK_DATA_MOAT.md` §1). A second grant turns an
+ * exhausted key from a stop into a slowdown, so `callInferxPooled` rotates
+ * rather than giving up. Add further keys as `INFERX_API_KEY_3`, `_4`, ... and
+ * they are picked up with no code change.
+ *
+ * Keys live in `.env`, which is gitignored — a grant is a credential and never
+ * belongs in the repository.
+ */
+export function inferxKeysFromEnv(env: NodeJS.ProcessEnv = process.env): string[] {
+  const keys: string[] = [];
+  for (const name of ['INFERX_API_KEY', 'INFERX_API_KEY_2', 'INFERX_API_KEY_3', 'INFERX_API_KEY_4']) {
+    const v = env[name];
+    if (typeof v === 'string' && v.trim() !== '' && !keys.includes(v.trim())) keys.push(v.trim());
+  }
+  return keys;
+}
+
+/**
+ * `callInferx` across a pool of grants: the first key that is merely BUSY costs
+ * a full backoff ladder before the next is tried, so rotation is a fallback and
+ * not a load balancer. A permanent failure (bad request, bad key) is returned
+ * immediately rather than retried against every remaining grant — repeating a
+ * malformed request four times is not resilience.
+ */
+export async function callInferxPooled(
+  prompt: string,
+  deps: Omit<InferxDeps, 'apiKey'> & { readonly apiKeys: readonly string[] },
+): Promise<InferxResult> {
+  const keys = deps.apiKeys.filter((k) => k.trim() !== '');
+  if (keys.length === 0) return { ok: false, reason: 'no InferX API key configured' };
+
+  let lastReason = 'unknown';
+  for (const [i, apiKey] of keys.entries()) {
+    const result = await callInferx(prompt, { ...deps, apiKey });
+    if (result.ok) return result;
+    lastReason = result.reason;
+    // Only capacity exhaustion is worth another grant's attention.
+    if (!/capacity|429/i.test(result.reason)) return result;
+    if (i < keys.length - 1) {
+      console.log(`    key ${i + 1}/${keys.length} exhausted (${result.reason}) — rotating`);
+    }
+  }
+  return { ok: false, reason: `all ${keys.length} InferX grants exhausted: ${lastReason}` };
+}
+
 export type InferxDeps = {
   readonly apiKey: string;
   readonly baseUrl?: string | undefined;
