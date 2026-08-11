@@ -292,8 +292,35 @@ export function initialAccountState(account: BharatLawAccount): AccountState {
  * `label:username:password` triple per line. **Credentials never live in the
  * repo** — `CLAUDE.md`: all keys in Railway env vars only.
  */
-export function accountsFromEnv(raw = process.env['BHARATLAW_ACCOUNTS']): BharatLawAccount[] {
-  if (!raw) return [];
+export function accountsFromEnv(
+  raw = process.env['BHARATLAW_ACCOUNTS'],
+  single: { email?: string | undefined; password?: string | undefined } = {
+    email: process.env['BHARATLAW_EMAIL'],
+    password: process.env['BHARATLAW_PASSWORD'],
+  },
+): BharatLawAccount[] {
+  /**
+   * **The single-account fallback exists because the pool form is not what a
+   * human provisions.** Found 11 Aug 2026: the founder had set
+   * `BHARATLAW_EMAIL` and `BHARATLAW_PASSWORD` in the environment — the obvious
+   * names for one account — and **nothing in the repository read either.** The
+   * pool refused for want of `BHARATLAW_ACCOUNTS`, which refuses identically
+   * whether the credentials are absent or merely named differently, so a
+   * provisioned account sat dormant and looked exactly like an unprovisioned one.
+   *
+   * `BHARATLAW_ACCOUNTS` stays authoritative: when both are present it wins, so
+   * a real pool is never silently reduced to one account.
+   *
+   * **This weakens no gate.** {@link AUTHORISATION} still governs what the pool
+   * may do, `extractionPermitted` is still false, and a 401 on any account still
+   * halts the whole pool. Reading a credential is not permission to use it.
+   */
+  if (!raw) {
+    const email = single.email?.trim();
+    const password = single.password?.trim();
+    if (email && password) return [{ label: 'primary', username: email, password }];
+    return [];
+  }
   return raw
     .split(/[\n,]/)
     .map((line) => line.trim())

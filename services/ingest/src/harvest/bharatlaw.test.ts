@@ -174,10 +174,43 @@ test('accounts parse from a label:username:password triple', () => {
 
 test('a malformed account line is dropped, never guessed at', () => {
   // A half-parsed credential that silently becomes a login attempt is how an
-  // account gets locked.
-  assert.deepEqual(accountsFromEnv('broken-line'), []);
-  assert.deepEqual(accountsFromEnv(''), []);
-  assert.deepEqual(accountsFromEnv(undefined), []);
+  // account gets locked. The second argument is passed explicitly so the
+  // single-account fallback cannot answer for the environment the test runs in.
+  const none = {};
+  assert.deepEqual(accountsFromEnv('broken-line', none), []);
+  assert.deepEqual(accountsFromEnv('', none), []);
+  assert.deepEqual(accountsFromEnv(undefined, none), []);
+});
+
+test('a single BHARATLAW_EMAIL/PASSWORD pair is read as one account', () => {
+  /**
+   * Found 11 Aug 2026: the founder had provisioned `BHARATLAW_EMAIL` and
+   * `BHARATLAW_PASSWORD` — the obvious names for one account — and **nothing in
+   * the repository read either name.** The pool refused for want of
+   * `BHARATLAW_ACCOUNTS` and refused identically whether the credentials were
+   * absent or merely named differently, so a real account sat dormant while
+   * looking exactly like an unprovisioned one.
+   */
+  const parsed = accountsFromEnv(undefined, { email: 'a@x.com', password: 'pw' });
+  assert.deepEqual(parsed, [{ label: 'primary', username: 'a@x.com', password: 'pw' }]);
+});
+
+test('half a pair is not an account', () => {
+  assert.deepEqual(accountsFromEnv(undefined, { email: 'a@x.com' }), []);
+  assert.deepEqual(accountsFromEnv(undefined, { password: 'pw' }), []);
+  assert.deepEqual(accountsFromEnv(undefined, { email: '  ', password: 'pw' }), []);
+});
+
+test('BHARATLAW_ACCOUNTS wins, so a real pool is never reduced to one', () => {
+  // Otherwise a stale single credential left in the environment would silently
+  // shrink a three-account pool, and the pacing budget would be wrong for the
+  // rest of the run.
+  const parsed = accountsFromEnv('one:a@x.com:pw1\ntwo:b@x.com:pw2', {
+    email: 'stale@x.com',
+    password: 'pw',
+  });
+  assert.equal(parsed.length, 2);
+  assert.ok(!parsed.some((a) => a.username === 'stale@x.com'));
 });
 
 test('the default entitlement is their published Pro credit meter', () => {

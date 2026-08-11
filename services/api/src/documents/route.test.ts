@@ -55,6 +55,23 @@ describe('citation extraction', () => {
     // authority wearing a verified badge.
     assert.ok(extractCitationSpans('see (2019) 4 SCC 221').length === 1);
   });
+
+  it('sees the year-first form the reports actually print', () => {
+    // Found 11 Aug 2026: the ingest extractor was blind to `1976 (1) SCR 906`
+    // and so was this one. Here the consequence is sharper than a missing edge —
+    // this function IS the PD-7 lock. A citation it cannot see is a citation an
+    // advocate can edit or delete without the server ever raising a 422, which
+    // is the false negative the module note calls the dangerous direction.
+    assert.equal(extractCitationSpans('as held in 1976 (1) SCR 906, the rule is').length, 1);
+    assert.equal(extractCitationSpans('U.P. SRTC v. Trilok Chandra 1996 (4) SCC 362').length, 1);
+  });
+
+  it('does not read a bare year and bracket as a citation', () => {
+    // The anchor is the reporter abbreviation. Greedy is not indiscriminate:
+    // this function rejecting a save is a real cost to the advocate.
+    assert.deepEqual(extractCitationSpans('under section 5 (2) of the 1996 Act, at 362'), []);
+    assert.deepEqual(extractCitationSpans('the award of 1996 (4) was set aside'), []);
+  });
 });
 
 describe('PD-7 — the document is the lock', () => {

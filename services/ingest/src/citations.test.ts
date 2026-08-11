@@ -72,6 +72,96 @@ describe('extractCitations', () => {
   });
 });
 
+/**
+ * The forms the extractor was blind to until 11 August 2026.
+ *
+ * **Every string in this block was taken verbatim out of the corpus**, not
+ * invented — `CONTINUATION_PROMPT.md` §1: *"read the real data before writing a
+ * regex; every extractor in this repo was written against sampled text and every
+ * one had bugs the samples exposed."*
+ *
+ * The defect was one asymmetry. The SCR pattern accepted either bracket
+ * (`[[(](\d{4})[\])]`) and the SCC pattern accepted only round parentheses, so
+ * `[2000] 5 SCC 573` — the dominant form in pre-2010 Supreme Court Reports text —
+ * matched nothing. Nor did the year-first `1976 (1) SCR 906`. The result was
+ * 13,834 judgments from which the extractor found **zero** citations, which is
+ * 36.1% of the corpus and 67.3% of the 1990s.
+ *
+ * Measured before it was written, on judgments that already carried edges: the
+ * widened set finds **+23.9%** more citations, **48.5%** of which resolve to a
+ * judgment we hold.
+ */
+describe('extractCitations — the bracket and year-first forms', () => {
+  const raw = (text: string) => extractCitations(text).map((c) => c.raw);
+
+  it('finds SCC in square brackets, as it already did for SCR', () => {
+    assert.deepEqual(raw('In SM Dyechem Ltd. v. Cadbury, [2000] 5 SCC 573 at paragraph 47'), [
+      '[2000] 5 SCC 573',
+    ]);
+  });
+
+  it('finds the year-first form used throughout the reports', () => {
+    assert.deepEqual(raw('U.P. SRTC v. Trilok Chandra 1996 (4) SCC 362; and'), ['1996 (4) SCC 362']);
+    assert.deepEqual(raw('Kesavananda, 1976 (1) SCR 906, was considered'), ['1976 (1) SCR 906']);
+  });
+
+  it('survives the OCR damage these pages actually carry', () => {
+    // Scanned print: a bracket pair that opens round and closes square, and a
+    // volume number split across a line break. Both are real corpus strings.
+    assert.equal(raw('reliance on (1997] 5 SCC 201, the High Court').length, 1);
+    assert.equal(raw('see 2005 (1)\nSCR 913 for the rule').length, 1);
+  });
+
+  it('collapses a year-first citation and its canonical form to ONE edge', () => {
+    // `judgment_citations_unique_edge` is keyed on normalised_citation. If these
+    // normalised differently the same authority would appear twice in "cited by"
+    // — one judgment, two rows, and a treatment count that double-counts.
+    assert.equal(normaliseCitation('1976 (1) SCR 906'), normaliseCitation('(1976) 1 SCR 906'));
+    assert.equal(extractCitations('both 1976 (1) SCR 906 and (1976) 1 SCR 906 appear').length, 1);
+  });
+
+  it('still NEVER conflates different numbers across the forms', () => {
+    // The widening changes which strings match. It must not change which
+    // citations are the same citation.
+    assert.notEqual(normaliseCitation('1976 (1) SCR 906'), normaliseCitation('(1976) 1 SCR 609'));
+    assert.notEqual(normaliseCitation('1976 (1) SCR 906'), normaliseCitation('(1976) 2 SCR 906'));
+    assert.notEqual(normaliseCitation('1976 (1) SCR 906'), normaliseCitation('(1977) 1 SCR 906'));
+  });
+
+  it('does not match prose that merely contains a year and a bracket', () => {
+    // The anchor is the reporter abbreviation. Without one there is no citation,
+    // and a year beside a bracketed number is ordinary judgment prose.
+    assert.deepEqual(raw('The award of 1996 (4) was set aside on 362 grounds.'), []);
+    assert.deepEqual(raw('Section 5 (2) of the 1996 Act, at page 362.'), []);
+    assert.deepEqual(raw('[2000] and 5 witnesses deposed to 573 facts.'), []);
+  });
+
+  it('finds High Court neutral citations, including bench and DB suffixes', () => {
+    // Formats taken from the issuing courts' own circulars — Delhi HC, Karnataka
+    // HC (principal, Dharwad, Kalaburagi benches) — NOT from our corpus, which
+    // has not been read past 2016 yet.
+    assert.deepEqual(raw('relying on 2023:DHC:2720 the bench held'), ['2023:DHC:2720']);
+    assert.deepEqual(raw('see 2023:DHC:2073-DB for the division bench view'), ['2023:DHC:2073-DB']);
+    assert.deepEqual(raw('the Dharwad bench in 2023:KHC-D:1 took a different view'), [
+      '2023:KHC-D:1',
+    ]);
+  });
+
+  it('does not read a time, a ratio or a statute reference as a neutral citation', () => {
+    // The uppercase court code is the anchor. Without it there is no citation.
+    assert.deepEqual(raw('the hearing was listed at 2023:12:30 hours'), []);
+    assert.deepEqual(raw('a ratio of 2023:45:12 was applied'), []);
+    assert.deepEqual(raw('under section 2023:abc:12 of the rules'), []);
+  });
+
+  it('does not read a running page header as a citation', () => {
+    // "S.C.R. SUPREME COURT REPORTS 807" is the printed header on every page of
+    // the bound volumes and appears in 12,725 judgments. It carries a reporter
+    // abbreviation and a number, and it is not a citation.
+    assert.deepEqual(raw('decided by the court. .• S.C.R. SUPREME COURT REPORTS 807 Per SINHA J.'), []);
+  });
+});
+
 describe('detectTreatment', () => {
   /** Markers trail their citation, so measure from the END of the citation. */
   const after = (text: string, citation: string) =>

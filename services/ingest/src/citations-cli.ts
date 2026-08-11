@@ -2,6 +2,32 @@
  * Extract judgment-to-judgment citation edges into `judgment_citations`.
  *
  *   pnpm --filter @lawmind/ingest run citations [--limit N] [--batch 200] [--reset]
+ *   pnpm --filter @lawmind/ingest run citations --rescan [--apply]
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * --rescan — for when the EXTRACTOR changed, not the corpus
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The ordinary run is resumable by skipping any judgment that already has rows.
+ * That is right when new judgments arrive and exactly wrong when the patterns
+ * widen: every judgment already has rows, so a better extractor reaches nothing.
+ *
+ * `--reset` is the obvious answer and the wrong one. It deletes all 192,197
+ * edges, and with them the 77,600 resolutions that three passes of the resolver
+ * produced. **`--rescan` re-reads every judgment and inserts only what is new**,
+ * leaning on `judgment_citations_unique_edge` (citing_judgment_id,
+ * normalised_citation) with `ON CONFLICT DO NOTHING` to decide what "new" means.
+ * Nothing existing is touched, so no resolution is lost.
+ *
+ * It also clears the SENTINEL from any judgment that has stopped citing nothing.
+ * A sentinel beside a real edge would break the invariant the resume query
+ * depends on — verified against production before this was written: 13,834
+ * sentinels over 13,834 distinct judgments, and **zero** judgments carrying both.
+ *
+ * DRY BY DEFAULT. `CONTINUATION_PROMPT.md` §1: a SELECT that counts what could
+ * match is not a WRITE that survives the constraints, and the first citation
+ * resolution pass published 49.1% from a query and delivered 40.4% from a write.
+ * `--rescan` alone reports; `--rescan --apply` writes.
  *
  * Resumable the same way the embed CLI is: a judgment that already has rows is
  * skipped, and each judgment's edges are written in one transaction, so an
@@ -34,6 +60,172 @@ type Row = {
   char_offset: number;
 };
 
+/**
+ * Every citation form → the judgment it names. Shared by the ordinary run and by
+ * `--rescan` so the two cannot drift into resolving differently.
+ *
+ * A form that maps to two judgments is emptied rather than pointed at whichever
+ * row was seen first: a wrong edge is worse than a missing one.
+ */
+async function buildIndex(sql: ReturnType<typeof postgres>): Promise<Map<string, string>> {
+  const known = await sql<
+    { id: string; neutral_citation: string | null; reporter_citations: string[] }[]
+  >`SELECT id, neutral_citation, reporter_citations FROM judgments`;
+
+  const index = new Map<string, string>();
+  let collisions = 0;
+  for (const j of known) {
+    for (const key of citationKeys({
+      neutralCitation: j.neutral_citation,
+      reporterCitations: j.reporter_citations ?? [],
+    })) {
+      if (index.has(key) && index.get(key) !== j.id) {
+        index.set(key, '');
+        collisions++;
+      } else {
+        index.set(key, j.id);
+      }
+    }
+  }
+  console.log(
+    `index: ${index.size.toLocaleString()} citation forms over ${known.length.toLocaleString()} judgments` +
+      ` (${collisions} ambiguous forms neutralised)`,
+  );
+  return index;
+}
+
+/**
+ * Re-read every judgment with the CURRENT patterns and insert only what is new.
+ *
+ * Reports before it writes, and writes nothing without `--apply`.
+ */
+async function rescan(
+  sql: ReturnType<typeof postgres>,
+  batchSize: number,
+  limit: number,
+): Promise<void> {
+  const APPLY = process.argv.includes('--apply');
+  console.log(`CITATION RE-SCAN${APPLY ? '' : ' — DRY RUN'}`);
+  console.log('='.repeat(74));
+
+  const [before] = await sql<{ total: string; resolved: string; sentinels: string }[]>`
+    SELECT count(*)::text AS total,
+           count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::text AS resolved,
+           count(*) FILTER (WHERE citation_text = '')::text AS sentinels
+    FROM judgment_citations`;
+  console.log(
+    `before: ${before?.total} rows · ${before?.resolved} resolved · ${before?.sentinels} sentinels`,
+  );
+
+  const index = await buildIndex(sql);
+
+  const all = await sql<{ id: string }[]>`
+    SELECT id FROM judgments ORDER BY judgment_date DESC ${
+      limit > 0 ? sql`LIMIT ${limit}` : sql``
+    }`;
+  console.log(`scanning ${all.length.toLocaleString()} judgments…\n`);
+
+  const started = Date.now();
+  let scanned = 0;
+  let newEdges = 0;
+  let sentinelsCleared = 0;
+
+  for (let i = 0; i < all.length; i += batchSize) {
+    const ids = all.slice(i, i + batchSize).map((r) => r.id);
+    const texts = await sql<{ id: string; full_text: string }[]>`
+      SELECT id, full_text FROM judgments WHERE id = ANY(${ids})`;
+
+    // What this judgment already has, so the dry run can report the true number
+    // of NEW edges rather than the number of citations found.
+    const existing = await sql<{ citing_judgment_id: string; normalised_citation: string }[]>`
+      SELECT citing_judgment_id, normalised_citation FROM judgment_citations
+      WHERE citing_judgment_id = ANY(${ids})`;
+    const have = new Map<string, Set<string>>();
+    for (const e of existing) {
+      let s = have.get(e.citing_judgment_id);
+      if (!s) have.set(e.citing_judgment_id, (s = new Set()));
+      s.add(e.normalised_citation);
+    }
+
+    const batchRows: Row[] = [];
+    const nowCiting: string[] = [];
+
+    for (const judgment of texts) {
+      const known = have.get(judgment.id) ?? new Set<string>();
+      const found = extractCitations(judgment.full_text);
+      let fresh = 0;
+      for (const c of found) {
+        if (known.has(c.normalised)) continue;
+        const target = index.get(c.normalised);
+        const citedId = target && target !== judgment.id ? target : null;
+        const { relationship, evidence } = detectTreatment(
+          judgment.full_text,
+          c.offset + c.raw.length,
+        );
+        batchRows.push({
+          citing_judgment_id: judgment.id,
+          cited_judgment_id: citedId,
+          citation_text: c.raw,
+          normalised_citation: c.normalised,
+          relationship,
+          evidence: evidence || null,
+          char_offset: c.offset,
+        });
+        fresh++;
+      }
+      // The sentinel says "this judgment cites nothing". Once it cites something
+      // that is no longer true, and leaving both would break the invariant the
+      // resume query stands on.
+      if (fresh > 0 && known.has('')) nowCiting.push(judgment.id);
+      newEdges += fresh;
+      scanned++;
+    }
+
+    if (APPLY && batchRows.length > 0) {
+      await sql.begin(async (tx) => {
+        const INSERT_CHUNK = 2000;
+        for (let k = 0; k < batchRows.length; k += INSERT_CHUNK) {
+          const slice = batchRows.slice(k, k + INSERT_CHUNK);
+          await tx`INSERT INTO judgment_citations ${tx(slice)} ON CONFLICT DO NOTHING`;
+        }
+        if (nowCiting.length > 0) {
+          const gone = await tx`
+            DELETE FROM judgment_citations
+            WHERE citing_judgment_id = ANY(${nowCiting}) AND citation_text = ''`;
+          sentinelsCleared += gone.count;
+        }
+      });
+    } else {
+      sentinelsCleared += nowCiting.length;
+    }
+
+    const secs = (Date.now() - started) / 1000;
+    console.log(
+      `[${scanned.toLocaleString()}/${all.length.toLocaleString()}] ` +
+        `new edges=${newEdges.toLocaleString()} sentinels cleared=${sentinelsCleared.toLocaleString()} ` +
+        `${(scanned / Math.max(secs, 1)).toFixed(1)} judgments/s`,
+    );
+  }
+
+  console.log('');
+  console.log(`NEW EDGES: ${newEdges.toLocaleString()}`);
+  console.log(`SENTINELS CLEARED: ${sentinelsCleared.toLocaleString()}`);
+  if (!APPLY) {
+    console.log('');
+    console.log('DRY RUN — nothing written. Re-run with --rescan --apply.');
+    console.log('Then run `resolve --apply`: these edges are extracted, not resolved.');
+    return;
+  }
+  const [after] = await sql<{ total: string; resolved: string; sentinels: string }[]>`
+    SELECT count(*)::text AS total,
+           count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::text AS resolved,
+           count(*) FILTER (WHERE citation_text = '')::text AS sentinels
+    FROM judgment_citations`;
+  console.log(
+    `after: ${after?.total} rows · ${after?.resolved} resolved · ${after?.sentinels} sentinels`,
+  );
+}
+
 async function main(): Promise<void> {
   const limit = arg('--limit', 500);
   const batchSize = arg('--batch', 200);
@@ -42,6 +234,10 @@ async function main(): Promise<void> {
   const sql = postgres(url, { max: 2, ssl: 'require' });
 
   try {
+    if (process.argv.includes('--rescan')) {
+      await rescan(sql, batchSize, arg('--limit', 0));
+      return;
+    }
     if (process.argv.includes('--reset')) {
       const deleted = await sql`DELETE FROM judgment_citations`;
       console.log(`reset: deleted ${deleted.count} edges`);
@@ -53,32 +249,7 @@ async function main(): Promise<void> {
     // them; indexing all of them is what lets AIR 1973 SC 1461 and
     // (1973) 4 SCC 225 resolve to the same row.
     console.log('building the resolution index…');
-    const known = await sql<
-      { id: string; neutral_citation: string | null; reporter_citations: string[] }[]
-    >`SELECT id, neutral_citation, reporter_citations FROM judgments`;
-
-    const index = new Map<string, string>();
-    let collisions = 0;
-    for (const j of known) {
-      for (const key of citationKeys({
-        neutralCitation: j.neutral_citation,
-        reporterCitations: j.reporter_citations ?? [],
-      })) {
-        // A citation string that maps to two judgments cannot be resolved
-        // safely, so it is removed from the index entirely rather than
-        // arbitrarily pointed at whichever row was seen first.
-        if (index.has(key) && index.get(key) !== j.id) {
-          index.set(key, '');
-          collisions++;
-        } else {
-          index.set(key, j.id);
-        }
-      }
-    }
-    console.log(
-      `index: ${index.size.toLocaleString()} citation forms over ${known.length.toLocaleString()} judgments` +
-        ` (${collisions} ambiguous forms neutralised)`,
-    );
+    const index = await buildIndex(sql);
 
     // --- the queue ------------------------------------------------------------
     const pending = await sql<{ id: string }[]>`

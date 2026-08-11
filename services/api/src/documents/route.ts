@@ -84,6 +84,13 @@ export function extractCitationSpans(text: string): string[] {
     /\(\s*\d{4}\s*\)\s*\d+\s+[A-Z]{2,6}\s+\d+/g, // (2019) 4 SCC 221
     /\bAIR\s+\d{4}\s+[A-Z]{2,4}\s+\d+\b/gi, // AIR 1973 SC 1461
     /\[\s*\d{4}\s*\]\s*\d*\s*[A-Z.]{2,8}\s*\d+/g, // [1950] 1 S.C.R. 869
+    // 1976 (1) SCR 906 — year first, and the reports' own house style. Added
+    // 11 Aug 2026: the ingest extractor was blind to this form across 13,834
+    // judgments, and so was this one. Here it matters more. This function IS
+    // the PD-7 lock, so a form it cannot see is a citation the advocate can
+    // edit or remove without the server raising a 422 — the false negative the
+    // note above calls the dangerous direction.
+    /\b\d{4}\s*\(\s*\d{1,3}\s*\)\s*[A-Z.]{2,8}\s*\d+/g,
   ];
   const found = new Set<string>();
   for (const p of patterns) {

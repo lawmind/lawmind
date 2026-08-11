@@ -69,12 +69,46 @@ export type TreatmentSignal = {
 const PATTERNS: readonly RegExp[] = [
   // Neutral: 2024 INSC 123 — the Supreme Court's own, and unambiguous.
   /\b(\d{4})\s+INSC\s+(\d{1,5})\b/g,
-  // (2019) 4 SCC 221 · (2019) 4 S.C.C. 221
-  /\((\d{4})\)\s*(\d{1,3})\s*S\.?\s?C\.?\s?C\.?\s*(\d{1,5})\b/g,
+  /**
+   * High Court neutral citations — `2023:DHC:2720`, `2023:KHC-D:1`,
+   * `2023:DHC:2073-DB`.
+   *
+   * **Added 11 Aug 2026, BEFORE the High Court pass needs it rather than after.**
+   * That pass streams AWS PDFs year by year and has so far processed **2016
+   * only** (263,783 documents). Neutral citations begin in **2023**, so the
+   * years where this matters are still ahead — and the pass records every
+   * document it has read, including the ones that yield nothing, so a form it
+   * cannot see would be recorded as "no citations here" and **never re-read**.
+   * The blind spot would have been permanent and silent, which is precisely the
+   * shape of the SCC bracket defect fixed earlier tonight.
+   *
+   * **Why this matters more than an ordinary recall gain.** `CURRENT_PLAN.md`
+   * §Q2 names citability as the first of two questions blocking the High Court
+   * ingest: *"Neither AWS metadata variant has a citation column. A High Court
+   * judgment ingested from that bucket is searchable and not citable."* A
+   * neutral citation is printed **in the judgment's own text**, so for 2023
+   * onward it needs no metadata column at all. It does not answer the question
+   * for older years, and it is not the founder's decision to make — but it
+   * changes what that decision is about.
+   *
+   * **The format is from the courts, not from us:** Delhi HC (`YEAR:DHC:NUMBER`,
+   * `-DB` for a division bench), Karnataka HC (`2023:KHC:1`, benches
+   * `2023:KHC-D:1` and `2023:KHC-K:1`), and the corresponding Gujarat, MP and
+   * Meghalaya circulars. **NOT yet observed in our own corpus** — the pass has
+   * not reached 2023 — so this is verified against the issuing courts'
+   * notices and not against our data. Recheck the first 2023 batch.
+   */
+  /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})(?:-(?:DB|FB))?\b/g,
+  // (2019) 4 SCC 221 · (2019) 4 S.C.C. 221 · [2000] 5 SCC 573
+  /[[(](\d{4})[\])]\s*(\d{1,3})\s*S\.?\s?C\.?\s?C\.?\s*(\d{1,5})\b/g,
+  // 1996 (4) SCC 362 — year first, the reports' own house style
+  /\b(\d{4})\s*\(\s*(\d{1,3})\s*\)\s*S\.?\s?C\.?\s?C\.?\s*(\d{1,5})\b/g,
   // AIR 1973 SC 1461
   /\bAIR\s+(\d{4})\s+SC\s+(\d{1,5})\b/g,
   // (1950) SCR 869 · [1950] SCR 869 · (1950) 1 SCR 869
   /[[(](\d{4})[\])]\s*(\d{1,3})?\s*S\.?\s?C\.?\s?R\.?\s*(\d{1,5})\b/g,
+  // 1976 (1) SCR 906 — year first again, and the single largest recovery
+  /\b(\d{4})\s*\(\s*(\d{1,3})\s*\)\s*S\.?\s?C\.?\s?R\.?\s*(\d{1,5})\b/g,
   // (2019) 5 SCALE 123
   /\((\d{4})\)\s*(\d{1,3})\s*SCALE\s*(\d{1,5})\b/g,
 ];
@@ -88,6 +122,14 @@ const PATTERNS: readonly RegExp[] = [
  *
  * Digits and their order are never touched — `(2019) 4 SCC 221` and
  * `(2019) 4 SCC 212` are different cases.
+ *
+ * **The year-first rewrite is load-bearing, not cosmetic.** The reports print
+ * the same citation as `1976 (1) SCR 906` and as `(1976) 1 SCR 906`, often in
+ * one judgment. `judgment_citations_unique_edge` is keyed on
+ * `normalised_citation`, so without folding one into the other the same
+ * authority becomes TWO edges to the same judgment — a "cited by" list showing a
+ * case twice and a treatment count that double-counts it. The rewrite moves only
+ * the brackets; the year, volume and page keep their values and their order.
  */
 export function normaliseCitation(raw: string): string {
   return raw
@@ -98,6 +140,7 @@ export function normaliseCitation(raw: string): string {
     .replace(/\(\s*/g, '(')
     .replace(/\s*\)/g, ')')
     .replace(/\)(\S)/g, ') $1')
+    .replace(/^(\d{4}) \((\d{1,3})\) /, '($1) $2 ')
     .trim();
 }
 

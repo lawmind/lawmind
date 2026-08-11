@@ -266,26 +266,44 @@ test('the key asked about carries no punctuation — symmetric with the SQL', as
   assert.deepEqual(keys, ['20194SCC221']);
 });
 
-test('SQUARE-BRACKET CITATIONS ARE INVISIBLE TO THE EXTRACTOR — a known gap', () => {
+test('THE SQUARE-BRACKET GAP IS CLOSED — every form collapses to one key', async () => {
   /**
-   * Pinned as a FAILING EXPECTATION rather than a passing assertion of correct
-   * behaviour, because it is not correct behaviour.
+   * **This test was a pinned defect until 11 August 2026 and is now an
+   * assertion of correct behaviour.** Its previous form asserted the extractor
+   * found NOTHING for `[2019] 4 SCC 221`, and its own closing message said what
+   * to do when that stopped being true: *"the gap closed — update this test and
+   * the note it carries."*
    *
-   * `citationLookupKey`'s own docstring promises that `(2019) 4 S.C.C. 221`,
-   * `[2019] 4 SCC 221` and `(2019)4 SCC  221` all collapse to the same key, and
-   * `build-queries.ts` carries a citation SHAPE for the square-bracket form. But
-   * `@lawmind/ingest`'s `extractCitations` never produces one: measured 9 Aug
-   * 2026, `[2019] 4 SCC 221` and `(2019) 4 S.C.C. 221` both extract to NOTHING.
+   * **What the gap was.** `citationLookupKey`'s docstring promised that
+   * `(2019) 4 S.C.C. 221`, `[2019] 4 SCC 221` and `(2019)4 SCC  221` all
+   * collapse to one key, and `build-queries.ts` carried a citation SHAPE for the
+   * square-bracket form — but `@lawmind/ingest`'s SCC pattern required literal
+   * round parentheses while its SCR pattern accepted either bracket. So the
+   * normalisation handled a form the extractor could not find.
    *
-   * So the normalisation handles forms the extractor cannot find. The blast
-   * radius reaches the citation graph and every caller of `classifyQuery`, which
-   * is why it is recorded here rather than fixed mid-experiment.
+   * **Half of the 9 Aug note was wrong, and the correction matters more than the
+   * fix.** It recorded that `[2019] 4 SCC 221` *and* `(2019) 4 S.C.C. 221` both
+   * extracted to nothing. Re-run against the pre-11-Aug pattern set: the square
+   * bracket found **0**, and the dotted form found **1**. The dotted form always
+   * worked. A note that overstates a defect sends the next reader looking in the
+   * wrong place.
+   *
+   * **What it cost while it stood:** 13,834 judgments — 36.1% of the corpus and
+   * 67.3% of the 1990s — from which the extractor found zero citations. Closing
+   * it produced 37,875 new edges and 20,276 newly resolved ones.
+   * `CURRENT_PLAN.md` §Q1.0c.
    */
   const spy = spySql([]);
-  return citationsPointingAtGold(spy.sql, 'see [2019] 4 SCC 221 for the position', 'gold-1').then(
-    (out) => {
-      assert.deepEqual(out, [], 'the gap closed — update this test and the note it carries');
-      assert.equal(spy.calls, 0, 'the extractor found nothing, so nothing was asked');
-    },
+  const out = await citationsPointingAtGold(
+    spy.sql,
+    'see [2019] 4 SCC 221 for the position',
+    'gold-1',
   );
+
+  // No rows come back because the spy holds no corpus. What is asserted here is
+  // that the question was ASKED, and asked under the same key the round-bracket
+  // form produces — that identity is the whole promise.
+  assert.deepEqual(out, []);
+  assert.equal(spy.calls, 1, 'the square-bracket form must now reach the database');
+  assert.deepEqual(spy.last[0] as string[], ['20194SCC221']);
 });

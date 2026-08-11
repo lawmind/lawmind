@@ -94,12 +94,32 @@ try {
   console.log('CITATION RE-RESOLUTION');
   console.log('='.repeat(74));
 
-  const [before] = await sql<{ total: number; resolved: number }[]>`
+  const [before] = await sql<{ total: number; resolved: number; sentinels: number }[]>`
     SELECT count(*)::int AS total,
-           count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::int AS resolved
+           count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::int AS resolved,
+           count(*) FILTER (WHERE citation_text = '')::int AS sentinels
     FROM judgment_citations`;
-  const pct = (n: number) => `${((n / (before?.total ?? 1)) * 100).toFixed(1)}%`;
-  console.log(`before: ${before?.resolved} / ${before?.total} resolved (${pct(before?.resolved ?? 0)})`);
+
+  /**
+   * The denominator is REAL CITATION EDGES, never every row.
+   *
+   * `judgment_citations` also holds one sentinel per judgment that cites
+   * nothing. Counting those as unresolved citations understated this figure by
+   * 3.1 points for as long as it has been published — 40.4% over all rows
+   * against 43.5% over citations. Both numbers are arithmetically true; only one
+   * of them answers "of the citations we extracted, how many can we point at a
+   * judgment we hold".
+   *
+   * Printed with its denominator every time, so the next reader cannot pick the
+   * percentage up without the thing it is a percentage OF.
+   */
+  const edgesOf = (row: { total: number; sentinels: number } | undefined) =>
+    Math.max((row?.total ?? 1) - (row?.sentinels ?? 0), 1);
+  const pct = (n: number, row = before) => `${((n / edgesOf(row)) * 100).toFixed(1)}%`;
+  console.log(
+    `before: ${before?.resolved?.toLocaleString()} / ${edgesOf(before).toLocaleString()} citation edges ` +
+      `resolved (${pct(before?.resolved ?? 0)})   [${before?.sentinels?.toLocaleString()} sentinels excluded]`,
+  );
 
   /* ------------------------------------------------------- the candidates -- */
   const stats = await sql<
@@ -143,13 +163,22 @@ try {
   const [empty] = await sql<{ n: number }[]>`
     SELECT count(*)::int AS n FROM judgment_citations
     WHERE cited_judgment_id IS NULL AND citation_text = ''`;
-  console.log(`  ${String(empty?.n ?? 0).padStart(7)}  (separate defect: EMPTY citation_text, can never resolve)`);
+  // NOT a defect, and it was recorded as one for a day. These are SENTINELS:
+  // citations-cli writes one row with an empty citation_text to mark a judgment
+  // that cites nothing, so the resumable pass does not re-scan it. Verified
+  // against production — one per judgment, never beside a real edge.
+  //
+  // They are excluded from the percentages below because a row that is not a
+  // citation does not belong in the denominator of "citations we resolved".
+  console.log(
+    `  ${String(empty?.n ?? 0).padStart(7)}  (sentinels: "this judgment cites nothing" — not citations, not a defect)`,
+  );
 
   const resolvable = stats.find((s) => s.verdict === 'RESOLVABLE')?.edges ?? 0;
   console.log('');
   console.log(`RESOLVABLE: ${resolvable.toLocaleString()} edges`);
   console.log(
-    `after apply: ${((before?.resolved ?? 0) + resolvable).toLocaleString()} / ${before?.total?.toLocaleString()} ` +
+    `after apply: ${((before?.resolved ?? 0) + resolvable).toLocaleString()} / ${edgesOf(before).toLocaleString()} ` +
       `= ${pct((before?.resolved ?? 0) + resolvable)}`,
   );
 
@@ -196,14 +225,18 @@ try {
       AND e.citing <> kd.target::uuid
   `;
 
-  const [after] = await sql<{ total: number; resolved: number }[]>`
+  const [after] = await sql<{ total: number; resolved: number; sentinels: number }[]>`
     SELECT count(*)::int AS total,
-           count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::int AS resolved
+           count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::int AS resolved,
+           count(*) FILTER (WHERE citation_text = '')::int AS sentinels
     FROM judgment_citations`;
 
   console.log('');
   console.log(`UPDATED ${updated.count.toLocaleString()} edges`);
-  console.log(`after: ${after?.resolved?.toLocaleString()} / ${after?.total?.toLocaleString()} resolved (${pct(after?.resolved ?? 0)})`);
+  console.log(
+    `after: ${after?.resolved?.toLocaleString()} / ${edgesOf(after).toLocaleString()} citation edges ` +
+      `resolved (${pct(after?.resolved ?? 0, after)})   [${after?.sentinels?.toLocaleString()} sentinels excluded]`,
+  );
 } finally {
   await sql.end();
 }
