@@ -364,19 +364,42 @@ The rest are correctly absent: admin-only routes (a different client), saved
 searches (gated on the founder, OD-12), `/documents/types` (uncalled), and
 `/build-info`.
 
-**Task 5 (desktop research workspace) is NOT started, and not for want of
-trying.** It contradicts `CLAUDE.md` §1 and `PRODUCT_BRIEF.md`, both of which say
-**web is admin only**, and no `PRODUCT_DECISIONS.md` or `OPEN_DECISIONS.md` entry
-covers it. Raised as **FQ-D9** in `docs/FOUNDER_QUEUE.md` with the scoping done:
-Expo web is ALREADY configured and building, `JudgmentScreen` is already
-prop-driven, and the whole thing is about a day inside `apps/mobile` with no
-backend work — which is a tenth of what a third app would have cost, and is the
-fact most likely to change the answer. Three options and a recommendation are in
-the entry. Nothing else is blocked by it.
+**Task 6 found one defect and it is a citation-harness one, not a type one.**
+`GET /matters/:id/authorities` selects seven columns and none of them is
+`overruled_status` — so the Authorities list in a matter renders a case name and
+a citation and nothing about whether the law still stands. That is the worst
+surface in the product to have the gap: a matter file is where an authority sits
+for MONTHS, and verified being silent means bare rows read as *"these are fine"*
+rather than *"we did not look"*. Three fields requested from LCC (bus 0048), read
+live at request time and never stored on the join row. Shipped meanwhile: the
+surface states its own limit in neutral ink on a dashed edge, never amber. Matter,
+MatterEvent, the shares shape and the bundle all matched exactly.
+
+**Task 5 (desktop research workspace) — BUILT.** `FQ-D9` was answered on 11 Aug
+2026 (option 1) and is recorded as **PD-15**; `CLAUDE.md` §1 and
+`PRODUCT_BRIEF.md` are amended so "web is admin only" no longer contradicts it.
+
+`src/screens/research/ResearchWorkspace.tsx`, mounted by the existing search tab.
+Below `size.researchTwoPane` (900) it renders `<SearchScreen />` and nothing else
+— the phone is byte-for-byte unchanged, and two tests fail the moment that stops
+being true. Above it: results left, reader right, and **the list survives opening
+a judgment**, which is the single thing a phone cannot do and the entire reason
+the layout exists. The pane holds a STACK, so a citation inside a judgment opens
+on top of it and steps back out without touching the results.
+
+`SearchScreen`, `JudgmentScreen` and `PrecedentScreen` are mounted unchanged. The
+only new seam is `SearchScreen`'s optional `onOpenJudgment`; without it the screen
+pushes a route exactly as before. **No backend change** — same `POST /search`,
+same `GET /judgments/:id`, no endpoint, parameter or field added, as PD-15
+requires. Verified by observation: `expo export --platform web` builds and emits
+a bundle.
 
 **Outstanding backend dependency:** bus 0046 — `POST /search` `filters` to accept
 `courts`/`bench`/`subjects`, plus the category→court-name mapping. Not guessed:
 a wrong court string silently returns zero results.
+
+**Also outstanding:** bus 0048 — the three citation fields on
+`GET /matters/:id/authorities`.
 
 ---
 

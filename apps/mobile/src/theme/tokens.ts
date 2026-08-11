@@ -171,6 +171,31 @@ export const size = {
   tabBarInset: 30,
   /** Active tab marker: oxblood 2px top rule. */
   tabActiveRule: 2,
+
+  /**
+   * ── THE DESKTOP RESEARCH BREAKPOINT — PD-15, 11 Aug 2026 ──────────────────
+   *
+   * At or above this width the research surface draws two panes; below it,
+   * every screen renders exactly as it does on a phone. It is the ONLY switch
+   * between the two layouts, which is what makes the decision reversible:
+   * removing the workspace is removing a branch.
+   *
+   * 900 rather than a device name. The left column needs the ~390px a result
+   * card was designed against plus its gutters, and the reader needs enough
+   * measure not to set legal prose in a slot — under about 900 one of the two
+   * is starved, and a cramped two-pane view is worse than the single pane it
+   * replaced. An iPad in portrait (834) therefore stays single-pane on purpose;
+   * in landscape (1194) it does not.
+   */
+  researchTwoPane: 900,
+
+  /**
+   * The results column at two panes. Fixed rather than a fraction: a result
+   * card's measure was designed once and does not improve by growing with the
+   * window, and a list that reflows as the browser resizes is a list an
+   * advocate loses their place in.
+   */
+  researchListPane: 420,
 } as const;
 
 /** Switch — one geometry, app and admin. Knob moves by transform, never by layout. */

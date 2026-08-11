@@ -82,7 +82,43 @@ const DISCLOSURE_DELAY = 80;
 const hasActiveFilters = (f: SearchFilters): boolean =>
   Boolean(f.caseType) || f.date !== 'any' || f.onlyVerified || f.excludeSetAsideOrDoubted;
 
-export function SearchScreen() {
+/**
+ * WHERE A RESULT SHOULD OPEN — the one seam the desktop workspace needs.
+ *
+ * On a phone a result opens by PUSHING a route, which covers the list. That is
+ * right on a 390px screen and wrong on a 1400px one, where the whole point of
+ * the width is that the list survives.
+ *
+ * So the screen asks to be told. Given nothing it pushes exactly as it always
+ * has — the phone path is untouched and does not know the workspace exists.
+ * PD-15: mobile is not redesigned around desktop.
+ */
+export type OpenJudgmentTarget = {
+  judgmentId: string;
+  /**
+   * The verification handle from THIS result row. It travels for the same
+   * reason it travels in the route: a verification record belongs to a citation
+   * as it was shown, not to a judgment in the abstract.
+   */
+  citationCheckId?: string | null;
+  /** Set when the advocate tapped the operative paragraph rather than the card. */
+  paragraphNumber?: number;
+  /**
+   * CARRIED FROM THE ROW THE ADVOCATE TAPPED, so a pane can title itself
+   * without a second request for a heading already on screen — the same
+   * reasoning `app/precedent/[id].tsx` gives for passing them as params.
+   * Nullable exactly as the row has them; never rebuilt, never guessed.
+   */
+  caseTitle: string;
+  neutralCitation: string | null;
+};
+
+export function SearchScreen({
+  onOpenJudgment,
+}: {
+  /** Absent on the phone; supplied by the desktop workspace. See above. */
+  onOpenJudgment?: (target: OpenJudgmentTarget) => void;
+} = {}) {
   const router = useRouter();
   const language = useLanguage();
   const setLanguage = useLanguageStore((s) => s.setLanguage);
@@ -419,7 +455,15 @@ export function SearchScreen() {
                  * says it has no record rather than inventing a lookup.
                  */
                 onOpenParagraph={(paragraphNumber) =>
-                  /**
+                  onOpenJudgment
+                    ? onOpenJudgment({
+                        judgmentId: item.judgmentId,
+                        citationCheckId: item.citationCheckId,
+                        paragraphNumber,
+                        caseTitle: item.caseTitle,
+                        neutralCitation: item.neutralCitation,
+                      })
+                    : /**
                    * THE PASSAGE OPENS WHERE IT CAME FROM — `?read=1&para=N`.
                    *
                    * PD-9 makes paragraph anchors linkable rather than local
@@ -459,13 +503,20 @@ export function SearchScreen() {
                  */
                 onAddToMatter={() => setSaveFor(item)}
                 onPress={() =>
-                  router.push({
-                    pathname: '/judgment/[id]',
-                    params: {
-                      id: item.judgmentId,
-                      ...(item.citationCheckId ? { check: item.citationCheckId } : {}),
-                    },
-                  })
+                  onOpenJudgment
+                    ? onOpenJudgment({
+                        judgmentId: item.judgmentId,
+                        citationCheckId: item.citationCheckId,
+                        caseTitle: item.caseTitle,
+                        neutralCitation: item.neutralCitation,
+                      })
+                    : router.push({
+                        pathname: '/judgment/[id]',
+                        params: {
+                          id: item.judgmentId,
+                          ...(item.citationCheckId ? { check: item.citationCheckId } : {}),
+                        },
+                      })
                 }
                 result={item}
               />
