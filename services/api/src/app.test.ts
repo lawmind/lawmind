@@ -19,6 +19,10 @@ type Body = {
     sha?: string;
     database?: { reachable?: boolean; latencyMs?: number };
     accepted?: boolean;
+    gitSha?: string;
+    deployedAt?: string | null;
+    environment?: string;
+    imageDigest?: string | null;
   };
   error?: { code: string; message: string };
 };
@@ -66,6 +70,29 @@ describe('GET /health', () => {
     assert.equal(body.ok, false);
     assert.equal(body.error?.code, 'DATABASE_UNREACHABLE');
     assert.equal(body.data, undefined);
+  });
+});
+
+describe('GET /version', () => {
+  it('exposes gitSha, deployedAt, environment and imageDigest — REB §1.3', async () => {
+    const res = await createApp(reachable).request('/version');
+    assert.equal(res.status, 200);
+
+    const body = await readBody(res);
+    assert.equal(body.ok, true);
+    // The same value /health reports — build-info.ts is the single source,
+    // never a second resolution that could disagree with the first.
+    assert.match(String(body.data?.gitSha), /^[0-9a-f]{40}$/);
+    assert.equal(typeof body.data?.environment, 'string');
+    // Honest gaps, not guessed values: locally (no DEPLOYED_AT set) this is
+    // null, and imageDigest is always null — nothing here computes one.
+    assert.ok(body.data?.deployedAt === null || typeof body.data?.deployedAt === 'string');
+    assert.equal(body.data?.imageDigest, null);
+  });
+
+  it('answers even when the database is unreachable — deploy identity is not a database question', async () => {
+    const res = await createApp(unreachable).request('/version');
+    assert.equal(res.status, 200);
   });
 });
 

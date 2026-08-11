@@ -1,0 +1,26 @@
+# Lane ownership — LCC (server) and RCC (client) — CLAUDE.md, V2 §5.
+#
+# This alone does not enforce anything: GitHub only applies CODEOWNERS review
+# requirements on a repo with branch protection enabled, and this repo's plan
+# does not currently permit that (`docs/FOUNDER_QUEUE.md` — "Branch protection
+# needs GitHub Pro"). Added now anyway because it is the part of V2 §5's ask
+# that costs nothing and needs no upgrade, and it documents the boundary both
+# lanes have already been keeping by convention all session — so the rule is
+# written down once branch protection can reference it, rather than invented
+# from scratch at that point.
+#
+# Last matching pattern wins, so more specific paths are listed after the
+# general ones they narrow.
+
+# RCC — client
+/apps/ @lawmind
+
+# LCC — server
+/services/ @lawmind
+/packages/ @lawmind
+/scripts/ @lawmind
+/.github/ @lawmind
+
+# Shared, either lane may touch with the other's awareness — not a hard
+# boundary the way apps/** and services/** are.
+/docs/ @lawmind

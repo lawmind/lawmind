@@ -62,6 +62,66 @@ Railway has no India region regardless.
 **Cost if never resolved:** a residency position with no written opinion is thin
 exactly when it gets challenged, and the DPDP full-compliance date is 13 May 2027.
 
+### [OPEN] Branch protection needs GitHub Pro · LCC · 11 Aug 2026 (V2 §5)
+
+**Needs:** GitHub Pro on this account (or making the repo public, a separate
+decision) to enable branch protection, required status checks and a merge
+queue on `main`.
+**Why it is not a blocker:** `gh api repos/lawmind/lawmind/branches/main/protection`
+returns a live, checked answer, not a guess: `403 — Upgrade to GitHub Pro or
+make this repository public to enable this feature`. This is an account-tier
+gate, not an engineering gap — nothing about the V2/REB request is
+unbuildable, it is simply unavailable on the current plan.
+**Cost if never resolved:** LCC and RCC keep pushing directly to `main` with
+no required CI gate and no merge queue, exactly as this whole session has
+run. Both lanes have been disciplined about it, but discipline is not a
+control.
+**Where it plugs in:** GitHub Pro is a monthly subscription; once active,
+CODEOWNERS (buildable today, see below) plus branch protection rules
+complete V2 §5's ask.
+
+### [OPEN] Worktree separation needs a coordinated switch, not a unilateral one · LCC+RCC · 11 Aug 2026 (V2 §5)
+
+**Needs:** a founder decision on *when* both lanes switch from the shared
+working tree to separate worktrees/branches — RCC flagged the same item
+independently (bus 0031), which is why this is recorded once, jointly.
+**Why it is not a blocker:** V2 calls the shared tree "unsafe for autonomous
+agents," and that is a fair concern going forward — but RCC has been
+actively committing to `apps/**` in this same tree for the entire session
+this was raised in. LCC switching alone mid-session would not reduce risk;
+it would add a second, unsynchronised copy of the tree while RCC keeps
+writing to the original, which is a worse divergence risk than the one V2
+is warning about.
+**Cost if never resolved:** the two lanes keep sharing one tree, which has
+worked without a collision this session (each lane has stayed inside its
+own path prefix) but has no structural enforcement behind that fact beyond
+CLAUDE.md's stated boundary.
+**Where it plugs in:** `git worktree add` for each lane, a CODEOWNERS file
+(buildable now, unblocked — see below) and, once GitHub Pro is active,
+branch protection referencing it.
+
+### [OPEN] Hidden adversarial benchmark needs infrastructure outside this repo · LCC · 11 Aug 2026 (V2 §5, REB §14)
+
+**Needs:** a decision on where the release-gating adversarial evaluation set
+should actually live so that a coding agent cannot read or edit it —
+options include a second, access-restricted repository; a secret-backed CI
+artifact fetched only during the gate run; or an external service.
+**Why it is not a blocker:** `services/harness/src/fixtures/adversarial.json`
+is a plain file in this repo today, fully readable and writable by any
+agent working in it, including this one. **True inaccessibility cannot be
+built from inside the same access an agent already has** — I looked for a
+way to self-restrict and there isn't one that would actually hold; anything
+short of an external mechanism is decoration, not protection. Recorded
+rather than faked.
+**Cost if never resolved:** the adversarial set remains readable by any
+future agent session, and V2/REB's stated goal — that "coding agents must
+not be able to weaken their own release gates" — is aspirational rather
+than enforced. Nothing has been weakened; the set is exactly as strong as
+it was, this is only about who could touch it.
+**Where it plugs in:** whichever mechanism is chosen, the harness only needs
+a URL or path to fetch the set from at gate-run time — `services/harness/src/adversarial.ts`
+already reads it as data, not as inline code.
+
 ### [OPEN] eCourts grant conditions, transcribed · LCC · 7 Aug 2026
 
 **Needs:** the registrar's letter — reference, expiry, attribution string,
@@ -133,6 +193,193 @@ release APK builds and installs in one command. Roughly twenty minutes with a
 phone.
 
 # DECISIONS ONLY THE FOUNDER CAN MAKE
+
+### [OPEN] FQ-D1 — real filings to evaluate the pseudonymiser · gates core feature #3 · LCC
+
+**Added 11 Aug 2026. This is the top of the chain that blocks drafting, and it is
+not the DPA.**
+
+**Needs:** roughly **20 real Indian court filings that contain client PII** —
+bail applications, written statements, petitions — or synthetic ones an advocate
+confirms are representative. Hindi and English both, since transliterated names
+are the hard case. They never leave the machine and are never sent to a model;
+they are an evaluation set, not training data.
+
+**Why it cannot be worked around.** Drafting is sensitive-class, so it must be
+pseudonymised before any model call. `callModel` refuses every sensitive call
+today, on purpose, with the reason in the code: sending raw text while recording
+`pseudonymised = true` would put a false claim in the audit ledger. The
+pseudonymiser is therefore the gate — and `PRIVACY_PII.md` requires it be
+**measured before it is trusted**: *"Evaluate Presidio on real Indian court
+documents before trusting it — a published F1 measured on English news text is
+not evidence about a Hindi bail order naming four transliterated surnames."*
+
+**We have no such documents and cannot manufacture them honestly.** `documents`
+is 0 rows and the judgments corpus is public-class, so it carries no client PII
+to detect. Without the evaluation set the ~80% coverage figure stays an
+**estimate**, and `CLAUDE.md` forbids describing it as anything else.
+
+**What was built anyway:** nothing speculative, and that is the point — the
+finding is recorded in `CURRENT_PLAN.md` §Q1.9 with the full chain, so the next
+agent does not re-derive it or start at the wrong end. `POST /documents` is
+`SPECCED` in the frozen contract, so no shape needs inventing when this clears.
+
+**What stays broken without it:** core feature #3 entirely. An advocate cannot
+create a draft. RCC's `DraftsListScreen` and `DraftDetailScreen` are built,
+tested and permanently empty.
+
+**Separate and also owed:** the countersigned DPA (OD-6). It binds *after* this,
+not before — resolving the DPA alone changes nothing.
+
+### [OPEN] FQ-VESPA — your Vespa/Qdrant/Milvus question, answered · 11 Aug
+
+**You asked whether Vespa, Qdrant or Milvus would beat pgvector for legal AI. You
+were right that something should, and right about which problem matters — but
+it is not the vector problem.** Working: `docs/HC_INGEST_PLAN.md` §3.1.
+
+**Qdrant is already excluded** by `CLAUDE.md` §4, by name, next to Neon, Vercel,
+Clerk and Supabase. Only you can change that and it should be in writing.
+
+**Milvus is the wrong shape.** It is vector-first, built for billion-vector
+scale. **We decided tonight not to build 41M vectors**, so it optimises a problem
+we no longer have.
+
+**Vespa is genuinely right, for a reason that is ours specifically.** The real
+gap I found tonight is that **Postgres `ts_rank` is not BM25 — it has no IDF**,
+so a rare term like *"Kharak Singh"* does not outrank a common one. And Railway
+Postgres has **only `pg_trgm` and `vector` available** — `pg_search`,
+`pg_textsearch` and `vchord_bm25` are not installable there.
+
+Vespa gives native BM25 **and** programmable ranking expressions — which means
+**how often a judgment is cited could become a first-class ranking signal.** We
+hold **97,876 citation edges**. Neither BM25 nor an embedding nor any competitor
+knows that a judgment has been cited 500 times. **That is a ranking advantage we
+own because we built the citation graph, and Vespa is the only one of the three
+that can express it.**
+
+**What it does NOT do:** replace Postgres. `CLAUDE.md` requires citation fields
+to render from the database row and `overruled_status` to be read live at every
+render. **Vespa would be an index built from `judgments`** — so **tonight's
+ingest is not wasted under any outcome.**
+
+**Cost to find out: £0.** A single-node Vespa needs 4 GB in Docker; this machine
+has 31.7 GB. It can be tested against a real court-year as soon as the first one
+lands, with no vendor and no commitment.
+
+**What I need from you:** nothing yet, and that is deliberate. **The right
+sequence is ingest first, then measure whether `ts_rank` actually fails advocates
+on 15.77M real documents, then decide.** Adding a second serving system to run,
+monitor, back up and keep in sync is a real cost, and it should be paid against a
+measurement rather than an argument.
+
+### [DECIDED 11 Aug 2026 — YES] FQ-CORPUS — one yes/no unblocks 15.77M documents
+
+**The founder's words:** *"Yes — ingest High Court documents as searchable text
+behind the coverage screen, no embeddings for now."*
+
+**Plan and every step's verification command: `docs/HC_INGEST_PLAN.md`.** Two
+corrections that the post-approval verification pass forced are recorded in its
+§0 rather than absorbed quietly: **we get `ts_rank`, not BM25** (no IDF, and no
+BM25 extension is available on Railway), and **Railway storage is ~98 GB ≈
+$15–25/month**, which is affordable — the original worry that this machine's disk
+was irrelevant because the database lives on Railway was correct in principle and
+does not bite at this size.
+
+Original entry kept below for provenance.
+
+### FQ-CORPUS — the original ask
+
+**This supersedes the "embedding cost" half of §Q2, because that half was costed
+wrong by everyone including me.** Full working: `docs/CORPUS_GAP_PLAN.md`.
+
+**What I need:** *"Yes — ingest High Court documents as searchable text behind the
+coverage screen, with no embeddings for now."*
+
+**Why the old framing was wrong.** Everyone quoted **3,956 GPU-hours**. That is
+the cost of *making* embeddings and it is not the binding constraint. Measured on
+our own database tonight: the HNSW index is **4.7 GB for 616,197 vectors**, and
+`judgment_chunks` is **9.3 GB against 1.5 GB of judgments** — **embeddings are
+7.2× the size of the text.** Scaled to the High Courts that is **~41 million
+vectors, roughly 490 GB, wanting to sit in RAM**, against a database that is
+**11 GB today**. pgvector is documented to stop working well around 5–10M
+vectors. **The vectors would not fit, and would not be servable if they did.**
+
+**And they may not be worth it.** On legal passage retrieval BM25 scores **37.1%**
+against dense embeddings' **36.8%** — 0.3 points. An advocate searching
+`section 138 NI Act` is doing lexical retrieval, which is what Postgres
+full-text search does for free.
+
+**What it costs if you say yes:** about **5 days of this machine's time** and
+**96 GB of its disk** (of 686 GB free). No GPU, no new vendor, no money.
+
+**What stays broken if you say no:** an advocate searching their own High Court
+gets nothing, and Jhana claims all 25 of them. `FEATURE_PARITY.md` §5b.
+
+**What you are actually deciding**, stated honestly: most of those 15.77M
+documents are **orders, not judgments** — the measured judgment share is
+**0.75%–18.64%** — and **pre-2023 ones carry no citation we can extract**, so they
+are searchable and not citable. From 2023 the courts print a neutral citation in
+the text and those *are* citable. **The coverage screen already says "documents"
+and never "judgments", and already states that share as a range.**
+
+**Stages 2 and 3 need nothing from you yet** — they wait on the citation pass
+finishing, which decides which judgments are worth a vector at all.
+
+### [OPEN] FQ-V1 — make `VERIFY:` a command, not a description · 11 Aug
+
+**Needs:** your yes or no to one change in `CLAUDE.md`, which is your file.
+
+**The evidence, not an opinion about my own conduct.** You said I tell you wrong
+things and correct myself later. That failure has a name, a measured rate, and a
+known fix — `docs/RESEARCH_2026-08-11.md` §1:
+
+- **False success** accounts for **44–52%** of agent failures, and **75.8%** in
+  coding agents that emit an explicit completion signal.
+- **Reasoning models give no protection** — the traces *"rationalize completion
+  rather than verify it"*. Thinking harder does not fix it.
+- **Dual control with independent verification drops it to 3%** — an order of
+  magnitude, and the largest effect in the literature. **That is what LCC/RCC
+  already is.** RCC catching me is the mechanism working.
+- **Structured evidence conditions beat an equivalent natural-language summary**,
+  worth **+4.8 to +11.8 pp** and **−12.1%** tokens.
+
+**The proposed change.** `CLAUDE.md`'s `DONE:/VERIFY:` is exactly the
+natural-language summary that ablation beats:
+
+> `VERIFY:` must name a **COMMAND and its expected output**, never a description.
+> *"probe the running service"* is a description. `curl -o /dev/null -w '%{http_code}'`
+> returning **401** is a condition.
+
+Every one of my six errors was a claim about system state that one command would
+have killed, and the command was not run. The table is in §1.
+
+**Corollary, needing no decision:** cheap mechanical detectors recover **72%** of
+false successes against an LLM judge's **13%**, at 1.19 ms versus 4,000 ms. That
+argues for **more `scripts/check-*.mjs`, not more prose** — the three that ran
+today caught three real defects.
+
+### [OPEN] OD-12 — confirm or reject the saved-search feed · RCC is idle on it · 11 Aug
+
+**Needs:** yes or no to **an in-app saved-search feed**, recorded in
+`OPEN_DECISIONS.md` §OD-12.
+
+**The question in one line:** PD-5 excluded subject-following *alerts* —
+*"discovery, not an alert; it belongs in the app, never in a notification"*.
+`FEATURE_PARITY.md` §3 proposes keeping PD-5 intact and putting the capability
+**in the app with no push, no badge, no notification of any kind.** Is that the
+reframe you meant, or did PD-5 exclude the capability itself?
+
+**Why it is not an agent's call:** it is a reading of a settled decision. Adopting
+a plausible reading alone is how a PD gets quietly reopened.
+
+**What was built anyway:** all four endpoints, server-side and tested —
+`GET`/`POST`/`DELETE /saved-searches` and `GET /saved-searches/:id/feed`. Ready
+the day you say yes.
+
+**What stays broken without it:** nothing else depends on it, but it is currently
+**the only unblocked client work RCC had**, and they refused it correctly — LCC
+sent "build this" after reading the contract's status table and missing the
+thirteen lines below it saying not to. RCC read the source and stopped.
 
 ### [OPEN] OD-11 — Tier B before Tier A, or the sprint plan as written · both lanes
 

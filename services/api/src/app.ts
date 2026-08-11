@@ -70,7 +70,7 @@ import {
 } from './auth/routes.ts';
 import { getBriefing, listMatterBriefings, markBriefingOpened } from './briefings/route.ts';
 import { courtLookupRequest, handleCourtLookup } from './court/lookup.ts';
-import { buildSha } from './build-info.ts';
+import { buildSha, deployedAt } from './build-info.ts';
 import { getCitationCheck } from './citations/check.ts';
 import { copyRequest, recordCopy } from './citations/copies.ts';
 import {
@@ -187,6 +187,31 @@ export function createApp(deps: AppDeps) {
       return fail(c, 'DATABASE_UNREACHABLE', `database is not reachable (build ${buildSha})`, 503);
     }
   });
+
+  /**
+   * REB §1.3 — "expose deployed Git SHA, build provenance, relevant
+   * build/version metadata." Deliberately separate from `/health`: `/health`
+   * answers "is this container able to serve traffic", `/version` answers
+   * "which code is this, and when did it get here" — different questions,
+   * and a caller checking deploy integrity should not have to parse a
+   * healthcheck's error path to get an honest answer to the second one.
+   *
+   * `gitSha`/`deployedAt` are exactly `build-info.ts`'s values — no new
+   * resolution logic, so this cannot disagree with what `/health` already
+   * reports. `imageDigest` and signed build provenance are NOT provided:
+   * `railway.json` uses Railpack, not a Dockerfile this project controls the
+   * build of, and nothing here computes or receives a content-addressed
+   * digest. Recorded as a known gap rather than guessed at —
+   * `docs/ai/V2_RECONCILIATION.md`.
+   */
+  app.get('/version', (c) =>
+    ok(c, {
+      gitSha: buildSha,
+      deployedAt,
+      environment: process.env['RAILWAY_ENVIRONMENT'] ?? process.env['NODE_ENV'] ?? 'development',
+      imageDigest: null,
+    }),
+  );
 
   const auth = deps.auth;
   if (auth) {

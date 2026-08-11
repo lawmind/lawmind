@@ -37,6 +37,7 @@ endpoint.
 | endpoint | status |
 |---|---|
 | `GET /health` | BUILT |
+| `GET /version` | BUILT |
 
 **Auth — RCC owns**
 
@@ -196,16 +197,40 @@ endpoint.
 ## Platform — LCC owns
 
 ```
-GET /health   —   → { status, sha, database: { reachable, latencyMs } }
+GET /health    —   → { status, sha, database: { reachable, latencyMs } }
+GET /version   —   → { gitSha, deployedAt, environment, imageDigest }
 ```
 
-**`sha` is what the build was told, not what is running.** It is an environment
-variable set at deploy time and it has reported a stale commit through a crashed
-deploy. **Never read it as proof of a deploy — probe the route whose behaviour
-changed.**
+**`sha`/`gitSha` are what the build was told, not what is running by any
+platform guarantee.** Both read the same `GIT_SHA` environment variable
+(`build-info.ts`) — never two independently-resolved values that could
+disagree. **It has reported a stale commit twice for two different reasons**:
+once through a crashed deploy (the container never actually replaced the old
+one), and once — found 11 Aug 2026 — because `railway up` (a CLI deploy,
+which is how every real deploy has happened since auto-deploy died 8 Aug)
+never populates `RAILWAY_GIT_COMMIT_SHA`, so the code fell through to a
+manually-set `GIT_SHA` that nothing was re-setting, and it read the 8 Aug
+commit through several real, successful deploys afterward. **Fixed by making
+the deploy itself set it**: `scripts/deploy-api.mjs` sets `GIT_SHA` and
+`DEPLOYED_AT` immediately before every `railway up`, atomically, so the two
+cannot drift apart the way a hand-set variable did. **Still not a platform
+guarantee** — it trusts the machine running the deploy script to have the
+right commit checked out, not a signed build-provenance chain. **When in
+doubt, probe the route whose behaviour actually changed**, not this field —
+`services/harness/src/deployed-safety.ts` exists for exactly that.
+
+`imageDigest` is always `null` — nothing in this build computes or receives
+a content-addressed image digest; `railway.json` uses Railpack, not a
+Dockerfile this project builds directly. Recorded as a known gap, not
+guessed at.
+
+`deployedAt` is `null` for any deploy that did not go through
+`scripts/deploy-api.mjs` (including every local `pnpm dev`) — absence, never
+a fabricated "now".
 
 Returns **503**, not 200, when the database is unreachable: a health check that
 stays green while the database is down keeps Railway routing traffic at it.
+`/version` answers regardless — deploy identity is not a database question.
 
 ## Auth — RCC owns
 ```
