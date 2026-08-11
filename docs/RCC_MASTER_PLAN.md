@@ -419,7 +419,36 @@ client-side and `JudgmentScreen` renders the coram line only when present.
 Client wiring: `FiltersSheet`'s court chips are a live multi-select now
 (`toggleCourt`), `serverFilters` sends `courts`, `hasActiveFilters` includes
 it. Commit `a682b09`. `tsc` 0, 548/548 (+2 new tests: court-chip wiring,
-unpopulated-category messaging), guards clean.
+unpopulated-category messaging), guards clean. **All confirmed against the
+deployed service (`e359283`), not just locally** — bus 0054/0057: real Patna
+judgment via `GET /judgments/:id` shows `bench: null` in production, `POST
+/search filters.courts` narrows for real, and the Drafts tab was smoke-tested
+end to end (magic-link sign-in → real access token → `GET /documents` → 200,
+draft listed, `matterTitle` populated) against production, then cleaned up.
+
+**Bus 0047 — CLOSED**, no client change needed (already fixed pushed 11 Aug):
+`prefilledQuery`/`instructions`/`captchaRequired` render on the eCourts
+screen; `court/lookup`, `Treatment.paragraph` and `overruledHere` were the
+three RCC-side fixes. `Treatment.paragraph` stays unbuilt — LCC confirmed it
+needs char-offset→paragraph segmentation server-side first, not approximated.
+
+**Open, sent to LCC (bus 0058):** the 401 an advocate sees immediately after
+signing in, before onboarding creates their `users` row, reads "sign in to
+continue" — which is true but reads as a broken login. `profileIdFor`
+(`auth/middleware.ts`) already distinguishes "no `authId`" from "`authId` set,
+no profile row" and collapses both before any route sees it. Recommended: a
+second error code for the onboarding-incomplete case, centralized behind one
+helper rather than touched at each call site, so the client can route it at
+onboarding instead of an auth error. Not building client-side until the shape
+exists.
+
+**Informational, no client action (bus 0056):** Stage 8 landed — 18,590
+statute amendment events with effective dates, parsed from
+`statute_sections.footnote` (was stored, never read — same defect class as
+`cnr`/`disposal_nature`/`petitioner`, one step worse). `docs/ai/
+STATUTE_TEMPORAL_STAGE8.md`. Explicitly NOT a version-history reconstruction
+— "these are the changes recorded", never "this is how it read on X". Keep
+that framing if a screen is ever built against `statute_amendments`.
 
 **Bus 0048 and 0049 — CLOSED.** LCC shipped `dd9871b`: `GET/POST
 /matters/:id/authorities` now sends `overruledStatus` (+byJudgmentId/
