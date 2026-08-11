@@ -46,9 +46,45 @@ describe('treatment and graph', () => {
     assert.equal(status, 200);
     const counts = body.data?.['counts'] as Record<string, number>;
     assert.ok(counts, 'counts must be present');
-    for (const k of ['followed', 'distinguished', 'doubted', 'overruled', 'cites']) {
+    // All SIX real values of judgment_citations.relationship (schema.ts:711) —
+    // a fifth was missing here until 11 Aug 2026 (RCC bus 0035): overruledInPart
+    // was silently uncounted while `total` (below) already included it.
+    for (const k of ['followed', 'distinguished', 'doubted', 'overruled', 'overruledInPart', 'cites']) {
       assert.equal(typeof counts[k], 'number', `${k} must be a number, not absent`);
     }
+  });
+
+  describe('overruled_in_part — the sixth value, found missing from counts 11 Aug 2026', () => {
+    /** A real judgment with a real overruled_in_part edge — 23 such rows in production. */
+    let partlyOverruledId: string | null = null;
+
+    before(async () => {
+      const [row] = await sql<{ id: string }[]>`
+        SELECT cited_judgment_id AS id FROM judgment_citations
+        WHERE relationship = 'overruled_in_part' AND cited_judgment_id IS NOT NULL
+        LIMIT 1`;
+      partlyOverruledId = row?.id ?? null;
+    });
+
+    it('counts.overruledInPart is non-zero for an authority actually overruled in part', async (t) => {
+      if (!partlyOverruledId) return t.skip('no overruled_in_part edge in this corpus');
+      const { body } = await get(`/judgments/${partlyOverruledId}/treatment`);
+      const counts = body.data?.['counts'] as Record<string, number>;
+      assert.ok(counts['overruledInPart']! > 0, 'a real overruled_in_part edge must be counted');
+    });
+
+    it('an overruled_in_part row ranks with overruled/doubted, not with ordinary cites', async (t) => {
+      if (!partlyOverruledId) return t.skip('no overruled_in_part edge in this corpus');
+      const { body } = await get(`/judgments/${partlyOverruledId}/treatment?limit=200`);
+      const rows = (body.data?.['treatments'] ?? []) as { relationship: string }[];
+      const relationships = rows.map((r) => r.relationship);
+      const firstPlainCite = relationships.indexOf('cites');
+      const firstPartial = relationships.indexOf('overruled_in_part');
+      if (firstPlainCite === -1 || firstPartial === -1) return t.skip('page did not carry both relationships');
+      // A partial overruling is the law moving — it must not be buried behind
+      // ordinary citing references in the same page.
+      assert.ok(firstPartial < firstPlainCite, 'overruled_in_part must rank ahead of a bare cites');
+    });
   });
 
   it('computes counts over the WHOLE set, not the returned page', async (t) => {

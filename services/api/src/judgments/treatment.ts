@@ -7,8 +7,9 @@
  * (`docs/SCHEMA_TRUTH.md` §judgment_citations).
  *
  * **Treatment is not prediction.** These endpoints state what courts DID —
- * followed, distinguished, doubted, overruled — every count traceable to a
- * judgment id and every relationship justified by a phrase the court printed.
+ * cites, followed, distinguished, doubted, overruled, overruled_in_part —
+ * every count traceable to a judgment id and every relationship justified by
+ * a phrase the court printed.
  * They must never return a probability, a score or a forecast; that is the one
  * competitor feature `docs/FEATURE_PARITY.md` §4 declines, because it cannot be
  * sourced to a primary record or verified by any tier.
@@ -81,9 +82,13 @@ export async function getTreatment(
     WHERE c.cited_judgment_id = ${id}
     -- Treatments before bare references, then most recent: a bench that overruled
     -- this authority matters more than one that mentioned it in passing.
+    -- overruled_in_part ranks with overruled/doubted, not with cites at the
+    -- bottom -- a partial overruling IS the law moving (CITATION_HARNESS.md
+    -- section "Overruled status is never cached"), not an ordinary reference.
     ORDER BY CASE c.relationship
-               WHEN 'overruled' THEN 0 WHEN 'doubted' THEN 1
-               WHEN 'distinguished' THEN 2 WHEN 'followed' THEN 3 ELSE 4 END,
+               WHEN 'overruled' THEN 0 WHEN 'overruled_in_part' THEN 1
+               WHEN 'doubted' THEN 2 WHEN 'distinguished' THEN 3
+               WHEN 'followed' THEN 4 ELSE 5 END,
              j.judgment_date DESC
     LIMIT ${q.limit + 1} OFFSET ${offset}
   `;
@@ -100,6 +105,12 @@ export async function getTreatment(
       distinguished: byRelationship['distinguished'] ?? 0,
       doubted: byRelationship['doubted'] ?? 0,
       overruled: byRelationship['overruled'] ?? 0,
+      // Found 11 Aug 2026 (RCC bus 0035): `judgment_citations.relationship`
+      // holds SIX values (`packages/db/src/schema.ts`), this object exposed
+      // five. `total` (below) already summed all six via `byRelationship`, so
+      // a client comparing counts.overruled + ... against `total` would see
+      // a gap it could not explain — 23 real rows, live, silently uncounted.
+      overruledInPart: byRelationship['overruled_in_part'] ?? 0,
       cites: byRelationship['cites'] ?? 0,
     },
     treatments: page.map((r) => ({

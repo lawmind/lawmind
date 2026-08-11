@@ -718,15 +718,26 @@ pseudonymise before any model call, **one document per call** (OD-6).
 ```
 GET /judgments/:id/treatment ?limit=50 &cursor
   → { judgmentId, asOf,
-      counts: { followed, distinguished, doubted, overruled },
+      counts: { followed, distinguished, doubted, overruled, overruledInPart, cites },
       treatments: [ { judgmentId, caseTitle, neutralCitation, court,
-                      judgmentDate, relationship: 'followed'|'distinguished'
-                                    |'doubted'|'overruled',
-                      paragraph,
+                      judgmentDate, relationship: 'cites'|'followed'
+                                    |'distinguished'|'doubted'|'overruled'
+                                    |'overruled_in_part',
+                      evidence,
                       verificationState, verifiedBySource, overruledStatus,
                       asOf } ],
       total, returned, truncated, nextCursor }
 ```
+**All SIX values `judgment_citations.relationship` actually stores**
+(`packages/db/src/schema.ts`) — `counts` was missing `overruledInPart` until 11
+Aug 2026, found by RCC (bus 0035) building against the live corpus: 23 real
+rows, silently uncounted even though `total` already summed them. `relationship`
+on each treatment row carries the raw stored value (snake_case for the one
+compound value, `overruled_in_part`); `counts`' keys follow this contract's
+usual camelCase. Ranked ahead of an ordinary `cites` in the returned page — a
+partial overruling is the law moving, not a passing reference.
+(`paragraph` was never actually returned by this endpoint; corrected here —
+`evidence`, the court's own phrase, is what the code has always sent.)
 **Every number is derived from real citation relationships in the corpus and is
 traceable to a judgment ID.** This endpoint states what courts *did*. It must never
 return a probability, a score, or a predicted outcome — that is the one competitor
