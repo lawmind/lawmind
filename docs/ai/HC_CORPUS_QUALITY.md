@@ -124,11 +124,46 @@ reporter-citation path or as uncitable.
 
 ---
 
+## 4a · The classification, validated by a signal it never used
+
+**Citation extraction has now run on the High Court corpus** — the pass that had
+never run. 40,281 documents processed in 275 s; **6,500 real citation edges
+where there were zero.**
+
+The classifier used `disposal_nature`, text length and a bail phrase. It did
+**not** use citation behaviour. So citation yield per class is an independent
+check:
+
+| class | documents | real edges | % of documents citing anything |
+| --- | --- | --- | --- |
+| **`decided`** | 2,410 | **4,664** | **26.2%** |
+| *(unclassified)* | 10,828 | 1,038 | 4.1% |
+| `bail_order` | 23,194 | 722 | 1.9% |
+| `procedural_disposal` | 3,963 | 73 | 1.2% |
+| `decided_brief` | 453 | 3 | 0.7% |
+| **`reference_stub`** | 132 | **0** | **0.0%** |
+
+**`decided` cites at 14× the rate of `bail_order`**, and holds **72% of all High
+Court citation edges while being 5.9% of the documents.** `reference_stub` is
+exactly zero, which is what a document containing nothing but a pointer should
+be. *(unclassified)* sits between bail and decided — consistent with it being a
+genuine mixture rather than a single hidden class.
+
+This is the validation that matters: the classes were confirmed by evidence they
+were not built from.
+
+**What it does not establish.** 143 of 6,433 new edges resolved to a corpus
+judgment — the rest name authorities we do not hold. That is a corpus-coverage
+fact, not an extraction failure, and it must not be read as "these citations are
+wrong".
+
+---
+
 ## 5 · What must NOT be concluded from this
 
-- **`0 outbound citations` is not evidence these documents cite nothing.**
-  Citation extraction has never run on the High Court corpus. It is evidence of
-  a missing pass, not of a property of the documents.
+- **`0 outbound citations` was not evidence these documents cite nothing** — it
+  was evidence of a missing pass. **Resolved: the pass has now run** and found
+  6,500 edges. §4a.
 - **`unclassified` is not `not an authority`.** 10,828 documents are unresolved,
   and some are certainly reasoned decisions.
 - **`bail_order` is not `worthless`.** A bail order is a real judicial act and an
@@ -142,12 +177,14 @@ reporter-citation path or as uncitable.
 
 ## 6 · Next, in order
 
-1. **Citation extraction on the High Court corpus** — the missing pass. Until it
-   runs, "0 citations" stays uninterpretable and the citation graph excludes 52%
-   of the corpus by row count.
+1. ~~Citation extraction on the High Court corpus~~ — **DONE**, §4a. 6,500 edges.
 2. **Collapse duplicate groups in retrieval.** 1,476 HC rows sit in
    `document_duplicate_members` and retrieval reads that table nowhere, so the
    same document can occupy several of five result slots.
-3. **Then design the index experiment** — and it should be scoped to the ~2,249
-   unique candidate authorities plus whatever citation extraction promotes out
-   of `unclassified`, not to 40,980 rows.
+3. **Resolve what the 6,500 edges point at.** Only 143 resolved to a judgment we
+   hold. The unresolved remainder is a **map of what the corpus is missing**,
+   named by the High Courts themselves — arguably more valuable than the edges
+   that did resolve, and the natural input to a coverage plan.
+4. **Then design the index experiment** — scoped to the ~2,249 unique candidate
+   authorities plus whatever comes out of `unclassified`, not to 40,980 rows.
+   **Not started, and no retrieval change has been made.**
