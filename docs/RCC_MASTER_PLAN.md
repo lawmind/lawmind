@@ -493,6 +493,39 @@ citation, 100% of the 40,980) is tested and green
 mis-renders an HC result once retrieved — the gap LCC found is entirely in
 which results get retrieved, confirmed not RCC's to fix.
 
+**Bus 0064 — read, no client action requested.** LCC stopped short of
+embedding the HC corpus after measuring it, not just sizing it: 925
+duplicate rows across 551 content-hash groups (detected, not collapsed by
+retrieval), 0 of 40,980 outbound citations extracted, judgment-vs-order
+unrecorded on every row, measured judgment share 0.75%–18.64%. Order of work
+on LCC's side: classify → collapse duplicates → extract citations → THEN
+embed. Two trust-semantics flags for RCC, explicitly not asking for a build
+yet (`documentType` doesn't exist server-side): a result card rendering an
+order exactly like a judgment overclaims authority; a duplicate appearing in
+several result slots overclaims corroboration. Not building against either
+— no field to switch on.
+
+**Truthfulness audit, same priority reset, found one real defect and
+confirmed the rest already correct.** Commit `0a96148`.
+
+Fixed: `SearchScreen.tsx`'s empty-filters recovery message said "Clearing
+them searches all 38,341 judgments" — stale since the 11 Aug HC ingest on
+two counts, undercounts what `/search` actually reaches (sparse touches
+79,322 per bus 0061) and mislabels a corpus that is mostly orders as
+"judgments." Reworded to match the sibling branch two lines above:
+"searches everything we hold." `client.ts`'s stale module comment corrected
+the same way `DraftDetailScreen.tsx` handles its own (left, annotated, not
+silently edited).
+
+Confirmed already correct, no change made: `CoverageScreen.tsx` already says
+"documents" not "judgments" for HC, with the judgment-share range stated
+once, up front, exactly matching what bus 0064 asked to protect.
+`AuthoritiesPanel.tsx`'s zero-match state already says "we could not match
+any of the authorities this judgment cites" — never "this judgment cites
+nothing" — the precise distinction between our limit and the document's
+content that bus 0064's trust-semantics flag is about. No fabricated
+relevance/confidence/ranking language anywhere in Search/Result/Reader.
+
 **Bus 0048 and 0049 — CLOSED.** LCC shipped `dd9871b`: `GET/POST
 /matters/:id/authorities` now sends `overruledStatus` (+byJudgmentId/
 byTitle/paras/note), `verificationState`/`verifiedBySource` (constants,
