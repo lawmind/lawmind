@@ -162,15 +162,17 @@ distinguish; not chased further at this scale).
 
 | | source corpus (**corrected**) | ingested (held) | coverage |
 | --- | --- | --- | --- |
-| Supreme Court | **38,351** | 38,341 | **99.97%** |
+| Supreme Court | **38,351** | **38,342** (after the same-day ingest, §8) | **99.98%, ~9 permanently unreachable at source** |
 | High Court | 20,529,203 (rows counted; distinct-document status unverified, §1) | 40,980 | **0.1996%, upper bound** |
-| **Combined** | **20,567,554** | **79,321** | **0.386%, HC-dominated** |
+| **Combined** | **20,567,554** | **79,322** | **0.386%, HC-dominated** |
 
 **The founder's instruction not to assume the 79,321 rows represent the
 full corpus was right to insist on — for the High Court half.** For the
 Supreme Court half, the corrected measurement says the opposite of the
-first draft: **we hold essentially the entire distinct SC corpus already**,
-and the real remaining SC gap is 11 rows, not thousands. The overall
+first draft: **we hold essentially the entire reachable SC corpus already**
+— of the 11 rows the metadata pointed at and we did not hold, 1 ingested
+successfully same day and 9 are permanently unreachable at the source
+(§8: HTTP 404 or a corrupted PDF, not an ingest defect). The overall
 0.386% combined figure is entirely an HC statement, not a balanced average
 of two comparable gaps — stating it without the per-court breakdown above
 would itself be a conflation of the kind this document exists to prevent.
@@ -186,8 +188,8 @@ corpus-wide.
 | | Supreme Court (**corrected**) | High Court |
 | --- | --- | --- |
 | **SOURCE**, distinct documents | 38,351 | 20,529,203 (rows; distinct-status unverified) |
-| **INGESTED** (`judgments` rows) | 38,341 | 40,980 |
-| **UNINGESTED** | **11**, sampled and named below | 20,488,223 |
+| **INGESTED** (`judgments` rows) | 38,342 (was 38,341; +1 same day, §8) | 40,980 |
+| **UNINGESTED** | **9, permanently — 404 or corrupt at source, §8** | 20,488,223 |
 | **DUPLICATES** among ingested (`content_hash` groups, task 003) | not broken out by court this session — 937 groups / 1,500 rows corpus-wide, 98.4% of the 1,500 are HC | see left |
 | **INVALID/MISSING** (ingested but structurally incomplete) | 0 rows with null `content_hash`/`text_quality` (100% backfilled, task 003) | same |
 
@@ -346,12 +348,23 @@ today's findings:**
    corrected §3's own first draft**: not 5,191 uningested, **11** — the
    other 5,180 were the raw footer sum double-counting cross-partition
    listings. Named and sampled, §3.
-3. **Ingest the 11 genuinely-new SC judgments** — trivial scope, the exact
-   opposite of a bulk operation: 11 known `sourceUrlFor` values, run
-   through the existing `cli.ts` path unchanged (it already
-   skips-and-resumes on `source_url`, so a targeted or even a full
-   `--resume` SC re-run only touches these 11). The natural immediate next
-   step, not deferred.
+3. ~~**Ingest the 11 genuinely-new SC judgments**~~ — **DONE, same day,
+   and the honest result is not "11 landed".** Ran `cli.ts --resume`
+   across all 77 years (safe: `source_url` uniqueness plus the resume
+   check touch only the 11, confirmed by the run's own count —
+   `skipped=43522` matches every already-held row exactly). **1 inserted,
+   9 failed, 1 unaccounted** (likely a duplicate the within-run dedup
+   caught). The 9 failures are **source-data problems, not an ingest
+   gap**: 6 return HTTP 404 (the PDF the metadata points at does not
+   exist at that URL) and 3 are `InvalidPDFException: Invalid PDF
+   structure` (corrupted at source). **SC now stands at 38,342 of 38,351
+   distinct source documents — 99.98% — and the remaining ~9 are a
+   permanent ceiling set by the source bucket, not something ingest can
+   close.** Verified: the one successful insert
+   (*Commissioner, Central Excise, Nagpur v. M/S. Waingana Sahkari S.
+   Karkhana Ltd.*, `ESCR010002182002`) landed with `native_text: true` —
+   the classifier wired in item 1 above working correctly on a real
+   production write, confirmed by querying the row directly.
 4. **Mobile-variant ingest for the 4 HC courts, as a scoped decision, not a
    backfill** (§5) — a founder-level acquisition-scope call (new rows,
    real disk/DB cost, real judgment-share unknown outside the 8% sample),

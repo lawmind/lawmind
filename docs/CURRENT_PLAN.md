@@ -786,9 +786,13 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     day**: the first pass reported SC at 88.1% coverage (43,532 raw footer
     rows vs. 38,341 held) — executing the very next measurement task found
     the SC bucket lists 5,181 documents under more than one year-partition,
-    so the true distinct SC source size is **38,351, coverage 99.97%**,
-    and only **11 judgments** are genuinely uningested (named in the
-    doc), not thousands. HC stands at 20,529,203 rows / 0.1996% coverage,
+    so the true distinct SC source size is **38,351**, and only **11
+    judgments** were genuinely uningested (named in the doc), not
+    thousands. **Ingested them same day**: 1 succeeded (landed with
+    `native_text: true`, proving the classifier below on a real write), 9
+    failed permanently (HTTP 404 or a corrupt PDF at source — not an
+    ingest defect). **SC now stands at 38,342 of 38,351 — 99.98%, the
+    practical ceiling.** HC stands at 20,529,203 rows / 0.1996% coverage,
     stated as an upper bound — HC's own distinct-document status was
     reasoned as unlikely to have the same defect (its URL construction
     keys off the partition, not a row field) but not independently
