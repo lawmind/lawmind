@@ -214,3 +214,77 @@ citations pointing at judgments we may simply not hold.
 the ledger, the strict parser and the promotion boundary are all sound and stay
 built — the boundary is exactly what made this finding cheap and safe to reach.
 What does not happen is promotion.
+
+---
+
+## 9 · INDEPENDENT AUDIT — a second session, 12 Aug 2026, re-derived rather than trusted
+
+**Per the founder's explicit instruction not to accept a reported number until it
+is independently reproduced from the persisted evidence.** This section was
+written by a different session from the one that ran the evaluation, working
+only from `docs/ai/CONCORDANCE_GOLD_RESULTS.json` and the raw
+`citation_concordance_resolutions`/`llm_calls` rows — not from the prose above.
+
+**VERIFIED — every headline number recomputed from raw data and matched exactly:**
+
+| claim | recomputed | match |
+| --- | --- | --- |
+| candidate-generation reach 22.0% (44/200) | `candidateGeneration` block: 44/200 | ✅ |
+| deterministic top-1: 70/79 correct, 9 wrong | recomputed from `outcomes[]` filtered to `kind IN (positive, adversarial)`: 79 rows, 70 `deterministicTop1Correct=true` | ✅ |
+| truth-absent fabrication: 4/37 = 10.8% | recomputed from `outcomes[]` filtered to `kind='truth_absent'`: 37 rows, 4 `fabricated=true` | ✅ |
+| paired trade: bothRight 52 · detOnly 18 · modelOnly 1 · neither 8 | recomputed independently from the same 79 rows, comparing `deterministicTop1Correct` against `selectedTruth` per row | ✅ exact match |
+| `judgment_citation_aliases` unchanged at 4,100; 0 rows `promoted` | `SELECT count(*) FROM judgment_citation_aliases` = 4,100; `SELECT count(*) ... WHERE validation_status='promoted'` = 0 | ✅ |
+| 184,375 tokens spent | `SELECT sum(input_tokens), sum(output_tokens) FROM llm_calls WHERE feature='concordance'` = 153,302 + 31,073 = 184,375 | ✅ |
+
+**STRENGTHENS THE VERDICT — read directly, not inferred.** The four
+`truth_absent` fabrications were pulled from `citation_concordance_resolutions`
+with their full `context_evidence` and `model_reasoning`. Two of the four show
+the model justifying its pick by appeal to its **own memory of a "well-known"
+case** rather than the evidence it was actually shown:
+
+- `(2017) 6 SCC 1`, truth removed: model picked a 2018-dated judgment against a
+  2017 citation and wrote *"despite the judgment date being 2018 the reported
+  SCC citation year is 2017"* — explicitly overriding a year discrepancy the
+  candidate generator's own guard would ordinarily catch, on the strength of
+  recognising *"the Nirbhaya case"*.
+- `(2010) 2 SCC 772`, truth removed: the model's own stated reasoning names the
+  evidence's actual respondent as *"Saroj Kumar Sinha"* while selecting a
+  candidate titled *"...MANOJ KUMAR SINHA"* — a different first name, stated
+  and then overridden in the same sentence — because *"the citation ... is a
+  known reported case with that approximate title."*
+
+**This is the specific failure the prompt design was meant to prevent**
+(`buildAdjudicationPrompt`: *"You are NOT being asked to recall the citation
+from memory"*), and the safeguard did not hold under adversarial pressure in at
+least half of the observed fabrications. This was not visible in the aggregate
+10.8% figure alone and is recorded because it argues the true fabrication *rate*
+under wider deployment is not obviously bounded by better prompting alone — the
+model reached for outside knowledge specifically when the deterministic evidence
+ran out, which is exactly the condition promotion would run under.
+
+**A genuine limitation found, not a defect: `outcomes[]` carries no per-case
+identifier.** Its eleven fields (`kind`, `deterministicTop1Correct`,
+`modelDecision`, `tier`, …) are purely categorical — no `citationKey`, no
+`citationText`. 94 of 116 rows are therefore byte-identical to at least one
+other row by construction, which is NOT evidence of duplicated test draws (it
+was mistaken for that on first read, then resolved by checking
+`citation_concordance_resolutions` directly). A future evaluator should carry
+`citationKey` on each outcome row so a case can be re-identified from the JSON
+alone, without a database round trip.
+
+**Also checked and cleared: no leakage across runs.** 22 `citation_key` values
+in `citation_concordance_resolutions` appear more than once (156 raw DB rows
+against 116 cases in the final aggregate). Every duplicate pair has a
+**different** `model_input_hash` and a timestamp roughly 20–30 minutes apart —
+the pre-`0280a3e` run (random padding distractor) and the post-fix run
+(highest-Jaccard real distractor) both cached under the same citation key, not
+the same case drawn twice inside one run.
+
+**UNKNOWN, and said so rather than guessed at:** whether a materially larger
+sample (the evaluation's own §7 names n≥200) would show the fabrication rate
+holding, rising, or falling — 37 truth-absent cases is not enough to bound that
+on its own, which is exactly why §7 sets that bar rather than this run's point
+estimate.
+
+**Verdict independently confirmed: DO NOT PROMOTE.** Nothing in this audit
+weakens the original finding; the two read-through cases make it more concrete.
