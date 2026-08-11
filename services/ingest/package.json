@@ -25,7 +25,9 @@
     "corpus:report": "tsx src/corpus-report-cli.ts",
     "hc:cnr-sample": "tsx src/harvest/hc-cnr-sample-cli.ts",
     "dedup:materialize": "tsx src/dedup-materialize-cli.ts",
-    "quality:report": "tsx src/quality-report-cli.ts"
+    "quality:report": "tsx src/quality-report-cli.ts",
+    "backfill:parties": "tsx src/backfill-parties.ts",
+    "backfill:disposal-nature": "tsx src/backfill-disposal-nature.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

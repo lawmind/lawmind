@@ -105,6 +105,19 @@ export const statuteRelationshipEnum = pgEnum('statute_relationship', [
 ]);
 
 export const caseTypeEnum = pgEnum('case_type', ['criminal', 'civil']);
+/**
+ * `source_metadata`: the court's own filed petitioner/respondent fields,
+ * present on `SciMetadataRow` (Supreme Court) — `services/ingest/src/
+ * parties.ts`. `title_parsed`: deterministic `case_title` separator
+ * splitting, the only method available for every held High Court row.
+ * `unknown`: neither method found a usable value. Never a fourth,
+ * LLM-derived value — `docs/ai/LEGAL_STRUCTURE.md` §Parties.
+ */
+export const partiesExtractionMethodEnum = pgEnum('parties_extraction_method', [
+  'source_metadata',
+  'title_parsed',
+  'unknown',
+]);
 export const ourSideEnum = pgEnum('our_side', [
   'petitioner',
   'respondent',
@@ -386,6 +399,27 @@ export const judgments = pgTable(
      * `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
      */
     nativeText: boolean('native_text'),
+    /**
+     * `services/ingest/src/parties.ts`. NULL on every row until the migration
+     * `0037` backfill runs — never guessed, never derived from `full_text`.
+     * `caseTitle` remains the source of truth for display; these are a
+     * queryable, structured VIEW of it (or, for Supreme Court rows, the
+     * court's own filed fields — stronger evidence than a title split).
+     */
+    petitioner: text('petitioner'),
+    respondent: text('respondent'),
+    partiesExtractionMethod: partiesExtractionMethodEnum('parties_extraction_method'),
+    /**
+     * Verbatim from the source's own `disposal_nature` field — present on
+     * BOTH `SciMetadataRow` (required, e.g. "Appeal(s) allowed", "Dismissed")
+     * and `HcMetadataRow` (optional, e.g. "DISMISS FOR NON-PROSECUTION") and
+     * read by neither mapper before migration `0038` — the same class of gap
+     * `cnr` and `petitioner`/`respondent` were found to be. Never classified
+     * into disposed/pending or judgment/order here — `docs/ai/
+     * HC_CORPUS_CHARACTERIZATION.md` §11 named that as separate, harder,
+     * not-yet-designed work. Migration `0038`.
+     */
+    disposalNature: text('disposal_nature'),
   },
   (t) => [
     index('judgments_full_text_idx').using('gin', t.fullTextTsv),

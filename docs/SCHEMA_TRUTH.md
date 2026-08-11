@@ -189,6 +189,24 @@ wires it to persist a value per judgment. **Null on every one of the
 count, which means re-fetching the PDF itself, not re-reading already-
 stored text or metadata. `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
 
+`petitioner` text null · `respondent` text null · `parties_extraction_method`
+enum (`source_metadata`|`title_parsed`|`unknown`) null -- added migration
+`0037`, 11 Aug 2026, `docs/ai/LEGAL_STRUCTURE.md`. `source_metadata`: the
+court's own filed petitioner/respondent, present on `SciMetadataRow` and
+never threaded into `JudgmentRecord` until this migration -- the same class
+of gap `cnr` was found to be. `title_parsed`: deterministic `case_title`
+separator splitting (`services/ingest/src/parties.ts`), the only method
+available for every held High Court row. **Backfilled to 100% method
+coverage the same day** -- 38,324 `source_metadata`, 40,998 `title_parsed`,
+0 rows unclassified.
+
+`disposal_nature` text null -- verbatim from the source's own
+`disposal_nature` field, added migration `0038`, 11 Aug 2026, present on
+BOTH source schemas and read by neither mapper before this migration.
+**Never classified** into disposed/pending or judgment/order --
+`docs/ai/HC_CORPUS_CHARACTERIZATION.md` §11 named that as separate, harder,
+not-yet-designed work. Backfilled to 78,160 of 79,322 rows (98.5%).
+
 Index: gin on `full_text_tsv`; btree on judgment_date, court; partial btree on
 `content_hash` where not null; partial btree on `cnr` where not null.
 Unique: `source_url`.

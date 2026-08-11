@@ -527,6 +527,32 @@ alongside this document.
     quality-sample.ts` SAMPLED (n=500, `TABLESAMPLE SYSTEM`, not corpus-wide)
     paragraph-number detection: average `numberedShare` 0.747, 10.4% of
     sampled rows carry no printed paragraph number at all.
+13. **Legal structure extraction — LANDED, 11 Aug 2026, Stage 5.**
+    `docs/ai/LEGAL_STRUCTURE.md`. **Parties** (migration `0037`,
+    `judgments.petitioner`/`respondent`/`parties_extraction_method`):
+    found `SciMetadataRow.petitioner`/`respondent` were never threaded into
+    `JudgmentRecord` — the third field in the `cnr`-drop's class this
+    program has now found. `services/ingest/src/parties.ts`, 16 tests on
+    real corpus fixtures, a zero-width-boundary regex bug found and fixed
+    (the same `\s`-in-a-JS-template-literal defect class `docs/CURRENT_PLAN.md`
+    Q1.0b names, independently rediscovered in application code). Backfilled
+    and verified: **100% method coverage, 38,324 `source_metadata` ·
+    40,998 `title_parsed`**, 0 rows unclassified. **Disposition** (migration
+    `0038`, `judgments.disposal_nature`): `disposal_nature` found present on
+    BOTH source schemas and read by neither mapper — the fourth dropped
+    field. Backfilled: **78,160 of 79,322 (98.5%)**, real values across both
+    court classes (`Appeal(s) allowed`, `BAIL GRANTED`, `Dismissed`,
+    `DISPOSED`, …), never classified into disposed/pending or judgment/order
+    — `docs/ai/HC_CORPUS_CHARACTERIZATION.md` §11's deferral stands.
+    **Advocates: SURVEYED, not built** — neither source schema carries an
+    advocate field; a 300-row sample found a 96.3% appearance-block signal in
+    `full_text` too noisy to extract reliably today (OCR-mangled names, no
+    clean boundary) — deferred with a named next step (pattern-building
+    against ≥50 real passages), not silently skipped. **Everything else Stage
+    5 asks for was already built** — judges (44,360 rows, 277 distinct),
+    bench (99.98%), court/dates (100%), case identifiers (100%), statutes
+    (97,806 refs), citations (227,478 edges) — all re-verified live this
+    session rather than trusted from an earlier summary.
 
 ---
 

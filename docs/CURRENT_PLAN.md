@@ -917,6 +917,29 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     average `numberedShare` 0.747, 10.4% of sampled rows carry no printed
     paragraph number.
 
+16. **`docs/ai/LEGAL_STRUCTURE.md` — Stage 5 of the DATA → RETRIEVAL EXECUTION
+    PROGRAM, LANDED same day.** Two more source fields found silently dropped
+    before this program's own identity/dedup work would have caught them
+    downstream: `SciMetadataRow.petitioner`/`respondent` (migration `0037`)
+    and `disposal_nature` on both source schemas (migration `0038`) — never
+    threaded from source metadata into `JudgmentRecord`, the same class as
+    the `cnr` gap task 007 closed. Both wired for future ingests
+    (`sci.ts`/`hc-load.ts`/`load.ts`) and backfilled against the existing
+    79,322 rows: parties **100% method coverage** (38,324 `source_metadata` ·
+    40,998 `title_parsed`, 16 tests including a zero-width-boundary regex fix
+    found by running the parser against every real `case_title` in the
+    corpus, not assumed correct from the design); disposition **78,160 of
+    79,322 (98.5%)**, verbatim, never classified into disposed/pending or
+    judgment/order (`HC_CORPUS_CHARACTERIZATION.md` §11's deferral stands).
+    **Advocates surveyed, not built** — no source field on either schema, and
+    a 300-row `full_text` sample found the appearance-block signal (96.3% of
+    rows) too noisy (OCR-mangled names, no clean boundary) to extract
+    reliably without real pattern-building first, matching the discipline
+    every other extractor in this repo already went through. Everything else
+    Stage 5 asks for — judges, bench, court, dates, case identifiers,
+    statutes, citations — was already built and re-verified live rather than
+    trusted from an earlier summary.
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court

@@ -254,6 +254,9 @@ export function toJudgmentRecord(
       sourceDocumentType: row.order_type?.trim() || null,
       cnr: row.cnr?.trim() || null,
       nativeText: nativeText ?? null,
+      // No petitioner/respondent field on the plain variant (the only one
+      // actually held) — undefined, so load.ts falls back to title parsing.
+      disposalNature: row.disposal_nature?.trim() || null,
     },
   };
 }

@@ -246,6 +246,20 @@
       "when": 1786370000000,
       "tag": "0036_document_duplicates",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1786380000000,
+      "tag": "0037_judgment_parties",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1786390000000,
+      "tag": "0038_judgment_disposal_nature",
+      "breakpoints": true
     }
   ]
 }

@@ -80,6 +80,22 @@ export type JudgmentRecord = {
    * `docs/ai/AWS_CORPUS_INVENTORY.md` §6.
    */
   nativeText?: boolean | null;
+  /**
+   * The court's own filed petitioner/respondent, verbatim from
+   * `SciMetadataRow` — present on every Supreme Court row (0 blank of 795
+   * sampled, year=2018), never threaded through until `services/ingest/src/
+   * parties.ts` existed. Undefined on High Court records, whose plain-variant
+   * metadata carries no such field — `load.ts` falls back to parsing
+   * `caseTitle` when either is absent. Migration `0037`.
+   */
+  sourcePetitioner?: string | null;
+  sourceRespondent?: string | null;
+  /**
+   * Verbatim from the source's own `disposal_nature` field — real outcomes
+   * ("Appeal(s) allowed", "Dismissed", "Disposed off"), never classified
+   * here. Migration `0038`.
+   */
+  disposalNature?: string | null;
 };
 
 export function metadataUrl(year: number): string {
@@ -173,6 +189,9 @@ export function toJudgment(
     caseType: toCaseType(caseNumber),
     cnr: blank(row.cnr) ? null : row.cnr.trim(),
     nativeText: nativeText ?? null,
+    sourcePetitioner: blank(row.petitioner) ? null : row.petitioner.trim(),
+    sourceRespondent: blank(row.respondent) ? null : row.respondent.trim(),
+    disposalNature: blank(row.disposal_nature) ? null : row.disposal_nature.trim(),
   };
 }
 

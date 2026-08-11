@@ -4,6 +4,7 @@ import type { Sql } from 'postgres';
 
 import { textQuality } from '@lawmind/embed';
 
+import { extractParties } from './parties.ts';
 import type { JudgmentRecord } from './sci.ts';
 
 /**
@@ -59,34 +60,53 @@ export async function upsertJudgments(sql: Sql, records: JudgmentRecord[]): Prom
 }
 
 async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadResult> {
-  const rows = records.map((r) => ({
-    case_title: r.caseTitle,
-    neutral_citation: r.neutralCitation,
-    reporter_citations: r.reporterCitations,
-    court: r.court,
-    bench: r.bench,
-    judgment_date: r.judgmentDate,
-    full_text: r.fullText,
-    language: r.language,
-    source_url: r.sourceUrl,
-    case_number: r.caseNumber,
-    case_type: r.caseType,
-    // Migration 0031. Computed here, not by the caller — every loader gets it
-    // for free, and a loader that forgets to pass it cannot ship a null by
-    // accident the way an optional field on JudgmentRecord could.
-    content_hash: contentHash(r.fullText),
-    text_quality: textQuality(r.fullText),
-    // Never invented — undefined on `JudgmentRecord` (SC has no such field)
-    // resolves to `null` here rather than an empty string.
-    source_document_type: r.sourceDocumentType ?? null,
-    // Migration 0034. Verbatim from source; undefined/null both resolve to a
-    // database NULL, never guessed.
-    cnr: r.cnr ?? null,
-    // Migration 0035. Computed by the caller from the source PDF's own page
-    // count (text.ts's isNativeText) — undefined/null means not computed,
-    // never a guess at scan-vs-native.
-    native_text: r.nativeText ?? null,
-  }));
+  const rows = records.map((r) => {
+    // Migration 0037. Computed here, not by the caller — source metadata
+    // first (Supreme Court only, per parties.ts), case_title parsing second,
+    // so every loader gets the best available method without deciding which
+    // one applies itself.
+    const parties = extractParties({
+      caseTitle: r.caseTitle,
+      sourcePetitioner: r.sourcePetitioner,
+      sourceRespondent: r.sourceRespondent,
+    });
+    return {
+      case_title: r.caseTitle,
+      neutral_citation: r.neutralCitation,
+      reporter_citations: r.reporterCitations,
+      court: r.court,
+      bench: r.bench,
+      judgment_date: r.judgmentDate,
+      full_text: r.fullText,
+      language: r.language,
+      source_url: r.sourceUrl,
+      case_number: r.caseNumber,
+      case_type: r.caseType,
+      // Migration 0031. Computed here, not by the caller — every loader gets it
+      // for free, and a loader that forgets to pass it cannot ship a null by
+      // accident the way an optional field on JudgmentRecord could.
+      content_hash: contentHash(r.fullText),
+      text_quality: textQuality(r.fullText),
+      // Never invented — undefined on `JudgmentRecord` (SC has no such field)
+      // resolves to `null` here rather than an empty string.
+      source_document_type: r.sourceDocumentType ?? null,
+      // Migration 0034. Verbatim from source; undefined/null both resolve to a
+      // database NULL, never guessed.
+      cnr: r.cnr ?? null,
+      // Migration 0035. Computed by the caller from the source PDF's own page
+      // count (text.ts's isNativeText) — undefined/null means not computed,
+      // never a guess at scan-vs-native.
+      native_text: r.nativeText ?? null,
+      // Migration 0037. See `parties` above.
+      petitioner: parties.petitioner,
+      respondent: parties.respondent,
+      parties_extraction_method: parties.method,
+      // Migration 0038. Verbatim from source; undefined/null both resolve to
+      // a database NULL, never guessed. Never classified — `docs/ai/
+      // HC_CORPUS_CHARACTERIZATION.md` §11.
+      disposal_nature: r.disposalNature ?? null,
+    };
+  });
 
   // Columns are inferred from the object keys — every row is built by the same
   // mapper, so the key set is uniform by construction.
@@ -107,7 +127,11 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       text_quality          = EXCLUDED.text_quality,
       source_document_type  = EXCLUDED.source_document_type,
       cnr                   = EXCLUDED.cnr,
-      native_text           = EXCLUDED.native_text
+      native_text           = EXCLUDED.native_text,
+      petitioner            = EXCLUDED.petitioner,
+      respondent            = EXCLUDED.respondent,
+      parties_extraction_method = EXCLUDED.parties_extraction_method,
+      disposal_nature       = EXCLUDED.disposal_nature
     RETURNING (xmax = 0) AS inserted
   `;
 
