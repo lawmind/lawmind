@@ -26,7 +26,16 @@ import { color, space } from '../../theme/tokens';
  * being hidden or sorted to the top. They are real work — a matter awaiting an
  * order has no date and has not gone anywhere.
  */
-export function MattersScreen() {
+export function MattersScreen({
+  onOpenMatter,
+}: {
+  /**
+   * THE SAME SEAM `SearchScreen.onOpenJudgment` USES — `MatterWorkspace.tsx`,
+   * the desktop pane pairing. Absent on the phone, where this screen pushes
+   * a route exactly as it always has.
+   */
+  onOpenMatter?: (matterId: string) => void;
+} = {}) {
   const router = useRouter();
   const status = useSession((s) => s.status);
   const matters = usePractice((s) => s.matters);
@@ -74,7 +83,8 @@ export function MattersScreen() {
     );
   }
 
-  const open = (id: string) => router.push({ pathname: '/matter/[id]', params: { id } });
+  const open = (id: string) =>
+    onOpenMatter ? onOpenMatter(id) : router.push({ pathname: '/matter/[id]', params: { id } });
 
   return (
     <Screen topInset>
