@@ -35,7 +35,12 @@ type Result = {
 };
 type Body = {
   ok: boolean;
-  data?: { results: Result[]; unverifiedReferences: unknown[]; searchId: string | null };
+  data?: {
+    results: Result[];
+    unverifiedReferences: unknown[];
+    searchId: string | null;
+    unpopulatedCourtCategories?: string[];
+  };
   error?: { code: string; message: string };
 };
 
@@ -145,6 +150,62 @@ describe('POST /search', () => {
       SELECT case_type FROM judgments WHERE id = ANY(${ids})
     `;
     for (const row of rows) assert.equal(row.case_type, 'criminal');
+  });
+
+  it('applies the courts category filter for real — RCC bus 0046', async (t) => {
+    if (corpusSize === 0) return t.skip('no corpus loaded');
+    // The defect: `filters.court` was an exact match on a court NAME and the
+    // client's chips are CATEGORIES, so `sc`/`hc` narrowed nothing against the
+    // real API while `api/mock.ts` narrowed against fixtures — development
+    // filtered and production did not.
+    const { status, body } = await post({
+      query: 'appeal',
+      language: 'en',
+      filters: { courts: ['sc'] },
+    });
+    assert.equal(status, 200);
+
+    const ids = (body.data?.results ?? []).map((r) => r.judgmentId);
+    if (ids.length === 0) return t.skip('no Supreme Court judgment matched');
+
+    // Verified against the column, not the response — the same standard the
+    // caseType test holds.
+    const rows = await sql<{ court: string }[]>`
+      SELECT court FROM judgments WHERE id = ANY(${ids})`;
+    for (const row of rows) assert.equal(row.court, 'Supreme Court of India');
+  });
+
+  it('a category the corpus holds nothing in returns nothing, and SAYS SO', async (t) => {
+    if (corpusSize === 0) return t.skip('no corpus loaded');
+    // The failure this prevents: an empty list from a category we hold none of
+    // is indistinguishable on screen from "your query matched nothing", and the
+    // advocate concludes we have no case on their point when we were never
+    // asked. Returning the unfiltered corpus instead would be worse still —
+    // silently ignoring a filter they can see is applied.
+    const { status, body } = await post({
+      query: 'appeal',
+      language: 'en',
+      filters: { courts: ['district'] },
+    });
+    assert.equal(status, 200);
+    assert.deepEqual(body.data?.results, [], 'no district court judgment exists to return');
+    assert.ok(
+      body.data?.unpopulatedCourtCategories?.includes('district'),
+      'the response must state that this category is unanswerable, not just answer empty',
+    );
+  });
+
+  it('refuses a court name where a category code belongs, rather than matching nothing', async () => {
+    // A raw name in `courts` would have passed zod as a string and matched no
+    // category, returning zero results with no error — exactly the silent
+    // failure RCC refused to build client-side. It is a 400 instead.
+    const { status, body } = await post({
+      query: 'appeal',
+      language: 'en',
+      filters: { courts: ['Supreme Court of India'] },
+    });
+    assert.equal(status, 400);
+    assert.equal(body.error?.code, 'INVALID_REQUEST');
   });
 
   it('rejects a malformed body through the shared validator', async () => {

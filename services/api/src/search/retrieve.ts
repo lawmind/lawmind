@@ -29,6 +29,14 @@ const CANDIDATE_DEPTH = 50;
 
 export type SearchFilters = {
   court?: string | undefined;
+  /**
+   * Court NAMES, already expanded from the client's category codes by
+   * `court-category.ts` — RCC bus 0046. Empty array and `undefined` are
+   * different: `undefined` means no court filter was asked for, `[]` means one
+   * was and nothing in the corpus matches it, which must return nothing rather
+   * than everything.
+   */
+  courts?: string[] | undefined;
   dateFrom?: string | undefined;
   dateTo?: string | undefined;
   /**
@@ -38,6 +46,24 @@ export type SearchFilters = {
    */
   caseType?: 'criminal' | 'civil' | undefined;
 };
+
+/**
+ * The court predicate, in ONE place, for the four rankers that need it.
+ *
+ * Written as a helper rather than repeated inline because it was already
+ * repeated inline four times: a fifth ranker that copied three of the four
+ * conditions and forgot the court would narrow differently from the other
+ * rankers and the difference would show up only as an odd ordering, never as an
+ * error. `courts` is added here once and every arm gets it.
+ *
+ * `courts: []` filters everything out and that is deliberate — the advocate
+ * asked for a category the corpus holds nothing in, and answering with the
+ * unfiltered corpus would silently ignore the request they can see on screen.
+ */
+function courtWhere(sql: Sql, filters: SearchFilters) {
+  if (filters.courts !== undefined) return sql`AND j.court = ANY(${filters.courts})`;
+  return filters.court ? sql`AND j.court = ${filters.court}` : sql``;
+}
 
 export type RetrievedJudgment = {
   judgmentId: string;
@@ -152,7 +178,7 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
     SELECT j.id
     FROM judgments j, plainto_tsquery('english', ${query}) AS q
     WHERE j.full_text_tsv @@ q
-      ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
+      ${courtWhere(sql, filters)}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
       ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
@@ -216,7 +242,7 @@ async function sparseAny(sql: Sql, query: string, filters: SearchFilters): Promi
     FROM judgments j, q
     WHERE q.tsq IS NOT NULL
       AND j.full_text_tsv @@ q.tsq
-      ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
+      ${courtWhere(sql, filters)}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
       ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
@@ -276,7 +302,9 @@ async function dense(
   queryVector: string,
   filters: SearchFilters,
 ): Promise<{ ranked: Ranked[]; bestChunk: Map<string, string> }> {
-  const filtered = Boolean(filters.court ?? filters.dateFrom ?? filters.dateTo ?? filters.caseType);
+  const filtered = Boolean(
+    filters.court ?? filters.courts ?? filters.dateFrom ?? filters.dateTo ?? filters.caseType,
+  );
   // Filters are applied AFTER the ANN search, so a narrow filter can eliminate
   // most candidates. Over-fetch when one is present rather than return a short
   // list — PD-10 filters are meant to narrow results, not to lose them.
@@ -322,7 +350,7 @@ async function dense(
       FROM candidates c
       JOIN judgments j ON j.id = c.judgment_id
       WHERE TRUE
-        ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
+        ${courtWhere(sql, filters)}
         ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
         ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
         ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
@@ -376,7 +404,7 @@ async function exactCitation(
         WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key}
       )
     )
-      ${filters.court ? sql`AND j.court = ${filters.court}` : sql``}
+      ${courtWhere(sql, filters)}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
       ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}

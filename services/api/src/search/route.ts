@@ -13,6 +13,7 @@ import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
 import { logger } from '../logger.ts';
+import { COURT_CATEGORIES, expandCategories, unpopulatedCategories } from './court-category.ts';
 import { hybridSearch, type SearchFilters } from './retrieve.ts';
 import { answerStructured } from './structured.ts';
 
@@ -22,6 +23,16 @@ export const searchRequest = z.object({
   filters: z
     .object({
       court: z.string().optional(),
+      /**
+       * Category codes, not court names — RCC bus 0046. The client's chips are
+       * `sc`/`hc`/`district`/`tribunal`; `judgments.court` holds printed names
+       * like `High Court  for State of Telangana`. The expansion is ours
+       * because the column is ours: a client hardcoding those strings returns
+       * zero results silently on the first one it gets wrong, and a search that
+       * says "nothing matched" when it never asked is the same failure as a
+       * filter that does nothing. `search/court-category.ts`.
+       */
+      courts: z.array(z.enum(COURT_CATEGORIES)).optional(),
       dateFrom: z.string().optional(),
       dateTo: z.string().optional(),
       caseType: z.enum(['criminal', 'civil']).optional(),
@@ -51,8 +62,22 @@ export async function handleSearch(
   // case number (`docs/SCHEMA_TRUTH.md` §judgments), not from the judgment's
   // content. Judgments whose case number states no side are excluded rather than
   // guessed into one.
+  /**
+   * Category codes → the names the column holds. RCC bus 0046.
+   *
+   * Expanded here, once, before any ranker sees the filter — so all four arms
+   * of the hybrid narrow identically. `[]` back from the expansion is kept as
+   * `[]` and never dropped to `undefined`: the advocate asked for a category
+   * the corpus holds nothing in, and quietly returning the unfiltered corpus
+   * would ignore a request they can see on their screen.
+   */
+  const courts = body.filters?.courts
+    ? await expandCategories(deps.sql, body.filters.courts)
+    : undefined;
+
   const filters: SearchFilters = {
     court: body.filters?.court,
+    courts,
     dateFrom: body.filters?.dateFrom,
     dateTo: body.filters?.dateTo,
     caseType: body.filters?.caseType,
@@ -272,6 +297,21 @@ export async function handleSearch(
     // model-claimed reference that failed to resolve. The field is always
     // present, never omitted.
     unverifiedReferences: [],
+    /**
+     * Court categories the corpus holds NO judgment for — `district` and
+     * `tribunal` today. Additive and provisional per `CLAUDE.md` §6b: a client
+     * that ignores it behaves exactly as before.
+     *
+     * It exists because an empty result from a category we hold nothing in is
+     * indistinguishable, on screen, from "your query matched nothing" — and the
+     * advocate concludes we have no case on their point when we were never
+     * asked. The same reasoning `CITATION_HARNESS.md` applies to a dropped
+     * citation, applied to a filter: absence has to state itself.
+     *
+     * Computed per request rather than cached, so the day a district-court
+     * ingest lands the category stops being listed without a deploy.
+     */
+    unpopulatedCourtCategories: await unpopulatedCategories(deps.sql),
     searchId,
   });
 }

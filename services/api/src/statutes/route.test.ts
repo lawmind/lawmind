@@ -61,10 +61,52 @@ describe('bare acts', () => {
 
     for (const s of data.data.statutes) {
       assert.ok(s.shortTitle.length > 0);
-      assert.ok(s.sectionCount > 0, `${s.shortTitle} has no sections`);
+      assert.ok(s.sectionCount >= 0);
       // A calendar date, not a midnight timestamp.
       if (s.enforcementDate !== null) assert.match(s.enforcementDate, /^\d{4}-\d{2}-\d{2}$/);
     }
+  });
+
+  it('an Act indiacode publishes no text for is LISTED, with a section count of 0', async (t) => {
+    if (loaded === 0) return t.skip('no statutes loaded');
+    // This assertion used to be `sectionCount > 0` for every Act, and it was
+    // asserting something the SOURCE does not provide. Audited against
+    // indiacode 11 Aug 2026, all 22 zero-section Acts, and re-run through the
+    // full ingest afterwards — 22 Acts retried, 0 sections gained:
+    //
+    //   18 carry no section index on the Act page at all (`sectionId=` × 0):
+    //      the colonial-era Bengal/Bombay/Madras revenue Acts, plus the
+    //      Wealth-tax Act 1957 and the Gift-tax Act 1958.
+    //    4 carry an index but `SectionPageContent` answers `{}` for every
+    //      section: Presidency-Towns Insolvency 1909 (130), Provincial
+    //      Insolvency 1920 (87), Broach and Kaira 1877 (41), National
+    //      Anti-Doping 2022 (34).
+    //
+    // The ingest is behaving correctly on all of them: `fetchSections` reports
+    // them as `missing` and writes nothing, because a statute with an invisible
+    // hole in it is worse than one that visibly failed to load.
+    //
+    // So the honest assertion is that an Act with no available text is still
+    // LISTED — dropping it would be a silent drop, and an advocate searching
+    // for the Wealth-tax Act would conclude we do not have it — and that its
+    // count is 0 rather than a number nobody measured.
+    const { body } = await get('/statutes');
+    const data = body as unknown as { data: { statutes: Statute[] } };
+    const empty = data.data.statutes.filter((s) => s.sectionCount === 0);
+    if (empty.length === 0) return t.skip('every Act now carries text — indiacode filled the gaps');
+
+    for (const s of empty) {
+      assert.ok(s.shortTitle.length > 0, 'a listed Act always names itself');
+      assert.equal(s.sectionCount, 0, 'zero, never null and never omitted');
+    }
+    // A ceiling, not a snapshot: this set can only shrink as indiacode
+    // publishes text. Growing past it means the ingest broke on Acts that DO
+    // have text, which is a different failure and must not pass quietly.
+    assert.ok(
+      empty.length <= 22,
+      `${empty.length} Acts hold no sections, up from the 22 audited against ` +
+        `indiacode on 11 Aug 2026 — the ingest is now failing on Acts that have text`,
+    );
   });
 
   it('jumps to a section by number and serves the published text', async (t) => {
