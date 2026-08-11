@@ -65,17 +65,53 @@ zero further cost.
 
 ---
 
-## 2 · THE CEILING: 22.0% of citations reach the model at all
+## 2 · THE CEILING: 22.0% of citations reached the model — and **most of that was a bug in the evaluator's own funnel**
 
-**44 of 200.** The rest are lost before any model is involved — 104 with no
-extractable case name beside the citation, 51 with no parseable year, 1 with no
-candidate above zero overlap.
+**44 of 200** at the time of the run. The rest were lost before any model was
+involved — 104 with no extractable case name beside the citation, 51 with no
+parseable year, 1 with no candidate above zero overlap.
 
-Nothing downstream can exceed this. **A layer that is perfect on 22% of the
-problem resolves 22% of the problem**, and the candidate generator, not the
-adjudicator, is where the remaining 78% lives. This is the same generator
-`AUTHORITY_COVERAGE.md` §3a already measured at a 28.0% raw ceiling; the model
-does not widen it, it only sorts what arrives.
+> ### CORRECTED SAME DAY, and the correction is larger than the finding
+>
+> **"22.0% is the ceiling on everything below" was wrong**, and chasing it found
+> a real defect. `yearFromCitationText` accepted `AIR YYYY SC` and
+> `(YYYY) N SCC` **and had no S.C.R. pattern at all** — the form that **all
+> 38,342** of our Supreme Court judgments carry (`AUTHORITY_COVERAGE.md` §1).
+>
+> Measured over 600 real resolved citations: **65.2% parsed to no year**, and
+> **321 of those 391 failures were ordinary S.C.R. citations** — `[2018] 12 SCR
+> 362`, `2012 (6) SCR 787`, `[1983] 2 S.C.R. 936`. They were dropped silently,
+> before candidate generation, and the evaluator reported the loss as a property
+> of the pipeline.
+>
+> **These are the same blind spots `Q1.0c` already found and fixed in
+> `citations.ts`'s extractor** — square brackets, the reports' year-first house
+> style, OCR-mismatched bracket pairs. This is a second, independently written
+> copy of the same idea that reproduced them. Fixed, with every test string
+> taken from a real row:
+>
+> | | before | after |
+> | --- | --- | --- |
+> | gold population, year parsed | 34.8% | **99.8%** |
+> | **gold population, reach** | **22.0%** | **49.2%** |
+> | target population, year parsed | 98.4% | **100.0%** |
+>
+> **And the 22.0% was never the target population's number anyway.** The gold
+> set is Supreme Court → Supreme Court, which is S.C.R.-formatted; the pipeline
+> exists to resolve High Court → Supreme Court citations, which are SCC/AIR.
+> Even before the fix, year parsing on the real targets was already **98.4%**.
+> **The reach ceiling was an artefact of the evaluation population**, and
+> reporting it as the pipeline's ceiling was this document's own error.
+>
+> **None of this changes the verdict.** Reach and fabrication are independent:
+> widening the funnel feeds *more* cases to a layer that invents an authority
+> 10.8% of the time when the answer is absent. It raises the value of fixing the
+> funnel and leaves the promotion decision exactly where §3 leaves it.
+
+**The bottleneck is now name extraction, not year parsing.** 50.8% of gold
+citations still produce no candidate because `nameBeforeCitation` cannot find a
+case name in the 400 characters before the citation. That is the next piece of
+work, and it bounds every approach, model or not.
 
 ---
 
@@ -165,9 +201,10 @@ whether an answer exists to be found. `medium` at n=4 is too thin to read.
   present it was right every single time it answered (100% precision, 79
   cases). The failure is specific and it is the one that matters: it does not
   reliably know when the answer is *absent*.
-- **Not that the corpus gap is closed or unclosable.** §2's 22.0% reach is a
-  property of the candidate generator, and improving *that* is the highest-value
-  remaining work — it bounds every approach, model or not.
+- **Not that the corpus gap is closed or unclosable.** §2's reach is a property
+  of the candidate generator, and improving *that* is the highest-value
+  remaining work — it bounds every approach, model or not. It has already moved
+  22.0% → 49.2% since this run, and the remaining loss is name extraction.
 - **Not a licence to promote the deterministic baseline either.** Arm A produced
   9 wrong authorities out of 79. `internal-concordance.ts` exists precisely
   because §3a's raw name+year match needs adversarial filtering before anything

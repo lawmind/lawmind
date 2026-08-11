@@ -162,14 +162,65 @@ export function rankCandidates(
     .slice(0, 5);
 }
 
-/** `AIR 1973 SC 1461` → 1973; `(2019) 4 SCC 221` → 2019. Null when neither shape matches. */
-const AIR_YEAR = /\bAIR\s+(\d{4})\s+SC\b/i;
-const SCC_YEAR = /\(\s*(\d{4})\s*\)\s*\d{1,3}\s+SCC\b/i;
+/**
+ * `AIR 1973 SC 1461` → 1973; `(2019) 4 SCC 221` → 2019; `[1983] 2 S.C.R. 936`
+ * → 1983. Null when nothing matches — a citation with no readable year is
+ * skipped, never guessed at, because the year window is the guard that stops a
+ * repeat litigant matching the wrong decade.
+ *
+ * ───────────────────────────────────────────────────────────────────────────
+ * WIDENED 12 Aug 2026, AND THE ORIGINAL GAP WAS MEASURED, NOT SUSPECTED
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * The first two patterns accepted `AIR YYYY SC` and `(YYYY) N SCC` and nothing
+ * else. **They had no S.C.R. pattern at all** — and S.C.R. is the form every
+ * one of our 38,342 Supreme Court judgments carries (`AUTHORITY_COVERAGE.md`
+ * §1). Measured over 600 real resolved citations: **65.2% returned no year**,
+ * and 321 of those 391 failures were ordinary S.C.R. citations.
+ *
+ * The consequence was not a crash but a silently narrowed funnel — every one of
+ * those citations was dropped before reaching candidate generation, and the
+ * gold evaluation read that as a 22.0% "reach ceiling" for the whole pipeline.
+ * On the actual target population (`external_citations`, which is SCC/AIR) the
+ * same function already parsed **98.4%**, so that ceiling was an artefact of
+ * the evaluation population, not a property of the pipeline.
+ * `CITATION_CONCORDANCE_EVALUATION.md` §2 carries the correction.
+ *
+ * **These are the same blind spots `Q1.0c` already found and fixed in
+ * `citations.ts`'s extractor** — square brackets, the reports' year-first house
+ * style, OCR-mismatched bracket pairs. This is a second, independently written
+ * copy of the same idea that reproduced them, which is the argument for the
+ * shapes below being derived from a frequency count over real corpus text
+ * rather than from what a citation is supposed to look like.
+ */
+/** `SCC` · `SCR` · `S.C.C.` · `S.C.R.` · `SCALE`, however the OCR spaced or dotted it. */
+const REPORTER = String.raw`(?:S\s*\.?\s*C\s*\.?\s*[CR]\s*\.?|SCALE)`;
+/** An optional volume number between the year and the reporter — `(1957) SCR 605` has none. */
+const VOLUME = String.raw`\s*\d{0,3}\s*`;
+/**
+ * Brackets are deliberately NOT required to match. `[1972) 4 SCC 600` and
+ * `(2004] 3 SCR 982` are both real rows in this corpus — a scanner misreading
+ * one delimiter is not a reason to drop an otherwise perfectly legible citation.
+ */
+const OPEN = String.raw`[[(]`;
+const CLOSE = String.raw`[\])]`;
+
+const YEAR_PATTERNS = [
+  /** `AIR 1973 SC 1461` — the year sits inside the citation, not in brackets. */
+  /\bAIR\s+(\d{4})\s+SC\b/i,
+  /** `(2019) 4 SCC 221` · `[1983] 2 S.C.R. 936` · `(1957) SCR 605` · `[2018] 12 SCR 362` */
+  new RegExp(`${OPEN}\\s*(\\d{4})\\s*${CLOSE}${VOLUME}${REPORTER}`, 'i'),
+  /** The reports' own house style, year first: `1996 (4) SCC 362` · `2012 (1) SCR 779` */
+  new RegExp(`\\b(\\d{4})\\s*${OPEN}\\s*\\d{1,3}\\s*${CLOSE}\\s*${REPORTER}`, 'i'),
+] as const;
 
 export function yearFromCitationText(citationText: string): number | null {
   const flat = citationText.replace(/\s+/g, ' ');
-  const m = AIR_YEAR.exec(flat) ?? SCC_YEAR.exec(flat);
-  return m ? Number(m[1]) : null;
+  for (const p of YEAR_PATTERNS) {
+    const m = p.exec(flat);
+    if (m) return Number(m[1]);
+  }
+  return null;
 }
 
 /* --------------------------------------------------------------- the call -- */

@@ -24,8 +24,48 @@ test('year parses from AIR and SCC forms, tolerant of OCR newlines', () => {
   assert.equal(yearFromCitationText('(2012)\n10 SCC 197'), 2012);
 });
 
+/**
+ * EVERY STRING BELOW WAS TAKEN FROM A REAL ROW, and the counts beside them are
+ * from a frequency scan of 600 resolved citations — not from what a citation is
+ * supposed to look like. The original two patterns had **no S.C.R. form at
+ * all**, which is the form all 38,342 of our Supreme Court judgments carry, so
+ * 65.2% of real citations parsed to no year and were dropped before candidate
+ * generation ever saw them.
+ */
+test('S.C.R. IS A CITATION FORMAT — the gap that silently cost 65.2% of the funnel', () => {
+  assert.equal(yearFromCitationText('[2018] 12 SCR 362'), 2018); // 180 occurrences
+  assert.equal(yearFromCitationText('2012 (6) SCR 787'), 2012); //  80, the reports' year-first house style
+  assert.equal(yearFromCitationText('[1983] 2 S.C.R. 936'), 1983); //  26, dotted
+  assert.equal(yearFromCitationText('(1968) 1 SCR 463'), 1968); //  15
+  assert.equal(yearFromCitationText('[1994] 2 S.C.R. 644'), 1994); // S.R. Bommai, as stored
+});
+
+test('a citation with no volume number still has a year', () => {
+  // `(1957) SCR 605` — 14 occurrences in the unresolved target population.
+  assert.equal(yearFromCitationText('(1957) SCR 605'), 1957);
+  assert.equal(yearFromCitationText('[1957] SCR 868'), 1957);
+});
+
+test('MISMATCHED BRACKETS PARSE — a scanner slip is not a reason to drop a citation', () => {
+  // Both shapes are real rows: `[1972) 4 SCC 600` was quoted verbatim in Q1.0c.
+  assert.equal(yearFromCitationText('[2012) 10 SCR 157'), 2012);
+  assert.equal(yearFromCitationText('(2004] 3 SCR 982'), 2004);
+});
+
+test('dotted SCC and SCALE, both of which appear in the unresolved targets', () => {
+  assert.equal(yearFromCitationText('(1992) 2 S.C.C. 206'), 1992);
+  assert.equal(yearFromCitationText('(2016) 1 SCALE 348'), 2016);
+});
+
 test('an unrecognised shape yields no year, not a wrong one', () => {
   assert.equal(yearFromCitationText('some unrelated text'), null);
+  // A bare year with no reporter beside it is NOT a citation year. Widening the
+  // patterns must not go so far as to read the first four digits it finds —
+  // that would hand the year guard a number from a paragraph reference and let
+  // a repeat litigant match the wrong decade, which is the exact harm the
+  // guard exists to prevent.
+  assert.equal(yearFromCitationText('paragraph 1994 of the judgment'), null);
+  assert.equal(yearFromCitationText('Section 302 IPC'), null);
 });
 
 /* ────────────────────────────────────────────────────────── tokenizing ── */
