@@ -1180,6 +1180,94 @@ Three things from it that change this queue:
   dangerous than an absent one because it looks like an answer. See
   `SCHEMA_TRUTH.md` §judgments.
 
+### Q1.15 · THE CONCORDANCE VERDICT, THE DEPLOY, AND A ROUTING DRIFT — 12 Aug 2026
+
+Four things closed. **The first is a negative result and it is the most
+valuable of them.**
+
+**1 · The DeepSeek concordance layer is MEASURED and DOES NOT SHIP.**
+`docs/ai/CITATION_CONCORDANCE_EVALUATION.md`. 116 cases, three arms, 184,375
+tokens (0.018% of the 1B grant), fully cached and re-runnable at no further
+cost.
+
+**The first evaluation reported 100.0% precision in every arm and every tier,
+and it was one accepted paragraph away from being written down as a ship
+signal.** It was measuring precision-on-decided and scoring every refusal as
+`null` — outside numerator and denominator both. Three defects, all fixed:
+refusals excluded from the arithmetic; an "adversarial" arm that injected a
+random distractor at `jaccard: 0.01` so it sorted *last* (**proof it was not
+adversarial: it scored HIGHER than the baseline it perturbs, 79.4% vs 64.7%**);
+and **no truth-absent arm at all**, so the set could ask *"does it pick the
+right one"* and never *"does it refuse when there is no right one"*.
+
+With the safety arm built, the verdict inverts:
+
+| | |
+| --- | --- |
+| candidate-generation reach | **22.0%** (44/200) — the ceiling on everything |
+| deterministic top-1 alone | 70/79 correct · **9 wrong authorities** (it never refuses) |
+| DeepSeek, truth present | precision **100%**, recall **63.6%** |
+| **DeepSeek, truth ABSENT** | **4 of 37 FABRICATED an authority — 10.8%** |
+| **fabrications tagged `high`** | **2 of 4** |
+| paired trade | gave up **18** correct resolutions, prevented **8** wrong ones · McNemar **p ≈ 0.00008** |
+
+**It resolves less than the baseline AND it invents authorities when the answer
+is absent** — which is the condition that defines the real target population.
+The promotion boundary held: `judgment_citation_aliases` **unchanged at 4,100**,
+**0 rows promoted**, both verified by query after the run. What would reverse the
+verdict is written down *in advance* in §7 of the evaluation, so it cannot be
+invented afterwards.
+
+**2 · THE DEPLOY GAP IS CLOSED — production was 43 commits stale and is now
+current.** `Q1.0` recorded this as the founder's call; it was made and executed.
+Production serves **`0280a3e`**, verified by probing `/version`, not inferred.
+Three things confirmed live against the real API:
+
+- **`cite:"(1994) 3 SCC 1"` returns S.R. BOMMAI.** The old deploy returned
+  *KAUSHAL KISHOR* — a real judgment, presented as an ordinary result, for a
+  query it had not understood. That was the product-safety issue `Q1.0` named,
+  and it is gone.
+- **Duplicate collapse works, verified decisively rather than by absence.** A
+  judgment with **124 rows sharing one `content_hash`** returns **exactly 1**
+  result. (`9697fdb`, live at last.)
+- Migrations `0042`/`0043`/`0044` were confirmed applied *before* deploying —
+  the database is ahead of the code, which is the safe direction.
+
+**A correction owed on my own check:** I first reported migration `0042` as
+absent from production. It was not — I had queried a column named
+`document_class` that I invented; the migration creates **`hc_document_class`**.
+The data caught it. 40,980 rows are classified and populated.
+
+**3 · `llm_feature` and the API's routing table had silently stopped agreeing.**
+`DEEPSEEK_DATA_MOAT.md` §3 claimed migration `0044` added `concordance` to the
+enum *and* that `route.ts` routed it to DeepSeek. **Only the first half was
+true**, while the comment above `Feature` went on claiming *"Matches
+`llm_feature` in the schema"*. Nothing broke — the concordance pass writes
+`llm_calls` from `services/ingest` and never calls `routeCall` — **and that is
+exactly why it survived.** `Feature` is now derived from one `ALL_FEATURES`
+array, a test asserts it against the database enum in both directions, and the
+DPA-refusal test iterates that array instead of a hand-written list it had
+silently outgrown. `2eb141e`.
+
+**4 · The deterministic safe half was adopted, not rebuilt.**
+`internal-concordance.ts` (+ CLI + 20 tests) arrived from a concurrent session
+in this lane; audited and taken unchanged. It is §3a's surviving 12.1% made
+mechanical — notably `detectCrossTargetCollisions`, which withholds *every*
+judgment claimed by more than one citation key because the deterministic signal
+cannot separate the 18 genuine SCC/AIR pairs from the 17 referral-order
+collisions (a 51/49 split). **Not run**: no `--apply`, zero rows written.
+
+**Test state, measured not assumed:** `services/api` **449/449** and
+`services/ingest` **405/416** — the 11 are all `harvest/store.test.ts`, which
+needs a local Postgres this machine does not run. Guards: schema-truth,
+contract-status, design-rules and amber all green; `check-alert-coverage` stays
+red on **Q1.10**, which is unrelated and still needs its producers.
+
+**Highest-value next action, and the evaluation points straight at it:
+candidate generation, not the model.** 78% of real citations never produce a
+candidate set — 104 of 200 had no extractable case name, 51 no parseable year.
+Every approach, model or not, is capped at 22.0% until that changes.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,

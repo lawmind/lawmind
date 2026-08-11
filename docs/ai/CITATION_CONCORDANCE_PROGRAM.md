@@ -117,3 +117,32 @@ baseline by a margin worth the complexity, **the layer does not ship and the
 finding is written down** — a negative result about a model is still a result,
 and forcing it into production would be the opposite of the discipline that
 produced this program.
+
+---
+
+## MEASURED 12 Aug 2026 — **the answer is no, and the layer does not ship**
+
+**`docs/ai/CITATION_CONCORDANCE_EVALUATION.md` is now written from a real run**
+(116 cases, 3 arms, 184,375 tokens). The paragraph above was the condition; this
+is the outcome, recorded here so nobody reads the architecture without it.
+
+- **It fabricates.** With the true judgment removed from the candidate list —
+  the condition that *defines* the real target population — the model named an
+  authority anyway in **10.8%** of cases (4 of 37) instead of refusing.
+- **Its confidence does not screen the failure.** **Two of those four were
+  tagged `high`.** `resolveConfidenceTier`'s own comment called itself *"a
+  starting hypothesis, not a measured result"*. It is measured now, and refuted:
+  there is no threshold on this evidence that admits the right answers while
+  excluding the fabricated ones.
+- **It resolves LESS than the deterministic baseline.** Paired on identical
+  cases: DeepSeek gave up **18** resolutions the deterministic step got right to
+  prevent **8** wrong authorities. McNemar p ≈ 0.00008.
+- **And all of it sits under a 22.0% ceiling** — only 44 of 200 real citations
+  produce a candidate set at all. The bottleneck is candidate generation, not
+  adjudication.
+
+**The boundary this document insisted on is what made that finding cheap and
+safe**: the model's opinions went to `citation_concordance_resolutions`, nothing
+read them, and `judgment_citation_aliases` never moved. Verified by query after
+the run — **4,100 aliases, unchanged; 0 rows promoted.** The rule at the top of
+this file held, which is the point of writing it down before running anything.
