@@ -274,29 +274,42 @@ already track for the eCourts path specifically.
 
 ## 6 · P6 — DATA QUALITY DASHBOARD
 
-**Not built as a dashboard.** The measurements exist, scattered:
+**Built, 11 Aug 2026** — `services/ingest/src/corpus-report-cli.ts`
+(`pnpm --filter @lawmind/ingest run corpus:report [--json <path>]`), dry,
+read-only. Run against production the same day it was written:
 
-- Coverage: `docs/HC_CORPUS_SURVEY.md` §2–3 (per court/year), `corpus/coverage.ts`
-  (the live `/corpus/coverage` endpoint RCC's `CoverageScreen` reads).
-- Uniqueness: `content_hash` duplicate groups, §0 above.
-- Metadata completeness: `source_document_type` populated for 4/25 HC courts
-  only (`docs/SCHEMA_TRUTH.md`), `cnr` at 0% (fresh gap, §0).
-- OCR quality: `text_quality` distribution — not aggregated into one report.
-- Citation extraction quality: 43.0% edge-resolution rate (§0), the
-  adversarial harness (`services/harness/`).
-- Paragraph extraction quality: `numberedShare` per judgment
-  (`judgments/paragraphs.ts`) — not aggregated corpus-wide.
-- Duplicate rate: 1.9% by content_hash (§0).
-- Freshness: no single number — see §5's gap.
-- Source reliability: qualitative only (per-source docs, §1's table).
-- Language coverage: **unmeasured** — `language` is hardcoded `en`
-  corpus-wide today (§2.1), so this metric currently has nothing to report.
+| metric | measured |
+| --- | --- |
+| Corpus | 79,321 (38,341 SC / 40,980 HC) |
+| `content_hash` coverage | 100.0% |
+| `cnr` coverage | 100.0% (task 007, same day) |
+| duplicate groups | 563 (1,500 rows, 1.9%) |
+| `source_document_type` coverage | **0.0% — see the finding below** |
+| `text_quality` average | 0.977 (388 rows below 0.90) |
+| citation edges | 227,478, 43.0% resolved to a held judgment |
+| treatment breakdown | 211,555 `cites` · 14,028 `followed` · 1,734 `distinguished` · 117 `overruled` · 23 `overruled_in_part` · 21 `doubted` |
+| `overruled_status` | 79,240 `none` · 57 `set_aside` · 16 `doubted` · 8 `partly_set_aside` |
+| language | 100% `en` (§2.1 — correct, not a gap) |
+| Acts / sections / mappings | 845 / 34,928 / 0 |
 
-**Recommended next task**: a single `services/ingest/src/corpus-report-cli.ts`
-that queries every metric above into one JSON/console report, dry (read-only,
-no writes) — the "dashboard" the founder asked for, built as a CLI first
-rather than a UI, matching this project's "solve it server-side, additively"
-convention. **Candidate for the next data-moat task**, §7.
+**A surprise the dashboard was built to catch, and did, immediately**:
+`docs/SCHEMA_TRUTH.md` documents `source_document_type` as populated for
+"4 of 25 High Courts" — but the report shows **0.0% corpus-wide, and zero
+courts with any coverage at all** among the 18 High Courts actually held.
+Verified directly, not a query bug: `count(source_document_type) = 0` of
+79,321. **Not yet root-caused** — plausible explanations, none confirmed:
+the 4 courts documented to publish `order_type` (the mobile-variant column)
+may not be among the 18 we hold rows from; or the real ingest runs that
+produced this corpus never actually pulled the mobile-variant files despite
+the loader supporting both. This is exactly the kind of gap a dashboard
+exists to surface rather than leave assumed-fine — flagged here, not
+investigated further in this pass.
+
+**Not measured, by design** (stated in the CLI's own header, not silently
+skipped): paragraph-extraction quality (`numberedShare`) at corpus scale —
+would require fetching every `full_text`, the expensive full-corpus scan a
+dry report should not casually trigger; native-vs-scanned classification
+(§2.1's separate, still-open gap); a per-source freshness cursor (§5's gap).
 
 ---
 
@@ -323,9 +336,10 @@ instruction:
    (whether to ingest Hindi as separate rows) but not a quick fix — moved
    out of the task queue, into the open-questions list a founder sequencing
    call would need, not an engineering backlog item.
-4. **Corpus-quality report CLI** (§6) — consolidates scattered metrics into
-   one dry, read-only report. Medium effort, no schema change, immediately
-   useful for every P0–P6 decision after it exists.
+4. ~~**Corpus-quality report CLI**~~ — **DONE, 11 Aug 2026, same session.**
+   `corpus-report-cli.ts`, run against production. Immediately found a real
+   gap: `source_document_type` is 0.0% corpus-wide against a docs claim of
+   "4 of 25 courts" — not yet root-caused, §6.
 5. **Official Gazette source survey** (§2.4) — genuinely unresearched;
    needed before `statute_mappings`/point-in-time statute work (REB §7) can
    start on real ground rather than a documented gap.
