@@ -199,14 +199,17 @@ The next number that matters is §A3.3's — **PDF→text extraction measured on
 - **Whether `View Judgement/Order` rows are judgments.** Needs PDF text.
 - **The judgment share for the 92% of the corpus with no `order_type` column.**
   Not derivable from metadata at all.
-- **Whether mobile rows duplicate plain rows under a different CNR.** Zero CNR
-  overlap is established; identity by any other key is not. Two records for one
-  judgment would inflate both counts, and de-duplication is an ingest concern.
-  **Still open as of 11 Aug 2026** — `content_hash` backfilled across the
-  corpus and 937 exact-duplicate groups found (1,500 rows, 98.4% High Court),
-  but the two groups sampled directly are consolidated/batch judgments (one
-  judgment deciding many tagged-along matters, replicated once per case
-  number), both with `cnr IS NULL`, not mobile/plain variants of one judgment.
-  A real, different duplication mechanism, measured; this question, not yet.
-  `docs/ai/tasks/003-corpus-inventory.md`.
+- **Whether mobile rows duplicate plain rows under a different CNR.**
+  **ANSWERED, 11 Aug 2026, same session `cnr` was backfilled across the whole
+  corpus** (migration `0034`, `docs/ai/tasks/007-cnr-backfill-investigation.md`).
+  With every row carrying a `cnr`, the direct query finally runs: 10 pairs
+  (22 rows, 0.03%) share a `cnr` across two different `source_url`s, and
+  every one is the same court/bench/filename differing only in the `year=`
+  path segment — a year-partition drift defect already known from the
+  Supreme Court corpus (`docs/CURRENT_PLAN.md` Q1.0), not the mobile/plain
+  metadata-variant split this question asked about. **No evidence of
+  mobile/plain cross-duplication in the 40,980 held HC rows.** The larger
+  (1.9%) duplication found via `content_hash` (`docs/ai/tasks/
+  003-corpus-inventory.md`) is a separate, unrelated mechanism —
+  consolidated/batch judgments replicated once per case number.
 - **Extraction cost, text quality, OCR need.** §A3.3.

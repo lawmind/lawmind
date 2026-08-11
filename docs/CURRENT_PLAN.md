@@ -759,15 +759,18 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
    explicitly NOT confirmation of `HC_CORPUS_SURVEY.md` §5's mobile/plain
    CNR-variant hypothesis (both sampled groups have `cnr IS NULL`). §5
    remains open. Full account: `docs/ai/tasks/003-corpus-inventory.md`.
-8. **`judgments.cnr` — found dropped for the entire corpus, both loaders.**
-   The eCourts Case Number Record is present in both source metadata schemas
-   (`SciMetadataRow.cnr`, `HcMetadataRow.cnr`) and was read by neither mapper
-   into `JudgmentRecord` — silently discarded before reaching the database,
-   Supreme Court and High Court alike, since ingest began. Migration `0034`
-   adds the column; both mappers and `load.ts` now carry it through for every
-   future write. Not backfilled for existing rows — that needs the original
-   source metadata, a distinct task from the content-hash backfill (which
-   only needed `full_text`, already in Postgres).
+8. **`judgments.cnr` — found dropped for the entire corpus, both loaders,
+   backfilled to 100% same day.** Present in both source metadata schemas,
+   read by neither mapper into `JudgmentRecord` — silently discarded since
+   ingest began. Migration `0034` added the column and fixed both mappers.
+   `services/ingest/src/backfill-cnr.ts` then re-read the same public AWS
+   metadata files (no re-fetch, no live court site) and backfilled **all
+   79,321 existing rows — 100% coverage**, matching by the same url-
+   construction functions the real loaders use. As a direct consequence,
+   finally answered `HC_CORPUS_SURVEY.md` §5 (open since before this
+   session): no mobile/plain-variant cross-duplication in the HC corpus —
+   the 22 rows sharing a `cnr` are year-partition drift, a known, smaller,
+   unrelated defect. `docs/ai/tasks/007-cnr-backfill-investigation.md`.
 
 9. **`counter.ts` — `overruledByJudgmentId`/`overruledNote` missing from
    `authorities[]`, RCC bus 0037.** Present on `excluded[]`, absent from

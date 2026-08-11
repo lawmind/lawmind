@@ -33,7 +33,7 @@ of which are now stale on exactly this point):
 | `judgments` total | **79,321** | `SELECT count(*) FROM judgments` |
 | — Supreme Court | 38,341 | `court = 'Supreme Court of India'` |
 | — High Court | 40,980 | everything else |
-| `cnr` populated | **0 of 79,321** | migration `0034`, 11 Aug — column exists, no row has one yet; see §3 |
+| `cnr` populated | **79,321 of 79,321 — 100%** | migration `0034` + `backfill-cnr.ts`, both run 11 Aug; task 007 |
 | `content_hash` populated | 79,321 of 79,321 | backfilled 11 Aug, `backfill-provenance.ts` |
 | — exact-duplicate groups | 937 groups / 1,500 rows (1.9%) | see `docs/ai/tasks/003-corpus-inventory.md` — consolidated/batch judgments, not confirmed mobile/plain duplication |
 | `judgment_citations` edges | 227,478 | citation graph, extracted from text |
@@ -111,12 +111,17 @@ loaders already assert or must be made to assert.
   this does not settle". `judgment_chunks.ocr_confidence` is the right field
   (engine-reported, not inferred) but nothing populates it for High Court
   text yet. **Next task candidate, §7.**
-- **Language identification**: `judgments.language` exists (`en`/`hi` enum)
-  but is hardcoded `'en'` by both loaders today — `available_languages` on
-  the SC source lists more (ENG,HIN,PUN) and is read but discarded, flagged
-  in `sci.ts`'s own comment as "not decided here". **A real gap, same shape
-  as the CNR one found today**: the source carries the signal, the loader
-  drops it.
+- **Language identification**: `judgments.language` is `'en'` on every held
+  row **correctly, not as a bug**. `sci.ts`'s `JudgmentRecord.language` is
+  typed as the literal `'en'`, not a variable — a deliberate constraint,
+  because only the English PDF is fetched and stored; `available_languages`
+  (ENG,HIN,PUN) describes what the *source* publishes, not what this row
+  *is*. Checked directly against the code before writing this: **not the
+  same shape as the CNR bug** (an earlier draft of this document overclaimed
+  that it was). A Hindi judgment would need a separate fetch and a separate
+  row, which `sci.ts`'s own comment already flags as an open S1-report
+  question — a multi-language ingest decision, not a one-line fix. No code
+  change from this program; the open question is recorded, not new.
 - **Court/year/document-type**: held (`court`, `judgment_date`,
   `source_document_type` for the 4 of 25 HC courts that publish one).
 - **CNR/case/diary identifiers**: **found dropped for the entire corpus by
@@ -304,15 +309,20 @@ instruction:
    as a real OCR-need signal rather than a damage proxy. Needed before any
    OCR-pipeline investment decision. Medium effort — needs the extraction
    path itself to report engine confidence, not a new source.
-2. **CNR backfill investigation** — can the existing AWS metadata files be
-   re-read by `source_url` to recover `cnr` for the 79,321 held rows without
-   a live re-fetch? If yes, this closes the canonical-identity gap
-   immediately; if the metadata files are no longer addressable the same
-   way, this needs its own task. **Unresearched — first task, low risk,
-   answers a question rather than committing to a build.**
-3. **Language field correction** (§2.1) — `available_languages` is read and
-   discarded by both loaders, same bug class as `cnr`. Small, well-scoped,
-   same shape as three fixes already landed today.
+2. ~~**CNR backfill investigation**~~ — **DONE, 11 Aug 2026, same session.**
+   Feasible, cheap (≤76 SC year-files + 198 HC partitions, ~275 requests
+   against the same public bucket), and executed: `services/ingest/src/
+   backfill-cnr.ts` backfilled **79,321 of 79,321 rows — 100% coverage** in
+   one run. Closed the canonical-identity gap immediately, and as a direct
+   consequence answered `HC_CORPUS_SURVEY.md` §5 for the first time (no
+   mobile/plain cross-duplication found — 22 rows of year-partition drift
+   instead, a known, different, smaller defect class). Task 007.
+3. ~~**Language field correction**~~ — **checked and closed, 11 Aug 2026,
+   not a bug.** `language: 'en'` is a deliberate literal type, correct for
+   what is actually fetched (the English PDF only). A real open question
+   (whether to ingest Hindi as separate rows) but not a quick fix — moved
+   out of the task queue, into the open-questions list a founder sequencing
+   call would need, not an engineering backlog item.
 4. **Corpus-quality report CLI** (§6) — consolidates scattered metrics into
    one dry, read-only report. Medium effort, no schema change, immediately
    useful for every P0–P6 decision after it exists.
