@@ -68,9 +68,18 @@ const authority = (over: Partial<MatterAuthority> = {}): MatterAuthority => ({
   judgmentId: 'jdg_1',
   caseTitle: 'Mock Appellant v. Union of India',
   neutralCitation: 'MOCK 2026 EXAMPLE 1',
+  reporterCitations: [],
   addedBy: 'usr_1',
   addedAt: '2026-08-11T00:00:00.000Z',
   removedAt: null,
+  // Verified/corpus by construction on this row — see contract.ts's own note.
+  verificationState: 'verified',
+  verifiedBySource: 'corpus',
+  overruledStatus: 'none',
+  overruledByJudgmentId: null,
+  overruledByTitle: null,
+  overruledParas: null,
+  overruledNote: null,
   ...over,
 });
 
@@ -266,48 +275,20 @@ describe('a saved authority we hold no citation for', () => {
   });
 });
 
-describe('good-law status, which this list does not hold', () => {
+describe('good-law status, live from bus 0048/0049 (LCC dd9871b)', () => {
   /*
-    `GET /matters/:id/authorities` sends no `overruled_status` and no
-    verification fields — `AUTHORITY_COLUMNS` in
-    `services/api/src/matters/authorities.ts` selects seven columns and none of
-    them is one. So this surface cannot answer "is this still good law".
+    `GET /matters/:id/authorities` now joins `overruled_status` and the three
+    verification fields live on every request — see the module note on
+    `MatterAuthority` in `contract.ts` and `matters/authorities.ts`'s own
+    header. A matter file is where an authority sits for months, which makes
+    it the likeliest place in the product for the law to move underneath a
+    citation, and the only one where the advocate has already decided to rely
+    on it. `CITATION_HARNESS.md` sets the stale-overruled threshold at zero.
 
-    IT MATTERS MORE HERE THAN ANYWHERE. A matter file is where an authority sits
-    for months, which makes it the likeliest place in the product for the law to
-    move underneath a citation, and the only one where the advocate has already
-    decided to rely on it. `CITATION_HARNESS.md` sets the stale-overruled
-    threshold at zero.
-
-    AND SILENCE IS NOT NEUTRAL IN THIS PRODUCT. Verified is silent, so a row with
-    no mark reads as "checked, not decorated" — which is a claim we have not
-    earned on these rows. The limit is therefore stated.
+    These tests replace the ones that asserted the OLD stopgap line — this
+    list no longer says it cannot answer, because it now can.
   */
-  it('states that it cannot say, rather than rendering rows that read as fine', async () => {
-    matterAuthorities.mockResolvedValue({
-      ok: true,
-      data: { authorities: [authority()], asOf: '2026-08-11T00:00:00.000Z' },
-    });
-
-    await draw();
-
-    expect(
-      await screen.findByText(/does not yet show whether an authority is still good law/)
-    ).toBeTruthy();
-  });
-
-  it('names the tap-through, because the judgment screen genuinely answers it', async () => {
-    matterAuthorities.mockResolvedValue({
-      ok: true,
-      data: { authorities: [authority()], asOf: '2026-08-11T00:00:00.000Z' },
-    });
-
-    await draw();
-
-    expect(await screen.findByText(/Open one to check it/)).toBeTruthy();
-  });
-
-  it('never claims the law HAS moved — that would be amber, and this is not', async () => {
+  it('renders nothing extra for an authority that is still good law — verified is silent', async () => {
     matterAuthorities.mockResolvedValue({
       ok: true,
       data: { authorities: [authority()], asOf: '2026-08-11T00:00:00.000Z' },
@@ -316,17 +297,55 @@ describe('good-law status, which this list does not hold', () => {
     await draw();
     await screen.findByText('Mock Appellant v. Union of India');
 
-    /*
-      Amber is reserved for THE LAW HAS MOVED. We are not saying it has; we are
-      saying we did not look. Our own uncertainty renders as neutral ink on a
-      dashed edge, so none of the moved wording may appear on this surface.
-    */
     expect(screen.queryByText(/law has moved/i)).toBeNull();
-    expect(screen.queryByText(/set aside/i)).toBeNull();
-    expect(screen.queryByText(/LAW MOVED/)).toBeNull();
+    expect(screen.queryByText('Overruled')).toBeNull();
+    expect(
+      screen.queryByText(/does not yet show whether an authority/)
+    ).toBeNull();
   });
 
-  it('says nothing at all when the matter has no live authorities', async () => {
+  it('draws the LAW MOVED mark, strikes the title and names the replacement for a set-aside authority', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: {
+        authorities: [
+          authority({
+            overruledStatus: 'set_aside',
+            overruledByJudgmentId: 'jdg_2',
+            overruledByTitle: 'Mock Successor v. Union of India',
+          }),
+        ],
+        asOf: '2026-08-11T00:00:00.000Z',
+      },
+    });
+
+    await draw();
+
+    expect(await screen.findByText('Overruled')).toBeTruthy();
+    expect(await screen.findByText(/Set aside in Mock Successor v\. Union of India/)).toBeTruthy();
+  });
+
+  it('states what still stands on a partly set-aside authority, before what fell', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: {
+        authorities: [
+          authority({
+            overruledStatus: 'partly_set_aside',
+            overruledParas: [19, 20],
+            overruledNote: 'The finding on limitation still stands.',
+          }),
+        ],
+        asOf: '2026-08-11T00:00:00.000Z',
+      },
+    });
+
+    await draw();
+
+    expect(await screen.findByText('The finding on limitation still stands.')).toBeTruthy();
+  });
+
+  it('says nothing extra when the matter has no live authorities', async () => {
     matterAuthorities.mockResolvedValue({
       ok: true,
       data: {
@@ -337,13 +356,6 @@ describe('good-law status, which this list does not hold', () => {
 
     await draw();
 
-    /*
-      The caveat belongs to the list. With no list there is nothing to caveat,
-      and a standing disclaimer on an empty section is noise that trains the eye
-      to skip the section that will one day carry it.
-    */
-    await waitFor(() =>
-      expect(screen.queryByText(/does not yet show whether an authority/)).toBeNull()
-    );
+    await waitFor(() => expect(screen.queryByText('Overruled')).toBeNull());
   });
 });

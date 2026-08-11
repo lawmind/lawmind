@@ -1086,13 +1086,21 @@ export type CitationCopy = {
 
 /**
  * AN AUTHORITY SAVED TO A MATTER — `GET|POST|DELETE /matters/:id/authorities`,
- * live 11 Aug 2026. Shape read from `services/api/src/matters/authorities.ts`,
+ * live 11 Aug 2026, good-law status added 11 Aug 2026 (bus 0048/0049, LCC
+ * `dd9871b`). Shape read from `services/api/src/matters/authorities.ts`,
  * not from the summary of it.
  *
  * REMOVAL IS A TIMESTAMP, NEVER A DELETE, mirroring `matter_shares`: a removed
  * row still comes back with `removedAt` set. A matter file that silently forgets
  * an authority was ever saved is a matter file that cannot answer "what did I
  * rely on in March", which is the question the workspace exists to answer.
+ *
+ * `verificationState`/`verifiedBySource` are `'verified'`/`'corpus'` BY
+ * CONSTRUCTION, not columns — `judgment_id` is a NOT NULL FK into our own
+ * corpus, so the row resolves to itself, exactly as a briefing authority does.
+ * `overruled*` is joined LIVE from `judgments` on every request and never
+ * copied onto `matter_authorities` — a status stored at save time is the
+ * cached value the harness forbids.
  */
 export type MatterAuthority = {
   authorityId: string;
@@ -1100,10 +1108,20 @@ export type MatterAuthority = {
   caseTitle: string;
   /** Nullable for the same reason it is everywhere else. Render via `citationDisplay`. */
   neutralCitation: string | null;
+  /** Absent until bus 0049 — without it a reporter-only citation (pre-~2013 SC) read as uncitable. */
+  reporterCitations: string[];
   addedBy: string;
   addedAt: string;
   /** Non-null once removed. The row is kept, not erased. */
   removedAt: string | null;
+  verificationState: VerificationState;
+  verifiedBySource: VerifiedBySource;
+  overruledStatus: OverruledStatus;
+  overruledByJudgmentId: string | null;
+  /** The case name of the judgment that displaced it, joined server-side. */
+  overruledByTitle: string | null;
+  overruledParas: number[] | null;
+  overruledNote: string | null;
 };
 
 export type HiddenResult = {

@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
+import { CitationMark, movedTone } from '../../components/CitationMark';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
@@ -17,6 +18,7 @@ import type {
   MatterEvent,
 } from '../../api/contract';
 import { citationDisplay, NO_CITATION_MARK } from '../../citation/citationDisplay';
+import { citationRender } from '../../citation/renderState';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { AddEventSheet } from './AddEventSheet';
 import { usePractice } from '../../state/practice';
@@ -421,67 +423,43 @@ export function MatterScreen({
           <View style={styles.section}>
             <SectionRule label="Authorities" />
 
-            {/*
-              ─────────────────────────────────────────────────────────────────
-              THIS LIST CANNOT YET SAY WHETHER AN AUTHORITY IS STILL GOOD LAW,
-              AND IT SAYS SO RATHER THAN STAYING SILENT.
-              ─────────────────────────────────────────────────────────────────
-
-              `GET /matters/:id/authorities` selects `a.id, a.judgment_id,
-              j.case_title, j.neutral_citation, a.added_by_user_id, a.added_at,
-              a.removed_at` — `AUTHORITY_COLUMNS` in
-              `services/api/src/matters/authorities.ts`. No `overruled_status`,
-              no verification fields. So this surface holds none of them.
-
-              WHY THAT IS SERIOUS HERE SPECIFICALLY. `CITATION_HARNESS.md`:
-              overruled status is never cached, is read live at render on EVERY
-              surface, and the stale-overruled threshold is ZERO — "overruled law
-              rendered without the LAW MOVED mark is as severe as a
-              hallucination". A matter file is the surface where an authority
-              sits for MONTHS. It is the likeliest place in the product for the
-              law to move underneath a citation, and the only one where the
-              advocate has already decided to rely on it.
-
-              AND SILENCE MEANS SOMETHING SPECIFIC IN THIS PRODUCT. Verified is
-              silent; a citation with no mark reads as "checked, not decorated".
-              Rendering these rows bare therefore does not read as "we do not
-              know" — it reads as "these are fine". That is the one thing we may
-              never say without having asked.
-
-              So the limit is stated, in neutral ink on a dashed edge, which is
-              how our own uncertainty renders everywhere. NOT AMBER: amber means
-              the law has moved, and we are not claiming it has — we are saying
-              we did not look.
-
-              The tap-through is named because it genuinely answers the question:
-              the judgment screen reads `overruled_status` live and bands
-              `set_aside` full width.
-
-              THIS LINE IS TEMPORARY BY DESIGN. The fix is three columns on the
-              server, sent to LCC on the bus rather than guessed at here — the
-              fields are not declared on `MatterAuthority` until they are really
-              on the wire, because a type that promises a field the server does
-              not send is the defect this sweep spent the day removing.
-            */}
-            <View style={styles.statusUnknown}>
-              <Text variant="ui" style={styles.statusUnknownText}>
-                This list does not yet show whether an authority is still good law. Open one to
-                check it.
-              </Text>
-            </View>
-
             {authorities
               .filter((a) => a.removedAt === null)
               .map((a) => {
                 const citation = citationDisplay(a);
+                /**
+                 * GOOD-LAW STATUS, LIVE — bus 0048/0049 landed `dd9871b`.
+                 * Same helper every other surface uses, never a second
+                 * opinion. `verificationState`/`verifiedBySource` are
+                 * `'verified'`/`'corpus'` by construction on this row, so
+                 * `existence` never draws here — declared anyway, the same
+                 * reason `BriefingAuthorityRow` does: the day this can carry
+                 * an authority resolved by another tier, nothing here has to
+                 * change for the mark to stay honest.
+                 */
+                const { moved } = citationRender({
+                  verificationState: a.verificationState,
+                  verifiedBySource: a.verifiedBySource,
+                  overruledStatus: a.overruledStatus,
+                  overruledNote: a.overruledNote,
+                  overruledParas: a.overruledParas,
+                });
                 return (
                   <Pressable
                     key={a.authorityId}
                     onPress={() => onOpenJudgment(a.judgmentId)}
-                    style={styles.row}
+                    style={[styles.row, moved.kind === 'moved' && styles.rowMoved]}
                   >
+                    {/* All three moved states carry a chip, `doubted` included. */}
+                    {moved.kind === 'moved' ? (
+                      <CitationMark label={moved.chipLabel} tone={movedTone(moved.band)} />
+                    ) : null}
                     <View style={styles.rowBody}>
-                      <Text variant="legal" scale="holding">
+                      <Text
+                        variant="legal"
+                        scale="holding"
+                        style={moved.kind === 'moved' && moved.strikeTitle ? styles.struck : undefined}
+                      >
                         {a.caseTitle}
                       </Text>
                       {/*
@@ -496,6 +474,27 @@ export function MatterScreen({
                       {!citation.citable ? (
                         <Text variant="ui" style={styles.uncitable}>
                           {NO_CITATION_MARK}
+                        </Text>
+                      ) : null}
+
+                      {/* What still stands is stated first — the half still being relied on. */}
+                      {moved.kind === 'moved' && moved.whatStillStands ? (
+                        <Text variant="ui" style={styles.stillStands}>
+                          {moved.whatStillStands}
+                        </Text>
+                      ) : null}
+
+                      {moved.kind === 'moved' && moved.band === 'none' ? (
+                        <Text variant="ui" style={styles.doubtedLine}>
+                          {moved.headline}
+                        </Text>
+                      ) : null}
+
+                      {/* Named, not merely flagged — the server joins who displaced it. */}
+                      {moved.kind === 'moved' && a.overruledByTitle ? (
+                        <Text variant="ui" style={styles.overruledBy}>
+                          {moved.status === 'doubted' ? 'Doubted in' : 'Set aside in'}{' '}
+                          {a.overruledByTitle}
                         </Text>
                       ) : null}
 
@@ -698,21 +697,16 @@ const styles = StyleSheet.create({
   },
 
   /**
-   * OUR OWN LIMIT, SO: NEUTRAL INK, DASHED EDGE, NO AMBER AND NO WASH.
-   *
-   * Identical treatment to the unconfirmed-citation mark and to the `unknown`
-   * block in `AuthoritiesPanel`. Amber is reserved for the law having moved,
-   * which is a statement about the authority; this is a statement about what we
-   * did not ask.
+   * This screen's rows carry no border normally (`row`, below) — a card
+   * border would be `BriefingAuthorityRow`'s treatment, not this list's. An
+   * ink left-rule, matching `uncitable`'s own accent, says "look here"
+   * without borrowing a different surface's chrome.
    */
-  statusUnknown: {
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderColor: color.inkFaint,
-    borderRadius: radius.base,
-    padding: space.xs,
-  },
-  statusUnknownText: { color: color.inkMuted },
+  rowMoved: { borderLeftWidth: 2, borderLeftColor: color.ink, paddingLeft: space.xs },
+  struck: { textDecorationLine: 'line-through' },
+  stillStands: { color: color.ink },
+  doubtedLine: { color: color.inkMuted },
+  overruledBy: { color: color.inkMuted },
 
   /**
    * Oxblood, and set on its own line rather than as a trailing icon — the same
