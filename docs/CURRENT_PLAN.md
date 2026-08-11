@@ -953,6 +953,19 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     2 new tests, qlang suite 40/40, `docs/API_CONTRACTS.md` updated
     additively.
 
+18. **`docs/ai/CITATION_GRAPH_STAGE7.md` — Stage 7, LANDED same day.** CITES/
+    TREATMENT separation with evidence already existed. Survey found
+    `approved` safely splittable from `followed` (real, distinct, anchored
+    printed word) but `affirmed`/`reversed` are NOT — they overwhelmingly
+    describe the citing judgment's OWN procedural history in ordinary prose,
+    not a cited precedent's treatment; deferred with the exact disambiguation
+    test named, not guessed at. Split `approved` in both citation
+    classifiers, migration `0039`, and fixed `services/api/src/judgments/
+    treatment.ts`'s `counts` object in the SAME commit — it would otherwise
+    have silently dropped the new value, the identical bug class RCC bus
+    0035 already caught once. 21 existing rows reclassified from their own
+    evidence text. `services/ingest` 343/343.
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court

@@ -174,11 +174,19 @@ describe('detectTreatment', () => {
     assert.match(t.evidence, /overruled/i);
   });
 
-  it('maps relied on, approved and followed to followed', () => {
-    for (const marker of ['relied on', 'approved', 'followed']) {
+  it('maps relied on and followed to followed', () => {
+    for (const marker of ['relied on', 'followed']) {
       const text = `Sharma v. State, (2019) 4 SCC 221 – ${marker}.`;
       assert.equal(after(text, '(2019) 4 SCC 221').relationship, 'followed', marker);
     }
+  });
+
+  it('maps approved to its own relationship, not folded into followed', () => {
+    // Split 11 Aug 2026, Stage 7 — docs/ai/CITATION_GRAPH_STAGE7.md.
+    const text = 'Sharma v. State, (2019) 4 SCC 221 – approved.';
+    const t = after(text, '(2019) 4 SCC 221');
+    assert.equal(t.relationship, 'approved');
+    assert.match(t.evidence, /approved/i);
   });
 
   it('maps distinguished and dissented from', () => {

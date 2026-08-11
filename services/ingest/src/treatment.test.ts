@@ -136,12 +136,14 @@ test('a citation that is not in the text returns null rather than guessing', () 
 
 /* ─────────────── treatments that leave the authority standing ── */
 
-test('followed, relied on and distinguished are treatments with NO overruled effect', () => {
+test('followed, relied on, approved and distinguished are treatments with NO overruled effect', () => {
   for (const [text, rel] of [
     ['[1975] 3 SCR 220 – relied on.', 'followed'],
     ['[1975] 3 SCR 220 – followed.', 'followed'],
     ['[1975] 3 SCR 220 – distinguished.', 'distinguished'],
-    ['[1975] 3 SCR 220 – approved.', 'followed'],
+    // Its own relationship, not folded into `followed` — Stage 7,
+    // docs/ai/CITATION_GRAPH_STAGE7.md.
+    ['[1975] 3 SCR 220 – approved.', 'approved'],
   ] as const) {
     const t = readTreatment('[1975] 3 SCR 220', text);
     assert.equal(t?.relationship, rel, `wrong relationship for: ${text}`);

@@ -293,8 +293,9 @@ as an extraction defect on the strength of this line alone.
 `cited_judgment_id` uuid null fk→judgments **set null** — null when the cited
 authority is not in the corpus · `citation_text` text — exactly as it appeared ·
 `normalised_citation` text — the comparison form · `relationship` text
-(`cites`|`followed`|`distinguished`|`doubted`|`overruled`) default `cites`,
-check-constrained · `evidence` text null — the phrase that justified a
+(`cites`|`followed`|`approved`|`distinguished`|`doubted`|`overruled`|
+`overruled_in_part`) default `cites`, check-constrained (migrations `0008`,
+`0010`, `0039`) · `evidence` text null — the phrase that justified a
 relationship other than `cites` · `char_offset` int — where in the citing text ·
 `created_at` timestamptz
 

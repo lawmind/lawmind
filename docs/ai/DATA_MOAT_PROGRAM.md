@@ -566,6 +566,23 @@ alongside this document.
     `parse.ts`/`compile.ts`/`explain.ts` (the last a compile-time-enforced
     `Record<Field, …>`, so a missed case would not compile), verified against
     a real production row, 2 new tests, qlang suite 40/40.
+15. **Citation graph — LANDED, 11 Aug 2026, Stage 7.**
+    `docs/ai/CITATION_GRAPH_STAGE7.md`. CITES/TREATMENT separation with
+    evidence was already built. **Found `approved` is safely splittable from
+    `followed`** (2,000-row survey: 61 real `– approved` table-annotation
+    hits, comparable to `– followed`'s 84) but **`affirmed`/`reversed` are
+    NOT** — real hits overwhelmingly describe the citing judgment's own
+    procedural history, not treatment of a cited precedent; deferred with the
+    exact next test named, not built blind. Split `approved` in both
+    classifiers (`citations.ts` + `treatment.ts`), migration `0039` widened
+    the CHECK constraint, and — **found and fixed in the same commit as the
+    split**, matching the exact bug class RCC bus 0035 already caught once —
+    `services/api/src/judgments/treatment.ts`'s `counts` object would have
+    silently excluded the new value. Reclassified 21 existing rows via their
+    own stored `evidence` text; caught the SAME `\y`-in-a-JS-template-literal
+    defect this program has now independently rediscovered three times
+    (`\y` is not a JS string escape) while building the reclassification
+    query. `services/ingest` 343/343.
 
 ---
 

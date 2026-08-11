@@ -260,6 +260,13 @@
       "when": 1786390000000,
       "tag": "0038_judgment_disposal_nature",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1786400000000,
+      "tag": "0039_citation_approved",
+      "breakpoints": true
     }
   ]
 }

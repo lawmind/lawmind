@@ -61,6 +61,7 @@ export type Relationship =
   | 'overruled_in_part'
   | 'doubted'
   | 'followed'
+  | 'approved'
   | 'distinguished'
   | 'cites';
 
@@ -124,7 +125,16 @@ const PHRASES: readonly {
   { re: /distinguished/i, relationship: 'distinguished', overruled: null },
   { re: /relied\s+(?:on|upon)/i, relationship: 'followed', overruled: null },
   { re: /\bfollowed\b/i, relationship: 'followed', overruled: null },
-  { re: /\bapproved\b/i, relationship: 'followed', overruled: null },
+  /**
+   * Its own relationship, not folded into `followed` — `docs/ai/
+   * CITATION_GRAPH_STAGE7.md`. A 2,000-row sample found `– approved` (the
+   * same table-annotation shape as `– followed`/`– overruled`) 61 times,
+   * comparable in frequency to `– followed` itself (84) — a real, distinct,
+   * printed word the reporter chooses deliberately, not a synonym. Stage 7
+   * of the DATA -> RETRIEVAL EXECUTION PROGRAM names `approves` as its own
+   * graph edge; this is the extractor half of that.
+   */
+  { re: /\bapproved\b/i, relationship: 'approved', overruled: null },
 ];
 
 /**

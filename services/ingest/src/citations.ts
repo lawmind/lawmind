@@ -36,6 +36,13 @@ export type ExtractedCitation = {
 export type Relationship =
   | 'cites'
   | 'followed'
+  /**
+   * Its own printed word, its own relationship — split from `followed`
+   * 11 Aug 2026, Stage 7 (`docs/ai/CITATION_GRAPH_STAGE7.md`). Kept
+   * consistent with `treatment.ts`'s `Relationship`, the second classifier
+   * (`citator-cli.ts`) that reads the same column.
+   */
+  | 'approved'
   | 'distinguished'
   | 'doubted'
   | 'overruled'
@@ -200,7 +207,7 @@ const MARKERS: readonly { pattern: RegExp; relationship: Relationship }[] = [
   { pattern: /doubted/i, relationship: 'doubted' },
   { pattern: /distinguished/i, relationship: 'distinguished' },
   { pattern: /relied\s+on/i, relationship: 'followed' },
-  { pattern: /approved/i, relationship: 'followed' },
+  { pattern: /approved/i, relationship: 'approved' },
   { pattern: /followed/i, relationship: 'followed' },
   // "referred to" means the case was mentioned, NOT that it was treated. It is
   // the most common marker in the corpus by a wide margin and maps to `cites`.
