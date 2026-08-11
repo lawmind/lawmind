@@ -90,6 +90,13 @@ export async function handleCounter(
       verifiedBySource: 'corpus' as const,
       overruledStatus: r.overruledStatus,
       overruledParas: r.overruledParas,
+      // Found missing 11 Aug 2026 (RCC bus 0037): retrieve.ts selects both on
+      // every row, `excluded[]` already carried them, but `authorities[]` did
+      // not — so a partly_set_aside authority here rendered its headline with
+      // no "what still stands" line, the half renderState.ts says must come
+      // first for the advocate about to argue against it.
+      overruledByJudgmentId: r.overruledByJudgmentId,
+      overruledNote: r.overruledNote,
       asOf,
     })),
     /** Named, never dropped. `set_aside` is the one state that disables use. */

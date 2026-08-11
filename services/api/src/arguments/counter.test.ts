@@ -39,6 +39,18 @@ describe('POST /arguments/counter', () => {
     }
   });
 
+  it('carries overruledByJudgmentId and overruledNote on authorities[], not only on excluded[]', async () => {
+    // Found missing 11 Aug 2026 (RCC bus 0037): excluded[] always carried
+    // both, authorities[] carried neither, so a partly_set_aside authority —
+    // still usable, still returned — rendered no "what still stands" line.
+    const { body } = await post({ position: 'anticipatory bail', language: 'en' });
+    const authorities = (body.data?.['authorities'] ?? []) as Record<string, unknown>[];
+    for (const a of authorities) {
+      assert.ok('overruledByJudgmentId' in a, 'key must be present even when null');
+      assert.ok('overruledNote' in a, 'key must be present even when null');
+    }
+  });
+
   it('never returns a set_aside authority as usable', async () => {
     const { body } = await post({ position: 'bail in a dowry death case', language: 'en' });
     const authorities = (body.data?.['authorities'] ?? []) as Record<string, unknown>[];

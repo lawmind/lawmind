@@ -879,18 +879,38 @@ judgment citations; authority questions go to `/search`.
 
 ### Counter-arguments
 ```
-POST /arguments/counter   { position, matterId?, judgmentIds? }
-  → { arguments: [ { argument, rebuttal,
-                     authorities: [ { judgmentId, caseTitle, neutralCitation,
-                                      verificationState, verifiedBySource,
-                                      overruledStatus, asOf } ] } ],
-      excluded: [ { judgmentId, caseTitle, reason: 'set_aside' } ],
-      unverifiedReferences: [ { citationClaimed, reason } ] }
+POST /arguments/counter   { position, matterId?, language? }
+  → { position, asOf,
+      authorities: [ { judgmentId, caseTitle, neutralCitation, court,
+                       judgmentDate, operativeParagraph,
+                       operativeParagraphNumber,
+                       verificationState, verifiedBySource, overruledStatus,
+                       overruledParas, overruledByJudgmentId, overruledNote,
+                       asOf } ],
+      excluded: [ { judgmentId, caseTitle, neutralCitation,
+                    reason: 'set_aside', overruledByJudgmentId,
+                    overruledNote, asOf } ],
+      unverifiedReferences: [] }
 ```
-Grounded only: the model references judgment IDs handed to it in context and never
-emits a citation from memory. `set_aside` authorities are **excluded and shown as
-excluded with the reason** — silently dropping them would be a silent drop, which
-is measured at a zero threshold.
+**S1: retrieved authorities only, no generated argument or rebuttal** — a
+manufactured argument beside a real citation is exactly the contamination the
+harness exists to prevent, and generation waits for S2 (`argument`/`rebuttal`
+fields do not exist on the wire yet, despite an earlier draft of this doc
+naming them). Grounded only: every authority comes from hybrid retrieval over
+the corpus and carries a `judgmentId` that resolves; nothing is invented.
+
+`set_aside` authorities are **excluded from `authorities[]` and named in
+`excluded[]` with the reason** — silently dropping them would be a silent
+drop, measured at a zero threshold. `unverifiedReferences` is always present,
+always empty in S1 (results ARE corpus rows), so the client never has to
+distinguish absent from none.
+
+**`overruledByJudgmentId`/`overruledNote` on `authorities[]` — added 11 Aug
+2026, RCC bus 0037.** Present on `excluded[]` from the start; missing here
+until found, so a `partly_set_aside` authority — still usable, still
+returned — rendered its headline with no "what still stands" line, the half
+`renderState.ts` requires stated first for an authority the advocate is about
+to argue against.
 
 ### Saved searches — in-app feed, never a push
 ```
