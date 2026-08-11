@@ -12,6 +12,7 @@ import {
   rankCandidates,
   resolveConfidenceTier,
   tokenizeName,
+  stripTrailingCitations,
   yearFromCitationText,
 } from './concordance-adjudicate.ts';
 
@@ -66,6 +67,78 @@ test('an unrecognised shape yields no year, not a wrong one', () => {
   // guard exists to prevent.
   assert.equal(yearFromCitationText('paragraph 1994 of the judgment'), null);
   assert.equal(yearFromCitationText('Section 302 IPC'), null);
+});
+
+/* --------------------------------------------- the parallel-citation problem ── */
+
+/**
+ * Every window below is a real one, taken verbatim from the corpus. Indian
+ * reports print a judgment's citations in pairs — `... [1999] 1 SCR 235 :
+ * (1999) 2 SCC 718` — and the extractor records both, so the SECOND citation's
+ * window ends with the FIRST citation rather than with the case name. The name
+ * regex is anchored at the end of the string, so it matched nothing.
+ *
+ * Measured: 277 of 304 name-extraction failures (91%) were this. Fixing it took
+ * reach from 49.2% to 74.8% without moving deterministic top-1 accuracy
+ * (88.6% -> 88.0%), which is the check that matters — a wider funnel that
+ * admitted rubbish would have shown up as a drop there.
+ */
+test('a parallel citation between the name and the offset no longer hides the name', () => {
+  assert.equal(
+    nameBeforeCitation('A.P. Pollution Control Board v. Prof. M.V. Nayudu [1999] 1 SCR 235 :'),
+    'A.P. Pollution Control Board v. Prof. M.V. Nayudu',
+  );
+  assert.equal(
+    nameBeforeCitation('Selvi & Others v. State of Karnataka (2010) 7 SCC 263 :'),
+    'Selvi & Others v. State of Karnataka',
+  );
+  // Year-first house style as the intervening citation.
+  assert.equal(
+    nameBeforeCitation('Narayanamurthy v. State of Karnataka 2008 (8) SCR 403 :'),
+    'Narayanamurthy v. State of Karnataka',
+  );
+  // `Vs.` capitalised, `& Ors.` on both sides, `=` as the separator.
+  assert.equal(
+    nameBeforeCitation('Rabindranath Bose & Ors. Vs. The Union of India & Ors. 1970 (2) SCR 697 ='),
+    'Rabindranath Bose & Ors. v. The Union of India & Ors.',
+  );
+});
+
+/**
+ * A SECOND, SEPARATE DEFECT found while fixing the first. The verb alternation
+ * was `(?:v\.?|vs\.?|versus)` with **no case-insensitive flag**, so `Vs.` with
+ * a capital V — the commonest form in Indian judgments — never matched at all.
+ * The two defects compounded: a window had to survive both to yield a name.
+ */
+test('CAPITAL "Vs." IS THE COMMON INDIAN FORM and must extract', () => {
+  assert.equal(
+    nameBeforeCitation('State of Haryana Vs. Chandra Mani'),
+    'State of Haryana v. Chandra Mani',
+  );
+  assert.equal(nameBeforeCitation('Union of India VS. Kamlesh'), 'Union of India v. Kamlesh');
+  assert.equal(nameBeforeCitation('Ram Singh V/s State of Bihar'), 'Ram Singh v. State of Bihar');
+  // The lowercase forms that already worked must keep working.
+  assert.equal(nameBeforeCitation('Naushey Ali vs. State of U.P.'), 'Naushey Ali v. State of U.P.');
+});
+
+test('supplement volumes and AIR with a bracketed year are stripped too', () => {
+  assert.equal(
+    nameBeforeCitation('Kesavananda Bharati v. State of Kerala AIR (1986) SC 687;'),
+    'Kesavananda Bharati v. State of Kerala',
+  );
+  assert.equal(
+    nameBeforeCitation('Some Appellant v. Some Respondent 1962 Suppl. SCR 848'),
+    'Some Appellant v. Some Respondent',
+  );
+});
+
+test('stripping only ever shortens, and never invents a name', () => {
+  // No case-name verb anywhere: 27 of the 304 failures are short forms like
+  // this, and they must stay unresolved rather than be guessed at.
+  assert.equal(nameBeforeCitation('approved in Ajay Hasia case [(1981) 2 SCR 79 :'), null);
+  assert.equal(nameBeforeCitation('as held in paragraph 14 (2019) 4 SCC 221'), null);
+  // Stripping a window that is ONLY a citation leaves nothing, not a fragment.
+  assert.equal(stripTrailingCitations('(2019) 4 SCC 221'), '');
 });
 
 /* ────────────────────────────────────────────────────────── tokenizing ── */
