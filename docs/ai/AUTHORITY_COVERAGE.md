@@ -13,7 +13,7 @@ corpus tell us we are missing?*
 | state | targets | what it means |
 | --- | --- | --- |
 | **HELD** | **514** | resolved to a judgment in our corpus. Joinable today. |
-| **MAPPED INTERNALLY** | **~155** | resolvable from our own text at multiple signals — name + year, surviving adversarial validation. **Not yet written.** §3a |
+| **MAPPED INTERNALLY** | ~~**~155**~~ **294 written, verified** | resolvable from our own text at multiple signals — name + year, surviving adversarial validation. **WRITTEN 12 Aug 2026** — `internal-concordance-cli.ts --apply`, §3c |
 | **AMBIGUOUS** | **~222** | a candidate exists but the evidence is thin or contested. Refused, not guessed. |
 | **KNOWN BUT UNMAPPED** | **~897** | a valid reporter identifier naming a judgment we may well hold, with no way to join it. **The concordance gap.** |
 | **GENUINELY MISSING** | **unknown — and it must stay unknown** | cannot be separated from the row above without a concordance. Claiming a number here would be an invention. |
@@ -204,6 +204,78 @@ signals is real, cheap and reversible. The other 87.9% is a founder decision
 about an external source — a licensing question, not an engineering one.
 
 **Nothing has been written to `cited_judgment_id` from this study.**
+
+---
+
+## 3c · IMPLEMENTED AND WRITTEN — 12 Aug 2026
+
+The recommendation above was carried out: `services/ingest/src/
+internal-concordance.ts` makes §3a's discipline mechanical rather than a
+one-off script (asymmetric year window — the citation year or the year
+before, never after, since a model is not reading along to catch a forward
+reference; the same 0.34/0.45 Jaccard thresholds; the 0.85 near-tie
+ambiguity refusal; and `detectCrossTargetCollisions`, which makes the
+17-vs-18 same-judgment/different-citation finding mechanical — every
+judgment claimed by more than one citation key in a run is withheld, since
+the deterministic signal cannot tell the 17 real collisions from the 18
+legitimate cross-reporter pairs, a 51/49 split). No model call anywhere in
+the pipeline.
+
+**Numbers moved, and moved further than this document's own estimate,
+because the population itself had grown.** This document's "1,277 HC
+targets" was measured 11 Aug against the pool as it stood then. By 12 Aug
+the qualifying pool (unresolved SCC/AIR citation keys, ≥2 sightings, corpus-
+wide — not HC-only) was **4,253**, both because citation extraction was
+independently widened the same day (`docs/ai/CITATION_CONCORDANCE_EVALUATION.md`
+§2 — an S.C.R. year pattern and a parallel-citation blind spot, found and
+fixed by a concurrent session) and because this module is not HC-scoped the
+way §3a's manual study was.
+
+**Two runs, and the second is the one to trust.** A first sweep (2,000-target
+`INTERNAL_CONCORDANCE_LIMIT` default, then re-run at 5,000 once the true
+population was measured) found 602 safe candidates using the *pre-fix*
+`nameBeforeCitation`/`yearFromCitationText`. Re-run after the S.C.R./parallel-
+citation fixes landed, still 602 — same count, different composition,
+confirming the fixes widened *reach* without changing the *safety bar*.
+
+**Hand-checked before writing anything — 14 samples, spanning corroboration 2
+to 22 and Jaccard 0.455 to 1.000, drawn deliberately from the riskiest
+(lowest-Jaccard, minimum-corroboration) end, not the easiest.** Every one
+verified correct against the actual `judgments` row, including two that read
+as wrong on first glance and were not: *"State of Haryana"* in a citing
+document's shorthand for the full respondent *"Financial Commissioner and
+Secretary to Govt. Haryana"*, and a `(2008) 2 SCC 108` match that correctly
+ignored ten other same-named *"Chanda Devi"* judgments — all recent, unrelated
+Patna High Court matters — because candidate generation is scoped to the
+Supreme Court pool within the citation's own year window.
+
+**WRITTEN: 294 aliases, not 602 — verified by direct query
+(`judgment_citation_aliases`: 4,100 → 4,394), not read off the CLI's own
+summary.** The gap between the dry-run count and the write count is real and
+recorded rather than smoothed over: a concurrent session was actively
+modifying the High Court citation pipeline (`hc-citations-cli.ts`,
+`hc-load-cli.ts`) in the same working tree between the two runs, which is the
+more likely explanation than a bug in this module — collision detection and
+the safety thresholds are unchanged between dry and apply, and no fabrication
+class of error is possible in an `INSERT ... ON CONFLICT (alias_key) DO
+NOTHING`. The next full re-run's count is the one that will settle it.
+
+**Then resolved into both edge tables — `resolve-cli.ts --apply` and its new
+`--external` flag (nothing had ever re-run `external_citations` against a
+grown alias table before this session; see `docs/CURRENT_PLAN.md`),
+independently verified against production:**
+
+| | before | after |
+| --- | --- | --- |
+| `judgment_citations` (SC-internal edges) | 99,887 / 222,738 = 44.8% | **101,968 / 222,738 = 45.8%** |
+| `external_citations` (HC sightings) | 15,102 / 51,272 = 29.5% | **18,889 / 51,272 = 36.8%** |
+
+**+2,081 and +3,787 edges resolved respectively, from 294 new aliases** — each
+alias corroborated by, on average, dozens of independent sightings, which is
+why a small alias count produces a disproportionately larger resolution
+count. `services/ingest` typecheck clean, 454/454 tests passing (one
+pre-existing, unrelated test needs a local Postgres this environment does not
+have and was excluded, not silenced).
 
 ---
 

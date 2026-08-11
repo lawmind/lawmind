@@ -1146,8 +1146,16 @@ engineering: an external SCC/AIR↔SCR concordance would unlock up to 1,122 HC
 targets and a large share of 57,947 corpus-wide. No source has been researched,
 priced, contacted or ingested — that is the step *after* the decision.
 
-**Implementable without it:** the safe ~155 mappings. Cheap, reversible,
-multi-signal. Not yet written.
+**Implementable without it:** ~~the safe ~155 mappings. Cheap, reversible,
+multi-signal. Not yet written.~~ **WRITTEN 12 Aug 2026.**
+`internal-concordance-cli.ts` (no model, no InferX call) made §3a's
+discipline mechanical, hand-checked 14 samples against real judgment rows at
+the riskiest end of the range, wrote **294 aliases** (verified: 4,100 → 4,394),
+then `resolve --apply --external` converted them into resolved edges:
+`judgment_citations` 44.8% → 45.8% (+2,081), `external_citations` 29.5% →
+36.8% (+3,787). Full account: `docs/ai/AUTHORITY_COVERAGE.md` §3c. **The
+founder decision below is unchanged and still open** — this only implements
+the part that never needed it.
 
 **Blocked by the unresolved portion:** citator completeness, "cases citing this
 authority", authority ranking by citation count, any claim about High Court

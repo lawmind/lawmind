@@ -77,10 +77,13 @@ priced or contacted**; that is the step after the decision, deliberately not
 taken first.
 
 **Why it is not a blocker:** everything that keys on judgments we hold works —
-search, verification, the citation harness, add-to-matter. The measured-safe
-internal mappings (~155 of 1,277 High Court targets, multi-signal) can be
-written without any external source, and the remaining edges stay honestly
-unresolved rather than guessed.
+search, verification, the citation harness, add-to-matter. **The measured-safe
+internal mappings are now WRITTEN, 12 Aug 2026** — 294 aliases (verified:
+`judgment_citation_aliases` 4,100 → 4,394), pushing `judgment_citations` 44.8%
+→ 45.8% and `external_citations` 29.5% → 36.8%, no model call, hand-checked
+against 14 real judgment rows before writing. `docs/ai/AUTHORITY_COVERAGE.md`
+§3c. The remaining edges stay honestly unresolved rather than guessed — that
+is exactly what this open item is still about.
 
 **Why it cannot be solved internally — measured, not assumed:**
 all 38,342 of our Supreme Court judgments carry S.C.R. citations and **zero
