@@ -18,6 +18,42 @@ point here, so a fresh agent finds it without being told.
 
 ---
 
+## FOUNDER DATA AUTHORIZATION — CURRENT / SETTLED
+
+**Founder decision — 11 Aug 2026. This section is authoritative for the current
+project state and supersedes earlier contradictory entries below.**
+
+LawMind has valid agreements/permissions authorizing use of:
+
+- **BharatLaw — AUTHORIZED**
+- **Supreme AI — AUTHORIZED**
+- **eCourts India — AUTHORIZED**
+
+The founder has confirmed these authorizations remain valid through
+**13 November 2029**.
+
+These three sources are **not licensing blockers** and must not be returned to
+the founder queue as unresolved authorization questions. Continue the data
+program without waiting for another confirmation.
+
+The authorization covers the intended LawMind data program, including where
+permitted: ingestion, storage, normalization, OCR, metadata extraction,
+citation extraction/resolution, indexing, retrieval, evaluation, enrichment,
+embeddings, training, fine-tuning, distillation, and related processing.
+
+Preserve source provenance and enforce source-specific operational constraints.
+Do not invent contract terms or broaden one source's permission to unrelated
+sources.
+
+**Important:** `Supreme AI` and `Supreme Today` are different sources. Historical
+`Supreme Today` entries below must not be used to classify `Supreme AI` as
+unresolved.
+
+This section exists specifically to prevent repeated reopening of this settled
+founder decision.
+
+---
+
 ## How to add an entry
 
 ```
@@ -122,7 +158,7 @@ it was, this is only about who could touch it.
 a URL or path to fetch the set from at gate-run time — `services/harness/src/adversarial.ts`
 already reads it as data, not as inline code.
 
-### [OPEN] eCourts grant conditions, transcribed · LCC · 7 Aug 2026
+### [SUPERSEDED — FOUNDER AUTHORIZATION SETTLED 11 Aug 2026] eCourts grant conditions, transcribed · LCC · 7 Aug 2026
 
 **Needs:** the registrar's letter — reference, expiry, attribution string,
 permitted courts, permitted hours, rate limits — transcribed into
@@ -193,6 +229,67 @@ release APK builds and installs in one command. Roughly twenty minutes with a
 phone.
 
 # DECISIONS ONLY THE FOUNDER CAN MAKE
+
+### [OPEN] FQ-D9 — the desktop research workspace contradicts the brief, and costs a tenth of what we assumed · RCC
+
+**Added 11 Aug 2026. One sentence from you unblocks it. It is NOT an engineering
+question — the engineering turned out to be small.**
+
+**The contradiction.** You have asked RCC for a desktop-first research workspace
+(REB §4, V2 §38, and TASK 5 of the current ladder). Two files say the opposite,
+and both are load-bearing:
+
+- `CLAUDE.md` §1 — *"Native iOS + Android (Expo). **Web is admin only.**"*
+- `PRODUCT_BRIEF.md` — *"Admin is a separate Railway service; **web is admin
+  only**."*
+
+Nothing in `PRODUCT_DECISIONS.md`, `docs/OPEN_DECISIONS.md` or
+`docs/CURRENT_PLAN.md` mentions a desktop research client at all. So the
+workspace exists only in your instructions to me and is contradicted by the north
+star, which `CLAUDE.md` §0 says stops work rather than proceeds. I am not
+reopening a settled product boundary on my own reading of a task list.
+
+**What I found while scoping it, which changes the decision.** I assumed this
+meant a third app under `apps/` and priced it accordingly. It does not:
+
+- **Expo web is already configured and already builds.** `app.config.ts` has a
+  `web` block (`bundler: 'metro'`, `output: 'single'`, favicon), `react-dom` and
+  `react-native-web` are installed dependencies, and `package.json` already has a
+  `web` script. Nobody has to create an app or pick a framework.
+- **The screens are already prop-driven.** `JudgmentScreen` takes a `judgmentId`
+  and callbacks — no router coupling — so it can be mounted in a second pane with
+  no refactor. `SearchScreen` needs ONE optional prop (`openJudgment`) so a
+  result opens beside the list instead of pushing a route; without the prop it
+  behaves exactly as today.
+- **No backend work, no new endpoint, no contract change.** It is the same
+  `POST /search` and `GET /judgments/:id` the phone already calls.
+
+So the real cost is roughly a day of client work inside `apps/mobile`, entirely
+reversible, and it degrades to today's phone behaviour below the width
+breakpoint. That is a very different proposition from "build a web app".
+
+**What I would build, and nothing more.** The smallest coherent workstation:
+search and results in a left column, the reader in a right column, the list not
+lost when a judgment opens — which is the single thing a phone cannot do and the
+whole reason desktop matters for research. No dashboard, no admin surface, no
+second design system.
+
+**Answer one of these:**
+
+1. **Yes — amend the brief.** `CLAUDE.md` §1 and `PRODUCT_BRIEF.md` change to
+   "web is admin **and desktop research**". I build the two-pane layout in
+   `apps/mobile` behind a width breakpoint. *(My recommendation, given the cost
+   is a day and the brief line predates the request.)*
+2. **No — the brief stands.** Web stays admin only, TASK 5 comes off the ladder,
+   and I stop scoping it. Say so and I will not raise it again.
+3. **Later** — after Gate S2. I record it in `CURRENT_PLAN.md` as queued and take
+   the next research-quality task instead.
+
+**What stays broken without an answer:** nothing. No feature depends on this and
+no other task is blocked by it. It is the only item on the RCC ladder I have not
+either finished or been able to start, and it is not blocked on code.
+
+---
 
 ### [OPEN] FQ-D1 — real filings to evaluate the pseudonymiser · gates core feature #3 · LCC
 
@@ -1163,7 +1260,24 @@ simulated failure had actually occurred. E1.2 gets the same guard.
 
 ---
 
-### [OPEN] Supreme Today prices at ₹5,000/yr for our exact user — and we have no answer there · LCC · 8 Aug 2026
+### [SETTLED — FOUNDER AUTHORIZATION] Supreme AI data authorization · 11 Aug 2026
+
+**Current state:** `Supreme AI` is a separately named authorized source under the
+founder's confirmed LawMind data authorization, valid through **13 November 2029**.
+
+This is **not** the same source as `Supreme Today`. The historical Supreme Today
+entries below must not be used to override or reopen the Supreme AI authorization.
+
+For the LawMind data program, Supreme AI may be used for the authorized activities
+covered by the founder's agreement, including citation/query evaluation and other
+permitted data processing, training, distillation, and retrieval-data construction.
+
+Competitor-derived outputs remain provenance-labelled and do not replace primary
+legal evidence. Final citation truth still comes from verified primary sources.
+
+---
+
+### [HISTORICAL — DISTINCT FROM SUPREME AI] Supreme Today prices at ₹5,000/yr for our exact user · LCC · 8 Aug 2026
 
 **Needs:** a decision on whether PD-13's tiers get a jurisdiction-scoped entry
 price, or whether we deliberately decline that segment.
@@ -1498,7 +1612,7 @@ decisions, not marketing — **cite the benchmark, never the competitor.**
 
 ---
 
-### [PENDING — awaiting their quote] A LICENSED arrangement with Supreme Today · founder in talks · 8 Aug 2026
+### [HISTORICAL — DISTINCT FROM SUPREME AI] A LICENSED arrangement with Supreme Today · founder in talks · 8 Aug 2026
 
 **Status:** the founder asked Supreme Today directly whether we may route through
 them. **They are quoting a monthly rupee figure within a day.** If it lands inside
@@ -1602,7 +1716,7 @@ and discover at renewal that we cannot leave.
 
 ---
 
-### [DECISION NEEDED] Supreme Today: licence granted at ₹50,000/month · 8 Aug 2026
+### [HISTORICAL — DISTINCT FROM SUPREME AI] Supreme Today: licence discussion · 8 Aug 2026
 
 > **UPDATED after the founder answered four questions, same day. All four are the
 > favourable ones and they change the shape of the decision:**
@@ -1815,7 +1929,7 @@ and not one more.**
 
 ---
 
-### [ANSWERED — recommendation, £1,499 decision] Bharat.Law's scraping offer · 8 Aug 2026
+### [SUPERSEDED — FOUNDER AUTHORIZATION SETTLED 11 Aug 2026] Bharat.Law's scraping offer · 8 Aug 2026
 
 **Founder reports Bharat.Law will allow scraping after a subscription is bought,
 and asks whether it is worth it.**
@@ -2499,3 +2613,24 @@ stopped rather than guess twice.
 Railway (I have CLI access and open/close the DB proxy myself) · a GPU for
 embedding (DirectML on the 4060 Ti, vectors proven identical) · money for the
 re-embed · an Indian Kanoon API key.
+
+
+---
+
+## CURRENT AUTHORIZATION RECONCILIATION — DO NOT REOPEN
+
+As of **11 Aug 2026**, the founder has explicitly settled the authorization status:
+
+| Source | Current status | Authorization through |
+| --- | --- | --- |
+| BharatLaw | AUTHORIZED | 13 Nov 2029 |
+| Supreme AI | AUTHORIZED | 13 Nov 2029 |
+| eCourts India | AUTHORIZED | 13 Nov 2029 |
+
+Earlier queue entries that contradict this table are retained only as historical
+provenance. They are not current blockers, open decisions, or exclusion rules.
+
+`Supreme AI` must not be conflated with `Supreme Today`.
+
+Do not create another licensing task for these three sources unless the founder
+explicitly changes this decision.

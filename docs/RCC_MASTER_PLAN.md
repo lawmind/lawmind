@@ -343,6 +343,43 @@ the `FOUNDER_QUEUE.md` decision.
 
 ## Progress marker — update this line every session
 
+### 11 Aug 2026 — the TASK 1–10 research ladder
+
+**Done: 1 (result-card actions), 2 (contract drift sweep), 3 (search workflow),
+4 (judgment reader audit).** Commits `b8b9558`, `e5763f8`, `434831b`, `0113bf7`.
+
+**Task 2 is finished and it was run mechanically, not by eye.** A script walks
+every `ok(c, {…})` the API returns, collects the object-literal keys and diffs
+them against `apps/mobile/src/api/contract.ts`. 172 response keys across the
+non-admin routes; 21 absent from the client, of which four were real:
+
+| finding | shape of the defect |
+| --- | --- |
+| `POST /verify/ecourts` `prefilledQuery` fetched and discarded, `instructions` + `captchaRequired` undeclared | the Tier 3 path handed the advocate an empty eCourts search box |
+| `POST /court/lookup` declared THREE different ways (contract, client, mock), with `manualEntry.expected` typed `string` against a boolean | one endpoint, no two descriptions alike |
+| `Treatment.paragraph` | **invented field** — no column, no route sends it, and `TreatmentCard` rendered it |
+| `AuthoritiesResponse.counts.overruledHere` optional against an unconditional field | two fixtures described a payload production never produces |
+
+The rest are correctly absent: admin-only routes (a different client), saved
+searches (gated on the founder, OD-12), `/documents/types` (uncalled), and
+`/build-info`.
+
+**Task 5 (desktop research workspace) is NOT started, and not for want of
+trying.** It contradicts `CLAUDE.md` §1 and `PRODUCT_BRIEF.md`, both of which say
+**web is admin only**, and no `PRODUCT_DECISIONS.md` or `OPEN_DECISIONS.md` entry
+covers it. Raised as **FQ-D9** in `docs/FOUNDER_QUEUE.md` with the scoping done:
+Expo web is ALREADY configured and building, `JudgmentScreen` is already
+prop-driven, and the whole thing is about a day inside `apps/mobile` with no
+backend work — which is a tenth of what a third app would have cost, and is the
+fact most likely to change the answer. Three options and a recommendation are in
+the entry. Nothing else is blocked by it.
+
+**Outstanding backend dependency:** bus 0046 — `POST /search` `filters` to accept
+`courts`/`bench`/`subjects`, plus the category→court-name mapping. Not guessed:
+a wrong court string silently returns zero results.
+
+---
+
 **Last updated 9 Aug 2026. All six workstreams done, and the one
 device-verification gap from 8 Aug is now closed.** PREP `4dc93a7`; A
 `cbb6719`; B `4cd5c60`; C `a907e86`; D `18b98fd`; E `939cec0`; F `e4dc3ed`.
