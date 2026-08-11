@@ -100,6 +100,7 @@ export function ReadingView({
   const textSize = useReadingStore((s) => s.textSize);
   const setProgress = useReadingStore((s) => s.setProgress);
   const addHighlight = useReadingStore((s) => s.addHighlight);
+  const syncAnnotations = useReadingStore((s) => s.syncAnnotations);
   const progress = useReadingStore((s) => s.progress[judgment.judgmentId]);
   const highlights = useHighlightsFor(judgment.judgmentId);
   /**
@@ -405,6 +406,23 @@ export function ReadingView({
    * It waits for `hydrated` because the read is asynchronous; on a cold start
    * the store is empty at first render.
    */
+  /**
+   * PULL THIS JUDGMENT'S HIGHLIGHTS BACK, ONCE PER JUDGMENT.
+   *
+   * Highlights were device-local in practice until 11 Aug 2026: the write
+   * synced and `GET /judgments/:id/annotations` was called by nothing, so an
+   * advocate who reinstalled or changed phone opened a judgment they had
+   * marked and saw none of it, while the server held every passage.
+   *
+   * The store MERGES rather than replaces — a highlight saved in a corridor
+   * with no signal has no server id yet and must not be deleted by a read.
+   * A failed fetch changes nothing at all: offline is the design case here,
+   * and an empty screen is a worse answer than a stale one.
+   */
+  useEffect(() => {
+    void syncAnnotations(judgment.judgmentId);
+  }, [judgment.judgmentId, syncAnnotations]);
+
   const hydrated = useReadingStore((s) => s.hydrated);
   const restored = useRef(false);
 
