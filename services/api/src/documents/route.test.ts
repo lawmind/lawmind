@@ -218,4 +218,55 @@ describe('PD-7 — the document is the lock', () => {
     });
     assert.equal(mine.status, 404);
   });
+
+  /* ------------------------------------------- the Drafts tab — RCC bus 0050 -- */
+
+  it('LISTS the advocate’s drafts at all — the query named a column that does not exist', async () => {
+    // `listDocuments` selected `m.title AS matter_title` and `matters` has never
+    // had a `title` column, only `case_title`. Postgres rejects that at PLAN
+    // time, so this route answered 500 unconditionally — every call, every user,
+    // whether or not any document had a matter. The Drafts tab shipped as R4 and
+    // has listed nothing for anybody since; the client fails soft on a non-ok
+    // response, so there was no crash to notice.
+    //
+    // No test exercised `listDocuments` at all, which is the whole reason a
+    // one-word typo reached production and stayed. This one calls it.
+    const res = await app.request('/documents', { headers: auth() });
+    assert.equal(res.status, 200, 'the Drafts tab must not 500');
+
+    const { data } = (await res.json()) as {
+      data: { documents: { documentId: string; matterTitle: string | null }[] };
+    };
+    assert.ok(
+      data.documents.some((d) => d.documentId === documentId),
+      'the advocate’s own draft must be in the list',
+    );
+  });
+
+  it('carries the matter’s case title on a draft attached to one', async () => {
+    // The column the broken line was reaching for. Asserted through the route so
+    // a future rename cannot silently return null here and pass.
+    const [m] = await sql<{ id: string }[]>`
+      INSERT INTO matters (user_id, case_title, court, case_type, parties, client_name,
+                           our_side, status, source)
+      VALUES (${userId}, 'SYNTHETIC — Drafts Tab Matter', 'Delhi High Court', 'criminal',
+              '{}'::jsonb, 'Client', 'accused', 'active', 'manual') RETURNING id`;
+    const [d] = await sql<{ id: string }[]>`
+      INSERT INTO documents (user_id, document_type, input_params, generated_content,
+                             language, matter_id)
+      VALUES (${userId}, 'bail', '{}'::jsonb, 'x', 'en', ${m!.id}) RETURNING id`;
+
+    try {
+      const res = await app.request('/documents', { headers: auth() });
+      assert.equal(res.status, 200);
+      const { data } = (await res.json()) as {
+        data: { documents: { documentId: string; matterTitle: string | null }[] };
+      };
+      const row = data.documents.find((x) => x.documentId === d!.id);
+      assert.equal(row?.matterTitle, 'SYNTHETIC — Drafts Tab Matter');
+    } finally {
+      await sql`DELETE FROM documents WHERE id = ${d!.id}`;
+      await sql`DELETE FROM matters WHERE id = ${m!.id}`;
+    }
+  });
 });

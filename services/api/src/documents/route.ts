@@ -366,6 +366,20 @@ export async function listDocuments(
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'sign in to continue', 401);
 
+  /**
+   * `m.case_title`, and it read `m.title` until RCC bus 0050.
+   *
+   * `matters` has never had a `title` column. Postgres rejects an unknown
+   * column at PLAN time, so this route answered 500 **unconditionally** — every
+   * call, every user, whether or not any document had a matter at all. The
+   * Drafts tab shipped as R4 and has listed nothing for anybody since; the
+   * client fails soft on a non-ok response, so there was no crash to notice.
+   *
+   * Every other query in this service reads the column correctly
+   * (`matters/route.ts` BRIEFING_COLUMNS: `m.case_title, m.court`). This one
+   * line did not, and **no test called `listDocuments` at all** — which is why
+   * a one-word typo reached production and stayed there. There is one now.
+   */
   const rows = await sql<
     {
       id: string;
@@ -379,7 +393,7 @@ export async function listDocuments(
     }[]
   >`
     SELECT d.id, d.document_type, d.matter_id,
-           m.title AS matter_title,
+           m.case_title AS matter_title,
            d.language,
            ${sql.unsafe(isoColumn('d.created_at'))} AS created_at,
            count(cc.id)::int AS citation_count,
@@ -390,7 +404,7 @@ export async function listDocuments(
     LEFT JOIN matters m ON m.id = d.matter_id
     LEFT JOIN citation_checks cc ON cc.document_id = d.id
     WHERE d.user_id = ${userId}
-    GROUP BY d.id, m.title
+    GROUP BY d.id, m.case_title
     ORDER BY d.created_at DESC`;
 
   return ok(c, {

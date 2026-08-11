@@ -271,7 +271,9 @@ merely displayed.
 ## Search — LCC owns
 ```
 POST /search
-  { query, language: 'en'|'hi', filters?: { court?, dateFrom?, dateTo?, caseType? }, matterId? }
+  { query, language: 'en'|'hi', matterId?,
+    filters?: { court?, dateFrom?, dateTo?, caseType?,
+                courts?: ('sc'|'hc'|'district'|'tribunal')[] } }   // added 11 Aug 2026, RCC bus 0046
   → { results: [ { judgmentId, caseTitle, neutralCitation, reporterCitations,
                    court, judgmentDate, holding,
                    operativeParagraph, operativeParagraphNumber,
@@ -280,10 +282,54 @@ POST /search
                    overruledStatus: 'none'|'set_aside'|'partly_set_aside'|'doubted',
                    overruledByJudgmentId?, overruledParas?, overruledNote? } ],
       unverifiedReferences: [ { citationClaimed, reason } ],
+      unpopulatedCourtCategories: ('sc'|'hc'|'district'|'tribunal')[],  // added 11 Aug 2026
       searchId,
       parsed?, total?, ambiguous?: true }
 ```
 Every field from the `judgments` row. Never from model output.
+
+**`filters.courts` — added 11 Aug 2026, RCC bus 0046.** Category CODES, never
+court names. `filters.court` (singular) was an exact match on a printed name
+while the client's chips are categories, so the court filter narrowed nothing
+against the real API — and `api/mock.ts` narrowed against fixtures, so
+development filtered and production did not.
+
+**The expansion is server-side because the column is.** RCC named the three
+ways to close it and refused the third — a client-side name mapping — on the
+grounds that a wrong string returns zero results silently, and a search that
+reports "nothing matched" when it never asked is the same failure as a filter
+that does nothing wearing a better face. That reasoning is accepted verbatim.
+`services/api/src/search/court-category.ts` classifies from the printed name
+rather than from a maintained list of the 19 values in the corpus today: a
+hardcoded list is correct until the twentieth court lands, and the twentieth
+court would then be invisible to every filtered search — the same silent zero,
+moved from the client to the server. `unclassifiedCourts()` is asserted empty
+against production by test.
+
+`filters.court` (singular, a name) is unchanged and still accepted. `courts: []`
+matches nothing rather than everything: the advocate asked for a category, and
+answering with the unfiltered corpus would ignore a filter they can see.
+
+**`unpopulatedCourtCategories`** is which categories the corpus holds **no**
+judgment for — `district` and `tribunal` today. Additive and provisional per
+`CLAUDE.md` §6b; a client ignoring it behaves exactly as before. It exists
+because an empty result from an unpopulated category is indistinguishable on
+screen from "your query matched nothing", which tells an advocate we have no
+case on their point when we were never asked — `CITATION_HARNESS.md`'s
+silent-drop reasoning applied to a filter. Computed per request, so the day a
+district ingest lands the category stops being listed with no deploy.
+
+**`bench` and `subjects` are NOT accepted, and will not be until there is data.**
+Bus 0046 asked for both. Measured against production 11 Aug 2026:
+- **`bench`** — bench strength is not derivable. `judgments.bench` held an S3
+  partition key on 40,980 rows (migration `0040`, now moved to
+  `source_bench_code`), so on half the corpus the column was never about judges
+  at all; on the other half it is a free-text list of names with no count. A
+  `constitution`/`three_plus` filter would need a judge-count column that does
+  not exist. `judgment_judges` covers Supreme Court rows only.
+- **`subjects`** — **there is no subject, topic, category or tag column
+  anywhere in the schema.** Not a filter that does nothing; an unbuilt feature.
+  Accepting the parameter would be worse than refusing it.
 `unverifiedReferences` is never empty-by-omission — anything the model referenced
 that no tier confirmed appears here. See `CITATION_HARNESS.md`.
 
