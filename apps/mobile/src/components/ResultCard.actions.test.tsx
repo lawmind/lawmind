@@ -4,6 +4,7 @@ import * as Clipboard from 'expo-clipboard';
 import { ResultCard } from './ResultCard';
 import { NO_CITATION_MARK } from '../citation/citationDisplay';
 import type { SearchResult } from '../api/contract';
+import { useOutbox } from '../state/outbox';
 
 /**
  * ACTIONS ON A SEARCH RESULT, AND THE SAFETY STATE THEY MUST RESPECT.
@@ -51,7 +52,10 @@ const uncitable: SearchResult = {
   court: 'Patna High Court · 2019',
 };
 
-beforeEach(() => setString.mockClear());
+beforeEach(() => {
+  setString.mockClear();
+  useOutbox.setState({ pending: [] });
+});
 
 describe('copy — a verified citation', () => {
   it('copies the case name and the citation, from the shared helper', async () => {
@@ -206,5 +210,109 @@ describe('the actions did not displace the evidence', () => {
     for (const mark of ['Do not file this without checking it', 'Overruled', 'Verified']) {
       expect(screen.queryByText(mark)).toBeNull();
     }
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE RECORD BEHIND THE COPY, which matters more than the paste.
+ *
+ * `SCHEMA_TRUTH.md#citation_copies`: an advocate who copies a citation into
+ * their own document "has taken it out of the app entirely — they saw the
+ * badge, they may file it, and without this record NO NOTIFICATION CAN EVER
+ * REACH THEM." If that judgment is set aside next March, this row is the only
+ * reason we can tell them.
+ *
+ * `surface` is the server's enum, not a free string: `copyRequest` validates
+ * `['search','judgment_detail','briefing','draft','matter']` and rejects
+ * anything else with a 400. The outbox never drops an entry, so a rejected copy
+ * retries eight times and then sits queued forever — counted, and undeliverable.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('the copy record that reaches the fan-out', () => {
+  it('queues the copy against this judgment, from this surface', async () => {
+    await render(<ResultCard result={cited} />);
+    await fireEvent.press(screen.getByLabelText('Copy citation'));
+
+    const queued = useOutbox.getState().pending;
+    expect(queued).toHaveLength(1);
+    expect(queued[0]?.judgmentId).toBe('jdg_sc');
+    expect(queued[0]?.surface).toBe('search');
+  });
+
+  /**
+   * The handle identifies the check behind THIS row on THIS search. Carried
+   * when present, absent when the server could not guarantee row alignment —
+   * never invented, because a guessed id points at another judgment's record.
+   */
+  it('carries the verification handle when the row has one', async () => {
+    await render(<ResultCard result={cited} />);
+    await fireEvent.press(screen.getByLabelText('Copy citation'));
+
+    expect(useOutbox.getState().pending[0]?.citationCheckId).toBe('chk_1');
+  });
+
+  it('omits the handle rather than inventing one when the row has none', async () => {
+    await render(<ResultCard result={{ ...cited, citationCheckId: null }} />);
+    await fireEvent.press(screen.getByLabelText('Copy citation'));
+
+    expect(useOutbox.getState().pending[0]?.citationCheckId).toBeUndefined();
+  });
+
+  /** Refusing the copy would destroy the only record that could warn them. */
+  it('still queues a record for a judgment carrying no citation at all', async () => {
+    await render(<ResultCard result={uncitable} />);
+    await fireEvent.press(screen.getByLabelText('Copy case name'));
+
+    expect(useOutbox.getState().pending).toHaveLength(1);
+    expect(useOutbox.getState().pending[0]?.judgmentId).toBe('jdg_hc');
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * OPENING THE OPERATIVE PARAGRAPH.
+ *
+ * The card hands out the PRINTED number, which is what `?para=` means and what
+ * an advocate cites. The reader converts it to an index at its own boundary —
+ * the two must never be confused, and a card that passed an array position
+ * would send the advocate to a different paragraph than the one they tapped.
+ *
+ * A row the server did not locate has no anchor to offer, and the evidence
+ * block is not drawn at all rather than linking to a guessed position.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('opening the paragraph the evidence came from', () => {
+  it('hands out the number the court printed, not the row position', async () => {
+    const onOpenParagraph = jest.fn();
+    await render(<ResultCard onOpenParagraph={onOpenParagraph} result={cited} />);
+
+    await fireEvent.press(screen.getByLabelText('Read paragraph 12 in full'));
+
+    expect(onOpenParagraph).toHaveBeenCalledWith(12);
+  });
+
+  it('offers no anchor when the server located no paragraph', async () => {
+    const onOpenParagraph = jest.fn();
+    await render(
+      <ResultCard
+        onOpenParagraph={onOpenParagraph}
+        result={{ ...cited, operativeParagraphNumber: null }}
+      />
+    );
+
+    expect(screen.queryByLabelText(/Read paragraph/)).toBeNull();
+    expect(onOpenParagraph).not.toHaveBeenCalled();
+  });
+
+  /**
+   * An unlocated passage must not quietly become a link to some other
+   * paragraph — the whole row is withheld, evidence included, rather than
+   * shown under an anchor it does not have.
+   */
+  it('never falls back to another paragraph number', async () => {
+    await render(<ResultCard result={{ ...cited, operativeParagraphNumber: null }} />);
+
+    expect(screen.queryByText(/Operative paragraph ·/)).toBeNull();
   });
 });

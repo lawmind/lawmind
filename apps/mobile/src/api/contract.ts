@@ -992,11 +992,34 @@ export type CitationCheck = {
  * dropped connection, must not become two copy records and inflate the count
  * the fan-out is measured against.
  */
+/**
+ * WHERE A CITATION WAS COPIED FROM — the server's enum, not a free string.
+ *
+ * `copyRequest` in `services/api/src/citations/copies.ts` validates
+ * `z.enum(['search', 'judgment_detail', 'briefing', 'draft', 'matter'])`, so a
+ * value outside it is a `400`. This was typed `string`, which is the mirror
+ * image of the defect this contract has been full of: too NARROW on what we
+ * receive loses information; too WIDE on what we SEND turns a typo into a
+ * runtime rejection the compiler could have caught.
+ *
+ * It matters more here than almost anywhere. The outbox never drops an entry,
+ * so a copy the server keeps refusing is not lost quietly — it retries eight
+ * times and then sits in the queue forever, counted. And a queued copy is,
+ * in `SCHEMA_TRUTH.md`'s words, "an advocate the fan-out cannot see": if that
+ * judgment is set aside next March, this row was the only reason we could have
+ * told them.
+ *
+ * NARROW WHAT WE SEND, WIDE WHAT WE RECEIVE. `CitationCheck.surface` stays
+ * `string` deliberately — that is a value read back out of the column, and a
+ * client that refused an unfamiliar one would break the day a surface is added.
+ */
+export type CitationCopySurface = 'search' | 'judgment_detail' | 'briefing' | 'draft' | 'matter';
+
 export type CitationCopy = {
   judgmentId: string;
   matterId?: string;
   citationCheckId?: string;
-  surface: string;
+  surface: CitationCopySurface;
   copiedAt: string;
   clientKey: string;
 };

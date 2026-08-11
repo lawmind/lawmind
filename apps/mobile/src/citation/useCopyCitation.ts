@@ -2,6 +2,7 @@ import { useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 
 import { citationCopyText, type CitationDisplay } from './citationDisplay';
+import type { CitationCopySurface } from '../api/contract';
 import { newClientKey, useOutbox } from '../state/outbox';
 import { haptics } from '../theme/haptics';
 
@@ -38,8 +39,13 @@ export function useCopyCitation(): {
     caseTitle: string;
     citation: CitationDisplay;
     judgmentId: string;
-    /** `SCHEMA_TRUTH.md#citation_copies` enum — `search`, `judgment_detail`, … */
-    surface: string;
+    /**
+     * THE SERVER'S ENUM, not a free string — `copyRequest` validates it and a
+     * value outside it is a 400. The outbox never drops an entry, so a rejected
+     * copy retries eight times and then sits queued forever: an advocate the
+     * fan-out cannot see if that judgment is later set aside.
+     */
+    surface: CitationCopySurface;
     citationCheckId?: string | undefined;
     matterId?: string | undefined;
   }) => void;

@@ -18,6 +18,9 @@ import { DEFAULT_FILTERS } from '../../api/mock';
 import { attentionCount } from '../../citation/renderState';
 import { useLanguage, useLanguageStore } from '../../state/language';
 import { color, radius, space } from '../../theme/tokens';
+import { MatterPicker } from '../judgment/MatterPicker';
+import { Toast } from '../../components/Toast';
+import { haptics } from '../../theme/haptics';
 import { FiltersSheet } from './FiltersSheet';
 
 /**
@@ -94,6 +97,11 @@ export function SearchScreen() {
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
+  /** The row awaiting a matter choice. `null` closes the picker. */
+  const [saveFor, setSaveFor] = useState<SearchResult | null>(null);
+  /** The judgment just saved, so the toast can confirm it and then clear. */
+  const [saved, setSaved] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   /**
    * STRUCTURED SEARCH — present only when `query` parsed as a field/Boolean/
    * citation query. `parsed` must be shown whenever it is set, not only on
@@ -431,6 +439,25 @@ export function SearchScreen() {
                     },
                   })
                 }
+                /**
+                 * SAVING AN AUTHORITY WITHOUT LEAVING THE RESULTS.
+                 *
+                 * `ResultCard` has drawn this action since 11 Aug 2026 and
+                 * search never passed the prop, so it rendered on no surface at
+                 * all — the action existed and was unreachable. An advocate had
+                 * to open the judgment to keep it, which is three taps and a
+                 * lost place in the list for the thing a search is FOR.
+                 *
+                 * A picker, because a judgment found by search belongs to no
+                 * matter yet — the opposite of the briefing, which belongs to
+                 * exactly one and needs no question asked.
+                 *
+                 * The card refuses `set_aside` itself, from
+                 * `moved.blocksAddToMatter`, and the server refuses it again
+                 * with a `409` naming the replacement. Both ends, because a
+                 * stale build or a replayed request bypasses the client one.
+                 */
+                onAddToMatter={() => setSaveFor(item)}
                 onPress={() =>
                   router.push({
                     pathname: '/judgment/[id]',
@@ -459,6 +486,56 @@ export function SearchScreen() {
         resultCount={countFor}
         visible={filtersOpen}
       />
+
+      {/*
+        THE SAME PICKER THE READER AND THE JUDGMENT SCREEN USE. A judgment found
+        by search belongs to no matter yet, so the question has to be asked —
+        unlike the briefing, which belongs to exactly one and asks nothing.
+      */}
+      <MatterPicker
+        onDismiss={() => setSaveFor(null)}
+        onPick={(matterId) => {
+          const target = saveFor;
+          setSaveFor(null);
+          if (!target) return;
+          setSaveError(null);
+          void api
+            .addAuthorityToMatter({
+              matterId,
+              judgmentId: target.judgmentId,
+              ...(target.citationCheckId ? { citationCheckId: target.citationCheckId } : {}),
+            })
+            .then((r) => {
+              if (r.ok) {
+                setSaved(target.judgmentId);
+                haptics.commit();
+              } else {
+                /*
+                  The server's message VERBATIM. On `set_aside` it names the
+                  replacement judgment, which is the actionable half of the
+                  refusal — rewording it would drop exactly that.
+                */
+                setSaveError(r.error.message);
+              }
+            });
+        }}
+        visible={saveFor !== null}
+      />
+
+      {/*
+        Confirmation and refusal both land here rather than on the row: the list
+        re-renders as results change, and a message pinned to a card the
+        advocate has scrolled past is a message they never see.
+      */}
+      {saved || saveError ? (
+        <Toast
+          message={saveError ?? 'Saved to the matter'}
+          onDone={() => {
+            setSaved(null);
+            setSaveError(null);
+          }}
+        />
+      ) : null}
     </Screen>
   );
 }

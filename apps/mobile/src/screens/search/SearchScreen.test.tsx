@@ -19,10 +19,27 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('../../api/client', () => ({
-  api: { search: jest.fn() },
+  api: { search: jest.fn(), addAuthorityToMatter: jest.fn() },
+}));
+
+jest.mock('../../state/practice', () => ({
+  usePractice: (selector: (s: unknown) => unknown) =>
+    selector({
+      matters: [
+        {
+          matterId: 'mat_1',
+          caseTitle: 'Mock Client v. Mock Opponent',
+          court: 'Mock High Court',
+          nextHearingDate: null,
+        },
+      ],
+    }),
 }));
 
 const search = api.search as jest.MockedFunction<typeof api.search>;
+const addAuthority = api.addAuthorityToMatter as jest.MockedFunction<
+  typeof api.addAuthorityToMatter
+>;
 const PLACEHOLDER = 'Ask in plain language, or paste a citation';
 
 function response(over: Partial<SearchResponse> = {}): SearchResponse {
@@ -237,5 +254,93 @@ describe('why a search came back empty', () => {
     const chip = await screen.findByText('Supreme Court');
     expect(screen.getByText('Court and bench do not narrow a search yet. Everything below does.')).toBeTruthy();
     expect(chip).toBeTruthy();
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * SAVING AN AUTHORITY WITHOUT LEAVING THE RESULTS.
+ *
+ * `ResultCard` has drawn "Add to a matter" since 11 Aug 2026 and search never
+ * passed the prop, so the action rendered on no surface at all — built and
+ * unreachable. An advocate had to open the judgment to keep an authority, which
+ * is three taps and a lost place in the list for the thing a search is FOR.
+ *
+ * A picker is asked here and not on the briefing, because a judgment found by
+ * search belongs to no matter yet while a briefing belongs to exactly one.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('saving a result to a matter', () => {
+  const withResult = () =>
+    search.mockResolvedValue({
+      ok: true,
+      data: response({ results: [MOCK_RESULTS[0]!] }),
+    });
+
+  beforeEach(() => {
+    search.mockReset();
+    mockPush.mockReset();
+    addAuthority.mockReset();
+    addAuthority.mockResolvedValue({
+      ok: true,
+      data: {
+        authority: {
+          authorityId: 'auth_1',
+          judgmentId: MOCK_RESULTS[0]!.judgmentId,
+          caseTitle: MOCK_RESULTS[0]!.caseTitle,
+          neutralCitation: MOCK_RESULTS[0]!.neutralCitation,
+          addedBy: 'usr_1',
+          addedAt: '2026-08-11T00:00:00.000Z',
+          removedAt: null,
+        },
+      },
+    });
+  });
+
+  it('offers the action on a result, and asks which matter', async () => {
+    withResult();
+    await render(<SearchScreen />);
+    await runSearch('anything');
+
+    await fireEvent.press(await screen.findByLabelText('Add to a matter'));
+
+    expect(await screen.findByText('Save to which matter?')).toBeTruthy();
+  });
+
+  it('saves the chosen judgment into the chosen matter', async () => {
+    withResult();
+    await render(<SearchScreen />);
+    await runSearch('anything');
+
+    await fireEvent.press(await screen.findByLabelText('Add to a matter'));
+    await fireEvent.press(await screen.findByText('Mock Client v. Mock Opponent'));
+
+    expect(addAuthority).toHaveBeenCalledWith(
+      expect.objectContaining({ matterId: 'mat_1', judgmentId: MOCK_RESULTS[0]!.judgmentId })
+    );
+  });
+
+  /**
+   * The server's message verbatim — on `set_aside` the 409 names the
+   * replacement judgment, which is the actionable half of the refusal.
+   */
+  it('shows the server’s refusal rather than a message of our own', async () => {
+    withResult();
+    addAuthority.mockResolvedValue({
+      ok: false,
+      error: {
+        code: 'AUTHORITY_SET_ASIDE',
+        message: 'That authority has been set aside. Cite Mock Later Bench instead.',
+      },
+    });
+
+    await render(<SearchScreen />);
+    await runSearch('anything');
+    await fireEvent.press(await screen.findByLabelText('Add to a matter'));
+    await fireEvent.press(await screen.findByText('Mock Client v. Mock Opponent'));
+
+    expect(
+      await screen.findByText('That authority has been set aside. Cite Mock Later Bench instead.')
+    ).toBeTruthy();
   });
 });
