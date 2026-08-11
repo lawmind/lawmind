@@ -347,9 +347,9 @@ the `FOUNDER_QUEUE.md` decision.
 
 **Done: 1 (result-card actions), 2 (contract drift sweep), 3 (search workflow),
 4 (judgment reader audit), 5 (desktop research workspace), 6 (matter
-authorities audit), 7 (briefing sweep).** Commits `b8b9558`, `e5763f8`,
-`434831b`, `0113bf7`, `0fb34ea`, `d6b8455`, and the briefing-sweep commit
-below.
+authorities audit), 7 (briefing sweep), 8 (drafting — investigated, blocked on
+Q1.9 exactly as flagged, one severe server bug found).** Commits `b8b9558`,
+`e5763f8`, `434831b`, `0113bf7`, `0fb34ea`, `d6b8455`, `67bfde1`.
 
 **Task 2 is finished and it was run mechanically, not by eye.** A script walks
 every `ok(c, {…})` the API returns, collects the object-literal keys and diffs
@@ -431,6 +431,29 @@ never in the row. Two-line fix in each file, offered to ride along with bus
 Verified: `tsc` 0 · 50 suites / 546 tests · guards
 `design-rules:0 contract-status:0 design-renders:0 schema-truth:0
 amber-reservation:0 alert-coverage:1` (pre-existing, LCC's).
+
+**TASK 8 (drafting) — investigated, nothing to build client-side, one severe
+server bug found and reported.** Checked the standing instruction first (bus
+0007, `CURRENT_PLAN.md` Q1.9): `POST /documents` still does not exist, the
+pseudonymiser/Presidio/DPA chain is still unbuilt, so RCC is still correctly
+not adding to draft creation or editing. `DraftDocument`/`DraftListItem`
+(against `readDocument`/`listDocuments`) were already verified 11 Aug 2026 and
+still match exactly. `PATCH /documents/:id` and
+`POST /documents/:id/citations` have zero client callers — deliberate,
+`DraftDetailScreen.tsx`'s own header says why: editing is a UX decision
+nobody has specified, not a gap.
+
+**Found instead, sent as bus 0050, marked urgent — `GET /documents` 500s on
+every call, in production, right now.** `documents/route.ts` `listDocuments`
+selects `m.title AS matter_title` from a LEFT JOIN on `matters`; the column is
+`case_title` (`packages/db/src/schema.ts:542`), never `title`, anywhere in the
+schema. Postgres rejects the query at plan time regardless of whether any row
+matched the join, so every call to the Drafts tab's list endpoint fails.
+`DraftsListScreen` is mounted at `app/(tabs)/drafts.tsx` (shipped as R4,
+`b8b9558`) and fails soft — `loadError` renders, no crash — so the tab has
+been silently empty for everyone since it shipped. No test exercises
+`listDocuments`; `documents/route.test.ts` covers only `PATCH`/citations.
+One-line fix, not RCC's file to touch.
 
 ---
 
