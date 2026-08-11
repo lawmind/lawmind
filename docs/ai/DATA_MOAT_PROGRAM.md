@@ -501,6 +501,32 @@ alongside this document.
     `case_number`). MinHash/LSH cost quantified and deferred with a named
     trigger, not built speculatively. No `judgments` row was merged, deleted,
     or altered.
+12. **Data quality buckets — LANDED, 11 Aug 2026, Stage 4.**
+    `docs/ai/CORPUS_QUALITY.md`. A/B/C/D classification built entirely from
+    columns already ≥99% populated, plus Stage 3's duplicate-membership fact
+    — `native_text`/`source_document_type` deliberately not gating fields
+    since both are populated on a minority of the corpus and would push
+    nearly everything into a lower tier for a reason unrelated to actual
+    text quality. Measured against production, full census (79,322 rows, not
+    a sample): **A 48.3% · B 51.2% · C 0.5% · D 0.0%**. **The real finding is
+    the court-class split, not the total**: Supreme Court is 99.9% bucket A;
+    High Court is **0.0% bucket A** — verified directly (not inferred from a
+    reasons count) that **0 of 40,980** High Court judgments carry even a
+    sentinel `judgment_citations` row, i.e. the citation extractor has never
+    run against the ingested High Court corpus at all, consistent with the
+    ingest having paused before citation extraction reached it
+    (`docs/CURRENT_PLAN.md` Q1.4). High Court `text_quality` itself is fine
+    (99.1% at or above the 0.90 floor) — this is a pipeline-coverage gap, not
+    a text-damage problem. **A real reporting defect was found and fixed
+    while building this**: the first report run showed `"cnr present"` on
+    78,934 rows as a reason for a *non-A* bucket, which is backwards — traced
+    to `quality-buckets.ts` pushing a satisfied condition into the same
+    array as degrading ones. The bucket counts were never wrong (only a
+    missing cnr degrades); the report re-ran unchanged after the fix, and two
+    tests now pin it. Separately, `services/api/src/judgments/paragraph-
+    quality-sample.ts` SAMPLED (n=500, `TABLESAMPLE SYSTEM`, not corpus-wide)
+    paragraph-number detection: average `numberedShare` 0.747, 10.4% of
+    sampled rows carry no printed paragraph number at all.
 
 ---
 

@@ -900,6 +900,23 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     ordering. MinHash/LSH cost is quantified (§3 of the doc) and deferred
     with a named trigger, not built without calibration data.
 
+15. **`docs/ai/CORPUS_QUALITY.md` — Stage 4 of the DATA → RETRIEVAL EXECUTION
+    PROGRAM, LANDED same day.** A/B/C/D quality buckets, full census against
+    production (79,322 rows): **A 48.3% · B 51.2% · C 0.5% · D 0.0%.** The
+    court-class split is the real finding: Supreme Court 99.9% bucket A,
+    **High Court 0.0% bucket A** — verified directly that 0 of 40,980 High
+    Court rows carry even a sentinel citation row, i.e. citation extraction
+    has never run against the ingested High Court corpus (consistent with
+    the paused ingest, Q1.4 above). High Court `text_quality` itself is fine
+    (99.1% ≥ 0.90) — a pipeline-coverage gap, not a text-damage one. Found
+    and fixed a real reporting defect in the same pass: `quality-buckets.ts`
+    was logging a satisfied condition (`"cnr present"`) as if it degraded
+    the bucket; the bucket math was always correct, only the reasons
+    breakdown was wrong, now pinned by two tests. Also: a bounded, SAMPLED
+    (n=500, not corpus-wide) paragraph-number-detection measurement —
+    average `numberedShare` 0.747, 10.4% of sampled rows carry no printed
+    paragraph number.
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court
