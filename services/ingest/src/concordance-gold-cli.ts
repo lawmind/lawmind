@@ -41,6 +41,7 @@
  * `judgment_citation_aliases`. It is read-only against `judgments` and
  * `judgment_citations`, and its only write is the JSON report file.
  */
+import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 
 import postgres from 'postgres';
@@ -58,6 +59,18 @@ import {
 import { callInferx } from './inferx.ts';
 
 const SAMPLE_SIZE = Number(process.env['GOLD_SAMPLE_SIZE'] ?? '25');
+/**
+ * Gold decisions share `citation_concordance_resolutions` with production
+ * adjudications but never its `source`. A gold-set answer about a citation must
+ * not be readable as a production adjudication of the same citation -- the
+ * promotion step keys on `source`, and one wrong row there is a wrong authority.
+ */
+const GOLD_SOURCE = 'gold_eval';
+/** Changes the deterministic draw. Same seed = same cases = cache hits. */
+const seed = process.env['GOLD_SEED'] ?? 'lawmind-gold-v1';
+/** The model actually called. `inferx.ts` defaults to this; recorded, not guessed. */
+const GOLD_MODEL = 'deepseek-v4-flash';
+const outputHash = (t: string) => createHash('sha256').update(t).digest('hex');
 const CONTEXT_WINDOW = 400;
 const OUT_PATH = new URL('../../../docs/ai/CONCORDANCE_GOLD_RESULTS.json', import.meta.url);
 
@@ -111,7 +124,13 @@ const rows = await sql<GoldRow[]>`
   JOIN judgments cj ON cj.id = jc.citing_judgment_id
   JOIN judgments tj ON tj.id = jc.cited_judgment_id
   WHERE jc.cited_judgment_id IS NOT NULL AND jc.citation_text <> '' AND jc.char_offset > 0
-  ORDER BY random()
+  -- DETERMINISTIC, not random(). Audited in 11 Aug 2026: this endpoint returns
+  -- HTTP 429 under load and a run that dies at case 11 of 102 used to throw
+  -- away every decision before it, because the next run drew a different
+  -- sample and could not hit the cache. Hashing a stable key gives the same
+  -- draw every time, so a crashed run RESUMES from cache instead of re-paying.
+  -- GOLD_SEED changes the draw deliberately when a fresh sample is wanted.
+  ORDER BY md5(jc.id::text || ${seed})
   LIMIT ${SAMPLE_SIZE * 4}`;
 
 console.log(`fetched ${rows.length} candidate gold rows, filtering to usable ones ...`);
@@ -223,6 +242,48 @@ for (const [i, c] of cases.entries()) {
 
   process.stdout.write(`[${i + 1}/${cases.length}] ${c.kind} · ${c.citationText.slice(0, 30)} ... `);
 
+  /**
+   * CACHE FIRST — audited in, 11 Aug 2026, after three runs re-paid for the
+   * same cases.
+   *
+   * `adjudicationInputHash` was computed here and used only to print eight
+   * characters at the end of the line. Nothing read it and nothing stored it,
+   * so every re-run bought identical answers again — and under the HTTP 429
+   * throttling this endpoint actually returns, a run that dies at case 11 threw
+   * away all ten decisions before it. That is the exact opposite of the
+   * standing rule for the token allocation: never process identical evidence
+   * twice.
+   *
+   * Cached into `citation_concordance_resolutions` under its own `source`, so
+   * a gold decision can never be mistaken for a production adjudication of the
+   * same citation, and so gold spend is auditable in the same place.
+   */
+  const cached = await sql`
+    SELECT decision, confidence, candidate_judgment_id, model_output_hash
+    FROM citation_concordance_resolutions
+    WHERE source = ${GOLD_SOURCE} AND citation_key = ${c.citationKey}
+      AND model_input_hash = ${hash}
+    LIMIT 1`;
+  if (cached.length > 0) {
+    const row = cached[0]!;
+    const modelCorrectCached =
+      row.decision === 'candidate_selected' ? row.candidate_judgment_id === c.trueJudgmentId : null;
+    console.log(
+      `${row.decision}${modelCorrectCached === true ? ' ✓' : modelCorrectCached === false ? ' ✗ WRONG' : ''}` +
+        ` (${row.confidence}) [cached ${hash.slice(0, 8)}]`,
+    );
+    outcomes.push({
+      kind: c.kind,
+      deterministicTop1Correct,
+      modelDecision: row.decision,
+      modelCorrect: modelCorrectCached,
+      tier: row.confidence as Outcome['tier'],
+      callFailed: null,
+    });
+    continue;
+  }
+
+  const startedAt = Date.now();
   const result = await callInferx(prompt, { apiKey: apiKey! });
   if (!result.ok) {
     console.log(`CALL FAILED: ${result.reason}`);
@@ -259,6 +320,33 @@ for (const [i, c] of cases.entries()) {
     `${parsed.decision}${modelCorrect === true ? ' ✓' : modelCorrect === false ? ' ✗ WRONG' : ''} (${tier})` +
       ` [hash ${hash.slice(0, 8)}]`,
   );
+
+  /**
+   * Persist the decision AND the ledger row.
+   *
+   * `CLAUDE.md` §5: *every* model call rows into `llm_calls`. The gold
+   * evaluator was calling InferX and recording nothing, so evaluation spend was
+   * invisible against the same allocation production draws on — you cannot
+   * manage what you do not measure. Token counts come from the API's own usage
+   * block, which `inferx.ts` already defaults to 0 when the endpoint omits it --
+   * never estimated, because a guessed token count in a cost ledger is worse
+   * than an absent one.
+   */
+  await sql`
+    INSERT INTO citation_concordance_resolutions
+      (source, citation_key, citation_text, citation_year, context_evidence, candidates,
+       candidate_judgment_id, decision, confidence, model_used, model_input_hash,
+       model_output_hash, needs_human_review, model_reasoning)
+    VALUES (${GOLD_SOURCE}, ${c.citationKey}, ${c.citationText}, ${c.citationYear},
+            ${c.contextEvidence}, ${JSON.stringify(c.candidates)}::jsonb,
+            ${parsed.candidateId}, ${parsed.decision}, ${tier}, ${GOLD_MODEL},
+            ${hash}, ${outputHash(result.text)}, ${parsed.needsHumanReview}, ${parsed.reason})
+    ON CONFLICT (source, citation_key, model_input_hash) DO NOTHING`;
+
+  await sql`
+    INSERT INTO llm_calls (feature, model, input_tokens, output_tokens, cost_usd,
+                           latency_ms, data_class, pseudonymised)
+    VALUES ('concordance', ${GOLD_MODEL}, ${result.inputTokens}, ${result.outputTokens}, 0, ${Date.now() - startedAt}, 'public', false)`;
 
   outcomes.push({
     kind: c.kind,
