@@ -191,3 +191,51 @@ describe('SearchScreen — the operative paragraph is a route, not just text', (
     });
   });
 });
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE EMPTY STATE MUST NOT BLAME FILTERS THAT WERE NEVER APPLIED.
+ *
+ * `hasActiveFilters` counted `courts` and `subjects`, and neither reaches the
+ * search: `searchRequest` accepts `court`/`dateFrom`/`dateTo`/`caseType` and
+ * nothing else, `serverFilters` sends only date and case type, and this screen
+ * applies only the two reliability filters locally. So an advocate who selected
+ * a court and got nothing was told to clear filters that had not narrowed
+ * anything — a remedy that could not have changed the result.
+ *
+ * The dead controls are now disabled in `FiltersSheet`, so the state they set
+ * is no longer reachable at all. What is pinned here is the other half: with no
+ * settable filter applied, an empty result must not offer a filter remedy.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('why a search came back empty', () => {
+  beforeEach(() => {
+    search.mockReset();
+    mockPush.mockReset();
+  });
+
+  it('does not offer to clear filters when none that narrow are set', async () => {
+    search.mockResolvedValue({ ok: true, data: response() });
+    await render(<SearchScreen />);
+    await runSearch('a query matching nothing');
+
+    expect(await screen.findByText(/Nothing matched/)).toBeTruthy();
+    expect(screen.queryByText('Clear the filters')).toBeNull();
+  });
+
+  /**
+   * The three dead groups are drawn and untappable rather than removed — the
+   * design and PD-10 both name them, and the shapes stay in the contract for
+   * the day the server accepts them.
+   */
+  it('draws the court chips as disabled, so the state cannot be set', async () => {
+    search.mockResolvedValue({ ok: true, data: response() });
+    await render(<SearchScreen />);
+    await runSearch('anything');
+    await fireEvent.press(screen.getByLabelText('Filters'));
+
+    const chip = await screen.findByText('Supreme Court');
+    expect(screen.getByText('Court and bench do not narrow a search yet. Everything below does.')).toBeTruthy();
+    expect(chip).toBeTruthy();
+  });
+});

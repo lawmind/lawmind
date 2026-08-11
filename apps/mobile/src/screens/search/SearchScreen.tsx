@@ -60,14 +60,24 @@ type Phase = 'idle' | 'loading' | 'done' | 'failed';
  */
 const DISCLOSURE_DELAY = 80;
 
-/** Only the filters that can actually narrow a search — used to word the empty state honestly. */
+/**
+ * ONLY THE FILTERS THAT CAN ACTUALLY NARROW A SEARCH — which is what this
+ * comment always said, and what the function stopped doing.
+ *
+ * It counted `courts` and `subjects`, and neither reaches the search:
+ * `searchRequest` accepts `court`/`dateFrom`/`dateTo`/`caseType` and nothing
+ * else, `serverFilters` sends only date and case type, and this screen applies
+ * only the two reliability filters locally. So an advocate who selected a court
+ * and got nothing was told "Nothing matched with these filters. Clearing them
+ * searches all 38,341 judgments" — a causal story about filters that were never
+ * applied, and a remedy that would not have changed the result.
+ *
+ * Blaming an empty result on the wrong cause is worse than not explaining it:
+ * it sends the advocate to change the one thing that was not the problem.
+ * Corrected 11 Aug 2026, alongside disabling those controls in `FiltersSheet`.
+ */
 const hasActiveFilters = (f: SearchFilters): boolean =>
-  Boolean(f.caseType) ||
-  f.date !== 'any' ||
-  f.courts.length > 0 ||
-  f.subjects.length > 0 ||
-  f.onlyVerified ||
-  f.excludeSetAsideOrDoubted;
+  Boolean(f.caseType) || f.date !== 'any' || f.onlyVerified || f.excludeSetAsideOrDoubted;
 
 export function SearchScreen() {
   const router = useRouter();

@@ -56,15 +56,36 @@ function Chip({
   label,
   selected,
   onPress,
+  disabled = false,
 }: {
   label: string;
   selected: boolean;
   onPress: () => void;
+  /**
+   * A filter the server cannot apply yet. Drawn, dimmed and untappable rather
+   * than removed: the design and PD-10 both name these, and a control that
+   * cannot act must never be left live and inert.
+   */
+  disabled?: boolean;
 }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ selected }} onPress={onPress}>
-      <View style={[styles.chip, selected && styles.chipSelected]}>
-        <Text variant="ui" style={selected ? styles.chipLabelSelected : styles.chipLabel}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected, disabled }}
+      disabled={disabled}
+      onPress={onPress}
+    >
+      <View style={[styles.chip, selected && styles.chipSelected, disabled && styles.chipDisabled]}>
+        <Text
+          variant="ui"
+          style={
+            disabled
+              ? styles.chipLabelDisabled
+              : selected
+                ? styles.chipLabelSelected
+                : styles.chipLabel
+          }
+        >
           {label}
         </Text>
       </View>
@@ -91,15 +112,12 @@ export function FiltersSheet({
 }) {
   const [draft, setDraft] = useState<SearchFilters>(filters);
 
-  const toggle = <K extends 'courts' | 'bench' | 'subjects'>(
-    key: K,
-    value: SearchFilters[K][number]
-  ) =>
-    setDraft((d) => {
-      const list = d[key] as SearchFilters[K][number][];
-      const next = list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
-      return { ...d, [key]: next } as SearchFilters;
-    });
+  /*
+    `toggle` lived here for the three multi-select groups and is removed with
+    them — it had no remaining call site, and a dead helper reads as a feature
+    somebody forgot to wire rather than one the server cannot serve yet. It is
+    eight lines to restore alongside the chips.
+  */
 
   const count = resultCount(draft);
 
@@ -117,25 +135,51 @@ export function FiltersSheet({
       </View>
 
       <ScrollView contentContainerStyle={styles.body}>
+        {/*
+          ─────────────────────────────────────────────────────────────────────
+          COURT, BENCH AND SUBJECT DO NOT NARROW A SEARCH YET, AND SAY SO.
+          ─────────────────────────────────────────────────────────────────────
+
+          `POST /search` accepts `court`, `dateFrom`, `dateTo` and `caseType` —
+          nothing else (`searchRequest` in `services/api/src/search/route.ts`).
+          `serverFilters` in `api/client.ts` sends only date and case type, and
+          `SearchScreen` applies only the two reliability filters locally. So
+          selecting a court, a bench strength or a subject did NOTHING against
+          the real API.
+
+          It looked like it worked because `api/mock.ts` applies all three
+          against `MOCK_FACETS`. Development narrowed; production did not.
+
+          THE COURT ONE MATTERS MOST RIGHT NOW. 40,980 High Court judgments
+          landed in the corpus this month, so "Supreme Court only" is exactly
+          the filter an advocate reaches for — and it was the one quietly doing
+          nothing.
+
+          DISABLED RATHER THAN DELETED. The design and PD-10 both name these,
+          the shapes are in the contract, and `draft` still carries them — the
+          day the server accepts them this reverts to one line. A control that
+          cannot act is disabled and explained; it is never left live and inert,
+          which is the same rule the reader follows for "Link" on an unnumbered
+          paragraph.
+
+          The server-side contract needed is recorded for LCC, not guessed at
+          here: `filters.court` is an exact `j.court = $1` match on a court
+          NAME, and the client's chips are categories. Mapping one to the other
+          means knowing the values that column holds, which is not a thing to
+          invent on a search that would silently return nothing.
+        */}
         <SectionRule label="Court and bench" />
         <View style={styles.chips}>
           {COURTS.map((c) => (
-            <Chip
-              key={c.key}
-              label={c.label}
-              onPress={() => toggle('courts', c.key)}
-              selected={draft.courts.includes(c.key)}
-            />
+            <Chip disabled key={c.key} label={c.label} onPress={() => {}} selected={false} />
           ))}
           {BENCH.map((b) => (
-            <Chip
-              key={b.key}
-              label={b.label}
-              onPress={() => toggle('bench', b.key)}
-              selected={draft.bench.includes(b.key)}
-            />
+            <Chip disabled key={b.key} label={b.label} onPress={() => {}} selected={false} />
           ))}
         </View>
+        <Text variant="ui" style={styles.notYet}>
+          Court and bench do not narrow a search yet. Everything below does.
+        </Text>
 
         <SectionRule label="Date" />
         <View style={styles.chips}>
@@ -149,17 +193,16 @@ export function FiltersSheet({
           ))}
         </View>
 
+        {/* Same as court and bench: `searchRequest` accepts no subject. */}
         <SectionRule label="Subject" />
         <View style={styles.chips}>
           {SUBJECTS.map((s) => (
-            <Chip
-              key={s}
-              label={SUBJECT_LABEL[s] ?? s}
-              onPress={() => toggle('subjects', s)}
-              selected={draft.subjects.includes(s)}
-            />
+            <Chip disabled key={s} label={SUBJECT_LABEL[s] ?? s} onPress={() => {}} selected={false} />
           ))}
         </View>
+        <Text variant="ui" style={styles.notYet}>
+          Subject does not narrow a search yet.
+        </Text>
 
         <SectionRule label="Reliability" />
         <SettingsRow
@@ -229,7 +272,10 @@ const styles = StyleSheet.create({
   },
   /** Selected is INK, not oxblood. The accent is spent on the commit button. */
   chipSelected: { backgroundColor: color.ink, borderColor: color.ink },
+  chipDisabled: { borderColor: color.hairline, backgroundColor: 'transparent' },
   chipLabel: { color: color.ink },
+  chipLabelDisabled: { color: color.inkFaint },
+  notYet: { color: color.inkMuted },
   chipLabelSelected: { color: color.card },
   commit: { marginTop: space.xs },
 });
