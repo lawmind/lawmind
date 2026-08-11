@@ -153,11 +153,33 @@ authority still stands.
 `VERIFY:` a case where a smaller bench "doubted" a larger one is not reported as
 displacing it.
 
-**Blocked on a real data gap, now measured:** bench strength is not derivable.
-Migration `0040` established that `judgments.bench` held an S3 partition key on
-51.3% of the corpus, and what remains is free text with no count.
-**`judgment_judges` covers Supreme Court rows only** (38,325). A judge-count
-column is a prerequisite for this stage and does not exist.
+**Blocked, and the first version of this entry got the reason wrong.** It said
+"no judge-count column exists". A count *is* derivable — `judgment_judges` holds
+44,360 rows over 38,325 Supreme Court judgments. Measuring it instead of
+asserting it produced the real answer, which is worse:
+
+**The count is a lower bound, and it is catastrophically wrong on exactly the
+cases this stage is about.** Checked against externally known bench sizes:
+
+| case | real bench | recorded |
+| --- | --- | --- |
+| **Kesavananda Bharati** | **13** | **1** (`S.M. SIKRI`) |
+| **Golak Nath** | **11** | **1** (`K. SUBBA RAO`) |
+| **Maneka Gandhi** | **7** | **1** (`M. HAMEEDULLAH BEG`) |
+| S.R. Bommai | 9 | 9 ✓ |
+
+The source records the **presiding judge alone** on most rows and the full coram
+on some. 33,484 "single-judge Supreme Court judgments" is not a fact about a
+Court that sits in twos — it is a fact about the metadata.
+
+So a `constitution` (5+) filter would **miss Kesavananda Bharati, Golak Nath and
+Maneka Gandhi**. An advocate filtering for Constitution Bench authority would be
+told the three most famous ones do not exist — *a filter that silently mis-sorts
+is worse than one that returns less*, at maximum severity.
+
+**A partial coram is more dangerous than an absent one**, because it looks like
+an answer. The prerequisite is a source that publishes the full bench, and
+`judgment_judges` must not be used for strength until then.
 
 **And the standing rule: never "good law" merely because nothing contrary was
 found.** Absence of a later contrary judgment is not currentness.

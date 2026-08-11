@@ -184,10 +184,36 @@ That is the honest value, not a gap: the plain High Court metadata variant —
 the only one we hold — publishes no judge field at all. `judgment_judges`
 covers 38,325 Supreme Court judgments and no High Court one.
 
-**Bench strength is not derivable from this column** and RCC bus 0046's
-`bench: ('constitution' | 'three_plus')[]` filter has no data behind it — on
-half the corpus the column was never about judges, and on the other half it is
-a free-text list of names with no count.
+**Bench strength is not derivable, and the reason is worse than "no column".**
+RCC bus 0046 asked for `bench: ('constitution' | 'three_plus')[]`. A count *can*
+be produced — `judgment_judges` has 44,360 rows over 38,325 Supreme Court
+judgments, and the distribution looks legally plausible at a glance (33,484
+single · 3,913 two · 798 three · 104 five · 6 seven · 2 nine).
+
+**It is a LOWER BOUND, and on the highest-value cases in Indian constitutional
+law it is catastrophically wrong.** Checked 11 Aug 2026 against benches whose
+size is externally known:
+
+| case | real bench | judges recorded | `bench` column holds |
+| --- | --- | --- | --- |
+| **Kesavananda Bharati** | **13** | **1** | `S.M. SIKRI` |
+| **Golak Nath** | **11** | **1** | `K. SUBBA RAO` |
+| **Maneka Gandhi** | **7** | **1** | `M. HAMEEDULLAH BEG` |
+| S.R. Bommai | 9 | **9** | all nine names |
+
+The source records the **presiding judge alone** on most rows and the full coram
+on some — Sikri CJ, Subba Rao CJ and Beg CJ each presided over the bench whose
+size is understated as 1. So 33,484 "single-judge Supreme Court judgments" is
+not a fact about the Court, which sits in benches of two or more by convention;
+it is a fact about the metadata.
+
+A `constitution` (5+) filter built on this **would miss Kesavananda Bharati,
+Golak Nath and Maneka Gandhi** — an advocate filtering for Constitution Bench
+authority would be told the three most famous ones do not exist. That is the
+`case_type` rule at maximum severity: *a filter that silently mis-sorts is worse
+than one that returns less.* **Bench strength needs a source that publishes the
+full coram, and until then it is not filterable and not reasonable-over
+(Stage 16).**
 
 `cnr` text null — the eCourts Case Number Record, added migration `0034`,
 11 Aug 2026. The canonical cross-source identity key (`docs/DATA_ADVANTAGE.md`:
