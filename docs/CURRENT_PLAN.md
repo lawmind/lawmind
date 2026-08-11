@@ -1068,6 +1068,41 @@ Deferred, recorded, not forgotten: `generated_holding` (DeepSeek, migration
 separation, and a hidden adversarial benchmark are `docs/FOUNDER_QUEUE.md`
 items — none block P0/P1.
 
+**Correction to the line above, 11 Aug 2026: statute point-in-time did NOT need
+a source.** See Q1.15. `generated_holding` is still unwired — and migration
+`0033` is **not applied and not journalled**: the columns do not exist in
+production, `meta/_journal.json` jumps 0032 → 0034, there is no
+`services/api/src/holdings/` module and no code references either column. It is
+an untracked draft, left as one deliberately.
+
+### Q1.15 · Stage 8, statute point-in-time — ✅ LANDED 11 Aug 2026
+
+`DONE:` amendment/commencement events queryable per provision with effective
+dates. `VERIFY:` a provision whose history is externally checkable returns it.
+
+**It was already in the database.** Stage 8's standing instruction was to check
+whether indiacode publishes amendment dates before assuming a new source was
+needed. It does, and the first `acts` run ingested it:
+`statute_sections.footnote` holds each Act's own printed amendment notes,
+verbatim, for **9,064 of 34,928 sections**, and nothing had ever parsed them.
+Same class as the `cnr`/`disposal_nature`/`petitioner` gaps, one step worse —
+not dropped at ingest, but stored and never looked at.
+
+Migration `0041`, applied to production. **18,590 events**, 15,388 with a real
+effective date, 1,208 distinct dates spanning 1870–2026. Verified on NI Act
+s.138: inserted by Act 66 of 1988 w.e.f. 1-4-1989, substituted by Act 55 of
+2002 w.e.f. 6-2-2003, with the "within fifteen days" entry naming no Act of its
+own and resolving correctly through `ibid`.
+
+`docs/ai/STATUTE_TEMPORAL_STAGE8.md` holds the measurements, the four things
+the real data does that an imagined parser misses, and the named next steps.
+**It is not a version history of the text** and must not be presented as one —
+indiacode publishes only the current wording.
+
+**`statute_mappings` is untouched and still 0 rows by design.** Nothing in a
+footnote establishes IPC→BNS equivalence, and same section number is not same
+legal substance. That remains a sourcing problem, and it is still open.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
