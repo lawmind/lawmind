@@ -52,6 +52,7 @@ export const FIELDS = [
   'judge',
   'cite',
   'caseno',
+  'cnr',
   'court',
   'date',
   'act',

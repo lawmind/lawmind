@@ -29,6 +29,7 @@ const PHRASING: Record<Field, (value: string) => string> = {
   judge: (v) => `decided by a judge matching ${quote(v)}`,
   cite: (v) => `reported as ${quote(v)}`,
   caseno: (v) => `with case number ${quote(v)}`,
+  cnr: (v) => `with CNR ${quote(v)}`,
   court: (v) => `from ${quote(v)}`,
   date: (v) => `decided in ${v}`,
   act: (v) => `referring to the ${quote(v)}`,

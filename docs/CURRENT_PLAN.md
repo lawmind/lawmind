@@ -940,6 +940,19 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     statutes, citations — was already built and re-verified live rather than
     trusted from an earlier summary.
 
+17. **`docs/ai/CITATION_PIPELINE_STAGE6.md` — Stage 6, LANDED same day,
+    verified-already-built plus one real gap closed.** Re-queried every
+    citation-pipeline number fresh against production rather than trusted
+    from earlier sessions: 227,478 edges, 97,876 resolved, 4,097 aliases —
+    zero drift from what was already recorded. DETECT (SCC/AIR/neutral
+    SC+HC/SCR/SCALE patterns), NORMALIZE, and the never-blend-structure-
+    with-semantics rule (§A2.7) were already landed. **The one gap**: CNR —
+    the canonical identity key, 100% populated since task 007 — had no
+    search entry point. `cnr:` added to `search/qlang` as an exact-match
+    field (never substring/wildcard), verified against a real production row,
+    2 new tests, qlang suite 40/40, `docs/API_CONTRACTS.md` updated
+    additively.
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court

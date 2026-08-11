@@ -129,6 +129,17 @@ function fieldMatch(sql: Sql, field: Field, value: string, phrase: boolean, wild
     case 'caseno':
       return sql`j.case_number ILIKE ${likePattern(value, wildcard)}`;
 
+    /**
+     * The eCourts Case Number Record — `docs/ai/CANONICAL_IDENTITY.md`'s
+     * canonical cross-source identity key, 100% populated (`docs/SCHEMA_TRUTH.md`
+     * §judgments). An exact identifier, never a fuzzy search term: an advocate
+     * typing a CNR from a court notice or an eCourts printout wants that exact
+     * case or nothing, never a substring's worth of unrelated matches. Trimmed
+     * and upper-cased to match how `backfill-cnr.ts`/the real loaders store it.
+     */
+    case 'cnr':
+      return sql`j.cnr = ${value.trim().toUpperCase()}`;
+
     case 'court':
       return sql`j.court ILIKE ${likePattern(value, wildcard)}`;
 

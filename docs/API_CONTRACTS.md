@@ -359,9 +359,15 @@ POST /search  { query: 'judge:"Kania" AND section:138 AND date:[2019 TO 2024]' }
       total: 214 }
 ```
 
-Fields: `party` · `judge` · `cite` · `caseno` · `court` · `date` · `act` ·
+Fields: `party` · `judge` · `cite` · `caseno` · `cnr` · `court` · `date` · `act` ·
 `section` · `type` · `text`. Operators: `AND` `OR` `NOT`, parentheses,
 `"phrases"`, `NEAR/n`, `[from TO to]`, trailing `*` and `?`.
+
+**`cnr` is an exact match, not a substring or wildcard field** — the eCourts
+Case Number Record (`docs/ai/CANONICAL_IDENTITY.md`), 100% populated,
+`services/api/src/search/qlang/compile.ts`. Added 11 Aug 2026, Stage 6 of
+`docs/ai/DATA_MOAT_PROGRAM.md` — CNR was storable and resolvable at the
+identity layer since migration `0034` but not searchable until this field.
 
 **`parsed` must be displayed.** It is the server stating what it understood, and
 it is a correctness feature rather than a courtesy: a misparse produces

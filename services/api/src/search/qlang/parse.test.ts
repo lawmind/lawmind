@@ -50,7 +50,7 @@ test('a bare sentence is an implicit AND of its words', () => {
 });
 
 test('every field parses with a word and with a phrase', () => {
-  for (const f of ['party', 'judge', 'cite', 'caseno', 'court', 'act', 'section', 'text']) {
+  for (const f of ['party', 'judge', 'cite', 'caseno', 'cnr', 'court', 'act', 'section', 'text']) {
     assert.doesNotThrow(() => parse(`${f}:something`), `${f}: rejected a word`);
     assert.doesNotThrow(() => parse(`${f}:"two words"`), `${f}: rejected a phrase`);
   }
@@ -89,6 +89,12 @@ test('a citation with punctuation survives as ONE term', () => {
   // to match separately.
   assert.deepEqual(shape(parse('cite:"(2019) 4 SCC 221"')), 'cite:(2019) 4 SCC 221"');
   assert.deepEqual(shape(parse('caseno:Crl.A.-19/1955')), 'caseno:Crl.A.-19/1955');
+});
+
+test('a CNR parses as one term, and survives the letters/digits it is made of', () => {
+  // Real form: BRHC010440502024 — 4 letters, 6 digits, 4-digit year, no
+  // punctuation, but the field must not assume that and split on anything.
+  assert.deepEqual(shape(parse('cnr:BRHC010440502024')), 'cnr:BRHC010440502024');
 });
 
 test('Devanagari parses as an ordinary term', () => {

@@ -553,6 +553,19 @@ alongside this document.
     bench (99.98%), court/dates (100%), case identifiers (100%), statutes
     (97,806 refs), citations (227,478 edges) — all re-verified live this
     session rather than trusted from an earlier summary.
+14. **Citation extraction + resolution — VERIFIED ALREADY BUILT, one real gap
+    closed, 11 Aug 2026, Stage 6.** `docs/ai/CITATION_PIPELINE_STAGE6.md`.
+    Every number from earlier sessions re-queried fresh against production
+    and found unchanged — 227,478 edges, 97,876 resolved, 4,097 aliases, 0
+    drift. DETECT/NORMALIZE/RESOLVE and the "structure decides, semantics
+    fills, never blended" rule (§A2.7) were already landed and are not
+    rebuilt. **The one gap found**: CNR — storable and resolvable at the
+    identity layer since task 007, but **not searchable** — `search/qlang`
+    had `cite`/`caseno` fields but no `cnr` field. Added: exact match (never
+    substring/wildcard, a CNR is an identifier not a search term),
+    `parse.ts`/`compile.ts`/`explain.ts` (the last a compile-time-enforced
+    `Record<Field, …>`, so a missed case would not compile), verified against
+    a real production row, 2 new tests, qlang suite 40/40.
 
 ---
 
