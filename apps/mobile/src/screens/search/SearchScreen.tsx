@@ -401,7 +401,7 @@ export function SearchScreen({
                       .map((c) => COURT_CATEGORY_LABEL[c])
                       .join(' or ')} judgments yet. Clearing that filter searches everything we hold.`
                   : hasActiveFilters(filters)
-                    ? `Nothing matched “${query}” with these filters. Clearing them searches all 38,341 judgments.`
+                    ? `Nothing matched “${query}” with these filters. Clearing them searches everything we hold.`
                     : `Nothing matched “${query}”. Search currently matches the words in a judgment rather than their meaning, so exact legal terms find more than a paraphrase does.`
             }
             title="No judgments matched"

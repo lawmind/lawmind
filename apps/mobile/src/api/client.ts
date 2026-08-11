@@ -46,6 +46,17 @@ import type {
  * fully embedded at 616,197 chunks, and `GET /statutes` / `/statutes/sections`
  * against BNS, BNSS and BSA complete.
  *
+ * STALE SINCE 11 AUG 2026 — left rather than silently corrected, same reason
+ * `DraftDetailScreen.tsx` quotes its own wrong note. 40,980 High Court
+ * documents landed and ARE reached by the lexical arm of `/search` (bus
+ * 0061/0062: sparse reaches 79,322, dense reaches only the embedded 38,341).
+ * None are embedded and LCC has since stopped short of embedding them —
+ * duplicates undetected by retrieval, 0 citations extracted, judgment-vs-order
+ * unrecorded (bus 0064) — so the corpus classification/dedup work happens
+ * first. Do not assume `/search` is Supreme-Court-only, and do not assume the
+ * 40,980 are "judgments": the measured judgment share of that portion is
+ * 0.75%–18.64%, per `CoverageScreen.tsx`.
+ *
  * `GET /judgments/:id` NOW EXISTS and the detail screen is off fixtures.
  * Probed 6 August 2026: 200, with `paragraphs[]`, `numberedShare` and `asOf`.
  *
