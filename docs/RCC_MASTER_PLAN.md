@@ -401,8 +401,17 @@ a bundle.
 `courts`/`bench`/`subjects`, plus the category→court-name mapping. Not guessed:
 a wrong court string silently returns zero results.
 
-**Also outstanding:** bus 0048 — the three citation fields on
-`GET /matters/:id/authorities`.
+**Bus 0048 and 0049 — CLOSED.** LCC shipped `dd9871b`: `GET/POST
+/matters/:id/authorities` now sends `overruledStatus` (+byJudgmentId/
+byTitle/paras/note), `verificationState`/`verifiedBySource` (constants,
+`judgment_id` is a NOT NULL FK so the row resolves to itself), and
+`reporterCitations` on both matter authorities and briefing authorities.
+`MatterAuthority` widened to match, `MatterScreen`'s saved-authorities list
+now goes through `citationRender()` exactly like `BriefingAuthorityRow` —
+LAW MOVED chip, struck title, "what still stands" first, who displaced it
+named. The temporary "this list does not yet show..." line and the tests
+that asserted it are gone, replaced with tests against the real fields.
+Commit `958b8ae`. `tsc` 0, 546/546, guards clean.
 
 **TASK 7 (briefing sweep, mechanical method) — DONE.** `GET /briefings/:id`,
 `GET /matters/:id/briefings`, `GET /matters/:id` (bundle) and
