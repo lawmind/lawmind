@@ -751,6 +751,14 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
 7. **`judgments.content_hash`/`text_quality` backfill — task 003's own
    recorded remaining gap, closed.** `services/ingest/src/backfill-
    provenance.ts` built and run with `--confirm` against all 79,321 rows.
+   Result: 78,384 distinct hashes, 937 exact-duplicate groups, 1,500 rows
+   (1.9%), 98.4% High Court. **Verified by reading two sampled groups, not
+   inferred from counts:** both are consolidated/batch judgments (one
+   judgment deciding many tagged-along matters, e.g. `{Total 327 Matters}`)
+   replicated once per case number — a real corpus-quality finding, and
+   explicitly NOT confirmation of `HC_CORPUS_SURVEY.md` §5's mobile/plain
+   CNR-variant hypothesis (both sampled groups have `cnr IS NULL`). §5
+   remains open. Full account: `docs/ai/tasks/003-corpus-inventory.md`.
 8. **`judgments.cnr` — found dropped for the entire corpus, both loaders.**
    The eCourts Case Number Record is present in both source metadata schemas
    (`SciMetadataRow.cnr`, `HcMetadataRow.cnr`) and was read by neither mapper

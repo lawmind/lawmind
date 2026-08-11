@@ -202,4 +202,11 @@ The next number that matters is §A3.3's — **PDF→text extraction measured on
 - **Whether mobile rows duplicate plain rows under a different CNR.** Zero CNR
   overlap is established; identity by any other key is not. Two records for one
   judgment would inflate both counts, and de-duplication is an ingest concern.
+  **Still open as of 11 Aug 2026** — `content_hash` backfilled across the
+  corpus and 937 exact-duplicate groups found (1,500 rows, 98.4% High Court),
+  but the two groups sampled directly are consolidated/batch judgments (one
+  judgment deciding many tagged-along matters, replicated once per case
+  number), both with `cnr IS NULL`, not mobile/plain variants of one judgment.
+  A real, different duplication mechanism, measured; this question, not yet.
+  `docs/ai/tasks/003-corpus-inventory.md`.
 - **Extraction cost, text quality, OCR need.** §A3.3.

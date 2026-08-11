@@ -62,17 +62,67 @@ concern."*
 
 ---
 
-## WHAT DID NOT LAND — the actual remaining gap
+## WHAT LANDED, PART 2 — 11 Aug 2026, same day, resumed per the founder's
+## RESUME AUTONOMOUS EXECUTION directive
 
-**No backfill.** The 79,321 existing rows (38,341 Supreme Court, 40,980 High
+**Backfill built and run.** `services/ingest/src/backfill-provenance.ts`
+(dry-by-default, `--confirm` to write, keyset-paginated on `id`) computed
+`content_hash`/`text_quality` for all 79,321 existing rows against
+`full_text` already in Postgres — no re-fetch. Result: **78,384 distinct
+hashes across 79,321 rows — 937 exact-text duplicate groups, 1,500 rows
+involved (1.9% of the corpus), 1,476 of them (98.4%) High Court.**
+
+**What the duplication actually is — verified by reading the text, not
+inferred from counts.** Sampled the two largest groups (n=124, Gujarat HC,
+1993; n=56, Patna HC, 2025) directly:
+
+- The Gujarat group is `{Total 327 Matters}` — one judgment deciding 327
+  tagged-along criminal revisions together, case numbers `CR.RA/151/1991`
+  through `CR.RA/274/1991` and others, **each ingested as a separate
+  `judgments` row sharing the one combined text.**
+- The Patna group is a Letters Patent Appeal batch — 56 distinct appellants
+  (`Arjun Kumar`, `Sujit Kumar Singh`, `Kumari Sudha Yadav`, …), each `Vs
+  The State of Bihar`, each with a genuinely distinct case number, all
+  disposed of in one 168,002-character consolidated judgment, again one row
+  per case number.
+
+**This is a real, measured finding, and it is NOT what `HC_CORPUS_SURVEY.md`
+§5 asked about.** §5's question was specifically whether the bucket's two
+metadata variants (`metadata.parquet` / `metadata-mobile.parquet`, zero CNR
+overlap) duplicate the same judgment under different CNRs. Both sampled dupe
+groups have `cnr IS NULL` throughout — not evidence either way on §5, because
+these rows predate CNR being carried at all (fixed same session, see below).
+**§5 remains open.** What this DOES establish: consolidated/batch judgments
+inflate the document count without inflating unique legal content — a
+distinct corpus-quality fact, consistent with `HC_CORPUS_SURVEY.md`'s own
+"document count is not judgment count" finding, now with a measured
+mechanism and two verified examples rather than a suspicion.
+
+**Not acted on further.** Deciding whether a duplicate-hash group should
+collapse to one canonical row (and which case numbers to preserve as
+aliases) is a retrieval/product decision — a search returning the same text
+124 times under different titles is a real UX cost, but resolving it changes
+what `judgments` rows exist and needs its own task, not a byproduct of this
+one's measurement.
+
+## WHAT ALSO LANDED — `judgments.cnr`, found dropped for the whole corpus
+
+Migration `0034`. `SciMetadataRow.cnr` and `HcMetadataRow.cnr` are present in
+both source metadata schemas and were read by **neither** mapping function
+into `JudgmentRecord` — silently discarded before reaching the database,
+every row, since ingest began. Column added, both mappers and `load.ts` now
+carry it through for every future write. **Not backfilled** — recovering it
+for the 79,321 existing rows needs the original source metadata, which the
+`content_hash`/`text_quality` backfill did not (that reads only `full_text`,
+already in Postgres); a CNR backfill would need to re-read the AWS metadata
+files by `source_url`, a distinct, larger, unbuilt task.
+
+## WHAT DID NOT LAND — the original remaining gap, now closed above
+
+~~**No backfill.** The 79,321 existing rows (38,341 Supreme Court, 40,980 High
 Court from the paused ingest) all have `content_hash`, `text_quality` and
 `source_document_type` NULL — new columns populate only on the next write to
-each row. A `services/ingest/src/backfill-provenance.ts` CLI (dry-by-default,
-matching every other CLI in this package) that reads `full_text` already in
-Postgres and writes the three computed fields, with no re-fetch, is the
-natural next increment and the thing that would actually let someone answer
-*"do the two metadata variants collide"* for real, on the corpus already
-held. **Not built this session** — recorded here rather than left implicit.
+each row.~~ **Closed — see "WHAT LANDED, PART 2" above.**
 
 ---
 
