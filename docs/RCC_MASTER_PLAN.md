@@ -450,6 +450,49 @@ STATUTE_TEMPORAL_STAGE8.md`. Explicitly NOT a version-history reconstruction
 — "these are the changes recorded", never "this is how it read on X". Keep
 that framing if a screen is ever built against `statute_amendments`.
 
+**Bus 0058 — CLOSED, `PROFILE_INCOMPLETE` shipped and verified live
+(`c72175d`).** `AUTH_REQUIRED`/401 stays for a genuinely absent session;
+`PROFILE_INCOMPLETE`/403 for a valid token with no `users` row yet, upgraded
+once at the envelope (`resolveAuthFailure`, `services/api/src/envelope.ts`)
+rather than at 48 call sites. Audited client-side, priority-reset item 2–4,
+11 Aug: **no regression** — `client.ts`'s refresh-and-retry is scoped to the
+literal `AUTH_REQUIRED` code, never fires on 403, so the re-login loop LCC
+described cannot happen here. `GET /me` (`handleMe`) is architecturally
+separate — it refuses on absent `authId` only, never goes through
+`profileIdFor`, so the `identity_only` session-status detection the app
+already relies on is untouched.
+
+**Found doing that audit, unrelated to the envelope change itself, same
+shape one layer up:** `TodayScreen` and `MattersScreen` both treated
+`identity_only` (signed in, onboarding abandoned before a `users` row
+existed) the same as `signed_out` — "Sign in to see your day/matters", button
+→ `/sign-in`, requesting a fresh magic link for an advocate who already had a
+valid session. `verify.tsx` already routes `identity_only` → `/onboarding`
+the instant it is set; these two screens had no path there on relaunch. Fixed
+both, 4 new tests. Commit `1cbefd9`.
+
+**Bus 0059–0062 — read, no client action.** 0059: bench-strength correction
+— it IS derivable from `judgment_judges` but the source records only the
+presiding judge on most rows (Kesavananda Bharati's 13-judge bench reads as
+1), so a partial coram is worse than none and the disabled chip stays
+disabled, for a sharper reason. 0061: Stage 10 bake-off first numbers, a
+corpus-size confound caught before publishing (sparse reaches 79,322
+judgments, dense reaches 38,341 — no fair comparison yet), controlled re-run
+in progress, nothing changes in `/search` without numbers sent first. 0062:
+**the court filter is the ONLY way an advocate reaches High Court law today**
+— unfiltered production search returns zero High Court results (0 of 40,980
+are embedded, so none can win the two-contribution RRF fusion), but
+`filters.courts:['hc']` returns real Patna High Court judgments immediately.
+LCC's fix is embedding the HC corpus, not RCC's to touch.
+
+Independently verified client-side (priority-reset item 5): the court-chip
+→ `filters.courts` wiring is tested (`SearchScreen.test.tsx`), and the
+citationless-render path every HC judgment hits (no neutral or reporter
+citation, 100% of the 40,980) is tested and green
+(`ResultCard.citationless.test.tsx`). Nothing client-side hides or
+mis-renders an HC result once retrieved — the gap LCC found is entirely in
+which results get retrieved, confirmed not RCC's to fix.
+
 **Bus 0048 and 0049 — CLOSED.** LCC shipped `dd9871b`: `GET/POST
 /matters/:id/authorities` now sends `overruledStatus` (+byJudgmentId/
 byTitle/paras/note), `verificationState`/`verifiedBySource` (constants,
