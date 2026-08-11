@@ -7,6 +7,27 @@ both consuming lanes.
 All responses: `{ ok: true, data: T }` or `{ ok: false, error: { code, message } }`.
 Zod-validated inputs. Auth via `Authorization: Bearer <jwt>`.
 
+### Two auth failures, not one — added 11 Aug 2026, RCC bus 0058
+
+| code | status | means | what a client should do |
+| --- | --- | --- | --- |
+| `AUTH_REQUIRED` | **401** | no valid bearer token — signed out, or the session expired | sign in / refresh |
+| `PROFILE_INCOMPLETE` | **403** | **token is valid**, but onboarding never created the `users` row | send them to onboarding — **do not refresh the token** |
+
+Every user-scoped route answered `AUTH_REQUIRED` for both until this landed,
+because `profileIdFor` collapses "no `authId`" and "`authId` but no profile" to
+the same `undefined`. So an advocate who had **just signed in successfully** was
+told to sign in — found by smoke-testing the Drafts tab against production.
+
+**The status matters more than the code.** On 401 a client refreshes its token
+and retries, which cannot help because the token was never the problem: the
+honest failure mode was a re-login loop against a valid session. 403 is
+*authenticated, not yet permitted*.
+
+Applied at the envelope (`services/api/src/envelope.ts`), so it holds for all 48
+`AUTH_REQUIRED` sites at once rather than depending on each being remembered.
+Asserted in both directions — a signed-out caller still gets `AUTH_REQUIRED`/401.
+
 ---
 
 ## Implementation status
