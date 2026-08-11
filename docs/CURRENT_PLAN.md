@@ -855,6 +855,27 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
     must explicitly use the full 283, not silently inherit the smaller
     defaults built for CI speed.
 
+13. **`docs/ai/CANONICAL_IDENTITY.md` — Stage 2 of the DATA → RETRIEVAL
+    EXECUTION PROGRAM, LANDED same day.** Founder-directed continuation past
+    HC characterization (item 11) and the retrieval-benchmark design (item
+    12). DOCUMENT / CASE / VERSION / SOURCE_ARTIFACT defined as distinct
+    concepts, citation explicitly excluded as the identity key (sparse, and
+    itself resolved against identity — circular). Closes the gap
+    `DATA_MOAT_PROGRAM.md` §5 named (*"the actual canonical cross-source key
+    [cnr] is present in schema but not yet the resolution key any code
+    uses"*) and task 003's deferred question about the 937 content_hash
+    duplicate groups. `services/ingest/src/identity.ts` — pure
+    classification functions, no writes, no merges. Two real corpus shapes
+    encoded as test fixtures: the Gujarat/Patna batch judgments (one
+    DOCUMENT, many CASEs — collapsing to one row per hash would delete 326
+    real case identities) and the Supreme Court year-boundary duplication
+    from `AWS_CORPUS_INVENTORY.md` §3 (one CASE, many SOURCE_ARTIFACTs — the
+    5,181-row overcount). 11 new tests plus a negative control against false
+    same-case matches on court+date coincidence; `services/ingest` **315/315**,
+    `tsc --noEmit` clean. **Identity layer only — Stage 3 (deduplication)
+    is next and is where a classification becomes a stored, provenance-
+    preserving relationship.**
+
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
 answer" and is explicit that it must be **evaluated on real Indian court

@@ -467,6 +467,23 @@ alongside this document.
    needs zero new embeddings — directly satisfying the founder's instruction
    not to begin a massive embedding job before the evaluation architecture
    justifies one.
+10. **Canonical document identity — LANDED, 11 Aug 2026, Stage 2 of the
+    DATA → RETRIEVAL EXECUTION PROGRAM.** `docs/ai/CANONICAL_IDENTITY.md` —
+    the model this section's own DEDUP row asked for
+    (*"the actual canonical cross-source key is present in schema but not
+    yet the resolution key any code uses"*). Defines DOCUMENT / CASE /
+    VERSION / SOURCE_ARTIFACT as distinct concepts, citation explicitly
+    excluded as an identity key, and resolves task 003's deferred question
+    (*"resolving [the 937 duplicate groups] changes what `judgments` rows
+    exist and needs its own task"*) into a non-destructive classification
+    layer — `services/ingest/src/identity.ts`, pure functions, no writes.
+    Two real corpus shapes encoded as test fixtures rather than invented
+    cases: the Gujarat/Patna batch judgments (one DOCUMENT, many CASEs) and
+    the Supreme Court year-boundary duplication that `AWS_CORPUS_INVENTORY.md`
+    §3 found overstated the SC source count by 5,181 (one CASE, many
+    SOURCE_ARTIFACTs). 11 new tests, `services/ingest` suite **315/315**,
+    `tsc --noEmit` clean. **This is the identity layer only — no relationship
+    is materialised against the live corpus yet.** That is Stage 3.
 
 ---
 
