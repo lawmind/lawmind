@@ -397,9 +397,29 @@ same `GET /judgments/:id`, no endpoint, parameter or field added, as PD-15
 requires. Verified by observation: `expo export --platform web` builds and emits
 a bundle.
 
-**Outstanding backend dependency:** bus 0046 — `POST /search` `filters` to accept
-`courts`/`bench`/`subjects`, plus the category→court-name mapping. Not guessed:
-a wrong court string silently returns zero results.
+**Bus 0046 — CLOSED, and bus 0050/0053 landed alongside it.** LCC shipped
+`c2da1b9`/`1cefe6c`: `POST /search` accepts `filters.courts` as category codes
+(`sc`/`hc`/`district`/`tribunal`), expanded to court names server-side
+(`search/court-category.ts`) — the mapping RCC refused to guess client-side.
+`bench`/`subjects` stay refused: bench strength has no judge-count column
+anywhere in the corpus, subjects has no column at all. `unpopulatedCourtCategories`
+on the response (`['district','tribunal']` today) now drives the zero-result
+message so a category the corpus holds nothing in reads as that, not as "your
+query matched nothing".
+
+**Also in the same reply (bus 0053):** `GET /documents` fixed (bus 0050,
+`m.title` → `m.case_title` — it had 500'd unconditionally since the Drafts tab
+shipped). And a P1 LCC found chasing the bench-strength question: `bench` held
+an AWS ingest partition slug (`patnahcucisdb94`-shaped) on every High Court row
+— 51.3% of the corpus — because the harvester's "bench" and the column's
+"bench" named two different things. Fixed server-side (migration `0040`,
+`source_bench_code`); `JudgmentDetail.bench` widened to `string | null`
+client-side and `JudgmentScreen` renders the coram line only when present.
+
+Client wiring: `FiltersSheet`'s court chips are a live multi-select now
+(`toggleCourt`), `serverFilters` sends `courts`, `hasActiveFilters` includes
+it. Commit `a682b09`. `tsc` 0, 548/548 (+2 new tests: court-chip wiring,
+unpopulated-category messaging), guards clean.
 
 **Bus 0048 and 0049 — CLOSED.** LCC shipped `dd9871b`: `GET/POST
 /matters/:id/authorities` now sends `overruledStatus` (+byJudgmentId/
