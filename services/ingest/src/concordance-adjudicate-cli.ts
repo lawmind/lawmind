@@ -215,7 +215,7 @@ for (const t of targets) {
          model_reasoning, contradictions, signals_used, needs_human_review, validation_status)
       VALUES
         (${SOURCE}, ${t.citation_key}, ${t.citation_text}, ${year}, ${context},
-         ${JSON.stringify(candidates)}::jsonb,
+         ${sql.json(candidates)},
          ${parsed?.candidateId ?? null}, ${decision}, ${tier},
          ${candidates[0]!.jaccard}, ${candidates[1]?.jaccard ?? null},
          'deepseek/deepseek-v4-flash', ${inputHash}, ${outputHash},

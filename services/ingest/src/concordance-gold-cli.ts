@@ -453,7 +453,7 @@ for (const [i, c] of cases.entries()) {
        candidate_judgment_id, decision, confidence, model_used, model_input_hash,
        model_output_hash, needs_human_review, model_reasoning)
     VALUES (${GOLD_SOURCE}, ${c.citationKey}, ${c.citationText}, ${c.citationYear},
-            ${c.contextEvidence}, ${JSON.stringify(c.candidates)}::jsonb,
+            ${c.contextEvidence}, ${sql.json(c.candidates)},
             ${parsed.candidateId}, ${parsed.decision}, ${tier}, ${GOLD_MODEL},
             ${hash}, ${outputHash(result.text)}, ${parsed.needsHumanReview}, ${parsed.reason})
     ON CONFLICT (source, citation_key, model_input_hash) DO NOTHING`;
