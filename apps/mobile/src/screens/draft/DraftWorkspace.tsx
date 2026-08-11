@@ -9,6 +9,11 @@ import { color, size, space } from '../../theme/tokens';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
+ * FROZEN — PD-15 REVERSED 12 AUG 2026, FOUNDER DIRECTION. See the identical
+ * notice at the top of `ResearchWorkspace.tsx`. Left in place, inert below the
+ * breakpoint on every phone; not extended further.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
  * THE DESKTOP DRAFTING WORKSPACE — same pattern as `ResearchWorkspace.tsx`
  * and `MatterWorkspace.tsx`. PD-15's reasoning again: a phone gives a draft
  * the whole screen because that is right at 390px; a desk-width screen does

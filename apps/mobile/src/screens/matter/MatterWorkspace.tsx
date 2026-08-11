@@ -9,6 +9,11 @@ import { color, size, space } from '../../theme/tokens';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
+ * FROZEN — PD-15 REVERSED 12 AUG 2026, FOUNDER DIRECTION. See the identical
+ * notice at the top of `ResearchWorkspace.tsx`. Left in place, inert below the
+ * breakpoint on every phone; not extended further.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
  * THE DESKTOP MATTER WORKSPACE — same pattern as `ResearchWorkspace.tsx`,
  * applied to the matter list. PD-15's reasoning carries over unchanged: a
  * phone gives a matter the whole screen because a 390px screen is right to;

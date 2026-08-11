@@ -285,11 +285,20 @@ phone.
 
 # DECISIONS ONLY THE FOUNDER CAN MAKE
 
-### [RESOLVED 11 Aug 2026] FQ-D9 — the desktop research workspace
+### [RESOLVED 11 Aug 2026, REVERSED 12 Aug 2026] FQ-D9 — the desktop research workspace
 
-**ANSWERED: option 1. Yes — the brief is amended and web is no longer admin
-only.** Recorded as **PD-15** in `PRODUCT_DECISIONS.md`; the superseded lines in
-`CLAUDE.md` §1 and `PRODUCT_BRIEF.md` §Where it runs are amended to point at it.
+**REVERSED 12 Aug 2026, said directly to RCC:** *"This is only an app, we do
+not plan for a desktop, or a website login for users. The website login is
+only for the admin panel."* `CLAUDE.md` §1 and `PRODUCT_BRIEF.md` §Where it
+runs are reverted to admin-only web; the reversal is recorded on the same
+**PD-15** entry in `PRODUCT_DECISIONS.md`, not a new one. Frozen rather than
+deleted, on the founder's explicit call when RCC asked which — see PD-15 for
+which files that leaves inert in the tree.
+
+**ANSWERED 11 Aug 2026 (superseded by the above): option 1. Yes — the brief is
+amended and web is no longer admin only.** Recorded as **PD-15** in
+`PRODUCT_DECISIONS.md`; the superseded lines in `CLAUDE.md` §1 and
+`PRODUCT_BRIEF.md` §Where it runs are amended to point at it.
 
 The founder's conditions, all carried into PD-15: mobile stays first-class and is
 not redesigned around desktop · build inside the existing `apps/mobile` Expo web

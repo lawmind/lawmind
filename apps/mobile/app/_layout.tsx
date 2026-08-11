@@ -79,9 +79,14 @@ export default function RootLayout() {
   /**
    * CMD/CTRL+K — THE COMMAND PALETTE, WEB ONLY. `9_GLOBAL_COMMAND_CENTER.md`:
    * "Primary shortcut: Cmd/Ctrl + K." Native has no hardware keyboard to bind
-   * this to as a rule, so the phone's entry point is the tab-bar trigger in
-   * `(tabs)/_layout.tsx` instead — `Platform.OS === 'web'` here is the
-   * correct gate, not a temporary one.
+   * this to as a rule, so the phone's entry point is the Today-screen trigger
+   * instead — `Platform.OS === 'web'` here is the correct gate, not a
+   * temporary one.
+   *
+   * FROZEN, NOT THE PALETTE ITSELF. PD-15 (desktop) is reversed 12 Aug
+   * 2026 — this listener never fires for an advocate on the phone app either
+   * way, since `Platform.OS` is never `'web'` there. The command palette's
+   * mobile trigger (Today screen) is unaffected and stays a live feature.
    */
   const toggleCommandPalette = useCommandPalette((s) => s.toggle);
   useEffect(() => {

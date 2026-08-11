@@ -226,3 +226,28 @@ not an admin surface, not a second design system.
 overruled status is still read live at render on every pane, amber still means
 only that the law has moved, and `set_aside` still disables add-to-matter. More
 room to draw is not permission to decorate.
+
+---
+
+**REVERSED — 12 Aug 2026, founder direction, in conversation with RCC.** *"This
+is only an app, we do not plan for a desktop, or a website login for users. The
+website login is only for the admin panel."* `CLAUDE.md` §1 and
+`PRODUCT_BRIEF.md` §Where it runs are amended back to admin-only web, the same
+amendment discipline PD-15 itself used going the other way eleven hours
+earlier.
+
+**Frozen, not removed — the founder's explicit call**, asked directly rather
+than assumed: the "reversible by construction" property above meant there was
+a real choice between deleting the desktop-specific code and leaving it inert,
+and the founder chose the second. `ResearchWorkspace.tsx`, `MatterWorkspace.tsx`,
+`DraftWorkspace.tsx` and the Cmd/Ctrl+K listener in `app/_layout.tsx` stay in
+the tree exactly as PD-15 left them — below the 900px breakpoint every one of
+them renders the ordinary phone screen, so a phone user was never affected by
+either the settling or the reversal. Nothing further is built against any of
+them: no new desktop surface, no additional keyboard shortcut, no web-specific
+layout. If this code is ever deleted outright, deleting it is the whole
+change — a file and an import per surface, same as PD-15 always said.
+
+**What this does not touch:** the admin console (`apps/admin`) keeps its own
+web login unchanged — that was never in question, and PD-15's "web is no
+longer admin only" line was always about the *advocate* product, not admin.

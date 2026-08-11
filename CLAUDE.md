@@ -32,12 +32,18 @@ first is what nobody may decide alone, the second is what nobody may re-decide.
 ## 1. WHAT LAWMIND IS
 
 AI research and drafting assistant for practising Indian advocates. Criminal and
-civil litigation. Native iOS + Android (Expo), **plus a desktop research
-workspace on the same Expo web target** — PD-15, settled 11 Aug 2026, resolving
-`FQ-D9`. The old "web is admin only" line is superseded: admin is still a
-separate service, and web is no longer admin alone. **Mobile is not redesigned
-around desktop**, no separate app is created, and the desktop layout is a width
-breakpoint inside `apps/mobile` that is removed by removing a branch.
+civil litigation. **Native iOS + Android (Expo) only. Admin is a separate
+service; web is admin only.**
+
+**PD-15 (11 Aug 2026, desktop research workspace) is REVERSED — 12 Aug 2026,
+founder direction.** This is a phone app; there is no planned desktop surface
+and no web login for advocates, only for the admin panel. The reversal was
+built for exactly this: the desktop layout was a width breakpoint inside
+`apps/mobile`, off below 900px on every phone, and is now frozen rather than
+extended. `ResearchWorkspace.tsx`, `MatterWorkspace.tsx`, `DraftWorkspace.tsx`
+and the Cmd/Ctrl+K web listener in `app/_layout.tsx` are left in place —
+inert, not deleted, per the founder's explicit call — but nothing further is
+built against them. See `PRODUCT_DECISIONS.md` PD-15 for the full history.
 
 Four core features PLUS the daily loop (Tier B, approved 2 Aug 2026). **Tier B
 ships before Tier A** — the loop creates the habit, the library only prevents a

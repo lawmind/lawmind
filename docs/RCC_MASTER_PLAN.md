@@ -613,3 +613,33 @@ display screens around it are built). One LCC-side gap flagged in
 suite — this pass edited types and state files across the two id-naming
 and onboarding fixes and neither has been re-run since. The device-side
 work above was observed live, not verified against the type-checker.
+
+---
+
+## PD-15 REVERSED — 12 Aug 2026, founder direction
+
+**"This is only an app, we do not plan for a desktop, or a website login for
+users. The website login is only for the admin panel."** Said directly to
+RCC, mid-session, the day after PD-15 settled the opposite way. Full record in
+`PRODUCT_DECISIONS.md` PD-15 (the reversal is appended to the same entry, not
+a new one) and `CLAUDE.md` §1 / `PRODUCT_BRIEF.md` §Where it runs are both
+reverted to admin-only web.
+
+**Asked the founder directly rather than guessing the blast radius**: fully
+revert the desktop code, or freeze it in place. Answer: **freeze, don't
+remove.** `ResearchWorkspace.tsx`, `MatterWorkspace.tsx`, `DraftWorkspace.tsx`
+and the Cmd/Ctrl+K listener in `app/_layout.tsx` (commits `0fb34ea`, `4063628`,
+`c8071ce`) stay in the tree exactly as built — each carries a new "FROZEN —
+PD-15 reversed" notice at the top of its own doc comment so a fresh session
+doesn't mistake dead code for a live surface and extend it. Below the 900px
+breakpoint every one of them has always rendered the ordinary phone screen, so
+no phone user was ever affected by the settling or by the reversal — this is
+precisely the "reversible by construction" property PD-15 built in on purpose.
+
+**Command Palette is NOT part of the reversal.** It shipped in the same
+session as the desktop workspaces (`c8071ce`) but is a mobile feature in its
+own right — Today screen's trigger icon is the primary entry point now, not
+the web-only Cmd+K listener. Kept live, no change.
+
+**Nothing to build from this.** Recorded so the reversal is durable across
+compaction and a fresh agent, per this file's whole purpose.
