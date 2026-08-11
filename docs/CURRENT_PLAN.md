@@ -1103,6 +1103,32 @@ indiacode publishes only the current wording.
 footnote establishes IPC→BNS equivalence, and same section number is not same
 legal substance. That remains a sourcing problem, and it is still open.
 
+### Q1.16 · Stages 9–20 — PLANNED, and 10 is running · 11 Aug 2026
+
+**The plan is `docs/ai/STAGES_9_20_PLAN.md`**, with each stage's DONE/VERIFY,
+its real dependencies, and a blocking graph. Read it before picking one up.
+
+Three things from it that change this queue:
+
+- **Stage 10 (retrieval bake-off) runs BEFORE Stage 9 (eval-set expansion)**,
+  and the reason is recorded rather than assumed: 283 of 283 gold judgments are
+  Supreme Court, which already has 100% dense embedding coverage, so the
+  bake-off needs no new embedding job — and expanding an eval set before knowing
+  which arm it must discriminate is building a ruler before knowing what is
+  measured. The isolated-arm `mode` parameter that made it possible is in
+  `fe1b21e`; the 283-query run is going.
+- **Stage 15 (rhetorical roles) is a SURVEY, and the answer is do not build.**
+  `docs/ai/RHETORICAL_ROLES_STAGE15_SURVEY.md`. OpenNyAI's `InRhetoricalRoles`
+  is Apache-2.0 and Indian-law-specific. **Using the weights is clean; training
+  on the CC BY-SA BUILD dataset is a share-alike question nobody may answer
+  alone.** It has no obiter label, and neither does anything else maintained —
+  recorded as an open gap, not folded into `Ratio`.
+- **Stage 16 (currentness) is blocked, and the reason changed on measurement.**
+  Not "no judge-count column" — the count exists and is a lower bound that reads
+  **1 for Kesavananda Bharati's 13-judge bench**. A partial coram is more
+  dangerous than an absent one because it looks like an answer. See
+  `SCHEMA_TRUTH.md` §judgments.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
