@@ -64,6 +64,21 @@
 import postgres from 'postgres';
 
 const APPLY = process.argv.includes('--apply');
+/**
+ * `--external` additionally resolves `external_citations.cited_judgment_id` —
+ * High Court citation SIGHTINGS of a judgment we do not hold as a citing row,
+ * as opposed to `judgment_citations`, edges between judgments we DO hold.
+ * Off by default: this flag was added 12 Aug 2026 alongside
+ * `internal-concordance-cli.ts`, which writes new `judgment_citation_aliases`
+ * rows for High Court targets specifically — nothing before that CLI existed
+ * had ever re-run `external_citations` against a grown alias table, so this
+ * table's own resolution rate could only fall further behind on every future
+ * `judgment_citation_aliases` write. Separate flag, not the default, because
+ * the two tables have different owners and different call sites elsewhere in
+ * this repo, and silently widening what a plain `resolve --apply` touches is
+ * exactly the kind of scope creep the ponytail ladder forbids.
+ */
+const RESOLVE_EXTERNAL = process.argv.includes('--external');
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!url) {
@@ -237,6 +252,96 @@ try {
     `after: ${after?.resolved?.toLocaleString()} / ${edgesOf(after).toLocaleString()} citation edges ` +
       `resolved (${pct(after?.resolved ?? 0, after)})   [${after?.sentinels?.toLocaleString()} sentinels excluded]`,
   );
+
+  /* ============================================================================
+   * `--external` — the same resolution against `external_citations`, added
+   * 12 Aug 2026. Same three guards (exactly one target, the year guard, never
+   * overwrite); no self-citation guard, because a High Court document sighted
+   * here is not itself a row in `judgments` and cannot self-cite one.
+   * ============================================================================ */
+  if (RESOLVE_EXTERNAL) {
+    console.log('');
+    console.log('EXTERNAL CITATIONS RE-RESOLUTION');
+    console.log('='.repeat(74));
+
+    const [extBefore] = await sql<{ total: number; resolved: number }[]>`
+      SELECT count(*)::int AS total, count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::int AS resolved
+      FROM external_citations`;
+    console.log(
+      `before: ${extBefore?.resolved?.toLocaleString()} / ${extBefore?.total?.toLocaleString()} ` +
+        `external citation sightings resolved (${((100 * (extBefore?.resolved ?? 0)) / Math.max(extBefore?.total ?? 1, 1)).toFixed(1)}%)`,
+    );
+
+    const extStats = await sql<{ verdict: string; edges: number }[]>`
+      WITH corpus AS (${CORPUS_KEYS}),
+      keyed AS (
+        SELECT k, count(DISTINCT id)::int AS targets, min(id::text) AS target,
+               array_agg(DISTINCT y) AS years
+        FROM corpus, LATERAL (
+          SELECT (regexp_matches(src, '(1[89][0-9][0-9]|20[0-9][0-9])', 'g'))[1] AS y
+        ) yy
+        GROUP BY k
+      ),
+      edges AS (
+        SELECT ec.id, ec.citation_key AS k,
+               substring(ec.citation_text from '(1[89][0-9][0-9]|20[0-9][0-9])') AS year
+        FROM external_citations ec
+        WHERE ec.cited_judgment_id IS NULL
+      )
+      SELECT CASE
+               WHEN kd.k IS NULL          THEN 'no key in our corpus'
+               WHEN kd.targets > 1        THEN 'REFUSED: two or more targets'
+               WHEN e.year IS NULL        THEN 'REFUSED: no year in the citation'
+               WHEN NOT (e.year = ANY(kd.years)) THEN 'REFUSED: year guard'
+               ELSE 'RESOLVABLE'
+             END AS verdict,
+             count(*)::int AS edges
+      FROM edges e LEFT JOIN keyed kd ON kd.k = e.k
+      GROUP BY 1 ORDER BY edges DESC`;
+
+    for (const s of extStats) console.log(`  ${String(s.edges).padStart(7)}  ${s.verdict}`);
+    const extResolvable = extStats.find((s) => s.verdict === 'RESOLVABLE')?.edges ?? 0;
+    console.log(`\nRESOLVABLE: ${extResolvable.toLocaleString()} sightings`);
+
+    if (APPLY) {
+      const extUpdated = await sql`
+        WITH corpus AS (${CORPUS_KEYS}),
+        keyed AS (
+          SELECT k, count(DISTINCT id)::int AS targets, min(id::text) AS target,
+                 array_agg(DISTINCT y) AS years
+          FROM corpus, LATERAL (
+            SELECT (regexp_matches(src, '(1[89][0-9][0-9]|20[0-9][0-9])', 'g'))[1] AS y
+          ) yy
+          GROUP BY k
+        ),
+        edges AS (
+          SELECT ec.id, ec.citation_key AS k,
+                 substring(ec.citation_text from '(1[89][0-9][0-9]|20[0-9][0-9])') AS year
+          FROM external_citations ec
+          WHERE ec.cited_judgment_id IS NULL
+        )
+        UPDATE external_citations ec
+        SET cited_judgment_id = kd.target::uuid
+        FROM edges e JOIN keyed kd ON kd.k = e.k
+        WHERE ec.id = e.id
+          AND ec.cited_judgment_id IS NULL
+          AND kd.targets = 1
+          AND e.year IS NOT NULL
+          AND e.year = ANY(kd.years)
+      `;
+
+      const [extAfter] = await sql<{ total: number; resolved: number }[]>`
+        SELECT count(*)::int AS total, count(*) FILTER (WHERE cited_judgment_id IS NOT NULL)::int AS resolved
+        FROM external_citations`;
+      console.log(`\nUPDATED ${extUpdated.count.toLocaleString()} sightings`);
+      console.log(
+        `after: ${extAfter?.resolved?.toLocaleString()} / ${extAfter?.total?.toLocaleString()} ` +
+          `external citation sightings resolved (${((100 * (extAfter?.resolved ?? 0)) / Math.max(extAfter?.total ?? 1, 1)).toFixed(1)}%)`,
+      );
+    } else {
+      console.log('\nDRY RUN -- nothing written. Re-run with --apply.');
+    }
+  }
 } finally {
   await sql.end();
 }

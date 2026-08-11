@@ -33,7 +33,8 @@
     "hc:classify": "tsx src/hc-classify-cli.ts",
     "concordance": "tsx src/concordance-cli.ts",
     "concordance:gold": "tsx src/concordance-gold-cli.ts",
-    "concordance:adjudicate": "tsx src/concordance-adjudicate-cli.ts"
+    "concordance:adjudicate": "tsx src/concordance-adjudicate-cli.ts",
+    "concordance:internal": "tsx src/internal-concordance-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",
