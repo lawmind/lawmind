@@ -36,11 +36,18 @@ figure). Full detail, the coverage matrix, and how each number was measured:
 first drafted, after the first draft was found to describe only the
 *ingested* corpus and risked being read as the whole one.
 
-**Source corpus, measured fresh via parquet footers, not assumed as "~20M"**:
-43,532 rows (Supreme Court, 77 year-files) + 20,529,203 rows (High Court,
-1,493 partition files, both metadata variants) = **20,572,735 total source
-rows** — and even that combined figure counts *metadata rows*, most of
-which are orders and procedural documents, not judgments
+**Source corpus, measured fresh via parquet footers, not assumed as "~20M",
+and CORRECTED same day for a real error the first draft made**: raw footer
+sums are per-*file* row counts, and the Supreme Court bucket lists some
+documents in more than one year-partition file — summing without
+correcting for that overstated the SC source size by 5,181 rows (a
+two-orders-of-magnitude error in the *coverage gap*, caught by executing
+the very next measurement task, `AWS_CORPUS_INVENTORY.md` §3). Corrected
+figures: **38,351 distinct rows (Supreme Court)** + 20,529,203 rows (High
+Court, 1,493 partition files, both metadata variants — this figure's own
+distinct-document status is unverified, `AWS_CORPUS_INVENTORY.md` §1) =
+**20,567,554 total source rows**, still overwhelmingly not judgments —
+most are orders and procedural documents
 (`AWS_CORPUS_INVENTORY.md` §2). Reproducible:
 `pnpm --filter @lawmind/ingest hc:count`.
 
@@ -50,8 +57,8 @@ of which are now stale on exactly this point):
 | | measured | source |
 | --- | --- | --- |
 | `judgments` (**ingested** corpus) total | **79,321** | `SELECT count(*) FROM judgments` |
-| — Supreme Court | 38,341 of 43,532 source rows (**88.1% coverage**) | `court = 'Supreme Court of India'` |
-| — High Court | 40,980 of 20,529,203 source rows (**0.1996% coverage**) | everything else |
+| — Supreme Court | 38,341 of 38,351 distinct source rows (**99.97% coverage — 11 judgments genuinely uningested, named in `AWS_CORPUS_INVENTORY.md` §3**) | `court = 'Supreme Court of India'` |
+| — High Court | 40,980 of 20,529,203 source rows (**0.1996%, an upper-bound coverage figure** — HC's distinct-document count is unverified) | everything else |
 | `cnr` populated | **79,321 of 79,321 — 100%** | migration `0034` + `backfill-cnr.ts`, both run 11 Aug; task 007 |
 | `content_hash` populated | 79,321 of 79,321 | backfilled 11 Aug, `backfill-provenance.ts` |
 | — exact-duplicate groups | 937 groups / 1,500 rows (1.9%) | see `docs/ai/tasks/003-corpus-inventory.md` — consolidated/batch judgments, not confirmed mobile/plain duplication |

@@ -28,18 +28,32 @@ conflate these:
 These four numbers are never the same number, and this document is what
 makes sure they are never typed as one.
 
+**CORRECTION, same day, before this document was ever cited outside itself:
+"total rows" is not "distinct documents" either, and the first draft of
+this section conflated exactly that** — the same class of error §2 warns
+against for judgment-vs-order, discovered while executing §8's own item 2
+(characterise the SC gap). Full account in §3. The one-line version: the
+Supreme Court bucket lists the same document under more than one year
+partition (`sci.ts`'s own long-standing comment: *"the same judgment is
+listed in two adjacent partitions"*), so summing footer row-counts across
+all 77 year files double-counts 5,181 of them. **True distinct SC source
+size is 38,351, not 43,532** — corrected below, not left standing.
+
 ---
 
 ## 1 · SOURCE CORPUS SIZE — measured fresh, 11 Aug 2026
 
 ### Supreme Court (`s3://indian-supreme-court-judgments`)
 
-Footer-counted across every year file, 1950–2026:
+Footer-counted across every year file, 1950–2026, **then corrected for
+cross-partition duplication** (§3):
 
 | | |
 | --- | --- |
 | metadata files (years) | **77** |
-| total rows | **43,532** |
+| total rows, raw footer sum | 43,532 |
+| **distinct `source_url` values (the real source-corpus size)** | **38,351** |
+| — rows that are a second listing of an already-counted `source_url` | 5,181 |
 
 ### High Court (`s3://indian-high-court-judgments`)
 
@@ -62,14 +76,32 @@ Allahabad 9_13, Madhya Pradesh 23_23, Himachal Pradesh 2_5) — carrying
 variants share **zero CNRs**: they are disjoint document sets, not two views
 of one record set.
 
+**Does the HC bucket have the same cross-partition duplication SC has
+(§3)? INFER, not KNOW — not independently checked this session.**
+`pdfUrlFor` builds the HC url from the **partition's own** year/court/bench
+(the folder path), never a field read from the row — unlike SC's
+`sourceUrlFor`, which keys off `row.year`, a row-level field that can
+disagree with the file it was read from. So the *specific* collision
+mechanism found in §3 cannot occur for HC by construction: two different
+partition files always produce different urls. That does not rule out a
+*different* kind of HC duplication (the same document genuinely re-listed
+in two folders) — only that this session did not find or measure one. The
+20,529,203 HC figure is presented as **rows counted**, not asserted to
+equal **distinct documents**, pending that check.
+
 ### Combined source corpus
 
-**20,529,203 (HC) + 43,532 (SC) = 20,572,735 total source rows.**
+**20,529,203 (HC, rows counted, distinct-document status for HC not yet
+verified) + 38,351 (SC, corrected for cross-partition duplication, §3) =
+20,567,554 total source rows**, on present evidence — not the raw
+43,532 + 20,529,203 = 20,572,735 an uncorrected footer sum would give.
 
 **This is not "~20M documents" as a round-number assumption — it is a
 measured figure, reproducible by anyone who runs the two commands above,
-and it is a count of *metadata rows*, not of judgments.** §2 below is the
-correction the founder's directive explicitly warned against skipping.
+and it is a count of *metadata rows*, not of judgments — and, for the SC
+half, corrected for cross-partition duplication the same day it was first
+measured, not left standing.** §2 and §3 below are the corrections the
+founder's directive explicitly warned against skipping.
 
 ---
 
@@ -103,37 +135,74 @@ judgments series), but that is **INFER, not KNOW** — not verified by reading
 
 ## 3 · INGESTED CORPUS SIZE, AND THE COVERAGE MATRIX
 
-| | source corpus | ingested (held) | coverage |
+**This section was wrong in its first draft, caught the same day by doing
+the exact measurement §7's task list called for next — recorded here
+rather than quietly replaced, because the failure mode is itself the
+lesson.** The first draft computed SC "coverage" as
+`38,341 / 43,532 = 88.1%` and reported "5,191 uningested rows". Executing
+the very next task (characterise what the SC gap actually is) found the
+true number is **11 genuinely uningested judgments**, not 5,191 — the
+other 5,180 were never missing at all; they were **the same document
+counted twice** in the raw footer sum (§1). The lesson restated plainly:
+a "source corpus size" measured by summing per-file row counts is only
+correct if no document is listed in more than one file, and for the SC
+bucket that assumption is false and was already known to be false
+(`sci.ts`'s own header comment, written before this session).
+
+**Verified two ways, not one**: (1) for each of the 43,532 raw rows,
+computed `sourceUrlFor(row)` and checked it against every held SC
+`source_url` — 11 rows had no held match, and every one of those 11 also
+had a `cnr` absent from every held row's `cnr`, i.e. genuinely new by two
+independent identity checks, not one. (2) Computed `sourceUrlFor(row)` for
+all 43,532 rows and counted distinct values directly: **38,351 distinct
+urls**, 5,181 of them produced by more than one row — `38,351 − 38,341 =
+10`, agreeing with the 11-row finding to within one (a row whose computed
+url coincidentally matches a held row through a path this check does not
+distinguish; not chased further at this scale).
+
+| | source corpus (**corrected**) | ingested (held) | coverage |
 | --- | --- | --- | --- |
-| Supreme Court | 43,532 | 38,341 | **88.1%** |
-| High Court | 20,529,203 | 40,980 | **0.1996%** |
-| **Combined** | **20,572,735** | **79,321** | **0.386%** |
+| Supreme Court | **38,351** | 38,341 | **99.97%** |
+| High Court | 20,529,203 (rows counted; distinct-document status unverified, §1) | 40,980 | **0.1996%, upper bound** |
+| **Combined** | **20,567,554** | **79,321** | **0.386%, HC-dominated** |
 
 **The founder's instruction not to assume the 79,321 rows represent the
-full corpus is correct, and the gap is not close** — 99.6% of the measured
-HC source corpus (20,529,203 rows) has never been read. Most of that 99.6%
-is not a judgment either (§2), so the *real* gap — usable authorities not
-yet held — is smaller than the row-count gap but categorically still large
-and **not precisely known**, because §2's judgment-share figure cannot be
-applied corpus-wide.
+full corpus was right to insist on — for the High Court half.** For the
+Supreme Court half, the corrected measurement says the opposite of the
+first draft: **we hold essentially the entire distinct SC corpus already**,
+and the real remaining SC gap is 11 rows, not thousands. The overall
+0.386% combined figure is entirely an HC statement, not a balanced average
+of two comparable gaps — stating it without the per-court breakdown above
+would itself be a conflation of the kind this document exists to prevent.
+
+Most of the still-real HC gap is not a judgment either (§2), so the *real*
+gap there — usable authorities not yet held — is smaller than the
+20,488,223 row-count gap but categorically still large and **not
+precisely known**, because §2's judgment-share figure cannot be applied
+corpus-wide.
 
 ### SOURCE vs DB vs UNINGESTED vs DUPLICATES vs INVALID/MISSING
 
-| | Supreme Court | High Court |
+| | Supreme Court (**corrected**) | High Court |
 | --- | --- | --- |
-| **SOURCE** rows (measured, §1) | 43,532 | 20,529,203 |
+| **SOURCE**, distinct documents | 38,351 | 20,529,203 (rows; distinct-status unverified) |
 | **INGESTED** (`judgments` rows) | 38,341 | 40,980 |
-| **UNINGESTED** (source − ingested) | 5,191 | 20,488,223 |
+| **UNINGESTED** | **11**, sampled and named below | 20,488,223 |
 | **DUPLICATES** among ingested (`content_hash` groups, task 003) | not broken out by court this session — 937 groups / 1,500 rows corpus-wide, 98.4% of the 1,500 are HC | see left |
 | **INVALID/MISSING** (ingested but structurally incomplete) | 0 rows with null `content_hash`/`text_quality` (100% backfilled, task 003) | same |
 
-**Why SC's "uningested" 5,191 is not simply "5,191 judgments we are
-missing"**: no measurement this session sampled what those specific 5,191
-rows are — could be duplicates of already-held rows under a slightly
-different `source_url`, could be genuinely new judgments, could include
-rows the original ingest deliberately skipped (unstorable text,
-`stripUnstorable`, `services/ingest/src/text.ts`). **Not claimed as a clean
-gap** — flagged as the natural next SC-side measurement, not performed here.
+**The 11 uningested SC judgments, named, not just counted** — sampled
+titles and CNRs, confirming they are real, distinct, genuinely-new cases
+spanning 1996–2009, not a clustered artefact of one bad year: *P.
+Ratnakar Rao v. Government of Andhra Pradesh* (`ESCR010015461996`),
+*Giridhari Paramanand Vadhava v. State of Maharashtra*
+(`ESCR010015471996`), *V. Uthirapathi v. Ashrab Ali* (`ESCR010001131998`),
+*State of U.P. v. Nahar Singh* (`ESCR010001151998`), *High Court of Punjab
+and Haryana v. Ishwar…* (`ESCR010002111999`), *K. Venkatachalam v. A.
+Swamickan* (`ESCR010005751999`), *Commissioner, Central Excise, Nagpur v.
+M/S. Waingan…* (`ESCR010002182002`), *State of Punjab v. Sohan Singh*
+(`ESCR010012922009`), and 3 more not listed here. **Small enough to ingest
+directly as the next concrete step, §8.**
 
 ---
 
@@ -270,17 +339,28 @@ scattered across three documents with three different vintages.
 **Ranked next data tasks, updated from `DATA_MOAT_PROGRAM.md` §7 given
 today's findings:**
 
-1. **Wire the existing `needs_ocr`/`extracted` classifier into the
-   production loader** (§6). Cheapest, most concrete, reuses proven code —
-   the same shape as the `cnr` fix that closed today.
-2. **SC uningested-rows characterisation** (§3) — sample the 5,191 SC rows
-   never ingested: genuinely new, or already-held under a different
-   `source_url`? Small (5,191, not millions), answers a real question §3
-   left open.
-3. **Mobile-variant ingest for the 4 courts, as a scoped decision, not a
+1. ~~**Wire the existing `needs_ocr`/`extracted` classifier into the
+   production loader**~~ — **DONE, same day.** `judgments.native_text`,
+   migration `0035`, applied.
+2. ~~**SC uningested-rows characterisation**~~ — **DONE, same day, and it
+   corrected §3's own first draft**: not 5,191 uningested, **11** — the
+   other 5,180 were the raw footer sum double-counting cross-partition
+   listings. Named and sampled, §3.
+3. **Ingest the 11 genuinely-new SC judgments** — trivial scope, the exact
+   opposite of a bulk operation: 11 known `sourceUrlFor` values, run
+   through the existing `cli.ts` path unchanged (it already
+   skips-and-resumes on `source_url`, so a targeted or even a full
+   `--resume` SC re-run only touches these 11). The natural immediate next
+   step, not deferred.
+4. **Mobile-variant ingest for the 4 HC courts, as a scoped decision, not a
    backfill** (§5) — a founder-level acquisition-scope call (new rows,
    real disk/DB cost, real judgment-share unknown outside the 8% sample),
    not an engineering default.
-4. Everything already recorded in `DATA_MOAT_PROGRAM.md` §7 (Gazette
+5. **Verify whether the HC bucket has cross-partition duplication of its
+   own** (§1's open caveat) — the SC mechanism cannot recur for HC by
+   construction (`pdfUrlFor` keys off the partition, not a row field), but
+   that was reasoned, not measured. A real HC-side duplicate-listing check
+   was not performed this session.
+6. Everything already recorded in `DATA_MOAT_PROGRAM.md` §7 (Gazette
    ingest build, OpenNyAI/NyayaAnumana audit pending a concrete need,
    eCourts scope blocked on the founder) stands unchanged.

@@ -782,20 +782,30 @@ Continuing per the founder's RESUME AUTONOMOUS EXECUTION directive into P1
 
 10. **`docs/ai/AWS_CORPUS_INVENTORY.md` — the source-vs-ingested scale
     question, per the founder's DATA SCALE CONTINUATION directive, 11 Aug.**
-    Measured fresh, not assumed "~20M": **20,572,735 total source rows**
-    (43,532 SC + 20,529,203 HC, footer-counted against the live bucket) vs.
-    **79,321 ingested** — SC at 88.1% coverage, HC at **0.1996%**. Fixed the
-    `source_document_type` mystery from item 4 above for good: every held
-    row, for all 25 courts including the 4 that publish a mobile-variant
-    file, came from the plain variant, which structurally never carries the
-    field — not backfillable, because plain and mobile share zero CNRs and
-    describe different documents. Also found: the deterministic
-    native-vs-scanned classifier the founder asked for already exists
-    (`hc-extract.ts`'s `measureExtraction`, proven against real PDFs) and
-    only needs wiring into the production loader, not designing from
-    scratch. `DATA_MOAT_PROGRAM.md` §0 terminology corrected to keep source
-    corpus size, ingested corpus size, unique canonical documents and
-    unique cases from ever being conflated again.
+    Measured fresh, not assumed "~20M", **then self-corrected the same
+    day**: the first pass reported SC at 88.1% coverage (43,532 raw footer
+    rows vs. 38,341 held) — executing the very next measurement task found
+    the SC bucket lists 5,181 documents under more than one year-partition,
+    so the true distinct SC source size is **38,351, coverage 99.97%**,
+    and only **11 judgments** are genuinely uningested (named in the
+    doc), not thousands. HC stands at 20,529,203 rows / 0.1996% coverage,
+    stated as an upper bound — HC's own distinct-document status was
+    reasoned as unlikely to have the same defect (its URL construction
+    keys off the partition, not a row field) but not independently
+    measured. Fixed the `source_document_type` mystery from item 4 above
+    for good: every held row, for all 25 courts including the 4 that
+    publish a mobile-variant file, came from the plain variant, which
+    structurally never carries the field — not backfillable, because
+    plain and mobile share zero CNRs and describe different documents.
+    Found and **wired the same day**: `services/ingest/src/text.ts`'s
+    `isNativeText` (the deterministic native-vs-scanned classifier the
+    founder asked for, already proven against real PDFs, just never
+    persisted per judgment) — `judgments.native_text`, migration `0035`,
+    applied to production; not backfillable for the 79,321 existing rows,
+    unlike `content_hash`/`cnr`, since it needs the source PDF re-fetched
+    for its page count. `DATA_MOAT_PROGRAM.md` §0 terminology corrected to
+    keep source corpus size, ingested corpus size, unique canonical
+    documents and unique cases from ever being conflated again.
 
 **Inspected and deliberately NOT started: PII pseudonymisation.** `docs/
 PRIVACY_PII.md` names Presidio (MIT) as "the detection base, not the
