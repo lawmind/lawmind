@@ -8,9 +8,26 @@ import postgres from 'postgres';
 import { createApp } from './app.ts';
 import { env } from './env.ts';
 import { logger } from './logger.ts';
+import { runPreflight } from './preflight.ts';
 
 const db = createDatabase(env.databaseUrl());
 const rawSql = postgres(env.databaseUrl(), { max: 10 });
+
+/**
+ * Fail closed, not open — REB §1. Every other degradation path in this file
+ * (the embedder, mail) is a deliberate choice to keep serving with a smaller
+ * surface; citation correctness is not one of those, because a `cite:` search
+ * that silently stopped matching is indistinguishable from one that correctly
+ * found nothing. `preflight.ts` documents exactly what is checked and why.
+ */
+const preflightFailures = await runPreflight(rawSql);
+if (preflightFailures.length > 0) {
+  logger.fatal(
+    { failures: preflightFailures },
+    'startup preflight failed — refusing to boot with a citation-safety-critical gap',
+  );
+  process.exit(1);
+}
 
 /**
  * A model that will not load must never take the API down.

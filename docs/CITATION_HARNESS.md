@@ -525,6 +525,49 @@ a verified badge and the law has since moved, say so plainly. Always name what
 replaced it, because the advocate's next action is finding the substitute. Never
 send a notification with no action attached.
 
+## Startup preflight — fail closed, never boot degraded — binding, added 11 Aug 2026
+
+Every other degradation path in the API is deliberately fail-*open*: if the
+embedding model never loads, `/search` keeps serving lexical-only rather than
+refusing requests (`services/api/src/index.ts`'s own comment explains why that
+specific gap is safe to survive — search degrades, it does not lie). Citation
+correctness is the one thing that must not survive silently broken, because an
+advocate cannot tell a `cite:` query that quietly stopped matching from one
+that correctly found nothing.
+
+`services/api/src/preflight.ts` runs on every boot, before `serve()`, and
+`process.exit(1)`s if any check fails:
+
+1. **`qlang` module sanity** — `parse()` on a canonical `cite:` query must
+   return a single citation term without throwing. Catches a parser
+   regression before it reaches `isBareCitationTerm` (the ambiguity gate).
+2. **Required tables** — `judgments`, `citation_checks`.
+3. **Required `judgments` columns** — `id`, `case_title`, `full_text`,
+   `neutral_citation`, `reporter_citations`, `overruled_status`. Real stored
+   columns only: `verificationState`/`verifiedBySource` in the judgment-detail
+   response are literal constants (`judgments/route.ts`) — a corpus judgment
+   is `verified`/`corpus` by construction — not columns, and do not belong on
+   this list.
+4. **The citation-lookup index**, `judgments_neutral_citation_key`
+   (`packages/db/drizzle/0026_structured_search.sql`).
+5. **JS/SQL citation-key parity** — the load-bearing check. `citationLookupKey()`
+   (`search/query-shape.ts`) and the index's SQL expression implement the same
+   normalisation rule twice, by design, in two languages — the file's own
+   comment calls a second implementation "exactly the drift `CLAUDE.md`
+   forbids." The preflight runs both on the same probe string and asserts they
+   agree. Table, columns and index can all be present while these two drift
+   silently; nothing else here would catch it.
+
+Schema- and expression-level, not data-dependent — passes against an empty
+corpus, so every boot runs it, not just a seeded fixture once.
+
+**The first draft of check 3 guessed `verification_state`/`verified_by_source`
+as `judgments` columns and was wrong** — caught by running it against the live
+production schema before shipping, not by review. Had it shipped, the API
+would have hard-failed every future boot. The lesson stays here rather than
+only in the commit: verify a schema assumption against the real database
+before writing an assertion that refuses to boot on it.
+
 ## The harness — run before any gate
 
 Fixed set, 30 queries with known-correct answers: criminal (10), civil (10),

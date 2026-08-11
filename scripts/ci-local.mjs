@@ -151,6 +151,23 @@ if (process.env['CORPUS_DATABASE_URL']) {
   );
 }
 
+/**
+ * Judgment-detail safety probe — same shape as gate S2 above, and for the
+ * same reason: `deployed-judgment-safety.ts` picks its target row (a
+ * citationless judgment, an overruled one) from a real corpus, so grading it
+ * against the empty scratch database this script creates would pass trivially
+ * ("no target row" is itself a pass) and mean nothing. `docs/ai/
+ * V2_RECONCILIATION.md`, 11 Aug 2026.
+ */
+if (process.env['CORPUS_DATABASE_URL']) {
+  STEPS.push(['judgment safety probe (deployed)', 'pnpm', ['judgment-safety-probe']]);
+} else {
+  console.log(
+    'judgment safety probe SKIPPED — CORPUS_DATABASE_URL is not set.\n' +
+      '                     Run it directly: CORPUS_DATABASE_URL=... pnpm judgment-safety-probe\n',
+  );
+}
+
 const admin = postgres(adminUrl, { max: 1, ssl: 'require', onnotice: () => {} });
 const results = [];
 let failed = false;
