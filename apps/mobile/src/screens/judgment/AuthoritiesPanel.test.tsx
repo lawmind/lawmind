@@ -36,7 +36,7 @@ const response = (authorities: PointInTimeAuthority[]): AuthoritiesResponse => (
   caseTitle: 'Balwinder Singh (Binda) v. Narcotics Control Bureau',
   deliveredOn: '2023-09-22',
   asOf: '2026-08-06T19:15:12.741Z',
-  counts: { goodLawThen: 12, alreadyMoved: 1, movedSince: 0, unknown: 0 },
+  counts: { goodLawThen: 12, alreadyMoved: 1, overruledHere: 0, movedSince: 0, unknown: 0 },
   authorities,
   resolvedAuthorities: authorities.length,
 });

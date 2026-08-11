@@ -86,7 +86,7 @@ describe('AuthoritiesPanel', () => {
           caseTitle: 'Mock Root v. State',
           deliveredOn: '2015-01-01',
           asOf: '2026-08-11T00:00:00.000Z',
-          counts: { goodLawThen: 1, alreadyMoved: 0, movedSince: 0, unknown: 0 },
+          counts: { goodLawThen: 1, alreadyMoved: 0, overruledHere: 0, movedSince: 0, unknown: 0 },
           authorities: [authority],
           resolvedAuthorities: 1,
         }}

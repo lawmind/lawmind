@@ -15,8 +15,10 @@ import type {
   CurrentTerms,
   DraftDocument,
   DraftListItem,
+  EcourtsPath,
   JudgmentDetail,
   Matter,
+  OverruledStatus,
   MatterAccess,
   MatterAuthority,
   MatterEvent,
@@ -32,6 +34,8 @@ import type {
   StatuteSection,
   TrainingConsent,
   TreatmentResponse,
+  VerificationState,
+  VerifiedBySource,
 } from './contract';
 
 /**
@@ -682,14 +686,33 @@ export const api = {
    * is Tier 3 and caches permanently, so nobody in their chamber does it twice.
    */
   verifyEcourts: (citationText: string) =>
-    request<{ ecourtsUrl: string; prefilledQuery: string }>('/verify/ecourts', {
+    request<EcourtsPath>('/verify/ecourts', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ citationText }),
     }),
 
+  /**
+   * `{ cached: true }` UNTIL 11 AUG 2026 — five of the six fields dropped, and
+   * one of them is `overruledStatus`, read live from the judgments row at the
+   * moment of confirmation.
+   *
+   * `handleConfirm` is explicit about why it sends it: "A judgment can be
+   * verified and overruled at once — confirming that it EXISTS says nothing
+   * about whether it is still good law." The two questions are the ones this
+   * product refuses to collapse, and a response that answers both while the
+   * client declares only the first is how they get collapsed by accident.
+   */
   verifyConfirm: (citationText: string, judgmentId: string) =>
-    request<{ cached: true }>('/verify/confirm', {
+    request<{
+      cached: true;
+      citationCheckId: string | null;
+      verificationState: VerificationState;
+      verifiedBySource: VerifiedBySource;
+      overruledStatus: OverruledStatus;
+      confirmedAt: string | null;
+      asOf: string;
+    }>('/verify/confirm', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ citationText, judgmentId }),

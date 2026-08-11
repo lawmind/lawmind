@@ -153,9 +153,16 @@ export function TreatmentCard({
         {treatment.caseTitle}
       </Text>
 
+      {/*
+        NO PARAGRAPH SUFFIX. This line appended ` · ¶ n` from `treatment.paragraph`
+        until 11 Aug 2026 — a field `judgment_citations` has no column for and
+        `treatment.ts` never sent, so the suffix could not appear in production
+        and the card silently promised a precision it did not have. If the
+        paragraph of the treating passage is ever wanted it is a server change
+        first (`char_offset` is what the table records), not a client one.
+      */}
       <Text opticalNudge variant="record" style={styles.citation}>
         {citation.text}
-        {treatment.paragraph === undefined ? '' : ` · ¶ ${treatment.paragraph}`}
       </Text>
 
       {/*

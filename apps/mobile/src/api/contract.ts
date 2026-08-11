@@ -390,8 +390,21 @@ export type Treatment = {
   court: string;
   judgmentDate: string;
   relationship: TreatmentRelationship;
-  /** The paragraph of the treating judgment that did it, where known. */
-  paragraph?: number;
+  /*
+    `paragraph?: number` LIVED HERE AND WAS FICTION. Removed 11 Aug 2026.
+
+    `judgment_citations` has no paragraph column (`packages/db/src/schema.ts`
+    — the positional field it stores is `char_offset`), `treatment.ts` selects
+    and returns no such key, and no fixture ever set one. `TreatmentCard` read
+    it and appended ` · ¶ n` to the citation line, so the card promised to name
+    the paragraph a later bench acted in and could never do it.
+
+    This is the INVERSE of the defect class this sweep keeps finding. The usual
+    one drops a field the server really sends; this one declares a field the
+    server has no column for, and it is more dangerous in review — the type
+    reads as evidence that the wire carries a paragraph, and the next person to
+    need one would build on it rather than ask LCC for it.
+  */
   /**
    * THE PHRASE THE COURT PRINTED — sent on every row, undeclared until
    * 11 Aug 2026, so the one thing that makes a treatment claim auditable was
@@ -573,10 +586,23 @@ export type AuthoritiesResponse = {
   /** The relying judgment's own date — the fixed point every comparison is against. */
   deliveredOn: string;
   asOf: string;
+  /**
+   * ALL FIVE ARE UNCONDITIONAL. `overruledHere` was optional here until
+   * 11 Aug 2026 while `as-at.ts` sent it on every response — and the two test
+   * fixtures that omitted it were therefore describing a payload production
+   * never produces, the same fixture-drift that hid the missing judgment date
+   * on a search row.
+   *
+   * The panel does not render this object and that is deliberate, not an
+   * oversight — see `AuthoritiesPanel.tsx`, "a five-tile dashboard here would
+   * read as a scorecard on the judgment". It recomputes what it needs from the
+   * rows. The shape is still declared truthfully, because the next surface to
+   * want a summary must not have to re-derive whether the field arrives.
+   */
   counts: {
     goodLawThen: number;
     alreadyMoved: number;
-    overruledHere?: number;
+    overruledHere: number;
     movedSince: number;
     unknown: number;
   };
@@ -977,6 +1003,40 @@ export type CitationCheck = {
   tiers: CitationTier[];
   coverage: CitationCoverage;
   asOf: string;
+};
+
+/**
+ * `POST /verify/ecourts` — THE WAY OUT OF AN UNVERIFIED CITATION.
+ *
+ * The client typed this inline as `{ ecourtsUrl, prefilledQuery }` until
+ * 11 Aug 2026 and used only the first of the two. Two of the four fields the
+ * server sends were undeclared, and the one that WAS declared was fetched and
+ * discarded — which is the more expensive half.
+ *
+ * `prefilledQuery` IS THE POINT OF THE CALL. eCourts exposes no query parameter
+ * we may rely on, so the URL alone lands the advocate on an empty search box —
+ * standing in a court building, holding a citation they now have to retype from
+ * memory, having left our app to do it. The server already built the exact
+ * string to paste, and built it carefully: reporter punctuation is stripped
+ * because eCourts matches poorly against it, and **digits and their order are
+ * never touched**, because `(2019) 4 SCC 221` and `(2019) 4 SCC 212` are
+ * different cases (`services/api/src/citations/verify.ts`).
+ *
+ * `instructions` IS THE SERVER'S SENTENCE AND IT CARRIES THE RULE — "We never
+ * solve it for you." That is not decoration: `CLAUDE.md` §6 permits CAPTCHA
+ * bypass ONLY for bulk cause-list harvesting under the registrar's grant, and
+ * Tier 3 is expressly the other thing — a human solving it and vouching. The
+ * sentence the advocate reads at the moment they are sent to eCourts is where
+ * that distinction is visible, so it comes from the server rather than being
+ * re-typed here where the two could drift apart.
+ */
+export type EcourtsPath = {
+  ecourtsUrl: string;
+  /** Paste-ready. Never rebuilt client-side — see above on digit order. */
+  prefilledQuery: string;
+  /** Always `true` today. Declared as sent, not assumed. */
+  captchaRequired: boolean;
+  instructions: string;
 };
 
 /**

@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Linking, ScrollView, StyleSheet, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { Check, ChevronLeft, CircleDot, Clock, X } from 'lucide-react-native';
 import Animated, {
   useAnimatedStyle,
@@ -15,7 +16,12 @@ import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
-import type { CitationCheck, CitationTier, JudgmentDetail } from '../../api/contract';
+import type {
+  CitationCheck,
+  CitationTier,
+  EcourtsPath,
+  JudgmentDetail,
+} from '../../api/contract';
 import { citationDisplay } from '../../citation/citationDisplay';
 import {
   coverageLine,
@@ -61,6 +67,9 @@ export function UnverifiedCitationScreen({
   const [check, setCheck] = useState<CitationCheck | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
+  /** The path itself, kept so the string to paste stays on screen after the tap. */
+  const [ecourts, setEcourts] = useState<EcourtsPath | null>(null);
+  const [ecourtsError, setEcourtsError] = useState(false);
 
   useEffect(() => {
     if (!citationCheckId) {
@@ -195,13 +204,84 @@ export function UnverifiedCitationScreen({
                 <Button
                   label={confirmed ? 'Marked as confirmed' : 'Open eCourts — about a minute'}
                   onPress={() => {
-                    void api.verifyEcourts(citationStored).then((r) => {
-                      if (r.ok) void Linking.openURL(r.data.ecourtsUrl);
-                      else setUnavailable(true);
+                    setEcourtsError(false);
+                    void api.verifyEcourts(citationStored).then(async (r) => {
+                      if (!r.ok) {
+                        setEcourtsError(true);
+                        return;
+                      }
+                      setEcourts(r.data);
+                      /*
+                        THE SEARCH STRING GOES ON THE CLIPBOARD BEFORE THE
+                        BROWSER OPENS, and this is the whole reason the endpoint
+                        returns it. eCourts exposes no query parameter we may
+                        rely on, so opening the URL alone lands the advocate on
+                        an EMPTY search box — outside our app, in a court
+                        building, retyping a citation from memory. We fetched
+                        the paste-ready string and threw it away until 11 Aug
+                        2026.
+
+                        It is written straight to the clipboard and NOT through
+                        `useCopyCitation`. That helper also enqueues a
+                        `citation_copies` row, which exists to catch an advocate
+                        who took an authority OUT of the app and into a filing
+                        so the fan-out can warn them if it moves. Pasting a
+                        search string into eCourts to check whether the thing
+                        exists at all is the opposite act, and recording it as a
+                        copy would inflate the count that metric is measured
+                        against.
+                      */
+                      await Clipboard.setStringAsync(r.data.prefilledQuery);
+                      void Linking.openURL(r.data.ecourtsUrl);
                     });
                   }}
                   variant="secondary"
                 />
+
+                {/*
+                  WHAT TO PASTE, AND WHOSE SENTENCE SAYS SO.
+
+                  `instructions` is the server's copy and it carries the rule —
+                  "We never solve it for you." Rendering our own wording here
+                  would let the two drift, and this is the one screen where the
+                  Tier 3 distinction is visible to a person: the registrar's
+                  grant permits a CAPTCHA bypass for BULK cause-list harvesting
+                  and expressly not for per-citation confirmation, which is a
+                  human solving it and vouching.
+
+                  Shown after the tap rather than before it. Before, it is
+                  instructions for something the advocate has not chosen to do.
+                */}
+                {ecourts ? (
+                  <View style={styles.ecourts}>
+                    <Text variant="ui">{ecourts.instructions}</Text>
+                    <Text opticalNudge variant="record" style={styles.ecourtsQuery}>
+                      {ecourts.prefilledQuery}
+                    </Text>
+                    <Text variant="ui" style={styles.muted}>
+                      Copied. Paste it into the eCourts search box.
+                    </Text>
+                  </View>
+                ) : null}
+
+                {/*
+                  A FAILED LOOKUP USED TO RENDER NOTHING AT ALL. It set
+                  `unavailable`, which is only read when the citation-check
+                  panel is absent — and here it is present, so the advocate
+                  tapped a button and watched the screen do nothing. Its own
+                  state, and a sentence that does not turn our outage into a
+                  finding about their citation.
+                */}
+                {ecourtsError ? (
+                  <Text variant="ui" style={styles.muted}>
+                    We could not build the eCourts link just now. That is us failing to answer, not
+                    anything about this citation — the search is
+                    {' '}
+                    <Text variant="record">{citationStored}</Text>, and eCourts is at
+                    judgments.ecourts.gov.in.
+                  </Text>
+                ) : null}
+
                 <Button
                   disabled={confirmed}
                   label={confirmed ? 'You confirmed this' : 'I verified it — mark it'}
@@ -366,4 +446,17 @@ const styles = StyleSheet.create({
   },
   sourceText: { flex: 1, gap: 2 },
   muted: { color: color.inkMuted },
+  /**
+   * NEUTRAL INK, NO WASH, NO AMBER. This is a set of directions, not a state —
+   * and never our uncertainty either. Amber is spent only on the law moving.
+   */
+  ecourts: {
+    borderLeftWidth: 2,
+    borderLeftColor: color.rule,
+    paddingLeft: space.sm,
+    paddingVertical: space.xs,
+    gap: space.xs,
+  },
+  /** The string itself, in the record face. It is a citation, so it is set as one. */
+  ecourtsQuery: { color: color.ink },
 });
