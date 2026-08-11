@@ -1,0 +1,298 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  type AdjudicationDecision,
+  type Candidate,
+  adjudicationInputHash,
+  buildAdjudicationPrompt,
+  jaccardSimilarity,
+  nameBeforeCitation,
+  parseAdjudicationResponse,
+  rankCandidates,
+  resolveConfidenceTier,
+  tokenizeName,
+  yearFromCitationText,
+} from './concordance-adjudicate.ts';
+
+/* ------------------------------------------------------------- year parsing ── */
+
+test('year parses from AIR and SCC forms, tolerant of OCR newlines', () => {
+  assert.equal(yearFromCitationText('AIR 1973 SC 1461'), 1973);
+  assert.equal(yearFromCitationText('AIR 2007\nSC 2588'), 2007);
+  assert.equal(yearFromCitationText('(2019) 4 SCC 221'), 2019);
+  assert.equal(yearFromCitationText('(2012)\n10 SCC 197'), 2012);
+});
+
+test('an unrecognised shape yields no year, not a wrong one', () => {
+  assert.equal(yearFromCitationText('some unrelated text'), null);
+});
+
+/* ────────────────────────────────────────────────────────── tokenizing ── */
+
+test('stopwords common to almost every case title do not inflate similarity', () => {
+  // "State of X" vs "State of Y" — sharing STATE/OF must not look like a match.
+  const a = tokenizeName('State of Maharashtra v. Ramesh Kumar');
+  const b = tokenizeName('State of Gujarat v. Suresh Patel');
+  assert.ok(jaccardSimilarity(a, b) < 0.3, 'unrelated cases matched mostly on stopwords');
+});
+
+test('a real match keeps enough signal after stopword removal', () => {
+  const a = tokenizeName('L. Hirday Narain v. Income Tax Officer');
+  const b = tokenizeName('L. Hirday Narain versus Income Tax Officer, Bareilly');
+  assert.ok(jaccardSimilarity(a, b) > 0.5, 'the same case, differently punctuated, scored too low');
+});
+
+test('empty input matches nothing, not everything', () => {
+  assert.equal(jaccardSimilarity([], ['STATE']), 0);
+  assert.equal(jaccardSimilarity([], []), 0);
+});
+
+/* ────────────────────────────────────────────────────── name extraction ── */
+
+test('a real "v." window, read off the corpus shape', () => {
+  const name = nameBeforeCitation('as held in L. Hirday Narain v. Income Tax Officer');
+  assert.equal(name, 'L. Hirday Narain v. Income Tax Officer');
+});
+
+test('"vs." and "versus" both extract', () => {
+  assert.ok(nameBeforeCitation('Naushey Ali vs. State of U.P.')?.includes('Naushey Ali'));
+  assert.ok(nameBeforeCitation('Kesavananda Bharati versus State of Kerala')?.includes('Kesavananda'));
+});
+
+test('no case name in the window returns null, never a guess', () => {
+  assert.equal(nameBeforeCitation('as was held in the earlier proceedings'), null);
+  assert.equal(nameBeforeCitation(''), null);
+});
+
+test('a bare "Vs" with an empty side is not a name', () => {
+  // The exact malformed shape parties.ts found in 0.08% of real case_title values.
+  assert.equal(nameBeforeCitation('Vs'), null);
+});
+
+/* ────────────────────────────────────────────────── candidate generation ── */
+
+const POOL = [
+  { id: 'a', caseTitle: 'L. HIRDAY NARAIN versus INCOME TAX OFFICER, BAREILLY', judgmentDate: '1970-11-04' },
+  { id: 'b', caseTitle: 'STATE OF MAHARASHTRA versus RAMESH KUMAR', judgmentDate: '1970-06-01' },
+  { id: 'c', caseTitle: 'L. HIRDAY NARAIN versus SOME OTHER PARTY', judgmentDate: '1985-01-01' },
+];
+
+test('candidate generation restricts to the year window', () => {
+  // 'c' shares the name but is 15 years off — the same guard concordance.ts applies to SCR pairing.
+  const ranked = rankCandidates('L. Hirday Narain v. Income Tax Officer', 1970, POOL);
+  assert.ok(ranked.some((c) => c.judgmentId === 'a'));
+  assert.ok(!ranked.some((c) => c.judgmentId === 'c'), 'a candidate 15 years outside the window was not excluded');
+});
+
+test('a name with no usable tokens generates no candidates', () => {
+  assert.deepEqual(rankCandidates('', 1970, POOL), []);
+  assert.deepEqual(rankCandidates('State of v.', 1970, POOL), []);
+});
+
+test('candidates are ranked highest similarity first', () => {
+  const ranked = rankCandidates('L. Hirday Narain v. Income Tax Officer', 1970, POOL);
+  assert.ok(ranked.length >= 1);
+  assert.equal(ranked[0]!.judgmentId, 'a');
+});
+
+/* ────────────────────────────────────────────────────────── the prompt ── */
+
+test('the prompt lists every candidate with an index the parser can validate against', () => {
+  const candidates: Candidate[] = [
+    { judgmentId: 'a', caseTitle: 'X versus Y', judgmentDate: '1970-01-01', jaccard: 0.8 },
+    { judgmentId: 'b', caseTitle: 'X versus Z', judgmentDate: '1970-06-01', jaccard: 0.3 },
+  ];
+  const prompt = buildAdjudicationPrompt({
+    citationText: 'AIR 1970 SC 100',
+    citationKey: 'AIR1970SC100',
+    contextEvidence: 'as held in X v. Y',
+    candidates,
+  });
+  assert.match(prompt, /\[0\] id=a/);
+  assert.match(prompt, /\[1\] id=b/);
+  assert.match(prompt, /AIR 1970 SC 100/);
+  assert.match(prompt, /impossible_to_determine/);
+});
+
+/* ────────────────────────────────────────────────────── response parsing ── */
+
+const CANDS: Candidate[] = [
+  { judgmentId: 'a', caseTitle: 'X versus Y', judgmentDate: '1970-01-01', jaccard: 0.8 },
+  { judgmentId: 'b', caseTitle: 'X versus Z', judgmentDate: '1970-06-01', jaccard: 0.3 },
+];
+
+test('a well-formed selection parses and resolves the real judgment id', () => {
+  const raw = JSON.stringify({
+    decision: 'candidate_selected',
+    candidate_index: 0,
+    confidence: 'high',
+    evidence: 'X v. Y is printed immediately before the citation',
+    contradictions: null,
+    signals_used: ['party_name_match', 'year_match'],
+    needs_human_review: false,
+    reason: 'Exact name and year match.',
+  });
+  const parsed = parseAdjudicationResponse(raw, CANDS);
+  assert.ok(parsed);
+  assert.equal(parsed.candidateId, 'a');
+  assert.equal(parsed.confidence, 'high');
+});
+
+test('markdown code fences around the JSON are stripped', () => {
+  const raw = '```json\n' + JSON.stringify({
+    decision: 'none_of_candidates',
+    candidate_index: null,
+    confidence: 'medium',
+    evidence: 'none of the candidates match the party names',
+    contradictions: null,
+    signals_used: [],
+    needs_human_review: true,
+    reason: 'No candidate shares a party name.',
+  }) + '\n```';
+  const parsed = parseAdjudicationResponse(raw, CANDS);
+  assert.ok(parsed);
+  assert.equal(parsed.decision, 'none_of_candidates');
+  assert.equal(parsed.candidateId, null);
+});
+
+test('a hallucinated candidate_index (out of range) is refused, never guessed', () => {
+  const raw = JSON.stringify({
+    decision: 'candidate_selected',
+    candidate_index: 5,
+    confidence: 'high',
+    evidence: 'x',
+    contradictions: null,
+    signals_used: [],
+    needs_human_review: false,
+    reason: 'x',
+  });
+  assert.equal(parseAdjudicationResponse(raw, CANDS), null);
+});
+
+test('a selection with no index at all is refused', () => {
+  const raw = JSON.stringify({
+    decision: 'candidate_selected',
+    candidate_index: null,
+    confidence: 'high',
+    evidence: 'x',
+    contradictions: null,
+    signals_used: [],
+    needs_human_review: false,
+    reason: 'x',
+  });
+  assert.equal(parseAdjudicationResponse(raw, CANDS), null);
+});
+
+test('an internally contradictory response — non-selection carrying an index — is refused', () => {
+  const raw = JSON.stringify({
+    decision: 'none_of_candidates',
+    candidate_index: 0,
+    confidence: 'high',
+    evidence: 'x',
+    contradictions: null,
+    signals_used: [],
+    needs_human_review: false,
+    reason: 'x',
+  });
+  assert.equal(parseAdjudicationResponse(raw, CANDS), null);
+});
+
+test('malformed JSON is refused, not partially trusted', () => {
+  assert.equal(parseAdjudicationResponse('not json at all', CANDS), null);
+  assert.equal(parseAdjudicationResponse('{"decision": "candidate_selected"', CANDS), null);
+});
+
+test('an unknown decision or confidence value is refused', () => {
+  const raw = JSON.stringify({
+    decision: 'yes_probably',
+    candidate_index: 0,
+    confidence: 'high',
+    evidence: 'x',
+    contradictions: null,
+    signals_used: [],
+    needs_human_review: false,
+    reason: 'x',
+  });
+  assert.equal(parseAdjudicationResponse(raw, CANDS), null);
+});
+
+/* ─────────────────────────────────────────────────────── confidence tier ── */
+
+function decision(overrides: Partial<AdjudicationDecision>): AdjudicationDecision {
+  return {
+    decision: 'candidate_selected',
+    candidateId: 'a',
+    confidence: 'high',
+    evidence: 'e',
+    contradictions: null,
+    signalsUsed: [],
+    needsHumanReview: false,
+    reason: 'r',
+    ...overrides,
+  };
+}
+
+test('HIGH requires model-high, deterministic agreement, and a clear gap', () => {
+  const cands: Candidate[] = [
+    { judgmentId: 'a', caseTitle: 'x', judgmentDate: '1970', jaccard: 0.9 },
+    { judgmentId: 'b', caseTitle: 'y', judgmentDate: '1970', jaccard: 0.3 },
+  ];
+  assert.equal(resolveConfidenceTier(decision({}), cands), 'high');
+});
+
+test('a thin gap over the same top candidate drops to MEDIUM, not HIGH', () => {
+  const cands: Candidate[] = [
+    { judgmentId: 'a', caseTitle: 'x', judgmentDate: '1970', jaccard: 0.5 },
+    { judgmentId: 'b', caseTitle: 'y', judgmentDate: '1970', jaccard: 0.48 },
+  ];
+  assert.equal(resolveConfidenceTier(decision({}), cands), 'medium');
+});
+
+test('the model disagreeing with the deterministic top candidate is LOW, never HIGH', () => {
+  const cands: Candidate[] = [
+    { judgmentId: 'a', caseTitle: 'x', judgmentDate: '1970', jaccard: 0.9 },
+    { judgmentId: 'b', caseTitle: 'y', judgmentDate: '1970', jaccard: 0.2 },
+  ];
+  assert.equal(resolveConfidenceTier(decision({ candidateId: 'b' }), cands), 'low');
+});
+
+test('any stated contradiction forces AMBIGUOUS regardless of confidence', () => {
+  const cands: Candidate[] = [{ judgmentId: 'a', caseTitle: 'x', judgmentDate: '1970', jaccard: 0.9 }];
+  assert.equal(
+    resolveConfidenceTier(decision({ contradictions: 'the year printed does not match' }), cands),
+    'ambiguous',
+  );
+});
+
+test('none_of_candidates and impossible_to_determine are both UNRESOLVED', () => {
+  const cands: Candidate[] = [{ judgmentId: 'a', caseTitle: 'x', judgmentDate: '1970', jaccard: 0.9 }];
+  assert.equal(
+    resolveConfidenceTier(decision({ decision: 'none_of_candidates', candidateId: null }), cands),
+    'unresolved',
+  );
+  assert.equal(
+    resolveConfidenceTier(decision({ decision: 'impossible_to_determine', candidateId: null }), cands),
+    'unresolved',
+  );
+});
+
+/* ─────────────────────────────────────────────────────────────── hashing ── */
+
+test('the input hash is stable under candidate reordering — the SET is the cache key', () => {
+  const a: Candidate[] = [
+    { judgmentId: 'x', caseTitle: '', judgmentDate: '', jaccard: 0.5 },
+    { judgmentId: 'y', caseTitle: '', judgmentDate: '', jaccard: 0.3 },
+  ];
+  const b: Candidate[] = [a[1]!, a[0]!];
+  const h1 = adjudicationInputHash({ citationText: 't', citationKey: 'k', contextEvidence: 'e', candidates: a });
+  const h2 = adjudicationInputHash({ citationText: 't', citationKey: 'k', contextEvidence: 'e', candidates: b });
+  assert.equal(h1, h2);
+});
+
+test('a different evidence snippet changes the hash — the cache must not conflate two sightings', () => {
+  const cands: Candidate[] = [{ judgmentId: 'x', caseTitle: '', judgmentDate: '', jaccard: 0.5 }];
+  const h1 = adjudicationInputHash({ citationText: 't', citationKey: 'k', contextEvidence: 'e1', candidates: cands });
+  const h2 = adjudicationInputHash({ citationText: 't', citationKey: 'k', contextEvidence: 'e2', candidates: cands });
+  assert.notEqual(h1, h2);
+});

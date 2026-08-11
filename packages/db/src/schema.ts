@@ -151,6 +151,7 @@ export const llmFeatureEnum = pgEnum('llm_feature', [
   'briefing',
   'extract',
   'ocr_postprocess',
+  'concordance',
 ]);
 export const dataClassEnum = pgEnum('data_class', ['public', 'sensitive']);
 
@@ -1547,6 +1548,101 @@ export const judgmentCitationAliases = pgTable(
     // ONE ALIAS, ONE JUDGMENT — a citation string names exactly one case.
     uniqueIndex('judgment_citation_aliases_key').on(t.aliasKey),
     index('judgment_citation_aliases_judgment_idx').on(t.judgmentId),
+  ],
+);
+
+/**
+ * DeepSeek-adjudicated candidate resolutions for `external_citations` targets
+ * that the deterministic concordance (`concordance.ts`) could not join —
+ * `docs/ai/CITATION_CONCORDANCE_PROGRAM.md`.
+ *
+ * **This table is an adjudication AID, never a source of truth.** A row here
+ * is a recorded opinion — the model's, checked against deterministic
+ * candidate-generation signals — not a fact about the corpus. Nothing reads
+ * this table to answer a citation query; only `judgment_citation_aliases`
+ * does that, and promotion from here into it is a separate, explicit,
+ * threshold-gated step this table does not perform on its own.
+ *
+ * **Every row is cached and auditable.** `modelInputHash` is the idempotency
+ * key (`CLAUDE.md` FQ-directive: "never pay twice for the same exact task") —
+ * a re-run with the same citation, context and candidate set is a lookup, not
+ * a second model call. `modelReasoning` is stored verbatim so a human can
+ * read why the model decided what it decided, the same discipline
+ * `judgment_citation_aliases.evidence` already applies to the deterministic
+ * concordance.
+ */
+export const citationConcordanceResolutions = pgTable(
+  'citation_concordance_resolutions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    /** Which unresolved-citation feed this target came from, e.g. `aws_high_court`. */
+    source: text('source').notNull(),
+    /** Matches `external_citations.citation_key` — alphanumeric-only comparison form. */
+    citationKey: text('citation_key').notNull(),
+    /** As printed, for provenance. */
+    citationText: text('citation_text').notNull(),
+    citationYear: integer('citation_year'),
+    /**
+     * A bounded snippet around one sighting of the citation — the case name a
+     * court printed beside it. **Not the document.** The same "evidence span,
+     * never the source text" discipline as `judgment_citation_aliases.evidence`;
+     * `docs/CITATION_STRATEGY.md`'s "read as evidence, throw the text away"
+     * rule governs the document this snippet was taken from.
+     */
+    contextEvidence: text('context_evidence').notNull(),
+    /**
+     * The candidate set actually shown to the model: `{judgmentId, caseTitle,
+     * judgmentDate, jaccard}[]`. Kept so a stored decision is reproducible
+     * without re-running candidate generation against a corpus that may have
+     * grown since.
+     */
+    candidates: jsonb('candidates').notNull(),
+    /** Which candidate the model selected, if any. NULL is a real answer, not a gap. */
+    candidateJudgmentId: uuid('candidate_judgment_id').references(() => judgments.id, {
+      onDelete: 'set null',
+    }),
+    decision: text('decision').notNull(),
+    /**
+     * HIGH/MEDIUM/LOW/AMBIGUOUS/UNRESOLVED — `docs/ai/
+     * CITATION_CONCORDANCE_EVALUATION.md` derives the thresholds from a
+     * measured precision/recall curve on a gold set drawn from the corpus's
+     * own already-corroborated aliases; not invented ahead of measurement.
+     */
+    confidence: text('confidence').notNull(),
+    deterministicTopScore: numeric('deterministic_top_score', { precision: 5, scale: 4 }),
+    deterministicRunnerUpScore: numeric('deterministic_runner_up_score', {
+      precision: 5,
+      scale: 4,
+    }),
+    modelUsed: text('model_used').notNull(),
+    /** sha256 of (citationKey + contextEvidence + candidate id list) — the cache key. */
+    modelInputHash: text('model_input_hash').notNull(),
+    modelOutputHash: text('model_output_hash'),
+    /** The model's own stated reason, verbatim. Never edited, never summarised. */
+    modelReasoning: text('model_reasoning'),
+    /** Contradictions the model itself flagged, verbatim. NULL means none reported. */
+    contradictions: text('contradictions'),
+    signalsUsed: text('signals_used').array().notNull().default(sql`'{}'::text[]`),
+    needsHumanReview: boolean('needs_human_review').notNull().default(true),
+    /**
+     * `unvalidated` | `gold_positive` | `gold_negative` | `promoted` | `rejected`.
+     * `promoted` is the ONLY status that means a row's `candidateJudgmentId`
+     * was ever written elsewhere (`judgment_citation_aliases`), and that write
+     * is a separate, explicit step — never automatic on insert here.
+     */
+    validationStatus: text('validation_status').notNull().default('unvalidated'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // The idempotency/cache constraint — re-adjudicating identical evidence is a lookup.
+    uniqueIndex('citation_concordance_resolutions_cache').on(
+      t.source,
+      t.citationKey,
+      t.modelInputHash,
+    ),
+    index('citation_concordance_resolutions_key_idx').on(t.citationKey),
+    index('citation_concordance_resolutions_candidate_idx').on(t.candidateJudgmentId),
+    index('citation_concordance_resolutions_confidence_idx').on(t.confidence),
   ],
 );
 

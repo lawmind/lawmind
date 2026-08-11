@@ -31,7 +31,9 @@
     "backfill:bench-code": "tsx src/backfill-source-bench-code.ts",
     "statute:amendments": "tsx src/statute-amendments-cli.ts",
     "hc:classify": "tsx src/hc-classify-cli.ts",
-    "concordance": "tsx src/concordance-cli.ts"
+    "concordance": "tsx src/concordance-cli.ts",
+    "concordance:gold": "tsx src/concordance-gold-cli.ts",
+    "concordance:adjudicate": "tsx src/concordance-adjudicate-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",

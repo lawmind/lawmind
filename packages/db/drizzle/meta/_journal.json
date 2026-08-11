@@ -288,6 +288,20 @@
       "when": 1786430000000,
       "tag": "0042_hc_document_class",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1786440000000,
+      "tag": "0043_citation_concordance",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1786440100000,
+      "tag": "0044_llm_feature_concordance",
+      "breakpoints": true
     }
   ]
 }

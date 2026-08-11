@@ -397,6 +397,69 @@ exists so the resumable pass — *"skip any judgment that already has rows"* —
 not re-scan the same judgment on every future run. Without it, the judgments that
 cite nothing would be re-read forever.
 
+## citation_concordance_resolutions
+
+Added 11 Aug 2026, migration `0043`. DeepSeek-adjudicated candidate resolutions
+for `external_citations` targets the deterministic concordance
+(`services/ingest/src/concordance.ts`) cannot join — `docs/ai/
+CITATION_CONCORDANCE_PROGRAM.md`. **An adjudication aid, never a source of
+truth**: nothing reads this table to answer a citation query, and moving a
+row's candidate into `judgment_citation_aliases` is a separate, explicit,
+threshold-gated step this table never performs on insert.
+
+`id` uuid pk · `source` text — the unresolved-citation feed, e.g.
+`aws_high_court` · `citation_key` text — matches `external_citations.
+citation_key` · `citation_text` text — as printed · `citation_year` int null ·
+`context_evidence` text — a bounded snippet around one sighting, never the
+source document · `candidates` jsonb — the exact candidate set shown to the
+model, `[{judgmentId, caseTitle, judgmentDate, jaccard}, ...]` ·
+`candidate_judgment_id` uuid null fk→judgments **set null** — the model's
+selection; null is a real answer (none of the candidates / impossible to
+determine), not a gap · `decision` text check
+(`candidate_selected`|`none_of_candidates`|`impossible_to_determine`|
+`no_candidate_generated`) · `confidence` text check
+(`high`|`medium`|`low`|`ambiguous`|`unresolved`) — thresholds derived from a
+measured precision/recall curve on a gold set, `docs/ai/
+CITATION_CONCORDANCE_EVALUATION.md`, never invented ahead of that measurement ·
+`deterministic_top_score` / `deterministic_runner_up_score` numeric(5,4) null —
+the Jaccard candidate-ranking scores, kept beside the model's decision so
+agreement/disagreement between the two is auditable · `model_used` text ·
+`model_input_hash` text — sha256 of (citation key + context + candidate id
+list); the cache key, so re-adjudicating identical evidence is a lookup, not a
+second model call · `model_output_hash` text null · `model_reasoning` text
+null — the model's own stated reason, stored verbatim · `contradictions` text
+null — verbatim, from the model · `signals_used` text[] default `{}` ·
+`needs_human_review` boolean default true · `validation_status` text check
+(`unvalidated`|`gold_positive`|`gold_negative`|`promoted`|`rejected`) default
+`unvalidated` — `promoted` is the only status meaning this row's candidate was
+ever written to `judgment_citation_aliases` · `created_at` timestamptz
+
+Unique: (`source`, `citation_key`, `model_input_hash`) — the idempotency
+constraint. Index: btree on `citation_key`; partial btree on
+`candidate_judgment_id` where non-null; btree on `confidence`.
+
+**Migration `0044`, same session:** `llm_calls.feature` widened with a
+`concordance` value — `CLAUDE.md` §5's ledger rule applies to this pass exactly
+as it does to search/draft/briefing. Public-class data (published court text
+and case names), DeepSeek V4 Flash via the inferx.net free grant.
+
+### Two related tables, undocumented before this entry — a pre-existing gap, noted rather than silently carried forward
+
+`external_citations` (migration `0030`) and `judgment_citation_aliases`
+(migration `0027`) both predate this entry and were never added to this file,
+despite its own opening rule. Not fixed here — out of scope for this
+program — but recorded so the next reader does not conclude the omission was
+deliberate. `external_citations`: one row per citation sighted in a High
+Court document this corpus does not hold as a judgment (`source`, `source_key`,
+`court_name`, `source_year`, `citation_text`, `citation_key`,
+`cited_judgment_id` null fk→judgments set null, `char_offset`), unique on
+(`source`, `source_key`, `citation_key`) — `packages/db/drizzle/
+0030_external_citations.sql` carries the full rationale. `judgment_citation_aliases`:
+the AIR/SCC↔SCR concordance mined from courts' own parallel citations
+(`judgment_id` fk→judgments cascade, `alias`, `alias_key` unique, `alias_reporter`,
+`corroborations`, `evidence`) — `services/ingest/src/concordance.ts` carries the
+full rationale.
+
 **Measured against production, not assumed:** 13,834 sentinel rows over **13,834
 distinct judgments**, every one with `char_offset = 0`, `relationship = 'cites'`
 and `cited_judgment_id` null, and **zero judgments carrying a sentinel beside a

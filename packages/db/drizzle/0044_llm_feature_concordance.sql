@@ -1,0 +1,13 @@
+-- A new `llm_calls.feature` value for the citation-concordance adjudication
+-- pass, `docs/ai/CITATION_CONCORDANCE_PROGRAM.md`. `CLAUDE.md` §5's ledger
+-- rule -- "every call rows into llm_calls with data_class and pseudonymised"
+-- -- applies here exactly as it does to search/draft/briefing. Public-class
+-- data (published court text, case names already of record), routed to
+-- DeepSeek V4 Flash via the inferx.net free grant -- `services/api/src/llm/
+-- route.ts`'s existing public-class switch, extended with this one case.
+--
+-- Kept as its own migration, separate from 0043's CREATE TABLE: adding an
+-- enum value is a statement Postgres restricts inside a transaction that also
+-- USES the new value, and the two statements have no other reason to share a
+-- transaction. Isolating it means a problem with one cannot roll back the other.
+ALTER TYPE llm_feature ADD VALUE IF NOT EXISTS 'concordance';
