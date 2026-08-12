@@ -489,6 +489,17 @@ export const judgmentChunks = pgTable(
     // NOT accuracy: a confidently-wrong character scores a clean 1.000.
     // Retrieval down-ranks on this and never excludes on it.
     textQuality: numeric('text_quality', { precision: 4, scale: 3 }),
+    /**
+     * Character offset/length of this chunk's own BODY (overlap excluded) in
+     * `judgments.full_text` — migration 0046. `judgments.full_text.slice(
+     * charOffset, charOffset + charLength)` is the exact span this chunk rests
+     * on, verbatim by construction. NULL on rows embedded before this column
+     * existed and not yet backfilled (`backfill-offsets-cli.ts`) — NULL means
+     * "unavailable", never "no span exists"; a reader must fall back to the
+     * located paragraph, never invent an offset.
+     */
+    charOffset: integer('char_offset'),
+    charLength: integer('char_length'),
   },
   (t) => [
     // HNSW, not ivfflat. Measured on the finished 616,197-chunk corpus, the dense

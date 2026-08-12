@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { numberedShare, segmentParagraphs } from './paragraphs.ts';
+import {
+  locateParagraphByOffset,
+  numberedShare,
+  resolveExactSpan,
+  segmentParagraphs,
+} from './paragraphs.ts';
 
 describe('segmentParagraphs', () => {
   it('splits on printed paragraph numbers and keeps them', () => {
@@ -122,6 +127,82 @@ describe('segmentParagraphs', () => {
 
   it('survives an empty judgment', () => {
     assert.deepEqual(segmentParagraphs(''), []);
+  });
+});
+
+describe('resolveExactSpan', () => {
+  const text = '1. The appellant was charged.\n2. The trial court convicted.';
+
+  it('recovers the exact substring verbatim', () => {
+    const expected = 'The appellant was charged.';
+    const span = resolveExactSpan(text, 3, expected.length);
+    assert.deepEqual(span, { text: expected, charOffset: 3 });
+  });
+
+  it('returns null when the span runs past the end of the text', () => {
+    assert.equal(resolveExactSpan(text, text.length - 5, 50), null);
+  });
+
+  it('returns null for a negative offset', () => {
+    assert.equal(resolveExactSpan(text, -1, 5), null);
+  });
+
+  it('returns null for a zero or negative length', () => {
+    assert.equal(resolveExactSpan(text, 0, 0), null);
+    assert.equal(resolveExactSpan(text, 0, -3), null);
+  });
+
+  it('returns null for a non-integer offset or length', () => {
+    assert.equal(resolveExactSpan(text, 1.5, 5), null);
+    assert.equal(resolveExactSpan(text, 0, 5.5), null);
+  });
+
+  it('accepts a span that exactly reaches the end of the text', () => {
+    const span = resolveExactSpan(text, text.length - 10, 10);
+    assert.equal(span?.text, text.slice(text.length - 10));
+  });
+});
+
+describe('locateParagraphByOffset', () => {
+  const text = [
+    '1. The appellant was charged.',
+    '2. The trial court convicted, and the appellant now appeals.',
+  ].join('\n');
+
+  it('finds the exact paragraph containing the offset, never fuzzy-matching', () => {
+    const secondParaOffset = text.indexOf('The trial court convicted');
+    const located = locateParagraphByOffset(text, secondParaOffset, 10);
+    assert.equal(located?.paragraphNumber, 2);
+  });
+
+  it('returns null when the span itself is invalid', () => {
+    assert.equal(locateParagraphByOffset(text, -1, 10), null);
+    assert.equal(locateParagraphByOffset(text, 0, text.length + 100), null);
+  });
+
+  it('resolves to a paragraph other than fuzzy substring probing would find', () => {
+    // Two paragraphs sharing an identical phrase. A fuzzy probe over the
+    // repeated phrase cannot tell them apart; the exact offset must.
+    const repeated = [
+      '1. The court considered the matter and the matter was disposed of.',
+      '2. The court considered the matter and the matter was disposed of.',
+    ].join('\n');
+    const secondOffset = repeated.lastIndexOf('The court considered');
+    const located = locateParagraphByOffset(repeated, secondOffset, 20);
+    assert.equal(located?.paragraphNumber, 2);
+  });
+
+  it('returns null for an offset sitting inside furniture before any real paragraph', () => {
+    const withFurniture = ['A B C D E F G H', '1155', '1. The appeal is allowed.'].join('\n');
+    // Offset 0 sits on the margin-letter line, before the paragraph block starts.
+    const located = locateParagraphByOffset(withFurniture, 0, 5);
+    assert.equal(located, null);
+  });
+
+  it('returns null when the containing block exceeds MAX_PARAGRAPH_CHARS', () => {
+    const huge = 'x'.repeat(3_500);
+    const located = locateParagraphByOffset(huge, 10, 5);
+    assert.equal(located, null);
   });
 });
 

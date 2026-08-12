@@ -60,6 +60,35 @@ describe('chunkJudgment', () => {
     }
   });
 
+  it('bodyLength recovers the exact body -- verbatim, never approximated', () => {
+    const text = [para(1, 180), para(2, 180), para(3, 180)].join('\n\n');
+    for (const c of chunkJudgment(text, opts)) {
+      const span = text.slice(c.offset, c.offset + c.bodyLength);
+      // The body is a real substring of the source, and (for every chunk but
+      // the first) it is exactly the SUFFIX of `text` once the overlap prefix
+      // this chunk carries is stripped off.
+      assert.ok(c.text.endsWith(span), `chunk ${c.index}'s recovered span is not its own suffix`);
+      assert.equal(span.length, c.bodyLength);
+    }
+  });
+
+  it('bodyLength is shorter than text.length exactly when a chunk carries overlap', () => {
+    const text = [para(1, 180), para(2, 180)].join('\n\n');
+    const chunks = chunkJudgment(text, opts);
+    assert.ok(chunks.length >= 2);
+    assert.equal(chunks[0]!.bodyLength, chunks[0]!.text.length, 'first chunk carries no overlap');
+    assert.ok(
+      chunks[1]!.bodyLength < chunks[1]!.text.length,
+      'second chunk carries overlap, so its body is shorter than its embedded text',
+    );
+  });
+
+  it('the recovered span for a single-chunk judgment is the whole judgment', () => {
+    const text = 'A short order of the Court.';
+    const [c] = chunkJudgment(text, opts);
+    assert.equal(text.slice(c!.offset, c!.offset + c!.bodyLength), text);
+  });
+
   it('does not leave a sub-minimum fragment as its own chunk', () => {
     const text = [para(1, 190), 'tiny tail.'].join('\n\n');
     const chunks = chunkJudgment(text, opts);
@@ -76,6 +105,50 @@ describe('chunkJudgment', () => {
     const chunks = chunkJudgment(text, opts);
     assert.ok(chunks.length > 1, 'expected a long unbroken run to still chunk');
     assert.ok(chunks.every((c) => c.text.length > 0));
+  });
+
+  it('never falls back to offset 0 for a later chunk when paragraphs are separated irregularly', () => {
+    // The bug this guards: paragraphs used to be reassembled with a canonical
+    // "\n\n" and relocated via `text.indexOf`. A separator that was not exactly
+    // two newlines -- three+ newlines, or a blank line carrying trailing
+    // spaces -- made the reconstructed body impossible to find, and the code
+    // silently reported offset 0 instead of the chunk's real position.
+    const text = [
+      para(1, 180),
+      '\n', // an extra blank line: three newlines between paragraphs 1 and 2
+      para(2, 180),
+      '   \n', // a "blank" line that is not actually empty
+      para(3, 180),
+      '\n\n',
+      para(4, 180),
+    ].join('\n\n');
+    const chunks = chunkJudgment(text, opts);
+    for (const c of chunks) {
+      if (c.index === 0) continue; // offset 0 is the genuine, correct answer here
+      assert.notEqual(c.offset, 0, `chunk ${c.index} fell back to offset 0`);
+      const span = text.slice(c.offset, c.offset + c.bodyLength);
+      assert.ok(c.text.endsWith(span), `chunk ${c.index}'s span is not its own suffix`);
+    }
+  });
+
+  it('reports offset 0 only for a chunk that genuinely starts at 0', () => {
+    const text = [para(1, 180), para(2, 180)].join('\n\n');
+    const chunks = chunkJudgment(text, opts);
+    assert.equal(chunks[0]!.offset, 0);
+    if (chunks.length > 1) assert.notEqual(chunks[1]!.offset, 0);
+  });
+
+  it('accounts for leading whitespace in fullText when computing offset', () => {
+    const inner = [para(1, 180), para(2, 180)].join('\n\n');
+    const withLeadingWs = `   \n\n${inner}`;
+    const chunks = chunkJudgment(withLeadingWs, opts);
+    for (const c of chunks) {
+      const span = withLeadingWs.slice(c.offset, c.offset + c.bodyLength);
+      assert.ok(c.text.endsWith(span), `chunk ${c.index} span not recovered against the untrimmed text`);
+    }
+    // The first chunk's body must not start at 0 -- that would be the leading
+    // whitespace, not real text.
+    assert.ok(chunks[0]!.offset > 0);
   });
 
   it('has defaults that sit inside the model context', () => {

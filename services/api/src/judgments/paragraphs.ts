@@ -210,13 +210,29 @@ function advances(previous: number | null, candidate: number): boolean {
   return candidate > previous && candidate - previous <= 5;
 }
 
-export function segmentParagraphs(fullText: string): JudgmentParagraph[] {
+/**
+ * One paragraph block, mid-construction, carrying where in `fullText` it
+ * started. Shared by `segmentParagraphs` (which discards the offset — its
+ * contract predates offsets and callers rely on the shape) and
+ * `locateParagraphByOffset` (which needs the offset to answer "which
+ * paragraph contains this exact character position" without re-scanning text).
+ */
+type ParagraphBlock = { number: number | null; lines: string[]; start: number };
+
+function buildParagraphBlocks(fullText: string): ParagraphBlock[] {
   const lines = fullText.split('\n');
-  const blocks: { number: number | null; lines: string[] }[] = [];
-  let current: { number: number | null; lines: string[] } | null = null;
+  const blocks: ParagraphBlock[] = [];
+  let current: ParagraphBlock | null = null;
   let lastNumber: number | null = null;
+  // Running offset into fullText. `+1` per line replaces the '\n' that
+  // split('\n') consumed, so this reconstructs exact original offsets
+  // regardless of '\r\n' line endings (the '\r' rides along inside `raw`).
+  let pos = 0;
 
   for (const raw of lines) {
+    const lineStart = pos;
+    pos += raw.length + 1;
+
     const line = raw.trim();
     if (isFurniture(line)) continue;
 
@@ -225,7 +241,7 @@ export function segmentParagraphs(fullText: string): JudgmentParagraph[] {
 
     if (candidate !== null && advances(lastNumber, candidate)) {
       if (current) blocks.push(current);
-      current = { number: candidate, lines: [line.slice(opener![0].length)] };
+      current = { number: candidate, lines: [line.slice(opener![0].length)], start: lineStart };
       lastNumber = candidate;
     } else if (current) {
       current.lines.push(line);
@@ -233,15 +249,88 @@ export function segmentParagraphs(fullText: string): JudgmentParagraph[] {
       // Text before the first numbered paragraph — the headnote, the bench, the
       // case title. Real content, never numbered, so it carries a null number
       // rather than being dropped or given a made-up one.
-      current = { number: null, lines: [line] };
+      current = { number: null, lines: [line], start: lineStart };
     }
   }
   if (current) blocks.push(current);
+  return blocks;
+}
 
-  return blocks
+export function segmentParagraphs(fullText: string): JudgmentParagraph[] {
+  return buildParagraphBlocks(fullText)
     .map((b) => ({ number: b.number, text: b.lines.join('\n').trim() }))
     .filter((b) => b.text.length > 0)
     .map((b, i) => ({ paragraphNumber: b.number, paragraphIndex: i, text: b.text }));
+}
+
+/**
+ * The exact substring `fullText.slice(charOffset, charOffset + charLength)`,
+ * or null when the span cannot possibly be real.
+ *
+ * Stage 13: `judgment_chunks.char_offset`/`char_length` are computed once at
+ * embed time by `chunkJudgment` and never re-derived here — this only
+ * validates bounds and slices. **Never approximated.** A span that fails the
+ * bounds check (stale row, truncated `full_text`, corrupt data) returns null
+ * rather than a clamped or shifted guess, so the caller can render an honest
+ * "unavailable" instead of text that does not actually sit at that position.
+ */
+export function resolveExactSpan(
+  fullText: string,
+  charOffset: number,
+  charLength: number,
+): { text: string; charOffset: number } | null {
+  if (!Number.isInteger(charOffset) || !Number.isInteger(charLength)) return null;
+  if (charOffset < 0 || charLength <= 0) return null;
+  if (charOffset + charLength > fullText.length) return null;
+  return { text: fullText.slice(charOffset, charOffset + charLength), charOffset };
+}
+
+/**
+ * The printed paragraph containing character position `charOffset`, located
+ * EXACTLY — no substring probing.
+ *
+ * This is `locateParagraph`'s sibling for chunks that carry a verified
+ * `char_offset`/`char_length` (Stage 13 backfill). Where `locateParagraph`
+ * fuzzy-matches a normalised interior slice of the chunk against the
+ * segmented text — necessary when only `chunk_text` is known, but capable of
+ * matching the wrong occurrence in a judgment that repeats a phrase —
+ * this instead walks the same paragraph blocks `segmentParagraphs` builds and
+ * picks the one whose span in `fullText` actually contains the offset.
+ * Deterministic: the same offset always resolves to the same paragraph.
+ *
+ * Returns null when the span itself is invalid (see `resolveExactSpan`), when
+ * segmentation produced no real paragraphs, or when the containing block
+ * exceeds `MAX_PARAGRAPH_CHARS` — the same "this is not a paragraph, it is a
+ * segmentation failure" guard `locateParagraph` applies.
+ */
+export function locateParagraphByOffset(
+  fullText: string,
+  charOffset: number,
+  charLength: number,
+): JudgmentParagraph | null {
+  if (!resolveExactSpan(fullText, charOffset, charLength)) return null;
+
+  const blocks = buildParagraphBlocks(fullText)
+    .map((b) => ({ number: b.number, text: b.lines.join('\n').trim(), start: b.start }))
+    .filter((b) => b.text.length > 0);
+  if (blocks.length === 0) return null;
+
+  // Blocks are produced in ascending `start` order (lines are walked in
+  // order), so the containing block is the last one whose start is at or
+  // before the offset.
+  let index = -1;
+  for (let i = 0; i < blocks.length; i++) {
+    if (blocks[i]!.start <= charOffset) index = i;
+    else break;
+  }
+  // The offset falls before any real paragraph text — e.g. inside reporter
+  // furniture at the very top of the document, before the headnote block
+  // begins. Genuinely no paragraph to point at; not a bug to paper over.
+  if (index === -1) return null;
+
+  const block = blocks[index]!;
+  if (block.text.length > MAX_PARAGRAPH_CHARS) return null;
+  return { paragraphNumber: block.number, paragraphIndex: index, text: block.text };
 }
 
 /**

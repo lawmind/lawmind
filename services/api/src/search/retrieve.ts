@@ -18,6 +18,7 @@ import { citationLookupKey, classifyQuery, warrantsExactLookup } from './query-s
 import {
   cleanExtractedText,
   locateParagraph,
+  locateParagraphByOffset,
   trimToSentenceStart,
 } from '../judgments/paragraphs.ts';
 
@@ -94,6 +95,18 @@ export type RetrievedJudgment = {
    * advocate told "see paragraph 22" must land on the court's paragraph 22.
    */
   operativeParagraphNumber: number | null;
+  /**
+   * True when `operativeParagraph` was located from a verified
+   * `judgment_chunks.char_offset`/`char_length` (Stage 13) rather than fuzzy
+   * substring-probing the chunk text against the segmented judgment.
+   *
+   * The exact path cannot match the wrong occurrence of a repeated phrase;
+   * the fuzzy path can. Both can legitimately produce a correct paragraph —
+   * this is provenance, not a quality signal to hide the fuzzy case behind.
+   * False whenever no paragraph was located at all (`operativeParagraphNumber`
+   * is then also null).
+   */
+  operativeParagraphVerified: boolean;
 };
 
 type Ranked = { judgmentId: string; rank: number };
@@ -299,11 +312,14 @@ const HNSW_EF_SEARCH = Number(process.env['HNSW_EF_SEARCH'] ?? 200);
  * of the index — and the quality re-rank happens outside on the candidates.
  * Ranking semantics are unchanged; only the plan is.
  */
+/** A dense-arm match's chunk text plus its verified position, when known. */
+export type BestChunk = { text: string; charOffset: number | null; charLength: number | null };
+
 async function dense(
   sql: Sql,
   queryVector: string,
   filters: SearchFilters,
-): Promise<{ ranked: Ranked[]; bestChunk: Map<string, string> }> {
+): Promise<{ ranked: Ranked[]; bestChunk: Map<string, BestChunk> }> {
   const filtered = Boolean(
     filters.court ?? filters.courts ?? filters.dateFrom ?? filters.dateTo ?? filters.caseType,
   );
@@ -335,15 +351,23 @@ async function dense(
      * then thrown away.
      */
     await tx`SET LOCAL hnsw.iterative_scan = relaxed_order`;
-    return tx<{ judgment_id: string; chunk_text: string; distance: number }[]>`
+    return tx<
+      {
+        judgment_id: string;
+        chunk_text: string;
+        distance: number;
+        char_offset: number | null;
+        char_length: number | null;
+      }[]
+    >`
       WITH candidates AS MATERIALIZED (
-        SELECT c.judgment_id, c.chunk_text, c.text_quality,
+        SELECT c.judgment_id, c.chunk_text, c.text_quality, c.char_offset, c.char_length,
                c.embedding <=> ${queryVector}::vector AS d
         FROM judgment_chunks c
         ORDER BY c.embedding <=> ${queryVector}::vector
         LIMIT ${annDepth}
       )
-      SELECT c.judgment_id, c.chunk_text,
+      SELECT c.judgment_id, c.chunk_text, c.char_offset, c.char_length,
              -- Down-ranked, never excluded: damaged text is still the judgment.
              -- quality 1.0 leaves distance untouched; 0.5 costs it 50%. Unscored
              -- chunks (no Latin tokens, e.g. Devanagari) are treated as clean
@@ -361,12 +385,16 @@ async function dense(
     `;
   });
 
-  const bestChunk = new Map<string, string>();
+  const bestChunk = new Map<string, BestChunk>();
   const ranked: Ranked[] = [];
   for (const row of rows) {
     // Rows arrive nearest-first, so the first sighting of a judgment is its best chunk.
     if (bestChunk.has(row.judgment_id)) continue;
-    bestChunk.set(row.judgment_id, row.chunk_text);
+    bestChunk.set(row.judgment_id, {
+      text: row.chunk_text,
+      charOffset: row.char_offset,
+      charLength: row.char_length,
+    });
     ranked.push({ judgmentId: row.judgment_id, rank: ranked.length + 1 });
     if (ranked.length >= CANDIDATE_DEPTH) break;
   }
@@ -525,7 +553,7 @@ export async function hybridSearch(
   const denseResult =
     queryVector && mode !== 'sparse'
       ? await dense(sql, queryVector, filters)
-      : { ranked: [] as Ranked[], bestChunk: new Map<string, string>() };
+      : { ranked: [] as Ranked[], bestChunk: new Map<string, BestChunk>() };
 
   /**
    * RRF over one list is not fusion, but it is order-preserving — `1/(k+rank)`
@@ -619,8 +647,27 @@ export async function hybridSearch(
     // judgment is too large to segment in-request, or when the passage cannot be
     // located: showing clean text with a null number is honest, and inventing a
     // number is the one thing this must never do.
-    const chunk = denseResult.bestChunk.get(id) ?? '';
-    const located = chunk && r.full_text ? locateParagraph(r.full_text, chunk) : null;
+    const best = denseResult.bestChunk.get(id);
+    const chunk = best?.text ?? '';
+    /**
+     * Exact position first, always — Stage 13. A chunk carrying a verified
+     * `char_offset`/`char_length` is located by walking to that literal
+     * position (`locateParagraphByOffset`), which cannot match the wrong
+     * occurrence of a phrase repeated elsewhere in the judgment the way a
+     * substring probe can. `locateParagraph`'s fuzzy probe runs ONLY when the
+     * exact position is unavailable (row not yet backfilled) or fails its own
+     * bounds check (e.g. the offset lands past `LOCATE_MAX_CHARS`'s
+     * truncation) — the same honest degrade this field has always made when a
+     * paragraph cannot be located at all, one level up.
+     */
+    let located =
+      chunk && r.full_text && best?.charOffset != null && best?.charLength != null
+        ? locateParagraphByOffset(r.full_text, best.charOffset, best.charLength)
+        : null;
+    const verified = located !== null;
+    if (!located && chunk && r.full_text) {
+      located = locateParagraph(r.full_text, chunk);
+    }
 
     results.push({
       judgmentId: r.id,
@@ -640,6 +687,7 @@ export async function hybridSearch(
         ? cleanExtractedText(located.text)
         : trimToSentenceStart(cleanExtractedText(chunk)),
       operativeParagraphNumber: located?.paragraphNumber ?? null,
+      operativeParagraphVerified: verified,
     });
   }
   return results;

@@ -50,6 +50,8 @@ type ChunkRow = {
   embedding: string;
   token_count: number;
   text_quality: number | null;
+  char_offset: number;
+  char_length: number;
 };
 
 /**
@@ -230,6 +232,8 @@ async function main(): Promise<void> {
             text_quality: textQuality(chunk.text),
             // ocr_confidence stays unset: the source ships no engine confidence
             // and we did not run the OCR, so any number here would be invented.
+            char_offset: chunk.offset,
+            char_length: chunk.bodyLength,
           });
         });
       }

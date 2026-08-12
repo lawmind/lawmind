@@ -28,6 +28,7 @@ function candidate(id: string, operativeParagraph: string): RetrievedJudgment {
     overruledNote: null,
     operativeParagraph,
     operativeParagraphNumber: null,
+    operativeParagraphVerified: false,
   };
 }
 

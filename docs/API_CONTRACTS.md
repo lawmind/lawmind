@@ -298,6 +298,7 @@ POST /search
   → { results: [ { judgmentId, caseTitle, neutralCitation, reporterCitations,
                    court, judgmentDate, holding,
                    operativeParagraph, operativeParagraphNumber,
+                   operativeParagraphVerified: boolean,  // added 12 Aug 2026, Stage 13
                    verificationState: 'verified'|'unverified'|'failed',
                    verifiedBySource: 'corpus'|'public_x2'|'ecourts'|'none',
                    overruledStatus: 'none'|'set_aside'|'partly_set_aside'|'doubted',
@@ -479,6 +480,21 @@ because that is what it is.
 
 An empty `operativeParagraph` is legitimate. A result matched by the lexical
 ranker alone has no dense chunk behind it and therefore no paragraph to show.
+
+**`operativeParagraphVerified` — added 12 Aug 2026, Stage 13. Additive.**
+
+Every `judgment_chunks` row now carries the `char_offset`/`char_length` the
+chunker computed at embed time — the chunk's own exact position in
+`full_text`, not a re-derived guess. When that position is present and valid,
+the server walks straight to the paragraph containing it instead of
+fuzzy-matching a normalised slice of the chunk against the segmented text.
+`operativeParagraphVerified: true` means that happened — the located paragraph
+cannot be the wrong occurrence of a phrase the judgment repeats elsewhere,
+which a substring probe genuinely can be. `false` means the fuzzy path ran
+instead (row not yet backfilled, or the offset landed past the in-request
+segmentation cap) or no paragraph was located at all. Both `true` and `false`
+can carry a correct paragraph; this is provenance the client may surface, not
+a signal to hide or downrank the `false` case.
 
 **`asOf` — added 6 Aug 2026. Additive; no existing field moved.**
 

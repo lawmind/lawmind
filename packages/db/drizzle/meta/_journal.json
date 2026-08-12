@@ -302,6 +302,20 @@
       "when": 1786440100000,
       "tag": "0044_llm_feature_concordance",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1786440200000,
+      "tag": "0045_document_enrichments",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1786440300000,
+      "tag": "0046_chunk_char_offset",
+      "breakpoints": true
     }
   ]
 }

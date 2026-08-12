@@ -1334,6 +1334,297 @@ implements §3a's adversarially-filtered discipline and **has never been run wit
 `--apply`**. That is the one route to canonical aliases this evidence supports,
 and it needs its own measured dry-run before any write.
 
+### Q1.18 · HC INGEST WAS DEAD 19 HOURS, TWO HANG VECTORS FIXED, AND THE DEEPSEEK ENRICHMENT PILOT PROVED OUT · 12 Aug 2026
+
+**Found on session start, not reported anywhere.** `hc-load.log` (S8's `--from-year
+2016 --batch 200 --concurrency 14 --apply` run) advanced steadily to
+`[38,800] mapped=38,796` at 05:53 on 11 Aug, then printed
+`Warning: TypeError: Math.sumPrecise is not a function` on a loop for the rest
+of the file and never advanced again — dead roughly 19 hours by the time this
+was caught, no PID alive, nothing restarted it.
+
+**Two independent hang vectors, not one, both in the fetch→parse step every HC
+CLI shares.** `mapConcurrent`'s worker pool never returns a stuck worker, so
+`Promise.all` never resolves and one bad document hangs the whole batch
+forever — not a crash, so nothing alerts on it.
+
+1. `unpdf`'s bundled pdfjs, repairing a malformed embedded font
+   (`Required "glyf" table is not found -- trying to recover`), calls
+   `Math.sumPrecise`, which does not exist on this Node runtime (`v24.14.1`,
+   a stage-3 proposal). The failure is swallowed by pdfjs's own `warn()`
+   rather than thrown, so it never reaches our `catch`.
+2. **A second, different hang after the first was patched and restarted**:
+   CPU time flat across a direct 5-second sample while "stuck" mid-batch —
+   not spinning, genuinely blocked — on the uncovered `fetch()`/
+   `arrayBuffer()` call itself. A stalled socket with no error and no bytes
+   hangs identically to (1) and was not covered by the first fix.
+
+**Fix: `withTimeout` (`hc-metadata.ts`) bounds the WHOLE per-document
+operation — fetch through parse — as one race against a 90s clock, paired
+with an `AbortController` so a timed-out fetch actually closes its socket
+rather than leaking it across a multi-day run. Applied in both
+`hc-load-cli.ts` and `hc-citations-cli.ts`. 38 tests green (12 new, covering
+the timeout racing a hang vs. a fast rejection vs. a fast success).**
+
+`DONE:` the ingest cannot hang on one bad document.
+`VERIFY:` restarted `hc-load-cli.ts --from-year 2016 --batch 200
+--concurrency 14 --apply`; watched it advance `[1] mapped=0` →
+`[4,004] mapped=4,002` over 25 minutes with climbing throughput
+(0.7 → 2.1 docs/s), confirmed by re-reading the log, not inferred.
+**Still running, unattended, at time of writing.**
+
+**Also found and left alone, matching bus 0064's number exactly**: 551
+duplicate `content_hash` groups in HC judgments, 925 extra rows. Search-time
+collapse (`9697fdb`) already hides these from users; storage still holds
+them. Not fixed — dedup means deciding which row survives and repointing any
+FK, a bigger operation than 925 rows currently justifies. Queued, not urgent.
+
+**Separately: the uncommitted DeepSeek enrichment pilot
+(`services/ingest/src/{inferx,enrich,enrich-cli}.ts`,
+`document_enrichments`) was sitting in the working tree, tested but never
+applied or run at scale.** Migration `0045` applied and verified against
+production (`to_regclass` confirms the table, columns match). Every task
+returns a verbatim evidence span and `verifyClaims` string-matches it
+against the source before anything is believed — same discipline
+`CITATION_CONCORDANCE_EVALUATION.md` drew for authority identity, applied
+here to judges/citations/treatment. Nothing it writes is read by the
+product; promotion is a separate, unbuilt step.
+
+**Metadata task run to 150 documents (63 cache hits, 87 new live calls,
+3 InferX grants rotating under real 429 pressure — confirmed live, key 1
+and key 2 both exhausted and rotated past mid-run with zero failed
+documents): 301/306 claims verified against source text = 98.4%, 0 calls
+failed, 0 unparseable.** This is real evidence DeepSeek V4 Flash reliably
+recovers the coram HC documents are missing (0 of 40,980 `judgment_judges`
+rows before this), when constrained to verbatim spans rather than trusted
+on its own claim.
+
+**Caught mid-session and back off from, not a false start**: a *second*,
+independently-started `enrich-cli.ts --task treatment --limit 40` was
+already running (PID tree launched 02:07:59, before this session touched
+`enrich-cli`) when this session went to pilot `citation_extraction` next —
+almost duplicated InferX-pool load across two concurrent processes.
+Killed the just-launched duplicate immediately, left the pre-existing run
+untouched. **Whoever is running that: `document_enrichments` already shows
+7 verified / 1 rejected for `treatment` from it as of this entry — no
+coordination needed, just noting it so a third session doesn't pile on.**
+`citation_extraction` and further `treatment` scaling queued behind letting
+that run finish, on the "concurrency is one, on purpose" rule
+`enrich-cli.ts` itself documents (the free pool measurably worsens under
+concurrent callers, `DEEPSEEK_DATA_MOAT.md` §1).
+
+### Q1.19 · SCALED TO 4 PARALLEL HC WORKERS, CAUGHT A FILE-COLLISION CASUALTY · 12 Aug 2026
+
+**Scaled the restarted ingest (Q1.18) from one process to four**, on measured
+headroom (6% CPU, 16.7 GB free RAM, 20 logical cores) rather than assumption:
+the general `--from-year 2016` sweep, plus three dedicated `--court` workers
+on the largest under-covered courts by `HC_METADATA_SURVEY.json`'s
+`perCourt` breakdown — Allahabad (`9_13`, 22% of the decade, **6 rows held
+before this**), Bombay (`27_1`), Madras (`33_10`, **1 row held before this**).
+Resumability by `source_url` uniqueness makes any eventual overlap with the
+general sweep wasteful, never unsafe.
+
+**Found mid-session: another concurrent session is actively editing the same
+harvest files this lane fixed in Q1.18** — `hc-metadata.ts`/`hc-load-cli.ts`
+briefly showed the pre-fix content on one `Grep` (no `withTimeout`) then the
+fixed content again on the next read, self-resolving. Re-verified stable with
+`tsc --noEmit` + the full harvest test suite (38/38 green) before trusting it
+again. **One real casualty**: the Bombay worker, launched inside that window,
+picked up the unfixed file and sat in the `Math.sumPrecise` warning flood from
+its very first batch — zero progress, confirmed by an empty log before the
+flood. Killed and relaunched against the now-stable file; recovered.
+
+**Also restarted the citation-extraction rescan after an unexplained crash**
+(`Warning: Detected unsettled top-level await`, exit 13, at
+37,200/121,346 judgments) — **not a data-loss event**: batched writes had
+already persisted all 11,335 new edges before the crash, verified against
+production (`judgment_citations` 273,383 → 284,718, exact match to the log's
+last printed count). Resumed with the same `--rescan --apply` command, which
+skips everything already scanned.
+
+**State at time of writing, four workers plus the rescan all still running:**
+
+| | |
+| --- | --- |
+| HC documents ingested | **94,989**, up from 40,980 at session start |
+| top courts by rows held | Patna 58,834 · Gauhati 14,536 · Calcutta 8,069 · Bombay 3,004 · Allahabad 2,040 · Madras 1,197 |
+| HC documents classified (`case_type` set) | 54,288 / 91,910 (86%, matching the S6 sample rate) |
+| HC duplicate `content_hash` groups / extra rows | 1,728 / 3,389 — **grown from 551/925** at the same rate as ingestion, not a new defect |
+| `judgment_citations`, all courts | 284,981 rows, 102,248 resolved |
+| citation rescan | mid-run, ~36,000/128,851 judgments scanned this pass |
+
+**Deferred, not forgotten**: a durable per-document ledger
+(`hc_ingest_ledger`, migration `0047`, applied) so a restart can skip a
+*permanently*-failed document the same way it already skips a *succeeded*
+one, instead of re-downloading every past failure on every restart. Table
+exists; wiring it into `hc-load-cli.ts` is deferred while another session is
+actively editing that exact file, to avoid compounding the collision above.
+
+**Not done, and said plainly**: no `--limit`-free run has finished a single
+court, no permanent-failure count exists yet (ledger deferred), and
+`resolve --apply` has not been re-run against the rescan's new edges.
+15,771,567 documents is the source inventory (`HC_METADATA_SURVEY.json`); 25
+courts, 0.75%–18.64% judgment share, per `HC_INGEST_PLAN.md` — **94,989
+ingested is 0.6% of the decade**, progress, not completion.
+
+### Q1.20 · A REAL BUG SURFACED BY RUNNING 4 WORKERS AT ONCE: DUPLICATE `source_url` WITHIN ONE UPSERT BATCH · 12 Aug 2026
+
+**All four HC workers crashed within one check-in cycle — two causes, not one,
+both diagnosed from the actual stack trace rather than guessed.**
+
+**Transient (Allahabad, Madras): `getaddrinfo ENOTFOUND hayabusa.proxy.rlwy.net`.**
+Checked before assuming it was permanent — the Railway TCP proxy's own note in
+`.env` warns it gets deleted after use. `nslookup`/`ping` immediately after
+showed it resolving and answering fine: a momentary local DNS hiccup, not a
+dead proxy. Relaunched as-is.
+
+**Real (main sweep): `PostgresError: ON CONFLICT DO UPDATE command cannot
+affect row a second time`.** `load.ts`'s `upsertBatch` puts up to 100 records
+in one `INSERT … ON CONFLICT (source_url) DO UPDATE`, and Postgres refuses
+outright — not retryable — if the same conflict key appears twice in one
+statement. **The AWS metadata bucket itself carries duplicate rows within a
+single parquet file** (same `pdf_link`), which `existingSourceUrls` cannot
+catch: it only knows what a *previous* batch already wrote, not what the
+*current* one is about to. **Only surfaced by running four workers at once**
+— a single worker's batches are small enough, and the corpus sparse enough,
+that the odds of hitting a duplicate-within-window are lower; higher
+concurrency reached it first.
+
+**Fixed in `hc-load-cli.ts`**: dedupe `candidates` by URL before the
+`existingSourceUrls` check, first occurrence wins — the same "one sighting"
+rule this codebase already applies to citations. Tallied as
+`duplicate_in_batch`, counted rather than silently dropped. 38 tests still
+green; `tsc --noEmit` clean. All four workers relaunched with the fix.
+
+**Bombay finished its assigned scope clean while this was being diagnosed**
+— 3,496 documents, standard end-of-run summary, zero crash. Its capacity was
+redirected to a fifth court, Punjab and Haryana (`3_22`, 1.26M documents,
+undercovered), rather than left idle.
+
+**Also observed, not a defect**: several Bombay 2026 records extract as
+visibly garbled text (`"( ) , (3) 3 ( ) Q , , 993…"`). Matches the
+already-documented font-substitution warnings (`Cannot substitute the font
+because of its name`) on PDFs with damaged embedded fonts — the same font-
+repair path `Math.sumPrecise` sits in. `text_quality` (`load.ts`) already
+scores this; not something this ingest CLI can fix without OCR, which is out
+of scope per `HC_INGEST_PLAN.md` §2.
+
+### Q1.21 · THE CITATION RESCAN CRASHES ON A TIMER, NOT A DOCUMENT — WORKED AROUND WITH `--limit`, NOT ROOT-CAUSED · 12 Aug 2026
+
+**Three crashes, same signature, each closer to the start.** `citations-cli.ts
+--rescan --apply`, unbounded, died three times on
+`Warning: Detected unsettled top-level await … await main();`, exit code 13
+— at 37,200/121,346, then 60,600/128,851, then 30,400/138,602 judgments. **Not
+a document-shaped bug**: the crash point does not track a fixed offset, a
+fixed judgment, or a fixed count, and it moved EARLIER as this lane went from
+one HC ingest worker to five. That points at resource pressure from running
+several heavy Node processes at once, not a bad row.
+
+**Per `CLAUDE.md`'s own rule, three of the same failure is the line — stop
+guessing and change strategy, not attempt a fourth blind resume.** Confirmed
+first that resuming loses nothing (`judgment_citations` count matched the
+log's last printed total exactly, twice), so the crash itself was never the
+risk — burning a fourth attempt on the same unbounded shape would have been.
+
+**Not root-caused. Worked around**: `--rescan` already accepts `--limit`
+(`arg('--limit', 0)`, read at `citations-cli.ts` line 238). Chained eight
+sequential `--limit 20000 --apply` runs instead of one unbounded one — each
+short enough to very likely finish inside whatever the crash's real time or
+resource threshold is, and the crash itself is harmless to interrupt given
+the batched-write safety already confirmed. **This is a workaround, stated as
+one**: the actual cause (a Windows/Node resource ceiling under concurrent
+`hc-load-cli.ts` + `citations-cli.ts` load, guessed but not measured) is still
+open. Revisit if `--limit`-bounded runs start crashing too.
+
+### Q1.22 · STAGE 13, EXACT-SPAN EVIDENCE — SHIPPED, AND A REAL OFFSET BUG FOUND AND FIXED ALONG THE WAY · 12 Aug 2026
+
+**`judgment_chunks.char_offset`/`char_length` now drive `operativeParagraph`
+directly, exactly.** `services/api/src/judgments/paragraphs.ts` gained
+`resolveExactSpan` (bounds-checked slice, never approximated, null on any
+invalid input) and `locateParagraphByOffset` (walks the same paragraph blocks
+`segmentParagraphs` builds and picks the one whose real span in `full_text`
+contains the offset — no substring probing). `retrieve.ts`'s `dense()` now
+carries `char_offset`/`char_length` per matched chunk; `hybridSearch()` tries
+the exact path FIRST and falls back to the pre-existing fuzzy `locateParagraph`
+only when no verified offset is available. New field
+`operativeParagraphVerified: boolean`, additive, documented in
+`API_CONTRACTS.md`, threaded through `search/route.ts` and
+`arguments/counter.ts`.
+
+**A real, pre-existing bug was found verifying this against production data,
+not invented from reading the code.** `chunk.ts`'s old offset computation
+reconstructed each chunk's body by rejoining split paragraphs with a canonical
+`\n\n` and then searched for it with `text.indexOf(body, searchFrom)`. When
+the source's real separator was not exactly two newlines — three+ blank
+lines, or a "blank" line carrying trailing spaces, both real in this
+OCR'd/scanned corpus — that search failed, and the code silently fell back to
+`offset: 0` instead of reporting the position as unknown. **A false "verified"
+position, not a missing one**: a chunk from paragraph 40 would read as if it
+began at the judgment's first character.
+
+Measured on real data: **0.54% of chunks (2,217 of 412,203)** carried this —
+found via `char_offset = 0 AND chunk_index > 0`, which is unambiguous (offset
+0 is only ever correct for `chunk_index = 0`). It was NOT caught by the
+backfill CLI's own byte-equality verification, because the bug is
+deterministic: recomputing produces the identical wrong offset, so
+`storedText === chunk.text` still passes.
+
+**Root-caused and fixed, not patched at the symptom.** Rewrote the paragraph
+splitter to track each unit's real position while walking the text once
+(`Positioned` type, `pushTrimmed`), so a merged chunk's offset is simply
+"where its first unit started" — carried forward through merging, never
+re-derived by searching. There is no `indexOf`-based position lookup left in
+`chunk.ts` at all; the failure mode is structurally gone, not detected-and-
+avoided. Also fixed: offsets are now correctly adjusted for `fullText`'s own
+leading whitespace (`fullText.trim()` vs `fullText`) — checked live against
+production (0/138,602 judgments actually have leading whitespace today, so
+this was latent, not separately measured as a live defect, but the old code
+would have silently mis-offset every chunk of any judgment that did). 16
+tests in `chunk.test.ts` (3 new, reproducing the exact failure mode plus the
+leading-whitespace case), `services/api` and `services/embed` suites green,
+`tsc --noEmit` clean both packages.
+
+**Cleanup, verified**: the 2,217 bad rows were NULLed (`char_offset = NULL,
+char_length = NULL`, never guessed at a correction) rather than left wrong,
+so they read as honestly unavailable and get correctly re-derived by the next
+backfill pass. Re-verified 200 fresh random samples post-fix: 200/200 correct,
+0 rows matching the bug's signature anywhere in the table.
+
+**Two long-running background jobs, both relaunched with the fix, both
+running at time of writing:**
+- `backfill:offsets --apply --limit 100000` — recovers `char_offset` for the
+  616,197 chunks embedded before migration `0046`. Resumable by construction
+  (`WHERE char_offset IS NULL`); a killed/restarted run loses nothing.
+- `EMBED_DEVICE=dml pnpm --filter @lawmind/embed run embed --limit 90000` —
+  closes a SEPARATE, larger gap found while investigating: **87,141 of
+  125,522 judgments (69%) have never been chunked or embedded at all**, so
+  they carry zero dense-retrieval presence (lexical-only). This runs on the
+  local RTX 4060 Ti via `embedDevice() === 'dml'`
+  (`services/embed/src/embed.ts`), whose fp32 GPU/CPU vector agreement was
+  re-verified live this session (cosine 0.999999996–1.000000002 on 3 texts
+  incl. Devanagari) before trusting it, on top of the 9 Aug measurement
+  already on record.
+
+**This GPU run is a deliberate call to REVISIT `Q1.12`'s "the GPU should not
+embed the corpus" finding, made on the founder's explicit direction this
+session** (not a silent reopening): that finding priced a RENTED GPU
+(~3,956 GPU-hours, ~$65) against a measured 0.3pp retrieval difference. On
+already-owned, otherwise-idle local hardware the cost side of that tradeoff is
+gone; bringing 69% of the corpus into dense retrieval at all has value beyond
+the 0.3pp figure regardless. `Q1.12`'s finding is not struck — it is still the
+right call for a RENTED GPU — this is a different question the founder
+answered directly.
+
+**Not yet done**: both jobs are still running; final row counts should be
+re-verified once they finish before this line is called closed. The already-
+known caveat from `AUTHORITY_COVERAGE.md`-style verification applies here too:
+chunks embedded outside these two jobs (i.e., via `cli.ts` directly, offset
+written at embed time) are only as good as `full_text` staying unchanged after
+embedding — nothing re-verifies an existing non-NULL offset against a
+LATER edit to `full_text`. Not observed as a live problem (no process in this
+repo currently writes `full_text` for an existing row), but structurally
+possible and not solved by this change.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
