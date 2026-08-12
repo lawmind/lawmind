@@ -142,7 +142,9 @@ async function main(): Promise<void> {
       `${already.size} already checkpointed, ${pending.length} pending`,
   );
 
-  const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require' });
+  // connect_timeout: 120 -- LCC's bus 0090, the same proxy-contention finding
+  // this run's own ECONNRESET timeout was a symptom of.
+  const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require', connect_timeout: 120 });
   try {
     const embedder = await getEmbedder();
     const results: Classification[] = [...already.values()];

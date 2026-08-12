@@ -99,7 +99,12 @@ const doc = JSON.parse(
 const limit = Number(process.env['ARMS_LIMIT'] ?? String(doc.queries.length));
 const queries = doc.queries.slice(0, limit);
 
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4 });
+// connect_timeout: 120 -- LCC's bus 0090, measured independently the same day
+// this session hit the same proxy contention: the 30s default is below what
+// this proxy needs under current five-lane load, and the failure surfaces as
+// `write CONNECT_TIMEOUT` on whatever query happened to be first, which reads
+// like a stuck query rather than what it actually is.
+const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4, connect_timeout: 120 });
 
 /** The advocate reads five. A gold judgment at rank 6 counts for nothing. */
 const successAt5 = (rows: ScoredQuery[]) =>
