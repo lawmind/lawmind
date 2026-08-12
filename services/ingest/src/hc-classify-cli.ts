@@ -35,10 +35,43 @@ async function main(): Promise<void> {
   const sql = postgres(url, { max: 2, onnotice: () => {} });
 
   try {
-    const rows = await sql<Row[]>`
-      SELECT id, disposal_nature, case_number, full_text, length(full_text) AS len
-      FROM judgments WHERE court <> 'Supreme Court of India'`;
-    console.log(`${rows.length} High Court documents\n`);
+    /**
+     * PAGED AND RESUMABLE, because the corpus outgrew the original query.
+     *
+     * This selected `full_text` for every non-Supreme-Court judgment in one
+     * result set. That was fine at 40,980 documents and is not fine at 265,000+
+     * — the High Court ingest is currently landing ~34,000 an hour, and the
+     * whole set is several gigabytes of text in a single round trip over a
+     * shared proxy.
+     *
+     * `--resume` restricts the walk to rows no rule has judged yet
+     * (`hc_class_method IS NULL`), so a re-run after an interrupted pass costs
+     * only what is left. Without it the walk covers everything, which is what a
+     * changed rule set needs.
+     */
+    const RESUME = process.argv.includes('--resume');
+    const PAGE = 2_000;
+    const rows: Row[] = [];
+    let cursor = '00000000-0000-0000-0000-000000000000';
+    for (;;) {
+      const page = await sql<Row[]>`
+        SELECT id, disposal_nature, case_number, full_text, length(full_text) AS len
+        FROM judgments
+        WHERE court <> 'Supreme Court of India' AND id > ${cursor}::uuid
+          ${RESUME ? sql`AND hc_class_method IS NULL` : sql``}
+        ORDER BY id
+        LIMIT ${PAGE}`;
+      if (page.length === 0) break;
+      cursor = page[page.length - 1]!.id;
+      rows.push(...page);
+      process.stdout.write(`\r  loaded ${rows.length.toLocaleString()} documents`);
+      if (page.length < PAGE) break;
+    }
+    console.log(`\n${rows.length} High Court documents${RESUME ? ' (unclassified only)' : ''}\n`);
+    if (rows.length === 0) {
+      console.log('nothing to classify.');
+      return;
+    }
 
     const byClass = new Map<string, number>();
     const byMethod = new Map<string, number>();
