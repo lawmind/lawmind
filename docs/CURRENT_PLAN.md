@@ -2336,8 +2336,42 @@ standing rule against tuning without one:**
   queries in the same run. A win on one at a measured cost to the other is
   reported, not shipped silently.
 
-**Not implemented yet in this commit** — the controlled arms run above is
-the BEFORE number this plan requires before writing `exactCaseTitle`.
+**BEFORE baseline, landed** — controlled (`courts=['sc']`), `ARMS_LIMIT=100`
+(the full 283 would run ~5h under current five-lane DB-proxy load; 100
+matches `ab-cli.ts`'s own established default for exactly this reason):
+
+| arm | success@5 | recall@20 | MRR | nDCG@5 | nDCG@20 |
+| --- | --- | --- | --- | --- | --- |
+| sparse | 7.0% | 13.0% | 0.053 | 0.053 | 0.070 |
+| dense | 17.0% | 34.0% | 0.118 | 0.116 | 0.168 |
+| hybrid (production) | 12.0% | 30.0% | 0.093 | 0.087 | 0.137 |
+
+Paired (McNemar, success@5, discordant queries only):
+
+| pair | gained/lost | p | queries to settle |
+| --- | --- | --- | --- |
+| dense vs sparse | +12 / −2 | **0.0129** | ~91 |
+| hybrid vs sparse | +5 / −0 | 0.0625 | ~77 |
+| hybrid vs dense | +3 / −8 | 0.2266 | ~324 |
+
+**This partially settles LCC's bus 0061 question, and the honest answer is
+narrower than either "yes" or "no."** The corpus-size confound LCC
+suspected (sparse reaching a haystack the dense arm cannot) is controlled
+for here — both arms see the identical Supreme-Court-only set. **Hybrid
+still underperforms dense on every point estimate** (12.0% vs 17.0%
+success@5; 30.0% vs 34.0% recall@20; 0.093 vs 0.118 MRR) even with the
+confound removed, which the confound theory alone does not explain. But
+`hybrid vs dense` is the one comparison that does **not** reach
+significance at this sample size (p=0.2266, ~324 queries needed) — so the
+correct statement is *"directionally worse, not yet proven,"* not *"proven
+worse."* Sparse is unambiguously the weakest arm (dense beats it at
+p=0.0129). Neither RRF fusion nor the corpus-size confound is ruled out by
+this run alone; both remain live explanations. **Not acted on** — this
+lane does not tune RRF or fusion weights from one controlled-but-
+underpowered run, per its own standing rule.
+
+**AFTER measurement**: same command, fresh process (this one loaded
+`retrieve.ts` before `exactCaseTitle` was committed), once running.
 
 ### Q1.31 · 20 WORKERS — Calcutta and Gauhati dedicated · 13 Aug 2026
 
