@@ -1,0 +1,182 @@
+/**
+ * `pnpm --filter @lawmind/ingest reextract` — re-extracts documents whose
+ * stored text is corrupt, using poppler's `pdftotext` instead of `unpdf`.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY: 2,403 BOMBAY JUDGMENTS ARE UNREADABLE, AND IT IS NOT AN OCR PROBLEM
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Measured 12 Aug 2026. Corruption is **entirely confined to Bombay High
+ * Court** — 2,403 of 6,493 documents (37.0%), against **0.00%** at the Supreme
+ * Court, Patna, Allahabad, Calcutta, Madras and Gauhati.
+ *
+ * The failure is systematic character DROPPING, not misreading:
+ *
+ *     stored:  `voc te for t e etitio e`
+ *     truth:   `advocate for the petitioner`
+ *     stored:  `he S a e f aharash ra`
+ *     truth:   `The State of Maharashtra`
+ *
+ * Those PDFs embed subsetted fonts with an incomplete glyph→Unicode map, and
+ * `unpdf` silently drops every glyph it cannot resolve. **No OCR is involved
+ * anywhere in this pipeline** — we read the PDF's own text layer — so "a better
+ * OCR engine" would not have touched it.
+ *
+ * `pdftotext` resolves the same fonts correctly. On the first document tested,
+ * `unpdf` produced `B MB Y B B niru h Subash aik V S S S a e f Maharash ra`
+ * while `pdftotext` produced `IN THE HIGH COURT OF JUDICATURE AT BOMBAY BENCH
+ * AT AURANGABAD … Anirudh Suba h Naik VERSUS State Of Mahara htra` — which
+ * `text-corruption.ts` scores CLEAN.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE RULE THIS OBEYS: NEVER REPLACE GOOD TEXT WITH WORSE TEXT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * A row is only rewritten when the stored text is corrupt AND the re-extracted
+ * text is clean AND it is not shorter than what is already there. Anything
+ * else is left exactly as it was and counted as a refusal. This is a
+ * deterministic re-read of the same source PDF — not a model's opinion about
+ * what the text should say — but it still writes to canonical `full_text`, so
+ * it is dry by default and every decision is reported before any of it runs.
+ */
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import postgres from 'postgres';
+
+import { classifyCorruption } from './text-corruption.ts';
+import { stripUnstorable } from './text.ts';
+
+const APPLY = process.argv.includes('--apply');
+const arg = (name: string, fallback: string): string => {
+  const i = process.argv.indexOf(`--${name}`);
+  return i >= 0 && process.argv[i + 1] ? process.argv[i + 1]! : fallback;
+};
+const LIMIT = Number(arg('limit', '50'));
+const COURT = arg('court', 'Bombay High Court');
+
+const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
+if (!dbUrl) {
+  console.error('DATABASE_URL is not set.');
+  process.exit(2);
+}
+const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+
+const TRANSIENT = /ECONNRESET|ETIMEDOUT|EPIPE|ENOTFOUND|EAI_AGAIN|socket|getaddrinfo/i;
+async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await run();
+    } catch (err) {
+      const m = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
+      if (attempt >= 8 || !TRANSIENT.test(m)) throw err;
+      const wait = Math.min(30_000, 1000 * 2 ** attempt);
+      console.log(`    db ${what} failed (${m.trim()}) — retry in ${wait / 1000}s`);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+}
+
+function pdftotext(bytes: Uint8Array): string {
+  const dir = mkdtempSync(join(tmpdir(), 'lawmind-'));
+  try {
+    const pdfPath = join(dir, 'in.pdf');
+    writeFileSync(pdfPath, bytes);
+    // `-q` silences font warnings; `-` writes to stdout. `-layout` is NOT used:
+    // it preserves visual columns, which inserts runs of spaces that the
+    // downstream citation offsets would then have to account for.
+    return execFileSync('pdftotext', ['-q', pdfPath, '-'], { encoding: 'utf8', maxBuffer: 200e6 });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+console.log('RE-EXTRACTION — poppler pdftotext over corrupt documents');
+console.log('='.repeat(74));
+console.log(`court "${COURT}" · limit ${LIMIT} · ${APPLY ? 'APPLY (will write full_text)' : 'DRY RUN'}`);
+
+const rows = await withDbRetry(
+  'select',
+  () => sql<{ id: string; caseTitle: string; sourceUrl: string; fullText: string }[]>`
+    SELECT id, case_title AS "caseTitle", source_url AS "sourceUrl", full_text AS "fullText"
+    FROM judgments
+    WHERE court = ${COURT} AND full_text IS NOT NULL AND source_url IS NOT NULL
+    ORDER BY id`,
+);
+
+let examined = 0;
+let corrupt = 0;
+let repaired = 0;
+let refusedStillCorrupt = 0;
+let refusedShorter = 0;
+let fetchFailed = 0;
+const started = Date.now();
+
+for (const row of rows) {
+  if (repaired + refusedStillCorrupt + refusedShorter + fetchFailed >= LIMIT) break;
+  const before = classifyCorruption(row.fullText);
+  examined++;
+  if (!before?.corrupt) continue;
+  corrupt++;
+
+  let text: string;
+  try {
+    const res = await fetch(row.sourceUrl);
+    if (!res.ok) throw new Error(`GET ${res.status}`);
+    text = stripUnstorable(pdftotext(new Uint8Array(await res.arrayBuffer())));
+  } catch (err) {
+    fetchFailed++;
+    console.log(`  FETCH FAILED ${row.caseTitle.slice(0, 40)} — ${err instanceof Error ? err.message : String(err)}`);
+    continue;
+  }
+
+  const after = classifyCorruption(text);
+  const label = row.caseTitle.slice(0, 42).padEnd(42);
+
+  if (!after || after.corrupt) {
+    refusedStillCorrupt++;
+    console.log(`  still corrupt   ${label} single=${after?.signals.singleCharRatio.toFixed(2) ?? 'n/a'}`);
+    continue;
+  }
+  /**
+   * A shorter result is a worse result even when it scores clean — losing
+   * pages to a parser quirk is a silent corpus loss, and the whole point here
+   * is to stop losing text.
+   */
+  if (text.length < row.fullText.length) {
+    refusedShorter++;
+    console.log(`  refused shorter ${label} ${row.fullText.length} -> ${text.length} chars`);
+    continue;
+  }
+
+  repaired++;
+  console.log(
+    `  REPAIRED        ${label} ${row.fullText.length} -> ${text.length} chars ` +
+      `(single ${before.signals.singleCharRatio.toFixed(2)} -> ${after.signals.singleCharRatio.toFixed(2)})`,
+  );
+  if (APPLY) {
+    await withDbRetry(
+      'update',
+      () => sql`UPDATE judgments SET full_text = ${text} WHERE id = ${row.id}`,
+    );
+  }
+}
+
+console.log('');
+console.log('RESULTS');
+console.log('='.repeat(74));
+console.log(`examined            ${examined}`);
+console.log(`corrupt found       ${corrupt}`);
+console.log(`REPAIRED            ${repaired}${APPLY ? ' (written)' : ' (dry run — nothing written)'}`);
+console.log(`refused still corrupt ${refusedStillCorrupt}`);
+console.log(`refused shorter     ${refusedShorter}`);
+console.log(`fetch failed        ${fetchFailed}`);
+const attempted = repaired + refusedStillCorrupt + refusedShorter;
+console.log(
+  `repair rate         ${attempted > 0 ? ((100 * repaired) / attempted).toFixed(1) + '%' : 'n/a'} of documents re-read`,
+);
+console.log(`wall clock          ${((Date.now() - started) / 1000).toFixed(0)}s`);
+
+await sql.end();
