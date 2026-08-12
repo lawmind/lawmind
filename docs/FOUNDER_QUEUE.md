@@ -54,6 +54,119 @@ founder decision.
 
 ---
 
+## [RESOLVED 12 Aug 2026 — founder confirmed] Is "Supreme AI" the same relationship as the Supreme Today licence, or a separate one? · NEW3 · 12 Aug 2026
+
+**Answer, verbatim: "yes supreme ai = supreme today ai."** `docs/
+AUTHORIZED_SOURCE_MAP.md` §2 carries the consequence: the acquisition plan
+is `SUPREME_TODAY_LICENCE.md`/`HARVEST_ENGINE.md`, already written and
+already engineered (AIMD pacing, archive-then-parse, `harvest:probe`), and
+the only remaining blocker is the account + first ₹50,000 payment already
+tracked below at §6 ("Supreme Today — the one real decision") — nothing new
+for any lane to build. Original entry kept below for provenance.
+
+---
+
+### [SUPERSEDED, see above] Is "Supreme AI" the same relationship as the Supreme Today licence, or a separate one? · NEW3 · 12 Aug 2026
+
+**Needs:** confirmation of what `Supreme AI` (named authorized in `CLAUDE.md`
+§6a, distinct from `Supreme Today` per repeated, deliberate instructions in
+this file and in `CLAUDE.md`) actually refers to.
+
+**Why this is not NEW3 guessing its way past a hard limit:** the lane's
+brief is explicit — new sources are a founder decision, and this lane must
+not conflate or silently resolve. A full web search this session found no
+product or site distinctly branded "Supreme AI" — only **Supreme Today AI**
+(`supremetoday.ai`), the 58-year-old publisher already deeply researched in
+`docs/COMPETITOR_SUPREME_TODAY.md` and under a separately negotiated
+₹50,000/month query-only licence in `docs/SUPREME_TODAY_LICENCE.md`. Your
+own quoted praise elsewhere in this repo — *"the citation of Supreme AI is
+very accurate and they can file in front of the judge with the actual
+citation"* — reads as a description of that same product.
+
+**What was built anyway:** `docs/AUTHORIZED_SOURCE_MAP.md` §2 lays out both
+readings precisely, so whichever is true, the next step is already written:
+if "Supreme AI" **is** Supreme Today, the licence mechanics in
+`SUPREME_TODAY_LICENCE.md` §9-10 are the acquisition plan and this item just
+confirms the name; if it is a **genuinely separate** product, that becomes a
+fresh discovery task with nothing yet built against it.
+
+**Cost if never resolved:** the §6a authorization for "Supreme AI" cannot be
+acted on by any lane — nobody can queue an acquisition against a name with
+no verified target — and the repo keeps carrying two documents
+(`COMPETITOR_SUPREME_TODAY.md`'s deep research and the bare "Supreme AI —
+AUTHORIZED" line) that may or may not be about the same relationship.
+
+**Where it plugs in:** one sentence answers it — "yes, same relationship" or
+"no, here is what Supreme AI actually is [name/URL/contact]." Either answer
+lets `docs/AUTHORIZED_SOURCE_MAP.md` §2 close.
+
+---
+
+## NOTE FROM THE ACQUISITION/DISCOVERY LANE — unbound session, 12 Aug 2026
+
+**Not LCC, not RCC — a separate research session run against the founder's
+NEW3 data-moat-acquisition brief.** Wrote three new files, edited nothing
+existing except this note: `docs/SOURCE_REGISTRY.md`, `docs/
+MISSING_AUTHORITY_QUEUE.md`, `docs/CORPUS_ACQUISITION_QUEUE.md`, `docs/
+ACQUISITION_SESSION_LOG.md` (the session's own continuity record — read this
+one first if resuming the work).
+
+**The one finding worth LCC's attention regardless of when the IndianKanoon
+purchase decision lands:** re-querying the citation graph live (312,373
+judgments now held, up from 79,322 on 12 Aug morning — the HC ingest grew the
+corpus roughly 4× intraday) shows LawMind's unresolved-citation population
+has grown to 32,383 rows / 8,733 distinct keys, and **99.6% of it is SCC/AIR
+citations to Supreme Court judgments almost certainly already held under a
+different citation form** — the same concordance gap already open below
+("An SCC/AIR ↔ S.C.R. citation concordance"), just measured bigger.
+Practical consequence: **the missing-authority queue this session built
+(`docs/MISSING_AUTHORITY_QUEUE.md`) should not be read as "8,733 documents to
+acquire."** It is overwhelmingly an alias-resolution backlog, and resolving
+even the top 40 through a cheap IndianKanoon pilot (~₹28) would answer far
+more of it than any new ingestion would.
+
+**A second, smaller finding, unrelated to the concordance question:**
+`external_citations.source_year` reads `2016` on every row sampled this
+session regardless of the cited judgment's real year (1958-2015 in the
+sample) — shape-consistent with an ingest artefact rather than 12,000+
+citing documents genuinely all dating from one year. Not chased further;
+out of this lane's remit and possibly already known. Full detail in
+`docs/MISSING_AUTHORITY_QUEUE.md` §2's caveat.
+
+**Also found, not acted on (out of lane):** tribunals (NCLT, CESTAT, NCDRC
+confirmed by doctype on IndianKanoon's own search) are very likely acquirable
+through the IndianKanoon API LawMind is already evaluating, rather than by
+scraping each tribunal's own site — those sites were checked directly and
+offer no bulk/API, case-by-case only. Detail: `docs/SOURCE_REGISTRY.md` §2.
+
+**UPDATE, same session, and this one outranks the IndianKanoon item above for
+the concordance question specifically.** The Supreme Court of India publishes
+its own **Equivalent Citation Table** — `main.sci.gov.in/pdf/ECT/` — mapping
+SCC/AIR/JT/SCALE citations to S.C.R. for every judgment, 1950 to present,
+across four official PDFs. Confirmed by two independent secondary sources
+(a University of Wisconsin law-library guide and a legal-procedure blog that
+quotes the table's own worked example), **not by this session's own fetch of
+the PDF** — `main.sci.gov.in` would not resolve from this session's fetch
+tool. **If it parses, this is a free, official, complete-coverage version of
+the exact concordance the open item above has been costing in IndianKanoon
+lookups.** Worth one real fetch (via `agent-browser`, which reaches sites
+this session's plain `WebFetch` could not) before spending anything further
+on the concordance question. Full account: `docs/SOURCE_REGISTRY.md` §5a.
+
+**What did not get done:** four parallel research subagents (tribunals,
+state Acts/gazettes, eCourts district judiciary, citators beyond
+IndianKanoon) were dispatched and all four failed on an account-level
+session-limit error before returning results. Direct research continued at
+reduced depth from the main session afterward. The citator/concordance
+category (the one most relevant to the finding above) was not reached at
+all. Full account: `docs/ACQUISITION_SESSION_LOG.md`.
+
+**Nothing here needs a founder decision that isn't already open below** — the
+IndianKanoon purchase is the existing open item this note reinforces, not a
+new one.
+
+---
+
 ## How to add an entry
 
 ```
