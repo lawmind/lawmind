@@ -227,7 +227,30 @@ async function selectRefs(): Promise<UnitRef[]> {
       WHERE j.court <> 'Supreme Court of India'
         AND j.full_text IS NOT NULL AND length(j.full_text) > 800
         AND NOT EXISTS (SELECT 1 FROM judgment_judges jj WHERE jj.judgment_id = j.id)
-      ORDER BY md5(j.id::text || 'enrich-v1')
+      /**
+       * THE QUEUE IS PRIORITISED, NOT RANDOM — enrichment must not fall
+       * permanently behind ingestion, and it will: the High Court ingest lands
+       * ~34,000 documents an hour while this worker manages a few a minute. A
+       * uniform random draw over a corpus growing that fast spends most of its
+       * budget on two-line adjournments.
+       *
+       * 1. REPAIRED DOCUMENTS FIRST. Their text roughly doubled today, so
+       *    whatever was derived from them was derived from half a judgment.
+       * 2. SUBSTANTIVE JUDGMENTS NEXT, by the classifier's own verdict — a
+       *    reasoned decision earns a model call, a bail order does not. NULL
+       *    sorts with the substantive group deliberately: unclassified is not
+       *    evidence of being trivial, and treating it as such would quietly
+       *    exclude every newly ingested document from enrichment forever.
+       * 3. NEWEST FIRST within a tier, so the queue drains toward the ingest
+       *    head rather than away from it.
+       * 4. The id hash last, purely so ties are stable across runs and a
+       *    restart hits cache instead of re-paying.
+       */
+      ORDER BY
+        (j.court IN ('Bombay High Court', 'Allahabad High Court')) DESC,
+        (j.hc_document_class IN ('bail_order', 'procedural_disposal', 'reference_stub')) ASC,
+        j.created_at DESC,
+        md5(j.id::text || 'enrich-v1')
       LIMIT ${LIMIT}`;
     return rows;
   }
