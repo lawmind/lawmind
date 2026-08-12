@@ -467,6 +467,64 @@ async function exactCitation(
 }
 
 /**
+ * Exact case-title lookup — the same architecture as {@link exactCitation},
+ * for the query shape it does not cover.
+ *
+ * `query-shape.ts` already classifies `X v Y` queries as `case_name`
+ * (`CASE_NAME_RE`) on the documented assumption that *"the lexical ranker is
+ * already strong"* for them. Measured, not assumed — `docs/CURRENT_PLAN.md`
+ * Q1.25: it is not. `S. N. DUTT versus UNION OF INDIA`, searched by its own
+ * exact printed title, does not appear in the sparse ranker's top 50 —
+ * `full_text_tsv` is one unweighted tsvector, and the one discriminating
+ * token (a party's surname, appearing once in the heading) loses to
+ * boilerplate ("Union of India", "versus") a long judgment repeats dozens of
+ * times. Reproduced against four real cases, worse as the corpus grows, not
+ * better — more candidates to be outranked by, not fewer. A term-frequency
+ * problem no amount of query retyping fixes; a structural match against the
+ * title itself does.
+ *
+ * **Exact only, deliberately — same asymmetry as `exactCitation`**: a
+ * missed match costs nothing (falls through to the ordinary pipeline
+ * unchanged); a wrongly-claimed one would pin the wrong judgment at rank 1.
+ * Case-insensitive and whitespace-normalised only (an advocate is unlikely
+ * to reproduce a title's exact capitalisation or spacing) — never fuzzy or
+ * similarity-scored, which would reopen exactly the "tune ranking without a
+ * controlled experiment" risk this fix exists to close, not reintroduce.
+ *
+ * **Requiring the WHOLE (normalised) query to equal the WHOLE (normalised)
+ * title is what keeps this safe without a separate "is the query ABOUT this"
+ * guard** — unlike `exactCitation`, which needed `citationIsTheQuery`
+ * because a looser, digit-stripped key could still match a citation merely
+ * MENTIONED inside a longer passage. A full-string case-title match cannot
+ * accidentally fire on a sentence that happens to contain a case name; it
+ * only fires when the query IS the title, verbatim, which is exactly the
+ * measured failure this closes.
+ */
+async function exactCaseTitle(
+  sql: Sql,
+  queryText: string,
+  filters: SearchFilters,
+): Promise<string | null> {
+  const rows = await sql<{ id: string }[]>`
+    SELECT j.id
+    FROM judgments j
+    WHERE lower(btrim(regexp_replace(j.case_title, '\\s+', ' ', 'g'))) =
+          lower(btrim(regexp_replace(${queryText}, '\\s+', ' ', 'g')))
+      ${courtWhere(sql, filters)}
+      ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+      ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+    LIMIT 2
+  `;
+  // Same asymmetry as exactCitation: two matches (two judgments printed with
+  // literally the same title -- not impossible, e.g. a common surname
+  // dispute pattern) means we do not know which the advocate meant, so
+  // neither is pinned. Both still reach them through the ordinary pipeline.
+  if (rows.length !== 1) return null;
+  return rows[0]!.id;
+}
+
+/**
  * ─────────────────────────────────────────────────────────────────────────────
  * WHAT THE CROSS-ENCODER IS ALLOWED TO SEE — never an empty string
  * ─────────────────────────────────────────────────────────────────────────────
@@ -604,7 +662,9 @@ export async function hybridSearch(
   const pinned =
     warrantsExactLookup(shape) && shape.citation !== null
       ? await exactCitation(sql, shape.citation, filters)
-      : null;
+      : shape.shape === 'case_name'
+        ? await exactCaseTitle(sql, query, filters)
+        : null;
 
   const ordered = [...scores.entries()]
     .sort((a, b) => b[1] - a[1])
