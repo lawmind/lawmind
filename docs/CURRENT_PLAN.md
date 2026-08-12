@@ -2254,6 +2254,78 @@ as "NEW1 has nothing to report" and so ranking failures are not mistaken
 for acquisition gaps by anyone reading `AUTHORITY_HELD_BUT_NOT_RETRIEVED`
 out of context.
 
+### Q1.30 · Q1.25'S FIX, SCOPED — a pin that already has a home, not a new mechanism · 13 Aug 2026
+
+Re-verified Q1.25 first, not assumed stale: `S. N. DUTT versus UNION OF
+INDIA` still fails to appear in the sparse AND-path's top 50, now against
+**492,020 judgments** (up from 297,291 at the original diagnosis) — capped
+at 50/50 candidates, meaning dilution is measurably worse as the corpus
+grows, not better. The mechanism holds.
+
+**The fix has a home already, found by reading rather than designing from
+scratch.** `services/api/src/search/query-shape.ts` already classifies
+`X v Y` / `X vs Y` / `X versus Y` queries as `shape: 'case_name'`
+(`CASE_NAME_RE`) — **every one of Q1.25's traced failures matches this
+shape exactly.** But `warrantsExactLookup` only returns true for
+`shape === 'citation'`; `case_name` queries fall through to the ordinary
+hybrid pipeline on the strength of a comment in the same file: *"a case by
+name, where the lexical ranker is already strong."* Q1.25 is the direct,
+measured disproof of that claim, sitting three lines from the assumption.
+
+**Scoped implementation, not yet written:**
+
+1. `exactCaseTitle(sql, queryText, filters)` in `retrieve.ts`, mirroring
+   `exactCitation()` exactly: case-insensitive, whitespace-normalised
+   comparison against `judgments.case_title`. Pins ONLY when it resolves to
+   **exactly one** row — same asymmetry `exactCitation()` already commits
+   to (*"a missed [match] costs nothing; a wrongly-claimed one pins the
+   wrong judgment at rank 1"*).
+2. In `hybridSearch()`, extend the existing pin branch to also fire when
+   `shape.shape === 'case_name'`, not only `'citation'`.
+3. **Deliberately NOT fuzzy.** An exact (normalised) match only — this
+   fixes precisely the measured failure (an advocate's query IS the
+   printed case title, verbatim, which is what all four traced cases and
+   this eval set's `case_name`-shaped queries actually are) without
+   introducing similarity scoring, which would reopen exactly the
+   "changing ranking weights without a controlled experiment" risk this
+   whole exercise exists to avoid.
+4. **Does not touch `full_text_tsv`.** No schema migration, no change to
+   how sparse or dense rank anything that isn't pinned — additive only,
+   same risk class as the citation pin already in production.
+
+**Why this cannot trade concept quality for title quality**: the new pin
+only ever fires when `classifyQuery` already returns `case_name` — a
+`concept` query never enters this branch, so there is no shared weight or
+threshold for a title fix to distort.
+
+**Measurement plan, fixed BEFORE implementation, per this lane's own
+standing rule against tuning without one:**
+
+- **Primary (BEFORE)**: the controlled Stage-10 arms comparison already
+  running (`ARMS_PASS=controlled`, `courts=['sc']`, full 283-query gold
+  set) — success@5, recall@20, MRR, nDCG@5/@20, for `hybrid` specifically
+  (production's arm), holding the haystack constant so the number reflects
+  the ranker, not corpus size. Isolates exactly what a case-name pin can
+  and cannot move.
+- **AFTER**: same command, same corpus state (re-run immediately after
+  the fix lands, not delayed — corpus is growing hourly and a stale
+  comparison would confound growth with the fix, exactly Q1.25's own
+  lesson).
+- **Query-type split**: the 283-query gold set's `group` field only
+  distinguishes criminal/civil, not shape — a real gap for a claim like
+  "this helped case-name queries specifically." `retrieval:regression`'s
+  `bench-queries.ts` (20 queries, already labelled `concept` / `section` /
+  `citation` / `case-name` / `procedural`) is the existing tool with the
+  right shape for that finer cut; run before and after alongside the
+  283-query gold set, not instead of it.
+- **Pass/fail for shipping the fix**: recall@20 and MRR on `case_name`-
+  shaped queries improve without a measured regression on `concept`-shaped
+  queries in the same run. A win on one at a measured cost to the other is
+  reported, not shipped silently.
+
+**Not implemented yet in this commit** — the controlled arms run above is
+the BEFORE number this plan requires before writing `exactCaseTitle`.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
