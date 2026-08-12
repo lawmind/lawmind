@@ -2492,6 +2492,81 @@ three minutes). Cost is the figure OpenRouter reports, never an estimated rate.
 **Statute references cover 25,466 of 592,027 documents (4.3%)** — backlog pass
 running.
 
+### Q1.32 · ALL 25 COURTS NOW HAVE A DEDICATED WORKER — the founder's "data before embeddings" decision · 13 Aug 2026
+
+**Founder decision, relayed via LCC (bus `0134`), settled and binding on the
+whole ring**: fund chunk-text coverage now; start embeddings only once all
+courts, all cases and citations are in and structured. **"NEW2: your lane is
+now the critical path — embeddings wait on your completeness."**
+
+Added the last four courts still riding the general sweep alone — Tripura
+(`16_20`), Manipur (`14_25`), Meghalaya (`17_21`), Sikkim (`11_24`), the
+smallest by inventory (11.7K–33.8K documents each) and already had
+proportionally strong coverage, but "all courts" per the founder's own
+wording means all 25, not the large ones only. **24 workers running: the
+general sweep plus one dedicated `--court` worker per High Court in the
+AWS bucket.** Coverage is now complete at the court level; depth within
+each court is the remaining work.
+
+Committed on the bus (`0136`) to messaging LCC when any court crosses ~50%
+of its own source-document count, so citation/statute passes can target it
+while fresh.
+
+### Q1.32 · `judgment_paragraphs` — a real fix for EVIDENCE_WRONG, scoped not yet wired · 13 Aug 2026
+
+**Founder decision, 13 Aug 2026, via LCC (bus 0133): fund chunk-TEXT
+coverage now; embeddings wait until every court's data is held, all
+citations are in, and the corpus is structured.** This is the direct
+answer to Q1.29's `EVIDENCE_WRONG` finding and LCC's root-cause (bus
+0124) — chunking (text, cheap) and embedding (vectors, deferred) are
+separable, and LCC built the cheap half: `judgment_paragraphs` (migration
+0049, applied, running), paragraph-level evidence — `paragraph_text`,
+`paragraph_number` (nullable, court-printed), `char_offset`/`char_length`
+(byte-exact against `full_text`) — **deliberately a separate table from
+`judgment_chunks`**, so the vector index stays exactly as small and fast
+as it is today. Confirmed by reading the migration, not assumed.
+
+**Verified live, real data, not the design doc alone**: 9,914 of 626,192
+judgments carry paragraphs already (early in the backfill, growing), and
+a real judgment with paragraphs but zero `judgment_chunks` rows — exactly
+`EVIDENCE_WRONG`'s shape — returns real, usable paragraph text on query.
+
+**Not wired into `retrieve.ts` yet, scoped rather than rushed:**
+
+1. A new fallback, `paragraphFallback(sql, judgmentId, query)`, used ONLY
+   when a matched judgment has no `bestChunk` entry (sparse-only match, no
+   dense chunk — precisely the population `EVIDENCE_WRONG` measured).
+2. **Query-aware selection, not "just the first paragraph"** — same
+   philosophy `passagesForRerank` already commits to for its own fallback
+   (*"the chunk of that judgment nearest the QUERY, not chunk zero"*):
+   rank a judgment's paragraphs by `ts_rank` against the query text, take
+   the top one. A judgment's cause title (paragraph 0) is exactly the
+   content-free candidate that mechanism was built to avoid handing to a
+   reader as if it were the reasoning.
+3. **Must be batched, not per-row.** `hybridSearch`'s result-building loop
+   currently makes no per-candidate DB call; adding one naively inside it
+   would cost real latency against Gate S1's 3-second budget for exactly
+   the sparse-only matches this is meant to help. The batching pattern
+   already exists to copy: `passagesForRerank`'s `DISTINCT ON` query,
+   `retrieve.ts`.
+4. **Measurement, before shipping, same standing rule as Q1.25**: re-run
+   `failure:classify`'s secondary-flag count before/after — `EVIDENCE_WRONG`
+   should drop specifically among `AUTHORITY_HELD_BUT_NOT_RETRIEVED`-turned-
+   found and `AUTHORITY_RETRIEVED_BUT_BADLY_RANKED` cases whose judgment now
+   has a `judgment_paragraphs` row; it should not move at all for judgments
+   that still have neither table populated (a real negative control).
+
+**Also relevant to Q1.29's own re-run** (LCC's research, bus 0133,
+arxiv.org/pdf/2510.06999): Document-Level Retrieval Mismatch is a named,
+studied failure that *worsens as the corpus scales* — Q1.29's 49.1%
+`AUTHORITY_HELD_BUT_NOT_RETRIEVED` was measured while the corpus grew
+~79k→600k mid-session. Some of that number may be corpus-scale rather
+than a static property of the ranker; worth controlling for (or at least
+stating) when `failure:classify` is re-run, per LCC's own standing ask —
+hold the re-run until their citation backlog (444,621 rows and climbing)
+completes, since that changes what "the gold answer is findable" means
+too.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
