@@ -1985,6 +1985,108 @@ one benchmark. Every change must be measured against a fixed regression
 set"* — `retrieval:regression`'s baseline (this session) is the tool to
 measure it with, before and after, when this is picked up.
 
+### Q1.27 · CORRUPTION-REPAIR FALLBACK WIRED INTO THE ACTIVE INGEST · 12 Aug 2026
+
+**A concurrent session independently investigated and fixed the same garbled-
+text defect this lane found evidence for (Bombay, letter-dropping fonts,
+`"nion of ndia"` for `"Union of India"`)** — landed as `fetchPdfText` +
+`classifyCorruption` in `text.ts`/`text-corruption.ts` before this lane's own
+fix was written. **Not duplicated.** Their classifier is measured against a
+4,000-row sample and token-shape based, materially more rigorous than the
+uppercase-ratio heuristic this lane had been about to build from a 27-sample
+comparison.
+
+**What WAS a real, non-duplicative gap: it was never wired into the running
+ingest.** `text.ts`'s own comment claimed `harvest/hc-load-cli.ts` was "the
+real ingest path" using `fetchPdfText` — it was not; the CLI still called
+`unpdf`'s `extractText`/`getDocumentProxy` directly, the same
+comment-claims-a-guard-that-was-never-wired pattern as `stripUnstorable`
+(Q1.23) and the extraction timeout (Q1.18), a fourth instance this session.
+**Fixed**: `hc-load-cli.ts` now calls `fetchPdfText`, which subsumes the
+manual `unpdf` calls and `stripUnstorable` (already applied internally via
+`normaliseWhitespace`) and adds the `pdftotext` repair pass no running
+worker had.
+
+**One safety gap found and fixed in the already-landed code before trusting
+it under 10-way concurrent load**: `pdftotextFallback`'s `execFileSync` had
+no `timeout`. Synchronous calls block the whole event loop, so a hang there
+cannot be raced by `withTimeout` the way the async `unpdf` path can — the
+exact class of hang `withTimeout` exists to prevent, reproduced
+synchronously. Added `timeout: 30_000`.
+
+**Verified**: `execFileSync('pdftotext', ...)` confirmed callable from a
+plain Node process (not just interactively) before trusting it in a detached
+worker — a real trap another concurrent session independently hit and fixed
+in the same file (`PDFTOTEXT_PATH` / explicit Git-for-Windows path
+resolution, since poppler is on Git Bash's PATH but not a detached
+PowerShell-launched process's). 48 tests green (`hc-load.test.ts` +
+`hc-metadata.test.ts` + `text-corruption.test.ts`), `tsc --noEmit` clean.
+All 10 workers relaunched with the fix; every document ingested from this
+point carries the repair pass.
+
+**Not backfilled**: documents already written before this landed (including
+whatever fraction of the ~260K HC documents ingested so far hit this defect)
+still carry `unpdf`'s possibly-garbled text. A backfill re-extracting
+`text_quality`-blind-but-`classifyCorruption`-positive rows is real,
+identifiable follow-up work, not done here — scope discipline over the
+already-large change in this entry.
+
+### Q1.26 · GATE S2 RE-MEASURED AGAINST A 7.7× LARGER CORPUS · 12 Aug 2026
+
+Gate S2's own harness (`services/harness`, 283 citation-edge-derived + 5
+audited cross-lingual gold queries — real gold, `queries.eval.json`/
+`queries.hand.json`, not invented this session) had not been run since
+8 Aug 2026 (`baseline.json`), against a corpus of 38,341 judgments. Re-ran
+it now against 297,291 (7.7×, all growth High Court per the concurrent
+lane's scale-up, still correctly unembedded per FQ-CORPUS).
+
+| metric | 8 Aug baseline | 12 Aug re-run | delta |
+| --- | --- | --- | --- |
+| success@5 | 24.0% | **24.0%** | unchanged |
+| recall@20 | 44.0% | **44.0%** | unchanged |
+| mean precision@5 | 4.8% | **4.8%** | unchanged |
+| MRR | 0.2395 | **0.2203** | -8% relative |
+| DRM (duplicate rate metric) | 95.2% | **95.2%** | unchanged |
+| overruled leakage | not in baseline | **0 / 46** | clean |
+| stale-overruled rate | 0.0% | **0.0%** | unchanged, confirms Q1.24 |
+| structured exactness | not in baseline | **100.0%** | clean |
+
+**Read honestly, not smoothed over.** `success@5` is EXACTLY the same
+decimal at 7.7× the corpus size — the 283 gold queries' correct answers are
+overwhelmingly Supreme Court judgments the growth didn't touch or compete
+with in a way that moved this specific metric. MRR's ~8% relative dip is
+small but real, and has a concrete, already-diagnosed mechanism: Q1.25 (this
+file, above) traced exactly why — more sparse-ranking candidates from
+corpus growth means more documents can out-rank a correct answer on raw
+term frequency, without necessarily pushing it outside the wider top-20
+window `recall@20` checks. One explanation for two numbers, not two
+separate mysteries.
+
+**Gate S2 still FAILS** — `success@5` at 24.0% against a 70.0% threshold,
+same as 8 Aug. This session's work (Stage 13, the offset backfill, both
+chunk.ts fixes) did not move this number, which is coherent with what
+those fixes actually targeted: exact-span EVIDENCE accuracy for a chunk
+already retrieved, not which chunk gets retrieved in the first place. The
+lexical-ranking gap (Q1.25) is the mechanism most directly implicated by
+this measurement and remains the highest-value next fix, not yet attempted
+this session for the reasons stated there.
+
+**`hallucinationRate`, `silentDropRate`, `adversarialPassRate`: NOT
+MEASURED, not 0%.** The generation stage's 25/25 calls failed on
+`http 429 service failure: tenant tn-ewuc4` — an OpenRouter capacity/rate
+issue, external to this codebase and this corpus, not a code or data
+defect. The harness's own refusal to report a rate from a failed run
+(*"Calls failed, so neither rate is reported. A partial run is not a
+run."*) is the correct behaviour and is why this is reported as
+"not measured" rather than papered over as a pass. Re-running the
+generation stage alone, later, when OpenRouter capacity recovers, would
+complete this — not attempted again this session.
+
+Raw output: `gate-s2-rerun.json` (not committed — a point-in-time
+measurement, not a fixture; `baseline.json` is the one meant to be durable
+and was intentionally left untouched by this run so the 8 Aug number stays
+comparable).
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
