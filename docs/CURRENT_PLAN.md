@@ -1911,6 +1911,36 @@ adversarial authority set (directive §6, §8) are queued behind it for the
 same reason: each needs either real gold or a real audited source, and
 inventing either is exactly what this program's standing rule forbids.
 
+### Q1.24 · STALE-OVERRULED RATE MEASURED END-TO-END FOR THE FIRST TIME: ZERO · 12 Aug 2026
+
+`docs/CITATION_HARNESS.md`'s hard rule — *"Stale-overruled rate threshold 0
+— overruled law rendered WITHOUT the LAW MOVED mark is as severe as a
+hallucination"* — had never been measured through the actual retrieval path.
+Built `overruled:audit` (`services/api/src/search/`): no invented adversarial
+data, every case tested IS overruled/set_aside/doubted per
+`judgments.overruled_status` as already recorded, a real audited
+relationship. For each, runs its own case title through `hybridSearch` and
+checks the returned `overruledStatus` equals the live db row.
+
+**Result: 0/57 stale.** Every overruled/set_aside/doubted judgment this
+lane's own retrieval surfaced came back carrying the SAME status the
+database holds right now — the rule the harness exists to enforce holds at
+100% on every case checked.
+
+**Corpus-wide, only 81 judgments carry a non-`none` overruled_status** (57
+set_aside, 8 partly_set_aside, 16 doubted) — small enough that this session
+checked the entire population, not a sample of it.
+
+**A second, different finding, out of this tool's stated scope but real:**
+24/81 (29.6%) were NOT found in the top 10 for their OWN exact case title.
+Not a staleness defect — a recall gap. An overruled case is exactly what an
+advocate searches FOR adversarially (checking whether something they were
+about to cite is still good law), so failing to surface it even by its own
+title is worth a look, separately from this session's scope. Flagged, not
+chased — the cause (older/rare-vocabulary titles losing to more common terms
+in the lexical ranker, a corpus that grew from 125,522 to 189,386 mid-session
+diluting exact-title matches, or something else) is not yet diagnosed.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
