@@ -154,7 +154,7 @@ const rows = await withDbRetry(
 );
 
 let examined = 0;
-let corrupt = 0;
+let considered = 0;
 let repaired = 0;
 let refusedStillCorrupt = 0;
 let refusedShorter = 0;
@@ -180,7 +180,9 @@ for (const row of rows) {
     before = classifyCorruption(stored);
     if (!before?.corrupt) continue;
   }
-  corrupt++;
+  // In `gain` mode nothing has been judged corrupt — this counts documents that
+  // reached the re-read, which is the honest label for both modes.
+  considered++;
 
   let text: string;
   try {
@@ -239,7 +241,7 @@ console.log('');
 console.log('RESULTS');
 console.log('='.repeat(74));
 console.log(`examined            ${examined}`);
-console.log(`corrupt found       ${corrupt}`);
+console.log(`${MODE === 'corrupt' ? 'corrupt found     ' : 'considered        '} ${considered}`);
 console.log(`REPAIRED            ${repaired}${APPLY ? ' (written)' : ' (dry run — nothing written)'}`);
 console.log(`refused still corrupt ${refusedStillCorrupt}`);
 console.log(`refused shorter     ${refusedShorter}`);
