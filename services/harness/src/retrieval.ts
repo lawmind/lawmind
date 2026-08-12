@@ -216,6 +216,12 @@ export async function scoreQuery(
           overruledNote: null,
           operativeParagraph: row.operative ?? row.case_title,
           operativeParagraphNumber: null,
+          // Synthetic graph-suggestion candidate: nearest chunk to the query
+          // vector, not the verified char_offset/char_length pipeline --
+          // honestly unverified, same as any lexical-only match with no
+          // dense chunk behind it. See RetrievedJudgment's own doc comment.
+          operativeParagraphVerified: false,
+          exactSpan: null,
         });
       }
       results = results.slice(0, depth);
