@@ -27,7 +27,8 @@
     "propagate": "tsx src/citations/propagate-cli.ts",
     "quality:paragraphs": "tsx src/judgments/paragraph-quality-sample.ts",
     "verify:exact-span": "tsx src/judgments/verify-exact-span-cli.ts",
-    "retrieval:regression": "tsx src/search/retrieval-regression-cli.ts"
+    "retrieval:regression": "tsx src/search/retrieval-regression-cli.ts",
+    "overruled:audit": "tsx src/search/overruled-retrieval-audit-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",
