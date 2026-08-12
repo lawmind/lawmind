@@ -50,6 +50,7 @@ import {
   windowAround,
 } from './enrich.ts';
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
+import { callOpenRouter, openRouterKeyFromEnv, openRouterModelFromEnv } from './openrouter.ts';
 
 const arg = (name: string, fallback: string): string => {
   const i = process.argv.indexOf(`--${name}`);
@@ -66,6 +67,7 @@ if (!VALID.includes(TASK)) {
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 const apiKeys = inferxKeysFromEnv();
+const openRouterKey = openRouterKeyFromEnv();
 if (!dbUrl) {
   console.error('DATABASE_URL is not set.');
   process.exit(2);
@@ -380,6 +382,8 @@ if (refs.length === 0) {
 }
 
 let cacheHits = 0;
+let openRouterCalls = 0;
+let openRouterCost = 0;
 let calls = 0;
 let failed = 0;
 let unparseable = 0;
@@ -446,7 +450,33 @@ for (const [i, ref] of refs.entries()) {
   }
 
   const startedAt = Date.now();
-  const result = await callInferxPooled(promptFor(u), { apiKeys, maxTokens: 2000 });
+  /**
+   * FREE POOL FIRST, PAID FALLBACK SECOND, and the order is the whole point.
+   *
+   * All three InferX grants now answer `http 429 (capacity)` within seconds
+   * under four lanes' load, so enrichment throughput had fallen to roughly zero
+   * while the corpus grew at ~34,000 documents an hour. OpenRouter picks up
+   * exactly those calls -- and only those, because reversing the order would
+   * spend money on work the free pool would gladly have done.
+   */
+  const prompt = promptFor(u);
+  let usedModel = ENRICH_MODEL;
+  let costUsd = 0;
+  let result: { ok: true; text: string; inputTokens: number; outputTokens: number } | { ok: false; reason: string } =
+    await callInferxPooled(prompt, { apiKeys, maxTokens: 2000 });
+
+  if (!result.ok && openRouterKey !== null && /capacity|429|exhausted/i.test(result.reason)) {
+    const fallback = await callOpenRouter(prompt, { apiKey: openRouterKey, maxTokens: 2000 });
+    if (fallback.ok) {
+      usedModel = openRouterModelFromEnv();
+      costUsd = fallback.costUsd;
+      openRouterCalls++;
+      openRouterCost += fallback.costUsd;
+      result = fallback;
+    } else {
+      result = { ok: false, reason: `inferx exhausted; openrouter: ${fallback.reason}` };
+    }
+  }
   const latency = Date.now() - startedAt;
 
   if (!result.ok) {
@@ -482,7 +512,7 @@ for (const [i, ref] of refs.entries()) {
     () => sql`
       INSERT INTO llm_calls (feature, model, input_tokens, output_tokens, cost_usd,
                              latency_ms, data_class, pseudonymised)
-      VALUES ('concordance', ${ENRICH_MODEL}, ${result.inputTokens}, ${result.outputTokens}, 0,
+      VALUES ('concordance', ${usedModel}, ${result.inputTokens}, ${result.outputTokens}, ${costUsd},
               ${latency}, 'public', false)`,
   );
 
@@ -571,6 +601,10 @@ console.log('RESULTS');
 console.log('='.repeat(74));
 console.log(`documents      ${refs.length}  (cache hits ${cacheHits}, new calls ${calls})`);
 console.log(`calls failed   ${failed}   unparseable ${unparseable}`);
+console.log(
+  `provider       inferx ${calls - openRouterCalls} · openrouter ${openRouterCalls}` +
+    (openRouterCost > 0 ? ` ($${openRouterCost.toFixed(4)} actual, reported by OpenRouter)` : ''),
+);
 console.log(`tokens         ${inTok.toLocaleString()} in / ${outTok.toLocaleString()} out = ${(inTok + outTok).toLocaleString()}`);
 console.log(`wall clock     ${((Date.now() - startedRun) / 1000).toFixed(0)}s`);
 console.log('');
