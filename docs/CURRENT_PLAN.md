@@ -2137,6 +2137,123 @@ measurement, not a fixture; `baseline.json` is the one meant to be durable
 and was intentionally left untouched by this run so the 8 Aug number stays
 comparable).
 
+### Q1.28 · `text_extraction_method` LANDED; A 20-MINUTE FALSE ALARM CHASED TO GROUND · 12 Aug 2026
+
+**Added `judgments.text_extraction_method`** (migration `0048`, applied) —
+`fetchPdfText` now reports `'unpdf'` or `'pdftotext_fallback'`, threaded
+through `hc-load.ts`/`sci.ts`/`load.ts`/`cli.ts`. Without it Q1.27's fix had
+no visibility of its own: no way to ask how often the repair pass actually
+fires. `load.test.ts` green against real Postgres (rolled back), 80 tests
+across the harvest/text suites. All 10 workers relaunched a third time.
+
+**Then chased what looked like a severe regression from that exact
+change for ~20 minutes — it was not one.** Workers showed `seen` climbing
+into the thousands with `mapped=written=0`. Ruled out in order: (1) a bounded
+CLI dry-run isolated it to 100% `pdf_missing` on one file; (2) direct `fetch()`
+against those exact URLs confirmed real 404s from S3, not a parsing defect;
+(3) an isolated `fetchPdfText` call against Allahabad candidates succeeded
+5/5 in under 2.5s each, clearing the extraction path itself; (4) a plain
+`SELECT count(*)` against `judgments` measured **11.8 seconds** — against
+`docs/LANE_PROTOCOL.md`'s own freshly-written warning that the shared
+Railway proxy is slow under load with five lanes now on it. **Verdict:
+ordinary data noise (some source partitions' `pdf_link` values are
+genuinely broken) plus shared-proxy congestion, not a code defect** — the
+boring explanation, not the exotic one, per the debugging protocol's own
+ordering. No revert made. Announced on the bus (`0077`–`0080`) so no other
+lane re-chases the same false trail.
+
+### Q1.29 · JOINED THE 5-LANE RING AS NEW2; CITATIONS HANDED BACK TO LCC; SCALED TO 14 · 12 Aug 2026
+
+**`docs/LANE_PROTOCOL.md` formalised the bus into five lanes today.** Bound
+this session as NEW2 (ingestion). Under the new ownership table citations are
+explicitly LCC's ("classification, metadata, citations, treatment, evidence
+spans"), not NEW2's — the citation-rescan loop this session ran earlier
+(Q1.21, Q1.28) predates the ring and was straddling a boundary that didn't
+exist yet. It finished its last queued iteration on its own; **not
+restarted**, handed back to LCC on the bus (`0093`).
+
+**Scaled from 10 to 14 HC ingest workers** — added Chhattisgarh (`22_18`),
+Jharkhand (`20_7`), Andhra Pradesh (`28_2`), Delhi (`7_26`), the next tier by
+`HC_METADATA_SURVEY.json` size after the eleven already running. Deliberately
+smaller than the earlier 4→10 jump: NEW1 flagged on the bus (`0087`) it is
+about to run DB-heavy retrieval measurement jobs and is being careful not to
+compound proxy load, so this lane matched that by adding four, not another
+ten, and checked the connection budget (23/100) and easing proxy latency
+(11.8s → 4.2s on a plain count) before doing even that.
+
+**HC total at last measurement: 309,113**, up from 103,486 at the start of
+the founder's 10× ask (target 1,034,860).
+
+### Q1.30 · 18 WORKERS — CROSS-LANE GAP FINDING ACTIONED · 13 Aug 2026
+
+**NEW3's `COVERAGE_GAP_MATRIX.md` (bus `0101`) found two courts under-
+scheduled, not blocked**: Himachal Pradesh 8/188,548 held (0.004%) and J&K
+2/112,046 (0.002%), both far below Tripura/Manipur/Meghalaya/Sikkim despite
+being larger sources — same authorized AWS bucket as every other court.
+Also flagged Uttarakhand (holding stops 1987) and Gujarat (stops 1995) as a
+**recency** gap distinct from raw coverage percentage — the ~25–30 most
+recent years are entirely unheld for both, which matters more to a
+practising advocate than the percentage suggests.
+
+**Root cause, not just the fix**: the general (`--from-year 2016`,
+no `--court` filter) sweep processes all 550 metadata files newest-first,
+but the growing set of dedicated per-court workers absorbs concurrency
+ahead of it in practice, so courts without a DEDICATED worker simply hadn't
+been reached yet. This explains both findings as one cause, not two.
+
+**Added 4 more dedicated workers** — HP (`2_5`), J&K (`1_12`), Uttarakhand
+(`5_15`), Gujarat (`24_17`) — all `--from-year 2016`, so this reaches the
+recency gap directly. **18 HC ingest workers running.** Also applied LCC's
+`connect_timeout: 120` fix (bus `0091`, the shared-proxy `CONNECT_TIMEOUT`
+LCC's own workers died on) to `hc-load-cli.ts`, on new launches only —
+did not force a disruptive restart of the 14 already healthy and writing.
+Confirmed on the bus (`0102`).
+
+### Q1.29 · THE FIRST NEW1→NEW3 MISSING-AUTHORITY FEEDBACK LOOP RUN — real numbers, no acquisition gap · 13 Aug 2026
+
+`failure:classify` finished against the full real gold set (288 queries;
+285 classified, 3 recoverable network timeouts flagged for a retry pass).
+No invented gold — every query's answer is a citation edge drawn from this
+corpus's own text.
+
+| class | count | share |
+| --- | --- | --- |
+| SUCCESS (gold in top 5) | 48 | 16.8% |
+| AUTHORITY_RETRIEVED_BUT_BADLY_RANKED | 97 | 34.0% |
+| AUTHORITY_HELD_BUT_NOT_RETRIEVED (not in top 50) | 140 | 49.1% |
+| NO_AUTHORITY_FOUND | **0** | 0.0% |
+
+**The headline finding, stated plainly: every single failure this run
+found is OURS, not a data gap.** 83.1% of queries fail to surface their
+gold judgment in the top 5, and **100% of that failure is retrieval or
+ranking — zero is a missing document.** `NO_AUTHORITY_FOUND` cannot fire
+against this query set by construction (gold is drawn from the corpus's
+own citation edges, so it is definitionally held) — stated as this run's
+honest boundary, not evidence of a clean corpus. But `AUTHORITY_HELD_BUT_
+NOT_RETRIEVED` (140, not found even at depth 50) vs `AUTHORITY_RETRIEVED_
+BUT_BADLY_RANKED` (97, found but past rank 5) is real, measured evidence:
+the larger failure mode is the corpus not surfacing the document AT ALL
+within 50 candidates, not merely ranking it poorly — which matters for
+where to spend effort next (recall first, ranking second).
+
+**Secondary finding, on the 145 queries that DID find their gold judgment
+(SUCCESS + BADLY_RANKED): 137 (94.5%) carry `EVIDENCE_WRONG`** — an empty
+`operativeParagraph` or a null `operativeParagraphNumber` on the matched
+result. `CITATION_UNRESOLVED` did not fire on any found authority (both
+`neutralCitation` and `reporterCitations` are never simultaneously empty
+on a match). Not yet root-caused — plausibly the located-paragraph
+mechanism failing disproportionately on the specific chunks this gold
+set's citation-edge extraction lands on, but that is a hypothesis, not a
+finding, and is queued rather than asserted.
+
+**NEW3_ACQUISITION_QUEUE.json: 0 new entries.** Per `docs/LANE_PROTOCOL.md`
+§3 ("a gap you cannot close → the lane that can"), nothing from this run is
+sent to NEW3 — there is nothing genuinely missing to send. Sent downstream
+on the bus instead: the finding itself, so NEW3/LCC do not read silence
+as "NEW1 has nothing to report" and so ranking failures are not mistaken
+for acquisition gaps by anyone reading `AUTHORITY_HELD_BUT_NOT_RETRIEVED`
+out of context.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
