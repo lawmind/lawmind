@@ -2359,6 +2359,58 @@ not root-caused further — a recurring but low-severity Node/postgres
 shutdown interaction under this environment's sustained load, worth a
 restart, not worth blocking on.
 
+### Q1.16 · THE RING, AND FOUR DEFECTS THAT ONLY APPEAR AT SCALE — 13 Aug 2026
+
+**The bus now carries five lanes** (`docs/LANE_PROTOCOL.md`): NEW3 discovery →
+NEW2 ingestion → LCC enrichment → NEW1 retrieval → back to NEW3. RCC sits
+outside the ring. LCC orchestrates.
+
+**Corpus grew from 79,322 to 600,073 judgments in one session.** Every defect
+below is one that did not exist at the smaller size.
+
+**1 · THE CITATION PASS WAS READING THE WRONG END OF THE CORPUS.** It produced
+`edges=0` across **8,100 consecutive documents** — the Q1.0c shape. The
+extractor was checked directly against the same population and was FINE (5 of 8
+documents containing "SCC" yielded citations, including `2020\n(11) SCC 648` and
+`(2003)4\nSCC 675`). The defect was `ORDER BY judgment_date DESC`: NEW2's ingest
+is loading 2026 documents, and those are overwhelmingly bail orders — **57,876
+bail orders and 20,641 procedural disposals against 39,914 reasoned decisions**.
+
+| | documents | edges |
+| --- | --- | --- |
+| newest-first | 8,100 | **0** |
+| substantive-first | 12,900 | **12,794** |
+
+**2 · `EVIDENCE_WRONG` IS CHUNK COVERAGE, NOT AN EVIDENCE BUG.** NEW1 measured
+94.5% of successfully-retrieved queries carrying an empty `operativeParagraph`.
+Root cause: **40,161 of 600,073 judgments have chunks (6.7%)**. `retrieve.ts`
+already documents that an empty paragraph is legitimate for a lexical-only
+match; it was 37.6% on 9 Aug and is 93.2% now purely because the corpus grew and
+the growth is unchunked. **Chunking and embedding are separable costs** — a
+passage to display needs the text, only the reranker needs the vector. HC
+embedding remains out of scope.
+
+**3 · THE 34 EDGES WHERE A WRONG ANSWER MARKS DEAD LAW LIVE.** NEW3 found them
+and ranked them correctly. `overruled-resolve-cli.ts`: 13 candidates (several at
+Jaccard 1.00), 1 ambiguous, 6 thin, 13 no candidate. **It writes nothing, by
+design and permanently** — a wrong `overruled` link is worse than an unresolved
+one, and 34 rows is a tractable human read.
+
+**4 · TWO WORKERS DIED OF THE SAME PAIR OF CAUSES.** `OFFSET` pagination against
+a table NEW2 is writing to (re-reads some rows, silently skips others), and a
+proxy connection with no `connect_timeout` that hangs instead of erroring
+("Detected unsettled top-level await" at 115,500 of 377,526). Both hardened.
+**Any long-running job in this repo needs keyset pagination and a connect
+timeout** — this cost an hour twice.
+
+**Also:** OpenRouter added as the paid fallback when InferX saturates, with a
+circuit breaker after 3 consecutive capacity failures (18 → 70 documents in
+three minutes). Cost is the figure OpenRouter reports, never an estimated rate.
+`document_enrichments` writes were outside the retry wrapper and are now inside.
+
+**Statute references cover 25,466 of 592,027 documents (4.3%)** — backlog pass
+running.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
