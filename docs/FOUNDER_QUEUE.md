@@ -2714,3 +2714,51 @@ provenance. They are not current blockers, open decisions, or exclusion rules.
 
 Do not create another licensing task for these three sources unless the founder
 explicitly changes this decision.
+
+---
+
+## FQ-IX1 · All three InferX/DeepSeek grants return HTTP 401 — the enrichment lane is credential-blocked
+
+**Raised by LCC, 12 August 2026.** This is the one item in this file that is a
+credential and nothing else. Everything around it is built, tested, deployed and
+waiting.
+
+**What is observed, not inferred.** All three configured grants were tested
+individually against the live endpoint and all three answer identically:
+
+```
+POST https://model.inferx.net/endpoints/v1/chat/completions
+HTTP 401
+{"error":"Unauthorized"}
+```
+
+The keys **worked earlier the same day** — 483 calls and 553,355 tokens went
+through them, and the treatment batch was mid-run when the 401s began. So this
+is a change on the provider's side (revoked, rotated, expired, or the free grant
+ending), not a configuration mistake here. The base URL, model name and request
+shape are unchanged from the calls that succeeded.
+
+**What is needed:** one working `inferx.net` API key. It goes in `.env` as
+`INFERX_API_KEY`, or as `INFERX_API_KEY_2`/`_3`/`_4` — `inferxKeysFromEnv()`
+picks up all four with no code change, and `callInferxPooled` now rotates
+automatically when a grant answers 401, 403 or 429.
+
+**What was built anyway, and what it already produced.** The pipeline is
+complete and none of its work was lost:
+
+| | |
+| --- | --- |
+| documents enriched and source-verified | **294** (190 metadata · 62 treatment · 42 citation extraction) |
+| claims verified against source text | **429** |
+| metadata verification rate | **99.5%** (201/202 on the measured pilot) |
+| tokens spent | 553,355 |
+
+**What still runs without any key**, and is running: the deterministic
+corruption scan, the deterministic concordance, and every analysis pass. The
+lane is not idle.
+
+**What stays true when a key arrives.** Nothing needs re-running: every
+completed document is committed with its provenance and replays from cache for
+free. The `call_failed` rows written during the outage have been deleted, so
+those documents are eligible again rather than permanently skipped — that was a
+real bug, found because of this outage, and fixed in `7d4abf3`.
