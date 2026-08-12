@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -80,13 +80,36 @@ export async function fetchPdfText(
 }
 
 /** Poppler `pdftotext` over an in-memory PDF. Null when the tool is absent or fails. */
+/**
+ * Poppler ships with Git for Windows but is NOT on the PATH of a process
+ * launched outside Git Bash. A detached worker started from PowerShell died on
+ * `spawnSync pdftotext ENOENT` for every document, while the identical command
+ * worked interactively — so the binary is resolved explicitly, with the bare
+ * name kept as the fallback for machines where it is properly installed.
+ * `PDFTOTEXT_PATH` overrides both.
+ */
+const PDFTOTEXT =
+  process.env['PDFTOTEXT_PATH'] ??
+  (existsSync('C:/Program Files/Git/mingw64/bin/pdftotext.exe')
+    ? 'C:/Program Files/Git/mingw64/bin/pdftotext.exe'
+    : 'pdftotext');
+
 function pdftotextFallback(bytes: Uint8Array): string | null {
   let dir: string | null = null;
   try {
     dir = mkdtempSync(join(tmpdir(), 'lawmind-pdf-'));
     const pdfPath = join(dir, 'in.pdf');
     writeFileSync(pdfPath, bytes);
-    return execFileSync('pdftotext', ['-q', pdfPath, '-'], { encoding: 'utf8', maxBuffer: 200e6 });
+    // `execFileSync` blocks the event loop, so a hang here cannot be raced by
+    // a caller's `withTimeout` the way the async `unpdf` path can — the exact
+    // font-repair hang this file exists to route around, reproduced
+    // synchronously instead of asynchronously. `timeout` makes Node SIGTERM
+    // the child itself rather than freezing the whole worker.
+    return execFileSync(PDFTOTEXT, ['-q', pdfPath, '-'], {
+      encoding: 'utf8',
+      maxBuffer: 200e6,
+      timeout: 30_000,
+    });
   } catch {
     return null;
   } finally {

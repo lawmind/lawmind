@@ -22,7 +22,7 @@
  * problem before anyone decides to re-extract 79,000 documents.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -41,13 +41,27 @@ const arg = (n: string, d: string) => {
 };
 const PER_COURT = Number(arg('per-court', '12'));
 
+/**
+ * Poppler ships with Git for Windows but is NOT on the PATH of a process
+ * launched outside Git Bash. A detached worker started from PowerShell died on
+ * `spawnSync pdftotext ENOENT` for every document, while the identical command
+ * worked interactively — so the binary is resolved explicitly, with the bare
+ * name kept as the fallback for machines where it is properly installed.
+ * `PDFTOTEXT_PATH` overrides both.
+ */
+const PDFTOTEXT =
+  process.env['PDFTOTEXT_PATH'] ??
+  (existsSync('C:/Program Files/Git/mingw64/bin/pdftotext.exe')
+    ? 'C:/Program Files/Git/mingw64/bin/pdftotext.exe'
+    : 'pdftotext');
+
 function pdftotext(bytes: Uint8Array): string | null {
   let dir: string | null = null;
   try {
     dir = mkdtempSync(join(tmpdir(), 'lawmind-audit-'));
     const p = join(dir, 'in.pdf');
     writeFileSync(p, bytes);
-    return execFileSync('pdftotext', ['-q', p, '-'], { encoding: 'utf8', maxBuffer: 200e6 });
+    return execFileSync(PDFTOTEXT, ['-q', p, '-'], { encoding: 'utf8', maxBuffer: 200e6 });
   } catch {
     return null;
   } finally {

@@ -40,7 +40,7 @@
  * it is dry by default and every decision is reported before any of it runs.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -99,6 +99,20 @@ async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
   }
 }
 
+/**
+ * Poppler ships with Git for Windows but is NOT on the PATH of a process
+ * launched outside Git Bash. A detached worker started from PowerShell died on
+ * `spawnSync pdftotext ENOENT` for every document, while the identical command
+ * worked interactively — so the binary is resolved explicitly, with the bare
+ * name kept as the fallback for machines where it is properly installed.
+ * `PDFTOTEXT_PATH` overrides both.
+ */
+const PDFTOTEXT =
+  process.env['PDFTOTEXT_PATH'] ??
+  (existsSync('C:/Program Files/Git/mingw64/bin/pdftotext.exe')
+    ? 'C:/Program Files/Git/mingw64/bin/pdftotext.exe'
+    : 'pdftotext');
+
 function pdftotext(bytes: Uint8Array): string {
   const dir = mkdtempSync(join(tmpdir(), 'lawmind-'));
   try {
@@ -107,7 +121,7 @@ function pdftotext(bytes: Uint8Array): string {
     // `-q` silences font warnings; `-` writes to stdout. `-layout` is NOT used:
     // it preserves visual columns, which inserts runs of spaces that the
     // downstream citation offsets would then have to account for.
-    return execFileSync('pdftotext', ['-q', pdfPath, '-'], { encoding: 'utf8', maxBuffer: 200e6 });
+    return execFileSync(PDFTOTEXT, ['-q', pdfPath, '-'], { encoding: 'utf8', maxBuffer: 200e6 });
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -117,10 +131,23 @@ console.log('RE-EXTRACTION — poppler pdftotext over corrupt documents');
 console.log('='.repeat(74));
 console.log(`court "${COURT}" · mode ${MODE} · limit ${LIMIT} · ${APPLY ? "APPLY (will write full_text)" : "DRY RUN"}`);
 
+/**
+ * IDENTIFIERS AND LENGTHS ONLY — never the corpus.
+ *
+ * The first version selected `full_text` for every document in the court, which
+ * for Allahabad is tens of thousands of judgments in a single result set over a
+ * shared Railway proxy. The worker sat on that query for minutes before it
+ * could touch a document, exactly as `enrich-cli` did before the same fix.
+ *
+ * `gain` mode never needs the stored text at all — it compares LENGTHS, and the
+ * length comes back as a number. `corrupt` mode does need it, so it is fetched
+ * per document, only for the documents that reach that branch.
+ */
 const rows = await withDbRetry(
   'select',
-  () => sql<{ id: string; caseTitle: string; sourceUrl: string; fullText: string }[]>`
-    SELECT id, case_title AS "caseTitle", source_url AS "sourceUrl", full_text AS "fullText"
+  () => sql<{ id: string; caseTitle: string; sourceUrl: string; storedLength: number }[]>`
+    SELECT id, case_title AS "caseTitle", source_url AS "sourceUrl",
+           length(full_text) AS "storedLength"
     FROM judgments
     WHERE court = ${COURT} AND full_text IS NOT NULL AND source_url IS NOT NULL
     ORDER BY id`,
@@ -137,9 +164,22 @@ const started = Date.now();
 
 for (const row of rows) {
   if (repaired + refusedStillCorrupt + refusedShorter + refusedNoGain + fetchFailed >= LIMIT) break;
-  const before = classifyCorruption(row.fullText);
   examined++;
-  if (MODE === 'corrupt' && !before?.corrupt) continue;
+  /**
+   * `corrupt` mode needs the stored text to judge it; `gain` mode does not and
+   * must not pay for it. This is the only place the corpus text is read, and
+   * only for the documents that actually reach it.
+   */
+  let before: ReturnType<typeof classifyCorruption> = null;
+  if (MODE === 'corrupt') {
+    const got = await withDbRetry('load text', () =>
+      sql<{ fullText: string }[]>`SELECT full_text AS "fullText" FROM judgments WHERE id = ${row.id}`,
+    );
+    const stored = got[0]?.fullText;
+    if (!stored) continue;
+    before = classifyCorruption(stored);
+    if (!before?.corrupt) continue;
+  }
   corrupt++;
 
   let text: string;
@@ -168,23 +208,23 @@ for (const row of rows) {
    * returns 54% less there, and without this guard a "repair" pass would have
    * deleted half that court.
    */
-  if (text.length < row.fullText.length) {
+  if (text.length < row.storedLength) {
     refusedShorter++;
-    console.log(`  refused shorter ${label} ${row.fullText.length} -> ${text.length} chars`);
+    console.log(`  refused shorter ${label} ${row.storedLength} -> ${text.length} chars`);
     continue;
   }
   /**
    * In `gain` mode the stored text is not corrupt, so rewriting it must earn
    * its place: a few percent is whitespace handling, not recovered content.
    */
-  if (MODE === 'gain' && text.length < row.fullText.length * (1 + MIN_GAIN)) {
+  if (MODE === 'gain' && text.length < row.storedLength * (1 + MIN_GAIN)) {
     refusedNoGain++;
     continue;
   }
 
   repaired++;
   console.log(
-    `  REPAIRED        ${label} ${row.fullText.length} -> ${text.length} chars ` +
+    `  REPAIRED        ${label} ${row.storedLength} -> ${text.length} chars ` +
       `(single ${before?.signals.singleCharRatio.toFixed(2) ?? 'n/a'} -> ${after.signals.singleCharRatio.toFixed(2)})`,
   );
   if (APPLY) {

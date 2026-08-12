@@ -42,10 +42,12 @@ import {
   claimsFromMetadata,
   claimsFromTreatment,
   enrichmentInputHash,
+  headExcerpt,
   parseJson,
   sha256,
   verificationState,
   verifyClaims,
+  windowAround,
 } from './enrich.ts';
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
 
@@ -73,7 +75,20 @@ if (apiKeys.length === 0) {
   process.exit(2);
 }
 
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+/**
+ * `connect_timeout` is raised from the 30s default because the Railway proxy is
+ * shared with the High Court ingest, the citation rescan and the re-extraction
+ * workers, and under that load a new connection routinely takes longer than 30s
+ * to establish. The first detached run of this worker died on exactly that —
+ * `write CONNECT_TIMEOUT` thrown out of `selectUnits`, before a single document
+ * was processed.
+ */
+const sql = postgres(dbUrl, {
+  ssl: dbUrl.includes('localhost') ? false : 'require',
+  max: 2,
+  connect_timeout: 120,
+  idle_timeout: 0,
+});
 
 /**
  * A LONG RUN OUTLIVES A RAILWAY CONNECTION, and that must not end the run.
@@ -100,7 +115,7 @@ const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'requir
  * the most ordinary transient failure there is.
  */
 const TRANSIENT =
-  /ECONNRESET|ETIMEDOUT|EPIPE|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ENETUNREACH|EHOSTUNREACH|CONNECTION_CLOSED|CONNECTION_ENDED|socket|getaddrinfo/i;
+  /ECONNRESET|ETIMEDOUT|EPIPE|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ENETUNREACH|EHOSTUNREACH|CONNECT_TIMEOUT|CONNECTION_CLOSED|CONNECTION_ENDED|socket|getaddrinfo/i;
 
 /**
  * Eight attempts with exponential backoff capped at 30s — roughly two minutes
@@ -143,11 +158,62 @@ type Unit = {
 };
 
 /**
+ * THE COHORT QUERY MUST NOT CARRY THE CORPUS WITH IT.
+ *
+ * The first version selected `full_text` for every document in the cohort up
+ * front: at `--limit 6000` and roughly 10 KB a judgment that is ~60 MB in one
+ * result set, over a shared Railway proxy, before a single document could be
+ * processed. Two detached runs died in `selectUnits` with `CONNECT_TIMEOUT`
+ * without touching a document, and a worker that cannot survive its own first
+ * query is not resumable in any useful sense.
+ *
+ * So the cohort query now returns IDENTIFIERS ONLY — cheap, fast, and stable —
+ * and each document's text is fetched as it is reached. Startup is immediate,
+ * the memory footprint is one judgment rather than six thousand, and a
+ * connection blip costs one document instead of the entire run.
+ */
+type UnitRef = { judgmentId: string; caseTitle: string; court: string; charOffset?: number; citedCase?: string };
+
+
+/**
+ * Fetches one document's text at the moment it is needed. Returns null when the
+ * row has vanished (the High Court ingest runs concurrently and rows do move),
+ * which is skipped rather than treated as an error.
+ */
+async function loadUnit(ref: UnitRef): Promise<Unit | null> {
+  /**
+   * The window is computed HERE, not in SQL. `greatest(1, $1 - $2)` sends two
+   * untyped parameters and Postgres cannot resolve `unknown - unknown`, so the
+   * treatment worker died on its first document with `operator is not unique`.
+   * Arithmetic on a number the caller already holds does not belong in the
+   * query anyway.
+   */
+  const rows = await withDbRetry('load text', () =>
+    sql<{ sourceText: string }[]>`
+      SELECT full_text AS "sourceText" FROM judgments WHERE id = ${ref.judgmentId}`,
+  );
+  const r = rows[0];
+  if (!r || !r.sourceText) return null;
+  const excerpt =
+    TASK === 'treatment'
+      ? windowAround(r.sourceText, ref.charOffset ?? 0, TREATMENT_BEFORE, TREATMENT_AFTER)
+      : headExcerpt(r.sourceText, TASK === 'citation_extraction' ? HEAD_CHARS * 2 : HEAD_CHARS);
+  return {
+    judgmentId: ref.judgmentId,
+    caseTitle: ref.caseTitle,
+    court: ref.court,
+    excerpt,
+    sourceText: r.sourceText,
+    ...(ref.citedCase !== undefined ? { citedCase: ref.citedCase } : {}),
+  };
+}
+
+/**
  * DETERMINISTIC COHORT SELECTION. Ordered by a hash of the id so a re-run draws
  * the SAME documents and hits cache, rather than paying again for a fresh
  * sample — the failure `concordance-gold-cli` was fixed for in `ac64cad`.
  */
-async function selectUnits(): Promise<Unit[]> {
+async function selectRefs(): Promise<UnitRef[]> {
   if (TASK === 'metadata') {
     /**
      * High Court judgments hold ZERO `judgment_judges` rows — 40,996 documents
@@ -155,9 +221,8 @@ async function selectUnits(): Promise<Unit[]> {
      * never covered the High Court metadata variant, so this is a real gap
      * rather than a re-extraction of something we already have.
      */
-    const rows = await sql<Unit[]>`
-      SELECT j.id AS "judgmentId", j.case_title AS "caseTitle", j.court,
-             left(j.full_text, ${HEAD_CHARS}) AS excerpt, j.full_text AS "sourceText"
+    const rows = await sql<UnitRef[]>`
+      SELECT j.id AS "judgmentId", j.case_title AS "caseTitle", j.court
       FROM judgments j
       WHERE j.court <> 'Supreme Court of India'
         AND j.full_text IS NOT NULL AND length(j.full_text) > 800
@@ -176,9 +241,8 @@ async function selectUnits(): Promise<Unit[]> {
      * Court side. Whether it is genuine here (bail orders really do cite
      * nothing) or another blind spot is an empirical question, and this asks it.
      */
-    const rows = await sql<Unit[]>`
-      SELECT j.id AS "judgmentId", j.case_title AS "caseTitle", j.court,
-             left(j.full_text, ${HEAD_CHARS * 2}) AS excerpt, j.full_text AS "sourceText"
+    const rows = await sql<UnitRef[]>`
+      SELECT j.id AS "judgmentId", j.case_title AS "caseTitle", j.court
       FROM judgments j
       WHERE j.court <> 'Supreme Court of India'
         AND j.full_text IS NOT NULL AND length(j.full_text) > 2000
@@ -197,11 +261,9 @@ async function selectUnits(): Promise<Unit[]> {
    * treatment verb was matched deterministically, so this population is exactly
    * where unrecognised treatment language would be hiding.
    */
-  const rows = await sql<Unit[]>`
+  const rows = await sql<UnitRef[]>`
     SELECT jc.citing_judgment_id AS "judgmentId", cj.case_title AS "caseTitle", cj.court,
-           substr(cj.full_text, greatest(1, jc.char_offset - ${TREATMENT_BEFORE}),
-                  ${TREATMENT_BEFORE + TREATMENT_AFTER}) AS excerpt,
-           cj.full_text AS "sourceText",
+           jc.char_offset AS "charOffset",
            tj.case_title AS "citedCase"
     FROM judgment_citations jc
     JOIN judgments cj ON cj.id = jc.citing_judgment_id
@@ -278,11 +340,17 @@ if (process.argv.includes('--reverify')) {
 
 /* -------------------------------------------------------------------- run -- */
 
-const units = await selectUnits();
+/**
+ * WRAPPED, because it was not. The cohort query is the FIRST database call the
+ * worker makes and was the one call outside `withDbRetry` -- so a proxy that was
+ * merely busy killed the whole run before any document was touched, which is
+ * exactly the un-resumable failure this worker is supposed to be immune to.
+ */
+const refs = await withDbRetry('select cohort', selectRefs);
 console.log('CORPUS ENRICHMENT PILOT');
 console.log('='.repeat(74));
-console.log(`task ${TASK} · prompt ${PROMPT_VERSION} · model ${ENRICH_MODEL} · units ${units.length} · InferX grants ${apiKeys.length}`);
-if (units.length === 0) {
+console.log(`task ${TASK} · prompt ${PROMPT_VERSION} · model ${ENRICH_MODEL} · units ${refs.length} · InferX grants ${apiKeys.length}`);
+if (refs.length === 0) {
   console.log('no eligible documents — nothing to do.');
   await sql.end();
   process.exit(0);
@@ -300,11 +368,17 @@ const rejectionTally = new Map<string, number>();
 const stateTally = new Map<string, number>();
 const startedRun = Date.now();
 
-for (const [i, u] of units.entries()) {
+let skippedMissing = 0;
+for (const [i, ref] of refs.entries()) {
+  const u = await loadUnit(ref);
+  if (u === null) {
+    skippedMissing++;
+    continue;
+  }
   const excerpt = u.excerpt ?? '';
   const inputHash = enrichmentInputHash(TASK, PROMPT_VERSION, excerpt);
   const sourceHash = sha256(u.sourceText ?? '');
-  const label = `[${i + 1}/${units.length}] ${(u.caseTitle ?? '').slice(0, 34).padEnd(34)}`;
+  const label = `[${i + 1}/${refs.length}] ${(u.caseTitle ?? '').slice(0, 34).padEnd(34)}`;
 
   /**
    * **`status = 'ok'` IS LOAD-BEARING AND WAS MISSING.**
@@ -425,7 +499,7 @@ for (const [i, u] of units.entries()) {
 console.log('');
 console.log('RESULTS');
 console.log('='.repeat(74));
-console.log(`documents      ${units.length}  (cache hits ${cacheHits}, new calls ${calls})`);
+console.log(`documents      ${refs.length}  (cache hits ${cacheHits}, new calls ${calls})`);
 console.log(`calls failed   ${failed}   unparseable ${unparseable}`);
 console.log(`tokens         ${inTok.toLocaleString()} in / ${outTok.toLocaleString()} out = ${(inTok + outTok).toLocaleString()}`);
 console.log(`wall clock     ${((Date.now() - startedRun) / 1000).toFixed(0)}s`);
