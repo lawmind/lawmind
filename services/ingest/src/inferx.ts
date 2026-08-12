@@ -24,7 +24,10 @@ export type InferxResult =
   | { readonly ok: false; readonly reason: string };
 
 /**
- * Every InferX grant configured, strongest-first by declaration order.
+ * Every InferX grant configured, **tried in declaration order** — so the
+ * preferred grant is simply the one named `INFERX_API_KEY`, and changing the
+ * preference is an `.env` edit rather than a code change. Reordered 12 Aug 2026
+ * on the founder's instruction to try `ix_798c4c06…` first.
  *
  * The free pool is capacity-limited and returns HTTP 429 under load — measured,
  * not assumed (`docs/ai/DEEPSEEK_DATA_MOAT.md` §1). A second grant turns an

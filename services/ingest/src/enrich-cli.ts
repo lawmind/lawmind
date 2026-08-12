@@ -383,6 +383,14 @@ if (refs.length === 0) {
 
 let cacheHits = 0;
 let openRouterCalls = 0;
+/** Consecutive InferX capacity failures. Resets the moment one succeeds. */
+let inferxFailStreak = 0;
+/** Documents processed, used to space the breaker's probe of the free pool. */
+let processed = 0;
+/** Three consecutive capacity failures is a saturated pool, not a blip. */
+const BREAKER_THRESHOLD = 3;
+/** With the breaker open, ask InferX again every N documents. */
+const BREAKER_PROBE = 25;
 let openRouterCost = 0;
 let calls = 0;
 let failed = 0;
@@ -402,6 +410,7 @@ for (const [i, ref] of refs.entries()) {
     skippedMissing++;
     continue;
   }
+  processed++;
   const excerpt = u.excerpt ?? '';
   const inputHash = enrichmentInputHash(TASK, PROMPT_VERSION, excerpt);
   const sourceHash = sha256(u.sourceText ?? '');
@@ -462,10 +471,41 @@ for (const [i, ref] of refs.entries()) {
   const prompt = promptFor(u);
   let usedModel = ENRICH_MODEL;
   let costUsd = 0;
-  let result: { ok: true; text: string; inputTokens: number; outputTokens: number } | { ok: false; reason: string } =
-    await callInferxPooled(prompt, { apiKeys, maxTokens: 2000 });
 
-  if (!result.ok && openRouterKey !== null && /capacity|429|exhausted/i.test(result.reason)) {
+  /**
+   * A CIRCUIT BREAKER, because the retry ladder is the slow part.
+   *
+   * Exhausting InferX costs 5 attempts x 3 grants with exponential backoff —
+   * roughly two minutes — before the fallback is even reached. Paying that on
+   * EVERY document while the pool is saturated meant the free-first policy was
+   * costing more time than the free calls were worth: measured at 6 documents
+   * in the time the fallback alone would have done dozens.
+   *
+   * So after `BREAKER_THRESHOLD` consecutive capacity failures the worker stops
+   * asking InferX and goes straight to OpenRouter, then retries the free pool
+   * once every `BREAKER_PROBE` documents to notice when capacity returns. Free
+   * is still preferred; it is simply no longer asked a question it has answered
+   * the same way ten times running.
+   */
+  const useInferx = openRouterKey === null || inferxFailStreak < BREAKER_THRESHOLD || processed % BREAKER_PROBE === 0;
+  let result: { ok: true; text: string; inputTokens: number; outputTokens: number } | { ok: false; reason: string } =
+    useInferx
+      ? await callInferxPooled(prompt, { apiKeys, maxTokens: 2000 })
+      : { ok: false, reason: 'inferx skipped: capacity breaker open' };
+
+  if (useInferx) {
+    if (result.ok) {
+      if (inferxFailStreak >= BREAKER_THRESHOLD) console.log('    inferx capacity returned — breaker closed');
+      inferxFailStreak = 0;
+    } else if (/capacity|429|exhausted/i.test(result.reason)) {
+      inferxFailStreak++;
+      if (inferxFailStreak === BREAKER_THRESHOLD) {
+        console.log(`    inferx failed ${BREAKER_THRESHOLD}x on capacity — breaker OPEN, using OpenRouter`);
+      }
+    }
+  }
+
+  if (!result.ok && openRouterKey !== null && /capacity|429|exhausted|breaker/i.test(result.reason)) {
     const fallback = await callOpenRouter(prompt, { apiKey: openRouterKey, maxTokens: 2000 });
     if (fallback.ok) {
       usedModel = openRouterModelFromEnv();
