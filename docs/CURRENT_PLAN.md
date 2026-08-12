@@ -22,6 +22,19 @@ layered on top, per this file's own convention, rather than rewritten.
 > cannot rely on and says so in the bar room has cost us that bar room
 > permanently. **The ground game amplifies whatever is actually there.**
 
+**12 Aug 2026 — a separate, unbound acquisition/discovery session (not LCC,
+not RCC) ran the founder's NEW3 data-moat brief and left four new files:
+`docs/SOURCE_REGISTRY.md`, `docs/MISSING_AUTHORITY_QUEUE.md`, `docs/
+CORPUS_ACQUISITION_QUEUE.md`, `docs/ACQUISITION_SESSION_LOG.md`.** Nothing in
+this queue changes as a result — no ingest was run, nothing was purchased —
+but the missing-authority finding is worth reading before the next citation
+or ingestion pass: the corpus's 32,383 unresolved external citations are
+99.6% SCC/AIR references to Supreme Court judgments almost certainly already
+held under a different citation form (the already-open SCC/AIR↔S.C.R.
+concordance item, re-measured bigger), not a document-acquisition gap. Full
+account and a founder-queue note: `docs/FOUNDER_QUEUE.md` "NOTE FROM THE
+ACQUISITION/DISCOVERY LANE".
+
 ---
 
 # Q · THE VERIFIED QUEUE — every open item, checked against the running system
@@ -1984,6 +1997,43 @@ words apply exactly**: *"Do not change ranking weights merely to improve
 one benchmark. Every change must be measured against a fixed regression
 set"* — `retrieval:regression`'s baseline (this session) is the tool to
 measure it with, before and after, when this is picked up.
+
+**INDEPENDENTLY VERIFIED, same day.** Traced three more real cases with
+direct DB queries (not pattern-matched from a log) rather than resting the
+finding on one anecdote:
+
+- **`KANHAIYALAL versus UNION OF INDIA AND ORS.`** — same mechanism as
+  DUTT exactly: 20 AND-candidates, target not in the top 50 by `ts_rank`.
+  **Confirms the dilution mechanism is not a one-off.**
+- **`V REVATHI versus UNION OF INDIA & ORS.`** — a DIFFERENT, DISTINCT
+  failure. The AND-path found only 1 candidate total corpus-wide, and it
+  was not the target — the target isn't a candidate AT ALL, not merely
+  outranked. Confirmed by direct read that `full_text` genuinely contains
+  "REVATHI" (`"y V. REVATHI A\nv.\nUNION OF INDIA & ORS."`, byte-verified).
+  **Hypothesis tested and REJECTED**: the raw text uses the abbreviated
+  "v." rather than the spelled-out "versus" `case_title` normalises to, so
+  I suspected the literal word "versus" was simply absent from this
+  document's tsvector — re-ran the AND query with "versus" removed
+  entirely and the target STILL did not appear. So that is not the (or not
+  the whole) mechanism either. **Root cause for this second failure shape
+  is NOT diagnosed** — stated honestly rather than papered over with the
+  first plausible-sounding theory. Something about how "V." or "REVATHI"
+  itself tokenizes in this specific document remains unexplained.
+- **`SARDARI LAL versus UNION OF INDIA & ORS`** — same shape as REVATHI
+  (1 AND-candidate corpus-wide, not the target), not separately dug into.
+
+**Q1.25 is independently verified: the symptom (exact case-title search
+missing a present document) is real and reproduces across at least four
+distinct cases, via at least TWO distinct mechanisms** — one fully
+diagnosed (frequency dilution, confirmed twice), one confirmed to exist but
+NOT yet diagnosed (a tokenization/candidate-exclusion failure that a
+"versus"-normalisation theory does not explain). **Closing this as
+"verified, not solved"**: the case-title-similarity boost proposed above
+would fix the dilution mechanism (its target is found and merely
+outranked, so a rank boost helps); it would NOT fix the second mechanism
+(the target isn't a candidate at all, so no re-ranking of existing
+candidates can surface it) — that needs its own root-cause pass before any
+fix is attempted, separate from and after the dilution fix.
 
 ### Q1.27 · CORRUPTION-REPAIR FALLBACK WIRED INTO THE ACTIVE INGEST · 12 Aug 2026
 
