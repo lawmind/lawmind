@@ -84,16 +84,19 @@ type New3QueueEntry = {
 };
 
 /**
- * Wall-clock budget for one query's embed+retrieve. Not tuned against a
- * measurement -- a generous ceiling whose only job is to turn a genuinely
- * stuck query (a starved DB-proxy connection under five-lane load,
- * `docs/LANE_PROTOCOL.md` §5) into a visible, skippable failure instead of
- * an opaque hang nobody can distinguish from "still working." The first run
- * of this tool stalled silently for 30+ minutes with zero progress output
- * and had to be killed blind -- this and the checkpoint below exist because
- * of that, not in the abstract.
+ * Wall-clock budget for one query's embed+retrieve. **Measured, not
+ * guessed**: the first timed version (30s) was itself measured wrong --
+ * under the actual five-lane load on the shared DB proxy right now,
+ * SUCCESSFUL queries were observed taking 30-70s+ (this run's own progress
+ * log, `docs/CURRENT_PLAN.md`), so 30s was timing out genuinely-working
+ * queries more often than catching stuck ones: 6 of the first 10 queries in
+ * that run timed out, most of them not actually stuck, just slow. Raised to
+ * 120s on that evidence. Still exists for the same reason as before -- a
+ * ceiling that turns a truly stuck query into a visible, skippable failure
+ * instead of an indefinite hang -- just calibrated to today's real
+ * condition instead of an assumption about it.
  */
-const QUERY_TIMEOUT_MS = 30_000;
+const QUERY_TIMEOUT_MS = 120_000;
 
 function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
