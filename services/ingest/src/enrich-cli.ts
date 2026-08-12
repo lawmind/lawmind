@@ -401,6 +401,14 @@ for (const [i, ref] of refs.entries()) {
       SELECT verification_state, verified_count, rejected_count FROM document_enrichments
       WHERE judgment_id = ${u.judgmentId} AND task = ${TASK}
         AND prompt_version = ${PROMPT_VERSION} AND input_hash = ${inputHash}
+        -- The status filter is LOAD-BEARING. A call_failed row records that the
+        -- endpoint was unreachable, not an answer about the document, so reading
+        -- one as a cache hit would permanently skip every document touched
+        -- during an outage. 840 rows were in exactly that state after the
+        -- model-alias outage; without this clause all 840 would have been
+        -- abandoned rather than retried. Its counterpart is the DO UPDATE below,
+        -- guarded on the same column: this clause makes a failure retryable,
+        -- that one makes the retry stick.
         AND status = 'ok'
       LIMIT 1`,
   );
@@ -426,7 +434,20 @@ for (const [i, ref] of refs.entries()) {
         source_text_hash, status, error, latency_ms, verification_state)
       VALUES (${u.judgmentId}, ${TASK}, ${PROMPT_VERSION}, ${ENRICH_MODEL}, ${inputHash},
               ${sourceHash}, 'call_failed', ${result.reason}, ${latency}, 'unverified')
-      ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO NOTHING`;
+      ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO UPDATE SET
+        raw_output = EXCLUDED.raw_output,
+        parsed_output = EXCLUDED.parsed_output,
+        status = EXCLUDED.status,
+        input_tokens = EXCLUDED.input_tokens,
+        output_tokens = EXCLUDED.output_tokens,
+        latency_ms = EXCLUDED.latency_ms,
+        verification_state = EXCLUDED.verification_state,
+        verified_count = EXCLUDED.verified_count,
+        rejected_count = EXCLUDED.rejected_count,
+        rejection_reasons = EXCLUDED.rejection_reasons,
+        error = EXCLUDED.error,
+        attempts = document_enrichments.attempts + 1
+      WHERE document_enrichments.status <> 'ok'`;
     continue;
   }
 
@@ -452,7 +473,20 @@ for (const [i, ref] of refs.entries()) {
       VALUES (${u.judgmentId}, ${TASK}, ${PROMPT_VERSION}, ${ENRICH_MODEL}, ${inputHash},
               ${sourceHash}, ${result.text.slice(0, 8000)}, 'unparseable',
               ${result.inputTokens}, ${result.outputTokens}, ${latency}, 'unverified')
-      ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO NOTHING`;
+      ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO UPDATE SET
+        raw_output = EXCLUDED.raw_output,
+        parsed_output = EXCLUDED.parsed_output,
+        status = EXCLUDED.status,
+        input_tokens = EXCLUDED.input_tokens,
+        output_tokens = EXCLUDED.output_tokens,
+        latency_ms = EXCLUDED.latency_ms,
+        verification_state = EXCLUDED.verification_state,
+        verified_count = EXCLUDED.verified_count,
+        rejected_count = EXCLUDED.rejected_count,
+        rejection_reasons = EXCLUDED.rejection_reasons,
+        error = EXCLUDED.error,
+        attempts = document_enrichments.attempts + 1
+      WHERE document_enrichments.status <> 'ok'`;
     continue;
   }
 
@@ -490,7 +524,20 @@ for (const [i, ref] of refs.entries()) {
               'ok', ${result.inputTokens}, ${result.outputTokens}, ${latency},
               ${state}, ${ok.length}, ${bad.length},
               ${JSON.stringify(bad.map((b) => b.reason))}::jsonb)
-      ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO NOTHING`,
+      ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO UPDATE SET
+        raw_output = EXCLUDED.raw_output,
+        parsed_output = EXCLUDED.parsed_output,
+        status = EXCLUDED.status,
+        input_tokens = EXCLUDED.input_tokens,
+        output_tokens = EXCLUDED.output_tokens,
+        latency_ms = EXCLUDED.latency_ms,
+        verification_state = EXCLUDED.verification_state,
+        verified_count = EXCLUDED.verified_count,
+        rejected_count = EXCLUDED.rejected_count,
+        rejection_reasons = EXCLUDED.rejection_reasons,
+        error = EXCLUDED.error,
+        attempts = document_enrichments.attempts + 1
+      WHERE document_enrichments.status <> 'ok'`,
   );
 }
 
