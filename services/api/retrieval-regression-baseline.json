@@ -1,0 +1,167 @@
+{
+  "capturedAt": "2026-08-12T14:16:07.618Z",
+  "corpusJudgments": "189386",
+  "corpusChunks": "620300",
+  "results": [
+    {
+      "query": "anticipatory bail custodial interrogation",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "56f252c3-83a2-4d08-9020-e01003bddbad",
+      "topCaseTitle": "PRIYA INDORIA versus STATE OF KARNATAKA AND ORS. ETC.",
+      "latencyMs": 4815.7069
+    },
+    {
+      "query": "special leave to appeal criminal jurisdiction",
+      "shape": "procedural",
+      "resultCount": 5,
+      "topJudgmentId": "93773037-862f-4481-b25f-34b649dc5087",
+      "topCaseTitle": "M/S CELESTIUM FINANCIAL versus A. GNANASEKARAN ETC",
+      "latencyMs": 3982.3587000000007
+    },
+    {
+      "query": "parity with co-accused in bail",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "a0e004a8-1d24-4fb1-8c6f-75d6c6434b50",
+      "topCaseTitle": "AMINUDDIN versus STATE OF UTTAR PRADESH & ANR.",
+      "latencyMs": 2355.9784
+    },
+    {
+      "query": "dying declaration corroboration",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "77e7d954-5c98-442b-ab41-ad27983d3661",
+      "topCaseTitle": "IRFAN @ NAKA versus THE STATE OF UTTAR PRADESH",
+      "latencyMs": 4787.2986
+    },
+    {
+      "query": "preventive detention grounds communicated",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "4ba89a70-88d6-4e0e-9e24-bf15a9ff7817",
+      "topCaseTitle": "UNION OF INDIA 2. JOINT SECRETARY (COFEPOSA), GOVT. OF INDIA, MINISTRY OF FINANCE versus DIMPLE HAPPY DHAKAD",
+      "latencyMs": 8401.742600000001
+    },
+    {
+      "query": "specific performance of agreement to sell",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "fc08ebd0-0aff-4b64-9243-38d7824804a0",
+      "topCaseTitle": "KAMAL KANT JAIN versus SURINDER SINGH (D) THR. LRS.",
+      "latencyMs": 4543.941599999998
+    },
+    {
+      "query": "compassionate appointment policy",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "875fd469-d79c-4f0f-a8ae-1f412115bc26",
+      "topCaseTitle": "THE STATE OF WEST BENGAL versus DEBABRATA TIWARI & ORS. ETC. ETC.",
+      "latencyMs": 8868.359199999999
+    },
+    {
+      "query": "dishonour of cheque legally enforceable debt",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "23293b20-9d1e-48c9-842c-6b852d72f8bd",
+      "topCaseTitle": "DASHRATHBHAI TRIKAMBHAI PATEL versus HITESH MAHENDRABHAI PATEL & ANR",
+      "latencyMs": 7579.741199999997
+    },
+    {
+      "query": "quashing of FIR inherent powers",
+      "shape": "procedural",
+      "resultCount": 5,
+      "topJudgmentId": "c37fe434-f3c2-4bb6-a4f6-d97ffc682c15",
+      "topCaseTitle": "GIAN SINGH versus STATE OF PUNJAB & ANOTHER",
+      "latencyMs": 7305.952499999999
+    },
+    {
+      "query": "maintenance to wife and minor children",
+      "shape": "concept",
+      "resultCount": 5,
+      "topJudgmentId": "2dc143fa-a44e-4075-9078-0ddafbe2a964",
+      "topCaseTitle": "RAJESWARI CHANDRASEKAR GANESH versus THE STATE OF TAMIL NADU & ORS.",
+      "latencyMs": 6830.474699999999
+    },
+    {
+      "query": "Section 138 Negotiable Instruments Act",
+      "shape": "section",
+      "resultCount": 4,
+      "topJudgmentId": "94dbae1f-b5b9-465d-b85e-4878f2f77e62",
+      "topCaseTitle": "GANESH MAJUMDAR Vs SREEKANTA PATHAK",
+      "latencyMs": 5390.723400000003
+    },
+    {
+      "query": "Section 482 CrPC inherent powers",
+      "shape": "section",
+      "resultCount": 5,
+      "topJudgmentId": "61a08abe-75dc-465b-bfa4-f0a2c1c3d845",
+      "topCaseTitle": "SURYA BAKSH SINGH versus STATE OF UTTAR PRADESH",
+      "latencyMs": 8493.409700000004
+    },
+    {
+      "query": "Section 34 Specific Relief Act",
+      "shape": "section",
+      "resultCount": 5,
+      "topJudgmentId": "f8e5ad3a-b5c6-43c9-a9a0-ac84dbc7d293",
+      "topCaseTitle": "RANA NAHID @ RESHMA @ SANA & ANR. versus SAHIDUL HAQ CHISTI",
+      "latencyMs": 13307.865000000005
+    },
+    {
+      "query": "Article 226 writ jurisdiction alternative remedy",
+      "shape": "section",
+      "resultCount": 5,
+      "topJudgmentId": "5355da1c-36f2-488f-84a4-29783c1ec822",
+      "topCaseTitle": "MAHARASHTRA CHESS ASSOCIATION versus UNION OF INDIA & ORS.",
+      "latencyMs": 5905.828799999988
+    },
+    {
+      "query": "bail under Section 439 CrPC",
+      "shape": "section",
+      "resultCount": 5,
+      "topJudgmentId": "89455604-4b70-4cae-89f2-133e44f3b707",
+      "topCaseTitle": "JAMIN & ANR. versus STATE OF UTTAR PRADESH & ANR.",
+      "latencyMs": 13793.482300000003
+    },
+    {
+      "query": "State of Punjab v. Baldev Singh",
+      "shape": "case-name",
+      "resultCount": 5,
+      "topJudgmentId": "c19d312a-e697-44aa-bcac-faa1b45a2b54",
+      "topCaseTitle": "THE STATE OF PUNJAB versus BALDEV SINGH",
+      "latencyMs": 10348.718599999993
+    },
+    {
+      "query": "K.M. Nanavati v. State of Maharashtra",
+      "shape": "case-name",
+      "resultCount": 5,
+      "topJudgmentId": "f891da86-e2fe-47ec-bfa4-8c1713361806",
+      "topCaseTitle": "VIKAS YADAV versus STATE OF U.P. AND ORS. ETC. ETC.",
+      "latencyMs": 11400.165499999988
+    },
+    {
+      "query": "Kesavananda Bharati basic structure",
+      "shape": "case-name",
+      "resultCount": 5,
+      "topJudgmentId": "53d48937-4aa0-4246-b8b1-842ee4d774fd",
+      "topCaseTitle": "I. R. COELHO (DEAD) BY LRS. versus STATE OF TAMIL NADU",
+      "latencyMs": 13331.622600000017
+    },
+    {
+      "query": "transfer petition matrimonial dispute jurisdiction",
+      "shape": "procedural",
+      "resultCount": 5,
+      "topJudgmentId": "8bb50576-c19e-4d75-913c-37ff43140d8e",
+      "topCaseTitle": "SANTHINI versus VIJAYA VENKETESH",
+      "latencyMs": 5274.046999999991
+    },
+    {
+      "query": "condonation of delay sufficient cause",
+      "shape": "procedural",
+      "resultCount": 5,
+      "topJudgmentId": "34a92b29-c1db-476b-b67a-49c398c00c92",
+      "topCaseTitle": "BALWANT SINGH (DEAD) versus JAGDISH SINGH & ORS.",
+      "latencyMs": 5243.313200000004
+    }
+  ]
+}
