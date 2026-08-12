@@ -350,12 +350,14 @@ if (process.argv.includes('--reverify')) {
     vBefore += Number(prev?.verifiedCount ?? 0);
     vAfter += ok.length;
     if (Number(prev?.verifiedCount ?? 0) !== ok.length) changed++;
-    await sql`
+    await withDbRetry('write enrichment',
+      () => sql`
       UPDATE document_enrichments SET
         parsed_output = ${JSON.stringify({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) })}::jsonb,
         verification_state = ${state}, verified_count = ${ok.length}, rejected_count = ${bad.length},
         rejection_reasons = ${JSON.stringify(bad.map((b) => b.reason))}::jsonb
-      WHERE id = ${row.id}`;
+      WHERE id = ${row.id}`,
+    );
   }
   console.log(`rows whose verified count changed: ${changed}`);
   console.log(`claims verified: ${vBefore} -> ${vAfter}`);
@@ -522,7 +524,8 @@ for (const [i, ref] of refs.entries()) {
   if (!result.ok) {
     failed++;
     console.log(`${label} CALL FAILED: ${result.reason}`);
-    await sql`
+    await withDbRetry('write enrichment',
+      () => sql`
       INSERT INTO document_enrichments (judgment_id, task, prompt_version, model, input_hash,
         source_text_hash, status, error, latency_ms, verification_state)
       VALUES (${u.judgmentId}, ${TASK}, ${PROMPT_VERSION}, ${ENRICH_MODEL}, ${inputHash},
@@ -540,7 +543,8 @@ for (const [i, ref] of refs.entries()) {
         rejection_reasons = EXCLUDED.rejection_reasons,
         error = EXCLUDED.error,
         attempts = document_enrichments.attempts + 1
-      WHERE document_enrichments.status <> 'ok'`;
+      WHERE document_enrichments.status <> 'ok'`,
+    );
     continue;
   }
 
@@ -560,7 +564,8 @@ for (const [i, ref] of refs.entries()) {
   if (parsed === null) {
     unparseable++;
     console.log(`${label} UNPARSEABLE`);
-    await sql`
+    await withDbRetry('write enrichment',
+      () => sql`
       INSERT INTO document_enrichments (judgment_id, task, prompt_version, model, input_hash,
         source_text_hash, raw_output, status, input_tokens, output_tokens, latency_ms, verification_state)
       VALUES (${u.judgmentId}, ${TASK}, ${PROMPT_VERSION}, ${ENRICH_MODEL}, ${inputHash},
@@ -579,7 +584,8 @@ for (const [i, ref] of refs.entries()) {
         rejection_reasons = EXCLUDED.rejection_reasons,
         error = EXCLUDED.error,
         attempts = document_enrichments.attempts + 1
-      WHERE document_enrichments.status <> 'ok'`;
+      WHERE document_enrichments.status <> 'ok'`,
+    );
     continue;
   }
 
