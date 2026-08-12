@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { type HarnessMetrics, grade, rate, THRESHOLDS } from './metrics.ts';
+import { type HarnessMetrics, grade, meanNdcgAtK, ndcgAtK, rate, THRESHOLDS } from './metrics.ts';
 
 const perfect: HarnessMetrics = {
   hallucinationRate: 0,
@@ -201,4 +201,44 @@ test('an unimplemented generation path cannot be mistaken for a clean one', () =
     assert.equal(v.passed, false, `${name} passed while unmeasured`);
     assert.ok(v.notMeasured, `${name} did not report itself as not measured`);
   }
+});
+
+test('nDCG@K: rank 1 scores exactly 1.0 — the ideal ranking', () => {
+  assert.equal(ndcgAtK(1, 5), 1);
+});
+
+test('nDCG@K: not found within K scores exactly 0', () => {
+  assert.equal(ndcgAtK(null, 5), 0);
+});
+
+test('nDCG@K: found, but past K, scores exactly 0 — not a partial credit', () => {
+  // The general algorithm would still give some credit for "found somewhere
+  // in the full ranking"; @K by definition does not look past K.
+  assert.equal(ndcgAtK(6, 5), 0);
+});
+
+test('nDCG@K: found exactly at the boundary K counts', () => {
+  assert.equal(ndcgAtK(5, 5), 1 / Math.log2(6));
+});
+
+test('nDCG@K: decreases monotonically as rank worsens', () => {
+  const at1 = ndcgAtK(1, 20);
+  const at2 = ndcgAtK(2, 20);
+  const at10 = ndcgAtK(10, 20);
+  assert.ok(at1 > at2, 'rank 1 must score higher than rank 2');
+  assert.ok(at2 > at10, 'rank 2 must score higher than rank 10');
+});
+
+test('mean nDCG@K over an empty set is 0, not NaN', () => {
+  assert.equal(meanNdcgAtK([], 5), 0);
+});
+
+test('mean nDCG@K: a mix of found-early, found-late-past-K, and not-found', () => {
+  // rank 1 -> 1.0, rank 10 (past K=5) -> 0, not found -> 0
+  const mean = meanNdcgAtK([1, 10, null], 5);
+  assert.equal(mean, (1 + 0 + 0) / 3);
+});
+
+test('mean nDCG@K: all queries at the ideal rank averages to exactly 1.0', () => {
+  assert.equal(meanNdcgAtK([1, 1, 1], 5), 1);
 });

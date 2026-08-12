@@ -241,3 +241,37 @@ export function rate(numerator: number, denominator: number): number | null {
   if (denominator === 0) return null;
   return numerator / denominator;
 }
+
+/**
+ * nDCG@K — genuinely missing until now (`docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md`
+ * §5 named it as the one cheap, unbuilt metric). Ungraded diagnostic, same
+ * status as `successAt5`/`recallAt20`/`mrr`: printed, never gated.
+ *
+ * **Closed form, not the general nDCG algorithm** — and that simplification
+ * is only valid because of a fact about THIS evaluation set, stated so it is
+ * not silently assumed elsewhere: ground truth is one citation edge per
+ * query, so relevance is binary and every query has exactly ONE relevant
+ * judgment (`metrics.ts`'s own note above `SUCCESS_AT_K`). Under binary,
+ * single-relevant-item relevance, the ideal ranking places that one item
+ * first, so `IDCG@K = 1` for every query with a gold judgment — there is no
+ * per-query IDCG to compute, unlike graded or multi-relevant nDCG. This
+ * makes `nDCG@K` collapse to `DCG@K`:
+ *
+ *   found within top K at rank r (1-based):  1 / log2(r + 1)
+ *   not found within top K:                  0
+ *
+ * A different evaluation set — graded relevance, or more than one gold
+ * judgment per query — would need the general algorithm; this one does not
+ * have that shape, and this function would silently give a wrong answer if
+ * pointed at one that did. Not generalised on the chance it might.
+ */
+export function ndcgAtK(foundAtAnyRank: number | null, k: number): number {
+  if (foundAtAnyRank === null || foundAtAnyRank > k) return 0;
+  return 1 / Math.log2(foundAtAnyRank + 1);
+}
+
+/** Mean nDCG@K over a set of queries, each already scored for its rank. */
+export function meanNdcgAtK(ranks: (number | null)[], k: number): number {
+  if (ranks.length === 0) return 0;
+  return ranks.reduce((sum: number, r) => sum + ndcgAtK(r, k), 0) / ranks.length;
+}
