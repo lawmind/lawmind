@@ -50,8 +50,8 @@ type ChunkRow = {
   embedding: string;
   token_count: number;
   text_quality: number | null;
-  char_offset: number;
-  char_length: number;
+  char_offset: number | null;
+  char_length: number | null;
 };
 
 /**
@@ -232,8 +232,12 @@ async function main(): Promise<void> {
             text_quality: textQuality(chunk.text),
             // ocr_confidence stays unset: the source ships no engine confidence
             // and we did not run the OCR, so any number here would be invented.
-            char_offset: chunk.offset,
-            char_length: chunk.bodyLength,
+            // chunk.offset is -1 when chunkJudgment's own self-check could not
+            // verify the position (chunk.ts) -- NULL, not the literal -1, so
+            // the read path's "unavailable" handling applies rather than a
+            // negative number silently reaching a bounds check somewhere.
+            char_offset: chunk.offset >= 0 ? chunk.offset : null,
+            char_length: chunk.offset >= 0 ? chunk.bodyLength : null,
           });
         });
       }

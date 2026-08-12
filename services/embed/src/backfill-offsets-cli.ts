@@ -67,6 +67,7 @@ let judgmentsProcessed = 0;
 let judgmentsChunkCountMismatch = 0;
 let chunksMatched = 0;
 let chunksTextMismatch = 0;
+let chunksOffsetUnverified = 0;
 let chunksUpdated = 0;
 
 for (let i = 0; i < pendingIds.length; i += pageSize) {
@@ -107,6 +108,16 @@ for (let i = 0; i < pendingIds.length; i += pageSize) {
       chunksMatched++;
       if (storedText !== chunk.text) {
         chunksTextMismatch++;
+        continue;
+      }
+      // chunk.ts verifies its own offset before returning it and reports -1
+      // when that verification failed (a merged chunk whose synthesised
+      // separator did not match the source's real gap). Left NULL here too,
+      // same as an unmatched or text-mismatched chunk -- never written as a
+      // literal -1, which would pass a bounds check and read as a real
+      // position.
+      if (chunk.offset < 0) {
+        chunksOffsetUnverified++;
         continue;
       }
       updates.push({
@@ -154,6 +165,7 @@ console.log(`judgments processed              ${judgmentsProcessed}`);
 console.log(`judgments with a chunk-count mismatch (not backfilled from) ${judgmentsChunkCountMismatch}`);
 console.log(`chunks matched by (judgment, index) ${chunksMatched}`);
 console.log(`chunks with a chunk_text mismatch, SKIPPED ${chunksTextMismatch}`);
+console.log(`chunks whose offset failed chunk.ts's own self-check, SKIPPED ${chunksOffsetUnverified}`);
 console.log(`chunks ${APPLY ? 'updated' : 'that WOULD be updated'} ${chunksUpdated}`);
 
 if (APPLY) {

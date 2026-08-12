@@ -15,7 +15,13 @@
 export type Chunk = {
   index: number;
   text: string;
-  /** Character offset into the source text — lets a citation point back at the span. */
+  /**
+   * Character offset into the source text — lets a citation point back at the
+   * span. **`-1` means the position could not be verified**, never a guess:
+   * see the note at `offset` inside `chunkJudgment`. Downstream (`cli.ts`,
+   * `backfill-offsets-cli.ts`) must treat `-1` as "no position", not as a
+   * literal index.
+   */
   offset: number;
   /**
    * Length, in characters, of THIS CHUNK'S OWN BODY in the source text —
@@ -23,7 +29,8 @@ export type Chunk = {
    * chunk's overlap tail, so `text.length` cannot be used to recover an exact
    * span. `sourceText.slice(offset, offset + bodyLength)` is exactly the body,
    * verbatim by construction — this is what an "exact span" is built from
-   * downstream (`docs/ai/STAGES_9_20_PLAN.md` Stage 13).
+   * downstream (`docs/ai/STAGES_9_20_PLAN.md` Stage 13). Meaningless when
+   * `offset` is `-1`.
    */
   bodyLength: number;
 };
@@ -183,11 +190,30 @@ export function chunkJudgment(
     // place fullText's own leading whitespace is accounted for. No `indexOf`
     // anywhere in this path — the position was known from the moment the
     // paragraph split happened, never re-derived by searching for it.
+    const offset = textStart + body.start;
+    const bodyLength = body.text.length;
+    /**
+     * Self-verified, not merely computed. A single unnnmerged unit's `start`
+     * and `text` came straight from a slice of `fullText`, so this always
+     * passes for it — but a MERGED buffer's `text` was built by joining units
+     * with a canonical `\n\n`, and that canonical separator is only a
+     * correct stand-in for the source's real gap when the real gap WAS
+     * exactly two newlines. When it was not (three+ newlines, a "blank" line
+     * with trailing spaces — the same irregularity `splitParagraphs` already
+     * has to survive), the synthesised text is a different LENGTH than the
+     * real span at `offset`, and `bodyLength` silently inherits that
+     * difference. Checking the actual slice, once, here, turns that from "a
+     * length that is usually right" into "a length that is verified right or
+     * not reported at all" — the same standard `resolveExactSpan` holds
+     * downstream, moved to the point where it can still be free (this is a
+     * slice and a string comparison, not a search).
+     */
+    const verified = fullText.slice(offset, offset + bodyLength) === body.text;
     chunks.push({
       index: i,
       text: withOverlap,
-      offset: textStart + body.start,
-      bodyLength: body.text.length,
+      offset: verified ? offset : -1,
+      bodyLength,
     });
   });
   return chunks;

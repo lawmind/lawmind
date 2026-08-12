@@ -138,6 +138,20 @@ describe('chunkJudgment', () => {
     if (chunks.length > 1) assert.notEqual(chunks[1]!.offset, 0);
   });
 
+  it('reports offset -1 rather than an unverified overshoot when a short tail merges across a non-canonical gap', () => {
+    // Reproduces the production failure exactly: a paragraph long enough to
+    // be split by splitLongParagraph, cut at a single space, leaving a
+    // trailing piece short enough to trigger the "short tail merges into the
+    // previous chunk" path. The real gap between the two pieces is ONE
+    // character (the space); the merge synthesises "\n\n" (two characters)
+    // between them. The resulting bodyLength is 1 character longer than the
+    // real span -- caught here by the self-verification, not silently wrong.
+    const text = 'A'.repeat(190) + ' ' + 'B'.repeat(35); // 226 chars total
+    const chunks = chunkJudgment(text, opts); // maxChars 200, minChars 40
+    assert.equal(chunks.length, 1, 'the short tail should have merged into one chunk');
+    assert.equal(chunks[0]!.offset, -1, 'an unverifiable position must not be reported as offset 0 or as a guess');
+  });
+
   it('accounts for leading whitespace in fullText when computing offset', () => {
     const inner = [para(1, 180), para(2, 180)].join('\n\n');
     const withLeadingWs = `   \n\n${inner}`;
