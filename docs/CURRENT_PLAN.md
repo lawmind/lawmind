@@ -2556,6 +2556,45 @@ a real judgment with paragraphs but zero `judgment_chunks` rows — exactly
    has a `judgment_paragraphs` row; it should not move at all for judgments
    that still have neither table populated (a real negative control).
 
+**IMPLEMENTED AND VERIFIED LIVE, 13 Aug 2026.** `fillParagraphFallback(sql,
+results, query)` in `retrieve.ts`, wired into `hybridSearch()` right before
+`return results` — runs unconditionally across sparse/dense/hybrid modes
+since it only fills display evidence, never touches ranking/order:
+
+1. Scans the already-built result set for entries with an empty
+   `operativeParagraph` (the sparse-only-match population `EVIDENCE_WRONG`
+   measured) and collects their judgment IDs.
+2. **One batched query**, not per-row: `SELECT DISTINCT ON (judgment_id) ...
+   FROM judgment_paragraphs WHERE judgment_id = ANY($ids) ORDER BY
+   judgment_id, ts_rank(...) DESC` — the same `DISTINCT ON` pattern
+   `passagesForRerank` already uses, query-aware per item 2 above, not "just
+   the first paragraph."
+3. Populates `operativeParagraph`, `operativeParagraphNumber`,
+   `operativeParagraphVerified: true`, and `exactSpan` (`charOffset`/
+   `charLength` straight from the row, byte-exact against `full_text` per
+   the migration's own guarantee) on the matched result in place.
+
+**Verified**: `pnpm --filter @lawmind/api run typecheck` clean.
+`pnpm --filter @lawmind/api run test` — 262/456 pass, 23 fail, identical to
+this session's established baseline (pre-existing DB-connectivity failures,
+confirmed unrelated by diffing against stashed `main` earlier in the
+session). **Live smoke test against production**, not the design doc alone:
+picked a real judgment (`078d8dea-5a2d-428e-9632-000c598bdb07`, "LATE
+ASSISTANT COMMISSIONER M K BHATNAGAR ... Vs PRINCIPAL CHIEF CONTROLLER
+ACCOUNT MINISTRY OF HOME AFFAIRS & ORS.") with `judgment_paragraphs` rows
+and zero `judgment_chunks` rows, queried `hybridSearch` with a phrase from
+one of its paragraphs — the judgment came back with `operativeParagraph`
+populated, `operativeParagraphNumber: 20`, `operativeParagraphVerified:
+true`, `exactSpan` present. Confirms the exact `EVIDENCE_WRONG` shape now
+gets real evidence instead of an empty operative paragraph.
+
+**Not yet done**: the item-4 measurement (re-run `failure:classify`
+before/after, checking `EVIDENCE_WRONG` drops specifically among judgments
+that now carry a `judgment_paragraphs` row and holds flat for the negative
+control) — deliberately deferred per LCC's own standing ask to hold the
+re-run until their citation backlog (444,621 rows and climbing at last
+check) completes, so "the gold answer is findable" doesn't shift mid-measurement.
+
 **Also relevant to Q1.29's own re-run** (LCC's research, bus 0133,
 arxiv.org/pdf/2510.06999): Document-Level Retrieval Mismatch is a named,
 studied failure that *worsens as the corpus scales* — Q1.29's 49.1%
@@ -2566,6 +2605,33 @@ stating) when `failure:classify` is re-run, per LCC's own standing ask —
 hold the re-run until their citation backlog (444,621 rows and climbing)
 completes, since that changes what "the gold answer is findable" means
 too.
+
+### Q1.33 · THE GATE IS PARITY, NOT COMPLETION — `docs/RING_PROGRAM.md`, connect_timeout rolled to every worker · 13 Aug 2026
+
+**LCC's `RING_PROGRAM.md` (bus `0140`) reframes the target precisely**: the
+AWS source is `~17.8M judgments · 25 courts · 45 benches`, **updated
+daily**. The gate is not "ingest everything once" — it is *reach parity
+with the source, then stay current*. Also settled: "all courts" means the
+25 High Courts + Supreme Court, explicitly **not** the ~33M NJDG
+district-court universe (unauthorized, a different question entirely). This
+lane has not touched district courts and will not on its own reading of
+"all courts."
+
+**`connect_timeout: 120` rolled to every worker, not just new launches.**
+Two hangs this session (Madras, Orissa — flat CPU, confirmed not just slow)
+match the exact failure LCC named — "a proxy connection with no timeout
+that hangs instead of erroring" — and it is now a binding rule across the
+whole ring (`RING_PROGRAM.md` §4). Rather than wait for the remaining 7
+pre-fix workers to hang too, restarted them proactively: Allahabad, Punjab,
+Rajasthan, Karnataka, Madhya Pradesh, Kerala, Telangana, plus the general
+sweep. **All 25 workers now run identical, current code.**
+
+**Sikkim finished its `--from-year 2016` scope naturally** (11 metadata
+files, smallest court) and was relaunched with no year floor to capture its
+full history — 27 files in scope instead of 11. The other small courts
+will hit the same natural completion soon; each gets the same treatment
+rather than being left capped at the last decade, since "all available
+data" per the founder's own wording is not scoped to one decade.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 

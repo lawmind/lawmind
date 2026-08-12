@@ -780,5 +780,82 @@ export async function hybridSearch(
       exactSpan,
     });
   }
+  await fillParagraphFallback(sql, results, query);
   return results;
+}
+
+/**
+ * Evidence fallback for sparse-only matches — Q1.32, `judgment_paragraphs`
+ * (migration 0049), the founder's data-before-embeddings decision (13 Aug
+ * 2026, via LCC bus 0133). A judgment reached only through the sparse
+ * ranker carries no dense chunk and so no `operativeParagraph` — correct,
+ * not a bug (`passagesForRerank`'s own comment already says so), but no
+ * longer the only option: `judgment_paragraphs` holds paragraph-level
+ * evidence, byte-exact against `full_text`, with no vector, for a growing
+ * share of the corpus (`docs/CURRENT_PLAN.md` Q1.29 measured 93.2% of
+ * judgments carrying no chunk at all — this is that population's fix).
+ *
+ * **Query-aware, not "the first paragraph"** — same reasoning
+ * `passagesForRerank` already applies to its own fallback: paragraph 0 of
+ * an Indian judgment is the cause title and coram, nearly content-free.
+ * Ranks a judgment's own paragraphs by `ts_rank` against the query and
+ * takes the best one.
+ *
+ * **`operativeParagraphVerified: true` and a populated `exactSpan`** — not
+ * a downgrade from the chunk-based path. `judgment_paragraphs.char_offset`/
+ * `char_length` are exactly what Stage 13 requires: a byte-exact span
+ * against `full_text`, computed once at paragraph-extraction time. This
+ * fallback is evidence-complete, not a weaker substitute.
+ *
+ * **One batched query for every candidate missing a passage**, not one
+ * per row — the same shape `passagesForRerank` already uses (`DISTINCT
+ * ON`), for the same reason: Gate S1's 3-second budget has no room for a
+ * per-candidate round trip inside a request already waiting on two
+ * rankers. Runs unconditionally, in every retrieval mode — it changes
+ * DISPLAY only, never ranking or order, so it cannot bias the Stage 10
+ * arm comparison the way a ranking change would.
+ */
+async function fillParagraphFallback(
+  sql: Sql,
+  results: RetrievedJudgment[],
+  query: string,
+): Promise<void> {
+  const missing = results
+    .map((r, i) => ({ i, id: r.judgmentId, empty: r.operativeParagraph.trim().length === 0 }))
+    .filter((x) => x.empty);
+  if (missing.length === 0) return;
+
+  const ids = missing.map((m) => m.id);
+  const rows = await sql<
+    {
+      judgment_id: string;
+      paragraph_text: string;
+      paragraph_number: number | null;
+      char_offset: number;
+      char_length: number;
+    }[]
+  >`
+    SELECT DISTINCT ON (judgment_id)
+      judgment_id, paragraph_text, paragraph_number, char_offset, char_length
+    FROM judgment_paragraphs
+    WHERE judgment_id = ANY(${ids})
+    ORDER BY judgment_id,
+      ts_rank(to_tsvector('english', paragraph_text), plainto_tsquery('english', ${query})) DESC
+  `;
+  const byId = new Map(rows.map((r) => [r.judgment_id, r]));
+  for (const m of missing) {
+    const row = byId.get(m.id);
+    // Genuinely no paragraphs for this judgment either yet — stays empty,
+    // which is still the honest answer, not a regression from before.
+    if (!row) continue;
+    const result = results[m.i]!;
+    result.operativeParagraph = cleanExtractedText(row.paragraph_text);
+    result.operativeParagraphNumber = row.paragraph_number;
+    result.operativeParagraphVerified = true;
+    result.exactSpan = {
+      text: row.paragraph_text,
+      charOffset: row.char_offset,
+      charLength: row.char_length,
+    };
+  }
 }
