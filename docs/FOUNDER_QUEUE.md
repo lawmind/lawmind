@@ -2765,7 +2765,7 @@ explicitly changes this decision.
 
 ---
 
-## FQ-IX1 · All three InferX/DeepSeek grants return HTTP 401 — the enrichment lane is credential-blocked
+## FQ-IX1 · ~~All three InferX grants return HTTP 401~~ — **RESOLVED 12 Aug 2026, and it was never a credential**
 
 **Raised by LCC, 12 August 2026.** This is the one item in this file that is a
 credential and nothing else. Everything around it is built, tested, deployed and
@@ -2810,3 +2810,30 @@ completed document is committed with its provenance and replays from cache for
 free. The `call_failed` rows written during the outage have been deleted, so
 those documents are eligible again rather than permanently skipped — that was a
 real bug, found because of this outage, and fixed in `7d4abf3`.
+
+> ### RESOLVED — nothing is needed from the founder, and my diagnosis above was wrong
+>
+> **The keys were never revoked. The model alias was.** `deepseek-v4-flash` is
+> still listed by `GET /models` and returns **401 on every chat request**;
+> `deepseek-v4-flash-0731` answers normally with the same key.
+>
+> **inferx.net returns 401 — not 404, not 400 — for a model alias it will not
+> serve.** So an unavailable model is indistinguishable from a dead key by
+> status code alone, and `{"error":"Unauthorized"}` arriving on three keys at
+> once reads exactly like a revocation. It was not one.
+>
+> **What actually settled it:** `GET /models` with the same key returns 200 and
+> a full catalogue. A key that can list models is not an unauthorised key. That
+> one extra call — same credential, nothing else in common — separated the two
+> explanations, and I should have made it before writing this entry rather than
+> after.
+>
+> **The correction I owe:** I reported this to the founder as a credential
+> blocker and queued it as one. It was a configuration bug in our own code, of
+> the kind this queue is explicitly not for. The lesson is recorded in
+> `inferx.ts` beside the constant: when an endpoint says Unauthorized, prove it
+> with a second call that needs the same credential and nothing else.
+>
+> The model id now lives in `INFERX_MODEL` (`.env`), defaulting to the working
+> alias, so the next catalogue change is a config edit rather than an outage.
+> Enrichment resumed immediately on the same three keys.

@@ -28,7 +28,7 @@
 import { createHash } from 'node:crypto';
 
 export const PROMPT_VERSION = 'v1';
-export const ENRICH_MODEL = 'deepseek-v4-flash';
+export const ENRICH_MODEL = process.env['INFERX_MODEL'] ?? 'deepseek-v4-flash-0731';
 
 export type EnrichTask = 'citation_extraction' | 'metadata' | 'treatment';
 

@@ -95,7 +95,26 @@ export type InferxDeps = {
 };
 
 const DEFAULT_BASE_URL = 'https://model.inferx.net/endpoints/v1';
-const DEFAULT_MODEL = 'deepseek-v4-flash';
+/**
+ * **`deepseek-v4-flash` IS LISTED BY `/models` AND ANSWERS 401 ON EVERY CHAT
+ * REQUEST. `deepseek-v4-flash-0731` works.**
+ *
+ * This cost hours and a wrong entry in the founder queue. When all three grants
+ * began returning `{"error":"Unauthorized"}` mid-run, the obvious reading was
+ * that the credentials had been revoked — the keys had worked minutes earlier,
+ * and 401 is an auth status. It was not auth. `GET /models` with the same key
+ * returns 200 and a catalogue, which is what finally separated the two: a key
+ * that can list models is not an unauthorised key.
+ *
+ * inferx.net returns **401, not 404 or 400, for a model alias it will not
+ * serve** — so an unavailable model is indistinguishable from a dead key by
+ * status code alone. The lesson recorded here rather than in a commit message
+ * nobody will re-read: when an endpoint says Unauthorized, prove it with a
+ * second call that needs the same credential and nothing else.
+ *
+ * Overridable via `INFERX_MODEL` so the next alias change is a config edit.
+ */
+const DEFAULT_MODEL = process.env['INFERX_MODEL'] ?? 'deepseek-v4-flash-0731';
 /**
  * `MODEL_STRATEGY.md` §5: DeepSeek V4 Flash emits reasoning tokens, and a
  * budget too small returns `finish_reason: "length"` with EMPTY content — a
