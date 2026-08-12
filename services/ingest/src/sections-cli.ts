@@ -40,9 +40,34 @@ try {
     first_offset: number;
   }[] = [];
 
-  for (let offset = 0; offset < total; offset += PAGE) {
+  /**
+   * KEYSET PAGINATION AND RESUME, because both assumptions this loop was built
+   * on have stopped holding.
+   *
+   * It walked with `LIMIT ... OFFSET`, which is only stable against a table
+   * nobody is writing to. NEW2 now runs ten ingest workers and the corpus has
+   * gone from ~79,000 rows to 592,027 while this session was open — under
+   * concurrent insert an OFFSET walk re-reads some rows and silently skips
+   * others, which for an extraction pass means missing documents nobody can
+   * identify afterwards.
+   *
+   * It also rescanned the whole corpus every run. At 25,466 of 592,027
+   * documents already carrying refs (4.3%), rescanning all of them to find the
+   * 95.7% that need work is most of the cost for none of the benefit.
+   *
+   * `--resume` skips documents that already have a statute reference. Without
+   * it the walk covers everything, which is what a changed extractor needs.
+   */
+  const RESUME = process.argv.includes('--resume');
+  let cursor = '00000000-0000-0000-0000-000000000000';
+  for (;;) {
     const page = await sql<{ id: string; full_text: string }[]>`
-      SELECT id, full_text FROM judgments ORDER BY id LIMIT ${PAGE} OFFSET ${offset}`;
+      SELECT id, full_text FROM judgments
+      WHERE id > ${cursor}::uuid
+        ${RESUME ? sql`AND NOT EXISTS (SELECT 1 FROM judgment_statute_refs r WHERE r.judgment_id = judgments.id)` : sql``}
+      ORDER BY id LIMIT ${PAGE}`;
+    if (page.length === 0) break;
+    cursor = page[page.length - 1]!.id;
 
     for (const j of page) {
       scanned++;

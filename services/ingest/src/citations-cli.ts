@@ -231,7 +231,16 @@ async function main(): Promise<void> {
   const batchSize = arg('--batch', 200);
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
-  const sql = postgres(url, { max: 2, ssl: 'require' });
+  /**
+   * `connect_timeout` and an idle-disabled pool, because this pass died once at
+   * 115,500 of 377,526 documents with "Detected unsettled top-level await" --
+   * a query that never settled against the shared Railway proxy, with no
+   * timeout to turn the hang into a retryable error. Nothing was lost (the
+   * resume query picks up documents with no citation rows, so a restart re-pays
+   * nothing), but a worker that stops silently is not resumable in the sense
+   * that matters.
+   */
+  const sql = postgres(url, { max: 2, ssl: 'require', connect_timeout: 120, idle_timeout: 0 });
 
   try {
     if (process.argv.includes('--rescan')) {
