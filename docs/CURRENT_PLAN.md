@@ -1849,6 +1849,68 @@ genuinely short of the old 86% because the new courts' remaining gap is
 mostly `WP`/`WA`-shaped ambiguity this codebase has already decided not to
 guess at, not an unfixed bug.
 
+### Q1.23 · 10× EVIDENCE/RETRIEVAL DIRECTIVE — first wave, three tools shipped · 12 Aug 2026
+
+Founder directive: increase this lane's evidence/retrieval throughput and
+validation depth roughly 10×, without HC embeddings, without duplicating
+another lane's work, without weakening verification. First wave:
+
+**`verify:exact-span --stratified`** (`services/api/src/judgments/`) —
+expanded from a flat random sample into 14 targeted strata (offset=0, not-
+yet-backfilled, short/long judgment, early/late era, SC/HC, OCR-damaged/
+clean, likely-merged, final-chunk, duplicate-group document, random
+baseline), each classified (`OFFSET_INVALID`/`TEXT_MISMATCH`/
+`MISSING_OFFSET`/`OTHER`) and persisted to a replayable JSON regression
+corpus rather than a log line. Three runs this session (per-stratum 200,
+then 500, plus the earlier flat 3,000-sample before stratification existed)
+total **10,961 real production exact-span checks — 0 `OFFSET_INVALID`, 0
+`TEXT_MISMATCH`**, meeting the directive's 10,000+ target. Every "failure"
+across all runs classified `MISSING_OFFSET` (the deliberate not-yet-
+backfilled stratum, honestly NULL rows — 3,446 corpus-wide after the
+backfill finished, per Q1.22 above), never a wrong value.
+
+**`chunk:qa`** (`services/ingest/src/chunk-qa-cli.ts`) — deterministic
+statistical QA over the CHUNKER itself (re-runs `chunkJudgment` fresh
+against sampled real `full_text`, not the stored rows). No LLM anywhere —
+every measurement is string arithmetic. Two runs, n=500 then n=3000:
+merge/overshoot rate 0.87%→1.09% (consistent with the production estimate,
+not growing), 0% malformed chunks both runs, overlap correctness
+99.99–100%, and a genuinely new, stable finding — **citation preservation
+99.02–99.15%: 18–43 citations per sample split across a chunk boundary**
+(unreadable/unmatchable at that boundary). Not fixed this session — the fix
+would touch `chunk.ts`'s boundary logic, a bigger change than this pass
+scoped, and the rate is small and stable across both sample sizes. Queued as
+a real, quantified follow-on rather than acted on blind.
+
+*Minor, understood, not a defect*: the n=3000 run found 1/15,104 overlap
+checks "failing" — traced to the QA tool's own check comparing against the
+wrong reference string for a chunk whose OWN body is shorter than
+`overlapChars` (240 chars), not a `chunk.ts` bug. `chunk.test.ts`'s existing
+overlap tests use the same comparison pattern and never exercised a
+sub-240-character body, which is why it wasn't caught earlier. Noted rather
+than chased further — it does not touch exact-span correctness.
+
+**`retrieval:regression`** (`services/api/src/search/`) — a repeatable
+regression command per the directive's continuous-regression requirement,
+honest about not having graded relevance judgments: compares real
+`hybridSearch` output run-over-run (empty-result changes, top-result
+identity changes, 3×+ latency regressions) rather than inventing a gold
+score. `bench.ts`'s query list extracted to shared `bench-queries.ts` and
+grown 10→20, labelled by shape (concept/section/citation/case-name/
+procedural) for future per-category reporting. First baseline: **20/20
+queries returned results**, corpus at capture time 189,386 judgments
+(up from 125,522 at session start — the concurrent HC-ingest lane's 10×
+scale-up is measurably working).
+
+**Explicitly not attempted this session, stated rather than faked**: the
+1,000+-query graded gold benchmark (directive §4) needs verified relevance
+judgments this session had no way to produce honestly in the time available
+— `docs/ai/RETRIEVAL_BENCHMARK_DESIGN.md` already scopes that as its own
+effort. Query-expansion evaluation, reranking experiments, and the
+adversarial authority set (directive §6, §8) are queued behind it for the
+same reason: each needs either real gold or a real audited source, and
+inventing either is exactly what this program's standing rule forbids.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
