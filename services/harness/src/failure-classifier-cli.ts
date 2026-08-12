@@ -32,7 +32,7 @@
  * emptiness is itself the finding: the acquisition queue has nothing
  * legitimate to receive from this session's evidence.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import postgres from 'postgres';
@@ -83,6 +83,27 @@ type New3QueueEntry = {
   foundAt: string;
 };
 
+/**
+ * Wall-clock budget for one query's embed+retrieve. Not tuned against a
+ * measurement -- a generous ceiling whose only job is to turn a genuinely
+ * stuck query (a starved DB-proxy connection under five-lane load,
+ * `docs/LANE_PROTOCOL.md` §5) into a visible, skippable failure instead of
+ * an opaque hang nobody can distinguish from "still working." The first run
+ * of this tool stalled silently for 30+ minutes with zero progress output
+ * and had to be killed blind -- this and the checkpoint below exist because
+ * of that, not in the abstract.
+ */
+const QUERY_TIMEOUT_MS = 30_000;
+
+function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`timeout after ${ms}ms: ${label}`)), ms)),
+  ]);
+}
+
+const CHECKPOINT_PATH = new URL('../../../failure-classify-checkpoint.jsonl', import.meta.url);
+
 async function main(): Promise<void> {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
@@ -97,68 +118,118 @@ async function main(): Promise<void> {
   const byId = new Map(queries.map((q) => [q.id, q]));
   const unique = [...byId.values()];
 
+  // Resumable: a checkpoint line is written after EVERY query (not batched),
+  // so a killed or crashed run picks up at the next unprocessed id rather
+  // than re-spending 30 minutes of DB load repeating work already done --
+  // docs/LANE_PROTOCOL.md's "checkpoint everything" rule, taken literally.
+  const already = new Map<string, Classification>();
+  if (existsSync(CHECKPOINT_PATH)) {
+    for (const line of readFileSync(CHECKPOINT_PATH, 'utf8').split('\n')) {
+      if (!line.trim()) continue;
+      const c = JSON.parse(line) as Classification;
+      already.set(c.queryId, c);
+    }
+  }
+  const pending = unique.filter((q) => !already.has(q.id));
+
   console.log('RETRIEVAL FAILURE CLASSIFICATION');
   console.log('='.repeat(78));
-  console.log(`${unique.length} real gold queries, depth=${depth}`);
+  console.log(
+    `${unique.length} real gold queries, depth=${depth}, ` +
+      `${already.size} already checkpointed, ${pending.length} pending`,
+  );
 
   const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require' });
   try {
     const embedder = await getEmbedder();
-    const results: Classification[] = [];
+    const results: Classification[] = [...already.values()];
+    let timedOut = 0;
 
-    for (const q of unique) {
+    let done = 0;
+    const startedAt = Date.now();
+    for (const q of pending) {
+      done++;
       if (!q.query || q.goldJudgmentIds.length === 0) continue;
-      const [embedded] = await embedder.embed([q.query]);
-      const vector = embedded ? toVectorLiteral(embedded.vector) : null;
-      const excluded = q.provenance?.citingJudgmentId
-        ? new Set([q.provenance.citingJudgmentId])
-        : new Set<string>();
 
-      const raw = await hybridSearch(sql, q.query, vector, {}, depth + excluded.size);
-      const retrieved = raw.filter((r) => !excluded.has(r.judgmentId)).slice(0, depth);
+      let classification: Classification;
+      try {
+        const [embedded] = await withTimeout(embedder.embed([q.query]), QUERY_TIMEOUT_MS, `embed ${q.id}`);
+        const vector = embedded ? toVectorLiteral(embedded.vector) : null;
+        const excluded = q.provenance?.citingJudgmentId
+          ? new Set([q.provenance.citingJudgmentId])
+          : new Set<string>();
 
-      let rank: number | null = null;
-      let match: RetrievedJudgment | undefined;
-      for (let i = 0; i < retrieved.length; i++) {
-        if (q.goldJudgmentIds.includes(retrieved[i]!.judgmentId)) {
-          rank = i + 1;
-          match = retrieved[i];
-          break;
+        const raw = await withTimeout(
+          hybridSearch(sql, q.query, vector, {}, depth + excluded.size),
+          QUERY_TIMEOUT_MS,
+          `search ${q.id}`,
+        );
+        const retrieved = raw.filter((r) => !excluded.has(r.judgmentId)).slice(0, depth);
+
+        let rank: number | null = null;
+        let match: RetrievedJudgment | undefined;
+        for (let i = 0; i < retrieved.length; i++) {
+          if (q.goldJudgmentIds.includes(retrieved[i]!.judgmentId)) {
+            rank = i + 1;
+            match = retrieved[i];
+            break;
+          }
         }
+
+        let primary: FailureClass;
+        if (rank === null) {
+          // Gold is definitionally held (drawn from this corpus's own citation
+          // edges) -- so a miss at this depth is a RECALL problem, never an
+          // acquisition one. See the module docstring for why NO_AUTHORITY_FOUND
+          // cannot fire here.
+          primary = 'AUTHORITY_HELD_BUT_NOT_RETRIEVED';
+        } else if (rank <= 5) {
+          primary = 'SUCCESS';
+        } else {
+          primary = 'AUTHORITY_RETRIEVED_BUT_BADLY_RANKED';
+        }
+
+        const secondary: SecondaryFlag[] = [];
+        if (match) {
+          if (match.operativeParagraph.trim().length === 0 || match.operativeParagraphNumber === null) {
+            secondary.push('EVIDENCE_WRONG');
+          }
+          if (match.neutralCitation === null && match.reporterCitations.length === 0) {
+            secondary.push('CITATION_UNRESOLVED');
+          }
+        }
+
+        classification = {
+          queryId: q.id,
+          group: q.group,
+          query: q.query,
+          goldJudgmentIds: q.goldJudgmentIds,
+          primary,
+          rank,
+          secondary,
+        };
+      } catch (err) {
+        timedOut++;
+        console.log(
+          `[${done}/${pending.length}] ${q.id.padEnd(20)} TIMED OUT/FAILED after ${QUERY_TIMEOUT_MS}ms: ` +
+            `${(err as Error).message} -- checkpointed as skipped, will retry on next run`,
+        );
+        // Not checkpointed as a Classification: a timeout is not a
+        // measurement, and writing one in would make a future re-run treat
+        // a stuck query as permanently resolved instead of retrying it.
+        continue;
       }
 
-      let primary: FailureClass;
-      if (rank === null) {
-        // Gold is definitionally held (drawn from this corpus's own citation
-        // edges) -- so a miss at this depth is a RECALL problem, never an
-        // acquisition one. See the module docstring for why NO_AUTHORITY_FOUND
-        // cannot fire here.
-        primary = 'AUTHORITY_HELD_BUT_NOT_RETRIEVED';
-      } else if (rank <= 5) {
-        primary = 'SUCCESS';
-      } else {
-        primary = 'AUTHORITY_RETRIEVED_BUT_BADLY_RANKED';
-      }
-
-      const secondary: SecondaryFlag[] = [];
-      if (match) {
-        if (match.operativeParagraph.trim().length === 0 || match.operativeParagraphNumber === null) {
-          secondary.push('EVIDENCE_WRONG');
-        }
-        if (match.neutralCitation === null && match.reporterCitations.length === 0) {
-          secondary.push('CITATION_UNRESOLVED');
-        }
-      }
-
-      results.push({
-        queryId: q.id,
-        group: q.group,
-        query: q.query,
-        goldJudgmentIds: q.goldJudgmentIds,
-        primary,
-        rank,
-        secondary,
-      });
+      results.push(classification);
+      appendFileSync(CHECKPOINT_PATH, JSON.stringify(classification) + '\n');
+      const elapsed = ((Date.now() - startedAt) / 1000).toFixed(0);
+      console.log(
+        `[${done}/${pending.length}] ${q.id.padEnd(20)} ${classification.primary.padEnd(32)} ` +
+          `rank=${classification.rank ?? '-'} elapsed=${elapsed}s`,
+      );
+    }
+    if (timedOut > 0) {
+      console.log(`\n${timedOut} quer${timedOut === 1 ? 'y' : 'ies'} timed out or failed -- re-run this command to retry only those.`);
     }
 
     // TEXT_QUALITY_BAD: a second pass, batched, only for queries that found a
