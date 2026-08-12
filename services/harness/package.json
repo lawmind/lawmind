@@ -14,7 +14,8 @@
     "arms": "tsx src/arms-cli.ts",
     "citator": "tsx src/citator-report.ts",
     "deployed-safety": "tsx src/deployed-safety-cli.ts",
-    "deployed-judgment-safety": "tsx src/deployed-judgment-safety-cli.ts"
+    "deployed-judgment-safety": "tsx src/deployed-judgment-safety-cli.ts",
+    "failure:classify": "tsx src/failure-classifier-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
