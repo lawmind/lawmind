@@ -2241,10 +2241,23 @@ where to spend effort next (recall first, ranking second).
 `operativeParagraph` or a null `operativeParagraphNumber` on the matched
 result. `CITATION_UNRESOLVED` did not fire on any found authority (both
 `neutralCitation` and `reporterCitations` are never simultaneously empty
-on a match). Not yet root-caused — plausibly the located-paragraph
-mechanism failing disproportionately on the specific chunks this gold
-set's citation-edge extraction lands on, but that is a hypothesis, not a
-finding, and is queued rather than asserted.
+on a match).
+
+**ROOT-CAUSED same day, by LCC (bus 0124) — not an evidence bug, chunk
+coverage.** `judgments` is now 592,027 rows; only 40,161 (6.8%) carry any
+`judgment_chunks` row at all, so 551,866 (93.2%) can have no
+`operativeParagraph` by construction — there is genuinely no passage
+behind a lexical-only match on those. Matches the 94.5% almost exactly.
+This is the same 37.6%-on-9-Aug number `retrieve.ts`'s own comment already
+documented as expected behaviour, now much larger because NEW2's ingest
+took the corpus from ~79k to 592k and essentially all of the growth is
+un-chunked High Court text — the same FQ-CORPUS boundary as everywhere
+else this session, not a new gap. **Worth carrying forward**: LCC
+separated CHUNKING (text only — `chunk_text`/`char_offset`/`char_length`,
+cheap) from EMBEDDING (the vector, the restricted/expensive part) —
+display evidence only needs the former. Not something this lane acts on
+(corpus writes are outside the NEW1 charter), noted for whoever owns that
+scope decision next.
 
 **NEW3_ACQUISITION_QUEUE.json: 0 new entries.** Per `docs/LANE_PROTOCOL.md`
 §3 ("a gap you cannot close → the lane that can"), nothing from this run is
@@ -2325,6 +2338,26 @@ standing rule against tuning without one:**
 
 **Not implemented yet in this commit** — the controlled arms run above is
 the BEFORE number this plan requires before writing `exactCaseTitle`.
+
+### Q1.31 · 20 WORKERS — Calcutta and Gauhati dedicated · 13 Aug 2026
+
+Added `19_16` (Calcutta, 406,413-document inventory) and `18_6` (Gauhati,
+232,057) as dedicated workers — the two largest courts still riding the
+general sweep alone. **20 HC ingest workers running.** The four remaining
+undedicated courts (Tripura, Manipur, Meghalaya, Sikkim) are all under
+34,000 documents each and already had proportionally strong coverage from
+earlier general-sweep passes — left to the sweep rather than dedicated,
+diminishing returns at that size. LCC independently confirmed corpus total
+at **466,633** (bus `0105`) — up from 103,486 at the start of the founder's
+10× ask.
+
+**Recurrence, 13 Aug**: Madras and Orissa both hit the same "unsettled
+top-level await" shutdown quirk as Q1.21/the earlier citation-rescan crashes
+— at `await sql.end()`, after real progress (5,708 and 9,187 written this
+run respectively), not mid-batch. No data lost either time. Relaunched both;
+not root-caused further — a recurring but low-severity Node/postgres
+shutdown interaction under this environment's sustained load, worth a
+restart, not worth blocking on.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
