@@ -56,6 +56,26 @@ const arg = (name: string, fallback: string): string => {
 };
 const LIMIT = Number(arg('limit', '50'));
 const COURT = arg('court', 'Bombay High Court');
+/**
+ * `corrupt` — only rewrite documents `text-corruption.ts` condemns. That
+ *   detector fires on SEVERE damage (a third of tokens reduced to single
+ *   letters), which found 2,403 broken Bombay judgments and 0.00% elsewhere.
+ *
+ * `gain` — rewrite whenever poppler returns materially MORE text, whether or
+ *   not the stored text looks corrupt. This exists because the detector's clean
+ *   bill of health was a measurement artefact: `extract-audit-cli.ts` compared
+ *   lengths directly and found **Allahabad losing 18.1% of its text across
+ *   10 of 10 sampled documents**, none of which the detector flags. A document
+ *   dropping one glyph in twenty reads fine, scores clean, and is still missing
+ *   text.
+ *
+ * The same audit found the opposite at Punjab and Haryana — poppler returns
+ * **54% LESS** there — which is why "never shorter" is enforced in both modes
+ * and why this runs per court rather than corpus-wide.
+ */
+const MODE = arg('mode', 'corrupt') as 'corrupt' | 'gain';
+/** In `gain` mode, the percentage more text poppler must return to be worth rewriting. */
+const MIN_GAIN = Number(arg('min-gain', '10')) / 100;
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!dbUrl) {
@@ -95,7 +115,7 @@ function pdftotext(bytes: Uint8Array): string {
 
 console.log('RE-EXTRACTION — poppler pdftotext over corrupt documents');
 console.log('='.repeat(74));
-console.log(`court "${COURT}" · limit ${LIMIT} · ${APPLY ? 'APPLY (will write full_text)' : 'DRY RUN'}`);
+console.log(`court "${COURT}" · mode ${MODE} · limit ${LIMIT} · ${APPLY ? "APPLY (will write full_text)" : "DRY RUN"}`);
 
 const rows = await withDbRetry(
   'select',
@@ -111,14 +131,15 @@ let corrupt = 0;
 let repaired = 0;
 let refusedStillCorrupt = 0;
 let refusedShorter = 0;
+let refusedNoGain = 0;
 let fetchFailed = 0;
 const started = Date.now();
 
 for (const row of rows) {
-  if (repaired + refusedStillCorrupt + refusedShorter + fetchFailed >= LIMIT) break;
+  if (repaired + refusedStillCorrupt + refusedShorter + refusedNoGain + fetchFailed >= LIMIT) break;
   const before = classifyCorruption(row.fullText);
   examined++;
-  if (!before?.corrupt) continue;
+  if (MODE === 'corrupt' && !before?.corrupt) continue;
   corrupt++;
 
   let text: string;
@@ -143,18 +164,28 @@ for (const row of rows) {
   /**
    * A shorter result is a worse result even when it scores clean — losing
    * pages to a parser quirk is a silent corpus loss, and the whole point here
-   * is to stop losing text.
+   * is to stop losing text. Punjab and Haryana is the live example: poppler
+   * returns 54% less there, and without this guard a "repair" pass would have
+   * deleted half that court.
    */
   if (text.length < row.fullText.length) {
     refusedShorter++;
     console.log(`  refused shorter ${label} ${row.fullText.length} -> ${text.length} chars`);
     continue;
   }
+  /**
+   * In `gain` mode the stored text is not corrupt, so rewriting it must earn
+   * its place: a few percent is whitespace handling, not recovered content.
+   */
+  if (MODE === 'gain' && text.length < row.fullText.length * (1 + MIN_GAIN)) {
+    refusedNoGain++;
+    continue;
+  }
 
   repaired++;
   console.log(
     `  REPAIRED        ${label} ${row.fullText.length} -> ${text.length} chars ` +
-      `(single ${before.signals.singleCharRatio.toFixed(2)} -> ${after.signals.singleCharRatio.toFixed(2)})`,
+      `(single ${before?.signals.singleCharRatio.toFixed(2) ?? 'n/a'} -> ${after.signals.singleCharRatio.toFixed(2)})`,
   );
   if (APPLY) {
     await withDbRetry(
@@ -172,6 +203,7 @@ console.log(`corrupt found       ${corrupt}`);
 console.log(`REPAIRED            ${repaired}${APPLY ? ' (written)' : ' (dry run — nothing written)'}`);
 console.log(`refused still corrupt ${refusedStillCorrupt}`);
 console.log(`refused shorter     ${refusedShorter}`);
+console.log(`refused no gain     ${refusedNoGain}`);
 console.log(`fetch failed        ${fetchFailed}`);
 const attempted = repaired + refusedStillCorrupt + refusedShorter;
 console.log(
