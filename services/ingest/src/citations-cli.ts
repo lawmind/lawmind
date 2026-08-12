@@ -252,10 +252,32 @@ async function main(): Promise<void> {
     const index = await buildIndex(sql);
 
     // --- the queue ------------------------------------------------------------
+    /**
+     * ORDERED BY WHERE CITATIONS ACTUALLY ARE, not by date.
+     *
+     * This was `ORDER BY judgment_date DESC`, which sounds sensible and is the
+     * wrong end of the corpus. The ingest is currently loading 2026 High Court
+     * documents, and those are overwhelmingly bail orders and procedural
+     * disposals — measured, `hc_document_class`: 57,876 bail orders and 20,641
+     * procedural disposals against 39,914 reasoned decisions.
+     *
+     * The consequence was visible and expensive: **8,100 consecutive documents
+     * yielded edges=0**. Nothing was broken — the extractor was checked directly
+     * against the same population and found citations in 5 of 8 documents that
+     * contain "SCC" — the pass was simply spending its time on the documents
+     * least likely to cite anything.
+     *
+     * So substantive decisions come first, then everything unclassified (which
+     * includes every newly ingested document and must not be starved), then the
+     * bail orders and adjournments last. Within a tier, newest first.
+     */
     const pending = await sql<{ id: string }[]>`
       SELECT j.id FROM judgments j
       WHERE NOT EXISTS (SELECT 1 FROM judgment_citations c WHERE c.citing_judgment_id = j.id)
-      ORDER BY j.judgment_date DESC
+      ORDER BY
+        (j.hc_document_class IN ('bail_order', 'procedural_disposal', 'reference_stub')) ASC,
+        (j.hc_document_class IN ('decided', 'decided_brief')) DESC,
+        j.judgment_date DESC
       LIMIT ${limit}
     `;
     console.log(`judgments needing extraction: ${pending.length.toLocaleString()}`);
