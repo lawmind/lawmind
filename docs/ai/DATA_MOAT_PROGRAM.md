@@ -88,6 +88,78 @@ span that cannot be located is not evidence.
 
 ---
 
+## 2b · THE BIGGEST DATA WIN OF THE DAY WAS NOT A MODEL — it was the PDF extractor
+
+**Found by asking why the corruption scan kept firing.** It needed no InferX
+key, no GPU and no tokens, and it recovered more usable text than every model
+call in this document combined.
+
+**We are not running OCR anywhere.** There is no Tesseract, Paddle or OCR
+service in the repository. `fetchPdfText` reads the PDF's own embedded text
+layer via `unpdf`. So "our OCR is bad" was never the diagnosis, and looking for
+a better OCR engine would have been the wrong move.
+
+**The failure is systematic character DROPPING by the text-layer extractor:**
+
+| stored | truth |
+| --- | --- |
+| `voc te for t e etitio e` | *advocate for the petitioner* |
+| `he S a e f aharash ra` | *The State of Maharashtra* |
+| `B MB Y B B niru h Subash aik` | *BOMBAY … Anirudh Subash Naik* |
+
+Those PDFs embed **subsetted fonts with an incomplete glyph→Unicode map**, and
+`unpdf` silently discards every glyph it cannot resolve.
+
+**Poppler's `pdftotext` resolves the same fonts correctly, and was already
+installed.** On the first 30 corrupt documents: **30 of 30 repaired**,
+single-character-token ratio falling 0.33–0.50 → 0.02–0.09, and the text
+**roughly doubling** (294→582, 1286→2498, 1930→2938 characters). We were not
+merely garbling those judgments — we were losing about half of each one.
+
+### The severe population, and the one that hid behind a clean score
+
+`text-corruption.ts` only fires on severe damage, which found Bombay and
+declared everywhere else clean. **That clean bill of health was a measurement
+artefact**, so `extract-audit-cli.ts` stopped trusting the detector and compared
+extraction *lengths* directly, per court:
+
+| court | poppler vs stored |
+| --- | --- |
+| **Allahabad High Court** | **+18.1%** — 10 of 10 sampled documents bigger |
+| High Court of Madhya Pradesh | +9.3% |
+| High Court of Manipur | +7.6% |
+| Bombay High Court | +7.1% (plus the 37% that are severely broken) |
+| High Court of Kerala | +6.0% |
+| **High Court of Punjab and Haryana** | **−54.0%** — 7 of 10 **smaller** |
+
+**Allahabad is the largest court in India by filing volume and we were
+discarding roughly a fifth of every judgment we hold from it** — text we already
+had and never extracted, not data anyone needs to acquire.
+
+**Punjab and Haryana is why this is not a blind switch.** Poppler returns 54%
+*less* there. A naive "poppler is better" migration would have deleted half that
+court. The `never shorter` guard refuses it, the audit runs per court, and
+`unpdf` remains the primary extractor everywhere.
+
+### What was done
+
+- **`fetchPdfText` now falls back to poppler** when `unpdf` returns text that
+  fails the corruption check — so newly ingested documents stop arriving broken.
+  The High Court ingest was running at the time and still adding them. If
+  `pdftotext` is absent the fallback is skipped and the original text returned,
+  degrading to previous behaviour rather than failing an ingest.
+- **`reextract-cli.ts`** repairs what is already stored, in two modes:
+  `corrupt` (severe) and `gain` (materially more text, default +10%). A row is
+  rewritten only when the result is clean AND not shorter. Dry by default.
+
+**Consequence still outstanding:** every repaired document must have its
+citations re-extracted, because the citations in the recovered half were
+unreadable when the citation pass first ran. `citations --rescan` is the
+existing tool for exactly this — it re-reads every judgment and inserts only
+what is new.
+
+---
+
 ## 3 · STAGE A · OCR / TEXT QUALITY — **DO NOT SPEND**
 
 `text_quality` is populated on all 79,322 rows and **cannot detect OCR
