@@ -1668,6 +1668,29 @@ backfill (bounded to chunks that already exist, not at risk of the FQ-CORPUS
 conflict) continues running. The GPU embed job stays stopped pending the
 founder's call.
 
+**CLOSED, verified by observation, not inferred from the log.** The backfill
+finished: `pnpm --filter @lawmind/embed run backfill:offsets` processed all
+11,351 remaining judgments. Independently re-queried production directly
+(not trusted from the run's own printed summary):
+
+| | |
+| --- | --- |
+| `judgment_chunks` total | 620,300 |
+| carrying a verified `char_offset` | **616,854 (99.44%)** |
+| honestly NULL (self-check failed or chunk-count changed since embed) | 3,446 (0.56%) |
+| bug #1 signature (`char_offset=0, chunk_index>0`) table-wide | **0** |
+| bug #2 signature (offset+length overshoot) table-wide | **0** |
+
+`DONE:` a retrieval result carries the paragraph and the exact span it rests
+on (Stage 13's own criterion, `docs/ai/STAGES_9_20_PLAN.md` §13).
+`VERIFY:` a returned span appears verbatim in the judgment's own text —
+confirmed at 5,000+ real production checks across this session (a flat
+3,000-sample plus a 2,230-check stratified sweep spanning offset=0, final-
+chunk, duplicate-group, OCR-damaged, long/short, and early/late-era rows),
+zero `OFFSET_INVALID`, zero `TEXT_MISMATCH`. `verify:exact-span --stratified`
+(`services/api/src/judgments/verify-exact-span-cli.ts`) stays in the repo as
+a repeatable check, not a one-off.
+
 ### Q1.22 · THE 10× PLAN — founder asked for a strategy before scaling, here it is · 12 Aug 2026
 
 **Target: ~1,034,860 HC documents, 10× the 103,486 held at the time of the
@@ -1794,6 +1817,37 @@ operates under (`FQ-CORPUS`); one would only exist if embeddings did.
 (`FOUNDER_QUEUE.md`, decided 11 Aug 2026): *"ingest High Court documents as
 searchable text behind the coverage screen, no embeddings for now."* Nothing
 in this session overrides that, so nothing here embeds anything.
+
+### Q1.26 · CLASSIFICATION FIXED, VERIFIED AGAINST REAL TEXT, BACKFILLED · 12 Aug 2026
+
+**Classification fell 86% → 45.9% the moment the 10× scale-up (Q1.24) added
+six more courts — a real signal, chased rather than shrugged off.** Sampled
+the new courts' unclassified prefixes: dominated by genuinely ambiguous ones
+already correctly left null (`WP`, `WA` — the code's own stated design), but
+`CRLMB`/`CRLMP`/`CRLW`/`CRLRP` (Rajasthan, Karnataka) stood out as a pattern
+the exact-match dictionary had never seen.
+
+**Verified against real text before writing any code** — the same bar the
+existing dictionary entries carry (*"observed, Patna 2024"*): pulled eleven
+real records across both courts, every one prints *"Criminal Miscellaneous
+Bail Application"* or *"Criminal Writ Petition"* in its own header, party
+described as *"Accused-Petitioner."*
+
+**Fixed as a substring rule (`prefix.includes('CRL')`), not another
+exact-match entry** — whack-a-moling every court's own `CRL`-compound is the
+same fix repeated forever. Safe from the one named trap in this function
+(`CRP`, Civil Revision Petition, begins `CR` but not `CRL`) because it is
+three letters, not two; test added asserting `CRP` still resolves `civil`.
+39 tests green, `tsc` clean.
+
+**Backfilled onto rows already ingested**, not left for new writes only:
+`backfill-case-type-cli.ts`, dry-run by default, pure and additive (never
+overwrites an existing classification, reuses `caseTypeFrom` rather than
+reimplementing it). Dry run matched the applied run's count exactly.
+**7,722 rows reclassified.** Classification now **50.4%** — up from 45.9%,
+genuinely short of the old 86% because the new courts' remaining gap is
+mostly `WP`/`WA`-shaped ambiguity this codebase has already decided not to
+guess at, not an unfixed bug.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
