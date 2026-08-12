@@ -1941,6 +1941,50 @@ chased — the cause (older/rare-vocabulary titles losing to more common terms
 in the lexical ranker, a corpus that grew from 125,522 to 189,386 mid-session
 diluting exact-title matches, or something else) is not yet diagnosed.
 
+### Q1.25 · A REAL LEXICAL-RANKING GAP, TRACED TO ROOT CAUSE, NOT FIXED · 12 Aug 2026
+
+Following up the recall gap Q1.24 flagged (24/81 overruled cases not found in
+top 10 for their own case title): built a targeted diagnostic
+(`services/api/src/search/_scratch_trace_one_miss.ts`, scratch — not
+committed, the finding below is) and traced ONE case rigorously rather than
+pattern-matching across log lines.
+
+**`S. N. DUTT versus UNION OF INDIA`** (a real 1961 Supreme Court judgment,
+confirmed present in the corpus by direct row lookup) does not appear in the
+sparse ranker's top 50 when searched by its OWN exact title. Traced why:
+
+1. `plainto_tsquery('english', 'S. N. DUTT versus UNION OF INDIA')` produces
+   `'n' & 'dutt' & 'versus' & 'union' & 'india'` — 45 judgments contain all
+   five lexemes.
+2. `full_text_tsv` is `GENERATED ALWAYS AS to_tsvector('english', full_text)`
+   (`docs/SCHEMA_TRUTH.md` §judgments) — **one tsvector, no weight class**.
+   `case_title` is a separate column, never indexed with elevated weight.
+3. `dutt` — the one genuinely discriminating token, the party's own surname —
+   appears exactly once in the target judgment (the heading). `union`,
+   `india`, `versus` are common party-reference boilerplate that a long
+   judgment repeats dozens of times discussing the government as a litigant.
+4. `ts_rank` scores by term frequency. A document that says "Union of India"
+   forty times outranks the one document where "Dutt" is the actual party,
+   because raw frequency cannot tell a heading token from an incidental one.
+
+**This is real and structural, not a corpus-growth artefact** — the
+mechanism would reproduce at any corpus size; a bigger corpus only supplies
+more candidate documents to outrank the target with.
+
+**Not fixed this session, deliberately.** `full_text_tsv` is a stored
+generated column read by every production search query; changing its
+definition is a schema migration touching the corpus-wide index used live,
+right now — a different risk class from the chunk.ts fixes above, and this
+session already carries two of those. The safer shape, not yet built:
+an ADDITIVE ranking signal — `judgments.case_title` similarity, applied as
+a rank boost or pin (the same architectural pattern `exactCitation()`
+already uses for citation-shaped queries in `retrieve.ts`) — rather than
+touching the tsvector generation `full_text_tsv` itself. **Directive's own
+words apply exactly**: *"Do not change ranking weights merely to improve
+one benchmark. Every change must be measured against a fixed regression
+set"* — `retrieval:regression`'s baseline (this session) is the tool to
+measure it with, before and after, when this is picked up.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
