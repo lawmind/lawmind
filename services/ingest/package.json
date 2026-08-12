@@ -34,7 +34,8 @@
     "concordance": "tsx src/concordance-cli.ts",
     "concordance:gold": "tsx src/concordance-gold-cli.ts",
     "concordance:adjudicate": "tsx src/concordance-adjudicate-cli.ts",
-    "concordance:internal": "tsx src/internal-concordance-cli.ts"
+    "concordance:internal": "tsx src/internal-concordance-cli.ts",
+    "chunk:qa": "tsx src/chunk-qa-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",
