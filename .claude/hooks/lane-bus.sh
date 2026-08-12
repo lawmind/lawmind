@@ -76,7 +76,7 @@ BIND_FILE=""
 if [ -n "$SESSION_ID" ]; then
   BIND_FILE="${BUS}/.lane-${SESSION_ID}"
   case "$LANE" in
-    LCC | RCC) ;;
+    LCC | RCC | NEW1 | NEW2 | NEW3) ;;
     *)
       if [ -f "$BIND_FILE" ]; then
         LANE="$(tr -cd 'A-Za-z' < "$BIND_FILE" | tr '[:lower:]' '[:upper:]')"
@@ -88,18 +88,26 @@ fi
 # No lane, no delivery — but say how to fix it rather than going quiet, because
 # the silent version of this hook cost a full session of undelivered mail.
 case "$LANE" in
-  LCC | RCC) ;;
+  LCC | RCC | NEW1 | NEW2 | NEW3) ;;
   *)
     [ -n "$SESSION_ID" ] || exit 0
     printf '%s\n' "<lane-bus lane=\"UNBOUND\">
-This session has not been bound to a lane, so the LCC/RCC message bus is
-delivering nothing to it. Messages may be waiting. If you are LCC (server) or
-RCC (client), run the matching line ONCE — it binds this session id only:
+This session has not been bound to a lane, so the lane message bus is
+delivering nothing to it. Messages may be waiting.
 
-  echo LCC > .agents/bus/.lane-${SESSION_ID}
-  echo RCC > .agents/bus/.lane-${SESSION_ID}
+Five lanes exist. Four form a ring, each feeding the next:
+  NEW3 (discovery) -> NEW2 (ingestion) -> LCC (enrichment) -> NEW1 (retrieval) -> NEW3
+RCC (client) sits outside the ring and consumes what it produces.
 
-Then \`pnpm lane:inbox\` to see the whole thread. If you are neither lane,
+Run the matching line ONCE — it binds this session id only:
+
+  echo LCC  > .agents/bus/.lane-${SESSION_ID}     # server / enrichment
+  echo RCC  > .agents/bus/.lane-${SESSION_ID}     # client
+  echo NEW1 > .agents/bus/.lane-${SESSION_ID}     # retrieval, ranking, evidence
+  echo NEW2 > .agents/bus/.lane-${SESSION_ID}     # ingestion, normalization
+  echo NEW3 > .agents/bus/.lane-${SESSION_ID}     # discovery, acquisition
+
+Then \`pnpm lane:inbox\` to see the whole thread. If you are none of these,
 ignore this — it will keep appearing and that is harmless.
 </lane-bus>"
     exit 0

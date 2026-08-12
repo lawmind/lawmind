@@ -39,15 +39,39 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BUS = join(ROOT, '.agents', 'bus');
 
-const LANES = ['LCC', 'RCC'];
+/**
+ * FIVE LANES, and four of them form a RING rather than a hierarchy:
+ *
+ *     NEW3  discovers what is missing        →  acquisition queue
+ *     NEW2  ingests it                       →  searchable corpus
+ *     LCC   structures and enriches it       →  citations, treatment, evidence
+ *     NEW1  tests retrieval and evidence     →  finds the next gap
+ *     back to NEW3
+ *
+ * RCC (the client lane) sits outside the ring and consumes what the ring
+ * produces. It is kept in the same bus because a lane boundary is a lane
+ * boundary — there is no second mechanism to learn.
+ *
+ * The ring matters for one practical reason: **each lane's output is the next
+ * lane's input**, so a message to the next lane downstream is the common case
+ * and a broadcast is the exception. `ALL` exists for the exception — a schema
+ * change, a shared-resource conflict, a finding that invalidates someone else's
+ * assumption — and fans out to one file per recipient so every lane's cursor
+ * advances independently.
+ */
+const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3'];
+/** Who each lane feeds, so `--downstream` needs no argument. */
+const DOWNSTREAM = { NEW3: 'NEW2', NEW2: 'LCC', LCC: 'NEW1', NEW1: 'NEW3', RCC: 'LCC' };
 
 const [, , toRaw, ...subjectParts] = process.argv;
-const to = (toRaw ?? '').toUpperCase();
+let to = (toRaw ?? '').toUpperCase();
 const subject = subjectParts.join(' ').trim();
 
-if (!LANES.includes(to) || subject === '') {
-  console.error('usage: node scripts/lane-send.mjs <LCC|RCC> <subject>   # body on stdin');
-  console.error('  e.g. node scripts/lane-send.mjs RCC "coverage contract is live" < msg.md');
+if ((!LANES.includes(to) && to !== 'ALL' && to !== '--DOWNSTREAM') || subject === '') {
+  console.error('usage: node scripts/lane-send.mjs <LCC|RCC|NEW1|NEW2|NEW3|ALL|--downstream> <subject>   # body on stdin');
+  console.error('  e.g. node scripts/lane-send.mjs NEW1 "treatment coverage is live" < msg.md');
+  console.error('       node scripts/lane-send.mjs --downstream "batch ready" < msg.md   # to the next lane in the ring');
+  console.error('       node scripts/lane-send.mjs ALL "migration 0045 applied" < msg.md');
   process.exit(2);
 }
 
@@ -79,6 +103,14 @@ if (!LANES.includes(from)) {
   console.error(`  echo LCC > .agents/bus/.lane-${process.env['CLAUDE_CODE_SESSION_ID'] ?? '<session-id>'}   # this session, persists`);
   process.exit(2);
 }
+if (to === '--DOWNSTREAM') {
+  to = DOWNSTREAM[from] ?? '';
+  if (!LANES.includes(to)) {
+    console.error(`no downstream lane is defined for ${from}.`);
+    process.exit(2);
+  }
+  console.log(`--downstream from ${from} resolves to ${to}`);
+}
 if (from === to) {
   console.error(`refusing to send ${from} → ${to}: a lane does not message itself.`);
   process.exit(2);
@@ -103,23 +135,36 @@ mkdirSync(BUS, { recursive: true });
 // Monotonic sequence across the whole bus, not per lane — the recipient's cursor
 // is a single number, and two independent counters could not be compared.
 const existing = readdirSync(BUS).filter((f) => /^\d{4}--/.test(f));
-const next = existing.length === 0
+let next = existing.length === 0
   ? 1
   : Math.max(...existing.map((f) => Number(f.slice(0, 4)))) + 1;
 
 const slug = subject.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
-const name = `${String(next).padStart(4, '0')}--${from}-to-${to}--${slug}.md`;
+const sentAt = new Date().toISOString();
 
-const content = `---
+/**
+ * A broadcast is written as ONE FILE PER RECIPIENT, not one file addressed to
+ * everybody. Each lane's cursor is a single sequence number, so a shared file
+ * would be marked read the moment the fastest lane read it and would vanish
+ * from every other lane's inbox unread — the exact failure a bus exists to
+ * prevent. Separate files cost a few kilobytes and keep five independent
+ * cursors honest.
+ */
+const recipients = to === 'ALL' ? LANES.filter((l) => l !== from) : [to];
+
+for (const recipient of recipients) {
+  const name = `${String(next).padStart(4, '0')}--${from}-to-${recipient}--${slug}.md`;
+  const content = `---
 seq: ${next}
 from: ${from}
-to: ${to}
-sentAt: ${new Date().toISOString()}
+to: ${recipient}
+sentAt: ${sentAt}
 subject: ${JSON.stringify(subject)}
----
+${recipients.length > 1 ? `broadcast: ${recipients.join(' ')}\n` : ''}---
 
 ${body.trimEnd()}
 `;
-
-writeFileSync(join(BUS, name), content, 'utf8');
-console.log(`sent ${from} → ${to}  ·  seq ${next}  ·  .agents/bus/${name}`);
+  writeFileSync(join(BUS, name), content, 'utf8');
+  console.log(`sent ${from} → ${recipient}  ·  seq ${next}  ·  .agents/bus/${name}`);
+  next++;
+}

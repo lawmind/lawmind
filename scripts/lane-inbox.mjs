@@ -29,7 +29,13 @@ const cursor = (lane) => {
   return Number.isFinite(n) ? n : 0;
 };
 
-const cursors = { LCC: cursor('LCC'), RCC: cursor('RCC') };
+/**
+ * Five lanes, four of which form the ring NEW3 -> NEW2 -> LCC -> NEW1 -> NEW3.
+ * Each keeps its own cursor, so "did they ever read it" is answerable per lane
+ * rather than per bus.
+ */
+const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3'];
+const cursors = Object.fromEntries(LANES.map((l) => [l, cursor(l)]));
 const files = readdirSync(BUS)
   .filter((f) => /^\d{4}--/.test(f))
   .sort();
@@ -39,7 +45,10 @@ if (files.length === 0) {
   process.exit(0);
 }
 
-console.log(`${files.length} message(s) · delivered-up-to: LCC ${cursors.LCC} · RCC ${cursors.RCC}`);
+console.log(
+  `${files.length} message(s) · delivered-up-to: ` +
+    LANES.map((l) => `${l} ${cursors[l]}`).join(' · '),
+);
 console.log('');
 
 for (const f of files) {
