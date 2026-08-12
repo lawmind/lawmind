@@ -82,6 +82,7 @@ import { expandCategories } from '@lawmind/api/search/court-category';
 import type { SearchFilters } from '@lawmind/api/search/retrieve';
 
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
+import { meanNdcgAtK } from './metrics.ts';
 import { mcnemarExactP, queriesToSettle } from './stats.ts';
 
 const ARMS: RetrievalMode[] = ['sparse', 'dense', 'hybrid'];
@@ -169,9 +170,11 @@ async function main(): Promise<void> {
         }
         results.set(`${pass.label}:${mode}`, rows);
         const secs = ((Date.now() - started) / 1000).toFixed(0);
+        const ranks = rows.map((r) => r.foundAtAnyRank);
         console.log(
           `${mode.padEnd(7)} success@5 ${pct(successAt5(rows))}  ` +
-            `recall@20 ${pct(recallAt20(rows))}  MRR ${mrr(rows).toFixed(3)}  ${secs}s`,
+            `recall@20 ${pct(recallAt20(rows))}  MRR ${mrr(rows).toFixed(3)}  ` +
+            `nDCG@5 ${meanNdcgAtK(ranks, 5).toFixed(3)}  nDCG@20 ${meanNdcgAtK(ranks, 20).toFixed(3)}  ${secs}s`,
         );
       }
     }
