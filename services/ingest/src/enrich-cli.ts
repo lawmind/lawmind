@@ -91,7 +91,25 @@ const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'requir
  * just repeats the same mistake more slowly, the same distinction `inferx.ts`
  * draws between a 429 and a 400.
  */
-const TRANSIENT = /ECONNRESET|ETIMEDOUT|EPIPE|ECONNREFUSED|CONNECTION_CLOSED|CONNECTION_ENDED|socket/i;
+/**
+ * **`ENOTFOUND` and `EAI_AGAIN` are DNS failures and belong here — leaving them
+ * out cost three concurrent jobs.** A network interruption on the host stopped
+ * `hayabusa.proxy.rlwy.net` resolving for a few minutes, and because the first
+ * version of this list covered only socket errors, every worker rethrew
+ * immediately instead of waiting the blip out. A name that fails to resolve is
+ * the most ordinary transient failure there is.
+ */
+const TRANSIENT =
+  /ECONNRESET|ETIMEDOUT|EPIPE|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ENETUNREACH|EHOSTUNREACH|CONNECTION_CLOSED|CONNECTION_ENDED|socket|getaddrinfo/i;
+
+/**
+ * Eight attempts with exponential backoff capped at 30s — roughly two minutes
+ * of patience. The outage that killed the first run lasted longer than the five
+ * short attempts it was given, and the cost of waiting is nothing: every
+ * document already processed is committed, so the alternative to waiting is a
+ * dead worker, not faster progress.
+ */
+const MAX_DB_ATTEMPTS = 8;
 
 async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
   for (let attempt = 0; ; attempt++) {
@@ -99,9 +117,11 @@ async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
       return await run();
     } catch (err) {
       const message = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
-      if (attempt >= 5 || !TRANSIENT.test(message)) throw err;
-      const waitMs = 1000 * 2 ** attempt;
-      console.log(`    db ${what} failed (${message.trim()}) — retry ${attempt + 1}/5 in ${waitMs / 1000}s`);
+      if (attempt >= MAX_DB_ATTEMPTS || !TRANSIENT.test(message)) throw err;
+      const waitMs = Math.min(30_000, 1000 * 2 ** attempt);
+      console.log(
+        `    db ${what} failed (${message.trim()}) — retry ${attempt + 1}/${MAX_DB_ATTEMPTS} in ${waitMs / 1000}s`,
+      );
       await new Promise((r) => setTimeout(r, waitMs));
     }
   }
@@ -286,12 +306,28 @@ for (const [i, u] of units.entries()) {
   const sourceHash = sha256(u.sourceText ?? '');
   const label = `[${i + 1}/${units.length}] ${(u.caseTitle ?? '').slice(0, 34).padEnd(34)}`;
 
+  /**
+   * **`status = 'ok'` IS LOAD-BEARING AND WAS MISSING.**
+   *
+   * A failed call also writes a row, carrying the same `input_hash` — that is
+   * deliberate, so a persistent failure is visible rather than silent. But the
+   * cache lookup did not filter on status, so any document whose call had
+   * failed counted as a CACHE HIT and was skipped forever after.
+   *
+   * Found when all three InferX grants began returning HTTP 401 mid-run: the
+   * workers cheerfully wrote a `call_failed` row per document, and every one of
+   * those documents would have been permanently excluded once the credentials
+   * were restored. An outage would have quietly become a permanent hole in the
+   * corpus, which is exactly the class of silent gap this project exists to
+   * refuse.
+   */
   const cached = await withDbRetry(
     'cache lookup',
     () => sql`
       SELECT verification_state, verified_count, rejected_count FROM document_enrichments
       WHERE judgment_id = ${u.judgmentId} AND task = ${TASK}
         AND prompt_version = ${PROMPT_VERSION} AND input_hash = ${inputHash}
+        AND status = 'ok'
       LIMIT 1`,
   );
   if (cached.length > 0) {

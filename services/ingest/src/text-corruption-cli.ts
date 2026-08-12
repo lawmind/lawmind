@@ -54,10 +54,10 @@ for (;;) {
       ORDER BY id
       LIMIT ${BATCH}`;
   } catch (err) {
-    if (reconnects >= 5) throw err;
+    if (reconnects >= 8) throw err;
     reconnects++;
-    process.stdout.write(`\n  connection lost, resuming from cursor (${reconnects}/5)\n`);
-    await new Promise((r) => setTimeout(r, 2000 * reconnects));
+    process.stdout.write(`\n  connection lost, resuming from cursor (${reconnects}/8)\n`);
+    await new Promise((r) => setTimeout(r, Math.min(30_000, 2000 * 2 ** reconnects)));
     continue;
   }
   if (rows.length === 0) break;

@@ -63,8 +63,20 @@ export async function callInferxPooled(
     const result = await callInferx(prompt, { ...deps, apiKey });
     if (result.ok) return result;
     lastReason = result.reason;
-    // Only capacity exhaustion is worth another grant's attention.
-    if (!/capacity|429/i.test(result.reason)) return result;
+    /**
+     * ROTATE ON A PER-KEY FAILURE, NOT JUST A BUSY ONE.
+     *
+     * The first version rotated only on capacity (429) and returned everything
+     * else straight to the caller. Then a grant started answering **HTTP 401**
+     * and the whole treatment batch died on it, one document at a time, with
+     * two perfectly good keys sitting unused behind it.
+     *
+     * 401/403 say *this key* is bad — expired, revoked, or out of allocation —
+     * which is precisely a reason to try the next grant. A 400 still does not:
+     * that says the REQUEST is malformed, and it would be malformed for every
+     * key, so repeating it three times is just a slower failure.
+     */
+    if (!/capacity|429|401|403|unauthor|forbidden/i.test(result.reason)) return result;
     if (i < keys.length - 1) {
       console.log(`    key ${i + 1}/${keys.length} exhausted (${result.reason}) — rotating`);
     }
