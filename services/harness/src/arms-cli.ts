@@ -153,11 +153,19 @@ async function main(): Promise<void> {
       for (const mode of ARMS) {
         const started = Date.now();
         const rows: ScoredQuery[] = [];
-        for (const q of queries) {
+        // Progress every 20 queries -- not a checkpoint, just visibility.
+        // `failure-classifier-cli.ts` learned this the hard way this
+        // session: a plain sequential loop against this same DB proxy under
+        // five-lane load gave zero output for 30+ minutes and had to be
+        // killed blind to find out it wasn't actually stuck. Paired McNemar
+        // comparison needs every arm scored on the IDENTICAL query set, so
+        // unlike that tool this one does not skip a slow query -- it only
+        // reports that it is still working on one.
+        for (let i = 0; i < queries.length; i++) {
           rows.push(
             await scoreQuery(
               sql,
-              q,
+              queries[i]!,
               embedQuery,
               20,
               undefined,
@@ -167,6 +175,10 @@ async function main(): Promise<void> {
               pass.filters,
             ),
           );
+          if ((i + 1) % 20 === 0 || i + 1 === queries.length) {
+            const elapsedSoFar = ((Date.now() - started) / 1000).toFixed(0);
+            console.log(`  ... ${mode} ${i + 1}/${queries.length} (${elapsedSoFar}s)`);
+          }
         }
         results.set(`${pass.label}:${mode}`, rows);
         const secs = ((Date.now() - started) / 1000).toFixed(0);
