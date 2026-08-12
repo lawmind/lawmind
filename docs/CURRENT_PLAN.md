@@ -2359,6 +2359,53 @@ not root-caused further — a recurring but low-severity Node/postgres
 shutdown interaction under this environment's sustained load, worth a
 restart, not worth blocking on.
 
+### Q1.17 · FOUNDER DECISION — DATA BEFORE EMBEDDINGS · 13 Aug 2026 · SETTLED
+
+> **Fund chunk-text coverage now. Start embeddings only once we hold all
+> available data from all courts, ALL cases and citations are in, and the data
+> is structured and ready. Data is the priority; embeddings come after.**
+
+**This is sequencing, not a preference, and it reframes every lane.** Nobody
+starts an embedding run. Missing vectors are not a defect — they are a
+deliberate ordering. **NEW2 (ingestion) and NEW3 (discovery) are now the
+critical path**: embeddings wait on their completeness, not the reverse.
+
+**Executed same day.** `judgment_paragraphs`, migration `0049`, applied.
+Paragraph-level evidence for the whole corpus with no vectors — closing the gap
+NEW1 measured (94.5% of retrieved queries returning an empty
+`operativeParagraph`, because only **40,161 of 600,073 judgments had any
+passage stored**).
+
+**It deliberately does NOT write to `judgment_chunks`.** That is the vector
+table, and `retrieve.ts`'s dense query is `ORDER BY c.embedding <=> $1 LIMIT n`
+over it with **no `WHERE embedding IS NOT NULL`** — read in the source, not
+assumed. ~550,000 embedding-less rows would grow it ~15× and invite the planner
+to abandon the HNSW index. **Paying for evidence display with production search
+latency is not a trade worth making quietly.** When embeddings are funded,
+chunks derive *from* these paragraphs rather than being re-split.
+
+**Measured on 600 real judgments:** 4,289 paragraphs, **86.0% carrying a
+court-printed number**, **0 refused for lost text**, 7.1 paragraphs/judgment.
+
+**Why paragraphs rather than fixed windows — checked against outside sources,
+not assumed:**
+
+- The Supreme Court's **July 2023 direction requires** *"all paragraphs should
+  be numbered sequentially commencing with the initial paragraph"*. Judgments
+  carry their own citable units; *"para 14"* is what goes in a filing, and a
+  pinpoint we invented is not one an advocate can use. The 86.0% measured above
+  is that mandate holding in practice.
+- **Structure-preserving segmentation outperforms sequential chunking on legal
+  text** (NLLP 2025), because a provision's meaning is bound to its numbering
+  and heading. Semantic chunking adds 15–25% accuracy at 3–5× compute — exactly
+  the trade this decision defers.
+- **Document-Level Retrieval Mismatch worsens as a corpus scales**
+  (arXiv 2510.06999) — the retriever picks chunks from *wrong* documents sharing
+  superficial similarity. NEW1's 49.1% held-but-not-retrieved was measured while
+  the corpus went 79k → 600k, so some degradation is scale, not regression.
+- The Bombay extraction failure is a **documented class**: subset fonts with
+  incomplete ToUnicode CMaps defeat pdf.js where poppler succeeds.
+
 ### Q1.16 · THE RING, AND FOUR DEFECTS THAT ONLY APPEAR AT SCALE — 13 Aug 2026
 
 **The bus now carries five lanes** (`docs/LANE_PROTOCOL.md`): NEW3 discovery →
