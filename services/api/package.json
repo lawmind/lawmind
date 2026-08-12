@@ -26,7 +26,8 @@
     "bench": "tsx src/search/bench.ts",
     "propagate": "tsx src/citations/propagate-cli.ts",
     "quality:paragraphs": "tsx src/judgments/paragraph-quality-sample.ts",
-    "verify:exact-span": "tsx src/judgments/verify-exact-span-cli.ts"
+    "verify:exact-span": "tsx src/judgments/verify-exact-span-cli.ts",
+    "retrieval:regression": "tsx src/search/retrieval-regression-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",

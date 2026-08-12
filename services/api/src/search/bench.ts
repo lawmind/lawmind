@@ -13,25 +13,8 @@
  */
 import postgres from 'postgres';
 
+import { BENCH_QUERIES as QUERIES } from './bench-queries.ts';
 import { hybridSearch } from './retrieve.ts';
-
-/**
- * Queries an advocate would actually type, spanning both halves of the hybrid:
- * some are lexical (a section number, a term of art), some are semantic
- * (a plain-language description of a situation).
- */
-const QUERIES = [
-  'anticipatory bail custodial interrogation',
-  'special leave to appeal criminal jurisdiction',
-  'parity with co-accused in bail',
-  'dying declaration corroboration',
-  'preventive detention grounds communicated',
-  'specific performance of agreement to sell',
-  'compassionate appointment policy',
-  'dishonour of cheque legally enforceable debt',
-  'quashing of FIR inherent powers',
-  'maintenance to wife and minor children',
-];
 
 function percentile(sorted: number[], p: number): number {
   if (sorted.length === 0) return 0;
@@ -55,7 +38,7 @@ async function main(): Promise<void> {
     let emptyResults = 0;
 
     for (let run = 0; run < runs; run++) {
-      for (const query of QUERIES) {
+      for (const { query } of QUERIES) {
         const started = performance.now();
         // queryVector null: this measures the LEXICAL half, which is the half
         // that scales with corpus size. Dense adds a fixed ivfflat probe.
