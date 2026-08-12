@@ -68,6 +68,54 @@ founder decision.
 
 # CREDENTIALS AND ACCOUNTS
 
+### [OPEN — DECISION, NOT A CREDENTIAL] Does FQ-CORPUS's "no embeddings for now" still hold, given today's data-richness push? · LCC · 12 Aug 2026
+
+**Needs:** an explicit call on whether **FQ-CORPUS** (11 Aug 2026: *"ingest
+High Court documents as searchable text behind the coverage screen, no
+embeddings for now"* — reasoned on pgvector degrading past 5–10M vectors
+against a ~41M-vector High Court scale-up) is superseded by today's direct
+instruction to use the local GPU freely and prioritise being data-rich before
+launch, or whether it still stands and the two are meant to coexist (e.g.
+Supreme Court embeddings yes, High Court embeddings still no).
+
+**What happened, concretely.** While closing Stage 13 (exact-span evidence),
+I found 87,141 of 125,522 held judgments had never been chunked/embedded at
+all — zero dense-retrieval presence, lexical-only. With this session's
+explicit GPU authorisation ("if you need GPU for any heavy task... it is free
+anyway"), I ran that backlog through `EMBED_DEVICE=dml pnpm --filter
+@lawmind/embed run embed` on the local RTX 4060 Ti. **I did not check this
+backlog's composition against FQ-CORPUS before starting** — that was my
+miss. Checked afterward: **1,680 judgments were embedded before I caught it
+and stopped**, nearly all High Court (Patna 1,102, Gauhati 464, Meghalaya 55,
+Manipur 43, Sikkim 10, and — the two that confirm the overlap — **Madhya
+Pradesh 3 and Kerala 3**, both courts the concurrent HC-ingest lane's own
+Q1.22 plan names as "currently near-zero, being scaled up now"). Checking the
+remaining backlog: **only 1 Supreme Court judgment is left un-embedded** —
+the 87,141-judgment gap was almost entirely High Court from the start, so it
+was mostly already inside FQ-CORPUS's "no" zone before I ever touched it.
+
+**Why it is not a blocker:** stopped, not guessed past. Added `--court
+"<name>"` to `services/embed/src/cli.ts` so a future run can be scoped
+precisely (e.g. Supreme-Court-only, which is now essentially caught up at
+1 judgment remaining and carries no FQ-CORPUS ambiguity at all). Nothing
+currently running touches High-Court embedding. The 1,680 already-embedded
+High Court judgments are sitting in the corpus, searchable both ways
+(lexical and dense) — not wrong, not rolled back, just a scope question:
+do they stay, does the run continue to the rest of the backlog, or does this
+wait for pgvector's scale limits to be re-examined against the
+now-much-larger held corpus?
+
+**Cost if never resolved:** the retrieval/evidence lane has no further
+un-embedded backlog to safely close without this answer — Supreme Court is
+essentially done, and the entire remainder is High Court territory FQ-CORPUS
+already reasoned through once, for a real infrastructure constraint, not a
+cost one.
+
+**Where it plugs in:** `services/embed/src/cli.ts --court "<name>"`, run
+manually once answered. `docs/CURRENT_PLAN.md` Q1.22 has the full technical
+account (the two chunk.ts bugs found and fixed getting here, and this scope
+question at the end of it).
+
 ### [OPEN] An SCC/AIR ↔ S.C.R. citation concordance · LCC · 11 Aug 2026
 
 **Needs:** a **decision** on whether to obtain an external citation-concordance

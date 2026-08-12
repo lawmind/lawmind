@@ -125,6 +125,17 @@ async function main(): Promise<void> {
       return;
     }
 
+    // `--court "Supreme Court of India"` scopes a run to one court, exact
+    // match against `judgments.court`. Exists because `FOUNDER_QUEUE.md`
+    // FQ-CORPUS decided High Court documents are ingested WITHOUT embeddings
+    // "for now" -- pgvector is documented to degrade past 5-10M vectors, and
+    // the High Court scale-up targets ~41M. An unfiltered run here would
+    // silently embed whatever `judgments` holds, including any High Court
+    // documents a concurrent ingest lane is actively adding -- observed
+    // happening this session (Q1.22), which is what this flag exists to
+    // prevent happening again before that decision is revisited.
+    const court = stringArg('--court');
+
     // IDs only. Selecting full_text here too would pull the entire corpus into
     // memory before the first chunk is embedded — 1.35 GB of judgment text, which
     // measured 2.9 GB resident and stalled the run for ~13 minutes at startup.
@@ -133,6 +144,7 @@ async function main(): Promise<void> {
       SELECT j.id
       FROM judgments j
       WHERE NOT EXISTS (SELECT 1 FROM judgment_chunks c WHERE c.judgment_id = j.id)
+        ${court ? sql`AND j.court = ${court}` : sql``}
       -- RECENT FIRST. Advocates cite recent law, so if a long run is interrupted
       -- the coverage we already have is the coverage that matters. Oldest-first
       -- also front-loads the 1950s scans, which are both the least cited and the

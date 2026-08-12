@@ -1615,15 +1615,185 @@ the 0.3pp figure regardless. `Q1.12`'s finding is not struck — it is still the
 right call for a RENTED GPU — this is a different question the founder
 answered directly.
 
-**Not yet done**: both jobs are still running; final row counts should be
-re-verified once they finish before this line is called closed. The already-
-known caveat from `AUTHORITY_COVERAGE.md`-style verification applies here too:
-chunks embedded outside these two jobs (i.e., via `cli.ts` directly, offset
-written at embed time) are only as good as `full_text` staying unchanged after
-embedding — nothing re-verifies an existing non-NULL offset against a
-LATER edit to `full_text`. Not observed as a live problem (no process in this
-repo currently writes `full_text` for an existing row), but structurally
-possible and not solved by this change.
+**UPDATE, same day: a SECOND offset bug, found by the tool this stage built to
+find exactly this.** `verify:exact-span --n 1000` against production (not a
+unit test — real rows) found 2/1000 failing the bounds check, both
+`char_offset + char_length` landing exactly ONE character past
+`full_text.length`. Different root cause from the first bug, same family: the
+merge step joins two paragraph units with a synthesised `"\n\n"`, correct only
+when the source's real gap between them WAS exactly two newlines. Units from
+`splitParagraphs` genuinely were (that's what qualified them as separate
+paragraphs); a short TAIL piece from `splitLongParagraph`'s own internal
+cut — merged into the previous chunk via the same synthetic separator when it
+falls under `minChars` — is often adjacent to its neighbour with a real gap of
+0–1 characters, not two. `bodyLength` silently inherited the 1–2 character
+difference.
+
+**Fixed at the source, not downstream.** `chunkJudgment` now verifies its own
+output before returning it — `fullText.slice(offset, offset+bodyLength) ===
+body.text`, a slice and a string comparison, free relative to the chunking
+work already done — and reports `offset: -1` (never a guess) when that check
+fails. `cli.ts`/`backfill-offsets-cli.ts` write NULL for both columns whenever
+`offset` is `-1`. New deterministic regression test reproduces the exact
+failure (a 226-character paragraph cut at a single space, the 35-character
+tail triggering the merge). Both jobs were stopped a second time on finding
+this (same reasoning as the first bug: they were actively writing with the
+unfixed code), a SQL-only table-wide bounds check found and NULLed **1,153**
+more affected rows (no `full_text` fetch needed — `char_offset + char_length >
+length(full_text)` is computable server-side), and a fresh 3,000-row sampled
+re-verification came back **3,000/3,000 clean** before either job restarted.
+17/17 `chunk.test.ts`, 31/31 embed suite, `tsc --noEmit` clean throughout.
+
+**UPDATE, same day: the GPU job's scope conflicted with a settled decision,
+found before it compounded, queued rather than resolved alone.**
+`FOUNDER_QUEUE.md` FQ-CORPUS (11 Aug 2026) decided High Court documents are
+ingested WITHOUT embeddings for now — pgvector is documented to degrade past
+5–10M vectors, and the High Court scale-up targets ~41M. The 87,141-judgment
+backlog this stage found and started closing turned out to be **almost
+entirely High Court** (checked after the fact: only 1 Supreme Court judgment
+remains un-embedded corpus-wide), so the GPU run had already embedded 1,680
+judgments — including Madhya Pradesh and Kerala, courts the concurrent
+HC-ingest lane's own plan (below, Q1.22 THE 10× PLAN) names as being actively
+scaled up right now — before this was caught. **Stopped again, not reasoned
+past**: this session's direct GPU authorisation and FQ-CORPUS's reasoned
+"no" are a genuine conflict, not something to pick a side of alone. Added
+`--court "<name>"` to `cli.ts` so a future run can be scoped precisely.
+Queued to the founder in full: `FOUNDER_QUEUE.md`'s newest entry.
+
+**Where this leaves Stage 13 itself: DONE and verified.** The exact-span
+mechanism, the two bugs, and their fixes are all real, tested, and hold
+regardless of how the embedding-scope question resolves — they govern HOW a
+chunk's position is trusted, not WHICH judgments get chunked. The offset
+backfill (bounded to chunks that already exist, not at risk of the FQ-CORPUS
+conflict) continues running. The GPU embed job stays stopped pending the
+founder's call.
+
+### Q1.22 · THE 10× PLAN — founder asked for a strategy before scaling, here it is · 12 Aug 2026
+
+**Target: ~1,034,860 HC documents, 10× the 103,486 held at the time of the
+ask.** Still only 6.6% of the 15,771,567-document decade inventory — headroom
+is not the constraint.
+
+**Where the room is, ranked by `HC_METADATA_SURVEY.json`'s `perCourt`, courts
+currently near-zero:** Rajasthan (848,617 docs, 4 held) · Orissa (761,067, 39)
+· Karnataka (730,432, **0**) · Madhya Pradesh (588,593, **0**) · Kerala
+(570,700, 60) · Telangana (526,825, 21) · Chhattisgarh (401,696, 4) ·
+Jharkhand (393,079, 8) · Andhra Pradesh (355,497, **0**) · Delhi (306,893, 2)
+· Gujarat (290,144, 497). **5.8M+ documents sit behind these eleven alone** —
+10× is reachable from a handful of them without touching the smaller courts.
+
+**Checked before scaling, not assumed:**
+- CPU 6% average load, 15.7 GB RAM free of 31.7 GB, 20 logical cores — the
+  existing 5 concurrent Node jobs use a small fraction of either.
+- Railway Postgres: **100 max_connections, 15 in use.** Six more
+  `hc-load-cli.ts` workers at `postgres(url, {max:3})` each add ≤18 —
+  comfortably inside budget with room left for the API and other sessions.
+
+**Plan: six more dedicated `--court` workers**, same command shape as the
+four already running (`--from-year 2016 --batch 200 --concurrency 16
+--apply`), on Rajasthan (`8_9`), Orissa (`21_11`), Karnataka (`29_3`),
+Madhya Pradesh (`23_23`), Kerala (`32_4`), Telangana (`36_29`) — ten
+`hc-load-cli.ts` processes total plus the bounded citation-rescan loop.
+
+**What "careful, no mistakes" means here, concretely**, given Q1.20 already
+found one real bug at higher concurrency:
+1. Verify each new worker prints a real progress line (not just a header)
+   before moving to the next, rather than firing all six blind.
+2. Re-run the harvest test suite before launching, since another session has
+   touched these files before (Q1.19) — cheap insurance against relaunching
+   a stale or half-edited version.
+3. Watch for the SAME failure shapes already catalogued (`ON CONFLICT`
+   duplicate-in-batch — fixed in shared code, so every new worker inherits
+   the fix automatically; transient DNS; the citation-rescan's unexplained
+   crash under load) rather than treating a new crash as novel before
+   checking it isn't one of these three first.
+4. **Not doing**: embeddings (FQ-CORPUS still says no), OCR (out of scope),
+   touching `citation_extraction`/`treatment` enrichment or the concordance
+   pass (other sessions' lanes, per this turn's own standing instruction).
+
+### Q1.23 · A COMMENT CLAIMED A GUARD THAT WAS NEVER WIRED IN — Punjab found it · 12 Aug 2026
+
+**Punjab crashed on `SQLSTATE 22021`, invalid UTF-8 byte sequence** — the
+exact failure `text.ts` documents as *"what silently ended the 2023 run"*,
+and `hc-load-cli.ts`'s own header comment claims is already handled:
+*"already carrying `stripUnstorable` for the invalid-UTF-8 failure … that
+once silently stopped an ingest after 2022."* **The claim was false.**
+`hc-load.ts` set `fullText: text` straight from unpdf's raw output; nothing
+in the HC path ever called `stripUnstorable`. It survived 103,486 documents
+across ten courts because none of them happened to carry the NUL bytes or
+unpaired surrogates that trigger it — Punjab's did.
+
+**Fixed**: `stripUnstorable(extracted.text)` before the text goes anywhere,
+in both `hc-load-cli.ts` (writes `judgments.full_text`) and
+`hc-citations-cli.ts` (writes `external_citations.citation_text`, same raw
+source, same risk, currently dormant per S8 but fixed for when it next
+runs). 38 tests still green, `tsc --noEmit` clean. Punjab relaunched,
+confirmed advancing past where it died (CPU climbing, not the flat-CPU hang
+signature from Q1.18).
+
+**The lesson, stated because it will recur**: a comment asserting a guard
+exists is not evidence the guard exists — this is the third time this
+session a documented claim about this exact codepath (`Math.sumPrecise`
+absent, DNS proxy presumed dead, now `stripUnstorable` presumed wired)
+turned out to need checking against the actual code or environment before
+trusting it.
+
+### Q1.24 · SCALED TO 10 · founder's 10× ask, 12 Aug 2026
+
+Ten `hc-load-cli.ts` workers running: the general sweep plus dedicated
+`--court` workers on Allahabad, Bombay (finished, redirected), Madras,
+Punjab and Haryana, Rajasthan, Orissa, Karnataka, Madhya Pradesh, Kerala,
+Telangana — the eleven largest courts by `HC_METADATA_SURVEY.json`, covering
+**11.2M of the 15.77M-document decade inventory** between them. Plus the
+citation rescan, bounded to `--limit 20000` chunks since Q1.21. Full plan
+and the headroom check (100 max DB connections, 15→22 in use; 6% CPU; 15.7 GB
+RAM free) before scaling: this file's own entry written at the time, kept
+above rather than restated.
+
+### Q1.25 · CLASSIFY / DEDUPLICATE / INDEX — checked against what already exists, not assumed absent · 12 Aug 2026
+
+**Asked to add classify → deduplicate → index-eligible stages. Checked each
+against the running system before building anything new — two of three were
+already done, and the third would have meant deciding a question this repo's
+own schema doc explicitly declined to decide.**
+
+**Classify: already automatic, and the gap is by design.** `case_type` is set
+at load time (`caseTypeFrom`, `hc-load.ts`). Sampled the unclassified 14%'s
+case-number prefixes rather than guessing: dominated by bare `WP`/`WPC`/`WPA`
+(writ petitions — `caseTypeFrom`'s own comment: *"may be either"*, and the
+same file states mislabelling is worse than leaving null) and abbreviations
+(`MJC`, `CMP`, `A`) with no verified meaning in THIS corpus. A few looked
+guessable (`IACIVIL`, `WRIC`, `BAILAPPLN`) but every existing entry in the
+dictionary carries a citation like *"observed, Patna 2024"* — verified
+against a real sampled record, not inferred from the string. Adding entries
+without that same verification is the exact risk the function's own comment
+warns against. Not done; flagged rather than guessed.
+
+**Deduplicate: already solved, at a layer already decided — checked, not
+assumed.** `SCHEMA_TRUTH.md` on `content_hash`: *"which one is canonical is
+still an ingest-design decision, not something this column answers."*
+Building a fixed, storage-level canonical-row marker would have been this
+session deciding that question unilaterally. **It didn't need deciding
+again** — `search/retrieve.ts` already collapses duplicates at retrieval,
+keeping *"the highest-ranked member of its own group"* per query (rank-
+dependent, which is why a fixed marker would be a DIFFERENT, narrower rule,
+not a durable version of the same one). The only thing that mechanism needs
+is `content_hash` populated on every row, since a NULL hash is never
+collapsed. **Verified, not assumed: 0 of 124,599 HC judgments are missing
+`content_hash`** — `upsertJudgments` computes it on every write, so this has
+held automatically since migration `0031`, before this session started.
+
+**Index-eligible documents: automatic, verified from the schema, not
+inferred.** `full_text_tsv` is `GENERATED ALWAYS AS (to_tsvector(...)) STORED`
+with a GIN index (migration `0004`) — every row is lexically searchable the
+instant `upsertJudgments` writes it. There is no separate "index eligibility"
+gate to build under the text-only, no-embeddings decision this ingest
+operates under (`FQ-CORPUS`); one would only exist if embeddings did.
+
+**Embeddings: declined, stated plainly, not silently skipped.** `FQ-CORPUS`
+(`FOUNDER_QUEUE.md`, decided 11 Aug 2026): *"ingest High Court documents as
+searchable text behind the coverage screen, no embeddings for now."* Nothing
+in this session overrides that, so nothing here embeds anything.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
