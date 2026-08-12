@@ -19,6 +19,7 @@ import {
   cleanExtractedText,
   locateParagraph,
   locateParagraphByOffset,
+  resolveExactSpan,
   trimToSentenceStart,
 } from '../judgments/paragraphs.ts';
 
@@ -107,6 +108,21 @@ export type RetrievedJudgment = {
    * is then also null).
    */
   operativeParagraphVerified: boolean;
+  /**
+   * Stage 13's own deliverable: the chunk's literal span in the judgment's
+   * own text, byte-identical, never approximated. Distinct from
+   * `operativeParagraph` — that is the printed paragraph CONTAINING this
+   * span (cleaned of reporter typesetting, sized for reading); this is the
+   * raw span the match itself rests on (uncleaned, sized for citation-grade
+   * verification: "does this text genuinely appear here").
+   *
+   * Null whenever no verified `char_offset`/`char_length` is available for
+   * the matched chunk — a row not yet backfilled, a lexical-only match with
+   * no dense chunk behind it, or a chunk whose position review needs no
+   * further reason: the bounds check in `resolveExactSpan` failing is reason
+   * enough. Never a guessed or clamped span.
+   */
+  exactSpan: { text: string; charOffset: number; charLength: number } | null;
 };
 
 type Ranked = { judgmentId: string; rank: number };
@@ -669,6 +685,19 @@ export async function hybridSearch(
       located = locateParagraph(r.full_text, chunk);
     }
 
+    // Stage 13's exact span. Computed independently of whether a paragraph
+    // was located — a chunk can carry a verified position even when it sits
+    // in a judgment too large to segment in-request (`LOCATE_MAX_CHARS`), and
+    // the raw span is a strictly weaker claim than "this is a whole
+    // paragraph" so it can succeed where paragraph location does not.
+    const rawSpan =
+      r.full_text && best?.charOffset != null && best?.charLength != null
+        ? resolveExactSpan(r.full_text, best.charOffset, best.charLength)
+        : null;
+    const exactSpan = rawSpan
+      ? { text: rawSpan.text, charOffset: rawSpan.charOffset, charLength: rawSpan.text.length }
+      : null;
+
     results.push({
       judgmentId: r.id,
       caseTitle: r.case_title,
@@ -688,6 +717,7 @@ export async function hybridSearch(
         : trimToSentenceStart(cleanExtractedText(chunk)),
       operativeParagraphNumber: located?.paragraphNumber ?? null,
       operativeParagraphVerified: verified,
+      exactSpan,
     });
   }
   return results;

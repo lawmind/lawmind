@@ -29,6 +29,7 @@ function candidate(id: string, operativeParagraph: string): RetrievedJudgment {
     operativeParagraph,
     operativeParagraphNumber: null,
     operativeParagraphVerified: false,
+    exactSpan: null,
   };
 }
 

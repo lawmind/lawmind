@@ -299,6 +299,7 @@ POST /search
                    court, judgmentDate, holding,
                    operativeParagraph, operativeParagraphNumber,
                    operativeParagraphVerified: boolean,  // added 12 Aug 2026, Stage 13
+                   exactSpan: { text, charOffset, charLength } | null,  // added 12 Aug 2026, Stage 13
                    verificationState: 'verified'|'unverified'|'failed',
                    verifiedBySource: 'corpus'|'public_x2'|'ecourts'|'none',
                    overruledStatus: 'none'|'set_aside'|'partly_set_aside'|'doubted',
@@ -495,6 +496,22 @@ instead (row not yet backfilled, or the offset landed past the in-request
 segmentation cap) or no paragraph was located at all. Both `true` and `false`
 can carry a correct paragraph; this is provenance the client may surface, not
 a signal to hide or downrank the `false` case.
+
+**`exactSpan` — added 12 Aug 2026, Stage 13. Additive.** Stage 13's own named
+deliverable (`docs/ai/STAGES_9_20_PLAN.md` §13): *"a retrieval result carries
+the paragraph and the exact span it rests on."* Distinct from
+`operativeParagraph`: that is the printed paragraph the match sits in,
+cleaned of reporter typesetting and sized for reading. `exactSpan` is the raw
+chunk's own literal span — `text` is `full_text.slice(charOffset,
+charOffset + charLength)`, byte-identical, uncleaned, never approximated.
+`charOffset`/`charLength` are the same values the server used internally;
+exposing them lets a client (or an evidence-verification pass) re-derive or
+re-check the span without trusting the server's word for it.
+
+Null whenever no verified position is available for the matched chunk — a
+row not yet backfilled, a lexical-only match with no dense chunk behind it,
+or any bounds failure. **Never a guessed or clamped span** — a null here
+means "position unverified", not "position is roughly here."
 
 **`asOf` — added 6 Aug 2026. Additive; no existing field moved.**
 

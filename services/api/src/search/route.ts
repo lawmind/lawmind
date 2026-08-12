@@ -138,6 +138,7 @@ export async function handleSearch(
         operativeParagraph: '',
         operativeParagraphNumber: null,
         operativeParagraphVerified: false,
+        exactSpan: null,
         verificationState: 'verified' as const,
         verifiedBySource: 'corpus' as const,
         // Read live from the row, never cached — CITATION_HARNESS.md.
@@ -180,6 +181,7 @@ export async function handleSearch(
         operativeParagraph: '',
         operativeParagraphNumber: null,
         operativeParagraphVerified: false,
+        exactSpan: null,
         verificationState: 'verified' as const,
         verifiedBySource: 'corpus' as const,
         overruledStatus: h.overruledStatus,
@@ -289,6 +291,9 @@ export async function handleSearch(
       // True when the paragraph above was located from a verified character
       // offset (Stage 13) rather than fuzzy-matching the chunk text.
       operativeParagraphVerified: r.operativeParagraphVerified,
+      // Stage 13: the chunk's literal, byte-verified span in the judgment's
+      // own text. Null exactly when no verified position is available.
+      exactSpan: r.exactSpan,
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
       // Read live from the row on every request. Never cached.
