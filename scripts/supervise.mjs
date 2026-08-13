@@ -97,7 +97,22 @@ for (;;) {
      * The arguments are ours, not user input, so the shell is not an injection
      * surface here.
      */
-    const child = spawn('npx.cmd', ['tsx', ...args], {
+    /**
+     * ARGUMENTS ARE RE-QUOTED, and skipping that silently corrupted a run.
+     *
+     * With `shell: true` Node joins the argv array into ONE command line
+     * without quoting anything, so `--court "High Court of Gujarat"` reaches
+     * the worker as four separate tokens and `--court` picks up `High`. The
+     * pass then selected zero rows and reported "examined 0 · REPAIRED 0" —
+     * a clean-looking success for work it never did, which is the worst way
+     * for this to fail.
+     *
+     * Anything containing whitespace is wrapped; embedded quotes are escaped.
+     */
+    const quoted = ['tsx', ...args].map((a) =>
+      /\s/.test(a) ? `"${a.replace(/(["\\])/g, '\\$1')}"` : a,
+    );
+    const child = spawn('npx.cmd', quoted, {
       cwd: join(ROOT, 'services', 'ingest'),
       stdio: ['ignore', 'pipe', 'pipe'],
       shell: true,
