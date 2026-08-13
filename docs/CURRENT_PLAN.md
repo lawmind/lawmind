@@ -4595,7 +4595,122 @@ expansion, gated on the embeddings question above), NEXT STEP 3 (EVIDENCE_WRONG
 retrieval-vs-paragraph split), NEXT STEP 5 (retrieval experiments, informed
 by the near-miss rank finding above).
 
-### Q1.42 · FOUNDER-CONFIRMED EXCEPTION: OFFSET CHECKPOINTING IS SAFE ON IMMUTABLE PARQUET, NEVER ON A MUTABLE TABLE · 13 Aug 2026
+### Q1.43 · ZERO WRITES FOR 46+ MINUTES POST-RESTART — CONFIRMED, ROOT CAUSE INFERRED NOT PROVEN · 14 Aug 2026
+
+**CONFIRMED via direct SQL, not inferred from logs**: `SELECT max(created_at)
+FROM judgments` returned the exact pre-outage timestamp (16:43:13 Aug 13)
+unchanged across two checks 10+ minutes apart, against `now()` reading
+00:51+ Aug 14 — **zero judgments written since the post-reboot restart**,
+despite all 21 workers alive, consuming real CPU, and "seen" counters
+climbing (MP: 3,400+ in ~40 min).
+
+**Root cause of `mapped=0`, not `written=0` in isolation**: read
+`toJudgmentRecord` in `hc-load.ts:240-254` — a candidate is rejected before
+ever reaching a write attempt if it has no `pdf_link`, no `title`, no
+`decision_date`, an unparseable date, or empty extracted text.
+`mapped=0` across THOUSANDS of "seen" candidates for MULTIPLE different
+courts (MP, Karnataka, Orissa, Rajasthan all observed) simultaneously, all
+on the SAME partition (`.../2026`), points to something structural about
+that partition's data shape rather than per-document corruption —
+real PDF fetch+parse IS happening (getHexString warnings visible, meaning
+unpdf is actively processing bytes), so this is not simple 404s.
+
+**Leading hypothesis, INFERRED not directly observed**: 2026 is the
+current, still-forming year. `no_decision_date` is a strong candidate —
+courts publish interim/procedural filings continuously through a case's
+life, and a still-open 2026 case may genuinely lack a populated
+`decision_date` in the source metadata until disposal, unlike a complete
+historical year. Not confirmed by reading an actual 2026 metadata row
+directly — three attempts at a live diagnostic (isolated single-document
+dry-runs, a metadata-only row-count survey) all timed out, most likely
+from S3 contention against 21 simultaneously-restarted workers all hitting
+the newest-year-first partition at once (an artefact of the mass restart
+tonight, not a normal steady-state pattern). Stopped after the third
+inconclusive attempt per the project's own 3-cycle discipline rather than
+keep guessing.
+
+**Why this matters, and why it isn't (yet) an emergency**: the "newest
+year first" sort order (`hc-load-cli.ts:190-203`, deliberate, cited
+reasoning: recent law matters more, an interruption should leave the most
+useful half) means EVERY worker restart pays this same 2026-scan tax
+before reaching the well-populated 2016-2025 range — normally spread out
+because workers restart at different times, but the mass reboot recovery
+tonight synchronised all 21 onto the identical partition simultaneously.
+**Not intervening further this cycle**: 2026 partitions are necessarily
+smaller than a full year (~7.5 months in), so this should exhaust on its
+own; killing and restarting again would just re-synchronise the same
+contention. Watching for writes to resume as workers clear 2026 naturally.
+**If writes are still zero next cycle, that upgrades this from "likely
+self-resolving" to a real blocking bug** worth a proper root-cause pass
+rather than more waiting.
+
+**CORRECTION, same session, ~15 min later — the `no_decision_date` guess
+above was wrong. Replaced by direct verification, not another guess:**
+
+Read raw 2026 metadata rows directly (MP, `metadata-mobile.parquet`) — every
+sampled row has a valid `title`, `decision_date`, and `pdf_link`, ruling out
+every `SkipReason` except `no_text`/`pdf_missing`. Fetched 5 of the actual
+PDFs those rows point to: **all 5 returned HTTP 404.** This is
+`pdf_missing`, a well-understood, benign outcome class already documented
+elsewhere in this file — mobile-variant metadata for the current,
+still-forming year is published ahead of the PDFs actually being uploaded
+to the bulk bucket. Not a code bug.
+
+**The SCALE mismatch is the real finding.** MP's entire 2026
+mobile-variant partition is exactly **3,477 rows** (measured via
+`rowCount`, a cheap parquet-footer read) — matching its observed "seen"
+count almost exactly, meaning the worker has nearly finished it. A 404 in
+isolation returns in 38-282ms measured directly. At even a conservative
+20 effective concurrent checks, 3,477 quick 404s should clear in well
+under a minute. **Observed: ~40 minutes.** A 40-100x gap between expected
+and actual, for a workload that is almost pure network round-trips with
+no PDF parsing involved.
+
+**This points directly back to the libuv-threadpool DNS bottleneck
+researched earlier tonight** (bus 0269): `dns.lookup()` (which plain
+`fetch()` uses) runs on a 4-thread pool with no caching, so no more than
+4 NEW connections can resolve DNS at once regardless of app concurrency.
+A wall of many quick sequential 404 checks against fresh URLs is exactly
+the shape that would be dominated by this ceiling — each request needs
+its own connection since a 404 response doesn't warrant keep-alive
+reuse the way a large successful fetch might. **Reframes the
+undici-Agent-tuning research already sent to LCC (0328) from "a
+throughput nice-to-have" to the likely explanation for the fleet
+producing zero writes for 46+ minutes against a workload that should be
+nearly instant.**
+
+**SECOND CORRECTION/EXTENSION, same session — the `pdf_missing` lag is NOT
+confined to the current still-forming year (2026). It extends into a fully-
+elapsed past year too, at least for this court.** Directly relevant to
+NEW3's independently-found "2023-24 donut hole" (bus 0332).
+
+DB check on `High Court of Madhya Pradesh` (court=23_23; earlier bus
+messages tonight mislabelled this "Madras" from the `hc-load-r4-mp.log`
+filename — MP is Madhya Pradesh, corrected here before it propagated
+further) by `judgment_date` year: 2023 has 102,892 rows (near-complete),
+2024 has 12,277, **2025 has only 184**, 2026 has 93. The live worker's log
+showed `mapped=0` continuously through the ENTIRE 2025 partition (candidate
+counts 3,677 → 26,821, ~23,000 candidates) before crossing into 2024.
+
+Verified directly, not inferred: sampled 15 rows from row-offset 5,000 in
+the `mphc_db_gwl` 2025 mobile-variant partition (23,344 rows total) — none
+already held in the DB (checked by CNR), and **15/15 live PDF HEAD
+requests returned 404.** Same `pdf_missing` class as 2026, not a code bug,
+not `already_held` — genuinely missing source PDFs, sampled mid-file so
+not an edge-of-file artefact.
+
+**Implication**: for at least this court, the registrar's PDF-file
+publication lags its metadata publication by more than one year — 2025
+is a complete calendar year with almost no PDFs actually uploaded yet.
+If this generalises to the other large courts NEW3 flagged, the
+"2023-24 donut hole" may be substantially a **source-side publication
+lag**, not a scheduling or ingestion gap — no amount of ingest scheduling
+fixes a PDF that AWS Open Data doesn't have yet. Scope caveat: measured
+on ONE court (MP), ONE bench-partition, N=15 sample — not yet checked
+against any of the 14 courts NEW3 actually named. Reported to NEW3 (bus
+0337) and folded into the DNS/undici priority note to LCC as it also
+explains why fleet throughput on these partitions is fetch-bound (near-
+constant 404 lookups) rather than write-bound.
 
 A founder directive ("NEW2 — DATA PARITY + INGESTION RELIABILITY EXECUTION")
 restated the project's standing rule — checkpoint by keyset, never OFFSET —
@@ -4633,6 +4748,33 @@ re-scan rather than trusting the tampered offset, matching the
 timing signature of a from-scratch run rather than a resumed one. tsc
 clean, 39 existing tests still green. Cleaned up all test checkpoint files
 and scratch scripts afterward.
+
+### Q1.43b · FOUR COURTS HAD NO WORKER RUNNING SINCE THE REBOOT — FOUND AND FIXED · 14 Aug 2026
+
+**Not a crash, an omission.** Cross-checked the live process list against
+`docs/HC_METADATA_SURVEY.json`'s 25-court manifest (ground truth, not
+memory or a guessed court-code list) rather than assuming the fleet
+matched scope. 20 courts + the general sweep were alive; Manipur
+correctly absent (verified earlier this session — 20,894/20,895
+candidates already held, a legitimately finished run, not a gap). But
+**Bombay (27_1), Patna (10_8), Sikkim (11_24), and Meghalaya (17_21) had
+no `hc-load-r4-*` log file at all** — never included in tonight's post-
+reboot restart wave. Confirmed via the exact launched command line of a
+running worker (`--court <CODE> --from-year 2016 --batch 200
+--concurrency 32 --apply`), replicated for all four, verified each came
+up clean (no crash-loop, real metadata-file counts: Bombay 119 files,
+the other three 11 each) and the fleet now shows all 24 applicable
+courts + sweep at the expected process count, no duplicates.
+
+**Why this matters beyond raw coverage**: Bombay and Patna are both
+named in NEW3's independently-found "2023-24 donut hole" (bus 0332). A
+court with zero workers running makes zero progress on every year, not
+just the recent ones — for those two specifically this may be a simpler,
+complete explanation than either the restart/DNS hypothesis (Q1.43a) or
+the source-side PDF-publication-lag finding (below), separate from
+whatever's true for the other 12 courts NEW3 named. Flagged to NEW3 (bus
+0342) to re-check once these two have had a few hours running. Reported
+to LCC as a `--downstream` tranche (bus 0341).
 
 ### Q1.44 · NEXT STEP 2 BLOCKED (named, not silently skipped); NEXT STEP 3 — EVIDENCE_WRONG is NOT the coverage gap it looked like · 13 Aug 2026
 
@@ -4751,6 +4893,57 @@ there is no citation field to weight toward here.
    machine outage (LCC, bus 0318) and every added query competes with
    ingest/enrichment catch-up for the same proxy. Queued as the next
    concrete action once the ring's DB load settles.
+
+**RUN, MEASURED, NOT SHIPPED — closed 13 Aug 2026.** Built
+`citation-strip.ts` (17 tests, 8 adversarial — Section/Article/BNS-number/
+bare-year/versus-with-no-citation/paragraph/page/judge-count references all
+survive unstripped, every genuine citation form strips cleanly including a
+repeated occurrence) and `experiment-citation-strip-cli.ts` (baseline vs
+candidate, both `mode: 'sparse'` so the haystack is identical by
+construction, negative control derived from the same run rather than a
+separate pass). Full 288, checkpointed across a benign "unsettled
+top-level await" restart (real pattern this session, not a new one — 72
+then 216 completed cleanly across two invocations, zero real crashes).
+
+| | ALL 288 | CHANGED (n=141) | CONTROL (n=147) |
+| --- | --- | --- | --- |
+| success@5 base | 9.7% | 7.8% | 11.6% |
+| success@5 candidate | 10.4% | 9.2% | 11.6% |
+| recall@20, both | 16.7% | 15.6% | 17.7% |
+| discordant (+/-) | +2/-0 | +2/-0 | +0/-0 |
+
+**Negative control held exactly** — 0 of 147 unchanged queries moved on any
+metric. The experiment mechanism is sound; this is not a confound or a
+measurement bug.
+
+**The effect itself does not clear the bar. `mcnemarExactP(2, 0) = 0.500`**
+— computed with this lane's own existing machinery (`stats.ts`), not
+eyeballed. Two discordant pairs, both favouring the candidate, is the exact
+shape of two coin flips landing the same way; `queriesToSettle(2, 0, 141)`
+= **271** — nearly double the entire changed population, and `= 554` against
+the full 288. This benchmark cannot settle this question at its current
+size, and cannot grow past 288 SC-only queries without the same HC-
+embeddings gate that already blocks NEXT STEP 2.
+
+**A second, independent reason not to ship even if the count had been
+larger**: `recall@20` is flat — 16.7%→16.7% overall, 15.6%→15.6% on the
+changed subset. Stripping never pulled a NEW judgment into the top-20; at
+most it could ever re-order within a set already retrieved. **The
+mechanism, even at its most generous, can only touch `BADLY_RANKED`
+(34.0%) — it was never going to move `HELD_NOT_RETRIEVED` (48.6%), the
+larger of the two failure populations**, which is itself a finding worth
+keeping: a citation-noise hypothesis explains at most the smaller half of
+the problem, by construction, not by this measurement's limits.
+
+**Decision, per the directive's own step 7: NOT IMPLEMENTED in
+`retrieve.ts`.** `citation-strip.ts` stays in the harness as a tested,
+reusable utility should a larger benchmark ever make the question
+answerable — nothing is deleted, nothing ships. This is the standing rule
+against tuning ranking without a settled measurement applying to itself:
+an underpowered positive result is not a result to act on, however
+tempting the arrow's direction. Both harness tools and this measurement
+reported to the ring; `HELD_NOT_RETRIEVED` remains the next cause to
+identify a mechanism for, not this one.
 
 ### Q1.43 · STATUTE MAPPING: measured, and it CANNOT be populated from what we hold · 13 Aug 2026
 
