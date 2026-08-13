@@ -35,7 +35,7 @@
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
-import postgres from 'postgres';
+import { openDb } from '@lawmind/ingest/db-host';
 
 import { hybridSearch, type RetrievedJudgment } from '@lawmind/api/search/retrieve';
 
@@ -142,9 +142,10 @@ async function main(): Promise<void> {
       `${already.size} already checkpointed, ${pending.length} pending`,
   );
 
-  // connect_timeout: 120 -- LCC's bus 0090, the same proxy-contention finding
-  // this run's own ECONNRESET timeout was a symptom of.
-  const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require', connect_timeout: 120 });
+  // openDb() -- LCC's actual DNS root-fix (bus 0169), adopted here the same
+  // way as arms-cli.ts: connect_timeout alone does not cover a stalled DNS
+  // lookup, which is what this run's own ENOTFOUND/ECONNRESET class was.
+  const sql = await openDb(url, 4);
   try {
     const embedder = await getEmbedder();
     const results: Classification[] = [...already.values()];
