@@ -93,14 +93,22 @@ try {
    * that 24 ingest workers are already saturating. The first attempt ran for
    * minutes without producing a row. Scoped, it reads ~38k rows.
    *
-   * **TESTED, AND THE ASSUMPTION IS WRONG.** Counted properly: **1,793 Supreme
-   * Court judgments print a paired citation, and 1,890 across all courts.** So
-   * **97 are outside the Supreme Court** — High Court judgments do quote the
-   * paired form, presumably when reproducing an SCR headnote.
+   * **TESTED BOTH WAYS, and the scoping turns out to cost nothing.**
    *
-   * Scoping to the Supreme Court therefore MISSES 97 judgments' worth of
-   * concordance. `--all-courts` is the correct mode for a real harvest; the
-   * scoped mode stays only because it is ~20x cheaper for iterating.
+   * The SQL predicate matches **1,793** Supreme Court judgments and **1,891**
+   * across all courts. That looked like scoping was discarding ~98 judgments'
+   * worth of concordance — so `--all-courts` was run to find out.
+   *
+   * It produced **identical** downstream numbers: 5,787 sightings, 3,927
+   * aliases, 3,873 resolved. **Those ~98 High Court judgments yield ZERO
+   * pairs.** They quote a paired citation in running prose; they do not carry a
+   * Case Law list with disposition markers, so the parser correctly rejects
+   * them.
+   *
+   * So the SQL predicate is a coarse pre-filter and the parser is the real
+   * gate — which is the right division. `--all-courts` remains for re-testing
+   * this whenever the corpus shape changes; scoped is the default because it is
+   * ~20x cheaper and, measured, loses nothing.
    */
   const allCourts = process.argv.includes('--all-courts');
   /**

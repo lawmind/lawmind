@@ -12,8 +12,7 @@
  * human. A classifier validated only against its own author's test fixtures has
  * been validated against the author's idea of a High Court order.
  */
-import postgres from 'postgres';
-
+import { openDb } from './db-host.ts';
 import { classifyHcDocument, type HcDocumentClass } from './hc-classify.ts';
 
 const BATCH = 1000;
@@ -32,7 +31,13 @@ async function main(): Promise<void> {
   const confirm = process.argv.includes('--confirm');
   const sampleAt = process.argv.indexOf('--sample');
   const sampleN = sampleAt === -1 ? 0 : Number(process.argv[sampleAt + 1] ?? 5);
-  const sql = postgres(url, { max: 2, onnotice: () => {} });
+  /**
+   * `openDb()`, not `postgres()` directly. A stalled DNS lookup is NOT covered
+   * by `connect_timeout`, and seven long-running passes died on exactly that
+   * today before `db-host.ts` existed. This job walks the whole corpus, so it is
+   * precisely the shape that gets caught by it.
+   */
+  const sql = await openDb(url, 2);
 
   try {
     /**
