@@ -4695,6 +4695,63 @@ numbers above).
 territory per the explicit "do not solve this by changing retrieval"
 instruction) and to the ring.
 
+### Q1.45 · NEXT STEP 5, ONE CANDIDATE SCOPED — residual-citation-span stripping in sparse ranking · 13 Aug 2026 · NOT IMPLEMENTED
+
+**Deterministic/lexical, per the directive's own ordering** (evaluate these
+before any model-architecture change). Scoped from Q1.43's own strongest
+secondary finding, not invented fresh: queries carrying a citation-shaped
+span skew toward `AUTHORITY_HELD_BUT_NOT_RETRIEVED` over `BADLY_RANKED`
+(83/123 = 67% vs 57/115 = 50%).
+
+**The naive read of that finding is wrong, and re-reading `build-queries.ts`
+caught it before any code was written.** The benchmark's own redaction step
+removes the GOLD judgment's `citation_text`, `neutral_citation` and
+`reporter_citations` from every query. So a citation-shaped span still
+present in a query is **never** the answer — it is always a *different,
+incidental* citation the reasoning passage happens to mention while
+discussing the real authority. This is `Q1.35`'s "sample of what a filter
+excludes" mistake, one level down: the correlation is real, but the cause
+cannot be "the ranker fails to boost the right citation," because the right
+one was deliberately stripped.
+
+**Revised hypothesis, falsifiable and cheap to test**: a residual citation
+span is **noise, not signal**, for this query population. `full_text_tsv`
+is `to_tsvector('english', full_text)` — one unweighted vector already
+named as the term-frequency problem behind Q1.25's whole existence, and a
+citation's digits/reporter abbreviations (`2019`, `4`, `SCC`, `221`) tokenize
+as ordinary lexemes, diluting `ts_rank`'s weight away from the legally
+meaningful vocabulary the true match actually shares with the query,
+without ever pointing toward the gold judgment (which carries no matching
+citation left to find). This reframes it as NEXT STEP 5's **query
+normalization** candidate, not a new "citation-field weighting" mechanism —
+there is no citation field to weight toward here.
+
+**Scoped, not built:**
+
+1. A pure query-side transform: strip spans matching the same
+   `CITATION_SHAPES` patterns `build-queries.ts` already uses for its own
+   residual-citation check, before constructing the sparse `tsquery`. Never
+   touches `full_text_tsv`, `judgment_chunks`, or the dense arm — additive
+   and reversible, same risk class as Q1.25.
+2. **Measurement plan, fixed before implementation**, per this lane's own
+   standing rule:
+   - Baseline: `AUTHORITY_HELD_BUT_NOT_RETRIEVED` / `AUTHORITY_RETRIEVED_
+     BUT_BADLY_RANKED` rates on exactly the 123 citation-span-carrying
+     queries from Q1.43's checkpoint (already have the query IDs).
+   - Candidate: same 123 queries, sparse arm only (isolate the mechanism
+     before touching hybrid), citation spans stripped pre-query.
+   - **Regression check, mandatory**: the 115 NO-citation-span queries run
+     unchanged through both passes as the negative control — a real
+     improvement moves the 123 and leaves the 115 flat; a query-shape
+     artifact would move both or neither.
+   - Reject if the 115-query control group regresses at all, per the
+     directive's explicit instruction not to trade one query type for
+     another.
+3. **Not run this session** — the corpus is mid-recovery from the 7.3-hour
+   machine outage (LCC, bus 0318) and every added query competes with
+   ingest/enrichment catch-up for the same proxy. Queued as the next
+   concrete action once the ring's DB load settles.
+
 ### Q1.43 · STATUTE MAPPING: measured, and it CANNOT be populated from what we hold · 13 Aug 2026
 
 Founder asked for the BNS/BNSS/BSA ↔ IPC/CrPC/Evidence mapping to be measured
