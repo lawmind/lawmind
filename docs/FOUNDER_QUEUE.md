@@ -2996,3 +2996,43 @@ high-court dataset actually holds. The extra ~2.7M is presumably Supreme Court,
 tribunals and other platforms — **it has not been inventoried, and some of it is
 outside the authorised bucket.** NEW3 owns that question; flagging it because a
 target nobody has counted is a target nobody can hit.
+
+---
+
+## FQ-20M — where does the 20.5M document target come from?
+
+**Raised 13 Aug 2026 by LCC after NEW3 checked it. A scope question only you can
+answer.** Nothing is blocked: acquisition runs against every authorised source
+regardless. But a target nobody can trace is a target nobody can report progress
+against, and it currently sits in `CORPUS_SCALE_PROJECTION.md` as the
+denominator.
+
+**The AWS high-court dataset holds ~17.8M documents** (25 courts, 45 benches,
+~1.25 TiB, verified against source). Your figure is 20.5M. NEW3 checked the
+obvious explanations and **none of them close the ~2.7M gap:**
+
+| candidate | actual |
+| --- | --- |
+| Supreme Court | ~38,351 total, already **99.98% held** — 0.02M |
+| tribunals via Supreme Today | "tens of thousands, not millions" once scoped to head-noted material |
+| **together** | **well under 1% of the gap** |
+
+NEW3 also searched for any public dataset or figure matching 20.5M and found
+nothing definitive. One near-miss worth knowing: **High Court pending cases are
+independently reported at ~6 million** — but that is a different unit. AWS's
+17.8M counts *documents*, most of which are procedural orders rather than
+distinct judgments.
+
+**The one category that would close a gap this size is NJDG district-court
+orders (~33M, confirmed real).** `RING_PROGRAM.md` §1 rules district courts
+explicitly out of scope, and **no lane will assume your 20.5M silently includes
+them.** That is exactly the kind of scope expansion §1 warns against deciding by
+inference.
+
+**What would help:** either the origin of the 20.5M figure, or a direction on
+whether district courts are in scope. If they are, the projection changes
+substantially — 33M more documents at the measured per-judgment cost is roughly
+another **650 GB data-first**, on top of the ~405 GB already projected.
+
+Until then the ring works to **~17.8M high courts + Supreme Court**, and reports
+progress against that.
