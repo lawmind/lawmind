@@ -301,3 +301,62 @@ a human closes that gap in minutes; no pipeline can.
 same check done for P. Kannadasan, which took one query each — then write
 `overruled_status` for the confirmed set only, with the citing judgment recorded
 as evidence.
+
+---
+
+## 7 · CHECKED AGAINST THE CORPUS — and the claim needs three corrections
+
+Nine of the 22 checked directly against held judgments. **The finding survives,
+but three things I implied are wrong.**
+
+    India Cement Ltd. v. State of Tamil Nadu   1989 INSC 322   none
+    Orissa Cement Ltd. v. State of Orissa      1991 INSC 90    none
+    State of M.P. v. Mahalaxmi Fabric Mills    1995 INSC 89    none
+    State of Orissa v. Mahanadi Coalfields     1995 INSC 286   none
+    Saurashtra Cement v. Union of India        2000 INSC 487   none
+    HDFC Bank Ltd. v. J.J. Mannan              2009 INSC 1314  none
+    Siddharam Satlingappa Mhetre               2010 INSC 843   SET_ASIDE  ← already marked
+    Federation of Mining Associations          NOT HELD
+    Randhir Singh Rana                         NOT HELD
+
+### 7a · A missed EDGE is not the same as a missing STATUS
+
+**Siddharam Mhetre already carries `overruled_status = 'set_aside'`** even though
+the citation edge was missed. Some other path set it.
+
+So "22 missed" counts **missing graph edges**, and I let that stand in for
+"22 authorities rendering as good law". Those are different quantities, and the
+second — the one that actually harms an advocate — is **smaller**. Any case
+whose status was set by another route renders correctly today regardless of the
+edge.
+
+**The edge still matters** (it is how the treatment graph explains *why*), but
+the severity claim has to be made against `overruled_status`, not against the
+edge count. I overstated it.
+
+### 7b · Two of the nine are not in the corpus at all
+
+Federation of Mining Associations and Randhir Singh Rana are **NOT HELD**. A
+missed `overruled` edge pointing at a judgment we do not have is a graph gap, not
+a mis-rendering — nothing displays them, so nothing displays them wrongly. A
+different problem, and NEW3's rather than mine.
+
+### 7c · Name matching cannot resolve these, which is the argument for the concordance
+
+The corpus holds **three** judgments titled *India Cements* (1965, 1989, 1989)
+and **three** *Saurashtra Cement* (1993, 2000, 2003). A name is not an identity
+here.
+
+Only the citation distinguishes them — `(1990) 1 SCC 12` picks out
+`1989 INSC 322` and nothing else. **This is precisely why the SCR↔SCC concordance
+is worth more than the disposition parser**: the parser says *something was
+overruled*, the concordance says *which judgment that was*.
+
+### What the corrected claim is
+
+> Of 22 missed adverse dispositions, **six are confirmed held, carry
+> `overruled_status = 'none'`, and therefore render as live good law** — the
+> mineral-royalty line plus HDFC v. J.J. Mannan. One was already marked. Two are
+> not in the corpus. The remaining thirteen are unchecked.
+
+Still worth fixing. Not the 22-authority figure the earlier section implied.
