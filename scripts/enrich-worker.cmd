@@ -1,43 +1,61 @@
 @echo off
-REM ---------------------------------------------------------------------------
-REM  Runs one resumable enrichment worker, forever, outside any agent session.
+REM ===========================================================================
+REM  Keeps ONE existing, resumable enrichment worker alive outside any agent
+REM  session. Founder-approved 14 Aug 2026 for execution reliability only.
 REM
-REM  WHY THIS EXISTS
+REM  Usage:   enrich-worker.cmd <name> <script.ts> [args...]
+REM  Disable: schtasks /change /tn "Lawmind-<name>" /disable
+REM  Remove:  schtasks /delete /tn "Lawmind-<name>" /f
+REM  Log:     %TEMP%\lawmind-<name>.log
+REM  Lock:    %TEMP%\lawmind-<name>.lock   (delete only if a crash orphaned it)
+REM
 REM  ---------------------------------------------------------------------------
-REM  Every long job LCC launched today died without an error and without an exit
-REM  code: a concordance harvest at its first query, a classifier dry run at
-REM  322,000 documents, a classifier write at 10,000, a paragraph pass at 18,219.
-REM  Backgrounded from bash, started via PowerShell Start-Process, wrapped in
-REM  nohup + disown -- all the same. The agent harness tears down the process
-REM  tree of each tool invocation, so anything descended from one is killed when
-REM  that call returns.
-REM
-REM  A scheduled task is not descended from the harness at all. It also survives
-REM  a reboot, which nothing did: the machine was powered off on 13 Aug and the
-REM  entire 24-worker ingest fleet stayed down for 7.3 hours because nothing
-REM  restarts itself.
-REM
-REM  SAFETY
+REM  WHY A SCHEDULED TASK AND NOT A LAUNCH TECHNIQUE
 REM  ---------------------------------------------------------------------------
-REM  Every worker invoked here must be RESUMABLE and IDEMPOTENT, because this
-REM  loops forever and will re-run a pass the moment it finishes. `paragraphs`
-REM  skips judgments that already have rows; `classify --resume` walks only
-REM  `hc_class_method IS NULL`. Do not add a worker that is not safe to re-run.
+REM  Six attempts across five methods -- bash background, nohup+disown, a
+REM  subshell-wrapped nohup+disown copied verbatim from NEW2's 19-hour-proven
+REM  pattern, PowerShell Start-Process, and the repo's own supervise.mjs -- every
+REM  one died the moment the agent tool call returned. NEW2's identical pattern
+REM  survives in THEIR session on the SAME machine, so this is the harness
+REM  attaching children to a job object with kill-on-close, not a technique
+REM  problem. A scheduled task is not a descendant of the harness at all.
 REM
-REM  Usage:  enrich-worker.cmd <name> <script.ts> [args...]
-REM  Remove: schtasks /delete /tn "Lawmind-<name>" /f
-REM ---------------------------------------------------------------------------
+REM  It also survives a reboot, which nothing did: the machine was powered off on
+REM  13 Aug and the entire 24-worker fleet stayed down 7.3 hours.
+REM
+REM  ---------------------------------------------------------------------------
+REM  SAFETY -- read before adding a worker here
+REM  ---------------------------------------------------------------------------
+REM  This loops forever, so every worker invoked MUST be resumable and MUST NOT
+REM  redo completed work:
+REM    paragraphs-cli --apply         skips judgments that already have rows
+REM    hc-classify-cli --resume       walks only hc_class_method IS NULL
+REM  A worker without that property would re-process the corpus every 30 seconds.
+REM  Do NOT add one. This wrapper exists to keep an EXISTING worker alive, never
+REM  to become a second enrichment implementation.
+REM ===========================================================================
 setlocal
 set NAME=%~1
+set LOG=%TEMP%\lawmind-%NAME%.log
+set LOCK=%TEMP%\lawmind-%NAME%.lock
 shift
+
+REM Single instance. The task can fire at boot while a manual run is already
+REM going, and two writers on the same rows is the collision NEW2 hit on Orissa.
+if exist "%LOCK%" (
+  echo [%DATE% %TIME%] %NAME% already running ^(lock present^); exiting >> "%LOG%"
+  exit /b 0
+)
+echo %DATE% %TIME% > "%LOCK%"
+
 set REPO=%~dp0..
 cd /d "%REPO%"
 
 :loop
-echo [%DATE% %TIME%] starting %NAME% >> "%TEMP%\lawmind-%NAME%.log"
-call npx tsx --env-file=.env %1 %2 %3 %4 %5 %6 %7 >> "%TEMP%\lawmind-%NAME%.log" 2>&1
-echo [%DATE% %TIME%] %NAME% exited with %ERRORLEVEL%, restarting in 30s >> "%TEMP%\lawmind-%NAME%.log"
-REM A crash-loop must not spin the CPU or hammer the proxy. 30s is long enough
-REM that a persistent failure is obvious in the log rather than buried in noise.
+echo [%DATE% %TIME%] starting %NAME% >> "%LOG%"
+call npx tsx --env-file=.env %1 %2 %3 %4 %5 %6 %7 >> "%LOG%" 2>&1
+echo [%DATE% %TIME%] %NAME% exited ^(%ERRORLEVEL%^), restarting in 30s >> "%LOG%"
+REM A crash-loop must not spin the CPU or hammer the shared proxy. 30s keeps a
+REM persistent failure obvious in the log rather than buried under retry noise.
 timeout /t 30 /nobreak > nul
 goto loop
