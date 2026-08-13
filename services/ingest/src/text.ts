@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -74,7 +74,7 @@ export async function fetchPdfText(
   if (classifyCorruption(primary)?.corrupt !== true) {
     return { text: primary, pages: totalPages || 1, method: 'unpdf' };
   }
-  const recovered = pdftotextFallback(bytes);
+  const recovered = await pdftotextFallback(bytes);
   if (recovered !== null && recovered.length >= primary.length && classifyCorruption(recovered)?.corrupt === false) {
     return { text: normaliseWhitespace(recovered), pages: totalPages || 1, method: 'pdftotext_fallback' };
   }
@@ -96,21 +96,62 @@ const PDFTOTEXT =
     ? 'C:/Program Files/Git/mingw64/bin/pdftotext.exe'
     : 'pdftotext');
 
-function pdftotextFallback(bytes: Uint8Array): string | null {
+/**
+ * ASYNCHRONOUS, and that is the whole point of this rewrite.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY `execFileSync` HAD TO GO — NEW2 reproduced it three times
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This used `execFileSync` with `timeout: 30_000`, and the comment beside it
+ * conceded the flaw while keeping it: **a synchronous call blocks the event
+ * loop, so the caller's `withTimeout` can never fire against it.** The timeout
+ * only bounds the CHILD; the parent thread is frozen for the duration
+ * regardless, and stays frozen if the child ignores the signal.
+ *
+ * NEW2 hit it deterministically — Orissa partition `21_11/2026`, candidate #459,
+ * three separate processes, immune to batch size, frozen 30+ minutes — and
+ * correctly stopped restarting rather than guessing a fourth time.
+ *
+ * **And the concurrency win makes it worse, not better.** At `--concurrency 40`
+ * a single blocking extraction stalls **39 other in-flight fetches** on that
+ * worker. The 1.9x throughput gain multiplies the cost of every such stall.
+ *
+ * `execFile` returns to the event loop while poppler runs, so the timeout is
+ * real, the other 39 fetches keep moving, and a stuck document costs one slot
+ * instead of the whole worker.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT THIS DOES NOT FIX, AND IT MATTERS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `unpdf`/pdf.js runs BEFORE this and does its font repair **synchronously on
+ * the main thread**. That is the original hang this file was written to route
+ * around, and no promise-based timeout can interrupt a synchronous CPU loop
+ * either. If Orissa #459 still hangs after this, the cause is upstream in
+ * extraction, not here, and the real fix is moving extraction to a worker
+ * thread. Recorded so the next person does not re-derive it.
+ */
+async function pdftotextFallback(bytes: Uint8Array): Promise<string | null> {
   let dir: string | null = null;
   try {
     dir = mkdtempSync(join(tmpdir(), 'lawmind-pdf-'));
     const pdfPath = join(dir, 'in.pdf');
     writeFileSync(pdfPath, bytes);
-    // `execFileSync` blocks the event loop, so a hang here cannot be raced by
-    // a caller's `withTimeout` the way the async `unpdf` path can — the exact
-    // font-repair hang this file exists to route around, reproduced
-    // synchronously instead of asynchronously. `timeout` makes Node SIGTERM
-    // the child itself rather than freezing the whole worker.
-    return execFileSync(PDFTOTEXT, ['-q', pdfPath, '-'], {
-      encoding: 'utf8',
-      maxBuffer: 200e6,
-      timeout: 30_000,
+    return await new Promise<string | null>((resolve) => {
+      const child = execFile(
+        PDFTOTEXT,
+        ['-q', pdfPath, '-'],
+        { encoding: 'utf8', maxBuffer: 200e6, timeout: 30_000 },
+        (err, stdout) => resolve(err ? null : stdout),
+      );
+      /**
+       * `timeout` sends SIGTERM, which poppler may ignore while wedged. Nothing
+       * downstream can recover a worker that never gets its callback, so the
+       * process is killed outright a little later.
+       */
+      const hard = setTimeout(() => child.kill('SIGKILL'), 35_000);
+      child.on('close', () => clearTimeout(hard));
     });
   } catch {
     return null;
