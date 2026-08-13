@@ -353,9 +353,9 @@ if (process.argv.includes('--reverify')) {
     await withDbRetry('write enrichment',
       () => sql`
       UPDATE document_enrichments SET
-        parsed_output = ${JSON.stringify({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) })}::jsonb,
+        parsed_output = ${sql.json({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) } as unknown as Parameters<typeof sql.json>[0])},
         verification_state = ${state}, verified_count = ${ok.length}, rejected_count = ${bad.length},
-        rejection_reasons = ${JSON.stringify(bad.map((b) => b.reason))}::jsonb
+        rejection_reasons = ${sql.json(bad.map((b) => b.reason))}
       WHERE id = ${row.id}`,
     );
   }
@@ -619,10 +619,10 @@ for (const [i, ref] of refs.entries()) {
         latency_ms, verification_state, verified_count, rejected_count, rejection_reasons)
       VALUES (${u.judgmentId}, ${TASK}, ${PROMPT_VERSION}, ${ENRICH_MODEL}, ${inputHash},
               ${sourceHash}, ${result.text.slice(0, 8000)},
-              ${JSON.stringify({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) })}::jsonb,
+              ${sql.json({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) } as unknown as Parameters<typeof sql.json>[0])},
               'ok', ${result.inputTokens}, ${result.outputTokens}, ${latency},
               ${state}, ${ok.length}, ${bad.length},
-              ${JSON.stringify(bad.map((b) => b.reason))}::jsonb)
+              ${sql.json(bad.map((b) => b.reason))})
       ON CONFLICT (judgment_id, task, prompt_version, input_hash) DO UPDATE SET
         raw_output = EXCLUDED.raw_output,
         parsed_output = EXCLUDED.parsed_output,
