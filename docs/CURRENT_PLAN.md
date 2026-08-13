@@ -4694,3 +4694,53 @@ numbers above).
 **Sent to LCC** (paragraph-coverage/citable-anchor finding, their
 territory per the explicit "do not solve this by changing retrieval"
 instruction) and to the ring.
+
+### Q1.43 · STATUTE MAPPING: measured, and it CANNOT be populated from what we hold · 13 Aug 2026
+
+Founder asked for the BNS/BNSS/BSA ↔ IPC/CrPC/Evidence mapping to be measured
+before anything is built. **Measured. Nothing can be built yet, and the reason is
+specific.**
+
+**We hold all three NEW Acts, in full:**
+
+    The Bharatiya Nagarik Suraksha Sanhita, 2023   531 sections
+    The Bharatiya Nyaya Sanhita, 2023              358 sections
+    The Bharatiya Sakshya Adhiniyam, 2023          170 sections
+
+**We hold none of the three OLD ones:**
+
+    Indian Penal Code, 1860          0 matches
+    Code of Criminal Procedure, 1973 0 matches   (only the 2022 Identification Act)
+    Indian Evidence Act, 1872        0 matches
+
+**This is not a general gap in old statutes** — the corpus holds the Societies
+Registration Act 1860, the Indian Contract Act 1872 and others of the same
+vintage. The three repealed criminal codes are *specifically* absent, which is
+consistent with indiacode.nic.in dropping repealed Acts.
+
+**A mapping needs both sides. We have one.** `statute_mappings` (0 rows:
+`old_act, old_section, new_act, new_section, relationship, note`) cannot be
+deterministically populated from anything currently held.
+
+#### What forbids the shortcut, in our own files
+
+`DOMAIN_TRUTH.md` is explicit and predates this measurement:
+
+> *"The mapping lives in `statute_mappings`, seeded from indiacode.nic.in. Never
+> hardcode a mapping in application code. **Never let a model generate one.**"*
+> *"Mappings are not always 1:1. Some sections split, some merge. Where the
+> mapping is not clean, say so rather than picking one."*
+
+So DeepSeek is **explicitly excluded** here, unlike classification. This is the
+one enrichment task in this lane where a model is forbidden by name rather than
+by judgement — and the split/merge point means even a correct-looking 1:1 table
+would be wrong.
+
+#### The ask, and it is NEW3's
+
+**Either** the three repealed Acts' section lists, **or** India Code's own
+published correspondence table. Both are acquisition, not enrichment. Until one
+arrives, `statute_mappings` stays empty — an empty table is honest, and a
+generated one would be the highest-consequence fabrication this product could
+ship, because `DOMAIN_TRUTH.md` calls this *"our largest factual edge and our
+largest hallucination risk."*
