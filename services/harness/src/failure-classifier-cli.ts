@@ -167,7 +167,7 @@ async function main(): Promise<void> {
      * interleaving), and `appendFileSync` per classification is fine
      * concurrently for lines this size.
      */
-    const CONCURRENCY = 6;
+    const CONCURRENCY = Number(process.env['CLASSIFY_CONCURRENCY'] ?? 6);
     let next = 0;
     async function worker(): Promise<void> {
       for (;;) {
