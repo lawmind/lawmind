@@ -98,3 +98,46 @@ test('one weak signal alone never condemns a document', () => {
   assert.ok(v.signals.wordLikeRatio < 0.2, 'expected a low word-like ratio for all caps');
   assert.equal(v.corrupt, false, 'all-caps text was condemned on one signal');
 });
+
+/* ------------------------------------- the SECOND corruption shape (bus 0167) -- */
+
+/**
+ * NEW2 found 51 Gujarat and 1 Telangana documents carrying the same font-cmap
+ * defect as Bombay that `classifyCorruption` passed as clean. Bombay SHATTERS
+ * words; this shape DROPS LEADING CHARACTERS, leaving word-shaped remnants that
+ * every shape-based signal reads as prose. Measured on a real document:
+ * single-char 0.009, word-like 0.312, mean length 5.2 — all three say clean.
+ */
+const LEADING_DROP =
+  'PLICATION NO. 19966 of 2021 filed by the etitioner against the nion of ndia and the ' +
+  'tate of ujarat. The ourt has heard learned counsel for the etitioner and the espondent. '.repeat(6);
+const LEADING_DROP_CLEAN =
+  'APPLICATION NO. 19966 of 2021 filed by the Petitioner against the Union of India and the ' +
+  'State of Gujarat. The Court has heard learned counsel for the Petitioner and the Respondent. '.repeat(6);
+
+test('LEADING-CHARACTER DROP IS CAUGHT, though every shape signal says clean', () => {
+  const v = classifyCorruption(LEADING_DROP)!;
+  assert.equal(v.corrupt, true, 'the second corruption shape passed as clean');
+  assert.match(v.reasons.join(' '), /first character missing/);
+  // The point: the shape signals genuinely do not see it.
+  assert.ok(v.signals.singleCharRatio < 0.1, 'single-char ratio should look clean here');
+});
+
+test('...and the SAME TEXT spelled correctly is not condemned', () => {
+  const v = classifyCorruption(LEADING_DROP_CLEAN)!;
+  assert.equal(v.corrupt, false, v.reasons.join(' · '));
+  assert.equal(v.signals.truncatedShare, 0);
+});
+
+test('the probe ratio needs enough sightings to be a rate at all', () => {
+  // One stray "tate" in an otherwise clean document is a typo, not corruption.
+  const text = `${LEADING_DROP_CLEAN} An isolated tate appears once here.`;
+  assert.equal(classifyCorruption(text)!.corrupt, false);
+});
+
+test('a document with no probe words yields a null share, never a false alarm', () => {
+  const devanagari = Array.from({ length: 60 }, () => 'याचिकाकर्ता अधिवक्ता न्यायालय').join(' ');
+  const v = classifyCorruption(devanagari)!;
+  assert.equal(v.signals.truncatedShare, null);
+  assert.equal(v.corrupt, false);
+});
