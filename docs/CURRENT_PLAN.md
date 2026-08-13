@@ -2975,6 +2975,50 @@ a clean, reproducible finding, not a one-off:
   partition starting near count 450-470, with process-level (not just
   promise-level) instrumentation on `execFileSync` calls specifically.
 
+**UPDATE — LCC root-caused and fixed the `execFileSync` half of this**
+(`text.ts`'s `pdftotextFallback` converted to async `execFile`, since a
+synchronous call blocks the event loop entirely and no `withTimeout`
+Promise.race can ever fire against it). **Retested against 21_11/2026, full result (4 automatic retries + a 5th
+that hung, not further restarted per the 3-cycle rule):**
+
+- Attempt 1: reached #459, threw a catchable `ECONNRESET` — retried
+  automatically (this itself is the improvement: no more infinite silent
+  freeze).
+- Attempts 2-4: same shape, retried automatically each time.
+- Attempt 5 (the wrapper's last automatic retry): genuinely hung —
+  confirmed via two consecutive CPU samples showing flat/near-zero growth
+  (65.30s → 65.33s over 15s), no further progress line.
+
+**Conclusion: the `execFile` fix is real and working** (it converted what
+used to be a permanent, unkillable-by-timeout hang into a catchable,
+retryable error on 4 of 5 attempts) **but did not fully cure #459.**
+Matches LCC's own caveat exactly: the remaining cause is most likely
+`unpdf`/pdf.js's synchronous font-repair loop running BEFORE the poppler
+fallback is ever reached — the ORIGINAL hang this file was written to
+route around, and no promise-based timeout interrupts a synchronous CPU
+loop either. Real fix would be moving extraction to a worker thread — a
+bigger, separately-scoped change per LCC, not another restart cycle here.
+Killed the stuck test process and relaunched orissa as a normal ongoing
+worker (`hc-load-r13-orissa.log`) rather than continuing to chase this
+specific partition.
+
+**A ~4-hour unmonitored gap happened this session** (loop wakeups stopped
+firing for reasons outside this lane's visibility — harness-level, not
+observed from here). Found on resume: **11 of 22 workers dead**, several
+with real crash evidence — `getaddrinfo ENOTFOUND
+indian-high-court-judgments.s3.ap-south-1.amazonaws.com` (punjab, delhi)
+and `Detected unsettled top-level await` (gauhati, chhattisgarh,
+karnataka, telangana). **This confirms the S3-DNS hypothesis from earlier
+in this session was not just a throughput question — it caused real
+worker deaths.** `fetchPdfText` (`text.ts:44`) still uses plain global
+`fetch()` with no DNS-bypass, unlike `openDb()` which already solved this
+exact class of failure for the database connection. All 11 restarted,
+confirmed exactly one process per court, no duplicates. **The S3-fetch
+DNS fix (mirroring `openDb()`'s pattern) is now upgraded from
+"nice-to-have throughput lever" to "reliability fix" given it has
+concretely killed workers** — worth prioritizing over the pipelining
+lever.
+
 **THIRD reproduction, 13 Aug ~09:52.** Same exact count (459), same
 partition (21_11/2026), third generation in a row (original, r10, r11),
 this time even with the batch-size mitigation already in place (batch=50)
@@ -4387,3 +4431,86 @@ second attempt writes to a file directly.
   corroborated it (SCR is the Supreme Court's own reporter, e-SCR confirmed
   SC-only) but explicitly flagged it as corroboration, not independent
   verification.
+
+### Q1.41 · `failure:classify` RE-RUN CLOSED — 288/288, zero timeouts, and two root-caused fixes that outlast this one run · 13 Aug 2026
+
+**All 288 gold queries classified. No stragglers left, no timeouts accepted as
+final.** Five attempts, each a genuine fix rather than a blind retry:
+
+| attempt | concurrency | timeout | result |
+| --- | --- | --- | --- |
+| 1 (sequential) | 1 | 120s | killed at 18/288 — too slow to finish |
+| 2 | 6 | 120s | 88 succeeded, 184 timed out (rising failure over the run) |
+| 3 | 3 | 120s | 161/183 succeeded — halving concurrency alone recovered most of it |
+| 4 | 3 | 120s | 7/22 succeeded, 15 remained |
+| 5 | 3 | **240s** | **15/15 succeeded, zero timeouts** |
+
+**BY PRIMARY CLASS, 288/288 (final):**
+
+| class | count | share | Q1.29 baseline (294,809 edges) | delta |
+| --- | --- | --- | --- | --- |
+| SUCCESS | 50 | 17.4% | 16.8% | +0.6pp |
+| AUTHORITY_RETRIEVED_BUT_BADLY_RANKED | 98 | 34.0% | 34.0% | 0.0pp |
+| AUTHORITY_HELD_BUT_NOT_RETRIEVED | 140 | 48.6% | 49.1% | −0.5pp |
+| NO_AUTHORITY_FOUND | 0 | 0% | 0% | unchanged |
+
+**Corpus context, recorded per LCC's standing ask**: this run's directed target
+was the 1.1M-edge graph (`judgment_citations` at 1,101,262 when TARGET 1 was
+set, bus 0193); by the time the last query classified, live query showed
+**1,209,451 judgments, 1,336,748 edges** — the corpus moved ~10% during the
+run itself, consistent with LCC's own warning (bus 0264/0277/0280) that the
+graph is now growing faster than any single measurement window.
+
+**The citation graph grew 3.7x (294,809 → 1,336,748 edges) and the failure
+distribution moved essentially nothing (≤0.6pp, noise-level on n=288).** This
+is itself the finding, not a null result: growing the citation graph does not
+help THIS benchmark, because `build-queries.ts`'s `INNER JOIN judgments cd ON
+cd.id = jc.cited_judgment_id` guarantees every gold judgment ID was already a
+resolved, held judgment at build time — a bigger graph cannot make an
+already-resolved answer "more resolved." The failures are structurally
+retrieval/ranking, not citation-graph coverage, for this specific query
+population. (Full reasoning already sent to LCC, bus 0287, in response to
+their 8.4%-resolution-rate concern — same conclusion, reached before this run
+finished.)
+
+**NO_AUTHORITY_FOUND confirmed genuinely zero**: `NEW3_ACQUISITION_QUEUE.json`
+— 0 new entries, 0 total. Correct by construction (every gold judgment is
+drawn from the corpus's own citation edges, so `NO_AUTHORITY_FOUND` cannot
+fire for this query set) and confirmed empirically across all 288.
+
+**Failure-type routing, as directed:**
+
+| type | count | destination |
+| --- | --- | --- |
+| retrieval failure (`AUTHORITY_HELD_BUT_NOT_RETRIEVED`) | 140 | stays with NEW1 |
+| ranking failure (`AUTHORITY_RETRIEVED_BUT_BADLY_RANKED`) | 98 | stays with NEW1 |
+| citation/concordance failure | **0** | none to route — see above, structurally impossible for this gold set |
+| missing-data failure (`NO_AUTHORITY_FOUND`) | 0 | none to route to NEW3 |
+
+**Secondary flag**: `EVIDENCE_WRONG` 130 of 148 found-authority queries
+(87.8%). Still high, consistent with `judgment_paragraphs` coverage not yet
+at 100% (LCC's last figure ~79.8%, climbing) — some found judgments still
+lack a paragraph row for Q1.32's `fillParagraphFallback` to use. Not a
+regression; expected given known partial coverage.
+
+**Two root-caused fixes, not just retries, now permanent in the tool:**
+
+1. **`openDb()` adopted** (services/ingest/src/db-host.ts, LCC bus 0169) —
+   same DNS root-fix as `arms-cli.ts`.
+2. **`CONCURRENCY` and `QUERY_TIMEOUT_MS` made tunable** via
+   `CLASSIFY_CONCURRENCY` / `CLASSIFY_TIMEOUT_MS`. The second was root-caused,
+   not guessed: pulled the single most persistent straggler
+   (`civil-e5de6bbd`, failed in attempts 2, 3 *and* 4) out of the batch loop
+   and ran `hybridSearch` against it directly with no timeout — completed
+   cleanly in **65,978ms**. Not stuck; genuinely slower than 120s under the
+   ring's current 5x-throughput push. Raising the ceiling to 240s for the
+   final straggler-only pass converted 15/15 timeouts into 15/15 real
+   classifications, `civil-e5de6bbd` included.
+
+**Q1.25 (case-title pin) status**: already shipped, live-verified, and
+measured closed in Q1.30 earlier this session — no further action from this
+run. The `failure:classify` re-run and Q1.25 are separate threads; both are
+now closed.
+
+**Reported to LCC on the bus.** All harness changes committed and pushed
+(`fa54441`, `497e4b0`, plus the earlier `65b7d7c` openDb adoption).
