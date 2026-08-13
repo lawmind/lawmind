@@ -2370,8 +2370,54 @@ this run alone; both remain live explanations. **Not acted on** — this
 lane does not tune RRF or fusion weights from one controlled-but-
 underpowered run, per its own standing rule.
 
-**AFTER measurement**: same command, fresh process (this one loaded
-`retrieve.ts` before `exactCaseTitle` was committed), once running.
+**AFTER measurement, attempt 1 — crashed mid-run, real data recovered
+anyway.** `arms-controlled-after.log`: sparse and dense both completed
+before the process died on `hybrid 20/100` with an uncaught `ENOTFOUND`.
+
+| arm | success@5 | recall@20 | MRR | nDCG@5 | nDCG@20 |
+| --- | --- | --- | --- | --- | --- |
+| sparse | 7.0% | 13.0% | 0.053 | 0.053 | 0.070 |
+| dense | 17.0% | 34.0% | 0.118 | 0.116 | 0.168 |
+
+**Byte-identical to BEFORE, both arms, all five metrics.** Not a build
+error — checked directly: `exactCaseTitle`'s SQL fires and correctly
+finds nothing to pin for the vast majority of this query set, because
+**the case-name pin was never going to move this benchmark.**
+`build-queries.ts`'s whole redaction step exists to strip a cited case's
+distinctive title words out of the query text so the task measures
+retrieval rather than string lookup (its own header, "LEAKAGE"). A
+benchmark built to remove case names from its queries cannot, by
+construction, exercise a fix for typing a case name. Q1.25 was correctly
+verified a different way — direct live smoke tests against real
+case-name queries (`S. N. DUTT versus UNION OF INDIA` and the other
+three traced failures) — and that verification stands; this benchmark
+was never going to corroborate or refute it, and expecting it to would
+have been the wrong check.
+
+**A second, real finding surfaced while explaining the first.**
+`query-shape.ts`'s `CASE_NAME_RE` (`/\S+\s+(?:v|vs|versus)\.?\s+\S+/i`)
+misclassifies 161 of the 283 gold queries as `case_name` shape — checked
+directly, not assumed: these are reasoning passages that happen to
+contain a bare `v` or `versus` token, e.g. one example began *"(2) For
+the purposes of this section, a fact is said to be proved only when the
+Special Court believes it to exist beyon…"*, which is not a case-name
+lookup by any reading. Every one of those 161 now fires an extra
+`exactCaseTitle` query per search that Q1.25 did not need to add. Whether
+any of them **falsely pin** (resolve to exactly one row and corrupt
+ranking, not just waste a round trip) is checked directly against the
+database — see the follow-up entry below once it lands; this is flagged
+now because it is real and predates knowing the answer, not held back
+for a tidier writeup.
+
+**AFTER measurement, attempt 2 — running.** `arms-cli.ts` hardened first
+(`scoreQueryResilient`, retries the same transient-network codes NEW2
+root-caused on their own workers — bus `0159`, a local DNS hiccup
+resolving the Railway proxy hostname, not shared-proxy load; unlike
+their fix this retries per-query rather than the whole run, since this
+loop has no checkpoint and paired McNemar needs every arm on the
+identical query set). Relaunched (`arms-controlled-after2.log`) — the
+hybrid arm is the only new information this run can add, since sparse
+and dense are already confirmed unchanged.
 
 ### Q1.31 · 20 WORKERS — Calcutta and Gauhati dedicated · 13 Aug 2026
 
@@ -2632,6 +2678,52 @@ full history — 27 files in scope instead of 11. The other small courts
 will hit the same natural completion soon; each gets the same treatment
 rather than being left capped at the last decade, since "all available
 data" per the founder's own wording is not scoped to one decade.
+
+**Escalation, 13 Aug, worth watching**: the flat-CPU hang that hit one worker
+at a time (Madras, Orissa, Rajasthan) hit **7 simultaneously** this check —
+Allahabad, Madras, Punjab, Rajasthan, Orissa, Karnataka, Telangana. Waited
+75s before restarting to rule out "merely slow under proxy load" (a `SELECT
+1` measured 2.8s at the time, elevated but not severe) — confirmed
+genuinely stuck, not slow: six of seven showed zero movement across the
+wait. All 7 restarted, verified healthy. **Not scaling worker count further
+this cycle** — holding at 24 rather than adding more while this pattern's
+true cause (still unconfirmed; Windows exec-timeout ruled out, proxy
+latency alone doesn't fully explain a 25+ minute stall) is unresolved.
+Watching whether the hang rate stabilises or keeps climbing on the next
+check.
+
+### Q1.34 · THE HANG'S ROOT CAUSE, FINALLY: a transient DNS blip, and now self-healing · 13 Aug 2026
+
+**Closes the "root cause still open" note from Q1.29's escalation.** This
+check found 7 workers dead (Chhattisgarh, AP, J&K, Gauhati, Tripura,
+Manipur, Gujarat) plus 2 more stuck (Orissa, Rajasthan) — the worst wave
+yet. The crashed ones' logs carried the actual answer this time:
+
+```
+Error: getaddrinfo ENOTFOUND hayabusa.proxy.rlwy.net
+```
+
+**The Railway proxy hostname itself failed to resolve** — an uncaught
+exception from `postgres.js`'s query construction, not a catchable
+rejection inside `main()`. Re-resolved fine moments later
+(`nslookup`/`dns.lookup` both succeeded immediately after) — a transient
+consumer-router DNS hiccup, not a broken environment or a code defect.
+**This is very likely what every earlier "flat CPU, no progress" hang in
+this session actually was** too — a DNS lookup stalling rather than failing
+fast, which `withTimeout` cannot help with (it bounds the extraction path,
+not the DB client's own connection attempts), explaining why multiple
+workers were hit at once each time: they all do DNS lookups around the
+same moments.
+
+**Fixed at the source rather than left as a manual-restart chore.**
+`hc-load-cli.ts`'s top-level `main()` call now retries the whole run (up to
+5 attempts, exponential backoff to 30s) on `ENOTFOUND` / `EAI_AGAIN` /
+`ECONNRESET` / `ECONNREFUSED` / `ETIMEDOUT` specifically — safe because
+`main()` is resumable by construction (`source_url` skip), so a retry costs
+a fast re-check of already-held rows, never lost work. Any other error
+still propagates immediately, unretried. 48 tests green, `tsc --noEmit`
+clean. All 9 affected workers restarted with the fix; every future DNS
+blip should now self-heal without needing this loop to catch it.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
