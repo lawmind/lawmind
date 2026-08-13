@@ -16,7 +16,8 @@
     "deployed-safety": "tsx src/deployed-safety-cli.ts",
     "deployed-judgment-safety": "tsx src/deployed-judgment-safety-cli.ts",
     "failure:classify": "tsx src/failure-classifier-cli.ts",
-    "failure:taxonomy": "tsx src/failure-taxonomy-cli.ts"
+    "failure:taxonomy": "tsx src/failure-taxonomy-cli.ts",
+    "experiment:citation-strip": "tsx src/experiment-citation-strip-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
