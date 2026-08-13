@@ -106,6 +106,69 @@ report before writing.
 
 ---
 
+## 4b · BUILT AND RUN — AND THE FIRST TWO VERSIONS WERE BOTH WRONG
+
+`headnote-dispositions.ts` + `-cli.ts`, 13 tests. **Writes nothing.** Run against
+all 45 judgments.
+
+### What it found
+
+| | |
+| --- | --- |
+| adverse dispositions parsed | **56** |
+| the extractor catches today | 28 |
+| apparently missed | **28** |
+| **SCR↔SCC concordance pairs** | **391 distinct** |
+| unresolved adverse edges with a harvested SCR form | **4 of 34** |
+
+### The 28 is NOT trustworthy, and that is the finding
+
+**Version 1 reported ten cases overruled by `Puttaswamy`** — including *Shayara
+Bano*, *Kihoto Hollohan* and *Tulsiram Patel*. All good law. The real group is
+two cases.
+
+Cause: `– relied on` appears with **no trailing period**
+(`– relied on 1.1.3 A constitutional trust…`). The marker regex required one, so
+that boundary was never seen and the next group reached back across two
+paragraphs of prose and two earlier lists.
+
+Fixed two ways — optional period, and the group is now **walked backward from
+the marker until an entry stops parsing as a case**, so a boundary comes from
+the text rather than from another regex having worked. Puttaswamy now reports 1.
+
+**Version 2 is still wrong.** `Joseph Shine` reports *E P Royappa*, *Navtej
+Singh Johar*, *Anuj Garg* and *Independent Thought* as overruled. It overruled
+*V. Revathi* and *Sowmithri Vishnu* and nothing else. Same shape, a marker form
+still unmatched.
+
+**Stopped there deliberately** — two fix-verify cycles on one defect, and
+`CLAUDE.md`'s three-strike rule exists so a third blind attempt does not happen.
+The false-positive rate is **unbounded, not small**, and the honest number is
+that 28 is an upper bound containing an unknown quantity of good law.
+
+### The two halves have different reliability, and this is the useful part
+
+**A concordance pair is read from ONE entry's own text** — `<name> [YYYY] N SCR
+P : (YYYY) N SCC P`. It does not depend on where a group starts or which marker
+closed it. The boundary bug assigns the wrong *disposition* to an entry; it does
+not corrupt that entry's own SCR↔SCC pairing.
+
+> **The 391 pairs are sound. The 28 is not.**
+
+That asymmetry is what makes this worth keeping despite the parser being wrong:
+the half that survives is the half that addresses the *"SCC/AIR → S.C.R.
+identity gap"* blocking all 34 unresolved edges.
+
+### And the report-only rule is what made this safe
+
+Had version 1 written to `overruled_status`, *Shayara Bano*, *Kihoto Hollohan*
+and *Tulsiram Patel* would now be marked dead law across every surface — the
+precise failure `CLAUDE.md` §6 calls *"as severe as a hallucination"*, caused by
+the tool built to prevent it. The discipline was not caution for its own sake;
+it was load-bearing twice in one hour.
+
+---
+
 ## 5 · PROPOSED, NOT DONE
 
 1. **A report-only pass over the 45 judgments** that parses grouped dispositions
