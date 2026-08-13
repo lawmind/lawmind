@@ -212,7 +212,17 @@ async function main(): Promise<void> {
       return e ? toVectorLiteral(e.vector) : null;
     };
 
-    console.log(`${queries.length} queries · arms: ${ARMS.join(', ')}\n`);
+    /**
+     * LCC's finding (bus 0164): Document-Level Retrieval Mismatch is a named
+     * failure mode that WORSENS as a corpus scales (arXiv 2510.06999), and
+     * this corpus went 79k -> 761k+ across this session's own baselines.
+     * Printed with every run so a before/after comparison states plainly
+     * whether it is measuring the change or measuring growth — a number
+     * with no row count next to it is a claim nobody downstream can check.
+     */
+    const corpusSizeRows = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM judgments`;
+    const corpusSize = corpusSizeRows[0]!.n;
+    console.log(`${queries.length} queries · arms: ${ARMS.join(', ')} · corpus: ${corpusSize} judgments\n`);
 
     /**
      * The controlled pass pins the haystack to what dense can actually reach.
