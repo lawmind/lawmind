@@ -219,10 +219,50 @@ try {
   console.log(`  ${ambiguous} refused — the SCR form matched more than one judgment`);
   console.log(`\n  ${final.length} aliases ready`);
 
-  const existing = await sql<{ n: number }[]>`
-    SELECT count(*)::int n FROM judgment_citation_aliases
+  /**
+   * CROSS-SOURCE RECONCILIATION — the last gate, and it found real conflicts.
+   *
+   * `reconcile()` drops an alias contradicted WITHIN this pass. It cannot see
+   * the deployed adjacency pass's rows, so the two sources were compared
+   * directly: of **1,394** overlapping alias keys, **1,391 agree** on the target
+   * judgment and **3 disagree**. Two independent methods agreeing 99.78% of the
+   * time is the strongest validation available here.
+   *
+   * The 3 were read individually and **neither method is reliably right**:
+   *
+   *   (2003) 4 SCC 399  mine=PUCL 2003, theirs=ADR 2002 — same subject, mine
+   *                     matches the SCC year
+   *   (1993) 3 SCC 339  identical case name and date, consecutive INSC numbers
+   *                     and consecutive SCR pages — a companion pair, genuinely
+   *                     unresolvable
+   *   (1980) 2 SCC 167  theirs carries [1980] 2 SCR 650, matching the SCC
+   *                     year/volume; mine picked the 1978 predecessor
+   *
+   * So the rule this file already inherits applies ACROSS sources too: **a
+   * contested alias is dropped, not adjudicated.**
+   *
+   * This is not merely conservative. The upsert is `ON CONFLICT (alias_key) DO
+   * UPDATE SET corroborations`, so writing a contested alias would RAISE the
+   * corroboration count on a row whose target we dispute — making a contested
+   * mapping look better-evidenced than an uncontested one. Exactly backwards.
+   */
+  const priorRows = await sql<{ alias_key: string; judgment_id: string }[]>`
+    SELECT alias_key, judgment_id::text FROM judgment_citation_aliases
      WHERE alias_key = ANY(${final.map((f) => f.aliasKey)})`;
-  console.log(`  ${existing[0]?.n ?? 0} already recorded · ${final.length - (existing[0]?.n ?? 0)} new`);
+  const prior = new Map(priorRows.map((r) => [r.alias_key, r.judgment_id]));
+
+  const conflicted = final.filter((f) => {
+    const p = prior.get(f.aliasKey);
+    return p !== undefined && p !== f.judgmentId;
+  });
+  const writable = final.filter((f) => !conflicted.includes(f));
+
+  console.log(`  ${prior.size} already recorded · ${writable.length - (prior.size - conflicted.length)} new`);
+  console.log(`  ${prior.size - conflicted.length} AGREE with the deployed adjacency pass`);
+  console.log(`  ${conflicted.length} DROPPED — the two sources name different judgments`);
+  for (const c of conflicted) {
+    console.log(`     ${c.alias}  headnote=${c.judgmentId.slice(0, 8)}  adjacency=${prior.get(c.aliasKey)?.slice(0, 8)}`);
+  }
 
   for (const f of final.slice(0, 10)) {
     console.log(`    ${f.alias.padEnd(22)} → ${f.judgmentId.slice(0, 8)}  ${f.evidence.slice(0, 58)}`);
@@ -244,8 +284,8 @@ try {
     // proxy, which is the latency lesson already paid for in concordance-cli.
     const CHUNK = 500;
     let written = 0;
-    for (let i = 0; i < final.length; i += CHUNK) {
-      const batch = final.slice(i, i + CHUNK).map((f) => ({
+    for (let i = 0; i < writable.length; i += CHUNK) {
+      const batch = writable.slice(i, i + CHUNK).map((f) => ({
         judgment_id: f.judgmentId,
         alias: f.alias,
         alias_key: f.aliasKey,

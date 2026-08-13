@@ -143,9 +143,48 @@ concrete step, not more government-site research.
 | ITAT | No — case-by-case only, fetched directly | Yes — a live `doctypes:itat_delhi` result URL (bench-suffixed doctype pattern) | Acquire via Supreme Today |
 | CAT | Not fetched | Yes — a live `doctypes:cat_delhi` result URL (same bench-suffixed pattern) | Acquire via Supreme Today |
 | NCDRC (+ state/district consumer commissions) | Not fetched this session | Yes — live `doctypes: judgments` result listings for NCDRC specifically | Acquire via Supreme Today |
-| NGT, SAT, DRT | Not fetched | **Weaker evidence** — named in a search engine's synthesized summary of IndianKanoon coverage, but no raw `doctypes:` result URL confirmed for any of the three this session | SAT and DRT are explicitly in Supreme Today's priority-2 list; NGT is not — worth confirming Supreme Today actually covers NGT before assuming it does |
-| CCI, TDSAT, NGT, AFT | Not fetched directly | **Confirmed this session** — live, real `doctypes:` result URLs for all four (TDSAT and AFT bench-suffixed, e.g. `doctypes:tdsat`, `armed forces tribunal doctypes:chennai`) | Not in Supreme Today's *stated* priority-2 list (which names NCLT/NCLAT/ITAT/CESTAT/SAT/DRT specifically) — worth confirming Supreme Today actually covers these once an account exists, since "not listed" may mean "not asked about" rather than "not held" |
-| GSTAT | N/A — **too new to matter yet** | N/A | **Different finding, not a research gap.** GSTAT only began adjudicating 16 Feb 2026 (Principal Bench; most State Benches still not operational as of this session). There is almost no case law anywhere to acquire yet — this is a "revisit in 12-18 months" item, not an unresearched source |
+| SAT, DRT, DRAT | IndianKanoon market intel (SAT, DRT) | Yes — live doctype URLs | Already in `HARVEST_ENGINE.md`'s stated priority-2 list, plus independently confirmed on Supreme Today's own site (below) |
+| NGT, TDSAT, CAT | IndianKanoon market intel confirmed real (bench-suffixed doctypes for TDSAT/CAT) | Yes | **Confirmed COVERED by Supreme Today directly, 13 Aug** — see below. Not in `HARVEST_ENGINE.md`'s original stated list but the vendor's own site lists them |
+| AFT | IndianKanoon market intel confirmed real (bench-suffixed doctypes, e.g. `armed forces tribunal doctypes:chennai`) | Yes | **Absent from Supreme Today's tribunal-news filter, 13 Aug** — real uncertainty, not confirmed either way (see below) |
+| CCI | Not independently confirmed on IndianKanoon this session | Unconfirmed | **Absent from Supreme Today's tribunal-news filter, 13 Aug** — same uncertainty as AFT |
+| GSTAT | N/A — **too new to matter yet** | N/A | GSTAT only began adjudicating 16 Feb 2026. Almost no case law exists anywhere yet — a "revisit in 12-18 months" item. **Notably, Supreme Today's own filter already lists "GST Appellate"** — the vendor is tracking it despite the near-zero volume, worth knowing for whenever this does matter |
+
+**Supreme Today AI's own tribunal-coverage filter, fetched directly 13 Aug
+2026 (`supremetoday.ai/tribunal-court-news`) — the best evidence in this
+registry for what the actual acquisition target covers, since it is the
+vendor's own claimed scope, not third-party market intel.** 22 distinct
+categories listed: Income Tax Appellate Tribunal, National Company Law
+Tribunal, National Company Law Appellate Tribunal, Customs Excise &
+Service Tax Appellate Tribunal, Central Administrative Tribunal, Central
+Electricity Regulatory Commission, National Green Tribunal, National/
+State Consumer Disputes Redressal Commissions, Real Estate Regulatory
+Authority, Securities and Exchange Board of India, Debt Recovery
+Tribunal, Debt Recovery Appellate Tribunal, Appellate Tribunal for
+Electricity, GST Appellate, Railway Claims Tribunal, Telecom Disputes
+Settlement and Appellate Tribunal, Central Information Commission.
+
+**This confirms coverage broader than `HARVEST_ENGINE.md`'s original
+priority-2 list**, and surfaces two genuinely new, high-value categories
+that list never named: **RERA** (a huge practice area on its own) and
+**Central Information Commission** (RTI appeals). **CCI and AFT — RESOLVED 13 Aug 2026, both confirmed covered.** Absent from
+the one tribunal-news filter page checked earlier, but a direct search
+found both genuinely indexed elsewhere on the same site: multiple real CCI
+judgment/news pages (Cadila Healthcare v. CCI, CCI v. Steel Authority of
+India, the Flipkart-CCI dominance dispute) and AFT-specific content using
+a systematic document-ID prefix (`INDAFT00000000048`) — clear evidence of
+structured coverage, not an incidental mention. **Both tribunals are in
+scope for the Supreme Today acquisition plan after all** — the earlier
+"absent from this page" finding was a false negative from checking only
+one filter view, not the vendor's actual coverage. Lesson: a single page
+of a product is not its full coverage claim, confirmed by this correction
+rather than left as a standing caveat.
+
+**Bonus find while checking AFT: the tribunal's own official site,
+`aft.gov.in/reportable-judgements` and `aft.gov.in/judgements`, is real**
+— not fetched or characterised this session (structure, bulk access
+unknown), but recorded as a free, primary, government-direct alternative
+worth a future look if the Supreme Today path is ever insufficient for
+AFT specifically.
 
 **Pattern found, useful market intelligence even though it's not this
 lane's acquisition path:** IndianKanoon's tribunal doctypes appear to be
@@ -216,14 +255,20 @@ unconfirmed.**
   | state | portal | verified how | finding |
   | --- | --- | --- | --- |
   | **Maharashtra** | `lj.maharashtra.gov.in/en/document-category/act-list/` | **Fetched directly** | Real, structured, ~180+ Acts, per-Act PDF (226 KB–1 MB), **paginated 16 pages**, coverage **1952–2026**, page itself maintained (last updated 12 Mar 2026). **VERIFIED_AVAILABLE.** Per-Act PDF, not per-section like indiacode's central Acts — a parser would need to extract sections from the PDF text itself |
-  | Uttar Pradesh | `upvidhansabhaproceedings.gov.in/gazette-search` | Found by search, not fetched | A dedicated Legislative Assembly gazette search tool — distinct from a bare Act repository. **VERIFIED_AVAILABLE (existence)**, structure/coverage unconfirmed |
-  | Tamil Nadu | `stationeryprinting.tn.gov.in/gazette.php` | Found by search, not fetched | Weekly gazette, English **and Tamil**, published since 1800 under its current successor name since 1967. **VERIFIED_AVAILABLE (existence)**, structure/coverage unconfirmed |
+  | **Uttar Pradesh** | `upvidhansabhaproceedings.gov.in/gazette-search` | **Fetched directly, 13 Aug** | Real, official Legislative Assembly search tool — rich filters (Type, Part, Category, Subject, Department, Ministry, notification number, publication/notification date, browse-by-decade). No bulk download visible on the search page itself. **VERIFIED_AVAILABLE**, structure is search-and-view rather than a listing/PDF-per-item like Maharashtra |
+  | **Tamil Nadu** | `stationeryprinting.tn.gov.in/gazette.php` | **Fetched directly, 13 Aug** (note: `www.` subdomain fails TLS cert validation — bare domain works) | Real, official, **current through 12 Aug 2026** — 32 issues listed for 2026 alone, plus a separate Extraordinary Gazette section and an archive for earlier years. Content includes Acts/ordinances with Tamil supplements, service rules, statutory notifications. **VERIFIED_AVAILABLE**, per-issue drill-down rather than direct PDF links on the index page |
+
+  | Karnataka | `gazette.kar.nic.in` (e-gazette, searchable from 2020) + `law.karnataka.gov.in` | Found by search, not fetched | Two-site pattern (gazette separate from law department), same as most states checked so far |
+  | Delhi | `law.delhi.gov.in/notifications` + `delhiarchives.delhi.gov.in/gazette-notifications` | Found by search, not fetched | Same two-site pattern |
 
   **Pattern worth recording for whoever scopes this next:** every state
   appears to need its own portal mapped individually — there is no
   multi-state aggregator found this session other than indiacode's own
   (unconfirmed-structure) state pages. 28 states + 8 union territories is a
-  real-sized discovery task on its own, not a quick add-on.
+  real-sized discovery task on its own, not a quick add-on. **5 of 28+8
+  now identified** (Maharashtra fetched directly; UP, TN fetched directly;
+  Karnataka, Delhi found by search) — roughly a sixth of the way through
+  a full state-by-state map, at the current rate.
 
 - **PRS Legislative Research (`prsindia.org`) hosts primary gazette PDFs
   directly, not just editorial commentary** — found this session at
@@ -301,6 +346,29 @@ structurally NOT the same shape as the High Court gap.**
 **Resumed directly after the session-limit cleared. One major finding —
 possibly the most valuable in this whole registry — and one caught
 hallucination, both recorded honestly below.**
+
+### 5a-pre · SUPERSEDING FINDING, 13 Aug 2026 — the concordance may not need an external source at all
+
+**Before reading the ECT section below (kept for provenance, not yet
+disproven, but now second priority): LCC found, from inside the corpus
+while resolving a single citation this lane had flagged, that 656
+judgments already print paired citations in `S.C.R. cite : SCC cite`
+form** — the exact mapping the ECT and every external candidate in this
+section exist to provide. No fetch, no purchase, no licensing question —
+a string pair in text already held. Full account: `docs/ai/
+OVERRULED_GROUP_MARKERS.md` §4, this lane's own follow-through in
+`TREATMENT_GRAPH_GAP.md` §3c.
+
+**This does not make the ECT worthless** — 656 judgments is a fraction of
+the corpus, and the ECT (if ever fetched) covers the Supreme Court's full
+1950–present population regardless of whether a citing High Court judgment
+happened to print both forms together. But it changes the priority: the
+internal, free, zero-tooling-risk source should be tried first, and the
+ECT (blocked on `agent-browser`, still unavailable to any session) drops
+to a fallback for whatever the internal harvest doesn't reach. **Building
+the harvester is LCC's call and LCC's territory** (enrichment/extraction,
+not corpus discovery) — recorded here as it directly changes this lane's
+own acquisition-priority ordering, not as a task this lane will build.
 
 ### 5a · THE ECT — an official, free Supreme Court citation concordance, likely unresearched by LawMind until now
 
@@ -432,14 +500,76 @@ Today licence (which buys *High Court* headnotes specifically because SC
 ones are "largely duplicated by e-SCR's official free headnotes,"
 `SUPREME_TODAY_LICENCE.md` §8a).
 
-**What this session did NOT do:** fetch `scr.sci.gov.in/scrsearch/`
-directly to confirm the CAPTCHA claim still holds, or scope what a
-CAPTCHA-bounded manual/authorised-bulk headnote acquisition would actually
-cost. **Filed as a genuine open question, not a recommendation** — the
-terminology conflict alone is worth a future session's time before any
-acquisition action, and if `scr.sci.gov.in` behaves like `scr.sci.gov.in`
-(same domain family, note the earlier ECT block on `main.`/`www.`
-subdomains this session), it may hit the same tooling wall.
+**RESOLVED 13 Aug 2026 — fetched directly, upgraded from INFER to KNOW.**
+`https://scr.sci.gov.in/scrsearch/` loaded successfully (unlike the ECT's
+`main.`/`www.sci.gov.in` subdomains, this one is not blocked for this
+session's tools). Confirmed hands-on: **a CAPTCHA is on the page**, and
+the search form offers **`SCR` and `Neutral Citation` fields only** — no
+SCC field, no AIR field, no party-name field. This directly confirms
+`RESEARCH_2026-08-11.md` §3a's finding rather than merely corroborating
+it secondhand: **e-SCR/`scr.sci.gov.in` cannot resolve an SCC/AIR citation
+to anything, at any access level**, because the form has nowhere to enter
+one. The likely reconciliation in §5d above still stands and is now
+better-evidenced: e-SCR is a genuine, free, human-usable lookup-by-S.C.R.-
+or-neutral-citation tool (matching the "free, fast, genuinely good"
+competitive-analysis framing, used the way a human uses it), and
+simultaneously useless for the specific SCC/AIR↔S.C.R. concordance problem
+(matching the "not a concordance source" retraction) — **both descriptions
+are correct at once, about two different uses of the same site.**
+
+---
+
+## 5e · THE CONSTITUTION'S SCHEDULES — LCC left this as an open question for this lane, researched 13 Aug
+
+**Context: not a new gap.** `LCC` shipped the Constitution parser (bus
+0158) and deliberately left the Schedules and three appendices unparsed —
+*"a clean follow-up with its own shape if you think it earns one."* This
+is that scoping.
+
+**The Seventh, Ninth and Tenth Schedules are not low-value appendix
+material — they are among the most heavily litigated parts of the
+Constitution, independently confirmed by search:**
+
+- **Seventh Schedule** — the Union/State/Concurrent legislative lists.
+  Foundational to essentially every centre-state legislative-competence
+  dispute; this is the schedule the Mineral Area Development Authority
+  judgment already flagged in `TREATMENT_GRAPH_GAP.md` turns on (mineral
+  royalty, Entry 50 List II).
+- **Ninth Schedule** — Acts placed beyond ordinary judicial review
+  (originally land reform). The subject of *I.R. Coelho v. State of Tamil
+  Nadu* and the basic-structure line of cases; a live, still-litigated
+  question of how far Ninth Schedule protection actually extends.
+- **Tenth Schedule** — the anti-defection law. **Currently and actively
+  litigated**, not merely historical: *Kihoto Hollohan v. Zachillhu*
+  (1992), *Ravi S. Naik v. Union of India* (1994), *Rajendra Singh Rana v.
+  Swami Prasad Maurya* (2007), and the line continues through recent
+  Karnataka/Manipur speaker-disqualification disputes.
+
+**CORRECTED 13 Aug 2026 — LCC measured this rather than accepting the
+recommendation, and the ordering below was wrong.** Bus 0196: this lane's
+first pass ranked the Tenth Schedule (anti-defection) highest on
+*litigation salience* — Kihoto Hollohan, the recent speaker-disqualification
+cases. LCC checked actual corpus frequency instead, over the whole Supreme
+Court population (38,342 judgments, no sampling): **Seventh Schedule
+1,200 judgments (3.13%), Ninth Schedule 142 (0.37%), Tenth Schedule 82
+(0.21%), anti-defection specifically only 19.** Seventh is **52× more
+frequent** than this lane's own first, unmeasured sample had suggested —
+because that first read came from a national-news framing of what's
+*talked about*, not what this specific corpus actually cites. **Litigation
+salience and corpus frequency are different quantities, and only the
+second predicts how often a parser actually gets used.** Scoping to just
+these three (and excluding the other nine Schedules plus the three
+appendices) was right; the priority order inside that scope was inverted.
+
+**Corrected recommendation: Seventh Schedule first, and only that, until
+it proves out — Ninth and Tenth after, if at all.** 1,200 SC judgments
+turning on Union/State/Concurrent list entries is the schedule the
+mineral-royalty case in `TREATMENT_GRAPH_GAP.md` itself turns on, and it
+is real, measured, resolvable value at a scale the other two do not
+match. **Lesson for this lane's own future prioritisation work, recorded
+so it isn't relearned:** rank by what THIS corpus actually contains, not
+by which provision gets the most news coverage — the two are not the same
+signal, and this session's first pass conflated them.
 
 ---
 

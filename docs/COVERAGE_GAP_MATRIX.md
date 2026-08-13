@@ -61,6 +61,28 @@ resourcing decision more than a day or two out.
 
 ---
 
+## 1b · UPDATE 13 Aug 2026 — the four gaps in §2 below are CLOSED
+
+Re-queried live: all four courts flagged in the original pass (§2) have
+moved dramatically since NEW2 acted on bus 0102/0131:
+
+| court | was | now | date range now |
+| --- | --- | --- | --- |
+| Himachal Pradesh | 8 | **28,888** | 1970–2026 |
+| Jammu & Kashmir | 2 | **30,822** | 1950–2026 |
+| Uttarakhand | 190 (stopped 1987) | **37,674** | **1950–2026, no longer stale** |
+| Gujarat | 497 (stopped 1995) | **24,712** | **1982–2026, no longer stale** |
+
+Both the near-zero problem and the stale-cutoff problem this lane
+originally flagged are resolved. Corpus overall grew from 407,331 to
+**817,428** judgments in the same window. **Bombay remains comparatively
+low (6,493, unchanged)** but was never a staleness finding — it already
+spans 1950–2026, just at lower volume, consistent with the separately-
+known corrupted-PDF extraction issue for that court (`docs/ai/
+DATA_MOAT_PROGRAM.md` §2b).
+
+---
+
 ## 2 · WHAT THE ABSOLUTE-GAP RANKING GETS WRONG, AND WHY IT'S HERE ANYWAY
 
 Sorted by raw document gap, the largest four courts (Allahabad, Bombay,
@@ -116,6 +138,45 @@ footers, per `HC_CORPUS_SURVEY.md`'s own method) joined against a
 not built this pass — the totals-level view above already surfaced two
 real, actionable findings (HP/J&K near-zero, Uttarakhand/Gujarat stale) that
 didn't need it.
+
+---
+
+## 3b · THE FOUNDER'S 20.5M TARGET vs the ~17.8M AWS actually holds — investigated 13 Aug
+
+**LCC flagged this to this lane directly** (bus 0214): the founder's stated
+target of ~20.5M documents exceeds the AWS High Court dataset (~17.8M,
+verified against source) by **~2.7M, "presumably Supreme Court, tribunals
+and other platforms" — LCC's own hypothesis, explicitly unverified.**
+
+**Checked that hypothesis against real numbers. It does not close the
+gap.** Supreme Court: ~38,351 total (AWS-sourced, 99.98% already held) —
+0.02M, negligible against 2.7M. Tribunals via the Supreme Today path: this
+registry's own `HARVEST_ENGINE.md`-derived estimate is *"tens of
+thousands, not millions"* once scoped to head-noted material — also
+negligible against 2.7M. **SC + tribunals together account for well under
+1% of the missing 2.7M.**
+
+**Searched for where "20.5M" might originate. Found nothing definitive** —
+no external dataset, public estimate, or competitor claim matching that
+figure was located. One data point worth having on record: **High Court
+pending CASES (not documents) are independently reported at roughly 6
+million** — a different unit than AWS's 17.8M *documents* (most of which
+are procedural orders, not distinct judgments, per this corpus's own
+long-established judgment-share measurements), so this doesn't explain
+the gap either, it just confirms "documents" and "cases" are not
+interchangeable units here.
+
+**The one category that WOULD close a gap this size: NJDG district-court
+orders, ~33 million, independently confirmed to exist** — but `RING_PROGRAM.md`
+already rules this explicitly out of scope (*"nobody expands scope to
+district courts on their own reading"* of "all courts"). **This lane is
+not assuming the 20.5M target silently includes district courts** — that
+would be exactly the kind of scope expansion no lane may decide alone.
+Flagged as a genuine open question rather than resolved either way: if the
+founder's 20.5M figure has a specific source, worth asking directly rather
+than this lane guessing further. **Verdict: the ~2.7M gap is UNEXPLAINED,
+not attributable to any currently-authorized source, and not assumed to
+require one.**
 
 ---
 

@@ -46,6 +46,7 @@ import { extractText, getDocumentProxy } from 'unpdf';
 import postgres from 'postgres';
 
 import { extractCitations, normaliseCitation } from '../citations.ts';
+import { stripUnstorable } from '../text.ts';
 import {
   listMetadataKeys,
   mapConcurrent,
@@ -53,7 +54,11 @@ import {
   pdfUrlFor,
   rowCount,
   sampleRows,
+  withTimeout,
 } from './hc-metadata.ts';
+
+/** A malformed embedded font can hang extraction forever (see `withTimeout`). Bound it, don't wait on it. */
+const EXTRACT_TIMEOUT_MS = 90_000;
 
 const SOURCE = 'aws_high_court';
 const APPLY = process.argv.includes('--apply');
@@ -165,14 +170,38 @@ for (const file of files) {
 
     const results = await mapConcurrent(docs, CONCURRENCY, async (doc): Promise<Result> => {
       let text = '';
+      let missing = false;
+      // Same fetch-abort pairing as `hc-load-cli.ts`: a stalled socket is
+      // closed at the timeout deadline, not merely abandoned, because this
+      // pass runs over days and a leaked connection per timeout compounds.
+      const controller = new AbortController();
+      const abortTimer = setTimeout(() => controller.abort(), EXTRACT_TIMEOUT_MS);
       try {
-        const res = await fetch(doc.url);
-        if (!res.ok) return { doc, outcome: 'missing', cites: [] };
-        const bytes = new Uint8Array(await res.arrayBuffer());
-        const pdf = await getDocumentProxy(bytes);
-        text = (await extractText(pdf, { mergePages: true })).text;
+        text = (
+          await withTimeout(
+            async () => {
+              const res = await fetch(doc.url, { signal: controller.signal });
+              if (!res.ok) {
+                missing = true;
+                return { text: '', totalPages: 1 };
+              }
+              const bytes = new Uint8Array(await res.arrayBuffer());
+              const pdf = await getDocumentProxy(bytes);
+              return extractText(pdf, { mergePages: true });
+            },
+            EXTRACT_TIMEOUT_MS,
+            doc.url,
+          )
+        ).text;
+        // Same gap `hc-load-cli.ts` had: raw unpdf output can carry NUL bytes
+        // or unpaired surrogates that Postgres refuses (SQLSTATE 22021) on
+        // the eventual `citation_text` write. Strip before anything reads it.
+        text = stripUnstorable(text);
+        if (missing) return { doc, outcome: 'missing', cites: [] };
       } catch {
         return { doc, outcome: 'failed', cites: [] };
+      } finally {
+        clearTimeout(abortTimer);
       }
       if (text.trim().length === 0) return { doc, outcome: 'no_text', cites: [] };
 

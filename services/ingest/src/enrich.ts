@@ -30,7 +30,7 @@ import { createHash } from 'node:crypto';
 export const PROMPT_VERSION = 'v1';
 export const ENRICH_MODEL = process.env['INFERX_MODEL'] ?? 'deepseek-v4-flash-0731';
 
-export type EnrichTask = 'citation_extraction' | 'metadata' | 'treatment';
+export type EnrichTask = 'citation_extraction' | 'metadata' | 'treatment' | 'document_class';
 
 export const sha256 = (t: string) => createHash('sha256').update(t).digest('hex');
 
@@ -89,6 +89,63 @@ honorifics like "Hon'ble", "Mr.", "Justice", "J.", "CJ"). "neutral_citation" is
 a court-assigned citation such as 2023:DHC:2720 or 2019 INSC 441, if printed.
 
 {"judges":[{"name":"<judge name>","evidence":"<verbatim substring of TEXT>"}],"neutral_citation":{"value":"<citation or null>","evidence":"<verbatim substring of TEXT, or null>"},"case_number":{"value":"<case number or null>","evidence":"<verbatim substring of TEXT, or null>"}}
+
+TEXT:
+${text}`;
+}
+
+/**
+ * Classify a High Court document that the RULE-BASED classifier could not.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY A MODEL IS JUSTIFIED HERE, WHEN IT IS NOT ELSEWHERE IN THIS FILE'S LANE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `hc-classify.ts` decides from `disposal_nature` and text shape, deterministically,
+ * and it is always tried FIRST. It settles 136,009 documents on its own and this
+ * prompt never sees them.
+ *
+ * It cannot settle **159,439**, and the reason is visible in its own method
+ * labels: `unclassified_disposal:DISPOSED OF`, `DISPOSED OFF`, `DISPOSED`. The
+ * source field carries no information — the registry typed "disposed of" and
+ * stopped. Whether that document is a bail order, a withdrawal, or a reasoned
+ * decision is written only in the text, and reading it is a judgment call.
+ *
+ * **That is the boundary**: deterministic where the data decides, a model only
+ * where it provably does not. Applying it the other way round — a model where
+ * a rule already works — is how a citation graph starts carrying opinion.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * IT STILL CANNOT BE BELIEVED WITHOUT A SPAN
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The class is a CLAIM, verified like any other: the model must quote the words
+ * that decide it, and `verifyClaims` locates that span in the source text before
+ * anything is written. A class with no locatable evidence is rejected.
+ *
+ * And the refusal has to be cheap, because the honest answer here is often
+ * "the text does not say" — a short order that records an outcome and nothing
+ * else genuinely cannot be classified, and `unknown` must stay `unknown`.
+ */
+export function buildDocumentClassPrompt(text: string): string {
+  return `You are reading an Indian High Court document to decide what KIND of
+document it is. This is not a legal judgment about the case — only about the
+document's nature.
+${REFUSAL_CLAUSE}
+
+Choose exactly one class:
+- "bail_order": grants, rejects, cancels or modifies bail, anticipatory bail or suspension of sentence.
+- "procedural_disposal": ends WITHOUT deciding the merits — withdrawn, dismissed for non-prosecution, abated, infructuous, disposed as settled, remanded purely on procedure.
+- "reference_stub": contains no reasoning of its own and points elsewhere — "as per separate order", "in terms of the judgment in", a bare tabular result.
+- "decided": decides the merits AND contains reasoning.
+- "decided_brief": decides the merits but is too short to contain reasoning.
+
+Rules:
+- Use ONLY the TEXT. Do not infer from what such a case usually is.
+- "evidence" MUST be a verbatim substring of TEXT that shows the class. Never paraphrase.
+- If the TEXT does not make the class clear, return "class":null. Guessing is worse than refusing.
+
+{"class":"<one of the five, or null>","evidence":"<verbatim substring of TEXT, or null>"}
 
 TEXT:
 ${text}`;
@@ -191,6 +248,19 @@ export function claimsFromMetadata(parsed: unknown): Claim[] {
   return out;
 }
 
+/** The five the rule-based classifier uses. A sixth value is a fabrication. */
+const DOCUMENT_CLASSES = new Set([
+  'bail_order', 'procedural_disposal', 'reference_stub', 'decided', 'decided_brief',
+]);
+
+export function claimsFromDocumentClass(parsed: unknown): Claim[] {
+  const value = str((parsed as Record<string, unknown>)?.['class']);
+  // null is a REFUSAL and a valid outcome, not a failure. An out-of-vocabulary
+  // class is a fabrication and is dropped rather than coerced to a neighbour.
+  if (!value || !DOCUMENT_CLASSES.has(value)) return [];
+  return [{ value, evidence: str((parsed as Record<string, unknown>)?.['evidence']), kind: 'document_class' }];
+}
+
 const TREATMENTS = new Set([
   'followed', 'approved', 'applied', 'distinguished', 'doubted', 'overruled',
   'overruled_in_part', 'not_followed', 'affirmed', 'reversed', 'explained', 'cites',
@@ -248,6 +318,28 @@ const fold = (s: string) => flatten(s).toLowerCase();
 /** Minimum evidence length. A two-character "span" matches almost any document. */
 export const MIN_EVIDENCE_CHARS = 12;
 
+/**
+ * Kinds whose value is a LABEL rather than a quotation.
+ *
+ * A citation or a judge's name must appear inside its own evidence span — that
+ * is what makes the span proof. A treatment (`followed`, `overruled`) is a word
+ * WE assign to what the span says; no judgment contains the token `overruled_in_part`.
+ * `document_class` is the same shape: no Indian judgment contains the string
+ * `bail_order`.
+ *
+ * **This is a real reduction in guarantee and it should be named as one.** For
+ * these kinds the span proves only that the quoted words EXIST in the document,
+ * not that they mean what the label says. The mapping from span to label is the
+ * model's judgment and nothing here checks it.
+ *
+ * That is acceptable only because the alternative is worse — demanding a label
+ * be a substring of a judgment would reject every true classification — and
+ * because the vocabulary is closed, so a fabricated label is dropped before it
+ * reaches this function. Do NOT add a kind here to make a failing verification
+ * pass.
+ */
+const LABEL_KINDS = new Set(['treatment', 'document_class']);
+
 export function verifyClaims(claims: readonly Claim[], sourceText: string): Verdict[] {
   const haystack = flatten(sourceText);
   return claims.map((claim): Verdict => {
@@ -266,10 +358,10 @@ export function verifyClaims(claims: readonly Claim[], sourceText: string): Verd
      * their own evidence; treatment is exempt because a relationship word is a
      * label for what the span says, not a substring of it.
      */
-    if (claim.kind !== 'treatment' && !fold(haystack).includes(fold(claim.value))) {
+    if (!LABEL_KINDS.has(claim.kind) && !fold(haystack).includes(fold(claim.value))) {
       return { claim, verified: false, reason: 'claimed value not present in source text' };
     }
-    if (claim.kind !== 'treatment' && !fold(needle).includes(fold(claim.value))) {
+    if (!LABEL_KINDS.has(claim.kind) && !fold(needle).includes(fold(claim.value))) {
       return { claim, verified: false, reason: 'evidence span does not contain the claimed value' };
     }
     return { claim, verified: true, reason: null };

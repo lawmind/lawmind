@@ -109,6 +109,9 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       // a database NULL, never guessed. Never classified — `docs/ai/
       // HC_CORPUS_CHARACTERIZATION.md` §11.
       disposal_nature: r.disposalNature ?? null,
+      // Migration 0048. From `text.ts`'s `fetchPdfText`; undefined/null means
+      // not recorded, never guessed at 'unpdf' by default.
+      text_extraction_method: r.textExtractionMethod ?? null,
     };
   });
 
@@ -136,7 +139,8 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       petitioner            = EXCLUDED.petitioner,
       respondent            = EXCLUDED.respondent,
       parties_extraction_method = EXCLUDED.parties_extraction_method,
-      disposal_nature       = EXCLUDED.disposal_nature
+      disposal_nature       = EXCLUDED.disposal_nature,
+      text_extraction_method = EXCLUDED.text_extraction_method
     RETURNING (xmax = 0) AS inserted
   `;
 

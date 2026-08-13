@@ -102,8 +102,8 @@ async function main(): Promise<void> {
 
       const settled = await mapPool(pending, args.concurrency, async (row) => {
         // Same URL for fetch and for provenance, by construction.
-        const { text, pages } = await fetchPdfText(sourceUrlFor(row));
-        return toJudgment(row, text, isNativeText(text.length, pages));
+        const { text, pages, method } = await fetchPdfText(sourceUrlFor(row));
+        return toJudgment(row, text, isNativeText(text.length, pages), method);
       });
 
       const records: JudgmentRecord[] = [];

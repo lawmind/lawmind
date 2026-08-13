@@ -100,6 +100,19 @@ describe('caseTypeFrom', () => {
     assert.equal(caseTypeFrom('CRP/100/2024'), 'civil');
   });
 
+  it('reads any CRL-compound as criminal — verified against real Rajasthan/Karnataka text, 12 Aug 2026', () => {
+    // Every one of these prints "Criminal Miscellaneous Bail Application" or
+    // "Criminal Writ Petition" in its own header. `CRL` is three letters, not
+    // the two-letter `CR` the CRP test above exists to guard against.
+    assert.equal(caseTypeFrom('CRLMB/6292/2026'), 'criminal');
+    assert.equal(caseTypeFrom('CRLMP/6916/2025'), 'criminal');
+    assert.equal(caseTypeFrom('CRLW/1015/2025'), 'criminal');
+    assert.equal(caseTypeFrom('CRLRP/220/2024'), 'criminal');
+    // Still not `CR` alone, and still not CRP — the substring rule does not
+    // widen the trap the exact-match set already guards against.
+    assert.equal(caseTypeFrom('CRP/100/2024'), 'civil');
+  });
+
   it('returns null rather than guessing an unknown or ambiguous abbreviation', () => {
     // Indian High Courts use hundreds of these and do not agree between courts.
     // A writ petition may be either side. Mislabelling a matter is worse than

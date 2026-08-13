@@ -35,10 +35,12 @@ export function isNativeText(characters: number, pages: number): boolean {
  * never written to disk** — Stage 1 alone is ~15 GB of PDFs and the text is
  * a fraction of that.
  */
+export type TextExtractionMethod = 'unpdf' | 'pdftotext_fallback';
+
 export async function fetchPdfText(
   url: string,
   signal?: AbortSignal,
-): Promise<{ text: string; pages: number }> {
+): Promise<{ text: string; pages: number; method: TextExtractionMethod }> {
   const res = await fetch(url, signal ? { signal } : {});
   if (!res.ok) throw new Error(`GET ${url} → ${res.status}`);
   const bytes = new Uint8Array(await res.arrayBuffer());
@@ -70,13 +72,13 @@ export async function fetchPdfText(
    * so this degrades to previous behaviour rather than failing an ingest.
    */
   if (classifyCorruption(primary)?.corrupt !== true) {
-    return { text: primary, pages: totalPages || 1 };
+    return { text: primary, pages: totalPages || 1, method: 'unpdf' };
   }
   const recovered = pdftotextFallback(bytes);
   if (recovered !== null && recovered.length >= primary.length && classifyCorruption(recovered)?.corrupt === false) {
-    return { text: normaliseWhitespace(recovered), pages: totalPages || 1 };
+    return { text: normaliseWhitespace(recovered), pages: totalPages || 1, method: 'pdftotext_fallback' };
   }
-  return { text: primary, pages: totalPages || 1 };
+  return { text: primary, pages: totalPages || 1, method: 'unpdf' };
 }
 
 /** Poppler `pdftotext` over an in-memory PDF. Null when the tool is absent or fails. */

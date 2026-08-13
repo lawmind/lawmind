@@ -71,6 +71,21 @@ checking it is not simply an unaliased judgment LawMind already holds.**
 
 ---
 
+## 1b · SUPERSEDING FINDING, 13 Aug 2026 — a free internal concordance source may exist
+
+**LCC found, resolving one of the 34 edges in `TREATMENT_GRAPH_GAP.md`,
+that 656 judgments already print paired `S.C.R. cite : SCC cite` citations
+in their own text** — the same mapping this whole queue has been missing.
+No fetch, no purchase, already held. Full account: `docs/ai/
+OVERRULED_GROUP_MARKERS.md` §4, `SOURCE_REGISTRY.md` §5a-pre. **This is
+now the top acquisition priority for closing this queue**, ahead of every
+external source this lane researched (the ECT, IndianKanoon, SCC Online).
+Building the harvester is LCC's territory, not this lane's — recorded here
+so the ranking below is read with that in mind rather than as the current
+state of the art.
+
+---
+
 ## 2 · TOP 40 UNRESOLVED CITATION TARGETS, BY CITING FREQUENCY
 
 Ranked by distinct citing documents (`times_cited`), which is a genuine

@@ -2975,6 +2975,28 @@ a clean, reproducible finding, not a one-off:
   partition starting near count 450-470, with process-level (not just
   promise-level) instrumentation on `execFileSync` calls specifically.
 
+**ROOT CAUSE FOUND for the "no progress line for 30-40+ min" pattern on
+madras/kerala/chhattisgarh/jharkhand — it is not a hang.** Read
+`hc-load-cli.ts:193-207`: when an entire batch's candidates are all
+`already_held`, `todo.length === 0` and the loop does a silent `continue` —
+**no line is printed** for that batch. The progress print only fires once a
+batch contains at least one genuinely new candidate. For large courts
+(Madras ~1.5M source documents, Kerala ~570K, both per
+`COVERAGE_GAP_MATRIX.md`) with several prior partial-ingest restart
+generations already run against them, long stretches of consecutive batches
+can be 100% already-held — the worker is genuinely scanning forward the
+whole time, just silently, and will eventually print once it reaches fresh
+material (exactly what happened with MP and Orissa after their own slow
+starts). **My own restarts of these 4 courts were very likely
+counterproductive** — each restart resets the scan position, so a court
+that needed, say, 45 minutes of silent skip-scanning to reach new material
+never got the chance to finish that scan across three separate restart
+attempts. Going forward: for known-large courts, "no progress line" alone
+is not a restart signal — only sustained exactly-0.000 CPU across 2+
+consecutive 5-minute checks (the standard LCC's 0242 correction and this
+session's own sustained-check practice already established) justifies
+acting.
+
 **Jharkhand (20_7) is now a second instance of the same class.** Hung twice
 this session (confirmed 0.000 CPU delta both times), the second time within
 ~11 minutes of a fresh restart — faster onset than orissa's, and at a much

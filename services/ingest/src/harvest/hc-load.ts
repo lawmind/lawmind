@@ -171,6 +171,26 @@ export function caseTypeFrom(caseNumber: string | null): 'criminal' | 'civil' | 
 
   if (CRIMINAL.has(prefix)) return 'criminal';
   if (CIVIL.has(prefix)) return 'civil';
+
+  /**
+   * Classification rate fell from 86% to 46% the moment six more courts
+   * joined the ingest (12 Aug 2026) — a real signal, not noise, sampled
+   * rather than guessed at: Rajasthan/Karnataka print dozens of case-number
+   * shapes the exact-match set above never saw (`CRLMB`, `CRLMP`, `CRLW`,
+   * `CRLRP`, …). Read eleven real records across both courts before adding
+   * this: every one prints "Criminal Miscellaneous Bail Application",
+   * "Criminal Writ Petition" or equivalent in its own header.
+   *
+   * A SUBSTRING rule, not another exact entry, because whack-a-moling every
+   * new court's own `CRL`-compound is the same fix repeated forever. Safe
+   * specifically because it is `CRL` (three letters) and not `CR`
+   * (two) — the exact trap the comment above this function already names:
+   * `CRP` (Civil Revision Petition) begins `CR` but does not contain `CRL`,
+   * so it still falls through to the exact-match `CIVIL` set above,
+   * unaffected. No entry in either set above contains `CRL`.
+   */
+  if (prefix.includes('CRL')) return 'criminal';
+
   // Indian High Courts use hundreds of abbreviations and they are not
   // consistent between courts. `WP` alone is a writ petition that may be either.
   // Everything unrecognised stays null on purpose.
@@ -215,6 +235,7 @@ export function toJudgmentRecord(
   text: string,
   sourceUrl: string,
   nativeText?: boolean | null,
+  textExtractionMethod?: string | null,
 ): MapOutcome {
   if (isTestFixture(partitions)) return { ok: false, reason: 'test_fixture_bench' };
   if (!row.pdf_link) return { ok: false, reason: 'no_pdf_link' };
@@ -274,6 +295,7 @@ export function toJudgmentRecord(
       // No petitioner/respondent field on the plain variant (the only one
       // actually held) — undefined, so load.ts falls back to title parsing.
       disposalNature: row.disposal_nature?.trim() || null,
+      textExtractionMethod: textExtractionMethod ?? null,
     },
   };
 }

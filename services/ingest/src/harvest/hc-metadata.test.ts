@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { parseListing, parsePartitions, withRetry } from './hc-metadata.ts';
+import { parseListing, parsePartitions, withRetry, withTimeout } from './hc-metadata.ts';
 
 describe('parseListing', () => {
   it('reads key and size out of a real ListObjectsV2 page, not truncated', () => {
@@ -93,5 +93,29 @@ describe('withRetry', () => {
       /Connect Timeout/,
     );
     assert.equal(calls, 3);
+  });
+});
+
+describe('withTimeout', () => {
+  it('returns the value when the promise settles first', async () => {
+    const result = await withTimeout(async () => 'ok', 1000, 'fast');
+    assert.equal(result, 'ok');
+  });
+
+  it('rejects on the clock, not the promise — the promise a hung font repair never settles', async () => {
+    // A promise that never resolves and never rejects, standing in for the
+    // real failure this exists for: unpdf's pdfjs looping on `Math.sumPrecise`
+    // inside a `warn()` it never throws out of.
+    const hangs = () => new Promise<string>(() => {});
+    await assert.rejects(withTimeout(hangs, 20, 'stuck-doc'), /timeout after 20ms: stuck-doc/);
+  });
+
+  it('rejects with the underlying error when the promise loses the race by failing, not by hanging', async () => {
+    await assert.rejects(
+      withTimeout(async () => {
+        throw new Error('pdf 404');
+      }, 1000, 'fails-fast'),
+      /pdf 404/,
+    );
   });
 });

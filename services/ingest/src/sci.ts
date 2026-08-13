@@ -107,6 +107,14 @@ export type JudgmentRecord = {
    * here. Migration `0038`.
    */
   disposalNature?: string | null;
+  /**
+   * How `fullText` was produced — `text.ts`'s `fetchPdfText` reports
+   * `'unpdf'` (the default) or `'pdftotext_fallback'` (the corruption-repair
+   * pass, `CURRENT_PLAN.md` Q1.27). `undefined`/`null` means not recorded —
+   * a row whose text arrived some other way, or ingested before this field
+   * existed. Migration `0048`.
+   */
+  textExtractionMethod?: string | null;
 };
 
 export function metadataUrl(year: number): string {
@@ -180,6 +188,7 @@ export function toJudgment(
   row: SciMetadataRow,
   fullText: string,
   nativeText?: boolean | null,
+  textExtractionMethod?: string | null,
 ): JudgmentRecord {
   const caseNumber = parseCaseNumber(row.raw_html);
   return {
@@ -203,6 +212,7 @@ export function toJudgment(
     sourcePetitioner: blank(row.petitioner) ? null : row.petitioner.trim(),
     sourceRespondent: blank(row.respondent) ? null : row.respondent.trim(),
     disposalNature: blank(row.disposal_nature) ? null : row.disposal_nature.trim(),
+    textExtractionMethod: textExtractionMethod ?? null,
   };
 }
 

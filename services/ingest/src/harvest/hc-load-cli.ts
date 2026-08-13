@@ -41,13 +41,10 @@
  * prints says "documents". The coverage endpoint already refuses the word and a
  * test asserts no field is ever named `sourceJudgments`.
  */
-import { extractText, getDocumentProxy } from 'unpdf';
-
-import postgres from 'postgres';
-
+import { openDb } from '../db-host.ts';
 import { existingSourceUrls, upsertJudgments } from '../load.ts';
 import type { JudgmentRecord } from '../sci.ts';
-import { isNativeText } from '../text.ts';
+import { fetchPdfText, isNativeText } from '../text.ts';
 import {
   type SkipReason,
   isTestFixture,
@@ -60,7 +57,11 @@ import {
   pdfUrlFor,
   rowCount,
   sampleRows,
+  withTimeout,
 } from './hc-metadata.ts';
+
+/** A malformed embedded font can hang extraction forever (see `withTimeout`). Bound it, don't wait on it. */
+const EXTRACT_TIMEOUT_MS = 90_000;
 
 function flag(name: string): string | undefined {
   const i = process.argv.indexOf(name);
@@ -85,7 +86,14 @@ if (!url) {
   console.error('DATABASE_URL is not set.');
   process.exit(2);
 }
-const sql = postgres(url, { max: 3, ssl: 'require' });
+// `openDb` (LCC, bus 0170) resolves the proxy hostname via public DNS and
+// hands the driver an address directly — the actual fix for the
+// `getaddrinfo ENOTFOUND` deaths this session had (bus 0159/0165/0170): the
+// OS resolver on this machine is the thing that intermittently fails, and
+// `connect_timeout` alone cannot help because a stalled lookup never reaches
+// the stage that timeout governs. Bundles connect_timeout: 120 and
+// idle_timeout: 0 already.
+const sql = await openDb(url, 3);
 
 type Tally = Record<string, number>;
 const tally: Tally = {};
@@ -165,12 +173,29 @@ async function main(): Promise<void> {
 
       // Resumability lives in the database: source_url is uniquely indexed, so a
       // killed run is restarted with the same command and skips what it has.
-      const candidates = rows
+      const rawCandidates = rows
         .map((r) => {
           const link = (r['pdf_link'] as string | undefined) ?? null;
           return link ? { row: r, url: pdfUrlFor(file.p, link) } : null;
         })
         .filter((x): x is NonNullable<typeof x> => x !== null);
+
+      // Found live: `upsertBatch` batches up to 100 rows into ONE `INSERT …
+      // ON CONFLICT (source_url) DO UPDATE`, and Postgres refuses outright if
+      // the same conflict key appears twice in one statement — "ON CONFLICT
+      // DO UPDATE command cannot affect row a second time", not a retryable
+      // error, crashed the whole process. The metadata source itself carries
+      // duplicate rows within a single parquet file (same `pdf_link`), which
+      // `existingSourceUrls` cannot catch — it only knows what a PREVIOUS
+      // batch already wrote. First occurrence wins, matching this codebase's
+      // "one sighting per document" rule for citations.
+      const seenUrls = new Set<string>();
+      const candidates = rawCandidates.filter((c) => {
+        if (seenUrls.has(c.url)) return false;
+        seenUrls.add(c.url);
+        return true;
+      });
+      bump('duplicate_in_batch', rawCandidates.length - candidates.length);
       if (candidates.length === 0) continue;
 
       const already = await existingSourceUrls(
@@ -184,18 +209,50 @@ async function main(): Promise<void> {
       const records = await mapConcurrent(todo, CONCURRENCY, async (c) => {
         let text = '';
         let pages = 1;
+        let method: string | null = null;
+        // Aborts the fetch at the same deadline `withTimeout` gives up at, so a
+        // stalled socket is actually closed rather than merely abandoned — this
+        // run touches 15.77M documents over days, and a leaked connection per
+        // timeout would eventually starve the pool. Parsing itself cannot be
+        // aborted (unpdf/pdfjs takes no signal), so `withTimeout` still races it.
+        const controller = new AbortController();
+        const abortTimer = setTimeout(() => controller.abort(), EXTRACT_TIMEOUT_MS);
         try {
-          const res = await fetch(c.url);
-          if (!res.ok) return { skip: 'pdf_missing' as const };
-          const bytes = new Uint8Array(await res.arrayBuffer());
-          const pdf = await getDocumentProxy(bytes);
-          const extracted = await extractText(pdf, { mergePages: true });
+          // The WHOLE per-document operation is bounded, not just parsing.
+          // A stalled fetch (no bytes, no error, no CPU — a dead socket the
+          // OS never reports as closed) hangs identically to the font-repair
+          // loop that motivated `withTimeout` in the first place: zero CPU,
+          // one worker permanently short, `Promise.all` in `mapConcurrent`
+          // never resolves. Observed directly restarting this run — CPU time
+          // flat across a 5s sample while "stuck" mid-batch.
+          //
+          // `fetchPdfText` (`../text.ts`) replaces the inline `unpdf` calls
+          // this line used to make — it is the SAME extraction plus the
+          // measured `pdftotext` fallback for the font-corruption pattern
+          // found on 37.0% of Bombay High Court documents (`CURRENT_PLAN.md`
+          // Q1.20/Q1.27), and already carries `stripUnstorable` internally
+          // via `normaliseWhitespace`, so that call is no longer needed here.
+          const extracted = await withTimeout(
+            () => fetchPdfText(c.url, controller.signal),
+            EXTRACT_TIMEOUT_MS,
+            c.url,
+          );
           text = extracted.text;
-          pages = extracted.totalPages || 1;
-        } catch {
-          return { skip: 'pdf_failed' as const };
+          pages = extracted.pages;
+          method = extracted.method;
+        } catch (error) {
+          if (error instanceof Error && error.message.startsWith('timeout after')) {
+            return { skip: 'pdf_timeout' as const };
+          }
+          // `fetchPdfText` throws `GET <url> → <status>` on a non-OK response —
+          // a 4xx/5xx is the same "not there" this CLI has always tallied
+          // separately from a genuine parse failure.
+          const missing = error instanceof Error && /→ \d{3}$/.test(error.message);
+          return missing ? { skip: 'pdf_missing' as const } : { skip: 'pdf_failed' as const };
+        } finally {
+          clearTimeout(abortTimer);
         }
-        const out = toJudgmentRecord(c.row, file.p, text, c.url, isNativeText(text.length, pages));
+        const out = toJudgmentRecord(c.row, file.p, text, c.url, isNativeText(text.length, pages), method);
         if (!out.ok) return { skip: out.reason };
         return { record: out.record };
       });
@@ -204,7 +261,7 @@ async function main(): Promise<void> {
       for (const r of records) {
         seen++;
         if ('skip' in r) {
-          bump(r.skip as SkipReason | 'pdf_missing' | 'pdf_failed');
+          bump(r.skip as SkipReason | 'pdf_missing' | 'pdf_failed' | 'pdf_timeout');
           continue;
         }
         mapped++;
@@ -257,8 +314,56 @@ async function main(): Promise<void> {
   }
 }
 
+/**
+ * A DNS blip on the shared Railway proxy hostname crashes the whole process
+ * with an UNCAUGHT `ENOTFOUND` (or a handful of related transient network
+ * codes) rather than a catchable rejection inside `main()`'s own try/catch —
+ * postgres.js throws it straight from query construction. Found live: five
+ * workers crashed within the same few minutes on
+ * `getaddrinfo ENOTFOUND hayabusa.proxy.rlwy.net`, and the hostname resolved
+ * fine moments later — a transient consumer-router DNS hiccup, not a broken
+ * environment. `main()` is resumable by construction (`source_url` skip), so
+ * retrying the WHOLE run costs only a fast re-check of already-held rows,
+ * not lost work.
+ */
+const TRANSIENT_CODES = new Set([
+  'ENOTFOUND',
+  'EAI_AGAIN',
+  'ECONNRESET',
+  'ECONNREFUSED',
+  'ETIMEDOUT',
+  // undici's connect-timeout to S3, found live: `listMetadataKeys()`'s bare
+  // `fetch()` throws `TypeError: fetch failed` with the real code one level
+  // down in `.cause` — undici always wraps this way, so checking only the
+  // top-level `.code` (as the DNS fix originally did) misses it entirely.
+  'UND_ERR_CONNECT_TIMEOUT',
+  'UND_ERR_SOCKET',
+  'UND_ERR_HEADERS_TIMEOUT',
+]);
+
+function isTransientNetworkError(error: unknown): boolean {
+  const err = error as (NodeJS.ErrnoException & { cause?: unknown }) | undefined;
+  if (err?.code && TRANSIENT_CODES.has(err.code)) return true;
+  const cause = err?.cause as NodeJS.ErrnoException | undefined;
+  return cause?.code !== undefined && TRANSIENT_CODES.has(cause.code);
+}
+
+const MAX_TRANSIENT_RETRIES = 5;
 try {
-  await main();
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await main();
+      break;
+    } catch (error) {
+      if (!isTransientNetworkError(error) || attempt >= MAX_TRANSIENT_RETRIES) throw error;
+      const delayMs = Math.min(30_000, 2_000 * 2 ** (attempt - 1));
+      const code = (error as NodeJS.ErrnoException).code;
+      console.error(
+        `transient network error (${code}), attempt ${attempt}/${MAX_TRANSIENT_RETRIES} — retrying in ${delayMs}ms`,
+      );
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
 } finally {
   await sql.end();
 }

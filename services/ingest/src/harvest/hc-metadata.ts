@@ -122,6 +122,34 @@ export async function withRetry<T>(fn: () => Promise<T>, attempts = 4): Promise<
   throw lastError;
 }
 
+/**
+ * Bounds a promise that may never settle.
+ *
+ * **Found by a dead run, not by design.** `hc-load.log` advanced steadily to
+ * `[38,800]` then printed `Warning: TypeError: Math.sumPrecise is not a
+ * function` on a loop for the rest of the file and never advanced again —
+ * `unpdf`'s bundled pdfjs repairing a malformed embedded font (`Required
+ * "glyf" table is not found -- trying to recover`) calls `Math.sumPrecise`,
+ * which does not exist on this Node runtime (`v24.14.1`), and the failure is
+ * swallowed as a `warn()` rather than thrown. `mapConcurrent`'s worker never
+ * returns, `Promise.all` never resolves, and one malformed font hangs the
+ * whole batch forever — not a crash, so nothing restarts it.
+ *
+ * Racing a timer turns that hang into an ordinary skip, which every caller
+ * here already knows how to count.
+ */
+export async function withTimeout<T>(fn: () => Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`timeout after ${ms}ms: ${label}`)), ms);
+  });
+  try {
+    return await Promise.race([fn(), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /** Row count from the parquet footer alone — no row data is fetched. */
 export async function rowCount(key: string): Promise<number> {
   return withRetry(async () => {

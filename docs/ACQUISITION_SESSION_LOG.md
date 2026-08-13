@@ -404,3 +404,365 @@ and LCC both acted on prior findings same-day). This lane's own
 advice to wait. Next session should check whether `external_citations`
 has moved before trusting that queue's numbers, and watch for a response
 on the treatment-graph priority list.
+
+---
+
+## Session 6 — 13 Aug 2026, "check the bus, expand research, find hooks/skills/workflows, push everything"
+
+**Read the bus first, as instructed — LCC had moved to orchestrator role**
+(bus 0128/0131/0135/0141) and given this lane two concrete, blocking asks
+directly: the Constitution PDF's structure (needed to build the parser),
+and whether the 13 no-candidate overruled edges are extraction failures or
+genuine absences (*"that distinction is your lane's core question and I
+cannot answer it from inside the corpus"*). Both resolved this session,
+both hands-on rather than inferred:
+
+1. **Constitution structure — fully verified, not just discovered.**
+   `indiacode.nic.in` blocked this session's fetch tools a third time (403
+   on both the handle page and the bitstream PDF). Routed around it: found
+   the same official document on a different government CDN
+   (`cdnbbsr.s3waas.gov.in`), downloaded it, and extracted the actual text
+   with the repo's own `pdftotext` (on PATH) rather than trusting
+   `WebFetch`'s unreliable raw-binary PDF summary — which had itself
+   given an uncertain, hedged non-answer on the first attempt. Confirmed
+   from the real extracted text (10,512 lines): one continuous PDF,
+   Preamble through Part XXV, all twelve Schedules in the same file,
+   cleanly numbered Articles, official Ministry of Law and Justice
+   edition current to the 106th Amendment. One real complication found
+   and flagged: it's a diglot Hindi/English edition and plain `pdftotext`
+   mangles the Hindi. Sent to LCC (bus 0143-0146); `CORPUS_ACQUISITION_QUEUE.md`
+   updated with the full verified shape.
+2. **The 13 no-candidate overruled edges — externally verified, 3 of 4
+   sampled confirmed as real landmark judgments.** Checked citation texts
+   against real news/case-law coverage of the actual overruling events
+   (never this lane's own recall). `AIR 1968 SC 662` = S. Azeez Basha v.
+   Union of India (what AMU 2024 overruled, 4 independent sources).
+   `(2005) 1 SCC 394` = E.V. Chinnaiah v. State of A.P. (what Davinder
+   Singh 2024 overruled, confirmed by SCC Online's own blog). `(1990) 1
+   SCC 109` = Synthetics and Chemicals Ltd. v. State of U.P. One,
+   `(1996) 5 SCC 670`, stayed genuinely inconclusive — the citing
+   judgment (Mineral Area Development Authority) is confirmed to have
+   overruled a *different* citation (India Cement, (1990) 1 SCC 12), so
+   this one specifically needs LCC's own source-text tool, not more
+   external search. `docs/TREATMENT_GRAPH_GAP.md` §3b has the full table
+   and method note. Sent alongside the Constitution answer.
+
+**Then the founder's separate, explicit ask: research external
+skills/hooks/workflows that could improve how the five agents work —
+meta, not legal data.** `docs/AGENT_WORKFLOW_RESEARCH.md`, new. Two
+findings, both tied to real pain already logged on this project's own
+bus rather than generic best-practice advice: (1) a public GitHub issue
+(anthropics/claude-code #76727) independently measured the exact
+collision risk this project's shared-working-tree, five-session setup is
+exposed to — 44% of writes going astray in a comparable heavy-user's
+30-day sample — and the critical design lesson if a lane-boundary hook is
+ever built (key on write target path, never session cwd, plus a documented
+class of silent-failure bugs to test against first); (2) a documented
+shared-rate-state file-lock pattern (`rate-pool.json`/`rate-state.json`,
+traffic-light zones, heartbeat-based crash recovery) that would mechanise
+`LANE_PROTOCOL.md`'s current "announce on the bus before a large batch"
+InferX rule, in the same filesystem-as-bus idiom this project already
+uses. Also recorded what was checked and correctly NOT recommended
+(HiveMind's fuller scheduler — overkill at 5 lanes; git worktrees —
+already a live, deliberately-deferred decision in `FOUNDER_QUEUE.md`, not
+reopened). Sent to all lanes (bus 0147-0150), explicitly framed as
+LCC's to build or decline, not this lane's to implement.
+
+**Nothing written to any corpus table this session, as always.** Six new/
+updated docs, four bus sends, zero code changes, zero writes outside
+`docs/**` and the ephemeral scratch scripts already cleaned up.
+
+---
+
+## Session 7 — 13 Aug 2026, "check lanes, check messages for NEW3, understand all agents' work"
+
+**Read the full bus since the last check** (0122 through 0171) rather than
+just the newest messages — the founder's ask was to understand the whole
+ring, not just react to the latest one. Absorbed: the Constitution landed
+in production (467 Articles, three real parser defects LCC caught and
+fixed, Schedules/appendices deliberately left unparsed); the 13
+no-candidate overruled edges got independent confirmation from both
+directions (this lane's external checks and LCC's internal tool agree:
+"held but unaliased"); a serious DNS root-cause chain played out across
+three lanes (NEW2 found it, LCC found two more wrong turns —
+`connect_timeout` doesn't help, `dns.setServers()` doesn't either — before
+the real fix, `services/ingest/src/db-host.ts`'s `openDb()`, landed); and
+the founder's explicit meta-ask to the whole ring: report solutions, not
+just findings.
+
+**Answered LCC's direct new ask (bus 0166): spot-check the 446
+`quoted_or_argued` treatment rows as an adversarial seed.** Found a real
+SQL gotcha worth recording for the ring: `document_enrichments.parsed_output`
+is a jsonb column holding a **JSON string, double-encoded** — `->`/`->>`
+access silently returns null rather than erroring, which cost several
+failed queries before finding it (`jsonb_typeof` showed `"string"`, not
+`"object"`). Fix: unwrap with `(parsed_output #>> '{}')::jsonb` first.
+Passed this along on the bus since it will bite the next person who
+queries this table.
+
+**Found a genuine, concrete misattribution, not just a clean bill of
+health.** Of 466 quoted_or_argued claims, checked the two `overruled`
+ones externally. One (World Sport Group v. MSM Satellite) confirmed
+accurate. The other — Hariharan v. Harsh Vardhan Singh Rao (2022) —
+extracted as *"overruled N.R. Parmar,"* but multiple independent sources
+say N.R. Parmar was actually overruled by **K. Meghachandra Singh v.
+Ningam Siro (2019)**, and Hariharan (2022) only discusses/applies that
+already-settled fact. **Both judgments are already held in the corpus**
+(checked directly), so if this edge is ever promoted, this is immediately
+fixable without any acquisition — a concrete instance of exactly the
+misattribution-to-the-wrong-citing-judgment risk LCC's own research had
+flagged as a class of risk, not yet as a specific example. Sent to the
+ring, bus 0172-0175.
+
+**Practised the founder's "share solutions" ask on myself, not just cited
+it:** adopted `openDb()`'s DNS-bypass logic inline in this session's own
+scratch scripts (`services/ingest` isn't importable standalone from
+`packages/db`, so replicated the resolver-bypass pattern rather than the
+file) — no DNS deaths this session, and said so on the bus rather than
+silently benefiting from someone else's fix.
+
+---
+
+## Session 8 — 13 Aug 2026, "widen your internet search, pull more useful data"
+
+**Checked the bus first** — one new message since the last check (LCC's
+0180, a self-reported near-miss on swapping DeepSeek for a weaker local
+model, and a real distinction worth remembering: verification catches
+fabrications, never catches omissions, so a weaker model would produce
+silently thinner data that all looks clean. Informational, nothing
+actionable for this lane).
+
+**Then widened research on three fronts, all resolved with direct
+fetches rather than left as inference:**
+
+1. **e-SCR/`scr.sci.gov.in` — closed for good.** Fetched directly
+   (succeeded where `main.`/`www.sci.gov.in` are blocked — a different
+   subdomain, different result). Confirmed hands-on: CAPTCHA present,
+   search form offers only SCR and Neutral Citation fields, no SCC, no
+   AIR. This upgrades the earlier reconciliation from inference to fact —
+   e-SCR is genuinely useful for human lookup-by-known-citation and
+   genuinely useless for the SCC/AIR concordance problem, at the same
+   time, confirmed rather than reasoned to.
+2. **UP and Tamil Nadu gazette portals, fetched directly** (previously
+   only found by search). Both real, official, current — TN specifically
+   showing issues through 12 Aug 2026.
+3. **Scoped LCC's open Schedules question** (left open in bus 0158 as "a
+   clean follow-up with its own shape if you think it earns one"). Found
+   the Seventh, Ninth and Tenth Schedules are independently confirmed as
+   among the most litigated parts of the Constitution — Seventh is what
+   the mineral-royalty case in `TREATMENT_GRAPH_GAP.md` itself turns on,
+   Tenth (anti-defection) is actively and currently litigated. Recorded
+   as a recommendation, not a decision.
+
+**Then the highest-value find of this round: fetched Supreme Today AI's
+own public tribunal-coverage filter directly** — the vendor's own claimed
+scope for the one acquisition target this lane can actually act on, not
+third-party market intel. Confirmed NGT, TDSAT and CAT are covered
+(broader than `HARVEST_ENGINE.md`'s original stated list), and surfaced
+two genuinely new categories nobody had named anywhere in this repo
+before — **RERA** and **Central Information Commission (RTI appeals)** —
+both real, both worth adding to the priority-2 ask. CCI and AFT do not
+appear on that specific page; reported as a real open question rather
+than assumed either way in either direction.
+
+Sent to all four lanes across two messages (bus 0181-0184, 0185-0188).
+`SOURCE_REGISTRY.md` and `CORPUS_ACQUISITION_QUEUE.md` both updated; found
+and fixed a small duplication left over from an earlier session's partial
+edit while updating the tribunal table. No corpus writes, no code changes.
+
+---
+
+## Session 9 — 13 Aug 2026, "check lane messages and continue working"
+
+**A real infrastructure fix landed mid-backlog: the wake/delivery hook had
+a bug (`tr -cd 'A-Za-z'` was silently deleting the digit from `NEW1`/`NEW2`/
+`NEW3`, so none of the three ever received automatic delivery — `LCC`/`RCC`
+have no digits, so the bus looked healthy for weeks while three of five
+lanes were never actually being woken).** Fixed by LCC (bus 0191), and a
+new Stop-hook now keeps the ring self-sustaining — a lane is handed
+waiting mail before it's allowed to go idle. Read the full backlog this
+unlocked (0189-0201) rather than reacting to only the newest message.
+
+**Two corrections accepted from LCC, both genuinely useful, both
+integrated rather than defended:**
+
+1. **The Schedules priority order was inverted.** This lane's own
+   recommendation (bus 0181/0185) ranked the Tenth Schedule (anti-
+   defection) first on litigation salience. LCC measured actual corpus
+   frequency instead: Seventh Schedule is cited in **1,200 SC judgments
+   (3.13%)**, Ninth in 142 (0.37%), Tenth in only 82 (0.21%) — 52× the
+   gap this lane's unmeasured first pass implied. **Corrected in
+   `SOURCE_REGISTRY.md` §5e**, with the general lesson recorded for this
+   lane's own future prioritisation: corpus frequency, not news salience,
+   predicts what a parser is actually worth building for.
+2. **A ring-wide methodology warning (0196/0197): `LIMIT n` without
+   `ORDER BY` on `judgments` returns physical/ingestion order, which on
+   this corpus means one court (Allahabad).** LCC nearly declined the
+   Schedules request entirely on exactly this artefact before catching it.
+   **Self-audited this lane's own queries in response**, reported honestly
+   on the bus (0203): the aggregate `GROUP BY` queries are safe by
+   construction, but a few "pull some real examples" spot-check queries
+   used `ORDER BY created_at LIMIT n`, which isn't the identical bug but
+   isn't provably court-diverse either — flagged rather than claimed clean
+   by default.
+
+**Closed a real loop end to end.** Re-checked the four courts this lane
+originally flagged (HP/JK near-zero, Uttarakhand/Gujarat stale-cutoff,
+session 4): all four are now fixed — HP 8→28,888, J&K 2→30,822,
+Uttarakhand 190→37,674 (now reaches 2026, was stuck at 1987), Gujarat
+497→24,712 (now reaches 2026, was stuck at 1995). Corpus grew
+407,331→817,428 in the same window. `COVERAGE_GAP_MATRIX.md` updated.
+This is the first time this session a finding->fix->re-verify loop has
+been confirmed complete, which is the actual point of the five-lane ring.
+
+**Also refreshed, no change in conclusion:** `external_citations` is still
+frozen at 2026-08-11T00:34Z — 2+ days stale now against a corpus that has
+grown ~2.6× since the freeze point, confirming (not just repeating) that
+`MISSING_AUTHORITY_QUEUE.md` stays un-re-ranked. Tried LCC's suggested
+"citations without statute refs" cross-reference as a sharper hunting set;
+measured 60.8% of citing judgments qualify, reported the number plainly
+rather than assuming the suggestion was applied correctly.
+
+**Practised the new "send per unit of work" discipline** (bus 0201)
+directly rather than only citing it: four separate messages this session
+instead of one batched summary at the end (0203-0206, 0207-0210).
+
+---
+
+## Session 10 — 13 Aug 2026, "add a schedule wakeup every 5 minutes to
+## check new lane messages and continue working"
+
+**Scheduled a recurring 5-minute check** via the `/loop` skill → `CronCreate`
+(job `fa2c422c`, `*/5 * * * *`, session-only, auto-expires after 7 days).
+This is the correct complement to the Stop-hook wake mechanism LCC shipped
+(bus 0201) — the hook keeps an *active* session from going idle with mail
+waiting, but per LCC's own account cannot restart a session that has
+already gone quiet. The cron fills exactly that gap.
+
+**Ran the check immediately rather than waiting for the first fire, and
+found the best result this queue has had.** LCC resolved the one citation
+this lane had left inconclusive three sessions ago — `(1996) 5 SCC 670`,
+cited by MADA v. SAIL as overruled. It is **P. Kannadasan v. State of
+Tamil Nadu** (1996 INSC 800), already held, currently rendering as live
+good law. `docs/TREATMENT_GRAPH_GAP.md` §3b closed out with the real
+answer.
+
+**Two findings behind that one, both recorded, neither built by this
+lane:**
+
+1. **A systemic extraction bug**: `– overruled.` closes a semicolon-
+   separated GROUP of citations in MADA's text, and the extractor only
+   attached the relationship to the last one — silently missing every
+   earlier case in the same group. 45 judgments affected, true missed
+   population plausibly "low hundreds." LCC has proposed a report-only
+   pass before any extractor change, correctly, per `RING_PROGRAM.md`
+   §2a's test-before-rewrite rule.
+2. **The best find of the whole program so far: 656 judgments already
+   print paired `S.C.R. : SCC` citations in their own text** — the exact
+   concordance mapping this lane has been chasing externally all week
+   (IndianKanoon, the ECT, e-SCR). Free, already held, no fetch, no
+   licensing question. **Re-prioritised the acquisition queue on the
+   spot**: this internal source now ranks P0, ahead of the Supreme
+   Court's own Equivalent Citation Table (demoted to P1, fallback for
+   whatever the internal harvest doesn't reach). Updated
+   `CORPUS_ACQUISITION_QUEUE.md`, `MISSING_AUTHORITY_QUEUE.md` §1b,
+   `SOURCE_REGISTRY.md` §5a-pre. **Not building the harvester** — that's
+   extraction/enrichment, explicitly LCC's territory, and LCC has already
+   scoped it correctly (deterministic, provenance-tagged, human-read
+   before any write).
+
+Also read NEW2's worker-attrition closure (0224, informational — 9 of 24
+dedicated court workers were silently down, root-caused via CPU-sampling
+not log-staleness inference, all restarted, one near-miss double-launch
+caught and recorded as a reusable pattern). Nothing needed from this lane.
+
+Sent one consolidated bus message (0225-0228) rather than several small
+ones, since all three findings shared one root cause and splitting them
+would have cost the ring more messages for no clearer signal.
+
+**Second cron fire, same session window: answered LCC's direct question
+(bus 0214) — why does the founder's 20.5M target exceed the ~17.8M AWS
+High Court dataset by ~2.7M?** Checked LCC's own hypothesis (Supreme Court
++ tribunals + other platforms) against real numbers rather than accepting
+it: SC is ~38,351 (already 99.98% held) and tribunals are estimated "tens
+of thousands, not millions" — together well under 1% of the 2.7M gap, so
+the hypothesis does not actually close it. Searched for where "20.5M"
+itself might originate; found nothing definitive. Confirmed the one
+category that *would* close a gap this size — NJDG district-court orders,
+~33M, real — is explicitly out of scope per `RING_PROGRAM.md`, and did
+**not** assume the founder's figure silently includes it. Reported the
+honest result: unexplained, not attributable to any authorized source,
+recorded in `COVERAGE_GAP_MATRIX.md` §3b and sent directly to LCC (0229)
+rather than broadcast, since it was a direct reply to a direct question.
+
+---
+
+## Session 11 — 13 Aug 2026, "continue use internet deeply research" +
+## the founder's explicit priority directive
+
+**Given a five-point priority directive covering the whole lane's remit**
+(coverage measurement, corpus-frequency-not-salience ranking, the
+external_citations re-rank gate, unresolved≠missing discipline, consuming
+NEW1's classification output, continued source discovery, authorization
+preservation, and manifest discipline) — all of which were already this
+lane's standing practice, confirmed rather than newly adopted. One
+specific new instruction: **investigate the in-corpus SCC↔SCR paired-
+citation evidence before treating the 34 unresolved overruled targets as
+externally missing.**
+
+**Did that investigation properly, independently of LCC's own tool.**
+Used `judgment_citations`' existing char_offset data (indexed, no
+full-text scan — deliberately avoiding the exact mistake this ring has
+already been burned by twice) to check whether each of the 34 targets has
+a nearby S.C.R.-form citation in the same judgment, then pulled targeted
+text windows (specific offsets, not a broad scan) to confirm genuine `X :
+Y` adjacency rather than coincidental proximity in these grouped-citation
+passages. **Result: 13 of 34 confirmed — matching LCC's own resolver's
+count exactly, via a completely different method.** Two independent
+techniques converging on the same number is real evidence, not
+coincidence. Also caught, live, a concrete instance of the exact
+page-header-interpolation trap LCC had only described in the abstract:
+`(2014) 11 SCC 381`'s nearest "SCR citation" was a PDF page-header
+artifact, not a real pairing. `TREATMENT_GRAPH_GAP.md` §3d.
+
+**Then genuinely widened research per the explicit "deeply research"
+instruction, resolving two things left as open questions in earlier
+sessions:**
+
+1. **CCI and AFT are both confirmed covered by Supreme Today after all.**
+   An earlier session's finding that they were "absent" was a false
+   negative from checking only one filter page of the vendor's product —
+   a direct search found real, structured coverage of both (AFT uses a
+   systematic document-ID prefix, clear evidence of deliberate coverage,
+   not incidental mention). Both move from open question to confirmed.
+2. **Two more state gazette/law-department portals identified**
+   (Karnataka, Delhi) — found by search, not yet fetched directly. 5 of
+   ~36 states/UTs now mapped.
+
+Checked the standing gates before doing any of the above: `external_citations`
+still frozen (now against 842,508 judgments, up from 407k three sessions
+ago — the gate itself hasn't moved, just the corpus it's measured
+against), `NEW3_ACQUISITION_QUEUE.json` still empty. Both confirmed, not
+assumed unchanged.
+
+Sent three bus messages this pass (0230, 0231-0234) rather than batching.
+`SOURCE_REGISTRY.md`, `CORPUS_ACQUISITION_QUEUE.md`, `TREATMENT_GRAPH_GAP.md`
+all updated. No corpus writes, no code changes, scratch scripts cleaned up
+after each use.
+
+---
+
+## Session 12 — 13 Aug 2026, direct correction from LCC
+
+**LCC asked this lane directly to update a figure this session had
+recorded from LCC's own earlier estimate**: `TREATMENT_GRAPH_GAP.md` said
+"45 judgments, low-hundreds plausible missed population" for the
+grouped-marker bug; LCC has now built and run the report-only pass (three
+versions — the first two would have marked real landmark judgments,
+including Shayara Bano and Kihoto Hollohan, as overruled, caught before
+shipping) and measured **22, not low-hundreds**. Updated
+`TREATMENT_GRAPH_GAP.md` §3c with the corrected figure and the full v1/v2
+near-miss story, since the story is worth more than the number alone.
+Acknowledged on the bus (0237). This is the older, superseded figure this
+session's own earlier log entries still carry (session 9) — left as
+historical record rather than rewritten, per this repo's own convention.
