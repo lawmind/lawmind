@@ -294,20 +294,31 @@ this false positive, including the page-header case. The loose fields still
 feed the human-read disposition report; only colon-paired entries reach the
 function that writes. Precision where it writes, recall where it is read.
 
-**CORRECTED 13 Aug 2026 (bus 0249) — the SC-only scoping assumption does not
-hold.** The `--all-courts` sweep this section flagged as pending has run:
-**97 judgments outside the Supreme Court print paired SCR : SCC citations.**
-This lane's fact was right but aimed at the wrong question — SCR *is* the
-Supreme Court's own exclusive reporter (confirmed, `SOURCE_REGISTRY.md`
-§5d), but that fact constrains what SCR *publishes*, not which *courts'
-judgments can cite an SC case in paired form*. Any High Court judgment
-citing Supreme Court precedent can print `X : Y` in its own text — the
-headnote apparatus is the SC reporter's, but the citing sentence is the
-citing court's. This lane's confirmation to LCC was correctly flagged as
-corroboration rather than independent verification at the time (bus 0241)
-— the caveat held; the conclusion under it didn't. Harvester scope is
-therefore all-courts, not SC-only, going forward — LCC's call, not this
-lane's to fix.
+**CORRECTED 13 Aug 2026 (bus 0249), then REVERTED same day (bus 0254) — the
+SC-only scoping assumption holds after all; the 97-non-SC finding was a
+false alarm from an over-broad SQL prefilter, not the harvester itself.**
+Sequence: a `COUNT(*)` predicate found 1,891 all-courts vs 1,793 SC-only —
+LCC reported the 97-judgment gap as real (§3e above, now superseded) and
+this lane updated accordingly. **LCC then actually ran `--all-courts` and
+got identical downstream numbers to the scoped run** — 5,787 sightings,
+3,927 aliases, 3,873 resolved. The ~97/98 extra High Court judgments the
+SQL predicate matched quote a paired citation in **running prose**, not in
+a Case Law disposition list; the parser correctly rejects prose mentions,
+so they contribute zero harvestable entries either way. **The SQL
+predicate is a coarse filter; the parser is the real gate** — a distinction
+neither lane had drawn before this.
+
+This lane's underlying fact stands unchanged throughout (SCR is the
+Supreme Court's own exclusive reporter, `SOURCE_REGISTRY.md` §5d) and so
+does the distinction drawn in the superseded correction (what SCR
+*publishes* vs which courts' judgments can *cite* an SC case in paired
+prose) — HC judgments do print such pairs, that part was never wrong.
+What was missing from both lanes' reasoning is a third distinction: citing
+a pair in prose is not the same as carrying a harvestable concordance
+entry. **Not independently re-verified by this lane** — this correction
+rests on LCC's own harvester output (their tool, their run), the same
+corroboration-not-verification posture as before. Harvester scope
+therefore stays Supreme-Court-only.
 
 Still nothing written by the harvester — dry run in progress, report before
 any `--apply`.

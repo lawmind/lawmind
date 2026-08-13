@@ -41,6 +41,9 @@
  * prints says "documents". The coverage endpoint already refuses the word and a
  * test asserts no field is ever named `sourceJudgments`.
  */
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { openDb } from '../db-host.ts';
 import { existingSourceUrls, upsertJudgments } from '../load.ts';
 import type { JudgmentRecord } from '../sci.ts';
@@ -80,6 +83,41 @@ const FROM_YEAR = flag('--from-year') ? Number(flag('--from-year')) : undefined;
 const LIMIT = num('--limit', 0);
 const BATCH = num('--batch', 200);
 const CONCURRENCY = num('--concurrency', 16);
+
+/**
+ * Measured live (bus 0257/0261): a large court with several prior partial
+ * generations behind it (Madras ~1.5M source documents, Kerala ~570K) can
+ * spend 45+ minutes silently re-scanning batches that are 100% `already_held`
+ * before reaching fresh material — every restart re-pays that scan from
+ * offset 0. `existingSourceUrls` is not wrong to check; the loop is wrong to
+ * forget where it already checked.
+ *
+ * A local per-court JSON checkpoint, not a DB migration: this ingest already
+ * runs one dedicated worker per court on one machine, so there is no
+ * cross-process coordination to get right, and a wrong or stale checkpoint
+ * costs at most a little re-scanning — `source_url`'s unique index is still
+ * the real safety net, this is purely a speed optimisation on top of it.
+ * Skipped entirely for the general sweep (no `--court`), which has no single
+ * court identity to key a checkpoint on and is not the courts this was
+ * measured against.
+ */
+const CHECKPOINT_DIR = join(dirname(fileURLToPath(import.meta.url)), '../../.checkpoints');
+const CHECKPOINT_PATH = COURT ? join(CHECKPOINT_DIR, `${COURT}.json`) : null;
+
+async function loadCheckpoint(): Promise<Record<string, number>> {
+  if (!CHECKPOINT_PATH) return {};
+  try {
+    return JSON.parse(await readFile(CHECKPOINT_PATH, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+async function saveCheckpoint(checkpoint: Record<string, number>): Promise<void> {
+  if (!CHECKPOINT_PATH) return;
+  await mkdir(CHECKPOINT_DIR, { recursive: true });
+  await writeFile(CHECKPOINT_PATH, JSON.stringify(checkpoint), 'utf8');
+}
 
 const url = process.env['DATABASE_URL'];
 if (!url) {
@@ -149,6 +187,7 @@ async function main(): Promise<void> {
   let mapped = 0;
   let written = 0;
   const samples: JudgmentRecord[] = [];
+  const checkpoint = await loadCheckpoint();
 
   for (const file of files) {
     let total = 0;
@@ -160,7 +199,10 @@ async function main(): Promise<void> {
     }
     if (total === 0) continue;
 
-    for (let offset = 0; offset < total; offset += BATCH) {
+    const resumeFrom = checkpoint[file.key] ?? 0;
+    if (resumeFrom >= total) continue;
+
+    for (let offset = resumeFrom; offset < total; offset += BATCH) {
       if (LIMIT > 0 && seen >= LIMIT) break;
       const want = Math.min(BATCH, total - offset);
       let rows: Record<string, unknown>[];
@@ -196,7 +238,11 @@ async function main(): Promise<void> {
         return true;
       });
       bump('duplicate_in_batch', rawCandidates.length - candidates.length);
-      if (candidates.length === 0) continue;
+      if (candidates.length === 0) {
+        checkpoint[file.key] = offset + want;
+        await saveCheckpoint(checkpoint);
+        continue;
+      }
 
       const already = await existingSourceUrls(
         sql,
@@ -204,7 +250,11 @@ async function main(): Promise<void> {
       );
       const todo = candidates.filter((c) => !already.has(c.url));
       bump('already_held', candidates.length - todo.length);
-      if (todo.length === 0) continue;
+      if (todo.length === 0) {
+        checkpoint[file.key] = offset + want;
+        await saveCheckpoint(checkpoint);
+        continue;
+      }
 
       const records = await mapConcurrent(todo, CONCURRENCY, async (c) => {
         let text = '';
@@ -273,6 +323,13 @@ async function main(): Promise<void> {
       if (APPLY && batch.length > 0) {
         const res = await upsertJudgments(sql, batch);
         written += res.inserted + res.updated;
+      }
+
+      // Dry runs never advance the checkpoint: nothing was actually written,
+      // so a later `--apply` run must still see and process this offset.
+      if (APPLY) {
+        checkpoint[file.key] = offset + want;
+        await saveCheckpoint(checkpoint);
       }
 
       const secs = (Date.now() - started) / 1000;

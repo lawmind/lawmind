@@ -1,13 +1,33 @@
 # COVERAGE GAP MATRIX — court × held, live
 
-**NEW3, 12 Aug 2026.** `held` queried live against production this session
-(`SELECT court, count(*) FROM judgments GROUP BY court`, read-only,
-`packages/db`, script deleted after use). `source_total` is the AWS Open
-Data parquet-footer count from `docs/HC_CORPUS_SURVEY.md` (measured ~6-7 Aug
-2026 by LCC pre-ring) — **not re-measured this session**, carried forward
-because the AWS bucket's total document count changes far more slowly than
-LawMind's ingest does. If a large discrepancy ever looks wrong, re-count the
-bucket rather than trust this table blindly.
+**UPDATED 13 Aug 2026 (bus 0266) — the denominator question is resolved.
+The founder's 20.5M target is not unexplained. It is the AWS bucket's
+ALL-YEARS total (plain + mobile combined), measured to the digit at
+20,529,203 in `docs/HC_METADATA_SURVEY.json` (generated 2026-08-11T09:24:03Z,
+25 courts, parquet footers, no rows decoded). Add Supreme Court's 38,351 and
+the combined denominator is 20,567,554 — within 0.3% of "20.5M." See §3b,
+rewritten below.**
+
+**The "~17.8M" figure used throughout `RING_PROGRAM.md` and the ring's own
+"5%, ~20 days" arithmetic does not match either real denominator** — not the
+all-years combined total (20.53M) and not the last-10-years combined total
+(15.77M, `docs/HC_CORPUS_SURVEY.md`, 10 Aug). Traced to `RING_PROGRAM.md`'s
+own bus 0140 origin — an earlier, rougher figure that predates the 10-11 Aug
+parquet-footer surveys and was never reconciled against them. **Not this
+lane's file to fix** — flagged to LCC, who owns it.
+
+**NEW3, 12 Aug 2026, table refreshed 13 Aug.** `held` queried live against
+production (`SELECT court, count(*) FROM judgments GROUP BY court`,
+read-only, `packages/db`, script deleted after use). `source_total` now
+carries BOTH cuts from `docs/HC_METADATA_SURVEY.json`'s `perCourt` array
+(the authoritative parquet-footer count, 11 Aug) — `allYears` (1950–2026,
+plain+mobile combined) and `last10Years` (2016–2026) — rather than only the
+last10Years figure this table used before. **A same-day discovery drove
+the switch to allYears as primary:** three small courts (Tripura, Meghalaya,
+Sikkim) showed held EXCEEDING last10Years source_total, which is
+impossible if source_total is accurate — using allYears instead resolves
+all three to just-under-100% coverage, which is what surfaced the
+wrong-denominator problem in the first place.
 
 **The mission's own rule, restated because this table gets misread easily:
 `source_total` counts DOCUMENTS, not JUDGMENTS.** `docs/DATASETS.md` already
@@ -20,39 +40,47 @@ real follow-up, not asserted).
 
 ---
 
-## 1 · THE TABLE, ranked by absolute document gap
+## 1 · THE TABLE — both denominators, ranked by absolute all-years gap
 
-| court | source_total (docs) | held (judgments rows) | gap | coverage % |
-| --- | --- | --- | --- | --- |
-| Allahabad High Court | 3,493,695 | 62,425 | 3,431,270 | 1.787% |
-| Bombay High Court | 1,528,665 | 6,493 | 1,522,172 | 0.425% |
-| Madras High Court | 1,510,131 | 19,398 | 1,490,733 | 1.285% |
-| High Court of Punjab and Haryana | 1,260,007 | 10,018 | 1,249,989 | 0.795% |
-| Patna High Court | 1,068,907 | 58,834 | 1,010,073 | 5.504% |
-| High Court Of Rajasthan | 848,617 | 25,048 | 823,569 | 2.952% |
-| Orissa High Court | 761,067 | 18,368 | 742,699 | 2.413% |
-| High Court of Karnataka | 730,432 | 24,222 | 706,210 | 3.316% |
-| High Court of Kerala | 570,700 | 21,536 | 549,164 | 3.774% |
-| High Court of Madhya Pradesh | 588,593 | 61,742 | 526,851 | 10.490% |
-| High Court for State of Telangana | 526,825 | 15,878 | 510,947 | 3.014% |
-| High Court Of Chhattisgarh | 401,696 | 3,996 | 397,700 | 0.995% |
-| Calcutta High Court | 406,413 | 9,566 | 396,847 | 2.354% |
-| High Court of Jharkhand | 393,079 | 4,799 | 388,280 | 1.221% |
-| High Court of Andhra Pradesh | 355,497 | 4,390 | 351,107 | 1.235% |
-| High Court of Delhi | 306,893 | 3,741 | 303,152 | 1.219% |
-| High Court of Gujarat | 290,144 | 497 | 289,647 | 0.171% |
-| Gauhati High Court | 232,057 | 14,536 | 217,521 | 6.264% |
-| High Court of Himachal Pradesh | 188,548 | 8 | 188,540 | 0.004% |
-| High Court of Uttarakhand | 137,869 | 190 | 137,679 | 0.138% |
-| High Court of Jammu and Kashmir | 112,046 | 2 | 112,044 | 0.002% |
-| High Court of Tripura | 25,423 | 931 | 24,492 | 3.662% |
-| High Court of Manipur | 20,890 | 1,305 | 19,585 | 6.247% |
-| High Court of Meghalaya | 11,744 | 984 | 10,760 | 8.379% |
-| High Court of Sikkim | 1,628 | 82 | 1,546 | 5.037% |
-| **Supreme Court of India** | **38,351** | **38,342** | **9** | **99.977%** |
-| **TOTAL** | **15,809,917** | **407,331** | **15,402,586** | **2.576%** |
+| court | held | allYears source | last10Years source | %allYears | %last10 |
+| --- | --- | --- | --- | --- | --- |
+| Allahabad High Court | 83,344 | 3,493,992 | 3,493,696 | 2.39% | 2.39% |
+| Bombay High Court | 6,493 | 2,421,666 | 1,528,665 | 0.27% | 0.42% |
+| Madras High Court | 25,088 | 1,696,917 | 1,510,131 | 1.48% | 1.66% |
+| High Court of Punjab and Haryana | 16,673 | 1,860,228 | 1,260,007 | 0.90% | 1.32% |
+| Patna High Court | 58,834 | 1,706,872 | 1,068,907 | 3.45% | 5.50% |
+| High Court Of Rajasthan | 33,419 | 1,095,547 | 848,617 | 3.05% | 3.94% |
+| High Court of Kerala | 43,831 | 1,036,226 | 570,700 | 4.23% | 7.68% |
+| High Court for State of Telangana | 21,938 | 1,044,211 | 526,825 | 2.10% | 4.16% |
+| High Court of Karnataka | 40,942 | 955,609 | 730,432 | 4.28% | 5.61% |
+| Orissa High Court | 22,756 | 795,093 | 761,067 | 2.86% | 2.99% |
+| High Court of Madhya Pradesh | 109,235 | 693,424 | 588,593 | 15.75% | 18.56% |
+| High Court Of Chhattisgarh | 19,379 | 669,323 | 401,696 | 2.90% | 4.82% |
+| High Court of Jharkhand | 26,241 | 459,701 | 393,079 | 5.71% | 6.68% |
+| High Court of Gujarat | 31,290 | 422,041 | 290,144 | 7.41% | 10.78% |
+| High Court of Delhi | 27,477 | 383,604 | 306,893 | 7.16% | 8.95% |
+| Calcutta High Court | 23,953 | 410,158 | 406,413 | 5.84% | 5.89% |
+| High Court of Andhra Pradesh | 26,313 | 356,072 | 355,497 | 7.39% | 7.40% |
+| Gauhati High Court | 33,859 | 322,307 | 232,057 | 10.51% | 14.59% |
+| High Court of Himachal Pradesh | 36,071 | 287,088 | 188,548 | 12.56% | 19.13% |
+| High Court of Uttarakhand | 50,153 | 235,634 | 137,869 | 21.28% | 36.38% |
+| High Court of Jammu and Kashmir | 44,482 | 113,600 | 112,046 | 39.16% | 39.70% |
+| High Court of Manipur | 18,745 | 20,895 | 20,890 | 89.71% | 89.73% |
+| High Court of Tripura | 33,863 | 33,872 | 25,423 | **99.97%** | 133.20% ⚠️ |
+| High Court of Meghalaya | 12,682 | 12,683 | 11,744 | **99.99%** | 107.99% ⚠️ |
+| High Court of Sikkim | 2,428 | 2,440 | 1,628 | **99.51%** | 149.14% ⚠️ |
+| **Supreme Court of India** | **38,342** | **38,351** | **38,351** | **99.98%** | **99.98%** |
+| **TOTAL** | **887,831** | **20,567,554** | **15,809,918** | **4.317%** | **5.616%** |
 
-**Supreme Court is effectively complete** (99.977%, the 9-document gap
+⚠️ = last10Years source_total is IMPOSSIBLE as a denominator for this court
+(held exceeds it) — the tell that surfaced the wrong-denominator problem.
+allYears resolves all three to a coherent just-under-100%.
+
+**Remaining against the founder's actual target (allYears + SC = 20,567,554):
+19,679,723 documents.** This is the number "5%" and "~20 days" should be
+computed against, not against "17.8M" — see §3b.
+
+**Supreme Court is effectively complete** (99.98%, the 9-document gap
 already characterised in `docs/DATASETS.md` as 6 HTTP 404s + 3 corrupt PDFs,
 none recoverable). **Every High Court is a live, moving ingest** — NEW2 is
 running ~34,000 documents/hour per `docs/LANE_PROTOCOL.md` §6, so this table
@@ -141,42 +169,37 @@ didn't need it.
 
 ---
 
-## 3b · THE FOUNDER'S 20.5M TARGET vs the ~17.8M AWS actually holds — investigated 13 Aug
+## 3b · THE FOUNDER'S 20.5M TARGET — RESOLVED 13 Aug, superseding the
+"unexplained 2.7M gap" verdict below (kept for the record, not deleted)
 
-**LCC flagged this to this lane directly** (bus 0214): the founder's stated
-target of ~20.5M documents exceeds the AWS High Court dataset (~17.8M,
-verified against source) by **~2.7M, "presumably Supreme Court, tribunals
-and other platforms" — LCC's own hypothesis, explicitly unverified.**
+**The gap was never real. It was a stale denominator.** This lane's earlier
+verdict compared the founder's 20.5M against "~17.8M AWS" — a figure that,
+traced today, does not match any actual measurement of the bucket (see the
+header of this document). `docs/HC_METADATA_SURVEY.json` (11 Aug, 25
+courts, parquet footers, no rows decoded) gives the real all-years combined
+total: **20,529,203.** Add Supreme Court's 38,351 and the total is
+**20,567,554 — within 0.3% of "20.5M."** That is not a coincidence worth
+still calling unexplained; it is the founder's target matching the AWS
+bucket's own full history almost exactly.
 
-**Checked that hypothesis against real numbers. It does not close the
-gap.** Supreme Court: ~38,351 total (AWS-sourced, 99.98% already held) —
-0.02M, negligible against 2.7M. Tribunals via the Supreme Today path: this
-registry's own `HARVEST_ENGINE.md`-derived estimate is *"tens of
-thousands, not millions"* once scoped to head-noted material — also
-negligible against 2.7M. **SC + tribunals together account for well under
-1% of the missing 2.7M.**
+**What was actually being compared before:** this document's own §1 table,
+and `RING_PROGRAM.md`'s "~17.8M" scale line, were both using the **last 10
+years only** (2016–2026, combined 15.77M) or an even older, unreconciled
+pre-survey figure — not the bucket's full 1950–2026 history. Measuring
+progress against either of those understates the true remaining work AND
+manufactures a gap against the founder's target that was never there.
 
-**Searched for where "20.5M" might originate. Found nothing definitive** —
-no external dataset, public estimate, or competitor claim matching that
-figure was located. One data point worth having on record: **High Court
-pending CASES (not documents) are independently reported at roughly 6
-million** — a different unit than AWS's 17.8M *documents* (most of which
-are procedural orders, not distinct judgments, per this corpus's own
-long-established judgment-share measurements), so this doesn't explain
-the gap either, it just confirms "documents" and "cases" are not
-interchangeable units here.
+**Original hypotheses, now moot but recorded for the trail:** SC (~38,351)
+and tribunals (Supreme Today path, "tens of thousands not millions" per
+`HARVEST_ENGINE.md`) were checked and correctly found not to close a ~2.7M
+gap — because the gap itself was the artifact, not something those sources
+needed to explain. District courts (NJDG, ~33M) were correctly never
+assumed into scope, and still aren't — the resolution above needs no scope
+expansion at all.
 
-**The one category that WOULD close a gap this size: NJDG district-court
-orders, ~33 million, independently confirmed to exist** — but `RING_PROGRAM.md`
-already rules this explicitly out of scope (*"nobody expands scope to
-district courts on their own reading"* of "all courts"). **This lane is
-not assuming the 20.5M target silently includes district courts** — that
-would be exactly the kind of scope expansion no lane may decide alone.
-Flagged as a genuine open question rather than resolved either way: if the
-founder's 20.5M figure has a specific source, worth asking directly rather
-than this lane guessing further. **Verdict: the ~2.7M gap is UNEXPLAINED,
-not attributable to any currently-authorized source, and not assumed to
-require one.**
+**Remaining work against the real target: 19,679,723 documents** (§1).
+`RING_PROGRAM.md`'s "~17.8M" scale line is now known-stale — flagged to
+LCC, who owns that file, rather than edited here.
 
 ---
 

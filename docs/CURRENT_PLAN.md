@@ -2975,6 +2975,22 @@ a clean, reproducible finding, not a one-off:
   partition starting near count 450-470, with process-level (not just
   promise-level) instrumentation on `execFileSync` calls specifically.
 
+**THIRD reproduction, 13 Aug ~09:52.** Same exact count (459), same
+partition (21_11/2026), third generation in a row (original, r10, r11),
+this time even with the batch-size mitigation already in place (batch=50)
+from the start of the r11 attempt, not applied mid-run. Frozen for 30+
+minutes unchanged, confirmed via repeated checks, not a single sample.
+**Per the project's own 3-failed-cycles rule, stopping here rather than
+restarting a fourth time on the same unverified hypothesis.** Leaving the
+current r11 process running as-is (it consumes negligible resources
+stalled, no reason to kill it) rather than cycling again. This is now a
+clean, three-times-reproduced bug report, not a hypothesis:
+**deterministically hangs at candidate #459 in the 21_11/2026 partition,
+immune to batch size, immune to a fresh process.** The synchronous
+`execFileSync`/`pdftotextFallback` theory remains the best untested
+hypothesis but needs the dedicated harness above to confirm — not another
+blind restart.
+
 **ROOT CAUSE FOUND for the "no progress line for 30-40+ min" pattern on
 madras/kerala/chhattisgarh/jharkhand — it is not a hang.** Read
 `hc-load-cli.ts:193-207`: when an entire batch's candidates are all

@@ -175,6 +175,7 @@ write down.
 | `pnpm lane:status` | whether a lane is RECEIVING, which `lane:inbox` never showed |
 | **group live PIDs by their arg, assert `count == 1`** | the last step of ANY multi-worker relaunch — NEW2, below |
 | **CPU delta AND log mtime, over minutes** | either signal alone produces false positives in both directions — see below |
+| **launch long jobs DETACHED, from `node` directly** | a backgrounded child dies when your turn ends; `npx.cmd` orphans the real process — see below |
 | measure a vocabulary before matching it | see below — three parser versions, two of them dangerous |
 | **check `pg_indexes` before trusting a comment that names one** | a claimed index that does not exist turns a join into a 150M-operation scan |
 
@@ -213,6 +214,37 @@ Rajasthan sat dead for three and a half hours because nothing ever looked at it.
 
 > **A health check that only examines the things you already suspect cannot
 > find anything new.** Sweep the whole fleet every pass.
+
+**LCC, 13 Aug 2026 — a long job that outlives your turn has to be launched
+differently, and I got this wrong three times in a row.**
+
+Three separate passes died mid-run with **no error and no exit code**, logs
+ending mid-line: a concordance harvest at its first query, a classifier dry run
+at 322,000 documents, and a classifier write run at 10,000. Each looked like a
+crash and none was. **A process backgrounded from the agent's own shell is a
+child of that shell, and it goes away when the turn ends.** The ingest fleet
+survives precisely because it was not launched that way.
+
+What works, and the two traps in it:
+
+    Start-Process -FilePath (Get-Command node).Source `
+      -ArgumentList "--import","tsx","--env-file=.env","<script>","<args>" `
+      -WorkingDirectory <repo> -RedirectStandardOutput <log> `
+      -RedirectStandardError <err> -WindowStyle Hidden
+
+- **Launch `node` directly, never `npx.cmd`.** A `.cmd` wrapper spawns the real
+  process as its own child and then exits; the worker is orphaned and **the
+  redirected log stays empty** while the job runs fine. That cost a debugging
+  cycle looking for a crash that had not happened.
+- **Redirect stdout AND stderr to files.** A `| tail -n` pipe buffers until its
+  input closes, so a healthy job looks silent for its entire duration — ten
+  minutes spent watching an empty pipe.
+
+**And count the survivors afterwards**, which is NEW2's rule above and which I
+promptly broke: I ended up with **three concurrent classifier trees** on the same
+rows, because a launch I had written off as failed was in fact alive with a
+broken log. Same class as the Orissa double-launch. `Get-CimInstance Win32_Process
+| Where-Object CommandLine -match '<script>'` before and after, every time.
 
 **LCC, 13 Aug 2026 — measure the vocabulary, do not reason about it.** A parser
 for headnote disposition markers was written twice with a generic `[a-z ]+`
