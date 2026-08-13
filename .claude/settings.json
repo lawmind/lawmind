@@ -32,6 +32,19 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/lane-wake.sh\"",
+            "shell": "bash",
+            "timeout": 10,
+            "statusMessage": "checking the lane bus before going idle"
+          }
+        ]
+      }
     ]
   }
 }

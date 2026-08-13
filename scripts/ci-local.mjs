@@ -65,6 +65,18 @@ const STEPS = [
   ['migrate (idempotent)', 'pnpm', ['--filter', '@lawmind/db', 'migrate']],
   ['test', 'pnpm', ['--filter', './services/*', '--filter', './packages/*', 'test']],
   ['design rules', 'node', ['scripts/check-design-rules.mjs', 'design/screens']],
+  // The lane bus carries every cross-agent message and had NO test until it had
+  // already shipped two message-destroying bugs. `tr -cd 'A-Za-z'` ate the digit
+  // in NEW1/NEW2/NEW3, so three correctly-bound lanes were told they were
+  // unbound and the founder relayed their mail by hand for weeks. Fixing that
+  // exposed a cursor advancing past messages it had never shown — 22 pending,
+  // 4 delivered, all 22 marked read.
+  //
+  // Neither is visible in a check that inspects ONE delivery and sees a
+  // plausible payload; both appear the moment you drain a backlog and count.
+  // Needs no database and runs in about a second, so there is no reason for it
+  // to sit outside the gate the way the two guards below did for days.
+  ['lane bus', 'bash', ['scripts/lane-bus.test.sh']],
   // The contract's BUILT/SPECCED column against the routes actually mounted.
   // A stale column is how RCC came to call an endpoint that does not exist.
   ['contract status', 'node', ['scripts/check-contract-status.mjs']],
