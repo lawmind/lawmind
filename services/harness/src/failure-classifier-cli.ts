@@ -153,9 +153,34 @@ async function main(): Promise<void> {
 
     let done = 0;
     const startedAt = Date.now();
-    for (const q of pending) {
+
+    /**
+     * Bounded concurrency, same fix and same reasoning as arms-cli.ts:
+     * measured live 13 Aug 2026 that a sequential pass here spends nearly all
+     * its wall time on the network round trip, not CPU -- 18 queries in 28
+     * minutes against the current five-lane load. Unlike arms-cli.ts this
+     * report is an unordered distribution (a histogram over 288 outcomes),
+     * not a paired per-index comparison, so concurrent completion order is
+     * fine -- there is no McNemar alignment to protect here. `done` and
+     * `timedOut` are plain counters incremented between `await`s, which is
+     * safe under JS's single-threaded event loop (no true parallelism, just
+     * interleaving), and `appendFileSync` per classification is fine
+     * concurrently for lines this size.
+     */
+    const CONCURRENCY = 6;
+    let next = 0;
+    async function worker(): Promise<void> {
+      for (;;) {
+        const i = next++;
+        if (i >= pending.length) return;
+        await classifyOne(pending[i]!);
+      }
+    }
+
+    async function classifyOne(q: HarnessQuery): Promise<void> {
       done++;
-      if (!q.query || q.goldJudgmentIds.length === 0) continue;
+      const thisDone = done;
+      if (!q.query || q.goldJudgmentIds.length === 0) return;
 
       let classification: Classification;
       try {
@@ -217,23 +242,26 @@ async function main(): Promise<void> {
       } catch (err) {
         timedOut++;
         console.log(
-          `[${done}/${pending.length}] ${q.id.padEnd(20)} TIMED OUT/FAILED after ${QUERY_TIMEOUT_MS}ms: ` +
+          `[${thisDone}/${pending.length}] ${q.id.padEnd(20)} TIMED OUT/FAILED after ${QUERY_TIMEOUT_MS}ms: ` +
             `${(err as Error).message} -- checkpointed as skipped, will retry on next run`,
         );
         // Not checkpointed as a Classification: a timeout is not a
         // measurement, and writing one in would make a future re-run treat
         // a stuck query as permanently resolved instead of retrying it.
-        continue;
+        return;
       }
 
       results.push(classification);
       appendFileSync(CHECKPOINT_PATH, JSON.stringify(classification) + '\n');
       const elapsed = ((Date.now() - startedAt) / 1000).toFixed(0);
       console.log(
-        `[${done}/${pending.length}] ${q.id.padEnd(20)} ${classification.primary.padEnd(32)} ` +
+        `[${thisDone}/${pending.length}] ${q.id.padEnd(20)} ${classification.primary.padEnd(32)} ` +
           `rank=${classification.rank ?? '-'} elapsed=${elapsed}s`,
       );
     }
+
+    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, pending.length) }, () => worker()));
+
     if (timedOut > 0) {
       console.log(`\n${timedOut} quer${timedOut === 1 ? 'y' : 'ies'} timed out or failed -- re-run this command to retry only those.`);
     }
