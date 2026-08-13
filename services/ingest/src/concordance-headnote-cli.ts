@@ -93,15 +93,34 @@ try {
    * that 24 ingest workers are already saturating. The first attempt ran for
    * minutes without producing a row. Scoped, it reads ~38k rows.
    *
-   * **This is an assumption with a cheap test**: if a High Court judgment ever
-   * does print a paired SCR : SCC list, this misses it. `--all-courts` runs the
-   * unrestricted sweep, and it is worth running once, off-peak, to find out.
+   * **TESTED, AND THE ASSUMPTION IS WRONG.** Counted properly: **1,793 Supreme
+   * Court judgments print a paired citation, and 1,890 across all courts.** So
+   * **97 are outside the Supreme Court** — High Court judgments do quote the
+   * paired form, presumably when reproducing an SCR headnote.
+   *
+   * Scoping to the Supreme Court therefore MISSES 97 judgments' worth of
+   * concordance. `--all-courts` is the correct mode for a real harvest; the
+   * scoped mode stays only because it is ~20x cheaper for iterating.
    */
   const allCourts = process.argv.includes('--all-courts');
+  /**
+   * `String.raw` and a bound parameter, NOT an inline literal — this repo has
+   * now lost time to backslash collapse **four times**.
+   *
+   * The measurement that was about to justify writing 2,514 rows used
+   * `'SCR [0-9]+ : \([0-9]{4}\)'` inline. Inside a template literal a lone
+   * backslash before `(` is dropped, so Postgres received `([0-9]{4})` — a
+   * CAPTURE GROUP rather than a literal paren — and quietly matched a different,
+   * much smaller population: **659 instead of 1,890**. No error, just a wrong
+   * number that looked plausible enough to reason about for an hour.
+   *
+   * With `String.raw` what is written is what Postgres receives.
+   */
+  const PAIRED_IN_TEXT = String.raw`SCR [0-9]+ : \([0-9]{4}\)`;
   const judgments = await sql<{ id: string; neutral_citation: string | null; full_text: string }[]>`
     SELECT id, neutral_citation, full_text
       FROM judgments
-     WHERE full_text ~ 'SCR [0-9]+ : \\([0-9]{4}\\)'
+     WHERE full_text ~ ${PAIRED_IN_TEXT}
        ${allCourts ? sql`` : sql`AND court ILIKE '%supreme%'`}`;
   console.log(
     `  ${judgments.length} judgments print a paired SCR : SCC citation` +
