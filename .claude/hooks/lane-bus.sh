@@ -79,7 +79,15 @@ if [ -n "$SESSION_ID" ]; then
     LCC | RCC | NEW1 | NEW2 | NEW3) ;;
     *)
       if [ -f "$BIND_FILE" ]; then
-        LANE="$(tr -cd 'A-Za-z' < "$BIND_FILE" | tr '[:lower:]' '[:upper:]')"
+        # 0-9 IS LOAD-BEARING. This was `tr -cd 'A-Za-z'`, written when the bus
+        # had two lanes named LCC and RCC — neither of which contains a digit,
+        # so the sanitiser looked harmless for weeks. NEW1/NEW2/NEW3 arrived and
+        # every one of them read back as "NEW", matched no lane below, and was
+        # told it was UNBOUND while its binding file sat there being correct.
+        # Three lanes received nothing and the founder delivered their mail by
+        # hand instead. Widen this whenever a lane name gains a new character
+        # class.
+        LANE="$(tr -cd 'A-Za-z0-9' < "$BIND_FILE" | tr '[:lower:]' '[:upper:]')"
       fi
       ;;
   esac
@@ -123,32 +131,73 @@ fi
 
 # Files are NNNN--FROM-to-TO--slug.md. Only those addressed to this lane, only
 # those newer than the cursor.
+# Claude Code truncates hook output at 10,000 characters, so the payload is
+# budgeted BEFORE the cursor moves rather than sliced afterwards.
+#
+# The earlier version appended every pending message, clipped the string to
+# 8,000 characters, and then advanced the cursor to the highest sequence it had
+# READ — not the highest it had actually SHOWN. With a backlog of 22 that
+# delivered 4 and marked all 22 read: eighteen messages destroyed, silently,
+# with a "[TRUNCATED]" note that looked like the whole story. It never fired
+# only because the digit bug above meant no lane with a backlog ever reached
+# this code. Both bugs were needed to hide it, and both were here for weeks.
+#
+# So: stop at the budget, and advance the cursor ONLY past messages that were
+# included whole. The remainder stays pending and arrives on the next prompt.
+# The cursor is a single high-water mark, so delivery MUST stay contiguous. The
+# first version of this fix skipped an oversized message and carried on to the
+# next — a smaller one then fitted, the cursor advanced past the skipped one,
+# and 9 of 22 vanished. A drain test caught it. Once one message defers, every
+# message after it defers too.
+MAX=8000
 PENDING=""
 HIGHEST="$CURSOR"
+REMAINING=0
+FULL=0
 for f in "$BUS"/[0-9][0-9][0-9][0-9]--*-to-"$LANE"--*.md; do
   [ -e "$f" ] || continue
   base="$(basename "$f")"
   seq="$(printf '%s' "${base:0:4}" | sed 's/^0*//')"
   [ -n "$seq" ] || seq=0
   [ "$seq" -gt "$CURSOR" ] || continue
-  PENDING="${PENDING}
+
+  # Budget spent, or an earlier message deferred — everything from here waits.
+  if [ "$FULL" -eq 1 ] || [ "${#PENDING}" -ge "$MAX" ]; then
+    FULL=1
+    REMAINING=$((REMAINING + 1))
+    continue
+  fi
+
+  block="
 --- message ${base} ---
 $(cat "$f")
 "
+  # A message that does not fit is deferred WHOLE, so it arrives intact next
+  # prompt instead of half-read now. The one exception is a message bigger than
+  # the entire budget with nothing delivered yet: deferring that forever would
+  # wedge the lane permanently, so it goes out clipped and is marked read —
+  # visibly, with the filename, so it can be opened directly.
+  if [ $((${#PENDING} + ${#block})) -gt "$MAX" ] && [ -n "$PENDING" ]; then
+    FULL=1
+    REMAINING=$((REMAINING + 1))
+    continue
+  fi
+  if [ "${#block}" -gt "$MAX" ]; then
+    block="${block:0:$MAX}
+[this message alone exceeds the delivery budget — read ${base} in .agents/bus/]"
+  fi
+
+  PENDING="${PENDING}${block}"
   [ "$seq" -gt "$HIGHEST" ] && HIGHEST="$seq"
 done
 
 [ -n "${PENDING// /}" ] || exit 0
 
-# Cap the payload. Claude Code truncates hook output at 10,000 characters, and a
-# silently clipped message is worse than one that says it was clipped.
-MAX=8000
 CLIPPED=""
-if [ "${#PENDING}" -gt "$MAX" ]; then
-  PENDING="${PENDING:0:$MAX}"
+if [ "$REMAINING" -gt 0 ]; then
   CLIPPED="
-
-[TRUNCATED — read the remaining messages directly in .agents/bus/]"
+[${REMAINING} further message(s) still queued — they are NOT lost and will be
+delivered on the next prompt. \`pnpm lane:inbox\` shows the whole thread now.]"
 fi
 
 OUT="<lane-bus lane=\"${LANE}\">
