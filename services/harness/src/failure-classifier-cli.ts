@@ -95,8 +95,18 @@ type New3QueueEntry = {
  * ceiling that turns a truly stuck query into a visible, skippable failure
  * instead of an indefinite hang -- just calibrated to today's real
  * condition instead of an assumption about it.
+ *
+ * 13 Aug 2026, re-measured against the same straggler set repeatedly:
+ * pulled one persistently-timing-out query (civil-e5de6bbd) out of the
+ * batch loop and ran hybridSearch against it directly, unbounded --
+ * completed cleanly in 65,978ms. Not stuck, just slower than 120s under
+ * the ring's current "5x" throughput push (founder direction, bus 0264).
+ * Tunable via CLASSIFY_TIMEOUT_MS for exactly this case: a small
+ * straggler-only retry pass can afford real headroom per query since
+ * there are few of them left, without raising the ceiling for a full
+ * 288-query run where a genuinely stuck query should still fail fast.
  */
-const QUERY_TIMEOUT_MS = 120_000;
+const QUERY_TIMEOUT_MS = Number(process.env['CLASSIFY_TIMEOUT_MS'] ?? 120_000);
 
 function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
