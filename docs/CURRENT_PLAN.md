@@ -2944,6 +2944,49 @@ All 9 confirmed alive and past their startup banner post-restart; orissa
 specifically already past its previous `seen=459` stall point at the smaller
 batch size. Reported to LCC (bus, this session).
 
+**UPDATE, ~35 min later: orissa hung again, at the EXACT SAME count (459),
+same partition (21_11/2026), immune to the smaller batch size.** This is now
+a clean, reproducible finding, not a one-off:
+
+- Confirmed via CPU-sampling before restarting (per protocol): 0.031 delta
+  one cycle, then exactly 0.000 the next — matches the original hang
+  signature precisely, not a slow-vs-stuck ambiguity this time.
+- Batch size was already reduced to 50 (the prior mitigation) — it did NOT
+  prevent the recurrence, meaning the earlier hypothesis ("Promise.all
+  never resolves if one item in a large batch hangs") is not the whole
+  story, since a batch of 50 hung too.
+- Landing at the identical count (459) twice, in the identical partition,
+  is too precise to be a random transient — this smells like ONE specific
+  candidate document at that position in the 21_11/2026 iteration order
+  that deterministically hangs the process, immune to `withTimeout`'s
+  Promise.race. The strongest remaining hypothesis, not yet verified: the
+  hang is in `pdftotextFallback`'s synchronous `execFileSync` (30s timeout
+  set, per Q1 history) rather than the async extraction path — a
+  synchronous hang blocks the whole JS thread before `withTimeout`'s
+  Promise.race ever gets a turn to race against it, which would explain
+  why an async-level timeout wrapper can't touch it.
+- **Not root-caused further this cycle** — the last attempt at isolating
+  this exact stall (a scratch diagnostic script, deleted after) ran out of
+  turn budget before reaching the actual hang. Restarted again
+  (resumability-by-construction makes this cheap) rather than burn more
+  budget guessing a third time in one sitting.
+- **Worth a dedicated investigation session**: reproduce with a single-
+  document, single-candidate harness targeting exactly the 21_11/2026
+  partition starting near count 450-470, with process-level (not just
+  promise-level) instrumentation on `execFileSync` calls specifically.
+
+**Jharkhand (20_7) is now a second instance of the same class.** Hung twice
+this session (confirmed 0.000 CPU delta both times), the second time within
+~11 minutes of a fresh restart — faster onset than orissa's, and at a much
+lower `seen` count (no progress line printed at all before hanging, unlike
+orissa which got well into its scan first). Restarted a third time with
+batch dropped to 100 and concurrency to 8, as a mitigation rather than a
+fix. **Two courts now showing the identical exactly-0.000-CPU hang
+signature is stronger evidence this is a shared root cause** (most likely
+the synchronous `execFileSync`/`pdftotextFallback` hypothesis above) rather
+than something specific to Orissa's 2026 partition — worth widening the
+dedicated investigation's scope accordingly when it happens.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
@@ -4249,3 +4292,60 @@ SCC/AIR→SCR identity gap that blocks all 34 unresolved edges, sitting in text 
 already hold. NEW3 has made it **P0** in the acquisition queue, ahead of every
 external option. `judgment_citation_aliases` already exists as its home; no new
 table needed.
+
+### Q1.40 · THE HEADNOTE CONCORDANCE — built, and three defects found on the way · 13 Aug 2026
+
+`services/ingest/src/headnote-dispositions.ts` + `concordance-headnote-cli.ts`.
+**Nothing written to the database yet.** 21 tests.
+
+Harvests the SCR↔SCC concordance the Supreme Court prints in its own headnote
+Case Law lists — the mapping that `overruled-resolve-cli` names as the blocker
+for all 34 unresolved `overruled` edges, sitting in text we already hold.
+
+**Dry run, Supreme Court scope:** 1,793 judgments print a paired `SCR : SCC`
+citation · 5,787 paired sightings · **3,927 distinct aliases survived
+reconciliation** · 43 dropped because sightings disagreed about the target.
+
+#### Three defects, each found by a different route
+
+**1 · Distance is not adjacency — found by NEW3's cross-check.** They verified
+the premise independently (char_offset proximity vs my name resolution, 13 of 34
+confirmed both ways) and measured that **6 of 21 proximity hits were false
+positives**, one being a page header `354 [2023] 6 S.C.R. 354` read as a
+citation. My parser searched each entry for an SCR and an SCC *independently*, so
+two forms merely co-occurring were paired as though the reporter had equated
+them. Now an entry is `paired` only when both come from a single `X : Y`
+construction. **Precision where it writes, recall where it is read** — the loose
+fields still feed the disposition report a human reads.
+
+**2 · The migration-0026 expression index does not exist.** The first dry run
+died mid-query with no error. `concordance-cli.ts` resolves SCR keys in SQL and
+its comment claims that index; `pg_indexes` shows only
+`judgments_reporter_citations_gin`, a plain GIN over the **raw** array, which
+cannot serve a query applying `upper(regexp_replace(…))` to every element. It
+degraded to ~150M regexp calls. **Same shape as Q1.23** — a comment claiming a
+guard that was never wired in. Fixed by resolving in memory: only **38,342**
+judgments carry `reporter_citations` at all, which is exactly the Supreme Court
+count and independently corroborates the scoping. **The deployed adjacency pass
+carries the same latent cost.**
+
+**3 · `| tail -30` hid a running job.** A backgrounded dry run appeared to
+produce nothing for ten minutes. `tail` buffers until its input closes, so the
+log was empty while the job ran normally. My own error, and the reason the
+second attempt writes to a file directly.
+
+#### Still open
+
+- The dry run has not yet reported how many aliases resolve to a held judgment,
+  nor how much of the 34-edge gap it closes. **No `--apply` until it does.**
+- **A discrepancy I cannot yet explain:** an earlier all-courts measurement found
+  **657** judgments with pairs; the Supreme-Court-only run finds **1,793**. A
+  narrower filter cannot return more. The earlier run is the suspect one (it
+  fetched every court's `full_text` and may have returned partially), but that is
+  a hypothesis, not a diagnosis. A `COUNT(*)`-only query settles it and is queued
+  behind the harvest rather than run concurrently against a proxy 24 ingest
+  workers are already using.
+- `--all-courts` sweep, off-peak, to test the SC-only scoping assumption. NEW3
+  corroborated it (SCR is the Supreme Court's own reporter, e-SCR confirmed
+  SC-only) but explicitly flagged it as corroboration, not independent
+  verification.
