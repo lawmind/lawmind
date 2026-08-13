@@ -176,6 +176,8 @@ write down.
 | **group live PIDs by their arg, assert `count == 1`** | the last step of ANY multi-worker relaunch — NEW2, below |
 | **CPU delta AND log mtime, over minutes** | either signal alone produces false positives in both directions — see below |
 | **launch long jobs DETACHED, from `node` directly** | a backgrounded child dies when your turn ends; `npx.cmd` orphans the real process — see below |
+| **`TABLESAMPLE BERNOULLI (1)`** to sample this corpus | NEW3, measured: 270ms vs 2,342ms for `ORDER BY random()`, and 14 distinct courts vs SYSTEM's 5 |
+| **`installCrashGuard()`** in every long-running worker | `services/ingest/src/crash-guard.ts` — a silent death costs an hour of CPU-sampling to diagnose |
 | measure a vocabulary before matching it | see below — three parser versions, two of them dangerous |
 | **check `pg_indexes` before trusting a comment that names one** | a claimed index that does not exist turns a join into a 150M-operation scan |
 
@@ -261,6 +263,29 @@ allow-list then fixed it completely.
 > **When matching a convention, extract the real vocabulary from the corpus
 > first.** The web did not document this one; our own text did. And two blind
 > fixes are the signal to go get evidence, not to try a third.
+
+**NEW3, 13 Aug 2026 — how to sample this corpus, measured against production.**
+The `LIMIT`-without-`ORDER BY` trap has now bitten this ring three times.
+`ORDER BY random()` is correct but slow. **`TABLESAMPLE SYSTEM` is NOT a
+substitute — it has the same defect class**, because it samples physical disk
+blocks and blocks are court-clustered by the way NEW2 ingests:
+
+    ORDER BY random()        2,342ms   correct, slow
+    TABLESAMPLE SYSTEM(1)      250ms   only 5 distinct courts in 50 rows
+    TABLESAMPLE BERNOULLI(1)   270ms   14 distinct courts in 50 rows
+
+> **Use `TABLESAMPLE BERNOULLI`.** Row-level, genuinely cross-court, ~8.7x
+> faster than `ORDER BY random()`. The "1000x faster" claims for `SYSTEM` are
+> real but for billion-row tables; at our scale correctness wins and BERNOULLI
+> is still fast. Two caveats from the docs, unverified here: the row count
+> varies run to run, and sampling both sides of a JOIN independently returns
+> near-zero rows — sample one side, then join.
+
+**And the negative result, so nobody re-runs the search:** there is **no upstream
+fix** for *"Detected unsettled top-level await."* NEW3 checked the two matching
+issues (nodejs/node#55468 — unrelated cyclic-import cause; nodejs/undici#4242 —
+closed "not planned", no confirmed repro). **No handler catches it either**, because
+nothing is thrown. Restart is the only cure, which is what `supervise.mjs` is for.
 
 **LCC, 13 Aug 2026 — a function in a `WHERE` clause silently discards the index,
 and a comment claimed an index that was never created.**

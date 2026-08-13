@@ -16,7 +16,11 @@ import type { Sql } from 'postgres';
 
 import { openDb } from './db-host.ts';
 import { classifyHcDocument, type HcDocumentClass } from './hc-classify.ts';
+import { installCrashGuard } from './crash-guard.ts';
 
+
+// Silent deaths cost three runs today; log the cause instead of vanishing.
+installCrashGuard('hc-classify');
 const BATCH = 1000;
 
 type Row = {

@@ -75,6 +75,32 @@ function num(name: string, fallback: number): number {
   return v === undefined ? fallback : Number(v);
 }
 
+/**
+ * Found live (NEW3, 12 Aug): zero process-level crash guard anywhere in
+ * `services/ingest/src`. Every "unsettled top-level await" death this session
+ * (Uttarakhand, Gauhati, Chhattisgarh, Karnataka, Telangana, Kerala) left no
+ * trace beyond Node's own bare warning — nothing here logged what was actually
+ * in flight, and a monitoring pass had to CPU-sample and guess rather than
+ * read a reason.
+ *
+ * This does not fix the underlying hang (Node prints "unsettled top-level
+ * await" when nothing is progressing, which is a genuine stall, not a thrown
+ * error — no handler catches a promise that never rejects). What it DOES fix:
+ * a genuinely uncaught exception or rejection from anywhere in the dependency
+ * tree (unpdf, postgres.js, undici) now logs its full detail before exit
+ * instead of vanishing into the same ambiguous silence. Cheap, standard, and
+ * it turns "which crash class was this" from a CPU-sampling exercise back
+ * into reading a line of output.
+ */
+process.on('uncaughtException', (error) => {
+  console.error(`FATAL uncaughtException: ${error?.stack ?? error}`);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error(`FATAL unhandledRejection: ${reason instanceof Error ? reason.stack : reason}`);
+  process.exit(1);
+});
+
 const APPLY = process.argv.includes('--apply');
 const COURT = flag('--court');
 const YEAR = flag('--year') ? Number(flag('--year')) : undefined;

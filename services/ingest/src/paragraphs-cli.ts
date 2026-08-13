@@ -41,7 +41,11 @@ import { createHash } from 'node:crypto';
 import postgres from 'postgres';
 
 import { splitParagraphs, spansAreContiguous } from './paragraphs.ts';
+import { installCrashGuard } from './crash-guard.ts';
 
+
+// Silent deaths cost three runs today; log the cause instead of vanishing.
+installCrashGuard('paragraphs');
 const APPLY = process.argv.includes('--apply');
 const RESUME = process.argv.includes('--resume');
 const arg = (name: string, fallback: string): string => {

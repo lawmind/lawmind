@@ -51,7 +51,11 @@ import {
 } from './enrich.ts';
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
 import { callOpenRouter, openRouterKeyFromEnv, openRouterModelFromEnv } from './openrouter.ts';
+import { installCrashGuard } from './crash-guard.ts';
 
+
+// Silent deaths cost three runs today; log the cause instead of vanishing.
+installCrashGuard('enrich');
 const arg = (name: string, fallback: string): string => {
   const i = process.argv.indexOf(`--${name}`);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1]! : fallback;

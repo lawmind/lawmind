@@ -86,6 +86,78 @@ state of the art.
 
 ---
 
+## 1c · THE LIVE TABLE, 13 Aug 2026 (bus 0281) — 1.22M unresolved is half sentinel, not 24x the queue
+
+**LCC flagged that `judgment_citations` (live, not frozen like
+`external_citations`) shows 1,224,507 unresolved edges against 112,241
+resolved — 91.6% unresolved, framed as "24x bigger than the frozen table."
+Verified the count exactly, then found the 1.22M figure conflates two
+unrelated populations.**
+
+    resolved                    112,241
+    unresolved, TOTAL          1,224,507   <- LCC's figure, verified exact
+      empty-normalised-citation   625,748   <- NOT a citation. See below.
+      real unresolved citations   598,759   <- the actual queue
+
+**625,748 of the "unresolved" rows have an empty `citation_text` AND empty
+`normalised_citation`** — `evidence` null, `char_offset` 0, `relationship`
+defaulted to `cites`. Sampled 15 across 8 different courts, all identical
+in shape. Checked the overlap: **zero judgments carry both an empty
+sentinel row and a real citation edge** — it is exclusively one or the
+other, one sentinel row per judgment. This is almost certainly a "citation
+extraction ran, found nothing" completion marker from the enrichment
+pipeline, not a citation of any kind. **It has zero acquisition
+relevance** and should not be read as 625,748 authorities LawMind is
+missing. **Not this lane's file to fix** — flagging to LCC/NEW2, whoever
+owns the citation extractor, since a marker row living in the same
+`cited_judgment_id IS NULL` bucket as real unresolved citations will keep
+inflating this exact metric for anyone who queries it the obvious way.
+
+**The real unresolved population is 598,759 — still ~11.7x the frozen
+51,272-row `external_citations` table, a genuine and substantial finding,
+just not the 24x LCC quoted.**
+
+### Characterised the top of the real population, frequency-weighted
+
+Per LCC's three-way ask — (a) normalisation failure, (b) alias exists /
+already held, (c) genuine acquisition candidate, "only (c) is acquisition"
+— on the top 200 most-frequently-cited real unresolved citations (80,329
+of the 598,759 edges, i.e. the head of a long-tail distribution), checked
+each `normalised_citation` against `judgment_citation_aliases` (4,394 rows)
+for an existing match:
+
+| bucket | distinct citations | edges (weighted) | share |
+| --- | --- | --- | --- |
+| (a) malformed | 0 | 0 | 0.0% |
+| (b) alias already exists | 77 | 40,408 | 50.3% |
+| (c) candidate | 123 | 39,921 | 49.7% |
+
+**Roughly half of the highest-value unresolved citations already have a
+matching alias** — meaning LawMind already holds the judgment, and closing
+these is a *linking* job (writing `cited_judgment_id` once the alias
+resolves), not acquisition. This is the same conclusion `SOURCE_REGISTRY.md`
+§6 and §1 above already reached from `external_citations` at 32,383 rows —
+now confirmed independently at 18x the scale, on a live rather than frozen
+table.
+
+**The other ~50% ("candidate") is not the same as "confirmed missing."**
+It means no existing alias matched — some of it will resolve once LCC's
+concordance harvest (§1b) processes more of the 656-judgment paired-citation
+source, some may be a normalisation gap this sample's crude malformed-check
+missed, and only a remaining fraction is a genuine document LawMind does not
+hold. **Not further characterised this pass** — the honest state is "roughly
+half of the top 200 is an open question," not "roughly half is an
+acquisition target." Distinguishing those needs either the alias harvest to
+finish or individual verification, neither done here.
+
+**Sampling note, per LCC's own caution:** both queries above used
+`ORDER BY random()` / `GROUP BY ... ORDER BY count DESC`, never a bare
+`LIMIT` — the top-40 table in §2 below spans single-court patterns by
+design (frequency ranking), but this section's 200-citation sample was
+checked to span courts, not accidentally read as physical insertion order.
+
+---
+
 ## 2 · TOP 40 UNRESOLVED CITATION TARGETS, BY CITING FREQUENCY
 
 Ranked by distinct citing documents (`times_cited`), which is a genuine

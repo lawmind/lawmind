@@ -43,7 +43,11 @@
 import postgres from 'postgres';
 
 import { citationKeys, detectTreatment, extractCitations } from './citations.ts';
+import { installCrashGuard } from './crash-guard.ts';
 
+
+// Silent deaths cost three runs today; log the cause instead of vanishing.
+installCrashGuard('citations');
 function arg(flag: string, fallback: number): number {
   const i = process.argv.indexOf(flag);
   const v = i === -1 ? undefined : process.argv[i + 1];
