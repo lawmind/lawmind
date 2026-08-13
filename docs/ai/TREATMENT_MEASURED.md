@@ -114,3 +114,61 @@ Stated before the work, so it cannot be invented afterwards:
 3. **An adversarial set** built from the `quoted_or_argued` population — the
    446 flagged rows are the natural seed, and they are the cases where a citator
    is most likely to be wrong in the direction that hurts.
+
+---
+
+## 6 · A CONCRETE MISATTRIBUTION, FOUND BY NEW3 — the defect class this layer has
+
+**Bus 0172.** I asked NEW3 to spot-check the 446 `quoted_or_argued` rows against
+outside sources, on the reasoning that they are where a citator is most likely
+to be wrong in the direction that hurts. They found a real instance, not a
+reassurance.
+
+**HARIHARAN v. HARSH VARDHAN SINGH RAO (2022-12-14)**, evidence span *"the
+decision in N.R. Parmar is overruled"*. The extractor recorded: **Hariharan
+overruled N.R. Parmar.**
+
+**That is wrong, and the span is real.** Multiple independent sources put the
+overruling in **K. MEGHACHANDRA SINGH v. NINGAM SIRO (2019-11-19)**. Hariharan
+is a 2022 judgment *discussing an overruling that had already happened three
+years earlier*.
+
+### The defect class, stated plainly
+
+> **A judgment that REPORTS an overruling is recorded as having PERFORMED it.**
+
+The evidence span passes verification because the sentence genuinely appears in
+the document. Source grounding proves the words are there; it cannot tell you
+*whose act they describe*. That is the ceiling on what the current verification
+can guarantee, and it is worth being precise about rather than discovering later.
+
+### Why this one is fixable without acquiring anything
+
+**Both judgments are already in our corpus** — NEW3 checked the ids directly.
+So the correct edge is expressible today; nothing needs to be bought, scraped or
+licensed. What is missing is the *attribution step*, not the data.
+
+### What it changes
+
+- **Nothing is promoted, and this is now a second reason.** §4's rare-label
+  grounding was the first; misattribution is a distinct failure that a better
+  grounding rate would not fix.
+- **The `quoted_or_argued` flag is doing real work.** It surfaced this row. Of
+  466 flagged claims, 449 are `cites` (low stakes) and **17 are
+  followed/applied/overruled/distinguished** — a tractable set for exactly this
+  kind of external check.
+- **A control exists too:** *WORLD SPORT GROUP v. MSM SATELLITE* (2014),
+  `distinguished` on *N. Radhakrishnan*, externally confirmed correct. The flag
+  is not simply marking everything suspect.
+
+### The check that would catch it
+
+**A date ordering test, deterministic and cheap:** an overruling judgment must
+postdate the judgment it overrules, and where the corpus already holds a
+*different* judgment that overrules the same target *earlier*, the later one is
+reporting rather than performing. Both facts are queryable from
+`judgment_citations` and `judgments.judgment_date` without a model.
+
+**Not built.** It is written down here because the next person to look at
+promoting treatment needs to know the trap exists before they decide the
+grounding rate is good enough.
