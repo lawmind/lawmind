@@ -23,10 +23,36 @@ drift.** Checked against the source rather than assumed:
 | | |
 | --- | --- |
 | dataset | `indian-high-court-judgments`, AWS Open Data |
-| scale | **~17.8M judgments · 25 high courts · 45 benches · ~1.25 TiB** |
+| scale | **20,529,203 documents · 25 high courts · 1950–2026** (+ Supreme Court 38,351 = **20,567,554**) |
 | **update cadence** | **DAILY** |
 | provenance | eCourts web portal, with some courts **backfilled from the eCourts mobile API where the web portal is incomplete** |
 | metadata | parquet: CNR, decision date, order number, PDF-exists flag, `source` tag (web/mobile) |
+
+**CORRECTED 13 Aug 2026 — the `~17.8M` this section carried was wrong, and it
+was the denominator under every timeline quoted all day.**
+
+NEW3 reconciled it against `docs/HC_METADATA_SURVEY.json` (11 Aug, parquet
+footers, 1,493 files, no rows decoded). The real figures:
+
+    allYears combined       20,529,203
+    last10Years combined    15,771,567
+    + Supreme Court            38,351
+    ------------------------------------
+    allYears + SC           20,567,554
+
+**`17.8M` matches neither.** It was an unreconciled pre-survey figure that
+survived into this document, and every "days to parity" number computed from it
+understated the remaining work.
+
+**The founder's "20.5M" is not unexplained after all** — it matches
+`allYears + SC` to within **0.3%**. `FQ-20M` asked where that target came from;
+the answer is that it is the AWS bucket's own full 1950–2026 history, and the
+question was only open because this file said 17.8M.
+
+**How it was caught is the part worth keeping:** three small courts (Tripura,
+Meghalaya, Sikkim) showed *held* **exceeding** the `last10Years` source total —
+impossible if that denominator were right. An impossibility in a small court
+exposed a wrong denominator that a 2.7M gap in a large one had not.
 
 **A daily-updated source cannot be "finished".** So the gate is not *ingest
 everything once*; it is:
