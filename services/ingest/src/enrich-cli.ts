@@ -50,6 +50,7 @@ import {
   windowAround,
 } from './enrich.ts';
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
+import { callOllama, ollamaAvailable, ollamaModelFromEnv } from './ollama.ts';
 import { callOpenRouter, openRouterKeyFromEnv, openRouterModelFromEnv } from './openrouter.ts';
 
 const arg = (name: string, fallback: string): string => {
@@ -373,6 +374,13 @@ if (process.argv.includes('--reverify')) {
  * merely busy killed the whole run before any document was touched, which is
  * exactly the un-resumable failure this worker is supposed to be immune to.
  */
+/**
+ * Probed once at start rather than per document: a daemon that is down should
+ * be reported plainly, not rediscovered thirty thousand times.
+ */
+const localModelReady = await ollamaAvailable();
+console.log(`local model (ollama): ${localModelReady ? `READY — ${ollamaModelFromEnv()}` : 'not serving'}`);
+
 const refs = await withDbRetry('select cohort', selectRefs);
 console.log('CORPUS ENRICHMENT PILOT');
 console.log('='.repeat(74));
@@ -385,6 +393,7 @@ if (refs.length === 0) {
 
 let cacheHits = 0;
 let openRouterCalls = 0;
+let localCalls = 0;
 /** Consecutive InferX capacity failures. Resets the moment one succeeds. */
 let inferxFailStreak = 0;
 /** Documents processed, used to space the breaker's probe of the free pool. */
@@ -519,6 +528,23 @@ for (const [i, ref] of refs.entries()) {
       result = { ok: false, reason: `inferx exhausted; openrouter: ${fallback.reason}` };
     }
   }
+
+  /**
+   * THE LOCAL FLOOR. Tried last, and only when both hosted providers are out —
+   * a 7B is weaker than DeepSeek V4, so the better model gets the work whenever
+   * it is reachable. Safe to fall back to because every claim still has to
+   * survive source verification: a weaker model yields more REJECTIONS, not
+   * wrong data. `docs/ai/GPU_PLAN.md`.
+   */
+  if (!result.ok && localModelReady && /capacity|429|exhausted|breaker|openrouter/i.test(result.reason)) {
+    const local = await callOllama(prompt, { maxTokens: 1024 });
+    if (local.ok) {
+      usedModel = ollamaModelFromEnv();
+      costUsd = 0;
+      localCalls++;
+      result = local;
+    }
+  }
   const latency = Date.now() - startedAt;
 
   if (!result.ok) {
@@ -648,7 +674,7 @@ console.log('='.repeat(74));
 console.log(`documents      ${refs.length}  (cache hits ${cacheHits}, new calls ${calls})`);
 console.log(`calls failed   ${failed}   unparseable ${unparseable}`);
 console.log(
-  `provider       inferx ${calls - openRouterCalls} · openrouter ${openRouterCalls}` +
+  `provider       inferx ${calls - openRouterCalls - localCalls} · openrouter ${openRouterCalls} · local ${localCalls}` +
     (openRouterCost > 0 ? ` ($${openRouterCost.toFixed(4)} actual, reported by OpenRouter)` : ''),
 );
 console.log(`tokens         ${inTok.toLocaleString()} in / ${outTok.toLocaleString()} out = ${(inTok + outTok).toLocaleString()}`);
