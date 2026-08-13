@@ -232,3 +232,72 @@ it was load-bearing twice in one hour.
 the schema, and `RING_PROGRAM.md` §2a is explicit that the component should be
 tested against the failing population before it is rewritten. Step 1 IS that
 test.
+
+---
+
+## 6 · THE 22, AS A CONFIRMATION LIST
+
+**Nothing here is written.** This is the human read the report-only design exists
+to enable, laid out so it costs minutes rather than an afternoon.
+
+### 6a · The mineral-royalty line — `MADA v. SAIL` (2024 INSC 554), nine judges
+
+The largest single block, and the most consequential. MADA prints its Case Law
+list **twice** — once in the majority, once in Nagarathna J's separate opinion —
+so several appear as duplicate rows above. **Distinct cases:**
+
+| SCC | case |
+| --- | --- |
+| (1990) 1 SCC 12 | India Cement Ltd. v. State of Tamil Nadu |
+| (1991) Supp 1 SCC 430 | Orissa Cement Ltd. v. State of Orissa |
+| (1992) Supp 2 SCC 239 | Federation of Mining Associations of Rajasthan v. State of Rajasthan |
+| (1995) Supp 1 SCC 642 | State of M.P. v. Mahalaxmi Fabric Mills Ltd. |
+| (1995) Supp 2 SCC 686 | State of Orissa v. Mahanadi Coalfields Ltd. |
+| (2001) 1 SCC 91 | Saurashtra Cement & Chemical Industries Ltd. v. Union of India |
+| (1996) 5 SCC 670 | **P. Kannadasan v. State of Tamil Nadu** — the one NEW3 left inconclusive |
+| (2008) 8 SCC 253 | New India Assurance Co. Ltd. v. Roshanben Rahemansha |
+
+These are coherent as a set: one nine-judge bench overruling a line of royalty
+authority. **Only P. Kannadasan has been independently confirmed** against the
+source text and the held judgment (`1996 INSC 800`). The rest are parser output
+that reads correctly and has not been individually checked.
+
+### 6b · The rest, one judgment each
+
+| SCC | case |
+| --- | --- |
+| (2011) 1 SCC 694 | Siddharam Satlingappa Mhetre v. State of Maharashtra |
+| (2010) 1 SCC 679 | HDFC Bank Ltd. v. J.J. Mannan |
+| (2008) 1 SCC 632 | Naresh Kumar Yadav v. Ravindra Kumar |
+| (2018) 4 SCC 303 | Satpal Singh v. State of Punjab |
+| (2017) 4 SCC 177 | Amrutbhai Shambubhai Patel v. Sumanbhai Kantibai Patel |
+| (2018) 14 SCC 298 | Athul Rao v. State of Karnataka |
+| (2019) 5 SCC 542 | Bikash Ranjan Rout v. State |
+| (1997) 1 SCC 361 | Randhir Singh Rana v. State (Delhi Administration) |
+| (1988) 2 SCC 72 | V. Revathi v. Union of India |
+
+### 6c · Two rows that are parser artefacts — DO NOT ACT ON
+
+    (2019) 12 SCC 816   "(v) whether the decision in Mukund Dewangan"
+    (2001) 7 SCC 358    "In the judgment of B.V. Nagarathna, J. District Mini…"
+
+Prose captured as a case name. Harmless in a list a human reads; **disqualifying
+for an automatic write**, and the concrete reason the `--apply` path does not
+exist for dispositions.
+
+### 6d · What confirming these would actually change
+
+Each one currently carries `overruled_status = 'none'` and renders as live good
+law. `CLAUDE.md` §6 sets the stale-overruled threshold at **zero** and calls this
+*"as severe as a hallucination"*.
+
+**But the write is still not automatic, and should not be.** The evidence for
+each is the court's own headnote — strong, deterministic, no model involved. The
+weakness is not the evidence, it is the **extraction**: two of twenty-two rows
+are demonstrably prose, so the parser's precision is high but not one. At 22 rows
+a human closes that gap in minutes; no pipeline can.
+
+**Recommended next step, unstarted:** confirm 6a and 6b against source text — the
+same check done for P. Kannadasan, which took one query each — then write
+`overruled_status` for the confirmed set only, with the citing judgment recorded
+as evidence.
