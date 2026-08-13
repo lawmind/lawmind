@@ -100,25 +100,65 @@ rare labels grounding at 33–50%.
 
 ---
 
+## 4b · REVERSED 13 Aug 2026 — FOUNDER DECISION, AND MY REASONING WAS WRONG
+
+> **No local model. DeepSeek stays, and it is paid for.**
+
+The founder's reason: a 7B is not intelligent enough for this work. They are
+right, and the argument I made for it above has a hole I should have found
+before writing it.
+
+**I claimed the trade was "quality-neutral and throughput-positive" because
+evidence-span verification means a weaker model produces more REJECTIONS rather
+than wrong data.** That is only half true, and the missing half is the one that
+matters.
+
+**Verification catches FALSE POSITIVES. It does not catch FALSE NEGATIVES.**
+A fabricated judge whose span is not in the source gets rejected — that half
+works. But a judge who IS named in the document and whom a weaker model simply
+fails to extract passes through unnoticed, because nothing in the pipeline
+compares against ground truth. There is no signal for a claim that was never
+made.
+
+So a weaker model's real cost is not more rejections. It is **silently thinner
+data** — fewer judges, fewer citations, fewer treatments — every one of them
+looking perfectly clean, because everything it *did* return was verified. That
+is worse than a visible failure, and it is exactly the *"unknown must stay
+unknown"* line this lane holds everywhere else. A gap you cannot see is not a
+gap you can report.
+
+**Also relevant and not a small point:** `CLAUDE.md` §5 names DeepSeek V4 Flash
+for public-class work. Swapping the model for a materially weaker one is a
+change to that routing rule, not an implementation detail, and it is not a
+change this lane makes on its own.
+
+**Ollama and the local provider are removed.** The measurements in §1–§3 stand
+and are worth keeping — the card is idle, most workloads genuinely cannot use
+it, and enrichment is the only compute-bound one. What changes is the conclusion
+drawn from them.
+
+**The GPU's remaining real use is §4's list, led by embeddings**, which the
+data-first decision has already deferred. When that gate is met, this hardware
+becomes the embedding engine — a task where a local model's output is a vector
+rather than a claim, so the false-negative problem above does not arise.
+
+---
+
 ## 5 · RECOMMENDATION
 
 **Do not build GPU infrastructure yet, and do not leave it at zero forever.**
 The sequencing that follows from the founder's own data-first decision:
 
 1. **Now:** nothing. The bottlenecks are network and rate limits, and the
-   fallback plus circuit breaker already handle the second. Standing up CUDA,
-   PyTorch and a serving stack today would be infrastructure built ahead of the
-   need — the third drift mode in `RING_PROGRAM.md` §2c.
-2. **When InferX + OpenRouter throughput becomes the binding constraint on
-   enrichment** — measurable as a sustained non-zero circuit-breaker rate with
-   the paid fallback also saturated — stand up a local 7B for **metadata only**,
-   behind the same evidence-span verification, and measure its grounding rate
-   against the current one before trusting it.
+   OpenRouter fallback plus circuit breaker already handle the second.
+2. **A local model for enrichment is RULED OUT**, per §4b — not on throughput
+   grounds but on quality, and the quality argument is about invisible recall
+   loss rather than visible errors.
 3. **When the data gate is met** (all courts held, citations in, corpus
-   structured), the GPU becomes the embedding engine and this document is
-   superseded by that plan.
+   structured), the GPU becomes the **embedding engine**. That is its real job
+   here, and it is deferred by sequencing rather than by doubt.
 
-**The trigger for step 2 is a number, not a feeling:** enrichment throughput
-capped by provider capacity rather than by our own queue depth. We are not there
-today — the queue is deeper than the capacity limit, so more capacity would help
-and more *hardware* would not.
+**If enrichment throughput does become the binding constraint**, the answer is
+more paid capacity on the model we have chosen, not a weaker model run locally.
+Buying throughput costs money; buying it with recall costs data nobody can see
+is missing.
