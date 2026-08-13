@@ -4633,3 +4633,64 @@ re-scan rather than trusting the tampered offset, matching the
 timing signature of a from-scratch run rather than a resumed one. tsc
 clean, 39 existing tests still green. Cleaned up all test checkpoint files
 and scratch scripts afterward.
+
+### Q1.44 · NEXT STEP 2 BLOCKED (named, not silently skipped); NEXT STEP 3 — EVIDENCE_WRONG is NOT the coverage gap it looked like · 13 Aug 2026
+
+**NEXT STEP 2 (benchmark expansion by court/`hc_document_class`): blocked,
+same wall Q1.43 already named.** `build-queries.ts`'s `embedded` CTE requires
+`judgment_chunks.embedding IS NOT NULL`; 0 High Court judgments are embedded
+by founder decision, so no HC-derived gold query can exist today without
+either starting HC embeddings (explicitly forbidden) or a fundamentally
+different, non-embedding-gated gold-construction method that does not yet
+exist. Not invented around. Recorded as blocked rather than silently
+dropped from the queue.
+
+**NEXT STEP 3 — measured, and it overturns the working assumption.** Earlier
+framing (Q1.29, carried into this directive) was *"EVIDENCE_WRONG is
+strongly related to incomplete paragraph coverage."* Checked directly
+against the 130 EVIDENCE_WRONG gold judgments rather than re-asserted:
+
+| | count | |
+| --- | --- | --- |
+| no `judgment_paragraphs` row at all | **0** | not a raw coverage gap |
+| has paragraphs, but none carry a `paragraph_number` | 10 | text without a citable anchor |
+| has paragraphs WITH a numbered paragraph | **120** | should be fillable today |
+| also has a `judgment_chunks` row | **130 / 130** | every one — see below |
+
+**Zero of the 130 lack paragraph data entirely.** The "coverage gap" framing
+does not hold for this specific population, checked now.
+
+**What `operativeParagraph` actually depends on, read directly from
+`retrieve.ts` rather than assumed**: it is populated from
+`denseResult.bestChunk`, which is built only from the dense ANN candidate
+set (`judgment_chunks ORDER BY embedding <=> $vector LIMIT annDepth`, top
+~200) — **not** from "does this judgment have a chunk at all." A judgment
+can hold a `judgment_chunks` row and still show empty `operativeParagraph`
+if that specific chunk didn't rank inside the query's own top-200 nearest
+neighbours. All 130 EVIDENCE_WRONG judgments carry a chunk row, so this is
+the live mechanism, not a hypothesis.
+
+**One live spot-check, not a batch (the shared proxy is under heavy 5x-push
+load right now; a single query took 66-120s+)**: re-ran `hybridSearch` for
+`criminal-c1d880a2`, one of the 130. Result: `operativeParagraph` **now
+comes back FILLED** (Q1.32's `fillParagraphFallback` firing correctly), but
+`operativeParagraphNumber` is **still null** — the specific paragraph
+`ts_rank` selected as the best match doesn't itself carry a court-printed
+number, even though the judgment has other numbered paragraphs. **A real,
+legitimate partial-evidence state** (text without a citable pinpoint), not a
+bug and not the same thing as "no paragraph at all."
+
+**The likely explanation for most of the 130, stated as inference not
+fact**: `failure:classify`'s five attempts spanned several hours of
+wall-clock time while `judgment_paragraphs` was climbing at ~773k
+rows/hour (LCC, bus 0193/0247). A judgment scored as EVIDENCE_WRONG early
+in that window may simply have gained its paragraph rows before the run
+finished — the same "measuring growth, not the change" confound this
+session has hit repeatedly. Re-classifying the 130 would settle this, and
+is queued rather than run now (adds DB load; the answer is already
+directionally clear from the one live check plus the paragraph-coverage
+numbers above).
+
+**Sent to LCC** (paragraph-coverage/citable-anchor finding, their
+territory per the explicit "do not solve this by changing retrieval"
+instruction) and to the ring.
