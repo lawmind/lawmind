@@ -15,6 +15,7 @@
  * here — "the marker scopes the group" — is checked against real text first.
  */
 import { openDb } from './db-host.ts';
+import type { HeadnoteEntry } from './headnote-dispositions.ts';
 import { ADVERSE_DISPOSITIONS, concordancePairs, parseHeadnoteDispositions } from './headnote-dispositions.ts';
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
@@ -36,7 +37,7 @@ console.log(`${judgments.length} judgments carry a grouped "– overruled." mark
 let totalAdverse = 0;
 let wouldHaveCaught = 0;
 const pairs = new Map<string, { scr: string; name: string; from: string }>();
-const adverseAll: { name: string; scc?: string; scr?: string; from: string; lastInGroup: boolean }[] = [];
+const adverseAll: (HeadnoteEntry & { from: string })[] = [];
 
 for (const j of judgments) {
   const entries = parseHeadnoteDispositions(j.full_text ?? '');

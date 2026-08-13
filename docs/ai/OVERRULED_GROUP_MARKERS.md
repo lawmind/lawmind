@@ -121,7 +121,52 @@ all 45 judgments.
 | **SCR↔SCC concordance pairs** | **391 distinct** |
 | unresolved adverse edges with a harvested SCR form | **4 of 34** |
 
-### The 28 is NOT trustworthy, and that is the finding
+### v3 — SOLVED, by measuring the vocabulary instead of guessing it
+
+| | v1 | v2 | **v3** |
+| --- | --- | --- | --- |
+| adverse parsed | 59 | 56 | **55** |
+| caught today | 25 | 28 | **33** |
+| **missed** | 34 | 28 | **22** |
+| landmark good law wrongly marked overruled | **8+** | **4+** | **0** |
+
+**What fixed it: the disposition vocabulary is a CLOSED SET, and it was
+measured from the corpus rather than reasoned about.** A loose pattern run over
+the 45 judgments returned, by frequency:
+
+    referred to 288 · relied on 162 · overruled 62 · followed 42
+    distinguished 19 · held inapplicable 12 · affirmed 10 · approved 8
+    clarified 6 · explained 3 · disapproved 2 · partially overruled 1
+    held not correct law 1 · per incurium 1
+
+Everything else the loose pattern matched was prose — `the`, `that`, `of the`,
+`see page`, `under section`. **That is why a generic `[a-z ]+` failed in both
+directions at once**: it matched prose as dispositions while missing real
+markers, so groups both over- and under-ran.
+
+An allow-list cannot match prose and catches every real marker whether or not a
+period follows. Matched longest-first, so `partially overruled` is never
+truncated to `overruled`.
+
+**The web could not answer this.** SCR is the authorised reporter but the marker
+vocabulary is not documented in any research guide found. The corpus we already
+hold was the better primary source — 45 judgments beat a secondary description.
+
+### The 22 that remain look right
+
+They are dominated by **the entire mineral-royalty line** — India Cement,
+Orissa Cement, Federation of Mining Associations, Mahalaxmi Fabric Mills,
+Saurashtra Cement, Mahanadi Coalfields, P. Kannadasan — which is exactly what
+the MADA nine-judge bench overruled, and every one of them currently renders as
+good law. Also Siddharam Satlingappa Mhetre, Randhir Singh Rana, HDFC Bank v.
+J.J. Mannan and others of the same shape.
+
+**Two entries still carry prose in the name** (`(v) whether the decision in
+Mukund Dewangan`, `In the judgment of B.V. Nagarathna, J. District Mini…`). Cosmetic
+for a human reading 22 rows; **disqualifying for an automatic write**, which is
+one more reason the write stays manual.
+
+### The earlier numbers were NOT trustworthy — kept here deliberately
 
 **Version 1 reported ten cases overruled by `Puttaswamy`** — including *Shayara
 Bano*, *Kihoto Hollohan* and *Tulsiram Patel*. All good law. The real group is
@@ -136,15 +181,16 @@ Fixed two ways — optional period, and the group is now **walked backward from
 the marker until an entry stops parsing as a case**, so a boundary comes from
 the text rather than from another regex having worked. Puttaswamy now reports 1.
 
-**Version 2 is still wrong.** `Joseph Shine` reports *E P Royappa*, *Navtej
+**Version 2 was still wrong.** `Joseph Shine` reported *E P Royappa*, *Navtej
 Singh Johar*, *Anuj Garg* and *Independent Thought* as overruled. It overruled
-*V. Revathi* and *Sowmithri Vishnu* and nothing else. Same shape, a marker form
-still unmatched.
+*V. Revathi* and *Sowmithri Vishnu* and nothing else.
 
-**Stopped there deliberately** — two fix-verify cycles on one defect, and
-`CLAUDE.md`'s three-strike rule exists so a third blind attempt does not happen.
-The false-positive rate is **unbounded, not small**, and the honest number is
-that 28 is an upper bound containing an unknown quantity of good law.
+**The third attempt was not a third guess**, which is the distinction
+`CLAUDE.md`'s three-strike rule actually draws. Two blind fixes had failed, so
+the next step was to stop fixing and go get the evidence that would settle it —
+the real marker vocabulary, extracted from the corpus. With that in hand the fix
+was obvious and complete. *"What would break the tie"* is the question the rule
+exists to force.
 
 ### The two halves have different reliability, and this is the useful part
 

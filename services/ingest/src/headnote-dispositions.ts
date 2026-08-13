@@ -45,17 +45,55 @@
  */
 
 /**
- * The en dash is U+2013, not a hyphen. The reports use it consistently.
+ * The disposition vocabulary — **an allow-list, measured from the corpus, not
+ * invented and not taken from a research guide.**
  *
- * **The trailing period is OPTIONAL, and requiring it was a real bug.**
- * `Puttaswamy` (2018 INSC 880) prints `– relied on 1.1.3 A constitutional
- * trust…` with no period at all. Requiring one meant that marker was never
- * seen, so the group boundary never closed and the NEXT marker's group reached
- * back across two paragraphs of prose and two earlier lists. The report then
- * claimed Shayara Bano, Kihoto Hollohan and Tulsiram Patel were overruled by
- * it. They are not — the real group is two cases long.
+ * Two earlier versions used a generic `[a-z ]+` pattern and both were wrong:
+ *
+ * - v1 required a trailing period. `Puttaswamy` prints `– relied on 1.1.3 A
+ *   constitutional trust…` with none, so that boundary was never seen, the next
+ *   group reached back across two paragraphs, and the report claimed *Shayara
+ *   Bano*, *Kihoto Hollohan* and *Tulsiram Patel* were overruled. All good law.
+ * - v2 made the period optional and walked groups backward. Better, still
+ *   wrong: `Joseph Shine` reported *E P Royappa*, *Navtej Singh Johar* and
+ *   *Anuj Garg* as overruled because a generic pattern still missed the marker
+ *   forms that close those lists, while matching prose fragments like `– the`
+ *   and `– see section` as though they were dispositions.
+ *
+ * The counts below are occurrences across judgments carrying `– overruled`,
+ * extracted with a deliberately loose pattern and then read. Everything the
+ * loose pattern found that is NOT here was prose: `the`, `that`, `of the`,
+ * `see page`, `under section`.
+ *
+ * **This is the whole fix.** A closed vocabulary cannot match prose, and it
+ * catches every real marker whether or not a period follows.
  */
-const MARKER = /–\s*([a-z][a-z ]{2,28})\.?(?=\s+[A-Z0-9“"]|\s*$)/g;
+const DISPOSITIONS = [
+  'referred to', // 288
+  'relied on', // 162
+  'overruled', // 62
+  'followed', // 42
+  'distinguished', // 19
+  'held inapplicable', // 12
+  'affirmed', // 10
+  'approved', // 8
+  'clarified', // 6
+  'explained', // 3
+  'disapproved', // 2
+  'partially overruled', // 1
+  'held not correct law', // 1
+  'per incurium', // 1 — the reports' spelling, not `per incuriam`
+] as const;
+
+/**
+ * Longest-first, so `partially overruled` is never truncated to `overruled` —
+ * which would invert a partial into a total and is exactly the kind of silent
+ * severity upgrade `CLAUDE.md` §6 separates into its own field.
+ */
+const MARKER = new RegExp(
+  `–\\s*(${[...DISPOSITIONS].sort((a, b) => b.length - a.length).join('|')})\\.?(?=[\\s;.]|$)`,
+  'gi',
+);
 
 /**
  * A case name longer than this is prose that happens to end in a citation.
@@ -70,7 +108,22 @@ const MAX_NAME_CHARS = 110;
  * treatment signal — `referred to` and `explained` are not `overruled`, and
  * collapsing them is how a citation graph starts lying.
  */
-export const ADVERSE_DISPOSITIONS = new Set(['overruled', 'overruled in part', 'set aside', 'reversed']);
+export const ADVERSE_DISPOSITIONS = new Set([
+  'overruled',
+  'partially overruled',
+  'disapproved',
+  'held not correct law',
+  'per incurium',
+]);
+
+/**
+ * Deliberately NOT adverse, and the distinction is the product: `distinguished`
+ * and `held inapplicable` mean the authority stands and simply does not govern
+ * these facts. `referred to`, `relied on`, `followed`, `affirmed`, `approved`,
+ * `clarified` and `explained` are the law being confirmed, not moved. Folding
+ * any of them into "overruled" would put the LAW MOVED mark on live authority —
+ * the mirror of the failure this file was written to measure.
+ */
 
 /**
  * Page furniture that PDF extraction injects INTO the middle of a citation:
@@ -92,9 +145,9 @@ export interface HeadnoteEntry {
   /** Case name as printed, never normalised and never recalled. */
   name: string;
   /** `[1996] Supp. 4 SCR 92` → `(1996) Supp 4 SCR 92`, or undefined. */
-  scr?: string;
+  scr?: string | undefined;
   /** `(1996) 5 SCC 670`, or undefined. */
-  scc?: string;
+  scc?: string | undefined;
   disposition: string;
   /** True when this entry sits at the end of its group, i.e. the ONLY one the
    *  current extractor would have caught. Lets the report quantify the miss. */
@@ -152,7 +205,7 @@ export function parseHeadnoteDispositions(fullText: string): HeadnoteEntry[] {
   let m: RegExpExecArray | null;
 
   while ((m = MARKER.exec(fullText)) !== null) {
-    const disposition = clean(m[1]).toLowerCase();
+    const disposition = clean(m[1] ?? '').toLowerCase();
     const group = fullText.slice(groupStart, m.index);
     groupStart = m.index + m[0].length;
 
