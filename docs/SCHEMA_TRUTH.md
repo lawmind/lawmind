@@ -397,6 +397,42 @@ exists so the resumable pass — *"skip any judgment that already has rows"* —
 not re-scan the same judgment on every future run. Without it, the judgments that
 cite nothing would be re-read forever.
 
+#### IT WILL CORRUPT ANY `cited_judgment_id IS NULL` COUNT — this cost a day
+
+**A sentinel is not an unresolved citation. It is the absence of a citation.**
+But it sits in the same table with `cited_judgment_id IS NULL`, so the obvious
+query silently conflates the two:
+
+```sql
+-- WRONG. Half of this is judgments that cite nothing at all.
+SELECT count(*) FROM judgment_citations WHERE cited_judgment_id IS NULL;
+
+-- RIGHT.
+SELECT count(*) FROM judgment_citations
+ WHERE cited_judgment_id IS NULL AND coalesce(citation_text,'') <> '';
+```
+
+Measured 13 Aug 2026, with the section above already written:
+
+    sentinels           625,748   (exactly one per judgment, 0 invariant violations)
+    real unresolved     598,759
+    resolved            112,241
+    resolution rate       15.8%   — the naive query gives 8.4%
+
+**Two lanes computed the wrong number from this on the same day, and one of them
+escalated it to a third lane as a reason to re-plan a week of retrieval work.**
+Neither had read this file first, which is the whole failure — `CLAUDE.md` names
+`SCHEMA_TRUTH.md` as the only authority on data shapes and it already said this.
+
+> **Before publishing any figure derived from a corpus table, read its entry
+> here.** A number computed against a shape you have not checked is a guess with
+> a decimal point on it.
+
+**The invariant, re-verified at 46x the scale it was written against:** 625,748
+sentinels over 625,748 distinct judgments, and **zero** judgments carrying both a
+sentinel and a real edge. `--rescan` clears the sentinel when a judgment starts
+citing something. The design is sound; only its discoverability was not.
+
 ## citation_concordance_resolutions
 
 Added 11 Aug 2026, migration `0043`. DeepSeek-adjudicated candidate resolutions
