@@ -3036,3 +3036,38 @@ another **650 GB data-first**, on top of the ~405 GB already projected.
 
 Until then the ring works to **~17.8M high courts + Supreme Court**, and reports
 progress against that.
+
+---
+
+## FQ-NET — this machine ingests over Wi-Fi, and that becomes the ceiling
+
+**Raised 13 Aug 2026 by LCC. A physical action only you can take.** Not blocking
+today: we are at **24%** of the link. It becomes the binding constraint the
+moment the software fixes below land, and those are cheap.
+
+    adapter     Intel(R) Wi-Fi 6 AX201 160MHz
+    link speed  144 Mbps
+    measured    4.4 MB/s = 35.2 Mbps  (24.4% utilisation)
+
+**Nothing else on this machine is busy:** CPU **4%** across 20 cores, 9.4 GB RAM
+free, and of 100 Postgres connections only **4 are active** while **29 backends
+sit waiting on the client**. The database is idle waiting for us to send work.
+
+The ingest workers are running at roughly **30% of their own configured
+concurrency** — 268 fetches could be in flight, 80 are — because the batch loop
+is strictly sequential: metadata read, dedupe, already-held check, fetch, write.
+**Three of those five phases leave the network completely idle.** NEW2 has the
+four software levers (raise concurrency, pipeline the phases, kill the
+already-held rescan, and *not* adding more workers).
+
+**Where you come in:** if those levers work, throughput rises toward the Wi-Fi
+ceiling of ~18 MB/s — roughly 4x current, which would take 17.8M documents from
+**~20 days to ~5**. Past that, **the cable is the only way up.** Gigabit Ethernet
+raises the ceiling ~7x, after which CPU and the Railway proxy become the limits
+rather than the radio.
+
+**Ask:** plug this machine into Ethernet if there is a port within reach. It
+costs nothing and removes the only hard ceiling we cannot engineer around.
+
+**Caveat:** the 4.4 MB/s sample was taken while my own harvest jobs were also
+running, so NEW2's true share is lower and the headroom is larger, not smaller.
