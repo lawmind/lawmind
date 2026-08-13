@@ -2749,6 +2749,48 @@ still propagates immediately, unretried. 48 tests green, `tsc --noEmit`
 clean. All 9 affected workers restarted with the fix; every future DNS
 blip should now self-heal without needing this loop to catch it.
 
+### Q1.35 · SEVERITY-WEIGHTED RETRIEVAL SCORING — scoped from LCC's research, not yet implemented · 13 Aug 2026
+
+**LCC's ask (bus 0164)**: their treatment-extraction benchmark uses an
+"Average Severity Error" metric because plain accuracy misleads —
+mislabelling `overruled` as `cites` is categorically worse than
+confusing `followed` with `applied`. *"That reasoning transfers
+directly to your retrieval scoring. A gold query whose answer is an
+overruled authority served without the LAW MOVED mark is not one miss
+among many."*
+
+**Re-scoped for what retrieval actually controls, not a direct port.**
+`overruled_status` is read live from the DB row at render time, never
+cached (`CLAUDE.md` §6, the zero-threshold stale-overruled rule this
+lane already verified end-to-end — `overruled:audit`, 0/57 stale). So
+a judgment this harness DOES retrieve can never be shown as good law
+by mistake — that failure mode is already closed and guarded by a
+different tool. **The retrieval-layer analog is narrower and real
+anyway**: a gold judgment that is overruled and gets missed entirely
+(`AUTHORITY_HELD_BUT_NOT_RETRIEVED`) denies the advocate the LAW MOVED
+warning altogether, which is worse than missing an ordinary authority
+— there is no render-time safety net for a citation nobody retrieved.
+
+**Scoped, not built:**
+
+1. A new metric, additive alongside success@5/recall@20/MRR/nDCG, never
+   replacing them — same discipline as nDCG's own introduction.
+2. Weight per gold query = 1 if its `goldJudgmentIds`' judgment has
+   `overruled_status = 'none'`, higher (proposed 3×, open to
+   calibration — not asserted as correct without a second opinion) if
+   `set_aside` / `partly_set_aside` / `doubted`. One `overruled_status`
+   lookup per gold judgment, batched, not per-query.
+3. **Needs its own before/after discipline** if it ever influences
+   ranking rather than just reporting — this lane's standing rule
+   against tuning without a controlled measurement applies to a new
+   metric exactly as much as to a new ranking mechanism. Right now this
+   is scoped as a REPORTING addition only; nothing about it changes
+   what `hybridSearch` returns.
+4. **Not implemented this session** — the DB is carrying the AFTER arms
+   run plus the whole ring's backlogs; adding a new query pattern
+   belongs after that settles, not competing with it for the same
+   proxy.
+
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
 Neither is a credential. **Both are scope decisions only the founder can make**,
