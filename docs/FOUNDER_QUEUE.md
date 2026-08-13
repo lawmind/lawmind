@@ -2950,3 +2950,49 @@ real bug, found because of this outage, and fixed in `7d4abf3`.
 > The model id now lives in `INFERX_MODEL` (`.env`), defaulting to the working
 > alias, so the next catalogue change is a config edit rather than an outage.
 > Enrichment resumed immediately on the same three keys.
+
+---
+
+## FQ-STORAGE — what reaching 20.5M documents costs in Railway Postgres
+
+**Raised 13 Aug 2026 by LCC. A money decision, therefore yours.** Nothing is
+blocked on it: acquisition and enrichment run as normal and neither is affected
+by the answer. This is here so the number is not discovered at 5 TB.
+
+Full working: `docs/ai/CORPUS_SCALE_PROJECTION.md`. All measured, not estimated.
+
+**Time is not the problem.** Held 819,632; remaining ~19.68M; measured ingestion
+28,343/hr on the 24-hour average — **about a month of continuous running**, in a
+range of 21 to 53 days depending which window you take. (Ingestion is currently
+*falling* — 38k → 28k → 15k/hr across the 6h/24h/1h windows, cause unknown, NEW2
+is the lane to ask.)
+
+**Storage is the problem, and only on the far side of the embedding gate:**
+
+| | at 20.5M |
+| --- | --- |
+| **data-first** — text, paragraphs, citations, statutes, NO embeddings | **~405 GB** |
+| adding embeddings | **+4.9 TB** (~316M vectors) |
+
+Your data-before-embeddings decision lands us at **~405 GB**, which is an
+ordinary bill. The embedding step multiplies it by thirteen, because 1024-dim
+vectors cost 4 KB each and the HNSW index measures **3.6x the heap it indexes**.
+
+**What is needed from you, and not yet:**
+
+1. **Confirmation that ~405 GB of Railway Postgres is acceptable**, or a decision
+   to move bulk text to R2 with Postgres holding only what is queried. Worth
+   answering in the next couple of weeks, not today — we are at 23 GB.
+2. **Nothing at all on the 4.9 TB** until the data gate is met. Two measured
+   levers cut it to roughly **1.1 TB** — `halfvec` (pgvector 0.8.5 is installed
+   and supports it) and not embedding the ~66% of documents that are bail orders
+   and procedural disposals with no reasoning in them. **Both need a retrieval
+   measurement from NEW1 first**, because an authority we chose not to index is
+   invisible to the verification that catches fabrication. Neither is a storage
+   optimisation anyone should apply unilaterally.
+
+**Also worth your eye:** the 20.5M target is larger than the ~17.8M the AWS
+high-court dataset actually holds. The extra ~2.7M is presumably Supreme Court,
+tribunals and other platforms — **it has not been inventoried, and some of it is
+outside the authorised bucket.** NEW3 owns that question; flagging it because a
+target nobody has counted is a target nobody can hit.
