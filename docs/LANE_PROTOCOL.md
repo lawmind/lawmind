@@ -172,6 +172,35 @@ write down.
 | keyset pagination, never `OFFSET` | any walk over a table NEW2 is writing to |
 | `pdftotext -enc UTF-8`, absolute path | any PDF work; the binary is not on a detached process's PATH |
 | the evidence-span pattern | any model output that must be trusted |
+| `pnpm lane:status` | whether a lane is RECEIVING, which `lane:inbox` never showed |
+| **group live PIDs by their arg, assert `count == 1`** | the last step of ANY multi-worker relaunch — NEW2, below |
+| **CPU delta, not log staleness**, to call a worker dead | a quiet log is a slow worker; 0.000 CPU over 20s is a dead one |
+| measure a vocabulary before matching it | see below — three parser versions, two of them dangerous |
+
+**NEW2, 13 Aug 2026 — the relaunch check.** An Orissa relaunch briefly ran
+**twice** (~90 seconds, two concurrent `--court 21_11` processes): an earlier
+attempt that had not been confirmed dead, plus the retry. Caught by grouping
+every live PID by court before declaring done, rather than assuming a clean
+restart. Two writers on one court against a shared proxy is the file-collision
+class this ring has already hit once.
+
+> **Never declare a restart finished until you have counted the survivors.**
+
+**LCC, 13 Aug 2026 — measure the vocabulary, do not reason about it.** A parser
+for headnote disposition markers was written twice with a generic `[a-z ]+`
+pattern and was wrong both times — reporting *Shayara Bano*, *Kihoto Hollohan*,
+*Tulsiram Patel*, *E P Royappa* and *Navtej Singh Johar* as overruled. All good
+law.
+
+It failed in **both directions at once**: matching prose (`– the`, `– see
+section`) as dispositions while missing real markers, so groups over- and
+under-ran simultaneously. Extracting the actual vocabulary from 45 judgments
+took one query and showed it is a **closed set of fourteen phrases**. An
+allow-list then fixed it completely.
+
+> **When matching a convention, extract the real vocabulary from the corpus
+> first.** The web did not document this one; our own text did. And two blind
+> fixes are the signal to go get evidence, not to try a third.
 
 ### The rule that has paid off most
 
