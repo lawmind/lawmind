@@ -37,11 +37,64 @@ export function isNativeText(characters: number, pages: number): boolean {
  */
 export type TextExtractionMethod = 'unpdf' | 'pdftotext_fallback';
 
+/**
+ * DNS failures on the S3 host are TRANSIENT, and until now they were FATAL.
+ *
+ * NEW2 lost two workers outright to
+ * `getaddrinfo ENOTFOUND indian-high-court-judgments.s3.ap-south-1.amazonaws.com`
+ * — the identical failure class `db-host.ts` already routes around for the
+ * database. **This machine's only configured resolver is the consumer router at
+ * `192.168.1.1`**, and it intermittently fails to answer. S3 is fine; the router
+ * is not.
+ *
+ * The error surfaces from `fetch` as a `TypeError` with a `cause` carrying the
+ * real code, so the code has to be dug out rather than matched on the top-level
+ * error.
+ *
+ * **What this does NOT do, stated plainly:** it does not take the OS resolver
+ * out of the path the way `openDb()` does. `fetch` accepts no `lookup` option,
+ * and doing it properly needs either `https.request` with a custom `lookup` or
+ * an undici `Agent` — undici is not a dependency here and adding one for this is
+ * not the smallest correct change. So a router that is down for longer than the
+ * backoff still fails, and that is the honest limit.
+ *
+ * What it DOES do is convert a **fatal, worker-killing** error into a retried
+ * one, which is the difference between losing a court for hours and losing a
+ * few seconds.
+ */
+const DNS_ERRORS = new Set(['ENOTFOUND', 'EAI_AGAIN', 'ECONNRESET', 'ETIMEDOUT', 'UND_ERR_CONNECT_TIMEOUT']);
+
+export function transientNetworkCode(err: unknown): string | null {
+  for (let e: unknown = err, depth = 0; e && depth < 4; depth++) {
+    const code = (e as { code?: unknown }).code;
+    if (typeof code === 'string' && DNS_ERRORS.has(code)) return code;
+    e = (e as { cause?: unknown }).cause;
+  }
+  return null;
+}
+
+async function fetchWithRetry(url: string, signal?: AbortSignal): Promise<Response> {
+  let last: unknown;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      return await fetch(url, signal ? { signal } : {});
+    } catch (err) {
+      // An abort is the caller's decision, never something to retry past.
+      if (signal?.aborted) throw err;
+      const code = transientNetworkCode(err);
+      if (code === null) throw err;
+      last = err;
+      await new Promise((r) => setTimeout(r, 400 * 2 ** attempt));
+    }
+  }
+  throw last;
+}
+
 export async function fetchPdfText(
   url: string,
   signal?: AbortSignal,
 ): Promise<{ text: string; pages: number; method: TextExtractionMethod }> {
-  const res = await fetch(url, signal ? { signal } : {});
+  const res = await fetchWithRetry(url, signal);
   if (!res.ok) throw new Error(`GET ${url} → ${res.status}`);
   const bytes = new Uint8Array(await res.arrayBuffer());
   const pdf = await getDocumentProxy(bytes);
