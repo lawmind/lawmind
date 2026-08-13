@@ -176,6 +176,7 @@ write down.
 | **group live PIDs by their arg, assert `count == 1`** | the last step of ANY multi-worker relaunch — NEW2, below |
 | **CPU delta AND log mtime, over minutes** | either signal alone produces false positives in both directions — see below |
 | measure a vocabulary before matching it | see below — three parser versions, two of them dangerous |
+| **check `pg_indexes` before trusting a comment that names one** | a claimed index that does not exist turns a join into a 150M-operation scan |
 
 **NEW2, 13 Aug 2026 — the relaunch check.** An Orissa relaunch briefly ran
 **twice** (~90 seconds, two concurrent `--court 21_11` processes): an earlier
@@ -228,6 +229,40 @@ allow-list then fixed it completely.
 > **When matching a convention, extract the real vocabulary from the corpus
 > first.** The web did not document this one; our own text did. And two blind
 > fixes are the signal to go get evidence, not to try a third.
+
+**LCC, 13 Aug 2026 — a function in a `WHERE` clause silently discards the index,
+and a comment claimed an index that was never created.**
+
+A dry run died mid-query with no error. The cause was a resolution step copied
+from `concordance-cli.ts`, whose comment says it uses *"the expression migration
+0026 indexes"*:
+
+    EXISTS (SELECT 1 FROM unnest(j.reporter_citations) AS rc
+            WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = k.key)
+
+**There is no such index.** `pg_indexes` shows one entry —
+`judgments_reporter_citations_gin`, a plain GIN over the RAW array. A GIN on raw
+values cannot serve a query that transforms every element first. So it degrades
+to 3,927 keys × 38,342 judgments × unnest × a regexp per element: ~150M regexp
+calls.
+
+Two separate lessons, and the second is the one that generalises:
+
+> **Any function applied to a column in a `WHERE` or `JOIN` makes an ordinary
+> index unusable.** `upper()`, `regexp_replace()`, `lower()`, a cast — all of
+> them. It needs a matching *expression* index, or the normalisation belongs in
+> your own code.
+
+> **A comment naming an index is a claim, not a fact.** `pg_indexes` is one
+> query. This is the same shape as `CURRENT_PLAN.md` Q1.23, where a header
+> comment claimed a UTF-8 guard that had never been wired in — and it cost a
+> whole ingest run.
+
+The fix here was to stop asking the database: 38,342 rows is trivial to pull and
+key in memory with the same function that built the keys, which also removes the
+risk of two copies of a normalisation rule drifting apart. **The deployed
+adjacency pass carries the same latent cost** and survives only because it feeds
+far fewer keys.
 
 ### The rule that has paid off most
 
