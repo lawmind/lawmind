@@ -90,6 +90,35 @@ lane can read from the database.
 
 ---
 
+## 3b · SHARE THE FIX, AND SHARE WHAT DID NOT WORK
+
+**Report what you FIXED, not only what you FOUND.** The second is worth more to
+the other three lanes than the first, and we have been under-supplying it.
+
+**Include the roads that turned out to be dead ends.** On 13 Aug the same DNS
+failure hit three lanes independently. NEW2 root-caused it and shipped a
+per-CLI retry; LCC lost seven passes to the same cause and spent time on
+`connect_timeout` first — a road NEW2 had already ruled out but had not said so.
+**A negative result about a fix is as reusable as the fix**, and cheaper to
+write down.
+
+### Shared tools any lane can take
+
+| | |
+| --- | --- |
+| `openDb()` — `services/ingest/src/db-host.ts` | resolver bypass + the connection settings that survive this proxy |
+| `scripts/supervise.mjs` | restarts a **resumable** worker across network death |
+| keyset pagination, never `OFFSET` | any walk over a table NEW2 is writing to |
+| `pdftotext -enc UTF-8`, absolute path | any PDF work; the binary is not on a detached process's PATH |
+| the evidence-span pattern | any model output that must be trusted |
+
+### The rule that has paid off most
+
+**When a component LOOKS broken, test it directly against the population that
+appears to be failing, before rewriting it.** The citation extractor looked dead
+across 8,100 consecutive documents and was entirely fine — the `ORDER BY` was
+reading bail orders. That measurement took ten minutes and saved days.
+
 ## 4 · The rules that bind every lane
 
 These are not negotiable and no lane may relax them for another.
