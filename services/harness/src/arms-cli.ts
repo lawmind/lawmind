@@ -76,7 +76,7 @@ import { readFileSync } from 'node:fs';
 
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import type { RetrievalMode } from '@lawmind/api/search/retrieve';
-import postgres from 'postgres';
+import postgres, { type Sql } from 'postgres';
 
 import { expandCategories } from '@lawmind/api/search/court-category';
 import type { SearchFilters } from '@lawmind/api/search/retrieve';
@@ -104,7 +104,52 @@ const queries = doc.queries.slice(0, limit);
 // this proxy needs under current five-lane load, and the failure surfaces as
 // `write CONNECT_TIMEOUT` on whatever query happened to be first, which reads
 // like a stuck query rather than what it actually is.
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4, connect_timeout: 120 });
+const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 8, connect_timeout: 120 });
+
+/**
+ * Bounded concurrency, not full-blast. Found live 13 Aug 2026: a fully
+ * sequential pass under current five-lane load spent most of its wall time
+ * waiting on the network, not the CPU — round-tripping one query at a time
+ * to a proxy every other lane is also hitting. `CONCURRENCY` queries in
+ * flight overlaps that wait without piling onto the shared proxy the way an
+ * unbounded `Promise.all` over all 100 would. Order is preserved (`results[i]
+ * = ...`) because paired McNemar needs each arm's row aligned to the same
+ * query index as every other arm.
+ */
+const CONCURRENCY = 6;
+async function scoreAllConcurrently(
+  sql: Sql,
+  queries: HarnessQuery[],
+  embedQuery: (text: string) => Promise<string | null>,
+  mode: RetrievalMode,
+  filters: SearchFilters,
+  onProgress: (done: number) => void,
+): Promise<ScoredQuery[]> {
+  const results: ScoredQuery[] = new Array(queries.length);
+  let next = 0;
+  let done = 0;
+  async function worker(): Promise<void> {
+    for (;;) {
+      const i = next++;
+      if (i >= queries.length) return;
+      results[i] = await scoreQueryResilient(
+        sql,
+        queries[i]!,
+        embedQuery,
+        20,
+        undefined,
+        false,
+        undefined,
+        mode,
+        filters,
+      );
+      done++;
+      onProgress(done);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, queries.length) }, () => worker()));
+  return results;
+}
 
 /**
  * Found live 13 Aug 2026: this run died on `hybrid 20/100` with an UNCAUGHT
@@ -199,34 +244,23 @@ async function main(): Promise<void> {
       console.log(`\n── ${pass.label} · ${pass.note}`);
       for (const mode of ARMS) {
         const started = Date.now();
-        const rows: ScoredQuery[] = [];
-        // Progress every 20 queries -- not a checkpoint, just visibility.
+        // Progress every 20 done -- not a checkpoint, just visibility.
         // `failure-classifier-cli.ts` learned this the hard way this
         // session: a plain sequential loop against this same DB proxy under
         // five-lane load gave zero output for 30+ minutes and had to be
         // killed blind to find out it wasn't actually stuck. Paired McNemar
         // comparison needs every arm scored on the IDENTICAL query set, so
         // unlike that tool this one does not skip a slow query -- it only
-        // reports that it is still working on one.
-        for (let i = 0; i < queries.length; i++) {
-          rows.push(
-            await scoreQueryResilient(
-              sql,
-              queries[i]!,
-              embedQuery,
-              20,
-              undefined,
-              false,
-              undefined,
-              mode,
-              pass.filters,
-            ),
-          );
-          if ((i + 1) % 20 === 0 || i + 1 === queries.length) {
+        // reports that it is still working on one. `CONCURRENCY`-wide now
+        // (see scoreAllConcurrently) rather than one at a time.
+        let lastLogged = 0;
+        const rows = await scoreAllConcurrently(sql, queries, embedQuery, mode, pass.filters, (done) => {
+          if (done - lastLogged >= 20 || done === queries.length) {
+            lastLogged = done;
             const elapsedSoFar = ((Date.now() - started) / 1000).toFixed(0);
-            console.log(`  ... ${mode} ${i + 1}/${queries.length} (${elapsedSoFar}s)`);
+            console.log(`  ... ${mode} ${done}/${queries.length} (${elapsedSoFar}s)`);
           }
-        }
+        });
         results.set(`${pass.label}:${mode}`, rows);
         const secs = ((Date.now() - started) / 1000).toFixed(0);
         const ranks = rows.map((r) => r.foundAtAnyRank);
