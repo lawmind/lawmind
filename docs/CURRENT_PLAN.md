@@ -4514,3 +4514,122 @@ now closed.
 
 **Reported to LCC on the bus.** All harness changes committed and pushed
 (`fa54441`, `497e4b0`, plus the earlier `65b7d7c` openDb adoption).
+
+### Q1.43 · A REAL FAILURE TAXONOMY OVER THE 238 NON-SUCCESS CASES — bottom-up, one strong finding, two structural limits named honestly · 13 Aug 2026
+
+**`failure:taxonomy` built** (`services/harness/src/failure-taxonomy-cli.ts`),
+reading Q1.41's checkpoint — no new retrieval load, pure analysis. Per
+`RING_PROGRAM.md` 2a/2c: cross-tabulated first, did not invent clusters
+before looking. Full output in the tool's own run; findings below.
+
+**THE HEADLINE, and it survived checking as a rate, not a raw count:**
+
+| benchmark group | success rate (of all queries in that group, not just failures) |
+| --- | --- |
+| civil | 44/200 = **22.0%** |
+| criminal | 5/83 = **6.0%** |
+| hindi | 1/5 = 20.0% (n too small to read) |
+
+**Criminal queries succeed at roughly a quarter the rate of civil ones — a
+3.7x gap, and real** (checked as a rate over the full 288, not inferred from
+failure counts alone, which would conflate a real gap with civil simply
+having more queries). Two partial explanations found, neither closing the
+case:
+
+- Criminal failures carry a citation-shaped span more often than civil ones
+  (46/78 = 59% vs 77/156 = 49%), and across the whole failure set, queries
+  carrying a citation span skew toward `AUTHORITY_HELD_BUT_NOT_RETRIEVED`
+  over `AUTHORITY_RETRIEVED_BUT_BADLY_RANKED` (83/123 = 67% vs 57/115 =
+  50%). Consistent with, not proof of, criminal queries being harder to
+  match because the embedded citation format doesn't align well with
+  sparse/dense scoring against a *different* judgment's text.
+- Not a query-shape artifact: the shape distribution (case_name/section/
+  concept) is proportionally similar across both groups (see cross-tab
+  below), so shape alone doesn't explain the gap.
+
+**Flagged, not solved — this is exactly the kind of finding NEXT STEP 5's
+experiment discipline exists for**, not something to patch from the
+taxonomy pass itself.
+
+**Two structural limits, named rather than worked around:**
+
+1. **This benchmark cannot say anything about court or `hc_document_class`
+   — 238/238 gold judgments are Supreme Court, 238/238 show
+   `hc_document_class = NULL`.** Not a measurement gap; a construction fact.
+   `build-queries.ts`'s `embedded` CTE requires `judgment_chunks.embedding
+   IS NOT NULL`, and 0 High Court judgments are embedded (founder's
+   data-before-embeddings sequencing, still binding). **Any HC/SC or
+   substantive/procedural segmentation requires either HC embeddings
+   (forbidden) or a non-embedding-gated gold-construction method** — this
+   is the real content of NEXT STEP 2, not a nice-to-have, and it is
+   currently blocked by the same gate that blocks embeddings themselves.
+2. **The `case_name` query-shape count is not a trustworthy taxonomy axis
+   here and is reported with that caveat rather than as a clean category.**
+   132/238 failures classify as `case_name` shape, but this session already
+   measured (Q1.25/Q1.30 work) that `CASE_NAME_RE` fires on 161/283 of this
+   benchmark's queries as a **false positive** — the redacted reasoning
+   passages this benchmark is built from routinely contain a stray "v" or
+   "versus" token from an *unrelated* citation the passage discusses, not
+   because the query IS a case-name lookup. Confirmed then: 0/161 of those
+   false positives actually mis-pin. The 132 figure is presented as "spans
+   matching the shape's regex," not "case-name-shaped failures."
+
+**Secondary, real, smaller findings:**
+
+- **BADLY_RANKED skews toward near-misses**: 64/98 (65%) rank 6–20, only
+  14/98 (14%) rank 36–50. The correct authority is usually close to the
+  cut, not buried — suggests a reranking-quality lever is more likely to
+  pay off than a different retrieval mechanism entirely, feeding directly
+  into NEXT STEP 5's candidate list.
+- **Query length has no readable signal** — 202/238 failures fall in the
+  700–900 char bucket, but that's `build-queries.ts`'s own WINDOW=700
+  construction concentrating most surviving passages there; the shorter
+  buckets have n=2–4, too few to compare against.
+- **Neutral citation and reporter citation presence show zero variance**
+  (100% yes on both, across all 238) — unsurprising and not a finding: every
+  gold judgment is a well-documented Supreme Court authority by
+  construction, so of course both citation fields are populated.
+
+**Not yet done, carried to the next entry**: NEXT STEP 2 (benchmark
+expansion, gated on the embeddings question above), NEXT STEP 3 (EVIDENCE_WRONG
+retrieval-vs-paragraph split), NEXT STEP 5 (retrieval experiments, informed
+by the near-miss rank finding above).
+
+### Q1.42 · FOUNDER-CONFIRMED EXCEPTION: OFFSET CHECKPOINTING IS SAFE ON IMMUTABLE PARQUET, NEVER ON A MUTABLE TABLE · 13 Aug 2026
+
+A founder directive ("NEW2 — DATA PARITY + INGESTION RELIABILITY EXECUTION")
+restated the project's standing rule — checkpoint by keyset, never OFFSET —
+against `hc-load-cli.ts`'s own lever-3 checkpoint (Q1.36), which resumes via a
+raw file-position offset. Flagged the conflict rather than silently keeping
+either side: the checkpoint's source is a single immutable parquet object
+published once by AWS Open Data (`hc-metadata.ts`'s own header), not a
+mutable database table, so row N always names the identical record on every
+read — the correctness risk the keyset rule exists to prevent (a concurrent
+insert/delete shifting what "row N" means between two reads) does not apply
+here.
+
+**Founder confirmed the distinction and set the explicit exception, now
+recorded in `hc-load-cli.ts` and here:**
+
+- **Database tables: keyset pagination only, never OFFSET.** Unchanged,
+  binding everywhere else.
+- **Immutable parquet/snapshot files: deterministic file-position
+  checkpointing is permitted**, but ONLY when (a) the checkpoint identifies
+  the exact file/object (already true — keyed on `file.key`, the literal S3
+  path), (b) the file's size at checkpoint-write time is verified to match
+  its current size before the offset is trusted, (c) the offset is confirmed
+  within the file's current bounds, and (d) any mismatch on (b) or (c)
+  refuses the resume and falls back to offset 0 for that one file rather
+  than risking a skipped or duplicated record.
+
+**Implemented, not just documented.** `Checkpoint` is now
+`Record<string, {offset, size}>`, not a bare offset. A new
+`verifiedResumeOffset()` performs all three checks before any stored offset
+is trusted. Verified live: (1) fresh run against sikkim writes `{offset,
+size}` correctly; (2) a second run resumes from the stored offset (0
+documents re-scanned in the already-completed partition); (3) a
+size-corrupted checkpoint entry is refused — the run fell back to a full
+re-scan rather than trusting the tampered offset, matching the
+timing signature of a from-scratch run rather than a resumed one. tsc
+clean, 39 existing tests still green. Cleaned up all test checkpoint files
+and scratch scripts afterward.
