@@ -2402,22 +2402,46 @@ contain a bare `v` or `versus` token, e.g. one example began *"(2) For
 the purposes of this section, a fact is said to be proved only when the
 Special Court believes it to exist beyon…"*, which is not a case-name
 lookup by any reading. Every one of those 161 now fires an extra
-`exactCaseTitle` query per search that Q1.25 did not need to add. Whether
-any of them **falsely pin** (resolve to exactly one row and corrupt
-ranking, not just waste a round trip) is checked directly against the
-database — see the follow-up entry below once it lands; this is flagged
-now because it is real and predates knowing the answer, not held back
-for a tidier writeup.
+`exactCaseTitle` query per search that Q1.25 did not need to add.
 
-**AFTER measurement, attempt 2 — running.** `arms-cli.ts` hardened first
+**Resolved: 0 of 161 actually false-pin.** First check attempt (161
+sequential round trips, one per query) hung for 12 minutes under current
+load with zero CPU progress — not a bug in the check, just the wrong
+shape for this load: killed and rewritten as **one batched query**
+(`unnest` + a single join, the same "batch, don't loop" lesson Q1.32's
+`fillParagraphFallback` already applied), which answered in seconds:
+`161 checked, 0 actually pinned (exactly 1 row)`. Confirmed by
+construction, not luck — these are reasoning passages, essentially never
+an exact normalised match against any `case_title`. So the 161 cost is
+real (a wasted round trip per search) but bounded and not a correctness
+risk; worth a tighter `CASE_NAME_RE` at some point, not urgent.
+
+**AFTER measurement, attempt 2 — also crashed, same ENOTFOUND, before
+logging its first checkpoint.** `arms-cli.ts` hardened
 (`scoreQueryResilient`, retries the same transient-network codes NEW2
 root-caused on their own workers — bus `0159`, a local DNS hiccup
 resolving the Railway proxy hostname, not shared-proxy load; unlike
 their fix this retries per-query rather than the whole run, since this
 loop has no checkpoint and paired McNemar needs every arm on the
-identical query set). Relaunched (`arms-controlled-after2.log`) — the
-hybrid arm is the only new information this run can add, since sparse
-and dense are already confirmed unchanged.
+identical query set) and relaunched, but the underlying pace — one
+query in flight against a proxy every other lane is also hitting right
+now — was still the binding constraint.
+
+**Attempt 3 — running, now with bounded concurrency (`CONCURRENCY = 6`,
+`scoreAllConcurrently`).** Measured directly: the sequential pass was
+spending nearly all its wall time waiting on the network round trip,
+not on CPU, so overlapping 6 in flight (not unbounded — the proxy is
+already strained ring-wide) should cut wall time roughly in proportion
+without piling on. Order is preserved per-index specifically because a
+shuffled row would silently corrupt every McNemar gained/lost count.
+Launched as a tracked background task with a live Monitor watching for
+both progress lines and the exact crash signatures attempts 1 and 2
+hit, so a repeat surfaces immediately rather than 40 minutes later.
+Typecheck clean, harness suite 123/123 both times. `judgment_citations`
+checked directly while waiting: **775,874 rows**, up from 444,621 at
+LCC's last report — still climbing, so TARGET 1's `failure:classify`
+re-run stays held for their explicit signal, per their own stated
+reason (a moving gold-findability baseline), not restarted early.
 
 ### Q1.31 · 20 WORKERS — Calcutta and Gauhati dedicated · 13 Aug 2026
 
