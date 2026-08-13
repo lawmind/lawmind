@@ -106,6 +106,48 @@ const queries = doc.queries.slice(0, limit);
 // like a stuck query rather than what it actually is.
 const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4, connect_timeout: 120 });
 
+/**
+ * Found live 13 Aug 2026: this run died on `hybrid 20/100` with an UNCAUGHT
+ * `ENOTFOUND` — postgres.js throws it straight from query construction, not
+ * as a catchable rejection `connect_timeout` can bound. NEW2 root-caused the
+ * identical symptom on their own workers (bus 0159): a transient local DNS
+ * hiccup resolving `hayabusa.proxy.rlwy.net`, not shared-proxy load — DNS
+ * resolution happens before the TCP connect phase `connect_timeout` covers,
+ * so it hung unprotected. Their fix retries the whole (resumable) run; this
+ * loop has no checkpoint and paired McNemar needs every arm on the identical
+ * query set, so retrying per-query is the correct analog here — it costs one
+ * query's delay, not the ~90 minutes sparse+dense had already taken.
+ */
+function isTransientNetworkError(error: unknown): boolean {
+  const code = (error as NodeJS.ErrnoException | undefined)?.code;
+  return (
+    code === 'ENOTFOUND' ||
+    code === 'EAI_AGAIN' ||
+    code === 'ECONNRESET' ||
+    code === 'ECONNREFUSED' ||
+    code === 'ETIMEDOUT'
+  );
+}
+
+const MAX_QUERY_RETRIES = 5;
+async function scoreQueryResilient(
+  ...args: Parameters<typeof scoreQuery>
+): ReturnType<typeof scoreQuery> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await scoreQuery(...args);
+    } catch (error) {
+      if (!isTransientNetworkError(error) || attempt >= MAX_QUERY_RETRIES) throw error;
+      const delayMs = Math.min(30_000, 2_000 * 2 ** (attempt - 1));
+      const code = (error as NodeJS.ErrnoException).code;
+      console.error(
+        `  transient network error (${code}), attempt ${attempt}/${MAX_QUERY_RETRIES} — retrying in ${delayMs}ms`,
+      );
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
+}
+
 /** The advocate reads five. A gold judgment at rank 6 counts for nothing. */
 const successAt5 = (rows: ScoredQuery[]) =>
   rows.filter((r) => r.goldRanks.length > 0).length / rows.length;
@@ -168,7 +210,7 @@ async function main(): Promise<void> {
         // reports that it is still working on one.
         for (let i = 0; i < queries.length; i++) {
           rows.push(
-            await scoreQuery(
+            await scoreQueryResilient(
               sql,
               queries[i]!,
               embedQuery,
