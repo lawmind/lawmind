@@ -2442,6 +2442,56 @@ checked directly while waiting: **775,874 rows**, up from 444,621 at
 LCC's last report — still climbing, so TARGET 1's `failure:classify`
 re-run stays held for their explicit signal, per their own stated
 reason (a moving gold-findability baseline), not restarted early.
+Adopted `openDb()` (LCC, bus 0169) partway through, root-fixing the
+DNS hang the previous two attempts died to rather than only retrying
+around it — see the harness commit log; not repeated here.
+
+**Attempt 3 — COMPLETE.** All three arms finished, no crash (one
+`ECONNRESET` on each of sparse and hybrid, both caught and retried
+automatically by `scoreQueryResilient`, exactly the resilience layer
+existing for this). Total wall time sparse+dense+hybrid: 1,400s (~23
+min) — the same three arms that had not even logged sparse's first
+20/100 checkpoint after 10 minutes in attempt 2.
+
+| arm | success@5 | recall@20 | MRR | nDCG@5 | nDCG@20 |
+| --- | --- | --- | --- | --- | --- |
+| sparse | 7.0% | 13.0% | 0.053 | 0.053 | 0.070 |
+| dense | 17.0% | 34.0% | 0.118 | 0.116 | 0.168 |
+| hybrid (production) | 12.0% | 30.0% | 0.093 | 0.087 | 0.137 |
+
+Paired (McNemar, success@5, discordant queries only):
+
+| pair | gained/lost | p | queries to settle |
+| --- | --- | --- | --- |
+| dense vs sparse | +12 / −2 | 0.0129 | ~91 |
+| hybrid vs sparse | +5 / −0 | 0.0625 | ~77 |
+| hybrid vs dense | +3 / −8 | 0.2266 | ~324 |
+
+**BEFORE and AFTER are identical to three decimal places on every
+metric, every arm, every McNemar pair.** Not a null result about
+whether the run worked — it is the expected result, now with hybrid
+confirming what sparse and dense already showed in attempts 1 and 2:
+Q1.25's case-name pin cannot move this benchmark, because
+`build-queries.ts`'s own redaction step strips distinctive case-title
+words out of every gold query specifically to prevent leakage. A
+benchmark built to remove case names from its queries was never going
+to exercise a fix for typing one. **Q1.25 stands on its own live
+verification** (the four traced real-world failures, `S. N. DUTT
+versus UNION OF INDIA` and three others, now pinning correctly) — that
+remains the correct evidence for it, and this closes the loop by
+confirming the benchmark neither corroborates nor contradicts it, as
+predicted before the run rather than rationalised after.
+
+**What this run actually cost 90 minutes of engineering time to
+establish, honestly stated**: not "did Q1.25 work" (already known) but
+"is this specific 283-query harness capable of detecting a case-name
+fix at all" (no, structurally, now confirmed rather than assumed) —
+plus, as a side effect, hardening `arms-cli.ts` against the exact DNS
+failure class that has cost every lane hours this session, and
+resolving the 161-query `CASE_NAME_RE` false-positive question (0
+actual false pins). Both outputs outlast this one comparison.
+
+**Q1.30 is now CLOSED.** Reported to LCC on the bus.
 
 ### Q1.31 · 20 WORKERS — Calcutta and Gauhati dedicated · 13 Aug 2026
 
@@ -2790,6 +2840,40 @@ warning altogether, which is worse than missing an ordinary authority
    run plus the whole ring's backlogs; adding a new query pattern
    belongs after that settles, not competing with it for the same
    proxy.
+
+### Q1.35 · ADOPTED LCC's `openDb()`, AND FOUND A SECOND GAP IN MY OWN DNS FIX · 13 Aug 2026
+
+**LCC root-fixed the DNS failure properly** (bus `0170`,
+`services/ingest/src/db-host.ts`): resolves the proxy hostname via public
+DNS (Cloudflare/Google) and hands the driver an address directly, keeping
+the original hostname for TLS SNI — the OS resolver (confirmed as the
+actual point of failure: this machine's only configured DNS server is the
+consumer router) comes out of the path entirely rather than being retried
+around. Two things LCC verified so nobody re-tries them: `connect_timeout`
+does not help (it governs connection establishment, not a stalled lookup
+before that stage), and `dns.setServers()` would not have helped either
+(sockets use `dns.lookup()` → OS `getaddrinfo`, ignoring Node's resolver
+config entirely — checked in postgres.js's own source).
+
+**Adopted in `hc-load-cli.ts`**, replacing the raw `postgres()` call.
+
+**While rolling it out to all 24 workers, found a real gap in my own retry
+fix (Q1.34)**: Madras crashed on `UND_ERR_CONNECT_TIMEOUT` fetching from
+S3, wrapped inside `TypeError: fetch failed` with the actual error code
+one level down in `.cause` — undici always wraps this way, and my
+`isTransientNetworkError` only checked the top-level `.code`, missing
+every fetch-originated transient failure entirely (as opposed to the
+postgres-originated ones it was built against). Fixed: now checks
+`error.cause?.code` too, and covers the undici connect/socket/headers
+timeout codes alongside the original DNS-class ones. 48 tests green,
+`tsc --noEmit` clean.
+
+**Lesson for the ring, matching LCC's own standing ask to share negative
+results**: a retry wrapper built against ONE library's error shape
+(postgres.js, flat `.code`) silently missed a DIFFERENT library's error
+shape (undici, nested `.cause.code`) doing the exact same class of
+network failure. Worth checking both shapes wherever a transient-retry
+wrapper touches more than one HTTP client.
 
 ## Q2 · WHAT IS ACTUALLY BLOCKED, and it is two questions, not a shortage of work
 
