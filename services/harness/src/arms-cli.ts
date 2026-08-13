@@ -76,7 +76,8 @@ import { readFileSync } from 'node:fs';
 
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import type { RetrievalMode } from '@lawmind/api/search/retrieve';
-import postgres, { type Sql } from 'postgres';
+import { openDb } from '@lawmind/ingest/db-host';
+import type { Sql } from 'postgres';
 
 import { expandCategories } from '@lawmind/api/search/court-category';
 import type { SearchFilters } from '@lawmind/api/search/retrieve';
@@ -99,12 +100,21 @@ const doc = JSON.parse(
 const limit = Number(process.env['ARMS_LIMIT'] ?? String(doc.queries.length));
 const queries = doc.queries.slice(0, limit);
 
-// connect_timeout: 120 -- LCC's bus 0090, measured independently the same day
-// this session hit the same proxy contention: the 30s default is below what
-// this proxy needs under current five-lane load, and the failure surfaces as
-// `write CONNECT_TIMEOUT` on whatever query happened to be first, which reads
-// like a stuck query rather than what it actually is.
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 8, connect_timeout: 120 });
+/**
+ * `openDb` (LCC, bus 0169, `services/ingest/src/db-host.ts`) — root-fixes the
+ * exact crash attempts 1 and 2 hit, rather than only retrying around it.
+ * `connect_timeout` alone does not cover this: it governs establishing a
+ * connection, and a DNS lookup that stalls never gets far enough to be
+ * timed — confirmed in the driver's own source, not assumed. This machine's
+ * only configured DNS server is the consumer router, which is intermittently
+ * the thing failing, not Railway. `openDb` resolves the hostname itself
+ * against Cloudflare/Google and hands postgres a direct address, taking the
+ * OS resolver out of the path entirely; every failure path returns the
+ * original url unchanged, so this cannot be worse than the previous
+ * `postgres(url, ...)` call it replaces. `scoreQueryResilient`'s retry stays
+ * — this closes the hole it was working around, not a reason to remove it.
+ */
+const sql = await openDb(url, 8);
 
 /**
  * Bounded concurrency, not full-blast. Found live 13 Aug 2026: a fully
