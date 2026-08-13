@@ -80,6 +80,29 @@ canonical path was the whole value of building it.
 > result.** 34 overruled edges got a report-only tool, not a promotion pipeline,
 > because 34 rows is a human read.
 
+### 2d · Researching feasibility instead of researching the decision
+
+I nearly replaced DeepSeek V4 with a local Qwen2.5 7B, and had measured the
+hardware exhaustively to justify it — VRAM per context length, tokens/sec,
+quantisation, whether 8 GB fit. **I never once searched for the capability
+gap.** It is 5–0 against Qwen on shared benchmarks, and DeepSeek-V3 alone
+outperforms Qwen2.5 *72B*, ten times the size of the model I proposed. V4 is a
+later generation still.
+
+**Feasibility research feels like diligence and reads like diligence**, so it
+substitutes for the decision without anyone noticing — including the person
+doing it.
+
+> **Rule: before substituting any model, tool or library for a better-performing
+> incumbent, search for a head-to-head comparison FIRST and put the numbers in
+> the proposal.** If no comparison exists, say so explicitly rather than
+> arguing from architecture. *Cheaper*, *faster* and *local* are never the case
+> on their own.
+
+**And when a project rule already names the incumbent** — `CLAUDE.md` §5 names
+DeepSeek V4 Flash for public-class work — swapping it is a change to the rule,
+not an implementation detail, and not a call a lane makes alone.
+
 ---
 
 ## 3 · LONG-RUNNING ASSIGNMENTS

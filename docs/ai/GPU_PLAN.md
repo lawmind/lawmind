@@ -127,6 +127,28 @@ is worse than a visible failure, and it is exactly the *"unknown must stay
 unknown"* line this lane holds everywhere else. A gap you cannot see is not a
 gap you can report.
 
+### THE NUMBER I NEVER LOOKED UP
+
+The search that would have settled this in sixty seconds, done only AFTER the
+founder stopped the work:
+
+| | |
+| --- | --- |
+| DeepSeek-V3 vs Qwen2.5 7B Instruct | **DeepSeek wins 5 of 5** shared benchmarks; Qwen wins **0** |
+| MMLU | DeepSeek-V3 **88.5%**; Qwen2.5 7B materially lower |
+| the detail that ends the argument | **DeepSeek-V3 significantly outperforms Qwen2.5 *72B*** — ten times larger than the model I proposed |
+
+**And that understates it.** The published head-to-head is against **V3**. We run
+**`deepseek-v4-flash-0731`**, which is a later generation — so V3-vs-Qwen is a
+**lower bound** on the real gap, not a measurement of it.
+
+**The process failure, stated plainly:** I researched the hardware exhaustively
+— VRAM per context length, tokens/sec, quantisation, whether 8 GB fit — and
+researched the model **not at all**. Feasibility research feels like diligence
+and reads like diligence, so it silently substituted for the decision. *"Can it
+run?"* is not *"should it run?"*, and I had answered only the first while
+writing a plan, a provider and a commit message that all sounded well-evidenced.
+
 **Also relevant and not a small point:** `CLAUDE.md` §5 names DeepSeek V4 Flash
 for public-class work. Swapping the model for a materially weaker one is a
 change to that routing rule, not an implementation detail, and it is not a
