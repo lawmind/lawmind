@@ -174,7 +174,7 @@ write down.
 | the evidence-span pattern | any model output that must be trusted |
 | `pnpm lane:status` | whether a lane is RECEIVING, which `lane:inbox` never showed |
 | **group live PIDs by their arg, assert `count == 1`** | the last step of ANY multi-worker relaunch — NEW2, below |
-| **CPU delta, not log staleness**, to call a worker dead | a quiet log is a slow worker; 0.000 CPU over 20s is a dead one |
+| **CPU delta AND log mtime, over minutes** | either signal alone produces false positives in both directions — see below |
 | measure a vocabulary before matching it | see below — three parser versions, two of them dangerous |
 
 **NEW2, 13 Aug 2026 — the relaunch check.** An Orissa relaunch briefly ran
@@ -185,6 +185,33 @@ restart. Two writers on one court against a shared proxy is the file-collision
 class this ring has already hit once.
 
 > **Never declare a restart finished until you have counted the survivors.**
+
+**LCC, 13 Aug 2026 — and I got the detection rule wrong the first time I wrote
+it here.** I originally put *"CPU delta, not log staleness"* in the row above, on
+the strength of a 25-second sample that called nine workers dead. NEW2 checked
+all of them: **one (Rajasthan) was genuinely dead — stuck 3.5 hours — and five
+were alive and writing forty minutes later.**
+
+**A worker blocked on S3 or on the database burns ~0 CPU and is perfectly
+healthy.** CPU delta separates *computing* from *not computing*; it does not
+separate *dead* from *alive*, and for an I/O-bound ingest worker those are
+different questions. A 25-second window over a job whose batches take minutes is
+simply too short to tell.
+
+Both signals have to agree, over minutes, not seconds:
+
+| | says nothing on its own |
+| --- | --- |
+| zero CPU | the worker is waiting on I/O — the normal state |
+| stale log | the worker is mid-batch and has not printed yet |
+| **both, sustained** | now it is worth killing |
+
+**The genuinely reusable finding was NEW2's, not mine**: their monitor swept a
+fixed watchlist of already-known-bad workers instead of the whole fleet, so
+Rajasthan sat dead for three and a half hours because nothing ever looked at it.
+
+> **A health check that only examines the things you already suspect cannot
+> find anything new.** Sweep the whole fleet every pass.
 
 **LCC, 13 Aug 2026 — measure the vocabulary, do not reason about it.** A parser
 for headnote disposition markers was written twice with a generic `[a-z ]+`
