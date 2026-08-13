@@ -141,6 +141,25 @@ const INTERPOLATED_HEADER =
 const SCR = /\[(\d{4})\]\s*(Supp\.?\s*)?(\d+)\s*SCR\s*(\d+)/i;
 const SCC = /\((\d{4})\)\s*(Supp\.?\s*)?(\d+)\s*SCC\s*(\d+)/i;
 
+/**
+ * **The pair must be joined by an explicit colon.** NEW3 measured why: of 21
+ * raw proximity hits in an independent cross-check, **6 were false positives**,
+ * and one was a running page header — `354 [2023] 6 S.C.R. 354` — sitting mid
+ * text and read as a citation. Their conclusion, adopted here verbatim:
+ * *punctuation-level adjacency, not distance.*
+ *
+ * `INTERPOLATED_HEADER` strips the `S.C.R.` spelling, but a header written
+ * `[2023] 6 SCR 354` would survive it and be picked up by a whole-entry scan.
+ * Requiring the `:` the reporter itself prints removes the class rather than
+ * one instance of it.
+ *
+ * Both orders occur, so both are matched.
+ */
+const PAIRED_SCR_FIRST =
+  /\[(\d{4})\]\s*(Supp\.?\s*)?(\d+)\s*SCR\s*(\d+)\s*:\s*\((\d{4})\)\s*(Supp\.?\s*)?(\d+)\s*SCC\s*(\d+)/i;
+const PAIRED_SCC_FIRST =
+  /\((\d{4})\)\s*(Supp\.?\s*)?(\d+)\s*SCC\s*(\d+)\s*:\s*\[(\d{4})\]\s*(Supp\.?\s*)?(\d+)\s*SCR\s*(\d+)/i;
+
 export interface HeadnoteEntry {
   /** Case name as printed, never normalised and never recalled. */
   name: string;
@@ -152,6 +171,15 @@ export interface HeadnoteEntry {
   /** True when this entry sits at the end of its group, i.e. the ONLY one the
    *  current extractor would have caught. Lets the report quantify the miss. */
   lastInGroup: boolean;
+  /**
+   * True only when `scr` and `scc` were read from a single `X : Y` construction
+   * with the colon between them — not found separately in the same entry.
+   *
+   * **Only a paired entry may be written as a concordance alias.** The loose
+   * fields are fine for a disposition report a human reads; they are not fine
+   * for a row that changes how a citation resolves.
+   */
+  paired: boolean;
 }
 
 const clean = (s: string) => s.replace(/\s+/g, ' ').trim();
@@ -177,6 +205,10 @@ function parseEntry(raw: string, disposition: string, lastInGroup: boolean): Hea
   const scc = citationOf(SCC, text);
   if (!scr && !scc) return null; // prose, not a case entry
 
+  // Both forms present is NOT the same as the reporter having equated them.
+  // Only an explicit `X : Y` counts. See PAIRED_* above and NEW3's measurement.
+  const paired = Boolean(scr && scc && (PAIRED_SCR_FIRST.test(text) || PAIRED_SCC_FIRST.test(text)));
+
   const firstCite = Math.min(
     ...[text.search(/\[\d{4}\]/), text.search(/\(\d{4}\)/)].filter((i) => i >= 0),
   );
@@ -188,7 +220,7 @@ function parseEntry(raw: string, disposition: string, lastInGroup: boolean): Hea
   // stops a group from reaching back across a paragraph.
   if (name.length > MAX_NAME_CHARS) return null;
 
-  return { name, scr, scc, disposition, lastInGroup };
+  return { name, scr, scc, disposition, lastInGroup, paired };
 }
 
 /**
@@ -252,6 +284,6 @@ export function parseHeadnoteDispositions(fullText: string): HeadnoteEntry[] {
  */
 export function concordancePairs(entries: HeadnoteEntry[]): { name: string; scr: string; scc: string }[] {
   return entries
-    .filter((e): e is HeadnoteEntry & { scr: string; scc: string } => Boolean(e.scr && e.scc))
+    .filter((e): e is HeadnoteEntry & { scr: string; scc: string } => Boolean(e.paired && e.scr && e.scc))
     .map(({ name, scr, scc }) => ({ name, scr, scc }));
 }

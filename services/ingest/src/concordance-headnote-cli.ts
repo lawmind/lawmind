@@ -77,11 +77,33 @@ const sql = await openDb(dbUrl, 4);
 try {
   console.log(`harvesting headnote concordance${apply ? '' : ' (DRY RUN)'}…`);
 
+  /**
+   * **Scoped to the Supreme Court, and the reason is not performance alone.**
+   *
+   * SCR *is* the Supreme Court Reports, and the headnote "Case Law" apparatus —
+   * grouped `– overruled.` markers with paired `SCR : SCC` citations — is that
+   * reporter's own editorial structure. A High Court judgment cites cases; it
+   * does not carry an SCR headnote.
+   *
+   * It also matters practically: an unrestricted `full_text ~ …` is a sequential
+   * scan over ~9 GB across 850k rows, then ships ~500 KB per hit through a proxy
+   * that 24 ingest workers are already saturating. The first attempt ran for
+   * minutes without producing a row. Scoped, it reads ~38k rows.
+   *
+   * **This is an assumption with a cheap test**: if a High Court judgment ever
+   * does print a paired SCR : SCC list, this misses it. `--all-courts` runs the
+   * unrestricted sweep, and it is worth running once, off-peak, to find out.
+   */
+  const allCourts = process.argv.includes('--all-courts');
   const judgments = await sql<{ id: string; neutral_citation: string | null; full_text: string }[]>`
     SELECT id, neutral_citation, full_text
       FROM judgments
-     WHERE full_text ~ 'SCR [0-9]+ : \\([0-9]{4}\\)'`;
-  console.log(`  ${judgments.length} judgments print a paired SCR : SCC citation`);
+     WHERE full_text ~ 'SCR [0-9]+ : \\([0-9]{4}\\)'
+       ${allCourts ? sql`` : sql`AND court ILIKE '%supreme%'`}`;
+  console.log(
+    `  ${judgments.length} judgments print a paired SCR : SCC citation` +
+      `${allCourts ? ' (all courts)' : ' (Supreme Court only — --all-courts to sweep everything)'}`,
+  );
 
   const sightings: ParallelPair[] = [];
   for (const j of judgments) {

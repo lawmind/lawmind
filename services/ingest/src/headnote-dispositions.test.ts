@@ -192,3 +192,39 @@ describe('refusals', () => {
     assert.deepEqual(parseHeadnoteDispositions('Ram v. State (1999) 1 SCC 1 – the matter rests.'), []);
   });
 });
+
+/**
+ * NEW3's independent cross-check (bus 0230): of 21 raw proximity hits, **6 were
+ * false positives**, one being a running page header — `354 [2023] 6 S.C.R. 354`
+ * — read as a citation. Their conclusion, adopted: punctuation-level adjacency,
+ * not distance.
+ *
+ * This matters because `concordancePairs` feeds a pass that WRITES.
+ */
+describe('a pair requires the colon, not proximity — NEW3 0230', () => {
+  it('pairs a genuine "X : Y" construction', () => {
+    const pairs = concordancePairs(
+      parseHeadnoteDispositions('Ram v. State [1996] Supp. 4 SCR 92 : (1996) 5 SCC 670 – overruled.'),
+    );
+    assert.equal(pairs.length, 1);
+    assert.equal(pairs[0]?.scr, '(1996) Supp 4 SCR 92');
+  });
+
+  it('refuses two forms that merely co-occur without a colon', () => {
+    // Both present, never equated by the reporter. A whole-entry scan would
+    // have paired them.
+    const entries = parseHeadnoteDispositions(
+      'Ram v. State (1996) 5 SCC 670 was considered at 354 [2023] 6 SCR 354 – overruled.',
+    );
+    assert.equal(concordancePairs(entries).length, 0, 'a page header is not a parallel citation');
+    // The disposition report still sees the entry — only the WRITE path refuses.
+    assert.ok(entries.length > 0);
+  });
+
+  it('pairs the reverse order too', () => {
+    const pairs = concordancePairs(
+      parseHeadnoteDispositions('Ram v. State (1996) 5 SCC 670 : [1996] Supp. 4 SCR 92 – overruled.'),
+    );
+    assert.equal(pairs.length, 1);
+  });
+});
