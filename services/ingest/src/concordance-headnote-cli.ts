@@ -33,8 +33,11 @@
  * exactly one judgment, and picking one is the confident wrong answer this
  * product cannot afford.
  *
- * The SCR side resolves against `judgments.reporter_citations` through the same
- * migration-0026 expression index the existing pass uses.
+ * The SCR side resolves against `judgments.reporter_citations` **in memory**.
+ * `concordance-cli.ts` does that join in SQL and claims a *"migration 0026
+ * expression index"* — there is no such index, only a plain GIN over the raw
+ * array, which cannot serve a `regexp_replace` per element. See the note at the
+ * resolution step; the first run of this CLI died there.
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * WHAT IT WILL NOT DO
@@ -125,16 +128,54 @@ try {
 
   const trusted = candidates.filter((c) => c.corroborations >= MIN_CORROBORATIONS);
 
-  // Same rule as the adjacency pass, in SQL, via the migration-0026 index.
+  /**
+   * RESOLVED IN MEMORY, and the SQL version it replaces is why.
+   *
+   * `concordance-cli.ts` does this join in Postgres and its comment says it uses
+   * *"the expression migration 0026 indexes"*. **That index does not exist.**
+   * The only index on the column is `judgments_reporter_citations_gin`, a plain
+   * GIN over the raw array — and the query applies
+   * `upper(regexp_replace(rc, …))` to every element, which no GIN on the raw
+   * values can serve.
+   *
+   * So it degrades to a nested scan: 3,927 keys × 38,342 judgments × unnest ×
+   * a regexp per element, roughly 150M regexp calls. The first run of this CLI
+   * died there with no error — the process simply went away mid-query.
+   *
+   * The same claim-a-guard-that-was-never-wired-in shape as `CURRENT_PLAN.md`
+   * Q1.23, and worth noting that the existing pass carries the same latent cost;
+   * it survives only because it feeds far fewer keys.
+   *
+   * Only **38,342** judgments carry `reporter_citations` at all — exactly the
+   * Supreme Court, which independently corroborates the scoping above. That is
+   * a trivial amount to pull and key locally with the same `aliasKey()` the
+   * candidates were built with, which also removes any chance of the SQL and TS
+   * normalisations drifting apart.
+   */
+  const holders = await sql<{ id: string; reporter_citations: string[] | null }[]>`
+    SELECT id::text, reporter_citations
+      FROM judgments
+     WHERE reporter_citations IS NOT NULL AND array_length(reporter_citations, 1) > 0`;
+
+  const keyToIds = new Map<string, Set<string>>();
+  for (const h of holders) {
+    for (const rc of h.reporter_citations ?? []) {
+      const k = aliasKey(rc);
+      if (!k) continue;
+      const set = keyToIds.get(k) ?? new Set<string>();
+      set.add(h.id);
+      keyToIds.set(k, set);
+    }
+  }
+  console.log(`  ${holders.length} judgments carry reporter_citations · ${keyToIds.size} distinct keys`);
+
   const scrKeys = [...new Set(trusted.map((c) => c.scrKey))];
-  const resolved = await sql<{ key: string; id: string; n: number }[]>`
-    SELECT k.key, min(j.id::text) AS id, count(*)::int AS n
-      FROM unnest(${scrKeys}::text[]) AS k(key)
-      JOIN judgments j
-        ON EXISTS (
-             SELECT 1 FROM unnest(j.reporter_citations) AS rc
-              WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = k.key)
-     GROUP BY k.key`;
+  const resolved = scrKeys
+    .map((key) => {
+      const ids = keyToIds.get(key);
+      return ids ? { key, id: [...ids][0]!, n: ids.size } : null;
+    })
+    .filter((r): r is { key: string; id: string; n: number } => r !== null);
 
   const byKey = new Map(resolved.map((r) => [r.key, r]));
   // An SCR form matching two held judgments is the same contradiction as an
@@ -154,7 +195,7 @@ try {
   const existing = await sql<{ n: number }[]>`
     SELECT count(*)::int n FROM judgment_citation_aliases
      WHERE alias_key = ANY(${final.map((f) => f.aliasKey)})`;
-  console.log(`  ${existing[0]?.n ?? 0} of them are already recorded (this pass adds ${final.length - (existing[0]?.n ?? 0)} new)`);
+  console.log(`  ${existing[0]?.n ?? 0} already recorded · ${final.length - (existing[0]?.n ?? 0)} new`);
 
   for (const f of final.slice(0, 10)) {
     console.log(`    ${f.alias.padEnd(22)} → ${f.judgmentId.slice(0, 8)}  ${f.evidence.slice(0, 58)}`);
