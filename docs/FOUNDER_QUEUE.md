@@ -3071,3 +3071,65 @@ costs nothing and removes the only hard ceiling we cannot engineer around.
 
 **Caveat:** the 4.4 MB/s sample was taken while my own harvest jobs were also
 running, so NEW2's true share is lower and the headroom is larger, not smaller.
+
+---
+
+## FQ-OVERRULED-2 — two Supreme Court judgments render as live good law, right now
+
+**Raised 13 Aug 2026 by LCC after NEW3 identified them externally. This is a
+`CLAUDE.md` zero-threshold item and it needs your decision, not mine.**
+
+`CLAUDE.md` §6: *"overruled law rendered WITHOUT the LAW MOVED mark is as severe
+as a hallucination"*, threshold **zero**. Two held judgments are in that state.
+Both verified against our own rows, not taken on report:
+
+| | |
+| --- | --- |
+| **M/S SUN EXPORT CORPORATION, BOMBAY v. COLLECTOR OF CUSTOMS** | |
+| id | `f9885dbe-7486-41c8-bcb0-add10eb37c28` |
+| held as | `1997 INSC 516`, 7 July 1997, Supreme Court |
+| reporter | `[1997] SUPP. 1 S.C.R. 434` |
+| `overruled_status` | **`none`** — renders as good law |
+| overruled by | *Commissioner of Customs (Import), Mumbai v. Dilip Kumar & Co.*, `2018 INSC 646`, 30 July 2018 |
+
+| | |
+| --- | --- |
+| **SEBI v. ROOFIT INDUSTRIES LTD.** | |
+| id | `1fee973e-cdc0-4437-aa3c-4494559b2999` |
+| held as | `2015 INSC 864`, 26 Nov 2015, Supreme Court |
+| reporter | `[2015] 12 S.C.R. 190` |
+| `overruled_status` | **`none`** — renders as good law |
+| overruled by | *Adjudicating Officer, SEBI v. Bhavesh Pabari*, 28 Feb 2019 |
+
+### Why the graph missed them, and it is not the extractor's fault
+
+**The citing judgment prints the wrong year.** `2018 INSC 646` names its target as
+`(1977) 6 SCC 564`. The real citation is `(1997) 6 SCC 564` — a single-digit
+transposition, in the source text, faithfully recorded by our extractor. The edge
+exists and carries `relationship = 'overruled'`; it simply resolves to nothing
+because no 1977 judgment of that name exists.
+
+**This is a source-data defect, not a parsing one**, and it is the first
+confirmed instance of a class nobody has measured: *citation year typos in
+published judgment text*. A name-matching resolver would have caught it; a
+citation-matching one cannot.
+
+### What I have NOT done, and why
+
+**I have not written `overruled_status`.** Your directive said not to, and I am
+holding to it even here — but you should know the cost of that decision is two
+specific judgments displaying as safe to rely on while they are not.
+
+The two changes are a two-row update with high confidence: the targets are
+identified, held, and externally verified by NEW3 against the overruling
+judgments. **If you want them corrected, say so and it is one command.** If you
+would rather wait for the audited extractor, that is a defensible call — but it
+should be a call, not a default.
+
+### The wider number this implies
+
+NEW3 resolved all 13 no-candidate overruled targets. Two are these. Eight are
+genuinely not held (acquisition candidates, in `CORPUS_ACQUISITION_QUEUE.md`).
+**If 2 of 13 known-missing edges turn out to be held-but-mislinked, the same
+ratio over the 598,759 real unresolved citations is not a small number** — and
+nobody has measured how many carry a year typo. That measurement is queued.
