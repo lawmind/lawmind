@@ -16,6 +16,121 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+**17 Aug 2026 — THE MIGRATION'S CUTOVER GATE PASSES.** `compare.mjs` reports
+**0 FAIL** across 53 tables on **exact** row counts, schema, structure,
+constraints and generated columns; `smoke.mjs --source local` matches the Railway
+baseline **13/13**, including the one check that fails on both; the R2 backup is
+**byte-verified** (629 files read back, 0 differences); `judgments` reads
+**7,296,068**. Full detail in `docs/ops/migration/MIGRATION_RUNBOOK.md`
+§STATUS 17 Aug 06:50.
+
+**~~The freeze STAYS ON and `LOCAL_DATABASE_CUTOVER_APPROVED` has NOT been
+sent.~~ SUPERSEDED 17 Aug 12:20 — THE CUTOVER IS DONE.** NEW1's independent gate
+returned **PASS** (bus 0641: 57 unique checks, 52 PASS, **0 FAIL**, 5 INFO, all
+eight classes). `DATABASE_URL` now points at `127.0.0.1`, `RAILWAY_DATABASE_URL`
+is retained as the rollback path, `new2-railway-static-audit --cutover` passes
+with every writer entry point LOOPBACK, and `LOCAL_DATABASE_CUTOVER_APPROVED`
+went to NEW2 (bus 0646). `LOCAL_READY_FOR_POST_MIGRATION_GATE` had gone out as
+bus 0593.
+
+**Item 3 below is CLOSED: `pg-service-verify` is 7/7.** The postmaster was
+restarted onto a direct detached `postgres.exe` spawn, so it has no `cmd.exe`
+parent and therefore no console for a control event to be delivered on —
+`no console parent  PASS  parent pid 17072 is gone`, where an hour earlier it read
+`FAIL  postmaster 27764 has LIVE cmd.exe parent 6848`. **FQ-PGSERVICE itself stays
+open**: a scheduled task fires at LOGON, not at boot, so an unattended reboot
+still comes up with no database until someone signs in. That needs the one
+elevated `pg_ctl register` command.
+
+### 17 Aug 2026 — THE MIGRATION JOURNAL WAS DRIFTED BY NINE, NOT SEVEN, AND `ci:local` COULD NOT SEE IT
+
+Reconciled, and the drift was worse than reported in the founder's addendum.
+Every number here is read from the database or from `git`, not inferred:
+
+| what | state found | state now |
+| --- | --- | --- |
+| migrations in `meta/_journal.json` | 45 (ended at `0046`) | **54** |
+| migration files with no journal entry | **9** — `0030`, `0033`, `0047`–`0053` | 0 |
+| migration files untracked by git | **7** — a fresh clone never received them | 0 |
+| rows in `drizzle.__drizzle_migrations` | **0** | 52 |
+| `0033` applied anywhere | **never** | applied, 1984ms |
+
+Three facts that matter more than the counts:
+
+1. **`ci:local` was green throughout, and green *because* of the gap.** Drizzle's
+   migrator reads the journal and nothing else, so an unjournalled `.sql` file is
+   not a pending migration — it is a file the migrator has never heard of. The
+   two `migrate` steps built a scratch database correctly from the 45 entries they
+   could see, agreed with themselves, and passed.
+2. **The empty ledger was a live hazard.** `migrate` against Gold would have
+   replayed all 54 from `0000` and aborted partway on `0036`'s bare `CREATE TYPE`
+   (no `IF NOT EXISTS` exists for it in PostgreSQL), having taken locks on a 65 GB
+   table on the way.
+3. **`0030` and `0033` sit mid-sequence, so they could not simply be appended.**
+   Drizzle applies journal ARRAY order and skips on a single `created_at`
+   high-water mark; an appended `0030` would run after `0046` on a fresh database
+   and never at all on an existing one. Both were inserted in numeric position
+   with a `when` between their neighbours.
+
+The earlier note at §6 of the 12 Aug entry — *"the `0033` slot is long taken;
+applying this file under its current number would collide"* — **was wrong**. No
+other file and no journal entry used `0033`; the numbers are unique and
+contiguous. It has been journalled in its own slot and applied. Both columns are
+nullable and nothing writes them yet, so this is storage arriving ahead of the
+feature, not the feature.
+
+**Two guards so this is mechanical from now on:**
+
+- `scripts/check-migration-journal.mjs` — files ↔ journal ↔ git, plus ordering,
+  contiguity and `when` monotonicity. Wired into `ci:local` **ahead of** the
+  `migrate` steps, because those two cannot see this class of defect. Verified in
+  both directions: it reports all nine against the pre-fix journal and passes
+  against the current one.
+- `scripts/migration/journal-replay-check.mjs` — replays the whole journal into a
+  throwaway database and diffs it against Gold **in both directions**, using the
+  same `manifest`/`compare` pair the cutover was decided with. The reverse
+  direction is the one that matters and it is clean: **Gold holds nothing that no
+  migration produces**, so a rebuild from this repo loses nothing.
+
+Remaining difference between a fresh database and Gold is exactly `0052`'s three
+objects, which is correct until it lands — see below.
+
+Three things are open, and none of them is data:
+
+1. **`cite:` search does a full sequential scan** — 14m39s for
+   `cite:"(1994) 3 SCC 1"`. `A OR B OR C` where B is an unindexable
+   `unnest(reporter_citations)`, so no BitmapOr.
+   `services/api/src/search/qlang/compile.ts` `countStructured`. **NEW1 (0575)
+   independently reports `exactCaseTitle` cannot use an index either and ~57% of
+   searches fire it** — same family, and the two should be fixed together. **Do
+   not label either "pre-existing on Railway": this query was never run there.**
+2. **tsvector tokenisation differs on 119/28,425 sampled rows** — `full_text`
+   byte-identical (md5), cause is *malformed* visual-order Devanagari from PDF
+   extraction meeting a different character classification. Measured, not
+   estimated.
+3. **The local server keeps dying to Windows console signals** (4×,
+   `0xC000013A`). Data-safe every time; costs minutes. **FQ-PGSERVICE** — needs
+   admin, and note that the auto-start scheduled task is currently **absent**
+   (see that entry).
+
+**16 Aug 2026 — THE RAILWAY→LOCAL MIGRATION OUTRANKS EVERY ITEM BELOW, AND IT
+IS BOUNDED BY MONEY, NOT BY THROUGHPUT.** The chunked dump is running and
+resumable; `judgments` (256/256) and `judgment_paragraphs` (256/256) are
+complete, `judgment_chunks` and the 50 small tables are what remain. The live
+state, the exact continuation commands and the cutover gate are in
+`docs/ops/migration/MIGRATION_RUNBOOK.md` §7b — **not here**, because that file
+is the one a fresh agent is pointed at.
+
+The one fact that changes decisions: **workspace usage is $71.69 against a $75
+hard limit**, and Railway's hard limit takes *all* workloads offline. Finishing
+the dump and taking the Railway-side exact row counts both fit inside the
+remaining $3.31; keeping Railway alive as the rollback path through the local
+restore does not. That is filed as **FQ-CAP** in `docs/FOUNDER_QUEUE.md` with
+the arithmetic. **No lane may resume enrichment, citations, paragraphs, the
+resolver or any DeepSeek call until the migration verifies** — the freeze is
+what makes the per-chunk snapshots mutually consistent, and a single write
+invalidates the dump.
+
 > **The ordering rule, and it is not negotiable.** `docs/GTM_INDIA.md` §9: Gate S2
 > passes **before** the ground campaign. A field campaign against 2 million
 > advocates is a one-shot instrument — an advocate who finds a citation they
@@ -4994,3 +5109,3407 @@ arrives, `statute_mappings` stays empty — an empty table is honest, and a
 generated one would be the highest-consequence fabrication this product could
 ship, because `DOMAIN_TRUTH.md` calls this *"our largest factual edge and our
 largest hallucination risk."*
+
+### Q1.46 · HYBRID-VS-DENSE, FULL SCALE — launched, not yet closed · 14 Aug 2026
+
+**Next largest failure cluster, picked per the standing directive**: `HELD_NOT_
+RETRIEVED` is 48.6% of the 288-query benchmark (vs `BADLY_RANKED` 34.0%), and
+Q1.45 (citation-span stripping) is closed NOT SHIPPED — its own mechanism could
+only ever touch `BADLY_RANKED`, never this larger population, by construction
+(recall@20 was flat). So this session's next action is not a new mechanism
+invented fresh, but the flagged-and-unresolved thread that already speaks to
+`HELD_NOT_RETRIEVED` directly: Q1.30's `arms-cli.ts` CONTROLLED sub-sample
+(n=100) found production `hybrid` recall@20 **below** `dense`-only (30.0% vs
+34.0%) — directionally suspicious since hybrid can only ever be as good as the
+better of its two inputs unless the fusion itself is discarding candidates —
+but underpowered (McNemar p=0.2266, ~324 queries to settle) and explicitly
+recorded "**Not acted on** — this lane does not tune RRF or fusion weights from
+one controlled-but-underpowered run."
+
+**Launched**: `arms-cli.ts`, `ARMS_PASS=controlled` (courts=sc, holds the
+haystack constant — the confound Q1.30 already controlled for), full 283
+queries, all three arms (sparse/dense/hybrid), so `hybrid vs dense` gets full
+McNemar power available from this benchmark (283 is short of the ~324 estimate
+but close, and a real direction should sharpen well before then). PID 29264,
+started 05:53 local, detached via `Start-Process` on `node` directly (LCC's
+0274 pattern — a job backgrounded from the agent's own shell dies with the
+turn), logging to `services/harness/arms-controlled-full.log`/`.err`. Smoke-
+tested first at `ARMS_LIMIT=6` (62s for the sparse arm alone at the current
+1,488,010-judgment corpus — corpus has roughly tripled since Q1.30's original
+100-query run, so multi-hour wall time is expected, not a regression). Bus
+0351–0354 notified all lanes before launch, so nobody else starts a competing
+heavy pass against the same shared DB proxy meanwhile. Monitor armed on the
+log/PID for completion.
+
+**Live bug found and fixed on the way**: `scripts/lane-send.mjs` line 96 used
+`/[^A-Za-z]/g` on the file-binding fallback — the exact digit-stripping
+regression Q1.37 (13 Aug) fixed in `lane-common.sh`, still present in this
+separate Node port, unnoticed because `lane-status.mjs` (line 59) already has
+the correct `/[^A-Za-z0-9]/g` and nobody had compared the two. `NEW1`'s own
+binding file read back as `NEW`, matching no lane, so this session's first
+send attempt failed with "no lane" despite the binding file being correct on
+disk — bitten by the identical class of bug Q1.37 named, in code that bug's
+own fix did not reach because it lives in a different implementation of the
+same rule. Fixed to match `lane-status.mjs`. Only bites lanes with a digit in
+their name (NEW1/NEW2/NEW3) binding via the file rather than an inline
+`export LAWMIND_LANE=` in the same shell call, which is presumably why prior
+NEW1 sessions never hit it. **DONE 14 Aug 2026 (LCC)**: added case 10 to `lane-bus.test.sh` (now 15) —
+asserts `lane-send.mjs`'s own strip-regex (a separate implementation from
+`lane-common.sh`, not a caller of it, which is why Q1.37's fix never reached
+it) stays byte-identical to `lane-status.mjs`'s. Couldn't black-box test
+`lane-send.mjs` via subprocess like the other 9 cases: it hardcodes its own
+`.agents/bus` path with no `CLAUDE_PROJECT_DIR`-style override, so a
+subprocess test would either write into the real bus or need a behavior
+change out of scope for adding a test. A regex-agreement guard targets the
+actual failure mode instead — two independent implementations of the same
+rule silently diverging — and would have caught this exact bug being
+introduced. Verified the guard is real, not vacuous: reverted the regex,
+confirmed the new case goes red (`14 passed, 1 failed`), restored, confirmed
+green (`15 passed, 0 failed`). Both files left uncommitted per this lane's
+standing rule (commit only when asked).
+
+**Not yet closed** — full run still in flight. Next entry reports the result:
+either dense-only genuinely outrecalls hybrid at the scale this benchmark can
+support (an actionable RRF/fusion-weight finding, still not this lane's to
+tune per its own standing rule — reports to LCC), or the effect fails to
+survive more data (closes the thread, matches Q1.45's discipline of not
+shipping an underpowered positive).
+
+**Run 1 died, root cause found, gap closed, relaunched · 14 Aug 2026.** PID
+29264 hit the exact "unsettled top-level await" shutdown quirk Q1.31 and
+Q1.45 both named — but unlike those, `arms-cli.ts` had no checkpoint,
+confirmed in its own source before this session ever wrote it (`"this loop
+has no checkpoint and paired McNemar needs every arm on the identical query
+set"`). Died at dense 260/283 (sparse had already completed: success@5
+10.2%, recall@20 17.0%). No completion summary, no paired McNemar table —
+**3417s of sparse plus 1903s of dense lost outright**, unlike every other
+long-running tool in this harness (`experiment-citation-strip-cli.ts`,
+`failure-classifier-cli.ts`), which already checkpoint for this exact
+failure mode.
+
+**Closed the gap rather than blind-retry**: added a per-row JSONL checkpoint
+to `arms-cli.ts` (`arms-checkpoint.jsonl`, keyed `pass:mode:index`, same
+append-and-resume idiom as `experiment-citation-strip-cli.ts`) so a second
+occurrence of this known-benign crash resumes instead of re-running ~90
+minutes blind. Typecheck clean, harness suite 140/140 both before and after.
+Relaunched — PID 9028, `arms-controlled-full-run2.log` — starting sparse and
+dense from zero again since run 1 left nothing to resume from (the
+checkpoint protects future crashes, not this one retroactively). Bus
+0396-0399 notified.
+
+**Run 2 died the identical way — checkpoint verified working in practice, not
+just in theory · 14 Aug 2026.** Same "unsettled top-level await" quirk, PID
+9028, this time at dense 240/283 (sparse had again fully completed,
+byte-identical numbers to run 1: success@5 10.2%, recall@20 17.0% — a useful
+determinism check as a side effect). Checked `arms-checkpoint.jsonl` before
+relaunching rather than assuming the fix worked: 524 rows on disk
+(`CONTROLLED:sparse` 283, `CONTROLLED:dense` 241), matching the log exactly.
+Relaunched — PID 13272, `arms-controlled-full-run3.log` — startup line reads
+`524 rows already checkpointed`, confirming resume in practice. This is the
+second occurrence of the same crash on this one experiment; per this lane's
+own 3-failed-cycles rule the 15-min tracking cron is now instructed NOT to
+auto-relaunch a third time on its own — a third occurrence gets reported and
+held for a decision rather than blindly retried again, even though the
+checkpoint makes each individual retry cheap.
+
+**Q1.46 CLOSED — full result, and the question stays open · 14 Aug 2026.**
+Run 3 (PID 13272) completed clean: empty stderr, full summary printed, no
+third crash.
+
+| arm | success@5 | recall@20 | MRR | nDCG@5 | nDCG@20 |
+| --- | --- | --- | --- | --- | --- |
+| sparse | 10.2% | 17.0% | 0.070 | 0.073 | 0.093 |
+| dense | 21.6% | 40.6% | 0.151 | 0.152 | 0.207 |
+| hybrid | 18.4% | 38.9% | 0.121 | 0.121 | 0.180 |
+
+Paired (McNemar, success@5, CONTROLLED, full 283):
+
+| pair | gained/lost | p | queries to settle |
+| --- | --- | --- | --- |
+| dense vs sparse | +42 / −10 | 0.0000 | ~99 |
+| hybrid vs sparse | +24 / −1 | 0.0000 | ~71 |
+| hybrid vs dense | +17 / −26 | 0.2221 | ~1164 |
+
+**Dense and hybrid both decisively beat sparse — not news, but now proven at
+full power rather than assumed.** The actual question this experiment
+existed to answer — does production `hybrid` genuinely underrecall
+`dense`-only, the thread Q1.30 flagged and left "not acted on" — **remains
+unsettled, and the effect got weaker with more data, not stronger.** Q1.30's
+n=100 controlled sub-sample: hybrid vs dense discordant pairs were 8:3
+favoring dense (2.67:1). This run's n=283: 26:17 favoring dense (1.53:1).
+Same direction, smaller ratio, `queriesToSettle` grew from ~324 to ~1164 —
+nearly 4x this benchmark's current size. **A larger, more careful measurement
+made the suspicion look less true, not more** — the opposite of what
+"underpowered positive that needed more data" usually looks like, and worth
+recording precisely for that reason: this is not a case of "still not proven,
+give it more queries" so much as "the point estimate itself moved toward
+parity as n grew."
+
+**Decision, per this lane's own standing rule stated at launch: NOT acted
+on.** RRF/fusion-weight tuning stays out of scope for this lane regardless
+of the result; the finding reports to LCC as a measurement, not a change
+request. `HELD_NOT_RETRIEVED` (48.6%) — the reason this experiment was
+picked in the first place — is **not explained by a hybrid-vs-dense fusion
+defect**: recall@20 gap between hybrid (38.9%) and dense (40.6%) is 1.7
+points, nowhere near large enough to be "half the retrieval failures are a
+fusion bug." The 48.6% has to have a different, larger cause than this
+thread — this closes it as a lead, not as a fix.
+
+**Side effects that outlast this result**: `arms-cli.ts` now checkpoints
+(`arms-checkpoint.jsonl`, kept on disk as a reusable artifact per this
+harness's existing convention, not deleted), verified working through two
+real crash-and-resume cycles, not just in theory. `scripts/lane-send.mjs`'s
+digit-stripping regression is fixed and now covered by
+`lane-bus.test.sh`. Both fixes apply to every future long-running harness
+tool and every future NEW1/NEW2/NEW3 session, independent of this
+experiment's own null-ish result.
+
+Bus report follows this entry.
+
+### Q1.47 · NEW2 · THE FLEET WAS FINE; THE **SCHEDULING** HAD MADE 4.76M DOCUMENTS UNREACHABLE · 14 Aug 2026
+
+**Continuation session. Nothing was reset, no checkpoint discarded, no worker
+relaunched blindly.** State recovered from disk and the database, per the
+directive: 19 harvest workers + 4 paragraph shards + 1 general sweep adopted
+alive, matched to their courts by command line, checkpoint mtime and DB row
+growth together — never process existence alone.
+
+**Corpus measured directly, not carried over from the previous chat:**
+`judgments 4,762,373 · judgment_paragraphs 22,670,426 · judgment_chunks 620,300`
+at 17:31Z, with **172,095 judgments written in the preceding hour** (~5x the
+34,000/hour recorded in `LANE_PROTOCOL.md` §6). Coverage against the founder's
+20,567,554 denominator: **23.15%**, up from 11.55% the previous day.
+
+#### The finding: every worker was `--from-year 2016`, and nothing else existed
+
+Per-court, per-era measurement (`judgment_date < 2016-01-01`):
+
+| | |
+| --- | --- |
+| pre-2016 held, ALL 25 High Courts | **11,876** |
+| pre-2016 available in the source | ~4,757,636 (`allYears` − `last10Years`) |
+| coverage of the historical corpus | **0.25%** |
+
+**23 of 25 High Courts held FEWER THAN 1,000 pre-2016 documents each**; Andhra,
+Madhya Pradesh and Karnataka held exactly **zero**. This was not a crash, a
+source gap or an attrition problem — it is the scheduling choice itself, which
+was bounded on one side only, and it would never have surfaced from the
+headline coverage number because that number rises the whole time.
+
+**A correction owed to `COVERAGE_GAP_MATRIX.md` §3**, which read
+`min(judgment_date)` as coverage depth and concluded "most courts' holdings DO
+span back to the 1950s-1980s". They do not. **Madras' earliest holding is 1953
+and it holds exactly ONE pre-2016 document**; Calcutta reaches 1950 on 74 rows.
+`min()` proves a year is *reachable*, never that it is *held* — one row makes a
+court look like it spans seventy years. Corrected in that file.
+
+**Fixed by adding `--to-year`** (`hc-load-cli.ts`), the historical complement of
+the running fleet's window. Additive: no `--to-year` leaves every existing
+invocation byte-identical, and the checkpoint suffix `-to<TO_YEAR>` is appended
+rather than folded in, because 22 workers were live against `<COURT>.json` and
+`saveCheckpoint` rewrites the whole file. Six historical workers launched
+(Bombay 893k, Patna 638k, P&H 600k, Telangana 517k, Himachal 99k, Uttarakhand
+98k pre-2016 source documents). **~38,000 pre-2016 documents written in the
+first 20 minutes** — a ~5x increase in the High Courts' entire historical
+holding.
+
+#### Every "missing" worker was a COMPLETED one — verified before restarting
+
+The directive's warning held exactly. Seven courts had no worker and all seven
+had finished their 2016+ window: J&K 99.99%, Himachal 99.99%, Uttarakhand
+99.998%, Sikkim 100%, Meghalaya 100%, Tripura 99.996%, Manipur 89.7%
+(previously verified as candidate-exhausted). **Uttarakhand's headline 58.6%
+was entirely its pre-2016 gap** — restarting its from-2016 worker would have
+achieved nothing. Only two genuinely needed relaunching: Kerala (44.8% of its
+window, worker exited early) and Gujarat (checkpoint frozen 2h52m AND zero
+writes in an hour — both signals sustained, the `LANE_PROTOCOL.md` kill
+criterion). Survivors counted after: exactly one worker per court+scope, no
+duplicates.
+
+#### A dry run was poisoning the checkpoint — found by doing it
+
+Verifying `--to-year` with a `--limit 5` DRY run on Sikkim left
+`11_24-to2015.json` on disk recording four files as partly done. **Nothing had
+been written**, so a later `--apply` would have skipped those records
+permanently. The reason this is worse than it looks is the checkpoint's own
+stated justification: it is "purely a speed optimisation" *because* `source_url`
+uniqueness is the real safety net — a premise that only holds when the skipped
+batches were actually inserted. `saveCheckpoint` now returns early unless
+`--apply`; the poisoned file was deleted.
+
+### Q1.48 · NEW2 · DETERMINISTIC FIRST: 773,096 ROWS CLASSIFIED FOR FREE, THEN THE MODEL MEASURED AND **REFUSED PROMOTION** · 14 Aug 2026
+
+Founder direction: deterministic ingestion stays primary; DeepSeek only for what
+deterministic processing cannot classify confidently; every model output
+source-span verified.
+
+#### The vocabulary was never measured, and most of the "hard" subset was not hard
+
+`SELECT upper(trim(disposal_nature)), count(*) … GROUP BY 1` — **487 distinct
+values across 4,398,309 rows**, exactly the `LANE_PROTOCOL.md` §3b discipline
+(*extract the real vocabulary before matching a convention*). Reading it showed
+the 593,786 `unclassified_disposal` rows were mostly not ambiguous, merely
+unlisted:
+
+    DISMISSED AS WITHDRAWN   71,226     DISMISSED AS INFRUCTUOUS  65,392
+    27-WITHDRAWN @ ADM.STAGE 40,254     TRANSFER TO OTHER COURT   18,775
+    DISMISED (sic)            8,621     DISPOSED IN LOK ADALAT     8,735
+
+**`DISMISED` — one S — is 8,621 rows** that `/^DISMISSED$/` could never match: a
+five-figure row count lost to a registry typo. The Gujarat/Bombay stage codes
+(`26-DISMISSED @ ADM.STAGE`) defeated every anchored pattern over a leading
+`26-`; stripped rather than enumerated, since a list of registry numbers goes
+stale the first time a court adds one.
+
+**Result, measured old-vs-new over all 487 values: 43.4% → 61.0% of rows
+carrying a disposal, +773,096 rows, zero model calls.** Validated by reading the
+output per class, not by counts alone. All 13 pre-existing tests stay green,
+including the one asserting `DISPOSED` remains unclassified.
+
+Transfers and Lok Adalat settlements fold into `procedural_disposal` rather than
+new classes — they are disposals in which the court decided no merits, and new
+enum values would break the `hc_document_class` segmentation LCC and NEW1 read.
+
+#### What the model was then allowed to see, and what it did
+
+`hc-adjudicate.ts` + `hc-adjudicate-cli.ts`, 18 tests. The gate is a **refusal
+test, not a selection test**: a row qualifies only because `classifyHcDocument`
+recorded that it declined to claim it. **The 3.6M rows with `hc_class_method IS
+NULL` are explicitly excluded** — those never had the classifier run, which is a
+backfill, not a hard case, and sending them to a model would pay tokens for what
+a regex answers exactly. Scope stated up front per `RING_PROGRAM.md` §2b: the
+residue is ~1.72M rows (`DISPOSED OFF` 687,076 · `DISPOSED OF` 497,294 ·
+`DISPOSED` 227,304 · `CLOSED` 54,241 · `ORDERED` 34,422) and **this pass will
+never cover it** — it is a bounded, prioritised sample on a capacity-limited
+free tier.
+
+**Measured on 40 real documents, representative (uuid v4 ordering is random with
+respect to court and year):**
+
+| verdict | n | share |
+| --- | --- | --- |
+| span verified | 31 | 77.5% |
+| **quoted words the document does NOT contain** | **7** | **17.5%** |
+| checker's own false negative | 1 | 2.5% |
+| cannot_determine | 1 | 2.5% |
+
+**Six of the seven fabrications carried the model's own `high` confidence.**
+That is worse than the 10.8% `docs/ai/CITATION_CONCORDANCE_EVALUATION.md`
+measured, and it lands on the same verdict: **not promotable to canonical.** The
+span check caught every one of them, which is the mechanism working, not a
+reason to trust the output.
+
+**The 8 refusals were triaged against the real documents rather than assumed to
+be fabrication** — 7 genuine, 1 this checker's own fault (the model quoted
+`AllPetitionsaredisposedofintheseterms.` — the words are in the document, the
+spaces are not, PDF extraction having lost them). Over-refusal is not the safe
+direction: it discards correct answers while looking like diligence. A
+whitespace-stripped second comparison now passes it, and re-checking confirmed
+all 7 genuine fabrications still fail that looser form too.
+
+**Standing conclusion: usable as a candidate generator with mandatory span
+verification, never as an autonomous classifier.** A verified span proves the
+model READ the document — never that it reasoned correctly. The CLI writes
+JSONL and no canonical row; the candidate table is not requested until a larger
+sample confirms the rate.
+
+#### NEXT, in order
+
+1. **`hc:classify` full re-walk is bandwidth-bound, ~400 rows/min** against the
+   shared proxy while 32 workers run — 3.6M rows would take ~150 hours. The fix
+   is to push `length()`, the pointer pattern and the bail pattern into SQL and
+   return booleans instead of `full_text` (~50x less transfer). **Not started:
+   it duplicates each regex in Postgres, and two copies of a matching rule
+   drifting apart is a documented failure in this repo.** Needs the pure module
+   to take precomputed signals so there is still one rule set.
+2. Extend historical workers to the remaining 11 courts as RAM allows (5.9 GB
+   free at 32 workers).
+3. Larger adjudication sample (n≥200) before deciding whether the candidate
+   table is worth asking LCC for.
+
+---
+
+## NEW3 · 14 Aug 2026 — the ECT is in hand, tribunals publish their own orders, and 14,374 SCR edges are ours already
+
+Four results, in descending order of value per unit of cost. Full detail:
+`docs/SOURCE_REGISTRY.md` §5a-FETCHED and §2b,
+`docs/MISSING_AUTHORITY_QUEUE.md` §1d/§1e/§1f.
+
+### 1 · The Equivalent Citation Table — fetched, parsed, measured, validated
+
+The concordance this ring has pointed at since 12 Aug. **235,807 citation
+pairs** parsed from four official Supreme Court Judges Library volumes.
+
+    live unresolved population        231,546 distinct / 598,766 edges
+    resolvable to a judgment WE HOLD   21,340 distinct / 204,684 edges  (34.2%)
+
+AIR 63.1%, SCC 52.4%, SCALE 49.3% of each reporter's unresolved edges.
+Validated at **99.42%** against `judgment_citation_aliases` (3,807
+comparable, 22 disagreements, all transcription slips in the table).
+
+**Two sessions had failed to fetch it because `main.sci.gov.in` is NXDOMAIN,
+not bot-defended.** `www.sci.gov.in` answers 200 to a plain `curl`. The
+content survives only in the Internet Archive — the Court still publishes the
+ECT on its live Judges Library page, and its own links have been dead since
+the site migration. Covers 1950 **to 12.03.2018 only**, not "to present" as
+this repo's docs said.
+
+**Licence NOT cleared** (Government work) → `FOUNDER_QUEUE.md`. Loader is
+LCC's. Nothing committed to the tree.
+
+### 2 · 14,374 unresolved SCR citations exactly match judgments we hold
+
+**Cheaper than the ECT — no external source, no licence, no decision.** Of
+26,270 distinct unresolved SCR citations, **18,581 (71%) point at judgments
+already held**: 14,374 by exact `normaliseCitation()` string equality, 4,207
+by volume-agnostic match. Verified with concrete pairs.
+
+**All 500 sampled matched-but-unresolved edges are from the 6 Aug batch**,
+while the resolver has written resolved edges continuously through today.
+Not a backlog. Either the resolver never revisits old rows or its match rule
+differs from exact equality — **LCC's to determine**; sent on the bus.
+
+### 3 · Tribunals publish their own orders — a category we hold ZERO of
+
+The ring assumed the only route was the paid Supreme Today account. **Supreme
+Today is an aggregator; the tribunals are the publishers.** 14 domains
+probed, **two verified end-to-end by downloading a real judgment PDF**:
+
+- **NCLAT** — order PDF, 56,049 bytes (three-step CSRF handshake).
+- **TDSAT** — reasoned judgment, 304,798 bytes (date-range search).
+
+Free, no account, no CAPTCHA, no access control bypassed. **NCLT, CESTAT,
+ITAT and NGT are CAPTCHA-gated and stay closed** — the eCourts bypass grant
+is eCourts-specific and does not extend to tribunal sites.
+
+**NOT authorized** (neither host is §6a-named) → `FOUNDER_QUEUE.md`. Fetching
+is NEW2's once cleared. Volume and historical depth **UNKNOWN**.
+
+### 4 · The JT extractor gap is real and NOT worth fixing — a correction
+
+`citations.ts` has no JT pattern and `judgment_citations` holds zero JT rows.
+I flagged it to LCC and NEW1 as a probable bug. **Measured: 1 occurrence in
+1,632 sampled judgments (0.06%).** Corrected on the bus. I had reasoned from
+the ECT's 89,372 JT atoms — evidence about the reporting literature, not
+about what our courts cite.
+
+### DeepSeek support, per the founder's 14 Aug instruction
+
+`.agents/new3/ds-research.ts` — analytical assistant only, never source
+truth. Closed task list (no free-text task, so it cannot be asked whether a
+source exists), JSON-shaped output stamped `UNVERIFIED_MODEL_OUTPUT`,
+SHA-256 cache, and every call logged to `.agents/new3/ds-calls.jsonl`.
+Refuses loudly with no key rather than falling back to recall.
+`.agents/new3/README.md`.
+
+**Honest assessment of its value so far:** one `gaps` run returned **no
+category our registry did not already track** — a useful completeness check,
+not new information. **Every finding of substance above came from inspecting
+the source**, per the founder's instruction not to spend tokens on what
+deterministic inspection can settle.
+
+### NEXT, in order
+
+1. **Measure the tribunal archives' depth and volume** once the licence
+   question clears — the endpoints are proven, the extent is not.
+2. **Characterise the 6,056 no-match SCR citations** — the only SCR bucket
+   that could be a genuine acquisition gap, and only after normalisation and
+   volume mismatch are ruled out. Year distribution skews recent (2023: 488,
+   2022: 485), which is not the shape of a historical hole.
+3. **The 2018–2026 concordance gap the ECT cannot cover.** The table stops at
+   12.03.2018; the internal 656-judgment paired-citation source (§5a-pre) and
+   the newer S.C.R. volumes are the candidate routes.
+4. **CIC, CAT, CCI, NCDRC** — reachable, no order link found on the homepage
+   or not chased to a PDF. Unfinished, not negative.
+
+---
+
+### Q1.47 · THE STRUCTURED LEGAL OBJECT, and three defects found on the way · 14–15 Aug 2026 (LCC)
+
+`DONE:` DeepSeek enrichment produces span-verified facts, issues, holdings,
+reasoning, arguments, authorities and topics into `document_enrichments`, and
+the citation-extraction worker survives the agent session.
+`VERIFY:` a real run against real corpus documents reporting a measured
+span-verification rate; `judgment_citations` row count growing with no agent
+attached; `check-schema-truth.mjs` green.
+
+**The session's actual highest-value finding was not the DeepSeek work.** It was
+that **no LCC enrichment worker was running at all**, while the corpus had grown
+7.8x and NEW3 had flagged the gap as compounding rather than static (bus 0460).
+Three separate defects were keeping it that way, and each had been invisible for
+a different reason.
+
+#### 1 · `citations-cli` could not run at 4.7M judgments — measured, then fixed
+
+Two scaling faults, both written when the corpus was 38k:
+
+- `buildIndex` did one unbounded `SELECT` over the whole table into a JS array.
+  The **Map** is small (876,630 forms); the **array** is what grows. Same shape
+  that killed the classify pass at 322k of 833k (`2414b09`). Now filtered
+  (`WHERE neutral_citation IS NOT NULL OR array_length(reporter_citations,1) > 0`
+  — **911,185 of 4,768,101 rows can contribute a key**, so 81% of the transfer
+  was rows producing nothing) and streamed through a cursor. `citationKeys` was
+  read to confirm the filter cannot change the index's contents, rather than
+  assumed.
+- The batch loop was serial. Added `--concurrency`, **default 1 so nothing
+  changes for anyone who does not ask**. Batches cover disjoint ids and each
+  writes its own transaction with `ON CONFLICT DO NOTHING`.
+
+**Measured, same machine, same shared proxy: 2.9 judgments/s serial →
+16.6 at concurrency 8 → 45–49 sustained at concurrency 12 in the live worker.**
+
+#### 2 · `enrich-worker.cmd` had never worked, and could not have
+
+The founder-approved persistence wrapper contained `set REPO=%~dp0..` **after**
+`shift`. In cmd, `shift` renumbers `%0` too, so `%~dp0` stops being the script
+and resolves against the current directory instead. The worker started in the
+repo's PARENT and died instantly with `node.exe: .env: not found`, restarting on
+that same error every 30 seconds.
+
+**It had never been launched before**, so a bug on line one of its job had never
+had the chance to surface — and `scripts/lawmind-enrichment-startup.cmd` claims
+in its own header that a copy *"lives in the current user's Startup folder"*.
+Checked both Startup folders on 14 Aug: **it does not, and never did.** A
+documented persistence claim that was simply not true. That is why nothing was
+running.
+
+Fixed (`%~dp0` captured before the shift), plus a second latent fault of the
+same family in the launcher: `%~dp0enrich-worker.cmd` resolves to the Start Menu
+directory from the only location the file is ever actually run.
+
+**Now verified by observation, not by hope:** `Lawmind-citations.cmd` installed
+in the user Startup folder, launched via `Start-Process` → `cmd` → wrapper, and
+**still logging progress across many subsequent agent tool calls** — the
+property every previous attempt failed.
+
+#### 3 · `judgments_created_at_idx` validated itself, 4 hours later
+
+NEW2 refused to repoint pagination while it read `indisvalid = false` (0471) —
+correctly. `pg_stat_progress_create_index` showed `waiting for old snapshots`
+with `blocks_done 523484/523486`: the build finished in minutes and spent **4h
+00m** waiting on the ingest fleet's long INSERT transactions, one virtual xid at
+a time. It is now `indisvalid = true` and the progress view is empty. **0474's
+"WAIT, not pause" was right** — nothing needed disrupting, it needed longer than
+either lane expected. Told NEW2 (0487).
+
+#### The DeepSeek work itself
+
+**Audited before building, and most of the directive was already satisfied** —
+key rotation, OpenRouter fallback with a circuit breaker, `llm_calls`, the
+`input_hash` cache with its load-bearing `status = 'ok'` filter, and
+`verifyClaims`. None of it was rebuilt. Full account:
+**`docs/ai/LEGAL_OBJECT_PROGRAM.md`.**
+
+Five new tasks (`case_structure`, `holding`, `arguments`, `authorities`,
+`topics`), migration `0051`, applied and verified in production. **Every field
+is a QUOTE, not a summary**, so the claim value *is* its evidence span and takes
+the full-strength check a citation gets — no new `LABEL_KINDS` entry, which the
+existing code explicitly warns against. 28/28 tests, including one asserting a
+fabricated-but-plausible holding is rejected and one asserting none of the five
+kinds has been quietly added to `LABEL_KINDS`.
+
+**Two schema gaps closed on the way:** `document_enrichments` has existed in
+production since 11 Aug with 28,728 rows and was in **neither** `schema.ts` nor
+`SCHEMA_TRUTH.md`. Both now carry it. Nothing was broken by the omission — every
+writer uses raw SQL — but this is the sentinel incident's exact shape:
+*undocumented ≠ absent*.
+
+**A measurement that reversed the queue design.** Every other pass sorts
+`created_at DESC` to follow the ingest. **Of the newest 200,000 judgments,
+199,444 — 99.7% — have `hc_document_class` NULL.** At the head there is nothing
+to prioritise with: "substantive first" ranks 184 of 200,000. A newest-first
+legal-object pass would have spent its whole budget on unclassified documents
+that are mostly bail orders — `RING_PROGRAM.md` §2b drift, reached by following
+a sensible rule off a cliff. The queue now targets the **classified substantive
+population (194,610 `decided` + 39,046 `decided_brief` = 233,656)**, which grows
+as `hc-classify-cli` catches up.
+
+**And an invented value caught before it shipped:** a first draft ordered on
+`text_extraction_method = 'repaired'`. The real value is `'pdftotext_fallback'`
+(migration `0048`), and production holds **0** of them — so that priority tier
+selects nothing today. Kept, with the correct value and the measurement written
+down, rather than a priority that silently ranks nothing.
+
+#### Deterministic work that cost no tokens and was worth more than any of it
+
+`resolve-cli` dry run: **122,217 unresolved edges point at judgments we already
+hold** — far beyond the 14,374 SCR subset NEW3 characterised in 0486. Applying
+takes citation resolution from **14.5% → 30.2%** of non-sentinel edges. Run with
+`--apply`; the tool's three guards (exactly one target · the year guard · never
+overwrites) are why this is safe to run unattended.
+
+#### Datasets
+
+`services/ingest/src/dataset-export-cli.ts` — five provenance-rich JSONL sets,
+**verified claims only**, split by DOCUMENT hash so a case's facts and its
+holding cannot land on opposite sides. Smoke-tested: `case_intelligence` 221 ·
+`treatment` 3,000 · `citation` 3,000 · `statute` 3,000 · **`retrieval` 0, and
+reported as empty rather than quietly absent** — the `topics` task has not run
+yet.
+
+#### What is NOT done, plainly
+
+- **The ladder stopped at stage 1.** 100 documents on one task, not the full
+  100 → 1,000 → 10,000 → 100,000 climb, and not the other four tasks. Scaling
+  past this needs the measured rate below to hold on a bigger sample.
+- **Throughput is grant-limited, not code-limited.** One InferX grant, ~16
+  s/document, ~225 documents/hour against 233,656 × 5 tasks. `FQ-IX2`.
+  Concurrency is deliberately NOT the answer: `DEEPSEEK_DATA_MOAT.md` §1
+  measured that parallel callers worsen the free pool's 429 rate.
+- **Nothing is promoted.** `0045`'s boundary is untouched — no route joins
+  `document_enrichments`, and promotion into a canonical table remains a
+  separate, measured step this session did not build.
+
+#### STAGE 1 RESULT — measured, and the ladder is HELD here deliberately
+
+100 documents, `case_structure`, real corpus, one InferX grant:
+
+    documents            100
+    claims verified      993
+    claims rejected      277
+    span-verification   78.2%
+
+**This is NOT auto-scaled to 1,000, and the reason is the number itself.**
+78.2% means **roughly one claim in five was a passage the model produced that
+is not in the judgment** — and that is with the strictest check this pipeline
+has, on a task where the model was asked only to quote. The mechanism worked:
+all 277 were rejected and none became data. But "the safety net caught 277
+things" is a reason to look at the net's contents before widening the throw,
+not a reason to multiply by ten.
+
+`verificationState` distribution over the run was overwhelmingly `partial`
+rather than `verified`, which is consistent with the model getting most spans
+right and reliably inventing a few per document rather than failing wholesale.
+
+**Next session's first action on this thread:** read a sample of the 277
+rejections out of `rejection_reasons` and decide whether they are (a) genuine
+fabrication, (b) whitespace/OCR artefacts the flattening does not cover, or
+(c) the model quoting across an elision boundary. Those have three different
+fixes and only one of them is "prompt harder". Scaling before that is buying
+277 rejections per 100 documents at full price.
+
+#### WHAT IS RUNNING AS THIS SESSION ENDS
+
+- **`citations-cli`** via `scripts/enrich-worker.cmd` → Startup-folder launcher,
+  `--limit 20000 --batch 25 --concurrency 12`, observed at **29–62
+  judgments/s**. Log: `%TEMP%\lawmind-citations.log`.
+- **`resolve-cli --apply`**, writing the 122,217 resolvable edges. **Not
+  finished when this session ended** — verify with
+  `select count(*) filter (where cited_judgment_id is not null) from
+  judgment_citations`; it read 113,716 before the run and should approach
+  235,933.
+- **Nothing else.** The four `paragraphs-cli` shards and the ~20 `hc-load-cli`
+  workers belong to other lanes and were not touched.
+
+**Reboot persistence is INSTALLED BUT UNPROVEN:** `Lawmind-citations.cmd` is in
+the user Startup folder, which fires at LOGON, not at boot — a rebooted machine
+sitting at the lock screen runs nothing. It has not been through a reboot yet,
+so do not record it as proven until it has.
+
+### Q1.49 · NEW2 · HANDOFF — one change is UNVERIFIED BY EXECUTION, read this before starting a worker · 15 Aug 2026
+
+**Session ended by the founder to start fresh sessions. Everything below is the
+state a new NEW2 agent inherits.**
+
+#### ⚠ THE ONE THING THAT IS NOT FINISHED
+
+`services/ingest/src/paragraphs-cli.ts` pagination was repointed from a uuid
+watermark to a `(created_at, id)` tuple keyset. **It typechecks and its exact
+query shape was EXPLAIN-verified against production, but the CLI ITSELF HAS NOT
+BEEN RUN SINCE THE EDIT.** Treat it as unproven until someone runs
+`--resume --shard 0/4 --limit 300` and sees it page.
+
+- **The 4 paragraph shards running right now still execute the OLD code** — tsx
+  loaded it before the edit — so nothing in flight is affected either way.
+- **`scripts/lawmind-ingest-startup.cmd` WILL launch the new code at next
+  logon.** That is the risk: an untested query would start under a supervisor
+  that restarts it. Run the smoke test above before trusting a reboot.
+
+**Why the change was made** (LCC bus 0487 cleared the blocker):
+`judgments.id` is uuid **v4**, so a cursor advanced to `c000…` never sees a
+judgment harvested afterwards whose id sorts below it. At ~170,000 rows/hour a
+long-running shard was permanently skipping a large share of what landed while
+it walked. `--resume` masks this across restarts (it re-walks from zero and the
+`NOT EXISTS` filter catches the misses) but not within a single long run.
+
+**Why a tuple and not a plain `>`**, measured not assumed: `created_at` defaults
+to `now()` = TRANSACTION time, so a whole `upsertJudgments` batch shares one
+timestamp. **Largest measured group sharing a single `created_at` is exactly
+100**, the batch size. A plain `>` skips up to 100 rows per page boundary; `>=`
+loops forever.
+
+**Planner confirmed** for the exact shape, per LCC's request that I verify
+rather than take their word: `Parallel Index Scan using
+judgments_created_at_idx` · `Index Cond: created_at >= …` · `Incremental Sort,
+Presorted Key: created_at`. `judgments_created_at_idx` is `indisvalid = true`.
+
+#### THE SHARPEST REMAINING COVERAGE HOLE
+
+NEW3 (bus 0488) verified this lane's pre-2016 figures independently and
+re-queried after the `--to-year` fix landed: **pre-2016 High Court holdings went
+11,876 → 279,957 (24x)**, concentrated exactly where the six historical workers
+were pointed (P&H 50,237 · Uttarakhand 48,246 · Patna 45,734 · Bombay 44,372 ·
+Himachal 41,692 · Telangana 38,784).
+
+**Allahabad is the sharpest hole left: 6 pre-2016 documents against 599,393
+held and 3,493,992 source documents.** The largest court in the dataset is
+essentially all post-2016. True zeroes: Karnataka 0, Andhra Pradesh 0, MP 0.
+Zeroes in all but name: Madras 1, Delhi 2, J&K 2, Gauhati 3, Chhattisgarh 4,
+Rajasthan 4, Manipur 5, Jharkhand 8.
+
+**Next scheduling action, if RAM allows** (6.9 GB free at 32 workers): historical
+`--from-year 1950 --to-year 2015` workers for `9_13` (Allahabad), `29_3`
+(Karnataka), `28_2` (Andhra), `23_23` (MP), `33_10` (Madras), `7_26` (Delhi).
+Note Allahabad's pre-2016 SOURCE is only 296 documents (`allYears` 3,493,992 −
+`last10Years` 3,493,696) — so its historical hole may be genuinely tiny and the
+6 documents may already be near-complete. **Measure its per-year source
+partitions before assuming there is anything to fetch.**
+
+#### FLEET AT HANDOFF
+
+32 workers, one per court+scope, no duplicates, verified by grouping live PIDs:
+18 from-2016 courts · 2 year-scoped (33_10-y2023, 8_9-y2023) · 6 historical
+1950-2015 · 1 general sweep · 4 paragraph shards · 1 classify backfill.
+
+Seven courts deliberately have NO from-2016 worker because they FINISHED that
+window (≥99.99%): J&K, Himachal, Uttarakhand, Sikkim, Meghalaya, Tripura,
+Manipur. **A missing worker there means completed, not forgotten.**
+
+#### STILL OPEN, IN PRIORITY ORDER
+
+1. Smoke-test the paragraphs pagination change above. **Do this first.**
+2. `hc:classify` full re-walk is bandwidth-bound (~400 rows/min against the
+   shared proxy; 4.09M never-classified rows ≈ 150h). Fix is to push
+   `length()`/pointer/bail predicates into SQL and return booleans instead of
+   `full_text`. **Deliberately not started** — it would put each regex in two
+   places, and two copies of a matching rule drifting apart is a documented
+   failure here. Needs the pure module to accept precomputed signals first.
+3. A second classify pass over `hc_class_method LIKE 'unclassified_disposal:%'`
+   (756,648 rows): the vocabulary extension can now claim ~773k of them, but
+   `--resume` only walks `hc_class_method IS NULL`, so those need a full walk.
+   Also ~9,980 `ALLOWED TO BE WITHDRAWN` rows are currently mis-held as merits
+   and become procedural under the new rules.
+4. Larger adjudication sample (n≥200) before asking LCC for a candidate table.
+   Current measured fabrication rate 17.5% on n=40 — promotion refused.
+5. Tribunals (NEW3 bus 0482): NCLAT + TDSAT verified open, free, no CAPTCHA.
+   **NOT cleared — neither host is §6a-named, it is in FOUNDER_QUEUE.md. Do not
+   start.** The fetch mechanism is documented in that message if it clears.
+
+### Q1.47 · HELD_NOT_RETRIEVED DECOMPOSED — the cheap fix is dead, the benchmark is clean, and 88.6% is the embedding model · 14 Aug 2026
+
+**Full account: `docs/ai/HELD_NOT_RETRIEVED_DECOMPOSITION.md`.** Picked per the
+standing directive — `HELD_NOT_RETRIEVED` is 48.6% of the 288-query benchmark,
+the largest failure population, and Q1.46 closed the only lead pointing at it
+(hybrid-vs-dense recall gap 1.7pp, far too small to explain half the failures).
+Nobody had ever measured WHERE in the pipeline the gold judgment falls out.
+
+**Corpus snapshot at measurement (a moving corpus invalidates naive
+before/after):** judgments ~3,622,046 · judgment_chunks ~599,379 (**620,300
+embedded, exact**) · judgment_citations ~1,275,661 · judgment_paragraphs
+~21,883,048 · 2026-08-14T18:01:14Z. NEW3 (bus 0483) correctly flagged that the
+citations figure is a `reltuples` ESTIMATE — their exact `count(*)` was
+1,336,773 at 17:30. Accepted: **estimates are fine for orientation, an exact
+`count(*)` belongs in any benchmark denominator.**
+
+**New tool `held:decompose`** (`services/harness/src/held-not-retrieved-cli.ts`),
+140/140 measured, checkpointed, no new gold invented. It measures gold's exact
+position against the TWO cut points `dense()` actually applies — `annDepth=200`
+**chunks** and `CANDIDATE_DEPTH=50` **judgments** — which are two independent
+failure modes wearing one name.
+
+| mechanism | n | % |
+| --- | --- | --- |
+| `SEMANTIC_RANKED_LOW` | **124** | **88.6%** |
+| `DENSE_OK_BUT_MISSED` | 16 | 11.4% |
+| `CANDIDATE_TRUNCATED_BY_ANN_DEPTH` | **0** | **0.0%** |
+| `GOLD_NOT_EMBEDDED` | 0 | 0.0% |
+
+**THE CHEAP FIX IS DEAD AND IT WAS THE FAVOURITE.** Zero of 140 are cases where
+the ranker scored gold inside the top 50 and the 200-chunk fetch discarded it.
+Raising `annDepth` — one integer, the most tempting intervention available —
+**would have fixed nothing.** Recorded prominently because the next person will
+have the same idea.
+
+**Depth vs exposure, the actionable table.** Both constants must move together
+(a rank-51–100 gold sits at chunk rank ~110 median but up to 570):
+
+| `CANDIDATE_DEPTH` | misses reachable | `annDepth` | gold chunk in pool |
+| --- | --- | --- | --- |
+| 50 *(today)* | 16/140 · 11.4% | 200 *(today)* | 40/140 · 28.6% |
+| 100 | 36/140 · 25.7% | 500 | 68/140 · 48.6% |
+| 200 | 60/140 · 42.9% | 1,000 | 82/140 · 58.6% |
+| 500 | 81/140 · 57.9% | 2,000 | 92/140 · 65.7% |
+
+**Deepening converts an INVISIBLE failure into a RANKABLE one — it is a
+precondition for reranking to pay, not a fix.** A gold moved from "absent" to
+"candidate rank 137" is still not in an advocate's top 5. Pairs with Q1.43's
+finding that `BADLY_RANKED` skews to near-misses (65% at rank 6–20). **Not this
+lane's to ship** — `RING_PROGRAM.md` §NEW1.3 forbids tuning fusion from a
+measurement; reported to LCC as a costed option.
+
+**THE BENCHMARK IS CLEAN ON THE ARTIFACT I MOST SUSPECTED.** `hybridSearch`
+collapses duplicates on `content_hash` while the classifier compares IDs — so a
+hit on a byte-identical twin would score as a MISS on the gold, a false failure.
+Measured: **0 of 138 gold judgments have a twin, 0 have a NULL hash.** Refuted,
+not assumed away.
+
+**STILL OPEN — the 16 that should have been impossible.** Gold at chunk rank 17,
+22, 29 (of 620,300) and judgment rank 15, 18, 25 — inside both cut points — and
+the pipeline returned neither. Duplicate collapse is excluded, so it is HNSW
+approximation loss or RRF displacement. `held:whymissed` was built and launched
+and **did not complete**: one `hybridSearch` call exceeded 25 minutes under live
+load (vs ~20s/query in Q1.46 the same day), CPU delta 0, I/O-blocked — NEW2 then
+reported the machine rebooted 22:27Z after a two-hour network fault. **The
+cheaper decisive measurement is designed and unrun**: exact says all 16 sit at
+chunkRank ≤ 164, so one ANN query per case (~19s, ~5 min total) settles
+ANN-vs-fusion without touching the full pipeline. **Next session's first task.**
+`dense-ok-missed-cli.ts` needs a checkpoint before re-running — same gap Q1.46
+already fixed on `arms-cli.ts`.
+
+**GRAPH EXPANSION AND RERANKING ARE NOT ON THE PRODUCTION PATH.** Verified by
+grep, not assumed: `search/graph-expand.ts` has exactly one importer,
+`services/harness/src/retrieval.ts`; `route.ts:202` calls `hybridSearch` and
+nothing else. **The 1.3M-edge citation graph contributes zero candidates to
+production retrieval.** Anyone reasoning about production recall as though it
+helped is reasoning about the harness.
+
+**A pgvector TRAP THAT COST ME A 7x-WRONG NUMBER, reusable by every lane.**
+`dense()` sets `hnsw.ef_search=200` and `iterative_scan=relaxed_order` inside its
+transaction. A probe omitting them runs the DEFAULT `ef_search=40`, and pgvector
+then **silently returns fewer rows than the LIMIT** — no error. Same vector, same
+query: 14 distinct judgments without the SET LOCALs, **93 with them**. Caught only
+because a follow-up `LIMIT 1 OFFSET 400` came back empty. The tool's own
+`annYield` query had the identical bug and was fixed before the run.
+
+**NEGATIVE RESULT, so nobody re-runs it:** the UNCAPPED exact rank query
+(`count(*) WHERE embedding <=> $v < $d`) ran **>9 minutes without returning** for
+ONE vector, vs ~19s for the ANN top-200 on the same connection. Uncapped exact
+KNN over `judgment_chunks` is not viable on this database. The capped form
+(`LIMIT 20001`) decides both cut points exactly and lets Postgres abort early.
+
+### Q1.48 · DEEPSEEK SUPPORT LAYER — GENERATED, never GOLD · 14 Aug 2026
+
+Founder direction, mid-session: DeepSeek is **not** the gold-label authority; use
+it to enlarge the evaluation/search test space, not to manufacture truth; mark
+every generated query GENERATED; cache and record all calls; continue the
+retrieval program independently of model availability.
+
+Built: `services/harness/src/generated-queries.ts` + `generate-queries-cli.ts`
+(`generate:queries`), 7 guard tests green.
+
+**The one rule, enforced structurally rather than by convention: a model may
+rewrite a QUESTION, never decide the ANSWER.** A generated variant **inherits**
+its `goldJudgmentIds` from the already-validated source query (which got them
+from a verified citation edge). The model never sees a judgment id, is never
+asked which authority is correct, and its output reaches only the `text` field.
+That is what makes these independently checkable rather than circular.
+
+- `provenance: 'GENERATED'` is a single-member literal; the gold fixtures have no
+  such field, so the shapes are structurally incompatible in both directions.
+- A test sweeps `src/fixtures/` asserting no `GENERATED` marker ever appears
+  there — the half TypeScript cannot check.
+- A test asserts no prompt asks a truth question. **It fired on two of my own
+  prompts** ("Do NOT change which case it is") — reworded rather than weakening
+  the guard.
+- Strict JSON parser: a malformed reply yields ZERO items. A lenient parser that
+  "recovers" a list from prose is one that invents content.
+- Cache is content-addressed on `sha256(promptVersion + model + kind + input)` —
+  the prompt version is IN the key, so a changed prompt cannot be served an old
+  answer.
+- `corpusValidated` starts `null` (UNKNOWN) and only the two kinds making a
+  corpus claim (citation phrasing, case-name variation) can ever move off it;
+  `--validate` rejects any variant that resolves to a DIFFERENT judgment.
+
+**Proven end-to-end, not just typechecked:** 6 real calls, 24 items generated,
+**verified in `llm_calls`** (`feature=search`, `data_class=public`,
+`pseudonymised=false`). Re-run made 0 model calls. Needs
+`INFERX_MODEL=deepseek-v4-flash-0731` — the bare alias 401s, per LANE_PROTOCOL §5.
+
+**One additive change outside this lane, flagged not hidden:** `services/api/package.json`
+now exports `./llm/call` and `./llm/route`, so the harness stays on the ledgered
+`callModel` path instead of growing a second HTTP client — which is exactly how a
+call escapes the `llm_calls` ledger. **I broke module resolution doing it**: a
+`"//llm"` comment key INSIDE `exports` is an invalid subpath and invalidated the
+whole map, breaking every `@lawmind/api/search/*` import in the harness. Caught by
+typecheck, fixed by moving the comment to a top-level key, and the reason is now
+written in the file so the next person does not repeat it.
+
+### Q1.50 · THE 16 SETTLED — ANN-ONLY PROBE, ZERO HNSW LOSS, ZERO CANDIDATE-GENERATION LOSS, RRF FUSION BY ELIMINATION · 15 Aug 2026
+
+**Picked up exactly where Q1.47 (`HELD_NOT_RETRIEVED_DECOMPOSITION.md`) left off**:
+16 of 140 `HELD_NOT_RETRIEVED` gold judgments sat inside BOTH of `dense()`'s cut
+points (`chunkRank <= 200`, `judgmentRank <= 50`, exact sequential-scan ranks) and
+the pipeline still lost them. `held:whymissed` was built to explain them by
+re-running the full `hybridSearch` twice per case and **did not complete** — one
+call exceeded 25 minutes under live load, and the tool had no checkpoint, so the
+partial run was a total loss.
+
+**Before running anything: checked the database was not under severe load** —
+`pg_stat_activity`: 2 active queries, 0 lock-waiters, 2.7s round trip. Fine for a
+16-query pass.
+
+**Built `held:annprobe`** (`services/harness/src/ann-probe-cli.ts`, new script,
+checkpointed to `ann-probe-checkpoint.jsonl`) — the cheaper measurement
+`HELD_NOT_RETRIEVED_DECOMPOSITION.md` §4b already named as next session's first
+task: **one raw ANN query per case**, production's exact `dense()` SQL
+(`SET LOCAL hnsw.ef_search=200`, `iterative_scan=relaxed_order`, same
+`ORDER BY … LIMIT 200`), no sparse arm, no filter join, no RRF, no
+`hybridSearch` call at all. 16 queries, sequential (not concurrent — one caller
+against the shared proxy, `LANE_PROTOCOL.md` §5), ~4.5 minutes total, 2.7–13.3s
+each.
+
+**Result — 16/16, first run, no retries needed:**
+
+| verdict | n | meaning |
+| --- | --- | --- |
+| `ANN_MISS_HNSW_LOSS` | **0** | the index itself does not return gold |
+| `ANN_HIT_JUDGMENT_COLLAPSED_OUT` | **0** | ANN finds gold but judgment-collapse on ANN order alone already exceeds 50 |
+| `ANN_HIT_JUDGMENT_IN_POOL` | **16** | ANN finds gold inside both cut points, on the index's own approximate order |
+
+For all 16, the ANN-approximate chunk rank landed within 1–14 positions of the
+exact sequential-scan rank (e.g. `criminal-3f99b5c8`: exact chunk=86, ANN
+chunk=83; `hindi-a259ece9`: exact chunk=22, ANN chunk=36 — the largest drift
+measured, still comfortably inside 200), and every ANN-derived judgment rank
+landed at or under 50 (range 14–50, median ~30).
+
+**Two of the four candidates the founder's directive named are now closed by
+direct measurement, not inference:**
+
+- **HNSW recall — RULED OUT.** The index does not lie at this setting for any
+  of the 16. `ef_search=200` finding gold reliably (0/16 misses) is consistent
+  with the ~96.9% recall@50 already measured in `retrieve.ts`'s own comment —
+  16 genuinely-close cases losing zero to approximation is not a surprising
+  draw from that rate.
+- **Candidate generation (ANN-depth truncation) — RULED OUT**, a second
+  confirmation of Q1.47's `CANDIDATE_TRUNCATED_BY_ANN_DEPTH = 0/140`, now at
+  the chunk-order level the earlier exact-scan measurement could not see
+  directly.
+
+**The remaining two, decided by elimination plus one code read (`retrieve.ts`
+line 669–673), not a full pipeline re-run:** `§4a` of the decomposition doc
+already measured duplicate collapse dead (0/16 gold judgments have a
+byte-identical `content_hash` twin). `failure-classifier-cli.ts` checks the
+**final, fused, `--depth 50`** output (`services/harness/src/failure-
+classifier-cli.ts:124`) — the same 50 as `dense()`'s own cut point. With ANN
+alone placing gold inside the top 50 on its own order, and duplicate collapse
+excluded, the only place left for a judgment to fall out of the *final*
+top-50 is `hybridSearch`'s RRF combination step (`rrf()` unions the dense and
+sparse candidate ID sets, scores `1/(RRF_K + rank)` per list, sums where a
+judgment appears in both, sorts, and slices to `limit`) or the exact-pin
+step immediately after it. **Read, not re-measured this session**: a gold
+judgment appearing in the dense list ALONE, at a mid-pack rank (14–50, median
+30), contributes exactly one term, `1/(60+rank)` ≈ 0.011–0.015. Any candidate
+present in BOTH lists, or present near the top of the sparse-only list,
+scores as high or higher from a single list and can occupy one of the 50
+final slots gold needed. **INFER, not KNOW**: this reasoning was not closed
+by an independent measurement this session (that would mean running the
+sparse arm too, which is cheap but was not done — flagged as the one gap
+below, not silently treated as proven).
+
+**Reported to LCC and NEW3 on the bus** (this is the answer both the standing
+directive and `HELD_NOT_RETRIEVED_DECOMPOSITION.md` §4b asked for). **Not this
+lane's to ship** — `RING_PROGRAM.md` §NEW1.3 forbids tuning RRF or fusion
+weights from a measurement; this is reported as a measurement with a named
+mechanism, not a change request.
+
+**What is still open, named rather than silently closed:**
+
+- The RRF-displacement mechanism above is INFERRED from the code, not
+  independently confirmed by running the cheap sparse-only arm
+  (`hybridSearch(sql, query, null, {}, limit, 'sparse')`, no ANN, ts_rank
+  only) for these 16 and simulating the actual fused score comparison. That
+  is the next cheap step if anyone wants KNOW instead of INFER on this
+  specific point — still well short of the full-pipeline `held:whymissed`
+  call that stalled.
+- `docs/ai/HELD_NOT_RETRIEVED_DECOMPOSITION.md` §4b updated with this result;
+  §4c added.
+
+### Q1.51 · NEW3 · SCR no-match bucket closed, the 2018+ concordance question closed, tribunal discovery advanced, and "Allahabad is the sharpest hole" corrected · 15 Aug 2026
+
+Continuation session. Five results, most-consequential first.
+
+**1 · The SCR no-match bucket (§1e/1f's "6,056, could conceivably be
+acquisition") is closed.** Re-measured live: 6,886 distinct / 10,359 edges
+against 38,342 held SC judgments. **62% of the no-match edges are dated
+2018+** — exactly the Equivalent Citation Table's blind spot (it stops
+12.03.2018). The pre-2018 remainder sits inside the ECT's own coverage
+window, so it isn't a separate gap either — both routes lead to "wait for
+the ECT licence," already open in `FOUNDER_QUEUE.md`, not a new item. SC
+holdings are 99.98% complete, so a 2018+ no-match SCR citation almost
+certainly means the judgment is already held under its neutral citation and
+the print S.C.R. series hasn't assigned it a volume/page yet — a metadata
+lag, not a missing document. **Net: nothing in this bucket is a genuine
+acquisition target.** Full detail: `MISSING_AUTHORITY_QUEUE.md` §1g. Sent to
+LCC and NEW1 (bus 0499/0500).
+
+**2 · A real, LCC-actionable normalisation defect, found while parsing #1.**
+`normaliseCitation()` (`services/ingest/src/citations.ts`) never inserts a
+space around a bare "SCR" token, so `(2017) 11SCR1036` and
+`(2017) 11 SCR 1036` normalise to different keys for the same authority.
+Measured: **1,648 distinct unresolved citations** carry this exact defect
+(excludes the legitimate volume-less form, which already resolves fine via
+volume-agnostic matching). Not this lane's file to touch — flagged on the
+bus with the count.
+
+**3 · The 2018–2026 concordance-gap research question is closed, no new
+source exists.** Both candidate routes named in the prior handoff were
+already checked in earlier sessions: e-SCR's search form has no SCC/AIR
+field (closed for the concordance problem, any year); the internal
+656-judgment paired-citation source is real but already LCC's queued build
+item, not a NEW3 discovery gap. No official post-2018 concordance
+publication found, this session or any prior one. `MISSING_AUTHORITY_QUEUE.md`
+§1h.
+
+**4 · Tribunal discovery advanced on the four still-open sites.** CIC is
+**CAPTCHA-gated, closed** — the earlier "no CAPTCHA token" read was the
+`cic.gov.in` gateway page; the actual search portal it links to
+(`dsscic.nic.in`) has a real CAPTCHA, fetched and confirmed directly. NCDRC's
+own site carries **no judgment repository at all** — case-status tools only,
+routing to `confonet.nic.in` (SMS/IVRS) and `e-jagriti.gov.in` (filing), a
+different portal not explored further. CCI (`cci.gov.in/antitrust/orders`) is
+a **real, no-CAPTCHA, filterable order browser** — the most promising find of
+the four — but its results table is JS/AJAX-rendered and a plain fetch
+returns it empty; needs `agent-browser` to go further. **Chrome was not
+installed in this environment; `agent-browser install` failed 3/3 download
+attempts with a timeout decoding the response body** — the same
+DNS/network flakiness this repo already documents for long-running workers,
+now hit by a one-off download too. Stopped per the three-strikes rule rather
+than retrying a fourth time; CCI and CAT stay unresolved for this session,
+open for whoever next has a stabler connection or a pre-cached Chrome.
+`SOURCE_REGISTRY.md` §2b table updated.
+**Still NOT authorized for acquisition regardless of what CCI/CAT turn out to
+be** — neither host is §6a-named.
+
+**5 · Correction: "Allahabad is the sharpest remaining coverage hole" (my own
+0488, and this file's own Q1.49 handoff) was measuring the wrong thing.**
+Re-queried live: corpus 5,706,753 (+258k since NEW2's 14 Aug 23:00 reboot
+report), pre-2016 total 499,405. **Allahabad's pre-2016 holding is still
+exactly 6** — unchanged despite 258k new judgments landing corpus-wide.
+That's not a stalled worker; `COVERAGE_GAP_MATRIX.md` §1's own table already
+had the proof: Allahabad's `allYears` source minus `last10Years` source is
+**296 documents, total** — cross-checked directly against
+`HC_METADATA_SURVEY.json`, not the derived table. 6/296 is already ~2%, and
+the ceiling is ~290 more documents. **The real priority list, same
+arithmetic, for every court still at zero/near-zero pre-2016: Chhattisgarh
+(4 held / 267,627 available), Rajasthan (4 / 246,930), Karnataka (0 /
+225,177), Madras (1 / 186,786), Madhya Pradesh (0 / 104,831)** — all over
+900x Allahabad's real remaining population. `COVERAGE_GAP_MATRIX.md`
+§3z-correction2. Sent to NEW2 (bus 0504) — this is evidence for NEW2's own
+scheduling call, not a scheduling instruction from this lane.
+
+**NEXT, in order:** (1) retry `agent-browser install` when the network is
+stable, then finish CCI/CAT; (2) watch for a founder answer on the three
+still-open licence questions (ECT, gazette, tribunals — none answered as of
+this session); (3) re-run this bucket's characterisation again once LCC's
+citation-resolver `--apply` pass (bus 0493) and any ECT-licence decision
+land, since both numbers in #1 will move.
+
+### Q1.49 · THE FLEET WAS DEAD 12.75 HOURS, THE BOOT LAUNCHER FAILED ITS FIRST TEST, AND 2016–2022 IS THE BIGGEST HOLE IN THE CORPUS · NEW2, 15 Aug 2026
+
+**Three findings, in the order they mattered.**
+
+#### 1 · Dead fleet — and the launcher written to survive this did not fire
+
+Found at session start: **zero workers, zero rows written in the preceding two
+hours** — verified against production, not against the process table. Every
+worker log cuts off mid-batch between 04:23 and 04:26 with no error and no
+`RESULTS` block.
+
+The System event log explains the death, and it is not a crash: **the machine
+shut down at 04:26 and did not come back until 17:11** — 12.75 hours powered
+off. Nothing was wrong with the workers.
+
+**What IS a defect is that `scripts/lawmind-ingest-startup.cmd` did not fire.**
+It was installed in the Startup folder, byte-identical to the repo copy, and the
+17:11 boot was its first real test. Not one `hc-boot-*.log` was created.
+
+**Root cause, verified empirically before changing anything:** the file derived
+its repo as `set REPO=%~dp0..`, which resolves against *the running copy's own
+directory*. The copy that actually runs lives in the Startup folder, so it
+resolved to `…\Start Menu\Programs`, which holds no `scripts\supervise.mjs`.
+`cd /d` **succeeds** (it is a real directory), `node` then exits instantly with
+module-not-found, and because `supervise.mjs` never started, **nothing writes a
+log.** A launcher that fails this way is indistinguishable from one that was
+never triggered — which is why it cost the whole outage to notice.
+
+**The sibling launcher already had this right and said so.**
+`scripts/lawmind-citations-startup.cmd` carries a section headed *"WHY AN
+ABSOLUTE PATH AND NOT `%~dp0`"* making this exact point, and uses
+`set REPO=C:\Users\Xerxus\Documents\Lawmind`. It was written the same day.
+
+> **The lesson is not "use an absolute path". It is that a sibling script's
+> header had already paid for this and nobody read it.**
+
+Fixed, and **verified by execution rather than by reading**: a probe mirroring
+the launcher's own lines, run from the Startup folder as Explorer would, prints
+`RESOLVED-OK cwd=C:\Users\Xerxus\Documents\Lawmind`. The deployed copy
+hash-matches the repo copy.
+
+**Two more instances of the same family, NOT fixed here because they are LCC's
+files** (sent on the bus instead): `scripts/lawmind-enrichment-startup.cmd`
+invokes `"%~dp0enrich-worker.cmd"` and carries the identical defect, **and it is
+not installed in the Startup folder at all** — so paragraph/enrichment work has
+no boot persistence whatever. (`scripts/enrich-worker.cmd`'s own `%~dp0..` is
+fine: it is always invoked from the repo, never copied.)
+
+#### 2 · The paragraphs keyset repoint has a cold-start defect — shards left DOWN
+
+The smoke test this file asked for, run: **it printed its banner and produced no
+first page in 7 minutes.** The tuple and the index are fine. The defect is the
+interaction of an ascending cursor seeded at the epoch with `--resume`'s
+`NOT EXISTS` filter.
+
+| measured, bounded queries only | |
+| --- | --- |
+| oldest 10,000 judgments by `created_at` lacking paragraphs | **0** |
+| oldest 100,000 lacking paragraphs | **1** |
+| judgments · already have paragraphs | 5,713,537 · 4,409,248 |
+| scan cost | ~99s per 100,000 rows walked |
+
+**The undone 1.3M rows are all at the NEW end; the cursor starts at the OLD
+end.** A cold start walks ~4.4M done rows — **~72 minutes — before its first
+page, re-paid on every restart**, and `supervise.mjs` restarts up to 40 times.
+The old uuid-v4 watermark hid this because it scanned in effectively random
+order, where undone rows are uniformly distributed. Its own defect was real; the
+replacement swapped a correctness bug for a cold-start cost that only appears
+once the done-prefix is large. It was small when measured, and is 4.4M rows now.
+
+The fix is to **persist the cursor** — `LANE_PROTOCOL.md` §4 already requires it
+and every harvest worker has a checkpoint for precisely this. `paragraphs-cli`
+is paragraph evidence, LCC's lane per `RING_PROGRAM.md` §3, so the measurement
+went to them (bus 505) and the edit did not go in here. **The 4 shards are
+commented out of the boot launcher with the reason written in place**, not
+silently dropped.
+
+#### 3 · 2016–2022 is a 7.69M-document hole and it is named nowhere
+
+`COVERAGE_GAP_MATRIX.md` §5 item 3 asked for the real court×year matrix. Built:
+survey `perCourtPerYear` joined against a live `GROUP BY court, year`. **Totals
+reconcile to 20,529,203 exactly** — the check that no court was silently dropped.
+
+| band | source | held | coverage | gap |
+| --- | --- | --- | --- | --- |
+| 1950–2015 | 4,757,636 | 467,742 | 9.83% | 4,289,894 |
+| **2016–2022** | **9,069,540** | **1,379,310** | **15.21%** | **7,690,230** |
+| 2023 | 2,078,757 | 1,378,862 | 66.33% | 699,895 |
+| 2024 | 1,747,681 | 613,138 | 35.08% | 1,134,543 |
+| 2025 | 2,034,647 | 1,107,240 | 54.42% | 927,407 |
+| 2026 | 840,942 | 721,011 | 85.74% | 119,931 |
+| **TOTAL** | **20,529,203** | **5,667,303** | **27.61%** | **14,861,900** |
+
+**Nearly double the pre-2016 backlog the whole `--to-year` remediation was built
+for**, and ranked below it everywhere: `RING_PROGRAM.md`, `COVERAGE_GAP_MATRIX.md`
+and the mission's own P0/P1 list all put pre-2016 and the 2023–2024 donut holes
+first. **Ten courts hold ZERO in the band** — Allahabad 2,055,580 · Madras
+820,458 · P&H 729,606 · Patna 639,070 · Bombay 623,223 · Rajasthan 570,702 ·
+Orissa 441,673 · Karnataka 423,516 · Chhattisgarh 215,270 · Calcutta 146,805.
+
+**Cause, checked against the running workers rather than reasoned about:** the
+from-2016 fleet descends newest-first and is still inside 2025 (`hc-r9-27_1.log`
+showed `27_1/2025` at its last write). Unlike the pre-2016 hole this is **not**
+unreachable — it needs scheduling, not a code change. Six band workers launched
+(`--from-year 2016 --to-year 2022`, 5.44M documents targeted) and added to the
+boot launcher. Checkpoint keys are scope-suffixed (`9_13-to2022.json`), verified
+against `hc-load-cli.ts`'s own `CHECKPOINT_PATH` derivation first — a shared key
+would have two workers erasing each other's progress on every write.
+
+**And a correction to how 2023 has been read, including by this lane.** 2023's
+66% is an artifact of dedicated `--year 2023` workers (their checkpoints exist),
+not of the fleet descending into it. 2024 has no such worker. `COVERAGE_GAP_MATRIX.md`
+§4b read that shape as a "donut hole" needing explanation — **there is no donut;
+there is a dedicated worker on one side of it.**
+
+> **A per-court percentage cannot answer a per-year question.** Allahabad at
+> 17.6% of `allYears` reads as a uniformly partial ingest. It is ~100% of 2026,
+> 36% of 2025, **0% of 2024**, 59% of 2023 and **0% of the seven years before**.
+> Each needs a different action; the single percentage recommends none.
+
+#### FLEET AT HANDOFF
+
+**34 workers, no duplicates** — every live PID grouped by scope, `count == 1`
+asserted. 18 from-2016 · 2 year-scoped 2023 · 6 historical 1950–2015 · **6 new
+2016–2022 band** · 1 general sweep · 1 classify backfill. **4 paragraph shards
+deliberately DOWN** (§2). RAM 7.4 GB free of 32.5 GB, comparable to the previous
+fleet's 6.9 GB at 32 workers.
+
+Verified by ROW GROWTH, not process count: `0 → 8,606 → 15,411` rows per 5
+minutes; 40,562 in the last 60.
+
+**A standing correction to the mission brief:** it states the machine has
+**~9.3 GB free**. Measured by two independent methods (`Win32_LogicalDisk` and
+`Get-PSDrive`): **C: has 664.51 GB free**, D: 29.03 GB. The repo and all ingest
+output are on C:. The local-disk pressure that framed the low-cost-storage
+section does not currently exist — object-storage work should be justified on
+Railway/Postgres cost, not on this machine running out of room.
+
+#### STILL OPEN
+
+1. **Re-enable the paragraph shards** once LCC checkpoints the cursor (bus 505).
+2. **2024 has no dedicated worker** on any large court (Allahabad 0, Bombay 0,
+   P&H 0, Telangana 0 held). Next scheduling action once the band workers show
+   sustained throughput; RAM is the constraint, not availability.
+3. Items 2–5 of the Q1.46 handoff list are untouched by this session.
+
+---
+
+### Q1.52 · THE 278 REJECTIONS TRIAGED, AND ONLY 28.4% WERE THE MODEL · LCC, 15 Aug 2026
+
+`DONE:` every rejected claim from the first 100-document `case_structure` pass
+classified by cause with an owner against each, so the response to a 78.4%
+verification rate is a fix rather than a prompt edit.
+`VERIFY:` bucket counts sum to 278; the predicted verifier gain reproduced by
+`enrich-cli --reverify` at zero token cost.
+
+**Built:** `services/ingest/src/enrich-triage.ts` + `-cli.ts` +
+`enrich-triage.test.ts` (14 tests). No model calls, no writes. Full account:
+**`docs/ai/ENRICHMENT_REJECTION_TRIAGE.md`**.
+
+| owner | claims | share |
+| --- | ---: | ---: |
+| **ingest** — page furniture spliced into sentences, OCR spacing, one-character substitutions | **150** | **54.0%** |
+| model — fabrication 30, paraphrase 31, splicing 17, ellipsis 1 | 79 | 28.4% |
+| verifier — case 45, min-length 3, punctuation 1 | 49 | 17.6% |
+
+**A prompt edit could have touched 28.4% of this.** Outright fabrication is 30
+claims — **2.3% of all 1,289** — and every one was caught and dropped by the span
+check. The pipeline worked; the rejection rate was mostly measuring us.
+
+**Category 4 (elision/boundary) is ZERO**, and the excerpt was reproduced from
+`input_hash` for 101/101 rows so the test was real. The 20k+8k window is not
+manufacturing false spans. It still cannot be shown not to lose recall — a claim
+never made leaves no trace.
+
+**The verifier defect, fixed.**
+`INTENT: verifyClaims located the evidence span with a CASE-SENSITIVE substring
+test while case-folding the value check one line below it; 45 rejected claims
+expect the span to be found; enrich.ts's own comment says case is not identity
+and that folding "still cannot find a name the document does not contain".`
+Applied, with three adversarial tests (a fabrication refused in three casings, a
+foreign span refused in two). `--reverify` over stored output: **1,011 → 1,056
+claims, 78.4% → 81.9%**, exactly the 45 predicted.
+
+**The ingest defect, NOT fixed here and deliberately so.** `full_text` carries
+page rules, running headers, NC stamps and e-signature panels **inside
+sentences**. Court-specific: **Karnataka 92.1%** of substantive judgments carry
+an inline page rule and 47.4% an inline signature panel; **MP 68.6%**; Kerala
+2.4%; most others clean. Everything reading `full_text` reads the furniture —
+paragraph segmentation, chunking, citation spans, any passage shown as evidence.
+Sent to NEW2 as the owner (bus 0512) with the measured vocabulary
+(`FURNITURE_PATTERNS`), and to NEW1 (bus 0513). Stripping it inside the
+enrichment worker would hide a corpus defect behind one consumer's workaround.
+
+**Not concluded:** whether the 6.1% model-owned claim rate is acceptable for
+promotion. Nothing is promoted; the `0045` boundary is untouched.
+
+### Q1.53 · THE CITATION RESOLVER HAD NOT BEEN RE-RUN — 131,125 EDGES, 14.0% → 30.0% · LCC, 15 Aug 2026
+
+`DONE:` the bulk resolution sweep re-run over a corpus that has grown 7.8x since
+it last ran. `VERIFY:` `count(*) WHERE cited_judgment_id IS NOT NULL` moves from
+114,425 toward 245,550.
+
+**Found by answering NEW3's bus 0486** — they measured 14,374 unresolved SCR
+citations exactly matching judgments we hold, all from the 6 Aug batch, and asked
+which of two causes it was. **Neither, quite.** `resolve-cli.ts` has no date
+filter; its selection is the whole table and `CORPUS_KEYS` unions
+`reporter_citations`, `neutral_citation` and aliases across every judgment. It
+had simply **not been run**. What runs continuously is `citations-cli`, which
+resolves inline at extraction time against an index built when that pass
+started — so new edges resolve on the way in and old edges are only revisited by
+the bulk sweep, which nothing was re-running.
+
+| | |
+| --- | ---: |
+| before | 114,425 / 819,290 (14.0%) |
+| RESOLVABLE | **131,125** |
+| REFUSED: self-citation | 183,665 |
+| REFUSED: two or more targets | 27,009 |
+| no key in our corpus | 363,066 |
+| after apply | **245,550 / 819,290 (30.0%)** |
+
+NEW3's 14,374 are a subset. No new logic, no new data, no licence, no founder
+decision. The three guards are unchanged: exactly-one-candidate, the year guard,
+never-overwrite, plus the self-citation filter the database itself found.
+
+**A CORRECTION TO HOW THIS LANE HAS BEEN REPORTING CITATION GAINS, owed after
+verifying NEW1's bus 0478 against my own code.** LCC has been quoting resolution
+improvements as though they were retrieval wins. **They are not, yet.**
+`search/graph-expand.ts` is imported by exactly one file —
+`services/harness/src/retrieval.ts` — and `services/api/src/search/route.ts`
+imports `hybridSearch` at line 17 and calls it and nothing else at line 202.
+Zero occurrences in `apps/`. **The 1.28M-edge citation graph contributes no
+candidates to production retrieval.** Checked independently rather than taken on
+NEW1's report. The edges are still worth resolving — treatment, authority checks
+and the citator all read them — but no recall benefit should be claimed for them
+until something in the funnel consults the graph.
+
+**THE STANDING DEFECT THIS EXPOSES, open:** the bulk sweep is a manual pass with
+no schedule while the corpus grows ~170,000 rows/hour, so resolution decays
+continuously between runs and **nothing measures the decay**. Same shape as
+NEW3's 0460 point about `external_citations` compounding rather than being
+static. Needs either a scheduled sweep or an incremental resolver that revisits
+`cited_judgment_id IS NULL` rows as the corpus grows.
+
+### Q1.54 · STORAGE FORENSICS — 22 GB of the 96 GB is a duplicate we already hold · LCC, 15 Aug 2026
+
+`DONE:` the first storage architecture audit, measured against the live database.
+`VERIFY:` `docs/STORAGE_AUDIT.md`, every figure from `pg_total_relation_size` /
+`pg_stat_user_indexes` and a `TABLESAMPLE` verification of the duplication claim.
+
+**96 GB total.** `judgments` 59 GB (35 GB TOAST + 18 GB indexes) ·
+`judgment_paragraphs` 27 GB · `judgment_chunks` 9.6 GB · everything else < 1%.
+
+**`judgment_paragraphs.paragraph_text` is derivable and therefore redundant.**
+The table already carries `char_offset` and `char_length` beside it. Verified on
+a 5,620-paragraph `TABLESAMPLE BERNOULLI` draw: **99.98% equal
+`substr(full_text, char_offset+1, char_length)` exactly, 100% are substrings of
+their judgment.** Dropping it reclaims **~22 GB, 23% of the database, with no
+information loss.** `judgment_chunks.chunk_text` has the same shape and a further
+~3.3 GB, unmeasured.
+
+**Not done, and not LCC's alone to do:** every paragraph read becomes a detoast
+of the parent judgment — the exact cost that made a `length(full_text)` predicate
+return nothing in ten minutes. NEW1 and NEW2 pay that half. Handing over the
+measurement, not the decision.
+
+**`judgment_paragraphs_number_idx` — 1,216 MB, THREE lifetime scans**, against
+siblings at 119M and 48M. In-lane and reversible, but an index drop locks a table
+taking ~170,000 inserts an hour, so it waits for a quiet window and
+`DROP INDEX CONCURRENTLY`.
+
+**Nothing here should move to object storage.** `full_text` carries the 14 GB
+full-text index and is what `verifyClaims` reads; the HNSW index is the retrieval
+path. The saving available is redundancy elimination, which costs CPU per read;
+tiering costs a network round trip per read forever. R2's right first use is raw
+source artefacts, which are not in Postgres at all today.
+
+### Q1.55 · PARAGRAPH CURSOR PERSISTED + THE ENRICHMENT LAUNCHER FIXED AND ACTUALLY INSTALLED · LCC, 15 Aug 2026
+
+`DONE:` NEW2's bus 0505 and 0510 both closed. `VERIFY:` two live runs of
+`paragraphs-cli` (cold writes a checkpoint, warm resumes past it) and the
+launcher executed from the real Startup folder with a worker log to show for it.
+
+**0505 — the cold start.** The `(created_at, id)` repoint was correct and
+incomplete: the cursor did not survive the process, so every restart re-walked
+~4.4M finished rows (~72 min/shard, and `supervise.mjs` restarts up to 40 times).
+`paragraphs-cli.ts` now checkpoints per shard to
+`services/ingest/.checkpoints/paragraphs-<i>_<n>.json`, **written only under
+`--apply`** (NEW2's own 0484 hc-load-cli defect, avoided because they wrote it up)
+and **only after the page is inserted** (safe: `ON CONFLICT DO NOTHING`). A
+malformed checkpoint is discarded rather than half-believed.
+**The trade, named:** a persisted cursor never goes back, so a row passed over
+below it is not revisited; `--restart-cursor` is the deliberate full sweep.
+Smoke-tested on `--shard 0/97` so it could not collide with NEW2's four shards.
+**Their shards are clear to start.**
+
+**0510 — `%~dp0` in the launcher.** `scripts/lawmind-enrichment-startup.cmd` used
+`%~dp0`, which from a Startup-folder copy resolves to the Startup folder. NEW2
+lost 12.75 hours to the identical defect. Fixed to an absolute `REPO`;
+`enrich-worker.cmd`'s own `%~dp0..` is correct and untouched.
+
+**And a second defect only the first execution could show.** The file was
+LF-only with a non-ASCII em-dash, so `cmd` mangled `REM` lines and printed
+`'M' is not recognized` — twice. Rewritten CRLF + ASCII. **It had never been run
+once**, which is also why NEW2 found it was never installed. A launcher nobody
+has executed is not a launcher, it is a plan.
+
+**Installed and verified:** Startup now holds `Lawmind-citations.cmd`,
+`Lawmind-ingest.cmd` and `Lawmind-paragraphs.cmd`; `%TEMP%\lawmind-paragraphs.log`
+carries a live banner and a `paragraphs-cli` node process is running.
+
+### Q1.56 · A LAUNCH-METHOD LESSON THIS SESSION RE-LEARNED THE HARD WAY · LCC, 15 Aug 2026
+
+`Start-Process`-launched workers **survive across tool calls but not across the
+agent process exiting.** Four detached jobs (the four-task legal-object pass, the
+`metadata` reverify, and the `resolve --apply`) were alive for an hour and were
+all gone at the next session boundary. `scripts/enrich-worker.cmd`'s own header
+already said this — *"every one died the moment the agent tool call returned …
+this is the harness attaching children to a job object with kill-on-close"* — and
+it was not read before launching.
+
+**Nothing was lost**, because every one of those passes writes per document:
+`holding` 99 rows and `arguments` 100 rows completed and are in the database,
+`authorities` stopped at 66/100 with all 66 persisted, `topics` never started.
+**But the throughput was.** The only launch path proven to outlive a session on
+this machine is the Startup-folder / `enrich-worker.cmd` route, and that is what
+the remaining legal-object passes should use.
+
+### Q1.57 · STORAGE: THE RECLAIM IS 1.4 GB, NOT 23 GB — three of four candidates died on inspection · LCC, 15 Aug 2026
+
+`DONE:` every storage candidate in `docs/STORAGE_AUDIT.md` checked against its
+actual consumers before anything was dropped, per the founder's directive.
+`VERIFY:` the audit's §2b/§3/§5, each conclusion resting on a named artefact —
+a repo instrument, a consumer grep, or an index definition.
+
+| candidate | first verdict | after checking |
+| --- | --- | --- |
+| `judgment_chunks.chunk_text` ~3.3 GB | derivable | **NO** — offsets describe the non-overlapping tail; `verify-exact-span-cli` 400/400 |
+| `judgment_paragraphs.paragraph_text` ~22 GB | "a deletion target" | **NO** — `ts_rank`ed at query time on the retrieval hot path |
+| `judgment_paragraphs_number_idx` 1.2 GB | drop, 3 scans | **NO** — a pinpoint index built ahead of its consumer |
+| `judgment_paragraphs_judgment_idx` 1.4 GB | not noticed | **YES** — strictly redundant against `judgment_paragraphs_unique` |
+
+**`paragraph_text` is required, and by more than display.**
+`services/api/src/search/retrieve.ts:818` `fillParagraphFallback` runs
+unconditionally in every retrieval mode and orders by
+`ts_rank(to_tsvector('english', paragraph_text), …)` — the column is **ranked
+on**, computed per row, inside Gate S1's 3-second budget. Deriving it means a
+TOAST decompression of a whole judgment per candidate row. The 22 GB becomes
+available only behind a retrieval redesign (a materialised `tsvector`, or moving
+the ranking into the chunk table), which is NEW1's call, not a storage task.
+`apps/` has zero references, so no client contract is involved. Sent as bus 0521.
+
+**The `number_idx` recommendation is WITHDRAWN**, on the instruction to prove it
+unnecessary rather than infer it from a scan count. Its definition —
+`btree(judgment_id, paragraph_number) WHERE paragraph_number IS NOT NULL` — is a
+pinpoint lookup, "paragraph 14 of judgment X". Three scans because no route does
+that lookup **yet**; pinpoint citation is Phase 1 exact-evidence work still
+ahead.
+
+> **A low scan count separates used from unused. It cannot separate useless from
+> built-ahead-of-its-consumer.** Only the definition and the roadmap can.
+
+**What replaced it is provable rather than inferred.**
+`judgment_paragraphs_judgment_idx` is `btree(judgment_id, paragraph_index)` and
+`judgment_paragraphs_unique` is `UNIQUE btree(judgment_id, paragraph_index)` —
+identical column list, so the plain one is strictly redundant. 1,440 MB on 26.6M
+rows. Its 119M scans move to the unique index at identical cost; `ON CONFLICT
+(judgment_id, paragraph_index)` binds to the unique one. **Not dropped yet** —
+wants a quiet window, `DROP INDEX CONCURRENTLY`, and a planner re-check against
+`fillParagraphFallback`'s `judgment_id = ANY(...)` shape.
+
+### Q1.58 · THE RESOLVER BLOCKER, PREPARED FOR FOUNDER EXECUTION · LCC, 15 Aug 2026
+
+**Production resolution is 13.63%** (114,748 of 841,768 real edges, measured
+19:10 UTC). **The 30.0% figure is a DRY-RUN PROJECTION and is not quoted as
+achieved anywhere.** Q1.53's numbers are corrected accordingly.
+
+Orphaned backend **pid 62315** — 16h+ on the resolver's `UPDATE`, started 33
+minutes after the 14 Aug reboot by a session that no longer exists — still holds
+the row locks, and `pg_blocking_pids` still names it as the only blocker of the
+ready run (pid 65284, waiting 58+ minutes).
+
+**Not worked around, and the resolver's logic was not modified to avoid it** —
+both were explicitly forbidden and both would have been the wrong fix anyway.
+`docs/ops/UNBLOCK_CITATION_RESOLVER.sql` carries the exact founder-executed
+sequence: confirm the pid is still the same backend (pids are reused), confirm it
+is still blocking, `pg_cancel_backend` first and `pg_terminate_backend` only if
+that fails, then LCC re-runs dry → apply, and **step 4 is the only count that
+converts the projection into an achievement.**
+
+### Q1.59 · NEW1 · `held:rrfsim` BUILT, HIT THE SAME PID 62315 BLOCKER INDEPENDENTLY, HELD PENDING THE FOUNDER · 15 Aug 2026
+
+Built `held:rrfsim` (`services/harness/src/rrf-sim-cli.ts`, `held:rrfsim`
+script) per the founder's explicit next-step: promote the 16
+`DENSE_OK_BUT_MISSED` cases' RRF-displacement attribution from INFER to KNOW
+via the cheapest decisive measurement — one isolated ANN call (reused from
+`held:annprobe`) + one isolated sparse-only `hybridSearch(..., 'sparse')`
+call per case, then `retrieve.ts`'s own `rrf()` formula reimplemented exactly
+(constants asserted against source, same pattern as `held-not-retrieved-
+cli.ts`) to decide gold's real fused rank. No full-pipeline `hybridSearch`
+call, no repeat of the 25-minute stall.
+
+**Checked `pg_stat_activity` first** (2→18 active between two checks minutes
+apart) and ran anyway at low footprint (sequential, pool size 2) since 16
+cheap queries isn't the "large experiment" the load warning targets. **First
+query still hung 10+ minutes, 0/16 checkpointed.** Stopped the task (not a
+blind retry) and diagnosed rather than guessed: `pg_stat_activity` showed
+**pid 62315 active 59,078s (16.4h)** and a second copy **pid 65284 at 4,383s,
+`wait=Lock`, blocked BY 62315** (`pg_blocking_pids` confirmed). My own sparse
+query (pid 65638) sat 650s+ on plain IO wait — not locked, just starved by a
+saturated shared proxy.
+
+**This is Q1.58's pid, not a new incident** — confirmed against LCC's entry
+above after broadcasting independently (bus 0523, before I'd read Q1.58).
+Traced the source myself: `services/ingest/src/resolve-cli.ts` lines 96-102,
+`CORPUS_KEYS` — an unindexed `unnest`+`regexp_replace` scan over the whole
+`judgments` table, the identical shape `LANE_PROTOCOL.md` already documents
+as found-and-fixed in the sibling file `concordance-cli.ts` on 13 Aug. The
+comment here ("38,341 judgments never cross the wire") was true at 12 Aug
+scale and is not at today's. **Not this lane's to fix** (ingest/citations
+code, not retrieval) and the founder-execution requirement is already
+correctly scoped in Q1.58/`FOUNDER_QUEUE.md` — `pg_cancel_backend` was
+refused by the tool sandbox's own classifier when LCC tried it, which is the
+guard working as intended, not a gap to route around.
+
+**Held, not abandoned.** `rrf-sim-checkpoint.jsonl` was never created — 0
+rows lost, confirming the checkpoint-before-run discipline cost nothing on a
+real stall, same property `held:decompose` and `held:annprobe` already
+proved. Resumes the moment pid 62315 clears; no code change needed to retry.
+
+### Q1.50 · A TIMEOUT WAS BEING LAUNDERED INTO A PERMANENT "COMPLETE" ON THE LARGEST GAP IN THE CORPUS · NEW2, 15 Aug 2026
+
+**The headline: `hc-load-cli` could not read Allahabad's large metadata parquet
+files at all, reported success, and `supervise.mjs` then refused to ever run
+that scope again.** Fixed, measured, verified in production.
+
+#### How it was found
+
+The machine rebooted again at 18:54. The fleet came back — the `%~dp0` fix from
+Q1.49 worked, `hc-boot-*.log` files appeared three minutes after boot — and then
+37 of 38 workers were alive but **`hc-boot-mid-9_13` was gone**. That is
+Allahabad 2016–2022: 2,055,580 source documents, 0 held, the single largest
+court-band gap we have.
+
+It had not crashed. It had `worker finished cleanly after 0 restart(s)`.
+
+    RESULTS
+    DOCUMENTS SEEN    4,632
+    MAPPED            3,787
+    WRITTEN           3,787
+         842  pdf_missing
+           6  metadata_batch_unreadable
+
+**4,632 documents seen against a 2,055,580 scope, and it called that done.**
+
+#### Root cause, measured from the parquet footers rather than reasoned about
+
+    metadata/parquet/year=2021/court=9_13/bench=cisdb_16012018/metadata.parquet
+      row groups   1
+      rows         351,704
+      compressed   140.7 MB
+      uncompressed 604.7 MB
+
+**A row group is the smallest unit a parquet reader can decode.** Asking for
+rows 200–400 of a 351,704-row group decodes the whole group and discards
+351,504 rows. At `--batch 200` that is **1,759 full re-reads of a 140.7 MB
+file — roughly 247 GB to ingest one file.** Every batch after the first blew the
+300s metadata timeout.
+
+Then three behaviours combined into a silent write-off:
+
+1. on timeout the loader did `break` — abandoning **the whole file**, not the window;
+2. having run out of files it printed its `RESULTS` sentinel;
+3. `supervise.mjs`'s `finished()` matches `/^RESULTS/m` and never restarts a clean finish.
+
+**A timeout became a permanent COMPLETE.** The checkpoint records it plainly: a
+140,702,960-byte file abandoned at row offset **200**.
+
+#### The second finding, which is the cheaper half of the fix
+
+Per-column sizes from the same footer:
+
+| column | compressed | uncompressed |
+| --- | --- | --- |
+| **`raw_html`** | **89.5 MB** | **441.5 MB** |
+| `description` | 32.3 MB | 104.4 MB |
+| everything the loader uses | **18.2 MB** | ~58 MB |
+
+**`raw_html` is 73% of the file and nothing reads it** — the loader fetches the
+PDF and extracts text itself. The needed set was extracted from
+`toJudgmentRecord`'s own field accesses, not guessed: `pdf_link`, `title`,
+`cnr`, `court`, `decision_date`, `disposal_nature`, `order_type`.
+
+#### What changed
+
+- **`hc-metadata.ts`** — new `rowGroupRanges(key)` (footer only, the method
+  `hc:count` already proved on 1,493 files); `sampleRows` takes an optional
+  `columns` projection.
+- **`hc-load-cli.ts`** — reads **one row group at a time, projected**, then
+  slices it in memory into `BATCH`-sized DB chunks. Row-offset checkpoint
+  semantics are unchanged, so **every existing checkpoint stays valid**.
+- **`break` became `continue`** on an unreadable window. One bad group no longer
+  writes off its siblings — which is what turned a timeout into a COMPLETE.
+- A footer read that fails falls back to one synthetic group, i.e. the OLD
+  behaviour. A footer we cannot read is a reason to try the slow path, not to
+  skip the file.
+
+**Cost per file: 140.7 MB x 1,759 -> 18.2 MB x 1.**
+
+#### Verified, not asserted
+
+- typecheck exit 0 · **39/39 harvest tests pass**
+- dry run against the exact previously-unreadable file: **completed in 70s**,
+  mapped real 2021 Allahabad records, **`metadata_batch_unreadable` = 0** where
+  it was 6
+- `hc-boot-mid-9_13` relaunched on the new code and running with **0 unreadable**
+- fleet writing **136,333 rows/hour across 16 courts** (`pnpm hc:fleet`)
+
+**CAVEAT, stated plainly: 37 of 38 workers are still executing the OLD code**,
+loaded into tsx before the edit. They inherit the fix on their next restart or
+at the next boot. A request to stop them in bulk was denied by the tool
+sandbox, and I did not work around it — the one worker that actually needed the
+fix today was launched on it, and the rest are not currently blocked because
+they have not yet descended into the large files.
+
+#### A THIRD defect, found while fixing the second
+
+**A stale `RESULTS` block makes a scope permanently unstartable.**
+`supervise.mjs` checks `finished()` BEFORE the first launch and the log persists
+across runs, so `hc-boot-mid-9_13` exited instantly on every relaunch, writing
+nothing.
+
+Rotating the log at fleet-launch time is the fix, and it is correct rather than
+a workaround: **the AWS bucket updates DAILY, so a court that exhausted its
+window yesterday has new documents today.** The supervisor's rule is about not
+looping within a run; a new boot is a new run. One generation is kept as
+`<scope>.prev.log`.
+
+#### AND THE BOOT LAUNCHER HAD A SECOND DEFECT BEHIND THE FIRST
+
+Q1.49 fixed `%~dp0`. That let the launcher actually start workers for the first
+time — which immediately exposed the next one. At the 18:54 boot all 38 started
+and **all 38 died 95 seconds later, simultaneously**:
+
+    exit 3221225786 == 0xC000013A == STATUS_CONTROL_C_EXIT
+    every log ending: ^CTerminate batch job (Y/N)?
+
+`start "" /b` runs children **in the launcher's own console**. All 38 shared the
+cmd.exe console the Startup folder created; when it went away Windows delivered
+CTRL_CLOSE_EVENT to every process attached to it.
+
+Fixed by moving the fleet into **`scripts/start-ingest-fleet.ps1`**, which uses
+`Start-Process` — each worker gets its own hidden console the launcher's console
+cannot reach. Same mechanism `LANE_PROTOCOL.md` §3b already documents.
+
+> **A launcher that has never successfully launched anything has not been
+> tested.** Both defects were latent for a day behind the fact that the first
+> one stopped execution before the second could show.
+
+#### AND A FOURTH, IN THE .cmd ITSELF — cmd parses REM lines
+
+The rewritten `.cmd` emitted ~30 `is not recognized as an internal or external
+command` errors and launched nothing. **cmd.exe processes redirection and escape
+characters even on `REM` lines**, so `REM ... <repo>\hc-boot-<scope>.log` and
+`REM ... ^CTerminate` desynchronised the parser and fragments of later lines ran
+as commands.
+
+`lawmind-citations-startup.cmd` has 46 non-ASCII characters and works fine, so
+encoding was NOT the cause — the differentiator is angle brackets and carets.
+The `.cmd` is now ~19 lines of plain ASCII and all prose lives in the `.ps1`.
+
+**And the `.ps1` had its own encoding trap worth recording for every lane:**
+written as UTF-8 **without BOM**, PowerShell 5.1 reads it as cp1252, so an
+em-dash `E2 80 94` became `â€”` — and that last byte is `”` (U+201D), **which
+PowerShell accepts as a string delimiter.** It closed a string early and the
+enclosing `{` block never closed. Diagnosed with
+`[Parser]::ParseFile`, fixed by writing a BOM.
+
+> **Any `.ps1` in this repo that contains a non-ASCII character MUST be saved
+> UTF-8 with BOM.** Without one, PowerShell 5.1 can turn a dash into a quote.
+
+#### STILL OPEN
+
+1. **LCC bus 0512 — page furniture spliced INTO sentences in `full_text`.**
+   Karnataka 92.1%, MP 68.6%. This is my lane and it is the next task: it
+   corrupts paragraph segmentation, chunking, citation spans and any passage
+   shown to an advocate. LCC has extracted the vocabulary
+   (`FURNITURE_PATTERNS` in `enrich-triage.ts`) and is not blocked on it.
+   NOT started this session and not verified independently yet.
+2. Roll the parquet fix onto the other 37 workers (next restart or boot).
+3. 2024 still has no dedicated worker on any large court.
+
+### Q1.59 · ALL FIVE DEEPSEEK TASKS MEASURED — FOUR CLEARED TO 1,000, ONE HELD · LCC, 15 Aug 2026
+
+`DONE:` every one of the five legal-object tasks run at 100 documents and
+triaged against the SAME (post-fix) verifier, so the safety gate rests on
+measurement rather than on the one task that happened to be measured first.
+`VERIFY:` `docs/ai/ENRICHMENT_REJECTION_TRIAGE.md` §7; per-task JSON in
+`.agents/triage-*.json`.
+
+| task | claims | rate | ingest | model | **fabrication** |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `topics` | 840 | 83.9% | 65.2% | 28.9% | **0.48%** |
+| `authorities` | 580 | 83.3% | 67.0% | 33.0% | **0.00%** |
+| `case_structure` | 1,289 | 81.9% | 64.4% | 33.9% | **2.33%** |
+| `holding` | 789 | 81.5% | 75.3% | 23.3% | **0.13%** |
+| `arguments` | 621 | 78.4% | 75.4% | 23.9% | **0.00%** |
+
+**THE HEADLINE RATE WOULD HAVE MISLED US.** Verification is flat at 78–84% across
+all five; **fabrication varies by a factor of eighteen**, and 30 of the 35
+fabrications in the whole programme are in `case_structure` alone. Ranking tasks
+by verification rate puts `case_structure` mid-pack and hides it completely.
+
+**The cause is the task shape, not the model.** `case_structure` asks for a
+NARRATIVE — what happened, in what order. The other four ask the model to locate
+something the court already stated: its holding, the relief granted, the
+authority relied on, a contention attributed to a side. Its worst kind, `fact`,
+is 8.9% model-owned and is the most narrative field in the programme.
+
+**GATE — cleared to 1,000:** `holding`, `arguments`, `authorities`, `topics`.
+**HELD at 100:** `case_structure`, pending a narrower `fact` prompt aimed at the
+court's own recital, then re-measure at 100. Holding it is a TOKEN decision, not
+a safety one.
+
+**What the gate does NOT claim:** all 35 fabrications were caught and dropped by
+the span check. None entered any table as fact; no route reads
+`document_enrichments`; `0045`'s boundary is untouched. This gate governs token
+efficiency and dataset quality, not product safety — the span check governs that,
+and it held on every one.
+
+**Named limit:** 100 documents/task from the classified substantive population,
+Karnataka- and Kerala-heavy. The pre-2016 tranche NEW2 started on 14 Aug — older
+scans, worse OCR, no neutral citations — is in **none** of these numbers, and the
+ingest-owned share is exactly what it should be expected to move.
+
+### Q1.60 · THE MISSING SPACE IN `normaliseCitation` — fixed, and SCC is 3.5x the half NEW3 measured · LCC, 15 Aug 2026
+
+`INTENT: normaliseCitation COLLAPSES whitespace but never INSERTS it, so
+"(2017) 11SCR1036" and "(2017) 11 SCR 1036" key differently; NEW3's measurement
+(bus 0499) expects them to be one authority; citations.ts's own header says the
+normaliser exists so the same authority folds to one normalised_citation, and
+citations.test.ts asserts it for the year-first form. X, Y and Z agree — the code
+fails at the thing the spec says it is for.`
+
+`VERIFY:` `citations.test.ts` — three new cases, 35/35 in the file, 472/474 across
+`services/ingest` (2 pre-existing skips), `tsc` clean.
+
+**Verified before fixing, not taken on report.** NEW3 named the SCR case.
+Measured over unresolved `judgment_citations`, the vocabulary is a **closed set of
+three**, and NEW3 had the smaller half:
+
+| token | digit-then-token | token-then-digit |
+| --- | ---: | ---: |
+| **SCC** | **1,749** | **1,588** |
+| SCR | 450 | 481 |
+| SCALE | 19 | 26 |
+| AIR · JT · CriLJ · SCC OnLine | 0 | 0 |
+
+**Why it survived this long:** `resolve-cli`'s bulk sweep strips every
+non-alphanumeric before comparing, so it was immune. The **inline** resolver in
+`citations-cli.ts` (`index.get(c.normalised)`) was not. The defect only ever
+showed as edges one path resolved and the other did not — which is exactly the
+shape NEW3 reported.
+
+**Deliberately narrow.** A generic "insert a space before any letter run" rule
+would rewrite `2023:DHC:2720` and every other neutral citation; tests assert both
+those and `SCC OnLine` are untouched, and that the inserted space never merges two
+different authorities.
+
+> ⚠ **REQUIRED FOLLOW-UP, AND NOTHING SHOULD RE-EXTRACT UNTIL IT EXISTS.**
+> `judgment_citations_unique_edge` is keyed on `normalised_citation`. Rows written
+> before this change hold the old unspaced key. A re-extraction computes the new
+> key, misses it in the `known` set `citations-cli.ts` builds from stored rows,
+> and writes a SECOND edge for the same authority — the double-counting the
+> year-first rewrite exists to prevent, arriving by a new road. The backfill must
+> also handle **two old keys collapsing onto one new key**, which is a unique
+> violation rather than a no-op. Not written this session; the code fix is inert
+> until extraction next runs over already-extracted judgments.
+
+---
+
+## NEW2 · 15 Aug 2026 — the fleet can now be paused and resumed on purpose, and page furniture is 25 courts rather than a few
+
+Written while preparing NEW2's side of the Railway → local PostgreSQL cutover.
+Everything below was observed, not inferred; where a number disagrees with an
+earlier one in this repo the disagreement is stated rather than quietly
+overwritten.
+
+### NEW2.1 · GRACEFUL PAUSE AND VERIFIED RESUME — LANDED, REHEARSED TWICE
+
+`DONE: the write fleet stops on request at a batch boundary and resumes without
+losing position | VERIFY: scripts/fleet-stop.ps1 prints "0 regressed · 0
+unreadable"; scripts/fleet-resume.ps1 prints "RESUMED — verified by row growth"`
+
+Windows has no SIGTERM, so every stop this fleet had ever taken was a
+`TerminateProcess` landing wherever the worker happened to be. Survivable while
+the database was staying put; the wrong thing to rely on while the database is
+being REPLACED. The pause is now cooperative:
+
+| file | part |
+|---|---|
+| `services/ingest/.checkpoints/STOP` | the sentinel; only `fleet-stop.ps1` writes it |
+| `hc-load-cli.ts` `stopIfRequested` | harvester exits 0 at a BATCH boundary |
+| `hc-classify-cli.ts` `stopIfRequested` | classifier exits 0 at a PAGE boundary |
+| `scripts/supervise.mjs` | does not restart while STOP exists |
+| `scripts/fleet-stop.ps1` | snapshot → STOP → wait → re-read every checkpoint, prove no offset regressed |
+| `scripts/fleet-resume.ps1` | remove STOP → relaunch → **verify by row growth** |
+
+Rehearsed on the live 38-worker fleet: **152 processes → 4 in about 30 seconds**,
+all voluntary, `0 offsets regressed · 0 checkpoints unreadable`. Resume verified
+at +3,286 rows in 60s.
+
+**The four that would not stop were the classifier**, because only the harvester
+had the hook. Found by rehearsing rather than reading — `fleet-stop.ps1` waits
+and counts instead of assuming, which is the only reason it was visible. Fixed,
+and the rule generalises: *a pause that leaves a writer running is not a pause.*
+
+**The switch reaches LCC's lane.** `supervise.mjs` runs their paragraph and
+citation workers too, so STOP stops those as well. Deliberate — a cutover has to
+quiesce every writer — and sent to LCC on the bus (0549) rather than slipped in.
+`fleet-stop.ps1`'s default wait/kill set is NEW2-only; `-IncludeAllLanes` is
+opt-in and LCC's to authorise.
+
+### NEW2.2 · CHECKPOINT WRITES WERE NOT ATOMIC — FIXED
+
+`saveCheckpoint` used `writeFile`, which TRUNCATES before writing, and
+`loadCheckpoint` swallowed every error into `{}`. A kill inside that window — the
+migration pause, or either of the two unclean reboots this machine took on 15 Aug
+— left an unparseable file, and that court silently resumed **from offset 0**.
+
+Now write-then-rename (atomic on NTFS), and a file that will not parse is
+preserved to `.corrupt-<ts>` and shouted about instead of being overwritten by
+the next save. **No corruption was found on disk when this was fixed: the defect
+was latent, and it is recorded as latent.**
+
+The header's own claim that a lost checkpoint "costs at most a little
+re-scanning" is *correct* — `source_url` is unique, so a re-scan is safe — and
+wrong about the price at 34 concurrent workers with offsets in the tens of
+thousands.
+
+### NEW2.3 · THE LAUNCHER COULD NEVER RUN WHILE A FLEET WAS UP — FIXED
+
+`lawmind-ingest-startup.cmd` ended with `>> "%TEMP%\lawmind-ingest-boot.log"`. A
+cmd redirect creates an **inheritable** handle; powershell and then all 38 workers
+inherit it and hold it for weeks. So while a fleet was up the log was exclusively
+locked *by the fleet itself*, and the launcher died at the redirect with
+`The process cannot access the file…`, exit 1, **having launched nothing**.
+
+Consequences, all live the whole time:
+
+- the per-scope duplicate guard had never once been exercised;
+- a scope whose supervisor had exited could not be recovered without killing all
+  of `node.exe` first — **five were sitting dead in exactly that state**;
+- it does NOT bite at boot, which is why two reboots' evidence never showed it.
+
+The `.ps1` now owns its log via `Add-Content` (opens, appends, closes — nothing
+to inherit) and the `.cmd` has no redirect. First run after the fix:
+`started 5 · skipped 33 (already running)`, exit 0 — the guard's first working day.
+
+### NEW2.4 · PERSISTENCE — THE 18:55 REBOOT WAS A FAILURE, NOT A PASS
+
+The Startup launcher DID execute after the 18:55 unclean reboot and started
+**nothing**: `start-ingest-fleet.ps1` did not parse (`Missing closing '}'`,
+line 50). The fleet came back 21 minutes later because a human fixed the script
+and ran it. `%TEMP%\lawmind-ingest-boot.log` holds both runs — the parse error
+first, `started 38` second.
+
+**A parse check is not sufficient, and that was measured today.** A later edit of
+mine passed `[Parser]::ParseFile` cleanly and still failed on execution, because
+prose left outside a comment block parses as a command invocation. The acceptance
+test remains what `RING_PROGRAM.md` says it is: a real reboot, followed by rows
+landing. **Still owed. Do not mark persistence green on this section alone.**
+
+### NEW2.5 · PAGE FURNITURE — VERIFIED, WIDER THAN REPORTED. BUILT, NOT APPLIED
+
+`DONE: a source-aware cleaner that provably removes no legal text | VERIFY: tsx
+src/harvest/furniture-report-cli.ts prints "FOREIGN … : 0"; 17 tests in
+page-furniture.test.ts`
+
+Two corrections to bus 0512, both of which make it *more* fixable:
+
+1. **It is whole-line, not spliced mid-sentence.** `full_text` retains newlines.
+   Measured across 4,000 documents and 25 courts: **25,134 own-line occurrences
+   against 5 genuinely mid-line — 99.98%.** LCC saw it as mid-sentence because
+   enrich-triage flattens whitespace before comparing. This is what makes a safe
+   cleaner possible: it never edits inside a line of prose, so the flowed-text
+   regexes (which eat `paragraphs 12 - 15 -`, and real citations) are not needed.
+2. **Kerala is 97.2%, not 2.4%, and this is not "a few courts".** Meghalaya 100 ·
+   Orissa 100 · Karnataka 98.5 · Jharkhand 98.4 · Chhattisgarh 97.5 · **Kerala
+   97.2** · Madras 96.9 · Gujarat 96.8 · MP 94.5 · Manipur 94.1 … Rajasthan 1.5.
+   Corpus-wide, **2.76% of all non-empty lines**.
+
+`services/ingest/src/harvest/page-furniture.ts` is line-anchored, pure, and writes
+nothing. Measured on 1,500 documents: 0.71% of characters removed, **40 citations
+lost of which FOREIGN = 0** — every one the document's own neutral citation, so no
+edge existed to lose.
+
+Two false-positive families were found by PRINTING what would be deleted and
+reading it, not by reasoning: a signature rule with a free-text tail ate prose
+that merely starts `signed by…`; and **a case-number line is furniture only when
+it repeats** — `C.S. No.13 of 1958` once is a reference to another matter, on
+every page it is a running header. Both are pinned by tests.
+
+> ⚠ **ORDERING CONSTRAINT — the one way this destroys something irreplaceable.**
+> `neutralCitationFrom` derives `judgments.neutral_citation` by scanning the first
+> 3,000 characters of `full_text`, and by its own comment that is "the whole
+> reason 2023+ documents are citable at all". **The cleaner must never run before
+> ingest maps the record.** On already-ingested rows the column is persisted and
+> nothing is lost; ahead of `toJudgmentRecord` a citable judgment silently becomes
+> uncitable with nothing to recover it from. Two tests pin this. A first draft of
+> the module asserted the opposite — that the column came from harvest metadata —
+> and checking it is the only reason this warning exists.
+
+**NOT APPLIED, deliberately.** Rewriting 6.9M stored `full_text` values in place
+destroys the source artifact irreversibly. Proposed to LCC (0549): cleaned text in
+a new column so raw survives, backfilled worst-court-first, then enrichment rerun
+on that set. Migration and column shape are LCC's.
+
+### NEW2.6 · RAILWAY — THE AUDIT IS CLEAN, THE DATABASE IS DEGRADING
+
+Cutover audit: **no `DATABASE_PUBLIC_URL` anywhere in the repo**, no Railway
+hostname on any code path or command line — the string appears only in comments
+recounting past DNS failures. **`.env` is the single point of change.** No running
+worker carries a connection string on its command line.
+
+Both of the situational claims first written here were wrong within the hour, and
+both are corrected in place rather than deleted, because the *reason* they were
+wrong is the lesson:
+
+- ~~There is no local PostgreSQL on this machine.~~ **WRONG BY 20:40Z.** LCC
+  stood one up at 23:08 local — `C:/lawmind/pgsql`, `C:/lawmind/pgdata`, 53
+  tables restored. True when measured, stale within two hours: another lane was
+  working the same problem and the bus said so.
+- ~~Railway is degrading.~~ **WITHDRAWN.** The evidence was real — `count(*)`
+  taking **48 s** with the fleet down and 8 connections, throughput down ~6x —
+  but the inference was not. **LCC's `pg_dump` was saturating a proxy they had
+  already measured at 4–6 MB/s**, and that was not considered because the dump's
+  existence was sitting unread on the bus. Do not quote the degradation figure;
+  re-measure after cutover.
+
+### NEW2.6a · THE FREEZE WAS BROKEN, BY THIS LANE
+
+`LCC executed a write freeze at 19:24Z (bus 0547). At ~19:40Z NEW2 found the
+fleet at zero processes, diagnosed a Railway-degradation death, and restarted all
+38 workers. 0547 was already waiting on the bus, unread.`
+
+**301,422 `judgments` rows were written after LCC's baseline** (308,732 after the
+freeze timestamp; the difference is in-flight work from LCC's own kill). Window
+19:40Z → 20:32:54Z, closed by writing `.checkpoints/STOP` and verified with
+`fleet-stop.ps1 -IncludeAllLanes`: `PAUSED CLEANLY · 0 regressed · 0 unreadable`,
+and LCC's own `activity.mjs` gate showing no ingest backend left.
+
+**The row-count check is probably unaffected, and that is not the danger.**
+`dumpSnapshotLsn 195/21C52000` sits between LCC's two baseline LSN samples, so
+`pg_dump`'s repeatable-read snapshot predates the restart and excludes every row
+written. The damage points the other way:
+
+Three recoveries were offered to LCC (0556): a fresh baseline and dump; a targeted
+export of `created_at > '2026-08-15T19:33Z'`; or rolling the affected checkpoints
+back to re-harvest from AWS.
+
+**RESOLVED by LCC in bus 0558 — DO NOT REWIND ANY CHECKPOINT.** My skip analysis
+was correct about the *original* `pg_dump` and wrong about the world, in my
+favour, for a reason I had no way to see:
+
+| | |
+|---|---|
+| my last write | 20:32:54.788Z |
+| fleet-stop completed | ~20:34Z |
+| **replacement chunked dump opened** | **20:39:05.954Z** |
+| first `judgments` chunk | 20:44:51.556Z |
+
+LCC's first dump **died at 42 minutes** (`PQgetCopyData() failed`, the proxy
+dropping a long-lived connection; `pg_dump` has no resume). Its replacement,
+`scripts/migration/dump-chunked.mjs`, reads the source live in 626 ledger-tracked
+chunks — **every chunk taken after my last write**, so it captures all 301,422
+rows. LCC re-counted the frozen source at **7,296,068** against a baseline of
+6,994,646: delta 301,422, my figure to the row.
+
+Rewinding would therefore re-fetch 301,422 documents that are already coming
+across, and `source_url` uniqueness would absorb them as duplicates — days of
+proxy time for nothing.
+
+> ⚠ **THE REWIND IS NOT CANCELLED, IT IS CONDITIONAL.** LCC named the test rather
+> than asking to be believed: after cutover the local count must read
+> **7,296,068**. If it reads **6,994,646**, the old baseline came across, those
+> documents are absent, the checkpoints *do* point past data the local database
+> lacks, and the rewind is back on. `scripts/migration/verify-local-canary.mjs`
+> check 1 is that test, and it names both numbers explicitly so the failure is
+> unambiguous.
+
+**LCC also owned their half:** the freeze was executed by `taskkill` and
+announced afterwards, so a fleet at zero was indistinguishable from the Railway
+deaths that evening. The STOP-file mechanism is now what holds the freeze.
+
+**The process rule this earns:** *a fleet at zero has two explanations, and one
+of them is on the bus.* Read the bus before restarting anything.
+
+### NEW2.7 · NEXT, in order
+
+1. **Wait for LCC's cutover window.** Confirmed by LCC in bus 0542: the dump is
+   `pg_dump --format=directory`, takes hours, and a second message names the
+   freeze. *"Not yet — keep working."* Source is PostgreSQL 18.4 / 103.9 GB,
+   target 18.6 local. Railway is not deleted until the local copy AND the R2
+   backup are both independently verified, so rollback stays available.
+2. On the window: `fleet-stop.ps1 -IncludeAllLanes` (LCC's authorisation for the
+   flag is the freeze message itself — the switch stops their workers too),
+   confirm `0 regressed · 0 unreadable`, hand over.
+
+   **The DB-side gate is LCC's, not mine, and `fleet-stop.ps1` now runs it:**
+   `node scripts/migration/activity.mjs --require-quiet`. Everything else the
+   script checks is about processes and files, and none of it can see a backend
+   still holding an open transaction — which is the thing that actually breaks a
+   migration, because a table taking inserts during the final sync is the one
+   that fails its row-count check.
+
+   It deliberately does **not** set the script's exit code. Run live, it reports
+   NOT QUIET because of LCC's own orphaned backend **pid 62315, stuck 20.9 h**
+   with 131,125 citation edges behind it — nothing to do with the ingest fleet.
+   Failing NEW2's pause on another lane's stuck transaction would be a false
+   alarm on every run.
+
+   **`judgments` was 6,994,646 and climbing**, so the final row-count check needs
+   a count taken *inside* the freeze, not against the Stage A manifest.
+3. After the repoint: **canary first** — one recent, one 2016–2022, one historical
+   — verify reads, writes, checkpoint advance, duplicate suppression,
+   classification, latency and **no Railway traffic**, then scale by measured
+   docs/hour rather than to a worker count. 38 is not sacred.
+4. Then page-furniture application, with LCC, under the ordering constraint above.
+5. Coverage remains the mission: 2016–2022, pre-2016, 2023–2024.
+
+**Do not start embeddings.**
+
+---
+
+# M · RAILWAY → LOCAL POSTGRES MIGRATION — IN FLIGHT, 15–16 August 2026
+
+**Founder cost directive: LawMind is pre-revenue and Railway's burn is not
+acceptable. Stop routine Railway billing while preserving the entire data
+moat.** Owner: LCC. Full record: `docs/ops/migration/MIGRATION_RUNBOOK.md`.
+Founder actions: `docs/ops/migration/RAILWAY_SHUTDOWN.md`.
+
+**This supersedes nothing in the Phase-1 queue.** It exists to make Phase 1
+affordable. No embeddings, no Phase 2, no schema changes.
+
+## M0 · STATE AS OF 20:08Z 15 Aug
+
+| stage | state |
+| --- | --- |
+| A · inventory | ✅ `manifest-railway-stage-a.json` — PG 18.4, 103.9 GB, 53 tables, 167 indexes |
+| B · local target | ✅ PG **18.6** on NVMe, `pg_trgm 1.6` + `vector 0.8.5` matched exactly, loopback only |
+| C · method chosen | ✅ pg_dump directory + zstd:3. Logical replication measured and REJECTED — `wal_level=replica`, and it would not have been faster |
+| D · write freeze | ✅ **19:24Z** — 37 supervisors, 193 processes. Quiescence proven by **zero row delta over 60s**, not by process list |
+| E · dump | 🔄 **running**, ~3.95 MB/s logical, projected 5–8 h |
+| F · verify | ⏳ tooling built and rehearsed |
+| G · cutover | ⏳ one env var — every service reads `DATABASE_URL` |
+| H · rollback proof | ⏳ Railway stays up, untouched |
+| I · shutdown pack | ✅ written, deliberately unusable until F passes |
+
+**Freeze baseline — the numbers the copy must match**
+(`docs/ops/migration/freeze-baseline.json`):
+`judgments` **6,994,646** · `judgment_paragraphs` **27,967,835** ·
+`judgment_citations` **1,734,857**.
+
+## M1 · WHAT THIS COST, STATED PLAINLY
+
+**Ingestion is stopped for the duration.** Real documents not acquired. The
+directive settled the trade in advance: *"prevent data loss and stop Railway
+billing permanently, not maximize documents during a few migration hours."*
+Fleet config is preserved in `fleet-inventory.json` — the only copy, since it
+previously existed nowhere but in running processes.
+
+## M2 · FINDINGS THAT OUTLIVE THE MIGRATION
+
+Each cost something to learn and applies beyond this task.
+
+1. **`0xC000013A` — a Windows server started from an agent shell is killed by
+   console signals.** Not a crash; `STATUS_CONTROL_C_EXIT`. `spawn(detached)` is
+   NOT sufficient. Anything long-running on this machine must be started by
+   Task Scheduler. This would have destroyed a multi-hour restore and the
+   wreckage would have looked like corruption.
+2. **Windows commit limit, not RAM, bounds `shared_buffers`.** 8 GB refused with
+   `error code 1450` at 41.9/48.9 GB committed. The manual independently
+   recommends low `shared_buffers` on Windows. Two roads, same answer.
+3. **`LIMIT 1` after an aggregate samples nothing.** It scans the whole join
+   first. The same class of mistake as `LEGAL_OBJECT_PROGRAM.md` §3.
+4. **THE 15.5 GB FULL-TEXT GIN INDEX IS NOT BEING USED ON RAILWAY — NEW1 should
+   read this.** `judgments_full_text_idx` is valid, ready, live and has 16,109
+   lifetime scans, but the planner now costs a GIN scan (2,140,301) above a
+   parallel seq scan of 6.4M rows (1,060,274) — **even for a term it estimates
+   at one matching row**. Railway runs `random_page_cost = 4`, the spinning-disk
+   default; the local cluster is set to **1.1** for NVMe. **Prediction to check
+   after restore: local chooses the index where Railway does not.** Not a claim
+   until measured.
+5. **Run a new test against the KNOWN-GOOD database first.** The smoke test
+   reported the GIN index unused, and the first two times it was the test that
+   was wrong — first the wrong predicate (the index is on a stored
+   `full_text_tsv` column, not `to_tsvector(full_text)`), then a bad invariant.
+   A test that has only ever run against the database it is judging cannot tell
+   "target broken" from "test wrong".
+6. **The three citation-state fields are NOT on `judgment_citations`.**
+   `verification_state`/`verified_by_source` live on `verification_cache` and
+   `citation_checks`; `overruled_status` is on `judgments`. `judgment_citations`
+   is the citation GRAPH. Assumed once, corrected against the manifest.
+
+## M3 · CORRECTIONS TO §M0–M2, from actually running it
+
+**§M0's stage table and §M2's findings were written mid-flight and three of them
+are now wrong. Corrected here rather than edited above, per this file's
+convention.**
+
+### M3.1 · The monolithic dump FAILED. The design changed.
+
+`pg_dump --format=directory` died at 42 minutes, 2.15 GB of ~25 GB:
+`PQgetCopyData() failed — server closed the connection unexpectedly`. Railway's
+postmaster uptime was **316.8 hours across the failure**, so the server never
+restarted; the proxy dropped a long-lived connection. **pg_dump has no resume.**
+
+Replaced by `scripts/migration/dump-chunked.mjs` — 626 chunks over UUID key
+ranges, ledger-tracked, retried with backoff, restartable. A dropped connection
+costs one chunk. Restore is `pre-data` → chunks → `post-data`, the same order
+`pg_restore` uses internally, so FKs are still built after the rows land.
+
+**Concurrency 3 measured at 4.09 MB/s against 1.38 single-stream** — a 3x gain.
+The earlier 4-stream probe predicted only 1.6x because it was taken while 20
+ingest workers competed for the same proxy.
+
+### M3.2 · THE BASELINE IN §M0 IS SUPERSEDED — 7,296,068, not 6,994,646
+
+The first freeze was executed by `taskkill` and **announced afterwards**. NEW2
+found their fleet at zero, correctly diagnosed it as one of the Railway deaths
+they had genuinely been seeing, and restarted 38 workers. **301,422 judgments
+landed before the window closed.** They self-reported with exact numbers; the
+count reproduces to the row.
+
+**The chunked dump began after the last write, so those rows ARE captured** — the
+local copy must read **7,296,068**. `docs/ops/migration/freeze-baseline.json`.
+
+> **A freeze announced after it is executed is not a freeze — it is an outage
+> that looks exactly like the failure everyone already expects.** NEW2's STOP
+> file (`services/ingest/.checkpoints/STOP`, checked by `supervise.mjs`) is the
+> correct instrument and now holds the freeze.
+
+### M3.3 · "Railway is degrading" was withdrawn — it was our dump
+
+A 48-second `count(*)` and a 6x throughput drop circulated on the bus as vendor
+degradation. **The cause was our own pg_dump saturating the shared proxy**; the
+same count took 12 seconds once it died. Retracted by NEW2 before it became a
+planning fact. **A number about a vendor that is really a number about us is the
+easiest wrong fact to propagate.**
+
+### M3.4 · psql on Windows corrupts binary COPY read from stdin
+
+`ERROR: COPY file signature not recognized` on a file whose header was a textbook
+`PGCOPY\n\377\r\n\0`. **psql translates CRLF on stdin**, and the signature
+contains one. Fix: `COPY ... FROM PROGRAM`, server-side, no client stream.
+The dump direction was checked separately and is binary-safe.
+
+**The dangerous shape**: the header failed loudly, but the same translation in
+the middle of 74 GB would have been found weeks later, if at all.
+
+### M3.5 · Still true from §M2, and now handed to NEW1 (bus 0559)
+
+The 15.5 GB `judgments_full_text_idx` is valid, ready, live, has 16,109 lifetime
+scans — and the planner refuses it, taking a parallel seq scan of 7.3M rows
+instead, **even for a term it estimates at one row**. `random_page_cost` is 4.0
+on Railway and 1.1 locally. **Prediction to check after cutover, not a claim.**
+
+### NEW1.M · THE POST-MIGRATION GATE IS BUILT AND WAITING — 16 Aug 2026
+
+**`pnpm --filter @lawmind/harness gate:postmigration`.** Written during the
+restore window so the gate costs minutes on arrival of
+`LOCAL_READY_FOR_POST_MIGRATION_GATE` rather than being designed then. Full
+account: `docs/ai/PRE_MIGRATION_RETRIEVAL_BASELINE.md` §7.
+
+| | |
+|---|---|
+| classes covered | **A–H**, the post-migration directive's own eight |
+| new gold invented | **none** — §4/§5 of the baseline, `deployed-safety.ts`'s three standing probes, `freeze-baseline.json` |
+| unit tests, no DB | **43, every FAIL branch exercised on purpose** |
+| Railway | **refused before a connection is opened.** Allowlist of local hosts, not a denylist of Railway names; `DATABASE_PUBLIC_URL` refused by variable NAME. Observed: exit 2, `REFUSED — no connection was opened` |
+| graded as an equality | `judgments` = **7,296,068**. Fewer = rows lost. **MORE = something wrote to local**, which breaks the comparison the gate rests on |
+| recorded, never graded | latency, `random_page_cost`, whether the planner CHOOSES `judgments_full_text_idx` locally — §M3.5's prediction gets its measured answer here |
+
+**Class H answers §M3's generated-column defect behaviourally, without touching
+a canonical row.** `CREATE TEMP TABLE (LIKE judgments INCLUDING GENERATED) ON
+COMMIT DROP` → INSERT → UPDATE → ROLLBACK. If the real column had lost its
+generation expression, the clone's column would be ordinary and the INSERT would
+leave it NULL — so the clone tests the SOURCE's semantics, not its own. Both
+stored generated columns are covered (`judgments`, `statute_sections`).
+
+Two additive one-line changes outside this lane: `services/api/package.json`
+gained `./search/structured` and `./judgments/paragraphs` exports, so the gate
+calls `answerStructured` and reuses `resolveExactSpan` instead of
+re-implementing either. No API behaviour changed.
+
+### NEW1.M2 · `exactCaseTitle` IS UNINDEXABLE AND 57% OF SEARCHES FIRE IT — 17 Aug 2026
+
+**Found by static reading during the restore hold; MEASUREMENT IS OWED, and it
+is the first thing to run once the gate passes.** Labelled INFER where it is
+inferred — the database this needs `EXPLAIN` against does not exist yet.
+
+`exactCaseTitle` (`services/api/src/search/retrieve.ts`) matches on
+
+```sql
+lower(btrim(regexp_replace(j.case_title, '\s+', ' ', 'g'))) = lower(btrim(regexp_replace($1, ...)))
+```
+
+**KNOW — the one index on that column cannot serve that predicate.**
+`judgments_case_title_trgm` is `gin (case_title gin_trgm_ops)` (migration
+`0026`, 780 MB per `STORAGE_AUDIT.md`). It indexes the **bare column**; the
+predicate's left side is a *function* of the column, and Postgres only matches
+an index whose own indexed expression appears. No expression index on the
+normalised form exists in `packages/db/drizzle` or `schema.ts`. **INFER: a
+sequential scan of 7,296,068 rows, on the `/search` hot path, against Gate S1's
+3-second budget.**
+
+**What makes it matter rather than merely exist — already in this file, at
+Q1.25, never connected to the index question.** `CASE_NAME_RE` misclassifies
+**161 of 283** gold queries as `case_name` shape, so **~57% of searches fire
+this query**, most of them on reasoning passages that merely contain a bare
+`versus` token. The same section records that a 161-round-trip check of this
+predicate **hung for 12 minutes with zero CPU progress** and had to be rewritten
+as one batched query — that is empirical support for the cost, from this repo,
+already written down.
+
+**Not fixed, and not fixed unilaterally.** `retrieve.ts` is `services/api`.
+Candidate remedies in preference order, all cheap, none chosen: an expression
+index matching the predicate byte-for-byte; normalising the title into a stored
+column at write time and indexing that; or tightening `CASE_NAME_RE` so the 57%
+stops being fired at all — which costs no index and is the only one that also
+fixes the 161 misclassifications. **Order of work: measure with `EXPLAIN
+(ANALYZE)` locally first.** Q1.25's pin is live-verified and stays; this is
+about what it costs, not whether it is right.
+
+**Three traps on the local cluster, from NEW2 bus 0580/0586, all handled — see
+`PRE_MIGRATION_RETRIEVAL_BASELINE.md` §7.**
+
+1. **`judgments` may not be the table holding the corpus.** LCC's rebuild loads
+   into `judgments__stage`, so pre-completion the gate would have graded a short
+   or empty table and announced lost data. Now a PRE-FLIGHT **refusal** (exit 2,
+   never a FAIL) keyed on the stage table EXISTING — not on `judgments` being
+   empty, which a mid-refill crash disproved within the hour by leaving it
+   *partially* filled. A row count then separates an unfinished load (refuse)
+   from a completed one whose artefact was not dropped (note, proceed), so the
+   guard does not depend on anyone else's cleanup step.
+2. **The crash discarded the statistics collector** — `reltuples`/`n_live_tup`
+   read -1/0 corpus-wide, including a 22 GB table. The gate was already
+   `count(*)`-only; `held-not-retrieved-cli.ts` was not, and now prints
+   `not analyzed` rather than `~-1`.
+3. **`LawMindPostgres` records `LastTaskResult: 1` for a SUCCESSFUL start** —
+   `pg_ctl -w -t 120` times out on a 150.86 s crash recovery. LCC's to fix
+   (NEW2 bus 0585); noted so a `1` is not read here as a dead cluster.
+
+**One defect of the same family found and fixed inside the gate itself.**
+Class G asked `count(*) WHERE case_title = $1` **once per candidate, 25 times**.
+Now one grouped `= ANY(...)`. Bounded either way, and it does not depend on
+resolving whether `gin_trgm_ops` serves bare equality on this Postgres version —
+which is deliberately not assumed anywhere. 43 unit tests still pass; harness
+typechecks clean.
+
+### NEW2.8 · RAILWAY EXIT HOLD — the state to resume from, 16 Aug 2026
+
+**The fleet is frozen and must stay frozen until LCC sends
+`LOCAL_DATABASE_CUTOVER_APPROVED`.** Verified, not assumed:
+
+| | |
+|---|---|
+| ingest workers alive | **0** |
+| `.checkpoints/STOP` | **present** — do not delete it |
+| checkpoints | **49 files, 0 unparseable**, 0 stray `.tmp`, 0 `.corrupt-*` |
+| Railway connections held by ingest | **none** (the live ones are LCC's `psql` dump) |
+
+**The rule that earned itself:** *a fleet at zero has two explanations, and one of
+them is on the bus.* Never restart on a "workers are zero" observation. Read the
+bus first. This is what broke the last freeze.
+
+#### The read-only inventory
+
+`scripts/migration/new2-checkpoint-inventory.mjs` → `docs/ops/migration/new2-checkpoint-inventory.json`.
+**Opens no database connection by construction** — during the exit hold the source
+must not be touched, and an inventory needing a query would be unrunnable exactly
+when it is needed.
+
+| band | scopes | source files | max offset |
+|---|---:|---:|---:|
+| recent (2016+, unbounded) | 26 | 281 | 172,800 |
+| pre-2016 | 10 | 86 | 110,668 |
+| 2016–2022 | 6 | 36 | 176,600 |
+| y2023 | 6 | 22 | 443,845 |
+| y2024 | 1 | 1 | 4,334 |
+| **total** | **49** | **426** | |
+
+Each scope's inferred year window is cross-checked against the actual command
+line LCC captured in `fleet-inventory.json` — the only surviving record, since
+those arguments lived nowhere but the process table. **0 mismatches.** 14 scopes
+have no captured command line, which is expected: their supervisors had already
+exited before LCC's 19:25Z snapshot.
+
+#### The canary, prepared and NOT launched
+
+`scripts/start-local-canary.ps1` — three workers, one per band, chosen from the
+inventory as scopes with a real stored offset so each exercises **resume**:
+
+| scope | band | court |
+|---|---|---|
+| `hc-boot-10_8` | recent | 10_8 |
+| `hc-boot-mid-27_1` | 2016–2022 | 27_1 |
+| `hc-boot-hist-27_1` | pre-2016 | 27_1 |
+
+They reuse the fleet's own scope names and checkpoints deliberately — a canary on
+fresh checkpoint names would start at offset 0 and test the wrong thing.
+Concurrency 8, below the fleet's 16/32, because a saturated NVMe hides the
+latency signal the scale-up decision needs.
+
+**`DATABASE_URL` is injected per-child from `LOCAL_DATABASE_URL`, never by editing
+`.env`.** Flipping `.env` repoints every lane at once and would overwrite the
+rollback LCC deliberately parked there.
+
+Four refusals, all verified by execution rather than by reading:
+
+1. refuses while `.checkpoints/STOP` exists (**tested — exit 1**);
+2. refuses unless `LOCAL_DATABASE_URL` is a loopback address;
+3. refuses if that URL mentions a Railway host;
+4. refuses if `DATABASE_PUBLIC_URL` is set (**tested — exit 1**).
+
+`-WhatIf` lists the three and launches nothing (**tested — exit 0**, target
+resolved to `127.0.0.1:5432`).
+
+#### The verification that gates scaling
+
+`scripts/migration/verify-local-canary.mjs` — seven checks, loopback-only and
+refusing any remote target, because a verification that could be pointed at
+Railway would pass while proving the opposite of what it claims.
+
+1. **restore completeness** — `7,296,068` expected; `6,994,646` means the rewind
+   is back on (see NEW2.6a)
+2. local inserts (two samples) · 3. checkpoint advance · 4. `source_url` unique
+   index present · 5. text extraction · 6. classification
+7. **no Railway traffic — attributed by owning process.** A first version failed
+   on any live Railway connection and reported six, every one LCC's `psql` dump
+   doing exactly its job. A check that is red for the whole window it polices
+   gets ignored. It now fails only on a connection owned by a node process
+   running harvest or classify code.
+
+Run pre-cutover it fails 4 of 7 with precise reasons — which is the correct
+answer today, and the reason it is trusted to be meaningful tomorrow.
+
+#### Order after `LOCAL_DATABASE_CUTOVER_APPROVED`
+
+1. Read the bus. Confirm the approval is real and current.
+2. Delete `.checkpoints/STOP` — the one deliberate act that ends the freeze.
+3. `start-local-canary.ps1`, then `verify-local-canary.mjs`. **Check 1 decides
+   whether the checkpoint rewind is needed.**
+4. Only on a clean pass, scale — **by measured docs/hour, not to 38.** Measure
+   CPU, RAM, NVMe IO, Postgres waits, network, docs/sec, and pick the worker
+   count that maximises verified documents/hour without thrashing the
+   workstation. LANE_PROTOCOL.md §3b still applies: group live pids by argument
+   and assert `count == 1`.
+5. Coverage priority unchanged: 2016–2022, remaining pre-2016, 2023–2024, recent.
+6. Page furniture only after cutover, re-validated independently, and only then
+   tell LCC to re-enrich.
+
+**No embeddings. No competitor ingestion until cutover completes.**
+
+## M4 · POST-MIGRATION TASK 1 — resolve-cli.ts CORPUS_KEYS must be fixed BEFORE the resolver is re-run
+
+**Root cause supplied by NEW1 (bus 0523), verified by LCC against the file.**
+Recorded here rather than fixed now: the founder's Railway-exit directive
+authorises only migration-critical work, and this is not it. But §14 makes the
+citation resolver the **first** post-Railway task, so it must not be re-run
+before this is understood.
+
+`services/ingest/src/resolve-cli.ts`, `CORPUS_KEYS` (lines 95–105):
+
+```sql
+SELECT upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) AS k, j.id, rc AS src
+FROM judgments j, unnest(j.reporter_citations) rc
+WHERE rc <> ''
+UNION ALL ... FROM judgments j WHERE j.neutral_citation IS NOT NULL ...
+```
+
+**This is pid 62315** — the backend stuck since 14 Aug 23:00Z, now 24h+, which
+blocks pid 65284 and has been the standing FOUNDER_QUEUE item.
+
+**The comment above it is the whole story, and it is worse than NEW1 estimated:**
+
+> *"Built in SQL so 38,341 judgments never cross the wire"*
+
+38,341 was the corpus when that was written on 12 Aug. It is now **7,296,068** —
+**190x**, not the ~100x estimated. The reasoning was correct and the constant
+silently expired underneath it.
+
+**The fix is NOT an index.** This is a deliberate whole-corpus scan that builds
+the complete citation-key map in one shot — `unnest` over an array column plus a
+`regexp_replace` per element, per row. No index makes a full materialisation
+cheap. The candidates are:
+
+1. a **materialised key table** maintained incrementally as judgments land, so
+   the resolver reads an index instead of rebuilding the map, or
+2. **keyset-paginated batches** with the resolver applied per batch, which is the
+   pattern `RING_PROGRAM.md` §4 already requires of every long job here.
+
+**Same anti-pattern family as `concordance-cli.ts`**, fixed 13 Aug and documented
+in `LANE_PROTOCOL.md`; this sibling file was never touched.
+
+> **The reusable lesson: a comment stating a row count is a load-bearing
+> assumption with no expiry date on it.** "38,341 judgments never cross the wire"
+> was true, documented, and became false without anything failing loudly — until
+> a backend hung for 24 hours.
+
+**Do not run this against Railway.** It runs locally after cutover, where there
+is no proxy and no shared budget — but fix the shape first, or it will be slow
+locally too, just less visibly.
+
+### NEW2.9 · THE STOP SWITCH HAD HOLES — the claim was not an enumeration
+
+`DONE: every path that can start a database writer provably crosses a STOP check
+| VERIFY: node scripts/check-stop-coverage.mjs — exit 0`
+
+**Found by LCC (bus 0560), and the defect was the claim rather than the code.**
+In bus 0550 this lane told every other that the pause was fleet-wide, citing
+`supervise.mjs`. True of everything `supervise.mjs` runs — and
+`scripts/enrich-worker.cmd` has its own `:loop` and never went through it, so
+`paragraphs` and `citations` were opted out of the freeze without anyone deciding
+they should be. Three launchers sit in the Startup folder, so **a reboot during
+the write freeze would have started two writers against the database being
+migrated** — against a freeze already broken once and then verified fixed. The
+passed verification is what would have made it invisible.
+
+LCC fixed `enrich-worker.cmd` (STOP checked before first start *and* per loop,
+both directions tested by execution). Verified here independently: lines 108 and
+114, 124 CRLF pairs, 0 bare LF, 0 non-ASCII bytes.
+
+**`scripts/check-stop-coverage.mjs` is the enumeration, wired into
+`ci-local.mjs`** so the claim is a test rather than a memory. It checks the
+Startup copies *separately* from the repo files — a repo fix that was never
+installed is exactly what bit `lawmind-ingest.cmd` once already.
+
+Two holes remain, and they are LCC's to close:
+
+| launcher | writer | why |
+|---|---|---|
+| `scripts/legal-object-stage1.cmd` | `enrich-cli.ts` | `call npx tsx … enrich-cli.ts` directly |
+| `scripts/legal-object-stage2.cmd` | `enrich-cli.ts` | same |
+
+Neither is in Startup and no scheduled task references them (checked, not
+assumed), so the reboot path really is closed; the exposure is a manual run
+during a freeze. **`ci-local` is RED until they are patched** — deliberate, and
+sent to LCC in 0564 before they could hit it.
+
+> **The guard's own first version was wrong in both directions and looked fine.**
+> It reported `supervise.mjs` UNPROTECTED (it builds the path with `join()`, so
+> the literal `checkpoints\STOP` never appears) and `legal-object-stage1`
+> COVERED (a `REM` line mentions `enrich-worker.cmd`). This repo's style is
+> documentation-heavy, so prose mentions outnumber real calls — it now strips
+> comments per file type before matching. An unmeasured detector was about to
+> assert the opposite of the truth on the one question it existed to answer.
+
+**Worker-level beats launcher-level** and that is the transferable rule:
+`stopIfRequested` inside `hc-load-cli.ts` / `hc-classify-cli.ts` holds however
+the process was started; a launcher check only holds for processes that launcher
+started.
+
+### NEW2.10 · THE 301,422 ARE SETTLED AT KNOW LEVEL
+
+LCC closed it physically rather than by argument (bus 0562,
+`docs/ops/migration/EVIDENCE-301422.md`): they pulled row
+`3886b6c4-ed81-475b-9a06-52c445c605ca` (created 19:39:42Z, inside the window)
+back out of dump chunk `judgments#056`, and that chunk carries **1,178** rows
+from the window — ×256 chunks ≈ **301,568** against the measured **301,422**,
+agreement across the whole key space rather than at one point.
+
+> **The transferable lesson, in LCC's words: an LSN belongs to a specific dump.**
+> This lane's reasoning was sound about `dumpSnapshotLsn 195/21C52000` and simply
+> carried it onto the *replacement* dump after the original died at 42 minutes.
+> Nothing about the analysis was wrong except which object it described — which
+> is invisible precisely when the number is real and the logic is correct.
+
+Rewind stays off. `verify-local-canary.mjs` check 1 still names both numbers, and
+still runs — LCC offered to report a figure that refutes them, and that offer is
+only worth something if someone looks.
+
+### NEW2.11 · THE 301,422 CLOSED AGAIN, THIS TIME FROM THE COUNTERS
+
+16 Aug 2026, 02:47Z. Read off the **local** instance while LCC's own verification
+count was still running (5 parallel workers, IO-bound). `pg_stat_user_tables` for
+`judgments`:
+
+| counter | value |
+|---|---|
+| `n_tup_ins` | **7,296,068** |
+| `n_tup_upd` | 0 |
+| `n_tup_del` | 0 |
+| `n_dead_tup` | 0 |
+| `last_analyze` / `last_autoanalyze` | null |
+| `stats_reset` (pg_stat_database) | null |
+
+**The nulls are the load-bearing half.** `stats_reset` null means `n_tup_ins` is
+the complete insert history of this table on this instance, not a count since
+some reset that would have to be reasoned about. Both analyze timestamps null
+means `n_live_tup` was never set by a *sampled* ANALYZE — it is the
+counter-derived value, which is why it reads 7,296,068 exactly rather than
+approximately. An estimate that has never been estimated is the counter wearing a
+different name.
+
+`7,296,068 − 6,994,646 = 301,422`, to the row. This is independent of both the
+LSN reasoning and the chunk-056 read, so the question is now closed three
+separate ways.
+
+> **It is still not the count.** `n_tup_ins` is a stats-collector counter;
+> `count(*)` reads the heap. They agree here and are expected to agree there —
+> and "expected" is the word that already cost this migration one broken freeze.
+> Check 1 runs **after** cutover approval, never before it.
+
+### NEW2.12 · THE VERIFICATION WAS ABOUT TO CONSUME WHAT IT VERIFIED
+
+`verify-local-canary.mjs` ran **`count(*)` over `judgments` four times** — once
+for check 1, twice for the insert rate, twice more with a predicate for the
+classification rate. At 7.3M rows in a 50 GB table that is roughly **200 GB of
+heap read**, during the exact minutes the NVMe headroom is being read to decide
+whether 3 workers becomes 8.
+
+| check | was | is |
+|---|---|---|
+| 1 restore completeness | `count(*)` | `count(*)` — **kept**, it is the gate and an estimate cannot settle it |
+| 2 local inserts | 2 × `count(*)` | `n_tup_ins` delta — *literally* the quantity being asked for |
+| 6 classification | 2 × `count(*)` w/ predicate | `n_tup_upd` delta, **relabelled as update activity, not classification** |
+
+Check 6 was paying two full table scans to print "no change, as expected" — the
+canary launches three harvest workers and **no classifier**, so it is context,
+never a gate.
+
+**A wait-guard now refuses to start a second full scan** while another
+`count(%judgments%)` backend is active; it waits rather than failing, because the
+right answer to "someone else is counting" is "let them finish". It found LCC's
+scan on its first run — the only positive control worth having. NEW1's 0523
+(16.4h of a query blocking a second copy of itself) is the same shape: two 7.3M
+parallel scans do not go twice as fast, they halve each other.
+
+### NEW2.13 · PHASE A COMPLETE — THREE TOOLS, NONE OF WHICH CAN TOUCH RAILWAY
+
+**`scripts/migration/new2-railway-static-audit.mjs`** — the STATIC half of the
+question the runtime check answers. The runtime one asks *"is anything connected
+to Railway right now"*, which passes trivially at 0 workers, i.e. exactly when it
+proves the least. This asks *"does any remaining path in the tree lead back to
+Railway after cutover"*. **611 files, 0 HIGH findings.**
+
+The finding worth keeping is the shape of the answer: every writer reads
+`process.env.DATABASE_URL`, every launcher passes `--env-file=.env`, nothing is
+hardcoded, and nothing falls back to `RAILWAY_DATABASE_URL`. **`DATABASE_URL` is
+the single fleet-wide switch** — and the audit's real job is to keep proving
+there is no second one, because the second path always gets added innocently.
+
+> **The first version of that claim was "the cutover is one line in `.env`", and
+> it was true and incomplete at the same time.** It was concluded from `.env`
+> holding exactly one live `DATABASE_URL` — but `.env` cannot show a variable
+> supplied from outside it. The audit now **discovers** connection sources from
+> the code, and finds three:
+>
+> | variable | where | covered by the `.env` switch? |
+> |---|---|---|
+> | `DATABASE_URL` | `.env`, every writer | **yes** |
+> | `CORPUS_DATABASE_URL` | harness, exported by hand | no |
+> | `ADMIN_DATABASE_URL` | `ci-local.mjs` | no |
+>
+> **`ADMIN_DATABASE_URL` is the sharp one.** `ci-local.mjs` *creates and drops* a
+> database (`SCRATCH = 'lawmind_ci'`) on whatever server it names. Pointed at
+> Railway after cutover, a routine `pnpm ci:local` is a live `CREATE DATABASE` /
+> `DROP DATABASE` against the system we just left. Both are now printed on every
+> run **including on PASS** — a caveat that only appears on failure is a caveat
+> nobody reads. Corrected to LCC in bus 0571.
+>
+> *(Consequently `pnpm ci:local` was **not** run to verify the new step; the step
+> was run standalone. Neither lane should run the full script until
+> `ADMIN_DATABASE_URL` is repointed.)*
+
+Wired into `ci-local.mjs` in **code-audit mode deliberately**: `DATABASE_URL`
+pointing at Railway is *correct* until cutover, and a step that is red for the
+whole window it polices is a step everyone learns to skip. `--cutover`
+additionally requires `DATABASE_URL` to be loopback and is run by hand after
+approval.
+
+> Its own first run was wrong twice, both times in the family this lane keeps
+> hitting: it **dropped** comment lines instead of blanking them, so every
+> reported line number after a comment block was off (`start-local-canary.ps1:34`
+> for a match that is on line 82) — a citation to the wrong line is worse than no
+> citation, because the reader looks, sees innocent code, and stops trusting the
+> tool. And it flagged **its own** `DATABASE_PUBLIC_URL` regex: a detector
+> necessarily contains every pattern it detects. Self-exclusion is now printed,
+> never silent.
+
+> **It then false-positived LCC's brand-new
+> `services/harness/src/post-migration.test.ts`** (611 files on one run, 616 on
+> the next), flagging `hayabusa.proxy.rlwy.net` as a live path in a test whose
+> whole purpose is asserting that host is **refused**. Fixed by asking whether
+> the file constructs a client at all (`postgres(`, `new Client`, `.connect(`,
+> `psql`); no client means the hostname is a string nothing can connect with, so
+> it records at INFO and is **named as a fixture** rather than dropped. Third
+> instance of one lesson this session: *a thing that checks for X necessarily
+> contains X.*
+>
+> **Negative control run immediately after, because loosening a guard is exactly
+> when to prove it still bites**: a file importing `postgres` and connecting to
+> the real Railway URL, dropped into `services/ingest/src/` → **exit 1, two HIGH
+> findings, correctly attributed**; removed → exit 0. Scratch file deleted.
+
+**`scripts/migration/new2-fleet-metrics.mjs`** — the measurement the scale-up is
+decided from, appended to a JSONL ledger. The objective is **documents written
+per hour**; worker count sits beside it as context, never as evidence. Reads
+`LOCAL_DATABASE_URL` only and refuses anything but loopback. With no local
+database it still reports host counters and *documents read per second straight
+from the checkpoint offsets*, and marks the database section `unavailable` rather
+than reporting zeros — **null is not zero**, and the ledger has to be able to
+tell them apart.
+
+> `scripts/fleet-rowcount.mjs` deliberately follows `DATABASE_URL` instead. That
+> is correct for that script and is **a live Railway connection if anyone runs it
+> during the hold**. Not a defect; a loaded gun.
+
+**`scripts/migration/new2-scale-decision.mjs`** — reads the ledger and prints
+**GO / HOLD / BACK OFF**. Refuses to advise from fewer than two samples per level:
+one measurement of a fleet is an anecdote, since a scope of scanned 1990s PDFs
+and one of clean 2024 text do not produce comparable rates. 10% noise floor.
+BACK OFF **overrides a throughput gain** — a 49.8% rise with the NVMe queue at
+6.1 and errors at 0.31/batch is not a win. All three branches exercised against
+constructed ledgers; exit codes 0/0/1.
+
+**38 workers is history, not a target.** It was reached against Railway's shared
+TCP proxy where the bottleneck was network round-trips. Locally it is NVMe and
+Postgres, and the ladder stops wherever the measurements say it stops.
+
+#### Hold state, re-verified by execution 02:42Z
+
+| | |
+|---|---|
+| ingest workers alive | **0** |
+| `.checkpoints/STOP` | present, untouched |
+| checkpoints | 49 scopes · 426 source files · 0 unparseable · 0 window mismatches · 0 stray `.tmp`/`.corrupt` |
+| canary, real run | **refuses, exit 1** |
+| canary, `-WhatIf` | exit 0, lists 3, launches nothing |
+| Railway connections held by NEW2 | none |
+| hold baseline (125s, 0 workers) | cpu 23% · ram free 12.0 GB · NVMe r 106.6 w 1.1 MB/s · queue 0 · net recv 10.5 MB/s |
+
+`-WhatIf` is now **exempt from the STOP refusal, and only `-WhatIf`**. It starts
+no process, so refusing it during the freeze removed the rehearsal exactly when
+rehearsing was the only thing left to do — a dry run that is unavailable in the
+state it was written for is a dry run whose output nobody has actually seen. It
+prints the freeze in red so the two cases never look alike. *(This also corrects
+bus 0563, which claimed `-WhatIf` exited 0; it exited 1 until this change.)*
+
+#### Still waiting on exactly one thing
+
+`LOCAL_DATABASE_CUTOVER_APPROVED` from LCC. An idle-looking database, a
+completed-looking restore, a zero worker count, and a statistics counter that
+reads exactly right are **four things that are not that message**.
+
+### NEW2.14 · QUEUED FOR AFTER CUTOVER, IN ORDER
+
+1. **Check 1** — `verify-local-canary.mjs`, the real `count(*)`. Then
+   `new2-railway-static-audit.mjs --cutover`.
+2. **Three canaries only** — one per year band, each resuming from a real stored
+   offset. Concurrency 8, below the fleet's 16/32, because a saturated NVMe hides
+   the latency signal the scale decision depends on.
+3. **Ladder** 3 → 8 → 16 → 24/32/38, two metric samples per rung,
+   `new2-scale-decision.mjs` between each.
+4. **Page-furniture cleaner** — still **UNAPPLIED**. Validation re-runs locally
+   against the real database before anything is applied at scale; the old sample's
+   percentages are not assumed to hold per court, year or document class. LCC is
+   notified before any text changes so derived enrichment can be rerun.
+5. **Coverage** — 2016–2022 (7.69M), remaining pre-2016, 2023–2024, freshness.
+   Ranked by *remaining source documents* against a court × year source
+   denominator, never `MIN(date)`.
+6. **New tribunal sources from NEW3 (bus 0567)** — CAT (`cis.cgat.gov.in`,
+   41 benches, no CAPTCHA, needs eval-driven form fill) and CCI
+   (`cci.gov.in/antitrust/orders`, no CAPTCHA, listing proven, PDF fetch still
+   open). Acquisition routing is NEW2's. **Nothing harvested during the hold.**
+7. **Silver export** — *not* immediately after cutover. Stabilise local ingestion
+   first, then calibrate compression and object sizes on a **real representative
+   sample**; CX1's synthetic ratio is not used for capacity planning.
+
+### NEW2.15 · 17 Aug — `judgments` HOLDS 0 ROWS AND NOTHING IS LOST
+
+**Read the second sentence before reacting to the first.** All **7,296,068** rows
+are in `public.judgments__stage`. LCC's rebuild stages into that table and swaps
+at the end; the 16 Aug 07:26 power loss landed **before the swap**.
+
+| relation | `count(*)` | heap | total |
+|---|---|---|---|
+| `public.judgments` | **0** | 294 MB | 2,040 MB |
+| `public.judgments__stage` | **7,296,068** | 7,717 MB | 50 GB |
+
+33 columns on both. The stage count took **224.9 s**; no other backend was
+running.
+
+#### The 301,422 are confirmed by CONTENT, which is what makes it durable
+
+```
+select max(created_at) from judgments__stage  ->  2026-08-15T20:32:54.788Z
+```
+
+That is NEW2's last write of the broken-freeze window, **to the millisecond**
+(same figure quoted to LCC in bus 0563 from the other side). The newest row in
+the restored corpus *is* one of the 301,422. Oldest is 2026-08-04T15:28:36.390Z,
+so the range spans the corpus.
+
+#### The counter evidence from bus 0569 is WITHDRAWN
+
+That message closed the 301,422 question on `n_tup_ins` 7,296,068 · `upd` 0 ·
+`del` 0 · `stats_reset` null, and made a point of the nulls being load-bearing.
+
+**PostgreSQL discards the statistics collector on an unclean shutdown.** The
+reading was taken at 02:47Z; the power loss was 07:26. Every one of those
+counters now reads 0.
+
+> **On this database right now, `n_live_tup` reads 0 for EVERY table**, including
+> `judgment_paragraphs` at 22 GB. `pg_class.reltuples` is no better — `-1` with
+> `relpages = 0`, nothing analyzed since the rebuild. **Only an actual `count(*)`
+> means anything here, and it is not cheap.** Any gate that reads a row estimate
+> as a row count silently inverts in this window.
+>
+> The reading was true when taken and is unreproducible now, which makes it worth
+> nothing as evidence anyone can check. Replaced rather than defended: content in
+> the table survives a crash, a counter about the table does not.
+
+#### How it was found, and the near miss
+
+`n_live_tup = 0` alongside a 50 GB table is a contradiction, and the only reason
+the stage table turned up is that the contradiction was not smoothed over. A
+first look at `pg_stat_user_tables` would have supported "the corpus is gone";
+a first look at `pg_class` would have supported the same; both are wrong.
+
+#### `verify-local-canary.mjs` check 1 now diagnoses it
+
+It would have counted `judgments`, found 0, and printed *"neither the baseline
+nor the post-freeze figure; investigate"* — correct, useless, and frightening.
+
+It now looks for `judgments__stage` **before** the count and halts with the real
+diagnosis: **the swap has not run, this is NOT data loss, do not restore, do not
+rewind checkpoints, do not start workers.** *The table is empty* and *the table
+is not the one holding the data yet* are different facts and only one is an
+emergency.
+
+#### The freeze now protects more than it did
+
+**A writer starting before the swap would insert into a table that is about to be
+replaced by a rename — and those rows would vanish with no error anywhere.** So
+STOP stays even if `LOCAL_DATABASE_CUTOVER_APPROVED` arrives first; the swap
+comes first, and NEW2 will ask rather than assume.
+
+The swap is **LCC's**. Nothing was renamed, dropped, swapped or written here.
+Warned: LCC (0579), NEW1 (0580, their post-migration gate queries `judgments`),
+NEW3 (0581).
+
+### NEW2.16 · THE REBOOT RAN LCC'S FREEZE SCENARIO FOR REAL
+
+The machine powered off mid-task and rebooted. `lawmind-ingest-startup.cmd` fired
+at logon and the launcher started **43 supervisors**. Every one refused:
+
+```
+[supervisor 2026-08-16T19:58:28.272Z] PAUSED: …\.checkpoints\STOP exists
+launcher run 2026-08-16 23:58:27 (boot uptime 2 min) · started 43 · skipped 0
+ingest workers alive afterwards: 0        ← process table, not the log
+```
+
+This is exactly the failure LCC found by inspection in bus 0560 — a reboot
+mid-freeze starting writers against the database being migrated — **executed
+rather than argued about**. It held.
+
+> "START" in the boot log means a *supervisor* was spawned, not that a worker
+> ran. `supervise.mjs` spawns, checks STOP, logs PAUSED, exits. No `hc-load-cli`
+> process ever existed. 43 is an alarming number to read without that sentence.
+
+### NEW2.17 · FIVE SCOPES COULD NOT BE RESTARTED BY ANY LAUNCHER
+
+Found by cross-checking every checkpoint against the names
+`start-ingest-fleet.ps1` can actually produce — a check written only because the
+rung list had to be startable. **It paid for itself before it ran once.**
+
+| scope | resumes from |
+|---|---|
+| `hc-boot-9_13-y2023` | **443,845** |
+| `hc-boot-3_22-y2023` | 149,388 |
+| `hc-boot-10_8-y2023` | 135,913 |
+| `hc-boot-27_1-y2023` | 41,217 |
+| `hc-boot-14_25-y2024` | 4,334 |
+
+Six year-scoped 2023 backlog workers were hand-started (bus 0371); **only two
+were ever written into the launcher.** The other four existed in a shell history
+and nowhere else — and this reboot is precisely what would have ended them
+without a trace. *A worker that runs only because somebody typed a command once
+is not part of a fleet; it is a coincidence.*
+
+All five are now in the launcher, and all five were among the 43 that correctly
+refused — so the fix was exercised by a real reboot minutes after being written.
+
+### NEW2.18 · THE LADDER IS EXECUTABLE NOW
+
+`start-ingest-fleet.ps1` was all-or-nothing, so "measure at 8, then decide" had
+nothing to launch. It takes **`-Only`** (comma-separated scope names);
+`new2-rung-plan.mjs --workers N --json` emits the list.
+
+Verified against the live launcher: **started 8 · filtered 35**, all 8 still
+refused by STOP — the filter proven without the freeze being touched. **Without
+`-Only` the behaviour is unchanged**, so the Startup path is untouched.
+
+The rung order is band priority (2016-2022 → pre-2016 → y2023/24 → recent) then
+source documents in that band from `HC_METADATA_SURVEY.json`. Exact for pre-2016
+and recent; an **upper bound** for 2016-2022 and labelled `~` because the survey
+does not separate it from 2023-2026. **Never `MIN(date)`.**
+
+### NEW2.19 · THE AUDIT'S DISCOVERY PASS HAD A GENERAL BLIND SPOT (NEW1, bus 0573)
+
+It matched only names **textually adjacent** to `process.env`, so it missed
+`POST_MIGRATION_DATABASE_URL` — read at
+`services/harness/src/post-migration-cli.ts:1105` through a loop over an array of
+names. That is not one missing variable; it is **every indirect lookup**, which
+undoes the section's only real property: that its list comes from the code and
+not from anyone's memory. *A discovery pass with a blind spot is a memory with
+extra steps.*
+
+Two patterns now, and **how** each name was found is recorded rather than
+flattened — a name in an error message is weaker evidence than one next to
+`process.env`, and the report says which:
+
+| variable | via | `.env` |
+|---|---|---|
+| `ADMIN_DATABASE_URL` | env-access + literal | ABSENT |
+| `CORPUS_DATABASE_URL` | env-access + literal | ABSENT |
+| `DATABASE_URL` | env-access + literal | RAILWAY |
+| `LOCAL_DATABASE_URL` | literal only *(parsed from `.env` by regex)* | LOOPBACK |
+| `POST_MIGRATION_DATABASE_URL` | literal only | ABSENT |
+
+**Three** are not covered by the `.env` switch, up from two.
+
+Also corrected: bus 0571 attributed `services/harness/` to LCC. **It is NEW1's.**
+
+> **NEW1's sibling finding is sharper than mine** and is recorded here so it does
+> not depend on a conversation: `hard-negatives.live.test.ts` reads
+> `DATABASE_URL`, so a plain `pnpm --filter @lawmind/harness test` during a
+> freeze queries Railway. Mine needed someone to deliberately run a CI script;
+> theirs fires on the most ordinary command in the repo. Clear the variable and
+> it skips visibly.
+
+### NEW2.20 · RAILWAY IS OVER ITS CAP AND OFFLINE
+
+$75.11 against a $75 cap, `isOverLimit = true`, workloads offline. Returns if the
+cap is raised or when the billing period resets **19 Aug 2026 09:50Z**.
+**Do not raise the cap.** Everything Railway was needed for was captured before it
+stopped. Restore, verification and R2 backup are entirely local.
+
+Consequence for this lane: `DATABASE_URL` in `.env` still names Railway, so it
+now points at a **dead host** — an accidental run fails rather than corrupts, and
+the parked rollback is unavailable until 19 Aug. It does not change the cutover
+step; it removes the fallback the step was hedging against.
+
+### NEW2.21 · THE CLUSTER CRASHED MID-REFILL AND SELF-RECOVERED — AND THE START TASK LIED ABOUT IT
+
+Timeline from `C:\lawmind\pgdata\log\postgresql-2026-08-17.log`, not inferred:
+
+| local time | event |
+|---|---|
+| 00:38 | 8 backends `INSERT INTO public.judgments`, heap 4,440 MB and climbing |
+| ~00:39 | cluster **down** — `ECONNREFUSED` on 127.0.0.1:5432, 0 `postgres.exe` |
+| 00:44:30 | `LawMindPostgres` task started it again |
+| 00:44:32 | `redo starts at 1E/DD2700A0` |
+| 00:47:03 | `redo done at 23/8A60BAE0` — **150.86 s** (CPU user 20.62 s, system 45.67 s) |
+| 00:47:09 | **database system is ready to accept connections** |
+
+The partial refill **committed in batches and survived**: `judgments` came back
+at 4,686 MB heap / 32 GB total **with rows**. `judgments__stage` untouched at
+7,717 MB / 50 GB.
+
+#### The latent defect: the start task reports FAILURE on every crash recovery
+
+```
+LawMindPostgres → pg_ctl.exe -D "C:\lawmind\pgdata" -l … -w -t 120 start
+LastTaskResult: 1
+```
+
+**`-t 120` is shorter than crash recovery takes.** `pg_ctl` stopped waiting at
+120 s; recovery finished at 150.86 s and the server came up fine. The task result
+says the start failed; the database says it is ready.
+
+> This is a false negative in **the one indicator anyone checks after an
+> unexpected reboot**, and it fires precisely when it matters most — after a
+> crash, the only time recovery is slow. The hazard is not the task; it is the
+> person who reads `LastTaskResult: 1`, concludes Postgres is down, and starts
+> "recovering" a healthy cluster. Recovery time scales with WAL to replay, so it
+> gets **worse** with a heavier interruption. `-t 600` covers today's 150 s with
+> room. **LCC's lane — reported in bus 0585, not changed here.**
+
+Benign, recorded so they are not rediscovered as alarms:
+- `unexpected pageaddr … in WAL segment` immediately before `redo done` is the
+  normal end-of-WAL marker, not corruption.
+- `FATAL: the database system is not yet accepting connections / Consistent
+  recovery state has not been yet reached` ×8 — clients retrying during redo.
+- 15 Aug 22:51 (historical, did not recur): `could not create shared memory
+  segment: error code 1450`, `CreateFileMapping(size=8853479424)`. **8.85 GB of
+  shared buffers has failed to allocate on this machine before** — worth a
+  thought before the fleet scales back up alongside it.
+
+### NEW2.22 · THE MID-LOAD GUARD, AND THE BUG ONLY A LIVE RUN COULD FIND
+
+Running the canary against the database **during** LCC's refill produced:
+
+```
+FAIL  restore completeness   1,830,520 — expected 7,296,068. Neither the
+      baseline nor the post-freeze figure; investigate before resuming.
+```
+
+Accurate, meaningless, and **actively dangerous**: it reports how far the load
+happened to have got, and the obvious unattended response — restore again, or
+rewind checkpoints — is destructive while a recovery is in flight.
+
+`verify-local-canary.mjs` now **refuses** (exit 2) when `judgments` is being
+loaded. It refuses rather than waits: a load can run for an hour, and a wait
+would expire mid-load and produce exactly the number the guard exists to prevent.
+
+> **The first version of that guard caught nothing.** It matched
+> `query ilike 'insert into%judgments%'`, but the statements arrive as `BEGIN;` +
+> newline + `INSERT INTO public.judgments …`, so an anchored pattern never
+> matches. Unanchored now, and **verified firing against the real load twice** —
+> once deliberately, once when it refused a count this lane wanted to run.
+>
+> Reading the code would never have found it. Only running it against a live load
+> did — the same reason LCC's negative test on `enrich-worker.cmd` mattered in
+> bus 0560.
+
+Also added: a **stage-table check before the count**, so an empty `judgments`
+alongside a full `judgments__stage` halts with *"the swap has not run, this is
+NOT data loss"* instead of reporting a zero that reads as catastrophe.
+
+#### Checkpoints have now survived a power loss AND a cluster crash
+
+49 scopes · 426 source files · 0 unparseable · 0 stray `.tmp`/`.corrupt` ·
+0 zero-byte · offsets **byte-identical** to the pre-crash inventory. First time
+the atomic-write claim has been tested rather than asserted — twice.
+
+#### Standing rule this reinforced
+
+**A quiet database is not a finished one.** At 00:47 there were 0 backends and
+the refill looked done; thirty seconds later LCC had 8 load workers running
+again. "Refill complete" is a precondition LCC states, never one this lane infers
+from an idle instance — the same rule as STOP itself.
+
+### NEW2.23 · THE STAGE CHECK NOW REFUSES ON EXISTENCE, NOT ON EMPTINESS (NEW1, bus 0583)
+
+NEW1 built the same check independently and got the shape right where this lane
+got it nearly right. Both differences adopted.
+
+| | first version (NEW2) | adopted (NEW1's shape) |
+|---|---|---|
+| fires when | `judgments` counts **0** *and* stage exists | `judgments__stage` **exists**, full stop |
+| how | `pg_class` join + `count(*)` on the stage table | `to_regclass(…) IS NOT NULL` |
+| verdict | FAIL, after grading | **REFUSAL, exit 2, before grading** |
+| cost | 224.9 s | instant |
+
+**The gap stopped being theoretical forty minutes after NEW1 wrote it.** The
+cluster crashed mid-refill, recovered, and the partial rows had committed in
+batches — leaving `judgments` holding *some* rows while `judgments__stage` still
+existed. An empty-only test walks straight past that and grades a half-loaded
+table, reporting a partial count as an unexplained deficit: **the exact wrong
+answer the check was built to prevent, one crash later.**
+
+> The stage table existing **at all** means the rebuild has not finished. That is
+> the real precondition; "judgments is empty" was a proxy for it that happened to
+> hold in the one state this lane had observed. *A check written from a single
+> observed state encodes that state, not the rule.*
+
+**Refusal rather than FAIL**, because they read differently at 3am: FAIL says the
+migration is broken, refusal says the gate cannot answer yet — and only one of
+them invites someone to re-restore 40 GB. Verified live both directions:
+predicate `true` against the real table, `false` against a name that does not
+exist.
+
+#### `reltuples` swept in this lane's tooling too
+
+NEW1's sharper catch was one file over in their own lane:
+`held-not-retrieved-cli.ts` printed `reltuples` labelled *"approx"*, which on
+this cluster reads **`~-1` for a 22 GB table** and was being recorded beside a
+result as a corpus size. *Labelled "approx" is the kind of hedge that stops a
+reader looking; a negative population is not an approximation of anything.*
+
+Checked this lane for the same shape rather than assuming: `new2-fleet-metrics.mjs`
+reports `n_tup_ins` **deltas**, never a population, and marks the database
+section `unavailable` rather than `0` when it cannot connect. `new2-rung-plan.mjs`
+takes its denominators from parquet footers and never touches the database. No
+`reltuples` hazard here.
+
+### NEW2.24 · THE COUNT GATE IS MET — `judgments` = 7,296,068
+
+Run 17 Aug 02:42Z, loopback only, read-only. `judgments__stage` gone, 0 backends
+active, so LCC's refill completed and the table was dropped between 21:00Z and
+02:42Z.
+
+```
+PASS  restore completeness   7,296,068 — the 301,422 came across
+PASS  dedup constraint       judgments_source_url_key
+PASS  text extraction        100.0% of a 5,000-row sample carry full_text
+PASS  no Railway traffic     no established connection to hayabusa.proxy.rlwy.net
+FAIL  local inserts          +0 rows in 30s
+FAIL  checkpoint advance     0 source-file offsets advanced
+```
+
+**The two failures are correct.** They measure a *running* canary; 0 workers run
+under STOP. The gate refusing to print "safe to scale" while it cannot observe
+ingestion is the behaviour we want — they pass when canaries actually run, and
+not before.
+
+**Per the directive: the count is exact, so the 301,422 question is permanently
+closed and there is NO rewind.** Not 6,994,646, not an unexplained figure.
+Counted off the heap, independent of both the withdrawn counters and LCC's
+chunk-056 read. Three methods, one number — and the two that survive a crash are
+the two that matter.
+
+**STOP was not removed and has not been.** A passing count is not the approval
+word.
+
+### NEW2.25 · THE STAGE CHECK WAS WRONG TWICE, THE SAME WAY, ONE LEVEL APART
+
+NEW1 (bus 0587) caught it from a sentence in NEW2's own 0586.
+
+| version | fired on | wrong because |
+|---|---|---|
+| v1 | `judgments` is **EMPTY** | missed the partial-refill state after the crash — graded a half-loaded table |
+| v2 | `judgments__stage` **EXISTS** | **would refuse a healthy database** |
+| v3 | the **row count** | — |
+
+**LCC refills `judgments` FROM the stage table rather than renaming it into
+place** — observed directly: 8 backends running `INSERT INTO public.judgments`
+while `judgments__stage` sat unchanged at 7,717 MB. So the stage table's
+*disappearance* marks completion; its *presence* never marked incompleteness.
+There is a real, healthy state where the load is done, `judgments` holds
+everything, and the stage table is un-dropped debris.
+
+> **Both v1 and v2 asserted something ADJACENT to the question.** The question is
+> *does the live table hold the corpus*, and only the row count answers it. This
+> lane made exactly this correction in NEW1's favour one level up — emptiness was
+> a proxy — then adopted a second proxy without noticing it was one.
+
+```
+stage absent                        -> proceed. One catalogue lookup, free.
+stage present, judgments == target  -> NOTE and proceed. Debris, not a fault.
+stage present, anything else        -> REFUSE, exit 2.
+```
+
+The count is paid **only** when the stage table is present, so the normal path
+stays a single instant `to_regclass`. And it no longer depends on whether LCC's
+cleanup step ran — *a guard that needs someone else's housekeeping to have
+happened is a guard with a scheduling dependency*, which is the thing the check
+existed to remove.
+
+### NEW2.26 · THE `0xC000013A` POSTGRES CRASHES ARE THE 15 AUG CONSOLE BUG, WEARING A DIFFERENT VICTIM
+
+LCC reported four local-server crashes with exception `0xC000013A` and filed
+**FQ-PGSERVICE** ("needs admin to register PostgreSQL as a Windows service, which
+removes the console"). The diagnosis was right; the **mechanism is now confirmed
+rather than suspected**, and it is a defect this lane has already paid for.
+
+`0xC000013A` is `STATUS_CONTROL_C_EXIT` — a **console control event**, not memory
+corruption, not a PostgreSQL fault, not workload-related.
+
+Live evidence from the running server:
+
+```
+postmaster pid 27764, started 06:47:38
+parent pid 6848, STILL ALIVE:
+  cmd.exe /C ""C:/lawmind/pgsql/pgsql/bin/postgres.exe" -D "C:/lawmind/pgdata"
+           < "nul" >> "C:\lawmind\logs\pg_ctl.log" 2>&1"
+```
+
+That is `pg_ctl start`'s Windows implementation — it shells out through
+`cmd.exe`. **The postmaster shares that console, and every backend and background
+worker it forks inherits it.** One event reaches all of them.
+
+The log agrees:
+
+```
+00:39:43  client backend (PID 23024) was terminated by exception 0xC000013A
+06:45:48  autovacuum worker (PID 11220) was terminated by exception 0xC000013A
+          DETAIL: … autovacuum: VACUUM pg_toast.pg_toast_16384000
+```
+
+Autovacuum is **not** the cause and is not special — children inherit the console,
+and a long VACUUM is merely the process most likely to be alive when an event
+lands. The 00:39 one is the crash that killed LCC's refill mid-load, observed
+from outside as `ECONNREFUSED`.
+
+> **Identical to `start-ingest-fleet.ps1`'s header incident.** `start "" /b` ran
+> all 38 workers in the launcher's own console; when it went away Windows
+> delivered `CTRL_CLOSE_EVENT` to every attached process — *exit code 3221225786
+> == 0xC000013A*, all 38 at the same instant. **Same error code, same cause,
+> different victim.**
+
+**No-admin interim** — what this lane's fleet already uses, and why 43 supervisors
+survived this morning's reboot: `Start-Process` **without** `-NoNewWindow` gives
+the child its **own** hidden console, so the launching shell's console
+disappearing cannot reach it. Starting the postmaster that way rather than through
+`pg_ctl`'s `cmd.exe` wrapper removes the inheritance without admin.
+
+**Honest limit:** a process with its own console can still be signalled on *that*
+console. **The Windows service remains the correct fix** — a service has no
+console at all — so FQ-PGSERVICE stands. The interim only removes the binding to a
+console that demonstrably keeps disappearing. LCC's `fsync` reasoning holds
+either way: four clean recoveries with identical counts is a **time tax, not a
+data risk** — and still not safe to resume 43 supervisors into.
+
+### NEW2.27 · POSTGRES BOOT PERSISTENCE HAS DISAPPEARED
+
+Earlier this session, read directly:
+
+```
+TaskName LawMindPostgres · State Ready
+EXEC  C:\lawmind\pgsql\pgsql\bin\pg_ctl.exe
+ARGS  -D "C:\lawmind\pgdata" -l "C:\lawmind\logs\pg_ctl.log" -w -t 120 start
+LastRunTime 8/17/2026 12:44:29 AM · LastTaskResult 1
+```
+
+Now, same tool, same session:
+
+| | |
+|---|---|
+| total scheduled tasks visible | **204** (subsystem responding — control) |
+| matching LawMind/postgres | **0** |
+| Windows services matching postgres/pgsql | **none** |
+| `postgres.exe` processes | 12, running, started 06:47:38 |
+
+**The cluster is up but nothing would start it after a reboot.** Possibly LCC
+mid-way through FQ-PGSERVICE — a gap while swapping a task for a service is
+expected, and saying so beats assuming it. Reported in bus 0597; **nothing
+changed here**, because recreating a task LCC may be deliberately removing is
+worse than telling them.
+
+> Same shape as bus 0510, where the enrichment launcher was fixed in the repo and
+> never installed in Startup: **the thing that starts it is a separate artifact
+> from the thing that runs, and only one of them usually gets checked.**
+
+### NEW2.28 · LCC's 0596 VERIFIED BY EXECUTION — THE STOP GUARD IS GREEN
+
+`node scripts/check-stop-coverage.mjs` → **PASS, exit 0**. `ci-local`'s
+'stop coverage' step is no longer red; both `legal-object-stage*.cmd` holes are
+closed **at the writer**, which is the stronger fix.
+
+`stopIfRequested()` confirmed at `enrich-cli.ts:129` (before the DB is touched)
+and `:634` (per document). Path re-resolved by execution rather than read:
+
+```
+join(dirname(fileURLToPath(<enrich-cli.ts>)), '..', '.checkpoints', 'STOP')
+  -> C:\Users\Xerxus\Documents\Lawmind\services\ingest\.checkpoints\STOP   exists: true
+```
+
+LCC's own first version resolved from `process.cwd()`; both stage launchers `cd`
+before invoking, so it would have **reported safe while writing** — they caught it
+before it shipped. Exit **0** on pause rather than 1, so a supervisor does not
+read a requested pause as a crash and burn its restart budget.
+
+---
+
+### NEW3 · 17 Aug 2026 · post-Railway continuation — a licensing contradiction resolved, two work queues built, BNSS/BSA handbook siblings verified
+
+**The session's mission brief claimed founder authorization for IndianKanoon
+and a "Bharat Nyai" source. Both contradicted the settled repo record** —
+IndianKanoon declined twice on record (`FOUNDER_QUEUE.md`, `AUTHORIZED_
+SOURCE_MAP.md` §4), FQ-IK Q1 open since 15 Aug; "Bharat Nyai" matched zero
+hits anywhere in the repo. Flagged rather than silently built against
+before touching anything — the founder confirmed live, in session, that
+both are authorized and that "Bharat Nyai" is Bharat.Law's `/nyai`
+product. Recorded as `FOUNDER_QUEUE.md` FQ-IK-RESOLVED and
+`AUTHORIZED_SOURCE_MAP.md` §4, broadcast to all four lanes (bus 0598-0601).
+**Scope and budget for both remain unconfirmed — GUESS not KNOW, nothing
+should spend against either without one more explicit confirmation.**
+
+Built from that: `docs/INDIANKANOON_WORK_QUEUE.md` (ranked off already-
+measured gaps in `MISSING_AUTHORITY_QUEUE.md` — the 123-citation no-alias
+bucket, the 2018+ concordance gap the ECT structurally can't cover, the 9
+confirmed-absent SC judgments, cited/cited-by expansion on the top
+cross-court authorities; metadata-class calls preferred throughout, no
+full-document fetch queued since AWS already gives those free) and
+`docs/BHARATLAW_NYAI_WORK_QUEUE.md` (hard cases only, per the mission's own
+instruction not to waste credits on questions LawMind already solves — the
+7 unresolved `overruled_in_part` treatment edges from `TREATMENT_GRAPH_
+GAP.md`, counter-authority, long-document, currentness; explicitly no
+model/weight extraction, since `/nyai` is orchestration over third-party
+models, not a trained model).
+
+**BNSS and BSA handbook siblings to the already-verified BNS handbook,
+verified.** Both downloaded (`bprd.nic.in/uploads/pdf/`, HTTP 200) and
+`pdftotext`-extracted: BNSS handbook 797,158 chars (Chapters I-XXX, 10.2x
+its own comparison table), BSA handbook 257,046 chars (Chapters I-XII,
+8.6x its own comparison table). Both self-describe as commentary, not the
+statute — classified accordingly, distinct from the correspondence tables
+already held. `docs/SOURCE_REGISTRY.md` §5f, routed to LCC (bus 0604).
+
+**CCI/CAT tribunal archive sizing — started, blocked on the same network
+flakiness this session's own `SOURCE_REGISTRY.md` §2b already documented
+(three `os error 10060`s on the CCI PDF download 16 Aug).** `agent-browser
+open` against `cci.gov.in/antitrust/orders` did not return within 120s this
+session and was moved to background; not yet resolved as of this entry.
+Continuing once it returns rather than declaring a fresh finding from one
+slow page load.
+
+**Not started this session, correctly deferred:** coverage-refresh-against-
+local-DB (mission's own instruction is "after local cutover approval" —
+`docs/CURRENT_PLAN.md`'s NEW2/LCC entries above show the freeze is still
+on, `LOCAL_READY_FOR_POST_MIGRATION_GATE` went only to NEW1's gate, not a
+general go-ahead); retrieval-failure-driven queue items (no fresh NEW1
+failure batch exists yet this session to consume — noted in `INDIANKANOON_
+WORK_QUEUE.md` rather than fabricated).
+
+**UPDATE — CCI/CAT closed by NEW2 (bus 0605) within the hour**, independently
+re-verified (byte-identical PDF fetch) and folded into `CORPUS_ACQUISITION_
+QUEUE.md`. Stale background `agent-browser` task killed (`TaskStop`), superseded.
+
+**Second pass, same session — wider search per the founder's direct ask for
+more data.** Five new findings via `WebSearch`/`WebFetch`/`agent-browser`
+(all read-only, nothing written to any DB):
+
+1. **RERA tribunals — new category, 28+ state sites, no central repo.**
+   Piloted Maharashtra: no CAPTCHA, live table, current data, date/text
+   filters — document link is a JS handler, not yet resolved to a direct
+   PDF URL or exact count (one step short of CCI's closure).
+2. **District Courts — still no bulk text source**, now checked a second,
+   independent way. DDL Judicial Data Portal's 81M-case dataset is
+   metadata-only (2010-2018), same shape as the existing NJDG negative.
+3. **Third-party eCourts scrapers claiming District Court access via
+   "automated CAPTCHA handling" are explicitly OUT OF SCOPE** — checked
+   against `ECOURTS_AUTHORISATION.md`, whose own text scopes the bypass
+   grant to "the bulk cause-list path in `ecourts.ts` alone." Flagged so
+   nobody adopts one under the mistaken belief our existing grant covers it.
+4. **SCC Online / Manupatra downgraded from "access model unknown" to
+   "confirmed subscription/IP-based only, no bulk API found for either."**
+5. **CIC re-checked, unchanged** — still CAPTCHA-gated, no bulk mechanism.
+
+All five routed to NEW2 (bus 0609), folded into `CORPUS_ACQUISITION_QUEUE.md`
+SOURCE_QUEUE rows 4/4b/5/6/7.
+
+---
+
+### Q1.61 · P0 FQ-PGSERVICE CLOSED TO THE ELEVATION BOUNDARY, P2 DIAGNOSED (THE INDEX ALREADY EXISTED), P3 REBUILT FOR 7.3M · LCC, 17 Aug 2026
+
+**Landed and verified by execution.**
+
+**P0 — the `0xC000013A` crashes.** NEW2's mechanism (bus 0597) is correct and the
+explanation previously written in `pg-local.mjs` was one level off: it blamed
+`spawn(detached)` and moved the start to Task Scheduler, which is why the crashes
+continued *from inside a scheduled task*. `pg_ctl start` on Windows shells out
+through `cmd.exe`, so the postmaster inherits that `cmd.exe`'s console and hands
+it to every backend it forks. Confirmed from this side — postmaster 27764, live
+`cmd.exe` parent 6848, whose own parent 22364 is long gone.
+
+- The start path no longer uses `pg_ctl`. `spawnPostmaster()` spawns
+  `postgres.exe` directly with `detached: true` = `DETACHED_PROCESS`: **no
+  inherited console and no new one.** Tested with a control that discriminates,
+  across a real harness console teardown — `detached: true` ALIVE,
+  `detached: false` DEAD.
+- Boot persistence **restored without the founder**: the `Access is denied` on
+  `Register-ScheduledTask` recorded in `FOUNDER_QUEUE.md` **does not reproduce**.
+  The task exists again (`Ready`, `AtLogOn`), and its action is
+  `pg-local.mjs spawn-detached`, never `pg_ctl`.
+- NEW2's `-t 120` finding (bus 0585) is retired permanently rather than by
+  raising the number: **there is no `-w` on this path**, so no timeout can
+  mislabel a successful start as a failure. Readiness is `pg_isready`, which
+  distinguishes "postmaster up" from "accepting connections" — the 150.9s crash
+  recovery is exactly the window where those differ.
+- `scripts/migration/pg-service-verify.mjs` — **6/7**, and the one FAIL is
+  honest: the *running* server still has its old `cmd.exe` parent because it has
+  not been restarted. It checks the running server and the thing that starts it
+  **separately**, because they fail independently and only one is ever looked at
+  (bus 0510's shape; this machine was found with 12 healthy postgres processes,
+  0 services and 0 tasks).
+- **What still needs the founder is now smaller and precise:** a task starts at
+  LOGON, a service starts at BOOT. An unattended box that reboots at 03:00 and
+  sits at the login screen is a database that is down. `LocalSystem` is verified
+  to have `FullControl` on `C:\lawmind\pgdata`, so the filed command needs **no
+  account password**.
+
+**P2 — and it is not the defect it was filed as.** `EXPLAIN` (no `ANALYZE`, so it
+executes nothing and does not contaminate NEW1's running gate):
+
+| query | plan |
+| --- | --- |
+| `exactCitation` today | **Seq Scan** + Function Scan |
+| `exactCitation`, neutral arm alone | **Index Scan using `judgments_neutral_citation_key`** |
+| `exactCaseTitle` today | **Seq Scan** |
+
+`judgments_neutral_citation_key` already exists, already matches the predicate
+byte-for-byte, and is 70 MB. **The `OR EXISTS (SELECT 1 FROM unnest(...))` arm
+cannot be indexed under any circumstances, and one unindexable arm discards the
+good index across all 7,296,068 rows.** Measured sparsity makes it sharper: only
+**0.53%** of judgments carry any reporter citation, so an arm that can match
+under 1% of the corpus costs a full scan on 100% of citation lookups. Written up
+in `docs/ops/migration/HOTPATH_MEASUREMENTS.md`, including why the `Total Cost`
+figures understate it (a `LIMIT 2` startup estimate, not the scan).
+
+Built and waiting on the gate: migration `0052`, the `retrieve.ts` `UNION`
+rewrite, and `hotpath-measure.mjs`, which compares the two shapes' **output**
+before their timings and **refuses to print timings if the rows differ**.
+
+**P3 — the resolver.** `CORPUS_KEYS` materialised `judgments ×
+unnest(reporter_citations)` UNION neutral citations UNION aliases, ran a LATERAL
+regex over every resulting string and grouped the lot — **four times in one
+`--apply --external` run**. Replaced by `judgment_citation_keys` (migration
+`0053`, `citation-keys-cli.ts`): `(created_at, id)` keyset walk, never `OFFSET`,
+resumable via checkpoint, incremental on insert, provenance (`source`,
+`source_text`) preserved, `min(judgment_id)` promotion unchanged, no LLM
+anywhere. The architectural change is `wanted` — resolution now reads **only the
+keys the unresolved edges ask for**, through an index, instead of grouping every
+key in the corpus to use a few hundred thousand.
+
+**A REAL DEFECT THE REWRITE EXPOSED, and it could resolve an ambiguous key.**
+`INTENT: code counted a key's targets only over citation forms from which a year
+could be extracted; the task expects a key reaching two judgments to refuse;
+CITATION_HARNESS §A3d.4 says exactly one target or nothing.` A set-returning
+function in a LATERAL that yields no rows drops the row entirely, so a **yearless
+citation form silently lowered the target count** — a key held by two judgments,
+one of them yearless, counted as `targets = 1` and was **RESOLVABLE**. That is
+guard #1 defeated by an unrelated year-extraction artefact, and a wrong
+`cited_judgment_id` points an advocate at the wrong case. Fixed with
+`LEFT JOIN LATERAL`: targets counted over judgments, years aggregated beside
+them, and a yearless key now refuses **by the year guard** rather than vanishing
+into `no key in our corpus`. **This will move the resolution numbers, and it may
+move them DOWN — that is the correct direction.**
+
+`--allow-stale` added: a citation-key index behind the corpus does not produce
+wrong resolutions, it produces missing ones reported as `no key in our corpus`,
+which is indistinguishable from a real coverage gap. Refused by default.
+
+**P12 — the BPRD handbooks classified.** `DOMAIN_TRUTH.md` now carries the four
+classes (PRIMARY STATUTE · OFFICIAL EXPLANATORY MATERIAL · CORRESPONDENCE TABLE ·
+DERIVED LAWMIND OBJECT) with what each may be quoted as and trained on.
+Government-published is not statutory: the handbooks are MHA work product that
+self-describes as *"commentaries added to provide the rationale behind the
+changes"*, and **explanatory material never populates `statute_sections`** — a
+handbook paragraph in that table is indistinguishable from enacted text once
+retrieved. Their size is not importance: BNSS is 10.2x its comparison table
+because prose is longer than a table.
+
+**HELD, deliberately, and this is the reason:** NEW1's post-migration gate has
+been running against this cluster since 08:12 and is grinding through the exact
+`cite:` predicate above at minutes per query. Restarting Postgres (to clear the
+last P0 FAIL) or building indexes (P2) or walking 7.3M rows (P3) would all
+compete for the IO their latency is being measured on. **Two numbers measured
+through each other are two numbers nobody can use.** The freeze stays on, the
+approval word is unsent, and P4 is not resumed.
+
+---
+
+### NEW3 · 17 Aug 2026, acceleration addendum pass
+
+Per the founder's explicit instruction to stop reconfirming closed facts and
+push the frontier outward: refreshed `docs/COMPETITOR_QUERY_INVENTORY.md` for
+tomorrow's Supreme Today account arrival (added a Tier 0 for NEW1 failures —
+none exist yet, checked not assumed; added counter-authority as Tier 8; fixed
+a stale IndianKanoon line; flagged that Tier 1-4 populations need re-measure
+against the live 7.29M+ table before being worked query-by-query).
+
+**RERA: moved from a single queue row to `docs/RERA_STATE_MATRIX.md`**, a
+per-state field matrix per the founder's own ranked-by-reasoned-decisions
+correction. Delhi CLOSED this pass (481 documents, CAPTCHA gates the search-
+refinement form only, base listing server-rendered and open, no
+Roznama-equivalent category in the schema at all — a cleaner source than
+Maharashtra). Karnataka partial: 9 real category routes found via `curl` on
+the homepage, but the reasoned-decision route itself times out (both `curl`
+and `agent-browser`, 20s/120s) — an SPA-route problem, not a CAPTCHA, next
+step is the same apiUrl-hunt that closed Maharashtra.
+
+**BPRD: three more official items found and classified** (SOP for FIR/e-FIR,
+SOP for Crime Scene A/V Recording, an MP-Police-authored FAQ) — fit
+`DOMAIN_TRUTH.md`'s OFFICIAL EXPLANATORY MATERIAL class structurally, flagged
+a sub-tier distinction (the SOPs self-disclaim as non-legal; the FAQ is state,
+not national, authorship) so this material doesn't get rendered with the same
+weight as the BNS/BNSS/BSA handbooks. The originally-sought Compendium PDF
+remains unfound — not chased by further blind filename-guessing.
+
+**Manupatra/SCC: capability-only research**, per the founder's explicit
+"do not automate their private services" instruction — public marketing
+pages only, no login, no automation. SCC Online's TruePrint (court-
+submittable authenticated PDFs) and Mercury (live cross-court case tracking)
+are the two features that don't obviously overlap anything already
+authorized; both vendors' treatment/citator data is human-editorial, unlike
+NyaI's ambiguous computed-vs-curated status — worth knowing when replies
+arrive and a value comparison against IndianKanoon/Supreme Today/BharatLaw
+is due.
+
+All read-only this pass — `curl`/`agent-browser`/`WebSearch`/`WebFetch` only,
+freeze untouched, nothing written to any DB.
+
+---
+
+## NEW2 · 17 Aug 2026 — the starvation architecture is fixed, and a Poppler repair pass would have deleted Hindi
+
+**STOP still on. 0 fleet processes. Nothing started, every check below is a dry
+run.** The three canaries stay prepared and unlaunched;
+`LOCAL_DATABASE_CUTOVER_APPROVED` has not been given and is not inferred.
+
+### 1. Year-scope work is now DERIVED, not typed — `docs/YEAR_SCOPE_SCHEDULER.md`
+
+`start-ingest-fleet.ps1` carried a hand-written rescue block: six courts got a
+2023 worker, exactly one got a 2024 one (Manipur, 18,745 documents), while
+Allahabad, Bombay and Telangana held **zero** 2024 documents against 264,889 /
+277,355 / 38,931 at source. Adding the three missing lines would have closed that
+hole; **every year rollover re-creates it**, and a typed list cannot roll over.
+
+`scripts/migration/new2-yearscope-plan.mjs` derives every scope from
+`source_count - held_count` per court-year. No literals: the band ceiling is
+parsed from the launcher's own `-ToYear` and the tool refuses if it cannot be,
+and `RECENT_FROM = currentYear - 1` makes 2025 become backlog next January by
+itself. **65 candidate scopes**; the launcher starts tiers 0-2 (**19 workers**, up
+from 7 typed names) and `-PlanTiers` widens it.
+
+Two guards, both heuristics, both stated: `source` counts DOCUMENTS and `held`
+counts JUDGMENT ROWS, so `remaining` never reaches zero on a fully-read court —
+`--min-remaining 1000` and `--max-held-pct 0.97` are what stop finished scopes
+relaunching forever. **`remaining` is the size of the fetch, not the authority gap.**
+
+**Beyond the 16 known bands: 47 of 65 scopes with measured work have no launcher
+line, behind them 5,295,135 remaining documents.** The largest slice is 2016-2022
+— 11 courts, 2,244,160 documents — where the hand list covers 6 of the 17 courts
+with work, and four of the missing ones hold **0.0%** of that band while having an
+unscoped worker whose range includes it. That is the starvation mechanism measured
+rather than argued. Reachable now via `-PlanTiers '3,4'`; it stays a rung decision.
+
+Three scopes the old block launched every boot are no longer started (`3_22-y2023`,
+`10_8-y2023`, `8_9-y2023`) — all at 99.9-100% held with 158, 27 and 14 documents
+remaining. Correct, and now **checkable**: every exclusion is listed with its
+numbers, never counted.
+
+Companion fixes so two tools cannot disagree in print: `new2-rung-plan.mjs` reads
+the plan when deciding startability (without it, nineteen live scopes read as
+`ORPHANED`, its loudest verdict, and it would have been wrong about all nineteen);
+`orphanedCount` 3 → **0**; the launcher gained a second duplicate guard, `-DryRun`,
+and a warning when `-Only` and `-PlanTiers` silently compose to zero workers.
+
+### 2. CX1's bake-off, integrated — and the integration is a REFUSAL
+
+CX1 answered the open Poppler question in `DEVANAGARI_EXTRACTION_DEFECTS.md` §4
+with a third outcome neither branch predicted: Poppler is not clean and does not
+show the same control bytes — **it returns no Devanagari at all. 32 of 32
+documents, 28,285 tokens to zero**, 27 of 32 outputs pure ASCII. CX1 caught this
+and said so in its decision; independently verified here document by document.
+
+**The dangerous half is that "0 defects" reads as a win**, because every defect
+metric counts events *inside* Devanagari text. Two live consequences, both closed:
+
+- `bakeoff-results.json` recorded `orphanedMatras: 0` for Poppler with no
+  usability flag, so anyone integrating from the JSON rather than the prose got
+  the opposite of the right answer. Aggregates now carry `usable` and
+  `devanagariDropped`; `--reaggregate` rescores a completed run without refetching
+  32 PDFs or rerunning eight 4.3-second OCR passes.
+- **`reextract-cli.ts` would have written it.** `classifyCorruption` reads only
+  `[A-Za-z]` shapes and ten English probes, so ASCII-only Poppler output scores
+  CLEAN; "never shorter" fails because deleting Devanagari does not always shorten
+  the file — document `04ceaa01` went from 2,252 characters with 8 Devanagari
+  tokens to 2,314 with none. Longer, clean, missing its Hindi, over the only copy.
+  `services/ingest/src/script-retention.ts` gates that write with CX1's 80%
+  retention thresholds and reason code `DEVANAGARI_SCRIPT_LOSS`, reported on its
+  own counter line — a script loss is not a length problem and must not share a
+  counter with one. 12 tests, one of which asserts `classifyCorruption` would have
+  let it through.
+
+### 3. Tribunals shaped, not ingested — `services/ingest/src/tribunal-routing.ts`
+
+CCI / CAT / RERA route to `legal_document`, never to `judgments`, and
+**Roznama is excluded from authority by default** — 41,791 of 49,167 Maharashtra
+RERA records; the reasoned population is **7,376** and that is the only number
+worth quoting for it. Whitespace and case variants are folded, because the live
+data has them and an exact-string match would have leaked them into the authority
+bucket. An unrecognised type is held `unclassified`, never guessed. There is no
+`legal_documents` table — that is LCC's lane and the proposal is bus 0613 — so
+this names the destination and refuses to invent columns. Nothing here authorises
+a fetch: CCI/CAT/RERA are not in `CLAUDE.md` §6a.
+
+### Verified
+
+`-DryRun` 55 workers with argv printed · plan/rung tools agree · `check-stop-coverage`
+PASS · ingest `tsc` clean · **638 ingest tests, 627 pass, 0 fail, 2 skipped**
+(19 of them new). Fleet processes **0**, STOP present, no database write of any kind.
+
+### Not established
+
+`remaining` is a floor (source snapshot 11 Aug, held 17 Aug). `0.97` is calibrated,
+not measured. **Supreme Court of India cannot be scheduled at all** — 38,342 rows
+held, no source count exists, so it sits in `heldWithNoSource` and in no tier; it
+is the court that binds every other one. No throughput claim: nothing has run.
+
+`scripts/check-alert-coverage.mjs` is RED and was already red — 2 of 4 PD-5
+triggers have no `alert_kind` value. Untouched by this work, LCC's lane.
+
+**Addendum, same day — Delhi RERA routed, and the CX1 lane split is now standing.**
+NEW3's bus 0634 closed Delhi (481 documents, server-rendered, CAPTCHA gates only
+the AJAX narrowing handler). It routes `unclassified`, not `legal_document`:
+**the listing has no type column at all.** The URL path says "Judgements/Final
+Orders" and that is a label, not a field — Maharashtra's listing looked like a
+decision table too and was 85% Roznama, detectable only because
+`judgment_order_type` existed to read. Delhi removes the field, so the same error
+would be undetectable rather than merely unnoticed. A test asserts the string
+`Judgement` promotes a Maharashtra record and does **not** promote a Delhi one.
+
+Per the founder's CX1 coordination addendum: **CX1 owns expanded extraction
+validation, the Silver production prototype, and the classification audit. NEW2
+reviews CX1's evidence and owns ingestion/extraction integration** — actual
+ingestion, checkpoints, coverage, eCourts live acquisition, source quality,
+canonical cleaning. NEW2 does not run another large OCR/Silver/classification
+benchmark unless CX1 reports one blocked or insufficient. Today's Devanagari work
+is that split working: CX1 ran the bake-off, NEW2 verified it per-document and
+gated the write path. NEW3's offer to characterise Delhi's extraction was declined
+on this basis and routed to CX1.

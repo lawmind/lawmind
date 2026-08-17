@@ -452,16 +452,28 @@ export const judgments = pgTable(
     index('judgments_full_text_idx').using('gin', t.fullTextTsv),
     index('judgments_judgment_date_idx').on(t.judgmentDate),
     index('judgments_court_idx').on(t.court),
+    // Arrival-order pagination for the paragraph-coverage backfill (NEW2, bus
+    // 0461): `judgments.id` is uuid v4, so a persisted id watermark would skip
+    // newly-harvested rows landing below it — `created_at` is monotonic and
+    // safe to page by. Without this index, ORDER BY created_at sorts 3.2M rows
+    // per page. Migration 0050.
+    index('judgments_created_at_idx').on(t.createdAt),
     // Partial: finding the tiered-out rows is the whole point, and the NULLs
     // are the majority for as long as Tier 1 exists.
-    index('judgments_storage_key_idx').on(t.storageKey).where(sql`storage_key IS NOT NULL`),
+    index('judgments_storage_key_idx')
+      .on(t.storageKey)
+      .where(sql`storage_key IS NOT NULL`),
     // Partial: a dedup lookup is the only query this serves.
-    index('judgments_content_hash_idx').on(t.contentHash).where(sql`content_hash IS NOT NULL`),
+    index('judgments_content_hash_idx')
+      .on(t.contentHash)
+      .where(sql`content_hash IS NOT NULL`),
     // Partial, not unique: data quality across 25+ courts is not yet proven
     // clean enough to enforce uniqueness without risking a rejected ingest
     // write on a legitimate edge case — the same caution already applied to
     // content_hash above.
-    index('judgments_cnr_idx').on(t.cnr).where(sql`cnr IS NOT NULL`),
+    index('judgments_cnr_idx')
+      .on(t.cnr)
+      .where(sql`cnr IS NOT NULL`),
     // Ingest resumability, enforced by the database rather than by application
     // code: re-running a killed ingest must not duplicate. `source_url` is the
     // natural key of a judgment at its source (one canonical document per URL).
@@ -1563,6 +1575,95 @@ export const judgmentCitationAliases = pgTable(
 );
 
 /**
+ * Every citation form the corpus holds, keyed — the resolver's index, made a
+ * table instead of a query.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS EXISTS: THE RESOLVER WAS WRITTEN FOR 38,341 JUDGMENTS AND NOW FACES
+ * 7,296,068
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `resolve-cli.ts` built its lookup index inline, on every run, as a CTE:
+ * `judgments × unnest(reporter_citations)` UNION the neutral citations UNION the
+ * alias table, then a LATERAL `regexp_matches` over every one of those strings to
+ * pull its years, then `GROUP BY` the lot. At 38k rows that is a rounding error.
+ * At 7.3M it is two sequential scans of an 8.4 GB heap plus a regex over every
+ * citation string in the corpus — **materialised four separate times in one
+ * `--apply --external` run**, because the same CTE appears in four statements.
+ * NEW1 caught it as a 16.4-hour query blocking a second copy of itself (bus
+ * 0523), and it is 190x the corpus it was designed against, not 100x.
+ *
+ * **The fix is not a faster scan. It is not scanning.** The keys change only when
+ * judgments or aliases change, so they belong in a table that is maintained
+ * incrementally and read through an index — after which resolution touches only
+ * the keys the unresolved edges actually ask for, which is a few hundred thousand
+ * rather than all of them.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT EACH COLUMN IS FOR, AND WHY NONE OF THEM IS DERIVED AT READ TIME
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `source` and `sourceText` are the provenance requirement, and they are the
+ * reason this is not a materialised view of keys alone. *"Why does this key point
+ * at that judgment?"* has to stay answerable — **"because the reporter printed
+ * `[1950] 1 S.C.R. 806` on it"** is an answer; a bare key is not. It is also what
+ * makes a bad row correctable: a key with no traceable form is indistinguishable
+ * from a bug.
+ *
+ * `years` is stored rather than recomputed because it is the resolver's YEAR
+ * GUARD — the check that stops a digit-boundary collapse pointing an advocate at
+ * a case from another decade — and recomputing it per run is exactly the LATERAL
+ * regex that made the old pass unaffordable.
+ *
+ * **This table is an INDEX, never an authority.** It asserts nothing that
+ * `judgments` and `judgment_citation_aliases` do not already say; it can be
+ * dropped and rebuilt from them at any time, and `citation-keys-cli.ts` exists to
+ * do exactly that. Nothing may write a fact here that has no source row.
+ */
+export const judgmentCitationKeys = pgTable(
+  'judgment_citation_keys',
+  {
+    /** Upper-cased, non-alphanumerics stripped — the same rule as `citationLookupKey`. */
+    citationKey: text('citation_key').notNull(),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+    /** `neutral` | `reporter` | `alias`. Which of the three origins this form came from. */
+    source: text('source').notNull(),
+    /** The citation exactly as it was printed or derived. Provenance, and a human's check. */
+    sourceText: text('source_text').notNull(),
+    /**
+     * Every four-digit year appearing in `sourceText`. The resolver's year guard
+     * reads this and nothing else.
+     *
+     * `[0-9]` and never `\d` when this is populated — a backslash does not survive
+     * the trip from a JS tagged template through the driver to PostgreSQL, and it
+     * fails as an EMPTY MATCH SET rather than an error, so a guard built on it
+     * looks like a guard that simply never had to fire. Measured, `resolve-cli.ts`.
+     */
+    years: text('years').array().notNull().default([]),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // The resolver's only access path: given a key, which judgments claim it.
+    index('judgment_citation_keys_key_idx').on(t.citationKey),
+    // Rebuild-one-judgment and the ON DELETE CASCADE both walk this.
+    index('judgment_citation_keys_judgment_idx').on(t.judgmentId),
+    // Idempotence. The builder is resumable and therefore WILL re-visit rows on
+    // an overlapping restart; without this a crash mid-page silently doubles a
+    // key's target count, and a key with two targets is one the resolver refuses
+    // outright. A duplicate row here does not corrupt data — it SUPPRESSES a
+    // correct resolution, which is the harder failure to notice.
+    uniqueIndex('judgment_citation_keys_unique').on(
+      t.citationKey,
+      t.judgmentId,
+      t.source,
+      t.sourceText,
+    ),
+  ],
+);
+
+/**
  * DeepSeek-adjudicated candidate resolutions for `external_citations` targets
  * that the deterministic concordance (`concordance.ts`) could not join —
  * `docs/ai/CITATION_CONCORDANCE_PROGRAM.md`.
@@ -1633,7 +1734,10 @@ export const citationConcordanceResolutions = pgTable(
     modelReasoning: text('model_reasoning'),
     /** Contradictions the model itself flagged, verbatim. NULL means none reported. */
     contradictions: text('contradictions'),
-    signalsUsed: text('signals_used').array().notNull().default(sql`'{}'::text[]`),
+    signalsUsed: text('signals_used')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     needsHumanReview: boolean('needs_human_review').notNull().default(true),
     /**
      * `unvalidated` | `gold_positive` | `gold_negative` | `promoted` | `rejected`.
@@ -1720,5 +1824,97 @@ export const documentDuplicateMembers = pgTable(
   (t) => [
     primaryKey({ columns: [t.groupId, t.judgmentId] }),
     index('document_duplicate_members_judgment_idx').on(t.judgmentId),
+  ],
+);
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * MODEL-DERIVED ENRICHMENT CANDIDATES — what a model SAYS, never what LawMind KNOWS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * **Transcribed into `schema.ts` on 14 Aug 2026, having existed in production
+ * since migration 0045 without ever appearing here.** 28,728 rows and two CLIs
+ * were writing a table Drizzle had no idea about. Nothing was broken by it —
+ * every writer uses raw SQL — but `SCHEMA_TRUTH.md` calls itself the only
+ * authority on data shapes, and a table missing from the transcription is a way
+ * for the next agent to conclude it does not exist. `documentEnrichments` is
+ * declared here so that reading is impossible, not so a query changes.
+ *
+ * `docs/ai/CITATION_CONCORDANCE_EVALUATION.md` is the reason the table is
+ * separate at all: with the true answer removed from its options this model
+ * invented an authority 10.8% of the time, and two of those four inventions
+ * carried its own `high` confidence. So model output lands HERE, and promotion
+ * into `judgments`, `judgment_citations`, `judgment_citation_aliases` or
+ * `judgment_judges` is a separate, measured, deliberate step. **No route joins
+ * this table and no retrieval path consults it.**
+ *
+ * `verificationState` is decided by STRING-MATCHING the model's claimed evidence
+ * span against the source text — never by the model's own confidence. A claim
+ * whose span cannot be located is `rejected`, with the reason recorded.
+ *
+ * `task` is text with a CHECK constraint rather than a `pgEnum`, deliberately:
+ * a new enrichment task is a normal weekly event, and 0044 taught what it costs
+ * to rewrite a type in production. Drizzle carries no CHECK here, so the
+ * constraint lives in the migrations (0045, extended by 0051 and 0054) and that
+ * is where the current task list is authoritative.
+ *
+ * 0054 adds the ATOMIC vocabulary — `issue`, `relief`, `procedural_event`,
+ * `date_event`, `fact_proposition`, `party_action`, `court_action`,
+ * `reasoning_proposition`, `statute_role` — alongside 0051's composite objects
+ * rather than replacing them. The reason is the verification rule two paragraphs
+ * up: a composite object fails as a UNIT, so a rejected `case_structure`
+ * discards the parts whose spans located perfectly. An atomic task is one
+ * assertion with one span, so a rejection names one proposition.
+ */
+export const documentEnrichments = pgTable(
+  'document_enrichments',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    judgmentId: uuid('judgment_id')
+      .notNull()
+      .references(() => judgments.id, { onDelete: 'cascade' }),
+    /** Which enrichment was attempted. CHECK-constrained in the migration, not here. */
+    task: text('task').notNull(),
+    /** Bumped when the prompt changes, so a revision re-runs instead of reusing. */
+    promptVersion: text('prompt_version').notNull(),
+    model: text('model').notNull(),
+    /** task + prompt version + the exact excerpt sent. The cache key. */
+    inputHash: text('input_hash').notNull(),
+    /** The document text the excerpt came from, so a re-extraction invalidates
+     * its own enrichments rather than keeping answers about text that is gone. */
+    sourceTextHash: text('source_text_hash').notNull(),
+    /** Kept verbatim so re-verification costs no tokens when the verifier improves. */
+    rawOutput: text('raw_output'),
+    parsedOutput: jsonb('parsed_output'),
+    inputTokens: integer('input_tokens').notNull().default(0),
+    outputTokens: integer('output_tokens').notNull().default(0),
+    latencyMs: integer('latency_ms'),
+    attempts: integer('attempts').notNull().default(1),
+    /** `ok` means the call returned and parsed. It says NOTHING about truth —
+     * that is `verificationState`'s job, and conflating the two is how a
+     * transport success becomes a legal fact. `ok` | `call_failed` | `unparseable`. */
+    status: text('status').notNull(),
+    error: text('error'),
+    /** `verified` | `partial` | `rejected` | `unverified`. Set by span matching. */
+    verificationState: text('verification_state').notNull().default('unverified'),
+    verifiedCount: integer('verified_count').notNull().default(0),
+    rejectedCount: integer('rejected_count').notNull().default(0),
+    rejectionReasons: jsonb('rejection_reasons'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // A repeat of the same task, prompt and excerpt is a lookup, never a second
+    // call against a rate-limited free pool.
+    uniqueIndex('document_enrichments_cache_key').on(
+      t.judgmentId,
+      t.task,
+      t.promptVersion,
+      t.inputHash,
+    ),
+    index('document_enrichments_task_idx').on(t.task, t.verificationState),
+    index('document_enrichments_judgment_idx').on(t.judgmentId),
+    // Added by 0051: the staged rollout asks "how did the last stage verify"
+    // constantly, which is a range read, not a scan of every row ever produced.
+    index('document_enrichments_task_created_idx').on(t.task, t.createdAt),
   ],
 );

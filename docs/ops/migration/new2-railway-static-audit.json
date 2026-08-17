@@ -1,0 +1,368 @@
+{
+  "tool": "scripts/migration/new2-railway-static-audit.mjs",
+  "takenAt": "2026-08-17T12:22:03.993Z",
+  "mode": "cutover-gate",
+  "purpose": "Static audit of every path that could still reach Railway. Opens no socket and imports no database driver.",
+  "filesScanned": 640,
+  "selfExcluded": "scripts/migration/new2-railway-static-audit.mjs",
+  "env": {
+    "urlVars": [
+      {
+        "name": "DATABASE_URL",
+        "host": "127.0.0.1:5432/lawmind",
+        "points": "LOOPBACK"
+      },
+      {
+        "name": "LOCAL_DATABASE_URL",
+        "host": "127.0.0.1:5432/lawmind",
+        "points": "LOOPBACK"
+      },
+      {
+        "name": "RAILWAY_DATABASE_URL",
+        "host": "hayabusa.proxy.rlwy.net:24909/railway",
+        "points": "RAILWAY"
+      }
+    ],
+    "activeDatabaseUrl": {
+      "name": "DATABASE_URL",
+      "host": "127.0.0.1:5432/lawmind",
+      "points": "LOOPBACK"
+    },
+    "note": "DATABASE_URL pointing at Railway is CORRECT until LOCAL_DATABASE_CUTOVER_APPROVED — LCC parked the rollback there deliberately. Only --cutover treats it as a failure."
+  },
+  "connectionSources": [
+    {
+      "name": "ADMIN_DATABASE_URL",
+      "discoveredVia": [
+        "env-access",
+        "string-literal"
+      ],
+      "indirectOnly": false,
+      "inEnvFile": "ABSENT",
+      "envFileHost": null,
+      "inProcessEnv": "unset",
+      "processHost": null,
+      "note": "supplied per-invocation — .env cannot show it, and repointing .env does not repoint it"
+    },
+    {
+      "name": "CORPUS_DATABASE_URL",
+      "discoveredVia": [
+        "env-access",
+        "string-literal"
+      ],
+      "indirectOnly": false,
+      "inEnvFile": "ABSENT",
+      "envFileHost": null,
+      "inProcessEnv": "unset",
+      "processHost": null,
+      "note": "supplied per-invocation — .env cannot show it, and repointing .env does not repoint it"
+    },
+    {
+      "name": "DATABASE_URL",
+      "discoveredVia": [
+        "env-access",
+        "string-literal"
+      ],
+      "indirectOnly": false,
+      "inEnvFile": "LOOPBACK",
+      "envFileHost": "127.0.0.1:5432/lawmind",
+      "inProcessEnv": "unset",
+      "processHost": null,
+      "note": null
+    },
+    {
+      "name": "LOCAL_DATABASE_URL",
+      "discoveredVia": [
+        "env-access",
+        "string-literal"
+      ],
+      "indirectOnly": false,
+      "inEnvFile": "LOOPBACK",
+      "envFileHost": "127.0.0.1:5432/lawmind",
+      "inProcessEnv": "unset",
+      "processHost": null,
+      "note": null
+    },
+    {
+      "name": "POST_MIGRATION_DATABASE_URL",
+      "discoveredVia": [
+        "string-literal"
+      ],
+      "indirectOnly": true,
+      "inEnvFile": "ABSENT",
+      "envFileHost": null,
+      "inProcessEnv": "unset",
+      "processHost": null,
+      "note": "supplied per-invocation — .env cannot show it, and repointing .env does not repoint it"
+    }
+  ],
+  "entryPoints": [
+    {
+      "launcher": "scripts/lawmind-citations-startup.cmd",
+      "writers": [
+        "citations-cli.ts"
+      ],
+      "envFiles": [],
+      "dbUrlSource": "DATABASE_URL from env file",
+      "wouldReach": "LOOPBACK"
+    },
+    {
+      "launcher": "scripts/lawmind-enrichment-startup.cmd",
+      "writers": [
+        "paragraphs-cli.ts"
+      ],
+      "envFiles": [],
+      "dbUrlSource": "DATABASE_URL from env file",
+      "wouldReach": "LOOPBACK"
+    },
+    {
+      "launcher": "scripts/legal-object-stage1.cmd",
+      "writers": [
+        "enrich-cli.ts"
+      ],
+      "envFiles": [
+        ".env"
+      ],
+      "dbUrlSource": "DATABASE_URL from env file",
+      "wouldReach": "LOOPBACK"
+    },
+    {
+      "launcher": "scripts/legal-object-stage2.cmd",
+      "writers": [
+        "enrich-cli.ts"
+      ],
+      "envFiles": [
+        ".env"
+      ],
+      "dbUrlSource": "DATABASE_URL from env file",
+      "wouldReach": "LOOPBACK"
+    },
+    {
+      "launcher": "scripts/start-ingest-fleet.ps1",
+      "writers": [
+        "hc-load-cli.ts",
+        "hc-classify-cli.ts"
+      ],
+      "envFiles": [
+        "../../.env,"
+      ],
+      "dbUrlSource": "DATABASE_URL from env file",
+      "wouldReach": "LOOPBACK"
+    },
+    {
+      "launcher": "scripts/start-local-canary.ps1",
+      "writers": [
+        "hc-load-cli.ts"
+      ],
+      "envFiles": [
+        "../../.env)"
+      ],
+      "dbUrlSource": "LOCAL_DATABASE_URL injected per child process",
+      "wouldReach": "LOCAL"
+    }
+  ],
+  "totals": {
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "INFO": 28
+  },
+  "cutoverBlocked": null,
+  "findings": [
+    {
+      "severity": "INFO",
+      "kind": "railway-http-endpoint",
+      "file": "apps/admin/lib/api.ts",
+      "line": 14,
+      "detail": "https://api-production-1c0b4.up.railway.app — HTTP API base URL, not a database path"
+    },
+    {
+      "severity": "INFO",
+      "kind": "railway-http-endpoint",
+      "file": "apps/mobile/src/api/client.ts",
+      "line": 79,
+      "detail": "https://api-production-1c0b4.up.railway.app — HTTP API base URL, not a database path"
+    },
+    {
+      "severity": "INFO",
+      "kind": "database-public-url",
+      "file": "scripts/ci-local.mjs",
+      "line": 42,
+      "detail": "names it in a refusal/guard"
+    },
+    {
+      "severity": "INFO",
+      "kind": "railway-db-host-literal",
+      "file": "scripts/migration/verify-local-canary.mjs",
+      "line": 334,
+      "detail": "hayabusa.proxy.rlwy.net — migration tooling, expected to name the source it is leaving"
+    },
+    {
+      "severity": "INFO",
+      "kind": "database-public-url",
+      "file": "scripts/start-local-canary.ps1",
+      "line": 93,
+      "detail": "names it in a refusal/guard"
+    },
+    {
+      "severity": "INFO",
+      "kind": "database-public-url",
+      "file": "scripts/start-local-canary.ps1",
+      "line": 94,
+      "detail": "names it in a refusal/guard"
+    },
+    {
+      "severity": "INFO",
+      "kind": "database-public-url",
+      "file": "scripts/start-local-canary.ps1",
+      "line": 158,
+      "detail": "names it in a refusal/guard"
+    },
+    {
+      "severity": "INFO",
+      "kind": "railway-http-endpoint",
+      "file": "services/api/src/env.ts",
+      "line": 27,
+      "detail": "https://api-production-1c0b4.up.railway.app — HTTP API base URL, not a database path"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 8,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 12,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 13,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 14,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 18,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "railway-db-host-literal",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 18,
+      "detail": "hayabusa.proxy.rlwy.net — string fixture, no database client in this file"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 26,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/db-url.test.ts",
+      "line": 30,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "railway-http-endpoint",
+      "file": "services/harness/src/deployed-judgment-safety-cli.ts",
+      "line": 14,
+      "detail": "https://api-production-1c0b4.up.railway.app — HTTP API base URL, not a database path"
+    },
+    {
+      "severity": "INFO",
+      "kind": "railway-http-endpoint",
+      "file": "services/harness/src/deployed-safety-cli.ts",
+      "line": 14,
+      "detail": "https://api-production-1c0b4.up.railway.app — HTTP API base URL, not a database path"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 35,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 40,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 44,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "railway-db-host-literal",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 44,
+      "detail": "hayabusa.proxy.rlwy.net — string fixture, no database client in this file"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 52,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "database-public-url",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 56,
+      "detail": "names it in a refusal/guard"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 57,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "database-public-url",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 57,
+      "detail": "names it in a refusal/guard"
+    },
+    {
+      "severity": "INFO",
+      "kind": "hardcoded-connection-string",
+      "file": "services/harness/src/post-migration.test.ts",
+      "line": 69,
+      "detail": "string fixture — the file builds no database client, so nothing can connect with it"
+    },
+    {
+      "severity": "INFO",
+      "kind": "database-public-url",
+      "file": "services/harness/src/post-migration.ts",
+      "line": 206,
+      "detail": "names it in a refusal/guard"
+    }
+  ]
+}
