@@ -37,8 +37,8 @@ consent, and the separation is the point.**
 `training_consent_at` + `training_consent_version` record that an advocate
 agreed their own work may be used as training input. **This is not the PD-8 pair
 below**, and reusing that pair would have been one column cheaper and wrong:
-**DPDP Act 2023 s. 6** requires consent to be *free, specific, informed,
-unconditional and unambiguous*, given **for a specified purpose**. Accepting the
+**DPDP Act 2023 s. 6** requires consent to be _free, specific, informed,
+unconditional and unambiguous_, given **for a specified purpose**. Accepting the
 terms is not agreeing that your drafting teaches the model.
 
 **An unset pair means NO** — no boolean, no default. A `boolean NOT NULL DEFAULT
@@ -50,8 +50,8 @@ guards it.
 
 **Withdrawal sets both columns back to NULL.** There is deliberately no
 `training_consent_withdrawn_at`: a third column leaves two that can disagree and
-a question — *granted in March, withdrawn in August, what about the pairs
-emitted in May?* — that application code must re-answer forever. DPDP s. 6(6)
+a question — _granted in March, withdrawn in August, what about the pairs
+emitted in May?_ — that application code must re-answer forever. DPDP s. 6(6)
 requires processing to cease on withdrawal, and it does, because
 `services/api/src/training/extract.ts` **materialises nothing**: pairs are
 generated on demand and filtered by consent at generation time, so withdrawal is
@@ -185,7 +185,7 @@ the only one we hold — publishes no judge field at all. `judgment_judges`
 covers 38,325 Supreme Court judgments and no High Court one.
 
 **Bench strength is not derivable, and the reason is worse than "no column".**
-RCC bus 0046 asked for `bench: ('constitution' | 'three_plus')[]`. A count *can*
+RCC bus 0046 asked for `bench: ('constitution' | 'three_plus')[]`. A count _can_
 be produced — `judgment_judges` has 44,360 rows over 38,325 Supreme Court
 judgments, and the distribution looks legally plausible at a glance (33,484
 single · 3,913 two · 798 three · 104 five · 6 seven · 2 nine).
@@ -194,12 +194,12 @@ single · 3,913 two · 798 three · 104 five · 6 seven · 2 nine).
 law it is catastrophically wrong.** Checked 11 Aug 2026 against benches whose
 size is externally known:
 
-| case | real bench | judges recorded | `bench` column holds |
-| --- | --- | --- | --- |
-| **Kesavananda Bharati** | **13** | **1** | `S.M. SIKRI` |
-| **Golak Nath** | **11** | **1** | `K. SUBBA RAO` |
-| **Maneka Gandhi** | **7** | **1** | `M. HAMEEDULLAH BEG` |
-| S.R. Bommai | 9 | **9** | all nine names |
+| case                    | real bench | judges recorded | `bench` column holds |
+| ----------------------- | ---------- | --------------- | -------------------- |
+| **Kesavananda Bharati** | **13**     | **1**           | `S.M. SIKRI`         |
+| **Golak Nath**          | **11**     | **1**           | `K. SUBBA RAO`       |
+| **Maneka Gandhi**       | **7**      | **1**           | `M. HAMEEDULLAH BEG` |
+| S.R. Bommai             | 9          | **9**           | all nine names       |
 
 The source records the **presiding judge alone** on most rows and the full coram
 on some — Sikri CJ, Subba Rao CJ and Beg CJ each presided over the bench whose
@@ -210,8 +210,8 @@ it is a fact about the metadata.
 A `constitution` (5+) filter built on this **would miss Kesavananda Bharati,
 Golak Nath and Maneka Gandhi** — an advocate filtering for Constitution Bench
 authority would be told the three most famous ones do not exist. That is the
-`case_type` rule at maximum severity: *a filter that silently mis-sorts is worse
-than one that returns less.* **Bench strength needs a source that publishes the
+`case_type` rule at maximum severity: _a filter that silently mis-sorts is worse
+than one that returns less._ **Bench strength needs a source that publishes the
 full coram, and until then it is not filterable and not reasonable-over
 (Stage 16).**
 
@@ -282,7 +282,10 @@ BOTH source schemas and read by neither mapper before this migration.
 `docs/ai/HC_CORPUS_CHARACTERIZATION.md` §11 named that as separate, harder,
 not-yet-designed work. Backfilled to 78,160 of 79,322 rows (98.5%).
 
-Index: gin on `full_text_tsv`; btree on judgment_date, court; partial btree on
+Index: gin on `full_text_tsv`; btree on judgment_date, court, **created_at**
+(migration `0050`, 14 Aug 2026 — arrival-order pagination for the paragraph-
+coverage backfill; `id` is uuid v4 so it cannot serve as a resumable
+watermark, `created_at` is monotonic and can, NEW2 bus 0461); partial btree on
 `content_hash` where not null; partial btree on `cnr` where not null.
 Unique: `source_url`.
 
@@ -393,7 +396,7 @@ machinery has anything to act on.
 
 `citations-cli.ts` writes **one row with an empty `citation_text` and an empty
 `normalised_citation`** for a judgment in which the extractor found nothing. It
-exists so the resumable pass — *"skip any judgment that already has rows"* — does
+exists so the resumable pass — _"skip any judgment that already has rows"_ — does
 not re-scan the same judgment on every future run. Without it, the judgments that
 cite nothing would be re-read forever.
 
@@ -571,7 +574,7 @@ cascade · `judgment_id` uuid fk→judgments cascade · composite pk
 
 **Never destroys provenance.** No column here can delete or merge a
 `judgments` row — `judgment_id`'s only FK action is CASCADE on the
-*membership* row, never the reverse. Each member keeps its own `cnr`,
+_membership_ row, never the reverse. Each member keeps its own `cnr`,
 `case_number` and `source_url` exactly as ingested.
 
 **Populated by `services/ingest/src/dedup-materialize-cli.ts`
@@ -704,7 +707,7 @@ dates spanning 1870–2026.** Everything below is a rule, not a preference:
   never the amending Act's year instead: those are different facts, and
   conflating them dates a legal event by guess.
 - **`ibid_unresolved` is a state, not a failure to be tidied.** 1,994 rows.
-  `Subs. by s. 8, ibid.` means the Act named in the *preceding* entry;
+  `Subs. by s. 8, ibid.` means the Act named in the _preceding_ entry;
   resolution walks backwards within the same footnote only. Reaching forward to
   an Act named later would be a confident wrong attribution, and a visible gap
   beats an invisible error.
@@ -722,10 +725,10 @@ dates spanning 1870–2026.** Everything below is a rule, not a preference:
 **Added migration `0041`.** `id` uuid pk · `statute_section_id` uuid
 fk→statute_sections cascade · `verbatim` text · `created_at` timestamptz
 
-596 footnote entries the extractor could not read, kept so that *"how much did
-we fail to read"* is a query rather than a silence — `CITATION_HARNESS.md`'s
+596 footnote entries the extractor could not read, kept so that _"how much did
+we fail to read"_ is a query rather than a silence — `CITATION_HARNESS.md`'s
 silent-drop rule, applied to statutes. They are overwhelmingly genuine
-non-events (*"See now the Arbitration Act, 1940"*), which must **not** be parsed
+non-events (_"See now the Arbitration Act, 1940"_), which must **not** be parsed
 as amendments because doing so would invent legal history.
 
 Rebuilt on each extraction pass rather than upserted: it records the state of
@@ -776,8 +779,8 @@ record** and shared notes only; private notes never travel (PD-4).
 
 **Added migration `0032`, 11 Aug 2026.** Authorities saved to a matter —
 `matters/route.ts`'s own header comment already described this feature
-(*"`set_aside` disables add-to-matter... it NAMES the judgment that displaced
-it"*) with nothing behind it: no table, no route, and the client's
+(_"`set_aside` disables add-to-matter... it NAMES the judgment that displaced
+it"_) with nothing behind it: no table, no route, and the client's
 "Add to a matter" button had never had an `onPress`. Found by RCC reading the
 code rather than the docs.
 
@@ -936,16 +939,16 @@ only one matched.
 
 The column carries more values than the API emits, and the gap is deliberate.
 
-| Value          | Meaning                                        | Strength | On the wire    |
-| -------------- | ---------------------------------------------- | -------- | -------------- |
-| `ecourts`      | a named human solved the CAPTCHA and vouched   | 4        | `ecourts`      |
-| `public_x2`    | two INDEPENDENT public sources agreed          | 3        | `public_x2`    |
-| `ecourts_bulk` | the registry answered us directly, under grant | 3        | `ecourts_bulk` |
+| Value          | Meaning                                         | Strength | On the wire    |
+| -------------- | ----------------------------------------------- | -------- | -------------- |
+| `ecourts`      | a named human solved the CAPTCHA and vouched    | 4        | `ecourts`      |
+| `public_x2`    | two INDEPENDENT public sources agreed           | 3        | `public_x2`    |
+| `ecourts_bulk` | the registry answered us directly, under grant  | 3        | `ecourts_bulk` |
 | `licensed`     | a commercial publisher's editorial view, bought | 2        | `licensed`     |
-| `corpus`       | we hold the judgment ourselves                 | 1        | `corpus`       |
-| `indiankanoon` | one public source matched, the other did not   | 0        | `none`         |
-| `aws_s3`       | one public source matched, the other did not   | 0        | `none`         |
-| `none`         | nobody confirmed it                            | 0        | `none`         |
+| `corpus`       | we hold the judgment ourselves                  | 1        | `corpus`       |
+| `indiankanoon` | one public source matched, the other did not    | 0        | `none`         |
+| `aws_s3`       | one public source matched, the other did not    | 0        | `none`         |
+| `none`         | nobody confirmed it                             | 0        | `none`         |
 
 `ecourts_bulk` was added 8 Aug 2026 (migration `0022`) when the registrar's
 grant made bulk automated resolution lawful. It is **not** `ecourts`: that value
@@ -966,7 +969,6 @@ The two diagnostic values collapse to `none` at the boundary because that is
 what they honestly mean to a reader: one source matching is not a confirmation
 under the step-5 rule, and such a row's `verification_state` is `unverified`
 anyway.
-
 
 ## harvest_fetches
 
@@ -1183,8 +1185,8 @@ broken by the commit that added it. Recorded now rather than quietly.
 `updated_at` timestamptz
 
 **One row per SOURCE**, holding enumeration state for that source as a whole —
-today `indiacode_central_acts`, 845 acts. It answers *"has this source been fully
-enumerated"*.
+today `indiacode_central_acts`, 845 acts. It answers _"has this source been fully
+enumerated"_.
 
 `source_total` is **null until an enumeration has run**: unknown is a state, not
 zero. `complete` is true only when a full pass finished with no failures, and
@@ -1206,7 +1208,7 @@ Index: btree on (source, court_name); btree on (source, year).
 Constraints: `source_documents >= 0`; `year BETWEEN 1800 AND 2200`.
 
 **A different GRAIN from `corpus_coverage`, not a replacement.** That table is
-keyed `source` and cannot express *"Allahabad, 2024"* without encoding two
+keyed `source` and cannot express _"Allahabad, 2024"_ without encoding two
 dimensions into one text key, which would make counting by court and counting by
 year both unanswerable. Both tables keep their jobs.
 
@@ -1248,7 +1250,7 @@ run per window** — not per operation.
 Index: btree on (window_start desc).
 
 **Why this is aggregated where `ecourts_fetch_ledger` is per request, and it is
-not an inconsistency.** The eCourts grant is *counted in requests* — 1,000 a day
+not an inconsistency.** The eCourts grant is _counted in requests_ — 1,000 a day
 — so the question it answers is "did we stay inside the grant", and only a row
 per request can answer that. **R2's constraint is spend, not permission.** Class
 A is $4.50 per million against a 15.77M-judgment corpus, so a per-operation
@@ -1460,6 +1462,144 @@ answered the same way: **every live token for that advocate is revoked.** Signin
 in again is a small cost; an attacker renewing a stolen token indefinitely
 alongside the real user is not.
 
+## hc_ingest_ledger
+
+Migration `0047`. **The FAILURE side of the ingest record.** `judgments.source_url`
+is already the success ledger — a written document is never re-fetched — but a
+document that FAILED left no trace at all, so every restart re-downloaded every
+failure forever and nothing could distinguish "not yet tried" from "tried three
+times". Measured cost on one scope: `hc-boot-23_23-y2024` paid **15,869**
+`pdf_missing` 404s on every start against about **21** genuinely recoverable
+documents (NEW2, bus 0667).
+
+**Applied `0047`, wired 17 Aug 2026 — it held zero rows in between**, because the
+migration shipped without a writer. Worth recording as a class: a migration
+applied and never wired is indistinguishable from one that works. Nothing errors,
+nothing is red, the table simply stays empty. `scripts/check-migration-journal.mjs`
+catches "the migration never reached the database"; nothing catches "the database
+never reached the code".
+
+`permanent` is the field that decides behaviour:
+
+| outcome family      | values                                               | promotion                                                      |
+| ------------------- | ---------------------------------------------------- | -------------------------------------------------------------- |
+| metadata-row defect | `no_title`, `no_decision_date`, `test_fixture_bench` | **permanent on first sight** — reads identically on attempt 10 |
+| fetch/parse failure | `pdf_timeout`, `pdf_missing`, `pdf_failed`           | retried to `MAX_ATTEMPTS = 3`, then permanent                  |
+
+**`attempts` accumulates IN THE TABLE and the promotion is computed by the
+DATABASE, never by a counter in the worker** —
+`permanent = EXCLUDED.permanent OR hc_ingest_ledger.attempts + 1 >= 3`.
+
+That constraint is recorded here rather than in the migration because `0047` is
+applied and forward-only. Its header specifies the threshold and never said where
+the count lives, which is a hole: a per-process counter satisfies the header
+exactly and **resets on every restart**, reproducing the failure the table exists
+to fix. NEW2 chose the durable form when wiring the writer and asked; confirmed
+by LCC (bus 0670). Read side `permanentlyFailedUrls`, write side `recordFailures`,
+plus `clearSucceeded` so the success and failure ledgers cannot disagree once a
+document finally loads — `services/ingest/src/harvest/ingest-ledger.ts`.
+
+Dry runs record nothing: a rehearsal that condemned documents to `permanent`
+would change what a real run does.
+
+## lexeme_document_frequency
+
+Migration `0055`. **Sampled document frequency per lexeme, so the sparse arm can
+ask a discriminating question instead of a long one.** Derived, safe to drop and
+rebuild with `services/ingest/src/lexeme-frequency-cli.ts`, never an authority
+about the law.
+
+Exists because `sparseAny()` selected its 40 query terms by LENGTH, on a stated
+assumption that the long word is nearly always the rarer one. NEW1 measured it
+and it is false in this corpus (bus 0664): `court` is five characters and appears
+in **90.7%** of documents, `state` 72.8%, while the terms that actually
+discriminate are also five characters and were being discarded. `ts_rank` carries
+no IDF, so PostgreSQL cannot know that `court` is worthless in a corpus of court
+judgments — only the corpus can say, and only by being counted.
+
+`document_count` is a count **within `sampled_documents`**, never corpus-wide,
+and the denominator is stored on every row because a frequency without its
+denominator is a number nobody can check. `ts_stat` over all 7.9M rows reads every
+`tsvector` — the same read that makes the unfixed sparse query cost 781 seconds.
+
+Built 18 Aug 2026: **128,243 lexemes over 40,537 sampled documents (0.5%
+Bernoulli), 24 lexemes above 50%.** `BERNOULLI` not `SYSTEM`: system sampling
+picks whole pages, and judgments arrive court-by-court and year-by-year, so a page
+sample skews along exactly the axis a vocabulary table must not.
+
+**An ABSENT lexeme means "not seen in the sample" and the query path MUST treat it
+as RARE.** Dropping an unmeasured term costs recall, and a recall failure leaves
+no trace — nothing errors, the authority simply never appears.
+
+## document_enrichments
+
+Migration `0045`, tasks extended by `0051` and `0054`. **Documented here 14 Aug 2026 — the
+table has been in production since 11 Aug with 28,728 rows and was in neither
+this file nor `schema.ts`.** Both gaps are now closed. Nothing was broken by the
+omission (every writer uses raw SQL) but this file claims to be the only
+authority on data shapes, and a table absent from it is how the next agent
+concludes it does not exist. That is exactly the sentinel incident's shape:
+_intentional state ≠ missing data_, and _undocumented ≠ absent_.
+
+**What a model SAYS, permanently separate from what LawMind KNOWS.** The same
+boundary `citation_concordance_resolutions` draws for authority identity,
+applied to every other enrichment task. **No route joins this table and no
+retrieval path consults it.** Promotion into `judgments`, `judgment_citations`,
+`judgment_citation_aliases` or `judgment_judges` is a separate, measured,
+deliberate step that writing a row here never performs.
+
+`id` uuid pk · `judgment_id` uuid fk→judgments **cascade** · `task` text check
+— see below · `prompt_version` text — in the cache key, so a prompt revision
+re-runs the document rather than silently reusing an answer produced by
+different instructions · `model` text · `input_hash` text — sha256 of (task |
+prompt version | the exact excerpt sent); the cache key · `source_text_hash`
+text — sha256 of the whole document, so a re-extracted or OCR-corrected
+document invalidates its own enrichments rather than keeping answers about text
+that no longer exists · `raw_output` text null — kept verbatim so improving the
+verifier costs no tokens to apply (`enrich-cli --reverify`) · `parsed_output`
+jsonb null · `input_tokens` / `output_tokens` int default 0 · `latency_ms` int
+null · `attempts` int default 1 · `status` text check
+(`ok`|`call_failed`|`unparseable`) · `error` text null · `verification_state`
+text check (`verified`|`partial`|`rejected`|`unverified`) default `unverified` ·
+`verified_count` / `rejected_count` int default 0 · `rejection_reasons` jsonb
+null · `created_at` timestamptz
+
+Unique: (`judgment_id`, `task`, `prompt_version`, `input_hash`) — the cache key.
+Index: btree (`task`, `verification_state`); btree (`judgment_id`); btree
+(`task`, `created_at` desc) added by `0051` for the staged rollout, which asks
+"how did the last stage verify" constantly and would otherwise scan every row a
+task has ever produced.
+
+**`status` and `verification_state` answer different questions and must never be
+conflated.** `status = 'ok'` means the call returned and parsed — a transport
+fact. `verification_state` is decided by string-matching the model's claimed
+evidence span against the source text, **never by the model's own confidence**.
+A call can be `ok` and `rejected` at once, and that combination is the pipeline
+working.
+
+**`status = 'ok'` is load-bearing in the cache lookup.** A failed call also
+writes a row carrying the same `input_hash`, deliberately, so a persistent
+failure is visible rather than silent. The lookup therefore filters on
+`status = 'ok'`; without that clause, 840 documents touched during the
+model-alias outage would have been permanently skipped rather than retried — an
+outage quietly becoming a permanent hole in the corpus.
+
+`task` values, authoritative in the migrations rather than in `schema.ts`
+(Drizzle carries no CHECK): `citation_extraction` · `metadata` · `treatment` ·
+`text_quality` · `classification` · `statute_reference` · `amendment_event` ·
+`evidence_span` (0045), and `case_structure` · `holding` · `arguments` ·
+`authorities` · `topics` (0051, the structured legal object). `task` is text
+with a CHECK and not a `pgEnum` on purpose — a new task is a normal weekly
+event, and `0044` is what rewriting an enum in production costs.
+
+**The five 0051 tasks return QUOTES, not summaries**, and that is a schema-level
+fact rather than a prompt detail: each claim's value _is_ its evidence span, so
+it goes through the full-strength `verifyClaims` check that a citation gets,
+instead of the weakened label path used for `treatment` and `document_class`.
+The model's own gloss is carried in `parsed_output[].extra.label` and is
+**never verified and never promoted**. `services/ingest/src/enrich.ts`,
+§THE STRUCTURED LEGAL OBJECT.
+
 ---
 
 # ACCESS PATHS — measured with `EXPLAIN (ANALYZE, BUFFERS)`, 11 August 2026
@@ -1476,13 +1616,13 @@ choosing plans for every new access path from week-old data.
 
 **One `ANALYZE` per table changed the plans, not just the timings:**
 
-| path | before ANALYZE | after | |
-| --- | --- | --- | --- |
-| `judgments WHERE storage_key IS NOT NULL` | **23.504 ms · Seq Scan** | **0.019 ms · Index Scan** | **1,237×** |
-| `judgment_statute_refs` by `act_key` + section | 1.606 ms | **0.040 ms** | 40× |
-| `judgment_citation_aliases` by `alias_key` | 0.976 ms | **0.038 ms** | 26× |
-| `judgment_judges` name filter | 15.343 ms | **2.127 ms** | 7× |
-| `/corpus/coverage` main query | 0.534 ms | **0.339 ms** | 1.6× |
+| path                                           | before ANALYZE           | after                     |            |
+| ---------------------------------------------- | ------------------------ | ------------------------- | ---------- |
+| `judgments WHERE storage_key IS NOT NULL`      | **23.504 ms · Seq Scan** | **0.019 ms · Index Scan** | **1,237×** |
+| `judgment_statute_refs` by `act_key` + section | 1.606 ms                 | **0.040 ms**              | 40×        |
+| `judgment_citation_aliases` by `alias_key`     | 0.976 ms                 | **0.038 ms**              | 26×        |
+| `judgment_judges` name filter                  | 15.343 ms                | **2.127 ms**              | 7×         |
+| `/corpus/coverage` main query                  | 0.534 ms                 | **0.339 ms**              | 1.6×       |
 
 **The partial index was never the problem.** `judgments_storage_key_idx` existed
 and was correct; with no statistics on the column the planner assumed a default
@@ -1491,7 +1631,7 @@ index the planner will not use.**
 
 > **Run `ANALYZE` on every table a migration touches, as part of applying it.**
 > Autoanalyze fires on write volume, and a migration that adds a column or an
-> index changes the *plan space* without changing a single row — so autoanalyze
+> index changes the _plan space_ without changing a single row — so autoanalyze
 > may not fire for days, and the new path is slow for exactly as long.
 
 **Why nobody would have noticed.** Over the Railway TCP proxy a request costs
@@ -1502,13 +1642,13 @@ latency that had proxy time baked into it.
 
 ## The paths, after ANALYZE
 
-| path | plan | exec |
-| --- | --- | --- |
-| `/corpus/coverage` | `Index Scan judgment_coverage_court_idx` + `Index Only Scan judgments_court_idx` | **0.339 ms** |
-| `cite:` alias lookup | `Index Scan judgment_citation_aliases_key` | **0.038 ms** |
-| `section:` + `act:` | `Index Scan judgment_statute_refs_act_key_idx` | **0.040 ms** |
-| `storage_key IS NOT NULL` | `Index Scan judgments_storage_key_idx` | **0.019 ms** |
-| `judge:` name filter | **Seq Scan on judgment_judges** | **2.127 ms** |
+| path                      | plan                                                                             | exec         |
+| ------------------------- | -------------------------------------------------------------------------------- | ------------ |
+| `/corpus/coverage`        | `Index Scan judgment_coverage_court_idx` + `Index Only Scan judgments_court_idx` | **0.339 ms** |
+| `cite:` alias lookup      | `Index Scan judgment_citation_aliases_key`                                       | **0.038 ms** |
+| `section:` + `act:`       | `Index Scan judgment_statute_refs_act_key_idx`                                   | **0.040 ms** |
+| `storage_key IS NOT NULL` | `Index Scan judgments_storage_key_idx`                                           | **0.019 ms** |
+| `judge:` name filter      | **Seq Scan on judgment_judges**                                                  | **2.127 ms** |
 
 **The judge filter still sequentially scans, and that is currently correct.**
 `judgment_judges_name_trgm` exists, but the query is `ILIKE '%name%'` over

@@ -29,6 +29,25 @@ const RRF_K = 60;
 /** How deep each ranker goes before fusion. */
 const CANDIDATE_DEPTH = 50;
 
+/**
+ * Sparse-arm term selection: drop any lexeme appearing in more than this share
+ * of sampled documents.
+ *
+ * **0.5 is NEW1's recommendation, not a tuned value** (bus 0664): "a term in
+ * >50% of documents contributes almost nothing to `ts_rank`'s ordering and costs
+ * most of the scan", chosen as the smallest-quality-risk change available. In
+ * the measured sample only 3 of the 40 length-selected terms cleared it, and
+ * `court` alone (90.6%) accounted for essentially the whole match set.
+ *
+ * **This is a LATENCY change and has not been shown to be a quality change.**
+ * Narrowing a candidate set can cost recall, and recall is already the failing
+ * axis — NEW1's baseline has 14 of 25 gold authorities never retrieved, with
+ * `gold:presence` proving all 278 gold ids are present AND embedded. NEW1 owns
+ * the benchmark and re-measures `recall@20` before this is trusted; if it comes
+ * back worse, this constant is where the change is reverted.
+ */
+const SPARSE_MAX_DOCUMENT_FREQUENCY = 0.5;
+
 export type SearchFilters = {
   court?: string | undefined;
   /**
@@ -257,13 +276,54 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
  */
 async function sparseAny(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
   const rows = await sql<{ id: string }[]>`
-    WITH lex AS (
-      SELECT lexeme FROM unnest(to_tsvector('english', ${query}))
+    WITH scored AS (
+      -- MEASURED document frequency, not length. The rule here used to be
+      -- "longest first, as a weak proxy for rarest first", and that comment
+      -- asserted the proxy holds in this corpus. NEW1 measured it and it does
+      -- not (bus 0664): \`court\` is five characters and appears in 90.6% of
+      -- documents, \`state\` 73.3%, while the terms that actually discriminate
+      -- are ALSO five characters and were being discarded. Of the 40 terms the
+      -- length rule chose, 3 appeared in at least half the corpus and 21 in
+      -- under 5%.
+      --
+      -- The cost was not marginal: the resulting OR'd tsquery matched 6,866,609
+      -- of 7,296,068 rows (94.1%), and \`ORDER BY ts_rank(...)\` over that set
+      -- took 781,289 ms against 4.47 ms for the same filter unranked, because
+      -- \`ts_rank\` must read the tsvector of every matching row.
+      --
+      -- \`ts_rank\` has no IDF, so the corpus is measured once into
+      -- \`lexeme_document_frequency\` (migration 0055) and read here.
+      SELECT
+        l.lexeme,
+        -- ABSENT MEANS RARE, and the direction is deliberate. A lexeme missing
+        -- from the sample scores 0 and is therefore kept and ranked first.
+        -- Failing the other way -- dropping a term nobody measured -- costs
+        -- RECALL, and a recall failure leaves no trace: nothing errors, the
+        -- authority simply never appears.
+        coalesce(f.document_count::numeric / nullif(f.sampled_documents, 0), 0) AS df
+      FROM unnest(to_tsvector('english', ${query})) AS l
+      LEFT JOIN lexeme_document_frequency f ON f.lexeme = l.lexeme
+    ),
+    discriminating AS (
+      SELECT lexeme, df FROM scored WHERE df <= ${SPARSE_MAX_DOCUMENT_FREQUENCY}
+    ),
+    lex AS (
+      -- If EVERY term is common the query still has to be answered, so the
+      -- filter falls back to the unfiltered set rather than producing an empty
+      -- tsquery. An empty ranker is the failure this whole function was
+      -- rewritten to avoid once already.
+      SELECT lexeme FROM (
+        SELECT lexeme, df FROM discriminating
+        UNION ALL
+        SELECT lexeme, df FROM scored
+        WHERE NOT EXISTS (SELECT 1 FROM discriminating)
+      ) candidates
+      -- Rarest first. \`length DESC\` survives only as a tie-break, which is
+      -- where a length heuristic honestly belongs: it breaks ties between terms
+      -- the corpus has never seen, where it is the only signal available.
+      ORDER BY df ASC, length(lexeme) DESC
       -- A cap, because a whole paragraph of terms turns the index scan into a
-      -- sequential one. Longest first is a weak proxy for rarest first, and it
-      -- is honest about being a proxy: "preventive" discriminates and "made"
-      -- does not, and in this corpus the long word is nearly always the rarer.
-      ORDER BY length(lexeme) DESC
+      -- sequential one.
       LIMIT 40
     ),
     q AS (

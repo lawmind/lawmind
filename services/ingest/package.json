@@ -13,11 +13,16 @@
     "acts": "tsx src/acts-cli.ts",
     "harvest:probe": "tsx src/harvest/probe-cli.ts",
     "hc:count": "tsx src/harvest/hc-metadata-cli.ts",
+    "hc:matrix": "tsx src/harvest/hc-coverage-matrix-cli.ts",
+    "hc:fleet": "tsx src/harvest/hc-fleet-status-cli.ts",
     "hc:ordertypes": "tsx src/harvest/hc-ordertype-cli.ts",
     "hc:extract": "tsx src/harvest/hc-extract-cli.ts",
     "coverage": "tsx src/coverage-cli.ts",
     "resolve": "tsx src/resolve-cli.ts",
+    "citation-keys": "tsx src/citation-keys-cli.ts",
     "hc:yield": "tsx src/harvest/hc-yield-cli.ts",
+    "silver:ratio": "tsx src/harvest/silver-ratio-cli.ts",
+    "hc:classsample": "tsx src/harvest/hc-class-sample-cli.ts",
     "hc:citations": "tsx src/harvest/hc-citations-cli.ts",
     "repealed": "tsx src/repealed-acts-cli.ts",
     "backfill:provenance": "tsx src/backfill-provenance.ts",
@@ -35,7 +40,10 @@
     "concordance:gold": "tsx src/concordance-gold-cli.ts",
     "concordance:adjudicate": "tsx src/concordance-adjudicate-cli.ts",
     "concordance:internal": "tsx src/internal-concordance-cli.ts",
-    "chunk:qa": "tsx src/chunk-qa-cli.ts"
+    "chunk:qa": "tsx src/chunk-qa-cli.ts",
+    "enrich": "tsx src/enrich-cli.ts",
+    "dataset:export": "tsx src/dataset-export-cli.ts",
+    "lexeme-frequency": "tsx src/lexeme-frequency-cli.ts"
   },
   "dependencies": {
     "@lawmind/db": "workspace:*",
@@ -44,6 +52,7 @@
     "hyparquet": "1.27.1",
     "postgres": "3.4.9",
     "tsx": "4.23.1",
+    "undici": "^8.10.0",
     "unpdf": "1.8.0"
   },
   "exports": {
