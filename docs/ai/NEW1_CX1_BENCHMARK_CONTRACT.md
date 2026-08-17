@@ -14,6 +14,57 @@ an experiment measures nothing.
 
 ---
 
+## 0. HANDOFF — CX1 IS UNAVAILABLE, NEW1 INHERITS ITS EXECUTION WORK (17 Aug 2026)
+
+CX1 hit usage limits. NEW1 inherits the unfinished retrieval/vector execution.
+**Its harnesses are adopted, not recreated** — `scripts/cx1-retrieval-matrix.mjs`,
+`docs/ai/cx1-*/`, `CX1_EXPERIMENT_REGISTRY.*`. Its historical controlled
+checkpoint is **not to be overwritten**.
+
+### What CX1 already settled, and what it explicitly did not
+
+`CX1_HALFVEC_FIDELITY.md`, on **copied** vectors, 100,000 pairs:
+
+    absolute cosine error   p50 0.0000076 · p95 0.0000224 · max 0.0000545
+    exact top-k overlap     k=5 0.9990 · k=10 0.9995 · k=20 1.0000 · k=50 0.9998
+    first-result disagreement 0.0000 · rank correlation 1.0000
+
+**Representation loss is measured and negligible.** That is C1/C2 and no more.
+CX1 said so itself: *"This report isolates representation loss; it does not
+approve production halfvec."*
+
+**Still unproven, and now NEW1's:**
+
+- **ANN approximation loss** — HNSW fp32 and HNSW halfvec against an **exact
+  fp32** reference. Representation loss and approximation loss are different
+  quantities and must not be summed into one "halfvec is fine".
+- **End-task quality** — `success@5`, `recall@20`, `MRR`, nDCG on the frozen gold
+  benchmark.
+
+### The sequencing decision, which is NEW1's to make and is now made
+
+**The halfvec end-task measurement runs against the DENSE ARM ALONE, never
+through hybrid.**
+
+Measured reason, not preference: fusion currently destroys the dense arm's
+advantage — RRF damages gold **8.4× more** when the sparse arm misses it, and
+knocks gold out of the top 5 on **42.6%** of the queries where dense had it
+(`pnpm rrf:displacement`; `NEW1_SPARSE_ARM_ROOT_CAUSE.md`). A halfvec-vs-fp32
+delta measured through that fusion would be swamped by fusion noise — it would
+measure fusion, not the vector representation.
+
+**Consequently, and this is the founder's own instruction confirmed by
+measurement: do NOT tune HNSW because hybrid is weak.** Fusion is the defect.
+HNSW parameter work (staged small → medium → finalist, never a full grid) comes
+**after** halfvec remains viable, and its results are read against the dense arm.
+
+### Resource rule
+
+The machine is shared with LCC's index work and NEW2's ingest fleet. Machine
+state is measured, never assumed from a stale snapshot. **Busy → benchmark
+analysis, failure decomposition, query stratification, harness preparation.
+Quiet → the heavy vector experiment.**
+
 ## 1. STATUS — NOT YET FROZEN
 
 **Do not consume this benchmark for scale decisions yet.** The post-migration
