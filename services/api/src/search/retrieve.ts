@@ -440,20 +440,76 @@ async function exactCitation(
   filters: SearchFilters,
 ): Promise<string | null> {
   const key = citationLookupKey(normalised);
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * TWO BRANCHES, NOT ONE `OR` — AND THIS IS A 7.3M-ROW SCAN, NOT A STYLE CHOICE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This was one predicate: `neutral_citation_key = $1 OR EXISTS (SELECT 1 FROM
+   * unnest(reporter_citations) rc WHERE <normalised rc> = $1)`. Measured on the
+   * local cluster, 17 Aug 2026, `EXPLAIN`:
+   *
+   *   the OR as written       Seq Scan + Function Scan     7,296,068 rows
+   *   the neutral arm ALONE   Index Scan using judgments_neutral_citation_key
+   *
+   * **The index was never missing.** `judgments_neutral_citation_key` already
+   * matches the first arm byte-for-byte and is 70 MB. But a correlated `EXISTS`
+   * over `unnest()` cannot use an index at all — the array is expanded per row —
+   * and because the arms are `OR`ed, a row failing the first might still pass the
+   * second, so **every row must be read**. One unindexable arm discarded a
+   * perfectly good index across the whole table, on the `/search` hot path,
+   * inside Gate S1's 3-second budget.
+   *
+   * Sparsity makes it sharper rather than milder: measured over a 3,760-row
+   * sample, **20 rows (0.53%)** carry any reporter citation. The arm that forced
+   * the scan can match under 1% of the corpus.
+   *
+   * `UNION`, never `UNION ALL` — a judgment matching BOTH arms must count once,
+   * which is exactly what `OR` did. The per-branch `LIMIT 2` is safe for the same
+   * reason the outer one is: this function only distinguishes "exactly one" from
+   * "not exactly one", so any branch returning 2 already settles the question.
+   *
+   * **EACH BRANCH IS PARENTHESISED, and that is not style.** `SELECT … LIMIT 2
+   * UNION SELECT … LIMIT 2` is a SYNTAX error in PostgreSQL — a `LIMIT` binds to
+   * the whole set operation, so an un-parenthesised branch carrying one is
+   * rejected at PARSE time, `42601`, before a row is read or a function is
+   * resolved. The first version of this query shipped without the parentheses
+   * and NEW1 caught it (bus 0638) with a four-case isolation: the error fires
+   * even in a statement that never mentions `lawmind_citation_keys`, which is
+   * what proves it is the `LIMIT`/`UNION` shape and not the missing migration.
+   *
+   * That distinction matters because the two failures look identical from the
+   * outside and only one of them is fixed by deploying. See below.
+   *
+   * REQUIRES migration `0052` (`lawmind_citation_keys` + its GIN index). Deploy
+   * order is migration-then-code, as always; ahead of it this throws `42883`
+   * (`function … does not exist`) rather than silently returning nothing, which
+   * is the right failure — a citation lookup that quietly stops matching is
+   * indistinguishable from a corpus gap. `42601` would have been the WRONG
+   * failure: a permanent parse error that no migration clears.
+   */
   const rows = await sql<{ id: string }[]>`
-    SELECT j.id
-    FROM judgments j
-    WHERE (
-      upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = ${key}
-      OR EXISTS (
-        SELECT 1 FROM unnest(j.reporter_citations) AS rc
-        WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key}
-      )
-    )
-      ${courtWhere(sql, filters)}
-      ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
-      ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
-      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+    SELECT id FROM (
+      (SELECT j.id
+       FROM judgments j
+       WHERE upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = ${key}
+         ${courtWhere(sql, filters)}
+         ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+         ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+         ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+       LIMIT 2)
+
+      UNION
+
+      (SELECT j.id
+       FROM judgments j
+       WHERE lawmind_citation_keys(j.reporter_citations) @> ARRAY[${key}::text]
+         ${courtWhere(sql, filters)}
+         ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+         ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+         ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+       LIMIT 2)
+    ) matched
     LIMIT 2
   `;
   /**

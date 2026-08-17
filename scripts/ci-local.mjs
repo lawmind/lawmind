@@ -59,6 +59,15 @@ const STEPS = [
   ['lint', 'pnpm', ['lint']],
   ['format', 'pnpm', ['format']],
   ['typecheck', 'pnpm', ['--filter', './services/*', '--filter', './packages/*', 'typecheck']],
+  // BEFORE the two migrate steps, because those two cannot see the defect it
+  // looks for. Drizzle's migrator reads `meta/_journal.json` and nothing else,
+  // so an unjournalled `.sql` file is not a pending migration — it is a file the
+  // migrator has never heard of. Both steps below therefore went green every day
+  // for a week while NINE migrations (0030, 0033, 0047-0053) existed only on
+  // LCC's disk, seven of them not even tracked by git. The scratch database was
+  // built correctly from the journal it could see, agreed with itself, and said
+  // so. Static, opens no socket, runs in milliseconds.
+  ['migration journal', 'node', ['scripts/check-migration-journal.mjs']],
   // Twice: the first proves migrations apply to an empty database, the second
   // proves a re-run is a no-op. Both are real failures we have shipped before.
   ['migrate (fresh)', 'pnpm', ['--filter', '@lawmind/db', 'migrate']],
@@ -111,6 +120,26 @@ const STEPS = [
   // persists switches for notifications the system cannot produce, and the
   // advocate finds out by missing a hearing.
   ['alert coverage', 'node', ['scripts/check-alert-coverage.mjs']],
+  // STOP coverage: every path that can start a database WRITER must cross the
+  // pause sentinel. Added 16 Aug 2026 because the claim was made without the
+  // enumeration — `enrich-worker.cmd` has its own loop, never went through
+  // `supervise.mjs`, and was therefore opted out of a fleet-wide freeze that
+  // nobody had decided to opt it out of (LCC, bus 0560). Three launchers sit in
+  // the Startup folder, so a reboot mid-freeze would have started writers
+  // against the database being migrated. A new launcher is exactly how this
+  // comes back, so the enumeration is a test rather than a memory.
+  ['stop coverage', 'node', ['scripts/check-stop-coverage.mjs']],
+  // Railway static audit: after the exit, the ONLY thing pointing the fleet at a
+  // database is `DATABASE_URL` in `.env`. That is a good position and a fragile
+  // one — it holds exactly as long as nobody adds a second path, and the second
+  // path is always added innocently (a hardcoded host in a one-off script, a
+  // `?? RAILWAY_DATABASE_URL` fallback added to make something work at 3am).
+  // Opens no socket, so it is safe to run in CI and during a freeze. It runs in
+  // code-audit mode here on purpose: `DATABASE_URL` pointing at Railway is
+  // CORRECT until cutover, and a step that is red for the whole window it
+  // polices is a step everyone learns to skip. `--cutover` is the stricter gate,
+  // run by hand once the local database is live.
+  ['railway static audit', 'node', ['scripts/migration/new2-railway-static-audit.mjs']],
   // ───────────────────────────────────────────────────────────────────────────
   // WIRED 11 Aug 2026 — `docs/ai/tasks/001-p0-citation-query-safety.md`
   // ───────────────────────────────────────────────────────────────────────────

@@ -1,0 +1,16 @@
+-- Arrival-order pagination for the paragraph-coverage backfill (NEW2, bus 0461,
+-- measured not guessed: coverage rate falling 78k/hr -> 31k/hr while harvest
+-- rose to 282k/hr, all four shards CPU-idle and sitting in DB wait on the
+-- anti-join `paragraphs-cli --resume` re-derives from id zero every restart).
+--
+-- `judgments.id` is uuid v4 -- a persisted id watermark would silently skip
+-- newly-harvested rows landing below it, the exact class of failure
+-- CITATION_HARNESS exists to prevent one table earlier. `created_at` is
+-- monotonic, so a watermark on it can never skip a later row.
+--
+-- Plain CREATE INDEX, not CONCURRENTLY, because a migration runs inside a
+-- transaction and CONCURRENTLY cannot -- same reasoning as `0011_judgment_
+-- chunks_hnsw.sql`. Built CONCURRENTLY out of band against production first;
+-- `IF NOT EXISTS` makes this a no-op everywhere that already happened. Any
+-- future rebuild against a populated database must be done out of band too.
+CREATE INDEX IF NOT EXISTS "judgments_created_at_idx" ON "judgments" ("created_at");

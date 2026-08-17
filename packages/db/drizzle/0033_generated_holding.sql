@@ -1,0 +1,32 @@
+-- A two-sentence holding per judgment — PRODUCT_BRIEF.md's own description of
+-- feature #1: "Five judgments with title, citation, court, date, a
+-- two-sentence holding and the operative paragraph." `search/route.ts` has
+-- hardcoded `holding: ''` on every result since S1, with the comment stating
+-- exactly why: "a summarisation task and needs the model OD-6 routes
+-- public-class text to. Not available in S1, so this is empty rather than a
+-- snippet dressed up as a holding."
+--
+-- Unblocked 11 Aug 2026 by a free DeepSeek V4 Flash token grant (inferx.net) —
+-- the model is now available and the marginal cost of calling it is zero.
+--
+-- ─────────────────────────────────────────────────────────────────────────────
+-- STORED, NOT GENERATED PER REQUEST
+-- ─────────────────────────────────────────────────────────────────────────────
+--
+-- The holding is a property of the JUDGMENT, not of a query — unlike
+-- `operativeParagraph`, which is query-relevant and computed per request in
+-- `retrieve.ts`. Generating it synchronously inside `/search` would add a
+-- model round trip (measured 11 Aug 2026 at up to ~30s on a cold call) to
+-- every result on every search, which is not a search latency budget. It is
+-- computed once by a batch backfill (`services/api/src/holdings/backfill-cli.ts`,
+-- dry-by-default like every other CLI in this repo) and served from the row
+-- at request time — the same "compute once, read many" shape as `content_hash`
+-- and `text_quality` (migration 0031).
+--
+-- NULL means not yet generated, not "no holding exists" — the wire contract
+-- (`API_CONTRACTS.md` §Search) still sends `holding: ''` for a null row rather
+-- than widening the type, so an ungenerated judgment reads exactly as it did
+-- before this migration.
+ALTER TABLE judgments
+  ADD COLUMN IF NOT EXISTS generated_holding text,
+  ADD COLUMN IF NOT EXISTS generated_holding_at timestamptz;
