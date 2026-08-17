@@ -126,13 +126,19 @@ export function routeCall(dataClass: DataClass, feature: Feature): Route {
    * because the sensitivity question is already settled.
    */
   switch (feature) {
-    case 'search':
     /**
+     * `search` and `concordance` are ONE grouped case, deliberately, and the
+     * comment sits above both rather than between them: a doc block between two
+     * `case` labels reads to eslint as a non-empty case body, so
+     * `no-fallthrough` fires on an intentional grouping and the rule stops being
+     * able to warn about an accidental one.
+     *
      * Citation concordance reads judgments and citations — published law, so
      * public class, so the cheapest capable model. `CLAUDE.md` §5. It reaches
      * the model only to CHOOSE among candidates the corpus already produced,
      * never to recall an authority, so nothing here creates canonical identity.
      */
+    case 'search':
     case 'concordance':
       return { ok: true, model: DEEPSEEK_V4_FLASH, pseudonymise: false };
     case 'extract':

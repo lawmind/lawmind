@@ -57,10 +57,15 @@ export function billingClass(operation: Operation): BillingClass {
     case 'put':
     case 'list':
       return 'A';
-    case 'get':
     // A ranged GET is one GetObject. The Range header changes what is
     // transferred, not what is billed — which is the whole economic basis of
     // the tiered design in CORPUS_TIERING.md §6.
+    //
+    // The comment sits ABOVE the group rather than between two `case` labels: a
+    // comment between them reads to eslint as a non-empty case body, so
+    // `no-fallthrough` fires on this deliberate grouping and then cannot warn
+    // about an accidental one.
+    case 'get':
     case 'getRange':
     case 'head':
       return 'B';
