@@ -13,11 +13,18 @@
     "ab": "tsx src/ab-cli.ts",
     "arms": "tsx src/arms-cli.ts",
     "citator": "tsx src/citator-report.ts",
+    "gate:postmigration": "tsx src/post-migration-cli.ts",
     "deployed-safety": "tsx src/deployed-safety-cli.ts",
     "deployed-judgment-safety": "tsx src/deployed-judgment-safety-cli.ts",
     "failure:classify": "tsx src/failure-classifier-cli.ts",
     "failure:taxonomy": "tsx src/failure-taxonomy-cli.ts",
-    "experiment:citation-strip": "tsx src/experiment-citation-strip-cli.ts"
+    "held:decompose": "tsx src/held-not-retrieved-cli.ts",
+    "held:whymissed": "tsx src/dense-ok-missed-cli.ts",
+    "held:annprobe": "tsx src/ann-probe-cli.ts",
+    "held:rrfsim": "tsx src/rrf-sim-cli.ts",
+    "generate:queries": "tsx src/generate-queries-cli.ts",
+    "experiment:citation-strip": "tsx src/experiment-citation-strip-cli.ts",
+    "gold:presence": "tsx src/gold-presence-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
