@@ -89,6 +89,7 @@ import { pathToFileURL } from 'node:url';
 
 import { extractCitations, normaliseCitation } from '@lawmind/ingest/citations';
 import postgres, { type Sql } from 'postgres';
+import { sslFor } from './db-url.ts';
 
 /** Bounds, stated before running so the set cannot be tuned toward a number. */
 export const SELECTION = {
@@ -625,7 +626,7 @@ async function main() {
    * needs a higher `EVAL_PER_GROUP`, criminal needs more candidates to filter.
    */
   const candidateDepth = Number(process.env['EVAL_CANDIDATES'] ?? '20000');
-  const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 3 });
+  const sql = postgres(url, { ssl: sslFor(url), max: 3 });
 
   try {
     const out: BuiltQuery[] = [];

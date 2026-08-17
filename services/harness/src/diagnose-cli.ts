@@ -19,6 +19,7 @@ import postgres from 'postgres';
 import { readFileSync } from 'node:fs';
 
 import type { HarnessQuery } from './retrieval.ts';
+import { sslFor } from './db-url.ts';
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!url) {
@@ -37,7 +38,7 @@ const queries = [...load('queries.derived.json'), ...load('queries.hand.json')];
 const wanted = process.argv[2];
 const subset = wanted ? queries.filter((q) => q.id === wanted) : queries.slice(0, 6);
 
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(url, { ssl: sslFor(url), max: 3 });
 
 try {
   const embedder = await getEmbedder();

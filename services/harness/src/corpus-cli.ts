@@ -9,6 +9,7 @@
 import postgres from 'postgres';
 
 import { assessReadiness, countCorpus, explainRefusal } from './corpus-readiness.ts';
+import { sslFor } from './db-url.ts';
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!url) {
@@ -16,7 +17,7 @@ if (!url) {
   process.exit(2);
 }
 
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 2 });
+const sql = postgres(url, { ssl: sslFor(url), max: 2 });
 
 try {
   const counts = await countCorpus(sql);

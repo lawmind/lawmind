@@ -44,6 +44,7 @@ import postgres from 'postgres';
 
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
 import { mcnemarExactP, queriesToSettle } from './stats.ts';
+import { sslFor } from './db-url.ts';
 
 const lever = (process.argv[2] ?? 'rerank') as 'rerank' | 'graph' | 'both' | 'hyde' | 'all';
 const limit = Number(process.env['AB_LIMIT'] ?? '100');
@@ -59,7 +60,7 @@ const doc = JSON.parse(
 ) as { queries: HarnessQuery[] };
 const queries = doc.queries.slice(0, limit);
 
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4 });
+const sql = postgres(url, { ssl: sslFor(url), max: 4 });
 
 /** Share of queries whose gold answer reached the top five. */
 function successAt5(rows: ScoredQuery[]): number {

@@ -25,6 +25,7 @@ import { measureStructuredGate } from './structured-gate.ts';
 import { type HarnessMetrics, grade, rate } from './metrics.ts';
 import { measureOverruledLeakage, measureStaleOverruled } from './overruled-checks.ts';
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
+import { sslFor } from './db-url.ts';
 
 const TARGET_QUERIES = 30;
 
@@ -49,7 +50,7 @@ async function main(): Promise<number> {
     return 2;
   }
 
-  const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4 });
+  const sql = postgres(url, { ssl: sslFor(url), max: 4 });
 
   try {
     const counts = await countCorpus(sql);
