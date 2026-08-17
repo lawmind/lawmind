@@ -116,6 +116,22 @@ const POINTER =
 
 const norm = (v: string | null | undefined) => (v ?? '').trim().toUpperCase();
 
+/**
+ * Strips the registry's own numeric stage code from the front of a disposal.
+ *
+ * Gujarat and Bombay print `26-DISMISSED  @ ADM.STAGE`, `28-REJECTED   @
+ * ADM.STAGE`, `44-PARTLY ALLOWED @ FH` — the number is a stage code in the
+ * court's own list, not part of the outcome. Every anchored pattern in this
+ * module (`^DISMISSED$`, `^REJECTED\b`, `^(PARTLY )?ALLOWED`) fails on them for
+ * that reason alone, which left ~20,000 rows unclassified over a leading `26-`.
+ *
+ * Stripped rather than enumerated: the codes run at least 26–59 and are a
+ * registry's internal numbering, so a list of them would go stale the first
+ * time a court added one. The ORIGINAL string is still what gets recorded in
+ * `method`, so nothing about the audit trail is normalised away.
+ */
+const stripStageCode = (v: string) => v.replace(/^\d{1,3}-\s*/, '');
+
 /** Bail, either way. `disposal_nature` states it; nothing is inferred. */
 function isBail(disposal: string): boolean {
   return /^BAIL (GRANTED|REJECTED)$/.test(disposal) || /\bBAIL\b/.test(disposal);
@@ -164,14 +180,151 @@ function isProcedural(disposal: string): boolean {
     /^D\.?F\.?D\.?/.test(disposal) ||
     /DISMISS(ED)? FOR DEFAULT/.test(disposal) ||
     /^CONSIGNED$/.test(disposal) ||
-    /^CONVERTED$/.test(disposal)
+    /^CONVERTED$/.test(disposal) ||
+    // ── extended 14 Aug 2026 from the MEASURED vocabulary, see MEASURED_VOCABULARY ──
+    WITHDRAWAL.test(disposal) ||
+    INFRUCTUOUS.test(disposal) ||
+    DEFAULT_OR_NON_COMPLIANCE.test(disposal) ||
+    TRANSFERRED.test(disposal) ||
+    SETTLED.test(disposal) ||
+    // Unanchored on purpose: the source prints `DISPOSED OFF AS ABATED`,
+    // `PROCEEDINGS CLOSED/DROPPED` and `CONSIGNED TO RECORD` as well as the
+    // bare words, and an anchored form matched only the bare ones.
+    /(\bABATED\b|\bDROPPED\b|NON PROSECUTION|CONSIGNED TO RECORD)/.test(disposal) ||
+    /^DISMISS OTHER THAN MERIT/.test(disposal)
   );
 }
 
-/** A disposal that decided something. */
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * MEASURED_VOCABULARY — extracted from production 14 Aug 2026, not reasoned about
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `LANE_PROTOCOL.md` §3b records this repo's most expensive parser lesson: a
+ * generic pattern for a court's printed vocabulary was written twice and was
+ * wrong both times, **in both directions at once** — matching prose while
+ * missing real markers. The fix was to extract the actual vocabulary first.
+ * That is what these patterns are built from.
+ *
+ * The measurement: `SELECT upper(trim(disposal_nature)), count(*) … GROUP BY 1`
+ * over the whole corpus — **487 distinct values across 4,398,309 rows.** Before
+ * this change 593,786 rows sat at `unclassified_disposal` and 112,058 at
+ * `no_disposal_nature`, and reading the top of that list showed most of it was
+ * not ambiguous at all, merely unlisted:
+ *
+ *     DISMISSED AS WITHDRAWN        71,226      DISMISSED AS INFRUCTUOUS  65,392
+ *     27-WITHDRAWN  @ ADM.STAGE     40,254      DISMISSED FOR DEFAULT     29,523
+ *     TRANSFER TO OTHER COURT       18,775      DISMISSED AS NOT PRESSED  15,301
+ *     DISMISED (sic)                 8,621      DISPOSED IN LOK ADALAT     8,735
+ *
+ * **`DISMISED` is the one worth naming.** 8,621 rows carry that spelling, and
+ * `isMerits`'s anchored `/^DISMISSED$/` could never match it — a source
+ * typo silently costing a five-figure row count. Misspellings are matched
+ * verbatim as the source prints them (`INFRACTUOUS`, `INFRACTOUS`, `DISSMISS`)
+ * rather than by a fuzzy rule that would also swallow things it should not.
+ *
+ * **What is deliberately NOT added here, and this is the point of the change:**
+ * `DISPOSED`, `DISPOSED OFF`, `DISPOSED OF`, `DISPOSED OF NO COSTS`, `CLOSED`,
+ * `ORDERED` and the `@ ADM.STAGE`/`ANY OTHER MODE` codes stay unclassified —
+ * **~1.5M rows OF THE CORPUS WE CURRENTLY HOLD.** The module header's reasoning
+ * is unchanged and now has a much larger denominator behind it: those words
+ * cover a reasoned decision, a consent order and an infructuous closure alike,
+ * and no amount of vocabulary work makes the source say which. **That residue is
+ * the population a model may look at, and the only one** — everything above it
+ * is now answered from the source's own field, for free, exactly.
+ *
+ * **THE ~1.5M IS SCOPED TO WHAT WE HOLD, AND WHOEVER BUDGETS THE MODEL PASS
+ * NEEDS THE OTHER NUMBER.** NEW2 sampled 200 documents across 20 court-year
+ * cells of the *plain* bucket variant through this exact function, unmodified
+ * (bus 0628, `docs/HC_PLAIN_VARIANT_COMPOSITION.md`), and measured the
+ * unclassified residue at **44.5%**. Against the plain variant's 19,237,684
+ * documents that projects to **8–9 million** model-eligible documents at full
+ * acquisition — roughly six times the production figure above.
+ *
+ * The two numbers do not disagree; they have different denominators, and quoting
+ * either one without saying which is how a DeepSeek budget comes out 6x wrong in
+ * whichever direction the reader assumed. `1.5M` = what is eligible in the
+ * corpus today. `8–9M` = what becomes eligible if acquisition completes.
+ * Indicative rather than a corpus rate — 20 cells chosen for spread is not a
+ * random draw — but the direction is not in doubt.
+ *
+ * NEW2's sample also confirms this refusal is load-bearing rather than
+ * conservative: **all 89 unclassified documents were the `DISPOSED*`/`CLOSED`
+ * family and nothing else fell through**, so the vocabulary is otherwise
+ * complete. A rule that guessed `DISPOSED OFF` into `decided` would have moved
+ * **32.5% of the sample** into the authority class on a word that does not mean
+ * it. Whoever proposes that rule next should be shown that number first.
+ *
+ * Transfers and Lok Adalat settlements are folded into `procedural_disposal`
+ * rather than given new classes on purpose: they are disposals in which this
+ * court decided no merits, which is precisely what that class means, and
+ * inventing enum values would break the `hc_document_class` segmentation LCC
+ * and NEW1 already consume.
+ */
+
+/** Withdrawn, not pressed, or dismissed *as* withdrawn. The court decided nothing. */
+const WITHDRAWAL = /(WITHDRAW|NOT PRESSED)/;
+
+/** Infructuous — the matter became moot. Three spellings appear in the source. */
+const INFRUCTUOUS = /(INFRUCTUOUS|INFRACTUOUS|INFRACTOUS)/;
+
+/** Dismissed for default, non-appearance, or failure to comply with the registry. */
+const DEFAULT_OR_NON_COMPLIANCE =
+  /(FOR DEFAULT|IN DEFAULT|WANT OF PROSECUTION|NON COMPLIANCE|NON-COMPLYING|DISSMISS)/;
+
+/** The case went to another forum. This court reached no merits. */
+const TRANSFERRED = /^(RE-)?TRANSFER(RED)?\b/;
+
+/** Lok Adalat / compromise / consent terms — settled, never adjudicated. */
+const SETTLED = /(LOK.?ADALAT|\bCOMPROMISE|CONSENT TERMS|^SETTLED\b)/;
+
+/**
+ * A disposal that decided something.
+ *
+ * Extended 14 Aug 2026 from `MEASURED_VOCABULARY`. **Every branch here is
+ * reached only AFTER `isProcedural`**, which is what makes the broad
+ * `DISMISS(ED)` forms safe: `DISMISSED AS WITHDRAWN`, `DISMISSED AS
+ * INFRUCTUOUS`, `DISMISSED FOR DEFAULT` and their misspellings have already
+ * been claimed as procedural by the time control reaches this function, so what
+ * survives to be matched here is a dismissal on the merits. Reordering these
+ * two calls would silently reclassify ~250,000 rows from "the court decided
+ * nothing" to "the court decided against you", which is the more damaging of
+ * the two errors and the reason this note exists at the call site's expense.
+ */
 function isMerits(disposal: string): boolean {
-  return /^(PARTLY )?ALLOWED/.test(disposal) || /^DISMISSED$/.test(disposal) || /^REJECTED$/.test(disposal);
+  return (
+    /^(PARTLY )?ALLOWED/.test(disposal) ||
+    /^DISMISSED$/.test(disposal) ||
+    /^REJECTED$/.test(disposal) ||
+    // `ON MERITS` is the source stating it outright — the strongest signal here.
+    /ON MERITS/.test(disposal) ||
+    ALLOWED_FORMS.test(disposal) ||
+    DISMISSED_FORMS.test(disposal) ||
+    RULE_OUTCOME.test(disposal)
+  );
 }
+
+/** Allowed / granted / partly allowed, in the forms the courts actually print. */
+const ALLOWED_FORMS =
+  /(\bALLOWED\b|^GRANTED$|^LEAVE GRANTED$|^APPLICATION ALLOWED$|^CASE ALLOWED$|^MODIFIED$|^REMANDED\b|^AMOUNT AWARDED$|^DECREED$)/;
+
+/**
+ * Dismissed / rejected, including the source's own misspelling.
+ *
+ * `DISMISED` — one S — appears on **8,621 rows**. The previous anchored
+ * `/^DISMISSED$/` could not match it, so those rows sat unclassified purely
+ * because a registry clerk's typo is not a code path. Matched literally, not
+ * by an edit-distance rule that would also catch things it should not.
+ */
+const DISMISSED_FORMS =
+  /(^DISMISED$|^DISMISS$|^DISMISSED\b|^APPEAL IS DISMISSED$|^REJECTED\b|^DISMISSAL\b)/;
+
+/**
+ * Writ practice: a rule made absolute is the petition succeeding, a rule
+ * discharged is it failing. Both are decisions on the merits, and both are
+ * printed with the Bombay/Gujarat numeric prefixes (`38-`, `58-`, `39-`).
+ */
+const RULE_OUTCOME = /(RULE ABSOLUTE|RULE MADE ABSOLUTE|RULE DISCHARGED|NOTICE DISCHARGED)/;
 
 /**
  * Classify one row.
@@ -188,6 +341,12 @@ export function classifyHcDocument(row: {
 }): HcClassification {
   const len = row.fullText.length;
   const disposal = norm(row.disposalNature);
+  /**
+   * What the RULES read. `disposal` itself stays untouched so `method` still
+   * records exactly what the source printed — a classification has to be
+   * auditable against the raw field, not against our normalisation of it.
+   */
+  const outcome = stripStageCode(disposal);
 
   /**
    * 1 · The reasoning is elsewhere. Checked before anything reads the disposal.
@@ -208,11 +367,16 @@ export function classifyHcDocument(row: {
 
   if (disposal === '') return { documentClass: null, method: 'no_disposal_nature' };
 
-  if (isBail(disposal)) return { documentClass: 'bail_order', method: 'disposal_nature_bail' };
-  if (isProcedural(disposal)) {
+  if (isBail(outcome)) return { documentClass: 'bail_order', method: 'disposal_nature_bail' };
+  /**
+   * PROCEDURAL BEFORE MERITS, and the order is load-bearing — see `isMerits`.
+   * `DISMISSED AS WITHDRAWN` (71,226 rows) is a withdrawal, not a dismissal on
+   * the merits, and only this ordering keeps it one.
+   */
+  if (isProcedural(outcome)) {
     return { documentClass: 'procedural_disposal', method: 'disposal_nature_procedural' };
   }
-  if (isMerits(disposal)) {
+  if (isMerits(outcome)) {
     // A bail application whose disposal says only "allowed". See BAIL_PHRASE:
     // 58% of what this branch would otherwise have called `decided`.
     if (BAIL_PHRASE.test(row.fullText)) {

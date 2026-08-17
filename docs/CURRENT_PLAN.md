@@ -97,21 +97,68 @@ objects, which is correct until it lands — see below.
 
 Three things are open, and none of them is data:
 
-1. **`cite:` search does a full sequential scan** — 14m39s for
-   `cite:"(1994) 3 SCC 1"`. `A OR B OR C` where B is an unindexable
-   `unnest(reporter_citations)`, so no BitmapOr.
-   `services/api/src/search/qlang/compile.ts` `countStructured`. **NEW1 (0575)
-   independently reports `exactCaseTitle` cannot use an index either and ~57% of
-   searches fire it** — same family, and the two should be fixed together. **Do
-   not label either "pre-existing on Railway": this query was never run there.**
+1. ~~**`cite:` search does a full sequential scan**~~ **CLOSED 17 Aug 12:55 —
+   `0052` applied and measured.** `exactCitation` **15.31 s → 0.1 ms**,
+   `exactCaseTitle` **47.85 s → 0.0 ms**, rows IDENTICAL to the shapes they
+   replace on every probe. Both indexes built `CONCURRENTLY` out of band (GIN
+   59.8s/11 MB, btree 521.0s/425 MB) so the resuming fleet was never write-blocked,
+   after which `0052` ran as a no-op through its own `IF NOT EXISTS`.
+   `docs/ops/migration/HOTPATH_MEASUREMENTS.md`.
+
+   **The finding worth more than the numbers: the first AFTER run showed no
+   improvement at all, and that was missing statistics, not a failed index.** A
+   new expression index carries no `pg_statistic` rows until the table is
+   analysed again; with no selectivity estimate the planner assumed matches were
+   common and that `LIMIT 2` would terminate a seq scan early (cost 163.86 against
+   the index's 214.23). `ANALYZE judgments`, 7.5 s, took the same query to 7.49.
+   **Any expression index on a populated table must be followed by `ANALYZE`
+   before it is measured or judged** — neither `CREATE INDEX` nor `CREATE INDEX
+   CONCURRENTLY` does it. This is exactly the trap NEW1 predicted in bus 0592.
+
+   Two defects were fixed on the way, both of which would have made this a hard
+   `500` on every `cite:` query rather than a slow one: `retrieve.ts` and
+   `hotpath-measure.mjs` each carried an un-parenthesised `LIMIT … UNION … LIMIT`,
+   a **parse** error (`42601`) that no migration clears. NEW1 found the first
+   (bus 0638); the second was in the tool that measures this very migration.
+   Guarded by `services/api/src/search/exact-lookup-parse.test.ts`.
 2. **tsvector tokenisation differs on 119/28,425 sampled rows** — `full_text`
-   byte-identical (md5), cause is *malformed* visual-order Devanagari from PDF
-   extraction meeting a different character classification. Measured, not
-   estimated.
-3. **The local server keeps dying to Windows console signals** (4×,
-   `0xC000013A`). Data-safe every time; costs minutes. **FQ-PGSERVICE** — needs
-   admin, and note that the auto-start scheduled task is currently **absent**
-   (see that entry).
+   byte-identical (md5). ~~cause is *malformed* visual-order Devanagari~~
+   **THE STATED MECHANISM IS PROBABLY WRONG, and the problem is much larger than
+   this line implies.** NEW2 characterised the text itself (bus 0632,
+   `docs/DEVANAGARI_EXTRACTION_DEFECTS.md`): **~40,000 rows carry Devanagari at
+   all (0.54–0.58%), and 65.1% of those are defective.** The 119/28,425 measured
+   *tsvector divergence between two servers*, which appears only where two
+   `unicode` builds disagree — a strict subset of the damage.
+
+   It is **three** defects, not one, and they do not have one remedy:
+
+   - **orphaned matra**, 47.1% — the vowel sign is *detached and floated between
+     two spaces* (`प्र` + SPACE + `ा` + SPACE), not reordered. Visual-order
+     streams put the matra *before* its consonant with no space, so visual order
+     is likely not the mechanism. **Repairable by normalisation.**
+   - **control character where the consonant should be**, 26.8% — `U+0015`
+     replacing the base consonant, vowel sign left behind. **NOT repairable by any
+     normalisation or tokeniser change: the information is destroyed, not
+     displaced.** Re-extraction or OCR, or nothing.
+   - **Latin-1 bleed**, 13.7% — an 8-bit legacy font (Kruti Dev family) passed
+     through unmapped.
+
+   Extremely uneven by court: **Rajasthan 95.3% across 2013–2026** (that
+   registry's PDF production, not one bad year), Allahabad 35.1% but the largest
+   population, **Patna 0.0%** as the control. `text_extraction_method` is `unpdf`
+   on all 395 sampled, so **the extractor is a constant and the defect cannot be
+   attributed to it from this data** — and Poppler has never been tried on the
+   population that most needs it. That is the next experiment and it needs
+   document fetches, not a database.
+3. ~~**The local server keeps dying to Windows console signals**~~ **CLOSED
+   17 Aug 12:20 — `pg-service-verify` is 7/7.** The postmaster was restarted onto
+   a direct detached `postgres.exe` spawn, so it has no `cmd.exe` parent and no
+   console for a control event to reach: `no console parent  PASS  parent pid
+   17072 is gone`, against `FAIL  postmaster 27764 has LIVE cmd.exe parent 6848`
+   an hour earlier. **FQ-PGSERVICE stays open** — the auto-start task exists and
+   is Ready, but fires at LOGON rather than at boot, so an unattended reboot still
+   comes up with no database until someone signs in. That needs the one elevated
+   `pg_ctl register` command.
 
 **16 Aug 2026 — THE RAILWAY→LOCAL MIGRATION OUTRANKS EVERY ITEM BELOW, AND IT
 IS BOUNDED BY MONEY, NOT BY THROUGHPUT.** The chunked dump is running and
