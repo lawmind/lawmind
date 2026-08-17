@@ -42,6 +42,61 @@ open**: a scheduled task fires at LOGON, not at boot, so an unattended reboot
 still comes up with no database until someone signs in. That needs the one
 elevated `pg_ctl register` command.
 
+### 18 Aug 2026 — THE SPARSE ARM ASKED THE WRONG QUESTION, AND CITATION KEYS EXIST FOR THE FIRST TIME
+
+**1. `sparseAny()` selected query terms by LENGTH and the proxy was false.**
+NEW1 measured it (bus 0664): `court` is five characters and appears in **90.7%**
+of documents; the terms that discriminate are also five characters and were being
+discarded. Of 40 length-selected terms, 3 appeared in ≥50% of the corpus and 21 in
+<5%. The resulting OR'd tsquery matched **94.1%** of the corpus, and
+`ORDER BY ts_rank(...)` over that set cost **781,289 ms** against **4.47 ms** for
+the same filter unranked — `ts_rank` must read the `tsvector` of every matching
+row, so the ranking is the expense, not the probe.
+
+Fixed by measuring the corpus instead of guessing at it: migration `0055`
+`lexeme_document_frequency`, built by
+`services/ingest/src/lexeme-frequency-cli.ts`. **128,243 lexemes over 40,537
+sampled documents, 24 above 50%.** My build reproduces NEW1's number independently
+(90.7% against their 90.6%).
+
+**This is a LATENCY change with NO demonstrated quality effect, and it must not be
+recorded as one.** Narrowing a candidate set can cost recall, and recall is the
+already-failing axis. **NEW1 owns the benchmark**; `recall@20` is the gate and
+`SPARSE_MAX_DOCUMENT_FREQUENCY` is the single revert point. An empty frequency
+table degrades to exactly the old behaviour, so CI is unaffected.
+
+**2. `judgment_citation_keys` is populated — 1,104,005 keys, 99.80% of the
+key-eligible population, 0 duplicate row groups, 0 yearless.** Full detail in
+`docs/ai/CITATION_KEY_BACKFILL.md`.
+
+The finding: **45,153 distinct keys are ambiguous and every one is
+`source='neutral'`** — zero reporter or alias ambiguity, which needed explaining
+because a neutral citation is unique by construction. Splitting by distinct
+judgment TEXT per key explains it:
+
+- **36,310 (80.4%) are one text recorded once per connected petition** — a common
+  order. `2025:CGHC:57112` is 845 writ petitions, 845 case numbers, 845 source
+  URLs, **one** `content_hash`, one date. Ordinary High Court practice, not bad
+  data — **but the harness cannot serve it**: `exactCitation` sees 845 candidates,
+  "not exactly one", and pins nothing for a correctly-cited order. The fix is
+  judgment identity (`content_hash` already proves it, `document_duplicates` from
+  `0036` is the machinery), **not** relaxing the resolver. Not implemented.
+- **8,843 (19.6%) are genuinely different texts sharing one citation.** A real
+  conflict; the refusal is correct and must survive any duplicate-collapsing work.
+
+**3. `hc_ingest_ledger` (`0047`) had never been written by anything.** Applied,
+indexed, documented, zero rows — cost 15,869 `pdf_missing` 404s per restart on one
+scope against ~21 recoverable documents. NEW2 wired it (bus 0667). A migration
+applied and never wired is indistinguishable from one that works, and the journal
+guard cannot see it: it catches "the migration never reached the database", not
+"the database never reached the code".
+
+**4. PostgreSQL crashed and self-recovered** (~4 min, ready 02:40:47). **No data
+lost** — `judgment_citation_keys` is byte-identical either side. **No crash line
+in the log**, which points at a hard kill rather than a Postgres fault; RAM was at
+**5.7% free with 71 node processes** shortly before. OOM is the hypothesis that
+fits and is *not* asserted as fact.
+
 ### 17 Aug 2026 — THE MIGRATION JOURNAL WAS DRIFTED BY NINE, NOT SEVEN, AND `ci:local` COULD NOT SEE IT
 
 Reconciled, and the drift was worse than reported in the founder's addendum.
@@ -8560,3 +8615,502 @@ benchmark unless CX1 reports one blocked or insufficient. Today's Devanagari wor
 is that split working: CX1 ran the bake-off, NEW2 verified it per-document and
 gated the write path. NEW3's offer to characterise Delhi's extraction was declined
 on this basis and routed to CX1.
+
+---
+
+## NEW2 · 17 Aug 2026 (evening) — CUTOVER EXECUTED, fleet live, and CX1's unfinished work inherited
+
+**`LOCAL_DATABASE_CUTOVER_APPROVED` received from LCC (bus 0646). STOP removed
+15:50:23Z on that word, not on an observation.** Sequence was canary → verify →
+scale, per the founder's acceleration addendum.
+
+### Canaries: 7 PASS, 0 FAIL
+
+Restore completeness 7,296,068 · dedup constraint present · 100.0% of a 5,000-row
+sample carry `full_text` · **+9 rows in 60s** · 2 checkpoint offsets advanced · no
+established connection to `hayabusa.proxy.rlwy.net`.
+
+### Two defects in `start-local-canary.ps1`, reachable ONLY on the real path
+
+The prepared canary **failed on first real execution**, at the moment the freeze
+lifted:
+
+1. **`$psi.ArgumentList.Add()` on a null.** `ProcessStartInfo.ArgumentList` is
+   .NET Core; Windows PowerShell 5.1 is .NET Framework and has no such property.
+   No `pwsh` on this machine. `-WhatIf` returns before that branch, so **the dry
+   run passed cleanly the minute before the real run died.**
+2. **`Process::Start` with `UseShellExecute=$false` and no redirect hands the
+   child the parent's console** — the 0xC000013A mechanism that killed 38 workers
+   95s after boot on 15 Aug. Three canaries sharing the agent's console would have
+   died when it closed, and that failure would have read as *"the local database
+   cannot sustain workers"* on the run built to answer exactly that question.
+
+Both now use the proven `Start-Process -WindowStyle Hidden` pattern with per-scope
+redirection. Child-only env injection unchanged; `.env` untouched.
+
+### Rung ladder — measured, and short windows lie
+
+| rung | window | rows | rate |
+| --- | --- | ---: | ---: |
+| 3 canaries | 60s | +9 | 540/hr |
+| 8 | 326s | 37,155 | 410,300/hr |
+| 16 (first window) | 580s | 34,583 | 214,700/hr |
+| 16 (settled) | 133s | 22,425 | **~607,000/hr** |
+
+**The first rung-16 reading was startup-contaminated** — eight new scopes scan and
+resume before they write. It read as a halving and would have stopped the ladder
+on an artefact. The settled rate is above rung 8. **No scale past 16 without a
+longer window**: the rung-8 figure begins on five virgin scopes, which is the most
+flattering moment a scope ever has, and neither short reading is quotable.
+
+Corpus **7,296,068 → 7,417,330**.
+
+### The scheduler earned its place on the first run
+
+All 13 scopes added at rungs 8 and 16 are scopes **no launcher could have started
+before today**. Five are tier 0 — zero held against real source: `27_1-y2024`
+(277,355), `9_13-y2024` (264,889), `21_11-y2023` (111,641), `28_2-y2023` (99,768),
+`29_3-y2023` (80,102). That is the 2024 hole from bus 0607, started from a
+generated plan rather than from three lines somebody remembered to type.
+
+### Lint: my lane is clean (LCC bus 0652)
+
+`eslint` 0 errors · `tsc` clean · 495 tests, 493 pass, 0 fail, 2 skipped. Three
+findings worth more than the counts:
+
+- **`statute-correspondence.ts:153` carried a literal U+00A0 inside a regex.** Same
+  class as LCC's `canonPunct()` fix. Now ` `; zero non-ASCII bytes in the file.
+- **`enrich-cli.ts` counted `skippedMissing` and never printed it.** Lint called it
+  unused; the real defect is that a document whose unit fails to load is absent
+  from `cacheHits`, `calls` and every tally while `refs.length` still counts it as
+  input — the totals did not add up and nothing said so. Deleting the variable
+  would have made the arithmetic consistent by making the loss permanent. Now
+  printed unconditionally.
+- Scratch debris deleted after checking for references: `_scratch_downstream.mjs`,
+  `_pop.ts`, `tmp-scan2.ts` (git-tracked). `baseline-extra-scratch.mjs` left alone —
+  NEW1's lane.
+
+### CX1 hit its usage limit — NEW2 inherits the unfinished extraction/Silver work
+
+**Accepted without retest** (founder's handoff addendum): the 32-document
+Devanagari bake-off; Silver's 365,588-judgment / ~1.89 GiB measurements, partition
+by court, ZSTD 9, ~32 MiB row groups, ~128 MiB objects, 64–256 MiB band, and
+court/year physical partitioning rejected for tiny objects. The 117.88x synthetic
+figure stays INVALID and is quoted nowhere as a planning number (verified).
+
+**Inherited and NOT started:** CX1's prepared 148-document stratified Devanagari
+validation across nine courts (`docs/ai/CX1_DEVANAGARI_SCALE_VALIDATION.md`,
+selector SQL prepared, never run) measuring **semantic** preservation — case
+names, citations, dates, section numbers, statute names, paragraph boundaries —
+not merely Unicode cleanliness. Deferred deliberately: CX1's own gate
+`cx1-heavy-lab-runner.mjs recommend` reports **MEDIUM — 84 heavy processes, RAM
+free 15.3%, oldest xact 688s**, which is my fleet. **Corpus growth outranks OCR
+science**, so it waits for a quiet window rather than competing with ingestion.
+
+Also inherited and not started: the Silver production replay (offline writer,
+checkpoint/resume, content hashes, atomic completion, failure injection) and the
+document-classification frequency audit.
+
+### §G — bad-text populations published rather than rediscovered
+
+Sent to NEW1 and LCC (bus 0662/0663) so neither lane re-measures them: Devanagari
+65.1% defective overall with Rajasthan at 95.3% and Patna the only clean control;
+Poppler deletes the script entirely; Bombay font-cmap 37.0%; Gujarat/Telangana
+leading-character loss; **Punjab & Haryana where `pdftotext` returns 54% LESS**, the
+opposite trap. The general rule handed over with them:
+`SOURCE HAS DEVANAGARI + OUTPUT HAS ZERO DEVANAGARI = AUTOMATIC REJECT`.
+
+### Not established
+
+Neither rung rate is final — sampling continues. No claim that 16 is the right
+rung. The eligibility-field set for §G is a **proposal to LCC, not my edit**, and
+NEW1 has been asked which fields they would actually filter on before columns get
+proposed that nobody uses.
+
+**CORRECTION to the rung table above, same evening.** Two claims in it were wrong.
+
+**The fleet was 14, not 16.** `hc-boot-10_8` and `hc-boot-hist-27_1` — two of the
+three canaries — were killed inside 20 seconds by a transient `EPERM` on the
+checkpoint rename (`saveCheckpoint`, `hc-load-cli.ts:377`), and `supervise.mjs`
+correctly abandoned both after three restarts. **`verify-local-canary.mjs` printed
+7 PASS anyway**, because `local inserts` and `checkpoint advance` are AGGREGATES:
+the one surviving canary was inserting and advancing briskly and passed both on
+its own work. The fleet ran 27 minutes at two-thirds width with the cutover on the
+record as clean. *"Verify by row growth, not process count" is the right rule and
+it is not sufficient — row growth is summed over scopes and a dead one contributes
+zero silently.*
+
+**The lock was transient, tested rather than assumed:** the same rename over the
+same path succeeds afterwards and neither checkpoint is held open. Millisecond
+external hold — scanner or indexer on the just-written `.tmp`. Nothing in this
+lane races those paths.
+
+Two fixes landed: `renameWithRetry` (6 attempts, 20–320ms, only EPERM/EACCES/EBUSY,
+**last failure still rethrown** — a checkpoint that silently fails to save is worse
+than a crash), and an `every scope alive` check in the verifier that reads each
+scope's supervisor give-up line, parses scope names from the canary script rather
+than retyping them, and runs **before** the mid-load refusal — that guard was
+written for LCC's restore and post-cutover the fleet itself is a bulk load, so it
+now fires constantly and would suppress the one check that catches a dead scope.
+
+**The "halving" at rung 16 was an artefact twice over** — a startup-contaminated
+window AND a fleet two workers short:
+
+| rung | window | rate |
+| --- | --- | ---: |
+| 8 | 326s | 410,300/hr |
+| "16" (really 14, startup) | 580s | 214,700/hr |
+| 14, settled | 398s | 586,500/hr |
+| **16, clean** | 198s | **657,000/hr** |
+
+Throughput **is** improving 8 → 16. Still no scale to 24 on a short window — a
+longer sample is running and the decision waits for it. Corpus **7,296,068 →
+7,509,955**, +213,887 since cutover. 16 supervisors verified **by name**, not by
+count.
+
+**Rung 20, and the ladder stops here.**
+
+| rung | method | window | rate |
+| --- | --- | --- | ---: |
+| 8 | `count(*)` delta | 326s | 410,300/hr |
+| 16 (clean) | `count(*)` delta | 264s | 681,300/hr |
+| **20** | `n_tup_ins` delta | 240s | **713,059/hr** |
+
+**+4.7% from 16 to 20 is not an improvement, it is noise.** The same rung 16
+produced 214,700 / 586,500 / 657,000 / 681,300 across four windows as startup
+effects decayed, so a 4.7% step sits well inside the spread. The founder's rule is
+"scale beyond 16 only when measured useful-documents/hour improves"; this does not
+clear that bar, RAM free is flat at 15.2% across 16→20, and the marginal return
+has visibly flattened. **Holding at 20. Not going to 24/32/38.** The bottleneck is
+more likely upstream PDF fetch than worker count, and that is the next thing to
+measure rather than to out-spend.
+
+**A measurement caveat that matters more than the numbers.** The rung-20 figure
+uses `n_tup_ins` and the earlier ones use `count(*)` deltas — **because `count(*)`
+over 7.5M rows became so slow under 20 writers that the sampler produced one line
+in six minutes.** The measurement was degrading the thing it measured. `n_tup_ins`
+is a counter read, not a heap scan. The two methods are not strictly comparable
+and the 4.7% should not be read as precise for that reason too.
+
+Corpus at hold: **7,540,767+** (`count(*)`), +244,699 since cutover. 20 supervisors
+verified **by name** with no supervisor give-up line on any scope.
+
+Guards green: `check-stop-coverage`, `check-schema-truth`, `check-amber-reservation`,
+`check-contract-status`, `check-design-rules` all PASS. `eslint` 0 errors in this
+lane, `tsc` clean, 495 tests / 493 pass / 0 fail / 2 skipped.
+
+**Two scopes finished CLEANLY within the hour, and one of them found a hole in the
+scheduler's semantics.** Fleet reads 18, not 20, and neither missing scope died —
+`supervise.mjs` logged *"worker finished cleanly after 0 restart(s)"* for both.
+Distinguishing that from the morning's EPERM deaths is exactly why the give-up
+line is what the liveness check reads.
+
+`hc-boot-23_23-y2024` was ranked at **15,890 remaining** and finished with
+**15,869 `pdf_missing`** — metadata in the parquet, documents absent from the
+bucket. Genuinely recoverable: about **21**. Every other scope measured shows
+single-digit to low-thousand `pdf_missing` against hundreds of thousands held, so
+it is a per-scope property, not a corpus-wide correction to `remaining`.
+
+**`maxHeldPct` does not catch this** (23_23 sits at 43.6% held, far from the 0.97
+gate), so the next plan regeneration will rank it at ~15,890 again and the fleet
+will re-scan and re-404 fifteen thousand documents. Same waste loop the threshold
+exists to prevent, through a door it does not watch. **Next scheduler refinement:
+feed observed `pdf_missing` back into the plan.** Not built — it needs
+`pdf_missing` persisted more durably than a log tail, which is a design question
+rather than a patch. Recorded in `docs/YEAR_SCOPE_SCHEDULER.md` §8 so it is not
+rediscovered as "a worker that finishes suspiciously fast".
+
+---
+
+## NEW2 · 17 Aug 2026 (late) — `hc_ingest_ledger` was built in migration 0047 and NOTHING had ever written it
+
+**Correction to my own note above.** I wrote that feeding `pdf_missing` back into
+the scheduler "needs `pdf_missing` persisted somewhere more durable than a log
+tail, and that is a design question rather than a patch." **Wrong.** The durable
+home has existed since migration `0047_hc_ingest_ledger.sql` — applied to the
+database, two purpose-built indexes, a header describing the exact semantics.
+`grep hc_ingest_ledger services --include=*.ts` returned **nothing**, and the
+table held **zero rows**. Built, applied, never wired. Same pattern as
+`lawmind-built-but-unreachable`, and I claimed a gap without checking the
+directory — the specific mistake my own memory warns about.
+
+### What it costs to not have it
+
+`judgments.source_url` is a SUCCESS ledger and `existingSourceUrls` consults it,
+so a written document is never re-fetched. **A FAILED document left no trace**, so
+every restart re-downloaded every failure forever, with no way to tell "not yet
+tried" from "tried three times".
+
+Measured, not hypothesised: `hc-boot-23_23-y2024` was scheduled against **15,890
+remaining** and recorded **15,869 `pdf_missing`** — metadata in the parquet, PDFs
+absent from the bucket, roughly **21** genuinely recoverable. That scope paid
+15,869 404s on every start and would have gone on doing so.
+
+### Wired now — `services/ingest/src/harvest/ingest-ledger.ts`
+
+Read side: `permanentlyFailedUrls` filters `todo` alongside `existingSourceUrls`,
+counted as `ledger_permanent_skip`. Write side: `recordFailures` upserts every
+skip with its URL, court and year. `clearSucceeded` deletes the row after a
+successful upsert so the success and failure ledgers cannot disagree.
+
+Semantics taken from the migration's own header, not invented: metadata-row
+defects (`no_title`, `no_decision_date`, `unparseable_date`, `no_pdf_link`,
+`test_fixture_bench`) are **permanent on first sight** — the bytes read identically
+on attempt 10. Fetch/parse failures (`pdf_missing`, `pdf_timeout`, `pdf_failed`,
+`no_text`) retry to **MAX_ATTEMPTS = 3**, matching this repo's standing "3 failed
+cycles" rule. **The promotion is decided by the database from accumulated
+`attempts`**, not by a per-process counter — an in-memory count resets on every
+restart, which is the exact failure being fixed. Both writers swallow their own
+errors: an operational ledger must never lose a batch of judgments.
+
+**Dry runs record nothing.** `--apply` is what makes a run's conclusions durable,
+and a rehearsal that condemned documents to `permanent` would change what a real
+run does.
+
+### Verified by execution, against the real table
+
+```
+dry run  50 pdf_missing, LEDGER FAILURES 0        (dry runs record nothing)
+apply    50 pdf_missing, LEDGER FAILURES 50       (rows land)
+x3 runs  150 rows — all attempts=1, because the CHECKPOINT ADVANCED each run,
+         so those were 150 DIFFERENT documents. The conflict path was untested,
+         not broken, and I checked rather than assuming the upsert was wrong.
+direct   attempts 1 -> 2 -> 3, permanent flips true at 3
+         no_title -> attempts=1 permanent=true on first sight
+         permanentlyFailedUrls returns both · clearSucceeded removes the row
+         probe rows deleted afterwards
+```
+
+`tsc` clean · `eslint` 0 in this lane · 495 tests / 493 pass / 0 fail / 2 skipped.
+
+One incidental fix: the map callback now has an **explicit** `MapResult` type.
+The inferred union let `url` widen to `string | undefined` the moment the ledger
+read it — two of the three skip branches returned no `url` at all, so those
+failures would silently never have been recorded.
+
+`ledgerWrites` is **printed** in the RESULTS block, not merely counted — the same
+lint rule caught `skippedMissing` in `enrich-cli.ts` doing exactly that, and the
+number answers "is the ledger actually being written".
+
+### Still not done
+
+The year-scope planner does **not** yet read the ledger, so `hc-boot-23_23-y2024`
+will still be ranked at ~15,890 on the next regeneration. The ledger now makes
+that fixable with a query instead of a design; it is the next step, not this one.
+
+---
+
+## NEW2 · 17 Aug 2026 (night) — THE WHOLE FLEET DIED ON A POSTGRES RESTART, and the retry that should have absorbed it could not see the error
+
+**Found by checking the process table, not by an alert.** Supervisors: **0**.
+
+```
+postmaster restarted                     22:36:43Z
+every worker died                        22:39:07Z - 22:39:41Z
+FATAL uncaughtException: PostgresError: the database system is not yet accepting connections
+[supervisor] died within 20s three times running (exit 1) — this is a defect, not a network blip. Stopping.
+```
+
+`supervise.mjs` applied its rule correctly to a false premise. A restarting
+database is not a defect, and the fleet sat at zero until a human looked.
+
+### Root cause: a SQLSTATE arriving in a field that only held errnos
+
+`hc-load-cli.ts` **already had** a retry wrapper that would have absorbed this
+entirely. It never fired: its classifier matched Node **errno** strings
+(`ECONNRESET`, `ETIMEDOUT`, …) while a `PostgresError` carries a **SQLSTATE** in
+that same `.code` field. `57P03` fell straight through to `throw`, hit the
+`uncaughtException` handler, and exited 1.
+
+**The audit is the real finding — every writer in the service had the same
+hole:**
+
+| CLI | before |
+| --- | --- |
+| `hc-load-cli` | retry wrapper, errno-only → died |
+| `enrich-cli` · `paragraphs-cli` · `reextract-cli` | retry wrapper, message-regex, matches none of Postgres's wording → would die |
+| `citations-cli` · `hc-classify-cli` · `citation-keys-cli` · `resolve-cli` | **no retry wrapper at all** |
+
+Seven copies of one judgement call, wrong in every copy that existed.
+`citation-keys-cli` is LCC's backfill, which they queued behind this fleet.
+
+### `services/ingest/src/db-transient.ts` — the judgement lives in one place now
+
+`isTransientDbOrNetworkError` covers the errno set **and** the SQLSTATEs a client
+sees across a restart — `57P03` cannot_connect_now, `57P01`/`57P02` shutdown,
+`08006`/`08001`/`08004` connection failure — plus a message backstop for paths
+that lose `.code`. To a batch writer a database that is not there *yet* and a
+network that is not there *yet* are the same event, survived the same way.
+
+**Defects are still rethrown immediately and unchanged.** `23505`, `42601`,
+`22021`, `42P01` are tested as NOT transient — retrying a constraint violation
+turns a loud bug into a slow one.
+
+**Budget raised 5 → 10 attempts, and the number is a measurement.** Five was
+2+4+8+16+30 = **60s**; this cluster self-recovered in **150.9s** on 16 Aug (bus
+0585), so the old budget expired less than halfway through a recovery already on
+the record. Ten is **210s**. A test asserts the budget exceeds 150.9s *and* that
+the old one did not, so nobody lowers it back without meeting that number.
+
+Wired into `hc-load-cli` (local copy deleted, not duplicated), `enrich-cli`,
+`paragraphs-cli`, `reextract-cli`. The four with no wrapper are reported to LCC,
+not silently patched — adding a retry loop changes their control flow and one of
+them is theirs.
+
+`tsc` clean · `eslint` 0 · **506 tests, 504 pass, 0 fail, 2 skipped** (11 new).
+
+### Fleet restored
+
+Corpus **7,999,553** — it had reached 7,961,447 before the stall, so ~195k rows
+landed after my previous check and ~38k since restart. Insert rate measured
+**206,963/hr** on 9 workers while the remaining 10 were still launching.
+
+### What this changes about how I check
+
+Both stalls today were found by reading the process table, never by a check that
+fired. The `every scope alive` verifier check added this afternoon reads the
+supervisor give-up line and would have caught this one — it was not running,
+because nothing runs it on a schedule. **That is the gap now: the check exists
+and nothing invokes it.**
+
+### The launcher then silently started 9 of 19, and that was a SECOND defect
+
+Restarting after the Postgres outage, `-Only` with 19 names started **9**. No
+error, no message — the launcher simply never returned. Two further invocations
+did the same and left **seven orphaned `powershell.exe` processes** holding the
+same spot.
+
+**It hangs, it does not fail.** `Start-Worker`'s rotation check was
+`Get-Content $log -Tail 40`. These logs reach **30 MB** and carry raw
+PDF-extractor bytes — NUL and other binary, which `grep` reports as "Binary file
+… matches" — and Windows PowerShell 5.1's `Get-Content -Tail` against that is not
+a bounded read. A single scope did not return in **120 seconds**. The scope it
+stopped on, `hc-boot-19_16-y2023`, simply has the largest log in the repo.
+
+Replaced with a `FileStream` seek reading a fixed 64 KB from the end:
+**60 ms against the same 30 MB log**, versus a >120 s hang. An unreadable log now
+logs `WARN … starting anyway` rather than aborting — failing to rotate costs at
+most one scope that exits early; failing to START is what this cost.
+
+**And I made the same .NET mistake for the third time today.** The first version
+used `[Text.Encoding]::Latin1`, which is .NET 5+; this host is .NET Framework, so
+every open threw and ten scopes logged `WARN … unreadable` in a row. Harmless
+only because the fallback starts the worker anyway. `GetEncoding(28591)` is
+ISO-8859-1 and has existed since .NET Framework 1. The other two were
+`ProcessStartInfo.ArgumentList` in `start-local-canary.ps1` (fatal, cost the
+canary run) and the same assumption in this file.
+
+### Fleet state, counted by name rather than by count
+
+```
+19 backlog year-scopes requested
+12 live
+ 2 finished cleanly        hc-boot-9_13-y2023, hc-boot-23_23-y2024
+ 5 restarted               29_3-y2023, 22_18-y2023, 29_3-y2024, 33_10-y2023, 14_25-y2024
+18 unscoped fleet scopes   STILL DOWN since the 22:39 outage — NOT restarted
+```
+
+**The unscoped scopes are down deliberately, and it is a real coverage gap I am
+naming rather than hiding.** They serve the 2016+ window per court, which is
+priority 5 in the founder's ordering ("remaining recent gaps"), while the 19
+backlog year-scopes are priorities 1 and 2. Throughput also plateaued at ~16-20
+workers, so restarting 18 more would not buy coverage — but the gap is real and
+should be closed once the backlog band drains.
+
+### One scope is looping on a third-party defect, not on our code
+
+`hc-boot-29_3-y2023` hit the supervisor's **other** bound — *"exceeded 40 restarts
+— stopping rather than looping forever"* — rather than the fast-death one, because
+each attempt outlived the 20 s window.
+
+```
+FATAL unhandledRejection: Error
+    at BaseExceptionClosure (unpdf@1.8.0/dist/pdfjs.mjs)
+    at ModuleJob.run · onImport · resolvePDFJSImport · getResolvedPDFJS · getDocumentProxy
+```
+
+It rejects at **module import** of unpdf's pdfjs bundle, not on any document.
+`Math.sumPrecise is not a function` appears as a non-fatal Warning in every
+worker log and is the likely neighbour. Other scopes import the same module and
+insert rows normally, so this is not a global break — most likely a module-load
+race under concurrency. **Restarted once to see whether it reproduces; if it
+loops again the unpdf version needs pinning and that is a real investigation, not
+another restart.** Stated rather than retried blindly.
+
+### The ledger is live in production and is already worth more than the fetch it saves
+
+Grew **150 → 23,592 rows** under the running fleet — written by real workers, not
+by my probe. The promotion logic is working in production too: one row has
+already reached `permanent = true` after three attempts.
+
+```
+outcome        permanent    rows
+pdf_missing    false       22,983
+pdf_failed     false          616
+no_text        false            9
+pdf_failed     true             1
+
+worst court-years
+  15,845  27_1 (Bombay) 2023
+   4,548  27_1 (Bombay) 2024
+   2,578  9_13 (Allahabad) 2024
+     150  23_23 2024
+```
+
+**Bombay 2023 alone has 15,845 documents whose metadata is in the parquet and
+whose PDFs are not in the bucket** — the same shape as `23_23-y2024` (15,869 of
+15,890), and Bombay is the largest single row in the coverage gap table. This is
+precisely the intelligence the ledger was built to produce, and it lands directly
+on the open scheduler question: `remaining = source − held` counts documents that
+cannot be fetched, so the plan over-ranks these scopes and will keep re-scheduling
+them.
+
+**Next step is now a query rather than a design**: subtract
+`hc_ingest_ledger` rows where `permanent = true` from `remaining` in
+`new2-yearscope-plan.mjs`. Not built tonight — the promotions are still
+accumulating (22,983 of 23,592 rows are at fewer than 3 attempts), so subtracting
+now would use a number that is still moving.
+
+### Throughput after everything
+
+**503,936/hr on 13 workers**, consistent with the measured 16-20 plateau. Corpus
+was 7,999,553 at the last full count and climbing.
+
+### CX1's lint errors were inherited too, and the gate is now within reach
+
+`ci:local` stops at lint, so **every guard behind it stays inert until lint is
+green** — including `check-stop-coverage.mjs`, which LCC noted has not run in CI
+once since the freeze began. Under the CX1 handoff its scripts are mine, so its
+9 errors were mine to clear.
+
+**53 → 19 errors.** What I fixed beyond my own files:
+
+- **Two `no-control-regex` hits that must NOT be "fixed".** The control
+  characters in `cx1-devanagari-bakeoff.mjs` and `cx1-select-devanagari-sample.mjs`
+  are **the defect being detected** — the raw control byte standing where a base
+  consonant should be, the one Devanagari defect class that destroys information.
+  A rule that removed them would silently disable the detector while it went on
+  reporting zero. Disabled in place with that reason written above the line.
+- `Buffer` imported from `node:buffer` (2 uses), and `setTimeout` from
+  `node:timers` in `scripts/supervise.mjs` — the fleet supervisor, mine.
+- Four genuinely unused bindings removed after checking each was not load-bearing:
+  `byId`, `classification`, `dr` in `cx1-heavy-lab-final.mjs` (verified the
+  generated report already covers those sections — §12 Classification Backlog
+  exists, so the reads were dead, not a missing section), plus `nameByCode` and
+  `jsonPath`.
+
+Verified the edits did not break the scripts: all five parse under `node --check`,
+and `cx1-devanagari-bakeoff.mjs --reaggregate` still reproduces the same verdict
+(`poppler usable=false droppedDevanagari=32/32`).
+
+**Remaining 19, none of them mine:**
+
+```
+6  services/harness      NEW1
+2  services/api          LCC/RCC
+2  scripts/migration     LCC  (pg-local.mjs, regenerate-generated-columns.mjs)
+```
+
+Nine of those are in files another lane is actively working in, so they are
+reported rather than edited. `services/harness/src/baseline-extra-scratch.mjs`
+is the scratch file LCC flagged and I left alone — NEW1's to delete.
