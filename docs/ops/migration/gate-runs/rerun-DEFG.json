@@ -1,0 +1,33 @@
+{
+  "ranAt": "2026-08-17T11:56:22.098Z",
+  "databaseHost": "127.0.0.1",
+  "checks": [
+    {
+      "cls": "D",
+      "id": "span-signature-zero-offset",
+      "verdict": "PASS",
+      "detail": "no chunk carries the char_offset=0 defect signature",
+      "ms": 21030
+    },
+    {
+      "cls": "D",
+      "id": "span-signature-overshoot",
+      "verdict": "PASS",
+      "detail": "no chunk span runs past the end of its own full_text",
+      "ms": 319270
+    },
+    {
+      "cls": "D",
+      "id": "span-storage-sample",
+      "verdict": "PASS",
+      "detail": "300 chunk spans re-resolve byte-identically against full_text",
+      "ms": 1471
+    }
+  ],
+  "passed": true,
+  "counts": {
+    "pass": 3,
+    "fail": 0,
+    "info": 0
+  }
+}

@@ -1,0 +1,35 @@
+LAWMIND POST-MIGRATION CORRECTNESS GATE
+==============================================================================
+database  127.0.0.1 (from LOCAL_DATABASE_URL)
+classes   A=citation identity · B=ambiguous citation behaviour · C=adverse / currentness · D=exact evidence · E=duplicate collapse · F=sparse / dense / hybrid behaviour · G=paragraph fallback · H=generated full-text-search column behaviour
+
+run       D · exact evidence …
+done      D · exact evidence · 342s · report updated
+run       E/F · duplicates and arms …
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+PostgresError: syntax error at or near "UNION"
+    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:815:30)
+    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:489:6)
+    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:563:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)
+    at Readable.push (node:internal/streams/readable:394:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+    at cachedError (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/query.js:170:23)
+    at new Query (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/query.js:36:24)
+    at sql (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/index.js:112:11)
+    at exactCitation (C:\Users\Xerxus\Documents\Lawmind\services\api\src\search\retrieve.ts:477:22) {
+  severity_local: 'ERROR',
+  severity: 'ERROR',
+  code: '42601',
+  position: '219',
+  file: 'scan.l',
+  line: '1240',
+  routine: 'scanner_yyerror'
+}
+
+Node.js v24.14.1

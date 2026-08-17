@@ -1,0 +1,94 @@
+{
+  "_comment": [
+    "Fixtures for the post-migration correctness gate. NOT new gold.",
+    "Every row here was READ OUT of docs/ai/PRE_MIGRATION_RETRIEVAL_BASELINE.md",
+    "sections 4 and 5, which captured them against the Railway corpus before the",
+    "freeze. They exist so the gate is deterministic and does not parse markdown.",
+    "",
+    "Ids are the right key across this migration specifically: it is a dump and",
+    "restore of the same rows, not a re-ingest, so a changed id IS a defect. The",
+    "opposite convention in deployed-safety.ts (grade on caseTitle, because a",
+    "re-ingest mints new ids) does not apply here and would hide the failure."
+  ],
+  "capturedFrom": "docs/ai/PRE_MIGRATION_RETRIEVAL_BASELINE.md §4, §5",
+  "capturedAt": "2026-08-15",
+  "sourceDatabase": "Railway Postgres, pre-freeze",
+
+  "overruled": [
+    {
+      "id": "ffda795d-e296-4f72-918d-3d425a0c1ba6",
+      "caseTitle": "NEW INDIA ASSURANCE CO. LTD. v. R. SRINIVASAN",
+      "overruledStatus": "set_aside",
+      "overruledByJudgmentId": "fb20f8d5-c54f-4087-b092-92b43cb166a5"
+    },
+    {
+      "id": "f9885dbe-7486-41c8-bcb0-add10eb37c28",
+      "caseTitle": "M/S SUN EXPORT CORPORATION BOMBAY v. COLLECTOR OF CUSTOMS, BOMBAY AND ANR.",
+      "overruledStatus": "set_aside",
+      "overruledByJudgmentId": "2d4ae970-0def-46a4-85ba-70e840d8f569"
+    },
+    {
+      "id": "f09f8d00-94f4-4ff2-8f04-3ad1f864af17",
+      "caseTitle": "VIJAY KUMAR MISHRA AND ANR. v. HIGH COURT OF JUDICATURE AT PATNA AND ORS.",
+      "overruledStatus": "set_aside",
+      "overruledByJudgmentId": "bd04ebf4-cedd-4f4a-88d4-20fa496acd18"
+    },
+    {
+      "id": "eecc8f01-f84d-4864-8fdb-f989638d22f3",
+      "caseTitle": "M/S. RAINBOW COLOUR LAB AND ANR. v. THE STATE OF MADHYA PRADESH",
+      "overruledStatus": "set_aside",
+      "overruledByJudgmentId": "3e64f14a-8c98-4a88-9a46-44911328772d"
+    },
+    {
+      "id": "d27280d5-d05a-40b4-9cef-4fa24583ebd8",
+      "caseTitle": "RITU MAHAJAN v. INDIAN OIL CORPORATION & ORS.",
+      "overruledStatus": "set_aside",
+      "overruledByJudgmentId": "c61ca820-0722-40fa-a45a-997232897d59"
+    }
+  ],
+
+  "citationIdentity": [
+    {
+      "id": "78ef7fdc-9e28-482b-bcc8-db04fe3eb24f",
+      "caseTitle": "PANDURANG & ORS. v. STATE OF MAHARASHTRA",
+      "neutralCitation": "1986 INSC 207",
+      "reporterCitation": "[1986] 3 S.C.R. 1004"
+    },
+    {
+      "id": "20a2b2c4-ba78-422d-a120-e6c5e60e3553",
+      "caseTitle": "M/S ASHOKA SMOKELESS COAL IND. P. LTD. AND ORS. v. UNION OF INDIA AND ORS.",
+      "neutralCitation": "2006 INSC 943",
+      "reporterCitation": "[2006] SUPP. 9 S.C.R. 954"
+    },
+    {
+      "id": "5c62ae39-5f79-4bf9-8171-4ac9b64b8488",
+      "caseTitle": "URMILA ROY & ORS. v. M/S.BENGAL PEERLESS HOUSING DEVELOPMENT COMPANY LTD. & ORS.",
+      "neutralCitation": "2009 INSC 389",
+      "reporterCitation": "[2009] 4 S.C.R. 834"
+    },
+    {
+      "id": "daf3d53d-f2b5-4e81-958b-7d49910c136d",
+      "caseTitle": "DEVATA PRASAD SINGH CHAUDHURI AND OTHERS v. THE HONBLE THE CHIEF JUSTICE AND JUDGES OF THE PATNA HIGH COURT",
+      "neutralCitation": "1961 INSC 249",
+      "reporterCitation": "[1962] 3 S.C.R. 305"
+    },
+    {
+      "id": "ef4eadf6-07b6-45f5-969a-32d6836800b1",
+      "caseTitle": "MAHARAJA PILLAI LAKSHMI AMMAL v. MAHARAJA PILLAI THILLANAYAKOM PILLAI AND ANOTHER",
+      "neutralCitation": "1987 INSC 311",
+      "reporterCitation": "[1988] 1 S.C.R. 780"
+    }
+  ],
+
+  "freezeTarget": {
+    "_comment": [
+      "docs/ops/migration/freeze-baseline.json is the authority and is read at",
+      "run time -- this is the twice-corrected figure recorded here only so a",
+      "reader can tell whether that file has since been edited underneath us.",
+      "PRE_MIGRATION_RETRIEVAL_BASELINE.md §2's own counts are a PRE-freeze",
+      "orientation snapshot and are deliberately NOT used as the target."
+    ],
+    "judgments": 7296068,
+    "frozenAt": "2026-08-15T20:57Z"
+  }
+}

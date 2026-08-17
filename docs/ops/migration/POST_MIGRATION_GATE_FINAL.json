@@ -1,0 +1,626 @@
+{
+  "_comment": "IMMUTABLE. The post-migration retrieval gate verdict, over UNIQUE check ids. Do not edit; a new verdict gets a new file.",
+  "verdict": "POST_MIGRATION_RETRIEVAL_GATE_PASS",
+  "passed": true,
+  "builtAt": "2026-08-17T12:14:30.366Z",
+  "databaseHost": "127.0.0.1",
+  "counts": {
+    "pass": 52,
+    "fail": 0,
+    "info": 5
+  },
+  "uniqueCheckCount": 57,
+  "remeasuredCount": 11,
+  "byClass": {
+    "A": {
+      "pass": 11,
+      "fail": 0,
+      "info": 0
+    },
+    "B": {
+      "pass": 2,
+      "fail": 0,
+      "info": 0
+    },
+    "C": {
+      "pass": 11,
+      "fail": 0,
+      "info": 4
+    },
+    "D": {
+      "pass": 12,
+      "fail": 0,
+      "info": 0
+    },
+    "E": {
+      "pass": 3,
+      "fail": 0,
+      "info": 0
+    },
+    "F": {
+      "pass": 6,
+      "fail": 0,
+      "info": 0
+    },
+    "G": {
+      "pass": 1,
+      "fail": 0,
+      "info": 0
+    },
+    "H": {
+      "pass": 6,
+      "fail": 0,
+      "info": 1
+    }
+  },
+  "runs": [
+    {
+      "runId": "accumulated-2026-08-17T08:19:26Z",
+      "ranAt": "2026-08-17T08:19:26.001Z",
+      "sourceOf": "A, B, C, E, F, G, and D/paragraph-fallback-span",
+      "artefact": "docs/ops/migration/gate-runs/accumulated-2026-08-17T081926Z.json",
+      "sha256": "d1f3af3bb21182729bcef30783a87ed021e5d068b0a85542aaf868866b7fc3d1",
+      "rawEntryCount": 65,
+      "uniqueEntryCount": 57,
+      "duplicatedIds": [
+        "D/span-retrieval-hybrid-2b427e54",
+        "D/span-retrieval-hybrid-44d56193",
+        "D/span-retrieval-hybrid-6b05401b",
+        "D/span-retrieval-hybrid-70effbcc",
+        "D/span-retrieval-hybrid-7842f390",
+        "D/span-retrieval-hybrid-a1bf8601",
+        "D/span-retrieval-hybrid-bff546dd",
+        "D/span-retrieval-hybrid-f04bd8c4"
+      ]
+    },
+    {
+      "runId": "rerun-D-2026-08-17T11:56:22.098Z",
+      "ranAt": "2026-08-17T11:56:22.098Z",
+      "sourceOf": "class D storage checks (3)",
+      "note": "Launched as --only D,E,F,G into a FRESH output path so nothing was carried and nothing could accumulate. Class D completed in 342s. The E/F stage then aborted on a defect in LCC's in-flight retrieve.ts — see evidence.efStageBlocked. G never started.",
+      "artefact": "docs/ops/migration/gate-runs/rerun-DEFG.json",
+      "sha256": "36ea731c379ddb049737d58eab16b780ea8ffb60fe9a988344ebfe66b3a9aa89",
+      "rawEntryCount": 3,
+      "uniqueEntryCount": 3
+    },
+    {
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z",
+      "ranAt": "2026-08-17T12:12:43.373Z",
+      "sourceOf": "the 8 duplicated span-retrieval-hybrid checks",
+      "note": "Direct re-measurement against judgment_chunks / judgment_paragraphs, bypassing retrieval. Re-establishes the span assertion, NOT the retrieval that selected the candidate.",
+      "artefact": "docs/ops/migration/gate-runs/rerun-span-reverify.json",
+      "sha256": "939e482e99dc8c843242064986bd7cd86ded66f3a054f54a1519ac22aa7593d7",
+      "rawEntryCount": 8,
+      "uniqueEntryCount": 8
+    }
+  ],
+  "evidence": {
+    "duplicationCause": "A check's tagged class is not the stage that produces it. spansFromResults() emits cls:'D' from inside the E/F stage (post-migration-cli.ts:503, called at :661) and classG emits paragraph-fallback-span as cls:'D' (:912). The resume logic carries forward every prior check whose CLASS was not re-run (:1574-1576), so the final --only A,B,E,F pass carried the 8 span-retrieval-hybrid entries forward AND re-emitted them from its E/F stage. Deterministic; accounts for all 8 duplicates exactly and for nothing else.",
+    "duplicatesWereIdentical": "All 8 duplicated pairs were byte-identical in the accumulated artefact — same verdict, same detail, same offsets. No grade disagreed with itself.",
+    "killedDuplicateExonerated": "The --only A,B process killed at ~08:1x UTC cannot have caused this: with only={A,B} it grades no D stage, and its carried set is a filter over the prior file, which cannot introduce a new copy. Two E/F stage executions are required; --only A,B is not one. This also answers NEW2's 0631 question about which process wrote the final file.",
+    "runIsolationNotProvableFromArtefact": "The artefact carries no per-check run id or timestamp, the file is untracked in git, and no console log of the earlier runs survives. Isolation was therefore RE-ESTABLISHED by re-measurement rather than argued from the file.",
+    "onlyDWouldHaveBeenWrong": "Re-running --only D alone would have DROPPED the 8 duplicated checks rather than re-grading them: they are emitted by the E/F stage, and the carry filter excludes prior checks whose class IS being re-run. The same class-vs-stage confusion, in the other direction. This is why the re-run was launched as D,E,F,G.",
+    "efStageBlocked": "services/api/src/search/retrieve.ts exactCitation() throws PostgresError 42601 'syntax error at or near UNION' before reading a row: LIMIT on an un-parenthesised UNION branch is a parse error. Isolated 4 ways against the local cluster — un-parenthesised fails 42601 even with NO reference to lawmind_citation_keys; parenthesised fails only 42883 (function does not exist) and succeeds outright without the function. So migration 0052 will NOT fix it. This is LCC's uncommitted in-flight change, reported as bus 0638, NOT touched by NEW1, and NOT a migration defect: the accumulated E/F checks ran against retrieve.ts as it was before that edit.",
+    "spanRemeasurementMethod": "exactSpan has TWO sources in retrieve.ts: the retrieved chunk (:796) and judgment_paragraphs via fillParagraphFallback (:897). A first pass checked only chunks and reported 3 of 8 as FAIL; all 3 are judgments holding ZERO chunks, so the paragraph table was their span source and a chunk-shaped question was the wrong question. Corrected to check both: 8 PASS, 0 FAIL. Recorded because the intermediate result looked like data loss and was not.",
+    "spanRemeasurementLimit": "This re-measures the span assertion (full_text at that offset is still byte-identical to the stored chunk/paragraph text), NOT the hybrid retrieval that selected those candidates. The retrieval half was measured at 08:19:26Z and cannot be re-measured until the exactCitation defect is fixed. Stated rather than glossed.",
+    "notRerun": {
+      "classes": [
+        "A",
+        "B",
+        "C",
+        "E",
+        "F",
+        "G"
+      ],
+      "reason": "Per founder directive: not duplicated, and not re-run for a reporting defect in D. A and B are ~3.5h of unindexable cite: scans; C is ~45m of live overruled reads. E/F/G were in the re-run's scope and were blocked by the exactCitation defect, not by anything about the migration.",
+      "completeness": "Checked against the fixtures, not assumed. A 11 = 1 bommai-exact + 5 neutral + 5 reporter from the 5 citationIdentity entries in fixtures/post-migration-probes.json, each carrying both a neutral and a reporter citation. B 2 = ambiguous + nonexistent. C 15 = 4 counts + 5 overruled + 5 live-read + 1 currentness-population. E 3, F 6, G 1, H 7."
+    },
+    "crossCheck": {
+      "divergences": [],
+      "newInRemeasure": [],
+      "remeasuredCount": 11,
+      "note": "Every re-measured check agreed with the accumulated artefact. A disagreement would have failed this build."
+    },
+    "databaseState": "LOCAL_DATABASE_URL 127.0.0.1:5432/lawmind, PostgreSQL 18.6, postmaster up since 2026-08-17T02:47:38Z — the SAME server instance that ran the accumulated gate. LCC applied migration 0053 between the runs (CREATE TABLE on an empty derived table, 0.47s); 0052 is deliberately NOT applied, so no retrieval hot path changed under either run.",
+    "fixLanded": "summarise() now counts over unique cls+id (dedupeChecks, last write wins) and the CLI names every collapse out loud before printing totals. 46/46 harness unit tests pass; tsc --noEmit clean."
+  },
+  "checks": [
+    {
+      "cls": "A",
+      "id": "bommai-exact",
+      "verdict": "PASS",
+      "detail": "cite:\"(1994) 3 SCC 1\" resolves to BOMMAI",
+      "expected": "title contains \"BOMMAI\"",
+      "actual": "S.R. BOMMAI versus UNION OF INDIA AND ORS.",
+      "ms": 681115,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "neutral-20a2b2c4",
+      "verdict": "PASS",
+      "detail": "cite:\"2006 INSC 943\" resolves to the same judgment id as before",
+      "expected": "20a2b2c4-ba78-422d-a120-e6c5e60e3553",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 618401,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "neutral-5c62ae39",
+      "verdict": "PASS",
+      "detail": "cite:\"2009 INSC 389\" resolves to the same judgment id as before",
+      "expected": "5c62ae39-5f79-4bf9-8171-4ac9b64b8488",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 910936,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "neutral-78ef7fdc",
+      "verdict": "PASS",
+      "detail": "cite:\"1986 INSC 207\" resolves to the same judgment id as before",
+      "expected": "78ef7fdc-9e28-482b-bcc8-db04fe3eb24f",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 603660,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "neutral-daf3d53d",
+      "verdict": "PASS",
+      "detail": "cite:\"1961 INSC 249\" resolves to the same judgment id as before",
+      "expected": "daf3d53d-f2b5-4e81-958b-7d49910c136d",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 859295,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "neutral-ef4eadf6",
+      "verdict": "PASS",
+      "detail": "cite:\"1987 INSC 311\" resolves to the same judgment id as before",
+      "expected": "ef4eadf6-07b6-45f5-969a-32d6836800b1",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 620822,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "reporter-20a2b2c4",
+      "verdict": "PASS",
+      "detail": "cite:\"[2006] SUPP. 9 S.C.R. 954\" resolves to the same judgment id as before",
+      "expected": "20a2b2c4-ba78-422d-a120-e6c5e60e3553",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 640295,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "reporter-5c62ae39",
+      "verdict": "PASS",
+      "detail": "cite:\"[2009] 4 S.C.R. 834\" resolves to the same judgment id as before",
+      "expected": "5c62ae39-5f79-4bf9-8171-4ac9b64b8488",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 836849,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "reporter-78ef7fdc",
+      "verdict": "PASS",
+      "detail": "cite:\"[1986] 3 S.C.R. 1004\" resolves to the same judgment id as before",
+      "expected": "78ef7fdc-9e28-482b-bcc8-db04fe3eb24f",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 676322,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "reporter-daf3d53d",
+      "verdict": "PASS",
+      "detail": "cite:\"[1962] 3 S.C.R. 305\" resolves to the same judgment id as before",
+      "expected": "daf3d53d-f2b5-4e81-958b-7d49910c136d",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 808050,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "A",
+      "id": "reporter-ef4eadf6",
+      "verdict": "PASS",
+      "detail": "cite:\"[1988] 1 S.C.R. 780\" resolves to the same judgment id as before",
+      "expected": "ef4eadf6-07b6-45f5-969a-32d6836800b1",
+      "actual": "matched (total 1, 1 hit(s))",
+      "ms": 2373642,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "B",
+      "id": "insc-189-ambiguous",
+      "verdict": "PASS",
+      "detail": "cite:\"2020 INSC 189\" is still flagged ambiguous across 3 judgments",
+      "expected": "ambiguous, ≥2 real judgments",
+      "actual": "ambiguous (total 3, 3 hit(s))",
+      "ms": 1861036,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "B",
+      "id": "nonexistent-citation",
+      "verdict": "PASS",
+      "detail": "cite:\"(9999) 99 SCC 999\" correctly returns nothing",
+      "expected": "no_match",
+      "actual": "no_match",
+      "ms": 1503405,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "currentness-population",
+      "verdict": "INFO",
+      "detail": "set_aside=70 · partly_set_aside=8 · doubted=17",
+      "ms": 42752,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "judgment_chunks-count",
+      "verdict": "INFO",
+      "detail": "6,20,300 rows",
+      "ms": 15437,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "judgment_citations-count",
+      "verdict": "INFO",
+      "detail": "17,34,857 rows",
+      "ms": 3087,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "judgment_paragraphs-count",
+      "verdict": "INFO",
+      "detail": "2,79,67,835 rows",
+      "ms": 173386,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "judgments-count",
+      "verdict": "PASS",
+      "detail": "row count matches the frozen source exactly",
+      "expected": "72,96,068",
+      "actual": "72,96,068",
+      "ms": 36985,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "live-read-d27280d5",
+      "verdict": "PASS",
+      "detail": "retrieval serves the stored overruled_status, live",
+      "expected": "set_aside",
+      "actual": "set_aside",
+      "ms": 347952,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "live-read-eecc8f01",
+      "verdict": "PASS",
+      "detail": "retrieval serves the stored overruled_status, live",
+      "expected": "set_aside",
+      "actual": "set_aside",
+      "ms": 431992,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "live-read-f09f8d00",
+      "verdict": "PASS",
+      "detail": "retrieval serves the stored overruled_status, live",
+      "expected": "set_aside",
+      "actual": "set_aside",
+      "ms": 604985,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "live-read-f9885dbe",
+      "verdict": "PASS",
+      "detail": "retrieval serves the stored overruled_status, live",
+      "expected": "set_aside",
+      "actual": "set_aside",
+      "ms": 487522,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "live-read-ffda795d",
+      "verdict": "PASS",
+      "detail": "retrieval serves the stored overruled_status, live",
+      "expected": "set_aside",
+      "actual": "set_aside",
+      "ms": 603039,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "overruled-d27280d5",
+      "verdict": "PASS",
+      "detail": "RITU MAHAJAN v. INDIAN OIL CORPORATION & ORS. — currentness intact",
+      "expected": "set_aside / overruled_by c61ca820-0722-40fa-a45a-997232897d59",
+      "ms": 32,
+      "actual": "set_aside / overruled_by c61ca820-0722-40fa-a45a-997232897d59",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "overruled-eecc8f01",
+      "verdict": "PASS",
+      "detail": "M/S. RAINBOW COLOUR LAB AND ANR. v. THE STATE OF MADHYA PRADESH — currentness intact",
+      "expected": "set_aside / overruled_by 3e64f14a-8c98-4a88-9a46-44911328772d",
+      "ms": 32,
+      "actual": "set_aside / overruled_by 3e64f14a-8c98-4a88-9a46-44911328772d",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "overruled-f09f8d00",
+      "verdict": "PASS",
+      "detail": "VIJAY KUMAR MISHRA AND ANR. v. HIGH COURT OF JUDICATURE AT PATNA AND ORS. — currentness intact",
+      "expected": "set_aside / overruled_by bd04ebf4-cedd-4f4a-88d4-20fa496acd18",
+      "ms": 32,
+      "actual": "set_aside / overruled_by bd04ebf4-cedd-4f4a-88d4-20fa496acd18",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "overruled-f9885dbe",
+      "verdict": "PASS",
+      "detail": "M/S SUN EXPORT CORPORATION BOMBAY v. COLLECTOR OF CUSTOMS, BOMBAY AND ANR. — currentness intact",
+      "expected": "set_aside / overruled_by 2d4ae970-0def-46a4-85ba-70e840d8f569",
+      "ms": 32,
+      "actual": "set_aside / overruled_by 2d4ae970-0def-46a4-85ba-70e840d8f569",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "C",
+      "id": "overruled-ffda795d",
+      "verdict": "PASS",
+      "detail": "NEW INDIA ASSURANCE CO. LTD. v. R. SRINIVASAN — currentness intact",
+      "expected": "set_aside / overruled_by fb20f8d5-c54f-4087-b092-92b43cb166a5",
+      "ms": 32,
+      "actual": "set_aside / overruled_by fb20f8d5-c54f-4087-b092-92b43cb166a5",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "D",
+      "id": "paragraph-fallback-span",
+      "verdict": "PASS",
+      "detail": "exactSpan is byte-identical at offset 0 (254 chars)",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-2b427e54",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 36393 (4508 chars) against judgment_paragraphs",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-44d56193",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 13944 (2322 chars) against judgment_chunks",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-6b05401b",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 54548 (3434 chars) against judgment_paragraphs",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-70effbcc",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 32009 (7014 chars) against judgment_paragraphs",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-7842f390",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 264408 (2059 chars) against judgment_chunks",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-a1bf8601",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 8728 (2320 chars) against judgment_chunks",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-bff546dd",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 109558 (2300 chars) against judgment_chunks",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-retrieval-hybrid-f04bd8c4",
+      "verdict": "PASS",
+      "detail": "re-resolves byte-identically at offset 4700 (2336 chars) against judgment_chunks",
+      "runId": "span-reverify-2026-08-17T12:12:43.373Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-signature-overshoot",
+      "verdict": "PASS",
+      "detail": "no chunk span runs past the end of its own full_text",
+      "ms": 319270,
+      "runId": "rerun-D-2026-08-17T11:56:22.098Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-signature-zero-offset",
+      "verdict": "PASS",
+      "detail": "no chunk carries the char_offset=0 defect signature",
+      "ms": 21030,
+      "runId": "rerun-D-2026-08-17T11:56:22.098Z"
+    },
+    {
+      "cls": "D",
+      "id": "span-storage-sample",
+      "verdict": "PASS",
+      "detail": "300 chunk spans re-resolve byte-identically against full_text",
+      "ms": 1471,
+      "runId": "rerun-D-2026-08-17T11:56:22.098Z"
+    },
+    {
+      "cls": "E",
+      "id": "collapse-hybrid",
+      "verdict": "PASS",
+      "detail": "10 results, 10 distinct content_hash, 0 un-hashed (never collapsed, by design)",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "E",
+      "id": "collapse-known-duplicate",
+      "verdict": "PASS",
+      "detail": "a 2-row duplicate group occupies exactly 1 result slot — collapsed, not dropped",
+      "expected": "exactly 1 slot",
+      "actual": "1",
+      "ms": 16,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "E",
+      "id": "collapse-sparse",
+      "verdict": "PASS",
+      "detail": "9 results, 9 distinct content_hash, 0 un-hashed (never collapsed, by design)",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "F",
+      "id": "arm-dense",
+      "verdict": "PASS",
+      "detail": "the dense arm returned 10 result(s)",
+      "ms": 1585,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "F",
+      "id": "arm-hybrid",
+      "verdict": "PASS",
+      "detail": "the hybrid arm returned 10 result(s)",
+      "ms": 590,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "F",
+      "id": "arm-sparse",
+      "verdict": "PASS",
+      "detail": "the sparse arm returned 9 result(s)",
+      "ms": 634,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "F",
+      "id": "citation-pin-hybrid",
+      "verdict": "PASS",
+      "detail": "the citation query pins its judgment at rank 1 in hybrid mode",
+      "ms": 67213,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "F",
+      "id": "citation-pin-sparse",
+      "verdict": "PASS",
+      "detail": "the citation query pins its judgment at rank 1 in sparse mode",
+      "ms": 78633,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "F",
+      "id": "fusion-provenance",
+      "verdict": "PASS",
+      "detail": "every hybrid result came from an arm or the exact-lookup pin",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "G",
+      "id": "paragraph-fallback",
+      "verdict": "PASS",
+      "detail": "a chunkless judgment is served evidence from judgment_paragraphs (253 chars, verified)",
+      "ms": 689574,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "H",
+      "id": "generated-judgments.full_text_tsv",
+      "verdict": "PASS",
+      "detail": "judgments.full_text_tsv is STORED GENERATED with the declared expression",
+      "expected": "attgenerated 's' AND expression containing \"to_tsvector('english'::regconfig, full_text)\"",
+      "ms": 15,
+      "actual": "to_tsvector('english'::regconfig, full_text)",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "H",
+      "id": "generated-statute_sections.full_text_tsv",
+      "verdict": "PASS",
+      "detail": "statute_sections.full_text_tsv is STORED GENERATED with the declared expression",
+      "expected": "attgenerated 's' AND expression containing \"to_tsvector('english'::regconfig, ((COALESCE(heading, ''::text) || ' '::text) || section_text))\"",
+      "ms": 1,
+      "actual": "to_tsvector('english'::regconfig, ((COALESCE(heading, ''::text) || ' '::text) || section_text))",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "H",
+      "id": "generated-write-judgments.full_text_tsv",
+      "verdict": "PASS",
+      "detail": "insert populates and update recomputes the generated tsvector",
+      "ms": 14,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "H",
+      "id": "generated-write-statute_sections.full_text_tsv",
+      "verdict": "PASS",
+      "detail": "insert populates and update recomputes the generated tsvector",
+      "ms": 4,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "H",
+      "id": "tsv-index-plan",
+      "verdict": "INFO",
+      "detail": "random_page_cost=1.1 · planner CHOOSES judgments_full_text_idx",
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "H",
+      "id": "tsv-matches-recomputation",
+      "verdict": "PASS",
+      "detail": "500 judgments sampled by id: every stored tsvector equals to_tsvector('english', full_text) recomputed now",
+      "ms": 328,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    },
+    {
+      "cls": "H",
+      "id": "tsv-populated-sample",
+      "verdict": "PASS",
+      "detail": "5,000 judgments sampled by id: every one with text carries a tsvector",
+      "ms": 31,
+      "runId": "accumulated-2026-08-17T08:19:26Z"
+    }
+  ]
+}
