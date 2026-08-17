@@ -1,0 +1,15 @@
+{
+  "schema": "cx1-gated-runner-smoke-v1",
+  "generatedAt": "2026-08-17T14:18:29.792Z",
+  "status": "pass",
+  "refusedTask": "cx1-db-sample-census-run",
+  "refusalExitCode": 2,
+  "refusalResult": "docs/ai/cx1-runner-results/refusal-smoke.json",
+  "normalRunnerResultPreserved": true,
+  "assertions": {
+    "refusedForMediumCleanGate": true,
+    "refusedBecauseRunnerIsLightOnly": true,
+    "noDefaultResultOverwrite": true
+  },
+  "boundary": "No DB/PDF/OCR/vector/HNSW work executed; the child runner refused before command execution."
+}

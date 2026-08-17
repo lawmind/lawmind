@@ -1,0 +1,60 @@
+{
+  "schema": "cx1-document-classification-sample-plan-v1",
+  "generatedAt": "2026-08-17T13:06:58.785Z",
+  "status": "prepared_not_run",
+  "boundary": "read-only selector plan only: not executed by this script, no model call, no canonical write",
+  "selectorSql": "docs/ai/cx1-classification-audit/sample-selector.sql",
+  "target": {
+    "population": "judgments where hc_class_method starts with 'unclassified_disposal:' or equals 'no_disposal_nature', length(full_text) > 500",
+    "maxPerStratum": 25,
+    "ordering": "md5(id::text), deterministic and stable for reruns",
+    "expectedUse": "write selector stdout to a disposable CX1 JSON/CSV file only when scheduler allows MEDIUM_CLEAN"
+  },
+  "strata": {
+    "residueMethod": [
+      "unclassified_disposal:DISPOSED OFF",
+      "unclassified_disposal:DISPOSED OF",
+      "unclassified_disposal:CLOSED",
+      "unclassified_disposal:DISPOSED",
+      "no_disposal_nature"
+    ],
+    "lengthBand": [
+      "short_501_1500",
+      "medium_1501_6000",
+      "long_6001_25000",
+      "very_long_gt25000"
+    ],
+    "citationBand": [
+      "none",
+      "one_to_two",
+      "three_to_ten",
+      "gt_ten"
+    ],
+    "scriptRisk": [
+      "devanagari_present",
+      "ascii_or_non_devanagari"
+    ]
+  },
+  "outputColumns": [
+    "id",
+    "court",
+    "year",
+    "disposal_nature",
+    "case_number",
+    "hc_class_method",
+    "residue_method",
+    "text_chars",
+    "length_band",
+    "citation_count",
+    "resolved_citation_count",
+    "citation_band",
+    "has_citation_on_file",
+    "script_risk",
+    "stratum_rank"
+  ],
+  "safety": [
+    "selector begins with WITH and contains no mutating SQL token",
+    "citation_count excludes sentinel rows with empty citation_text",
+    "sample labels are audit strata only, not legal classifications"
+  ]
+}

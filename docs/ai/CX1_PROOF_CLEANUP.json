@@ -1,0 +1,48 @@
+{
+  "evidenceClass": "VERIFIED",
+  "scope": [
+    "docs/ai/cx1-parquet-proof",
+    "docs/ai/cx1-hardware-proof"
+  ],
+  "trackedBeforeCleanup": false,
+  "rootBytesBefore": 2575435258,
+  "removed": {
+    "files": 1069,
+    "bytes": 2575426674,
+    "byType": [
+      {
+        "type": ".bin",
+        "files": 7,
+        "bytes": 1031632960
+      },
+      {
+        "type": ".duckdb",
+        "files": 5,
+        "bytes": 1537011712
+      },
+      {
+        "type": ".duckdb.wal",
+        "files": 1,
+        "bytes": 2074074
+      },
+      {
+        "type": ".parquet",
+        "files": 1056,
+        "bytes": 4707928
+      }
+    ]
+  },
+  "rootBytesAfter": 8584,
+  "remaining": {
+    "files": 5,
+    "jsonReports": 5,
+    "payloadFiles": 0
+  },
+  "archive": {
+    "path": "cX1work.zip",
+    "payloadFilesVerifiedBeforeCleanup": 1069,
+    "payloadUncompressedBytesVerifiedBeforeCleanup": 2575426674,
+    "archiveBytesAtVerification": 38276847
+  },
+  "note": "Only CX1-owned .bin, .duckdb, .duckdb.wal, and .parquet proof payloads were removed. Scripts, JSON reports, Markdown decisions, and unrelated files were preserved."
+}

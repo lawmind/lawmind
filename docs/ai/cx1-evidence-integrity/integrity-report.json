@@ -1,0 +1,127 @@
+{
+  "schema": "cx1-evidence-integrity-v1",
+  "generatedAt": "2026-08-17T16:10:15.467Z",
+  "status": "pass",
+  "boundary": "offline only: no PostgreSQL query, no PDF fetch, no OCR, no vector copy, no HNSW build, no model call, no production write",
+  "inputs": [
+    "docs/ai/CX1_EXPERIMENT_REGISTRY.json",
+    "docs/ai/CX1_RUN_QUEUE.json",
+    "docs/ai/CX1_PREFLIGHT.json",
+    "docs/ai/CX1_HEAVY_LAB_STATUS.md"
+  ],
+  "summary": {
+    "registryExperiments": 28,
+    "queueTasks": 16,
+    "manifestFiles": 120,
+    "jsonFiles": 40,
+    "sqlFiles": 7,
+    "failFindings": 0,
+    "warnFindings": 0,
+    "infoFindings": 17
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-classification-audit/residue-projection.csv"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-corpus-census/metadata-coverage.csv"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-devanagari-results/sample-manifest.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-embedding-eligibility/population-scenarios.csv"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-hardware-proof/run-20260816-033249/hardware-report.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-hardware-proof/run-20260816-033302/hardware-report.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-hardware-proof/run-20260816-033316/hardware-report.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-legal-object-efficiency/kind-risk.csv"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-legal-object-efficiency/task-summary.csv"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-parquet-proof/run-20260816-033152/benchmark-report.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-parquet-proof/run-20260816-035605-v2/benchmark-report.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-runner-results/citation-graph-census-runner.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-runner-results/premium-backend-lab-runner.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-runner-results/refusal-smoke.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-runner-results/retrieval-matrix-runner.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-runner-results/selector-smoke-runner.json"
+    },
+    {
+      "severity": "info",
+      "area": "manifest",
+      "message": "CX1 evidence file is not directly referenced by registry or queue",
+      "path": "docs/ai/cx1-vector-results/hnsw-parameter-matrix.csv"
+    }
+  ],
+  "manifestPath": "docs/ai/cx1-evidence-integrity/artifact-manifest.json"
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "cx1-selector-runner-smoke-v1",
+  "generatedAt": "2026-08-17T14:21:26.215Z",
+  "status": "pass",
+  "assertions": {
+    "dryRunDoesNotExecute": true,
+    "unsupportedTaskRefusedBeforeExecution": true
+  },
+  "dryRunResult": "docs/ai/cx1-selector-results/selector-runner-dry-run.json",
+  "refusalResult": "docs/ai/cx1-selector-results/selector-runner-refusal.json",
+  "boundary": "No DB/PDF/OCR/vector/HNSW work executed; dry-run omitted --execute and unsupported execute was refused before command execution."
+}

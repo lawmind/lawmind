@@ -1,0 +1,69 @@
+{
+  "evidence_class": "MEASURED-BUT-LIMITED",
+  "kind": "bounded_synthetic_duckdb_parquet_mechanics",
+  "duckdb_version": "1.5.5",
+  "rows": 18000,
+  "seed": 4107,
+  "synthetic_raw_text_bytes": 37452000,
+  "controls": {
+    "threads": 1,
+    "preserve_insertion_order": false,
+    "fragment_batches": 6,
+    "row_group_size_bytes": "256KB",
+    "compaction_file_size_bytes": "1MB",
+    "file_size_control_applied_per_coarse_partition": true,
+    "production_target_inference": "forbidden"
+  },
+  "layouts": {
+    "fragmented_coarse_partition": {
+      "objects": 36,
+      "bytes": 17900511,
+      "object_min_bytes": 496915,
+      "object_p50_bytes": 497247,
+      "object_max_bytes": 497624,
+      "row_groups": 36,
+      "rows": 18000,
+      "coarse_partitions": 6,
+      "delhi_2024_rows": 3000,
+      "estimated_get_requests_for_delhi_2024": 6,
+      "write_seconds": 0.968
+    },
+    "overpartitioned_document_class": {
+      "objects": 18,
+      "bytes": 17851264,
+      "object_min_bytes": 991354,
+      "object_p50_bytes": 991671,
+      "object_max_bytes": 992349,
+      "row_groups": 18,
+      "rows": 18000,
+      "coarse_partitions": 6,
+      "delhi_2024_rows": 3000,
+      "estimated_get_requests_for_delhi_2024": 3,
+      "write_seconds": 1.171
+    },
+    "compacted_coarse_partition": {
+      "objects": 12,
+      "bytes": 17828009,
+      "object_min_bytes": 943292,
+      "object_p50_bytes": 1485546,
+      "object_max_bytes": 2028349,
+      "row_groups": 12,
+      "rows": 18000,
+      "coarse_partitions": 6,
+      "delhi_2024_rows": 3000,
+      "estimated_get_requests_for_delhi_2024": 2,
+      "write_seconds": 1.981
+    }
+  },
+  "checks": {
+    "all_layouts_preserve_rows": true,
+    "compaction_reduces_object_count": true,
+    "delhi_2024_selective_count_nonzero": true,
+    "document_class_partition_increases_partition_count": true
+  },
+  "compression_capacity_status": "INVALID FOR CAPACITY PLANNING",
+  "compression_capacity_reason": "Synthetic text does not represent LawMind legal-text entropy. No synthetic compression ratio is reported or used.",
+  "delhi_2024_correction": "The V1 script looked below <layout>/court=delhi/year=2024, but DuckDB wrote the Hive tree below <layout>/data.parquet/. V2 counts distinct filenames returned by read_parquet after filtering the partition columns, so it is independent of that path assumption.",
+  "payload_retention": "Generated Parquet files lived in an OS temporary directory and were removed after measurements; this JSON report is retained.",
+  "run_dir": "docs/ai/cx1-parquet-proof/run-20260816-035605-v2"
+}

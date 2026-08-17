@@ -1,0 +1,24 @@
+{
+  "schema": "cx1-gated-runner-v1",
+  "generatedAt": "2026-08-17T13:42:30.852Z",
+  "status": "pass",
+  "taskId": "cx1-retrieval-matrix-refresh",
+  "gate": "LIGHT",
+  "command": "node scripts\\cx1-retrieval-matrix.mjs",
+  "exitCode": 0,
+  "stdout": "wrote docs/ai/cx1-retrieval-matrix/matrix-plan.json\nwrote docs/ai/cx1-retrieval-matrix/completed-controlled-summary.csv\nwrote docs/ai/CX1_RETRIEVAL_MATRIX.md\ncontrolled summaries 3; checkpoint rows 849",
+  "stderr": "",
+  "queueGeneratedAt": "2026-08-17T13:42:30.848Z",
+  "scheduler": {
+    "available": true,
+    "maxClass": "MEDIUM",
+    "reasons": [
+      "PostgreSQL active=2, oldest transaction=33s",
+      "RAM free 23.5%"
+    ],
+    "cpuPct": 11.645510655642255,
+    "freeRamPct": 23.480656809588375,
+    "postgresActive": 2,
+    "postgresOldestSeconds": 33
+  }
+}

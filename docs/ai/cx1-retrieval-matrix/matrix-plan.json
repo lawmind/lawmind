@@ -1,0 +1,260 @@
+{
+  "schema": "cx1-retrieval-matrix-v1",
+  "generatedAt": "2026-08-17T14:21:24.097Z",
+  "status": "prepared_with_existing_controlled_summary",
+  "git": {
+    "commit": "87067db35d4d1de0be924794de145092ffa7fecf",
+    "dirty": true
+  },
+  "boundary": "offline only: no PostgreSQL query, no embedding call, no retrieval run, no NEW1 gold edit, no production mutation",
+  "inputs": [
+    {
+      "name": "checkpoint",
+      "path": "arms-checkpoint.jsonl",
+      "exists": true,
+      "sha256": "f66b40035a9fe7da4b93dc8ac77f8ef2b902670cfaeea5716cb37ac7df40985f",
+      "sizeBytes": 406539784
+    },
+    {
+      "name": "baseline",
+      "path": "services/harness/baseline.json",
+      "exists": true,
+      "sha256": "0a2cd1af98960509d8ad16098ec914aaee15e44ad333760406af5c021422aacf",
+      "sizeBytes": 16833
+    },
+    {
+      "name": "armsCli",
+      "path": "services/harness/src/arms-cli.ts",
+      "exists": true,
+      "sha256": "4a8cfe60ba9de15aad3a810ef6594595bc93b6f6f1e44349e30be91f63a5e5ef",
+      "sizeBytes": 19335
+    },
+    {
+      "name": "retrievalSource",
+      "path": "services/harness/src/retrieval.ts",
+      "exists": true,
+      "sha256": "341889d91575a25a0a470322d0f55faa920fdd2090fb3e4a1c1116c7290c87cd",
+      "sizeBytes": 16368
+    },
+    {
+      "name": "retrieveSource",
+      "path": "services/api/src/search/retrieve.ts",
+      "exists": true,
+      "sha256": "15f84a2922bfd80b4071662481f1d923f8cd76174a21882c83361c3f64d5e63e",
+      "sizeBytes": 43423
+    },
+    {
+      "name": "metricsSource",
+      "path": "services/harness/src/metrics.ts",
+      "exists": true,
+      "sha256": "d08cd6ac2e72ed44ebb6938f07e16d4c40a1cd422688cffe1085c8819cc53452",
+      "sizeBytes": 14160
+    },
+    {
+      "name": "statsSource",
+      "path": "services/harness/src/stats.ts",
+      "exists": true,
+      "sha256": "c8fdcb25bedbc0f4e129a5e9aace4a9c9b8b18267d751d805e6ab00ef8ad6710",
+      "sizeBytes": 4217
+    },
+    {
+      "name": "evalQueries",
+      "path": "services/harness/src/fixtures/queries.eval.json",
+      "exists": true,
+      "sha256": "f2510c0cc1e5a02a73c308918a35f500eab168ca23a4eb01393239cff9c0fffd",
+      "sizeBytes": 471594
+    },
+    {
+      "name": "derivedQueries",
+      "path": "services/harness/src/fixtures/queries.derived.json",
+      "exists": true,
+      "sha256": "f5521a31652e2355670a581a96f5a7c20c87d25fdd9bb8f35828b986ffb64a49",
+      "sizeBytes": 33745
+    },
+    {
+      "name": "handQueries",
+      "path": "services/harness/src/fixtures/queries.hand.json",
+      "exists": true,
+      "sha256": "bc9fb320a8e46b9b6939b5bdeecc259493e566e54b386e213a179bb36aa6f3bd",
+      "sizeBytes": 9062
+    },
+    {
+      "name": "postMigrationProbes",
+      "path": "services/harness/src/fixtures/post-migration-probes.json",
+      "exists": true,
+      "sha256": "48f121a1c8902275ea781b027d39b7eb7d7f989abcf3b6fac161b3d884d31dc0",
+      "sizeBytes": 3949
+    },
+    {
+      "name": "preMigrationBaseline",
+      "path": "docs/ai/PRE_MIGRATION_RETRIEVAL_BASELINE.md",
+      "exists": true,
+      "sha256": "fe1657bb04e3cbf52baf998d5f68529e5433f87a8bef4dd5ba37a688caea078a",
+      "sizeBytes": 40782
+    }
+  ],
+  "fixtureSummary": {
+    "totalQueriesAcrossFixtures": 308,
+    "evalQueries": 283,
+    "derivedQueries": 20,
+    "handQueries": 5,
+    "groups": {
+      "civil": 210,
+      "criminal": 93,
+      "hindi": 5
+    },
+    "languages": {
+      "en": 303,
+      "hi": 5
+    },
+    "caveat": "queries.eval.json is the 283-query full arms set named in arms-cli.ts; derived/hand fixtures overlap with smaller gate/probe workflows and are not automatically additive gold."
+  },
+  "checkpoint": {
+    "path": "arms-checkpoint.jsonl",
+    "rows": 849,
+    "completeControlledRowsExpected": 849,
+    "completeControlledRowsObserved": 849,
+    "passes": [
+      "CONTROLLED"
+    ],
+    "modes": [
+      "dense",
+      "hybrid",
+      "sparse"
+    ]
+  },
+  "completedSummaries": [
+    {
+      "pass": "CONTROLLED",
+      "mode": "dense",
+      "queries": 283,
+      "successAt5": 0.21554770318021202,
+      "recallAt20": 0.40636042402826855,
+      "mrr": 0.15056243071304504,
+      "ndcgAt5": 0.15162317347357238,
+      "ndcgAt20": 0.20710596897863795,
+      "meanReturned": 19.996466431095406
+    },
+    {
+      "pass": "CONTROLLED",
+      "mode": "hybrid",
+      "queries": 283,
+      "successAt5": 0.18374558303886926,
+      "recallAt20": 0.38869257950530034,
+      "mrr": 0.12128095639319915,
+      "ndcgAt5": 0.1213974166489678,
+      "ndcgAt20": 0.17995291269148697,
+      "meanReturned": 19.996466431095406
+    },
+    {
+      "pass": "CONTROLLED",
+      "mode": "sparse",
+      "queries": 283,
+      "successAt5": 0.10247349823321555,
+      "recallAt20": 0.1696113074204947,
+      "mrr": 0.07039100439066526,
+      "ndcgAt5": 0.07283806825887253,
+      "ndcgAt20": 0.09284860387590003,
+      "meanReturned": 20
+    }
+  ],
+  "configs": [
+    {
+      "configId": "E0-controlled-sparse-existing",
+      "status": "complete_existing_checkpoint",
+      "gate": "none_offline_summary",
+      "command": "not rerun; summarized from arms-checkpoint.jsonl",
+      "pass": "CONTROLLED",
+      "mode": "sparse",
+      "notes": "Existing NEW1 controlled pass; Supreme Court haystack. Postgres ts_rank, not BM25."
+    },
+    {
+      "configId": "E0-controlled-dense-existing",
+      "status": "complete_existing_checkpoint",
+      "gate": "none_offline_summary",
+      "command": "not rerun; summarized from arms-checkpoint.jsonl",
+      "pass": "CONTROLLED",
+      "mode": "dense",
+      "notes": "Existing NEW1 controlled pass; dense searches embedded Supreme Court corpus."
+    },
+    {
+      "configId": "E0-controlled-hybrid-existing",
+      "status": "complete_existing_checkpoint",
+      "gate": "none_offline_summary",
+      "command": "not rerun; summarized from arms-checkpoint.jsonl",
+      "pass": "CONTROLLED",
+      "mode": "hybrid",
+      "notes": "Existing NEW1 controlled pass; sparse+dense RRF through production harness code at run time."
+    },
+    {
+      "configId": "E1-uncontrolled-sparse",
+      "status": "prepared_not_run",
+      "gate": "MEDIUM_CLEAN",
+      "command": "ARMS_PASS=uncontrolled pnpm --filter @lawmind/harness arms",
+      "pass": "UNCONTROLLED",
+      "mode": "sparse",
+      "notes": "Measures production haystack behavior; do not compare as ranker quality against controlled pass."
+    },
+    {
+      "configId": "E1-uncontrolled-dense",
+      "status": "prepared_not_run",
+      "gate": "MEDIUM_CLEAN",
+      "command": "ARMS_PASS=uncontrolled pnpm --filter @lawmind/harness arms",
+      "pass": "UNCONTROLLED",
+      "mode": "dense",
+      "notes": "Same command produces sparse/dense/hybrid; listed separately for matrix accounting."
+    },
+    {
+      "configId": "E1-uncontrolled-hybrid",
+      "status": "prepared_not_run",
+      "gate": "MEDIUM_CLEAN",
+      "command": "ARMS_PASS=uncontrolled pnpm --filter @lawmind/harness arms",
+      "pass": "UNCONTROLLED",
+      "mode": "hybrid",
+      "notes": "Same command produces sparse/dense/hybrid; listed separately for matrix accounting."
+    },
+    {
+      "configId": "E2-halfvec-controlled-dense",
+      "status": "blocked_by_missing_disposable_halfvec_retrieval_runner",
+      "gate": "VECTOR_EXCLUSIVE",
+      "command": "future: copied/disposable halfvec retrieval runner over frozen 283-query benchmark",
+      "pass": "CONTROLLED",
+      "mode": "dense_halfvec",
+      "notes": "Requires Workstream C3/D disposable ANN recall and a harness that points only at copied vectors."
+    },
+    {
+      "configId": "E3-halfvec-controlled-hybrid",
+      "status": "blocked_by_missing_disposable_halfvec_retrieval_runner",
+      "gate": "VECTOR_EXCLUSIVE",
+      "command": "future: copied/disposable halfvec hybrid retrieval runner over frozen 283-query benchmark",
+      "pass": "CONTROLLED",
+      "mode": "hybrid_halfvec",
+      "notes": "Do not route production retrieval to halfvec; NEW1 owns quality approval."
+    },
+    {
+      "configId": "E4-ef-search-sweep",
+      "status": "blocked_by_hnsw_parameter_lab",
+      "gate": "VECTOR_EXCLUSIVE",
+      "command": "future: run HNSW finalist ef_search values against frozen retrieval benchmark",
+      "pass": "CONTROLLED",
+      "mode": "dense_or_hybrid",
+      "notes": "Depends on Workstream D Pareto frontier; avoid tuning against hidden data."
+    },
+    {
+      "configId": "E5-exact-route-probes",
+      "status": "prepared_not_run",
+      "gate": "MEDIUM_CLEAN",
+      "command": "future: bounded exact citation/title probe set from post-migration-probes.json",
+      "pass": "PROBES",
+      "mode": "exact_citation_title",
+      "notes": "Probe exact routes separately from dense/lexical arms; citation harness five-state semantics apply."
+    }
+  ],
+  "caveats": [
+    "queries.eval.json is a Supreme Court regression/evaluation set; it does not prove High Court retrieval quality.",
+    "CONTROLLED holds the haystack constant for ranker comparison; UNCONTROLLED measures production reach and must not be conflated with CONTROLLED.",
+    "Sparse mode is Postgres ts_rank, not BM25.",
+    "Halfvec retrieval arms are not runnable until copied/disposable halfvec retrieval structures exist.",
+    "No citation shown here is a verified user-facing legal answer."
+  ]
+}

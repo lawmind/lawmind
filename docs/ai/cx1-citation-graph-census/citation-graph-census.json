@@ -1,0 +1,228 @@
+{
+  "schema": "cx1-citation-graph-census-v1",
+  "generatedAt": "2026-08-17T14:21:22.560Z",
+  "status": "prepared_not_run",
+  "boundary": "Offline Workstream J only: no PostgreSQL query, no citation extraction/resolution run, no alias/treatment/currentness write, no model call, no provider fetch, and citation counts are diagnostics rather than legal authority.",
+  "inputs": [
+    {
+      "key": "schemaTruth",
+      "path": "docs/SCHEMA_TRUTH.md",
+      "sha256": "724058528bd0abb87e31acb82bfbcbef2566164228685369c9c422ac535ebe84"
+    },
+    {
+      "key": "treatmentGraphGap",
+      "path": "docs/TREATMENT_GRAPH_GAP.md",
+      "sha256": "3193861176640d32db7c9814590eb56b79c58c1584b043926576b20a232b030b"
+    },
+    {
+      "key": "dataMoatProgram",
+      "path": "docs/ai/DATA_MOAT_PROGRAM.md",
+      "sha256": "eba06c9792194450ce0ba57351d188eba8eff9c0fb63d120d9f43ab1e89fb9bf"
+    },
+    {
+      "key": "retrievalProgram",
+      "path": "docs/ai/RETRIEVAL_PROGRAM.md",
+      "sha256": "6a318228306c5a20b2c64e722a7155f84108b6a61a5c2f847877b4e9e3cbe05f"
+    },
+    {
+      "key": "preMigrationBaseline",
+      "path": "docs/ai/PRE_MIGRATION_RETRIEVAL_BASELINE.md",
+      "sha256": "fe1657bb04e3cbf52baf998d5f68529e5433f87a8bef4dd5ba37a688caea078a"
+    },
+    {
+      "key": "citationsCli",
+      "path": "services/ingest/src/citations-cli.ts",
+      "sha256": "60863e23a0ac71b43991a8636c4698ae93063b21b3a6dd1d1cb4e569f05a227e"
+    },
+    {
+      "key": "citationKeysCli",
+      "path": "services/ingest/src/citation-keys-cli.ts",
+      "sha256": "97b0a2adb7a0eb6775650ec4326553107469c42fb3cc31ccf489b7243e821bab"
+    },
+    {
+      "key": "graphExpand",
+      "path": "services/api/src/search/graph-expand.ts",
+      "sha256": "b5f1534ce00f1645997ddb1a8a4a869d0dfe70e30d7e585b1dd1c4d2cd4d270a"
+    },
+    {
+      "key": "propagateTreatment",
+      "path": "services/api/src/citations/propagate-treatment.ts",
+      "sha256": "0cd1a67faf7fbdd199cd1098e8234be7875533fc36b54ecaa3f3e709307f2d67"
+    }
+  ],
+  "validations": [
+    {
+      "input": "schemaTruth",
+      "status": "pass",
+      "pattern": "/sentinels\\s+625,748[\\s\\S]*real unresolved\\s+598,759[\\s\\S]*resolved\\s+112,241/"
+    },
+    {
+      "input": "schemaTruth",
+      "status": "pass",
+      "pattern": "/A sentinel is not an unresolved citation/"
+    },
+    {
+      "input": "schemaTruth",
+      "status": "pass",
+      "pattern": "/adjudication aid, never a source of\\s+truth/"
+    },
+    {
+      "input": "dataMoatProgram",
+      "status": "pass",
+      "pattern": "/judgment_citations` 273,383 rows, 99,887 resolved, \\*\\*50,645 sentinels\\*\\*/"
+    },
+    {
+      "input": "dataMoatProgram",
+      "status": "pass",
+      "pattern": "/external_citations` 51,272 rows, 15,102 resolved/"
+    },
+    {
+      "input": "dataMoatProgram",
+      "status": "pass",
+      "pattern": "/overruled 117[\\s\\S]*overruled_in_part 23[\\s\\S]*doubted 21/"
+    },
+    {
+      "input": "dataMoatProgram",
+      "status": "pass",
+      "pattern": "/40 of 40 returned zero citations/"
+    },
+    {
+      "input": "retrievalProgram",
+      "status": "pass",
+      "pattern": "/judgment_citations` 227,478 edges \\/ 97,876 resolved/"
+    },
+    {
+      "input": "retrievalProgram",
+      "status": "pass",
+      "pattern": "/\\+37,875 edges[\\s\\S]*\\+20,276 resolved[\\s\\S]*77,600[\\s\\S]*97,876/"
+    },
+    {
+      "input": "treatmentGraphGap",
+      "status": "pass",
+      "pattern": "/unresolved:\\s+\\*\\*32\\*\\*/"
+    },
+    {
+      "input": "treatmentGraphGap",
+      "status": "pass",
+      "pattern": "/34 edges: \\*\\*13 candidate, 1 ambiguous, 6 thin, 1 no-name-beside-citation,\\s+13 no-candidate at all\\*\\*/"
+    },
+    {
+      "input": "citationsCli",
+      "status": "pass",
+      "pattern": "/DRY BY DEFAULT/"
+    },
+    {
+      "input": "citationKeysCli",
+      "status": "pass",
+      "pattern": "/OFFSET[\\s\\S]{0,120}WRONG/"
+    }
+  ],
+  "snapshots": [
+    {
+      "snapshotId": "schema-truth-20260813-citation-denominator",
+      "source": "docs/SCHEMA_TRUTH.md",
+      "date": "2026-08-13",
+      "scope": "judgment_citations denominator correction",
+      "metric": "sentinels / real unresolved / resolved",
+      "value": "625748 / 598759 / 112241",
+      "derivedRate": "resolved real-citation rate 15.8%; naive null-target rate 8.4%",
+      "caveat": "snapshot in schema-truth; use live selector before making corpus-current claims"
+    },
+    {
+      "snapshotId": "data-moat-20260812-production-inventory",
+      "source": "docs/ai/DATA_MOAT_PROGRAM.md",
+      "date": "2026-08-12",
+      "scope": "pilot-era production citation inventory",
+      "metric": "judgment_citations / resolved / sentinels; external_citations / resolved",
+      "value": "273383 / 99887 / 50645; 51272 / 15102",
+      "derivedRate": "judgment_citations resolved including sentinels 36.5%",
+      "caveat": "older snapshot; corpus and extraction continued afterward"
+    },
+    {
+      "snapshotId": "data-moat-20260812-treatment-counts",
+      "source": "docs/ai/DATA_MOAT_PROGRAM.md",
+      "date": "2026-08-12",
+      "scope": "relationship distribution over then-current judgment_citations",
+      "metric": "cites/followed/distinguished/overruled/overruled_in_part/doubted/approved",
+      "value": "257460 / 14007 / 1734 / 117 / 23 / 21 / 21",
+      "derivedRate": "non-cites relationship share 5.8%",
+      "caveat": "relationship counts are diagnostics; citation count is not legal authority"
+    },
+    {
+      "snapshotId": "retrieval-program-20260811-graph-architecture",
+      "source": "docs/ai/RETRIEVAL_PROGRAM.md",
+      "date": "2026-08-11",
+      "scope": "retrieval architecture graph status",
+      "metric": "judgment_citations edges / resolved; aliases",
+      "value": "227478 / 97876; judgment_citation_aliases 4097",
+      "derivedRate": "resolved edge rate 43.0%",
+      "caveat": "architecture snapshot; graph not a ranking signal yet"
+    },
+    {
+      "snapshotId": "treatment-gap-20260814-high-risk-unresolved",
+      "source": "docs/TREATMENT_GRAPH_GAP.md",
+      "date": "2026-08-14",
+      "scope": "high-risk unresolved treatment targets",
+      "metric": "overruled/overruled_in_part/doubted unresolved",
+      "value": "32 fresh-check unresolved, down from 34 after two fixes",
+      "derivedRate": "not a rate; priority region",
+      "caveat": "priority list, not target identity proof for every row"
+    },
+    {
+      "snapshotId": "pre-migration-20260815-overruled-count",
+      "source": "docs/ai/PRE_MIGRATION_RETRIEVAL_BASELINE.md",
+      "date": "2026-08-15",
+      "scope": "migration baseline currentness cross-check",
+      "metric": "overruled_status != none judgments",
+      "value": "95",
+      "derivedRate": "set_aside 70 + partly_set_aside 8 + doubted 17 = 95",
+      "caveat": "baseline spot-check; not a full Workstream J census"
+    }
+  ],
+  "priorityRegions": [
+    {
+      "regionId": "J1-sentinel-safe-denominators",
+      "priority": "P0-diagnostic-safety",
+      "evidence": "docs/SCHEMA_TRUTH.md",
+      "finding": "Sentinel rows with empty citation_text must be excluded from unresolved-citation denominators and advocate-facing graph surfaces.",
+      "nextSelector": "graph-census-selector.sql section sentinel_invariants"
+    },
+    {
+      "regionId": "J2-unresolved-treatment-targets",
+      "priority": "P0-currentness-risk",
+      "evidence": "docs/TREATMENT_GRAPH_GAP.md",
+      "finding": "Overruled/overruled_in_part/doubted unresolved targets are the highest-value graph region because the failure mode is live-law currentness, not ranking.",
+      "nextSelector": "graph-census-selector.sql section unresolved_treatment_targets"
+    },
+    {
+      "regionId": "J3-citation-key-coverage",
+      "priority": "P1-resolution-throughput",
+      "evidence": "services/ingest/src/citation-keys-cli.ts",
+      "finding": "citation-key population is a derived table and must be measured without duplicating the active population job or using OFFSET.",
+      "nextSelector": "graph-census-selector.sql section key_coverage"
+    },
+    {
+      "regionId": "J4-high-degree-authorities",
+      "priority": "P2-prioritisation",
+      "evidence": "docs/ai/RETRIEVAL_PROGRAM.md",
+      "finding": "High in-degree/out-degree authorities are triage signals only; citation count alone is not legal authority or ranking approval.",
+      "nextSelector": "graph-census-selector.sql section degree_distribution"
+    },
+    {
+      "regionId": "J5-external-citation-gaps",
+      "priority": "P2-source-gap",
+      "evidence": "docs/ai/DATA_MOAT_PROGRAM.md",
+      "finding": "external_citations and citation_concordance_resolutions need separate accounting because model adjudication is an aid, never canonical identity.",
+      "nextSelector": "graph-census-selector.sql section external_citation_gaps"
+    },
+    {
+      "regionId": "J6-ambiguous-yearless-parallel-keys",
+      "priority": "P2-resolution-diagnostics",
+      "evidence": "services/ingest/src/citation-keys-cli.ts",
+      "finding": "Ambiguous keys, yearless keys, and parallel citation alias multiplicity are separate resolution diagnostics; none should be collapsed into one unresolved count.",
+      "nextSelector": "graph-census-selector.sql sections ambiguous_key_distribution, yearless_key_prevalence, parallel_alias_multiplicity"
+    }
+  ],
+  "selectorSql": "docs/ai/cx1-citation-graph-census/graph-census-selector.sql",
+  "nextGate": "MEDIUM_CLEAN for read-only selector execution; do not duplicate active citation-key population or any LCC write job"
+}

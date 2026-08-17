@@ -1,0 +1,168 @@
+{
+  "kind": "cx1_halfvec_fidelity",
+  "createdAt": "2026-08-17T12:21:42Z",
+  "evidenceClass": "MEASURED_COPIED_VECTORS_NO_HNSW",
+  "input": {
+    "copyFile": "C:\\lawmind\\cx1-lab\\halfvec-fidelity\\vectors-5000-170817.csv",
+    "requestedRows": 5000,
+    "loadedRows": 5000,
+    "dimensions": 1024,
+    "seed": 170817,
+    "copySeconds": 1.218,
+    "copyPayloadRemovedAfterRun": true
+  },
+  "c1DistanceDistortion": {
+    "pairs": 100000,
+    "absoluteError": {
+      "count": 100000,
+      "p50": 0.00000762939453125,
+      "p95": 0.000022351741790771484,
+      "p99": 0.000029802322387695312,
+      "max": 0.00005447864532470703
+    },
+    "relativeError": {
+      "count": 99991,
+      "p50": 0.000015751756675147543,
+      "p95": 0.000045762910755444944,
+      "p99": 0.000060628463400051624,
+      "max": 1
+    },
+    "bySimilarityBucket": {
+      "high_similarity": {
+        "count": 14,
+        "p50": 0,
+        "p95": 8.910894393920891e-7,
+        "p99": 0.0000020378828048706036,
+        "max": 0.0000023245811462402344
+      },
+      "medium_similarity": {
+        "count": 97790,
+        "p50": 0.000007569789886474609,
+        "p95": 0.000022232532501220703,
+        "p99": 0.00002956390380859375,
+        "max": 0.00005447864532470703
+      },
+      "low_similarity": {
+        "count": 2196,
+        "p50": 0.000009462237358093262,
+        "p95": 0.000026553869247436523,
+        "p99": 0.000034639239311218294,
+        "max": 0.00004982948303222656
+      }
+    },
+    "worst": [
+      {
+        "i": 4401,
+        "j": 3321,
+        "fp32Distance": 0.5812462866306305,
+        "halfDistance": 0.5811918079853058,
+        "absError": 0.00005447864532470703
+      },
+      {
+        "i": 2005,
+        "j": 635,
+        "fp32Distance": 0.5221173167228699,
+        "halfDistance": 0.522168755531311,
+        "absError": 0.00005143880844116211
+      },
+      {
+        "i": 2636,
+        "j": 4103,
+        "fp32Distance": 0.6092602610588074,
+        "halfDistance": 0.6092104315757751,
+        "absError": 0.00004982948303222656
+      },
+      {
+        "i": 4393,
+        "j": 1227,
+        "fp32Distance": 0.5541152060031891,
+        "halfDistance": 0.5540654361248016,
+        "absError": 0.00004976987838745117
+      },
+      {
+        "i": 4174,
+        "j": 2708,
+        "fp32Distance": 0.5236506462097168,
+        "halfDistance": 0.5236017405986786,
+        "absError": 0.00004890561103820801
+      },
+      {
+        "i": 4411,
+        "j": 4655,
+        "fp32Distance": 0.6399053633213043,
+        "halfDistance": 0.6398569345474243,
+        "absError": 0.00004842877388000488
+      },
+      {
+        "i": 3754,
+        "j": 2636,
+        "fp32Distance": 0.5985850691795349,
+        "halfDistance": 0.5985373258590698,
+        "absError": 0.00004774332046508789
+      },
+      {
+        "i": 3795,
+        "j": 372,
+        "fp32Distance": 0.5237748920917511,
+        "halfDistance": 0.523822546005249,
+        "absError": 0.000047653913497924805
+      },
+      {
+        "i": 2439,
+        "j": 4843,
+        "fp32Distance": 0.5904545187950134,
+        "halfDistance": 0.5904069244861603,
+        "absError": 0.000047594308853149414
+      },
+      {
+        "i": 4095,
+        "j": 735,
+        "fp32Distance": 0.5310356914997101,
+        "halfDistance": 0.5309883654117584,
+        "absError": 0.000047326087951660156
+      }
+    ]
+  },
+  "c2ExactNearestNeighbourOverlap": {
+    "queries": 200,
+    "topK": {
+      "5": {
+        "meanOverlap": 0.9990000000000001,
+        "p50Overlap": 1,
+        "p05Overlap": 1,
+        "meanRankCorrelation": 1,
+        "firstResultDisagreementRate": 0
+      },
+      "10": {
+        "meanOverlap": 0.9995,
+        "p50Overlap": 1,
+        "p05Overlap": 1,
+        "meanRankCorrelation": 0.9998787878787877,
+        "firstResultDisagreementRate": 0
+      },
+      "20": {
+        "meanOverlap": 1,
+        "p50Overlap": 1,
+        "p05Overlap": 1,
+        "meanRankCorrelation": 0.9999624060150376,
+        "firstResultDisagreementRate": 0
+      },
+      "50": {
+        "meanOverlap": 0.9998,
+        "p50Overlap": 1,
+        "p05Overlap": 1,
+        "meanRankCorrelation": 0.9999779111644657,
+        "firstResultDisagreementRate": 0
+      }
+    },
+    "fp32FirstSecondDistanceMargin": {
+      "count": 200,
+      "p50": 0.014514327049255371,
+      "p95": 0.09906522631645198,
+      "p99": 0.14877871453762045,
+      "max": 0.18125426769256592
+    }
+  },
+  "verdictCandidate": "NO_MEASURABLE_DEGRADATION",
+  "resultFile": "docs/ai/cx1-vector-results/halfvec-fidelity.json"
+}

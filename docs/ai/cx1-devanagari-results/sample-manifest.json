@@ -1,0 +1,685 @@
+{
+  "kind": "cx1_devanagari_bakeoff_manifest",
+  "createdAt": "2026-08-17T09:55:01.269Z",
+  "source": "NEW2 affected cohort in docs/DEVANAGARI_EXTRACTION_DEFECTS.md",
+  "selection": {
+    "tableSampleSystemPercent": 4,
+    "repeatableSeed": 170817,
+    "candidates": 1218,
+    "selected": 32,
+    "courts": [
+      "High Court Of Rajasthan",
+      "Allahabad High Court",
+      "Patna High Court"
+    ],
+    "years": [
+      2013,
+      2014,
+      2015,
+      2017,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ]
+  },
+  "documents": [
+    {
+      "id": "182b5ab1-b1ce-48bc-9e55-0999cf7535f6",
+      "caseTitle": "JAL SINGH Vs RAJ. STATE ROAD TRAN. CORPN. and ORS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2014,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2014/court=8_9/bench=rhcjodh240618/RJHC010404352012_1_2014-01-27.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 3840,
+      "storedTextSha256": "cb18a54f88433b9d86bb3dd663e5a028bbbfd8ca5c28b06f9ca1ecaa9d8d813b",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 49,
+        "latin1Bleed": 0,
+        "labels": [
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "0a91edf8-1a15-47ac-adca-3c4e109006e1",
+      "caseTitle": "JAFAR MOHD Vs STATE OF RAJASTHAN THROUGH PP",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2013,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2013/court=8_9/bench=jaipur/RJHC020224962013_1_2013-07-03.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 2383,
+      "storedTextSha256": "d64a1d0c2245eaa9cb1cba72630a7833cd6db9894c9aa4bbbf538d4104723710",
+      "defects": {
+        "orphanedMatras": 40,
+        "controlAdjacency": 0,
+        "latin1Bleed": 34,
+        "labels": [
+          "orphaned_matra",
+          "latin1_bleed"
+        ]
+      }
+    },
+    {
+      "id": "09f0b4e5-c784-4471-830a-72c4fc63e9ac",
+      "caseTitle": "SOHAN LAL KUMAWAT AND ORS Vs STATE PANCHAYATI RAJ DEP ANR",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2013,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2013/court=8_9/bench=jaipur/RJHC020832812013_1_2013-12-19.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 102537,
+      "storedTextSha256": "cf9e0180fb1eeafb7e4eb05c70ef438fe0d9806e5eac867dffee1cdb49eb3f52",
+      "defects": {
+        "orphanedMatras": 71,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra"
+        ]
+      }
+    },
+    {
+      "id": "a4d49ba4-cec3-4727-8bb4-80563d85953b",
+      "caseTitle": "RAM KARAN SINGH Vs UNION OF INDIA",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2013,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2013/court=8_9/bench=jaipur/RJHC020226512012_1_2013-03-22.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 2696,
+      "storedTextSha256": "678e43706a1f947a335325489730ce71ed4a04e5157063230954c737f80fdb42",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "004cca68-1552-44ba-88dd-1a25ab8645b2",
+      "caseTitle": "NAVEEN KUMAR Vs STATE OF RAJASTHAN THROUGH PP",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2015,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2015/court=8_9/bench=jaipur/RJHC020838922015_1_2015-02-25.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 1434,
+      "storedTextSha256": "27238a3cc5329ca83dcb379cfdcee0b7e96069b9f4cfdc34ab3970db4e5aa4eb",
+      "defects": {
+        "orphanedMatras": 29,
+        "controlAdjacency": 0,
+        "latin1Bleed": 26,
+        "labels": [
+          "orphaned_matra",
+          "latin1_bleed"
+        ]
+      }
+    },
+    {
+      "id": "0c42638b-c7da-4063-b994-ef73510f0ba6",
+      "caseTitle": "M/S TRIVENI BROKERS Vs M/S HIRA RAM HANSA RAM",
+      "neutralCitation": "2024:RJ-JD:12253",
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2024,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=8_9/bench=rhcjodh240618/RJHC010113752024_1_2024-03-19.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 56197,
+      "storedTextSha256": "dba126f40f8676d8bb7630fc3945f50543045eeeafbb9f71bde7804606217d3d",
+      "defects": {
+        "orphanedMatras": 46,
+        "controlAdjacency": 79,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "51ac34fc-969d-4388-9b9f-b856402977cc",
+      "caseTitle": "UNION OF INDIA Vs RAM PRASAD AGARWAL S/O LATE SHRI RAM GOPAL AGARWAL",
+      "neutralCitation": "2026:RJ-JP:8726-DB",
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2026,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=8_9/bench=jaipur/RJHC020426252023_1_2026-02-25.pdf",
+      "textExtractionMethod": null,
+      "storedTextChars": 8334,
+      "storedTextSha256": "1b8af3a1dd38e5465e26edec77998c6f33cf25e91ca132ffbf9c7858288c330d",
+      "defects": {
+        "orphanedMatras": 3,
+        "controlAdjacency": 2,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "9212cc7e-10b5-4ba7-909b-63150e2bea00",
+      "caseTitle": "BHAGWAT SINGH @ BHAGWAN SINGH Vs KHUSHBOO KANWAR @ MANJU KANWAR",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2022,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2022/court=8_9/bench=rhcjodh240618/RJHC010445042022_1_2022-11-29.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 7481,
+      "storedTextSha256": "c979079853895c57a775e2880bfbaf571d3fc71ea4c18c5a56aaff08cd520106",
+      "defects": {
+        "orphanedMatras": 15,
+        "controlAdjacency": 20,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "ef0d76fb-06ab-47c8-82ab-0e6ec5f80ad9",
+      "caseTitle": "CHENA Vs STATE OF RAJ.",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=8_9/bench=rhcjodh240618/RJHC010743252016_1_2023-08-23.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 21858,
+      "storedTextSha256": "ac7c0aec00dc23411afeef7e357e3fc789d37c355ad3069173325ce4b0c2b6dd",
+      "defects": {
+        "orphanedMatras": 27,
+        "controlAdjacency": 52,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "cf19aced-3c98-4ef1-9c3b-c421e23b6fcc",
+      "caseTitle": "SMT. KAMLA DEVI W/O RANVEER SINGH Vs THE STATE OF RAJASTHAN",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2021,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=8_9/bench=jaipur/RJHC020171252021_1_2021-03-24.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 33614,
+      "storedTextSha256": "b103efee46531e0659d8cf36b506a69d11a480ae2b4b31c39bcba0d6434da36d",
+      "defects": {
+        "orphanedMatras": 12,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra"
+        ]
+      }
+    },
+    {
+      "id": "0d2595a6-7721-4920-844a-331d4644b40f",
+      "caseTitle": "THE EXECUTIVE ENGINEER Vs SACHDEVA METAL WORKS",
+      "neutralCitation": "2025:RJ-JP:42142-DB",
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2025,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=8_9/bench=jaipur/RJHC020479572022_1_2025-10-15.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 31107,
+      "storedTextSha256": "72b8db0c8fb8c07c9fcfb7c2b0e058129281bd5dd6564db4d06054564b374ba3",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "0156070e-b8b3-4478-aa18-b49c7acf6f12",
+      "caseTitle": "ANSAR AHMED MAKRANI AND ORS Vs STATE EDUCATION DEPARTMENTORS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "High Court Of Rajasthan",
+      "year": 2014,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2014/court=8_9/bench=jaipur/RJHC020318702013_1_2014-11-26.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 99978,
+      "storedTextSha256": "dfb74e2eed8e279e539ed5dda3f44d73175172d890b3d7a09712b892c0e7bd07",
+      "defects": {
+        "orphanedMatras": 8,
+        "controlAdjacency": 0,
+        "latin1Bleed": 9,
+        "labels": [
+          "orphaned_matra",
+          "latin1_bleed"
+        ]
+      }
+    },
+    {
+      "id": "7d1619a1-8b50-44d8-b100-68406f001cf1",
+      "caseTitle": "GOPI Vs PREM SHANKER",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2022,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2022/court=9_13/bench=cisdb_16012018/UPHC011056182004_1_2022-07-14.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 3704,
+      "storedTextSha256": "0df205f211949b7c6eb29e5400f5708f778c15131eeffcbf74a3f16e92374599",
+      "defects": {
+        "orphanedMatras": 2,
+        "controlAdjacency": 1,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "2075587a-7532-4734-8692-4c14baaec87a",
+      "caseTitle": "JATA SHANKAR SHUKLA Vs State of U.P. AND 11 OTHERS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2022,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2022/court=9_13/bench=cisdb_16012018/UPHC010044002022_1_2022-02-14.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 7208,
+      "storedTextSha256": "b7c89105d4f703e47d0d0a81f0e029d711d1f1a264937301db1562651d980db1",
+      "defects": {
+        "orphanedMatras": 1,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra"
+        ]
+      }
+    },
+    {
+      "id": "adbcfd38-d2ca-4d7e-81de-7ddc3166a4bf",
+      "caseTitle": "KHALID ZAMEEL Vs STATE OF U.P. AND 2 OTHERS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2017,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2017/court=9_13/bench=cisdb_16012018/UPHC011430022017_1_2017-11-28.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 5019,
+      "storedTextSha256": "7db3425d179e75ab8bdeee50ae895c89e1864686a6f9fdbaec790e2f0fe36800",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "143896b6-1e4e-40df-8014-f5629c72686a",
+      "caseTitle": "PRAMOD Vs State of U.P.",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=9_13/bench=cisdb_16012018/UPHC010014212023_1_2023-04-04.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 14617,
+      "storedTextSha256": "f8881ed5f10782d4dc5b934ff997ebfb88e9ac1a2b63ceddeaaea70bf3678cb6",
+      "defects": {
+        "orphanedMatras": 113,
+        "controlAdjacency": 82,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "203df9a4-c587-4fa3-84be-3f73bbe40732",
+      "caseTitle": "AMIT KUMAR PANDEY Vs UTTAR PRADESH GRAMIN BANK AND ANOTHER",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2025,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=9_13/bench=cisdb_16012018/UPHC014330662025_1_2025-10-07.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 18946,
+      "storedTextSha256": "1571147f2587ddd047eb531e544f249f8a3a2246b4d84daab8636453725ac226",
+      "defects": {
+        "orphanedMatras": 757,
+        "controlAdjacency": 3,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "04ceaa01-4d63-4b9a-904a-dae719dd030b",
+      "caseTitle": "GAJANAND VS STATE OF U.P. THRU. PRIN. SECY. IRRIGATION AND WATER RESOURCES DEPTT. LKO. AND 4 OTHERS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2026,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=9_13/bench=cishclko/orders_2026_202000028652026_1.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 2252,
+      "storedTextSha256": "e26e64fad4478d223276e2535216662de0e9e412264e590611bb94e5e0e89f4d",
+      "defects": {
+        "orphanedMatras": 1,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra"
+        ]
+      }
+    },
+    {
+      "id": "4fcdf1fc-5f1f-47a1-8fae-556493ed91cb",
+      "caseTitle": "SHIV PRATAP SINGH and OTHERS Vs STATE OF U.P.",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2021,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=9_13/bench=cishclko/UPHC020037681985_1_2021-12-13.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 52614,
+      "storedTextSha256": "14c9dbdd40905b3e6e5f25037de2aa7fd669f97f3f024a2a26c862d2aebef3dc",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "1b9ac8d8-eac6-4e32-9a19-cb1b1e006525",
+      "caseTitle": "JAY BAJPAI @ JAY KANT BAJPAI Vs State of U.P.",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=9_13/bench=cisdb_16012018/UPHC010794362021_1_2023-04-20.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 138406,
+      "storedTextSha256": "139c1b3d1b4774dfd7408815ec51ac30c6893ae0c1f2f3d7e295c644b2be0d4a",
+      "defects": {
+        "orphanedMatras": 675,
+        "controlAdjacency": 1,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "2ac2f496-77b9-4ea9-bca5-ec9f3c8b8093",
+      "caseTitle": "KAJAL SHARMA Vs State of U.P. AND 2 OTHERS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=9_13/bench=cisdb_16012018/UPHC010563542023_1_2023-03-27.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 16298,
+      "storedTextSha256": "b6db859309a82e42e4cbe35a4e1bc6d1de00217626f3c629bca8126035bb6027",
+      "defects": {
+        "orphanedMatras": 16,
+        "controlAdjacency": 13,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "2c83f4c6-af2f-4909-9adf-cd97ec0e04c6",
+      "caseTitle": "TEKCHAND Vs State of U.P. AND 6 OTHERS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2025,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=9_13/bench=cisdb_16012018/UPHC011967182022_1_2023-01-28.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 10935,
+      "storedTextSha256": "a011a8b3ec7e94745063514816bb6a71bb6be1d5e8c3e9324aa6267456de8879",
+      "defects": {
+        "orphanedMatras": 116,
+        "controlAdjacency": 142,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "2dfedb4e-8488-4fb4-a986-c5c0ccd7f48e",
+      "caseTitle": "MARUTI NANDAN SINGH Vs State of U.P. AND 4 OTHERS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=9_13/bench=cisdb_16012018/UPHC012069642022_1_2023-02-15.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 2269,
+      "storedTextSha256": "98b981999e9a2e4916a43fafd99ae0235c112d6fc8ad4d88e731f04f8ec5580d",
+      "defects": {
+        "orphanedMatras": 48,
+        "controlAdjacency": 21,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "678a550d-e735-4229-8ea2-1b5e1b0084b9",
+      "caseTitle": "LAXMAN PRASAD Vs DEPUTY DIRECTOR OF CONSOLIDATION, UNNAO AND 4 OTHERS",
+      "neutralCitation": "2023:AHC-LKO:59946",
+      "reporterCitations": [],
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=9_13/bench=cishclko/UPHC020642602023_1_2023-09-19.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 20235,
+      "storedTextSha256": "54ef6f0c803f6eda6c188462d807f8efbc55502e953046a2535f81bce043704a",
+      "defects": {
+        "orphanedMatras": 6,
+        "controlAdjacency": 81,
+        "latin1Bleed": 0,
+        "labels": [
+          "orphaned_matra",
+          "control_adjacency"
+        ]
+      }
+    },
+    {
+      "id": "2f8b863a-29e3-46ba-9ad5-37924baa76a4",
+      "caseTitle": "THE STATE OF BIHAR Vs NASRUDDIN MIAN @ LALLU",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2021,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=10_8/bench=patnahcucisdb94/BRHC010402042019_1_2021-06-21.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 107201,
+      "storedTextSha256": "cddb81f42330a348fdb9ff09428c1f727c9ed10777092290002dc85559247351",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "01f43760-cb7c-411c-9916-4c0c2efbaef4",
+      "caseTitle": "DR.SOMESHWAR NARAYAN SINGH Vs THE STATE OF BIHAR and ORS",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=10_8/bench=patnahcucisdb94/BRHC010582262007_1_2023-04-04.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 9069,
+      "storedTextSha256": "e917436ad608e8d6d07f913391a73169bd2e20f6c77f9ed0ae96d8bfc3e26915",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "05932580-c8d9-4f62-8984-c012e187356a",
+      "caseTitle": "Pramod Kumar Vs The State of Bihar through the Principal Secretary,",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2025,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=10_8/bench=patnahcucisdb94/BRHC010997062022_1_2025-07-25.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 3330,
+      "storedTextSha256": "08be6f66a0af434be4f5298ad3036b497154c671b17d21726fdb3be8f37b3757",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "200a9e9f-5ef8-4430-8dd7-aedfe17d5c31",
+      "caseTitle": "Mantun Rai @ Mintu Rai @ Mantu Rai Vs The State of Bihar",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2026,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=10_8/bench=patnahcucisdb94/BRHC010128852026_1_2026-05-15.pdf",
+      "textExtractionMethod": null,
+      "storedTextChars": 3670,
+      "storedTextSha256": "b4c5df0aa8ab8c05b69b494a489adc382869da051fc57f503dfac270a292d0d9",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "45563ac9-ff9e-4aac-be87-24ec33914cac",
+      "caseTitle": "Shamimul Haque Khan Vs The State of Bihar",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2022,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2022/court=10_8/bench=patnahcucisdb94/BRHC010221132021_1_2022-04-26.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 2535,
+      "storedTextSha256": "fd583bf55ca8c849f8415bd996733a0653f04e37ba38b92ff88541cd817389fb",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "0821e37e-3ad1-4162-9c03-8c7cca85682b",
+      "caseTitle": "Dr. Fateh Faiyaz Vs The State of Bihar",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2023,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=10_8/bench=patnahcucisdb94/BRHC010778522019_1_2023-11-06.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 10286,
+      "storedTextSha256": "d30aadff7af09e01dc65e3b34f7e3ef6d7a3204a5933220602e69f016cac039a",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "0b19cf03-cbd9-41c4-93e2-ec9ee1d34277",
+      "caseTitle": "KUNAL GAURAV @ KUNAL KUMAR Vs The State of Bihar",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2025,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=10_8/bench=patnahcucisdb94/BRHC010477082023_1_2025-06-24.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 16607,
+      "storedTextSha256": "5121e7a794c9b5a2e0c6bcf2c0d790194f1959019b2c1e6f37e398d3573254b9",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    },
+    {
+      "id": "0be4cce6-3a5c-47be-a207-76597145d699",
+      "caseTitle": "Om Prakash Gautam Vs The State of Bihar through the Vigilance",
+      "neutralCitation": null,
+      "reporterCitations": [],
+      "court": "Patna High Court",
+      "year": 2025,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=10_8/bench=patnahcucisdb94/BRHC010577672025_1_2025-07-21.pdf",
+      "textExtractionMethod": "unpdf",
+      "storedTextChars": 4723,
+      "storedTextSha256": "2f37b7fc48d38d2b8d8d95e1ab20301ea69a013292889d084017c8147c235072",
+      "defects": {
+        "orphanedMatras": 0,
+        "controlAdjacency": 0,
+        "latin1Bleed": 0,
+        "labels": [
+          "clean_control"
+        ]
+      }
+    }
+  ]
+}

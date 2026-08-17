@@ -1,0 +1,201 @@
+{
+  "schema": "cx1-embedding-eligibility-phase1-v1",
+  "generatedAt": "2026-08-17T12:20:41.911Z",
+  "evidenceClass": "ESTIMATED_FROM_EXISTING_MEASUREMENTS_NO_DB_READ",
+  "inputs": {
+    "corpusCensus": "docs/ai/cx1-corpus-census/metadata-coverage.json",
+    "hcClassSample": "docs/ai/new2-silver-proof/hc-class-sample-20260817.json",
+    "mobileOrderTypes": "docs/HC_ORDER_TYPES.json",
+    "vectorCapacity": "docs/ai/CX1_VECTOR_CAPACITY_BENCHMARK.md"
+  },
+  "constants": {
+    "fp32CombinedBytesPerVector": 13778.58,
+    "halfvecCombinedBytesPerVector": 5571.26,
+    "existingVectorRows": 620300,
+    "existingVectorJudgments": 40161,
+    "supremeCourtSource": 38351,
+    "supremeCourtHeld": 38342,
+    "supremeCourtGap": 9,
+    "devanagariDocumentShareEstimate": 0.0056
+  },
+  "heldHighCourtDocuments": 7257726,
+  "classEstimates": {
+    "unclassified": {
+      "sampleCount": 89,
+      "share": 0.445,
+      "estimatedHeldDocuments": 3229688.07,
+      "meanChars": 8204,
+      "estimatedUtf8Bytes": 26496360926.28
+    },
+    "decided": {
+      "sampleCount": 36,
+      "share": 0.18,
+      "estimatedHeldDocuments": 1306390.68,
+      "meanChars": 21053,
+      "estimatedUtf8Bytes": 27503442986.039997
+    },
+    "procedural_disposal": {
+      "sampleCount": 34,
+      "share": 0.17,
+      "estimatedHeldDocuments": 1233813.4200000002,
+      "meanChars": 1421,
+      "estimatedUtf8Bytes": 1753248869.8200002
+    },
+    "bail_order": {
+      "sampleCount": 25,
+      "share": 0.125,
+      "estimatedHeldDocuments": 907215.75,
+      "meanChars": 6047,
+      "estimatedUtf8Bytes": 5485933640.25
+    },
+    "decided_brief": {
+      "sampleCount": 11,
+      "share": 0.055,
+      "estimatedHeldDocuments": 399174.93,
+      "meanChars": 981,
+      "estimatedUtf8Bytes": 391590606.33
+    },
+    "reference_stub": {
+      "sampleCount": 5,
+      "share": 0.025,
+      "estimatedHeldDocuments": 181443.15000000002,
+      "meanChars": 436,
+      "estimatedUtf8Bytes": 79109213.4
+    }
+  },
+  "tiers": [
+    {
+      "id": "TIER_A",
+      "label": "canonical substantive authorities with reliable identity/text",
+      "population": 1743908,
+      "components": {
+        "supremeCourtHeld": 38342,
+        "hcDecidedUpperBound": 1306391,
+        "hcDecidedBriefUpperBound": 399175
+      },
+      "caution": "`decided` and `decided_brief` are sample-derived upper bounds on authority; they are not legal weight."
+    },
+    {
+      "id": "TIER_B",
+      "label": "verified legal objects",
+      "population": null,
+      "components": {},
+      "caution": "Population needs document_enrichments task/status counts by task and verification_state; not estimated from document class."
+    },
+    {
+      "id": "TIER_C",
+      "label": "important paragraphs from substantive authorities",
+      "population": null,
+      "components": {},
+      "caution": "Paragraph count and importance signals require sampled paragraph/citation/user-action data; not estimated in phase 1."
+    },
+    {
+      "id": "TIER_D",
+      "label": "procedural/non-precedential material whose embedding value is uncertain",
+      "population": 2141029,
+      "components": {
+        "hcBailOrders": 907216,
+        "hcProceduralDisposals": 1233813
+      },
+      "caution": "Bail orders may be practically useful but are not automatically precedential. Procedural disposals are a retrieval-value experiment, not an authority tier."
+    },
+    {
+      "id": "TIER_E",
+      "label": "exclude/defer",
+      "population": 3411131,
+      "components": {
+        "referenceStubs": 181443,
+        "disposedClosedUnclassifiedResidue": 3229688
+      },
+      "caution": "The unclassified residue is model-triage work, not safe exclusion forever; reference stubs are the true hard defer in this phase."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "MINIMAL",
+      "description": "Existing dense coverage plus one document vector for TIER_A candidate authorities only.",
+      "estimatedDocuments": 1743908,
+      "vectorsPerDocument": 1,
+      "storage": {
+        "vectors": 1743908,
+        "fp32CombinedBytes": 24028570517,
+        "halfvecCombinedBytes": 9715762711,
+        "fp32CombinedHuman": "22.38 GiB",
+        "halfvecCombinedHuman": "9.05 GiB"
+      },
+      "notes": [
+        "Uses sample-derived HC decided + decided_brief upper bound and all Supreme Court held rows.",
+        "Does not include unclassified DISPOSED/CLOSED residue."
+      ]
+    },
+    {
+      "id": "BALANCED",
+      "description": "TIER_A plus bail-order practical material, one document vector each.",
+      "estimatedDocuments": 2651123,
+      "vectorsPerDocument": 1,
+      "storage": {
+        "vectors": 2651123,
+        "fp32CombinedBytes": 36528715306,
+        "halfvecCombinedBytes": 14770097531,
+        "fp32CombinedHuman": "34.02 GiB",
+        "halfvecCombinedHuman": "13.76 GiB"
+      },
+      "notes": [
+        "Includes bail_order because criminal-practice retrieval may need it.",
+        "Still excludes DISPOSED/CLOSED residue until triaged."
+      ]
+    },
+    {
+      "id": "AGGRESSIVE",
+      "description": "All plausibly useful non-procedural/non-stub material, one document vector each.",
+      "estimatedDocuments": 5880811,
+      "vectorsPerDocument": 1,
+      "storage": {
+        "vectors": 5880811,
+        "fp32CombinedBytes": 81029230753,
+        "halfvecCombinedBytes": 32763529488,
+        "fp32CombinedHuman": "75.46 GiB",
+        "halfvecCombinedHuman": "30.51 GiB"
+      },
+      "notes": [
+        "Includes the unclassified DISPOSED/CLOSED residue as a triage candidate.",
+        "This is not a recommendation to embed it before classification."
+      ]
+    },
+    {
+      "id": "BALANCED_PLUS_OBJECTS",
+      "description": "BALANCED plus three legal-object vectors per included document.",
+      "estimatedDocuments": 2651123,
+      "vectorsPerDocument": 4,
+      "storage": {
+        "vectors": 10604493,
+        "fp32CombinedBytes": 146114861223,
+        "halfvecCombinedBytes": 59080390123,
+        "fp32CombinedHuman": "136.08 GiB",
+        "halfvecCombinedHuman": "55.02 GiB"
+      },
+      "notes": [
+        "One document vector plus three legal-object/proposition vectors per document.",
+        "Legal-object acceptance rates are not included yet; this is an upper cost envelope."
+      ]
+    }
+  ],
+  "deferOrMeasure": {
+    "proceduralAndReferenceStubEstimate": 1415257,
+    "unclassifiedResidueEstimate": 3229688,
+    "mobileSliceWarning": {
+      "scope": "metadata-mobile.parquet only — 4 of 25 courts, disjoint from the plain files",
+      "labelledRows": 1291519,
+      "warning": "Disjoint mobile variant only; not a corpus-wide judgment share."
+    },
+    "missingMetrics": [
+      "paragraph count distribution",
+      "citation-count distribution by class",
+      "existing vector coverage by court/year after migration",
+      "legal-object acceptance rates by task",
+      "verified legal-object population",
+      "duplicate/canonical collapse impact",
+      "language distribution beyond Devanagari character presence proxy"
+    ]
+  }
+}

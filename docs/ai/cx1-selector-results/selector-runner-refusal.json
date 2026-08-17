@@ -1,0 +1,31 @@
+{
+  "schema": "cx1-selector-runner-v1",
+  "generatedAt": "2026-08-17T14:21:24.504Z",
+  "taskId": "cx1-validate-light-artifacts",
+  "mode": "execute",
+  "gate": "LIGHT",
+  "command": "node --check scripts\\cx1-heavy-lab-runner.mjs scripts\\cx1-db-sample-census.mjs scripts\\cx1-devanagari-scale-plan.mjs scripts\\cx1-hnsw-parameter-plan.mjs scripts\\cx1-run-queue.mjs scripts\\cx1-document-classification-audit.mjs scripts\\cx1-legal-object-efficiency.mjs scripts\\cx1-evidence-integrity.mjs scripts\\cx1-selector-runner.mjs scripts\\cx1-selector-runner-smoke.mjs scripts\\cx1-retrieval-matrix.mjs scripts\\cx1-citation-graph-census.mjs scripts\\cx1-premium-backend-lab.mjs scripts\\cx1-disaster-recovery-drill.mjs scripts\\cx1-heavy-lab-final.mjs scripts\\cx1-preflight.mjs scripts\\cx1-gated-runner.mjs scripts\\cx1-gated-runner-smoke.mjs",
+  "sqlPath": null,
+  "queueGeneratedAt": "2026-08-17T14:21:26.197Z",
+  "scheduler": {
+    "available": true,
+    "maxClass": "MEDIUM",
+    "reasons": [
+      "PostgreSQL active=2, oldest transaction=380s",
+      "RAM free 21.7%"
+    ],
+    "cpuPct": 21.38763400984425,
+    "freeRamPct": 21.69903388584944,
+    "postgresActive": 2,
+    "postgresOldestSeconds": 380
+  },
+  "evidencePath": "docs/ai/cx1-selector-results/selector-runner-refusal.json",
+  "status": "refused",
+  "executed": false,
+  "exitCode": null,
+  "refusalReasons": [
+    "selector runner only executes MEDIUM_CLEAN tasks; task gate is LIGHT",
+    "task command is not an allowed pg-local psql selector shape"
+  ],
+  "dryRunNote": null
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "cx1_local_hardware_non_destructive",
+  "run_dir": "docs/ai/cx1-hardware-proof/run-20260816-033316",
+  "sequential": {
+    "file": "docs/ai/cx1-hardware-proof/run-20260816-033316/sequential-write.bin",
+    "bytes": 268435456,
+    "write_seconds": 0.145,
+    "write_mib_per_second": 1760.77,
+    "read_seconds": 0.107,
+    "read_mib_per_second": 2401.32
+  },
+  "random_io": {
+    "file": "docs/ai/cx1-hardware-proof/run-20260816-033316/random-io.bin",
+    "ops": 4096,
+    "block_bytes": 4096,
+    "write_seconds": 0.048,
+    "write_iops": 86202.4,
+    "read_seconds": 0.04,
+    "read_iops": 103505.2,
+    "checksum_probe": 0
+  },
+  "network": {
+    "url": "https://speed.cloudflare.com/__down?bytes=25000000",
+    "file": "docs/ai/cx1-hardware-proof/run-20260816-033316/cloudflare-25mb.bin",
+    "bytes": 25000000,
+    "seconds": 1.926,
+    "mib_per_second": 12.38,
+    "mbit_per_second": 103.82
+  },
+  "note": "Benchmark creates new files and leaves them in place; it does not delete or mutate production data."
+}

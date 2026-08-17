@@ -1,0 +1,175 @@
+{
+  "schema": "cx1-document-classification-audit-v1",
+  "generatedAt": "2026-08-17T13:06:58.785Z",
+  "status": "offline_audit_complete",
+  "boundary": "offline only: no PostgreSQL query, no PDF fetch, no OCR, no model call, no production classifier edit",
+  "inputs": {
+    "sample": "docs/ai/new2-silver-proof/hc-class-sample-20260817.json",
+    "corpusCensus": "docs/ai/cx1-corpus-census/metadata-coverage.json",
+    "mobileOrderTypes": "docs/HC_ORDER_TYPES.json",
+    "classifierSource": "services/ingest/src/hc-classify.ts",
+    "adjudicationSource": "services/ingest/src/hc-adjudicate.ts"
+  },
+  "sourceUniverse": {
+    "plainSourceDocuments": 19237684,
+    "mobileSourceDocuments": 1291519,
+    "combinedSourceDocuments": 20529203,
+    "plainShareOfCombined": 0.9370886926297138,
+    "mobileShareOfCombined": 0.06291130737028612
+  },
+  "sample": {
+    "documentsClassified": 200,
+    "courtYearCells": 20,
+    "byClass": {
+      "unclassified": {
+        "sampleCount": 89,
+        "sampleShare": 0.445,
+        "projectedPlainDocuments": 8560769
+      },
+      "decided": {
+        "sampleCount": 36,
+        "sampleShare": 0.18,
+        "projectedPlainDocuments": 3462783
+      },
+      "procedural_disposal": {
+        "sampleCount": 34,
+        "sampleShare": 0.17,
+        "projectedPlainDocuments": 3270406
+      },
+      "bail_order": {
+        "sampleCount": 25,
+        "sampleShare": 0.125,
+        "projectedPlainDocuments": 2404711
+      },
+      "decided_brief": {
+        "sampleCount": 11,
+        "sampleShare": 0.055,
+        "projectedPlainDocuments": 1058073
+      },
+      "reference_stub": {
+        "sampleCount": 5,
+        "sampleShare": 0.025,
+        "projectedPlainDocuments": 480942
+      }
+    },
+    "byMethod": {
+      "unclassified_disposal:DISPOSED OFF": 65,
+      "disposal_nature_merits": 36,
+      "disposal_nature_procedural": 34,
+      "disposal_nature_bail": 13,
+      "text_bail_phrase": 12,
+      "disposal_nature_merits_short": 11,
+      "unclassified_disposal:DISPOSED OF": 11,
+      "unclassified_disposal:CLOSED": 10,
+      "below_stub_length": 4,
+      "unclassified_disposal:DISPOSED": 3,
+      "pointer_phrase": 1
+    },
+    "meanCharsByClass": {
+      "decided_brief": 981,
+      "decided": 21053,
+      "bail_order": 6047,
+      "unclassified": 8204,
+      "procedural_disposal": 1421,
+      "reference_stub": 436
+    },
+    "caveats": [
+      "`decided` is an UPPER BOUND on the authority share: it means a merits disposal long enough to contain reasoning, not that reasoning is present.",
+      "Court-year cells are chosen for spread, not drawn at random from the corpus. Indicative, not a corpus rate.",
+      "Documents with no text layer are excluded and counted, never classified on length alone.",
+      "Does not supersede docs/HC_ORDER_TYPES.json — that measures the DISJOINT mobile variant. These are two populations, not two estimates of one."
+    ]
+  },
+  "keyFindings": {
+    "unclassifiedShare": 0.445,
+    "unclassifiedProjectedPlainDocuments": 8560769,
+    "residueMethodsAccountForAllUnclassified": true,
+    "disposedFamilySampleCount": 89,
+    "decidedUpperBoundShare": 0.18,
+    "decidedUpperBoundProjectedPlainDocuments": 3462783,
+    "mobileVariantIsDisjointWarning": "metadata-mobile.parquet only — 4 of 25 courts, disjoint from the plain files",
+    "mobileJudgmentShareRange": [
+      0.007493501837758485,
+      0.18640453605405727
+    ]
+  },
+  "residueProjection": [
+    {
+      "method": "unclassified_disposal:DISPOSED OFF",
+      "sampleCount": 65,
+      "sampleShare": 0.325,
+      "projectedPlainDocuments": 6252247
+    },
+    {
+      "method": "unclassified_disposal:DISPOSED OF",
+      "sampleCount": 11,
+      "sampleShare": 0.055,
+      "projectedPlainDocuments": 1058073
+    },
+    {
+      "method": "unclassified_disposal:CLOSED",
+      "sampleCount": 10,
+      "sampleShare": 0.05,
+      "projectedPlainDocuments": 961884
+    },
+    {
+      "method": "unclassified_disposal:DISPOSED",
+      "sampleCount": 3,
+      "sampleShare": 0.015,
+      "projectedPlainDocuments": 288565
+    }
+  ],
+  "heldResidue": {
+    "source": "services/ingest/src/hc-adjudicate.ts header, measured 14 Aug 2026 over held corpus",
+    "scope": "held corpus only; not a full-source-universe estimate",
+    "rowsApprox": 1720000,
+    "byDisposal": {
+      "DISPOSED OFF": 687076,
+      "DISPOSED OF": 497294,
+      "DISPOSED": 227304,
+      "DISPOSED OF NO COSTS": 115541,
+      "CLOSED": 54241,
+      "ORDERED": 34422
+    },
+    "modelPilot": {
+      "source": "docs/CURRENT_PLAN.md Q1.48 / services/ingest/src/hc-adjudicate.ts",
+      "documents": 40,
+      "spanVerified": 31,
+      "fabricatedSpan": 7,
+      "checkerFalseNegative": 1,
+      "cannotDetermine": 1,
+      "conclusion": "candidate generator with mandatory span verification only; not promotable as an autonomous classifier"
+    }
+  },
+  "sourceEvidenceChecks": {
+    "classifyKeepsDisposedUnclassified": true,
+    "adjudicateSelectsOnlyRefusedRows": true,
+    "adjudicateRequiresSpanVerification": true
+  },
+  "backlog": [
+    {
+      "id": "H1",
+      "owner": "CX1",
+      "status": "complete_plan",
+      "action": "Larger stratified sample plan prepared for DISPOSED*/CLOSED/ORDERED residue by court, year, length band, citation density, and script defect risk.",
+      "gate": "LIGHT completed; selector execution remains MEDIUM_CLEAN",
+      "promotionRisk": "none; sample planning only"
+    },
+    {
+      "id": "H2",
+      "owner": "CX1",
+      "status": "prepared_not_run",
+      "action": "Run read-only selector once DB pressure clears and write candidate sample rows to disposable CX1 JSONL.",
+      "gate": "MEDIUM_CLEAN",
+      "promotionRisk": "none; copied sample only"
+    },
+    {
+      "id": "H3",
+      "owner": "LCC/NEW2",
+      "status": "not_cx1_canonical_change",
+      "action": "If a larger CX1 sample confirms value, decide whether a candidate table/migration is worth building; model output remains span-verified candidate evidence only.",
+      "gate": "owner decision",
+      "promotionRisk": "high if model labels are promoted without evidence-span verification and review"
+    }
+  ]
+}

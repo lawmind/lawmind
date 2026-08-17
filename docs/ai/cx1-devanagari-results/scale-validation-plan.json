@@ -1,0 +1,151 @@
+{
+  "schema": "cx1-devanagari-scale-validation-plan-v1",
+  "generatedAt": "2026-08-17T12:42:50.873Z",
+  "status": "prepared_not_run",
+  "scope": "offline plan and selector SQL only; no DB query, PDF fetch, OCR, or production write",
+  "sources": {
+    "characterization": "docs/DEVANAGARI_EXTRACTION_DEFECTS.md",
+    "sampleManifest": "docs/ai/cx1-devanagari-results/sample-manifest.json",
+    "bakeoffResults": "docs/ai/cx1-devanagari-results/bakeoff-results.json",
+    "bakeoffReport": "docs/ai/CX1_DEVANAGARI_BAKEOFF.md"
+  },
+  "knownPopulationSignals": {
+    "devanagariDocumentShareLow": 0.0054,
+    "devanagariDocumentShareHigh": 0.0058,
+    "approximateCorpusDocumentsWithDevanagari": 40000,
+    "systematicSampleDevanagariDocuments": 395,
+    "systematicSampleDefectiveDocuments": 257,
+    "anyDefectShareAmongDevanagari": 0.650633
+  },
+  "bakeoffReadback": {
+    "manifestDocuments": 32,
+    "unpdf": {
+      "attempted": 32,
+      "usable": true,
+      "devanagariTokens": 28285,
+      "defectEvents": 2601
+    },
+    "poppler": {
+      "attempted": 32,
+      "usable": false,
+      "devanagariDropped": 32,
+      "devanagariTokens": 0
+    },
+    "ocr": {
+      "attempted": 8,
+      "usable": true,
+      "devanagariTokens": 1146,
+      "defectEvents": 2,
+      "citationPreservationProven": false
+    }
+  },
+  "strata": [
+    {
+      "court": "High Court Of Rajasthan",
+      "sampledDevanagariDocs": 127,
+      "defectiveDocs": 121,
+      "yearsSeen": "2013-2026",
+      "role": "highest_defect_rate",
+      "defectiveShare": 0.952756,
+      "targetDocuments": 32
+    },
+    {
+      "court": "Allahabad High Court",
+      "sampledDevanagariDocs": 134,
+      "defectiveDocs": 47,
+      "yearsSeen": "2022-2026",
+      "role": "largest_absolute_population",
+      "defectiveShare": 0.350746,
+      "targetDocuments": 32
+    },
+    {
+      "court": "High Court of Chhattisgarh",
+      "sampledDevanagariDocs": 43,
+      "defectiveDocs": 33,
+      "yearsSeen": "2023-2026",
+      "role": "high_defect_rate",
+      "defectiveShare": 0.767442,
+      "targetDocuments": 16
+    },
+    {
+      "court": "Bombay High Court",
+      "sampledDevanagariDocs": 16,
+      "defectiveDocs": 9,
+      "yearsSeen": "2014-2026",
+      "role": "mixed_defect_control",
+      "defectiveShare": 0.5625,
+      "targetDocuments": 10
+    },
+    {
+      "court": "High Court of Jharkhand",
+      "sampledDevanagariDocs": 15,
+      "defectiveDocs": 10,
+      "yearsSeen": "2023-2026",
+      "role": "high_defect_rate",
+      "defectiveShare": 0.666667,
+      "targetDocuments": 16
+    },
+    {
+      "court": "High Court of Uttarakhand",
+      "sampledDevanagariDocs": 8,
+      "defectiveDocs": 6,
+      "yearsSeen": "2023-2026",
+      "role": "small_high_defect_sample",
+      "defectiveShare": 0.75,
+      "targetDocuments": 10
+    },
+    {
+      "court": "High Court of Madhya Pradesh",
+      "sampledDevanagariDocs": 5,
+      "defectiveDocs": 2,
+      "yearsSeen": "2017-2023",
+      "role": "low_count_mixed_control",
+      "defectiveShare": 0.4,
+      "targetDocuments": 10
+    },
+    {
+      "court": "High Court of Delhi",
+      "sampledDevanagariDocs": 4,
+      "defectiveDocs": 2,
+      "yearsSeen": "2019-2024",
+      "role": "low_count_mixed_control",
+      "defectiveShare": 0.5,
+      "targetDocuments": 10
+    },
+    {
+      "court": "Patna High Court",
+      "sampledDevanagariDocs": 5,
+      "defectiveDocs": 0,
+      "yearsSeen": "2022-2026",
+      "role": "clean_control",
+      "defectiveShare": 0,
+      "targetDocuments": 12
+    }
+  ],
+  "proposedRun": {
+    "targetDocuments": 148,
+    "ocrPolicy": "Run OCR only where unpdf is structurally defective and Poppler fails script-retention gates.",
+    "citationBearingRequirement": "Prioritize documents with real citation strings so OCR citation preservation is measured, not inferred.",
+    "gates": {
+      "acceptPopplerOnlyIf": [
+        "structurally clean",
+        ">= 0.80 Devanagari-token retention vs unpdf",
+        ">= 0.80 character retention vs unpdf",
+        "no expected-citation regression",
+        "no case-name token regression"
+      ],
+      "promoteOcrOnlyIf": [
+        "source text retained with provenance",
+        "extractor/version/settings/hash recorded",
+        "citation strings survive and pass the five-state citation harness",
+        "case-name preservation gate passes",
+        "manual review route exists for retention failures"
+      ]
+    }
+  },
+  "outputs": {
+    "plan": "docs/ai/cx1-devanagari-results/scale-validation-plan.json",
+    "selectorSql": "docs/ai/cx1-devanagari-results/scale-validation-selector.sql",
+    "report": "docs/ai/CX1_DEVANAGARI_SCALE_VALIDATION.md"
+  }
+}

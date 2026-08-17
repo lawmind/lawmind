@@ -1,0 +1,2805 @@
+{
+  "kind": "cx1_devanagari_bakeoff_results",
+  "createdAt": "2026-08-17T10:00:59.332Z",
+  "manifest": "docs/ai/cx1-devanagari-results/sample-manifest.json",
+  "controls": {
+    "poppler": "C:/Program Files/Git/mingw64/bin/pdftotext.exe",
+    "ocr": "C:/Program Files/Tesseract-OCR/tesseract.exe (hin+eng best, 250 dpi, psm 6)",
+    "ocrRouting": "only when unpdf and Poppler both have structural defects; cap 8"
+  },
+  "aggregates": {
+    "unpdf": {
+      "attempted": 32,
+      "succeeded": 32,
+      "usable": true,
+      "devanagariDropped": 0,
+      "devanagariDroppedRate": 0,
+      "pureAsciiOutput": 0,
+      "devanagariTokens": 28285,
+      "failureRate": 0,
+      "runtimeMs": {
+        "p50": 26.74,
+        "p95": 149.62,
+        "mean": 39.93
+      },
+      "validDevanagariTokenRate": 0.940993,
+      "orphanedMatras": 1986,
+      "controlAdjacency": 546,
+      "latin1Bleed": 69,
+      "textChars": 821384,
+      "expectedCitationsPresent": 4,
+      "expectedCitations": 4,
+      "caseNameTokensPresent": 169,
+      "caseNameTokens": 190
+    },
+    "poppler": {
+      "attempted": 32,
+      "succeeded": 32,
+      "usable": false,
+      "devanagariDropped": 32,
+      "devanagariDroppedRate": 1,
+      "pureAsciiOutput": 27,
+      "devanagariTokens": 0,
+      "failureRate": 0,
+      "runtimeMs": {
+        "p50": 35.98,
+        "p95": 129.78,
+        "mean": 53.15
+      },
+      "validDevanagariTokenRate": null,
+      "orphanedMatras": 0,
+      "controlAdjacency": 0,
+      "latin1Bleed": 0,
+      "textChars": 667598,
+      "expectedCitationsPresent": 4,
+      "expectedCitations": 4,
+      "caseNameTokensPresent": 169,
+      "caseNameTokens": 190
+    },
+    "ocr_tesseract_hin_eng": {
+      "attempted": 8,
+      "succeeded": 8,
+      "usable": true,
+      "devanagariDropped": 0,
+      "devanagariDroppedRate": 0,
+      "pureAsciiOutput": 0,
+      "devanagariTokens": 1146,
+      "failureRate": 0,
+      "runtimeMs": {
+        "p50": 4337.76,
+        "p95": 11017.64,
+        "mean": 4848.75
+      },
+      "validDevanagariTokenRate": 0.991274,
+      "orphanedMatras": 2,
+      "controlAdjacency": 0,
+      "latin1Bleed": 0,
+      "textChars": 31366,
+      "expectedCitationsPresent": 0,
+      "expectedCitations": 0,
+      "caseNameTokensPresent": 40,
+      "caseNameTokens": 49
+    }
+  },
+  "documents": [
+    {
+      "id": "182b5ab1-b1ce-48bc-9e55-0999cf7535f6",
+      "court": "High Court Of Rajasthan",
+      "year": 2014,
+      "defectClasses": [
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 82.91,
+          "metrics": {
+            "chars": 3840,
+            "bytes": 4088,
+            "devanagariTokens": 57,
+            "validDevanagariTokens": 21,
+            "validDevanagariTokenRate": 0.368421,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 49,
+            "latin1Bleed": 0,
+            "defectEvents": 49,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 0.875,
+            "structure": {
+              "lines": 78,
+              "nonemptyLines": 78,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 3
+            },
+            "sha256": "3929810832ccdd1549c4588c2cddb364c1d46f3f3fdba4388f1b6592514f2a90"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 27.65,
+          "metrics": {
+            "chars": 3630,
+            "bytes": 3630,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 0.875,
+            "structure": {
+              "lines": 37,
+              "nonemptyLines": 22,
+              "blankSeparatedParagraphs": 14,
+              "numberedParagraphs": 4
+            },
+            "sha256": "11c07f774eb316f94f1ffcaa1248fcbc4be899f69d294aa621df9c5f6d991d73"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 4500.64,
+          "metrics": {
+            "chars": 3955,
+            "bytes": 4391,
+            "devanagariTokens": 49,
+            "validDevanagariTokens": 49,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 0.875,
+            "structure": {
+              "lines": 92,
+              "nonemptyLines": 79,
+              "blankSeparatedParagraphs": 13,
+              "numberedParagraphs": 3
+            },
+            "sha256": "cca465b41630344c6b45a4255ba67160a7862cba33eb0be8be3004952f3dc551"
+          }
+        }
+      ],
+      "pdfBytes": 67435,
+      "downloadMs": 220.94,
+      "pages": 4
+    },
+    {
+      "id": "0a91edf8-1a15-47ac-adca-3c4e109006e1",
+      "court": "High Court Of Rajasthan",
+      "year": 2013,
+      "defectClasses": [
+        "orphaned_matra",
+        "latin1_bleed"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 27.58,
+          "metrics": {
+            "chars": 2384,
+            "bytes": 5427,
+            "devanagariTokens": 460,
+            "validDevanagariTokens": 408,
+            "validDevanagariTokenRate": 0.886957,
+            "orphanedMatras": 40,
+            "orphanedMatraRate": 0.086957,
+            "controlAdjacency": 0,
+            "latin1Bleed": 34,
+            "defectEvents": 74,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 54,
+              "nonemptyLines": 54,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 2
+            },
+            "sha256": "0ecc101e2a8ea6f5c397ec004411d246a0506e9ed5d4f4621dc9751ed1033381"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 29.63,
+          "metrics": {
+            "chars": 249,
+            "bytes": 249,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 19,
+              "nonemptyLines": 16,
+              "blankSeparatedParagraphs": 2,
+              "numberedParagraphs": 4
+            },
+            "sha256": "0fc366fbff55f93d619fc51dbf137d7385a13b453c92972c871cddfaa8c7d3c4"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 4337.76,
+          "metrics": {
+            "chars": 2664,
+            "bytes": 6342,
+            "devanagariTokens": 428,
+            "validDevanagariTokens": 428,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 64,
+              "nonemptyLines": 54,
+              "blankSeparatedParagraphs": 10,
+              "numberedParagraphs": 2
+            },
+            "sha256": "e4734ed6ada265c55861de61a1f71825816c3fa9a0dcb40c911dd1a10db4f20f"
+          }
+        }
+      ],
+      "pdfBytes": 44215,
+      "downloadMs": 80.3,
+      "pages": 2
+    },
+    {
+      "id": "09f0b4e5-c784-4471-830a-72c4fc63e9ac",
+      "court": "High Court Of Rajasthan",
+      "year": 2013,
+      "defectClasses": [
+        "orphaned_matra"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 157.54,
+          "metrics": {
+            "chars": 102537,
+            "bytes": 104847,
+            "devanagariTokens": 275,
+            "validDevanagariTokens": 273,
+            "validDevanagariTokenRate": 0.992727,
+            "orphanedMatras": 71,
+            "orphanedMatraRate": 0.258182,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 71,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20134SCC690",
+              "20003SCC59",
+              "20091SCC599",
+              "19903SCC655",
+              "19941SCC1",
+              "20024SCC726",
+              "20061SCC667",
+              "AIR1993SC75"
+            ],
+            "caseNameTokens": 9,
+            "caseNameTokensPresent": 9,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 2650,
+              "nonemptyLines": 2650,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 29
+            },
+            "sha256": "874768bd69df6ffbaa0fdac705d1d464aba713fc668027b8ace001eaeff5699e"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 129.78,
+          "metrics": {
+            "chars": 101130,
+            "bytes": 101130,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20134SCC690",
+              "20003SCC59",
+              "20091SCC599",
+              "19903SCC655",
+              "19941SCC1",
+              "20024SCC726",
+              "20061SCC667",
+              "AIR1993SC75"
+            ],
+            "caseNameTokens": 9,
+            "caseNameTokensPresent": 9,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 1381,
+              "nonemptyLines": 1158,
+              "blankSeparatedParagraphs": 212,
+              "numberedParagraphs": 18
+            },
+            "sha256": "bb5e55546240dd8a49844eab8d82f8bf95944928227236b7b5eb7afa4a0faeb0"
+          }
+        }
+      ],
+      "pdfBytes": 313290,
+      "downloadMs": 152.66,
+      "pages": 91
+    },
+    {
+      "id": "a4d49ba4-cec3-4727-8bb4-80563d85953b",
+      "court": "High Court Of Rajasthan",
+      "year": 2013,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 17.82,
+          "metrics": {
+            "chars": 2696,
+            "bytes": 2704,
+            "devanagariTokens": 2,
+            "validDevanagariTokens": 2,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 54,
+              "nonemptyLines": 54,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 1
+            },
+            "sha256": "56c51ed60ea9ebedfb37190b7dd79058bbff566fd2d8aac045369dfc419ada26"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 26.59,
+          "metrics": {
+            "chars": 2630,
+            "bytes": 2630,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 15,
+              "nonemptyLines": 12,
+              "blankSeparatedParagraphs": 2,
+              "numberedParagraphs": 0
+            },
+            "sha256": "478dbed1bc5ecc380f87a3e34dfe818d8c4bdaa2a3af1a5125bea2a4cfda8457"
+          }
+        }
+      ],
+      "pdfBytes": 36865,
+      "downloadMs": 59.4,
+      "pages": 2
+    },
+    {
+      "id": "004cca68-1552-44ba-88dd-1a25ab8645b2",
+      "court": "High Court Of Rajasthan",
+      "year": 2015,
+      "defectClasses": [
+        "orphaned_matra",
+        "latin1_bleed"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 12.97,
+          "metrics": {
+            "chars": 1434,
+            "bytes": 3199,
+            "devanagariTokens": 248,
+            "validDevanagariTokens": 209,
+            "validDevanagariTokenRate": 0.842742,
+            "orphanedMatras": 29,
+            "orphanedMatraRate": 0.116935,
+            "controlAdjacency": 0,
+            "latin1Bleed": 26,
+            "defectEvents": 55,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 30,
+              "nonemptyLines": 30,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 0
+            },
+            "sha256": "66113b3ed9b7c9afc7e26849cd81c8342b79c8e509ea2c68687a9f0e4a9324c7"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 27.37,
+          "metrics": {
+            "chars": 229,
+            "bytes": 229,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 26,
+              "nonemptyLines": 12,
+              "blankSeparatedParagraphs": 7,
+              "numberedParagraphs": 0
+            },
+            "sha256": "b31e7e50bcf9d6c3b40b9111998985495e558ddcd4a8c3bfe930cd6ca6f567c4"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 3024.12,
+          "metrics": {
+            "chars": 1709,
+            "bytes": 3857,
+            "devanagariTokens": 229,
+            "validDevanagariTokens": 228,
+            "validDevanagariTokenRate": 0.995633,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 32,
+              "nonemptyLines": 31,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 0
+            },
+            "sha256": "46c0d43fb3705692ea5e3583d8870aabceacc4571147bd54123e860f2287236c"
+          }
+        }
+      ],
+      "pdfBytes": 52880,
+      "downloadMs": 66.69,
+      "pages": 1
+    },
+    {
+      "id": "0c42638b-c7da-4063-b994-ef73510f0ba6",
+      "court": "High Court Of Rajasthan",
+      "year": 2024,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 90.27,
+          "metrics": {
+            "chars": 56197,
+            "bytes": 58768,
+            "devanagariTokens": 329,
+            "validDevanagariTokens": 249,
+            "validDevanagariTokenRate": 0.756839,
+            "orphanedMatras": 46,
+            "orphanedMatraRate": 0.139818,
+            "controlAdjacency": 79,
+            "latin1Bleed": 0,
+            "defectEvents": 125,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [
+              "19754SCC664",
+              "201616SCC483",
+              "20049SCC512",
+              "20128SCC706",
+              "19892SCC163",
+              "19982SCC70",
+              "201713SCC174",
+              "202212SCC641"
+            ],
+            "caseNameTokens": 6,
+            "caseNameTokensPresent": 6,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 1004,
+              "nonemptyLines": 1004,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 91
+            },
+            "sha256": "c335eee7b75bb892d8f10daeeff742def7a79a1a6f0252e5a8334bcb9f4f368a"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 106.89,
+          "metrics": {
+            "chars": 54594,
+            "bytes": 54604,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [
+              "19754SCC664",
+              "201616SCC483",
+              "20049SCC512",
+              "20128SCC706",
+              "19892SCC163",
+              "19982SCC70",
+              "201713SCC174",
+              "202212SCC641"
+            ],
+            "caseNameTokens": 6,
+            "caseNameTokensPresent": 6,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 667,
+              "nonemptyLines": 465,
+              "blankSeparatedParagraphs": 201,
+              "numberedParagraphs": 63
+            },
+            "sha256": "ae236d252ba6abc38f70be86622ecbbf887f9e9ce37198ca52295639c22db29c"
+          }
+        }
+      ],
+      "pdfBytes": 252099,
+      "downloadMs": 66.16,
+      "pages": 30
+    },
+    {
+      "id": "51ac34fc-969d-4388-9b9f-b856402977cc",
+      "court": "High Court Of Rajasthan",
+      "year": 2026,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 17.69,
+          "metrics": {
+            "chars": 8334,
+            "bytes": 8538,
+            "devanagariTokens": 16,
+            "validDevanagariTokens": 14,
+            "validDevanagariTokenRate": 0.875,
+            "orphanedMatras": 3,
+            "orphanedMatraRate": 0.1875,
+            "controlAdjacency": 2,
+            "latin1Bleed": 0,
+            "defectEvents": 5,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [
+              "20168SCC293"
+            ],
+            "caseNameTokens": 10,
+            "caseNameTokensPresent": 10,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 165,
+              "nonemptyLines": 165,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 25
+            },
+            "sha256": "534bd556d381f7eba83f7b1019f68999470612a31f80cee62f9c7e42c18c8510"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 33.1,
+          "metrics": {
+            "chars": 8225,
+            "bytes": 8225,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [
+              "20168SCC293"
+            ],
+            "caseNameTokens": 10,
+            "caseNameTokensPresent": 10,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 100,
+              "nonemptyLines": 58,
+              "blankSeparatedParagraphs": 41,
+              "numberedParagraphs": 12
+            },
+            "sha256": "b26638006094cdc8cb102facb5bd8abc444a2c15e4e6e50c35b85088a69e24d3"
+          }
+        }
+      ],
+      "pdfBytes": 114015,
+      "downloadMs": 58.04,
+      "pages": 6
+    },
+    {
+      "id": "9212cc7e-10b5-4ba7-909b-63150e2bea00",
+      "court": "High Court Of Rajasthan",
+      "year": 2022,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 15.13,
+          "metrics": {
+            "chars": 7481,
+            "bytes": 8179,
+            "devanagariTokens": 95,
+            "validDevanagariTokens": 79,
+            "validDevanagariTokenRate": 0.831579,
+            "orphanedMatras": 15,
+            "orphanedMatraRate": 0.157895,
+            "controlAdjacency": 20,
+            "latin1Bleed": 0,
+            "defectEvents": 35,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 142,
+              "nonemptyLines": 142,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 6
+            },
+            "sha256": "96b1c182ba4e4d87abbffb92c9eb6ac9778ee8b762723a90590c41a733cfcde5"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 35.98,
+          "metrics": {
+            "chars": 7001,
+            "bytes": 7001,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 131,
+              "nonemptyLines": 76,
+              "blankSeparatedParagraphs": 54,
+              "numberedParagraphs": 3
+            },
+            "sha256": "834fffafa454071d7220195e5d4529c2b56942ece40a021ec6134adab2669b2a"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 11017.64,
+          "metrics": {
+            "chars": 7474,
+            "bytes": 8210,
+            "devanagariTokens": 85,
+            "validDevanagariTokens": 77,
+            "validDevanagariTokenRate": 0.905882,
+            "orphanedMatras": 2,
+            "orphanedMatraRate": 0.023529,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 2,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 179,
+              "nonemptyLines": 143,
+              "blankSeparatedParagraphs": 36,
+              "numberedParagraphs": 4
+            },
+            "sha256": "d4b2712d632f9aeb5d957f71c119b752c637cba32ca5a344a6bc5db3e3c67c7a"
+          }
+        }
+      ],
+      "pdfBytes": 95054,
+      "downloadMs": 54.1,
+      "pages": 5
+    },
+    {
+      "id": "ef0d76fb-06ab-47c8-82ab-0e6ec5f80ad9",
+      "court": "High Court Of Rajasthan",
+      "year": 2023,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 33.27,
+          "metrics": {
+            "chars": 21858,
+            "bytes": 22512,
+            "devanagariTokens": 85,
+            "validDevanagariTokens": 38,
+            "validDevanagariTokenRate": 0.447059,
+            "orphanedMatras": 27,
+            "orphanedMatraRate": 0.317647,
+            "controlAdjacency": 52,
+            "latin1Bleed": 0,
+            "defectEvents": 79,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 2,
+            "caseNameTokensPresent": 2,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 397,
+              "nonemptyLines": 397,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 52
+            },
+            "sha256": "7cadeda65c315af20e6e6dde248984df8dfee2f8d4dcc139d55d6a534bd5c8bf"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 53.45,
+          "metrics": {
+            "chars": 21424,
+            "bytes": 21424,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 2,
+            "caseNameTokensPresent": 2,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 134,
+              "nonemptyLines": 77,
+              "blankSeparatedParagraphs": 56,
+              "numberedParagraphs": 18
+            },
+            "sha256": "e252c3521a194c85efe9b371159c15f1c1148c2fba8eea6fb244d413088486e0"
+          }
+        }
+      ],
+      "pdfBytes": 156703,
+      "downloadMs": 63.81,
+      "pages": 14
+    },
+    {
+      "id": "cf19aced-3c98-4ef1-9c3b-c421e23b6fcc",
+      "court": "High Court Of Rajasthan",
+      "year": 2021,
+      "defectClasses": [
+        "orphaned_matra"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 53.94,
+          "metrics": {
+            "chars": 33614,
+            "bytes": 34006,
+            "devanagariTokens": 42,
+            "validDevanagariTokens": 38,
+            "validDevanagariTokenRate": 0.904762,
+            "orphanedMatras": 12,
+            "orphanedMatraRate": 0.285714,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 12,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "AIR1966SC343"
+            ],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 793,
+              "nonemptyLines": 793,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 174
+            },
+            "sha256": "cb823f39240b8872ed4edfb915ab50fcaad09222aa36922c7dfb42a9449d05dd"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 68.96,
+          "metrics": {
+            "chars": 33392,
+            "bytes": 33392,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "AIR1966SC343"
+            ],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 907,
+              "nonemptyLines": 465,
+              "blankSeparatedParagraphs": 441,
+              "numberedParagraphs": 156
+            },
+            "sha256": "c42865d41216b612008ea557c694b254d467ba4e2c3e0889fda3a7c3aa514ca9"
+          }
+        }
+      ],
+      "pdfBytes": 132489,
+      "downloadMs": 59.59,
+      "pages": 24
+    },
+    {
+      "id": "0d2595a6-7721-4920-844a-331d4644b40f",
+      "court": "High Court Of Rajasthan",
+      "year": 2025,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 45.37,
+          "metrics": {
+            "chars": 31107,
+            "bytes": 33045,
+            "devanagariTokens": 246,
+            "validDevanagariTokens": 246,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [
+              "20139SCC32",
+              "19711SCC286",
+              "19892SCC163",
+              "19932SCC130",
+              "19954SCC153",
+              "20029SCC613",
+              "20044SCC671",
+              "20099SCC403",
+              "202118SCC790",
+              "20051SCC754",
+              "20236SCC401"
+            ],
+            "caseNameTokens": 6,
+            "caseNameTokensPresent": 6,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 654,
+              "nonemptyLines": 654,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 119
+            },
+            "sha256": "ede9f2aa4fdc222a35283b8e2ee7a7c5d127700e1ed4a561fc64d87d8a38635a"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 69.59,
+          "metrics": {
+            "chars": 29945,
+            "bytes": 29945,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [
+              "20139SCC32",
+              "19711SCC286",
+              "19892SCC163",
+              "19932SCC130",
+              "19954SCC153",
+              "20029SCC613",
+              "20044SCC671",
+              "20099SCC403",
+              "202118SCC790",
+              "20051SCC754",
+              "20236SCC401"
+            ],
+            "caseNameTokens": 6,
+            "caseNameTokensPresent": 6,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 676,
+              "nonemptyLines": 369,
+              "blankSeparatedParagraphs": 306,
+              "numberedParagraphs": 95
+            },
+            "sha256": "9b0dbc49cfd936c1cdc36587782917d64375dd26e352cbf619b45b1adcae8073"
+          }
+        }
+      ],
+      "pdfBytes": 194181,
+      "downloadMs": 69.14,
+      "pages": 17
+    },
+    {
+      "id": "0156070e-b8b3-4478-aa18-b49c7acf6f12",
+      "court": "High Court Of Rajasthan",
+      "year": 2014,
+      "defectClasses": [
+        "orphaned_matra",
+        "latin1_bleed"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 109.76,
+          "metrics": {
+            "chars": 99978,
+            "bytes": 100714,
+            "devanagariTokens": 95,
+            "validDevanagariTokens": 85,
+            "validDevanagariTokenRate": 0.894737,
+            "orphanedMatras": 8,
+            "orphanedMatraRate": 0.084211,
+            "controlAdjacency": 0,
+            "latin1Bleed": 9,
+            "defectEvents": 17,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20128SCC203",
+              "20126SCC312",
+              "19762SCC310",
+              "19781SCC552",
+              "20012SCC386",
+              "20113SCC238",
+              "19791SCC380",
+              "20132SCC772",
+              "AIR1972SC1767",
+              "AIR1958SC731"
+            ],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 0.571429,
+            "structure": {
+              "lines": 1788,
+              "nonemptyLines": 1788,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 84
+            },
+            "sha256": "727ca37d791f16cf50d2598dc9a93fc43bfd98e6ba99189cf3992e2d356031db"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 120.73,
+          "metrics": {
+            "chars": 99537,
+            "bytes": 99537,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20128SCC203",
+              "20126SCC312",
+              "19762SCC310",
+              "19781SCC552",
+              "20012SCC386",
+              "20113SCC238",
+              "19791SCC380",
+              "20132SCC772",
+              "AIR1972SC1767",
+              "AIR1958SC731"
+            ],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 0.571429,
+            "structure": {
+              "lines": 577,
+              "nonemptyLines": 376,
+              "blankSeparatedParagraphs": 200,
+              "numberedParagraphs": 29
+            },
+            "sha256": "795dbd1f3ffcbb8bd9ef29dc776074fb348cf61fda7916df7a06d8f3d23236b1"
+          }
+        }
+      ],
+      "pdfBytes": 215096,
+      "downloadMs": 66.75,
+      "pages": 46
+    },
+    {
+      "id": "7d1619a1-8b50-44d8-b100-68406f001cf1",
+      "court": "Allahabad High Court",
+      "year": 2022,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 8.6,
+          "metrics": {
+            "chars": 3704,
+            "bytes": 4066,
+            "devanagariTokens": 54,
+            "validDevanagariTokens": 46,
+            "validDevanagariTokenRate": 0.851852,
+            "orphanedMatras": 2,
+            "orphanedMatraRate": 0.037037,
+            "controlAdjacency": 1,
+            "latin1Bleed": 0,
+            "defectEvents": 3,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 3,
+            "caseNameTokensPresent": 3,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 81,
+              "nonemptyLines": 81,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 5
+            },
+            "sha256": "c8c9770a45689cf9040ec6dfaf5de425d23443ac165042044d419e4d6b5c000c"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 26.82,
+          "metrics": {
+            "chars": 3469,
+            "bytes": 3469,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 3,
+            "caseNameTokensPresent": 3,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 35,
+              "nonemptyLines": 26,
+              "blankSeparatedParagraphs": 8,
+              "numberedParagraphs": 5
+            },
+            "sha256": "a6807a8ac63e697c46f889af83499e64a8589d77a7349122d775c4e6680242d7"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 3331.66,
+          "metrics": {
+            "chars": 3787,
+            "bytes": 4163,
+            "devanagariTokens": 44,
+            "validDevanagariTokens": 44,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 3,
+            "caseNameTokensPresent": 3,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 98,
+              "nonemptyLines": 81,
+              "blankSeparatedParagraphs": 17,
+              "numberedParagraphs": 4
+            },
+            "sha256": "7d10141226f80ec534108715b9e971e2cebbd84b5ddaef98e45b4a5e17b8a6ce"
+          }
+        }
+      ],
+      "pdfBytes": 48171,
+      "downloadMs": 66.86,
+      "pages": 3
+    },
+    {
+      "id": "2075587a-7532-4734-8692-4c14baaec87a",
+      "court": "Allahabad High Court",
+      "year": 2022,
+      "defectClasses": [
+        "orphaned_matra"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 14.11,
+          "metrics": {
+            "chars": 7208,
+            "bytes": 8394,
+            "devanagariTokens": 134,
+            "validDevanagariTokens": 128,
+            "validDevanagariTokenRate": 0.955224,
+            "orphanedMatras": 1,
+            "orphanedMatraRate": 0.007463,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 1,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "AIR2011SC1132"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 121,
+              "nonemptyLines": 121,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 12
+            },
+            "sha256": "750619682107187d266758926cf70df3879de454efbc3e6b279fea2379831ecc"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 34.43,
+          "metrics": {
+            "chars": 6484,
+            "bytes": 6484,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "AIR2011SC1132"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 40,
+              "nonemptyLines": 34,
+              "blankSeparatedParagraphs": 4,
+              "numberedParagraphs": 11
+            },
+            "sha256": "d4ab8c79938eefaa65eb531b6e3766629063769d4afda1877032620623f80ab9"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 6493.96,
+          "metrics": {
+            "chars": 7162,
+            "bytes": 8160,
+            "devanagariTokens": 113,
+            "validDevanagariTokens": 113,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "AIR2077SC32"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 124,
+              "nonemptyLines": 106,
+              "blankSeparatedParagraphs": 18,
+              "numberedParagraphs": 10
+            },
+            "sha256": "736c75c8c7aeb785dc86b5e70bd220a60deefb44431c1dd5e7d67b8301d13c99"
+          }
+        }
+      ],
+      "pdfBytes": 78037,
+      "downloadMs": 64.26,
+      "pages": 4
+    },
+    {
+      "id": "adbcfd38-d2ca-4d7e-81de-7ddc3166a4bf",
+      "court": "Allahabad High Court",
+      "year": 2017,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 12.85,
+          "metrics": {
+            "chars": 5019,
+            "bytes": 5035,
+            "devanagariTokens": 2,
+            "validDevanagariTokens": 2,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 84,
+              "nonemptyLines": 84,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 8
+            },
+            "sha256": "fc5965411e7472b9af5fa7cb2dfc4bba87110d39b87564a5a21b4594ef349060"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 29.33,
+          "metrics": {
+            "chars": 5010,
+            "bytes": 5010,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 34,
+              "nonemptyLines": 31,
+              "blankSeparatedParagraphs": 2,
+              "numberedParagraphs": 5
+            },
+            "sha256": "e804cb76c146dd83932863222cefecb5a42ac67a03e192dbf8d727d846cf93f7"
+          }
+        }
+      ],
+      "pdfBytes": 54415,
+      "downloadMs": 53.11,
+      "pages": 2
+    },
+    {
+      "id": "143896b6-1e4e-40df-8014-f5629c72686a",
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 26.74,
+          "metrics": {
+            "chars": 14617,
+            "bytes": 36938,
+            "devanagariTokens": 2869,
+            "validDevanagariTokens": 2683,
+            "validDevanagariTokenRate": 0.935169,
+            "orphanedMatras": 113,
+            "orphanedMatraRate": 0.039387,
+            "controlAdjacency": 82,
+            "latin1Bleed": 0,
+            "defectEvents": 195,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 1,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 239,
+              "nonemptyLines": 239,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 0
+            },
+            "sha256": "c045e5b9db08479b8ad4e2397a4138aabd7f41652b9d7545c898066fc154bfd6"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 40.53,
+          "metrics": {
+            "chars": 831,
+            "bytes": 831,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 1,
+            "caseNameTokensPresent": 0,
+            "caseNamePreservationRate": 0,
+            "structure": {
+              "lines": 63,
+              "nonemptyLines": 29,
+              "blankSeparatedParagraphs": 22,
+              "numberedParagraphs": 6
+            },
+            "sha256": "80c633ea5959be384a281a403a3029686361aef5f830c093551fe1da34e05f99"
+          }
+        }
+      ],
+      "pdfBytes": 95528,
+      "downloadMs": 57.47,
+      "pages": 9
+    },
+    {
+      "id": "203df9a4-c587-4fa3-84be-3f73bbe40732",
+      "court": "Allahabad High Court",
+      "year": 2025,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 29.85,
+          "metrics": {
+            "chars": 18946,
+            "bytes": 46747,
+            "devanagariTokens": 4248,
+            "validDevanagariTokens": 3470,
+            "validDevanagariTokenRate": 0.816855,
+            "orphanedMatras": 757,
+            "orphanedMatraRate": 0.178202,
+            "controlAdjacency": 3,
+            "latin1Bleed": 0,
+            "defectEvents": 760,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 9,
+            "caseNameTokensPresent": 1,
+            "caseNamePreservationRate": 0.111111,
+            "structure": {
+              "lines": 380,
+              "nonemptyLines": 380,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 0
+            },
+            "sha256": "c9f2ee6f7ceaf1f68c32a74db74894f76efc1cefde6ffa6947544ab033d1eae8"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 48.32,
+          "metrics": {
+            "chars": 2098,
+            "bytes": 2098,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 9,
+            "caseNameTokensPresent": 1,
+            "caseNamePreservationRate": 0.111111,
+            "structure": {
+              "lines": 104,
+              "nonemptyLines": 81,
+              "blankSeparatedParagraphs": 22,
+              "numberedParagraphs": 0
+            },
+            "sha256": "abb0779c3283b0a13ce44ae3ff5e0c19a09a434e5c42d20625b3c16a8a345b69"
+          }
+        }
+      ],
+      "pdfBytes": 118287,
+      "downloadMs": 54.32,
+      "pages": 10
+    },
+    {
+      "id": "04ceaa01-4d63-4b9a-904a-dae719dd030b",
+      "court": "Allahabad High Court",
+      "year": 2026,
+      "defectClasses": [
+        "orphaned_matra"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 7.37,
+          "metrics": {
+            "chars": 2252,
+            "bytes": 2316,
+            "devanagariTokens": 8,
+            "validDevanagariTokens": 7,
+            "validDevanagariTokenRate": 0.875,
+            "orphanedMatras": 1,
+            "orphanedMatraRate": 0.125,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 1,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 12,
+            "caseNameTokensPresent": 12,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 52,
+              "nonemptyLines": 52,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 7
+            },
+            "sha256": "4ecf53d04ac6e47f6c97134f6fd4867dcc39fead91f5956dbbeecba37827cc6c"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 29.16,
+          "metrics": {
+            "chars": 2314,
+            "bytes": 2314,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 12,
+            "caseNameTokensPresent": 12,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 48,
+              "nonemptyLines": 25,
+              "blankSeparatedParagraphs": 22,
+              "numberedParagraphs": 6
+            },
+            "sha256": "46642ebe1afd45d04f11bdd57f5033c7fba7c9e7873af1e3124eb5bff14f8d7f"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 2790.24,
+          "metrics": {
+            "chars": 2361,
+            "bytes": 2427,
+            "devanagariTokens": 6,
+            "validDevanagariTokens": 6,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 12,
+            "caseNameTokensPresent": 12,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 59,
+              "nonemptyLines": 55,
+              "blankSeparatedParagraphs": 4,
+              "numberedParagraphs": 7
+            },
+            "sha256": "411dd4c78c359d7c00ccae43b4cddd5dc8bd284bdba4b8be90f96c6f289227fb"
+          }
+        }
+      ],
+      "pdfBytes": 382038,
+      "downloadMs": 98.17,
+      "pages": 2
+    },
+    {
+      "id": "4fcdf1fc-5f1f-47a1-8fae-556493ed91cb",
+      "court": "Allahabad High Court",
+      "year": 2021,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 84.12,
+          "metrics": {
+            "chars": 52614,
+            "bytes": 52713,
+            "devanagariTokens": 9,
+            "validDevanagariTokens": 9,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20124SCC79",
+              "201010SCC259",
+              "19733SCC881",
+              "19753SCC311",
+              "19833SCC470",
+              "19956SCC447",
+              "19977SCC712",
+              "20027SCC606",
+              "20088SCC270",
+              "200910SCC477",
+              "200912SCC546",
+              "20106SCC673",
+              "20099SCC719",
+              "20047SCC629",
+              "200612SCC459"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 1014,
+              "nonemptyLines": 1014,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 86
+            },
+            "sha256": "af58c01ed16c1f2f6f3d6ea6061ac0f028fd9eeeebcb640b662d2c1a649e6698"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 91.05,
+          "metrics": {
+            "chars": 52543,
+            "bytes": 52553,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20124SCC79",
+              "201010SCC259",
+              "19733SCC881",
+              "19753SCC311",
+              "19833SCC470",
+              "19956SCC447",
+              "19977SCC712",
+              "20027SCC606",
+              "20088SCC270",
+              "200910SCC477",
+              "200912SCC546",
+              "20106SCC673",
+              "20099SCC719",
+              "20047SCC629",
+              "200612SCC459"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 247,
+              "nonemptyLines": 183,
+              "blankSeparatedParagraphs": 63,
+              "numberedParagraphs": 61
+            },
+            "sha256": "137154c22024b4c5fc5ccf461b0e4babc9339786403324ecb7c9895d212344be"
+          }
+        }
+      ],
+      "pdfBytes": 179622,
+      "downloadMs": 56.47,
+      "pages": 37
+    },
+    {
+      "id": "1b9ac8d8-eac6-4e32-9a19-cb1b1e006525",
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 77.36,
+          "metrics": {
+            "chars": 138406,
+            "bytes": 318539,
+            "devanagariTokens": 17869,
+            "validDevanagariTokens": 17747,
+            "validDevanagariTokenRate": 0.993173,
+            "orphanedMatras": 675,
+            "orphanedMatraRate": 0.037775,
+            "controlAdjacency": 1,
+            "latin1Bleed": 0,
+            "defectEvents": 676,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20182SCC22"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 624,
+              "nonemptyLines": 624,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 73
+            },
+            "sha256": "1f1cd1f38753456507bacbb5f6576db6b468bb819078b5d9f44ff0b45eb894c2"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 111.75,
+          "metrics": {
+            "chars": 31476,
+            "bytes": 31476,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20182SCC22"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 132,
+              "nonemptyLines": 105,
+              "blankSeparatedParagraphs": 26,
+              "numberedParagraphs": 65
+            },
+            "sha256": "82906e3951892f566c4965338bfb85fdd51543f2827a9bf2d0360b51a9fd4ae5"
+          }
+        }
+      ],
+      "pdfBytes": 226628,
+      "downloadMs": 57.08,
+      "pages": 17
+    },
+    {
+      "id": "2ac2f496-77b9-4ea9-bca5-ec9f3c8b8093",
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 29.32,
+          "metrics": {
+            "chars": 16298,
+            "bytes": 16950,
+            "devanagariTokens": 67,
+            "validDevanagariTokens": 53,
+            "validDevanagariTokenRate": 0.791045,
+            "orphanedMatras": 16,
+            "orphanedMatraRate": 0.238806,
+            "controlAdjacency": 13,
+            "latin1Bleed": 0,
+            "defectEvents": 29,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 304,
+              "nonemptyLines": 304,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 32
+            },
+            "sha256": "38c390a59c766a8615e24ed103b153c0bc485dcddd8f317414265ea31c95c001"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 50,
+          "metrics": {
+            "chars": 15900,
+            "bytes": 15900,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 59,
+              "nonemptyLines": 46,
+              "blankSeparatedParagraphs": 12,
+              "numberedParagraphs": 26
+            },
+            "sha256": "1dbd562f05522cf6d2a7b9303a23f33f2b0624ba06bc16cb84b872497fbe45e4"
+          }
+        }
+      ],
+      "pdfBytes": 89067,
+      "downloadMs": 57.45,
+      "pages": 8
+    },
+    {
+      "id": "2c83f4c6-af2f-4909-9adf-cd97ec0e04c6",
+      "court": "Allahabad High Court",
+      "year": 2025,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 20.84,
+          "metrics": {
+            "chars": 10935,
+            "bytes": 14967,
+            "devanagariTokens": 552,
+            "validDevanagariTokens": 414,
+            "validDevanagariTokenRate": 0.75,
+            "orphanedMatras": 116,
+            "orphanedMatraRate": 0.210145,
+            "controlAdjacency": 142,
+            "latin1Bleed": 0,
+            "defectEvents": 258,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20066SCC255",
+              "200910SCC170",
+              "202012SCC70",
+              "19761SCC687",
+              "2011SCCONLINEALL2721",
+              "2017SCCONLINEALL3332",
+              "2023SCCONLINEALL11",
+              "AIR1975SC2117",
+              "AIR1964SC1249"
+            ],
+            "caseNameTokens": 3,
+            "caseNameTokensPresent": 3,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 199,
+              "nonemptyLines": 199,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 29
+            },
+            "sha256": "9c4a141dee1c222bb5e114eb32eb5516200ea1863044fc42930085818a9ed996"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 34.8,
+          "metrics": {
+            "chars": 8323,
+            "bytes": 8323,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "20066SCC255",
+              "200910SCC170",
+              "202012SCC70",
+              "19761SCC687",
+              "2011SCCONLINEALL2721",
+              "2017SCCONLINEALL3332",
+              "2023SCCONLINEALL11",
+              "AIR1975SC2117",
+              "AIR1964SC1249"
+            ],
+            "caseNameTokens": 3,
+            "caseNameTokensPresent": 3,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 62,
+              "nonemptyLines": 45,
+              "blankSeparatedParagraphs": 16,
+              "numberedParagraphs": 24
+            },
+            "sha256": "e2010cf733b6ad1450c8ad40f42d8d8b9413e45c7a4f99c752a69a7b152aa9f8"
+          }
+        }
+      ],
+      "pdfBytes": 85359,
+      "downloadMs": 55.4,
+      "pages": 7
+    },
+    {
+      "id": "2dfedb4e-8488-4fb4-a986-c5c0ccd7f48e",
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 8.46,
+          "metrics": {
+            "chars": 2269,
+            "bytes": 4133,
+            "devanagariTokens": 247,
+            "validDevanagariTokens": 194,
+            "validDevanagariTokenRate": 0.785425,
+            "orphanedMatras": 48,
+            "orphanedMatraRate": 0.194332,
+            "controlAdjacency": 21,
+            "latin1Bleed": 0,
+            "defectEvents": 69,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 53,
+              "nonemptyLines": 53,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 7
+            },
+            "sha256": "c9dbe2f7e5c3b0dfe99669b7cf01bbb461a82c130ead3b75086a08627ae65a36"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 25.01,
+          "metrics": {
+            "chars": 1100,
+            "bytes": 1100,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 66,
+              "nonemptyLines": 30,
+              "blankSeparatedParagraphs": 28,
+              "numberedParagraphs": 8
+            },
+            "sha256": "b450096da99279ba713095c4fb61aff89587a60ca0826e90b941f29fd6be43c2"
+          }
+        },
+        {
+          "method": "ocr_tesseract_hin_eng",
+          "runtimeMs": 3293.98,
+          "metrics": {
+            "chars": 2254,
+            "bytes": 4236,
+            "devanagariTokens": 192,
+            "validDevanagariTokens": 191,
+            "validDevanagariTokenRate": 0.994792,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 54,
+              "nonemptyLines": 51,
+              "blankSeparatedParagraphs": 3,
+              "numberedParagraphs": 6
+            },
+            "sha256": "57122a2337f93316cb520f2243e4c30925b761822a0f4839da51d18195cf1bb4"
+          }
+        }
+      ],
+      "pdfBytes": 55659,
+      "downloadMs": 50.51,
+      "pages": 2
+    },
+    {
+      "id": "678a550d-e735-4229-8ea2-1b5e1b0084b9",
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "defectClasses": [
+        "orphaned_matra",
+        "control_adjacency"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 29.61,
+          "metrics": {
+            "chars": 20235,
+            "bytes": 21366,
+            "devanagariTokens": 167,
+            "validDevanagariTokens": 93,
+            "validDevanagariTokenRate": 0.556886,
+            "orphanedMatras": 6,
+            "orphanedMatraRate": 0.035928,
+            "controlAdjacency": 81,
+            "latin1Bleed": 0,
+            "defectEvents": 87,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 320,
+              "nonemptyLines": 320,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 8
+            },
+            "sha256": "10e0b9c6941a7dbcda50473e64233af3b4f67643e2c453d05c7525d8422ace34"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 50.71,
+          "metrics": {
+            "chars": 19414,
+            "bytes": 19420,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 1,
+            "expectedCitationsPresent": 1,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 101,
+              "nonemptyLines": 87,
+              "blankSeparatedParagraphs": 13,
+              "numberedParagraphs": 4
+            },
+            "sha256": "c6b744c2d119b3fb29516ef90ba04b5490c45503ace4c6cf9067826f7732832a"
+          }
+        }
+      ],
+      "pdfBytes": 170585,
+      "downloadMs": 55.02,
+      "pages": 8
+    },
+    {
+      "id": "2f8b863a-29e3-46ba-9ad5-37924baa76a4",
+      "court": "Patna High Court",
+      "year": 2021,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 149.62,
+          "metrics": {
+            "chars": 107201,
+            "bytes": 108097,
+            "devanagariTokens": 66,
+            "validDevanagariTokens": 66,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "201111SCC140",
+              "20027SCC317",
+              "19911SCC371",
+              "201411SCC538",
+              "201612SCC172",
+              "19844SCC116",
+              "19732SCC793",
+              "199610SCC193",
+              "19772SCC99",
+              "19832SCC330",
+              "19871SCC1",
+              "20155SCC201",
+              "20134SCC131",
+              "200712SCC443",
+              "2021SCCONLINESC404",
+              "AIR1952SC159",
+              "AIR1977SC1063",
+              "AIR1983SC446",
+              "AIR1985SC1224",
+              "AIR1987SC350",
+              "AIR1989SC1890",
+              "AIR1954SC621"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 2017,
+              "nonemptyLines": 2017,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 219
+            },
+            "sha256": "9108a6a4e79f922d2e82eb6c3ba4a40a0d596f0abc0296b3612ab730eac0037a"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 169.57,
+          "metrics": {
+            "chars": 106722,
+            "bytes": 106722,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [
+              "201111SCC140",
+              "20027SCC317",
+              "19911SCC371",
+              "201411SCC538",
+              "201612SCC172",
+              "19844SCC116",
+              "19732SCC793",
+              "199610SCC193",
+              "19772SCC99",
+              "19832SCC330",
+              "19871SCC1",
+              "20155SCC201",
+              "20134SCC131",
+              "200712SCC443",
+              "2021SCCONLINESC404",
+              "AIR1952SC159",
+              "AIR1977SC1063",
+              "AIR1983SC446",
+              "AIR1985SC1224",
+              "AIR1987SC350",
+              "AIR1989SC1890",
+              "AIR1954SC621"
+            ],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 3004,
+              "nonemptyLines": 1536,
+              "blankSeparatedParagraphs": 1467,
+              "numberedParagraphs": 190
+            },
+            "sha256": "00ecc0f126725a188063593e08dae8feea36d5a0efc5e93c21e190d4d52e8ad1"
+          }
+        }
+      ],
+      "pdfBytes": 356593,
+      "downloadMs": 94.25,
+      "pages": 77
+    },
+    {
+      "id": "01f43760-cb7c-411c-9916-4c0c2efbaef4",
+      "court": "Patna High Court",
+      "year": 2023,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 21.42,
+          "metrics": {
+            "chars": 9069,
+            "bytes": 9081,
+            "devanagariTokens": 2,
+            "validDevanagariTokens": 2,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 239,
+              "nonemptyLines": 239,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 27
+            },
+            "sha256": "40195730ef773b6b9624110d99f1d681c9adbf47c87ff2fd72df4b69d9fa2bb7"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 38.43,
+          "metrics": {
+            "chars": 9061,
+            "bytes": 9061,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 241,
+              "nonemptyLines": 130,
+              "blankSeparatedParagraphs": 110,
+              "numberedParagraphs": 7
+            },
+            "sha256": "42d6dfb4aa05c1b5f7e98270e2aaab1ec0032bed7d9d58a31888c6f9660841df"
+          }
+        }
+      ],
+      "pdfBytes": 143580,
+      "downloadMs": 77.49,
+      "pages": 8
+    },
+    {
+      "id": "05932580-c8d9-4f62-8984-c012e187356a",
+      "court": "Patna High Court",
+      "year": 2025,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 10.99,
+          "metrics": {
+            "chars": 3330,
+            "bytes": 3636,
+            "devanagariTokens": 27,
+            "validDevanagariTokens": 26,
+            "validDevanagariTokenRate": 0.962963,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 76,
+              "nonemptyLines": 76,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 15
+            },
+            "sha256": "9403d896fd69468d3e66e97d3dd7bca0cbbaf902dc032b4adfb24239d1d4ff4c"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 27.05,
+          "metrics": {
+            "chars": 3153,
+            "bytes": 3153,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 91,
+              "nonemptyLines": 44,
+              "blankSeparatedParagraphs": 38,
+              "numberedParagraphs": 11
+            },
+            "sha256": "d1c1be1df753e662643b9eb3c6f874a03cf50008d6b1d4dedec1e6c3d816bc91"
+          }
+        }
+      ],
+      "pdfBytes": 98652,
+      "downloadMs": 52.78,
+      "pages": 3
+    },
+    {
+      "id": "200a9e9f-5ef8-4430-8dd7-aedfe17d5c31",
+      "court": "Patna High Court",
+      "year": 2026,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 14.84,
+          "metrics": {
+            "chars": 3670,
+            "bytes": 3676,
+            "devanagariTokens": 2,
+            "validDevanagariTokens": 2,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 76,
+              "nonemptyLines": 76,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 11
+            },
+            "sha256": "772db243c87b865f8e209427d0fe3465fe7302eae5e23fb8b5f650863e496aaa"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 28.83,
+          "metrics": {
+            "chars": 3664,
+            "bytes": 3664,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 8,
+            "caseNameTokensPresent": 8,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 85,
+              "nonemptyLines": 47,
+              "blankSeparatedParagraphs": 37,
+              "numberedParagraphs": 10
+            },
+            "sha256": "30e6898a24d265c3d6cc232aa59d2972be7c157898e8954738e4a1bed879833b"
+          }
+        }
+      ],
+      "pdfBytes": 78806,
+      "downloadMs": 56.69,
+      "pages": 3
+    },
+    {
+      "id": "45563ac9-ff9e-4aac-be87-24ec33914cac",
+      "court": "Patna High Court",
+      "year": 2022,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 7.98,
+          "metrics": {
+            "chars": 2535,
+            "bytes": 2541,
+            "devanagariTokens": 1,
+            "validDevanagariTokens": 1,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 58,
+              "nonemptyLines": 58,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 7
+            },
+            "sha256": "0b87621b4ef870ce32587f53ff5d5fc5393b732558aeeb9c6a30d7d33bb0a8e3"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 27.57,
+          "metrics": {
+            "chars": 2511,
+            "bytes": 2511,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 5,
+            "caseNameTokensPresent": 5,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 62,
+              "nonemptyLines": 33,
+              "blankSeparatedParagraphs": 28,
+              "numberedParagraphs": 7
+            },
+            "sha256": "81bdd4424a5d4a69ed9d9ef1bd9b867498121f62972750ee35d896a9e8b271ed"
+          }
+        }
+      ],
+      "pdfBytes": 76970,
+      "downloadMs": 56.52,
+      "pages": 2
+    },
+    {
+      "id": "0821e37e-3ad1-4162-9c03-8c7cca85682b",
+      "court": "Patna High Court",
+      "year": 2023,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 17.49,
+          "metrics": {
+            "chars": 10286,
+            "bytes": 10313,
+            "devanagariTokens": 1,
+            "validDevanagariTokens": 1,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 186,
+              "nonemptyLines": 186,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 19
+            },
+            "sha256": "c6cabecd75e5579fb0f1fb3ec918059bfd572b45334542973685a98cd6a3aae4"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 34.51,
+          "metrics": {
+            "chars": 10277,
+            "bytes": 10303,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 4,
+            "caseNameTokensPresent": 4,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 99,
+              "nonemptyLines": 60,
+              "blankSeparatedParagraphs": 38,
+              "numberedParagraphs": 15
+            },
+            "sha256": "74eab060e3aa0a82fae20818278f0b715a792f76fc6f3836d1572b8603eec086"
+          }
+        }
+      ],
+      "pdfBytes": 111634,
+      "downloadMs": 81.28,
+      "pages": 7
+    },
+    {
+      "id": "0b19cf03-cbd9-41c4-93e2-ec9ee1d34277",
+      "court": "Patna High Court",
+      "year": 2025,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 30.25,
+          "metrics": {
+            "chars": 16607,
+            "bytes": 16686,
+            "devanagariTokens": 8,
+            "validDevanagariTokens": 8,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 6,
+            "caseNameTokensPresent": 6,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 436,
+              "nonemptyLines": 436,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 64
+            },
+            "sha256": "3371430f9d8bfe5edc20394dbbc718eeda0f5c500342a9136dc8648c1cae8ec9"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 45.42,
+          "metrics": {
+            "chars": 16563,
+            "bytes": 16567,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 6,
+            "caseNameTokensPresent": 6,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 424,
+              "nonemptyLines": 227,
+              "blankSeparatedParagraphs": 196,
+              "numberedParagraphs": 53
+            },
+            "sha256": "43ed6f6c28c7fd783ff5051e08bce9fc7c826bf77354f876f32186f734d4c0fb"
+          }
+        }
+      ],
+      "pdfBytes": 132040,
+      "downloadMs": 79.19,
+      "pages": 12
+    },
+    {
+      "id": "0be4cce6-3a5c-47be-a207-76597145d699",
+      "court": "Patna High Court",
+      "year": 2025,
+      "defectClasses": [
+        "clean_control"
+      ],
+      "methods": [
+        {
+          "method": "unpdf",
+          "runtimeMs": 11.74,
+          "metrics": {
+            "chars": 4723,
+            "bytes": 4747,
+            "devanagariTokens": 2,
+            "validDevanagariTokens": 2,
+            "validDevanagariTokenRate": 1,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": 0,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 92,
+              "nonemptyLines": 92,
+              "blankSeparatedParagraphs": 1,
+              "numberedParagraphs": 9
+            },
+            "sha256": "8cda5bceed3654b6f2a68b2de1037a9fad0ba9d6ef19535238eaee42d292d82a"
+          }
+        },
+        {
+          "method": "poppler",
+          "runtimeMs": 27.86,
+          "metrics": {
+            "chars": 4699,
+            "bytes": 4699,
+            "devanagariTokens": 0,
+            "validDevanagariTokens": 0,
+            "validDevanagariTokenRate": null,
+            "orphanedMatras": 0,
+            "orphanedMatraRate": null,
+            "controlAdjacency": 0,
+            "latin1Bleed": 0,
+            "defectEvents": 0,
+            "expectedCitations": 0,
+            "expectedCitationsPresent": 0,
+            "detectedCitationKeys": [],
+            "caseNameTokens": 7,
+            "caseNameTokensPresent": 7,
+            "caseNamePreservationRate": 1,
+            "structure": {
+              "lines": 80,
+              "nonemptyLines": 45,
+              "blankSeparatedParagraphs": 34,
+              "numberedParagraphs": 8
+            },
+            "sha256": "1f5c677d59829f4c0889578b364be5e99df218803f4b972b8a32097ba8ec1fc4"
+          }
+        }
+      ],
+      "pdfBytes": 83463,
+      "downloadMs": 47.69,
+      "pages": 4
+    }
+  ],
+  "reaggregatedAt": "2026-08-17T11:59:28.621Z",
+  "reaggregateNote": "Aggregates rescored 17 Aug 2026 to add usable/devanagariDropped. The original summary scored Poppler as defect-free when it had emitted no Devanagari at all. Per-document metrics are unchanged — only the reading of them."
+}

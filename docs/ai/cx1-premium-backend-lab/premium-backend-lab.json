@@ -1,0 +1,520 @@
+{
+  "schema": "cx1-premium-backend-lab-v1",
+  "generatedAt": "2026-08-17T14:21:22.571Z",
+  "fixedToday": "2026-08-17",
+  "yesterdayCutoff": "2026-08-16T00:00:00.000Z",
+  "status": "complete_sample",
+  "boundary": "Synthetic CX1 shadow lab only: no production DB reads/writes, no canonical schema/API/UI edit, no provider fetch, no model call, no legal advice, and no citation confirmation.",
+  "inputs": {
+    "matterFixtures": 3,
+    "observationFixtures": 10,
+    "dataClass": "synthetic only; no uploaded client document or real party data"
+  },
+  "metrics": {
+    "inputObservations": 10,
+    "uniqueLinkedObservations": 8,
+    "duplicatesCollapsed": 1,
+    "unlinkedObservations": 1,
+    "timelineEvents": 8,
+    "legalDocuments": 2,
+    "newOrdersDetected": 1,
+    "nextHearingTriggers": 2,
+    "conflicts": 1
+  },
+  "assertions": [
+    {
+      "name": "duplicate observation collapsed",
+      "status": "PASS"
+    },
+    {
+      "name": "unlinked observation retained outside matter timeline",
+      "status": "PASS"
+    },
+    {
+      "name": "tomorrow hearing trigger exists for alpha",
+      "status": "PASS"
+    },
+    {
+      "name": "bench change updates latest state",
+      "status": "PASS"
+    },
+    {
+      "name": "new order detected without citable promotion",
+      "status": "PASS"
+    },
+    {
+      "name": "judgment remains citable while procedural objects do not",
+      "status": "PASS"
+    },
+    {
+      "name": "disposed state remains terminal despite late old listing",
+      "status": "PASS"
+    },
+    {
+      "name": "same advocate same date conflict is detected",
+      "status": "PASS"
+    }
+  ],
+  "projection": {
+    "timeline": [
+      {
+        "id": "evt-639121137e22a71f",
+        "matterId": "matter-alpha",
+        "eventDate": "2026-08-14",
+        "observedAt": "2026-08-14T06:10:00.000Z",
+        "source": "ecourts",
+        "sourceId": "dlhc-alpha-filed",
+        "kind": "registered",
+        "transition": "registered",
+        "stateBefore": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": null
+        },
+        "stateAfter": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-14T06:10:00.000Z"
+        }
+      },
+      {
+        "id": "evt-532a42588d270055",
+        "matterId": "matter-alpha",
+        "eventDate": "2026-08-16",
+        "observedAt": "2026-08-17T04:45:00.000Z",
+        "source": "ecourts",
+        "sourceId": "dlhc-alpha-order-001",
+        "kind": "order_uploaded",
+        "transition": "order_uploaded",
+        "stateBefore": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Bench A",
+          "itemNumber": "23",
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-16T05:00:00.000Z"
+        },
+        "stateAfter": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Bench A",
+          "itemNumber": "23",
+          "lastOrderDocumentId": "doc-order-alpha-001",
+          "lastOrderDate": "2026-08-16",
+          "lastObservationAt": "2026-08-17T04:45:00.000Z"
+        }
+      },
+      {
+        "id": "evt-6f7af7c3a423e5c2",
+        "matterId": "matter-alpha",
+        "eventDate": "2026-08-18",
+        "observedAt": "2026-08-16T05:00:00.000Z",
+        "source": "ecourts",
+        "sourceId": "dlhc-alpha-listed-20260818",
+        "kind": "cause_list_seen",
+        "transition": "listed",
+        "stateBefore": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-14T06:10:00.000Z"
+        },
+        "stateAfter": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Bench A",
+          "itemNumber": "23",
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-16T05:00:00.000Z"
+        }
+      },
+      {
+        "id": "evt-b704797f954e0aa5",
+        "matterId": "matter-alpha",
+        "eventDate": "2026-08-18",
+        "observedAt": "2026-08-17T06:00:00.000Z",
+        "source": "ecourts",
+        "sourceId": "dlhc-alpha-bench-change",
+        "kind": "bench_assigned",
+        "transition": "bench_changed",
+        "stateBefore": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Bench A",
+          "itemNumber": "23",
+          "lastOrderDocumentId": "doc-order-alpha-001",
+          "lastOrderDate": "2026-08-16",
+          "lastObservationAt": "2026-08-17T04:45:00.000Z"
+        },
+        "stateAfter": {
+          "matterId": "matter-alpha",
+          "court": "Delhi High Court",
+          "cnr": "DLHC010000012026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Bench B",
+          "itemNumber": "23",
+          "lastOrderDocumentId": "doc-order-alpha-001",
+          "lastOrderDate": "2026-08-16",
+          "lastObservationAt": "2026-08-17T06:00:00.000Z"
+        }
+      },
+      {
+        "id": "evt-e74b12d4ba9fcc4b",
+        "matterId": "matter-gamma",
+        "eventDate": "2026-08-17",
+        "observedAt": "2026-08-17T03:00:00.000Z",
+        "source": "manual",
+        "sourceId": "mhhc-gamma-note-001",
+        "kind": "filing",
+        "transition": "filing",
+        "stateBefore": {
+          "matterId": "matter-gamma",
+          "court": "Bombay High Court",
+          "cnr": "MHHC020000022026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Court 4",
+          "itemNumber": "9",
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-17T02:20:00.000Z"
+        },
+        "stateAfter": {
+          "matterId": "matter-gamma",
+          "court": "Bombay High Court",
+          "cnr": "MHHC020000022026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Court 4",
+          "itemNumber": "9",
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-17T03:00:00.000Z"
+        }
+      },
+      {
+        "id": "evt-03fdaa3ba9f7e905",
+        "matterId": "matter-gamma",
+        "eventDate": "2026-08-18",
+        "observedAt": "2026-08-17T02:20:00.000Z",
+        "source": "ecourts",
+        "sourceId": "mhhc-gamma-listed-20260818",
+        "kind": "cause_list_seen",
+        "transition": "listed",
+        "stateBefore": {
+          "matterId": "matter-gamma",
+          "court": "Bombay High Court",
+          "cnr": "MHHC020000022026",
+          "status": "active",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": null
+        },
+        "stateAfter": {
+          "matterId": "matter-gamma",
+          "court": "Bombay High Court",
+          "cnr": "MHHC020000022026",
+          "status": "active",
+          "nextHearingDate": "2026-08-18",
+          "bench": "Court 4",
+          "itemNumber": "9",
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-17T02:20:00.000Z"
+        }
+      },
+      {
+        "id": "evt-4e9a32f8298f229a",
+        "matterId": "matter-omega",
+        "eventDate": "2026-08-01",
+        "observedAt": "2026-08-17T08:00:00.000Z",
+        "source": "ecourts",
+        "sourceId": "kahc-omega-late-old-listing",
+        "kind": "cause_list_seen",
+        "transition": "listed",
+        "stateBefore": {
+          "matterId": "matter-omega",
+          "court": "Karnataka High Court",
+          "cnr": "KAHC030000032025",
+          "status": "disposed",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-15T07:00:00.000Z"
+        },
+        "stateAfter": {
+          "matterId": "matter-omega",
+          "court": "Karnataka High Court",
+          "cnr": "KAHC030000032025",
+          "status": "disposed",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-17T08:00:00.000Z"
+        }
+      },
+      {
+        "id": "evt-7ddd22d8b49a22cc",
+        "matterId": "matter-omega",
+        "eventDate": "2026-08-15",
+        "observedAt": "2026-08-15T07:00:00.000Z",
+        "source": "ecourts",
+        "sourceId": "kahc-omega-disposed",
+        "kind": "disposed",
+        "transition": "disposed",
+        "stateBefore": {
+          "matterId": "matter-omega",
+          "court": "Karnataka High Court",
+          "cnr": "KAHC030000032025",
+          "status": "active",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": null
+        },
+        "stateAfter": {
+          "matterId": "matter-omega",
+          "court": "Karnataka High Court",
+          "cnr": "KAHC030000032025",
+          "status": "disposed",
+          "nextHearingDate": null,
+          "bench": null,
+          "itemNumber": null,
+          "lastOrderDocumentId": null,
+          "lastOrderDate": null,
+          "lastObservationAt": "2026-08-15T07:00:00.000Z"
+        }
+      }
+    ],
+    "states": [
+      {
+        "matterId": "matter-alpha",
+        "court": "Delhi High Court",
+        "cnr": "DLHC010000012026",
+        "status": "active",
+        "nextHearingDate": "2026-08-18",
+        "bench": "Bench B",
+        "itemNumber": "23",
+        "lastOrderDocumentId": "doc-order-alpha-001",
+        "lastOrderDate": "2026-08-16",
+        "lastObservationAt": "2026-08-17T06:00:00.000Z"
+      },
+      {
+        "matterId": "matter-gamma",
+        "court": "Bombay High Court",
+        "cnr": "MHHC020000022026",
+        "status": "active",
+        "nextHearingDate": "2026-08-18",
+        "bench": "Court 4",
+        "itemNumber": "9",
+        "lastOrderDocumentId": null,
+        "lastOrderDate": null,
+        "lastObservationAt": "2026-08-17T03:00:00.000Z"
+      },
+      {
+        "matterId": "matter-omega",
+        "court": "Karnataka High Court",
+        "cnr": "KAHC030000032025",
+        "status": "disposed",
+        "nextHearingDate": null,
+        "bench": null,
+        "itemNumber": null,
+        "lastOrderDocumentId": null,
+        "lastOrderDate": null,
+        "lastObservationAt": "2026-08-17T08:00:00.000Z"
+      }
+    ],
+    "duplicates": [
+      {
+        "sourceId": "dlhc-alpha-listed-20260818",
+        "dedupeKey": "ecourts|Delhi High Court|DLHC010000012026|dlhc-alpha-listed-20260818|cause_list_seen"
+      }
+    ],
+    "unlinked": [
+      {
+        "sourceId": "unlinked-listed-001",
+        "court": "Madras High Court",
+        "cnr": "TNHC040000042026",
+        "kind": "cause_list_seen"
+      }
+    ],
+    "legalDocuments": [
+      {
+        "matterId": "matter-omega",
+        "documentId": "doc-judgment-omega-001",
+        "documentClass": "judgment",
+        "title": "judgment",
+        "sourceObservationId": "kahc-omega-disposed",
+        "isCitable": true
+      },
+      {
+        "matterId": "matter-alpha",
+        "documentId": "doc-order-alpha-001",
+        "documentClass": "order",
+        "title": "Interim order uploaded",
+        "sourceObservationId": "dlhc-alpha-order-001",
+        "isCitable": false
+      }
+    ],
+    "nextHearingTriggers": [
+      {
+        "matterId": "matter-alpha",
+        "nextHearingDate": "2026-08-18",
+        "bench": "Bench B"
+      },
+      {
+        "matterId": "matter-gamma",
+        "nextHearingDate": "2026-08-18",
+        "bench": "Court 4"
+      }
+    ],
+    "changedSinceYesterday": [
+      {
+        "matterId": "matter-alpha",
+        "observedAt": "2026-08-17T04:45:00.000Z",
+        "transition": "order_uploaded",
+        "kind": "order_uploaded",
+        "eventDate": "2026-08-16"
+      },
+      {
+        "matterId": "matter-alpha",
+        "observedAt": "2026-08-16T05:00:00.000Z",
+        "transition": "listed",
+        "kind": "cause_list_seen",
+        "eventDate": "2026-08-18"
+      },
+      {
+        "matterId": "matter-alpha",
+        "observedAt": "2026-08-17T06:00:00.000Z",
+        "transition": "bench_changed",
+        "kind": "bench_assigned",
+        "eventDate": "2026-08-18"
+      },
+      {
+        "matterId": "matter-gamma",
+        "observedAt": "2026-08-17T03:00:00.000Z",
+        "transition": "filing",
+        "kind": "filing",
+        "eventDate": "2026-08-17"
+      },
+      {
+        "matterId": "matter-gamma",
+        "observedAt": "2026-08-17T02:20:00.000Z",
+        "transition": "listed",
+        "kind": "cause_list_seen",
+        "eventDate": "2026-08-18"
+      },
+      {
+        "matterId": "matter-omega",
+        "observedAt": "2026-08-17T08:00:00.000Z",
+        "transition": "listed",
+        "kind": "cause_list_seen",
+        "eventDate": "2026-08-01"
+      }
+    ],
+    "newOrders": [
+      {
+        "matterId": "matter-alpha",
+        "sourceId": "dlhc-alpha-order-001",
+        "observedAt": "2026-08-17T04:45:00.000Z",
+        "documentId": "doc-order-alpha-001"
+      }
+    ],
+    "conflicts": [
+      {
+        "matterIds": [
+          "matter-alpha",
+          "matter-gamma"
+        ],
+        "advocateKey": "advocate-a",
+        "hearingDate": "2026-08-18",
+        "reason": "same advocate has two active matters listed on the same date"
+      }
+    ],
+    "hearingPackReadiness": [
+      {
+        "matterId": "matter-alpha",
+        "nextHearingDate": "2026-08-18",
+        "status": "active",
+        "ready": false,
+        "readinessScore": 0.8,
+        "missing": [
+          "authority/citation packet"
+        ]
+      },
+      {
+        "matterId": "matter-gamma",
+        "nextHearingDate": "2026-08-18",
+        "status": "active",
+        "ready": false,
+        "readinessScore": 0.4,
+        "missing": [
+          "latest court order or judgment",
+          "court-record document metadata",
+          "authority/citation packet"
+        ]
+      },
+      {
+        "matterId": "matter-omega",
+        "nextHearingDate": null,
+        "status": "disposed",
+        "ready": false,
+        "readinessScore": 0.6,
+        "missing": [
+          "next hearing date",
+          "authority/citation packet"
+        ]
+      }
+    ]
+  },
+  "openImplementationQuestions": [
+    "Which owner lane owns the observation-to-matter matcher and confidence threshold?",
+    "How long should unlinked observation rows be retained when no adopted matter exists?",
+    "Should hearing-pack readiness become API data only, notification data, or both?",
+    "What exact conflict dimensions are safe for MVP: same advocate/date only, or date/time/court/bench where available?"
+  ]
+}

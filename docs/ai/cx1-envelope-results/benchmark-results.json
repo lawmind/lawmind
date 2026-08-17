@@ -1,0 +1,314 @@
+{
+  "kind": "cx1_local_scale_envelope",
+  "createdAt": "2026-08-17T11:05:17Z",
+  "evidenceClass": "MEASURED_DISPOSABLE_WORKLOADS",
+  "controls": {
+    "durationSecondsForNonVectorScenarios": 15.0,
+    "sourceDocumentsCopied": 50000,
+    "sourceCopyBytes": 276312259,
+    "vectorBuildRows": 100000,
+    "canonicalWrites": 0,
+    "deepseekModelCalls": 0,
+    "deepseekWriteWorkload": "representative JSONB/raw-output persistence only"
+  },
+  "scenarios": [
+    {
+      "name": "read",
+      "wallSeconds": 15.403,
+      "workloads": {
+        "read": {
+          "name": "postgres_random_read",
+          "operations": 170384,
+          "units": 170384,
+          "seconds": 15.147,
+          "unitsPerSecond": 11248.85,
+          "latencyMs": {
+            "p50": 0.068,
+            "p95": 0.153
+          },
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 17.23,
+        "cpuPeakPercent": 28.4,
+        "postgresRssPeakBytes": 3199143936,
+        "diskReadBytes": 139264,
+        "diskWriteBytes": 520675840
+      }
+    },
+    {
+      "name": "ingest",
+      "wallSeconds": 15.921,
+      "workloads": {
+        "ingest": {
+          "name": "ingest_copy_write",
+          "operations": 42,
+          "units": 42000,
+          "seconds": 15.803,
+          "unitsPerSecond": 2657.8,
+          "latencyMs": {
+            "p50": 381.102,
+            "p95": 681.406
+          },
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 14.42,
+        "cpuPeakPercent": 26.3,
+        "postgresRssPeakBytes": 3487907840,
+        "diskReadBytes": 65536,
+        "diskWriteBytes": 515459072
+      }
+    },
+    {
+      "name": "citation",
+      "wallSeconds": 15.421,
+      "workloads": {
+        "citation": {
+          "name": "citation_key_walk",
+          "operations": 314,
+          "units": 15700000,
+          "seconds": 15.188,
+          "unitsPerSecond": 1033738.94,
+          "latencyMs": {
+            "p50": 27.846,
+            "p95": 132.431
+          },
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 25.88,
+        "cpuPeakPercent": 48.5,
+        "postgresRssPeakBytes": 3313340416,
+        "diskReadBytes": 20480,
+        "diskWriteBytes": 29323776
+      }
+    },
+    {
+      "name": "deepseek_writes",
+      "wallSeconds": 15.406,
+      "workloads": {
+        "deepseek_writes": {
+          "name": "deepseek_result_writes_simulated",
+          "operations": 65,
+          "units": 65000,
+          "seconds": 15.198,
+          "unitsPerSecond": 4276.77,
+          "latencyMs": {
+            "p50": 194.576,
+            "p95": 487.679
+          },
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 14.83,
+        "cpuPeakPercent": 26.6,
+        "postgresRssPeakBytes": 3478720512,
+        "diskReadBytes": 0,
+        "diskWriteBytes": 80945664
+      }
+    },
+    {
+      "name": "vector_build",
+      "wallSeconds": 54.765,
+      "workloads": {
+        "vector_build": {
+          "name": "hnsw_build_100k",
+          "operations": 1,
+          "units": 100000,
+          "seconds": 54.53,
+          "unitsPerSecond": 1833.85,
+          "latencyMs": null,
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 14.69,
+        "cpuPeakPercent": 25.5,
+        "postgresRssPeakBytes": 5108588544,
+        "diskReadBytes": 307200,
+        "diskWriteBytes": 81740288
+      }
+    },
+    {
+      "name": "ingest+vector_build",
+      "wallSeconds": 54.762,
+      "workloads": {
+        "ingest": {
+          "name": "ingest_copy_write",
+          "operations": 131,
+          "units": 131000,
+          "seconds": 54.553,
+          "unitsPerSecond": 2401.33,
+          "latencyMs": {
+            "p50": 382.255,
+            "p95": 802.654
+          },
+          "error": null
+        },
+        "vector_build": {
+          "name": "hnsw_build_100k",
+          "operations": 1,
+          "units": 100000,
+          "seconds": 54.455,
+          "unitsPerSecond": 1836.37,
+          "latencyMs": null,
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 23.25,
+        "cpuPeakPercent": 33.3,
+        "postgresRssPeakBytes": 5384720384,
+        "diskReadBytes": 147456,
+        "diskWriteBytes": 219602944
+      }
+    },
+    {
+      "name": "citation+vector_build",
+      "wallSeconds": 58.179,
+      "workloads": {
+        "citation": {
+          "name": "citation_key_walk",
+          "operations": 1160,
+          "units": 58000000,
+          "seconds": 57.987,
+          "unitsPerSecond": 1000216.88,
+          "latencyMs": {
+            "p50": 29.097,
+            "p95": 135.784
+          },
+          "error": null
+        },
+        "vector_build": {
+          "name": "hnsw_build_100k",
+          "operations": 1,
+          "units": 100000,
+          "seconds": 57.677,
+          "unitsPerSecond": 1733.78,
+          "latencyMs": null,
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 31.74,
+        "cpuPeakPercent": 50.4,
+        "postgresRssPeakBytes": 5084323840,
+        "diskReadBytes": 5926400,
+        "diskWriteBytes": 207106560
+      }
+    },
+    {
+      "name": "deepseek_writes+vector_build",
+      "wallSeconds": 55.551,
+      "workloads": {
+        "deepseek_writes": {
+          "name": "deepseek_result_writes_simulated",
+          "operations": 200,
+          "units": 200000,
+          "seconds": 55.294,
+          "unitsPerSecond": 3617.0,
+          "latencyMs": {
+            "p50": 265.803,
+            "p95": 501.511
+          },
+          "error": null
+        },
+        "vector_build": {
+          "name": "hnsw_build_100k",
+          "operations": 1,
+          "units": 100000,
+          "seconds": 54.792,
+          "unitsPerSecond": 1825.09,
+          "latencyMs": null,
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 22.36,
+        "cpuPeakPercent": 38.0,
+        "postgresRssPeakBytes": 5249343488,
+        "diskReadBytes": 413696,
+        "diskWriteBytes": 340758528
+      }
+    },
+    {
+      "name": "ingest+citation",
+      "wallSeconds": 15.429,
+      "workloads": {
+        "ingest": {
+          "name": "ingest_copy_write",
+          "operations": 41,
+          "units": 41000,
+          "seconds": 15.249,
+          "unitsPerSecond": 2688.77,
+          "latencyMs": {
+            "p50": 367.977,
+            "p95": 673.495
+          },
+          "error": null
+        },
+        "citation": {
+          "name": "citation_key_walk",
+          "operations": 354,
+          "units": 17700000,
+          "seconds": 15.173,
+          "unitsPerSecond": 1166573.22,
+          "latencyMs": {
+            "p50": 27.875,
+            "p95": 133.836
+          },
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 32.95,
+        "cpuPeakPercent": 47.8,
+        "postgresRssPeakBytes": 3613282304,
+        "diskReadBytes": 4096,
+        "diskWriteBytes": 377606144
+      }
+    },
+    {
+      "name": "ingest+deepseek_writes",
+      "wallSeconds": 15.921,
+      "workloads": {
+        "ingest": {
+          "name": "ingest_copy_write",
+          "operations": 42,
+          "units": 42000,
+          "seconds": 15.695,
+          "unitsPerSecond": 2676.02,
+          "latencyMs": {
+            "p50": 371.128,
+            "p95": 683.084
+          },
+          "error": null
+        },
+        "deepseek_writes": {
+          "name": "deepseek_result_writes_simulated",
+          "operations": 65,
+          "units": 65000,
+          "seconds": 15.217,
+          "unitsPerSecond": 4271.62,
+          "latencyMs": {
+            "p50": 195.216,
+            "p95": 484.373
+          },
+          "error": null
+        }
+      },
+      "resources": {
+        "cpuMeanPercent": 22.13,
+        "cpuPeakPercent": 27.6,
+        "postgresRssPeakBytes": 3901042688,
+        "diskReadBytes": 8192,
+        "diskWriteBytes": 269435392
+      }
+    }
+  ]
+}

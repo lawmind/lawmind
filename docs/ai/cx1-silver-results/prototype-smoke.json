@@ -1,0 +1,10 @@
+{
+  "compactedContentHash": "76cb8e6612b0b858f33a260defcc61abad20f503a8e0b2be974f12d75fc36954",
+  "compactedObjects": 6,
+  "fixtureRows": 24,
+  "payloadRoot": "C:\\lawmind\\cx1-lab\\silver-prototype-smoke",
+  "status": "pass",
+  "writerContentHash": "8fcd58e11b32a4cd1236a3d8922d044e55f150bdbc5372a9a670c72e4e9691ee",
+  "writerIdempotent": true,
+  "writerObjects": 12
+}

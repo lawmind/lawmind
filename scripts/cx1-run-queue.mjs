@@ -29,14 +29,113 @@ const TASKS = [
     gate: 'LIGHT',
     status: 'ready',
     command:
-      'node --check scripts\\cx1-heavy-lab-runner.mjs scripts\\cx1-db-sample-census.mjs scripts\\cx1-devanagari-scale-plan.mjs scripts\\cx1-hnsw-parameter-plan.mjs scripts\\cx1-run-queue.mjs scripts\\cx1-preflight.mjs scripts\\cx1-gated-runner.mjs scripts\\cx1-gated-runner-smoke.mjs',
+      'node --check scripts\\cx1-heavy-lab-runner.mjs scripts\\cx1-db-sample-census.mjs scripts\\cx1-devanagari-scale-plan.mjs scripts\\cx1-hnsw-parameter-plan.mjs scripts\\cx1-run-queue.mjs scripts\\cx1-document-classification-audit.mjs scripts\\cx1-legal-object-efficiency.mjs scripts\\cx1-evidence-integrity.mjs scripts\\cx1-selector-runner.mjs scripts\\cx1-selector-runner-smoke.mjs scripts\\cx1-retrieval-matrix.mjs scripts\\cx1-citation-graph-census.mjs scripts\\cx1-premium-backend-lab.mjs scripts\\cx1-disaster-recovery-drill.mjs scripts\\cx1-heavy-lab-final.mjs scripts\\cx1-preflight.mjs scripts\\cx1-gated-runner.mjs scripts\\cx1-gated-runner-smoke.mjs',
     evidence: [
       'docs/ai/CX1_EXPERIMENT_REGISTRY.json',
       'docs/ai/cx1-db-sample-census/sample-census-plan.json',
       'docs/ai/cx1-devanagari-results/scale-validation-plan.json',
       'docs/ai/cx1-vector-results/hnsw-parameter-plan.json',
+      'docs/ai/cx1-classification-audit/sample-plan.json',
+      'docs/ai/cx1-legal-object-efficiency/router-proposal.json',
+      'docs/ai/cx1-evidence-integrity/integrity-report.json',
+      'docs/ai/cx1-selector-results/selector-runner-smoke.json',
+      'docs/ai/cx1-retrieval-matrix/matrix-plan.json',
+      'docs/ai/cx1-citation-graph-census/citation-graph-census.json',
+      'docs/ai/cx1-premium-backend-lab/premium-backend-lab.json',
+      'docs/ai/cx1-disaster-recovery-drill/drill-plan.json',
+      'docs/ai/CX1_HEAVY_LAB_FINAL.md',
     ],
     notes: 'Cheap validation only; no DB query.',
+  },
+  {
+    id: 'cx1-citation-graph-census-refresh',
+    workstream: 'J',
+    gate: 'LIGHT',
+    status: 'ready',
+    registryExperimentId: 'cx1-citation-graph-census-plan-20260817',
+    command: 'node scripts\\cx1-citation-graph-census.mjs',
+    evidence: [
+      'docs/ai/CX1_CITATION_GRAPH_CENSUS.md',
+      'docs/ai/cx1-citation-graph-census/citation-graph-census.json',
+      'docs/ai/cx1-citation-graph-census/snapshot-inventory.csv',
+      'docs/ai/cx1-citation-graph-census/priority-regions.csv',
+      'docs/ai/cx1-citation-graph-census/graph-census-selector.sql',
+    ],
+    notes:
+      'Offline snapshot inventory and selector preparation only; no DB query, citation extraction/resolution, alias write, treatment write, or model call.',
+  },
+  {
+    id: 'cx1-premium-backend-lab-refresh',
+    workstream: 'K',
+    gate: 'LIGHT',
+    status: 'ready',
+    registryExperimentId: 'cx1-premium-backend-shadow-lab-20260817',
+    command: 'node scripts\\cx1-premium-backend-lab.mjs',
+    evidence: [
+      'docs/ai/CX1_PREMIUM_DATA_BACKEND_LAB.md',
+      'docs/ai/cx1-premium-backend-lab/premium-backend-lab.json',
+      'docs/ai/cx1-premium-backend-lab/scenario-summary.csv',
+      'docs/ai/cx1-premium-backend-lab/hearing-pack-readiness.csv',
+    ],
+    notes:
+      'Synthetic offline projection lab only; no production DB, provider fetch, canonical schema/API/UI edit, model call, or legal advice.',
+  },
+  {
+    id: 'cx1-retrieval-matrix-refresh',
+    workstream: 'E',
+    gate: 'LIGHT',
+    status: 'ready',
+    registryExperimentId: 'cx1-retrieval-matrix-plan-20260817',
+    command: 'node scripts\\cx1-retrieval-matrix.mjs',
+    evidence: [
+      'docs/ai/CX1_RETRIEVAL_MATRIX.md',
+      'docs/ai/cx1-retrieval-matrix/matrix-plan.json',
+      'docs/ai/cx1-retrieval-matrix/completed-controlled-summary.csv',
+      'docs/ai/cx1-retrieval-matrix/planned-configs.csv',
+    ],
+    notes: 'Offline summary/plan only; reads existing NEW1 harness checkpoints and does not run retrieval.',
+  },
+  {
+    id: 'cx1-selector-runner-smoke',
+    workstream: 'M',
+    gate: 'LIGHT',
+    status: 'ready',
+    registryExperimentId: 'cx1-selector-runner-20260817',
+    command: 'node scripts\\cx1-selector-runner-smoke.mjs',
+    evidence: [
+      'docs/ai/CX1_SELECTOR_RUNNER.md',
+      'docs/ai/cx1-selector-results/selector-runner-smoke.json',
+      'docs/ai/cx1-selector-results/selector-runner-dry-run.json',
+      'docs/ai/cx1-selector-results/selector-runner-refusal.json',
+    ],
+    notes: 'Offline smoke only; proves dry-run/default refusal behavior for prepared selectors.',
+  },
+  {
+    id: 'cx1-disaster-recovery-drill-refresh',
+    workstream: 'L',
+    gate: 'LIGHT',
+    status: 'ready',
+    registryExperimentId: 'cx1-disaster-recovery-drill-plan-20260817',
+    command: 'node scripts\\cx1-disaster-recovery-drill.mjs',
+    evidence: [
+      'docs/ai/CX1_DISASTER_RECOVERY_DRILL.md',
+      'docs/ai/cx1-disaster-recovery-drill/drill-plan.json',
+      'docs/ai/cx1-disaster-recovery-drill/acceptance-checklist.csv',
+      'docs/ai/cx1-disaster-recovery-drill/restore-smoke.sql',
+    ],
+    notes:
+      'Offline DR drill plan only; no R2 download, pg_verifybackup, restore, pg_ctl, PostgreSQL query, provider operation, or production cleanup.',
+  },
+  {
+    id: 'cx1-final-packet-refresh',
+    workstream: 'M',
+    gate: 'LIGHT',
+    status: 'ready',
+    registryExperimentId: 'cx1-heavy-lab-final-packet-20260817',
+    command: 'node scripts\\cx1-heavy-lab-final.mjs',
+    evidence: ['docs/ai/CX1_HEAVY_LAB_FINAL.md'],
+    notes:
+      'Offline final checkpoint packet only; summarizes current CX1 evidence and explicitly marks gated/not-yet-KNOW items.',
   },
   {
     id: 'cx1-db-sample-census-run',
@@ -63,6 +162,50 @@ const TASKS = [
     ],
     notes:
       'Selector only; no PDF fetch/OCR. Save stdout to a lab result file when executed.',
+  },
+  {
+    id: 'cx1-classification-selector-run',
+    workstream: 'H',
+    gate: 'MEDIUM_CLEAN',
+    status: 'prepared_not_run',
+    command:
+      'node scripts\\migration\\pg-local.mjs psql -t -A -X -q -f docs\\ai\\cx1-classification-audit\\sample-selector.sql',
+    evidence: [
+      'docs/ai/CX1_DOCUMENT_CLASSIFICATION_AUDIT.md',
+      'docs/ai/cx1-classification-audit/sample-selector.sql',
+    ],
+    notes:
+      'Read-only selector for a larger difficult-subset sample. Save stdout to disposable CX1 results only.',
+  },
+  {
+    id: 'cx1-legal-object-efficiency-selector-run',
+    workstream: 'I',
+    gate: 'MEDIUM_CLEAN',
+    status: 'prepared_not_run',
+    command:
+      'node scripts\\migration\\pg-local.mjs psql -t -A -X -q -f docs\\ai\\cx1-legal-object-efficiency\\efficiency-selector.sql',
+    evidence: [
+      'docs/ai/CX1_LEGAL_OBJECT_EFFICIENCY.md',
+      'docs/ai/cx1-legal-object-efficiency/efficiency-selector.sql',
+      'docs/ai/cx1-legal-object-efficiency/llm-cost-selector.sql',
+    ],
+    notes:
+      'Read-only enrichment/token/latency selector. Cost selector is separate and coarse because llm_calls is not linked to document_enrichments.',
+  },
+  {
+    id: 'cx1-citation-graph-selector-run',
+    workstream: 'J',
+    gate: 'MEDIUM_CLEAN',
+    status: 'prepared_not_run',
+    registryExperimentId: 'cx1-citation-graph-census-plan-20260817',
+    command:
+      'node scripts\\migration\\pg-local.mjs psql -t -A -X -q -f docs\\ai\\cx1-citation-graph-census\\graph-census-selector.sql',
+    evidence: [
+      'docs/ai/CX1_CITATION_GRAPH_CENSUS.md',
+      'docs/ai/cx1-citation-graph-census/graph-census-selector.sql',
+    ],
+    notes:
+      'Read-only graph/citation selector. Save stdout to disposable CX1 evidence only; do not duplicate LCC citation-key population or write citation/treatment state.',
   },
   {
     id: 'cx1-hnsw-d0-plan-run',
@@ -98,6 +241,22 @@ const TASKS = [
     evidence: ['docs/ai/CX1_SILVER_PRODUCTION_PROTOTYPE.md'],
     notes:
       'Prototype smoke/failure smoke passed; real-corpus replay still needs a bounded read-only exporter.',
+  },
+  {
+    id: 'cx1-disaster-recovery-drill-run',
+    workstream: 'L',
+    gate: 'HEAVY',
+    status: 'prepared_not_run',
+    registryExperimentId: 'cx1-disaster-recovery-drill-plan-20260817',
+    command:
+      'future: execute docs\\ai\\cx1-disaster-recovery-drill\\acceptance-checklist.csv against R2/base backup into C:\\lawmind\\cx1-lab\\dr-restore on a non-production port',
+    evidence: [
+      'docs/ai/CX1_DISASTER_RECOVERY_DRILL.md',
+      'docs/ai/cx1-disaster-recovery-drill/drill-plan.json',
+      'docs/ai/cx1-disaster-recovery-drill/restore-smoke.sql',
+    ],
+    notes:
+      'Full DR drill is disk/network heavy and restored-cluster-only; do not run while PostgreSQL/main-lane work is active.',
   },
 ];
 
@@ -159,6 +318,18 @@ function gateState(task, snapshot) {
     return {
       runnableNow: reasons.length === 0,
       reasons: reasons.length ? reasons : ['VECTOR_EXCLUSIVE gate clear'],
+    };
+  }
+
+  if (task.gate === 'HEAVY') {
+    if (maxRank < JOB_CLASS_RANK.HEAVY) reasons.push(`scheduler maxClass is ${maxClass}`);
+    if (active > 0) reasons.push(`PostgreSQL active backends=${active}`);
+    if (oldest > 60) reasons.push(`oldest transaction=${oldest}s`);
+    if (freeRamPct < 35) reasons.push(`RAM free ${freeRamPct.toFixed(1)}%`);
+    if (hasMainLaneHeavy(snapshot)) reasons.push('known main-lane heavy process detected');
+    return {
+      runnableNow: reasons.length === 0,
+      reasons: reasons.length ? reasons : ['HEAVY gate clear'],
     };
   }
 

@@ -1,0 +1,12 @@
+{
+  "compactedObjects": 4,
+  "compactorCleanedStaleTemp": true,
+  "compactorRepairedStaleFinal": true,
+  "fixtureRows": 18,
+  "outsideLabGuardRefused": true,
+  "payloadRoot": "C:\\lawmind\\cx1-lab\\silver-failure-smoke",
+  "status": "pass",
+  "writerCleanedStaleTemp": true,
+  "writerObjects": 10,
+  "writerRepairedStaleFinal": true
+}

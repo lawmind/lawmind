@@ -1,0 +1,4 @@
+matterId,status,nextHearingDate,ready,readinessScore,missing
+matter-alpha,active,2026-08-18,false,0.8,authority/citation packet
+matter-gamma,active,2026-08-18,false,0.4,latest court order or judgment; court-record document metadata; authority/citation packet
+matter-omega,disposed,,false,0.6,next hearing date; authority/citation packet

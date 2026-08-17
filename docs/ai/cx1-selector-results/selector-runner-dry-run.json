@@ -1,0 +1,30 @@
+{
+  "schema": "cx1-selector-runner-v1",
+  "generatedAt": "2026-08-17T14:21:22.656Z",
+  "taskId": "cx1-devanagari-selector-run",
+  "mode": "dry-run",
+  "gate": "MEDIUM_CLEAN",
+  "command": "node scripts\\migration\\pg-local.mjs psql -t -A -X -q -f docs\\ai\\cx1-devanagari-results\\scale-validation-selector.sql",
+  "sqlPath": "docs/ai/cx1-devanagari-results/scale-validation-selector.sql",
+  "queueGeneratedAt": "2026-08-17T14:21:24.433Z",
+  "scheduler": {
+    "available": true,
+    "maxClass": "MEDIUM",
+    "reasons": [
+      "PostgreSQL active=2, oldest transaction=378s",
+      "RAM free 18.9%"
+    ],
+    "cpuPct": 28.64250705480469,
+    "freeRamPct": 18.86242834409063,
+    "postgresActive": 2,
+    "postgresOldestSeconds": 378
+  },
+  "evidencePath": "docs/ai/cx1-selector-results/selector-runner-dry-run.json",
+  "status": "dry_run_blocked",
+  "executed": false,
+  "exitCode": null,
+  "refusalReasons": [
+    "queue says task is not runnable: PostgreSQL active backends=2; oldest transaction=378s; RAM free 18.9%"
+  ],
+  "dryRunNote": "No selector executed because --execute was not supplied."
+}

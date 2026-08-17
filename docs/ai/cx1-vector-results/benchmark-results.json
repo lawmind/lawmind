@@ -1,0 +1,264 @@
+{
+  "kind": "cx1_vector_capacity_benchmark",
+  "createdAt": "2026-08-17T10:55:36Z",
+  "evidenceClass": "MEASURED_DISPOSABLE_POSTGRES_COPY",
+  "source": {
+    "rows": 620300,
+    "nonnullVectors": 620300,
+    "heapBytes": 1172307968,
+    "hnswIndexBytes": 5073821696,
+    "hnswIndexDefinition": "CREATE INDEX judgment_chunks_embedding_hnsw ON public.judgment_chunks USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')",
+    "pgvectorVersion": "0.8.5",
+    "writes": 0
+  },
+  "copy": {
+    "rows": 620300,
+    "binaryCopyBytes": 2559357821,
+    "exportSeconds": 58.689,
+    "importSeconds": 12.016,
+    "payloadRemovedAfterImport": true
+  },
+  "lab": {
+    "port": 55432,
+    "dataDirectory": "C:\\lawmind\\cx1-lab\\vector\\pgdata",
+    "sharedBuffers": "2GB",
+    "maintenanceWorkMem": "2GB",
+    "maxParallelMaintenanceWorkers": 4
+  },
+  "measurements": [
+    {
+      "scaleRows": 100000,
+      "representation": "fp32",
+      "payloadBytesPerVector": 4100.0,
+      "heapBytesBeforeIncremental": 7340032,
+      "heapBytesPerVectorBeforeIncremental": 73.4,
+      "indexBytesBeforeIncremental": 818864128,
+      "indexBytesPerVectorBeforeIncremental": 8188.64,
+      "build": {
+        "seconds": 55.901,
+        "baselineRssBytes": 1228328960,
+        "peakRssBytes": 2414608384,
+        "peakRssDeltaBytes": 1186279424
+      },
+      "queryLatencyMs": {
+        "queries": 40,
+        "p50": 1.032,
+        "p95": 1.35,
+        "max": 6.227,
+        "efSearch": 40
+      },
+      "incrementalInsert": {
+        "rows": 10000,
+        "seconds": 29.064,
+        "rowsPerSecond": 344.07,
+        "indexGrowthBytes": 81829888,
+        "heapGrowthBytes": 679936
+      },
+      "backupImpact": {
+        "logicalCustomDumpBytes": 548182199,
+        "logicalDumpSeconds": 75.433,
+        "physicalHeapPlusIndexBytes": 908713984,
+        "note": "pg_dump stores rows and index DDL, not HNSW pages. physicalHeapPlusIndexBytes excludes TOAST; use storageIncludingToastObservations for capacity."
+      }
+    },
+    {
+      "scaleRows": 100000,
+      "representation": "halfvec",
+      "payloadBytesPerVector": 2052.0,
+      "heapBytesBeforeIncremental": 7340032,
+      "heapBytesPerVectorBeforeIncremental": 73.4,
+      "indexBytesBeforeIncremental": 272965632,
+      "indexBytesPerVectorBeforeIncremental": 2729.66,
+      "build": {
+        "seconds": 46.102,
+        "baselineRssBytes": 3534536704,
+        "peakRssBytes": 3812519936,
+        "peakRssDeltaBytes": 277983232
+      },
+      "queryLatencyMs": {
+        "queries": 40,
+        "p50": 0.89,
+        "p95": 1.435,
+        "max": 2.336,
+        "efSearch": 40
+      },
+      "incrementalInsert": {
+        "rows": 10000,
+        "seconds": 27.314,
+        "rowsPerSecond": 366.11,
+        "indexGrowthBytes": 27271168,
+        "heapGrowthBytes": 262144
+      },
+      "backupImpact": {
+        "logicalCustomDumpBytes": 481740631,
+        "logicalDumpSeconds": 69.375,
+        "physicalHeapPlusIndexBytes": 307838976,
+        "note": "pg_dump stores rows and index DDL, not HNSW pages. physicalHeapPlusIndexBytes excludes TOAST; use storageIncludingToastObservations for capacity."
+      }
+    },
+    {
+      "scaleRows": 300000,
+      "representation": "fp32",
+      "payloadBytesPerVector": 4100.0,
+      "heapBytesBeforeIncremental": 20971520,
+      "heapBytesPerVectorBeforeIncremental": 69.91,
+      "indexBytesBeforeIncremental": 2455347200,
+      "indexBytesPerVectorBeforeIncremental": 8184.49,
+      "build": {
+        "seconds": 54.642,
+        "baselineRssBytes": 3608838144,
+        "peakRssBytes": 12901826560,
+        "peakRssDeltaBytes": 9292988416
+      },
+      "queryLatencyMs": {
+        "queries": 40,
+        "p50": 8.866,
+        "p95": 13.832,
+        "max": 15.323,
+        "efSearch": 40
+      },
+      "incrementalInsert": {
+        "rows": 10000,
+        "seconds": 36.993,
+        "rowsPerSecond": 270.32,
+        "indexGrowthBytes": 81756160,
+        "heapGrowthBytes": 581632
+      },
+      "backupImpact": {
+        "logicalCustomDumpBytes": 1544883462,
+        "logicalDumpSeconds": 209.015,
+        "physicalHeapPlusIndexBytes": 2558656512,
+        "note": "pg_dump stores rows and index DDL, not HNSW pages. physicalHeapPlusIndexBytes excludes TOAST; use storageIncludingToastObservations for capacity."
+      }
+    },
+    {
+      "scaleRows": 300000,
+      "representation": "halfvec",
+      "payloadBytesPerVector": 2052.0,
+      "heapBytesBeforeIncremental": 20971520,
+      "heapBytesPerVectorBeforeIncremental": 69.91,
+      "indexBytesBeforeIncremental": 818454528,
+      "indexBytesPerVectorBeforeIncremental": 2728.18,
+      "build": {
+        "seconds": 36.222,
+        "baselineRssBytes": 4487036928,
+        "peakRssBytes": 10107179008,
+        "peakRssDeltaBytes": 5620142080
+      },
+      "queryLatencyMs": {
+        "queries": 40,
+        "p50": 8.012,
+        "p95": 12.502,
+        "max": 13.999,
+        "efSearch": 40
+      },
+      "incrementalInsert": {
+        "rows": 10000,
+        "seconds": 31.275,
+        "rowsPerSecond": 319.74,
+        "indexGrowthBytes": 27254784,
+        "heapGrowthBytes": 598016
+      },
+      "backupImpact": {
+        "logicalCustomDumpBytes": 1357618034,
+        "logicalDumpSeconds": 195.336,
+        "physicalHeapPlusIndexBytes": 867278848,
+        "note": "pg_dump stores rows and index DDL, not HNSW pages. physicalHeapPlusIndexBytes excludes TOAST; use storageIncludingToastObservations for capacity."
+      }
+    },
+    {
+      "scaleRows": 600000,
+      "representation": "fp32",
+      "payloadBytesPerVector": 4100.0,
+      "heapBytesBeforeIncremental": 41418752,
+      "heapBytesPerVectorBeforeIncremental": 69.03,
+      "indexBytesBeforeIncremental": 4907827200,
+      "indexBytesPerVectorBeforeIncremental": 8179.71,
+      "build": {
+        "seconds": 403.253,
+        "baselineRssBytes": 4052054016,
+        "peakRssBytes": 24134615040,
+        "peakRssDeltaBytes": 20082561024
+      },
+      "queryLatencyMs": {
+        "queries": 40,
+        "p50": 6.617,
+        "p95": 11.2,
+        "max": 15.519,
+        "efSearch": 40
+      },
+      "incrementalInsert": {
+        "rows": 10000,
+        "seconds": 64.467,
+        "rowsPerSecond": 155.12,
+        "indexGrowthBytes": 81747968,
+        "heapGrowthBytes": 385024
+      },
+      "backupImpact": {
+        "logicalCustomDumpBytes": 3040005983,
+        "logicalDumpSeconds": 410.074,
+        "physicalHeapPlusIndexBytes": 5031378944,
+        "note": "pg_dump stores rows and index DDL, not HNSW pages. physicalHeapPlusIndexBytes excludes TOAST; use storageIncludingToastObservations for capacity."
+      }
+    },
+    {
+      "scaleRows": 600000,
+      "representation": "halfvec",
+      "payloadBytesPerVector": 2052.0,
+      "heapBytesBeforeIncremental": 41418752,
+      "heapBytesPerVectorBeforeIncremental": 69.03,
+      "indexBytesBeforeIncremental": 1635950592,
+      "indexBytesPerVectorBeforeIncremental": 2726.58,
+      "build": {
+        "seconds": 80.3,
+        "baselineRssBytes": 4913029120,
+        "peakRssBytes": 14930788352,
+        "peakRssDeltaBytes": 10017759232
+      },
+      "queryLatencyMs": {
+        "queries": 40,
+        "p50": 5.754,
+        "p95": 9.804,
+        "max": 10.532,
+        "efSearch": 40
+      },
+      "incrementalInsert": {
+        "rows": 10000,
+        "seconds": 35.361,
+        "rowsPerSecond": 282.79,
+        "indexGrowthBytes": 27254784,
+        "heapGrowthBytes": 679936
+      },
+      "backupImpact": {
+        "logicalCustomDumpBytes": 2671521150,
+        "logicalDumpSeconds": 383.201,
+        "physicalHeapPlusIndexBytes": 1705304064,
+        "note": "pg_dump stores rows and index DDL, not HNSW pages. physicalHeapPlusIndexBytes excludes TOAST; use storageIncludingToastObservations for capacity."
+      }
+    }
+  ],
+  "storageIncludingToastObservations": [
+    {
+      "representation": "fp32",
+      "scaleRows": 620300,
+      "tableIncludingToastBytes": 3473031168,
+      "tableIncludingToastBytesPerVector": 5598.95,
+      "hnswIndexBytes": 5073821696,
+      "hnswIndexBytesPerVector": 8179.63,
+      "combinedBytesPerVector": 13778.58,
+      "source": "read-only existing population"
+    },
+    {
+      "representation": "halfvec",
+      "scaleRows": 600000,
+      "tableIncludingToastBytes": 1706803200,
+      "tableIncludingToastBytesPerVector": 2844.67,
+      "hnswIndexBytes": 1635950592,
+      "hnswIndexBytesPerVector": 2726.58,
+      "combinedBytesPerVector": 5571.26,
+      "source": "disposable copied structure"
+    }
+  ],
+  "measurementClarification": "Per-run heapBytes and physicalHeapPlusIndexBytes use pg_relation_size and therefore exclude TOAST. Capacity estimates use the TOAST-inclusive observations above; the rerun script now records pg_table_size explicitly.",
+  "semanticEquivalence": "NOT TESTED \u2014 NEW1 owns quality"
+}

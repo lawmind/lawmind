@@ -1,0 +1,188 @@
+{
+  "schema": "cx1-disaster-recovery-drill-v1",
+  "generatedAt": "2026-08-17T14:21:22.607Z",
+  "status": "prepared_not_run",
+  "boundary": "Offline Workstream L only: no R2 download, no provider operation, no pg_basebackup, no pg_verifybackup, no restore, no pg_ctl, no PostgreSQL query, no production write, and no Gold cleanup.",
+  "inputs": [
+    {
+      "key": "backupArchitecture",
+      "path": "docs/ops/LOW_COST_BACKUP_ARCHITECTURE.md",
+      "sha256": "e839264ddbd5cf38242fb935a54773a9e2482a327ca2066f0b46363975cee031",
+      "role": "Stage A/Stage B backup acceptance design"
+    },
+    {
+      "key": "architecturePacket",
+      "path": "docs/ai/CX1_ARCHITECTURE_PACKET_V2.md",
+      "sha256": "e25aaef9c43d35f545129fc6633e13395bc97c9041ea6ae8517edb7d9456240e",
+      "role": "CX1 architecture correction and backup policy source"
+    },
+    {
+      "key": "migrationCompare",
+      "path": "docs/ops/migration/compare-final.json",
+      "sha256": "af903544499ee58200e4414c24e8ba3023eab7e321dcf239d163417249e38234",
+      "role": "current local migration comparison baseline"
+    },
+    {
+      "key": "localSmoke",
+      "path": "docs/ops/migration/smoke-local.json",
+      "sha256": "50db335d11de219b84b7384a4538540eab3f7a398739def7541bcd64a425f809",
+      "role": "current local LawMind smoke baseline"
+    }
+  ],
+  "validations": [
+    {
+      "input": "backupArchitecture",
+      "status": "pass",
+      "pattern": "/Stage A uses a full plain-format pg_basebackup with required WAL\\s+streamed into the backup/"
+    },
+    {
+      "input": "backupArchitecture",
+      "status": "pass",
+      "pattern": "/pg_verifybackup against the plain backup/"
+    },
+    {
+      "input": "backupArchitecture",
+      "status": "pass",
+      "pattern": "/a full restore into a different local data directory/"
+    },
+    {
+      "input": "backupArchitecture",
+      "status": "pass",
+      "pattern": "/LawMind smoke tests against the restored cluster/"
+    },
+    {
+      "input": "backupArchitecture",
+      "status": "pass",
+      "pattern": "/prior 25 MB download is not restore-throughput\\s+evidence/"
+    },
+    {
+      "input": "backupArchitecture",
+      "status": "pass",
+      "pattern": "/encrypt before off-machine storage/"
+    },
+    {
+      "input": "architecturePacket",
+      "status": "pass",
+      "pattern": "/Acceptance requires pg_verifybackup, a full\\s+restore into a different data directory, and LawMind smoke tests/"
+    },
+    {
+      "input": "architecturePacket",
+      "status": "pass",
+      "pattern": "/R2 remains the initial provider for operational simplicity/"
+    }
+  ],
+  "baselines": {
+    "migrationCompare": {
+      "comparedAt": "2026-08-17T01:59:41.871Z",
+      "sourceLabel": "railway-final-v2",
+      "targetLabel": "local-final",
+      "counts": {
+        "fail": 0,
+        "warn": 2,
+        "info": 1
+      },
+      "findings": [
+        {
+          "level": "WARN",
+          "area": "server",
+          "message": "minor version differs: source 180004, target 180006 — same major, restore is supported"
+        },
+        {
+          "level": "INFO",
+          "area": "rowcounts",
+          "message": "53 tables compared on exact counts, 0 skipped for lack of an exact count on one side"
+        },
+        {
+          "level": "WARN",
+          "area": "size",
+          "message": "database size source 107.7 GB, target 120.0 GB (+11.5%) — a fresh restore packs tighter and carries no bloat, so smaller is expected and is not evidence of loss"
+        }
+      ]
+    },
+    "localSmoke": {
+      "at": "2026-08-17T02:07:52.821Z",
+      "passCount": 11,
+      "failCount": 1,
+      "nullCount": 1,
+      "failedChecks": [
+        "full-text query uses the GIN index"
+      ]
+    }
+  },
+  "drillPhases": [
+    {
+      "phase": "Stage A baseline restore",
+      "state": "prepared_not_run",
+      "commandShape": "pg_verifybackup <base-backup-dir>; pg_ctl -D C:/lawmind/cx1-lab/dr-restore/<id>/pgdata -o \"-p <nonprod-port>\" start; psql -p <nonprod-port> -f restore-smoke.sql",
+      "boundary": "Disposable restore only; never start on 5432 and never point smoke SQL at Gold."
+    },
+    {
+      "phase": "Stage B incremental benchmark",
+      "state": "future_benchmark",
+      "commandShape": "Only after Stage A accepted: pg_basebackup --incremental=<ancestor manifest>; pg_combinebackup; pg_verifybackup; full disposable restore.",
+      "boundary": "Do not enable incremental retention before a successful full restore gate."
+    }
+  ],
+  "acceptanceChecklist": [
+    {
+      "phase": "L0-source-selection",
+      "check": "Identify exact accepted base backup ID, object keys, backup_manifest path, WAL start/end, and encryption/key procedure.",
+      "evidence": "chain manifest or operator-captured backup metadata",
+      "gate": "before-download",
+      "status": "not_run"
+    },
+    {
+      "phase": "L1-object-readback",
+      "check": "Download or mount backup objects from R2 into CX1 disposable storage and hash every object against the source manifest.",
+      "evidence": "object hash manifest and byte counts",
+      "gate": "HEAVY_IDLE",
+      "status": "not_run"
+    },
+    {
+      "phase": "L2-pg-verifybackup",
+      "check": "Run pg_verifybackup against the plain base backup, including WAL parsing.",
+      "evidence": "pg_verifybackup stdout/stderr, exit code, duration",
+      "gate": "HEAVY_IDLE",
+      "status": "not_run"
+    },
+    {
+      "phase": "L3-disposable-restore",
+      "check": "Restore into a different data directory under C:/lawmind/cx1-lab/dr-restore and start on a non-production port.",
+      "evidence": "pg_ctl log, restored data-dir path, port, startup duration",
+      "gate": "HEAVY_IDLE",
+      "status": "not_run"
+    },
+    {
+      "phase": "L4-restored-smoke-sql",
+      "check": "Run restore-smoke.sql only against the restored cluster, not Gold.",
+      "evidence": "restore-smoke output JSON sections",
+      "gate": "RESTORED_CLUSTER_ONLY",
+      "status": "not_run"
+    },
+    {
+      "phase": "L5-compare-to-baseline",
+      "check": "Compare extension versions, relation estimates, migration state, representative counts, generated columns, citation lookup, full-text search, vector readiness, and application preflight.",
+      "evidence": "comparison report against migration manifests and local smoke baseline",
+      "gate": "RESTORED_CLUSTER_ONLY",
+      "status": "not_run"
+    },
+    {
+      "phase": "L6-rto-rpo",
+      "check": "Record backup readback duration, verify duration, WAL replay duration, restored bytes, disk peak, RTO, and effective RPO.",
+      "evidence": "timing and disk telemetry JSON",
+      "gate": "after-restore",
+      "status": "not_run"
+    },
+    {
+      "phase": "L7-cleanup",
+      "check": "Stop restored cluster and remove only CX1 disposable restore paths after evidence is written.",
+      "evidence": "cleanup manifest with deleted paths and bytes",
+      "gate": "after-evidence",
+      "status": "not_run"
+    }
+  ],
+  "restoreSmokeSql": "docs/ai/cx1-disaster-recovery-drill/restore-smoke.sql",
+  "acceptanceChecklistCsv": "docs/ai/cx1-disaster-recovery-drill/acceptance-checklist.csv",
+  "planJson": "docs/ai/cx1-disaster-recovery-drill/drill-plan.json",
+  "nextGate": "HEAVY_IDLE for R2 readback/verify/restore; RESTORED_CLUSTER_ONLY for restore-smoke SQL execution on a non-production port"
+}

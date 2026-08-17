@@ -1,0 +1,23 @@
+{
+  "schema": "cx1-db-sample-census-plan-v1",
+  "generatedAt": "2026-08-17T12:36:38.132Z",
+  "status": "prepared_not_run",
+  "db": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "database": "lawmind",
+    "helper": "scripts/migration/pg-local.mjs"
+  },
+  "controls": {
+    "samplePercent": 0.25,
+    "limit": 20000,
+    "seed": 170817,
+    "dryRunDefault": true,
+    "runCommand": "node scripts/cx1-db-sample-census.mjs --run --sample-percent 0.25 --limit 20000 --seed 170817"
+  },
+  "outputs": {
+    "sql": "docs/ai/cx1-db-sample-census/sample-census.sql",
+    "result": null,
+    "report": "docs/ai/CX1_DB_SAMPLE_CENSUS.md"
+  }
+}

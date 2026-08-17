@@ -1,0 +1,9 @@
+phase,check,evidence,gate,status
+L0-source-selection,"Identify exact accepted base backup ID, object keys, backup_manifest path, WAL start/end, and encryption/key procedure.",chain manifest or operator-captured backup metadata,before-download,not_run
+L1-object-readback,Download or mount backup objects from R2 into CX1 disposable storage and hash every object against the source manifest.,object hash manifest and byte counts,HEAVY_IDLE,not_run
+L2-pg-verifybackup,"Run pg_verifybackup against the plain base backup, including WAL parsing.","pg_verifybackup stdout/stderr, exit code, duration",HEAVY_IDLE,not_run
+L3-disposable-restore,Restore into a different data directory under C:/lawmind/cx1-lab/dr-restore and start on a non-production port.,"pg_ctl log, restored data-dir path, port, startup duration",HEAVY_IDLE,not_run
+L4-restored-smoke-sql,"Run restore-smoke.sql only against the restored cluster, not Gold.",restore-smoke output JSON sections,RESTORED_CLUSTER_ONLY,not_run
+L5-compare-to-baseline,"Compare extension versions, relation estimates, migration state, representative counts, generated columns, citation lookup, full-text search, vector readiness, and application preflight.",comparison report against migration manifests and local smoke baseline,RESTORED_CLUSTER_ONLY,not_run
+L6-rto-rpo,"Record backup readback duration, verify duration, WAL replay duration, restored bytes, disk peak, RTO, and effective RPO.",timing and disk telemetry JSON,after-restore,not_run
+L7-cleanup,Stop restored cluster and remove only CX1 disposable restore paths after evidence is written.,cleanup manifest with deleted paths and bytes,after-evidence,not_run

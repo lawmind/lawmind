@@ -1,0 +1,24 @@
+{
+  "schema": "cx1-gated-runner-v1",
+  "generatedAt": "2026-08-17T13:33:43.690Z",
+  "status": "pass",
+  "taskId": "cx1-selector-runner-smoke",
+  "gate": "LIGHT",
+  "command": "node scripts\\cx1-selector-runner-smoke.mjs",
+  "exitCode": 0,
+  "stdout": "wrote docs/ai/cx1-selector-results/selector-runner-smoke.json\nwrote docs/ai/CX1_SELECTOR_RUNNER.md\nstatus pass",
+  "stderr": "",
+  "queueGeneratedAt": "2026-08-17T13:33:43.679Z",
+  "scheduler": {
+    "available": true,
+    "maxClass": "MEDIUM",
+    "reasons": [
+      "PostgreSQL active=2, oldest transaction=305s",
+      "RAM free 23.9%"
+    ],
+    "cpuPct": 13.609869277347064,
+    "freeRamPct": 23.94427240564394,
+    "postgresActive": 2,
+    "postgresOldestSeconds": 305
+  }
+}

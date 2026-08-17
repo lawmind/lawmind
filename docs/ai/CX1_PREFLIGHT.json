@@ -1,0 +1,749 @@
+{
+  "schema": "cx1-preflight-v1",
+  "generatedAt": "2026-08-17T14:22:23.316Z",
+  "status": "pass",
+  "boundary": "offline only: no PostgreSQL query, no PDF fetch, no OCR, no vector copy, no HNSW build, no production write",
+  "checks": [
+    {
+      "id": "node-syntax",
+      "status": "pass",
+      "command": "node --check scripts/cx1-heavy-lab-runner.mjs scripts/cx1-corpus-census.mjs scripts/cx1-embedding-eligibility-census.mjs scripts/cx1-db-sample-census.mjs scripts/cx1-devanagari-scale-plan.mjs scripts/cx1-hnsw-parameter-plan.mjs scripts/cx1-run-queue.mjs scripts/cx1-document-classification-audit.mjs scripts/cx1-legal-object-efficiency.mjs scripts/cx1-evidence-integrity.mjs scripts/cx1-selector-runner.mjs scripts/cx1-selector-runner-smoke.mjs scripts/cx1-retrieval-matrix.mjs scripts/cx1-citation-graph-census.mjs scripts/cx1-premium-backend-lab.mjs scripts/cx1-disaster-recovery-drill.mjs scripts/cx1-heavy-lab-final.mjs scripts/cx1-preflight.mjs scripts/cx1-gated-runner.mjs scripts/cx1-gated-runner-smoke.mjs",
+      "files": [
+        "scripts/cx1-heavy-lab-runner.mjs",
+        "scripts/cx1-corpus-census.mjs",
+        "scripts/cx1-embedding-eligibility-census.mjs",
+        "scripts/cx1-db-sample-census.mjs",
+        "scripts/cx1-devanagari-scale-plan.mjs",
+        "scripts/cx1-hnsw-parameter-plan.mjs",
+        "scripts/cx1-run-queue.mjs",
+        "scripts/cx1-document-classification-audit.mjs",
+        "scripts/cx1-legal-object-efficiency.mjs",
+        "scripts/cx1-evidence-integrity.mjs",
+        "scripts/cx1-selector-runner.mjs",
+        "scripts/cx1-selector-runner-smoke.mjs",
+        "scripts/cx1-retrieval-matrix.mjs",
+        "scripts/cx1-citation-graph-census.mjs",
+        "scripts/cx1-premium-backend-lab.mjs",
+        "scripts/cx1-disaster-recovery-drill.mjs",
+        "scripts/cx1-heavy-lab-final.mjs",
+        "scripts/cx1-preflight.mjs",
+        "scripts/cx1-gated-runner.mjs",
+        "scripts/cx1-gated-runner-smoke.mjs"
+      ],
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "python-compile",
+      "status": "pass",
+      "command": "C:\\lawmind\\cx1-lab\\venv\\Scripts\\python.exe -m py_compile scripts/cx1-halfvec-fidelity.py scripts/cx1_silver_lib.py scripts/cx1-silver-writer.py scripts/cx1-silver-compact.py scripts/cx1-silver-smoke.py scripts/cx1-silver-failure-smoke.py",
+      "files": [
+        "scripts/cx1-halfvec-fidelity.py",
+        "scripts/cx1_silver_lib.py",
+        "scripts/cx1-silver-writer.py",
+        "scripts/cx1-silver-compact.py",
+        "scripts/cx1-silver-smoke.py",
+        "scripts/cx1-silver-failure-smoke.py"
+      ],
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "json-parse",
+      "status": "pass",
+      "findings": [
+        {
+          "file": "docs/ai/CX1_EXPERIMENT_REGISTRY.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/CX1_RUN_QUEUE.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/CX1_GATED_RUNNER.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-runner-results/runner-smoke.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-runner-results/refusal-smoke.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-corpus-census/metadata-coverage.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-embedding-eligibility/population-scenarios.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-vector-results/halfvec-fidelity.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-vector-results/hnsw-parameter-plan.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-devanagari-results/scale-validation-plan.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-db-sample-census/sample-census-plan.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-classification-audit/classification-audit.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-classification-audit/sample-plan.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-legal-object-efficiency/triage-summary.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-legal-object-efficiency/router-proposal.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-evidence-integrity/integrity-report.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-evidence-integrity/artifact-manifest.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-selector-results/selector-runner-smoke.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-selector-results/selector-runner-dry-run.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-selector-results/selector-runner-refusal.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-retrieval-matrix/matrix-plan.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-citation-graph-census/citation-graph-census.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-premium-backend-lab/premium-backend-lab.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-disaster-recovery-drill/drill-plan.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-silver-results/prototype-smoke.json",
+          "status": "pass"
+        },
+        {
+          "file": "docs/ai/cx1-silver-results/failure-smoke.json",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "sql-readonly-scan",
+      "status": "pass",
+      "findings": [
+        {
+          "file": "docs/ai/cx1-db-sample-census/sample-census.sql",
+          "status": "pass",
+          "startsWithRead": true,
+          "forbiddenToken": null
+        },
+        {
+          "file": "docs/ai/cx1-devanagari-results/scale-validation-selector.sql",
+          "status": "pass",
+          "startsWithRead": true,
+          "forbiddenToken": null
+        },
+        {
+          "file": "docs/ai/cx1-classification-audit/sample-selector.sql",
+          "status": "pass",
+          "startsWithRead": true,
+          "forbiddenToken": null
+        },
+        {
+          "file": "docs/ai/cx1-legal-object-efficiency/efficiency-selector.sql",
+          "status": "pass",
+          "startsWithRead": true,
+          "forbiddenToken": null
+        },
+        {
+          "file": "docs/ai/cx1-legal-object-efficiency/llm-cost-selector.sql",
+          "status": "pass",
+          "startsWithRead": true,
+          "forbiddenToken": null
+        },
+        {
+          "file": "docs/ai/cx1-citation-graph-census/graph-census-selector.sql",
+          "status": "pass",
+          "startsWithRead": true,
+          "forbiddenToken": null
+        },
+        {
+          "file": "docs/ai/cx1-disaster-recovery-drill/restore-smoke.sql",
+          "status": "pass",
+          "startsWithRead": true,
+          "forbiddenToken": null
+        }
+      ],
+      "caveat": "Lexical guard only. It proves no obvious mutating SQL token in prepared selectors; it is not a PostgreSQL parser."
+    },
+    {
+      "id": "registry-references",
+      "status": "pass",
+      "findings": [
+        {
+          "experimentId": "cx1-heavy-lab-scheduler-20260817",
+          "field": "script",
+          "path": "scripts/cx1-heavy-lab-runner.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-heavy-lab-scheduler-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_HEAVY_LAB_STATUS.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-run-queue-20260817",
+          "field": "script",
+          "path": "scripts/cx1-run-queue.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-run-queue-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_RUN_QUEUE.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-run-queue-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/CX1_RUN_QUEUE.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-preflight-20260817",
+          "field": "script",
+          "path": "scripts/cx1-preflight.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-preflight-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_PREFLIGHT.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-preflight-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/CX1_PREFLIGHT.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-gated-runner-20260817",
+          "field": "script",
+          "path": "scripts/cx1-gated-runner.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-gated-runner-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_GATED_RUNNER.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-gated-runner-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/CX1_GATED_RUNNER.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-gated-runner-refusal-smoke-20260817",
+          "field": "script",
+          "path": "scripts/cx1-gated-runner-smoke.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-gated-runner-refusal-smoke-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_GATED_RUNNER_SAFETY.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-gated-runner-refusal-smoke-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-runner-results/runner-smoke.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-evidence-integrity-20260817",
+          "field": "script",
+          "path": "scripts/cx1-evidence-integrity.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-evidence-integrity-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_EVIDENCE_INTEGRITY.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-evidence-integrity-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-evidence-integrity/integrity-report.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-selector-runner-20260817",
+          "field": "script",
+          "path": "scripts/cx1-selector-runner.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-selector-runner-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_SELECTOR_RUNNER.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-selector-runner-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-selector-results/selector-runner-smoke.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-corpus-census-phase1-20260817",
+          "field": "script",
+          "path": "scripts/cx1-corpus-census.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-corpus-census-phase1-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_FULL_CORPUS_CENSUS.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-corpus-census-phase1-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-corpus-census/metadata-coverage.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-halfvec-fidelity-harness-20260817",
+          "field": "script",
+          "path": "scripts/cx1-halfvec-fidelity.py",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-halfvec-fidelity-harness-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_HALFVEC_FIDELITY.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-halfvec-fidelity-harness-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-vector-results/halfvec-fidelity.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-embedding-eligibility-phase1-20260817",
+          "field": "script",
+          "path": "scripts/cx1-embedding-eligibility-census.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-embedding-eligibility-phase1-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_EMBEDDING_ELIGIBILITY_CENSUS.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-embedding-eligibility-phase1-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-embedding-eligibility/population-scenarios.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-retrieval-matrix-plan-20260817",
+          "field": "script",
+          "path": "scripts/cx1-retrieval-matrix.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-retrieval-matrix-plan-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_RETRIEVAL_MATRIX.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-retrieval-matrix-plan-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-retrieval-matrix/matrix-plan.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-db-sample-census-harness-20260817",
+          "field": "script",
+          "path": "scripts/cx1-db-sample-census.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-db-sample-census-harness-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_DB_SAMPLE_CENSUS.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-db-sample-census-harness-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-db-sample-census/sample-census-plan.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-halfvec-fidelity-c1-c2-20260817",
+          "field": "script",
+          "path": "scripts/cx1-halfvec-fidelity.py",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-halfvec-fidelity-c1-c2-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_HALFVEC_FIDELITY.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-halfvec-fidelity-c1-c2-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-vector-results/halfvec-fidelity.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-experiment-registry-summary-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_EXPERIMENT_REGISTRY.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-experiment-registry-summary-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/CX1_EXPERIMENT_REGISTRY.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-vector-capacity-20260817",
+          "field": "script",
+          "path": "scripts/cx1-vector-capacity.py",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-vector-capacity-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_VECTOR_CAPACITY_BENCHMARK.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-vector-capacity-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-vector-results/benchmark-results.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-hnsw-parameter-plan-20260817",
+          "field": "script",
+          "path": "scripts/cx1-hnsw-parameter-plan.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-hnsw-parameter-plan-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_HNSW_PARAMETER_LAB.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-hnsw-parameter-plan-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-vector-results/hnsw-parameter-plan.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-local-scale-envelope-20260817",
+          "field": "script",
+          "path": "scripts/cx1-local-scale-envelope.py",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-local-scale-envelope-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_LOCAL_SCALE_ENVELOPE.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-local-scale-envelope-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-envelope-results/benchmark-results.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-real-silver-benchmark-20260817",
+          "field": "script",
+          "path": "scripts/cx1-real-silver-benchmark.py",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-real-silver-benchmark-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_REAL_SILVER_BENCHMARK.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-real-silver-benchmark-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-silver-results/benchmark-results.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-silver-production-prototype-smoke-20260817",
+          "field": "script",
+          "path": "scripts/cx1-silver-smoke.py",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-silver-production-prototype-smoke-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_SILVER_PRODUCTION_PROTOTYPE.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-silver-production-prototype-smoke-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-silver-results/prototype-smoke.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-silver-failure-smoke-20260817",
+          "field": "script",
+          "path": "scripts/cx1-silver-failure-smoke.py",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-silver-failure-smoke-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_SILVER_PRODUCTION_PROTOTYPE.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-silver-failure-smoke-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-silver-results/failure-smoke.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-document-classification-audit-20260817",
+          "field": "script",
+          "path": "scripts/cx1-document-classification-audit.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-document-classification-audit-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_DOCUMENT_CLASSIFICATION_AUDIT.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-document-classification-audit-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-classification-audit/classification-audit.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-legal-object-efficiency-audit-20260817",
+          "field": "script",
+          "path": "scripts/cx1-legal-object-efficiency.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-legal-object-efficiency-audit-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_LEGAL_OBJECT_EFFICIENCY.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-legal-object-efficiency-audit-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-legal-object-efficiency/triage-summary.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-devanagari-bakeoff-20260817",
+          "field": "script",
+          "path": "scripts/cx1-devanagari-bakeoff.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-devanagari-bakeoff-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_DEVANAGARI_BAKEOFF.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-devanagari-bakeoff-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-devanagari-results/bakeoff-results.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-devanagari-scale-validation-plan-20260817",
+          "field": "script",
+          "path": "scripts/cx1-devanagari-scale-plan.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-devanagari-scale-validation-plan-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_DEVANAGARI_SCALE_VALIDATION.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-devanagari-scale-validation-plan-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-devanagari-results/scale-validation-plan.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-premium-backend-shadow-lab-20260817",
+          "field": "script",
+          "path": "scripts/cx1-premium-backend-lab.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-premium-backend-shadow-lab-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_PREMIUM_DATA_BACKEND_LAB.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-premium-backend-shadow-lab-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-premium-backend-lab/premium-backend-lab.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-citation-graph-census-plan-20260817",
+          "field": "script",
+          "path": "scripts/cx1-citation-graph-census.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-citation-graph-census-plan-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_CITATION_GRAPH_CENSUS.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-citation-graph-census-plan-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-citation-graph-census/citation-graph-census.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-disaster-recovery-drill-plan-20260817",
+          "field": "script",
+          "path": "scripts/cx1-disaster-recovery-drill.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-disaster-recovery-drill-plan-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_DISASTER_RECOVERY_DRILL.md",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-disaster-recovery-drill-plan-20260817",
+          "field": "resultFile",
+          "path": "docs/ai/cx1-disaster-recovery-drill/drill-plan.json",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-heavy-lab-final-packet-20260817",
+          "field": "script",
+          "path": "scripts/cx1-heavy-lab-final.mjs",
+          "status": "pass"
+        },
+        {
+          "experimentId": "cx1-heavy-lab-final-packet-20260817",
+          "field": "report",
+          "path": "docs/ai/CX1_HEAVY_LAB_FINAL.md",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "run-queue-gates",
+      "status": "pass",
+      "scheduler": {
+        "available": true,
+        "maxClass": "MEDIUM",
+        "reasons": [
+          "PostgreSQL active=2, oldest transaction=396s",
+          "RAM free 21.7%"
+        ],
+        "cpuPct": 32.18124914954416,
+        "freeRamPct": 21.67378880065058,
+        "postgresActive": 2,
+        "postgresOldestSeconds": 396
+      },
+      "nextRunnable": {
+        "id": "cx1-validate-light-artifacts",
+        "command": "node --check scripts\\cx1-heavy-lab-runner.mjs scripts\\cx1-db-sample-census.mjs scripts\\cx1-devanagari-scale-plan.mjs scripts\\cx1-hnsw-parameter-plan.mjs scripts\\cx1-run-queue.mjs scripts\\cx1-document-classification-audit.mjs scripts\\cx1-legal-object-efficiency.mjs scripts\\cx1-evidence-integrity.mjs scripts\\cx1-selector-runner.mjs scripts\\cx1-selector-runner-smoke.mjs scripts\\cx1-retrieval-matrix.mjs scripts\\cx1-citation-graph-census.mjs scripts\\cx1-premium-backend-lab.mjs scripts\\cx1-disaster-recovery-drill.mjs scripts\\cx1-heavy-lab-final.mjs scripts\\cx1-preflight.mjs scripts\\cx1-gated-runner.mjs scripts\\cx1-gated-runner-smoke.mjs",
+        "gate": "LIGHT"
+      },
+      "forbiddenRunnable": []
+    },
+    {
+      "id": "lab-path-fences",
+      "status": "pass",
+      "findings": [
+        {
+          "file": "scripts/cx1_silver_lib.py",
+          "status": "pass",
+          "hasLabRoot": true,
+          "hasOutsideGuard": true
+        },
+        {
+          "file": "scripts/cx1-silver-smoke.py",
+          "status": "pass",
+          "hasLabRoot": true,
+          "hasOutsideGuard": true
+        },
+        {
+          "file": "scripts/cx1-silver-failure-smoke.py",
+          "status": "pass",
+          "hasLabRoot": true,
+          "hasOutsideGuard": true
+        }
+      ]
+    }
+  ]
+}

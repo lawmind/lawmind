@@ -1,0 +1,288 @@
+{
+  "schema": "cx1-experiment-registry-v1",
+  "createdAt": "2026-08-17T12:10:00Z",
+  "updatedAt": "2026-08-17T14:17:00Z",
+  "policy": "A CX1 result without a reproducible script, input description, and machine-readable evidence is not KNOW-level project truth.",
+  "experiments": [
+    {
+      "experimentId": "cx1-heavy-lab-scheduler-20260817",
+      "status": "active",
+      "workstream": "resource scheduler",
+      "script": "scripts/cx1-heavy-lab-runner.mjs",
+      "report": "docs/ai/CX1_HEAVY_LAB_STATUS.md",
+      "resultFile": null,
+      "input": "OS process table, disk/memory counters, local pg_stat_activity through pg-local.mjs",
+      "finding": "scheduler recommends largest safe CX1 class and defaults to observation only"
+    },
+    {
+      "experimentId": "cx1-run-queue-20260817",
+      "status": "active",
+      "workstream": "M",
+      "script": "scripts/cx1-run-queue.mjs",
+      "report": "docs/ai/CX1_RUN_QUEUE.md",
+      "resultFile": "docs/ai/CX1_RUN_QUEUE.json",
+      "input": "CX1 experiment registry plus live cx1-heavy-lab-runner scheduler JSON",
+      "finding": "active observer queue ranks prepared CX1 work by gate class and currently permits only LIGHT artifact validation while DB/vector/OCR work remains gated"
+    },
+    {
+      "experimentId": "cx1-preflight-20260817",
+      "status": "active",
+      "workstream": "M",
+      "script": "scripts/cx1-preflight.mjs",
+      "report": "docs/ai/CX1_PREFLIGHT.md",
+      "resultFile": "docs/ai/CX1_PREFLIGHT.json",
+      "input": "CX1 scripts, registry, run queue, JSON manifests, prepared SQL selectors, and lab-path fence checks",
+      "finding": "offline preflight passes: Node/Python syntax, JSON parse, lexical read-only SQL scan, registry references, run-queue gates, and Silver lab-path fences"
+    },
+    {
+      "experimentId": "cx1-gated-runner-20260817",
+      "status": "active",
+      "workstream": "M",
+      "script": "scripts/cx1-gated-runner.mjs",
+      "report": "docs/ai/CX1_GATED_RUNNER.md",
+      "resultFile": "docs/ai/CX1_GATED_RUNNER.json",
+      "input": "CX1_RUN_QUEUE.json plus LIGHT task allowlist",
+      "finding": "gated runner executed the queue-approved LIGHT validation task successfully and refuses non-LIGHT DB/PDF/OCR/vector/HNSW work"
+    },
+    {
+      "experimentId": "cx1-gated-runner-refusal-smoke-20260817",
+      "status": "complete_sample",
+      "workstream": "M",
+      "script": "scripts/cx1-gated-runner-smoke.mjs",
+      "report": "docs/ai/CX1_GATED_RUNNER_SAFETY.md",
+      "resultFile": "docs/ai/cx1-runner-results/runner-smoke.json",
+      "input": "cx1-db-sample-census-run requested through cx1-gated-runner with isolated result paths",
+      "finding": "refusal smoke passed: DB sample task was refused before execution, refusal wrote to isolated evidence, and the normal runner result was preserved"
+    },
+    {
+      "experimentId": "cx1-evidence-integrity-20260817",
+      "status": "active",
+      "workstream": "M",
+      "script": "scripts/cx1-evidence-integrity.mjs",
+      "report": "docs/ai/CX1_EVIDENCE_INTEGRITY.md",
+      "resultFile": "docs/ai/cx1-evidence-integrity/integrity-report.json",
+      "input": "CX1 experiment registry, run queue, preflight, status document, and discovered CX1 evidence files under docs/ai",
+      "finding": "offline integrity audit hashes CX1 evidence files, parses JSON, lexically scans SQL, checks registry/queue/preflight consistency, and currently reports zero failure or warning findings"
+    },
+    {
+      "experimentId": "cx1-selector-runner-20260817",
+      "status": "active",
+      "workstream": "M",
+      "script": "scripts/cx1-selector-runner.mjs",
+      "report": "docs/ai/CX1_SELECTOR_RUNNER.md",
+      "resultFile": "docs/ai/cx1-selector-results/selector-runner-smoke.json",
+      "input": "CX1_RUN_QUEUE.json, prepared MEDIUM_CLEAN pg-local psql selector commands, and selector-runner smoke outputs",
+      "finding": "selector runner prepared as a dry-run-default wrapper for future read-only selector execution; smoke proves dry-run/no-execute behavior and unsupported-task refusal before execution"
+    },
+    {
+      "experimentId": "cx1-corpus-census-phase1-20260817",
+      "status": "complete",
+      "workstream": "A",
+      "script": "scripts/cx1-corpus-census.mjs",
+      "report": "docs/ai/CX1_FULL_CORPUS_CENSUS.md",
+      "resultFile": "docs/ai/cx1-corpus-census/metadata-coverage.json",
+      "input": "docs/HC_METADATA_SURVEY.json, docs/ops/migration/new2-held-by-court-year.json, docs/HC_ORDER_TYPES.json",
+      "finding": "metadata-only HC coverage base is 7257726 held of 20529203 source documents, 35.4%"
+    },
+    {
+      "experimentId": "cx1-halfvec-fidelity-harness-20260817",
+      "status": "complete_sample",
+      "workstream": "C",
+      "script": "scripts/cx1-halfvec-fidelity.py",
+      "report": "docs/ai/CX1_HALFVEC_FIDELITY.md",
+      "resultFile": "docs/ai/cx1-vector-results/halfvec-fidelity.json",
+      "input": "local loopback vector sample copied into disposable CX1 lab payload during vector-exclusive window",
+      "finding": "harness executed for C1/C2 sample and remains reusable for larger C1/C2 or future C3 work"
+    },
+    {
+      "experimentId": "cx1-embedding-eligibility-phase1-20260817",
+      "status": "complete",
+      "workstream": "B",
+      "script": "scripts/cx1-embedding-eligibility-census.mjs",
+      "report": "docs/ai/CX1_EMBEDDING_ELIGIBILITY_CENSUS.md",
+      "resultFile": "docs/ai/cx1-embedding-eligibility/population-scenarios.json",
+      "input": "CX1 corpus census phase 1, NEW2 HC plain-variant class sample, HC_ORDER_TYPES mobile warning, CX1 vector capacity constants",
+      "finding": "phase-1 MINIMAL/BALANCED/AGGRESSIVE population scenarios prepared with explicit caveats and storage estimates"
+    },
+    {
+      "experimentId": "cx1-retrieval-matrix-plan-20260817",
+      "status": "prepared_not_run",
+      "workstream": "E",
+      "script": "scripts/cx1-retrieval-matrix.mjs",
+      "report": "docs/ai/CX1_RETRIEVAL_MATRIX.md",
+      "resultFile": "docs/ai/cx1-retrieval-matrix/matrix-plan.json",
+      "input": "NEW1 harness source, 283-query fixture, existing arms-checkpoint.jsonl, pre-migration retrieval baseline, and post-migration probe fixture",
+      "finding": "offline retrieval matrix plan prepared and existing CONTROLLED sparse/dense/hybrid checkpoint summarized: 849 rows, 283 queries x 3 arms; uncontrolled, halfvec, ef_search, and exact-route arms remain gated/not run"
+    },
+    {
+      "experimentId": "cx1-db-sample-census-harness-20260817",
+      "status": "prepared_not_run",
+      "workstream": "A/B",
+      "script": "scripts/cx1-db-sample-census.mjs",
+      "report": "docs/ai/CX1_DB_SAMPLE_CENSUS.md",
+      "resultFile": "docs/ai/cx1-db-sample-census/sample-census-plan.json",
+      "input": "prepared SQL over judgments TABLESAMPLE SYSTEM, judgment_citations, judgment_chunks, and document_enrichments",
+      "finding": "read-only DB sample census harness prepared in dry-run mode; live DB execution deferred until scheduler window is clean"
+    },
+    {
+      "experimentId": "cx1-halfvec-fidelity-c1-c2-20260817",
+      "status": "complete_sample",
+      "workstream": "C",
+      "script": "scripts/cx1-halfvec-fidelity.py",
+      "report": "docs/ai/CX1_HALFVEC_FIDELITY.md",
+      "resultFile": "docs/ai/cx1-vector-results/halfvec-fidelity.json",
+      "input": "5000 copied vector(1024) embeddings, 100000 vector pairs, 200 exact nearest-neighbour queries",
+      "finding": "sample verdict candidate NO_MEASURABLE_DEGRADATION: absolute distance error p99 0.00002980, top-10 exact overlap 0.9995, first-result disagreement 0"
+    },
+    {
+      "experimentId": "cx1-experiment-registry-summary-20260817",
+      "status": "complete",
+      "workstream": "M",
+      "script": null,
+      "report": "docs/ai/CX1_EXPERIMENT_REGISTRY.md",
+      "resultFile": "docs/ai/CX1_EXPERIMENT_REGISTRY.json",
+      "input": "current CX1 experiment registry entries",
+      "finding": "human-readable registry summary added with status semantics and KNOW/not-yet-KNOW split"
+    },
+    {
+      "experimentId": "cx1-vector-capacity-20260817",
+      "status": "complete",
+      "workstream": "C/D prerequisite capacity measurement",
+      "script": "scripts/cx1-vector-capacity.py",
+      "report": "docs/ai/CX1_VECTOR_CAPACITY_BENCHMARK.md",
+      "resultFile": "docs/ai/cx1-vector-results/benchmark-results.json",
+      "input": "620300 copied non-null vector(1024) rows, disposable PostgreSQL cluster on port 55432",
+      "finding": "halfvec reduced TOAST-inclusive table plus HNSW footprint from 13778.58 to 5571.26 bytes/vector at ~600k scale; quality not tested"
+    },
+    {
+      "experimentId": "cx1-hnsw-parameter-plan-20260817",
+      "status": "prepared_not_run",
+      "workstream": "D",
+      "script": "scripts/cx1-hnsw-parameter-plan.mjs",
+      "report": "docs/ai/CX1_HNSW_PARAMETER_LAB.md",
+      "resultFile": "docs/ai/cx1-vector-results/hnsw-parameter-plan.json",
+      "input": "existing vector capacity benchmark and halfvec C1/C2 fidelity evidence",
+      "finding": "offline HNSW matrix prepared: 270 parameter rows, with D0/D1/D2 priority frontiers gated on VECTOR_EXCLUSIVE; no DB query, vector copy, index build, or retrieval run was performed"
+    },
+    {
+      "experimentId": "cx1-local-scale-envelope-20260817",
+      "status": "complete",
+      "workstream": "resource scheduler baseline",
+      "script": "scripts/cx1-local-scale-envelope.py",
+      "report": "docs/ai/CX1_LOCAL_SCALE_ENVELOPE.md",
+      "resultFile": "docs/ai/cx1-envelope-results/benchmark-results.json",
+      "input": "50000 copied real documents and 100000 copied vectors in disposable PostgreSQL cluster",
+      "finding": "two-worker ceiling for non-vector heavy DB work; one-worker ceiling during HNSW maintenance"
+    },
+    {
+      "experimentId": "cx1-real-silver-benchmark-20260817",
+      "status": "complete",
+      "workstream": "G",
+      "script": "scripts/cx1-real-silver-benchmark.py",
+      "report": "docs/ai/CX1_REAL_SILVER_BENCHMARK.md",
+      "resultFile": "docs/ai/cx1-silver-results/benchmark-results.json",
+      "input": "365588 real LawMind judgments selected read-only with TABLESAMPLE SYSTEM (5) REPEATABLE (170817)",
+      "finding": "plain Parquet ZSTD 9, partition by court, sort by year/date; do not partition physically by court/year"
+    },
+    {
+      "experimentId": "cx1-silver-production-prototype-smoke-20260817",
+      "status": "complete_sample",
+      "workstream": "G",
+      "script": "scripts/cx1-silver-smoke.py",
+      "report": "docs/ai/CX1_SILVER_PRODUCTION_PROTOTYPE.md",
+      "resultFile": "docs/ai/cx1-silver-results/prototype-smoke.json",
+      "input": "24 synthetic JSONL fixture rows written under C:/lawmind/cx1-lab/silver-prototype-smoke",
+      "finding": "offline Silver writer/compactor smoke passed: writer idempotent on rerun, 24 rows preserved, 12 writer objects compacted to 6 objects"
+    },
+    {
+      "experimentId": "cx1-silver-failure-smoke-20260817",
+      "status": "complete_sample",
+      "workstream": "G",
+      "script": "scripts/cx1-silver-failure-smoke.py",
+      "report": "docs/ai/CX1_SILVER_PRODUCTION_PROTOTYPE.md",
+      "resultFile": "docs/ai/cx1-silver-results/failure-smoke.json",
+      "input": "18 synthetic JSONL fixture rows plus injected stale final and temp manifests under C:/lawmind/cx1-lab/silver-failure-smoke",
+      "finding": "synthetic failure smoke passed: writer and compactor repaired stale final manifests, removed stale temp directories, and refused outside-lab output"
+    },
+    {
+      "experimentId": "cx1-document-classification-audit-20260817",
+      "status": "complete_sample",
+      "workstream": "H",
+      "script": "scripts/cx1-document-classification-audit.mjs",
+      "report": "docs/ai/CX1_DOCUMENT_CLASSIFICATION_AUDIT.md",
+      "resultFile": "docs/ai/cx1-classification-audit/classification-audit.json",
+      "input": "NEW2 200-document plain-variant class sample, CX1 corpus census, HC_ORDER_TYPES, hc-classify/hc-adjudicate source evidence",
+      "finding": "offline audit projects the 44.5% DISPOSED*/CLOSED sample residue to about 8.56M plain-source documents if the sample rate held, confirms no safe deterministic relabel, and prepares a read-only stratified selector"
+    },
+    {
+      "experimentId": "cx1-legal-object-efficiency-audit-20260817",
+      "status": "complete_sample",
+      "workstream": "I",
+      "script": "scripts/cx1-legal-object-efficiency.mjs",
+      "report": "docs/ai/CX1_LEGAL_OBJECT_EFFICIENCY.md",
+      "resultFile": "docs/ai/cx1-legal-object-efficiency/triage-summary.json",
+      "input": "existing .agents legal-object rejection triage JSON, LEGAL_OBJECT_PROGRAM, ENRICHMENT_REJECTION_TRIAGE, and schema-truth evidence for document_enrichments and llm_calls",
+      "finding": "offline audit summarizes 4,119 post-fix legal-object quote claims at 81.9% verified, recommends holding case_structure at 100 due to 2.33% fabrication while allowing four other tasks to remain 1,000-document candidates, and prepares read-only enrichment/cost selectors"
+    },
+    {
+      "experimentId": "cx1-devanagari-bakeoff-20260817",
+      "status": "complete",
+      "workstream": "F",
+      "script": "scripts/cx1-devanagari-bakeoff.mjs",
+      "report": "docs/ai/CX1_DEVANAGARI_BAKEOFF.md",
+      "resultFile": "docs/ai/cx1-devanagari-results/bakeoff-results.json",
+      "input": "32-document deterministic sample from the known Devanagari affected cohort",
+      "finding": "Poppler dropped 100% of Devanagari tokens in 32/32 documents; OCR is a targeted recovery path, not a default extractor"
+    },
+    {
+      "experimentId": "cx1-devanagari-scale-validation-plan-20260817",
+      "status": "prepared_not_run",
+      "workstream": "F",
+      "script": "scripts/cx1-devanagari-scale-plan.mjs",
+      "report": "docs/ai/CX1_DEVANAGARI_SCALE_VALIDATION.md",
+      "resultFile": "docs/ai/cx1-devanagari-results/scale-validation-plan.json",
+      "input": "existing Devanagari characterization, 32-document bakeoff manifest/results, and known court-level defect strata",
+      "finding": "offline scale-validation plan prepared for 148 documents across 9 strata with selector SQL; no DB query, PDF fetch, OCR, or production write was run"
+    },
+    {
+      "experimentId": "cx1-premium-backend-shadow-lab-20260817",
+      "status": "complete_sample",
+      "workstream": "K",
+      "script": "scripts/cx1-premium-backend-lab.mjs",
+      "report": "docs/ai/CX1_PREMIUM_DATA_BACKEND_LAB.md",
+      "resultFile": "docs/ai/cx1-premium-backend-lab/premium-backend-lab.json",
+      "input": "synthetic matter, case-observation, order, judgment, listing, duplicate, unlinked, late-arriving, and conflict fixtures",
+      "finding": "offline premium backend shadow lab passes 8 assertions over synthetic fixtures: duplicate observations collapse, unlinked observations are retained outside matter timelines, latest-state projection handles listings/orders/bench changes/disposal, tomorrow hearing triggers and same-advocate conflicts are detected, and procedural orders remain non-citable"
+    },
+    {
+      "experimentId": "cx1-citation-graph-census-plan-20260817",
+      "status": "prepared_not_run",
+      "workstream": "J",
+      "script": "scripts/cx1-citation-graph-census.mjs",
+      "report": "docs/ai/CX1_CITATION_GRAPH_CENSUS.md",
+      "resultFile": "docs/ai/cx1-citation-graph-census/citation-graph-census.json",
+      "input": "SCHEMA_TRUTH, TREATMENT_GRAPH_GAP, DATA_MOAT_PROGRAM, RETRIEVAL_PROGRAM, PRE_MIGRATION_RETRIEVAL_BASELINE, and citation graph source files",
+      "finding": "offline citation graph census plan prepared: validates existing measured snapshots, records sentinel-denominator and high-risk unresolved-treatment caveats, ranks six graph priority regions, and writes a read-only graph census selector for a future MEDIUM_CLEAN window"
+    },
+    {
+      "experimentId": "cx1-disaster-recovery-drill-plan-20260817",
+      "status": "prepared_not_run",
+      "workstream": "L",
+      "script": "scripts/cx1-disaster-recovery-drill.mjs",
+      "report": "docs/ai/CX1_DISASTER_RECOVERY_DRILL.md",
+      "resultFile": "docs/ai/cx1-disaster-recovery-drill/drill-plan.json",
+      "input": "LOW_COST_BACKUP_ARCHITECTURE, CX1_ARCHITECTURE_PACKET_V2, migration compare baseline, and local smoke baseline",
+      "finding": "offline disaster-recovery drill plan prepared: validates the native pg_basebackup/WAL restore acceptance gate, records migration/smoke baselines, writes an acceptance checklist, and emits restore-smoke SQL for a future disposable restored cluster"
+    },
+    {
+      "experimentId": "cx1-heavy-lab-final-packet-20260817",
+      "status": "active",
+      "workstream": "M",
+      "script": "scripts/cx1-heavy-lab-final.mjs",
+      "report": "docs/ai/CX1_HEAVY_LAB_FINAL.md",
+      "resultFile": null,
+      "input": "CX1 experiment registry, run queue, evidence integrity report, and current workstream machine evidence",
+      "finding": "offline final checkpoint packet generated in the requested 20-section format, with KNOW findings separated from gated not-yet-KNOW measurements and no production promotion approval"
+    }
+  ]
+}

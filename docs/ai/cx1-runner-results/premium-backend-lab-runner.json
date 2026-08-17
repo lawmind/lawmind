@@ -1,0 +1,24 @@
+{
+  "schema": "cx1-gated-runner-v1",
+  "generatedAt": "2026-08-17T13:50:31.942Z",
+  "status": "pass",
+  "taskId": "cx1-premium-backend-lab-refresh",
+  "gate": "LIGHT",
+  "command": "node scripts\\cx1-premium-backend-lab.mjs",
+  "exitCode": 0,
+  "stdout": "wrote docs/ai/cx1-premium-backend-lab/premium-backend-lab.json\nwrote docs/ai/CX1_PREMIUM_DATA_BACKEND_LAB.md",
+  "stderr": "",
+  "queueGeneratedAt": "2026-08-17T13:50:31.932Z",
+  "scheduler": {
+    "available": true,
+    "maxClass": "MEDIUM",
+    "reasons": [
+      "PostgreSQL active=2, oldest transaction=117s",
+      "RAM free 23.3%"
+    ],
+    "cpuPct": 11.042114970796192,
+    "freeRamPct": 23.267833892386005,
+    "postgresActive": 2,
+    "postgresOldestSeconds": 117
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "cx1-gated-runner-v1",
+  "generatedAt": "2026-08-17T14:04:00.092Z",
+  "status": "pass",
+  "taskId": "cx1-citation-graph-census-refresh",
+  "gate": "LIGHT",
+  "command": "node scripts\\cx1-citation-graph-census.mjs",
+  "exitCode": 0,
+  "stdout": "wrote docs/ai/cx1-citation-graph-census/citation-graph-census.json\nwrote docs/ai/CX1_CITATION_GRAPH_CENSUS.md",
+  "stderr": "",
+  "queueGeneratedAt": "2026-08-17T14:04:00.086Z",
+  "scheduler": {
+    "available": true,
+    "maxClass": "MEDIUM",
+    "reasons": [
+      "PostgreSQL active=2, oldest transaction=120s",
+      "RAM free 23.6%"
+    ],
+    "cpuPct": 26.71270340489539,
+    "freeRamPct": 23.613887416292297,
+    "postgresActive": 2,
+    "postgresOldestSeconds": 120
+  }
+}

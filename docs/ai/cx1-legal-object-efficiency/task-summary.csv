@@ -1,0 +1,6 @@
+task,claimsTotal,claimsVerified,claimsRejected,verificationRate,rejectionRate,ingestOwnedRejected,modelOwnedRejected,verifierOwnedRejected,mixedRejected,unknownRejected,fabricationCount,fabricationRate,modelBucketRejected,modelBucketRate,recommendation,recommendationReason
+arguments,621,487,134,0.7842,0.2158,101,32,1,53,0,0,0,32,0.0515,CLEAR_TO_1000,post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero
+authorities,580,483,97,0.8328,0.1672,65,32,0,20,0,0,0,32,0.0552,CLEAR_TO_1000,post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero
+case_structure,1289,1056,233,0.8192,0.1808,150,79,4,54,0,30,0.0233,79,0.0613,HOLD_AT_100,fabrication concentration needs prompt/router work before wider spend
+holding,789,643,146,0.815,0.185,110,34,2,48,0,1,0.0013,34,0.0431,CLEAR_TO_1000,post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero
+topics,840,705,135,0.8393,0.1607,88,39,8,44,0,4,0.0048,39,0.0464,CLEAR_TO_1000,post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero

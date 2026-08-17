@@ -1,0 +1,161 @@
+{
+  "schema": "cx1-legal-object-router-proposal-v1",
+  "generatedAt": "2026-08-17T13:17:38.452Z",
+  "boundary": "proposal only: no canonical routing, prompt, verifier, enrichment, retrieval, or product behavior changed",
+  "eligibleDocsBaseline": 233656,
+  "secondsPerDocumentTask": 16,
+  "estimatedSingleGrantHours": {
+    "allFiveTasks": 5192.4,
+    "fourClearedTasks": 4153.9,
+    "deferredCaseStructure": 1038.5
+  },
+  "taskPolicy": [
+    {
+      "task": "arguments",
+      "recommendation": "CLEAR_TO_1000",
+      "rationale": "post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero",
+      "verificationRate": 0.7842,
+      "fabricationRate": 0,
+      "modelShareOfRejected": 0.2388
+    },
+    {
+      "task": "authorities",
+      "recommendation": "CLEAR_TO_1000",
+      "rationale": "post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero",
+      "verificationRate": 0.8328,
+      "fabricationRate": 0,
+      "modelShareOfRejected": 0.3299
+    },
+    {
+      "task": "case_structure",
+      "recommendation": "HOLD_AT_100",
+      "rationale": "fabrication concentration needs prompt/router work before wider spend",
+      "verificationRate": 0.8192,
+      "fabricationRate": 0.0233,
+      "modelShareOfRejected": 0.3391
+    },
+    {
+      "task": "holding",
+      "recommendation": "CLEAR_TO_1000",
+      "rationale": "post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero",
+      "verificationRate": 0.815,
+      "fabricationRate": 0.0013,
+      "modelShareOfRejected": 0.2329
+    },
+    {
+      "task": "topics",
+      "recommendation": "CLEAR_TO_1000",
+      "rationale": "post-fix rejection profile is mostly ingest/verifier noise and fabrications are at or near zero",
+      "verificationRate": 0.8393,
+      "fabricationRate": 0.0048,
+      "modelShareOfRejected": 0.2889
+    }
+  ],
+  "kindPolicy": [
+    {
+      "task": "case_structure",
+      "kind": "fact",
+      "recommendation": "ROUTE_TO_PROMPT_REWORK",
+      "claimsTotal": 313,
+      "rejectionRate": 0.2364,
+      "fabricationRate": 0.0319,
+      "modelBucketRate": 0.0895
+    },
+    {
+      "task": "case_structure",
+      "kind": "procedural_history",
+      "recommendation": "ROUTE_TO_PROMPT_REWORK",
+      "claimsTotal": 285,
+      "rejectionRate": 0.1719,
+      "fabricationRate": 0.0246,
+      "modelBucketRate": 0.0491
+    },
+    {
+      "task": "case_structure",
+      "kind": "chronology",
+      "recommendation": "ROUTE_TO_PROMPT_REWORK",
+      "claimsTotal": 373,
+      "rejectionRate": 0.1367,
+      "fabricationRate": 0.0241,
+      "modelBucketRate": 0.0509
+    },
+    {
+      "task": "case_structure",
+      "kind": "relief_sought",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 147,
+      "rejectionRate": 0.1837,
+      "fabricationRate": 0.0136,
+      "modelBucketRate": 0.0408
+    },
+    {
+      "task": "case_structure",
+      "kind": "issue",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 171,
+      "rejectionRate": 0.1871,
+      "fabricationRate": 0.0117,
+      "modelBucketRate": 0.0702
+    },
+    {
+      "task": "topics",
+      "kind": "topic",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 327,
+      "rejectionRate": 0.1713,
+      "fabricationRate": 0.0061,
+      "modelBucketRate": 0.0489
+    },
+    {
+      "task": "holding",
+      "kind": "relief_granted",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 189,
+      "rejectionRate": 0.1323,
+      "fabricationRate": 0.0053,
+      "modelBucketRate": 0.0476
+    },
+    {
+      "task": "topics",
+      "kind": "search_concept",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 513,
+      "rejectionRate": 0.154,
+      "fabricationRate": 0.0039,
+      "modelBucketRate": 0.0448
+    },
+    {
+      "task": "authorities",
+      "kind": "authority_relied_on",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 227,
+      "rejectionRate": 0.2555,
+      "fabricationRate": 0,
+      "modelBucketRate": 0.0881
+    },
+    {
+      "task": "arguments",
+      "kind": "argument_petitioner",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 382,
+      "rejectionRate": 0.2173,
+      "fabricationRate": 0,
+      "modelBucketRate": 0.0602
+    },
+    {
+      "task": "holding",
+      "kind": "holding",
+      "recommendation": "KEEP_SPAN_VERIFICATION_AND_MONITOR",
+      "claimsTotal": 180,
+      "rejectionRate": 0.1722,
+      "fabricationRate": 0,
+      "modelBucketRate": 0.05
+    }
+  ],
+  "notes": [
+    "Continue span verification for every promoted quote candidate.",
+    "Treat labels as model gloss, not verified legal fact.",
+    "Do not widen case_structure until narrative fact fabrication is reworked and remeasured.",
+    "llm_calls has no foreign key to document_enrichments, so per-task cost attribution needs either log correlation or future schema work."
+  ]
+}
