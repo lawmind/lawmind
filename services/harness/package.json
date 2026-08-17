@@ -24,7 +24,8 @@
     "held:rrfsim": "tsx src/rrf-sim-cli.ts",
     "generate:queries": "tsx src/generate-queries-cli.ts",
     "experiment:citation-strip": "tsx src/experiment-citation-strip-cli.ts",
-    "gold:presence": "tsx src/gold-presence-cli.ts"
+    "gold:presence": "tsx src/gold-presence-cli.ts",
+    "rrf:displacement": "tsx src/rrf-displacement-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
