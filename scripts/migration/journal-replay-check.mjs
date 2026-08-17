@@ -46,10 +46,11 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * It CREATEs and DROPs a database, so it is fenced three ways: the target URL
- * must be loopback, the scratch name is a hardcoded constant, and the DROP
- * refuses any name but that constant. NEW2 (bus 0571) found `ci:local` dropping
- * whatever `ADMIN_DATABASE_URL` happened to name; that is the failure mode these
- * fences exist for. Gold is opened READ-ONLY — the only writes this script makes
+ * must be loopback, the scratch name is a hardcoded constant, and that name is
+ * validated at module load against a protected-name list BEFORE any connection
+ * is opened. NEW2 (bus 0571) found `ci:local` dropping whatever
+ * `ADMIN_DATABASE_URL` happened to name; that is the failure mode these fences
+ * exist for. Gold is opened READ-ONLY — the only writes this script makes
  * anywhere are to the scratch database it just created.
  *
  * It is schema-only, so it is safe to run during a write freeze and adds no
@@ -73,6 +74,22 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
  * this exact string, so there is no input that can point it at anything else.
  */
 const SCRATCH_DB = 'lawmind_journal_replay';
+
+/**
+ * The fence, asserted ONCE at module load rather than re-tested beside each
+ * `DROP`. Those inline re-tests compared the constant against itself, which
+ * proves nothing, and the one in the cleanup path sat inside a `finally` where a
+ * `throw` would have replaced whatever exception was already propagating.
+ *
+ * This is the check that actually has content: the name must look like a scratch
+ * database and must not be one of the real ones. It runs before a connection is
+ * opened, so an edit that repointed this script at Gold fails immediately and
+ * loudly instead of at `DROP DATABASE`.
+ */
+const PROTECTED = new Set(['lawmind', 'postgres', 'railway', 'template0', 'template1']);
+if (!/^lawmind_[a-z0-9_]+$/.test(SCRATCH_DB) || PROTECTED.has(SCRATCH_DB)) {
+  throw new Error(`refusing to CREATE/DROP a database named ${SCRATCH_DB}`);
+}
 
 const argv = process.argv.slice(2);
 const keep = argv.includes('--keep');
@@ -128,7 +145,6 @@ async function main() {
   // ── 1. a genuinely empty database ────────────────────────────────────────
   const admin = postgres(maintenance, { max: 1, connect_timeout: 10, onnotice: () => {} });
   try {
-    if (SCRATCH_DB !== 'lawmind_journal_replay') throw new Error('scratch name fence tripped');
     await admin.unsafe(`DROP DATABASE IF EXISTS "${SCRATCH_DB}" WITH (FORCE)`);
     await admin.unsafe(`CREATE DATABASE "${SCRATCH_DB}"`);
     console.log(`replay: created ${SCRATCH_DB}`);
@@ -225,7 +241,10 @@ async function main() {
     } else {
       const admin2 = postgres(maintenance, { max: 1, connect_timeout: 10, onnotice: () => {} });
       try {
-        if (SCRATCH_DB !== 'lawmind_journal_replay') throw new Error('scratch name fence tripped');
+        // No fence re-check here. The one at module load already ran, and a
+        // `throw` inside a `finally` REPLACES whatever exception was propagating
+        // — so a guard placed here would destroy the very error a caller needs to
+        // see, in exchange for re-testing a constant against itself.
         await admin2.unsafe(`DROP DATABASE IF EXISTS "${SCRATCH_DB}" WITH (FORCE)`);
         console.log(`replay: dropped ${SCRATCH_DB}`);
       } finally {

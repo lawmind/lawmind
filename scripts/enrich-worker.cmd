@@ -35,23 +35,86 @@ REM  Do NOT add one. This wrapper exists to keep an EXISTING worker alive, never
 REM  to become a second enrichment implementation.
 REM ===========================================================================
 setlocal
+REM  %~dp0 IS CAPTURED BEFORE THE SHIFT, AND THAT IS THE WHOLE POINT.
+REM  `shift` renumbers %0 too, so after it %~dp0 is no longer this script -- cmd
+REM  resolves it against the CURRENT DIRECTORY instead. The old code read
+REM  `set REPO=%~dp0..` after the shift and landed on the repo's PARENT, so the
+REM  worker started in C:\Users\Xerxus\Documents and died instantly with
+REM  `node.exe: .env: not found`, restarting on that same error every 30s.
+REM  Measured 14 Aug 2026 on the first run this wrapper ever actually did: it
+REM  had never been launched before, so a bug on line 1 of its job had never
+REM  had the chance to surface.
+set REPO=%~dp0..
 set NAME=%~1
 set LOG=%TEMP%\lawmind-%NAME%.log
 set LOCK=%TEMP%\lawmind-%NAME%.lock
 shift
 
-REM Single instance. The task can fire at boot while a manual run is already
-REM going, and two writers on the same rows is the collision NEW2 hit on Orissa.
-if exist "%LOCK%" (
-  echo [%DATE% %TIME%] %NAME% already running ^(lock present^); exiting >> "%LOG%"
+REM ---------------------------------------------------------------------------
+REM  SINGLE INSTANCE, BY LIVE PROCESS AND NOT BY LOCK FILE
+REM ---------------------------------------------------------------------------
+REM  Two writers on the same rows is the collision NEW2 hit on Orissa, so the
+REM  guard has to exist. It must NOT be a bare lock file.
+REM
+REM  Measured 15 Aug 2026: the citations worker died at 9,300/20,000 when its
+REM  parent shell was torn down, taking the restart loop with it and leaving
+REM  %TEMP%\lawmind-citations.lock behind. Every later start then read that file
+REM  and politely declined -- "already running (lock present); exiting" -- while
+REM  NOTHING was running. A stale lock does not degrade the guard, it INVERTS
+REM  it: the single-instance check became a permanent stop, and it is silent,
+REM  because declining to start looks exactly like starting was unnecessary.
+REM
+REM  So the question asked is the real one -- "is there a live node process
+REM  running THIS script" -- rather than a proxy for it. A killed worker leaves
+REM  no process, so the next logon simply starts. The lock file is still written
+REM  for a human reading %TEMP%, but nothing branches on its existence.
+REM ---------------------------------------------------------------------------
+powershell -NoProfile -ExecutionPolicy Bypass -Command "if (Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -like '*%~1*' }) { exit 1 } else { exit 0 }"
+if errorlevel 1 (
+  echo [%DATE% %TIME%] %NAME% already running ^(live node process^); exiting >> "%LOG%"
   exit /b 0
 )
 echo %DATE% %TIME% > "%LOCK%"
 
-set REPO=%~dp0..
 cd /d "%REPO%"
 
+REM ---------------------------------------------------------------------------
+REM  THE FLEET-WIDE PAUSE SWITCH, WHICH THIS WRAPPER WAS SILENTLY IGNORING
+REM ---------------------------------------------------------------------------
+REM  NEW2's fleet pause (bus 0550) works by writing
+REM  services/ingest/.checkpoints/STOP, and scripts/supervise.mjs checks it at
+REM  the top of its restart loop -- so it guards the FIRST start as well as
+REM  every restart. NEW2 described it as fleet-wide, "LCC's paragraph and
+REM  citation ones included", and that was true of everything supervise.mjs
+REM  runs.
+REM
+REM  IT WAS NOT TRUE OF THIS FILE. enrich-worker.cmd has its own :loop and never
+REM  goes through supervise.mjs, so paragraphs and citations opted out of the
+REM  pause without anyone deciding they should.
+REM
+REM  FOUND 16 Aug 2026, DURING the Railway->local migration, which is what makes
+REM  it worth more than a tidy-up. Three launchers now sit in the Startup folder
+REM  (Lawmind-ingest, Lawmind-citations, Lawmind-paragraphs). A reboot and logon
+REM  during the write freeze would have started these two writing to Railway
+REM  again -- breaking a freeze that had already been broken once and verified
+REM  fixed, and breaking it in the way that is hardest to catch, because the
+REM  verification had already passed.
+REM
+REM  Checked in BOTH places on purpose: once before the first start, because a
+REM  boot launcher only ever does a first start; and once per iteration, so a
+REM  pause written while a worker is running takes effect at the next restart
+REM  instead of being ignored until someone kills the process.
+REM ---------------------------------------------------------------------------
+if exist "%REPO%\services\ingest\.checkpoints\STOP" (
+  echo [%DATE% %TIME%] %NAME% PAUSED by services/ingest/.checkpoints/STOP -- not starting >> "%LOG%"
+  exit /b 0
+)
+
 :loop
+if exist "%REPO%\services\ingest\.checkpoints\STOP" (
+  echo [%DATE% %TIME%] %NAME% PAUSED by services/ingest/.checkpoints/STOP -- not restarting >> "%LOG%"
+  exit /b 0
+)
 echo [%DATE% %TIME%] starting %NAME% >> "%LOG%"
 call npx tsx --env-file=.env %1 %2 %3 %4 %5 %6 %7 >> "%LOG%" 2>&1
 echo [%DATE% %TIME%] %NAME% exited ^(%ERRORLEVEL%^), restarting in 30s >> "%LOG%"

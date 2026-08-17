@@ -66,6 +66,29 @@ const TOO_FAST_MS = 20_000;
 const finished = () =>
   existsSync(logPath) && /^RESULTS/m.test(readFileSync(logPath, 'utf8').slice(-4000));
 
+/**
+ * THE FLEET-WIDE PAUSE SWITCH, added 15 Aug 2026 for the Railway -> local
+ * PostgreSQL cutover. `scripts/fleet-stop.ps1` is what writes it.
+ *
+ * Without this, a graceful pause is impossible to express. The worker side
+ * (hc-load-cli's `stopIfRequested`) exits cleanly at a batch boundary, but a
+ * supervisor that does not also know about the pause simply RESTARTS it — and
+ * the restarted worker exits at once, so the pause reads as a crash loop and
+ * burns the 40-restart budget while opening a database connection per attempt.
+ * Both halves have to honour the same file or neither does.
+ *
+ * It is checked before each restart rather than only at entry, because the
+ * point of the switch is to stop a fleet that is ALREADY RUNNING.
+ *
+ * NOTE FOR THE OTHER LANE: this file supervises LCC's paragraph and citation
+ * workers too, so this switch stops those as well. That is deliberate and was
+ * sent to LCC on the bus rather than slipped in — a database cutover has to
+ * quiesce every writer, and a pause switch that stopped only some of them would
+ * be worse than none. It is inert until the file exists, and only fleet-stop
+ * writes it.
+ */
+const STOP_FILE = join(ROOT, 'services', 'ingest', '.checkpoints', 'STOP');
+
 function note(line) {
   const stamped = `\n[supervisor ${new Date().toISOString()}] ${line}\n`;
   process.stdout.write(stamped);
@@ -80,6 +103,10 @@ let restarts = 0;
 let consecutiveFast = 0;
 
 for (;;) {
+  if (existsSync(STOP_FILE)) {
+    note(`PAUSED: ${STOP_FILE} exists — not restarting. Delete it and relaunch to resume.`);
+    break;
+  }
   if (finished()) {
     note('worker finished cleanly — not restarting.');
     break;

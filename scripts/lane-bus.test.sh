@@ -148,6 +148,27 @@ out="$(run lane-wake.sh "no-such-session")"
 [ -z "$out" ] && ok "wake: unbound session is left alone" \
   || no "wake: unbound session is left alone" "$out"
 
+# ── 10 · lane-send.mjs's own binding resolver strips digits like the hooks ───
+# `lane-send.mjs` reads `.lane-<session>` itself (a separate implementation
+# from `lane-common.sh`, not a caller of it) so it did not inherit Q1.37's
+# fix when that fix landed. It used `/[^A-Za-z]/g`, which turned "NEW1" back
+# into "NEW" and made every send from a digit-named lane fail with "no lane"
+# even though the binding file on disk was correct. Fixed in Q1.46 to match
+# `lane-status.mjs`'s `/[^A-Za-z0-9]/g`, but nothing asserted the two files
+# stay in agreement — this would not have caught the bug being introduced,
+# only a future re-divergence, which is exactly how it happened the first
+# time (one file fixed, a second implementation of the same rule left behind).
+SEND_MJS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lane-send.mjs"
+STATUS_MJS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lane-status.mjs"
+send_re="$(grep -o '/\[\^A-Za-z0-9\][a-z_.-]*/g' "$SEND_MJS" | tail -1)"
+status_re="$(grep -o '/\[\^A-Za-z0-9\][a-z_.-]*/g' "$STATUS_MJS" | tail -1)"
+if [ -n "$send_re" ] && [ "$send_re" = "$status_re" ]; then
+  ok "lane-send.mjs strips like lane-status.mjs ($send_re)"
+else
+  no "lane-send.mjs strips like lane-status.mjs" \
+    "lane-send.mjs: '${send_re:-<not found>}' vs lane-status.mjs: '${status_re:-<not found>}'"
+fi
+
 echo
 printf '%d passed, %d failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

@@ -93,7 +93,7 @@ const laneFromBinding = () => {
   if (!id) return '';
   const f = join(BUS, `.lane-${id.replace(/[^A-Za-z0-9._-]/g, '')}`);
   if (!existsSync(f)) return '';
-  return readFileSync(f, 'utf8').replace(/[^A-Za-z]/g, '').toUpperCase();
+  return readFileSync(f, 'utf8').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 };
 
 const from = ((process.env['LAWMIND_LANE'] || laneFromBinding()) ?? '').toUpperCase();

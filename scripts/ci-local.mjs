@@ -27,20 +27,46 @@
  * plan tests are read-only (`EXPLAIN`, `SELECT`, `SET LOCAL`).
  */
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import postgres from 'postgres';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const SCRATCH = 'lawmind_ci';
 const keep = process.argv.includes('--keep');
 
-const adminUrl = process.env['ADMIN_DATABASE_URL'];
+/**
+ * POST-CUTOVER DEFAULT, 17 Aug 2026. `ADMIN_DATABASE_URL` used to be mandatory
+ * and the error text sent you to Railway to create a TCP proxy. After the local
+ * cutover that guidance is actively dangerous — NEW2 (bus 0571) pointed out that
+ * this script CREATEs and DROPs a database on whatever that variable names, so a
+ * routine `ci:local` with a stale value is a live write to the system we just
+ * left. Repointing `.env` does NOT repoint it, because it is supplied
+ * per-invocation and `.env` cannot show it.
+ *
+ * So when it is unset we now derive the local cluster's `postgres` maintenance
+ * database from `LOCAL_DATABASE_URL` rather than refusing. An explicit
+ * `ADMIN_DATABASE_URL` still wins — this is a default, not an override.
+ */
+function localAdminUrl() {
+  const env = readFileSync(join(ROOT, '.env'), 'utf8');
+  const local = (/^LOCAL_DATABASE_URL=(.+)$/m.exec(env) ?? [])[1]?.trim();
+  if (!local) return null;
+  const u = new URL(local);
+  u.pathname = '/postgres';
+  return u.toString();
+}
+
+const adminUrl = process.env['ADMIN_DATABASE_URL'] ?? localAdminUrl();
 if (!adminUrl) {
   console.error(
-    'ADMIN_DATABASE_URL is not set.\n' +
+    'ADMIN_DATABASE_URL is not set and LOCAL_DATABASE_URL is missing from .env.\n' +
       'It must point at a Postgres server this may CREATE and DROP a database on —\n' +
-      'never at the database under test. On Railway:\n' +
-      '  railway tcp-proxy create --service Postgres --port 5432\n' +
-      '  railway variables --service Postgres --kv   # DATABASE_PUBLIC_URL\n' +
-      'and delete the proxy again when finished.',
+      'never at the database under test. Normally it is derived automatically from\n' +
+      "LOCAL_DATABASE_URL's cluster, maintenance database `postgres`.",
   );
   process.exit(2);
 }
@@ -52,7 +78,16 @@ if (new URL(adminUrl).pathname === `/${SCRATCH}`) {
 }
 
 const scratchUrl = adminUrl.replace(/\/[^/?]+(\?|$)/, `/${SCRATCH}$1`);
-const withSsl = scratchUrl.includes('?') ? scratchUrl : `${scratchUrl}?sslmode=require`;
+/**
+ * `sslmode=require` was unconditional, which was right when the only server was
+ * Railway and is wrong now: the local cluster does not serve SSL, so forcing it
+ * fails the connection before a single step runs. Loopback is exempt; anything
+ * else still gets it, because a remote database reached without TLS is a worse
+ * failure than a broken gate.
+ */
+const isLoopback = ['127.0.0.1', 'localhost', '::1'].includes(new URL(scratchUrl).hostname);
+const withSsl =
+  isLoopback || scratchUrl.includes('?') ? scratchUrl : `${scratchUrl}?sslmode=require`;
 
 /** Every step CI runs, in CI's order. A failure stops the run, as it should. */
 const STEPS = [
@@ -209,7 +244,14 @@ if (process.env['CORPUS_DATABASE_URL']) {
   );
 }
 
-const admin = postgres(adminUrl, { max: 1, ssl: 'require', onnotice: () => {} });
+// `ssl` follows the same loopback rule as `withSsl` above, and for the same
+// reason: the local cluster serves no TLS, so a hardcoded 'require' fails the
+// connection with ECONNRESET before any step runs. Remote still requires it.
+const admin = postgres(adminUrl, {
+  max: 1,
+  ssl: isLoopback ? false : 'require',
+  onnotice: () => {},
+});
 const results = [];
 let failed = false;
 
