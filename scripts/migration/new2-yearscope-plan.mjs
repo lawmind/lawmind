@@ -374,6 +374,38 @@ function lastRunExhausted(scope) {
   };
 }
 
+/**
+ * Is the unscoped descent worker that WOULD serve this court's recent years
+ * still running?
+ *
+ * `supervise.mjs` appends one line to `<scope>.super.log` when it gives up, so a
+ * log whose last supervisor line reports a stop is a worker that is not coming
+ * back on its own. Absence of the log means it has never run, which is equally
+ * "not serving".
+ *
+ * Returns a REASON string when the descent is not serving, and null when it
+ * appears to be. Deliberately not a boolean: the reason is what the reader needs.
+ */
+function descentNotServing(court) {
+  const path = join(ROOT, `hc-boot-${court}.super.log`);
+  if (!existsSync(path)) return 'no supervisor log — the unscoped descent has never run';
+  let tail;
+  try {
+    const buf = readFileSync(path);
+    tail = buf.subarray(Math.max(0, buf.length - 16384)).toString('latin1');
+  } catch {
+    return null;
+  }
+  const lines = tail.split(/\r?\n/).filter((l) => l.includes('[supervisor '));
+  const last = lines[lines.length - 1];
+  if (last === undefined) return null;
+  if (/died within 20s three times|exceeded \d+ restarts/.test(last))
+    return `descent STOPPED by the supervisor — ${last.trim()}`;
+  if (/worker finished cleanly/.test(last)) return 'descent finished and exited — nothing is serving these years now';
+  if (/PAUSED/.test(last)) return 'descent PAUSED by the STOP file';
+  return null;
+}
+
 /** Which scopes have EVER run — a checkpoint file on disk is the only evidence. */
 const checkpointFiles = new Set(
   existsSync(CHECKPOINT_DIR) ? readdirSync(CHECKPOINT_DIR).filter((f) => f.endsWith('.json')) : [],
@@ -394,6 +426,26 @@ const ranBefore = {
  *   3  2016-2022, the largest single gap in the corpus
  *   4  pre-2016
  *   5  recent — the descent is already inside these
+ *
+ * TIER 5'S RANK IS A CLAIM ABOUT ANOTHER WORKER, AND IT WAS FALSE FOR A DAY.
+ *
+ * "The descent is already inside these" is why recent years rank LAST. It is
+ * not a judgement about their value — 2023+ documents are the only High Court
+ * documents that carry a neutral citation — it is an assertion that the
+ * unscoped `hc-boot-<court>` worker is serving them. That assertion is only
+ * sound while those workers are alive.
+ *
+ * Measured 18 Aug 2026: **all 18 of them died at 22:39 on 17 Aug**, together, on
+ * `PostgresError: the database system is not yet accepting connections` during
+ * a postmaster restart. `db-transient.ts` was written to fix exactly that and
+ * did — but nothing ever relaunched them. So the lowest-ranked tier was also the
+ * only completely unserved one, holding 844,514 actionable documents, and
+ * nothing in this plan said so.
+ *
+ * The tier ORDER is the founder's stated acquisition priority and is not changed
+ * here. What is added is the check: every tier-5 scope now carries
+ * `descentServing`, read from the would-be server's own supervisor log, so the
+ * assumption is visible instead of assumed. A dead descent is printed loudly.
  */
 const TIER = {
   0: 'backlog year · never ran · zero held',
@@ -456,6 +508,11 @@ for (const [court, years] of sourceByCourtYear) {
     const ran = ranBefore.year(court, year);
     const isRecent = year >= RECENT_FROM;
     const tier = isRecent ? 5 : ran ? 2 : held === 0 ? 0 : 1;
+    /**
+     * Only meaningful for tier 5, whose whole rank rests on the descent serving
+     * it. Computed here so the claim travels with the scope that depends on it.
+     */
+    const descentGap = isRecent ? descentNotServing(court) : null;
     push({
       scope: `hc-boot-${court}-y${year}`,
       court,
@@ -475,6 +532,8 @@ for (const [court, years] of sourceByCourtYear) {
       remainingDocuments: Math.max(0, src - held),
       remainingActionable: Math.max(0, src - held - unreachableFor(court, year)),
       heldExceedsSource: held > src,
+      descentServing: isRecent ? descentGap === null : null,
+      descentGap,
     });
   }
 
@@ -593,6 +652,14 @@ const out = {
   excludedBelowMinRemaining: belowThreshold.sort(
     (a, b) => b.remainingActionable - a.remainingActionable,
   ),
+  /**
+   * Tier-5 scopes whose descent is NOT serving them. These are ranked last on
+   * the assumption that it is; when this array is non-empty that assumption is
+   * false and the lowest-ranked tier is the only unserved one.
+   */
+  recentWithNoDescent: candidates
+    .filter((c) => c.tier === 5 && c.descentServing === false)
+    .sort((a, b) => b.remainingActionable - a.remainingActionable),
   excludedExhaustedByLastRun: exhausted.sort((a, b) => b.remainingActionable - a.remainingActionable),
   exhaustedByLastRun: exhausted.length,
   finishedAtOrAboveMaxHeldPct: finished.length,
@@ -663,6 +730,20 @@ console.log(
 console.log(
   `  ${finished.length} scope(s) at >=${(MAX_HELD_PCT * 100).toFixed(0)}% held treated as FINISHED · ${belowThreshold.length} below ${n(MIN_REMAINING)} remaining.`,
 );
+const orphanedRecent = candidates.filter((c) => c.tier === 5 && c.descentServing === false);
+if (orphanedRecent.length > 0) {
+  const total = orphanedRecent.reduce((a, c) => a + c.remainingActionable, 0);
+  console.log(
+    `\n  *** ${orphanedRecent.length} RECENT SCOPE(S), ${n(total)} DOCUMENTS, RANKED LAST BUT SERVED BY NOTHING ***`,
+  );
+  console.log(
+    '  Tier 5 sits last because "the descent is already inside these". For these courts it is not.',
+  );
+  for (const c of orphanedRecent.slice(0, 8)) {
+    console.log(`    ${c.scope.padEnd(24)} ${n(c.remainingActionable).padStart(9)}  ${c.descentGap}`);
+  }
+  if (orphanedRecent.length > 8) console.log(`    … and ${orphanedRecent.length - 8} more (see recentWithNoDescent in the JSON)`);
+}
 if (exhausted.length > 0) {
   console.log(
     `\n  EXHAUSTED BY THEIR OWN LAST RUN — ${exhausted.length} scope(s) the worker walked to the end without writing.`,
