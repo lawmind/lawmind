@@ -29,7 +29,9 @@
  * Exit codes: 0 all checks pass · 1 a check failed · 2 could not run.
  */
 import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import net from 'node:net';
+import { join } from 'node:path';
 import { PG, pgEnv, psqlValue } from './pg-local.mjs';
 
 const results = [];
@@ -41,11 +43,10 @@ const record = (pass, name, detail) => {
 const note = (name, detail) => console.log(`note  ${name.padEnd(28)} ${detail}`);
 
 function ps(script) {
-  return execFileSync(
-    'powershell.exe',
-    ['-NoProfile', '-NonInteractive', '-Command', script],
-    { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
-  ).trim();
+  return execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script], {
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+  }).trim();
 }
 
 function json(script) {
@@ -177,7 +178,10 @@ function checkBootPersistence() {
       'FQ-PGSERVICE',
       'STILL OPEN — a task only starts at LOGON, not at boot, and needs the user to log in',
     );
-    note('the one elevated command', `${PG.bin}\\pg_ctl.exe register -N LawMindPostgres -D "${PG.data}" -S auto`);
+    note(
+      'the one elevated command',
+      `${PG.bin}\\pg_ctl.exe register -N LawMindPostgres -D "${PG.data}" -S auto`,
+    );
   }
 }
 
@@ -198,6 +202,75 @@ function checkDuplicateClusters() {
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. Did it actually STAY up? — the check the other three cannot make
+// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * ADDED 18 Aug 2026, because this script reported **7/7** three minutes after the
+ * cluster had been killed and had reinitialised.
+ *
+ * Every check above inspects the process as it stands right now, and a
+ * postmaster that crashed and came back looks identical to one that never fell
+ * over. Worse, `checkNoConsoleAncestor` infers "no console" from "the parent pid
+ * is gone" — its own comment admits that is also what a service looks like from
+ * here — so it cannot distinguish a genuinely detached start from a
+ * console-attached one whose launcher happened to exit. That inference was the
+ * thing being trusted, and it is not evidence.
+ *
+ * The server's own log IS evidence. `0xC000013A` and "terminating any other
+ * active server processes" are written by the postmaster at the moment it
+ * decides to reinitialise, so they cannot be produced by a healthy cluster and
+ * cannot be faked by a process listing.
+ *
+ * This does not diagnose the cause. On 18 Aug the victim was an autovacuum worker
+ * while the postmaster demonstrably had NO console (no `conhost.exe` child, and
+ * the scheduled task had started it via `spawn-detached` with `LastResult=0`), so
+ * the same exit code arrived by some route other than a console control event.
+ * Recording that honestly is the point: the check reports that the cluster went
+ * down, and refuses to explain it.
+ */
+function checkRecentCrash(hours = 24) {
+  const logDir = PG.logs.replace(/\\/g, '/');
+  let text = '';
+  try {
+    // The postmaster writes into the data directory's log/ on this cluster; PG.logs
+    // is where the launcher's own output goes. Both are checked because which one
+    // holds the server log depends on `logging_collector`, and guessing wrong here
+    // would silently make this check always pass.
+    for (const dir of [`${PG.data.replace(/\\/g, '/')}/log`, logDir]) {
+      if (!existsSync(dir)) continue;
+      for (const f of readdirSync(dir).filter((n) => n.endsWith('.log'))) {
+        const p = join(dir, f);
+        if (Date.now() - statSync(p).mtimeMs > hours * 3600_000) continue;
+        text += readFileSync(p, 'utf8');
+      }
+    }
+  } catch (error) {
+    record(
+      true,
+      'no recent crash',
+      `log unreadable, check skipped (${error.message.split('\n')[0]})`,
+    );
+    return;
+  }
+
+  const events = text
+    .split(/\r?\n/)
+    .filter((l) =>
+      /0xC000013A|terminating any other active server processes|was terminated by (signal|exception)/i.test(
+        l,
+      ),
+    );
+
+  record(
+    events.length === 0,
+    'no recent crash',
+    events.length === 0
+      ? `no crash lines in the last ${hours}h of server log`
+      : `${events.length} crash line(s) in the last ${hours}h — most recent: ${events.at(-1).trim().slice(0, 120)}`,
+  );
+}
+
 async function main() {
   console.log(`FQ-PGSERVICE verification — ${new Date().toISOString()}`);
   console.log(`data ${PG.data}   port ${PG.port}   database ${PG.database}\n`);
@@ -208,6 +281,7 @@ async function main() {
     checkDuplicateClusters();
   }
   checkBootPersistence();
+  checkRecentCrash();
 
   const failed = results.filter((r) => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
