@@ -144,6 +144,55 @@ consoles`, `console windows hidden`), and `docs/ops/PROCESS_TOPOLOGY.md`.
 **FQ-PGSERVICE is now the fix for both problems** — the unelevated S4U/session-0
 route was tried and refused.
 
+### 18 Aug 2026 — NEW1: THE POST-0055 BASELINE, AND `adversarialPassRate` MEASURED FOR THE FIRST TIME
+
+**Added by NEW1 (retrieval lane). Nothing in LCC's ordering below is changed.**
+Full detail `docs/ai/NEW1_POST_0055_BASELINE.md`, machine-readable
+`docs/ai/new1-post-0055/`.
+
+1. **0055 is QUALITY-NEUTRAL. Recommendation: do not revert.** `recall@20`
+   17.0% -> 18.0%, and paired on the frozen 283 that is +11/-8, McNemar exact
+   **p = 0.6476**. Nineteen queries changed state in each direction: 0055 changed
+   *which* queries succeed, not *how many*. It should be kept for the latency it
+   buys, and never recorded as a quality win — which LCC already said.
+2. **The dense arm is unchanged by a 30.7% larger corpus** — `recall@20` 40.6%
+   both times, **zero discordant pairs across 283 queries**. Because
+   `judgment_chunks` has not moved: **620,300 embedded, `count(*)`, on both
+   14 and 18 August**, while `judgments` grew 2.24M. 8.9M documents cannot be
+   retrieved semantically at all. That number, not storage, is the scale decision.
+3. **The sparse arm's cost is a SEQUENTIAL SCAN, not a GIN probe.** At `LIMIT 40`
+   the planner abandons `judgments_full_text_idx` and reads all 9.3M rows; at a
+   5% union budget it goes back to the index on 5 of 5 sampled queries, at 30/30
+   filter recall. Sent to LCC as bus 0679/0686. `retrieve.ts` untouched from this
+   lane.
+4. **`expandCategories` is a full index scan on the `POST /search` path** —
+   `SELECT DISTINCT court FROM judgments` ran **>8m56s and was cancelled**; a
+   loose index scan returns the same 26 courts in **716 ms cold / 1 ms warm**.
+   LCC's module; only `arms-cli.ts` was changed here.
+5. **§110 of this file is half wrong, and so was §8a of the previous baseline.**
+   `OPENROUTER_API_KEY` **is** set (73 chars) and **live** — `GET /api/v1/key`
+   returns 200. `ANTHROPIC_API_KEY` is **not** set. Both errors came from reading
+   `process.env` without `--env-file=.env`.
+6. **`adversarialPassRate` produced a number for the first time: 0.0%**
+   (worst-of-5, threshold 1). It was never key-blocked — `generate()` routed to
+   InferX whenever `INFERX_API_KEY` existed and had no fallback, despite its own
+   comment promising one; InferX answered 1 call and failed 24 with
+   `429 all replicas at capacity`. Fixed, and OpenRouter is now primary whenever
+   InferX cannot serve (founder direction, 18 Aug).
+   **Two of the five failures are genuine** — adv-5 (the refusal never mentions
+   the offence date or 2024; the model reasons purely in IPC and does not hold
+   the BNS/BNSS/BSA cutover) and adv-1 (right refusal, wrong law). **Three are
+   grader defects**: `mustNotProduce` is a bare substring test that fires inside
+   correct refusals, including on a negation. `adversarial.json` was deliberately
+   **not** changed — weakening a Gate S2 pass condition on the strength of my own
+   failing run is not mine to do alone. Proposal in bus 0705.
+7. **CX1's embedding scenarios are priced at 1 vector per document; the index has
+   15.45.** TIER_A is **13.5M vectors, 70 GiB halfvec / 173 GiB fp32**, not 1.7M
+   and 9 GiB. Broadcast as bus 0697-0700.
+
+Still open in this lane: the hybrid arm (running), one unopposed latency pass,
+`structuredExactness` / `fieldPrecision`, and halfvec C3/C4.
+
 ### 18 Aug 2026 — THE SPARSE ARM ASKED THE WRONG QUESTION, AND CITATION KEYS EXIST FOR THE FIRST TIME
 
 **1. `sparseAny()` selected query terms by LENGTH and the proxy was false.**
@@ -378,7 +427,7 @@ box and go look.**
 | A2.4–A2.8 unticked | **All landed.** `qlang/compile.ts`, `qlang/explain.ts`, `structured.ts` exist; `route.ts` echoes `parsed` at lines 97 and 126; `structuredExactness`/`fieldPrecision` are in `metrics.ts` |
 | A3c.1–5 and A3d.1–6 unticked | **All landed.** Verified in production: **4,097** rows in `judgment_citation_aliases` (SCC 3,877 · AIR 220), **81** flagged judgments, **13,389** treatment-carrying edges |
 | `CONTINUATION_PROMPT.md` §6.6: *"Facets — contract slot documented, not built"* | **There is no contract slot.** Zero occurrences of "facet" in `docs/API_CONTRACTS.md` and zero in `services/**`. Not documented AND not built |
-| §2: *"Three metrics stay NOT MEASURED until an LLM key exists — founder-queued"* | **`OPENROUTER_API_KEY` is set** (73 chars) and `ANTHROPIC_API_KEY` is set. `FOUNDER_QUEUE.md` §1 and §5 (the $65 GPU) are both stale — §5 was struck on 9 Aug when re-embedding was measured at 36.6 ms/chunk on local CPU |
+| §2: *"Three metrics stay NOT MEASURED until an LLM key exists — founder-queued"* | **`OPENROUTER_API_KEY` is set** (73 chars) and **verified live 18 Aug** — `GET /api/v1/key` returns 200, not free tier, no expiry. **CORRECTION 18 Aug (NEW1): `ANTHROPIC_API_KEY` is NOT set** — it appears only in a comment on line 11 of `.env`. The three metrics were never key-blocked; `adversarialPassRate` produced its first number on 18 Aug (0.0%, threshold 1) once `generate()`'s missing InferX→OpenRouter fallback was wired. `FOUNDER_QUEUE.md` §1 and §5 (the $65 GPU) are both stale — §5 was struck on 9 Aug when re-embedding was measured at 36.6 ms/chunk on local CPU |
 | A3b.1 unticked | **Landed.** `refusingStore` and `objectStoreFromEnv` exist in `packages/storage/src/r2.ts`, and production with no credentials refuses to start |
 | **This table's own wording: *"landed and applied to production"*** | **CORRECTED 11 Aug — it conflated three different things.** The **database** is production and was queried directly, so the row counts above are real. The **code** is not: `origin/main` is **43 commits behind** and the deployed API serves none of it. **Repo + DB ≠ deployed.** §Q1.0 |
 
@@ -9875,3 +9924,90 @@ minute of launch — 200 documents at 11.7 docs/s into a band that held zero.
 `hc-boot-hist-23_23` (Madhya Pradesh pre-2016, 104,831) is the third such gap and
 is NOT launched — the fleet is held at 11 pending LCC's answer on the width
 question. It is the next slot when that clears.
+
+### The width ceiling, re-derived after LCC removed the reason for the old one
+
+LCC confirmed (bus 0707) that the 07:58 service registration was theirs, adopted
+my six-event console-signal table over their own three-event version, and stated
+plainly: *"that conclusion was wrong and the cut was made on it."* The 20 -> 8 cut
+came from a memory theory the cluster log contradicts, so the ceiling had to be
+re-derived rather than preserved.
+
+They also supplied the mechanism neither of us had. `DETACHED_PROCESS` fixed the
+postmaster and **moved the problem down one level**: a console-less parent
+spawning a console-subsystem child makes Windows ALLOCATE A NEW CONSOLE for the
+child. So every backend, autovacuum worker and bgworker held its own console —
+and on Windows 11 its own taskbar window. **33 of the 43 windows in the founder's
+"terminal storm" screenshot were the database, not the ingest fleet.** Now
+structurally gone: everything runs in SessionId 0, which has no interactive
+desktop.
+
+### What the ladder found — the ceiling is not RAM and it is not the fleet
+
+```
+rung        10 -> 13 scopes
+free RAM    22.4% -> 13.3%  (4.3 GB)
+cluster     ZERO deaths since 07:58 — no 0xC000013A, no "terminating any other
+            active server processes". The only FATAL is "connection to client
+            lost", from workers I killed deliberately.
+windows     WindowsTerminal 1, down from 33
+```
+
+**The database's own slow-statement log names the real bottleneck, and it is not
+ingest.** 1,219 slow statements today:
+
+```
+738  WITH      <- the retrieval path
+394  SELECT
+ 78  INSERT    <- the entire ingest fleet, all day
+```
+
+```
+mean  58,264 ms      p50  43,675 ms      p90 107,460 ms      max 115 minutes
+```
+
+Pulled one to identify the owner rather than assume it:
+`WITH candidates AS MATERIALIZED ( … c.embedding <=> $1::vector AS d`. That is
+retrieval, and the recent ones cluster at **six concurrent backends, 16-19
+seconds each**. Independent confirmation — from the cluster's own log rather than
+from a harness — of what NEW1 measured in 0679/0686 and LCC took as a production
+defect in 0708.
+
+**78 slow INSERTs across a day in which the corpus grew from 7.3M to 14.4M rows.**
+The fleet is not the thing that is slow.
+
+**Holding at 13**, and the reason is not a failure — nothing failed. Free RAM is
+the only measure still trending down, and 13.3% is close enough to the 5.7%
+figure in LCC's original observation that stepping again is worth doing after
+watching rather than before. The next rung is a decision for a session that can
+watch it, not a parting gesture.
+
+The complication worth handing on: **fleet width is a tax on retrieval latency.**
+NEW1 already withdrew latency figures for contention from this fleet. Sixteen
+-second vector queries are not caused by ingest, but thirteen writers do not
+help. Offered LCC/NEW1 a drop to 4 scopes for as long as they need a quiet
+window — a cheaper trade than either lane guessing.
+
+### Six scopes completed cleanly during the ladder — 1,059,329 documents
+
+Not deaths, and the fleet count dropping from 16 to 8 mid-ladder was this, not a
+failure:
+
+```
+hc-boot-mid-19_16    146,779 written   <- CALCUTTA'S SEVEN-YEAR BLACKOUT, CLOSED
+hc-boot-mid-27_1     148,237
+hc-boot-mid-29_3     174,448
+hc-boot-mid-36_29    220,138
+hc-boot-9_13-y2025   247,659
+hc-boot-33_10-y2025  122,068
+```
+
+`hc-boot-mid-19_16` wrote **146,779 of 146,805** source documents. Calcutta
+2016-2022 held ZERO this morning; it is now complete. That gap was found by the
+coverage report a few hours earlier and is the first blackout closed.
+
+### Where the fleet points now
+
+Nine of the thirteen are `hist` (pre-2016), which is where the remaining
+blackouts live — Bombay 1996-2012 at 605,453 is the single largest gap in the
+corpus and `hc-boot-hist-27_1` is on it.
