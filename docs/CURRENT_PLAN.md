@@ -190,8 +190,23 @@ Full detail `docs/ai/NEW1_POST_0055_BASELINE.md`, machine-readable
    15.45.** TIER_A is **13.5M vectors, 70 GiB halfvec / 173 GiB fp32**, not 1.7M
    and 9 GiB. Broadcast as bus 0697-0700.
 
-Still open in this lane: the hybrid arm (running), one unopposed latency pass,
-`structuredExactness` / `fieldPrecision`, and halfvec C3/C4.
+8. **FUSION IS SETTLED, and my own hypothesis was wrong.** All three arms closed:
+   dense 21.9 / 40.6 / 0.154, **hybrid 18.7 / 37.8 / 0.133**, sparse 10.6 / 18.0 /
+   0.069. Hybrid still loses to dense on every metric after 0055. The "RRF rewards
+   arbitrary agreement" reading does **not** survive — displacers were
+   sparse-agreed 49.4% against a 46.2% base rate, no signal. With all 20 ranks per
+   arm: **gold was found by DENSE ONLY in 22 of 22 damaged queries (100%)** and
+   47.1% of displacers are documents *sparse alone* returned at sparse rank 1-2.
+   It is arithmetic — `k=60` makes sparse rank 1 (0.01639) outrank dense rank 3
+   (0.01587), so an arm at `recall@20` 18.0% is interleaved 1:1 with one at 40.6%.
+   **Rules out HNSW parameters, `annDepth`, agreement weighting and candidate
+   truncation. Names arm weighting, or removing sparse from fusion** — the latter
+   is LCC's and the founder's call, not this lane's. Bus 0713.
+
+Still open in this lane: the sparse-weight sweep the fusion verdict predicts
+(offline, against the existing checkpoint), one unopposed latency pass,
+`structuredExactness` / `fieldPrecision`, and halfvec C3/C4. Not started:
+cross-lingual (P7) and provider teacher evaluation (P8).
 
 ### 18 Aug 2026 — THE SPARSE ARM ASKED THE WRONG QUESTION, AND CITATION KEYS EXIST FOR THE FIRST TIME
 
@@ -10057,3 +10072,51 @@ That is independent confirmation — from the cluster's own log rather than a
 harness — of NEW1's 0679/0686 and the production defect LCC took in 0708. Sent to
 both (bus 0711/0712), with an offer to drop to 4 scopes for as long as either
 needs a quiet window to measure retrieval properly.
+
+### The classifier is not behind. It cannot classify half of what it reads.
+
+Built NEW1's stratified frame (bus 0706) and the first run changed the diagnosis.
+
+```
+classified                        988,834
+assessed but UNCLASSIFIABLE     1,036,042      <- a rule ran and failed
+never assessed                 12,590,930
+```
+
+**Of everything ever assessed, 51.2% could not be classified.** The stratified
+sample puts the forward rate at **39.6%**, which is the better estimate because
+it is a proper sample rather than a cumulative artefact of whatever was walked.
+
+So `hc_document_class` is not 8.9% populated because of a backlog. Grinding the
+remaining 12.6M rows would, at this rate, produce another ~6M rows it also cannot
+judge. **Volume was never going to fix this** — which retrospectively makes
+NEW1's instinct to demand precision before volume right for a reason neither lane
+had when they asked.
+
+The failing rule names the cause: `unclassified_disposal` fires 18,726 times of
+21,263 unclassified. The classifier is largely a lookup on `disposal_nature`, and
+that field is absent or unrecognised on ~40% of documents. **Fixing
+`disposal_nature` coverage is the lever, not classifier throughput.**
+
+One thing checked before proposing anything, and it was already right:
+`hc_class_method` is written even when the class comes back NULL, so
+"assessed and unjudgeable" is already distinguishable from "never assessed".
+Anything selecting an assessed population must filter on
+`hc_class_method IS NOT NULL`, never on `hc_document_class IS NOT NULL` — the
+second silently merges the two.
+
+### The frame itself
+
+`docs/ops/migration/new2-classify-frame.json` — 53,708 rows, 98 strata, drawn
+BERNOULLI (not SYSTEM: rows sharing a page here share a court and a year, so a
+page sample would skew along the very axis being stratified). Proportional
+allocation with a floor of 300, which makes it **non-self-weighting** — weights
+run 3.0x to 289.2x and `HOW_TO_USE` is written into the file rather than left in
+a message. 30 thin strata are named individually with their numbers.
+
+### NOT done, and left as a decision rather than a default
+
+Exhaustive classification of the corpus. On the 51.2% evidence the rules need
+work before the volume does, and which lever to pull — deepen the 30 thin strata,
+or attack `disposal_nature` coverage — is NEW1's call since they own what the
+selector is for. Asked in bus 0714.
