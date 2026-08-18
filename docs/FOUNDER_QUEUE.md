@@ -181,6 +181,351 @@ new one.
 
 # CREDENTIALS AND ACCOUNTS
 
+### [OPEN — NEEDS ONE IDENTIFIER, NOT A DECISION] FQ-ECOURTS-ACTOR — the eCourts switch is built, verified and one field short of ON · LCC · 17 Aug 2026
+
+**Needs:** the `users.id` that should own the change. Nothing else.
+
+```
+pnpm --filter @lawmind/api kill-switch ecourts_harvest --on   --actor <your users.id>   --reason "founder confirmed the grant stands, 17 Aug 2026 (bus 0617)" --apply
+```
+
+**The decision is already made and I am not re-asking it.** You confirmed the
+eCourts permission stands and asked for the switch ON (via NEW3, bus 0617). This
+is not that question.
+
+**Why I did not just flip it.** `audit_log.actor_user_id` is `NOT NULL`, and
+`admin/platform.ts` is explicit that *"a config change with no audit trail is
+worse than no change, because it is unaccountable rather than merely absent."*
+Of the six kill switches, this is the one where that is not housekeeping — it
+authorises contacting a court's systems under a registrar's written grant, and
+if the registrar asks who turned it on, *"we are not sure"* is the answer that
+loses the grant. There is no founder identity in `users`: 53 rows, and the only
+non-test-looking one is named `Adv. Test Verify`. Attributing your instruction to
+a test account would be a false audit record, which is worse than a missing one.
+
+**Everything else is done and verified by execution:**
+
+- terms transcribed and unexpired — `AUTHORISATION is null? false`,
+  `expiresAt 2029-01-01`, `ALL_COURTS`, hours `0–24`, `expired now? false`
+- `guard.ts` checks terms, then expiry, **then** the switch. The first two pass,
+  so **the switch is the only remaining refusal**
+- the command is written, dry by default, refuses an `--actor` not in `users`
+  (both paths exercised), writes config + audit in ONE transaction, and prints
+  `decide()`'s verdict afterwards so you see what the switch bought
+- `docs/ECOURTS_AUTHORISATION.md` corrected — its status table said
+  "Conditions transcribed: NO" for nine days after that stopped being true, and
+  NEW3 nearly acted on it
+
+**Turning it on starts no traffic, measured not assumed.** The only caller of
+`fetchCauseList` is `retryCauseList`, an attributable admin request — no cron, no
+scheduler, no poll. So it is safe to flip during the freeze; it grants permission
+and cannot initiate a fetch. Harvesting still waits on the cutover.
+
+---
+
+### [CLOSED — DONE 18 Aug 2026] FQ-PGSERVICE — PostgreSQL now runs as a Windows service; the console defect is gone, not hidden
+
+> **CLOSED 18 Aug 2026. The founder granted elevation in session and the fix
+> was applied and verified end to end.** Nothing is owed on this item.
+>
+> ```
+> pg_ctl register -N LawMindPostgres -D "C:\lawmind\pgdata" -S auto
+> ```
+>
+> Then a controlled cutover: `pg_ctl stop -m fast` (clean, 18s, no crash
+> recovery) and `Start-Service LawMindPostgres` (3s).
+>
+> **Measured before and after, which is the only reason to believe it:**
+>
+> | | before | after |
+> | --- | --- | --- |
+> | postgres consoles | **37**, one per child | **1**, the postmaster's |
+> | of those, reachable by a user | **37** | **0** — all in session 0 |
+> | postgres taskbar windows | **33** | **0** |
+> | starts after | logon only | **boot** |
+>
+> Every postgres process now runs in **SessionId 0**, which has no interactive
+> desktop. The windows are not hidden, they cannot be created. `pg-service-verify`
+> reports **9/10**, the single FAIL being the pre-fix 04:22 crash still inside its
+> 24-hour window.
+>
+> **The fleet survived the restart with no worker lost** — all 8 process chains
+> intact, on the transient-SQLSTATE retry (`services/ingest/src/db-transient.ts`).
+> **7 of 8 scopes were writing again within seconds. `3_22` was not**, and the
+> aggregate would have hidden it: it reconnected on the same `57P03` retry but
+> restarted its pass on a different year partition and took ~18 minutes to write
+> its first rows, now running 0.9 docs/s against 35.2 before the restart. Whether
+> it resumed from its checkpoint or re-walked is NEW2's to confirm.
+>
+> **Three follow-ons landed with it, because a fix that can be undone by the next
+> agent is not finished:**
+>
+> - `pg-local.mjs start` and `spawn-detached` now **REFUSE** when the service
+>   exists. Their job is to spawn a DETACHED postmaster, which is precisely what
+>   gives every backend its own console again.
+> - `isRunning()` no longer trusts `pg_ctl status`. **Measured minutes after the
+>   cutover: `pg_ctl status` said "no server running", exit 3, while the database
+>   was accepting connections** — an unelevated `pg_ctl` cannot open a LocalSystem
+>   process in session 0. `start()` branches on that, so believing it would have
+>   spawned a second postmaster against a live data directory.
+> - The `LawMindPostgres` **scheduled task is disabled** (not deleted). The service
+>   starts at boot, which strictly dominates a logon trigger.
+>
+> `scripts/pg-hide-consoles.ps1` is **retired** and kept only as documentation of
+> the mechanism; its watcher is stopped. It was the unelevated interim and it is
+> no longer needed.
+
+**The original entry is kept below for the reasoning trail. It is SUPERSEDED.**
+
+#### [SUPERSEDED — closed above 18 Aug 2026] FQ-PGSERVICE — local PostgreSQL keeps being killed by console signals; the fix needs one elevated command · LCC · 17 Aug 2026
+
+> **UPDATE 18 Aug 2026 (LCC) — this entry is now the fix for the taskbar storm
+> as well, and the previous diagnosis was one level off for the second time.**
+> `DETACHED_PROCESS` fixed the *postmaster* and nothing else. The claim written
+> into `pg-local.mjs` — that it leaves "nothing left to signal" — is **false for
+> the postmaster's children**, which is precisely why the crashes continued
+> after that fix landed:
+>
+> **a process with NO console that spawns a console-subsystem child does not
+> pass a console down — Windows ALLOCATES A NEW ONE for the child.**
+>
+> So every backend, autovacuum worker, io_worker, wal_writer and bgworker gets
+> its own private console, and on Windows 11 the default terminal application is
+> Windows Terminal, so **each one surfaces as its own taskbar window** titled
+> `C:\lawmind\pgsql\pgsql\bin\postgres.exe`. Measured this session: **33 of the
+> 43 visible windows on this desktop were PostgreSQL child processes.** The
+> "dozens of npm/node terminals" in the screenshot were not the ingest fleet —
+> the fleet launches correctly hidden. They were the database.
+>
+> That makes the two problems one problem. Those windows are live console
+> attachments to live database processes: **closing one delivers a console
+> control event, the backend exits `0xC000013A`, and the postmaster restarts the
+> entire cluster and takes the ingest fleet with it.** Every recorded instance
+> killed a *child*, never the postmaster — which is exactly what this mechanism
+> predicts and what a memory-exhaustion explanation does not.
+>
+> Mechanism measured with a control that discriminates, not reasoned about: a
+> detached parent spawning three ordinary children produced **3 new consoles and
+> 3 new visible Windows Terminal windows**; the same parent non-detached
+> produced **0** — and died with its launcher, which is why "just drop
+> `detached`" is not available as a fix.
+>
+> **Both unelevated routes to a console-free cluster were tried this session and
+> both were refused:** `Register-ScheduledTask` with an **S4U** principal (the
+> session-0 route) returned `Access is denied`, and service registration needs
+> elevation by definition. The `Access is denied` that "did not reproduce" for
+> the *Interactive* task above **does reproduce for S4U** — the two are
+> different rights, so that earlier note is not in conflict.
+>
+> **Interim shipped, so nothing waits on you to keep working:**
+> `scripts/pg-hide-consoles.ps1` hides those windows with `ShowWindow(SW_HIDE)`
+> — no signal, no message, nothing terminated, reversible with `-Restore`. Run
+> once it took the desktop from **43 visible windows to 10**, with the postgres
+> process count unchanged at 34 and the ingest fleet still writing in the same
+> second. It runs in `-Watch` mode because each new backend opens a new window.
+> **This removes the accident, not the cause** — a hidden window is still a live
+> console attachment, and anything that enumerates and closes windows, or any
+> stray `GenerateConsoleCtrlEvent`, still reaches the cluster.
+>
+> **Your one command is unchanged and is now worth more than it was:** a service
+> runs with no interactive desktop, so the child consoles are never created, the
+> windows never exist, and the whole failure class disappears rather than being
+> hidden. It also retires the watcher process this interim requires.
+
+
+**Needs:** one command run from an **Administrator** PowerShell/cmd:
+
+```
+C:\lawmind\pgsql\pgsql\bin\pg_ctl.exe register -N LawMindPostgres -D "C:\lawmind\pgdata" -S auto
+```
+
+then `sc start LawMindPostgres`. Nothing else. It is not a purchase and not an
+account — it is the elevation.
+
+**Two things that were in this entry are now settled, and one of them was mine
+being wrong. Both are verified rather than assumed:**
+
+- **`LocalSystem` will work, so the command above needs no account password.**
+  This was the one real risk in it — a service that cannot read the data
+  directory fails at start, and the obvious workaround is registering the
+  service as the logged-in user, which means putting a Windows password on a
+  command line. Checked instead of assumed: `NT AUTHORITY\SYSTEM` holds
+  `FullControl` on `C:\lawmind\pgdata`. The command as written is complete.
+- **The `Access is denied` I reported does NOT reproduce.** Same cmdlet, same
+  unelevated session, 17 Aug: `Register-ScheduledTask` succeeded, and so did
+  `Unregister-ScheduledTask`. Whatever restricted that earlier call was
+  transient. **Boot persistence is therefore restored and this is no longer
+  waiting on you** — the `LawMindPostgres` task exists again (verified: State
+  `Ready`, trigger `AtLogOn`, user `XC\Xerxus`).
+
+**What is left for the elevated command is now smaller and worth stating exactly,
+because "it already works" is the reason a queued item quietly rots:**
+
+| | scheduled task (in place now) | Windows service (needs your one command) |
+| --- | --- | --- |
+| starts after reboot | only once **you log in** | at **boot**, no logon needed |
+| console attached to the server | none | none |
+| survives a locked/logged-out machine | no | yes |
+
+The task removes the crashes. It does not remove the *logon* dependency, and an
+unattended box that reboots at 03:00 and sits at the login screen is a database
+that is down until somebody notices. That is the remaining gap and it is the
+whole reason this entry stays open.
+
+**Meanwhile the console defect itself is fixed without elevation, and measured
+rather than argued.** `pg_ctl start` on Windows shells out through `cmd.exe`, so
+the postmaster inherits that `cmd.exe`'s console — that is the actual mechanism,
+confirmed on the live server by NEW2 (bus 0597), and my earlier explanation in
+`pg-local.mjs` was one level off. The start path no longer uses `pg_ctl` at all:
+it spawns `postgres.exe` directly with `detached: true`, which is
+`DETACHED_PROCESS` on Windows — no inherited console and no new one.
+
+Tested with a control that discriminates, across a real harness console
+teardown, rather than reasoned about:
+
+```
+detached: true   -> ALIVE, still heartbeating
+detached: false  -> DEAD
+```
+
+**Verify any of this yourself in one command** — it is written to fail loudly
+rather than to reassure:
+
+```
+node scripts/migration/pg-service-verify.mjs
+```
+
+It currently reports **6/7**, and the single `FAIL` is honest: the *running*
+postmaster still has its old live `cmd.exe` parent, because it was started the
+old way and has not been restarted since. **I am deliberately not restarting it
+— NEW1's post-migration gate is mid-run against this cluster.** The fix applies
+at the next start, and the verifier will say so.
+
+**The problem, measured four times:** PostgreSQL on this machine keeps dying with
+`exception 0xC000013A` — `STATUS_CONTROL_C_EXIT`, a console signal.
+
+| when | what died |
+| --- | --- |
+| 16 Aug 03:25 | the whole server, six minutes after starting |
+| 17 Aug 00:39 | a client backend, 16 of 32 ranges into the table rebuild |
+| 17 Aug 06:45 | **an autovacuum worker** — a pure server-side process with no client |
+| (plus 16 Aug 07:26 | a genuine power cut, unrelated, listed so the count is honest) |
+
+The third one is the decisive evidence. An **autovacuum worker** has no client
+connection and no relationship to any shell — so the postmaster and all its
+children are sitting in a console that keeps receiving Ctrl-C events. This is not
+a client problem and cannot be fixed on the client side.
+
+**What was already tried, and why each was not enough:**
+
+1. **Task Scheduler at logon** (`LawMindPostgres`, already registered). This is
+   what `pg-local.mjs` uses and it genuinely helped — it is why the server came
+   back by itself after the power cut. It does **not** remove the console: a task
+   with `-LogonType Interactive` runs in the logged-on session and its children
+   can still be signalled.
+2. **A session-0 task** (`-LogonType S4U`, no console at all). Registration was
+   **refused**: `HRESULT 0x80070534` — "no mapping between account names and
+   security IDs", i.e. this account cannot be mapped for an S4U logon. Likely a
+   Microsoft account rather than a local one. Not fixable from here.
+3. **Detaching the client work** into its own console via `Start-Process
+   -WindowStyle Hidden`. This DID work for the client side and is now the pattern
+   for long jobs — but it cannot protect the server's own background workers.
+
+**A Windows service is the actual fix**: services have no console, so there is no
+process group for a Ctrl-C to reach. `pg_ctl register` needs administrator rights,
+which is the only reason this is your item and not mine.
+
+**What was built anyway / what happens if you do nothing:** nothing is lost when
+it happens. `fsync` is on, crash recovery has run cleanly **three times**, and
+every row count re-verified identical afterwards. The corpus is also backed up to
+R2 and byte-verified. The cost is **time**, not data — each crash means 2–20
+minutes of recovery, and one of them threw away 40 minutes of a table rebuild.
+The rebuild was made crash-resumable in response (progress markers commit inside
+the same transaction as the rows), so a repeat now costs minutes rather than
+restarting.
+
+**Do not treat this as urgent-at-night.** It is a stability tax on a machine that
+is otherwise working, and the migration completed despite it.
+
+### [ANSWER CHANGED 17 Aug 2026 — RECOMMENDATION IS NOW **DO NOT RAISE IT**] FQ-CAP · LCC · 16 Aug 2026
+
+> **Read this box, not the arithmetic below it.** The cap was reached while the
+> machine was off: workspace usage is **$75.11 against the $75 hard limit,
+> `isOverLimit = true`**, and Railway has taken the workloads offline exactly as
+> its docs say it would. Nothing was lost. **Stopped is not deleted** — the
+> volume still holds the database and the service restarts if the limit is
+> raised, or by itself when the billing period resets on **19 Aug 2026 09:50Z**.
+>
+> **The migration no longer needs Railway at all.** Both things it was required
+> for were finished before the cap hit: the **626/626 dump** (40.22 GB, verified
+> intact after the power loss — 626 files, 0 missing, 0 size mismatches against
+> the ledger) and the **exact row counts for all 53 tables**. The remaining work
+> — restore, verify, back up to R2 — is entirely local.
+>
+> **So the $90 below is no longer recommended.** Raising it now buys only the
+> rollback path, and it would buy it at roughly $0.45/hr for a copy we are about
+> to stop needing. If local verification FAILS and something must genuinely be
+> re-fetched, the billing period resets in two days and restores the service for
+> free. **Spend nothing. Wait.**
+>
+> The original request and its arithmetic are kept below unedited, because "did
+> we ever ask, and what did we think at the time" is a question that comes back.
+
+**[SUPERSEDED — original request, 16 Aug 2026]** raise the Railway compute hard limit $75 → $90 until the migration verifies
+
+**Needs:** one number changed on the Workspace Usage page, or
+`railway usage limit set --target workspace --hard 90`. Nothing else.
+
+**The situation, measured not assumed (16 Aug 2026, 05:3x local):**
+
+| | |
+| --- | --- |
+| workspace usage now | **$71.69** |
+| hard limit now | **$75** — headroom **$3.31** |
+| billing period ends | **19 Aug 2026 09:50Z** — it does *not* reset in time |
+| chunked dump | **~520 of 626 chunks**, running, ~36.7 GB on local disk |
+| what a hard limit does | Railway's own docs: *"all your workloads will be taken offline"* — the source Postgres dies mid-dump |
+
+**Measured burn (Railway metrics + Railway's published rates, not a guess):**
+the Postgres service holds **24.0 GB RAM** ($10/GB/mo), **~0.92 vCPU**
+($20/vCPU/mo) and a **121.8 GB volume** ($0.15/GB/mo) → **≈ $0.38/hr just to
+exist, idle or not.** Egress is $0.05/GB and the dump moves ~14 GB/hr of wire →
+**≈ $1.08/hr while dumping.**
+
+**Why $90 and not more, not less:**
+
+| remaining step | cost |
+| --- | ---: |
+| finish the dump (~4.8 GB wire left) | $0.47 |
+| Railway exact row counts — the cutover gate needs them | $0.19 |
+| Railway idle ~20 h while the **local** restore, verify and R2 backup run | $7.60 |
+| contingency: one table re-dumped if verification disagrees | $1.85 |
+| **new spend** | **≈ $10** |
+
+$71.69 + $10 = $81.7. **$90 gives ~1.5× margin on the new spend.** It is a
+ceiling, not a bill — the expected charge is ~$10.
+
+**Do NOT make it open-ended.** The moment `compare.mjs` reports 0 FAIL and the
+R2 backup reads back clean, Railway is deleted and this cap stops mattering.
+
+**What was built anyway / what happens if you do nothing:** the dump and the
+exact counts both fit inside the existing $3.31 — that work is proceeding now
+without you. Doing nothing costs the **rollback path**: Railway shuts itself off
+roughly 7 hours later, mid-restore, and the local dump becomes the only copy of
+7,296,068 judgments before anything has proven it restores.
+`RAILWAY_SHUTDOWN.md`'s one rule is that Railway stays up, billing, until the
+local copy *and* the R2 backup are independently verified. This entry is that
+rule costed out.
+
+**The $0 alternative, if you would rather not raise it:** stop (do not delete)
+the Postgres service once the exact counts land. RAM and CPU stop billing, the
+**volume keeps the data** at $0.60/day, and the remaining 3 days fit in $3.31
+with ~$0.85 to spare. It is cheaper and it is worse: it bets the only rollback
+copy on a stop/start cycle completing correctly, to save about ten dollars.
+Recommended only if the answer to $90 is no.
+
+---
+
 ### [OPEN — DECISION, NOT A CREDENTIAL] Does FQ-CORPUS's "no embeddings for now" still hold, given today's data-richness push? · LCC · 12 Aug 2026
 
 **Needs:** an explicit call on whether **FQ-CORPUS** (11 Aug 2026: *"ingest
@@ -2999,6 +3344,67 @@ target nobody has counted is a target nobody can hit.
 
 ---
 
+## FQ-20M — where does the 20.5M document target come from? — **ANSWERED 17 Aug 2026, NEW2. Your figure was right and ours was wrong. No action needed from you.**
+
+**It comes from the AWS bucket, and it is exact: 20,529,203.**
+
+> **This was found on 13 August, not on 17 August, and the credit is NEW3's.**
+> `docs/COVERAGE_GAP_MATRIX.md`'s own header already carried it — *"measured to
+> the digit at 20,529,203 … Add Supreme Court's 38,351 and the combined
+> denominator is 20,567,554, within 0.3% of 20.5M."* That is the better figure,
+> because it folds in the Supreme Court rows the High Court survey omits, and it
+> lands within **0.3%** of the founder's number rather than merely near it.
+> **This entry was a separate, older, un-updated copy of the same question**, and
+> the answer below was arrived at independently four days late. Recorded that way
+> rather than quietly, because "two files asking the same question and only one
+> of them answered" is the failure worth seeing. Cross-link:
+> `docs/COVERAGE_GAP_MATRIX.md` header.
+
+`docs/HC_METADATA_SURVEY.json` — parquet footers for 1,493 objects, already in
+the repo — states it directly: `totals.allYears.combined = 20,529,203`, being
+`plain 19,237,684 + mobile 1,291,519`. Summing its `perCourtPerYear` block
+independently reproduces the same figure to the document.
+
+**The "~17.8M" below is the number that was wrong**, and the ~2.7M "gap" it
+created never existed. Nothing needs to be found, and district courts do **not**
+need to be in scope to explain it — the question that was escalated to you was
+an artefact of two different readings of the same file.
+
+**Checked rather than assumed**, because `plain + mobile` would double-count if
+the two variants published the same documents — and they look like they might,
+since the mobile file carries a superset schema over the same court, bench and
+year. They do not: `pdf_link` overlap between the variants is **0.0%** on both
+partitions tested (Bombay/Aurangabad 2025 and Allahabad 2023). Disjoint
+populations, so the addition is sound.
+
+**What we actually hold against it, measured the same day:** 7,257,726 of
+20,529,203 — **35.4%**, with 13,271,477 remaining. The largest single band is
+2016–2022 at 7,026,064 remaining (22.5% held). Full working:
+`docs/COVERAGE_FRONTIER_17AUG.md` §0.
+
+**One caveat that matters for how you read progress:** these are **documents**,
+not judgments — most of what the bucket holds is a procedural order rather than
+a reasoned decision. Progress against 20.5M is honest; describing it as 20.5M
+*judgments* would not be.
+
+**How much smaller the judgment count is, we do not actually know.** The only
+labelled measurement (`docs/HC_ORDER_TYPES.json`) covers 1,291,519 rows — 6.3%
+of the corpus, four courts, on a file variant that is *disjoint* from the other
+93.7% — and its own tool states it "must never be quoted as a corpus-wide
+judgment count". An earlier draft of this entry quoted its 0.75%–18.64% range as
+though it were general. **It is not, and that sentence has been removed rather
+than softened.** If the ratio matters for a decision you are making, say so and
+it becomes a measurement task rather than an estimate.
+
+**The scope question underneath is still yours and still open, but it is now
+separable.** Nothing forces district courts into scope to make the arithmetic
+work. If you want them, it is a decision on its own merits (~33M NJDG orders,
+roughly another 650 GB), not an inference from a number that no longer needs
+explaining.
+
+<details>
+<summary>Original entry, kept because its reasoning is still the right shape — only its 17.8M premise was wrong</summary>
+
 ## FQ-20M — where does the 20.5M document target come from?
 
 **Raised 13 Aug 2026 by LCC after NEW3 checked it. A scope question only you can
@@ -3036,6 +3442,8 @@ another **650 GB data-first**, on top of the ~405 GB already projected.
 
 Until then the ring works to **~17.8M high courts + Supreme Court**, and reports
 progress against that.
+
+</details>
 
 ---
 
@@ -3133,3 +3541,767 @@ genuinely not held (acquisition candidates, in `CORPUS_ACQUISITION_QUEUE.md`).
 **If 2 of 13 known-missing edges turn out to be held-but-mislinked, the same
 ratio over the 598,759 real unresolved citations is not a small number** — and
 nobody has measured how many carry a year typo. That measurement is queued.
+
+---
+
+## [OPEN] Bulk-fetch the Gazette of India from its archive.org mirror — licence not cleared · NEW3 · 14 Aug 2026
+
+**Not a licensing blocker in the "SC/HC AWS bucket, CC-BY-4.0, already
+authorized" sense — a genuinely new question, because this specific source
+hasn't been checked before.**
+
+**What was verified, by direct API calls this session, not a search
+snippet:** `archive.org`'s `gazetteofindia` collection holds **171,942
+central Government of India gazette documents**, dated **1947-01-01 to
+2026-08-11** — current to three days before this check, not a stale
+one-time scrape. Confirmed 453 entries exist for July 2024, the month
+BNS/BNSS/BSA commenced. Each item traces back to the official
+`egazette.gov.in` portal (checked on one item: sourced from
+`egazette.gov.in/WriteReadData/2024/255085.pdf`, carrying the gazette's
+own official control ID `CG-DL-E-...`), mirrored with OCR added by
+`sushant@indiankanoon.com` / `github.com/sushant354/egazette`. A wider,
+separate 805,433-document collection also exists covering state gazettes.
+
+**UPDATE 14 Aug 2026 — now characterised per-state, 13 of LawMind's 25
+High Court jurisdictions measured:** Kerala 56,730 · Rajasthan 46,055 ·
+Andhra Pradesh 22,496 · Maharashtra 21,917 · Karnataka 20,264 · Tamil
+Nadu 15,303 · Punjab 9,411 · Madhya Pradesh 9,358 · Gujarat 8,453 ·
+Telangana 7,092 · Delhi 5,234 · Uttar Pradesh 3,772 · Bihar 724 · West
+Bengal 105 (the last two notably thin relative to court size — possibly
+a naming-variant miss, not confirmed either way). Same licence question
+below covers all of it as one decision, not one per state.
+
+**Why this needs a founder call and not a technical one:** this is the
+official statutory-notification source the mission brief names as a
+priority category — commencement notifications, GSR/S.O. central Act
+amendments, rules and regulations — currently completely unheld by
+LawMind. No `licenseurl` field appears in the item metadata checked. The
+underlying gazette content is widely understood to sit outside ordinary
+copyright the way judgment text does (a neighbouring provision in the
+Copyright Act, not identical to the s.52(1)(q) judgment exemption this
+product already relies on) — **but that reading is unverified here, and
+this lane does not clear licences.** Bulk-fetching an archive.org mirror
+of a government publication is a different provenance question from
+fetching AWS Open Data's own CC-BY-4.0-declared bucket, even though both
+ultimately trace to a government source.
+
+**What's needed:** either founder/counsel confirmation that gazette
+content can be bulk-fetched under the same reasoning as judgment text, or
+a specific licence read of archive.org's terms for this collection.
+**Nothing is blocked while this waits** — no other lane depends on this
+source yet, it is a newly-surfaced opportunity, not a stalled task. Full
+technical detail: `docs/SOURCE_REGISTRY.md` §3, `docs/
+CORPUS_ACQUISITION_QUEUE.md` row 2.
+
+---
+
+## NEW3 — 14 Aug 2026 · The Supreme Court's Equivalent Citation Table: one licence read, worth 34.2% of the citation gap
+
+**Nothing is blocked while this waits.** The table is fetched, parsed,
+measured and validated; only the decision to *use* it is outstanding.
+
+**What it is.** The **Equivalent Citation Table**, compiled by the **Supreme
+Court Judges Library** and signed by its Director. Four volumes giving
+equivalent citations across S.C.R., SCC, AIR (SC), JT and SCALE for the same
+judgment. Still offered on the live official page
+`https://www.sci.gov.in/judges-library/`. Covers **1950 to 12.03.2018**.
+
+**What it is worth, measured — not estimated.** Against the live corpus:
+
+- **204,684 of 598,766 unresolved citation edges (34.2%) become resolvable**,
+  pointing at judgments **LawMind already holds**. No documents acquired, no
+  ingestion, no purchase.
+- By reporter: **AIR 63.1%**, **SCC 52.4%**, **SCALE 49.3%** of each
+  reporter's unresolved edges.
+- Cross-checked against our own corpus-derived alias table (4,394 pairings,
+  each corroborated by ≥2 citing judgments): **99.42% agreement** across
+  3,807 comparable rows. The 22 disagreements are transcription slips in the
+  table, not systematic error.
+
+This is the single largest measured improvement to citation resolution
+available to this product, and it costs nothing to obtain.
+
+**Why it needs you and not us.** Two things, and only the first is a real
+question:
+
+1. **Licence.** An official Government of India publication is a *Government
+   work* under the Copyright Act (s.2(k), s.17(d)). That is a **different
+   category** from a judgment, which `CLAUDE.md` §6 exempts via
+   s.52(1)(q)(iv) — so the exemption this product already relies on does not
+   obviously extend to it. The counter-reading is that the ECT is a table of
+   bare citation numbers — facts, lacking the "modicum of creativity"
+   *EBC v. D.B. Modak* requires — and thin or absent copyright would follow.
+   **That is a legal reading, and this lane does not clear licences.**
+2. **Source scope.** `sci.gov.in` is not among the three §6a-named sources.
+   Adding the Supreme Court's own website as an authorised source is
+   plausibly routine, but it is your call, not ours.
+
+**One wrinkle you should know about.** The Court still publishes the ECT, but
+**its own links to it have been broken since the site migration** — the live
+January-2024 landing PDF points at `main.sci.gov.in`, a hostname that no
+longer resolves. The content is currently reachable **only via the Internet
+Archive**. So the provenance is unambiguously official, while the retrieval
+route is a third-party mirror — which may or may not matter to how you want
+the licence question answered.
+
+**What's needed:** a yes/no on using an official SCI Judges Library
+publication as a citation-concordance source, and if yes, whether retrieval
+via the Internet Archive is acceptable given the Court's own links are dead.
+
+**Deliberately not done pending your answer:** the four PDFs (~12 MB) and the
+235,807 parsed pairs are **not committed to the repo**. Everything needed to
+reproduce them in minutes is recorded in `docs/SOURCE_REGISTRY.md`
+§5a-FETCHED. Building the loader is LCC's territory once cleared.
+
+---
+
+## NEW3 — 14 Aug 2026 · Tribunals publish their own orders, free. One licence read could unblock a category we hold zero of.
+
+**Nothing is blocked while this waits.** No harvesting has been done beyond
+two single-document verification fetches.
+
+**What changed.** Until today the only route to tribunal decisions was the
+paid Supreme Today account (₹50,000/month, already in this queue). That
+framing missed something: **Supreme Today is an aggregator, and the tribunals
+themselves publish their own orders on their own official `.gov.in` sites.**
+
+**Verified end-to-end — a real PDF downloaded and its text read, not a page
+that merely looked promising:**
+
+- **NCLAT** (`nclat.gov.in`) — retrieved an order dated 14 Aug 2026.
+- **TDSAT** (`tdsat.gov.in`) — retrieved a full reasoned judgment dated
+  13 Aug 2026, 304 KB, *Den Networks Ltd v. Skyline Cable Network*.
+
+Both are free, need **no account, no payment, and no CAPTCHA**. Neither
+required bypassing any access control — we followed the same form the site
+submits itself in a browser. `robots.txt` on NCLAT does not disallow the
+judgment paths; TDSAT publishes no `robots.txt` at all.
+
+**Four other tribunals are CAPTCHA-gated and we are NOT touching them:**
+NCLT, CESTAT, ITAT and NGT. The eCourts CAPTCHA grant is eCourts-specific and
+does not extend to tribunal sites, so those stay closed regardless of any
+licence answer. Recorded so nobody re-derives it.
+
+**What we need from you.** These sites are not among the three §6a-named
+authorized sources, so the normal provenance process applies:
+
+> May we harvest tribunal orders directly from the tribunals' own official
+> websites — specifically NCLAT and TDSAT to begin with?
+
+The argument in favour is that a tribunal order is a judicial decision
+published by the deciding body itself, which is the same reasoning
+`CLAUDE.md` §6 already relies on for judgments. **Whether that statutory
+exemption extends to tribunals specifically is a legal reading, and this lane
+does not clear licences** — which is why it is here rather than decided.
+
+**Why it is worth your attention.** LawMind holds **zero** tribunal
+decisions. Tribunal practice — insolvency, tax, telecom, competition,
+consumer — is a large share of commercial litigation, and it is the one
+document category where a competitor with tribunal coverage beats us
+outright. If the answer is yes, this is free and the mechanism is already
+proven.
+
+**Still unknown even if you say yes:** the volume and historical depth
+available from each site. A one-week date-range probe proves the endpoint
+works; it does not tell us whether the archive goes back two years or twenty.
+That is measurable once cleared. Full technical detail, including the exact
+request sequence and two path traps that cost a cycle each:
+`docs/SOURCE_REGISTRY.md` §2b.
+
+---
+
+## FQ-IX2 · Only ONE InferX grant is configured, and grants are the enrichment ceiling
+
+**Filed 14 Aug 2026 by LCC, under the DEEPSEEK SCALE-UP directive. Nothing is
+blocked; the whole path is built, tested and running on the one grant.**
+
+### What is needed
+
+**More InferX / DeepSeek grant keys.** That is the entire ask. No code change
+comes with it: `inferxKeysFromEnv` already reads `INFERX_API_KEY`,
+`INFERX_API_KEY_2`, `INFERX_API_KEY_3` and `INFERX_API_KEY_4`, rotates on
+capacity and on 401/403, and refuses to rotate on a 400 (a malformed request is
+malformed for every key). Adding a line to `.env` is the whole deployment.
+
+### Why it is the ceiling, with the numbers
+
+The run log prints what is actually configured. Today it reads:
+
+    task case_structure · prompt v1 · model deepseek-v4-flash-0731 · units 100 · InferX grants 1
+
+Measured this session on real corpus documents: **~16 s/document**, one caller.
+That is roughly **225 documents/hour**.
+
+**Concurrency is NOT the lever, and this is measured rather than assumed.**
+`docs/ai/DEEPSEEK_DATA_MOAT.md` §1 recorded that running several callers at once
+against the free pool makes its 429 rate measurably worse — three simultaneous
+processes hit capacity failures far more than one. So the pipeline deliberately
+runs one caller, and adding threads to a pool that punishes them would be a way
+to go slower while looking busier.
+
+The eligible population for the structured legal object is **233,656 classified
+substantive judgments**, and there are **five tasks**. At one grant that is on
+the order of 5,200 hours. Each additional grant is a roughly proportional cut,
+because the constraint is the shared free pool's capacity and not this machine.
+
+### What was built anyway, and what stays true without it
+
+Everything. The five tasks, the span verification, the prioritised queue, the
+staged rollout and the dataset export all work on one grant — they are simply
+slower. **The paid fallback is already wired**: when the free pool returns three
+consecutive capacity failures the circuit breaker opens and calls go to
+OpenRouter, with the real charge (`usage.cost`) written to `llm_calls.cost_usd`
+rather than a rate typed in from a pricing page. So the pipeline never stops for
+capacity; it either waits or it spends.
+
+**Which means this is genuinely a cost question, not a capability one**, and
+that is why it is yours: more free grants, or accept OpenRouter spend at a rate
+you set, or accept the slower schedule. All three are fine and the code does not
+care.
+
+### Where it plugs in
+
+`.env` → `INFERX_API_KEY_2` … `_4`. `services/ingest/src/inferx.ts`.
+`docs/ai/LEGAL_OBJECT_PROGRAM.md` §5.
+
+---
+
+## FQ-PGKILL · A 19-hour orphaned database query is blocking the citation resolver, and the agent is not permitted to cancel it · LCC, 15 Aug 2026
+
+**This is a permission grant, not a credential and not money.** Everything else
+about the work is done and waiting.
+
+### What is happening
+
+Backend `pid 62315` on the Railway Postgres has been running one statement since
+**14 Aug 23:00:27 UTC — 19h20m at the time of writing.** It is the citation
+resolver's bulk `UPDATE`, started about half an hour after the machine rebooted
+at 22:27, by a session that no longer exists. The identical statement completed
+its dry run **in about two minutes** this evening.
+
+It holds row locks on `judgment_citations`. `pg_blocking_pids` names it exactly
+as the blocker of this session's `resolve-cli --apply`, which is otherwise ready
+to resolve **131,125 citation edges — 14.0% → 30.0% resolution** — with no new
+data, no new logic and no licence question. That work is measured, dry-run
+verified, and simply queued behind a dead query.
+
+### What I tried, and what stopped me
+
+`pg_cancel_backend(62315)` and then `pg_terminate_backend(62315)`. Both were
+refused by the tool sandbox's classifier. **I did not attempt to work around
+it** — that guard exists for a good reason and an agent routing around it is a
+worse outcome than a delayed pass.
+
+Cancelling is the mild option and the correct one: the `UPDATE` is uncommitted,
+so it rolls back cleanly with no partial write and nothing to repair. The work
+is fully reproducible — this session's own run redoes it.
+
+### What is needed
+
+Either
+
+1. run `SELECT pg_cancel_backend(62315);` against the corpus database yourself
+   (Railway's query console, or `psql`), or
+2. add a Bash permission rule allowing `pg_cancel_backend` / `pg_terminate_backend`
+   for this project so a stuck backend can be cleared without a founder round trip.
+
+Option 2 is the one that stops this recurring. This is the **second** time a
+stuck transaction has blocked LCC's work this week — bus 0472/0473 was a 90-minute
+`INSERT` holding up an index build, and that one only cleared because NEW2's fleet
+moved on by itself.
+
+### What was built anyway, and what stays broken without it
+
+Built and landed regardless: the rejection triage, the verifier fix, the storage
+audit, and the resolver run itself (it is launched and waiting, not abandoned).
+What stays broken: citation resolution stays at **14.0% instead of 30.0%**, which
+is the product's core promise, and it degrades further every hour the corpus grows.
+
+### Where it plugs in
+
+`services/ingest/src/resolve-cli.ts`. Log: `.agents/logs/resolve-apply.log`.
+`docs/CURRENT_PLAN.md` §Q1.53.
+
+---
+
+## FQ-IK · The repo says two different things about Indian Kanoon, and the competitor-distillation schema cannot be built until it says one · LCC, 15 Aug 2026
+
+**Not asking to activate anything. Asking which record is current**, because the
+provider-signal tables are supposed to carry a `license_scope` per row and that
+field cannot be populated from a contradiction.
+
+### The contradiction, both quoted from this repo
+
+| record | says |
+| --- | --- |
+| `CLAUDE.md` §6a — founder-declared, dated, "settled" | authorises **BharatLaw · Supreme AI · eCourts India**, through 13 Nov 2029. **Indian Kanoon is not on the list.** |
+| `docs/DATASETS.md` | lists **IndianKanoon as an approved source** |
+| `docs/BLOCKER_REGISTER.md` §B2.1 | treats it as a **paid commercial API** (₹0.02/call, `api.indiankanoon.org/pricing/`) needing founder sign-off, and notes its terms were never read before shipping |
+| `docs/COMPETITIVE_TEARDOWN.md` §1 | notes it is now also a **competitor** — Prism, an eight-tool AI suite over 30M+ judgments |
+
+The current session directive states plainly that Indian Kanoon is **NOT
+AUTHORIZED** and that API harvesting must not be activated unless the decision is
+"explicitly superseded and recorded". **That instruction is being followed —
+nothing has been activated, no key has been requested, no call has been made.**
+This entry exists so the written record stops disagreeing with itself.
+
+### Why it blocks real work rather than being a tidiness complaint
+
+The competitor-distillation data model (`provider_citation`, `provider_treatment`,
+`provider_case_structure`, `provider_paragraph`, `provider_topic`,
+`provider_query_expansion`, `provider_retrieval_result`, `provider_ai_output`)
+requires **`license scope` on every record**. Verified today: **none of those
+tables exists yet** — zero matching `table_name` in `information_schema`. So this
+is being asked before the schema is written, not after it is populated.
+
+Building it against a source list that contradicts itself is how one source's
+permissions silently broaden into another's, which `CLAUDE.md` §6a explicitly
+forbids.
+
+### The three questions, and only you can answer them
+
+1. **Indian Kanoon** — is `DATASETS.md`'s "approved" stale, or is `CLAUDE.md`
+   §6a's list simply not exhaustive? If it is authorised, under what scope
+   (metadata lookup only? fragments? full documents? training?) and is the paid
+   API balance funded?
+2. **Supreme Today** — the directive says it needs its own licence, separate from
+   Supreme AI, and that the two must never be conflated. Is a Supreme Today
+   licence in place? **Assumed NO until you say otherwise, and nothing is being
+   built against it.**
+3. **Supreme AI** — §6a covers it. Confirming the scope reading before anything
+   is built: citation/query evaluation, permitted processing, training,
+   distillation and retrieval-data construction. Correct?
+
+### What was built anyway, and what stays blocked
+
+**Built:** nothing that touches any provider — deliberately. The distillation
+design is recorded but unimplemented, because the first column of the first table
+is the one that needs your answer.
+
+**Stays blocked:** the whole competitor-teacher programme (P1), including the
+active-learning query queue that would be driven by LawMind's own unresolved
+citations and treatment gaps. That queue is real and measurable today — it is the
+provider side of it that cannot start.
+
+**Not blocked and continuing:** everything internal. The 131,125-edge citation
+resolution needs no provider at all (see FQ-PGKILL), and NEW3 has already
+measured that 71% of unresolved SCR citations point at judgments **we already
+hold** — no external source required.
+
+### Question 2 — RESOLVED by the founder, 16 Aug 2026: ONE identity, not two
+
+**The founder answered directly, unprompted, addressed to NEW3:** *"Supreme
+Today AI and Supreme AI refer to the SAME provider/platform. From now on
+treat them as one competitor/provider identity. Do not create separate
+provider schemas, licensing assumptions, query queues or datasets for them.
+Preserve any historical aliases for auditability, but canonicalize future
+planning under one provider identity."*
+
+This settles Question 2 above in favour of the reading `AUTHORIZED_SOURCE_MAP.md`
+§2 already carried from the founder's 12 Aug confirmation (*"yes supreme ai =
+supreme today ai"*) — **the current session directive's "must never be
+conflated, assume no licence until told otherwise" instruction is superseded
+for this specific pair.** It was protecting against under-scoping a single
+real relationship, not describing two, which is exactly the possibility
+§2 of `AUTHORIZED_SOURCE_MAP.md` flagged as unresolved on 12 Aug and which
+Question 2 here re-opened out of caution on 15 Aug. Full record:
+`AUTHORIZED_SOURCE_MAP.md` §2-RESOLVED.
+
+**Practical consequence for the `provider_*` schema this entry blocks:** one
+canonical `provider_id` (e.g. `supreme_today`) carries `license_scope` from
+the already-negotiated Supreme Today terms (`SUPREME_TODAY_LICENCE.md`
+§"UPDATE" — query-only, perpetual retention granted, target = everything
+they have). `"supreme_ai"` is retained only as a historical alias — in
+whatever lookup/enum the schema uses for provenance — never as a second row
+with its own scope or a second licence assumption. **Question 1 (Indian
+Kanoon) and Question 3 (exact Supreme AI processing-scope confirmation) are
+UNCHANGED and still open** — this founder message addressed the identity
+question only, not those two.
+
+---
+
+## LCC · RAILWAY → LOCAL POSTGRES MIGRATION · 15 August 2026
+
+**Nothing here blocks the migration. It is running.** Two items need you; both
+have working code around them and neither stops the lane.
+
+### FQ-R2-KEYS — **RESOLVED 15 Aug 2026, same session**
+
+R2 credentials were absent (`docs/FOUNDER_QUEUE.md` §"Export needs R2" was
+right). You supplied both pairs mid-session. **Verified working end to end**:
+a 74.5 MB archive was uploaded to `lawmind-corpus/backups/postgres/`, downloaded
+again, and byte-compared — `0 differences found`.
+
+Recorded in `.env` (gitignored, confirmed by `git check-ignore`). The split is
+kept as `packages/storage/src/r2.ts` requires:
+
+| pair | used by | blast radius |
+| --- | --- | --- |
+| **object** (`R2_ACCESS_KEY_ID`) | all tooling and services | **cannot create or delete a bucket** — verified, it is refused on `ListBuckets` with a 403 |
+| **admin** (`R2_ADMIN_ACCESS_KEY_ID`) | one-off bucket administration by a human | scoped to `lawmind-corpus` |
+
+**One thing to know:** backups go to `lawmind-corpus` under the prefix
+`backups/postgres/`, not to a separate bucket, because the admin token is scoped
+to that one bucket. `R2_BACKUP_BUCKET` is a separate variable so splitting them
+later is a config change, not a code change. **If you ever write an R2 lifecycle
+rule for the corpus, scope it by prefix** — an unscoped expiry rule on that
+bucket would delete the database backups.
+
+### FQ-RAILWAY-SHUTDOWN — **needs you, but NOT yet**
+
+`docs/ops/migration/RAILWAY_SHUTDOWN.md` has the exact commands. **Do not run
+any of it until the gate in its §0 passes** — it is written to be unusable early
+on purpose.
+
+The short version when the time comes:
+
+1. Repoint workers/API to local — reversible, then **soak 48 h**
+2. `railway down` on each service, **Postgres last** — reversible, **this is
+   where the billing stops**, then **soak 7 days**
+3. Railway's own final backup, independent of ours
+4. Delete the Postgres service — **irreversible**
+5. Delete remaining billable resources — **irreversible**
+
+**Steps 4 and 5 save comparatively little and are the only unrecoverable ones.**
+A stopped service is not billed for compute; a retained volume is billed for
+storage, which is the small number. A month of Railway costs far less than the
+corpus, so the soak periods are not caution for its own sake.
+
+### The stuck resolver backend — no longer urgent, and here is why
+
+**pid 62315 is still stuck, 20.6 hours as of 19:35Z**, still the only blocker of
+pid 65284. Re-confirmed against `pg_stat_activity`, and it is the same backend
+described in `docs/ops/UNBLOCK_CITATION_RESOLVER.sql` — same `backend_start`,
+same query head, not a reused pid. 131,125 citation edges are behind it.
+
+**It does not block the migration and you no longer need to run that SQL.** The
+UPDATE is uncommitted, so `pg_dump`'s snapshot correctly excludes it and it will
+roll back when Railway stops. The resolver re-runs locally after cutover —
+against a database with no proxy, no twenty-writer contention, and no shared
+statement budget, which is a strictly better place to run it. The dry run
+projects 13.63% → 30.0%; that remains **a projection, not an achieved number**,
+and will be quoted as achieved only after the live count confirms it.
+
+### What was paused, and what it costs
+
+**The ingest fleet is stopped** — 37 supervisors, 193 processes, killed at
+19:24Z. The directive authorised this explicitly. Their exact command lines are
+recorded in `docs/ops/migration/fleet-inventory.json`, which is now the **only**
+copy of that configuration, and `freeze.mjs thaw` prints them back for restart
+against the local database.
+
+**Cost of the pause: ingestion stops for the duration of the migration.** At the
+fleet's rate that is real documents not acquired. The directive settled this
+trade in advance — *"prevent data loss and stop Railway billing permanently, not
+maximize documents during a few migration hours."*
+
+**NEW1's Gate S2 harness (`services/harness/src/run-cli.ts`) was left running.**
+It is read-only, so it cannot affect dump consistency, and it is another lane's
+work. It does compete for IO on the source and will have slowed the dump.
+
+---
+
+## LCC · RAILWAY COST-KILL — executed 16 Aug 2026
+
+**Acting on the usage dashboard ($62.89: Postgres $48.09, api $14.56).** The bill
+is RAM and egress, not volume — so the levers are "stop compute" and "finish the
+dump", in that order.
+
+### DONE — stopped, reversible, no migration dependency
+
+| service | was | now | monthly |
+| --- | --- | --- | ---: |
+| **api** | ● Online | deployment removed, edge returns 404 | **~$14.56** |
+| **cron** | deployed | deployment removed | included above |
+| **recheck** | deployed | deployment removed | included above |
+| Postgres-fKqF | "No deployments found" | unchanged | $0.17 |
+| Postgres-NQ5a | "No deployments found" | unchanged | $0.16 |
+
+**Proven before acting, not assumed:**
+
+- **The migration does not touch the api service.** Its tooling connects to
+  exactly three things: `hayabusa.proxy.rlwy.net` (Postgres), R2, and localhost.
+- **`Postgres` is the dump source** — `RAILWAY_TCP_PROXY_DOMAIN=hayabusa.proxy.rlwy.net`,
+  port `24909`, matching `DATABASE_URL` exactly. It was **not** touched.
+- **No Railway service was connected to the database.** Every backend in
+  `pg_stat_activity` was accounted for: 5 of my own COPY chunks, the 2 stuck
+  resolver backends, 1 autovacuum. So `cron`/`recheck` were not a freeze risk —
+  worth checking, because my freeze only ever stopped processes on *this*
+  machine and a Railway-side writer would have been invisible to it.
+- **The two extra Postgres services hold no data.** `railway volume list` returns
+  exactly ONE volume, `postgres-volume`, attached to the main `Postgres`
+  (121,841 MB / 250,000 MB). fKqF and NQ5a have no volume, no variables and no
+  deployment — abandoned shells. **Stopped, not deleted**, per the directive.
+
+**Reversible:** `railway down` removes a deployment; a redeploy restores it.
+Nothing was deleted.
+
+### The remaining bill, and when it stops
+
+**~$48/mo of Postgres RAM+egress cannot be stopped before cutover** — it is the
+migration source. It stops when the gate passes and the service is shut down,
+which is the whole point of finishing the dump quickly rather than carefully
+economising around it.
+
+**Egress is uncompressed.** The Postgres wire protocol does not compress, so the
+dump costs ~74 GB of egress regardless of zstd — compression only saves local
+disk. **38.6 GB already spent, ~35.8 GB remaining.** That is a sunk, bounded,
+one-time cost and there is no cheaper way to get the corpus off Railway.
+
+### STILL NEEDS YOU — after the gate, not now
+
+1. **Delete the Postgres service and its 250 GB volume.** Irreversible.
+   `RAILWAY_SHUTDOWN.md`. Note the directive's amendment: do **not** keep it as a
+   paid rollback for weeks once local + R2 both verify — that defeats the point.
+2. **Cancel or downgrade the Pro subscription** once nothing billable remains.
+   Not a CLI action.
+3. **`docs/ops/UNBLOCK_CITATION_RESOLVER.sql` is now optional.** pid 62315 is at
+   23.8h and still stuck, but it is uncommitted, excluded from every chunk
+   snapshot, and rolls back when the service stops. The resolver runs locally
+   after cutover — no proxy, no contention. **Do not run it against Railway.**
+
+---
+
+## FQ-IK-RESOLVED · Founder confirms Indian Kanoon + "Bharat Nyai" licensing, live in session · NEW3, 17 Aug 2026
+
+**Answers FQ-IK Q1 (`docs/FOUNDER_QUEUE.md` line ~3622), open since 15 Aug 2026.**
+The founder, live in this session, confirmed:
+
+1. **Indian Kanoon — API/training rights now authorized.** Supersedes the
+   twice-recorded declination (*"We are NOT buying the Indian Kanoon
+   API...money is going to Supreme Today instead"*, *"Indian Kanoon is
+   settled: no API"*, both 8 Aug 2026, `AUTHORIZED_SOURCE_MAP.md` §4).
+2. **"Bharat Nyai" = BharatLaw.** No separate product by that name exists
+   anywhere in this repo or was found by search (`grep` for
+   `Bharat.?Nyai|nyaya.?ai` — zero hits, checked before asking). The founder's
+   live confirmation supersedes `BharatLaw`'s own Evaluation/Platform
+   Agreement reading of `extractionPermitted: false` and clears
+   benchmark/distillation/training use against it.
+
+**What was NOT specified and is still open, GUESS-labelled below, not
+KNOW:** exact processing scope for either (metadata-only vs fragment vs full
+document vs training), IndianKanoon paid-API budget ceiling, and whether the
+BharatLaw contract's written-consent email (FQ-BL1) is still required as a
+formality or is now waived. **Do not spend against either without one more
+explicit confirmation of scope + budget** — this entry only lifts the
+blanket "declined"/"prohibited" status, it does not set a spending ceiling.
+
+**Not yet reflected in `CLAUDE.md` §6a**, which is founder-declared,
+dated, and states it "supersedes earlier repository statements" — that file's
+own convention is a founder-authored dated update, not an agent edit under
+a session confirmation. **Recorded here per the existing FQ-IK convention
+so the written record stops disagreeing with itself**; §6a's authorized-list
+edit is the founder's, whenever convenient, not blocking on it.
+
+Broadcasting to LCC/NEW1/NEW2/RCC via bus — LCC's `provider_*` schema
+(FQ-IK's original blocker) can now take IndianKanoon and BharatLaw as
+licensed `provider_id` rows once scope/budget are confirmed.
+
+---
+
+## FQ-CCI-PERMISSION · CCI publishes 1,231 orders and asks for one email before anyone reproduces them · NEW2, 17 Aug 2026
+
+**What is needed from you: one email, and a judgment call I am not allowed to
+make alone.**
+
+**What was built anyway:** the whole acquisition path, measured and proven, in
+`docs/TRIBUNAL_ACQUISITION_MEASUREMENT.md`. The listing endpoint is
+enumerable, the exact count is **1,231 antitrust orders** (the site's own
+figure, not an estimate), and the order PDFs fetch directly — HTTP 200,
+`application/pdf`, verified by execution. Nothing was harvested.
+
+**The conflict.** CCI's copyright page says, verbatim:
+
+> "Material featured on Competition Commission of India (CCI) may be reproduced
+> free of charge after taking proper permission by sending a mail to us."
+
+Free, but **on prior written permission**. Against that: CCI is a quasi-judicial
+authority, and Copyright Act **s. 52(1)(q)(iv)** exempts "any judgment or order
+of a court, tribunal or other judicial authority" without distinguishing
+commercial use — the exact provision `CLAUDE.md` §6 already relies on for
+judgments. On that reading the site policy governs CCI's own publications
+(market studies, annual reports, page design), not its adjudicatory orders.
+
+I think the exemption reading is probably right. **I am not acting on it.**
+`CLAUDE.md` §6a says sources outside BharatLaw / Supreme AI / eCourts stay in
+the normal authorization process, and "a site-wide policy versus a statutory
+exemption" is precisely the kind of question that section exists to keep out of
+an agent's hands. The cost of asking is one email; the cost of being wrong is a
+regulator with a documented permission process finding we skipped it.
+
+**Two ways to close it, either is fine:**
+
+1. **Send the email** CCI asks for — reproduction is free, so this is a
+   formality with a paper trail, and the paper trail is the point.
+2. **Tell me the s. 52(1)(q)(iv) reading governs** for tribunal and regulator
+   orders generally, and I will treat CCI, CAT and the other first-party
+   tribunal publishers the same way we already treat court judgments.
+
+**What stays broken without it:** nothing breaks. 1,231 orders is a small
+tranche, and the corpus does not depend on it. What we lose is a category we
+hold **zero** of — competition-law orders — and the same question returns
+unanswered for every tribunal after this one, which is the real cost.
+
+**Same item covers CAT** (`cis.cgat.gov.in`), measured in the same pass and
+fully reachable: 42 benches, date-enumerable final orders, cause lists and daily
+orders, PDFs fetching at 200. CAT publishes **no** copyright or reuse policy
+that I could find — only an NIC hosting footer and a Disclaimer link whose text
+I could not retrieve. **Absence of a restriction is not a grant**, and I did not
+read the disclaimer, so CAT is recorded as unresolved rather than clear. Answer
+(2) above would resolve both at once.
+
+**And now a third source, which is why option (2) is the better buy.** RERA
+Maharashtra (`mahareat.maharashtra.gov.in`) was closed end-to-end the same
+afternoon: **49,167 records in a single unauthenticated API call**, direct PDF
+download, live to 14 Aug 2026. Its reasoned-decision population is **~7,376** —
+85% of the records are *Roznama*, the daily order sheet, not a decision. It is
+one of **28+ state RERA tribunals with no central repository**, so answering
+this question per-source means answering it 28 more times. RERA appellate
+tribunals are tribunals and the same s. 52(1)(q)(iv) argument applies to them
+in the same terms.
+
+**Where it plugs in:** `docs/TRIBUNAL_ACQUISITION_MEASUREMENT.md` holds all
+three proven request shapes. None of these sources is court-judgment-shaped, so
+ingestion also waits on the generic legal-document layer — that is a design task
+in this lane, not a founder question.
+
+---
+
+## FQ-RECOVERY · Does the eCourts registrar's grant cover recovering judgment PDFs that AWS is missing? · NEW3, 18 Aug 2026
+
+**One question. It is worth roughly $130 and I am not answering it myself,
+because answering it myself is the failure mode `CLAUDE.md` §6 names.**
+
+NEW2's `hc_ingest_ledger` has recorded **22,983 documents whose metadata is in
+the AWS parquet and whose PDF is not in the bucket** — worst single population
+Bombay 2023 at 15,845. The judgments exist; the object store does not have them.
+
+eCourts obviously holds these. We hold a written registrar authorisation. The
+grant expressly permits CAPTCHA bypass. It would be very easy to read that as
+covering this.
+
+**I am not reading it that way, and this is why.** The grant scopes bypass to
+**bulk cause-list harvesting**, in one named module, and §6 states the rule in
+terms that apply directly:
+
+> *"Tier 3 per-citation confirmation and bulk cause-list harvesting are different
+> acts under different parts of the grant, and collapsing them is how a bounded
+> permission becomes an unbounded one."*
+
+Recovering missing judgment PDFs is a **third act** — neither a cause list nor a
+per-citation confirmation. Treating it as covered would put the most valuable
+authorisation this project holds at risk to save about $130.
+
+**What is needed from you:** either (a) confirm the grant already covers
+retrieving judgment copies and point at the clause, or (b) let it be asked of the
+registrar as a separate, narrow extension, or (c) say no and the Indian Kanoon
+path below stands.
+
+**What was built anyway, so nothing waits on this:**
+`docs/MISSING_PDF_RECOVERY.md` — a complete, costed recovery program that does
+**not** use eCourts at all. Indian Kanoon is confirmed to hold the population
+(325,674 Bombay HC 2023 documents against 15,845 missing, verified live) and
+`/origdoc/<id>` returns the court's own copy. Triage costs **₹1,150 (~$14)** for
+the entire ledger using `citedby` from the search response; recovery is then
+selective rather than bulk. It needs `INDIANKANOON_API_TOKEN` and
+`INDIANKANOON_BUDGET_PAISE`, which is the still-open half of FQ-IK-RESOLVED — not
+a new ask.
+
+**What stays broken without an answer:** nothing, immediately. This decides
+whether the cheapest path is free or ~$14–$130, not whether the path exists.
+
+---
+
+## FQ-RERA-10 · Ten state RERA sources are now measured and all ten are waiting on the same permission · NEW3, 18 Aug 2026
+
+**Extends `FQ-CCI-PERMISSION`, does not duplicate it.** That entry asked the
+acquisition-policy question for CCI/CAT/Maharashtra RERA. The answer now governs
+**27,040 measured documents across ten states**, not one:
+
+```
+Maharashtra 49,167 raw / 7,376 reasoned    Bihar        5,652 / <=5,081  (digital text)
+Punjab       5,067 / <=5,067  (scanned)    Chhattisgarh 4,154 / 3,687
+Tamil Nadu   2,967 / 2,967    (scanned)    West Bengal  4,884 / 1,816 complaints
+Delhi          481 / ~155     (93.8% procedural, measured)
+Jharkhand      228 / 218      (digital, site-labelled)   Goa 173    UP 8
+```
+
+Full detail: `docs/RERA_STATE_MATRIX.md`. Every one is a public listing served
+without a login and, except where noted, without a CAPTCHA. **Nothing has been
+fetched in bulk and nothing ingested** — these are read-only measurements.
+
+**The legal question is identical for all ten and identical to CCI/CAT:** a RERA
+authority or appellate tribunal decision is a judicial/quasi-judicial decision,
+and the s. 52(1)(q)(iv) argument `CLAUDE.md` §6 applies to judgments applies to
+them in the same terms. That is a legal reading and it is not this lane's to
+make. **One ruling covers all ten and every future state**, which is why this is
+one entry rather than ten.
+
+**What was built anyway:** the matrix, the mechanism families (three shapes cover
+all ten states, so the next state is a confirmation rather than an investigation),
+the reasoned-vs-procedural discriminators per state, and NEW2's
+`tribunal-routing.ts` which already routes all of these to `legal_document` and
+never to `judgments`.
+
+**What stays broken without it:** nothing in the build. The matrix keeps growing
+and no worker starts. This decides whether ~20,000 reasoned tribunal decisions
+enter the corpus, in a practice area — RERA — that `SOURCE_REGISTRY.md` §2 names
+as one the original source list never covered at all.
+
+---
+
+## FQ-INDIANKANOON — is Indian Kanoon an authorized source? NEW3 has costed a recovery program that depends on the answer · NEW2, 18 Aug 2026
+
+**What is needed:** a ruling on whether Indian Kanoon may be fetched from.
+Nothing else — no key, no account, no money beyond ~$14.
+
+**Why it is being asked now.** NEW3 (bus 0682) has designed and costed a recovery
+program for documents that the AWS Open Data bucket lists in its metadata but
+does not actually hold. Their core finding is sound and my own measurements
+support it:
+
+> **Indian Kanoon holds 325,674 Bombay High Court 2023 documents**, verified live
+> against the index. A 20.6x superset of what AWS has for that court-year, and
+> `/origdoc/<id>` returns the court's own copy.
+
+So *"missing from AWS"* is emphatically **not** *"the judgment does not exist"* —
+which is exactly the distinction the citation harness exists to protect. Triage
+is near-free at ~₹0.05 per document, ₹1,150 (~$14) for the whole ledger.
+
+**Why it is a founder question and not mine.** NEW3's message describes Indian
+Kanoon as *"already authorized"*. `CLAUDE.md` §6a names **BharatLaw, Supreme AI
+and eCourts India** and says plainly that *"new sources not named above remain
+subject to the normal provenance/authorization process."* Indian Kanoon is not
+among the three. The string `indiankanoon` does appear in
+`services/api/src/citations/source-strength.ts` as a historical
+`verified_by_source` value that the wire maps to `none`, which is evidence it was
+used once — not evidence it is authorized now.
+
+Two lanes reading the same rule differently is precisely the case §6a says must
+not be settled inside a lane.
+
+**The number is bigger than NEW3 costed, and that matters to the ruling.** Their
+figure was 22,983 `pdf_missing` rows. After probing the population this session —
+63,845 URLs HEADed, **63,841 returned 404** — the ledger now holds **96,091
+confirmed-absent documents**, and it grows as the fleet advances. So this is a
+~4x larger program than the one they priced, which strengthens the case for
+answering it either way rather than leaving it open.
+
+**What was built anyway:** the whole absent-document ledger, which is what makes
+the program possible and is useful regardless of the answer.
+`hc_ingest_ledger` now distinguishes `pdf_absent` (a 404/403/410 was actually
+observed) from `pdf_unavailable` (retryable), and
+`scripts/migration/new2-ledger-absence-probe.mjs` promotes rows one at a time by
+asking the bucket rather than by inference. Coverage reporting already carries
+SOURCE DOCUMENT MISSING as a first-class state.
+
+**What stays broken without it:** nothing in the build, and no worker waits. The
+96,091 documents simply stay absent. They are correctly marked, correctly
+excluded from the work queue, and correctly reported as missing at source rather
+than as a gap in our fetching — so the corpus is honest about them either way.
+What is lost is only the chance to recover them.
+
+**Where it plugs in:** `services/ingest/src/harvest/` — a recovery worker would
+read `hc_ingest_ledger WHERE outcome = 'pdf_absent'` and write through the same
+`upsertJudgments` path, with `source_url` recording the real provenance. It would
+not touch the AWS ingest path.
