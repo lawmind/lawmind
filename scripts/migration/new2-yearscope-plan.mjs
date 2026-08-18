@@ -94,6 +94,46 @@
  * smaller number of reasoned decisions.
  *
  * ---------------------------------------------------------------------------
+ * `source - held` CANNOT REACH ZERO, AND THE WORKER'S OWN RESULTS BLOCK CAN
+ * ---------------------------------------------------------------------------
+ * `source` counts parquet ROWS across every metadata object in a partition.
+ * `held` counts DISTINCT documents in `judgments`. A document listed in more
+ * than one metadata object -- the `metadata-mobile.parquet` variant beside
+ * `metadata.parquet`, overlapping bench files -- is counted once per listing at
+ * source and once in total when held.
+ *
+ * Measured 18 Aug 2026 on Allahabad 2023, and the arithmetic is exact:
+ *
+ *     survey source rows            534,053
+ *     distinct rows in judgments    313,610   (both year definitions agree)
+ *     -> "remaining"                220,443
+ *
+ *     what the worker actually saw  532,089 already_held + 1,964 absent = 534,053
+ *     duplicate candidate URLs      532,089 - 313,610 = 218,479
+ *
+ * 218,479 is, to the row, the `remainingActionable` this tool printed for that
+ * scope. The gap IS the duplication. `hc-boot-9_13-y2023` was ranked FIRST in
+ * the whole fleet on it, walked every one of its 534,053 listings, wrote ZERO
+ * documents and exited cleanly.
+ *
+ * No correction to `held` fixes this, because `held` is right. The scope is
+ * finished and the subtraction has no term that can say so.
+ *
+ * WHAT CAN SAY SO is the worker itself. `hc-load-cli` prints a `RESULTS` block
+ * only on clean completion -- `supervise.mjs` treats that string as "do not
+ * restart" -- so a log carrying one is a scope that reached the end of its
+ * scope. If that run also wrote NOTHING and left nothing retryable, the scope is
+ * EXHAUSTED whatever the arithmetic says, and it is excluded here.
+ *
+ * Deliberately narrow, because this can retire real work:
+ *   - `WRITTEN` must be 0. A run that wrote anything found work and may find more.
+ *   - `MAPPED` must be 0. Mapped-but-unwritten is a dry run, not an exhausted one.
+ *   - the run must be the LAST thing in the log, so a stale RESULTS above a newer
+ *     partial run cannot retire a scope that is mid-recovery.
+ * Exhausted scopes are listed with their numbers, never counted, for the same
+ * reason every other exclusion here is.
+ *
+ * ---------------------------------------------------------------------------
  * BOTH SIDES OF THE SUBTRACTION MUST MEAN THE SAME "YEAR"
  * ---------------------------------------------------------------------------
  * `source` is counted by the bucket's PARTITION year -- the `year=2023` in the
@@ -288,6 +328,52 @@ for (const n of heldSnapshot.courtNamesWithNoSurveyCode ?? []) {
   if (!heldWithNoSource.some((h) => h.court === n)) heldWithNoSource.push({ court: n, heldDocuments: null });
 }
 
+/**
+ * Scopes whose LAST completed run reached the end of their scope and wrote
+ * nothing. See the header: `source - held` cannot express this, because the
+ * remainder is duplicate listings rather than outstanding documents.
+ *
+ * Reads `<scope>.log` at the repo root, which is where `supervise.mjs` appends
+ * and where the launcher looks for its own RESULTS sentinel. Only the tail is
+ * read — these logs reach hundreds of thousands of lines.
+ */
+const EXHAUSTED_TAIL_BYTES = 65536;
+function lastRunExhausted(scope) {
+  const path = join(ROOT, `${scope}.log`);
+  if (!existsSync(path)) return null;
+  let tail;
+  try {
+    const buf = readFileSync(path);
+    tail = buf.subarray(Math.max(0, buf.length - EXHAUSTED_TAIL_BYTES)).toString('latin1');
+  } catch {
+    return null;
+  }
+  const at = tail.lastIndexOf('\nRESULTS\n');
+  if (at === -1) return null;
+  const block = tail.slice(at);
+  /**
+   * Anything that looks like a NEW run after the RESULTS block disqualifies it.
+   * `hc-load-cli` prints its banner on every start, so a banner below the last
+   * RESULTS means the scope was restarted and is no longer described by it.
+   */
+  if (/HIGH COURT DOCUMENT INGEST/.test(block)) return null;
+  const num = (label) => {
+    const m = new RegExp(`^${label}\\s+([0-9,]+)`, 'm').exec(block);
+    return m ? Number(m[1].replace(/,/g, '')) : null;
+  };
+  const seen = num('DOCUMENTS SEEN');
+  const mapped = num('MAPPED');
+  const written = num('WRITTEN');
+  if (seen === null || mapped === null || written === null) return null;
+  if (written !== 0 || mapped !== 0) return null;
+  const alreadyHeld = /^\s*([0-9]+)\s+already_held$/m.exec(block);
+  return {
+    documentsSeen: seen,
+    alreadyHeld: alreadyHeld ? Number(alreadyHeld[1]) : null,
+    evidence: `${scope}.log ends with a completed RESULTS block: MAPPED 0, WRITTEN 0`,
+  };
+}
+
 /** Which scopes have EVER run — a checkpoint file on disk is the only evidence. */
 const checkpointFiles = new Set(
   existsSync(CHECKPOINT_DIR) ? readdirSync(CHECKPOINT_DIR).filter((f) => f.endsWith('.json')) : [],
@@ -323,6 +409,7 @@ const MID_FROM = BAND_CEILING - 6;
 const candidates = [];
 const finished = [];
 const belowThreshold = [];
+const exhausted = [];
 
 function push(entry) {
   if (entry.sourceDocuments <= 0) return;
@@ -338,6 +425,16 @@ function push(entry) {
   const reachable = entry.sourceDocuments - entry.unreachableDocuments;
   const effPct = reachable > 0 ? Math.min(1, entry.heldDocuments / reachable) : 1;
   const decorated = { ...entry, heldPct: pct, effectiveHeldPct: effPct };
+  /**
+   * Checked BEFORE the percentage tests. A scope the worker walked to the end
+   * without writing is finished no matter what the arithmetic reads, and
+   * Allahabad 2023 read 58.9% held while being complete.
+   */
+  const done = lastRunExhausted(entry.scope);
+  if (done !== null) {
+    exhausted.push({ ...decorated, lastRun: done });
+    return;
+  }
   if (effPct >= MAX_HELD_PCT) {
     finished.push(decorated);
     return;
@@ -496,6 +593,8 @@ const out = {
   excludedBelowMinRemaining: belowThreshold.sort(
     (a, b) => b.remainingActionable - a.remainingActionable,
   ),
+  excludedExhaustedByLastRun: exhausted.sort((a, b) => b.remainingActionable - a.remainingActionable),
+  exhaustedByLastRun: exhausted.length,
   finishedAtOrAboveMaxHeldPct: finished.length,
   belowMinRemaining: belowThreshold.length,
   unjoinedSurveyNames,
@@ -564,6 +663,23 @@ console.log(
 console.log(
   `  ${finished.length} scope(s) at >=${(MAX_HELD_PCT * 100).toFixed(0)}% held treated as FINISHED · ${belowThreshold.length} below ${n(MIN_REMAINING)} remaining.`,
 );
+if (exhausted.length > 0) {
+  console.log(
+    `\n  EXHAUSTED BY THEIR OWN LAST RUN — ${exhausted.length} scope(s) the worker walked to the end without writing.`,
+  );
+  console.log(
+    '  The subtraction still reports work for these: source counts parquet ROWS across every metadata',
+  );
+  console.log(
+    '  object, held counts DISTINCT documents, and a document listed twice is counted twice at source.',
+  );
+  for (const r of exhausted) {
+    console.log(
+      `    ${r.scope.padEnd(24)} arithmetic says ${n(r.remainingActionable).padStart(9)} · worker saw ` +
+        `${r.lastRun.alreadyHeld === null ? '?' : n(r.lastRun.alreadyHeld)} already held, wrote 0`,
+    );
+  }
+}
 
 /**
  * DROPPED BUT PREVIOUSLY RUNNING — the one class that can silently lose work.

@@ -42,6 +42,71 @@ open**: a scheduled task fires at LOGON, not at boot, so an unattended reboot
 still comes up with no database until someone signs in. That needs the one
 elevated `pg_ctl register` command.
 
+### 18 Aug 2026 — 39 TOOLS COULD NOT OPEN THE DATABASE, AND 80% OF "AMBIGUOUS" CITATIONS ARE ONE DECISION
+
+**Post-cutover the corpus is at `127.0.0.1` with `ssl = off`, and 39 tools still
+demanded TLS.** Two wrong tests: `ssl: 'require'` hard-coded (12 files) and
+`ssl: url.includes('localhost') ? false : 'require'` (27 files) — the URL says
+`127.0.0.1`, so the substring never matches. All 39 died with `ECONNRESET` inside
+the driver, before their first query. NEW1 had already fixed this in their lane
+17 Aug (`services/harness/src/db-url.ts`); it had never been applied elsewhere.
+**36 fixed** across `services/ingest`, `services/api`, `services/embed` via a
+per-service copy of their `sslFor()`; typecheck clean in all three. Two remain and
+are NEW1's (`scripts/measure-recall.mjs`, `baseline-extra.local.mjs`) — bus 0680.
+
+`dedup-materialize-cli.ts` was one of the 39, which is why
+`document_duplicate_groups` holds 563 groups against 104,930 affected judgments.
+**A tool that fails before its first query looks exactly like a job nobody ran.**
+
+**The 45,153 ambiguous neutral keys are measured and split**
+(`docs/ai/AMBIGUOUS_CITATION_POPULATION.md`): **36,310 keys / 104,930 judgments
+(80.4%) are ONE decision** — every member byte-identical by `content_hash`. That
+is the common-order shape `CANONICAL_IDENTITY.md` §1 already names.
+`resolve-cli.ts` guard #1 refuses all of them, which is CORRECT under
+`CITATION_HARNESS.md` §A3d.4 — **nothing points at the wrong petition** — but it
+is pure recall loss.
+
+The circulating "~8,843 true conflicts" is exactly B+C, and **most of B is not a
+conflict**: sampled members are OCR variants of one title (`COMMISSIONER OF
+IINCOME TAX`, `ONCOME TAX`, `COMMISSONER`). 34.4% of B collapses to one normalised
+title; 55.5% holds texts within 10% by length. **Irreducible conflicts are ~2,000
+keys, not ~8,800.**
+
+Design settled without a new table: an ambiguous key whose members all sit in ONE
+exact-duplicate group resolves to that decision; anything else keeps refusing.
+**Resolver change deliberately NOT implemented this pass** — it is harness-adjacent
+and needs its own INTENT line and its own recall measurement.
+
+### 18 Aug 2026 — THE TASKBAR STORM WAS THE DATABASE, AND `0xC000013A` IS NOT OOM
+
+**Item 3 above says `pg-service-verify` is 7/7 and the console problem is closed.
+It is not, and the reason it looked closed is worth keeping.** That check asks
+about the POSTMASTER's parent. `DETACHED_PROCESS` fixed the postmaster and
+**moved the console down a level** rather than removing it: a process with no
+console that spawns a console-subsystem child does not pass a console down —
+**Windows allocates a new one for the child.** So every backend, autovacuum
+worker, io_worker, wal_writer and bgworker holds its own signalable console, and
+on Windows 11 each is also a taskbar window titled with the server binary path.
+
+**33 of the 43 visible windows on this desktop were PostgreSQL child processes.**
+The founder's screenshot was not the ingest fleet — `start-ingest-fleet.ps1`
+launches hidden with redirected stdio and contributes zero windows at any width.
+
+That makes the storm and the restarts ONE bug: closing such a window delivers a
+console event, the backend exits `0xC000013A` (`STATUS_CONTROL_C_EXIT`), and the
+postmaster restarts the whole cluster and takes the fleet with it. Every recorded
+kill hit a **child**, never the postmaster — 17 Aug 00:39, 17 Aug 06:45, 18 Aug
+04:22 — which is what this mechanism predicts and what memory exhaustion does
+not. **NEW2's OOM hypothesis is refuted as the cause** (bus 0677); the width
+correlation was real but indirect, via connection count.
+
+Landed: `scripts/pg-hide-consoles.ps1` (hides the windows, signals nothing,
+`-Restore` undoes it; 43 → 10 windows, fleet uninterrupted), the false comment in
+`pg-local.mjs` corrected, two new checks in `pg-service-verify.mjs` (`child
+consoles`, `console windows hidden`), and `docs/ops/PROCESS_TOPOLOGY.md`.
+**FQ-PGSERVICE is now the fix for both problems** — the unelevated S4U/session-0
+route was tried and refused.
+
 ### 18 Aug 2026 — THE SPARSE ARM ASKED THE WRONG QUESTION, AND CITATION KEYS EXIST FOR THE FIRST TIME
 
 **1. `sparseAny()` selected query terms by LENGTH and the proxy was false.**
@@ -9114,3 +9179,451 @@ and `cx1-devanagari-bakeoff.mjs --reaggregate` still reproduces the same verdict
 Nine of those are in files another lane is actively working in, so they are
 reported rather than edited. `services/harness/src/baseline-extra-scratch.mjs`
 is the scratch file LCC flagged and I left alone — NEW1's to delete.
+
+---
+
+## NEW2 · 18 Aug 2026 — the backlog band DRAINED, and the fleet moved to 2016-2022
+
+**Corpus 7,296,068 → 8,736,896 since cutover. +1,440,828 documents.**
+
+The fleet reading zero this time was **success, not a stall**: **23 of 24
+year-scoped scopes finished cleanly** (`worker finished cleanly after N
+restart(s)`), which is the priority-1 and priority-2 band exhausted. Checked by
+reading each log's supervisor verdict rather than inferring from the count —
+the same distinction that mattered when two canaries were dead behind a passing
+aggregate.
+
+**The transient fix is proven in production.** Postgres restarted again (uptime
+2h32m at the check, `n_tup_ins` reset to 124,566 confirms it). Under the old
+classifier that meant three fast deaths and an abandoned scope. What the logs
+show instead is *"finished cleanly after 1 restart(s)"* — the worker rode the
+restart out and completed. That is `db-transient.ts` doing exactly what it was
+built for, measured rather than assumed.
+
+**One scope stays abandoned and I am not restarting it again.**
+`hc-boot-29_3-y2023` reproduced the unpdf module-import rejection after the one
+restart I gave it. I said at the time that a second occurrence makes it an
+investigation rather than a fourth restart, and it is: `unpdf@1.8.0`'s pdfjs
+bundle rejects at `ModuleJob.run`/`onImport`, with `Math.sumPrecise is not a
+function` as the likely neighbour. Pinning or upgrading unpdf is the next move,
+not another launch.
+
+### LCC's 0670 changed what I believe about the 22:36 crash
+
+They confirmed the ledger semantics — and better, said my choice was *more*
+correct than their own header specified: it names the threshold but never says
+where the count lives, so a per-process counter would have satisfied it while
+resetting on every restart, rebuilding the exact bug the table exists to fix.
+
+More importantly they supplied evidence I did not have: **no crash line in the
+PostgreSQL log**, which points at a hard kill rather than a database fault, and
+**RAM at 5.7% free with 71 node processes** shortly before. I had diagnosed
+"Postgres restarted, workers must survive it" — correct and still necessary, but
+it is only half. **The fleet may have killed the database.** 71 node processes
+came from roughly 20 scopes at ~3.5 processes each, which is the width I had
+settled on from throughput alone.
+
+**So the rung is now bounded by memory, not only by throughput.** Restarted at
+**8 scopes** rather than 20 for the 2016-2022 band: RAM free 36.3% at 8 scopes
+against 5.7% at ~20. Throughput said 16-20 was the plateau; memory says the
+plateau was also the cliff. Eight is the width that leaves headroom for the
+database.
+
+### Now running — tier 3, the largest single gap in the corpus
+
+```
+hc-boot-mid-9_13    1,875,249 remaining   8.8% held
+hc-boot-mid-33_10     754,484              8.0%
+hc-boot-mid-3_22      597,652             18.1%
+hc-boot-mid-10_8      552,538             13.5%
+hc-boot-mid-27_1      539,842             13.4%
+hc-boot-mid-8_9       462,120             19.0%
+hc-boot-mid-21_11     441,673              0.0%
+hc-boot-mid-29_3      423,516              0.0%
+```
+
+Four of these had **no launcher line at all** before this session's scheduler,
+and two hold **0.0%** of the band while having an unscoped worker whose range
+covers it — the starvation mechanism measured directly.
+
+### The ledger, after a full night
+
+**58,117 rows**, 1 promoted to `permanent`. The promotion count is low because
+most rows are still below three attempts, which is why the year-scope planner
+still must not subtract it yet.
+
+## NEW2 · 18 Aug 2026 — the scheduler was ranking documents that do not exist, and two years that were never the same year
+
+Both defects made `remaining` a number nobody could act on. Both were found by
+asking the data, not by reading the arithmetic. Neither self-corrects: each
+survives a reboot, a fresh agent and a re-run, producing identical numbers for
+the next person to trust.
+
+### State at hand-off
+
+| | |
+|---|---|
+| judgments | **9,350,544** (exact `count(*)`, 02:10Z) — was 7,296,068 at the 17 Aug snapshot |
+| live scopes | 9 · eight `mid` 2016-2022 + `hc-boot-29_3-y2023` |
+| free RAM | 24.4% at width 9 (LCC's postmaster kill was at 5.7% / ~71 node processes) |
+| ledger | 66,838 rows · **65,465 `pdf_absent` permanent** · 1,368 retry pending · 5 other |
+| per-scope health | all 8 `mid` verified INDIVIDUALLY: process, checkpoint mtime, source offset, and rows landing in their own 2016-2022 band |
+
+### D1 · 63,322 documents were being counted as work, and 404 said otherwise
+
+`hc-load-cli` matched `/→ \d{3}$/` and called every non-OK status `pdf_missing`.
+`ingest-ledger` then retried that bucket three times, justified in its own header
+on the ground that *"one request cannot tell a transient S3 hiccup from a
+genuinely absent object"*.
+
+The reasoning is sound and the premise was false — the status was in hand and was
+being discarded. Probed 520 at random, then the whole population:
+
+```
+63,322 of 63,326 -> 404      0 x 5xx      0 x 2xx      4 network errors
+```
+
+Split by what the server actually said: **`pdf_absent`** (404/403/410, permanent
+on sight) and **`pdf_unavailable`** (everything else, retry rule unchanged).
+`pdf_missing` is kept as a retryable legacy value and never written again.
+
+**The existing rows were NOT mass-updated.** A sample is evidence about a
+population and this number decides whether an individual judgment is ever fetched
+again, so `new2-ledger-absence-probe.mjs` HEADs them one at a time and promotes
+only confirmed absences. A 2xx row is left alone rather than deleted —
+`judgments.source_url` is the only record allowed to claim a success. `attempts`
+is never incremented: a probe is not an ingest attempt.
+
+Measured in the next scope's own RESULTS block, not predicted:
+
+```
+hc-boot-27_1-y2024   ledger_permanent_skip  34,242     <- skipped without a fetch
+                     pdf_absent              3,405
+                     WRITTEN                     5
+```
+
+34,242 GETs that scope used to re-pay on every restart, gone.
+
+### D2 · `source - held` subtracted two different definitions of "year"
+
+`source` counts the bucket's PARTITION year — the `year=2023` in the object key.
+`held` counted `year(judgment_date)`.
+
+```
+Allahabad 2023   source partition          534,053
+                 held by judgment_date     313,610  -> ranked #1 of 53, "220,443 remaining"
+                 the worker's own RESULTS  532,089 already held
+                                           +  1,964 absent  =  534,053   exactly
+```
+
+`hc-boot-9_13-y2023` was the **top-ranked scope in the entire fleet** on that
+220,443. It ran to completion, wrote **zero** documents, and finished cleanly. A
+partition records when the court PUBLISHED an object, not when it decided the
+case, so a `year=2023` partition is full of judgments dated 2020 and 2024.
+
+`new2-held-refresh.mjs` now emits both maps and names which is which.
+**Coverage reporting keeps decision years** — it is asking a legal question, and
+`cx1-corpus-census.mjs` is right to use them. Only the partition-year map may be
+subtracted from source. A snapshot without it makes the planner print the warning
+on every run rather than plan silently.
+
+### D3 · The snapshot the whole fleet plans against could not be refreshed
+
+`new2-held-by-court-year.json` recorded its own provenance as a `psql \copy`.
+**There is no psql on this machine.** It could be read and never regenerated, and
+was 1.9M rows stale while three tools treated it as current. A stale `held` does
+not fail loudly — it inflates `remaining` on exactly the bands the fleet has been
+draining hardest.
+
+### D4 · P5, unpdf — not a packaging fault, and the first fix silently did nothing
+
+`hc-boot-29_3-y2023` died three times in 32 seconds, and the supervisor correctly
+retired it: a restart resumes at the same checkpoint and replays the same batch,
+so the failure was perfectly repeatable. **One library-internal fault retires a
+whole court-year.**
+
+- `import('unpdf/pdfjs')` in an isolated process **succeeds**, 61 exports. Not
+  packaging, not the runtime, not the install.
+- The module job emits a **second** rejection that nothing here is on the chain
+  of. Proved by adding `warmPdfEngine()` — the awaited import resolved, the run
+  printed its file count, and the worker died anyway with the stack now naming
+  `warmPdfEngine`. No `try/catch` in this codebase can reach it.
+- The fatal handler now survives a rejection whose **throw site** is a
+  dependency. The first version of that guard tested the WHOLE stack and did
+  nothing, because an async stack always names the awaiting callers — caught
+  because `SURVIVED` never printed once.
+
+Verified live: the scope now logs `SURVIVED unhandledRejection #1/#2` and writes
+at 18 docs/s where it previously died in 11 seconds.
+
+### D5 · One Node process per scope was buying nothing
+
+`supervise.mjs` spawned `npx.cmd tsx …` through a shell. The npx hop is a full
+Node process holding ~79 MB to answer a question that is answerable statically:
+
+```
+supervise.mjs -> cmd.exe -> npx-cli.js -> tsx/dist/cli.mjs -> worker
+```
+
+~630 MB at the current rung, **~1.6 GB at the width where the postmaster was
+killed**. Free RAM is the measured ceiling on fleet width, so a process per scope
+is not bookkeeping — it is width. Now `node tsx/dist/cli.mjs` directly, verified
+on a live launch (3 processes, no cmd.exe). Losing the shell also deletes the
+argv re-splitting hazard the old code had to guard against by hand.
+
+### Fleet-width position — HOLDING at 9, deliberately
+
+8 remains the rung LCC's OOM evidence supports; 9 is one deliberate step with
+24.4% free measured after it. **Not returning to 20.** Two scopes completed and
+exited cleanly during this session (`9_13-y2023`, `27_1-y2024`), which is the
+population shrinking for the right reason rather than dying.
+
+`hc-boot-29_3-y2023` was started, crashed, and was restarted only after each fix
+had a stated hypothesis — three attempts, three different root causes, the last
+one verified. Not a retry loop.
+
+### Q · NEXT, in order
+
+1. **Re-rank the frontier on the corrected held snapshot.** Every year-scope
+   number in the current plan is inflated by D2. Allahabad 2023 collapsed from
+   220,443 to 0; the other six backlog scopes have not yet been re-measured and
+   MUST NOT be launched on the old figures.
+2. **P6 — the 18 down scopes.** D4 is a plausible cause for some of them: check
+   each `*.super.log` for the `died within 20s three times` line before assuming
+   anything else. Route survivors through the generated scheduler, never a hand
+   list.
+3. **P7 — quality fields.** NEW1 (bus 0676) wants `document_class` as a selection
+   dimension and `script_quality`/`text_quality` as STRATIFIERS, not filters, and
+   explicitly does not want OCR workflow-state fields. `hc_document_class` and
+   `hc_class_method` already exist on `judgments`; `text_quality` exists as
+   numeric; **`script_quality` does not exist.** Schema is LCC's — coordinate,
+   do not add columns unilaterally.
+4. **P8 Devanagari** — the 148-document stratified validation. NEW1 has confirmed
+   (bus 0676) their `hindi` gold set is Hindi QUERIES against English SC text with
+   zero Devanagari codepoints, so this is NOT blocking their benchmark. Ingest
+   stays higher priority.
+
+### Standing correction owed
+
+`text_extraction_method` is **not universally populated** — NEW1 found it null on
+all five `hindi` gold judgments. Anything using it as a denominator is measuring a
+subset, not the corpus.
+
+---
+
+## NEW3 · 18 Aug 2026 — the source frontier: 10 RERA states measured, a third extraction failure mode, and the missing-PDF ledger turned into a costed recovery program
+
+Discovery lane. **Nothing ingested, no worker started, no database written, no
+Railway touched.** Every number below is a recorded HTTP response.
+
+### What landed
+
+| # | deliverable | file |
+| --- | --- | --- |
+| 1 | RERA frontier: **2 states → 10 states, 27,040 documents** measured and ranked by reasoned decisions | `docs/RERA_STATE_MATRIX.md`, `SOURCE_REGISTRY.md` §2c |
+| 2 | **Missing-PDF source recovery**, costed, with a triage that runs at ₹0.05/document | `docs/MISSING_PDF_RECOVERY.md` |
+| 3 | **Manupatra / SCC buy decision**, written before the quotes arrive | `docs/MANUPATRA_SCC_DECISION.md` |
+| 4 | Supreme Today first-use manifest — **43 executable queries, generated not transcribed** | `docs/ai/SUPREME_TODAY_FIRST_USE_MANIFEST.json`, `scripts/new3-supreme-today-manifest.mjs` |
+| 5 | Two founder questions, each with the work already done around them | `FQ-RECOVERY`, `FQ-RERA-10` |
+
+### The three findings that change other lanes' work
+
+**1 · There is a THIRD extraction failure mode and it defeats both existing
+checks.** CX1 established mode 2 — Poppler deletes Devanagari and scores a
+perfect zero on every defect metric by doing so. Chhattisgarh RERA is mode 3:
+a text layer that extracts to long, clean, **pure-ASCII** output which is Hindi
+in a legacy Kruti Dev-family font. Six subsetted `CIDFont+F*` fonts, `Identity`
+encoding, six `/ToUnicode` CMaps — the extractor is correct per the file's own
+map and the output is unreadable.
+
+```
+mode 1  no text layer                  detectable by LENGTH
+mode 2  extractor deletes the script   detectable by SCRIPT RETENTION
+mode 3  legacy font-encoded script     detectable by NEITHER
+```
+
+The only test is script plausibility. Kruti Dev → Unicode is a deterministic
+remap and solved OSS territory, so this is a routing decision, not a blocker —
+but nothing detects it today, and a Hindi-bearing *court* in this shape would
+read as clean. Across ten sources the text layer varies four ways: digital,
+absent, font-mangled, and **present-Unicode-and-silently-OCR-corrupted** (West
+Bengal). Record the extractor and the script check per source, never per
+category.
+
+**2 · NEW2's 22,983 missing PDFs have a confirmed source, and the triage is
+nearly free.** Indian Kanoon holds **325,674 Bombay HC 2023 documents** against
+15,845 missing — verified live, a 20.6× superset — and `/origdoc/<id>` returns
+the court's own copy. Triage on `citedby` from the search response costs
+**₹0.05/document, ₹1,150 (~$14) for the whole ledger**; recovery is then
+selective. Bulk recovery is explicitly wrong — most of this corpus is procedural
+orders averaging 2,223 characters, so bulk-recovering buys the chaff back at a
+price. **Do not price against 22,983**: that is the `pdf_missing` count, the
+recovery population is `pdf_absent`, and today exactly one row is promoted
+permanent.
+
+**eCourts is ruled out for this act.** We hold a grant, it permits CAPTCHA
+bypass, and eCourts obviously has these judgments — but the grant scopes bypass
+to bulk cause-list harvesting in one named module, and §6 states that collapsing
+two acts under one grant is how a bounded permission becomes unbounded.
+Missing-PDF recovery is a third act. Routed to the founder as `FQ-RECOVERY`
+rather than reinterpreted.
+
+**3 · Manupatra/SCC: default SKIP, and one argument decides it.** Their unique
+value is precisely the part we may not copy — `EBC v. D.B. Modak` protects
+headnotes and editorial numbering, and everything outside that layer is raw
+court text we already hold 7.3M documents of. Neither publishes an API at any
+tier, confirmed by direct fetch. **A student or research price makes this worse,
+not better**: cheap academic terms are more restrictive, and a cheap price on
+unusable terms looks like a win. The only genuine residual gap is post-2018
+parallel citations, benchmarked at **₹2,502 (~$30)** via Indian Kanoon `docmeta`
+on a licence we already hold.
+
+### The RERA ranking, by reasoned decisions
+
+```
+Maharashtra  7,376 of 49,167 raw     Bihar        <=5,081  (digital text, no OCR needed)
+Punjab      <=5,067  (scanned)       Chhattisgarh  3,687   (site pre-segments interim)
+Tamil Nadu   2,967   (scanned)       West Bengal   1,816 complaints of 4,884 orders
+Jharkhand      218   (digital, site-labelled, 100% reasoned)
+Goa            173   (scanned)       Delhi          ~155   Uttar Pradesh 8
+```
+
+Two structural findings make the eleventh state cheap: **`erera.co.in` is a
+multi-state platform** (Punjab runs the identical application as Delhi, so
+siblings can be sized before being fetched), and **three mechanism families
+cover all ten states** — server-rendered whole listing · one unparameterised
+AJAX call behind an empty table · Angular SPA with a private API.
+
+One source **rejected**: `hprera.in` returns 200 and reads like an authority. It
+is a WordPress affiliate blog (`/category/home-loans/`, `/hello-world/`). For a
+government source, a 200 and a convincing name are not identity.
+
+### A correction to this lane's own earlier work
+
+I characterised Delhi RERA on 17 Aug as having *"no Roznama-style category…
+structurally like Maharashtra's already-filtered bucket"*, flagged unconfirmed.
+**Measured on a 34-document sample: 93.8% procedural.** The 481 files are hearing
+*dates* bundling ~5.3 appeals each; the typical unit reads in full *"Bench could
+not assemble today. Put up for same purpose on 03.11.2023."* NEW2 declined to
+promote Delhi on exactly that doubt (bus 0640) and was right. The discriminator
+they asked for exists but is post-extraction only — ≥3 numbered paragraphs **and**
+≥1,500 chars per appeal-order unit; all 11 reasoned units have both, none of the
+165 procedural ones has either.
+
+### NEXT, in order
+
+1. **Karnataka**, with the technique UP just proved: an empty table is usually one
+   unparameterised AJAX call away and the call is named in the page's own inline
+   script. Three approaches were tried there and reading the script for the
+   endpoint name was not one of them.
+2. **`erera.co.in` sibling sweep** — probe the three known routes against the
+   remaining states and UTs. Confirmation, not investigation.
+3. **Remaining states**: Telangana, Rajasthan, MP, AP, Kerala, and the ~14 not
+   started.
+4. **Bihar reasoned count** — run the Delhi classifier over a sample. 5,081 is an
+   upper bound and it is the second-largest population in the matrix.
+5. **Retest `bombayhighcourt.nic.in` from a different network.** If the court's
+   own archive is reachable, the entire missing-PDF recovery cost goes to zero for
+   the two worst populations. Single highest-leverage unknown open in this lane.
+6. **Tier 0 stays empty by design** — NEW1's retrieval-failure queue outranks
+   everything in the Supreme Today manifest and is not fabricated in its absence.
+
+### CORRECTION to D2, made the same session, from the measurement that was supposed to confirm it
+
+**D2's fix is right and D2's diagnosis of Allahabad was wrong.** Recording both,
+because the wrong half was already in a commit message.
+
+I attributed Allahabad 2023's phantom 220,443 to `source` counting partition
+years while `held` counted decision years. Then I built the partition-year map
+and checked:
+
+```
+9_13 / 2023   held by DECISION year   313,610
+              held by PARTITION year  313,610     identical
+```
+
+For Allahabad the two definitions agree exactly, so the year mismatch cannot be
+the explanation. The dual-year map is still correct and still needed — Bombay
+2024 reads 208,822 by partition year and that is the figure its worker's own
+`already_held` matched — but it did not cause this.
+
+**The real cause is a third pair of incompatible units.** `source` counts parquet
+ROWS across every metadata object in a partition; `held` counts DISTINCT
+documents. A document listed in both `metadata.parquet` and its
+`metadata-mobile.parquet` variant is counted twice at source and once when held.
+The survey read all 1,493 objects' footers and summed them, so every court with
+`hasMobileVariant: true` inherits this.
+
+```
+survey source rows          534,053
+distinct rows in judgments  313,610
+-> "remaining"              220,443
+
+worker actually saw         532,089 already_held + 1,964 absent = 534,053
+duplicate candidate URLs    532,089 - 313,610 = 218,479
+```
+
+**218,479 is, to the row, the `remainingActionable` the planner printed.** The
+gap IS the duplication. No correction to `held` fixes it, because `held` is
+right, and the subtraction has no term that can ever say "finished".
+
+What CAN say so is the worker. `hc-load-cli` prints a `RESULTS` block only on
+clean completion — `supervise.mjs` already treats that string as "do not
+restart" — so a log ending in one is a scope that reached the end of its scope.
+The planner now reads it and, when the last completed run wrote NOTHING, retires
+the scope regardless of the arithmetic. Deliberately narrow: `WRITTEN` and
+`MAPPED` must both be 0, and the RESULTS block must be the last thing in the log,
+so a stale block above a newer partial run cannot retire a scope mid-recovery.
+
+First run of that rule:
+
+```
+hc-boot-9_13-y2023    arithmetic 218,479  | worker saw 532,089 already held, wrote 0
+hc-boot-23_23-y2024   arithmetic  15,740  | worker saw  12,296 already held, wrote 0
+hc-boot-14_25-y2024   arithmetic   2,149  | worker saw   4,332 already held, wrote 0
+```
+
+**236,368 documents of phantom work retired**, and Allahabad 2023 stopped being
+the top-ranked scope in the fleet. Every one is listed with its numbers rather
+than counted, because this rule can retire real work and an exclusion nobody can
+check is how the y2024 hole opened.
+
+`hc-boot-27_1-y2024` is deliberately NOT retired: its last run wrote 5, so it
+found work and may find more. The rule is meant to be conservative in that
+direction.
+
+### Correction to the fleet-width decision, which is larger
+
+The postmaster deaths are **console control signals, not memory pressure**, and I
+cut the fleet from 20 scopes to 8 on the memory theory.
+
+```
+2026-08-15 23:01  logical replication launcher  0xC000013A   STATUS_CONTROL_C_EXIT
+2026-08-16 03:25  logical replication launcher  0xC000013A
+2026-08-16 07:43  client backend                0x40010004   DBG_CONTROL_BREAK
+2026-08-17 00:39  client backend                0xC000013A
+2026-08-17 06:45  autovacuum worker             0xC000013A
+2026-08-18 04:22  autovacuum worker             0xC000013A
+```
+
+Each followed by `terminating any other active server processes` /
+`reinitializing` — one child dies on a console signal, the whole cluster goes
+down. **`grep -i "out of memory"` across all four days of PostgreSQL log returns
+nothing.** Not one line. LCC's "no crash line in the log" observation was the
+strongest evidence and pointed the other way: there is no crash because it was a
+signal.
+
+`start-ingest-fleet.ps1`'s own header already documents 0xC000013A as the
+signature of a shared console — it is the mechanism that killed 38 workers 95
+seconds after boot on 15 Aug. Same code, different victim.
+
+At 07:58:23 today `LawMindPostgres` was registered as a Windows service
+(`pg_ctl runservice`, LocalSystem) and the cluster restarted into it at 07:59:54.
+A service has no console and cannot be reached by a terminal's CTRL events, so
+that removes the mechanism rather than the symptom. Sent to LCC (bus 0685) for
+confirmation that it was theirs and is intended to stand.
+
+**The width ceiling of 8 was derived from a theory the cluster's log contradicts
+and should be re-derived, not left standing.** Holding at 11 until LCC confirms —
+this is not an argument that 20 is safe, only that the number came from the wrong
+reason.
