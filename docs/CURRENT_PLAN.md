@@ -9448,7 +9448,7 @@ subset, not the corpus.
 
 ---
 
-## NEW3 · 18 Aug 2026 — the source frontier: 10 RERA states measured, a third extraction failure mode, and the missing-PDF ledger turned into a costed recovery program
+## NEW3 · 18 Aug 2026 — the source frontier: 12 RERA states measured, a third extraction failure mode, and the missing-PDF ledger turned into a costed recovery program
 
 Discovery lane. **Nothing ingested, no worker started, no database written, no
 Railway touched.** Every number below is a recorded HTTP response.
@@ -9457,7 +9457,7 @@ Railway touched.** Every number below is a recorded HTTP response.
 
 | # | deliverable | file |
 | --- | --- | --- |
-| 1 | RERA frontier: **2 states → 10 states, 27,040 documents** measured and ranked by reasoned decisions | `docs/RERA_STATE_MATRIX.md`, `SOURCE_REGISTRY.md` §2c |
+| 1 | RERA frontier: **2 states → 12 states, 38,689 documents** measured and ranked by reasoned decisions, plus Karnataka's 11,707 matters | `docs/RERA_STATE_MATRIX.md`, `SOURCE_REGISTRY.md` §2c |
 | 2 | **Missing-PDF source recovery**, costed, with a triage that runs at ₹0.05/document | `docs/MISSING_PDF_RECOVERY.md` |
 | 3 | **Manupatra / SCC buy decision**, written before the quotes arrive | `docs/MANUPATRA_SCC_DECISION.md` |
 | 4 | Supreme Today first-use manifest — **43 executable queries, generated not transcribed** | `docs/ai/SUPREME_TODAY_FIRST_USE_MANIFEST.json`, `scripts/new3-supreme-today-manifest.mjs` |
@@ -9549,12 +9549,47 @@ they asked for exists but is post-extraction only — ≥3 numbered paragraphs *
 ≥1,500 chars per appeal-order unit; all 11 reasoned units have both, none of the
 165 procedural ones has either.
 
+### Second-pass corrections, all to this lane's own numbers
+
+Recorded because each was caught by a check that should have run first.
+
+- **Karnataka's "20 s+ timeout, 0 bytes, Angular SPA" was wrong three times over.**
+  It answers in **7.0 seconds**, no session, no CAPTCHA. Zero `<tr>` is also
+  correct — it is a *search form*, and its 4 MB payload is inline JavaScript
+  holding **11,707 distinct decided matters**, 2023–2026. Largest RERA population
+  after Maharashtra, and the number was sitting in the page through three passes
+  that concluded absence. Documents still not reached; the result POST returns an
+  identical 35,753-byte shell for three field combinations, so I stopped.
+- **Rajasthan was written off as an Angular SPA because I checked the authority's
+  domain and never the tribunal's.** `reat.rajasthan.gov.in` is plain
+  server-rendered HTML: **750 appeal judgments with a DISPOSAL OUTCOME field**,
+  digital text on 4/4 samples, plus 11,523 orders on a separate route.
+- **Bihar's raw count was 5,081 and is 4,367.** The first pass counted every
+  `.pdf` href on the page; 714 were not orders and **545 were cause lists** — the
+  exact procedural class this work excludes. **Count by directory, not by
+  extension**, and every state counted the old way needs the same re-check.
+- **The Delhi discriminator does not transfer, and nearly produced a Bihar figure
+  three times too low.** Delhi's test scores Bihar at 22.6%; a content test scores
+  67.7%, and reading a boundary case confirms the content test — the Bihar
+  authority simply does not number its paragraphs. **A discriminator is a property
+  of the source, not of the category.**
+- **Gujarat's diagnosis is now definite rather than a timeout**: client-side-only
+  routing with **no server fallback**, so `/judgements/rera-judgement` and
+  `/zzz-not-a-route` return byte-identical 404s. `curl` and `agent-browser` both
+  fail on any deep link for the same reason, which is easy to misread as a tool
+  limitation.
+
+**Six ways a live source reads as empty**, collected: single-quoted `href` ·
+unquoted `href` · opaque-token handler · numeric-id handler · empty table filled
+by one AJAX call · data as inline JavaScript. A row count with no link count is
+the tell one way; megabytes with no rows is the tell the other. And re-test a
+timeout before building a theory on it.
+
 ### NEXT, in order
 
-1. **Karnataka**, with the technique UP just proved: an empty table is usually one
-   unparameterised AJAX call away and the call is named in the page's own inline
-   script. Three approaches were tried there and reading the script for the
-   endpoint name was not one of them.
+1. **Karnataka's form submission** — we now hold 11,707 real identifiers from the
+   autocomplete, so the form can carry a value the server will match instead of
+   an empty or invented one. A different experiment, not a fourth repetition.
 2. **`erera.co.in` sibling sweep** — probe the three known routes against the
    remaining states and UTs. Confirmation, not investigation.
 3. **Remaining states**: Telangana, Rajasthan, MP, AP, Kerala, and the ~14 not
@@ -9730,3 +9765,76 @@ worth naming: `29_3-y2023` finished with `DEPENDENCY FAULTS 116` — it survived
 
 A shrinking worker population is not automatically a problem. **Verify by scope
 name and offset delta, never by count.**
+
+### Closing state — 18 Aug 2026
+
+```
+judgments        12,148,177      from 7,296,068 at the 17 Aug snapshot  (+4,851,109)
+                                 from  9,194,206 measured at session start (+2,953,971)
+live scopes      11              8 x mid 2016-2022 + 3 x y2025, all verified by name
+ledger           90,575 rows     85,073 pdf_absent (permanent) · 5,012 pdf_failed · 301 legacy
+frontier         ~9.3M actionable across 49 candidate scopes
+```
+
+### TWO HANGS, both at the Postgres service restart, and a watchdog for them
+
+`hc-boot-mid-3_22` stopped at 07:59:58 — the instant the cluster was restarted —
+and sat 25 minutes. `hc-boot-mid-32_4` did the same later: **zero CPU across its
+whole process tree over a 10-second sample**, 12.6 minutes of silence, worker
+resident at 132 MB where a healthy one is 300-600 MB.
+
+Neither was visible to anything. `supervise.mjs` reacts to the child EXITING —
+restart loop, backoff, `consecutiveFast`, `MAX_RESTARTS`, the RESULTS sentinel,
+all of it. A hang never exits. And from outside, the corpus was gaining ~800k
+rows/hour from the other scopes, so **every aggregate looked healthy**. Both were
+found by diffing per-scope checkpoint offsets by hand.
+
+`db-transient.ts` cannot help and that is not a gap in it: a retry needs
+something to catch, and a hang throws nothing.
+
+The only signal a stalled worker emits is silence, so that is what is now
+watched. `STALL_MS` defaults to 15 minutes, `lastOutputAt` comes from the
+stdout/stderr handlers rather than the log's mtime (the log is shared across
+restarts — its mtime is not *this* child's liveness), and the kill is SIGKILL
+because the worker is wedged on a socket that will never answer. The kill makes
+`close` fire, so the existing restart path applies unchanged and a worker that
+hangs every time is still reported and stopped. Verified against a stand-in
+worker that prints once and hangs forever.
+
+### The whole fleet is now on one code path
+
+Five scopes were still running the pre-change chain:
+
+```
+old   supervise -> cmd.exe -> npx-cli(79MB) -> tsx bin(61MB) -> tsx cli -> worker
+new   supervise -> tsx cli(64MB) -> worker
+```
+
+Rotated all five. **Zero `cmd.exe` in any supervisor tree now**, node process
+count 55 -> 50 for the same eleven scopes. Beyond the memory, the old chain meant
+the supervisor was waiting on `cmd.exe` rather than on the worker — the thing it
+watched was not the thing doing the work.
+
+### What is NOT done, stated plainly
+
+- **The survey denominator is still wrong.** The scheduler now works around it
+  via the RESULTS rule; `perCourtPerYear`, the 20,529,203 figure and every
+  coverage percentage still count parquet rows. Sent to NEW3 (bus 0692) with the
+  one-comparison test that settles it. Ours is UNDERSTATED, which is the pleasant
+  direction and still wrong.
+- **Fleet width is held at 11 pending LCC.** The 8-scope ceiling came from an OOM
+  theory the cluster log contradicts (bus 0685). I will not raise it until LCC
+  confirms the service registration is theirs and intended.
+- **`script_quality` is not built.** With LCC (bus 0681); `judgments` is theirs.
+- **`hc_document_class` covers 8.9%** — 10,107,727 of 11,090,502 rows NULL when
+  measured. NEW1 asked for it as their primary selection dimension (bus 0691);
+  they owe me which population to classify first so the backlog is drained in
+  the order their pilot needs rather than newest-first.
+- **P8 Devanagari validation not started.** Correctly deprioritised: NEW1
+  confirmed their `hindi` gold set carries zero Devanagari codepoints, so nothing
+  downstream is waiting on it.
+- **P9 eCourts live state not started.** Waiting on LCC's audit-actor/switch work.
+- **P11 Silver not touched.** Deliberate — ingest was the priority all session.
+- Three scopes were restarted during the closing verification and were still in
+  their startup phase at the last offset sample. They are alive and logging;
+  a stall now surfaces by itself within 15 minutes rather than needing a human.
