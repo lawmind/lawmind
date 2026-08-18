@@ -14,9 +14,40 @@
  */
 import type { Sql } from 'postgres';
 
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { openDb } from './db-host.ts';
-import { classifyHcDocument, type HcDocumentClass } from './hc-classify.ts';
+import { classifyHcDocument } from './hc-classify.ts';
 import { installCrashGuard } from './crash-guard.ts';
+
+/**
+ * THE MIGRATION PAUSE SWITCH — the same sentinel `hc-load-cli.ts` honours, and
+ * this file needs it for the same reason: it WRITES (`writeClasses`), so it has
+ * to be quiet before the database moves underneath it.
+ *
+ * Found by rehearsing the pause on 15 Aug 2026 rather than by reading code: 152
+ * worker processes stood themselves down in about thirty seconds and exactly
+ * FOUR would not — all of them this classifier, because only the harvester had
+ * the hook. A pause that leaves a writer running is not a pause, and the only
+ * reason it was visible at all is that fleet-stop.ps1 waits and counts instead
+ * of assuming.
+ *
+ * Checked per PAGE rather than per row: a page is already the unit this walk
+ * commits in, so it is the point where nothing is half-written. The check sits
+ * BEFORE the cursor advances, so a paused run re-reads the page it stopped on —
+ * `--resume` selects on `hc_class_method IS NULL`, so anything already written
+ * is simply not selected again.
+ */
+const STOP_FILE = join(dirname(fileURLToPath(import.meta.url)), '../.checkpoints/STOP');
+function stopIfRequested(): void {
+  if (!existsSync(STOP_FILE)) return;
+  console.log(
+    `\nPAUSED by ${STOP_FILE} at a page boundary — nothing in flight. ` +
+      `Delete the file and relaunch to resume from the first unclassified row.`,
+  );
+  process.exit(0);
+}
 
 
 // Silent deaths cost three runs today; log the cause instead of vanishing.
@@ -111,6 +142,40 @@ async function main(): Promise<void> {
      * changed rule set needs.
      */
     const RESUME = process.argv.includes('--resume');
+    /**
+     * `--frame <file>` — classify EXACTLY the rows in a stratified sampling
+     * frame, in frame order, and nothing else.
+     *
+     * Requested by NEW1 (bus 0706). The distinction they drew is the reason this
+     * mode exists rather than a `--limit`: `hc_document_class` is not an input to
+     * their pilot, it is a SELECTOR, and a selector whose per-class precision is
+     * unmeasured cannot be used to choose 13.5 million vectors' worth of
+     * embedding work. Measuring that precision needs a sample with known
+     * inclusion probabilities, not the first N rows of a cursor walk.
+     *
+     * A newest-first walk cannot produce it at any volume. The corpus arrives
+     * court-by-court and year-by-year, so the first 50,000 rows of a walk are
+     * one court in one year — a population you can classify and cannot
+     * generalise from. `scripts/migration/new2-stratified-sample.mjs` draws the
+     * frame; this reads it.
+     */
+    const frameAt = process.argv.indexOf('--frame');
+    const FRAME_PATH = frameAt === -1 ? null : (process.argv[frameAt + 1] ?? null);
+    let frameIds: string[] | null = null;
+    if (FRAME_PATH !== null) {
+      const frame = JSON.parse(readFileSync(FRAME_PATH, 'utf8')) as {
+        strata?: { ids?: string[] }[];
+      };
+      frameIds = (frame.strata ?? []).flatMap((st) => st.ids ?? []);
+      if (frameIds.length === 0) {
+        console.error(`${FRAME_PATH} carries no ids — refusing to classify the whole corpus by accident.`);
+        process.exit(2);
+      }
+      console.log(
+        `frame ${FRAME_PATH}: ${frameIds.length.toLocaleString()} rows across ` +
+          `${(frame.strata ?? []).length} strata. Classifying these and nothing else.`,
+      );
+    }
     const PAGE = 2_000;
     const byClass = new Map<string, number>();
     const byMethod = new Map<string, number>();
@@ -137,14 +202,22 @@ async function main(): Promise<void> {
      */
     let cursor = '00000000-0000-0000-0000-000000000000';
     for (;;) {
+      /**
+       * The frame restricts the SAME cursor walk rather than replacing it, so
+       * paging, `--resume`, the STOP check and the per-page write all behave
+       * identically. A separate code path for the sampled run is how the two
+       * would drift, and the sampled run is the one whose numbers get published.
+       */
       const page = await sql<Row[]>`
         SELECT id, disposal_nature, case_number, full_text, length(full_text) AS len
         FROM judgments
         WHERE court <> 'Supreme Court of India' AND id > ${cursor}::uuid
           ${RESUME ? sql`AND hc_class_method IS NULL` : sql``}
+          ${frameIds === null ? sql`` : sql`AND id = ANY(${frameIds}::uuid[])`}
         ORDER BY id
         LIMIT ${PAGE}`;
       if (page.length === 0) break;
+      stopIfRequested();
       cursor = page[page.length - 1]!.id;
       total += page.length;
 
