@@ -72,7 +72,7 @@
  *
  * Neither is "the" answer and the write-up must carry both.
  */
-import { readFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import type { RetrievalMode } from '@lawmind/api/search/retrieve';
@@ -99,6 +99,29 @@ const doc = JSON.parse(
 ) as { queries: HarnessQuery[] };
 const limit = Number(process.env['ARMS_LIMIT'] ?? String(doc.queries.length));
 const queries = doc.queries.slice(0, limit);
+
+/**
+ * Per-row JSONL checkpoint. Added 14 Aug 2026 after the full 283-query
+ * CONTROLLED run died to the "unsettled top-level await" shutdown quirk
+ * (the same benign Node/postgres shutdown interaction Q1.31 and Q1.45 both
+ * hit) at dense 260/283 with nothing to resume from — every other
+ * long-running tool in this harness checkpoints (`experiment-citation-
+ * strip-cli.ts`, `failure-classifier-cli.ts`), this one did not, and that
+ * gap is why 3417s of sparse plus 1903s of dense were lost outright rather
+ * than resumed. One line per (pass, mode, index) row; a restart skips
+ * whatever is already on disk instead of re-running it blind.
+ */
+const CHECKPOINT_PATH = new URL('../../../arms-checkpoint.jsonl', import.meta.url);
+type CheckpointLine = { pass: string; mode: RetrievalMode; index: number; row: ScoredQuery };
+const checkpoint = new Map<string, ScoredQuery>();
+if (existsSync(CHECKPOINT_PATH)) {
+  for (const line of readFileSync(CHECKPOINT_PATH, 'utf8').split('\n')) {
+    if (!line.trim()) continue;
+    const c = JSON.parse(line) as CheckpointLine;
+    checkpoint.set(`${c.pass}:${c.mode}:${c.index}`, c.row);
+  }
+  console.log(`${checkpoint.size} rows already checkpointed at ${CHECKPOINT_PATH.pathname}\n`);
+}
 
 /**
  * `openDb` (LCC, bus 0169, `services/ingest/src/db-host.ts`) — root-fixes the
@@ -134,6 +157,7 @@ async function scoreAllConcurrently(
   mode: RetrievalMode,
   filters: SearchFilters,
   onProgress: (done: number) => void,
+  passLabel: string,
 ): Promise<ScoredQuery[]> {
   const results: ScoredQuery[] = new Array(queries.length);
   let next = 0;
@@ -142,17 +166,28 @@ async function scoreAllConcurrently(
     for (;;) {
       const i = next++;
       if (i >= queries.length) return;
-      results[i] = await scoreQueryResilient(
-        sql,
-        queries[i]!,
-        embedQuery,
-        20,
-        undefined,
-        false,
-        undefined,
-        mode,
-        filters,
-      );
+      const key = `${passLabel}:${mode}:${i}`;
+      const cached = checkpoint.get(key);
+      if (cached) {
+        results[i] = cached;
+      } else {
+        const row = await scoreQueryResilient(
+          sql,
+          queries[i]!,
+          embedQuery,
+          20,
+          undefined,
+          false,
+          undefined,
+          mode,
+          filters,
+        );
+        results[i] = row;
+        appendFileSync(
+          CHECKPOINT_PATH,
+          JSON.stringify({ pass: passLabel, mode, index: i, row } satisfies CheckpointLine) + '\n',
+        );
+      }
       done++;
       onProgress(done);
     }
@@ -264,23 +299,33 @@ async function main(): Promise<void> {
       console.log(`\n── ${pass.label} · ${pass.note}`);
       for (const mode of ARMS) {
         const started = Date.now();
-        // Progress every 20 done -- not a checkpoint, just visibility.
-        // `failure-classifier-cli.ts` learned this the hard way this
-        // session: a plain sequential loop against this same DB proxy under
-        // five-lane load gave zero output for 30+ minutes and had to be
-        // killed blind to find out it wasn't actually stuck. Paired McNemar
+        // Progress logged every 20 done for visibility (`failure-classifier-
+        // cli.ts` learned this the hard way this session: a plain
+        // sequential loop against this same DB proxy under five-lane load
+        // gave zero output for 30+ minutes and had to be killed blind to
+        // find out it wasn't actually stuck) -- and now ALSO a real
+        // per-row checkpoint (see CHECKPOINT_PATH above), added after this
+        // exact pass died with nothing to resume from. Paired McNemar
         // comparison needs every arm scored on the IDENTICAL query set, so
-        // unlike that tool this one does not skip a slow query -- it only
-        // reports that it is still working on one. `CONCURRENCY`-wide now
-        // (see scoreAllConcurrently) rather than one at a time.
+        // unlike the classifier this one does not skip a slow query -- it
+        // only reports that it is still working on one. `CONCURRENCY`-wide
+        // now (see scoreAllConcurrently) rather than one at a time.
         let lastLogged = 0;
-        const rows = await scoreAllConcurrently(sql, queries, embedQuery, mode, pass.filters, (done) => {
-          if (done - lastLogged >= 20 || done === queries.length) {
-            lastLogged = done;
-            const elapsedSoFar = ((Date.now() - started) / 1000).toFixed(0);
-            console.log(`  ... ${mode} ${done}/${queries.length} (${elapsedSoFar}s)`);
-          }
-        });
+        const rows = await scoreAllConcurrently(
+          sql,
+          queries,
+          embedQuery,
+          mode,
+          pass.filters,
+          (done) => {
+            if (done - lastLogged >= 20 || done === queries.length) {
+              lastLogged = done;
+              const elapsedSoFar = ((Date.now() - started) / 1000).toFixed(0);
+              console.log(`  ... ${mode} ${done}/${queries.length} (${elapsedSoFar}s)`);
+            }
+          },
+          pass.label,
+        );
         results.set(`${pass.label}:${mode}`, rows);
         const secs = ((Date.now() - started) / 1000).toFixed(0);
         const ranks = rows.map((r) => r.foundAtAnyRank);

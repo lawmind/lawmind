@@ -172,7 +172,7 @@ test('no Gate S2 metric is derived from the presence of an env var', async () =>
     'successAt5',
   ];
   for (const metric of metricNames) {
-    const assignment = new RegExp(`${metric}\s*:([^,\n]*)`).exec(src);
+    const assignment = new RegExp(`${metric}\\s*:([^,\\n]*)`).exec(src);
     if (!assignment) continue;
     assert.doesNotMatch(
       assignment[1]!,

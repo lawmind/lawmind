@@ -24,7 +24,7 @@ import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import { openDb } from '@lawmind/ingest/db-host';
 
 import { stripResidualCitations } from './citation-strip.ts';
-import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
+import { type HarnessQuery, scoreQuery } from './retrieval.ts';
 import { meanNdcgAtK } from './metrics.ts';
 
 const CHECKPOINT_PATH = new URL('../../../experiment-citation-strip-checkpoint.jsonl', import.meta.url);

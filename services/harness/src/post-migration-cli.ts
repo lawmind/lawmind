@@ -1007,7 +1007,7 @@ async function classH(sql: Sql): Promise<Check[]> {
      * class-H FAIL nobody believes is exactly how a genuinely lost generation
      * expression would get waved through.
      */
-    let expectCanonical: string | null = null;
+    let expectCanonical: string | null;
     try {
       expectCanonical = await sql.begin(async (tx) => {
         const t = `pmg_expect_${g.table}`;

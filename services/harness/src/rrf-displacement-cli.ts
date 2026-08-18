@@ -119,7 +119,7 @@ function main(): number {
   console.log('');
   console.log('CONDITIONED on whether sparse found gold (queries where dense DID find it)');
   console.log('─'.repeat(72));
-  let damagedRates: number[] = [];
+  const damagedRates: number[] = [];
   for (const [name, st] of Object.entries(strata)) {
     const damaged = st.worse + st.lost;
     const rate = st.n === 0 ? Number.NaN : (100 * damaged) / st.n;
