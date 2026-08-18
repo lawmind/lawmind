@@ -77,6 +77,43 @@ exact-duplicate group resolves to that decision; anything else keeps refusing.
 **Resolver change deliberately NOT implemented this pass** — it is harness-adjacent
 and needs its own INTENT line and its own recall measurement.
 
+### 18 Aug 2026 — FQ-PGSERVICE IS CLOSED; POSTGRES RUNS AS A SERVICE AND THE CONSOLE CLASS IS GONE
+
+**The founder granted elevation in session, so the item below did not stay
+queued.** `pg_ctl register -N LawMindPostgres -S auto`, then a controlled cutover:
+`pg_ctl stop -m fast` (clean, 18s, no crash recovery) and `Start-Service` (3s).
+
+| | before | after |
+| --- | --- | --- |
+| postgres consoles | 37, one per child | **1**, the postmaster's |
+| reachable by a user | 37 | **0** — all session 0 |
+| postgres taskbar windows | 33 | **0** |
+| starts after | logon only | **boot** |
+
+Every postgres process is now in **SessionId 0**, which has no interactive
+desktop: the windows are not hidden, they **cannot be created**. `pg-service-verify`
+reports **9/10**, the one FAIL being the pre-fix 04:22 crash still inside its 24h
+**The fleet survived the restart with no worker lost** - all 8 process chains
+intact, on the transient-SQLSTATE retry (`services/ingest/src/db-transient.ts`).
+**7 of 8 scopes were writing again within seconds. `3_22` was not**, and the
+aggregate would have hidden it: it reconnected on the same `57P03` retry but
+restarted its pass on a different year partition and took ~18 minutes to write
+its first rows, now running 0.9 docs/s against 35.2 before the restart. Whether
+it resumed from its checkpoint or re-walked is NEW2's to confirm.
+
+**Three follow-ons, because a fix the next agent can undo is not finished:**
+`pg-local.mjs start`/`spawn-detached` now REFUSE when the service exists (their job
+is to spawn a DETACHED postmaster, which re-creates the per-child consoles);
+`isRunning()` no longer trusts `pg_ctl status` — **measured minutes after cutover it
+said "no server running", exit 3, while the DB was accepting connections**, because
+an unelevated `pg_ctl` cannot open a LocalSystem process in session 0, and `start()`
+branches on it; and the `LawMindPostgres` scheduled task is **disabled** (boot beats
+logon). `scripts/pg-hide-consoles.ps1` is **retired** — it was the unelevated interim.
+
+**READ THIS IF YOU TOUCH THE CLUSTER:** `pg_ctl status` and `pg_ctl stop` now need
+elevation to see or signal the postmaster. Use `sc start/stop LawMindPostgres`, or
+`node scripts/migration/pg-local.mjs status`, which asks the service first.
+
 ### 18 Aug 2026 — THE TASKBAR STORM WAS THE DATABASE, AND `0xC000013A` IS NOT OOM
 
 **Item 3 above says `pg-service-verify` is 7/7 and the console problem is closed.
@@ -9478,14 +9515,16 @@ unusable terms looks like a win. The only genuine residual gap is post-2018
 parallel citations, benchmarked at **₹2,502 (~$30)** via Indian Kanoon `docmeta`
 on a licence we already hold.
 
-### The RERA ranking, by reasoned decisions
+### The RERA ranking, by reasoned decisions — 12 states, 38,689 documents
 
 ```
-Maharashtra  7,376 of 49,167 raw     Bihar        <=5,081  (digital text, no OCR needed)
-Punjab      <=5,067  (scanned)       Chhattisgarh  3,687   (site pre-segments interim)
-Tamil Nadu   2,967   (scanned)       West Bengal   1,816 complaints of 4,884 orders
-Jharkhand      218   (digital, site-labelled, 100% reasoned)
-Goa            173   (scanned)       Delhi          ~155   Uttar Pradesh 8
+Maharashtra  7,376 of 49,167 raw     Punjab       <=5,067  (scanned)
+Chhattisgarh  3,687 (site pre-segments)  Tamil Nadu  2,967  (scanned)
+Bihar        ~2,956 of 4,367  (digital text, no OCR needed)
+West Bengal   1,816 complaints of 4,884 orders
+Rajasthan       750 judgments + 11,523 orders -- the ONLY source publishing a disposal outcome
+Jharkhand       218 (digital, site-labelled)   Goa 173   Delhi ~155   Telangana 90   UP 8
+Karnataka    11,707 decided matters measured; documents not yet reached
 ```
 
 Two structural findings make the eleventh state cheap: **`erera.co.in` is a
@@ -9627,3 +9666,67 @@ confirmation that it was theirs and is intended to stand.
 and should be re-derived, not left standing.** Holding at 11 until LCC confirms —
 this is not an argument that 20 is safe, only that the number came from the wrong
 reason.
+
+### P6 · The 18 down scopes were never broken — nothing relaunched them, and they were the only thing serving 2025+
+
+Audited all 62 supervisor logs. Eighteen carry
+`died within 20s three times running (exit 1)`, and every one stopped within six
+seconds of the others:
+
+```
+hc-boot-9_13   2026-08-17T22:39:03.720Z     hc-boot-27_1   22:39:03.703Z
+hc-boot-3_22   2026-08-17T22:39:04.641Z     … 15 more, all 22:39:03-22:39:09
+```
+
+All eighteen on the same error:
+
+```
+FATAL uncaughtException: PostgresError: the database system is not yet accepting connections
+    at existingSourceUrls (services/ingest/src/load.ts:154:22)
+```
+
+That is precisely the event `db-transient.ts` was written for, and the classifier
+handles `57P03` correctly today — by code AND by message. **These deaths predate
+the fix.** So P6 is not a bug: it is eighteen supervisors that exited and were
+never started again.
+
+**Why that mattered more than it looks.** Those unscoped `hc-boot-<court>`
+descents are what tier 5 assumes is serving recent years. The plan ranks
+2025+ LAST, and the reason recorded in the file is *"the descent is already
+inside these"* — not a value judgement, an assertion about another worker. With
+all 18 dead, **the lowest-ranked tier was the only completely unserved one:
+844,514 actionable documents, for a day, with nothing saying so.**
+
+Ranking is a decision; liveness is a fact. They should not live in the same
+number. The tier ORDER is the founder's priority and is unchanged; what is added
+is `descentServing` / `descentGap` on every tier-5 scope, read from the would-be
+server's own supervisor log and printed at the top of the plan.
+
+Acted on it with YEAR scopes rather than by restarting the descents — a year
+scope is pinned and cannot be starved by the newest-first ordering, which is the
+whole argument the scheduler exists for. Launched and verified writing:
+`9_13-y2025` (311,256), `33_10-y2025` (162,690), `27_1-y2025` (152,460).
+
+### The frontier, measured, after every correction in this session
+
+| tier | scopes | actionable | band |
+|---|---|---|---|
+| 2 | 3 | 130,468 | backlog 2023-2024 |
+| 3 | 17 | **4,811,477** | 2016-2022 |
+| 4 | 17 | 3,536,687 | pre-2016 |
+| 5 | 12 | 844,514 | recent 2025+ — was unserved |
+
+~9.32M actionable documents remain, against 11.25M held. Four scopes retired as
+exhausted (252,826 phantom documents) and 66,271 confirmed absent are already
+subtracted from those figures.
+
+### Scopes that completed cleanly during this session — not deaths
+
+`hc-boot-9_13-y2023`, `hc-boot-27_1-y2024`, `hc-boot-28_2-y2023`,
+`hc-boot-27_1-y2023`, `hc-boot-29_3-y2023`, `hc-boot-mid-21_11`. The last two are
+worth naming: `29_3-y2023` finished with `DEPENDENCY FAULTS 116` — it survived
+116 pdf.js rejections that would each have killed it before D4 — and
+`mid-21_11` walked its entire 2016-2022 band and wrote 44,227.
+
+A shrinking worker population is not automatically a problem. **Verify by scope
+name and offset delta, never by count.**
