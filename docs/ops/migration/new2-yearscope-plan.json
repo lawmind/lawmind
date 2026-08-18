@@ -1,6 +1,6 @@
 {
   "tool": "scripts/migration/new2-yearscope-plan.mjs",
-  "takenAt": "2026-08-18T04:08:35.199Z",
+  "takenAt": "2026-08-18T04:11:33.131Z",
   "derivedFrom": {
     "source": "docs/HC_METADATA_SURVEY.json perCourtPerYear (exact parquet footers, DOCUMENTS)",
     "sourceGeneratedAt": "2026-08-11T09:24:03.309Z",
@@ -29,9 +29,9 @@
     "4": "pre-2016",
     "5": "recent (2025+)"
   },
-  "candidateCount": 50,
-  "selectedCount": 12,
-  "onlyArgument": "hc-boot-29_3-y2023,hc-boot-28_2-y2023,hc-boot-27_1-y2024,hc-boot-27_1-y2023,hc-boot-mid-9_13,hc-boot-mid-33_10,hc-boot-mid-27_1,hc-boot-mid-32_4,hc-boot-mid-36_29,hc-boot-mid-29_3,hc-boot-mid-10_8,hc-boot-mid-3_22",
+  "candidateCount": 49,
+  "selectedCount": 10,
+  "onlyArgument": "hc-boot-29_3-y2023,hc-boot-28_2-y2023,hc-boot-27_1-y2024,hc-boot-mid-9_13,hc-boot-mid-33_10,hc-boot-mid-27_1,hc-boot-mid-32_4,hc-boot-mid-36_29,hc-boot-mid-29_3,hc-boot-mid-10_8",
   "workers": [
     {
       "scope": "hc-boot-29_3-y2023",
@@ -64,17 +64,6 @@
       "concurrency": 32,
       "remainingDocuments": 68533,
       "remainingActionable": 30882,
-      "tier": 2
-    },
-    {
-      "scope": "hc-boot-27_1-y2023",
-      "court": "27_1",
-      "year": 2023,
-      "fromYear": null,
-      "toYear": null,
-      "concurrency": 32,
-      "remainingDocuments": 32275,
-      "remainingActionable": 16458,
       "tier": 2
     },
     {
@@ -153,17 +142,6 @@
       "remainingDocuments": 246717,
       "remainingActionable": 246689,
       "tier": 3
-    },
-    {
-      "scope": "hc-boot-mid-3_22",
-      "court": "3_22",
-      "year": null,
-      "fromYear": 2016,
-      "toYear": 2022,
-      "concurrency": 16,
-      "remainingDocuments": 240953,
-      "remainingActionable": 240953,
-      "tier": 3
     }
   ],
   "candidates": [
@@ -232,28 +210,6 @@
       "heldExceedsSource": false,
       "heldPct": 0.7529051215950677,
       "effectiveHeldPct": 0.871166104862664
-    },
-    {
-      "scope": "hc-boot-27_1-y2023",
-      "court": "27_1",
-      "courtName": "Bombay High Court",
-      "band": "y2023",
-      "year": 2023,
-      "fromYear": null,
-      "toYear": null,
-      "concurrency": 32,
-      "tier": 2,
-      "tierLabel": "backlog year · ran before, still short",
-      "ranBefore": true,
-      "sourceDocuments": 127700,
-      "heldDocuments": 95425,
-      "unreachableDocuments": 15817,
-      "retryPendingDocuments": 28,
-      "remainingDocuments": 32275,
-      "remainingActionable": 16458,
-      "heldExceedsSource": false,
-      "heldPct": 0.7472592012529365,
-      "effectiveHeldPct": 0.8528999043643807
     },
     {
       "scope": "hc-boot-mid-9_13",
@@ -3435,6 +3391,33 @@
       }
     },
     {
+      "scope": "hc-boot-27_1-y2023",
+      "court": "27_1",
+      "courtName": "Bombay High Court",
+      "band": "y2023",
+      "year": 2023,
+      "fromYear": null,
+      "toYear": null,
+      "concurrency": 32,
+      "tier": 2,
+      "tierLabel": "backlog year · ran before, still short",
+      "ranBefore": true,
+      "sourceDocuments": 127700,
+      "heldDocuments": 95425,
+      "unreachableDocuments": 15817,
+      "retryPendingDocuments": 28,
+      "remainingDocuments": 32275,
+      "remainingActionable": 16458,
+      "heldExceedsSource": false,
+      "heldPct": 0.7472592012529365,
+      "effectiveHeldPct": 0.8528999043643807,
+      "lastRun": {
+        "documentsSeen": 28,
+        "alreadyHeld": 95425,
+        "evidence": "hc-boot-27_1-y2023.log ends with a completed RESULTS block: MAPPED 0, WRITTEN 0"
+      }
+    },
+    {
       "scope": "hc-boot-23_23-y2024",
       "court": "23_23",
       "courtName": "High Court of Madhya Pradesh",
@@ -3489,7 +3472,7 @@
       }
     }
   ],
-  "exhaustedByLastRun": 3,
+  "exhaustedByLastRun": 4,
   "finishedAtOrAboveMaxHeldPct": 95,
   "belowMinRemaining": 2,
   "unjoinedSurveyNames": [],
