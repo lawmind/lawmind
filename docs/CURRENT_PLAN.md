@@ -10011,3 +10011,49 @@ coverage report a few hours earlier and is the first blackout closed.
 Nine of the thirteen are `hist` (pre-2016), which is where the remaining
 blackouts live — Bombay 1996-2012 at 605,453 is the single largest gap in the
 corpus and `hc-boot-hist-27_1` is on it.
+
+### The rung, measured to its limit and rolled back on the criterion I set
+
+Stepped 10 -> 13 and found the ceiling by reaching it, with the rollback stated
+in advance rather than after the fact.
+
+```
+10 scopes                                  22.4% free
+13 scopes                                  13.3% free
+13 scopes + a full-table BERNOULLI scan     7.8% free   <- below the 10% criterion
+rolled back to 10                          16.6% free
+```
+
+**Rolled back three `hist` scopes immediately on crossing 10%.** Nothing had
+failed — no cluster death, no worker loss — and that is the point: a criterion
+honoured only when something breaks is not a criterion. The three were the
+smallest remaining gaps (`hist-8_9`, `hist-33_10`, `hist-29_3`), so the rollback
+cost the least available work.
+
+**The working ceiling on this box is ~10-12 scopes**, not 8 and not 20, and the
+binding constraint is that this lane must ALSO run full-table analytics — the
+held refresh, the coverage report, the sampling frame. A width that is stable
+with nothing else running is not a width, because something else always runs.
+
+The old 8 came from a memory theory the cluster log contradicts (LCC has
+withdrawn it, bus 0707). The new 10-12 comes from watching free RAM cross a line
+under a load this lane actually produces.
+
+### Two things this ladder proved that the number does not show
+
+**Zero cluster deaths since LCC's 07:58 service move**, across a rung step, three
+scope kills, a rollback and a full-table scan. No `0xC000013A`, no
+`terminating any other active server processes`. The only `FATAL` in the log is
+`connection to client lost`, from workers killed deliberately. The console fix is
+holding under load, not merely under observation.
+
+**Ingest is not what is slow.** The cluster logged 1,219 slow statements today:
+738 `WITH` (retrieval), 394 `SELECT`, and **78 `INSERT` for the entire fleet
+across a day the corpus grew from 7.3M to 14.5M rows.** p50 43.7s, p90 107s. The
+recent cluster is six concurrent backends at 16-19s each on
+`WITH candidates AS MATERIALIZED ( … c.embedding <=> $1::vector )`.
+
+That is independent confirmation — from the cluster's own log rather than a
+harness — of NEW1's 0679/0686 and the production defect LCC took in 0708. Sent to
+both (bus 0711/0712), with an offer to drop to 4 scopes for as long as either
+needs a quiet window to measure retrieval properly.
