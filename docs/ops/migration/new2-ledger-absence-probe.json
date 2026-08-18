@@ -1,0 +1,84 @@
+{
+ "tool": "scripts/migration/new2-ledger-absence-probe.mjs",
+ "takenAt": "2026-08-18T02:24:47.864Z",
+ "applied": true,
+ "court": null,
+ "probed": 63326,
+ "tally": {
+  "absent": 63322,
+  "unavailable": 0,
+  "present": 0,
+  "networkError": 4
+ },
+ "byStatus": {
+  "404": 63322,
+  "net:TypeError": 4
+ },
+ "byCourt": {
+  "27_1": {
+   "absent": 59293,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 4
+  },
+  "8_9": {
+   "absent": 1,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "10_8": {
+   "absent": 28,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "21_11": {
+   "absent": 2,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "9_13": {
+   "absent": 3790,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "19_16": {
+   "absent": 1,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "33_10": {
+   "absent": 10,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "28_2": {
+   "absent": 46,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "23_23": {
+   "absent": 150,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  },
+  "3_22": {
+   "absent": 1,
+   "unavailable": 0,
+   "present": 0,
+   "networkError": 0
+  }
+ },
+ "written": {
+  "promotedToPdfAbsent": 63322,
+  "relabelledPdfUnavailable": 0
+ },
+ "note": "HEAD only, no bodies fetched. `attempts` deliberately untouched: a probe is not an ingest attempt. A 2xx row is left alone rather than deleted — the object exists, but nothing here has ingested it, and `judgments.source_url` is the only record allowed to claim a success."
+}

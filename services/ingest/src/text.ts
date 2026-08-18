@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { extractText, getDocumentProxy } from 'unpdf';
+import { extractText, getDocumentProxy, resolvePDFJSImport } from 'unpdf';
 
 import { classifyCorruption } from './text-corruption.ts';
 
@@ -88,6 +88,66 @@ async function fetchWithRetry(url: string, signal?: AbortSignal): Promise<Respon
     }
   }
   throw last;
+}
+
+/**
+ * Resolve `unpdf`'s bundled PDF.js ONCE, before any concurrency starts.
+ *
+ * ---------------------------------------------------------------------------
+ * THE FAILURE THIS PREVENTS, AND WHY NO `catch` COULD REACH IT
+ * ---------------------------------------------------------------------------
+ * Scope `hc-boot-29_3-y2023` died three times in 32 seconds on 18 Aug 2026,
+ * each run ending:
+ *
+ *     FATAL unhandledRejection: Error
+ *         at BaseExceptionClosure (unpdf/dist/pdfjs.mjs:1:7031)
+ *         at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+ *         at async resolvePDFJSImport (unpdf/dist/index.mjs:112:20)
+ *
+ * The supervisor then applied its "died within 20s three times running" rule
+ * and stopped the scope. It was right to: the failure was perfectly repeatable,
+ * because a restart resumes at the same checkpoint offset and replays the same
+ * first batch. That is a POISON PILL, not a network blip.
+ *
+ * `unpdf`'s own resolver is guarded by a plain value, not a promise:
+ *
+ *     async function resolvePDFJSImport(...) {
+ *       if (resolvedModule && !reload) return;
+ *       ...
+ *       resolvedModule = await import("unpdf/pdfjs");
+ *     }
+ *
+ * With `--concurrency 32`, the first batch enters `getDocumentProxy` on 32
+ * tasks at once, every one of them sees `resolvedModule` unset, and all 32 call
+ * `import("unpdf/pdfjs")` before any of them can assign it. Node collapses
+ * those onto one ModuleJob — and when that job's evaluation throws, the
+ * rejection surfaces on the job itself rather than only on the awaited import
+ * promises. Nothing in this codebase is on that promise's chain, so
+ * `hc-load-cli`'s per-document `try/catch` cannot see it and the process-level
+ * `unhandledRejection` handler kills the worker instead.
+ *
+ * The tell that it is the JOB's rejection and not the resolver's: `unpdf` wraps
+ * its own failure as `new Error("Serverless PDF.js bundle could not be resolved:
+ * ...")`. The fatal one has an EMPTY message. They are two different rejections
+ * from the same evaluation, and only one of them was ever catchable.
+ *
+ * ---------------------------------------------------------------------------
+ * WHAT WARMING CHANGES
+ * ---------------------------------------------------------------------------
+ * One serial call before the pool starts. `resolvedModule` is then set, so no
+ * concurrent caller re-enters the import and the race cannot occur.
+ *
+ * If the bundle genuinely cannot load, this **still fails** — but it fails once,
+ * at startup, as an ordinary awaited rejection the caller can report honestly,
+ * instead of an uncatchable one 16 seconds into a batch. Turning an unreachable
+ * error into a reachable one is the whole point; it is not a claim that the
+ * bundle always loads.
+ *
+ * Safe to call more than once: `resolvePDFJSImport` returns immediately once
+ * `resolvedModule` is set.
+ */
+export async function warmPdfEngine(): Promise<void> {
+  await resolvePDFJSImport();
 }
 
 export async function fetchPdfText(

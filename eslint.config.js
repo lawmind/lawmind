@@ -43,7 +43,16 @@ export default tseslint.config(
     // gate landed on main with `pnpm lint` red.
     files: ['scripts/**/*.mjs'],
     languageOptions: {
-      globals: { console: 'readonly', process: 'readonly', fetch: 'readonly', URL: 'readonly' },
+      // `AbortSignal` joins the list for the same reason the others are here:
+      // `AbortSignal.timeout()` is the standard way a script bounds a fetch, and
+      // without the declaration a correctly-written timeout reads as a typo.
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        fetch: 'readonly',
+        URL: 'readonly',
+        AbortSignal: 'readonly',
+      },
     },
   },
 );

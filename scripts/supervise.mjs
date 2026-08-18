@@ -46,6 +46,7 @@ import { spawn } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { setTimeout } from 'node:timers';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -115,35 +116,48 @@ for (;;) {
   const startedAt = Date.now();
   const code = await new Promise((resolve) => {
     /**
-     * `shell: true` is REQUIRED on Windows and is not a style choice: `npx.cmd`
-     * is a batch script, and spawning one without a shell fails with
-     * `spawn EINVAL`. The first version of this supervisor did exactly that and
-     * died before launching anything -- a supervisor that cannot spawn is worse
-     * than no supervisor, because it looks like coverage.
+     * THE WORKER IS SPAWNED DIRECTLY: `node tsx/dist/cli.mjs ...`.
      *
-     * The arguments are ours, not user input, so the shell is not an injection
-     * surface here.
+     * It used to be `spawn('npx.cmd', ['tsx', ...args], { shell: true })`, and the
+     * reasoning for that was sound: `npx.cmd` is a batch script, spawning one
+     * without a shell fails with `spawn EINVAL`, and a supervisor that cannot spawn
+     * is worse than no supervisor because it looks like coverage.
+     *
+     * Every word of that is still true, and the premise is avoidable. `npx` was
+     * only ever resolving `tsx`, which lives at a known path inside this repo -- so
+     * the shell and the `.cmd` and the whole npx layer exist to answer a question
+     * that can be answered statically. Counted on the live fleet, 18 Aug 2026:
+     *
+     *     supervise.mjs -> cmd.exe -> npx-cli.js -> tsx/dist/cli.mjs -> worker
+     *
+     * The `npx-cli.js` hop is a full Node process holding ~79 MB and doing nothing
+     * after startup. At the eight-scope rung that is ~630 MB; at the twenty-scope
+     * width where PostgreSQL was killed it is ~1.6 GB -- spent entirely on path
+     * resolution. Free RAM is the measured ceiling on fleet width (LCC, bus 0670:
+     * 5.7% free with 71 node processes shortly before the postmaster died), so a
+     * process per scope is not bookkeeping. It is width.
+     *
+     * Removing the shell removes a defect class rather than guarding against it.
+     * The re-quoting this call used to do existed because `shell: true` makes Node
+     * join argv into ONE command line without quoting, so
+     * `--court "High Court of Gujarat"` arrived as four tokens and `--court` picked
+     * up `High`; the pass then selected zero rows and reported a clean-looking
+     * success for work it never did. With no shell, argv is passed through as an
+     * array and cannot be re-split. The quoting is gone because the hazard is gone,
+     * not because it was tidied away.
+     *
+     * `process.execPath` rather than the string `node`: the supervisor must launch
+     * the worker on the interpreter it is itself running on, and that is also the
+     * one lookup a broken PATH cannot take away.
      */
-    /**
-     * ARGUMENTS ARE RE-QUOTED, and skipping that silently corrupted a run.
-     *
-     * With `shell: true` Node joins the argv array into ONE command line
-     * without quoting anything, so `--court "High Court of Gujarat"` reaches
-     * the worker as four separate tokens and `--court` picks up `High`. The
-     * pass then selected zero rows and reported "examined 0 · REPAIRED 0" —
-     * a clean-looking success for work it never did, which is the worst way
-     * for this to fail.
-     *
-     * Anything containing whitespace is wrapped; embedded quotes are escaped.
-     */
-    const quoted = ['tsx', ...args].map((a) =>
-      /\s/.test(a) ? `"${a.replace(/(["\\])/g, '\\$1')}"` : a,
+    const child = spawn(
+      process.execPath,
+      [join(ROOT, 'services', 'ingest', 'node_modules', 'tsx', 'dist', 'cli.mjs'), ...args],
+      {
+        cwd: join(ROOT, 'services', 'ingest'),
+        stdio: ['ignore', 'pipe', 'pipe'],
+      },
     );
-    const child = spawn('npx.cmd', quoted, {
-      cwd: join(ROOT, 'services', 'ingest'),
-      stdio: ['ignore', 'pipe', 'pipe'],
-      shell: true,
-    });
     // Append rather than truncate: the log is the resume story across restarts.
     const append = (buf) => {
       try {
