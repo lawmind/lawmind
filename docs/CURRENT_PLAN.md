@@ -9838,3 +9838,40 @@ watched was not the thing doing the work.
 - Three scopes were restarted during the closing verification and were still in
   their startup phase at the last offset sample. They are alive and logging;
   a stall now surfaces by itself within 15 minutes rather than needing a human.
+
+### Two High Courts have a contiguous SEVEN-YEAR blackout, and it does not read as one
+
+Looking for scopes with zero held documents turned up something sharper than a
+percentage. These are not courts we have never touched — they are courts we hold
+substantially, with 2016-2022 missing entirely:
+
+| court | total held | held 2016-2022 | source in band |
+|---|---|---|---|
+| Calcutta High Court | 259,629 | **0** | 146,805 |
+| High Court of Chhattisgarh | 236,165 | **0** | 215,270 |
+
+A Calcutta advocate researching anything decided between 2016 and 2022 gets
+nothing from us, while the same court answers for other years. That is worse
+than a court we obviously do not have: the gap is invisible from inside a search
+result, because the court is clearly present.
+
+It does not show up in any coverage percentage either. Calcutta reads as a
+well-covered court on any court-level aggregate; the hole only appears when the
+denominator is court **x year**, which is exactly why `perCourtPerYear` is the
+denominator the scheduler uses.
+
+**Acted on within the width I am holding**, by rotation rather than addition:
+
+```
+stopped  hc-boot-mid-3_22   Punjab & Haryana, 67.0% held  ->  hc-boot-mid-22_18  Chhattisgarh, 0% in band
+stopped  hc-boot-mid-10_8   Patna,            61.4% held  ->  hc-boot-mid-19_16  Calcutta,     0% in band
+```
+
+The trade is deliberate: finishing the last third of a court an advocate can
+already use is worth less than the first third of seven years they cannot use at
+all. Breadth is this lane's stated job. `hc-boot-mid-22_18` was writing within a
+minute of launch — 200 documents at 11.7 docs/s into a band that held zero.
+
+`hc-boot-hist-23_23` (Madhya Pradesh pre-2016, 104,831) is the third such gap and
+is NOT launched — the fleet is held at 11 pending LCC's answer on the width
+question. It is the next slot when that clears.

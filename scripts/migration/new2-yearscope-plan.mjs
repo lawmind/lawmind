@@ -211,7 +211,7 @@
  * collected and printed. Dropping it to `null` and sorting it last is the shape
  * of the bug this file exists to fix: a band with no number becomes invisible.
  */
-import { readFileSync, existsSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -406,6 +406,35 @@ function descentNotServing(court) {
   return null;
 }
 
+/**
+ * Is a YEAR-SCOPED worker serving this court-year right now?
+ *
+ * Added the same session the descent check was, and for a defect the descent
+ * check created. Once the three biggest orphaned recent scopes were given
+ * dedicated year workers, the plan went on printing them under
+ * "SERVED BY NOTHING" — because the descent it names really is still stopped.
+ * The sentence was true and the conclusion was wrong, which is the worse kind of
+ * wrong for an artefact whose whole job is to say where work is missing.
+ *
+ * A checkpoint file is written after every batch, so its mtime is the one
+ * on-disk signal that something is actively reading this scope. No process table
+ * and no database, which keeps this tool runnable during a freeze.
+ *
+ * The window is generous: a slow court writes a batch every few minutes, and
+ * being wrong here only suppresses a warning about a scope somebody is already
+ * working on.
+ */
+const SERVED_RECENTLY_MS = 30 * 60_000;
+function yearScopeActive(court, year) {
+  const path = join(CHECKPOINT_DIR, `${court}-y${year}.json`);
+  if (!existsSync(path)) return false;
+  try {
+    return Date.now() - statSync(path).mtimeMs < SERVED_RECENTLY_MS;
+  } catch {
+    return false;
+  }
+}
+
 /** Which scopes have EVER run — a checkpoint file on disk is the only evidence. */
 const checkpointFiles = new Set(
   existsSync(CHECKPOINT_DIR) ? readdirSync(CHECKPOINT_DIR).filter((f) => f.endsWith('.json')) : [],
@@ -512,7 +541,14 @@ for (const [court, years] of sourceByCourtYear) {
      * Only meaningful for tier 5, whose whole rank rests on the descent serving
      * it. Computed here so the claim travels with the scope that depends on it.
      */
-    const descentGap = isRecent ? descentNotServing(court) : null;
+    let descentGap = isRecent ? descentNotServing(court) : null;
+    /**
+     * A live year scope serves this court-year regardless of the descent's
+     * state, and it serves it BETTER — pinned to one year, so the newest-first
+     * ordering cannot starve it. When one is running the descent's condition is
+     * no longer a gap, only a fact about another worker.
+     */
+    if (descentGap !== null && yearScopeActive(court, year)) descentGap = null;
     push({
       scope: `hc-boot-${court}-y${year}`,
       court,

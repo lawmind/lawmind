@@ -1,0 +1,79 @@
+{
+  "source": "railway",
+  "at": "2026-08-15T20:04:02.252Z",
+  "results": [
+    {
+      "name": "pgvector operator computes",
+      "pass": true,
+      "detail": "L2 distance = 2.8284",
+      "ms": 6083
+    },
+    {
+      "name": "pg_trgm similarity computes",
+      "pass": true,
+      "detail": "similarity = 0.769",
+      "ms": 278
+    },
+    {
+      "name": "corpus is populated (estimates)",
+      "pass": true,
+      "detail": "~judgments 6370826 · ~paragraphs 26642644 · ~chunks 599379 · ~citations 1708780",
+      "ms": 563
+    },
+    {
+      "name": "full-text search returns rows",
+      "pass": true,
+      "detail": "5 hit(s)",
+      "ms": 546
+    },
+    {
+      "name": "full-text query uses the GIN index",
+      "pass": false,
+      "detail": "SEQ SCAN — the 14 GB index is not being used"
+    },
+    {
+      "name": "vector column populated",
+      "pass": true,
+      "detail": "1024 dimensions"
+    },
+    {
+      "name": "ANN search returns neighbours",
+      "pass": true,
+      "detail": "10 neighbour(s)",
+      "ms": 4766
+    },
+    {
+      "name": "ANN query uses the HNSW index",
+      "pass": true,
+      "detail": "index scan chosen"
+    },
+    {
+      "name": "fillParagraphFallback shape works",
+      "pass": true,
+      "detail": "8 paragraph(s)",
+      "ms": 3391
+    },
+    {
+      "name": "paragraph offsets reconstruct text",
+      "pass": true,
+      "detail": "500/500 = 100.00%",
+      "ms": 1350
+    },
+    {
+      "name": "citation state fields intact",
+      "pass": true,
+      "detail": "resolved edges (sampled) 115041 · overruled judgments 95 · verification_cache 0 rows / 0 state(s) / 0 source(s) · citation_checks 4438",
+      "ms": 7084
+    },
+    {
+      "name": "collation provider",
+      "pass": null,
+      "detail": "provider=c locale=(none) · sort: apple Apple ápple banana Banana"
+    },
+    {
+      "name": "planner statistics present",
+      "pass": true,
+      "detail": "382 column stats — ANALYZE has run"
+    }
+  ]
+}

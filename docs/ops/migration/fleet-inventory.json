@@ -1,0 +1,1119 @@
+{
+  "tool": "scripts/migration/freeze.mjs",
+  "takenAt": "2026-08-15T19:25:00.114Z",
+  "note": "The fleet as it was immediately before the Railway->local write freeze. This is the ONLY record of each worker's arguments; the processes themselves were the previous one.",
+  "supervisors": [
+    {
+      "pid": 24080,
+      "label": "hc-boot-9_13",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-9_13 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 27240,
+      "label": "hc-boot-27_1",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-27_1 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 19996,
+      "label": "hc-boot-3_22",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-3_22 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 32544,
+      "label": "hc-boot-10_8",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-10_8 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 4184,
+      "label": "hc-boot-33_10",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-33_10 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 28244,
+      "label": "hc-boot-8_9",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-8_9 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 12720,
+      "label": "hc-boot-36_29",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-36_29 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 23924,
+      "label": "hc-boot-32_4",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-32_4 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 32752,
+      "label": "hc-boot-29_3",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-29_3 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 34176,
+      "label": "hc-boot-21_11",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-21_11 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 21_11 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 30680,
+      "label": "hc-boot-23_23",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-23_23 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 23_23 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 32100,
+      "label": "hc-boot-22_18",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-22_18 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 19652,
+      "label": "hc-boot-20_7",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-20_7 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 20_7 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 5520,
+      "label": "hc-boot-24_17",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-24_17 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 24_17 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 6488,
+      "label": "hc-boot-19_16",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-19_16 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 19_16 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 30648,
+      "label": "hc-boot-7_26",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-7_26 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 7_26 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 23000,
+      "label": "hc-boot-28_2",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-28_2 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 28_2 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 30328,
+      "label": "hc-boot-18_6",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-18_6 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 18_6 --from-year 2016 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 21196,
+      "label": "hc-boot-33_10-y2023",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-33_10-y2023 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --year 2023 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 24876,
+      "label": "hc-boot-mid-9_13",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-mid-9_13 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 20000,
+      "label": "hc-boot-mid-33_10",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-mid-33_10 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 28868,
+      "label": "hc-boot-mid-3_22",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-mid-3_22 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 7988,
+      "label": "hc-boot-mid-10_8",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-mid-10_8 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 3260,
+      "label": "hc-boot-mid-27_1",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-mid-27_1 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 23800,
+      "label": "hc-boot-mid-8_9",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-mid-8_9 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 31868,
+      "label": "hc-boot-hist-27_1",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-27_1 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 22508,
+      "label": "hc-boot-hist-10_8",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-10_8 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 26748,
+      "label": "hc-boot-hist-3_22",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-3_22 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 28860,
+      "label": "hc-boot-hist-36_29",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-36_29 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 15384,
+      "label": "hc-boot-hist-32_4",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-32_4 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 10588,
+      "label": "hc-boot-hist-22_18",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-22_18 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 10020,
+      "label": "hc-boot-hist-8_9",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-8_9 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 24380,
+      "label": "hc-boot-hist-29_3",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-29_3 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 26272,
+      "label": "hc-boot-hist-2_5",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-2_5 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 2_5 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 3044,
+      "label": "hc-boot-hist-5_15",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-hist-5_15 -- --env-file=../../.env src/harvest/hc-load-cli.ts --court 5_15 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply "
+    },
+    {
+      "pid": 29684,
+      "label": "hc-boot-sweep",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-boot-sweep -- --env-file=../../.env src/harvest/hc-load-cli.ts --from-year 2016 --batch 200 --concurrency 16 --apply "
+    },
+    {
+      "pid": 7384,
+      "label": "hc-classify-boot",
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" scripts\\supervise.mjs hc-classify-boot -- --env-file=../../.env src/hc-classify-cli.ts --resume --confirm "
+    }
+  ],
+  "workers": [
+    {
+      "pid": 21988,
+      "parentPid": 19996,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 26792,
+      "parentPid": 4184,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 8400,
+      "parentPid": 12720,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 15516,
+      "parentPid": 21988,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 29292,
+      "parentPid": 26792,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 20396,
+      "parentPid": 8400,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 33780,
+      "parentPid": 30648,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 7_26 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 28736,
+      "parentPid": 23000,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 28_2 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 29992,
+      "parentPid": 30328,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 18_6 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 26012,
+      "parentPid": 33780,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 7_26 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 16376,
+      "parentPid": 28736,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 28_2 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 26712,
+      "parentPid": 29992,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 18_6 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 2040,
+      "parentPid": 24876,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 20548,
+      "parentPid": 20000,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 17752,
+      "parentPid": 28868,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 30116,
+      "parentPid": 20548,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 22208,
+      "parentPid": 2040,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 29244,
+      "parentPid": 7988,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 27372,
+      "parentPid": 3260,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 35296,
+      "parentPid": 17752,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 4388,
+      "parentPid": 27372,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 32916,
+      "parentPid": 29244,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 7440,
+      "parentPid": 22508,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 24948,
+      "parentPid": 7440,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 35100,
+      "parentPid": 10588,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 7380,
+      "parentPid": 20396,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 23416,
+      "parentPid": 15516,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 33852,
+      "parentPid": 7380,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 28232,
+      "parentPid": 23416,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 29916,
+      "parentPid": 29292,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 2720,
+      "parentPid": 33852,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 21252,
+      "parentPid": 35100,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 31304,
+      "parentPid": 28232,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 35260,
+      "parentPid": 29916,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 24452,
+      "parentPid": 29684,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --from-year 2016 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 14900,
+      "parentPid": 35260,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 1696,
+      "parentPid": 7384,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/hc-classify-cli.ts --resume --confirm\""
+    },
+    {
+      "pid": 32696,
+      "parentPid": 24452,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --from-year 2016 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 26360,
+      "parentPid": 1696,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/hc-classify-cli.ts --resume --confirm"
+    },
+    {
+      "pid": 33200,
+      "parentPid": 26012,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 7_26 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 30048,
+      "parentPid": 33200,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 7_26 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 35572,
+      "parentPid": 30048,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 7_26 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 12352,
+      "parentPid": 30116,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 14724,
+      "parentPid": 16376,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 28_2 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 28616,
+      "parentPid": 26712,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 18_6 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 19624,
+      "parentPid": 12352,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 6908,
+      "parentPid": 28616,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 18_6 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 3024,
+      "parentPid": 14724,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 28_2 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 28556,
+      "parentPid": 19624,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 7952,
+      "parentPid": 6908,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 18_6 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 26548,
+      "parentPid": 22208,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 32844,
+      "parentPid": 3024,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 28_2 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 20136,
+      "parentPid": 26548,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 27884,
+      "parentPid": 35296,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 14484,
+      "parentPid": 27884,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 26956,
+      "parentPid": 20136,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 27420,
+      "parentPid": 24948,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 18324,
+      "parentPid": 27420,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 32524,
+      "parentPid": 14484,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 33340,
+      "parentPid": 18324,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 19768,
+      "parentPid": 21252,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 10520,
+      "parentPid": 19768,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 28192,
+      "parentPid": 32916,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 19556,
+      "parentPid": 10520,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 24068,
+      "parentPid": 28192,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 33796,
+      "parentPid": 26360,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/hc-classify-cli.ts --resume --confirm"
+    },
+    {
+      "pid": 25372,
+      "parentPid": 33796,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/hc-classify-cli.ts --resume --confirm"
+    },
+    {
+      "pid": 27188,
+      "parentPid": 24068,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 13108,
+      "parentPid": 25372,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/hc-classify-cli.ts --resume --confirm"
+    },
+    {
+      "pid": 23628,
+      "parentPid": 32696,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --from-year 2016 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 24852,
+      "parentPid": 23628,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --from-year 2016 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 7684,
+      "parentPid": 24852,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --from-year 2016 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 8132,
+      "parentPid": 4388,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 35432,
+      "parentPid": 8132,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 28260,
+      "parentPid": 35432,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 4508,
+      "parentPid": 34176,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 21_11 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 13012,
+      "parentPid": 4508,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 21_11 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 4364,
+      "parentPid": 13012,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 21_11 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 33908,
+      "parentPid": 4364,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 21_11 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 23696,
+      "parentPid": 33908,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 21_11 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 15000,
+      "parentPid": 24080,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 22920,
+      "parentPid": 15000,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 27368,
+      "parentPid": 22920,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 35568,
+      "parentPid": 27368,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 25752,
+      "parentPid": 35568,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 9_13 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 8972,
+      "parentPid": 15384,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 3584,
+      "parentPid": 8972,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 22780,
+      "parentPid": 3584,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 27932,
+      "parentPid": 22780,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 24036,
+      "parentPid": 27932,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 9144,
+      "parentPid": 32544,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 892,
+      "parentPid": 9144,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 7968,
+      "parentPid": 892,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 24312,
+      "parentPid": 7968,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 17660,
+      "parentPid": 24312,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 10_8 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 5384,
+      "parentPid": 21196,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --year 2023 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 31128,
+      "parentPid": 5384,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --year 2023 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 33372,
+      "parentPid": 31128,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --year 2023 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 23876,
+      "parentPid": 33372,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --year 2023 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 19912,
+      "parentPid": 23876,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 33_10 --year 2023 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 13140,
+      "parentPid": 5520,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 24_17 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 29264,
+      "parentPid": 13140,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 24_17 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 33712,
+      "parentPid": 29264,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 24_17 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 30484,
+      "parentPid": 33712,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 24_17 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 31008,
+      "parentPid": 30484,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 24_17 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 22008,
+      "parentPid": 6488,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 19_16 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 26028,
+      "parentPid": 22008,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 19_16 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 25672,
+      "parentPid": 26028,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 19_16 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 33868,
+      "parentPid": 25672,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 19_16 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 7268,
+      "parentPid": 33868,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 19_16 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 20256,
+      "parentPid": 26748,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 33576,
+      "parentPid": 20256,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 26604,
+      "parentPid": 33576,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 6360,
+      "parentPid": 26604,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 14944,
+      "parentPid": 6360,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 3_22 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 6216,
+      "parentPid": 28860,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 23824,
+      "parentPid": 6216,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 21464,
+      "parentPid": 23824,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 15704,
+      "parentPid": 21464,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 31364,
+      "parentPid": 15704,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 36_29 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 33368,
+      "parentPid": 32100,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 6416,
+      "parentPid": 33368,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 24464,
+      "parentPid": 6416,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 8384,
+      "parentPid": 24464,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 30304,
+      "parentPid": 8384,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 22_18 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 19440,
+      "parentPid": 10020,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 33760,
+      "parentPid": 19440,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 25988,
+      "parentPid": 33760,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 23120,
+      "parentPid": 25988,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 29808,
+      "parentPid": 23120,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 27136,
+      "parentPid": 30680,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 23_23 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 32304,
+      "parentPid": 27136,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 23_23 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 15040,
+      "parentPid": 32304,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 23_23 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 14508,
+      "parentPid": 15040,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 23_23 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 34304,
+      "parentPid": 14508,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 23_23 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 34836,
+      "parentPid": 26272,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 2_5 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 7632,
+      "parentPid": 23800,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 34536,
+      "parentPid": 34836,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 2_5 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 21952,
+      "parentPid": 7632,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 25144,
+      "parentPid": 34536,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 2_5 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 27496,
+      "parentPid": 25144,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 2_5 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 23012,
+      "parentPid": 21952,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 1660,
+      "parentPid": 23012,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 2012,
+      "parentPid": 27496,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 2_5 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 27816,
+      "parentPid": 1660,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --to-year 2022 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 17680,
+      "parentPid": 3044,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 5_15 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 23172,
+      "parentPid": 17680,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 5_15 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 20260,
+      "parentPid": 23172,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 5_15 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 6428,
+      "parentPid": 20260,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 5_15 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 35696,
+      "parentPid": 6428,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 5_15 --from-year 1950 --to-year 2015 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 10584,
+      "parentPid": 23924,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 34360,
+      "parentPid": 10584,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 27304,
+      "parentPid": 34360,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 19824,
+      "parentPid": 27304,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 23700,
+      "parentPid": 19824,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 32_4 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 19728,
+      "parentPid": 19652,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 20_7 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 29380,
+      "parentPid": 28244,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 15316,
+      "parentPid": 27240,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 2708,
+      "parentPid": 24380,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 23896,
+      "parentPid": 31868,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply\""
+    },
+    {
+      "pid": 33044,
+      "parentPid": 19728,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 20_7 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 25648,
+      "parentPid": 29380,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 27716,
+      "parentPid": 15316,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 20056,
+      "parentPid": 2708,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 35688,
+      "parentPid": 23896,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 12900,
+      "parentPid": 33044,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 20_7 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 31236,
+      "parentPid": 25648,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 2608,
+      "parentPid": 27716,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 28004,
+      "parentPid": 12900,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 20_7 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 23056,
+      "parentPid": 31236,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 29228,
+      "parentPid": 2608,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 21508,
+      "parentPid": 20056,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 4188,
+      "parentPid": 35688,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 35428,
+      "parentPid": 21508,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 10680,
+      "parentPid": 4188,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 27924,
+      "parentPid": 28004,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 20_7 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 23368,
+      "parentPid": 23056,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 8_9 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 4268,
+      "parentPid": 29228,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 7972,
+      "parentPid": 35428,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 7356,
+      "parentPid": 10680,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 27_1 --from-year 1950 --to-year 2015 --batch 200 --concurrency 16 --apply"
+    },
+    {
+      "pid": 34760,
+      "parentPid": 32752,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"npx.cmd tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 2016 --batch 200 --concurrency 32 --apply\""
+    },
+    {
+      "pid": 32056,
+      "parentPid": 34760,
+      "commandLine": "\"C:\\Program Files\\nodejs\\\\node.exe\"  \"C:\\Users\\Xerxus\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npx-cli.js\" tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 25272,
+      "parentPid": 32056,
+      "commandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsx --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 10576,
+      "parentPid": 25272,
+      "commandLine": "node   \"C:\\Users\\Xerxus\\Documents\\Lawmind\\services\\ingest\\node_modules\\.bin\\\\..\\tsx\\dist\\cli.mjs\" --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    },
+    {
+      "pid": 32756,
+      "parentPid": 10576,
+      "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\Xerxus\\Documents\\Lawmind\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs --env-file=../../.env src/harvest/hc-load-cli.ts --court 29_3 --from-year 2016 --batch 200 --concurrency 32 --apply"
+    }
+  ]
+}

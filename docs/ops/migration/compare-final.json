@@ -1,0 +1,43 @@
+{
+  "source": {
+    "label": "railway-final-v2",
+    "url": "postgresql://postgres:***@hayabusa.proxy.rlwy.net:24909/railway",
+    "startedAt": "2026-08-16T02:07:11.382Z",
+    "finishedAt": "2026-08-16T02:12:03.898Z",
+    "exact": true,
+    "tool": "scripts/migration/manifest.mjs"
+  },
+  "target": {
+    "label": "local-final",
+    "url": "postgresql://postgres:***@127.0.0.1:5432/lawmind",
+    "startedAt": "2026-08-17T01:56:00.438Z",
+    "finishedAt": "2026-08-17T01:59:41.747Z",
+    "exact": true,
+    "tool": "scripts/migration/manifest.mjs"
+  },
+  "schemaOnly": false,
+  "allowSourceDrift": [],
+  "counts": {
+    "fail": 0,
+    "warn": 2,
+    "info": 1
+  },
+  "findings": [
+    {
+      "level": "WARN",
+      "area": "server",
+      "message": "minor version differs: source 180004, target 180006 — same major, restore is supported"
+    },
+    {
+      "level": "INFO",
+      "area": "rowcounts",
+      "message": "53 tables compared on exact counts, 0 skipped for lack of an exact count on one side"
+    },
+    {
+      "level": "WARN",
+      "area": "size",
+      "message": "database size source 107.7 GB, target 120.0 GB (+11.5%) — a fresh restore packs tighter and carries no bloat, so smaller is expected and is not evidence of loss"
+    }
+  ],
+  "comparedAt": "2026-08-17T01:59:41.871Z"
+}

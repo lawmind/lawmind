@@ -1,0 +1,4389 @@
+{
+  "tool": "scripts/migration/new2-checkpoint-inventory.mjs",
+  "takenAt": "2026-08-17T03:20:45.960Z",
+  "purpose": "Read-only inventory of NEW2 ingest checkpoints during the Railway exit hold. No database connection is opened by this tool.",
+  "holdState": {
+    "stopFilePresent": true,
+    "note": "The fleet resumes from these offsets against the LOCAL database after cutover. Per LCC bus 0558 the 301,422 rows written during the broken freeze ARE captured by the replacement chunked dump, so NO checkpoint is to be rewound."
+  },
+  "totals": {
+    "scopes": 49,
+    "sourceFiles": 426,
+    "unparseable": 0,
+    "scopesWithoutCapturedCommandLine": 14,
+    "windowMismatches": 0
+  },
+  "scopes": [
+    {
+      "file": "10_8-to2015.json",
+      "court": "10_8",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-10_8",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.523Z",
+      "sourceFileCount": 3,
+      "maxOffset": 63800,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2015,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 63800,
+          "sizeBytes": 38885426
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2014,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 19800,
+          "sizeBytes": 31987762
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2013,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 6400,
+          "sizeBytes": 31283587
+        }
+      ]
+    },
+    {
+      "file": "10_8-to2022.json",
+      "court": "10_8",
+      "yearBand": "2016-2022",
+      "window": {
+        "fromYear": 2016,
+        "toYear": 2022,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-mid-10_8",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:33:06.396Z",
+      "sourceFileCount": 2,
+      "maxOffset": 44800,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2022,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 41800,
+          "sizeBytes": 44704461
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2021,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 44800,
+          "sizeBytes": 22307969
+        }
+      ]
+    },
+    {
+      "file": "10_8-y2023.json",
+      "court": "10_8",
+      "yearBand": "y2023",
+      "window": {
+        "fromYear": null,
+        "toYear": null,
+        "year": 2023
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T11:18:28.681Z",
+      "sourceFileCount": 1,
+      "maxOffset": 135913,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2023,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 135913,
+          "sizeBytes": 54621820
+        }
+      ]
+    },
+    {
+      "file": "10_8.json",
+      "court": "10_8",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-10_8",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:54.353Z",
+      "sourceFileCount": 4,
+      "maxOffset": 112625,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2026,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 58193,
+          "sizeBytes": 21403846
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2025,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 112625,
+          "sizeBytes": 42562750
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2024,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 8400,
+          "sizeBytes": 47574364
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=10_8/bench=patnahcucisdb94/metadata.parquet",
+          "year": 2023,
+          "court": "10_8",
+          "bench": "patnahcucisdb94",
+          "offset": 70800,
+          "sizeBytes": 54621820
+        }
+      ]
+    },
+    {
+      "file": "11_24.json",
+      "court": "11_24",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-13T21:40:01.352Z",
+      "sourceFileCount": 11,
+      "maxOffset": 224,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2026,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 82,
+          "sizeBytes": 43143
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2025,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 150,
+          "sizeBytes": 68018
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2024,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 131,
+          "sizeBytes": 57531
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2023,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 148,
+          "sizeBytes": 65138
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2022,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 156,
+          "sizeBytes": 71599
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2021,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 213,
+          "sizeBytes": 97243
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2020,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 135,
+          "sizeBytes": 67216
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2019,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 224,
+          "sizeBytes": 102405
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2018,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 145,
+          "sizeBytes": 68846
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2017,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 183,
+          "sizeBytes": 81780
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=11_24/bench=sikkimhc_pg/metadata.parquet",
+          "year": 2016,
+          "court": "11_24",
+          "bench": "sikkimhc_pg",
+          "offset": 61,
+          "sizeBytes": 35038
+        }
+      ]
+    },
+    {
+      "file": "14_25-y2024.json",
+      "court": "14_25",
+      "yearBand": "y2024",
+      "window": {
+        "fromYear": null,
+        "toYear": null,
+        "year": 2024
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T02:08:35.603Z",
+      "sourceFileCount": 1,
+      "maxOffset": 4334,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2024,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 4334,
+          "sizeBytes": 969792
+        }
+      ]
+    },
+    {
+      "file": "14_25.json",
+      "court": "14_25",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-13T20:36:44.242Z",
+      "sourceFileCount": 12,
+      "maxOffset": 4334,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2026,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 1305,
+          "sizeBytes": 317336
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2025,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 2678,
+          "sizeBytes": 693383
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2024,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 4334,
+          "sizeBytes": 969792
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2023,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 1885,
+          "sizeBytes": 498753
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2022,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 2970,
+          "sizeBytes": 758814
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2021,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 1673,
+          "sizeBytes": 422406
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2020,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 884,
+          "sizeBytes": 232047
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2019,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 2526,
+          "sizeBytes": 654383
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2018,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 1780,
+          "sizeBytes": 457680
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2017,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 854,
+          "sizeBytes": 217027
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2016,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 1,
+          "sizeBytes": 12935
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2005/court=14_25/bench=manipurhc_pg/metadata.parquet",
+          "year": 2005,
+          "court": "14_25",
+          "bench": "manipurhc_pg",
+          "offset": 5,
+          "sizeBytes": 14139
+        }
+      ]
+    },
+    {
+      "file": "16_20.json",
+      "court": "16_20",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-13T22:28:14.519Z",
+      "sourceFileCount": 22,
+      "maxOffset": 3895,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2026,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 931,
+          "sizeBytes": 437349
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2025,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 1601,
+          "sizeBytes": 740826
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2024,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2149,
+          "sizeBytes": 933181
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2023,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2242,
+          "sizeBytes": 964410
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2022,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2433,
+          "sizeBytes": 1046656
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2021,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2707,
+          "sizeBytes": 1118877
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2020,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2221,
+          "sizeBytes": 908126
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2019,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 3083,
+          "sizeBytes": 1283545
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2018,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2107,
+          "sizeBytes": 912134
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2017,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2511,
+          "sizeBytes": 1060144
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2016,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 3438,
+          "sizeBytes": 1525358
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2015,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 3895,
+          "sizeBytes": 1830665
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2014,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 3150,
+          "sizeBytes": 1495852
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2013,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 1387,
+          "sizeBytes": 661269
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2012/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2012,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 7,
+          "sizeBytes": 18713
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2011/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2011,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2,
+          "sizeBytes": 15853
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2010/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2010,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2,
+          "sizeBytes": 17002
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2008/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2008,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 1,
+          "sizeBytes": 15081
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2006/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2006,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 1,
+          "sizeBytes": 14898
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2003/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2003,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 1,
+          "sizeBytes": 14890
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2002/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2002,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 1,
+          "sizeBytes": 14854
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2001/court=16_20/bench=thcnc/metadata.parquet",
+          "year": 2001,
+          "court": "16_20",
+          "bench": "thcnc",
+          "offset": 2,
+          "sizeBytes": 16009
+        }
+      ]
+    },
+    {
+      "file": "17_21.json",
+      "court": "17_21",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-13T21:54:32.530Z",
+      "sourceFileCount": 11,
+      "maxOffset": 1497,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2026,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 984,
+          "sizeBytes": 418233
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2025,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 1414,
+          "sizeBytes": 626800
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2024,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 1446,
+          "sizeBytes": 643388
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2023,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 1476,
+          "sizeBytes": 543291
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2022,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 1497,
+          "sizeBytes": 560698
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2021,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 961,
+          "sizeBytes": 348072
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2020,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 617,
+          "sizeBytes": 220398
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2019,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 1183,
+          "sizeBytes": 444883
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2018,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 867,
+          "sizeBytes": 347725
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2017,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 695,
+          "sizeBytes": 306448
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=17_21/bench=meghalaya/metadata.parquet",
+          "year": 2016,
+          "court": "17_21",
+          "bench": "meghalaya",
+          "offset": 604,
+          "sizeBytes": 262853
+        }
+      ]
+    },
+    {
+      "file": "18_6.json",
+      "court": "18_6",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-18_6",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.802Z",
+      "sourceFileCount": 30,
+      "maxOffset": 23497,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2026,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 941,
+          "sizeBytes": 349293
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2026,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 12595,
+          "sizeBytes": 5323562
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=18_6/bench=azghccis/metadata.parquet",
+          "year": 2026,
+          "court": "18_6",
+          "bench": "azghccis",
+          "offset": 491,
+          "sizeBytes": 117097
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=18_6/bench=nlghccis/metadata.parquet",
+          "year": 2026,
+          "court": "18_6",
+          "bench": "nlghccis",
+          "offset": 508,
+          "sizeBytes": 206165
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2025,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 1618,
+          "sizeBytes": 612271
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2025,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 20600,
+          "sizeBytes": 10291161
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=18_6/bench=azghccis/metadata.parquet",
+          "year": 2025,
+          "court": "18_6",
+          "bench": "azghccis",
+          "offset": 557,
+          "sizeBytes": 140293
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=18_6/bench=nlghccis/metadata.parquet",
+          "year": 2025,
+          "court": "18_6",
+          "bench": "nlghccis",
+          "offset": 730,
+          "sizeBytes": 298444
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2024,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 800,
+          "sizeBytes": 611073
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2024,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 23497,
+          "sizeBytes": 10305937
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=18_6/bench=azghccis/metadata.parquet",
+          "year": 2024,
+          "court": "18_6",
+          "bench": "azghccis",
+          "offset": 605,
+          "sizeBytes": 151214
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=18_6/bench=nlghccis/metadata.parquet",
+          "year": 2024,
+          "court": "18_6",
+          "bench": "nlghccis",
+          "offset": 1456,
+          "sizeBytes": 490614
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2023,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 1161,
+          "sizeBytes": 468562
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2023,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 1000,
+          "sizeBytes": 10920539
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=18_6/bench=azghccis/metadata.parquet",
+          "year": 2023,
+          "court": "18_6",
+          "bench": "azghccis",
+          "offset": 552,
+          "sizeBytes": 135030
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=18_6/bench=nlghccis/metadata.parquet",
+          "year": 2023,
+          "court": "18_6",
+          "bench": "nlghccis",
+          "offset": 792,
+          "sizeBytes": 317158
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2022,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 1160,
+          "sizeBytes": 455445
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2022,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 3600,
+          "sizeBytes": 10193317
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=18_6/bench=azghccis/metadata.parquet",
+          "year": 2022,
+          "court": "18_6",
+          "bench": "azghccis",
+          "offset": 511,
+          "sizeBytes": 125910
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=18_6/bench=nlghccis/metadata.parquet",
+          "year": 2022,
+          "court": "18_6",
+          "bench": "nlghccis",
+          "offset": 676,
+          "sizeBytes": 276458
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2021,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 764,
+          "sizeBytes": 299168
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2021,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 18258,
+          "sizeBytes": 7793352
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=18_6/bench=azghccis/metadata.parquet",
+          "year": 2021,
+          "court": "18_6",
+          "bench": "azghccis",
+          "offset": 254,
+          "sizeBytes": 66743
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=18_6/bench=nlghccis/metadata.parquet",
+          "year": 2021,
+          "court": "18_6",
+          "bench": "nlghccis",
+          "offset": 431,
+          "sizeBytes": 177515
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2020,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 725,
+          "sizeBytes": 295020
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2020,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 14721,
+          "sizeBytes": 6302505
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=18_6/bench=azghccis/metadata.parquet",
+          "year": 2020,
+          "court": "18_6",
+          "bench": "azghccis",
+          "offset": 72,
+          "sizeBytes": 28734
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=18_6/bench=nlghccis/metadata.parquet",
+          "year": 2020,
+          "court": "18_6",
+          "bench": "nlghccis",
+          "offset": 322,
+          "sizeBytes": 135109
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=18_6/bench=arghccis/metadata.parquet",
+          "year": 2019,
+          "court": "18_6",
+          "bench": "arghccis",
+          "offset": 227,
+          "sizeBytes": 106699
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=18_6/bench=asghccis/metadata.parquet",
+          "year": 2019,
+          "court": "18_6",
+          "bench": "asghccis",
+          "offset": 19600,
+          "sizeBytes": 10437484
+        }
+      ]
+    },
+    {
+      "file": "19_16.json",
+      "court": "19_16",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-19_16",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:45.396Z",
+      "sourceFileCount": 13,
+      "maxOffset": 55000,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=19_16/bench=calcutta_appellate_side/metadata.parquet",
+          "year": 2026,
+          "court": "19_16",
+          "bench": "calcutta_appellate_side",
+          "offset": 29407,
+          "sizeBytes": 13761059
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_jalpaiguri/metadata.parquet",
+          "year": 2026,
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_jalpaiguri",
+          "offset": 3031,
+          "sizeBytes": 663050
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_port_blair/metadata.parquet",
+          "year": 2026,
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_port_blair",
+          "offset": 714,
+          "sizeBytes": 275376
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=19_16/bench=calcutta_original_side/metadata.parquet",
+          "year": 2026,
+          "court": "19_16",
+          "bench": "calcutta_original_side",
+          "offset": 3280,
+          "sizeBytes": 1263905
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=19_16/bench=calcutta_appellate_side/metadata.parquet",
+          "year": 2025,
+          "court": "19_16",
+          "bench": "calcutta_appellate_side",
+          "offset": 27400,
+          "sizeBytes": 30189677
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=19_16/bench=calcutta_circuit_bench_at_jalpaiguri/metadata.parquet",
+          "year": 2025,
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_jalpaiguri",
+          "offset": 3825,
+          "sizeBytes": 909879
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=19_16/bench=calcutta_circuit_bench_at_port_blair/metadata.parquet",
+          "year": 2025,
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_port_blair",
+          "offset": 1017,
+          "sizeBytes": 435717
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=19_16/bench=calcutta_original_side/metadata.parquet",
+          "year": 2025,
+          "court": "19_16",
+          "bench": "calcutta_original_side",
+          "offset": 4390,
+          "sizeBytes": 1927124
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=19_16/bench=calcutta_appellate_side/metadata.parquet",
+          "year": 2024,
+          "court": "19_16",
+          "bench": "calcutta_appellate_side",
+          "offset": 55000,
+          "sizeBytes": 29550449
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=19_16/bench=calcutta_circuit_bench_at_jalpaiguri/metadata.parquet",
+          "year": 2024,
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_jalpaiguri",
+          "offset": 3513,
+          "sizeBytes": 843562
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=19_16/bench=calcutta_circuit_bench_at_port_blair/metadata.parquet",
+          "year": 2024,
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_port_blair",
+          "offset": 1183,
+          "sizeBytes": 487212
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=19_16/bench=calcutta_original_side/metadata.parquet",
+          "year": 2024,
+          "court": "19_16",
+          "bench": "calcutta_original_side",
+          "offset": 4358,
+          "sizeBytes": 1891352
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=19_16/bench=calcutta_appellate_side/metadata.parquet",
+          "year": 2023,
+          "court": "19_16",
+          "bench": "calcutta_appellate_side",
+          "offset": 2800,
+          "sizeBytes": 35617035
+        }
+      ]
+    },
+    {
+      "file": "1_12.json",
+      "court": "1_12",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T09:12:28.475Z",
+      "sourceFileCount": 22,
+      "maxOffset": 12295,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2026,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 3649,
+          "sizeBytes": 1593086
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2026,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 2529,
+          "sizeBytes": 1091375
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2025,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 7217,
+          "sizeBytes": 3284078
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2025,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 6315,
+          "sizeBytes": 2825194
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2024,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 5831,
+          "sizeBytes": 2761931
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2024,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 5129,
+          "sizeBytes": 2314849
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2023,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 7885,
+          "sizeBytes": 3593026
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2023,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 4815,
+          "sizeBytes": 2165251
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2022,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 7214,
+          "sizeBytes": 3204159
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2022,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 7228,
+          "sizeBytes": 3207270
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2021,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 12295,
+          "sizeBytes": 5222621
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2021,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 8858,
+          "sizeBytes": 3870459
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2020,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 10375,
+          "sizeBytes": 4216495
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2020,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 8434,
+          "sizeBytes": 3051254
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2019,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 5116,
+          "sizeBytes": 2263110
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2019,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 2982,
+          "sizeBytes": 1316140
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2018,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 1833,
+          "sizeBytes": 760809
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2018,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 971,
+          "sizeBytes": 400834
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2017,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 2261,
+          "sizeBytes": 910952
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2017,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 768,
+          "sizeBytes": 317780
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=1_12/bench=jammuhc/metadata.parquet",
+          "year": 2016,
+          "court": "1_12",
+          "bench": "jammuhc",
+          "offset": 256,
+          "sizeBytes": 124725
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=1_12/bench=kashmirhc/metadata.parquet",
+          "year": 2016,
+          "court": "1_12",
+          "bench": "kashmirhc",
+          "offset": 85,
+          "sizeBytes": 52769
+        }
+      ]
+    },
+    {
+      "file": "20_7.json",
+      "court": "20_7",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-20_7",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:45.396Z",
+      "sourceFileCount": 6,
+      "maxOffset": 46520,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=20_7/bench=jhar_pg/metadata.parquet",
+          "year": 2026,
+          "court": "20_7",
+          "bench": "jhar_pg",
+          "offset": 22365,
+          "sizeBytes": 9953113
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=20_7/bench=jhar_pg/metadata.parquet",
+          "year": 2025,
+          "court": "20_7",
+          "bench": "jhar_pg",
+          "offset": 40974,
+          "sizeBytes": 19286237
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=20_7/bench=jhar_pg/metadata.parquet",
+          "year": 2024,
+          "court": "20_7",
+          "bench": "jhar_pg",
+          "offset": 46520,
+          "sizeBytes": 21145484
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=20_7/bench=jhar_pg/metadata.parquet",
+          "year": 2023,
+          "court": "20_7",
+          "bench": "jhar_pg",
+          "offset": 37800,
+          "sizeBytes": 19958642
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=20_7/bench=jhar_pg/metadata.parquet",
+          "year": 2022,
+          "court": "20_7",
+          "bench": "jhar_pg",
+          "offset": 44410,
+          "sizeBytes": 18969241
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=20_7/bench=jhar_pg/metadata.parquet",
+          "year": 2021,
+          "court": "20_7",
+          "bench": "jhar_pg",
+          "offset": 28200,
+          "sizeBytes": 15799093
+        }
+      ]
+    },
+    {
+      "file": "21_11.json",
+      "court": "21_11",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-21_11",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:47.389Z",
+      "sourceFileCount": 3,
+      "maxOffset": 42310,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=21_11/bench=cisnc/metadata.parquet",
+          "year": 2026,
+          "court": "21_11",
+          "bench": "cisnc",
+          "offset": 42310,
+          "sizeBytes": 15824837
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=21_11/bench=cisnc/metadata.parquet",
+          "year": 2025,
+          "court": "21_11",
+          "bench": "cisnc",
+          "offset": 34400,
+          "sizeBytes": 30549965
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=21_11/bench=cisnc/metadata.parquet",
+          "year": 2024,
+          "court": "21_11",
+          "bench": "cisnc",
+          "offset": 30550,
+          "sizeBytes": 36983410
+        }
+      ]
+    },
+    {
+      "file": "22_18-to2015.json",
+      "court": "22_18",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-22_18",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:33:07.020Z",
+      "sourceFileCount": 3,
+      "maxOffset": 35195,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=22_18/bench=cghccisdb/metadata.parquet",
+          "year": 2015,
+          "court": "22_18",
+          "bench": "cghccisdb",
+          "offset": 20182,
+          "sizeBytes": 10241349
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=22_18/bench=cghccisdb/metadata.parquet",
+          "year": 2014,
+          "court": "22_18",
+          "bench": "cghccisdb",
+          "offset": 35195,
+          "sizeBytes": 20162786
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=22_18/bench=cghccisdb/metadata.parquet",
+          "year": 2013,
+          "court": "22_18",
+          "bench": "cghccisdb",
+          "offset": 11600,
+          "sizeBytes": 21377475
+        }
+      ]
+    },
+    {
+      "file": "22_18.json",
+      "court": "22_18",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-22_18",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.523Z",
+      "sourceFileCount": 4,
+      "maxOffset": 32056,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=22_18/bench=cghccisdb/metadata.parquet",
+          "year": 2026,
+          "court": "22_18",
+          "bench": "cghccisdb",
+          "offset": 32056,
+          "sizeBytes": 14065426
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=22_18/bench=cghccisdb/metadata.parquet",
+          "year": 2025,
+          "court": "22_18",
+          "bench": "cghccisdb",
+          "offset": 22800,
+          "sizeBytes": 27896499
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=22_18/bench=cghccisdb/metadata.parquet",
+          "year": 2024,
+          "court": "22_18",
+          "bench": "cghccisdb",
+          "offset": 20000,
+          "sizeBytes": 24304296
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=22_18/bench=cghccisdb/metadata.parquet",
+          "year": 2023,
+          "court": "22_18",
+          "bench": "cghccisdb",
+          "offset": 24000,
+          "sizeBytes": 20101718
+        }
+      ]
+    },
+    {
+      "file": "23_23.json",
+      "court": "23_23",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-23_23",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:48.094Z",
+      "sourceFileCount": 33,
+      "maxOffset": 53408,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=23_23/bench=mphc_db_gwl/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 3477,
+          "sizeBytes": 244752
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2026,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 14,
+          "sizeBytes": 16398
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2026,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 15,
+          "sizeBytes": 16598
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2026,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 65,
+          "sizeBytes": 27687
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=23_23/bench=mphc_db_gwl/metadata-mobile.parquet",
+          "year": 2025,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 8400,
+          "sizeBytes": 1499283
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2025,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 35,
+          "sizeBytes": 21467
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2025,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 38,
+          "sizeBytes": 22023
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2025,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 111,
+          "sizeBytes": 37892
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2024,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 6119,
+          "sizeBytes": 1163801
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=23_23/bench=mphc_db_gwl/metadata-mobile.parquet",
+          "year": 2024,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 4600,
+          "sizeBytes": 979623
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2024,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 2135,
+          "sizeBytes": 393753
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2024,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 400,
+          "sizeBytes": 764460
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2023,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 25241,
+          "sizeBytes": 4773733
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2023,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 31334,
+          "sizeBytes": 5923550
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2023,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 25200,
+          "sizeBytes": 12815592
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2022,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 21337,
+          "sizeBytes": 4216849
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2022,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 25398,
+          "sizeBytes": 4893999
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2022,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 53408,
+          "sizeBytes": 10616946
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2021,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 15245,
+          "sizeBytes": 3311226
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2021,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 14704,
+          "sizeBytes": 3029106
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2021,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 27518,
+          "sizeBytes": 5692525
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2020,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 11160,
+          "sizeBytes": 2396284
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2020,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 11439,
+          "sizeBytes": 2427587
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2020,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 18172,
+          "sizeBytes": 3801212
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2019,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 14234,
+          "sizeBytes": 3158090
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2019,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 15000,
+          "sizeBytes": 4087589
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2019,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 27919,
+          "sizeBytes": 5916521
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2018,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 14586,
+          "sizeBytes": 3195228
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2018,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 18826,
+          "sizeBytes": 4328941
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2018,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 23752,
+          "sizeBytes": 5439146
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=23_23/bench=mphc_db_gwl/metadata.parquet",
+          "year": 2017,
+          "court": "23_23",
+          "bench": "mphc_db_gwl",
+          "offset": 11106,
+          "sizeBytes": 2526412
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=23_23/bench=mphc_db_ind/metadata.parquet",
+          "year": 2017,
+          "court": "23_23",
+          "bench": "mphc_db_ind",
+          "offset": 16417,
+          "sizeBytes": 3778777
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=23_23/bench=mphc_db_jbp/metadata.parquet",
+          "year": 2017,
+          "court": "23_23",
+          "bench": "mphc_db_jbp",
+          "offset": 16000,
+          "sizeBytes": 3837598
+        }
+      ]
+    },
+    {
+      "file": "24_17.json",
+      "court": "24_17",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-24_17",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:43.092Z",
+      "sourceFileCount": 11,
+      "maxOffset": 54600,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2026,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 5479,
+          "sizeBytes": 1844553
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2025,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 7473,
+          "sizeBytes": 2552417
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2024,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 1760,
+          "sizeBytes": 602685
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2023,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 4513,
+          "sizeBytes": 1586646
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2022,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 54600,
+          "sizeBytes": 23506299
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2021,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 53369,
+          "sizeBytes": 18621219
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2020,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 40943,
+          "sizeBytes": 14145528
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2019,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 20800,
+          "sizeBytes": 21825647
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2018,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 45595,
+          "sizeBytes": 15954735
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2017,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 348,
+          "sizeBytes": 126097
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=24_17/bench=gujarathc/metadata.parquet",
+          "year": 2016,
+          "court": "24_17",
+          "bench": "gujarathc",
+          "offset": 289,
+          "sizeBytes": 90511
+        }
+      ]
+    },
+    {
+      "file": "27_1-to2015.json",
+      "court": "27_1",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-27_1",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:47.634Z",
+      "sourceFileCount": 17,
+      "maxOffset": 32954,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=hcaurdb/metadata-mobile.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 3,
+          "sizeBytes": 10418
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=hcaurdb/metadata.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 32954,
+          "sizeBytes": 15849385
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=hcbgoa/metadata.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 3044,
+          "sizeBytes": 1554866
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=kolhcdb/metadata-mobile.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 20,
+          "sizeBytes": 11796
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=kolhcdb/metadata.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 6919,
+          "sizeBytes": 3397401
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=newas/metadata-mobile.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 67,
+          "sizeBytes": 17315
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=newas/metadata.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 32716,
+          "sizeBytes": 16089226
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=newos/metadata-mobile.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 19,
+          "sizeBytes": 11232
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=newos/metadata.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 10778,
+          "sizeBytes": 2814821
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=27_1/bench=newos_spl/metadata.parquet",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "newos_spl",
+          "offset": 143,
+          "sizeBytes": 64162
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=27_1/bench=hcaurdb/metadata-mobile.parquet",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 4,
+          "sizeBytes": 9821
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=27_1/bench=hcaurdb/metadata.parquet",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 30243,
+          "sizeBytes": 14478913
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=27_1/bench=hcbgoa/metadata.parquet",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 3143,
+          "sizeBytes": 1618860
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=27_1/bench=kolhcdb/metadata-mobile.parquet",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 5,
+          "sizeBytes": 10324
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=27_1/bench=kolhcdb/metadata.parquet",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 6923,
+          "sizeBytes": 3400502
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=27_1/bench=newas/metadata-mobile.parquet",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 20,
+          "sizeBytes": 12744
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=27_1/bench=newas/metadata.parquet",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 12800,
+          "sizeBytes": 15232171
+        }
+      ]
+    },
+    {
+      "file": "27_1-to2022.json",
+      "court": "27_1",
+      "yearBand": "2016-2022",
+      "window": {
+        "fromYear": 2016,
+        "toYear": 2022,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-mid-27_1",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:49.377Z",
+      "sourceFileCount": 10,
+      "maxOffset": 37060,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=hcaurdb/metadata-mobile.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 112,
+          "sizeBytes": 25693
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=hcaurdb/metadata.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 37060,
+          "sizeBytes": 17314043
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=hcbgoa/metadata-mobile.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 58,
+          "sizeBytes": 15155
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=hcbgoa/metadata.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 1696,
+          "sizeBytes": 868755
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=kolhcdb/metadata-mobile.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 546,
+          "sizeBytes": 26539
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=kolhcdb/metadata.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 7232,
+          "sizeBytes": 3435691
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=newas/metadata-mobile.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 1525,
+          "sizeBytes": 99080
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=newas/metadata.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 34284,
+          "sizeBytes": 16791992
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=newos/metadata-mobile.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 2212,
+          "sizeBytes": 128513
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=27_1/bench=newos/metadata.parquet",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 3000,
+          "sizeBytes": 1766025
+        }
+      ]
+    },
+    {
+      "file": "27_1-y2023.json",
+      "court": "27_1",
+      "yearBand": "y2023",
+      "window": {
+        "fromYear": null,
+        "toYear": null,
+        "year": 2023
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T11:22:11.208Z",
+      "sourceFileCount": 12,
+      "maxOffset": 41217,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=hcaurdb/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 156,
+          "sizeBytes": 33180
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=hcaurdb/metadata.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 39468,
+          "sizeBytes": 18763291
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=hcbgoa/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 152,
+          "sizeBytes": 24506
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=hcbgoa/metadata.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 2432,
+          "sizeBytes": 1206177
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=kolhcdb/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 481,
+          "sizeBytes": 35209
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=kolhcdb/metadata.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 7777,
+          "sizeBytes": 3746626
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=newas/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 3487,
+          "sizeBytes": 234364
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=newas/metadata.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 41217,
+          "sizeBytes": 20168021
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=newos/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 11862,
+          "sizeBytes": 536088
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=newos/metadata.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 4156,
+          "sizeBytes": 1150236
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=newos_spl/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "newos_spl",
+          "offset": 28,
+          "sizeBytes": 9922
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=27_1/bench=newos_spl/metadata.parquet",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "newos_spl",
+          "offset": 54,
+          "sizeBytes": 36327
+        }
+      ]
+    },
+    {
+      "file": "27_1.json",
+      "court": "27_1",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-27_1",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:45.395Z",
+      "sourceFileCount": 18,
+      "maxOffset": 172800,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=hcaurdb/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 22321,
+          "sizeBytes": 1651142
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=hcaurdb/metadata.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 139,
+          "sizeBytes": 77215
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=hcbgoa/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 1903,
+          "sizeBytes": 135316
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=kolhcdb/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 8311,
+          "sizeBytes": 429721
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=kolhcdb/metadata.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 12,
+          "sizeBytes": 22188
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=newas/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 8400,
+          "sizeBytes": 2160326
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=newas/metadata.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 2590,
+          "sizeBytes": 1238500
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=newos/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 2200,
+          "sizeBytes": 1684985
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=newos/metadata.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newos",
+          "offset": 621,
+          "sizeBytes": 176570
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=newos_spl/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newos_spl",
+          "offset": 11,
+          "sizeBytes": 10517
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=27_1/bench=newos_spl/metadata.parquet",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newos_spl",
+          "offset": 25,
+          "sizeBytes": 24440
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=27_1/bench=hcaurdb/metadata-mobile.parquet",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 14200,
+          "sizeBytes": 1158040
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=27_1/bench=hcbgoa/metadata-mobile.parquet",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 3227,
+          "sizeBytes": 163016
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=27_1/bench=hcbgoa/metadata.parquet",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "offset": 1399,
+          "sizeBytes": 690963
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=27_1/bench=kolhcdb/metadata-mobile.parquet",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 8218,
+          "sizeBytes": 346355
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=27_1/bench=kolhcdb/metadata.parquet",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "kolhcdb",
+          "offset": 10603,
+          "sizeBytes": 4931550
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=27_1/bench=newas/metadata-mobile.parquet",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "newas",
+          "offset": 172800,
+          "sizeBytes": 7952078
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=27_1/bench=hcaurdb/metadata.parquet",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "offset": 20200,
+          "sizeBytes": 19744501
+        }
+      ]
+    },
+    {
+      "file": "28_2.json",
+      "court": "28_2",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-28_2",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:48.171Z",
+      "sourceFileCount": 3,
+      "maxOffset": 41000,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=28_2/bench=aphc/metadata.parquet",
+          "year": 2026,
+          "court": "28_2",
+          "bench": "aphc",
+          "offset": 25934,
+          "sizeBytes": 9767234
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=28_2/bench=aphc/metadata.parquet",
+          "year": 2025,
+          "court": "28_2",
+          "bench": "aphc",
+          "offset": 41000,
+          "sizeBytes": 24080140
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=28_2/bench=aphc/metadata.parquet",
+          "year": 2024,
+          "court": "28_2",
+          "bench": "aphc",
+          "offset": 30000,
+          "sizeBytes": 24255915
+        }
+      ]
+    },
+    {
+      "file": "29_3-to2015.json",
+      "court": "29_3",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-29_3",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.529Z",
+      "sourceFileCount": 2,
+      "maxOffset": 7600,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=29_3/bench=karhcdharwad/metadata.parquet",
+          "year": 2015,
+          "court": "29_3",
+          "bench": "karhcdharwad",
+          "offset": 7600,
+          "sizeBytes": 5533029
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=29_3/bench=karhckalaburagi/metadata.parquet",
+          "year": 2015,
+          "court": "29_3",
+          "bench": "karhckalaburagi",
+          "offset": 600,
+          "sizeBytes": 2630473
+        }
+      ]
+    },
+    {
+      "file": "29_3.json",
+      "court": "29_3",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-29_3",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:33:06.403Z",
+      "sourceFileCount": 9,
+      "maxOffset": 61048,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=29_3/bench=karhcdharwad/metadata.parquet",
+          "year": 2026,
+          "court": "29_3",
+          "bench": "karhcdharwad",
+          "offset": 2894,
+          "sizeBytes": 1135583
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=29_3/bench=karhckalaburagi/metadata.parquet",
+          "year": 2026,
+          "court": "29_3",
+          "bench": "karhckalaburagi",
+          "offset": 1415,
+          "sizeBytes": 502683
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=29_3/bench=karnataka_bng_old/metadata.parquet",
+          "year": 2026,
+          "court": "29_3",
+          "bench": "karnataka_bng_old",
+          "offset": 39177,
+          "sizeBytes": 15078366
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=29_3/bench=karhcdharwad/metadata.parquet",
+          "year": 2025,
+          "court": "29_3",
+          "bench": "karhcdharwad",
+          "offset": 21027,
+          "sizeBytes": 8813384
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=29_3/bench=karhckalaburagi/metadata.parquet",
+          "year": 2025,
+          "court": "29_3",
+          "bench": "karhckalaburagi",
+          "offset": 9398,
+          "sizeBytes": 3591960
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=29_3/bench=karnataka_bng_old/metadata.parquet",
+          "year": 2025,
+          "court": "29_3",
+          "bench": "karnataka_bng_old",
+          "offset": 61048,
+          "sizeBytes": 24536795
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=29_3/bench=karhcdharwad/metadata.parquet",
+          "year": 2024,
+          "court": "29_3",
+          "bench": "karhcdharwad",
+          "offset": 22758,
+          "sizeBytes": 9572243
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=29_3/bench=karhckalaburagi/metadata.parquet",
+          "year": 2024,
+          "court": "29_3",
+          "bench": "karhckalaburagi",
+          "offset": 11975,
+          "sizeBytes": 4751444
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=29_3/bench=karnataka_bng_old/metadata.parquet",
+          "year": 2024,
+          "court": "29_3",
+          "bench": "karnataka_bng_old",
+          "offset": 49800,
+          "sizeBytes": 23188308
+        }
+      ]
+    },
+    {
+      "file": "2_5-to2015.json",
+      "court": "2_5",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-2_5",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:23:20.657Z",
+      "sourceFileCount": 26,
+      "maxOffset": 15213,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2015,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 15213,
+          "sizeBytes": 5984930
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2014,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 13157,
+          "sizeBytes": 4773683
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2013,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 13136,
+          "sizeBytes": 5056151
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2012/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2012,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 14454,
+          "sizeBytes": 6149731
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2011/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2011,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 12174,
+          "sizeBytes": 4666263
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2010/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2010,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 13935,
+          "sizeBytes": 5241304
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2009/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2009,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 7411,
+          "sizeBytes": 2958182
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2008/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2008,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 5182,
+          "sizeBytes": 2220941
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2007/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2007,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 2956,
+          "sizeBytes": 1226875
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2006/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2006,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 697,
+          "sizeBytes": 301130
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2005/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2005,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 55,
+          "sizeBytes": 40029
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2004/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2004,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 36,
+          "sizeBytes": 33017
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2003/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2003,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 19,
+          "sizeBytes": 25639
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2002/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2002,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 19,
+          "sizeBytes": 26154
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2001/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2001,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 28,
+          "sizeBytes": 28088
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2000/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2000,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 8,
+          "sizeBytes": 19850
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1999/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1999,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 21,
+          "sizeBytes": 26909
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1998/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1998,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 10,
+          "sizeBytes": 21037
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1997/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1997,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 14,
+          "sizeBytes": 22878
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1996/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1996,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 5,
+          "sizeBytes": 18325
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1995/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1995,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 2,
+          "sizeBytes": 17286
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1994/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1994,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 4,
+          "sizeBytes": 17741
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1993/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1993,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 1,
+          "sizeBytes": 14067
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1987/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1987,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 1,
+          "sizeBytes": 14797
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1978/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1978,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 1,
+          "sizeBytes": 15392
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1970/court=2_5/bench=cmis/metadata.parquet",
+          "year": 1970,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 1,
+          "sizeBytes": 18213
+        }
+      ]
+    },
+    {
+      "file": "2_5.json",
+      "court": "2_5",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T16:51:42.860Z",
+      "sourceFileCount": 13,
+      "maxOffset": 36132,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=2_5/bench=cmis/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 2,
+          "sizeBytes": 9175
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2026,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 22102,
+          "sizeBytes": 7410828
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=2_5/bench=cmis/metadata-mobile.parquet",
+          "year": 2025,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 5,
+          "sizeBytes": 9241
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2025,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 36132,
+          "sizeBytes": 13432597
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2024,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 27911,
+          "sizeBytes": 10857434
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2023,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 20635,
+          "sizeBytes": 8146568
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2022,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 16501,
+          "sizeBytes": 6890697
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2021,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 13354,
+          "sizeBytes": 5609213
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2020,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 9697,
+          "sizeBytes": 3729191
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2019,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 11879,
+          "sizeBytes": 4827110
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2018,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 10244,
+          "sizeBytes": 4278770
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2017,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 8724,
+          "sizeBytes": 3668139
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=2_5/bench=cmis/metadata.parquet",
+          "year": 2016,
+          "court": "2_5",
+          "bench": "cmis",
+          "offset": 11362,
+          "sizeBytes": 4662883
+        }
+      ]
+    },
+    {
+      "file": "32_4-to2015.json",
+      "court": "32_4",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-32_4",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:33:05.821Z",
+      "sourceFileCount": 3,
+      "maxOffset": 54264,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2015,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 54264,
+          "sizeBytes": 21368725
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2014,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 50511,
+          "sizeBytes": 19955258
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2013,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 10400,
+          "sizeBytes": 19035420
+        }
+      ]
+    },
+    {
+      "file": "32_4.json",
+      "court": "32_4",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-32_4",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.529Z",
+      "sourceFileCount": 6,
+      "maxOffset": 45800,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2026,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 67,
+          "sizeBytes": 48939
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2025,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 6818,
+          "sizeBytes": 2740983
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2024,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 45796,
+          "sizeBytes": 19864356
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2023,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 45800,
+          "sizeBytes": 37394219
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2022,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 16200,
+          "sizeBytes": 34508065
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=32_4/bench=highcourtofkerala/metadata.parquet",
+          "year": 2021,
+          "court": "32_4",
+          "bench": "highcourtofkerala",
+          "offset": 4800,
+          "sizeBytes": 24620913
+        }
+      ]
+    },
+    {
+      "file": "33_10-to2022.json",
+      "court": "33_10",
+      "yearBand": "2016-2022",
+      "window": {
+        "fromYear": 2016,
+        "toYear": 2022,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-mid-33_10",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.523Z",
+      "sourceFileCount": 1,
+      "maxOffset": 66000,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=33_10/bench=hc_cis_mas/metadata.parquet",
+          "year": 2022,
+          "court": "33_10",
+          "bench": "hc_cis_mas",
+          "offset": 66000,
+          "sizeBytes": 25840162
+        }
+      ]
+    },
+    {
+      "file": "33_10-y2023.json",
+      "court": "33_10",
+      "yearBand": "y2023",
+      "window": {
+        "fromYear": null,
+        "toYear": null,
+        "year": 2023
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-33_10-y2023",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:33:05.807Z",
+      "sourceFileCount": 2,
+      "maxOffset": 108552,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=33_10/bench=hc_cis_mas/metadata.parquet",
+          "year": 2023,
+          "court": "33_10",
+          "bench": "hc_cis_mas",
+          "offset": 108552,
+          "sizeBytes": 27158354
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=33_10/bench=mdubench/metadata.parquet",
+          "year": 2023,
+          "court": "33_10",
+          "bench": "mdubench",
+          "offset": 38800,
+          "sizeBytes": 30487160
+        }
+      ]
+    },
+    {
+      "file": "33_10.json",
+      "court": "33_10",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-33_10",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.529Z",
+      "sourceFileCount": 5,
+      "maxOffset": 59200,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=33_10/bench=hc_cis_mas/metadata.parquet",
+          "year": 2026,
+          "court": "33_10",
+          "bench": "hc_cis_mas",
+          "offset": 50000,
+          "sizeBytes": 15734473
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=33_10/bench=mdubench/metadata.parquet",
+          "year": 2026,
+          "court": "33_10",
+          "bench": "mdubench",
+          "offset": 11800,
+          "sizeBytes": 16928769
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=33_10/bench=hc_cis_mas/metadata.parquet",
+          "year": 2025,
+          "court": "33_10",
+          "bench": "hc_cis_mas",
+          "offset": 59200,
+          "sizeBytes": 34928205
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=33_10/bench=hc_cis_mas/metadata.parquet",
+          "year": 2024,
+          "court": "33_10",
+          "bench": "hc_cis_mas",
+          "offset": 3400,
+          "sizeBytes": 27773772
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=33_10/bench=mdubench/metadata.parquet",
+          "year": 2024,
+          "court": "33_10",
+          "bench": "mdubench",
+          "offset": 13800,
+          "sizeBytes": 28071602
+        }
+      ]
+    },
+    {
+      "file": "36_29-to2015.json",
+      "court": "36_29",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-36_29",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:45.395Z",
+      "sourceFileCount": 3,
+      "maxOffset": 43000,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=36_29/bench=taphc/metadata.parquet",
+          "year": 2015,
+          "court": "36_29",
+          "bench": "taphc",
+          "offset": 43000,
+          "sizeBytes": 29608045
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=36_29/bench=taphc/metadata.parquet",
+          "year": 2014,
+          "court": "36_29",
+          "bench": "taphc",
+          "offset": 4000,
+          "sizeBytes": 32431814
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=36_29/bench=taphc/metadata.parquet",
+          "year": 2013,
+          "court": "36_29",
+          "bench": "taphc",
+          "offset": 24200,
+          "sizeBytes": 27284800
+        }
+      ]
+    },
+    {
+      "file": "36_29.json",
+      "court": "36_29",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-36_29",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:47.323Z",
+      "sourceFileCount": 2,
+      "maxOffset": 37600,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=36_29/bench=taphc/metadata.parquet",
+          "year": 2026,
+          "court": "36_29",
+          "bench": "taphc",
+          "offset": 10630,
+          "sizeBytes": 4108461
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=36_29/bench=taphc/metadata.parquet",
+          "year": 2025,
+          "court": "36_29",
+          "bench": "taphc",
+          "offset": 37600,
+          "sizeBytes": 21757199
+        }
+      ]
+    },
+    {
+      "file": "3_22-to2015.json",
+      "court": "3_22",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-3_22",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.523Z",
+      "sourceFileCount": 2,
+      "maxOffset": 110668,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=3_22/bench=phhc/metadata.parquet",
+          "year": 2015,
+          "court": "3_22",
+          "bench": "phhc",
+          "offset": 110668,
+          "sizeBytes": 47387839
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=3_22/bench=phhc/metadata.parquet",
+          "year": 2014,
+          "court": "3_22",
+          "bench": "phhc",
+          "offset": 80400,
+          "sizeBytes": 44611090
+        }
+      ]
+    },
+    {
+      "file": "3_22-to2022.json",
+      "court": "3_22",
+      "yearBand": "2016-2022",
+      "window": {
+        "fromYear": 2016,
+        "toYear": 2022,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-mid-3_22",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:33:04.801Z",
+      "sourceFileCount": 1,
+      "maxOffset": 132000,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=3_22/bench=phhc/metadata.parquet",
+          "year": 2022,
+          "court": "3_22",
+          "bench": "phhc",
+          "offset": 132000,
+          "sizeBytes": 55682425
+        }
+      ]
+    },
+    {
+      "file": "3_22-y2023.json",
+      "court": "3_22",
+      "yearBand": "y2023",
+      "window": {
+        "fromYear": null,
+        "toYear": null,
+        "year": 2023
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T13:39:21.025Z",
+      "sourceFileCount": 1,
+      "maxOffset": 149388,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=3_22/bench=phhc/metadata.parquet",
+          "year": 2023,
+          "court": "3_22",
+          "bench": "phhc",
+          "offset": 149388,
+          "sizeBytes": 62396547
+        }
+      ]
+    },
+    {
+      "file": "3_22.json",
+      "court": "3_22",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-3_22",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:54.335Z",
+      "sourceFileCount": 3,
+      "maxOffset": 77000,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=3_22/bench=phhc/metadata.parquet",
+          "year": 2026,
+          "court": "3_22",
+          "bench": "phhc",
+          "offset": 65600,
+          "sizeBytes": 33127959
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=3_22/bench=phhc/metadata.parquet",
+          "year": 2025,
+          "court": "3_22",
+          "bench": "phhc",
+          "offset": 77000,
+          "sizeBytes": 61731356
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=3_22/bench=phhc/metadata.parquet",
+          "year": 2024,
+          "court": "3_22",
+          "bench": "phhc",
+          "offset": 3000,
+          "sizeBytes": 64729159
+        }
+      ]
+    },
+    {
+      "file": "5_15-to2015.json",
+      "court": "5_15",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-5_15",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:43.407Z",
+      "sourceFileCount": 22,
+      "maxOffset": 11452,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2015,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 9296,
+          "sizeBytes": 3993222
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2014,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 9198,
+          "sizeBytes": 4034105
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2013,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 11452,
+          "sizeBytes": 5073043
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2012/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2012,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 8163,
+          "sizeBytes": 3647795
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2011/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2011,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 5671,
+          "sizeBytes": 2531708
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2010/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2010,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 8256,
+          "sizeBytes": 3704502
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2009/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2009,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 4383,
+          "sizeBytes": 1994332
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2008/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2008,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 8026,
+          "sizeBytes": 3637852
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2007/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2007,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 4081,
+          "sizeBytes": 1763368
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2006/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2006,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 10719,
+          "sizeBytes": 5094830
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2005/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2005,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 3957,
+          "sizeBytes": 1797497
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2004/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2004,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 5186,
+          "sizeBytes": 2354737
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2003/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2003,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 5175,
+          "sizeBytes": 2181461
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2002/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2002,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 2241,
+          "sizeBytes": 966383
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2001/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2001,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 1647,
+          "sizeBytes": 685159
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2000/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2000,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 44,
+          "sizeBytes": 32698
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1999/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 1999,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 67,
+          "sizeBytes": 27804
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1998/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 1998,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 5,
+          "sizeBytes": 16549
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1997/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 1997,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 7,
+          "sizeBytes": 17165
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1996/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 1996,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 1,
+          "sizeBytes": 14291
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1987/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 1987,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 1,
+          "sizeBytes": 14316
+        },
+        {
+          "sourceFile": "metadata/parquet/year=1950/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 1950,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 189,
+          "sizeBytes": 66361
+        }
+      ]
+    },
+    {
+      "file": "5_15.json",
+      "court": "5_15",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T10:32:37.617Z",
+      "sourceFileCount": 11,
+      "maxOffset": 16794,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2026,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 9313,
+          "sizeBytes": 3076818
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2025,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 16794,
+          "sizeBytes": 6010892
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2024,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 14710,
+          "sizeBytes": 5348850
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2023,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 14570,
+          "sizeBytes": 5446397
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2022,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 14922,
+          "sizeBytes": 5571095
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2021,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 12416,
+          "sizeBytes": 4679630
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2020,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 9595,
+          "sizeBytes": 4135163
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2019,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 15547,
+          "sizeBytes": 6698413
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2018,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 10701,
+          "sizeBytes": 4654894
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2017,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 10990,
+          "sizeBytes": 4849288
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+          "year": 2016,
+          "court": "5_15",
+          "bench": "ukhcucis_pg",
+          "offset": 8311,
+          "sizeBytes": 3520266
+        }
+      ]
+    },
+    {
+      "file": "7_26.json",
+      "court": "7_26",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-7_26",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:48.280Z",
+      "sourceFileCount": 10,
+      "maxOffset": 40321,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2026,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 27713,
+          "sizeBytes": 12361427
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2025,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 39200,
+          "sizeBytes": 23305919
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2024,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 8200,
+          "sizeBytes": 23564010
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2023,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 8465,
+          "sizeBytes": 3895727
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2022,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 5024,
+          "sizeBytes": 2268011
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2021,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 4577,
+          "sizeBytes": 1994759
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2020,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 13117,
+          "sizeBytes": 5975864
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2019,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 27239,
+          "sizeBytes": 12543331
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2018,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 40321,
+          "sizeBytes": 18650337
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=7_26/bench=dhcdb/metadata.parquet",
+          "year": 2017,
+          "court": "7_26",
+          "bench": "dhcdb",
+          "offset": 16400,
+          "sizeBytes": 17236806
+        }
+      ]
+    },
+    {
+      "file": "8_9-to2015.json",
+      "court": "8_9",
+      "yearBand": "pre-2016",
+      "window": {
+        "fromYear": 1950,
+        "toYear": 2015,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-hist-8_9",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:33:06.403Z",
+      "sourceFileCount": 5,
+      "maxOffset": 36820,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2015,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 36820,
+          "sizeBytes": 15359237
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2015/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2015,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 22848,
+          "sizeBytes": 9023992
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2014,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 34684,
+          "sizeBytes": 14545127
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2014/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2014,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 13923,
+          "sizeBytes": 5534368
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2013/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2013,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 5600,
+          "sizeBytes": 6895109
+        }
+      ]
+    },
+    {
+      "file": "8_9-to2022.json",
+      "court": "8_9",
+      "yearBand": "2016-2022",
+      "window": {
+        "fromYear": 2016,
+        "toYear": 2022,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-mid-8_9",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.529Z",
+      "sourceFileCount": 3,
+      "maxOffset": 31600,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2022,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 27000,
+          "sizeBytes": 20956625
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2022,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 31600,
+          "sizeBytes": 21043877
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2021,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 15200,
+          "sizeBytes": 19193645
+        }
+      ]
+    },
+    {
+      "file": "8_9-y2023.json",
+      "court": "8_9",
+      "yearBand": "y2023",
+      "window": {
+        "fromYear": null,
+        "toYear": null,
+        "year": 2023
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-15T20:03:57.860Z",
+      "sourceFileCount": 2,
+      "maxOffset": 63646,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2023,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 63646,
+          "sizeBytes": 30084459
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2023,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 55541,
+          "sizeBytes": 23858655
+        }
+      ]
+    },
+    {
+      "file": "8_9.json",
+      "court": "8_9",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-8_9",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.529Z",
+      "sourceFileCount": 8,
+      "maxOffset": 43600,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2026,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 17000,
+          "sizeBytes": 8358552
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2026,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 28,
+          "sizeBytes": 29330
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2025,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 24400,
+          "sizeBytes": 22559513
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2025,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 791,
+          "sizeBytes": 346017
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2024,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 17400,
+          "sizeBytes": 25974633
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2024/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2024,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 36188,
+          "sizeBytes": 15477952
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=8_9/bench=jaipur/metadata.parquet",
+          "year": 2023,
+          "court": "8_9",
+          "bench": "jaipur",
+          "offset": 43600,
+          "sizeBytes": 30084459
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=8_9/bench=rhcjodh240618/metadata.parquet",
+          "year": 2023,
+          "court": "8_9",
+          "bench": "rhcjodh240618",
+          "offset": 43200,
+          "sizeBytes": 23858655
+        }
+      ]
+    },
+    {
+      "file": "9_13-to2022.json",
+      "court": "9_13",
+      "yearBand": "2016-2022",
+      "window": {
+        "fromYear": 2016,
+        "toYear": 2022,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-mid-9_13",
+        "batch": "200",
+        "concurrency": "16"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:47.632Z",
+      "sourceFileCount": 19,
+      "maxOffset": 176600,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2022,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 212,
+          "sizeBytes": 30491
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=9_13/bench=cishclko/metadata-mobile.parquet",
+          "year": 2022,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 253,
+          "sizeBytes": 38979
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2022,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 1200,
+          "sizeBytes": 37917432
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2022/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2022,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 176600,
+          "sizeBytes": 179817840
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2021,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 115,
+          "sizeBytes": 18649
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2021,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 200,
+          "sizeBytes": 140702960
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2021/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2021,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 145,
+          "sizeBytes": 76084
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2020,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 75,
+          "sizeBytes": 16808
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2020/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2020,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 4,
+          "sizeBytes": 17262
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2019,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 126,
+          "sizeBytes": 20496
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2019,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 200,
+          "sizeBytes": 189602887
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2019/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2019,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 9,
+          "sizeBytes": 20865
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2018,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 57,
+          "sizeBytes": 14191
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2018/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2018,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 8,
+          "sizeBytes": 20966
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2017,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 4,
+          "sizeBytes": 9504
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2017,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 1951,
+          "sizeBytes": 855375
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2017/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2017,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 6,
+          "sizeBytes": 18637
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2016,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 66,
+          "sizeBytes": 49208
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2016/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2016,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 1,
+          "sizeBytes": 16373
+        }
+      ]
+    },
+    {
+      "file": "9_13-y2023.json",
+      "court": "9_13",
+      "yearBand": "y2023",
+      "window": {
+        "fromYear": null,
+        "toYear": null,
+        "year": 2023
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-14T10:18:41.210Z",
+      "sourceFileCount": 4,
+      "maxOffset": 443845,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 1339,
+          "sizeBytes": 88456
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=9_13/bench=cishclko/metadata-mobile.parquet",
+          "year": 2023,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 625,
+          "sizeBytes": 70461
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2023,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 443845,
+          "sizeBytes": 179906982
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2023/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2023,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 88244,
+          "sizeBytes": 39801122
+        }
+      ]
+    },
+    {
+      "file": "9_13.json",
+      "court": "9_13",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": {
+        "label": "hc-boot-9_13",
+        "batch": "200",
+        "concurrency": "32"
+      },
+      "windowAgreesWithCapture": true,
+      "lastWrite": "2026-08-15T20:32:44.802Z",
+      "sourceFileCount": 6,
+      "maxOffset": 59000,
+      "sources": [
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 27400,
+          "sizeBytes": 3313807
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2026,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 8202,
+          "sizeBytes": 3315893
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=9_13/bench=cishclko/metadata-mobile.parquet",
+          "year": 2026,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 58600,
+          "sizeBytes": 5925717
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2026/court=9_13/bench=cishclko/metadata.parquet",
+          "year": 2026,
+          "court": "9_13",
+          "bench": "cishclko",
+          "offset": 303,
+          "sizeBytes": 160186
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=9_13/bench=cisdb_16012018/metadata-mobile.parquet",
+          "year": 2025,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 48000,
+          "sizeBytes": 6549270
+        },
+        {
+          "sourceFile": "metadata/parquet/year=2025/court=9_13/bench=cisdb_16012018/metadata.parquet",
+          "year": 2025,
+          "court": "9_13",
+          "bench": "cisdb_16012018",
+          "offset": 59000,
+          "sizeBytes": 47738232
+        }
+      ]
+    },
+    {
+      "file": "paragraphs-0_1.json",
+      "court": "paragraphs-0_1",
+      "yearBand": "recent (2016+, unbounded)",
+      "window": {
+        "fromYear": 2016,
+        "toYear": null,
+        "year": null
+      },
+      "capturedCommandLine": null,
+      "windowAgreesWithCapture": null,
+      "lastWrite": "2026-08-15T15:48:13.856Z",
+      "sourceFileCount": 5,
+      "maxOffset": 0,
+      "sources": [
+        {
+          "sourceFile": "cursorAt",
+          "year": null,
+          "court": null,
+          "bench": null
+        },
+        {
+          "sourceFile": "cursorId",
+          "year": null,
+          "court": null,
+          "bench": null
+        },
+        {
+          "sourceFile": "scanned",
+          "year": null,
+          "court": null,
+          "bench": null
+        },
+        {
+          "sourceFile": "written",
+          "year": null,
+          "court": null,
+          "bench": null
+        },
+        {
+          "sourceFile": "updatedAt",
+          "year": null,
+          "court": null,
+          "bench": null
+        }
+      ]
+    }
+  ]
+}

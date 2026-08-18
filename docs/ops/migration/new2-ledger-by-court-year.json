@@ -1,6 +1,6 @@
 {
  "tool": "scripts/migration/new2-ledger-snapshot.mjs",
- "takenAt": "2026-08-18T04:20:09.914Z",
+ "takenAt": "2026-08-18T07:01:47.731Z",
  "database": "postgresql://***@127.0.0.1:5432/lawmind",
  "states": {
   "sourceDocumentMissing": "pdf_absent — a 404/403/410 was observed. Confirmed absent at source.",
@@ -9,88 +9,36 @@
   "unreachable": "sourceDocumentMissing + otherFailure — the only quantity the planner subtracts."
  },
  "totals": {
-  "sourceDocumentMissing": 66260,
-  "retryPending": 1383,
-  "otherFailure": 11,
+  "sourceDocumentMissing": 85205,
+  "retryPending": 5189,
+  "otherFailure": 74,
   "unclassified": 0,
-  "unreachable": 66271
+  "unreachable": 85279
  },
- "ledgerRows": 67654,
+ "ledgerRows": 90468,
  "outcomeTotals": {
-  "pdf_failed": 1304,
-  "pdf_missing": 3,
-  "pdf_absent": 66260,
-  "no_text": 87
+  "pdf_failed": 4921,
+  "pdf_absent": 85205,
+  "no_text": 167,
+  "pdf_missing": 174,
+  "pdf_timeout": 1
  },
  "unclassifiedOutcomes": [],
  "byCourtCodeByYear": {
-  "29_3": {
-   "2020": {
-    "sourceDocumentMissing": 0,
-    "retryPending": 20,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 0
-   },
-   "2021": {
-    "sourceDocumentMissing": 1,
-    "retryPending": 0,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 1
-   },
-   "2022": {
-    "sourceDocumentMissing": 0,
-    "retryPending": 0,
-    "otherFailure": 1,
-    "unclassified": 0,
-    "unreachable": 1
-   },
-   "2023": {
-    "sourceDocumentMissing": 0,
-    "retryPending": 60,
-    "otherFailure": 1,
-    "unclassified": 0,
-    "unreachable": 1
-   },
-   "2024": {
-    "sourceDocumentMissing": 0,
-    "retryPending": 4,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 0
-   }
-  },
-  "8_9": {
-   "2018": {
-    "sourceDocumentMissing": 2,
-    "retryPending": 17,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 2
-   },
-   "2019": {
-    "sourceDocumentMissing": 37,
-    "retryPending": 0,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 37
-   },
-   "2020": {
-    "sourceDocumentMissing": 2,
-    "retryPending": 0,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 2
-   }
-  },
   "36_29": {
-   "2021": {
-    "sourceDocumentMissing": 5,
-    "retryPending": 0,
+   "2020": {
+    "sourceDocumentMissing": 39,
+    "retryPending": 8,
     "otherFailure": 0,
     "unclassified": 0,
-    "unreachable": 5
+    "unreachable": 39
+   },
+   "2021": {
+    "sourceDocumentMissing": 492,
+    "retryPending": 1092,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 492
    },
    "2022": {
     "sourceDocumentMissing": 256,
@@ -116,61 +64,24 @@
     "unreachable": 150
    }
   },
-  "33_10": {
-   "2020": {
-    "sourceDocumentMissing": 2,
-    "retryPending": 10,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 2
-   },
-   "2021": {
-    "sourceDocumentMissing": 6,
-    "retryPending": 4,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 6
-   },
-   "2022": {
-    "sourceDocumentMissing": 2,
-    "retryPending": 0,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 2
-   },
-   "2023": {
-    "sourceDocumentMissing": 8,
-    "retryPending": 16,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 8
-   },
-   "2024": {
+  "3_22": {
+   "2017": {
     "sourceDocumentMissing": 0,
-    "retryPending": 47,
+    "retryPending": 56,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 0
-   }
-  },
-  "3_22": {
+   },
    "2018": {
     "sourceDocumentMissing": 0,
-    "retryPending": 4,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 0
-   },
-   "2020": {
-    "sourceDocumentMissing": 0,
-    "retryPending": 7,
+    "retryPending": 8,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 0
    },
    "2021": {
     "sourceDocumentMissing": 0,
-    "retryPending": 16,
+    "retryPending": 8,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 0
@@ -191,40 +102,47 @@
    }
   },
   "27_1": {
+   "2017": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 13,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   },
    "2018": {
     "sourceDocumentMissing": 1,
-    "retryPending": 3,
+    "retryPending": 1801,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 1
    },
    "2019": {
     "sourceDocumentMissing": 209,
-    "retryPending": 60,
-    "otherFailure": 0,
+    "retryPending": 57,
+    "otherFailure": 2,
     "unclassified": 0,
-    "unreachable": 209
+    "unreachable": 211
    },
    "2020": {
     "sourceDocumentMissing": 267,
-    "retryPending": 12,
-    "otherFailure": 0,
+    "retryPending": 0,
+    "otherFailure": 12,
     "unclassified": 0,
-    "unreachable": 267
+    "unreachable": 279
    },
    "2021": {
     "sourceDocumentMissing": 1405,
-    "retryPending": 25,
-    "otherFailure": 0,
+    "retryPending": 0,
+    "otherFailure": 25,
     "unclassified": 0,
-    "unreachable": 1405
+    "unreachable": 1430
    },
    "2022": {
     "sourceDocumentMissing": 4370,
-    "retryPending": 14,
-    "otherFailure": 0,
+    "retryPending": 0,
+    "otherFailure": 14,
     "unclassified": 0,
-    "unreachable": 4370
+    "unreachable": 4384
    },
    "2023": {
     "sourceDocumentMissing": 15826,
@@ -239,22 +157,82 @@
     "otherFailure": 4,
     "unclassified": 0,
     "unreachable": 37651
+   },
+   "2025": {
+    "sourceDocumentMissing": 11599,
+    "retryPending": 50,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 11599
+   }
+  },
+  "32_4": {
+   "2021": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 284,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   },
+   "2022": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 1,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   }
+  },
+  "8_9": {
+   "2017": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 118,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   },
+   "2018": {
+    "sourceDocumentMissing": 2,
+    "retryPending": 17,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 2
+   },
+   "2019": {
+    "sourceDocumentMissing": 37,
+    "retryPending": 0,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 37
+   },
+   "2020": {
+    "sourceDocumentMissing": 2,
+    "retryPending": 0,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 2
    }
   },
   "21_11": {
+   "2016": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 27,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   },
    "2018": {
     "sourceDocumentMissing": 1,
-    "retryPending": 1,
+    "retryPending": 0,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 1
    },
    "2021": {
     "sourceDocumentMissing": 0,
-    "retryPending": 1,
-    "otherFailure": 0,
+    "retryPending": 0,
+    "otherFailure": 1,
     "unclassified": 0,
-    "unreachable": 0
+    "unreachable": 1
    },
    "2022": {
     "sourceDocumentMissing": 1,
@@ -278,10 +256,128 @@
     "unreachable": 0
    }
   },
+  "9_13": {
+   "2019": {
+    "sourceDocumentMissing": 126,
+    "retryPending": 33,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 126
+   },
+   "2020": {
+    "sourceDocumentMissing": 76,
+    "retryPending": 0,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 76
+   },
+   "2021": {
+    "sourceDocumentMissing": 116,
+    "retryPending": 0,
+    "otherFailure": 1,
+    "unclassified": 0,
+    "unreachable": 117
+   },
+   "2022": {
+    "sourceDocumentMissing": 465,
+    "retryPending": 0,
+    "otherFailure": 1,
+    "unclassified": 0,
+    "unreachable": 466
+   },
+   "2023": {
+    "sourceDocumentMissing": 1964,
+    "retryPending": 0,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 1964
+   },
+   "2024": {
+    "sourceDocumentMissing": 3325,
+    "retryPending": 52,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 3325
+   },
+   "2025": {
+    "sourceDocumentMissing": 6693,
+    "retryPending": 6,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 6693
+   }
+  },
+  "33_10": {
+   "2020": {
+    "sourceDocumentMissing": 3,
+    "retryPending": 0,
+    "otherFailure": 4,
+    "unclassified": 0,
+    "unreachable": 7
+   },
+   "2021": {
+    "sourceDocumentMissing": 6,
+    "retryPending": 0,
+    "otherFailure": 4,
+    "unclassified": 0,
+    "unreachable": 10
+   },
+   "2022": {
+    "sourceDocumentMissing": 2,
+    "retryPending": 0,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 2
+   },
+   "2023": {
+    "sourceDocumentMissing": 8,
+    "retryPending": 16,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 8
+   },
+   "2024": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 47,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   },
+   "2025": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 13,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   }
+  },
+  "28_2": {
+   "2023": {
+    "sourceDocumentMissing": 46,
+    "retryPending": 0,
+    "otherFailure": 3,
+    "unclassified": 0,
+    "unreachable": 49
+   },
+   "2024": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 184,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   }
+  },
   "10_8": {
+   "2017": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 137,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 0
+   },
    "2018": {
     "sourceDocumentMissing": 0,
-    "retryPending": 4,
+    "retryPending": 24,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 0
@@ -315,17 +411,45 @@
     "unreachable": 0
    }
   },
-  "32_4": {
-   "2021": {
+  "29_3": {
+   "2019": {
     "sourceDocumentMissing": 0,
-    "retryPending": 16,
+    "retryPending": 174,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 0
    },
+   "2020": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 0,
+    "otherFailure": 1,
+    "unclassified": 0,
+    "unreachable": 1
+   },
+   "2021": {
+    "sourceDocumentMissing": 1,
+    "retryPending": 0,
+    "otherFailure": 0,
+    "unclassified": 0,
+    "unreachable": 1
+   },
    "2022": {
     "sourceDocumentMissing": 0,
-    "retryPending": 1,
+    "retryPending": 0,
+    "otherFailure": 1,
+    "unclassified": 0,
+    "unreachable": 1
+   },
+   "2023": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 157,
+    "otherFailure": 1,
+    "unclassified": 0,
+    "unreachable": 1
+   },
+   "2024": {
+    "sourceDocumentMissing": 0,
+    "retryPending": 4,
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 0
@@ -338,59 +462,6 @@
     "otherFailure": 0,
     "unclassified": 0,
     "unreachable": 1
-   }
-  },
-  "9_13": {
-   "2020": {
-    "sourceDocumentMissing": 76,
-    "retryPending": 3,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 76
-   },
-   "2021": {
-    "sourceDocumentMissing": 116,
-    "retryPending": 0,
-    "otherFailure": 1,
-    "unclassified": 0,
-    "unreachable": 117
-   },
-   "2022": {
-    "sourceDocumentMissing": 465,
-    "retryPending": 0,
-    "otherFailure": 1,
-    "unclassified": 0,
-    "unreachable": 466
-   },
-   "2023": {
-    "sourceDocumentMissing": 1964,
-    "retryPending": 0,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 1964
-   },
-   "2024": {
-    "sourceDocumentMissing": 3325,
-    "retryPending": 52,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 3325
-   }
-  },
-  "28_2": {
-   "2023": {
-    "sourceDocumentMissing": 46,
-    "retryPending": 0,
-    "otherFailure": 3,
-    "unclassified": 0,
-    "unreachable": 49
-   },
-   "2024": {
-    "sourceDocumentMissing": 0,
-    "retryPending": 184,
-    "otherFailure": 0,
-    "unclassified": 0,
-    "unreachable": 0
    }
   }
  }

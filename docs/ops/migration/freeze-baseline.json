@@ -1,0 +1,61 @@
+{
+  "tool": "measured by hand against the frozen source, recorded by LCC",
+  "status": "CORRECTED 2026-08-15T21:00Z. The first version of this file is WRONG as a verification target and is kept below rather than deleted, because how it went wrong is the reusable part.",
+
+  "whatHappened": "The first freeze (19:24Z, taskkill) was announced only AFTER it was executed. NEW2 found their fleet at zero processes at ~19:40Z, correctly diagnosed it against the evidence they had -- workers HAD genuinely been dying that evening -- as a Railway-degradation death, and restarted all 38 workers. My freeze message was already on the bus, unread. 301,422 judgments were written between ~19:40Z and 20:32:54Z. NEW2 self-reported it within minutes of reading the message, with exact numbers, and the count reproduces to the row.",
+
+  "theLesson": "A freeze that is announced after it is executed is not a freeze, it is an outage that looks exactly like the failure everyone is already expecting. NEW2's STOP-file mechanism (services/ingest/.checkpoints/STOP, checked by supervise.mjs before every restart) is the correct instrument and is what holds the freeze now; taskkill is not, because it leaves no signal that the absence was deliberate.",
+
+  "authoritativeCounts": {
+    "measuredAt": "2026-08-15T20:57Z",
+    "source": "Railway, frozen via STOP file, fleet-stop.ps1 -IncludeAllLanes reported PAUSED CLEANLY with 0 offsets regressed",
+    "judgments": 7296068,
+    "note": "THIS is the number the local copy must match. The chunked dump began at 20:39:05Z, after NEW2's last write at 20:32:54.788Z, so every chunk includes these rows."
+  },
+
+  "supersededCounts": {
+    "measuredAt": "2026-08-15T19:33Z",
+    "judgments": 6994646,
+    "judgment_paragraphs": 27967835,
+    "judgment_citations": 1734857,
+    "whyStale": "+301,422 judgments were written after this was taken. Do NOT verify against these. judgment_paragraphs and judgment_citations were not re-counted at 20:57 -- they must be re-counted from the frozen source at STAGE F rather than carried forward from here.",
+    "quiescenceWindowSeconds": 60,
+    "deltasOverWindow": { "judgments": 0, "judgment_paragraphs": 0, "judgment_citations": 0 }
+  },
+
+  "consistencyOfTheChunkedDump": {
+    "why": "Each chunk is its own transaction and therefore its own snapshot. That is safe ONLY against a frozen source. The freeze is held by the STOP file, and fleet-stop.ps1 runs scripts/migration/activity.mjs --require-quiet as its final step.",
+    "chunkedDumpLedgerOpenedAt": "2026-08-15T20:39:05.954Z",
+    "firstJudgmentsChunkAt": "2026-08-15T20:44:51.556Z",
+    "new2LastWriteAt": "2026-08-15T20:32:54.788Z",
+    "allChunksAfterLastWrite": true,
+    "residualRisk": "pid 62315 has held an UNCOMMITTED citation-resolver UPDATE for 21+ hours. It is excluded from every snapshot while uncommitted. If it were somehow to COMMIT mid-dump, chunks taken before and after would disagree. It has been stuck since 2026-08-14T23:00Z and is expected to roll back when Railway stops, but this is a real residual risk and is recorded rather than dismissed."
+  },
+
+  "abandonedFirstDump": {
+    "tool": "scripts/migration/dump.mjs --full (monolithic pg_dump)",
+    "snapshotLsn": "195/21C52000",
+    "failedAfterSeconds": 2520,
+    "bytesWritten": 2306867200,
+    "error": "PQgetCopyData() failed -- server closed the connection unexpectedly, while dumping judgment_paragraphs",
+    "serverRestarted": false,
+    "postmasterUptimeHoursAtFailure": 316.8,
+    "conclusion": "A proxy or network drop, not a server restart. pg_dump has no resume, so all 42 minutes were lost. This is what required the chunked, resumable design."
+  },
+
+  "stillRunningDuringTheDump": [
+    { "pid": 62315, "what": "stuck citation-resolver UPDATE, 21.6h", "writes": "UNCOMMITTED", "consistencyImpact": "none while uncommitted" },
+    { "pid": 65284, "what": "resolver run blocked by 62315", "writes": "UNCOMMITTED", "consistencyImpact": "none" },
+    { "what": "autovacuum on judgments and a pg_toast relation", "writes": "no logical change", "consistencyImpact": "none" },
+    { "what": "NEW1's Gate S2 harness (services/harness/src/run-cli.ts)", "writes": "read-only", "consistencyImpact": "none; competes for proxy IO" }
+  ],
+
+  "retractedClaim": {
+    "claim": "Railway is measurably degrading -- count(*) on judgments took 48 seconds, throughput down 6x",
+    "reportedBy": "NEW2, bus 0549/0554/0555",
+    "retractedBy": "NEW2, bus 0557",
+    "confirmedBy": "LCC -- the same count took 12 seconds at 20:57Z with the chunked dump running between chunks",
+    "actualCause": "LCC's monolithic pg_dump saturating the shared proxy. Railway was not degrading.",
+    "whyRecorded": "This number was on its way into other lanes' planning as a fact about the vendor. It was a fact about us."
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "source": "local",
+  "at": "2026-08-17T02:07:52.821Z",
+  "results": [
+    {
+      "name": "pgvector operator computes",
+      "pass": true,
+      "detail": "L2 distance = 2.8284",
+      "ms": 57
+    },
+    {
+      "name": "pg_trgm similarity computes",
+      "pass": true,
+      "detail": "similarity = 0.769",
+      "ms": 49
+    },
+    {
+      "name": "corpus is populated (estimates)",
+      "pass": true,
+      "detail": "~judgments 7300469 · ~paragraphs 27980616 · ~chunks 619636 · ~citations 1734857",
+      "ms": 5
+    },
+    {
+      "name": "full-text search returns rows",
+      "pass": true,
+      "detail": "5 hit(s)",
+      "ms": 27
+    },
+    {
+      "name": "full-text query uses the GIN index",
+      "pass": false,
+      "detail": "SEQ SCAN — 15.5 GB index not chosen (random_page_cost=1.1, cost≈104.98). Known pre-existing on Railway; see the comment here before treating it as a migration defect"
+    },
+    {
+      "name": "vector column populated",
+      "pass": true,
+      "detail": "1024 dimensions"
+    },
+    {
+      "name": "ANN search returns neighbours",
+      "pass": true,
+      "detail": "10 neighbour(s)",
+      "ms": 102
+    },
+    {
+      "name": "ANN query uses the HNSW index",
+      "pass": true,
+      "detail": "index scan chosen"
+    },
+    {
+      "name": "fillParagraphFallback shape works",
+      "pass": true,
+      "detail": "20 paragraph(s)",
+      "ms": 90
+    },
+    {
+      "name": "paragraph offsets reconstruct text",
+      "pass": true,
+      "detail": "499/500 = 99.80%",
+      "ms": 457
+    },
+    {
+      "name": "citation state fields intact",
+      "pass": true,
+      "detail": "resolved edges (sampled) 115041 · overruled judgments 95 · verification_cache 0 rows / 0 state(s) / 0 source(s) · citation_checks 4438",
+      "ms": 120785
+    },
+    {
+      "name": "collation provider",
+      "pass": null,
+      "detail": "provider=i locale=en-US · sort: apple Apple ápple banana Banana"
+    },
+    {
+      "name": "planner statistics present",
+      "pass": true,
+      "detail": "343 column stats — ANALYZE has run"
+    }
+  ]
+}
