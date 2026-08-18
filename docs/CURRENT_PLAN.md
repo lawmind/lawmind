@@ -10120,3 +10120,32 @@ Exhaustive classification of the corpus. On the 51.2% evidence the rules need
 work before the volume does, and which lever to pull — deepen the 30 thin strata,
 or attack `disposal_nature` coverage — is NEW1's call since they own what the
 selector is for. Asked in bus 0714.
+
+#### The frame write landed, and it exposed a defect I had just introduced
+
+Final counts after `--frame … --confirm`:
+
+```
+classified                      1,010,938
+assessed but UNCLASSIFIABLE     1,048,789      50.9% of everything assessed
+never assessed                 12,624,089
+```
+
+(The 51.2% recorded above was the pre-write figure and was correct at the time;
+the frame added 53,708 assessments and moved it to 50.9%. Same conclusion.)
+
+**The CLI's own self-check printed `12,624,089 with no method (must be 0)`.**
+That assertion is only true of a FULL walk — it exists so a leftover
+`hc_class_method IS NULL` reveals a pass that missed rows. A `--frame` run
+classifies 53,708 of 14.6M *on purpose*, so the same number is correctly ~12.6M,
+and the line reads as catastrophic failure of a run that did exactly what it was
+told.
+
+The defect arrived with `--frame`, which is mine, so it is fixed rather than left
+for whoever reads that line next and reasonably panics. The check is now
+scope-aware and says which run it is describing.
+
+Worth keeping as a shape: **a self-check inherits the assumptions of the only
+mode that existed when it was written.** Adding a mode that violates one turns
+the check from a safeguard into a false alarm, and a false alarm in a
+verification line is worse than no line — it trains the reader to ignore it.

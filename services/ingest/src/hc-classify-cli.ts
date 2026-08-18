@@ -264,9 +264,27 @@ async function main(): Promise<void> {
              count(*) FILTER (WHERE hc_document_class IS NULL AND hc_class_method IS NOT NULL)::int AS unclassified,
              count(*) FILTER (WHERE hc_class_method IS NULL)::int AS methodless
       FROM judgments WHERE court <> 'Supreme Court of India'`;
+    /**
+     * `(must be 0)` IS ONLY TRUE OF A FULL WALK, and printing it after a
+     * `--frame` run is a lie about a healthy result.
+     *
+     * The assertion exists because a full pass touches every High Court row, so
+     * a leftover `hc_class_method IS NULL` means the walk missed something. A
+     * frame run classifies 53,708 rows out of 14.6M ON PURPOSE, so the same
+     * number is correctly ~12.6M — and the first frame run printed
+     * `12,624,089 with no method (must be 0)`, which reads as a catastrophic
+     * failure of a run that did exactly what it was told.
+     *
+     * The defect arrived with `--frame`, so it is fixed here rather than left
+     * for whoever reads that line next and reasonably panics.
+     */
+    const scopeNote =
+      frameIds === null
+        ? 'with no method (must be 0 after a full pass)'
+        : `with no method — EXPECTED: this run classified only the ${frameIds.length.toLocaleString()} rows in the frame`;
     console.log(
       `\nwritten: ${check?.classified} classified, ${check?.unclassified} deliberately unclassified, ` +
-        `${check?.methodless} with no method (must be 0)`,
+        `${check?.methodless} ${scopeNote}`,
     );
   } finally {
     await sql.end();
