@@ -41,12 +41,43 @@
  * **A real defect still stops.** Restarts are capped, and a worker that dies
  * immediately on every attempt is reported rather than hammered — repeating a
  * malformed query more slowly is not resilience.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * AND A WORKER THAT STOPS WITHOUT DYING — the case everything above misses
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Every rule above reacts to the child EXITING. A child that HANGS never exits,
+ * so none of them fire and the scope is silently down while the process table
+ * still shows it.
+ *
+ * Measured 18 Aug 2026: `hc-boot-mid-3_22` stopped at 07:59:58 — the exact
+ * instant the PostgreSQL service was restarted — and sat there ~25 minutes,
+ * blocked on a connection the restart took away without tearing the socket down.
+ * Its checkpoint offset never moved once. Nothing in this file noticed, because
+ * nothing had exited.
+ *
+ * It was invisible from the outside too: the corpus was gaining ~800k rows/hour
+ * from the other ten scopes, so **every aggregate looked healthy**. A human found
+ * it by diffing per-scope checkpoint offsets.
+ *
+ * `db-transient.ts` cannot help here and it is not a gap in it. A retry needs
+ * something to catch; a hang throws nothing. The only signal a stalled worker
+ * emits is SILENCE, so that is what is watched: these workers print a progress
+ * line every batch, and a log that has not grown in `STALL_MS` is a worker that
+ * is not working. Killing it turns the one failure this file could not see into
+ * the one it handles best — an exit.
+ *
+ * The threshold is deliberately generous. The slowest healthy rate observed
+ * across the fleet is 0.7 docs/s, which is still ~600 documents inside the
+ * window, and a single hostile PDF is separately bounded by the extractor's own
+ * timeout. Being wrong this way costs one restart from a checkpoint; being wrong
+ * the other way cost 25 minutes and would have cost the rest of the run.
  */
 import { spawn } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { setTimeout } from 'node:timers';
+import { setTimeout, setInterval, clearInterval } from 'node:timers';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -63,6 +94,15 @@ const logPath = join(ROOT, `${logName}.log`);
 const MAX_RESTARTS = 40;
 /** A worker that dies faster than this never did any work — likely a real defect. */
 const TOO_FAST_MS = 20_000;
+/**
+ * How long a supervised worker may produce NO output before it is treated as
+ * hung. See the header: a hang emits nothing, so silence is the only signal.
+ * Generous on purpose — the slowest healthy rate measured across the fleet is
+ * 0.7 docs/s, which still writes a progress line every few minutes.
+ */
+const STALL_MS = Number(process.env['SUPERVISE_STALL_MS'] ?? 15 * 60_000);
+/** Cheap enough to run often; the check is one integer comparison. */
+const STALL_POLL_MS = 30_000;
 
 const finished = () =>
   existsSync(logPath) && /^RESULTS/m.test(readFileSync(logPath, 'utf8').slice(-4000));
@@ -158,8 +198,15 @@ for (;;) {
         stdio: ['ignore', 'pipe', 'pipe'],
       },
     );
+    /**
+     * Last time the child said ANYTHING. Updated from the data handlers rather
+     * than by stat-ing the log, because the log is shared across restarts and
+     * appended by whoever ran last — its mtime is not this child's liveness.
+     */
+    let lastOutputAt = Date.now();
     // Append rather than truncate: the log is the resume story across restarts.
     const append = (buf) => {
+      lastOutputAt = Date.now();
       try {
         appendFileSync(logPath, buf);
       } catch {
@@ -168,11 +215,48 @@ for (;;) {
     };
     child.stdout.on('data', append);
     child.stderr.on('data', append);
+
+    /**
+     * THE STALL WATCHDOG. Turns a hang — which this supervisor cannot see —
+     * into an exit, which is the only thing it handles.
+     *
+     * SIGKILL rather than SIGTERM: the worker is wedged on a socket that will
+     * never answer, so asking it politely is asking the thing that is stuck to
+     * unstick itself. Every supervised worker is resumable from its checkpoint,
+     * so the cost is at most one re-read batch.
+     *
+     * The kill makes `child.on('close')` fire, so the normal restart path —
+     * backoff, `consecutiveFast`, `MAX_RESTARTS`, the STOP check — applies
+     * unchanged. A worker that hangs on every attempt therefore still gets
+     * reported and stopped rather than restarted forever.
+     */
+    const watchdog = setInterval(() => {
+      const silentFor = Date.now() - lastOutputAt;
+      if (silentFor < STALL_MS) return;
+      note(
+        `STALLED — no output for ${(silentFor / 60_000).toFixed(1)} min (limit ` +
+          `${(STALL_MS / 60_000).toFixed(1)} min). A hang exits nothing, so killing it to ` +
+          'restart from the checkpoint.',
+      );
+      clearInterval(watchdog);
+      try {
+        child.kill('SIGKILL');
+      } catch {
+        /* the close handler below reports whatever happens next */
+      }
+    }, STALL_POLL_MS);
+    /** Unref'd so a finished supervisor is never held open by its own timer. */
+    watchdog.unref?.();
+    const stopWatchdog = () => clearInterval(watchdog);
     child.on('error', (err) => {
+      stopWatchdog();
       note(`spawn failed: ${err.message}`);
       resolve(-1);
     });
-    child.on('close', resolve);
+    child.on('close', (code) => {
+      stopWatchdog();
+      resolve(code);
+    });
   });
 
   const ranFor = Date.now() - startedAt;
