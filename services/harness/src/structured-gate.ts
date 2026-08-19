@@ -51,18 +51,84 @@ export async function measureStructuredGate(
 
   /* ── structuredExactness ──────────────────────────────────────────────── */
 
+  /**
+   * `TABLESAMPLE SYSTEM`, not `ORDER BY md5(id::text)` over the whole table —
+   * found necessary 18 Aug 2026. `array_length(reporter_citations, 1) >= 1` has
+   * no usable index (GIN supports containment/overlap, not a generic existence
+   * check), so a plain filtered scan reads all 9.5M rows before sorting a
+   * random key over them. Under the ingest fleet's current write load this
+   * missed a 20s `statement_timeout` outright — the earlier 8s attempt also
+   * failed here, not in the `cite:` loop below.
+   *
+   * `retrieve.ts`'s own measurement (`exactCitation`'s header) puts reporter
+   * citations at **0.53% of rows** — sparse, not rare — so `SYSTEM (5)` (5% of
+   * physical blocks) expects ~2,500 qualifying rows against a `LIMIT` of
+   * `sampleSize`, comfortably enough margin that an empty result would itself
+   * be a finding worth surfacing rather than silently retrying.
+   */
   const citations = await sql<{ judgment_id: string; alias: string }[]>`
     (SELECT judgment_id, alias FROM judgment_citation_aliases
       ORDER BY md5(id::text) LIMIT ${sampleSize})
     UNION ALL
     (SELECT id AS judgment_id, reporter_citations[1] AS alias
-       FROM judgments
+       FROM judgments TABLESAMPLE SYSTEM (5)
       WHERE array_length(reporter_citations, 1) >= 1
       ORDER BY md5(id::text) LIMIT ${sampleSize})`;
 
   let exact = 0;
-  for (const c of citations) {
-    const hits = await runStructured(sql, parse(`cite:${q(c.alias)}`), 2);
+  let timedOut = 0;
+  /**
+   * A TIGHTER `statement_timeout` for THIS loop only, restored to `DEFAULT`
+   * in the `finally` below. The setup query above needs room for ordinary
+   * write contention (minutes, not seconds); the `cite:` loop needs a short
+   * leash because ONE call here can be the 47-million-cost plan described
+   * below, and averaging the two into one connection-wide setting is what
+   * killed the setup query on the first two attempts at this fix (18 Aug).
+   *
+   * Correct only when the caller's `sql` is a single connection (`max: 1`) —
+   * `SET` is session state, and a pool free to route the next query elsewhere
+   * would silently stop enforcing this. `structured-gate-cli.ts` documents
+   * that requirement at its own connection. `run-cli.ts`, the OTHER caller,
+   * is not verified to hold it — noted rather than fixed here, since changing
+   * its pool sizing is outside what this gate's own correctness needs.
+   */
+  await sql`SET statement_timeout = 8000`;
+  try {
+    for (const c of citations) {
+    /**
+     * **`runStructured`'s `cite:` branch (`citationMatchFragment` in
+     * `compile.ts`) can trigger a full-table backward index scan.** Found
+     * running this gate 18 Aug 2026: `EXPLAIN` on a real, common citation
+     * showed the planner choosing `Index Scan Backward using
+     * judgments_judgment_date_idx` — walking the table in date order and
+     * evaluating the (unindexable, correlated) `unnest(reporter_citations)`
+     * predicate row by row — cost estimate 47 MILLION, over `Index Scan using
+     * judgments_neutral_citation_key`, the exact functional index this WHERE
+     * clause matches byte-for-byte. One query ran 31 minutes before being
+     * cancelled. `retrieve.ts`'s `exactCitation` hit and fixed the identical
+     * predicate shape on 17 Aug (see its own header); that fix was never
+     * carried to this sibling call site.
+     *
+     * This is a correctness-adjacent PRODUCTION finding, not a harness-only
+     * one — `search/structured.ts` calls this same `runStructured` for a live
+     * `cite:` field query — and it is server-lane code
+     * (`services/api/src/search/qlang/compile.ts`), not this lane's to fix.
+     * Reported to LCC. Guarded here so one pathological citation cannot hang
+     * this gate for half an hour: a per-query timeout is treated as a
+     * measured FAILURE (the query ran and did not complete), never as a
+     * silent skip — `citationsTested` still counts it. The bound is the `SET
+     * statement_timeout = 8000` immediately above this loop.
+     */
+    let hits: Awaited<ReturnType<typeof runStructured>>;
+    try {
+      hits = await runStructured(sql, parse(`cite:${q(c.alias)}`), 2);
+    } catch {
+      timedOut += 1;
+      failures.push(
+        `cite:${c.alias} → TIMED OUT — likely the full-table backward scan defect, see header`,
+      );
+      continue;
+    }
     /**
      * **Rank 1 and nothing else.** A citation naming two judgments is not a
      * near-miss; it is an ambiguous answer, and `exactCitation` already refuses
@@ -74,6 +140,16 @@ export async function measureStructuredGate(
         `cite:${c.alias} → ${hits.length === 0 ? 'nothing' : `${hits.length} judgment(s), wrong or ambiguous`}`,
       );
     }
+    }
+  } finally {
+    // Restored even if the loop threw for a reason other than a timeout —
+    // this session-level setting must never outlive this function's need for it.
+    await sql`SET statement_timeout = DEFAULT`;
+  }
+  if (timedOut > 0) {
+    failures.unshift(
+      `${timedOut} of ${citations.length} citation queries TIMED OUT (>8s) — see the runStructured plan-defect note above`,
+    );
   }
 
   /* ── fieldPrecision ───────────────────────────────────────────────────── */

@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "//exports": "Briefing assembly is domain logic the nightly sweep needs too. Exported rather than duplicated, and rather than moved to packages/ for one consumer — the ponytail ladder says the cheapest correct change wins. recheck joined it 8 Aug 2026 for the same reason and one more: the API needs it for POST /admin/overruled-rechecks/run, and cron already depends on api rather than the reverse, so moving it HERE removed a cross-package import instead of adding a package.",
-  "//llm-exports": "Added by NEW1, 14 Aug 2026, additively. The harness makes DeepSeek calls for GENERATED (never gold) query-expansion material, and CLAUDE.md §5 says every model call rows into llm_calls with no exceptions. Exporting callModel keeps the harness ON that ledgered path; the alternative was a second HTTP client in the harness, which is exactly how a call escapes the ledger. NOTE FOR ANYONE ADDING MORE: a comment key must live HERE, at the top level, never inside `exports` — every key inside `exports` is parsed as a subpath, and a key not starting with './' invalidates the whole map. Putting this note inside it broke `@lawmind/api/search/*` resolution for the entire harness until typecheck caught it.",
+  "//exports": "Briefing assembly is domain logic the nightly sweep needs too. Exported rather than duplicated, and rather than moved to packages/ for one consumer \u2014 the ponytail ladder says the cheapest correct change wins. recheck joined it 8 Aug 2026 for the same reason and one more: the API needs it for POST /admin/overruled-rechecks/run, and cron already depends on api rather than the reverse, so moving it HERE removed a cross-package import instead of adding a package.",
+  "//llm-exports": "Added by NEW1, 14 Aug 2026, additively. The harness makes DeepSeek calls for GENERATED (never gold) query-expansion material, and CLAUDE.md \u00a75 says every model call rows into llm_calls with no exceptions. Exporting callModel keeps the harness ON that ledgered path; the alternative was a second HTTP client in the harness, which is exactly how a call escapes the ledger. NOTE FOR ANYONE ADDING MORE: a comment key must live HERE, at the top level, never inside `exports` \u2014 every key inside `exports` is parsed as a subpath, and a key not starting with './' invalidates the whole map. Putting this note inside it broke `@lawmind/api/search/*` resolution for the entire harness until typecheck caught it.",
   "exports": {
     "./briefings/assemble": "./src/briefings/assemble.ts",
     "./push/expo": "./src/push/expo.ts",
@@ -21,7 +21,8 @@
     "./judgments/paragraphs": "./src/judgments/paragraphs.ts",
     "./search/qlang/compile": "./src/search/qlang/compile.ts",
     "./search/qlang/parse": "./src/search/qlang/parse.ts",
-    "./search/qlang/explain": "./src/search/qlang/explain.ts"
+    "./search/qlang/explain": "./src/search/qlang/explain.ts",
+    "./statutes/transition": "./src/statutes/transition.ts"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",

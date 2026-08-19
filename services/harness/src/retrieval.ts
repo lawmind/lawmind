@@ -53,6 +53,20 @@ export type ScoredQuery = {
    */
   retrieved: { judgmentId: string; caseTitle: string; passage: string }[];
   /**
+   * Every returned judgment id in rank order, ids only — added 18 Aug 2026.
+   *
+   * `retrieved` above stops at `PRECISION_AT_K` (5) because that is what the
+   * generation path is graded on. Fusion attribution needs more: RRF fuses
+   * candidate lists ~200 deep, so a document that reaches hybrid's top five by
+   * scoring in BOTH arms is routinely at rank 8 in one of them and invisible in
+   * a five-row snapshot. `rrf-displacement-cli.ts` names exactly this as the
+   * follow-up its own analysis could not do.
+   *
+   * Ids only, deliberately. `retrieved` carries `passage`, which is what makes
+   * `arms-checkpoint.jsonl` 387 MB for 849 rows; 20 uuids is ~740 bytes.
+   */
+  rankedIds: string[];
+  /**
    * The query text itself. Carried because the generation path needs the actual
    * QUESTION — an earlier version passed `id` by mistake and the model was
    * handed `civil-a259ece9` as its prompt, which is why it cited almost nothing.
@@ -347,5 +361,6 @@ export async function scoreQuery(
       caseTitle: r.caseTitle,
       passage: r.operativeParagraph,
     })),
+    rankedIds: results.map((r) => r.judgmentId),
   };
 }

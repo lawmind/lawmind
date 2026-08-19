@@ -77,16 +77,80 @@ import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import type { RetrievalMode } from '@lawmind/api/search/retrieve';
 import { openDb } from '@lawmind/ingest/db-host';
+import {
+  MAX_TRANSIENT_RETRIES,
+  isTransientDbOrNetworkError,
+  transientBackoffMs,
+} from '@lawmind/ingest/db-transient';
 import type { Sql } from 'postgres';
 
-import { expandCategories } from '@lawmind/api/search/court-category';
+import { categoryOf } from '@lawmind/api/search/court-category';
 import type { SearchFilters } from '@lawmind/api/search/retrieve';
 
 import { type HarnessQuery, type ScoredQuery, scoreQuery } from './retrieval.ts';
 import { meanNdcgAtK } from './metrics.ts';
 import { mcnemarExactP, queriesToSettle } from './stats.ts';
 
-const ARMS: RetrievalMode[] = ['sparse', 'dense', 'hybrid'];
+/**
+ * Which arms to run. All three by default; `ARMS_MODES=dense` runs one.
+ *
+ * Added 18 Aug 2026 because the arms now cost wildly different amounts and a
+ * three-arm run is priced by its slowest. Measured that day: the dense arm is
+ * an HNSW probe at ~10 ms, while the sparse arm's OR'd tsquery matches 4.5-25.3%
+ * of a 9.3M-row corpus (planner estimate over 8 eval queries) and `ts_rank` must
+ * read the tsvector of every matching row — three sparse queries did not finish
+ * in fifteen minutes under ingest load. Coupling them means the arm that CAN be
+ * measured cleanly today does not get measured at all.
+ *
+ * Paired McNemar still requires arms scored on the identical query set, so this
+ * selects which arms RUN, never which queries they see, and the per-row
+ * checkpoint keys on the arm — a later `ARMS_MODES=sparse,hybrid` fills the same
+ * checkpoint and the pairing is recovered offline.
+ */
+const ALL_ARMS: RetrievalMode[] = ['sparse', 'dense', 'hybrid'];
+const ARMS: RetrievalMode[] = (process.env['ARMS_MODES'] ?? ALL_ARMS.join(','))
+  .split(',')
+  .map((m) => m.trim().toLowerCase())
+  .filter((m) => m.length > 0)
+  .map((m) => {
+    if (!ALL_ARMS.includes(m as RetrievalMode)) {
+      throw new Error(`ARMS_MODES: unknown arm "${m}" — expected some of ${ALL_ARMS.join(', ')}`);
+    }
+    return m as RetrievalMode;
+  });
+
+/**
+ * The corpus's distinct court names, then classified by the SERVER'S OWN
+ * `categoryOf` — so the benchmark still cannot drift from `POST /search` by
+ * hardcoding a court name, which is why this used `expandCategories` before.
+ *
+ * What changed is the ENUMERATION, not the classification. `expandCategories`
+ * issues `SELECT DISTINCT court FROM judgments`, and Postgres has no index skip
+ * scan for `DISTINCT` on a single column: the plan is a full parallel
+ * index-only scan of `judgments_court_idx`. That was 19 rows over 79,322
+ * judgments when the comment on it was written. Measured 18 Aug 2026 against
+ * 9,041,159 judgments under ingest load it had **not returned after 10 minutes**,
+ * and it runs once per arms pass before a single query is scored.
+ *
+ * The recursive form below is the standard loose index scan: one index descent
+ * per distinct value instead of one scan of every entry. Same 26 courts,
+ * measured **716 ms cold / 1 ms warm** on the same box in the same window.
+ *
+ * `expandCategories` itself is on the `POST /search` path and has the same
+ * problem there. That is LCC's module, so this fixes the harness only and the
+ * finding goes to them rather than being silently worked around here.
+ */
+async function courtsInCategory(sql: Sql, category: 'sc' | 'hc'): Promise<string[]> {
+  const rows = await sql<{ court: string }[]>`
+    WITH RECURSIVE t AS (
+      (SELECT court FROM judgments ORDER BY court LIMIT 1)
+      UNION ALL
+      SELECT (SELECT j.court FROM judgments j WHERE j.court > t.court ORDER BY j.court LIMIT 1)
+        FROM t WHERE t.court IS NOT NULL
+    )
+    SELECT court FROM t WHERE court IS NOT NULL`;
+  return rows.map((r) => r.court).filter((c) => categoryOf(c) === category);
+}
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!url) {
@@ -149,7 +213,15 @@ const sql = await openDb(url, 8);
  * = ...`) because paired McNemar needs each arm's row aligned to the same
  * query index as every other arm.
  */
-const CONCURRENCY = 6;
+/**
+ * `ARMS_CONCURRENCY` overrides, added 18 Aug 2026. Six is right for the dense
+ * arm — an HNSW probe that spends its time waiting. It is wrong for the sparse
+ * arm, which reads the tsvector of hundreds of thousands of rows per query and
+ * competes for IO with an ingest fleet writing ~450k rows/hr; six of those in
+ * flight is six sequential-ish scans against one disk, and it slows the fleet
+ * as well as itself.
+ */
+const CONCURRENCY = Number(process.env['ARMS_CONCURRENCY'] ?? 6);
 async function scoreAllConcurrently(
   sql: Sql,
   queries: HarnessQuery[],
@@ -201,25 +273,36 @@ async function scoreAllConcurrently(
  * `ENOTFOUND` — postgres.js throws it straight from query construction, not
  * as a catchable rejection `connect_timeout` can bound. NEW2 root-caused the
  * identical symptom on their own workers (bus 0159): a transient local DNS
- * hiccup resolving `hayabusa.proxy.rlwy.net`, not shared-proxy load — DNS
- * resolution happens before the TCP connect phase `connect_timeout` covers,
- * so it hung unprotected. Their fix retries the whole (resumable) run; this
- * loop has no checkpoint and paired McNemar needs every arm on the identical
- * query set, so retrying per-query is the correct analog here — it costs one
- * query's delay, not the ~90 minutes sparse+dense had already taken.
+ * hiccup, and DNS resolution happens before the TCP connect phase
+ * `connect_timeout` covers. Retrying per-query is the correct analog here
+ * because paired McNemar needs every arm on the identical query set.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * 18 AUG 2026 — THE LOCAL CLASSIFIER HAD THE HOLE NEW2 PREDICTED IT WOULD
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * It matched Node **errno** strings only. A `PostgresError` carries a
+ * **SQLSTATE** in that same `.code` field, so `57P03` ("the database system is
+ * not yet accepting connections") fell straight through to `throw`. NEW2 warned
+ * in bus 0672 that this harness probably shared the hole their whole ingest
+ * fleet died to; it did, and it was observed rather than inferred — the
+ * postmaster restarted at 03:59:56Z and the sparse pass exited with **zero**
+ * rows written and nothing in the log but the unsettled-top-level-await
+ * warning.
+ *
+ * So this no longer keeps its own copy. `services/ingest/src/db-transient.ts`
+ * is the single place that answers "is this worth waiting out", written after
+ * the same judgement was found duplicated seven times and wrong in one of them;
+ * an eighth copy in the harness is the thing that module exists to prevent. Its
+ * budget is also better founded than the one here was — 210 s against 60 s,
+ * sized on this cluster's one measured 150.9 s recovery.
+ *
+ * The only local change was exporting it: `services/ingest/package.json` gained
+ * `"./db-transient"`. That is a one-line manifest addition in NEW2's lane, it
+ * cannot alter their behaviour, and it is flagged to them rather than done
+ * quietly.
  */
-function isTransientNetworkError(error: unknown): boolean {
-  const code = (error as NodeJS.ErrnoException | undefined)?.code;
-  return (
-    code === 'ENOTFOUND' ||
-    code === 'EAI_AGAIN' ||
-    code === 'ECONNRESET' ||
-    code === 'ECONNREFUSED' ||
-    code === 'ETIMEDOUT'
-  );
-}
-
-const MAX_QUERY_RETRIES = 5;
+const MAX_QUERY_RETRIES = MAX_TRANSIENT_RETRIES;
 async function scoreQueryResilient(
   ...args: Parameters<typeof scoreQuery>
 ): ReturnType<typeof scoreQuery> {
@@ -227,11 +310,11 @@ async function scoreQueryResilient(
     try {
       return await scoreQuery(...args);
     } catch (error) {
-      if (!isTransientNetworkError(error) || attempt >= MAX_QUERY_RETRIES) throw error;
-      const delayMs = Math.min(30_000, 2_000 * 2 ** (attempt - 1));
-      const code = (error as NodeJS.ErrnoException).code;
+      if (!isTransientDbOrNetworkError(error) || attempt >= MAX_QUERY_RETRIES) throw error;
+      const delayMs = transientBackoffMs(attempt);
+      const code = (error as NodeJS.ErrnoException).code ?? 'no-code';
       console.error(
-        `  transient network error (${code}), attempt ${attempt}/${MAX_QUERY_RETRIES} — retrying in ${delayMs}ms`,
+        `  transient failure (${code}), attempt ${attempt}/${MAX_QUERY_RETRIES} — retrying in ${delayMs}ms`,
       );
       await new Promise((r) => setTimeout(r, delayMs));
     }
@@ -265,16 +348,38 @@ async function main(): Promise<void> {
      * whether it is measuring the change or measuring growth — a number
      * with no row count next to it is a claim nobody downstream can check.
      */
-    const corpusSizeRows = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM judgments`;
-    const corpusSize = corpusSizeRows[0]!.n;
-    console.log(`${queries.length} queries · arms: ${ARMS.join(', ')} · corpus: ${corpusSize} judgments\n`);
+    /**
+     * `reltuples` first, `count(*)` only as a fallback. Measured 18 Aug 2026:
+     * `count(*)` on a 9.5M-row `judgments` under ingest load took over five
+     * minutes, once per run, for a line that exists purely as provenance —
+     * NEW2 hit the same wall from the other side (bus 0666) and reached the
+     * same conclusion. An estimate LABELLED as an estimate satisfies what this
+     * line is for; an unlabelled one would not.
+     *
+     * The fallback is not defensive padding. `reltuples` is -1 on a table that
+     * has never been analysed and reads 0 on this cluster after a crash before
+     * autovacuum catches up, and a run that silently reports "corpus: 0" is a
+     * run whose provenance line is worse than useless.
+     */
+    const estRows = await sql<{ n: number }[]>`
+      SELECT reltuples::bigint::int AS n FROM pg_class WHERE relname = 'judgments'`;
+    const estimate = estRows[0]?.n ?? 0;
+    const corpusSize =
+      estimate > 0
+        ? estimate
+        : (await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM judgments`)[0]!.n;
+    const corpusHow = estimate > 0 ? 'reltuples estimate' : 'exact count(*)';
+    console.log(
+      `${queries.length} queries · arms: ${ARMS.join(', ')} · corpus: ${corpusSize} judgments (${corpusHow})
+`,
+    );
 
     /**
      * The controlled pass pins the haystack to what dense can actually reach.
      * Expanded through the same server-side mapping `POST /search` uses, so the
      * benchmark cannot drift from the product by hardcoding a court name.
      */
-    const scCourts = await expandCategories(sql, ['sc']);
+    const scCourts = await courtsInCategory(sql, 'sc');
     const ALL_PASSES: { label: string; filters: SearchFilters; note: string }[] = [
       { label: 'UNCONTROLLED', filters: {}, note: 'no filter — the arms as production runs them' },
       {

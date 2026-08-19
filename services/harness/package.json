@@ -25,7 +25,21 @@
     "generate:queries": "tsx src/generate-queries-cli.ts",
     "experiment:citation-strip": "tsx src/experiment-citation-strip-cli.ts",
     "gold:presence": "tsx src/gold-presence-cli.ts",
-    "rrf:displacement": "tsx src/rrf-displacement-cli.ts"
+    "rrf:displacement": "tsx src/rrf-displacement-cli.ts",
+    "rrf:attribution": "tsx src/rrf-attribution-cli.ts",
+    "halfvec:gaps": "tsx src/halfvec-gap-cli.ts",
+    "vector:scale": "tsx src/vector-scale-cli.ts",
+    "adversarial": "tsx src/adversarial-cli.ts",
+    "paired:arms": "tsx src/paired-arms-cli.ts",
+    "fusion:sweep": "tsx src/fusion-sweep-cli.ts",
+    "fusion:policy": "tsx src/fusion-policy-cli.ts",
+    "fusion:reach": "tsx src/fusion-reachability-cli.ts",
+    "fusion:routable": "tsx src/fusion-routing-feasibility-cli.ts",
+    "rep:lab": "tsx src/representation-lab-cli.ts",
+    "rep:layers": "tsx src/representation-layers-cli.ts",
+    "bench:expansion": "tsx src/tier-a-expansion-benchmark-cli.ts",
+    "gate:structured": "tsx src/structured-gate-cli.ts",
+    "crosslingual": "tsx src/crosslingual-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
