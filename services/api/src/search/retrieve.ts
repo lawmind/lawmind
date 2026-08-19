@@ -569,6 +569,52 @@ async function exactCitation(
          ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
          ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
        LIMIT 2)
+
+      UNION
+
+      /**
+       * ── THE CONCORDANCE ARM, AND WHY ITS ABSENCE WAS THE WHOLE BUG
+       *
+       * judgment_citation_aliases exists for exactly one purpose, stated in
+       * migration 0027: an advocate searching AIR 1973 SC 1461 — the
+       * ordinary way to cite *Kesavananda* — got nothing, because we hold it
+       * only as 1973 INSC 91 and [1973] SUPP. 1 S.C.R. 1. *"A zero result
+       * reads as 'no such case', which is the worst failure available to a
+       * product whose promise is that a citation is real."*
+       *
+       * qlang's cite: field has matched aliases since it was written. This
+       * function did not, and the two are the same question asked on two paths:
+       * *which judgment is this citation*. Measured 19 Aug 2026 — **all 4,394
+       * alias keys are unreachable by the two arms above**, which is not a
+       * surprise but the table's entire reason for existing: it holds the
+       * citations that are NOT in the row's own fields. So every one of them
+       * resolved under cite:AIR 1973 SC 1461 and none under the same citation
+       * typed into ordinary search, which then fell back to the sparse ranker —
+       * the arm NEW1 measured at 18.0% recall and which loses a party surname
+       * appearing once to boilerplate a long judgment repeats.
+       *
+       * This is the third instance of one family: exactCitation was fixed 17
+       * Aug, qlang's cite: was catastrophic separately and fixed 18 Aug, and
+       * this arm existed in one and not the other the whole time.
+       *
+       * ── SHAPE COPIED DELIBERATELY, NOT REINVENTED
+       *
+       * j.id = ANY (ARRAY(SELECT …)) is the form compile.ts already proved:
+       * a scalar array expression plans as an InitPlan evaluated ONCE plus a
+       * Bitmap Index Scan on judgments_pkey, where a correlated EXISTS has
+       * to be re-run per candidate row. judgment_citation_aliases_key is
+       * UNIQUE on alias_key, so the constructed array is at most one element —
+       * bounded by the index, not by hope.
+       */
+      (SELECT j.id
+       FROM judgments j
+       WHERE j.id = ANY (ARRAY(
+               SELECT a.judgment_id FROM judgment_citation_aliases a WHERE a.alias_key = ${key}))
+         ${courtWhere(sql, filters)}
+         ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+         ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+         ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+       LIMIT 2)
     ) matched
     LIMIT 2
   `;

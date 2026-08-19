@@ -89,21 +89,85 @@ export function categoryOf(courtName: string): CourtCategory | null {
 }
 
 /**
+ * Every distinct value of `judgments.court`, by one index descent per value.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS IS NOT `SELECT DISTINCT court FROM judgments` — MEASURED 18 AUG 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * It was, until now, in all three functions below, and the comment justifying it
+ * read "19 rows over an indexed column — cheap enough that caching it would be
+ * trading correctness for nothing". The reasoning was right and the arithmetic
+ * aged badly: the cost is not the 26 rows returned, it is the 15,191,513 index
+ * entries Postgres reads to be sure there are only 26. **Postgres has no index
+ * skip scan**, so `DISTINCT` on a single column plans as a full parallel
+ * index-only scan of `judgments_court_idx` — 1,850,847 estimated cost, and NEW1
+ * measured it on the `POST /search` path at **>8m56s, cancelled** (bus 0679).
+ *
+ * It ran on EVERY search, not only filtered ones: `unpopulatedCategories` is on
+ * the response of every request. A corpus that grew 79,322 → 15.2M turned a
+ * documented cheap read into the slowest thing in the hot path.
+ *
+ * The recursive form below is the standard loose index scan — descend the index
+ * once, then repeatedly ask for the next value strictly greater than the last.
+ * 26 descents instead of 15.2M entries. Measured on the same box in the same
+ * window, with 13 concurrent ingest queries running:
+ *
+ *     EXPLAIN ANALYZE, cold        79.9 ms   (26 index searches, 0 heap fetches)
+ *     warm                          1 ms
+ *     SELECT DISTINCT, same box    >8m56s    (NEW1, cancelled)
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY NOT A COURT REGISTRY TABLE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `judgment_coverage.court_name` holds court names, and reading them from there
+ * would be one cheap indexed lookup. It would also be a SECOND truth about which
+ * courts the corpus contains, sourced from what exists AT THE SOURCE rather than
+ * what we hold — and the two are measurably different (`docs/ai/` coverage work:
+ * 22 court-year blackouts where we hold zero of what the source lists). A filter
+ * built on the wrong one offers the advocate a court chip that returns nothing,
+ * which is the exact silent-zero failure this module exists to prevent.
+ *
+ * This reads the column the filter actually filters on. It cannot drift from it,
+ * because it IS it.
+ *
+ * Deliberately the same technique NEW1 wrote in `services/harness/src/arms-cli.ts`
+ * when they hit this in the benchmark, and deliberately not shared code with it:
+ * that file classifies with `categoryOf` imported from here so the CLASSIFICATION
+ * cannot drift, and duplicates only the enumeration. Credit there.
+ *
+ * Still uncached, and the original reasoning for that stands unchanged: an ingest
+ * landing a new court must become filterable without a deploy. At 1 ms warm the
+ * trade the old comment described is finally the trade actually being made.
+ */
+async function distinctCourts(sql: Sql): Promise<string[]> {
+  const rows = await sql<{ court: string }[]>`
+    WITH RECURSIVE t AS (
+      (SELECT court FROM judgments ORDER BY court LIMIT 1)
+      UNION ALL
+      SELECT (SELECT j.court FROM judgments j WHERE j.court > t.court ORDER BY j.court LIMIT 1)
+        FROM t WHERE t.court IS NOT NULL
+    )
+    SELECT court FROM t WHERE court IS NOT NULL
+  `;
+  return rows.map((r) => r.court);
+}
+
+/**
  * The court names in the corpus that fall under the requested categories.
  *
  * Read from the column each request rather than cached: an ingest landing a new
- * court must become filterable without a deploy, and the distinct-court list is
- * 19 rows over an indexed column — cheap enough that caching it would be
- * trading correctness for nothing.
+ * court must become filterable without a deploy. See `distinctCourts` for what
+ * that read costs and why it is no longer a full scan.
  */
 export async function expandCategories(
   sql: Sql,
   categories: readonly CourtCategory[],
 ): Promise<string[]> {
   if (categories.length === 0) return [];
-  const rows = await sql<{ court: string }[]>`SELECT DISTINCT court FROM judgments`;
   const wanted = new Set(categories);
-  return rows.map((r) => r.court).filter((c) => {
+  return (await distinctCourts(sql)).filter((c) => {
     const cat = categoryOf(c);
     return cat !== null && wanted.has(cat);
   });
@@ -118,8 +182,8 @@ export async function expandCategories(
  * applied to a filter: absence must state itself.
  */
 export async function unpopulatedCategories(sql: Sql): Promise<CourtCategory[]> {
-  const rows = await sql<{ court: string }[]>`SELECT DISTINCT court FROM judgments`;
-  const present = new Set(rows.map((r) => categoryOf(r.court)).filter((c) => c !== null));
+  const courts = await distinctCourts(sql);
+  const present = new Set(courts.map((c) => categoryOf(c)).filter((c) => c !== null));
   return COURT_CATEGORIES.filter((c) => !present.has(c));
 }
 
@@ -132,6 +196,5 @@ export async function unpopulatedCategories(sql: Sql): Promise<CourtCategory[]> 
  * rather than something anybody has to think to look for.
  */
 export async function unclassifiedCourts(sql: Sql): Promise<string[]> {
-  const rows = await sql<{ court: string }[]>`SELECT DISTINCT court FROM judgments`;
-  return rows.map((r) => r.court).filter((c) => categoryOf(c) === null);
+  return (await distinctCourts(sql)).filter((c) => categoryOf(c) === null);
 }

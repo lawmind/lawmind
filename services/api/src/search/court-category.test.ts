@@ -75,9 +75,76 @@ describe('court categories', () => {
     assert.deepEqual(await expandCategories(sql, []), []);
   });
 
+  /**
+   * The enumeration is a loose index scan, not `SELECT DISTINCT` — see
+   * `distinctCourts`. Two things have to hold for that substitution to be safe,
+   * and neither is provable by reading the code.
+   *
+   * FIRST, it must return the SAME VALUES `pg_stats` knows about. Those come
+   * from ANALYZE, an independent sample of the heap rather than a walk of the
+   * index, so they cannot fail the same way the scan would.
+   *
+   * **Superset, not equality — and the first version of this test asserted
+   * equality and was wrong.** It reasoned that with 26 distinct values and a
+   * statistics target of 100, the MCV list must hold all of them. It does not:
+   * ANALYZE samples, so a court rarer than the sampling rate is invisible to it.
+   * Measured 19 Aug 2026 — the enumeration returns 26 courts, `pg_stats` reports
+   * `n_distinct = 25` with a 25-entry MCV, and the missing one is
+   * `High Court of Sikkim`, which demonstrably has rows. The two statistics
+   * agreed with each other and were both wrong about the table, so a guard
+   * comparing them to each other could not notice.
+   *
+   * The DIRECTION is what carries the meaning:
+   *   · in MCV, absent from the enumeration → a real defect, the scan lost a
+   *     value that a heap sample independently found;
+   *   · enumerated, absent from MCV → ANALYZE has not sampled a rare court.
+   *     Expected, and not something this test should ever fail on.
+   *
+   * SECOND, it must be bounded. The defect this replaces was not wrong, it was
+   * slow: `>8m56s` on the `POST /search` path (NEW1 bus 0679), on a query whose
+   * own comment called it cheap. A wall-clock assertion is the only shape that
+   * catches a plan regression, and the margin here is five orders of magnitude,
+   * so the bound is generous enough to survive a loaded box and still red on any
+   * return to a full scan.
+   */
+  it('enumerates the same courts pg_stats saw, and does it bounded', async (t) => {
+    const [stat] = await sql<{ mcv: string[] | null; nDistinct: number }[]>`
+      SELECT most_common_vals::text::text[] AS mcv, n_distinct AS "nDistinct"
+        FROM pg_stats WHERE tablename = 'judgments' AND attname = 'court'
+    `;
+    if (!stat?.mcv) return t.skip('no column statistics — run ANALYZE judgments');
+
+    const started = Date.now();
+    const enumerated = [
+      ...(await expandCategories(sql, COURT_CATEGORIES)),
+      ...(await unclassifiedCourts(sql)),
+    ];
+    const elapsed = Date.now() - started;
+
+    const found = new Set(enumerated);
+    const lost = stat.mcv.filter((court) => !found.has(court));
+    assert.deepEqual(
+      lost,
+      [],
+      'ANALYZE sampled these courts from the heap and the enumeration did not return them: ' +
+        lost.join(' · '),
+    );
+    assert.ok(
+      enumerated.length >= stat.mcv.length,
+      'enumerated ' + enumerated.length + ' courts against ' + stat.mcv.length + ' in the MCV list',
+    );
+    assert.ok(
+      elapsed < 30_000,
+      `court enumeration took ${elapsed}ms — a full index scan is back (was 79.9ms cold, 1ms warm)`,
+    );
+  });
+
   it('reports the categories the corpus cannot answer', async (t) => {
-    const [any] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM judgments`;
-    if (!any?.n) return t.skip('no corpus loaded');
+    // `count(*)` here would be the same defect in miniature — it took 11s on
+    // this corpus and the question is only "is anything loaded". EXISTS stops
+    // at the first row.
+    const [any] = await sql<{ loaded: boolean }[]>`SELECT EXISTS (SELECT 1 FROM judgments) AS loaded`;
+    if (!any?.loaded) return t.skip('no corpus loaded');
 
     const unpopulated = await unpopulatedCategories(sql);
     // Not asserted as an exact list — an ingest landing tribunal judgments must

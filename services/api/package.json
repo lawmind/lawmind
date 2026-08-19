@@ -3,17 +3,22 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "//exports": "Briefing assembly is domain logic the nightly sweep needs too. Exported rather than duplicated, and rather than moved to packages/ for one consumer \u2014 the ponytail ladder says the cheapest correct change wins. recheck joined it 8 Aug 2026 for the same reason and one more: the API needs it for POST /admin/overruled-rechecks/run, and cron already depends on api rather than the reverse, so moving it HERE removed a cross-package import instead of adding a package.",
+  "//exports": "Briefing assembly is domain logic the nightly sweep needs too. Exported rather than duplicated, and rather than moved to packages/ for one consumer — the ponytail ladder says the cheapest correct change wins. recheck joined it 8 Aug 2026 for the same reason and one more: the API needs it for POST /admin/overruled-rechecks/run, and cron already depends on api rather than the reverse, so moving it HERE removed a cross-package import instead of adding a package.",
+  "//llm-exports": "Added by NEW1, 14 Aug 2026, additively. The harness makes DeepSeek calls for GENERATED (never gold) query-expansion material, and CLAUDE.md §5 says every model call rows into llm_calls with no exceptions. Exporting callModel keeps the harness ON that ledgered path; the alternative was a second HTTP client in the harness, which is exactly how a call escapes the ledger. NOTE FOR ANYONE ADDING MORE: a comment key must live HERE, at the top level, never inside `exports` — every key inside `exports` is parsed as a subpath, and a key not starting with './' invalidates the whole map. Putting this note inside it broke `@lawmind/api/search/*` resolution for the entire harness until typecheck caught it.",
   "exports": {
     "./briefings/assemble": "./src/briefings/assemble.ts",
     "./push/expo": "./src/push/expo.ts",
     "./citations/fanout": "./src/citations/fanout.ts",
     "./citations/recheck": "./src/citations/recheck.ts",
     "./search/retrieve": "./src/search/retrieve.ts",
+    "./search/structured": "./src/search/structured.ts",
+    "./llm/call": "./src/llm/call.ts",
+    "./llm/route": "./src/llm/route.ts",
     "./search/court-category": "./src/search/court-category.ts",
     "./search/graph-expand": "./src/search/graph-expand.ts",
     "./search/query-shape": "./src/search/query-shape.ts",
     "./search/hyde": "./src/search/hyde.ts",
+    "./judgments/paragraphs": "./src/judgments/paragraphs.ts",
     "./search/qlang/compile": "./src/search/qlang/compile.ts",
     "./search/qlang/parse": "./src/search/qlang/parse.ts",
     "./search/qlang/explain": "./src/search/qlang/explain.ts"
@@ -28,7 +33,8 @@
     "quality:paragraphs": "tsx src/judgments/paragraph-quality-sample.ts",
     "verify:exact-span": "tsx src/judgments/verify-exact-span-cli.ts",
     "retrieval:regression": "tsx src/search/retrieval-regression-cli.ts",
-    "overruled:audit": "tsx src/search/overruled-retrieval-audit-cli.ts"
+    "overruled:audit": "tsx src/search/overruled-retrieval-audit-cli.ts",
+    "kill-switch": "tsx src/admin/kill-switch-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",

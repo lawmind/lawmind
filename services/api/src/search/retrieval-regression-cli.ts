@@ -31,6 +31,7 @@ import postgres from 'postgres';
 
 import { BENCH_QUERIES } from './bench-queries.ts';
 import { hybridSearch } from './retrieve.ts';
+import { sslFor } from '../db-ssl';
 
 type QueryResult = {
   query: string;
@@ -73,7 +74,7 @@ async function main(): Promise<void> {
   if (!url) throw new Error('DATABASE_URL is not set');
   const saveBaseline = process.argv.includes('--save-baseline');
 
-  const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require' });
+  const sql = postgres(url, { max: 4, ssl: sslFor(url) });
   let exitCode = 0;
   try {
     const [size] = await sql<{ n: string }[]>`SELECT count(*)::text AS n FROM judgments`;

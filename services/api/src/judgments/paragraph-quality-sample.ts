@@ -20,6 +20,7 @@
 import postgres from 'postgres';
 
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
+import { sslFor } from '../db-ssl';
 
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
@@ -27,7 +28,7 @@ async function main(): Promise<void> {
   const nArg = process.argv.indexOf('--n');
   const n = nArg === -1 ? 500 : Number(process.argv[nArg + 1] ?? 500);
 
-  const sql = postgres(url, { max: 4, ssl: 'require' });
+  const sql = postgres(url, { max: 4, ssl: sslFor(url) });
   try {
     // TABLESAMPLE for a cheap, honestly-random slice rather than ORDER BY
     // random() over the whole table (which forces a full scan to score every

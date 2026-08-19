@@ -37,6 +37,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import postgres from 'postgres';
 
 import { resolveExactSpan } from './paragraphs.ts';
+import { sslFor } from '../db-ssl';
 
 type FailureClass =
   | 'OFFSET_INVALID' // bounds check itself failed: offset/length don't fit inside full_text
@@ -113,7 +114,7 @@ async function main(): Promise<void> {
   const persistPath =
     persistArg === -1 ? 'verify-exact-span-regressions.json' : (argv[persistArg + 1] ?? 'verify-exact-span-regressions.json');
 
-  const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require' });
+  const sql = postgres(url, { max: 4, ssl: sslFor(url) });
   let exitCode = 0;
   const failures: FailureRecord[] = [];
   const byClass = new Map<FailureClass, number>();

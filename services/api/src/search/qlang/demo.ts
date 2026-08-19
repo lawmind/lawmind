@@ -15,8 +15,10 @@ import { explainQuery } from './explain.ts';
 import { countStructured, runStructured } from './compile.ts';
 import { QueryError } from './lex.ts';
 import { parse } from './parse.ts';
+import { sslFor } from '../../db-ssl.ts';
 
-const sql = postgres(process.env['DATABASE_URL']!, { ssl: 'require', max: 3 });
+const dbUrl = process.env['DATABASE_URL']!;
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 3 });
 
 const QUERIES: readonly { q: string; expect: string }[] = [
   { q: 'cite:"(1994) 3 SCC 1"', expect: 'AN SCC CITATION — impossible before the concordance' },

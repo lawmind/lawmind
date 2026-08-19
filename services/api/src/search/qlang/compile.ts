@@ -94,14 +94,82 @@ function textMatch(sql: Sql, value: string, phrase: boolean, wildcard: boolean):
  * change nothing.
  */
 export function citationMatchFragment(sql: Sql, key: string): Frag {
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * EVERY ARM MUST BE BITMAP-INDEXABLE, OR ONE OF THEM READS THE WHOLE TABLE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The three sources below are unchanged and so is the set this matches. What
+   * changed, 19 Aug 2026, is that two arms were written as CORRELATED
+   * subqueries — and a correlated subquery cannot take part in a `BitmapOr`.
+   * Because the arms are `OR`ed, a row failing the others might still pass that
+   * one, so **every row of `judgments` had to be evaluated.**
+   *
+   * NEW1 measured the consequence (bus 0730/0731): `structuredExactness` at
+   * **0.00%**, all **120 of 120** real citations timing out at 8 s through
+   * `runStructured`, one query observed running **31 minutes** before it was
+   * cancelled by hand. Not an unlucky-selectivity edge case — the entire
+   * predicate shape, every time, on the live `/search` route inside Gate S1's
+   * 3-second budget. `CLAUDE.md` calls Gate S2 a hard stop; this was it.
+   *
+   * Measured on the local cluster, same citation, `EXPLAIN`:
+   *
+   *   before   Index Scan Backward using judgments_judgment_date_idx
+   *            cost 50,116,705 · est. 12,367,043 rows · times out at 20 s
+   *   after    BitmapOr of all three arms, then Sort
+   *            cost 1,342 · **3 ms**
+   *
+   * **It was NOT enough to fix the `unnest` arm.** That was the obvious suspect
+   * — it is the one `exactCitation`'s 17 Aug header names — but replacing it
+   * alone left the plan completely unchanged, still a backward date scan at cost
+   * 51,353,396. Each arm was then planned in isolation: the neutral arm is an
+   * index scan, the array arm a bitmap scan, and `A OR B` already BitmapOrs at
+   * cost 188. **The alias `EXISTS` was equally fatal on its own**, and it is the
+   * arm nobody had suspected.
+   *
+   * WHY THE PLANNER'S MISTAKE IS SO LARGE. With an unindexable arm in the `OR`
+   * it estimates ~8-12M matching rows, so `ORDER BY judgment_date DESC LIMIT 2`
+   * looks cheap — walk the date index backward and stop as soon as two match.
+   * The predicate actually matches ONE row, so that walk reads the corpus. The
+   * fix is not a hint or a rewritten `ORDER BY`; it is making the estimate
+   * honest by making every arm indexable.
+   *
+   * ── arm 2: the same substitution `exactCitation` already made
+   *
+   * `lawmind_citation_keys(reporter_citations)` is `IMMUTABLE`, is backed by
+   * `judgments_reporter_citation_keys_gin` (migration 0053), and its body is
+   * `upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g'))` over `unnest` —
+   * **byte-identical** to the normalisation it replaces, verified by reading
+   * `pg_get_functiondef` rather than assuming. A NULL element compared under the
+   * old arm yielded NULL, i.e. no match, exactly as the function's
+   * `WHERE rc IS NOT NULL` does.
+   *
+   * ── arm 3: `ARRAY(...)` instead of a correlated `EXISTS`
+   *
+   * `j.id = ANY (ARRAY(SELECT …))` is a scalar array expression, so it plans as
+   * an `InitPlan` evaluated ONCE plus a `Bitmap Index Scan on judgments_pkey` —
+   * which is a arm a `BitmapOr` can take. The correlated `EXISTS` it replaces
+   * had to be re-run per candidate row and could not.
+   *
+   * Bounded, and checked rather than hoped: `judgment_citation_aliases` holds
+   * 4,394 rows over 4,394 distinct `alias_key` values — **at most one judgment
+   * per key** — so the constructed array is a single element. If that ever
+   * became one-to-many the array stays small for the same reason the concordance
+   * is useful: a key identifies a decision.
+   *
+   * ── why not `exactCitation`'s `UNION`
+   *
+   * It cannot be used here and NEW1 was right about that. `compileWhere`
+   * composes this fragment inside arbitrary boolean expressions
+   * (`judge:X AND cite:Y`, `NOT (…)`), and a `UNION` of two `SELECT`s is not a
+   * boolean fragment. This fix needs no set operation: it stays one `OR`, and
+   * composes exactly as before.
+   */
   return sql`(
     upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = ${key}
-    OR EXISTS (
-      SELECT 1 FROM unnest(j.reporter_citations) AS rc
-       WHERE upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) = ${key})
-    OR EXISTS (
-      SELECT 1 FROM judgment_citation_aliases a
-       WHERE a.judgment_id = j.id AND a.alias_key = ${key}))`;
+    OR lawmind_citation_keys(j.reporter_citations) @> ARRAY[${key}::text]
+    OR j.id = ANY (ARRAY(
+      SELECT a.judgment_id FROM judgment_citation_aliases a WHERE a.alias_key = ${key})))`;
 }
 
 /**

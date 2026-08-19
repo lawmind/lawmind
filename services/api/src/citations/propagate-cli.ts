@@ -9,6 +9,7 @@
 import postgres from 'postgres';
 
 import { findUnappliedTreatment, propagateTreatment } from './propagate-treatment.ts';
+import { sslFor } from '../db-ssl';
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!url) {
@@ -17,7 +18,7 @@ if (!url) {
 }
 
 const apply = process.argv.includes('--apply');
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 2 });
+const sql = postgres(url, { ssl: sslFor(url), max: 2 });
 
 try {
   const candidates = await findUnappliedTreatment(sql);

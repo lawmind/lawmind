@@ -25,6 +25,7 @@
 import postgres from 'postgres';
 
 import { hybridSearch } from './retrieve.ts';
+import { sslFor } from '../db-ssl';
 
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
@@ -32,7 +33,7 @@ async function main(): Promise<void> {
   const nArg = process.argv.indexOf('--n');
   const n = nArg === -1 ? 300 : Number(process.argv[nArg + 1] ?? 300);
 
-  const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require' });
+  const sql = postgres(url, { max: 4, ssl: sslFor(url) });
   let exitCode = 0;
   try {
     const [counts] = await sql<
