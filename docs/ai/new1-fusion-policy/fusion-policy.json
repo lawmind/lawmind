@@ -1,0 +1,313 @@
+{
+  "tool": "services/harness/src/fusion-policy-cli.ts",
+  "generatedAt": "2026-08-19T06:37:09.294Z",
+  "checkpoint": "C:\\Users\\Xerxus\\Documents\\Lawmind\\arms-checkpoint.jsonl",
+  "pass": "CONTROLLED",
+  "queries": 283,
+  "groups": {
+    "civil": 200,
+    "criminal": 83
+  },
+  "rrfK": 60,
+  "depth": 20,
+  "repeats": 2000,
+  "bootstrap": 10000,
+  "seed": 20260819,
+  "grid": [
+    0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.85,
+    1
+  ],
+  "method": {
+    "heldOut": "repeated stratified split-half; tuned policies pick θ on the train half by success@5 (ties broken toward the LARGER weight, i.e. the higher-coverage choice); all policies scored on the same test half",
+    "bootstrap": "query-level resampling with replacement, stratified by group, identical draws shared across every comparison so differences are paired",
+    "limitation": "CONTROLLED pass, courts=[sc]; every gold judgment is embedded, so both arms can reach every candidate. Nothing here measures the coverage cliff for unembedded documents."
+  },
+  "fullSetInSample": [
+    {
+      "policy": "DENSE_ONLY",
+      "thetaInSample": null,
+      "n": 283,
+      "successAt5": 0.21908127208480566,
+      "recallAt20": 0.40636042402826855,
+      "mrr": 0.15391932117240903,
+      "ndcgAt5": 0.15515674237816598,
+      "ndcgAt20": 0.20983504937193495,
+      "denseSuccessesDestroyed": 0,
+      "winsAddedByReordering": 0,
+      "winsAddedSparseOnlyReach": 0,
+      "mcnemarVsDenseP": null,
+      "note": "sparse arm dropped entirely — unshippable at current embedding coverage"
+    },
+    {
+      "policy": "CURRENT_EQUAL_RRF",
+      "thetaInSample": null,
+      "n": 283,
+      "successAt5": 0.2049469964664311,
+      "recallAt20": 0.36395759717314485,
+      "mrr": 0.13140076214486293,
+      "ndcgAt5": 0.13806892108820476,
+      "ndcgAt20": 0.18300249712226854,
+      "denseSuccessesDestroyed": 18,
+      "winsAddedByReordering": 10,
+      "winsAddedSparseOnlyReach": 4,
+      "mcnemarVsDenseP": 0.5966148958541407,
+      "note": "production today"
+    },
+    {
+      "policy": "CRIMINAL_DENSE_ONLY + CIVIL_EXISTING_HYBRID",
+      "thetaInSample": null,
+      "n": 283,
+      "successAt5": 0.2226148409893993,
+      "recallAt20": 0.37809187279151946,
+      "mrr": 0.13968554800242602,
+      "ndcgAt5": 0.14817970948448317,
+      "ndcgAt20": 0.193131109728324,
+      "denseSuccessesDestroyed": 12,
+      "winsAddedByReordering": 10,
+      "winsAddedSparseOnlyReach": 3,
+      "mcnemarVsDenseP": 0.9999999999999873,
+      "note": "routed, no free parameter — criminal drops sparse, civil unchanged"
+    },
+    {
+      "policy": "CRIMINAL_SPARSE_DOWNWEIGHT(theta) + CIVIL_EXISTING_HYBRID",
+      "thetaInSample": 0,
+      "n": 283,
+      "successAt5": 0.2226148409893993,
+      "recallAt20": 0.37809187279151946,
+      "mrr": 0.13968554800242602,
+      "ndcgAt5": 0.14817970948448317,
+      "ndcgAt20": 0.193131109728324,
+      "denseSuccessesDestroyed": 12,
+      "winsAddedByReordering": 10,
+      "winsAddedSparseOnlyReach": 3,
+      "mcnemarVsDenseP": 0.9999999999999873,
+      "note": "routed, one free parameter fitted on the train half only"
+    },
+    {
+      "policy": "GLOBAL_DOWNWEIGHT(theta)",
+      "thetaInSample": 0.05,
+      "n": 283,
+      "successAt5": 0.2332155477031802,
+      "recallAt20": 0.40636042402826855,
+      "mrr": 0.1530150279619698,
+      "ndcgAt5": 0.15950890683198987,
+      "ndcgAt20": 0.2092469170169114,
+      "denseSuccessesDestroyed": 2,
+      "winsAddedByReordering": 6,
+      "winsAddedSparseOnlyReach": 0,
+      "mcnemarVsDenseP": 0.28906249999999983,
+      "note": "NOT routed, one free parameter fitted on the train half — the control for \"is routing what helps?\""
+    }
+  ],
+  "heldOut": [
+    {
+      "policy": "DENSE_ONLY",
+      "testSuccessAt5Mean": 0.21867253521126814,
+      "testRecallAt20Mean": 0.40530633802817073,
+      "deltaVsEqualMean": 0.014507042253521151,
+      "deltaVsEqualCi95": [
+        -0.028169014084507032,
+        0.056338028169014065
+      ],
+      "repetitionsBeatingEqual": 0.7045,
+      "thetaHistogram": null
+    },
+    {
+      "policy": "CURRENT_EQUAL_RRF",
+      "testSuccessAt5Mean": 0.2041654929577474,
+      "testRecallAt20Mean": 0.3626549295774657,
+      "deltaVsEqualMean": null,
+      "deltaVsEqualCi95": null,
+      "repetitionsBeatingEqual": null,
+      "thetaHistogram": null
+    },
+    {
+      "policy": "CRIMINAL_DENSE_ONLY + CIVIL_EXISTING_HYBRID",
+      "testSuccessAt5Mean": 0.22192253521126828,
+      "testRecallAt20Mean": 0.376908450704226,
+      "deltaVsEqualMean": 0.01775704225352117,
+      "deltaVsEqualCi95": [
+        0,
+        0.03521126760563381
+      ],
+      "repetitionsBeatingEqual": 0.9425,
+      "thetaHistogram": null
+    },
+    {
+      "policy": "CRIMINAL_SPARSE_DOWNWEIGHT(theta) + CIVIL_EXISTING_HYBRID",
+      "testSuccessAt5Mean": 0.2147570422535219,
+      "testRecallAt20Mean": 0.3759084507042262,
+      "deltaVsEqualMean": 0.010591549295774792,
+      "deltaVsEqualCi95": [
+        0,
+        0.028169014084507032
+      ],
+      "repetitionsBeatingEqual": 0.786,
+      "thetaHistogram": {
+        "0": 975,
+        "1": 146,
+        "0.05": 464,
+        "0.85": 415
+      }
+    },
+    {
+      "policy": "GLOBAL_DOWNWEIGHT(theta)",
+      "testSuccessAt5Mean": 0.21940140845070524,
+      "testRecallAt20Mean": 0.4011302816901425,
+      "deltaVsEqualMean": 0.015235915492957683,
+      "deltaVsEqualCi95": [
+        -0.01408450704225353,
+        0.04225352112676056
+      ],
+      "repetitionsBeatingEqual": 0.777,
+      "thetaHistogram": {
+        "0": 47,
+        "1": 90,
+        "0.05": 866,
+        "0.1": 117,
+        "0.15": 31,
+        "0.5": 201,
+        "0.6": 58,
+        "0.85": 590
+      }
+    }
+  ],
+  "bootstrapPairs": [
+    {
+      "a": "DENSE_ONLY",
+      "aTheta": 0,
+      "b": "CURRENT_EQUAL_RRF",
+      "bTheta": 0,
+      "deltaSuccessAt5Mean": 0.014233922261483605,
+      "ci95": [
+        -0.024734982332155486,
+        0.05300353356890458
+      ],
+      "probDeltaPositive": 0.7339
+    },
+    {
+      "a": "CRIMINAL_DENSE_ONLY + CIVIL_EXISTING_HYBRID",
+      "aTheta": 0,
+      "b": "CURRENT_EQUAL_RRF",
+      "bTheta": 0,
+      "deltaSuccessAt5Mean": 0.017628975265016722,
+      "ci95": [
+        0,
+        0.035335689045936425
+      ],
+      "probDeltaPositive": 0.9686
+    },
+    {
+      "a": "CRIMINAL_SPARSE_DOWNWEIGHT(theta) + CIVIL_EXISTING_HYBRID",
+      "aTheta": 0,
+      "b": "CURRENT_EQUAL_RRF",
+      "bTheta": 0,
+      "deltaSuccessAt5Mean": 0.017628975265016722,
+      "ci95": [
+        0,
+        0.035335689045936425
+      ],
+      "probDeltaPositive": 0.9686
+    },
+    {
+      "a": "CRIMINAL_DENSE_ONLY + CIVIL_EXISTING_HYBRID",
+      "aTheta": 0,
+      "b": "DENSE_ONLY",
+      "bTheta": 0,
+      "deltaSuccessAt5Mean": 0.003395053003533593,
+      "ci95": [
+        -0.03180212014134273,
+        0.038869257950530034
+      ],
+      "probDeltaPositive": 0.5377
+    }
+  ],
+  "criminalSubgroup": [
+    {
+      "policy": "DENSE_ONLY",
+      "theta": null,
+      "successAt5": 0.1686746987951807,
+      "ci95": [
+        0.0963855421686747,
+        0.25301204819277107
+      ],
+      "deltaVsEqualMean": 0.06100722891565806,
+      "deltaVsEqualCi95": [
+        0,
+        0.12048192771084339
+      ],
+      "probBetterThanEqual": 0.9678
+    },
+    {
+      "policy": "CURRENT_EQUAL_RRF",
+      "theta": null,
+      "successAt5": 0.10843373493975904,
+      "ci95": [
+        0.04819277108433735,
+        0.18072289156626506
+      ],
+      "deltaVsEqualMean": 0,
+      "deltaVsEqualCi95": [
+        0,
+        0
+      ],
+      "probBetterThanEqual": 0
+    },
+    {
+      "policy": "CRIMINAL_DENSE_ONLY + CIVIL_EXISTING_HYBRID",
+      "theta": null,
+      "successAt5": 0.1686746987951807,
+      "ci95": [
+        0.0963855421686747,
+        0.25301204819277107
+      ],
+      "deltaVsEqualMean": 0.06100722891565806,
+      "deltaVsEqualCi95": [
+        0,
+        0.12048192771084339
+      ],
+      "probBetterThanEqual": 0.9678
+    },
+    {
+      "policy": "CRIMINAL_SPARSE_DOWNWEIGHT(theta) + CIVIL_EXISTING_HYBRID",
+      "theta": 0,
+      "successAt5": 0.1686746987951807,
+      "ci95": [
+        0.0963855421686747,
+        0.25301204819277107
+      ],
+      "deltaVsEqualMean": 0.06100722891565806,
+      "deltaVsEqualCi95": [
+        0,
+        0.12048192771084339
+      ],
+      "probBetterThanEqual": 0.9678
+    },
+    {
+      "policy": "GLOBAL_DOWNWEIGHT(theta)",
+      "theta": 0.05,
+      "successAt5": 0.1566265060240964,
+      "ci95": [
+        0.08433734939759036,
+        0.24096385542168675
+      ],
+      "deltaVsEqualMean": 0.04881927710842849,
+      "deltaVsEqualCi95": [
+        0,
+        0.10843373493975904
+      ],
+      "probBetterThanEqual": 0.9378
+    }
+  ]
+}

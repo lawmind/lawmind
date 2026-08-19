@@ -1,0 +1,81 @@
+{
+  "kind": "new1_representation_layers",
+  "createdAt": "2026-08-19T14:29:34.777Z",
+  "pool": 4546,
+  "queries": 283,
+  "spanChars": 4800,
+  "seed": 20260819,
+  "chunkVectorSource": "judgment_chunks.embedding, equivalence-checked against the sidecar",
+  "equivalence": {
+    "sampled": 60,
+    "meanCosine": 0.9999983146411677,
+    "minCosine": 0.9999783500320969,
+    "floor": 0.999
+  },
+  "embedder": "BGE-M3 fp32 via the GPU sidecar, CLS-pooled and L2-normalised",
+  "queryVectors": "C:\\Users\\Xerxus\\Documents\\Lawmind\\docs\\ai\\new1-halfvec\\eval-query-vectors.json",
+  "pooling": "MAX over a document vectors",
+  "results": {
+    "A_HEAD": {
+      "n": 283,
+      "successAt5": 0.20141342756183744,
+      "recallAt20": 0.37809187279151946,
+      "mrr": 0.140047048299489,
+      "ndcgAt5": 0.13685041743862486,
+      "ndcgAt20": 0.18643980013369438,
+      "vectors": 4546,
+      "vectorsPerDocument": 1
+    },
+    "B_HEAD_TAIL": {
+      "n": 283,
+      "successAt5": 0.18374558303886926,
+      "recallAt20": 0.37809187279151946,
+      "mrr": 0.13528826885033646,
+      "ndcgAt5": 0.12849182346975135,
+      "ndcgAt20": 0.18219600992769022,
+      "vectors": 9092,
+      "vectorsPerDocument": 2
+    },
+    "C_HEAD_TAIL_ISSUE": {
+      "n": 283,
+      "successAt5": 0.19434628975265017,
+      "recallAt20": 0.38515901060070673,
+      "mrr": 0.13327021123861102,
+      "ndcgAt5": 0.1282259821419318,
+      "ndcgAt20": 0.18243741663395865,
+      "vectors": 13638,
+      "vectorsPerDocument": 3
+    },
+    "D_HEAD_TAIL_ISSUE_MEDOID2": {
+      "n": 283,
+      "successAt5": 0.24028268551236748,
+      "recallAt20": 0.44876325088339225,
+      "mrr": 0.1663759543687746,
+      "ndcgAt5": 0.16367904272932216,
+      "ndcgAt20": 0.22280868591882108,
+      "vectors": 22729,
+      "vectorsPerDocument": 4.999780026396833
+    },
+    "CONTROL_HEAD_RANDOM4": {
+      "n": 283,
+      "successAt5": 0.1872791519434629,
+      "recallAt20": 0.43109540636042404,
+      "mrr": 0.13905201039866968,
+      "ndcgAt5": 0.1285127056388197,
+      "ndcgAt20": 0.197637422027673,
+      "vectors": 22684,
+      "vectorsPerDocument": 4.989881214254289
+    },
+    "CEILING_ALL_CHUNKS": {
+      "n": 283,
+      "successAt5": 0.22968197879858657,
+      "recallAt20": 0.4169611307420495,
+      "mrr": 0.1570453195042751,
+      "ndcgAt5": 0.15283091156028217,
+      "ndcgAt20": 0.20719546028865993,
+      "vectors": 149211,
+      "vectorsPerDocument": 32.82248130224373
+    }
+  },
+  "limitation": "exact search over an in-memory pool of hard negatives, not HNSW over the corpus. The comparison BETWEEN representations is the measurement; the absolute figures are not production numbers."
+}

@@ -50,6 +50,26 @@ const OUT = process.env['EXPANSION_JSON'] ?? null;
 const MAX_QUERIES = Number(process.env['MAX_QUERIES'] ?? 300);
 const CANDIDATE_DEPTH = Number(process.env['CANDIDATE_DEPTH'] ?? 50);
 const ANN_DEPTH = Number(process.env['ANN_DEPTH'] ?? 2000);
+/**
+ * How many queries get the FULL production-ANN treatment on the OLD universe.
+ *
+ * The first version scored all 120 and spent two hours re-proving a fact the
+ * selection SQL already guarantees: the value-ordered manifest was built with
+ * `NOT EXISTS (SELECT 1 FROM judgment_chunks ...)`, so those gold documents have
+ * no chunk and no ANN query at any depth can return them. Paying 120 vector
+ * searches to rediscover an exclusion criterion is not evidence, it is a slow
+ * tautology.
+ *
+ * What IS worth paying for is a POSITIVE CONTROL: a subsample scored the
+ * expensive way, to catch the case where the presence check and the retrieval
+ * path disagree — a stale index, a partial rebuild, a judgment whose chunks
+ * arrived after the manifest was cut. If the control ever returns a gold
+ * document the presence check called absent, the presence check is wrong and
+ * this number stops being trustworthy.
+ */
+const OLD_SAMPLE = Number(process.env['OLD_SAMPLE'] ?? 20);
+/** Per-statement ceiling. The first run hung with no query in flight and no error. */
+const STATEMENT_TIMEOUT_MS = Number(process.env['STATEMENT_TIMEOUT_MS'] ?? 120000);
 
 type Vec = Float32Array;
 
@@ -106,7 +126,11 @@ async function main(): Promise<void> {
     console.error('DATABASE_URL is not set.');
     process.exit(1);
   }
-  const sql = postgres(url, { ssl: sslFor(url), max: 2, connection: { statement_timeout: 0 } });
+  const sql = postgres(url, {
+    ssl: sslFor(url),
+    max: 2,
+    connection: { statement_timeout: STATEMENT_TIMEOUT_MS },
+  });
 
   console.log('TIER-A EXPANSION BENCHMARK — P6');
   console.log('='.repeat(78));
@@ -216,10 +240,23 @@ async function main(): Promise<void> {
   console.log('embedding queries on the GPU sidecar');
   const qvecs = await embedAll(built.map((b) => b.query));
 
-  // ── OLD universe: production dense arm ──
-  console.log('scoring OLD universe (production HNSW over judgment_chunks)');
-  const oldRanks: (number | null)[] = [];
-  for (const [i, b] of built.entries()) {
+  // ── OLD universe, part 1: the presence check (cheap, exhaustive) ──
+  const goldIds = built.map((b) => b.gold);
+  const chunked = await sql<{ judgment_id: string }[]>`
+    SELECT DISTINCT judgment_id FROM judgment_chunks
+    WHERE judgment_id = ANY(${goldIds}::uuid[])
+  `;
+  const reachableInOld = new Set(chunked.map((r) => r.judgment_id));
+  console.log(
+    `OLD universe reachability: ${reachableInOld.size} of ${goldIds.length} gold judgments carry a chunk`,
+  );
+
+  // ── OLD universe, part 2: the positive control (expensive, subsampled) ──
+  console.log(`scoring OLD universe on ${Math.min(OLD_SAMPLE, built.length)} queries as a control`);
+  const oldRanks: (number | null)[] = built.map((b) => (reachableInOld.has(b.gold) ? null : null));
+  const controlDisagreements: string[] = [];
+  for (let i = 0; i < Math.min(OLD_SAMPLE, built.length); i += 1) {
+    const b = built[i] as Built;
     const rows = await sql.begin(async (tx) => {
       await tx.unsafe('SET LOCAL hnsw.ef_search = 40');
       await tx.unsafe('SET LOCAL hnsw.iterative_scan = relaxed_order');
@@ -237,7 +274,15 @@ async function main(): Promise<void> {
       judgments.push(r.judgment_id);
     }
     const at = judgments.indexOf(b.gold);
-    oldRanks.push(at === -1 ? null : at + 1);
+    oldRanks[i] = at === -1 ? null : at + 1;
+    if (at !== -1 && !reachableInOld.has(b.gold)) controlDisagreements.push(b.gold);
+  }
+  if (controlDisagreements.length > 0) {
+    console.log(
+      `  CONTROL DISAGREES on ${controlDisagreements.length} queries — the presence check called these absent and the ANN arm returned them. Treat the OLD row as unsound.`,
+    );
+  } else {
+    console.log('  control agrees with the presence check on every sampled query');
   }
 
   // ── NEW universe: exact cosine over the staged document vectors ──
@@ -299,6 +344,9 @@ async function main(): Promise<void> {
           annDepth: ANN_DEPTH,
           candidateDepth: CANDIDATE_DEPTH,
           old: oldM,
+          oldReachableGold: reachableInOld.size,
+          oldControlQueries: Math.min(OLD_SAMPLE, built.length),
+          oldControlDisagreements: controlDisagreements,
           new: newM,
           queries: built.map((b, i) => ({
             id: b.id,

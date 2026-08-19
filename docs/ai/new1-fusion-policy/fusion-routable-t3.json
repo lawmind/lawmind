@@ -1,0 +1,163 @@
+{
+  "tool": "services/harness/src/fusion-routing-feasibility-cli.ts",
+  "generatedAt": "2026-08-19T06:45:14.929Z",
+  "pass": "CONTROLLED",
+  "queries": 283,
+  "threshold": 3,
+  "markers": [
+    "bharatiya nyaya sanhita",
+    "bharatiya nagarik suraksha sanhita",
+    "bharatiya sakshya adhiniyam",
+    "\\bbns\\b",
+    "\\bbnss\\b",
+    "\\bbsa\\b",
+    "indian penal code",
+    "\\bipc\\b",
+    "code of criminal procedure",
+    "\\bcr\\.?p\\.?c\\b",
+    "\\bpocso\\b",
+    "\\bndps\\b",
+    "\\buapa\\b",
+    "prevention of corruption act",
+    "negotiable instruments act",
+    "protection of children from sexual offences",
+    "narcotic drugs",
+    "\\bbail\\b",
+    "anticipatory bail",
+    "\\bacquitt",
+    "\\bconvict",
+    "\\baccused\\b",
+    "\\bprosecut",
+    "charge ?sheet",
+    "\\bfir\\b",
+    "first information report",
+    "\\bmurder\\b",
+    "culpable homicide",
+    "rarest of rare",
+    "death sentence",
+    "capital punishment",
+    "life imprisonment",
+    "criminal appeal",
+    "criminal revision",
+    "sessions judge",
+    "beyond reasonable doubt",
+    "investigating officer",
+    "\\bremand\\b",
+    "\\bcustody\\b"
+  ],
+  "classifier": {
+    "tp": 8,
+    "fp": 0,
+    "tn": 200,
+    "fn": 75,
+    "precision": 1,
+    "recall": 0.0963855421686747,
+    "accuracy": 0.734982332155477
+  },
+  "thresholdSweep": [
+    {
+      "threshold": 1,
+      "routed": 46,
+      "precision": 0.9347826086956522,
+      "recall": 0.5180722891566265
+    },
+    {
+      "threshold": 2,
+      "routed": 17,
+      "precision": 1,
+      "recall": 0.20481927710843373
+    },
+    {
+      "threshold": 3,
+      "routed": 8,
+      "precision": 1,
+      "recall": 0.0963855421686747
+    },
+    {
+      "threshold": 4,
+      "routed": 4,
+      "precision": 1,
+      "recall": 0.04819277108433735
+    },
+    {
+      "threshold": 5,
+      "routed": 3,
+      "precision": 1,
+      "recall": 0.03614457831325301
+    },
+    {
+      "threshold": 6,
+      "routed": 0,
+      "precision": 0,
+      "recall": 0
+    }
+  ],
+  "policies": [
+    {
+      "policy": "CURRENT_EQUAL_RRF",
+      "n": 283,
+      "successAt5": 0.2049469964664311,
+      "recallAt20": 0.36395759717314485,
+      "mrr": 0.13140076214486293,
+      "ndcgAt5": 0.13806892108820476,
+      "ndcgAt20": 0.18300249712226854,
+      "vsEqual": {
+        "gained": 0,
+        "lost": 0,
+        "mcnemarP": null
+      }
+    },
+    {
+      "policy": "DENSE_ONLY",
+      "n": 283,
+      "successAt5": 0.21908127208480566,
+      "recallAt20": 0.40636042402826855,
+      "mrr": 0.15391932117240903,
+      "ndcgAt5": 0.15515674237816598,
+      "ndcgAt20": 0.20983504937193495,
+      "vsEqual": {
+        "gained": 18,
+        "lost": 14,
+        "mcnemarP": 0.5966148958541407
+      }
+    },
+    {
+      "policy": "ROUTED (oracle label)",
+      "n": 283,
+      "successAt5": 0.2226148409893993,
+      "recallAt20": 0.37809187279151946,
+      "mrr": 0.13968554800242602,
+      "ndcgAt5": 0.14817970948448317,
+      "ndcgAt20": 0.193131109728324,
+      "vsEqual": {
+        "gained": 6,
+        "lost": 1,
+        "mcnemarP": 0.12500000000000025
+      }
+    },
+    {
+      "policy": "ROUTED (lexicon classifier)",
+      "n": 283,
+      "successAt5": 0.2049469964664311,
+      "recallAt20": 0.36395759717314485,
+      "mrr": 0.13140076214486293,
+      "ndcgAt5": 0.13806892108820476,
+      "ndcgAt20": 0.18300249712226854,
+      "vsEqual": {
+        "gained": 0,
+        "lost": 0,
+        "mcnemarP": null
+      }
+    }
+  ],
+  "heldOut": {
+    "meanDeltaVsEqual": 0,
+    "ci95": [
+      0,
+      0
+    ],
+    "repeats": 2000,
+    "seed": 20260819
+  },
+  "limitation": "The fixture label is case_type of the CITING judgment, not a property of the query. Production exposes filters.caseType as an OPTIONAL user filter and derives nothing from query text. Both the label and the classifier are therefore proxies for a signal production does not currently compute."
+}

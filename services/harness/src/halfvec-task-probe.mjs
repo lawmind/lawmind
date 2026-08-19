@@ -141,6 +141,88 @@ for (const k of KS) {
   annRecall.HNSW_HALFVEC[k] = [];
 }
 
+const mean = (a) => (a.length === 0 ? 0 : a.reduce((x, y) => x + y, 0) / a.length);
+const pctl = (a, p) => {
+  const s = [...a].sort((x, y) => x - y);
+  return s[Math.min(s.length - 1, Math.floor(s.length * p))];
+};
+
+/**
+ * The whole artifact, computable from however many queries have completed.
+ * `complete` is on the object rather than implied by its existence.
+ */
+function buildArtifact(done, complete) {
+  const goldById = new Map(queries.map((q) => [q.id, q.gold]));
+  const ranksByArm = {};
+  for (const name of Object.keys(arms))
+    ranksByArm[name] = results[name].map((r) => goldRank(r.judgments, goldById.get(r.id)));
+
+  const judgmentOverlap = { HNSW_FP32: {}, HNSW_HALFVEC: {} };
+  for (const name of ['HNSW_FP32', 'HNSW_HALFVEC'])
+    for (const k of [5, 20, 50])
+      judgmentOverlap[name][k] = mean(
+        results[name].map((r, i) => overlapAtK(r.judgments, results.EXACT_FP32[i].judgments, k)),
+      );
+
+  const movement = {};
+  for (const name of ['HNSW_FP32', 'HNSW_HALFVEC']) {
+    const deltas = [];
+    let lostFromTop5 = 0;
+    let gainedIntoTop5 = 0;
+    let bothMissing = 0;
+    ranksByArm[name].forEach((r, i) => {
+      const e = ranksByArm.EXACT_FP32[i];
+      if (e === null && r === null) bothMissing += 1;
+      if (e !== null && r !== null) deltas.push(r - e);
+      const eHit = e !== null && e <= 5;
+      const rHit = r !== null && r <= 5;
+      if (eHit && !rHit) lostFromTop5 += 1;
+      if (!eHit && rHit) gainedIntoTop5 += 1;
+    });
+    movement[name] = {
+      meanRankDelta: deltas.length ? mean(deltas) : null,
+      maxRankDelta: deltas.length ? Math.max(...deltas) : null,
+      minRankDelta: deltas.length ? Math.min(...deltas) : null,
+      identicalRank: deltas.filter((d) => d === 0).length,
+      comparableQueries: deltas.length,
+      lostFromTop5,
+      gainedIntoTop5,
+      bothMissing,
+    };
+  }
+
+  return {
+    kind: 'new1_halfvec_task_fidelity',
+    generatedAt: new Date().toISOString(),
+    complete,
+    queriesRequested: queries.length,
+    queriesDone: done,
+    annDepth: ANN_DEPTH,
+    efSearch: EF_SEARCH,
+    note: 'text_quality re-weighting excluded on purpose; identical across arms',
+    annRecall: Object.fromEntries(
+      Object.entries(annRecall).map(([arm, byK]) => [
+        arm,
+        Object.fromEntries(
+          Object.entries(byK).map(([k, v]) => [
+            k,
+            { mean: mean(v), p05: pctl(v, 0.05), min: v.length ? Math.min(...v) : null },
+          ]),
+        ),
+      ]),
+    ),
+    taskMetrics: Object.fromEntries(Object.entries(ranksByArm).map(([k, v]) => [k, metrics(v)])),
+    judgmentCandidateOverlap: judgmentOverlap,
+    goldRankMovement: movement,
+    latencyMs: Object.fromEntries(
+      Object.entries(latency).map(([k, v]) => [
+        k,
+        { mean: mean(v), p50: pctl(v, 0.5), p95: pctl(v, 0.95) },
+      ]),
+    ),
+  };
+}
+
 const queries = QV.queries.slice(0, LIMIT_QUERIES);
 console.log('C3/C4 probe — ' + queries.length + ' queries, annDepth ' + ANN_DEPTH + ', ef_search ' + EF_SEARCH);
 const t0 = Date.now();
@@ -158,55 +240,15 @@ for (const [qi, q] of queries.entries()) {
     const got = chunkLists[name].map((r) => r.id);
     for (const k of KS) annRecall[name][k].push(overlapAtK(got, truth, k));
   }
-  if ((qi + 1) % 20 === 0 || qi === queries.length - 1)
+  if ((qi + 1) % 20 === 0 || qi === queries.length - 1) {
     console.log('  ' + (qi + 1) + '/' + queries.length + '  ' + ((Date.now() - t0) / 1000).toFixed(1) + 's');
-}
-
-const mean = (a) => a.reduce((x, y) => x + y, 0) / a.length;
-const pctl = (a, p) => {
-  const s = [...a].sort((x, y) => x - y);
-  return s[Math.min(s.length - 1, Math.floor(s.length * p))];
-};
-
-const goldById = new Map(queries.map((q) => [q.id, q.gold]));
-const ranksByArm = {};
-for (const name of Object.keys(arms))
-  ranksByArm[name] = results[name].map((r) => goldRank(r.judgments, goldById.get(r.id)));
-
-const judgmentOverlap = { HNSW_FP32: {}, HNSW_HALFVEC: {} };
-for (const name of ['HNSW_FP32', 'HNSW_HALFVEC']) {
-  for (const k of [5, 20, 50]) {
-    judgmentOverlap[name][k] = mean(
-      results[name].map((r, i) => overlapAtK(r.judgments, results.EXACT_FP32[i].judgments, k)),
-    );
+    // Checkpoint the artifact as it goes. The first attempt at this run reached
+    // 160 of 283 queries and was killed with the session, and because the whole
+    // artifact was written at the end it left NOTHING — 63 minutes of database
+    // work with no record. A partial artifact that says how partial it is beats
+    // an all-or-nothing one on a box that has killed long jobs six times.
+    writeFileSync(OUT, JSON.stringify(buildArtifact(qi + 1, false), null, 2) + String.fromCharCode(10));
   }
-}
-
-const movement = {};
-for (const name of ['HNSW_FP32', 'HNSW_HALFVEC']) {
-  const deltas = [];
-  let lostFromTop5 = 0;
-  let gainedIntoTop5 = 0;
-  let bothMissing = 0;
-  ranksByArm[name].forEach((r, i) => {
-    const e = ranksByArm.EXACT_FP32[i];
-    if (e === null && r === null) bothMissing += 1;
-    if (e !== null && r !== null) deltas.push(r - e);
-    const eHit = e !== null && e <= 5;
-    const rHit = r !== null && r <= 5;
-    if (eHit && !rHit) lostFromTop5 += 1;
-    if (!eHit && rHit) gainedIntoTop5 += 1;
-  });
-  movement[name] = {
-    meanRankDelta: deltas.length ? mean(deltas) : null,
-    maxRankDelta: deltas.length ? Math.max(...deltas) : null,
-    minRankDelta: deltas.length ? Math.min(...deltas) : null,
-    identicalRank: deltas.filter((d) => d === 0).length,
-    comparableQueries: deltas.length,
-    lostFromTop5,
-    gainedIntoTop5,
-    bothMissing,
-  };
 }
 
 const sizes = await sql`
@@ -216,43 +258,15 @@ const sizes = await sql`
 `;
 await sql.end({ timeout: 5 });
 
-const artifact = {
-  kind: 'new1_halfvec_task_fidelity',
-  generatedAt: new Date().toISOString(),
-  queries: queries.length,
-  annDepth: ANN_DEPTH,
-  efSearch: EF_SEARCH,
-  note: 'text_quality re-weighting excluded on purpose; identical across arms',
-  annRecall: Object.fromEntries(
-    Object.entries(annRecall).map(([arm, byK]) => [
-      arm,
-      Object.fromEntries(
-        Object.entries(byK).map(([k, v]) => [
-          k,
-          { mean: mean(v), p05: pctl(v, 0.05), min: Math.min(...v) },
-        ]),
-      ),
-    ]),
-  ),
-  taskMetrics: Object.fromEntries(Object.entries(ranksByArm).map(([k, v]) => [k, metrics(v)])),
-  judgmentCandidateOverlap: judgmentOverlap,
-  goldRankMovement: movement,
-  latencyMs: Object.fromEntries(
-    Object.entries(latency).map(([k, v]) => [
-      k,
-      { mean: mean(v), p50: pctl(v, 0.5), p95: pctl(v, 0.95) },
-    ]),
-  ),
-  indexBytes: Object.fromEntries(sizes.map((r) => [r.arm, Number(r.index_bytes)])),
-};
-
-writeFileSync(OUT, JSON.stringify(artifact, null, 2) + '\n');
+const artifact = buildArtifact(queries.length, true);
+artifact.indexBytes = Object.fromEntries(sizes.map((r) => [r.arm, Number(r.index_bytes)]));
+writeFileSync(OUT, JSON.stringify(artifact, null, 2) + String.fromCharCode(10));
 console.log(
   JSON.stringify(
     {
       annRecall: artifact.annRecall,
       taskMetrics: artifact.taskMetrics,
-      movement,
+      movement: artifact.goldRankMovement,
       latency: artifact.latencyMs,
       indexBytes: artifact.indexBytes,
     },

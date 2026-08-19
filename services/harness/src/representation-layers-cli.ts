@@ -340,9 +340,9 @@ async function main(): Promise<void> {
     randomPick.set(d.id, [...idx]);
   }
 
-  /** The two chunks nearest the document's own centroid. */
-  function medoid2(d: Doc): Vec[] {
-    if (d.chunkVectors.length <= 2) return d.chunkVectors;
+  /** The n chunks nearest the document's own centroid. */
+  function medoid(d: Doc, n: number): Vec[] {
+    if (d.chunkVectors.length <= n) return d.chunkVectors;
     const dim = d.chunkVectors[0]?.length ?? 0;
     const centroid = new Float32Array(dim);
     for (const v of d.chunkVectors)
@@ -354,8 +354,18 @@ async function main(): Promise<void> {
     return d.chunkVectors
       .map((v, i) => ({ v, i, s: dot(v, centroid) }))
       .sort((a, b) => b.s - a.s)
-      .slice(0, 2)
+      .slice(0, n)
       .map((x) => x.v);
+  }
+  const medoid2 = (d: Doc): Vec[] => medoid(d, 2);
+
+  const rng2 = mulberry32(SEED ^ 0x1234567);
+  const randomPick2 = new Map<string, number[]>();
+  for (const d of docs.values()) {
+    const n = d.chunkVectors.length;
+    const idx = new Set<number>();
+    while (idx.size < Math.min(2, n)) idx.add(Math.floor(rng2() * n));
+    randomPick2.set(d.id, [...idx]);
   }
 
   const REPRESENTATIONS: Record<string, (d: Doc) => Vec[]> = {
@@ -365,6 +375,21 @@ async function main(): Promise<void> {
     'D_HEAD_TAIL_ISSUE_MEDOID2': (d) => [
       ...[d.head, d.tail, d.issue].filter((v): v is Vec => !!v),
       ...medoid2(d),
+    ],
+    // ── the isolating arms ──
+    // D beat the 32.82-vector ceiling and CONTROL_HEAD_RANDOM4 did not, so the
+    // SELECTION is doing the work rather than the count. What that does not say
+    // is WHICH selection: D carries TAIL and ISSUE, both of which SCORED WORSE
+    // than HEAD alone as B and C. These arms take the positional proxies away
+    // and leave the geometry — the cheaper hypothesis and the cheaper
+    // population, since 3 vectors per document instead of 5 is ~17.7M fewer
+    // vectors at Tier-A scale.
+    'E_HEAD_MEDOID2': (d) => [...(d.head ? [d.head] : []), ...medoid(d, 2)],
+    'F_HEAD_MEDOID4': (d) => [...(d.head ? [d.head] : []), ...medoid(d, 4)],
+    'G_MEDOID2_ONLY': (d) => medoid(d, 2),
+    'CONTROL_HEAD_RANDOM2': (d) => [
+      ...(d.head ? [d.head] : []),
+      ...(randomPick2.get(d.id) ?? []).map((i) => d.chunkVectors[i]).filter((v): v is Vec => !!v),
     ],
     'CONTROL_HEAD_RANDOM4': (d) => [
       ...(d.head ? [d.head] : []),

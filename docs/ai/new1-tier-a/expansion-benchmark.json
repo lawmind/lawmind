@@ -1,0 +1,990 @@
+{
+  "kind": "new1_tier_a_expansion_benchmark",
+  "generatedAt": "2026-08-19T19:21:31.001Z",
+  "stagedDocuments": 19987,
+  "edgesConsidered": 720,
+  "queriesBuilt": 120,
+  "rejected": 113,
+  "annDepth": 2000,
+  "candidateDepth": 50,
+  "old": {
+    "n": 120,
+    "successAt5": 0.008333333333333333,
+    "recallAt20": 0.008333333333333333,
+    "mrr": 0.004166666666666667,
+    "ndcgAt5": 0.005257747946428813
+  },
+  "oldReachableGold": 3,
+  "oldControlQueries": 20,
+  "oldControlDisagreements": [],
+  "new": {
+    "n": 120,
+    "successAt5": 0.35833333333333334,
+    "recallAt20": 0.4583333333333333,
+    "mrr": 0.31774726344727655,
+    "ndcgAt5": 0.31861698033590113
+  },
+  "queries": [
+    {
+      "id": "exp-76927ba2",
+      "gold": "76927ba2-4dba-4a75-9baf-79c1b5462c72",
+      "citingId": "4aa78bef-ae52-4799-add5-fd5f3b425ae4",
+      "court": "High Court of Punjab and Haryana",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-8d51b0f5",
+      "gold": "8d51b0f5-ce79-4d94-a90b-71860218bcb9",
+      "citingId": "1b2a329b-f7f5-47eb-a970-f728140b5966",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-98c31f6f",
+      "gold": "98c31f6f-d599-45bb-9964-cf3d1abdf5b6",
+      "citingId": "bc769ac2-0099-4a04-8375-25c0ac2e2087",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 4
+    },
+    {
+      "id": "exp-009c53f2",
+      "gold": "009c53f2-3c08-4d5b-a9bb-9790ea42ae31",
+      "citingId": "2377deb5-e30d-4eff-920f-f7e69aebf113",
+      "court": "Allahabad High Court",
+      "oldRank": 2,
+      "newRank": 43
+    },
+    {
+      "id": "exp-977baa7a",
+      "gold": "977baa7a-9da9-4d1c-b3a7-70a4b068da06",
+      "citingId": "939992d9-aa5f-489b-b882-b64c74b25312",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-079989bf",
+      "gold": "079989bf-5721-47ff-a2d8-715a91e5eccc",
+      "citingId": "11d25cf8-458a-4692-a046-74feb2374e85",
+      "court": "High Court of Punjab and Haryana",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-bba9f504",
+      "gold": "bba9f504-8f15-4dcf-a3cd-ab6699ebc6e4",
+      "citingId": "6efcda64-b17a-4680-93f9-56d7ef504c2f",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 27
+    },
+    {
+      "id": "exp-07931e6c",
+      "gold": "07931e6c-3e8f-4773-9b99-24facaa622bf",
+      "citingId": "5081ee77-7855-4cc3-9c83-0eac5090bd95",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 29
+    },
+    {
+      "id": "exp-0255071c",
+      "gold": "0255071c-6d5a-431f-b83c-98463454d35b",
+      "citingId": "5ba51c70-7580-4755-82fc-67440f2d337c",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 20
+    },
+    {
+      "id": "exp-3d498fb1",
+      "gold": "3d498fb1-a7e3-49a8-9bd2-6d79501efa99",
+      "citingId": "51759878-83d2-4fef-93b2-bfd984bf2739",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-6c8ef585",
+      "gold": "6c8ef585-231f-48df-8f0e-974a00d94ad8",
+      "citingId": "49f4897b-dfbf-4f38-970e-b4c274c5866a",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-8972e37e",
+      "gold": "8972e37e-e4a6-4402-b3c4-c14f2519342f",
+      "citingId": "9aa45b05-9b96-49be-8dff-ccc4e6689b50",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-1c1b09ff",
+      "gold": "1c1b09ff-c0e2-4866-a3be-fb1966d9067b",
+      "citingId": "79d469fe-0a7d-427d-80a1-e30b260bd270",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-a3376743",
+      "gold": "a3376743-0646-493a-8f0d-c53406c07d7a",
+      "citingId": "3caf3295-e945-4049-b929-967533827992",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": 30
+    },
+    {
+      "id": "exp-0d9fe812",
+      "gold": "0d9fe812-0f02-4ea0-b623-ca5312f1dbba",
+      "citingId": "8f960dea-8d54-44e4-b863-6a93e1d141db",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-58e3ed82",
+      "gold": "58e3ed82-620f-4035-9cd4-ef8addcf6e1d",
+      "citingId": "e985d4c3-bc11-412c-84e7-22af0b4dbd0d",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-9b63a49d",
+      "gold": "9b63a49d-d9c5-4b92-a153-c9b81d04cd70",
+      "citingId": "df58870a-12e6-401e-8723-e901fb6bcfec",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 3
+    },
+    {
+      "id": "exp-e380d63f",
+      "gold": "e380d63f-a13d-4afe-a9e1-8262820de819",
+      "citingId": "f12bf21e-fb5d-4f5e-b490-0ebefb45da16",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-a9e5cc4a",
+      "gold": "a9e5cc4a-819a-475b-a58b-ff09751de93f",
+      "citingId": "be77529c-1ef2-4e7c-b258-207f0a88763a",
+      "court": "High Court of Punjab and Haryana",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-b72f326e",
+      "gold": "b72f326e-466f-4a40-8503-aefe7693da87",
+      "citingId": "4882021e-3c8d-4f2c-b604-8647059ddac1",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-74674c9f",
+      "gold": "74674c9f-f3ec-4a70-b2fa-5c3c1f8c3616",
+      "citingId": "d623fcc3-03a5-48c3-a8aa-2214e8084b20",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-4abeddf3",
+      "gold": "4abeddf3-943a-4532-a656-e8820765fe6f",
+      "citingId": "60fe2839-bb9c-4030-8871-4dbbbcda94a4",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-39a9437e",
+      "gold": "39a9437e-fcaf-4739-b216-2ac3b54c7d67",
+      "citingId": "63ed6adb-055a-4bc2-b580-dc335d6909f1",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-3164a312",
+      "gold": "3164a312-a00b-41b6-b578-7125dfd8bb2d",
+      "citingId": "a1cd0f9e-62d4-451b-b555-7d3f061b42d6",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-3533188c",
+      "gold": "3533188c-a814-4674-8546-ac7b0e7b84f8",
+      "citingId": "7a944704-db77-4723-8077-acacd86122eb",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-ed6a8c7f",
+      "gold": "ed6a8c7f-100b-4745-9fb1-b112e0f07cea",
+      "citingId": "07001f9b-c93a-491a-b1da-ca9934276bd5",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-25ec05b9",
+      "gold": "25ec05b9-0f15-4f3c-af98-494e9022232d",
+      "citingId": "e0761880-1e98-457c-abc8-730833782be6",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-b37fba99",
+      "gold": "b37fba99-cbdd-4c99-9319-dbb545f8b8f4",
+      "citingId": "152a8be8-0895-43ca-b144-e648cd18cf33",
+      "court": "High Court of Himachal Pradesh",
+      "oldRank": null,
+      "newRank": 24
+    },
+    {
+      "id": "exp-c68300e0",
+      "gold": "c68300e0-c4e7-4858-b735-e6728332143a",
+      "citingId": "d63bcf2b-f8ff-45b4-a85b-4b87fb145f8d",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 2
+    },
+    {
+      "id": "exp-06111105",
+      "gold": "06111105-07c4-48ea-a915-586dccdc8a4c",
+      "citingId": "9c43edfa-792b-45ff-88d8-d14dc11c0366",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-3ca5d907",
+      "gold": "3ca5d907-d403-45dd-a170-2f40228ded74",
+      "citingId": "8bca3c3d-040c-4f85-a131-a3a4eae6f190",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-c09afe95",
+      "gold": "c09afe95-8c5e-49f8-8092-b8d33c8d8209",
+      "citingId": "7dd9e1ac-23fd-414c-9adf-0603bf2a03f2",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": 5
+    },
+    {
+      "id": "exp-8a92e1d3",
+      "gold": "8a92e1d3-c1d8-4bd3-921f-1be5acbf4f25",
+      "citingId": "e231afe3-c097-4c1b-ab9b-1edf45f8b820",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-b152a607",
+      "gold": "b152a607-2d89-42d8-ac80-91e8c8102b53",
+      "citingId": "af01a89a-11f0-4957-a8b6-5b2be9caac35",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-51189e6d",
+      "gold": "51189e6d-4510-42dd-aed5-189a522750e1",
+      "citingId": "5d7871da-c794-4235-a53b-0cb5a7ff081e",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-a6057442",
+      "gold": "a6057442-250e-44ee-ae41-6ec2a981fc43",
+      "citingId": "50d4e03e-9c4b-4ca4-91b5-2c8e426863b1",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 32
+    },
+    {
+      "id": "exp-c88b37cc",
+      "gold": "c88b37cc-51a2-454c-9bca-b93afbb47964",
+      "citingId": "4a722dcb-0dac-4c9d-b076-867452174621",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 9
+    },
+    {
+      "id": "exp-3917198a",
+      "gold": "3917198a-4696-48f8-ab55-6501bd564e8b",
+      "citingId": "3440416b-6066-4494-b03b-75b47589527c",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 2
+    },
+    {
+      "id": "exp-00a2a2eb",
+      "gold": "00a2a2eb-bb17-4fbc-86e4-72d95458cf6d",
+      "citingId": "dd7672e5-eff9-4d3c-a759-0e3800465610",
+      "court": "High Court of Gujarat",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-05b21017",
+      "gold": "05b21017-b0f1-49ba-b6aa-39da1e6f56e4",
+      "citingId": "e7fad7bf-c59e-4e09-8426-524d32d7b674",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": 9
+    },
+    {
+      "id": "exp-b8bf2b2c",
+      "gold": "b8bf2b2c-a9b2-411f-bc9a-8da04cc79ebf",
+      "citingId": "8bb1d6d7-ffe7-4e96-99dc-e50941f7863d",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-731c662b",
+      "gold": "731c662b-0194-4b77-ba2a-26702f69f23e",
+      "citingId": "ae60bbda-842e-4214-a7cc-894e5a306b87",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-a4baac83",
+      "gold": "a4baac83-5316-4bd1-bdda-a80298d28313",
+      "citingId": "4361505d-47b2-458d-96fb-ff4118917107",
+      "court": "High Court Of Chhattisgarh",
+      "oldRank": null,
+      "newRank": 2
+    },
+    {
+      "id": "exp-a3ec80c7",
+      "gold": "a3ec80c7-c01a-4c0d-ac97-460b28cb9fb3",
+      "citingId": "d142ac59-f4a9-48c4-9cc9-98f5dc676664",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 2
+    },
+    {
+      "id": "exp-37ede3d7",
+      "gold": "37ede3d7-d5fd-4344-98d5-3e966e53a7c4",
+      "citingId": "82ef9bf6-d5ac-4a2f-8ed7-d9a5227eb698",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-9840910f",
+      "gold": "9840910f-73a2-436e-ab49-9fc40c079a20",
+      "citingId": "882f33e7-1d9d-477d-a04a-55f297c80f8c",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-a5820272",
+      "gold": "a5820272-5c03-4577-a737-e73a0bdfb942",
+      "citingId": "1c9c94b1-91e7-414c-866f-aefecd7d62c8",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 7
+    },
+    {
+      "id": "exp-5be576a6",
+      "gold": "5be576a6-f6f2-4446-8a34-0c9fa72e63d5",
+      "citingId": "42e217a3-156c-4f4c-acb3-674756dd26b2",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-6109e463",
+      "gold": "6109e463-a016-4bf9-aa7e-bf44b1e98876",
+      "citingId": "b78471b6-6e99-4933-9bda-6af62f59e30d",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-00ce9b38",
+      "gold": "00ce9b38-210b-4a5e-81b9-54551630b4e4",
+      "citingId": "82c6f4bb-0ffe-4178-8a3b-867fe6adc727",
+      "court": "Madras High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-01fa0761",
+      "gold": "01fa0761-db1f-46cb-bde5-4b7eb6a8fe1b",
+      "citingId": "1d7575bc-3dfa-47f0-a261-42418bf04cf7",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-6d1eed1b",
+      "gold": "6d1eed1b-7ea8-47ad-9ffb-5f0433b26425",
+      "citingId": "225a26ea-7600-4044-bd9a-3152dd265ca6",
+      "court": "High Court Of Chhattisgarh",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-13c2cc17",
+      "gold": "13c2cc17-6b9d-4ad7-ba14-6ce32b2d2674",
+      "citingId": "fce93b28-c186-4d77-8e30-bbcf71b028e1",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-d7f2b8b7",
+      "gold": "d7f2b8b7-af5a-4b1f-a2dc-7651a5a938b3",
+      "citingId": "ab836cef-012c-4a88-b9c3-25eca95f5f1f",
+      "court": "Madras High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-51f2e7a1",
+      "gold": "51f2e7a1-6d06-4fe9-a6ea-dc18a003bb14",
+      "citingId": "8aab0701-f996-431a-a79c-20c5cbb65fa1",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-aba8c427",
+      "gold": "aba8c427-cfaf-4b98-8c6b-1b1af928ce0c",
+      "citingId": "19b5527c-7bbf-43f8-9364-98d33c8ed72d",
+      "court": "High Court Of Chhattisgarh",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-2062fad2",
+      "gold": "2062fad2-d74d-46a2-9e3a-c35e8b295065",
+      "citingId": "7d2f5b5b-27b5-4a43-8d86-02165741d5b7",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 11
+    },
+    {
+      "id": "exp-39248597",
+      "gold": "39248597-9f40-4e02-a8ad-76bece40fc85",
+      "citingId": "3449c662-28df-48ab-9c19-93c6a77eeca7",
+      "court": "High Court of Punjab and Haryana",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-57b479fb",
+      "gold": "57b479fb-9a95-4ec1-859c-26e762f93ce1",
+      "citingId": "7f6e61a6-ad85-4de2-bffd-9622e47857f0",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-5cdfc1cd",
+      "gold": "5cdfc1cd-a44b-4214-b1a3-93258788225b",
+      "citingId": "9a409c08-faa6-4cf9-8943-a222ec7337b7",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-b89994a1",
+      "gold": "b89994a1-b2cb-4455-a6ee-14e906a0278d",
+      "citingId": "3bcca1d5-8e85-423b-bf97-a36d55034c0b",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-793289eb",
+      "gold": "793289eb-ffcf-4014-9e64-9ff29aec2399",
+      "citingId": "cffe1b27-fdb8-4cc1-86b4-3a92953973fa",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 6
+    },
+    {
+      "id": "exp-9ae4b568",
+      "gold": "9ae4b568-662e-4ae5-837d-2c06fa55a52a",
+      "citingId": "446ed871-9f90-4909-8b09-57af9639694d",
+      "court": "High Court Of Rajasthan",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-8cb9ddc3",
+      "gold": "8cb9ddc3-2866-466e-8e15-4f51cebfcfb8",
+      "citingId": "8ec6662d-4e48-442b-a7da-c9545c171cad",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-bfcccb85",
+      "gold": "bfcccb85-437d-4c59-acda-423458ff0ed6",
+      "citingId": "83310507-ccd9-407d-929b-e415fb6ea062",
+      "court": "High Court of Punjab and Haryana",
+      "oldRank": null,
+      "newRank": 38
+    },
+    {
+      "id": "exp-a2fb494c",
+      "gold": "a2fb494c-5b3d-4d21-bad4-cdac1401ec13",
+      "citingId": "8be343e4-445b-4e14-84c4-9076673d1e4a",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 14
+    },
+    {
+      "id": "exp-c15d2e32",
+      "gold": "c15d2e32-e8c1-4037-b6de-56bb66584105",
+      "citingId": "792a6551-00f9-41c1-92ed-204baa529f31",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-a30e2856",
+      "gold": "a30e2856-7a74-481a-89c1-742a50b35388",
+      "citingId": "d29287fc-dd82-499f-8e75-de1b79f12140",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-b2dec22e",
+      "gold": "b2dec22e-4fe6-4f02-8d61-e914be2751fa",
+      "citingId": "d12a3ab3-033a-4466-813b-2bdb7a01a93f",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 11
+    },
+    {
+      "id": "exp-099c24e5",
+      "gold": "099c24e5-a11a-4d68-bf33-6aefb06af2c6",
+      "citingId": "35c49d9d-5bd5-4549-8573-9ee8740b2ebc",
+      "court": "High Court Of Rajasthan",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-29718ae0",
+      "gold": "29718ae0-3060-4622-99ec-dc937e009744",
+      "citingId": "0b47b766-a212-495b-bfe3-8bdb886d3080",
+      "court": "High Court of Uttarakhand",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-7a978bd7",
+      "gold": "7a978bd7-3b9a-4ce4-8525-246a460ea4a9",
+      "citingId": "d53db729-2563-4ab8-a1cd-f14ea70f2893",
+      "court": "High Court Of Rajasthan",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-e42e28ba",
+      "gold": "e42e28ba-277b-49b3-a970-54ce094d76bb",
+      "citingId": "43fb217a-e614-4191-9892-62b185e96966",
+      "court": "High Court Of Rajasthan",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-4e1e2dc8",
+      "gold": "4e1e2dc8-c6dd-4e2e-b5a1-de52a8dbde11",
+      "citingId": "8a60b3f0-29c3-4d2e-8bc5-27d85b9bd874",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-4ff1c821",
+      "gold": "4ff1c821-d548-4ed1-8ca0-be89f5fef80d",
+      "citingId": "6ab0277b-48e8-4986-905b-c47b79aeb90e",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-c5e3ed86",
+      "gold": "c5e3ed86-5b0b-45f2-b389-20859a3cdb12",
+      "citingId": "1b0c7a63-d0e8-40ea-a033-5ff5e104f344",
+      "court": "High Court Of Rajasthan",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-7e7b2734",
+      "gold": "7e7b2734-ef25-493f-bfca-68b9ec2a030d",
+      "citingId": "0b170565-7ab8-4444-954b-e88b7a4774dc",
+      "court": "High Court of Punjab and Haryana",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-665fc60e",
+      "gold": "665fc60e-e154-448f-9af2-93577c6e8bf6",
+      "citingId": "262fd734-9280-48f4-996b-ac36dd8fa6f9",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 14
+    },
+    {
+      "id": "exp-9d92210e",
+      "gold": "9d92210e-4359-4398-b67e-ade36d667003",
+      "citingId": "99f479a7-b17a-4a45-aec4-80746d1bd060",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-e8c21c25",
+      "gold": "e8c21c25-c478-494e-bcf2-35f04d81759c",
+      "citingId": "b669d97b-2c87-449d-9fce-3fd6f9f67ba1",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-11ead64d",
+      "gold": "11ead64d-8a75-455c-96b6-31a305ddbf1b",
+      "citingId": "d693d2d9-7cf6-4027-b1cd-4f045f9a95d5",
+      "court": "High Court of Himachal Pradesh",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-eb051596",
+      "gold": "eb051596-3bfe-4085-88b4-dfad00e49445",
+      "citingId": "bc930ec4-625a-4405-8f95-0f1febaa6eda",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 2
+    },
+    {
+      "id": "exp-2eeedf6d",
+      "gold": "2eeedf6d-71f2-49b1-9665-1b18cdf0f335",
+      "citingId": "9426fce6-3c7a-4b08-8ce0-6cb7de52e74f",
+      "court": "Madras High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-0bc147cd",
+      "gold": "0bc147cd-d5b7-4817-a3d4-b36414faab9c",
+      "citingId": "39301234-8975-4dc4-99a3-71330332fe50",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-a9293e6c",
+      "gold": "a9293e6c-f015-422f-9011-b8dc83436c9c",
+      "citingId": "6f656684-ee69-4bc4-8597-974ec3adcda6",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-f9aa5d6d",
+      "gold": "f9aa5d6d-bf31-4cbf-8f16-861c88e029bc",
+      "citingId": "f31fa8e2-4eff-4a4d-a00f-41993c59fede",
+      "court": "High Court Of Rajasthan",
+      "oldRank": null,
+      "newRank": 14
+    },
+    {
+      "id": "exp-9969e2e5",
+      "gold": "9969e2e5-9506-446a-891a-d3eefe448905",
+      "citingId": "7af5617a-1270-4b50-a8ad-e3bec42701d9",
+      "court": "High Court Of Rajasthan",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-54ba9be5",
+      "gold": "54ba9be5-9656-452e-8abf-38db5782aa4b",
+      "citingId": "404bd710-4c30-40b8-9d33-1ef225f20c9a",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 18
+    },
+    {
+      "id": "exp-23273fe7",
+      "gold": "23273fe7-d400-4d91-8680-8f8a591e9e82",
+      "citingId": "f314f08f-9743-4fc6-9712-91598a3c8512",
+      "court": "High Court of Himachal Pradesh",
+      "oldRank": null,
+      "newRank": 2
+    },
+    {
+      "id": "exp-b9a14dd5",
+      "gold": "b9a14dd5-5fa5-4b54-a8a8-8c2011924914",
+      "citingId": "00588ef2-4fa4-4d8e-90dd-33b4cfe82cba",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 30
+    },
+    {
+      "id": "exp-3ad4f1c4",
+      "gold": "3ad4f1c4-cd8a-414c-9046-c35a8eef6878",
+      "citingId": "bcda6982-a7aa-4fee-8f90-abe2aa96908d",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-d8eeb3c7",
+      "gold": "d8eeb3c7-999b-4cbb-8433-992defbe5c57",
+      "citingId": "b7722f19-1c76-446d-8d10-23ea8a17955b",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-cd435bbe",
+      "gold": "cd435bbe-2aa4-4c6e-93bb-6f2973b643d4",
+      "citingId": "c1495a77-c4a2-46ab-9b40-ba7abf288ce6",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-ac05f0ea",
+      "gold": "ac05f0ea-d9e3-48b5-ba57-20124b852e7b",
+      "citingId": "072c8f78-c58a-4921-9243-8b262685c18a",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-a9fd8d96",
+      "gold": "a9fd8d96-2c5d-454b-8ac3-2c831dbdbd7b",
+      "citingId": "812c2aeb-2fe9-42b6-9e4b-f137259034b6",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-8ba460ef",
+      "gold": "8ba460ef-d01c-4ca4-b0ba-110e1457db74",
+      "citingId": "61b5242e-e10a-467a-9027-219dc8fbc0e3",
+      "court": "High Court Of Chhattisgarh",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-352e37fd",
+      "gold": "352e37fd-a2cc-4288-b219-3d1a63efdcb1",
+      "citingId": "2e2e0e4f-0c93-4da2-80c9-8581efdd32da",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-64be3db1",
+      "gold": "64be3db1-e38b-4545-936b-2bfbc8d3c129",
+      "citingId": "fa5c9913-dcc8-461f-827b-0f15d7c0b08c",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": 6
+    },
+    {
+      "id": "exp-e4898578",
+      "gold": "e4898578-f15e-4844-9776-c1e4e6c4a8d4",
+      "citingId": "9c43edfa-792b-45ff-88d8-d14dc11c0366",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-67e137e5",
+      "gold": "67e137e5-b0fe-4a68-8365-5912c518a9da",
+      "citingId": "1dba8dc8-37be-4d34-a47d-1b6b463e5d4b",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-b52111f6",
+      "gold": "b52111f6-a5a6-4446-b8b9-ee59104e7097",
+      "citingId": "104084e1-9d71-4a42-a70d-b29cd3060647",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-b850e178",
+      "gold": "b850e178-e048-4398-b1e7-9a3b0be15749",
+      "citingId": "28febdd4-6c89-4ee6-8cb1-7d99c1c103d1",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-3d3c2b24",
+      "gold": "3d3c2b24-e57f-4a64-891e-f08609774de6",
+      "citingId": "709deca6-4ab8-46b2-9d32-9492b3c8b687",
+      "court": "High Court of Himachal Pradesh",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-9856bdf7",
+      "gold": "9856bdf7-0d18-47d9-a485-219bc91446aa",
+      "citingId": "defa80da-1142-4e81-abaa-dfe19490ab97",
+      "court": "Allahabad High Court",
+      "oldRank": null,
+      "newRank": 50
+    },
+    {
+      "id": "exp-b69e5f38",
+      "gold": "b69e5f38-1d2b-4a86-bc7a-cde137794a63",
+      "citingId": "0dcb97b2-c13b-434c-8088-e0bd641a01a0",
+      "court": "High Court of Uttarakhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-a6a35c90",
+      "gold": "a6a35c90-62b1-461e-bcd4-1892c1aa09a4",
+      "citingId": "849d420e-cb55-4eb5-b618-b2f7ebbb8e8b",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 3
+    },
+    {
+      "id": "exp-e728470c",
+      "gold": "e728470c-c26e-4b03-8bd4-47f350ada44b",
+      "citingId": "0b170565-7ab8-4444-954b-e88b7a4774dc",
+      "court": "High Court of Punjab and Haryana",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-bd630491",
+      "gold": "bd630491-d9c7-4037-90fa-053fae6e811e",
+      "citingId": "e9fc56a1-507b-4793-99e9-b528c55bce1e",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-ec52c20f",
+      "gold": "ec52c20f-3961-4b57-92b0-6747e5720c6b",
+      "citingId": "e4586722-eec9-4a69-8a43-a8cd65246f25",
+      "court": "High Court of Jharkhand",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-9464c611",
+      "gold": "9464c611-8f66-4e23-9edb-5ce5ca1ce973",
+      "citingId": "2cbcdf18-1bdf-4dbb-b69d-db634ebbe0c7",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 2
+    },
+    {
+      "id": "exp-00711747",
+      "gold": "00711747-d259-4c44-8394-4dd1e825fdc9",
+      "citingId": "d2b979c4-ff06-47de-816c-4cae6eabf61b",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-2dc28144",
+      "gold": "2dc28144-1abe-405c-a60c-df1541ad368a",
+      "citingId": "86b40be0-4ed5-4050-a509-16bb28311ec1",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": 31
+    },
+    {
+      "id": "exp-22be22cb",
+      "gold": "22be22cb-7335-49c6-a54c-5f5a2bdfdb6b",
+      "citingId": "39f75682-11a7-4c83-ae2f-e6cb1332a95c",
+      "court": "Madras High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-13e69f61",
+      "gold": "13e69f61-b2b9-4012-bff9-9e2e920ab1d8",
+      "citingId": "6feb4ae9-91e6-4d69-8b68-2e58d53a0d1c",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-ac5772d6",
+      "gold": "ac5772d6-d650-4946-9d1e-66e6288c7e38",
+      "citingId": "820aa061-9e2d-4ffd-a8bf-a4d26e9e30cd",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-e082b15e",
+      "gold": "e082b15e-3a94-47b6-a39e-0d47a1867ede",
+      "citingId": "1ef61e40-3916-4895-89d8-19b0dbd8f36c",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-47b449b1",
+      "gold": "47b449b1-556b-4438-92bd-9af3afe94ce0",
+      "citingId": "b87a873d-e9dc-4b15-bf1a-c56797761147",
+      "court": "Madras High Court",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-573b4e7f",
+      "gold": "573b4e7f-a917-4f4d-8b3b-7bc2ba3c3d7f",
+      "citingId": "db074f20-6c21-4823-a862-ee67c7c65497",
+      "court": "High Court of Karnataka",
+      "oldRank": null,
+      "newRank": 1
+    },
+    {
+      "id": "exp-1c6e3139",
+      "gold": "1c6e3139-eab5-440a-ae7b-b87bf3a7bd48",
+      "citingId": "75680010-5277-444e-ba1f-568b61cf1bc5",
+      "court": "High Court of Himachal Pradesh",
+      "oldRank": null,
+      "newRank": null
+    },
+    {
+      "id": "exp-b0b48190",
+      "gold": "b0b48190-20a4-41c6-9bda-68cf78cfd860",
+      "citingId": "e6fb0f0d-9721-4520-94c9-e87b355450f5",
+      "court": "High Court of Delhi",
+      "oldRank": null,
+      "newRank": null
+    }
+  ],
+  "limitation": "NEW is exact cosine over the staged population alone; it does not contend with the 40,161 chunk-embedded documents in one ranking. Merging the two representations is an open calibration question and is deliberately not decided here."
+}

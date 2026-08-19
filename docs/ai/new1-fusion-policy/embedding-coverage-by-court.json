@@ -1,0 +1,168 @@
+{
+  "generatedAt": "2026-08-19T06:46:38.477Z",
+  "elapsedMs": 39529,
+  "otherActiveBackendsAtStart": 7,
+  "totals": {
+    "judgments": 17945147,
+    "embeddedDocuments": 40161,
+    "coverage": 0.002237986682416143
+  },
+  "courts": [
+    {
+      "court": "Allahabad High Court",
+      "held": 2275791,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "Bombay High Court",
+      "held": 1982292,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "Madras High Court",
+      "held": 1695524,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Punjab and Haryana",
+      "held": 1679700,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "Patna High Court",
+      "held": 1639111,
+      "embedded": 1208,
+      "coverage": 0.0007369848655765229
+    },
+    {
+      "court": "High Court  for State of Telangana",
+      "held": 1028962,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court Of Rajasthan",
+      "held": 1001967,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Karnataka",
+      "held": 955372,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Kerala",
+      "held": 954027,
+      "embedded": 3,
+      "coverage": 0.0000031445650909250995
+    },
+    {
+      "court": "Orissa High Court",
+      "held": 759517,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Madhya Pradesh",
+      "held": 607107,
+      "embedded": 3,
+      "coverage": 0.000004941468307893008
+    },
+    {
+      "court": "High Court Of Chhattisgarh",
+      "held": 567981,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Gujarat",
+      "held": 421911,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Jharkhand",
+      "held": 407769,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "Calcutta High Court",
+      "held": 406457,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Delhi",
+      "held": 313790,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Himachal Pradesh",
+      "held": 287063,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "Gauhati High Court",
+      "held": 273226,
+      "embedded": 492,
+      "coverage": 0.0018007071069371142
+    },
+    {
+      "court": "High Court of Uttarakhand",
+      "held": 235630,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Andhra Pradesh",
+      "held": 233848,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Jammu and Kashmir",
+      "held": 112034,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "Supreme Court of India",
+      "held": 38342,
+      "embedded": 38341,
+      "coverage": 0.9999739189400657
+    },
+    {
+      "court": "High Court of Tripura",
+      "held": 33871,
+      "embedded": 0,
+      "coverage": 0
+    },
+    {
+      "court": "High Court of Manipur",
+      "held": 18745,
+      "embedded": 46,
+      "coverage": 0.00245398773006135
+    },
+    {
+      "court": "High Court of Meghalaya",
+      "held": 12682,
+      "embedded": 58,
+      "coverage": 0.0045734111338905535
+    },
+    {
+      "court": "High Court of Sikkim",
+      "held": 2428,
+      "embedded": 10,
+      "coverage": 0.004118616144975288
+    }
+  ]
+}

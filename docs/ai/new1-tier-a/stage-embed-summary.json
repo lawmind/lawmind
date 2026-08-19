@@ -1,0 +1,14 @@
+{
+  "kind": "new1_doc_vector_stage_run",
+  "batchFile": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/new1-tier-a/tier-a-value-batch-00000.jsonl",
+  "rowsInBatch": 10000,
+  "inserted": 10000,
+  "skippedNoText": 0,
+  "tableRows": 19987,
+  "nonUnitNormVectors": 0,
+  "tokens": 9497081,
+  "elapsedSeconds": 1843.333,
+  "tokensPerSecond": 5152.124439805504,
+  "recipe": "HEAD:4800",
+  "finishedAt": "2026-08-19T14:19:56.974Z"
+}

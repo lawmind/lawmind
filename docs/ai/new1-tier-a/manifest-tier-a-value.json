@@ -1,0 +1,45 @@
+{
+  "kind": "new1_tier_a_value_ordered_manifest",
+  "generatedAt": "2026-08-19T13:48:26.300Z",
+  "order": "inbound citation count DESC, then eligibility-filtered",
+  "eligibility": "judgment_embedding_eligibility axis A+B+C, text_length >= 2000",
+  "excludes": "documents already in judgment_chunks or new1_doc_vector_stage",
+  "target": 50000,
+  "rows": 10669,
+  "inboundMax": 219,
+  "inboundMin": 1,
+  "distribution": [
+    {
+      "bucket": "1",
+      "judgments": 23914
+    },
+    {
+      "bucket": "100+",
+      "judgments": 202
+    },
+    {
+      "bucket": "2-4",
+      "judgments": 5750
+    },
+    {
+      "bucket": "20-99",
+      "judgments": 1308
+    },
+    {
+      "bucket": "5-19",
+      "judgments": 4520
+    }
+  ],
+  "batches": [
+    {
+      "file": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/new1-tier-a//tier-a-value-batch-00000.jsonl",
+      "rows": 10000,
+      "idsHash": "3df8e7967de4afffec0c8ea240e4a02e4019e5eef641fc4d3c533b31992bf4e3"
+    },
+    {
+      "file": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/new1-tier-a//tier-a-value-batch-00001.jsonl",
+      "rows": 669,
+      "idsHash": "abd13de9b7af706bc3a065c3fe97bcbcb632a091e584d08539a9e2ce1f949b6e"
+    }
+  ]
+}

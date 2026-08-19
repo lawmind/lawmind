@@ -1,0 +1,81 @@
+{
+  "kind": "new1_crosslingual",
+  "createdAt": "2026-08-19T13:44:20.962Z",
+  "method": "live production hybrid search, 5 Hindi queries paired with their English originals by shared gold judgment",
+  "missingPairs": [],
+  "rows": [
+    {
+      "id": "hindi-e39b2b83",
+      "language": "hi",
+      "foundAtAnyRank": 1,
+      "precision": 0.2
+    },
+    {
+      "id": "criminal-e39b2b83",
+      "language": "en",
+      "foundAtAnyRank": 6,
+      "precision": 0
+    },
+    {
+      "id": "hindi-187694cc",
+      "language": "hi",
+      "foundAtAnyRank": 6,
+      "precision": 0
+    },
+    {
+      "id": "criminal-187694cc",
+      "language": "en",
+      "foundAtAnyRank": null,
+      "precision": 0
+    },
+    {
+      "id": "hindi-a259ece9",
+      "language": "hi",
+      "foundAtAnyRank": null,
+      "precision": 0
+    },
+    {
+      "id": "civil-a259ece9",
+      "language": "en",
+      "foundAtAnyRank": null,
+      "precision": 0
+    },
+    {
+      "id": "hindi-bcc47cbd",
+      "language": "hi",
+      "foundAtAnyRank": 4,
+      "precision": 0.2
+    },
+    {
+      "id": "civil-bcc47cbd",
+      "language": "en",
+      "foundAtAnyRank": 2,
+      "precision": 0.2
+    },
+    {
+      "id": "hindi-6f885356",
+      "language": "hi",
+      "foundAtAnyRank": null,
+      "precision": 0
+    },
+    {
+      "id": "criminal-6f885356",
+      "language": "en",
+      "foundAtAnyRank": null,
+      "precision": 0
+    }
+  ],
+  "summary": {
+    "hi": {
+      "n": 5,
+      "successAt5": 0.4,
+      "recallAt20": 0.6
+    },
+    "en": {
+      "n": 5,
+      "successAt5": 0.2,
+      "recallAt20": 0.4
+    }
+  },
+  "caveat": "n=5 pairs. This is a first measurement, not a settled benchmark — the directive itself calls for expanding the gold set before broad claims."
+}
