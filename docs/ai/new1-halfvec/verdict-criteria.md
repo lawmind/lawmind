@@ -51,3 +51,44 @@ cheap, because the same probe runs against any table.
 Latency is recorded but is NOT a criterion. The box carries NEW2's ingest fleet
 (25 processes) throughout, so per-query timings are contended and comparing them
 across arms measures the box as much as the index.
+
+---
+
+## AMENDMENT, 19 Aug 23:32 UTC — criterion 1's ABSOLUTE clause measures the wrong thing
+
+Recorded as an amendment rather than an edit, because a threshold quietly changed
+after seeing data is not a threshold.
+
+At the first checkpoint (n = 20) the ANN recall against exact came back:
+
+| k | HNSW_FP32 | HNSW_HALFVEC |
+| --- | --- | --- |
+| 5 | 0.940 | 0.940 |
+| 10 | 0.930 | 0.925 |
+| 20 | 0.890 | 0.893 |
+| 50 | 0.894 | 0.886 |
+
+**The incumbent fp32 graph does not clear 0.98 either.** Criterion 1 has two
+clauses — a DIFFERENCE clause (halfvec within 1 point of fp32) and an ABSOLUTE
+clause (not below 0.98) — and the absolute clause fails for both arms at every k
+above 5.
+
+That clause was badly chosen and I chose it: I set it without knowing what the
+production graph's own recall was, so it encodes an assumption about HNSW rather
+than a requirement of the representation. **A halfvec index cannot be held to a
+standard the fp32 index it would replace does not meet.**
+
+What this does NOT mean is that the clause is deleted. It is reported as FAILED,
+with the reason, and the verdict follows the rule as written — which routes an
+ANN-layer failure with intact task metrics to **WARN**, not FAIL. The
+interpretation attached to WARN in the original text ("lossy deeper in the
+candidate pool") needs one correction: the loss is the GRAPH's and is shared by
+the incumbent, so it is not evidence against halfvec.
+
+**The decision-relevant number is the DIFFERENCE clause**, and on it the two
+representations are separated by at most 0.8 points at any k so far.
+
+**Separately worth recording**: the 5-query pilot showed recall@5 = 1.000 for both
+graphs; at n = 20 it is 0.940. The pilot was optimistic, which is the ordinary
+behaviour of a 5-sample estimate and the reason the full run exists.
+
