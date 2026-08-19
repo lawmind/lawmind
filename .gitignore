@@ -55,3 +55,48 @@ scripts/recall-ground-truth.json
 hc-citations.err
 arms-run.log
 arms-*.log
+
+# Training/evaluation dataset snapshots (services/ingest/src/dataset-export-cli.ts).
+# Cut from the database on demand and reproducible from it; they are large,
+# they are not source, and a snapshot committed here would go stale silently
+# while looking authoritative.
+datasets/
+
+# Fleet pause/resume runtime artifacts (scripts/fleet-stop.ps1, NEW2, 15 Aug 2026).
+# The checkpoints themselves ARE tracked and stay tracked — these are the
+# transient files around them and none is source:
+#   *.tmp             the write-then-rename staging file, swept at worker startup
+#   STOP              the pause sentinel; committing it would pause a fresh clone
+#   *.corrupt-*       a checkpoint preserved for inspection after a failed parse
+#   .fleet-stop-*     the pre-pause offset snapshot fleet-stop.ps1 verifies against
+services/ingest/.checkpoints/*.tmp
+services/ingest/.checkpoints/STOP
+services/ingest/.checkpoints/*.corrupt-*
+services/ingest/.checkpoints/.fleet-stop-manifest.json
+
+# CX1 proof payloads are reproducible and intentionally disposable. Keep the
+# JSON reports and scripts; never commit generated database, Parquet, or IO files.
+/docs/ai/cx1-parquet-proof/**/*.parquet
+/docs/ai/cx1-parquet-proof/**/benchmark.duckdb*
+/docs/ai/cx1-hardware-proof/**/*.bin
+
+# Atomic cost-ledger lock is process-local; approvals and ledger records remain
+# visible to git.
+/docs/.cost-spend-ledger.lock
+
+# Regenerated on every run of scripts/migration/journal-replay-check.mjs.
+scripts/migration/.journal-replay/
+
+# the console-hider watcher's stderr (scripts/pg-hide-consoles.ps1)
+pg-hide-consoles.err
+
+# Resource-gate claim markers — `scripts/resource-gate.mjs`. Live process state
+# with a 30-minute TTL, meaningful only on the machine that wrote them. A
+# committed claim is a claim nobody can release from the box that owns it.
+.agents/resource/
+
+# Document-vector batch manifests: 886 files x ~1.4 MB of ids that are
+# regenerable from the census in one command, and change every time the corpus
+# grows. The SUMMARY (manifest-tier-a.json) is committed; the batches are not.
+docs/ai/embedding-manifests/document-vectors/*.jsonl
+docs/ai/embedding-manifests/document-vectors/*.meta.json
