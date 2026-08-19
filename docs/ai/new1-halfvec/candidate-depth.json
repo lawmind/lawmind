@@ -1,0 +1,70 @@
+{
+  "kind": "new1_candidate_depth",
+  "generatedAt": "2026-08-19T20:50:24.861Z",
+  "efSearch": 40,
+  "queries": 140,
+  "arm": "production HNSW fp32 over judgment_chunks, iterative_scan relaxed_order",
+  "note": "presence and result are reported separately; a depth that raises presence without raising result has bought a reranking opportunity, not a retrieval improvement",
+  "rows": [
+    {
+      "depth": 200,
+      "n": 140,
+      "goldPresentInPool": 0.6428571428571429,
+      "successAt5": 0.18571428571428572,
+      "recallAt20": 0.37142857142857144,
+      "mrr": 0.10517186277300629,
+      "meanDistinctJudgments": 113.9,
+      "latencyMs": {
+        "mean": 576.7071428571429,
+        "p50": 512,
+        "p95": 1123
+      },
+      "elapsedSeconds": 80.743
+    },
+    {
+      "depth": 500,
+      "n": 140,
+      "goldPresentInPool": 0.7214285714285714,
+      "successAt5": 0.18571428571428572,
+      "recallAt20": 0.37142857142857144,
+      "mrr": 0.1056107333048292,
+      "meanDistinctJudgments": 276.76428571428573,
+      "latencyMs": {
+        "mean": 810.5785714285714,
+        "p50": 598,
+        "p95": 2374
+      },
+      "elapsedSeconds": 113.503
+    },
+    {
+      "depth": 1000,
+      "n": 140,
+      "goldPresentInPool": 0.7571428571428571,
+      "successAt5": 0.18571428571428572,
+      "recallAt20": 0.37142857142857144,
+      "mrr": 0.10571470079177188,
+      "meanDistinctJudgments": 531.1642857142857,
+      "latencyMs": {
+        "mean": 1423.3428571428572,
+        "p50": 1155,
+        "p95": 3642
+      },
+      "elapsedSeconds": 199.288
+    },
+    {
+      "depth": 2000,
+      "n": 140,
+      "goldPresentInPool": 0.8,
+      "successAt5": 0.18571428571428572,
+      "recallAt20": 0.37142857142857144,
+      "mrr": 0.1057720499247525,
+      "meanDistinctJudgments": 994.2571428571429,
+      "latencyMs": {
+        "mean": 2075.8357142857144,
+        "p50": 1586,
+        "p95": 4408
+      },
+      "elapsedSeconds": 290.667
+    }
+  ]
+}
