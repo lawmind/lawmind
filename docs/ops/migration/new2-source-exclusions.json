@@ -1,0 +1,455 @@
+{
+ "tool": ".scratch/source-exclusions.mjs (NEW2)",
+ "takenAt": "2026-08-19T23:02:05.802Z",
+ "predicate": "services/ingest/src/harvest/hc-load.ts isTestFixture() — bench name contains \"testcase\"",
+ "why": "HC_METADATA_SURVEY.perCourtPerYear sums parquet footers per court-year with no bench breakdown, so it counts partitions the ingester deliberately refuses. Every actionable-frontier figure derived from it therefore carries a permanent, never-shrinking remainder that no worker will ever consume. Measured here so the denominator can be corrected rather than explained away each time.",
+ "objects": 56,
+ "totalRows": 289502,
+ "byCourtCodeByYear": {
+  "27_1": {
+   "1960": 1,
+   "1961": 2,
+   "1962": 1,
+   "1974": 1,
+   "1980": 2,
+   "1981": 1,
+   "1983": 3,
+   "1988": 1,
+   "1989": 2,
+   "1990": 1,
+   "1993": 2,
+   "1994": 2,
+   "1995": 3,
+   "1996": 5,
+   "1997": 2,
+   "1998": 5,
+   "1999": 2,
+   "2000": 9,
+   "2001": 22,
+   "2002": 21,
+   "2003": 24,
+   "2004": 18,
+   "2005": 65,
+   "2006": 634,
+   "2007": 3522,
+   "2008": 8088,
+   "2009": 12422,
+   "2010": 16184,
+   "2011": 13971,
+   "2012": 12953,
+   "2013": 12199,
+   "2014": 10482,
+   "2015": 12528,
+   "2016": 11512,
+   "2017": 11586,
+   "2018": 9237,
+   "2019": 13062,
+   "2020": 5584,
+   "2021": 10967,
+   "2022": 14169,
+   "2023": 16430,
+   "2024": 30790,
+   "2025": 43603,
+   "2026": 19384
+  }
+ },
+ "rowsDetail": [
+  {
+   "key": "metadata/parquet/year=1960/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1960",
+   "bench": "testcase",
+   "rows": 1
+  },
+  {
+   "key": "metadata/parquet/year=1961/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1961",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=1962/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1962",
+   "bench": "testcase",
+   "rows": 1
+  },
+  {
+   "key": "metadata/parquet/year=1974/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1974",
+   "bench": "testcase",
+   "rows": 1
+  },
+  {
+   "key": "metadata/parquet/year=1980/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1980",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=1981/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1981",
+   "bench": "testcase",
+   "rows": 1
+  },
+  {
+   "key": "metadata/parquet/year=1983/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1983",
+   "bench": "testcase",
+   "rows": 3
+  },
+  {
+   "key": "metadata/parquet/year=1988/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1988",
+   "bench": "testcase",
+   "rows": 1
+  },
+  {
+   "key": "metadata/parquet/year=1989/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1989",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=1990/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1990",
+   "bench": "testcase",
+   "rows": 1
+  },
+  {
+   "key": "metadata/parquet/year=1993/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1993",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=1994/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1994",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=1995/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1995",
+   "bench": "testcase",
+   "rows": 3
+  },
+  {
+   "key": "metadata/parquet/year=1996/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1996",
+   "bench": "testcase",
+   "rows": 5
+  },
+  {
+   "key": "metadata/parquet/year=1997/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1997",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=1998/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1998",
+   "bench": "testcase",
+   "rows": 5
+  },
+  {
+   "key": "metadata/parquet/year=1999/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "1999",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=2000/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2000",
+   "bench": "testcase",
+   "rows": 9
+  },
+  {
+   "key": "metadata/parquet/year=2001/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2001",
+   "bench": "testcase",
+   "rows": 22
+  },
+  {
+   "key": "metadata/parquet/year=2002/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2002",
+   "bench": "testcase",
+   "rows": 21
+  },
+  {
+   "key": "metadata/parquet/year=2003/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2003",
+   "bench": "testcase",
+   "rows": 24
+  },
+  {
+   "key": "metadata/parquet/year=2004/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2004",
+   "bench": "testcase",
+   "rows": 18
+  },
+  {
+   "key": "metadata/parquet/year=2005/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2005",
+   "bench": "testcase",
+   "rows": 65
+  },
+  {
+   "key": "metadata/parquet/year=2006/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2006",
+   "bench": "testcase",
+   "rows": 634
+  },
+  {
+   "key": "metadata/parquet/year=2007/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2007",
+   "bench": "testcase",
+   "rows": 3522
+  },
+  {
+   "key": "metadata/parquet/year=2008/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2008",
+   "bench": "testcase",
+   "rows": 8088
+  },
+  {
+   "key": "metadata/parquet/year=2009/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2009",
+   "bench": "testcase",
+   "rows": 12422
+  },
+  {
+   "key": "metadata/parquet/year=2010/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2010",
+   "bench": "testcase",
+   "rows": 16184
+  },
+  {
+   "key": "metadata/parquet/year=2011/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2011",
+   "bench": "testcase",
+   "rows": 13971
+  },
+  {
+   "key": "metadata/parquet/year=2012/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2012",
+   "bench": "testcase",
+   "rows": 1
+  },
+  {
+   "key": "metadata/parquet/year=2012/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2012",
+   "bench": "testcase",
+   "rows": 12952
+  },
+  {
+   "key": "metadata/parquet/year=2013/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2013",
+   "bench": "testcase",
+   "rows": 12199
+  },
+  {
+   "key": "metadata/parquet/year=2014/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2014",
+   "bench": "testcase",
+   "rows": 10482
+  },
+  {
+   "key": "metadata/parquet/year=2015/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2015",
+   "bench": "testcase",
+   "rows": 3
+  },
+  {
+   "key": "metadata/parquet/year=2015/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2015",
+   "bench": "testcase",
+   "rows": 12525
+  },
+  {
+   "key": "metadata/parquet/year=2016/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2016",
+   "bench": "testcase",
+   "rows": 11512
+  },
+  {
+   "key": "metadata/parquet/year=2017/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2017",
+   "bench": "testcase",
+   "rows": 2
+  },
+  {
+   "key": "metadata/parquet/year=2017/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2017",
+   "bench": "testcase",
+   "rows": 11584
+  },
+  {
+   "key": "metadata/parquet/year=2018/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2018",
+   "bench": "testcase",
+   "rows": 13
+  },
+  {
+   "key": "metadata/parquet/year=2018/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2018",
+   "bench": "testcase",
+   "rows": 9224
+  },
+  {
+   "key": "metadata/parquet/year=2019/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2019",
+   "bench": "testcase",
+   "rows": 36
+  },
+  {
+   "key": "metadata/parquet/year=2019/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2019",
+   "bench": "testcase",
+   "rows": 13026
+  },
+  {
+   "key": "metadata/parquet/year=2020/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2020",
+   "bench": "testcase",
+   "rows": 17
+  },
+  {
+   "key": "metadata/parquet/year=2020/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2020",
+   "bench": "testcase",
+   "rows": 5567
+  },
+  {
+   "key": "metadata/parquet/year=2021/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2021",
+   "bench": "testcase",
+   "rows": 102
+  },
+  {
+   "key": "metadata/parquet/year=2021/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2021",
+   "bench": "testcase",
+   "rows": 10865
+  },
+  {
+   "key": "metadata/parquet/year=2022/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2022",
+   "bench": "testcase",
+   "rows": 126
+  },
+  {
+   "key": "metadata/parquet/year=2022/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2022",
+   "bench": "testcase",
+   "rows": 14043
+  },
+  {
+   "key": "metadata/parquet/year=2023/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2023",
+   "bench": "testcase",
+   "rows": 347
+  },
+  {
+   "key": "metadata/parquet/year=2023/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2023",
+   "bench": "testcase",
+   "rows": 16083
+  },
+  {
+   "key": "metadata/parquet/year=2024/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2024",
+   "bench": "testcase",
+   "rows": 16107
+  },
+  {
+   "key": "metadata/parquet/year=2024/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2024",
+   "bench": "testcase",
+   "rows": 14683
+  },
+  {
+   "key": "metadata/parquet/year=2025/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2025",
+   "bench": "testcase",
+   "rows": 26021
+  },
+  {
+   "key": "metadata/parquet/year=2025/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2025",
+   "bench": "testcase",
+   "rows": 17582
+  },
+  {
+   "key": "metadata/parquet/year=2026/court=27_1/bench=testcase/metadata-mobile.parquet",
+   "court": "27_1",
+   "year": "2026",
+   "bench": "testcase",
+   "rows": 19192
+  },
+  {
+   "key": "metadata/parquet/year=2026/court=27_1/bench=testcase/metadata.parquet",
+   "court": "27_1",
+   "year": "2026",
+   "bench": "testcase",
+   "rows": 192
+  }
+ ],
+ "caveats": [
+  "This is the SOURCE side only. Nothing was ingested and nothing is written to any table.",
+  "Row counts are parquet footer num_rows, the same quantity HC_METADATA_SURVEY uses, so they subtract commensurably. They are ROWS, not distinct documents.",
+  "The predicate is imported from the ingester, not re-implemented, so the exclusion measured here cannot drift from the exclusion applied."
+ ]
+}

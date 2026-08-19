@@ -61,6 +61,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SURVEY = join(ROOT, 'docs', 'HC_METADATA_SURVEY.json');
+const EXCLUSIONS = join(ROOT, 'docs', 'ops', 'migration', 'new2-source-exclusions.json');
 const HELD = join(ROOT, 'docs', 'ops', 'migration', 'new2-held-by-court-year.json');
 const LEDGER = join(ROOT, 'docs', 'ops', 'migration', 'new2-ledger-by-court-year.json');
 const OUT_JSON = join(ROOT, 'docs', 'ops', 'migration', 'new2-coverage.json');
@@ -83,6 +84,24 @@ for (const [label, path] of [
   }
 }
 const survey = JSON.parse(readFileSync(SURVEY, 'utf8'));
+
+/**
+ * FIXTURE ROWS ARE NOT A COVERAGE GAP.
+ *
+ * The survey sums parquet footers per court-year with no bench breakdown, so it
+ * counts `bench=testcase` — a published fixture `hc-load` refuses by rule. Left
+ * in, it renders as 289,502 documents Bombay is missing, permanently, in a
+ * report whose whole purpose is to tell the retrieval lane the difference
+ * between "no law" and "no data". It is neither: it is not law and we correctly
+ * did not fetch it.
+ *
+ * Subtracted from SOURCE RECORD EXISTS and reported separately as
+ * SOURCE RECORD EXCLUDED, never silently dropped.
+ */
+const exclusions = existsSync(EXCLUSIONS)
+  ? JSON.parse(readFileSync(EXCLUSIONS, 'utf8'))
+  : { byCourtCodeByYear: {}, totalRows: 0, takenAt: null };
+const excludedMap = exclusions.byCourtCodeByYear ?? {};
 const held = JSON.parse(readFileSync(HELD, 'utf8'));
 const ledger = existsSync(LEDGER) ? JSON.parse(readFileSync(LEDGER, 'utf8')) : null;
 
@@ -110,7 +129,9 @@ for (const [courtName, years] of Object.entries(survey.perCourtPerYear ?? {})) {
   if (ONE_COURT && code !== ONE_COURT) continue;
   for (const [y, srcRaw] of Object.entries(years)) {
     const year = Number(y);
-    const sourceRecords = Number(srcRaw);
+    const sourceRecordsRaw = Number(srcRaw);
+    const sourceExcluded = Number(excludedMap[code]?.[y] ?? 0);
+    const sourceRecords = Math.max(0, sourceRecordsRaw - sourceExcluded);
     const acquired = Number(heldMap[code]?.[String(year)] ?? 0);
     const l = ledgerMap[code]?.[String(year)] ?? {};
     const missing = Number(l.sourceDocumentMissing ?? 0);
@@ -175,10 +196,12 @@ const report = {
   takenAt: new Date().toISOString(),
   derivedFrom: {
     source: `docs/HC_METADATA_SURVEY.json perCourtPerYear (${survey.generatedAt ?? '?'})`,
+    sourceExclusions: `docs/ops/migration/new2-source-exclusions.json (${exclusions.takenAt ?? 'ABSENT — fixture rows still counted as a gap'})`,
     held: `new2-held-by-court-year.json heldByCourtCodeBySourceYear (${held.takenAt ?? '?'})`,
     ledger: ledger ? `new2-ledger-by-court-year.json (${ledger.takenAt})` : 'ABSENT — failure states read 0',
   },
   caveats: [
+    'SOURCE RECORD EXISTS has bench=testcase subtracted from it. That partition is a published FIXTURE the ingester refuses by rule, and leaving it in the denominator rendered 289,502 fixture rows as a permanent Bombay coverage gap — the exact confusion between "no law" and "no data" this report exists to prevent. The excluded total is printed separately and is never silently dropped.',
     'SOURCE RECORD EXISTS counts parquet ROWS, not distinct documents: a bench publishing both metadata.parquet and metadata-mobile.parquet lists the same document twice, so every source figure is an UPPER bound and every coverage figure derived from it is UNDERSTATED by an unmeasured amount.',
     'No corpus-wide percentage is printed, deliberately. A number with an unknown error bar beside four exact ones gets quoted as though it were exact.',
     'This counts DOCUMENTS, not reasoned decisions. Maharashtra RERA was 49,167 raw records and ~7,376 reasoned decisions; hc_document_class is the field that separates them and was 8.9% populated when last measured.',
@@ -194,6 +217,9 @@ const n = (x) => x.toLocaleString();
 console.log(`COVERAGE — five states, per court per year${ONE_COURT ? ` · court ${ONE_COURT}` : ''}`);
 console.log(`  source ${survey.generatedAt ?? '?'} · held ${held.takenAt ?? '?'} · ledger ${ledger?.takenAt ?? 'ABSENT'}\n`);
 console.log(`  SOURCE RECORD EXISTS      ${n(totals.sourceRecords).padStart(12)}   parquet ROWS — upper bound, see caveats`);
+console.log(
+  `  SOURCE RECORD EXCLUDED    ${n(Number(exclusions.totalRows ?? 0)).padStart(12)}   bench=testcase fixture, refused by hc-load — NOT a coverage gap`,
+);
 console.log(`  DOCUMENT ACQUIRED         ${n(totals.acquired).padStart(12)}`);
 console.log(`  SOURCE DOCUMENT MISSING   ${n(totals.sourceDocumentMissing).padStart(12)}   404/403/410 observed`);
 console.log(`  RETRY PENDING             ${n(totals.retryPending).padStart(12)}`);
@@ -222,6 +248,7 @@ if (MD_OUT) {
     '| state | documents |',
     '| --- | ---: |',
     `| SOURCE RECORD EXISTS (parquet rows, upper bound) | ${n(totals.sourceRecords)} |`,
+    `| SOURCE RECORD EXCLUDED (bench=testcase fixture, refused by hc-load) | ${n(Number(exclusions.totalRows ?? 0))} |`,
     `| DOCUMENT ACQUIRED | ${n(totals.acquired)} |`,
     `| SOURCE DOCUMENT MISSING (404/403/410 observed) | ${n(totals.sourceDocumentMissing)} |`,
     `| RETRY PENDING | ${n(totals.retryPending)} |`,

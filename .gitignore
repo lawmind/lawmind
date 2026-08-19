@@ -106,3 +106,12 @@ docs/ai/embedding-manifests/document-vectors/*.meta.json
 # .generated-cache/ directory was swept in the same way and is deliberately NOT
 # ignored here — it is NEW1's and whether it belongs in git is NEW1's call.
 services/harness/*.err
+
+# NEW2 model-classification manifest: one JSON line per residue document that
+# the frozen deterministic screen cannot call either way, each carrying a 700
+# character tail snippet so LCC's model pass needs no second read. ~195,000 rows
+# and ~310 MB, regenerable in ~40 minutes from the corpus plus the frozen screen
+# artifact by `disposal-manifest-cli`. The SUMMARY
+# (new2-model-classification-manifest.json) is committed and carries the counts,
+# the frozen screen it was built under and the watermark; the payload is not.
+docs/ops/migration/new2-model-classification-manifest.jsonl

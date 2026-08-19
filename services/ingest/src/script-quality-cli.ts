@@ -100,23 +100,74 @@ const COURTS = (argOf('courts') ?? '')
   .map((c) => c.trim())
   .filter(Boolean);
 
-const CKPT = join(import.meta.dirname, '..', '.checkpoints', 'script-quality.json');
+/**
+ * --since <ISO> — THE INCREMENTAL PASS, AND WHY IT CANNOT USE THE ID CURSOR.
+ *
+ * The full pass walks `judgments_pkey` and records how far it got as one id.
+ * That is only a watermark if ids arrive in key order, and they do not: `id` is
+ * a random uuid, so a document ingested after the pass lands anywhere in the key
+ * space — almost always BELOW a watermark that has already reached the top.
+ *
+ * Measured 20 Aug 2026, not assumed: 740,993 judgments were created after the
+ * 19 Aug pass began and 740,993 of them — every single one — sort below its
+ * final watermark `ffffff40-…`. Resuming that cursor screens nothing, for ever,
+ * while reporting a clean exit.
+ *
+ * So --since keysets on `(created_at, id)` against `judgments_created_at_idx`
+ * instead, and keeps its progress in a SEPARATE file. Sharing the main
+ * checkpoint would overwrite a 17.9M-row watermark with a cursor that means
+ * something else entirely, and no later reader could tell.
+ */
+const SINCE = argOf('since');
 
-type Checkpoint = { cursor: string; screened: number; written: number; startedAt: string };
+const CKPT = join(
+  import.meta.dirname,
+  '..',
+  '.checkpoints',
+  SINCE ? 'script-quality-since.json' : 'script-quality.json',
+);
+
+type Checkpoint = {
+  cursor: string;
+  screened: number;
+  written: number;
+  startedAt: string;
+  /** --since only: the `created_at` half of the composite cursor. */
+  cursorAt?: string;
+  /** --since only: the boundary the pass was started with, so a resume with a
+   *  DIFFERENT --since is visible rather than silently continuing the old one. */
+  since?: string;
+};
 const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
+const EPOCH = '1970-01-01T00:00:00.000Z';
+function fresh(): Checkpoint {
+  return {
+    cursor: ZERO_UUID,
+    screened: 0,
+    written: 0,
+    startedAt: new Date().toISOString(),
+    ...(SINCE ? { cursorAt: EPOCH, since: SINCE } : {}),
+  };
+}
 function loadCheckpoint(): Checkpoint {
-  if (RESTART || !existsSync(CKPT)) {
-    return { cursor: ZERO_UUID, screened: 0, written: 0, startedAt: new Date().toISOString() };
-  }
+  if (RESTART || !existsSync(CKPT)) return fresh();
   try {
-    return JSON.parse(readFileSync(CKPT, 'utf8')) as Checkpoint;
+    const c = JSON.parse(readFileSync(CKPT, 'utf8')) as Checkpoint;
+    if (SINCE && c.since !== SINCE) {
+      /* A different boundary is a different pass. Continuing the old cursor
+       * would skip everything between the two boundaries and report the skip as
+       * progress. */
+      console.log(`checkpoint was built for --since ${c.since ?? '(none)'} — restarting for ${SINCE}`);
+      return fresh();
+    }
+    return c;
   } catch {
     /* A corrupt cursor restarts from zero rather than from a guess. The pass is
      * idempotent — it re-screens rows and re-writes the same verdict — so the
      * cost of restarting is time, and the cost of trusting a half-written file
      * is a silently skipped range. */
     console.log('checkpoint unreadable — restarting from the beginning of the key order');
-    return { cursor: ZERO_UUID, screened: 0, written: 0, startedAt: new Date().toISOString() };
+    return fresh();
   }
 }
 function saveCheckpoint(c: Checkpoint): void {
@@ -124,7 +175,14 @@ function saveCheckpoint(c: Checkpoint): void {
   writeFileSync(CKPT, JSON.stringify(c, null, 1));
 }
 
-type Row = { id: string; court: string | null; source_url: string | null; full_text: string | null };
+type Row = {
+  id: string;
+  court: string | null;
+  source_url: string | null;
+  full_text: string | null;
+  /** Selected only under --since; the composite cursor's other half. */
+  created_at?: string | Date | null;
+};
 
 /**
  * Ten minutes. Each batch detoasts up to `BATCH` full texts, which is the single
@@ -149,7 +207,11 @@ console.log(
     `${LIMIT > 0 ? ` · limit ${LIMIT.toLocaleString()}` : ''}` +
     `${COURTS.length > 0 ? ` · courts ${COURTS.join(',')}` : ' · all courts'}`,
 );
-console.log(`resuming from id > ${ckpt.cursor}\n`);
+console.log(
+  SINCE
+    ? `incremental — created_at >= ${SINCE} · resuming from (${ckpt.cursorAt}, ${ckpt.cursor.slice(0, 8)})\n`
+    : `resuming from id > ${ckpt.cursor}\n`,
+);
 
 try {
   for (;;) {
@@ -159,7 +221,25 @@ try {
     /* Keyset pagination, never OFFSET. `id > cursor ORDER BY id LIMIT n` is an
      * index scan of `judgments_pkey` whose cost does not grow with how far in
      * the pass has got; OFFSET re-reads everything skipped, on every batch. */
-    const rows = COURTS.length
+    const rows = SINCE
+      ? /* Composite keyset on (created_at, id). ROW(...) > ROW(...) is the one
+         * form Postgres can drive off `judgments_created_at_idx` while still
+         * being total — comparing the two columns with AND/OR by hand either
+         * loses rows that share a timestamp or re-reads them for ever. The
+         * --courts filter composes as an ordinary predicate. */
+        ((await sql`
+          SELECT id, court, source_url, full_text, created_at
+            FROM judgments
+           WHERE created_at >= ${SINCE}::timestamptz
+             AND (created_at, id) > (${ckpt.cursorAt ?? EPOCH}::timestamptz, ${ckpt.cursor}::uuid)
+             ${
+               COURTS.length
+                 ? sql`AND source_url LIKE ANY(${COURTS.map((c) => `%/court=${c}/%`)}::text[])`
+                 : sql``
+             }
+           ORDER BY created_at, id
+           LIMIT ${want}`) as unknown as Row[])
+      : COURTS.length
       ? ((await sql`
           SELECT id, court, source_url, full_text
             FROM judgments
@@ -234,7 +314,9 @@ try {
       ckpt.written += verdicts.length;
     }
 
-    ckpt.cursor = rows[rows.length - 1]!.id;
+    const last = rows[rows.length - 1]!;
+    ckpt.cursor = last.id;
+    if (SINCE) ckpt.cursorAt = new Date(last.created_at!).toISOString();
     ckpt.screened += rows.length;
     saveCheckpoint(ckpt);
 
@@ -256,11 +338,21 @@ try {
   console.log('');
   console.log('RESULTS');
   console.log(`SCREENED          ${counts.screened.toLocaleString()}`);
-  console.log(`legacy_font_ascii ${counts.legacyFontAscii.toLocaleString()}${CONFIRM ? ' written' : ' would be written'}`);
-  console.log(`Devanagari present, no verdict available   ${counts.hasDevanagari.toLocaleString()}`);
-  console.log(`pure ASCII below marker threshold, no verdict   ${counts.zeroDevanagariBelowThreshold.toLocaleString()}`);
+  console.log(
+    `legacy_font_ascii ${counts.legacyFontAscii.toLocaleString()}${CONFIRM ? ' written' : ' would be written'}`,
+  );
+  console.log(
+    `Devanagari present, no verdict available   ${counts.hasDevanagari.toLocaleString()}`,
+  );
+  console.log(
+    `pure ASCII below marker threshold, no verdict   ${counts.zeroDevanagariBelowThreshold.toLocaleString()}`,
+  );
   console.log(`empty text        ${counts.emptyText.toLocaleString()}`);
-  console.log(`elapsed           ${elapsed.toFixed(0)}s · watermark ${ckpt.cursor}`);
+  console.log(
+    SINCE
+      ? `elapsed           ${elapsed.toFixed(0)}s · cursor (${ckpt.cursorAt}, ${ckpt.cursor})`
+      : `elapsed           ${elapsed.toFixed(0)}s · watermark ${ckpt.cursor}`,
+  );
   console.log('');
   console.log('courts with any legacy-font verdict:');
   for (const c of courtRows.filter((c) => c.legacy > 0).slice(0, 25)) {
@@ -281,6 +373,8 @@ try {
           suspectMarkerRate: SUSPECT_MARKER_RATE,
           method: 'text_marker_screen_v1',
           courtsFilter: COURTS.length ? COURTS : null,
+          since: SINCE,
+          createdAtCursor: SINCE ? (ckpt.cursorAt ?? null) : null,
           counts,
           elapsedSeconds: Number(elapsed.toFixed(1)),
           watermark: ckpt.cursor,
@@ -290,6 +384,7 @@ try {
             'The verdict comes from the TEXT screen, not from PDF font evidence. Pooled over three pilots the screen had 0 false positives in 939 PDF-labelled clean documents and 76.2% recall (32/42), so its error is entirely missed positives, which stay NULL.',
             'A legacy-font document is MIXED: the English caption extracts correctly and the Hindi reasoning does not. These rows are findable by title and unusable as reasoning, which is worse than absent, and no length or text_quality check detects it.',
             'The rate per court here is over the rows this pass screened, in primary-key order. It is not a corpus rate for that court unless the pass has finished.',
+            'Under --since the pass walks (created_at, id), NOT the primary key, because judgments.id is a random uuid: 740,993 of 740,993 rows created after the 19 Aug pass began sort BELOW its final watermark, so an id cursor can never reach them. "Was this looked at" is then created_at < createdAtCursor, and the two cursors are stored in different files on purpose.',
             'Rows screened and left NULL are recorded by the WATERMARK, not by a per-row method. "Was this looked at" is `id <= watermark`; a per-row method would be a ~17.9M-row UPDATE for a fact one cursor already carries.',
           ],
         },

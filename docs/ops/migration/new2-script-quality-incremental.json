@@ -1,0 +1,144 @@
+{
+ "tool": "script-quality-cli",
+ "takenAt": "2026-08-19T22:47:50.691Z",
+ "wrote": true,
+ "markerListSize": 40,
+ "suspectMarkerRate": 4,
+ "method": "text_marker_screen_v1",
+ "courtsFilter": null,
+ "since": "2026-08-19T06:49:27Z",
+ "createdAtCursor": "2026-08-19T22:47:48.360Z",
+ "counts": {
+  "screened": 777186,
+  "legacyFontAscii": 1911,
+  "hasDevanagari": 4284,
+  "zeroDevanagariBelowThreshold": 770991,
+  "emptyText": 0
+ },
+ "elapsedSeconds": 314.8,
+ "watermark": "febf874b-471d-496b-8b3d-2116530544be",
+ "byCourt": [
+  {
+   "court": "8_9",
+   "screened": 95901,
+   "legacy": 1480,
+   "rate": 0.015432581516355409
+  },
+  {
+   "court": "23_23",
+   "screened": 45487,
+   "legacy": 406,
+   "rate": 0.008925627102248994
+  },
+  {
+   "court": "10_8",
+   "screened": 69877,
+   "legacy": 20,
+   "rate": 0.00028621721024085176
+  },
+  {
+   "court": "20_7",
+   "screened": 53755,
+   "legacy": 5,
+   "rate": 0.00009301460329271696
+  },
+  {
+   "court": "28_2",
+   "screened": 74530,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "32_4",
+   "screened": 85327,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "3_22",
+   "screened": 172321,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "7_26",
+   "screened": 71320,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "18_6",
+   "screened": 50093,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "27_1",
+   "screened": 1606,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "24_17",
+   "screened": 103,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "21_11",
+   "screened": 35746,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "33_10",
+   "screened": 1173,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "22_18",
+   "screened": 817,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "29_3",
+   "screened": 78,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "9_13",
+   "screened": 2,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "36_29",
+   "screened": 13762,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "19_16",
+   "screened": 3745,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "1_12",
+   "screened": 1543,
+   "legacy": 0,
+   "rate": 0
+  }
+ ],
+ "caveats": [
+  "Only legacy_font_ascii is written. clean, devanagari_deleted, mixed_script_ok and damaged_other have no validated detector at scan time and are deliberately left NULL rather than guessed — 0056 passes NULL and excludes only a known-bad verdict, so silence is free and a wrong verdict is not.",
+  "The verdict comes from the TEXT screen, not from PDF font evidence. Pooled over three pilots the screen had 0 false positives in 939 PDF-labelled clean documents and 76.2% recall (32/42), so its error is entirely missed positives, which stay NULL.",
+  "A legacy-font document is MIXED: the English caption extracts correctly and the Hindi reasoning does not. These rows are findable by title and unusable as reasoning, which is worse than absent, and no length or text_quality check detects it.",
+  "The rate per court here is over the rows this pass screened, in primary-key order. It is not a corpus rate for that court unless the pass has finished.",
+  "Under --since the pass walks (created_at, id), NOT the primary key, because judgments.id is a random uuid: 740,993 of 740,993 rows created after the 19 Aug pass began sort BELOW its final watermark, so an id cursor can never reach them. \"Was this looked at\" is then created_at < createdAtCursor, and the two cursors are stored in different files on purpose.",
+  "Rows screened and left NULL are recorded by the WATERMARK, not by a per-row method. \"Was this looked at\" is `id <= watermark`; a per-row method would be a ~17.9M-row UPDATE for a fact one cursor already carries."
+ ]
+}

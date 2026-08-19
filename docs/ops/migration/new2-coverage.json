@@ -1,565 +1,27 @@
 {
  "tool": "scripts/migration/new2-coverage-report.mjs",
- "takenAt": "2026-08-18T07:12:25.827Z",
+ "takenAt": "2026-08-19T23:13:14.885Z",
  "derivedFrom": {
   "source": "docs/HC_METADATA_SURVEY.json perCourtPerYear (2026-08-11T09:24:03.309Z)",
-  "held": "new2-held-by-court-year.json heldByCourtCodeBySourceYear (2026-08-18T07:07:39.022Z)",
-  "ledger": "new2-ledger-by-court-year.json (2026-08-18T07:01:47.731Z)"
+  "sourceExclusions": "docs/ops/migration/new2-source-exclusions.json (2026-08-19T23:02:05.802Z)",
+  "held": "new2-held-by-court-year.json heldByCourtCodeBySourceYear (2026-08-19T23:10:02.072Z)",
+  "ledger": "new2-ledger-by-court-year.json (2026-08-19T23:10:03.022Z)"
  },
  "caveats": [
+  "SOURCE RECORD EXISTS has bench=testcase subtracted from it. That partition is a published FIXTURE the ingester refuses by rule, and leaving it in the denominator rendered 289,502 fixture rows as a permanent Bombay coverage gap — the exact confusion between \"no law\" and \"no data\" this report exists to prevent. The excluded total is printed separately and is never silently dropped.",
   "SOURCE RECORD EXISTS counts parquet ROWS, not distinct documents: a bench publishing both metadata.parquet and metadata-mobile.parquet lists the same document twice, so every source figure is an UPPER bound and every coverage figure derived from it is UNDERSTATED by an unmeasured amount.",
   "No corpus-wide percentage is printed, deliberately. A number with an unknown error bar beside four exact ones gets quoted as though it were exact.",
   "This counts DOCUMENTS, not reasoned decisions. Maharashtra RERA was 49,167 raw records and ~7,376 reasoned decisions; hc_document_class is the field that separates them and was 8.9% populated when last measured.",
   "DOCUMENT ACQUIRED is keyed by the PARTITION year in source_url so it is commensurable with the source count. The decision-year map answers a different question and is not used here."
  ],
  "totals": {
-  "sourceRecords": 20529203,
-  "acquired": 12184886,
-  "sourceDocumentMissing": 85205,
-  "retryPending": 5189,
-  "otherFailure": 74
+  "sourceRecords": 20239701,
+  "acquired": 18660626,
+  "sourceDocumentMissing": 217794,
+  "retryPending": 12916,
+  "otherFailure": 221
  },
- "blackouts": [
-  {
-   "court": "27_1",
-   "courtName": "Bombay High Court",
-   "years": [
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012
-   ],
-   "sourceRecords": 605453,
-   "courtHeldElsewhere": 1237314
-  },
-  {
-   "court": "33_10",
-   "courtName": "Madras High Court",
-   "years": [
-    1995,
-    1996,
-    1997,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016,
-    2017,
-    2018
-   ],
-   "sourceRecords": 477667,
-   "courtHeldElsewhere": 1052202
-  },
-  {
-   "court": "3_22",
-   "courtName": "High Court of Punjab and Haryana",
-   "years": [
-    1995,
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013
-   ],
-   "sourceRecords": 385664,
-   "courtHeldElsewhere": 1254083
-  },
-  {
-   "court": "10_8",
-   "courtName": "Patna High Court",
-   "years": [
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012
-   ],
-   "sourceRecords": 380011,
-   "courtHeldElsewhere": 1168635
-  },
-  {
-   "court": "36_29",
-   "courtName": "High Court  for State of Telangana",
-   "years": [
-    1995,
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012
-   ],
-   "sourceRecords": 341033,
-   "courtHeldElsewhere": 425624
-  },
-  {
-   "court": "32_4",
-   "courtName": "High Court of Kerala",
-   "years": [
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012
-   ],
-   "sourceRecords": 312556,
-   "courtHeldElsewhere": 417538
-  },
-  {
-   "court": "32_4",
-   "courtName": "High Court of Kerala",
-   "years": [
-    2017,
-    2018,
-    2019,
-    2020
-   ],
-   "sourceRecords": 246609,
-   "courtHeldElsewhere": 417538
-  },
-  {
-   "court": "36_29",
-   "courtName": "High Court  for State of Telangana",
-   "years": [
-    2016,
-    2017,
-    2018,
-    2019
-   ],
-   "sourceRecords": 226083,
-   "courtHeldElsewhere": 425624
-  },
-  {
-   "court": "20_7",
-   "courtName": "High Court of Jharkhand",
-   "years": [
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016,
-    2017,
-    2018,
-    2019,
-    2020
-   ],
-   "sourceRecords": 219765,
-   "courtHeldElsewhere": 228434
-  },
-  {
-   "court": "22_18",
-   "courtName": "High Court Of Chhattisgarh",
-   "years": [
-    2016,
-    2017,
-    2018,
-    2019,
-    2020,
-    2021,
-    2022
-   ],
-   "sourceRecords": 215270,
-   "courtHeldElsewhere": 236165
-  },
-  {
-   "court": "22_18",
-   "courtName": "High Court Of Chhattisgarh",
-   "years": [
-    1996,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012
-   ],
-   "sourceRecords": 175505,
-   "courtHeldElsewhere": 236165
-  },
-  {
-   "court": "29_3",
-   "courtName": "High Court of Karnataka",
-   "years": [
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014
-   ],
-   "sourceRecords": 165362,
-   "courtHeldElsewhere": 572599
-  },
-  {
-   "court": "23_23",
-   "courtName": "High Court of Madhya Pradesh",
-   "years": [
-    1996,
-    2000,
-    2002,
-    2004,
-    2007,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016
-   ],
-   "sourceRecords": 156616,
-   "courtHeldElsewhere": 493187
-  },
-  {
-   "court": "29_3",
-   "courtName": "High Court of Karnataka",
-   "years": [
-    2016,
-    2017,
-    2018
-   ],
-   "sourceRecords": 156361,
-   "courtHeldElsewhere": 572599
-  },
-  {
-   "court": "19_16",
-   "courtName": "Calcutta High Court",
-   "years": [
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016,
-    2017,
-    2018,
-    2019,
-    2020,
-    2021,
-    2022
-   ],
-   "sourceRecords": 150476,
-   "courtHeldElsewhere": 259629
-  },
-  {
-   "court": "18_6",
-   "courtName": "Gauhati High Court",
-   "years": [
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016,
-    2017,
-    2018
-   ],
-   "sourceRecords": 140168,
-   "courtHeldElsewhere": 176713
-  },
-  {
-   "court": "24_17",
-   "courtName": "High Court of Gujarat",
-   "years": [
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015
-   ],
-   "sourceRecords": 131400,
-   "courtHeldElsewhere": 290629
-  },
-  {
-   "court": "7_26",
-   "courtName": "High Court of Delhi",
-   "years": [
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016
-   ],
-   "sourceRecords": 119056,
-   "courtHeldElsewhere": 231497
-  },
-  {
-   "court": "8_9",
-   "courtName": "High Court Of Rajasthan",
-   "years": [
-    1995,
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012
-   ],
-   "sourceRecords": 116175,
-   "courtHeldElsewhere": 862132
-  },
-  {
-   "court": "21_11",
-   "courtName": "Orissa High Court",
-   "years": [
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015
-   ],
-   "sourceRecords": 33987,
-   "courtHeldElsewhere": 719439
-  },
-  {
-   "court": "28_2",
-   "courtName": "High Court of Andhra Pradesh",
-   "years": [
-    1995,
-    1996,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016,
-    2017,
-    2018,
-    2019
-   ],
-   "sourceRecords": 14278,
-   "courtHeldElsewhere": 231053
-  },
-  {
-   "court": "1_12",
-   "courtName": "High Court of Jammu and Kashmir",
-   "years": [
-    1999,
-    2000,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015
-   ],
-   "sourceRecords": 1552,
-   "courtHeldElsewhere": 112034
-  }
- ],
+ "blackouts": [],
  "rows": [
   {
    "court": "1_12",
@@ -588,176 +50,176 @@
    "courtName": "High Court of Jammu and Kashmir",
    "year": 1999,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2000,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2002,
    "sourceRecords": 5,
-   "acquired": 0,
+   "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2003,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2004,
    "sourceRecords": 5,
-   "acquired": 0,
+   "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2005,
    "sourceRecords": 44,
-   "acquired": 0,
+   "acquired": 44,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 44
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2006,
    "sourceRecords": 11,
-   "acquired": 0,
+   "acquired": 11,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2007,
    "sourceRecords": 46,
-   "acquired": 0,
+   "acquired": 46,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 46
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2008,
    "sourceRecords": 95,
-   "acquired": 0,
+   "acquired": 95,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 95
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2009,
    "sourceRecords": 117,
-   "acquired": 0,
+   "acquired": 117,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 117
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2010,
    "sourceRecords": 143,
-   "acquired": 0,
+   "acquired": 143,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 143
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2011,
    "sourceRecords": 132,
-   "acquired": 0,
+   "acquired": 132,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 132
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2012,
    "sourceRecords": 236,
-   "acquired": 0,
+   "acquired": 235,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 236
+   "unaccountedUpperBound": 1
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2013,
    "sourceRecords": 232,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 229,
+   "sourceDocumentMissing": 3,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 232
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2014,
    "sourceRecords": 203,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 201,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 203
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
    "courtName": "High Court of Jammu and Kashmir",
    "year": 2015,
    "sourceRecords": 277,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 274,
+   "sourceDocumentMissing": 3,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 277
+   "unaccountedUpperBound": 0
   },
   {
    "court": "1_12",
@@ -1116,209 +578,209 @@
    "courtName": "Patna High Court",
    "year": 1996,
    "sourceRecords": 19,
-   "acquired": 0,
+   "acquired": 19,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 19
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 1997,
    "sourceRecords": 24,
-   "acquired": 0,
+   "acquired": 24,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 24
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 1998,
    "sourceRecords": 23,
-   "acquired": 0,
+   "acquired": 23,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 23
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 1999,
    "sourceRecords": 24,
-   "acquired": 0,
+   "acquired": 24,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 24
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2000,
    "sourceRecords": 50,
-   "acquired": 0,
+   "acquired": 50,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 50
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2001,
    "sourceRecords": 30,
-   "acquired": 0,
+   "acquired": 30,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 30
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2002,
    "sourceRecords": 50,
-   "acquired": 0,
+   "acquired": 50,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 50
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2003,
    "sourceRecords": 48,
-   "acquired": 0,
+   "acquired": 48,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 48
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2004,
    "sourceRecords": 59,
-   "acquired": 0,
+   "acquired": 59,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 59
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2005,
    "sourceRecords": 117,
-   "acquired": 0,
+   "acquired": 117,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 117
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2006,
    "sourceRecords": 186,
-   "acquired": 0,
+   "acquired": 186,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 186
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2007,
    "sourceRecords": 573,
-   "acquired": 0,
+   "acquired": 573,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 573
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2008,
    "sourceRecords": 44859,
-   "acquired": 0,
+   "acquired": 44859,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 44859
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2009,
    "sourceRecords": 71211,
-   "acquired": 0,
+   "acquired": 71211,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 71211
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2010,
    "sourceRecords": 81983,
-   "acquired": 0,
+   "acquired": 81983,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 81983
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2011,
    "sourceRecords": 91446,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 91445,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 91446
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2012,
    "sourceRecords": 89309,
-   "acquired": 0,
+   "acquired": 89309,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 89309
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2013,
    "sourceRecords": 80251,
-   "acquired": 6496,
+   "acquired": 80251,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 73755
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2014,
    "sourceRecords": 79395,
-   "acquired": 79366,
+   "acquired": 79395,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 29
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
@@ -1336,22 +798,22 @@
    "courtName": "Patna High Court",
    "year": 2016,
    "sourceRecords": 86417,
-   "acquired": 2400,
+   "acquired": 86417,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 139,
    "otherFailure": 0,
-   "unaccountedUpperBound": 84017
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2017,
    "sourceRecords": 95440,
-   "acquired": 95303,
+   "acquired": 95440,
    "sourceDocumentMissing": 0,
-   "retryPending": 137,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 137
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
@@ -1360,7 +822,7 @@
    "sourceRecords": 115394,
    "acquired": 115394,
    "sourceDocumentMissing": 0,
-   "retryPending": 24,
+   "retryPending": 0,
    "otherFailure": 0,
    "unaccountedUpperBound": 0
   },
@@ -1413,22 +875,22 @@
    "courtName": "Patna High Court",
    "year": 2023,
    "sourceRecords": 135913,
-   "acquired": 135886,
-   "sourceDocumentMissing": 0,
+   "acquired": 135912,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 27
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
    "courtName": "Patna High Court",
    "year": 2024,
    "sourceRecords": 123106,
-   "acquired": 122927,
+   "acquired": 123106,
    "sourceDocumentMissing": 0,
-   "retryPending": 179,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 179
+   "unaccountedUpperBound": 0
   },
   {
    "court": "10_8",
@@ -1437,7 +899,7 @@
    "sourceRecords": 112625,
    "acquired": 112613,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 12,
    "otherFailure": 0,
    "unaccountedUpperBound": 12
   },
@@ -1447,10 +909,10 @@
    "year": 2026,
    "sourceRecords": 58193,
    "acquired": 58185,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 3,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "unaccountedUpperBound": 5
   },
   {
    "court": "11_24",
@@ -1503,7 +965,7 @@
    "sourceRecords": 78,
    "acquired": 77,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
    "unaccountedUpperBound": 1
   },
@@ -1567,22 +1029,22 @@
    "courtName": "High Court of Sikkim",
    "year": 2010,
    "sourceRecords": 65,
-   "acquired": 62,
+   "acquired": 65,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "11_24",
    "courtName": "High Court of Sikkim",
    "year": 2011,
    "sourceRecords": 43,
-   "acquired": 35,
+   "acquired": 43,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "unaccountedUpperBound": 0
   },
   {
    "court": "11_24",
@@ -2174,7 +1636,7 @@
    "sourceRecords": 351,
    "acquired": 350,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
    "unaccountedUpperBound": 1
   },
@@ -2348,242 +1810,242 @@
    "courtName": "Gauhati High Court",
    "year": 1998,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 1999,
    "sourceRecords": 6,
-   "acquired": 0,
+   "acquired": 6,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2000,
    "sourceRecords": 44,
-   "acquired": 0,
+   "acquired": 44,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 44
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2001,
    "sourceRecords": 75,
-   "acquired": 0,
+   "acquired": 75,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 75
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2002,
    "sourceRecords": 76,
-   "acquired": 0,
+   "acquired": 76,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 76
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2003,
    "sourceRecords": 42,
-   "acquired": 0,
+   "acquired": 42,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 42
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2004,
    "sourceRecords": 55,
-   "acquired": 0,
+   "acquired": 55,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 55
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2005,
    "sourceRecords": 68,
-   "acquired": 0,
+   "acquired": 68,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 68
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2006,
    "sourceRecords": 114,
-   "acquired": 0,
+   "acquired": 114,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 114
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2007,
    "sourceRecords": 1492,
-   "acquired": 0,
+   "acquired": 1492,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1492
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2008,
    "sourceRecords": 1186,
-   "acquired": 0,
+   "acquired": 1186,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1186
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2009,
    "sourceRecords": 1391,
-   "acquired": 0,
+   "acquired": 1391,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1391
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2010,
    "sourceRecords": 5190,
-   "acquired": 0,
+   "acquired": 5190,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5190
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2011,
    "sourceRecords": 12586,
-   "acquired": 0,
+   "acquired": 12586,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 12586
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2012,
    "sourceRecords": 16751,
-   "acquired": 0,
+   "acquired": 16751,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 16751
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2013,
    "sourceRecords": 18890,
-   "acquired": 0,
+   "acquired": 18890,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18890
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2014,
    "sourceRecords": 16187,
-   "acquired": 0,
+   "acquired": 16187,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 16187
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2015,
    "sourceRecords": 16090,
-   "acquired": 0,
+   "acquired": 16090,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 16090
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2016,
    "sourceRecords": 12997,
-   "acquired": 0,
+   "acquired": 12997,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 12997
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2017,
    "sourceRecords": 14082,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 14081,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14082
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2018,
    "sourceRecords": 22842,
-   "acquired": 0,
+   "acquired": 22842,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 22842
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
    "courtName": "Gauhati High Court",
    "year": 2019,
    "sourceRecords": 24683,
-   "acquired": 19925,
+   "acquired": 24683,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4758
+   "unaccountedUpperBound": 0
   },
   {
    "court": "18_6",
@@ -2603,7 +2065,7 @@
    "sourceRecords": 19707,
    "acquired": 19706,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
    "unaccountedUpperBound": 1
   },
@@ -2613,10 +2075,10 @@
    "year": 2022,
    "sourceRecords": 26000,
    "acquired": 25997,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 2,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 1
   },
   {
    "court": "18_6",
@@ -2636,7 +2098,7 @@
    "sourceRecords": 27102,
    "acquired": 26441,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
    "unaccountedUpperBound": 661
   },
@@ -2647,7 +2109,7 @@
    "sourceRecords": 26470,
    "acquired": 26469,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
    "unaccountedUpperBound": 1
   },
@@ -3008,319 +2470,319 @@
    "courtName": "Calcutta High Court",
    "year": 1996,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 1997,
    "sourceRecords": 24,
-   "acquired": 0,
+   "acquired": 24,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 24
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 1998,
    "sourceRecords": 14,
-   "acquired": 0,
+   "acquired": 14,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 1999,
    "sourceRecords": 38,
-   "acquired": 0,
+   "acquired": 38,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 38
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2000,
    "sourceRecords": 45,
-   "acquired": 0,
+   "acquired": 45,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 45
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2001,
    "sourceRecords": 44,
-   "acquired": 0,
+   "acquired": 44,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 44
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2002,
    "sourceRecords": 27,
-   "acquired": 0,
+   "acquired": 27,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 27
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2003,
    "sourceRecords": 53,
-   "acquired": 0,
+   "acquired": 53,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 53
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2004,
    "sourceRecords": 72,
-   "acquired": 0,
+   "acquired": 72,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 72
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2005,
    "sourceRecords": 94,
-   "acquired": 0,
+   "acquired": 94,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 94
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2006,
    "sourceRecords": 73,
-   "acquired": 0,
+   "acquired": 73,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 73
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2007,
    "sourceRecords": 193,
-   "acquired": 0,
+   "acquired": 193,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 193
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2008,
    "sourceRecords": 233,
-   "acquired": 0,
+   "acquired": 233,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 233
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2009,
    "sourceRecords": 181,
-   "acquired": 0,
+   "acquired": 181,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 181
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2010,
    "sourceRecords": 199,
-   "acquired": 0,
+   "acquired": 199,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 199
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2011,
    "sourceRecords": 125,
-   "acquired": 0,
+   "acquired": 125,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 125
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2012,
    "sourceRecords": 134,
-   "acquired": 0,
+   "acquired": 134,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 134
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2013,
    "sourceRecords": 207,
-   "acquired": 0,
+   "acquired": 207,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 207
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2014,
    "sourceRecords": 1595,
-   "acquired": 0,
+   "acquired": 1595,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1595
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2015,
    "sourceRecords": 311,
-   "acquired": 0,
+   "acquired": 311,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 311
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2016,
    "sourceRecords": 300,
-   "acquired": 0,
+   "acquired": 300,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 300
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2017,
    "sourceRecords": 375,
-   "acquired": 0,
+   "acquired": 375,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 375
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2018,
    "sourceRecords": 556,
-   "acquired": 0,
+   "acquired": 556,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 556
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2019,
    "sourceRecords": 2157,
-   "acquired": 0,
+   "acquired": 2157,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2157
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2020,
    "sourceRecords": 9733,
-   "acquired": 0,
+   "acquired": 9733,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9733
+   "unaccountedUpperBound": 0
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2021,
    "sourceRecords": 51186,
-   "acquired": 0,
+   "acquired": 51185,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 51186
+   "unaccountedUpperBound": 1
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2022,
    "sourceRecords": 82498,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 82496,
+   "sourceDocumentMissing": 1,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 82498
+   "unaccountedUpperBound": 1
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2023,
    "sourceRecords": 85323,
-   "acquired": 85304,
+   "acquired": 85321,
    "sourceDocumentMissing": 1,
-   "retryPending": 18,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 1
   },
   {
    "court": "19_16",
    "courtName": "Calcutta High Court",
    "year": 2024,
    "sourceRecords": 68643,
-   "acquired": 68633,
+   "acquired": 68642,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10
+   "unaccountedUpperBound": 1
   },
   {
    "court": "19_16",
@@ -3329,7 +2791,7 @@
    "sourceRecords": 69210,
    "acquired": 69188,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 22,
    "otherFailure": 0,
    "unaccountedUpperBound": 22
   },
@@ -3526,10 +2988,10 @@
    "year": 2006,
    "sourceRecords": 697,
    "acquired": 696,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "2_5",
@@ -3592,10 +3054,10 @@
    "year": 2012,
    "sourceRecords": 14454,
    "acquired": 14453,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "2_5",
@@ -3625,10 +3087,10 @@
    "year": 2015,
    "sourceRecords": 15213,
    "acquired": 15211,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "2_5",
@@ -3747,7 +3209,7 @@
    "sourceRecords": 22104,
    "acquired": 22095,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 4,
    "otherFailure": 0,
    "unaccountedUpperBound": 9
   },
@@ -3811,275 +3273,275 @@
    "courtName": "High Court of Jharkhand",
    "year": 1998,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 1999,
    "sourceRecords": 5,
-   "acquired": 0,
+   "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2000,
    "sourceRecords": 10,
-   "acquired": 0,
+   "acquired": 10,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2001,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2002,
    "sourceRecords": 5,
-   "acquired": 0,
+   "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2003,
    "sourceRecords": 7,
-   "acquired": 0,
+   "acquired": 7,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2004,
    "sourceRecords": 15,
-   "acquired": 0,
+   "acquired": 15,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 15
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2005,
    "sourceRecords": 18,
-   "acquired": 0,
+   "acquired": 18,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2006,
    "sourceRecords": 11,
-   "acquired": 0,
+   "acquired": 11,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2007,
    "sourceRecords": 18,
-   "acquired": 0,
+   "acquired": 18,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2008,
    "sourceRecords": 18,
-   "acquired": 0,
+   "acquired": 18,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2009,
    "sourceRecords": 13,
-   "acquired": 0,
+   "acquired": 13,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2010,
    "sourceRecords": 57,
-   "acquired": 0,
+   "acquired": 57,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 57
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2011,
    "sourceRecords": 67,
-   "acquired": 0,
+   "acquired": 67,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 67
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2012,
    "sourceRecords": 6016,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 6014,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6016
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2013,
    "sourceRecords": 13758,
-   "acquired": 0,
+   "acquired": 13758,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13758
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2014,
    "sourceRecords": 19388,
-   "acquired": 0,
+   "acquired": 19387,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 19388
+   "unaccountedUpperBound": 1
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2015,
    "sourceRecords": 27200,
-   "acquired": 0,
+   "acquired": 27200,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 27200
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2016,
    "sourceRecords": 25060,
-   "acquired": 0,
+   "acquired": 25060,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 25060
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2017,
    "sourceRecords": 28319,
-   "acquired": 0,
+   "acquired": 28319,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 28319
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2018,
    "sourceRecords": 31325,
-   "acquired": 0,
+   "acquired": 31325,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 31325
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2019,
    "sourceRecords": 40951,
-   "acquired": 0,
+   "acquired": 40951,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 40951
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2020,
    "sourceRecords": 27496,
-   "acquired": 0,
+   "acquired": 27495,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 27496
+   "unaccountedUpperBound": 1
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2021,
    "sourceRecords": 39649,
-   "acquired": 28191,
+   "acquired": 39649,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11458
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
    "courtName": "High Court of Jharkhand",
    "year": 2022,
    "sourceRecords": 44410,
-   "acquired": 44400,
-   "sourceDocumentMissing": 0,
+   "acquired": 44409,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10
+   "unaccountedUpperBound": 0
   },
   {
    "court": "20_7",
@@ -4110,7 +3572,7 @@
    "sourceRecords": 40974,
    "acquired": 40942,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 32,
    "otherFailure": 0,
    "unaccountedUpperBound": 32
   },
@@ -4229,231 +3691,231 @@
    "courtName": "Orissa High Court",
    "year": 1996,
    "sourceRecords": 46,
-   "acquired": 0,
+   "acquired": 46,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 46
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 1997,
    "sourceRecords": 38,
-   "acquired": 0,
+   "acquired": 38,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 38
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 1998,
    "sourceRecords": 56,
-   "acquired": 0,
+   "acquired": 56,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 56
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 1999,
    "sourceRecords": 74,
-   "acquired": 0,
+   "acquired": 74,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 74
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2000,
    "sourceRecords": 67,
-   "acquired": 0,
+   "acquired": 67,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 67
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2001,
    "sourceRecords": 61,
-   "acquired": 0,
+   "acquired": 61,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 61
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2002,
    "sourceRecords": 75,
-   "acquired": 0,
+   "acquired": 75,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 75
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2003,
    "sourceRecords": 87,
-   "acquired": 0,
+   "acquired": 87,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 87
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2004,
    "sourceRecords": 77,
-   "acquired": 0,
+   "acquired": 77,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 77
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2005,
    "sourceRecords": 128,
-   "acquired": 0,
+   "acquired": 128,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 128
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2006,
    "sourceRecords": 163,
-   "acquired": 0,
+   "acquired": 163,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 163
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2007,
    "sourceRecords": 140,
-   "acquired": 0,
+   "acquired": 140,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 140
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2008,
    "sourceRecords": 168,
-   "acquired": 0,
+   "acquired": 168,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 168
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2009,
    "sourceRecords": 304,
-   "acquired": 0,
+   "acquired": 304,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 304
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2010,
    "sourceRecords": 705,
-   "acquired": 0,
+   "acquired": 705,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 705
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2011,
    "sourceRecords": 727,
-   "acquired": 0,
+   "acquired": 727,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 727
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2012,
    "sourceRecords": 855,
-   "acquired": 0,
+   "acquired": 855,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 855
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2013,
    "sourceRecords": 3351,
-   "acquired": 0,
+   "acquired": 3351,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3351
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2014,
    "sourceRecords": 2576,
-   "acquired": 0,
+   "acquired": 2576,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2576
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2015,
    "sourceRecords": 24289,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 24284,
+   "sourceDocumentMissing": 5,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 24289
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2016,
    "sourceRecords": 52246,
-   "acquired": 52219,
+   "acquired": 52246,
    "sourceDocumentMissing": 0,
-   "retryPending": 27,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 27
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
@@ -4526,33 +3988,33 @@
    "courtName": "Orissa High Court",
    "year": 2023,
    "sourceRecords": 111641,
-   "acquired": 111528,
+   "acquired": 111640,
    "sourceDocumentMissing": 1,
-   "retryPending": 112,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 112
+   "unaccountedUpperBound": 0
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2024,
    "sourceRecords": 90078,
-   "acquired": 90014,
+   "acquired": 90072,
    "sourceDocumentMissing": 0,
-   "retryPending": 58,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 64
+   "unaccountedUpperBound": 6
   },
   {
    "court": "21_11",
    "courtName": "Orissa High Court",
    "year": 2025,
    "sourceRecords": 75365,
-   "acquired": 34366,
+   "acquired": 75209,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 122,
    "otherFailure": 0,
-   "unaccountedUpperBound": 40999
+   "unaccountedUpperBound": 156
   },
   {
    "court": "21_11",
@@ -4560,10 +4022,10 @@
    "year": 2026,
    "sourceRecords": 42310,
    "acquired": 41849,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 461,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 461
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
@@ -4614,176 +4076,176 @@
    "courtName": "High Court Of Chhattisgarh",
    "year": 1996,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 1999,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2000,
    "sourceRecords": 49,
-   "acquired": 0,
+   "acquired": 49,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 49
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2001,
    "sourceRecords": 701,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 700,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 701
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2002,
    "sourceRecords": 544,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 543,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 544
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2003,
    "sourceRecords": 1683,
-   "acquired": 0,
+   "acquired": 1683,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1683
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2004,
    "sourceRecords": 2278,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 2277,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2278
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2005,
    "sourceRecords": 10925,
-   "acquired": 0,
+   "acquired": 5856,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10925
+   "unaccountedUpperBound": 5069
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2006,
    "sourceRecords": 8892,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 8885,
+   "sourceDocumentMissing": 1,
+   "retryPending": 6,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8892
+   "unaccountedUpperBound": 6
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2007,
    "sourceRecords": 25568,
-   "acquired": 0,
+   "acquired": 13112,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 25568
+   "otherFailure": 2,
+   "unaccountedUpperBound": 12454
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2008,
    "sourceRecords": 10448,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 10446,
+   "sourceDocumentMissing": 1,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10448
+   "unaccountedUpperBound": 1
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2009,
    "sourceRecords": 27715,
-   "acquired": 0,
+   "acquired": 14308,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 27715
+   "otherFailure": 3,
+   "unaccountedUpperBound": 13404
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2010,
    "sourceRecords": 33082,
-   "acquired": 0,
+   "acquired": 17015,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 33082
+   "unaccountedUpperBound": 16067
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2011,
    "sourceRecords": 15531,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 15526,
+   "sourceDocumentMissing": 1,
+   "retryPending": 4,
    "otherFailure": 0,
-   "unaccountedUpperBound": 15531
+   "unaccountedUpperBound": 4
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2012,
    "sourceRecords": 38086,
-   "acquired": 0,
+   "acquired": 19512,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 38086
+   "unaccountedUpperBound": 18574
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2013,
    "sourceRecords": 36741,
-   "acquired": 11578,
+   "acquired": 19013,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 25163
+   "unaccountedUpperBound": 17728
   },
   {
    "court": "22_18",
@@ -4793,8 +4255,8 @@
    "acquired": 18001,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 17194
+   "otherFailure": 1,
+   "unaccountedUpperBound": 17193
   },
   {
    "court": "22_18",
@@ -4812,77 +4274,77 @@
    "courtName": "High Court Of Chhattisgarh",
    "year": 2016,
    "sourceRecords": 26244,
-   "acquired": 0,
+   "acquired": 26244,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 26244
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2017,
    "sourceRecords": 30079,
-   "acquired": 0,
+   "acquired": 30079,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 30079
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2018,
    "sourceRecords": 35894,
-   "acquired": 0,
+   "acquired": 35894,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 35894
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2019,
    "sourceRecords": 37977,
-   "acquired": 0,
+   "acquired": 37977,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 37977
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2020,
    "sourceRecords": 23012,
-   "acquired": 0,
+   "acquired": 23012,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 23012
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2021,
    "sourceRecords": 29848,
-   "acquired": 0,
+   "acquired": 29848,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 29848
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
    "courtName": "High Court Of Chhattisgarh",
    "year": 2022,
    "sourceRecords": 32216,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 32215,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 32216
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
@@ -4900,11 +4362,11 @@
    "courtName": "High Court Of Chhattisgarh",
    "year": 2024,
    "sourceRecords": 50880,
-   "acquired": 50866,
+   "acquired": 50880,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14
+   "unaccountedUpperBound": 0
   },
   {
    "court": "22_18",
@@ -4913,7 +4375,7 @@
    "sourceRecords": 61311,
    "acquired": 61302,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 9,
    "otherFailure": 0,
    "unaccountedUpperBound": 9
   },
@@ -4923,186 +4385,186 @@
    "year": 2026,
    "sourceRecords": 32056,
    "acquired": 32053,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 3,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 1996,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2000,
    "sourceRecords": 21,
-   "acquired": 0,
+   "acquired": 21,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 21
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2002,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2004,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2007,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2009,
    "sourceRecords": 6,
-   "acquired": 0,
+   "acquired": 6,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2010,
    "sourceRecords": 55,
-   "acquired": 0,
+   "acquired": 55,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 55
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2011,
    "sourceRecords": 1489,
-   "acquired": 0,
+   "acquired": 1489,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1489
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2012,
    "sourceRecords": 14642,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 14641,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14642
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2013,
    "sourceRecords": 14696,
-   "acquired": 0,
+   "acquired": 14696,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14696
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2014,
    "sourceRecords": 27406,
-   "acquired": 0,
+   "acquired": 27406,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 27406
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2015,
    "sourceRecords": 46511,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 46510,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 46511
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2016,
    "sourceRecords": 51785,
-   "acquired": 0,
+   "acquired": 51785,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 51785
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2017,
    "sourceRecords": 44325,
-   "acquired": 43444,
+   "acquired": 44324,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 881
+   "unaccountedUpperBound": 1
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2018,
    "sourceRecords": 57164,
-   "acquired": 57143,
-   "sourceDocumentMissing": 0,
+   "acquired": 57163,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 21
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
    "courtName": "High Court of Madhya Pradesh",
    "year": 2019,
    "sourceRecords": 60600,
-   "acquired": 60595,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 60598,
+   "sourceDocumentMissing": 1,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 1
   },
   {
    "court": "23_23",
@@ -5111,7 +4573,7 @@
    "sourceRecords": 40771,
    "acquired": 40770,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
    "unaccountedUpperBound": 1
   },
@@ -5121,10 +4583,10 @@
    "year": 2021,
    "sourceRecords": 57467,
    "acquired": 57466,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
@@ -5154,10 +4616,10 @@
    "year": 2024,
    "sourceRecords": 28167,
    "acquired": 12277,
-   "sourceDocumentMissing": 150,
+   "sourceDocumentMissing": 15869,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 15740
+   "unaccountedUpperBound": 21
   },
   {
    "court": "23_23",
@@ -5165,10 +4627,10 @@
    "year": 2025,
    "sourceRecords": 23528,
    "acquired": 184,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 23344,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 23344
+   "unaccountedUpperBound": 0
   },
   {
    "court": "23_23",
@@ -5176,10 +4638,10 @@
    "year": 2026,
    "sourceRecords": 3571,
    "acquired": 93,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 3477,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3478
+   "unaccountedUpperBound": 1
   },
   {
    "court": "24_17",
@@ -5274,220 +4736,220 @@
    "courtName": "High Court of Gujarat",
    "year": 1996,
    "sourceRecords": 4109,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 4107,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4109
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 1997,
    "sourceRecords": 6396,
-   "acquired": 0,
+   "acquired": 6396,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6396
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 1998,
    "sourceRecords": 5973,
-   "acquired": 0,
+   "acquired": 5973,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5973
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 1999,
    "sourceRecords": 5047,
-   "acquired": 0,
+   "acquired": 5047,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5047
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2000,
    "sourceRecords": 9301,
-   "acquired": 0,
+   "acquired": 9301,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9301
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2001,
    "sourceRecords": 6872,
-   "acquired": 0,
+   "acquired": 6872,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6872
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2002,
    "sourceRecords": 5191,
-   "acquired": 0,
+   "acquired": 5190,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 5191
+   "otherFailure": 1,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2003,
    "sourceRecords": 4778,
-   "acquired": 0,
+   "acquired": 4778,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4778
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2004,
    "sourceRecords": 6254,
-   "acquired": 0,
+   "acquired": 6254,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6254
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2005,
    "sourceRecords": 8800,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 8798,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8800
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2006,
    "sourceRecords": 7960,
-   "acquired": 0,
+   "acquired": 7960,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7960
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2007,
    "sourceRecords": 7357,
-   "acquired": 0,
+   "acquired": 7357,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7357
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2008,
    "sourceRecords": 10484,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 10482,
+   "sourceDocumentMissing": 1,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10484
+   "unaccountedUpperBound": 1
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2009,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2010,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2011,
    "sourceRecords": 29,
-   "acquired": 0,
+   "acquired": 29,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 29
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2012,
    "sourceRecords": 11956,
-   "acquired": 0,
+   "acquired": 11954,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 2,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11956
+   "unaccountedUpperBound": 2
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2013,
    "sourceRecords": 9297,
-   "acquired": 0,
+   "acquired": 9294,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9297
+   "unaccountedUpperBound": 3
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2014,
    "sourceRecords": 12559,
-   "acquired": 0,
+   "acquired": 12556,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 12559
+   "unaccountedUpperBound": 3
   },
   {
    "court": "24_17",
    "courtName": "High Court of Gujarat",
    "year": 2015,
    "sourceRecords": 9024,
-   "acquired": 0,
+   "acquired": 9024,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9024
+   "unaccountedUpperBound": 0
   },
   {
    "court": "24_17",
@@ -5528,10 +4990,10 @@
    "year": 2019,
    "sourceRecords": 61925,
    "acquired": 61922,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 2,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 1
   },
   {
    "court": "24_17",
@@ -5550,10 +5012,10 @@
    "year": 2021,
    "sourceRecords": 53369,
    "acquired": 53366,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 2,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 1
   },
   {
    "court": "24_17",
@@ -5713,34 +5175,34 @@
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1960,
-   "sourceRecords": 3,
+   "sourceRecords": 2,
    "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1961,
-   "sourceRecords": 5,
+   "sourceRecords": 3,
    "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1962,
-   "sourceRecords": 5,
+   "sourceRecords": 4,
    "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
@@ -5856,12 +5318,12 @@
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1974,
-   "sourceRecords": 1,
+   "sourceRecords": 0,
    "acquired": 0,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
@@ -5900,23 +5362,23 @@
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1980,
-   "sourceRecords": 6,
+   "sourceRecords": 4,
    "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1981,
-   "sourceRecords": 4,
+   "sourceRecords": 3,
    "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
@@ -5933,12 +5395,12 @@
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1983,
-   "sourceRecords": 8,
+   "sourceRecords": 5,
    "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
@@ -5988,34 +5450,34 @@
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1988,
-   "sourceRecords": 9,
+   "sourceRecords": 8,
    "acquired": 8,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1989,
-   "sourceRecords": 20,
+   "sourceRecords": 18,
    "acquired": 18,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1990,
-   "sourceRecords": 17,
+   "sourceRecords": 16,
    "acquired": 16,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
@@ -6043,661 +5505,661 @@
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1993,
-   "sourceRecords": 276,
+   "sourceRecords": 274,
    "acquired": 246,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 28,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 30
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1994,
-   "sourceRecords": 77,
+   "sourceRecords": 75,
    "acquired": 69,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 6,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1995,
-   "sourceRecords": 195,
-   "acquired": 6,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 192,
+   "acquired": 80,
+   "sourceDocumentMissing": 112,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 189
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1996,
-   "sourceRecords": 131,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 126,
+   "acquired": 118,
+   "sourceDocumentMissing": 8,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 131
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1997,
-   "sourceRecords": 161,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 159,
+   "acquired": 150,
+   "sourceDocumentMissing": 9,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 161
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1998,
-   "sourceRecords": 191,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 186,
+   "acquired": 182,
+   "sourceDocumentMissing": 4,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 191
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 1999,
-   "sourceRecords": 167,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 165,
+   "acquired": 158,
+   "sourceDocumentMissing": 7,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 167
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2000,
-   "sourceRecords": 266,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 257,
+   "acquired": 253,
+   "sourceDocumentMissing": 4,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 266
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2001,
-   "sourceRecords": 322,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 300,
+   "acquired": 290,
+   "sourceDocumentMissing": 10,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 322
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2002,
-   "sourceRecords": 949,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 928,
+   "acquired": 829,
+   "sourceDocumentMissing": 99,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 949
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2003,
-   "sourceRecords": 1784,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 1760,
+   "acquired": 1707,
+   "sourceDocumentMissing": 53,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1784
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2004,
-   "sourceRecords": 14957,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 14939,
+   "acquired": 14912,
+   "sourceDocumentMissing": 27,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14957
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2005,
-   "sourceRecords": 53120,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 53055,
+   "acquired": 51298,
+   "sourceDocumentMissing": 1757,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 53120
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2006,
-   "sourceRecords": 51154,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceRecords": 50520,
+   "acquired": 44244,
+   "sourceDocumentMissing": 6275,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 51154
+   "unaccountedUpperBound": 1
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2007,
-   "sourceRecords": 57332,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 53810,
+   "acquired": 47104,
+   "sourceDocumentMissing": 6706,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 57332
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2008,
-   "sourceRecords": 64470,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 56382,
+   "acquired": 49750,
+   "sourceDocumentMissing": 6632,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 64470
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2009,
-   "sourceRecords": 84068,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 71646,
+   "acquired": 68792,
+   "sourceDocumentMissing": 2854,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 84068
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2010,
-   "sourceRecords": 92521,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 76337,
+   "acquired": 76217,
+   "sourceDocumentMissing": 120,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 92521
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2011,
-   "sourceRecords": 95091,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceRecords": 81120,
+   "acquired": 80951,
+   "sourceDocumentMissing": 168,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 95091
+   "unaccountedUpperBound": 1
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2012,
-   "sourceRecords": 88769,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 75816,
+   "acquired": 75443,
+   "sourceDocumentMissing": 372,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 88769
+   "otherFailure": 1,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2013,
-   "sourceRecords": 93732,
-   "acquired": 29378,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 81533,
+   "acquired": 81161,
+   "sourceDocumentMissing": 372,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 64354
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2014,
-   "sourceRecords": 93860,
-   "acquired": 83094,
-   "sourceDocumentMissing": 0,
+   "sourceRecords": 83378,
+   "acquired": 83114,
+   "sourceDocumentMissing": 264,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10766
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2015,
-   "sourceRecords": 99191,
+   "sourceRecords": 86663,
    "acquired": 86438,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 224,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 12753
+   "unaccountedUpperBound": 1
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2016,
-   "sourceRecords": 100858,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceRecords": 89346,
+   "acquired": 84551,
+   "sourceDocumentMissing": 4794,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 100858
+   "unaccountedUpperBound": 1
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2017,
-   "sourceRecords": 102443,
-   "acquired": 21107,
-   "sourceDocumentMissing": 0,
-   "retryPending": 13,
+   "sourceRecords": 90857,
+   "acquired": 83076,
+   "sourceDocumentMissing": 7780,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 81336
+   "unaccountedUpperBound": 1
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2018,
-   "sourceRecords": 100910,
+   "sourceRecords": 91673,
    "acquired": 90003,
-   "sourceDocumentMissing": 1,
-   "retryPending": 1801,
+   "sourceDocumentMissing": 1670,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 10906
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2019,
-   "sourceRecords": 106890,
+   "sourceRecords": 93828,
    "acquired": 93560,
-   "sourceDocumentMissing": 209,
-   "retryPending": 57,
-   "otherFailure": 2,
-   "unaccountedUpperBound": 13119
+   "sourceDocumentMissing": 266,
+   "retryPending": 2,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 2
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2020,
-   "sourceRecords": 35796,
+   "sourceRecords": 30212,
    "acquired": 29933,
-   "sourceDocumentMissing": 267,
-   "retryPending": 0,
-   "otherFailure": 12,
-   "unaccountedUpperBound": 5584
+   "sourceDocumentMissing": 278,
+   "retryPending": 1,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 1
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2021,
-   "sourceRecords": 70644,
+   "sourceRecords": 59677,
    "acquired": 58247,
-   "sourceDocumentMissing": 1405,
-   "retryPending": 0,
-   "otherFailure": 25,
-   "unaccountedUpperBound": 10967
+   "sourceDocumentMissing": 1429,
+   "retryPending": 1,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 1
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2022,
-   "sourceRecords": 105682,
+   "sourceRecords": 91513,
    "acquired": 87129,
-   "sourceDocumentMissing": 4370,
+   "sourceDocumentMissing": 4384,
    "retryPending": 0,
-   "otherFailure": 14,
-   "unaccountedUpperBound": 14169
+   "otherFailure": 0,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2023,
-   "sourceRecords": 127700,
+   "sourceRecords": 111270,
    "acquired": 95425,
    "sourceDocumentMissing": 15826,
-   "retryPending": 19,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 16449
+   "retryPending": 17,
+   "otherFailure": 2,
+   "unaccountedUpperBound": 17
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2024,
-   "sourceRecords": 277355,
+   "sourceRecords": 246565,
    "acquired": 208822,
    "sourceDocumentMissing": 37647,
-   "retryPending": 92,
-   "otherFailure": 4,
-   "unaccountedUpperBound": 30882
+   "retryPending": 73,
+   "otherFailure": 23,
+   "unaccountedUpperBound": 73
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2025,
-   "sourceRecords": 382619,
-   "acquired": 266416,
-   "sourceDocumentMissing": 11599,
-   "retryPending": 50,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 104604
+   "sourceRecords": 339016,
+   "acquired": 302192,
+   "sourceDocumentMissing": 36791,
+   "retryPending": 0,
+   "otherFailure": 33,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "27_1",
    "courtName": "Bombay High Court",
    "year": 2026,
-   "sourceRecords": 117768,
+   "sourceRecords": 98384,
    "acquired": 87239,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 11135,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 30529
+   "otherFailure": 9,
+   "unaccountedUpperBound": 1
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 1995,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 1996,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 1999,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2000,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2001,
    "sourceRecords": 5,
-   "acquired": 0,
+   "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2002,
    "sourceRecords": 13,
-   "acquired": 0,
+   "acquired": 13,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2003,
    "sourceRecords": 12,
-   "acquired": 0,
+   "acquired": 12,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 12
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2004,
    "sourceRecords": 14,
-   "acquired": 0,
+   "acquired": 14,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2005,
    "sourceRecords": 13,
-   "acquired": 0,
+   "acquired": 13,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2006,
    "sourceRecords": 14,
-   "acquired": 0,
+   "acquired": 14,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2007,
    "sourceRecords": 18,
-   "acquired": 0,
+   "acquired": 18,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2008,
    "sourceRecords": 21,
-   "acquired": 0,
+   "acquired": 21,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 21
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2009,
    "sourceRecords": 17,
-   "acquired": 0,
+   "acquired": 17,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 17
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2010,
    "sourceRecords": 35,
-   "acquired": 0,
+   "acquired": 35,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 35
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2011,
    "sourceRecords": 73,
-   "acquired": 0,
+   "acquired": 73,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 73
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2012,
    "sourceRecords": 63,
-   "acquired": 0,
+   "acquired": 63,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 63
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2013,
    "sourceRecords": 79,
-   "acquired": 0,
+   "acquired": 79,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 79
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2014,
    "sourceRecords": 81,
-   "acquired": 0,
+   "acquired": 81,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 81
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2015,
    "sourceRecords": 110,
-   "acquired": 0,
+   "acquired": 110,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 110
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2016,
    "sourceRecords": 120,
-   "acquired": 0,
+   "acquired": 120,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 120
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2017,
    "sourceRecords": 107,
-   "acquired": 0,
+   "acquired": 107,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 107
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2018,
    "sourceRecords": 174,
-   "acquired": 0,
+   "acquired": 174,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 174
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2019,
    "sourceRecords": 13302,
-   "acquired": 0,
+   "acquired": 13302,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13302
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2020,
    "sourceRecords": 24330,
-   "acquired": 10070,
+   "acquired": 24330,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14260
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2021,
    "sourceRecords": 29772,
-   "acquired": 29436,
+   "acquired": 29772,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 336
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2022,
    "sourceRecords": 46038,
-   "acquired": 0,
+   "acquired": 46038,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 46038
+   "unaccountedUpperBound": 0
   },
   {
    "court": "28_2",
@@ -6706,31 +6168,31 @@
    "sourceRecords": 99768,
    "acquired": 50861,
    "sourceDocumentMissing": 46,
-   "retryPending": 0,
-   "otherFailure": 3,
-   "unaccountedUpperBound": 48858
+   "retryPending": 3,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 48861
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2024,
    "sourceRecords": 56751,
-   "acquired": 56253,
+   "acquired": 56297,
    "sourceDocumentMissing": 0,
-   "retryPending": 184,
+   "retryPending": 209,
    "otherFailure": 0,
-   "unaccountedUpperBound": 498
+   "unaccountedUpperBound": 454
   },
   {
    "court": "28_2",
    "courtName": "High Court of Andhra Pradesh",
    "year": 2025,
    "sourceRecords": 59201,
-   "acquired": 58502,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 58655,
+   "sourceDocumentMissing": 545,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 699
+   "unaccountedUpperBound": 1
   },
   {
    "court": "28_2",
@@ -6738,18 +6200,7 @@
    "year": 2026,
    "sourceRecords": 25934,
    "acquired": 25931,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 3
-  },
-  {
-   "court": "29_3",
-   "courtName": "High Court of Karnataka",
-   "year": 1997,
-   "sourceRecords": 2,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
    "unaccountedUpperBound": 2
@@ -6757,244 +6208,255 @@
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
-   "year": 1998,
-   "sourceRecords": 1243,
-   "acquired": 0,
+   "year": 1997,
+   "sourceRecords": 2,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1243
+   "unaccountedUpperBound": 0
+  },
+  {
+   "court": "29_3",
+   "courtName": "High Court of Karnataka",
+   "year": 1998,
+   "sourceRecords": 1243,
+   "acquired": 1242,
+   "sourceDocumentMissing": 1,
+   "retryPending": 0,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 1999,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2000,
    "sourceRecords": 3,
-   "acquired": 0,
+   "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2001,
    "sourceRecords": 3,
-   "acquired": 0,
+   "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2002,
    "sourceRecords": 3,
-   "acquired": 0,
+   "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2003,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2004,
    "sourceRecords": 8,
-   "acquired": 0,
+   "acquired": 8,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2005,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2006,
    "sourceRecords": 13,
-   "acquired": 0,
+   "acquired": 13,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2007,
    "sourceRecords": 29,
-   "acquired": 0,
+   "acquired": 29,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 29
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2008,
    "sourceRecords": 103,
-   "acquired": 0,
+   "acquired": 103,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 103
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2009,
    "sourceRecords": 321,
-   "acquired": 0,
+   "acquired": 321,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 321
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2010,
    "sourceRecords": 529,
-   "acquired": 0,
+   "acquired": 529,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 529
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2011,
    "sourceRecords": 2260,
-   "acquired": 0,
+   "acquired": 2260,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2260
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2012,
    "sourceRecords": 39508,
-   "acquired": 0,
+   "acquired": 39507,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 39508
+   "unaccountedUpperBound": 1
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2013,
    "sourceRecords": 58227,
-   "acquired": 0,
+   "acquired": 58224,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 58227
+   "unaccountedUpperBound": 3
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2014,
    "sourceRecords": 63091,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 63090,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 63091
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2015,
    "sourceRecords": 59815,
-   "acquired": 12648,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 59802,
+   "sourceDocumentMissing": 10,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 47167
+   "unaccountedUpperBound": 3
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2016,
    "sourceRecords": 53101,
-   "acquired": 0,
+   "acquired": 53100,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 53101
+   "unaccountedUpperBound": 1
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2017,
    "sourceRecords": 50190,
-   "acquired": 0,
+   "acquired": 50188,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 2,
    "otherFailure": 0,
-   "unaccountedUpperBound": 50190
+   "unaccountedUpperBound": 2
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2018,
    "sourceRecords": 53070,
-   "acquired": 0,
+   "acquired": 53066,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 2,
    "otherFailure": 0,
-   "unaccountedUpperBound": 53070
+   "unaccountedUpperBound": 4
   },
   {
    "court": "29_3",
    "courtName": "High Court of Karnataka",
    "year": 2019,
    "sourceRecords": 68489,
-   "acquired": 54653,
+   "acquired": 68489,
    "sourceDocumentMissing": 0,
-   "retryPending": 174,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13836
+   "unaccountedUpperBound": 0
   },
   {
    "court": "29_3",
@@ -7003,9 +6465,9 @@
    "sourceRecords": 46835,
    "acquired": 46832,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
-   "otherFailure": 1,
-   "unaccountedUpperBound": 2
+   "retryPending": 1,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 3
   },
   {
    "court": "29_3",
@@ -7034,11 +6496,11 @@
    "courtName": "High Court of Karnataka",
    "year": 2023,
    "sourceRecords": 80102,
-   "acquired": 79943,
+   "acquired": 80094,
    "sourceDocumentMissing": 0,
-   "retryPending": 157,
-   "otherFailure": 1,
-   "unaccountedUpperBound": 158
+   "retryPending": 5,
+   "otherFailure": 2,
+   "unaccountedUpperBound": 6
   },
   {
    "court": "29_3",
@@ -7047,9 +6509,9 @@
    "sourceRecords": 91855,
    "acquired": 91851,
    "sourceDocumentMissing": 0,
-   "retryPending": 4,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "retryPending": 2,
+   "otherFailure": 2,
+   "unaccountedUpperBound": 2
   },
   {
    "court": "29_3",
@@ -7058,7 +6520,7 @@
    "sourceRecords": 91473,
    "acquired": 91466,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 7,
    "otherFailure": 0,
    "unaccountedUpperBound": 7
   },
@@ -7068,10 +6530,10 @@
    "year": 2026,
    "sourceRecords": 43486,
    "acquired": 43380,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 96,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 106
+   "unaccountedUpperBound": 10
   },
   {
    "court": "3_22",
@@ -7232,220 +6694,220 @@
    "courtName": "High Court of Punjab and Haryana",
    "year": 1995,
    "sourceRecords": 30,
-   "acquired": 0,
+   "acquired": 30,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 30
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 1996,
    "sourceRecords": 19,
-   "acquired": 0,
+   "acquired": 19,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 19
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 1997,
    "sourceRecords": 24,
-   "acquired": 0,
+   "acquired": 24,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 24
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 1998,
    "sourceRecords": 48,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 46,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 48
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 1999,
    "sourceRecords": 73,
-   "acquired": 0,
+   "acquired": 73,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 73
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2000,
    "sourceRecords": 61,
-   "acquired": 0,
+   "acquired": 61,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 61
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2001,
    "sourceRecords": 97,
-   "acquired": 0,
+   "acquired": 97,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 97
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2002,
    "sourceRecords": 68,
-   "acquired": 0,
+   "acquired": 68,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 68
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2003,
    "sourceRecords": 106,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 105,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 106
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2004,
    "sourceRecords": 94,
-   "acquired": 0,
+   "acquired": 94,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 94
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2005,
    "sourceRecords": 98,
-   "acquired": 0,
+   "acquired": 98,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 98
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2006,
    "sourceRecords": 7008,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 7006,
+   "sourceDocumentMissing": 1,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7008
+   "unaccountedUpperBound": 1
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2007,
    "sourceRecords": 7027,
-   "acquired": 0,
+   "acquired": 7024,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7027
+   "unaccountedUpperBound": 3
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2008,
    "sourceRecords": 18904,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 18862,
+   "sourceDocumentMissing": 38,
+   "retryPending": 4,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18904
+   "unaccountedUpperBound": 4
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2009,
    "sourceRecords": 46096,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 45810,
+   "sourceDocumentMissing": 276,
+   "retryPending": 10,
    "otherFailure": 0,
-   "unaccountedUpperBound": 46096
+   "unaccountedUpperBound": 10
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2010,
    "sourceRecords": 56102,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 55897,
+   "sourceDocumentMissing": 180,
+   "retryPending": 25,
    "otherFailure": 0,
-   "unaccountedUpperBound": 56102
+   "unaccountedUpperBound": 25
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2011,
    "sourceRecords": 68559,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 68262,
+   "sourceDocumentMissing": 234,
+   "retryPending": 63,
    "otherFailure": 0,
-   "unaccountedUpperBound": 68559
+   "unaccountedUpperBound": 63
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2012,
    "sourceRecords": 85301,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 84884,
+   "sourceDocumentMissing": 408,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 85301
+   "otherFailure": 9,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2013,
    "sourceRecords": 95949,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 95847,
+   "sourceDocumentMissing": 102,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 95949
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2014,
    "sourceRecords": 103796,
-   "acquired": 80365,
-   "sourceDocumentMissing": 0,
+   "acquired": 103795,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 23431
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
@@ -7463,33 +6925,33 @@
    "courtName": "High Court of Punjab and Haryana",
    "year": 2016,
    "sourceRecords": 107677,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 107676,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 107677
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2017,
    "sourceRecords": 100426,
-   "acquired": 100344,
+   "acquired": 100426,
    "sourceDocumentMissing": 0,
-   "retryPending": 56,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 82
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2018,
    "sourceRecords": 119171,
-   "acquired": 119163,
+   "acquired": 119171,
    "sourceDocumentMissing": 0,
-   "retryPending": 8,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
@@ -7520,9 +6982,9 @@
    "sourceRecords": 81072,
    "acquired": 81064,
    "sourceDocumentMissing": 0,
-   "retryPending": 8,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "retryPending": 0,
+   "otherFailure": 8,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
@@ -7531,53 +6993,53 @@
    "sourceRecords": 133062,
    "acquired": 133039,
    "sourceDocumentMissing": 5,
-   "retryPending": 18,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "retryPending": 0,
+   "otherFailure": 18,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2023,
    "sourceRecords": 149388,
-   "acquired": 149230,
+   "acquired": 149367,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 21,
    "otherFailure": 0,
-   "unaccountedUpperBound": 158
+   "unaccountedUpperBound": 21
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2024,
    "sourceRecords": 154801,
-   "acquired": 154581,
+   "acquired": 154755,
    "sourceDocumentMissing": 1,
-   "retryPending": 219,
+   "retryPending": 45,
    "otherFailure": 0,
-   "unaccountedUpperBound": 219
+   "unaccountedUpperBound": 45
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2025,
    "sourceRecords": 145495,
-   "acquired": 72659,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 137491,
+   "sourceDocumentMissing": 19,
+   "retryPending": 7985,
    "otherFailure": 0,
-   "unaccountedUpperBound": 72836
+   "unaccountedUpperBound": 7985
   },
   {
    "court": "3_22",
    "courtName": "High Court of Punjab and Haryana",
    "year": 2026,
    "sourceRecords": 80717,
-   "acquired": 64679,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 78282,
+   "sourceDocumentMissing": 36,
+   "retryPending": 2428,
    "otherFailure": 0,
-   "unaccountedUpperBound": 16038
+   "unaccountedUpperBound": 2399
   },
   {
    "court": "32_4",
@@ -7760,198 +7222,198 @@
    "courtName": "High Court of Kerala",
    "year": 1997,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 1998,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 1999,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2000,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2001,
    "sourceRecords": 3,
-   "acquired": 0,
+   "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2002,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2003,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2004,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2005,
    "sourceRecords": 41,
-   "acquired": 0,
+   "acquired": 41,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 41
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2006,
    "sourceRecords": 5451,
-   "acquired": 0,
+   "acquired": 5451,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5451
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2007,
    "sourceRecords": 50141,
-   "acquired": 0,
+   "acquired": 50141,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 50141
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2008,
    "sourceRecords": 56088,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 56086,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 56088
+   "otherFailure": 1,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2009,
    "sourceRecords": 50186,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 50185,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 50186
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2010,
    "sourceRecords": 49209,
-   "acquired": 0,
+   "acquired": 49209,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 49209
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2011,
    "sourceRecords": 49793,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 49789,
+   "sourceDocumentMissing": 4,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 49793
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2012,
    "sourceRecords": 51632,
-   "acquired": 0,
+   "acquired": 51632,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 51632
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2013,
    "sourceRecords": 48135,
-   "acquired": 10396,
-   "sourceDocumentMissing": 0,
+   "acquired": 48134,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 37739
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2014,
    "sourceRecords": 50511,
-   "acquired": 50493,
+   "acquired": 50511,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
@@ -7969,66 +7431,66 @@
    "courtName": "High Court of Kerala",
    "year": 2016,
    "sourceRecords": 55621,
-   "acquired": 37436,
+   "acquired": 55621,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18185
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2017,
    "sourceRecords": 52399,
-   "acquired": 0,
+   "acquired": 52398,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 52399
+   "unaccountedUpperBound": 1
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2018,
    "sourceRecords": 69094,
-   "acquired": 0,
+   "acquired": 69094,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 69094
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2019,
    "sourceRecords": 76082,
-   "acquired": 0,
+   "acquired": 76082,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 76082
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2020,
    "sourceRecords": 49034,
-   "acquired": 0,
+   "acquired": 49027,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 49034
+   "otherFailure": 7,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
    "courtName": "High Court of Kerala",
    "year": 2021,
    "sourceRecords": 55193,
-   "acquired": 51616,
+   "acquired": 55099,
    "sourceDocumentMissing": 0,
-   "retryPending": 284,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 3577
+   "retryPending": 0,
+   "otherFailure": 94,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "32_4",
@@ -8047,10 +7509,10 @@
    "year": 2023,
    "sourceRecords": 83859,
    "acquired": 83857,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 1,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 1
   },
   {
    "court": "32_4",
@@ -8059,7 +7521,7 @@
    "sourceRecords": 45796,
    "acquired": 45795,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 1,
    "otherFailure": 0,
    "unaccountedUpperBound": 1
   },
@@ -8101,264 +7563,264 @@
    "courtName": "Madras High Court",
    "year": 1995,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 1996,
    "sourceRecords": 2,
-   "acquired": 0,
+   "acquired": 2,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 1997,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 1999,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2000,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2001,
    "sourceRecords": 57,
-   "acquired": 0,
+   "acquired": 57,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 57
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2002,
    "sourceRecords": 1027,
-   "acquired": 0,
+   "acquired": 1027,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1027
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2003,
    "sourceRecords": 1096,
-   "acquired": 0,
+   "acquired": 1096,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1096
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2004,
    "sourceRecords": 984,
-   "acquired": 0,
+   "acquired": 984,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 984
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2005,
    "sourceRecords": 567,
-   "acquired": 0,
+   "acquired": 567,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 567
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2006,
    "sourceRecords": 2480,
-   "acquired": 0,
+   "acquired": 2480,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2480
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2007,
    "sourceRecords": 3181,
-   "acquired": 0,
+   "acquired": 3181,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3181
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2008,
    "sourceRecords": 3533,
-   "acquired": 0,
+   "acquired": 3533,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3533
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2009,
    "sourceRecords": 4028,
-   "acquired": 0,
+   "acquired": 4028,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4028
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2010,
    "sourceRecords": 5304,
-   "acquired": 0,
+   "acquired": 5304,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5304
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2011,
    "sourceRecords": 20607,
-   "acquired": 0,
+   "acquired": 20607,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 20607
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2012,
    "sourceRecords": 8080,
-   "acquired": 0,
+   "acquired": 8080,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8080
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2013,
    "sourceRecords": 30981,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 30968,
+   "sourceDocumentMissing": 2,
+   "retryPending": 11,
    "otherFailure": 0,
-   "unaccountedUpperBound": 30981
+   "unaccountedUpperBound": 11
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2014,
    "sourceRecords": 38380,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 38377,
+   "sourceDocumentMissing": 3,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 38380
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2015,
    "sourceRecords": 66466,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 66458,
+   "sourceDocumentMissing": 8,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 66466
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2016,
    "sourceRecords": 88387,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 88377,
+   "sourceDocumentMissing": 8,
+   "retryPending": 2,
    "otherFailure": 0,
-   "unaccountedUpperBound": 88387
+   "unaccountedUpperBound": 2
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2017,
    "sourceRecords": 92056,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 92055,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 92056
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2018,
    "sourceRecords": 110439,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 110438,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 110439
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2019,
    "sourceRecords": 124776,
-   "acquired": 96098,
-   "sourceDocumentMissing": 0,
+   "acquired": 124775,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 28678
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
@@ -8367,9 +7829,9 @@
    "sourceRecords": 93305,
    "acquired": 93298,
    "sourceDocumentMissing": 3,
-   "retryPending": 0,
-   "otherFailure": 4,
-   "unaccountedUpperBound": 0
+   "retryPending": 4,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 4
   },
   {
    "court": "33_10",
@@ -8378,9 +7840,9 @@
    "sourceRecords": 136922,
    "acquired": 136912,
    "sourceDocumentMissing": 6,
-   "retryPending": 0,
-   "otherFailure": 4,
-   "unaccountedUpperBound": 0
+   "retryPending": 4,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 4
   },
   {
    "court": "33_10",
@@ -8399,32 +7861,32 @@
    "year": 2023,
    "sourceRecords": 181272,
    "acquired": 181248,
-   "sourceDocumentMissing": 8,
-   "retryPending": 16,
+   "sourceDocumentMissing": 24,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 16
+   "unaccountedUpperBound": 0
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2024,
    "sourceRecords": 177560,
-   "acquired": 177511,
+   "acquired": 177557,
    "sourceDocumentMissing": 0,
-   "retryPending": 47,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 49
+   "unaccountedUpperBound": 3
   },
   {
    "court": "33_10",
    "courtName": "Madras High Court",
    "year": 2025,
    "sourceRecords": 221936,
-   "acquired": 83787,
-   "sourceDocumentMissing": 0,
-   "retryPending": 13,
+   "acquired": 221928,
+   "sourceDocumentMissing": 5,
+   "retryPending": 2,
    "otherFailure": 0,
-   "unaccountedUpperBound": 138149
+   "unaccountedUpperBound": 3
   },
   {
    "court": "33_10",
@@ -8432,10 +7894,10 @@
    "year": 2026,
    "sourceRecords": 108905,
    "acquired": 108776,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 113,
+   "retryPending": 4,
    "otherFailure": 0,
-   "unaccountedUpperBound": 129
+   "unaccountedUpperBound": 16
   },
   {
    "court": "36_29",
@@ -8486,209 +7948,209 @@
    "courtName": "High Court  for State of Telangana",
    "year": 1995,
    "sourceRecords": 17,
-   "acquired": 0,
+   "acquired": 17,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 17
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 1996,
    "sourceRecords": 33,
-   "acquired": 0,
+   "acquired": 33,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 33
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 1997,
    "sourceRecords": 44,
-   "acquired": 0,
+   "acquired": 44,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 44
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 1998,
    "sourceRecords": 45,
-   "acquired": 0,
+   "acquired": 45,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 45
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 1999,
    "sourceRecords": 55,
-   "acquired": 0,
+   "acquired": 55,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 55
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2000,
    "sourceRecords": 47,
-   "acquired": 0,
+   "acquired": 47,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 47
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2001,
    "sourceRecords": 115,
-   "acquired": 0,
+   "acquired": 115,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 115
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2002,
    "sourceRecords": 183,
-   "acquired": 0,
+   "acquired": 183,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 183
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2003,
    "sourceRecords": 352,
-   "acquired": 0,
+   "acquired": 352,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 352
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2004,
    "sourceRecords": 19465,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 19464,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 19465
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2005,
    "sourceRecords": 27968,
-   "acquired": 0,
+   "acquired": 27967,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 27968
+   "otherFailure": 1,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2006,
    "sourceRecords": 25374,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 25373,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 25374
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2007,
    "sourceRecords": 32391,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 32389,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 32391
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2008,
    "sourceRecords": 28270,
-   "acquired": 0,
+   "acquired": 28270,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 28270
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2009,
    "sourceRecords": 32418,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 32416,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 32418
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2010,
    "sourceRecords": 53885,
-   "acquired": 0,
+   "acquired": 53885,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 53885
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2011,
    "sourceRecords": 60507,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 60505,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 60507
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2012,
    "sourceRecords": 59864,
-   "acquired": 0,
+   "acquired": 59864,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 59864
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2013,
    "sourceRecords": 53775,
-   "acquired": 24198,
+   "acquired": 53775,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 29577
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
@@ -8696,10 +8158,10 @@
    "year": 2014,
    "sourceRecords": 63466,
    "acquired": 63465,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
@@ -8707,120 +8169,120 @@
    "year": 2015,
    "sourceRecords": 59091,
    "acquired": 59090,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2016,
    "sourceRecords": 66149,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 66147,
+   "sourceDocumentMissing": 2,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 66149
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2017,
    "sourceRecords": 59242,
-   "acquired": 0,
+   "acquired": 59242,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 59242
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2018,
    "sourceRecords": 66725,
-   "acquired": 0,
+   "acquired": 66725,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 66725
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2019,
    "sourceRecords": 33967,
-   "acquired": 0,
+   "acquired": 33967,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 33967
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2020,
    "sourceRecords": 22207,
-   "acquired": 16947,
-   "sourceDocumentMissing": 39,
-   "retryPending": 8,
+   "acquired": 22146,
+   "sourceDocumentMissing": 61,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5221
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2021,
    "sourceRecords": 39728,
-   "acquired": 38144,
-   "sourceDocumentMissing": 492,
-   "retryPending": 1092,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 1092
+   "acquired": 39224,
+   "sourceDocumentMissing": 503,
+   "retryPending": 0,
+   "otherFailure": 1,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2022,
    "sourceRecords": 71594,
-   "acquired": 71331,
+   "acquired": 71338,
    "sourceDocumentMissing": 256,
-   "retryPending": 7,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7
+   "unaccountedUpperBound": 0
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2023,
    "sourceRecords": 66857,
-   "acquired": 65782,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 66774,
+   "sourceDocumentMissing": 80,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1075
+   "unaccountedUpperBound": 3
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2024,
    "sourceRecords": 38931,
-   "acquired": 38757,
+   "acquired": 38929,
    "sourceDocumentMissing": 0,
-   "retryPending": 80,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 174
+   "unaccountedUpperBound": 2
   },
   {
    "court": "36_29",
    "courtName": "High Court  for State of Telangana",
    "year": 2025,
    "sourceRecords": 50795,
-   "acquired": 37323,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 49975,
+   "sourceDocumentMissing": 37,
+   "retryPending": 506,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13472
+   "unaccountedUpperBound": 783
   },
   {
    "court": "36_29",
@@ -8828,10 +8290,10 @@
    "year": 2026,
    "sourceRecords": 10630,
    "acquired": 10566,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 58,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 64
+   "unaccountedUpperBound": 6
   },
   {
    "court": "5_15",
@@ -8915,22 +8377,22 @@
    "courtName": "High Court of Uttarakhand",
    "year": 2001,
    "sourceRecords": 1647,
-   "acquired": 1646,
+   "acquired": 1647,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "5_15",
    "courtName": "High Court of Uttarakhand",
    "year": 2002,
    "sourceRecords": 2241,
-   "acquired": 2240,
+   "acquired": 2241,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "5_15",
@@ -8960,10 +8422,10 @@
    "year": 2005,
    "sourceRecords": 3957,
    "acquired": 3956,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "5_15",
@@ -9223,253 +8685,253 @@
    "courtName": "High Court of Delhi",
    "year": 1996,
    "sourceRecords": 3,
-   "acquired": 0,
+   "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 1997,
    "sourceRecords": 6,
-   "acquired": 0,
+   "acquired": 6,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 1998,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 1999,
    "sourceRecords": 11,
-   "acquired": 0,
+   "acquired": 11,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2000,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2001,
    "sourceRecords": 26,
-   "acquired": 0,
+   "acquired": 26,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 26
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2002,
    "sourceRecords": 52,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 51,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 52
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2003,
    "sourceRecords": 98,
-   "acquired": 0,
+   "acquired": 98,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 98
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2004,
    "sourceRecords": 108,
-   "acquired": 0,
+   "acquired": 108,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 108
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2005,
    "sourceRecords": 157,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 156,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 157
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2006,
    "sourceRecords": 276,
-   "acquired": 0,
+   "acquired": 276,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 276
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2007,
    "sourceRecords": 1295,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 1210,
+   "sourceDocumentMissing": 85,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1295
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2008,
    "sourceRecords": 2507,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 2482,
+   "sourceDocumentMissing": 25,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2507
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2009,
    "sourceRecords": 4594,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 4578,
+   "sourceDocumentMissing": 16,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4594
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2010,
    "sourceRecords": 6854,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 6835,
+   "sourceDocumentMissing": 19,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 6854
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2011,
    "sourceRecords": 15288,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 15261,
+   "sourceDocumentMissing": 27,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 15288
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2012,
    "sourceRecords": 11602,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 11569,
+   "sourceDocumentMissing": 33,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11602
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2013,
    "sourceRecords": 9467,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 9451,
+   "sourceDocumentMissing": 16,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9467
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2014,
    "sourceRecords": 7112,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 7098,
+   "sourceDocumentMissing": 14,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7112
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2015,
    "sourceRecords": 17235,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 17223,
+   "sourceDocumentMissing": 12,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 17235
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2016,
    "sourceRecords": 42347,
-   "acquired": 0,
+   "acquired": 42347,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 42347
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2017,
    "sourceRecords": 37214,
-   "acquired": 16587,
+   "acquired": 37209,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 5,
    "otherFailure": 0,
-   "unaccountedUpperBound": 20627
+   "unaccountedUpperBound": 5
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2018,
    "sourceRecords": 40321,
-   "acquired": 40291,
+   "acquired": 40321,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 30
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
@@ -9488,10 +8950,10 @@
    "year": 2020,
    "sourceRecords": 13117,
    "acquired": 13114,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 2,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 1
   },
   {
    "court": "7_26",
@@ -9499,21 +8961,21 @@
    "year": 2021,
    "sourceRecords": 4577,
    "acquired": 4574,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 3,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2022,
    "sourceRecords": 5024,
-   "acquired": 5022,
+   "acquired": 5024,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 2
+   "unaccountedUpperBound": 0
   },
   {
    "court": "7_26",
@@ -9531,22 +8993,22 @@
    "courtName": "High Court of Delhi",
    "year": 2024,
    "sourceRecords": 50462,
-   "acquired": 50273,
-   "sourceDocumentMissing": 0,
+   "acquired": 50323,
+   "sourceDocumentMissing": 4,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 189
+   "unaccountedUpperBound": 135
   },
   {
    "court": "7_26",
    "courtName": "High Court of Delhi",
    "year": 2025,
    "sourceRecords": 50414,
-   "acquired": 38656,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 49777,
+   "sourceDocumentMissing": 454,
+   "retryPending": 183,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11758
+   "unaccountedUpperBound": 183
   },
   {
    "court": "7_26",
@@ -9554,10 +9016,10 @@
    "year": 2026,
    "sourceRecords": 27713,
    "acquired": 27276,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "sourceDocumentMissing": 124,
+   "retryPending": 313,
    "otherFailure": 0,
-   "unaccountedUpperBound": 437
+   "unaccountedUpperBound": 313
   },
   {
    "court": "8_9",
@@ -9608,220 +9070,220 @@
    "courtName": "High Court Of Rajasthan",
    "year": 1995,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 1996,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 1997,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 1998,
    "sourceRecords": 3,
-   "acquired": 0,
+   "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 1999,
    "sourceRecords": 7,
-   "acquired": 0,
+   "acquired": 7,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2000,
    "sourceRecords": 7,
-   "acquired": 0,
+   "acquired": 7,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2001,
    "sourceRecords": 12,
-   "acquired": 0,
+   "acquired": 12,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 12
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2002,
    "sourceRecords": 11,
-   "acquired": 0,
+   "acquired": 11,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 11
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2003,
    "sourceRecords": 18,
-   "acquired": 0,
+   "acquired": 18,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2004,
    "sourceRecords": 727,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 726,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 727
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2005,
    "sourceRecords": 1643,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 1642,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1643
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2006,
    "sourceRecords": 7890,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 7873,
+   "sourceDocumentMissing": 17,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7890
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2007,
    "sourceRecords": 14596,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 14589,
+   "sourceDocumentMissing": 7,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14596
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2008,
    "sourceRecords": 15968,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 15928,
+   "sourceDocumentMissing": 40,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 15968
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2009,
    "sourceRecords": 17146,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 17114,
+   "sourceDocumentMissing": 29,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 17146
+   "unaccountedUpperBound": 3
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2010,
    "sourceRecords": 13436,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 13435,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13436
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2011,
    "sourceRecords": 17316,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 17310,
+   "sourceDocumentMissing": 5,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 17316
+   "unaccountedUpperBound": 1
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2012,
    "sourceRecords": 27386,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 27377,
+   "sourceDocumentMissing": 9,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 27386
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2013,
    "sourceRecords": 22476,
-   "acquired": 5588,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 22448,
+   "sourceDocumentMissing": 27,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 16888
+   "unaccountedUpperBound": 1
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2014,
    "sourceRecords": 48607,
-   "acquired": 48557,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 48593,
+   "sourceDocumentMissing": 13,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 50
+   "unaccountedUpperBound": 1
   },
   {
    "court": "8_9",
@@ -9829,43 +9291,43 @@
    "year": 2015,
    "sourceRecords": 59668,
    "acquired": 59664,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 4,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2016,
    "sourceRecords": 67588,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 67470,
+   "sourceDocumentMissing": 117,
+   "retryPending": 1,
    "otherFailure": 0,
-   "unaccountedUpperBound": 67588
+   "unaccountedUpperBound": 1
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2017,
    "sourceRecords": 99660,
-   "acquired": 67030,
-   "sourceDocumentMissing": 0,
-   "retryPending": 118,
+   "acquired": 99626,
+   "sourceDocumentMissing": 25,
+   "retryPending": 183,
    "otherFailure": 0,
-   "unaccountedUpperBound": 32630
+   "unaccountedUpperBound": 9
   },
   {
    "court": "8_9",
    "courtName": "High Court Of Rajasthan",
    "year": 2018,
    "sourceRecords": 90032,
-   "acquired": 90013,
-   "sourceDocumentMissing": 2,
-   "retryPending": 17,
-   "otherFailure": 0,
-   "unaccountedUpperBound": 17
+   "acquired": 90027,
+   "sourceDocumentMissing": 4,
+   "retryPending": 0,
+   "otherFailure": 1,
+   "unaccountedUpperBound": 0
   },
   {
    "court": "8_9",
@@ -9917,10 +9379,10 @@
    "year": 2023,
    "sourceRecords": 119187,
    "acquired": 119173,
-   "sourceDocumentMissing": 0,
+   "sourceDocumentMissing": 10,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 14
+   "unaccountedUpperBound": 4
   },
   {
    "court": "8_9",
@@ -9951,7 +9413,7 @@
    "sourceRecords": 18460,
    "acquired": 18457,
    "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "retryPending": 2,
    "otherFailure": 0,
    "unaccountedUpperBound": 3
   },
@@ -10004,220 +9466,220 @@
    "courtName": "Allahabad High Court",
    "year": 1995,
    "sourceRecords": 1,
-   "acquired": 0,
+   "acquired": 1,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 1
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 1996,
    "sourceRecords": 5,
-   "acquired": 0,
+   "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 1997,
    "sourceRecords": 5,
-   "acquired": 0,
+   "acquired": 5,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 1999,
    "sourceRecords": 4,
-   "acquired": 0,
+   "acquired": 4,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 4
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2000,
    "sourceRecords": 3,
-   "acquired": 0,
+   "acquired": 3,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 3
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2001,
    "sourceRecords": 7,
-   "acquired": 0,
+   "acquired": 7,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2002,
    "sourceRecords": 8,
-   "acquired": 0,
+   "acquired": 8,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2003,
    "sourceRecords": 7,
-   "acquired": 0,
+   "acquired": 7,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2004,
    "sourceRecords": 13,
-   "acquired": 0,
+   "acquired": 13,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2005,
    "sourceRecords": 13,
-   "acquired": 0,
+   "acquired": 13,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 13
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2006,
    "sourceRecords": 9,
-   "acquired": 0,
+   "acquired": 9,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 9
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2007,
    "sourceRecords": 8,
-   "acquired": 0,
+   "acquired": 8,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 8
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2008,
    "sourceRecords": 16,
-   "acquired": 0,
+   "acquired": 16,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 16
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2009,
    "sourceRecords": 17,
-   "acquired": 0,
+   "acquired": 17,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 17
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2010,
    "sourceRecords": 32,
-   "acquired": 0,
+   "acquired": 32,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 32
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2011,
    "sourceRecords": 18,
-   "acquired": 0,
-   "sourceDocumentMissing": 0,
+   "acquired": 17,
+   "sourceDocumentMissing": 1,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 18
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2012,
    "sourceRecords": 21,
-   "acquired": 0,
+   "acquired": 21,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 21
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2013,
    "sourceRecords": 26,
-   "acquired": 0,
+   "acquired": 26,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 26
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2014,
    "sourceRecords": 48,
-   "acquired": 0,
+   "acquired": 48,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 48
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2015,
    "sourceRecords": 29,
-   "acquired": 0,
+   "acquired": 29,
    "sourceDocumentMissing": 0,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 29
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
@@ -10235,33 +9697,33 @@
    "courtName": "Allahabad High Court",
    "year": 2017,
    "sourceRecords": 1961,
-   "acquired": 1954,
-   "sourceDocumentMissing": 0,
+   "acquired": 1957,
+   "sourceDocumentMissing": 4,
    "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 7
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2018,
    "sourceRecords": 456951,
-   "acquired": 8,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 228653,
+   "sourceDocumentMissing": 1420,
+   "retryPending": 370,
    "otherFailure": 0,
-   "unaccountedUpperBound": 456943
+   "unaccountedUpperBound": 226878
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2019,
    "sourceRecords": 468045,
-   "acquired": 84176,
+   "acquired": 235385,
    "sourceDocumentMissing": 126,
-   "retryPending": 33,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 383743
+   "unaccountedUpperBound": 232534
   },
   {
    "court": "9_13",
@@ -10281,9 +9743,9 @@
    "sourceRecords": 351964,
    "acquired": 176991,
    "sourceDocumentMissing": 116,
-   "retryPending": 0,
-   "otherFailure": 1,
-   "unaccountedUpperBound": 174856
+   "retryPending": 1,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 174857
   },
   {
    "court": "9_13",
@@ -10292,9 +9754,9 @@
    "sourceRecords": 525018,
    "acquired": 306840,
    "sourceDocumentMissing": 465,
-   "retryPending": 0,
-   "otherFailure": 1,
-   "unaccountedUpperBound": 217712
+   "retryPending": 1,
+   "otherFailure": 0,
+   "unaccountedUpperBound": 217713
   },
   {
    "court": "9_13",
@@ -10312,33 +9774,33 @@
    "courtName": "Allahabad High Court",
    "year": 2024,
    "sourceRecords": 264889,
-   "acquired": 261512,
+   "acquired": 261564,
    "sourceDocumentMissing": 3325,
-   "retryPending": 52,
+   "retryPending": 0,
    "otherFailure": 0,
-   "unaccountedUpperBound": 52
+   "unaccountedUpperBound": 0
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2025,
    "sourceRecords": 487750,
-   "acquired": 208551,
-   "sourceDocumentMissing": 6693,
-   "retryPending": 6,
+   "acquired": 478870,
+   "sourceDocumentMissing": 8877,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 272506
+   "unaccountedUpperBound": 3
   },
   {
    "court": "9_13",
    "courtName": "Allahabad High Court",
    "year": 2026,
    "sourceRecords": 151424,
-   "acquired": 145770,
-   "sourceDocumentMissing": 0,
-   "retryPending": 0,
+   "acquired": 145773,
+   "sourceDocumentMissing": 5655,
+   "retryPending": 3,
    "otherFailure": 0,
-   "unaccountedUpperBound": 5654
+   "unaccountedUpperBound": 0
   }
  ]
 }
