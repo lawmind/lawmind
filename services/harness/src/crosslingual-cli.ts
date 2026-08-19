@@ -150,7 +150,13 @@ async function main(): Promise<void> {
         {
           kind: 'new1_crosslingual',
           createdAt: new Date().toISOString(),
-          method: 'live production hybrid search, 5 Hindi queries paired with their English originals by shared gold judgment',
+          // The mode is interpolated rather than asserted: this string used to
+          // read "hybrid" unconditionally, and after CROSSLINGUAL_MODE was added
+          // a dense-only run wrote an artifact claiming it had used the hybrid
+          // path. An artifact that misdescribes its own method is worse than no
+          // artifact, because it is quotable.
+          method: `live production ${MODE} search, ${hindiQueries.length} Hindi queries paired with their English originals by shared gold judgment`,
+          mode: MODE,
           missingPairs: missing.map((m) => m.hi.id),
           rows,
           summary: { hi, en },

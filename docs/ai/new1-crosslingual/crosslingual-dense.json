@@ -1,7 +1,8 @@
 {
   "kind": "new1_crosslingual",
-  "createdAt": "2026-08-19T13:44:20.962Z",
-  "method": "live production hybrid search, 5 Hindi queries paired with their English originals by shared gold judgment",
+  "createdAt": "2026-08-19T19:29:57.628Z",
+  "method": "live production dense search, 5 Hindi queries paired with their English originals by shared gold judgment",
+  "mode": "dense",
   "missingPairs": [],
   "rows": [
     {
