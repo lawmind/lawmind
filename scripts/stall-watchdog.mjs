@@ -63,11 +63,21 @@ function flag(name, fallback) {
 
 const logPath = flag('log', null);
 const stallSeconds = Number(flag('stall', 600));
+/**
+ * A child that exits 0 has FINISHED. Restarting it is not supervision, it is a
+ * spin: the completed Tier-A manifest builder was re-run 549 times in 5.7 hours,
+ * each run re-opening a database connection to discover it had nothing to do —
+ * contending with the embed runner it was supposed to be feeding. Restarting on
+ * a clean exit also makes "done" and "crashed" the same event, which is the one
+ * distinction a supervisor exists to make. Pass --restart-always for a child
+ * that is expected to exit 0 per unit of work and rely on the loop.
+ */
+const restartAlways = process.argv.includes('--restart-always');
 const sep = process.argv.indexOf('--');
 const cmd = sep === -1 ? [] : process.argv.slice(sep + 1);
 
 if (!logPath || cmd.length === 0) {
-  console.error('usage: node scripts/stall-watchdog.mjs --log <file> [--stall 600] -- <cmd> [args...]');
+  console.error('usage: node scripts/stall-watchdog.mjs --log <file> [--stall 600] [--restart-always] -- <cmd> [args...]');
   process.exit(2);
 }
 
@@ -128,6 +138,10 @@ function runOnce() {
   child.on('exit', (code, signal) => {
     clearInterval(timer);
     if (stopping) return;
+    if (code === 0 && !restartAlways) {
+      note('child exited cleanly (code 0) — finished, not restarting');
+      return;
+    }
     restarts += 1;
     note('child exited (code ' + code + ', signal ' + signal + ') — restart #' + restarts + ' in 10s');
     setTimeout(runOnce, 10_000);
