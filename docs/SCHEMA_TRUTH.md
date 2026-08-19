@@ -1607,6 +1607,204 @@ The model's own gloss is carried in `parsed_output[].extra.label` and is
 `docs/CURRENT_PLAN.md` §Q1.6. Every path added by migrations `0026`–`0029`,
 planned against the real corpus rather than reasoned about.
 
+## judgments.script_quality · script_quality_method · script_quality_at
+
+Migration `0056`. **A verdict about a document's TEXT, separate from
+`text_quality`, because two of the three measured extraction failure modes make
+`text_quality` read HIGH on a document that is half gone.**
+
+| mode | caught by `text_quality`? |
+| --- | --- |
+| missing or bad text layer | yes — the score collapses |
+| Poppler silently DELETING Devanagari | **no** — what survives is clean Latin, so the score is high |
+| legacy Kruti Dev / non-Unicode Hindi | **no** — the bytes are valid ASCII, so every character-class metric reads clean |
+
+A second scalar squeezed into `text_quality` would have to mean two incompatible
+things, so this is a separate nullable verdict with its own provenance.
+
+Closed vocabulary, enforced by `judgments_script_quality_check`:
+`clean` · `devanagari_deleted` · `legacy_font_ascii` · `mixed_script_ok` ·
+`damaged_other`. `damaged_other` exists so a detector never has to lie to record
+a failure it cannot classify.
+
+The constraint is `NOT VALID`, and that is **not** a weakening. It skips the
+15M-row validation scan (which would hold ACCESS EXCLUSIVE and stall the fleet)
+and it does **not** skip enforcement on INSERT/UPDATE — proved 19 Aug 2026 by an
+UPDATE to `'bogus_value'` inside a rolled-back transaction, rejected by
+`ExecConstraints`. Every existing row was NULL when the column was created, so
+there was nothing to validate.
+
+Text + CHECK rather than a pg enum: NEW2 owns the detectors and will add verdicts
+as modes are found, and adding a value to a CHECK is a one-line migration while
+altering an enum under a 15M-row table is not.
+
+**NULL means NEVER ASSESSED and is not a failure.** `script_quality_method`
+mirrors `hc_class_method` deliberately — it is the column that separates "looked
+at and could not judge" from "never looked". Filter on the method, never on
+`script_quality IS NOT NULL`.
+
+`ocr_candidate` / `ocr_repaired` are WORKFLOW state and must never become values
+here: a document queued for OCR and a document whose script was destroyed are the
+same row to a scheduler and opposite rows to a retriever.
+
+Index `judgments_script_quality_idx` is partial (`WHERE script_quality IS NOT
+NULL`) because the assessed minority is what a selector probes. **Zero rows carry
+a verdict as of 19 Aug 2026.**
+
+---
+
+## judgment_embedding_eligibility (VIEW)
+
+Migrations `0056`, corrected by `0058`. **Four independent axes, never collapsed
+into one flag.** A document can be safe to search but not precedent-grade;
+precedent-grade but of uncertain class; canonical but textually corrupt. One
+boolean cannot say any of that, and the moment it tries, the reason a document
+was excluded stops being answerable.
+
+| axis | question |
+| --- | --- |
+| A `axis_a_identity` | do we know WHICH decision this is |
+| B `axis_b_text` | is the text we hold usable |
+| C `axis_c_role` | is this a decision or a piece of court admin |
+| D `value_band` | is there enough here for a vector to mean anything |
+
+A VIEW rather than a column or a materialised table: a column would be a 15M-row
+UPDATE that goes stale the moment a detector improves, a materialised table is a
+second truth that drifts from its definition, and a view is a macro —
+`WHERE id > $cursor ORDER BY id LIMIT 1000` pushes the keyset predicate straight
+into `judgments_pkey`.
+
+**Duplicate collapse is NOT here.** The view EXPOSES `content_hash` and the
+consumer collapses, because collapsing within the view would silently emit one
+representative PER WINDOW.
+
+`is_bail_order` is broken out rather than excluded or included: bail orders are
+practically useful and are not precedent, and which tier they belong in is a
+retrieval measurement, not a WHERE clause.
+
+**Every boolean is NULL-safe, and `0058` exists because one was not.**
+`is_bail_order` was `(hc_document_class = 'bail_order')`, which is NULL for the
+93.7% of rows with no class. Consumers wrote `AND NOT e.is_bail_order`; `NOT
+NULL` is NULL, NULL is not TRUE, and the row was dropped. On a 50,000-row page of
+Tier-A representatives that predicate kept **6,954**; the null-safe form kept all
+50,000. There are 326,187 bail orders corpus-wide (1.8%). Fixed with
+`IS NOT DISTINCT FROM`. Guard:
+`services/embed/src/eligibility-null-safety.test.ts`. Note `pg_get_viewdef`
+re-prints that operator as `NOT a IS DISTINCT FROM b`.
+
+Contract version is `v1` and lives in `services/embed/src/eligibility.ts`; the
+definition HASH is taken from `pg_get_viewdef` so a manifest's identity tracks
+the definition that really selected its rows.
+
+---
+
+## embedding_content_representative
+
+Migration `0057`. **One representative per BYTE-IDENTICAL text, for embedding
+only.**
+
+36,310 ambiguous citation keys are one decision each, covering 104,930 judgment
+rows. A common final order disposing of forty writ petitions is forty rows and
+one decision; embedding it forty times buys forty copies of the same point in
+vector space.
+
+**It merges no cases.** Every petition, case number, caption and party keeps its
+own `judgments` row untouched. The map back is `WHERE content_hash = $1` against
+`judgments_content_hash_idx`, which already existed.
+
+**Obligation this creates:** a retrieval hit on a representative MUST fan back
+out to its members before display, or a petitioner searching their own case
+number finds a decision filed under somebody else's name. `member_count` is on
+the row so the surface can see the fan-out is required.
+
+`representative_judgment_id` is `min(id)` over the members — arbitrary but STABLE
+and reproducible from the data alone, which matters more than being meaningful.
+Built with `LEAST(...)` on conflict so it is min over the WHOLE population and not
+min of whichever page saw the group first.
+
+**Only byte-identical. Nothing fuzzy.** ~2k citation keys are genuine CONFLICTS —
+different decisions colliding on one key — and roughly 8,843 ambiguous keys are
+mostly OCR variance. None of that is collapsed here. Collapsing a true conflict
+deletes a decision from the corpus while every count still looks healthy.
+
+Measured 19 Aug 2026: **8,854,281 groups covering 9,700,157 Tier-A rows**,
+301,531 groups with more than one member, largest 7,118 (a real Madras common
+order). `docs/ai/TIER_A_CENSUS.md`.
+
+---
+
+## embedding_census_progress · embedding_census_cell
+
+Migration `0057`. The checkpoint and the counts for the Tier-A census
+(`services/embed/src/tier-census-cli.ts`).
+
+**Progress is a TABLE and not a file for one reason.** `member_count` and every
+cell count ACCUMULATE, so double-processing a page is not an error — it is a
+plausible number, and a plausible wrong number is undetectable by any later
+check. The cursor therefore lives in the SAME TRANSACTION as the aggregates it
+accounts for: commit both or neither. Interrupt anywhere and the resume is
+correct, because the only two states that can exist are "page fully counted and
+cursor advanced" and "neither". Postgres died six times in four days on this box
+(0xC000013A console signals), so this is the measured operating condition rather
+than defensive programming.
+
+`embedding_census_cell` is court × year × band × bucket, and **counts the
+EXCLUDED buckets too** — "what did we throw away and why" is the question a
+selector has to survive. `judgment_year` is `-1` rather than NULL for undated
+judgments: NULL in a primary key never equals itself, so the upsert would insert
+a new row every page and the count would be low by however many pages contained
+one.
+
+Distinct content hashes are deliberately ABSENT here — the same text can appear
+in two courts, so the figure is not summable across cells and comes from
+`embedding_content_representative` instead. `chars_total` IS summable and gives
+the text-size distribution its mean without a second walk.
+
+---
+
+## document_vector_staging
+
+Migration `0057`. **Vectors before any index exists.**
+
+`judgment_chunks.embedding` cannot serve: it is one fixed representation, carries
+no model identity, and writing an experiment into it would corrupt the only dense
+arm currently serving retrieval.
+
+Three independently addressable populations, via `representation_type`:
+
+| level | values |
+| --- | --- |
+| A | `document` — one canonical vector per authority |
+| B | `holding`, `issue`, `proposition` — verified legal objects |
+| C | `paragraph` — SELECTED paragraphs, never all of them |
+
+For `document`, `source_object_id` is the REPRESENTATIVE judgment id.
+
+**Deliberately NO ANN index.** An HNSW build over millions of rows is the single
+most expensive thing available on this box, where retrieval is already p50 43s.
+Staged vectors are for exact brute-force comparison over bounded candidate sets;
+the index gets built when a measurement says which representation deserves one.
+
+`embedding_fp32 vector` and `embedding_halfvec halfvec` sit side by side for the
+SAME source object, because "does halfvec lose quality" needs both present at
+once. Undimensioned on purpose (pgvector 0.8.5 permits it): the model is not
+chosen and a dimension baked into DDL now would need a table rewrite later. `dim`
+is stored and checked by the writer.
+
+`source_hash` is a hash of the exact TEXT handed to the model, not of the source
+row — a row can change without the embedded text changing and vice versa, and
+only this answers "is this vector still valid".
+
+`precision` is stored rather than derived from NULL-ness: "we meant to store both
+and one failed" and "we only wanted halfvec" are different states that a NULL
+check cannot tell apart.
+
+**`status = 'approved'` is NEW1's call, never a writer's** — semantic approval is
+not a side effect of a successful write. `superseded` rows are kept, because
+deleting them destroys the ability to reproduce the comparison that replaced them.
+
+---
+
 ## THE FINDING: STATISTICS WERE A WEEK AND THREE MIGRATIONS STALE
 
 `pg_stat_user_tables` reported `judgments.last_analyze = NULL` and
