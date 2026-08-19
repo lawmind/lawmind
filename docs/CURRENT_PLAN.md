@@ -16,6 +16,45 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 19 Aug 2026 — NEW1: THE EMBEDDINGS DO USEFUL WORK — 0.8% TO 35.8% ON AUTHORITIES THAT WERE UNREACHABLE
+
+**Added by NEW1 (retrieval lane).** Detail
+`docs/ai/NEW1_TIER_A_EXPANSION_BENCHMARK.md`, artifact
+`docs/ai/new1-tier-a/expansion-benchmark.json`.
+
+The frozen 283-query benchmark is `courts=[sc]` and cannot measure corpus
+expansion — it was built to be insulated from corpus change. So a second
+benchmark: 120 query→authority pairs from real citation edges, gold = documents
+that only became reachable when Tier-A embedded them, citing side across 11 High
+Courts, queries built through `build-queries.ts`'s own redaction functions
+(113 of 233 candidates rejected by them).
+
+| universe | n | success@5 | recall@20 | MRR |
+| --- | --- | --- | --- | --- |
+| OLD — production dense arm, 40,161 documents | 120 | **0.8%** | 0.8% | 0.004 |
+| NEW — Tier-A document vectors, 19,987 documents | 120 | **35.8%** | 45.8% | 0.318 |
+
+**117 of the 120 gold authorities carry no chunk at all.** Not a ranking failure —
+no reranker, fusion weight or candidate depth can return a document that has no
+vector. Verified by a presence check over all 120 plus a 20-query positive control
+through the production ANN path; the control agreed on every sampled query.
+
+**Not a like-for-like ranking comparison** — 19,987 documents against 620,300
+chunks, and a smaller pool is an easier ranking problem. The like-for-like claim is
+the reachability one. A fair ranking comparison needs the MERGED universe and was
+deliberately not built: chunk-level and document-level distances are not
+calibrated, and merging them silently would smuggle a fusion decision into an
+expansion measurement. That calibration is the next question, and LCC's
+`document_vector_staging` (0057) is where it belongs.
+
+**Also landed (P5, `docs/ai/NEW1_REPRESENTATION_LAYERS.md`): five vectors per
+document BEAT the 32.82-vector full-chunk ceiling** — 24.0% vs 23.0% success@5,
+44.9% vs 41.7% recall@20, at 15.2% of the vectors — while a seeded-random
+selection of the SAME size scores 18.7%. The selection does the work, not the
+count. The two positional proxies (TAIL for holding, ISSUE for the question
+presented) both scored BELOW head-only; the layer that pays is geometric
+(the chunks nearest the document's own centroid), which needs no extraction stage.
+
 ### 19 Aug 2026 — NEW1: THE GPU IS EMBEDDING, AND THE QUEUE IT SHOULD DRAIN IS 10,669 DOCUMENTS LONG
 
 **Added by NEW1 (retrieval lane).** Detail `docs/ai/NEW1_TIER_A_STAGING.md`,
@@ -158,18 +197,49 @@ documents, so the real figure is 87.0%. 98.5% would have licensed writing
 `decided` onto ~570,000 rows with one in seven being court admin entering the
 authority class.
 
-**4. 14,402 documents were permanently condemned by a one-hour outage, and every
-one of them returns HTTP 200.** `ingest-ledger.ts` promoted rows to `permanent`
-at `MAX_ATTEMPTS = 3` with no notion of TIME, and `permanentlyFailedUrls()` then
-excluded them from every scope forever. **99.5% of the condemned population was
-condemned inside the single hour 2026-08-18 18:00, and 97% of it is Bombay.**
-A HEAD probe of all 14,402 (`scripts/migration/new2-ledger-failed-probe.mjs`,
-dry by default) returned **200 for 14,402 of 14,402 — 100.0%**. All cleared.
-`attempts` reset to 1, not 0: `CHECK (attempts > 0)` refused zero and is right to,
-because a ledger row exists BECAUSE an attempt was made. The durable fix requires
-both the budget and elapsed time — `MIN_CONDEMN_SPAN = '6 hours'`.
-`PERMANENT_ON_SIGHT` outcomes are untouched: a 404 is a property of the object,
-not of the network. Typecheck clean, 51/51 ingest tests pass.
+**4. The 14,402 "outage" was a SOFT 404, they were correctly condemned, and I
+un-condemned them. Correction in full, because the correction is the finding.**
+The claim was: `ingest-ledger.ts` promotes at `MAX_ATTEMPTS = 3` with no notion of
+time, 99.5% of the 14,402 permanent `pdf_failed` rows were condemned inside the
+single hour 2026-08-18 18:00, 97% Bombay, and a HEAD probe returned **200 for
+14,402 of 14,402** — so the permanence was wrong. All 14,402 were cleared.
+
+**It was not wrong.** Fetched in FULL those objects are `HTTP 200 ·
+Content-Type: application/pdf · 124 bytes` containing
+`<html>…Welcome User Search Page not Found here…</html>` — the upstream stores its
+own error page under the PDF key. A real one begins `%PDF-`; a known-good Bombay
+judgment sampled beside them was 34,899 bytes. **360 of 360 sampled across two
+draws were the error page; 0 were PDFs.** The clustering was real but meant the
+worker had reached a contiguous run of dead keys, not that the source had a bad
+hour.
+
+**HEAD was the wrong instrument and the tool's own caveat block said so** — "a
+HEAD 200 says the object exists, not that it parses". The caveat was right and the
+code did not act on it. Cost: the fleet re-fetched 14,402 error pages and
+re-condemned them within the hour (Bombay permanent `pdf_failed` 14,004 ->
+38,876); `hc-boot-mid-27_1` and `hc-boot-hist-27_1` spent a pass on it at
+`24,627 seen / 0 mapped` and `13,908 seen / 0 mapped`. **`judgments` was never
+touched, so no corpus data was lost or corrupted.**
+
+**The real defect, which is worth having found:** a soft 404 was recorded as
+`pdf_failed`, which is RETRYABLE — so the fleet re-fetched every one three times
+per pass forever, and they sat in a retry queue instead of the provider-recovery
+population. `text.ts:fetchPdfText` now checks the magic bytes before parsing and
+throws in the exact `GET <url> → 404` shape `hc-load-cli` already parses, so it
+maps to `pdf_absent`, permanent on sight. Two tests assert that shape specifically,
+because a different message falls through to `pdf_failed` again. 7/7 in
+`text-fetch.test.ts`, 58/58 across the ingest suites, typecheck clean.
+
+**`MIN_CONDEMN_SPAN = '6 hours'` is REVERTED.** It was justified by an outage that
+did not happen; without that evidence it only delays correct condemnation of dead
+keys and buys another round of fetches for each. The reasoning stays in
+`ingest-ledger.ts` as a comment so nobody re-derives it, and names what evidence
+would justify adding it back: an OBSERVED outage, not one inferred from clustering.
+
+**Consequence for NEW3's missing-PDF pilot: the population GROWS.**
+`pdf_absent AND permanent` was 177,670; ~39,000 more join it from this
+reclassification, nearly all Bombay. They are exactly the pilot's target — metadata
+exists, the document does not exist at this source, only a provider can supply it.
 
 **5. Fleet restarted at width 6, not 24, and deliberately NOT widened to 8.**
 Gate under load: `CPU 46.6% · RAM free 23.8% · commit free 20.0% · GPU 100%`.
@@ -183,6 +253,44 @@ Embedded documents: **40,161, unchanged**. As a share of corpus that is 0.22%,
 down from 0.2238% purely because the denominator grew. With 1,081,044 source rows
 left, **the acquisition programme is close to finished and the semantic programme
 has barely started** — the case for reclaiming CPU from ingest strengthens daily.
+
+**7. The box rebooted mid-session and the LOGON LAUNCHER started 42 workers.**
+`start-ingest-fleet.ps1` fires at logon by design, and its static `foreach` blocks
+do not consult the plan — the plan contributed 0 workers because its candidates
+are all tier 3-5 and `-PlanTiers` defaults to `0,1,2`. Result: 42 supervisors,
+123 fleet processes, **RAM free 18.4%** — the memory-pressure condition behind six
+`0xC000013A` Postgres deaths. Cut to 6 with `new2-scope-stop.mjs` (which refused
+three partial stop-sets before it would act, correctly). RAM free 18.4% -> 45.6%,
+commit free 25.3% -> 53.4%. Kept: `hist-27_1`, `mid-27_1`, `27_1`, `3_22`,
+`21_11`, `36_29` — the six with real remaining work. **Most of the other 36 were
+cursor-exhausted and would have re-read parquet footers to write nothing.**
+
+**8. The frontier artefact lied to me before the guard existed, and the guard is
+the lesson.** Its first full run emitted thirteen cells reading `WALKED` with held
+under 50% of source — including `18_6 2016 source 12,997 held 0 0.0% WALKED`,
+which reads as a serious acquisition defect. Live check: that cell holds **12,997
+of 12,997**. The held snapshot had been taken while `hc-boot-mid-18_6` was
+mid-run. **A stale held column does not fail loudly — it produces a plausible
+coverage gap in the file another lane builds its coverage contract on.** The tool
+now stats every checkpoint and flags `heldIsStale` in the report header and in the
+artefact whenever a cursor was written after the snapshot.
+
+**9. Of the thirteen, three survived a refresh, and they are one court.** Madhya
+Pradesh 2024 / 2025 / 2026 hold 12,277 / 184 / 93 against 28,167 / 23,528 / 3,571
+source rows — and `permanentAbsent` accounts for essentially all of the
+difference (15,869 / 23,344 / 3,477). **MP 2024-2026 is ~99% `pdf_absent` at the
+bucket**: metadata rows exist, PDFs 404. Not an ingest gap at any width; the
+second-largest provider-recovery population after Bombay.
+
+**10. `new2-frontier.json` now emits ALL 889 court-year cells**, which is the
+precomputed table NEW1's coverage-state contract (bus 0724) said does not exist.
+`heldShare` is emitted and **no PARTIAL threshold is applied** — where "materially
+less" begins is a product judgement and belongs in `PRODUCT_DECISIONS.md`, not in
+one lane's script.
+
+**Frontier, end of session:** source 20,529,203 · walked 19,733,117 · **remaining
+728,493** · acquired 18,579,847 · permanent absent 177,670. **Bombay is 289,502 of
+the 728,493 — 40% of all outstanding ingest is one court.**
 
 **Still founder-blocked, already queued, not re-raised:** `INDIANKANOON_API_TOKEN`
 is unset, so the bounded missing-PDF pilot (161,792 `pdf_absent AND permanent`)

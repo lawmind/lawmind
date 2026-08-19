@@ -4305,3 +4305,106 @@ What is lost is only the chance to recover them.
 read `hc_ingest_ledger WHERE outcome = 'pdf_absent'` and write through the same
 `upsertJudgments` path, with `source_url` recording the real provenance. It would
 not touch the AWS ingest path.
+
+---
+
+## FQ-INDIANKANOON-RESOLVED · Founder settles it directly — Indian Kanoon is authorized, in writing, this is not reopenable · NEW3, 18 Aug 2026
+
+**Closes `FQ-INDIANKANOON` above.** The founder's source-frontier-continuation
+addendum, this session, states plainly: *"written Indian Kanoon
+permission/API access; separate paid licence; authorized agreed
+extraction/RAG/training use. Any stale CLAUDE.md/repo statement is superseded
+and should be corrected through the normal source-authorization record. Do
+not ask again unless the question is about a SPECIFIC operation outside the
+written scope."*
+
+That is a direct answer to the exact question `FQ-INDIANKANOON` asked (NEW2,
+18 Aug, same day) — is Indian Kanoon authorized at all — and it supersedes
+both the two-lanes-disagree framing in that entry and the "scope and budget
+still GUESS" caveat in `FQ-IK-RESOLVED` above. **Corrected through the normal
+source-authorization record, not by editing `CLAUDE.md` §6a myself**
+(§6a's own convention: a founder-authored dated update, not an agent edit) —
+`docs/AUTHORIZED_SOURCE_MAP.md` §4 now carries this as the current record.
+
+**Do not re-ask "is Indian Kanoon authorized."** The only questions still
+open about it are about a **specific operation outside the written scope**,
+per the founder's own carve-out, and there is exactly one candidate: whether
+using Indian Kanoon to recover PDFs that AWS is missing (`FQ-RECOVERY`
+above, `docs/MISSING_PDF_RECOVERY.md`) is inside "extraction/RAG/training
+use" or is a distinct act. Read as *inside* scope — recovering a document for
+the corpus is extraction — so `FQ-RECOVERY`'s IK path is unblocked on
+authorization; NEW2's `hc_ingest_ledger` triage/recovery program may proceed
+once the two items below are resolved. If that reading is wrong, this is the
+one thing to correct, not the general authorization.
+
+**What is NOT resolved by this, and is a credential/money item, not an
+authorization question — queued here per `CLAUDE.md` §6b rather than
+blocking:**
+
+1. **`INDIANKANOON_API_TOKEN` is unset.** `services/ingest/src/harvest/
+   indiankanoon.ts` is built, tested (11 tests), and refuses every call
+   honestly without it — nothing is blocked on code, only on the credential
+   existing in `.env`.
+2. **The paid licence's actual pricing is unknown.** The client's
+   `PRICE_PAISE` table (search ₹0.50 / document ₹0.20 / fragment ₹0.05) and
+   `INDIANKANOON_BUDGET_PAISE` default (₹500, the old signup-credit ceiling)
+   both come from `docs/DATA_SOURCES.md` §2, written under the **declined,
+   no-API framing from 8 Aug**. A separate paid licence very likely has
+   different, probably better, per-call economics, or may be a flat
+   subscription rather than metered at all. Using the ₹500 default under a
+   real paid licence would refuse spend far below what is actually available.
+   **Needed: the licence's actual rate card / ceiling, whatever form it
+   takes, so the client's budget config reflects the real agreement rather
+   than the pre-licence guess.**
+
+**What was built anyway, so nothing waits on this:** the bounded
+~1,000-record missing-PDF pilot manifest for NEW2
+(`docs/MISSING_PDF_PILOT_MANIFEST.md`), stratified by court/year/source
+state, priced against the current (possibly-wrong) rate card so the shape of
+the pilot is ready — only the credential and the real price are missing, and
+both are drop-in once supplied.
+
+## FQ-COVERAGE-FLOOR · How much unreachable law is acceptable inside a filtered search? · NEW1, 19 Aug 2026
+
+**Nothing is blocked.** Retrieval behaviour is unchanged and the code path this
+decides does not exist yet. This is queued because it is a product-risk judgement,
+not a measurement, and this lane should not make it alone.
+
+### The situation, measured
+
+Embedding coverage is **court-shaped and effectively binary** (full `GROUP BY`
+over 17,945,147 judgments, 19 Aug):
+
+| | held | embedded | coverage |
+| --- | --- | --- | --- |
+| Supreme Court of India | 38,342 | 38,341 | **99.9974%** |
+| every other court (25 of 26) | 17.9M | 1,820 | **≤ 0.46%**, 18 courts at exactly 0 |
+
+Separately measured: authorities with no vector are found by the dense arm at
+**0.8% success@5**; the same authorities with one vector each are found at
+**35.8%** (`docs/ai/NEW1_TIER_A_EXPANSION_BENCHMARK.md`).
+
+### The decision
+
+A retrieval policy that prefers the semantic arm may only fire where that arm can
+actually see the candidate universe. That needs a threshold — `COVERAGE_FLOOR` —
+below which a court's judgments are treated as *lexically searchable only*.
+
+**The question is not technical.** It is: *how much law may be unreachable inside
+a filtered search before we stop letting the semantic arm dominate the ranking?*
+Set it high and the feature almost never fires; set it low and an advocate
+filtering to one High Court gets a confident ranking over a fraction of a percent
+of that court's decisions.
+
+### What the lanes did anyway
+
+- The coverage table is measured and reproducible; the gate is a lookup, not a model.
+- The retrieval contract (`docs/ai/NEW1_COVERAGE_STATE_CONTRACT.md`) already
+  separates the two axes and refuses to render `UNKNOWN` as covered.
+- Tier-A embedding continues, which raises coverage and makes the threshold matter
+  less over time.
+
+**What stays broken without an answer:** nothing today. The moment a
+coverage-gated ranking policy is proposed, it needs this number and cannot be
+shipped with one invented by an agent.
+
