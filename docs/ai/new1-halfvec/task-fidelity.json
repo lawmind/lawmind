@@ -1,0 +1,137 @@
+{
+  "kind": "new1_halfvec_task_fidelity",
+  "generatedAt": "2026-08-19T20:36:40.522Z",
+  "complete": true,
+  "queriesRequested": 283,
+  "queriesDone": 283,
+  "annDepth": 2000,
+  "efSearch": 40,
+  "note": "text_quality re-weighting excluded on purpose; identical across arms",
+  "annRecall": {
+    "HNSW_FP32": {
+      "5": {
+        "mean": 0.9399293286219085,
+        "p05": 0.6,
+        "min": 0
+      },
+      "10": {
+        "mean": 0.9339222614840996,
+        "p05": 0.5,
+        "min": 0
+      },
+      "20": {
+        "mean": 0.9075971731448756,
+        "p05": 0.6,
+        "min": 0
+      },
+      "50": {
+        "mean": 0.906572438162544,
+        "p05": 0.64,
+        "min": 0.08
+      }
+    },
+    "HNSW_HALFVEC": {
+      "5": {
+        "mean": 0.9321554770318023,
+        "p05": 0.6,
+        "min": 0
+      },
+      "10": {
+        "mean": 0.9226148409893997,
+        "p05": 0.5,
+        "min": 0
+      },
+      "20": {
+        "mean": 0.901236749116607,
+        "p05": 0.5,
+        "min": 0
+      },
+      "50": {
+        "mean": 0.9030388692579502,
+        "p05": 0.62,
+        "min": 0.2
+      }
+    }
+  },
+  "taskMetrics": {
+    "EXACT_FP32": {
+      "n": 283,
+      "successAt5": 0.2226148409893993,
+      "recallAt20": 0.4098939929328622,
+      "mrr": 0.12389338884911899,
+      "ndcgAt5": 0.12921220084817128,
+      "ndcgAt20": 0.18317196211632458
+    },
+    "HNSW_FP32": {
+      "n": 283,
+      "successAt5": 0.2049469964664311,
+      "recallAt20": 0.392226148409894,
+      "mrr": 0.11767555346676865,
+      "ndcgAt5": 0.11925626669513975,
+      "ndcgAt20": 0.17359018161614517
+    },
+    "HNSW_HALFVEC": {
+      "n": 283,
+      "successAt5": 0.20848056537102475,
+      "recallAt20": 0.3992932862190813,
+      "mrr": 0.12305371941252288,
+      "ndcgAt5": 0.12446651513652575,
+      "ndcgAt20": 0.17952973561293092
+    }
+  },
+  "judgmentCandidateOverlap": {
+    "HNSW_FP32": {
+      "5": 0.9335689045936397,
+      "20": 0.8743816254416956,
+      "50": 0.8620494699646637
+    },
+    "HNSW_HALFVEC": {
+      "5": 0.9243816254416966,
+      "20": 0.865194346289752,
+      "50": 0.8612014134275612
+    }
+  },
+  "goldRankMovement": {
+    "HNSW_FP32": {
+      "meanRankDelta": -10.145299145299145,
+      "maxRankDelta": 233,
+      "minRankDelta": -211,
+      "identicalRank": 112,
+      "comparableQueries": 234,
+      "lostFromTop5": 5,
+      "gainedIntoTop5": 0,
+      "bothMissing": 45
+    },
+    "HNSW_HALFVEC": {
+      "meanRankDelta": -8.405982905982906,
+      "maxRankDelta": 269,
+      "minRankDelta": -213,
+      "identicalRank": 112,
+      "comparableQueries": 234,
+      "lostFromTop5": 4,
+      "gainedIntoTop5": 0,
+      "bothMissing": 45
+    }
+  },
+  "latencyMs": {
+    "EXACT_FP32": {
+      "mean": 4201.053003533569,
+      "p50": 3604,
+      "p95": 7199
+    },
+    "HNSW_FP32": {
+      "mean": 6426.187279151944,
+      "p50": 5962,
+      "p95": 11031
+    },
+    "HNSW_HALFVEC": {
+      "mean": 5205.438162544169,
+      "p50": 4579,
+      "p95": 10095
+    }
+  },
+  "indexBytes": {
+    "HNSW_FP32": 5073821696,
+    "HNSW_HALFVEC": 1691279360
+  }
+}
