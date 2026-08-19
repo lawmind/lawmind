@@ -1,0 +1,29 @@
+{
+  "kind": "legal_object_manifest",
+  "contractVersion": "v1",
+  "level": "B",
+  "claimsScanned": 827,
+  "skippedTooShort": 0,
+  "minChars": 40,
+  "populations": {
+    "holding": {
+      "rows": 219,
+      "distinctJudgments": 133,
+      "contentHash": "e40185497d15a4646f59f1fc50f3328ff696601815d06083600d6682ef5d1f12",
+      "file": "docs\\ai\\embedding-manifests\\legal-objects\\holdings.jsonl"
+    },
+    "issue": {
+      "rows": 138,
+      "distinctJudgments": 78,
+      "contentHash": "bdd6f8a8c4822a7f1a7c53626da81b57a2c511630d1d8f9e353ccdde2652eb72",
+      "file": "docs\\ai\\embedding-manifests\\legal-objects\\issues.jsonl"
+    },
+    "proposition": {
+      "rows": 470,
+      "distinctJudgments": 138,
+      "contentHash": "004a588fb66d5ea728ab8ab75ed4af0e49cb0b1f2caf93663f7d5fffd4c8daeb",
+      "file": "docs\\ai\\embedding-manifests\\legal-objects\\propositions.jsonl"
+    }
+  },
+  "generatedAt": "2026-08-19T14:04:48.505Z"
+}

@@ -12,7 +12,8 @@
     "tier-manifest": "tsx src/tier-manifest-cli.ts",
     "chunk-incremental": "tsx src/chunk-incremental-cli.ts",
     "tier-census": "tsx src/tier-census-cli.ts",
-    "doc-vector-batches": "tsx src/document-vector-batch-cli.ts"
+    "doc-vector-batches": "tsx src/document-vector-batch-cli.ts",
+    "legal-object-manifest": "tsx src/legal-object-manifest-cli.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "4.2.0",

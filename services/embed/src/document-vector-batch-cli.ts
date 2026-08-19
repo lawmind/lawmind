@@ -115,51 +115,115 @@ async function gate(jobClass: JobClass): Promise<{ allow: boolean; reasons: stri
 }
 
 /**
- * One keyset batch, joined from representatives to the eligibility view.
+ * One keyset batch: a BOUNDED page of representatives, then a join.
  *
- * The join is on the PRIMARY KEY of `judgments` and is bounded by the batch, so
- * the view's `length(full_text)` is evaluated for at most `limit` rows. That is
- * the difference between a bounded index probe and the 140 GB scan the census
- * pays once.
+ * ── THE SHAPE THAT DID NOT WORK, AND WHY, MEASURED 19 AUG 2026
  *
- * `AND e.value_band = ANY(...)` re-applies the tier band here rather than
- * trusting the representative table. Representatives are built for Tier A as a
- * whole; A_CORE is a narrower band set, and re-checking is one comparison on a
- * row already fetched. Trusting an upstream filter for a narrower question is
- * how a selector quietly widens.
+ * The obvious version joins `embedding_content_representative` to the
+ * eligibility view and puts `ORDER BY … LIMIT 10000` on the result. It ran for
+ * over 70 seconds without producing a single batch, with parallel workers on
+ * `DataFileRead`.
+ *
+ * The reason is not the join, it is WHERE the filter sits. `LIMIT` can only stop
+ * an index scan early when everything it filters on is available from that
+ * index. Here the predicates are on the VIEW side — `axis_b_text` needs
+ * `text_quality`, `value_band` needs `length(full_text)` — so the planner has to
+ * join and evaluate all 8.85M representatives before it can know which first
+ * 10,000 survive. The `LIMIT` describes the output and constrains nothing about
+ * the work.
+ *
+ * The census walk did not have this problem because it filtered nothing: it took
+ * a page and bucketed whatever it got.
+ *
+ * ── THE FIX: BOUND FIRST, JOIN SECOND
+ *
+ * The CTE takes its page from the representative table alone, ordered by the
+ * column its index is on, with no view predicate in sight — so `LIMIT` really
+ * does stop after 10,000 index entries. Only then does the join run, against a
+ * set that is already bounded, detoasting at most `limit` documents.
+ *
+ * ── WHY THE BAND FILTER STAYS EVEN THOUGH TIER A CANNOT FAIL IT
+ *
+ * Representatives are built from the Tier-A population, so for `--tier A` every
+ * row in the page passes. `A_CORE` is a NARROWER band set and genuinely drops
+ * rows. Trusting an upstream filter for a narrower question is how a selector
+ * quietly widens, so the check stays — it is now one comparison on a row already
+ * fetched rather than the thing that decides the plan.
+ *
+ * Consequence the caller must handle: a batch can come back SHORTER than the
+ * page. `pageLastId` is therefore returned separately from the rows — advancing
+ * the cursor to the last EMITTED row would silently re-walk every filtered-out
+ * representative on the next call, forever.
  */
+type Page = { rows: BatchRow[]; pageLastId: string | null; pageRows: number };
+
 async function batch(
   sql: Sql,
   tier: Tier,
   cursor: string | null,
   limit: number,
   withText: boolean,
-): Promise<BatchRow[]> {
+): Promise<Page> {
   const bands = BANDS[tier];
-  return sql<BatchRow[]>`
+  const rows = await sql<(BatchRow & { pageLastId: string; pageRows: string })[]>`
+    WITH page AS (
+      SELECT representative_judgment_id, content_hash, member_count
+        FROM embedding_content_representative
+       WHERE definition_version = ${CONTRACT_VERSION}
+         ${cursor ? sql`AND representative_judgment_id > ${cursor}::uuid` : sql``}
+       ORDER BY representative_judgment_id
+       LIMIT ${limit}
+    ),
+    bounds AS (
+      SELECT (SELECT representative_judgment_id FROM page
+               ORDER BY representative_judgment_id DESC LIMIT 1) AS last_id,
+             (SELECT count(*)::text FROM page) AS n
+    )
     SELECT
-      r.representative_judgment_id AS "judgmentId",
-      r.content_hash               AS "contentHash",
-      r.member_count               AS "memberCount",
+      p.representative_judgment_id AS "judgmentId",
+      p.content_hash               AS "contentHash",
+      p.member_count               AS "memberCount",
       e.court,
       EXTRACT(YEAR FROM e.judgment_date)::int AS "judgmentYear",
       e.text_length                AS "textLength",
       e.value_band                 AS "valueBand",
       e.script_quality             AS "scriptQuality",
-      e.hc_document_class          AS "hcDocumentClass"
-      ${withText ? sql`, (SELECT j.full_text FROM judgments j WHERE j.id = r.representative_judgment_id) AS "fullText"` : sql``}
-    FROM embedding_content_representative r
-    JOIN judgment_embedding_eligibility e ON e.id = r.representative_judgment_id
-    WHERE r.definition_version = ${CONTRACT_VERSION}
-      AND e.axis_a_identity
+      e.hc_document_class          AS "hcDocumentClass",
+      b.last_id                    AS "pageLastId",
+      b.n                          AS "pageRows"
+      ${withText ? sql`, (SELECT j.full_text FROM judgments j WHERE j.id = p.representative_judgment_id) AS "fullText"` : sql``}
+    FROM page p
+    CROSS JOIN bounds b
+    JOIN judgment_embedding_eligibility e ON e.id = p.representative_judgment_id
+    WHERE e.axis_a_identity
       AND e.axis_b_text
       AND e.axis_c_role
-      AND NOT e.is_bail_order
+      AND coalesce(e.is_bail_order, false) = false
       AND e.value_band = ANY(${bands as string[]})
-      ${cursor ? sql`AND r.representative_judgment_id > ${cursor}::uuid` : sql``}
-    ORDER BY r.representative_judgment_id
-    LIMIT ${limit}
+    ORDER BY p.representative_judgment_id
   `;
+
+  // `bounds` is a single row cross-joined onto every result, so any row carries
+  // it. When the filter removes EVERYTHING the rows are empty and the page
+  // bounds are lost with them — hence the separate probe, which only runs in
+  // that case and reads one index entry.
+  if (rows.length > 0) {
+    return { rows, pageLastId: rows[0]!.pageLastId, pageRows: Number(rows[0]!.pageRows) };
+  }
+  const [probe] = await sql<{ last_id: string | null; n: string }[]>`
+    WITH page AS (
+      SELECT representative_judgment_id
+        FROM embedding_content_representative
+       WHERE definition_version = ${CONTRACT_VERSION}
+         ${cursor ? sql`AND representative_judgment_id > ${cursor}::uuid` : sql``}
+       ORDER BY representative_judgment_id
+       LIMIT ${limit}
+    )
+    SELECT (SELECT representative_judgment_id FROM page
+             ORDER BY representative_judgment_id DESC LIMIT 1) AS last_id,
+           (SELECT count(*)::text FROM page) AS n
+  `;
+  return { rows: [], pageLastId: probe?.last_id ?? null, pageRows: Number(probe?.n ?? 0) };
 }
 
 async function main(): Promise<number> {
@@ -256,8 +320,22 @@ async function main(): Promise<number> {
 
     for (;;) {
       if (maxBatches > 0 && batchesThisRun >= maxBatches) break;
-      const rows = await batch(sql, tier, cursor, batchSize, withText);
-      if (rows.length === 0) break;
+      const page = await batch(sql, tier, cursor, batchSize, withText);
+      // An EMPTY page means the representative table is exhausted. An empty
+      // `rows` with a non-empty page means the tier's band filter removed
+      // everything in this window, which is ordinary for A_CORE and must
+      // advance rather than stop.
+      if (page.pageRows === 0 || page.pageLastId === null) break;
+      const rows = page.rows;
+      if (rows.length === 0) {
+        cursor = page.pageLastId;
+        await sql`
+          UPDATE embedding_census_progress
+             SET cursor = ${cursor}::uuid, updated_at = now()
+           WHERE job = ${job}`;
+        if (page.pageRows < batchSize) break;
+        continue;
+      }
 
       const ids = rows.map((r) => r.judgmentId);
       const idsHash = createHash('sha256').update(ids.join('\n')).digest('hex');
@@ -315,7 +393,11 @@ async function main(): Promise<number> {
         ) + '\n',
       );
 
-      cursor = ids[ids.length - 1]!;
+      // The PAGE's last id, never the last emitted row. Those differ whenever
+      // the band filter dropped the tail of a page, and using the emitted one
+      // would re-read the dropped rows on the next call — forever, since they
+      // would be dropped again.
+      cursor = page.pageLastId;
       emitted += rows.length;
       index += 1;
       batchesThisRun += 1;
@@ -327,7 +409,8 @@ async function main(): Promise<number> {
          WHERE job = ${job}`;
 
       console.log('  ' + stem + '.jsonl · ' + rows.length.toLocaleString() + ' rows · ' + idsHash.slice(0, 12));
-      if (rows.length < batchSize) break;
+      // Short PAGE means the table is exhausted. A short batch does not.
+      if (page.pageRows < batchSize) break;
     }
 
     const exhausted = maxBatches === 0 || batchesThisRun < maxBatches;

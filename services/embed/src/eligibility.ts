@@ -123,7 +123,7 @@ export async function page(
       -- Broken out rather than excluded by class: bail orders are practically
       -- useful and are not precedent, and which tier they belong in is a
       -- retrieval measurement nobody has made yet.
-      AND NOT is_bail_order
+      AND coalesce(is_bail_order, false) = false
       AND value_band = ANY(${bands as string[]})
       ${cursor ? sql`AND id > ${cursor}::uuid` : sql``}
     ORDER BY id
@@ -162,7 +162,7 @@ export async function pagePending(
     WHERE e.axis_a_identity
       AND e.axis_b_text
       AND e.axis_c_role
-      AND NOT e.is_bail_order
+      AND coalesce(e.is_bail_order, false) = false
       AND e.value_band = ANY(${bands as string[]})
       ${cursor ? sql`AND e.id > ${cursor}::uuid` : sql``}
       AND NOT EXISTS (SELECT 1 FROM judgment_chunks c WHERE c.judgment_id = e.id)
