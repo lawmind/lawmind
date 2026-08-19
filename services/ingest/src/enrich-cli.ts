@@ -63,6 +63,7 @@ import {
   verifyClaims,
   windowAround,
 } from './enrich.ts';
+import { ATOMIC_TASKS, buildAtomicPrompt, claimsFromAtomic, isAtomicTask } from './enrich-atomic.ts';
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
 import { callOpenRouter, openRouterKeyFromEnv, openRouterModelFromEnv } from './openrouter.ts';
 import { installCrashGuard } from './crash-guard.ts';
@@ -81,8 +82,19 @@ const TASK = arg('task', 'metadata') as EnrichTask;
 const LIMIT = Number(arg('limit', '20'));
 /** The five 0051 tasks that together build the structured legal object. */
 const LEGAL_OBJECT_TASKS: EnrichTask[] = ['case_structure', 'holding', 'arguments', 'authorities', 'topics'];
-const IS_LEGAL_OBJECT = (t: EnrichTask): boolean => LEGAL_OBJECT_TASKS.includes(t);
-const VALID: EnrichTask[] = ['citation_extraction', 'metadata', 'treatment', ...LEGAL_OBJECT_TASKS];
+/**
+ * The 0054 atomic tasks are legal objects too — same eligibility, same selector,
+ * same verifier. They differ only in asking for ONE kind of object per call, so
+ * a rejection names one proposition rather than a bucket of them.
+ */
+const IS_LEGAL_OBJECT = (t: EnrichTask): boolean => LEGAL_OBJECT_TASKS.includes(t) || isAtomicTask(t);
+const VALID: EnrichTask[] = [
+  'citation_extraction',
+  'metadata',
+  'treatment',
+  ...LEGAL_OBJECT_TASKS,
+  ...ATOMIC_TASKS,
+];
 if (!VALID.includes(TASK)) {
   console.error(`--task must be one of ${VALID.join(', ')}`);
   process.exit(2);
@@ -577,6 +589,7 @@ async function selectRefs(): Promise<UnitRef[]> {
 }
 
 function promptFor(u: Unit): string {
+  if (isAtomicTask(TASK)) return buildAtomicPrompt(TASK, u.excerpt);
   if (TASK === 'metadata') return buildMetadataPrompt(u.excerpt);
   if (TASK === 'citation_extraction') return buildCitationPrompt(u.excerpt);
   if (TASK === 'case_structure') return buildCaseStructurePrompt(u.excerpt);
@@ -588,6 +601,7 @@ function promptFor(u: Unit): string {
 }
 
 function claimsFor(parsed: unknown): Claim[] {
+  if (isAtomicTask(TASK)) return claimsFromAtomic(TASK, parsed);
   if (TASK === 'metadata') return claimsFromMetadata(parsed);
   if (TASK === 'citation_extraction') return claimsFromCitations(parsed);
   if (TASK === 'case_structure') return claimsFromCaseStructure(parsed);

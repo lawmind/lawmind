@@ -40,7 +40,18 @@ export type EnrichTask =
   | 'holding'
   | 'arguments'
   | 'authorities'
-  | 'topics';
+  | 'topics'
+  /* ---- the ATOMIC vocabulary, migration 0054 · builders in `enrich-atomic.ts`
+     ---- one proposition per claim, because `holding` was too big to verify -- */
+  | 'issue'
+  | 'relief'
+  | 'procedural_event'
+  | 'date_event'
+  | 'fact_proposition'
+  | 'party_action'
+  | 'court_action'
+  | 'reasoning_proposition'
+  | 'statute_role';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
