@@ -116,14 +116,53 @@ distribution above is recorded so the tail's size is visible rather than implied
 
 ---
 
+## THE INTEGRITY CHECK THAT ACTUALLY BINDS
+
+Row counts and unit norms prove the WRITE path worked. They do not prove the
+vectors mean anything: a pipeline that embedded the wrong column, or embedded one
+document's text repeatedly, would pass both and look perfect.
+
+`services/harness/src/stage-sanity.mjs` asks the question that binds — **is a
+document its own nearest neighbour?** It re-embeds a staged document's own HEAD
+span on the sidecar and searches the staging table with it.
+
+```
+8 of 8 documents are their own nearest neighbour, distance 0.000000
+```
+
+Distance exactly zero also means the sidecar reproduces the stored vector
+bit-for-bit for the same input, which is the same equivalence the representation
+lab checks from the other direction (mean cosine 0.999998 against
+`judgment_chunks`).
+
+So the staged population is verified three ways: **19,987 rows, 0 non-unit-norm
+vectors, and 8/8 exact self-retrieval.**
+
+---
+
 ## STAGE 2 — THE VALUE-ORDERED BATCH
 
 Input: `tier-a-value-batch-00000.jsonl`, `idsHash 3df8e7967de4`, 10,000 rows of
 the 10,669 (the remaining 669 are batch 00001).
 
-Results are appended below when the run completes; the run shares the GPU with
-the P5 representation lab, so its throughput figure is a shared-GPU number and
-not comparable to stage 1's 8,861 tokens/s.
+| | |
+| --- | --- |
+| documents | 10,000 of 10,000 — 0 skipped for missing text |
+| vectors written | 10,000 |
+| **non-unit-norm vectors** | **0** |
+| tokens | 9,497,081 |
+| throughput | 5,152 tokens/s, 30.7 min wall |
+| staging table total | **19,987** |
+
+The throughput figure is a **shared-GPU** number — the P5 representation lab was
+embedding spans on the same sidecar throughout — and is not comparable to stage
+1's 8,861 tokens/s. Total GPU work is what it is; the two jobs interleave.
+
+**This batch is the one P6 could measure.** Stage 1 (id-ordered) staged documents
+nothing cites and no citation-grounded benchmark can score. Stage 2 (value-ordered)
+produced 720 usable citation edges and 120 scored query→authority pairs — see
+`NEW1_TIER_A_EXPANSION_BENCHMARK.md`, where these authorities go from 0.8% to
+35.8% success@5.
 
 ---
 
@@ -134,8 +173,19 @@ not comparable to stage 1's 8,861 tokens/s.
 - **The staging table is not a production route.** It is disposable, it is not in
   the schema, and nothing in `retrieve.ts` reads it. Promoting it is LCC's
   migration to write, after the halfvec verdict decides the column type.
-- **`EMBEDDING_TIER_A_READY` was never signalled.** The manifest tooling and the
-  `embedding_content_representative` table (8,854,281 rows) were already present
-  and working, so staging proceeded on what exists rather than waiting on a
-  signal. If LCC's contract has moved since, these batches are re-derivable from
-  the recorded `idsHash` and `definitionHash`.
+- **Staging started BEFORE `EMBEDDING_TIER_A_READY` arrived.** The manifest
+  tooling and `embedding_content_representative` (8,854,281 rows) were already
+  present and working, so the GPU ran on what existed rather than waiting. LCC
+  signalled ready at 13:56 UTC (bus 0785) and `DOCUMENT_VECTOR_PIPELINE_READY` at
+  13:57 (bus 0787), after stage 1 had completed.
+- **One consequence of that ordering, and it is not cosmetic.** LCC's 0785 reports
+  a NULL-boolean defect — `is_bail_order` was NULL for 93.7% of rows, so
+  `AND NOT e.is_bail_order` dropped six rows in seven — meaning **any tier manifest
+  cut before migration 0058 was ~14% of the intended Tier A**. Stage 1's batch was
+  cut before that fix, so its population is a biased subset (weighted toward rows
+  that carry an `hc_document_class`), not a uniform Tier-A sample.
+  **Checked rather than assumed for MY selection**: the value-ordered query filters
+  on `axis_a_identity AND axis_b_text AND axis_c_role`, and over the 35,694 cited
+  judgments those three axes are NULL on **zero** rows — strict and null-safe forms
+  both keep 35,594. Stage 2 is unaffected. Stage 1's 9,987 vectors are still valid
+  vectors of the documents they name; what is skewed is which documents got picked.
