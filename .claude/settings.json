@@ -46,5 +46,8 @@
         ]
       }
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "codebase-memory"
+  ]
 }
