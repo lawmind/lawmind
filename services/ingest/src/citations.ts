@@ -137,12 +137,61 @@ const PATTERNS: readonly RegExp[] = [
  * authority becomes TWO edges to the same judgment — a "cited by" list showing a
  * case twice and a treatment count that double-counts it. The rewrite moves only
  * the brackets; the year, volume and page keep their values and their order.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE MISSING SPACE, FOUND BY NEW3 (bus 0499) AND MEASURED WIDER HERE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The header above promised `(2019)4 SCC  221` folds together, and it does. What
+ * it did NOT handle is the space missing on the *reporter* side:
+ * `(2017) 11SCR1036` and `(2017) 11 SCR 1036` are the same authority and
+ * normalised to different keys, because whitespace was only ever COLLAPSED here,
+ * never INSERTED. PDF extraction drops that space constantly.
+ *
+ * `resolve-cli`'s bulk sweep is immune — it strips every non-alphanumeric before
+ * comparing — which is exactly why this survived: the nightly-style pass fixed
+ * the symptom while the INLINE resolver in `citations-cli.ts` (`index.get(
+ * c.normalised)`) kept missing them, so the defect only showed up as edges that
+ * one path resolved and the other did not.
+ *
+ * **The token list is a CLOSED SET EXTRACTED FROM THE CORPUS, not a guess** —
+ * `RING_PROGRAM.md`'s own rule, learned expensively on headnote dispositions.
+ * Measured 15 Aug 2026 over unresolved `judgment_citations`:
+ *
+ *     SCC     1,749 digit-then-token · 1,588 token-then-digit
+ *     SCR       450 digit-then-token ·   481 token-then-digit
+ *     SCALE      19 digit-then-token ·    26 token-then-digit
+ *     AIR · JT · CriLJ · SCC OnLine        ZERO, either side
+ *
+ * NEW3 reported the SCR half; **SCC is roughly 3.5x larger and was not in their
+ * measurement.** Only these three are handled: a generic "insert a space before
+ * any letter run" rule would rewrite neutral citations (`2023:DHC:2720`) and
+ * anything else with a letter beside a digit, which is how a normaliser starts
+ * merging authorities that are genuinely different.
+ *
+ * `SCC ONLINE` is unaffected: the rule inserts a space only between one of these
+ * tokens and a DIGIT, and `ONLINE` is not a digit.
+ *
+ * ⚠ **DO NOT RE-RUN CITATION EXTRACTION OVER ALREADY-EXTRACTED JUDGMENTS UNTIL
+ * THE STORED KEYS ARE BACKFILLED.** `judgment_citations_unique_edge` is keyed on
+ * `normalised_citation`; rows written before this change hold the old unspaced
+ * key. A re-extraction computes the new key, fails to find it in the `known` set
+ * `citations-cli.ts` builds from stored rows, and inserts a SECOND edge for the
+ * same authority — precisely the double-counting the year-first rewrite above
+ * exists to prevent. The backfill must also handle two old keys collapsing onto
+ * one new key, which is a unique-constraint conflict, not a no-op.
+ * `docs/CURRENT_PLAN.md` Q1.60.
  */
+const UNSPACED_REPORTERS = /(?<=[0-9])(SCC|SCR|SCALE)|(SCC|SCR|SCALE)(?=[0-9])/g;
+
 export function normaliseCitation(raw: string): string {
   return raw
     .toUpperCase()
     .replace(/[[\]]/g, (m) => (m === '[' ? '(' : ')'))
     .replace(/\./g, '')
+    /* Insert BEFORE the collapse below, so a space added here and a space that
+     * was already there end up identical rather than doubled. */
+    .replace(UNSPACED_REPORTERS, (m) => ` ${m} `)
     .replace(/\s+/g, ' ')
     .replace(/\(\s*/g, '(')
     .replace(/\s*\)/g, ')')

@@ -27,13 +27,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import postgres from 'postgres';
+import { sslFor } from './db-ssl';
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!dbUrl) {
   console.error('DATABASE_URL is not set.');
   process.exit(2);
 }
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 2 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 2 });
 
 const arg = (n: string, d: string) => {
   const i = process.argv.indexOf(`--${n}`);
@@ -94,7 +95,7 @@ for (const c of courts) {
   let popplerTotal = 0;
 
   for (const r of rows) {
-    let text: string | null = null;
+    let text: string | null;
     try {
       const res = await fetch(r.sourceUrl);
       if (!res.ok) continue;

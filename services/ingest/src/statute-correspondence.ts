@@ -150,7 +150,7 @@ export function parseOldSide(raw: string): OldRef[] | null | 'new' {
 }
 
 export function parseCorrespondence(text: string): ParseResult {
-  const lines = text.split(/\r?\n/).map((l) => l.replace(/ /g, ' '));
+  const lines = text.split(/\r?\n/).map((l) => l.replace(/\u00a0/g, ' '));
   const layout = findLayout(lines);
   if (!layout) return { pair: 'BSA-IEA', rows: [], unparsed: [], ambiguous: [] };
 
@@ -175,7 +175,7 @@ export function parseCorrespondence(text: string): ParseResult {
     const oldCell = layout.oldAt < layout.subjectAt ? midCell : endCell;
     const subjectCell = layout.oldAt < layout.subjectAt ? endCell : midCell;
 
-    let startsRow = SECTION_RE.test(tidy(newCell));
+    const startsRow = SECTION_RE.test(tidy(newCell));
 
     if (!startsRow) {
       /**

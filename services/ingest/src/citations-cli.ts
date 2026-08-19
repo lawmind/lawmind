@@ -40,10 +40,11 @@
  * far cheaper than a per-citation round trip, and it makes the resolve step a map
  * lookup rather than a query.
  */
-import postgres from 'postgres';
+import type postgres from 'postgres';
 
 import { citationKeys, detectTreatment, extractCitations } from './citations.ts';
 import { installCrashGuard } from './crash-guard.ts';
+import { openDb } from './db-host.ts';
 
 
 // Silent deaths cost three runs today; log the cause instead of vanishing.
@@ -70,29 +71,57 @@ type Row = {
  *
  * A form that maps to two judgments is emptied rather than pointed at whichever
  * row was seen first: a wrong edge is worse than a missing one.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * FILTERED AND STREAMED — measured 14 Aug 2026, at 4,768,101 judgments
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This was one unbounded `SELECT` over the whole table, materialised into a
+ * JavaScript array. That was fine at the 38k it was written against and is the
+ * same shape that killed the classify pass at 322k of 833k (commit 2414b09):
+ * the array, not the Map, is what grows — the Map is only **875,018 forms**.
+ *
+ * Two changes, and neither one can alter the index's CONTENTS:
+ *
+ * 1. **`WHERE neutral_citation IS NOT NULL OR array_length(reporter_citations,
+ *    1) > 0`.** `citationKeys` returns `[]` for a judgment with a null neutral
+ *    citation and no reporter citations — checked in its source, not assumed —
+ *    so every excluded row contributed nothing. Measured: **911,185 of
+ *    4,768,101** rows can contribute a key. 81% of the transfer was rows that
+ *    produced no key. The filter is a safe superset in the other direction too:
+ *    an empty-string citation still passes the SQL and still yields no key.
+ * 2. **A cursor instead of an array.** Peak memory is now one 20k page rather
+ *    than every row at once, so the corpus can keep growing toward the source's
+ *    20.5M without this becoming the thing that dies.
  */
 async function buildIndex(sql: ReturnType<typeof postgres>): Promise<Map<string, string>> {
-  const known = await sql<
-    { id: string; neutral_citation: string | null; reporter_citations: string[] }[]
-  >`SELECT id, neutral_citation, reporter_citations FROM judgments`;
-
   const index = new Map<string, string>();
   let collisions = 0;
-  for (const j of known) {
-    for (const key of citationKeys({
-      neutralCitation: j.neutral_citation,
-      reporterCitations: j.reporter_citations ?? [],
-    })) {
-      if (index.has(key) && index.get(key) !== j.id) {
-        index.set(key, '');
-        collisions++;
-      } else {
-        index.set(key, j.id);
+  let scanned = 0;
+
+  await sql<{ id: string; neutral_citation: string | null; reporter_citations: string[] }[]>`
+    SELECT id, neutral_citation, reporter_citations FROM judgments
+    WHERE neutral_citation IS NOT NULL
+       OR coalesce(array_length(reporter_citations, 1), 0) > 0
+  `.cursor(20_000, (rows) => {
+    for (const j of rows) {
+      scanned++;
+      for (const key of citationKeys({
+        neutralCitation: j.neutral_citation,
+        reporterCitations: j.reporter_citations ?? [],
+      })) {
+        if (index.has(key) && index.get(key) !== j.id) {
+          index.set(key, '');
+          collisions++;
+        } else {
+          index.set(key, j.id);
+        }
       }
     }
-  }
+  });
+
   console.log(
-    `index: ${index.size.toLocaleString()} citation forms over ${known.length.toLocaleString()} judgments` +
+    `index: ${index.size.toLocaleString()} citation forms over ${scanned.toLocaleString()} citable judgments` +
       ` (${collisions} ambiguous forms neutralised)`,
   );
   return index;
@@ -233,18 +262,32 @@ async function rescan(
 async function main(): Promise<void> {
   const limit = arg('--limit', 500);
   const batchSize = arg('--batch', 200);
+  /**
+   * How many batches are in flight at once. DEFAULT 1 — the previous behaviour
+   * exactly, so nothing changes for anyone who does not ask.
+   *
+   * Measured 14 Aug 2026, serial: **2.9 judgments/s**, and almost none of it is
+   * the regex. A batch is one `full_text` fetch over the shared Railway public
+   * proxy, then CPU, then one INSERT — so the process spends most of its life
+   * waiting on a socket. Batches cover disjoint judgment ids and each writes in
+   * its own transaction with `ON CONFLICT DO NOTHING`, so overlapping them
+   * changes throughput and nothing else.
+   */
+  const concurrency = Math.max(1, arg('--concurrency', 1));
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
   /**
-   * `connect_timeout` and an idle-disabled pool, because this pass died once at
-   * 115,500 of 377,526 documents with "Detected unsettled top-level await" --
-   * a query that never settled against the shared Railway proxy, with no
-   * timeout to turn the hang into a retryable error. Nothing was lost (the
-   * resume query picks up documents with no citation rows, so a restart re-pays
-   * nothing), but a worker that stops silently is not resumable in the sense
-   * that matters.
+   * `openDb` rather than a raw `postgres()`, because this is now a worker meant
+   * to run for hours: it resolves the Railway hostname through public resolvers
+   * before dialling, which is the documented cause of the "Detected unsettled
+   * top-level await" deaths this CLI's own comments describe. `connect_timeout`
+   * never helped there — a DNS lookup that stalls never gets far enough to be
+   * timed. `services/ingest/src/db-host.ts` has the full account.
+   *
+   * The pool has one connection per in-flight batch plus one spare for the
+   * summary queries, so a worker never blocks on its own pool.
    */
-  const sql = postgres(url, { max: 2, ssl: 'require', connect_timeout: 120, idle_timeout: 0 });
+  const sql = await openDb(url, concurrency + 1);
 
   try {
     if (process.argv.includes('--rescan')) {
@@ -302,8 +345,15 @@ async function main(): Promise<void> {
     let treatments = 0;
     let done = 0;
 
+    // Every batch of ids, precomputed, so `concurrency` workers can pull from
+    // one shared cursor instead of coordinating index arithmetic between them.
+    const batches: string[][] = [];
     for (let i = 0; i < pending.length; i += batchSize) {
-      const ids = pending.slice(i, i + batchSize).map((r) => r.id);
+      batches.push(pending.slice(i, i + batchSize).map((r) => r.id));
+    }
+    let nextBatch = 0;
+
+    async function runBatch(ids: string[]): Promise<void> {
       const texts = await sql<{ id: string; full_text: string }[]>`
         SELECT id, full_text FROM judgments WHERE id = ANY(${ids})
       `;
@@ -383,6 +433,19 @@ async function main(): Promise<void> {
           `elapsed=${secs.toFixed(0)}s (${(done / Math.max(secs, 1)).toFixed(1)} judgments/s)`,
       );
     }
+
+    // Each worker takes the next unclaimed batch until there are none. Node is
+    // single-threaded, so `nextBatch++` between awaits cannot interleave — no
+    // two workers can ever be handed the same batch.
+    await Promise.all(
+      Array.from({ length: Math.min(concurrency, batches.length) }, async () => {
+        for (;;) {
+          const mine = batches[nextBatch++];
+          if (!mine) return;
+          await runBatch(mine);
+        }
+      }),
+    );
 
     const [total] = await sql<{ n: string; r: string }[]>`
       SELECT count(*)::text AS n,

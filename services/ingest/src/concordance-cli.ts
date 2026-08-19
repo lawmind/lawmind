@@ -11,6 +11,7 @@
 import postgres from 'postgres';
 
 import { type ParallelPair, aliasKey, findParallel, reconcile } from './concordance.ts';
+import { sslFor } from './db-ssl';
 
 /**
  * How many separate sightings before an alias is trusted.
@@ -27,7 +28,7 @@ if (!url) {
   process.exit(2);
 }
 const apply = process.argv.includes('--apply');
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4 });
+const sql = postgres(url, { ssl: sslFor(url), max: 4 });
 
 try {
   console.log(`scanning unresolved AIR and SCC citations${apply ? '' : ' (DRY RUN)'}…`);

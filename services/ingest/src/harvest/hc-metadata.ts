@@ -150,10 +150,23 @@ export async function withTimeout<T>(fn: () => Promise<T>, ms: number, label: st
   }
 }
 
-/** Row count from the parquet footer alone — no row data is fetched. */
-export async function rowCount(key: string): Promise<number> {
+/**
+ * Row count from the parquet footer alone — no row data is fetched.
+ *
+ * Takes a `signal` for the same reason `sampleRows` does, and the omission was
+ * measured rather than imagined: on 14 Aug the court=5_15 worker sat 46 minutes
+ * at 0.02s CPU per 20s having written nothing, because this call — which runs
+ * for EVERY file before any batch — had no bound while `sampleRows` did. A
+ * footer read is one small range request and normally returns in under a
+ * second, which is exactly why an unbounded one is so easy to miss: it fails
+ * open, silently, before the loop can reach the code that would have counted it.
+ */
+export async function rowCount(key: string, signal?: AbortSignal): Promise<number> {
   return withRetry(async () => {
-    const file = await asyncBufferFromUrl({ url: `${HC_BUCKET}/${key}` });
+    const file = await asyncBufferFromUrl({
+      url: `${HC_BUCKET}/${key}`,
+      ...(signal ? { requestInit: { signal } } : {}),
+    });
     const meta = await parquetMetadataAsync(file);
     return Number(meta.num_rows);
   });
@@ -219,15 +232,102 @@ export function pdfUrlFor(
   return `${HC_BUCKET}/data/pdf/year=${year}/court=${courtCode}/bench=${bench}/${base}`;
 }
 
-/** A window of real rows from one metadata file. Used for sampling, never for ingest. */
+/**
+ * A window of real rows from one metadata file. Used for sampling, never for ingest.
+ *
+ * **`signal` is not optional decoration — without it a bounded read still leaks.**
+ * Racing a read against a timer unblocks the CALLER; it does nothing to the
+ * fetch, which stays in flight holding a socket and keeping the event loop
+ * open. Measured 14 Aug 2026: the court=9_13 year=2023 worker timed out on two
+ * oversized parquet files, printed its final tally, and then never exited —
+ * 274MB resident and 0% CPU, which reads as a live worker to every check that
+ * counts processes. Passing the signal through makes the abandoned read
+ * actually stop.
+ *
+ * It reaches every range request, not just the first: `asyncBufferFromUrl`
+ * keeps `requestInit` and spreads it into each `slice()` fetch, so one signal
+ * cancels the whole read including the HEAD that precedes it.
+ */
 export async function sampleRows<T = Record<string, unknown>>(
   key: string,
   rowStart: number,
   rowEnd: number,
+  signal?: AbortSignal,
+  columns?: readonly string[],
 ): Promise<T[]> {
   return withRetry(async () => {
-    const file = await asyncBufferFromUrl({ url: `${HC_BUCKET}/${key}` });
-    return (await parquetReadObjects({ file, rowStart, rowEnd })) as T[];
+    const file = await asyncBufferFromUrl({
+      url: `${HC_BUCKET}/${key}`,
+      ...(signal ? { requestInit: { signal } } : {}),
+    });
+    return (await parquetReadObjects({
+      file,
+      rowStart,
+      rowEnd,
+      /*
+       * Column projection. `raw_html` alone is 89.5 MB compressed / 441.5 MB
+       * uncompressed in the Allahabad 2021 file — 73% of it — and NOTHING reads
+       * it: the loader fetches the PDF and extracts text itself. Measured, not
+       * estimated: see `rowGroupRanges` below for the numbers and the incident.
+       */
+      ...(columns ? { columns: [...columns] } : {}),
+    })) as T[];
+  });
+}
+
+/**
+ * The row-group boundaries of a metadata parquet, from its footer alone.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THE LOADER MUST READ BY ROW GROUP — measured 15 Aug 2026, and it had
+ * silently written off the single largest gap in the corpus
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * **A row group is the smallest unit a parquet reader can decode.** Asking for
+ * rows 200-400 of a file whose row group holds 351,704 rows decodes the WHOLE
+ * group and throws away 351,504 rows. Do that once per 200-row batch and the
+ * cost is quadratic in the worst way.
+ *
+ * The Allahabad 2021 metadata file, measured from its own footer:
+ *
+ *     row groups            1
+ *     rows                  351,704
+ *     compressed            140.7 MB
+ *     uncompressed          604.7 MB
+ *     BATCH=200 re-reads    1,759x  ->  roughly 247 GB to ingest ONE file
+ *
+ * It never finished. Each batch after the first exceeded the 300s metadata
+ * timeout, `hc-load-cli` counted `metadata_batch_unreadable` and `break`ed out
+ * of the file, and having run out of files it printed its RESULTS block —
+ * which `supervise.mjs` reads as a clean finish and refuses to restart. **A
+ * timeout was being laundered into a permanent COMPLETE**, on the court holding
+ * the biggest gap we have (Allahabad 2016-2022, 2,055,580 documents, 0 held).
+ *
+ * Reading the group once, with only the seven columns the loader actually uses,
+ * costs **18.2 MB compressed instead of 140.7 MB, once instead of 1,759 times.**
+ *
+ * The footer read is cheap and already proven at scale — `hc:count` surveyed
+ * 1,493 files this way without decoding a single row.
+ */
+export async function rowGroupRanges(
+  key: string,
+  signal?: AbortSignal,
+): Promise<Array<{ start: number; end: number }>> {
+  return withRetry(async () => {
+    const file = await asyncBufferFromUrl({
+      url: `${HC_BUCKET}/${key}`,
+      ...(signal ? { requestInit: { signal } } : {}),
+    });
+    const meta = await parquetMetadataAsync(file);
+    const ranges: Array<{ start: number; end: number }> = [];
+    let start = 0;
+    for (const g of meta.row_groups) {
+      const n = Number(g.num_rows);
+      /* A zero-row group is legal and must not produce an empty read window. */
+      if (n > 0) ranges.push({ start, end: start + n });
+      start += n;
+    }
+    return ranges;
   });
 }
 

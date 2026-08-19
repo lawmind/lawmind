@@ -61,9 +61,20 @@
  * chain. Verified directly: 38,431 corpus years extracted, `[1950] 1 S.C.R. 806`
  * → `1950`, and the artefact `"(2014)14 SCC\n664"` → `2014`.
  */
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import postgres from 'postgres';
+import { sslFor } from './db-ssl';
 
 const APPLY = process.argv.includes('--apply');
+/**
+ * Run against a citation-key index that is behind the corpus. Refused by
+ * default, and the refusal is the point: a stale index does not produce wrong
+ * resolutions, it produces MISSING ones reported as `no key in our corpus` —
+ * a silent under-resolution that looks exactly like a corpus gap.
+ */
+const ALLOW_STALE = process.argv.includes('--allow-stale');
 /**
  * `--external` additionally resolves `external_citations.cited_judgment_id` —
  * High Court citation SIGHTINGS of a judgment we do not hold as a citing row,
@@ -86,24 +97,123 @@ if (!url) {
   process.exit(2);
 }
 
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(url, { ssl: sslFor(url), max: 3 });
 
 /**
- * Every citation form we hold → the judgment it names, plus that judgment's own
- * years for the year guard. Built in SQL so 38,341 judgments never cross the
- * wire — `CONTINUATION_PROMPT.md` §8: the work was never the database's.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE LOOKUP INDEX IS A TABLE NOW, AND ONLY THE KEYS THE EDGES ASK FOR ARE READ
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This used to be a CTE that materialised `judgments × unnest(reporter_citations)`
+ * UNION the neutral citations UNION the aliases, ran a LATERAL `regexp_matches`
+ * over every one of those strings, and grouped the lot — **four times in one
+ * `--apply --external` run**, because the same CTE appeared in four statements.
+ * Written against 38,341 judgments; the corpus is 7,296,068. NEW1 measured the
+ * result as a 16.4-hour query blocking a second copy of itself (bus 0523).
+ *
+ * Two things changed and only the second one is about speed:
+ *
+ * 1. **The keys live in `judgment_citation_keys`**, maintained incrementally by
+ *    `citation-keys-cli.ts` with a `(created_at, id)` keyset walk. Deriving them
+ *    is no longer part of resolving.
+ * 2. **`wanted` bounds the read to the keys the unresolved edges actually
+ *    contain.** That is the architectural change: the old pass grouped every key
+ *    in the corpus in order to use a few hundred thousand of them, and the join
+ *    now runs through `judgment_citation_keys_key_idx` instead of a scan.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A DEFECT THE REWRITE EXPOSED — AND IT COULD RESOLVE AN AMBIGUOUS KEY
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The old shape was `FROM corpus, LATERAL (SELECT (regexp_matches(src, …))[1])`.
+ * A set-returning function in a LATERAL that yields no rows **drops the corpus
+ * row entirely** — so a citation form with no extractable year vanished before
+ * `count(DISTINCT id)` ever saw it.
+ *
+ * That silently lowers the target count. A key held by two judgments, where one
+ * of them carries a yearless form, counted as `targets = 1` and was therefore
+ * **RESOLVABLE** — the exact ambiguity guard #1 exists to refuse, defeated by an
+ * unrelated year-extraction artefact. A wrong `cited_judgment_id` points an
+ * advocate at the wrong case, which `docs/CITATION_HARNESS.md` §A3d.4 treats as
+ * worse than no resolution at all.
+ *
+ * `LEFT JOIN LATERAL unnest(ck.years)` fixes it: the target count is now taken
+ * over judgments, the years are aggregated beside it, and a key with no years
+ * survives to be refused BY THE YEAR GUARD — which is the honest verdict — rather
+ * than disappearing into `no key in our corpus`.
  */
-const CORPUS_KEYS = sql`
-  SELECT upper(regexp_replace(rc, '[^A-Za-z0-9]', '', 'g')) AS k, j.id, rc AS src
-  FROM judgments j, unnest(j.reporter_citations) rc
-  WHERE rc <> ''
-  UNION ALL
-  SELECT upper(regexp_replace(j.neutral_citation, '[^A-Za-z0-9]', '', 'g')), j.id, j.neutral_citation
-  FROM judgments j WHERE j.neutral_citation IS NOT NULL AND j.neutral_citation <> ''
-  UNION ALL
-  SELECT a.alias_key, a.judgment_id, a.alias
-  FROM judgment_citation_aliases a
+const KEYED = (wanted: ReturnType<typeof sql>) => sql`
+  SELECT ck.citation_key                       AS k,
+         count(DISTINCT ck.judgment_id)::int   AS targets,
+         min(ck.judgment_id::text)             AS target,
+         coalesce(array_agg(DISTINCT y) FILTER (WHERE y IS NOT NULL), '{}') AS years
+  FROM (${wanted}) w
+  JOIN judgment_citation_keys ck ON ck.citation_key = w.k
+  LEFT JOIN LATERAL unnest(ck.years) AS y ON true
+  GROUP BY ck.citation_key
 `;
+
+/**
+ * The index is derived, so it can be behind — and being behind is invisible in
+ * the output, which is why this refuses rather than warns. An index missing the
+ * newest judgments reports their citations as `no key in our corpus`: identical
+ * on screen to a genuine coverage gap, and it would be written up as one.
+ */
+async function assertIndexFresh(): Promise<void> {
+  const checkpoint = join(
+    dirname(fileURLToPath(import.meta.url)),
+    '..',
+    '.checkpoints',
+    'citation-keys.json',
+  );
+  const [{ rows } = { rows: 0 }] = await sql<{ rows: number }[]>`
+    SELECT count(*)::int AS rows FROM judgment_citation_keys`;
+  if (rows === 0) {
+    console.error(
+      'judgment_citation_keys is EMPTY. Nothing can resolve and every edge would be reported\n' +
+        'as "no key in our corpus". Build it first:\n' +
+        '  pnpm --filter @lawmind/ingest citation-keys',
+    );
+    process.exit(2);
+  }
+
+  if (!existsSync(checkpoint)) {
+    console.log('  index freshness: no checkpoint file — cannot measure lag, continuing');
+    return;
+  }
+  let cursorAt: string | undefined;
+  let cursorId: string | undefined;
+  try {
+    const c = JSON.parse(readFileSync(checkpoint, 'utf8')) as { cursorAt?: string; cursorId?: string };
+    cursorAt = c.cursorAt;
+    cursorId = c.cursorId;
+  } catch {
+    console.log('  index freshness: checkpoint unreadable — cannot measure lag, continuing');
+    return;
+  }
+  if (!cursorAt || !cursorId) return;
+
+  // Counts only the TAIL above the cursor, through judgments_created_at_idx —
+  // this is a range count, not the full-table count the old pass would have done.
+  const [{ behind } = { behind: 0 }] = await sql<{ behind: number }[]>`
+    SELECT count(*)::int AS behind FROM judgments
+    WHERE (created_at, id) > (${cursorAt}::timestamptz, ${cursorId}::uuid)`;
+
+  if (behind === 0) {
+    console.log(`  index freshness: up to date (cursor ${cursorAt})`);
+    return;
+  }
+  const msg =
+    `judgment_citation_keys is BEHIND by ${behind.toLocaleString()} judgments (cursor ${cursorAt}).\n` +
+    'Their citations would be reported as "no key in our corpus", which is indistinguishable\n' +
+    'from a real coverage gap. Run `pnpm --filter @lawmind/ingest citation-keys` first.';
+  if (!ALLOW_STALE) {
+    console.error(msg);
+    console.error('Pass --allow-stale to proceed anyway and treat the numbers as a FLOOR.');
+    process.exit(2);
+  }
+  console.log(`  index freshness: STALE, proceeding under --allow-stale\n  ${msg.replace(/\n/g, '\n  ')}`);
+}
 
 try {
   console.log('CITATION RE-RESOLUTION');
@@ -136,30 +246,24 @@ try {
       `resolved (${pct(before?.resolved ?? 0)})   [${before?.sentinels?.toLocaleString()} sentinels excluded]`,
   );
 
+  await assertIndexFresh();
+
   /* ------------------------------------------------------- the candidates -- */
+  // `edges` is declared FIRST now, because `keyed` reads from it — that ordering
+  // IS the fix. The old version built the key index and then looked at the edges;
+  // this one lets the edges decide which keys are worth reading at all.
   const stats = await sql<
     { verdict: string; edges: number }[]
   >`
-    WITH corpus AS (${CORPUS_KEYS}),
-    keyed AS (
-      SELECT k,
-             count(DISTINCT id)::int AS targets,
-             min(id::text)           AS target,
-             -- every 4-digit year appearing in any form of this judgment's citations
-             array_agg(DISTINCT y)   AS years
-      FROM corpus, LATERAL (
-        SELECT (regexp_matches(src, '(1[89][0-9][0-9]|20[0-9][0-9])', 'g'))[1] AS y
-      ) yy
-      GROUP BY k
-    ),
-    edges AS (
+    WITH edges AS (
       SELECT jc.id,
              jc.citing_judgment_id                                            AS citing,
              upper(regexp_replace(jc.citation_text, '[^A-Za-z0-9]', '', 'g')) AS k,
              substring(jc.citation_text from '(1[89][0-9][0-9]|20[0-9][0-9])')        AS year
       FROM judgment_citations jc
       WHERE jc.cited_judgment_id IS NULL AND jc.citation_text <> ''
-    )
+    ),
+    keyed AS (${KEYED(sql`SELECT DISTINCT k FROM edges`)})
     SELECT CASE
              WHEN kd.k IS NULL          THEN 'no key in our corpus'
              WHEN kd.targets > 1        THEN 'REFUSED: two or more targets'
@@ -207,23 +311,15 @@ try {
   // One statement. 49,605 single-row updates over the proxy is the mistake
   // CONTINUATION_PROMPT.md §8 already recorded costing 34 minutes and a timeout.
   const updated = await sql`
-    WITH corpus AS (${CORPUS_KEYS}),
-    keyed AS (
-      SELECT k, count(DISTINCT id)::int AS targets, min(id::text) AS target,
-             array_agg(DISTINCT y) AS years
-      FROM corpus, LATERAL (
-        SELECT (regexp_matches(src, '(1[89][0-9][0-9]|20[0-9][0-9])', 'g'))[1] AS y
-      ) yy
-      GROUP BY k
-    ),
-    edges AS (
+    WITH edges AS (
       SELECT jc.id,
              jc.citing_judgment_id                                            AS citing,
              upper(regexp_replace(jc.citation_text, '[^A-Za-z0-9]', '', 'g')) AS k,
              substring(jc.citation_text from '(1[89][0-9][0-9]|20[0-9][0-9])') AS year
       FROM judgment_citations jc
       WHERE jc.cited_judgment_id IS NULL AND jc.citation_text <> ''
-    )
+    ),
+    keyed AS (${KEYED(sql`SELECT DISTINCT k FROM edges`)})
     UPDATE judgment_citations jc
     SET cited_judgment_id = kd.target::uuid
     FROM edges e JOIN keyed kd ON kd.k = e.k
@@ -273,21 +369,13 @@ try {
     );
 
     const extStats = await sql<{ verdict: string; edges: number }[]>`
-      WITH corpus AS (${CORPUS_KEYS}),
-      keyed AS (
-        SELECT k, count(DISTINCT id)::int AS targets, min(id::text) AS target,
-               array_agg(DISTINCT y) AS years
-        FROM corpus, LATERAL (
-          SELECT (regexp_matches(src, '(1[89][0-9][0-9]|20[0-9][0-9])', 'g'))[1] AS y
-        ) yy
-        GROUP BY k
-      ),
-      edges AS (
+      WITH edges AS (
         SELECT ec.id, ec.citation_key AS k,
                substring(ec.citation_text from '(1[89][0-9][0-9]|20[0-9][0-9])') AS year
         FROM external_citations ec
         WHERE ec.cited_judgment_id IS NULL
-      )
+      ),
+      keyed AS (${KEYED(sql`SELECT DISTINCT k FROM edges`)})
       SELECT CASE
                WHEN kd.k IS NULL          THEN 'no key in our corpus'
                WHEN kd.targets > 1        THEN 'REFUSED: two or more targets'
@@ -305,21 +393,13 @@ try {
 
     if (APPLY) {
       const extUpdated = await sql`
-        WITH corpus AS (${CORPUS_KEYS}),
-        keyed AS (
-          SELECT k, count(DISTINCT id)::int AS targets, min(id::text) AS target,
-                 array_agg(DISTINCT y) AS years
-          FROM corpus, LATERAL (
-            SELECT (regexp_matches(src, '(1[89][0-9][0-9]|20[0-9][0-9])', 'g'))[1] AS y
-          ) yy
-          GROUP BY k
-        ),
-        edges AS (
+        WITH edges AS (
           SELECT ec.id, ec.citation_key AS k,
                  substring(ec.citation_text from '(1[89][0-9][0-9]|20[0-9][0-9])') AS year
           FROM external_citations ec
           WHERE ec.cited_judgment_id IS NULL
-        )
+        ),
+        keyed AS (${KEYED(sql`SELECT DISTINCT k FROM edges`)})
         UPDATE external_citations ec
         SET cited_judgment_id = kd.target::uuid
         FROM edges e JOIN keyed kd ON kd.k = e.k

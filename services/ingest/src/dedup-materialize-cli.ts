@@ -18,13 +18,14 @@
  * carried into the materialisation step it warned would need its own task.
  */
 import postgres from 'postgres';
+import { sslFor } from './db-ssl';
 
 type GroupRow = { content_hash: string; ids: string[]; n: string };
 
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
-  const sql = postgres(url, { max: 5, ssl: 'require' });
+  const sql = postgres(url, { max: 5, ssl: sslFor(url) });
   const confirmed = process.argv.includes('--confirm');
 
   try {

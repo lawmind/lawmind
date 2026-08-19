@@ -19,6 +19,7 @@ import postgres from 'postgres';
 import { chunkJudgment, defaultChunkOptions } from '@lawmind/embed';
 
 import { extractCitations } from './citations.ts';
+import { sslFor } from './db-ssl';
 
 function percentile(sorted: number[], p: number): number {
   if (sorted.length === 0) return 0;
@@ -45,7 +46,7 @@ async function main(): Promise<void> {
   const nArg = process.argv.indexOf('--n');
   const n = nArg === -1 ? 500 : Number(process.argv[nArg + 1] ?? 500);
 
-  const sql = postgres(url, { max: 4, ssl: url.includes('localhost') ? false : 'require' });
+  const sql = postgres(url, { max: 4, ssl: sslFor(url) });
   try {
     // TABLESAMPLE for a cheap, honestly-random slice -- same reasoning as
     // paragraph-quality-sample.ts: a full-corpus sweep is the cost this

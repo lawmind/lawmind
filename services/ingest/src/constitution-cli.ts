@@ -33,6 +33,7 @@ import { join } from 'node:path';
 import postgres from 'postgres';
 
 import { articleSortKey, parseArticles } from './constitution.ts';
+import { sslFor } from './db-ssl';
 
 const APPLY = process.argv.includes('--apply');
 
@@ -59,7 +60,7 @@ if (!dbUrl) {
   process.exit(2);
 }
 const sql = postgres(dbUrl, {
-  ssl: dbUrl.includes('localhost') ? false : 'require',
+  ssl: sslFor(dbUrl),
   max: 2,
   connect_timeout: 120,
 });

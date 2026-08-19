@@ -41,6 +41,7 @@ import {
 } from './concordance-adjudicate.ts';
 import { HC_BUCKET } from './harvest/hc-metadata.ts';
 import { callInferx } from './inferx.ts';
+import { sslFor } from './db-ssl';
 
 const SOURCE = 'aws_high_court';
 const APPLY = process.argv.includes('--apply');
@@ -60,7 +61,7 @@ if (!apiKey) {
   process.exit(2);
 }
 
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 3 });
 
 console.log('CITATION CONCORDANCE — DEEPSEEK ADJUDICATION PASS');
 console.log('='.repeat(74));

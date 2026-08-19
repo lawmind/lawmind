@@ -9,8 +9,13 @@ import { test } from 'node:test';
 
 import {
   type Claim,
+  claimsFromArguments,
+  claimsFromAuthorities,
+  claimsFromCaseStructure,
   claimsFromCitations,
+  claimsFromHolding,
   claimsFromMetadata,
+  claimsFromTopics,
   claimsFromTreatment,
   enrichmentInputHash,
   parseJson,
@@ -182,4 +187,190 @@ test('the input hash changes with the prompt version, so a reworded prompt re-ru
   assert.notEqual(a, b);
   assert.notEqual(a, c);
   assert.equal(a, enrichmentInputHash('metadata', 'v1', 'text'));
+});
+
+/* --------------------------------- the structured legal object (0051) ----- */
+
+/**
+ * The whole safety argument for these five tasks is one sentence: the model's
+ * QUOTE is the claim value, so a fabricated passage fails `verifyClaims` at
+ * full strength rather than needing a new entry in `LABEL_KINDS`. Every test
+ * below exists to hold that sentence true.
+ */
+
+const JUDGMENT = `IN THE HIGH COURT OF DELHI AT NEW DELHI
+The appellant assails the judgment of conviction dated 12.03.2019 passed by the
+learned Additional Sessions Judge. The prosecution case is that on 4 January
+2017 the complainant delivered a cheque which was returned unpaid.
+Learned counsel for the appellant contends that the statutory notice was never
+served upon his client. We are unable to accept that contention. In our
+considered view the notice was validly served and the conviction calls for no
+interference. The appeal is accordingly dismissed.`;
+
+test('a quoted fact is verified, and the model gloss is carried but never checked', () => {
+  const claims = claimsFromCaseStructure({
+    facts: [
+      {
+        quote: 'on 4 January 2017 the complainant delivered a cheque which was returned unpaid',
+        label: 'dishonoured cheque delivered',
+      },
+    ],
+  });
+  assert.equal(claims.length, 1);
+  assert.equal(claims[0]!.kind, 'fact');
+  // The quote is BOTH the value and the evidence. That is the design.
+  assert.equal(claims[0]!.value, claims[0]!.evidence);
+  assert.equal(claims[0]!.extra?.['label'], 'dishonoured cheque delivered');
+
+  const [verdict] = verifyClaims(claims, JUDGMENT);
+  assert.equal(verdict!.verified, true);
+});
+
+test('a fabricated quote is REJECTED even though it reads like this judgment', () => {
+  // Plausible, on-topic, in the right register, and nowhere in the text.
+  const claims = claimsFromHolding({
+    holdings: [
+      {
+        quote: 'we hold that the statutory notice was never served and the conviction is set aside',
+        label: 'conviction set aside for want of notice',
+      },
+    ],
+  });
+  const [verdict] = verifyClaims(claims, JUDGMENT);
+  assert.equal(verdict!.verified, false);
+  assert.equal(verdict!.reason, 'evidence span not found in source text');
+});
+
+test('a summarised holding is rejected — paraphrase cannot substitute for a quote', () => {
+  const claims = claimsFromHolding({
+    holdings: [{ quote: 'The court dismissed the appeal.', label: 'appeal dismissed' }],
+  });
+  const [verdict] = verifyClaims(claims, JUDGMENT);
+  // The judgment says "The appeal is accordingly dismissed", not this.
+  assert.equal(verdict!.verified, false);
+});
+
+test('a real quote lifted from the wrong judgment is rejected', () => {
+  const claims = claimsFromCaseStructure({
+    issues: [{ quote: 'whether the plaintiff is entitled to specific performance', label: 'specific performance' }],
+  });
+  const [verdict] = verifyClaims(claims, JUDGMENT);
+  assert.equal(verdict!.verified, false);
+});
+
+/**
+ * The three tests below guard the 15 Aug 2026 change that made the EVIDENCE
+ * SPAN check case-insensitive, matching the value check beside it. The first
+ * shows what it buys; the second and third are the ones that matter — folding
+ * must not admit anything a case-sensitive test refused on CONTENT.
+ */
+test('CASE FOLDING ON THE SPAN accepts a prayer the court printed in capitals', () => {
+  const capitals = 'THIS WRIT PETITION IS FILED UNDER ARTICLE 226 OF THE CONSTITUTION OF INDIA, PRAYING TO QUASH THE PROCEEDINGS.';
+  const claims = claimsFromCaseStructure({
+    relief_sought: [
+      { quote: 'This Writ Petition is filed under Article 226 of the Constitution of India', label: 'writ' },
+    ],
+  });
+  const [verdict] = verifyClaims(claims, capitals);
+  assert.equal(verdict!.verified, true);
+});
+
+test('...and a FABRICATED span is still rejected in every casing', () => {
+  for (const q of [
+    'the appellant was awarded compensation of Rs. 15,00,000 with interest',
+    'THE APPELLANT WAS AWARDED COMPENSATION OF RS. 15,00,000 WITH INTEREST',
+    'The Appellant Was Awarded Compensation Of Rs. 15,00,000 With Interest',
+  ]) {
+    const [verdict] = verifyClaims(claimsFromCaseStructure({ facts: [{ quote: q, label: 'award' }] }), JUDGMENT);
+    assert.equal(verdict!.verified, false, `folding admitted a fabrication cased as: ${q}`);
+  }
+});
+
+test('...and a real span from ANOTHER judgment is still rejected in every casing', () => {
+  const elsewhere = 'whether the plaintiff is entitled to specific performance';
+  for (const q of [elsewhere, elsewhere.toUpperCase()]) {
+    const [verdict] = verifyClaims(claimsFromCaseStructure({ issues: [{ quote: q, label: 'issue' }] }), JUDGMENT);
+    assert.equal(verdict!.verified, false, `folding admitted a foreign span cased as: ${q}`);
+  }
+});
+
+test('arguments keep the side the judgment itself used', () => {
+  const claims = claimsFromArguments({
+    petitioner: [
+      {
+        quote: 'Learned counsel for the appellant contends that the statutory notice was never served',
+        label: 'no service of statutory notice',
+        side: 'appellant',
+      },
+    ],
+    respondent: [],
+  });
+  assert.equal(claims.length, 1);
+  assert.equal(claims[0]!.kind, 'argument_petitioner');
+  assert.equal(claims[0]!.extra?.['side'], 'appellant');
+  assert.equal(verifyClaims(claims, JUDGMENT)[0]!.verified, true);
+});
+
+test('an authority name is carried in extra and is NOT what gets verified', () => {
+  const claims = claimsFromAuthorities({
+    authorities: [
+      {
+        // A real Supreme Court case, deliberately one this judgment never names.
+        name: 'K.K. Verma v. Union of India',
+        quote: 'We are unable to accept that contention',
+        proposition: 'contention rejected',
+      },
+    ],
+  });
+  assert.equal(claims[0]!.kind, 'authority_relied_on');
+  assert.equal(claims[0]!.extra?.['name'], 'K.K. Verma v. Union of India');
+  // The QUOTE is in the text, so the claim verifies — and the unverified case
+  // name rides along in extra where nothing may promote it. This asymmetry is
+  // deliberate and is why resolving a name to a judgment id stays with
+  // citations.ts rather than happening here.
+  assert.equal(verifyClaims(claims, JUDGMENT)[0]!.verified, true);
+});
+
+test('a topic label is free-form but its anchoring quote still has to exist', () => {
+  const good = claimsFromTopics({
+    topics: [{ quote: 'a cheque which was returned unpaid', label: 'dishonour of cheque' }],
+    search_concepts: [],
+  });
+  assert.equal(verifyClaims(good, JUDGMENT)[0]!.verified, true);
+
+  const bad = claimsFromTopics({
+    topics: [{ quote: 'a promissory note executed in favour of the plaintiff', label: 'dishonour of cheque' }],
+  });
+  assert.equal(verifyClaims(bad, JUDGMENT)[0]!.verified, false);
+});
+
+test('a missing or empty quote yields no claim at all, rather than an unverifiable one', () => {
+  assert.deepEqual(claimsFromCaseStructure({ facts: [{ label: 'no quote offered' }] }), []);
+  assert.deepEqual(claimsFromCaseStructure({ facts: [{ quote: '   ', label: 'blank' }] }), []);
+  assert.deepEqual(claimsFromHolding({ holdings: 'not an array' }), []);
+  assert.deepEqual(claimsFromTopics(null), []);
+});
+
+test('a two-word "quote" is rejected on length before it can match anything', () => {
+  const claims = claimsFromCaseStructure({ facts: [{ quote: 'the appeal', label: 'short' }] });
+  const [verdict] = verifyClaims(claims, JUDGMENT);
+  assert.equal(verdict!.verified, false);
+  assert.match(verdict!.reason!, /shorter than/);
+});
+
+test('none of the five new kinds is a LABEL_KIND — they all take the full check', () => {
+  // If someone adds one of these to LABEL_KINDS to make a run look better, the
+  // fabricated-quote test above would still fail, but this asserts the intent
+  // directly: a fabricated span is rejected for EVERY new kind, not just holding.
+  const fabricated = 'this sentence appears nowhere in the judgment whatsoever';
+  for (const claims of [
+    claimsFromCaseStructure({ facts: [{ quote: fabricated, label: 'x' }] }),
+    claimsFromHolding({ reasoning: [{ quote: fabricated, label: 'x' }] }),
+    claimsFromArguments({ respondent: [{ quote: fabricated, label: 'x', side: 'State' }] }),
+    claimsFromAuthorities({ provisions: [{ provision: 's. 138', quote: fabricated, proposition: 'x' }] }),
+    claimsFromTopics({ search_concepts: [{ quote: fabricated, label: 'x' }] }),
+  ]) {
+    assert.equal(claims.length, 1, 'the claim should be produced');
+    assert.equal(verifyClaims(claims, JUDGMENT)[0]!.verified, false);
+  }
 });

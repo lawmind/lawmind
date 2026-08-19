@@ -11,6 +11,7 @@
 import postgres from 'postgres';
 
 import { canonicalAct, extractSectionRefs, foldSectionRefs } from './sections.ts';
+import { sslFor } from './db-ssl';
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!url) {
@@ -18,7 +19,7 @@ if (!url) {
   process.exit(2);
 }
 const apply = process.argv.includes('--apply');
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4 });
+const sql = postgres(url, { ssl: sslFor(url), max: 4 });
 
 const PAGE = 500;
 

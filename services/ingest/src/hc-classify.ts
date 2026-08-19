@@ -262,8 +262,15 @@ function isProcedural(disposal: string): boolean {
  * and NEW1 already consume.
  */
 
-/** Withdrawn, not pressed, or dismissed *as* withdrawn. The court decided nothing. */
-const WITHDRAWAL = /(WITHDRAW|NOT PRESSED)/;
+/**
+ * Withdrawn, not pressed, or dismissed *as* withdrawn. The court decided nothing.
+ *
+ * `NOT.?PRESSED` rather than `NOT PRESSED`, added 18 Aug 2026: the source also
+ * prints `NOT-PRESSED` (119 rows), and a space is not a rule. Found by replaying
+ * the current rules over the recorded unclassified vocabulary rather than by
+ * reading the source list again — `disposal-coverage-cli.ts`.
+ */
+const WITHDRAWAL = /(WITHDRAW|NOT.?PRESSED)/;
 
 /** Infructuous — the matter became moot. Three spellings appear in the source. */
 const INFRUCTUOUS = /(INFRUCTUOUS|INFRACTUOUS|INFRACTOUS)/;
@@ -317,14 +324,60 @@ const ALLOWED_FORMS =
  * by an edit-distance rule that would also catch things it should not.
  */
 const DISMISSED_FORMS =
-  /(^DISMISED$|^DISMISS$|^DISMISSED\b|^APPEAL IS DISMISSED$|^REJECTED\b|^DISMISSAL\b)/;
+  /(^DISMISED$|^DISMISS$|^DISMISSED\b|^APPEAL (IS )?DISMISSED\b|^REJECTED\b|^DISMISSAL\b)/;
 
 /**
  * Writ practice: a rule made absolute is the petition succeeding, a rule
  * discharged is it failing. Both are decisions on the merits, and both are
  * printed with the Bombay/Gujarat numeric prefixes (`38-`, `58-`, `39-`).
  */
-const RULE_OUTCOME = /(RULE ABSOLUTE|RULE MADE ABSOLUTE|RULE DISCHARGED|NOTICE DISCHARGED)/;
+const RULE_OUTCOME = /(RULE ABSOLUTE|RULE MADE ABSOLUTE|RULE DISCHARGED|NOTICE DISCHARGED|\bABSOLUTE\b)/;
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE 18 AUG 2026 ADDITIONS, AND — MORE IMPORTANTLY — WHAT WAS LEFT ALONE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Method: `disposal-coverage-cli.ts` replayed THIS function over all 332 raw
+ * disposal strings recorded in `hc_class_method`, covering 883,796 rows, and
+ * split them three ways. The result reframed the task:
+ *
+ *   STALE      123,840  14.0%  today's rules already claim these; they are
+ *                             unclassified only because nothing re-read them
+ *   RESIDUE    755,620  85.5%  the DISPOSED / CLOSED family refused above
+ *   CANDIDATE    4,336   0.5%  refused, and not by a documented decision
+ *
+ * **New rules can win at most 4,336 rows. The `--restale` re-run wins 123,840.**
+ * That is the whole finding, and it is why this section is four small patterns
+ * rather than thirty: the coverage problem was never a vocabulary problem.
+ *
+ * Added, each because the source states an outcome and only one reading exists:
+ *
+ *   NOT-PRESSED         119  a space was the only thing failing the match
+ *   APPEAL DISMISSED    121  the anchored form only allowed `APPEAL IS DISMISSED`
+ *   ABSOLUTE            229  writ practice: a rule made absolute is the petition
+ *                            succeeding. Also catches `INJUNCTION MADE ABSOLUTE`
+ *                            and `PETITION MADE ABSOLUTE`; no procedural string
+ *                            in the measured vocabulary contains the word.
+ *
+ * **DELIBERATELY NOT ADDED, and this list is the more useful half:**
+ *
+ *   DELAY CONDONED (791), CONDONED (64), TIME EXTENDED (107) — the court decided
+ *   an APPLICATION INSIDE the case, not the case. `procedural_disposal` means
+ *   "the case ended without a decision on its merits", and these do not end the
+ *   case at all. Filing them there would be a wrong substantive classification,
+ *   which is the one error this module may not make; UNKNOWN is correct.
+ *
+ *   DELAY CONDONATED/REJECTED. (1,216) — the largest single candidate and the
+ *   least determinate. The slash carries both outcomes and the source does not
+ *   say which happened. No amount of pattern work makes it say.
+ *
+ *   PEREMPTORY (128) — same family as `PREMPTORY` (4,166), which is already
+ *   residue. It names a hearing posture, not a disposal.
+ *
+ *   GRANT ISSUED (461) — probably a testamentary grant, and "probably" is the
+ *   problem. Left for the model pass with the rest of the residue.
+ */
 
 /**
  * Classify one row.

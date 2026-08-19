@@ -36,6 +36,7 @@
 import { createHash } from 'node:crypto';
 
 import postgres from 'postgres';
+import { sslFor } from './db-ssl';
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!dbUrl) {
@@ -43,7 +44,7 @@ if (!dbUrl) {
   process.exit(2);
 }
 const sql = postgres(dbUrl, {
-  ssl: dbUrl.includes('localhost') ? false : 'require',
+  ssl: sslFor(dbUrl),
   max: 2,
   connect_timeout: 120,
 });

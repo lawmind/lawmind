@@ -40,6 +40,7 @@ import {
 } from './hc-metadata.ts';
 
 import postgres from 'postgres';
+import { sslFor } from '../db-ssl';
 
 const TARGET = Number(process.env['HC_YIELD_SAMPLE'] ?? '400');
 const CONCURRENCY = Number(process.env['HC_YIELD_CONCURRENCY'] ?? '8');
@@ -50,7 +51,7 @@ if (!dbUrl) {
   console.error('DATABASE_URL is not set — resolution is measured against our own corpus.');
   process.exit(2);
 }
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 3 });
 
 console.log(`HIGH COURT CITATION YIELD — ${TARGET} PDFs, ${FROM_YEAR}+`);
 console.log('='.repeat(74));
@@ -127,7 +128,7 @@ const results = await mapConcurrent(picks, CONCURRENCY, async (pick): Promise<Ro
   if (++done % 50 === 0) console.log(`  ... ${done}/${picks.length}`);
   // One fetch, one parse. The real pipeline will do exactly this and then throw
   // the text away, so measuring anything heavier would measure the wrong thing.
-  let text = '';
+  let text: string;
   try {
     const res = await fetch(pick.url);
     if (!res.ok) return EMPTY;

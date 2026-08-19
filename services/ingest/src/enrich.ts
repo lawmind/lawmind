@@ -30,7 +30,47 @@ import { createHash } from 'node:crypto';
 export const PROMPT_VERSION = 'v1';
 export const ENRICH_MODEL = process.env['INFERX_MODEL'] ?? 'deepseek-v4-flash-0731';
 
-export type EnrichTask = 'citation_extraction' | 'metadata' | 'treatment' | 'document_class';
+export type EnrichTask =
+  | 'citation_extraction'
+  | 'metadata'
+  | 'treatment'
+  | 'document_class'
+  /* ---- the structured legal object, added 14 Aug 2026 ------------------- */
+  | 'case_structure'
+  | 'holding'
+  | 'arguments'
+  | 'authorities'
+  | 'topics';
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE STRUCTURED LEGAL OBJECT — AND WHY EVERY FIELD IS A QUOTE, NOT A SUMMARY
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The five tasks above recover what a judgment SAYS: its facts, issues,
+ * procedural history, arguments, holding, reasoning, relief, the authorities it
+ * leans on and the topics it belongs to. That is a summarisation task in every
+ * other product, and summarisation is exactly the shape this pipeline refuses.
+ *
+ * `verifyClaims` can only prove one thing: that a string appears in the
+ * document. A paraphrase never does — *"the appellant challenged the
+ * conviction"* is nowhere in a judgment that says *"the appellant assails the
+ * judgment of conviction dated 12.03.2019"*. So a paraphrase can only be
+ * verified by weakening the check, and `LABEL_KINDS` above says plainly why
+ * that door stays shut.
+ *
+ * **So the model is asked to QUOTE, and the quote is the value.** Each item is
+ * `{quote, label}`: the `quote` is a verbatim span and becomes `Claim.value`
+ * AND `Claim.evidence`, so it goes through the full-strength check with no new
+ * label kind; the `label` is the model's own short gloss, carried in `extra`
+ * for readability and **never verified, never promoted, never displayed as
+ * fact**. If the model invents a sentence the judgment does not contain, the
+ * item is rejected — the paraphrase cannot smuggle it in, because the
+ * paraphrase is not what is checked.
+ *
+ * The cost of this design is recall, and it is the right cost: a holding the
+ * model cannot find words for is dropped rather than written from memory.
+ */
 
 export const sha256 = (t: string) => createHash('sha256').update(t).digest('hex');
 
@@ -174,6 +214,148 @@ TEXT:
 ${text}`;
 }
 
+/* ------------------------------------------- the structured legal object -- */
+
+/**
+ * Shared by all five legal-object prompts. Stricter than `REFUSAL_CLAUSE`
+ * because these tasks are the ones a model most wants to answer from general
+ * knowledge: it has read thousands of judgments and can write a plausible
+ * "holding" for an Indian criminal appeal without reading this one.
+ */
+const QUOTE_CLAUSE = `
+RULES, and they outrank completeness:
+- Every item MUST contain a "quote" that is a VERBATIM substring of the TEXT
+  below, copied character for character. Do not tidy, join, shorten with an
+  ellipsis, fix spelling, or expand an abbreviation.
+- A quote must be a meaningful stretch of the judgment's own words — at least a
+  full clause, not a fragment of a few words.
+- "label" is YOUR short description of that quote, at most 15 words. It is
+  never treated as fact; the quote is the only thing that will be believed.
+- If the TEXT does not contain something, return an empty array for it. An
+  empty array is CORRECT. Writing something plausible is the one real failure.
+- Never quote from a passage the judgment is itself quoting from another case
+  as if it were this court's own words.
+Respond with ONLY a single JSON object, no prose and no code fence.`;
+
+/** Facts, issues, procedural history, chronology, relief sought. */
+export function buildCaseStructurePrompt(text: string): string {
+  return `You are reading an Indian court judgment and locating the passages that
+carry its structure. You are NOT summarising it.
+${QUOTE_CLAUSE}
+
+- "facts": what happened between the parties, before any court got involved.
+- "issues": the questions this court says it has to decide.
+- "procedural_history": what earlier courts or authorities did with this matter.
+- "chronology": passages that fix a date to an event.
+- "relief_sought": what the party bringing this proceeding asked for.
+
+{"facts":[{"quote":"<verbatim>","label":"<=15 words>"}],"issues":[{"quote":"<verbatim>","label":"<=15 words>"}],"procedural_history":[{"quote":"<verbatim>","label":"<=15 words>"}],"chronology":[{"quote":"<verbatim>","label":"<=15 words>"}],"relief_sought":[{"quote":"<verbatim>","label":"<=15 words>"}]}
+
+TEXT:
+${text}`;
+}
+
+/** Holdings, reasoning, relief granted, and the propositions of law laid down. */
+export function buildHoldingPrompt(text: string): string {
+  return `You are reading an Indian court judgment and locating the passages where
+the court DECIDES, as opposed to where it recites facts or arguments.
+${QUOTE_CLAUSE}
+
+- "holdings": the court's own conclusion on an issue it had to decide.
+- "reasoning": the passages giving the court's reason for a conclusion.
+- "relief_granted": the operative direction — what the court actually orders.
+- "propositions": statements of law stated generally, not tied to these parties.
+
+Be strict about the difference between the court's own voice and everything
+else. A submission recorded as "learned counsel contends" is NOT a holding. A
+passage introduced by "it was held in" is another court's holding, not this
+one's.
+
+{"holdings":[{"quote":"<verbatim>","label":"<=15 words>"}],"reasoning":[{"quote":"<verbatim>","label":"<=15 words>"}],"relief_granted":[{"quote":"<verbatim>","label":"<=15 words>"}],"propositions":[{"quote":"<verbatim>","label":"<=15 words>"}]}
+
+TEXT:
+${text}`;
+}
+
+/** What each side argued, kept attributed and kept apart from the holding. */
+export function buildArgumentsPrompt(text: string): string {
+  return `You are reading an Indian court judgment and locating what each side
+ARGUED. You are not deciding who was right, and you are not recording what the
+court concluded.
+${QUOTE_CLAUSE}
+
+- "petitioner": contentions of the party who brought this proceeding (appellant,
+  petitioner, applicant, complainant, prosecution — whichever this judgment uses).
+- "respondent": contentions of the opposing party (respondent, State, accused,
+  defendant — whichever this judgment uses).
+- "side" in each item is the word the JUDGMENT uses for that party.
+
+A passage where the court accepts or rejects a contention is a holding, not an
+argument. Leave it out.
+
+{"petitioner":[{"quote":"<verbatim>","label":"<=15 words>","side":"<the word the judgment uses>"}],"respondent":[{"quote":"<verbatim>","label":"<=15 words>","side":"<the word the judgment uses>"}]}
+
+TEXT:
+${text}`;
+}
+
+/**
+ * Which authorities the court actually LEANED ON, and what for.
+ *
+ * Deliberately not an extraction of citations — `citations.ts` does that
+ * deterministically and better, and `CLAUDE.md` is explicit that a model must
+ * not be paid to do work a regex already does. What no regex can decide is
+ * whether an authority was load-bearing or merely listed, and what proposition
+ * it was invoked for. That judgement is the only thing asked for here.
+ */
+export function buildAuthoritiesPrompt(text: string): string {
+  return `You are reading an Indian court judgment. Some earlier decisions and
+statutory provisions it mentions are load-bearing — the court relies on them to
+reach its conclusion. Others are merely listed, or cited by a party and not
+adopted. Identify only the load-bearing ones.
+${QUOTE_CLAUSE}
+
+- "authorities": earlier court decisions the court RELIES ON. "name" is the case
+  name as printed. "proposition" is what the court uses it for, in your words.
+- "provisions": statutory provisions the court APPLIES. "provision" is the
+  section/article as printed, e.g. "Section 138 of the Negotiable Instruments
+  Act" or "Article 226".
+
+Do not list an authority that appears only in a party's submission which the
+court does not adopt.
+
+{"authorities":[{"name":"<as printed>","quote":"<verbatim>","proposition":"<=20 words>"}],"provisions":[{"provision":"<as printed>","quote":"<verbatim>","proposition":"<=20 words>"}]}
+
+TEXT:
+${text}`;
+}
+
+/**
+ * Topic taxonomy and the queries this judgment should answer.
+ *
+ * `search_concepts` exists for retrieval, not for display: `NEW1`'s benchmark
+ * measures `HELD_NOT_RETRIEVED` at 48.6%, and a judgment that never states the
+ * words an advocate would search for is one mechanism for that. Every concept
+ * still has to be anchored to a quote, so this cannot become a keyword-stuffing
+ * layer detached from the document.
+ */
+export function buildTopicsPrompt(text: string): string {
+  return `You are reading an Indian court judgment and placing it in a subject
+taxonomy, then writing the questions a practising advocate would type to find it.
+${QUOTE_CLAUSE}
+
+- "topics": areas of law this judgment is about, most specific first, e.g.
+  "dishonour of cheque", "anticipatory bail", "specific performance".
+- "search_concepts": the phrasings an advocate would actually search. These are
+  YOUR words and go in "label"; the "quote" must still be the passage in this
+  judgment that makes that search a correct hit.
+
+{"topics":[{"quote":"<verbatim>","label":"<the topic>"}],"search_concepts":[{"quote":"<verbatim>","label":"<what an advocate would search>"}]}
+
+TEXT:
+${text}`;
+}
+
 /* ----------------------------------------------------------------- parsing -- */
 
 /** Strips a ```json fence if the model added one despite being told not to. */
@@ -280,6 +462,96 @@ export function claimsFromTreatment(parsed: unknown): Claim[] {
   ];
 }
 
+/* --------------------------------- the structured legal object: claims -- */
+
+/**
+ * `{quote, label}[]` under a set of named buckets → `Claim[]`.
+ *
+ * **The quote becomes the `value`, which is the entire point.** A `Claim` whose
+ * value and evidence are the same verbatim span passes `verifyClaims` only if
+ * that span is genuinely in the document — the strongest check this pipeline
+ * has, and the same one a citation gets. The model's `label` rides along in
+ * `extra` and is never checked, because nothing downstream is allowed to treat
+ * it as fact.
+ *
+ * `kind` is `<task field>` (`fact`, `issue`, `holding`, …) so a consumer can
+ * tell a holding from a submission without re-reading the prompt, and so the
+ * training-set export can filter by role.
+ */
+function claimsFromQuoteBuckets(
+  parsed: unknown,
+  buckets: readonly (readonly [field: string, kind: string])[],
+  extraKeys: readonly string[] = [],
+): Claim[] {
+  const p = parsed as Record<string, unknown> | null;
+  if (!p || typeof p !== 'object') return [];
+  const out: Claim[] = [];
+  for (const [field, kind] of buckets) {
+    const rows = p[field];
+    if (!Array.isArray(rows)) continue;
+    for (const r of rows) {
+      const row = r as Record<string, unknown>;
+      const quote = str(row?.['quote']);
+      if (!quote) continue;
+      const extra: Record<string, unknown> = { label: str(row?.['label']) };
+      for (const k of extraKeys) extra[k] = str(row?.[k]);
+      out.push({ value: quote, evidence: quote, kind, extra });
+    }
+  }
+  return out;
+}
+
+export function claimsFromCaseStructure(parsed: unknown): Claim[] {
+  return claimsFromQuoteBuckets(parsed, [
+    ['facts', 'fact'],
+    ['issues', 'issue'],
+    ['procedural_history', 'procedural_history'],
+    ['chronology', 'chronology'],
+    ['relief_sought', 'relief_sought'],
+  ]);
+}
+
+export function claimsFromHolding(parsed: unknown): Claim[] {
+  return claimsFromQuoteBuckets(parsed, [
+    ['holdings', 'holding'],
+    ['reasoning', 'reasoning'],
+    ['relief_granted', 'relief_granted'],
+    ['propositions', 'proposition'],
+  ]);
+}
+
+export function claimsFromArguments(parsed: unknown): Claim[] {
+  return claimsFromQuoteBuckets(
+    parsed,
+    [
+      ['petitioner', 'argument_petitioner'],
+      ['respondent', 'argument_respondent'],
+    ],
+    ['side'],
+  );
+}
+
+/**
+ * Authorities and provisions carry a `name`/`provision` the model read off the
+ * page. That name is NOT verified by `verifyClaims` — the quote is — so it is
+ * kept in `extra` beside the proposition rather than becoming the claim value.
+ * Resolving a name to a judgment id is `citations.ts`'s deterministic job and
+ * is deliberately not attempted here.
+ */
+export function claimsFromAuthorities(parsed: unknown): Claim[] {
+  return [
+    ...claimsFromQuoteBuckets(parsed, [['authorities', 'authority_relied_on']], ['name', 'proposition']),
+    ...claimsFromQuoteBuckets(parsed, [['provisions', 'provision_applied']], ['provision', 'proposition']),
+  ];
+}
+
+export function claimsFromTopics(parsed: unknown): Claim[] {
+  return claimsFromQuoteBuckets(parsed, [
+    ['topics', 'topic'],
+    ['search_concepts', 'search_concept'],
+  ]);
+}
+
 /* ------------------------------------------------------------ verification -- */
 
 export type Verdict = {
@@ -348,7 +620,32 @@ export function verifyClaims(claims: readonly Claim[], sourceText: string): Verd
     if (needle.length < MIN_EVIDENCE_CHARS) {
       return { claim, verified: false, reason: `evidence shorter than ${MIN_EVIDENCE_CHARS} chars` };
     }
-    if (!haystack.includes(needle)) {
+    /**
+     * CASE-FOLDED, AS OF 15 AUG 2026 — and this is the SAME decision already
+     * recorded above for the value check, applied to the check it was never
+     * applied to.
+     *
+     * The two tests disagreed with each other: the value had to appear
+     * case-insensitively, while the span it came from had to appear
+     * case-sensitively. That inconsistency was measured rather than argued
+     * about. Triaging all 278 `case_structure` rejections
+     * (`enrich-triage-cli.ts`, `docs/ai/ENRICHMENT_REJECTION_TRIAGE.md`) put
+     * **45 of them — 16.2% — in a bucket where case was the ONLY difference**,
+     * every one a real passage of the judgment the model had copied correctly.
+     * Indian judgments print prayers, cause titles and exhibit lists in full
+     * capitals and the model returns sentence case, which is exactly the
+     * `HONOURABLE MR. JUSTICE …` problem that forced folding on the value check
+     * in the first pilot.
+     *
+     * **The safety property is unchanged and that is the whole argument.** A
+     * case-insensitive substring test still cannot find a passage the document
+     * does not contain: a fabricated sentence fails in every casing, a real
+     * span from a DIFFERENT judgment fails in every casing, and
+     * `enrich.test.ts` asserts both. This is folding, not fuzziness — no
+     * distance, no token overlap, no punctuation stripping. Those would each
+     * admit something new, and none of them is here.
+     */
+    if (!fold(haystack).includes(fold(needle))) {
       return { claim, verified: false, reason: 'evidence span not found in source text' };
     }
     /**

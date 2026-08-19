@@ -25,6 +25,7 @@ import postgres from 'postgres';
 import { projectCompletion } from './pace.ts';
 import { enqueue, progress, recordFetch } from './store.ts';
 import { createSupremeTodayClient } from './supremetoday.ts';
+import { sslFor } from '../db-ssl';
 
 const SOURCE = 'supreme_today';
 
@@ -37,7 +38,7 @@ if (!dbUrl) {
   process.exit(2);
 }
 
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 3 });
 const client = createSupremeTodayClient();
 
 try {

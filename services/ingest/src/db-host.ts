@@ -126,7 +126,41 @@ export async function resolveDbUrl(rawUrl: string): Promise<ResolvedDb> {
  * shared with twenty ingest workers, and `idle_timeout: 0` so a pass that
  * pauses on a slow batch does not have its connection reaped underneath it.
  */
-export async function openDb(rawUrl: string, max = 2) {
+/**
+ * `statementTimeoutMs` — a bound on how long ONE statement may run.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY, MEASURED 18 AUG 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `supervise.mjs` SIGKILLs a worker it judges hung, and argues that is safe
+ * because every supervised worker is resumable from its checkpoint. That is
+ * true of a READER and says nothing about a WRITER: killing the client does not
+ * kill the statement. PostgreSQL only notices a dead client when it next tries
+ * to write to the socket, and a long `UPDATE` is not doing that.
+ *
+ * `hc-classify-boot` was stall-killed twice and restarted five times. Each dead
+ * worker left its `UPDATE judgments SET hc_document_class …` running server
+ * side, holding row locks, and each restart then blocked behind the last
+ * corpse. Read off `pg_stat_activity`:
+ *
+ *   pid 26448  57m  IO/DataFileRead    blocked by 0   ← still doing real work
+ *   pid  2896  42m  Lock/transactionid blocked by 1
+ *   pid 27336  27m  Lock/tuple         blocked by 1
+ *   pid 16812  12m  Lock/tuple         blocked by 2
+ *
+ * Four backends, one hour of locks on a 15M-row table, and no client attached
+ * to any of them. The supervisor's restart is what BUILT the convoy: without a
+ * server-side bound, "kill it and start again" adds a writer without removing
+ * one.
+ *
+ * A timeout fixes it at the only layer that can see the statement. It is
+ * OPTIONAL and off by default because this helper is shared with passes whose
+ * statements are legitimately long — a blanket bound here would start
+ * cancelling index builds and full-table backfills that are working correctly.
+ * Writers under a supervisor opt in; nothing else changes.
+ */
+export async function openDb(rawUrl: string, max = 2, statementTimeoutMs?: number) {
   const postgres = (await import('postgres')).default;
   const { url, servername } = await resolveDbUrl(rawUrl);
   const local = url.includes('localhost') || url.includes('127.0.0.1');
@@ -137,5 +171,19 @@ export async function openDb(rawUrl: string, max = 2) {
     max,
     connect_timeout: 120,
     idle_timeout: 0,
+    ...(statementTimeoutMs === undefined
+      ? {}
+      : {
+          connection: {
+            statement_timeout: statementTimeoutMs,
+            /**
+             * Paired deliberately. `statement_timeout` bounds a statement; a
+             * transaction left OPEN between statements by a client that died
+             * mid-batch holds its locks just as long and is not a statement at
+             * all. Bounding one without the other closes half the hole.
+             */
+            idle_in_transaction_session_timeout: statementTimeoutMs,
+          },
+        }),
   });
 }

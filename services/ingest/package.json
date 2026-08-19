@@ -59,6 +59,7 @@
     "./paragraph-refs": "./src/paragraph-refs.ts",
     "./citations": "./src/citations.ts",
     "./sections": "./src/sections.ts",
-    "./db-host": "./src/db-host.ts"
+    "./db-host": "./src/db-host.ts",
+    "./db-transient": "./src/db-transient.ts"
   }
 }

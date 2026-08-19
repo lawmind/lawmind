@@ -15,6 +15,7 @@
 import { readFile } from 'node:fs/promises';
 
 import postgres from 'postgres';
+import { sslFor } from './db-ssl';
 
 const APPLY = process.argv.includes('--apply');
 const SOURCE = 'aws_high_court';
@@ -61,7 +62,7 @@ if (!APPLY) {
   process.exit(0);
 }
 
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 3 });
 try {
   // One statement, not 275. `CONTINUATION_PROMPT.md` §8: 4,097 single-row inserts
   // over the proxy took 34 minutes and timed out at ten. The work was never the

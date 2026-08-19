@@ -28,6 +28,7 @@ import { textQuality } from '@lawmind/embed';
 import postgres from 'postgres';
 
 import { contentHash } from './load.ts';
+import { sslFor } from './db-ssl';
 
 const PAGE_SIZE = 500;
 
@@ -36,7 +37,7 @@ type Row = { id: string; full_text: string };
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
-  const sql = postgres(url, { max: 10, ssl: 'require' });
+  const sql = postgres(url, { max: 10, ssl: sslFor(url) });
   const confirmed = process.argv.includes('--confirm');
 
   try {

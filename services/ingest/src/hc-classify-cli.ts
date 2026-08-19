@@ -124,7 +124,23 @@ async function main(): Promise<void> {
    * today before `db-host.ts` existed. This job walks the whole corpus, so it is
    * precisely the shape that gets caught by it.
    */
-  const sql = await openDb(url, 2);
+  /**
+   * TEN MINUTES, and it is the supervisor's SIGKILL that makes it necessary.
+   *
+   * Measured 18 Aug 2026: `hc-classify-boot` was stall-killed twice and
+   * restarted five times, and each dead worker left its `UPDATE judgments SET
+   * hc_document_class …` running server side holding row locks. Four such
+   * backends were found in `pg_stat_activity` at 57, 42, 27 and 12 minutes,
+   * three of them blocked on the first — a convoy the restart loop built rather
+   * than cleared, because killing a client does not kill its statement.
+   *
+   * A page write is 2,000 rows in batches of 1,000 and takes seconds when the
+   * box is not saturated. Ten minutes is far outside that and far inside the
+   * fifteen-minute stall window, so a statement this bound cancels is one that
+   * was going to be SIGKILLed anyway — and now dies with its locks instead of
+   * outliving them. `db-host.ts` has the full note.
+   */
+  const sql = await openDb(url, 2, 10 * 60_000);
 
   try {
     /**
@@ -142,6 +158,106 @@ async function main(): Promise<void> {
      * changed rule set needs.
      */
     const RESUME = process.argv.includes('--resume');
+    /**
+     * `--restale` — re-assess rows a PREVIOUS rule set could not claim.
+     *
+     * ─────────────────────────────────────────────────────────────────────────
+     * INTENT: code stamps `unclassified_disposal:<raw>` and `--resume` then
+     * skips the row forever, because it has a method; the task expects the
+     * 14 Aug vocabulary extension to have reduced the unclassified population;
+     * `hc-classify.ts` MEASURED_VOCABULARY says those strings were added
+     * precisely so they would stop being unclassified. Spec and task agree and
+     * the CODE CANNOT EXPRESS EITHER — there was no selector for "judged, but
+     * by rules that have since changed".
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Measured before writing this, by replaying today's `classifyHcDocument`
+     * over the raw disposal strings the column recorded
+     * (`disposal-coverage-cli.ts`, 332 distinct strings, 883,796 rows):
+     *
+     *   STALE      123,840  14.0%  today's rules DO classify these
+     *   RESIDUE    755,620  85.5%  refused on purpose (DISPOSED/CLOSED family)
+     *   CANDIDATE    4,336   0.5%  refused, and not by a documented decision
+     *
+     * `DISMISSED AS WITHDRAWN` (20,674), `DISMISSED AS INFRUCTUOUS` (16,878),
+     * `38-RULE ABSOLUTE/ALLOWED @ FH` (8,586) and the `DISMISED` misspelling
+     * (4,209) are all in the STALE column — every one of them named in
+     * MEASURED_VOCABULARY as a string the rules were extended to catch.
+     *
+     * **This is why the flag is not `--resume` widened.** A row stamped
+     * `unclassified_disposal:` and a row stamped nothing look identical to any
+     * count of `hc_document_class IS NULL`, and they want opposite work: the
+     * first wants a re-run of rules that already exist, the second wants a
+     * classifier pass it has never had. Conflating them is how "we need better
+     * rules" gets concluded from a population that needed no new rule at all.
+     *
+     * Deliberately does NOT include `no_disposal_nature` (164,993 rows). Those
+     * rows have an empty source field; no rule change can help them and
+     * re-reading their text every time the vocabulary moves is pure cost.
+     */
+    const RESTALE = process.argv.includes('--restale');
+    if (RESTALE && RESUME) {
+      console.error('--restale and --resume select disjoint populations; pass one.');
+      process.exit(2);
+    }
+    /**
+     * The stale METHOD STRINGS, computed once, so the walk reads 123,840 rows
+     * instead of 883,796.
+     *
+     * A first version selected `hc_class_method LIKE 'unclassified_disposal:%'`
+     * and was abandoned after 45 minutes without emitting a page. The page query
+     * is not the problem — `EXPLAIN ANALYZE` puts it at **1.03 s** on a plain
+     * primary-key index scan. The cost is `full_text`: 2,000 documents per page
+     * across 442 pages is the whole 883,796-document text volume off disk, on a
+     * box already saturated by eight ingest scopes.
+     *
+     * **Seven eighths of that read cannot change anything.** Replaying the
+     * current rules over the recorded vocabulary (`disposal-coverage-cli.ts`)
+     * says 755,620 rows are the `DISPOSED*`/`CLOSED` family the module refuses
+     * on purpose and 4,336 are refused for want of a rule; re-reading their text
+     * produces `unclassified_disposal:` again, identically, at full price. Only
+     * the 123,840 whose string today's rules DO claim can move.
+     *
+     * So the set is narrowed to exactly those method strings and passed as an
+     * array. One `GROUP BY` over the column pays for it once.
+     *
+     * **The one inaccuracy, stated rather than discovered later:**
+     * `hc_class_method` stores the disposal truncated to 40 characters
+     * (`unclassified_disposal:${disposal.slice(0, 40)}`), so this selects on a
+     * PREFIX of what the row actually holds. A disposal whose truncated form
+     * fails a rule its full form would pass is therefore skipped. That errs
+     * toward doing LESS work and never toward a wrong class — the rows that are
+     * selected are re-classified against the real `disposal_nature`, not against
+     * the prefix.
+     */
+    let staleMethods: string[] | null = null;
+    if (RESTALE) {
+      const vocab = await sql<{ method: string }[]>`
+        SELECT DISTINCT hc_class_method AS method
+        FROM judgments
+        WHERE hc_class_method LIKE 'unclassified_disposal:%'`;
+      staleMethods = vocab
+        .map((v) => v.method)
+        .filter(
+          (m) =>
+            classifyHcDocument({
+              disposalNature: m.slice('unclassified_disposal:'.length),
+              caseNumber: null,
+              /* Long and inert: this asks the DISPOSAL branches only. The two
+               * prose rules are held off deliberately — a row they would claim
+               * is classified either way, which is what is being selected for. */
+              fullText: 'x'.repeat(5000),
+            }).documentClass !== null,
+        );
+      if (staleMethods.length === 0) {
+        console.log('no recorded verdict differs from the current rules — nothing to re-assess.');
+        await sql.end({ timeout: 5 });
+        return;
+      }
+      console.log(
+        `${staleMethods.length} of ${vocab.length} recorded unclassified strings are claimed by today's rules.`,
+      );
+    }
     /**
      * `--frame <file>` — classify EXACTLY the rows in a stratified sampling
      * frame, in frame order, and nothing else.
@@ -213,6 +329,7 @@ async function main(): Promise<void> {
         FROM judgments
         WHERE court <> 'Supreme Court of India' AND id > ${cursor}::uuid
           ${RESUME ? sql`AND hc_class_method IS NULL` : sql``}
+          ${staleMethods === null ? sql`` : sql`AND hc_class_method = ANY(${staleMethods}::text[])`}
           ${frameIds === null ? sql`` : sql`AND id = ANY(${frameIds}::uuid[])`}
         ORDER BY id
         LIMIT ${PAGE}`;
@@ -227,7 +344,12 @@ async function main(): Promise<void> {
       process.stdout.write(`\r  ${confirm ? 'classified + wrote' : 'classified'} ${total.toLocaleString()}`);
       if (page.length < PAGE) break;
     }
-    console.log(`\n${total} High Court documents${RESUME ? ' (unclassified only)' : ''}\n`);
+    const scopeLabel = RESUME
+      ? ' (never assessed)'
+      : RESTALE
+        ? ' (previously unclassified_disposal, re-assessed against current rules)'
+        : '';
+    console.log(`\n${total} High Court documents${scopeLabel}\n`);
     if (total === 0) {
       console.log('nothing to classify.');
       return;
@@ -277,11 +399,23 @@ async function main(): Promise<void> {
      *
      * The defect arrived with `--frame`, so it is fixed here rather than left
      * for whoever reads that line next and reasonably panics.
+     *
+     * **`--restale` and `--resume` inherited the same lie and are fixed with it.**
+     * A `--restale` run classifies ONLY rows already stamped
+     * `unclassified_disposal:`, so it cannot touch a methodless row by
+     * construction — and it duly printed `14,058,456 with no method (must be 0)`
+     * after a run that converted 123,491 rows exactly as designed. The assertion
+     * belongs to the full walk and to nothing else; every selector that narrows
+     * the walk has to say so, or the tool reports its own success as a disaster.
      */
     const scopeNote =
-      frameIds === null
-        ? 'with no method (must be 0 after a full pass)'
-        : `with no method — EXPECTED: this run classified only the ${frameIds.length.toLocaleString()} rows in the frame`;
+      frameIds !== null
+        ? `with no method — EXPECTED: this run classified only the ${frameIds.length.toLocaleString()} rows in the frame`
+        : RESTALE
+          ? 'with no method — EXPECTED: --restale re-reads only rows a previous rule set refused, and can never reach a methodless row'
+          : RESUME
+            ? 'with no method — remaining backlog for this selector; --resume walks exactly these, so a non-zero figure is work left, not a defect'
+            : 'with no method (must be 0 after a full pass)';
     console.log(
       `\nwritten: ${check?.classified} classified, ${check?.unclassified} deliberately unclassified, ` +
         `${check?.methodless} ${scopeNote}`,

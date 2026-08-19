@@ -57,6 +57,7 @@ import {
   yearFromCitationText,
 } from './concordance-adjudicate.ts';
 import { callInferx } from './inferx.ts';
+import { sslFor } from './db-ssl';
 
 const SAMPLE_SIZE = Number(process.env['GOLD_SAMPLE_SIZE'] ?? '25');
 /**
@@ -85,7 +86,7 @@ if (!apiKey) {
   process.exit(2);
 }
 
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 2 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 2 });
 
 console.log('CITATION CONCORDANCE — GOLD SET EVALUATION');
 console.log('='.repeat(74));

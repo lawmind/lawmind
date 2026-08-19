@@ -34,6 +34,7 @@
  * have.
  */
 import postgres from 'postgres';
+import { sslFor } from './db-ssl';
 
 type Candidate = {
   cited_judgment_id: string;
@@ -48,7 +49,7 @@ type Candidate = {
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
-  const sql = postgres(url, { max: 2, ssl: 'require' });
+  const sql = postgres(url, { max: 2, ssl: sslFor(url) });
   const confirmed = process.argv.includes('--confirm');
 
   try {

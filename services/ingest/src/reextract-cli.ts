@@ -46,8 +46,11 @@ import { join } from 'node:path';
 
 import postgres from 'postgres';
 
+import { checkScriptRetention } from './script-retention.ts';
 import { classifyCorruption } from './text-corruption.ts';
 import { stripUnstorable } from './text.ts';
+import { isTransientDbOrNetworkError } from './db-transient.ts';
+import { sslFor } from './db-ssl';
 
 const APPLY = process.argv.includes('--apply');
 const arg = (name: string, fallback: string): string => {
@@ -82,7 +85,7 @@ if (!dbUrl) {
   console.error('DATABASE_URL is not set.');
   process.exit(2);
 }
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 3 });
 
 const TRANSIENT = /ECONNRESET|ETIMEDOUT|EPIPE|ENOTFOUND|EAI_AGAIN|socket|getaddrinfo/i;
 async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
@@ -91,7 +94,8 @@ async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
       return await run();
     } catch (err) {
       const m = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
-      if (attempt >= 8 || !TRANSIENT.test(m)) throw err;
+      /** See `./db-transient.ts` — a restarting Postgres matches no word in this regex. */
+      if (attempt >= 8 || (!isTransientDbOrNetworkError(err) && !TRANSIENT.test(m))) throw err;
       const wait = Math.min(30_000, 1000 * 2 ** attempt);
       console.log(`    db ${what} failed (${m.trim()}) — retry in ${wait / 1000}s`);
       await new Promise((r) => setTimeout(r, wait));
@@ -159,11 +163,16 @@ let repaired = 0;
 let refusedStillCorrupt = 0;
 let refusedShorter = 0;
 let refusedNoGain = 0;
+let refusedScriptLoss = 0;
 let fetchFailed = 0;
 const started = Date.now();
 
 for (const row of rows) {
-  if (repaired + refusedStillCorrupt + refusedShorter + refusedNoGain + fetchFailed >= LIMIT) break;
+  if (
+    repaired + refusedStillCorrupt + refusedShorter + refusedNoGain + refusedScriptLoss + fetchFailed >=
+    LIMIT
+  )
+    break;
   examined++;
   /**
    * `corrupt` mode needs the stored text to judge it; `gain` mode does not and
@@ -171,13 +180,14 @@ for (const row of rows) {
    * only for the documents that actually reach it.
    */
   let before: ReturnType<typeof classifyCorruption> = null;
+  let storedText: string | null = null;
   if (MODE === 'corrupt') {
     const got = await withDbRetry('load text', () =>
       sql<{ fullText: string }[]>`SELECT full_text AS "fullText" FROM judgments WHERE id = ${row.id}`,
     );
-    const stored = got[0]?.fullText;
-    if (!stored) continue;
-    before = classifyCorruption(stored);
+    storedText = got[0]?.fullText ?? null;
+    if (!storedText) continue;
+    before = classifyCorruption(storedText);
     if (!before?.corrupt) continue;
   }
   // In `gain` mode nothing has been judged corrupt — this counts documents that
@@ -224,6 +234,49 @@ for (const row of rows) {
     continue;
   }
 
+  /**
+   * THE SCRIPT GATE. It is last because it is the only one that needs the
+   * stored TEXT rather than its length, and everything above rejects far more
+   * cheaply.
+   *
+   * `classifyCorruption` and "never shorter" between them cannot see a
+   * replacement that deleted an entire writing system: the first reads only
+   * `[A-Za-z]` token shapes, and the second passes anything that is not
+   * shorter. CX1 measured poppler returning ZERO Devanagari tokens on 32 of 32
+   * Devanagari-bearing documents, one of them LONGER than the original — which
+   * is to say, a document that clears both guards and arrives here with its
+   * Hindi gone. `UPDATE judgments SET full_text` writes over the only copy.
+   * See `script-retention.ts` for the measurement and the thresholds.
+   *
+   * `gain` mode never loaded the stored text — deliberately, it compares
+   * lengths — so it is fetched HERE, per document, and only for the handful
+   * that survived every cheaper refusal. That keeps the bulk-select
+   * optimisation this file's header describes while still making the
+   * comparison possible; the query costs nothing beside the HTTP fetch and the
+   * pdftotext run this document has already paid for.
+   */
+  if (storedText === null) {
+    const got = await withDbRetry('load text for script gate', () =>
+      sql<{ fullText: string }[]>`SELECT full_text AS "fullText" FROM judgments WHERE id = ${row.id}`,
+    );
+    storedText = got[0]?.fullText ?? null;
+  }
+  if (storedText === null) {
+    /**
+     * Refused, not accepted. The gate cannot run without the original, and a
+     * check that cannot run must never read as a check that passed.
+     */
+    refusedScriptLoss++;
+    console.log(`  no stored text  ${label} — cannot verify script retention, refusing`);
+    continue;
+  }
+  const retention = checkScriptRetention(storedText, text);
+  if (!retention.accept) {
+    refusedScriptLoss++;
+    console.log(`  ${retention.reason === 'CHARACTER_LOSS' ? 'char loss     ' : 'SCRIPT LOSS   '}  ${label} ${retention.detail}`);
+    continue;
+  }
+
   repaired++;
   console.log(
     `  REPAIRED        ${label} ${row.storedLength} -> ${text.length} chars ` +
@@ -246,8 +299,15 @@ console.log(`REPAIRED            ${repaired}${APPLY ? ' (written)' : ' (dry run 
 console.log(`refused still corrupt ${refusedStillCorrupt}`);
 console.log(`refused shorter     ${refusedShorter}`);
 console.log(`refused no gain     ${refusedNoGain}`);
+/**
+ * Reported on its own line and never folded into `refused shorter`. A script
+ * loss is not a length problem — CX1 measured one that was LONGER — and if the
+ * two share a counter, the day poppler starts deleting Devanagari at scale
+ * looks identical to the day it returns short pages.
+ */
+console.log(`refused SCRIPT LOSS ${refusedScriptLoss}  (Devanagari/character retention gate)`);
 console.log(`fetch failed        ${fetchFailed}`);
-const attempted = repaired + refusedStillCorrupt + refusedShorter;
+const attempted = repaired + refusedStillCorrupt + refusedShorter + refusedScriptLoss;
 console.log(
   `repair rate         ${attempted > 0 ? ((100 * repaired) / attempted).toFixed(1) + '%' : 'n/a'} of documents re-read`,
 );

@@ -90,6 +90,35 @@ import type { Sql } from 'postgres';
 export const MAX_ATTEMPTS = 3;
 
 /**
+ * A DOCUMENT MAY NOT BE CONDEMNED FASTER THAN THIS, however many times it fails.
+ *
+ * `MAX_ATTEMPTS` alone has no notion of time, and on 18 Aug 2026 that cost
+ * 14,331 documents. The ledger's own histogram:
+ *
+ *   last_attempted_at (hour)      permanent pdf_failed rows
+ *   2026-08-18 18:00                          14,331   99.5%
+ *   everything else combined                      71
+ *
+ * 97% of them were Bombay. The source had a bad hour; three attempts fit inside
+ * that hour; every document in flight was marked permanent, and
+ * `permanentlyFailedUrls()` then excluded them from every future scope at every
+ * width, forever. A HEAD probe of ALL 14,402 the next day returned **200 for
+ * 14,402 of them — 100%**. Nothing about those documents was ever wrong. Only
+ * the clock was.
+ *
+ * Six hours, and the shape of the fix matters more than the number: attempts
+ * still have to be exhausted, and now they must be exhausted ACROSS a span. The
+ * comment above this module's retry budget already said three attempts exist
+ * because "one request cannot tell a transient hiccup from a genuine absence" —
+ * that argument is about time passing, and the code was counting instead.
+ *
+ * `PERMANENT_ON_SIGHT` outcomes are untouched: a 404 and a missing title are
+ * properties of the object, not of the network, and waiting six hours to agree
+ * with them would only cost fetches.
+ */
+export const MIN_CONDEMN_SPAN = '6 hours';
+
+/**
  * Outcomes that are a property of the METADATA ROW, not of the network. These go
  * permanent immediately — a second attempt reads the identical bytes.
  */
@@ -180,7 +209,10 @@ export async function recordFailures(sql: Sql, rows: readonly LedgerOutcome[]): 
         outcome = EXCLUDED.outcome,
         attempts = hc_ingest_ledger.attempts + 1,
         permanent = EXCLUDED.permanent
-                    OR hc_ingest_ledger.attempts + 1 >= ${MAX_ATTEMPTS},
+                    OR (
+                      hc_ingest_ledger.attempts + 1 >= ${MAX_ATTEMPTS}
+                      AND now() - hc_ingest_ledger.first_attempted_at >= ${MIN_CONDEMN_SPAN}::interval
+                    ),
         last_attempted_at = now()
     `;
     return rows.length;

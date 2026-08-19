@@ -160,3 +160,46 @@ describe('unclassified is a result, never a default', () => {
     }
   });
 });
+
+describe('18 Aug 2026 additions, and the refusals beside them', () => {
+  const long = 'x'.repeat(5000);
+  const cls = (disposal: string) =>
+    classifyHcDocument({ disposalNature: disposal, caseNumber: null, fullText: long }).documentClass;
+
+  it('reads NOT-PRESSED as a withdrawal — a hyphen was the only thing failing', () => {
+    assert.equal(cls('NOT-PRESSED'), 'procedural_disposal');
+    assert.equal(cls('NOT PRESSED'), 'procedural_disposal');
+  });
+
+  it('reads APPEAL DISMISSED as merits, with or without the IS', () => {
+    assert.equal(cls('APPEAL DISMISSED'), 'decided');
+    assert.equal(cls('APPEAL IS DISMISSED'), 'decided');
+  });
+
+  it('reads a rule or injunction made ABSOLUTE as merits', () => {
+    for (const d of ['ABSOLUTE', 'INJUNCTION MADE ABSOLUTE', 'PETITION MADE ABSOLUTE']) {
+      assert.equal(cls(d), 'decided', d);
+    }
+  });
+
+  /**
+   * The refusals matter more than the additions. Each of these decides an
+   * application INSIDE a case rather than the case, so `procedural_disposal` —
+   * "ended without a decision on its merits" — would be a wrong substantive
+   * classification rather than a conservative one.
+   */
+  it('still refuses interlocutory outcomes rather than filing them as disposals', () => {
+    for (const d of ['DELAY CONDONED', 'CONDONED', 'TIME EXTENDED']) {
+      assert.equal(cls(d), null, d);
+    }
+  });
+
+  it('still refuses the disposal that records both outcomes at once', () => {
+    assert.equal(cls('DELAY CONDONATED/REJECTED.'), null);
+  });
+
+  it('does not let ABSOLUTE reclassify a withdrawal — procedural still runs first', () => {
+    assert.equal(cls('WITHDRAWN'), 'procedural_disposal');
+    assert.equal(cls('DISMISSED AS WITHDRAWN'), 'procedural_disposal');
+  });
+});

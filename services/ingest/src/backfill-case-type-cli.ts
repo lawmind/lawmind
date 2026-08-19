@@ -17,6 +17,7 @@
 import postgres from 'postgres';
 
 import { caseTypeFrom } from './harvest/hc-load.ts';
+import { sslFor } from './db-ssl';
 
 const APPLY = process.argv.includes('--apply');
 const url = process.env['DATABASE_URL'];
@@ -24,7 +25,7 @@ if (!url) {
   console.error('DATABASE_URL is not set.');
   process.exit(2);
 }
-const sql = postgres(url, { max: 2, ssl: 'require' });
+const sql = postgres(url, { max: 2, ssl: sslFor(url) });
 
 console.log(`CASE_TYPE BACKFILL${APPLY ? '' : ' — DRY RUN'}`);
 console.log('='.repeat(74));

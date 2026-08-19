@@ -120,6 +120,36 @@ describe('extractCitations — the bracket and year-first forms', () => {
     assert.equal(extractCitations('both 1976 (1) SCR 906 and (1976) 1 SCR 906 appear').length, 1);
   });
 
+  it('folds the MISSING space beside the reporter, either side or both', () => {
+    // NEW3, bus 0499: PDF extraction drops the space around the reporter token
+    // constantly, and the normaliser only ever COLLAPSED whitespace, never
+    // inserted it. Measured over unresolved edges: SCC 1,749/1,588,
+    // SCR 450/481, SCALE 19/26 (digit-then-token / token-then-digit).
+    const canonical = normaliseCitation('(2017) 11 SCR 1036');
+    for (const variant of ['(2017) 11SCR1036', '(2017) 11 SCR1036', '(2017) 11SCR 1036']) {
+      assert.equal(normaliseCitation(variant), canonical, `did not fold: ${variant}`);
+    }
+    assert.equal(normaliseCitation('(1191) 1SCC752'), normaliseCitation('(1191) 1 SCC 752'));
+    assert.equal(normaliseCitation('(1994) 1SCALE631'), normaliseCitation('(1994) 1 SCALE 631'));
+  });
+
+  it('...and the inserted space NEVER merges two different authorities', () => {
+    // The whole risk of inserting whitespace is that it makes strings equal that
+    // were not. Digits and their order are still untouched.
+    assert.notEqual(normaliseCitation('(2017) 11SCR1036'), normaliseCitation('(2017) 11 SCR 1063'));
+    assert.notEqual(normaliseCitation('(2017) 11SCR1036'), normaliseCitation('(2017) 12 SCR 1036'));
+    assert.notEqual(normaliseCitation('(2017) 11SCR1036'), normaliseCitation('(2018) 11 SCR 1036'));
+    assert.notEqual(normaliseCitation('(2017) 11SCC1036'), normaliseCitation('(2017) 11 SCR 1036'));
+  });
+
+  it('leaves a neutral citation and SCC OnLine alone', () => {
+    // A generic "space before any letter run" rule would rewrite both. This is
+    // why the token list is a closed set measured from the corpus, not a class.
+    assert.equal(normaliseCitation('2023:DHC:2720'), '2023:DHC:2720');
+    assert.equal(normaliseCitation('2019 INSC 441'), '2019 INSC 441');
+    assert.equal(normaliseCitation('2016 SCC OnLine Del 1234'), normaliseCitation('2016 SCC ONLINE DEL 1234'));
+  });
+
   it('still NEVER conflates different numbers across the forms', () => {
     // The widening changes which strings match. It must not change which
     // citations are the same citation.

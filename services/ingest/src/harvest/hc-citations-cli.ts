@@ -47,6 +47,7 @@ import postgres from 'postgres';
 
 import { extractCitations, normaliseCitation } from '../citations.ts';
 import { stripUnstorable } from '../text.ts';
+import { sslFor } from '../db-ssl';
 import {
   listMetadataKeys,
   mapConcurrent,
@@ -75,7 +76,7 @@ if (!dbUrl) {
   process.exit(2);
 }
 const sql = postgres(dbUrl, {
-  ssl: dbUrl.includes('localhost') ? false : 'require',
+  ssl: sslFor(dbUrl),
   max: 4,
   idle_timeout: 120,
 });
@@ -141,7 +142,7 @@ const startedAt = Date.now();
 
 for (const file of files) {
   if (stop) break;
-  let total = 0;
+  let total: number;
   try {
     total = await rowCount(file.key);
   } catch {
@@ -169,7 +170,7 @@ for (const file of files) {
     if (docs.length === 0) continue;
 
     const results = await mapConcurrent(docs, CONCURRENCY, async (doc): Promise<Result> => {
-      let text = '';
+      let text: string;
       let missing = false;
       // Same fetch-abort pairing as `hc-load-cli.ts`: a stalled socket is
       // closed at the timeout deadline, not merely abandoned, because this

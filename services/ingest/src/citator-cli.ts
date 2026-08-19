@@ -11,6 +11,7 @@
 import postgres from 'postgres';
 
 import { type Treatment, readTreatment } from './treatment.ts';
+import { sslFor } from './db-ssl';
 
 const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!url) {
@@ -18,7 +19,7 @@ if (!url) {
   process.exit(2);
 }
 const apply = process.argv.includes('--apply');
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 4 });
+const sql = postgres(url, { ssl: sslFor(url), max: 4 });
 
 /** Strongest wins when several judgments treat the same authority differently. */
 const RANK: Record<string, number> = { set_aside: 3, partly_set_aside: 2, doubted: 1 };

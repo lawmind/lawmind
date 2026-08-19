@@ -34,6 +34,7 @@ import {
   type PromotionCandidate,
 } from './internal-concordance.ts';
 import { HC_BUCKET } from './harvest/hc-metadata.ts';
+import { sslFor } from './db-ssl';
 
 const APPLY = process.argv.includes('--apply');
 const LIMIT = Number(process.env['INTERNAL_CONCORDANCE_LIMIT'] ?? '2000');
@@ -46,7 +47,7 @@ if (!dbUrl) {
   process.exit(2);
 }
 
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 3 });
 
 console.log('INTERNAL CONCORDANCE — deterministic name+year matching, no model call');
 console.log('='.repeat(74));

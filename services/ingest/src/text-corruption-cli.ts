@@ -12,13 +12,14 @@
 import postgres from 'postgres';
 
 import { classifyCorruption } from './text-corruption.ts';
+import { sslFor } from './db-ssl';
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!dbUrl) {
   console.error('DATABASE_URL is not set.');
   process.exit(2);
 }
-const sql = postgres(dbUrl, { ssl: dbUrl.includes('localhost') ? false : 'require', max: 2 });
+const sql = postgres(dbUrl, { ssl: sslFor(dbUrl), max: 2 });
 
 const BATCH = 2_000;
 

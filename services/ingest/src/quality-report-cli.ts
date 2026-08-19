@@ -20,6 +20,7 @@ import postgres from 'postgres';
 
 import { classifyQuality } from './quality-buckets.ts';
 import type { QualityBucket, QualityInput } from './quality-buckets.ts';
+import { sslFor } from './db-ssl';
 
 type Row = {
   id: string;
@@ -36,7 +37,7 @@ const PAGE_SIZE = 2000;
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
-  const sql = postgres(url, { max: 5, ssl: 'require' });
+  const sql = postgres(url, { max: 5, ssl: sslFor(url) });
 
   try {
     const counts: Record<QualityBucket, number> = { A: 0, B: 0, C: 0, D: 0 };

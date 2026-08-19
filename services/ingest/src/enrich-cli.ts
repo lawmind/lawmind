@@ -28,6 +28,10 @@
  * 429 rate. One caller, with `inferx.ts`'s existing backoff, finishes sooner
  * than three fighting each other.
  */
+import { existsSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import postgres from 'postgres';
 
 import {
@@ -35,11 +39,21 @@ import {
   ENRICH_MODEL,
   type EnrichTask,
   PROMPT_VERSION,
+  buildArgumentsPrompt,
+  buildAuthoritiesPrompt,
+  buildCaseStructurePrompt,
   buildCitationPrompt,
+  buildHoldingPrompt,
   buildMetadataPrompt,
+  buildTopicsPrompt,
   buildTreatmentPrompt,
+  claimsFromArguments,
+  claimsFromAuthorities,
+  claimsFromCaseStructure,
   claimsFromCitations,
+  claimsFromHolding,
   claimsFromMetadata,
+  claimsFromTopics,
   claimsFromTreatment,
   enrichmentInputHash,
   headExcerpt,
@@ -52,6 +66,8 @@ import {
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
 import { callOpenRouter, openRouterKeyFromEnv, openRouterModelFromEnv } from './openrouter.ts';
 import { installCrashGuard } from './crash-guard.ts';
+import { isTransientDbOrNetworkError } from './db-transient.ts';
+import { sslFor } from './db-ssl';
 
 
 // Silent deaths cost three runs today; log the cause instead of vanishing.
@@ -63,11 +79,56 @@ const arg = (name: string, fallback: string): string => {
 
 const TASK = arg('task', 'metadata') as EnrichTask;
 const LIMIT = Number(arg('limit', '20'));
-const VALID: EnrichTask[] = ['citation_extraction', 'metadata', 'treatment'];
+/** The five 0051 tasks that together build the structured legal object. */
+const LEGAL_OBJECT_TASKS: EnrichTask[] = ['case_structure', 'holding', 'arguments', 'authorities', 'topics'];
+const IS_LEGAL_OBJECT = (t: EnrichTask): boolean => LEGAL_OBJECT_TASKS.includes(t);
+const VALID: EnrichTask[] = ['citation_extraction', 'metadata', 'treatment', ...LEGAL_OBJECT_TASKS];
 if (!VALID.includes(TASK)) {
   console.error(`--task must be one of ${VALID.join(', ')}`);
   process.exit(2);
 }
+
+/**
+ * THE FREEZE SWITCH, CHECKED IN THE WRITER RATHER THAN IN THE LAUNCHER.
+ *
+ * `services/ingest/.checkpoints/STOP` quiesces every writer during a database
+ * cutover. It used to be enforced only by `supervise.mjs` and
+ * `enrich-worker.cmd`, and NEW2's `scripts/check-stop-coverage.mjs` found that
+ * `legal-object-stage1.cmd` and `legal-object-stage2.cmd` call THIS FILE
+ * directly — no supervisor, no wrapper, no check. During a freeze that is a live
+ * path to the database being migrated, and the freeze had already been broken
+ * once by exactly this class of gap (301,422 rows written after a baseline).
+ *
+ * Putting it here rather than in the two launchers is the point: a launcher-level
+ * guard protects the launchers someone has already written, and this file is
+ * reachable by `npx tsx` from anywhere. `hc-load-cli.ts` and `hc-classify-cli.ts`
+ * both hold it at the worker for the same reason.
+ *
+ * Checked per document, at a boundary where nothing is in flight: the enrichment
+ * for the current document is either fully written or not started, so a pause
+ * costs at most one model call and never a half-written row. An `existsSync` on
+ * a local path is not measurable against a model call that takes seconds.
+ *
+ * Exits 0, not 1 — a requested pause is a success, and a non-zero exit here would
+ * read as a crash to every supervisor and burn its restart budget.
+ */
+// Resolved from THIS MODULE's location, never from `process.cwd()` — the two
+// legal-object launchers `cd` before invoking, and a guard that silently looks
+// in the wrong directory is worse than no guard: it reports safe and writes anyway.
+// Same construction as `hc-load-cli.ts`'s CHECKPOINT_DIR, one level shallower.
+const STOP_FILE = join(dirname(fileURLToPath(import.meta.url)), '..', '.checkpoints', 'STOP');
+function stopIfRequested(): void {
+  if (!existsSync(STOP_FILE)) return;
+  console.log(
+    `PAUSED by ${STOP_FILE} at a document boundary — nothing in flight, no partial enrichment written. ` +
+      `Delete the file and relaunch to resume.`,
+  );
+  process.exit(0);
+}
+
+// BEFORE the database is even reached, so a launcher started during a freeze
+// opens no connection and writes nothing at all.
+stopIfRequested();
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 const apiKeys = inferxKeysFromEnv();
@@ -90,7 +151,7 @@ if (apiKeys.length === 0) {
  * was processed.
  */
 const sql = postgres(dbUrl, {
-  ssl: dbUrl.includes('localhost') ? false : 'require',
+  ssl: sslFor(dbUrl),
   max: 2,
   connect_timeout: 120,
   idle_timeout: 0,
@@ -138,7 +199,20 @@ async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
       return await run();
     } catch (err) {
       const message = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
-      if (attempt >= MAX_DB_ATTEMPTS || !TRANSIENT.test(message)) throw err;
+      /**
+       * `isTransientDbOrNetworkError` FIRST, because this regex tests a message
+       * and a restarting Postgres does not use any of its words. On 17 Aug the
+       * postmaster restarted and every worker in the harvest fleet died on
+       * `PostgresError: the database system is not yet accepting connections`
+       * — an errno/message classifier exactly like this one let it through as
+       * a defect, and `supervise.mjs` then abandoned every scope. See
+       * `../db-transient.ts`.
+       */
+      if (
+        attempt >= MAX_DB_ATTEMPTS ||
+        (!isTransientDbOrNetworkError(err) && !TRANSIENT.test(message))
+      )
+        throw err;
       const waitMs = Math.min(30_000, 1000 * 2 ** attempt);
       console.log(
         `    db ${what} failed (${message.trim()}) — retry ${attempt + 1}/${MAX_DB_ATTEMPTS} in ${waitMs / 1000}s`,
@@ -152,6 +226,43 @@ async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
 const HEAD_CHARS = 4_000;
 const TREATMENT_BEFORE = 1_200;
 const TREATMENT_AFTER = 600;
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE LEGAL-OBJECT WINDOW — WHY 20k + 8k AND WHAT IT KNOWINGLY GIVES UP
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `HEAD_CHARS = 4_000` is right for metadata, which lives in the cause title,
+ * and catastrophically wrong for `holding`: the operative direction is the LAST
+ * thing in a judgment. A head-only excerpt would ask the model where the court
+ * decided while showing it only the part where the court recites.
+ *
+ * Measured over 20,000 substantive documents (`hc_document_class` in
+ * `decided`/`decided_brief`): **p50 4,977 chars · p90 22,146 · p99 125,929**.
+ * So a 28,000-character budget sends **more than 90% of substantive judgments
+ * WHOLE**, with no elision at all, and the head+tail split only ever applies to
+ * the long tail.
+ *
+ * **What is given up, stated plainly: on a document past the budget, the middle
+ * is not shown, so reasoning that lives only there cannot be found.** That is a
+ * recall loss and it is invisible in the output — a claim never made leaves no
+ * trace, and no verification catches it. It is accepted because the alternative
+ * is either paying for 125,929 characters on the 1% or letting the model write
+ * a holding it was never shown, and the second is not a trade this pipeline
+ * makes.
+ *
+ * The elision marker is safe by construction: `verifyClaims` runs against the
+ * FULL source text, not the excerpt, so a quote from either side still
+ * verifies, and the model cannot quote what it was never sent.
+ */
+const OBJECT_BUDGET = 28_000;
+const OBJECT_HEAD = 20_000;
+const OBJECT_TAIL = 8_000;
+
+export function legalObjectExcerpt(fullText: string): string {
+  if (fullText.length <= OBJECT_BUDGET) return fullText;
+  return `${fullText.slice(0, OBJECT_HEAD)}\n\n[… omitted from this excerpt …]\n\n${fullText.slice(-OBJECT_TAIL)}`;
+}
 
 type Unit = {
   judgmentId: string;
@@ -203,7 +314,9 @@ async function loadUnit(ref: UnitRef): Promise<Unit | null> {
   const excerpt =
     TASK === 'treatment'
       ? windowAround(r.sourceText, ref.charOffset ?? 0, TREATMENT_BEFORE, TREATMENT_AFTER)
-      : headExcerpt(r.sourceText, TASK === 'citation_extraction' ? HEAD_CHARS * 2 : HEAD_CHARS);
+      : IS_LEGAL_OBJECT(TASK)
+        ? legalObjectExcerpt(r.sourceText)
+        : headExcerpt(r.sourceText, TASK === 'citation_extraction' ? HEAD_CHARS * 2 : HEAD_CHARS);
   return {
     judgmentId: ref.judgmentId,
     caseTitle: ref.caseTitle,
@@ -220,6 +333,165 @@ async function loadUnit(ref: UnitRef): Promise<Unit | null> {
  * sample — the failure `concordance-gold-cli` was fixed for in `ac64cad`.
  */
 async function selectRefs(): Promise<UnitRef[]> {
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE ELIGIBLE POPULATION FOR THE STRUCTURED LEGAL OBJECT
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `RING_PROGRAM.md` §2b is the governing rule and it is stated before the
+   * query rather than discovered after it: **this pass will never cover the
+   * corpus and is not trying to.** Enrichment runs at a few documents a minute
+   * against an ingest of ~34,000 an hour. A pass with no stated scope silently
+   * acquires an infinite one.
+   *
+   * **WHAT THIS EXPLICITLY DOES NOT COVER:** bail orders, procedural disposals
+   * and reference stubs (57,876 + 20,641 of them, measured) — they contain no
+   * facts, no issues and no reasoning to find, so a call against one buys a
+   * correctly empty answer at full price. Also excluded: anything under 2,000
+   * characters, and anything a `status = 'ok'` row already exists for.
+   *
+   * THE ORDER IS THE FOUNDER'S PRIORITY LIST, IN THEIR WORDS:
+   *   1. repaired / extraction-improved documents — their text changed, so
+   *      anything derived from them was derived from a different document.
+   *   2. substantive judgments, by the classifier's own verdict.
+   *   3. newly ingested high-value judgments — `created_at DESC` drains the
+   *      queue toward the ingest head rather than away from it.
+   *   4. citation- and treatment-rich authorities — a judgment other judgments
+   *      lean on is worth more structure than one nothing cites.
+   *   5. statute-heavy judgments.
+   *
+   * NULL `hc_document_class` sorts WITH the substantive group, deliberately:
+   * unclassified is not evidence of being trivial, and treating it as such
+   * would quietly exclude every newly ingested document from enrichment
+   * forever.
+   *
+   * ───────────────────────────────────────────────────────────────────────────
+   * TWO STAGES, BECAUSE PRIORITIES 4 AND 5 CANNOT BE PAID FOR ON 4.8M ROWS
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * "Citation-rich" and "statute-heavy" are counts over `judgment_citations`
+   * and `judgment_statute_refs`. Put those in an `ORDER BY` over the whole
+   * eligible population and Postgres computes them for **every candidate row
+   * before it can sort** — 4.8M correlated subqueries to return 100 ids. That
+   * is not a priority list, it is a way to never start.
+   *
+   * So the cheap tiers (repaired · substantive · newest) narrow to a bounded
+   * POOL, and the expensive tiers rank inside it. The pool is `LIMIT * 20`, so
+   * the counts are paid for on thousands of rows rather than millions, and the
+   * founder's ordering still decides which documents are actually chosen.
+   *
+   * **Priority 1 currently selects nothing, and that is recorded rather than
+   * hidden.** Measured 14 Aug 2026: `text_extraction_method` is
+   * `pdftotext_fallback` on **0** rows, `unpdf` on 4,504,033, NULL on 333,788.
+   * The repair pass has not written a row yet. The tier stays, with the value
+   * checked against migration `0048` rather than guessed — an earlier draft of
+   * this query invented `'repaired'`, which would have been a priority that
+   * silently ranked nothing for a reason no one could see.
+   *
+   * ───────────────────────────────────────────────────────────────────────────
+   * WHY THIS DOES **NOT** DRAIN TOWARD THE INGEST HEAD, UNLIKE EVERY OTHER PASS
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Every other queue in this file sorts `created_at DESC` so it follows the
+   * ingest. **Measured 14 Aug 2026, and it reverses the decision here: of the
+   * newest 200,000 judgments, 199,444 — 99.7% — have `hc_document_class` NULL.**
+   * The rule-based classifier is far behind the harvest.
+   *
+   * So at the head there is nothing to prioritise WITH. "Substantive first"
+   * ranks 184 documents out of 200,000 and the exclusion filter removes 304;
+   * a newest-first legal-object pass would therefore spend almost its entire
+   * budget on unclassified documents that are, by the corpus-wide ratio,
+   * mostly bail orders and procedural disposals. That is precisely the spend
+   * `RING_PROGRAM.md` §2b names as drift, arrived at by following a sensible
+   * rule off a cliff.
+   *
+   * **The eligible population is therefore the CLASSIFIED SUBSTANTIVE one:
+   * 194,610 `decided` + 39,046 `decided_brief` = 233,656 documents**, served by
+   * the existing partial index `judgments_hc_document_class_idx`. It is bounded,
+   * it is where structure actually exists, and it grows as `hc-classify-cli`
+   * catches up — which is the correct dependency, since a document nobody has
+   * classified is a document nobody has established is worth reading.
+   *
+   * The length filter moved to the SECOND stage on purpose. `length(full_text)`
+   * detoasts the column for every row it touches; over the eligible population
+   * that is hundreds of thousands of decompressions to return 100 ids, and it
+   * is what made the first version of this query return nothing in ten minutes.
+   * Applied to the bounded pool instead, it costs a few thousand.
+   */
+  if (IS_LEGAL_OBJECT(TASK)) {
+    /**
+     * ── THE POOL IS TIER-A, NOT `hc_document_class IN (…)`. CHANGED 19 AUG 2026.
+     *
+     * This selector used to require a KNOWN class of `decided` or
+     * `decided_brief`. Measured against the full corpus the same day:
+     *
+     *     hc_document_class NULL            16,811,480   93.7%
+     *     'decided' + 'decided_brief'          478,421    2.7%
+     *
+     * So the factory could reach 2.7% of the corpus, and no amount of running it
+     * would change that — the remaining 97.3% is not a backlog, it is outside the
+     * predicate. NEW2 measured that 51.2% of everything ever ASSESSED could not be
+     * classified at all, so waiting for coverage is waiting for something that
+     * will not converge.
+     *
+     * **UNKNOWN IS NOT BAD.** A document nobody has looked at is not a document
+     * without a holding. The eligibility contract exists precisely so that
+     * absence of a verdict never disqualifies, and `hc_document_class IS NOT NULL`
+     * is the collapse it was written to prevent.
+     *
+     * So class becomes a PRIORITISER and Tier A becomes the filter. Known
+     * substantive judgments still go first — they are the best bet per call — but
+     * an unclassified 6,000-character judgment is now reachable instead of
+     * invisible.
+     *
+     * ── ONE REPRESENTATIVE PER BYTE-IDENTICAL TEXT
+     *
+     * The join to `embedding_content_representative` is not an optimisation.
+     * 301,531 texts in Tier A have more than one judgment row and the largest is
+     * a Madras common order shared by 7,118 writ petitions. Without this the
+     * factory would spend 7,118 DeepSeek calls extracting the same holding from
+     * the same bytes, and store 7,118 copies of it.
+     *
+     * No case identity is lost: every petition keeps its row, and an object
+     * extracted from the representative is an object about that one decision.
+     *
+     * ── THE LENGTH FILTER STAYS IN THE SECOND STAGE
+     *
+     * `length(full_text)` detoasts, and over a 9.7M-row pool that is millions of
+     * decompressions to return 100 ids — the thing that made an earlier version
+     * of this query return nothing in ten minutes. The bounded pool pays it for a
+     * few thousand rows instead. Same reason the eligibility view's own band is
+     * not used as the outer filter here.
+     */
+    return sql<UnitRef[]>`
+      WITH pool AS (
+        SELECT r.representative_judgment_id AS id
+        FROM embedding_content_representative r
+        WHERE NOT EXISTS (
+          SELECT 1 FROM document_enrichments e
+          WHERE e.judgment_id = r.representative_judgment_id AND e.task = ${TASK}
+            AND e.prompt_version = ${PROMPT_VERSION} AND e.status = 'ok'
+        )
+        ORDER BY r.representative_judgment_id
+        LIMIT ${LIMIT * 20}
+      )
+      SELECT p.id AS "judgmentId", j.case_title AS "caseTitle", j.court
+      FROM pool p
+      JOIN judgments j ON j.id = p.id
+      WHERE j.full_text IS NOT NULL AND length(j.full_text) > 2000
+      ORDER BY
+        -- Repaired documents first: their text roughly doubled, so anything
+        -- derived from them before was derived from half a judgment.
+        (j.text_extraction_method = 'pdftotext_fallback') DESC,
+        -- Then the classifier's verdict WHERE IT HAS ONE — a prioritiser now,
+        -- never a filter. NULL sorts last here rather than being excluded.
+        (j.hc_document_class IN ('decided', 'decided_brief')) DESC NULLS LAST,
+        (SELECT count(*) FROM judgment_citations c WHERE c.cited_judgment_id = p.id) DESC,
+        (SELECT count(*) FROM judgment_statute_refs s WHERE s.judgment_id = p.id) DESC,
+        md5(p.id::text || 'enrich-v1')
+      LIMIT ${LIMIT}`;
+  }
+
   if (TASK === 'metadata') {
     /**
      * High Court judgments hold ZERO `judgment_judges` rows — 40,996 documents
@@ -307,12 +579,22 @@ async function selectRefs(): Promise<UnitRef[]> {
 function promptFor(u: Unit): string {
   if (TASK === 'metadata') return buildMetadataPrompt(u.excerpt);
   if (TASK === 'citation_extraction') return buildCitationPrompt(u.excerpt);
+  if (TASK === 'case_structure') return buildCaseStructurePrompt(u.excerpt);
+  if (TASK === 'holding') return buildHoldingPrompt(u.excerpt);
+  if (TASK === 'arguments') return buildArgumentsPrompt(u.excerpt);
+  if (TASK === 'authorities') return buildAuthoritiesPrompt(u.excerpt);
+  if (TASK === 'topics') return buildTopicsPrompt(u.excerpt);
   return buildTreatmentPrompt(u.excerpt, u.citedCase ?? u.caseTitle);
 }
 
 function claimsFor(parsed: unknown): Claim[] {
   if (TASK === 'metadata') return claimsFromMetadata(parsed);
   if (TASK === 'citation_extraction') return claimsFromCitations(parsed);
+  if (TASK === 'case_structure') return claimsFromCaseStructure(parsed);
+  if (TASK === 'holding') return claimsFromHolding(parsed);
+  if (TASK === 'arguments') return claimsFromArguments(parsed);
+  if (TASK === 'authorities') return claimsFromAuthorities(parsed);
+  if (TASK === 'topics') return claimsFromTopics(parsed);
   return claimsFromTreatment(parsed);
 }
 
@@ -411,6 +693,7 @@ const startedRun = Date.now();
 
 let skippedMissing = 0;
 for (const [i, ref] of refs.entries()) {
+  stopIfRequested();
   const u = await loadUnit(ref);
   if (u === null) {
     skippedMissing++;
@@ -650,6 +933,22 @@ console.log('');
 console.log('RESULTS');
 console.log('='.repeat(74));
 console.log(`documents      ${refs.length}  (cache hits ${cacheHits}, new calls ${calls})`);
+/**
+ * `skippedMissing` was counted and never printed. Lint found it as an unused
+ * variable, which is the shallow reading: a document whose unit fails to load
+ * is absent from `cacheHits`, from `calls`, and from every tally below, while
+ * `refs.length` still counts it as an input. The totals therefore did not add
+ * up and nothing said so.
+ *
+ * Deleting the variable would have made the arithmetic consistent by making the
+ * loss permanent. This lane's rule for citations is that nothing is ever
+ * silently dropped; a skipped document is the same class of event, so it is
+ * printed — and printed unconditionally, because "0 skipped" is a fact worth
+ * seeing and a line that only appears on bad days is a line nobody trusts.
+ */
+console.log(
+  `skipped        ${skippedMissing}  (unit did not load — counted as input, absent from every tally above)`,
+);
 console.log(`calls failed   ${failed}   unparseable ${unparseable}`);
 console.log(
   `provider       inferx ${calls - openRouterCalls} · openrouter ${openRouterCalls}` +
