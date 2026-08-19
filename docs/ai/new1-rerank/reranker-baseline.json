@@ -1,0 +1,118 @@
+{
+  "kind": "new1_reranker_baseline",
+  "generatedAt": "2026-08-19T22:41:53.223Z",
+  "efSearch": 40,
+  "queries": 283,
+  "split": {
+    "by": "gold_authority_sha1",
+    "dev": 139,
+    "test": 144
+  },
+  "features": [
+    "bestSim",
+    "chunkMass",
+    "meanTop3",
+    "reciprocalRank",
+    "inbound",
+    "isSC",
+    "recency",
+    "lenNorm"
+  ],
+  "poolLatencyMs": {
+    "mean": 1326.6713780918728,
+    "p50": 1268,
+    "p95": 2091
+  },
+  "results": [
+    {
+      "depth": 50,
+      "weights": {
+        "bestSim": 1,
+        "chunkMass": 0,
+        "meanTop3": 0,
+        "reciprocalRank": 0,
+        "inbound": 0.1,
+        "isSC": 0,
+        "recency": -0.05,
+        "lenNorm": 0
+      },
+      "devSuccessAt5": 0.38848920863309355,
+      "dense": {
+        "n": 144,
+        "successAt5": 0.19444444444444445,
+        "recallAt20": 0.4097222222222222,
+        "mrr": 0.10917350004692819,
+        "ndcgAt10": 0.1559126141253634,
+        "goldPresent": 0.4513888888888889
+      },
+      "features": {
+        "n": 144,
+        "successAt5": 0.3402777777777778,
+        "recallAt20": 0.4513888888888889,
+        "mrr": 0.18462026014109345,
+        "ndcgAt10": 0.2461181247374125,
+        "goldPresent": 0.4513888888888889
+      }
+    },
+    {
+      "depth": 100,
+      "weights": {
+        "bestSim": 1,
+        "chunkMass": 0,
+        "meanTop3": -0.2,
+        "reciprocalRank": 0,
+        "inbound": 0.1,
+        "isSC": 0,
+        "recency": -0.2,
+        "lenNorm": -0.2
+      },
+      "devSuccessAt5": 0.4244604316546763,
+      "dense": {
+        "n": 144,
+        "successAt5": 0.19444444444444445,
+        "recallAt20": 0.4166666666666667,
+        "mrr": 0.1121014912036483,
+        "ndcgAt10": 0.1559126141253634,
+        "goldPresent": 0.5625
+      },
+      "features": {
+        "n": 144,
+        "successAt5": 0.4097222222222222,
+        "recallAt20": 0.5486111111111112,
+        "mrr": 0.24941880553859727,
+        "ndcgAt10": 0.3063540870547387,
+        "goldPresent": 0.5625
+      }
+    },
+    {
+      "depth": 200,
+      "weights": {
+        "bestSim": 1,
+        "chunkMass": 0,
+        "meanTop3": 0,
+        "reciprocalRank": 0,
+        "inbound": 0.1,
+        "isSC": 0,
+        "recency": -0.2,
+        "lenNorm": -0.05
+      },
+      "devSuccessAt5": 0.38848920863309355,
+      "dense": {
+        "n": 144,
+        "successAt5": 0.19444444444444445,
+        "recallAt20": 0.4166666666666667,
+        "mrr": 0.1133291662327702,
+        "ndcgAt10": 0.1559126141253634,
+        "goldPresent": 0.6527777777777778
+      },
+      "features": {
+        "n": 144,
+        "successAt5": 0.4097222222222222,
+        "recallAt20": 0.5902777777777778,
+        "mrr": 0.2532153849117933,
+        "ndcgAt10": 0.3052106665124157,
+        "goldPresent": 0.6527777777777778
+      }
+    }
+  ]
+}
