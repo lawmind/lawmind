@@ -19,6 +19,8 @@
     "hc:extract": "tsx src/harvest/hc-extract-cli.ts",
     "coverage": "tsx src/coverage-cli.ts",
     "resolve": "tsx src/resolve-cli.ts",
+    "treatment:link": "tsx src/treatment-link-cli.ts",
+    "enrich:telemetry": "tsx src/enrich-telemetry-cli.ts",
     "citation-keys": "tsx src/citation-keys-cli.ts",
     "hc:yield": "tsx src/harvest/hc-yield-cli.ts",
     "silver:ratio": "tsx src/harvest/silver-ratio-cli.ts",
