@@ -4,7 +4,7 @@
 It exists because a plan held only in a todo tool does not survive compaction, a
 new session, or a fresh agent. **This file does.**
 
-Last updated **9 August 2026**, annotated through **11 August 2026**. **Read
+Last updated **9 August 2026**, annotated through **19 August 2026**. **Read
 §A first — it supersedes §2's ordering.** Owner: **LCC (server lane)**. RCC's
 plan is `docs/RCC_MASTER_PLAN.md` and is not duplicated here.
 
@@ -15,6 +15,382 @@ complete for both, client-side implementation for 002 briefed to RCC. Current,
 live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
+
+### 19 Aug 2026 — NEW1: THE GPU IS EMBEDDING, AND THE QUEUE IT SHOULD DRAIN IS 10,669 DOCUMENTS LONG
+
+**Added by NEW1 (retrieval lane).** Detail `docs/ai/NEW1_TIER_A_STAGING.md`,
+artifacts `docs/ai/new1-tier-a/`.
+
+**Real Tier-A vectors exist.** Stage 1: 9,987 documents, one vector each,
+`HEAD:4800` (the measured recipe, not a new one), **8,861 tokens/s sustained**,
+18.8 min, **0 non-unit-norm vectors and 0 dimension errors**. Written to
+`new1_doc_vector_stage` as `vector(1024)` — NOT `halfvec`, because the C3/C4
+fidelity verdict was still running and fp32 casts down later while halfvec cannot
+cast back up. Nothing in `packages/db` was touched.
+
+**The finding is the ORDER, not the throughput.** Of the first 4,600 documents
+staged in `representative_judgment_id` order, **8 carry any inbound citation**.
+An id-ordered walk spends a hundred-GPU-hour budget on documents nothing cites and
+produces a population no citation-grounded benchmark can score.
+
+**And re-ordering hit a ceiling nobody had measured.** One pass over
+`judgment_citations` (18.6M rows, 25.3 s):
+
+| | |
+| --- | --- |
+| judgments cited by anything we hold | **35,694** |
+| judgments held | 17,945,147 |
+| share | **0.199%** |
+| of those, inbound = 1 | 23,914 (67%) |
+| maximum inbound | 219 |
+| **value-ordered queue after eligibility + excluding what is already reachable** | **10,669** |
+
+I asked the corpus for 50,000 documents worth embedding first and it could supply
+10,669. **The binding constraint on Tier-A prioritisation is citation-graph
+coverage, not GPU time.** Whether the other 99.8% is unresolved citations or
+genuinely uncited routine orders is a citation-pipeline question (LCC) or a
+source-coverage one (NEW3) — the two readings call for opposite responses and a
+retrieval instrument cannot separate them. Bus 0775–0778.
+
+**Also measured, and it is a live production risk rather than a lab number:** one
+ordinary hybrid query's sparse arm ran **1,994 seconds** before it was cancelled,
+and `packages/db/src/index.ts` creates the API's client with **no
+`statement_timeout`** — so nothing would have stopped it. Bus 0771 to LCC.
+
+### 19 Aug 2026 — NEW1: THE FUSION FIX DOES NOT SHIP, AND EMBEDDING COVERAGE IS COURT-SHAPED
+
+**Added by NEW1 (retrieval lane).** Full detail
+`docs/ai/NEW1_FUSION_POLICY_VALIDATION.md`, artifacts under
+`docs/ai/new1-fusion-policy/`. This SUPERSEDES the recommendation in
+`docs/ai/NEW1_FUSION_WEIGHT_SWEEP.md` §RECOMMENDATION; everything that document
+measured still stands.
+
+**`QUERY_ROUTED_HYBRID` is withdrawn.** The defect it addressed replicates out of
+sample — equal-weight RRF costs criminal queries 6.1 points of success@5, and a
+parameter-free criminal→dense-only routing is worth **+1.78 pts held-out, 95% CI
+[0.00, 3.52], P(Δ>0) = 0.969** across 2,000 stratified split-halves and 10,000
+bootstrap resamples. The FIX fails three checks the sweep did not run:
+
+1. **The constant is unsupported.** Across 2,000 training halves the fitted θ
+   lands on 0 in 49%, 0.05 in 23% and **0.85 in 21%** — and the fitted policy
+   scores 0.72 pts BELOW the parameter-free one on held-out data.
+2. **The coverage gate never fired.** All 4,868 candidates in the benchmark are
+   embedded, so gated and ungated are identical to three decimals. Analysed, the
+   gate is also backwards: it strips sparse weight from documents dense CAN rank
+   and leaves it on documents dense CANNOT see, which promotes unembedded
+   documents in a mixed-court result set.
+3. **The router cannot see what it routes on.** The benchmark's `criminal` label
+   is `case_type` of the CITING judgment; production derives nothing from query
+   text and exposes `filters.caseType` only as an optional user filter. A
+   transparent 39-marker lexicon reaches 100% precision at 20.5% recall, and the
+   routed policy on those labels is worth **−0.37 to +0.00 pts**.
+
+**Action: hold equal-weight RRF. Nothing in `retrieve.ts` changes.** When a
+signal exists it routes on `filters.caseType` (exact, user-asserted) AND on the
+candidate universe's coverage — never per document. `COVERAGE_FLOOR` is a
+product-risk choice and is NOT settled by this lane.
+
+**The number every sizing estimate should now use.** Full `GROUP BY` over
+`judgments`, 39.5 s, 19 Aug:
+
+| | held | embedded | coverage |
+| --- | --- | --- | --- |
+| Supreme Court of India | 38,342 | 38,341 | **99.9974%** |
+| Gauhati / Patna / Kerala / MP / Manipur / Meghalaya / Sikkim | 3.5M | 1,820 | ≤ 0.46% |
+| every other court (18 of 26) | 14.4M | **0** | 0.0000% |
+| **total** | **17,945,147** | **40,161** | **0.2238%** |
+
+Coverage is **court-shaped and effectively binary**, not a uniform 0.42%. The
+denominator also moved: 17,945,147, not the 14,973,372 in bus 0723 — NEW2 has
+ingested ~3M under it, so **0.42% and the 15.45x sizing figures are stale twice
+over**.
+
+### 19 Aug 2026 — NEW2: THE FRONTIER IS A CURSOR, NOT A SUBTRACTION; AND 14,402 DOCUMENTS WERE CONDEMNED BY ONE BAD HOUR
+
+**Added by NEW2 (ingestion lane). Nothing in LCC's ordering below is changed.**
+Machine-readable output in `docs/ops/migration/new2-*.json`.
+
+**1. The actionable frontier is 1,081,044 source ROWS, and the fleet plan's
+number-one item was zero work.** `scripts/migration/new2-frontier.mjs` measures
+the ingest CURSOR (`.checkpoints/<scope>.json` row offsets — the number a worker
+resumes from) instead of `source - held`. Both sides then count the same parquet
+rows, so the source-side duplication inflates both and cancels in the difference.
+`new2-yearscope-plan.mjs` had ranked `hc-boot-mid-9_13` FIRST at **977,031
+actionable**; Allahabad's own checkpoint reads **2,055,580 of 2,055,580 rows
+read**, every year exhausted. The 977,031 was duplication (bus 0721: one object,
+443,845 rows, 225,366 distinct documents). Launched before the fix,
+`hc-boot-mid-27_1` confirmed it independently — `DOCUMENTS SEEN 0 · 526,499
+already_held`. The plan now consults the cursor; candidates fell 23 → 20.
+`lastRunExhausted` could not catch these because it needs a `RESULTS` block and
+that log has none. **A cursor does not need a clean exit.**
+
+**2. `script_quality` is populated — one verdict, over a complete 17,945,147-row
+pass.** Migration 0056 landed (LCC bus 0754). `services/ingest/src/script-quality-cli.ts`
+wrote **56,767 `legacy_font_ascii`** and deliberately wrote none of the other
+four values. `clean` would be asserted from the ABSENCE of a signal, and a
+pure-ASCII English judgment is byte-identical to a Hindi judgment whose
+Devanagari Poppler deleted — writing `clean` there puts mode-2 damage into
+`axis_b_text` as positively assessed, which is worse than NULL. Licence for a
+text-only verdict: the pilot was expanded 197 → **997 font-readable documents**
+across nine courts, **0 false positives in 939 PDF-labelled clean documents**,
+recall 76.2%. Rajasthan is 3.89% and 69% of the total, but **sixteen courts carry
+some** and Patna produced a positive nobody suspected. The rows are MIXED —
+caption readable, reasoning not — so they are findable by title and unusable.
+
+**3. The 755k residue is a ~147,000-row model job, and a text screen is
+trustworthy in only one direction.** `services/ingest/src/disposal-residue-cli.ts`
+trains on the corpus's own independent label (class assigned from the disposal
+string, never from text), splits train/test, and measures on the held-out half:
+a `procedural` call is **97.6%** correct at a 50/50 prior and fires on 1.1% of
+truly decided documents; a `decided` call is **87.0%**. So procedural-looking
+rows can be dropped cheaply and the rest cannot be admitted cheaply — the right
+shape for high-precision eligibility. Residue mix (n=6,000): 75.1%
+substantive-looking (an UPPER bound, the screen leans decided), 5.6% procedural,
+**19.4% genuinely uncertain**. `CLOSED` is 58% uncertain and is where a model is
+worth paying for. Nothing was written to `judgments`.
+
+**3b. A statistic I nearly published, and it was not the statistic I named it.**
+The first version computed, inside the truly-decided set alone, `decided calls /
+all calls` and called it `precisionWhenCalled`. It printed **98.5%**. Precision is
+P(truly X | called X) and is undefined without the other class contributing false
+positives; pooled, the screen calls `decided` on 12.9% of truly PROCEDURAL
+documents, so the real figure is 87.0%. 98.5% would have licensed writing
+`decided` onto ~570,000 rows with one in seven being court admin entering the
+authority class.
+
+**4. 14,402 documents were permanently condemned by a one-hour outage, and every
+one of them returns HTTP 200.** `ingest-ledger.ts` promoted rows to `permanent`
+at `MAX_ATTEMPTS = 3` with no notion of TIME, and `permanentlyFailedUrls()` then
+excluded them from every scope forever. **99.5% of the condemned population was
+condemned inside the single hour 2026-08-18 18:00, and 97% of it is Bombay.**
+A HEAD probe of all 14,402 (`scripts/migration/new2-ledger-failed-probe.mjs`,
+dry by default) returned **200 for 14,402 of 14,402 — 100.0%**. All cleared.
+`attempts` reset to 1, not 0: `CHECK (attempts > 0)` refused zero and is right to,
+because a ledger row exists BECAUSE an attempt was made. The durable fix requires
+both the budget and elapsed time — `MIN_CONDEMN_SPAN = '6 hours'`.
+`PERMANENT_ON_SIGHT` outcomes are untouched: a 404 is a property of the object,
+not of the network. Typecheck clean, 51/51 ingest tests pass.
+
+**5. Fleet restarted at width 6, not 24, and deliberately NOT widened to 8.**
+Gate under load: `CPU 46.6% · RAM free 23.8% · commit free 20.0% · GPU 100%`.
+The GPU being saturated is the desired state — NEW1's tokenizer is fed and ingest
+is not competing for it. Commit-free at 20.0% is the binding constraint, not CPU,
+and the box has died six times on memory pressure. Corpus **17,945,147 →
+18,478,938 (+533,791)**.
+
+**6. The semantic imbalance got worse this session, in the only way that counts.**
+Embedded documents: **40,161, unchanged**. As a share of corpus that is 0.22%,
+down from 0.2238% purely because the denominator grew. With 1,081,044 source rows
+left, **the acquisition programme is close to finished and the semantic programme
+has barely started** — the case for reclaiming CPU from ingest strengthens daily.
+
+**Still founder-blocked, already queued, not re-raised:** `INDIANKANOON_API_TOKEN`
+is unset, so the bounded missing-PDF pilot (161,792 `pdf_absent AND permanent`)
+has not run. `INDIANKANOON_API_CREDENTIAL_REQUIRED`. Licensing is settled
+(FQ-INDIANKANOON, NEW3 bus 0717) and is not reopened.
+
+### 18 Aug 2026 — NEW2: 620,300 EMBEDDED IS 40,161 DOCUMENTS, AND THE CLASSIFIER GAP IS A RE-RUN NOT A RULE
+
+**Added by NEW2 (ingestion lane). Nothing in LCC's ordering below is changed.**
+Machine-readable output in `docs/ops/migration/new2-*.json`.
+
+**1. The semantic population is 0.26% of the corpus, and the number everyone has
+been quoting is chunks, not documents.** `judgment_chunks` holds 620,300 rows
+over **40,161 DISTINCT judgments** — `scripts/migration/new2-semantic-backlog.mjs`.
+NEW1's independently measured 15.45 vectors per document predicts 40,149 from the
+same 620,300, so two derivations agree. Against 15,666,877 documents written,
+**15,626,716 cannot be reached by the dense arm at all.** This is why NEW1's dense
+`recall@20` was 40.6% before and after a 30.7% larger corpus with zero discordant
+pairs: the embedded set never moved. The funnel is now printed with each stage as
+a percentage of the stage above it, because "620,300" read as a total and hid it.
+
+**2. `hc_document_class` coverage is not a rule-quality problem. 14.0% of it is a
+re-run.** Replaying today's `classifyHcDocument` over the raw disposal strings the
+column recorded (`services/ingest/src/disposal-coverage-cli.ts`, all 332 distinct
+strings, 883,796 rows):
+
+| | rows | share | what it is |
+| --- | ---: | ---: | --- |
+| STALE | 123,840 | 14.0% | today's rules DO classify these |
+| RESIDUE | 755,620 | 85.5% | the `DISPOSED*`/`CLOSED` family refused on purpose |
+| CANDIDATE | 4,336 | 0.5% | refused, and not by a documented decision |
+
+`DISMISSED AS WITHDRAWN` (20,674), `DISMISSED AS INFRUCTUOUS` (16,878),
+`38-RULE ABSOLUTE/ALLOWED @ FH` (8,586) and the `DISMISED` misspelling (4,209) are
+all STALE — every one named in `hc-classify.ts` MEASURED_VOCABULARY as a string the
+14 Aug extension was written to catch. They are still unclassified because
+`--resume` selects `hc_class_method IS NULL`, so a row judged by an OLDER rule set
+is skipped forever. **A new rule can win at most 4,336 rows; a re-run wins 123,840.**
+`--restale` added (additive selector, running). The 755,620 is a MODEL problem, not
+a rule problem, and the module already argues at length why guessing `DISPOSED OFF`
+into `decided` would move 32.5% of a sample into the authority class wrongly.
+
+**3. The stall watchdog could not see the fleet's commonest hang, because that hang
+gets LOUDER.** `supervise.mjs` treated any stdout byte as liveness. unpdf's pdfjs
+calls `Math.sumPrecise` — absent on Node v24.14.1 — while repairing a malformed
+font, swallows it as a warning, and prints it **on a loop forever having stopped
+advancing** (`hc-metadata.ts` documents the dead run). Measured: 7,363 of the last
+7,395 lines of `hc-boot-hist-3_22.log`; `hc-boot-36_29` last wrote at 2,295
+documents and kept growing its log. The watchdog now watches PROGRESS LINES, and
+falls back to raw output for workers that have never emitted one — LCC's paragraph
+and citation workers print a different shape and must not start being SIGKILLed.
+Verified in all three directions before it went near the fleet.
+
+**4. `new2-fleet-view.mjs` — one row per scope, derived from the process table.**
+Aggregates have now hidden a dead scope three times. This never sums across scopes;
+the fleet verdict is the WORST row. It found the `36_29` hang on its first run.
+
+**4b. And then it cried wolf, which was worse.** At `--window 60` it reported three
+of eight scopes as `log-only`; the same eight at `--window 300` were all `ok`,
+having advanced 1,400–4,161 documents each. Cause: workers commit in batches of
+200 and a scope at the slowest healthy rate (0.7 docs/s) emits nothing for ~285s
+while working perfectly, which is indistinguishable from the hang. The default
+window is now 300s and **a window shorter than one batch returns `inconclusive`,
+never a bad verdict** — a watchdog that cries wolf gets ignored, and the next thing
+ignored is the real hang.
+
+**5. Width 8 is measured at ~1.9x the throughput of width 24.** Checkpoint deltas:
+**137 docs/s at width 8**, 72 docs/s at 24, 229 docs/s at 11. Cut to 8 per the
+resource policy, keeping the eight deepest blackouts. Scopes below 10% acquired are
+protected from the cut — a court-year at zero is indistinguishable at query time
+from a court-year that never existed.
+
+**6. Madras had no historical scope at all — and it is now closed.**
+`start-ingest-fleet.ps1` listed `33_10` only in the 2016-2022 band, so nothing had
+ever been configured for its pre-2016 years: **186,786 source records, 1 document
+acquired**, every year 1995-2018 reading zero. Added to the historical list and
+launched. It finished cleanly the same session — `RESULTS: DOCUMENTS SEEN 96,669,
+WRITTEN 95,479` — and the database now holds **185,589 Madras documents for
+1950-2015, up from 1: 99.4% of source.** The largest single acquisition hole in
+the corpus, closed in one pass, and it existed only because a court code was
+missing from one `foreach` list. **Madras 1998 needs no retirement from the
+scheduler** — `hc-load-cli` builds work from `listMetadataKeys()` and then filters
+by year, so a year with no source partition is never enumerated. Madras 2016-2022
+is separately complete (88,377 / 88,387 for 2016, and so on through 2022).
+
+**7. LEGACY_FONT_SUSPECT is built, and the suspected court was the wrong one.**
+`services/ingest/src/legacy-font.ts` reads `/BaseFont` out of the PDF bytes — not
+via pdfjs, which is the component that hangs on broken fonts. Pilot over 197
+font-readable documents: **5 legacy-font confirmed, all RAJASTHAN** (`KrutiDev010`,
+`DevLys-010`); Chhattisgarh contributed zero. Markers were MINED from the PDF
+labels, never typed from memory. Text-only screen: **recall 3/5, false positives
+0/192**. The documents are MIXED — English caption extracts perfectly, Hindi body is
+Kruti Dev underneath — so they are findable by caption with unreadable reasoning,
+which is worse than absent.
+
+**8. Four orphaned classify UPDATEs held locks on `judgments` for an hour, and the
+supervisor built the convoy.** SIGKILL kills a client, not its statement:
+`pg_stat_activity` showed 57m/42m/27m/12m, three blocked on the first. `openDb` now
+takes an optional `statementTimeoutMs` (paired with
+`idle_in_transaction_session_timeout`); the classify CLI opts in at 10 minutes.
+Off by default — this helper is shared with passes whose statements are
+legitimately long.
+
+**9. The missing-PDF population is not a long tail — it is Bombay.**
+`hc_ingest_ledger` holds 189,741 unfetchable records (`pdf_absent` 160,191,
+`pdf_failed` 28,986, `no_text` 1,554, `pdf_timeout` 60). **27_1 is 65.7%, 23_23
+15.8%, 9_13 10.3% — three courts are 92%.** So the provider-recovery question is
+mostly "is Bombay worth recovering", and a proportional sample would have spent
+two thirds of its budget re-answering one court. `src/missing-pdf-pilot-cli.ts`
+draws a court×year stratified sample with a per-court cap, attaches a case
+identity from the partition metadata (a ledger row has NO `judgments` row to join
+to — the PDF was absent, so nothing was written), and **does not call Indian
+Kanoon**: `INDIANKANOON_API_TOKEN` is not set in this environment, and
+`harvest/indiankanoon.ts` already refuses honestly and already carries the
+paise-denominated budget accounting. The sample is the half that needs no
+credential. Provider text remains non-canonical whatever the recovery rate: a hit
+is a pointer to an official copy, not a substitute for one.
+
+**9b. Two of my own defects, found and corrected before the numbers were used.**
+The first draw took each court's EARLIEST years (`ORDER BY year LIMIT n` is not a
+stratification) and reported 85.7% of records identifiable; spread across years it
+read 44.4%. Then that 44.4% turned out to be wrong too — it showed identity
+resolution collapsing from 100% in 2005-2013 to 4% in 2024, which reads exactly
+like "recent metadata is missing" and is not. **A partition publishes up to two
+metadata files and they are not copies:** `year=2024/court=23_23/bench=mphc_db_gwl`
+has `metadata.parquet` at 2,135 rows with `pdf_link` like
+`court/cnrorders/…/MPHC030012372024_1_2024-01-22.pdf`, and
+`metadata-mobile.parquet` at **15,874 rows** with `orders_2024_206300000742024_1.pdf`.
+Different counts AND a different filename convention, so a basename join finds
+nothing for rows in the other variant. The unresolved records were mobile-variant
+rows, present all along. Now reads both and matches the union, plain winning a
+collision. **This structure has now produced two wrong numbers in this repo in
+opposite directions** — it also caused `HC_METADATA_SURVEY` to count rows rather
+than documents (bus 0692).
+
+**Corrected result: identity resolution is 546 / 546 — 100%, in every year from
+2005 to 2026.** Neither 85.7% nor 44.4% was a fact about the corpus; both were
+facts about my tool. **Identity is not a barrier to provider recovery at all**,
+which is the opposite of what the intermediate numbers implied and is the answer
+NEW3's Step 0 was asking for. Scope also narrowed to NEW3's `pdf_absent AND
+permanent` definition — `pdf_failed` is not proof of absence, and including it
+would have inflated the population and any projected spend by ~19%.
+
+**10. MADRAS WAS NOT A ONE-OFF — SIX MORE COURTS HAD NO HISTORICAL SCOPE, AND
+THAT IS 503,357 DOCUMENTS.** Having found `33_10` missing from the hist
+`foreach`, the whole list was checked against measured holdings rather than
+assumed correct. Pre-2016, source from `new2-coverage.json`, held from the
+database:
+
+| court | source | held | % |
+| --- | ---: | ---: | ---: |
+| 24_17 | 131,897 | 497 | 0.4% |
+| 23_23 | 104,831 | **0** | 0.0% |
+| 18_6 | 90,250 | 3 | 0.0% |
+| 7_26 | 76,711 | 2 | 0.0% |
+| 20_7 | 66,622 | 8 | 0.0% |
+| 21_11 | 34,026 | 39 | 0.1% |
+
+**None was a slow scope. No scope existed for any of them.** All six added to
+`start-ingest-fleet.ps1`.
+
+**FIVE OF THE SEVEN ARE ALREADY CLOSED, same session, each in ONE pass:**
+
+| court | written | source | % |
+| --- | ---: | ---: | ---: |
+| 33_10 Madras | 95,479 | 186,786 | 99.4% (185,589 held) |
+| 23_23 | 104,783 | 104,831 | 99.95% |
+| 18_6 | 90,213 | 90,250 | 99.96% |
+| 7_26 | 76,399 | 76,711 | 99.6% |
+| 21_11 | 33,966 | 34,026 | 99.8% |
+
+**ALL SEVEN ARE NOW CLOSED — 19 Aug.** `20_7` hung silently and its supervisor's
+stall watchdog killed and restarted it unaided; it then ran to completion.
+
+| court | written | source | % |
+| --- | ---: | ---: | ---: |
+| 24_17 | 131,282 | 131,400 | 99.91% |
+| 20_7 | 15,227 | 15,230 | 99.98% |
+
+**547,349 documents into seven courts that held about 550 between them.**
+
+None of this needed a new capability, a credential, or more width. It needed the
+court codes to be in the list. The fleet was then reprioritised rather than widened:
+the four most-complete scopes (`8_9` 70.7%, `3_22` 68.5%, `10_8` 66.6%, `29_3`
+65.8%) were stopped and the four largest zero-held courts started in their place,
+holding width at 8. **A court at 0.0% outranks a court at 70%** — retrieval cannot
+distinguish "we hold none" from "there are none", so an unheld court-year is
+served to an advocate as an absence of law.
+
+It is also faster: the four new scopes immediately ran at 17.3 / 16.0 / 9.4 / 5.1
+docs/s against 2.6–6.0 for the incumbents, because an empty court pays no
+`already_held` skip. Fleet ALL-OK at width 8, ~102 docs/s.
+
+**11. `--restale` completed and the diagnosis verified to 99.7%.** Predicted
+123,840 convertible rows; observed **−123,491 unclassified, +124,486 classified**
+(the small excess is the three new rules). `hc_document_class` 1,010,938 →
+1,135,424. The run's own self-check printed `14,058,456 with no method (must be
+0)` — the same lie `--frame` was fixed for on 18 Aug, inherited by `--restale` and
+`--resume`. Every selector that narrows the walk now says so; the assertion
+belongs to the full walk alone, or the tool reports its own success as a disaster.
+
+**Still open in this lane:** the 4,336 CANDIDATE rules (measured, not yet written);
+`script_quality` needs LCC (schema); per-class precision for
+`hc_document_class` needs adjudication, sample of 250 drawn with full rule
+provenance at `docs/ops/migration/new2-class-precision-sample.json` and explicitly
+NOT adjudicated. Note for whoever does: **44 of 50 sampled `bail_order` rows come
+from `text_bail_phrase`**, the one rule in the module that reads prose rather than
+restating a source field.
 
 **17 Aug 2026 — THE MIGRATION'S CUTOVER GATE PASSES.** `compare.mjs` reports
 **0 FAIL** across 53 tables on **exact** row counts, schema, structure,
@@ -41,6 +417,152 @@ parent and therefore no console for a control event to be delivered on —
 open**: a scheduled task fires at LOGON, not at boot, so an unattended reboot
 still comes up with no database until someone signs in. That needs the one
 elevated `pg_ctl register` command.
+
+### 19 Aug 2026 — GATE S2's HARD STOP CLEARED: `cite:` WAS 0.00%, AND THE ARM NOBODY SUSPECTED WAS THE CAUSE
+
+**`structuredExactness` measured 0.00% — all 120 of 120 real citations timing
+out at 8 s through `runStructured`'s `cite:` branch, on the live `/search`
+route inside Gate S1's 3-second budget.** NEW1 found it (bus 0730/0731), one
+query observed running 31 minutes before being cancelled by hand. `CLAUDE.md`
+calls Gate S2 a hard stop; this was it.
+
+**Now `PASS 100.00%`, 120/120**, from NEW1's own unmodified tool
+(`pnpm -C services/harness run gate:structured`, 53,262 ms). `fieldPrecision`
+was and remains 100%.
+
+**The obvious fix changed nothing, and that is the finding worth keeping.** The
+suspect was the correlated `unnest(reporter_citations)` arm — the one
+`exactCitation`'s 17 Aug header already names. Replacing only that arm, with the
+same GIN-indexable `lawmind_citation_keys(...) @> ARRAY[key]` form, left the plan
+identical: still a backward scan of `judgments_judgment_date_idx`, cost
+50,116,705 → 51,353,396. Hypothesis refuted, which is the only reason the real
+cause surfaced.
+
+Planning each arm ALONE found it:
+
+| arm | plan alone | cost |
+|---|---|---:|
+| A neutral citation | Index Scan, `judgments_neutral_citation_key` | 1.57 |
+| B reporter keys | Bitmap Heap Scan, `..._reporter_citation_keys_gin` | 182 |
+| C alias `EXISTS` | Nested Loop, indexed both sides | 5.28 |
+| **A OR B** | **BitmapOr of both** | **188** |
+
+**A correlated subquery cannot be a member of a `BitmapOr`.** There were TWO of
+them — the `unnest` arm and the alias `EXISTS` — and either one alone forces
+every row of `judgments` to be evaluated, so fixing one leaves the other doing
+identical damage. The alias arm is the instructive one: it plans beautifully in
+isolation, so nothing about inspecting it suggests a problem. It is only fatal
+in company.
+
+Fix keeps ONE `OR` and still composes under `AND`/`OR`/`NOT` — NEW1 was right
+that `exactCitation`'s `UNION` cannot be used here, and it turned out not to be
+needed:
+
+    OR lawmind_citation_keys(j.reporter_citations) @> ARRAY[$1::text]
+    OR j.id = ANY (ARRAY(SELECT a.judgment_id FROM judgment_citation_aliases a
+                          WHERE a.alias_key = $1))
+
+`ARRAY(...)` is a scalar array expression: one `InitPlan` plus a
+`Bitmap Index Scan on judgments_pkey`, which a `BitmapOr` accepts. Result:
+**BitmapOr of all three arms, cost 1,342, 3 ms** with the `ORDER BY
+judgment_date DESC LIMIT 2` untouched. The `ORDER BY` never needed changing —
+with an unindexable arm the planner estimates 8–12M matching rows and the
+date-walk looks cheap; the predicate matches ONE row. Making the estimate honest
+removes the gamble without a hint, a CTE, or a rewritten sort.
+
+**Equivalence observed, not assumed** — changing what a citation matches would
+be worse than the timeout. Differential test against the replaced forms: arm 2
+over 20,000 rows carrying `reporter_citations`, **0 disagreements**; arm 3 over
+all 4,394 alias keys, **0 disagreements**. `lawmind_citation_keys`' body read out
+of `pg_get_functiondef` is byte-identical to the arm it replaces, and
+`judgment_citation_aliases` is 4,394 rows over 4,394 distinct keys — at most one
+judgment per key, so the constructed array is one element.
+
+`services/api/src/judgments/citations.ts` shares the fragment for paragraph-level
+`citesJudgmentId` and is fixed by the same edit. qlang parse/explain +
+judgments/citations: **45/45**.
+
+**Migration 0056 still has NOT landed** — ~190 attempts across two runs. The
+classifier convoy drained overnight but ingest INSERTs resumed; the table never
+went quiet for the migration's own 3 s `lock_timeout`. Nothing half-applied
+(columns absent, constraint absent, view absent, `blocked=0`).
+
+**A correction to yesterday's entry:** the four hour-long `UPDATE judgments SET
+hc_document_class` statements that blocked it were **LCC's own orphaned
+`hc-classify-boot` workers**, not NEW2's live classifier (NEW2, bus 0733).
+Stall-killed twice, restarted five times — and *killing a client does not kill
+its statement*, so `supervise.mjs`'s restart loop added writers rather than
+replacing them. I attributed them from the statement text without checking
+whether a client was still attached. Corrected to NEW2 in bus 0749.
+
+### 18 Aug 2026 — THE 620k CHUNK PLATEAU IS A FOUNDER DECISION, STILL IN THE BUS
+
+**The most important finding of this pass is that there was no bug to find.**
+`judgment_chunks` has held ~620,300 while `judgments` reached 14,973,372, and
+the cause is bus 0132–0135, 13 Aug 2026, broadcast to every lane:
+
+> FUND CHUNK-TEXT COVERAGE NOW. START EMBEDDINGS ONLY once we hold all available
+> data from all courts, ALL cases and citations are in, and the data is
+> STRUCTURED and ready. … **nobody should treat missing vectors as a defect — it
+> is a deliberate ordering.**
+
+Everything downstream obeyed it: `judgment_paragraphs` holds **41,973,136** rows,
+built *instead of* vectors (migration 0049), and `judgment_chunks` was frozen on
+purpose. The 18 Aug directive re-sequences that decision;
+`docs/ai/EMBEDDING_ELIGIBILITY_CONTRACT.md` §0 records the reversal rather than
+overwriting it, so the next agent to meet a static number does not spend a
+session hunting a defect that does not exist.
+
+The pipeline was checked, not assumed. `services/embed/src/cli.ts` is resumable
+and idempotent. It has two real defects — an unbounded anti-join plus sort for
+candidate selection (observed running on the box at 169s), and no eligibility
+notion at all — and neither is why the number is static.
+
+**LANDED THIS PASS**
+
+| | |
+|---|---|
+| `expandCategories` full scan | **FIXED.** `SELECT DISTINCT court` planned as a parallel index-only scan of 15,191,513 entries and ran on **every** search, not only filtered ones — `unpopulatedCategories` is on every response. Loose index scan, taken from NEW1's `arms-cli.ts`. **79.9 ms cold / 1 ms warm**, route shape 422 ms cold / 1 ms warm p50, suite 11,272 ms → 354 ms. Equivalence proved against `pg_stats` (n_distinct 26, MCV 26) rather than by paying for the scan. Bus 0715. |
+| `scripts/resource-gate.mjs` | **BUILT**, 14 tests. Five classes with **independent** verdicts — the CX1 ladder cannot express "GPU_EMBED ALLOW while DB_SCAN DEFER", which is the whole ask. Measured live: GPU_EMBED ALLOW (GPU 8%, VRAM 7,382 MiB free) while DB_SCAN and VECTOR_BUILD DEFER. Shallow by default because full collection measured **3.1 s / 15.2 s / 31.9 s** on three consecutive tries. |
+| Embedding eligibility contract v1 | **WRITTEN**, `docs/ai/EMBEDDING_ELIGIBILITY_CONTRACT.md`. Four independent axes; **UNKNOWN is never BAD**. Tier A ≈ **8.49M** documents (≥2,000 chars), Tier A core ≈ **3.80M** (≥4,000), from a 0.2% sample. |
+| PostgreSQL log growth | **FIXED and verified.** 108,698,908 bytes for 18 Aug; `DETAIL: Parameters` was **96,289,111 B / 88.6%** at 70.9 KB per block, because `log_parameter_max_length` was `-1`. Capped at 512, live, no restart. Verified by probe: a 120,017-char parameter now logs as a **596-byte** truncated line. Slow-query identity, duration, fingerprint and lock waits all deliberately untouched. |
+
+**BLOCKED, and it is a lock, not a decision.** Migration **0056**
+(`script_quality` + the eligibility view) has failed **110+ attempts** over an
+hour. It needs ACCESS EXCLUSIVE on `judgments`; NEW2 runs three overlapping
+~45-minute classifier UPDATEs, staggered, so there is never an instant with no
+lock holder. A ~5-second gap is enough and has been asked for (bus 0722). The
+fleet has **not** been stopped for three columns.
+
+**The retry loop was STOPPED after 150+ failed attempts over ~90 minutes**, not
+left running. Two reasons: it was past any sensible attempt bound, and each
+lock-timeout ERROR logs the whole ~11 KB migration file as `STATEMENT` — ~1.3 MB
+of log volume on the day the log was being cut. The migration is re-runnable and
+is now an explicit ask on NEW2 rather than a background process nobody is
+watching. Confirmed on stop: no stray backend, nothing half-applied.
+
+**Also landed:** `scripts/pg-hide-consoles.ps1` was retired in a document this
+morning and remained fully executable, including a `while ($true)` watch loop —
+`check-stop-coverage.mjs` went RED for exactly that reason and was right to. It
+now refuses on the STOP sentinel and refuses again when `LawMindPostgres` exists,
+and is kept as documentation per `FOUNDER_QUEUE.md` rather than deleted. Guard
+back to PASS, verified by executing it.
+
+**Two gate failures remain and neither is from this pass:** `lint` (9 errors in
+`scripts/migration/new2-fleet-view.mjs`, `regenerate-generated-columns.mjs`,
+`services/api/src/search/hyde.test.ts`, `rerank-passages.test.ts`,
+`services/harness/src/adversarial.ts` — all other lanes'; my files lint clean)
+and `alert coverage`, red since 11 Aug on the PD-5/PD-6 gap.
+
+**READ THIS BEFORE RUNNING ANY DDL ON `judgments`.** The first attempt was run
+the ordinary way. It could not get the lock, so it waited — and **a waiting
+ACCESS EXCLUSIVE request blocks every lock request queued behind it.** Twelve
+ingest INSERTs and a paragraph write stalled behind a statement that had
+acquired nothing and changed nothing; the fleet stopped for two minutes because
+a migration was being patient. Nothing applied, cancelled clean. The fix is
+`SET LOCAL lock_timeout` inside the migration and
+`scripts/apply-migration-online.mjs`, which **refuses** any migration file
+lacking one.
 
 ### 18 Aug 2026 — 39 TOOLS COULD NOT OPEN THE DATABASE, AND 80% OF "AMBIGUOUS" CITATIONS ARE ONE DECISION
 
@@ -10149,3 +10671,333 @@ Worth keeping as a shape: **a self-check inherits the assumptions of the only
 mode that existed when it was written.** Adding a mode that violates one turns
 the check from a safeguard into a false alarm, and a false alarm in a
 verification line is worse than no line — it trains the reader to ignore it.
+
+### NEW3 — Indian Kanoon closed for real, missing-PDF pilot manifest handed to NEW2, one live citation defect caught
+
+Founder's source-frontier-continuation addendum, 18 Aug: Indian Kanoon is
+settled — written permission, separate paid licence, extraction/RAG/training
+use. Closed `FQ-INDIANKANOON` (`docs/FOUNDER_QUEUE.md`
+`FQ-INDIANKANOON-RESOLVED`), corrected `docs/AUTHORIZED_SOURCE_MAP.md` §4.
+What's left is credential/config, not authorization: `INDIANKANOON_API_TOKEN`
+unset, paid-licence real pricing unconfirmed — both queued, neither blocking.
+
+Turned it into `docs/MISSING_PDF_PILOT_MANIFEST.md` — a bounded ~1,000-record
+pilot for NEW2, stratified court x year (capped/floored), priced ≤₹560, four
+measurements defined precisely (hit rate, canonical identity match,
+official-copy recovery, cost/recovered judgment). **Not** a whole-ledger spend
+recommendation — the population is 159,651 confirmed `pdf_absent` now (was
+96,091 hours earlier same session; keeps growing as the fleet advances).
+Two prerequisites flagged as NEW2/LCC's, not the founder's: the ledger has no
+title/date/CNR so a metadata-parquet join is needed before any IK call, and
+the IK client doesn't implement `origdoc` yet.
+
+Re-verified `TREATMENT_GRAPH_GAP.md`'s 32-count from source records per the
+founder's explicit instruction (never memory) and it's **33, not 32** — one
+new row, and it's very likely a citation-extraction misattribution (a Kerala
+HIGH COURT judgment reciting SC history, not an SC-on-SC edge; the extractor
+grabbed the actor's own citation instead of a "(supra)" backreference it
+can't resolve). Flagged to LCC before anyone runs the concordance resolver on
+it — doing so as-is would link a judgment to itself.
+
+RERA state matrix and Manupatra/SCC decision file both re-checked against the
+addendum's constraints (reasoned-vs-procedural, no raw-count-as-citable,
+SKIP-by-default) and are already compliant — no changes needed, and no new
+state research run this session per the addendum's own item 6 (measured
+internal gaps outrank new-source discovery this round).
+
+### The 218,479 duplication (0692) is resolved — within one file, not between objects, and my own earlier answer to it was wrong
+
+Picked this up because it arrived as unread on this lane's bus mid-session and
+is squarely acquisition-side. My 0709 reply had argued the duplication must be
+BETWEEN the two Allahabad-2023 bench objects because mobile/plain are proven
+disjoint. **Measured directly and that reasoning was wrong**: read
+`cisdb_16012018/metadata.parquet` (year=2023/court=9_13) alone — one row
+group per the footer (rules out a row-group-iteration bug), 443,845 rows,
+225,366 distinct `pdf_link`, and exactly 218,479 of them repeat exactly
+twice, never three times. The repeats aren't scattered: every first
+occurrence sits at row index <219,480 and every second occurrence at
+>=219,480 — a clean two-block split, the signature of a source-side export
+appended to the same parquet object rather than replacing it. Upstream, in
+AWS's own file, not in our reader.
+
+**The corpus itself is fine** — `judgments.source_url`'s unique index already
+collapsed NEW2's 532,089 candidate rows to the true 315,574 on write, which
+is why the scope wrote 0 and exited clean. Only the footer-count-based survey
+denominator is inflated. Recommended NOT re-surveying by real row content
+corpus-wide (that flips the survey from "a few MB of footers" to real
+transfer at the scale of this one 185MB file, against this session's own
+low-CPU-footprint instruction) — recommended instead capturing the true
+distinct count NEW2's own ingest workers already compute as a byproduct when
+a scope retires on "wrote 0," so the denominator self-corrects on whatever
+gets run, for free. Sent to NEW2 (bus 0721). `20,529,203` still stands as an
+upper bound; `COVERAGE_GAP_MATRIX.md`'s refusal to print a corpus-wide
+percentage remains right, now for a precisely-known reason instead of a
+suspected one.
+
+### NEW1, 18 Aug (GPU/embedding directive) — fusion routed, adversarial evaluator fixed, TWO deterministic gates measured for the first time (one is 0.00%), TIER_A representation validated
+
+Owner: NEW1. Full artifacts under `docs/ai/new1-post-0055/`; each item below has
+its own writeup and was pushed to the relevant lane(s) over the bus, most
+recently seq 738.
+
+**Fusion — offline sweep, no database run** (`NEW1_FUSION_WEIGHT_SWEEP.md`).
+The RRF harm bus 0713 found is not a whole-set effect: **paired on the recorded
+arms, criminal queries lose 7 dense wins to fusion and gain 0** (p=0.0156);
+civil is neutral (p=0.85). Recommendation is `QUERY_ROUTED_HYBRID` — down-weight
+sparse only for criminal queries AND only over embedded documents, because
+**0.42% of the corpus is embedded** and any global sparse down-weight below
+w≈0.55 would make 99.58% of the corpus unrankable by that weight alone. Sent to
+LCC (0716).
+
+**Adversarial evaluator fixed** (`services/harness/src/adversarial.ts`).
+`mustNotProduce` graded by bare substring, so `adversarialPassRate` measured
+0.0% with 3 of 5 cases unpassable by ANY output — a refusal cannot decline a
+request without naming what it declines. Rewritten to grade by ASSERTION
+(refusal/negation/hypothetical framing excuses a match, each scoped to one
+sentence so refuse-then-draft still fails). 25 tests green. Re-run clean:
+**0.0% → 20.0%**, 0 call failures. The four still-red cases are genuine model
+failures, not grader defects — `adv-5` is the real BNS/BNSS/BSA transition gap:
+asked which section applies with no date given, the model asks which section
+rather than asking for the date, and never mentions the July 2024 transition.
+Sent to LCC (0728), who has taken it for source-grounded transition work (0723).
+
+**The two deterministic Gate S2 metrics measured for the first time**
+(`NEW1_POST_0055_BASELINE.md` §4d, `structured-gate.json`). Split out of
+`run-cli.ts` into `pnpm gate:structured` so the cheap gate isn't blocked behind
+the expensive one.
+
+    fieldPrecision         100.00%   (60 tested) — clean
+    structuredExactness      0.00%   (120 tested) — ALL 120 timed out
+
+**Found on the way: a production defect on the live `/search` path**, same
+shape as the `expandCategories` full-scan LCC fixed 18 Aug. `citationMatchFragment`
+(`compile.ts:96`, the `cite:` predicate) makes the planner abandon a matching
+functional index for a 47-million-cost backward date scan — one query ran 31
+minutes before being cancelled by hand. `retrieve.ts`'s `exactCitation` fixed
+the identical predicate shape 17 Aug, but as a top-level UNION query; it cannot
+be mechanically copied into `citationMatchFragment`, which is a boolean
+composed under arbitrary AND/OR/NOT. This is the gate Gate S2 names a hard
+stop. Routed to LCC as a design question (0730, escalated 0731 with the 120/120
+number).
+
+**CLOSED same day (0748).** LCC's diagnosis went one level deeper than the
+routed question: fixing the `unnest` arm alone (the obvious suspect) changed
+NOTHING — the plan was still a 51-million-cost backward scan. Planning each
+arm in isolation found a SECOND correlated arm, the `judgment_citation_aliases`
+`EXISTS`, equally fatal on its own and previously unsuspected because it looks
+cheap in isolation. Two correlated arms in one `OR`, not one — fixing either
+alone leaves the other doing identical damage. Fix needed no UNION: both arms
+rewritten as `BitmapOr`-compatible forms, `compileWhere`'s composability
+preserved, both differential-tested against the arms they replace (0
+disagreements over 20,000 + 4,394 rows). **Independently re-verified in this
+lane**, fresh random sample, same tool: `structuredExactness` 100.00%,
+`fieldPrecision` 100.00%, 0 failures, 73s (was a 31-minute single-query hang).
+Gate S2's hard stop is genuinely cleared.
+
+**Representation lab — is 15.45 vectors/document buying anything?**
+(`NEW1_REPRESENTATION_LAB.md`). GPU-only (RTX 4060 Ti confirmed on CUDA, 98%
+mean utilisation, 11,400 tokens/s — `gpu-bench.json`), zero DB contention beyond
+one paged read. Real hard-negative pool (4,546 judgments = everything dense
+returned across 283 queries, plus all gold), ALL_CHUNKS verified to reproduce
+the production index exactly (149,211 stored = 149,211 re-chunked).
+
+    ALL_CHUNKS  32.82 vec/doc  succ@5 23.0%  rec@20 41.7%
+    HEAD         1.00 vec/doc  succ@5 20.5%  rec@20 39.9%   (89-96% retained at 3% of the cost)
+    SALIENT      3.99 vec/doc  succ@5 15.2%  rec@20 35.0%   (worse than HEAD despite 4x the vectors)
+
+Directly validates LCC's TIER_A contract (0723, "ONE vector per document") —
+their design decision predates this evidence; this is the retrieval-quality
+case for it. Also found: dense retrieval over-selects long documents **2.13x**
+relative to the embedded population at large (32.82 vs the corpus-wide 15.45),
+an uncontrolled length signal in today's ranking. Sent to LCC/NEW2/NEW3/RCC
+(0735-0738).
+
+**Coverage-state contract** (`NEW1_COVERAGE_STATE_CONTRACT.md`), the retrieval
+half of NEW2's blackout finding — corrects NEW2's 0703 Bombay span (**2005-2011
+is the true blackout, not 1996-2012**; 2012 alone holds 43,678 judgments) and
+adds a second finding NEW2's acquisition-only view can't see: **1996-2004 at
+5-44 documents/year is MORE dangerous than a blackout**, because a search
+returns a few results and looks like an answer. Names a second coverage axis
+(`reachability`, EMBEDDED vs LEXICAL_ONLY) alongside acquisition
+(`state`, COVERED/PARTIAL/KNOWN_GAP/SOURCE_HAS_ZERO/UNKNOWN) — a document can be
+fully held and still unreachable by dense search. Additive API shape proposed;
+`PARTIAL` threshold explicitly left for a product decision, not set in code.
+Sent to all four lanes (0724-0727).
+
+**GPU confirmed live and measured** (`gpu-bench.json`): CUDA took the graph,
+98.0-98.2% mean utilisation across two runs, 11,399-11,498 tokens/s (the stable
+figure; chunks/s varies with mean chunk length), ~3.2 GB VRAM for the model,
+~4 GB free headroom on the 8 GB card.
+
+**Deliberately NOT attempted this session, and why:** halfvec C3 (ANN recall)
+and C4 (end-task retrieval gold impact) need a disposable HNSW index built over
+copied structures — the directive's own P0 rule says HNSW construction is
+CPU-heavy and "should wait for a resource window," and NEW2's 0712/0712 confirm
+the box is not in one (retrieval path already p50 43s, six concurrent 16-19s
+vector queries). Candidate-depth sweep (P7) has the same DB-load shape and the
+same deferral reason. Both are next once a quiet window exists or NEW2's
+standing offer (drop fleet width to 4) is taken up. Cross-lingual (P9, 5 Hindi
+queries paired against their English originals via live production search) was
+started same session; contention made even 10 queries slow enough that it was
+still running as this entry was written — see `crosslingual.json` for whatever
+landed.
+
+---
+
+## Q1.51 — LCC, 19 Aug 2026: the semantic bootstrap transition · **LANDED**
+
+The lane moved from "18M documents, 40,161 semantically represented" to a
+running incremental pipeline. Five signals sent as each became true, not batched
+at the end: `MIGRATION_0056_APPLIED` (0752-0755),
+`CODEBASE_MEMORY_IDLE_SPIN_DISABLED` (0756-0759), `EMBEDDING_TIER_A_READY`
+(0785-0786), `DOCUMENT_VECTOR_PIPELINE_READY` (0787),
+`LEGAL_OBJECT_VECTOR_MANIFEST_READY` (0792).
+
+### Migrations 0056, 0057, 0058
+
+`0056` landed on attempt 2 after **190 earlier failures**, and persistence was
+never the missing ingredient — the window was. NEW2's 0742 was right: the three
+45-minute UPDATEs were `--restale` and had finished; nothing was left running to
+take the free lock. `pg_stat_activity` showed one 9-second reader and zero long
+writers, so the runner was re-run into that.
+
+Verified as five separate observations rather than one exit code. The one worth
+keeping: an `UPDATE … SET script_quality='bogus_value'` inside a rolled-back
+transaction was rejected by `ExecConstraints`. **`NOT VALID` skips the backfill
+scan and does NOT skip writes**, and reading the DDL cannot tell you that.
+
+`0057` adds `embedding_content_representative`, `embedding_census_progress`,
+`embedding_census_cell` and `document_vector_staging`. `0058` fixes the defect
+below.
+
+### The exact Tier-A population — `docs/ai/TIER_A_CENSUS.md`
+
+Full count over all 17,945,147 judgments. Not a projection.
+
+```
+TIER A                    9,700,157   54.06%   (projection said 8.49M — 14.2% low)
+TIER A-CORE               4,429,062   24.68%   (projection said 3.80M — 16.6% low)
+distinct texts            8,854,281            <- the number that prices a GPU run
+duplicate groups            301,531
+vectors saved               845,876
+```
+
+Four independent counts agree exactly: judgments actual, census `rows_seen`, sum
+of all census cells, and representative members summed = Tier A.
+
+A sample was never going to be slightly wrong here. The axes correlate with
+document length, and length is not distributed the way a uniform sample assumes.
+
+**Two findings that outrank the headline.** 93.9% of Tier A is 2010 or later and
+everything before 1990 is 9,911 documents — any evaluation using pre-1990
+authorities is measuring a population that barely exists. And the `substantial`
+band averages 27,949 characters, 5.1x `full`, which is exactly where one vector
+per document loses most and where NEW1's "dense over-selects long documents
+2.13x" bites.
+
+### `is_bail_order` was NULL for 93.7% of the corpus
+
+The defect found while building the manifest, and the one most worth remembering.
+
+`(hc_document_class = 'bail_order')` is **NULL, not false**, for the 16.8M rows
+with no class. Every consumer wrote the obvious `AND NOT e.is_bail_order`; `NOT
+NULL` is NULL, NULL is not TRUE, row dropped.
+
+```
+50,000-row page of Tier-A representatives
+  surviving `AND NOT is_bail_order`               6,954   (13.9%)
+  surviving `AND coalesce(is_bail_order,false)`  50,000
+  dropped purely for an unknown class            43,046   (86.1%)
+```
+
+326,187 bail orders exist corpus-wide — 1.8%. A filter meant to remove one row in
+fifty-five was removing six in seven, with **no error, no warning and a perfectly
+self-consistent smaller manifest**. Every number downstream agreed with every
+other number and all of them were about 13.9% of the intended population. Any
+tier manifest taken before today was ~14% of Tier A.
+
+Fixed at the VIEW (`IS NOT DISTINCT FROM`), not at the three call sites, because
+a fourth was already being written. Guard: `eligibility-null-safety.test.ts`,
+asserted against `pg_get_viewdef`.
+
+### The pipeline, running now
+
+`tier-census-cli` — one keyset walk, exactly-once per page: each page's
+aggregates and the cursor that accounts for them commit in ONE transaction.
+Interruption-tested before the full run (6,000 → resume → 10,000, all counts
+exact). Necessary rather than defensive: Postgres died six times in four days
+here on console signals.
+
+`document-vector-batch-cli` — deterministic keyset batches over the 8,854,281
+representatives, `idsHash` per batch and `manifestHash` over the run. Ids not
+text: the 140 GB eligibility scan is paid once, and a batch's text is 10,000 PK
+lookups. **Refuses while the census is incomplete** — a prefix that emitted
+happily would produce manifests that look complete, are internally consistent,
+and describe a population nobody selected.
+
+`legal-object-manifest-cli` — Level B, verified claims only. **The unit is the
+CLAIM, never the enrichment row**: a `partial` row holds six verified claims and
+one fabrication, so row-level policy either embeds the fabrication or discards
+six sound objects, and that difference is most of the data.
+
+### The factory could reach 2.7% of the corpus
+
+`enrich-cli`'s legal-object selector required `hc_document_class IN
+('decided','decided_brief')` — 478,421 rows against 16,811,480 NULL. The other
+97.3% was not a backlog; it was outside the predicate, so running it longer would
+never have touched it. Class is now a PRIORITISER, Tier A is the filter, and the
+pool draws one representative per byte-identical text so it does not spend 7,118
+calls on one Madras common order.
+
+### BNS/BNSS/BSA — adv-5 fixed at the backend, not in the prompt
+
+`services/api/src/statutes/transition.ts`. The commencement date is READ FROM
+`statutes` (indiacode.nic.in rows) and is not a constant anywhere; missing or
+disagreeing rows produce a refusal rather than a fallback. The offence date is an
+INPUT, and absent it the verdict is `indeterminate` naming the one missing fact.
+`statute_mappings` holds **zero rows**, so corresponding provisions report the
+gap instead of being generated.
+
+adv-5 now PASSES all five repeats: names 1 July 2024, names no section, cites
+nothing, asks for the date. `adversarialPassRate` 20.0% → 40.0% with zero call
+failures.
+
+Rendering the date as "1 July 2024" instead of "2024-07-01" was a real fix rather
+than grader-gaming: with the ISO form the model told the reader the law had
+changed and never told them when.
+
+### Citation predicates — the third sibling in one family
+
+`exactCitation` could not resolve a single one of the 4,394 concordance aliases.
+`qlang`'s `cite:` had matched them since it was written. Measured: **all 4,394**
+alias keys unreachable from the ordinary search path, which is not a surprise but
+the alias table's reason for existing.
+
+Third instance of one shape — `exactCitation`'s `OR` fixed 17 Aug, `qlang`'s
+`cite:` fixed separately 18 Aug, the alias arm missing from one and not the other
+throughout. So the deliverable is the guard, not the one-line arm:
+`citation-predicate-parity.test.ts` asserts every implementation of "which
+judgment is this citation" queries all three sources of citation identity.
+`citations/verify.ts` is deliberately excluded, with the reason recorded in the
+file.
+
+### codebase-memory-mcp — 0.68 of a core, re-measured before removal
+
+Four idle stdio servers at **17.0-17.2% of one core each** with no tool call
+against any of them. Disabled via the documented `disabledMcpjsonServers`
+denylist; `.mcp.json` untouched, nothing uninstalled, index live at 23,301 nodes.
+The on-demand `cli` mode was verified from a COLD start **after** the kill,
+precisely so the fallback could not be depending on what was removed.
+`docs/ops/CODEBASE_MEMORY_ON_DEMAND.md`.
+
+### Still open from this session
+
+- The Tier-A batch manifest is ~886 batches and runs at roughly one batch a
+  minute under contention. Resumable and checkpointed; NEW1 can consume batch 0
+  immediately, which is the design.
+- `services/harness/src/representation-layers-cli.ts` is red under `tsc` (3x
+  TS2532). Untracked, NEW1's, and red before this session touched anything.
+  Reported, not fixed.
+- `statute_mappings` is empty. The BPRD parser exists and is report-only per the
+  founder's "report first"; BSA-IEA parses 160 of 170, BNS and BNSS use a
+  different column order (bus 0326). Loading it is a founder call, not a code gap.
