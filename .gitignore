@@ -100,3 +100,9 @@ pg-hide-consoles.err
 # grows. The SUMMARY (manifest-tier-a.json) is committed; the batches are not.
 docs/ai/embedding-manifests/document-vectors/*.jsonl
 docs/ai/embedding-manifests/document-vectors/*.meta.json
+
+# Harness stderr dumps. Transient run artifacts, swept into a commit by an
+# over-broad `git add -A services/harness` on 19 Aug 2026 (LCC). The
+# .generated-cache/ directory was swept in the same way and is deliberately NOT
+# ignored here — it is NEW1's and whether it belongs in git is NEW1's call.
+services/harness/*.err
