@@ -8,7 +8,11 @@
     "test": "tsx --test src/*.test.ts",
     "embed": "tsx src/cli.ts",
     "fetch-model": "tsx src/fetch-model.ts",
-    "backfill:offsets": "tsx src/backfill-offsets-cli.ts"
+    "backfill:offsets": "tsx src/backfill-offsets-cli.ts",
+    "tier-manifest": "tsx src/tier-manifest-cli.ts",
+    "chunk-incremental": "tsx src/chunk-incremental-cli.ts",
+    "tier-census": "tsx src/tier-census-cli.ts",
+    "doc-vector-batches": "tsx src/document-vector-batch-cli.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "4.2.0",

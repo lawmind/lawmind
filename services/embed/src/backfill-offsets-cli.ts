@@ -28,6 +28,7 @@
 import postgres from 'postgres';
 
 import { chunkJudgment } from './chunk.ts';
+import { sslFor } from './db-ssl';
 
 const APPLY = process.argv.includes('--apply');
 const arg = (name: string, fallback: number): number => {
@@ -41,7 +42,7 @@ if (!url) {
   process.exit(2);
 }
 
-const sql = postgres(url, { ssl: url.includes('localhost') ? false : 'require', max: 3 });
+const sql = postgres(url, { ssl: sslFor(url), max: 3 });
 
 console.log('CHUNK OFFSET BACKFILL');
 console.log('='.repeat(74));
