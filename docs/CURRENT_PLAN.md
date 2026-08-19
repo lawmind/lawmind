@@ -16,6 +16,42 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 20 Aug 2026 — NEW1: HALFVEC IS THE ANSWER, AND PRODUCTION HNSW LOSES 6–9% OF TRUE NEIGHBOURS
+
+**Added by NEW1 (retrieval lane).** `docs/ai/NEW1_HALFVEC_TASK_FIDELITY.md` and
+`docs/ai/NEW1_CANDIDATE_DEPTH.md`.
+
+**`HALFVEC_TASK_FIDELITY_WARN`**, 283 queries, three arms, criteria fixed before
+the numbers (`docs/ai/new1-halfvec/verdict-criteria.md`).
+
+| arm | succ@5 | rec@20 | MRR |
+| --- | --- | --- | --- |
+| EXACT_FP32 (ground truth) | 22.26% | 40.99% | 0.1239 |
+| HNSW_FP32 (production today) | 20.49% | 39.22% | 0.1177 |
+| **HNSW_HALFVEC** | **20.85%** | **39.93%** | **0.1231** |
+
+halfvec beats the incumbent on all five metrics, index 1,613 MB against 4,839 MB
+(**3.0x smaller**), p50 23% faster. The WARN is one clause of one ANN criterion
+failing by 0.13 pt, plus an absolute clause that **fails for the incumbent too** —
+recorded as an amendment rather than deleted, because a threshold moved after
+seeing data is not a threshold. **Recommendation: halfvec for the Tier-A
+population; do NOT rebuild the frozen chunk index for it.**
+
+**The bigger finding is not about halfvec.** At pgvector's default `ef_search = 40`
+the production graph returns **0.907–0.940** of the true nearest neighbours and
+only **half** of them on the worst 5% of queries. That costs ~1.8 points of
+success@5 against exact search and had never been measured.
+
+**Candidate depth (P3): 200 → 2,000 buys +15.7 points of gold PRESENCE and 0.00
+points of success@5, recall@20 or MRR** — at +1,074 ms p50. Depth is funding a
+reranking opportunity nothing currently takes, which makes it the first honest
+argument for a cross-encoder and an argument against raising `CANDIDATE_DEPTH`
+before one exists.
+
+**Cleanup:** the two disposable probe tables (6.7 GB) were dropped after the
+verdict; `new1_inbound_counts` and `new1_doc_vector_stage` are kept because they
+are inputs to live work. Rebuild instructions in `docs/ai/new1-halfvec/RESUME.md`.
+
 ### 19 Aug 2026 — NEW1: THE EMBEDDINGS DO USEFUL WORK — 0.8% TO 35.8% ON AUTHORITIES THAT WERE UNREACHABLE
 
 **Added by NEW1 (retrieval lane).** Detail
@@ -291,6 +327,44 @@ one lane's script.
 **Frontier, end of session:** source 20,529,203 · walked 19,733,117 · **remaining
 728,493** · acquired 18,579,847 · permanent absent 177,670. **Bombay is 289,502 of
 the 728,493 — 40% of all outstanding ingest is one court.**
+
+**11. The soft-404 reclassification, measured over the whole population.** The
+corrected probe (GET + `%PDF-` magic + a 1,024-byte floor) over all 39,024
+permanent `pdf_failed`: **39,003 soft 404s (99.9%), 21 real PDFs, 0 hard 404s, 0
+unknown.** Bombay alone was 38,867 of them. `pdf_absent AND permanent` went
+177,692 -> **216,695**; permanent `pdf_failed` is now **0**. Not all stubs are the
+124-byte page — sizes run to 19,795 bytes — so the size floor alone would not have
+caught them and the magic-byte check is what does.
+
+**11b. That apply reported `cleared 0 / reclassified 0` while moving 39,003 rows.**
+`res.count` came back unset on those UPDATEs; the write had happened and the tool
+said nothing had. Verified by counting `pdf_absent` before and after. Now
+`RETURNING 1` and `res.length`, which cannot be unset. **A write that
+under-reports itself is worse than one that fails, because it invites the operator
+to run it again.**
+
+**12. The fleet plan gated on the cursor but still RANKED on source-minus-held,
+and that half-change showed.** `hc-boot-hist-22_18` was correctly kept as a
+candidate — its cursor is 263,296 of 267,627, so 4,331 rows really do remain — and
+then listed FIRST at **101,121 actionable**, the held-based subtraction,
+over-reporting by 23x. The launcher takes its order from that ranking.
+`remainingActionable` now carries the cursor figure wherever a cursor exists, with
+`remainingBySubtraction` kept beside it so the disagreement stays visible.
+
+**12b. Fixing the ranking surfaced real work the held-percentage gate was
+hiding.** `MAX_HELD_PCT` is now consulted only where there is NO cursor, because a
+scope can read 100% held and still hold rows no worker has ever walked —
+duplication makes held ≈ source while the cursor lags. Newly visible: `mid-10_8`
+**67,617 unwalked at 100.0% held**, `hist-10_8` 74,246 at 100.0%, `hist-36_29`
+54,107 at 99.5%, `hist-32_4` 38,593 at 99.7%, `7_26-y2024` 42,262 at 99.6%.
+Candidates went 8 -> 16. **Every one of those would have been declared FINISHED by
+a percentage.**
+
+**13. Frontier and fleet at hand-off.** source 20,529,203 · walked 19,759,434 ·
+**remaining 702,176** · acquired 18,609,913 (+38,342 Supreme Court =
+**18,648,255**) · permanent absent 216,695 · retryable 18,288. Six workers running:
+`21_11`, `3_22`, `36_29`, `7_26-y2024`, `mid-10_8`, `hist-10_8`. Gate at launch:
+CPU 31.2% · RAM free 33.3% · commit free 31.1% · GPU 100% (NEW1 fed).
 
 **Still founder-blocked, already queued, not re-raised:** `INDIANKANOON_API_TOKEN`
 is unset, so the bounded missing-PDF pilot (161,792 `pdf_absent AND permanent`)
