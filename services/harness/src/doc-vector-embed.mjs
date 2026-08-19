@@ -105,12 +105,31 @@ try {
 
   let done = 0;
   let skippedNoText = 0;
+  let skippedAlreadyStaged = 0;
   let inserted = 0;
   let tokensTotal = 0;
   const t0 = Date.now();
   for (let i = 0; i < rows.length; i += FETCH_PAGE) {
     const page = rows.slice(i, i + FETCH_PAGE);
-    const ids = page.map((r) => r.judgmentId);
+    const allIds = page.map((r) => r.judgmentId);
+
+    // Skip what is already staged BEFORE the GPU sees it. `ON CONFLICT DO
+    // NOTHING` made the write idempotent but not the WORK: batch lcc-00002 was
+    // re-embedded in full and inserted 0 rows, because LCC's manifest is keyset
+    // ordered by representative_judgment_id and deterministically produced the
+    // same id range an earlier batch had already covered. That is 15 minutes of
+    // GPU spent to discard every vector it produced.
+    const already = await sql`
+      SELECT judgment_id FROM new1_doc_vector_stage
+      WHERE judgment_id = ANY(${allIds}::uuid[])
+    `;
+    const have = new Set(already.map((r) => r.judgment_id));
+    skippedAlreadyStaged += have.size;
+    const ids = allIds.filter((id) => !have.has(id));
+    if (ids.length === 0) {
+      done += page.length;
+      continue;
+    }
     const texts = await sql`
       SELECT id, left(full_text, ${HEAD_CHARS}) AS head, length(full_text) AS len
       FROM judgments WHERE id = ANY(${ids}::uuid[])
@@ -118,6 +137,7 @@ try {
     const byId = new Map(texts.map((t) => [t.id, t]));
     const toEmbed = [];
     for (const r of page) {
+      if (have.has(r.judgmentId)) continue;
       const t = byId.get(r.judgmentId);
       if (!t || !t.head || t.head.trim().length === 0) {
         skippedNoText += 1;
@@ -165,6 +185,7 @@ try {
       'staged ' + done + '/' + rows.length +
         '  inserted ' + inserted +
         '  noText ' + skippedNoText +
+        '  dup ' + skippedAlreadyStaged +
         '  ' + secs.toFixed(1) + 's' +
         '  ' + (tokensTotal / Math.max(secs, 0.001)).toFixed(0) + ' tok/s',
     );
@@ -181,6 +202,7 @@ try {
     rowsInBatch: rows.length,
     inserted,
     skippedNoText,
+    skippedAlreadyStaged,
     tableRows: n,
     nonUnitNormVectors: bad,
     tokens: tokensTotal,
