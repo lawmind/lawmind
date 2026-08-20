@@ -82,6 +82,8 @@ type Sample = {
   disposalNature: string | null;
   textLen: number;
   textHead: string;
+  /** Last 900 characters: where the disposal and the order actually are. */
+  textTail: string;
   sourceUrl: string;
 };
 
@@ -110,7 +112,8 @@ try {
     const start = `${Math.floor(Math.random() * 16).toString(16)}0000000-0000-0000-0000-000000000000`;
     const rows = (await sql`
       SELECT id, court, hc_document_class, hc_class_method, disposal_nature,
-             length(full_text) AS len, left(full_text, 600) AS head, source_url
+             length(full_text) AS len, left(full_text, 600) AS head,
+             right(full_text, 900) AS tail, source_url
       FROM judgments
       WHERE hc_document_class = ${cls} AND id > ${start}::uuid
       ORDER BY id
@@ -122,6 +125,7 @@ try {
       disposal_nature: string | null;
       len: number;
       head: string;
+      tail: string;
       source_url: string;
     }[];
 
@@ -135,6 +139,26 @@ try {
         disposalNature: r.disposal_nature,
         textLen: Number(r.len),
         textHead: r.head,
+        /**
+         * THE TAIL IS WHERE THE ANSWER IS, AND THE FIRST VERSION OF THIS FILE
+         * SHIPPED WITHOUT IT.
+         *
+         * The adjudication question is "was a substantive final decision taken",
+         * and an Indian judgment answers that in its closing paragraphs — the
+         * order, the relief, the disposal. The opening 600 characters are the
+         * cause title, the coram and the parties: identical in a merits judgment
+         * and in a two-line adjournment. Every instrument in this repo that
+         * actually screens for substance reads the TAIL (disposal-residue-cli
+         * takes the last 4,000 characters), and this sample asked a human to do
+         * the same job with the wrong end of the document.
+         *
+         * 900 characters, not 4,000: an adjudicator reads these, and the
+         * operative paragraph is short. Where it does not settle the question,
+         * the honest answer is `uncertain`, which the instruction now allows —
+         * forcing a verdict out of insufficient evidence manufactures exactly
+         * the label this exercise must not manufacture.
+         */
+        textTail: r.tail,
         sourceUrl: r.source_url,
       });
     }
@@ -155,9 +179,13 @@ try {
     adjudication: {
       status: 'NOT ADJUDICATED',
       instruction:
-        'For each row decide whether hc_document_class is correct for what the document IS, ' +
-        'using textHead and, where it does not settle it, sourceUrl. Record correct/incorrect ' +
-        'per row. Per-class precision is then correct/(correct+incorrect) WITHIN each class.',
+        'For each row decide whether hc_document_class is correct for what the document IS. ' +
+        'Read textTail FIRST — the disposal, the relief and the order live in the closing ' +
+        'paragraphs, and textHead is the cause title, which reads identically on a merits ' +
+        'judgment and on an adjournment. Use textHead for identity (what kind of proceeding ' +
+        'this is) and textTail for the verdict. Record correct/incorrect/uncertain per row. ' +
+        'Per-class precision is correct/(correct+incorrect) WITHIN each class, and the ' +
+        'uncertain count is reported beside it rather than distributed into either bucket.',
       warning:
         'Re-running classifyHcDocument over these rows measures determinism, not precision, ' +
         'and would report 100%. The label must be compared with the DOCUMENT, never with the rule.',
@@ -167,7 +195,8 @@ try {
     },
     caveats: [
       'Contiguous primary-key run from a random start, per class. Not a uniform random sample; adequate for finding defects, not for estimating a rate.',
-      'Classes are sampled at EQUAL size, so this is a stratified audit sample and its class mix is not the corpus mix.',
+      'Classes are sampled at EQUAL size, so this is a stratified audit sample and its class mix is not the corpus mix. A per-class rate read off it is a rate WITHIN that class and pooling them without re-weighting by the corpus prior overstates the good classes.',
+      'textTail is the last 900 characters and textHead the first 600. Between them they are not the document: a judgment whose operative order sits in the middle, or whose tail is a signature block and a certificate, can be adjudicated wrongly from either end. Those rows are uncertain, not a guess.',
     ],
     rows: out,
   };

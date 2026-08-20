@@ -1,0 +1,2114 @@
+{
+ "tool": "disposal-manifest-cli",
+ "takenAt": "2026-08-19T23:50:16.210Z",
+ "forLane": "LCC",
+ "wroteToJudgments": false,
+ "manifest": "../../docs/ops/migration/new2-model-classification-manifest.jsonl",
+ "purpose": "Every row in the DISPOSED/CLOSED residue that the FROZEN deterministic screen cannot call either way. This is the population where model adjudication buys something; the rows the screen can call are excluded on purpose.",
+ "selector": "hc_class_method IS NOT NULL AND hc_document_class IS NULL AND disposal_nature IS NOT NULL AND full_text IS NOT NULL AND length(full_text) >= 1200",
+ "frozenScreen": {
+  "file": "../../docs/ops/migration/new2-disposal-residue.json",
+  "takenAt": "2026-08-19T13:25:09.771Z",
+  "margin": 2,
+  "tailChars": 4000,
+  "minChars": 1200,
+  "proceduralMarkers": 12,
+  "decidedMarkers": 46,
+  "heldOutWorstPrecisionAtBalancedPrior": 0.8696236559139785,
+  "confusionMatrix": {
+   "trulyDecided": {
+    "n": 1500,
+    "calledDecided": 1294,
+    "calledProcedural": 17,
+    "uncertain": 189
+   },
+   "trulyProcedural": {
+    "n": 1500,
+    "calledDecided": 194,
+    "calledProcedural": 690,
+    "uncertain": 616
+   }
+  }
+ },
+ "counts": {
+  "scanned": 1044987,
+  "uncertain": 190102,
+  "decidedCall": 662884,
+  "proceduralCall": 26000,
+  "tooShort": 166001
+ },
+ "elapsedSeconds": 3657.6,
+ "watermark": "fffffc52-7062-4e30-84c2-ab12ac2bcb3e",
+ "byDisposal": [
+  {
+   "disposal": "Disposed Off",
+   "n": 244132,
+   "uncertain": 42617,
+   "uncertainShare": 0.17456539904641752
+  },
+  {
+   "disposal": "DISPOSED OF",
+   "n": 218948,
+   "uncertain": 40351,
+   "uncertainShare": 0.18429490107240076
+  },
+  {
+   "disposal": "DISPOSED",
+   "n": 141209,
+   "uncertain": 35357,
+   "uncertainShare": 0.2503877231621214
+  },
+  {
+   "disposal": "CLOSED",
+   "n": 27583,
+   "uncertain": 16155,
+   "uncertainShare": 0.585686836094696
+  },
+  {
+   "disposal": "DISPOSED OFF",
+   "n": 48813,
+   "uncertain": 11744,
+   "uncertainShare": 0.24059164566816216
+  },
+  {
+   "disposal": "DISPOSED OF NO COSTS",
+   "n": 76099,
+   "uncertain": 11536,
+   "uncertainShare": 0.15159200515118465
+  },
+  {
+   "disposal": "Disposed Of",
+   "n": 51792,
+   "uncertain": 11212,
+   "uncertainShare": 0.21648130985480382
+  },
+  {
+   "disposal": "CLOSED NO COSTS",
+   "n": 11547,
+   "uncertain": 5412,
+   "uncertainShare": 0.46869316705637826
+  },
+  {
+   "disposal": "ORDERED",
+   "n": 13448,
+   "uncertain": 4241,
+   "uncertainShare": 0.3153628792385485
+  },
+  {
+   "disposal": "35-ANY OTHER MODE @ ADM.STAGE",
+   "n": 5937,
+   "uncertain": 2186,
+   "uncertainShare": 0.3681994273201954
+  },
+  {
+   "disposal": "RELAXED",
+   "n": 1840,
+   "uncertain": 1298,
+   "uncertainShare": 0.7054347826086956
+  },
+  {
+   "disposal": "Closed",
+   "n": 2853,
+   "uncertain": 1163,
+   "uncertainShare": 0.40764107956536977
+  },
+  {
+   "disposal": "56-DISPOSED AT ADMISSION STAGE",
+   "n": 4399,
+   "uncertain": 1022,
+   "uncertainShare": 0.23232552852921118
+  },
+  {
+   "disposal": "OTHERS DISPOSED OFF",
+   "n": 5254,
+   "uncertain": 1009,
+   "uncertainShare": 0.19204415683288922
+  },
+  {
+   "disposal": "PREMPTORY",
+   "n": 6557,
+   "uncertain": 802,
+   "uncertainShare": 0.12231203294189416
+  },
+  {
+   "disposal": "47-DISPOSAL IN ANY OTHER MODE FH",
+   "n": 2429,
+   "uncertain": 447,
+   "uncertainShare": 0.184026348291478
+  },
+  {
+   "disposal": "46-ANY OTHER MODE @ FH",
+   "n": 2790,
+   "uncertain": 444,
+   "uncertainShare": 0.15913978494623657
+  },
+  {
+   "disposal": "Disposed of",
+   "n": 1358,
+   "uncertain": 396,
+   "uncertainShare": 0.2916053019145803
+  },
+  {
+   "disposal": "DELAY CONDONATED/REJECTED.",
+   "n": 1049,
+   "uncertain": 366,
+   "uncertainShare": 0.3489037178265014
+  },
+  {
+   "disposal": "DISPOSED OF WITH DIRECTION",
+   "n": 2507,
+   "uncertain": 339,
+   "uncertainShare": 0.13522138013562027
+  },
+  {
+   "disposal": "36-MCA DISPOSED OF",
+   "n": 753,
+   "uncertain": 286,
+   "uncertainShare": 0.3798140770252324
+  },
+  {
+   "disposal": "DELAY CONDONED",
+   "n": 362,
+   "uncertain": 196,
+   "uncertainShare": 0.5414364640883977
+  },
+  {
+   "disposal": "Disposed of with direction",
+   "n": 873,
+   "uncertain": 196,
+   "uncertainShare": 0.22451317296678122
+  },
+  {
+   "disposal": "33-CA DISPOSED OF",
+   "n": 618,
+   "uncertain": 181,
+   "uncertainShare": 0.2928802588996764
+  },
+  {
+   "disposal": "PEREMPTORY",
+   "n": 487,
+   "uncertain": 148,
+   "uncertainShare": 0.30390143737166325
+  },
+  {
+   "disposal": "IA/Memo/VK/OP in disposal",
+   "n": 153,
+   "uncertain": 131,
+   "uncertainShare": 0.8562091503267973
+  },
+  {
+   "disposal": "GRANT ISSUED",
+   "n": 1250,
+   "uncertain": 111,
+   "uncertainShare": 0.0888
+  },
+  {
+   "disposal": "CONSENT TERM",
+   "n": 156,
+   "uncertain": 90,
+   "uncertainShare": 0.5769230769230769
+  },
+  {
+   "disposal": "TIME EXTENDED",
+   "n": 122,
+   "uncertain": 81,
+   "uncertainShare": 0.6639344262295082
+  },
+  {
+   "disposal": "DISPOSAL WITH OBSERVATION",
+   "n": 94,
+   "uncertain": 27,
+   "uncertainShare": 0.2872340425531915
+  },
+  {
+   "disposal": "OTHER DISPOSED OFF",
+   "n": 219,
+   "uncertain": 27,
+   "uncertainShare": 0.1232876712328767
+  },
+  {
+   "disposal": "DISPOSAL BCZ FILE SHIFTED TO TRIBUNAL",
+   "n": 35,
+   "uncertain": 26,
+   "uncertainShare": 0.7428571428571429
+  },
+  {
+   "disposal": "DISPOSED AT ADMISSION STAGE",
+   "n": 109,
+   "uncertain": 25,
+   "uncertainShare": 0.22935779816513763
+  },
+  {
+   "disposal": "SCHEME SANCTIONED - COMPANY",
+   "n": 201,
+   "uncertain": 24,
+   "uncertainShare": 0.11940298507462686
+  },
+  {
+   "disposal": "Compramised",
+   "n": 41,
+   "uncertain": 23,
+   "uncertainShare": 0.5609756097560976
+  },
+  {
+   "disposal": "REVOKED",
+   "n": 20,
+   "uncertain": 20,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "NOT-PRESSED",
+   "n": 45,
+   "uncertain": 20,
+   "uncertainShare": 0.4444444444444444
+  },
+  {
+   "disposal": "Condoned",
+   "n": 49,
+   "uncertain": 19,
+   "uncertainShare": 0.3877551020408163
+  },
+  {
+   "disposal": "ABSOLUTE",
+   "n": 197,
+   "uncertain": 18,
+   "uncertainShare": 0.09137055837563451
+  },
+  {
+   "disposal": "Admitted and Disposed Off",
+   "n": 179,
+   "uncertain": 18,
+   "uncertainShare": 0.1005586592178771
+  },
+  {
+   "disposal": "Order on PUD/Clerical error",
+   "n": 138,
+   "uncertain": 18,
+   "uncertainShare": 0.13043478260869565
+  },
+  {
+   "disposal": "INTERM  ORDER",
+   "n": 47,
+   "uncertain": 15,
+   "uncertainShare": 0.3191489361702128
+  },
+  {
+   "disposal": "TRIAL BE EXPEDITED",
+   "n": 77,
+   "uncertain": 14,
+   "uncertainShare": 0.18181818181818182
+  },
+  {
+   "disposal": "Data not available in the software",
+   "n": 69,
+   "uncertain": 10,
+   "uncertainShare": 0.14492753623188406
+  },
+  {
+   "disposal": "Modification",
+   "n": 10,
+   "uncertain": 10,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "DECREE",
+   "n": 49,
+   "uncertain": 9,
+   "uncertainShare": 0.1836734693877551
+  },
+  {
+   "disposal": "EX-PARTE DECREE",
+   "n": 72,
+   "uncertain": 9,
+   "uncertainShare": 0.125
+  },
+  {
+   "disposal": "97-DISPOSED AS TRANSFER TO DISTRICT/SESSION COURT N.I. ACT.",
+   "n": 257,
+   "uncertain": 9,
+   "uncertainShare": 0.03501945525291829
+  },
+  {
+   "disposal": "JUDGEMENT",
+   "n": 83,
+   "uncertain": 8,
+   "uncertainShare": 0.0963855421686747
+  },
+  {
+   "disposal": "DECREE IN TERMS OF MEMO OF COMPROM",
+   "n": 73,
+   "uncertain": 8,
+   "uncertainShare": 0.1095890410958904
+  },
+  {
+   "disposal": "STAY MADE ABSOLUTE",
+   "n": 11,
+   "uncertain": 8,
+   "uncertainShare": 0.7272727272727273
+  },
+  {
+   "disposal": "LEAVE TO APPEAL GRANTED/REFUSED",
+   "n": 48,
+   "uncertain": 7,
+   "uncertainShare": 0.14583333333333334
+  },
+  {
+   "disposal": "DISPOSED OF WITH COSTS",
+   "n": 59,
+   "uncertain": 7,
+   "uncertainShare": 0.11864406779661017
+  },
+  {
+   "disposal": "Infructuos",
+   "n": 15,
+   "uncertain": 7,
+   "uncertainShare": 0.4666666666666667
+  },
+  {
+   "disposal": "Rule Disposed of",
+   "n": 33,
+   "uncertain": 7,
+   "uncertainShare": 0.21212121212121213
+  },
+  {
+   "disposal": "ORDERED ACCORDINGLY",
+   "n": 40,
+   "uncertain": 7,
+   "uncertainShare": 0.175
+  },
+  {
+   "disposal": "DISCHARGED",
+   "n": 16,
+   "uncertain": 7,
+   "uncertainShare": 0.4375
+  },
+  {
+   "disposal": "COMPOUNDED",
+   "n": 9,
+   "uncertain": 7,
+   "uncertainShare": 0.7777777777777778
+  },
+  {
+   "disposal": "TRANSFERED TO CAT,HYDERABAD",
+   "n": 9,
+   "uncertain": 7,
+   "uncertainShare": 0.7777777777777778
+  },
+  {
+   "disposal": "CLARIFIED",
+   "n": 21,
+   "uncertain": 7,
+   "uncertainShare": 0.3333333333333333
+  },
+  {
+   "disposal": "BOGUS",
+   "n": 40,
+   "uncertain": 6,
+   "uncertainShare": 0.15
+  },
+  {
+   "disposal": "Reference Disposed off",
+   "n": 86,
+   "uncertain": 5,
+   "uncertainShare": 0.05813953488372093
+  },
+  {
+   "disposal": "ORDERED AS PRAYED OFOR",
+   "n": 18,
+   "uncertain": 5,
+   "uncertainShare": 0.2777777777777778
+  },
+  {
+   "disposal": "INFRUCTIOUS",
+   "n": 12,
+   "uncertain": 5,
+   "uncertainShare": 0.4166666666666667
+  },
+  {
+   "disposal": "Admitted & Disposed Off",
+   "n": 28,
+   "uncertain": 5,
+   "uncertainShare": 0.17857142857142858
+  },
+  {
+   "disposal": "Direction for District Court",
+   "n": 23,
+   "uncertain": 5,
+   "uncertainShare": 0.21739130434782608
+  },
+  {
+   "disposal": "By Transfer",
+   "n": 13,
+   "uncertain": 5,
+   "uncertainShare": 0.38461538461538464
+  },
+  {
+   "disposal": "CONDITIONAL ORDER",
+   "n": 16,
+   "uncertain": 4,
+   "uncertainShare": 0.25
+  },
+  {
+   "disposal": "ORDERED ON TERMS",
+   "n": 32,
+   "uncertain": 4,
+   "uncertainShare": 0.125
+  },
+  {
+   "disposal": "Transfrd to Dharwad(Disposed)",
+   "n": 4,
+   "uncertain": 4,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "DISPENSED WITH  ORDERED",
+   "n": 13,
+   "uncertain": 4,
+   "uncertainShare": 0.3076923076923077
+  },
+  {
+   "disposal": "NOT MAINTAINABLE/RETURN THE FILE",
+   "n": 6,
+   "uncertain": 4,
+   "uncertainShare": 0.6666666666666666
+  },
+  {
+   "disposal": "RETURNED",
+   "n": 13,
+   "uncertain": 3,
+   "uncertainShare": 0.23076923076923078
+  },
+  {
+   "disposal": "DISPOSED BY NONPV",
+   "n": 14,
+   "uncertain": 3,
+   "uncertainShare": 0.21428571428571427
+  },
+  {
+   "disposal": "ADMITTED",
+   "n": 14,
+   "uncertain": 3,
+   "uncertainShare": 0.21428571428571427
+  },
+  {
+   "disposal": "Disposed On Motion date after hearing the both sides",
+   "n": 20,
+   "uncertain": 3,
+   "uncertainShare": 0.15
+  },
+  {
+   "disposal": "Set Aside",
+   "n": 29,
+   "uncertain": 3,
+   "uncertainShare": 0.10344827586206896
+  },
+  {
+   "disposal": "Speaking To Minutes",
+   "n": 5,
+   "uncertain": 3,
+   "uncertainShare": 0.6
+  },
+  {
+   "disposal": "APPEAL DISMISSED",
+   "n": 119,
+   "uncertain": 2,
+   "uncertainShare": 0.01680672268907563
+  },
+  {
+   "disposal": "ANSWERED",
+   "n": 19,
+   "uncertain": 2,
+   "uncertainShare": 0.10526315789473684
+  },
+  {
+   "disposal": "Dismiss By Prem.order",
+   "n": 8,
+   "uncertain": 2,
+   "uncertainShare": 0.25
+  },
+  {
+   "disposal": "ALLOW/ BY CIRCULATION IN CHAMBER",
+   "n": 7,
+   "uncertain": 2,
+   "uncertainShare": 0.2857142857142857
+  },
+  {
+   "disposal": "Addl. Ground",
+   "n": 15,
+   "uncertain": 2,
+   "uncertainShare": 0.13333333333333333
+  },
+  {
+   "disposal": "OTHERS (DISPOSE/DISMISSED for court disposal)",
+   "n": 12,
+   "uncertain": 2,
+   "uncertainShare": 0.16666666666666666
+  },
+  {
+   "disposal": "DISPOSAL BCZ FILE SHIFTED TO SUPREMECOURT",
+   "n": 7,
+   "uncertain": 2,
+   "uncertainShare": 0.2857142857142857
+  },
+  {
+   "disposal": "COMPANY WOUND UP",
+   "n": 31,
+   "uncertain": 2,
+   "uncertainShare": 0.06451612903225806
+  },
+  {
+   "disposal": "DISPOSED OF ACCORDINGLY",
+   "n": 15,
+   "uncertain": 2,
+   "uncertainShare": 0.13333333333333333
+  },
+  {
+   "disposal": "TRANSFERED TO APPELLATE SIDE",
+   "n": 4,
+   "uncertain": 2,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "AT THE TIME OF HEARING",
+   "n": 2,
+   "uncertain": 2,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "CLOSED WITH DIRECTION",
+   "n": 10,
+   "uncertain": 2,
+   "uncertainShare": 0.2
+  },
+  {
+   "disposal": "MEDIATION",
+   "n": 5,
+   "uncertain": 2,
+   "uncertainShare": 0.4
+  },
+  {
+   "disposal": "CONVERTED TO OTHER TYPE",
+   "n": 5,
+   "uncertain": 2,
+   "uncertainShare": 0.4
+  },
+  {
+   "disposal": "DECREE ON ADMISSION",
+   "n": 2,
+   "uncertain": 2,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "MODIFIED AND DISMISSED",
+   "n": 2,
+   "uncertain": 2,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "STAY VACATED",
+   "n": 3,
+   "uncertain": 2,
+   "uncertainShare": 0.6666666666666666
+  },
+  {
+   "disposal": "DIVERGENT OPINION - HON'BLE CHIEF JUSTICE",
+   "n": 3,
+   "uncertain": 2,
+   "uncertainShare": 0.6666666666666666
+  },
+  {
+   "disposal": "Order passed",
+   "n": 4,
+   "uncertain": 2,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "Disposed,No order",
+   "n": 6,
+   "uncertain": 2,
+   "uncertainShare": 0.3333333333333333
+  },
+  {
+   "disposal": "Cases not falling above",
+   "n": 98,
+   "uncertain": 1,
+   "uncertainShare": 0.01020408163265306
+  },
+  {
+   "disposal": "NOT CONFIRMED",
+   "n": 4,
+   "uncertain": 1,
+   "uncertainShare": 0.25
+  },
+  {
+   "disposal": "Disposed off as per Administrative Order",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "ALONGWITH RECORDS",
+   "n": 43,
+   "uncertain": 1,
+   "uncertainShare": 0.023255813953488372
+  },
+  {
+   "disposal": "Delay condoned",
+   "n": 11,
+   "uncertain": 1,
+   "uncertainShare": 0.09090909090909091
+  },
+  {
+   "disposal": "INTERIM DIRECTION MADE ABSOLUTE",
+   "n": 2,
+   "uncertain": 1,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "DISPOSED OFF/ BY CIRCULATION IN CHAMBER",
+   "n": 6,
+   "uncertain": 1,
+   "uncertainShare": 0.16666666666666666
+  },
+  {
+   "disposal": "AG and OT",
+   "n": 5,
+   "uncertain": 1,
+   "uncertainShare": 0.2
+  },
+  {
+   "disposal": "Confirmed",
+   "n": 56,
+   "uncertain": 1,
+   "uncertainShare": 0.017857142857142856
+  },
+  {
+   "disposal": "DIRECTION",
+   "n": 16,
+   "uncertain": 1,
+   "uncertainShare": 0.0625
+  },
+  {
+   "disposal": "CLOSED WITH OBSERVATION",
+   "n": 5,
+   "uncertain": 1,
+   "uncertainShare": 0.2
+  },
+  {
+   "disposal": "DISPOSED OFF- Reporting Compliance",
+   "n": 9,
+   "uncertain": 1,
+   "uncertainShare": 0.1111111111111111
+  },
+  {
+   "disposal": "TRANSFERED TO OTHER COURTS",
+   "n": 5,
+   "uncertain": 1,
+   "uncertainShare": 0.2
+  },
+  {
+   "disposal": "TRANSFERED TO DRT",
+   "n": 5,
+   "uncertain": 1,
+   "uncertainShare": 0.2
+  },
+  {
+   "disposal": "DISMMISSED/BY CIRCULATION IN CHAMBER",
+   "n": 8,
+   "uncertain": 1,
+   "uncertainShare": 0.125
+  },
+  {
+   "disposal": "Verify",
+   "n": 13,
+   "uncertain": 1,
+   "uncertainShare": 0.07692307692307693
+  },
+  {
+   "disposal": "CLOSED WITH COSTS",
+   "n": 4,
+   "uncertain": 1,
+   "uncertainShare": 0.25
+  },
+  {
+   "disposal": "RETURN TO COUNSEL",
+   "n": 3,
+   "uncertain": 1,
+   "uncertainShare": 0.3333333333333333
+  },
+  {
+   "disposal": "Extension of time",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "PLAINT RETURNED TO PLAINTIFF",
+   "n": 6,
+   "uncertain": 1,
+   "uncertainShare": 0.16666666666666666
+  },
+  {
+   "disposal": "EXPEDEDIT",
+   "n": 2,
+   "uncertain": 1,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "32-NO ORDER @ ADM STAGE",
+   "n": 4,
+   "uncertain": 1,
+   "uncertainShare": 0.25
+  },
+  {
+   "disposal": "Petition Is Dismissed/rejected",
+   "n": 6,
+   "uncertain": 1,
+   "uncertainShare": 0.16666666666666666
+  },
+  {
+   "disposal": "DISPOSED OFF AT ADMISSION STAGE",
+   "n": 3,
+   "uncertain": 1,
+   "uncertainShare": 0.3333333333333333
+  },
+  {
+   "disposal": "NO FURTHER ORDERS",
+   "n": 4,
+   "uncertain": 1,
+   "uncertainShare": 0.25
+  },
+  {
+   "disposal": "Reversed",
+   "n": 5,
+   "uncertain": 1,
+   "uncertainShare": 0.2
+  },
+  {
+   "disposal": "STAY ORDERED",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "DEREGISTERED",
+   "n": 13,
+   "uncertain": 1,
+   "uncertainShare": 0.07692307692307693
+  },
+  {
+   "disposal": "CANCELED",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "TERMINATED",
+   "n": 2,
+   "uncertain": 1,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "INJUNCTION MADE ABSOLUTE",
+   "n": 4,
+   "uncertain": 1,
+   "uncertainShare": 0.25
+  },
+  {
+   "disposal": "DISPENSED WITH FOR THE PRESENT",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "OFFICE OBJECTIONS UPHELD",
+   "n": 2,
+   "uncertain": 1,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "REVERSED",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "Case Converted To Another Case Type",
+   "n": 2,
+   "uncertain": 1,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "CASE WRONGLY REGISTERED/FILED",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "OFFICE OBJECTION SUSTAINED",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "WOUND UP",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "Closed For Judgment - CAV",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "CASE CONVERSION BY COURT ORDER",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "Settlement",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "Returned to Counsel",
+   "n": 2,
+   "uncertain": 1,
+   "uncertainShare": 0.5
+  },
+  {
+   "disposal": "ABATE",
+   "n": 1,
+   "uncertain": 1,
+   "uncertainShare": 1
+  },
+  {
+   "disposal": "PETITION REMITTED BACK FOR FRESH CONSIDERATION",
+   "n": 12,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "APPEAL CONFIRMED",
+   "n": 47,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "REMAND",
+   "n": 20,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DECREED AS PRAYED FOR",
+   "n": 20,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "ADJUDICATED",
+   "n": 3,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DISPOSED OF WITH OBSERVATION",
+   "n": 8,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "SUCCEED",
+   "n": 68,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "BY  LEGAL AID",
+   "n": 3,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "TRANSFERED TO FAMILY COURT",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Succeeds",
+   "n": 14,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "REMITTED",
+   "n": 6,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "COUNTER AFFIDAVIT",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "TRANSFERD TO SUPREME COURT",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "ANSWERED IN FAVOUR OF ASSESSE",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DE-NUMBERED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "SENTENCE SUSPENDED.",
+   "n": 5,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Transf/Returned for presentation to other court",
+   "n": 3,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "STRUCK OFF",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DISPOSED OFF / TRANSMITTED BACK TO DISTRICT COURT",
+   "n": 5,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "REDUNDANT",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "I. O. Set a Side",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "TRANSFERED TO TELANGANA HIGH COURT",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "R and P TRANSFERED TO NAGPUR BENCH",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DEATH SENTENCE CONFIRMED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "APPEAL DISMISSED AT ADMISSION STAGE",
+   "n": 6,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DISPOSED/ORDERED (Sr.Citizen Case)",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DE-REGISTER THE CASE",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DISCHARGE ORDERED",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "APPEAL DISMISSED/CONFIRMED",
+   "n": 5,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "WRONGLY ENTERED IN S/W",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "RETAIN",
+   "n": 3,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "PLAINT REJECTED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Disposal on conditional Order",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "CONFIRMED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DOES NOT SURVICE(MAIN MATTER DISPOSED OFF)",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "REMAND FROM SC",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Application granted",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "JHARKHAND",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "INTELLECTUAL PROP. APPELLATE BD.",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DISPOSED/ CASE TRANSFERED TO MP HIGH COURT",
+   "n": 4,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "PERMITTED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Summarily Dismissed",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DISPOSED AS TRANSFERRED TO CIRCUIT BENCH AT PORT BLAIR",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Petition made absolute",
+   "n": 4,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Transfrd to Gulbarga(Disposed)",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Decided Case",
+   "n": 4,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "76-NOTE FILED BY OFFICE",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "AFFIRMATIVE AGAINST ASSESSEE",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Destructed",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Not Maintainable",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "ORDER RESERVED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "LEAVE TO APPEAL",
+   "n": 3,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "AWAIT",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "REFERENCE ANSWERED",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "RESTORED",
+   "n": 4,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "ADMIT, ISSUE NOTICE",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "INJUNCTION VACATED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Disposed On Motion date after hearing the Petitioner",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "PASS OVER",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "DECREED EX-PARTY",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "ARBIRTATION APPOINTMENT",
+   "n": 6,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "NONE",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "OBJECTIONS DISPOSED",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "For Purpose of Compliance",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "CASE DISPOSED BY THE SUPREME COURT OF INDIA",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "ANOTHER BENCH",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Disposed off (Through Mediation)",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Amount enhanced",
+   "n": 2,
+   "uncertain": 0,
+   "uncertainShare": 0
+  },
+  {
+   "disposal": "Default",
+   "n": 1,
+   "uncertain": 0,
+   "uncertainShare": 0
+  }
+ ],
+ "byCourtYear": [
+  {
+   "cell": "33_10 2026",
+   "uncertain": 7522
+  },
+  {
+   "cell": "23_23 2023",
+   "uncertain": 6092
+  },
+  {
+   "cell": "32_4 2016",
+   "uncertain": 5147
+  },
+  {
+   "cell": "32_4 2024",
+   "uncertain": 4226
+  },
+  {
+   "cell": "18_6 2025",
+   "uncertain": 3894
+  },
+  {
+   "cell": "23_23 2022",
+   "uncertain": 3837
+  },
+  {
+   "cell": "21_11 2026",
+   "uncertain": 3635
+  },
+  {
+   "cell": "8_9 2025",
+   "uncertain": 3591
+  },
+  {
+   "cell": "28_2 2026",
+   "uncertain": 3436
+  },
+  {
+   "cell": "27_1 2025",
+   "uncertain": 3349
+  },
+  {
+   "cell": "29_3 2026",
+   "uncertain": 3231
+  },
+  {
+   "cell": "33_10 2025",
+   "uncertain": 2933
+  },
+  {
+   "cell": "32_4 2022",
+   "uncertain": 2884
+  },
+  {
+   "cell": "24_17 2022",
+   "uncertain": 2695
+  },
+  {
+   "cell": "18_6 2026",
+   "uncertain": 2659
+  },
+  {
+   "cell": "10_8 2026",
+   "uncertain": 2511
+  },
+  {
+   "cell": "33_10 2023",
+   "uncertain": 2479
+  },
+  {
+   "cell": "28_2 2021",
+   "uncertain": 2420
+  },
+  {
+   "cell": "27_1 2023",
+   "uncertain": 2327
+  },
+  {
+   "cell": "19_16 2026",
+   "uncertain": 2017
+  },
+  {
+   "cell": "32_4 2023",
+   "uncertain": 1954
+  },
+  {
+   "cell": "27_1 2026",
+   "uncertain": 1907
+  },
+  {
+   "cell": "33_10 2022",
+   "uncertain": 1849
+  },
+  {
+   "cell": "8_9 2023",
+   "uncertain": 1822
+  },
+  {
+   "cell": "36_29 2025",
+   "uncertain": 1812
+  },
+  {
+   "cell": "27_1 2022",
+   "uncertain": 1810
+  },
+  {
+   "cell": "29_3 2015",
+   "uncertain": 1631
+  },
+  {
+   "cell": "21_11 2024",
+   "uncertain": 1610
+  },
+  {
+   "cell": "8_9 2026",
+   "uncertain": 1584
+  },
+  {
+   "cell": "29_3 2025",
+   "uncertain": 1560
+  },
+  {
+   "cell": "33_10 2024",
+   "uncertain": 1505
+  },
+  {
+   "cell": "21_11 2023",
+   "uncertain": 1439
+  },
+  {
+   "cell": "2_5 2026",
+   "uncertain": 1372
+  },
+  {
+   "cell": "20_7 2026",
+   "uncertain": 1356
+  },
+  {
+   "cell": "29_3 2017",
+   "uncertain": 1353
+  },
+  {
+   "cell": "29_3 2019",
+   "uncertain": 1328
+  },
+  {
+   "cell": "33_10 2021",
+   "uncertain": 1315
+  },
+  {
+   "cell": "29_3 2014",
+   "uncertain": 1309
+  },
+  {
+   "cell": "8_9 2024",
+   "uncertain": 1299
+  },
+  {
+   "cell": "29_3 2016",
+   "uncertain": 1291
+  },
+  {
+   "cell": "27_1 2024",
+   "uncertain": 1259
+  },
+  {
+   "cell": "19_16 2025",
+   "uncertain": 1183
+  },
+  {
+   "cell": "29_3 2024",
+   "uncertain": 1166
+  },
+  {
+   "cell": "33_10 2018",
+   "uncertain": 1142
+  },
+  {
+   "cell": "32_4 2015",
+   "uncertain": 1142
+  },
+  {
+   "cell": "21_11 2025",
+   "uncertain": 1140
+  },
+  {
+   "cell": "28_2 2025",
+   "uncertain": 1108
+  },
+  {
+   "cell": "32_4 2014",
+   "uncertain": 1092
+  },
+  {
+   "cell": "8_9 2022",
+   "uncertain": 1082
+  },
+  {
+   "cell": "2_5 2016",
+   "uncertain": 1082
+  },
+  {
+   "cell": "33_10 2019",
+   "uncertain": 1074
+  },
+  {
+   "cell": "32_4 2025",
+   "uncertain": 989
+  },
+  {
+   "cell": "33_10 2016",
+   "uncertain": 976
+  },
+  {
+   "cell": "28_2 2020",
+   "uncertain": 974
+  },
+  {
+   "cell": "10_8 2014",
+   "uncertain": 963
+  },
+  {
+   "cell": "29_3 2018",
+   "uncertain": 943
+  },
+  {
+   "cell": "22_18 2026",
+   "uncertain": 929
+  },
+  {
+   "cell": "36_29 2023",
+   "uncertain": 905
+  },
+  {
+   "cell": "10_8 2023",
+   "uncertain": 897
+  },
+  {
+   "cell": "29_3 2013",
+   "uncertain": 873
+  },
+  {
+   "cell": "33_10 2015",
+   "uncertain": 871
+  },
+  {
+   "cell": "36_29 2022",
+   "uncertain": 861
+  },
+  {
+   "cell": "29_3 2021",
+   "uncertain": 837
+  },
+  {
+   "cell": "10_8 2015",
+   "uncertain": 818
+  },
+  {
+   "cell": "32_4 2019",
+   "uncertain": 787
+  },
+  {
+   "cell": "27_1 2021",
+   "uncertain": 777
+  },
+  {
+   "cell": "33_10 2020",
+   "uncertain": 770
+  },
+  {
+   "cell": "2_5 2019",
+   "uncertain": 752
+  },
+  {
+   "cell": "23_23 2024",
+   "uncertain": 741
+  },
+  {
+   "cell": "33_10 2017",
+   "uncertain": 733
+  },
+  {
+   "cell": "18_6 2024",
+   "uncertain": 733
+  },
+  {
+   "cell": "18_6 2023",
+   "uncertain": 722
+  },
+  {
+   "cell": "5_15 2024",
+   "uncertain": 703
+  },
+  {
+   "cell": "21_11 2021",
+   "uncertain": 702
+  },
+  {
+   "cell": "21_11 2022",
+   "uncertain": 699
+  },
+  {
+   "cell": "27_1 2015",
+   "uncertain": 694
+  },
+  {
+   "cell": "18_6 2022",
+   "uncertain": 678
+  },
+  {
+   "cell": "32_4 2013",
+   "uncertain": 671
+  },
+  {
+   "cell": "32_4 2008",
+   "uncertain": 663
+  },
+  {
+   "cell": "10_8 2025",
+   "uncertain": 657
+  },
+  {
+   "cell": "36_29 2026",
+   "uncertain": 657
+  },
+  {
+   "cell": "29_3 2022",
+   "uncertain": 649
+  },
+  {
+   "cell": "8_9 2015",
+   "uncertain": 645
+  },
+  {
+   "cell": "8_9 2018",
+   "uncertain": 639
+  },
+  {
+   "cell": "2_5 2025",
+   "uncertain": 631
+  },
+  {
+   "cell": "32_4 2021",
+   "uncertain": 628
+  },
+  {
+   "cell": "10_8 2024",
+   "uncertain": 626
+  },
+  {
+   "cell": "32_4 2018",
+   "uncertain": 626
+  },
+  {
+   "cell": "29_3 2020",
+   "uncertain": 613
+  },
+  {
+   "cell": "8_9 2017",
+   "uncertain": 607
+  },
+  {
+   "cell": "29_3 2023",
+   "uncertain": 578
+  },
+  {
+   "cell": "32_4 2007",
+   "uncertain": 573
+  },
+  {
+   "cell": "32_4 2012",
+   "uncertain": 569
+  },
+  {
+   "cell": "33_10 2014",
+   "uncertain": 555
+  },
+  {
+   "cell": "2_5 2018",
+   "uncertain": 529
+  },
+  {
+   "cell": "32_4 2010",
+   "uncertain": 509
+  },
+  {
+   "cell": "8_9 2021",
+   "uncertain": 502
+  },
+  {
+   "cell": "20_7 2024",
+   "uncertain": 502
+  },
+  {
+   "cell": "10_8 2022",
+   "uncertain": 500
+  },
+  {
+   "cell": "27_1 2018",
+   "uncertain": 494
+  },
+  {
+   "cell": "32_4 2020",
+   "uncertain": 494
+  },
+  {
+   "cell": "28_2 2024",
+   "uncertain": 487
+  },
+  {
+   "cell": "10_8 2019",
+   "uncertain": 484
+  },
+  {
+   "cell": "5_15 2025",
+   "uncertain": 484
+  },
+  {
+   "cell": "10_8 2018",
+   "uncertain": 483
+  },
+  {
+   "cell": "32_4 2017",
+   "uncertain": 482
+  },
+  {
+   "cell": "18_6 2021",
+   "uncertain": 476
+  },
+  {
+   "cell": "32_4 2011",
+   "uncertain": 471
+  },
+  {
+   "cell": "16_20 2014",
+   "uncertain": 471
+  },
+  {
+   "cell": "2_5 2017",
+   "uncertain": 461
+  },
+  {
+   "cell": "8_9 2019",
+   "uncertain": 458
+  },
+  {
+   "cell": "22_18 2024",
+   "uncertain": 458
+  },
+  {
+   "cell": "36_29 2021",
+   "uncertain": 457
+  },
+  {
+   "cell": "1_12 2023",
+   "uncertain": 452
+  },
+  {
+   "cell": "18_6 2019",
+   "uncertain": 447
+  },
+  {
+   "cell": "29_3 2012",
+   "uncertain": 447
+  },
+  {
+   "cell": "24_17 2019",
+   "uncertain": 443
+  },
+  {
+   "cell": "36_29 2014",
+   "uncertain": 433
+  },
+  {
+   "cell": "10_8 2013",
+   "uncertain": 430
+  },
+  {
+   "cell": "22_18 2025",
+   "uncertain": 414
+  },
+  {
+   "cell": "27_1 2014",
+   "uncertain": 411
+  },
+  {
+   "cell": "2_5 2024",
+   "uncertain": 406
+  },
+  {
+   "cell": "27_1 2019",
+   "uncertain": 404
+  },
+  {
+   "cell": "27_1 2017",
+   "uncertain": 403
+  },
+  {
+   "cell": "27_1 2016",
+   "uncertain": 400
+  },
+  {
+   "cell": "19_16 2024",
+   "uncertain": 396
+  },
+  {
+   "cell": "32_4 2009",
+   "uncertain": 394
+  },
+  {
+   "cell": "8_9 2016",
+   "uncertain": 380
+  },
+  {
+   "cell": "20_7 2025",
+   "uncertain": 375
+  },
+  {
+   "cell": "36_29 2015",
+   "uncertain": 366
+  },
+  {
+   "cell": "23_23 2021",
+   "uncertain": 366
+  },
+  {
+   "cell": "10_8 2017",
+   "uncertain": 361
+  },
+  {
+   "cell": "5_15 2016",
+   "uncertain": 359
+  },
+  {
+   "cell": "36_29 2024",
+   "uncertain": 354
+  },
+  {
+   "cell": "8_9 2014",
+   "uncertain": 354
+  },
+  {
+   "cell": "5_15 2023",
+   "uncertain": 350
+  },
+  {
+   "cell": "1_12 2025",
+   "uncertain": 346
+  },
+  {
+   "cell": "24_17 2018",
+   "uncertain": 345
+  },
+  {
+   "cell": "5_15 2026",
+   "uncertain": 344
+  },
+  {
+   "cell": "16_20 2016",
+   "uncertain": 337
+  },
+  {
+   "cell": "21_11 2020",
+   "uncertain": 336
+  },
+  {
+   "cell": "23_23 2018",
+   "uncertain": 333
+  },
+  {
+   "cell": "10_8 2016",
+   "uncertain": 330
+  },
+  {
+   "cell": "2_5 2022",
+   "uncertain": 330
+  },
+  {
+   "cell": "18_6 2020",
+   "uncertain": 311
+  },
+  {
+   "cell": "27_1 2007",
+   "uncertain": 306
+  },
+  {
+   "cell": "28_2 2023",
+   "uncertain": 305
+  },
+  {
+   "cell": "33_10 2013",
+   "uncertain": 301
+  },
+  {
+   "cell": "27_1 2008",
+   "uncertain": 300
+  },
+  {
+   "cell": "10_8 2012",
+   "uncertain": 299
+  },
+  {
+   "cell": "27_1 2005",
+   "uncertain": 288
+  },
+  {
+   "cell": "22_18 2014",
+   "uncertain": 283
+  },
+  {
+   "cell": "16_20 2015",
+   "uncertain": 281
+  },
+  {
+   "cell": "27_1 2006",
+   "uncertain": 277
+  },
+  {
+   "cell": "22_18 2023",
+   "uncertain": 276
+  },
+  {
+   "cell": "5_15 2017",
+   "uncertain": 265
+  },
+  {
+   "cell": "36_29 2018",
+   "uncertain": 263
+  },
+  {
+   "cell": "27_1 2011",
+   "uncertain": 261
+  },
+  {
+   "cell": "8_9 2020",
+   "uncertain": 259
+  },
+  {
+   "cell": "2_5 2021",
+   "uncertain": 251
+  },
+  {
+   "cell": "22_18 2015",
+   "uncertain": 245
+  },
+  {
+   "cell": "36_29 2013",
+   "uncertain": 244
+  },
+  {
+   "cell": "36_29 2017",
+   "uncertain": 244
+  },
+  {
+   "cell": "14_25 2025",
+   "uncertain": 244
+  },
+  {
+   "cell": "19_16 2023",
+   "uncertain": 243
+  },
+  {
+   "cell": "10_8 2021",
+   "uncertain": 242
+  },
+  {
+   "cell": "36_29 2016",
+   "uncertain": 241
+  },
+  {
+   "cell": "27_1 2013",
+   "uncertain": 240
+  },
+  {
+   "cell": "22_18 2018",
+   "uncertain": 236
+  },
+  {
+   "cell": "27_1 2012",
+   "uncertain": 236
+  },
+  {
+   "cell": "27_1 2020",
+   "uncertain": 231
+  },
+  {
+   "cell": "5_15 2018",
+   "uncertain": 229
+  },
+  {
+   "cell": "27_1 2009",
+   "uncertain": 226
+  },
+  {
+   "cell": "23_23 2019",
+   "uncertain": 225
+  },
+  {
+   "cell": "24_17 2020",
+   "uncertain": 223
+  },
+  {
+   "cell": "14_25 2024",
+   "uncertain": 219
+  },
+  {
+   "cell": "23_23 2020",
+   "uncertain": 217
+  },
+  {
+   "cell": "28_2 2022",
+   "uncertain": 216
+  },
+  {
+   "cell": "24_17 2025",
+   "uncertain": 214
+  },
+  {
+   "cell": "21_11 2019",
+   "uncertain": 212
+  },
+  {
+   "cell": "17_21 2025",
+   "uncertain": 212
+  },
+  {
+   "cell": "17_21 2024",
+   "uncertain": 207
+  },
+  {
+   "cell": "14_25 2022",
+   "uncertain": 202
+  },
+  {
+   "cell": "22_18 2013",
+   "uncertain": 199
+  },
+  {
+   "cell": "8_9 2012",
+   "uncertain": 196
+  },
+  {
+   "cell": "22_18 2017",
+   "uncertain": 194
+  },
+  {
+   "cell": "27_1 2010",
+   "uncertain": 192
+  },
+  {
+   "cell": "10_8 2020",
+   "uncertain": 189
+  },
+  {
+   "cell": "1_12 2026",
+   "uncertain": 188
+  },
+  {
+   "cell": "24_17 2021",
+   "uncertain": 186
+  },
+  {
+   "cell": "36_29 2009",
+   "uncertain": 184
+  },
+  {
+   "cell": "18_6 2018",
+   "uncertain": 184
+  },
+  {
+   "cell": "36_29 2020",
+   "uncertain": 183
+  },
+  {
+   "cell": "33_10 2011",
+   "uncertain": 181
+  },
+  {
+   "cell": "24_17 2026",
+   "uncertain": 181
+  },
+  {
+   "cell": "1_12 2024",
+   "uncertain": 179
+  },
+  {
+   "cell": "21_11 2016",
+   "uncertain": 178
+  },
+  {
+   "cell": "16_20 2017",
+   "uncertain": 174
+  },
+  {
+   "cell": "24_17 2023",
+   "uncertain": 173
+  },
+  {
+   "cell": "19_16 2021",
+   "uncertain": 166
+  }
+ ],
+ "caveats": [
+  "NOTHING is written to judgments. hc_document_class stays NULL for every id in the manifest. LCC owns the model pass and owns the write.",
+  "The screen is FROZEN, loaded from the artifact named in frozenScreen. It is not re-mined here. A manifest built under different markers is a different manifest and must say so.",
+  "The held-out precision in frozenScreen is measured at a 50/50 TEST prior against REGISTRY labels, not human ground truth. It does not transfer to this population and must not be used to auto-promote a model verdict to `decided`.",
+  "The screen leans `decided`, so the rows it excluded as decided-looking are an UPPER bound on substantive content, and the uncertain population here is the near-ties rather than the whole of the doubt.",
+  "Rows below the measured minimum length are counted in counts.tooShort and are NOT in the manifest. They are residue the instrument cannot speak about, which is different from residue it judged.",
+  "The walk is primary-key order over a table the fleet is still writing to. Rows ingested after the watermark are not in this manifest — and because judgments.id is a random uuid, an extension pass must key on created_at, not on this cursor. Measured 20 Aug: 740,993 of 740,993 rows created after a full id-order pass began sorted BELOW its final watermark."
+ ]
+}
