@@ -16,6 +16,74 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 20 Aug 2026 — NEW2: THE HISTORICAL BULK FRONTIER IS CLOSED, AND `decided_brief` IS 15.6% PRECISE
+
+**Added by NEW2 (ingestion lane).** Artifacts `docs/ops/migration/new2-frontier.txt`,
+`new2-source-exclusions.json`, `new2-class-precision-sample.json`,
+`new2-model-classification-manifest.json`. Bus 0844–0847, 0850–0852, 0857–0860.
+
+**`HISTORICAL_BULK_FRONTIER_CLOSED`.** `REMAINING ACTIONABLE` went **702,176 → 0**.
+888 of 889 court-year cells read `WALKED`; the 889th is a partition the ingester
+deliberately refuses. No worker is running and the logon launcher
+(`Startup\Lawmind-ingest.cmd`) is renamed to `.disabled-frontier-closed` so a
+reboot cannot silently restart 46 workers that would walk to exhaustion and write
+nothing. **judgments 18,698,968**, exact `count(*)`.
+
+**289,502 of that backlog — the entire Bombay remainder — was `bench=testcase`.**
+A published test fixture `hc-load.ts` refuses by rule, documented in
+`HC_INGEST_PLAN.md` and covered by a test. `HC_METADATA_SURVEY.perCourtPerYear`
+sums parquet footers per court-year with **no bench breakdown**, so the
+denominator counted rows no worker will ever fetch and the remainder could not
+shrink. Listing the objects live gives 56 files and 289,502 rows — the residual
+to the row. Fixed at the denominator: `new2-source-exclusions.json` imports
+`isTestFixture` from the ingester rather than re-implementing it, and
+`new2-frontier.mjs` / `new2-coverage-report.mjs` now subtract it and report
+`SOURCE_EXCLUDED` separately.
+
+**The last 878 rows were invisible to the scheduler.** 43 cells with no cursor at
+all, below `--min-remaining 1000`, in four courts the launcher's static `hist`
+list omits. **Run the plan once at `--min-remaining 1` before believing any "0
+remaining".** 16,632 documents written this session, confirmed by counting the
+heap before and after rather than by trusting worker logs.
+
+**Per-class precision, adjudicated against the documents:**
+
+| class | precision | 95% CI | corpus rows |
+| --- | --- | --- | --- |
+| `bail_order` | 100.0% | [92.9, 100.0] | 515,125 |
+| `reference_stub` | 100.0% | [92.9, 100.0] | 113,973 |
+| `procedural_disposal` | 98.0% | [89.5, 99.6] | 372,784 |
+| `decided` | 75.0% | [60.6, 85.4] | 658,954 |
+| **`decided_brief`** | **15.6%** | [7.7, 28.8] | 205,731 |
+
+**`decided` + `decided_brief` — the Tier-A selector — is 60.9%.** The 87.0% broad
+figure averaged a 100% class with a 15.6% one and must not be quoted again.
+`decided_brief`'s rule is `disposal_nature_merits_short`: the same merits-looking
+disposal string as `decided`, minus the length that gave the text room to
+disagree with it. Below ~1,500 characters the registry's bookkeeping string is
+carrying the whole decision. **Whether `decided_brief` stays in Tier A is a
+decision for LCC and NEW1, not for this lane alone** — dropping it costs 24% of
+the row count and moves the selector from 60.9% to 75.0%.
+
+**`script_quality` incremental pass was structurally impossible before today.**
+`judgments.id` is a random uuid, and **740,993 of 740,993** rows created after
+the 19 Aug full pass began sort BELOW its final id watermark. Resuming would have
+screened nothing for ever while exiting cleanly. `--since` keysets on
+`(created_at, id)` in a separate checkpoint file. 777,186 new documents screened,
+**58,615 `legacy_font_ascii` verdicts total** — and 11 of 100 sampled Tier-A rows
+are unreadable mojibake, so treat 58,615 as a floor with a wide margin above it.
+
+**`MODEL_CLASSIFICATION_MANIFEST_READY`** — 190,102 uncertain rows enumerated
+over a **1,044,987**-row residue against a FROZEN screen. The 760,305 constant
+every earlier projection used is stale by 37%. Payload is gitignored (283 MB);
+the summary is committed. CLOSED-family rows are 40–59% uncertain against 15–25%
+for DISPOSED, so a bounded first paid pass is CLOSED + CLOSED NO COSTS + RELAXED
+= 22,865 rows.
+
+**Blocked, and not on a credential:** the live-eCourts pivot needs an observation
+schema from LCC (bus 0839). Nothing has been harvested; a live harvest whose rows
+have nowhere correct to land is the one mistake that cannot be cleaned up later.
+
 ### 20 Aug 2026 — NEW1: HALFVEC IS THE ANSWER, AND PRODUCTION HNSW LOSES 6–9% OF TRUE NEIGHBOURS
 
 **Added by NEW1 (retrieval lane).** `docs/ai/NEW1_HALFVEC_TASK_FIDELITY.md` and
