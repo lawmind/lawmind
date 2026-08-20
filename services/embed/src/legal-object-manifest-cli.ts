@@ -22,13 +22,38 @@
  * means measuring the multiplier after committing to it.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * ONLY `verified: true`. THIS IS THE PROMOTION BOUNDARY.
+ * ONLY `verified: true` — WHICH IS SPAN VERIFICATION, AND NOT THE WHOLE LADDER
  * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * **This section previously called span verification "THE PROMOTION BOUNDARY".
+ * It is a boundary, and it is not the only one.** Corrected 20 Aug 2026 against
+ * a measurement, not against an opinion — everything below it still holds.
  *
  * DeepSeek generates candidates; evidence validation promotes them. A claim is
  * `verified` when its evidence span was found VERBATIM in the source text — not
  * when the model was confident, and not when the enrichment row as a whole
  * graded well.
+ *
+ * That defeats FABRICATION, which is what the rest of this header is about and
+ * is the risk it was written to stop. It does **not** establish that the span
+ * plays the ROLE it is filed under. Measured on this factory's own model, two
+ * independent runs over one document agree on the role label **81.0%** of the
+ * time — and only **87.6%** when both runs' spans verify
+ * (`docs/ai/MODEL_CLASSIFICATION_1K_AUDIT.md`). A verified quotation filed as a
+ * holding may be a party's contention, and it will read perfectly either way.
+ *
+ * Migration 0064 names the ladder: `MODEL_PROPOSED → SPAN_VERIFIED →
+ * SEMANTIC_ROLE_VERIFIED → CANONICAL_TRUSTED`. **Nothing has passed the third
+ * rung.** So `manifest.json` now stamps `trustLevel: 'SPAN_VERIFIED'` and says
+ * in the artifact what that does and does not mean.
+ *
+ * **Why this still emits rows rather than zero.** These vectors feed RETRIEVAL
+ * RANKING. A proposition filed under the wrong role is a slightly worse nearest
+ * neighbour — recoverable and invisible to the advocate. The unrecoverable act
+ * is showing such a span TO an advocate as the court's holding, and nothing
+ * downstream of this manifest does that. Emitting zero would end the
+ * vector-multiplier comparison this file exists for and buy no safety on the
+ * path that actually carries risk. The stamp is what keeps the two uses apart.
  *
  * The unit is the CLAIM, never the enrichment row. A `partial` row can hold six
  * verified claims and one fabricated one; taking the row would embed the
@@ -117,7 +142,10 @@ async function gate(jobClass: JobClass): Promise<{ allow: boolean; reasons: stri
     const v = await mod.check(jobClass);
     return { allow: v.allow, reasons: v.reasons };
   } catch (error) {
-    return { allow: false, reasons: ['resource gate unavailable: ' + String((error as Error).message)] };
+    return {
+      allow: false,
+      reasons: ['resource gate unavailable: ' + String((error as Error).message)],
+    };
   }
 }
 
@@ -133,7 +161,12 @@ async function gate(jobClass: JobClass): Promise<{ allow: boolean; reasons: stri
  * is not part of the cursor because pages break on enrichment boundaries: an
  * enrichment's claims are all emitted together or not at all.
  */
-async function page(sql: Sql, cursor: string | null, limit: number, minChars: number): Promise<ObjectRow[]> {
+async function page(
+  sql: Sql,
+  cursor: string | null,
+  limit: number,
+  minChars: number,
+): Promise<ObjectRow[]> {
   return sql<ObjectRow[]>`
     SELECT
       e.id                                   AS "enrichmentId",
@@ -277,6 +310,39 @@ async function main(): Promise<number> {
        * paragraphs, never all of them) does not exist yet.
        */
       level: 'B',
+      /**
+       * **The trust level of every object in this manifest — stamped, so no
+       * consumer can mistake what it is holding.**
+       *
+       * `SPAN_VERIFIED` (migration 0064) means the quoted evidence occurs
+       * verbatim in the source judgment. It does **not** mean the span is the
+       * holding, the issue, or the proposition it is filed under. Measured on
+       * this factory's own model, two independent runs over one document produce
+       * the same role label only **81.0%** of the time — and only 87.6% even
+       * when both runs' spans verify. Span verification defeats FABRICATION,
+       * which is what this file's header was written about and remains true. It
+       * does not establish ROLE, which is a separate question nothing has
+       * answered yet.
+       *
+       * **Why the manifest ships at SPAN_VERIFIED rather than emitting zero.**
+       * These vectors feed RETRIEVAL RANKING. A proposition filed under the
+       * wrong role makes a slightly worse nearest neighbour — recoverable, and
+       * invisible to the advocate. The unrecoverable act is presenting such a
+       * span TO an advocate as the court's holding, and nothing downstream of
+       * this manifest does that. Emitting zero today would end NEW1's
+       * vector-multiplier comparison — the reason this file ships early — and
+       * buy no safety on the path that actually carries risk.
+       *
+       * The stamp is what keeps those two uses separable. A consumer that wants
+       * to ASSERT a holding must wait for `SEMANTIC_ROLE_VERIFIED` and can now
+       * tell, from the manifest itself, that it is not looking at one.
+       */
+      trustLevel: 'SPAN_VERIFIED',
+      trustLevelMeans:
+        'The evidence span occurs verbatim in the source judgment. NOT that the span ' +
+        'is the holding/issue/proposition it is filed under — same-document role ' +
+        'agreement across two independent model runs is 81.0%. Safe for retrieval ' +
+        'ranking; NEVER sufficient to assert a holding to a user.',
       claimsScanned: scanned,
       skippedTooShort: skippedShort,
       minChars,
@@ -285,12 +351,25 @@ async function main(): Promise<number> {
     };
     writeFileSync(join(outDir, 'manifest.json'), JSON.stringify(summary, null, 2) + '\n');
 
-    console.log('LEGAL OBJECT MANIFEST — verified claims only');
+    console.log('LEGAL OBJECT MANIFEST — trustLevel SPAN_VERIFIED');
+    console.log(
+      '  the span is real; the ROLE is not verified. Retrieval ranking only —\n' +
+        '  never sufficient to assert a holding to a user. See manifest.json.',
+    );
     console.log('claims scanned      ' + scanned.toLocaleString());
-    console.log('skipped, too short  ' + skippedShort.toLocaleString() + '  (< ' + minChars + ' chars)');
+    console.log(
+      'skipped, too short  ' + skippedShort.toLocaleString() + '  (< ' + minChars + ' chars)',
+    );
     for (const rep of KINDS) {
       const w = written[rep] as { rows: number; distinctJudgments: number } | undefined;
-      if (w) console.log(rep.padEnd(20) + String(w.rows).padStart(7) + '  over ' + w.distinctJudgments + ' judgments');
+      if (w)
+        console.log(
+          rep.padEnd(20) +
+            String(w.rows).padStart(7) +
+            '  over ' +
+            w.distinctJudgments +
+            ' judgments',
+        );
     }
     console.log('wrote ' + outDir);
     return 0;

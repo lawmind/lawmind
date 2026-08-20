@@ -61,6 +61,9 @@ type Row = {
   verified: number;
   rejected: number;
   docs_verified: number;
+  docs_span_verified: number;
+  docs_role_verified: number;
+  docs_canonical_trusted: number;
   docs_partial: number;
   docs_rejected: number;
 };
@@ -80,7 +83,13 @@ try {
            coalesce(sum(rejected_count), 0)::int                                AS rejected,
            count(*) FILTER (WHERE verification_state = 'verified')::int         AS docs_verified,
            count(*) FILTER (WHERE verification_state = 'partial')::int          AS docs_partial,
-           count(*) FILTER (WHERE verification_state = 'rejected')::int         AS docs_rejected
+           count(*) FILTER (WHERE verification_state = 'rejected')::int         AS docs_rejected,
+           -- The trust ladder (migration 0064). verified_count above is SPAN
+           -- verification and nothing more; these are the states that say what
+           -- was established about the span, not merely that it exists.
+           count(*) FILTER (WHERE trust_rank >= 2)::int                         AS docs_span_verified,
+           count(*) FILTER (WHERE trust_rank >= 3)::int                         AS docs_role_verified,
+           count(*) FILTER (WHERE trust_rank >= 4)::int                         AS docs_canonical_trusted
       FROM document_enrichments
      ${SINCE ? sql`WHERE created_at >= ${SINCE}::timestamptz` : sql``}
      GROUP BY task, prompt_version, model
@@ -129,7 +138,29 @@ try {
     return {
       ...r,
       tokens,
+      /**
+       * **Tokens per SPAN-verified claim. This is the optimistic number** and
+       * it is kept because it is the one that moves when a prompt improves.
+       */
       tokensPerVerifiedObject: r.verified > 0 ? Math.round(tokens / r.verified) : null,
+      /**
+       * **Tokens per CANONICAL_TRUSTED object — the real cost of a usable
+       * object**, and the figure the founder roadmap asks for.
+       *
+       * It is `null` for every task today, because nothing has reached
+       * `SEMANTIC_ROLE_VERIFIED` let alone above it. That is not a bug in this
+       * report: a real span is not a verified holding, and measured on this
+       * model two independent runs over the same document produce the same
+       * class only 81.0% of the time even when BOTH spans verify. Printing
+       * `tok/obj` against span verification alone would price the factory's
+       * output at the cost of its cheapest checkpoint.
+       *
+       * `null` rather than a large number, deliberately. A denominator of zero
+       * means the question has no answer yet; substituting the span-verified
+       * figure would answer a different question in the same column.
+       */
+      tokensPerCanonicalTrusted:
+        r.docs_canonical_trusted > 0 ? Math.round(tokens / r.docs_canonical_trusted) : null,
       claimVerificationRate: claims > 0 ? r.verified / claims : null,
     };
   });
@@ -158,11 +189,33 @@ try {
     }
     const totalVerified = enriched.reduce((a, r) => a + r.verified, 0);
     const totalTokens = enriched.reduce((a, r) => a + r.tokens, 0);
+    const totalSpan = enriched.reduce((a, r) => a + r.docs_span_verified, 0);
+    const totalRole = enriched.reduce((a, r) => a + r.docs_role_verified, 0);
+    const totalTrusted = enriched.reduce((a, r) => a + r.docs_canonical_trusted, 0);
     console.log(
-      `\nALL TASKS  ${totalVerified.toLocaleString()} verified objects for ${totalTokens.toLocaleString()} tokens` +
+      `\nALL TASKS  ${totalVerified.toLocaleString()} SPAN-verified claims for ${totalTokens.toLocaleString()} tokens` +
         (totalVerified > 0
-          ? ` = ${Math.round(totalTokens / totalVerified).toLocaleString()} tokens per verified object`
+          ? ` = ${Math.round(totalTokens / totalVerified).toLocaleString()} tokens per span-verified claim`
           : ''),
+    );
+    /**
+     * The trust ladder printed as a funnel, because the drop between rungs is
+     * the finding. `tokens per CANONICAL_TRUSTED object` is what the roadmap
+     * asks for and it is undefined while the top rung is empty — reported as
+     * such rather than quietly replaced by the rung below it.
+     */
+    console.log(
+      `\nTRUST LADDER (documents)  SPAN_VERIFIED ${totalSpan.toLocaleString()} · ` +
+        `SEMANTIC_ROLE_VERIFIED ${totalRole.toLocaleString()} · ` +
+        `CANONICAL_TRUSTED ${totalTrusted.toLocaleString()}`,
+    );
+    console.log(
+      totalTrusted > 0
+        ? `  = ${Math.round(totalTokens / totalTrusted).toLocaleString()} tokens per CANONICAL_TRUSTED object`
+        : '  tokens per CANONICAL_TRUSTED object: UNDEFINED — nothing has passed semantic-role\n' +
+            '  verification, so the factory has produced no trusted object at any price. A real\n' +
+            '  span is not a verified holding: on the same model, two independent runs over one\n' +
+            '  document agree on the class only 81.0% of the time even when both spans verify.',
     );
     console.log('\nrejection reasons — each one is a claim that did NOT become data');
     for (const r of reasons.slice(0, 12)) {
