@@ -1,0 +1,59 @@
+{
+  "kind": "new1_head_length_sweep",
+  "generatedAt": "2026-08-19T23:48:33.617Z",
+  "note": "exact cosine over a fixed pool, not production ANN; arms differ only by head length",
+  "poolDocs": 5000,
+  "goldInPool": 278,
+  "queries": 283,
+  "manifestRows": 8846550,
+  "results": [
+    {
+      "head": 1200,
+      "docs": 5000,
+      "tokens": 1712271,
+      "tokensPerDoc": 342,
+      "embedSeconds": 198.5,
+      "docsPerHour": 90680,
+      "successAt5": 0.15547703180212014,
+      "recallAt20": 0.24381625441696114,
+      "mrr": 0.09856113102629945,
+      "ndcgAt10": 0.11809549595974184
+    },
+    {
+      "head": 2400,
+      "docs": 5000,
+      "tokens": 3264518,
+      "tokensPerDoc": 653,
+      "embedSeconds": 508.266,
+      "docsPerHour": 35415,
+      "successAt5": 0.22614840989399293,
+      "recallAt20": 0.3286219081272085,
+      "mrr": 0.1572766083468934,
+      "ndcgAt10": 0.18016834855781738
+    },
+    {
+      "head": 4800,
+      "docs": 5000,
+      "tokens": 6408001,
+      "tokensPerDoc": 1282,
+      "embedSeconds": 950.021,
+      "docsPerHour": 18947,
+      "successAt5": 0.22968197879858657,
+      "recallAt20": 0.4028268551236749,
+      "mrr": 0.1687676132840967,
+      "ndcgAt10": 0.19081096680492476
+    },
+    {
+      "head": 9600,
+      "docs": 5000,
+      "tokens": 12639715,
+      "tokensPerDoc": 2528,
+      "embedSeconds": 2025.337,
+      "docsPerHour": 8887,
+      "successAt5": 0.23674911660777384,
+      "recallAt20": 0.3710247349823322,
+      "mrr": 0.16811768334238564,
+      "ndcgAt10": 0.18882378342369333
+    }
+  ]
+}

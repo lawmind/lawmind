@@ -1,0 +1,31 @@
+{
+  "kind": "new1_rerank_crossencoder",
+  "generatedAt": "2026-08-19T23:19:14.194Z",
+  "model": "bge-reranker-v2-m3",
+  "dtype": "q8",
+  "split": "test",
+  "depth": 50,
+  "queries": 144,
+  "meanPairsPerQuery": 50,
+  "dense": {
+    "n": 144,
+    "successAt5": 0.19444444444444445,
+    "recallAt20": 0.4097222222222222,
+    "mrr": 0.10917350004692819,
+    "ndcgAt10": 0.1559126141253634,
+    "goldPresent": 0.4513888888888889
+  },
+  "crossEncoder": {
+    "n": 144,
+    "successAt5": 0.16666666666666666,
+    "recallAt20": 0.4166666666666667,
+    "mrr": 0.10972604484343389,
+    "ndcgAt10": 0.13994736099650135,
+    "goldPresent": 0.4513888888888889
+  },
+  "latencyMs": {
+    "mean": 12176.263888888889,
+    "p50": 12140,
+    "p95": 12989
+  }
+}
