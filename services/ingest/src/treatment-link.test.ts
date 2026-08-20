@@ -77,6 +77,23 @@ describe('harvestPairings', () => {
     assert.equal(citationKey(p.scr), '1989SUPP1SCR623');
   });
 
+  /**
+   * The verbatim *Lalta Prasad Vaish* list, end to end: the pairing is read, the
+   * bench line in front of it does not defeat the name guard, and the entry that
+   * prints `1959 SCR 379` twice with no colon-joined SCC form yields no pairing.
+   */
+  it('reads Lalta Prasad Vaish whole — one pairing, and the unpaired entry beside it is ignored', () => {
+    const pairings = harvestPairings(LALTA);
+    assert.equal(pairings.length, 1, 'Gannon Dunkerley prints no SCR:SCC pair and must not produce one');
+    const p = pairings[0]!;
+    assert.equal(citationKey(p.alt), '19901SCC109');
+    assert.equal(citationKey(p.scr), '1989SUPP1SCR623');
+    assert.equal(
+      nameAgrees(p.name, 'SYNTHETICS & CHEMICALS LTD. ETC. versus STATE OF U.P. AND ORS.').agrees,
+      true,
+    );
+  });
+
   it('never pairs two citations that merely sit near each other', () => {
     const proximity = 'Lisie Medical Institutions v. State of Kerala (2017) 14 SCC 533 [2017] 8 SCR 900';
     assert.equal(harvestPairings(proximity).length, 0);
