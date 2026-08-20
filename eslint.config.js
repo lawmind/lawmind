@@ -67,7 +67,11 @@ export default tseslint.config(
     // red for every lane over code that is correct. They are plain Node scripts
     // run by hand, nothing imports them, and each one produced a published
     // number.
-    files: ['scripts/**/*.mjs', 'services/harness/probes/**/*.mjs', 'services/harness/src/**/*.mjs'],
+    files: [
+      'scripts/**/*.mjs',
+      'services/harness/probes/**/*.mjs',
+      'services/harness/src/**/*.mjs',
+    ],
     languageOptions: {
       // `AbortSignal` joins the list for the same reason the others are here:
       // `AbortSignal.timeout()` is the standard way a script bounds a fetch, and

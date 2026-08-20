@@ -24,14 +24,23 @@ describe('profileFor', () => {
     const p = profileFor('procedural_event');
     assert.equal(p.name, 'procedural');
     assert.equal(p.includeBailOrders, true);
-    assert.ok(p.minChars < 2000, 'a procedural event is a sentence in a one-page order, not an argument');
+    assert.ok(
+      p.minChars < 2000,
+      'a procedural event is a sentence in a one-page order, not an argument',
+    );
   });
 
   it('the four machinery tasks share one profile and the reasoning tasks share the other', () => {
     for (const t of ['procedural_event', 'date_event', 'party_action', 'court_action']) {
       assert.equal(profileFor(t).name, 'procedural', `${t} should reach procedural decisions`);
     }
-    for (const t of ['issue', 'relief', 'reasoning_proposition', 'fact_proposition', 'statute_role']) {
+    for (const t of [
+      'issue',
+      'relief',
+      'reasoning_proposition',
+      'fact_proposition',
+      'statute_role',
+    ]) {
       assert.equal(profileFor(t).name, 'substantive', `${t} reads reasoning, not machinery`);
     }
   });
@@ -41,15 +50,26 @@ describe('profileFor', () => {
   });
 
   it('NO profile filters on document class — UNKNOWN is not BAD, in either direction', () => {
-    const profiles = [...new Set([...ATOMIC_TASKS, 'holding', 'metadata'].map((t) => profileFor(t)))];
+    const profiles = [
+      ...new Set([...ATOMIC_TASKS, 'holding', 'metadata'].map((t) => profileFor(t))),
+    ];
     for (const p of profiles) {
-      assert.ok(!('requiresKnownClass' in p), 'class is a prioritiser in the selector, never a filter here');
+      assert.ok(
+        !('requiresKnownClass' in p),
+        'class is a prioritiser in the selector, never a filter here',
+      );
       assert.ok(p.minChars > 0, 'a document with no usable text is out under every profile');
     }
   });
 
   it('the composite and non-legal-object tasks are unchanged', () => {
-    for (const t of ['metadata', 'treatment', 'citation_extraction', 'case_structure', 'authorities']) {
+    for (const t of [
+      'metadata',
+      'treatment',
+      'citation_extraction',
+      'case_structure',
+      'authorities',
+    ]) {
       assert.equal(profileFor(t).name, 'substantive');
       assert.equal(isProceduralTask(t), false);
     }

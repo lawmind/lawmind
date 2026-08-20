@@ -47,7 +47,6 @@
  *   node scripts/migration/regenerate-generated-columns.mjs --status
  *   node scripts/migration/regenerate-generated-columns.mjs --run [--jobs 8]
  */
-import fs from 'node:fs';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { PG, pgEnv, psqlValue, psqlExec } from './pg-local.mjs';
@@ -96,13 +95,6 @@ const exists = (t) =>
     PG.database,
   ).trim() === '1';
 
-const isGenerated = (t, c) =>
-  psqlValue(
-    `SELECT count(*) FROM information_schema.columns
-      WHERE table_schema='public' AND table_name='${t}' AND column_name='${c}'
-        AND is_generated <> 'NEVER'`,
-    PG.database,
-  ).trim() === '1';
 
 /**
  * Split by PHYSICAL position (`ctid`), not by the uuid key.

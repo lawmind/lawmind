@@ -318,7 +318,6 @@ export function gradeCase(
   answer: string,
   citedIds: readonly string[],
 ): CaseVerdict {
-  const hay = answer.toLowerCase();
   const failures: string[] = [];
 
   /**

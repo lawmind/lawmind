@@ -81,11 +81,18 @@ export function openRouterModelFromEnv(env: NodeJS.ProcessEnv = process.env): st
   return typeof m === 'string' && m.trim() !== '' ? m.trim() : null;
 }
 
-export async function callOpenRouter(prompt: string, deps: OpenRouterDeps): Promise<OpenRouterResult> {
+export async function callOpenRouter(
+  prompt: string,
+  deps: OpenRouterDeps,
+): Promise<OpenRouterResult> {
   const doFetch = deps.fetchImpl ?? globalThis.fetch;
   const sleep = deps.sleepImpl ?? defaultSleep;
   const model = deps.model;
-  if (!model) return { ok: false, reason: 'OPENROUTER_MODEL is not set — no model is assumed (founder: DeepSeek V4 Flash only)' };
+  if (!model)
+    return {
+      ok: false,
+      reason: 'OPENROUTER_MODEL is not set — no model is assumed (founder: DeepSeek V4 Flash only)',
+    };
   const maxTokens = deps.maxTokens ?? DEFAULT_MAX_TOKENS;
 
   let lastReason = 'unknown';

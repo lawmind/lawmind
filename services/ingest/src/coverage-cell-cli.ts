@@ -80,7 +80,9 @@ type Frontier = {
 };
 
 const frontier = JSON.parse(readFileSync(FRONTIER, 'utf8')) as Frontier;
-const survey = JSON.parse(readFileSync(SURVEY, 'utf8')) as { perCourt?: { name: string; code: string }[] };
+const survey = JSON.parse(readFileSync(SURVEY, 'utf8')) as {
+  perCourt?: { name: string; code: string }[];
+};
 const nameByCode = new Map((survey.perCourt ?? []).map((c) => [c.code, c.name]));
 
 /**
@@ -115,15 +117,21 @@ try {
      GROUP BY 1, 2`;
   const embeddedBy = new Map(embeddedRows.map((r) => [`${r.court ?? ''}|${r.year ?? 0}`, r.n]));
   const embeddedTotal = embeddedRows.reduce((a, r) => a + r.n, 0);
-  console.log(`  ${embeddedTotal.toLocaleString()} reachable documents over ${embeddedRows.length} court-year cells`);
+  console.log(
+    `  ${embeddedTotal.toLocaleString()} reachable documents over ${embeddedRows.length} court-year cells`,
+  );
 
   // Tier-A eligibility per cell, from the census the embed lane already ran.
-  const eligibleRows = await sql<{ court: string | null; judgment_year: number | null; n: string }[]>`
+  const eligibleRows = await sql<
+    { court: string | null; judgment_year: number | null; n: string }[]
+  >`
     SELECT court, judgment_year, sum(rows)::text AS n
       FROM embedding_census_cell
      WHERE bucket LIKE 'tier_a%'
      GROUP BY 1, 2`;
-  const eligibleBy = new Map(eligibleRows.map((r) => [`${r.court ?? ''}|${r.judgment_year ?? 0}`, Number(r.n)]));
+  const eligibleBy = new Map(
+    eligibleRows.map((r) => [`${r.court ?? ''}|${r.judgment_year ?? 0}`, Number(r.n)]),
+  );
 
   const heldMeasuredAt = frontier.heldFreshness?.heldTakenAt ?? frontier.takenAt;
   const provenance = frontier.derivedFrom?.source ?? 'new2-frontier.json';
@@ -195,11 +203,17 @@ try {
   const reachable = upserts.filter((u) => u.reachability === 'EMBEDDED').length;
 
   console.log(`\ncells ${upserts.length}`);
-  for (const [state, n] of [...byState].sort((a, b) => b[1] - a[1])) console.log(`  ${state.padEnd(16)} ${n}`);
-  console.log(`  reachability     EMBEDDED ${reachable} · LEXICAL_ONLY ${upserts.length - reachable}`);
-  if (unjoined.size > 0) console.log(`  survey codes with no court name: ${[...unjoined].join(', ')}`);
+  for (const [state, n] of [...byState].sort((a, b) => b[1] - a[1]))
+    console.log(`  ${state.padEnd(16)} ${n}`);
+  console.log(
+    `  reachability     EMBEDDED ${reachable} · LEXICAL_ONLY ${upserts.length - reachable}`,
+  );
+  if (unjoined.size > 0)
+    console.log(`  survey codes with no court name: ${[...unjoined].join(', ')}`);
   if (frontier.heldFreshness?.heldIsStale) {
-    console.log('  held is STALE — a worker wrote after the snapshot, so every held count is a LOWER bound');
+    console.log(
+      '  held is STALE — a worker wrote after the snapshot, so every held count is a LOWER bound',
+    );
   }
 
   if (!APPLY) {

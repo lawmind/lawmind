@@ -23,7 +23,9 @@ describe('openRouterModelFromEnv', () => {
 
   it('returns exactly what was configured, trimmed', () => {
     assert.equal(
-      openRouterModelFromEnv({ OPENROUTER_MODEL: ' deepseek/deepseek-v4-flash ' } as NodeJS.ProcessEnv),
+      openRouterModelFromEnv({
+        OPENROUTER_MODEL: ' deepseek/deepseek-v4-flash ',
+      } as NodeJS.ProcessEnv),
       'deepseek/deepseek-v4-flash',
     );
   });

@@ -93,7 +93,9 @@ try {
        AND c.citation_text <> ''
      ORDER BY c.citation_text`;
 
-  console.log(`${edges.length} unresolved adverse edges.${APPLY ? '' : '  DRY RUN — nothing will be written.'}\n`);
+  console.log(
+    `${edges.length} unresolved adverse edges.${APPLY ? '' : '  DRY RUN — nothing will be written.'}\n`,
+  );
 
   const outcomes: Outcome[] = [];
 
@@ -112,7 +114,10 @@ try {
     // GUARD 0 — the citing bench must have printed the equivalence itself.
     const pairing = harvestPairings(e.full_text ?? '').find((p) => citationKey(p.alt) === key);
     if (!pairing) {
-      outcomes.push({ ...base, refusal: 'no printed SCR pairing for this citation in the citing judgment' });
+      outcomes.push({
+        ...base,
+        refusal: 'no printed SCR pairing for this citation in the citing judgment',
+      });
       continue;
     }
 
@@ -128,7 +133,10 @@ try {
         ...base,
         scr: pairing.scr,
         printedName: pairing.name,
-        refusal: targets.length === 0 ? `target not held (${pairing.scr})` : `${targets.length} judgments carry ${pairing.scr}`,
+        refusal:
+          targets.length === 0
+            ? `target not held (${pairing.scr})`
+            : `${targets.length} judgments carry ${pairing.scr}`,
       });
       continue;
     }
@@ -186,7 +194,9 @@ try {
   const linked = outcomes.filter((o) => o.linked);
   for (const o of outcomes) {
     if (o.linked) {
-      console.log(`LINK   ${o.citation.padEnd(22)} -> ${o.scr?.padEnd(24)} ${o.targetTitle?.slice(0, 46)}`);
+      console.log(
+        `LINK   ${o.citation.padEnd(22)} -> ${o.scr?.padEnd(24)} ${o.targetTitle?.slice(0, 46)}`,
+      );
       console.log(`       evidence: ${o.evidence}`);
     } else {
       console.log(`refuse ${o.citation.padEnd(22)} ${o.refusal}`);
@@ -194,13 +204,25 @@ try {
   }
 
   console.log(`\n${'='.repeat(78)}`);
-  console.log(`LINKED ${linked.length} · REFUSED ${outcomes.length - linked.length} of ${outcomes.length}`);
-  console.log(APPLY ? 'Written. Run `pnpm --filter @lawmind/ingest overruled --confirm` next.' : 'Nothing written — re-run with --apply.');
+  console.log(
+    `LINKED ${linked.length} · REFUSED ${outcomes.length - linked.length} of ${outcomes.length}`,
+  );
+  console.log(
+    APPLY
+      ? 'Written. Run `pnpm --filter @lawmind/ingest overruled --confirm` next.'
+      : 'Nothing written — re-run with --apply.',
+  );
 
   writeFileSync(
     OUT,
     JSON.stringify(
-      { generatedAt: new Date().toISOString(), applied: APPLY, total: outcomes.length, linked: linked.length, outcomes },
+      {
+        generatedAt: new Date().toISOString(),
+        applied: APPLY,
+        total: outcomes.length,
+        linked: linked.length,
+        outcomes,
+      },
       null,
       2,
     ),

@@ -46,13 +46,20 @@ describe('summarise', () => {
   });
 
   it('SOURCE_HAS_ZERO still beats COVERED — it is a fact about the selection, not silence', () => {
-    assert.equal(summarise([cell({}), cell({ year: 2009, state: 'SOURCE_HAS_ZERO' })]).state, 'SOURCE_HAS_ZERO');
+    assert.equal(
+      summarise([cell({}), cell({ year: 2009, state: 'SOURCE_HAS_ZERO' })]).state,
+      'SOURCE_HAS_ZERO',
+    );
   });
 
   it('reachability is summarised INDEPENDENTLY and never folded into state', () => {
     const r = summarise([cell({ reachability: 'LEXICAL_ONLY', embedded: 0 })]);
     assert.equal(r.state, 'COVERED', 'held in full');
-    assert.equal(r.reachability, 'LEXICAL_ONLY', 'and unreachable by the dense arm at the same time');
+    assert.equal(
+      r.reachability,
+      'LEXICAL_ONLY',
+      'and unreachable by the dense arm at the same time',
+    );
   });
 
   it('one unreachable cell makes the selection unreachable', () => {
@@ -68,6 +75,9 @@ describe('summarise', () => {
 
   it('invents no measurement date when the caller has none', () => {
     assert.equal(summarise([cell({})]).measuredAt, null);
-    assert.equal(summarise([cell({})], '2026-08-20T00:00:00.000Z').measuredAt, '2026-08-20T00:00:00.000Z');
+    assert.equal(
+      summarise([cell({})], '2026-08-20T00:00:00.000Z').measuredAt,
+      '2026-08-20T00:00:00.000Z',
+    );
   });
 });

@@ -66,7 +66,12 @@ const PROCEDURAL: EligibilityProfile = {
  * Tasks that read the case's MACHINERY rather than its reasoning. Each one is
  * satisfied by a one-page order and each one is impoverished by excluding them.
  */
-const PROCEDURAL_TASKS = new Set<string>(['procedural_event', 'date_event', 'party_action', 'court_action']);
+const PROCEDURAL_TASKS = new Set<string>([
+  'procedural_event',
+  'date_event',
+  'party_action',
+  'court_action',
+]);
 
 export function profileFor(task: EnrichTask | string): EligibilityProfile {
   return PROCEDURAL_TASKS.has(task) ? PROCEDURAL : SUBSTANTIVE;

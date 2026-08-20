@@ -38,7 +38,13 @@
  */
 import type { Sql } from 'postgres';
 
-export const COVERAGE_STATES = ['COVERED', 'PARTIAL', 'KNOWN_GAP', 'SOURCE_HAS_ZERO', 'UNKNOWN'] as const;
+export const COVERAGE_STATES = [
+  'COVERED',
+  'PARTIAL',
+  'KNOWN_GAP',
+  'SOURCE_HAS_ZERO',
+  'UNKNOWN',
+] as const;
 export type CoverageState = (typeof COVERAGE_STATES)[number];
 
 export const REACHABILITY_STATES = ['EMBEDDED', 'LEXICAL_ONLY', 'UNKNOWN'] as const;
@@ -104,8 +110,11 @@ export const UNKNOWN_COVERAGE: CoverageReport = {
   measuredAt: null,
 };
 
-const worst = <T extends string>(values: readonly T[], severity: Record<T, number>, fallback: T): T =>
-  values.reduce((acc, v) => (severity[v] > severity[acc] ? v : acc), fallback);
+const worst = <T extends string>(
+  values: readonly T[],
+  severity: Record<T, number>,
+  fallback: T,
+): T => values.reduce((acc, v) => (severity[v] > severity[acc] ? v : acc), fallback);
 
 /**
  * Summarise a set of cells. Exported separately from the query so the rule —
@@ -115,7 +124,10 @@ const worst = <T extends string>(values: readonly T[], severity: Record<T, numbe
  * wire, and inventing one here would be a measurement date computed from data
  * that does not contain it.
  */
-export function summarise(cells: readonly CoverageCell[], measuredAt: string | null = null): CoverageReport {
+export function summarise(
+  cells: readonly CoverageCell[],
+  measuredAt: string | null = null,
+): CoverageReport {
   if (cells.length === 0) return UNKNOWN_COVERAGE;
   return {
     state: worst(
@@ -178,7 +190,9 @@ export async function coverageFor(sql: Sql, query: CoverageQuery): Promise<Cover
   const measuredAt =
     rows.length === 0
       ? null
-      : rows.reduce((acc, r) => (r.updated_at < acc ? r.updated_at : acc), rows[0]!.updated_at).toISOString();
+      : rows
+          .reduce((acc, r) => (r.updated_at < acc ? r.updated_at : acc), rows[0]!.updated_at)
+          .toISOString();
 
   return summarise(cells, measuredAt);
 }

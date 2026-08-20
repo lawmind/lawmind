@@ -86,7 +86,9 @@ import { type ActPair, PARSER_VERSION, parseCorrespondence } from './statute-cor
 const dir = process.argv[2];
 const APPLY = process.argv.includes('--apply');
 if (!dir || dir.startsWith('--')) {
-  console.error('usage: statute-mappings-load-cli.ts <dir containing bns.txt bnss.txt bsa.txt> [--apply]');
+  console.error(
+    'usage: statute-mappings-load-cli.ts <dir containing bns.txt bnss.txt bsa.txt> [--apply]',
+  );
   process.exit(2);
 }
 
@@ -106,11 +108,12 @@ const SOURCE_URL: Record<ActPair, string> = {
   'BSA-IEA': 'https://bprd.nic.in/uploads/pdf/Comparison%20Summary%20BSA%20to%20IEA.pdf',
 };
 
-const ACTS: Record<ActPair, { oldAct: string; newAct: string; file: string; shortTitle: RegExp }> = {
-  'BNS-IPC': { oldAct: 'ipc', newAct: 'bns', file: 'bns', shortTitle: /nyaya sanhita/i },
-  'BNSS-CrPC': { oldAct: 'crpc', newAct: 'bnss', file: 'bnss', shortTitle: /nagarik suraksha/i },
-  'BSA-IEA': { oldAct: 'evidence', newAct: 'bsa', file: 'bsa', shortTitle: /sakshya/i },
-};
+const ACTS: Record<ActPair, { oldAct: string; newAct: string; file: string; shortTitle: RegExp }> =
+  {
+    'BNS-IPC': { oldAct: 'ipc', newAct: 'bns', file: 'bns', shortTitle: /nyaya sanhita/i },
+    'BNSS-CrPC': { oldAct: 'crpc', newAct: 'bnss', file: 'bnss', shortTitle: /nagarik suraksha/i },
+    'BSA-IEA': { oldAct: 'evidence', newAct: 'bsa', file: 'bsa', shortTitle: /sakshya/i },
+  };
 
 const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -211,23 +214,38 @@ try {
 
     const effective = effectiveFor(pair);
     console.log(`${pair}`);
-    console.log(`  parsed rows        ${rows.length}   distinct new sections ${distinct} of ${EXPECTED[pair]} (${((100 * distinct) / EXPECTED[pair]).toFixed(1)}%)`);
+    console.log(
+      `  parsed rows        ${rows.length}   distinct new sections ${distinct} of ${EXPECTED[pair]} (${((100 * distinct) / EXPECTED[pair]).toFixed(1)}%)`,
+    );
     console.log(`  mappings to load   ${loadable}   (one per old section named)`);
-    console.log(`  marked "New"       ${newly}   NOT loaded — old_section is NOT NULL and no placeholder is invented`);
-    console.log(`  UNGROUNDED         ${ungrounded}   old section absent from its own printed line — column drift, dropped`);
-    console.log(`  ambiguous          ${ambiguous.length}   unparsed ${unparsed.length}   — the PARSER's limit, not the source's`);
-    console.log(`  effective_date     ${effective ?? 'UNKNOWN — statutes carries no enforcement_date for this act'}`);
+    console.log(
+      `  marked "New"       ${newly}   NOT loaded — old_section is NOT NULL and no placeholder is invented`,
+    );
+    console.log(
+      `  UNGROUNDED         ${ungrounded}   old section absent from its own printed line — column drift, dropped`,
+    );
+    console.log(
+      `  ambiguous          ${ambiguous.length}   unparsed ${unparsed.length}   — the PARSER's limit, not the source's`,
+    );
+    console.log(
+      `  effective_date     ${effective ?? 'UNKNOWN — statutes carries no enforcement_date for this act'}`,
+    );
     console.log('');
   }
 
   const byRelationship = new Map<string, number>();
-  for (const p of pending) byRelationship.set(p.relationship, (byRelationship.get(p.relationship) ?? 0) + 1);
-  console.log(`TOTAL ${pending.length} mappings · ${[...byRelationship].map(([k, v]) => `${k} ${v}`).join(' · ')}`);
+  for (const p of pending)
+    byRelationship.set(p.relationship, (byRelationship.get(p.relationship) ?? 0) + 1);
+  console.log(
+    `TOTAL ${pending.length} mappings · ${[...byRelationship].map(([k, v]) => `${k} ${v}`).join(' · ')}`,
+  );
   console.log(`${newlyAddedTotal} provisions marked "New" across all three pairs, none loaded.`);
 
   const missingDate = (Object.keys(ACTS) as ActPair[]).filter((p) => effectiveFor(p) === null);
   if (missingDate.length > 0) {
-    console.log(`\nWARNING: no enforcement_date in \`statutes\` for ${missingDate.join(', ')} — those rows load with a NULL effective_date rather than a guessed one.`);
+    console.log(
+      `\nWARNING: no enforcement_date in \`statutes\` for ${missingDate.join(', ')} — those rows load with a NULL effective_date rather than a guessed one.`,
+    );
   }
 
   if (!APPLY) {
@@ -254,7 +272,9 @@ try {
     }
     const [count] = await sql<{ n: number }[]>`SELECT count(*)::int n FROM statute_mappings`;
     console.log(`\nWrote ${written} mappings. statute_mappings now holds ${count?.n ?? 0}.`);
-    console.log('COVERAGE IS PARTIAL: the absence of a mapping means the parser has not read it, NEVER that no counterpart exists.');
+    console.log(
+      'COVERAGE IS PARTIAL: the absence of a mapping means the parser has not read it, NEVER that no counterpart exists.',
+    );
   }
 } finally {
   await sql.end();

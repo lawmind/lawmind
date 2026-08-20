@@ -7,7 +7,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { ATOMIC_TASKS, buildAtomicPrompt, claimsFromAtomic, isAtomicTask, locateSpan } from './enrich-atomic.ts';
+import {
+  ATOMIC_TASKS,
+  buildAtomicPrompt,
+  claimsFromAtomic,
+  isAtomicTask,
+  locateSpan,
+} from './enrich-atomic.ts';
 import { MIN_EVIDENCE_CHARS, verifyClaims } from './enrich.ts';
 
 const JUDGMENT =
@@ -17,18 +23,21 @@ const JUDGMENT =
   'The appeal is accordingly dismissed with no order as to costs.';
 
 describe('ATOMIC_TASKS', () => {
-  it('is exactly migration 0054\'s vocabulary, in the database\'s own spelling', () => {
-    assert.deepEqual([...ATOMIC_TASKS], [
-      'issue',
-      'relief',
-      'procedural_event',
-      'date_event',
-      'fact_proposition',
-      'party_action',
-      'court_action',
-      'reasoning_proposition',
-      'statute_role',
-    ]);
+  it("is exactly migration 0054's vocabulary, in the database's own spelling", () => {
+    assert.deepEqual(
+      [...ATOMIC_TASKS],
+      [
+        'issue',
+        'relief',
+        'procedural_event',
+        'date_event',
+        'fact_proposition',
+        'party_action',
+        'court_action',
+        'reasoning_proposition',
+        'statute_role',
+      ],
+    );
   });
 
   it('does not answer to a name the CHECK constraint has never heard of', () => {
@@ -47,7 +56,10 @@ describe('buildAtomicPrompt', () => {
   });
 
   it('carries the minimum evidence length the verifier actually enforces', () => {
-    assert.match(buildAtomicPrompt('issue', JUDGMENT), new RegExp(`at least ${MIN_EVIDENCE_CHARS} characters`));
+    assert.match(
+      buildAtomicPrompt('issue', JUDGMENT),
+      new RegExp(`at least ${MIN_EVIDENCE_CHARS} characters`),
+    );
   });
 
   it('is pure — the same task and text produce the same string, so input_hash is stable', () => {
@@ -55,7 +67,10 @@ describe('buildAtomicPrompt', () => {
   });
 
   it('names the task-specific fields for the tasks that have them', () => {
-    assert.match(buildAtomicPrompt('statute_role', JUDGMENT), /"section":"<section>","role":"<role>"/);
+    assert.match(
+      buildAtomicPrompt('statute_role', JUDGMENT),
+      /"section":"<section>","role":"<role>"/,
+    );
     assert.match(buildAtomicPrompt('date_event', JUDGMENT), /"date":"<date>"/);
     assert.doesNotMatch(buildAtomicPrompt('issue', JUDGMENT), /"party"/);
   });
@@ -64,7 +79,13 @@ describe('buildAtomicPrompt', () => {
 describe('claimsFromAtomic', () => {
   it('makes the QUOTE the claim value, so the string match proves the claim', () => {
     const [c] = claimsFromAtomic('court_action', {
-      objects: [{ quote: 'The appeal is accordingly dismissed', value: 'the appeal was dismissed', court: 'this Court' }],
+      objects: [
+        {
+          quote: 'The appeal is accordingly dismissed',
+          value: 'the appeal was dismissed',
+          court: 'this Court',
+        },
+      ],
     });
     assert.ok(c);
     assert.equal(c.value, 'The appeal is accordingly dismissed');
@@ -75,7 +96,10 @@ describe('claimsFromAtomic', () => {
   });
 
   it('drops an object with no quote rather than keeping an unprovable one', () => {
-    assert.equal(claimsFromAtomic('issue', { objects: [{ value: 'whether the suit is barred' }] }).length, 0);
+    assert.equal(
+      claimsFromAtomic('issue', { objects: [{ value: 'whether the suit is barred' }] }).length,
+      0,
+    );
   });
 
   it('returns nothing for a response of the wrong shape', () => {
@@ -92,7 +116,11 @@ describe('claimsFromAtomic', () => {
     });
     const verdicts = verifyClaims(claims, JUDGMENT);
     assert.equal(verdicts[0]?.verified, true);
-    assert.equal(verdicts[1]?.verified, false, 'a span the judgment does not contain must not verify');
+    assert.equal(
+      verdicts[1]?.verified,
+      false,
+      'a span the judgment does not contain must not verify',
+    );
   });
 });
 

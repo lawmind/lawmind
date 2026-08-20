@@ -49,7 +49,8 @@ describe('harvestPairings', () => {
   });
 
   it('does not need a recognised disposition marker — the pairing stands on its own', () => {
-    const noMarker = 'Synthetics and Chemicals Ltd. v. State of UP [1989] Supp. 1 SCR 623 : (1990) 1 SCC 109';
+    const noMarker =
+      'Synthetics and Chemicals Ltd. v. State of UP [1989] Supp. 1 SCR 623 : (1990) 1 SCC 109';
     const p = bySccKey(noMarker, '19901SCC109');
     assert.ok(p, 'pairing outside any disposition group must still be harvested');
     assert.equal(citationKey(p.scr), '1989SUPP1SCR623');
@@ -67,7 +68,11 @@ describe('harvestPairings', () => {
     const p = bySccKey(wrapped, '19965SCC670');
     assert.ok(p);
     assert.equal(p.name, 'P Kannadasan v. State of Tamil Nadu');
-    assert.equal(nameAgrees(p.name, 'P. KANNADASAN ETC. ETC. versus STATE OF TAMIL NADU AND ORS. ETC. ETC.').agrees, true);
+    assert.equal(
+      nameAgrees(p.name, 'P. KANNADASAN ETC. ETC. versus STATE OF TAMIL NADU AND ORS. ETC. ETC.')
+        .agrees,
+      true,
+    );
   });
 
   it('a citation wrapped across a line still resolves to one key', () => {
@@ -84,7 +89,11 @@ describe('harvestPairings', () => {
    */
   it('reads Lalta Prasad Vaish whole — one pairing, and the unpaired entry beside it is ignored', () => {
     const pairings = harvestPairings(LALTA);
-    assert.equal(pairings.length, 1, 'Gannon Dunkerley prints no SCR:SCC pair and must not produce one');
+    assert.equal(
+      pairings.length,
+      1,
+      'Gannon Dunkerley prints no SCR:SCC pair and must not produce one',
+    );
     const p = pairings[0]!;
     assert.equal(citationKey(p.alt), '19901SCC109');
     assert.equal(citationKey(p.scr), '1989SUPP1SCR623');
@@ -95,7 +104,8 @@ describe('harvestPairings', () => {
   });
 
   it('never pairs two citations that merely sit near each other', () => {
-    const proximity = 'Lisie Medical Institutions v. State of Kerala (2017) 14 SCC 533 [2017] 8 SCR 900';
+    const proximity =
+      'Lisie Medical Institutions v. State of Kerala (2017) 14 SCC 533 [2017] 8 SCR 900';
     assert.equal(harvestPairings(proximity).length, 0);
   });
 
@@ -146,7 +156,10 @@ describe('nameAgrees', () => {
   });
 
   it('one shared word is never enough, however clean the name looks', () => {
-    const v = nameAgrees('Kannadasan v. State of Kerala', 'P. KANNADASAN versus STATE OF TAMIL NADU AND ORS.');
+    const v = nameAgrees(
+      'Kannadasan v. State of Kerala',
+      'P. KANNADASAN versus STATE OF TAMIL NADU AND ORS.',
+    );
     assert.equal(v.agrees, false, 'KANNADASAN alone leaves TAMIL and NADU unaccounted for');
   });
 
@@ -156,13 +169,19 @@ describe('nameAgrees', () => {
    * that matched the target's title exactly, at Jaccard 1.00.
    */
   it('a title whose distinctive part is one word can still agree', () => {
-    const v = nameAgrees('V. Revathi v. Union of India and others', 'V REVATHI versus UNION OF INDIA & ORS.');
+    const v = nameAgrees(
+      'V. Revathi v. Union of India and others',
+      'V REVATHI versus UNION OF INDIA & ORS.',
+    );
     assert.equal(v.agrees, true);
     assert.equal(v.sharedTokens, 1);
   });
 
   it('refuses two unrelated cases that share only stopwords', () => {
-    const v = nameAgrees('State of Punjab v. Union of India', 'STATE OF KERALA versus UNION OF INDIA AND ORS.');
+    const v = nameAgrees(
+      'State of Punjab v. Union of India',
+      'STATE OF KERALA versus UNION OF INDIA AND ORS.',
+    );
     assert.equal(v.agrees, false, 'stopword-only overlap must not agree');
   });
 });

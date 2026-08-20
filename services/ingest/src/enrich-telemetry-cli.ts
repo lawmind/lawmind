@@ -135,10 +135,18 @@ try {
   });
 
   if (AS_JSON) {
-    console.log(JSON.stringify({ generatedAt: new Date().toISOString(), since: SINCE ?? null, tasks: enriched, reasons }, null, 2));
+    console.log(
+      JSON.stringify(
+        { generatedAt: new Date().toISOString(), since: SINCE ?? null, tasks: enriched, reasons },
+        null,
+        2,
+      ),
+    );
   } else {
     console.log(`LEGAL OBJECT TELEMETRY${SINCE ? ` — since ${SINCE}` : ''}\n`);
-    console.log('task                  docs   ok  fail  unpars      tokens  verified  rejected   tok/obj   claim%');
+    console.log(
+      'task                  docs   ok  fail  unpars      tokens  verified  rejected   tok/obj   claim%',
+    );
     for (const r of enriched) {
       console.log(
         `${r.task.padEnd(20)} ${String(r.documents).padStart(5)} ${String(r.calls_ok).padStart(4)} ` +
@@ -152,7 +160,9 @@ try {
     const totalTokens = enriched.reduce((a, r) => a + r.tokens, 0);
     console.log(
       `\nALL TASKS  ${totalVerified.toLocaleString()} verified objects for ${totalTokens.toLocaleString()} tokens` +
-        (totalVerified > 0 ? ` = ${Math.round(totalTokens / totalVerified).toLocaleString()} tokens per verified object` : ''),
+        (totalVerified > 0
+          ? ` = ${Math.round(totalTokens / totalVerified).toLocaleString()} tokens per verified object`
+          : ''),
     );
     console.log('\nrejection reasons — each one is a claim that did NOT become data');
     for (const r of reasons.slice(0, 12)) {

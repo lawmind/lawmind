@@ -60,7 +60,8 @@ export const ATOMIC_TASKS = [
 
 export type AtomicTask = (typeof ATOMIC_TASKS)[number];
 
-export const isAtomicTask = (t: string): t is AtomicTask => (ATOMIC_TASKS as readonly string[]).includes(t);
+export const isAtomicTask = (t: string): t is AtomicTask =>
+  (ATOMIC_TASKS as readonly string[]).includes(t);
 
 /**
  * Repeated verbatim in every atomic prompt. `enrich.ts`'s composite prompts
@@ -102,7 +103,7 @@ const SPECS: Record<AtomicTask, Spec> = {
     fields: ['party'],
   },
   procedural_event: {
-    what: 'a STEP IN THIS CASE\'S OWN HISTORY as the judgment recites it',
+    what: "a STEP IN THIS CASE'S OWN HISTORY as the judgment recites it",
     rules: [
       'Remand, transfer, consolidation, earlier dismissal, leave granted — steps already taken before or below.',
       'NOT something this court is doing now. That is a court_action.',
@@ -145,7 +146,7 @@ const SPECS: Record<AtomicTask, Spec> = {
     what: 'ONE STEP of the reasoning that links a fact to a conclusion',
     rules: [
       'One inferential step per object. A whole paragraph of reasoning is several objects, not one.',
-      'The court\'s own voice only. A step attributed to counsel or to another judgment is not this court\'s reasoning.',
+      "The court's own voice only. A step attributed to counsel or to another judgment is not this court's reasoning.",
     ],
     fields: [],
   },
@@ -184,7 +185,8 @@ TEXT:
 ${text}`;
 }
 
-const str = (v: unknown): string | null => (typeof v === 'string' && v.trim() !== '' ? v.trim() : null);
+const str = (v: unknown): string | null =>
+  typeof v === 'string' && v.trim() !== '' ? v.trim() : null;
 
 /**
  * Claims from one atomic response.
