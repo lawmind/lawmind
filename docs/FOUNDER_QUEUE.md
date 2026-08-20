@@ -183,6 +183,21 @@ new one.
 
 ### [OPEN — NEEDS ONE IDENTIFIER, NOT A DECISION] FQ-ECOURTS-ACTOR — the eCourts switch is built, verified and one field short of ON · LCC · 17 Aug 2026
 
+> **21 Aug 2026 — this one identifier now blocks FIVE premium surfaces, not one.**
+> The storage side landed today: `ecourts_observation` and `ecourts_transition`
+> (migration `0061`), append-only enforced by trigger, four guards proved by
+> execution. NEW2 had been holding live traffic on exactly that schema and is now
+> unblocked on everything except the switch.
+>
+> Case Brain, hearing prep, the matter timeline, next hearing and fresh order all
+> share one input — the eCourts observation stream — so this single field moves
+> the whole cluster from BLOCKED to buildable. `docs/ai/PREMIUM_BACKEND_READINESS.md`.
+>
+> Still true, and still the reason nobody flipped it: **zero requests have ever
+> been made**, and that is answerable by query rather than by assertion —
+> `ecourts_fetch_ledger` holds 52 rows and every one is
+> `refused` / `kill_switch_off`.
+
 **Needs:** the `users.id` that should own the change. Nothing else.
 
 ```
