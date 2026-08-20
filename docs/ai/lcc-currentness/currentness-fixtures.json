@@ -1,0 +1,2031 @@
+{
+  "generatedAt": "2026-08-20T17:24:29.695Z",
+  "lane": "LCC",
+  "purpose": "Canonical currentness fixtures. An adverse authority must never be presented as good law merely because its identity resolves. Every row here is a judgment a search may legitimately RETURN and must never render WITHOUT its currentness mark.",
+  "readLive": "overruled_status is NEVER cached. These rows are a fixture for testing the rendering path, not a cache to read at request time. Re-read the judgments row at render, on every surface.",
+  "counts": {
+    "total": 98,
+    "set_aside": 73,
+    "partly_set_aside": 8,
+    "doubted": 17
+  },
+  "everyRowIsEvidenced": true,
+  "rows": [
+    {
+      "judgmentId": "f551fccb-c631-4f20-b086-94903698fdaf",
+      "caseTitle": "ASHOK G. RAJANI versus BEACON TRUSTEESHIP LTD. & ORS",
+      "judgmentDate": "2022-09-22",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2022 INSC 1003",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "d30ba6a6-9144-44af-a931-9bc7bd80a524",
+          "citingTitle": "GLAS TRUST COMPANY LLC versus BYJU RAVEENDRAN & ORS.",
+          "citingDate": "2024-10-23",
+          "citationText": "[2022] 18 SCR 133"
+        }
+      ]
+    },
+    {
+      "judgmentId": "f5bd5329-f6bb-4cbc-8ce4-c34d1ccc9a48",
+      "caseTitle": "SAKHARAM SINCE DECEASED THROUGH LRS & ANR. versus KISHANRAO",
+      "judgmentDate": "2022-08-03",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2022 INSC 1312",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "b6f15818-b39d-4473-b7cd-b1e97ee084e7",
+          "citingTitle": "SURESH CHANDRA (DECEASED) THR. LRS. & ORS. versus PARASRAM & ORS.",
+          "citingDate": "2025-07-18",
+          "citationText": "[2022] 6 SCR 901"
+        }
+      ]
+    },
+    {
+      "judgmentId": "844e1b50-ed81-474b-bf93-ac2f18c955c4",
+      "caseTitle": "GARWARE WALL ROPES LTD. versus COASTAL MARINE CONSTRUCTIONS & ENGINEERING LTD.",
+      "judgmentDate": "2019-04-10",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2019 INSC 511",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "f4ec253e-5421-4232-a737-e248e0a3163e",
+          "citingTitle": "IN RE: INTERPLAY BETWEEN ARBITRATION AGREEMENTS UNDER THE ARBITRATION AND CONCIL",
+          "citingDate": "2023-12-13",
+          "citationText": "[2019] 5 SCR 579"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "f4ec253e-5421-4232-a737-e248e0a3163e",
+          "citingTitle": "IN RE: INTERPLAY BETWEEN ARBITRATION AGREEMENTS UNDER THE ARBITRATION AND CONCIL",
+          "citingDate": "2023-12-13",
+          "citationText": "(2019) 9 SCC 209"
+        }
+      ]
+    },
+    {
+      "judgmentId": "af440a61-0be6-4f4d-a0e1-926677ba53c3",
+      "caseTitle": "UNITED INDIA INSURANCE CO. LTD. versus ANTIQUE ART EXPORTS PVT. LTD.",
+      "judgmentDate": "2019-03-28",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2019 INSC 415",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "4ab3b98b-e4e5-4030-9eb1-5bb4a9a2d92f",
+          "citingTitle": "M/S MAYAVTI TRADING PVT. LTD. versus PRADYUAT DEB BURMAN",
+          "citingDate": "2019-09-05",
+          "citationText": "(2019) 5 SCC 362"
+        }
+      ]
+    },
+    {
+      "judgmentId": "3406dd87-9018-4b97-b4e6-8373648ad7e9",
+      "caseTitle": "MOHANLAL versus THE STATE OF PUNJAB",
+      "judgmentDate": "2018-08-16",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2018 INSC 714",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "11b5dd84-722c-4508-9cce-2e74817eedcb",
+          "citingTitle": "MUKESH SINGH versus STATE (NARCOTIC BRANCH OF DELHI)",
+          "citingDate": "2020-08-31",
+          "citationText": "[2018] 9 SCR 1006"
+        }
+      ]
+    },
+    {
+      "judgmentId": "cda2042d-81da-4c35-b6ff-8ead6bc179ec",
+      "caseTitle": "G H CHAMPA LAL versus STATE OF RAJASTHAN AND ORS.",
+      "judgmentDate": "2018-04-26",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2018 INSC 422",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "eef8e52c-afdb-4e16-b62b-912042ce3e9a",
+          "citingTitle": "STATE OF RAJASTHAN versus ASHOK KHETOLIYA & ANR",
+          "citingDate": "2022-03-10",
+          "citationText": "[2018] 5 SCR 628"
+        }
+      ]
+    },
+    {
+      "judgmentId": "4f9c2c5a-ba20-4f78-b4d7-0549a1af234d",
+      "caseTitle": "RAMSINGBHAI (RAMSANGBHAI) JERAMBHAI versus THE STATE OF GUJARAT AND ANR.",
+      "judgmentDate": "2018-04-24",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2018 INSC 405",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "9b373b1c-f2ac-4e24-9925-fc5acf002236",
+          "citingTitle": "BANWARI AND OTHERS versus HARYANA STATE INDUSTRIAL AND INFRASTRUCTURE DEVELOPMEN",
+          "citingDate": "2024-12-10",
+          "citationText": "2018 INSC 405"
+        },
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "9b373b1c-f2ac-4e24-9925-fc5acf002236",
+          "citingTitle": "BANWARI AND OTHERS versus HARYANA STATE INDUSTRIAL AND INFRASTRUCTURE DEVELOPMEN",
+          "citingDate": "2024-12-10",
+          "citationText": "[2018] 3 SCR 1019"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ccb1c771-8ea2-45f3-8f01-f3dfd05bb5d6",
+      "caseTitle": "SURAT SINGH (DEAD) versus SIRI BHAGWAN & ORS.",
+      "judgmentDate": "2018-02-19",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2018 INSC 170",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "66c19795-8a07-48b8-9966-afa247d68e9a",
+          "citingTitle": "KIRODI (SINCE DECEASED) THROUGH HIS LR versus RAM PARKASH & ORS.",
+          "citingDate": "2019-05-10",
+          "citationText": "[2018] 1\nSCR 1063"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ca98af50-b49f-4289-8d1e-efb89d7d61d6",
+      "caseTitle": "DANAMMA @ SUMAN SURPUR & ANR. versus AMAR AND ORS.",
+      "judgmentDate": "2018-02-01",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2018 INSC 84",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "eaf4e0c1-1f8e-409f-8044-54c35a380267",
+          "citingTitle": "VINEETA SHARMA versus RAKESH SHARMA & ORS.",
+          "citingDate": "2020-08-11",
+          "citationText": "[2018] 2 SCR 553"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "eaf4e0c1-1f8e-409f-8044-54c35a380267",
+          "citingTitle": "VINEETA SHARMA versus RAKESH SHARMA & ORS.",
+          "citingDate": "2020-08-11",
+          "citationText": "(2018) 3 SCC 343"
+        }
+      ]
+    },
+    {
+      "judgmentId": "8b8da12b-9c6d-47d5-8871-e307697cf84e",
+      "caseTitle": "M/S. METERS AND INSTRUMENTS PRIVATE LIMITED & ANR. versus KANCHAN MEHTA",
+      "judgmentDate": "2017-10-05",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2017 INSC 1009",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "43039777-c2e7-4f98-8ae6-e6e39af3fa85",
+          "citingTitle": "IN RE: EXPEDITIOUS TRIAL OF CASES UNDER SECTION 138 OF N.I. ACT 1881 versus .",
+          "citingDate": "2021-04-16",
+          "citationText": "[2017] 10 SCR 66"
+        }
+      ]
+    },
+    {
+      "judgmentId": "9500feb9-7355-4e5d-afad-fb104741cc33",
+      "caseTitle": "DHARAMPAL (DEAD) THR. LRS. versus PUNJAB WAKF BOARD & ORS.",
+      "judgmentDate": "2017-09-13",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2017 INSC 899",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "b52f63bb-32f5-4efe-97f0-f9332373f10d",
+          "citingTitle": "RAVINDER KAUR GREWAL & ORS versus MANJIT KAUR & ORS.",
+          "citingDate": "2019-08-07",
+          "citationText": "[2017] 8 SCR 316"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "b52f63bb-32f5-4efe-97f0-f9332373f10d",
+          "citingTitle": "RAVINDER KAUR GREWAL & ORS versus MANJIT KAUR & ORS.",
+          "citingDate": "2019-08-07",
+          "citationText": "(2018) 11 SCC 449"
+        }
+      ]
+    },
+    {
+      "judgmentId": "4b47b219-e614-4dff-9667-fcd0ec9c735a",
+      "caseTitle": "KINNARI MULLICK AND ANOTHER versus GHANSHYAM DAS DAMANI",
+      "judgmentDate": "2017-04-20",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2017 INSC 1281",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "e4faa920-7d3b-4f02-b004-bfa21232dd53",
+          "citingTitle": "GAYATRI BALASAMY versus M/S ISG NOVASOFT TECHNOLOGIES LIMITED",
+          "citingDate": "2025-04-30",
+          "citationText": "[2017] 6\nSCR 657"
+        }
+      ]
+    },
+    {
+      "judgmentId": "17c0252d-c6e5-4f2a-9f27-41c59c7fa4a1",
+      "caseTitle": "B. K. PAVITRA & ORS. versus UNION OF INDIA & ORS.",
+      "judgmentDate": "2017-02-09",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2017 INSC 121",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "d237e702-e4c6-4679-9162-547b7fb032b9",
+          "citingTitle": "THE STATE OF TAMIL NADU versus THE GOVERNOR OF TAMIL NADU & ANR.",
+          "citingDate": "2025-04-08",
+          "citationText": "[2017] 1 SCR 631"
+        }
+      ]
+    },
+    {
+      "judgmentId": "649521e6-aba4-4327-91d0-ddfe5fa4ef17",
+      "caseTitle": "RAJENDRA KUMAR MESHRAM versus VANSHMANI PRASAD VERMA AND ANR.",
+      "judgmentDate": "2016-10-03",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2016 INSC 942",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "b5c0c2ca-b1aa-4855-aed5-a650b602efd6",
+          "citingTitle": "ARJUN PANDITRAO KHOTKAR versus KAILASH KUSHANRAO GORANTYAL AND ORS.",
+          "citingDate": "2020-07-14",
+          "citationText": "[2016] 9 SCR 74"
+        }
+      ]
+    },
+    {
+      "judgmentId": "f09f8d00-94f4-4ff2-8f04-3ad1f864af17",
+      "caseTitle": "VIJAY KUMAR MISHRA AND ANR. versus HIGH COURT OF JUDICATURE AT PATNA AND ORS.",
+      "judgmentDate": "2016-08-09",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2016 INSC 586",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "bd04ebf4-cedd-4f4a-88d4-20fa496acd18",
+          "citingTitle": "DHEERAJ MOR versus HON’BLE HIGH COURT OF DELHI",
+          "citingDate": "2020-02-19",
+          "citationText": "(2016) 9 SCC 313"
+        }
+      ]
+    },
+    {
+      "judgmentId": "6fa790ec-1a91-492b-8a3d-4b43da3a5415",
+      "caseTitle": "M/S GANGOTRI ENTERPRISES LTD. versus UNION OF INDIA & ORS.",
+      "judgmentDate": "2016-05-05",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2016 INSC 375",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "e6a1caeb-2ebb-4c29-ad9d-f298a4238ce5",
+          "citingTitle": "STATE OF GUJARAT THROUGH CHIEF SECRETARY & ANR. versus AMBER BUILDERS",
+          "citingDate": "2020-01-08",
+          "citationText": "[2016] 2 SCR 1074"
+        }
+      ]
+    },
+    {
+      "judgmentId": "1fee973e-cdc0-4437-aa3c-4494559b2999",
+      "caseTitle": "SEBI THROUGH ITS CHAIHMAN versus ROOFIT INDUSTRIES LTD.",
+      "judgmentDate": "2015-11-26",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2015 INSC 864",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "1cf3ca74-5949-424e-83d0-dd24d7ba741b",
+          "citingTitle": "ADJUDICATING OFFICER, SECURITIES AND EXCHANGE BOARD OF INDIA versus BHAVESH PABA",
+          "citingDate": "2019-02-28",
+          "citationText": "(2016) 12 SCC\n125"
+        }
+      ]
+    },
+    {
+      "judgmentId": "594937e5-369e-46ff-a86e-3fda4bb25e03",
+      "caseTitle": "PRAKASH & ORS. versus PHULAVATI & ORS.",
+      "judgmentDate": "2015-10-16",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2015 INSC 793",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "eaf4e0c1-1f8e-409f-8044-54c35a380267",
+          "citingTitle": "VINEETA SHARMA versus RAKESH SHARMA & ORS.",
+          "citingDate": "2020-08-11",
+          "citationText": "[2015] 12 SCR 579"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "eaf4e0c1-1f8e-409f-8044-54c35a380267",
+          "citingTitle": "VINEETA SHARMA versus RAKESH SHARMA & ORS.",
+          "citingDate": "2020-08-11",
+          "citationText": "(2016) 2 SCC 36"
+        }
+      ]
+    },
+    {
+      "judgmentId": "f63091f2-993f-402d-a1dc-ec3a2f473ea4",
+      "caseTitle": "CANARA BANK AND ANR. versus M. MAHESH KUMAR",
+      "judgmentDate": "2015-05-15",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2015 INSC 424",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "98b282b4-ecdd-4378-88ba-7e12644115c1",
+          "citingTitle": "CANARA BANK versus AJITHKUMAR G.K.",
+          "citingDate": "2025-02-11",
+          "citationText": "[2015] 9 SCR 724"
+        },
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "98b282b4-ecdd-4378-88ba-7e12644115c1",
+          "citingTitle": "CANARA BANK versus AJITHKUMAR G.K.",
+          "citingDate": "2025-02-11",
+          "citationText": "(2015) 7\nSCC 412"
+        }
+      ]
+    },
+    {
+      "judgmentId": "7451b217-fa4b-4c6b-9a90-dc9c4816af0f",
+      "caseTitle": "TAMILNADU TERMINATED FULL TIME TEMPORARY UC EMPLOYEES ASSOCIATION versus LIFE INSURANCE CORPORATION OF INDIA& ORS.",
+      "judgmentDate": "2015-03-18",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2015 INSC 235",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "5bfd0e94-ef5b-4a20-b3c7-bca307cf1a74",
+          "citingTitle": "RANBIR SINGH versus SK ROY, CHAIRMAN, LIFE INSURANCE CORP. OF INDIA & ANR.",
+          "citingDate": "2022-04-27",
+          "citationText": "[2015] 5 SCR 806"
+        }
+      ]
+    },
+    {
+      "judgmentId": "73f18c68-d12c-455c-8483-eb99adcfe7ba",
+      "caseTitle": "M/S. QUEEN'S EDUCATIONAL SOCIETY versus COMMISSIONER OF INCOME TAX",
+      "judgmentDate": "2015-03-16",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2015 INSC 219",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "7a20e084-fdfc-49a1-9b1b-ff22884305b5",
+          "citingTitle": "M/S NEW NOBLE EDUCATIONAL SOCIETY versus THE CHIEF COMMISSIONER OF INCOME TAX 1 ",
+          "citingDate": "2022-10-19",
+          "citationText": "[2015] 3 SCR 838"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "7a20e084-fdfc-49a1-9b1b-ff22884305b5",
+          "citingTitle": "M/S NEW NOBLE EDUCATIONAL SOCIETY versus THE CHIEF COMMISSIONER OF INCOME TAX 1 ",
+          "citingDate": "2022-10-19",
+          "citationText": "(2015) 8 SCC 47"
+        }
+      ]
+    },
+    {
+      "judgmentId": "993e5dac-51bf-4465-ae1c-4e5edabdfe4d",
+      "caseTitle": "UNION OF INDIA & ORS. versus MAJOR GENERAL SHRI KANT SHARMA & ANR.",
+      "judgmentDate": "2015-03-11",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2015 INSC 206",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "1c118951-ef95-4d42-a770-74ee36c14143",
+          "citingTitle": "UNION OF INDIA & ORS. versus PARASHOTAM DASS",
+          "citingDate": "2023-03-21",
+          "citationText": "[2015] 4 SCR 676"
+        }
+      ]
+    },
+    {
+      "judgmentId": "8116df0e-1a69-4812-9a31-571696f89ac2",
+      "caseTitle": "TOMASO BRUNO & ANR. versus STATE OF U.P.",
+      "judgmentDate": "2015-01-20",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2015 INSC 52",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "b5c0c2ca-b1aa-4855-aed5-a650b602efd6",
+          "citingTitle": "ARJUN PANDITRAO KHOTKAR versus KAILASH KUSHANRAO GORANTYAL AND ORS.",
+          "citingDate": "2020-07-14",
+          "citationText": "[2015] 1 SCR 721"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "b5c0c2ca-b1aa-4855-aed5-a650b602efd6",
+          "citingTitle": "ARJUN PANDITRAO KHOTKAR versus KAILASH KUSHANRAO GORANTYAL AND ORS.",
+          "citingDate": "2020-07-14",
+          "citationText": "(2015)\n7 SCC 178"
+        }
+      ]
+    },
+    {
+      "judgmentId": "1b0b1ac3-7e2b-4577-975b-c0f8d3039aec",
+      "caseTitle": "FORBES FORBES CAMPBELL & CO. LTD. versus BOARD OF TRUSTEES, PORT OF BOMBAY",
+      "judgmentDate": "2014-12-03",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2014 INSC 826",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a46331f6-ba94-485b-8a45-721014dc4fb8",
+          "citingTitle": "THE CHAIRMAN, BOARD OF TRUSTEES, COCHIN PORT TRUST versus M/S AREBEE STAR MARITI",
+          "citingDate": "2020-08-05",
+          "citationText": "[2014] 12 SCR 337"
+        }
+      ]
+    },
+    {
+      "judgmentId": "885b8bc3-bd48-41d8-a0f7-a5eeeab2f4a4",
+      "caseTitle": "ASSOCIATE BUILDERS versus DELHI DEVELOPMENT AUTHORITY",
+      "judgmentDate": "2014-11-25",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2014 INSC 809",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "7bb73eb7-b6c7-44b1-b6a0-38cd0fa7f1d6",
+          "citingTitle": "DELHI AIRPORT METRO EXPRESS PVT. LTD. versus DELHI METRO RAIL CORPORATION LTD.",
+          "citingDate": "2021-09-09",
+          "citationText": "[2014] 13 SCR 895"
+        }
+      ]
+    },
+    {
+      "judgmentId": "af32aac0-eb3f-4b53-b5fd-b4de99cbf58c",
+      "caseTitle": "RUNGTA ENGINEERING COLLEGE, BHILAI & ANOTHER versus CHHATTISGARH SWAMI VIVEKANAND TECHNICAL UNIVERSITY & ANOTHER",
+      "judgmentDate": "2014-09-25",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2014 INSC 684",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "aade3783-5e75-4939-98a0-dd7e5dc84281",
+          "citingTitle": "G H APJ ABDUL KALAM TECHNOLOGICAL UNIVERSITY & ANR. versus JAI BHARATH COLLEGE O",
+          "citingDate": "2020-12-10",
+          "citationText": "[2014] 12 SCR 796"
+        }
+      ]
+    },
+    {
+      "judgmentId": "232ea6ee-9a21-4e16-ba45-9c96f9bb6ceb",
+      "caseTitle": "SREE BALAJI NAGAR RESIDENTIAL ASSOCIATION versus STATE OF TAMIL NADU & ORS.",
+      "judgmentDate": "2014-09-10",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2014 INSC 617",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "ca6946eb-8388-40d0-9b06-af25aa1d97ab",
+          "citingTitle": "INDORE DEVELOPMENT AUTHORITY versus SHAILENDRA (DEAD) THROUGH LRS. & ORS.",
+          "citingDate": "2018-02-08",
+          "citationText": "[2014] 7 SCR 799"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "ca6946eb-8388-40d0-9b06-af25aa1d97ab",
+          "citingTitle": "INDORE DEVELOPMENT AUTHORITY versus SHAILENDRA (DEAD) THROUGH LRS. & ORS.",
+          "citingDate": "2018-02-08",
+          "citationText": "(2015) 3 SCC 353"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ccb7824f-be8d-47e2-b8b1-fe21ca017a43",
+      "caseTitle": "CHANDIGARH ADMINISTRATION & ANOTHER versus JASMINE KAUR & OTHERS",
+      "judgmentDate": "2014-09-01",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2014 INSC 579",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "e8efa80c-9492-434f-87a9-e9767e7060e2",
+          "citingTitle": "S. KRISHNA SRADHA versus THE STATE OF ANDHRA PRADESH & ORS.",
+          "citingDate": "2019-12-13",
+          "citationText": "[2014] 9 SCR 1122"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "e8efa80c-9492-434f-87a9-e9767e7060e2",
+          "citingTitle": "S. KRISHNA SRADHA versus THE STATE OF ANDHRA PRADESH & ORS.",
+          "citingDate": "2019-12-13",
+          "citationText": "(2014) 10 SCC\n521"
+        }
+      ]
+    },
+    {
+      "judgmentId": "084da4fe-bb74-4203-943b-88d822136be7",
+      "caseTitle": "CHERUKURI MANI W/O NARENDRA CHOWDARI versus THE CHIEF SECRETARY, GOVERNMENT OF ANDHRA PRADESH & ORS.",
+      "judgmentDate": "2014-05-08",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2014 INSC 380",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a13bbfa9-7300-45e8-8247-74898f235b28",
+          "citingTitle": "PESALA NOOKARAJU versus THE GOVERNMENT OF ANDHRA PRADESH & ORS",
+          "citingDate": "2023-08-16",
+          "citationText": "[2014] 6 SCR 750"
+        }
+      ]
+    },
+    {
+      "judgmentId": "bd67505e-b7d7-4d64-b185-ccd2a4587883",
+      "caseTitle": "PRAMATI EDUCATIONAL & CULTURAL TRUST ® & ORS. versus UNION OF INDIA & ORS.",
+      "judgmentDate": "2014-05-06",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2014 INSC 362",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "21bae0d0-447e-43dd-ad89-50602aba2637",
+          "citingTitle": "ANJUMAN ISHAAT-E-TALEEM TRUST versus THE STATE OF MAHARASHTRA AND OTHERS",
+          "citingDate": "2025-09-01",
+          "citationText": "[2014] 11\nSCR 712"
+        },
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "21bae0d0-447e-43dd-ad89-50602aba2637",
+          "citingTitle": "ANJUMAN ISHAAT-E-TALEEM TRUST versus THE STATE OF MAHARASHTRA AND OTHERS",
+          "citingDate": "2025-09-01",
+          "citationText": "(2014) 8 SCC 1"
+        }
+      ]
+    },
+    {
+      "judgmentId": "2c0daea0-7c7b-4b0d-928b-af4258efa371",
+      "caseTitle": "SHALINI versus NEW ENGLISH HIGH SCH. ASSN. & ORS.",
+      "judgmentDate": "2013-12-12",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2013 INSC 830",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a02b1cfd-a1e0-4884-b8b3-a401a48986c4",
+          "citingTitle": "CHAIRMAN AND MANAGING DIRECTOR FCI AND ORS. versus JAGDISH BALARAM BAHIRA AND OR",
+          "citingDate": "2017-07-06",
+          "citationText": "[2013] 12 SCR 807"
+        }
+      ]
+    },
+    {
+      "judgmentId": "e3eb1c3f-03fd-422c-83b5-df8604603820",
+      "caseTitle": "SURESH KUMAR KOUSHAL AND ANOTHER versus NAZ FOUNDATION AND OTHERS",
+      "judgmentDate": "2013-12-11",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2013 INSC 823",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "da1faed5-c032-4cee-b391-3368fdd69f26",
+          "citingTitle": "NAVTEJ SINGH JOHAR & ORS. versus UNION OF INDIA THR. SECRETARY MINISTRY OF LAW A",
+          "citingDate": "2018-09-06",
+          "citationText": "[2013] 17 SCR 116"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "da1faed5-c032-4cee-b391-3368fdd69f26",
+          "citingTitle": "NAVTEJ SINGH JOHAR & ORS. versus UNION OF INDIA THR. SECRETARY MINISTRY OF LAW A",
+          "citingDate": "2018-09-06",
+          "citationText": "[2013] 17 SCR116"
+        }
+      ]
+    },
+    {
+      "judgmentId": "699fdd45-8af4-43a1-bed3-356865de6f44",
+      "caseTitle": "KANTILAL MARTAJI PANDOR versus STATE OF GUJARAT & ANR.",
+      "judgmentDate": "2013-07-25",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2013 INSC 494",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "3abf5fda-306e-4e02-af04-b80daad89e40",
+          "citingTitle": "SURENDRAN versus STATE OF KERELA",
+          "citingDate": "2022-05-13",
+          "citationText": "[2013]\n8 SCR 137"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "3abf5fda-306e-4e02-af04-b80daad89e40",
+          "citingTitle": "SURENDRAN versus STATE OF KERELA",
+          "citingDate": "2022-05-13",
+          "citationText": "(2013) 8 SCC 781"
+        }
+      ]
+    },
+    {
+      "judgmentId": "2c517a2d-7952-4e43-bde0-6bb0616810e9",
+      "caseTitle": "VANCHALABAI RAGHUNATH ITHAPE (D) BY LR versus SHANKARRAO BABURAO BHILARE (D) BY LRS. AND OTHERS",
+      "judgmentDate": "2013-07-01",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2013 INSC 377",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "38c551cc-54a7-4938-8a52-1470c8208d1a",
+          "citingTitle": "BHIMRAO RAMCHANDRA KHALATE (DECEASED) THROUGH LRS. versus NANA DINKAR YADAV (TAN",
+          "citingDate": "2021-08-13",
+          "citationText": "[2013] 8 SCR 1028"
+        }
+      ]
+    },
+    {
+      "judgmentId": "c619adcd-d293-4c06-94c4-b722242e1069",
+      "caseTitle": "UNION OF INDIA & ORS. versus N.R. PARMAR & ORS.",
+      "judgmentDate": "2012-11-27",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2012 INSC 547",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "1d5ed2d3-8179-489f-835b-a94de51e920f",
+          "citingTitle": "K. MEGHACHANDRA SINGH & ORS. versus NINGAM SIRO & ORS.",
+          "citingDate": "2019-11-19",
+          "citationText": "(2012) 13\nSCC 340"
+        }
+      ]
+    },
+    {
+      "judgmentId": "3d84de6b-1138-4c42-8885-a70a6e9162b6",
+      "caseTitle": "M/S PURBANCHAL CABLES & CONDUCTORS PVT. LTD versus ASSAM STATE ELECTRICITY BOARD & ANOTHER",
+      "judgmentDate": "2012-07-10",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2012 INSC 280",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a8f15cae-f8e4-4a2f-8f57-046bdfef501f",
+          "citingTitle": "M/S. SHANTI CONDUCTORS (P) LTD. & ANR. versus ASSAM STATE ELECTRICITY BOARD & OR",
+          "citingDate": "2019-01-23",
+          "citationText": "[2012] 6 SCR 905"
+        }
+      ]
+    },
+    {
+      "judgmentId": "f783be66-76e7-4379-8daa-f97e8715c55c",
+      "caseTitle": "RAGHBIR SINGH SEHRAWAT versus STATE OF HARYANA AND OTHERS",
+      "judgmentDate": "2011-11-23",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2011 INSC 816",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "6b0ede38-63a2-43fd-a990-8910246d2bfa",
+          "citingTitle": "INDORE DEVELOPMENT AUTHORITY versus MANOHARLAL & ORS. ETC.",
+          "citingDate": "2020-03-06",
+          "citationText": "[2011] 14 SCR 1113"
+        }
+      ]
+    },
+    {
+      "judgmentId": "7cef6ece-bb75-464d-ae4e-0a5f44834ca7",
+      "caseTitle": "M/S. SMS TEA ESTATES PVT. LTD. versus M/S. CHANDMARI TEA CO. PVT. LTD.",
+      "judgmentDate": "2011-07-20",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2011 INSC 508",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "f4ec253e-5421-4232-a737-e248e0a3163e",
+          "citingTitle": "IN RE: INTERPLAY BETWEEN ARBITRATION AGREEMENTS UNDER THE ARBITRATION AND CONCIL",
+          "citingDate": "2023-12-13",
+          "citationText": "[2011] 9 SCR 382"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "f4ec253e-5421-4232-a737-e248e0a3163e",
+          "citingTitle": "IN RE: INTERPLAY BETWEEN ARBITRATION AGREEMENTS UNDER THE ARBITRATION AND CONCIL",
+          "citingDate": "2023-12-13",
+          "citationText": "(2011)\n14 SCC 66"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "c7d804b8-8c09-4d9e-b94c-63a2359e9835",
+          "citingTitle": "M/S. N.N. GLOBAL MERCANTILE PVT. LTD. versus M/S. INDO UNIQUE FLAME LTD. & OTHER",
+          "citingDate": "2021-01-11",
+          "citationText": "[2011] 9 SCR 382"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "c7d804b8-8c09-4d9e-b94c-63a2359e9835",
+          "citingTitle": "M/S. N.N. GLOBAL MERCANTILE PVT. LTD. versus M/S. INDO UNIQUE FLAME LTD. & OTHER",
+          "citingDate": "2021-01-11",
+          "citationText": "(2011) 14 SCC 66"
+        }
+      ]
+    },
+    {
+      "judgmentId": "af4b3576-261a-4d6a-a85e-5fc2b6c0e0de",
+      "caseTitle": "SRI INDRA DAS versus STATE OF ASSAM",
+      "judgmentDate": "2011-02-10",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2011 INSC 114",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "11d32988-8287-4ba6-8780-c7ced3cdbac5",
+          "citingTitle": "ARUP BHUYAN versus STATE OF ASSAM & ANR.",
+          "citingDate": "2023-03-24",
+          "citationText": "[2011] 4 SCR 289"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ee5b3599-56b7-4fd3-a938-b5ab8634fcf7",
+      "caseTitle": "SIDDHARAM SATLINGAPPA MHETRE versus STATE OF MAHARASHTRA AND OTHERS",
+      "judgmentDate": "2010-12-02",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2010 INSC 843",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "e0207b25-149b-4599-bee7-1617216f17f1",
+          "citingTitle": "SUSHILA AGGARWAL AND OTHERS versus STATE (NCT OF DELHI) AND ANOTHER",
+          "citingDate": "2020-01-29",
+          "citationText": "[2010] 15 SCR 201"
+        }
+      ]
+    },
+    {
+      "judgmentId": "0c53b65f-576f-4eca-80ce-c8312d8e8136",
+      "caseTitle": "STATE OF HARYANA & ORS. versus S. L. ARORA & COMPANY",
+      "judgmentDate": "2010-01-29",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2010 INSC 69",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "2c55ae08-eef0-4301-82b3-4ffcc02bde45",
+          "citingTitle": "UHL POWER COMPANY LTD. versus STATE OF HIMACHAL PRADESH",
+          "citingDate": "2022-01-07",
+          "citationText": "[2010] 2 SCR 297"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "08c9ec4b-b6c4-48b4-aeb7-cedb21d9d8d5",
+          "citingTitle": "M/S. HYDER CONSULTING (UK) LTD. versus GOVERNOR, STATE OF ORISSA THROUGH CHIEF E",
+          "citingDate": "2014-11-25",
+          "citationText": "(2010) 3 SCC 690"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "08c9ec4b-b6c4-48b4-aeb7-cedb21d9d8d5",
+          "citingTitle": "M/S. HYDER CONSULTING (UK) LTD. versus GOVERNOR, STATE OF ORISSA THROUGH CHIEF E",
+          "citingDate": "2014-11-25",
+          "citationText": "2010 (2) SCR 297"
+        }
+      ]
+    },
+    {
+      "judgmentId": "1cf9ea6f-d9a3-4cef-b06e-0b105b8dcc44",
+      "caseTitle": "N. RADHAKRISHNAN versus M/S. MAESTRO ENGINEERS & ORS.",
+      "judgmentDate": "2009-10-22",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2009 INSC 1195",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "ea837c78-d50c-45f3-950f-6ec5aa05969d",
+          "citingTitle": "VIDYA DROLIA AND OTHERS versus DURGA TRADING CORPORATION",
+          "citingDate": "2020-12-14",
+          "citationText": "[2009] 15 SCR 371"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "ea837c78-d50c-45f3-950f-6ec5aa05969d",
+          "citingTitle": "VIDYA DROLIA AND OTHERS versus DURGA TRADING CORPORATION",
+          "citingDate": "2020-12-14",
+          "citationText": "(2010)\n1 SCC 72"
+        }
+      ]
+    },
+    {
+      "judgmentId": "eda24fb4-4e27-40a9-9012-43e3b1df638c",
+      "caseTitle": "GENERAL MANAGER, TELECOM versus M. KRISHNAN & ANR.",
+      "judgmentDate": "2009-09-01",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2009 INSC 1100",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "2655ee24-616f-4dd3-927b-3f27a3b89f40",
+          "citingTitle": "VODAFONE IDEA CELLULAR LTD. versus AJAY KUMAR AGARWAL",
+          "citingDate": "2022-02-16",
+          "citationText": "[2009] 14 SCR 86"
+        }
+      ]
+    },
+    {
+      "judgmentId": "31b66d98-8554-4ef3-81ab-c91e88423549",
+      "caseTitle": "REETA NAG versus STATE OF WEST BENGAL & ORS.",
+      "judgmentDate": "2009-08-13",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2009 INSC 1045",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a9129eaa-3287-40d3-9645-908f1458fa45",
+          "citingTitle": "HARIBHAI MALAVIYA AND ORS. versus THE STATE OF GUJARAT AND ANR.",
+          "citingDate": "2019-10-16",
+          "citationText": "[2009] 13 SCR 276"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a9129eaa-3287-40d3-9645-908f1458fa45",
+          "citingTitle": "HARIBHAI MALAVIYA AND ORS. versus THE STATE OF GUJARAT AND ANR.",
+          "citingDate": "2019-10-16",
+          "citationText": "(2009) 9\nSCC 129"
+        }
+      ]
+    },
+    {
+      "judgmentId": "37f7852e-9df6-4c92-96fe-3fa809594b5e",
+      "caseTitle": "ORIENTAL INSURANCE CO. LTD. versus ANGAD KOL AND ORS.",
+      "judgmentDate": "2009-02-18",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2009 INSC 209",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "c013cf24-500f-471d-a837-73d75355fb06",
+          "citingTitle": "M/S BAJAJ ALLIANCE GENERAL INSURANCE CO. LTD. versus RAMBHA DEVI & ORS.",
+          "citingDate": "2024-11-06",
+          "citationText": "[2009] 2 SCR 695"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "0e32acb5-c06b-4705-aca7-e4e6e5ae7ade",
+          "citingTitle": "MUKUND DEWANGAN versus ORIENTAL INSURANCE COMPANY LIMITED",
+          "citingDate": "2017-07-03",
+          "citationText": "[2009] 2 SCR 695"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "c013cf24-500f-471d-a837-73d75355fb06",
+          "citingTitle": "M/S BAJAJ ALLIANCE GENERAL INSURANCE CO. LTD. versus RAMBHA DEVI & ORS.",
+          "citingDate": "2024-11-06",
+          "citationText": "(2009) 11\nSCC 356"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "0e32acb5-c06b-4705-aca7-e4e6e5ae7ade",
+          "citingTitle": "MUKUND DEWANGAN versus ORIENTAL INSURANCE COMPANY LIMITED",
+          "citingDate": "2017-07-03",
+          "citationText": "(2009)\n11 SCC 356"
+        }
+      ]
+    },
+    {
+      "judgmentId": "d27280d5-d05a-40b4-9cef-4fa24583ebd8",
+      "caseTitle": "RITU MAHAJAN versus INDIAN OIL CORPORATION & ORS.",
+      "judgmentDate": "2009-02-09",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2009 INSC 132",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "c61ca820-0722-40fa-a45a-997232897d59",
+          "citingTitle": "CHAIRMAN CUM MANAGING DIRECTOR INDIAN OIL CORPORATION LTD. AND ORS. versus SUNIT",
+          "citingDate": "2014-09-18",
+          "citationText": "2009 (1) SCR 1126"
+        }
+      ]
+    },
+    {
+      "judgmentId": "c2ba21cc-00ab-4da4-9fdc-eddfb4bce1b5",
+      "caseTitle": "TUKURAM MARUTI CHAVAN versus MARUTI NARAYAN CHAVAN (DEAD) BY L.RS. & ORS.",
+      "judgmentDate": "2008-09-15",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2008 INSC 1042",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "9618a5ac-1292-4ede-b285-bfe6392f804e",
+          "citingTitle": "VASANT GANPAT PADAVE (D) BY LRS. & ORS . versus ANANT MAHADEV SAWANT (D) THROUGH",
+          "citingDate": "2019-09-18",
+          "citationText": "[2008] 13 SCR 508"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "9618a5ac-1292-4ede-b285-bfe6392f804e",
+          "citingTitle": "VASANT GANPAT PADAVE (D) BY LRS. & ORS . versus ANANT MAHADEV SAWANT (D) THROUGH",
+          "citingDate": "2019-09-18",
+          "citationText": "(2008) 9 SCC 358"
+        }
+      ]
+    },
+    {
+      "judgmentId": "a3a394e4-0b77-42f0-9d01-8a8894584b17",
+      "caseTitle": "EASTERN COALFIELDS LTD. versus DUGAL KUMAR",
+      "judgmentDate": "2008-07-28",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2008 INSC 870",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "2edb4738-d205-4336-8399-2ad805ba3275",
+          "citingTitle": "STATE OF ASSAM versus RIPA SARMA",
+          "citingDate": "2013-02-20",
+          "citationText": "(2008) 11 SCR 369"
+        }
+      ]
+    },
+    {
+      "judgmentId": "4153bc40-0d68-46ad-b0ea-4c4bf3bcac4e",
+      "caseTitle": "TDM INFRASTRUCTURE PRIVATE LIMITED versus UE DEVELOPMENT INDIA PRIVATE LIMITED",
+      "judgmentDate": "2008-05-14",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2008 INSC 677",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "7ebb8962-875d-4b92-a66c-9dd40ede0413",
+          "citingTitle": "PASL WIND SOLUTIONS PRIVATE LIMITED versus GE POWER CONVERSION INDIA PRIVATE LIM",
+          "citingDate": "2021-04-20",
+          "citationText": "[2008] 8 SCR 775"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "7ebb8962-875d-4b92-a66c-9dd40ede0413",
+          "citingTitle": "PASL WIND SOLUTIONS PRIVATE LIMITED versus GE POWER CONVERSION INDIA PRIVATE LIM",
+          "citingDate": "2021-04-20",
+          "citationText": "(2008) 14 SCC 271"
+        }
+      ]
+    },
+    {
+      "judgmentId": "4755ec40-1e03-4dce-a89c-7111b089de4c",
+      "caseTitle": "E. MICHEAL RAJ versus INTELLIGENCE OFFICER, NARCOTIC CONTROL BUREAU",
+      "judgmentDate": "2008-03-11",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2008 INSC 338",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "83a60773-0420-4d89-8897-2b851c23286a",
+          "citingTitle": "HIRA SINGH AND ANOTHER versus UNION OF INDIA AND ANOTHER",
+          "citingDate": "2020-04-22",
+          "citationText": "[2008] 4 SCR 644"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ea6ed8a8-1282-4971-a8cb-968f5124ffa3",
+      "caseTitle": "NATIONAL INSURANCE COMPANY LTD. versus ANNAPPA IRAPPA NESARIA AND ORS.",
+      "judgmentDate": "2008-01-22",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2008 INSC 82",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "0e32acb5-c06b-4705-aca7-e4e6e5ae7ade",
+          "citingTitle": "MUKUND DEWANGAN versus ORIENTAL INSURANCE COMPANY LIMITED",
+          "citingDate": "2017-07-03",
+          "citationText": "(2008) 1 SCR\n1061"
+        },
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "0e32acb5-c06b-4705-aca7-e4e6e5ae7ade",
+          "citingTitle": "MUKUND DEWANGAN versus ORIENTAL INSURANCE COMPANY LIMITED",
+          "citingDate": "2017-07-03",
+          "citationText": "(2008) 3 SCC 464"
+        }
+      ]
+    },
+    {
+      "judgmentId": "00222d6a-796b-44bb-b9e0-9c2619406a7c",
+      "caseTitle": "KANHAIYALAL versus UNION OF INDIA AND ORS.",
+      "judgmentDate": "2008-01-09",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2008 INSC 25",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "c85a2af9-e0db-43bc-9f82-3c40c38d30a0",
+          "citingTitle": "TOFAN SINGH versus STATE OF TAMIL NADU",
+          "citingDate": "2020-10-29",
+          "citationText": "[2008] 1 SCR 350"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "c85a2af9-e0db-43bc-9f82-3c40c38d30a0",
+          "citingTitle": "TOFAN SINGH versus STATE OF TAMIL NADU",
+          "citingDate": "2020-10-29",
+          "citationText": "(2008) 4 SCC 668"
+        }
+      ]
+    },
+    {
+      "judgmentId": "92398b96-58a6-4811-9ccd-4a60797446ae",
+      "caseTitle": "COMMISSIONER OF INCOME TAX CENTRAL II versus SURESH N. GUPTA",
+      "judgmentDate": "2008-01-07",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2008 INSC 14",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "05200be0-2fad-4d19-a007-a5ced59a4dc1",
+          "citingTitle": "COMMISSIONER OF INCOME TAX (CENTRAL)-1, NEW DELHI versus VATIKA TOWNSHIP PRIVATE",
+          "citingDate": "2014-09-15",
+          "citationText": "2008 (1 ) SCR 157"
+        }
+      ]
+    },
+    {
+      "judgmentId": "1f26c704-c37d-4025-beaa-8b1f5b0b2a94",
+      "caseTitle": "NEW INDIA ASSURANCE CO. LTD. versus PRABHU LAL",
+      "judgmentDate": "2007-11-30",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2007 INSC 1210",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "0e32acb5-c06b-4705-aca7-e4e6e5ae7ade",
+          "citingTitle": "MUKUND DEWANGAN versus ORIENTAL INSURANCE COMPANY LIMITED",
+          "citingDate": "2017-07-03",
+          "citationText": "(2007) 12 SCR 724"
+        }
+      ]
+    },
+    {
+      "judgmentId": "099d543c-8e2d-4397-8788-16696279a9ad",
+      "caseTitle": "UNION OF INDIA AND ORS. versus STATE OF U.P. AND ORS.",
+      "judgmentDate": "2007-11-01",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2007 INSC 1116",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "e38ba65f-a576-4c98-89b9-360a8f4cbb95",
+          "citingTitle": "JALKAL VIBHAG NAGAR NIGAM & ORS. versus PRADESHIYA INDUSTRIAL AND INVESTMENT COR",
+          "citingDate": "2021-10-22",
+          "citationText": "(2007) 11\nSCC 324"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ddd29e26-8e9d-4711-af96-b0671f5c645e",
+      "caseTitle": "MOHD. SHAFI versus MOHD. RAFIQ & ANR.",
+      "judgmentDate": "2007-04-09",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2007 INSC 390",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "b0c755e9-80eb-4db3-b067-52372fb600ed",
+          "citingTitle": "UNION TERRITORY OF LADAKH & ORS. versus JAMMU AND KASHMIR NATIONAL CONFERENCE & ",
+          "citingDate": "2023-09-06",
+          "citationText": "(2007) 4 SCR 1023"
+        }
+      ]
+    },
+    {
+      "judgmentId": "26b3c251-a548-4e25-b2df-cad3ede91feb",
+      "caseTitle": "JINDAL STAINLESS LTD. AND ANR. versus STATE OF HARYANA AND ORS.",
+      "judgmentDate": "2006-04-13",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2006 INSC 224",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "0f83811a-dcdf-4be6-8651-7278f6f36809",
+          "citingTitle": "JINDAL STAINLESS LTD. & ANR versus STATE OF HARYANA & ORS",
+          "citingDate": "2016-11-11",
+          "citationText": "(2006) 7 SCC 241"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "0f83811a-dcdf-4be6-8651-7278f6f36809",
+          "citingTitle": "JINDAL STAINLESS LTD. & ANR versus STATE OF HARYANA & ORS",
+          "citingDate": "2016-11-11",
+          "citationText": "2006 (3)\nSCR 1095"
+        }
+      ]
+    },
+    {
+      "judgmentId": "683bfe2d-e485-45ce-9045-1eaea273cb28",
+      "caseTitle": "E. V. CHINNAIAH versus STATE OF ANDHRA PRADESH AND ORS.",
+      "judgmentDate": "2004-11-05",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2004 INSC 644",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "3e5c0f55-1e15-4855-9a6a-6c7b977e323a",
+          "citingTitle": "THE STATE OF PUNJAB & ORS. versus DAVINDER SINGH & ORS.",
+          "citingDate": "2024-08-01",
+          "citationText": "(2005) 1 SCC 394"
+        }
+      ]
+    },
+    {
+      "judgmentId": "7ec1d9f8-95a6-4b1f-a745-28d4e0ddd272",
+      "caseTitle": "SAMARENDRA DAS, ADVOCATE versus THE STATE OF WEST BENGAL AND ORS.",
+      "judgmentDate": "2004-01-16",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2004 INSC 37",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "94012390-d2f9-4014-a5d7-ec87bfa83842",
+          "citingTitle": "DEEPAK AGGARWAL versus KESHAV KAUSHIK AND OTHERS",
+          "citingDate": "2013-01-21",
+          "citationText": "2004 (1) SCR 532"
+        }
+      ]
+    },
+    {
+      "judgmentId": "f91485e2-b3e0-43c6-bdbb-522c11259dfc",
+      "caseTitle": "KULWANT KAUR AND ORS. versus GURDIAL SINGH MANN (DEAD) BY LRS. AND ORS.",
+      "judgmentDate": "2001-03-21",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2001 INSC 158",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "dacdaa6f-4028-4cc4-8aa6-f353c5491eef",
+          "citingTitle": "AVTAR SINGH & ORS. versus BIMLA DEVI & ORS.",
+          "citingDate": "2021-09-29",
+          "citationText": "[2001] 2 SCR 525"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "66c19795-8a07-48b8-9966-afa247d68e9a",
+          "citingTitle": "KIRODI (SINCE DECEASED) THROUGH HIS LR versus RAM PARKASH & ORS.",
+          "citingDate": "2019-05-10",
+          "citationText": "[2001] 2 SCR 525"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "70638bf5-3b94-45a0-8124-178beb8ad119",
+          "citingTitle": "PANKAJAKSHI (DEAD) THROUGH LRS. & OTHERS versus CHANDRIKA & OTHERS",
+          "citingDate": "2016-02-25",
+          "citationText": "(2001) 4 SCC 262"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ffda795d-e296-4f72-918d-3d425a0c1ba6",
+      "caseTitle": "NEW INDIA ASSURANCE CO. LTD. versus R. SRINIVASAN",
+      "judgmentDate": "2000-02-28",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2000 INSC 107",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "fb20f8d5-c54f-4087-b092-92b43cb166a5",
+          "citingTitle": "RAJEEV HITENDRA PATHAK & OTHERS versus ACHYUT KASHINATH KAREKAR & ANOTHER",
+          "citingDate": "2011-08-19",
+          "citationText": "2000 (1)\nSCR 1228"
+        }
+      ]
+    },
+    {
+      "judgmentId": "eecc8f01-f84d-4864-8fdb-f989638d22f3",
+      "caseTitle": "M/S. RAINBOW COLOUR LAB AND ANR. versus THE STATE OF MADHYA PRADESH",
+      "judgmentDate": "2000-02-02",
+      "court": "Supreme Court of India",
+      "neutralCitation": "2000 INSC 47",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "3e64f14a-8c98-4a88-9a46-44911328772d",
+          "citingTitle": "STATE OF KARNATAKA versus M/S PRO LAB & ORS. ETC.",
+          "citingDate": "2015-01-30",
+          "citationText": "(2000) 2 SCC 385"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "3e64f14a-8c98-4a88-9a46-44911328772d",
+          "citingTitle": "STATE OF KARNATAKA versus M/S PRO LAB & ORS. ETC.",
+          "citingDate": "2015-01-30",
+          "citationText": "2000 (1) SCR 594"
+        }
+      ]
+    },
+    {
+      "judgmentId": "1def9dcf-b44a-4288-a56a-fa0eba25104f",
+      "caseTitle": "M/S. SIL IMPORT, USA versus M/S. EXIM AIDES SILK EXPORTERS, BANGALORE",
+      "judgmentDate": "1999-05-03",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1999 INSC 214",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "54235d9c-a6a1-4b5c-9e2c-b59784ff3824",
+          "citingTitle": "ECON ANTRI LTD. versus ROM INDUSTRIES LTD. & ANR.",
+          "citingDate": "2013-08-26",
+          "citationText": "1999 (2) SCR 958"
+        }
+      ]
+    },
+    {
+      "judgmentId": "0d538021-7fcf-48fe-ab64-4f868abcc12b",
+      "caseTitle": "V. SUDEER ETC versus BAR COUNCIL OF INDIA AND ANOTHER",
+      "judgmentDate": "1999-03-15",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1999 INSC 105",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "5861b8ae-3297-4802-8684-d620359df4c5",
+          "citingTitle": "BAR COUNCIL OF INDIA versus BONNIE FOI LAW COLLEGE & ORS.",
+          "citingDate": "2023-02-10",
+          "citationText": "[1999] 1 SCR 1048"
+        }
+      ]
+    },
+    {
+      "judgmentId": "24020f0f-bc5b-413b-977e-ed4697f23592",
+      "caseTitle": "P.V. NARASIMHA RAO ETC. ETC. versus STATE (CBL/SPE) ETC. ETC.",
+      "judgmentDate": "1998-04-17",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1998 INSC 185",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "eead926a-46d7-42f1-84d8-b8380b9ff74a",
+          "citingTitle": "SITA SOREN versus UNION OF INDIA",
+          "citingDate": "2024-03-04",
+          "citationText": "[1998] 2 SCR\n870"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "eead926a-46d7-42f1-84d8-b8380b9ff74a",
+          "citingTitle": "SITA SOREN versus UNION OF INDIA",
+          "citingDate": "2024-03-04",
+          "citationText": "(1998) 4 SCC 626"
+        }
+      ]
+    },
+    {
+      "judgmentId": "f9885dbe-7486-41c8-bcb0-add10eb37c28",
+      "caseTitle": "M/S SUN EXPORT CORPORATION BOMBAY versus COLLECTOR OF CUSTOMS, BOMBAY AND ANR.",
+      "judgmentDate": "1997-07-07",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1997 INSC 516",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "2d4ae970-0def-46a4-85ba-70e840d8f569",
+          "citingTitle": "COMMISSIONER OF CUSTOMS (IMPORT), MUMBAI versus M/S. DILIP KUMAR AND COMPANY & O",
+          "citingDate": "2018-07-30",
+          "citationText": "(1977) 6 SCC 564"
+        }
+      ]
+    },
+    {
+      "judgmentId": "cd7a9400-099a-4134-add2-adb0dc4b3653",
+      "caseTitle": "SMT RAM RATI versus SAROJ DEVI AND ORS.",
+      "judgmentDate": "1997-04-25",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1997 INSC 441",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "f4ed5b48-a646-4848-b228-f72feffe1dd6",
+          "citingTitle": "CHANDESHWAR SAW versus BRIJ BHUSHAN PRASAD & ORS.",
+          "citingDate": "2020-01-28",
+          "citationText": "[1997] 3 SCR 1050"
+        }
+      ]
+    },
+    {
+      "judgmentId": "01b1a470-4166-4b64-bd01-9874f0ff0dd1",
+      "caseTitle": "P. KANNADASAN ETC. ETC. versus STATE OF TAMIL NADU AND ORS. ETC. ETC.",
+      "judgmentDate": "1996-07-26",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1996 INSC 800",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "72d92c17-96dd-41d5-a05b-7b55e41f86e3",
+          "citingTitle": "MINERAL AREA DEVELOPMENT AUTHORITY & ANR. versus M/S STEEL AUTHORITY OF INDIA & ",
+          "citingDate": "2024-07-25",
+          "citationText": "(1996) 5 SCC 670"
+        }
+      ]
+    },
+    {
+      "judgmentId": "828e90a5-2cf8-4db1-ba3d-6443048f65d7",
+      "caseTitle": "STATE OF ANDHRA PRADESH AND ORS. ETC. versus MC. DOWELL & CO. AND ORS. ETC.",
+      "judgmentDate": "1996-03-21",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1996 INSC 419",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "7e806941-08c2-4711-8c2e-77ba710641b7",
+          "citingTitle": "SHAYARA BANO versus UNION OF INDIA AND OTHERS",
+          "citingDate": "2017-08-22",
+          "citationText": "[1996) 3 SCR 721"
+        }
+      ]
+    },
+    {
+      "judgmentId": "b5e3d6d9-bfcd-4409-a352-212b7b14c080",
+      "caseTitle": "MINAKSHI BALA SUDHIR KUMAR AND ORS. versus SUDHIR KUMAR AND ORS.",
+      "judgmentDate": "1994-05-10",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1994 INSC 201",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "d9c41e01-d0d1-4506-aa9a-3cbe2e9df806",
+          "citingTitle": "VISHNU KUMAR SHUKLA & ANR versus THE STATE OF UTTAR PRADESH & ANR",
+          "citingDate": "2023-11-28",
+          "citationText": "[1994] 3 SCR\n1008"
+        },
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "d9c41e01-d0d1-4506-aa9a-3cbe2e9df806",
+          "citingTitle": "VISHNU KUMAR SHUKLA & ANR versus THE STATE OF UTTAR PRADESH & ANR",
+          "citingDate": "2023-11-28",
+          "citationText": "(1994) 4 SCC 142"
+        }
+      ]
+    },
+    {
+      "judgmentId": "bea90dae-9579-4507-b4ee-36d3c8bf0118",
+      "caseTitle": "STATE OF HARYANA AND ORS. ETC.ETC. versus PIARA SINGH AND ORS. ETC. ETC.",
+      "judgmentDate": "1992-08-12",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1992 INSC 201",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "5da65c93-3a8c-4c56-990e-5c7a65605187",
+          "citingTitle": "SECRETARY, STATE OF KARNATAKA AND ORS. versus UMADEVI AND ORS.",
+          "citingDate": "2006-04-10",
+          "citationText": "(1992) 3 SCR 826"
+        }
+      ]
+    },
+    {
+      "judgmentId": "deacdf12-5bb9-49b7-b7ac-a8bec74ee877",
+      "caseTitle": "SYNTHETICS & CHEMICALS LTD. ETC. versus STATE OF U.P. AND ORS.",
+      "judgmentDate": "1989-10-25",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1989 INSC 321",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "0cfbc124-2c53-408c-995f-6ab9f9b30d36",
+          "citingTitle": "STATE OF U.P. & ORS versus M/S LALTA PRASAD VAISH AND SONS",
+          "citingDate": "2024-10-23",
+          "citationText": "(1990) 1 SCC 109"
+        }
+      ]
+    },
+    {
+      "judgmentId": "92c741da-9c48-4126-b75b-a5e081669d55",
+      "caseTitle": "V REVATHI versus UNION OF INDIA & ORS.",
+      "judgmentDate": "1988-02-25",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1988 INSC 61",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "f6eed579-0385-4f41-9afa-92dec01f1da7",
+          "citingTitle": "JOSEPH SHINE versus UNION OF INDIA",
+          "citingDate": "2018-09-27",
+          "citationText": "[1988] 3\nSCR 73"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "f6eed579-0385-4f41-9afa-92dec01f1da7",
+          "citingTitle": "JOSEPH SHINE versus UNION OF INDIA",
+          "citingDate": "2018-09-27",
+          "citationText": "(1988) 2 SCC 72"
+        }
+      ]
+    },
+    {
+      "judgmentId": "8f0f217c-aeaa-405c-844a-89c2a4378eea",
+      "caseTitle": "CHOWGULE & CO. PRIVATE LIMITED ETC. versus UNION OF INDIA & ORS.",
+      "judgmentDate": "1987-02-19",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1987 INSC 53",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "95db67e7-d195-477c-ba27-504c182bc5a7",
+          "citingTitle": "UNION OF INDIA AND ANR. versus V.M. SALGAONCAR AND BROS. (P) LTD. ETC.",
+          "citingDate": "1998-03-18",
+          "citationText": "(1987] 2 SCR 351"
+        }
+      ]
+    },
+    {
+      "judgmentId": "fff9e6b3-7f1e-4587-acf4-ec579962d692",
+      "caseTitle": "MOHD. AZEEM versus DISTRICT JUDGE, ALIGARH AND ORS.",
+      "judgmentDate": "1985-04-23",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1985 INSC 101",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a68cd734-08d7-4f37-b06f-4fe7c02ea6aa",
+          "citingTitle": "SHRI HARISH TANDON versus THE ADDL. DISTRICT MAGISTRATE, ALLAHABAD, U.P. AND ORS",
+          "citingDate": "1995-01-05",
+          "citationText": "[1985] 3 SCR 906"
+        }
+      ]
+    },
+    {
+      "judgmentId": "e6f07a4f-baa6-4aed-8905-032d033c025b",
+      "caseTitle": "BHARTU versus RANDHIR SINGH & ORS.",
+      "judgmentDate": "1985-01-22",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1985 INSC 12",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "c6fde7ab-9eb0-4fa0-ad12-a0fca97879a6",
+          "citingTitle": "DINA versus THE FINANCIAL COMMISSIONER, PUNJAB, CHANDIGARH AND ORS.",
+          "citingDate": "1995-12-05",
+          "citationText": "(1985] 2 SCR 638"
+        }
+      ]
+    },
+    {
+      "judgmentId": "555a7724-484b-400c-a02e-9928492aa213",
+      "caseTitle": "UNION OF INDIA & OTHERS versus HAJI MASTAN MIRZA",
+      "judgmentDate": "1984-02-23",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1984 INSC 45",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "47b836ea-71df-42eb-b05d-40d3c233cb52",
+          "citingTitle": "ATTORNEY GENERAL FOR INDIA ETC. ETC. versus AMRRATLAL PRAJIVANDAS AND ORS. ETC. ",
+          "citingDate": "1994-05-12",
+          "citationText": "(1984] 3 SCR 1"
+        }
+      ]
+    },
+    {
+      "judgmentId": "02467ce4-09bf-413c-bcfb-4a4fc9db4ff3",
+      "caseTitle": "S. K. VERMA versus MAHESH CHANDRA AND ANOTHER",
+      "judgmentDate": "1983-09-02",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1983 INSC 109",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "e9c0c6ea-103e-40e1-b687-a44307e462e8",
+          "citingTitle": "MUKESH K. TRIPATHI versus SR. DIVISIONAL MANAGER, LIC AND ORS.",
+          "citingDate": "2004-09-06",
+          "citationText": "(1983) 3 SCR 799"
+        }
+      ]
+    },
+    {
+      "judgmentId": "51d5b174-91a3-454e-9e45-c89e85ddfef7",
+      "caseTitle": "GURU NANAK FOUNDATION versus RATTAN SINGH & SONS",
+      "judgmentDate": "1981-09-29",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1981 INSC 175",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "d0cad739-8c09-4b0a-babd-5ae7945d2a23",
+          "citingTitle": "THE STATE OF JHARKHAND & ORS. versus MIS HINDUSTAN CONSTRUCTION CO. LTD.",
+          "citingDate": "2017-12-14",
+          "citationText": "[1982] 1 SCR\n842"
+        }
+      ]
+    },
+    {
+      "judgmentId": "45b181d8-03fb-4f33-8585-0916dfd675b7",
+      "caseTitle": "STATE OF RAJASTHAN versus SMT. KALKI & ANR.",
+      "judgmentDate": "1981-04-15",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1981 INSC 94",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "d999d6e8-5db8-42dc-8bfd-7677a1e9f9fa",
+          "citingTitle": "RAJU @ BALACHANDRAN & ORS. versus STATE OF TAMIL NADU",
+          "citingDate": "2012-11-27",
+          "citationText": "(1981) 2 SCC 752"
+        }
+      ]
+    },
+    {
+      "judgmentId": "a733676b-fcc3-4c53-b675-d42ee35553a8",
+      "caseTitle": "UNION OF INDIA ETC. versus BHANUDAS KRISHNA GAWDE AND ORS. ETC.",
+      "judgmentDate": "1977-01-25",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1977 INSC 28",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "385f06ce-3d4c-4f5e-a173-72fded3fd28f",
+          "citingTitle": "JUSTICE K S PUTTASWAMY (RETD.), AND ANR. versus UNION OF INDIA AND ORS.",
+          "citingDate": "2017-08-24",
+          "citationText": "[1977] 2 SCR\n719"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "385f06ce-3d4c-4f5e-a173-72fded3fd28f",
+          "citingTitle": "JUSTICE K S PUTTASWAMY (RETD.), AND ANR. versus UNION OF INDIA AND ORS.",
+          "citingDate": "2017-08-24",
+          "citationText": "(1977) 1 SCC 834"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ee260152-2ebc-496e-9d2f-c4d0cce46085",
+      "caseTitle": "COMMISSLONER OF SALES TAX, U.P. versus MADANLAL DAN & SONS, BAREILLY",
+      "judgmentDate": "1976-09-22",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1976 INSC 231",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "16e7e803-b2fc-4894-b01b-5de7d78b3f65",
+          "citingTitle": "KALPRAJ DHARAMSHI & ANR. versus KOTAK INVESTMENT ADVISORS LTD. & ANR.",
+          "citingDate": "2021-03-10",
+          "citationText": "[1977] 1 SCR 683"
+        }
+      ]
+    },
+    {
+      "judgmentId": "f83d0700-eaf5-4075-9744-2e20faacedc9",
+      "caseTitle": "DIVISIONAL PERSONNEL OFFICER, SOUTHERN RAILWAY & ANR. versus T. R. CHALLAPPAN",
+      "judgmentDate": "1975-09-15",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1975 INSC 212",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "fee9fe7b-a5a4-4a64-9107-194d642b2ab6",
+          "citingTitle": "UNION OF INDIA AND ANOTHER versus TULSIRAM PATEL AND OTHERS",
+          "citingDate": "1985-07-11",
+          "citationText": "[1976] 1 S.C.R. 783"
+        }
+      ]
+    },
+    {
+      "judgmentId": "40741b38-3c54-4d06-9536-538e4d798fed",
+      "caseTitle": "SARDARI LAL versus UNION OF INDIA & ORS",
+      "judgmentDate": "1971-01-21",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1971 INSC 20",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "104dc344-6392-419c-a440-951de9f2f772",
+          "citingTitle": "COMMON CAUSE, A REGISTERED SOCIETY versus UNION OF INDIA & ORS.",
+          "citingDate": "1999-08-03",
+          "citationText": "[1971] 3 SCR 461"
+        }
+      ]
+    },
+    {
+      "judgmentId": "9268ef22-dcd3-460b-9e2b-3670d3d6f64f",
+      "caseTitle": "SHIV KIRPAL SINGH versus SHRI V. V. GIRI",
+      "judgmentDate": "1970-09-14",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1970 INSC 190",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "f4ffe6c7-d31d-4f0a-a0de-3721bed071a2",
+          "citingTitle": "GOVERNMENT OF NCT OF DELHI versus UNION OF INDIA",
+          "citingDate": "2023-05-11",
+          "citationText": "[1971]\n2 SCR 197"
+        }
+      ]
+    },
+    {
+      "judgmentId": "c31c1e92-5cea-4c4b-bdf3-92e155af067c",
+      "caseTitle": "TOWN MUNICIPAL COUNCIL, ATHANI versus PRESIDING OFFICER, LABOUR COURT, HUBLI & ORS.",
+      "judgmentDate": "1969-03-20",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1969 INSC 87",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "83db0a51-9919-4293-887a-6bcb2c6fca9d",
+          "citingTitle": "KERALA STATE ELECTRICITY BOARD, TRIVANDRUM versus T. P. K. K. AMSOM AND BESOM, K",
+          "citingDate": "1976-10-29",
+          "citationText": "[1970] 1 SCR 51"
+        }
+      ]
+    },
+    {
+      "judgmentId": "94b063b6-c1e6-4433-aa5d-958da7cc76fd",
+      "caseTitle": "HEAVY ENGINEERING MAZDOOR UNION versus THE STATE OF BIHAR & ORS.",
+      "judgmentDate": "1969-03-12",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1969 INSC 77",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "7d266e4f-e6d6-4bdb-9be3-2924c3fa1dd4",
+          "citingTitle": "AIR INDIA STATUTORY CORPORATION versus UNITED LABOUR UNION AND ORS.",
+          "citingDate": "1996-12-06",
+          "citationText": "[1969]\n3 SCR 995"
+        }
+      ]
+    },
+    {
+      "judgmentId": "a4ef6d73-95e7-42af-b7bb-7cbeb24d4b2a",
+      "caseTitle": "STATE OF GUJARAT versus SHRI SHANTILAL MANGALDAS & ORS.",
+      "judgmentDate": "1969-01-13",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1969 INSC 8",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "2e3d517c-7762-4b4e-9072-9bda3dc05c5a",
+          "citingTitle": "HIS HOLINESS KESAVANANDA BHARATI SRIPADAGALAVARU versus STATE OF KERALA",
+          "citingDate": "1973-04-24",
+          "citationText": "[1969] 3 S.C.R. 341"
+        }
+      ]
+    },
+    {
+      "judgmentId": "9530d3e8-10d9-4453-8b6a-d53a68a03adf",
+      "caseTitle": "S. AZEEZ BASHA AND ANR. versus UNION OF INDIA",
+      "judgmentDate": "1967-10-20",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1967 INSC 238",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "1b67c7d0-ff2f-477b-87b0-f4a1800f8f70",
+          "citingTitle": "ALIGARH MUSLIM UNIVERSITY versus NARESH AGARWAL & ORS.",
+          "citingDate": "2024-11-08",
+          "citationText": "[1968] 1 SCR 833"
+        },
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "1b67c7d0-ff2f-477b-87b0-f4a1800f8f70",
+          "citingTitle": "ALIGARH MUSLIM UNIVERSITY versus NARESH AGARWAL & ORS.",
+          "citingDate": "2024-11-08",
+          "citationText": "AIR 1968\nSC 662"
+        }
+      ]
+    },
+    {
+      "judgmentId": "b14223ef-2b9d-414e-a135-7fa0654141d9",
+      "caseTitle": "NORTHERN INDIA CATERERS PRIVATE LTD., & ANR. versus STATE OF PUNJAB AND ANOTHER",
+      "judgmentDate": "1967-04-04",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1967 INSC 87",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "843cf5d6-e4ec-42f5-96f6-7d790f34f408",
+          "citingTitle": "DIRECTOR OF INDUSTRIES, U.P. AND ORS. versus DEEP CHAND AGGARWAL",
+          "citingDate": "1980-02-06",
+          "citationText": "[1967]\n3 SCR 399"
+        }
+      ]
+    },
+    {
+      "judgmentId": "31e2a0a1-92f7-4c4d-a8f5-e61cb3ec5d7a",
+      "caseTitle": "GOVIND DATTATRAY KELKAR & ORS. versus CHIEF CONTROLLER OF IMPORTS & EXPORTS & ORS.",
+      "judgmentDate": "1966-11-01",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1966 INSC 242",
+      "overruledStatus": "doubted",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "doubted",
+          "citingJudgmentId": "80886a84-9e8f-43dc-a84d-4f2c587e34f3",
+          "citingTitle": "N. K. CHAUHAN & ORS . versus STATE OF GUJARAT & ORS.",
+          "citingDate": "1976-11-01",
+          "citationText": "[1967] 2 S.C.R. 29"
+        }
+      ]
+    },
+    {
+      "judgmentId": "9c0e057a-9c07-422e-82de-72c8446a463c",
+      "caseTitle": "MADHYA PRADESH INDUSI'RIES LTD. versus UNION OF INDIA AND OTHERS",
+      "judgmentDate": "1965-08-16",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1965 INSC 154",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "eb7fa6c5-31a3-4f32-9ecf-bbf87c5ff378",
+          "citingTitle": "TRAVANCORE RAYON LTD. versus UNION OF INDIA",
+          "citingDate": "1969-10-28",
+          "citationText": "[1966] 1 S.C.R.\n466"
+        }
+      ]
+    },
+    {
+      "judgmentId": "b6d43715-db3a-4c32-9790-5865f24cc793",
+      "caseTitle": "KHARAK SINGH versus THE STATE OF U. P. & OTHERS",
+      "judgmentDate": "1962-12-18",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1962 INSC 389",
+      "overruledStatus": "partly_set_aside",
+      "addToMatterDisabled": false,
+      "adverseEdges": [
+        {
+          "relationship": "overruled_in_part",
+          "citingJudgmentId": "385f06ce-3d4c-4f5e-a173-72fded3fd28f",
+          "citingTitle": "JUSTICE K S PUTTASWAMY (RETD.), AND ANR. versus UNION OF INDIA AND ORS.",
+          "citingDate": "2017-08-24",
+          "citationText": "[1964] 1 SCR 332"
+        }
+      ]
+    },
+    {
+      "judgmentId": "86ac0a69-422b-4e90-8f08-e83bdbd79db3",
+      "caseTitle": "REV. SIDHAJBHAI SABHAI AND OTHERS versus STATE OF BOMBAY AND ANOTHER",
+      "judgmentDate": "1962-08-30",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1962 INSC 247",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "1b67c7d0-ff2f-477b-87b0-f4a1800f8f70",
+          "citingTitle": "ALIGARH MUSLIM UNIVERSITY versus NARESH AGARWAL & ORS.",
+          "citingDate": "2024-11-08",
+          "citationText": "[1963] 3 SCR 837"
+        }
+      ]
+    },
+    {
+      "judgmentId": "2f005622-aaa1-4e3f-8d3d-ae07dd4331eb",
+      "caseTitle": "THE AUTOMOBILE TRANSPORT (RAJASTHAN) LTD. versus THE STATE OF RA.JASTHAN AND OTHERS",
+      "judgmentDate": "1962-04-09",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1962 INSC 127",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "0f83811a-dcdf-4be6-8651-7278f6f36809",
+          "citingTitle": "JINDAL STAINLESS LTD. & ANR versus STATE OF HARYANA & ORS",
+          "citingDate": "2016-11-11",
+          "citationText": "(1963) 1 SCR 491"
+        }
+      ]
+    },
+    {
+      "judgmentId": "ced822e7-0762-4d38-9109-e51a719f15f0",
+      "caseTitle": "S. N. DUTT versus UNION OF INDIA",
+      "judgmentDate": "1961-03-27",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1961 INSC 117",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "64f2e3a3-7658-43d4-b3ad-d03656df3fea",
+          "citingTitle": "Y. SAVARIMUTHU versus STATE OF TAMIL NADU & ORS.",
+          "citingDate": "2019-04-30",
+          "citationText": "(1962) 1 SCR 560"
+        }
+      ]
+    },
+    {
+      "judgmentId": "13e6cee7-04d8-4a7d-94b1-41d6bd9a6894",
+      "caseTitle": "THE STATE OF PUNJAB versus SODHI SUKHDEV SINGH",
+      "judgmentDate": "1960-11-15",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1960 INSC 200",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "a296d07b-adda-4ef2-b79d-583adc879d42",
+          "citingTitle": "S.P. GUPTA & ORS. ETC. ETC. versus UNION OF INDIA & ORS. ETC. ETC.",
+          "citingDate": "1981-12-28",
+          "citationText": "[1961] 2 SCR 371"
+        }
+      ]
+    },
+    {
+      "judgmentId": "439aa7b0-b257-483d-8c79-34d575c4a590",
+      "caseTitle": "DIRECTOR OF RATIONING AND DISTRIBUTION versus THE CORPORATION OF CALCUTTA AND OTHERS",
+      "judgmentDate": "1960-08-16",
+      "court": "Supreme Court of India",
+      "neutralCitation": "1960 INSC 123",
+      "overruledStatus": "set_aside",
+      "addToMatterDisabled": true,
+      "adverseEdges": [
+        {
+          "relationship": "overruled",
+          "citingJudgmentId": "33ff6ba5-cd16-4499-b882-5600036cc85c",
+          "citingTitle": "B. K. RAVICHANDRA & ORS. versus UNION OF INDIA & ORS.",
+          "citingDate": "2020-11-24",
+          "citationText": "[1961] 1 SCR 158"
+        }
+      ]
+    }
+  ]
+}
