@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-08-20T17:04:01.903Z",
+  "lane": "NEW2",
+  "version": "v1",
+  "deployedEligibilityViewHash": "e76879ab6bbcd452",
+  "rows": 3000,
+  "courts": "all",
+  "walk": "keyset on judgments.id from the start of the key space — a bounded PREFIX of the corpus, not a sample of it",
+  "documentRole": {
+    "unknown": 1077,
+    "judgment": 652,
+    "bail_order": 612,
+    "procedural": 322,
+    "final_order": 249,
+    "registry_note": 88
+  },
+  "textQuality": {
+    "UNKNOWN": 2728,
+    "OCR_CANDIDATE": 262,
+    "LEGACY_FONT_SUSPECT": 10
+  },
+  "identityState": {
+    "sound": 2836,
+    "duplicate_member": 164
+  },
+  "citability": {
+    "unknown": 1525,
+    "citable_with_care": 807,
+    "not_citable": 396,
+    "unsafe": 272
+  },
+  "valueBand": {
+    "standard": 947,
+    "brief": 784,
+    "stub": 502,
+    "full": 476,
+    "substantial": 291
+  },
+  "citabilityByAdmission": {
+    "unknown|admitted": 1056,
+    "citable_with_care|rejected": 731,
+    "unknown|rejected": 469,
+    "not_citable|rejected": 396,
+    "unsafe|rejected": 140,
+    "unsafe|admitted": 132,
+    "citable_with_care|admitted": 76
+  },
+  "caveats": [
+    "This walk is a PREFIX of the id space, not a uniform sample. judgments.id is uuid v4 so a prefix is unbiased with respect to court and date, but it is NOT unbiased with respect to anything correlated with when a row was classified — the classifier walks the same key order, so early ids are far more likely to carry a stored class. For a uniform estimate use semantic-core-audit-cli.ts, which draws rather than walks.",
+    "textQuality KNOWN_GOOD comes only from a STORED verdict. Nothing here upgrades a document to KNOWN_GOOD from the absence of a defect, so a low KNOWN_GOOD count means the screens have not run, never that the corpus is bad.",
+    "englishRate and markerRate are computed on the first 20,000 characters. For standard and full bands that is the whole document; for substantial it is not, and a rate there is a rate over the opening.",
+    "disposition is the raw registry string. It is exported so a consumer can see it, and it is deliberately not mapped into a role or a citability by this tool.",
+    "citability never reads overruled_status. Good-law status is read live at render on every surface and must not be cached into a derived quality state."
+  ]
+}

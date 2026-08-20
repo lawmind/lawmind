@@ -5,6 +5,15 @@
 
 Everything below is measured on this corpus. Where a number is a floor it says so.
 
+> **Figures revised 20 Aug 2026, and the reason is a defect in this tool.** For
+> its first runs the text screens read a variable the query had stopped
+> selecting, so every one of them — English density, marker rate, bail phrase,
+> citation presence — ran on the **1,400-character tail alone** rather than on
+> the 20,000-character probe the tool describes. Fixed and re-run at the same
+> 25,000 draws. Most figures barely moved; **citation presence moved a long way**
+> and is corrected below. The earlier numbers went out on the bus in 0908, 0909
+> and 0910 and are retracted there, not quietly overwritten here.
+
 ---
 
 ## The method, and why it is not the class-precision sample again
@@ -34,7 +43,7 @@ can be attributed to a single conjunct.
 
 `semantic-core-audit-cli.ts` · `docs/ops/migration/new2-semantic-core-audit.json`
 
-**13,389 of 25,000 draws are admitted — 53.6%.** The full-corpus census says
+**13,390 of 25,000 draws are admitted — 53.6%.** The full-corpus census says
 54.06%. Two methods, two sessions, agreement inside sampling error; the audit is
 measuring the same thing the census measured.
 
@@ -43,12 +52,12 @@ measuring the same thing the census measured.
 ## 1. Ninety-four per cent of Tier A is admitted on no evidence at all
 
 ```
-admission reason, among 13,389 admitted           rows     share
-no role evidence AND no script evidence          12,619     94.2%
-role decided, no script evidence                    770      5.8%
+admission reason, among 13,390 admitted           rows     share
+no role evidence AND no script evidence          12,597     94.1%
+role decided, no script evidence                    793      5.9%
 ```
 
-Not "classified and found substantive". **Nothing has ever read 94.2% of what the
+Not "classified and found substantive". **Nothing has ever read 94.1% of what the
 semantic core admits.** `decided` is the ONLY class present among admitted rows;
 every other class is either refused by the predicate or, in `decided_brief`'s
 case, structurally too short to reach it.
@@ -94,10 +103,10 @@ never touched Tier A.
 
 | # | mechanism | measured | scaled to Tier A |
 | --- | --- | ---: | ---: |
-| 1 | **admitted with no role evidence** — `axis_c_role` passes `NULL` | 94.2% of admitted | ~9,140,000 |
-| 2 | **bail orders with no class label** — the break-out needs a label | 20.9% of admitted | ~2,025,000 |
-| 3 | **unreadable text** — `axis_b_text` passes `NULL` script quality | 8.3% of admitted | ~808,000 |
-| 4 | **duplicate members** — no dedup in the predicate | 11.6% of admitted | 845,876 exactly |
+| 1 | **admitted with no role evidence** — `axis_c_role` passes `NULL` | 94.1% of admitted | ~9,130,000 |
+| 2 | **bail orders with no class label** — the break-out needs a label | 23.2% of admitted | ~2,253,000 |
+| 3 | **unreadable text** — `axis_b_text` passes `NULL` script quality | 8.9% of admitted | ~863,000 |
+| 4 | **duplicate members** — no dedup in the predicate | 11.2% of admitted | 845,876 exactly |
 | 5 | **`decided` itself is 75.0% precise** | 25% of 559,946 | ~140,000 |
 
 `decided_brief`, weak `decided` classification, and disposal wording are all
@@ -109,24 +118,30 @@ The view breaks bail orders out on `hc_document_class = 'bail_order'`. That is a
 **label**, so a bail order nothing has classified is not broken out at all.
 
 ```
-admitted documents matching a bail phrase        2,796   20.9%
-  ...of which carry no class label               2,781   99.5%
+admitted documents matching a bail phrase        3,111   23.2%
+  ...of which carry no class label               3,085   99.2%
 ```
 
 While adjudicating I found why the number is still a floor. Document `26573ee8`
 reads `...be released on\nbail.` — the PDF wrapped the line. `hc-classify.ts`
 spells its patterns with literal single spaces, so it scores false.
 
-A whitespace-tolerant pattern, measured on the same 13,389 rows:
+A whitespace-tolerant pattern, measured on the same 13,390 rows:
 
 ```
-deployed pattern              2,518
-whitespace-tolerant           2,796
-missed by the deployed rule     278   +11.0% relative recall
+deployed pattern              2,916
+whitespace-tolerant           3,111
+missed by the deployed rule     195   +6.7% relative recall
 ```
 
-Scaled: roughly **202,000 bail orders in Tier A that the production classifier
-cannot see**, on top of the ~1.8M it could see if the rows were classified at all.
+Scaled: roughly **141,000 bail orders in Tier A that the production classifier
+cannot see**, on top of the ~2.1M it could see if the rows were classified at all.
+
+The recall gain fell from 11.0% to 6.7% when the probe was widened, which is what
+should happen: a phrase that wraps at one point in a document usually appears
+unwrapped somewhere else in it, and only a probe that reads the whole document can
+find the second occurrence. 6.7% is the honest figure; 11.0% was an artefact of
+reading 1,400 characters.
 
 Fixed in `quality-state.ts` with `BAIL_PHRASE_AS_DEPLOYED` kept beside it so both
 can be measured. `quality-state.test.ts` asserts the wrapped case matches and the
@@ -144,8 +159,8 @@ find.
 
 ### It is not the legacy-font mode, and the existing screen cannot see it
 
-The mined-marker screen fired on **4 of 13,389** admitted documents — 0.03%.
-Meanwhile 1,115 of them carry text like:
+The mined-marker screen fired on **3 of 13,390** admitted documents — 0.02%.
+Meanwhile 1,187 of them carry text like:
 
 ```
 74< =7/ 12- <.50 7==-4;-< < <8;2 47 541-/=-/-4;- 5< ;.33-0 =7/ -4;- 12- .>>-.3 5< 05<:5<<-0
@@ -159,8 +174,8 @@ admitted population is bimodal with a clear valley:
 
 ```
 per 1,000 chars    0-1     1-12    12-40      40+
-rows               505      610      473   11,801
-                  3.8%     4.6%     3.5%    88.1%
+rows               502      685      646   11,557
+                  3.7%     5.1%     4.8%    86.3%
 ```
 
 Documents were read on both sides of the valley before the floor was chosen.
@@ -174,29 +189,29 @@ raised to catch them.
 
 ```
 court                              admitted   unreadable   share
-High Court of Punjab and Haryana      1,025          577   56.3%
-High Court of Karnataka                 975          476   48.8%
-High Court of Tripura                     21           2    9.5%
-High Court of Jammu and Kashmir           45           2    4.4%
-High Court Of Rajasthan                  685          20    2.9%
-...every other court                                        < 1.5%
-Madras, Patna, Gujarat, Orissa,
-Andhra Pradesh, Jharkhand, Gauhati,
-Calcutta, Uttarakhand, Supreme Court       —           0    0.0%
+High Court of Punjab and Haryana      1,138          614   53.9%
+High Court of Karnataka               1,010          476   47.1%
+High Court of Tripura                     22            5   22.7%
+High Court Of Rajasthan                  717           32    4.5%
+High Court Of Chhattisgarh               466           16    3.4%
+...every other court                                        < 1.7%
+Madras, Gujarat, Orissa, Andhra Pradesh,
+Jharkhand, Gauhati, Calcutta,
+Uttarakhand, Supreme Court                 —            0    0.0%
 ```
 
-Two courts hold 1,053 of the 1,115 — **94.4% of the damage in two registries.**
-A corpus-wide 8.3% conceals a court at 56.3%,
+Two courts hold 1,090 of the 1,187 — **91.8% of the damage in two registries.**
+A corpus-wide 8.9% conceals a court at 53.9%,
 which is the same shape as the embedding-coverage finding where 18 of 26 courts
 sat at exactly zero behind one healthy percentage.
 
 ### `text_quality` does not merely miss them — it certifies them
 
 ```
-unreadable rows carrying a text_quality score   1,115 / 1,115
-minimum score                                   0.857
+unreadable rows carrying a text_quality score   1,187 / 1,187
+minimum score                                   0.851
 median score                                    1.000
-scoring >= 0.85, i.e. PASSING axis_b_text       1,115 / 1,115
+scoring >= 0.85, i.e. PASSING axis_b_text       1,187 / 1,187
 ```
 
 Every one. The cause is in `textQuality()`: it tokenises on `/[A-Za-z]/` and
@@ -254,18 +269,31 @@ follow-on orders is **119,374 characters** and carries no independent ratio at
 all — length is not substance, and the value band is the only substance proxy the
 predicate has.
 
-**94.2% of admitted documents contain no citation-shaped string**, and it holds
-across bands (standard 94.8%, full 94.0%, substantial 92.6%). For the standard
-band — 7,252 of the 13,389 — the probe covers the whole document, so there it is
-close to a whole-document fact rather than a fact about an excerpt.
+**84.4% of admitted documents contain no citation-shaped string**, and unlike
+every other figure here it varies strongly with length:
+
+```
+standard      6,644 / 7,261   91.5%
+full          3,003 / 3,642   82.5%
+substantial   1,660 / 2,487   66.8%
+```
+
+That gradient is the useful part. A substantial document is three times more
+likely to cite something than a standard one, which is what reasoned authority
+should look like — and it says the 2,000-character band floor is admitting a
+large population that argues from nothing.
+
+This is the figure the probe defect distorted worst. On the 1,400-character tail
+it read 94.2% and looked flat across bands, because a tail is a signature block
+and citations live in the body.
 
 ---
 
 ## 5. What is NOT wrong
 
-* **Identity holds.** 4 of 25,000 draws fail axis A — 0.016%, against the
-  census's 2,703 of 17.9M, which is 0.015%. Identity is not the discriminator in
-  this corpus.
+* **Identity holds.** 2 of 25,000 draws fail axis A — 0.008%, against the full
+  census figure of 2,703 in 17.9M, which is 0.015%. Identity is not the
+  discriminator in this corpus.
 * **Duplicate groups are real common orders, not a data defect.** All 40 of the
   largest groups are single-court. The largest is 7,118 members — one Madras writ
   order across thousands of petitions. No case identity is collapsed anywhere;
@@ -273,10 +301,10 @@ close to a whole-document fact rather than a fact about an excerpt.
   `docs/ops/migration/new2-duplicate-groups.json`.
 * **The bail break-out and axis C are sound as negative selectors.** They refuse
   what they are given. The defect is that they are given almost nothing.
-* **Length is doing essentially all the exclusion**, and correctly: of 11,611
-  rejected draws, **9,778 — 84.2% — are rejected for being under 2,000
-  characters**. Everything else combined rejects 1,833: bail 695, role 648, text
-  486, identity 4.
+* **Length is doing essentially all the exclusion**, and correctly: of 11,610
+  rejected draws, **9,863 — 85.0% — are rejected for being under 2,000
+  characters**. Everything else combined rejects 1,747: bail 669, role 622, text
+  454, identity 2.
 
 ---
 

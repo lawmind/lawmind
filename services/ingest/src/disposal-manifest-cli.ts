@@ -33,6 +33,7 @@
  * row named here. LCC owns the model pass and owns the write.
  */
 import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { ENGLISH_RATE_FLOOR, QUALITY_STATE_VERSION, englishRate } from './quality-state.ts';
 import { dirname, join } from 'node:path';
 import { openDb } from './db-host.ts';
 
@@ -136,7 +137,14 @@ const stream = outPath
   ? createWriteStream(outPath, { flags: ckpt.cursor === ZERO_UUID ? 'w' : 'a' })
   : null;
 
-const counts = { scanned: 0, uncertain: 0, decidedCall: 0, proceduralCall: 0, tooShort: 0 };
+const counts = {
+  scanned: 0,
+  uncertain: 0,
+  decidedCall: 0,
+  proceduralCall: 0,
+  tooShort: 0,
+  unreadable: 0,
+};
 const byDisposal = new Map<string, { n: number; uncertain: number }>();
 const byCourtYear = new Map<string, number>();
 const started = Date.now();
@@ -188,6 +196,38 @@ try {
         counts.tooShort++;
         continue;
       }
+      /**
+       * The text is not language, so no screen and no model can speak about it.
+       *
+       * Excluded for exactly the reason `tooShort` above is excluded: this is
+       * residue the instrument cannot judge, which is a different thing from
+       * residue it judged and found uncertain. Counted, never silently dropped.
+       *
+       * MEASURED, not assumed. LCC ran 1,000 rows of this manifest through a
+       * model (bus 0911) and NEW2 evaluated the output independently: 163 of the
+       * 1,000 were documents whose extracted text carries no Devanagari and
+       * under 12 English function words per thousand characters. They accounted
+       * for 59.2% of the run's `span_not_found` and 70.4% of its
+       * `no_evidence_offered` — a fabrication-shaped number that was really a
+       * corpus-damage number. Worse, 25 of the run's 773 "verified" spans were
+       * substring matches inside glyph codes: a check that passes and carries no
+       * information.
+       *
+       * The near-tie manifest is ENRICHED for these, and that follows from what
+       * it selects. A document with no readable text gives a marker screen
+       * nothing to be confident about in either direction, so it lands in the
+       * uncertain bucket by construction.
+       *
+       * Screened on the same tail the markers read. The screen loses very little
+       * there: on 25,000 uniform draws it reported 8.3% of admitted documents
+       * unreadable from a 1,400-character tail and 8.9% from a 20,000-character
+       * probe, because a document broken this way is broken throughout.
+       */
+      if (englishRate(r.tail_text ?? '') < ENGLISH_RATE_FLOOR) {
+        counts.unreadable++;
+        continue;
+      }
+
       const t = (r.tail_text ?? '').toLowerCase();
       const p = hits(t, proRe);
       const d = hits(t, decRe);
@@ -275,6 +315,7 @@ try {
   console.log(
     `below ${MIN_CHARS} chars, screen not applicable   ${counts.tooShort.toLocaleString()}`,
   );
+  console.log(`text is not language, no screen applies    ${counts.unreadable.toLocaleString()}`);
   console.log(`elapsed ${elapsed.toFixed(0)}s · watermark ${ckpt.cursor}`);
 
   const disposals = [...byDisposal.entries()]
@@ -306,6 +347,10 @@ try {
             margin: MARGIN,
             tailChars: TAIL_CHARS,
             minChars: MIN_CHARS,
+            /* A manifest built under a different exclusion is a different
+             * manifest and has to say so. This is that declaration. */
+            englishDensityFloor: ENGLISH_RATE_FLOOR,
+            englishDensityScreenVersion: QUALITY_STATE_VERSION,
             proceduralMarkers: PRO.length,
             decidedMarkers: DEC.length,
             heldOutWorstPrecisionAtBalancedPrior:
@@ -326,6 +371,7 @@ try {
             'The held-out precision in frozenScreen is measured at a 50/50 TEST prior against REGISTRY labels, not human ground truth. It does not transfer to this population and must not be used to auto-promote a model verdict to `decided`.',
             'The screen leans `decided`, so the rows it excluded as decided-looking are an UPPER bound on substantive content, and the uncertain population here is the near-ties rather than the whole of the doubt.',
             'Rows below the measured minimum length are counted in counts.tooShort and are NOT in the manifest. They are residue the instrument cannot speak about, which is different from residue it judged.',
+            'Rows whose text is not language in any script are counted in counts.unreadable and are NOT in the manifest, for the same reason. Added 21 Aug 2026 after 163 of 1,000 manifest rows sent to a model turned out to be unreadable, producing 59.2% of that run\'s span_not_found and 25 spans "verified" inside glyph codes. A manifest generated before that date contains them; regenerate with --restart rather than resuming, because a resumed walk produces a file built under two different exclusions.',
             'The walk is primary-key order over a table the fleet is still writing to. Rows ingested after the watermark are not in this manifest — and because judgments.id is a random uuid, an extension pass must key on created_at, not on this cursor. Measured 20 Aug: 740,993 of 740,993 rows created after a full id-order pass began sorted BELOW its final watermark.',
           ],
         },

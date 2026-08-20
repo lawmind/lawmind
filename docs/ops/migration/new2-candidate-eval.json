@@ -1,0 +1,1927 @@
+{
+  "generatedAt": "2026-08-20T17:34:56.000Z",
+  "lane": "NEW2",
+  "evaluates": "hc_class_candidate, produced by LCC (bus 0911)",
+  "independence": "uses only evidence the model was not shown and LCC did not consult: a deterministic bail screen, the English-density screen, and the value band",
+  "candidates": 1000,
+  "proposedClass": {
+    "procedural_disposal": 540,
+    "NULL": 227,
+    "decided": 123,
+    "bail_order": 62,
+    "reference_stub": 30,
+    "decided_brief": 18
+  },
+  "spanVerdict": {
+    "verified": 773,
+    "span_not_found": 169,
+    "no_evidence_offered": 54,
+    "span_too_short": 4
+  },
+  "valueBand": {
+    "brief": 444,
+    "standard": 413,
+    "full": 78,
+    "substantial": 65
+  },
+  "unreadable": {
+    "documents": 163,
+    "share": 0.163,
+    "withVerifiedSpan": 25,
+    "note": "a span verified inside unreadable text is a substring match against glyph codes — the check passes and carries no information"
+  },
+  "disagreementsByKind": {
+    "UNREADABLE_TEXT": 138,
+    "UNREADABLE_TEXT_WITH_VERIFIED_SPAN": 25,
+    "DECIDED_BRIEF_TOO_LONG": 14,
+    "BAIL_CLASS_NO_BAIL_PHRASE": 11
+  },
+  "disagreements": [
+    {
+      "judgmentId": "000090bf-82f6-4370-8b49-78d11700079b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1302,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0000c09b-1ff6-42d2-b3a2-8920a6595bf6",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 2412,
+      "englishRate": 3.32,
+      "detail": "englishRate 3.32 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000158c3-1944-4508-a125-e98f86b1240d",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "High Court  for State of Telangana",
+      "textLength": 1239,
+      "englishRate": 66.18,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "0000ac9e-331b-41d5-acb7-91f0c0d82b2d",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 2077,
+      "englishRate": 7.22,
+      "detail": "englishRate 7.22 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0000fd90-026e-4b26-9145-7d3c217c39dd",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2933,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000199b7-1cdf-4354-9bcc-c065384a9b5d",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "Bombay High Court",
+      "textLength": 1784,
+      "englishRate": 2.24,
+      "detail": "englishRate 2.24 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0001ab6b-1fb3-4086-ac27-f41f128e9c44",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4149,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0001ca33-01eb-438e-a61b-67fca1c105c4",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court Of Chhattisgarh",
+      "textLength": 5910,
+      "englishRate": 10.49,
+      "detail": "englishRate 10.49 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00027552-e513-41d6-8d04-ca538db22449",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3728,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00027a31-c408-4d9f-a0be-19c192c3c0d0",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 5992,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000305fe-b9bd-497e-8222-32a7dd2e79e6",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2663,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0003330e-72cb-48af-8885-2b40167cab07",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 3091,
+      "englishRate": 0.32,
+      "detail": "englishRate 0.32 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00036cfb-aec8-4200-b46d-e7186eb4ba91",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 3902,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000395dd-4f9b-4a39-afe2-14a77cbb46bc",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4092,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00041fb5-a85b-4e9b-8ad6-787be73df6df",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Himachal Pradesh",
+      "textLength": 4666,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0004d4f0-f40c-407d-9e5c-cee569eb7638",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2322,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000557f8-c285-44f3-8fff-ccf84c2336c9",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 1504,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00056ee1-a04f-48b1-95c4-54924c1d8a08",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Punjab and Haryana",
+      "textLength": 2175,
+      "englishRate": 2.76,
+      "detail": "englishRate 2.76 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00054fb0-ca78-41bd-a471-ce6605362c5d",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3698,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0005b492-d165-446c-bd8a-3a5fa56effd3",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1505,
+      "englishRate": 16.61,
+      "detail": "1505 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "0005d623-de64-44cf-b116-15399a8fd2e9",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 11153,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000657f2-45d1-4752-999a-efc510566430",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1349,
+      "englishRate": 6.67,
+      "detail": "englishRate 6.67 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0006e981-9a16-4f38-b3f7-4c6782dcff45",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court Of Rajasthan",
+      "textLength": 4646,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000708dd-1207-4ac0-bbde-45411bd1986e",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2691,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000749df-ef85-4f0c-9848-db6ed479c962",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 4224,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000704e5-6062-4725-84f3-40cb913b130f",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Orissa High Court",
+      "textLength": 1531,
+      "englishRate": 42.46,
+      "detail": "1531 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "00070fb7-cfce-46d2-a6e5-0d707e133174",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1605,
+      "englishRate": 14.95,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "000764fd-4075-44e4-ae40-933893cc873f",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "High Court of Kerala",
+      "textLength": 2159,
+      "englishRate": 58.36,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "0007be98-08ae-4574-bd5c-50bc55878c77",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 1294,
+      "englishRate": 65.69,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "0007c7dc-0d73-4924-945e-f72813f20e94",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1686,
+      "englishRate": 1.78,
+      "detail": "englishRate 1.78 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000849cd-1c0e-46f1-a283-deb758e2be99",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2303,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00099f66-25bd-45be-aa3c-5b70202d6fa3",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 10041,
+      "englishRate": 5.78,
+      "detail": "englishRate 5.78 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000a1c1b-dd05-4ae9-b9ed-63cb11506f75",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 3200,
+      "englishRate": 2.5,
+      "detail": "englishRate 2.50 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0009f0ec-224c-4ec2-a217-1d84ada50371",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 8757,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000ae078-0dfd-42c0-bfe2-9dadc724328c",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Punjab and Haryana",
+      "textLength": 1211,
+      "englishRate": 0.83,
+      "detail": "englishRate 0.83 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000b63e2-5761-43ce-9a57-2b093d2e4924",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2754,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000b5d3e-da2d-4b63-a3ee-b111565056b0",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "High Court of Kerala",
+      "textLength": 1840,
+      "englishRate": 33.15,
+      "detail": "1840 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "000c18b3-605f-4f1d-8195-514f3eb36ebe",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 1609,
+      "englishRate": 8.7,
+      "detail": "englishRate 8.70 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000c44b6-eb36-4965-8328-bcb2810c86bc",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1327,
+      "englishRate": 6.03,
+      "detail": "englishRate 6.03 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000c59a9-731d-4bfd-8da8-64e06f835209",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 8186,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000cd0b9-f6bc-4e80-8730-0ecede6be6c8",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2420,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000c9215-c48f-4abf-b005-e5f5d9d582ff",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2269,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000d08b9-5f64-4f13-a6fb-a27528a3bc0e",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 4863,
+      "englishRate": 0.62,
+      "detail": "englishRate 0.62 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000e0081-5b2c-461d-b44e-4c181b6946a7",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4519,
+      "englishRate": 1.99,
+      "detail": "englishRate 1.99 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000f1946-5a9d-4fdc-8b41-cb91df9b9674",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Himachal Pradesh",
+      "textLength": 30498,
+      "englishRate": 3,
+      "detail": "englishRate 3.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000f5462-760b-4967-8a88-4ad0c378769b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2307,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000fcd2a-443d-46d3-9ee5-59c79b9f2f2f",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Tripura",
+      "textLength": 14724,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000e684a-62bf-4803-9677-63767abe59a7",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2378,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000efb50-b238-4296-9961-750a9f654422",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2996,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "000f5410-1de4-4c78-a71d-7b598f28452c",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "Bombay High Court",
+      "textLength": 1831,
+      "englishRate": 2.18,
+      "detail": "englishRate 2.18 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0010c645-0e1e-4a69-a947-ab6e3aed1ec2",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 12651,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0011009c-9f5c-48ca-b7f8-0acc044d530c",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "High Court of Karnataka",
+      "textLength": 4073,
+      "englishRate": 36.58,
+      "detail": "4073 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "0010840a-166d-4cab-a51e-c2bd3b29dd27",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1835,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0010a7aa-94a7-47f4-ba55-90ad9a1f8886",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 3547,
+      "englishRate": 2.26,
+      "detail": "englishRate 2.26 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001127b9-00c9-4c10-88e1-f4b3f5afa6bc",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1694,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001251b5-9d5c-426b-9ae4-61c8bfdc2015",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 2131,
+      "englishRate": 53.97,
+      "detail": "2131 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "001220a2-6567-4a56-87bb-d81d07db9724",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Himachal Pradesh",
+      "textLength": 29857,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0012f35b-2d35-4bb7-ad70-3f11536ece0f",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2576,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00135519-2d28-4179-85b9-da9d549c6ded",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2406,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001397a9-b70c-4591-a8bd-b1dadbee5a9e",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2515,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00138727-9141-45ea-b153-540095712348",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "High Court  for State of Telangana",
+      "textLength": 1318,
+      "englishRate": 75.11,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "001410b7-6e89-4d44-8b26-0ff424747bac",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 8782,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00142cd8-0c31-4ee1-b0d5-a19e7af0ecf7",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3693,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0014be6c-4d40-4a4c-8d17-4f4cb7a15819",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1473,
+      "englishRate": 58.38,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "0014d140-300e-403f-83d3-6fe7933dd5b4",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 4818,
+      "englishRate": 10.17,
+      "detail": "englishRate 10.17 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00150789-9dd0-49bd-b1d2-ac0363b6a0fb",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2845,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00147882-7794-4e9f-8a68-d50cd0dd146b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4522,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0014edd4-0ee5-4153-8627-80b6b8a619fb",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 2285,
+      "englishRate": 11.82,
+      "detail": "englishRate 11.82 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0015a5eb-b41e-48df-8657-07fdf77f8d7c",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 56357,
+      "englishRate": 11.05,
+      "detail": "englishRate 11.05 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00166e4e-08af-46bb-8b4f-2295de13033a",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 5446,
+      "englishRate": 10.1,
+      "detail": "englishRate 10.10 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001688e7-d978-466b-82b7-931de62f5e90",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2838,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00160e3e-92df-4b0c-a98a-cea10d28da05",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4446,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00164855-662a-4010-8508-1d2d834a2cc0",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2145,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0016761e-4d98-41c2-a25d-c3e4f0b8e637",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "High Court of Andhra Pradesh",
+      "textLength": 2426,
+      "englishRate": 67.19,
+      "detail": "2426 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "0016d0ee-7be4-48f9-aa5f-3494281c62e1",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Punjab and Haryana",
+      "textLength": 1423,
+      "englishRate": 2.11,
+      "detail": "englishRate 2.11 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00178c94-1ffd-42cc-9a45-df2dcd0ab663",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 2629,
+      "englishRate": 3.04,
+      "detail": "englishRate 3.04 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0017c02b-559b-4b64-a652-7348d117e501",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4290,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0017e419-df48-4334-a441-c24a4e4d5566",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1624,
+      "englishRate": 5.54,
+      "detail": "englishRate 5.54 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0016c8a2-fd92-445e-90d0-8c8b2e7f87fd",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2782,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0017254c-c136-425b-aebe-ca77ca5805ac",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2688,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00174f12-757d-4941-9842-f7a8512d2613",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2504,
+      "englishRate": 1.2,
+      "detail": "englishRate 1.20 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0017b965-6a72-4125-8e44-4e0607fc2505",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "High Court Of Chhattisgarh",
+      "textLength": 24742,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0018499d-d59d-4692-be04-59ce832d4fd0",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 2416,
+      "englishRate": 56.29,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "00189d29-e09c-4928-a945-2e2852fa3bc8",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4199,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0018b76c-f46c-4568-89fc-5fb2d1882449",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2737,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001a4396-ac09-4041-a9c7-7734c57a5138",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Orissa High Court",
+      "textLength": 1581,
+      "englishRate": 65.15,
+      "detail": "1581 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "001a9919-c19d-40c0-be24-3cca72860de9",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1569,
+      "englishRate": 9.56,
+      "detail": "englishRate 9.56 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001ad8f0-ba9e-4a14-9a54-3ea34de0807f",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2355,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001b9a32-3bb5-46d5-a4f1-c77c042e9c63",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 1932,
+      "englishRate": 51.76,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "001be75d-2e7e-4fc0-aed7-15ec7448cb8f",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 4413,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001c0284-95e5-48b9-8838-e9f400ec5049",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1849,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001ca5d7-2508-4a0a-8645-a56bdbdd9bd0",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2894,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001d466f-13fd-4b43-91df-ed129d22b5f3",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 2254,
+      "englishRate": 9.76,
+      "detail": "englishRate 9.76 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001d5940-6e11-45b3-8e29-e45dfba2d2e8",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3653,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001c15c1-c427-4991-ba07-c8b898227293",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 2113,
+      "englishRate": 53.01,
+      "detail": "2113 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "001ce5d3-5f1f-4ae4-9722-64efd1f0b9d3",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 5670,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001d63ed-bc69-4fd1-bed1-75148b71d4a2",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Punjab and Haryana",
+      "textLength": 2248,
+      "englishRate": 3.11,
+      "detail": "englishRate 3.11 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001dd29b-f571-4f06-b61c-d68ead16e157",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 3497,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001e1e85-a3dd-4d30-95c9-e4536f07c074",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "Bombay High Court",
+      "textLength": 5247,
+      "englishRate": 2.1,
+      "detail": "englishRate 2.10 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001e5520-0272-4748-be3b-b2b249cc7c5b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4706,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001e85b8-761f-4e74-a3b9-ecace22025a1",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2440,
+      "englishRate": 1.23,
+      "detail": "englishRate 1.23 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001dd250-a57e-4bae-8a11-5d2c161c3c98",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 5128,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001df9dd-69af-4024-b518-bc49e452785d",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3699,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001e16db-8de7-4345-9206-daa8225a5932",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 3635,
+      "englishRate": 0.83,
+      "detail": "englishRate 0.83 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001ed79a-4ef7-4282-b0b6-f0d56ebac78c",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 8756,
+      "englishRate": 4.11,
+      "detail": "englishRate 4.11 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001f0ff9-10f5-45a0-9d44-72fd45e71b40",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 13468,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "001fc532-ae4a-48d8-a278-9a066e5068fd",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1508,
+      "englishRate": 45.09,
+      "detail": "1508 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "00200f79-f1fe-4d5a-a910-5e3c9ad0c472",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Madhya Pradesh",
+      "textLength": 4171,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0020972c-53d2-464c-8adf-3b0986203022",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1659,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00202a4b-6d3e-4734-af7d-6d7210f8d6ac",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2812,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0020626b-b1e7-4161-974f-c03c46a75e20",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2611,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0020d4d1-0436-4d4a-ab32-68bc1a8e7ccb",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "High Court  for State of Telangana",
+      "textLength": 1651,
+      "englishRate": 49.06,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "00217be9-f79c-43b3-a47e-9e36119a4b22",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2813,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0021a3e2-97f2-4f9e-b20e-301cd4274b54",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "Bombay High Court",
+      "textLength": 1697,
+      "englishRate": 4.12,
+      "detail": "englishRate 4.12 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00224c95-d325-43a6-ae09-b546c35c062b",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 2706,
+      "englishRate": 2.96,
+      "detail": "englishRate 2.96 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0022bf4c-ae1a-466a-a2ac-0cbc184ddf08",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2134,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0022fb5a-56e5-4fda-bc97-7b4757204643",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 10675,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00233a5b-d986-4d79-a01d-708f325ce03d",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "Bombay High Court",
+      "textLength": 1713,
+      "englishRate": 9.34,
+      "detail": "englishRate 9.34 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0023db17-8331-4ac7-87eb-9bed94c383ac",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1979,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0023f264-cad0-4d81-b282-10773b9b1ad1",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Himachal Pradesh",
+      "textLength": 1661,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0023ff18-3ab7-4c05-897a-199207e564e3",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 4189,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002445c6-a17f-4c37-8e41-ec888b5a820d",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 2346,
+      "englishRate": 53.71,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "00247157-66c2-458a-a0b6-b47de622cd0a",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2089,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00248319-b04f-45ed-92e5-6d41e2159c96",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 4021,
+      "englishRate": 6.96,
+      "detail": "englishRate 6.96 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0024c37d-898c-4130-bcba-4de9f8a95999",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 2411,
+      "englishRate": 41.48,
+      "detail": "2411 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "00261bd6-ef7b-4213-941f-b2f8ee7b614b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2576,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0025d7a7-b985-4c9a-913c-c038102fefd5",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 7781,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00265f97-dc70-41cd-98a3-f56bac0e4b76",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2770,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0026d468-35fb-4fed-b067-cfcbd2066bde",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2796,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00268224-9ef2-4180-8aa6-ccd41cb4664b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2527,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0027b0ce-92d3-4923-8aef-45352e5048fb",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Punjab and Haryana",
+      "textLength": 1682,
+      "englishRate": 1.19,
+      "detail": "englishRate 1.19 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00271654-c326-48db-a588-4815e3bdd94b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 9802,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00277f93-fcfa-4035-812c-4968171913c8",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2821,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0027aa40-78c4-4b07-a3f5-ac6152adce01",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 9308,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00287959-e23a-4703-b9ba-ed9a0f713628",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2914,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00288162-46ae-408b-a83c-f12d8dabed5e",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1820,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0028abe0-a622-4307-96b8-848d4a47ae6b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3869,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002937ce-f7d0-4123-a643-3d674fa5e224",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2042,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00298b00-09cd-4bae-b389-b72eda46e1ec",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2386,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0029957b-474f-4026-9dcd-05cf8dd3a655",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 2040,
+      "englishRate": 54.41,
+      "detail": "2040 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "002946cb-b268-4b60-84c6-b935262d5911",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 7327,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0029ca81-dee2-4fd3-9194-441b19a1974f",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 50222,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0029de7d-01b8-49ad-acda-4298007bfc87",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 8740,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002a4f72-70a9-4fc6-8d01-b940937f97a1",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 3712,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002af5b2-59c7-4060-8b23-2e54c6199057",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1820,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002b1509-6ddf-4406-b0f9-f6d884022f0a",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2573,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002ab9f2-140c-4dbb-89ae-d2ddfbd9c9ff",
+      "kind": "BAIL_CLASS_NO_BAIL_PHRASE",
+      "proposedClass": "bail_order",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 2232,
+      "englishRate": 56.9,
+      "detail": "no bail phrase in the first 20,000 characters"
+    },
+    {
+      "judgmentId": "002ae865-d03f-4471-8cf9-138c339d3220",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 4089,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002b3732-12ee-4810-9781-42ab2389ebe4",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2136,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002b7ec0-7aa2-40f5-bc24-1001079f9002",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1574,
+      "englishRate": 52.1,
+      "detail": "1574 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "002ba498-11be-454a-8034-83d14f58d3e0",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 15590,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002bff61-f571-4d1a-8bed-51c992b65cc5",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2448,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002b67c5-1021-453d-a525-130a4d463860",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2118,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002b8758-99ad-4b80-9c1d-14c608ea81da",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 25910,
+      "englishRate": 3.4,
+      "detail": "englishRate 3.40 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002bf8a3-ed28-4fc9-8c5c-a9de04a8723c",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1763,
+      "englishRate": 13.05,
+      "detail": "1763 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "002c0092-d187-4067-bc2a-621d5a94dd6b",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3019,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002c406b-8a26-4f82-a6a7-223dadbf47c9",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1903,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002c96c6-b3d8-40df-b96f-9f9acd0dc652",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2774,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002cb48e-cf0e-47d1-b5dc-8846da7d4db0",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2353,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002d7f9f-085c-492d-bdfd-6a7fc8da496f",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Punjab and Haryana",
+      "textLength": 2225,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002d8498-08ed-4ab7-b5d0-073823d992e2",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4401,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002cb998-89a7-49ea-bd34-e07b8a412e15",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 177476,
+      "englishRate": 8.45,
+      "detail": "englishRate 8.45 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002cf4a9-26d3-4fb0-8043-ae623c867b9f",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "decided",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1515,
+      "englishRate": 7.92,
+      "detail": "englishRate 7.92 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002d75b4-e205-426d-bf8e-18f1abc4ceff",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 5307,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002dc6c6-fa35-49bf-aa54-4c2a4155d14c",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2726,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002ece2b-ed2d-40bd-bc46-1ba5ea3c193c",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court Of Rajasthan",
+      "textLength": 1216,
+      "englishRate": 6.58,
+      "detail": "englishRate 6.58 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002f3af2-62dc-4bea-8ced-1a7aaf3d4934",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 4332,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002e6d62-8537-4871-8b2e-a17781bc2f7f",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 2348,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002fb10f-b7fc-45e9-aa8d-14a034fda6e2",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3052,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "002ff6b4-e563-4b56-9c24-f06c1f42c3ae",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 6246,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "003049c4-861c-4b3b-9768-db016d3aea48",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Punjab and Haryana",
+      "textLength": 2003,
+      "englishRate": 3,
+      "detail": "englishRate 3.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0030c756-c6bb-4130-8b7e-68c914988d45",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1668,
+      "englishRate": 8.99,
+      "detail": "englishRate 8.99 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00310242-2e3e-4a0f-bf5d-66b6bf79e0ea",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "Bombay High Court",
+      "textLength": 1817,
+      "englishRate": 8.26,
+      "detail": "englishRate 8.26 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0031163f-32d5-4733-ae2a-4d069c1fb7a8",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 8285,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00324a0b-c2cc-4ec5-87c9-61bcffc3c07d",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 3279,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0032bde8-a313-409c-acdb-f3e38e00c2a7",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "Bombay High Court",
+      "textLength": 11919,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0031b8e5-f4ae-4557-9c57-eaaba890b131",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 9439,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00323c36-5c2d-460e-be9d-25c1ae54fb52",
+      "kind": "UNREADABLE_TEXT_WITH_VERIFIED_SPAN",
+      "proposedClass": "procedural_disposal",
+      "spanVerdict": "verified",
+      "court": "High Court Of Rajasthan",
+      "textLength": 186449,
+      "englishRate": 10.8,
+      "detail": "englishRate 10.80 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00325b9a-a6af-45dd-b9a8-62802130c325",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 12585,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0032e35a-1a28-496f-b810-cec18f54507e",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1418,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0032f915-a45c-4d40-8cc5-8d376d1b11d7",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1752,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00334291-185d-4d9f-a81b-3288d2b89fa9",
+      "kind": "DECIDED_BRIEF_TOO_LONG",
+      "proposedClass": "decided_brief",
+      "spanVerdict": "verified",
+      "court": "Madras High Court",
+      "textLength": 1914,
+      "englishRate": 55.38,
+      "detail": "1914 characters, against BRIEF_MAX_CHARS of 1,500"
+    },
+    {
+      "judgmentId": "0033911a-e188-4dc1-840d-07c0344eeec6",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 11355,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00341f07-b507-4bf0-a8fb-4ad96f4b6dc4",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2943,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "003451ec-07d6-4801-967c-1f1f74309e79",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 2754,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00339acd-dd88-4240-92e1-dc9666be03e4",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "no_evidence_offered",
+      "court": "High Court of Karnataka",
+      "textLength": 9101,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "0033b7cb-0857-4b4a-bf95-8f234a359ef0",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1846,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    },
+    {
+      "judgmentId": "00341de8-893b-4aa9-b1f3-f1b5044ff469",
+      "kind": "UNREADABLE_TEXT",
+      "proposedClass": null,
+      "spanVerdict": "span_not_found",
+      "court": "High Court of Karnataka",
+      "textLength": 1572,
+      "englishRate": 0,
+      "detail": "englishRate 0.00 is below the floor of 12"
+    }
+  ],
+  "caveats": [
+    "None of these checks can say a candidate is RIGHT. Each can say a candidate is inconsistent with something the document itself carries, which is the only disagreement worth reporting from a second lane.",
+    "BAIL_CLASS_NO_BAIL_PHRASE is a weak signal in one direction only. The screen has finite recall, so its silence is not evidence of absence; a candidate flagged this way needs a human, not a correction.",
+    "The screens read the first 20,000 characters. A bail phrase appearing only beyond that point is missed, and the document is longer than that in a minority of cases.",
+    "This tool writes nothing. hc_class_candidate belongs to LCC and judgments.hc_document_class is not touched, because a lane that can both evaluate and promote is not an evaluator."
+  ]
+}
