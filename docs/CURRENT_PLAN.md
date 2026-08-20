@@ -43,6 +43,17 @@ PowerShell `Start-Process`, and `sidecar-keeper.mjs` watches the walk on SILENCE
 as well as the sidecar on health — twenty minutes without a log line means hung
 or dead, and both want the same treatment.
 
+**21 Aug, after LCC acted (migration `0066`): bail orders GO IN, and my own
+walk then spent an afternoon still discarding them.** The skip list in
+`doc-vector-embed.mjs` was a copy of a predicate that had moved, and nothing
+looked wrong at runtime — the ineligible rate held steady at 15-16% and I
+reported that steadiness to NEW2 as good news. The deployed view hash caught it
+(`e76879ab6bbcd452` → `5efa4c8decef699e`); the stage now asserts that hash on
+every batch and throws on a mismatch. 29,349 quarantined bail-order vectors were
+restored at no GPU cost, which is exactly what quarantining rather than deleting
+was for. The remaining ceiling on the same gold is **8.4%**, almost all of it the
+2,000-character floor, which LCC has recorded as an accepted loss.
+
 **13.2% of the authorities judges actually cite are refused by the eligibility
 contract.** All 250 of NEW3's citation-verified gold authorities are ones a real
 High Court judge really cited; 33 of them fail
