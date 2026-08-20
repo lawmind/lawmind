@@ -176,3 +176,94 @@ Instead, at the same or lower spend:
   reproducibility pass, so `hc_class_candidate` holds the first answer for every
   document. The disagreement measurement lives in the JSONL artifacts, not in the
   table.
+
+---
+
+# ADDENDUM — 21 August 2026: the accuracy measurement §6 said was owed
+
+§6 stated plainly that nothing above bounds accuracy against ground truth. NEW2
+supplied the ground truth (bus 0918): **45 documents drawn uniformly from what
+the eligibility view ADMITS**, adjudicated by hand from the operative text,
+**with the key written before any model output existed** and zero overlap with
+the 1,000.
+
+## The first attempt measured nothing, and that is worth recording
+
+Run through the normal path, the report read `span-verified 0.0%, fabrication
+100.0%`. It was **n = 1**.
+
+`selectsForModel` admits only rows a deterministic rule looked at and declined.
+The held-out set is drawn from ADMITTED documents, and an admitted document
+usually already carries a class from a rule — so **44 of 45 were correctly
+refused by the gate**. The gate did its job; the experiment was the wrong shape
+for it.
+
+A `--ignore-gate` flag now makes this a deliberate, separate mode. **It refuses
+`--persist` outright**: these rows already have a deterministic verdict, and
+storing a model candidate beside one invites a later promotion sweep to overwrite
+a rule with a model. Deterministic-first is the architecture, not a preference.
+
+## The result, on the population that matters
+
+```
+matched documents                                45
+key verdict UNCERTAIN — unscorable by the key's own rule    9
+model abstained on a scorable row                 3
+SCORABLE                                         33
+CORRECT                                          29    87.9%   [72.7, 95.2]
+```
+
+Confusion, key → model:
+
+```
+  17   NON_SUBSTANTIVE_PROCEDURAL  ->  NON_SUBSTANTIVE_PROCEDURAL
+  12   HIGH_CONFIDENCE_SUBSTANTIVE ->  HIGH_CONFIDENCE_SUBSTANTIVE
+   3   NON_SUBSTANTIVE_PROCEDURAL  ->  HIGH_CONFIDENCE_SUBSTANTIVE   <- the costly direction
+   2   NON_SUBSTANTIVE_PROCEDURAL  ->  ABSTAIN
+   1   HIGH_CONFIDENCE_SUBSTANTIVE ->  NON_SUBSTANTIVE_PROCEDURAL
+   1   HIGH_CONFIDENCE_SUBSTANTIVE ->  ABSTAIN
+```
+
+Span verification also runs better here than on the near-ties: **86.7% verified,
+13.3% span-not-found**, against 77.3% and 16.9%.
+
+### The two error directions are not equally expensive
+
+**3 of 20 scored procedural documents were called substantive — a 15%
+false-substantive rate.** That is the direction that admits non-law into an
+authority set, and it is the one that matters. The reverse (1 substantive called
+procedural) loses a real authority, which is recoverable by other routes.
+
+`UNCERTAIN` rows were excluded rather than scored, per the key's own rule that
+*"UNCERTAIN is a verdict, not an abstention"*. Of the 9, the model called 5
+procedural, 1 substantive, and abstained on 3.
+
+## What this does and does not change
+
+**It does not reopen the ladder.** 87.9% on admitted documents and 81.0%
+self-agreement on near-ties are not in tension — they are two populations, and
+the near-ties are hard by construction. The reason for halting was never the
+absolute accuracy; it was that **a single-run verdict is not reproducible on the
+population the ladder would actually process**, and nothing here touches that.
+
+**It does raise the value of screening before spending.** NEW2's 0918 shows
+16.3% of the 1,000 were documents whose extracted text is not language in any
+script — 59.2% of all `span_not_found` and 70.4% of `no_evidence_offered`. So the
+16.9% headline is materially a **corpus-damage** figure rather than a fabrication
+one, and 25 of the 773 "verified" spans verified **inside glyph garbage**, which
+reads as evidence while carrying none. Screening for a readable document before
+the call recovers that spend and removes a class of false verification.
+
+## Caveats, and they are load-bearing at this n
+
+- **33 scorable documents.** The interval is [72.7, 95.2] and the point estimate
+  should never be quoted without it.
+- **Single annotator, unblinded to the corpus though blind to the model.** The
+  key was written first, which removes the worst bias and not all of them.
+- **The class mapping is mine, not the key's.** `decided` was scored as
+  substantive and `bail_order` / `procedural_disposal` / `reference_stub` /
+  `decided_brief` as non-substantive, following NEW2's own adjudication which
+  counts bail among the non-substantive half. A different mapping gives a
+  different number.
+- **Nothing was persisted.** `--ignore-gate` cannot write, so
+  `hc_class_candidate` is unchanged at 1,000 rows, none promoted.

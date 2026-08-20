@@ -82,6 +82,46 @@ const MANIFEST = flag('--manifest');
  * as it was.
  */
 const PERSIST = process.argv.includes('--persist');
+
+/**
+ * Run the model over rows the difficult-subset gate would refuse. **A different
+ * experiment, and it is REPORT-ONLY — it cannot persist.**
+ *
+ * ── WHY IT EXISTS
+ *
+ * `selectsForModel` admits only rows a deterministic rule LOOKED AT AND
+ * DECLINED. That is right for the difficult-subset pass and it makes one
+ * question unanswerable: *how accurate is this model on the population Tier A is
+ * actually made of?* Near-ties are not that population, so the 1,000-row run
+ * cannot bound accuracy on it.
+ *
+ * NEW2 wrote a held-out key for exactly that — 45 documents drawn uniformly from
+ * what the eligibility view ADMITS, adjudicated by hand from the operative text
+ * BEFORE any model ran (`new2-heldout-key.json`). Run through the normal gate,
+ * **44 of the 45 are refused**, because an admitted document usually already
+ * carries a class from a rule. Measuring accuracy on the one survivor would be
+ * measuring nothing.
+ *
+ * ── WHY IT MAY NEVER PERSIST
+ *
+ * These rows already have a deterministic verdict. A model candidate for such a
+ * row is a SECOND OPINION competing with a rule, and `hc_class_candidate` is not
+ * built to express that — a later promotion sweep reading it could quietly
+ * overwrite a rule's answer with a model's. Deterministic-first is the whole
+ * architecture of this module, and a flag that let a measurement erode it would
+ * be the most expensive kind of convenience.
+ *
+ * So this refuses `--persist` outright rather than warning about it.
+ */
+const IGNORE_GATE = process.argv.includes('--ignore-gate');
+if (IGNORE_GATE && PERSIST) {
+  console.error(
+    '--ignore-gate cannot be combined with --persist. Rows the gate refuses already\n' +
+      'carry a deterministic verdict; storing a model candidate beside one invites a\n' +
+      'promotion sweep to overwrite a rule with a model. This mode measures and reports.',
+  );
+  process.exit(2);
+}
 /**
  * Deliberately low. The grant is a capacity-limited free tier that returns HTTP
  * 429 under this repo's own load, and `callInferxPooled` treats a busy key as a
@@ -295,8 +335,16 @@ async function main(): Promise<void> {
 
   // The gate is re-asserted in code, not trusted to the SQL that mirrors it:
   // two copies of a predicate drift, and this is the one that must not.
-  const todo = rows.filter((r) => selectsForModel(r.hc_class_method));
-  if (todo.length !== rows.length) {
+  const gated = rows.filter((r) => selectsForModel(r.hc_class_method));
+  const todo = IGNORE_GATE ? rows : gated;
+  if (IGNORE_GATE) {
+    console.log(
+      `--ignore-gate: measuring on ${rows.length} rows, of which ${rows.length - gated.length} ` +
+        'already carry a deterministic verdict.\n' +
+        '  This is an ACCURACY MEASUREMENT on the admitted population, not the difficult\n' +
+        '  subset, and it writes no candidate. Deterministic-first is unchanged.',
+    );
+  } else if (todo.length !== rows.length) {
     console.log(
       `${rows.length - todo.length} rows refused by the gate despite matching the query — SQL and gate disagree`,
     );
