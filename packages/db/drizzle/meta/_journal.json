@@ -456,6 +456,13 @@
       "when": 1786442100000,
       "tag": "0064_trust_lifecycle_and_class_candidates",
       "breakpoints": true
+    },
+    {
+      "idx": 65,
+      "version": "7",
+      "when": 1786442200000,
+      "tag": "0065_statute_mapping_authority_class",
+      "breakpoints": true
     }
   ]
 }

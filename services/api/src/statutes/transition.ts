@@ -41,11 +41,21 @@
  *   · the offence date is an INPUT. When it is absent the verdict is
  *     `indeterminate`, and the only correct output is a question;
  *   · corresponding provisions come from `statute_mappings` and nowhere else.
- *     That table is EMPTY today (0 rows, measured 19 Aug 2026), so this module
- *     reports "we do not hold the correspondence" rather than producing one.
- *     `DOMAIN_TRUTH.md`: *"Never hardcode a mapping in application code. Never
- *     let a model generate one."* An empty table is a known gap; a fabricated
- *     mapping is a wrong answer that looks like knowledge.
+ *     That table held 0 rows on 19 Aug 2026 and holds **226 on 20 Aug** — the
+ *     BPR&D tables parsed and loaded in between. Coverage is still thin where it
+ *     matters most: **4 of the BNS's 358 sections**, 24 of 531 BNSS, 101 of 170
+ *     BSA. So this module still reports "we do not hold the correspondence" for
+ *     almost every criminal section, and that sentence must read as UNMAPPED —
+ *     nobody has looked — never as *no counterpart exists*, which is a positive
+ *     legislative finding with its own `no_equivalent` value and its own source
+ *     requirement.
+ *     Every row now carries `authority_class`, and **all 226 are
+ *     `OFFICIAL_CORRESPONDENCE`, none is `ENACTED_STATUTE`**: Parliament enacted
+ *     the Sanhitas, the BPR&D wrote a concordance to them, and only the first
+ *     would win an argument. `DOMAIN_TRUTH.md`: *"Never hardcode a mapping in
+ *     application code. Never let a model generate one."* A thin table is a
+ *     known gap; a fabricated mapping is a wrong answer that looks like
+ *     knowledge, and 1.1% coverage is when that temptation is strongest.
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * WHAT THIS MODULE WILL NOT DO
@@ -236,7 +246,9 @@ let cached: TransitionEvidence | null = null;
 
 export async function commencementEvidence(sql: Sql): Promise<TransitionEvidence> {
   if (cached) return cached;
-  const rows = await sql<{ short_title: string; enforcement_date: Date | null; source_url: string | null }[]>`
+  const rows = await sql<
+    { short_title: string; enforcement_date: Date | null; source_url: string | null }[]
+  >`
     SELECT short_title, enforcement_date, source_url
       FROM statutes
      WHERE short_title = ANY(${NEW_CODE_TITLES as unknown as string[]})
@@ -293,7 +305,10 @@ export async function assessTransition(sql: Sql, input: AssessInput): Promise<Tr
       kind: 'unavailable',
       why:
         'the commencement dates of the 2023 codes are not readable from `statutes` ' +
-        '(found ' + evidence.commencement.length + ' of ' + NEW_CODE_TITLES.length +
+        '(found ' +
+        evidence.commencement.length +
+        ' of ' +
+        NEW_CODE_TITLES.length +
         (evidence.commencedOn === null && evidence.commencement.length > 0
           ? ', and the rows found do not agree on a single date'
           : '') +
@@ -311,7 +326,8 @@ export async function assessTransition(sql: Sql, input: AssessInput): Promise<Tr
       mustAsk: 'offence_date',
       why:
         'The governing code depends entirely on when the offence is alleged to have ' +
-        'occurred, and no such date was given. Before ' + humanDate(settled.commencedOn) +
+        'occurred, and no such date was given. Before ' +
+        humanDate(settled.commencedOn) +
         ' the old codes govern; on or after it, the 2023 codes do. Answering without ' +
         'the date means guessing which of two different provisions and two different ' +
         'punishment ranges applies.',
@@ -329,25 +345,60 @@ export async function assessTransition(sql: Sql, input: AssessInput): Promise<Tr
   };
 }
 
+export type CorrespondenceRow = {
+  readonly newAct: string;
+  readonly newSection: string;
+  readonly oldAct: string;
+  readonly oldSection: string;
+  readonly relationship: string;
+  readonly note: string | null;
+  /**
+   * WHOSE correspondence this is. `ENACTED_STATUTE` would be law; everything we
+   * currently hold is `OFFICIAL_CORRESPONDENCE` — the executive's concordance,
+   * not the Sanhitas. Carried on every row so a caller cannot present one at the
+   * other's weight by forgetting to look it up.
+   */
+  readonly authorityClass: string;
+  /** Named for a reader: "BPR&D comparative table", not a `bprd.nic.in` URL. */
+  readonly authorityBody: string | null;
+};
+
 export type Correspondence =
-  | { readonly held: true; readonly rows: readonly { newAct: string; newSection: string; oldAct: string; oldSection: string; relationship: string; note: string | null }[] }
+  | { readonly held: true; readonly rows: readonly CorrespondenceRow[] }
   | { readonly held: false; readonly why: string };
 
 /**
  * Corresponding provisions, from `statute_mappings` and nothing else.
  *
- * **Measured 19 Aug 2026: `statute_mappings` holds 0 rows.** So this returns
- * `held: false` for everything today, and that is the correct output — the
- * parser for the BPRD correspondence tables exists
- * (`services/ingest/src/statute-correspondence.ts`) and is deliberately
- * report-only pending validation, per the founder's "report first" instruction.
- * BSA↔IEA parses at 160 of 170 sections; BNS and BNSS use a different column
- * order and do not parse yet (bus 0326).
+ * **Measured 20 Aug 2026: `statute_mappings` holds 226 rows.** (This comment
+ * previously said 0, measured 19 Aug, and was true when written — the BPR&D
+ * tables have since been parsed and loaded.) All 226 are
+ * `authority_class = 'OFFICIAL_CORRESPONDENCE'` and **none is
+ * `ENACTED_STATUTE`**, which is the distinction migration 0065 exists to carry:
+ * Parliament enacted the Sanhitas, the BPR&D wrote a concordance to them, and
+ * only the first would win an argument.
  *
- * Reporting an honest gap is not the same as failing. The alternative — letting
- * a model supply the missing mapping — is the one outcome `DOMAIN_TRUTH.md`
- * names twice: *"Never hardcode a mapping in application code. Never let a model
- * generate one."*
+ * ── COVERAGE, AND WHY THE `held: false` WORDING MATTERS MORE THAN THE ROWS
+ *
+ *     act    sections held   with a mapping   coverage
+ *     bns              358                4       1.1%
+ *     bnss             531               24       4.5%
+ *     bsa              170              101      59.4%
+ *
+ * **Four of the BNS's 358 sections have a mapping**, and the BNS replaced the
+ * Indian Penal Code. So the overwhelmingly common outcome of this function is
+ * `held: false`, and what that sentence says is the product.
+ *
+ * It must say UNMAPPED — *nobody has read the correspondence for this section* —
+ * and never anything a reader could take as *there is no counterpart*. Those are
+ * our ignorance and a positive legislative finding, and `statute_relationship`
+ * has a separate `no_equivalent` value for the second, CHECK-constrained to
+ * require an official source. Absence of a row is only ever the first.
+ *
+ * The alternative — letting a model supply the missing mapping — is the outcome
+ * `DOMAIN_TRUTH.md` names twice: *"Never hardcode a mapping in application code.
+ * Never let a model generate one."* At 1.1% coverage that temptation is at its
+ * strongest, which is exactly when the rule matters.
  */
 export async function correspondingProvisions(
   sql: Sql,
@@ -355,22 +406,41 @@ export async function correspondingProvisions(
   section: string,
 ): Promise<Correspondence> {
   const rows = await sql<
-    { new_act: string; new_section: string; old_act: string; old_section: string; relationship: string; note: string | null }[]
+    {
+      new_act: string;
+      new_section: string;
+      old_act: string;
+      old_section: string;
+      relationship: string;
+      note: string | null;
+      authority_class: string;
+      authority_body: string | null;
+    }[]
   >`
-    SELECT new_act::text, new_section, old_act::text, old_section, relationship::text, note
+    SELECT new_act::text, new_section, old_act::text, old_section, relationship::text, note,
+           authority_class, authority_body
       FROM statute_mappings
      WHERE (old_act::text = ${act} AND old_section = ${section})
         OR (new_act::text = ${act} AND new_section = ${section})
+     -- Strongest authority first, so a caller that renders only the head row
+     -- renders the best-supported one rather than whichever the heap returned.
+     ORDER BY authority_rank DESC, new_section
   `;
   if (rows.length === 0) {
     return {
       held: false,
       why:
-        'no correspondence is held for ' + act + ' ' + section + '. ' +
-        'The old to new section mapping is sourced from the official BPRD comparison ' +
-        'tables and is not yet loaded; it is never generated. Where the mapping is not ' +
-        'clean the source itself splits or merges sections, so a single equivalent may ' +
-        'not exist even once it is loaded.',
+        'no correspondence is held for ' +
+        act +
+        ' ' +
+        section +
+        '. ' +
+        'This means UNMAPPED — nobody has read the correspondence for this section — ' +
+        'and NOT that no counterpart exists. Coverage of the official BPRD comparison ' +
+        'tables is presently 4 of 358 BNS sections, 24 of 531 BNSS and 101 of 170 BSA, ' +
+        'so a gap here is the expected case rather than a finding. A mapping is never ' +
+        'generated; where the source itself splits or merges sections, a single ' +
+        'equivalent may not exist at all.',
     };
   }
   return {
@@ -382,6 +452,8 @@ export async function correspondingProvisions(
       oldSection: r.old_section,
       relationship: r.relationship,
       note: r.note,
+      authorityClass: r.authority_class,
+      authorityBody: r.authority_body,
     })),
   };
 }
@@ -400,8 +472,18 @@ export async function correspondingProvisions(
  */
 function humanDate(iso: string): string {
   const MONTHS = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
   if (!m) return iso;
@@ -459,7 +541,8 @@ export function transitionContext(verdict: TransitionVerdict): string | null {
         'CRIMINAL LAW REGIME — ESTABLISHED FROM THE OFFENCE DATE',
         '',
         'Offence date given: ' + humanDate(verdict.offenceDate),
-        'The 2023 codes commenced ' + humanDate(verdict.evidence.commencedOn) +
+        'The 2023 codes commenced ' +
+          humanDate(verdict.evidence.commencedOn) +
           ' (source: statutes table, indiacode.nic.in).',
         '',
         old
