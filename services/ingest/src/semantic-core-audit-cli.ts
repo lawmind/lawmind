@@ -164,6 +164,7 @@ function axes(r: Row): {
   bail: boolean;
   band: string;
   admitted: boolean;
+  tier: string;
 } {
   const len = r.text_len ?? 0;
   const tq = r.text_quality === null ? 0 : Number(r.text_quality);
@@ -177,9 +178,13 @@ function axes(r: Row): {
     len > 0 &&
     tq >= 0.85 &&
     (r.script_quality === null || ['clean', 'mixed_script_ok'].includes(r.script_quality));
+  /* `decided_brief` was added to this list by migration 0063 and the exclusion is
+   * a NO-OP: `BRIEF_MAX_CHARS` is 1,500, below the 2,000-character band floor, so
+   * no row of that class ever reached the band anyway. Transcribed faithfully
+   * rather than simplified, because this function's only job is to be the view. */
   const role =
     r.hc_document_class === null ||
-    !['procedural_disposal', 'reference_stub'].includes(r.hc_document_class);
+    !['procedural_disposal', 'reference_stub', 'decided_brief'].includes(r.hc_document_class);
   const bail = r.hc_document_class === 'bail_order';
   const band =
     len >= 8000
@@ -191,9 +196,38 @@ function axes(r: Row): {
           : len >= 1000
             ? 'brief'
             : 'stub';
-  const admitted =
-    identity && text && role && !bail && ['standard', 'full', 'substantial'].includes(band);
-  return { identity, text, role, bail, band, admitted };
+
+  /**
+   * `semantic_tier`, migration 0066.
+   *
+   * ADMITTED IS NO LONGER `NOT is_bail_order`. LCC took the decision on NEW1's
+   * 250-authority gold — judges cite bail orders in 12 of 250, 4.8% — and bail
+   * orders are now reachable under their own tier rather than broken out and
+   * dropped. So `admitted` here means "the view gives this row a tier that is not
+   * NOT_ELIGIBLE", which is what decides whether a vector gets spent.
+   *
+   * Note the tier ladder does NOT consult `axis_c_role`: a row is NOT_ELIGIBLE on
+   * identity, text and length alone, and the role classes then choose between the
+   * three reachable tiers. `axis_c_role` is still computed and still reported,
+   * because a consumer selecting on it directly gets a different population from
+   * one selecting on the tier, and an audit that reported only one of them would
+   * hide that.
+   */
+  const eligible = identity && text && ['standard', 'full', 'substantial'].includes(band);
+  const tier = !eligible
+    ? 'NOT_ELIGIBLE'
+    : bail
+      ? 'BAIL_ORDER_REACHABLE'
+      : ['decided_brief', 'procedural_disposal', 'reference_stub'].includes(
+            r.hc_document_class ?? '',
+          )
+        ? 'UNRESOLVED_EXPERIMENTAL'
+        : r.hc_document_class === 'decided' &&
+            ['clean', 'mixed_script_ok'].includes(r.script_quality ?? '')
+          ? 'VERIFIED_SEMANTIC_CORE'
+          : 'BROAD_SEARCHABLE';
+
+  return { identity, text, role, bail, band, admitted: eligible, tier };
 }
 
 /**
@@ -310,6 +344,7 @@ async function draw(): Promise<Row | null> {
 type Audited = Row & {
   band: string;
   admitted: boolean;
+  semanticTier: string;
   axisIdentity: boolean;
   axisText: boolean;
   axisRole: boolean;
@@ -378,6 +413,7 @@ async function worker(): Promise<void> {
       ...r,
       band: a.band,
       admitted: a.admitted,
+      semanticTier: a.tier,
       axisIdentity: a.identity,
       axisText: a.text,
       axisRole: a.role,
@@ -482,6 +518,13 @@ try {
     admitted: admitted.length,
     admittedShare: Number((admitted.length / Math.max(1, audited.length)).toFixed(4)),
     breakdown: {
+      /* The tier is what actually decides whether a vector is spent, so it leads.
+       * `VERIFIED_SEMANTIC_CORE` reading zero is the honest state and not a bug:
+       * it needs positive evidence on BOTH axes, and `script_quality` is written
+       * for 58,615 rows of 18,698,968. LCC reached the same zero from the view
+       * side; two routes to the same zero is the strongest evidence either lane
+       * has that it is real. */
+      semanticTier: tally(admitted, (a) => a.semanticTier),
       admissionReason: tally(admitted, (a) => a.admissionReason),
       band: tally(admitted, (a) => a.band),
       court: tally(admitted, (a) => a.court),
@@ -655,26 +698,39 @@ try {
         ]),
       ),
     },
+    /* Every draw, by tier, including the rejected ones — the view assigns a tier
+     * to every row in the corpus and reporting only the admitted half would hide
+     * the denominator. */
+    semanticTierAllDraws: tally(audited, (a) => a.semanticTier),
     rejected: {
       total: audited.length - admitted.length,
+      /**
+       * Attributed in the tier ladder's own order, which is NOT the order the
+       * conjuncts are written in.
+       *
+       * Under migration 0066 a row is `NOT_ELIGIBLE` on identity, text and length
+       * alone. `axis_c_role` and `is_bail_order` choose between the three
+       * REACHABLE tiers and can no longer reject anything, so neither may appear
+       * here as a rejection reason. An earlier ordering tested role before band
+       * and reported 1,034 rejections as `role` that were really short documents
+       * — a rejection attributed to a conjunct that had stopped rejecting.
+       */
       byFailingAxis: tally(
         audited.filter((a) => !a.admitted),
-        (a) =>
-          !a.axisIdentity
-            ? 'identity'
-            : !a.axisText
-              ? 'text'
-              : !a.axisRole
-                ? 'role'
-                : a.isBail
-                  ? 'bail_order'
-                  : `band_${a.band}`,
+        (a) => (!a.axisIdentity ? 'identity' : !a.axisText ? 'text' : `band_${a.band}`),
+      ),
+      /* The role classes among rejected rows, reported separately because they
+       * are a PROPERTY of the rejected population and not a cause of it. */
+      roleAmongRejected: tally(
+        audited.filter((a) => !a.admitted),
+        (a) => a.hc_document_class ?? 'NULL',
       ),
     },
     adjudicationQueue: queue,
     caveats: [
       'Draws are uniform over judgments.id, which is uuid v4. If ids ever stop being uniformly distributed — a sequential or time-ordered id scheme, a bulk load with a fixed prefix — this sampler silently stops being uniform and nothing here would notice.',
-      'The eligibility predicate is transcribed into JavaScript so that admission can be attributed to a single conjunct. The deployed view hash is recorded above; if it differs from the hash in TIER_A_CENSUS.md the transcription must be re-read before any number here is quoted.',
+      'The eligibility predicate is transcribed into JavaScript so that admission can be attributed to a single conjunct, which SQL cannot report. The deployed view hash is recorded above; if it differs from the hash in the report that quoted this run, the transcription must be re-read before any number here is trusted. It has already drifted once: migration 0066 made bail orders reachable and added semantic_tier, and this file was updated to follow rather than the other way round.',
+      'admitted now means "the view gives this row a tier other than NOT_ELIGIBLE". Before migration 0066 it meant that AND not a bail order, so an admitted count from this tool taken before 21 Aug 2026 is over a smaller population by roughly the bail share.',
       'text_len saturates at 200,000 characters. Every band boundary the predicate uses is far below that, so bands are exact; a mean length computed from this field is not.',
       'The marker screen fires on the head and tail only, not on the whole document. Its recall on a truncated probe is lower than the 76.2% measured on full text, so the legacy-font rate reported here is a FLOOR.',
       'HIGH-CONFIDENCE SUBSTANTIVE, NON-SUBSTANTIVE and UNCERTAIN are deliberately NOT assigned mechanically. A row reading PENDING_ADJUDICATION has not been judged, and counting those as substantive would restate the selector as its own audit.',
@@ -687,6 +743,12 @@ try {
       `draws                  ${out.draws.toLocaleString()}`,
       `admitted by the view   ${out.admitted.toLocaleString()} (${(out.admittedShare * 100).toFixed(1)}%)`,
       `deployed view hash     ${deployedHash}`,
+      '',
+      'semantic tier, among admitted:',
+      ...Object.entries(out.breakdown.semanticTier).map(
+        ([k, v]) =>
+          `  ${k.padEnd(46)} ${String(v).padStart(6)}  ${((100 * v) / out.admitted).toFixed(1)}%`,
+      ),
       '',
       'admission reason, among admitted:',
       ...Object.entries(out.breakdown.admissionReason).map(
