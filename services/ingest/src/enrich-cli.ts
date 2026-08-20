@@ -808,10 +808,15 @@ for (const [i, ref] of refs.entries()) {
     }
   }
 
-  if (!result.ok && openRouterKey !== null && /capacity|429|exhausted|breaker/i.test(result.reason)) {
-    const fallback = await callOpenRouter(prompt, { apiKey: openRouterKey, maxTokens: 2000 });
+  // The OpenRouter fallback runs ONLY with an explicit OPENROUTER_MODEL. It used
+  // to default to `deepseek/deepseek-chat` — V3 — so a 429 mid-run could swap the
+  // model that produced a row without anything saying so. Founder, 20 Aug 2026:
+  // DeepSeek V4 Flash only. Unset means no fallback, not a guessed slug.
+  const openRouterModel = openRouterModelFromEnv();
+  if (!result.ok && openRouterKey !== null && openRouterModel !== null && /capacity|429|exhausted|breaker/i.test(result.reason)) {
+    const fallback = await callOpenRouter(prompt, { apiKey: openRouterKey, model: openRouterModel, maxTokens: 2000 });
     if (fallback.ok) {
-      usedModel = openRouterModelFromEnv();
+      usedModel = openRouterModel;
       costUsd = fallback.costUsd;
       openRouterCalls++;
       openRouterCost += fallback.costUsd;

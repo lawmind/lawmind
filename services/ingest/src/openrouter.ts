@@ -49,11 +49,21 @@ export type OpenRouterDeps = {
 
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 /**
- * `deepseek/deepseek-chat` — the same model family the enrichment prompts were
- * written and evaluated against, so switching provider does not silently change
- * what is being measured. Overridable via `OPENROUTER_MODEL`.
+ * THERE IS NO DEFAULT MODEL, AND THAT IS A FOUNDER INSTRUCTION — 20 Aug 2026.
+ *
+ * This used to default to `deepseek/deepseek-chat`, which is **DeepSeek V3**.
+ * The founder's direction is explicit: DeepSeek **V4 Flash** only, never V3, on
+ * either provider. InferX already runs V4 Flash (`ENRICH_MODEL`), so the only
+ * place V3 could enter the corpus was this fallback — silently, on a 429, in the
+ * middle of a run, recorded in `document_enrichments.model` where nobody was
+ * reading it.
+ *
+ * No replacement slug is guessed here. `OPENROUTER_MODEL` must be set to a real
+ * V4-Flash slug for the fallback to run at all; unset, `openRouterModelFromEnv`
+ * returns null and the caller does not call OpenRouter. A pass that refuses the
+ * fallback loses throughput; a pass that quietly swaps the model loses the
+ * ability to say what produced a row.
  */
-const DEFAULT_MODEL = 'deepseek/deepseek-chat';
 const DEFAULT_MAX_TOKENS = 2000;
 const MAX_ATTEMPTS = 4;
 
@@ -66,14 +76,16 @@ export function openRouterKeyFromEnv(env: NodeJS.ProcessEnv = process.env): stri
   return typeof k === 'string' && k.trim() !== '' ? k.trim() : null;
 }
 
-export function openRouterModelFromEnv(env: NodeJS.ProcessEnv = process.env): string {
-  return env['OPENROUTER_MODEL'] ?? DEFAULT_MODEL;
+export function openRouterModelFromEnv(env: NodeJS.ProcessEnv = process.env): string | null {
+  const m = env['OPENROUTER_MODEL'];
+  return typeof m === 'string' && m.trim() !== '' ? m.trim() : null;
 }
 
 export async function callOpenRouter(prompt: string, deps: OpenRouterDeps): Promise<OpenRouterResult> {
   const doFetch = deps.fetchImpl ?? globalThis.fetch;
   const sleep = deps.sleepImpl ?? defaultSleep;
-  const model = deps.model ?? DEFAULT_MODEL;
+  const model = deps.model;
+  if (!model) return { ok: false, reason: 'OPENROUTER_MODEL is not set — no model is assumed (founder: DeepSeek V4 Flash only)' };
   const maxTokens = deps.maxTokens ?? DEFAULT_MAX_TOKENS;
 
   let lastReason = 'unknown';

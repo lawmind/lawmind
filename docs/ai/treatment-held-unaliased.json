@@ -1,0 +1,241 @@
+{
+  "generatedAt": "2026-08-20T03:24:19.471Z",
+  "applied": true,
+  "total": 28,
+  "linked": 1,
+  "outcomes": [
+    {
+      "edgeId": "45dc9e09-addb-41f1-ae5b-0217472038bb",
+      "citation": "(1983) 3 SCC 284",
+      "relationship": "overruled",
+      "citingTitle": "STATE OF HIMACHAL PRADESH & ORS. versus RAJ KUMAR & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "e402ec8a-bffe-494d-8c15-c7540843cf48",
+      "citation": "(1988) 2 SCC 72",
+      "relationship": "overruled",
+      "citingTitle": "JOSEPH SHINE versus UNION OF INDIA",
+      "linked": true,
+      "targetId": "92c741da-9c48-4126-b75b-a5e081669d55",
+      "targetTitle": "V REVATHI versus UNION OF INDIA & ORS.",
+      "scr": "[1988] 3 SCR 73",
+      "printedName": "V. Revathi v. Union of India and others",
+      "jaccard": 1,
+      "evidence": "V. Revathi v. Union of India and others (1988) 2 SCC 72 : [1988] 3 SCR 73"
+    },
+    {
+      "edgeId": "dedd2b6d-0a86-4a45-8984-88ad37b00e68",
+      "citation": "(1996) 9 SCC 766",
+      "relationship": "overruled",
+      "citingTitle": "BHARAT PARIKH versus C.B.I. & ANR.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "f25b10c7-c5e3-4bfb-8c28-154a7df56bfc",
+      "citation": "(1999) 4 SCC 453",
+      "relationship": "overruled",
+      "citingTitle": "VASANT GANPAT PADAVE (D) BY LRS. & ORS . versus ANANT MAHADEV SAWANT (D) THROUGH LRS. & ORS",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "17a2a2bb-0bc5-43fc-8d5e-aa306c9a7a24",
+      "citation": "(2000) 9 SCC 63",
+      "relationship": "overruled",
+      "citingTitle": "M/S. VIJAY INDUSTRIES versus COMMISSIONER OF INCOME TAX",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "47f3097f-c4f5-4ed1-afb6-c9c0db0b9eb8",
+      "citation": "(2003) 2 S.C.C. 3",
+      "relationship": "doubted",
+      "citingTitle": "SHRI PANDIT KESHAV CHIPADE Vs SHRI ATMARAM BALKRISHNA THAKAR AND ANR.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "1bdba53d-bc45-42dc-a6ae-de5bb4df9a39",
+      "citation": "(2003) 2 S.C.C. 3",
+      "relationship": "doubted",
+      "citingTitle": "SHRI PANDIT KESHAV CHIPADE Vs SHRI ATMARAM BALKRISHNA THAKAR AND ANR.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "97984feb-d54f-420c-b35b-4a8de87053bd",
+      "citation": "(2004) 6 SCC 689",
+      "relationship": "overruled",
+      "citingTitle": "STATE OF MADHYA PRADESH AND OTHERS versus LAFARGE DEALERS ASSOCIATION AND OTHERS",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "16aa7d97-b1b9-4656-b665-a912b6a1b22b",
+      "citation": "(2005) 11 SCC 600",
+      "relationship": "overruled",
+      "citingTitle": "ANVAR P.V. versus P.K. BASHEER AND ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "9eb89cf1-22e0-4577-b9e0-1ba758dcf677",
+      "citation": "(2005) 2 SCC 479",
+      "relationship": "overruled",
+      "citingTitle": "HUDA versus VIDYA CHETAL",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "244049de-7bcc-4944-9de0-a8cf131f7f93",
+      "citation": "(2007) 1 SCC 663",
+      "relationship": "overruled",
+      "citingTitle": "CHAIRMAN-CUM-MANAGING DIRECTOR, MAHANADI COALFIELDS LIMITED versus SRI RABINDRANATH CHOUBEY",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "c5f9e499-3146-48a6-bdb1-91add80053c1",
+      "citation": "(2009) 3 SCC 506",
+      "relationship": "overruled",
+      "citingTitle": "CHAIRMAN CUM MANAGING DIRECTOR INDIAN OIL CORPORATION LTD. AND ORS. versus SUNITA KUMARI & ANR.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "3f7f20fd-bd9b-45d7-8a36-6723070d08a4",
+      "citation": "(2014) 11 SCC 381",
+      "relationship": "overruled",
+      "citingTitle": "M/S. LISIE MEDICAL INSTITUTIONS versus THE STATE OF KERALA AND ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "300dae19-d6fd-4ca8-924b-e4029b005be8",
+      "citation": "(2014) 1 SCC 1",
+      "relationship": "overruled",
+      "citingTitle": "NAVTEJ SINGH JOHAR & ORS. versus UNION OF INDIA THR. SECRETARY MINISTRY OF LAW AND JUSTICE",
+      "linked": false,
+      "scr": "[2013] 17 SCR 1019",
+      "printedName": "ed on A B C D E F G H 404 SUPREME COURT REPORTS Suresh Kumar Koushal and another v. Naz Foundation and others",
+      "refusal": "target not held ([2013] 17 SCR 1019)"
+    },
+    {
+      "edgeId": "ae608c2d-e1bb-4e94-a4c1-6d9cb5a4ea63",
+      "citation": "(2015) 13 SCC 713",
+      "relationship": "overruled_in_part",
+      "citingTitle": "M/S LION ENGINEERING CONSULTANTS versus STATE OF M.P. & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "ef9157cd-8378-4add-b545-dbb5602fe8b1",
+      "citation": "(2015) 4 SCC 325",
+      "relationship": "overruled",
+      "citingTitle": "INDORE DEVELOPMENT AUTHORITY versus SHAILENDRA (DEAD) THROUGH LRS. & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "4d3d7f13-c95c-4024-9de9-2f9e81421cf3",
+      "citation": "(2017) 14 SCC 533",
+      "relationship": "doubted",
+      "citingTitle": "THE CARITAS AYURVEDIC HOSPITAL TRUST, THELLAKOM Vs THE STATE OF KERALA,",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "34389f97-0862-48e5-85ab-a58861ef38ee",
+      "citation": "(2017) 4 SCC 150",
+      "relationship": "overruled_in_part",
+      "citingTitle": "SANTHINI versus VIJAYA VENKETESH",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "ebfe3860-3369-40a8-8357-cc0e4f387f19",
+      "citation": "(2017) 6 SCC 751",
+      "relationship": "overruled",
+      "citingTitle": "SHIV KUMAR & ANR. versus UNION OF INDIA & ORS.",
+      "linked": false,
+      "scr": "[2017] 4 SCR 232",
+      "printedName": "709-A-B] Government (NCT of Delhi) v. Manav Dharam Trust & Anr",
+      "refusal": "target not held ([2017] 4 SCR 232)"
+    },
+    {
+      "edgeId": "45467802-e4e3-4867-93ed-018dca5938ba",
+      "citation": "(2018) 1 SCC 340",
+      "relationship": "overruled",
+      "citingTitle": "JANABAI versus ADDITIONAL COMMISSIONER AND OTHERS",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "8f7de9ad-0084-4871-aa6f-36b6c66ab9b2",
+      "citation": "(2020) 2 SCC 109",
+      "relationship": "overruled",
+      "citingTitle": "GOVERNMENT OF MAHARASHTRA (WATER RESOURCES DEPARTMENT) REPRESENTED BY EXECUTIVE ENGINEER versus M/S BORSE BROTHERS ENGINEERS & CONTRACTORS PVT. LTD.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "09181ddc-851f-4881-bca2-f8d4911be470",
+      "citation": "(2021) 4 SCC 379",
+      "relationship": "overruled",
+      "citingTitle": "M/S N. N. GLOBAL MERCANTILE PRIVATE LIMITED versus M/S INDO UNIQUE FLAME LTD. & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "b212f04a-7c25-492e-9381-9458042d3287",
+      "citation": "[2013] 17 SCR 1019",
+      "relationship": "overruled",
+      "citingTitle": "NAVTEJ SINGH JOHAR & ORS. versus UNION OF INDIA THR. SECRETARY MINISTRY OF LAW AND JUSTICE",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "16274e53-df8e-40b0-a1cd-74a95813be4f",
+      "citation": "[2017] 4 SCR 232",
+      "relationship": "overruled",
+      "citingTitle": "SHIV KUMAR & ANR. versus UNION OF INDIA & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "ead1061e-d11b-4eed-893e-d081f918a6e9",
+      "citation": "2000 (4) SCC 130",
+      "relationship": "overruled_in_part",
+      "citingTitle": "UNITED INDIA INSURANCE CO. LTD. versus SHILA DATTA & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "f2362893-b906-4f62-9ba3-c991388dd7c8",
+      "citation": "2003 (6) SCC 675",
+      "relationship": "overruled",
+      "citingTitle": "RADHEY SHYAM & ANR. versus CHHABI NATH & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "28b5e071-ea2c-440f-aa3d-85a8dd5b0ae7",
+      "citation": "AIR 1987 SC 2158",
+      "relationship": "overruled",
+      "citingTitle": "STATE OF PUNJAB & ORS. versus BHAJAN KAUR & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    },
+    {
+      "edgeId": "708afeb9-d377-487b-9737-075be2f98ecb",
+      "citation": "AIR 2015 SC 710",
+      "relationship": "overruled_in_part",
+      "citingTitle": "M/S LION ENGINEERING CONSULTANTS versus STATE OF M.P. & ORS.",
+      "linked": false,
+      "refusal": "no printed SCR pairing for this citation in the citing judgment"
+    }
+  ]
+}
