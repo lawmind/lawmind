@@ -1,0 +1,642 @@
+{
+  "generatedAt": "2026-08-20T11:38:39.296Z",
+  "generatedBy": "NEW3",
+  "purpose": "P3 (session brief) -- non-circular, non-citation gold answering NEW1 bus 0834: the 278-authority reranker eval set is 100% inbound-cited, cannot measure whether retrieval finds an authority nobody cites. This lane's own new3-semantic-expansion-gold.json (250 authorities, bus 0820) has the SAME bias -- MIN_INBOUND:1 in its own selection config, confirmed by inspection this session, not assumed.",
+  "population": {
+    "source": "docs/ai/embedding-manifests/legal-objects/holdings.jsonl (LCC LEGAL_OBJECT_VECTOR_MANIFEST_READY v2, bus 0892)",
+    "distinctJudgmentsInHoldingPopulation": 1553,
+    "verifiedZeroInboundCitations": 1547,
+    "verifiedNonZeroInboundCitations": 6,
+    "verificationMethod": "SELECT cited_judgment_id, count(*) FROM judgment_citations WHERE cited_judgment_id IN (<1553 holding-population ids>) GROUP BY cited_judgment_id -- 6 rows returned, remainder is 0-row (absent from result set), run live this session against judgment_citations",
+    "thisFileSamples": 26,
+    "samplingMethod": "one holding per court (two for the three largest-population courts: Madras, Allahabad, Kerala), filtered to evidence text 100-500 chars, longest-first within court -- diversity across 23 courts, not random, not cherry-picked for retrieval difficulty"
+  },
+  "caveat": "This tests whether retrieval surfaces a genuinely uncited authority given a query built from ITS OWN extracted holding text -- a real, non-circular test (the query text is not derived from any inbound citing judgment, because none exists). It does NOT test cross-document paraphrase robustness, since query and target share vocabulary by construction (the query IS a substring of the target). One case (UAG index for Himachal Pradesh, judgmentId 001236ef-...) contains an internal reference to a different case (\"Anil Kumar's judgment (supra)\") inside the holding text itself -- kept deliberately as a realistic hard case, not filtered out.",
+  "reachabilityWarning": "CHECKED LIVE: 0 of these 26 authorities carry a row in document_vector_staging (SELECT source_object_id FROM document_vector_staging WHERE source_object_id IN (<26 ids>) -- 0 rows). None are dense-retrievable today. Consistent with NEW2 bus 0872/0888 (only 19,987 of 18,698,968 documents embedded, 0.107%) and NEW1 bus 0775 (embedding queue is citation-graph-value-ordered, so a zero-inbound-citation judgment is at the back of that queue by construction). This file is gold for WHEN the population is embedded -- lexical/BM25-only retrieval could be tested against it today, dense/hybrid retrieval cannot yet.",
+  "cases": [
+    {
+      "query_id": "UAG-001",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0001f458-4c89-41e7-a15b-e3676ae72127",
+      "court": "Allahabad High Court",
+      "year": 2019,
+      "query": "Considering the facts and circumstances of this case and the gravity of offence, it is hereby directed that the Senior Superintendent of Police, Gautam Budh Nagar, respondent no.2, shall look into the matter and shall ensure that proper, effective and fair investigation be carried out and be concluded at the earliest preferably within two months from the date of production of a certified copy of this order after giving due opportunity of hearing to the petitioner-complainant.",
+      "primary_evidence": "Considering the facts and circumstances of this case and the gravity of offence, it is hereby directed that the Senior Superintendent of Police, Gautam Budh Nagar, respondent no.2, shall look into the matter and shall ensure that proper, effective and fair investigation be carried out and be concluded at the earliest preferably within two months from the date of production of a certified copy of this order after giving due opportunity of hearing to the petitioner-complainant.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-002",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0006a495-94e5-49ee-b308-bcccc4f394c6",
+      "court": "Allahabad High Court",
+      "year": 2023,
+      "query": "Considering the submissions of the learned counsel for the parties, the Trial Court is hereby directed to conclude the trial proceeding of Complaint Case no. 756 of 2018, Smt. Raj Kumari Vs. Lal Sahab, under section 12 Domestic Violence Act at Police Station- Para, District- Lucknow, within a period of four months, while affording opportunity to all concerned, if there is no legal impediment, while considering the guidelines and circulars issued in this regard.",
+      "primary_evidence": "Considering the submissions of the learned counsel for the parties, the Trial Court is hereby directed to conclude the trial proceeding of Complaint Case no. 756 of 2018, Smt. Raj Kumari Vs. Lal Sahab, under section 12 Domestic Violence Act at Police Station- Para, District- Lucknow, within a period of four months, while affording opportunity to all concerned, if there is no legal impediment, while considering the guidelines and circulars issued in this regard.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-003",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00152c93-05f8-4209-b79a-220f83feeea3",
+      "court": "Bombay High Court",
+      "year": 2018,
+      "query": "if the possession of land is taken before the notification for acquisition under Section 4(1) of the Land Acquisition Act is published and/or before the award is passed, the claimants would be entitled to interest as per Section 34 from the date of passing of the award under Section 11 of the Act, except in cases where the possession is taken in accordance with Section 17, where the provision of section 34 of the Act shall start operating from the date of possession.",
+      "primary_evidence": "if the possession of land is taken before the notification for acquisition under Section 4(1) of the Land Acquisition Act is published and/or before the award is passed, the claimants would be entitled to interest as per Section 34 from the date of passing of the award under Section 11 of the Act, except in cases where the possession is taken in accordance with Section 17, where the provision of section 34 of the Act shall start operating from the date of possession.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-004",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0001c779-6f56-44d8-bf3e-671feefe68f6",
+      "court": "Calcutta High Court",
+      "year": 2026,
+      "query": "if the prayer made by the petitioners and the private opposite party seeking quashment of the proceeding being G.R. case no. 2773 of 2024 is refused on the ground that Section 498A of the IPC is a non-compoundable offence, I find that it may become counter productive and may frustrate the object of the legislation",
+      "primary_evidence": "if the prayer made by the petitioners and the private opposite party seeking quashment of the proceeding being G.R. case no. 2773 of 2024 is refused on the ground that Section 498A of the IPC is a non-compoundable offence, I find that it may become counter productive and may frustrate the object of the legislation",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-005",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0009b334-ecb0-48ff-9230-2adc95fe8b36",
+      "court": "Gauhati High Court",
+      "year": 2026,
+      "query": "This Court is of the considered opinion that the reasons cited for delay in filing the connected appeal in paragraph Nos.3 to 8 of the instant Interlocutory Application will be regarded as sufficient cause, which prevented the applicant in approaching this Court for filing the connected MAC Appeal within the prescribed period of limitation.",
+      "primary_evidence": "This Court is of the considered opinion that the reasons cited for delay in filing the connected appeal in paragraph Nos.3 to 8 of the instant Interlocutory Application will be regarded as sufficient cause, which prevented the applicant in approaching this Court for filing the connected MAC Appeal within the prescribed period of limitation.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-006",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0013687e-011e-4c86-804a-a36f0b1a60f2",
+      "court": "High Court  for State of Telangana",
+      "year": 2011,
+      "query": "The learned Commissioner applied G.O.Ms.No.81 for the purpose of calculating the wages of claimant. Admittedly, the said G.O is applicable to Private Motor Transport Workers. Insofar as Public Transport workers are concerned, G.O.Ms.No.30 Labour, Employment, Training and Factories (Lab-II) Department, dated 27.7.2000 which came into effect on 27.7.2000, is applicable, and in view of that G.O, the basic wages have to be taken into consideration as Rs.2,587/-.",
+      "primary_evidence": "The learned Commissioner applied G.O.Ms.No.81 for the purpose of calculating the wages of claimant. Admittedly, the said G.O is applicable to Private Motor Transport Workers. Insofar as Public Transport workers are concerned, G.O.Ms.No.30 Labour, Employment, Training and Factories (Lab-II) Department, dated 27.7.2000 which came into effect on 27.7.2000, is applicable, and in view of that G.O, the basic wages have to be taken into consideration as Rs.2,587/-.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-007",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0011c589-f65b-440c-b62e-de091b31aa62",
+      "court": "High Court Of Chhattisgarh",
+      "year": 2024,
+      "query": "this Court is of the opinion that the Tribunal has wrongly held that the offending vehicle was driven without driving license by respondent No. 1, which was in breach of policy condition and has wrongly fastened the liability upon the driver and owner of the offending vehicle, which finding given by the Tribunal in this regard, in the considered opinion of this Court, is unsustainable in law, therefore, it is hereby set aside.",
+      "primary_evidence": "this Court is of the opinion that the Tribunal has wrongly held that the offending vehicle was driven without driving license by respondent No. 1, which was in breach of policy condition and has wrongly fastened the liability upon the driver and owner of the offending vehicle, which finding given by the Tribunal in this regard, in the considered opinion of this Court, is unsustainable in law, therefore, it is hereby set aside.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-008",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00121c64-853c-4a1e-b544-15ad545d0053",
+      "court": "High Court Of Rajasthan",
+      "year": 2021,
+      "query": "In these circumstances, learned Single Judge rightly based reliance on the Rule 266(3)(a) of the Rajasthan Panchayati Raj Rules, 1996 as well as notification dated 29.07.2011 issued by the NCTE, while directing the appellants to consider the candidature of the respondent on her own eligibility and merit in pursuance to the advertisement dated 11.08.2013 for recruitment to the post of Teacher Grade III (Level-I) (Class-1 to 5).",
+      "primary_evidence": "In these circumstances, learned Single Judge rightly based reliance on the Rule 266(3)(a) of the Rajasthan Panchayati Raj Rules, 1996 as well as notification dated 29.07.2011 issued by the NCTE, while directing the appellants to consider the candidature of the respondent on her own eligibility and merit in pursuance to the advertisement dated 11.08.2013 for recruitment to the post of Teacher Grade III (Level-I) (Class-1 to 5).",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-009",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00017015-6369-4454-aadd-1309234dfcaf",
+      "court": "High Court of Andhra Pradesh",
+      "year": 2025,
+      "query": "For the reasons mentioned in the petition and the submission of the learned Assistant Public Prosecutor, the Order passed by this Court in CrI.P. No. 8827 of 2025, dated 08.09.2025, at paragraph No.8 (ii)r directing the petitioners/accused Nos.6 and 7 to appear before the Station House Officer concerned on every Sunday between 10:00 and 5:00 p.m., till cognizance is taken by the learned Trial Court, is modified.",
+      "primary_evidence": "For the reasons mentioned in the petition and the submission of the learned Assistant Public Prosecutor, the Order passed by this Court in CrI.P. No. 8827 of 2025, dated 08.09.2025, at paragraph No.8 (ii)r directing the petitioners/accused Nos.6 and 7 to appear before the Station House Officer concerned on every Sunday between 10:00 and 5:00 p.m., till cognizance is taken by the learned Trial Court, is modified.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-010",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "000a572d-c6a5-4b32-94c7-bac07d77d6d7",
+      "court": "High Court of Delhi",
+      "year": 2018,
+      "query": "the first two submissions made by the learned counsel for the respondents relate to the merits of the case. As to whether or not, the petitioner completed the work assigned under the contract and as contended on behalf of the respondents that the burden of ECC is to be borne by the petitioner, are aspects which are not to be examined in a Section 11 petition.",
+      "primary_evidence": "the first two submissions made by the learned counsel for the respondents relate to the merits of the case. As to whether or not, the petitioner completed the work assigned under the contract and as contended on behalf of the respondents that the burden of ECC is to be borne by the petitioner, are aspects which are not to be examined in a Section 11 petition.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-011",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00127918-7356-4734-b425-01b731054c60",
+      "court": "High Court of Gujarat",
+      "year": 2002,
+      "query": "in view of the settled position that if there is any discrepancy in the birth date recorded in the birth certificate issued by the competent authority and any other document the former should normally prevail, the Regional Passport Officer should not have had any hesitation in accepting the petitioner's request for showing the correct birth date in the passport on the basis of the certificate issued by the concerned authority.",
+      "primary_evidence": "in view of the settled position that if there is any discrepancy in the birth date recorded in the birth certificate issued by the competent authority and any other document the former should normally prevail, the Regional Passport Officer should not have had any hesitation in accepting the petitioner's request for showing the correct birth date in the passport on the basis of the certificate issued by the concerned authority.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-012",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "001236ef-94b0-480f-b8bb-49327fd6821f",
+      "court": "High Court of Himachal Pradesh",
+      "year": 2017,
+      "query": "Since the entire evidence has been gone into in detail in Anil Kumar’s judgment (supra) and her co-accused have been acquitted by this Court and also that the judgment of this Court has even been upheld by the Apex Court also, the findings of conviction and sentence recorded against appellant-convict Sunita Chandel are neither legally nor factually sustainable.",
+      "primary_evidence": "Since the entire evidence has been gone into in detail in Anil Kumar’s judgment (supra) and her co-accused have been acquitted by this Court and also that the judgment of this Court has even been upheld by the Apex Court also, the findings of conviction and sentence recorded against appellant-convict Sunita Chandel are neither legally nor factually sustainable.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-013",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00179089-90c9-4d3c-9bf9-ff3ca8091a95",
+      "court": "High Court of Jammu and Kashmir",
+      "year": 2023,
+      "query": "the contention raised by the learned counsel for the petitioner that M/s Joginder Nath Varinder Kumar is not a partnership firm but the proprietorship concern of the respondent No. 3 and the petitioner has nothing to do with the said concern, are the disputed questions of facts in view of the specific averment made in the complaint, therefore, the same are required to be adjudicated during the course of the trial and not while adjudicating a petition under Section 482 Cr. P.C.",
+      "primary_evidence": "the contention raised by the learned counsel for the petitioner that M/s Joginder Nath Varinder Kumar is not a partnership firm but the proprietorship concern of the respondent No. 3 and the petitioner has nothing to do with the said concern, are the disputed questions of facts in view of the specific averment made in the complaint, therefore, the same are required to be adjudicated during the course of the trial and not while adjudicating a petition under Section 482 Cr. P.C.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-014",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00135d84-6c2e-490b-a03d-5000ad1224c7",
+      "court": "High Court of Jharkhand",
+      "year": 2015,
+      "query": "since it has been found that the money and DD were received by the cashier and not by this petitioner, and misappropriation of the money, according to the petitioner was done by misusing the password of the computer of the petitioner, as also in view of the fact that the petitioner is still allowed to continue in service of the company and is getting his salary regularly, which shows that no action has been taken against the petitioner by the company",
+      "primary_evidence": "since it has been found that the money and DD were received by the cashier and not by this petitioner, and misappropriation of the money, according to the petitioner was done by misusing the password of the computer of the petitioner, as also in view of the fact that the petitioner is still allowed to continue in service of the company and is getting his salary regularly, which shows that no action has been taken against the petitioner by the company",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-015",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0006ace2-f77e-43b4-95f6-12624998fa92",
+      "court": "High Court of Karnataka",
+      "year": 2024,
+      "query": "Hence, the first appellate Court is not justified in confirming the judgment and decree passed by the trial Court. Both the judgments and decrees passed by the first appellate Court and the trial Court are liable to be set aside and remanded the matter to the trial Court for fresh consideration after giving an opportunity to defendant No.11 to contest the suit by filing written statement. Hence substantial question of law is answered in the negative.",
+      "primary_evidence": "Hence, the first appellate Court is not justified in confirming the judgment and decree passed by the trial Court. Both the judgments and decrees passed by the first appellate Court and the trial Court are liable to be set aside and remanded the matter to the trial Court for fresh consideration after giving an opportunity to defendant No.11 to contest the suit by filing written statement. Hence substantial question of law is answered in the negative.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-016",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0008cd7e-81ce-4895-954a-d318952fa93f",
+      "court": "High Court of Kerala",
+      "year": 2020,
+      "query": "it is an admitted fact that petitioner did not participate in the 2nd phase of allotment. She has not clicked the confirm button in the home page, in the 2nd phase which is mandatory for retention of her options even if no alteration was required for her higher options. Failure to do so has resulted in loss of the entire data relating to her from the CAP before the Entrance Commissioner. Once she does not participate she gets automatically out of the CAP.",
+      "primary_evidence": "it is an admitted fact that petitioner did not participate in the 2nd phase of allotment. She has not clicked the confirm button in the home page, in the 2nd phase which is mandatory for retention of her options even if no alteration was required for her higher options. Failure to do so has resulted in loss of the entire data relating to her from the CAP before the Entrance Commissioner. Once she does not participate she gets automatically out of the CAP.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-017",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "7b51c478-1add-4141-be83-ff5acb8aa785",
+      "court": "High Court of Kerala",
+      "year": 2024,
+      "query": "Criminal Appeals preferred by A1 to A8, A11, A18 and A31 (Crl.Appeal Nos.177/2014 and 178/2014, 172/2014, 180/2014, 174/2014 and 179/2014) are dismissed, Criminal Appeals preferred by the State (Crl.Appeal Nos.339/2014 and 403/2014) and the Criminal Appeal preferred by the victim (Crl.A(V).No.571/2015) are allowed in part and Criminal Appeal preferred by A13 (Crl.Appeal No.176/2014) is disposed of as indicated above.",
+      "primary_evidence": "Criminal Appeals preferred by A1 to A8, A11, A18 and A31 (Crl.Appeal Nos.177/2014 and 178/2014, 172/2014, 180/2014, 174/2014 and 179/2014) are dismissed, Criminal Appeals preferred by the State (Crl.Appeal Nos.339/2014 and 403/2014) and the Criminal Appeal preferred by the victim (Crl.A(V).No.571/2015) are allowed in part and Criminal Appeal preferred by A13 (Crl.Appeal No.176/2014) is disposed of as indicated above.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-018",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0009813e-02da-4bac-ab28-4230f0753027",
+      "court": "High Court of Madhya Pradesh",
+      "year": 2022,
+      "query": "The petitioner was classified by order dated 30/04/2008. Accordingly, if the classification is intact and if he files a representation before the authorities for grant of minimum pay scale from 30/04/2008 till the benefit of Sthaikarmi is given to his, then the said representation shall be decided as early as possible preferably within a period of one month from the date of representation in the light of judgment passed in the case of Ram Naresh Rawat (supra).",
+      "primary_evidence": "The petitioner was classified by order dated 30/04/2008. Accordingly, if the classification is intact and if he files a representation before the authorities for grant of minimum pay scale from 30/04/2008 till the benefit of Sthaikarmi is given to his, then the said representation shall be decided as early as possible preferably within a period of one month from the date of representation in the light of judgment passed in the case of Ram Naresh Rawat (supra).",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-019",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00168236-8b6c-48c8-912b-708dff341cd5",
+      "court": "High Court of Punjab and Haryana",
+      "year": 2012,
+      "query": "Since the appointments to the posts have to be made as per the statutory Rules, governing the service, the claim, as has been made by the petitioner for issuance of a writ of mandamus for directing the respondents to declare the petitioner eligible candidate for the post of JBT teacher on the basis of relaxation provided in the prospectus for CTET-2011, cannot be granted as that would amount to amendment of the statutory Rules which would be beyond the domain of the Court.",
+      "primary_evidence": "Since the appointments to the posts have to be made as per the statutory Rules, governing the service, the claim, as has been made by the petitioner for issuance of a writ of mandamus for directing the respondents to declare the petitioner eligible candidate for the post of JBT teacher on the basis of relaxation provided in the prospectus for CTET-2011, cannot be granted as that would amount to amendment of the statutory Rules which would be beyond the domain of the Court.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-020",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "000adc2c-c0d8-4b05-bf77-c7afc0c1536d",
+      "court": "High Court of Tripura",
+      "year": 2022,
+      "query": "I direct the respondents to prepare a revised select list incorporating/including the name of the petitioner in accordance with his merit position on being treated him as UR candidate and appoint him in the advertised post without disturbing the candidates already selected and appointed.",
+      "primary_evidence": "I direct the respondents to prepare a revised select list incorporating/including the name of the petitioner in accordance with his merit position on being treated him as UR candidate and appoint him in the advertised post without disturbing the candidates already selected and appointed.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-021",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00130523-fe13-4316-a242-77044c0d638a",
+      "court": "High Court of Uttarakhand",
+      "year": 2023,
+      "query": "the writ petition is being disposed of with a direction to respondent no.3-Additional Director, Secondary Education, Kumaun Mandal, Nainital to decide the representations of the petitioner dated 30.06.2023 and 13.07.2023 sympathetically and by passing speaking order within a period of six weeks from the date of receipt of the certified copy of this order.",
+      "primary_evidence": "the writ petition is being disposed of with a direction to respondent no.3-Additional Director, Secondary Education, Kumaun Mandal, Nainital to decide the representations of the petitioner dated 30.06.2023 and 13.07.2023 sympathetically and by passing speaking order within a period of six weeks from the date of receipt of the certified copy of this order.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-022",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00125748-2ed2-4aae-9364-1fd98914efde",
+      "court": "Madras High Court",
+      "year": 2024,
+      "query": "taking into consideration the facts and circumstances of the case and also the revocation of suspension order passed by the 1st respondent through proceedings dated 17.05.2024 and also considering the fact that the driver of the bus has already rejoined duty based on the order passed by this Court in W.P.No.18451 of 2024, there shall be a direction to the 2nd respondent to immediately act upon the order passed by the 1st respondent dated 17.05.2024 and permit the petitioner to rejoin duty.",
+      "primary_evidence": "taking into consideration the facts and circumstances of the case and also the revocation of suspension order passed by the 1st respondent through proceedings dated 17.05.2024 and also considering the fact that the driver of the bus has already rejoined duty based on the order passed by this Court in W.P.No.18451 of 2024, there shall be a direction to the 2nd respondent to immediately act upon the order passed by the 1st respondent dated 17.05.2024 and permit the petitioner to rejoin duty.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-023",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0003ad37-5309-4005-af24-35be6d9ed079",
+      "court": "Madras High Court",
+      "year": 2017,
+      "query": "there is no final order passed by the registering authority and therefore,(it is suffice) for the limited purpose of satisfying the issues of the registering authority, it is enough to send notice to both the parties and thereafter, the registering authority shall enquire into the matter based on the materials available whether to register or not and pass orders in accordance with law, within a period of four weeks from the date of receipt of a copy of this order.",
+      "primary_evidence": "there is no final order passed by the registering authority and therefore,(it is suffice) for the limited purpose of satisfying the issues of the registering authority, it is enough to send notice to both the parties and thereafter, the registering authority shall enquire into the matter based on the materials available whether to register or not and pass orders in accordance with law, within a period of four weeks from the date of receipt of a copy of this order.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-024",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00079848-b5ce-4b96-97f9-8112cdeb26d4",
+      "court": "Orissa High Court",
+      "year": 2023,
+      "query": "Taking into consideration the submissions of learned counsel for the parties, this Court directs that without prejudice to the case of either parties, in the event the Petitioner deposits 50% of the VCR amount, i.e. Rs.5,000/- (Rupees five thousand only) before the State Transport Authority, Cuttack-Opposite Party, the e-Challan/VCR shall be transmitted to the jurisdictional Magistrate for adjudication in accordance with law, if not already transmitted.",
+      "primary_evidence": "Taking into consideration the submissions of learned counsel for the parties, this Court directs that without prejudice to the case of either parties, in the event the Petitioner deposits 50% of the VCR amount, i.e. Rs.5,000/- (Rupees five thousand only) before the State Transport Authority, Cuttack-Opposite Party, the e-Challan/VCR shall be transmitted to the jurisdictional Magistrate for adjudication in accordance with law, if not already transmitted.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-025",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "0010fff5-1c08-4200-b7d1-2d3e51208b00",
+      "court": "Patna High Court",
+      "year": 2022,
+      "query": "the petitioner above-named, in the event of his arrest or surrender before the learned trial court within a period of six weeks from today, be released on anticipatory bail on furnishing bail bonds of Rs. 10,000/- (Rupees Ten Thousand) with two sureties of the like amount each to the satisfaction of the learned trial court where the case is pending/successor court in connection with Baikunthpur P.S. Case No. 288 of 2021 subject to the conditions as laid down under Section 438 (2) of the Cr.P.C.",
+      "primary_evidence": "the petitioner above-named, in the event of his arrest or surrender before the learned trial court within a period of six weeks from today, be released on anticipatory bail on furnishing bail bonds of Rs. 10,000/- (Rupees Ten Thousand) with two sureties of the like amount each to the satisfaction of the learned trial court where the case is pending/successor court in connection with Baikunthpur P.S. Case No. 288 of 2021 subject to the conditions as laid down under Section 438 (2) of the Cr.P.C.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    },
+    {
+      "query_id": "UAG-026",
+      "gold_provenance_type": "HOLDING_DERIVED",
+      "generated": false,
+      "authority_id": "00025d56-73f1-45a8-8058-249539ad082d",
+      "court": "Supreme Court of India",
+      "year": 1960,
+      "query": "an order of discharge made by the Magistrate in exercise of the powers under sub-s. (2) of s. 25rA, does not mean the discharge of the accused in respect of all the offences, which the facts mentioned in the police report would make out.",
+      "primary_evidence": "an order of discharge made by the Magistrate in exercise of the powers under sub-s. (2) of s. 25rA, does not mean the discharge of the accused in respect of all the offences, which the facts mentioned in the police report would make out.",
+      "case_family": "holding",
+      "extraction_model": "deepseek-v4-flash-0731",
+      "allowed_feature_families": [
+        "lexical_similarity",
+        "dense_semantic_similarity",
+        "court_match",
+        "date_proximity"
+      ],
+      "prohibited_feature_families": [
+        "inbound_citation_count",
+        "citation_graph_authority_score",
+        "pagerank_style_score"
+      ],
+      "note": "zero inbound citations, verified live against judgment_citations this session"
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "generatedAt": "2026-08-20T04:45:00.000Z",
+  "generatedBy": "NEW3",
+  "purpose": "P6 (session brief) -- verified BNS/BNSS/BSA transition test cases for NEW1 adversarial/retrieval evaluation. Feeds services/api/src/statutes/transition.ts's two functions: assessTransition() (date logic) and correspondingProvisions() (section mapping, unusable before statute_mappings had rows -- LCC bus 0879/0891, 226 rows, verified live this session).",
+  "doNotInvent": "Every row/date/URL below was read live from the local cluster this session (statute_mappings, statutes tables). No section correspondence or commencement date in this file was supplied from memory. DOMAIN_TRUTH.md: 'Never hardcode a mapping in application code. Never let a model generate one.'",
+  "sharedFacts": {
+    "commencementDate": "2024-07-01",
+    "commencementDateHuman": "1 July 2024",
+    "commencementSource": [
+      { "act": "The Bharatiya Nyaya Sanhita, 2023", "url": "https://www.indiacode.nic.in/handle/123456789/20062" },
+      { "act": "The Bharatiya Nagarik Suraksha Sanhita, 2023", "url": "https://www.indiacode.nic.in/handle/123456789/20099" },
+      { "act": "The Bharatiya Sakshya Adhiniyam, 2023", "url": "https://www.indiacode.nic.in/handle/123456789/20063" }
+    ],
+    "verifiedLive": "SELECT short_title, enforcement_date, source_url FROM statutes WHERE short_title LIKE '%Bharatiya%' -- all three agree on 2024-07-01, run this session"
+  },
+  "cases": [
+    {
+      "case_id": "STG-001",
+      "category": "PRE_EFFECTIVE_DATE",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "input": { "text": "My client is charged with cheating under IPC. Offence alleged 2023-01-15.", "offenceDate": "2023-01-15" },
+      "expected": { "kind": "determinate", "regime": "pre_bns" },
+      "why": "2023-01-15 is before commencement (2024-07-01). Simple string-comparison case, not itself a mapping claim."
+    },
+    {
+      "case_id": "STG-002",
+      "category": "POST_EFFECTIVE_DATE",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "input": { "text": "My client is charged with cheating. Offence alleged 2024-08-01.", "offenceDate": "2024-08-01" },
+      "expected": { "kind": "determinate", "regime": "post_bns" },
+      "why": "2024-08-01 is on/after commencement. Boundary is exclusive of the old regime at exactly 2024-07-01 (>=), per transition.ts:326 `offenceDate < settled.commencedOn ? 'pre_bns' : 'post_bns'`."
+    },
+    {
+      "case_id": "STG-003",
+      "category": "DATE_ABSENT",
+      "gold_provenance_type": "OTHER_VERIFIED",
+      "generated": false,
+      "input": { "text": "My client is charged with cheating. What is the punishment and which section applies?", "offenceDate": null },
+      "expected": { "kind": "indeterminate", "mustAsk": "offence_date" },
+      "why": "This is not a new case -- it is NEW1's own adv-5 fixture (docs/ai/new1-post-0055/adversarial-fixed.json), already PASS per LCC bus 0838/0748 and verified live against the DB this session's predecessor session. Included here as the DATE_ABSENT anchor case per P6's required category, not re-derived."
+    },
+    {
+      "case_id": "STG-004",
+      "category": "CLEAR_CORRESPONDENCE",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": {
+        "old_act": "ipc", "old_section": "298", "new_act": "bns", "new_section": "302",
+        "relationship": "exact",
+        "source": "https://bprd.nic.in/uploads/pdf/COMPARISON%20SUMMARY%20BNS%20to%20IPC%20.pdf",
+        "source_line": 1932,
+        "effective_date": "2024-07-01"
+      },
+      "input": { "act": "ipc", "section": "298" },
+      "expected": { "held": true, "rowCount": 1, "relationship": "exact" },
+      "why": "IPC S.298 (uttering words with deliberate intent to wound religious feelings) maps one-to-one to BNS S.302. Single row, relationship='exact' -- a clean correspondence, no split/merge ambiguity."
+    },
+    {
+      "case_id": "STG-005",
+      "category": "CLEAR_CORRESPONDENCE",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": {
+        "old_act": "crpc", "old_section": "100", "new_act": "bnss", "new_section": "103P",
+        "relationship": "exact",
+        "source": "https://bprd.nic.in/uploads/pdf/Comparison%20summary%20BNSS%20to%20CrPC.pdf",
+        "source_line": 550,
+        "effective_date": "2024-07-01"
+      },
+      "input": { "act": "crpc", "section": "100" },
+      "expected": { "held": true, "rowCount": 1, "relationship": "exact" },
+      "why": "CrPC->BNSS exact case, distinct act pair from STG-004 (IPC->BNS) so this file does not test only one of the three code pairs."
+    },
+    {
+      "case_id": "STG-006",
+      "category": "PARTIAL_CORRESPONDENCE_SPLIT",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": [
+        { "old_act": "ipc", "old_section": "2", "new_act": "bns", "new_section": "1(3)", "relationship": "split", "source_line": 28 },
+        { "old_act": "ipc", "old_section": "2", "new_act": "bns", "new_section": "149", "relationship": "split", "source_line": 1053 }
+      ],
+      "source": "https://bprd.nic.in/uploads/pdf/COMPARISON%20SUMMARY%20BNS%20to%20IPC%20.pdf",
+      "input": { "act": "ipc", "section": "2" },
+      "expected": { "held": true, "rowCount": 2, "relationship": "split", "singleEquivalentExists": false },
+      "why": "IPC S.2 splits into TWO distinct BNS targets (1(3) and 149) per the BPRD comparison table itself. A correct answer must not collapse this to a single 'BNS equivalent of IPC 2' -- that would be exactly the false precision transition.ts's own docstring warns against ('a single equivalent may not exist')."
+    },
+    {
+      "case_id": "STG-007",
+      "category": "PARTIAL_CORRESPONDENCE_MERGED",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": {
+        "old_act": "ipc", "old_section": "33", "new_act": "bns", "new_section": "2(1)",
+        "relationship": "merged",
+        "source": "https://bprd.nic.in/uploads/pdf/COMPARISON%20SUMMARY%20BNS%20to%20IPC%20.pdf",
+        "source_line": 78,
+        "effective_date": "2024-07-01"
+      },
+      "input": { "act": "ipc", "section": "33" },
+      "expected": { "held": true, "rowCount": 1, "relationship": "merged" },
+      "why": "IPC S.33 ('Act'/'Omission') was merged into BNS S.2(1) alongside other definitions per BPRD's own note. relationship='merged' is the opposite direction of split (many-old to one-new) and needs its own gold row -- P6 lists split and merged as separate outcomes."
+    },
+    {
+      "case_id": "STG-008",
+      "category": "PARTIAL_CORRESPONDENCE_SPLIT",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": {
+        "old_act": "evidence", "old_section": "3(1)", "new_act": "bsa", "new_section": "2(1)(a)",
+        "relationship": "split",
+        "source": "https://bprd.nic.in/uploads/pdf/Comparison%20Summary%20BSA%20to%20IEA.pdf",
+        "source_line": 17,
+        "effective_date": "2024-07-01"
+      },
+      "input": { "act": "evidence", "section": "3(1)" },
+      "expected": { "held": true, "relationship": "split" },
+      "why": "Evidence Act -> BSA split case, third act pair covered (Evidence/BSA), completing coverage of all three transitions per P6."
+    },
+    {
+      "case_id": "STG-009",
+      "category": "CLEAR_CORRESPONDENCE",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": {
+        "old_act": "evidence", "old_section": "65B", "new_act": "bsa", "new_section": "63",
+        "relationship": "exact",
+        "source": "https://bprd.nic.in/uploads/pdf/Comparison%20Summary%20BSA%20to%20IEA.pdf",
+        "source_line": 417,
+        "effective_date": "2024-07-01"
+      },
+      "input": { "act": "evidence", "section": "65B" },
+      "expected": { "held": true, "rowCount": 1, "relationship": "exact" },
+      "why": "Evidence Act S.65B (electronic evidence admissibility, the most litigated single section of the old Act) maps exactly to BSA S.63. High retrieval-relevance case -- 65B is one of the most commonly asked-about sections in Indian criminal/civil practice."
+    },
+    {
+      "case_id": "STG-010",
+      "category": "NO_PROVEN_MAPPING",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": null,
+      "input": { "act": "ipc", "section": "420" },
+      "expected": { "held": false },
+      "why": "Verified live: `SELECT * FROM statute_mappings WHERE old_act='ipc' AND old_section='420'` returns 0 rows. IPC S.420 (cheating) is the exact section adv-5 (STG-003) asks about, and it is commonly believed to map to BNS S.318 -- but that correspondence is NOT yet loaded into statute_mappings. This is the deliberate trap case: a model answering from general knowledge would likely state 'BNS 318' confidently and correctly by coincidence, which is exactly the failure mode DOMAIN_TRUTH.md forbids regardless of whether the guess happens to be right. correspondingProvisions() must return held:false here, not a remembered mapping."
+    },
+    {
+      "case_id": "STG-011",
+      "category": "NO_PROVEN_MAPPING",
+      "gold_provenance_type": "STATUTE_DERIVED",
+      "generated": false,
+      "primaryEvidence": null,
+      "input": { "act": "crpc", "section": "154" },
+      "expected": { "held": false },
+      "why": "Verified live: `SELECT * FROM statute_mappings WHERE old_act='crpc' AND old_section='154'` returns 0 rows. CrPC S.154 (FIR registration) is arguably the single most commonly cited CrPC section in practice and is NOT yet loaded -- a second, independent trap case in a different act pair (CrPC/BNSS) from STG-010 (IPC/BNS)."
+    }
+  ],
+  "coverage": {
+    "actPairsCovered": ["ipc-bns", "crpc-bnss", "evidence-bsa"],
+    "categoriesCovered": ["PRE_EFFECTIVE_DATE", "POST_EFFECTIVE_DATE", "DATE_ABSENT", "CLEAR_CORRESPONDENCE", "PARTIAL_CORRESPONDENCE_SPLIT", "PARTIAL_CORRESPONDENCE_MERGED", "NO_PROVEN_MAPPING"],
+    "notCovered": "PARTIAL_CORRESPONDENCE for crpc-bnss and evidence-bsa individually (STG-006/007 use ipc-bns only for split/merged) -- crpc has its own merged rows (e.g. crpc 110->bnss 129S) available for a future STG-01x if NEW1 wants act-pair x category full cross-product."
+  }
+}
