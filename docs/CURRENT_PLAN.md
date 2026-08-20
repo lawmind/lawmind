@@ -111,6 +111,36 @@ fork emulation runs out under a loop that forks node+timeout+grep every batch.
 The Node version spawns Win32 processes directly and carries the nine atomic
 tasks behind the five composites.
 
+**P3 · Eligibility is per task, and `issue` was costing 10,486 tokens per
+object** — commits `11a7e3d` and `cf4bef4`. Tier A had become a single universal
+predicate, wrong in two directions at once. `procedural_event`, `date_event`,
+`party_action` and `court_action` now reach bail orders — verified live: six
+documents drawn returned 2 `bail_order`, 2 unclassified, 2 `decided`. `issue`,
+`relief` and `reasoning_proposition` now need 5,000 characters, a floor measured
+across 1,732 documents (share yielding a verified issue: 29.0% ≤2,500 · 44.3%
+≤5,000 · 63.8% ≤7,500 · 79.7% ≤15,000). Per-document yield doubled.
+
+**A 16,000-character head-only excerpt for `issue` was tried and REVERTED**:
+28k head+tail bought 6 verified objects for 52,538 tokens, 16k head-only bought 2
+for 37,428. The span positions that justified it were measured on extractions
+made WITH the full window — they say where a found issue sits, not where the
+model must look to find one.
+
+**P7 · Legal-object manifest v2** — commit `45c9f6c`. 7,414 verified claims, up
+from 1,265 in nine hours: holding 2,286 / issue 1,330 / proposition 3,798. The
+`issue` population NEW1's representation-layers experiment could not test now
+exists.
+
+**`pnpm lint` is green, 161 errors to 0** — commits `138784b`, `3ebb7e4`. 159
+were NEW1's `services/harness/src/*.mjs` reading Node globals as undefined; that
+population joins the eslint block `scripts/**` and `services/harness/probes/**`
+already sit in. Three genuinely dead variables in other lanes' files were taken
+under NEW2's 18 Aug handoff convention. **`format` is still RED — 301 files,
+including files untouched since 9 Aug, so it has been failing about eleven days.
+Only this session's own files were formatted; a repo-wide `prettier --write`
+mid-sprint would rewrite every lane's in-flight work and is somebody's deliberate
+quiet-moment commit, not a side effect of this one.**
+
 **Commit `5fb6caf` (NEW1's) contains six LCC files.** They were staged when NEW1
 committed in the shared working tree — migration 0060, its journal entry,
 `statute-mappings-load-cli.ts`, `legal-object-factory.mjs`, the `.sh` and
