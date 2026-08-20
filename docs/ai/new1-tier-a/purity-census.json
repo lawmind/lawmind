@@ -1,0 +1,111 @@
+{
+  "kind": "new1_tier_a_purity_census",
+  "sampledIds": 2089,
+  "resolved": 2089,
+  "manifestFiles": 886,
+  "filesSampled": 21,
+  "byClassAndMethod": [
+    {
+      "cls": "(null)",
+      "method": "(null)",
+      "n": 1724
+    },
+    {
+      "cls": "decided",
+      "method": "disposal_nature_merits",
+      "n": 145
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:DISPOSED OF",
+      "n": 54
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:DISPOSED OFF",
+      "n": 42
+    },
+    {
+      "cls": "bail_order",
+      "method": "text_bail_phrase",
+      "n": 30
+    },
+    {
+      "cls": "(null)",
+      "method": "no_disposal_nature",
+      "n": 27
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:DISPOSED",
+      "n": 19
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:DISPOSED OF NO COSTS",
+      "n": 16
+    },
+    {
+      "cls": "bail_order",
+      "method": "disposal_nature_bail",
+      "n": 9
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:CLOSED",
+      "n": 6
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:56-DISPOSED AT ADMISSION STAGE",
+      "n": 3
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:CLOSED NO COSTS",
+      "n": 3
+    },
+    {
+      "cls": "procedural_disposal",
+      "method": "disposal_nature_procedural",
+      "n": 3
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:ORDERED",
+      "n": 3
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:RELAXED",
+      "n": 1
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:APPEAL CONFIRMED",
+      "n": 1
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:SCHEME SANCTIONED - COMPANY",
+      "n": 1
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:PREMPTORY",
+      "n": 1
+    },
+    {
+      "cls": "(null)",
+      "method": "unclassified_disposal:35-ANY OTHER MODE @ ADM.STAGE",
+      "n": 1
+    }
+  ],
+  "byScriptQuality": [
+    {
+      "sq": "(null)",
+      "n": 2089
+    }
+  ],
+  "measuredAt": "2026-08-20T11:41:55.603Z"
+}

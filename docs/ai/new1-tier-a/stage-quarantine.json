@@ -1,0 +1,23 @@
+{
+  "kind": "new1_stage_quarantine",
+  "refusedClasses": [
+    "procedural_disposal",
+    "reference_stub",
+    "bail_order",
+    "decided_brief"
+  ],
+  "movedRows": 34370,
+  "stageRowsAfter": 195861,
+  "quarantineRowsAfter": 34370,
+  "byClassBefore": [
+    {
+      "cls": "bail_order",
+      "n": 29349
+    },
+    {
+      "cls": "procedural_disposal",
+      "n": 5021
+    }
+  ],
+  "appliedAt": "2026-08-20T11:50:07.206Z"
+}

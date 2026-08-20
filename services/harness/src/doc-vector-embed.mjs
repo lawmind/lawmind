@@ -40,6 +40,15 @@ const FETCH_PAGE = Number(process.env.FETCH_PAGE ?? 200);
 const LIMIT = Number(process.env.STAGE_LIMIT ?? Infinity);
 const LOG = new URL('../../../docs/ai/new1-tier-a/stage-embed.log', import.meta.url);
 
+/**
+ * Classes the DEPLOYED eligibility view refuses. Not a NEW1 opinion — these are
+ * `axis_c_role`'s `procedural_disposal` / `reference_stub` and `is_bail_order`'s
+ * `bail_order`, plus `decided_brief`, which the length bands already exclude in
+ * full (all 205,731 of its rows sit in `stub` and `brief`, measured) and which is
+ * named here so a future band change cannot let a 15.6%-precise class in silently.
+ */
+const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'bail_order', 'decided_brief']);
+
 const log = (m) => {
   const line = new Date().toISOString() + '  ' + m + '\n';
   process.stdout.write(line);
@@ -105,6 +114,8 @@ try {
 
   let done = 0;
   let skippedNoText = 0;
+  let skippedNowIneligible = 0;
+  const byRefusedClass = new Map();
   let skippedAlreadyStaged = 0;
   let inserted = 0;
   let tokensTotal = 0;
@@ -130,8 +141,27 @@ try {
       done += page.length;
       continue;
     }
+    // `hc_document_class` is read HERE, not trusted from the batch file.
+    //
+    // The manifest is a snapshot of a moving predicate. It was cut at
+    // 2026-08-19T22:26Z and every row in it was eligible AT THAT MOMENT;
+    // NEW2 has kept classifying since. A uniform 2,089-row sample of the
+    // manifest, re-checked against the live table, found 1.87% of it now
+    // carries a class the deployed eligibility view refuses — 1.8%
+    // `bail_order` and 0.1% `procedural_disposal`. Over 8,846,550 rows that
+    // is on the order of 165,000 documents, and an eleven-day walk only gets
+    // staler as it runs.
+    //
+    // This does NOT invent a second eligibility definition — the four names
+    // below are exactly `axis_c_role`'s two refusals plus `is_bail_order`'s
+    // one, read from `pg_get_viewdef('judgment_embedding_eligibility')` this
+    // session, with `reference_stub` included because axis C refuses it too.
+    // A row with NO class is NOT skipped: unclassified is the other 82.5% and
+    // refusing it would silently shrink Tier A to the 6.9% that a rule has
+    // positively labelled.
     const texts = await sql`
-      SELECT id, left(full_text, ${HEAD_CHARS}) AS head, length(full_text) AS len
+      SELECT id, left(full_text, ${HEAD_CHARS}) AS head, length(full_text) AS len,
+             hc_document_class AS cls
       FROM judgments WHERE id = ANY(${ids}::uuid[])
     `;
     const byId = new Map(texts.map((t) => [t.id, t]));
@@ -141,6 +171,11 @@ try {
       const t = byId.get(r.judgmentId);
       if (!t || !t.head || t.head.trim().length === 0) {
         skippedNoText += 1;
+        continue;
+      }
+      if (t.cls && REFUSED_CLASSES.has(t.cls)) {
+        skippedNowIneligible += 1;
+        byRefusedClass.set(t.cls, (byRefusedClass.get(t.cls) ?? 0) + 1);
         continue;
       }
       toEmbed.push({ meta: r, head: t.head, len: t.len });
@@ -185,6 +220,7 @@ try {
       'staged ' + done + '/' + rows.length +
         '  inserted ' + inserted +
         '  noText ' + skippedNoText +
+        '  ineligible ' + skippedNowIneligible +
         '  dup ' + skippedAlreadyStaged +
         '  ' + secs.toFixed(1) + 's' +
         '  ' + (tokensTotal / Math.max(secs, 0.001)).toFixed(0) + ' tok/s',
@@ -202,6 +238,8 @@ try {
     rowsInBatch: rows.length,
     inserted,
     skippedNoText,
+    skippedNowIneligible,
+    skippedByRefusedClass: Object.fromEntries(byRefusedClass),
     skippedAlreadyStaged,
     tableRows: n,
     nonUnitNormVectors: bad,

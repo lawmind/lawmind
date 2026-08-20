@@ -76,13 +76,51 @@ echo "=== $(date -u +%H:%M:%S) RUNNER START batches $START_BATCH..$MAX_BATCH"
 
 run_batch "$ROOT/docs/ai/new1-tier-a/tier-a-value-batch-00001.jsonl" "value-00001" || exit 1
 
-for i in $(seq -f "%05g" "$START_BATCH" "$MAX_BATCH"); do
-  f="$ROOT/docs/ai/embedding-manifests/document-vectors/tier-a-batch-$i.jsonl"
-  [ -f "$f" ] || continue
-  run_batch "$f" "lcc-$i" || {
-    echo "=== $(date -u +%H:%M:%S) RUNNER ABORTED at batch $i" >&2
-    exit 1
-  }
-done
+# COVERAGE, NOT RANGE.
+#
+# The range walk reached batch 88 while batches 10..76 held zero vectors — the 67
+# a dead sidecar consumed in sixty seconds, each printing START and END. The
+# exit-status bug is fixed, but a range never goes back, so the hole would have
+# survived the entire eleven-day run and shown up only as a corpus that is
+# mysteriously thin in a third of its ids.
+#
+# `stage-coverage-census.mjs` asks the database, per batch file, how many of the
+# ids that file names are staged. Its `worklist` is every file that is not yet
+# covered, in manifest order. Walking THAT closes 10..76 on the way past and
+# needs nobody to remember which numbers were lost.
+COVERAGE="$ROOT/docs/ai/new1-tier-a/stage-coverage.json"
+if [ "${USE_COVERAGE:-1}" = "1" ] && [ -f "$COVERAGE" ]; then
+  echo "=== $(date -u +%H:%M:%S) walking the COVERAGE worklist from $COVERAGE"
+  # Re-read per run, never cached: the census is re-run between runs and a stale
+  # worklist would re-walk batches that have since been filled.
+  node -e '
+    const c = require(process.argv[1]);
+    for (const f of c.worklist) if (/^tier-a-batch-/.test(f)) console.log(f);
+  ' "$COVERAGE" > "$ROOT/docs/ai/new1-tier-a/.worklist.txt" || exit 1
+  total="$(wc -l < "$ROOT/docs/ai/new1-tier-a/.worklist.txt")"
+  echo "=== $(date -u +%H:%M:%S) $total batch files to walk"
+  n=0
+  while IFS= read -r name; do
+    [ -n "$name" ] || continue
+    n=$((n + 1))
+    f="$ROOT/docs/ai/embedding-manifests/document-vectors/$name"
+    [ -f "$f" ] || continue
+    tag="lcc-$(echo "$name" | grep -o '[0-9]\{5\}')"
+    echo "=== $(date -u +%H:%M:%S) worklist $n/$total"
+    run_batch "$f" "$tag" || {
+      echo "=== $(date -u +%H:%M:%S) RUNNER ABORTED at $name" >&2
+      exit 1
+    }
+  done < "$ROOT/docs/ai/new1-tier-a/.worklist.txt"
+else
+  for i in $(seq -f "%05g" "$START_BATCH" "$MAX_BATCH"); do
+    f="$ROOT/docs/ai/embedding-manifests/document-vectors/tier-a-batch-$i.jsonl"
+    [ -f "$f" ] || continue
+    run_batch "$f" "lcc-$i" || {
+      echo "=== $(date -u +%H:%M:%S) RUNNER ABORTED at batch $i" >&2
+      exit 1
+    }
+  done
+fi
 
 echo "=== $(date -u +%H:%M:%S) RUNNER COMPLETE"

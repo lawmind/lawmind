@@ -1,14 +1,19 @@
 {
   "kind": "new1_doc_vector_stage_run",
-  "batchFile": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/new1-tier-a/tier-a-value-batch-00000.jsonl",
-  "rowsInBatch": 10000,
-  "inserted": 10000,
+  "batchFile": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/new1-tier-a/tier-a-value-batch-00001.jsonl",
+  "rowsInBatch": 669,
+  "inserted": 0,
   "skippedNoText": 0,
-  "tableRows": 19987,
+  "skippedNowIneligible": 4,
+  "skippedByRefusedClass": {
+    "bail_order": 4
+  },
+  "skippedAlreadyStaged": 665,
+  "tableRows": 195861,
   "nonUnitNormVectors": 0,
-  "tokens": 9497081,
-  "elapsedSeconds": 1843.333,
-  "tokensPerSecond": 5152.124439805504,
+  "tokens": 0,
+  "elapsedSeconds": 2.375,
+  "tokensPerSecond": 0,
   "recipe": "HEAD:4800",
-  "finishedAt": "2026-08-19T14:19:56.974Z"
+  "finishedAt": "2026-08-20T11:51:33.034Z"
 }
