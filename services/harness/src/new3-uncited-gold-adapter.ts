@@ -49,6 +49,10 @@ export type LoadedUncited = {
   courts: string[];
 };
 
+// Matching mojibake IS the job here: these are the bytes a legacy-font PDF leaves
+// behind, and the lint rule exists to stop them entering a regex by accident
+// rather than on purpose.
+// eslint-disable-next-line no-control-regex
 const CONTROL = new RegExp('[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f]', 'g');
 const CONTROL_LIMIT = 5;
 
