@@ -37,7 +37,7 @@ import { isAtomicTask } from './enrich-atomic.ts';
 import type { EnrichTask } from './enrich.ts';
 
 export type EligibilityProfile = {
-  readonly name: 'substantive' | 'procedural';
+  readonly name: 'substantive' | 'procedural' | 'reasoned';
   /**
    * Tier A excludes bail orders. `procedural` wants them: a bail order is a
    * procedural decision, and its own history is what the task extracts.
@@ -63,6 +63,42 @@ const PROCEDURAL: EligibilityProfile = {
 };
 
 /**
+ * ── THE 5,000-CHARACTER FLOOR IS MEASURED, NOT CHOSEN
+ *
+ * The `issue` task ran at **10,486 tokens per verified object** in its first
+ * rounds — twenty times the composite tasks — and the cause was not the prompt.
+ * Sampling the zero-object responses: the model returned `{"objects":[]}` on
+ * 2,200-character High Court orders, which is CORRECT. A one-page order frames
+ * no issue. The waste was in asking it.
+ *
+ * So the floor comes from the corpus. Across 1,732 documents where the composite
+ * `case_structure` task ran, the share that yielded a VERIFIED `issue` claim, by
+ * text length:
+ *
+ *     ≤ 2,500 chars    29.0%    0.34 issues per document
+ *     ≤ 5,000          44.3%    0.56
+ *     ≤ 7,500          63.8%    0.92
+ *     ≤ 12,500         72.6%    1.24
+ *     ≤ 15,000         79.7%    1.39
+ *
+ * Monotone, and the knee is between 5,000 and 7,500. The floor is 5,000: it
+ * roughly doubles issues per call against the 2,000 floor, and it keeps the band
+ * where nearly half of documents still carry one rather than chasing the 80%
+ * band and shrinking the pool to the longest judgments in the corpus.
+ *
+ * This is a yield decision, not a quality one. Nothing below 5,000 characters is
+ * ineligible in principle — it is deprioritised because the same tokens buy more
+ * verified objects above the line, which is exactly what `enrich:telemetry`
+ * exists to say.
+ */
+const REASONED: EligibilityProfile = {
+  name: 'reasoned',
+  includeBailOrders: false,
+  minChars: 5000,
+  why: 'a judgment long enough to frame a question and answer it — measured, see the table above',
+};
+
+/**
  * Tasks that read the case's MACHINERY rather than its reasoning. Each one is
  * satisfied by a one-page order and each one is impoverished by excluding them.
  */
@@ -73,8 +109,17 @@ const PROCEDURAL_TASKS = new Set<string>([
   'court_action',
 ]);
 
+/**
+ * Tasks that need a REASONED judgment, not merely a substantive one. An issue,
+ * the relief actually sought, and a step of reasoning are all things a two-page
+ * disposal does not contain.
+ */
+const REASONED_TASKS = new Set<string>(['issue', 'relief', 'reasoning_proposition']);
+
 export function profileFor(task: EnrichTask | string): EligibilityProfile {
-  return PROCEDURAL_TASKS.has(task) ? PROCEDURAL : SUBSTANTIVE;
+  if (PROCEDURAL_TASKS.has(task)) return PROCEDURAL;
+  if (REASONED_TASKS.has(task)) return REASONED;
+  return SUBSTANTIVE;
 }
 
 /**

@@ -63,14 +63,18 @@ import {
   verifyClaims,
   windowAround,
 } from './enrich.ts';
-import { ATOMIC_TASKS, buildAtomicPrompt, claimsFromAtomic, isAtomicTask } from './enrich-atomic.ts';
+import {
+  ATOMIC_TASKS,
+  buildAtomicPrompt,
+  claimsFromAtomic,
+  isAtomicTask,
+} from './enrich-atomic.ts';
 import { profileFor } from './enrich-eligibility.ts';
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
 import { callOpenRouter, openRouterKeyFromEnv, openRouterModelFromEnv } from './openrouter.ts';
 import { installCrashGuard } from './crash-guard.ts';
 import { isTransientDbOrNetworkError } from './db-transient.ts';
 import { sslFor } from './db-ssl';
-
 
 // Silent deaths cost three runs today; log the cause instead of vanishing.
 installCrashGuard('enrich');
@@ -82,13 +86,20 @@ const arg = (name: string, fallback: string): string => {
 const TASK = arg('task', 'metadata') as EnrichTask;
 const LIMIT = Number(arg('limit', '20'));
 /** The five 0051 tasks that together build the structured legal object. */
-const LEGAL_OBJECT_TASKS: EnrichTask[] = ['case_structure', 'holding', 'arguments', 'authorities', 'topics'];
+const LEGAL_OBJECT_TASKS: EnrichTask[] = [
+  'case_structure',
+  'holding',
+  'arguments',
+  'authorities',
+  'topics',
+];
 /**
  * The 0054 atomic tasks are legal objects too — same eligibility, same selector,
  * same verifier. They differ only in asking for ONE kind of object per call, so
  * a rejection names one proposition rather than a bucket of them.
  */
-const IS_LEGAL_OBJECT = (t: EnrichTask): boolean => LEGAL_OBJECT_TASKS.includes(t) || isAtomicTask(t);
+const IS_LEGAL_OBJECT = (t: EnrichTask): boolean =>
+  LEGAL_OBJECT_TASKS.includes(t) || isAtomicTask(t);
 const VALID: EnrichTask[] = [
   'citation_extraction',
   'metadata',
@@ -211,7 +222,10 @@ async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
     try {
       return await run();
     } catch (err) {
-      const message = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
+      const message =
+        err instanceof Error
+          ? `${err.message} ${(err as { code?: string }).code ?? ''}`
+          : String(err);
       /**
        * `isTransientDbOrNetworkError` FIRST, because this regex tests a message
        * and a restarting Postgres does not use any of its words. On 17 Aug the
@@ -272,6 +286,25 @@ const OBJECT_BUDGET = 28_000;
 const OBJECT_HEAD = 20_000;
 const OBJECT_TAIL = 8_000;
 
+/**
+ * ── AN `issue`-SPECIFIC HEAD WINDOW WAS TRIED AND MADE THE NUMBER WORSE
+ *
+ * The tail exists because a HOLDING is the last thing in a judgment, and a
+ * framed ISSUE looked like the opposite: over 779 verified `issue` spans from
+ * the composite task, the span sits at character p50 3,199 · p90 15,582 · p99
+ * 87,705, so a 16,000-character head-only excerpt should have carried 90% of
+ * them at 29% fewer input tokens.
+ *
+ * Run against 12 documents it carried far fewer:
+ *
+ *     28k head+tail   12 docs   52,538 tokens    6 verified   8,756 tok/object
+ *     16k head only   12 docs   37,428 tokens    2 verified  18,892 tok/object
+ *
+ * Tokens fell 29% and yield fell 67%. The span POSITIONS were measured on
+ * extractions made with the full window, so they say where a found issue sits —
+ * not where the model must look to find one. Reverted; the measurement is kept
+ * because the next person will have the same idea.
+ */
 export function legalObjectExcerpt(fullText: string): string {
   if (fullText.length <= OBJECT_BUDGET) return fullText;
   return `${fullText.slice(0, OBJECT_HEAD)}\n\n[… omitted from this excerpt …]\n\n${fullText.slice(-OBJECT_TAIL)}`;
@@ -302,8 +335,13 @@ type Unit = {
  * the memory footprint is one judgment rather than six thousand, and a
  * connection blip costs one document instead of the entire run.
  */
-type UnitRef = { judgmentId: string; caseTitle: string; court: string; charOffset?: number; citedCase?: string };
-
+type UnitRef = {
+  judgmentId: string;
+  caseTitle: string;
+  court: string;
+  charOffset?: number;
+  citedCase?: string;
+};
 
 /**
  * Fetches one document's text at the moment it is needed. Returns null when the
@@ -318,8 +356,10 @@ async function loadUnit(ref: UnitRef): Promise<Unit | null> {
    * Arithmetic on a number the caller already holds does not belong in the
    * query anyway.
    */
-  const rows = await withDbRetry('load text', () =>
-    sql<{ sourceText: string }[]>`
+  const rows = await withDbRetry(
+    'load text',
+    () =>
+      sql<{ sourceText: string }[]>`
       SELECT full_text AS "sourceText" FROM judgments WHERE id = ${ref.judgmentId}`,
   );
   const r = rows[0];
@@ -684,7 +724,8 @@ if (process.argv.includes('--reverify')) {
     vBefore += Number(prev?.verifiedCount ?? 0);
     vAfter += ok.length;
     if (Number(prev?.verifiedCount ?? 0) !== ok.length) changed++;
-    await withDbRetry('write enrichment',
+    await withDbRetry(
+      'write enrichment',
       () => sql`
       UPDATE document_enrichments SET
         parsed_output = ${sql.json({ claims: verdicts.map((v) => ({ ...v.claim, verified: v.verified, reason: v.reason })) } as unknown as Parameters<typeof sql.json>[0])},
@@ -710,7 +751,9 @@ if (process.argv.includes('--reverify')) {
 const refs = await withDbRetry('select cohort', selectRefs);
 console.log('CORPUS ENRICHMENT PILOT');
 console.log('='.repeat(74));
-console.log(`task ${TASK} · prompt ${PROMPT_VERSION} · model ${ENRICH_MODEL} · units ${refs.length} · InferX grants ${apiKeys.length}`);
+console.log(
+  `task ${TASK} · prompt ${PROMPT_VERSION} · model ${ENRICH_MODEL} · units ${refs.length} · InferX grants ${apiKeys.length}`,
+);
 if (refs.length === 0) {
   console.log('no eligible documents — nothing to do.');
   await sql.end();
@@ -788,7 +831,10 @@ for (const [i, ref] of refs.entries()) {
   if (cached.length > 0) {
     cacheHits++;
     const r = cached[0]!;
-    stateTally.set(String(r['verification_state']), (stateTally.get(String(r['verification_state'])) ?? 0) + 1);
+    stateTally.set(
+      String(r['verification_state']),
+      (stateTally.get(String(r['verification_state'])) ?? 0) + 1,
+    );
     claimsTotal += Number(r['verified_count']) + Number(r['rejected_count']);
     claimsVerified += Number(r['verified_count']);
     console.log(`${label} cached ${r['verification_state']}`);
@@ -824,20 +870,27 @@ for (const [i, ref] of refs.entries()) {
    * is still preferred; it is simply no longer asked a question it has answered
    * the same way ten times running.
    */
-  const useInferx = openRouterKey === null || inferxFailStreak < BREAKER_THRESHOLD || processed % BREAKER_PROBE === 0;
-  let result: { ok: true; text: string; inputTokens: number; outputTokens: number } | { ok: false; reason: string } =
-    useInferx
-      ? await callInferxPooled(prompt, { apiKeys, maxTokens: 2000 })
-      : { ok: false, reason: 'inferx skipped: capacity breaker open' };
+  const useInferx =
+    openRouterKey === null ||
+    inferxFailStreak < BREAKER_THRESHOLD ||
+    processed % BREAKER_PROBE === 0;
+  let result:
+    | { ok: true; text: string; inputTokens: number; outputTokens: number }
+    | { ok: false; reason: string } = useInferx
+    ? await callInferxPooled(prompt, { apiKeys, maxTokens: 2000 })
+    : { ok: false, reason: 'inferx skipped: capacity breaker open' };
 
   if (useInferx) {
     if (result.ok) {
-      if (inferxFailStreak >= BREAKER_THRESHOLD) console.log('    inferx capacity returned — breaker closed');
+      if (inferxFailStreak >= BREAKER_THRESHOLD)
+        console.log('    inferx capacity returned — breaker closed');
       inferxFailStreak = 0;
     } else if (/capacity|429|exhausted/i.test(result.reason)) {
       inferxFailStreak++;
       if (inferxFailStreak === BREAKER_THRESHOLD) {
-        console.log(`    inferx failed ${BREAKER_THRESHOLD}x on capacity — breaker OPEN, using OpenRouter`);
+        console.log(
+          `    inferx failed ${BREAKER_THRESHOLD}x on capacity — breaker OPEN, using OpenRouter`,
+        );
       }
     }
   }
@@ -847,8 +900,17 @@ for (const [i, ref] of refs.entries()) {
   // model that produced a row without anything saying so. Founder, 20 Aug 2026:
   // DeepSeek V4 Flash only. Unset means no fallback, not a guessed slug.
   const openRouterModel = openRouterModelFromEnv();
-  if (!result.ok && openRouterKey !== null && openRouterModel !== null && /capacity|429|exhausted|breaker/i.test(result.reason)) {
-    const fallback = await callOpenRouter(prompt, { apiKey: openRouterKey, model: openRouterModel, maxTokens: 2000 });
+  if (
+    !result.ok &&
+    openRouterKey !== null &&
+    openRouterModel !== null &&
+    /capacity|429|exhausted|breaker/i.test(result.reason)
+  ) {
+    const fallback = await callOpenRouter(prompt, {
+      apiKey: openRouterKey,
+      model: openRouterModel,
+      maxTokens: 2000,
+    });
     if (fallback.ok) {
       usedModel = openRouterModel;
       costUsd = fallback.costUsd;
@@ -864,7 +926,8 @@ for (const [i, ref] of refs.entries()) {
   if (!result.ok) {
     failed++;
     console.log(`${label} CALL FAILED: ${result.reason}`);
-    await withDbRetry('write enrichment',
+    await withDbRetry(
+      'write enrichment',
       () => sql`
       INSERT INTO document_enrichments (judgment_id, task, prompt_version, model, input_hash,
         source_text_hash, status, error, latency_ms, verification_state)
@@ -904,7 +967,8 @@ for (const [i, ref] of refs.entries()) {
   if (parsed === null) {
     unparseable++;
     console.log(`${label} UNPARSEABLE`);
-    await withDbRetry('write enrichment',
+    await withDbRetry(
+      'write enrichment',
       () => sql`
       INSERT INTO document_enrichments (judgment_id, task, prompt_version, model, input_hash,
         source_text_hash, raw_output, status, input_tokens, output_tokens, latency_ms, verification_state)
@@ -1007,7 +1071,9 @@ console.log(
   `provider       inferx ${calls - openRouterCalls} · openrouter ${openRouterCalls}` +
     (openRouterCost > 0 ? ` ($${openRouterCost.toFixed(4)} actual, reported by OpenRouter)` : ''),
 );
-console.log(`tokens         ${inTok.toLocaleString()} in / ${outTok.toLocaleString()} out = ${(inTok + outTok).toLocaleString()}`);
+console.log(
+  `tokens         ${inTok.toLocaleString()} in / ${outTok.toLocaleString()} out = ${(inTok + outTok).toLocaleString()}`,
+);
 console.log(`wall clock     ${((Date.now() - startedRun) / 1000).toFixed(0)}s`);
 console.log('');
 console.log(
@@ -1018,7 +1084,8 @@ console.log('document verification state:');
 for (const [k, v] of [...stateTally].sort()) console.log(`  ${k.padEnd(11)} ${v}`);
 if (rejectionTally.size > 0) {
   console.log('rejection reasons — each one is a claim that did NOT become data:');
-  for (const [k, v] of [...rejectionTally].sort((a, b) => b[1] - a[1])) console.log(`  ${String(v).padStart(5)}  ${k}`);
+  for (const [k, v] of [...rejectionTally].sort((a, b) => b[1] - a[1]))
+    console.log(`  ${String(v).padStart(5)}  ${k}`);
 }
 
 await sql.end();

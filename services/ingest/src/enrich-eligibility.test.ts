@@ -30,18 +30,31 @@ describe('profileFor', () => {
     );
   });
 
+  /**
+   * `issue` ran at 10,486 tokens per verified object because it was being asked
+   * of 2,200-character orders that frame no issue — the model returned an empty
+   * array, correctly, sixty times. The floor is measured: across 1,732 documents,
+   * the share yielding a verified issue rises 29.0% -> 44.3% -> 63.8% across the
+   * 2,500 / 5,000 / 7,500-character bands.
+   */
+  it('issue, relief and reasoning need a REASONED judgment, not merely a substantive one', () => {
+    for (const t of ['issue', 'relief', 'reasoning_proposition']) {
+      const p = profileFor(t);
+      assert.equal(p.name, 'reasoned', `${t} should not be asked of a two-page disposal`);
+      assert.equal(p.minChars, 5000);
+      assert.equal(p.includeBailOrders, false);
+    }
+  });
+
   it('the four machinery tasks share one profile and the reasoning tasks share the other', () => {
     for (const t of ['procedural_event', 'date_event', 'party_action', 'court_action']) {
       assert.equal(profileFor(t).name, 'procedural', `${t} should reach procedural decisions`);
     }
-    for (const t of [
-      'issue',
-      'relief',
-      'reasoning_proposition',
-      'fact_proposition',
-      'statute_role',
-    ]) {
+    for (const t of ['fact_proposition', 'statute_role']) {
       assert.equal(profileFor(t).name, 'substantive', `${t} reads reasoning, not machinery`);
+    }
+    for (const t of ['issue', 'relief', 'reasoning_proposition']) {
+      assert.notEqual(profileFor(t).name, 'procedural', `${t} reads reasoning, not machinery`);
     }
   });
 
