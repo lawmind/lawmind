@@ -22,6 +22,7 @@
     "treatment:link": "tsx src/treatment-link-cli.ts",
     "enrich:telemetry": "tsx src/enrich-telemetry-cli.ts",
     "coverage:cells": "tsx src/coverage-cell-cli.ts",
+    "statute:mappings": "tsx src/statute-mappings-load-cli.ts",
     "citation-keys": "tsx src/citation-keys-cli.ts",
     "hc:yield": "tsx src/harvest/hc-yield-cli.ts",
     "silver:ratio": "tsx src/harvest/silver-ratio-cli.ts",
