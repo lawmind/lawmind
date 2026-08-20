@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T17:10:26.881Z",
+  "generatedAt": "2026-08-20T22:29:41.346Z",
   "lane": "NEW2",
   "purpose": "held-out validation ids for LCC DeepSeek candidate classification — NO VERDICTS IN THIS FILE",
   "verdicts": [
@@ -324,6 +324,300 @@
       "judgmentYear": 2019,
       "caseNumber": "RFA/6137/2011",
       "textLength": 2002
+    },
+    {
+      "documentId": "01c99302-8a53-4f9c-8426-7c7b4d4ae88d",
+      "court": "Madras High Court",
+      "judgmentYear": 2022,
+      "caseNumber": "Arb Appln/368/2021",
+      "textLength": 6194
+    },
+    {
+      "documentId": "6b7704fc-f163-4789-a499-4120a9690cf3",
+      "court": "High Court of Kerala",
+      "judgmentYear": 2017,
+      "caseNumber": "WP(C)/12324/2017",
+      "textLength": 2855
+    },
+    {
+      "documentId": "c2235fe2-401b-4679-8f69-66d686ffc764",
+      "court": "High Court of Gujarat",
+      "judgmentYear": 2022,
+      "caseNumber": "SCR.A/12250/2022",
+      "textLength": 7669
+    },
+    {
+      "documentId": "bead476b-fe08-4ad7-a8eb-26c1aeeff4a5",
+      "court": "Gauhati High Court",
+      "judgmentYear": 2021,
+      "caseNumber": "Bail Appln./3135/2021",
+      "textLength": 3099
+    },
+    {
+      "documentId": "4e1b9ab6-51b0-4431-999a-556c82d4de87",
+      "court": "High Court  for State of Telangana",
+      "judgmentYear": 2023,
+      "caseNumber": "CMA/1360/2011",
+      "textLength": 14776
+    },
+    {
+      "documentId": "c81da334-4222-4c0f-8ed5-334a344c7b99",
+      "court": "Madras High Court",
+      "judgmentYear": 2021,
+      "caseNumber": "CRL OP/2067/2021",
+      "textLength": 4142
+    },
+    {
+      "documentId": "d97884aa-535b-468c-99b1-f1b4ec475e35",
+      "court": "Allahabad High Court",
+      "judgmentYear": 2019,
+      "caseNumber": "CRLP/20270/2019",
+      "textLength": 2234
+    },
+    {
+      "documentId": "6f7cb146-96bb-434a-a46a-2a3418cfb572",
+      "court": "Calcutta High Court",
+      "judgmentYear": 2022,
+      "caseNumber": "CRR/1470/2019",
+      "textLength": 2292
+    },
+    {
+      "documentId": "4ee48ecd-26f5-4490-b327-623106a3d339",
+      "court": "Patna High Court",
+      "judgmentYear": 2019,
+      "caseNumber": "CR. MISC./73120/2019",
+      "textLength": 3880
+    },
+    {
+      "documentId": "97c3616a-a850-4e93-bf72-8fb373130b1e",
+      "court": "High Court Of Rajasthan",
+      "judgmentYear": 2015,
+      "caseNumber": "CW/3056/2015",
+      "textLength": 8940
+    },
+    {
+      "documentId": "d98a62d5-0a8c-4def-95a9-116fff1bf6a7",
+      "court": "High Court of Uttarakhand",
+      "judgmentYear": 2026,
+      "caseNumber": "WPSS/2510/2024",
+      "textLength": 3231
+    },
+    {
+      "documentId": "d9c94b5c-5af2-4af3-a040-787119788133",
+      "court": "High Court of Punjab and Haryana",
+      "judgmentYear": 2013,
+      "caseNumber": "CRM-M/684/2013",
+      "textLength": 2576
+    },
+    {
+      "documentId": "0877724d-0542-4233-b047-c12b9f937812",
+      "court": "High Court Of Chhattisgarh",
+      "judgmentYear": 2022,
+      "caseNumber": "MCRC/1560/2022",
+      "textLength": 2525
+    },
+    {
+      "documentId": "e0e887cc-d97b-443a-85ed-dc7edaf544e7",
+      "court": "High Court of Kerala",
+      "judgmentYear": 2014,
+      "caseNumber": "Crl.MC/3831/2014",
+      "textLength": 4771
+    },
+    {
+      "documentId": "4be6247f-b534-493b-8a68-c7d7d15b8fc0",
+      "court": "Allahabad High Court",
+      "judgmentYear": 2018,
+      "caseNumber": "CRLP/3442/2018",
+      "textLength": 2069
+    },
+    {
+      "documentId": "2e11bea1-5372-42fc-ae5b-092b8e3d61ec",
+      "court": "High Court of Jharkhand",
+      "judgmentYear": 2025,
+      "caseNumber": "B.A./8651/2025",
+      "textLength": 2094
+    },
+    {
+      "documentId": "5cab60f0-fb14-4a52-8523-6ce8688c21d8",
+      "court": "Allahabad High Court",
+      "judgmentYear": 2022,
+      "caseNumber": "WRIA/6602/2000",
+      "textLength": 59026
+    },
+    {
+      "documentId": "3e3be355-0d5e-44f7-ad9b-9e5783e5bbcd",
+      "court": "Madras High Court",
+      "judgmentYear": 2019,
+      "caseNumber": "CRL OP(MD)/6869/2019",
+      "textLength": 2898
+    },
+    {
+      "documentId": "54a6664e-7c86-4fa9-9772-48e985efd772",
+      "court": "High Court of Karnataka",
+      "judgmentYear": 2025,
+      "caseNumber": "RFA/371/2024",
+      "textLength": 13170
+    },
+    {
+      "documentId": "5c5847a8-113f-4ede-981e-00b22e5baf74",
+      "court": "Bombay High Court",
+      "judgmentYear": 2025,
+      "caseNumber": "MCA/195/2023",
+      "textLength": 4655
+    },
+    {
+      "documentId": "2ded327e-ca96-4899-9baf-b90f24b58b64",
+      "court": "High Court of Kerala",
+      "judgmentYear": 2011,
+      "caseNumber": "WP(C)/15132/2011",
+      "textLength": 2994
+    },
+    {
+      "documentId": "6549c90b-86e7-434d-aa80-cfb9e08f1e48",
+      "court": "Patna High Court",
+      "judgmentYear": 2025,
+      "caseNumber": "CWJC/1062/2025",
+      "textLength": 4863
+    },
+    {
+      "documentId": "c6d5f66c-ca0c-4998-b242-20e97eea200c",
+      "court": "High Court of Himachal Pradesh",
+      "judgmentYear": 2016,
+      "caseNumber": "CWP/4444/2015",
+      "textLength": 7425
+    },
+    {
+      "documentId": "078e6c12-5015-46f1-a5d5-91ebc290ee6b",
+      "court": "High Court of Kerala",
+      "judgmentYear": 2021,
+      "caseNumber": "WP(C)/22015/2021",
+      "textLength": 6005
+    },
+    {
+      "documentId": "958659b1-9496-4102-b599-31ca14a76727",
+      "court": "Orissa High Court",
+      "judgmentYear": 2019,
+      "caseNumber": "WP(C)/13999/2019",
+      "textLength": 2143
+    },
+    {
+      "documentId": "ccd218f8-4b3a-4093-8da8-a38eeef82da2",
+      "court": "Madras High Court",
+      "judgmentYear": 2025,
+      "caseNumber": "WP(MD)/23183/2024",
+      "textLength": 4122
+    },
+    {
+      "documentId": "bbee4fcd-ff5b-463e-b844-5297fa8b9c91",
+      "court": "Patna High Court",
+      "judgmentYear": 2016,
+      "caseNumber": "CR. MISC./46131/2015",
+      "textLength": 3832
+    },
+    {
+      "documentId": "a7e329db-e662-4840-94ed-e0731e6f8d2b",
+      "court": "Bombay High Court",
+      "judgmentYear": 2026,
+      "caseNumber": "WP/12086/2025",
+      "textLength": 3751
+    },
+    {
+      "documentId": "8daf644a-362c-4aac-949f-8c6268695cea",
+      "court": "High Court of Kerala",
+      "judgmentYear": 2009,
+      "caseNumber": "WP(C)/34070/2009",
+      "textLength": 2295
+    },
+    {
+      "documentId": "dfd826f2-e97e-416b-a6fd-648269661427",
+      "court": "Madras High Court",
+      "judgmentYear": 2021,
+      "caseNumber": "HCP/708/2021",
+      "textLength": 6060
+    },
+    {
+      "documentId": "03a611cc-e5b3-49ea-bb54-3728f443b8ad",
+      "court": "High Court of Jharkhand",
+      "judgmentYear": 2022,
+      "caseNumber": "B.A./7400/2022",
+      "textLength": 2556
+    },
+    {
+      "documentId": "90aedc46-c493-4be4-955d-13eb00f5c975",
+      "court": "High Court Of Chhattisgarh",
+      "judgmentYear": 2015,
+      "caseNumber": "MCRC/4032/2015",
+      "textLength": 3460
+    },
+    {
+      "documentId": "7aeac6b9-9a00-47d3-9fa4-e90e45f2793f",
+      "court": "Supreme Court of India",
+      "judgmentYear": 2009,
+      "caseNumber": "CIVIL APPEAL No. 8500/2001",
+      "textLength": 128120
+    },
+    {
+      "documentId": "b8e17669-398a-47b2-a5d4-219bd0aaed3d",
+      "court": "Bombay High Court",
+      "judgmentYear": 2012,
+      "caseNumber": "WP/232/2011",
+      "textLength": 7998
+    },
+    {
+      "documentId": "aef49be3-87c2-4fa5-829c-10bb0bd6bfa4",
+      "court": "High Court of Kerala",
+      "judgmentYear": 2017,
+      "caseNumber": "Bail Appl./785/2017",
+      "textLength": 2607
+    },
+    {
+      "documentId": "913d53b2-cee7-40f3-9912-bba028c5f6be",
+      "court": "High Court Of Chhattisgarh",
+      "judgmentYear": 2021,
+      "caseNumber": "MCRC/8030/2021",
+      "textLength": 2769
+    },
+    {
+      "documentId": "71212cea-1520-437f-ab80-ee1f56a59124",
+      "court": "Allahabad High Court",
+      "judgmentYear": 2023,
+      "caseNumber": "/3313/2023",
+      "textLength": 12378
+    },
+    {
+      "documentId": "a1308748-2257-40ed-a568-f8987962507a",
+      "court": "Patna High Court",
+      "judgmentYear": 2015,
+      "caseNumber": "CR. MISC./51231/2015",
+      "textLength": 4013
+    },
+    {
+      "documentId": "c7678a2d-e54a-44c2-b12d-92c5627f88a6",
+      "court": "High Court  for State of Telangana",
+      "judgmentYear": 2010,
+      "caseNumber": "CRP/4214/2009",
+      "textLength": 3065
+    },
+    {
+      "documentId": "fd133a93-dde7-4587-9cb0-d5d88e393598",
+      "court": "High Court of Madhya Pradesh",
+      "judgmentYear": 2023,
+      "caseNumber": "MP/7108/2023",
+      "textLength": 5029
+    },
+    {
+      "documentId": "6b90b546-3fb6-46a9-b6bc-d204ec25be04",
+      "court": "High Court  for State of Telangana",
+      "judgmentYear": 2024,
+      "caseNumber": "WP/3884/2024",
+      "textLength": 6029
+    },
+    {
+      "documentId": "e865af63-0d4c-42e6-890e-2f81d5bb6d1c",
+      "court": "Bombay High Court",
+      "judgmentYear": 2024,
+      "caseNumber": "IA/4653/2023",
+      "textLength": 4503
     }
   ]
 }

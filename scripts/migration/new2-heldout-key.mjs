@@ -246,6 +246,178 @@ const KEY = [
     'NON_SUBSTANTIVE_PROCEDURAL',
     'appeal disposed in terms of a named earlier decision',
   ],
+
+  /* SECOND SITTING, 21 August 2026, drawn from the same uniform sample under
+   * eligibility contract v2. Adjudicated the same way and under the same rule:
+   * from the operative text at the END, and UNCERTAIN wherever the tail is a
+   * service list, an exhibit index or a garbled registry block rather than a
+   * decision. Added because LCC's first run against this key had only 33
+   * scorable rows, and 33 gives an interval of plus or minus eleven points on
+   * the only accuracy figure anyone has for the population the tier is made of.
+   * Rows the density screen calls unreadable are excluded from the draw: a key
+   * row nobody can read is a key row nobody can score. */
+  [
+    '01c99302',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'liberty to institute execution proceedings; disposed without deciding anything',
+  ],
+  [
+    '6b7704fc',
+    'UNCERTAIN',
+    'payment terms and a clearance-certificate direction; relief granted but no reasoning visible',
+  ],
+  [
+    'c2235fe2',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'confiscation conditions settled on the merits, rule made absolute',
+  ],
+  [
+    'bead476b',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'bail application disposed with s. 438-type conditions',
+  ],
+  ['4e1b9ab6', 'UNCERTAIN', 'CMA dismissed without costs; the tail is a garbled registry block'],
+  ['c81da334', 'UNCERTAIN', 'Crl.OP; the tail is a service list'],
+  [
+    'd97884aa',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'interim protection discharged on a condition; petition disposed with a direction',
+  ],
+  [
+    '6f7cb146',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'revisional application disposed, interim order vacated',
+  ],
+  ['4ee48ecd', 'NON_SUBSTANTIVE_PROCEDURAL', 'surrender and bail bond under s. 438(2) CrPC'],
+  [
+    '97c3616a',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'arbitral and tribunal orders held free of infirmity; writ dismissed on merits',
+  ],
+  [
+    'd98a62d5',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'decided in terms of an earlier judgment on the respondents concession',
+  ],
+  [
+    'd9c94b5c',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'protection order expressly conferring no legitimacy on the marriage or the age',
+  ],
+  [
+    '0877724d',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'bail allowed on surety, class already labelled bail_order',
+  ],
+  [
+    'e0e887cc',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'prosecution quashed under s. 482 CrPC, petitioners released from prosecution',
+  ],
+  [
+    '4be6247f',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'quashing refused on a reasoned finding that a cognizable offence is prima facie made out',
+  ],
+  [
+    '2e11bea1',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'bail conditions including Aadhaar and cooperation at trial',
+  ],
+  [
+    '5cab60f0',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'impugned order quashed for breach of natural justice; 59,026 characters',
+  ],
+  ['3e3be355', 'UNCERTAIN', 'Crl.OP(MD); the tail is a service list'],
+  [
+    '54a6664e',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'trial court view held legal and valid; appeal dismissed',
+  ],
+  [
+    '5c5847a8',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'restoration of an appeal allowed after condoning delay',
+  ],
+  [
+    '2ded327e',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'stay petition to be considered; recovery kept in abeyance meanwhile',
+  ],
+  [
+    '6549c90b',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'direction to allocate funds so an earlier order can be complied with',
+  ],
+  [
+    'c6d5f66c',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'bias plea rejected for want of pleading and of a party-respondent; petition dismissed',
+  ],
+  ['078e6c12', 'UNCERTAIN', 'the tail is an exhibit list'],
+  [
+    '958659b1',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'representation to be decided within four weeks per a named earlier judgment',
+  ],
+  ['ccd218f8', 'UNCERTAIN', 'the tail is a respondent list'],
+  [
+    'bbee4fcd',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'anticipatory bail on a maintenance-payment condition',
+  ],
+  [
+    'a7e329db',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'listing direction to verify compliance with an earlier order',
+  ],
+  [
+    '8daf644a',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'Wakf Board to consider and decide after hearing; no finding made',
+  ],
+  ['dfd826f2', 'UNCERTAIN', 'H.C.P.; the tail is a service list'],
+  [
+    '03a611cc',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'bail allowed on surety, class already labelled bail_order',
+  ],
+  ['90aedc46', 'NON_SUBSTANTIVE_PROCEDURAL', 'bail conditions on inducement and fair trial'],
+  [
+    '7aeac6b9',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'civil appeals dismissed and the consequent contempt petitions with them; 128,120 characters',
+  ],
+  [
+    'b8e17669',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'maintenance quantum examined on capacity to earn; no case to interfere',
+  ],
+  ['aef49be3', 'NON_SUBSTANTIVE_PROCEDURAL', 'bail conditions including surrender of passport'],
+  ['913d53b2', 'NON_SUBSTANTIVE_PROCEDURAL', 'bail application allowed on personal bond'],
+  [
+    '71212cea',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'writ dismissed as misconceived after examining the Magistrate order',
+  ],
+  ['a1308748', 'NON_SUBSTANTIVE_PROCEDURAL', 'bail granted with bailor and attendance conditions'],
+  [
+    'c7678a2d',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'civil revision allowed and remanded on s. 35 Stamp Act and the s. 49 Registration Act proviso',
+  ],
+  [
+    'fd133a93',
+    'HIGH_CONFIDENCE_SUBSTANTIVE',
+    'court below held to have committed no error; petition devoid of merits dismissed',
+  ],
+  ['6b90b546', 'UNCERTAIN', 'the tail is a garbled registry and service block'],
+  [
+    'e865af63',
+    'NON_SUBSTANTIVE_PROCEDURAL',
+    'notice issued and the matter adjourned to a named date',
+  ],
 ];
 
 const url = process.env['DATABASE_URL'];
