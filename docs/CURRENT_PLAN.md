@@ -16,6 +16,103 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 21 Aug 2026 — NEW1: A 670,000-DOCUMENT HOLE, A 13.2% RECALL CEILING, AND RERANKING IS STILL NOT THE ANSWER
+
+**Added by NEW1 (retrieval lane).** Every figure below was read from the live
+database or from an artefact this session wrote; none is inferred from a command
+exiting 0. Detail: `docs/ai/NEW1_TIER_A_PURITY_AND_COVERAGE.md`,
+`docs/ai/NEW1_EXPANSION_BENCHMARK_250K.md`,
+`docs/ai/new1-halfvec/VERDICT_250K.md`,
+`docs/ai/new1-rerank/LEAKAGE_SAFE_BASELINE.md`.
+
+**The Tier-A walk had reached batch 88 and 67 batches inside that range held
+zero vectors.** `stage-embed.log` carried 100 `STAGE START` lines, 29
+`STAGE DONE` and 69 `FAILED`; 23 of 888 batch files actually held anything. The
+missing 10..76 are the batches a dead GPU sidecar consumed in sixty seconds on
+20 Aug, each printing START and END while embedding nothing. The exit-status
+cause was fixed that day; the HOLE was not, because the walk was a RANGE and a
+range never goes back. 220,259 staged rows read healthy throughout.
+`stage-coverage-census.mjs` now asks per batch file how many of the ids it names
+are accounted for, and `stage-runner.sh` walks that worklist instead of a range.
+
+**Both the walk and its keeper died with the session and nothing said so.** Both
+were started with `nohup` from inside a session shell; both were gone two hours
+later and the GPU sat at 0% for three hours and twenty minutes. Git Bash `nohup`
+does not detach from the Windows job object. Long runs are now started with
+PowerShell `Start-Process`, and `sidecar-keeper.mjs` watches the walk on SILENCE
+as well as the sidecar on health — twenty minutes without a log line means hung
+or dead, and both want the same treatment.
+
+**13.2% of the authorities judges actually cite are refused by the eligibility
+contract.** All 250 of NEW3's citation-verified gold authorities are ones a real
+High Court judge really cited; 33 of them fail
+`judgment_embedding_eligibility` — 18 for being under 2,000 characters, 12 for
+being `bail_order`, 2 `procedural_disposal`, 1 on text quality. **That is a
+ceiling, not a backlog**: embedding the whole 8,846,550-row manifest at perfect
+quality leaves those 33 unreachable. `eligibility.ts` says bail orders are "a
+retrieval measurement nobody has made yet" — this is that measurement, and it
+replicated at 11.5% on NEW3's independently built uncited-authority set. The
+decision belongs to LCC; what changed is that it now has a number.
+
+**`decided_brief` was never in Tier A.** All 205,731 of its rows sit in bands
+`brief` and `stub`, and Tier A takes only `standard`/`full`/`substantial` —
+confirmed independently by 0 occurrences in a 409,647-row sample of the manifest
+files. NEW2's "60.9% over 864,685 rows" figure is `decided` at **75.0% over
+570,452**, and axis C is already the negative selector NEW2 asked for.
+
+**The manifest goes stale over its own consumption window.** It froze eligibility
+on 19 Aug and is consumed over eleven days. 1.9% of it corpus-wide, and 16% of
+batch 10, now carries a class the contract refuses — because the manifest and
+NEW2's classifier walk the same primary-key order and the classifier is ~1-2%
+into the id space. `doc-vector-embed.mjs` re-reads `hc_document_class` in the
+query it already runs for text and skips the four refused classes before the GPU
+sees them. 34,370 already-embedded refused rows were **moved, not deleted**, to
+`new1_doc_vector_stage_refused` — which the 13.2% finding then vindicated.
+
+**Halfvec: `HALFVEC_QUALITY_PASS_AT_TEST_SCALE`, n=256,998, and deliberately not
+production-ready.** The previous verdict was taken at `ef_search=40`; production
+runs 200 and that is what both arms run here. Paired sign test over 684 shared
+queries finds **no difference on any query type** (p = 0.267 / 0.688 / 0.804,
+with 94-97% of queries returning the gold at exactly the same rank). Index 669 MB
+against 2006 MB — 3.0x, the same ratio measured at 620,300 chunks — and latency
+p50 14 ms against 41 ms. The stage table stays `vector(1024)` for the walk: fp32
+casts down to halfvec and halfvec cannot cast back up.
+
+**Reranking, rebuilt so it cannot lie, is worth three queries out of seventy.**
+Every feature is checked against a new leakage contract per row and a prohibited
+one THROWS, so `inbound_citation_graph` — the feature behind the +21.5-point
+illusion — cannot return quietly. Best leakage-safe held gain is +4.3 points of
+success@5 on 70 queries against a train delta of 7.6. Two things are not small:
+**`sparseOnly` beats `denseOnly`** on the pool dense itself selected (s@5 27.1%
+against 22.9%, r@20 34.3% against 27.1%) while losing on MRR, which is
+complementarity and argues for fusion rather than a reranker; and **depth buys
+presence, not position, for the third independent time** — pool 50 to 200 lifts
+gold presence 31.4% to 38.6% and leaves success@5 at 22.86% throughout.
+
+**Currentness safety: PASS.** No NEW1 table holds a cached treatment or
+currentness column — checked against `information_schema`, so a column added next
+month by someone who never read the rule still fails it. Every NEW1 vector table
+carries `judgment_id` so status is read live at the point of use.
+
+**Statute transition: 11/11 on NEW3's gold**, including both memory traps. IPC 420
+and CrPC 154 return `held: false` with UNMAPPED wording rather than a remembered
+mapping.
+
+**Two corrections this lane owes.** First: production ALREADY has the exact
+routes. `retrieve.ts` pins an exact citation lookup and an exact case-title
+lookup ahead of the ranked list in every mode; the 0.9% success@5 for citation
+queries is a true statement about a vector index and a false one about the
+product. Timed live: a citation query is 0.7 s, a case name 3.8 s, a concept
+question 3.5 s. Second: the "a clean issue statement beats a citing passage"
+inference from `NEW1_CROSSLINGUAL.md` does NOT reproduce — all three query-shape
+arms tie at 40% success@5.
+
+**One finding handed on rather than solved.** The production sparse arm did not
+finish a 900-character passage query in **32 minutes**, on a loaded box. Short
+queries are fine. It is a query SHAPE the rarest-term rule in migration 0055 was
+never measured against, and it needs its own bounded experiment with EXPLAIN.
+
+
 ### 21 Aug 2026 — LCC: SIX MIGRATIONS, AND FIVE NUMBERS OTHER LANES WERE USING WERE WRONG
 
 **Added by LCC (server lane).** Every state below was read back from the live
