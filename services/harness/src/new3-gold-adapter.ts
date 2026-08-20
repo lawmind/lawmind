@@ -24,6 +24,18 @@
  * about how its gold was built.
  */
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { isAbsolute, join } from 'node:path';
+
+/**
+ * Gold paths are REPO-relative, resolved here rather than in each caller.
+ *
+ * The harness runs from  under pnpm and from the repo root by
+ * hand, and every caller that resolved the path itself got it wrong for one of
+ * the two. Doing it in the loader means a caller can pass what a person would
+ * type and an absolute path still works untouched, which the tests rely on.
+ */
+const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 import type { EvalRow, GoldProvenanceType, QueryConstruction } from './gold-contract.ts';
 
 type New3Provenance = {
@@ -86,7 +98,8 @@ export function loadNew3Gold(
   const dropChronology = opts.dropChronologyDefects ?? true;
   const dropControl = opts.dropControlCharacters ?? true;
 
-  const file = JSON.parse(readFileSync(path, 'utf8')) as { rows: New3Row[] };
+  const resolved = isAbsolute(path) ? path : join(ROOT, path);
+  const file = JSON.parse(readFileSync(resolved, 'utf8')) as { rows: New3Row[] };
   const rows: EvalRow[] = [];
   const dropped: LoadedGold['dropped'] = [];
   const edges = new Set<string>();

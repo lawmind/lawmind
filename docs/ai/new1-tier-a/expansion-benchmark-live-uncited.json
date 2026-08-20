@@ -1,0 +1,278 @@
+{
+  "kind": "new1_expansion_benchmark_v2",
+  "milestone": "live",
+  "probeTable": "new1_doc_vector_stage",
+  "queryCast": "vector",
+  "efSearch": 200,
+  "topK": 50,
+  "measuredAt": "2026-08-20T22:24:44.965Z",
+  "goldKind": "uncited",
+  "cautions": [
+    {
+      "family": "dense_similarity",
+      "why": "the query is the target’s OWN words, so this is the easiest possible query for it — an upper bound"
+    }
+  ],
+  "goldFile": "docs/ai/new3-semantic-expansion-gold.json",
+  "goldDropped": 0,
+  "funnel": {
+    "goldAuthorities": 26,
+    "sourcePresent": 26,
+    "semanticEligible": 23,
+    "embedded": 23
+  },
+  "byQueryType": {
+    "uncited_holding": {
+      "queries": 26,
+      "embeddedGold": 23,
+      "successAt5": 30.77,
+      "successAt5GivenEmbedded": 34.78,
+      "recallAt20": 46.15,
+      "recallAt20GivenEmbedded": 52.17,
+      "presentAt50": 46.15,
+      "mrr": 0.3094,
+      "ndcgAt10": 0.3437
+    }
+  },
+  "latencyMs": {
+    "p50": 1506,
+    "p95": 1979,
+    "max": 2191
+  },
+  "results": [
+    {
+      "queryId": "UAG-001",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0001f458-4c89-41e7-a15b-e3676ae72127",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-002",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0006a495-94e5-49ee-b308-bcccc4f394c6",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 1
+    },
+    {
+      "queryId": "UAG-003",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00152c93-05f8-4209-b79a-220f83feeea3",
+      "sourcePresent": true,
+      "semanticEligible": false,
+      "embedded": false,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-004",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0001c779-6f56-44d8-bf3e-671feefe68f6",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-005",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0009b334-ecb0-48ff-9230-2adc95fe8b36",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-006",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0013687e-011e-4c86-804a-a36f0b1a60f2",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 1
+    },
+    {
+      "queryId": "UAG-007",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0011c589-f65b-440c-b62e-de091b31aa62",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-008",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00121c64-853c-4a1e-b544-15ad545d0053",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 9
+    },
+    {
+      "queryId": "UAG-009",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00017015-6369-4454-aadd-1309234dfcaf",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-010",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "000a572d-c6a5-4b32-94c7-bac07d77d6d7",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 8
+    },
+    {
+      "queryId": "UAG-011",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00127918-7356-4734-b425-01b731054c60",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-012",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "001236ef-94b0-480f-b8bb-49327fd6821f",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 1
+    },
+    {
+      "queryId": "UAG-013",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00179089-90c9-4d3c-9bf9-ff3ca8091a95",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 7
+    },
+    {
+      "queryId": "UAG-014",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00135d84-6c2e-490b-a03d-5000ad1224c7",
+      "sourcePresent": true,
+      "semanticEligible": false,
+      "embedded": false,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-015",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0006ace2-f77e-43b4-95f6-12624998fa92",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-016",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0008cd7e-81ce-4895-954a-d318952fa93f",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 1
+    },
+    {
+      "queryId": "UAG-017",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "7b51c478-1add-4141-be83-ff5acb8aa785",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-018",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0009813e-02da-4bac-ab28-4230f0753027",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 6
+    },
+    {
+      "queryId": "UAG-019",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00168236-8b6c-48c8-912b-708dff341cd5",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 1
+    },
+    {
+      "queryId": "UAG-020",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "000adc2c-c0d8-4b05-bf77-c7afc0c1536d",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-021",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00130523-fe13-4316-a242-77044c0d638a",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-022",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00125748-2ed2-4aae-9364-1fd98914efde",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 1
+    },
+    {
+      "queryId": "UAG-023",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0003ad37-5309-4005-af24-35be6d9ed079",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-024",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00079848-b5ce-4b96-97f9-8112cdeb26d4",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 2
+    },
+    {
+      "queryId": "UAG-025",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "0010fff5-1c08-4200-b7d1-2d3e51208b00",
+      "sourcePresent": true,
+      "semanticEligible": false,
+      "embedded": false,
+      "rank": null
+    },
+    {
+      "queryId": "UAG-026",
+      "queryType": "uncited_holding",
+      "goldAuthorityId": "00025d56-73f1-45a8-8058-249539ad082d",
+      "sourcePresent": true,
+      "semanticEligible": true,
+      "embedded": true,
+      "rank": 1
+    }
+  ]
+}

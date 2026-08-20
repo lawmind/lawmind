@@ -7,6 +7,7 @@ import {
   featurePolicy,
   LeakageError,
   splitByFamily,
+  cautionsAcross,
   type EvalRow,
 } from './gold-contract.ts';
 
@@ -113,4 +114,35 @@ test('the split is deterministic — two runs of the same gold are comparable', 
   const a = splitByFamily(rows, 0.5).test.map((r) => r.caseFamily);
   const b = splitByFamily(rows, 0.5).test.map((r) => r.caseFamily);
   assert.deepEqual(a, b);
+});
+
+test('own_text_span prohibits sparse and CAUTIONS dense — the uncited-gold shape', () => {
+  const r = row({ goldProvenanceType: 'legal_object_claim', queryConstruction: 'own_text_span' });
+  const policy = featurePolicy(r);
+  assert.deepEqual(
+    policy.prohibited.map((p) => p.family).sort(),
+    ['sparse_lexical', 'verified_legal_object_match'],
+  );
+  assert.deepEqual(policy.cautioned.map((c) => c.family), ['dense_similarity']);
+  // A caution never throws. Throwing would discard the only gold that can
+  // measure an authority nobody has cited.
+  assert.doesNotThrow(() => assertFeatureAllowed(r, 'dense_similarity'));
+  assert.throws(() => assertFeatureAllowed(r, 'sparse_lexical'), LeakageError);
+});
+
+test('a prohibition outranks a caution on the same family', () => {
+  // raw_passage cautions dense; if a provenance ever prohibits it too, the family
+  // must appear once, as prohibited.
+  const r = row({ queryConstruction: 'raw_passage' });
+  const policy = featurePolicy(r);
+  const both = policy.cautioned.filter((c) => policy.prohibited.some((p) => p.family === c.family));
+  assert.deepEqual(both, []);
+});
+
+test('cautionsAcross collects every caution in a set so a report cannot omit one', () => {
+  const rows = [
+    row({ queryId: 'a' }),
+    row({ queryId: 'b', goldProvenanceType: 'legal_object_claim', queryConstruction: 'own_text_span' }),
+  ];
+  assert.deepEqual(cautionsAcross(rows).map((c) => c.family), ['dense_similarity']);
 });

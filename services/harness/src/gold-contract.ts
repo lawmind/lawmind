@@ -126,6 +126,17 @@ export type QueryConstruction =
   | 'raw_passage'
   /** The authority's own identifier, handed back verbatim. */
   | 'own_identifier'
+  /**
+   * A verbatim span of the TARGET's own text — its extracted holding, say.
+   *
+   * This is the shape of NEW3's uncited-authority gold, and it is the only way to
+   * build gold for an authority nobody has cited: with no citing judgment there is
+   * no independent passage to lift, so the document's own words are all there is.
+   * That makes the set genuinely valuable and genuinely optimistic at the same
+   * time, which is why it gets its own value rather than being filed as
+   * `raw_passage`.
+   */
+  | 'own_text_span'
   /** Written by a person, or by a model that never saw the target. */
   | 'independent';
 
@@ -142,6 +153,43 @@ const CONSTRUCTION_PROHIBITED: Record<QueryConstruction, { family: FeatureFamily
     },
   ],
   own_identifier: [],
+  own_text_span: [
+    {
+      family: 'sparse_lexical',
+      why: 'the query is a verbatim span of the target, so a term-overlap score is measuring the copy, not the retrieval',
+    },
+  ],
+  independent: [],
+};
+
+/**
+ * ALLOWED, but the number it produces is an upper bound rather than an estimate.
+ *
+ * A third state exists because the binary was making the contract lie in both
+ * directions. `own_text_span` with a dense feature is not leakage — the vector is
+ * over the document's HEAD and the span may not even be inside it — but it is the
+ * easiest possible query for that document, and a success rate from it is not the
+ * success rate a paraphrase would get. Prohibiting it would throw away the only
+ * gold that can measure uncited authority at all; allowing it silently would let
+ * that number be quoted as if it were general.
+ *
+ * A caution never throws. It travels with the report and it must be printed.
+ */
+const CONSTRUCTION_CAUTIONED: Record<QueryConstruction, { family: FeatureFamily; why: string }[]> = {
+  redacted_passage: [],
+  raw_passage: [
+    {
+      family: 'dense_similarity',
+      why: 'the query is lifted verbatim from a document that quotes the target — an upper bound, not an estimate',
+    },
+  ],
+  own_identifier: [],
+  own_text_span: [
+    {
+      family: 'dense_similarity',
+      why: 'the query is the target’s OWN words, so this is the easiest possible query for it — an upper bound',
+    },
+  ],
   independent: [],
 };
 
@@ -193,17 +241,30 @@ export type Negative = {
 export type FeaturePolicy = {
   allowed: FeatureFamily[];
   prohibited: { family: FeatureFamily; why: string }[];
+  /** Allowed, but the resulting figure is an upper bound. Must be printed. */
+  cautioned: { family: FeatureFamily; why: string }[];
+};
+
+const dedupe = (xs: { family: FeatureFamily; why: string }[]): { family: FeatureFamily; why: string }[] => {
+  // Two doors to the same leak is still one leak, and reporting it twice reads as
+  // two problems.
+  const seen = new Set<FeatureFamily>();
+  return xs.filter((p) => (seen.has(p.family) ? false : (seen.add(p.family), true)));
 };
 
 /** What a scorer may read for one row. Provenance and construction compose. */
 export function featurePolicy(row: Pick<EvalRow, 'goldProvenanceType' | 'queryConstruction'>): FeaturePolicy {
-  const prohibited = [...PROHIBITED[row.goldProvenanceType], ...CONSTRUCTION_PROHIBITED[row.queryConstruction]];
-  // Deduplicated by family, keeping the first reason: two doors to the same leak
-  // is still one leak, and reporting it twice reads as two problems.
-  const seen = new Set<FeatureFamily>();
-  const unique = prohibited.filter((p) => (seen.has(p.family) ? false : (seen.add(p.family), true)));
-  const banned = new Set(unique.map((p) => p.family));
-  return { allowed: ALL_FEATURE_FAMILIES.filter((f) => !banned.has(f)), prohibited: unique };
+  const prohibited = dedupe([...PROHIBITED[row.goldProvenanceType], ...CONSTRUCTION_PROHIBITED[row.queryConstruction]]);
+  const banned = new Set(prohibited.map((p) => p.family));
+  // A prohibition outranks a caution: there is nothing to caution about a family
+  // that may not be read at all.
+  const cautioned = dedupe(CONSTRUCTION_CAUTIONED[row.queryConstruction]).filter((c) => !banned.has(c.family));
+  return { allowed: ALL_FEATURE_FAMILIES.filter((f) => !banned.has(f)), prohibited, cautioned };
+}
+
+/** Every caution attached to any row in a set, so a report cannot omit one. */
+export function cautionsAcross(rows: EvalRow[]): { family: FeatureFamily; why: string }[] {
+  return dedupe(rows.flatMap((r) => featurePolicy(r).cautioned));
 }
 
 export class LeakageError extends Error {

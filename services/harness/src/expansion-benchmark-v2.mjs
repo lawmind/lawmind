@@ -33,7 +33,8 @@
 import postgres from 'postgres';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { loadNew3Gold } from './new3-gold-adapter.ts';
-import { assertFeatureAllowed } from './gold-contract.ts';
+import { loadUncitedGold } from './new3-uncited-gold-adapter.ts';
+import { assertFeatureAllowed, cautionsAcross } from './gold-contract.ts';
 
 const url = readFileSync(new URL('../../../.env', import.meta.url), 'utf8')
   .match(/^DATABASE_URL=(.*)$/m)[1]
@@ -56,13 +57,24 @@ const TOP_K = Number(process.env.TOP_K ?? 50);
 const GOLD = new URL('../../../docs/ai/new3-semantic-expansion-gold.json', import.meta.url);
 // The arm is in the FILENAME. Without it the halfvec run silently overwrites the
 // fp32 report and the comparison is between a file and its own replacement.
-const ARM = CAST === 'halfvec' ? '-halfvec' : '';
+const ARM = (CAST === 'halfvec' ? '-halfvec' : '') + ((process.env.GOLD_KIND ?? 'expansion') === 'uncited' ? '-uncited' : '');
 const OUT = new URL(`../../../docs/ai/new1-tier-a/expansion-benchmark-${LABEL}${ARM}.json`, import.meta.url);
 
 const sql = postgres(url, { ssl: false, max: 1, connection: { statement_timeout: 300_000 }, onnotice: () => {} });
 
-const loaded = loadNew3Gold(GOLD.pathname.replace(/^\//, ''));
-console.log(`gold: ${loaded.rows.length} usable of ${loaded.totals.rowsInFile} (${loaded.dropped.length} dropped)`);
+// Two gold sets, one harness. The uncited set is the only instrument that can
+// measure an authority nobody has cited, and it has to run through the SAME
+// funnel and the SAME contract or its numbers are comparable with nothing.
+const GOLD_KIND = process.env.GOLD_KIND ?? 'expansion';
+const loaded = GOLD_KIND === 'uncited' ? loadUncitedGold() : loadNew3Gold(GOLD.pathname.replace(/^\//, ''));
+console.log(
+  `gold[${GOLD_KIND}]: ${loaded.rows.length} usable of ${loaded.totals?.rowsInFile ?? loaded.rows.length + loaded.dropped.length} (${loaded.dropped.length} dropped)`,
+);
+
+// Printed, not buried in the JSON. A cautioned family is one whose figure is an
+// upper bound, and the uncited set's whole dense measurement is one.
+const cautions = cautionsAcross(loaded.rows);
+for (const c of cautions) console.log(`  CAUTION ${c.family}: ${c.why}`);
 
 // Dense similarity is the only family this arm reads. Asserting it per row means a
 // gold set that forbids it — none does today — stops the run instead of being
@@ -185,6 +197,8 @@ const report = {
   efSearch: EF_SEARCH,
   topK: TOP_K,
   measuredAt: new Date().toISOString(),
+  goldKind: GOLD_KIND,
+  cautions,
   goldFile: 'docs/ai/new3-semantic-expansion-gold.json',
   goldDropped: loaded.dropped.length,
   funnel,

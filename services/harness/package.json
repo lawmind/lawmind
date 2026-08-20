@@ -43,7 +43,12 @@
     "gold:contract": "tsx src/gold-contract-cli.ts",
     "stage:coverage": "tsx src/stage-coverage-census.mjs",
     "stage:quarantine": "tsx src/stage-quarantine-refused.mjs",
-    "sidecar:keep": "tsx src/sidecar-keeper.mjs"
+    "sidecar:keep": "tsx src/sidecar-keeper.mjs",
+    "bench:prodroute": "tsx --env-file=../../.env src/production-route-benchmark.ts",
+    "bench:expansion2": "tsx src/expansion-benchmark-v2.mjs",
+    "milestone": "tsx src/stage-milestone.mjs",
+    "probe:snapshot": "tsx src/probe-snapshot.mjs",
+    "safety:currentness": "tsx src/currentness-safety.mjs"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",

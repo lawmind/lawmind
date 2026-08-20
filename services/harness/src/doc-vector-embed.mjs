@@ -38,7 +38,10 @@ const HEAD_CHARS = Number(process.env.HEAD_CHARS ?? 4800);
 const EMBED_BATCH_CHARS = Number(process.env.EMBED_BATCH_CHARS ?? 240000);
 const FETCH_PAGE = Number(process.env.FETCH_PAGE ?? 200);
 const LIMIT = Number(process.env.STAGE_LIMIT ?? Infinity);
-const LOG = new URL('../../../docs/ai/new1-tier-a/stage-embed.log', import.meta.url);
+// The log path is overridable so an ad-hoc batch does not pollute the walk's
+// own log. stage-milestone.mjs derives attempted/written/throughput by parsing
+// that file, and a 26-row side run landing in it would show up as a batch.
+const LOG = new URL(process.env.STAGE_LOG_PATH ?? '../../../docs/ai/new1-tier-a/stage-embed.log', import.meta.url);
 
 /**
  * Classes the DEPLOYED eligibility view refuses. Not a NEW1 opinion — these are
@@ -250,7 +253,7 @@ try {
     finishedAt: new Date().toISOString(),
   };
   writeFileSync(
-    new URL('../../../docs/ai/new1-tier-a/stage-embed-summary.json', import.meta.url),
+    new URL(process.env.SUMMARY_PATH_REL ?? '../../../docs/ai/new1-tier-a/stage-embed-summary.json', import.meta.url),
     JSON.stringify(summary, null, 2) + '\n',
   );
   log('STAGE DONE ' + JSON.stringify(summary));
