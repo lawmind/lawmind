@@ -27,6 +27,7 @@
  */
 import postgres from 'postgres';
 import { readFileSync, appendFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const url = readFileSync(new URL('../../../.env', import.meta.url), 'utf8')
   .match(/^DATABASE_URL=(.*)$/m)[1]
@@ -44,13 +45,34 @@ const LIMIT = Number(process.env.STAGE_LIMIT ?? Infinity);
 const LOG = new URL(process.env.STAGE_LOG_PATH ?? '../../../docs/ai/new1-tier-a/stage-embed.log', import.meta.url);
 
 /**
- * Classes the DEPLOYED eligibility view refuses. Not a NEW1 opinion — these are
- * `axis_c_role`'s `procedural_disposal` / `reference_stub` and `is_bail_order`'s
- * `bail_order`, plus `decided_brief`, which the length bands already exclude in
- * full (all 205,731 of its rows sit in `stub` and `brief`, measured) and which is
- * named here so a future band change cannot let a 15.6%-precise class in silently.
+ * Classes the DEPLOYED eligibility view refuses — `axis_c_role`'s three, as of
+ * migration `0066`.
+ *
+ * ── `bail_order` WAS in this set and has been removed, 21 Aug ────────────────
+ *
+ * It was here because `is_bail_order` excluded bail orders from Tier A when this
+ * skip was written. Migration `0066` (commit `c6a3150`, 21 Aug 02:14) changed
+ * that, in response to this lane's own measurement: 12 of NEW3's 250
+ * citation-verified gold authorities are bail orders that a real judge really
+ * cited, and the exclusion rested on "bail orders are not precedent" — a claim
+ * about WEIGHT, not about RETRIEVABILITY. They are now their own tier,
+ * `BAIL_ORDER_REACHABLE`, and 489,444 of them pass the base gate.
+ *
+ * Between those two facts this file spent an afternoon discarding roughly 1,380
+ * bail orders per batch that the contract had started admitting. The deployed
+ * view's hash is the thing that catches this — `e76879ab6bbcd452` became
+ * `5efa4c8decef699e` — and a copy of a predicate that does not check the hash is
+ * a copy that will drift again, so `assertContractHash()` below now refuses to
+ * run against a definition the file has not been reconciled with.
  */
-const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'bail_order', 'decided_brief']);
+const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'decided_brief']);
+
+/**
+ * The deployed definition this skip list was reconciled against. NOT a hash of
+ * this file: hashing a constant here would certify the copy, which is precisely
+ * the thing that cannot drift from itself.
+ */
+const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '5efa4c8decef699e';
 
 const log = (m) => {
   const line = new Date().toISOString() + '  ' + m + '\n';
@@ -96,8 +118,35 @@ async function embed(texts) {
   return out;
 }
 
+/**
+ * Refuse to run against an eligibility definition this file has not been
+ * reconciled with.
+ *
+ * A warning would be read past. The failure this prevents is silent and
+ * expensive: the skip list kept discarding bail orders for an afternoon after
+ * migration 0066 started admitting them, and nothing anywhere looked wrong —
+ * the counter went up, the batches completed, the rate held steady.
+ *
+ * `EXPECTED_VIEW_HASH` exists so that whoever reconciles the list next can run
+ * once with the new hash before editing, rather than being blocked by their own
+ * guard while they read the diff.
+ */
+async function assertContractHash() {
+  const [row] = await sql`SELECT pg_get_viewdef('judgment_embedding_eligibility'::regclass, true) AS def`;
+  const live = createHash('sha256').update(row.def).digest('hex').slice(0, 16);
+  if (live !== RECONCILED_VIEW_HASH) {
+    throw new Error(
+      `eligibility view has changed: deployed ${live}, this file reconciled against ${RECONCILED_VIEW_HASH}. ` +
+        'Read the new definition and update REFUSED_CLASSES before embedding another batch — ' +
+        'a stale skip list discards documents the contract admits, and nothing about that looks wrong at runtime.',
+    );
+  }
+  log('contract hash OK ' + live);
+}
+
 try {
   log('STAGE START ' + BATCH_FILE + '  rows ' + rows.length + '  headChars ' + HEAD_CHARS);
+  await assertContractHash();
   await sql`
     CREATE TABLE IF NOT EXISTS new1_doc_vector_stage (
       judgment_id uuid PRIMARY KEY,

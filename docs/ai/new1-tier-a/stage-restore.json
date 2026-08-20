@@ -1,0 +1,16 @@
+{
+  "kind": "new1_stage_restore",
+  "restoredClasses": [
+    "bail_order"
+  ],
+  "movedRows": 29349,
+  "stageRowsAfter": 480627,
+  "quarantineRowsAfter": 5021,
+  "byClassBefore": [
+    {
+      "refused_class": "bail_order",
+      "n": 29349
+    }
+  ],
+  "appliedAt": "2026-08-20T23:19:10.518Z"
+}

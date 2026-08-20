@@ -28,8 +28,69 @@ const url = readFileSync(new URL('../../../.env', import.meta.url), 'utf8')
   .trim();
 const sql = postgres(url, { ssl: false, max: 1, onnotice: () => {} });
 
-const REFUSED = ['procedural_disposal', 'reference_stub', 'bail_order', 'decided_brief'];
+/**
+ * `bail_order` was here and is not any more — migration `0066` (21 Aug) made bail
+ * orders their own reachable tier, `BAIL_ORDER_REACHABLE`, on the strength of this
+ * lane's own measurement that 12 of 250 citation-verified gold authorities are
+ * bail orders a judge really cited.
+ *
+ * This is exactly the case the file's header argued for moving rather than
+ * deleting: "deleting them throws away real GPU work for a classification that
+ * could be revised". It was revised inside thirty-six hours, and `--restore` puts
+ * 29,349 vectors back at no GPU cost at all.
+ */
+const REFUSED = ['procedural_disposal', 'reference_stub', 'decided_brief'];
 const APPLY = process.argv.includes('--apply');
+
+/**
+ * Move rows the other way: quarantine -> stage, for classes the contract has
+ * started admitting. Named explicitly rather than derived from the difference
+ * between the old and new lists, because "everything not currently refused" would
+ * silently restore a class nobody decided about.
+ */
+const restoreIdx = process.argv.indexOf('--restore');
+const RESTORE = restoreIdx >= 0 ? (process.argv[restoreIdx + 1] ?? '').split(',').filter(Boolean) : [];
+if (RESTORE.length > 0) {
+  const before = await sql`
+    SELECT refused_class, count(*)::int AS n FROM new1_doc_vector_stage_refused
+    WHERE refused_class = ANY(${RESTORE}) GROUP BY 1 ORDER BY n DESC
+  `;
+  const total = before.reduce((a, r) => a + r.n, 0);
+  console.log(`restore ${RESTORE.join(',')}: ${total} quarantined rows`);
+  for (const r of before) console.log(`  ${r.refused_class.padEnd(22)} ${String(r.n).padStart(7)}`);
+  if (!APPLY) {
+    console.log('\ndry run — pass --apply to move them back');
+    await sql.end();
+    process.exit(0);
+  }
+  // One statement again: never in both tables, never in neither.
+  const moved = await sql`
+    WITH lifted AS (
+      DELETE FROM new1_doc_vector_stage_refused
+      WHERE refused_class = ANY(${RESTORE})
+      RETURNING judgment_id, content_hash, court, year, member_count, text_chars,
+                embedded_chars, tokens, recipe, model, embedding, created_at
+    )
+    INSERT INTO new1_doc_vector_stage
+      (judgment_id, content_hash, court, year, member_count, text_chars,
+       embedded_chars, tokens, recipe, model, embedding, created_at)
+    SELECT * FROM lifted
+    ON CONFLICT (judgment_id) DO NOTHING
+  `;
+  const [{ main }] = await sql`SELECT count(*)::int AS main FROM new1_doc_vector_stage`;
+  const [{ q }] = await sql`SELECT count(*)::int AS q FROM new1_doc_vector_stage_refused`;
+  writeFileSync(
+    new URL('../../../docs/ai/new1-tier-a/stage-restore.json', import.meta.url),
+    JSON.stringify(
+      { kind: 'new1_stage_restore', restoredClasses: RESTORE, movedRows: moved.count ?? total, stageRowsAfter: main, quarantineRowsAfter: q, byClassBefore: before, appliedAt: new Date().toISOString() },
+      null,
+      2,
+    ) + '\n',
+  );
+  console.log(`\nrestored ${moved.count ?? total}; stage now ${main}, quarantine now ${q}`);
+  await sql.end();
+  process.exit(0);
+}
 
 const before = await sql`
   SELECT coalesce(j.hc_document_class, '(null)') AS cls, count(*)::int AS n
