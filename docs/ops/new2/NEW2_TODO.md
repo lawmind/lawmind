@@ -24,8 +24,9 @@ Standing constraints:
 | 5 | P1.1 Enumerate false-positive admission mechanisms from the predicate | VERIFIED DONE | five named; three admit on absence of evidence |
 | 6 | P1.2 Measure each and rank by impact | VERIFIED DONE | no role evidence 94.1% · bail 23.2% · unreadable 8.9% · duplicates 11.2% · `decided` 75.0% |
 | 7 | P2 Canonical vocabulary: role / disposition / citability / text quality | VERIFIED DONE, LCC to ratify | `docs/ops/new2/DOCUMENT_QUALITY_VOCABULARY.md`; derivation in `quality-state.ts` |
-| 8 | P3.1 Held-out validation data for LCC's DeepSeek classification | VERIFIED DONE | 45 rows adjudicated before any model ran; `new2-heldout-questions.json` (no answers) and `new2-heldout-key.json`. Zero overlap with LCC's 1,000 — checked |
-| 9 | P3.2 Evaluate model outputs independently | VERIFIED DONE | `candidate-eval-cli.ts` over all 1,000: 59.2% of `span_not_found` and 70.4% of `no_evidence_offered` are unreadable documents; 25 of 773 verified spans are verified inside glyph codes |
+| 8 | P3.1 Held-out validation data for LCC's DeepSeek classification | VERIFIED DONE | **87 rows** adjudicated before any model ran, in two sittings that agree (31.1% vs 28.6% substantive); `new2-heldout-questions.json` (no answers) and `new2-heldout-key.json`. Zero overlap with LCC's 1,000 — checked |
+| 9 | P3.2 Evaluate model outputs independently | VERIFIED DONE | `candidate-eval-cli.ts` over all 1,000: 59.2% of `span_not_found` and 70.4% of `no_evidence_offered` are unreadable documents; 25 of 773 verified spans are verified inside glyph codes. LCC accepted the correction (0923) — their 16.9% fabrication headline is really closer to 7% |
+| 9b | P3.3 Held-out accuracy measured | VERIFIED DONE | LCC ran the key: **87.9% [72.7, 95.2]** on 33 scorable, and a **15% false-substantive rate** on the costly direction. Key extended to 87 rows so the next run roughly doubles scorable |
 | 10 | P4.1 Script-quality cursor keysets on `(created_at, id)` | VERIFIED DONE | `script-quality-page.ts`; separate checkpoint `script-quality-since.json` |
 | 11 | P4.2 Test with deliberately out-of-order ids and duplicate timestamps | VERIFIED DONE | `script-quality-page.test.ts`, 6/6 against live Postgres |
 | 12 | P5 Text-quality vocabulary; never CLEAN from a silent detector | VERIFIED DONE | five failure modes named, the fifth new; `text_quality` shown to certify 1,187/1,187 |
@@ -39,8 +40,10 @@ Standing constraints:
 | 20 | P13 eCourts request-efficiency instrumentation, testable without traffic | VERIFIED DONE | `new2-ecourts-efficiency.mjs`; reports `n/a — no denominator`, never 0 |
 | 21 | P14 Machine-readable quality export | VERIFIED DONE | `quality-export-cli.ts` + `quality-state.ts`; every verdict carries method and version |
 | 22 | P15 Workstation discipline | VERIFIED DONE | no fleet restarted; concurrency 3-4 on every probe; process table checked before each launch; the one throughput figure quoted carries the three competing jobs that were on the box |
-| 23 | NEW1's ask (0902): classify in id order AHEAD of the embedding walk | RUNNING | `hc-classify-cli --resume --confirm`. Frontier 12.5% → 18.8% of the id space overnight; NEW1 at ~1.1% |
+| 23 | NEW1's ask (0902): classify in id order AHEAD of the embedding walk | RUNNING | `hc-classify-cli --resume --confirm`. Frontier 12.5% → 18.8% of the id space overnight; NEW1 at ~1.1%. Visible in the audit: reachable-with-no-role-evidence fell 94.1% → 87.9% in half a day |
 | 24 | Screen unreadable documents out of the model-classification manifest | VERIFIED DONE | `disposal-manifest-cli.ts`; on a fresh 40,000-row walk it removes 2,950 rows, 30.9% of the would-be model queue |
+| 25 | Follow the eligibility contract to v2 when LCC changed it mid-audit | VERIFIED DONE | hash moved `e76879ab6bbcd452` → `5efa4c8decef699e` and the tool caught it. Re-measured: reachable 55.4%, `VERIFIED_SEMANTIC_CORE` **0**, matching LCC's full-view zero from the other direction |
+| 26 | Stop attributing rejections to a conjunct that stopped rejecting | VERIFIED DONE | v2 made `admitted` tier-based while attribution still tested `axis_c_role` first; 1,034 rejections read as `role` that were short documents. Rejections are 95.6% length |
 
 ## Still owed to another lane
 
