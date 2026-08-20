@@ -105,7 +105,7 @@ compaction. Update it as items move.
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 12.1 | exact routes + dense + sparse → union/dedup → reranker → currentness → evidence | TODO | do not force equal-weight RRF |
+| 12.1 | The architecture, argued from measurements | DONE | `docs/ai/NEW1_RETRIEVAL_ARCHITECTURE.md`. Exact routes ALREADY EXIST and are pinned in every mode — I had said otherwise and corrected it in bus 0927/0928. The one box worth spending on is the fusion WEIGHT, and it must not default to 50/50: dense is better at rank 1, sparse at ranks 2-20 |
 
 ## P13 — expanded HC benchmark at semantic milestones
 
@@ -118,7 +118,7 @@ compaction. Update it as items move.
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 14.1 | document-only vs +holding vs +issue vs +proposition; marginal gain per extra vector | TODO | LCC 0890 v2 gives the issue population that did not exist before |
+| 14.1 | document-only vs +holding vs +issue vs +proposition; marginal gain per extra vector | BLOCKED on population | LCC 0912: `verified_legal_object_match` covers **0.12% of judgments** and NOTHING carries a verified semantic role. A marginal-gain-per-extra-vector measurement over 0.12% of the corpus cannot generalise to the other 99.88%. Re-open when the population is material; the contract rule for it (P9.1) is already in place |
 
 ## P15 — currentness safety
 
@@ -137,7 +137,7 @@ compaction. Update it as items move.
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 17.1 | Resume the EXISTING checkpoint only; Hindi-query → English-authority, not OCR quality | TODO | |
+| 17.1 | Cross-lingual | DONE (already closed) + follow-up run | The language question was closed 19 Aug. Its open INFER — that a clean issue statement beats a citing passage — was tested and DOES NOT REPRODUCE: all three arms tie at 40% success@5. `docs/ai/new1-crosslingual/QUERY_SHAPE_ARMS.md` |
 
 ## P18 — eCourts evaluation
 
@@ -149,4 +149,4 @@ compaction. Update it as items move.
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 19.1 | Track quality, p50, p95, timeout rate, candidate count, DB time, rerank time, model time for every candidate production configuration | TODO | |
+| 19.1 | Latency for every candidate configuration | PARTIAL | dense-only 250k p50 41ms / p95 519ms; halfvec p50 14ms / p95 232ms; production hybridSearch 0.7s citation, 3.8s case name, 3.5s concept — all on a loaded box, so upper bounds. **One shape does not complete: a 900-char passage kept the sparse arm alive 32 minutes.** Handed to LCC, bus 0927 |
