@@ -463,6 +463,13 @@
       "when": 1786442200000,
       "tag": "0065_statute_mapping_authority_class",
       "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1786442300000,
+      "tag": "0066_bail_orders_are_reachable",
+      "breakpoints": true
     }
   ]
 }
