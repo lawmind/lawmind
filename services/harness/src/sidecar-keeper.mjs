@@ -21,17 +21,33 @@
  * asks the thing we actually depend on. `pgrep` does not exist on this box in a
  * form that answers the question, so the process table is not consulted at all.
  *
- * WHAT IT DELIBERATELY DOES NOT DO
- * --------------------------------
- * It does not restart the WALK. A restarted sidecar is enough for the walk's own
- * retry to succeed, and a keeper that also relaunches the runner is a keeper that
- * can start a second concurrent walk over the same manifest.
+ * IT WATCHES THE WALK TOO, AND THAT WAS A CORRECTION
+ * ---------------------------------------------------
+ * The first version of this file said, in as many words, that it deliberately did
+ * NOT restart the walk — a restarted sidecar is enough for the walk's own retry,
+ * and a keeper that relaunches the runner could start a second concurrent walk.
+ * Three and a half hours later the walk was gone and so was this keeper: both had
+ * been launched with `nohup ... &` from inside a session shell, and both died with
+ * it at 13:39Z. The GPU sat at 0% until 17:00Z. Nothing reported anything, because
+ * a process that is killed does not write "I was killed".
+ *
+ * So the reasoning was right about the RISK and wrong about the trade. Two walks
+ * is a bad outcome; zero walks for three hours is the outcome we actually got, and
+ * it is silent. The walk is now watched by SILENCE — `stage-embed.log` gains a line
+ * roughly every twenty seconds while a batch is running, so twenty minutes without
+ * one means hung or dead, and both want the same treatment. The double-walk risk is
+ * handled by killing any surviving walk processes before relaunching, not by
+ * declining to look.
+ *
+ * Silence, not exit. A worker that exits gets noticed by anything; a worker that
+ * hangs holding no connection looks perfect forever and is the failure this fleet
+ * keeps hitting.
  *
  * It refuses to start if another keeper holds the lock, because two keepers race
  * to spawn two sidecars on one port and the loser's failure is silent.
  */
 import { spawn } from 'node:child_process';
-import { appendFileSync, existsSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, statSync, writeFileSync, unlinkSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -48,6 +64,18 @@ const POLL_MS = Number(process.env.KEEPER_POLL_MS ?? 20_000);
 const MISSES_BEFORE_RESTART = Number(process.env.KEEPER_MISSES ?? 2);
 /** Loading BGE-M3 onto the GPU took 3.8 s cold; give it room before the first poll counts. */
 const WARMUP_MS = Number(process.env.KEEPER_WARMUP_MS ?? 45_000);
+
+const STAGE_LOG = join(ROOT, 'docs', 'ai', 'new1-tier-a', 'stage-embed.log');
+const WALK_LAUNCH = join(ROOT, 'services', 'harness', 'src', 'walk-launch.sh');
+const WATCH_WALK = (process.env.KEEPER_WATCH_WALK ?? '1') === '1';
+/**
+ * Twenty minutes. A running batch appends a progress line every 200 documents,
+ * which is about twenty seconds — so this is a fifty-fold margin and will not fire
+ * on a slow batch. The gap it must catch was three hours and twenty minutes.
+ */
+const WALK_SILENCE_MS = Number(process.env.KEEPER_WALK_SILENCE_MS ?? 20 * 60_000);
+/** After a relaunch, do not judge the walk again until it has had time to log. */
+const WALK_GRACE_MS = Number(process.env.KEEPER_WALK_GRACE_MS ?? 5 * 60_000);
 
 function note(line) {
   const stamped = `${new Date().toISOString()}  ${line}\n`;
@@ -109,6 +137,47 @@ function startSidecar() {
   return child.pid;
 }
 
+/**
+ * Kill anything still running the walk, then start one.
+ *
+ * The kill is by COMMAND LINE, not by a pid file, because the thing being killed
+ * may be a hung descendant several processes below the runner (bash -> npx -> cmd
+ * -> node -> node) and a pid file names only the top. `pgrep` does not exist on
+ * this box in a form that answers the question, so PowerShell's process table is
+ * the tool; `Where-Object` on the command line finds every generation.
+ */
+function relaunchWalk() {
+  // `$_.Name -ne 'powershell.exe'` is load-bearing, not defensive tidiness.
+  //
+  // A process query that matches on CommandLine MATCHES THE QUERYING SHELL: the
+  // PowerShell process running this very command has 'doc-vector-embed' in its own
+  // command line, so an unguarded filter selects it, `Stop-Process` kills the shell
+  // mid-pipeline, and the `Start-Process` that was supposed to relaunch the walk
+  // never runs. It exits 255 and prints nothing, which reads exactly like success.
+  // Verified by hand this session, three times, before the cause was obvious.
+  const ps = [
+    'Get-CimInstance Win32_Process |',
+    "Where-Object { $_.Name -ne 'powershell.exe' -and $_.CommandLine -match 'stage-runner|doc-vector-embed|walk-launch' } |",
+    'ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} };',
+    'Start-Sleep -Seconds 3;',
+    `Start-Process -FilePath 'C:\\Program Files\\Git\\bin\\bash.exe' -ArgumentList '${WALK_LAUNCH.replace(/\\/g, '\\\\')}' -WorkingDirectory '${ROOT.replace(/\\/g, '\\\\')}' -WindowStyle Hidden`,
+  ].join(' ');
+  const child = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], {
+    detached: true,
+    stdio: 'ignore',
+  });
+  child.unref();
+  note('WALK RELAUNCH issued (killed any survivors first)');
+}
+
+function walkSilentFor() {
+  try {
+    return Date.now() - statSync(STAGE_LOG).mtimeMs;
+  } catch {
+    return Number.POSITIVE_INFINITY;
+  }
+}
+
 async function main() {
   if (!claimLock()) return 1;
   const release = () => {
@@ -123,9 +192,16 @@ async function main() {
   process.on('SIGTERM', () => process.exit(0));
 
   note(`keeper up — polling ${HEALTH} every ${POLL_MS / 1000}s, restart after ${MISSES_BEFORE_RESTART} misses`);
+  note(
+    WATCH_WALK
+      ? `watching the walk too — ${STAGE_LOG} silent for ${WALK_SILENCE_MS / 60_000} min means relaunch`
+      : 'walk watching DISABLED (KEEPER_WATCH_WALK=0)',
+  );
 
   let misses = 0;
   let restarts = 0;
+  let walkRelaunches = 0;
+  let walkQuietSince = 0;
   let lastOk = Date.now();
 
   for (;;) {
@@ -147,6 +223,22 @@ async function main() {
         continue;
       }
     }
+
+    // The walk is judged only while the sidecar is answering. Relaunching a walk
+    // into a dead sidecar burns its three retries and aborts it for good.
+    if (WATCH_WALK && ok && Date.now() - walkQuietSince > WALK_GRACE_MS) {
+      const silent = walkSilentFor();
+      if (silent > WALK_SILENCE_MS) {
+        walkRelaunches += 1;
+        note(
+          `WALK SILENT for ${Math.round(silent / 60_000)} min — relaunch #${walkRelaunches}. ` +
+            'Hung and dead look identical from here and want the same treatment.',
+        );
+        relaunchWalk();
+        walkQuietSince = Date.now();
+      }
+    }
+
     await new Promise((r) => setTimeout(r, POLL_MS));
   }
 }

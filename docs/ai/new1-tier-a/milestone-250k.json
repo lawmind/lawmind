@@ -1,0 +1,202 @@
+{
+  "kind": "new1_stage_milestone",
+  "milestone": "250k",
+  "measuredAt": "2026-08-20T17:08:34.128Z",
+  "stagedRows": 255989,
+  "quarantinedRows": 34370,
+  "nonUnitNormVectors": 0,
+  "nullOrZeroTokenRows": 0,
+  "distinctCourts": 26,
+  "recipes": [
+    {
+      "recipe": "HEAD:4800",
+      "model": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+      "n": 255989,
+      "first": "2026-08-19T13:18:27.402Z",
+      "last": "2026-08-20T17:08:01.000Z"
+    }
+  ],
+  "topCourts": [
+    {
+      "court": "Madras High Court",
+      "n": 36008
+    },
+    {
+      "court": "Allahabad High Court",
+      "n": 29105
+    },
+    {
+      "court": "High Court of Punjab and Haryana",
+      "n": 22884
+    },
+    {
+      "court": "High Court of Kerala",
+      "n": 22748
+    },
+    {
+      "court": "High Court of Karnataka",
+      "n": 22719
+    },
+    {
+      "court": "High Court  for State of Telangana",
+      "n": 18518
+    },
+    {
+      "court": "Bombay High Court",
+      "n": 17374
+    },
+    {
+      "court": "Patna High Court",
+      "n": 12272
+    },
+    {
+      "court": "High Court Of Rajasthan",
+      "n": 10854
+    },
+    {
+      "court": "High Court Of Chhattisgarh",
+      "n": 9093
+    },
+    {
+      "court": "High Court of Delhi",
+      "n": 7063
+    },
+    {
+      "court": "High Court of Gujarat",
+      "n": 6939
+    },
+    {
+      "court": "Orissa High Court",
+      "n": 6832
+    },
+    {
+      "court": "High Court of Madhya Pradesh",
+      "n": 5902
+    },
+    {
+      "court": "Gauhati High Court",
+      "n": 4942
+    }
+  ],
+  "throughput": {
+    "batchesCompleted": 32,
+    "stageStartLines": 117,
+    "stageDoneLines": 45,
+    "failedLines": 69,
+    "attemptedRows": 375036,
+    "inserted": 281484,
+    "skippedAlreadyStaged": 62890,
+    "skippedNowIneligible": 20653,
+    "skippedNoText": 0,
+    "tokens": 291783594,
+    "lastTenMeanTokensPerSecond": 2687.7506773578084,
+    "lastTenMeanBatchSeconds": 211.77299999999997
+  },
+  "selfRetrieval": {
+    "sampled": 20,
+    "selfIsNearestNeighbour": 20,
+    "selfInTop3": 20,
+    "ranks": [
+      {
+        "judgmentId": "009dc860-6b2b-4df7-abf8-b414b12b5693",
+        "court": "Bombay High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dc861-09b9-4f3c-b03b-d393cbb7ff78",
+        "court": "High Court Of Chhattisgarh",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dca31-edf9-4df2-ae91-d316dc59347a",
+        "court": "High Court of Andhra Pradesh",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dcfa8-7d16-4450-a14d-23b5d09109a6",
+        "court": "High Court Of Rajasthan",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dd0f2-8779-4da6-9b02-debe08a69c4f",
+        "court": "High Court of Punjab and Haryana",
+        "rank": 1
+      },
+      {
+        "judgmentId": "03f2d845-4dda-4b19-bcf6-9912ff0f39ed",
+        "court": "High Court Of Chhattisgarh",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dd1c9-0920-4ac5-9ed0-e347a6ae5162",
+        "court": "High Court of Karnataka",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dd65b-88c1-4196-be2c-89e41b4a50ee",
+        "court": "Bombay High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dd7ce-9536-4a5f-9d89-9e683427ddb6",
+        "court": "Madras High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dd9f4-4fb7-4c41-b99a-37095a512745",
+        "court": "High Court Of Rajasthan",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dda0a-269c-4f9c-bb63-d23c9ea30688",
+        "court": "Calcutta High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009ddae6-2004-4cdf-b671-2026ba7d1c44",
+        "court": "High Court of Punjab and Haryana",
+        "rank": 1
+      },
+      {
+        "judgmentId": "03f2db35-3439-4735-aabc-82fb9399338e",
+        "court": "Bombay High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "03f2db62-cebc-4d74-b277-43e13b891f94",
+        "court": "Madras High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009ddd66-d043-402d-839f-9413d5c71aff",
+        "court": "High Court Of Chhattisgarh",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dde91-08ea-4b05-b617-69e6a7e7fcd3",
+        "court": "Allahabad High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009dde9b-979a-489a-a2eb-5fe8ac71d2c0",
+        "court": "Madras High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009ddefe-db61-41ca-868c-834af161e2ed",
+        "court": "High Court Of Chhattisgarh",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009de2d7-2c58-4759-bb12-f64318527c9b",
+        "court": "High Court of Uttarakhand",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009de463-b76e-4b8c-a43c-01db269c62b5",
+        "court": "High Court of Punjab and Haryana",
+        "rank": 1
+      }
+    ]
+  }
+}
