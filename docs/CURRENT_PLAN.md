@@ -16,6 +16,108 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 20 Aug 2026 — LCC: P. KANNADASAN IS NO LONGER GOOD LAW, `statute_mappings` HAS ROWS, AND COVERAGE HAS TWO AXES
+
+**Added by LCC (server lane).** Six things landed; each one is a founder-roadmap
+item and each is verified by reading the result back, not by trusting a run.
+
+**P0 · TREATMENT_HELD_UNALIASED_CLOSED** — commit `0da8e62`.
+`services/ingest/src/treatment-link.ts` links an adverse citation edge to a
+judgment we already hold using ONLY the equivalence the Supreme Court printed in
+the citing judgment's own Case Law list (`[1996] Supp. 4 SCR 92 : (1996) 5 SCC
+670`). 8 of 35 edges linked; `overruled --confirm` then moved six authorities to
+`set_aside`, including **P. Kannadasan**, which had been rendering as live good
+law since 13 Aug against a zero threshold. Two of NEW3's §1d UNIDENTIFIED rows
+identified themselves from their own citing judgments. Four guards, each refusing
+alone. Three false refusals were found by RUNNING it and are now fixtures: a PDF
+line wrap read the printed name as `Nadu`; the bench line before a Case Law list
+dropped *Synthetics and Chemicals* to Jaccard 0.18 (hence containment, not
+Jaccard); a flat two-token floor refused *V. Revathi* at Jaccard 1.00.
+**Still refused, correctly:** M.K. Kunhimohammed — its citing judgment prints no
+pairing, so there is no printed evidence to act on.
+
+**P1 · TIER_A_MANIFEST_COMPLETE** — 886 batches, **8,846,550** representatives
+covering **9,691,284** case identities, recounted from the 886 `.meta.json` files
+rather than read off the summary. The 7,731 short of the representative table are
+the eligibility re-check firing at manifest time, evenly spread (batch 0: a
+10,000-row page emitted 9,991). Its watchdog had restarted the finished job **576
+times** on a 10-second timer — NEW1 fixed `stall-watchdog.mjs` the same hour.
+
+**P4 · The nine atomic legal objects got their prompt builders** — commit
+`25731e9`. Migration 0054 added `issue`, `relief`, `procedural_event`,
+`date_event`, `fact_proposition`, `party_action`, `court_action`,
+`reasoning_proposition`, `statute_role` to the database CHECK on 14 Aug and
+nothing could produce one. The claim VALUE is the QUOTE, never the paraphrase;
+location is COMPUTED from the verified span, never asserted. Smoke runs:
+`court_action` 70.0% of claims verified, `statute_role` 100.0%.
+
+**P6 · Tokens per accepted verified object** — commit `2d08d1f`,
+`pnpm --filter @lawmind/ingest enrich:telemetry`.
+
+| task | docs | tokens | verified | tok/obj | claim% |
+| --- | --- | --- | --- | --- | --- |
+| metadata | 17,699 | 18.1M | 38,691 | 469 | 99.8 |
+| case_structure | 1,270 | 4.5M | 9,458 | 479 | 79.2 |
+| holding | 1,537 | 5.2M | 7,033 | 742 | 78.6 |
+| topics | 1,357 | 4.4M | 6,832 | 642 | 80.3 |
+| treatment | 8,000 | 7.5M | 5,818 | 1,288 | 84.8 |
+| arguments | 1,472 | 4.7M | 4,643 | 1,016 | 79.1 |
+| authorities | 1,516 | 4.8M | 2,299 | 2,088 | 81.4 |
+
+**75,234 verified objects for 49.7M tokens = 660 tokens per verified object.**
+`authorities` costs 4.4x `case_structure` per object at the same verification
+rate — it asks for a judgement most judgments support only a few times, so it is
+the task to scale last. **`citation_extraction` has 42 documents and ZERO
+verified claims**; recorded, not investigated. Also found: `rejection_reasons`
+holds two encodings (23,395 arrays, 9,119 double-encoded strings from a 12-13 Aug
+pass); reading only the arrays silently drops 226 real rejection reasons.
+
+**P8 · `statute_mappings` holds 226 rows, and the gate threw away 45%** —
+migration `0060` plus `statute-mappings-load-cli.ts`, both swept into NEW1's
+commit `5fb6caf` (see below). BSA 117 · BNSS 95 · BNS 14, every row carrying its
+printed evidence line, its source URL and an `effective_date` READ from
+`statutes.enforcement_date` rather than typed.
+
+The gate exists because spot-checking the parse before writing turned up
+`BNSS 24 -> CrPC 201` from a line reading `24 New proviso is added to subsection
+(1).` — **`201` is not on that line.** The parser reads by column position and a
+wrapped summary drops a neighbour's number into the old-section column. Every
+mapping now has to survive the test a legal-object claim survives: the old
+section must appear as a standalone token in its own printed line or the two
+after it. It rejected **191 of 420** — 174 of them BNSS, 0 of them BSA, which is
+the same ranking the coverage figures already gave. Coverage stays 6.4% / 42.4% /
+70.6% and every run prints it: **the absence of a mapping means the parser has
+not read it, never that no counterpart exists.**
+
+**P9 · CRIMINAL_CODE_TRANSITION_READY** — `transition.ts` (commit `7098842`,
+verified live this session). No offence date ⇒ `indeterminate`, and the answer is
+to ask for the date rather than pick IPC or BNS. NEW1's `adv-5` passes. The
+commencement date is read from `statutes`; disagreeing rows produce a REFUSAL.
+
+**P11 · COVERAGE_CONTRACT_READY** — commit `a1d131b`, migration `0059`,
+966 court-year cells: COVERED 631 · PARTIAL 257 · UNKNOWN 77 · SOURCE_HAS_ZERO 1;
+EMBEDDED 558 · LEXICAL_ONLY 408. **Zero KNOWN_GAP, and that is a correction:**
+NEW1 counted Bombay 2005-2011 as absent entirely on 18 Aug; against NEW2's 19 Aug
+frontier those years hold 87.5%-99.8% of source. The fleet filled it between the
+two measurements, which is the argument for a table with a `measured_at` rather
+than a number in a document. **No PARTIAL threshold is encoded** — `held_share`
+is stored so `PRODUCT_DECISIONS.md` can draw that line later.
+
+**Two operational notes.**
+
+`scripts/legal-object-factory.sh` is superseded by `legal-object-factory.mjs`:
+the bash loop died with `dofork: child -1 ... 0xC000026B, errno 11` — git-bash's
+fork emulation runs out under a loop that forks node+timeout+grep every batch.
+The Node version spawns Win32 processes directly and carries the nine atomic
+tasks behind the five composites.
+
+**Commit `5fb6caf` (NEW1's) contains six LCC files.** They were staged when NEW1
+committed in the shared working tree — migration 0060, its journal entry,
+`statute-mappings-load-cli.ts`, `legal-object-factory.mjs`, the `.sh` and
+`services/ingest/package.json`. Nothing is lost and history is not being
+rewritten; the P8 reasoning that would have been in that commit message is the
+section above, which is why it is here in full.
+
 ### 20 Aug 2026 — NEW2: THE HISTORICAL BULK FRONTIER IS CLOSED, AND `decided_brief` IS 15.6% PRECISE
 
 **Added by NEW2 (ingestion lane).** Artifacts `docs/ops/migration/new2-frontier.txt`,
