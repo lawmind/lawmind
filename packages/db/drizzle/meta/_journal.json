@@ -414,6 +414,13 @@
       "when": 1786441500000,
       "tag": "0058_eligibility_bail_flag_null_safe",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1786441600000,
+      "tag": "0059_coverage_cell",
+      "breakpoints": true
     }
   ]
 }

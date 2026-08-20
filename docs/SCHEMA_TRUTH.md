@@ -1805,6 +1805,40 @@ deleting them destroys the ability to reproduce the comparison that replaced the
 
 ---
 
+## coverage_cell
+
+Migration `0059`. **Two INDEPENDENT coverage axes per court × year**, read by the
+retrieval path in one indexed lookup.
+
+`docs/ai/NEW1_COVERAGE_STATE_CONTRACT.md`: the grouped count over `judgments`
+that produces this took **86.5 seconds** live, and retrieval is already the
+majority of slow statements on the box. So it is precomputed and refreshed by
+`pnpm --filter @lawmind/ingest coverage:cells --apply`, which reads NEW2's
+`new2-frontier.json` for the acquisition axis and measures reachability itself.
+
+| axis | columns | states |
+| --- | --- | --- |
+| acquisition | `source_rows` · `source_provenance` · `held` · `held_share` | `source_state`: `COVERED` \| `PARTIAL` \| `KNOWN_GAP` \| `SOURCE_HAS_ZERO` \| `UNKNOWN` |
+| reachability | `embedded` · `eligible` | `reachability`: `EMBEDDED` \| `LEXICAL_ONLY` \| `UNKNOWN` |
+
+**Never folded into one enum.** A cell can be `COVERED` and `LEXICAL_ONLY` at
+once — held in full, invisible to the dense arm — and the two produce the same
+empty screen for opposite reasons.
+
+`UNKNOWN` is the DEFAULT on both axes and must never render as `COVERED`; a cell
+absent from the table is `UNKNOWN` for the same reason. `SOURCE_HAS_ZERO`
+requires a POSITIVE source measurement of zero, never the absence of one.
+
+**No PARTIAL threshold is encoded.** Where partial stops being an answer is a
+product judgement (`PRODUCT_DECISIONS.md`); `held_share` is stored so that line
+can be drawn later without recomputing anything. `source_provenance` is stored
+because the denominator counts parquet ROWS, not documents, and over-reports gaps.
+
+Three `measured_at` columns, not one: source, held and embedded are measured by
+different jobs at different cadences, and a single timestamp would hide which is
+stale. First load 20 Aug 2026: 966 cells — 631 COVERED, 257 PARTIAL, 77 UNKNOWN,
+1 SOURCE_HAS_ZERO; 558 EMBEDDED, 408 LEXICAL_ONLY.
+
 ## THE FINDING: STATISTICS WERE A WEEK AND THREE MIGRATIONS STALE
 
 `pg_stat_user_tables` reported `judgments.last_analyze = NULL` and
