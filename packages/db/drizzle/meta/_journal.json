@@ -442,6 +442,20 @@
       "when": 1786441900000,
       "tag": "0062_coverage_shortfall_layers",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1786442000000,
+      "tag": "0063_semantic_tier_and_decided_brief",
+      "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1786442100000,
+      "tag": "0064_trust_lifecycle_and_class_candidates",
+      "breakpoints": true
     }
   ]
 }
