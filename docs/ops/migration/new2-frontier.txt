@@ -1,10 +1,5 @@
 CURRENT ACTIONABLE CORPUS FRONTIER - measured from ingest cursors, not from source minus held
-  source 2026-08-11T09:24:03.309Z | held 2026-08-19T23:10:02.072Z | ledger 2026-08-19T23:10:03.022Z | 99 checkpoints
-
-  *** HELD SNAPSHOT IS 1s OLDER THAN THE NEWEST CURSOR WRITE ***
-  A worker wrote after this snapshot. Every acquired/heldShare figure is a LOWER bound,
-  and a cell may read as an acquisition gap that is already filled. Re-run
-  new2-held-refresh.mjs before quoting any coverage number from this run.
+  source 2026-08-11T09:24:03.309Z | held 2026-08-20T11:55:23.117Z | ledger 2026-08-19T23:10:03.022Z | 99 checkpoints
 
   SOURCE ROWS (upper bound)     20,239,701   fixture rows already removed
   SOURCE ROWS EXCLUDED            289,502   bench=testcase, refused by hc-load, never fetchable
@@ -22,3 +17,5 @@ CURRENT ACTIONABLE CORPUS FRONTIER - measured from ingest cursors, not from sour
   COURTS WITH WORK REMAINING, ranked by unwalked rows (cursor where one exists, held_fallback where not):
 
   NO CURSOR AND WORK REMAINING: none.
+
+  json: C:\Users\Xerxus\Documents\Lawmind\docs\ops\migration\new2-frontier.json

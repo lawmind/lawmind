@@ -1,0 +1,69 @@
+{
+  "kind": "new1_arm_compare",
+  "armA": {
+    "file": "docs/ai/new1-tier-a/expansion-benchmark-250k.json",
+    "table": "new1_probe_fp32_250k",
+    "efSearch": 200,
+    "latencyMs": {
+      "p50": 41,
+      "p95": 519,
+      "max": 1225
+    }
+  },
+  "armB": {
+    "file": "docs/ai/new1-tier-a/expansion-benchmark-250k-halfvec.json",
+    "table": "new1_probe_half_250k",
+    "efSearch": 200,
+    "latencyMs": {
+      "p50": 14,
+      "p95": 232,
+      "max": 1022
+    }
+  },
+  "sharedQueries": 684,
+  "perQueryType": [
+    {
+      "queryType": "proposition",
+      "queries": 228,
+      "bImproved": 9,
+      "bWorsened": 4,
+      "tied": 215,
+      "enteredTop5": 4,
+      "leftTop5": 1,
+      "sumRankDelta": -128,
+      "meanRankDelta": -0.561,
+      "movedQueries": 13,
+      "signTestP": 0.2668,
+      "verdict": "NO DIFFERENCE DETECTED"
+    },
+    {
+      "queryType": "exact_citation",
+      "queries": 228,
+      "bImproved": 4,
+      "bWorsened": 2,
+      "tied": 222,
+      "enteredTop5": 1,
+      "leftTop5": 1,
+      "sumRankDelta": -5,
+      "meanRankDelta": -0.022,
+      "movedQueries": 6,
+      "signTestP": 0.6875,
+      "verdict": "NO DIFFERENCE DETECTED"
+    },
+    {
+      "queryType": "case_title",
+      "queries": 228,
+      "bImproved": 7,
+      "bWorsened": 9,
+      "tied": 212,
+      "enteredTop5": 0,
+      "leftTop5": 5,
+      "sumRankDelta": 276,
+      "meanRankDelta": 1.211,
+      "movedQueries": 16,
+      "signTestP": 0.8036,
+      "verdict": "NO DIFFERENCE DETECTED"
+    }
+  ],
+  "comparedAt": "2026-08-20T17:30:44.042Z"
+}

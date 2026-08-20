@@ -1,13 +1,13 @@
 {
  "tool": "scripts/migration/new2-held-refresh.mjs",
- "takenAt": "2026-08-19T23:10:02.072Z",
+ "takenAt": "2026-08-20T11:55:23.117Z",
  "database": "postgresql://***@127.0.0.1:5432/lawmind",
  "method": "exact count(*) from the heap, GROUP BY court, year(judgment_date), partition year from source_url -- NOT reltuples. Rows with a NULL judgment_date are counted under year \"null\" rather than dropped.",
  "yearDefinitions": {
   "heldByCourtCodeByYear": "year(judgment_date) -- when the case was DECIDED. What every coverage report means by a year.",
   "heldByCourtCodeBySourceYear": "the year= segment of source_url -- when the object was PUBLISHED to the bucket. The only one commensurable with HC_METADATA_SURVEY.json, and the only one a scheduler may subtract from source."
  },
- "elapsedMs": 200754,
+ "elapsedMs": 169119,
  "totalRowsCounted": 18698968,
  "nullJudgmentDateRows": 0,
  "sourceYearUnattributable": 0,

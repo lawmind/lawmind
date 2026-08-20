@@ -1,10 +1,10 @@
 {
  "tool": "scripts/migration/new2-coverage-report.mjs",
- "takenAt": "2026-08-19T23:13:14.885Z",
+ "takenAt": "2026-08-20T17:17:40.655Z",
  "derivedFrom": {
   "source": "docs/HC_METADATA_SURVEY.json perCourtPerYear (2026-08-11T09:24:03.309Z)",
   "sourceExclusions": "docs/ops/migration/new2-source-exclusions.json (2026-08-19T23:02:05.802Z)",
-  "held": "new2-held-by-court-year.json heldByCourtCodeBySourceYear (2026-08-19T23:10:02.072Z)",
+  "held": "new2-held-by-court-year.json heldByCourtCodeBySourceYear (2026-08-20T11:55:23.117Z)",
   "ledger": "new2-ledger-by-court-year.json (2026-08-19T23:10:03.022Z)"
  },
  "caveats": [

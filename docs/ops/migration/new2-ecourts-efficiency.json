@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-08-20T17:20:58.238Z",
+  "lane": "NEW2",
+  "windowDays": 30,
+  "since": "2026-07-21T17:20:57.989Z",
+  "grant": {
+    "maxRequestsPerHour": 100,
+    "maxRequestsPerDay": 1000,
+    "minIntervalMs": 2000
+  },
+  "requests": {
+    "total": 52,
+    "made": 0,
+    "refused": 52,
+    "ok": 0,
+    "failed": 0,
+    "firstAt": "2026-08-09T21:29:01.687Z",
+    "lastAt": "2026-08-11T19:56:48.855Z",
+    "peakHourAgainstCeiling": {
+      "peak": 0,
+      "ceiling": 100
+    },
+    "peakDayAgainstCeiling": {
+      "peak": 0,
+      "ceiling": 1000
+    },
+    "refusalReasons": {
+      "kill_switch_off": 52
+    }
+  },
+  "observations": {
+    "total": 0,
+    "distinctPayloads": 0,
+    "duplicates": 0,
+    "duplicateRate": null,
+    "parsed": 0,
+    "partial": 0,
+    "unreadable": 0
+  },
+  "stateChanges": {
+    "transitions": 0,
+    "unnotified": 0
+  },
+  "efficiency": {
+    "requestsPerNewFact": null,
+    "requestsPerStateChange": null,
+    "observationsPerRequest": null,
+    "failureRate": null
+  },
+  "byCourt": [
+    {
+      "court": "delhi_hc",
+      "requests": 52,
+      "made": 0,
+      "observations": 0,
+      "distinctPayloads": 0,
+      "duplicateRate": null,
+      "requestsPerNewFact": null
+    }
+  ],
+  "caveats": [
+    "A rate over a zero denominator is null, never 0. \"We made no requests\" and \"we made requests and none was wasted\" are different facts and a dashboard that renders them the same is lying by omission.",
+    "Refusals are rows in the ledger but do not consume quota, so they are excluded from every headroom figure and included in the totals. The ledger records refusals precisely so that the locks can be shown to have held.",
+    "requestsPerNewFact counts a DISTINCT payload as the fact. Two fetches returning identical bytes are one fact and two requests, which is exactly the waste this measures.",
+    "A duplicate observation is still written. There is no unique constraint on payload_sha256 because the court repeating itself on a later date is a different fact from our not having asked, and collapsing them would destroy the signal this tool reads.",
+    "A state change is an ecourts_transition row, derived by LCC. This tool counts them; it never derives one, and in particular it never treats a cause-list appearance as a hearing having occurred."
+  ]
+}

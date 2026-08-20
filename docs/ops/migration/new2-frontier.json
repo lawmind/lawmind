@@ -1,18 +1,18 @@
 {
  "tool": "scripts/migration/new2-frontier.mjs",
- "takenAt": "2026-08-19T23:10:03.317Z",
+ "takenAt": "2026-08-20T17:17:40.564Z",
  "derivedFrom": {
   "source": "docs/HC_METADATA_SURVEY.json perCourtPerYear (2026-08-11T09:24:03.309Z)",
   "sourceExclusions": "docs/ops/migration/new2-source-exclusions.json (2026-08-19T23:02:05.802Z) — 289,502 fixture rows subtracted before any arithmetic",
-  "held": "new2-held-by-court-year.json (2026-08-19T23:10:02.072Z)",
+  "held": "new2-held-by-court-year.json (2026-08-20T11:55:23.117Z)",
   "ledger": "new2-ledger-by-court-year.json (2026-08-19T23:10:03.022Z)",
   "cursors": "services/ingest/.checkpoints - 99 read, 1 unparseable"
  },
  "heldFreshness": {
-  "heldTakenAt": "2026-08-19T23:10:02.072Z",
-  "newestCursorWrite": "2026-08-19T23:10:02.915Z",
-  "heldIsStale": true,
-  "staleBySeconds": 1,
+  "heldTakenAt": "2026-08-20T11:55:23.117Z",
+  "newestCursorWrite": "2026-08-19T23:50:16.212Z",
+  "heldIsStale": false,
+  "staleBySeconds": 0,
   "meaning": "When heldIsStale is true a worker wrote after the held snapshot was taken, so every `acquired` and `heldShare` below is a LOWER bound and a cell can read as an acquisition gap that has since been filled. Cursors and remaining are unaffected — they come from the checkpoints."
  },
  "caveats": [

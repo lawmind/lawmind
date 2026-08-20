@@ -79,6 +79,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { openDb } from './db-host.ts';
 import { MINED_MARKERS, SUSPECT_MARKER_RATE, textSignature } from './legacy-font.ts';
+import { pageAll, pageSince } from './script-quality-page.ts';
 
 const url = process.env['DATABASE_URL'];
 if (!url) {
@@ -157,7 +158,9 @@ function loadCheckpoint(): Checkpoint {
       /* A different boundary is a different pass. Continuing the old cursor
        * would skip everything between the two boundaries and report the skip as
        * progress. */
-      console.log(`checkpoint was built for --since ${c.since ?? '(none)'} — restarting for ${SINCE}`);
+      console.log(
+        `checkpoint was built for --since ${c.since ?? '(none)'} — restarting for ${SINCE}`,
+      );
       return fresh();
     }
     return c;
@@ -218,41 +221,26 @@ try {
     if (LIMIT > 0 && counts.screened >= LIMIT) break;
     const want = LIMIT > 0 ? Math.min(BATCH, LIMIT - counts.screened) : BATCH;
 
-    /* Keyset pagination, never OFFSET. `id > cursor ORDER BY id LIMIT n` is an
-     * index scan of `judgments_pkey` whose cost does not grow with how far in
-     * the pass has got; OFFSET re-reads everything skipped, on every batch. */
-    const rows = SINCE
-      ? /* Composite keyset on (created_at, id). ROW(...) > ROW(...) is the one
-         * form Postgres can drive off `judgments_created_at_idx` while still
-         * being total — comparing the two columns with AND/OR by hand either
-         * loses rows that share a timestamp or re-reads them for ever. The
-         * --courts filter composes as an ordinary predicate. */
-        ((await sql`
-          SELECT id, court, source_url, full_text, created_at
-            FROM judgments
-           WHERE created_at >= ${SINCE}::timestamptz
-             AND (created_at, id) > (${ckpt.cursorAt ?? EPOCH}::timestamptz, ${ckpt.cursor}::uuid)
-             ${
-               COURTS.length
-                 ? sql`AND source_url LIKE ANY(${COURTS.map((c) => `%/court=${c}/%`)}::text[])`
-                 : sql``
-             }
-           ORDER BY created_at, id
-           LIMIT ${want}`) as unknown as Row[])
-      : COURTS.length
-      ? ((await sql`
-          SELECT id, court, source_url, full_text
-            FROM judgments
-           WHERE id > ${ckpt.cursor}::uuid
-             AND source_url LIKE ANY(${COURTS.map((c) => `%/court=${c}/%`)}::text[])
-           ORDER BY id
-           LIMIT ${want}`) as unknown as Row[])
-      : ((await sql`
-          SELECT id, court, source_url, full_text
-            FROM judgments
-           WHERE id > ${ckpt.cursor}::uuid
-           ORDER BY id
-           LIMIT ${want}`) as unknown as Row[]);
+    /* Keyset pagination, never OFFSET, in both directions. The two page queries
+     * live in `script-quality-page.ts` so a test can drive them against a table
+     * whose ids are deliberately out of order — the id-watermark defect they
+     * exist to prevent exits with status 0 and cannot be caught by reading a
+     * successful run's output. */
+    const rows = (SINCE
+      ? await pageSince({
+          sql,
+          since: SINCE,
+          cursorAt: ckpt.cursorAt ?? EPOCH,
+          cursor: ckpt.cursor,
+          courts: COURTS,
+          limit: want,
+        })
+      : await pageAll({
+          sql,
+          cursor: ckpt.cursor,
+          courts: COURTS,
+          limit: want,
+        })) as unknown as Row[];
 
     if (rows.length === 0) break;
 

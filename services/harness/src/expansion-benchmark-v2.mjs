@@ -44,9 +44,20 @@ const LABEL = process.env.MILESTONE ?? '250k';
 const TABLE = process.env.PROBE_TABLE ?? `new1_probe_fp32_${LABEL}`;
 /** Production runs 200. Measuring at 40 answered a question production does not ask. */
 const EF_SEARCH = Number(process.env.EF_SEARCH ?? 200);
+/**
+ * The query literal must be cast to the COLUMN's type or Postgres will not use the
+ * HNSW index and will silently fall back to a sequential scan — same answers, two
+ * orders of magnitude slower, and the latency figures would then be about the
+ * wrong thing. Derived from the table name so the halfvec arm cannot be run with
+ * the fp32 cast by accident.
+ */
+const CAST = /_half_/.test(process.env.PROBE_TABLE ?? '') ? 'halfvec' : 'vector';
 const TOP_K = Number(process.env.TOP_K ?? 50);
 const GOLD = new URL('../../../docs/ai/new3-semantic-expansion-gold.json', import.meta.url);
-const OUT = new URL(`../../../docs/ai/new1-tier-a/expansion-benchmark-${LABEL}.json`, import.meta.url);
+// The arm is in the FILENAME. Without it the halfvec run silently overwrites the
+// fp32 report and the comparison is between a file and its own replacement.
+const ARM = CAST === 'halfvec' ? '-halfvec' : '';
+const OUT = new URL(`../../../docs/ai/new1-tier-a/expansion-benchmark-${LABEL}${ARM}.json`, import.meta.url);
 
 const sql = postgres(url, { ssl: false, max: 1, connection: { statement_timeout: 300_000 }, onnotice: () => {} });
 
@@ -115,7 +126,7 @@ for (const [i, row] of loaded.rows.entries()) {
   const lit = '[' + vectors[i].join(',') + ']';
   const t = Date.now();
   const hits = await sql.unsafe(
-    `SELECT judgment_id FROM ${TABLE} ORDER BY embedding <=> $1::vector LIMIT ${TOP_K}`,
+    `SELECT judgment_id FROM ${TABLE} ORDER BY embedding <=> $1::${CAST} LIMIT ${TOP_K}`,
     [lit],
   );
   latencies.push(Date.now() - t);
@@ -170,6 +181,7 @@ const report = {
   kind: 'new1_expansion_benchmark_v2',
   milestone: LABEL,
   probeTable: TABLE,
+  queryCast: CAST,
   efSearch: EF_SEARCH,
   topK: TOP_K,
   measuredAt: new Date().toISOString(),
