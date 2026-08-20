@@ -17,6 +17,107 @@ correct and the gap in this file was real.
 
 ---
 
+## OD-14 — `set_aside` is doing the work of `overruled`, and it disables add-to-matter · OPEN · 20 Aug 2026
+
+**Needs:** a call on whether `overruled_status` should distinguish an **overruled**
+authority from a **set aside** one, and — the part that actually bites — whether
+an overruled authority should still be addable to a matter.
+
+**The measurement.** 73 of the 98 judgments currently marked non-current carry
+`set_aside`, and **every one of them was derived from a `judgment_citations`
+edge whose relationship is `overruled`.** Verified live 20 Aug; the full
+reconciliation is `docs/TREATMENT_MANIFEST_RECONCILED.md` §3.
+
+**Why the two words are not synonyms.**
+
+- **Set aside** — an appellate court undid *this judgment in this case*. The
+  decision between the parties is gone.
+- **Overruled** — a later, usually larger bench held the *proposition* is no
+  longer good law. **The original decision between the original parties stands**,
+  and the judgment frequently remains citable for propositions the later court
+  never reached.
+
+Every one of the seven verified rows is an overruling by a Constitution Bench.
+E.V. Chinnaiah was overruled by seven judges in *State of Punjab v. Davinder
+Singh*; nothing in Chinnaiah's own case was set aside.
+
+**Why this is not an engineering fix.** `CLAUDE.md` §6: *"`set_aside` disables
+add-to-matter — the one case where Lawmind refuses to let an authority be used."*
+So today an overruled-but-intact authority is refused on exactly the same footing
+as a judgment that no longer exists. Whether that is right is a **product**
+judgement about what an advocate is allowed to rely on, not a data question —
+and the four values appear in `CLAUDE.md`, the session hook, `SCHEMA_TRUTH.md`
+and RCC's rendering, so changing them is a cross-lane contract change.
+
+**What is NOT at issue.** The evidence is sound and no row needs re-deriving.
+The verified treatment edge already carries the full seven-value vocabulary
+(`cites · followed · distinguished · overruled · approved · doubted ·
+overruled_in_part`), and zero judgments are marked non-current on a
+`distinguished` edge or on no edge at all. If this resolves toward a distinct
+`overruled` state it is a **relabel of 73 rows whose supporting edges already say
+`overruled`** — the data to do it correctly is in the graph today.
+
+**Three ways it could go**, none of them chosen here:
+
+1. Add `overruled` / `overruled_in_part` to `overruled_status` and relabel. Most
+   truthful; costs a contract change and an RCC render change.
+2. Keep four values, and move the add-to-matter refusal off `set_aside` alone so
+   the block matches the act rather than the label.
+3. Keep as-is and accept that `set_aside` means "adverse, strongest class". Costs
+   nothing and leaves the product refusing authorities it need not refuse.
+
+**Does not block:** anything currently queued. The reconciliation, the coverage
+work and the legal-object factory all proceed unchanged. **Blocks:** any claim
+that Lawmind distinguishes overruling from setting aside, which it does not yet.
+
+---
+
+## OD-13 — Pre-1950 Privy Council / colonial HC reporters: usable at all under the raw-text-not-reporter rule? · OPEN · 14 Aug 2026
+
+**Needs:** a call on whether pre-1950 historical law reports (Privy Council
+appeals, Bengal Law Reports, Calcutta Law Journal and similar) can be ingested
+under the existing "raw court text, never a law report's edition" rule
+(CLAUDE.md §6, *Eastern Book Company v. D.B. Modak*), or whether the rule
+forecloses this whole category. Neither NEW3 (found it) nor LCC (asked)
+resolves this alone — it is a copyright-risk judgment call, not a technical one.
+
+**Why it is a decision and not a task.** NEW3 (bus 0406) confirmed a real,
+free, unpaywalled source: the Digital Library of India mirror on archive.org,
+1,676 items tagged `subject:law`, 571 matching "law reports"/"Privy
+Council"/"Indian Appeals" directly, one item fetched and verified (*Privy
+Council Judgments on Appeals from India*, Vol 1, 1825–1862, full
+PDF/EPUB/plain-text/OCR). This is Privy Council and colonial-era High Court
+material with **no eCourts/AWS equivalent at all** — genuinely additive for
+the 1825–1947 span, not a duplicate of anything held.
+
+**The rule as written assumes an alternative exists.** For modern reporters
+(SCC, AIR), the raw judgment text is also available from the court itself or
+AWS Open Data, so "use raw text, skip the reporter's headnotes/editorial
+numbering" is a straightforward substitution. **For most pre-1950 material,
+the historical law report may be the only surviving record — there is no raw
+court text to fall back to.** That does not automatically clear it: *E.B.C. v.
+D.B. Modak*'s copyright concern is specifically the reporter's editorial
+layer (headnotes, paragraph numbering, cross-references), not the judgment
+text itself, and that layer is *more* entangled with the judgment text in
+colonial-era reporting — Privy Council appeal reports of that period
+routinely interleave the reporter's own summary of arguments with the actual
+judgment, unlike a modern SCC headnote that sits cleanly above a clean
+judgment body. Whether "extract only the judge's own words, discard the
+reporter's layer" is even mechanically separable for this material — and
+whether attempting it is a defensible reading of the rule or a rationalisation
+of the only source that exists — is exactly the call neither research lane
+should make unilaterally.
+
+**Not yet filed to `FOUNDER_QUEUE.md`** (NEW3's call, and the right one): a
+licence read is the wrong next step before this question has an answer, since
+the answer might rule the source out regardless of licence terms.
+
+**Cost if never resolved:** the entire pre-1950 span (1825–1947) — currently a
+complete gap, no source of any kind — stays unaddressable, and DLI's other
+571+ matching items go unevaluated pending the same answer.
+
+---
+
 ## OD-12 — The saved-search feed, a proposed REFRAME of PD-5 · OPEN · 11 Aug 2026
 
 **Needs:** the founder to confirm or reject **an in-app saved-search feed**, and
