@@ -1,0 +1,178 @@
+# MODEL CLASSIFICATION — THE 1K RUNG, AND WHY THE LADDER STOPS HERE
+
+**20 August 2026 · LCC · DeepSeek V4 Flash (`deepseek-v4-flash-0731`) via InferX**
+
+The directive's ladder was `1k → audit → 10k → audit → 50k → audit`, "remaining
+only if precision supports it". The 1k rung ran and the audit says **precision
+does not support it in this form.** The recommendation is not more volume; it is
+a different method at the same volume.
+
+---
+
+## 1 · WHAT RAN
+
+`hc-adjudicate-cli.ts --manifest new2-model-classification-manifest.jsonl
+--limit 1000 --persist`
+
+The manifest is NEW2's enumeration (bus 0850) of the **190,102 rows the frozen
+deterministic screen cannot call either way** — the near-ties. Rows the screen
+*can* call are excluded on purpose: paying a capacity-limited free tier to
+re-derive a verdict a two-marker margin already reached buys nothing.
+
+Nothing was written to `judgments`. Candidates land in `hc_class_candidate`
+(migration 0064), whose CHECK refuses a `promoted_at` without
+`CANONICAL_TRUSTED`. Zero rows are promoted.
+
+## 2 · THE HEADLINE NUMBERS, n = 1,000
+
+```
+verified               773    77.3%
+span_not_found         169    16.9%   <- quoted words the document does not contain
+cannot_determine        48     4.8%
+span_too_short           5     0.5%
+unparseable              5     0.5%
+```
+
+Class distribution among the 773 span-verified:
+
+```
+procedural_disposal    541    70.0%
+decided                121    15.7%
+bail_order              61     7.9%
+reference_stub          31     4.0%
+decided_brief           19     2.5%
+```
+
+**16.9% fabrication.** Roughly one call in six quotes words the document does not
+contain. `adjudicate()` discards the class whenever the span fails, so none of
+those became a classification — but it is the rate at which this model invents
+supporting text when asked for it, and it is the reason nothing here may
+auto-promote.
+
+**70% procedural.** On the near-ties the model reads the residue as
+overwhelmingly procedural. NEW2 stated that their screen **leans `decided`** and
+that the 662,884 it excluded are therefore an **upper bound** on substantive
+content. This measurement is consistent with that and sharpens it: where the
+screen cannot decide, the answer is mostly *not a decision*.
+
+## 3 · THE FINDING THAT STOPS THE LADDER — n = 300
+
+300 documents from the 1,000 were adjudicated a **second time**, independently,
+same model, same prompt, same window.
+
+```
+identical CLASS                       243 / 300   81.0%   [76.2, 85.0]
+identical span VERDICT                257 / 300   85.7%   [81.2, 89.2]
+both runs span-verified               218 / 300
+   ...and agreeing on the class       191 / 218   87.6%   [82.6, 91.3]
+```
+
+Wilson 95% intervals. An earlier n=40 pass gave 82.5%, so the figure is stable
+across two sample sizes.
+
+### Three things follow, and the third is the one that matters
+
+**Self-agreement bounds achievable precision.** A verdict the model will not
+reproduce cannot be more accurate than it is stable. **81.0% is a ceiling**, and
+any single-run precision claim materially above it would be measuring noise
+rather than the model.
+
+**Span verification does not stabilise the class.** Restricting to documents
+where *both* runs produced a verified span, class agreement only rises from 81.0%
+to 87.6% — and 27 of those 218 pairs are two verified quotations supporting two
+*different* classes. This is `MODEL_PROPOSED → SPAN_VERIFIED →
+SEMANTIC_ROLE_VERIFIED` (migration 0064) demonstrated rather than argued: a real
+span proves the words are in the document and proves nothing about the role
+assigned to them.
+
+**The flips land on the boundary that decides Tier A.**
+
+```
+  6   decided -> procedural_disposal
+  6   procedural_disposal -> decided
+```
+
+Symmetric, both directions, on the one distinction that determines whether a
+document enters the semantic core. Twelve documents in 300 — **4%** — crossed it
+between two runs of the same model on the same text. The next-largest group,
+`procedural_disposal -> (none)` at 11, is a refusal rather than a
+misclassification and is the harmless direction.
+
+## 4 · THE EVIDENCE ITSELF READS WELL — AND THAT IS NOT THE SAME THING
+
+Eight `procedural_disposal` candidates were read against their spans:
+
+- petition filed prematurely, court declines to entertain
+- disposed in terms of consent terms
+- disposed directing the respondent to consider an application
+- time extended to execute sureties
+- audit report accepted under s. 462, application disposed
+- application infructuous on counsel's own submission
+- disposed at the admission stage
+
+**Eight of eight are correctly procedural on my reading.** The model is not
+guessing wildly; where it commits, it commits sensibly.
+
+But one span was `"This original petition is disposed of as above."` That
+verifies trivially, appears in thousands of documents, and **supports no class on
+its own** — the reasoning did the work, and the reasoning is unverified prose.
+
+Measured across all 773 verified spans:
+
+```
+mean length                                     133 chars
+median                                          112 chars
+under 60 characters                             135    17.5%
+pure disposal boilerplate, no case content       38     4.9%
+```
+
+So the span check confirms a quotation is **present**. It cannot confirm it is
+**discriminative**, and ~5% provably are not. That is a concrete, nameable
+requirement for the `SEMANTIC_ROLE_VERIFIED` stage rather than a vague one.
+
+## 5 · RECOMMENDATION — CHANGE THE METHOD, NOT THE VOLUME
+
+**Do not run the 10k rung as a single pass.** It would produce 10,000 verdicts of
+which roughly 1,900 would not survive a re-run, distributed across exactly the
+boundary that matters, and no downstream consumer could tell which 1,900.
+
+Instead, at the same or lower spend:
+
+1. **Two independent runs, and require agreement.** Documents where the two runs
+   agree AND both spans verify are the only ones worth carrying forward — about
+   64% of documents (0.727 both-verified × 0.876 agreeing) at 2× the per-document
+   cost. Same money buys half the population with a stability guarantee instead
+   of twice the population without one.
+2. **Disagreement is `UNCERTAIN`, and it stays there.** Not a tie-break, not a
+   third run, not the higher-confidence answer. The directive is explicit that
+   UNCERTAIN remains UNCERTAIN, and a model's `stated_confidence` is a token
+   distribution rather than a calibrated probability — `hc_class_candidate`
+   records it and nothing acts on it.
+3. **Require a discriminative span, not merely a present one.** Reject spans
+   under 60 characters and spans that are pure disposal boilerplate. On this
+   sample that is ~17.5% and ~4.9% of verified spans respectively.
+4. **Do not force 100% classification.** The directive says so and the data
+   agrees: at 81% self-agreement, the marginal document is one the model will
+   answer differently tomorrow.
+
+## 6 · WHAT THIS DOES NOT SHOW
+
+- **No accuracy measurement against ground truth.** Everything here is
+  self-agreement, span presence and one reader's spot-check of eight documents.
+  Self-consistency bounds accuracy from above; it does not establish it. A
+  human-labelled sample is still owed and nothing in this file substitutes for
+  one.
+- **The 8/8 evidence audit is a single annotator, unblinded, on a
+  non-random draw** (`ORDER BY random()` over `procedural_disposal` only). It
+  says the class is not obviously broken. It is not a precision estimate.
+- **Only `procedural_disposal` evidence was read.** `decided` — the class that
+  actually admits documents to Tier A, and the one with the higher error cost —
+  was not audited here.
+- **The manifest is a frozen snapshot and the corpus is not.** Rows whose
+  `hc_class_method` changed since enumeration are refused by the gate at fetch
+  time rather than adjudicated on a stale premise, but the population itself
+  ages.
+- **Second runs were not persisted.** `--persist` was omitted on the
+  reproducibility pass, so `hc_class_candidate` holds the first answer for every
+  document. The disagreement measurement lives in the JSONL artifacts, not in the
+  table.
