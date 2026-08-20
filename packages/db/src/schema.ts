@@ -1135,6 +1135,125 @@ export const ecourtsFetchLedger = pgTable(
 );
 
 /**
+ * What a source published, as it published it. **Append-only, enforced by a
+ * trigger in migration 0061 — an UPDATE or DELETE raises.**
+ *
+ * Deliberately has no foreign key to `judgments`, not even a nullable one. A
+ * cause-list entry and a next-hearing date are registry bookkeeping; `judgments`
+ * is the population the retrieval lane treats as authority. A nullable link is
+ * an invitation to backfill one, and once embeddings and citation edges are
+ * built over registry rows there is no undo.
+ *
+ * `observationKind` has no `hearing_occurred` value and must never gain one.
+ * eCourts publishes listings, not attendance — *a listing is not a hearing* —
+ * and a hearing having happened is only ever evidenced by a later artefact.
+ * The CHECK constraint makes minting one impossible rather than detectable.
+ *
+ * Provenance is four NOT NULL columns, because a row we cannot place inside the
+ * registrar's grant is a row we cannot defend. `conditionsVersion` is the
+ * fingerprint from `authorisation.ts`, which survives a renewal that narrows
+ * the terms in a way the letter's own reference would not.
+ */
+export const ecourtsObservation = pgTable(
+  'ecourts_observation',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    observationKind: text('observation_kind').notNull(),
+    source: text('source').notNull().default('ecourts'),
+    /** When WE fetched it. */
+    observedAt: timestamp('observed_at', { withTimezone: true }).notNull().defaultNow(),
+    /**
+     * The date the SOURCE puts on the fact, where it states one. Separate from
+     * `observedAt` so a late or out-of-order fetch cannot move live state
+     * backwards — a Wednesday fetch returning Monday's page is still Monday.
+     */
+    sourceAssertedAt: timestamp('source_asserted_at', { withTimezone: true }),
+    court: text('court').notNull(),
+    courtCode: text('court_code'),
+    cnr: text('cnr'),
+    caseNumber: text('case_number'),
+    caseYear: integer('case_year'),
+    caseType: text('case_type'),
+    listingDate: date('listing_date'),
+    nextListingDate: date('next_listing_date'),
+    disposalDate: date('disposal_date'),
+    caseStatus: text('case_status'),
+    bench: text('bench'),
+    courtNumber: text('court_number'),
+    itemNumber: integer('item_number'),
+    orderRef: text('order_ref'),
+    payload: jsonb('payload').notNull(),
+    /** Over the bytes as received, before parsing — a parser change must not renumber history. */
+    payloadSha256: text('payload_sha256').notNull(),
+    endpoint: text('endpoint').notNull(),
+    grantDataType: text('grant_data_type').notNull(),
+    conditionsVersion: text('conditions_version').notNull(),
+    fetchLedgerId: uuid('fetch_ledger_id')
+      .notNull()
+      .references(() => ecourtsFetchLedger.id),
+    /**
+     * `partial` and `unreadable` rows are still written and still counted. They
+     * are never promoted into a transition. An observation we could not read is
+     * not an observation that did not happen — same rule as an unverified
+     * citation, which is shown and never silently dropped.
+     */
+    extractionState: text('extraction_state').notNull().default('parsed'),
+    extractionNote: text('extraction_note'),
+  },
+  (t) => [
+    index('ecourts_observation_observed_at_idx').on(t.observedAt.desc()),
+    // Not unique: a repeated identical page is evidence the court said the same
+    // thing again, which is a different fact from us not having asked.
+    index('ecourts_observation_payload_sha256_idx').on(t.payloadSha256),
+  ],
+);
+
+/**
+ * The CHANGE between two observations — a hearing moved, a bench changed, an
+ * order appeared. **The change is the product**, not the snapshot.
+ *
+ * Stored rather than derived on read, for two reasons that outweigh the
+ * redundancy: raw payloads will be pruned on a retention schedule and the
+ * transitions they evidence must outlive them; and notification is at-most-once,
+ * so *"did we already tell the advocate"* has to be answerable from a row.
+ *
+ * `first_observation` is a kind of its own because seeing an attribute for the
+ * first time is not a change, and `listing_removed` is not a disposal.
+ */
+export const ecourtsTransition = pgTable(
+  'ecourts_transition',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    transitionKind: text('transition_kind').notNull(),
+    court: text('court').notNull(),
+    cnr: text('cnr'),
+    caseNumber: text('case_number'),
+    fromValue: text('from_value'),
+    toValue: text('to_value'),
+    fromObservationId: uuid('from_observation_id').references(() => ecourtsObservation.id, {
+      onDelete: 'set null',
+    }),
+    toObservationId: uuid('to_observation_id').references(() => ecourtsObservation.id, {
+      onDelete: 'set null',
+    }),
+    /** Says the evidence is gone, so a NULL id is never read as "never had any". */
+    evidencePrunedAt: timestamp('evidence_pruned_at', { withTimezone: true }),
+    occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+    derivedAt: timestamp('derived_at', { withTimezone: true }).notNull().defaultNow(),
+    /**
+     * Late-binding by design. A transition is observed before any advocate has a
+     * matter for it, and the matter may be created weeks later.
+     */
+    matterId: uuid('matter_id').references(() => matters.id, { onDelete: 'set null' }),
+    notifiedAt: timestamp('notified_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('ecourts_transition_cnr_idx').on(t.cnr, t.occurredAt.desc()),
+    index('ecourts_transition_matter_idx').on(t.matterId, t.occurredAt.desc()),
+  ],
+);
+
+/**
  * The citation fan-out — **one implementation, two triggers.**
  *
  * When a judgment's overruled status changes, the work is identical whether an

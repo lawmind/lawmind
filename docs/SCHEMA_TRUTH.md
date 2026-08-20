@@ -1174,6 +1174,129 @@ refused row must carry **no** `http_status` and **no** `duration_ms`, because it
 never left the process. **The rate limiter counts only rows that reached the
 network** — a refusal must not consume the quota it just protected.
 
+## ecourts_observation · ecourts_transition
+
+**Migration `0061`, 20 Aug 2026.** The live-judicial-state foundation. NEW2 held
+live traffic until these existed (bus 0839) and was right to: a harvest whose
+rows have nowhere correct to land is the one mistake that cannot be cleaned up
+afterwards, and the grant runs only to January 2029.
+
+### ecourts_observation — what a source published, as it published it
+
+`id` uuid pk · `observation_kind` text · `source` text default 'ecourts' ·
+`observed_at` timestamptz · `source_asserted_at` timestamptz null ·
+`court` text · `court_code` text null · `cnr` text null ·
+`case_number` text null · `case_year` int null · `case_type` text null ·
+`listing_date` date null · `next_listing_date` date null ·
+`disposal_date` date null · `case_status` text null · `bench` text null ·
+`court_number` text null · `item_number` int null · `order_ref` text null ·
+`payload` jsonb · `payload_sha256` text · `endpoint` text ·
+`grant_data_type` text · `conditions_version` text ·
+`fetch_ledger_id` uuid fk→ecourts_fetch_ledger · `extraction_state` text
+default 'parsed' · `extraction_note` text null
+
+Indexes: (cnr, coalesce(source_asserted_at, observed_at) desc) where cnr not
+null; (court, case_number, coalesce(...) desc) where case_number not null;
+(observed_at desc); (payload_sha256); (court, listing_date) where listing_date
+not null.
+
+**Three properties are load-bearing and all three are enforced, not documented.**
+
+**1. It is not `judgments` and has no foreign key to it — not even a nullable
+one.** A cause-list entry, a next-hearing date and a status transition are
+registry bookkeeping; `judgments` is the population the retrieval lane treats as
+**authority**. A nullable link is an invitation to backfill one, and once
+embeddings and citation edges are built over registry rows there is no undo.
+
+**2. Append-only, by trigger.** UPDATE and DELETE both raise
+`restrict_violation`. If the court said 11 March on Monday and 22 April on
+Wednesday, **both are true statements about what the court published** and only
+the second is the current listing. An UPDATE destroys the first, and with it the
+answer to _"what did we tell the advocate before this moved"_. The trigger
+raises rather than silently discarding the write — a `DO INSTEAD NOTHING` rule
+would make the attempt look like success. Verified by execution 20 Aug 2026:
+UPDATE refused, DELETE refused, probe row rolled back, table left at 0.
+
+**3. A listing is not a hearing.** `observation_kind` is CHECK-constrained to
+nine values and **`hearing_occurred` is not among them, deliberately** — eCourts
+publishes listings, never attendance. A hearing having happened is only ever
+evidenced by a *later* artefact (an order appearing, a status change, a next-date
+move), and the projection must reason from those. The CHECK makes minting the
+fact impossible rather than detectable afterwards; an insert of
+`'hearing_occurred'` was run and refused.
+
+Kinds: `cause_list_entry` · `case_status` · `case_history_entry` ·
+`order_listed` · `next_date` · `bench_composition` · `disposal` · `caveat` ·
+`court_directory`.
+
+`observed_at` (when **we** fetched) and `source_asserted_at` (the date the
+**source** puts on the fact) are separate columns, so out-of-order and late
+observations need no special handling in the writer — a Wednesday fetch that
+returns Monday's page does not move live state forward. The projection orders by
+`coalesce(source_asserted_at, observed_at)` and the indexes carry that same
+expression so the two cannot drift.
+
+**Provenance is four NOT NULL columns** — `endpoint`, `grant_data_type`,
+`conditions_version`, `fetch_ledger_id`. A row we cannot place inside the grant
+is a row whose adherence we could not later demonstrate, and a registrar asking
+is exactly the scenario the ledger exists for. `grant_data_type` is
+CHECK-constrained to `GRANT_CONDITIONS.permittedDataTypes` in
+`services/api/src/court/authorisation.ts`; an insert of an ungranted type was run
+and refused. `conditions_version` is `CONDITIONS_VERSION`, the fingerprint of the
+limits actually enforced — it answers _"which transcription was in force"_ across
+a renewal that narrows the terms, which the letter's own reference could not.
+
+**A duplicate observation is still written.** There is deliberately no unique
+constraint on `payload_sha256`: the court saying the same thing again on a later
+date is a different fact from us not having asked. The index exists so duplicate
+rate per request stays measurable, which is NEW2's request-allocation metric.
+
+`extraction_state` `partial`/`unreadable` rows are written and counted, never
+dropped, and never promoted into a transition. Same rule as an unverified
+citation: shown honestly, never silently discarded.
+
+### ecourts_transition — the change, which is the product
+
+`id` uuid pk · `transition_kind` text · `court` text · `cnr` text null ·
+`case_number` text null · `from_value` text null · `to_value` text null ·
+`from_observation_id` uuid null fk→ecourts_observation ·
+`to_observation_id` uuid null fk→ecourts_observation ·
+`evidence_pruned_at` timestamptz null · `occurred_at` timestamptz ·
+`derived_at` timestamptz · `matter_id` uuid null fk→matters ·
+`notified_at` timestamptz null
+
+Indexes: (occurred_at) where notified_at is null; (cnr, occurred_at desc);
+(matter_id, occurred_at desc); UNIQUE (transition_kind, from_observation_id,
+to_observation_id) where both evidence ids are not null.
+
+Kinds: `first_observation` · `next_date_moved` · `status_changed` ·
+`bench_changed` · `order_appeared` · `disposed` · `listing_added` ·
+`listing_removed`.
+
+**Stored, not a view, and the redundancy is paid deliberately.** NEW2 asked
+whether the diff is stored or derived. Two reasons stored wins: raw payloads
+will be pruned on a retention schedule and the transitions they evidence must
+outlive them — a view dies with its inputs; and notification is **at-most-once**,
+so _"did we already tell the advocate this hearing moved"_ must be answerable
+from a row rather than recomputed from a window that may have shifted.
+
+Both evidence ids are kept so a stored diff can be re-checked against its source
+while that source survives, and `evidence_pruned_at` records honestly when it no
+longer can — a NULL id must never be read as _"never had any"_.
+
+**`first_observation` is not a change** — it is the first time we saw an
+attribute, and giving it its own kind stops a NULL `from_value` being reported to
+an advocate as a move. **`listing_removed` is not a disposal** — a matter absent
+from today's list may have been adjourned, transferred, or simply not listed.
+
+The unique index makes the projection **idempotent**: re-running it over the same
+evidence pair cannot write the transition twice. Partial, because rows whose
+evidence was pruned can no longer be deduplicated this way and must not block it.
+
+`matter_id` is late-binding by design and never blocking: a transition is
+observed before any advocate has a matter for it, and the matter may be created
+weeks later.
+
 ## corpus_coverage
 
 **Migration `0012`. Documented 11 Aug 2026 — it had been missing from this file
