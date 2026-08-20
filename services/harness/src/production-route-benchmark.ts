@@ -56,16 +56,46 @@ type Row = {
 async function main(): Promise<number> {
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {} });
+  // A statement timeout so ONE pathological query cannot consume the run. A
+  // timed-out query is recorded as a miss with its duration, which is a datum;
+  // a hung run is not.
+  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 30000 } });
 
   const loaded = loadNew3Gold('docs/ai/new3-semantic-expansion-gold.json');
-  console.log(`gold: ${loaded.rows.length} usable of ${loaded.totals.rowsInFile}`);
+  /**
+   * SHORT query types only, by default, and that is a scoping decision made from
+   * a measurement rather than a preference.
+   *
+   * The first attempt ran all 684 rows including the 900-character `proposition`
+   * passages. It did not complete: after forty minutes fewer than fifty queries
+   * had finished, and `pg_stat_activity` showed the sparse arm alive on ONE query
+   * for **32 minutes** and another for 17. `retrieve.ts`'s own header records the
+   * shape — an OR'd tsquery over a large match set costs 781 seconds under
+   * `ORDER BY ts_rank(...)` and 4.47 ms without it, because `ts_rank` reads the
+   * tsvector of every matching row — and migration 0055's rarest-term selection
+   * exists to keep the match set small. A 900-character verbatim passage carries
+   * far more rare terms than a typed question, so it is a query shape that rule
+   * was never measured against.
+   *
+   * That is a real finding and it belongs in its own bounded experiment, with
+   * EXPLAIN and a controlled box. It is NOT the question this file exists to
+   * answer, which is whether the exact routes fire. `citation` and `case_name`
+   * queries are short, are what an advocate actually types, and are the two
+   * shapes `query-shape.ts` routes away from the ranker entirely.
+   */
+  const only = (process.env['QUERY_TYPES'] ?? 'exact_citation,case_title').split(',');
+  const rows0 = loaded.rows.filter((r) => only.includes(r.queryType));
+  console.log(`gold: ${rows0.length} of ${loaded.rows.length} usable rows, types ${only.join(',')}`);
 
   const rows: Row[] = [];
   try {
-    for (const [i, g] of loaded.rows.entries()) {
+    for (const [i, g] of rows0.entries()) {
       const t = Date.now();
-      const hits = await hybridSearch(sql, g.query, null, {}, LIMIT);
+      const hits = await hybridSearch(sql, g.query, null, {}, LIMIT).catch(() => null);
+      if (hits === null) {
+        rows.push({ queryId: g.queryId, queryType: g.queryType, goldAuthorityId: g.goldAuthorityId, rank: null, pinnedFirst: false, ms: Date.now() - t });
+        continue;
+      }
       const ms = Date.now() - t;
       const rank = hits.findIndex((h) => h.judgmentId === g.goldAuthorityId) + 1;
       rows.push({
@@ -79,7 +109,7 @@ async function main(): Promise<number> {
         pinnedFirst: rank === 1,
         ms,
       });
-      if ((i + 1) % 50 === 0) console.log(`  ${i + 1}/${loaded.rows.length}`);
+      if ((i + 1) % 25 === 0) console.log(`  ${i + 1}/${rows0.length}`);
     }
   } finally {
     await sql.end({ timeout: 10 });

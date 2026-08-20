@@ -32,7 +32,7 @@ compaction. Update it as items move.
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 2.1 | Confirm the running manifest is 1 vector per exact-canonical decision, not 15.45 | TODO | LCC 0826: 8,846,550 representatives covering 9,691,284 identities — ratio looks right, verify against the stage table |
+| 2.1 | Confirm 1 vector per canonical decision, not 15.45 | DONE | 442,342 rows, 442,342 distinct `judgment_id` — the primary key enforces it. 441,996 distinct `content_hash`, so 346 rows (0.078%) are byte-identical texts that still got separate vectors; the old 15+/document design is gone |
 
 ## P3 — GPU scale milestones (100k / 250k / 500k / 1M / 2M)
 
@@ -72,7 +72,7 @@ compaction. Update it as items move.
 | # | task | state | evidence |
 | --- | --- | --- | --- |
 | 7.1 | Stop tuning the contaminated setup | DONE | 0831: 278/278 gold inbound-cited; 0853: three reranking routes, nothing gained |
-| 7.2 | Consume NEW3 leakage-aware gold when it lands | TODO | |
+| 7.2 | Consume NEW3 leakage-aware gold | DONE | uncited-authority gold (0899) loaded through the contract as `legal_object_claim` + `own_text_span`; statute-transition gold (0897) scored 11/11 |
 
 ## P8 — gold provenance / leakage contract
 
@@ -86,20 +86,20 @@ compaction. Update it as items move.
 | # | task | state | evidence |
 | --- | --- | --- | --- |
 | 9.1 | Guard legal-object gold against circularity | DONE (rule) | `legal_object_claim` provenance prohibits `verified_legal_object_match`. LCC manifest not yet loaded |
-| 9.2 | Strip target case/citation from query; tag variants; group families in one split | TODO | |
+| 9.2 | Strip target identifiers; tag variants; group families | DONE | NEW3 redacts before emitting (`provenance.redacted`); the contract records the construction and `splitByFamily` groups on the authority. `own_text_span` added for the uncited set, which CANNOT strip — the query is the target own words — and it CAUTIONS dense as an upper bound |
 
 ## P10 — query-relative negatives
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 10.1 | Query-relative negatives | DONE (type) | `Negative` in `gold-contract.ts`; no global negative id is representable. Population not yet built |
+| 10.1 | Query-relative negatives | DONE (type) · population TODO | `Negative` in `gold-contract.ts`; no global negative id is representable. No negative population built yet — needs a gold with adverse-authority query types, which neither set has (all edges are `cites`) |
 
 ## P11 — leakage-safe reranker baseline
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 11.1 | Interpretable rescoring on leakage-safe gold, allowed features only | TODO | |
-| 11.2 | Candidate pools 50 / 100 / 200 — not 2,000 | TODO | 0815: 200→2,000 buys +15.7 pt presence, 0.00 pt success@5 |
+| 11.1 | Interpretable rescoring, allowed features only | DONE | `leakage-safe-rerank.mjs`. Best held gain +4.3pt s@5 on 70 queries = three queries; train delta 7.6pt, so half is fitting. sparseOnly BEATS denseOnly on s@5 and r@20 while losing on MRR — complementarity, argues for fusion not reranking. `docs/ai/new1-rerank/LEAKAGE_SAFE_BASELINE.md` |
+| 11.2 | Candidate pools 50 / 100 / 200 | DONE | third independent replication: pool 50→200 lifts gold PRESENCE 31.4%→38.6% and leaves denseOnly success@5 at 22.86% at every depth |
 
 ## P12 — retrieval architecture
 
@@ -112,7 +112,7 @@ compaction. Update it as items move.
 | # | task | state | evidence |
 | --- | --- | --- | --- |
 | 13.1 | Consume NEW3 verified semantic gold | DONE | 684 of 750 rows usable through the leakage contract; 66 dropped with recorded reasons |
-| 13.2 | Score at each milestone with the full funnel | 250k DONE | funnel 228 source / 200 eligible / 187 embedded. proposition s@5 21.5% · case_title 5.7% · exact_citation 0.9%. **33 of 250 gold authorities (13.2%) are REFUSED by the eligibility contract — a ceiling throughput cannot lift.** `docs/ai/NEW1_EXPANSION_BENCHMARK_250K.md` |
+| 13.2 | Score at each milestone with the full funnel | 250k DONE | funnel 228 source / 200 eligible / 187 embedded. proposition s@5 21.5% · case_title 5.7% · exact_citation 0.9%. **33 of 250 gold authorities (13.2%) are REFUSED by the eligibility contract — a ceiling throughput cannot lift.** Replicated on the uncited set: 3 of 26 (11.5%). `docs/ai/NEW1_EXPANSION_BENCHMARK_250K.md` |
 
 ## P14 — legal object layers
 
@@ -131,7 +131,7 @@ compaction. Update it as items move.
 
 | # | task | state | evidence |
 | --- | --- | --- | --- |
-| 16.1 | Test pre-date / post-date / date absent / mapping ambiguity | TODO | LCC 0835 `APPLICABILITY_UNRESOLVED`; 0877 `statute_mappings` = 226 rows |
+| 16.1 | Test pre-date / post-date / date absent / mapping ambiguity | DONE — 11/11 | `statute-transition-gold-cli.ts`. Both NO_PROVEN_MAPPING traps pass: IPC 420 and CrPC 154 return held:false with UNMAPPED wording, not a remembered mapping |
 
 ## P17 — cross-lingual
 
