@@ -50,7 +50,8 @@
     "probe:snapshot": "tsx src/probe-snapshot.mjs",
     "safety:currentness": "tsx src/currentness-safety.mjs",
     "gold:transition": "tsx --env-file=../../.env src/statute-transition-gold-cli.ts",
-    "rerank:safe": "tsx src/leakage-safe-rerank.mjs"
+    "rerank:safe": "tsx src/leakage-safe-rerank.mjs",
+    "arms:queryshape": "tsx src/query-shape-arms.mjs"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",

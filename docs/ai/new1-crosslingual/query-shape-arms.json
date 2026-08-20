@@ -1,0 +1,104 @@
+{
+  "kind": "new1_query_shape_arms",
+  "measuredAt": "2026-08-20T23:01:26.177Z",
+  "table": "judgment_chunks",
+  "efSearch": 200,
+  "topK": 20,
+  "n": 5,
+  "caveat": "n=5. This cannot settle the question; it can only say whether the effect is large enough to justify a properly powered set.",
+  "summary": {
+    "hindiRestatement": {
+      "successAt5": 40,
+      "recallAt20": 80,
+      "found": 4,
+      "meanChars": 240,
+      "mrr": 0.3111
+    },
+    "englishIssue": {
+      "successAt5": 40,
+      "recallAt20": 40,
+      "found": 4,
+      "meanChars": 90,
+      "mrr": 0.2545
+    },
+    "englishPassage": {
+      "successAt5": 40,
+      "recallAt20": 60,
+      "found": 3,
+      "meanChars": 826,
+      "mrr": 0.1611
+    }
+  },
+  "results": [
+    {
+      "pairId": "e39b2b83",
+      "goldCase": "THE STATE OF BOMBAY versus KATHI KALU OGHAD AND OTHERS",
+      "chars": {
+        "hindiRestatement": 268,
+        "englishIssue": 98,
+        "englishPassage": 741
+      },
+      "ranks": {
+        "hindiRestatement": 1,
+        "englishIssue": 1,
+        "englishPassage": 4
+      }
+    },
+    {
+      "pairId": "187694cc",
+      "goldCase": "JAGMOHAN SINGH versus THE STATE OF U. P.",
+      "chars": {
+        "hindiRestatement": 231,
+        "englishIssue": 70,
+        "englishPassage": 885
+      },
+      "ranks": {
+        "hindiRestatement": 6,
+        "englishIssue": 4,
+        "englishPassage": null
+      }
+    },
+    {
+      "pairId": "a259ece9",
+      "goldCase": "STATE OF U.P. versus DEOMAN UPADHYAYA",
+      "chars": {
+        "hindiRestatement": 225,
+        "englishIssue": 95,
+        "englishPassage": 832
+      },
+      "ranks": {
+        "hindiRestatement": 18,
+        "englishIssue": 103,
+        "englishPassage": 18
+      }
+    },
+    {
+      "pairId": "bcc47cbd",
+      "goldCase": "PRIYA GUPTA AND ANR. versus ADDL. SECY. MINISTRY OF HEALTH AND FAMILY WELFARE AND ORS.",
+      "chars": {
+        "hindiRestatement": 240,
+        "englishIssue": 83,
+        "englishPassage": 892
+      },
+      "ranks": {
+        "hindiRestatement": 3,
+        "englishIssue": 78,
+        "englishPassage": 2
+      }
+    },
+    {
+      "pairId": "6f885356",
+      "goldCase": "SAHIBZADA SAIYED MUHAMMED AMIRABBAS ABBASI & OTHERS versus THE STATE OF MADHYA BHARAT & OTHERS",
+      "chars": {
+        "hindiRestatement": 235,
+        "englishIssue": 105,
+        "englishPassage": 782
+      },
+      "ranks": {
+        "hindiRestatement": null,
+        "englishIssue": null,
+        "englishPassage": null
+      }
+    }
+  ]
+}
