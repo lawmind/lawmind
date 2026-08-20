@@ -1,0 +1,406 @@
+{
+  "kind": "new1_gold_contract_report",
+  "goldFile": "C:\\Users\\Xerxus\\Documents\\Lawmind\\docs\\ai\\new3-semantic-expansion-gold.json",
+  "measuredAt": "2026-08-20T16:58:25.062Z",
+  "totals": {
+    "rowsInFile": 750,
+    "distinctAuthorities": 250,
+    "distinctEdges": 250
+  },
+  "usableRows": 684,
+  "dropped": [
+    {
+      "queryId": "prop-76927ba2",
+      "reason": "control_characters",
+      "detail": "151 control characters"
+    },
+    {
+      "queryId": "cite-76927ba2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2026-01-12 > citing 2025-12-22"
+    },
+    {
+      "queryId": "title-76927ba2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2026-01-12 > citing 2025-12-22"
+    },
+    {
+      "queryId": "prop-0255071c",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-21 > citing 2025-03-02"
+    },
+    {
+      "queryId": "cite-0255071c",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-21 > citing 2025-03-02"
+    },
+    {
+      "queryId": "title-0255071c",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-21 > citing 2025-03-02"
+    },
+    {
+      "queryId": "prop-2401baa2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-07-11 > citing 2011-07-07"
+    },
+    {
+      "queryId": "cite-2401baa2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-07-11 > citing 2011-07-07"
+    },
+    {
+      "queryId": "title-2401baa2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-07-11 > citing 2011-07-07"
+    },
+    {
+      "queryId": "prop-85644974",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-12-08 > citing 2011-12-07"
+    },
+    {
+      "queryId": "cite-85644974",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-12-08 > citing 2011-12-07"
+    },
+    {
+      "queryId": "title-85644974",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-12-08 > citing 2011-12-07"
+    },
+    {
+      "queryId": "prop-36577431",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-09-22 > citing 2025-07-07"
+    },
+    {
+      "queryId": "cite-36577431",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-09-22 > citing 2025-07-07"
+    },
+    {
+      "queryId": "title-36577431",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-09-22 > citing 2025-07-07"
+    },
+    {
+      "queryId": "prop-ff9f12ec",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-08-19 > citing 2025-08-11"
+    },
+    {
+      "queryId": "cite-ff9f12ec",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-08-19 > citing 2025-08-11"
+    },
+    {
+      "queryId": "title-ff9f12ec",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-08-19 > citing 2025-08-11"
+    },
+    {
+      "queryId": "prop-7b26a326",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-02-06 > citing 2025-01-23"
+    },
+    {
+      "queryId": "cite-7b26a326",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-02-06 > citing 2025-01-23"
+    },
+    {
+      "queryId": "title-7b26a326",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-02-06 > citing 2025-01-23"
+    },
+    {
+      "queryId": "prop-1c2f8f13",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-10-15 > citing 2025-10-14"
+    },
+    {
+      "queryId": "cite-1c2f8f13",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-10-15 > citing 2025-10-14"
+    },
+    {
+      "queryId": "title-1c2f8f13",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-10-15 > citing 2025-10-14"
+    },
+    {
+      "queryId": "prop-929f5c4e",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-19 > citing 2025-08-01"
+    },
+    {
+      "queryId": "cite-929f5c4e",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-19 > citing 2025-08-01"
+    },
+    {
+      "queryId": "title-929f5c4e",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-19 > citing 2025-08-01"
+    },
+    {
+      "queryId": "prop-fedc14b9",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-03-20 > citing 2024-11-12"
+    },
+    {
+      "queryId": "cite-fedc14b9",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-03-20 > citing 2024-11-12"
+    },
+    {
+      "queryId": "title-fedc14b9",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-03-20 > citing 2024-11-12"
+    },
+    {
+      "queryId": "prop-45e16fad",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-03-02 > citing 2012-02-15"
+    },
+    {
+      "queryId": "cite-45e16fad",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-03-02 > citing 2012-02-15"
+    },
+    {
+      "queryId": "title-45e16fad",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-03-02 > citing 2012-02-15"
+    },
+    {
+      "queryId": "prop-0ff2b269",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-10-13 > citing 2024-08-12"
+    },
+    {
+      "queryId": "cite-0ff2b269",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-10-13 > citing 2024-08-12"
+    },
+    {
+      "queryId": "title-0ff2b269",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-10-13 > citing 2024-08-12"
+    },
+    {
+      "queryId": "prop-cb3ebc3c",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-09-01 > citing 2025-07-18"
+    },
+    {
+      "queryId": "cite-cb3ebc3c",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-09-01 > citing 2025-07-18"
+    },
+    {
+      "queryId": "title-cb3ebc3c",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-09-01 > citing 2025-07-18"
+    },
+    {
+      "queryId": "prop-ce1f0fb2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-02-27 > citing 2012-01-24"
+    },
+    {
+      "queryId": "cite-ce1f0fb2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-02-27 > citing 2012-01-24"
+    },
+    {
+      "queryId": "title-ce1f0fb2",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-02-27 > citing 2012-01-24"
+    },
+    {
+      "queryId": "prop-a41a2072",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-05-11 > citing 2011-04-27"
+    },
+    {
+      "queryId": "cite-a41a2072",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-05-11 > citing 2011-04-27"
+    },
+    {
+      "queryId": "title-a41a2072",
+      "reason": "cited_after_citing",
+      "detail": "cited 2011-05-11 > citing 2011-04-27"
+    },
+    {
+      "queryId": "prop-f10a9506",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-12-17 > citing 2024-11-28"
+    },
+    {
+      "queryId": "cite-f10a9506",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-12-17 > citing 2024-11-28"
+    },
+    {
+      "queryId": "title-f10a9506",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-12-17 > citing 2024-11-28"
+    },
+    {
+      "queryId": "prop-b4dc0341",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-02-28 > citing 2012-02-13"
+    },
+    {
+      "queryId": "cite-b4dc0341",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-02-28 > citing 2012-02-13"
+    },
+    {
+      "queryId": "title-b4dc0341",
+      "reason": "cited_after_citing",
+      "detail": "cited 2012-02-28 > citing 2012-02-13"
+    },
+    {
+      "queryId": "prop-ac5b1f31",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-10-13 > citing 2024-09-17"
+    },
+    {
+      "queryId": "cite-ac5b1f31",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-10-13 > citing 2024-09-17"
+    },
+    {
+      "queryId": "title-ac5b1f31",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-10-13 > citing 2024-09-17"
+    },
+    {
+      "queryId": "prop-e4b6fa99",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-11-11 > citing 2024-10-17"
+    },
+    {
+      "queryId": "cite-e4b6fa99",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-11-11 > citing 2024-10-17"
+    },
+    {
+      "queryId": "title-e4b6fa99",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-11-11 > citing 2024-10-17"
+    },
+    {
+      "queryId": "prop-3e21e66b",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-19 > citing 2025-06-05"
+    },
+    {
+      "queryId": "cite-3e21e66b",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-19 > citing 2025-06-05"
+    },
+    {
+      "queryId": "title-3e21e66b",
+      "reason": "cited_after_citing",
+      "detail": "cited 2025-11-19 > citing 2025-06-05"
+    },
+    {
+      "queryId": "prop-2cd14124",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-08-12 > citing 2024-07-16"
+    },
+    {
+      "queryId": "cite-2cd14124",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-08-12 > citing 2024-07-16"
+    },
+    {
+      "queryId": "title-2cd14124",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-08-12 > citing 2024-07-16"
+    },
+    {
+      "queryId": "prop-450e7997",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-03-07 > citing 2024-03-06"
+    },
+    {
+      "queryId": "cite-450e7997",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-03-07 > citing 2024-03-06"
+    },
+    {
+      "queryId": "title-450e7997",
+      "reason": "cited_after_citing",
+      "detail": "cited 2024-03-07 > citing 2024-03-06"
+    }
+  ],
+  "droppedByReason": {
+    "control_characters": 1,
+    "cited_after_citing": 65
+  },
+  "perQueryType": {
+    "case_title": {
+      "rows": 228,
+      "allowed": [
+        "dense_similarity",
+        "sparse_lexical",
+        "exact_citation_match",
+        "inbound_citation_graph",
+        "court_and_date",
+        "verified_legal_object_match",
+        "treatment_and_currentness"
+      ],
+      "prohibited": [
+        "title_match: the query IS the authority’s title, so title match is identity, not retrieval"
+      ]
+    },
+    "exact_citation": {
+      "rows": 228,
+      "allowed": [
+        "dense_similarity",
+        "sparse_lexical",
+        "title_match",
+        "inbound_citation_graph",
+        "court_and_date",
+        "verified_legal_object_match",
+        "treatment_and_currentness"
+      ],
+      "prohibited": [
+        "exact_citation_match: the query IS the authority’s citation string, so exact-citation match is identity, not retrieval"
+      ]
+    },
+    "proposition": {
+      "rows": 228,
+      "allowed": [
+        "dense_similarity",
+        "sparse_lexical",
+        "exact_citation_match",
+        "title_match",
+        "court_and_date",
+        "verified_legal_object_match",
+        "treatment_and_currentness"
+      ],
+      "prohibited": [
+        "inbound_citation_graph: the authority is gold BECAUSE it was cited — an inbound-citation feature reads the answer key"
+      ]
+    }
+  },
+  "pooledAllowed": [
+    "dense_similarity",
+    "sparse_lexical",
+    "court_and_date",
+    "verified_legal_object_match",
+    "treatment_and_currentness"
+  ],
+  "split": {
+    "train": 474,
+    "held": 210,
+    "straddling": 0
+  }
+}
