@@ -1,0 +1,24 @@
+{
+  "kind": "new1_probe_snapshot",
+  "milestone": "250k",
+  "rows": 256998,
+  "hnsw": {
+    "m": 16,
+    "efConstruction": 64
+  },
+  "fp32Table": "new1_probe_fp32_250k",
+  "halfvecTable": "new1_probe_half_250k",
+  "buildSeconds": {
+    "fp32": 440.856,
+    "halfvec": 329.669,
+    "copy": 19.365
+  },
+  "sizes": {
+    "new1_probe_fp32_250k": 3552108544,
+    "new1_probe_fp32_250k_hnsw": 2103476224,
+    "new1_probe_half_250k": 1442021376,
+    "new1_probe_half_250k_hnsw": 701161472
+  },
+  "totalSeconds": 807.449,
+  "builtAt": "2026-08-20T17:23:29.774Z"
+}

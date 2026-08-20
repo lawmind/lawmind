@@ -1,0 +1,105 @@
+{
+  "kind": "new1_currentness_safety",
+  "measuredAt": "2026-08-20T17:23:25.055Z",
+  "verdict": "PASS",
+  "new1Tables": [
+    "new1_doc_vector_stage",
+    "new1_doc_vector_stage_refused",
+    "new1_inbound_counts",
+    "new1_probe_fp32_250k",
+    "new1_probe_half_250k"
+  ],
+  "cachedStatusColumns": [],
+  "vectorTablesWithoutIdentity": [],
+  "liveJoinCarriesStatus": true,
+  "lawHasMoved": {
+    "total": 98,
+    "byStatus": {
+      "set_aside": {
+        "total": 73,
+        "embedded": 3
+      },
+      "doubted": {
+        "total": 17,
+        "embedded": 1
+      },
+      "partly_set_aside": {
+        "total": 8,
+        "embedded": 0
+      }
+    },
+    "embeddedAndReachable": 4
+  },
+  "examples": [
+    {
+      "id": "1fee973e-cdc0-4437-aa3c-4494559b2999",
+      "status": "set_aside",
+      "court": "Supreme Court of India",
+      "title": "SEBI THROUGH ITS CHAIHMAN versus ROOFIT INDUSTRIES LTD.",
+      "embedded": false
+    },
+    {
+      "id": "4153bc40-0d68-46ad-b0ea-4c4bf3bcac4e",
+      "status": "set_aside",
+      "court": "Supreme Court of India",
+      "title": "TDM INFRASTRUCTURE PRIVATE LIMITED versus UE DEVELOPMENT INDIA PRIVATE",
+      "embedded": false
+    },
+    {
+      "id": "4755ec40-1e03-4dce-a89c-7111b089de4c",
+      "status": "set_aside",
+      "court": "Supreme Court of India",
+      "title": "E. MICHEAL RAJ versus INTELLIGENCE OFFICER, NARCOTIC CONTROL BUREAU",
+      "embedded": false
+    },
+    {
+      "id": "b14223ef-2b9d-414e-a135-7fa0654141d9",
+      "status": "set_aside",
+      "court": "Supreme Court of India",
+      "title": "NORTHERN INDIA CATERERS PRIVATE LTD., & ANR. versus STATE OF PUNJAB AN",
+      "embedded": false
+    },
+    {
+      "id": "a3a394e4-0b77-42f0-9d01-8a8894584b17",
+      "status": "doubted",
+      "court": "Supreme Court of India",
+      "title": "EASTERN COALFIELDS LTD. versus DUGAL KUMAR",
+      "embedded": false
+    },
+    {
+      "id": "b6d43715-db3a-4c32-9790-5865f24cc793",
+      "status": "partly_set_aside",
+      "court": "Supreme Court of India",
+      "title": "KHARAK SINGH versus THE STATE OF U. P. & OTHERS",
+      "embedded": false
+    },
+    {
+      "id": "f5bd5329-f6bb-4cbc-8ce4-c34d1ccc9a48",
+      "status": "doubted",
+      "court": "Supreme Court of India",
+      "title": "SAKHARAM SINCE DECEASED THROUGH LRS & ANR. versus KISHANRAO",
+      "embedded": false
+    },
+    {
+      "id": "ee260152-2ebc-496e-9d2f-c4d0cce46085",
+      "status": "doubted",
+      "court": "Supreme Court of India",
+      "title": "COMMISSLONER OF SALES TAX, U.P. versus MADANLAL DAN & SONS, BAREILLY",
+      "embedded": false
+    },
+    {
+      "id": "fff9e6b3-7f1e-4587-acf4-ec579962d692",
+      "status": "set_aside",
+      "court": "Supreme Court of India",
+      "title": "MOHD. AZEEM versus DISTRICT JUDGE, ALIGARH AND ORS.",
+      "embedded": false
+    },
+    {
+      "id": "f783be66-76e7-4379-8daa-f97e8715c55c",
+      "status": "set_aside",
+      "court": "Supreme Court of India",
+      "title": "RAGHBIR SINGH SEHRAWAT versus STATE OF HARYANA AND OTHERS",
+      "embedded": false
+    }
+  ]
+}

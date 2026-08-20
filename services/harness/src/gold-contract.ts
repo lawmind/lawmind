@@ -207,13 +207,21 @@ export function featurePolicy(row: Pick<EvalRow, 'goldProvenanceType' | 'queryCo
 }
 
 export class LeakageError extends Error {
-  constructor(
-    readonly queryId: string,
-    readonly family: FeatureFamily,
-    readonly why: string,
-  ) {
+  // Assigned in the body, not as constructor parameter properties. Node's
+  // strip-only TypeScript loader rejects parameter properties outright
+  // (ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX), and several NEW1 tools are plain `.mjs`
+  // run under bare node rather than tsx. A contract module that only half the
+  // harness can import is a contract half the harness will skip.
+  readonly queryId: string;
+  readonly family: FeatureFamily;
+  readonly why: string;
+
+  constructor(queryId: string, family: FeatureFamily, why: string) {
     super(`LEAKAGE: ${queryId} may not be scored with ${family} — ${why}`);
     this.name = 'LeakageError';
+    this.queryId = queryId;
+    this.family = family;
+    this.why = why;
   }
 }
 
