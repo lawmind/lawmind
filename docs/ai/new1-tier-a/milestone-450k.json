@@ -1,0 +1,364 @@
+{
+  "kind": "new1_stage_milestone",
+  "milestone": "450k",
+  "measuredAt": "2026-08-20T23:14:26.107Z",
+  "stagedRows": 449745,
+  "quarantinedRows": 34370,
+  "nonUnitNormVectors": 0,
+  "nullOrZeroTokenRows": 0,
+  "distinctCourts": 26,
+  "recipes": [
+    {
+      "recipe": "HEAD:4800",
+      "model": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+      "n": 449745,
+      "first": "2026-08-19T13:18:27.402Z",
+      "last": "2026-08-20T23:13:41.179Z"
+    }
+  ],
+  "topCourts": [
+    {
+      "court": "Madras High Court",
+      "n": 64440
+    },
+    {
+      "court": "Allahabad High Court",
+      "n": 44289
+    },
+    {
+      "court": "High Court of Punjab and Haryana",
+      "n": 40914
+    },
+    {
+      "court": "High Court of Karnataka",
+      "n": 40790
+    },
+    {
+      "court": "High Court of Kerala",
+      "n": 40572
+    },
+    {
+      "court": "High Court  for State of Telangana",
+      "n": 33308
+    },
+    {
+      "court": "Bombay High Court",
+      "n": 30880
+    },
+    {
+      "court": "Patna High Court",
+      "n": 21697
+    },
+    {
+      "court": "High Court Of Rajasthan",
+      "n": 19364
+    },
+    {
+      "court": "High Court Of Chhattisgarh",
+      "n": 16250
+    },
+    {
+      "court": "High Court of Delhi",
+      "n": 12564
+    },
+    {
+      "court": "Orissa High Court",
+      "n": 12410
+    },
+    {
+      "court": "High Court of Gujarat",
+      "n": 12269
+    },
+    {
+      "court": "High Court of Madhya Pradesh",
+      "n": 10608
+    },
+    {
+      "court": "Gauhati High Court",
+      "n": 8788
+    }
+  ],
+  "throughput": {
+    "batchesCompleted": 55,
+    "stageStartLines": 140,
+    "stageDoneLines": 68,
+    "failedLines": 69,
+    "attemptedRows": 604815,
+    "inserted": 474547,
+    "skippedAlreadyStaged": 63100,
+    "skippedNowIneligible": 57159,
+    "skippedNoText": 0,
+    "tokens": 489118632,
+    "lastTenMeanTokensPerSecond": 9129.078716977096,
+    "lastTenMeanBatchSeconds": 939.0799999999999
+  },
+  "ineligibleTrend": [
+    {
+      "batch": "batch-00020",
+      "newRows": 9988,
+      "ineligible": 1608,
+      "ratePct": 16.1,
+      "byClass": {
+        "procedural_disposal": 270,
+        "bail_order": 1338
+      }
+    },
+    {
+      "batch": "batch-00021",
+      "newRows": 9979,
+      "ineligible": 1542,
+      "ratePct": 15.45,
+      "byClass": {
+        "bail_order": 1289,
+        "procedural_disposal": 253
+      }
+    },
+    {
+      "batch": "batch-00022",
+      "newRows": 9974,
+      "ineligible": 1565,
+      "ratePct": 15.69,
+      "byClass": {
+        "bail_order": 1351,
+        "procedural_disposal": 214
+      }
+    },
+    {
+      "batch": "batch-00023",
+      "newRows": 9983,
+      "ineligible": 1653,
+      "ratePct": 16.56,
+      "byClass": {
+        "bail_order": 1395,
+        "procedural_disposal": 258
+      }
+    },
+    {
+      "batch": "batch-00024",
+      "newRows": 9979,
+      "ineligible": 1583,
+      "ratePct": 15.86,
+      "byClass": {
+        "bail_order": 1329,
+        "procedural_disposal": 254
+      }
+    },
+    {
+      "batch": "batch-00025",
+      "newRows": 9971,
+      "ineligible": 1555,
+      "ratePct": 15.6,
+      "byClass": {
+        "procedural_disposal": 243,
+        "bail_order": 1312
+      }
+    },
+    {
+      "batch": "batch-00026",
+      "newRows": 9986,
+      "ineligible": 1640,
+      "ratePct": 16.42,
+      "byClass": {
+        "bail_order": 1413,
+        "procedural_disposal": 227
+      }
+    },
+    {
+      "batch": "batch-00027",
+      "newRows": 9977,
+      "ineligible": 1608,
+      "ratePct": 16.12,
+      "byClass": {
+        "bail_order": 1397,
+        "procedural_disposal": 211
+      }
+    },
+    {
+      "batch": "batch-00028",
+      "newRows": 9982,
+      "ineligible": 1522,
+      "ratePct": 15.25,
+      "byClass": {
+        "bail_order": 1294,
+        "procedural_disposal": 228
+      }
+    },
+    {
+      "batch": "batch-00029",
+      "newRows": 9989,
+      "ineligible": 1541,
+      "ratePct": 15.43,
+      "byClass": {
+        "procedural_disposal": 245,
+        "bail_order": 1296
+      }
+    },
+    {
+      "batch": "batch-00030",
+      "newRows": 9977,
+      "ineligible": 1628,
+      "ratePct": 16.32,
+      "byClass": {
+        "bail_order": 1373,
+        "procedural_disposal": 255
+      }
+    },
+    {
+      "batch": "batch-00031",
+      "newRows": 9984,
+      "ineligible": 1553,
+      "ratePct": 15.55,
+      "byClass": {
+        "bail_order": 1325,
+        "procedural_disposal": 228
+      }
+    },
+    {
+      "batch": "batch-00032",
+      "newRows": 9982,
+      "ineligible": 1536,
+      "ratePct": 15.39,
+      "byClass": {
+        "bail_order": 1307,
+        "procedural_disposal": 229
+      }
+    },
+    {
+      "batch": "batch-00033",
+      "newRows": 9974,
+      "ineligible": 1616,
+      "ratePct": 16.2,
+      "byClass": {
+        "bail_order": 1379,
+        "procedural_disposal": 237
+      }
+    },
+    {
+      "batch": "batch-00034",
+      "newRows": 9981,
+      "ineligible": 1646,
+      "ratePct": 16.49,
+      "byClass": {
+        "bail_order": 1381,
+        "procedural_disposal": 265
+      }
+    },
+    {
+      "batch": "batch-00035",
+      "newRows": 9988,
+      "ineligible": 1602,
+      "ratePct": 16.04,
+      "byClass": {
+        "bail_order": 1373,
+        "procedural_disposal": 229
+      }
+    },
+    {
+      "batch": "batch-00036",
+      "newRows": 9987,
+      "ineligible": 1605,
+      "ratePct": 16.07,
+      "byClass": {
+        "bail_order": 1373,
+        "procedural_disposal": 232
+      }
+    },
+    {
+      "batch": "batch-00037",
+      "newRows": 9983,
+      "ineligible": 1591,
+      "ratePct": 15.94,
+      "byClass": {
+        "bail_order": 1352,
+        "procedural_disposal": 239
+      }
+    },
+    {
+      "batch": "batch-00038",
+      "newRows": 9980,
+      "ineligible": 1545,
+      "ratePct": 15.48,
+      "byClass": {
+        "bail_order": 1342,
+        "procedural_disposal": 203
+      }
+    },
+    {
+      "batch": "batch-00039",
+      "newRows": 9982,
+      "ineligible": 1617,
+      "ratePct": 16.2,
+      "byClass": {
+        "bail_order": 1379,
+        "procedural_disposal": 238
+      }
+    }
+  ],
+  "selfRetrieval": {
+    "sampled": 12,
+    "selfIsNearestNeighbour": 12,
+    "selfInTop3": 12,
+    "ranks": [
+      {
+        "judgmentId": "03f1b3bf-196c-4f4d-b893-fa2f37f4898f",
+        "court": "High Court of Kerala",
+        "rank": 1
+      },
+      {
+        "judgmentId": "009797c7-2215-4fbe-bd47-93f22d73f405",
+        "court": "High Court  for State of Telangana",
+        "rank": 1
+      },
+      {
+        "judgmentId": "0097983d-a5d7-474e-bc86-9868e72f2f13",
+        "court": "High Court  for State of Telangana",
+        "rank": 1
+      },
+      {
+        "judgmentId": "00979a42-4e50-403a-8154-db3290fbf186",
+        "court": "Orissa High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "00979aae-5ad9-40db-a191-68b147634de1",
+        "court": "Madras High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "03f1bb61-d18a-4b57-8f32-c6eedbc668ea",
+        "court": "High Court  for State of Telangana",
+        "rank": 1
+      },
+      {
+        "judgmentId": "00979c0b-6e35-4096-a65f-68634b9ca861",
+        "court": "High Court of Madhya Pradesh",
+        "rank": 1
+      },
+      {
+        "judgmentId": "00979fcd-43e2-494d-9abe-3aca4dc8bb82",
+        "court": "Bombay High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "03f1bcf0-4247-4346-9ee7-40e2e1316f83",
+        "court": "Madras High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "0097a106-2937-4b71-8bdf-ec4a8ce27312",
+        "court": "Madras High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "0097a3d8-2959-44d0-8cd7-e54fffb913e9",
+        "court": "Madras High Court",
+        "rank": 1
+      },
+      {
+        "judgmentId": "0097a49c-3818-42ed-a339-e99aa398bf0b",
+        "court": "High Court of Karnataka",
+        "rank": 1
+      }
+    ]
+  }
+}

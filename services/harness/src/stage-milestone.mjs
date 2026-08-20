@@ -70,6 +70,33 @@ const batchesCompleted = new Set(done.map((d) => d.batchFile)).size;
 const failedLines = lines.filter((l) => l.includes('FAILED')).length;
 const sum = (k) => done.reduce((a, d) => a + (Number(d[k]) || 0), 0);
 const recent = done.slice(-10);
+
+/**
+ * The per-batch ineligible RATE, as a trend rather than a total.
+ *
+ * NEW2 is classifying ahead of this walk in the same primary-key order, which is
+ * what makes the pre-GPU skip worth anything: a document only gets refused if a
+ * rule has already looked at it. So the rate is a live readout of whether they
+ * are still in front.
+ *
+ * A FALLING rate is the alarm, and it is the kind of alarm that otherwise looks
+ * like good news. It does not mean the corpus got cleaner; it means the walk has
+ * overtaken the classifier and is embedding documents nobody has judged — the
+ * same population reading as clean because nothing looked at it.
+ */
+const ineligibleTrend = done
+  .filter((d) => d.skippedNowIneligible !== undefined)
+  .slice(-20)
+  .map((d) => {
+    const newRows = Math.max(1, d.rowsInBatch - (d.skippedAlreadyStaged ?? 0));
+    return {
+      batch: d.batchFile.replace(/.*tier-a-/, '').replace('.jsonl', ''),
+      newRows,
+      ineligible: d.skippedNowIneligible,
+      ratePct: Number(((100 * d.skippedNowIneligible) / newRows).toFixed(2)),
+      byClass: d.skippedByRefusedClass ?? {},
+    };
+  });
 const throughput = {
   batchesCompleted,
   stageStartLines: lines.filter((l) => l.includes('STAGE START')).length,
@@ -142,6 +169,7 @@ const report = {
   recipes,
   topCourts: byCourt,
   throughput,
+  ineligibleTrend,
   selfRetrieval: {
     sampled: docs.length,
     selfIsNearestNeighbour: selfFirst,
@@ -163,6 +191,15 @@ console.log(`  attempted / inserted   ${throughput.attemptedRows} / ${throughput
 console.log(`  dup / ineligible / noText  ${throughput.skippedAlreadyStaged} / ${throughput.skippedNowIneligible} / ${throughput.skippedNoText}`);
 console.log(`  last-10 tok/s          ${throughput.lastTenMeanTokensPerSecond?.toFixed(0) ?? 'n/a'}`);
 console.log(`  last-10 batch seconds  ${throughput.lastTenMeanBatchSeconds?.toFixed(0) ?? 'n/a'}`);
+if (ineligibleTrend.length > 0) {
+  const rates = ineligibleTrend.map((t) => t.ratePct);
+  const half = Math.ceil(rates.length / 2);
+  const mean = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  console.log(
+    `  ineligible rate        ${mean(rates.slice(0, half)).toFixed(1)}% -> ${mean(rates.slice(-half)).toFixed(1)}% over the last ${rates.length} batches`,
+  );
+  console.log('    a FALLING rate means the walk has overtaken the classifier, not that the corpus got cleaner');
+}
 console.log(`  self-retrieval         ${selfFirst}/${docs.length} nearest, ${selfTop3}/${docs.length} in top 3`);
 console.log(`\nwrote ${OUT.pathname}`);
 
