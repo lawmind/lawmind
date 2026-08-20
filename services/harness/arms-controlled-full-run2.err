@@ -1,8 +1,0 @@
-  transient network error (ECONNRESET), attempt 1/5 — retrying in 2000ms
-  transient network error (ECONNRESET), attempt 1/5 — retrying in 2000ms
-Warning: Detected unsettled top-level await at C:\Users\Xerxus\Documents\Lawmind\services\harness\src\arms-cli.ts:393
-await main();
-^
-
-
-
