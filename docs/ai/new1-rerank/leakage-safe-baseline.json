@@ -1,0 +1,442 @@
+{
+  "kind": "new1_leakage_safe_rerank_baseline",
+  "measuredAt": "2026-08-20T22:41:54.078Z",
+  "probeTable": "new1_probe_fp32_250k",
+  "efSearch": 200,
+  "queryType": "proposition",
+  "featuresUsed": [
+    "dense_similarity",
+    "sparse_lexical",
+    "court_and_date"
+  ],
+  "featuresProhibitedByContract": [
+    "inbound_citation_graph"
+  ],
+  "gridSize": 176,
+  "split": {
+    "train": 158,
+    "held": 70
+  },
+  "byDepth": {
+    "50": {
+      "arms": {
+        "denseOnly": {
+          "weights": {
+            "dense": 1,
+            "sparse": 0,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 20.89,
+            "recallAt20": 29.11,
+            "presentInPool": 32.91,
+            "mrr": 0.1672
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 22.86,
+            "recallAt20": 27.14,
+            "presentInPool": 31.43,
+            "mrr": 0.1923
+          }
+        },
+        "sparseOnly": {
+          "weights": {
+            "dense": 0,
+            "sparse": 1,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 25.32,
+            "recallAt20": 31.01,
+            "presentInPool": 32.91,
+            "mrr": 0.2021
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 28.57,
+            "recallAt20": 30,
+            "presentInPool": 31.43,
+            "mrr": 0.188
+          }
+        },
+        "equalBlend": {
+          "weights": {
+            "dense": 1,
+            "sparse": 1,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 21.52,
+            "recallAt20": 29.11,
+            "presentInPool": 32.91,
+            "mrr": 0.1685
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 22.86,
+            "recallAt20": 27.14,
+            "presentInPool": 31.43,
+            "mrr": 0.1925
+          }
+        },
+        "blendPlusContext": {
+          "weights": {
+            "dense": 1,
+            "sparse": 1,
+            "court": 0.15,
+            "time": 0.15
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 23.42,
+            "recallAt20": 31.01,
+            "presentInPool": 32.91,
+            "mrr": 0.188
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 24.29,
+            "recallAt20": 27.14,
+            "presentInPool": 31.43,
+            "mrr": 0.1977
+          }
+        }
+      },
+      "denseOnly": {
+        "train": {
+          "queries": 158,
+          "successAt5": 20.89,
+          "recallAt20": 29.11,
+          "presentInPool": 32.91,
+          "mrr": 0.1672
+        },
+        "held": {
+          "queries": 70,
+          "successAt5": 22.86,
+          "recallAt20": 27.14,
+          "presentInPool": 31.43,
+          "mrr": 0.1923
+        }
+      },
+      "bestWeights": {
+        "dense": 1,
+        "sparse": 8,
+        "court": 0.4,
+        "time": 0.4
+      },
+      "bestWeightsOnGridEdge": true,
+      "reranked": {
+        "train": {
+          "queries": 158,
+          "successAt5": 27.22,
+          "recallAt20": 32.28,
+          "presentInPool": 32.91,
+          "mrr": 0.2125
+        },
+        "held": {
+          "queries": 70,
+          "successAt5": 25.71,
+          "recallAt20": 30,
+          "presentInPool": 31.43,
+          "mrr": 0.2023
+        }
+      },
+      "heldDelta": {
+        "successAt5": 2.85,
+        "recallAt20": 2.86,
+        "mrr": 0.01
+      },
+      "trainDelta": {
+        "successAt5": 6.33,
+        "mrr": 0.0453
+      }
+    },
+    "100": {
+      "arms": {
+        "denseOnly": {
+          "weights": {
+            "dense": 1,
+            "sparse": 0,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 20.89,
+            "recallAt20": 29.11,
+            "presentInPool": 36.71,
+            "mrr": 0.1678
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 22.86,
+            "recallAt20": 27.14,
+            "presentInPool": 35.71,
+            "mrr": 0.193
+          }
+        },
+        "sparseOnly": {
+          "weights": {
+            "dense": 0,
+            "sparse": 1,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 25.95,
+            "recallAt20": 32.91,
+            "presentInPool": 36.71,
+            "mrr": 0.2064
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 27.14,
+            "recallAt20": 32.86,
+            "presentInPool": 35.71,
+            "mrr": 0.1863
+          }
+        },
+        "equalBlend": {
+          "weights": {
+            "dense": 1,
+            "sparse": 1,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 21.52,
+            "recallAt20": 29.11,
+            "presentInPool": 36.71,
+            "mrr": 0.1692
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 22.86,
+            "recallAt20": 27.14,
+            "presentInPool": 35.71,
+            "mrr": 0.1932
+          }
+        },
+        "blendPlusContext": {
+          "weights": {
+            "dense": 1,
+            "sparse": 1,
+            "court": 0.15,
+            "time": 0.15
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 23.42,
+            "recallAt20": 31.01,
+            "presentInPool": 36.71,
+            "mrr": 0.189
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 24.29,
+            "recallAt20": 28.57,
+            "presentInPool": 35.71,
+            "mrr": 0.1997
+          }
+        }
+      },
+      "denseOnly": {
+        "train": {
+          "queries": 158,
+          "successAt5": 20.89,
+          "recallAt20": 29.11,
+          "presentInPool": 36.71,
+          "mrr": 0.1678
+        },
+        "held": {
+          "queries": 70,
+          "successAt5": 22.86,
+          "recallAt20": 27.14,
+          "presentInPool": 35.71,
+          "mrr": 0.193
+        }
+      },
+      "bestWeights": {
+        "dense": 1,
+        "sparse": 8,
+        "court": 0.4,
+        "time": 0.4
+      },
+      "bestWeightsOnGridEdge": true,
+      "reranked": {
+        "train": {
+          "queries": 158,
+          "successAt5": 27.22,
+          "recallAt20": 34.18,
+          "presentInPool": 36.71,
+          "mrr": 0.2149
+        },
+        "held": {
+          "queries": 70,
+          "successAt5": 27.14,
+          "recallAt20": 32.86,
+          "presentInPool": 35.71,
+          "mrr": 0.2064
+        }
+      },
+      "heldDelta": {
+        "successAt5": 4.28,
+        "recallAt20": 5.72,
+        "mrr": 0.0134
+      },
+      "trainDelta": {
+        "successAt5": 6.33,
+        "mrr": 0.0471
+      }
+    },
+    "200": {
+      "arms": {
+        "denseOnly": {
+          "weights": {
+            "dense": 1,
+            "sparse": 0,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 20.89,
+            "recallAt20": 29.11,
+            "presentInPool": 41.14,
+            "mrr": 0.1681
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 22.86,
+            "recallAt20": 27.14,
+            "presentInPool": 38.57,
+            "mrr": 0.1932
+          }
+        },
+        "sparseOnly": {
+          "weights": {
+            "dense": 0,
+            "sparse": 1,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 25.95,
+            "recallAt20": 34.81,
+            "presentInPool": 41.14,
+            "mrr": 0.2088
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 27.14,
+            "recallAt20": 34.29,
+            "presentInPool": 38.57,
+            "mrr": 0.1856
+          }
+        },
+        "equalBlend": {
+          "weights": {
+            "dense": 1,
+            "sparse": 1,
+            "court": 0,
+            "time": 0
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 21.52,
+            "recallAt20": 29.11,
+            "presentInPool": 41.14,
+            "mrr": 0.1696
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 22.86,
+            "recallAt20": 27.14,
+            "presentInPool": 38.57,
+            "mrr": 0.1935
+          }
+        },
+        "blendPlusContext": {
+          "weights": {
+            "dense": 1,
+            "sparse": 1,
+            "court": 0.15,
+            "time": 0.15
+          },
+          "train": {
+            "queries": 158,
+            "successAt5": 23.42,
+            "recallAt20": 31.01,
+            "presentInPool": 41.14,
+            "mrr": 0.1899
+          },
+          "held": {
+            "queries": 70,
+            "successAt5": 24.29,
+            "recallAt20": 28.57,
+            "presentInPool": 38.57,
+            "mrr": 0.2
+          }
+        }
+      },
+      "denseOnly": {
+        "train": {
+          "queries": 158,
+          "successAt5": 20.89,
+          "recallAt20": 29.11,
+          "presentInPool": 41.14,
+          "mrr": 0.1681
+        },
+        "held": {
+          "queries": 70,
+          "successAt5": 22.86,
+          "recallAt20": 27.14,
+          "presentInPool": 38.57,
+          "mrr": 0.1932
+        }
+      },
+      "bestWeights": {
+        "dense": 1,
+        "sparse": 8,
+        "court": 0.4,
+        "time": 0.4
+      },
+      "bestWeightsOnGridEdge": true,
+      "reranked": {
+        "train": {
+          "queries": 158,
+          "successAt5": 28.48,
+          "recallAt20": 36.08,
+          "presentInPool": 41.14,
+          "mrr": 0.2195
+        },
+        "held": {
+          "queries": 70,
+          "successAt5": 27.14,
+          "recallAt20": 32.86,
+          "presentInPool": 38.57,
+          "mrr": 0.2068
+        }
+      },
+      "heldDelta": {
+        "successAt5": 4.28,
+        "recallAt20": 5.72,
+        "mrr": 0.0136
+      },
+      "trainDelta": {
+        "successAt5": 7.59,
+        "mrr": 0.0514
+      }
+    }
+  }
+}

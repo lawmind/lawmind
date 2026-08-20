@@ -49,7 +49,8 @@
     "milestone": "tsx src/stage-milestone.mjs",
     "probe:snapshot": "tsx src/probe-snapshot.mjs",
     "safety:currentness": "tsx src/currentness-safety.mjs",
-    "gold:transition": "tsx --env-file=../../.env src/statute-transition-gold-cli.ts"
+    "gold:transition": "tsx --env-file=../../.env src/statute-transition-gold-cli.ts",
+    "rerank:safe": "tsx src/leakage-safe-rerank.mjs"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
