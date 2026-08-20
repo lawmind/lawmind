@@ -1,0 +1,214 @@
+{
+  "kind": "new1_statute_transition_score",
+  "goldFile": "docs/ai/new3-statute-transition-gold.json",
+  "measuredAt": "2026-08-20T22:28:41.491Z",
+  "passed": 11,
+  "total": 11,
+  "byCategory": {
+    "PRE_EFFECTIVE_DATE": {
+      "pass": 1,
+      "total": 1
+    },
+    "POST_EFFECTIVE_DATE": {
+      "pass": 1,
+      "total": 1
+    },
+    "DATE_ABSENT": {
+      "pass": 1,
+      "total": 1
+    },
+    "CLEAR_CORRESPONDENCE": {
+      "pass": 3,
+      "total": 3
+    },
+    "PARTIAL_CORRESPONDENCE_SPLIT": {
+      "pass": 2,
+      "total": 2
+    },
+    "PARTIAL_CORRESPONDENCE_MERGED": {
+      "pass": 1,
+      "total": 1
+    },
+    "NO_PROVEN_MAPPING": {
+      "pass": 2,
+      "total": 2
+    }
+  },
+  "cases": [
+    {
+      "caseId": "STG-001",
+      "category": "PRE_EFFECTIVE_DATE",
+      "pass": true,
+      "expected": {
+        "kind": "determinate",
+        "regime": "pre_bns"
+      },
+      "actual": {
+        "kind": "determinate",
+        "regime": "pre_bns"
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-002",
+      "category": "POST_EFFECTIVE_DATE",
+      "pass": true,
+      "expected": {
+        "kind": "determinate",
+        "regime": "post_bns"
+      },
+      "actual": {
+        "kind": "determinate",
+        "regime": "post_bns"
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-003",
+      "category": "DATE_ABSENT",
+      "pass": true,
+      "expected": {
+        "kind": "indeterminate",
+        "mustAsk": "offence_date"
+      },
+      "actual": {
+        "kind": "indeterminate"
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-004",
+      "category": "CLEAR_CORRESPONDENCE",
+      "pass": true,
+      "expected": {
+        "held": true,
+        "rowCount": 1,
+        "relationship": "exact"
+      },
+      "actual": {
+        "held": true,
+        "rowCount": 1,
+        "relationships": [
+          "exact"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-005",
+      "category": "CLEAR_CORRESPONDENCE",
+      "pass": true,
+      "expected": {
+        "held": true,
+        "rowCount": 1,
+        "relationship": "exact"
+      },
+      "actual": {
+        "held": true,
+        "rowCount": 1,
+        "relationships": [
+          "exact"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-006",
+      "category": "PARTIAL_CORRESPONDENCE_SPLIT",
+      "pass": true,
+      "expected": {
+        "held": true,
+        "rowCount": 2,
+        "relationship": "split",
+        "singleEquivalentExists": false
+      },
+      "actual": {
+        "held": true,
+        "rowCount": 2,
+        "relationships": [
+          "split"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-007",
+      "category": "PARTIAL_CORRESPONDENCE_MERGED",
+      "pass": true,
+      "expected": {
+        "held": true,
+        "rowCount": 1,
+        "relationship": "merged"
+      },
+      "actual": {
+        "held": true,
+        "rowCount": 1,
+        "relationships": [
+          "merged"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-008",
+      "category": "PARTIAL_CORRESPONDENCE_SPLIT",
+      "pass": true,
+      "expected": {
+        "held": true,
+        "relationship": "split"
+      },
+      "actual": {
+        "held": true,
+        "rowCount": 1,
+        "relationships": [
+          "split"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-009",
+      "category": "CLEAR_CORRESPONDENCE",
+      "pass": true,
+      "expected": {
+        "held": true,
+        "rowCount": 1,
+        "relationship": "exact"
+      },
+      "actual": {
+        "held": true,
+        "rowCount": 1,
+        "relationships": [
+          "exact"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-010",
+      "category": "NO_PROVEN_MAPPING",
+      "pass": true,
+      "expected": {
+        "held": false
+      },
+      "actual": {
+        "held": false,
+        "why": "no correspondence is held for ipc 420. This means UNMAPPED — nobody has read the correspondence for this section — and NOT that no counterpart exists. Coverage of the official BPRD comparison tables is presently 4 of 358 BNS sections, 24 of 531 BNSS and 101 of 170 BSA, so a gap here is the expected case rather than a finding. A mapping is never generated; where the source itself splits or merges sections, a single equivalent may not exist at all."
+      },
+      "note": ""
+    },
+    {
+      "caseId": "STG-011",
+      "category": "NO_PROVEN_MAPPING",
+      "pass": true,
+      "expected": {
+        "held": false
+      },
+      "actual": {
+        "held": false,
+        "why": "no correspondence is held for crpc 154. This means UNMAPPED — nobody has read the correspondence for this section — and NOT that no counterpart exists. Coverage of the official BPRD comparison tables is presently 4 of 358 BNS sections, 24 of 531 BNSS and 101 of 170 BSA, so a gap here is the expected case rather than a finding. A mapping is never generated; where the source itself splits or merges sections, a single equivalent may not exist at all."
+      },
+      "note": ""
+    }
+  ]
+}

@@ -48,7 +48,8 @@
     "bench:expansion2": "tsx src/expansion-benchmark-v2.mjs",
     "milestone": "tsx src/stage-milestone.mjs",
     "probe:snapshot": "tsx src/probe-snapshot.mjs",
-    "safety:currentness": "tsx src/currentness-safety.mjs"
+    "safety:currentness": "tsx src/currentness-safety.mjs",
+    "gold:transition": "tsx --env-file=../../.env src/statute-transition-gold-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
