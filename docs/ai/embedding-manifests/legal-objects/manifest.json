@@ -2,28 +2,28 @@
   "kind": "legal_object_manifest",
   "contractVersion": "v1",
   "level": "B",
-  "claimsScanned": 1265,
+  "claimsScanned": 7414,
   "skippedTooShort": 0,
   "minChars": 40,
   "populations": {
     "holding": {
-      "rows": 399,
-      "distinctJudgments": 242,
-      "contentHash": "13e710807f87a81b258d7beba8b43297b10be4ad8cb9690eaa4c52a4cb9b3e52",
+      "rows": 2286,
+      "distinctJudgments": 1553,
+      "contentHash": "99f6bd8e58f5d260f8f2aecce86f47d762fb1b693264f7c5c563b7512bb8ec3c",
       "file": "docs\\ai\\embedding-manifests\\legal-objects\\holdings.jsonl"
     },
     "issue": {
-      "rows": 138,
-      "distinctJudgments": 78,
-      "contentHash": "bdd6f8a8c4822a7f1a7c53626da81b57a2c511630d1d8f9e353ccdde2652eb72",
+      "rows": 1330,
+      "distinctJudgments": 881,
+      "contentHash": "a074dce0189723fec119236cbf8e7eaa908f947e64590ad5ffd1680444f5737b",
       "file": "docs\\ai\\embedding-manifests\\legal-objects\\issues.jsonl"
     },
     "proposition": {
-      "rows": 728,
-      "distinctJudgments": 248,
-      "contentHash": "27dc3dc6834dc99a8eddfb9339f97c057d76084741f00a937c8547b978a544d0",
+      "rows": 3798,
+      "distinctJudgments": 1535,
+      "contentHash": "c0c2ac0714dfd8e1300e70e8044386a4acb1bc0f6a9d5b5643c8db385ec7ab0a",
       "file": "docs\\ai\\embedding-manifests\\legal-objects\\propositions.jsonl"
     }
   },
-  "generatedAt": "2026-08-19T19:14:00.399Z"
+  "generatedAt": "2026-08-20T04:04:07.965Z"
 }
