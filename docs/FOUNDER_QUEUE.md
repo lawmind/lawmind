@@ -4408,3 +4408,43 @@ of that court's decisions.
 coverage-gated ranking policy is proposed, it needs this number and cannot be
 shipped with one invented by an agent.
 
+
+#### Addendum, 20 Aug 2026 — the number this question needs now exists
+
+NEW2 built the per-court-year coverage table this decision was waiting on:
+`docs/ops/migration/new2-frontier.json` → `cells[]`, **889 cells**, each carrying
+`sourceRows`, `acquired`, `heldShare`, `permanentAbsent` and `state`. Verified on
+today's file rather than taken on report.
+
+NEW2 deliberately emitted `heldShare` and applied **no PARTIAL threshold**, on the
+grounds that where "materially less than source" begins is a product judgement
+about when a result set stops being an answer. That is right, and it is the same
+question this entry already asks, made concrete: the measurement is done, only
+the line is missing.
+
+The sharpest real example, confirmed against the artefact:
+
+```
+Madhya Pradesh (23_23) 2025   source 23,528   held    184   0.8%   permanentAbsent 23,344
+Madhya Pradesh (23_23) 2026   source  3,571   held     93   2.6%   permanentAbsent  3,477
+Madhya Pradesh (23_23) 2024   source 28,167   held 12,277  43.6%   permanentAbsent 15,869
+```
+
+The metadata rows exist and the PDFs 404, so this is not an ingest gap and no
+amount of harvesting recovers it. A cell like this must not render as
+`SOURCE_HAS_ZERO` — the source positively exists — and must not render as
+`COVERED` either. It is the case the PARTIAL state was argued for.
+
+Two properties of the file a consumer must respect, both from NEW2 and both
+verified: `heldShare` can legitimately exceed 1.0 (source counts parquet rows,
+held counts distinct documents), so clamping it silently reads duplication as
+completeness; and when `heldFreshness.heldIsStale` is true — it is, by 1 second,
+because a worker is live — every `acquired` is a LOWER bound.
+
+Also worth recording against the original entry: the ingest frontier has since
+CLOSED. All 889 cells now read `remainingRows = 0` (NEW2's 19:10 message reported
+728,493 outstanding). So the unreachable-law question is no longer partly a
+"wait for ingest" question; what is missing now is missing permanently, and the
+threshold is the only thing still undecided.
+
+**No agent may set this line.** NEW1 is not setting it.
