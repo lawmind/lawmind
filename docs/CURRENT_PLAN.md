@@ -84,6 +84,59 @@ for DISPOSED, so a bounded first paid pass is CLOSED + CLOSED NO COSTS + RELAXED
 schema from LCC (bus 0839). Nothing has been harvested; a live harvest whose rows
 have nowhere correct to land is the one mistake that cannot be cleaned up later.
 
+### 20 Aug 2026 — NEW1: THREE JOBS SAID "COMPLETE" WHILE DOING 1.1%, AND RERANKING DOES NOT WORK
+
+**Added by NEW1 (retrieval lane).** Artefacts under `docs/ai/new1-rerank/` and
+`docs/ai/new1-halfvec/ef-search-sweep.json`.
+
+**The Tier-A scale run had stopped at 110,469 vectors — 1.1% — and printed
+`RUNNER COMPLETE`.** `stage-runner.sh` defaulted `MAX_BATCH` to 9 against an
+886-batch manifest. Restarting it exposed a second defect: the GPU sidecar had
+died, so every batch failed instantly with `fetch failed` and the walk advanced
+anyway, eating 67 batches in about sixty seconds and printing START and END for
+each. A third, in a script all five lanes share: `scripts/stall-watchdog.mjs`
+restarted its child on exit code 0, re-running the COMPLETED manifest builder 549
+times in 5.7 hours. All three fixed; all three verified against the failure they
+were meant to catch. **Batches 10-76 still owe a pass** —
+`START_BATCH=10 MAX_BATCH=76`, a re-run rather than a repair, since the stage is
+idempotent per document.
+
+The pattern is worth carrying: every one of these made a stopped job look like a
+finished one. Process tables showed them alive, row counts rose until they
+didn't, and the logs said success throughout.
+
+**ef_search=40 is the PROBES' setting, not production's.** `retrieve.ts:374`
+defaults `HNSW_EF_SEARCH` to 200 and sets `iterative_scan = relaxed_order`, with
+no override anywhere in the repo. The 6–9% loss reproduces exactly at 40 (6.0% at
+recall@10, 9.6% at @50, 1.67pt success@5) — measured against an exact scan with
+index access disabled — so the earlier finding was right about the number and
+wrong about who was paying it. **200 is the lowest arm that fixes the tail** and
+production is already there; 80 and 120 lift the mean while leaving the worst
+query at 10% recall. Remaining for HALFVEC: compare fp32 against halfvec **at
+ef_search=200** rather than at the 40 both were measured at. Not issuing
+HALFVEC_PRODUCTION_READY before that runs.
+
+**Reranking does not work here, by three independent routes.** Candidate depth
+200→2,000 bought +15.7pt of gold PRESENCE and 0.00pt of success@5. Eight trusted
+features appeared to buy +21.5pt until the ablation showed **278 of 278 gold
+authorities are inbound-cited** — the gold is citation-derived, so `inbound` was
+recognising eligibility to BE gold; stripped of document priors the gain is
++0.69pt. The cross-encoder (`bge-reranker-v2-m3`, already in the repo) makes
+success@5 **worse by 2.78pt** at 12.2s/query, and fp32 loses harder than q8, so
+quantisation was not the confound.
+
+**Consequence for gold construction (NEW3):** this evaluation set cannot measure
+retrieval of uncited authority at all, and roughly 99.8% of the corpus is uncited
+— exactly the population Tier-A expansion exists to reach. The expanded HC
+benchmark must deliberately include gold nobody has cited.
+
+**HEAD:4800 is validated, by the arm expected to beat it.** 1200/2400/4800/9600
+over one fixed pool of 5,000 documents with real ANN hard distractors: 9,600
+COSTS 3.2pt of recall@20 at double the price. 2,400 offers 1.87x throughput for
+0.35pt of success@5 but costs 7.42pt of recall@20 and is declined. With 99.2% of
+the run's wall time inside the encoder and 0.9% in the database, **there is no
+cheap throughput lever** — the 11.4 days stands on tokens.
+
 ### 20 Aug 2026 — NEW1: HALFVEC IS THE ANSWER, AND PRODUCTION HNSW LOSES 6–9% OF TRUE NEIGHBOURS
 
 **Added by NEW1 (retrieval lane).** `docs/ai/NEW1_HALFVEC_TASK_FIDELITY.md` and
