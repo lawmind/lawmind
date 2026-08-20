@@ -16,6 +16,75 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 21 Aug 2026 — LCC: SIX MIGRATIONS, AND FIVE NUMBERS OTHER LANES WERE USING WERE WRONG
+
+**Added by LCC (server lane).** Every state below was read back from the live
+database, never inferred from a command exiting 0.
+
+**P11 · ECOURTS_OBSERVATION_PIPELINE_READY** — migration `0061`, commit
+`abaf0e6`. NEW2 had been holding live eCourts traffic since bus 0839 because no
+observation schema existed. `ecourts_observation` has **no foreign key to
+`judgments`, not even a nullable one** — registry bookkeeping must not enter the
+authority population, and a nullable link is an invitation to backfill it.
+Append-only by trigger; there is **no `hearing_occurred` observation kind and
+there must never be one**, because eCourts publishes listings and never
+attendance. Four guards proved by execution in one rolled-back transaction:
+UPDATE refused, DELETE refused, `hearing_occurred` refused, ungranted data type
+refused, table left at 0.
+
+**P1 · COVERAGE_TRUTH_V2** — migration `0062`, commit `c7e55a5`. Of 257 cells
+carrying a shortfall, **179 are entirely `permanentAbsent` + `retryable`** —
+Bombay 2006 is short 6,276 with 6,275 permanently absent, and 2007 is short 6,706
+with exactly 6,706. They rendered `PARTIAL`, "we are missing law", about
+documents the court never published. And **Allahabad's 50.03% / 50.29% is a
+2.00x row-to-document ratio, not a coverage figure** — 88.6% of all unexplained
+shortfall is that one court. The genuinely unattributed gap is **153,204 rows
+over 115 cells, not 1,579,075 over 257**: a 10.3x overstatement. `source_state`
+was NOT renamed (NEW1's contract reads it); `shortfall_reason` is a second
+orthogonal axis.
+
+**P0 · TREATMENT_MANIFEST_RECONCILED** — commit `d49fea0`. Population is **27
+unlinked, not 33**. Treatment and currentness are already separate and the
+collapse the directive warned about is measured and ABSENT — zero judgments are
+non-current on a `distinguished` edge alone. The real defect is vocabulary:
+**73 of 98 carry `set_aside` for an act that is `overruled`**, which disables
+add-to-matter. Raised as **OD-14** and deliberately not resolved.
+
+**P2/P4 · migrations `0063` and `0064`**, commit `093e164`. `semantic_tier` reads
+back over the whole corpus: BROAD_SEARCHABLE 9,934,916 · NOT_ELIGIBLE 8,696,250 ·
+UNRESOLVED_EXPERIMENTAL 67,802 · **VERIFIED_SEMANTIC_CORE 0** — two lanes reached
+that zero independently. The trust ladder MODEL_PROPOSED -> SPAN_VERIFIED ->
+SEMANTIC_ROLE_VERIFIED -> CANONICAL_TRUSTED is live; 30,007 rows sit at span, and
+**nothing has ever reached role verification.**
+
+**P5 · the ladder is HALTED at 1k** — `docs/ai/MODEL_CLASSIFICATION_1K_AUDIT.md`.
+Not on accuracy: **the model agrees with itself only 81.0%** [76.2, 85.0] on the
+same document, and the flips are symmetric across the `decided`/`procedural`
+boundary that decides Tier A. Accuracy against NEW2's held-out key — written
+before any model ran — is **87.9%** [72.7, 95.2] on 33 scorable documents, with a
+15% false-substantive rate in the costly direction.
+
+**P8 · migration `0065`**, commit `8e3e1d2`. All 226 statute mappings are BPR&D
+comparison tables: **`OFFICIAL_CORRESPONDENCE`, none `ENACTED_STATUTE`**. Coverage
+is **bns 4/358**, bnss 24/531, bsa 101/170, so absence is the normal case and now
+reads UNMAPPED rather than anything resembling "no counterpart exists".
+
+**Migration `0066`**, commit `c6a3150` — **bail orders become reachable.** NEW1
+measured that 13.2% of the authorities judges actually cite are refused before the
+GPU sees them, bail being 4.8%. "Not precedent" is a claim about weight, not
+retrievability. Priced at 489,444 rows, +5.5% of the manifest. The 2,000-char
+floor deliberately does NOT move despite refusing a larger 7.2%.
+
+**Corrections I made in the open:** `decided_brief` costs ZERO rows, not "about
+one percent" — NEW2 caught it and the error was mine. My 16.9% "fabrication" is
+materially a **corpus-damage** figure; 59.2% of it is documents whose text is not
+language.
+
+**Still open:** OD-14. FQ-ECOURTS-ACTOR, which now blocks FIVE premium surfaces
+rather than one. `assessTransition` is correct, tested 19/19 and reachable from
+nothing in production. P14 wall-clock timings deferred — the box carried three
+other lanes all session.
+
 ### 20 Aug 2026 — LCC: P. KANNADASAN IS NO LONGER GOOD LAW, `statute_mappings` HAS ROWS, AND COVERAGE HAS TWO AXES
 
 **Added by LCC (server lane).** Six things landed; each one is a founder-roadmap
