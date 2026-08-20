@@ -64,6 +64,7 @@ import {
   windowAround,
 } from './enrich.ts';
 import { ATOMIC_TASKS, buildAtomicPrompt, claimsFromAtomic, isAtomicTask } from './enrich-atomic.ts';
+import { profileFor } from './enrich-eligibility.ts';
 import { callInferxPooled, inferxKeysFromEnv } from './inferx.ts';
 import { callOpenRouter, openRouterKeyFromEnv, openRouterModelFromEnv } from './openrouter.ts';
 import { installCrashGuard } from './crash-guard.ts';
@@ -475,6 +476,18 @@ async function selectRefs(): Promise<UnitRef[]> {
      * few thousand rows instead. Same reason the eligibility view's own band is
      * not used as the outer filter here.
      */
+    /**
+     * ── ONE PREDICATE PER TASK, NOT ONE FOR ALL OF THEM. 20 Aug 2026.
+     *
+     * Making Tier A the filter fixed reaching 2.7% of the corpus. It then became
+     * a single universal predicate, which is wrong in the other direction for
+     * four tasks: Tier A excludes bail orders by construction (`is_bail_order`,
+     * 0058), and a `procedural_event` is exactly what a bail order is full of.
+     * `enrich-eligibility.ts` holds the profiles and the reasoning; a profile may
+     * admit procedural decisions and lower the length floor, and may never turn
+     * class back into a filter — a NULL class is admitted by all of them.
+     */
+    const profile = profileFor(TASK);
     return sql<UnitRef[]>`
       WITH pool AS (
         SELECT r.representative_judgment_id AS id
@@ -486,11 +499,32 @@ async function selectRefs(): Promise<UnitRef[]> {
         )
         ORDER BY r.representative_judgment_id
         LIMIT ${LIMIT * 20}
+      ),
+      -- The procedural profile reaches OUTSIDE Tier A, because Tier A is where
+      -- bail orders are not. Same anti-join, same one-representative-per-text
+      -- rule via content_hash, bounded by the same page size, never a scan.
+      procedural_pool AS (
+        SELECT DISTINCT ON (j.content_hash) j.id
+        FROM judgments j
+        WHERE ${profile.includeBailOrders ? sql`j.hc_document_class = 'bail_order'` : sql`false`}
+          AND j.content_hash IS NOT NULL
+          AND NOT EXISTS (
+            SELECT 1 FROM document_enrichments e
+            WHERE e.judgment_id = j.id AND e.task = ${TASK}
+              AND e.prompt_version = ${PROMPT_VERSION} AND e.status = 'ok'
+          )
+        ORDER BY j.content_hash, j.id
+        LIMIT ${LIMIT * 2}
+      ),
+      combined AS (
+        SELECT id FROM pool
+        UNION
+        SELECT id FROM procedural_pool
       )
       SELECT p.id AS "judgmentId", j.case_title AS "caseTitle", j.court
-      FROM pool p
+      FROM combined p
       JOIN judgments j ON j.id = p.id
-      WHERE j.full_text IS NOT NULL AND length(j.full_text) > 2000
+      WHERE j.full_text IS NOT NULL AND length(j.full_text) > ${profile.minChars}
       ORDER BY
         -- Repaired documents first: their text roughly doubled, so anything
         -- derived from them before was derived from half a judgment.
