@@ -160,9 +160,42 @@ function isBail(disposal: string): boolean {
  * an inference rather than a restatement of a source field. `enlarged on bail`
  * and `released on bail` are included because they are how a Patna order states
  * the operative direction.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `\s+`, NOT A LITERAL SPACE — MEASURED 21 AUG 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The phrase does not survive a line break, and a PDF puts line breaks wherever
+ * the page ended. Drawn uniformly from rows a rule had ALREADY called `decided`
+ * or `decided_brief` — i.e. exactly the rows this pattern missed:
+ *
+ *   n = 4,000
+ *   literal-space pattern fires        0        (correctly: a hit would have
+ *                                                made the row `bail_order`)
+ *   whitespace-flexible fires         33        0.82% of the class
+ *
+ * Every gained match is a wrapped phrase and nothing else — `"bail\napplication"`,
+ * `"released on\nbail"`, `"prayer for\nbail"`, `"anticipatory\nbail"`.
+ *
+ * Corroborated by a witness the pattern cannot see: **31 of the 33 carry a
+ * criminal or bail case type** — `BA1/`, `B.A./`, `CR. MISC./`, `CRM-M/`,
+ * `CRL OP/`, `AB/`, `MCRC/`, `CRLP/`, `SOSA/`, `SCR.A/`. The prose and the
+ * registry's own case-type field agree without either being derived from the
+ * other.
+ *
+ * **De-hyphenation was measured and rejected.** Tolerating a hyphen inserted at
+ * a line break (`anticipa-\ntory bail`) gained **0 further documents** of the
+ * 4,000, so it is not added. A mechanism nobody can measure is not a mechanism.
+ *
+ * **What this does NOT fix.** `released on bail` and `enlarged on bail` can be
+ * incidental narration in a judgment that is not a bail order ("the accused was
+ * released on bail during trial"). That risk predates this change and this
+ * change does not alter which phrases count — only whether a newline defeats
+ * them. Of the 33 gained, the two without a criminal case type are `CRA/` and
+ * `SCA/`, and the second is the shape that risk takes.
  */
 const BAIL_PHRASE =
-  /(anticipatory bail|regular bail|bail application|enlarged on bail|released on bail|prayer for bail)/i;
+  /(anticipatory\s+bail|regular\s+bail|bail\s+application|enlarged\s+on\s+bail|released\s+on\s+bail|prayer\s+for\s+bail)/i;
 
 /**
  * The case ended without the court deciding it.

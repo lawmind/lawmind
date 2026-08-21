@@ -127,6 +127,48 @@ describe('bail hiding behind a merits disposal — found by the validation sampl
     assert.equal(r.method, 'text_bail_phrase', 'recorded as an inference, not as a source field');
   });
 
+  it('catches the phrase when a PDF line break falls inside it', () => {
+    // Measured 21 Aug 2026: over 4,000 rows a rule had already called `decided`
+    // or `decided_brief`, the literal-space pattern fired 0 times and the
+    // whitespace-flexible one fired 33 — every gain a wrapped phrase, and 31 of
+    // the 33 independently corroborated by a criminal or bail case type.
+    // The newline below is the real shape: "bail\napplication", Patna.
+    for (const wrapped of [
+      'The bail\napplication is rejected.',
+      'the petitioner be released on\nbail on furnishing bonds.',
+      'prayer for\nbail is allowed.',
+      'This is an anticipatory\nbail matter.',
+    ]) {
+      const r = classifyHcDocument(
+        doc({
+          disposalNature: 'ALLOWED',
+          caseNumber: 'CR. MISC./25935/2026',
+          fullText: wrapped + ' ' + 'x'.repeat(3000),
+        }),
+      );
+      assert.equal(r.documentClass, 'bail_order', `wrapped phrase missed: ${JSON.stringify(wrapped)}`);
+      assert.equal(r.method, 'text_bail_phrase');
+    }
+  });
+
+  it('does NOT stretch across a paragraph — \\s+ is not .*', () => {
+    // The fix must tolerate a line break INSIDE the phrase and nothing more. If
+    // `\s+` were ever loosened to `.*`, a judgment mentioning bail and an
+    // application in unrelated sentences would be reclassified, and the rule
+    // would stop being about a phrase at all.
+    const r = classifyHcDocument(
+      doc({
+        disposalNature: 'ALLOWED',
+        caseNumber: 'CWJC/7804/2015',
+        fullText:
+          'The accused had earlier sought bail. That is not this matter. ' +
+          'The present application concerns land acquisition. ' +
+          'x'.repeat(3000),
+      }),
+    );
+    assert.equal(r.documentClass, 'decided');
+  });
+
   it('does NOT reclassify a writ matter that never mentions bail', () => {
     // The control that makes the rule a signal: 1 of 738 CWJC merits disposals
     // mentions bail, so the phrase is genuinely discriminating.
