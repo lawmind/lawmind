@@ -252,9 +252,67 @@ const dedupe = (xs: { family: FeatureFamily; why: string }[]): { family: Feature
   return xs.filter((p) => (seen.has(p.family) ? false : (seen.add(p.family), true)));
 };
 
-/** What a scorer may read for one row. Provenance and construction compose. */
-export function featurePolicy(row: Pick<EvalRow, 'goldProvenanceType' | 'queryConstruction'>): FeaturePolicy {
-  const prohibited = dedupe([...PROHIBITED[row.goldProvenanceType], ...CONSTRUCTION_PROHIBITED[row.queryConstruction]]);
+/**
+ * Citation-edge relationships that ARE a treatment finding.
+ *
+ * Raised by LCC, bus 0912. `treatment_and_currentness` sits in the pooled-allowed
+ * set and does NOT leak on the golds we have, because every edge in
+ * `new3-semantic-expansion-gold` is a plain `cites` and the currentness feature
+ * reads only adverse states — disjoint by construction.
+ *
+ * **But that disjointness is a property of THAT GOLD, not of the feature.** The
+ * moment a gold is built from adverse edges — precisely what an "find the
+ * authority against me" benchmark does, and P6 names it as a required query class
+ * — the authority is gold BECAUSE of its treatment, and reading the treatment back
+ * is identity rather than retrieval.
+ *
+ * So the ban is attached to the EDGE, not to the provenance type. A citation-edge
+ * gold is safe or unsafe depending on which edges it was built from, and only the
+ * row knows.
+ */
+const ADVERSE_RELATIONSHIPS: ReadonlySet<string> = new Set([
+  'overruled',
+  'overruled_in_part',
+  'set_aside',
+  'partly_set_aside',
+  'doubted',
+  'distinguished',
+  'reversed',
+  'disapproved',
+]);
+
+/**
+ * Read the edge relationship out of the free-form evidence bag.
+ *
+ * `goldEvidence` is deliberately unschema'd, so this accepts the two spellings
+ * the adapters actually emit and treats anything else as absent. Absent is NOT
+ * treated as adverse: an unknown edge must not silently ban a family, or every
+ * gold that omits the field loses a legitimate feature.
+ */
+function edgeRelationship(evidence: Record<string, unknown> | undefined): string | null {
+  const raw = evidence?.relationship ?? evidence?.edgeRelationship;
+  return typeof raw === 'string' ? raw.toLowerCase() : null;
+}
+
+/** What a scorer may read for one row. Provenance, construction and EDGE compose. */
+export function featurePolicy(
+  row: Pick<EvalRow, 'goldProvenanceType' | 'queryConstruction'> & { goldEvidence?: Record<string, unknown> },
+): FeaturePolicy {
+  const rel = edgeRelationship(row.goldEvidence);
+  const edgeProhibited =
+    rel !== null && ADVERSE_RELATIONSHIPS.has(rel)
+      ? [
+          {
+            family: 'treatment_and_currentness' as FeatureFamily,
+            why: `the gold edge is '${rel}', which IS a treatment finding — reading treatment back is identity, not retrieval (LCC bus 0912)`,
+          },
+        ]
+      : [];
+  const prohibited = dedupe([
+    ...PROHIBITED[row.goldProvenanceType],
+    ...CONSTRUCTION_PROHIBITED[row.queryConstruction],
+    ...edgeProhibited,
+  ]);
   const banned = new Set(prohibited.map((p) => p.family));
   // A prohibition outranks a caution: there is nothing to caution about a family
   // that may not be read at all.

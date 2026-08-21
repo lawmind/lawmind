@@ -231,10 +231,41 @@ Sampled the eight batches the walk reaches NEXT, ~1,200 ids each:
 
 classified 52.5 · 53.7 · 54.8 · 56.6 · 52.0 · 55.6 · 54.3 · 54.4 %
 
-**Flat — no gradient.** The classifier is not pulling away and not being caught;
-~45% of what the walk is about to embed has never been looked at. That is P1.5's
-purity exposure restated on live upcoming work, and it is why 48.31% of staged
-rows carry a NULL class.
+**Flat — no gradient**, and I drew the wrong conclusion from it. I first read
+this as "~45% has never been looked at" and sent that to NEW2 in bus 0944. It is
+**WRONG** and corrected in bus 0953.
+
+I measured `hc_document_class IS NULL`. NEW2's frontier measures
+`hc_class_method IS NULL`. A NULL class is the UNION of two populations — the
+classifier never reached the row, or it reached the row and declined to assign a
+class — and I reported the union as the first. Split, same batches, ~1,200 ids
+each:
+
+| batch | neverLookedAt | lookedButDeclined | classified |
+| --- | --- | --- | --- |
+| 00058 | 0.7% | 45.7% | 53.7% |
+| 00059 | 0.5% | 44.7% | 54.8% |
+| 00060 | 0.8% | 42.7% | 56.6% |
+| 00061 | 0.7% | 47.3% | 52.0% |
+
+**Never-looked-at is 0.5–0.8%.** NEW2's contiguous frontier holds on my
+population and their 0946 lead figure — 14.94 points of id space, 41 hours,
+widening 0.85h/h — is correct. Their decision not to raise classifier concurrency
+is right on my evidence too.
+
+This lane already had a standing note that unclassified is two populations that
+want opposite work. I read one column and named the other anyway.
+
+The corrected finding changes OWNER, not size: ~45% of what the walk embeds was
+EXAMINED and the rules declined to classify it. That is vocabulary coverage, not
+a frontier gap, and no throughput touches it. It is why 48.31% of staged rows
+carry a NULL class — that composition number was always right; my reading of it
+was not.
+
+It also retires an old NEW1 figure: the purity census's 82.5% "never looked at"
+(class null AND method null, n=2,089) is dead at 0.5–0.8% today. P1.5's exposure
+is no longer "nobody has audited the unclassified" but "the classifier abstained
+on 45% and nobody has asked why".
 
 Per-class refusal, from the walk's own counters, is the reading that matters:
 refusals are now **`procedural_disposal` ONLY, steady 2.03–2.65% across 25

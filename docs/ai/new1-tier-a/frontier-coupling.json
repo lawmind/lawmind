@@ -1,0 +1,50 @@
+{
+  "kind": "new1_frontier_coupling",
+  "measuredAt": "2026-08-21T17:41:14.623Z",
+  "worklistPos": 49,
+  "worklistLen": 864,
+  "note": "neverLookedAt is the ONLY frontier figure. lookedButDeclined is vocabulary coverage and no classifier throughput touches it.",
+  "batches": [
+    {
+      "lead": 0,
+      "file": "tier-a-batch-00058.jsonl",
+      "sampled": 1200,
+      "neverLookedAtPct": 0.7,
+      "lookedButDeclinedPct": 45.7,
+      "classifiedPct": 53.7
+    },
+    {
+      "lead": 1,
+      "file": "tier-a-batch-00059.jsonl",
+      "sampled": 1200,
+      "neverLookedAtPct": 0.5,
+      "lookedButDeclinedPct": 44.7,
+      "classifiedPct": 54.8
+    },
+    {
+      "lead": 2,
+      "file": "tier-a-batch-00060.jsonl",
+      "sampled": 1200,
+      "neverLookedAtPct": 0.8,
+      "lookedButDeclinedPct": 42.7,
+      "classifiedPct": 56.6
+    },
+    {
+      "lead": 3,
+      "file": "tier-a-batch-00061.jsonl",
+      "sampled": 1200,
+      "neverLookedAtPct": 0.7,
+      "lookedButDeclinedPct": 47.3,
+      "classifiedPct": 52
+    },
+    {
+      "lead": 4,
+      "file": "tier-a-batch-00062.jsonl",
+      "sampled": 1200,
+      "neverLookedAtPct": 1,
+      "lookedButDeclinedPct": 43.4,
+      "classifiedPct": 55.6
+    }
+  ],
+  "verdict": "CLASSIFIER COMFORTABLY AHEAD — worst never-looked-at is 1%. Do not ask NEW2 for more concurrency."
+}

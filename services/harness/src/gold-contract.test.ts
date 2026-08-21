@@ -146,3 +146,61 @@ test('cautionsAcross collects every caution in a set so a report cannot omit one
   ];
   assert.deepEqual(cautionsAcross(rows).map((c) => c.family), ['dense_similarity']);
 });
+
+// ── adverse-edge guard (LCC bus 0912) ────────────────────────────────────────
+// The gold we have does not leak through `treatment_and_currentness` because
+// every edge in it is a plain `cites`. These tests exist because that is a fact
+// about the GOLD, and the next gold — an adverse-authority benchmark, which P6
+// requires — makes the same feature circular.
+
+test('a plain cites edge still allows treatment_and_currentness', () => {
+  const policy = featurePolicy(row({ goldEvidence: { relationship: 'cites' } }));
+  assert.ok(policy.allowed.includes('treatment_and_currentness'));
+  assert.deepEqual(
+    policy.prohibited.map((p) => p.family),
+    ['inbound_citation_graph'],
+  );
+});
+
+test('an adverse edge prohibits treatment_and_currentness even on citation_edge provenance', () => {
+  for (const rel of ['overruled', 'set_aside', 'doubted', 'distinguished', 'reversed']) {
+    const policy = featurePolicy(row({ goldEvidence: { relationship: rel } }));
+    assert.ok(
+      policy.prohibited.some((p) => p.family === 'treatment_and_currentness'),
+      `${rel} must ban treatment_and_currentness`,
+    );
+    assert.ok(!policy.allowed.includes('treatment_and_currentness'), `${rel} must not allow it`);
+  }
+});
+
+test('the adverse-edge ban is case-insensitive and reads either spelling', () => {
+  for (const evidence of [{ relationship: 'OVERRULED' }, { edgeRelationship: 'Set_Aside' }]) {
+    const policy = featurePolicy(row({ goldEvidence: evidence }));
+    assert.ok(policy.prohibited.some((p) => p.family === 'treatment_and_currentness'));
+  }
+});
+
+test('an ABSENT relationship does not ban — unknown is not adverse', () => {
+  // The opposite default would make every gold that omits the field lose a
+  // legitimate feature, which is a silent quality loss rather than a safety win.
+  assert.ok(featurePolicy(row({ goldEvidence: {} })).allowed.includes('treatment_and_currentness'));
+  assert.ok(featurePolicy(row({ goldEvidence: { relationship: 42 } })).allowed.includes('treatment_and_currentness'));
+});
+
+test('assertFeatureAllowed THROWS on an adverse edge, and the message names the edge', () => {
+  const r = row({ goldEvidence: { relationship: 'overruled' } });
+  assert.throws(
+    () => assertFeatureAllowed(r, 'treatment_and_currentness'),
+    (e: unknown) => e instanceof LeakageError && /overruled/.test((e as LeakageError).why),
+  );
+  // and it must not have become a blanket ban on the row
+  assert.doesNotThrow(() => assertFeatureAllowed(r, 'dense_similarity'));
+});
+
+test('one adverse row bans the family for the whole run', () => {
+  const rows = [
+    row({ queryId: 'q1', goldEvidence: { relationship: 'cites' } }),
+    row({ queryId: 'q2', caseFamily: 'auth-2', goldEvidence: { relationship: 'overruled' } }),
+  ];
+  assert.ok(!allowedAcross(rows).includes('treatment_and_currentness'));
+});
