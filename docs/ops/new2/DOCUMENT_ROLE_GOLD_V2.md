@@ -1,6 +1,6 @@
 # DOCUMENT-ROLE GOLD V2 — and the finding it produced about NEW2's own classifier
 
-**Owner:** NEW2 · **21 Aug 2026** · **60 rows labelled from primary documents, on a
+**Owner:** NEW2 · **21 Aug 2026** · **90 rows labelled from primary documents, on a
 270-row stratified frame.**
 
 ---
@@ -59,25 +59,43 @@ arithmetic rather than judgement.
 
 ## 3. The finding: `decided` is 30% procedural
 
-60 rows labelled so far, each from its own cause title and operative tail, each
+90 rows labelled so far, each from its own cause title and operative tail, each
 carrying the sentence the verdict rests on.
 
 ```
-decided:long   n=30      SUBSTANTIVE 14 · PROCEDURAL  9 · TEXT_UNSAFE 3 · UNCERTAIN 3 · IDENTITY_UNSAFE 1
-procedural:long n=15     PROCEDURAL 14 · FALSE_PROCEDURAL 1
-unclassified:long n=15   PROCEDURAL  5 · BAIL 4 · SUBSTANTIVE 3 · UNCERTAIN 2 · TEXT_UNSAFE 1
+cell                     n    SUBST  PROC  BAIL  TEXT_UNSAFE  UNCERTAIN  other
+decided:long            30      14     9     0        3           3      1 identity
+decided_brief:short     15       1     9     1        2           2      -
+procedural_disposal:long 15      -    14     -        -           -      1 FALSE_PROCEDURAL
+unclassified:long       15       3     5     4        1           2      -
+unclassified:short      15       0     7     3        4           0      1 reference
+                       ───    ────  ────  ────     ────        ────
+                        90      18    44     8       10           7      3
 ```
 
+The rates that matter, each with its interval:
+
 ```
-FALSE-SUBSTANTIVE in `decided`      9 / 30   30.0%   [13.6, 46.4]
-  excluding unjudgeable rows        9 / 23   39.1%   [19.2, 59.1]
-false-procedural in `procedural`    1 / 15    6.7%   [0.0, 19.4]
-substantive share of `unclassified` 3 / 15   20.0%
+FALSE-SUBSTANTIVE in `decided`         9 / 30   30.0%   [13.6, 46.4]
+FALSE-SUBSTANTIVE in `decided_brief`   9 / 15   60.0%   [35.2, 84.8]
+false-procedural in `procedural`       1 / 15    6.7%   [ 0.0, 19.4]
+substantive share of `unclassified:long`  3/15  20.0%
+substantive share of `unclassified:short` 0/15   0.0%   [ 0.0, 21.8]
 ```
 
 **The asymmetry is five to one in the direction that admits non-law into an
 authority set** — the same direction LCC measured at three to one on a model, and
 larger, because this is the deterministic rule rather than the model.
+
+**`decided_brief` is worse than `decided`, at 60% procedural and one substantive
+row in fifteen.** NEW1 excludes it from Tier A by the length bands, which turns
+out to have been right for a stronger reason than length. It corroborates and
+tightens the 15.6% precision NEW2 estimated for that class earlier.
+
+**`unclassified:short` — an estimated 4.7 million rows — produced ZERO substantive
+documents in fifteen draws**, and four of the fifteen are `TEXT_UNSAFE_VERIFIED`,
+every one of them Punjab & Haryana. The cell is registrar's orders, adjournments,
+infructuous dismissals, bail, and glyph dumps.
 
 ### The nine, and what each actually is
 
@@ -151,7 +169,7 @@ its companion. Identity is not one-document-one-decision in either direction.
 
 ## 5. What this is not
 
-- **60 labelled of 270.** The remaining six cells are drawn and unlabelled. The
+- **90 labelled of 270.** The remaining six cells are drawn and unlabelled. The
   intervals above are wide and stated; `decided` at 30% has a lower bound of 13.6%.
 - **One labeller, no model.** The same objection LCC raised about their own
   adjudication applies here. What this has instead is a quoted sentence per row.
