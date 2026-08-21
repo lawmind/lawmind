@@ -470,6 +470,27 @@
       "when": 1786442300000,
       "tag": "0066_bail_orders_are_reachable",
       "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1786442400000,
+      "tag": "0067_text_unsafe_verified",
+      "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1786442500000,
+      "tag": "0068_cited_authority_matview",
+      "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1786442600000,
+      "tag": "0069_cited_authority_reachable",
+      "breakpoints": true
     }
   ]
 }
