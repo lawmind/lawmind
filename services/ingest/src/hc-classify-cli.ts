@@ -308,8 +308,15 @@ async function main(): Promise<void> {
      */
     const RULE_METHODS: Record<string, string[]> = {
       bail: ['disposal_nature_merits', 'disposal_nature_merits_short'],
+      /* Same population as `bail`: `operative_act_withdrawn` is reached from the
+       * same `isMerits` branch, so only rows that branch stamped can move. */
+      withdrawn: ['disposal_nature_merits', 'disposal_nature_merits_short'],
     };
-    const RULE_PREFILTER: Record<string, string> = { bail: '%bail%' };
+    /* Every alternative in the WITHDRAWN patterns contains the literal substring
+     * `withdraw` -- `dismissed as withdrawn`, `permitted to withdraw the ...` --
+     * so this is a superset of the rule's precondition and can cost work but
+     * never correctness. Same argument as the bail prefilter. */
+    const RULE_PREFILTER: Record<string, string> = { bail: '%bail%', withdrawn: '%withdraw%' };
     const ruleArgIndex = process.argv.indexOf('--restale-rule');
     const RESTALE_RULE = ruleArgIndex >= 0 ? (process.argv[ruleArgIndex + 1] ?? null) : null;
     if (RESTALE_RULE !== null && RULE_METHODS[RESTALE_RULE] === undefined) {

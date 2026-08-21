@@ -169,6 +169,59 @@ describe('bail hiding behind a merits disposal — found by the validation sampl
     assert.equal(r.documentClass, 'decided');
   });
 
+  it('a merits disposal whose text says the matter was WITHDRAWN is procedural', () => {
+    // The thesis in one real row: Allahabad WRIC/29561/2023 carries
+    // disposal_nature = "Dismissed on merits" and its own text says otherwise.
+    // Measured 68 of 68 judgeable firings correct, precision >= 95.6%.
+    const r = classifyHcDocument(
+      doc({
+        disposalNature: 'Dismissed on merits',
+        caseNumber: 'WRIC/29561/2023',
+        fullText:
+          'x '.repeat(1200) +
+          'Learned counsel for the petitioner requested that this petition may be dismissed as ' +
+          'withdrawn. The writ petition is, accordingly, dismissed as withdrawn.',
+      }),
+    );
+    assert.equal(r.documentClass, 'procedural_disposal');
+    assert.equal(r.method, 'operative_act_withdrawn', 'recorded as a prose rule, not as a source field');
+  });
+
+  it('does NOT demote a judgment that merely RECITES an earlier withdrawal', () => {
+    // The safety case. Only the operative region is read, so history is safe —
+    // without that, this rule would delete real authorities from the index.
+    const r = classifyHcDocument(
+      doc({
+        disposalNature: 'ALLOWED',
+        caseNumber: 'CWP/7804/2015',
+        fullText:
+          'The petitioner had earlier approached this Court and that petition was dismissed as withdrawn. ' +
+          'x '.repeat(1400) +
+          'For the reasons recorded above, the impugned order is quashed and set aside.',
+      }),
+    );
+    assert.equal(r.documentClass, 'decided');
+    assert.equal(r.method, 'disposal_nature_merits');
+  });
+
+  it('does NOT demote on the reasons that failed their precision bar', () => {
+    // DIRECTION_TO_CONSIDER, NOT_PRESSED, REGISTRY_DEFAULT and TRANSFERRED all
+    // measured 50-60% out of sample and are deliberately NOT wired in. If a
+    // future edit widens this from WITHDRAWN to procedurallyDisposed().procedural,
+    // this test is what catches it.
+    for (const text of [
+      'the competent authority is directed to consider the representation within six weeks.',
+      'Pending interlocutory application, if any, is dismissed as not pressed. Office to prepare decree.',
+      'the petition stands dismissed for non-compliance of office objections.',
+      'Registry is directed to transfer the amount of Rs.50,000 to the bank account.',
+    ]) {
+      const r = classifyHcDocument(
+        doc({ disposalNature: 'ALLOWED', caseNumber: 'CWP/1/2020', fullText: 'x '.repeat(1200) + text }),
+      );
+      assert.equal(r.documentClass, 'decided', `wrongly demoted on: ${text}`);
+    }
+  });
+
   it('does NOT reclassify a writ matter that never mentions bail', () => {
     // The control that makes the rule a signal: 1 of 738 CWJC merits disposals
     // mentions bail, so the phrase is genuinely discriminating.

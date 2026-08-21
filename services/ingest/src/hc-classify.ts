@@ -21,8 +21,20 @@
  * own fields, which is a different and answerable question.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * EVERY RULE READS A RAW SOURCE FIELD, NOT THE JUDGMENT'S PROSE
+ * MOST RULES READ A RAW SOURCE FIELD. TWO READ THE PROSE, AND BOTH SAY SO.
  * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This section used to say EVERY rule reads a source field. That stopped being
+ * true when `BAIL_PHRASE` was added and again when `operative_act_withdrawn`
+ * was, and a header that states the opposite of the code is the defect this
+ * lane has now caught twice in other people's files. Corrected here rather than
+ * left for the next reader.
+ *
+ * The two prose rules exist for the same reason: **`disposal_nature` is the
+ * REGISTRY's bookkeeping about a FILE, not a record of what the court did.** It
+ * says `ALLOWED` for a bail application and `Dismissed on merits` for a petition
+ * the text says was withdrawn. Both prose rules carry their own method name so
+ * any row's provenance is visible, and both were measured before being enabled.
  *
  * `disposal_nature` is present on **40,791 of 40,980 (99.5%)** and is verbatim
  * from the source. `case_number` is present on 100% and is verbatim. Neither is
@@ -65,6 +77,8 @@
  * and the same discipline applies one level up: *not classified* must not become
  * *classified as ordinary*.
  */
+
+import { procedurallyDisposed } from './operative-act.ts';
 
 /** What the source's own fields say this document is. Never a legal weight. */
 export type HcDocumentClass =
@@ -467,6 +481,57 @@ export function classifyHcDocument(row: {
     // 58% of what this branch would otherwise have called `decided`.
     if (BAIL_PHRASE.test(row.fullText)) {
       return { documentClass: 'bail_order', method: 'text_bail_phrase' };
+    }
+    /**
+     * THE COURT SAID IT WAS WITHDRAWN AND THE REGISTRY SAID IT WAS DECIDED.
+     *
+     * ───────────────────────────────────────────────────────────────────────
+     * INTENT: code reaches `decided` through `isMerits(disposal_nature)`; the
+     * task is that a matter the court did not decide must not be an authority;
+     * `DOCUMENT_QUALITY_VOCABULARY.md` says **"no arrow runs from DISPOSITION
+     * to CITABILITY"**. All three agree, and `isMerits(disposal) -> decided`
+     * IS that arrow.
+     * ───────────────────────────────────────────────────────────────────────
+     *
+     * `disposal_nature` is the REGISTRY's bookkeeping about a FILE. Measured
+     * example, and it is the whole thesis in one row: Allahabad
+     * `WRIC/29561/2023` carries `disposal_nature = "Dismissed on merits"` while
+     * its own text reads *"Learned counsel for the petitioner requested that
+     * this petition may be dismissed as withdrawn. The writ petition is,
+     * accordingly, dismissed as withdrawn."*
+     *
+     * **ONLY `WITHDRAWN`, and only because it is the only reason that earned
+     * it.** `operative-act.ts` finds eleven kinds of procedural disposal and
+     * was measured per reason on documents nobody had read:
+     *
+     * ```
+     * WITHDRAWN               68 of 68 judgeable correct   precision >= 95.6%
+     * ADJOURNED / WANT_OF_PROSECUTION            ~86%
+     * INFRUCTUOUS                                ~83%
+     * NO_OPINION_EXPRESSED                       ~80%
+     * TRANSFERRED                                 60%
+     * DIRECTION_TO_CONSIDER / NOT_PRESSED /
+     *   REGISTRY_DEFAULT                          50%
+     * ```
+     *
+     * The pooled rule reads ~68% and is NOT wired in. Only the one reason with
+     * 68 clean observations is — the bound is the rule of three, `3/68 = 4.4%`,
+     * against the 95% bar `operative-act.ts` sets for itself.
+     *
+     * Each rejected reason failed for a nameable reason, not from noise:
+     * `NOT_PRESSED` fires on the Jharkhand boilerplate *"Pending interlocutory
+     * application, if any, is dismissed as not pressed"* that closes reasoned
+     * judgments; `TRANSFERRED` fires on *"Registry is directed to transfer the
+     * amount of Rs.50,000"*; `REGISTRY_DEFAULT` fires on a recital of the
+     * procedural history in a case decided on the merits.
+     *
+     * It reads the OPERATIVE REGION only, so a judgment reciting an earlier
+     * withdrawal in its history is untouched — the case that would otherwise
+     * make a demote-only rule delete real authorities.
+     */
+    const withdrawn = procedurallyDisposed(row.fullText);
+    if (withdrawn.reasons.includes('WITHDRAWN')) {
+      return { documentClass: 'procedural_disposal', method: 'operative_act_withdrawn' };
     }
     return len < BRIEF_MAX_CHARS
       ? { documentClass: 'decided_brief', method: 'disposal_nature_merits_short' }
