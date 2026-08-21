@@ -121,6 +121,33 @@ describe('a decision is one court on one day', () => {
     assert.equal(isPromotable(c!), true);
   });
 
+  it('NEW2 0955: one day apart is the known date defect, NOT a timeline edge', () => {
+    /**
+     * 4.45% of stored dates disagree with the PDF filename and the document
+     * backed the filename 33 times out of 34; 2.8% is a same-direction
+     * off-by-one concentrated in a handful of courts. So two rows of one case
+     * a single day apart are more likely ONE decision with a bad date than two
+     * decisions — and filing that as SAME_CASE_DIFFERENT_DATE would hide a
+     * duplicate inside a timeline, silently.
+     */
+    const c = candidate(
+      row({ id: 'a', cnr: 'MHAU010012342021', judgmentDate: '2021-06-14' }),
+      row({ id: 'b', cnr: 'MHAU010012342021', judgmentDate: '2021-06-15' }),
+    );
+    assert.equal(c?.strength, 'SAME_CASE_ADJACENT_DATE');
+    // Flagged, never acted on. This module does not correct a date.
+    assert.equal(isPromotable(c!), false);
+    assert.match(String(c!.evidence['note']), /never auto-merge and never auto-correct/);
+  });
+
+  it('two days apart is a timeline edge again, not the off-by-one', () => {
+    const c = candidate(
+      row({ id: 'a', cnr: 'MHAU010012342021', judgmentDate: '2021-06-14' }),
+      row({ id: 'b', cnr: 'MHAU010012342021', judgmentDate: '2021-06-16' }),
+    );
+    assert.equal(c?.strength, 'SAME_CASE_DIFFERENT_DATE');
+  });
+
   it('a row never links to itself', () => {
     assert.equal(candidate(row({ id: 'a' }), row({ id: 'a' })), null);
   });

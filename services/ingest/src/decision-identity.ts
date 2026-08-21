@@ -76,6 +76,10 @@ export const STRENGTHS = [
   /* Not weaker than the others — a DIFFERENT relation. These two rows are one
    * case at two stages, which is a timeline edge and never a duplicate. */
   'SAME_CASE_DIFFERENT_DATE',
+  /* Same case, dates exactly one day apart. Almost certainly ONE decision whose
+   * date is wrong on one side — NEW2's measured off-by-one — but the module
+   * refuses to decide that on its own. See `ADJACENT_DATE_IS_PROBABLY_A_DEFECT`. */
+  'SAME_CASE_ADJACENT_DATE',
 ] as const;
 export type Strength = (typeof STRENGTHS)[number];
 
@@ -113,6 +117,38 @@ export const CNR_EXACT_RESIDUAL_RISK =
   'One court can pass two orders in one case on one day; both carry the same CNR ' +
   'and the same judgment_date. Require hashesDiffer === false, or a human, before ' +
   'treating a CNR_EXACT pair as a single decision.';
+
+/**
+ * THE OTHER SIDE OF REQUIRING THE DATE, and NEW2 measured it (bus 0955).
+ *
+ * `judgment_date` is not clean. Against the PDF filename date — a witness the
+ * publisher writes from a different field than the S3 partition — **4.45% of
+ * stored dates disagree**, and when the document's own printed date was read as
+ * the tiebreak it backed the filename **33 times out of 34**. The stored column
+ * is the unreliable side.
+ *
+ * 2.8% of the corpus is a same-direction OFF-BY-ONE concentrated in a handful of
+ * courts (Allahabad 22, Chhattisgarh 21, Andhra Pradesh 17, Gauhati 13 in a
+ * 3,000-draw sample) — the shape a UTC midnight rendered in a negative offset
+ * produces.
+ *
+ * So requiring the date costs RECALL in a specific, predictable way: two rows
+ * that really are one decision, where one side carries the off-by-one, fall out
+ * of `CNR_EXACT` and land one day apart. Calling that `SAME_CASE_DIFFERENT_DATE`
+ * would file a duplicate as a timeline edge — the exact opposite error, and
+ * silent.
+ *
+ * Hence a separate strength. It is NOT promotable: this module will not correct
+ * a date, and NEW2 deliberately corrected none either, because replacing a
+ * measured 4.45% error with an unmeasured one is a bad trade inside a citation
+ * harness. It exists so the population is COUNTABLE and can be adjudicated with
+ * the filename witness rather than disappearing into the wrong bucket.
+ */
+export const ADJACENT_DATE_IS_PROBABLY_A_DEFECT =
+  'Same CNR, one day apart. NEW2 measured 2.8% of the corpus carrying a ' +
+  'same-direction off-by-one in judgment_date, so this pair is more likely one ' +
+  'decision with a bad date than two decisions. Adjudicate with the PDF filename ' +
+  'date on both sides; never auto-merge and never auto-correct the date.';
 
 export type IdentityRow = {
   id: string;
@@ -203,6 +239,20 @@ export function normaliseCaption(raw: string | null): string | null {
   return s;
 }
 
+/**
+ * Whole days between two ISO dates, or null when either is missing.
+ *
+ * Both are `date` columns with no time part and are compared as UTC midnights,
+ * so no timezone can shift the answer — which matters here, because the defect
+ * being detected IS a timezone shift.
+ */
+function dayGap(a: string | null, b: string | null): number | null {
+  if (!a || !b) return null;
+  const ms = Date.parse(`${a}T00:00:00Z`) - Date.parse(`${b}T00:00:00Z`);
+  if (Number.isNaN(ms)) return null;
+  return Math.abs(ms) / 86_400_000;
+}
+
 /** The source partition a row came from, e.g. `court=3_22`. Null when unknown. */
 export function sourcePartition(sourceUrl: string | null): string | null {
   if (!sourceUrl) return null;
@@ -246,11 +296,23 @@ export function candidate(a: IdentityRow, b: IdentityRow): Candidate | null {
   }
 
   /**
-   * Same CNR, different date: the same CASE at two stages. Reported so a
-   * consumer can build a case timeline from it, and never promotable — these are
-   * two real decisions and merging them would delete one.
+   * Same CNR, different date. Two sub-cases, and merging them would hide the
+   * more interesting one.
    */
   if (a.cnr && b.cnr && a.cnr === b.cnr) {
+    const gap = dayGap(a.judgmentDate, b.judgmentDate);
+    if (gap === 1) {
+      return {
+        ...common,
+        strength: 'SAME_CASE_ADJACENT_DATE',
+        evidence: {
+          cnr: a.cnr,
+          aDate: a.judgmentDate,
+          bDate: b.judgmentDate,
+          note: ADJACENT_DATE_IS_PROBABLY_A_DEFECT,
+        },
+      };
+    }
     return {
       ...common,
       strength: 'SAME_CASE_DIFFERENT_DATE',
