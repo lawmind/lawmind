@@ -1,27 +1,42 @@
 {
- "generatedAt": "2026-08-21T17:59:20.150Z",
+ "generatedAt": "2026-08-21T22:08:08.988Z",
+ "source": "document_enrichments.parsed_output.roleVerification (live), not a jsonl artefact",
  "definition": [
-  "axis_a_identity (content_hash, case_number, judgment_date, court, case_title > 3 chars)",
+  "axis_a_identity",
   "AND text_safety <> UNSAFE_VERIFIED",
-  "AND >= 1 CANONICAL_ACCEPT claim in a court-authored role (holding | reasoning | reasoning_proposition | proposition)",
-  "AND >= 1 CANONICAL_ACCEPT claim in an outcome role (relief | relief_granted | court_action)",
-  "AND 0 ROLE_MISMATCH claims anywhere on the document"
+  "AND >= 1 CANONICAL_ACCEPT in a court-authored role (holding | reasoning | reasoning_proposition | proposition)",
+  "AND >= 1 CANONICAL_ACCEPT in an OUTCOME role (relief_granted | court_action)",
+  "AND 0 ROLE_MISMATCH anywhere on the document"
  ],
+ "note": "`relief` is NO LONGER an outcome role. semantic-role v2: it is RELIEF SOUGHT, a prayer, and is adjudicated as a party submission.",
+ "claimsAdjudicated": 11034,
+ "byOutcome": {
+  "ROLE_UNPROVEN": 4787,
+  "ROLE_MISMATCH": 2182,
+  "CANONICAL_ACCEPT": 4046,
+  "SOURCE_TEXT_DAMAGED": 17,
+  "GLYPH_NOISE_MATCH": 2
+ },
  "funnel": {
   "adjudicated": 1707,
   "identitySound": 1707,
   "textNotProvenDamaged": 1702,
   "hasCourtAuthoredAccept": 285,
-  "plusOutcomeAccept": 253,
-  "plusNoMismatchAnywhere": 125
+  "plusOutcomeAccept": 252,
+  "plusNoMismatchAnywhere": 128
  },
- "population": 125,
+ "population": 128,
  "byValueBand": {
   "standard": 50,
-  "substantial": 38,
-  "full": 37
+  "full": 39,
+  "substantial": 39
  },
  "byTextSafety": {
-  "UNKNOWN": 125
+  "UNKNOWN": 128
+ },
+ "bySemanticTier": {
+  "BROAD_SEARCHABLE": 109,
+  "BAIL_ORDER_REACHABLE": 17,
+  "UNRESOLVED_EXPERIMENTAL": 2
  }
 }
