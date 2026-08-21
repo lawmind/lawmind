@@ -1,0 +1,272 @@
+{
+  "kind": "new1_staged_readability_census",
+  "measuredAt": "2026-08-21T12:45:09.844Z",
+  "floorPer1000": 12,
+  "perCourtSample": 300,
+  "note": "Measures the span that was EMBEDDED, not the whole document. Reports only; axis B belongs to the eligibility view and this lane does not filter on its own authority.",
+  "stagedRows": 542980,
+  "projectedNotLanguage": 50108,
+  "projectedPct": 9.23,
+  "byCourt": [
+    {
+      "court": "High Court of Punjab and Haryana",
+      "stagedRows": 44841,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 168,
+      "ratePct": 56,
+      "projectedStaged": 25111
+    },
+    {
+      "court": "High Court of Karnataka",
+      "stagedRows": 43821,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 149,
+      "ratePct": 49.7,
+      "projectedStaged": 21764
+    },
+    {
+      "court": "High Court of Tripura",
+      "stagedRows": 1138,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 42,
+      "ratePct": 14,
+      "projectedStaged": 159
+    },
+    {
+      "court": "High Court Of Rajasthan",
+      "stagedRows": 24098,
+      "sampled": 300,
+      "devanagariPresent": 6,
+      "judged": 294,
+      "notLanguage": 13,
+      "ratePct": 4.4,
+      "projectedStaged": 1066
+    },
+    {
+      "court": "High Court Of Chhattisgarh",
+      "stagedRows": 20877,
+      "sampled": 300,
+      "devanagariPresent": 1,
+      "judged": 299,
+      "notLanguage": 12,
+      "ratePct": 4,
+      "projectedStaged": 838
+    },
+    {
+      "court": "High Court of Himachal Pradesh",
+      "stagedRows": 8374,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 6,
+      "ratePct": 2,
+      "projectedStaged": 167
+    },
+    {
+      "court": "High Court of Madhya Pradesh",
+      "stagedRows": 12162,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 5,
+      "ratePct": 1.7,
+      "projectedStaged": 203
+    },
+    {
+      "court": "High Court of Manipur",
+      "stagedRows": 442,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 5,
+      "ratePct": 1.7,
+      "projectedStaged": 7
+    },
+    {
+      "court": "High Court of Meghalaya",
+      "stagedRows": 383,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 4,
+      "ratePct": 1.3,
+      "projectedStaged": 5
+    },
+    {
+      "court": "High Court of Sikkim",
+      "stagedRows": 91,
+      "sampled": 91,
+      "devanagariPresent": 1,
+      "judged": 90,
+      "notLanguage": 1,
+      "ratePct": 1.1,
+      "projectedStaged": 1
+    },
+    {
+      "court": "Bombay High Court",
+      "stagedRows": 35009,
+      "sampled": 300,
+      "devanagariPresent": 1,
+      "judged": 299,
+      "notLanguage": 3,
+      "ratePct": 1,
+      "projectedStaged": 351
+    },
+    {
+      "court": "High Court of Delhi",
+      "stagedRows": 13147,
+      "sampled": 300,
+      "devanagariPresent": 1,
+      "judged": 299,
+      "notLanguage": 2,
+      "ratePct": 0.7,
+      "projectedStaged": 88
+    },
+    {
+      "court": "High Court of Kerala",
+      "stagedRows": 46046,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 1,
+      "ratePct": 0.3,
+      "projectedStaged": 153
+    },
+    {
+      "court": "High Court  for State of Telangana",
+      "stagedRows": 35785,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 1,
+      "ratePct": 0.3,
+      "projectedStaged": 119
+    },
+    {
+      "court": "Gauhati High Court",
+      "stagedRows": 9173,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 1,
+      "ratePct": 0.3,
+      "projectedStaged": 31
+    },
+    {
+      "court": "High Court of Andhra Pradesh",
+      "stagedRows": 8648,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 1,
+      "ratePct": 0.3,
+      "projectedStaged": 29
+    },
+    {
+      "court": "High Court of Uttarakhand",
+      "stagedRows": 4867,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 1,
+      "ratePct": 0.3,
+      "projectedStaged": 16
+    },
+    {
+      "court": "Madras High Court",
+      "stagedRows": 74947,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "Allahabad High Court",
+      "stagedRows": 67392,
+      "sampled": 300,
+      "devanagariPresent": 8,
+      "judged": 292,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "Patna High Court",
+      "stagedRows": 42969,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "Orissa High Court",
+      "stagedRows": 14354,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "High Court of Gujarat",
+      "stagedRows": 13014,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "Calcutta High Court",
+      "stagedRows": 8574,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "High Court of Jharkhand",
+      "stagedRows": 8289,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "Supreme Court of India",
+      "stagedRows": 2409,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    },
+    {
+      "court": "High Court of Jammu and Kashmir",
+      "stagedRows": 2130,
+      "sampled": 300,
+      "devanagariPresent": 0,
+      "judged": 300,
+      "notLanguage": 0,
+      "ratePct": 0,
+      "projectedStaged": 0
+    }
+  ]
+}
