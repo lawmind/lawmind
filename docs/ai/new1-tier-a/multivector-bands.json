@@ -1,0 +1,1903 @@
+{
+  "kind": "new1_multivector_bands",
+  "measuredAt": "2026-08-20T23:57:18.576Z",
+  "probeTable": "new1_probe_fp32_250k",
+  "pool": 50,
+  "windowChars": 4800,
+  "distinctDocuments": 8815,
+  "note": "RESCORING only. Gold that never reaches the pool cannot be rescued here, and this does not claim otherwise.",
+  "overall": {
+    "queries": 228,
+    "inPool": 74,
+    "denseSuccessAt5": 21.49,
+    "multiSuccessAt5": 24.56,
+    "denseMrr": 0.1749,
+    "multiMrr": 0.1984,
+    "improved": 14,
+    "worsened": 18,
+    "tied": 196
+  },
+  "byBand": {
+    "long": {
+      "queries": 19,
+      "inPool": 15,
+      "denseSuccessAt5": 36.84,
+      "multiSuccessAt5": 52.63,
+      "denseMrr": 0.3341,
+      "multiMrr": 0.4437,
+      "improved": 5,
+      "worsened": 5,
+      "tied": 9
+    },
+    "medium": {
+      "queries": 19,
+      "inPool": 13,
+      "denseSuccessAt5": 52.63,
+      "multiSuccessAt5": 57.89,
+      "denseMrr": 0.3938,
+      "multiMrr": 0.4838,
+      "improved": 5,
+      "worsened": 2,
+      "tied": 12
+    },
+    "short": {
+      "queries": 50,
+      "inPool": 40,
+      "denseSuccessAt5": 56,
+      "multiSuccessAt5": 60,
+      "denseMrr": 0.4629,
+      "multiMrr": 0.4776,
+      "improved": 3,
+      "worsened": 9,
+      "tied": 38
+    },
+    "unknown": {
+      "queries": 133,
+      "inPool": 0,
+      "denseSuccessAt5": 0,
+      "multiSuccessAt5": 0,
+      "denseMrr": 0,
+      "multiMrr": 0,
+      "improved": 0,
+      "worsened": 0,
+      "tied": 133
+    },
+    "very_long": {
+      "queries": 7,
+      "inPool": 6,
+      "denseSuccessAt5": 57.14,
+      "multiSuccessAt5": 71.43,
+      "denseMrr": 0.4147,
+      "multiMrr": 0.5324,
+      "improved": 1,
+      "worsened": 2,
+      "tied": 4
+    }
+  },
+  "perQuery": [
+    {
+      "queryId": "prop-98c31f6f",
+      "goldBand": "long",
+      "goldChars": 24801,
+      "windows": 5,
+      "denseRank": 9,
+      "multiRank": 15
+    },
+    {
+      "queryId": "prop-977baa7a",
+      "goldBand": "short",
+      "goldChars": 3789,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-079989bf",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-07931e6c",
+      "goldBand": "short",
+      "goldChars": 5350,
+      "windows": 2,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-3d498fb1",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-8972e37e",
+      "goldBand": "long",
+      "goldChars": 24971,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-a3376743",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-0d9fe812",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e380d63f",
+      "goldBand": "medium",
+      "goldChars": 14090,
+      "windows": 5,
+      "denseRank": 2,
+      "multiRank": 5
+    },
+    {
+      "queryId": "prop-a9e5cc4a",
+      "goldBand": "long",
+      "goldChars": 18851,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-b72f326e",
+      "goldBand": "short",
+      "goldChars": 4114,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-74674c9f",
+      "goldBand": "long",
+      "goldChars": 22363,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-4abeddf3",
+      "goldBand": "long",
+      "goldChars": 25364,
+      "windows": 5,
+      "denseRank": 2,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-39a9437e",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-3164a312",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-c7053800",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-ed6a8c7f",
+      "goldBand": "short",
+      "goldChars": 7839,
+      "windows": 3,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-06111105",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-3ca5d907",
+      "goldBand": "short",
+      "goldChars": 4971,
+      "windows": 2,
+      "denseRank": 2,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-c09afe95",
+      "goldBand": "short",
+      "goldChars": 7823,
+      "windows": 3,
+      "denseRank": 44,
+      "multiRank": 3
+    },
+    {
+      "queryId": "prop-8a92e1d3",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-b152a607",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-51189e6d",
+      "goldBand": "short",
+      "goldChars": 4827,
+      "windows": 2,
+      "denseRank": 2,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-c88b37cc",
+      "goldBand": "long",
+      "goldChars": 17579,
+      "windows": 5,
+      "denseRank": 13,
+      "multiRank": 22
+    },
+    {
+      "queryId": "prop-3917198a",
+      "goldBand": "very_long",
+      "goldChars": 96085,
+      "windows": 5,
+      "denseRank": 4,
+      "multiRank": 5
+    },
+    {
+      "queryId": "prop-05b21017",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-2bae7c68",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a4baac83",
+      "goldBand": "short",
+      "goldChars": 3706,
+      "windows": 1,
+      "denseRank": 9,
+      "multiRank": 9
+    },
+    {
+      "queryId": "prop-37ede3d7",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9840910f",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a5820272",
+      "goldBand": "short",
+      "goldChars": 2139,
+      "windows": 1,
+      "denseRank": 31,
+      "multiRank": 32
+    },
+    {
+      "queryId": "prop-6d1eed1b",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d7f2b8b7",
+      "goldBand": "long",
+      "goldChars": 18062,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-51f2e7a1",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-aba8c427",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-39248597",
+      "goldBand": "long",
+      "goldChars": 26397,
+      "windows": 5,
+      "denseRank": 5,
+      "multiRank": 5
+    },
+    {
+      "queryId": "prop-57b479fb",
+      "goldBand": "short",
+      "goldChars": 5037,
+      "windows": 2,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-5cdfc1cd",
+      "goldBand": "medium",
+      "goldChars": 10614,
+      "windows": 4,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9ae4b568",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-8cb9ddc3",
+      "goldBand": "short",
+      "goldChars": 3620,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-a2fb494c",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-c15d2e32",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-52534bf8",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a30e2856",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-099c24e5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-7a978bd7",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e42e28ba",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-4e1e2dc8",
+      "goldBand": "medium",
+      "goldChars": 8501,
+      "windows": 4,
+      "denseRank": 2,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-84fac34b",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-c5e3ed86",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-7e7b2734",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-2eeedf6d",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-f9aa5d6d",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9969e2e5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-84d78907",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-3ad4f1c4",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d8eeb3c7",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-cd435bbe",
+      "goldBand": "short",
+      "goldChars": 3821,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-8ba460ef",
+      "goldBand": "long",
+      "goldChars": 19144,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-352e37fd",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-64be3db1",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e4898578",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-67e137e5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9856bdf7",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e728470c",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-22be22cb",
+      "goldBand": "short",
+      "goldChars": 6101,
+      "windows": 3,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-47b449b1",
+      "goldBand": "short",
+      "goldChars": 5115,
+      "windows": 2,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-fed1b8b2",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-8fd3c1ef",
+      "goldBand": "short",
+      "goldChars": 3957,
+      "windows": 1,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-77f511fd",
+      "goldBand": "long",
+      "goldChars": 24900,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 6
+    },
+    {
+      "queryId": "prop-9b8afc4e",
+      "goldBand": "short",
+      "goldChars": 7234,
+      "windows": 3,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-1b450ae5",
+      "goldBand": "very_long",
+      "goldChars": 60521,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-4ef00679",
+      "goldBand": "short",
+      "goldChars": 6285,
+      "windows": 3,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-92814c64",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-b9e04664",
+      "goldBand": "medium",
+      "goldChars": 13810,
+      "windows": 5,
+      "denseRank": 23,
+      "multiRank": 29
+    },
+    {
+      "queryId": "prop-83b4e5ae",
+      "goldBand": "medium",
+      "goldChars": 8549,
+      "windows": 4,
+      "denseRank": 2,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-77233635",
+      "goldBand": "short",
+      "goldChars": 3421,
+      "windows": 1,
+      "denseRank": 46,
+      "multiRank": 46
+    },
+    {
+      "queryId": "prop-ae16140c",
+      "goldBand": "short",
+      "goldChars": 6546,
+      "windows": 3,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-57a5f22a",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-ca1a8458",
+      "goldBand": "very_long",
+      "goldChars": 47915,
+      "windows": 5,
+      "denseRank": 2,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-87869fe5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-7a26a6bf",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-639ef035",
+      "goldBand": "short",
+      "goldChars": 3879,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-31a8e601",
+      "goldBand": "very_long",
+      "goldChars": 130276,
+      "windows": 5,
+      "denseRank": 36,
+      "multiRank": 37
+    },
+    {
+      "queryId": "prop-98c10bc8",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d81ba7de",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-4cc32a70",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6cd25f2f",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-b405ce63",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-220ad52d",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-fc0ce5b7",
+      "goldBand": "short",
+      "goldChars": 4070,
+      "windows": 1,
+      "denseRank": 3,
+      "multiRank": 3
+    },
+    {
+      "queryId": "prop-4c851bfd",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e6cd9b02",
+      "goldBand": "short",
+      "goldChars": 5258,
+      "windows": 2,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-2d26913f",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-04d26d04",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-945cca7e",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-386780ab",
+      "goldBand": "short",
+      "goldChars": 3694,
+      "windows": 1,
+      "denseRank": 3,
+      "multiRank": 3
+    },
+    {
+      "queryId": "prop-e9ca9aa0",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-13a09c00",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6c608f04",
+      "goldBand": "short",
+      "goldChars": 3435,
+      "windows": 1,
+      "denseRank": 10,
+      "multiRank": 14
+    },
+    {
+      "queryId": "prop-31323f95",
+      "goldBand": "long",
+      "goldChars": 19004,
+      "windows": 5,
+      "denseRank": 50,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-1fa9567a",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-962f264c",
+      "goldBand": "short",
+      "goldChars": 2118,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-611b009b",
+      "goldBand": "medium",
+      "goldChars": 13837,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-47f10681",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-5986e811",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d90b6ed9",
+      "goldBand": "short",
+      "goldChars": 3823,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-258633af",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-da27ef1e",
+      "goldBand": "very_long",
+      "goldChars": 77237,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-b907d599",
+      "goldBand": "short",
+      "goldChars": 4156,
+      "windows": 1,
+      "denseRank": 18,
+      "multiRank": 20
+    },
+    {
+      "queryId": "prop-28a660b5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-2e3141f1",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-cf19566c",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-bec4e2f5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a3c65b10",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-89d97e54",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-f5fb5403",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d1c30a22",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6d8f0928",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a1666a42",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-ffbed027",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d2ed31e1",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e7b0fd00",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e3f8eb9c",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-0f9e7145",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e805106c",
+      "goldBand": "long",
+      "goldChars": 16361,
+      "windows": 5,
+      "denseRank": 7,
+      "multiRank": 4
+    },
+    {
+      "queryId": "prop-4c4a99dd",
+      "goldBand": "medium",
+      "goldChars": 8806,
+      "windows": 4,
+      "denseRank": 3,
+      "multiRank": 3
+    },
+    {
+      "queryId": "prop-07f01884",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-5a99e77a",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-5f324dde",
+      "goldBand": "short",
+      "goldChars": 2374,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-23d00cc7",
+      "goldBand": "medium",
+      "goldChars": 15678,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-487639d0",
+      "goldBand": "medium",
+      "goldChars": 13242,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6fac6fb6",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-62228e73",
+      "goldBand": "short",
+      "goldChars": 5562,
+      "windows": 2,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-a76bc46d",
+      "goldBand": "short",
+      "goldChars": 3799,
+      "windows": 1,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e2f12998",
+      "goldBand": "medium",
+      "goldChars": 8461,
+      "windows": 4,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-c489d5e1",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-2691c638",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6c7c0b6b",
+      "goldBand": "short",
+      "goldChars": 4615,
+      "windows": 1,
+      "denseRank": 19,
+      "multiRank": 21
+    },
+    {
+      "queryId": "prop-e78cdd6a",
+      "goldBand": "short",
+      "goldChars": 7465,
+      "windows": 3,
+      "denseRank": 9,
+      "multiRank": 9
+    },
+    {
+      "queryId": "prop-9bacd406",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-55816f9b",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-65080d3b",
+      "goldBand": "long",
+      "goldChars": 22488,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-6930c773",
+      "goldBand": "short",
+      "goldChars": 2519,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-309e32e6",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-3aa31da0",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d09867fb",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-fe28871a",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-ca079b28",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-7c971456",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6d5a71b7",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-21f2098f",
+      "goldBand": "medium",
+      "goldChars": 11591,
+      "windows": 4,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-7368c2c3",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d4fce0f8",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-33c05d9e",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9d569067",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-0aeb4700",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-bdd2209a",
+      "goldBand": "long",
+      "goldChars": 26909,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-674d3d01",
+      "goldBand": "short",
+      "goldChars": 3129,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-d597de95",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-aa2bab19",
+      "goldBand": "short",
+      "goldChars": 3503,
+      "windows": 1,
+      "denseRank": 16,
+      "multiRank": 16
+    },
+    {
+      "queryId": "prop-df445147",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-8a4eac65",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-54f86128",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-e8637917",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-274a862f",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-83d7db36",
+      "goldBand": "medium",
+      "goldChars": 9118,
+      "windows": 4,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-4639985f",
+      "goldBand": "very_long",
+      "goldChars": 41722,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-dc38bf93",
+      "goldBand": "short",
+      "goldChars": 2940,
+      "windows": 1,
+      "denseRank": 11,
+      "multiRank": 24
+    },
+    {
+      "queryId": "prop-87c1763b",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-5bbb18f8",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-3f006e54",
+      "goldBand": "medium",
+      "goldChars": 10055,
+      "windows": 4,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-98c9cfa0",
+      "goldBand": "long",
+      "goldChars": 17695,
+      "windows": 5,
+      "denseRank": 38,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-d22ac0c9",
+      "goldBand": "short",
+      "goldChars": 7568,
+      "windows": 3,
+      "denseRank": 11,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-f1650229",
+      "goldBand": "short",
+      "goldChars": 3072,
+      "windows": 1,
+      "denseRank": 9,
+      "multiRank": 10
+    },
+    {
+      "queryId": "prop-54982692",
+      "goldBand": "medium",
+      "goldChars": 15440,
+      "windows": 5,
+      "denseRank": 44,
+      "multiRank": 8
+    },
+    {
+      "queryId": "prop-49d082e7",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-4d5768c5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-0d68004d",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-449f0ecb",
+      "goldBand": "short",
+      "goldChars": 3211,
+      "windows": 1,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-64f8fa56",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6c89cb88",
+      "goldBand": "long",
+      "goldChars": 19834,
+      "windows": 5,
+      "denseRank": 6,
+      "multiRank": 6
+    },
+    {
+      "queryId": "prop-1f1e4e5b",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a393597a",
+      "goldBand": "very_long",
+      "goldChars": 102460,
+      "windows": 5,
+      "denseRank": 8,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-e1fe22e9",
+      "goldBand": "short",
+      "goldChars": 2331,
+      "windows": 1,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-24bf5096",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9b7deab5",
+      "goldBand": "short",
+      "goldChars": 4975,
+      "windows": 2,
+      "denseRank": 4,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-717eb817",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-638ede29",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-34499767",
+      "goldBand": "medium",
+      "goldChars": 13383,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-0e9fdf11",
+      "goldBand": "short",
+      "goldChars": 2069,
+      "windows": 1,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-ae689596",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-4b5ef3fd",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-40c1f0a0",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-61d67001",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9610023b",
+      "goldBand": "short",
+      "goldChars": 3520,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-68bd105a",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-4a1303cc",
+      "goldBand": "long",
+      "goldChars": 16257,
+      "windows": 5,
+      "denseRank": 16,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-9662f0f4",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-aa073e9e",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-3f15616f",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-d123061e",
+      "goldBand": "medium",
+      "goldChars": 14088,
+      "windows": 5,
+      "denseRank": 12,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-b7c29125",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-22929527",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a603f38d",
+      "goldBand": "short",
+      "goldChars": 4043,
+      "windows": 1,
+      "denseRank": 2,
+      "multiRank": 2
+    },
+    {
+      "queryId": "prop-47b596f5",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-48d19997",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-c8b46ee9",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a28d9c51",
+      "goldBand": "short",
+      "goldChars": 4221,
+      "windows": 1,
+      "denseRank": 3,
+      "multiRank": 3
+    },
+    {
+      "queryId": "prop-24a5f3aa",
+      "goldBand": "short",
+      "goldChars": 4298,
+      "windows": 1,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a7c889a3",
+      "goldBand": "medium",
+      "goldChars": 15297,
+      "windows": 5,
+      "denseRank": 2,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-3e632183",
+      "goldBand": "short",
+      "goldChars": 2230,
+      "windows": 1,
+      "denseRank": 5,
+      "multiRank": 5
+    },
+    {
+      "queryId": "prop-6ae95157",
+      "goldBand": "long",
+      "goldChars": 16801,
+      "windows": 5,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a5c16823",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-7ac2ad6b",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-ca40fe90",
+      "goldBand": "medium",
+      "goldChars": 10573,
+      "windows": 4,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-a23a90cd",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-f57ca981",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-2566f3fb",
+      "goldBand": "short",
+      "goldChars": 4098,
+      "windows": 1,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-d16db3ed",
+      "goldBand": "long",
+      "goldChars": 24843,
+      "windows": 5,
+      "denseRank": 24,
+      "multiRank": 29
+    },
+    {
+      "queryId": "prop-3775e109",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-97931808",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-6a88d2fc",
+      "goldBand": "medium",
+      "goldChars": 13290,
+      "windows": 5,
+      "denseRank": 1,
+      "multiRank": 1
+    },
+    {
+      "queryId": "prop-53beed8c",
+      "goldBand": "short",
+      "goldChars": 3410,
+      "windows": 1,
+      "denseRank": 3,
+      "multiRank": 5
+    },
+    {
+      "queryId": "prop-10c5debc",
+      "goldBand": "short",
+      "goldChars": 3121,
+      "windows": 1,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-a1be5683",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-dd9116df",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    },
+    {
+      "queryId": "prop-9c6ae56c",
+      "goldBand": "unknown",
+      "goldChars": null,
+      "windows": 0,
+      "denseRank": null,
+      "multiRank": null
+    }
+  ]
+}
