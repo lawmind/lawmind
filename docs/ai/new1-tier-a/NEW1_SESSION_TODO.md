@@ -360,3 +360,103 @@ Tests 13 → 19, all green.
 only two typecheck errors in `@lawmind/harness`. My files are clean under tsc.
 Reported in bus 0958 rather than edited — they are NEW3's tools and the fixes are
 judgment calls about their data.
+
+---
+
+# NEW1 — 22 Aug 2026, 02:00-03:00 +04:00 (session resumed)
+
+## S9 — the walk had been DEAD for 4h20m, and the keeper reported 51 successes
+
+| # | finding | evidence |
+| --- | --- | --- |
+| S9.1 | The walk stopped ITSELF at 18:03Z on the contract-hash guard | `FAILED eligibility view has changed: deployed b64e1aa4d6384b00, this file reconciled against 5efa4c8decef699e`. Correct behaviour — the second time the guard has earned its keep |
+| S9.2 | It stayed dead for **4h20m** | 18:03Z → 22:30Z. GPU idle throughout |
+| S9.3 | **The keeper logged "WALK RELAUNCH issued" 51 times during that window** | every 5 min, all futile. The line is written unconditionally right after `spawn`, with `stdio:'ignore'` discarding PowerShell's output. The log read like 51 recoveries |
+| S9.4 | Cause of the relaunch failure: **UNKNOWN** | a hand-run `Start-Process` with the same launcher worked immediately. A doubled-backslash theory was TESTED AND WRONG — PowerShell's `Test-Path` accepts both forms. Not guessing further |
+| S9.5 | Fixed what IS provable: falsifiability | keeper now asks the process table 20s after `Start-Process` whether a runner exists, logs `VERIFIED` / `DID NOT TAKE` with a consecutive-failure count, and names the likeliest cause. 51 identical failures would now be visible in the first |
+
+## S10 — contract reconciliation, twice in one hour
+
+The deployed view moved **three times**: `5efa4c8decef699e` → `b64e1aa4d6384b00`
+(what the abort saw) → `6e87c83ac05da264` (live, verified stable over 45s before
+being hard-coded).
+
+New in the contract: `CITED_AUTHORITY_REACHABLE`, a `text_safety` column
+(0067), and `is_cited_authority`.
+
+**A refused class is no longer sufficient to refuse.** A document carrying
+`procedural_disposal` / `reference_stub` / `decided_brief` that other judgments
+have actually cited is now `CITED_AUTHORITY_REACHABLE` — 1,007 such rows. The
+skip list would have gone on discarding them while the counter rose and the rate
+held steady, which is the bail-order episode one revision later. Exemption read
+from the same materialised view the contract joins (`cited_authority`), never
+re-derived, and COUNTED as `admittedCitedAuthority`.
+
+## S11 — TEXT_UNSAFE_CONTRACT_READY acted on (LCC 0960)
+
+| | |
+| --- | --- |
+| quarantined | **64,083** rows, all `damaged_other` — 63,757 + a 326 sweep |
+| stage | 718,785 → **660,292** |
+| quarantine table | 5,021 → **69,104** |
+| staged `text_safety = UNSAFE_VERIFIED` after | **0** (100% UNKNOWN) |
+| reversible | `--restore text_unsafe:damaged_other` |
+
+Predicate read from the view's own `text_safety` (0067), never from a copy of
+NEW2's 12-per-thousand floor. `UNKNOWN` is NOT quarantined — 652,869 rows, and
+absence of evidence is not evidence of damage. The tool REFUSES outright if any
+row is `UNSAFE_VERIFIED` and still eligible rather than acting on a contradiction;
+it has read 0 every time.
+
+**The defect this exposed:** within minutes, 88 damaged rows were back in stage
+and 8 ids were in BOTH tables. The walk re-read `hc_document_class` and nothing
+else while LCC's screen wrote verdicts at ~1,800 rows/s underneath it — quarantine
+was a TREADMILL and every row count looked correct. The walk now re-reads
+`text_safety` per batch, checked FIRST and exempted by nothing (measured: of
+64,083 quarantined rows, 0 were still eligible).
+
+**Live effect: `textUnsafe 24` in batch 61's first 200 rows — ~12% of a batch
+refused before a GPU token.** That is the ~9% waste I reported this morning as
+unactionable for want of a canonical predicate.
+
+## S12 — the view hash cannot see a writer, and that is now RECORDED not enforced
+
+LCC crossed the boundary of `assertContractHash` for real: 62,215 verdicts landed
+with `pg_get_viewdef` byte-identical.
+
+```
+definition changed -> REFUSE   a stale skip list is silently wrong (18:03Z, correct)
+data changed       -> RECORD   the screen writes continuously; a guard that threw
+                               on data would halt the walk forever for no defect
+```
+
+Each batch now logs `script_quality verdicts written 731168` and carries
+`scriptQualityVerdictsAtStart` in its `STAGE DONE` record. Count rather than
+`max(script_quality_at)` on measurement, not taste: partial index on the former,
+none on the latter — **5.4s against 23.5s**. Fails soft.
+
+## S13 — the keeper is DURABLE, and the founder block was never real
+
+`scripts/durable-job.ps1` (LCC 0971) registered `Lawmind-new1-sidecar-keeper`,
+`/SC MINUTE /MO 5`. Verified by parent chain, not by liveness:
+
+```
+node.exe(10844) <- cmd.exe(25096) <- svchost.exe(2380) <- services.exe(1692) <- wininit.exe(1612)
+```
+
+Task Scheduler, **not an agent shell**. It needs no elevation — only `/RU SYSTEM`
+and `/RL HIGHEST` do, and neither is wanted. **The one item this lane had queued
+as founder-blocked on admin rights was never blocked.**
+
+## S14 — NEW2's 0987 sized, and it needs no NEW1 change
+
+`decided` measures 30.0% procedural [13.6, 46.4]. Against `decided` at 35.06% of
+staged vectors: **10.52% [4.77, 16.27] of staged vectors are implied
+non-authorities** — roughly 69,000, the same order as the text screen removed,
+from an unrelated cause.
+
+No code change is required here and none was made. The walk re-reads
+`hc_document_class` every batch, `procedural_disposal` is already refused, and
+already-staged rows move with the existing tool. **Reclassifying IS the fix.** A
+second definition of "authority" owned by the lane that consumes it is how the
+skip list drifted twice already.

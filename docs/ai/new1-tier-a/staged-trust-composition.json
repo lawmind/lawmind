@@ -1,47 +1,60 @@
 {
   "kind": "new1_staged_trust_composition",
-  "measuredAt": "2026-08-21T17:17:08.181Z",
-  "stageTable": "new1_doc_vector_stage",
-  "stagedTotal": "687589",
-  "sampled": 27477,
-  "vocabularySource": "judgment_embedding_eligibility.semantic_tier (a VIEW, ELIGIBILITY_CONTRACT_V2)",
-  "note": "NEW1 applies no private text filter. TEXT_UNSAFE is not yet a tier in the canonical vocabulary; until TEXT_UNSAFE_CONTRACT_READY lands, damaged text is reported through script_quality and cannot be separated from unknown.",
+  "measuredAt": "2026-08-21T22:56:58.251Z",
+  "phase": "after TEXT_UNSAFE quarantine",
+  "stagedTotal": "660292",
+  "quarantinedTotal": "69104",
+  "sampled": 26150,
   "bySemanticTier": {
     "BROAD_SEARCHABLE": {
-      "n": 23731,
-      "pct": 86.37
+      "n": 22129,
+      "pct": 84.62
     },
     "BAIL_ORDER_REACHABLE": {
-      "n": 3739,
-      "pct": 13.61
+      "n": 4013,
+      "pct": 15.35
     },
     "UNRESOLVED_EXPERIMENTAL": {
-      "n": 7,
-      "pct": 0.03
+      "n": 6,
+      "pct": 0.02
+    },
+    "CITED_AUTHORITY_REACHABLE": {
+      "n": 2,
+      "pct": 0.01
     }
   },
   "byDocumentClass": {
     "NULL": {
-      "n": 13273,
-      "pct": 48.31
+      "n": 12960,
+      "pct": 49.56
     },
     "decided": {
-      "n": 10458,
-      "pct": 38.06
+      "n": 9169,
+      "pct": 35.06
     },
     "bail_order": {
-      "n": 3739,
-      "pct": 13.61
+      "n": 4013,
+      "pct": 15.35
     },
     "procedural_disposal": {
-      "n": 7,
+      "n": 8,
       "pct": 0.03
     }
   },
-  "byScriptQuality": {
-    "NULL": {
-      "n": 27477,
+  "byTextSafety": {
+    "UNKNOWN": {
+      "n": 26150,
       "pct": 100
     }
+  },
+  "new2_0987_exposure": {
+    "claim": "NEW2 measures `decided` as 30.0% procedural [13.6, 46.4] on a 60-row labelled stratified frame",
+    "decidedShareOfStaged": 35.06,
+    "impliedNonAuthorityShareOfStaged": 10.52,
+    "impliedRange": [
+      4.77,
+      16.27
+    ],
+    "note": "NEW1 applies NO private correction. If NEW2 reclassifies these to procedural_disposal, the walk refuses them automatically — it re-reads hc_document_class every batch — and already-staged rows move via the existing quarantine tool. No code change is required on this side."
   }
 }
