@@ -4516,10 +4516,41 @@ threshold is the only thing still undecided.
 
 ## NEW1 — ADMIN RIGHTS TO REGISTER ONE SCHEDULED TASK (21 Aug 2026)
 
-**What is needed:** permission to register a single Windows scheduled task on
-this workstation. `Register-ScheduledTask` returns `Access is denied`
-(`HRESULT 0x80070005`) from the session, so it needs an elevated shell — a
-machine permission, not a code problem.
+> **CLOSED 22 Aug 2026 — NOTHING WAS EVER NEEDED FROM THE FOUNDER. Registered,
+> running, and durability proven by parent chain.**
+>
+> ```
+> node.exe(10844) <- cmd.exe(25096) <- svchost.exe(2380) <- services.exe(1692) <- wininit.exe(1612)
+> ```
+>
+> Task Scheduler, not an agent shell, so it survives session teardown. Registered
+> with `scripts/durable-job.ps1 -Name new1-sidecar-keeper` as
+> `Lawmind-new1-sidecar-keeper`, `/SC MINUTE /MO 5`.
+>
+> **The diagnosis below was wrong in one specific, reusable way.** Registering a
+> task for the CURRENT USER needs no elevation. Only `/RU SYSTEM` and
+> `/RL HIGHEST` do, and neither is wanted here — the job must run as the user who
+> owns the files and the GPU session. The `Access is denied` came from the
+> PowerShell `Register-ScheduledTask` cmdlet; `schtasks.exe` for the current user
+> succeeds from an unelevated shell. Two interfaces to the same service, different
+> default security contexts, and the first one's refusal was read as a machine
+> permission rather than as a property of that call. LCC proved it (bus 0971) by
+> registering a probe task, tracing its process to `svchost`, and deleting it.
+>
+> **What it cost to not check:** the GPU idled 4h, 3h20m, 11h24m and then a fourth
+> time for 4h20m — the last of which this task would not have prevented anyway,
+> because the keeper was alive and relaunching futilely. See the keeper's own
+> defect, fixed the same day: it logged "WALK RELAUNCH issued" 51 times over those
+> four hours with the line written unconditionally after `spawn`.
+>
+> **The lesson worth keeping is not about scheduled tasks.** "Access is denied"
+> from one API is evidence about that API, not about the machine. Two items were
+> queued here this week on the same shape of inference and neither was real.
+
+**What was needed (superseded):** permission to register a single Windows
+scheduled task on this workstation. `Register-ScheduledTask` returns
+`Access is denied` (`HRESULT 0x80070005`) from the session, so it needs an
+elevated shell — a machine permission, not a code problem.
 
 **The command, exactly:**
 
@@ -4566,3 +4597,56 @@ Tier-A embedding run only, and it can be deleted the day that run finishes.
 **Not urgent enough to interrupt for.** The session-start relaunch is two
 `Start-Process` calls and any NEW1 session can do it; this only removes the need
 for a session to exist at all.
+
+---
+
+## FQ-IK-TEXT-RECOVERY-SCOPE · Does the IndianKanoon authorization cover text-recovery for documents we already hold, or only genuinely-missing PDFs? · NEW3, 21 Aug 2026
+
+**What is needed: one scope confirmation, not a new authorization or any
+spend.** `FQ-IK-RESOLVED` and `MISSING_PDF_RECOVERY.md` already authorize a
+narrow, specific act — fetching a full document from IndianKanoon **when
+AWS does not have the PDF at all** (`hc_ingest_ledger` `pdf_missing`,
+Bombay 2023/2024 the named case). That reasoning is deliberately narrow:
+`INDIANKANOON_WORK_QUEUE.md` opens by saying no full-document fetch should
+be queued except that one exception, "it would duplicate a free source for
+money."
+
+**A different, NOT-yet-scoped population surfaced this session (NEW2 bus
+0910):** ~700,000 Punjab & Haryana and Karnataka High Court documents where
+LawMind **already holds the PDF** via AWS, but the embedded text layer is
+structurally broken — subset-embedded fonts (`MYGXBS+Helvetica` etc.) with
+no `/ToUnicode` map, so any extractor returns raw glyph codes, not text.
+`text_quality` scores them 1.000 because the metric cannot see this failure
+mode; NEW2's own framing was "we HAVE these documents, what we do not have
+is their text... a second source... worth a look before anyone prices an
+OCR run."
+
+**Spot-checked, read-only, 2 documents (not a bulk operation):** IndianKanoon's
+free public site (not the paid API — no credential is set, see
+`FQ-INDIANKANOON` below) renders clean, full, readable text for one Punjab &
+Haryana judgment (`indiankanoon.org/doc/53856650/`) and one Karnataka
+judgment (`indiankanoon.org/doc/96186418/`) that match documents in this
+affected population by court and year. Full detail on the bus (0956/0957).
+
+**Why this is a real, separate question and not covered by the existing
+authorization as written:** the missing-PDF exception's own stated
+reasoning is "the document does not exist in our holding at all." Here it
+does — the PDF is held, s. 52(1)(q)(iv) already covers it, nothing is being
+newly acquired. Using IndianKanoon's rendering as a **text-recovery input
+for a document already in the corpus** is arguably a different, lower-risk
+act than acquiring a new document — but it is also not what
+`MISSING_PDF_RECOVERY.md`'s narrow exception was written to permit, and
+`FQ-IK-RESOLVED` itself lists "exact processing scope... metadata-only vs
+fragment vs full document" as still GUESS, not KNOW. I am not resolving
+that reading myself — OPEN_DECISIONS discipline and CLAUDE.md §6 both say
+this is not this lane's call alone.
+
+**What stays broken without an answer:** nothing immediately — no worker is
+built or running against this population, and NEW2's own next step (OCR
+pricing for the 76.9% no-ToUnicode-map majority) proceeds independently
+either way. This only decides whether a second, cheaper path is available
+for the 23.1% minority worth trying before OCR.
+
+**Not urgent.** ~700K documents' worth of consequence, zero documents
+fetched, zero spend proposed — flagging the scope boundary now so it is
+answered once rather than assumed under time pressure later.
