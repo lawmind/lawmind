@@ -29,3 +29,26 @@ states: TODO / RUNNING / DONE(verified) / BLOCKED
 - 19908 tsx services/ingest/src/hc-classify-cli.ts --resume    (NEW2)
 - 24096 tsx src/doc-vector-embed.mjs                           (NEW1)
 - 30700 tsx services/ingest/src/citations-cli.ts --limit 20000 (owner TBD)
+
+## FINAL STATE — 21 Aug 2026, end of session
+
+| # | task | state | evidence |
+|---|------|-------|----------|
+| 0 | bind lane, read bus, inspect procs, adopt vs duplicate | DONE | lane file; registry.jsonl; no job adopted, none orphaned |
+| 1 | P0 OD-14 representation split | DONE | precedential-effect.ts; 73 refusals removed; fixture 98 rows |
+| 2 | P0 OD-14 regression fixtures + TREATMENT_SEMANTICS_V2_READY | DONE | 12 tests pass; bus 0966-0969 |
+| 3 | P1 eCourts actor | DONE (reduced to 1 command) | no role column; 55/55 uniform; 54 test-shaped in audit_log; --actor-email |
+| 4 | P1 eCourts canary | BLOCKED on 3 | 52/52 ledger rows refused/kill_switch_off |
+| 5 | P2 semantic-role verification | DONE | semantic-role.ts; 20 tests; 1,344 rows promoted |
+| 6 | P3 VERIFIED_CORE_V1 | DONE | 125 documents; funnel + precision published; bus 0962-0965 |
+| 7 | P4 refused gold audit + CITED_AUTHORITY_REACHABLE | DONE | 12/16 length-only; 7,935 docs; migrations 0068/0069 |
+| 8 | P5 text safety / answer NEW1 0936 | DONE | 0067; 62,215 staged verdicts; corpus pass running; bus 0960/0961 |
+| 9 | P6 span false confidence + telemetry states | DONE | 6 outcomes; SOURCE_TEXT_DAMAGED before locating; GLYPH_NOISE_MATCH |
+| 10 | P7 DeepSeek factory tokens/CANONICAL_TRUSTED | NOT DONE | no model calls made this session; verifier is deterministic |
+| 11 | P8 statute mapping authority | PARTIAL | classes correct + tested; coverage comment corrected 4/24/101 -> 14/88/117; parser at its limit |
+| 12 | P9 coverage truth states | NOT DONE | untouched this session |
+| 13 | P10 decision identity | DONE | decision-identity.ts; 15 tests; CNR-is-a-case correction |
+| 14 | P11 eCourts derivation rules | DONE | ecourts-derivation.ts; 11 tests; zero live observations |
+| 15 | P12 durable GPU runner assist | DONE | no elevation needed; parent chain proved; handed to NEW1 |
+| 16 | P13 premium backend readiness | NOT SIGNALLED | VERIFIED_CORE is 125 docs and eCourts has no observations |
+| 17 | background job registry | DONE | appended 3 lines to .agents/jobs/registry.jsonl |
