@@ -1,0 +1,27 @@
+{
+ "generatedAt": "2026-08-21T17:59:20.150Z",
+ "definition": [
+  "axis_a_identity (content_hash, case_number, judgment_date, court, case_title > 3 chars)",
+  "AND text_safety <> UNSAFE_VERIFIED",
+  "AND >= 1 CANONICAL_ACCEPT claim in a court-authored role (holding | reasoning | reasoning_proposition | proposition)",
+  "AND >= 1 CANONICAL_ACCEPT claim in an outcome role (relief | relief_granted | court_action)",
+  "AND 0 ROLE_MISMATCH claims anywhere on the document"
+ ],
+ "funnel": {
+  "adjudicated": 1707,
+  "identitySound": 1707,
+  "textNotProvenDamaged": 1702,
+  "hasCourtAuthoredAccept": 285,
+  "plusOutcomeAccept": 253,
+  "plusNoMismatchAnywhere": 125
+ },
+ "population": 125,
+ "byValueBand": {
+  "standard": 50,
+  "substantial": 38,
+  "full": 37
+ },
+ "byTextSafety": {
+  "UNKNOWN": 125
+ }
+}

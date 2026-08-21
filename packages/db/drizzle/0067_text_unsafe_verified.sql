@@ -121,19 +121,6 @@ SELECT
 
   (NOT (hc_document_class IS DISTINCT FROM 'bail_order'::text)) AS is_bail_order,
 
-  -- NEW. Three honest states and a fail-closed fourth. Never inferred from the
-  -- absence of a verdict.
-  CASE
-    WHEN script_quality IS NULL THEN 'UNKNOWN'::text
-    WHEN script_quality = ANY (ARRAY['clean'::text, 'mixed_script_ok'::text])
-      THEN 'SCREENED_OK'::text
-    WHEN script_quality = ANY (ARRAY[
-      'legacy_font_ascii'::text,
-      'devanagari_deleted'::text,
-      'damaged_other'::text]) THEN 'UNSAFE_VERIFIED'::text
-    ELSE 'SCREENED_OTHER'::text
-  END AS text_safety,
-
   CASE
     WHEN (length(full_text) >= 8000) THEN 'substantial'::text
     WHEN (length(full_text) >= 4000) THEN 'full'::text
@@ -164,7 +151,26 @@ SELECT
       THEN 'VERIFIED_SEMANTIC_CORE'::text
 
     ELSE 'BROAD_SEARCHABLE'::text
-  END AS semantic_tier
+  END AS semantic_tier,
+
+  -- NEW, and LAST — not a style choice. `CREATE OR REPLACE VIEW` may only APPEND
+  -- columns: placing this next to `script_quality` where it belongs failed with
+  -- *"cannot change name of view column value_band to text_safety"*, because
+  -- Postgres matches the replacement's columns to the original BY POSITION. A
+  -- column inserted in the middle renames every column after it.
+  --
+  -- Three honest states and a fail-closed fourth. Never inferred from the
+  -- absence of a verdict.
+  CASE
+    WHEN script_quality IS NULL THEN 'UNKNOWN'::text
+    WHEN script_quality = ANY (ARRAY['clean'::text, 'mixed_script_ok'::text])
+      THEN 'SCREENED_OK'::text
+    WHEN script_quality = ANY (ARRAY[
+      'legacy_font_ascii'::text,
+      'devanagari_deleted'::text,
+      'damaged_other'::text]) THEN 'UNSAFE_VERIFIED'::text
+    ELSE 'SCREENED_OTHER'::text
+  END AS text_safety
 
 FROM judgments j;
 
