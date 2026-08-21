@@ -171,9 +171,48 @@ async function assertContractHash() {
   log('contract hash OK ' + live);
 }
 
+/**
+ * The DATA identity, recorded and never enforced.
+ *
+ * LCC crossed the boundary of what `assertContractHash` can certify (bus 0960):
+ * they deployed a WRITER, not a rule. 62,215 damage verdicts were written and
+ * `pg_get_viewdef` returned byte-identical text before and after, so two manifests
+ * an hour apart carry the same definitionHash and describe different populations.
+ * The hash was not wrong; it answers a different question.
+ *
+ * This is deliberately RECORDED rather than asserted, and the distinction is the
+ * whole point:
+ *
+ *   definition changed -> REFUSE. A stale skip list is silently wrong, and the
+ *                         walk must stop until someone reconciles it.
+ *   data changed       -> RECORD. The screen writes at ~1,800 rows/s while this
+ *                         walk runs, so a guard that threw on a data change would
+ *                         halt the walk permanently and for no defect at all.
+ *
+ * Counting non-null `script_quality` rather than `max(script_quality_at)`: there
+ * is a partial index on the former (`judgments_script_quality_idx ... WHERE
+ * script_quality IS NOT NULL`) and none on the latter — measured 5.4s against
+ * 23.5s, on an 18-minute batch.
+ */
+async function dataIdentity() {
+  try {
+    const [row] = await sql`SELECT count(*)::bigint AS n FROM judgments WHERE script_quality IS NOT NULL`;
+    log('script_quality verdicts written ' + row.n);
+    return Number(row.n);
+  } catch (e) {
+    // A provenance marker must never be the reason a batch dies.
+    log('data identity unavailable: ' + (e?.message ?? e));
+    return null;
+  }
+}
+
+/** Corpus-wide count of written script_quality verdicts at batch start. Provenance, not a gate. */
+let scriptQualityVerdicts = null;
+
 try {
   log('STAGE START ' + BATCH_FILE + '  rows ' + rows.length + '  headChars ' + HEAD_CHARS);
   await assertContractHash();
+  scriptQualityVerdicts = await dataIdentity();
   await sql`
     CREATE TABLE IF NOT EXISTS new1_doc_vector_stage (
       judgment_id uuid PRIMARY KEY,
@@ -352,6 +391,7 @@ try {
   `;
   const summary = {
     kind: 'new1_doc_vector_stage_run',
+    scriptQualityVerdictsAtStart: scriptQualityVerdicts,
     batchFile: BATCH_FILE,
     rowsInBatch: rows.length,
     inserted,
