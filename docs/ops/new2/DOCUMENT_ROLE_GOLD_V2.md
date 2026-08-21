@@ -147,14 +147,14 @@ to measure. What this file establishes is the size and the mechanism.
 
 ## 4. Three findings that are not about classification
 
-**The tail is a service list in Madras and Telangana.** Five of the sixty rows are
-`UNCERTAIN` and three of those are uncertain only because the last 1,800
+**The tail is a service list in Madras and Telangana.** Seven of the ninety rows
+are `UNCERTAIN`, and three of those are uncertain ONLY because the last 1,800
 characters are the addressee block and the certified-copy footer. Any method that
 reads a tail for the operative direction silently gets a footer in those courts —
 mine here, and any verifier's window.
 
-**`text-damage-v2.0`'s recall is not 100%, and here is the evidence.** Four rows
-are unusable and three were caught. The misses are a third damage mode:
+**`text-damage-v2.0`'s recall is not 100%, and here is the evidence.** Ten rows
+are unusable and nine were caught. The misses are a third damage mode:
 **letter-spacing destruction** — `"g g k m x C y M g k mm g 45 C y m y x k g m"` —
 which carries no control characters and no long letter runs, so the VERIFIED class
 cannot see it and only the SUSPECT screens fire. Two more rows in the core audit
