@@ -308,3 +308,84 @@ UNKNOWN        the rollup has no row for this court
 unreachable law is tolerable inside a filtered search, and it belongs with the
 founder or with `PRODUCT_DECISIONS.md`, not inside a `WHERE` clause written by
 this lane.
+
+---
+
+## ADDENDUM, 21 AUGUST 2026 — `PARTIAL` ALONE IS NO LONGER SUFFICIENT TO RENDER
+
+LCC's migration `0062` (bus 0901) added a second, orthogonal axis to
+`coverage_cell`: `shortfall_reason`. Nothing this contract reads broke —
+`source_state`, `held_share`, `reachability`, `embedded` and `eligible` are
+unchanged in name, type and meaning — but the rendering rule above is now
+**wrong on 131 of 257 `PARTIAL` cells**, and wrong in the direction that matters.
+
+### What the measurement found
+
+Of the 257 cells carrying a shortfall, 1,579,075 rows:
+
+```
+179 cells   the shortfall is ENTIRELY permanentAbsent + retryable
+ 40 cells   partly
+ 38 cells   wholly unexplained
+```
+
+**Bombay 2006 is short 6,276 and its `permanentAbsent` is 6,275. Bombay 2007 is
+short 6,706 and its `permanentAbsent` is 6,706, exactly.** Under the rule as
+written those cells render as our own uncertainty — *we hold part of this year* —
+about documents **the court never published**. That is not a limit of our
+holdings. It is a fact about the source, and saying otherwise understates the
+corpus to an advocate deciding whether to trust it.
+
+The genuinely unattributed gap is **153,204 rows over 115 cells, not 1,579,075
+over 257** — the old presentation overstated the unknown by 10.3x in rows.
+
+### The rule, amended
+
+`source_state` decides WHETHER something is said. `shortfall_reason` decides
+WHAT. Both are read; neither is derived from the other; and this is the same
+relationship `overruled_status` has to `verification_state` — two independent
+questions, two independent fields, and what renders is derived from both at
+render time.
+
+| `source_state` | `shortfall_reason` | renders |
+| --- | --- | --- |
+| `COVERED` | `NONE` | **nothing** |
+| `PARTIAL` | `SOURCE_ABSENT` | **nothing** — the court did not publish them; there is no gap in our holdings to confess |
+| `PARTIAL` | `RETRYABLE` | **nothing** — a fetch we will retry is our backlog, not a hole in the law |
+| `PARTIAL` | `PARTLY_EXPLAINED` | our own uncertainty, on the unexplained remainder only |
+| `PARTIAL` | `UNEXPLAINED` | our own uncertainty, as before |
+| `PARTIAL` | `DENOMINATOR_SUSPECT` | our own uncertainty, **with the percentage suppressed** |
+| `KNOWN_GAP` / `UNKNOWN` | any | our own uncertainty, as before |
+| `SOURCE_HAS_ZERO` | any | the only state that may say "there is nothing here" |
+
+LCC's recommendation is taken as written, with one addition of my own:
+`PARTLY_EXPLAINED` must render on the **unexplained remainder**, not on the whole
+shortfall, or it repeats the same overstatement at a smaller scale.
+
+### `DENOMINATOR_SUSPECT` suppresses the number, never the warning
+
+Allahabad 2018 reads 456,951 source rows against 228,653 documents — a ratio of
+1.998 — and 2019 reads 1.988. **A coverage figure does not land on 50.0% twice.**
+Those cells are `WALKED` with `remainingRows: 0`, the ingest ledger holds 22,407
+rows for the entire court, and half a million walked rows produced neither a
+document nor a failure. The only thing they can have been is rows for documents
+already held. This is "source count is parquet rows, not documents" surfacing as
+a product claim: we were about to tell an advocate we hold **half of Allahabad**
+when we hold essentially all of it.
+
+So the flag suppresses the SHARE and keeps the uncertainty. Hiding the warning
+would let a real gap in an unchecked court disappear behind a suspect
+denominator, and LCC's decision to enumerate the affected courts explicitly
+rather than infer them from a ratio threshold is right for the same reason.
+
+### What is NOT changed
+
+The five `source_state` values keep their names. Renaming them to express what
+`shortfall_reason` now carries would break a contract that is frozen for the
+sprint in order to buy vocabulary, and the five already encode the honest
+categories.
+
+**Reachability is now 264,071 documents over 581 court-year cells**, against the
+40,161 the `0059` header was written against — the Tier-A vectors landing. The
+`LEXICAL_ONLY` count in the 19 August addendum is stale in the favourable
+direction and should be re-read from the table rather than quoted from here.

@@ -50,7 +50,7 @@ compaction. Update it as items move.
 | --- | --- | --- | --- |
 | 4.1 | Stratify by document band | DONE | four length bands over 228 HC proposition queries, 8,815 documents re-embedded in 5 positional windows each |
 | 4.2 | 1-vector vs multi-vector, per band | DONE | rescoring the top-50 pool. ALL: s@5 21.49% -> 24.56%, MRR 0.1749 -> 0.1984, but **14 better against 18 worse** (sign p=0.597). No band significant: short p=0.146 (directionally WORSE), medium 0.453, long 1.000, very_long 1.000 |
-| 4.3 | Name the bands that benefit | DONE — **NONE** | At these sample sizes no band shows a detectable benefit. Multi-vector makes ranking MORE VARIABLE: a few large rescues, rather more small demotions. Also 133 of 228 golds are outside the top-50 pool, so only 74 queries could move at all.  |
+| 4.3 | Name the bands that benefit | DONE — **NONE** | At these sample sizes no band shows a detectable benefit. Multi-vector makes ranking MORE VARIABLE: a few large rescues, rather more small demotions. Also 133 of 228 golds are outside the top-50 pool, so only 74 queries could move at all. `docs/ai/NEW1_MULTIVECTOR_BANDS.md` |
 
 ## P5 — halfvec verdict at REAL conditions (ef_search=200)
 
