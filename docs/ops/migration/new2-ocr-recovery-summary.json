@@ -1,0 +1,56 @@
+{
+  "suspect": {
+    "n": 20,
+    "errors": 0,
+    "storedReadable": 0,
+    "mupdfReadable": 0,
+    "ocrReadable": 20,
+    "medianEnglish": {
+      "stored": 0,
+      "mupdf": 3.13,
+      "ocr": 46.3
+    },
+    "medianControlDensity": {
+      "stored": 0.6775,
+      "mupdf": 0.7014,
+      "ocr": 0
+    },
+    "medianSeconds": 3.7
+  },
+  "control_same_court": {
+    "n": 10,
+    "errors": 0,
+    "storedReadable": 10,
+    "mupdfReadable": 10,
+    "ocrReadable": 10,
+    "medianEnglish": {
+      "stored": 53.33,
+      "mupdf": 47.18,
+      "ocr": 49.39
+    },
+    "medianControlDensity": {
+      "stored": 0,
+      "mupdf": 0,
+      "ocr": 0
+    },
+    "medianSeconds": 4.2
+  },
+  "control_other_court": {
+    "n": 10,
+    "errors": 0,
+    "storedReadable": 10,
+    "mupdfReadable": 10,
+    "ocrReadable": 10,
+    "medianEnglish": {
+      "stored": 30.83,
+      "mupdf": 21.28,
+      "ocr": 29.79
+    },
+    "medianControlDensity": {
+      "stored": 0,
+      "mupdf": 0,
+      "ocr": 0
+    },
+    "medianSeconds": 4.3
+  }
+}
