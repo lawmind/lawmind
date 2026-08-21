@@ -15,7 +15,7 @@ compaction. Update it as items move.
 | 0.5 | Sidecar keeper — restart on death, so an 11-day run survives one | DONE | `services/harness/src/sidecar-keeper.mjs`, running; `.agents/logs/new1-sidecar-keeper.log` `keeper up — polling …/health every 20s` |
 | 0.7 | **THE HOLE** — 67 batches (10..76) inside the walked range hold ZERO vectors | DONE (found) | `stage-coverage.json`: 888 files, **23 complete**, 8,622,700 rows missing. `stage-embed.log` has 100 STAGE START, 29 STAGE DONE, 69 FAILED. These are the batches the dead sidecar ate on 20 Aug. |
 | 0.8 | Replace the RANGE walk with a COVERAGE walk so a hole can never survive again | DONE | `stage-coverage-census.mjs` (new) + `stage-runner.sh` `USE_COVERAGE=1` branch |
-| 0.9 | Relaunch the walk on the worklist | RUNNING | 864 files; started at batch 00010 which is the hole. Relaunched a second time at 17:06Z after nohup let it die with the session — now started via PowerShell Start-Process and watched by the keeper on SILENCE |
+| 0.9 | Relaunch the walk on the worklist | RUNNING (relaunched 3x) | 864 files; started at batch 00010 which is the hole. Relaunched a second time at 17:06Z after nohup let it die with the session — now started via PowerShell Start-Process and watched by the keeper on SILENCE |
 | 0.6 | Record measured throughput / vectors / malformed at adoption | DONE | 220,259 staged rows at batch 87 end; 8,676 tok/s; `nonUnitNormVectors: 0`; recipe `HEAD:4800`; model BGE-M3 onnx fp32 CLS-pooled L2-normalised |
 
 ## P1 — do not blindly embed an impure population
@@ -150,3 +150,15 @@ compaction. Update it as items move.
 | # | task | state | evidence |
 | --- | --- | --- | --- |
 | 19.1 | Latency for every candidate configuration | PARTIAL | dense-only 250k p50 41ms / p95 519ms; halfvec p50 14ms / p95 232ms; production hybridSearch 0.7s citation, 3.8s case name, 3.5s concept — all on a loaded box, so upper bounds. **One shape does not complete: a 900-char passage kept the sparse arm alive 32 minutes.** Handed to LCC, bus 0927 |
+
+
+## PENDING AT SESSION END — 21 Aug 2026
+
+| item | state | note |
+| --- | --- | --- |
+| Tier-A walk | RUNNING | 519,055 vectors staged, batch 00020 of an 864-file worklist, ~9,500 tok/s, contract hash asserted green each batch |
+| Production-route benchmark over 456 short queries | RUNNING | killed twice by the session ending; relaunched detached via . The CORRECTION it exists to support is already established by three timed queries (citation 0.7s, case name 3.8s, concept 3.5s) |
+| ANN recall vs exact ground truth (P5.3) | TODO | needs an exact scan on ~100 queries against  with the index disabled |
+| 500k / 1M / 2M milestones (P3) | TODO |  |
+| The 82.5%-unclassified purity audit (P1.5) | TODO | NEW2 is classifying ahead of the walk; the ineligible-rate trend in the milestone report is the signal to watch |
+| Scheduled task for the keeper | BLOCKED — founder | admin rights;  |
