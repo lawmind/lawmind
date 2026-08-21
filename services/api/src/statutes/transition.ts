@@ -381,11 +381,16 @@ export type Correspondence =
  * ── COVERAGE, AND WHY THE `held: false` WORDING MATTERS MORE THAN THE ROWS
  *
  *     act    sections held   with a mapping   coverage
- *     bns              358                4       1.1%
- *     bnss             531               24       4.5%
- *     bsa              170              101      59.4%
+ *     bns              358               14       3.9%
+ *     bnss             531               88      16.6%
+ *     bsa              170              117      68.8%
  *
- * **Four of the BNS's 358 sections have a mapping**, and the BNS replaced the
+ * (Re-measured live 21 Aug 2026. This table previously read 4 / 24 / 101 and
+ * was true when written; the BPR&D parser improved and the loader ran again. A
+ * coverage figure in a comment goes stale in silence, so these carry the date
+ * they were taken.)
+ *
+ * **Fourteen of the BNS's 358 sections have a mapping**, and the BNS replaced the
  * Indian Penal Code. So the overwhelmingly common outcome of this function is
  * `held: false`, and what that sentence says is the product.
  *
