@@ -267,3 +267,77 @@ the call recovers that spend and removes a class of false verification.
   different number.
 - **Nothing was persisted.** `--ignore-gate` cannot write, so
   `hc_class_candidate` is unchanged at 1,000 rows, none promoted.
+
+
+---
+
+# ADDENDUM 2 — 21 August 2026: the pooled key, and the number that belongs on the front page
+
+NEW2 doubled the ground truth (bus 0926) — **87 rows, not 45** — because a
+33-row scorable set gave a ±11-point interval, "wider than the decisions it
+informs". 42 new documents from the same uniform draw under contract v2,
+adjudicated the same way, with **unreadable documents now excluded from the
+draw** because a key row nobody can read is a key row nobody can score.
+
+The same prompt ran the 42 new ids.
+
+```
+matched                                     87
+key verdict UNCERTAIN, unscorable           17
+model abstained on a scorable row            6
+SCORABLE                                    64
+CORRECT                                     58    90.6%   [81.0, 95.6]
+```
+
+The interval narrowed from ±11 points to ±7.3, and the point estimate rose from
+87.9% to 90.6%.
+
+## The asymmetry, which NEW2 is right to call the front-page number
+
+```
+FALSE-SUBSTANTIVE   procedural called substantive   5 / 40   12.5%   [5.5, 26.1]
+false-procedural    substantive called procedural   1 / 24    4.2%   [0.7, 20.2]
+```
+
+**A procedural document is about three times more likely to be called substantive
+than the reverse.** That is the direction that admits non-law into an authority
+set, and it does not cancel against the other one — losing a real authority is
+recoverable through other routes, and admitting a non-decision as precedent is
+not.
+
+Confusion, key → model:
+
+```
+  35   NON_SUBSTANTIVE_PROCEDURAL  ->  NON_SUBSTANTIVE_PROCEDURAL
+  23   HIGH_CONFIDENCE_SUBSTANTIVE ->  HIGH_CONFIDENCE_SUBSTANTIVE
+   5   NON_SUBSTANTIVE_PROCEDURAL  ->  HIGH_CONFIDENCE_SUBSTANTIVE
+   4   NON_SUBSTANTIVE_PROCEDURAL  ->  ABSTAIN
+   2   HIGH_CONFIDENCE_SUBSTANTIVE ->  ABSTAIN
+   1   HIGH_CONFIDENCE_SUBSTANTIVE ->  NON_SUBSTANTIVE_PROCEDURAL
+```
+
+Span verification on the 42 new rows: **88.1% verified, 4.8% span-not-found**,
+against 16.9% on the near-ties. Two `call_failed`. The gap between 4.8% and 16.9%
+is the clearest confirmation yet of NEW2's 0918 point — the near-tie manifest is
+**enriched for unreadable documents**, because a document with no readable text
+gives a rule nothing to be confident about.
+
+## Still does not reopen the ladder
+
+90.6% on admitted documents and 81.0% self-agreement on near-ties remain two
+populations. The halt was never about absolute accuracy on easy rows; it is that
+a single-run verdict is **not reproducible** on the population the ladder would
+process. Nothing here touches that, and the 12.5% false-substantive rate is a
+second, independent reason not to auto-promote.
+
+## Caveats
+
+- 64 scorable. Still small, and the false-substantive rate's own interval is
+  [5.5, 26.1] — wide enough that "about one in eight" is the honest phrasing.
+- `bail_order` is scored non-substantive here, following NEW2's adjudication of
+  *"is this a reasoned adjudication of a lis"*. **That is not a reopening of
+  migration 0066** — their vocabulary maps `bail_order` to `citable_with_care`,
+  never `not_citable`. Usable, not precedent, reachable. Three different
+  questions.
+- Nothing was persisted: `--ignore-gate` cannot write, and
+  `hc_class_candidate` is unchanged at 1,000 rows with none promoted.
