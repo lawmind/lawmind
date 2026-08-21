@@ -115,3 +115,6 @@ services/harness/*.err
 # (new2-model-classification-manifest.json) is committed and carries the counts,
 # the frozen screen it was built under and the watermark; the payload is not.
 docs/ops/migration/new2-model-classification-manifest.jsonl
+
+# NEW2 scratch: measurement scripts and intermediate artefacts, never committed
+.scratch/
