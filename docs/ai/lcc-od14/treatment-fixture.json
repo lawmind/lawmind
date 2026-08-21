@@ -1,0 +1,1191 @@
+{
+ "generatedAt": "2026-08-21T17:28:38.845Z",
+ "note": "OD-14 fixture. Every non-current judgment, the verified edge that explains it, and the effect/policy precedential-effect.ts derives. Regenerate with .scratch/lcc/od14-fixture.mjs after any treatment re-derivation.",
+ "nonCurrentJudgments": 98,
+ "unblockedByOd14": 73,
+ "tally": {
+  "set_aside + [overruled] -> overruled / allow": 72,
+  "set_aside + [overruled,overruled_in_part] -> overruled / allow": 1,
+  "partly_set_aside + [overruled_in_part] -> overruled_in_part / allow": 8,
+  "doubted + [doubted] -> doubted / allow": 17
+ },
+ "rows": [
+  {
+   "id": "885b8bc3-bd48-41d8-a0f7-a5eeeab2f4a4",
+   "caseTitle": "ASSOCIATE BUILDERS versus DELHI DEVELOPMENT AUTHORITY",
+   "neutralCitation": "2014 INSC 809",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "ccb7824f-be8d-47e2-b8b1-fe21ca017a43",
+   "caseTitle": "CHANDIGARH ADMINISTRATION & ANOTHER versus JASMINE KAUR & OTHERS",
+   "neutralCitation": "2014 INSC 579",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "084da4fe-bb74-4203-943b-88d822136be7",
+   "caseTitle": "CHERUKURI MANI W/O NARENDRA CHOWDARI versus THE CHIEF SECRETARY, GOVERNMENT OF ANDHRA PRADESH & ORS.",
+   "neutralCitation": "2014 INSC 380",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "8f0f217c-aeaa-405c-844a-89c2a4378eea",
+   "caseTitle": "CHOWGULE & CO. PRIVATE LIMITED ETC. versus UNION OF INDIA & ORS.",
+   "neutralCitation": "1987 INSC 53",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "92398b96-58a6-4811-9ccd-4a60797446ae",
+   "caseTitle": "COMMISSIONER OF INCOME TAX CENTRAL II versus SURESH N. GUPTA",
+   "neutralCitation": "2008 INSC 14",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "9500feb9-7355-4e5d-afad-fb104741cc33",
+   "caseTitle": "DHARAMPAL (DEAD) THR. LRS. versus PUNJAB WAKF BOARD & ORS.",
+   "neutralCitation": "2017 INSC 899",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "439aa7b0-b257-483d-8c79-34d575c4a590",
+   "caseTitle": "DIRECTOR OF RATIONING AND DISTRIBUTION versus THE CORPORATION OF CALCUTTA AND OTHERS",
+   "neutralCitation": "1960 INSC 123",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "f83d0700-eaf5-4075-9744-2e20faacedc9",
+   "caseTitle": "DIVISIONAL PERSONNEL OFFICER, SOUTHERN RAILWAY & ANR. versus T. R. CHALLAPPAN",
+   "neutralCitation": "1975 INSC 212",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "4755ec40-1e03-4dce-a89c-7111b089de4c",
+   "caseTitle": "E. MICHEAL RAJ versus INTELLIGENCE OFFICER, NARCOTIC CONTROL BUREAU",
+   "neutralCitation": "2008 INSC 338",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "683bfe2d-e485-45ce-9045-1eaea273cb28",
+   "caseTitle": "E. V. CHINNAIAH versus STATE OF ANDHRA PRADESH AND ORS.",
+   "neutralCitation": "2004 INSC 644",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "1b0b1ac3-7e2b-4577-975b-c0f8d3039aec",
+   "caseTitle": "FORBES FORBES CAMPBELL & CO. LTD. versus BOARD OF TRUSTEES, PORT OF BOMBAY",
+   "neutralCitation": "2014 INSC 826",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "cda2042d-81da-4c35-b6ff-8ead6bc179ec",
+   "caseTitle": "G H CHAMPA LAL versus STATE OF RAJASTHAN AND ORS.",
+   "neutralCitation": "2018 INSC 422",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "eda24fb4-4e27-40a9-9012-43e3b1df638c",
+   "caseTitle": "GENERAL MANAGER, TELECOM versus M. KRISHNAN & ANR.",
+   "neutralCitation": "2009 INSC 1100",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "51d5b174-91a3-454e-9e45-c89e85ddfef7",
+   "caseTitle": "GURU NANAK FOUNDATION versus RATTAN SINGH & SONS",
+   "neutralCitation": "1981 INSC 175",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "94b063b6-c1e6-4433-aa5d-958da7cc76fd",
+   "caseTitle": "HEAVY ENGINEERING MAZDOOR UNION versus THE STATE OF BIHAR & ORS.",
+   "neutralCitation": "1969 INSC 77",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "26b3c251-a548-4e25-b2df-cad3ede91feb",
+   "caseTitle": "JINDAL STAINLESS LTD. AND ANR. versus STATE OF HARYANA AND ORS.",
+   "neutralCitation": "2006 INSC 224",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "00222d6a-796b-44bb-b9e0-9c2619406a7c",
+   "caseTitle": "KANHAIYALAL versus UNION OF INDIA AND ORS.",
+   "neutralCitation": "2008 INSC 25",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "4b47b219-e614-4dff-9667-fcd0ec9c735a",
+   "caseTitle": "KINNARI MULLICK AND ANOTHER versus GHANSHYAM DAS DAMANI",
+   "neutralCitation": "2017 INSC 1281",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "f91485e2-b3e0-43c6-bdbb-522c11259dfc",
+   "caseTitle": "KULWANT KAUR AND ORS. versus GURDIAL SINGH MANN (DEAD) BY LRS. AND ORS.",
+   "neutralCitation": "2001 INSC 158",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "3d84de6b-1138-4c42-8885-a70a6e9162b6",
+   "caseTitle": "M/S PURBANCHAL CABLES & CONDUCTORS PVT. LTD versus ASSAM STATE ELECTRICITY BOARD & ANOTHER",
+   "neutralCitation": "2012 INSC 280",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "f9885dbe-7486-41c8-bcb0-add10eb37c28",
+   "caseTitle": "M/S SUN EXPORT CORPORATION BOMBAY versus COLLECTOR OF CUSTOMS, BOMBAY AND ANR.",
+   "neutralCitation": "1997 INSC 516",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "8b8da12b-9c6d-47d5-8871-e307697cf84e",
+   "caseTitle": "M/S. METERS AND INSTRUMENTS PRIVATE LIMITED & ANR. versus KANCHAN MEHTA",
+   "neutralCitation": "2017 INSC 1009",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "eecc8f01-f84d-4864-8fdb-f989638d22f3",
+   "caseTitle": "M/S. RAINBOW COLOUR LAB AND ANR. versus THE STATE OF MADHYA PRADESH",
+   "neutralCitation": "2000 INSC 47",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "1def9dcf-b44a-4288-a56a-fa0eba25104f",
+   "caseTitle": "M/S. SIL IMPORT, USA versus M/S. EXIM AIDES SILK EXPORTERS, BANGALORE",
+   "neutralCitation": "1999 INSC 214",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "7cef6ece-bb75-464d-ae4e-0a5f44834ca7",
+   "caseTitle": "M/S. SMS TEA ESTATES PVT. LTD. versus M/S. CHANDMARI TEA CO. PVT. LTD.",
+   "neutralCitation": "2011 INSC 508",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled",
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "9c0e057a-9c07-422e-82de-72c8446a463c",
+   "caseTitle": "MADHYA PRADESH INDUSI'RIES LTD. versus UNION OF INDIA AND OTHERS",
+   "neutralCitation": "1965 INSC 154",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "3406dd87-9018-4b97-b4e6-8373648ad7e9",
+   "caseTitle": "MOHANLAL versus THE STATE OF PUNJAB",
+   "neutralCitation": "2018 INSC 714",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "fff9e6b3-7f1e-4587-acf4-ec579962d692",
+   "caseTitle": "MOHD. AZEEM versus DISTRICT JUDGE, ALIGARH AND ORS.",
+   "neutralCitation": "1985 INSC 101",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "1cf9ea6f-d9a3-4cef-b06e-0b105b8dcc44",
+   "caseTitle": "N. RADHAKRISHNAN versus M/S. MAESTRO ENGINEERS & ORS.",
+   "neutralCitation": "2009 INSC 1195",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "1f26c704-c37d-4025-beaa-8b1f5b0b2a94",
+   "caseTitle": "NEW INDIA ASSURANCE CO. LTD. versus PRABHU LAL",
+   "neutralCitation": "2007 INSC 1210",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "ffda795d-e296-4f72-918d-3d425a0c1ba6",
+   "caseTitle": "NEW INDIA ASSURANCE CO. LTD. versus R. SRINIVASAN",
+   "neutralCitation": "2000 INSC 107",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "b14223ef-2b9d-414e-a135-7fa0654141d9",
+   "caseTitle": "NORTHERN INDIA CATERERS PRIVATE LTD., & ANR. versus STATE OF PUNJAB AND ANOTHER",
+   "neutralCitation": "1967 INSC 87",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "37f7852e-9df6-4c92-96fe-3fa809594b5e",
+   "caseTitle": "ORIENTAL INSURANCE CO. LTD. versus ANGAD KOL AND ORS.",
+   "neutralCitation": "2009 INSC 209",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "01b1a470-4166-4b64-bd01-9874f0ff0dd1",
+   "caseTitle": "P. KANNADASAN ETC. ETC. versus STATE OF TAMIL NADU AND ORS. ETC. ETC.",
+   "neutralCitation": "1996 INSC 800",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "24020f0f-bc5b-413b-977e-ed4697f23592",
+   "caseTitle": "P.V. NARASIMHA RAO ETC. ETC. versus STATE (CBL/SPE) ETC. ETC.",
+   "neutralCitation": "1998 INSC 185",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "594937e5-369e-46ff-a86e-3fda4bb25e03",
+   "caseTitle": "PRAKASH & ORS. versus PHULAVATI & ORS.",
+   "neutralCitation": "2015 INSC 793",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "f783be66-76e7-4379-8daa-f97e8715c55c",
+   "caseTitle": "RAGHBIR SINGH SEHRAWAT versus STATE OF HARYANA AND OTHERS",
+   "neutralCitation": "2011 INSC 816",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "649521e6-aba4-4327-91d0-ddfe5fa4ef17",
+   "caseTitle": "RAJENDRA KUMAR MESHRAM versus VANSHMANI PRASAD VERMA AND ANR.",
+   "neutralCitation": "2016 INSC 942",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "31b66d98-8554-4ef3-81ab-c91e88423549",
+   "caseTitle": "REETA NAG versus STATE OF WEST BENGAL & ORS.",
+   "neutralCitation": "2009 INSC 1045",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "86ac0a69-422b-4e90-8f08-e83bdbd79db3",
+   "caseTitle": "REV. SIDHAJBHAI SABHAI AND OTHERS versus STATE OF BOMBAY AND ANOTHER",
+   "neutralCitation": "1962 INSC 247",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "d27280d5-d05a-40b4-9cef-4fa24583ebd8",
+   "caseTitle": "RITU MAHAJAN versus INDIAN OIL CORPORATION & ORS.",
+   "neutralCitation": "2009 INSC 132",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "af32aac0-eb3f-4b53-b5fd-b4de99cbf58c",
+   "caseTitle": "RUNGTA ENGINEERING COLLEGE, BHILAI & ANOTHER versus CHHATTISGARH SWAMI VIVEKANAND TECHNICAL UNIVERSITY & ANOTHER",
+   "neutralCitation": "2014 INSC 684",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "9530d3e8-10d9-4453-8b6a-d53a68a03adf",
+   "caseTitle": "S. AZEEZ BASHA AND ANR. versus UNION OF INDIA",
+   "neutralCitation": "1967 INSC 238",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "02467ce4-09bf-413c-bcfb-4a4fc9db4ff3",
+   "caseTitle": "S. K. VERMA versus MAHESH CHANDRA AND ANOTHER",
+   "neutralCitation": "1983 INSC 109",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "ced822e7-0762-4d38-9109-e51a719f15f0",
+   "caseTitle": "S. N. DUTT versus UNION OF INDIA",
+   "neutralCitation": "1961 INSC 117",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "7ec1d9f8-95a6-4b1f-a745-28d4e0ddd272",
+   "caseTitle": "SAMARENDRA DAS, ADVOCATE versus THE STATE OF WEST BENGAL AND ORS.",
+   "neutralCitation": "2004 INSC 37",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "40741b38-3c54-4d06-9536-538e4d798fed",
+   "caseTitle": "SARDARI LAL versus UNION OF INDIA & ORS",
+   "neutralCitation": "1971 INSC 20",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "1fee973e-cdc0-4437-aa3c-4494559b2999",
+   "caseTitle": "SEBI THROUGH ITS CHAIHMAN versus ROOFIT INDUSTRIES LTD.",
+   "neutralCitation": "2015 INSC 864",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "2c0daea0-7c7b-4b0d-928b-af4258efa371",
+   "caseTitle": "SHALINI versus NEW ENGLISH HIGH SCH. ASSN. & ORS.",
+   "neutralCitation": "2013 INSC 830",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "ee5b3599-56b7-4fd3-a938-b5ab8634fcf7",
+   "caseTitle": "SIDDHARAM SATLINGAPPA MHETRE versus STATE OF MAHARASHTRA AND OTHERS",
+   "neutralCitation": "2010 INSC 843",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "cd7a9400-099a-4134-add2-adb0dc4b3653",
+   "caseTitle": "SMT RAM RATI versus SAROJ DEVI AND ORS.",
+   "neutralCitation": "1997 INSC 441",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "232ea6ee-9a21-4e16-ba45-9c96f9bb6ceb",
+   "caseTitle": "SREE BALAJI NAGAR RESIDENTIAL ASSOCIATION versus STATE OF TAMIL NADU & ORS.",
+   "neutralCitation": "2014 INSC 617",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "af4b3576-261a-4d6a-a85e-5fc2b6c0e0de",
+   "caseTitle": "SRI INDRA DAS versus STATE OF ASSAM",
+   "neutralCitation": "2011 INSC 114",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "a4ef6d73-95e7-42af-b7bb-7cbeb24d4b2a",
+   "caseTitle": "STATE OF GUJARAT versus SHRI SHANTILAL MANGALDAS & ORS.",
+   "neutralCitation": "1969 INSC 8",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "0c53b65f-576f-4eca-80ce-c8312d8e8136",
+   "caseTitle": "STATE OF HARYANA & ORS. versus S. L. ARORA & COMPANY",
+   "neutralCitation": "2010 INSC 69",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "bea90dae-9579-4507-b4ee-36d3c8bf0118",
+   "caseTitle": "STATE OF HARYANA AND ORS. ETC.ETC. versus PIARA SINGH AND ORS. ETC. ETC.",
+   "neutralCitation": "1992 INSC 201",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "ccb1c771-8ea2-45f3-8f01-f3dfd05bb5d6",
+   "caseTitle": "SURAT SINGH (DEAD) versus SIRI BHAGWAN & ORS.",
+   "neutralCitation": "2018 INSC 170",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "e3eb1c3f-03fd-422c-83b5-df8604603820",
+   "caseTitle": "SURESH KUMAR KOUSHAL AND ANOTHER versus NAZ FOUNDATION AND OTHERS",
+   "neutralCitation": "2013 INSC 823",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "deacdf12-5bb9-49b7-b7ac-a8bec74ee877",
+   "caseTitle": "SYNTHETICS & CHEMICALS LTD. ETC. versus STATE OF U.P. AND ORS.",
+   "neutralCitation": "1989 INSC 321",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "4153bc40-0d68-46ad-b0ea-4c4bf3bcac4e",
+   "caseTitle": "TDM INFRASTRUCTURE PRIVATE LIMITED versus UE DEVELOPMENT INDIA PRIVATE LIMITED",
+   "neutralCitation": "2008 INSC 677",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "2f005622-aaa1-4e3f-8d3d-ae07dd4331eb",
+   "caseTitle": "THE AUTOMOBILE TRANSPORT (RAJASTHAN) LTD. versus THE STATE OF RA.JASTHAN AND OTHERS",
+   "neutralCitation": "1962 INSC 127",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "13e6cee7-04d8-4a7d-94b1-41d6bd9a6894",
+   "caseTitle": "THE STATE OF PUNJAB versus SODHI SUKHDEV SINGH",
+   "neutralCitation": "1960 INSC 200",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "8116df0e-1a69-4812-9a31-571696f89ac2",
+   "caseTitle": "TOMASO BRUNO & ANR. versus STATE OF U.P.",
+   "neutralCitation": "2015 INSC 52",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "c31c1e92-5cea-4c4b-bdf3-92e155af067c",
+   "caseTitle": "TOWN MUNICIPAL COUNCIL, ATHANI versus PRESIDING OFFICER, LABOUR COURT, HUBLI & ORS.",
+   "neutralCitation": "1969 INSC 87",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "993e5dac-51bf-4465-ae1c-4e5edabdfe4d",
+   "caseTitle": "UNION OF INDIA & ORS. versus MAJOR GENERAL SHRI KANT SHARMA & ANR.",
+   "neutralCitation": "2015 INSC 206",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "c619adcd-d293-4c06-94c4-b722242e1069",
+   "caseTitle": "UNION OF INDIA & ORS. versus N.R. PARMAR & ORS.",
+   "neutralCitation": "2012 INSC 547",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "555a7724-484b-400c-a02e-9928492aa213",
+   "caseTitle": "UNION OF INDIA & OTHERS versus HAJI MASTAN MIRZA",
+   "neutralCitation": "1984 INSC 45",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "099d543c-8e2d-4397-8788-16696279a9ad",
+   "caseTitle": "UNION OF INDIA AND ORS. versus STATE OF U.P. AND ORS.",
+   "neutralCitation": "2007 INSC 1116",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "a733676b-fcc3-4c53-b675-d42ee35553a8",
+   "caseTitle": "UNION OF INDIA ETC. versus BHANUDAS KRISHNA GAWDE AND ORS. ETC.",
+   "neutralCitation": "1977 INSC 28",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "af440a61-0be6-4f4d-a0e1-926677ba53c3",
+   "caseTitle": "UNITED INDIA INSURANCE CO. LTD. versus ANTIQUE ART EXPORTS PVT. LTD.",
+   "neutralCitation": "2019 INSC 415",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "92c741da-9c48-4126-b75b-a5e081669d55",
+   "caseTitle": "V REVATHI versus UNION OF INDIA & ORS.",
+   "neutralCitation": "1988 INSC 61",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "0d538021-7fcf-48fe-ab64-4f868abcc12b",
+   "caseTitle": "V. SUDEER ETC versus BAR COUNCIL OF INDIA AND ANOTHER",
+   "neutralCitation": "1999 INSC 105",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "f09f8d00-94f4-4ff2-8f04-3ad1f864af17",
+   "caseTitle": "VIJAY KUMAR MISHRA AND ANR. versus HIGH COURT OF JUDICATURE AT PATNA AND ORS.",
+   "neutralCitation": "2016 INSC 586",
+   "storedOverruledStatus": "set_aside",
+   "inboundRelationships": [
+    "overruled"
+   ],
+   "derivedEffect": "overruled",
+   "addToMatter": "allow",
+   "bannerStatus": "set_aside"
+  },
+  {
+   "id": "e6f07a4f-baa6-4aed-8905-032d033c025b",
+   "caseTitle": "BHARTU versus RANDHIR SINGH & ORS.",
+   "neutralCitation": "1985 INSC 12",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "ca98af50-b49f-4289-8d1e-efb89d7d61d6",
+   "caseTitle": "DANAMMA @ SUMAN SURPUR & ANR. versus AMAR AND ORS.",
+   "neutralCitation": "2018 INSC 84",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "844e1b50-ed81-474b-bf93-ac2f18c955c4",
+   "caseTitle": "GARWARE WALL ROPES LTD. versus COASTAL MARINE CONSTRUCTIONS & ENGINEERING LTD.",
+   "neutralCitation": "2019 INSC 511",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "699fdd45-8af4-43a1-bed3-356865de6f44",
+   "caseTitle": "KANTILAL MARTAJI PANDOR versus STATE OF GUJARAT & ANR.",
+   "neutralCitation": "2013 INSC 494",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "b6d43715-db3a-4c32-9790-5865f24cc793",
+   "caseTitle": "KHARAK SINGH versus THE STATE OF U. P. & OTHERS",
+   "neutralCitation": "1962 INSC 389",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "73f18c68-d12c-455c-8483-eb99adcfe7ba",
+   "caseTitle": "M/S. QUEEN'S EDUCATIONAL SOCIETY versus COMMISSIONER OF INCOME TAX",
+   "neutralCitation": "2015 INSC 219",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "ea6ed8a8-1282-4971-a8cb-968f5124ffa3",
+   "caseTitle": "NATIONAL INSURANCE COMPANY LTD. versus ANNAPPA IRAPPA NESARIA AND ORS.",
+   "neutralCitation": "2008 INSC 82",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "c2ba21cc-00ab-4da4-9fdc-eddfb4bce1b5",
+   "caseTitle": "TUKURAM MARUTI CHAVAN versus MARUTI NARAYAN CHAVAN (DEAD) BY L.RS. & ORS.",
+   "neutralCitation": "2008 INSC 1042",
+   "storedOverruledStatus": "partly_set_aside",
+   "inboundRelationships": [
+    "overruled_in_part"
+   ],
+   "derivedEffect": "overruled_in_part",
+   "addToMatter": "allow",
+   "bannerStatus": "partly_set_aside"
+  },
+  {
+   "id": "f551fccb-c631-4f20-b086-94903698fdaf",
+   "caseTitle": "ASHOK G. RAJANI versus BEACON TRUSTEESHIP LTD. & ORS",
+   "neutralCitation": "2022 INSC 1003",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "17c0252d-c6e5-4f2a-9f27-41c59c7fa4a1",
+   "caseTitle": "B. K. PAVITRA & ORS. versus UNION OF INDIA & ORS.",
+   "neutralCitation": "2017 INSC 121",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "f63091f2-993f-402d-a1dc-ec3a2f473ea4",
+   "caseTitle": "CANARA BANK AND ANR. versus M. MAHESH KUMAR",
+   "neutralCitation": "2015 INSC 424",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "ee260152-2ebc-496e-9d2f-c4d0cce46085",
+   "caseTitle": "COMMISSLONER OF SALES TAX, U.P. versus MADANLAL DAN & SONS, BAREILLY",
+   "neutralCitation": "1976 INSC 231",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "a3a394e4-0b77-42f0-9d01-8a8894584b17",
+   "caseTitle": "EASTERN COALFIELDS LTD. versus DUGAL KUMAR",
+   "neutralCitation": "2008 INSC 870",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "31e2a0a1-92f7-4c4d-a8f5-e61cb3ec5d7a",
+   "caseTitle": "GOVIND DATTATRAY KELKAR & ORS. versus CHIEF CONTROLLER OF IMPORTS & EXPORTS & ORS.",
+   "neutralCitation": "1966 INSC 242",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "6fa790ec-1a91-492b-8a3d-4b43da3a5415",
+   "caseTitle": "M/S GANGOTRI ENTERPRISES LTD. versus UNION OF INDIA & ORS.",
+   "neutralCitation": "2016 INSC 375",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "b5e3d6d9-bfcd-4409-a352-212b7b14c080",
+   "caseTitle": "MINAKSHI BALA SUDHIR KUMAR AND ORS. versus SUDHIR KUMAR AND ORS.",
+   "neutralCitation": "1994 INSC 201",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "ddd29e26-8e9d-4711-af96-b0671f5c645e",
+   "caseTitle": "MOHD. SHAFI versus MOHD. RAFIQ & ANR.",
+   "neutralCitation": "2007 INSC 390",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "bd67505e-b7d7-4d64-b185-ccd2a4587883",
+   "caseTitle": "PRAMATI EDUCATIONAL & CULTURAL TRUST ® & ORS. versus UNION OF INDIA & ORS.",
+   "neutralCitation": "2014 INSC 362",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "4f9c2c5a-ba20-4f78-b4d7-0549a1af234d",
+   "caseTitle": "RAMSINGBHAI (RAMSANGBHAI) JERAMBHAI versus THE STATE OF GUJARAT AND ANR.",
+   "neutralCitation": "2018 INSC 405",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "f5bd5329-f6bb-4cbc-8ce4-c34d1ccc9a48",
+   "caseTitle": "SAKHARAM SINCE DECEASED THROUGH LRS & ANR. versus KISHANRAO",
+   "neutralCitation": "2022 INSC 1312",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "9268ef22-dcd3-460b-9e2b-3670d3d6f64f",
+   "caseTitle": "SHIV KIRPAL SINGH versus SHRI V. V. GIRI",
+   "neutralCitation": "1970 INSC 190",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "828e90a5-2cf8-4db1-ba3d-6443048f65d7",
+   "caseTitle": "STATE OF ANDHRA PRADESH AND ORS. ETC. versus MC. DOWELL & CO. AND ORS. ETC.",
+   "neutralCitation": "1996 INSC 419",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "45b181d8-03fb-4f33-8585-0916dfd675b7",
+   "caseTitle": "STATE OF RAJASTHAN versus SMT. KALKI & ANR.",
+   "neutralCitation": "1981 INSC 94",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "7451b217-fa4b-4c6b-9a90-dc9c4816af0f",
+   "caseTitle": "TAMILNADU TERMINATED FULL TIME TEMPORARY UC EMPLOYEES ASSOCIATION versus LIFE INSURANCE CORPORATION OF INDIA& ORS.",
+   "neutralCitation": "2015 INSC 235",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  },
+  {
+   "id": "2c517a2d-7952-4e43-bde0-6bb0616810e9",
+   "caseTitle": "VANCHALABAI RAGHUNATH ITHAPE (D) BY LR versus SHANKARRAO BABURAO BHILARE (D) BY LRS. AND OTHERS",
+   "neutralCitation": "2013 INSC 377",
+   "storedOverruledStatus": "doubted",
+   "inboundRelationships": [
+    "doubted"
+   ],
+   "derivedEffect": "doubted",
+   "addToMatter": "allow",
+   "bannerStatus": "doubted"
+  }
+ ]
+}

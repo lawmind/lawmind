@@ -69,6 +69,11 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import {
+  precedentialEffect,
+  precedentialPolicy,
+  type OverruledStatus,
+} from '../judgments/precedential-effect.ts';
 
 export const addAuthorityBody = z.object({
   judgmentId: z.string().uuid(),
@@ -212,16 +217,52 @@ export async function addAuthority(
     WHERE j.id = ${body.judgmentId}`;
   if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
 
-  // The one refusal Lawmind enforces server-side, unconditionally.
-  // `CITATION_HARNESS.md`, `matters/route.ts` module comment.
-  if (judgment.overruled_status === 'set_aside') {
+  /**
+   * The one refusal Lawmind enforces server-side — now keyed on the ACT rather
+   * than on the label. OD-14, resolved 21 Aug 2026 on the founder's direction.
+   *
+   * `overruled_status = 'set_aside'` was carrying two different acts: 73
+   * judgments read `set_aside` for what their own verified edge calls
+   * `overruled`, because `set_aside` was the value that produced the strongest
+   * warning and an overruling deserved the strongest warning. The warning was
+   * right; the refusal that came attached to it was not. An overruling leaves
+   * the decision between the original parties standing, and Lawmind was
+   * declining to let an advocate rely on law that is still law.
+   *
+   * `precedential-effect.ts` holds the reasoning and the table. Only two effects
+   * refuse: a genuine `set_aside`, and `review_required` — a stored adverse
+   * status no verified edge accounts for, where quietly becoming addable is the
+   * dangerous direction.
+   *
+   * The banner is UNCHANGED in every case. Nothing here weakens a warning.
+   */
+  const treatment = await sql<{ relationship: string }[]>`
+    SELECT DISTINCT relationship
+      FROM judgment_citations
+     WHERE cited_judgment_id = ${body.judgmentId}
+       AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
+
+  const effect = precedentialEffect({
+    overruledStatus: judgment.overruled_status as OverruledStatus,
+    inboundRelationships: treatment.map((t) => t.relationship),
+  });
+  const policy = precedentialPolicy(effect);
+
+  if (policy.addToMatter === 'refuse') {
+    /* Copy is licence protection, not an audit (`CLAUDE.md`): it says what the
+     * advocate can act on, and for `review_required` it does not claim a set
+     * aside that nothing verified. */
+    const what =
+      effect === 'set_aside'
+        ? 'was set aside and cannot be added to a matter.'
+        : 'has a recorded change of status we could not confirm, so it cannot be added to a matter yet.';
     return fail(
       c,
       'AUTHORITY_SET_ASIDE',
-      judgment.overruled_by_case_title
+      effect === 'set_aside' && judgment.overruled_by_case_title
         ? `${judgment.case_title} was set aside and cannot be added to a matter. ` +
           `${judgment.overruled_by_case_title}${judgment.overruled_by_neutral_citation ? ` (${judgment.overruled_by_neutral_citation})` : ''} replaced it.`
-        : `${judgment.case_title} was set aside and cannot be added to a matter.`,
+        : `${judgment.case_title} ${what}`,
       409,
     );
   }

@@ -17,7 +17,7 @@ correct and the gap in this file was real.
 
 ---
 
-## OD-14 — `set_aside` is doing the work of `overruled`, and it disables add-to-matter · OPEN · 20 Aug 2026
+## OD-14 — `set_aside` is doing the work of `overruled`, and it disables add-to-matter · **RESOLVED 21 Aug 2026, founder direction** · raised 20 Aug 2026
 
 **Needs:** a call on whether `overruled_status` should distinguish an **overruled**
 authority from a **set aside** one, and — the part that actually bites — whether
@@ -69,6 +69,65 @@ overruled_in_part`), and zero judgments are marked non-current on a
 **Does not block:** anything currently queued. The reconciliation, the coverage
 work and the legal-object factory all proceed unchanged. **Blocks:** any claim
 that Lawmind distinguishes overruling from setting aside, which it does not yet.
+
+---
+
+### RESOLUTION · 21 August 2026 · founder direction
+
+The founder resolved this directly, and not toward any of the three options as
+written: *"Do NOT solve this as a UI flag. Audit the underlying representation.
+Separate permanently: VERIFIED TREATMENT EDGE from DERIVED CURRENTNESS /
+PRECEDENTIAL EFFECT from PRODUCT POLICY. Never coerce OVERRULED into SET_ASIDE
+merely to reuse product behavior."*
+
+**What shipped.** `services/api/src/judgments/precedential-effect.ts` — the three
+layers as three types, with the table that was previously spread across a
+column's value list, a route's `if`, and a client's switch:
+
+| layer | lives in | changed? |
+|---|---|---|
+| verified treatment edge | `judgment_citations.relationship` | no — it was always right |
+| derived precedential effect | `precedentialEffect()`, **derived, never stored** | new |
+| product policy | `precedentialPolicy()` | the refusal moved here |
+
+**Measured, live, on the day of the change** (`docs/ai/lcc-od14/treatment-fixture.json`):
+
+```
+  72  set_aside        + [overruled]                   -> overruled          / ALLOW
+   1  set_aside        + [overruled, overruled_in_part]-> overruled          / ALLOW
+  17  doubted          + [doubted]                     -> doubted            / allow
+   8  partly_set_aside + [overruled_in_part]           -> overruled_in_part  / allow
+  ──
+  98  non-current judgments · 73 add-to-matter refusals removed
+```
+
+**The finding underneath the finding.** After the change, **zero** judgments in
+the corpus derive a genuine `set_aside`. The one refusal in the product had
+fired 73 times and not once for the case it was written for.
+
+**What did NOT change, deliberately:**
+
+- **No warning was weakened.** An overruling still renders `bannerStatus =
+  'set_aside'`, the strongest class. A warning is never the price of a correct
+  label.
+- **The wire enum still has exactly four values.** `apps/mobile` switches on
+  `OverruledStatus` exhaustively; a fifth value at a client that has never seen
+  it renders an overruled judgment with **no mark at all**, which `CLAUDE.md`
+  rates as severe as a hallucination. A test asserts no effect can produce a
+  fifth value.
+- **Nothing is stored.** No column, no backfill, no `ALTER` on an 18.7M-row
+  table. `CITATION_HARNESS.md` already forbids caching good-law status, and this
+  is the same fact one layer down.
+- `propagate-treatment.ts` still owns the `none` → adverse transition, with the
+  fan-out and the alerts. `precedentialEffect()` returns `none` for a good-law
+  judgment even when an unapplied edge exists, precisely so it cannot become a
+  second implementation of that write.
+
+**Still owed, and it is RCC's:** the banner for an overruling still reads as a
+setting aside, because the wire word is `set_aside`. The true word is available
+additively as the derived `precedentialEffect`; the render change is RCC's and
+is on the bus. Until they take it, Lawmind distinguishes the two acts in its
+DATA and its BEHAVIOUR, and not yet in its COPY.
 
 ---
 

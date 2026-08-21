@@ -181,7 +181,7 @@ new one.
 
 # CREDENTIALS AND ACCOUNTS
 
-### [OPEN — NEEDS ONE IDENTIFIER, NOT A DECISION] FQ-ECOURTS-ACTOR — the eCourts switch is built, verified and one field short of ON · LCC · 17 Aug 2026
+### [OPEN — ONE COMMAND, AND IT NO LONGER NEEDS A UUID] FQ-ECOURTS-ACTOR — the eCourts switch is built, verified and one field short of ON · LCC · 17 Aug 2026
 
 > **21 Aug 2026 — this one identifier now blocks FIVE premium surfaces, not one.**
 > The storage side landed today: `ecourts_observation` and `ecourts_transition`
@@ -198,11 +198,32 @@ new one.
 > `ecourts_fetch_ledger` holds 52 rows and every one is
 > `refused` / `kill_switch_off`.
 
-**Needs:** the `users.id` that should own the change. Nothing else.
+**Needs:** one command, run once. It no longer needs a uuid.
 
 ```
-pnpm --filter @lawmind/api kill-switch ecourts_harvest --on   --actor <your users.id>   --reason "founder confirmed the grant stands, 17 Aug 2026 (bus 0617)" --apply
+pnpm --filter @lawmind/api kill-switch ecourts_harvest --on   --actor-email <the address you signed up with>   --reason "founder confirmed the grant stands, 17 Aug 2026 (bus 0617)" --apply
 ```
+
+> **21 Aug 2026 — LCC looked for the account rather than asking again, and there
+> isn't one.** Aggregates only, no personal data read:
+>
+> - `users` has **no role column at all** — there is nothing to identify an admin
+>   BY, so "find the founder account" was never answerable from stored evidence.
+> - All **55** rows are `subscription_tier = 'none'`, `enrolment_status =
+>   'unverified'` — one uniform population, no privileged tier.
+> - **54 of the 55** appear in `audit_log` with exactly **6 actions inside a
+>   30-second window** each. That is a test fixture's signature, 162 of the 216
+>   audit rows.
+>
+> So there is no genuine founder or admin account to name, and one will not be
+> fabricated. What LCC could remove, it removed: `--actor-email` resolves the
+> address to a `users.id` and **refuses on zero matches or on more than one**, so
+> the audit row still names a real person. The requirement did not move; only the
+> lookup did. Previously this asked for a uuid nobody carries in their head and
+> which cannot be read without a database session.
+>
+> **If the address matches nothing, the account does not exist yet** — sign in to
+> the app once with it, then run the command. That is the whole remaining action.
 
 **The decision is already made and I am not re-asking it.** You confirmed the
 eCourts permission stands and asked for the switch ON (via NEW3, bus 0617). This

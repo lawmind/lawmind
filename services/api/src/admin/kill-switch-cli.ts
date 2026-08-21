@@ -60,6 +60,25 @@ const key = process.argv[2];
 const on = process.argv.includes('--on');
 const off = process.argv.includes('--off');
 const actor = arg('actor');
+/**
+ * The same requirement, expressed in the one identifier a person actually
+ * knows about themselves.
+ *
+ * FQ-ECOURTS-ACTOR has been open since 17 Aug asking the founder for a
+ * `users.id`, which nobody carries in their head and which cannot be looked up
+ * without a database session — so the ask was really "open psql, then run this",
+ * and it blocked five premium surfaces for four days. Measured 21 Aug: all 55
+ * rows in `users` are `subscription_tier = 'none'`, `enrolment_status =
+ * 'unverified'`, and 54 of them appear in `audit_log` in six-action bursts
+ * lasting thirty seconds — test fixtures, every one. There is no founder account
+ * to find, and `users` has no role column to find it by.
+ *
+ * This does NOT weaken the requirement by one inch: it resolves an email to
+ * exactly one `users.id` and refuses on zero matches or on more than one. The
+ * audit row still names a real person. What changes is only that the person can
+ * name themselves the way they signed up.
+ */
+const actorEmail = arg('actor-email');
 const reason = arg('reason');
 /** Prints what WOULD happen and writes nothing. The default, deliberately. */
 const apply = process.argv.includes('--apply');
@@ -80,7 +99,8 @@ if (!key || !(KILL_SWITCH_KEYS as readonly string[]).includes(key)) {
   usage(`unknown kill switch: ${key ?? '(none given)'}`);
 }
 if (on === off) usage('give exactly one of --on or --off');
-if (!actor) usage('--actor is required');
+if (!actor && !actorEmail) usage('one of --actor or --actor-email is required');
+if (actor && actorEmail) usage('give --actor or --actor-email, not both');
 if (!reason) usage('--reason is required (mirrors the database CHECK and the Zod schema)');
 
 const url =
@@ -125,7 +145,7 @@ try {
   await sql.begin(async (tx) => {
     const [row] = await tx<{ enabled: boolean }[]>`
       INSERT INTO platform_config (key, kind, enabled, reason, updated_by_user_id, updated_at)
-      VALUES (${key}, 'kill_switch', ${on}, ${reason}, ${actor}::uuid, now())
+      VALUES (${key}, 'kill_switch', ${on}, ${reason}, ${who.id}::uuid, now())
       ON CONFLICT (key) DO UPDATE SET
         enabled = excluded.enabled,
         reason = excluded.reason,
@@ -136,7 +156,8 @@ try {
     // Same transaction as the write. Both or neither — an unaccountable config
     // change is worse than no change.
     await writeAudit(tx, {
-      actorUserId: actor,
+      // `who.id`, never the raw flag: --actor-email means `actor` is null here.
+      actorUserId: who.id,
       actorRole: 'admin',
       action: 'platform.kill_switch.toggle',
       targetType: 'platform_config',
