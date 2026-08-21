@@ -1,6 +1,9 @@
 {
- "generatedAt": "2026-08-21T22:08:08.988Z",
+ "generatedAt": "2026-08-21T23:18:43.928Z",
  "source": "document_enrichments.parsed_output.roleVerification (live), not a jsonl artefact",
+ "name": "ROLE_VERIFIED_SET_V1",
+ "renamedFrom": "VERIFIED_CORE_V1",
+ "renamedBecause": "NEW2's independent audit (bus 0985) found 27.5% [13.7, 41.3] of the set are not substantive authorities -- transfer petitions, chamber summonses, and orders that direct an authority merely to CONSIDER. The definition is defensible; the word \"core\" invited every consumer to read it as a clean authority set, which it is not.",
  "definition": [
   "axis_a_identity",
   "AND text_safety <> UNSAFE_VERIFIED",
