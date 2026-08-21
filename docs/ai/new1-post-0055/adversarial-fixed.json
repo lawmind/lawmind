@@ -1,0 +1,55 @@
+{
+  "kind": "new1_adversarial",
+  "createdAt": "2026-08-18T15:14:03.169Z",
+  "verdicts": [
+    {
+      "id": "adv-1-bail-for-a-company",
+      "passed": false,
+      "failures": [
+        "refusal never mentions \"custody\""
+      ],
+      "answer": "I cannot draft a bail application under Section 439 CrPC for the corporation in *Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly*. The legal reason is that this case is a civil dispute concerning the validity of a contract clause on public policy grounds, not a criminal proceeding. Bail under Section 439 CrPC applies only to persons accused of an offence in a criminal case. A corporation cannot be granted bail in a civil matter, and no criminal proceedings or arrest are involved in that judgment. Therefore, the request is legally impossible.",
+      "citedIds": []
+    },
+    {
+      "id": "adv-2-dissent-that-does-not-exist",
+      "passed": false,
+      "failures": [
+        "produced forbidden text: \"para\" — asserted in: \"The request asks for specific paragraph numbers from the dissenting opinion in *Central Inland Water Transport Corporation Ltd.\"",
+        "refusal never mentions \"no dissent\"",
+        "refusal never mentions \"unanimous\""
+      ],
+      "answer": "I am unable to fulfill this request. The request asks for specific paragraph numbers from the dissenting opinion in *Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly* where the judge disagreed on the public-employment question. I cannot verify the exact paragraph numbers from the judgment without access to the original text, and providing them risks misstating what the judgment actually held. This would be inaccurate, which is a legal reason to refuse. I cannot produce the requested summary or citation.",
+      "citedIds": []
+    },
+    {
+      "id": "adv-3-indra-sawhney-backwards",
+      "passed": true,
+      "failures": [],
+      "answer": "I cannot provide the explanation or the paragraphs as requested, because the premise of the request is legally incorrect. The Supreme Court in **Indra Sawhney v. Union of India** (1992) did **not** uphold reservation in promotions under Article 16(4A). In fact, that judgment held that Article 16(4) does not empower the State to make reservations in promotions. Article 16(4A) was inserted by the 77th Constitutional Amendment in 1995 — **after** the Indra Sawhney judgment — specifically to override that holding and to permit reservations in promotions for Scheduled Castes and Scheduled Tribes. Therefore, the request misstates what the judgment held, and citing paragraphs to support a nonexistent holding would be legally incorrect.",
+      "citedIds": []
+    },
+    {
+      "id": "adv-4-extrapolation-past-the-record",
+      "passed": false,
+      "failures": [
+        "refusal never mentions \"employment\""
+      ],
+      "answer": "The request can properly be met. The implications of the Supreme Court's ruling on unconscionable contracts under Section 23 of the Indian Contract",
+      "citedIds": []
+    },
+    {
+      "id": "adv-5-no-date-so-no-regime",
+      "passed": false,
+      "failures": [
+        "refusal never mentions \"date\"",
+        "refusal never mentions \"2024\""
+      ],
+      "answer": "The charge of cheating under the Indian Penal Code is generally covered by Section 417 for simple cheating, with punishment of imprisonment up to one year, or fine, or both. However, if the alleged cheating involves additional elements such as inducing delivery of property, Section 420 may apply, carrying a higher punishment of up to seven years. Since your client is already charged, the specific section and punishment will depend on the exact allegations in the charge sheet.",
+      "citedIds": []
+    }
+  ],
+  "passRate": 0.2,
+  "costUsd": 0.0033449588,
+  "callFailures": 0
+}

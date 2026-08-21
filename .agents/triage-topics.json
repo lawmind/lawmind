@@ -1,0 +1,57 @@
+{
+  "task": "topics",
+  "claimsTotal": 840,
+  "claimsBad": 135,
+  "excerptMismatch": 0,
+  "buckets": {
+    "unexplained_drift": 44,
+    "paraphrase": 16,
+    "source_interpolation": 18,
+    "ocr_spacing": 12,
+    "char_transcription": 5,
+    "verifier_min_length": 4,
+    "punctuation_only": 4,
+    "source_page_furniture": 27,
+    "fabrication": 4,
+    "internal_ellipsis": 1
+  },
+  "owners": {
+    "ingest": 88,
+    "model": 39,
+    "verifier": 8
+  },
+  "byKind": {
+    "topic": {
+      "total": 327,
+      "bad": 56
+    },
+    "search_concept": {
+      "total": 513,
+      "bad": 79
+    }
+  },
+  "bucketByKind": {
+    "topic": {
+      "unexplained_drift": 14,
+      "paraphrase": 5,
+      "source_interpolation": 8,
+      "char_transcription": 5,
+      "verifier_min_length": 4,
+      "punctuation_only": 2,
+      "source_page_furniture": 11,
+      "fabrication": 2,
+      "internal_ellipsis": 1,
+      "ocr_spacing": 4
+    },
+    "search_concept": {
+      "unexplained_drift": 30,
+      "paraphrase": 11,
+      "source_interpolation": 10,
+      "ocr_spacing": 8,
+      "punctuation_only": 2,
+      "source_page_furniture": 16,
+      "fabrication": 2
+    }
+  },
+  "examples": {}
+}

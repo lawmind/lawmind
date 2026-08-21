@@ -88,7 +88,12 @@ const MIN_CHARS = 1200;
 const TAIL_CHARS = 4000;
 const tail = (t: string): string => (t.length <= TAIL_CHARS ? t : t.slice(-TAIL_CHARS));
 
-type Row = { id: string; disposal_nature: string | null; full_text: string | null; court: string | null };
+type Row = {
+  id: string;
+  disposal_nature: string | null;
+  full_text: string | null;
+  court: string | null;
+};
 
 const sql = await openDb(url, 2, 10 * 60_000);
 
@@ -128,7 +133,9 @@ async function draw(where: string, limit: number): Promise<Row[]> {
 }
 
 try {
-  console.log(`drawing labelled documents (target ${LABELLED} per class, min ${MIN_CHARS} chars)...`);
+  console.log(
+    `drawing labelled documents (target ${LABELLED} per class, min ${MIN_CHARS} chars)...`,
+  );
   const decided = await draw(
     `hc_document_class = 'decided' AND hc_class_method = 'disposal_nature_merits' AND full_text IS NOT NULL`,
     LABELLED,
@@ -139,7 +146,9 @@ try {
   );
   console.log(`  decided ${decided.length} · procedural ${procedural.length}`);
   if (decided.length < 200 || procedural.length < 200) {
-    console.log('\nnot enough labelled documents in either class to measure a screen. No manifest written.');
+    console.log(
+      '\nnot enough labelled documents in either class to measure a screen. No manifest written.',
+    );
     process.exit(0);
   }
 
@@ -160,10 +169,26 @@ try {
    * recognise is precedent" is precisely the contamination this exercise exists
    * to prevent.
    */
-  const opts = { minLength: 4, maxLength: 20, minPositiveShare: 0.12, maxNegativeShare: 0.04, top: 60 };
-  const proMarkers = mineMarkers(proTrain.map((r) => tail(r.full_text ?? '')), decTrain.map((r) => tail(r.full_text ?? '')), opts);
-  const decMarkers = mineMarkers(decTrain.map((r) => tail(r.full_text ?? '')), proTrain.map((r) => tail(r.full_text ?? '')), opts);
-  console.log(`  mined ${proMarkers.length} procedural marker(s), ${decMarkers.length} decided marker(s)`);
+  const opts = {
+    minLength: 4,
+    maxLength: 20,
+    minPositiveShare: 0.12,
+    maxNegativeShare: 0.04,
+    top: 60,
+  };
+  const proMarkers = mineMarkers(
+    proTrain.map((r) => tail(r.full_text ?? '')),
+    decTrain.map((r) => tail(r.full_text ?? '')),
+    opts,
+  );
+  const decMarkers = mineMarkers(
+    decTrain.map((r) => tail(r.full_text ?? '')),
+    proTrain.map((r) => tail(r.full_text ?? '')),
+    opts,
+  );
+  console.log(
+    `  mined ${proMarkers.length} procedural marker(s), ${decMarkers.length} decided marker(s)`,
+  );
 
   const hits = (text: string, markers: { marker: string }[]): string[] => {
     const t = text.toLowerCase();
@@ -231,7 +256,10 @@ try {
   const perClass = {
     decided: {
       recall: rate(matrix.trulyDecided.calledDecided, matrix.trulyDecided.n),
-      falseCallRateOnOtherClass: rate(matrix.trulyProcedural.calledDecided, matrix.trulyProcedural.n),
+      falseCallRateOnOtherClass: rate(
+        matrix.trulyProcedural.calledDecided,
+        matrix.trulyProcedural.n,
+      ),
     },
     procedural: {
       recall: rate(matrix.trulyProcedural.calledProcedural, matrix.trulyProcedural.n),
@@ -268,7 +296,10 @@ try {
       `the screen calls procedural on ${(100 * perClass.procedural.falseCallRateOnOtherClass).toFixed(1)}% of truly decided documents`,
   );
 
-  const worstPrecision = Math.min(precisionAtBalancedPrior.decided, precisionAtBalancedPrior.procedural);
+  const worstPrecision = Math.min(
+    precisionAtBalancedPrior.decided,
+    precisionAtBalancedPrior.procedural,
+  );
 
   console.log(`\ndrawing residue sample (target ${RESIDUE})...`);
   const residue = await draw(
@@ -278,8 +309,17 @@ try {
   console.log(`  residue drawn ${residue.length}`);
 
   const mix = { decided: 0, procedural: 0, uncertain: 0 };
-  const byDisposal = new Map<string, { n: number; decided: number; procedural: number; uncertain: number }>();
-  const uncertainIds: { id: string; disposal: string; court: string | null; proceduralHits: number; decidedHits: number }[] = [];
+  const byDisposal = new Map<
+    string,
+    { n: number; decided: number; procedural: number; uncertain: number }
+  >();
+  const uncertainIds: {
+    id: string;
+    disposal: string;
+    court: string | null;
+    proceduralHits: number;
+    decidedHits: number;
+  }[] = [];
   for (const r of residue) {
     const s = score(tail(r.full_text ?? ''));
     mix[s.call]++;
@@ -289,15 +329,27 @@ try {
     b[s.call]++;
     byDisposal.set(key, b);
     if (s.call === 'uncertain') {
-      uncertainIds.push({ id: r.id, disposal: key, court: r.court, proceduralHits: s.p, decidedHits: s.d });
+      uncertainIds.push({
+        id: r.id,
+        disposal: key,
+        court: r.court,
+        proceduralHits: s.p,
+        decidedHits: s.d,
+      });
     }
   }
 
   console.log('\nRESIDUE MIX (sample, deterministic text screen only):');
   const pct = (x: number) => `${((100 * x) / Math.max(1, residue.length)).toFixed(1)}%`;
-  console.log(`  substantive-looking (decided)   ${String(mix.decided).padStart(5)}  ${pct(mix.decided)}`);
-  console.log(`  procedural-looking              ${String(mix.procedural).padStart(5)}  ${pct(mix.procedural)}`);
-  console.log(`  UNCERTAIN — the manifest        ${String(mix.uncertain).padStart(5)}  ${pct(mix.uncertain)}`);
+  console.log(
+    `  substantive-looking (decided)   ${String(mix.decided).padStart(5)}  ${pct(mix.decided)}`,
+  );
+  console.log(
+    `  procedural-looking              ${String(mix.procedural).padStart(5)}  ${pct(mix.procedural)}`,
+  );
+  console.log(
+    `  UNCERTAIN — the manifest        ${String(mix.uncertain).padStart(5)}  ${pct(mix.uncertain)}`,
+  );
 
   console.log('\nby disposal string (top 15 by sample size):');
   for (const [k, v] of [...byDisposal.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 15)) {
@@ -324,7 +376,9 @@ try {
   console.log('\nPROJECTED OVER THE 760,305-ROW RESIDUE (estimates, not counts):');
   console.log(`  substantive-looking  ~${projected.substantiveLooking.toLocaleString()}`);
   console.log(`  procedural-looking   ~${projected.proceduralLooking.toLocaleString()}`);
-  console.log(`  genuinely uncertain  ~${projected.uncertain.toLocaleString()}  <- the population a model is for`);
+  console.log(
+    `  genuinely uncertain  ~${projected.uncertain.toLocaleString()}  <- the population a model is for`,
+  );
 
   const report = {
     tool: 'disposal-residue-cli',
@@ -333,7 +387,11 @@ try {
     minChars: MIN_CHARS,
     tailChars: TAIL_CHARS,
     margin: MARGIN,
-    labelled: { decided: decided.length, procedural: procedural.length, trainTestSplit: 'alternating index, deterministic' },
+    labelled: {
+      decided: decided.length,
+      procedural: procedural.length,
+      trainTestSplit: 'alternating index, deterministic',
+    },
     heldOut: {
       confusionMatrix: matrix,
       perClass,
@@ -344,7 +402,9 @@ try {
     },
     markers: { procedural: proMarkers, decided: decMarkers, mineOptions: opts },
     residueSample: { n: residue.length, mix },
-    byDisposal: [...byDisposal.entries()].map(([disposal, v]) => ({ disposal, ...v })).sort((a, b) => b.n - a.n),
+    byDisposal: [...byDisposal.entries()]
+      .map(([disposal, v]) => ({ disposal, ...v }))
+      .sort((a, b) => b.n - a.n),
     projected,
     caveats: [
       'NOTHING is written to judgments. hc_document_class stays NULL for every row here. This is a measurement and a manifest; LCC owns any model classification.',
@@ -372,7 +432,7 @@ try {
           purpose:
             'Rows in the DISPOSED/CLOSED residue that a deterministic text screen cannot call either way. These are the rows where model classification is genuinely useful; the rows the screen CAN call are not in here and should not be paid for.',
           selector:
-            "hc_class_method IS NOT NULL AND hc_document_class IS NULL AND disposal_nature IS NOT NULL AND length(full_text) >= 1200",
+            'hc_class_method IS NOT NULL AND hc_document_class IS NULL AND disposal_nature IS NOT NULL AND length(full_text) >= 1200',
           screen: {
             margin: MARGIN,
             tailChars: TAIL_CHARS,

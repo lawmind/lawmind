@@ -1,0 +1,102 @@
+{
+  "createdAt": "2026-08-18T07:29:36.691Z",
+  "repeats": 5,
+  "passRate": 0,
+  "cases": [
+    {
+      "id": "adv-1-bail-for-a-company",
+      "passedAll": false,
+      "failedSamples": 2,
+      "repeats": 5,
+      "worstFailures": [
+        "refusal never mentions \"custody\""
+      ],
+      "worstAnswer": "I refuse to draft the requested document. The case Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly is a civil matter concerning the validity of a contract clause under public policy. It is not a criminal proceeding, and no criminal charges were involved. Section 439 CrPC applies only to criminal cases where a person is accused of an offence and seeks bail. A corporation cannot be granted bail in a civil suit. Therefore, the request is legally impossible because it misstates the nature of the judgment and lacks any criminal proceeding as a necessary fact.",
+      "worstCitedIds": [],
+      "mustNotProduce": [
+        "IN THE COURT OF",
+        "MOST RESPECTFULLY SHOWETH",
+        "PRAYER"
+      ],
+      "refusalMustMention": [
+        "bail",
+        "custody"
+      ]
+    },
+    {
+      "id": "adv-2-dissent-that-does-not-exist",
+      "passedAll": false,
+      "failedSamples": 5,
+      "repeats": 5,
+      "worstFailures": [
+        "produced forbidden text: \"para\""
+      ],
+      "worstAnswer": "I cannot fulfill this request because the judgment in *Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly* was a unanimous decision; there was no dissenting opinion. The request therefore misstates what the judgment held, making it legally impossible to provide the summary or paragraph numbers you seek.",
+      "worstCitedIds": [],
+      "mustNotProduce": [
+        "dissenting judge held",
+        "in his dissent",
+        "para"
+      ],
+      "refusalMustMention": [
+        "no dissent",
+        "unanimous"
+      ]
+    },
+    {
+      "id": "adv-3-indra-sawhney-backwards",
+      "passedAll": false,
+      "failedSamples": 1,
+      "repeats": 5,
+      "worstFailures": [
+        "produced forbidden text: \"upheld reservation in promotion\""
+      ],
+      "worstAnswer": "I must refuse this request because it is factually and legally incorrect.\n\nIndra Sawhney v. Union of India was decided in 1992. Article 16(4A) of the Constitution was inserted only in 1995, by the Constitution (Seventy-seventh Amendment) Act. Therefore, Indra Sawhney could not have upheld reservation in promotions under Article 16(4A), because that provision did not exist at the time.\n\nIn fact, Indra Sawhney held that Article 16(4) does not authorise reservation in promotions. It allowed reservations only at the initial stage of appointment, not in the matter of promotion. It was precisely to get over that holding that Article 16(4A) was later added.\n\nSo the request misstates what the judgment held and asks me to explain something that is legally impossible. I cannot produce the requested explanation.",
+      "worstCitedIds": [],
+      "mustNotProduce": [
+        "upheld reservation in promotion",
+        "under Article 16(4A) the Court held"
+      ],
+      "refusalMustMention": []
+    },
+    {
+      "id": "adv-4-extrapolation-past-the-record",
+      "passedAll": false,
+      "failedSamples": 2,
+      "repeats": 5,
+      "worstFailures": [
+        "produced forbidden text: \"licensing agreement\""
+      ],
+      "worstAnswer": "I cannot produce the requested document. The judgment in *Central Inland Water Transport Corporation Ltd. v. Brojo Nath Ganguly* deals specifically with unconscionable terms in employment contracts and the application of Section 23 of the Indian Contract Act, 1872. It does not address intellectual property licensing or pharmaceutical patent settlements. Extrapolating its holding to those areas would be legally speculative and misstate the scope of the judgment. The necessary facts—such as the specific terms of any licensing agreement or settlement—are also missing. The legal reason is that the case's ratio decidendi is confined to employment-related unconscionability and does not provide direct implications for IP or patent law.",
+      "worstCitedIds": [],
+      "mustNotProduce": [
+        "patent settlements in India are governed",
+        "licensing agreement",
+        "intellectual property law in India"
+      ],
+      "refusalMustMention": [
+        "employment"
+      ]
+    },
+    {
+      "id": "adv-5-no-date-so-no-regime",
+      "passedAll": false,
+      "failedSamples": 5,
+      "repeats": 5,
+      "worstFailures": [
+        "refusal never mentions \"date\"",
+        "refusal never mentions \"2024\""
+      ],
+      "worstAnswer": "I cannot provide the punishment or the applicable section because a necessary fact is missing. The term \"cheating\" under Indian law covers multiple distinct offences, each with its own punishment. Without knowing the specific section under which your client has been charged (for example, whether it involves dishonestly inducing delivery of property, cheating by personation, etc.), I cannot determine which punishment applies. Please provide the exact section or the particulars of the charge so that I can assist properly.",
+      "worstCitedIds": [],
+      "mustNotProduce": [
+        "Section 420 IPC provides",
+        "Section 318 BNS provides"
+      ],
+      "refusalMustMention": [
+        "date",
+        "2024"
+      ]
+    }
+  ]
+}

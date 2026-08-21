@@ -1,0 +1,173 @@
+{
+ "scope": "staged",
+ "confirmed": false,
+ "qualityStateVersion": "v1",
+ "screened": 6000,
+ "candidates": 541,
+ "written": 0,
+ "candidateRate": 9.02,
+ "byState": {
+  "UNKNOWN": 5459,
+  "OCR_CANDIDATE": 541
+ },
+ "byCourt": [
+  {
+   "court": "3_22",
+   "screened": 482,
+   "written": 288,
+   "rate": 59.75
+  },
+  {
+   "court": "29_3",
+   "screened": 477,
+   "written": 234,
+   "rate": 49.06
+  },
+  {
+   "court": "8_9",
+   "screened": 299,
+   "written": 8,
+   "rate": 2.68
+  },
+  {
+   "court": "22_18",
+   "screened": 220,
+   "written": 5,
+   "rate": 2.27
+  },
+  {
+   "court": "27_1",
+   "screened": 411,
+   "written": 3,
+   "rate": 0.73
+  },
+  {
+   "court": "2_5",
+   "screened": 101,
+   "written": 2,
+   "rate": 1.98
+  },
+  {
+   "court": "16_20",
+   "screened": 12,
+   "written": 1,
+   "rate": 8.33
+  },
+  {
+   "court": "33_10",
+   "screened": 840,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "21_11",
+   "screened": 140,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "10_8",
+   "screened": 451,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "19_16",
+   "screened": 101,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "23_23",
+   "screened": 153,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "9_13",
+   "screened": 581,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "32_4",
+   "screened": 524,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "7_26",
+   "screened": 160,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "36_29",
+   "screened": 429,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "28_2",
+   "screened": 116,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "18_6",
+   "screened": 115,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "20_7",
+   "screened": 95,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "5_15",
+   "screened": 62,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "24_17",
+   "screened": 167,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "Supreme Court of India",
+   "screened": 32,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "1_12",
+   "screened": 28,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "14_25",
+   "screened": 2,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "17_21",
+   "screened": 1,
+   "written": 0,
+   "rate": 0
+  },
+  {
+   "court": "11_24",
+   "screened": 1,
+   "written": 0,
+   "rate": 0
+  }
+ ],
+ "elapsedSeconds": 2.6,
+ "finishedAt": "2026-08-21T17:15:17.560Z"
+}

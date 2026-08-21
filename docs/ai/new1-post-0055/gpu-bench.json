@@ -1,0 +1,49 @@
+{
+  "kind": "new1_gpu_embed_bench",
+  "createdAt": "2026-08-18T15:13:12Z",
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 4060 Ti",
+    "vramTotalMiB": "8188",
+    "driver": "610.47"
+  },
+  "providers": [
+    "CUDAExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "model": "BGE-M3 (Xenova/bge-m3) onnx fp32, CLS-pooled, L2-normalised",
+  "tokenSqBudget": 2000000,
+  "chunks": 2000,
+  "maxChars": 2400,
+  "elapsedSeconds": 94.477,
+  "chunksPerSecond": 21.169,
+  "msPerChunk": 47.239,
+  "tokens": 1076941,
+  "tokensPerSecond": 11398.9,
+  "meanTokensPerChunk": 538.5,
+  "gpuUtilisationPct": {
+    "n": 308,
+    "mean": 98.0,
+    "max": 100.0,
+    "p50": 100.0
+  },
+  "vramUsedMiB": {
+    "n": 308,
+    "mean": 4017.9,
+    "max": 4032.0,
+    "p50": 4017.0
+  },
+  "vramBeforeLoadMiB": 824.0,
+  "vramModelResidentMiB": 4014.0,
+  "vramModelWeightsMiB": 3190.0,
+  "vramInferenceWorkingSetMiB": 18.0,
+  "processCpuPct": {
+    "n": 308,
+    "mean": 99.06,
+    "max": 112.8,
+    "p50": 99.3
+  },
+  "psutilAvailable": true,
+  "gpuObservedWorking": true,
+  "textSource": "C:/Users/Xerxus/AppData/Local/Temp/claude/c--Users-Xerxus-Documents-Lawmind/dc6f3075-4d44-45bc-aaed-699ef6eda73e/scratchpad/gpu-bench-texts.json",
+  "note": "texts read from a file, never the database \u2014 the box's CPU is saturated by the ingest fleet and a DB read would measure contention"
+}

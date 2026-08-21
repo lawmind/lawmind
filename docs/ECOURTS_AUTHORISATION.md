@@ -15,7 +15,7 @@ them.
 
 ---
 
-## STATUS: AWAITING THE LETTER'S NUMBERS — the switch cannot move
+## STATUS, 17 AUG 2026: THE SWITCH CAN MOVE. IT IS THE LAST LOCK LEFT
 
 |                                   |                                                                 |
 | --------------------------------- | --------------------------------------------------------------- |
@@ -24,8 +24,58 @@ them.
 | CAPTCHA bypass                    | **expressly permitted** — see below, rule changed               |
 | Expires                           | **January 2029**, then **renewable for payment**                |
 | Kill switch `ecourts_harvest`     | **off**, created off in migration 0013                          |
-| Conditions transcribed            | **NO** — `services/api/src/court/authorisation.ts` holds `null` |
+| Conditions transcribed            | **YES**, 8 Aug 2026 — corrected 17 Aug, this row said `NO` for nine days after it stopped being true |
 | Requests ever made                | **0**, and the ledger can show it                               |
+
+> **This heading previously read "AWAITING THE LETTER'S NUMBERS — the switch
+> cannot move", and it was wrong for nine days.** NEW3 read it, nearly acted on
+> it, and flagged it instead (bus 0617). Recording that rather than quietly
+> editing it: a status table that is stale in the SAFE direction still costs
+> someone a day, and this one was blocking a founder instruction.
+
+**Verified by execution, 17 Aug 2026, not by reading:**
+
+```
+AUTHORISATION is null?  false
+expiresAt               2029-01-01T06:30:00.000Z
+permittedCourts         ALL_COURTS
+hoursIst                {"from":0,"to":24}
+captchaBypass           true
+expired now?            false
+```
+
+`guard.ts` checks its locks cheapest-and-most-absolute first: terms on file,
+then expiry, **then** the kill switch. The first two now pass. **The kill switch
+is the only remaining refusal**, which is exactly what the founder asked to
+change.
+
+**Turning it on does not start any traffic, and that is measured, not assumed.**
+The only caller of `fetchCauseList` is `retryCauseList` — an authenticated,
+attributable admin request. There is no cron, no scheduler and no poll. So the
+freeze concern raised in bus 0617 does not apply to the switch itself: it grants
+permission, it cannot initiate a fetch.
+
+**What the flip still needs — and it is one field, not a decision.**
+`audit_log.actor_user_id` is `NOT NULL`, and `admin/platform.ts` is explicit that
+*"a config change with no audit trail is worse than no change."* Of the six
+switches this is the one where that is not an internal nicety: it authorises
+contacting a court's systems under a registrar's written grant, and *"we are not
+sure who turned it on"* is the answer that loses the grant. There is no founder
+identity in `users` — 53 rows, all test accounts — so naming one would be a false
+audit record.
+
+The command is built and needs only that id (`FQ-ECOURTS-ACTOR`):
+
+```
+pnpm --filter @lawmind/api kill-switch ecourts_harvest --on \
+  --actor <the founder's users.id> \
+  --reason "founder confirmed the grant stands, 17 Aug 2026 (bus 0617)" --apply
+```
+
+It writes the config row and the audit row in ONE transaction, refuses an
+`--actor` that is not in `users`, is dry by default, and afterwards prints
+`decide()`'s verdict for a sample court — so the operator sees what the switch
+actually bought instead of assuming it bought permission.
 
 ### The CAPTCHA rule changed — 8 Aug 2026, on the founder's authority
 

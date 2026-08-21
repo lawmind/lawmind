@@ -90,33 +90,30 @@ import type { Sql } from 'postgres';
 export const MAX_ATTEMPTS = 3;
 
 /**
- * A DOCUMENT MAY NOT BE CONDEMNED FASTER THAN THIS, however many times it fails.
+ * A NOTE ON TIME-SPACING, AND WHY THIS FILE DOES NOT DO IT.
  *
- * `MAX_ATTEMPTS` alone has no notion of time, and on 18 Aug 2026 that cost
- * 14,331 documents. The ledger's own histogram:
+ * On 19 Aug 2026 a `MIN_CONDEMN_SPAN` of six hours was added here, requiring a
+ * row to exhaust its attempts ACROSS a span rather than merely three times. The
+ * justification was that 99.5% of the 14,402 permanent `pdf_failed` rows had
+ * been condemned inside a single hour, and 97% were one court — which reads
+ * unmistakably as a source having a bad hour while a three-attempt budget ran
+ * out inside it.
  *
- *   last_attempted_at (hour)      permanent pdf_failed rows
- *   2026-08-18 18:00                          14,331   99.5%
- *   everything else combined                      71
+ * That reading was WRONG and the change has been reverted. Fetched in full,
+ * those objects return HTTP 200 with `Content-Type: application/pdf` and a
+ * 124-byte HTML error page: a soft 404 (`text.ts`, `fetchPdfText`). The hour was
+ * not an outage — it was the worker reaching a contiguous run of dead keys. The
+ * documents were correctly condemned; the only defect was that a soft 404 was
+ * classified `pdf_failed` (retryable) instead of `pdf_absent` (permanent on
+ * sight), which `text.ts` now fixes at the source of the mistake.
  *
- * 97% of them were Bombay. The source had a bad hour; three attempts fit inside
- * that hour; every document in flight was marked permanent, and
- * `permanentlyFailedUrls()` then excluded them from every future scope at every
- * width, forever. A HEAD probe of ALL 14,402 the next day returned **200 for
- * 14,402 of them — 100%**. Nothing about those documents was ever wrong. Only
- * the clock was.
- *
- * Six hours, and the shape of the fix matters more than the number: attempts
- * still have to be exhausted, and now they must be exhausted ACROSS a span. The
- * comment above this module's retry budget already said three attempts exist
- * because "one request cannot tell a transient hiccup from a genuine absence" —
- * that argument is about time passing, and the code was counting instead.
- *
- * `PERMANENT_ON_SIGHT` outcomes are untouched: a 404 and a missing title are
- * properties of the object, not of the network, and waiting six hours to agree
- * with them would only cost fetches.
+ * Spacing is therefore a cost with no demonstrated benefit here: it would delay
+ * correct condemnation of dead keys by six hours and buy the fleet a further
+ * round of fetches for every one of them. If a real outage is ever OBSERVED —
+ * as opposed to inferred from clustering, which is what happened — this is the
+ * right place to add it, and it should be added on that evidence rather than on
+ * this one.
  */
-export const MIN_CONDEMN_SPAN = '6 hours';
 
 /**
  * Outcomes that are a property of the METADATA ROW, not of the network. These go
@@ -209,10 +206,7 @@ export async function recordFailures(sql: Sql, rows: readonly LedgerOutcome[]): 
         outcome = EXCLUDED.outcome,
         attempts = hc_ingest_ledger.attempts + 1,
         permanent = EXCLUDED.permanent
-                    OR (
-                      hc_ingest_ledger.attempts + 1 >= ${MAX_ATTEMPTS}
-                      AND now() - hc_ingest_ledger.first_attempted_at >= ${MIN_CONDEMN_SPAN}::interval
-                    ),
+                    OR hc_ingest_ledger.attempts + 1 >= ${MAX_ATTEMPTS},
         last_attempted_at = now()
     `;
     return rows.length;

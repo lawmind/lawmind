@@ -325,7 +325,8 @@ for (const code of Object.keys(heldByCourtYear)) {
   }
 }
 for (const n of heldSnapshot.courtNamesWithNoSurveyCode ?? []) {
-  if (!heldWithNoSource.some((h) => h.court === n)) heldWithNoSource.push({ court: n, heldDocuments: null });
+  if (!heldWithNoSource.some((h) => h.court === n))
+    heldWithNoSource.push({ court: n, heldDocuments: null });
 }
 
 /**
@@ -401,7 +402,8 @@ function descentNotServing(court) {
   if (last === undefined) return null;
   if (/died within 20s three times|exceeded \d+ restarts/.test(last))
     return `descent STOPPED by the supervisor — ${last.trim()}`;
-  if (/worker finished cleanly/.test(last)) return 'descent finished and exited — nothing is serving these years now';
+  if (/worker finished cleanly/.test(last))
+    return 'descent finished and exited — nothing is serving these years now';
   if (/PAUSED/.test(last)) return 'descent PAUSED by the STOP file';
   return null;
 }
@@ -434,6 +436,75 @@ function yearScopeActive(court, year) {
     return false;
   }
 }
+
+/**
+ * THE CURSOR, which outranks the subtraction this file has always ranked on.
+ *
+ * Added 19 Aug 2026 after this plan put `hc-boot-mid-9_13` at the TOP with
+ * 977,031 "actionable" documents. Checked against Allahabad's own checkpoint:
+ *
+ *   2016     67 source ·     67 cursor        2020  251,574 ·  251,574
+ *   2017  1,961        ·  1,961               2021  351,964 ·  351,964
+ *   2018 456,951       · 456,951              2022  525,018 ·  525,018
+ *   2019 468,045       · 468,045
+ *   ────────────────────────────────────────────────────────────────────
+ *   2,055,580 source rows · 2,055,580 read. Every row. Remaining: ZERO.
+ *
+ * The 977,031 is duplication, not work. The source side counts parquet ROWS and
+ * NEW3 measured one Allahabad object at 443,845 rows for 225,366 distinct
+ * documents (bus 0721) — a source-side re-export appended to the same file. The
+ * held side counts DISTINCT documents, because `judgments.source_url` is
+ * uniquely indexed, so the duplicates never reached the corpus. Subtracting one
+ * from the other therefore reports the duplication as a gap, and would have
+ * spent the widest worker in the fleet re-reading two million rows to write
+ * nothing.
+ *
+ * `lastRunExhausted` already catches this, but only from a `RESULTS` block, and
+ * `hc-boot-mid-9_13.log` has none — that run did not finish cleanly, so the
+ * strongest evidence available was invisible to it. The checkpoint does not
+ * depend on a clean exit: it is written after every batch and it is the offset
+ * the worker itself resumes from. Where a cursor covers a scope's whole band, it
+ * is the authority; the subtraction is a fallback for scopes with no cursor.
+ */
+const cursorByCourtYear = new Map();
+for (const f of existsSync(CHECKPOINT_DIR) ? readdirSync(CHECKPOINT_DIR) : []) {
+  if (!f.endsWith('.json')) continue;
+  if (
+    f.startsWith('paragraphs-') ||
+    f.startsWith('citation-keys') ||
+    f.startsWith('script-quality')
+  )
+    continue;
+  let parsed;
+  try {
+    parsed = JSON.parse(readFileSync(join(CHECKPOINT_DIR, f), 'utf8'));
+  } catch {
+    continue;
+  }
+  for (const [key, v] of Object.entries(parsed)) {
+    const court = /court=([^/]+)/.exec(key)?.[1];
+    const year = /year=(\d+)/.exec(key)?.[1];
+    if (!court || !year) continue;
+    /* MAX per parquet key, never SUM. A year scope and a band scope legitimately
+     * share a boundary key, and summing two cursors over one file yields an
+     * offset past its end — which reads as "walked" and would hide real work. */
+    const k = `${key}`;
+    const prev = cursorByCourtYear.get(k) ?? 0;
+    cursorByCourtYear.set(k, Math.max(prev, Number(v?.offset ?? 0)));
+  }
+}
+const cursorRowsFor = (court, from, to) => {
+  let rows = 0;
+  let sawAny = false;
+  for (const [key, off] of cursorByCourtYear) {
+    const c = /court=([^/]+)/.exec(key)?.[1];
+    const y = Number(/year=(\d+)/.exec(key)?.[1]);
+    if (c !== court || !Number.isFinite(y) || y < from || y > to) continue;
+    rows += off;
+    sawAny = true;
+  }
+  return sawAny ? rows : null;
+};
 
 /** Which scopes have EVER run — a checkpoint file on disk is the only evidence. */
 const checkpointFiles = new Set(
@@ -516,11 +587,64 @@ function push(entry) {
     exhausted.push({ ...decorated, lastRun: done });
     return;
   }
-  if (effPct >= MAX_HELD_PCT) {
+  /**
+   * And the same question asked of the cursor, which needs no clean exit. A
+   * scope whose stored offsets already cover every source row of its band has
+   * read all of it; what did not become a judgment is a duplicate or is in
+   * `hc_ingest_ledger`, and neither is work a re-run recovers.
+   */
+  const from = entry.fromYear ?? entry.year;
+  const to = entry.toYear ?? entry.year;
+  const cursorRows = from === null || to === null ? null : cursorRowsFor(entry.court, from, to);
+  if (cursorRows !== null && cursorRows >= entry.sourceDocuments) {
+    exhausted.push({
+      ...decorated,
+      lastRun: null,
+      cursorRows,
+      cursorEvidence: `cursor ${cursorRows.toLocaleString()} of ${entry.sourceDocuments.toLocaleString()} source rows read`,
+    });
+    return;
+  }
+
+  /**
+   * AND THE RANKING USES THE CURSOR TOO, not just the exhaustion gate.
+   *
+   * Gating on the cursor while RANKING on `source - held - absent` was a half
+   * change, and it showed: `hc-boot-hist-22_18` was correctly kept as a
+   * candidate (its cursor is 263,296 of 267,627, so 4,331 rows really do remain)
+   * and then listed at the TOP of the plan with **101,121 actionable** — the
+   * held-based subtraction, over-reporting the real work by 23x. The launcher
+   * takes its order from this ranking, so the fleet would have opened its widest
+   * band worker for 4,331 rows.
+   *
+   * The two numbers differ for the reason the whole cursor argument rests on:
+   * source counts parquet ROWS and held counts DISTINCT documents, so
+   * duplication in a source object inflates the subtraction and cancels in the
+   * cursor difference. Where a cursor exists it is authoritative, and
+   * `remainingActionable` — which is what ranks, what `MIN_REMAINING` tests, and
+   * what the launcher prints — now carries it. `remainingBySubtraction` is kept
+   * beside it so the disagreement stays visible rather than being quietly
+   * replaced.
+   */
+  if (cursorRows !== null) {
+    decorated.remainingBySubtraction = decorated.remainingActionable;
+    decorated.remainingActionable = Math.max(0, entry.sourceDocuments - cursorRows);
+    decorated.remainingMethod = 'cursor';
+    decorated.cursorRows = cursorRows;
+  } else {
+    decorated.remainingBySubtraction = decorated.remainingActionable;
+    decorated.remainingMethod = 'held_subtraction';
+  }
+
+  if (effPct >= MAX_HELD_PCT && decorated.remainingMethod !== 'cursor') {
+    /* The held percentage is only consulted where there is no cursor. A scope at
+     * 99% held can still have real rows a worker has never read — that is
+     * exactly the seven never-scoped courts — and a scope at 62% held can be one
+     * batch from done. */
     finished.push(decorated);
     return;
   }
-  if (entry.remainingActionable < MIN_REMAINING) {
+  if (decorated.remainingActionable < MIN_REMAINING) {
     belowThreshold.push(decorated);
     return;
   }
@@ -650,7 +774,9 @@ const out = {
     held: HELD_IS_COMMENSURABLE
       ? 'docs/ops/migration/new2-held-by-court-year.json heldByCourtCodeBySourceYear (exact count(*), JUDGMENT ROWS, keyed by the PARTITION year in source_url so it is commensurable with the survey)'
       : 'docs/ops/migration/new2-held-by-court-year.json heldByCourtCodeByYear (exact count(*), JUDGMENT ROWS, keyed by year(judgment_date)) -- STALE SHAPE. The survey counts partition years, so every remaining below is inflated by documents whose decision year differs from their object key. Rerun scripts/migration/new2-held-refresh.mjs.',
-    heldYearDefinition: HELD_IS_COMMENSURABLE ? 'source_url partition year' : 'year(judgment_date) — NOT commensurable with source',
+    heldYearDefinition: HELD_IS_COMMENSURABLE
+      ? 'source_url partition year'
+      : 'year(judgment_date) — NOT commensurable with source',
     heldTakenAt: heldSnapshot.takenAt ?? null,
     ledger: ledgerSnapshot
       ? 'docs/ops/migration/new2-ledger-by-court-year.json (hc_ingest_ledger, DOCUMENTS that will not arrive)'
@@ -696,7 +822,9 @@ const out = {
   recentWithNoDescent: candidates
     .filter((c) => c.tier === 5 && c.descentServing === false)
     .sort((a, b) => b.remainingActionable - a.remainingActionable),
-  excludedExhaustedByLastRun: exhausted.sort((a, b) => b.remainingActionable - a.remainingActionable),
+  excludedExhaustedByLastRun: exhausted.sort(
+    (a, b) => b.remainingActionable - a.remainingActionable,
+  ),
   exhaustedByLastRun: exhausted.length,
   finishedAtOrAboveMaxHeldPct: finished.length,
   belowMinRemaining: belowThreshold.length,
@@ -711,9 +839,7 @@ if (JSON_ONLY) {
 }
 
 const n = (x) => x.toLocaleString();
-console.log(
-  `NEW2 YEAR-SCOPE PLAN — ${selected.length} of ${candidates.length} candidate scopes\n`,
-);
+console.log(`NEW2 YEAR-SCOPE PLAN — ${selected.length} of ${candidates.length} candidate scopes\n`);
 console.log(
   `  band ceiling ${BAND_CEILING} (parsed from the launcher) · backlog ${BACKLOG_FROM}-${RECENT_FROM - 1} · recent ${RECENT_FROM}+`,
 );
@@ -761,7 +887,7 @@ console.log(
   ledgerSnapshot
     ? `  actionable = raw minus ${n(ledgerSnapshot.totals?.unreachable ?? 0)} ledger-confirmed absences corpus-wide (ledger ${ledgerSnapshot.takenAt}). Ranking and thresholds use actionable.`
     : `  NO LEDGER SNAPSHOT — actionable equals raw, so documents already observed to 404 are still ranked as work.` +
-      `\n  Run: node scripts/migration/new2-ledger-snapshot.mjs`,
+        `\n  Run: node scripts/migration/new2-ledger-snapshot.mjs`,
 );
 console.log(
   `  ${finished.length} scope(s) at >=${(MAX_HELD_PCT * 100).toFixed(0)}% held treated as FINISHED · ${belowThreshold.length} below ${n(MIN_REMAINING)} remaining.`,
@@ -776,9 +902,14 @@ if (orphanedRecent.length > 0) {
     '  Tier 5 sits last because "the descent is already inside these". For these courts it is not.',
   );
   for (const c of orphanedRecent.slice(0, 8)) {
-    console.log(`    ${c.scope.padEnd(24)} ${n(c.remainingActionable).padStart(9)}  ${c.descentGap}`);
+    console.log(
+      `    ${c.scope.padEnd(24)} ${n(c.remainingActionable).padStart(9)}  ${c.descentGap}`,
+    );
   }
-  if (orphanedRecent.length > 8) console.log(`    … and ${orphanedRecent.length - 8} more (see recentWithNoDescent in the JSON)`);
+  if (orphanedRecent.length > 8)
+    console.log(
+      `    … and ${orphanedRecent.length - 8} more (see recentWithNoDescent in the JSON)`,
+    );
 }
 if (exhausted.length > 0) {
   console.log(
@@ -793,7 +924,7 @@ if (exhausted.length > 0) {
   for (const r of exhausted) {
     console.log(
       `    ${r.scope.padEnd(24)} arithmetic says ${n(r.remainingActionable).padStart(9)} · worker saw ` +
-        `${r.lastRun.alreadyHeld === null ? '?' : n(r.lastRun.alreadyHeld)} already held, wrote 0`,
+        `${r.lastRun === null ? r.cursorEvidence : `${r.lastRun.alreadyHeld === null ? '?' : n(r.lastRun.alreadyHeld)} already held, wrote 0`}`,
     );
   }
 }
@@ -813,7 +944,9 @@ if (droppedWithProgress.length > 0) {
   console.log(
     `\n  DROPPED BUT RAN BEFORE — ${droppedWithProgress.length} scope(s) with stored progress that this plan does NOT schedule:`,
   );
-  for (const r of droppedWithProgress.sort((a, b) => b.remainingActionable - a.remainingActionable)) {
+  for (const r of droppedWithProgress.sort(
+    (a, b) => b.remainingActionable - a.remainingActionable,
+  )) {
     console.log(
       `    ${r.scope.padEnd(24)} ${n(r.remainingActionable).padStart(9)} actionable (${n(r.remainingDocuments)} raw, ${n(r.unreachableDocuments)} absent) of ${n(r.sourceDocuments).padStart(9)}  ${(r.effectiveHeldPct * 100).toFixed(1)}% held  ${r.effectiveHeldPct >= MAX_HELD_PCT ? 'FINISHED' : `below ${n(MIN_REMAINING)}`}`,
     );
@@ -827,7 +960,9 @@ if (unjoinedSurveyNames.length > 0) {
 if (heldWithNoSource.length > 0) {
   console.log(`\n  HELD WITH NO SOURCE DENOMINATOR — cannot be scheduled, must not be forgotten:`);
   for (const h of heldWithNoSource) {
-    console.log(`    ${String(h.court).padEnd(28)} ${h.heldDocuments == null ? 'held unknown' : `${n(h.heldDocuments)} rows held`}`);
+    console.log(
+      `    ${String(h.court).padEnd(28)} ${h.heldDocuments == null ? 'held unknown' : `${n(h.heldDocuments)} rows held`}`,
+    );
   }
 }
 

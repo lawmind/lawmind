@@ -66,7 +66,10 @@ const CONCURRENCY = 4;
  * with `--courts` so the next run can follow the evidence instead of this list.
  */
 const DEFAULT_COURTS = ['22_18', '17_21', '18_6', '8_9', '10_8', '19_16'];
-const COURTS = (argOf('courts') ?? DEFAULT_COURTS.join(',')).split(',').map((c) => c.trim()).filter(Boolean);
+const COURTS = (argOf('courts') ?? DEFAULT_COURTS.join(','))
+  .split(',')
+  .map((c) => c.trim())
+  .filter(Boolean);
 
 /**
  * Long enough to hold reasoning, and pure ASCII.
@@ -80,7 +83,11 @@ const MIN_CHARS = 2000;
 
 type Row = { id: string; court: string; source_url: string; full_text: string };
 
-async function mapConcurrent<T, R>(items: readonly T[], n: number, fn: (t: T) => Promise<R>): Promise<R[]> {
+async function mapConcurrent<T, R>(
+  items: readonly T[],
+  n: number,
+  fn: (t: T) => Promise<R>,
+): Promise<R[]> {
   const out: R[] = new Array(items.length);
   let next = 0;
   await Promise.all(
@@ -147,18 +154,22 @@ try {
    * start should land "at an arbitrary point in the key order"; the code did not.
    */
   const randomStart = randomUUID();
-  const rows = ((await sql`
+  const rows = (
+    (await sql`
     SELECT id, court, source_url, full_text
     FROM judgments
     WHERE id > ${randomStart}::uuid
       AND source_url LIKE ANY(${patterns}::text[])
       AND source_url LIKE '%.pdf'
     ORDER BY id
-    LIMIT ${LIMIT * 4}`) as unknown as Row[])
+    LIMIT ${LIMIT * 4}`) as unknown as Row[]
+  )
     .filter((r) => r.full_text.length >= MIN_CHARS && !/[ऀ-ॿ]/u.test(r.full_text))
     .slice(0, LIMIT);
 
-  console.log(`sampled ${rows.length} long pure-ASCII documents across ${COURTS.length} court(s)\n`);
+  console.log(
+    `sampled ${rows.length} long pure-ASCII documents across ${COURTS.length} court(s)\n`,
+  );
   if (rows.length === 0) {
     console.log('nothing matched — no conclusion is available and none is reported.');
     process.exit(0);
@@ -191,7 +202,8 @@ try {
   console.log(`PDF-LABELLED  legacy ${positives.length}   clean ${negatives.length}\n`);
 
   const fontTally = new Map<string, number>();
-  for (const l of readable) for (const f of l.pdf!.fonts) fontTally.set(f, (fontTally.get(f) ?? 0) + 1);
+  for (const l of readable)
+    for (const f of l.pdf!.fonts) fontTally.set(f, (fontTally.get(f) ?? 0) + 1);
   console.log('  ── font names seen, most common first ──');
   for (const [f, n] of [...fontTally].sort((a, b) => b[1] - a[1]).slice(0, 20)) {
     console.log(`     ${String(n).padStart(5)}  ${f}`);
@@ -237,8 +249,10 @@ try {
    */
   const markerList = mined.map((m) => m.marker);
   const screen = (t: string) => classifyLegacyFont({ text: textSignature(t, markerList) }).verdict;
-  const falsePositives = markerList.length > 0 ? negatives.filter((l) => screen(l.row.full_text) !== 'clean') : [];
-  const truePositives = markerList.length > 0 ? positives.filter((l) => screen(l.row.full_text) !== 'clean') : [];
+  const falsePositives =
+    markerList.length > 0 ? negatives.filter((l) => screen(l.row.full_text) !== 'clean') : [];
+  const truePositives =
+    markerList.length > 0 ? positives.filter((l) => screen(l.row.full_text) !== 'clean') : [];
 
   if (markerList.length > 0) {
     console.log(
@@ -254,9 +268,18 @@ try {
     tool: 'legacy-font-pilot-cli',
     takenAt: new Date().toISOString(),
     courts: COURTS,
-    sample: { requested: LIMIT, drawn: rows.length, minChars: MIN_CHARS, fetched, failed, fontReadable: readable.length },
+    sample: {
+      requested: LIMIT,
+      drawn: rows.length,
+      minChars: MIN_CHARS,
+      fetched,
+      failed,
+      fontReadable: readable.length,
+    },
     labels: { legacy: positives.length, clean: negatives.length },
-    fontsSeen: [...fontTally].sort((a, b) => b[1] - a[1]).map(([font, n]) => ({ font, documents: n })),
+    fontsSeen: [...fontTally]
+      .sort((a, b) => b[1] - a[1])
+      .map(([font, n]) => ({ font, documents: n })),
     minedMarkers: mined,
     textOnlyScreen:
       markerList.length > 0

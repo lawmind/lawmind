@@ -1,0 +1,183 @@
+{
+ "tool": "script-quality-cli",
+ "takenAt": "2026-08-19T09:46:33.637Z",
+ "wrote": true,
+ "markerListSize": 40,
+ "suspectMarkerRate": 4,
+ "method": "text_marker_screen_v1",
+ "courtsFilter": null,
+ "counts": {
+  "screened": 17945147,
+  "legacyFontAscii": 56767,
+  "hasDevanagari": 73047,
+  "zeroDevanagariBelowThreshold": 17815333,
+  "emptyText": 0
+ },
+ "elapsedSeconds": 10626.3,
+ "watermark": "ffffff40-1694-46f8-8dc7-f9532537609d",
+ "byCourt": [
+  {
+   "court": "8_9",
+   "screened": 1001967,
+   "legacy": 39010,
+   "rate": 0.03893341796685919
+  },
+  {
+   "court": "9_13",
+   "screened": 2275791,
+   "legacy": 7887,
+   "rate": 0.0034656082214930984
+  },
+  {
+   "court": "23_23",
+   "screened": 607107,
+   "legacy": 5557,
+   "rate": 0.00915324646232048
+  },
+  {
+   "court": "10_8",
+   "screened": 1639111,
+   "legacy": 1830,
+   "rate": 0.001116458860931322
+  },
+  {
+   "court": "22_18",
+   "screened": 567981,
+   "legacy": 1078,
+   "rate": 0.0018979508117348996
+  },
+  {
+   "court": "5_15",
+   "screened": 235630,
+   "legacy": 563,
+   "rate": 0.0023893392182659256
+  },
+  {
+   "court": "27_1",
+   "screened": 1982292,
+   "legacy": 429,
+   "rate": 0.0002164161485795231
+  },
+  {
+   "court": "36_29",
+   "screened": 1028962,
+   "legacy": 173,
+   "rate": 0.00016813060151881217
+  },
+  {
+   "court": "20_7",
+   "screened": 407769,
+   "legacy": 138,
+   "rate": 0.0003384269034674043
+  },
+  {
+   "court": "33_10",
+   "screened": 1695524,
+   "legacy": 64,
+   "rate": 0.000037746442987536594
+  },
+  {
+   "court": "2_5",
+   "screened": 287063,
+   "legacy": 20,
+   "rate": 0.00006967111748988898
+  },
+  {
+   "court": "18_6",
+   "screened": 273226,
+   "legacy": 13,
+   "rate": 0.0000475796593296392
+  },
+  {
+   "court": "21_11",
+   "screened": 759517,
+   "legacy": 2,
+   "rate": 0.0000026332524485956206
+  },
+  {
+   "court": "29_3",
+   "screened": 955372,
+   "legacy": 1,
+   "rate": 0.0000010467126941128692
+  },
+  {
+   "court": "3_22",
+   "screened": 1679700,
+   "legacy": 1,
+   "rate": 5.953444067392987e-7
+  },
+  {
+   "court": "11_24",
+   "screened": 2428,
+   "legacy": 1,
+   "rate": 0.00041186161449752884
+  },
+  {
+   "court": "19_16",
+   "screened": 406457,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "32_4",
+   "screened": 954027,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "7_26",
+   "screened": 313790,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "24_17",
+   "screened": 421911,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "28_2",
+   "screened": 233848,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "1_12",
+   "screened": 112034,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "unknown",
+   "screened": 38342,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "16_20",
+   "screened": 33871,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "17_21",
+   "screened": 12682,
+   "legacy": 0,
+   "rate": 0
+  },
+  {
+   "court": "14_25",
+   "screened": 18745,
+   "legacy": 0,
+   "rate": 0
+  }
+ ],
+ "caveats": [
+  "Only legacy_font_ascii is written. clean, devanagari_deleted, mixed_script_ok and damaged_other have no validated detector at scan time and are deliberately left NULL rather than guessed — 0056 passes NULL and excludes only a known-bad verdict, so silence is free and a wrong verdict is not.",
+  "The verdict comes from the TEXT screen, not from PDF font evidence. Pooled over three pilots the screen had 0 false positives in 939 PDF-labelled clean documents and 76.2% recall (32/42), so its error is entirely missed positives, which stay NULL.",
+  "A legacy-font document is MIXED: the English caption extracts correctly and the Hindi reasoning does not. These rows are findable by title and unusable as reasoning, which is worse than absent, and no length or text_quality check detects it.",
+  "The rate per court here is over the rows this pass screened, in primary-key order. It is not a corpus rate for that court unless the pass has finished.",
+  "Rows screened and left NULL are recorded by the WATERMARK, not by a per-row method. \"Was this looked at\" is `id <= watermark`; a per-row method would be a ~17.9M-row UPDATE for a fact one cursor already carries."
+ ]
+}

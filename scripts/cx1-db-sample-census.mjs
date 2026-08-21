@@ -44,9 +44,6 @@ function intArg(name, fallback) {
   return value;
 }
 
-function jsonPath(relativePath) {
-  return path.join(ROOT, relativePath);
-}
 
 function fmtInt(n) {
   return new Intl.NumberFormat('en-US').format(Number(n));

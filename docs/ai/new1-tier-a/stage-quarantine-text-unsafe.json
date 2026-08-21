@@ -2,15 +2,15 @@
   "kind": "new1_stage_quarantine_text_unsafe",
   "predicate": "judgment_embedding_eligibility.text_safety = 'UNSAFE_VERIFIED' (deployed view, migration 0067)",
   "note": "UNKNOWN is NOT quarantined. Absence of evidence is not evidence of damage.",
-  "movedRows": 63757,
-  "stageRowsAfter": 655028,
-  "quarantineRowsAfter": 68778,
+  "movedRows": 326,
+  "stageRowsAfter": 659240,
+  "quarantineRowsAfter": 69104,
   "byScriptQualityBefore": [
     {
       "text_safety": "UNSAFE_VERIFIED",
       "sq": "damaged_other",
-      "n": 63757
+      "n": 326
     }
   ],
-  "appliedAt": "2026-08-21T22:46:37.274Z"
+  "appliedAt": "2026-08-21T22:55:04.671Z"
 }

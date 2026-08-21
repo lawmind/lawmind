@@ -1,0 +1,24 @@
+{
+ "tool": "scripts/migration/new2-ledger-failed-probe.mjs",
+ "takenAt": "2026-08-19T19:25:52.415Z",
+ "applied": true,
+ "courtFilter": null,
+ "populationTotal": 0,
+ "probed": 0,
+ "counts": {
+  "present": 0,
+  "absent": 0,
+  "soft404": 0,
+  "unknown": 0
+ },
+ "statuses": {},
+ "byCourt": [],
+ "clearedPermanent": 0,
+ "reclassifiedAbsent": 0,
+ "caveats": [
+  "A HEAD 200 says the object exists, not that it parses. A row cleared here re-enters the fetch queue and can fail again for a different reason; that is correct, because it will then be judged on its own evidence rather than on an outage.",
+  "unknown NEVER changes a row. A probe that could not reach the object has learned nothing, and recording \"could not tell\" as \"fine\" is the failure this file exists to undo.",
+  "The sample is ordered by md5(source_url), which is stable and uncorrelated with insertion order, but it is not stratified by court. With 97% of the population in one court, a sample rate is mostly a statement about Bombay.",
+  "This does not change MAX_ATTEMPTS. Three attempts with no time spacing will condemn the next outage the same way; the durable fix is spacing attempts in time, which is a change to ingest-ledger.ts and is not made here."
+ ]
+}

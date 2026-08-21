@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "codebase-memory": {
-      "command": "npx",
-      "args": ["-y", "codebase-memory-mcp@0.10.0"],
+      "command": "C:\\Users\\Xerxus\\.local\\bin\\codebase-memory-mcp.exe",
+      "args": [],
       "env": {}
     }
   }

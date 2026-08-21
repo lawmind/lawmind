@@ -1,0 +1,192 @@
+{
+  "task": "holding",
+  "claimsTotal": 789,
+  "claimsBad": 146,
+  "excerptMismatch": 0,
+  "buckets": {
+    "unexplained_drift": 48,
+    "source_page_furniture": 36,
+    "punctuation_only": 2,
+    "ocr_spacing": 20,
+    "char_transcription": 6,
+    "paraphrase": 28,
+    "source_interpolation": 4,
+    "internal_ellipsis": 1,
+    "fabrication": 1
+  },
+  "owners": {
+    "ingest": 110,
+    "model": 34,
+    "verifier": 2
+  },
+  "byKind": {
+    "holding": {
+      "total": 180,
+      "bad": 31
+    },
+    "reasoning": {
+      "total": 290,
+      "bad": 64
+    },
+    "relief_granted": {
+      "total": 189,
+      "bad": 25
+    },
+    "proposition": {
+      "total": 130,
+      "bad": 26
+    }
+  },
+  "bucketByKind": {
+    "holding": {
+      "unexplained_drift": 13,
+      "ocr_spacing": 5,
+      "paraphrase": 8,
+      "char_transcription": 1,
+      "source_page_furniture": 3,
+      "source_interpolation": 1
+    },
+    "reasoning": {
+      "unexplained_drift": 24,
+      "punctuation_only": 1,
+      "paraphrase": 10,
+      "ocr_spacing": 7,
+      "source_page_furniture": 18,
+      "source_interpolation": 3,
+      "char_transcription": 1
+    },
+    "relief_granted": {
+      "source_page_furniture": 4,
+      "ocr_spacing": 5,
+      "char_transcription": 2,
+      "unexplained_drift": 5,
+      "paraphrase": 7,
+      "internal_ellipsis": 1,
+      "fabrication": 1
+    },
+    "proposition": {
+      "punctuation_only": 1,
+      "char_transcription": 2,
+      "paraphrase": 3,
+      "source_page_furniture": 11,
+      "ocr_spacing": 3,
+      "unexplained_drift": 6
+    }
+  },
+  "examples": {
+    "unexplained_drift": [
+      {
+        "judgmentId": "f221d101-3b63-4ee4-895b-7e3be112c948",
+        "kind": "holding",
+        "quote": "the impugned order is violative of principles of natural justice warranting interference by this Court in the present petition which deserves to be allowed and the matter remitted back to the respondent for reconsideration afresh and in accordance with law.",
+        "ratio": 0.91
+      },
+      {
+        "judgmentId": "f221d101-3b63-4ee4-895b-7e3be112c948",
+        "kind": "reasoning",
+        "quote": "the respondent was not justified in declining the request of the petitioner for grant of personal hearing despite bringing it to his notice that the petitioner had filed a discharge application and the same was pending consideration before the Special/Sessions",
+        "ratio": 0.6
+      }
+    ],
+    "source_page_furniture": [
+      {
+        "judgmentId": "f221d101-3b63-4ee4-895b-7e3be112c948",
+        "kind": "relief_granted",
+        "quote": "Liberty is reserved in favour of the petitioner to submit additional pleadings documents etc., before respondent No.1, who shall consider the same and provide sufficient and reasonable opportunity to the petitioner and pass appropriate orders in accordance wit",
+        "ratio": 0.77
+      },
+      {
+        "judgmentId": "c7795a4c-903e-4abd-8d82-5dcb2d3557d9",
+        "kind": "proposition",
+        "quote": "The role of the Courts is to interpret law, but not to legislate under the guise of interpretation.",
+        "ratio": 0.72
+      }
+    ],
+    "punctuation_only": [
+      {
+        "judgmentId": "b310e0f8-8bc4-4811-af80-20ff25dcde4c",
+        "kind": "proposition",
+        "quote": "after the coming into force of the Hindu Succession Act, the succession opens even with regard to property allotted to the 'Nissanthathi Kavaru, under the 'Aliyasanthana Law under Sec. 7(2) or Sec. 17, as the case may be and not under the Aliyasantana Act",
+        "ratio": 0.48
+      },
+      {
+        "judgmentId": "5dc4f07e-a034-4efe-baa8-6472a85cfbc2",
+        "kind": "reasoning",
+        "quote": "The act resulting in Radheshyam's death was not pre-meditated.",
+        "ratio": 0.5
+      }
+    ],
+    "ocr_spacing": [
+      {
+        "judgmentId": "57238399-535e-4df5-9e64-9bf80cafc121",
+        "kind": "holding",
+        "quote": "petitioners herein failed to make out any case to interfere with the impugned orders.",
+        "ratio": 0.99
+      },
+      {
+        "judgmentId": "57238399-535e-4df5-9e64-9bf80cafc121",
+        "kind": "relief_granted",
+        "quote": "Therefore, these writ petitions are liable to be dismissed and are accordingly dismissed. There shall be no order as to costs.",
+        "ratio": 0.57
+      }
+    ],
+    "char_transcription": [
+      {
+        "judgmentId": "57238399-535e-4df5-9e64-9bf80cafc121",
+        "kind": "proposition",
+        "quote": "The scope of judicial review under Article 226 of the Constitution of India is very limited.",
+        "ratio": 0.57
+      },
+      {
+        "judgmentId": "dbdbc3a1-8d02-43b0-9f1a-26bb92d592fc",
+        "kind": "relief_granted",
+        "quote": "the Criminal Petition is allowed and the proceedings in C.C.No.281 of 2022 on the file of The Special Judicial First Class Magistrate for trial of Excise Cases, Manoranjan Complex, Nampally, Hyderabad, against petitioner/ accused No.1, are hereby quashed.",
+        "ratio": 0.65
+      }
+    ],
+    "paraphrase": [
+      {
+        "judgmentId": "dbdbc3a1-8d02-43b0-9f1a-26bb92d592fc",
+        "kind": "holding",
+        "quote": "On a perusal of the material on record it is observed that procedure laid out under Section 195 of Cr.P.C. has not been adhered to, charge sheet is taken on record and cognizance of the offence is taken by Judicial First Class Magistrate, at Vikarabad, for an ",
+        "ratio": 0.12
+      },
+      {
+        "judgmentId": "dbdbc3a1-8d02-43b0-9f1a-26bb92d592fc",
+        "kind": "holding",
+        "quote": "in the absence of adherence to the requirements of law, the proceedings are liable to be quashed.",
+        "ratio": 0.37
+      }
+    ],
+    "source_interpolation": [
+      {
+        "judgmentId": "c2ff9e4d-399b-49fc-b17d-955820c396dc",
+        "kind": "reasoning",
+        "quote": "the failure to depose in support of such allegations invites an adverse inference under Section 114(g) of the Indian Evidence Act.",
+        "ratio": 0.94
+      },
+      {
+        "judgmentId": "ae3edc0f-8e98-474b-941e-bd450144816b",
+        "kind": "reasoning",
+        "quote": "Only when the question of entitlement involves complicated or intractable issues of title, incapable of prima facie determination on record, thus Section 30 gets attracted.",
+        "ratio": 0.6
+      }
+    ],
+    "internal_ellipsis": [
+      {
+        "judgmentId": "a613667b-635d-4da0-af95-00c96f47d2ce",
+        "kind": "relief_granted",
+        "quote": "the judgment and decree dated 21.12.2022 ... as well as the judgment and decree dated 29.07.2017 ... are hereby affirmed.",
+        "ratio": 0.4
+      }
+    ],
+    "fabrication": [
+      {
+        "judgmentId": "78b1cac0-987b-4a93-8f79-c790a63189b4",
+        "kind": "relief_granted",
+        "quote": "the petition is dismissed.",
+        "ratio": 0.69
+      }
+    ]
+  }
+}

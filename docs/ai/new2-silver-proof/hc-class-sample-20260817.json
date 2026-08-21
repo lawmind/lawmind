@@ -1,0 +1,47 @@
+{
+  "tool": "services/ingest/src/harvest/hc-class-sample-cli.ts",
+  "takenAt": "2026-08-17T08:21:39.570Z",
+  "evidenceClass": "MEASURED — plain variant, real sample, deterministic classifier",
+  "variant": "plain (metadata.parquet) — the 93.7% the mobile order_type survey does NOT cover",
+  "documentsClassified": 200,
+  "courtYearCells": 20,
+  "skippedNoTextLayer": 0,
+  "rowsWithNoDisposalNature": 0,
+  "fetchFailures": 0,
+  "byClass": {
+    "unclassified": 89,
+    "decided": 36,
+    "procedural_disposal": 34,
+    "bail_order": 25,
+    "decided_brief": 11,
+    "reference_stub": 5
+  },
+  "byMethod": {
+    "unclassified_disposal:DISPOSED OFF": 65,
+    "disposal_nature_merits": 36,
+    "disposal_nature_procedural": 34,
+    "disposal_nature_bail": 13,
+    "text_bail_phrase": 12,
+    "disposal_nature_merits_short": 11,
+    "unclassified_disposal:DISPOSED OF": 11,
+    "unclassified_disposal:CLOSED": 10,
+    "below_stub_length": 4,
+    "unclassified_disposal:DISPOSED": 3,
+    "pointer_phrase": 1
+  },
+  "meanCharsByClass": {
+    "decided_brief": 981,
+    "decided": 21053,
+    "bail_order": 6047,
+    "unclassified": 8204,
+    "procedural_disposal": 1421,
+    "reference_stub": 436
+  },
+  "decidedSharePercent": 18,
+  "caveats": [
+    "`decided` is an UPPER BOUND on the authority share: it means a merits disposal long enough to contain reasoning, not that reasoning is present.",
+    "Court-year cells are chosen for spread, not drawn at random from the corpus. Indicative, not a corpus rate.",
+    "Documents with no text layer are excluded and counted, never classified on length alone.",
+    "Does not supersede docs/HC_ORDER_TYPES.json — that measures the DISJOINT mobile variant. These are two populations, not two estimates of one."
+  ]
+}

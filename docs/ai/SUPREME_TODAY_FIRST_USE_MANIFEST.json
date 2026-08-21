@@ -1,0 +1,1138 @@
+{
+  "generatedBy": "scripts/new3-supreme-today-manifest.mjs",
+  "generatedAt": "2026-08-18T06:51:15.842Z",
+  "lane": "NEW3",
+  "purpose": "Deterministic first-use plan for Supreme Today AI, built from measured LawMind gaps before access exists, so that day one is not spent on exploratory searching.",
+  "standingRules": [
+    "Supreme Today output is a CANDIDATE, never a record. Every citation is confirmed against a primary source before it is written anywhere.",
+    "Never becomes a production dependency: this is snapshot-then-decompose. If the account disappears tomorrow, everything learned stays in LawMind-owned tables.",
+    "Run tiers in order. Within a tier, order is as listed.",
+    "Tier 0 (NEW1 retrieval failures) outranks everything here and is absent by design — it is not fabricated in NEW1's absence. If a failure list lands before access does, it goes first.",
+    "Tier 1 and Tier 3 are gated on the free SCI Equivalent Citation Table being checked FIRST — do not spend a query re-deriving what a free official table already answers."
+  ],
+  "knownDiscrepancy": {
+    "what": "This manifest carries 34 treatment queries; TREATMENT_GRAPH_GAP.md's freshness header says the unresolved population is 32.",
+    "why": "The header names the two fixed rows by CASE NAME (\"Sun Export Corporation\", \"SEBI v. Roofit Industries\"). §2's table identifies targets by CITATION only — its name column is the CITING judgment, a different case. The document therefore names two rows to drop without providing the key to find them.",
+    "decision": "Both are kept and run. Guessing which two would mean supplying a citation from memory, which CLAUDE.md forbids. Two redundant queries cost far less than silently dropping two unresolved overruled targets from a category with a zero threshold.",
+    "toClose": "whoever holds the database can settle it in one query — the two targets that are now resolved will simply return a linked row. Until then this stays 34, stated, not quietly rounded to 32."
+  },
+  "counts": {
+    "tier0.5_treatment": 34,
+    "tier2_documentGaps": 9,
+    "total": 43
+  },
+  "queries": [
+    {
+      "id": "T0.5-01",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1994) 4 SCC 142",
+      "queryHint": "Find this authority and report its current treatment. It is asserted doubted by \"Vishnu Kumar Shukla & Anr. v. State of U.P. & Anr.\" (2023-11-28).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "doubted",
+      "citingJudgment": "Vishnu Kumar Shukla & Anr. v. State of U.P. & Anr.",
+      "citingDate": "2023-11-28"
+    },
+    {
+      "id": "T0.5-02",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1996) 5 SCC 670",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Mineral Area Development Authority & Anr. v. M/S Steel Authority of India & Anr. Etc.\" (2024-07-25).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Mineral Area Development Authority & Anr. v. M/S Steel Authority of India & Anr. Etc.",
+      "citingDate": "2024-07-25"
+    },
+    {
+      "id": "T0.5-03",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "AIR 1968 SC 662",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Aligarh Muslim University v. Naresh Agarwal & Ors.\" (2024-11-08).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Aligarh Muslim University v. Naresh Agarwal & Ors.",
+      "citingDate": "2024-11-08"
+    },
+    {
+      "id": "T0.5-04",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2005) 1 SCC 394",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"The State of Punjab & Ors. v. Davinder Singh & Ors.\" (2024-08-01).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "The State of Punjab & Ors. v. Davinder Singh & Ors.",
+      "citingDate": "2024-08-01"
+    },
+    {
+      "id": "T0.5-05",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1990) 1 SCC 109",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"State of U.P. & Ors v. M/S Lalta Prasad Vaish and Sons\" (2024-10-23).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "State of U.P. & Ors v. M/S Lalta Prasad Vaish and Sons",
+      "citingDate": "2024-10-23"
+    },
+    {
+      "id": "T0.5-06",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2021) 4 SCC 379",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"M/S N.N. Global Mercantile Private Limited v. M/S Indo Unique Flame Ltd. & Ors.\" (2023-04-25).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "M/S N.N. Global Mercantile Private Limited v. M/S Indo Unique Flame Ltd. & Ors.",
+      "citingDate": "2023-04-25"
+    },
+    {
+      "id": "T0.5-07",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2014) 11 SCC 381",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"M/S. Lisie Medical Institutions v. The State of Kerala and Ors.\" (2023-02-09).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "M/S. Lisie Medical Institutions v. The State of Kerala and Ors.",
+      "citingDate": "2023-02-09"
+    },
+    {
+      "id": "T0.5-08",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1983) 3 SCC 284",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"State of Himachal Pradesh & Ors. v. Raj Kumar & Ors.\" (2022-05-20).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "State of Himachal Pradesh & Ors. v. Raj Kumar & Ors.",
+      "citingDate": "2022-05-20"
+    },
+    {
+      "id": "T0.5-09",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2020) 2 SCC 109",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Government of Maharashtra (WRD) v. M/S Borse Brothers Engineers & Contractors Pvt. Ltd.\" (2021-03-19).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Government of Maharashtra (WRD) v. M/S Borse Brothers Engineers & Contractors Pvt. Ltd.",
+      "citingDate": "2021-03-19"
+    },
+    {
+      "id": "T0.5-10",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2007) 1 SCC 663",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Chairman-cum-MD, Mahanadi Coalfields Ltd. v. Sri Rabindranath Choubey\" (2020-05-27).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Chairman-cum-MD, Mahanadi Coalfields Ltd. v. Sri Rabindranath Choubey",
+      "citingDate": "2020-05-27"
+    },
+    {
+      "id": "T0.5-11",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "[2017] 4 SCR 232",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Shiv Kumar & Anr. v. Union of India & Ors.\" (2019-10-14).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Shiv Kumar & Anr. v. Union of India & Ors.",
+      "citingDate": "2019-10-14"
+    },
+    {
+      "id": "T0.5-12",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2017) 6 SCC 751",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Shiv Kumar & Anr. v. Union of India & Ors.\" (2019-10-14).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Shiv Kumar & Anr. v. Union of India & Ors.",
+      "citingDate": "2019-10-14"
+    },
+    {
+      "id": "T0.5-13",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2005) 2 SCC 479",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"HUDA v. Vidya Chetal\" (2019-09-16).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "HUDA v. Vidya Chetal",
+      "citingDate": "2019-09-16"
+    },
+    {
+      "id": "T0.5-14",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1999) 4 SCC 453",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Vasant Ganpat Padave (D) by LRs. & Ors. v. Anant Mahadev Sawant (D) through LRs. & Ors\" (2019-09-18).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Vasant Ganpat Padave (D) by LRs. & Ors. v. Anant Mahadev Sawant (D) through LRs. & Ors",
+      "citingDate": "2019-09-18"
+    },
+    {
+      "id": "T0.5-15",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2004) 6 SCC 689",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"State of Madhya Pradesh and Others v. Lafarge Dealers Association and Others\" (2019-07-09).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "State of Madhya Pradesh and Others v. Lafarge Dealers Association and Others",
+      "citingDate": "2019-07-09"
+    },
+    {
+      "id": "T0.5-16",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2000) 9 SCC 63",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"M/S. Vijay Industries v. Commissioner of Income Tax\" (2019-03-01).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "M/S. Vijay Industries v. Commissioner of Income Tax",
+      "citingDate": "2019-03-01"
+    },
+    {
+      "id": "T0.5-17",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2016) 12 SCC 125",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Adjudicating Officer, SEBI v. Bhavesh Pabari\" (2019-02-28).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Adjudicating Officer, SEBI v. Bhavesh Pabari",
+      "citingDate": "2019-02-28"
+    },
+    {
+      "id": "T0.5-18",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1988) 2 SCC 72",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Joseph Shine v. Union of India\" (2018-09-27).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Joseph Shine v. Union of India",
+      "citingDate": "2018-09-27"
+    },
+    {
+      "id": "T0.5-19",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2018) 1 SCC 340",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Janabai v. Additional Commissioner and Others\" (2018-09-19).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Janabai v. Additional Commissioner and Others",
+      "citingDate": "2018-09-19"
+    },
+    {
+      "id": "T0.5-20",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2014) 1 SCC 1",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Navtej Singh Johar & Ors. v. Union of India\" (2018-09-06).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Navtej Singh Johar & Ors. v. Union of India",
+      "citingDate": "2018-09-06"
+    },
+    {
+      "id": "T0.5-21",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "[2013] 17 SCR 1019",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Navtej Singh Johar & Ors. v. Union of India\" (2018-09-06).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Navtej Singh Johar & Ors. v. Union of India",
+      "citingDate": "2018-09-06"
+    },
+    {
+      "id": "T0.5-22",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1977) 6 SCC 564",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Commissioner of Customs (Import), Mumbai v. M/S. Dilip Kumar and Company & Ors.\" (2018-07-30).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Commissioner of Customs (Import), Mumbai v. M/S. Dilip Kumar and Company & Ors.",
+      "citingDate": "2018-07-30"
+    },
+    {
+      "id": "T0.5-23",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2015) 4 SCC 325",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Indore Development Authority v. Shailendra (Dead) through LRs. & Ors.\" (2018-02-08).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Indore Development Authority v. Shailendra (Dead) through LRs. & Ors.",
+      "citingDate": "2018-02-08"
+    },
+    {
+      "id": "T0.5-24",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2015) 3 SCC 353",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Indore Development Authority v. Shailendra (Dead) through LRs. & Ors.\" (2018-02-08).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Indore Development Authority v. Shailendra (Dead) through LRs. & Ors.",
+      "citingDate": "2018-02-08"
+    },
+    {
+      "id": "T0.5-25",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2009) 3 SCC 506",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Chairman cum Managing Director Indian Oil Corporation Ltd. v. Sunita Kumari & Anr.\" (2014-09-18).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Chairman cum Managing Director Indian Oil Corporation Ltd. v. Sunita Kumari & Anr.",
+      "citingDate": "2014-09-18"
+    },
+    {
+      "id": "T0.5-26",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2005) 11 SCC 600",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Anvar P.V. v. P.K. Basheer and Ors.\" (2014-09-18).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Anvar P.V. v. P.K. Basheer and Ors.",
+      "citingDate": "2014-09-18"
+    },
+    {
+      "id": "T0.5-27",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(1996) 9 SCC 766",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Bharat Parikh v. C.B.I. & Anr.\" (2008-07-14).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Bharat Parikh v. C.B.I. & Anr.",
+      "citingDate": "2008-07-14"
+    },
+    {
+      "id": "T0.5-28",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "AIR 1987 SC 2158",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"State of Punjab & Ors. v. Bhajan Kaur & Ors.\" (2008-05-08).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "State of Punjab & Ors. v. Bhajan Kaur & Ors.",
+      "citingDate": "2008-05-08"
+    },
+    {
+      "id": "T0.5-29",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "2003 (6) SCC 675",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled by \"Radhey Shyam & Anr. v. Chhabi Nath & Ors.\" (2015-02-26).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled",
+      "citingJudgment": "Radhey Shyam & Anr. v. Chhabi Nath & Ors.",
+      "citingDate": "2015-02-26"
+    },
+    {
+      "id": "T0.5-30",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2013) 8 SCC 781",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled in part by \"Surendran v. State of Kerela\" (2022-05-13).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "BHARATLAW_NYAI_WORK_QUEUE.md P0",
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled_in_part",
+      "citingJudgment": "Surendran v. State of Kerela",
+      "citingDate": "2022-05-13"
+    },
+    {
+      "id": "T0.5-31",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2015) 13 SCC 713",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled in part by \"M/S Lion Engineering Consultants v. State of M.P. & Ors.\" (2018-03-22).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "BHARATLAW_NYAI_WORK_QUEUE.md P0",
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled_in_part",
+      "citingJudgment": "M/S Lion Engineering Consultants v. State of M.P. & Ors.",
+      "citingDate": "2018-03-22"
+    },
+    {
+      "id": "T0.5-32",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "AIR 2015 SC 710",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled in part by \"M/S Lion Engineering Consultants v. State of M.P. & Ors.\" (2018-03-22).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "BHARATLAW_NYAI_WORK_QUEUE.md P0",
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled_in_part",
+      "citingJudgment": "M/S Lion Engineering Consultants v. State of M.P. & Ors.",
+      "citingDate": "2018-03-22"
+    },
+    {
+      "id": "T0.5-33",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "(2017) 4 SCC 150",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled in part by \"Santhini v. Vijaya Venketesh\" (2017-10-09).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "BHARATLAW_NYAI_WORK_QUEUE.md P0",
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled_in_part",
+      "citingJudgment": "Santhini v. Vijaya Venketesh",
+      "citingDate": "2017-10-09"
+    },
+    {
+      "id": "T0.5-34",
+      "tier": "0.5",
+      "priority": "P0-currentness-risk",
+      "type": "treatment",
+      "query": "2000 (4) SCC 130",
+      "queryHint": "Find this authority and report its current treatment. It is asserted overruled in part by \"United India Insurance Co. Ltd. v. Shila Datta & Ors.\" (2011-10-13).",
+      "whyItExists": "LawMind holds the citing judgment and the edge, but the TARGET is unresolved — no row in our corpus is linked to this citation. While it stays unresolved, if we hold that target under another citation form it renders as ordinary good law with no LAW MOVED mark.",
+      "whatIsMissing": "the identity of the target judgment: its neutral citation, its parallel citations, its date, its parties — anything that lets our concordance link it to a row we already hold.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations (SCC / AIR / SCR)",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "current_treatment_status",
+        "treating_judgment (which case changed its status)"
+      ],
+      "verificationAgainstPrimarySource": "take the returned neutral citation and match it against `judgments` directly. If it matches a held row, this was an alias gap and LCC links the edge — no acquisition. If it matches nothing, confirm the judgment exists via the Supreme Court e-SCR or judgments.ecourts.gov.in BEFORE recording it as a document gap. The provider answer is a CANDIDATE, never the record: nothing from Supreme Today is written as a citation without a primary-source confirmation.",
+      "sharedWith": [
+        "BHARATLAW_NYAI_WORK_QUEUE.md P0",
+        "INDIANKANOON_WORK_QUEUE.md P0-PRE"
+      ],
+      "source": "docs/TREATMENT_GRAPH_GAP.md §2",
+      "relationship": "overruled_in_part",
+      "citingJudgment": "United India Insurance Co. Ltd. v. Shila Datta & Ors.",
+      "citingDate": "2011-10-13"
+    },
+    {
+      "id": "T2-01",
+      "tier": "2",
+      "priority": "P1-named-gap",
+      "type": "identity + related-authority",
+      "query": "Federation of Mining Associations v. State of Rajasthan (1992) Supp 2 SCC 239",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "named as a P1 acquisition target in the missing-authority queue — cited by judgments we hold, absent from our corpus.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-02",
+      "tier": "2",
+      "priority": "P1-named-gap",
+      "type": "identity + related-authority",
+      "query": "Randhir Singh Rana v. State (Delhi Administration) (1997) 1 SCC 361",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "named as a P1 acquisition target in the missing-authority queue — cited by judgments we hold, absent from our corpus.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-03",
+      "tier": "2",
+      "priority": "P2-confirmed-absent",
+      "type": "identity + related-authority",
+      "query": "Y.V. Rangaiah",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "confirmed absent from BOTH LawMind holdings and the authorized AWS Open Data bucket. This is the one bucket where an identity query is worth more than a resolution query, because the free source genuinely does not have it.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-04",
+      "tier": "2",
+      "priority": "P2-confirmed-absent",
+      "type": "identity + related-authority",
+      "query": "Appa Narsappa Magdum",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "confirmed absent from BOTH LawMind holdings and the authorized AWS Open Data bucket. This is the one bucket where an identity query is worth more than a resolution query, because the free source genuinely does not have it.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-05",
+      "tier": "2",
+      "priority": "P2-confirmed-absent",
+      "type": "identity + related-authority",
+      "query": "HUDA v. Sunita",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "confirmed absent from BOTH LawMind holdings and the authorized AWS Open Data bucket. This is the one bucket where an identity query is worth more than a resolution query, because the free source genuinely does not have it.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-06",
+      "tier": "2",
+      "priority": "P2-confirmed-absent",
+      "type": "identity + related-authority",
+      "query": "S.H. Medical Centre Hospital",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "confirmed absent from BOTH LawMind holdings and the authorized AWS Open Data bucket. This is the one bucket where an identity query is worth more than a resolution query, because the free source genuinely does not have it.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-07",
+      "tier": "2",
+      "priority": "P2-confirmed-absent",
+      "type": "identity + related-authority",
+      "query": "Velaxan Kumar",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "confirmed absent from BOTH LawMind holdings and the authorized AWS Open Data bucket. This is the one bucket where an identity query is worth more than a resolution query, because the free source genuinely does not have it.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-08",
+      "tier": "2",
+      "priority": "P2-confirmed-absent",
+      "type": "identity + related-authority",
+      "query": "Government NCT of Delhi v. Manav Dharam Trust",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "confirmed absent from BOTH LawMind holdings and the authorized AWS Open Data bucket. This is the one bucket where an identity query is worth more than a resolution query, because the free source genuinely does not have it.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    },
+    {
+      "id": "T2-09",
+      "tier": "2",
+      "priority": "P2-confirmed-absent",
+      "type": "identity + related-authority",
+      "query": "N.V. International",
+      "queryHint": "Retrieve the full judgment record and the authorities it is related to.",
+      "whyItExists": "confirmed absent from BOTH LawMind holdings and the authorized AWS Open Data bucket. This is the one bucket where an identity query is worth more than a resolution query, because the free source genuinely does not have it.",
+      "whatIsMissing": "the judgment document itself, and any citation form that would let us locate it in a source we are authorized to fetch from.",
+      "outputFieldsThatMatter": [
+        "neutral_citation",
+        "parallel_citations",
+        "case_title",
+        "judgment_date",
+        "court_and_bench",
+        "related_authorities",
+        "current_treatment_status"
+      ],
+      "verificationAgainstPrimarySource": "confirm existence and citation form against e-SCR or judgments.ecourts.gov.in, then route ACQUISITION to whichever authorized source actually holds it — never ingest the provider’s copy as the document of record.",
+      "source": "docs/COMPETITOR_QUERY_INVENTORY.md Tier 2"
+    }
+  ]
+}

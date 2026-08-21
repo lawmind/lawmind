@@ -51,9 +51,6 @@ function fmtPct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
 }
 
-function byId(items, id) {
-  return items.find((item) => item.id === id);
-}
 
 function safeScenario(embedding, id) {
   return embedding.scenarios.find((scenario) => scenario.id === id);
@@ -78,11 +75,9 @@ function main() {
   const hnsw = readJson(FILES.hnsw);
   const retrieval = readJson(FILES.retrieval);
   const devScale = readJson(FILES.devScale);
-  const classification = readJson(FILES.classification);
   const legalObjects = readJson(FILES.legalObjects);
   const citation = readJson(FILES.citation);
   const premium = readJson(FILES.premium);
-  const dr = readJson(FILES.dr);
 
   const scheduler = queue.scheduler;
   const lines = [];

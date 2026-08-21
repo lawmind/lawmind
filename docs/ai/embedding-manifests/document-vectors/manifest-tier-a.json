@@ -1,0 +1,15 @@
+{
+  "job": "doc-vector-batches:A",
+  "tier": "A",
+  "complete": true,
+  "batchSize": 10000,
+  "batches": 886,
+  "rowsEmitted": 8846550,
+  "includesText": false,
+  "contractVersion": "v1",
+  "definitionHash": "e76879ab6bbcd452",
+  "representationType": "document",
+  "manifestHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "batchHashes": [],
+  "generatedAt": "2026-08-19T22:26:30.723Z"
+}

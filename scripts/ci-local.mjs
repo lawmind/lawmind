@@ -121,6 +121,14 @@ const STEPS = [
   // Needs no database and runs in about a second, so there is no reason for it
   // to sit outside the gate the way the two guards below did for days.
   ['lane bus', 'bash', ['scripts/lane-bus.test.sh']],
+  // The shared resource gate the four lanes consult before heavy work. Its
+  // decisions are tested against synthetic snapshots, so it is fast and does not
+  // depend on what this box happens to be doing — except for two cases that
+  // read the real machine, one of which asserts a WALL-CLOCK bound. That bound
+  // is the point: a full collection measured 3.1s / 15.2s / 31.9s on three
+  // consecutive tries under fleet load, which is why the default path collects
+  // no PowerShell at all. A gate expensive enough to be skipped is not a gate.
+  ['resource gate', 'node', ['--test', 'scripts/resource-gate.test.mjs']],
   // The contract's BUILT/SPECCED column against the routes actually mounted.
   // A stale column is how RCC came to call an endpoint that does not exist.
   ['contract status', 'node', ['scripts/check-contract-status.mjs']],

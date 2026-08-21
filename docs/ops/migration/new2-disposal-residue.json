@@ -1,0 +1,677 @@
+{
+ "tool": "disposal-residue-cli",
+ "takenAt": "2026-08-19T13:25:09.771Z",
+ "wroteToJudgments": false,
+ "minChars": 1200,
+ "tailChars": 4000,
+ "margin": 2,
+ "labelled": {
+  "decided": 3000,
+  "procedural": 3000,
+  "trainTestSplit": "alternating index, deterministic"
+ },
+ "heldOut": {
+  "confusionMatrix": {
+   "trulyDecided": {
+    "n": 1500,
+    "calledDecided": 1294,
+    "calledProcedural": 17,
+    "uncertain": 189
+   },
+   "trulyProcedural": {
+    "n": 1500,
+    "calledDecided": 194,
+    "calledProcedural": 690,
+    "uncertain": 616
+   }
+  },
+  "perClass": {
+   "decided": {
+    "recall": 0.8626666666666667,
+    "falseCallRateOnOtherClass": 0.12933333333333333
+   },
+   "procedural": {
+    "recall": 0.46,
+    "falseCallRateOnOtherClass": 0.011333333333333334
+   }
+  },
+  "precisionAtBalancedPrior": {
+   "decided": 0.8696236559139785,
+   "procedural": 0.9759547383309759
+  },
+  "worstPrecisionAtBalancedPrior": 0.8696236559139785,
+  "priorWarning": "Precision is quoted at the TEST SET prior, which is 50/50 by construction. The residue prior is unknown and is the thing being measured, so these precisions do not transfer to the residue without it."
+ },
+ "markers": {
+  "procedural": [
+   {
+    "marker": "signing",
+    "positiveShare": 0.27266666666666667,
+    "negativeShare": 0.012666666666666666,
+    "lift": 19.95121951219512
+   },
+   {
+    "marker": "jabalpur",
+    "positiveShare": 0.19733333333333333,
+    "negativeShare": 0.013333333333333334,
+    "lift": 13.767441860465116
+   },
+   {
+    "marker": "withdrawal",
+    "positiveShare": 0.18466666666666667,
+    "negativeShare": 0.012666666666666666,
+    "lift": 13.512195121951219
+   },
+   {
+    "marker": "bhopal",
+    "positiveShare": 0.13666666666666666,
+    "negativeShare": 0.009333333333333334,
+    "lift": 13.225806451612902
+   },
+   {
+    "marker": "occupation",
+    "positiveShare": 0.3233333333333333,
+    "negativeShare": 0.024666666666666667,
+    "lift": 12.597402597402596
+   },
+   {
+    "marker": "signature",
+    "positiveShare": 0.3353333333333333,
+    "negativeShare": 0.028,
+    "lift": 11.563218390804597
+   },
+   {
+    "marker": "verified",
+    "positiveShare": 0.342,
+    "negativeShare": 0.029333333333333333,
+    "lift": 11.274725274725276
+   },
+   {
+    "marker": "infructuous",
+    "positiveShare": 0.19533333333333333,
+    "negativeShare": 0.021333333333333333,
+    "lift": 8.746268656716417
+   },
+   {
+    "marker": "withdraw",
+    "positiveShare": 0.3433333333333333,
+    "negativeShare": 0.03933333333333333,
+    "lift": 8.512396694214877
+   },
+   {
+    "marker": "seeks",
+    "positiveShare": 0.25,
+    "negativeShare": 0.03933333333333333,
+    "lift": 6.198347107438017
+   },
+   {
+    "marker": "bhawan",
+    "positiveShare": 0.14133333333333334,
+    "negativeShare": 0.02266666666666667,
+    "lift": 5.971830985915492
+   },
+   {
+    "marker": "prays",
+    "positiveShare": 0.124,
+    "negativeShare": 0.03,
+    "lift": 4
+   }
+  ],
+  "decided": [
+   {
+    "marker": "find",
+    "positiveShare": 0.14333333333333334,
+    "negativeShare": 0.005333333333333333,
+    "lift": 22.63157894736842
+   },
+   {
+    "marker": "held",
+    "positiveShare": 0.202,
+    "negativeShare": 0.011333333333333334,
+    "lift": 16.378378378378375
+   },
+   {
+    "marker": "cannot",
+    "positiveShare": 0.25333333333333335,
+    "negativeShare": 0.018,
+    "lift": 13.333333333333334
+   },
+   {
+    "marker": "evidence",
+    "positiveShare": 0.16933333333333334,
+    "negativeShare": 0.012,
+    "lift": 13.025641025641026
+   },
+   {
+    "marker": "result",
+    "positiveShare": 0.12333333333333334,
+    "negativeShare": 0.008666666666666666,
+    "lift": 12.758620689655173
+   },
+   {
+    "marker": "should",
+    "positiveShare": 0.14666666666666667,
+    "negativeShare": 0.012,
+    "lift": 11.282051282051281
+   },
+   {
+    "marker": "material",
+    "positiveShare": 0.13666666666666666,
+    "negativeShare": 0.011333333333333334,
+    "lift": 11.081081081081079
+   },
+   {
+    "marker": "question",
+    "positiveShare": 0.16066666666666668,
+    "negativeShare": 0.014666666666666666,
+    "lift": 10.255319148936172
+   },
+   {
+    "marker": "could",
+    "positiveShare": 0.13866666666666666,
+    "negativeShare": 0.014,
+    "lift": 9.244444444444444
+   },
+   {
+    "marker": "decision",
+    "positiveShare": 0.15333333333333332,
+    "negativeShare": 0.016,
+    "lift": 9.019607843137253
+   },
+   {
+    "marker": "supreme",
+    "positiveShare": 0.14066666666666666,
+    "negativeShare": 0.015333333333333332,
+    "lift": 8.612244897959185
+   },
+   {
+    "marker": "reason",
+    "positiveShare": 0.128,
+    "negativeShare": 0.014,
+    "lift": 8.533333333333333
+   },
+   {
+    "marker": "where",
+    "positiveShare": 0.13866666666666666,
+    "negativeShare": 0.015333333333333332,
+    "lift": 8.489795918367347
+   },
+   {
+    "marker": "opinion",
+    "positiveShare": 0.14333333333333334,
+    "negativeShare": 0.016,
+    "lift": 8.431372549019608
+   },
+   {
+    "marker": "accuracy",
+    "positiveShare": 0.124,
+    "negativeShare": 0.014666666666666666,
+    "lift": 7.914893617021277
+   },
+   {
+    "marker": "facts",
+    "positiveShare": 0.25466666666666665,
+    "negativeShare": 0.032,
+    "lift": 7.717171717171716
+   },
+   {
+    "marker": "attest",
+    "positiveShare": 0.124,
+    "negativeShare": 0.015333333333333332,
+    "lift": 7.591836734693878
+   },
+   {
+    "marker": "were",
+    "positiveShare": 0.25466666666666665,
+    "negativeShare": 0.03333333333333333,
+    "lift": 7.417475728155339
+   },
+   {
+    "marker": "found",
+    "positiveShare": 0.13266666666666665,
+    "negativeShare": 0.017333333333333333,
+    "lift": 7.236363636363635
+   },
+   {
+    "marker": "basis",
+    "positiveShare": 0.13666666666666666,
+    "negativeShare": 0.018666666666666668,
+    "lift": 6.94915254237288
+   },
+   {
+    "marker": "thereafter",
+    "positiveShare": 0.124,
+    "negativeShare": 0.017333333333333333,
+    "lift": 6.763636363636364
+   },
+   {
+    "marker": "regard",
+    "positiveShare": 0.174,
+    "negativeShare": 0.026,
+    "lift": 6.444444444444444
+   },
+   {
+    "marker": "document",
+    "positiveShare": 0.142,
+    "negativeShare": 0.021333333333333333,
+    "lift": 6.35820895522388
+   },
+   {
+    "marker": "them",
+    "positiveShare": 0.12866666666666668,
+    "negativeShare": 0.02,
+    "lift": 6.126984126984127
+   },
+   {
+    "marker": "ground",
+    "positiveShare": 0.18533333333333332,
+    "negativeShare": 0.029333333333333333,
+    "lift": 6.1098901098901095
+   },
+   {
+    "marker": "purpose",
+    "positiveShare": 0.126,
+    "negativeShare": 0.02,
+    "lift": 6
+   },
+   {
+    "marker": "thus",
+    "positiveShare": 0.16333333333333333,
+    "negativeShare": 0.02666666666666667,
+    "lift": 5.903614457831325
+   },
+   {
+    "marker": "fact",
+    "positiveShare": 0.22066666666666668,
+    "negativeShare": 0.037333333333333336,
+    "lift": 5.756521739130434
+   },
+   {
+    "marker": "person",
+    "positiveShare": 0.142,
+    "negativeShare": 0.024666666666666667,
+    "lift": 5.532467532467532
+   },
+   {
+    "marker": "though",
+    "positiveShare": 0.138,
+    "negativeShare": 0.024,
+    "lift": 5.5200000000000005
+   },
+   {
+    "marker": "hereby",
+    "positiveShare": 0.15866666666666668,
+    "negativeShare": 0.028,
+    "lift": 5.471264367816092
+   },
+   {
+    "marker": "reasons",
+    "positiveShare": 0.134,
+    "negativeShare": 0.024,
+    "lift": 5.36
+   },
+   {
+    "marker": "part",
+    "positiveShare": 0.12133333333333333,
+    "negativeShare": 0.02266666666666667,
+    "lift": 5.126760563380281
+   },
+   {
+    "marker": "whether",
+    "positiveShare": 0.152,
+    "negativeShare": 0.028666666666666667,
+    "lift": 5.123595505617978
+   },
+   {
+    "marker": "entitled",
+    "positiveShare": 0.128,
+    "negativeShare": 0.024666666666666667,
+    "lift": 4.987012987012987
+   },
+   {
+    "marker": "while",
+    "positiveShare": 0.184,
+    "negativeShare": 0.036,
+    "lift": 4.972972972972973
+   },
+   {
+    "marker": "given",
+    "positiveShare": 0.172,
+    "negativeShare": 0.034,
+    "lift": 4.914285714285714
+   },
+   {
+    "marker": "dispute",
+    "positiveShare": 0.12866666666666668,
+    "negativeShare": 0.03,
+    "lift": 4.150537634408603
+   },
+   {
+    "marker": "perused",
+    "positiveShare": 0.13066666666666665,
+    "negativeShare": 0.030666666666666665,
+    "lift": 4.126315789473685
+   },
+   {
+    "marker": "required",
+    "positiveShare": 0.14666666666666667,
+    "negativeShare": 0.036,
+    "lift": 3.9639639639639643
+   },
+   {
+    "marker": "take",
+    "positiveShare": 0.13066666666666665,
+    "negativeShare": 0.032,
+    "lift": 3.959595959595959
+   },
+   {
+    "marker": "another",
+    "positiveShare": 0.15133333333333332,
+    "negativeShare": 0.037333333333333336,
+    "lift": 3.947826086956521
+   },
+   {
+    "marker": "claim",
+    "positiveShare": 0.122,
+    "negativeShare": 0.032,
+    "lift": 3.696969696969697
+   },
+   {
+    "marker": "three",
+    "positiveShare": 0.13066666666666665,
+    "negativeShare": 0.035333333333333335,
+    "lift": 3.596330275229357
+   },
+   {
+    "marker": "clear",
+    "positiveShare": 0.12333333333333334,
+    "negativeShare": 0.034666666666666665,
+    "lift": 3.457943925233645
+   },
+   {
+    "marker": "till",
+    "positiveShare": 0.12133333333333333,
+    "negativeShare": 0.03666666666666667,
+    "lift": 3.2212389380530975
+   }
+  ],
+  "mineOptions": {
+   "minLength": 4,
+   "maxLength": 20,
+   "minPositiveShare": 0.12,
+   "maxNegativeShare": 0.04,
+   "top": 60
+  }
+ },
+ "residueSample": {
+  "n": 6000,
+  "mix": {
+   "decided": 4504,
+   "procedural": 334,
+   "uncertain": 1162
+  }
+ },
+ "byDisposal": [
+  {
+   "disposal": "Disposed Off",
+   "n": 2191,
+   "decided": 1581,
+   "procedural": 274,
+   "uncertain": 336
+  },
+  {
+   "disposal": "DISPOSED",
+   "n": 1064,
+   "decided": 880,
+   "procedural": 21,
+   "uncertain": 163
+  },
+  {
+   "disposal": "DISPOSED OF",
+   "n": 1011,
+   "decided": 802,
+   "procedural": 4,
+   "uncertain": 205
+  },
+  {
+   "disposal": "DISPOSED OF NO COSTS",
+   "n": 515,
+   "decided": 435,
+   "procedural": 1,
+   "uncertain": 79
+  },
+  {
+   "disposal": "Disposed Of",
+   "n": 489,
+   "decided": 364,
+   "procedural": 14,
+   "uncertain": 111
+  },
+  {
+   "disposal": "DISPOSED OFF",
+   "n": 196,
+   "decided": 152,
+   "procedural": 7,
+   "uncertain": 37
+  },
+  {
+   "disposal": "CLOSED",
+   "n": 146,
+   "decided": 59,
+   "procedural": 2,
+   "uncertain": 85
+  },
+  {
+   "disposal": "CLOSED NO COSTS",
+   "n": 86,
+   "decided": 39,
+   "procedural": 0,
+   "uncertain": 47
+  },
+  {
+   "disposal": "ORDERED",
+   "n": 52,
+   "decided": 27,
+   "procedural": 0,
+   "uncertain": 25
+  },
+  {
+   "disposal": "35-ANY OTHER MODE @ ADM.STAGE",
+   "n": 51,
+   "decided": 24,
+   "procedural": 7,
+   "uncertain": 20
+  },
+  {
+   "disposal": "DISPOSED OF WITH DIRECTION",
+   "n": 46,
+   "decided": 38,
+   "procedural": 0,
+   "uncertain": 8
+  },
+  {
+   "disposal": "Closed",
+   "n": 28,
+   "decided": 17,
+   "procedural": 0,
+   "uncertain": 11
+  },
+  {
+   "disposal": "56-DISPOSED AT ADMISSION STAGE",
+   "n": 27,
+   "decided": 22,
+   "procedural": 1,
+   "uncertain": 4
+  },
+  {
+   "disposal": "47-DISPOSAL IN ANY OTHER MODE FH",
+   "n": 23,
+   "decided": 17,
+   "procedural": 0,
+   "uncertain": 6
+  },
+  {
+   "disposal": "46-ANY OTHER MODE @ FH",
+   "n": 17,
+   "decided": 11,
+   "procedural": 1,
+   "uncertain": 5
+  },
+  {
+   "disposal": "Disposed of with direction",
+   "n": 14,
+   "decided": 10,
+   "procedural": 0,
+   "uncertain": 4
+  },
+  {
+   "disposal": "36-MCA DISPOSED OF",
+   "n": 7,
+   "decided": 2,
+   "procedural": 0,
+   "uncertain": 5
+  },
+  {
+   "disposal": "RELAXED",
+   "n": 7,
+   "decided": 2,
+   "procedural": 0,
+   "uncertain": 5
+  },
+  {
+   "disposal": "DELAY CONDONATED/REJECTED.",
+   "n": 4,
+   "decided": 4,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "33-CA DISPOSED OF",
+   "n": 4,
+   "decided": 3,
+   "procedural": 0,
+   "uncertain": 1
+  },
+  {
+   "disposal": "OTHERS DISPOSED OFF",
+   "n": 4,
+   "decided": 2,
+   "procedural": 0,
+   "uncertain": 2
+  },
+  {
+   "disposal": "SUCCEED",
+   "n": 2,
+   "decided": 2,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "PREMPTORY",
+   "n": 2,
+   "decided": 2,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "Order on PUD/Clerical error",
+   "n": 2,
+   "decided": 0,
+   "procedural": 2,
+   "uncertain": 0
+  },
+  {
+   "disposal": "Disposed On Motion date after hearing the both sides",
+   "n": 2,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 1
+  },
+  {
+   "disposal": "DISPOSAL WITH OBSERVATION",
+   "n": 1,
+   "decided": 0,
+   "procedural": 0,
+   "uncertain": 1
+  },
+  {
+   "disposal": "DELAY CONDONED",
+   "n": 1,
+   "decided": 0,
+   "procedural": 0,
+   "uncertain": 1
+  },
+  {
+   "disposal": "DEREGISTERED",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "DISPOSED OF WITH COSTS",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "97-DISPOSED AS TRANSFER TO DISTRICT/SESSION COURT N.I. ACT.",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "OTHER DISPOSED OFF",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "APPEAL DISMISSED",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "PEREMPTORY",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "CONSENT TERM",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  },
+  {
+   "disposal": "ABSOLUTE",
+   "n": 1,
+   "decided": 1,
+   "procedural": 0,
+   "uncertain": 0
+  }
+ ],
+ "projected": {
+  "residueTotal": 760305,
+  "note": "projections are sampleShare x residueTotal. The sample is bounded and drawn from eight independent key-order runs; it is not a uniform random draw, so these are estimates and the third digit is not meaningful.",
+  "substantiveLooking": 570736,
+  "proceduralLooking": 42324,
+  "uncertain": 147246
+ },
+ "caveats": [
+  "NOTHING is written to judgments. hc_document_class stays NULL for every row here. This is a measurement and a manifest; LCC owns any model classification.",
+  "The labels are the DISPOSAL STRING, not a human reading. A document the registry recorded as a merits disposal is treated as decided even if the text disagrees, so the held-out precision is precision against the registry, not against ground truth.",
+  "The text screen is a word-presence margin over the last 4,000 characters. It is a triage device for choosing what to send a model, and it is not a document classifier. A `decided`-looking residue row is a CANDIDATE, never an authority.",
+  "Sampling is eight independent random-uuid key-order runs, bounded. Not a uniform random draw: rows adjacent in key order were inserted together. Projections inherit that exactly.",
+  "The screen is ASYMMETRIC and leans decided: it calls decided on a measured share of truly procedural documents (see perClass.decided.falseCallRateOnOtherClass). The substantive-looking projection is therefore an UPPER bound on substantive content in the residue, and the procedural projection is a lower bound.",
+  "Precision figures are at the test set 50/50 prior. The residue prior is unknown; if the residue is mostly procedural the decided-call precision is far worse than quoted, and that possibility is exactly why nothing is written.",
+  "DISPOSED OFF is still not decided. The whole point of the residue is that its disposal string cannot answer the question, and a text screen that leans one way does not convert a bookkeeping string into a holding."
+ ]
+}

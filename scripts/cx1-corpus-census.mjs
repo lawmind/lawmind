@@ -81,7 +81,6 @@ function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   const codeByName = new Map(survey.perCourt.map((c) => [c.name, c.code]));
-  const nameByCode = new Map(survey.perCourt.map((c) => [c.code, c.name]));
 
   const rows = [];
   const byCourt = [];

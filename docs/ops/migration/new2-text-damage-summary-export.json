@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-08-21T17:25:00.631Z",
+  "lane": "NEW2",
+  "mode": "range-export",
+  "detector": "text-damage-v2.0",
+  "span": 20000,
+  "range": {
+    "from": "00000000-0000-0000-0000-000000000000",
+    "to": "08ffffff-0000-0000-0000-000000000000"
+  },
+  "lastCursor": "0011811e-85e6-4b3d-a2fb-4857a5f1ec75",
+  "walked": 5000,
+  "emitted": 445,
+  "includedSuspect": false,
+  "reasons": {
+    "GLYPH_CODE_DUMP": 396,
+    "TOKEN_SHAPE_ANOMALY": 386,
+    "ENGLISH_DENSITY_LOW": 352,
+    "SCRIPT_DAMAGE_STORED": 200,
+    "WORD_SPACING_DESTROYED": 22,
+    "LEGACY_FONT_ASCII_STORED": 15,
+    "LEGACY_FONT_MARKERS": 15,
+    "LEADING_CHAR_DELETION": 3
+  },
+  "out": "../../docs/ops/migration/new2-text-damage.jsonl",
+  "caveats": [
+    "This is a CHOSEN range, not a sample. Its emitted/walked ratio is not a corpus rate — use --sample for that.",
+    "Rows are emitted only where a detector fired. Absence from this file is UNKNOWN, never clean."
+  ]
+}

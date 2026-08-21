@@ -1,0 +1,137 @@
+{
+  "kind": "new1_halfvec_gap_at_scale",
+  "createdAt": "2026-08-18T04:15:57.764Z",
+  "indexPopulation": 620300,
+  "probes": 20,
+  "k": 50,
+  "efSearch": 200,
+  "cx1AbsoluteError": {
+    "p99": 0.000029802322387695312,
+    "max": 0.00005447864532470703
+  },
+  "swapThreshold": {
+    "p99": 0.000059604644775390625,
+    "max": 0.00010895729064941406
+  },
+  "gaps": {
+    "n": 980,
+    "min": -6.287160370099798e-8,
+    "p01": 0.000005125998839616841,
+    "p05": 0.00003735355913769833,
+    "p50": 0.000571285173696201,
+    "belowP99Threshold": 81,
+    "belowMaxThreshold": 137
+  },
+  "top5Gaps": {
+    "n": 80,
+    "min": 0.0002270341122478925,
+    "belowMaxThreshold": 0
+  },
+  "limits": [
+    "representation loss only — says nothing about ANN approximation under a halfvec-built HNSW graph (C3)",
+    "gaps are measured through the fp32 HNSW index at ef_search=200, not by exact scan",
+    "CX1 error figures are from 5,000 copied vectors; only the GAPS here are at production scale"
+  ],
+  "perProbe": [
+    {
+      "id": "criminal-96f5c829",
+      "minGap": 0.00006531027753842178,
+      "nearest": 0.12705387199566598
+    },
+    {
+      "id": "criminal-33238e81",
+      "minGap": 0.000004906700034612577,
+      "nearest": 0.17809872757799916
+    },
+    {
+      "id": "criminal-dc524dc6",
+      "minGap": 0.000014447808791118177,
+      "nearest": 0.25978680013339517
+    },
+    {
+      "id": "criminal-3f99b5c8",
+      "minGap": 0.000044989947795448515,
+      "nearest": 0.17456655653914321
+    },
+    {
+      "id": "criminal-d0421e4b",
+      "minGap": 0.000010125213330325344,
+      "nearest": 0.16647262373403449
+    },
+    {
+      "id": "criminal-9f3bf77e",
+      "minGap": 0.000004649162292480469,
+      "nearest": 0.15514051914215088
+    },
+    {
+      "id": "civil-bcc47cbd",
+      "minGap": 0.00002505561291565872,
+      "nearest": 0.15667201022337585
+    },
+    {
+      "id": "civil-c808ad72",
+      "minGap": 0.0000528693214914,
+      "nearest": 0.1723265894554049
+    },
+    {
+      "id": "civil-57afe38e",
+      "minGap": 0.00014092196211412666,
+      "nearest": 0.14367823936472746
+    },
+    {
+      "id": "civil-c46c823c",
+      "minGap": 0,
+      "nearest": 0.14717116513337847
+    },
+    {
+      "id": "civil-b842461c",
+      "minGap": 0.00002656435955117331,
+      "nearest": 0.2741954706369477
+    },
+    {
+      "id": "civil-5fd52a3d",
+      "minGap": 0.00000949081135759311,
+      "nearest": 0.13213694095611572
+    },
+    {
+      "id": "civil-0e50ac32",
+      "minGap": 0.0000013894857057161758,
+      "nearest": 0.22661428292904462
+    },
+    {
+      "id": "civil-3e5ac8b6",
+      "minGap": 0.000018715859017248704,
+      "nearest": 0.13637645813436217
+    },
+    {
+      "id": "civil-a7519ce5",
+      "minGap": 0.000025351207134205467,
+      "nearest": 0.24176994686633158
+    },
+    {
+      "id": "civil-e034c8c0",
+      "minGap": -6.287160370099798e-8,
+      "nearest": 0.1494230538950515
+    },
+    {
+      "id": "civil-93bf1aa5",
+      "minGap": 0.0000023841752510023184,
+      "nearest": 0.18004206359511765
+    },
+    {
+      "id": "civil-b0580449",
+      "minGap": 0.00003314018051980838,
+      "nearest": 0.1835170035506155
+    },
+    {
+      "id": "civil-2813f95d",
+      "minGap": 0.000005424022674560547,
+      "nearest": 0.11417976362048832
+    },
+    {
+      "id": "civil-7e89ff85",
+      "minGap": 0,
+      "nearest": 0.14019038855461763
+    }
+  ]
+}

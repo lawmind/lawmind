@@ -1,0 +1,127 @@
+{
+  "document": "NEW1 post-0055 retrieval baseline",
+  "owner": "NEW1",
+  "writtenAt": "2026-08-18T09:32:37.394Z",
+  "status": "COMPLETE for the three retrieval arms; generation and structured gates partial",
+  "querySet": {
+    "path": "services/harness/src/fixtures/queries.eval.json",
+    "sha256": "f2510c0cc1e5a02a73c308918a35f500eab168ca23a4eb01393239cff9c0fffd",
+    "queries": 283,
+    "note": "frozen; all 283 gold judgments are Supreme Court. Regression set, not a final benchmark."
+  },
+  "pass": "CONTROLLED (courts=[sc]) — identical haystack for every arm",
+  "runs": {
+    "pre0055": {
+      "checkpoint": "arms-checkpoint.pre0055.jsonl",
+      "corpusJudgments": 7296068,
+      "note": "archived, not resumed into. Recomputing from it reproduces the historical figures exactly.",
+      "arms": {
+        "dense": {
+          "n": 283,
+          "successAt5": 0.21554770318021202,
+          "recallAt20": 0.40636042402826855,
+          "mrr": 0.15056243071304504
+        },
+        "sparse": {
+          "n": 283,
+          "successAt5": 0.10247349823321555,
+          "recallAt20": 0.1696113074204947,
+          "mrr": 0.07039100439066526
+        },
+        "hybrid": {
+          "n": 283,
+          "successAt5": 0.18374558303886926,
+          "recallAt20": 0.38869257950530034,
+          "mrr": 0.12128095639319915
+        }
+      }
+    },
+    "post0055": {
+      "checkpoint": "arms-checkpoint.jsonl",
+      "corpusJudgments": 9536254,
+      "lexemeDocumentFrequency": {
+        "lexemes": 128243,
+        "sampledDocuments": 40537,
+        "builtAt": "2026-08-17T23:19:21.945Z"
+      },
+      "embeddedChunks": 619636,
+      "contended": true,
+      "contendedBy": "ingest fleet writing throughout; latency from this run is NOT quotable",
+      "arms": {
+        "dense": {
+          "n": 283,
+          "successAt5": 0.21908127208480566,
+          "recallAt20": 0.40636042402826855,
+          "mrr": 0.15391932117240897
+        },
+        "sparse": {
+          "n": 283,
+          "successAt5": 0.10600706713780919,
+          "recallAt20": 0.18021201413427562,
+          "mrr": 0.06873935659736291
+        },
+        "hybrid": {
+          "n": 283,
+          "successAt5": 0.1872791519434629,
+          "recallAt20": 0.37809187279151946,
+          "mrr": 0.13262779658115464
+        }
+      }
+    }
+  },
+  "pairedDenseControl": {
+    "what": "same arm, same code, corpus 30.7% larger — a control for corpus growth, not a ranker comparison",
+    "paired": 283,
+    "successAt5": {
+      "gained": 1,
+      "lost": 0,
+      "both": 61,
+      "neither": 221,
+      "mcnemarExactP": 1,
+      "gainedIds": [
+        "civil-6b99601e"
+      ]
+    },
+    "recallAt20": {
+      "gained": 0,
+      "lost": 0,
+      "both": 115,
+      "neither": 168,
+      "mcnemarExactP": null,
+      "note": "no discordant pairs"
+    },
+    "goldRankMoved": 1,
+    "verdict": "dense retrieval is unchanged by a 30.7% corpus growth. Expected and now measured: the dense arm searches judgment_chunks (619,636, unchanged), and the 2.24M judgments added since carry no embedding. This stability is an artefact of the embedding backlog and ENDS the moment the pilot embeds High Court text."
+  },
+  "notMeasured": [
+    "structuredExactness",
+    "fieldPrecision",
+    "adversarialPassRate",
+    "overruled leakage / stale-overruled rate",
+    "hallucinationRate and silentDropRate — need an LLM key; neither OPENROUTER_API_KEY nor ANTHROPIC_API_KEY is set",
+    "unopposed latency — every timing in this run was taken under ingest load",
+    "the sparse-weight sweep predicted by the fusion verdict (offline rrf-sim, next)"
+  ],
+  "notMeasuredIsNotZero": true,
+  "fusionVerdict": {
+    "mechanism": "RRF grants an unweighted arm rank-for-rank parity; sparse rank 1 (1/61) outranks dense rank 3 (1/63)",
+    "damagedQueries": 22,
+    "displacers": {
+      "sparseOnly": 32,
+      "bothArms": 20,
+      "denseOnlyRank6to20": 9,
+      "neitherTop20": 7
+    },
+    "displacedGold": {
+      "bothArms": 0,
+      "denseOnly": 22
+    },
+    "ruledOut": [
+      "HNSW parameters",
+      "annDepth",
+      "agreement weighting",
+      "candidate truncation"
+    ],
+    "namedFix": "weight the arms by measured quality, or remove sparse from fusion"
+  }
+}

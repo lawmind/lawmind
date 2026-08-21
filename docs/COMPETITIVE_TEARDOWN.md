@@ -418,3 +418,85 @@ signal, bright daylight, over fifty. That is still ours.
 
 **Numbers from that essay, useful for sizing:** **48.7 million** cases pending in
 district courts, **6.4 million** in High Courts.
+
+---
+
+## 9 · The 24-hour hearing briefing claim, hands-on checked — NEW3, 22 Aug 2026
+
+`PRODUCT_BRIEF.md`'s wedge claim, verbatim: *"no Indian competitor has it."*
+§7 above named hands-on testing as the outstanding gap on the whole document.
+This section closes it for exactly this one claim — the single most
+load-bearing sentence in the product's positioning — because if it is wrong,
+nothing else here matters as much.
+
+**What was tested, and the bar used.** Not "does a competitor track hearing
+dates" — several do, and §3/§8 already say so. The bar is narrower and is the
+actual product: an **AI-generated, synthesized document** — case history,
+arguments, prep points — **produced automatically ahead of a specific hearing
+date**, distinct from a notification that a hearing exists. Fetched each
+vendor's own current homepage/product page live today and asked directly
+whether that feature exists, rather than trusting a claims list against
+memory.
+
+| vendor | has hearing/cause-list tracking? | has an auto-generated PRE-HEARING BRIEFING document? | evidence |
+| --- | --- | --- | --- |
+| **Bharat.Law** — the direct threat, §8 | yes — "daily digest of hearings, orders, and intelligence," cause-list matches, limitation-risk alerts | **No.** Digest/alert, not a synthesized document. Confirmed on their own current homepage, fetched live | `bharat.law/` |
+| **Prism (IndianKanoon)** — §1 | not found on this page | **No.** DocHub (templates), Know Your Kanoon (chat), Upload and Chat, CasePredictAI (outcome prediction), Counter Argument Generator, Legal Sandbox (moot court) — none of the six is a pre-hearing briefing | `indiankanoon.org/prism/` |
+| **Supreme Today AI** — §7 | not found on this page | **No.** AI judgment analysis, chat, drafting, case-law research, document upload/analysis, judge-name search — none synthesizes a pre-hearing brief | `supremetoday.ai/` |
+| **CaseMine** | yes, per third-party description — cause-list matching, task tracking | **Not found**, but **weak evidence**: their own site returned HTTP 403 to a direct fetch (bot-blocked), so this is from a WebSearch summary, and the top result describing their workspace gaps was **Bharat.Law's own head-to-head comparison page** — a rival's marketing about CaseMine, not independent. Flagged, not trusted the same as the other three rows | secondary only |
+
+**Verdict: the claim holds, hands-on, as of today, against the three
+best-documented competitors.** All three offer AI *tools* (search, drafting,
+outcome prediction, counter-arguments) and, increasingly, hearing *tracking*
+(digests, cause-list matches) — but none synthesizes those into a document
+prepared ahead of a specific hearing. That gap between "we tell you a hearing
+exists" and "we tell you what to say at it" is precisely PRODUCT_BRIEF's
+distinction, and it is real today, not assumed.
+
+**What this does NOT establish, stated plainly:**
+- Homepage/product-page text only — no account was created, nothing was
+  tested behind a login, and a feature could exist without being marketing
+  copy on the landing page (the inverse risk — vendor pages **over-claiming**
+  features they don't fully have — is the one COMPETITIVE_TEARDOWN.md already
+  discounts throughout).
+- CaseMine is genuinely unverified, not confirmed-absent — the 403 is a real
+  gap, not a finding.
+- The market moves fast (Bharat.Law itself is new since 5 Aug per §8) — this
+  is a snapshot, re-check before it anchors a launch claim, same standing
+  instruction as the rest of this file.
+- LegitQuest, VIDUR AI, BharatLaw.AI (a distinct product from Bharat.Law —
+  confusingly similar name, not checked this pass), Jhana, and the global
+  players (Harvey, Lexis+ AI) were not checked this round — §7's list of
+  untested vendors is unchanged except for the four rows above.
+
+---
+
+## 10 · Two corrections to `COMPETITIVE.md`'s table, found while closing §9 — NEW3, 22 Aug 2026
+
+**LegitQuest is a more mature matter-workspace threat than the table shows.**
+`COMPETITIVE.md`'s row lists LegitQuest only as "AI research... semantic
+search over Indian law." Their own site (`legitquest.com`, fetched live)
+names a separate product, **Patrol®**, a litigation management system with
+"Real Time Case Monitoring," automated alerts across "10,000+ forums," a
+document-management/team-collaboration workspace, and billing/expense
+tracking. That is closer to Bharat.Law's Case Workspace (§8) than to plain
+research. No AI-generated pre-hearing briefing document found on the page —
+same gap as every other row in §9 — but the workspace claim itself
+undercounts the threat as currently written. `COMPETITIVE.md`'s table needs
+a LegitQuest row correction, not just a supplement.
+
+**VIDUR AI is not general Indian-law research — it is Corporate/Tax/
+Regulatory only.** The table lists it under "Semantic search over Indian
+law" alongside CaseMine and LegitQuest. Their own site (`vidur.in`, via
+search) scopes it explicitly to **Income Tax, GST, Companies Act,
+Insolvency, FEMA, SEBI** — a different practice area than Lawmind's
+criminal/civil litigation focus (`PRODUCT_BRIEF.md` §1). Likely not a
+direct competitor for Tier A/B as scoped, though worth a second look if
+Lawmind ever extends into corporate/regulatory practice. **Not verified,
+flagged not resolved:** VIDUR's own page credits "expertise from...
+renowned publishers like Bharat Law" — whether this is the same entity as
+either `bharat.law` (§8) or `bharatlaw.ai` (§9) or a third, unrelated
+"Bharat Law" (e.g. a law-book publisher) was not checked. Given this session
+already produced one premature "confirmed" claim on a near-identical naming
+question (§9's correction), stating a reading here without checking would
+repeat the same mistake — left as an open question rather than guessed.

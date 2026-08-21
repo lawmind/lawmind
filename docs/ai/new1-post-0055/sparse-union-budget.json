@@ -1,0 +1,1527 @@
+{
+  "corpus": 9307436,
+  "budgets": [
+    null,
+    0.01,
+    0.02,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "totals": {
+    "null": {
+      "terms": 1194,
+      "rows": 50847325,
+      "goldMatched": 30,
+      "goldTotal": 30,
+      "n": 30
+    },
+    "0.01": {
+      "terms": 242,
+      "rows": 2687268,
+      "goldMatched": 20,
+      "goldTotal": 30,
+      "n": 30
+    },
+    "0.02": {
+      "terms": 310,
+      "rows": 3452611,
+      "goldMatched": 25,
+      "goldTotal": 30,
+      "n": 30
+    },
+    "0.05": {
+      "terms": 429,
+      "rows": 4789400,
+      "goldMatched": 30,
+      "goldTotal": 30,
+      "n": 30
+    },
+    "0.1": {
+      "terms": 534,
+      "rows": 5947017,
+      "goldMatched": 30,
+      "goldTotal": 30,
+      "n": 30
+    },
+    "0.2": {
+      "terms": 672,
+      "rows": 8213186,
+      "goldMatched": 30,
+      "goldTotal": 30,
+      "n": 30
+    }
+  },
+  "rows": [
+    {
+      "id": "criminal-96f5c829",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.6392362796863971,
+          "plannerRows": 1282354,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 6,
+          "modelledUnion": 0.008505326274558023,
+          "plannerRows": 59562,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 9,
+          "modelledUnion": 0.017309702880468292,
+          "plannerRows": 94314,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 11,
+          "modelledUnion": 0.03974980090085389,
+          "plannerRows": 117193,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 15,
+          "modelledUnion": 0.09263279164874372,
+          "plannerRows": 162269,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 21,
+          "modelledUnion": 0.19153869801477952,
+          "plannerRows": 228210,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-6f885356",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.7256160849187385,
+          "plannerRows": 1646298,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 8,
+          "modelledUnion": 0.00563730284412034,
+          "plannerRows": 93864,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 10,
+          "modelledUnion": 0.015010026373515006,
+          "plannerRows": 116747,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 15,
+          "modelledUnion": 0.04704899329559942,
+          "plannerRows": 172963,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 18,
+          "modelledUnion": 0.08508686622779593,
+          "plannerRows": 206022,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 23,
+          "modelledUnion": 0.18551316512286675,
+          "plannerRows": 260028,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-cf0b1539",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.5267364616675372,
+          "plannerRows": 1254956,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 15,
+          "modelledUnion": 0.008088685586081668,
+          "plannerRows": 172963,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 18,
+          "modelledUnion": 0.017553682613302257,
+          "plannerRows": 206022,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 23,
+          "modelledUnion": 0.04702982215335594,
+          "plannerRows": 260028,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 28,
+          "modelledUnion": 0.09987121322544346,
+          "plannerRows": 312698,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 31,
+          "modelledUnion": 0.1926625636923498,
+          "plannerRows": 466814,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-a259ece9",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.686078653135539,
+          "plannerRows": 1517432,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 7,
+          "modelledUnion": 0.008752933964956355,
+          "plannerRows": 82336,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 9,
+          "modelledUnion": 0.01690355241506092,
+          "plannerRows": 105334,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 13,
+          "modelledUnion": 0.04052754525178248,
+          "plannerRows": 150646,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 18,
+          "modelledUnion": 0.09999239439185192,
+          "plannerRows": 206022,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 24,
+          "modelledUnion": 0.19615365090074044,
+          "plannerRows": 270668,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-169512f8",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.7856081087040936,
+          "plannerRows": 1832390,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 12,
+          "modelledUnion": 0.008581735365788545,
+          "plannerRows": 116761,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 13,
+          "modelledUnion": 0.013106302525601299,
+          "plannerRows": 128117,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 16,
+          "modelledUnion": 0.04323239673294632,
+          "plannerRows": 161846,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 20,
+          "modelledUnion": 0.09389068865087902,
+          "plannerRows": 206036,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 24,
+          "modelledUnion": 0.18016849665206336,
+          "plannerRows": 310606,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-d1de0dec",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.6308106085482235,
+          "plannerRows": 1298283,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 9,
+          "modelledUnion": 0.007991512925853317,
+          "plannerRows": 93922,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 12,
+          "modelledUnion": 0.01716519507043135,
+          "plannerRows": 128161,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 18,
+          "modelledUnion": 0.04970784357329905,
+          "plannerRows": 195114,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 21,
+          "modelledUnion": 0.09326555559396799,
+          "plannerRows": 227843,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 25,
+          "modelledUnion": 0.18252942287225138,
+          "plannerRows": 270723,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-595da465",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.9271020467657591,
+          "plannerRows": 2156630,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 7,
+          "modelledUnion": 0.008800135054228608,
+          "plannerRows": 71372,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 9,
+          "modelledUnion": 0.01982742108211033,
+          "plannerRows": 94480,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 12,
+          "modelledUnion": 0.04851702523466761,
+          "plannerRows": 128711,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 15,
+          "modelledUnion": 0.09162827765701675,
+          "plannerRows": 162431,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 20,
+          "modelledUnion": 0.19416523441390798,
+          "plannerRows": 217517,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-4243d17f",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 38,
+          "modelledUnion": 0.9921316125497933,
+          "plannerRows": 2361680,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 4,
+          "modelledUnion": 0.00670787034263598,
+          "plannerRows": 47403,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 5,
+          "modelledUnion": 0.013250263677577312,
+          "plannerRows": 59106,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 8,
+          "modelledUnion": 0.04518021605024081,
+          "plannerRows": 93865,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 10,
+          "modelledUnion": 0.07932978320664463,
+          "plannerRows": 116750,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 14,
+          "modelledUnion": 0.18387179574757306,
+          "plannerRows": 161835,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-2b4fa55c",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.6734961607531942,
+          "plannerRows": 1354197,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 6,
+          "modelledUnion": 0.0077026299898345085,
+          "plannerRows": 59106,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 8,
+          "modelledUnion": 0.017324542398036824,
+          "plannerRows": 82337,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 12,
+          "modelledUnion": 0.04971784230402598,
+          "plannerRows": 128106,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 16,
+          "modelledUnion": 0.09772865288419597,
+          "plannerRows": 172966,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 22,
+          "modelledUnion": 0.19222825832649948,
+          "plannerRows": 238593,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "criminal-beadb943",
+      "group": "criminal",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8850575143408935,
+          "plannerRows": 2004142,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 3,
+          "modelledUnion": 0.009078347775780093,
+          "plannerRows": 35642,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 5,
+          "modelledUnion": 0.019245668700353602,
+          "plannerRows": 59106,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 8,
+          "modelledUnion": 0.04117340468275554,
+          "plannerRows": 93866,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 12,
+          "modelledUnion": 0.09224440269221124,
+          "plannerRows": 139406,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 17,
+          "modelledUnion": 0.1926654138380015,
+          "plannerRows": 195062,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-73c19f96",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8767383843098137,
+          "plannerRows": 2034692,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 9,
+          "modelledUnion": 0.009241287062835668,
+          "plannerRows": 93866,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 11,
+          "modelledUnion": 0.019894142121512526,
+          "plannerRows": 116750,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 13,
+          "modelledUnion": 0.039214262649501674,
+          "plannerRows": 139406,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 15,
+          "modelledUnion": 0.07704509141171512,
+          "plannerRows": 161836,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 19,
+          "modelledUnion": 0.1774346885890663,
+          "plannerRows": 206027,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-b6589cd6",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.6718617326752399,
+          "plannerRows": 1570115,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 12,
+          "modelledUnion": 0.00791838487912,
+          "plannerRows": 139406,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 15,
+          "modelledUnion": 0.016702928653556826,
+          "plannerRows": 172967,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 21,
+          "modelledUnion": 0.04822463450110104,
+          "plannerRows": 238594,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 25,
+          "modelledUnion": 0.09152460670268192,
+          "plannerRows": 281262,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 30,
+          "modelledUnion": 0.19153223708493428,
+          "plannerRows": 416349,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-bd2cac6a",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8911571747118663,
+          "plannerRows": 2141361,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 10,
+          "modelledUnion": 0.007525485353973349,
+          "plannerRows": 116750,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 13,
+          "modelledUnion": 0.019451214354271995,
+          "plannerRows": 150650,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 16,
+          "modelledUnion": 0.045395430184134056,
+          "plannerRows": 184043,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 19,
+          "modelledUnion": 0.09316189706056444,
+          "plannerRows": 216938,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 22,
+          "modelledUnion": 0.16781089834020058,
+          "plannerRows": 249342,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-2f6ad808",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8259401694284149,
+          "plannerRows": 1878200,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 5,
+          "modelledUnion": 0.006450227847554668,
+          "plannerRows": 59107,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 7,
+          "modelledUnion": 0.016449744102984387,
+          "plannerRows": 82338,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 12,
+          "modelledUnion": 0.04761444500824685,
+          "plannerRows": 139407,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 15,
+          "modelledUnion": 0.09133992091416898,
+          "plannerRows": 172968,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 19,
+          "modelledUnion": 0.1891443246688289,
+          "plannerRows": 216938,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-c46c823c",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.884987128191676,
+          "plannerRows": 2079487,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 6,
+          "modelledUnion": 0.007532724333647933,
+          "plannerRows": 70752,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 7,
+          "modelledUnion": 0.013139330795092885,
+          "plannerRows": 82338,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 9,
+          "modelledUnion": 0.03279298996500013,
+          "plannerRows": 105338,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 11,
+          "modelledUnion": 0.07941209863390464,
+          "plannerRows": 128108,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 15,
+          "modelledUnion": 0.1970927567772578,
+          "plannerRows": 307056,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-3e049bba",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.9412072742895153,
+          "plannerRows": 2174418,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 6,
+          "modelledUnion": 0.008335121078007823,
+          "plannerRows": 59114,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 9,
+          "modelledUnion": 0.01636201632085854,
+          "plannerRows": 82499,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 12,
+          "modelledUnion": 0.04542204560231622,
+          "plannerRows": 116910,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 14,
+          "modelledUnion": 0.09171510245147785,
+          "plannerRows": 139564,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 17,
+          "modelledUnion": 0.1996686026075566,
+          "plannerRows": 346346,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-4c211925",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.9460897040120706,
+          "plannerRows": 2233348,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 6,
+          "modelledUnion": 0.006079016522071545,
+          "plannerRows": 70752,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 8,
+          "modelledUnion": 0.01549637592657982,
+          "plannerRows": 93867,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 11,
+          "modelledUnion": 0.049655533371846916,
+          "plannerRows": 128108,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 13,
+          "modelledUnion": 0.08256235402202117,
+          "plannerRows": 150650,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 18,
+          "modelledUnion": 0.1986695582219251,
+          "plannerRows": 206029,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-1cd71b82",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.5006566399396668,
+          "plannerRows": 1015450,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 9,
+          "modelledUnion": 0.008750270467876797,
+          "plannerRows": 105338,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 12,
+          "modelledUnion": 0.018013601790909384,
+          "plannerRows": 139408,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 18,
+          "modelledUnion": 0.04793224671054874,
+          "plannerRows": 206029,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 24,
+          "modelledUnion": 0.09475208148727421,
+          "plannerRows": 270677,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 30,
+          "modelledUnion": 0.1880624130651214,
+          "plannerRows": 333410,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-d5e3fb5c",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.5461897807548872,
+          "plannerRows": 1119808,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 10,
+          "modelledUnion": 0.009240198211375894,
+          "plannerRows": 116752,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 12,
+          "modelledUnion": 0.017897738776875838,
+          "plannerRows": 139408,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 17,
+          "modelledUnion": 0.04580071264785479,
+          "plannerRows": 195065,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 22,
+          "modelledUnion": 0.09001540089327242,
+          "plannerRows": 249344,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 28,
+          "modelledUnion": 0.18373015597495923,
+          "plannerRows": 312709,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-92cc28db",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.6186890241941323,
+          "plannerRows": 1454205,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 12,
+          "modelledUnion": 0.007965571228739976,
+          "plannerRows": 139408,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 16,
+          "modelledUnion": 0.018155675753476652,
+          "plannerRows": 184045,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 22,
+          "modelledUnion": 0.049775677153665265,
+          "plannerRows": 249344,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 26,
+          "modelledUnion": 0.09548690361517198,
+          "plannerRows": 291799,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 29,
+          "modelledUnion": 0.1720071250340155,
+          "plannerRows": 388390,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-7b0b891e",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.7990845280681218,
+          "plannerRows": 1784923,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 8,
+          "modelledUnion": 0.009662362561266846,
+          "plannerRows": 93868,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 10,
+          "modelledUnion": 0.01843799761021847,
+          "plannerRows": 116752,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 13,
+          "modelledUnion": 0.04780844421181052,
+          "plannerRows": 150652,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 16,
+          "modelledUnion": 0.08775917520769538,
+          "plannerRows": 184045,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 21,
+          "modelledUnion": 0.19870827357144416,
+          "plannerRows": 238598,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-c6b87af8",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8639115783446584,
+          "plannerRows": 1890785,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 8,
+          "modelledUnion": 0.008874829500176262,
+          "plannerRows": 82342,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 10,
+          "modelledUnion": 0.017462748689921592,
+          "plannerRows": 105341,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 14,
+          "modelledUnion": 0.04048021536638147,
+          "plannerRows": 150654,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 18,
+          "modelledUnion": 0.09394861549375966,
+          "plannerRows": 195068,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 23,
+          "modelledUnion": 0.19206290745667753,
+          "plannerRows": 249347,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-4776fd1f",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.6009845332583819,
+          "plannerRows": 1127853,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 5,
+          "modelledUnion": 0.008924955360633313,
+          "plannerRows": 59108,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 7,
+          "modelledUnion": 0.0163924166500915,
+          "plannerRows": 82339,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 12,
+          "modelledUnion": 0.046376056457934856,
+          "plannerRows": 139408,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 17,
+          "modelledUnion": 0.09703084263756778,
+          "plannerRows": 195066,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 23,
+          "modelledUnion": 0.19049202115782304,
+          "plannerRows": 260039,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-48bbae86",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.7526824523089073,
+          "plannerRows": 1700666,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 10,
+          "modelledUnion": 0.008138314636728539,
+          "plannerRows": 95016,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 13,
+          "modelledUnion": 0.018112191795860766,
+          "plannerRows": 129240,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 18,
+          "modelledUnion": 0.046175417681181274,
+          "plannerRows": 185149,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 21,
+          "modelledUnion": 0.08054344537541214,
+          "plannerRows": 218028,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 25,
+          "modelledUnion": 0.18306172165872647,
+          "plannerRows": 327656,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-b084ae45",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.4041763791764782,
+          "plannerRows": 811624,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 15,
+          "modelledUnion": 0.008065990132736123,
+          "plannerRows": 161840,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 18,
+          "modelledUnion": 0.018891265211282038,
+          "plannerRows": 195066,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 23,
+          "modelledUnion": 0.04771281073276312,
+          "plannerRows": 249346,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 28,
+          "modelledUnion": 0.08884656630501653,
+          "plannerRows": 302282,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 33,
+          "modelledUnion": 0.17894834812375793,
+          "plannerRows": 353908,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-b48cbd18",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8212152449726733,
+          "plannerRows": 1840749,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 5,
+          "modelledUnion": 0.007063390391895297,
+          "plannerRows": 59108,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 7,
+          "modelledUnion": 0.016910177742956,
+          "plannerRows": 82339,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 11,
+          "modelledUnion": 0.041060340153914465,
+          "plannerRows": 128109,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 15,
+          "modelledUnion": 0.092261182269322,
+          "plannerRows": 172970,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 19,
+          "modelledUnion": 0.1847742601981036,
+          "plannerRows": 216941,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-8d9021bf",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8220848730867419,
+          "plannerRows": 1776084,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 10,
+          "modelledUnion": 0.009073741653345069,
+          "plannerRows": 116752,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 12,
+          "modelledUnion": 0.019922089874030546,
+          "plannerRows": 139409,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 15,
+          "modelledUnion": 0.041784408806687656,
+          "plannerRows": 172970,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 17,
+          "modelledUnion": 0.09167978066328786,
+          "plannerRows": 195066,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 20,
+          "modelledUnion": 0.17694680221081927,
+          "plannerRows": 227797,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-2c19d917",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.5659552043026395,
+          "plannerRows": 1285259,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 9,
+          "modelledUnion": 0.009435765237826965,
+          "plannerRows": 96842,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 12,
+          "modelledUnion": 0.01896015274317242,
+          "plannerRows": 131040,
+          "goldMatched": 0,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 18,
+          "modelledUnion": 0.04863813586714483,
+          "plannerRows": 197910,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 22,
+          "modelledUnion": 0.09259420780642669,
+          "plannerRows": 241385,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 28,
+          "modelledUnion": 0.19872328418823415,
+          "plannerRows": 368212,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-2813f95d",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 40,
+          "modelledUnion": 0.8806266205196066,
+          "plannerRows": 1899866,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 5,
+          "modelledUnion": 0.0052514696914303105,
+          "plannerRows": 59108,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 7,
+          "modelledUnion": 0.01672755814778204,
+          "plannerRows": 82339,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 10,
+          "modelledUnion": 0.04831457417830365,
+          "plannerRows": 116752,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 12,
+          "modelledUnion": 0.08525513561441345,
+          "plannerRows": 139409,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 17,
+          "modelledUnion": 0.19824434923515988,
+          "plannerRows": 195066,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    },
+    {
+      "id": "civil-75009a0b",
+      "group": "civil",
+      "gold": 1,
+      "budgets": {
+        "null": {
+          "terms": 36,
+          "modelledUnion": 0.9827568197946596,
+          "plannerRows": 2320070,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.01": {
+          "terms": 5,
+          "modelledUnion": 0.00716053113768933,
+          "plannerRows": 59108,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.02": {
+          "terms": 6,
+          "modelledUnion": 0.01646755923961296,
+          "plannerRows": 70752,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.05": {
+          "terms": 8,
+          "modelledUnion": 0.0399820904458571,
+          "plannerRows": 93868,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.1": {
+          "terms": 11,
+          "modelledUnion": 0.08535914560188673,
+          "plannerRows": 128109,
+          "goldMatched": 1,
+          "goldTotal": 1
+        },
+        "0.2": {
+          "terms": 15,
+          "modelledUnion": 0.18316438967536774,
+          "plannerRows": 172970,
+          "goldMatched": 1,
+          "goldTotal": 1
+        }
+      }
+    }
+  ]
+}

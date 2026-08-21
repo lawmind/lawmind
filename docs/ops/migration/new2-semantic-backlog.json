@@ -1,0 +1,68 @@
+{
+  "tool": "new2-semantic-backlog",
+  "takenAt": "2026-08-18T20:15:06.939Z",
+  "stages": [
+    {
+      "stage": "written",
+      "count": 16293949,
+      "of": null,
+      "pctOfParent": 100,
+      "pctOfCorpus": 100
+    },
+    {
+      "stage": "assessed by a classifier",
+      "count": 2060750,
+      "of": "written",
+      "pctOfParent": 12.65,
+      "pctOfCorpus": 12.65
+    },
+    {
+      "stage": "classified (a class, not a refusal)",
+      "count": 1135424,
+      "of": "assessed by a classifier",
+      "pctOfParent": 55.1,
+      "pctOfCorpus": 6.97
+    },
+    {
+      "stage": "Tier-A CONFIRMED (decided)",
+      "count": 375544,
+      "of": "classified (a class, not a refusal)",
+      "pctOfParent": 33.08,
+      "pctOfCorpus": 2.3
+    },
+    {
+      "stage": "chunked (distinct documents)",
+      "count": 40161,
+      "of": "written",
+      "pctOfParent": 0.25,
+      "pctOfCorpus": 0.25
+    },
+    {
+      "stage": "embedded (distinct documents)",
+      "count": 40161,
+      "of": "chunked (distinct documents)",
+      "pctOfParent": 100,
+      "pctOfCorpus": 0.25
+    }
+  ],
+  "classificationResidue": {
+    "neverAssessed": 14233199,
+    "unclassifiedDisposal": 760305,
+    "noDisposalNature": 165021,
+    "note": "unclassifiedDisposal means a classifier LOOKED and no rule claimed the row. neverAssessed means nothing has looked. hc_class_method is what separates them; hc_document_class IS NULL cannot."
+  },
+  "tierA": {
+    "confirmed": 375544,
+    "confirmedIncludingBrief": 478421,
+    "possibleUpperBound": 14608743,
+    "note": "possibleUpperBound adds every never-assessed row, because an unassessed row is not a row known to be procedural. The distance between confirmed and possible IS the classification backlog and must not be reported as a single figure."
+  },
+  "chunks": {
+    "total": 620300,
+    "embedded": 620300
+  },
+  "unretrievable": {
+    "documents": 16253788,
+    "note": "Documents held with no embedded chunk. These cannot be reached by the dense arm at all."
+  }
+}

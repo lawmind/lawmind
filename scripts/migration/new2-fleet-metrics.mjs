@@ -44,7 +44,9 @@
  *   node scripts/migration/new2-fleet-metrics.mjs --window 300    5min window
  *   node scripts/migration/new2-fleet-metrics.mjs --label 8w      tag the row
  */
+import { Buffer } from 'node:buffer';
 import { readFileSync, existsSync, readdirSync, statSync, appendFileSync } from 'node:fs';
+import { setTimeout } from 'node:timers';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';

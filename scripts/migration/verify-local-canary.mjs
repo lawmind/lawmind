@@ -31,12 +31,68 @@
  *   node scripts/migration/verify-local-canary.mjs --window 90
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { setTimeout } from 'node:timers';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import postgres from '../../services/ingest/node_modules/postgres/src/index.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+/**
+ * EVERY OTHER CHECK IN THIS FILE IS AN AGGREGATE, AND AN AGGREGATE CANNOT SEE A
+ * DEAD SCOPE.
+ *
+ * Measured 17 Aug 2026 on the first fleet start after cutover: this script
+ * reported **7 PASS 0 FAIL** while TWO of the three canaries were already dead —
+ * `hc-boot-10_8` and `hc-boot-hist-27_1`, both killed inside 20 seconds by a
+ * transient `EPERM` on the checkpoint rename, both correctly abandoned by
+ * `supervise.mjs` after three restarts. The one survivor was inserting rows and
+ * advancing offsets briskly, so `local inserts` and `checkpoint advance` both
+ * passed on its work alone and the fleet ran at two-thirds width for 27 minutes
+ * while the cutover was reported clean.
+ *
+ * "Verify by row growth, not process count" is the right rule and it is not
+ * sufficient: row growth is SUMMED over scopes, and a dead one contributes zero
+ * silently.
+ *
+ * So the supervisor's own verdict is read back from the log. It needs no database
+ * and no process table — the supervisor already decided, and its verdict outlives
+ * the process that earned it, which a `Get-CimInstance` snapshot does not.
+ */
+function reportDeadScopes() {
+  const dead = [];
+  for (const label of expectedScopes()) {
+    const log = join(ROOT, `${label}.log`);
+    if (!existsSync(log)) continue;
+    /** latin1: these logs carry raw PDF-extractor bytes and are not valid UTF-8. */
+    const tail = readFileSync(log, 'latin1').slice(-4000);
+    const m = tail.match(/\[supervisor [^\]]+\] (died within \d+s[^\n]*)/);
+    if (m) dead.push(`${label}: ${m[1].trim()}`);
+  }
+  record(
+    'every scope alive',
+    dead.length === 0,
+    dead.length === 0
+      ? 'no canary scope log carries a supervisor give-up line'
+      : `${dead.length} scope(s) ABANDONED by their supervisor — ${dead.join(' · ')}`,
+  );
+}
+
+/**
+ * The scope names PARSED out of `start-local-canary.ps1`, never retyped here.
+ *
+ * A hardcoded copy is how the launcher's own year-scope list drifted for three
+ * days (`docs/YEAR_SCOPE_SCHEDULER.md`), and the same trap applies to a verifier:
+ * a scope this file does not know about is a scope whose death it cannot report,
+ * and it would go on printing PASS.
+ */
+function expectedScopes() {
+  const path = join(ROOT, 'scripts', 'start-local-canary.ps1');
+  if (!existsSync(path)) return [];
+  const src = readFileSync(path, 'utf8');
+  return [...src.matchAll(/Label\s*=\s*'([^']+)'/g)].map((m) => m[1]);
+}
 const CKPT_DIR = join(ROOT, 'services', 'ingest', '.checkpoints');
 
 const argv = process.argv.slice(2);
@@ -149,6 +205,16 @@ try {
       console.log('  A count taken mid-load is an accurate number and a meaningless one: it reports');
       console.log('  however far the load happens to have got, and check 1 would read that as an');
       console.log('  unexplained deficit. The load is LCC\'s; wait for it and re-run.');
+      /**
+       * THE LIVENESS CHECK STILL RUNS, BECAUSE IT NEEDS NO DATABASE.
+       *
+       * This refusal was written for LCC's restore, when the fleet was stopped.
+       * Post-cutover the fleet itself is a bulk load, so the guard now fires on
+       * the ordinary running state — and it would have suppressed the ONE check
+       * that catches a dead scope, which reads log tails and touches no backend.
+       * A refusal about counting must not take a non-counting check down with it.
+       */
+      reportDeadScopes();
       await sql.end({ timeout: 5 });
       process.exit(2);
     }
@@ -304,6 +370,31 @@ try {
   let moved = 0;
   for (const [k, v] of afterCk) if (beforeCk.has(k) && v > beforeCk.get(k)) moved++;
   record('checkpoint advance', moved > 0, `${moved} source-file offsets advanced`);
+
+  /**
+   * EVERY CHECK ABOVE IS AN AGGREGATE, AND AN AGGREGATE CANNOT SEE A DEAD SCOPE.
+   *
+   * Measured 17 Aug 2026, on the first fleet start after cutover. This script
+   * reported **7 PASS 0 FAIL** while TWO of the three canaries were already
+   * dead — `hc-boot-10_8` and `hc-boot-hist-27_1`, both killed inside 20 seconds
+   * by a transient `EPERM` on the checkpoint rename, both correctly abandoned by
+   * `supervise.mjs` after three restarts. The one survivor was inserting rows
+   * and advancing offsets briskly, so `local inserts` and `checkpoint advance`
+   * both passed on its work alone.
+   *
+   * That is the precise failure this verifier exists to prevent — "verify by row
+   * growth, not process count" is the right rule and it is not sufficient, because
+   * row growth is summed over scopes and a dead one contributes zero silently.
+   * The fleet ran for 27 minutes at two-thirds of its intended width while the
+   * cutover was being reported as clean.
+   *
+   * So the supervisor's own verdict is read back. It writes an unambiguous line
+   * before it gives up, and a scope carrying it is DEAD, whatever the totals say.
+   * Checked per scope, named individually, and FAILING the run — a canary whose
+   * job is to decide whether 38 workers are safe must not pass while a third of
+   * itself is missing.
+   */
+  reportDeadScopes();
 
   const updDelta = statsAfter.upd - statsBefore.upd;
   record(

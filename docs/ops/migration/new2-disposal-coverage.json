@@ -1,0 +1,1994 @@
+{
+  "tool": "disposal-coverage-cli",
+  "takenAt": "2026-08-18T18:10:24.403Z",
+  "distinctStringsExamined": 329,
+  "rowsCovered": 868145,
+  "counts": {
+    "stale": 108353,
+    "residue": 755960,
+    "candidate": 3832
+  },
+  "caveat": "STALE is a claim about classifiability, not about the final class: a short document would land in reference_stub instead. Both are classified.",
+  "buckets": {
+    "stale": [
+      {
+        "disposal": "DISMISSED AS WITHDRAWN",
+        "rows": 17915,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED AS INFRUCTUOUS",
+        "rows": 14668,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "38-RULE ABSOLUTE/ALLOWED @ FH",
+        "rows": 7509,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "27-WITHDRAWN  @ ADM.STAGE",
+        "rows": 6282,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "58-RULE ISSUED & RULE ABSOLUTE/ALLOWED @",
+        "rows": 6225,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "GRANTED",
+        "rows": 5700,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "INFRUCTUOUS",
+        "rows": 5312,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED IN LOK ADALAT",
+        "rows": 4293,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISED",
+        "rows": 3706,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED AS NOT PRESSED",
+        "rows": 2800,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "40-WITHDRAWN @ FH",
+        "rows": 2339,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED NO COSTS",
+        "rows": 2247,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISPOSED OFF AS WITHDRAWN",
+        "rows": 2155,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "53-ALLOWED / GRANTED @ ADM.STAGE",
+        "rows": 2085,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "WITHDRAWN DISMISSED",
+        "rows": 2009,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED AS INFRACTUOUS",
+        "rows": 1999,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED OFF/DECIDED ON MERITS",
+        "rows": 1636,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "26-DISMISSED  @ ADM.STAGE",
+        "rows": 1387,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "28-REJECTED   @ ADM.STAGE",
+        "rows": 1338,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "39-RULE DISCHARGED/DISMISSED @ FH",
+        "rows": 1287,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "44-PARTLY ALLOWED @ FH",
+        "rows": 1230,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED IN DEFAULT",
+        "rows": 783,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED ON MERITS/REJECTED",
+        "rows": 781,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DROPPED",
+        "rows": 707,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO CENTRAL ADMINISTRATIVE TR",
+        "rows": 687,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSAL FOR NON COMPLIANCE OF OFFICE O",
+        "rows": 651,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "ADMITTED/ALLOWED/GRANTED/RULE ABSOLUTE",
+        "rows": 563,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISS OTHER THAN MERIT(DD/NON PROSEC./",
+        "rows": 548,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED AS INFRUCTUOUS",
+        "rows": 534,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED AS WITHDRAWAL",
+        "rows": 531,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED ON WITHDRAWAL WITH LIBERTY TO ",
+        "rows": 515,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED ON WITHDRAWAL NO ORDER FOR SUC",
+        "rows": 451,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "MODIFIED",
+        "rows": 320,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "TRANSFERRED CAT SRINAGAR",
+        "rows": 319,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED  AS INFRACTUOUS",
+        "rows": 299,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED OF AS INFRUCTUOUS",
+        "rows": 282,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISS",
+        "rows": 277,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISPOSED OF AS WITHDRAWN",
+        "rows": 276,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED AS INFRACTOUS",
+        "rows": 256,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED AS ABATED",
+        "rows": 249,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "CLOSED AS INFRUCTUOUS",
+        "rows": 248,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "REMANDED",
+        "rows": 248,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "ABSOLUTE",
+        "rows": 231,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "31-NOTICE DISCHARGED @ ADM.STAGE",
+        "rows": 230,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "CONSIGNED TO RECORD",
+        "rows": 225,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "42-RULE DISCHARGED @ FH",
+        "rows": 222,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "INFRACTOUS",
+        "rows": 195,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED WITH MODIFICATION",
+        "rows": 177,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "59-RULE ISSUED & RULE DISCHARGED/DISMISS",
+        "rows": 153,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED FOR NON-COMPLYING CONDITIONAL ",
+        "rows": 152,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "AMOUNT AWARDED",
+        "rows": 138,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "APPEAL DISMISSED",
+        "rows": 122,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "NOT-PRESSED",
+        "rows": 119,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED ON MERITS",
+        "rows": 117,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED AS NOT MAINTAINABLE",
+        "rows": 117,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "NOT PRESSED",
+        "rows": 117,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "APPLICATION ALLOWED",
+        "rows": 113,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "COMPROMISE",
+        "rows": 112,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "COMPROMISED/CONSENT TERMS",
+        "rows": 106,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO HP ADMINISTRATIVE TRIBUNA",
+        "rows": 98,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED OFF AS INFRACTOUS",
+        "rows": 83,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "PROCEEDINGS CLOSED/DROPPED",
+        "rows": 77,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "COMPROMISED.",
+        "rows": 71,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "REMANDED FOR RETRIAL",
+        "rows": 68,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "TRANSFER TO ARMED FORCES TRIBUNAL BENCH,",
+        "rows": 66,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "LEAVE GRANTED",
+        "rows": 65,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED WITH COSTS",
+        "rows": 65,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "SETTLED IN LOK ADALAT",
+        "rows": 63,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED FOR WANT OF PROSECUTION",
+        "rows": 62,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED AS REJECTED",
+        "rows": 55,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "APPEAL IS ALLOWED",
+        "rows": 54,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED ON CONTEST",
+        "rows": 51,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISPOSED AS WITHDRAWN",
+        "rows": 48,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED FOR NOT PRESSED",
+        "rows": 47,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "APPEAL IS DISMISSED",
+        "rows": 46,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED WITH COST",
+        "rows": 44,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "SETTLED",
+        "rows": 40,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "REJECTED AT ADMISSION STAGE",
+        "rows": 39,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "RULE DISCHARGED",
+        "rows": 39,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "SETTLED BEFORE THE LOK-ADALATS",
+        "rows": 38,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO OTHER COURT",
+        "rows": 35,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED/RULE DISCHARGED",
+        "rows": 35,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "RULE ISSUED AND PARTLY ALLOWED",
+        "rows": 35,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "29-COMPROMISE @ ADM.STAGE",
+        "rows": 35,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED OFF AS ABATED",
+        "rows": 34,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED OF IN MEMO OF COMPROMISE",
+        "rows": 34,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED",
+        "rows": 34,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED WITH LIBERTY",
+        "rows": 30,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISPOSED AS NOT PRESSED",
+        "rows": 29,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISPOSED OF AS NOT PRESSED",
+        "rows": 29,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DECIDED IN TERMS OF COMPROMISE",
+        "rows": 28,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DECREED",
+        "rows": 27,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED IN LIMINE",
+        "rows": 25,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "APPEAL IS PARTLY ALLOWED",
+        "rows": 23,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "41-COMPROMISE @ FH",
+        "rows": 23,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED AS SETTLED OUT OF COURT",
+        "rows": 23,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "ADMITTED/ALLWD/GRANTED/RULE ABSOLUTE",
+        "rows": 17,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "STAY MADE ABSOLUTE",
+        "rows": 16,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED AS TIME BARRED",
+        "rows": 15,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "CLOSED AS NOT PRESSED",
+        "rows": 13,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DECIDED BY LOK ADALAT",
+        "rows": 12,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "LOK ADALAT DISPOSAL",
+        "rows": 12,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "98-DISPOSED AS ABATED",
+        "rows": 12,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO DELHI HIGH COURT",
+        "rows": 11,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "COMPROMISE AT FINAL HEARING STAGE",
+        "rows": 11,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED WITH DIRECTION",
+        "rows": 10,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "COMPROMISED",
+        "rows": 10,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "86-TRANSFERRED TO NCLT",
+        "rows": 10,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "PETITION IS ALLOWED",
+        "rows": 9,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISPOSED OFF AS NOT PRESSED",
+        "rows": 9,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO CENTRAL ADMINISTRATIVE BRANC",
+        "rows": 9,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "APPEAL ALLOWED",
+        "rows": 9,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "TRANSFERRED TO JABALPUR BENCH",
+        "rows": 9,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "APPEAL DISMISSED AT ADMISSION STAGE",
+        "rows": 8,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "57-NOTICE ISSUED & NOTICE DISCHARGED",
+        "rows": 8,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "REJECTED AS NOT MAINTAINABLE",
+        "rows": 7,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "COMPROMISE AT ADMISSION STAGE",
+        "rows": 7,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO CAT",
+        "rows": 7,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "CLOSED AS ABATED",
+        "rows": 7,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "52-TRANSFERRED TO DISTRICT/SESSION COURT",
+        "rows": 7,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "WITHDRAWN WITH",
+        "rows": 6,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "INJUNCTION MADE ABSOLUTE",
+        "rows": 6,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED WITH PEREMPTORY ORDER",
+        "rows": 6,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "APPEAL DISMISSED/CONFIRMED",
+        "rows": 5,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "51-TRANSFERRED TO SC / OTHER HC",
+        "rows": 5,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "CLOSED AS WITHDRAWN",
+        "rows": 4,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED OUTSIDE STATE",
+        "rows": 4,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "PETITION MADE ABSOLUTE",
+        "rows": 4,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED AS NOT ENTERTAINED",
+        "rows": 4,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED WITH OBSERVATION",
+        "rows": 4,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISPOSED AS ABATED",
+        "rows": 4,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "RULE MADE ABSOLUTE",
+        "rows": 4,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "TRANSFERRED CAT JAMMU",
+        "rows": 4,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "APPEAL ABATED",
+        "rows": 3,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED SETTLED OUT OF COURT",
+        "rows": 3,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "TRANSFERRED TO INDORE BENCH",
+        "rows": 3,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "LOK ADALAT",
+        "rows": 3,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO RESPECTIVE DISTRICT COURT",
+        "rows": 3,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "99-NOT PRESSED",
+        "rows": 3,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO ARMED FORCES TRIBUNAL BENCH",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "INTERIM DIRECTION MADE ABSOLUTE",
+        "rows": 2,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "TRANSFER CASES",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "REJECTED U/S 986",
+        "rows": 2,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "NOT PRESSED HENCE DISMISSED",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO TRIBUNAL",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO OTHER COURT.",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO OTHER COURT AT FINAL HEARING",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO OTHER COURT AT ADMISSION STA",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO JAMMU WING",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "55-TRANSFER TO DEBT RECO.TRIBUNAL",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO SRINAGAR WING",
+        "rows": 2,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "NOTICE ISSUED AND ALLOWED",
+        "rows": 1,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "DISMISSED FOR NON REMOVAL OF DEFECTS",
+        "rows": 1,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "SETTLED IN ADALAT",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "89-TRANSFERRED TO CIVIL COURT",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "DISMISSED WITHOUT COSTS",
+        "rows": 1,
+        "wouldBe": "decided",
+        "method": "disposal_nature_merits"
+      },
+      {
+        "disposal": "TRANSFER TO CITY CIVIL COURT",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO FOOD SAFETY APPELLATE TRIBUN",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFER TO OTHER HIGH COURT",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "54-TRANSFERRED TO IPA BOARD",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO ARMED FORCE TRIBUNAL",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO CIRCUIT BENCH JALPAIGURI",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO DHARWAD",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO GHC/TRIBUNAL",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "45-TRANSFERRED TO CAT @ FH",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      },
+      {
+        "disposal": "TRANSFERRED TO LOWER COURT",
+        "rows": 1,
+        "wouldBe": "procedural_disposal",
+        "method": "disposal_nature_procedural"
+      }
+    ],
+    "residue": [
+      {
+        "disposal": "DISPOSED OFF",
+        "rows": 298008,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OFF"
+      },
+      {
+        "disposal": "DISPOSED OF",
+        "rows": 207298,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OF"
+      },
+      {
+        "disposal": "DISPOSED",
+        "rows": 119482,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED"
+      },
+      {
+        "disposal": "DISPOSED OF NO COSTS",
+        "rows": 58119,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OF NO COSTS"
+      },
+      {
+        "disposal": "CLOSED",
+        "rows": 22842,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CLOSED"
+      },
+      {
+        "disposal": "CLOSED NO COSTS",
+        "rows": 11518,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CLOSED NO COSTS"
+      },
+      {
+        "disposal": "ORDERED",
+        "rows": 9403,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDERED"
+      },
+      {
+        "disposal": "35-ANY OTHER MODE @ ADM.STAGE",
+        "rows": 6569,
+        "wouldBe": null,
+        "method": "unclassified_disposal:35-ANY OTHER MODE @ ADM.STAGE"
+      },
+      {
+        "disposal": "56-DISPOSED AT ADMISSION STAGE",
+        "rows": 5058,
+        "wouldBe": null,
+        "method": "unclassified_disposal:56-DISPOSED AT ADMISSION STAGE"
+      },
+      {
+        "disposal": "PREMPTORY",
+        "rows": 4169,
+        "wouldBe": null,
+        "method": "unclassified_disposal:PREMPTORY"
+      },
+      {
+        "disposal": "DISPOSED OF WITH DIRECTION",
+        "rows": 3204,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OF WITH DIRECTION"
+      },
+      {
+        "disposal": "47-DISPOSAL IN ANY OTHER MODE FH",
+        "rows": 2698,
+        "wouldBe": null,
+        "method": "unclassified_disposal:47-DISPOSAL IN ANY OTHER MODE FH"
+      },
+      {
+        "disposal": "OTHERS DISPOSED OFF",
+        "rows": 1820,
+        "wouldBe": null,
+        "method": "unclassified_disposal:OTHERS DISPOSED OFF"
+      },
+      {
+        "disposal": "46-ANY OTHER MODE @ FH",
+        "rows": 1735,
+        "wouldBe": null,
+        "method": "unclassified_disposal:46-ANY OTHER MODE @ FH"
+      },
+      {
+        "disposal": "RELAXED",
+        "rows": 1216,
+        "wouldBe": null,
+        "method": "unclassified_disposal:RELAXED"
+      },
+      {
+        "disposal": "36-MCA DISPOSED OF",
+        "rows": 980,
+        "wouldBe": null,
+        "method": "unclassified_disposal:36-MCA DISPOSED OF"
+      },
+      {
+        "disposal": "33-CA DISPOSED OF",
+        "rows": 789,
+        "wouldBe": null,
+        "method": "unclassified_disposal:33-CA DISPOSED OF"
+      },
+      {
+        "disposal": "97-DISPOSED AS TRANSFER TO DISTRICT/SESS",
+        "rows": 257,
+        "wouldBe": null,
+        "method": "unclassified_disposal:97-DISPOSED AS TRANSFER TO DISTRICT/SESS"
+      },
+      {
+        "disposal": "OTHER DISPOSED OFF",
+        "rows": 125,
+        "wouldBe": null,
+        "method": "unclassified_disposal:OTHER DISPOSED OFF"
+      },
+      {
+        "disposal": "DATA NOT AVAILABLE IN THE SOFTWARE",
+        "rows": 109,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DATA NOT AVAILABLE IN THE SOFTWARE"
+      },
+      {
+        "disposal": "DISPOSAL BCZ FILE SHIFTED TO TRIBUNAL",
+        "rows": 53,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSAL BCZ FILE SHIFTED TO TRIBUNAL"
+      },
+      {
+        "disposal": "DISPOSED OF WITH COSTS",
+        "rows": 49,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OF WITH COSTS"
+      },
+      {
+        "disposal": "ALONGWITH RECORDS",
+        "rows": 45,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ALONGWITH RECORDS"
+      },
+      {
+        "disposal": "ADMITTED & DISPOSED OFF",
+        "rows": 42,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ADMITTED & DISPOSED OFF"
+      },
+      {
+        "disposal": "CASES NOT FALLING ABOVE",
+        "rows": 40,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CASES NOT FALLING ABOVE"
+      },
+      {
+        "disposal": "BOGUS",
+        "rows": 35,
+        "wouldBe": null,
+        "method": "unclassified_disposal:BOGUS"
+      },
+      {
+        "disposal": "REFERENCE DISPOSED OFF",
+        "rows": 31,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REFERENCE DISPOSED OFF"
+      },
+      {
+        "disposal": "ADMITTED AND DISPOSED OFF",
+        "rows": 28,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ADMITTED AND DISPOSED OFF"
+      },
+      {
+        "disposal": "ORDERED ON TERMS",
+        "rows": 28,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDERED ON TERMS"
+      },
+      {
+        "disposal": "DISPOSAL WITH OBSERVATION",
+        "rows": 25,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSAL WITH OBSERVATION"
+      },
+      {
+        "disposal": "DISPENSED WITH  ORDERED",
+        "rows": 25,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPENSED WITH  ORDERED"
+      },
+      {
+        "disposal": "RULE DISPOSED OF",
+        "rows": 21,
+        "wouldBe": null,
+        "method": "unclassified_disposal:RULE DISPOSED OF"
+      },
+      {
+        "disposal": "DISPOSED ON MOTION DATE AFTER HEARING TH",
+        "rows": 19,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED ON MOTION DATE AFTER HEARING TH"
+      },
+      {
+        "disposal": "ORDERED AS PRAYED OFOR",
+        "rows": 18,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDERED AS PRAYED OFOR"
+      },
+      {
+        "disposal": "ORDERED ACCORDINGLY",
+        "rows": 10,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDERED ACCORDINGLY"
+      },
+      {
+        "disposal": "DISPOSED,NO ORDER",
+        "rows": 10,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED,NO ORDER"
+      },
+      {
+        "disposal": "DISPOSAL BCZ FILE SHIFTED TO SUPREMECOUR",
+        "rows": 9,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSAL BCZ FILE SHIFTED TO SUPREMECOUR"
+      },
+      {
+        "disposal": "CLOSED WITH DIRECTION",
+        "rows": 8,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CLOSED WITH DIRECTION"
+      },
+      {
+        "disposal": "DISPOSED OF WITH OBSERVATION",
+        "rows": 7,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OF WITH OBSERVATION"
+      },
+      {
+        "disposal": "DISPOSED BY NONPV",
+        "rows": 7,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED BY NONPV"
+      },
+      {
+        "disposal": "IA/MEMO/VK/OP IN DISPOSAL",
+        "rows": 7,
+        "wouldBe": null,
+        "method": "unclassified_disposal:IA/MEMO/VK/OP IN DISPOSAL"
+      },
+      {
+        "disposal": "DISPOSED OFF / TRANSMITTED BACK TO DISTR",
+        "rows": 6,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OFF / TRANSMITTED BACK TO DISTR"
+      },
+      {
+        "disposal": "DISPOSED OFF- REPORTING COMPLIANCE",
+        "rows": 5,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OFF- REPORTING COMPLIANCE"
+      },
+      {
+        "disposal": "DISPOSED OFF/ BY CIRCULATION IN CHAMBER",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OFF/ BY CIRCULATION IN CHAMBER"
+      },
+      {
+        "disposal": "DISPOSED AT ADMISSION STAGE",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED AT ADMISSION STAGE"
+      },
+      {
+        "disposal": "CLOSED WITH COSTS",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CLOSED WITH COSTS"
+      },
+      {
+        "disposal": "DISPOSED OF ACCORDINGLY",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OF ACCORDINGLY"
+      },
+      {
+        "disposal": "DISPOSED/ CASE TRANSFERED TO MP HIGH COU",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED/ CASE TRANSFERED TO MP HIGH COU"
+      },
+      {
+        "disposal": "DISPOSED AS NOT MAINTAINABLE",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED AS NOT MAINTAINABLE"
+      },
+      {
+        "disposal": "CLOSED WITH OBSERVATION",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CLOSED WITH OBSERVATION"
+      },
+      {
+        "disposal": "CLOSED FOR JUDGMENT - CAV",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CLOSED FOR JUDGMENT - CAV"
+      },
+      {
+        "disposal": "DISPOSED OFF AS PER ADMINISTRATIVE ORDER",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OFF AS PER ADMINISTRATIVE ORDER"
+      },
+      {
+        "disposal": "DISPOSED OFF AT ADMISSION STAGE",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OFF AT ADMISSION STAGE"
+      },
+      {
+        "disposal": "CASE DISPOSED BY THE SUPREME COURT OF IN",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CASE DISPOSED BY THE SUPREME COURT OF IN"
+      },
+      {
+        "disposal": "OBJECTIONS DISPOSED",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:OBJECTIONS DISPOSED"
+      },
+      {
+        "disposal": "ORDERED IN TERMS OF DECREE OF COMPR",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDERED IN TERMS OF DECREE OF COMPR"
+      },
+      {
+        "disposal": "DISPOSED OFF (THROUGH MEDIATION)",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPOSED OFF (THROUGH MEDIATION)"
+      },
+      {
+        "disposal": "TRANSFRD TO GULBARGA(DISPOSED)",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRANSFRD TO GULBARGA(DISPOSED)"
+      }
+    ],
+    "candidate": [
+      {
+        "disposal": "DELAY CONDONATED/REJECTED.",
+        "rows": 1217,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DELAY CONDONATED/REJECTED."
+      },
+      {
+        "disposal": "DELAY CONDONED",
+        "rows": 792,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DELAY CONDONED"
+      },
+      {
+        "disposal": "GRANT ISSUED",
+        "rows": 463,
+        "wouldBe": null,
+        "method": "unclassified_disposal:GRANT ISSUED"
+      },
+      {
+        "disposal": "ORDER ON PUD/CLERICAL ERROR",
+        "rows": 189,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDER ON PUD/CLERICAL ERROR"
+      },
+      {
+        "disposal": "PEREMPTORY",
+        "rows": 128,
+        "wouldBe": null,
+        "method": "unclassified_disposal:PEREMPTORY"
+      },
+      {
+        "disposal": "TIME EXTENDED",
+        "rows": 107,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TIME EXTENDED"
+      },
+      {
+        "disposal": "SUCCEED",
+        "rows": 68,
+        "wouldBe": null,
+        "method": "unclassified_disposal:SUCCEED"
+      },
+      {
+        "disposal": "CONFIRMED",
+        "rows": 65,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CONFIRMED"
+      },
+      {
+        "disposal": "CONDONED",
+        "rows": 64,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CONDONED"
+      },
+      {
+        "disposal": "CONSENT TERM",
+        "rows": 60,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CONSENT TERM"
+      },
+      {
+        "disposal": "DIRECTION FOR DISTRICT COURT",
+        "rows": 45,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DIRECTION FOR DISTRICT COURT"
+      },
+      {
+        "disposal": "TRIAL BE EXPEDITED",
+        "rows": 42,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRIAL BE EXPEDITED"
+      },
+      {
+        "disposal": "INTERM  ORDER",
+        "rows": 41,
+        "wouldBe": null,
+        "method": "unclassified_disposal:INTERM  ORDER"
+      },
+      {
+        "disposal": "DECREE IN TERMS OF MEMO OF COMPROM",
+        "rows": 33,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DECREE IN TERMS OF MEMO OF COMPROM"
+      },
+      {
+        "disposal": "COMPRAMISED",
+        "rows": 32,
+        "wouldBe": null,
+        "method": "unclassified_disposal:COMPRAMISED"
+      },
+      {
+        "disposal": "INFRUCTUOS",
+        "rows": 30,
+        "wouldBe": null,
+        "method": "unclassified_disposal:INFRUCTUOS"
+      },
+      {
+        "disposal": "SET ASIDE",
+        "rows": 28,
+        "wouldBe": null,
+        "method": "unclassified_disposal:SET ASIDE"
+      },
+      {
+        "disposal": "PETITION IS DISMISSED/REJECTED",
+        "rows": 22,
+        "wouldBe": null,
+        "method": "unclassified_disposal:PETITION IS DISMISSED/REJECTED"
+      },
+      {
+        "disposal": "REMAND",
+        "rows": 20,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REMAND"
+      },
+      {
+        "disposal": "APPEAL CONFIRMED",
+        "rows": 20,
+        "wouldBe": null,
+        "method": "unclassified_disposal:APPEAL CONFIRMED"
+      },
+      {
+        "disposal": "BY TRANSFER",
+        "rows": 19,
+        "wouldBe": null,
+        "method": "unclassified_disposal:BY TRANSFER"
+      },
+      {
+        "disposal": "ADDL. GROUND",
+        "rows": 17,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ADDL. GROUND"
+      },
+      {
+        "disposal": "CLARIFIED",
+        "rows": 16,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CLARIFIED"
+      },
+      {
+        "disposal": "ANSWERED",
+        "rows": 15,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ANSWERED"
+      },
+      {
+        "disposal": "ADMITTED",
+        "rows": 15,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ADMITTED"
+      },
+      {
+        "disposal": "JUDGEMENT",
+        "rows": 15,
+        "wouldBe": null,
+        "method": "unclassified_disposal:JUDGEMENT"
+      },
+      {
+        "disposal": "DEREGISTERED",
+        "rows": 14,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DEREGISTERED"
+      },
+      {
+        "disposal": "LEAVE TO APPEAL GRANTED/REFUSED",
+        "rows": 13,
+        "wouldBe": null,
+        "method": "unclassified_disposal:LEAVE TO APPEAL GRANTED/REFUSED"
+      },
+      {
+        "disposal": "LEAVE TO APPEAL",
+        "rows": 10,
+        "wouldBe": null,
+        "method": "unclassified_disposal:LEAVE TO APPEAL"
+      },
+      {
+        "disposal": "RETURNED",
+        "rows": 9,
+        "wouldBe": null,
+        "method": "unclassified_disposal:RETURNED"
+      },
+      {
+        "disposal": "COMPANY WOUND UP",
+        "rows": 9,
+        "wouldBe": null,
+        "method": "unclassified_disposal:COMPANY WOUND UP"
+      },
+      {
+        "disposal": "PETITION REMITTED BACK FOR FRESH CONSIDE",
+        "rows": 8,
+        "wouldBe": null,
+        "method": "unclassified_disposal:PETITION REMITTED BACK FOR FRESH CONSIDE"
+      },
+      {
+        "disposal": "CONVERTED TO OTHER TYPE",
+        "rows": 8,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CONVERTED TO OTHER TYPE"
+      },
+      {
+        "disposal": "NOT MAINTAINABLE/RETURN THE FILE",
+        "rows": 7,
+        "wouldBe": null,
+        "method": "unclassified_disposal:NOT MAINTAINABLE/RETURN THE FILE"
+      },
+      {
+        "disposal": "MEDIATION",
+        "rows": 7,
+        "wouldBe": null,
+        "method": "unclassified_disposal:MEDIATION"
+      },
+      {
+        "disposal": "DISMMISSED/BY CIRCULATION IN CHAMBER",
+        "rows": 7,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISMMISSED/BY CIRCULATION IN CHAMBER"
+      },
+      {
+        "disposal": "ALLOW/ BY CIRCULATION IN CHAMBER",
+        "rows": 7,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ALLOW/ BY CIRCULATION IN CHAMBER"
+      },
+      {
+        "disposal": "DISCHARGED",
+        "rows": 6,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISCHARGED"
+      },
+      {
+        "disposal": "TRANSF/RETURNED FOR PRESENTATION TO OTHE",
+        "rows": 6,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRANSF/RETURNED FOR PRESENTATION TO OTHE"
+      },
+      {
+        "disposal": "INFRUCTIOUS",
+        "rows": 6,
+        "wouldBe": null,
+        "method": "unclassified_disposal:INFRUCTIOUS"
+      },
+      {
+        "disposal": "ARBIRTATION APPOINTMENT",
+        "rows": 6,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ARBIRTATION APPOINTMENT"
+      },
+      {
+        "disposal": "TRANSFERED TO TELANGANA HIGH COURT",
+        "rows": 5,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRANSFERED TO TELANGANA HIGH COURT"
+      },
+      {
+        "disposal": "DECREED AS PRAYED FOR",
+        "rows": 5,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DECREED AS PRAYED FOR"
+      },
+      {
+        "disposal": "RESTORED",
+        "rows": 5,
+        "wouldBe": null,
+        "method": "unclassified_disposal:RESTORED"
+      },
+      {
+        "disposal": "REVERSED",
+        "rows": 5,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REVERSED"
+      },
+      {
+        "disposal": "EX-PARTE DECREE",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:EX-PARTE DECREE"
+      },
+      {
+        "disposal": "REGISTRATION REFUSED.",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REGISTRATION REFUSED."
+      },
+      {
+        "disposal": "STAY VACATED",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:STAY VACATED"
+      },
+      {
+        "disposal": "OTHERS (DISPOSE/DISMISSED FOR COURT DISP",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:OTHERS (DISPOSE/DISMISSED FOR COURT DISP"
+      },
+      {
+        "disposal": "SCHEME SANCTIONED - COMPANY",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:SCHEME SANCTIONED - COMPANY"
+      },
+      {
+        "disposal": "ORDER PASSED",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDER PASSED"
+      },
+      {
+        "disposal": "REVOKED",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REVOKED"
+      },
+      {
+        "disposal": "RETURN TO COUNSEL",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:RETURN TO COUNSEL"
+      },
+      {
+        "disposal": "REMITTED",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REMITTED"
+      },
+      {
+        "disposal": "NO FURTHER ORDERS",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:NO FURTHER ORDERS"
+      },
+      {
+        "disposal": "DISPENSED WITH FOR THE PRESENT",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISPENSED WITH FOR THE PRESENT"
+      },
+      {
+        "disposal": "DECREE",
+        "rows": 4,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DECREE"
+      },
+      {
+        "disposal": "CASE CONVERTED TO ANOTHER CASE TYPE",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CASE CONVERTED TO ANOTHER CASE TYPE"
+      },
+      {
+        "disposal": "NONE",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:NONE"
+      },
+      {
+        "disposal": "CASE CONVERSION BY COURT ORDER",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CASE CONVERSION BY COURT ORDER"
+      },
+      {
+        "disposal": "TRANSFERED TO DRT",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRANSFERED TO DRT"
+      },
+      {
+        "disposal": "DIVERGENT OPINION - HON'BLE CHIEF JUSTIC",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DIVERGENT OPINION - HON'BLE CHIEF JUSTIC"
+      },
+      {
+        "disposal": "DIRECTION",
+        "rows": 3,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DIRECTION"
+      },
+      {
+        "disposal": "REFERENCE ANSWERED",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REFERENCE ANSWERED"
+      },
+      {
+        "disposal": "COMPOUNDED",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:COMPOUNDED"
+      },
+      {
+        "disposal": "FOR PURPOSE OF COMPLIANCE",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:FOR PURPOSE OF COMPLIANCE"
+      },
+      {
+        "disposal": "EXPARTY DECISION AT ADMISSION STAGE",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:EXPARTY DECISION AT ADMISSION STAGE"
+      },
+      {
+        "disposal": "ADJUDICATED",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ADJUDICATED"
+      },
+      {
+        "disposal": "ANOTHER BENCH",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ANOTHER BENCH"
+      },
+      {
+        "disposal": "OFFICE OBJECTIONS UPHELD",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:OFFICE OBJECTIONS UPHELD"
+      },
+      {
+        "disposal": "RETAIN",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:RETAIN"
+      },
+      {
+        "disposal": "CONDITIONAL ORDER",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CONDITIONAL ORDER"
+      },
+      {
+        "disposal": "RETURNED TO COUNSEL",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:RETURNED TO COUNSEL"
+      },
+      {
+        "disposal": "SPEAKING TO MINUTES",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:SPEAKING TO MINUTES"
+      },
+      {
+        "disposal": "COUNTER AFFIDAVIT",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:COUNTER AFFIDAVIT"
+      },
+      {
+        "disposal": "DECREED EX-PARTY",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DECREED EX-PARTY"
+      },
+      {
+        "disposal": "AMOUNT ENHANCED",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:AMOUNT ENHANCED"
+      },
+      {
+        "disposal": "WRONGLY ENTERED IN S/W",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:WRONGLY ENTERED IN S/W"
+      },
+      {
+        "disposal": "DECIDED CASE",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DECIDED CASE"
+      },
+      {
+        "disposal": "DEFAULT",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DEFAULT"
+      },
+      {
+        "disposal": "NOT MAINTAINABLE",
+        "rows": 2,
+        "wouldBe": null,
+        "method": "unclassified_disposal:NOT MAINTAINABLE"
+      },
+      {
+        "disposal": "BY  LEGAL AID",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:BY  LEGAL AID"
+      },
+      {
+        "disposal": "32-NO ORDER @ ADM STAGE",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:32-NO ORDER @ ADM STAGE"
+      },
+      {
+        "disposal": "OFFICE OBJECTION SUSTAINED",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:OFFICE OBJECTION SUSTAINED"
+      },
+      {
+        "disposal": "ORDER RESERVED",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ORDER RESERVED"
+      },
+      {
+        "disposal": "CASE WRONGLY REGISTERED/FILED",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:CASE WRONGLY REGISTERED/FILED"
+      },
+      {
+        "disposal": "WOUND UP",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:WOUND UP"
+      },
+      {
+        "disposal": "PASS OVER",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:PASS OVER"
+      },
+      {
+        "disposal": "PERMITTED",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:PERMITTED"
+      },
+      {
+        "disposal": "R AND P TRANSFERED TO NAGPUR BENCH",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:R AND P TRANSFERED TO NAGPUR BENCH"
+      },
+      {
+        "disposal": "REDUNDANT",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:REDUNDANT"
+      },
+      {
+        "disposal": "ADMIT, SUMMON THE L.C.R",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ADMIT, SUMMON THE L.C.R"
+      },
+      {
+        "disposal": "ADMIT, ISSUE NOTICE",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ADMIT, ISSUE NOTICE"
+      },
+      {
+        "disposal": "DISMISS BY PREM.ORDER",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DISMISS BY PREM.ORDER"
+      },
+      {
+        "disposal": "ABATE",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:ABATE"
+      },
+      {
+        "disposal": "SETTLEMENT",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:SETTLEMENT"
+      },
+      {
+        "disposal": "DE-REGISTER THE CASE",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DE-REGISTER THE CASE"
+      },
+      {
+        "disposal": "76-NOTE FILED BY OFFICE",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:76-NOTE FILED BY OFFICE"
+      },
+      {
+        "disposal": "TRANSFERD TO SUPREME COURT",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRANSFERD TO SUPREME COURT"
+      },
+      {
+        "disposal": "TRANSFERED TO CAT,HYDERABAD",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRANSFERED TO CAT,HYDERABAD"
+      },
+      {
+        "disposal": "TRANSFERED TO OTHER COURTS",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:TRANSFERED TO OTHER COURTS"
+      },
+      {
+        "disposal": "DECREE ON ADMISSION",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:DECREE ON ADMISSION"
+      },
+      {
+        "disposal": "INJUNCTION VACATED",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:INJUNCTION VACATED"
+      },
+      {
+        "disposal": "AWAIT",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:AWAIT"
+      },
+      {
+        "disposal": "APPLICATION GRANTED",
+        "rows": 1,
+        "wouldBe": null,
+        "method": "unclassified_disposal:APPLICATION GRANTED"
+      }
+    ]
+  }
+}

@@ -11,7 +11,10 @@ import { transientNetworkCode } from './text.ts';
 
 describe('transient network detection', () => {
   it('finds the code on the error itself', () => {
-    assert.equal(transientNetworkCode(Object.assign(new Error('x'), { code: 'ENOTFOUND' })), 'ENOTFOUND');
+    assert.equal(
+      transientNetworkCode(Object.assign(new Error('x'), { code: 'ENOTFOUND' })),
+      'ENOTFOUND',
+    );
   });
 
   it('digs the code out of a nested cause, which is where fetch puts it', () => {
@@ -32,12 +35,77 @@ describe('transient network detection', () => {
     // A 404 or a parse error must surface immediately. Retrying a permanent
     // error just turns a fast failure into a slow one.
     assert.equal(transientNetworkCode(new Error('GET ... -> 404')), null);
-    assert.equal(transientNetworkCode(Object.assign(new Error('x'), { code: 'ERR_INVALID_URL' })), null);
+    assert.equal(
+      transientNetworkCode(Object.assign(new Error('x'), { code: 'ERR_INVALID_URL' })),
+      null,
+    );
   });
 
   it('does not loop forever on a self-referential cause chain', () => {
     const e: Record<string, unknown> = { code: 'NOPE' };
     e['cause'] = e;
     assert.equal(transientNetworkCode(e), null);
+  });
+});
+
+/**
+ * THE SOFT 404.
+ *
+ * The upstream bucket serves a 124-byte HTML error page under some PDF keys,
+ * with HTTP 200 and `Content-Type: application/pdf`. Every signal short of the
+ * bytes says the document is present. Measured 19 Aug 2026: 360 of 360 sampled
+ * condemned Bombay objects were exactly this.
+ *
+ * Recorded as `pdf_failed` (retryable) before the magic-byte check existed, so
+ * the fleet re-fetched every one of them three times per pass and then condemned
+ * them for the wrong reason — and put them in a retry queue rather than in the
+ * provider-recovery population where a document absent from this source belongs.
+ *
+ * The test asserts the SHAPE the caller parses (`GET <url> → 404`), because
+ * `hc-load-cli` reads the status out of that message to choose between
+ * `pdf_absent` and `pdf_unavailable`. A different message would silently fall
+ * through to `pdf_failed` again.
+ */
+describe('fetchPdfText rejects a soft 404', () => {
+  const SOFT_404 =
+    '<!DOCTYPE html>\n<html>\n<body>\n\n<center><strong>Welcome User Search Page not Found here</strong></center>\n\n\n</body>\n</html>\n\n';
+
+  const withStubbedFetch = async (body: string, run: () => Promise<void>): Promise<void> => {
+    const original = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(new TextEncoder().encode(body), {
+        status: 200,
+        headers: { 'content-type': 'application/pdf' },
+      })) as typeof globalThis.fetch;
+    try {
+      await run();
+    } finally {
+      globalThis.fetch = original;
+    }
+  };
+
+  it('throws GET <url> → 404 for a 200 whose body is not a PDF', async () => {
+    await withStubbedFetch(SOFT_404, async () => {
+      const { fetchPdfText } = await import('./text.ts');
+      await assert.rejects(
+        () => fetchPdfText('https://example.invalid/x.pdf'),
+        (e: unknown) => {
+          assert.ok(e instanceof Error);
+          /* The exact shape hc-load-cli's `/→ (\d{3})$/` parses. */
+          assert.match(e.message, /→ 404$/);
+          return true;
+        },
+      );
+    });
+  });
+
+  it('throws for an empty body too — zero bytes is not a PDF either', async () => {
+    await withStubbedFetch('', async () => {
+      const { fetchPdfText } = await import('./text.ts');
+      await assert.rejects(
+        () => fetchPdfText('https://example.invalid/y.pdf'),
+        (e: unknown) => e instanceof Error && /→ 404$/.test(e.message),
+      );
+    });
   });
 });

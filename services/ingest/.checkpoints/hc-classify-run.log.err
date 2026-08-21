@@ -1,0 +1,16 @@
+
+[2026-08-21T17:47:34.711Z] hc-classify — uncaughtException
+PostgresError: canceling statement due to statement timeout [57014]
+PostgresError: canceling statement due to statement timeout
+    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:815:30)
+    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:489:6)
+    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:563:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)
+    at Readable.push (node:internal/streams/readable:394:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+    at cachedError (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/query.js:170:23)
+    at new Query (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/query.js:36:24)
+    at sql (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/index.js:112:11)
+    at writeClasses (C:\Users\Xerxus\Documents\Lawmind\services\ingest\src\hc-classify-cli.ts:107:11)

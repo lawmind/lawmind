@@ -146,17 +146,54 @@ foreach ($c in $canaries) {
     loads the rest of the configuration, and Node's own environment takes
     precedence over an --env-file entry, so this overrides the Railway value
     without editing the file that holds LCC's rollback.
+
+    ─────────────────────────────────────────────────────────────────────────
+    REWRITTEN 17 AUG 2026 — TWO DEFECTS, BOTH ONLY REACHABLE ON THE REAL PATH
+    ─────────────────────────────────────────────────────────────────────────
+
+    This block used to build a `ProcessStartInfo` and call
+    `$psi.ArgumentList.Add($a)`. On the first real run, at the moment the
+    freeze lifted, it died on every worker with:
+
+        You cannot call a method on a null-valued expression.
+
+    `ProcessStartInfo.ArgumentList` is .NET Core. **Windows PowerShell 5.1 is
+    .NET Framework, where the property does not exist** and the collection is
+    therefore null. This machine has no `pwsh`. `-WhatIf` returns two lines
+    above, so the rehearsal never touched it — the dry run passed cleanly the
+    minute before the real run failed, which is exactly the shape of hazard a
+    dry run is supposed to remove.
+
+    The second defect is worse and would not have announced itself.
+    `Process::Start` with `UseShellExecute = $false` and no redirection gives
+    the child THE PARENT'S CONSOLE. That is precisely the mechanism
+    `start-ingest-fleet.ps1` documents at length: when that console goes away,
+    Windows delivers CTRL_CLOSE_EVENT to every process attached to it and they
+    die together — exit 3221225786 / 0xC000013A, which killed 38 workers 95
+    seconds after boot on 15 Aug. Three canaries sharing this agent's console
+    would have died the moment it closed, and the failure would have read as
+    "the local database cannot sustain workers" on the very run built to
+    answer that question.
+
+    So this now uses the pattern that is already proven in this repo:
+    `Start-Process -WindowStyle Hidden`, which gives each worker its own
+    console, with stdout/stderr redirected per scope exactly as the fleet
+    launcher does.
+
+    The child-only environment intent is UNCHANGED. `$env:` assignment here
+    mutates this PowerShell process only — it dies with the script, `.env` is
+    never touched, and LCC's rollback value stays where they put it. Children
+    inherit it, which is the whole mechanism.
   #>
-  $psi = New-Object System.Diagnostics.ProcessStartInfo
-  $psi.FileName = $node
-  foreach ($a in (@('scripts\supervise.mjs', $c.Label, '--', '--env-file=../../.env') + $workerArgs)) {
-    $psi.ArgumentList.Add($a)
-  }
-  $psi.WorkingDirectory = $repo
-  $psi.UseShellExecute = $false
-  $psi.EnvironmentVariables['DATABASE_URL'] = $localUrl
-  $psi.EnvironmentVariables.Remove('DATABASE_PUBLIC_URL') | Out-Null
-  [System.Diagnostics.Process]::Start($psi) | Out-Null
+  $env:DATABASE_URL = $localUrl
+  if (Test-Path Env:DATABASE_PUBLIC_URL) { Remove-Item Env:DATABASE_PUBLIC_URL }
+
+  Start-Process -FilePath $node `
+    -ArgumentList (@('scripts\supervise.mjs', $c.Label, '--', '--env-file=../../.env') + $workerArgs) `
+    -WorkingDirectory $repo `
+    -RedirectStandardOutput (Join-Path $repo "$($c.Label).super.log") `
+    -RedirectStandardError  (Join-Path $repo "$($c.Label).super.err") `
+    -WindowStyle Hidden
 
   Write-Host "  START  $($c.Label.PadRight(20)) [$($c.Band)]  concurrency 8"
 }

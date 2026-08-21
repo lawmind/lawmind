@@ -1,0 +1,1640 @@
+{
+  "tool": "legacy-font-pilot-cli",
+  "takenAt": "2026-08-18T17:52:09.823Z",
+  "courts": [
+    "22_18",
+    "17_21",
+    "18_6",
+    "8_9",
+    "10_8",
+    "19_16"
+  ],
+  "sample": {
+    "requested": 200,
+    "drawn": 200,
+    "minChars": 2000,
+    "fetched": 198,
+    "failed": 2,
+    "fontReadable": 197
+  },
+  "labels": {
+    "legacy": 5,
+    "clean": 192
+  },
+  "fontsSeen": [
+    {
+      "font": "BAAAAA+TimesNewRomanPS-BoldMT",
+      "documents": 47
+    },
+    {
+      "font": "CAAAAA+TimesNewRomanPSMT",
+      "documents": 46
+    },
+    {
+      "font": "DAAAAA+Carlito",
+      "documents": 41
+    },
+    {
+      "font": "Times#20New#20Roman",
+      "documents": 27
+    },
+    {
+      "font": "CAAAAA+Verdana",
+      "documents": 15
+    },
+    {
+      "font": "BAAAAA+Verdana-Bold",
+      "documents": 15
+    },
+    {
+      "font": "BAAAAA+TimesNewRomanPSMT",
+      "documents": 14
+    },
+    {
+      "font": "CAAAAA+TimesNewRomanPS-BoldMT",
+      "documents": 12
+    },
+    {
+      "font": "Helvetica",
+      "documents": 11
+    },
+    {
+      "font": "EAAAAA+TimesNewRomanPS-ItalicMT",
+      "documents": 10
+    },
+    {
+      "font": "BAAAAA+LiberationSerif",
+      "documents": 10
+    },
+    {
+      "font": "Arial",
+      "documents": 8
+    },
+    {
+      "font": "Times-Roman",
+      "documents": 6
+    },
+    {
+      "font": "EAAAAA+Carlito",
+      "documents": 6
+    },
+    {
+      "font": "CAAAAA+Verdana-Bold",
+      "documents": 6
+    },
+    {
+      "font": "DAAAAA+Verdana-Italic",
+      "documents": 6
+    },
+    {
+      "font": "CAAAAA+LiberationSans-Bold",
+      "documents": 6
+    },
+    {
+      "font": "DAAAAA+TimesNewRomanPSMT",
+      "documents": 5
+    },
+    {
+      "font": "DAAAAA+Tahoma-Bold",
+      "documents": 5
+    },
+    {
+      "font": "EAAAAA+Tahoma",
+      "documents": 5
+    },
+    {
+      "font": "EAAAAA+ArialMT",
+      "documents": 5
+    },
+    {
+      "font": "CAAAAA+Arial-BoldMT",
+      "documents": 5
+    },
+    {
+      "font": "BAAAAA+Arial-BoldMT",
+      "documents": 5
+    },
+    {
+      "font": "CAAAAA+BookmanOldStyle",
+      "documents": 4
+    },
+    {
+      "font": "DAAAAA+ArialMT",
+      "documents": 4
+    },
+    {
+      "font": "DAAAAA+Tahoma",
+      "documents": 4
+    },
+    {
+      "font": "DOSZQI+Arial",
+      "documents": 4
+    },
+    {
+      "font": "DAAAAA+Verdana",
+      "documents": 4
+    },
+    {
+      "font": "CAAAAA+ArialMT",
+      "documents": 4
+    },
+    {
+      "font": "ZapfDingbats",
+      "documents": 4
+    },
+    {
+      "font": "TimesNewRomanPSMT",
+      "documents": 4
+    },
+    {
+      "font": "BAAAAA+DejaVuSans",
+      "documents": 3
+    },
+    {
+      "font": "DAAAAA+OpenSymbol",
+      "documents": 3
+    },
+    {
+      "font": "CAAAAA+RupeeForadian",
+      "documents": 3
+    },
+    {
+      "font": "Symbol",
+      "documents": 3
+    },
+    {
+      "font": "BAAAAA+Verdana",
+      "documents": 3
+    },
+    {
+      "font": "EAAAAA+Verdana-BoldItalic",
+      "documents": 3
+    },
+    {
+      "font": "DAAAAA+Arial-BoldMT",
+      "documents": 3
+    },
+    {
+      "font": "GlyphLessFont",
+      "documents": 3
+    },
+    {
+      "font": "ABCDEE+Bookman#20Old#20Style",
+      "documents": 3
+    },
+    {
+      "font": "EAAAAA+LiberationSans",
+      "documents": 3
+    },
+    {
+      "font": "GLPZLO+TimesNewRoman",
+      "documents": 3
+    },
+    {
+      "font": "EAAAAA+Carlito-Bold",
+      "documents": 3
+    },
+    {
+      "font": "BAAAAA+BookmanOldStyle-Bold",
+      "documents": 2
+    },
+    {
+      "font": "DAAAAA+Aroania",
+      "documents": 2
+    },
+    {
+      "font": "GAAAAA+Carlito-Bold",
+      "documents": 2
+    },
+    {
+      "font": "DAAAAA+KrutiDev010",
+      "documents": 2
+    },
+    {
+      "font": "EAAAAA+LiberationSerif",
+      "documents": 2
+    },
+    {
+      "font": "FAAAAA+LiberationSerif-Bold",
+      "documents": 2
+    },
+    {
+      "font": "EAAAAA+Tahoma-Bold",
+      "documents": 2
+    },
+    {
+      "font": "DAAAAA+BookmanOldStyle-Bold",
+      "documents": 2
+    },
+    {
+      "font": "Verdana",
+      "documents": 2
+    },
+    {
+      "font": "FAAAAA+Carlito-Bold",
+      "documents": 2
+    },
+    {
+      "font": "BAAAAA+LiberationSerif-Bold",
+      "documents": 2
+    },
+    {
+      "font": "DAAAAA+LiberationSans",
+      "documents": 2
+    },
+    {
+      "font": "GAAAAA+Tahoma-Bold",
+      "documents": 2
+    },
+    {
+      "font": "DAAAAA+TimesNewRomanPS-ItalicMT",
+      "documents": 2
+    },
+    {
+      "font": "DAAAAA+Verdana-BoldItalic",
+      "documents": 2
+    },
+    {
+      "font": "GAAAAA+Tahoma",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+Tahoma-Bold",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+CenturyGothic",
+      "documents": 1
+    },
+    {
+      "font": "DAAAAA+CenturyGothic-Bold",
+      "documents": 1
+    },
+    {
+      "font": "KRQHDC+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "PGVVGC+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "LSANGP+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "EXPMKD+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "HQBZWU+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "WWNUTW+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "IQDVSO+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "URIIMN+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "WDWBJT+EstrangeloEdessa",
+      "documents": 1
+    },
+    {
+      "font": "QGEWTB+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "AYSGJM+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "CKBVWZ+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "BAAAAA+Caladea-Bold",
+      "documents": 1
+    },
+    {
+      "font": "CAAAAA+Caladea-Regular",
+      "documents": 1
+    },
+    {
+      "font": "WNHIXH+LiberationSans-Bold",
+      "documents": 1
+    },
+    {
+      "font": "NROHQB+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "LUXMPO+LiberationSerif-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "LFCZFB+DejaVuSans-Bold",
+      "documents": 1
+    },
+    {
+      "font": "UTDOJS+LiberationSerif-Italic",
+      "documents": 1
+    },
+    {
+      "font": "TSSOKM+OpenSymbol",
+      "documents": 1
+    },
+    {
+      "font": "BXEIFO+LiberationMono-Italic",
+      "documents": 1
+    },
+    {
+      "font": "XAVUEF+LiberationSans",
+      "documents": 1
+    },
+    {
+      "font": "DBAEQP+DejaVuSans",
+      "documents": 1
+    },
+    {
+      "font": "DBFRLE+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "PTIASA+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "XHZXVJ+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "HRDDFK+Arial",
+      "documents": 1
+    },
+    {
+      "font": "KAAAAA+Arial-Black",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+Algerian",
+      "documents": 1
+    },
+    {
+      "font": "JAAAAA+TimesNewRomanPS-BoldMT",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+OldEnglishTextMT",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+CenturySchoolbook",
+      "documents": 1
+    },
+    {
+      "font": "HAAAAA+CenturySchoolbook-Bold",
+      "documents": 1
+    },
+    {
+      "font": "IAAAAA+CenturySchoolbook-Italic",
+      "documents": 1
+    },
+    {
+      "font": "DAAAAA+Bahnschrift",
+      "documents": 1
+    },
+    {
+      "font": "HXFISO+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "NRASSR+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "JGHBKZ+Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "GQGCQE+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+AroaniaBold",
+      "documents": 1
+    },
+    {
+      "font": "JJUUGW+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "SHTKAR+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "ZEKREU+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "EIGMSF+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "AZGVTW+DejaVuSans",
+      "documents": 1
+    },
+    {
+      "font": "BGKJJY+ArialMT",
+      "documents": 1
+    },
+    {
+      "font": "OIZUGI+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "CTOVID+Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "TCZDSQ+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "FEHPZC+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "DSSZCH+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "XHQXEU+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "HYUCKE+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "FYVVPR+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "MIFJZL+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "SUSTTG+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+LiberationSerif-Italic",
+      "documents": 1
+    },
+    {
+      "font": "HAAAAA+Carlito-Bold",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+IskoolaPota",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+IskoolaPota-Bold",
+      "documents": 1
+    },
+    {
+      "font": "HAAAAA+TimesNewRomanPS-ItalicMT",
+      "documents": 1
+    },
+    {
+      "font": "IAAAAA+TimesNewRomanPS-BoldItalicMT",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+TimesNewRomanPS-BoldItalicMT",
+      "documents": 1
+    },
+    {
+      "font": "RHLJCE+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "ZDDTKX+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "HRBMEC+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "FBTEKL+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "NKZVSB+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "WAKUYD+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "QRSGQK+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "RUASYD+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "EYCRTQ+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "KBPOLF+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "RMHSLC+DejaVuSerif",
+      "documents": 1
+    },
+    {
+      "font": "YSWXPC+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "FIBETT+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "AOPYRF+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "KZGLLG+TimesNewRomanPS-BoldMT",
+      "documents": 1
+    },
+    {
+      "font": "MRSKNG+TimesNewRomanPSMT",
+      "documents": 1
+    },
+    {
+      "font": "QHIQIF+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "QXBDJD+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "DXYRQZ+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "OUVJQR+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+KrutiDev010",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+Verdana-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "EDELAO+BitstreamVeraSerif-Bold",
+      "documents": 1
+    },
+    {
+      "font": "EDELBP+BitstreamVeraSerif-Roman",
+      "documents": 1
+    },
+    {
+      "font": "BISBHG+Verdana-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "IRUWNO+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "KLPQNR+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "NYJCJI+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "SSCVTY+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "MLVMYX+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "ROWXGO+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "LPOARL+FreeSans",
+      "documents": 1
+    },
+    {
+      "font": "QKMMCX+FreeSansOblique",
+      "documents": 1
+    },
+    {
+      "font": "MNASIJ+FreeSansBold",
+      "documents": 1
+    },
+    {
+      "font": "QRZYDT+DejaVuSerif",
+      "documents": 1
+    },
+    {
+      "font": "EURKDR+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "KRIWTP+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "EABDAR+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "VNRBFE+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "RWQLBA+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "GUUAHT+DejaVuSerif",
+      "documents": 1
+    },
+    {
+      "font": "IGDYKW+DejaVuSerif",
+      "documents": 1
+    },
+    {
+      "font": "QRYQWH+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "OJEKIN+ArialMT",
+      "documents": 1
+    },
+    {
+      "font": "CSFLVQ+LiberationMono-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "BDVBIN+Arial-BoldMT",
+      "documents": 1
+    },
+    {
+      "font": "XOSEPF+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "ZLBVZD+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "CAAAAA+DejaVuSans-Bold",
+      "documents": 1
+    },
+    {
+      "font": "DAAAAA+LiberationSans-Bold",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+LiberationSans-Italic",
+      "documents": 1
+    },
+    {
+      "font": "KKBPBE+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "ZITTET+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "VMVKAK+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "XSWATF+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "XUEUIM+ArialMT",
+      "documents": 1
+    },
+    {
+      "font": "AZPQUR+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "XECJNN+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "NCNTBX+Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "FXPCOQ+Verdana-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "GRBSTN+PalatinoLinotype",
+      "documents": 1
+    },
+    {
+      "font": "PDONGF+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "EJWPPC+PalatinoLinotype",
+      "documents": 1
+    },
+    {
+      "font": "LucidaConsole",
+      "documents": 1
+    },
+    {
+      "font": "MCIMTN+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "SDFGIV+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+LiberationSerif-Italic",
+      "documents": 1
+    },
+    {
+      "font": "XWDGQJ+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "GNCJHT+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "KDNIGT+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "QQDWLO+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "JKOXRE+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "BXFUFF+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "WAFFEY+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "GNLJXC+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "VBCOOS+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "IFSOJQ+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+Tahoma",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+BaskOldFace",
+      "documents": 1
+    },
+    {
+      "font": "DAAAAA+CopperplateGothic-Bold",
+      "documents": 1
+    },
+    {
+      "font": "TNZWNA+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "OOTHXA+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "UGDXOY+Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "PCSZYC+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "UCYPOW+LiberationSans-Bold",
+      "documents": 1
+    },
+    {
+      "font": "CNWMMB+LiberationSans",
+      "documents": 1
+    },
+    {
+      "font": "SVLVNY+TimesNewRomanPSMT",
+      "documents": 1
+    },
+    {
+      "font": "UMTKED+Chilanka-Regular",
+      "documents": 1
+    },
+    {
+      "font": "DHXGOV+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "SVEDBW+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "MHLXMT+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "NXHIRG+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "TPVYDD+Calibri",
+      "documents": 1
+    },
+    {
+      "font": "IXLALI+Consolas",
+      "documents": 1
+    },
+    {
+      "font": "HEJHGT+Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "VMDGRR+DejaVuSans-Bold",
+      "documents": 1
+    },
+    {
+      "font": "AQJLNN+DejaVuSans",
+      "documents": 1
+    },
+    {
+      "font": "TZQYPG+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "IGVDOK+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "SNYCGK+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "KIGQOE+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "Verdana-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "BBJGAI+DejaVuSerif",
+      "documents": 1
+    },
+    {
+      "font": "JRJICG+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "JNUHOA+LiberationSans-Bold",
+      "documents": 1
+    },
+    {
+      "font": "IBNSVX+ArialMT",
+      "documents": 1
+    },
+    {
+      "font": "YVSWRP+Arial-BoldMT",
+      "documents": 1
+    },
+    {
+      "font": "IGVGYI+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "BUGFHC+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "IXKDKF+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "EGMHGW+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "ABCDEE+Courier#20New",
+      "documents": 1
+    },
+    {
+      "font": "TXYMSD+GlyphLessFont",
+      "documents": 1
+    },
+    {
+      "font": "Courier",
+      "documents": 1
+    },
+    {
+      "font": "BZCOLT+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "LSZYXW+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "YBWGRQ+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+Ubuntu",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+OpenSymbol",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+LiberationSans",
+      "documents": 1
+    },
+    {
+      "font": "DAAAAA+LiberationSans-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "JRGLKH+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "IWVRIA+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "ESJVZO+Verdana-Italic",
+      "documents": 1
+    },
+    {
+      "font": "HPHUQH+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "ZDWXDR+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "JCLKUH+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "AEMBCH+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "FFAVXW+DejaVuSerif",
+      "documents": 1
+    },
+    {
+      "font": "HRHCGP+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "LOFMND+Arial-BoldItalicMT",
+      "documents": 1
+    },
+    {
+      "font": "BOYBWA+ArialMT",
+      "documents": 1
+    },
+    {
+      "font": "KYNMPX+Arial-BoldMT",
+      "documents": 1
+    },
+    {
+      "font": "NMYXLP+Arial-ItalicMT",
+      "documents": 1
+    },
+    {
+      "font": "BAAAAA+RupeeForadian",
+      "documents": 1
+    },
+    {
+      "font": "DLDQVD+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "BEMWUG+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "RRPIKK+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "CAAAAA+Carlito",
+      "documents": 1
+    },
+    {
+      "font": "GJEGIF+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "DXDVTX+Verdana-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "VJNPVI+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "MEQVVO+TimesNewRomanPSMT",
+      "documents": 1
+    },
+    {
+      "font": "AHVHFK+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "PKKLWI+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "FXGWTT+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "AVDWXH+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "QAXHWG+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "IMMVSP+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "IURPUD+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "HWPRTO+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "RMEAJS+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "WHKHEK+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "INAHXX+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "TKWQEG+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "IATSYR+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "YUQMBG+TimesNewRomanPSMT",
+      "documents": 1
+    },
+    {
+      "font": "EHTHTG+LucidaSansUnicode",
+      "documents": 1
+    },
+    {
+      "font": "HUTTTK+CourierNewPSMT",
+      "documents": 1
+    },
+    {
+      "font": "FBCYZZ+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "TLSJHX+Verdana",
+      "documents": 1
+    },
+    {
+      "font": "HVOZKG+Calibri",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+BookmanOldStyle-BoldItalic",
+      "documents": 1
+    },
+    {
+      "font": "XHMFOH+DejaVuSerif",
+      "documents": 1
+    },
+    {
+      "font": "HAAAAA+LiberationSerif-Italic",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+Arial-ItalicMT",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+Arial-BoldItalicMT",
+      "documents": 1
+    },
+    {
+      "font": "OWLKGB+LiberationSerif",
+      "documents": 1
+    },
+    {
+      "font": "DVQJPV+ArialNarrow-Bold",
+      "documents": 1
+    },
+    {
+      "font": "GUUNTU+Symbol",
+      "documents": 1
+    },
+    {
+      "font": "YAIMWF+ArialNarrow",
+      "documents": 1
+    },
+    {
+      "font": "GAAAAA+ArialMT",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+DevLys-010",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+KrutiDev010",
+      "documents": 1
+    },
+    {
+      "font": "FPEFAA+Palatino#20Linotype",
+      "documents": 1
+    },
+    {
+      "font": "FPEFAB+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "DAAAAA+RupeeForadianStandardSans-Roman",
+      "documents": 1
+    },
+    {
+      "font": "ABCDEE+Algerian",
+      "documents": 1
+    },
+    {
+      "font": "SAUZLB+EstrangeloEdessa",
+      "documents": 1
+    },
+    {
+      "font": "PSZLFC+YuMinchoDemibold",
+      "documents": 1
+    },
+    {
+      "font": "XOJGLT+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "ETMTNJ+BookmanOldStyle",
+      "documents": 1
+    },
+    {
+      "font": "IXZHFB+FranklinGothicMedium",
+      "documents": 1
+    },
+    {
+      "font": "VPRYFM+LucidaConsole",
+      "documents": 1
+    },
+    {
+      "font": "VUAGWB+PalatinoLinotype",
+      "documents": 1
+    },
+    {
+      "font": "WCZXUV+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "KRURCQ+Tahoma",
+      "documents": 1
+    },
+    {
+      "font": "DAAAAA+Cambria",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+BookmanOldStyle-Italic",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+BookmanOldStyle-Bold",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+Verdana-Bold",
+      "documents": 1
+    },
+    {
+      "font": "BAAAAA+KrutiDev010",
+      "documents": 1
+    },
+    {
+      "font": "EAAAAA+SymbolMT",
+      "documents": 1
+    },
+    {
+      "font": "CAFIPM+TimesNewRoman",
+      "documents": 1
+    },
+    {
+      "font": "DFVXJF+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "ABSATS+Times#20New#20Roman",
+      "documents": 1
+    },
+    {
+      "font": "FAAAAA+TimesNewRomanPS-BoldItalicMT",
+      "documents": 1
+    }
+  ],
+  "minedMarkers": [
+    {
+      "marker": "fopkj",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "ky",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "fof",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "izdj",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "iqj",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kjk",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "fu",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "la",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "esa",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "ikfjr",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kz",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "ftlds",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "rgr",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "dh",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "vksj",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "izlrqr",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "ij",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "vfhk",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "qdr",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kkjk",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "vf",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kfu",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "gq",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kkj",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "oa",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "fd",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "gs",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "vihy",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "fnukad",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kd",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "lohdkj",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "gsa",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kksa",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "vijk",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "rfkk",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "vkns",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "tk",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "ifj",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "kker",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    },
+    {
+      "marker": "dksbz",
+      "positiveShare": 0.6,
+      "negativeShare": 0,
+      "lift": 600
+    }
+  ],
+  "textOnlyScreen": {
+    "recall": 0.6,
+    "falsePositiveRate": 0,
+    "truePositives": 3,
+    "falsePositives": 0
+  },
+  "caveats": [
+    "Labels come from /BaseFont in the PDF. A file whose fonts sit in a compressed object stream reads as zero fonts and is EXCLUDED from both classes, never counted as clean.",
+    "The sample is drawn from long pure-ASCII documents in named courts. It is not a corpus rate and must not be quoted as one.",
+    "NOT a uniform random draw: the sample is a contiguous run of the primary key from a random start. id is a UUID and carries no court or date ordering, so the run is not one court or one year, but neighbouring rows are correlated by insertion and the spread is narrower than a true random sample.",
+    "A text-only SUSPECT is never a confirmation. Only a PDF font name confirms."
+  ],
+  "examples": [
+    {
+      "id": "7000cefe-4bc0-414c-bdbb-99bb14539626",
+      "court": "High Court Of Rajasthan",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2022/court=8_9/bench=jaipur/RJHC020605712022_1_2022-09-20.pdf",
+      "legacyFonts": [
+        "DAAAAA+KrutiDev010"
+      ],
+      "textHead": "HIGH COURT OF JUDICATURE FOR RAJASTHAN\nBENCH AT JAIPUR\nS.B. Criminal Revision Petition No. 1208/2022\nKamal Son Of Jyoti Prakash Sharma, Resident Of Plot No 12,\nJamna Colony (Ex) Dehar Ka Balaji, Sikar"
+    },
+    {
+      "id": "70012566-2810-478e-82bf-7784b1be8510",
+      "court": "High Court Of Rajasthan",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=8_9/bench=rhcjodh240618/RJHC010062282020_1_2021-03-25.pdf",
+      "legacyFonts": [
+        "DAAAAA+KrutiDev010"
+      ],
+      "textHead": "(1 of 10) [CMA-464/2020]\nHIGH COURT OF JUDICATURE FOR RAJASTHAN AT\nJODHPUR\nD.B. Civil Misc. Appeal No. 464/2020\nIndra Singh Chouhan S/o Late Shri Rameshwar Singh Chouhan,\nAged About 49 Years, R/o 1006"
+    },
+    {
+      "id": "7001a3f1-27df-47dc-ab91-70e54a0d6b47",
+      "court": "High Court Of Rajasthan",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=8_9/bench=jaipur/RJHC020293692013_1_2025-03-17.pdf",
+      "legacyFonts": [
+        "GAAAAA+KrutiDev010"
+      ],
+      "textHead": "HIGH COURT OF JUDICATURE FOR RAJASTHAN\nBENCH AT JAIPUR\nS.B. Civil Writ Petition No. 340/2014\nYogendra Kumar Sharma Son Of Shri Atma Ram Sharma, B-72,\nPurusharth Nagar, Jagatpura, Jaipur, Rajasthan\n---"
+    },
+    {
+      "id": "7005b80a-b7a8-4ccc-b41a-5fa0bbed26e4",
+      "court": "High Court Of Rajasthan",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=8_9/bench=jaipur/RJHC020769332025_1_2025-10-09.pdf",
+      "legacyFonts": [
+        "EAAAAA+DevLys-010",
+        "FAAAAA+KrutiDev010"
+      ],
+      "textHead": "[2025:RJ-JP:40982]\nHIGH COURT OF JUDICATURE FOR RAJASTHAN\nBENCH AT JAIPUR\nS.B. Criminal Misc Suspension Of Sentence(Bail) Application No.\n1769/2025\nIn\nS.B. Criminal Appeal No. 2379/2025\nPappulal Saini"
+    },
+    {
+      "id": "70064eb0-d292-41c7-9b8f-3ebe506b2d20",
+      "court": "High Court Of Rajasthan",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2019/court=8_9/bench=jaipur/RJHC020434072019_1_2019-08-08.pdf",
+      "legacyFonts": [
+        "BAAAAA+KrutiDev010"
+      ],
+      "textHead": "1\nS.B. Cri. Leave to Appeal No. 267/2019\nShyam Distibutors Vs. State of Raj. & Ors.\njktLFkku mPp U;k;ky;] t;iqj ihB] t;iqjA\n%% vkns'k %%\nS.B. Cri. Leave to Appeal No. 267/2019\nShyam Distributors, Thro"
+    }
+  ]
+}

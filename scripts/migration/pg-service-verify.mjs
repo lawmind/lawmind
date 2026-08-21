@@ -138,6 +138,87 @@ function checkNoConsoleAncestor() {
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. Will it come back by itself?
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * The check `checkNoConsoleAncestor` cannot make, and the blind spot that let a
+ * recurring outage survive two "fixes".
+ *
+ * That check asks about the POSTMASTER's parent, and it has been passing —
+ * correctly — since the start path stopped going through `pg_ctl`. But
+ * `DETACHED_PROCESS` does not remove consoles from the cluster, it MOVES them:
+ *
+ *   a process with NO console that spawns a console-subsystem child does not
+ *   pass a console down — Windows ALLOCATES A NEW ONE for the child.
+ *
+ * So the postmaster is clean and every backend, autovacuum worker, io_worker,
+ * wal_writer and bgworker it forks holds its own private, signalable console.
+ * On Windows 11 each of those also surfaces as a taskbar window, because the
+ * default terminal application is Windows Terminal. Closing one delivers a
+ * console control event, the backend dies `0xC000013A`, and the postmaster
+ * restarts the whole cluster.
+ *
+ * Read off the live server 18 Aug 2026: 7/8 passing, "no console parent" green,
+ * and 33 database windows on the desktop at the same moment. Every recorded
+ * kill hit a CHILD, never the postmaster — which is what this predicts.
+ *
+ * Counted via conhost.exe parented to a postgres.exe: one conhost is one
+ * console, and a child with no console has none. This is a WARNING and not a
+ * FAIL on purpose — it is the expected state until FQ-PGSERVICE's one elevated
+ * command lands, and a permanently red check is a check people stop reading.
+ */
+function checkChildConsoles() {
+  // SessionId, not just a count. A console in session 0 belongs to a service and
+  // has NO interactive desktop: no window can be drawn on it and no logged-in
+  // user can deliver Ctrl-C to it. A console in the interactive session is the
+  // hazard. Counting consoles without asking which session they live in reports
+  // a healthy service as a problem — which this check did on its first run
+  // after the cutover, and the reconciliation is what produced this comment.
+  const consoles = json(
+    `$pg = @(Get-CimInstance Win32_Process -Filter "Name='postgres.exe'" | Select-Object -ExpandProperty ProcessId); ` +
+      `Get-CimInstance Win32_Process -Filter "Name='conhost.exe'" | Where-Object { $pg -contains $_.ParentProcessId } | Select-Object ProcessId,ParentProcessId,SessionId`,
+  );
+  const interactive = consoles.filter((c) => Number(c.SessionId) !== 0);
+  const session0 = consoles.length - interactive.length;
+  const n = interactive.length;
+  if (n === 0) {
+    record(
+      true,
+      'no reachable consoles',
+      session0 === 0
+        ? 'no conhost.exe parented to a postgres.exe'
+        : `${session0} console(s), all in session 0 — no interactive desktop, nothing can signal them`,
+    );
+    return;
+  }
+  // Not record(false, ...): see the comment above. The cluster is working as
+  // designed here; what is missing is elevation, and that is already queued.
+  note(
+    'child consoles',
+    `${n} postgres process(es) hold a console in an INTERACTIVE session — each is a signalable window (FQ-PGSERVICE)`,
+  );
+  // Read in Node rather than shelled out to PowerShell: the pid file is a local
+  // file and quoting a Windows path through a PowerShell string was the bug this
+  // replaced.
+  const pidFile = join(import.meta.dirname, '..', '..', '.pg-hide-consoles.pid');
+  let watcher = 0;
+  if (existsSync(pidFile)) {
+    const candidate = Number(readFileSync(pidFile, 'utf8').trim());
+    if (Number.isInteger(candidate) && candidate > 0) {
+      // Liveness, not existence. A stale pid file must not read as "covered".
+      const alive = json(
+        `Get-CimInstance Win32_Process -Filter "ProcessId=${candidate}" | Select-Object ProcessId,Name`,
+      );
+      if (alive[0] && /^powershell\.exe$/i.test(alive[0].Name ?? '')) watcher = candidate;
+    }
+  }
+  record(
+    watcher !== 0,
+    'console windows hidden',
+    watcher !== 0
+      ? `pg-hide-consoles.ps1 watcher live (pid ${watcher}) — windows hidden, cluster still signalable`
+      : 'NO WATCHER: run  powershell -File scripts/pg-hide-consoles.ps1 -Apply -Watch',
+  );
+}
+
 function checkBootPersistence() {
   const services = json(
     `Get-CimInstance Win32_Service | Where-Object { $_.PathName -match 'postgres|pgsql' } | Select-Object Name,StartMode,State,PathName`,
@@ -278,6 +359,7 @@ async function main() {
   const up = await checkReachable();
   if (up) {
     checkNoConsoleAncestor();
+    checkChildConsoles();
     checkDuplicateClusters();
   }
   checkBootPersistence();

@@ -1,0 +1,118 @@
+{
+  "kind": "new1_vector_scale_restated",
+  "createdAt": "2026-08-18T04:22:10.730Z",
+  "chunkerMeanChars": 2195,
+  "bytesPerVector": {
+    "fp32": 13778.58,
+    "halfvec": 5571.26
+  },
+  "measuredToday": {
+    "documentsWithVectors": 40161,
+    "vectors": 620300,
+    "vectorsPerDocument": {
+      "mean": 15.45,
+      "p50": 11,
+      "p90": 29,
+      "p99": 90,
+      "max": 1276
+    },
+    "byCourt": {
+      "supremeCourt": {
+        "docs": 38341,
+        "vectors": 616197
+      },
+      "highCourt": {
+        "docs": 1820,
+        "vectors": 4103
+      }
+    }
+  },
+  "classes": [
+    {
+      "name": "decided",
+      "docs": 1306391,
+      "meanChars": 21053,
+      "tier": "A",
+      "vectorsPerDoc": 10,
+      "vectors": 13063910
+    },
+    {
+      "name": "decided_brief",
+      "docs": 399175,
+      "meanChars": 981,
+      "tier": "A",
+      "vectorsPerDoc": 1,
+      "vectors": 399175
+    },
+    {
+      "name": "bail_order",
+      "docs": 907216,
+      "meanChars": 6047,
+      "tier": "D",
+      "vectorsPerDoc": 3,
+      "vectors": 2721648
+    },
+    {
+      "name": "procedural_disposal",
+      "docs": 1233813,
+      "meanChars": 1421,
+      "tier": "D",
+      "vectorsPerDoc": 1,
+      "vectors": 1233813
+    },
+    {
+      "name": "unclassified",
+      "docs": 3229688,
+      "meanChars": 8204,
+      "tier": "E",
+      "vectorsPerDoc": 4,
+      "vectors": 12918752
+    },
+    {
+      "name": "reference_stub",
+      "docs": 181443,
+      "meanChars": 436,
+      "tier": "E",
+      "vectorsPerDoc": 1,
+      "vectors": 181443
+    }
+  ],
+  "tiers": [
+    {
+      "tier": "A",
+      "docs": 1705566,
+      "vectors": 13463085
+    },
+    {
+      "tier": "D",
+      "docs": 2141029,
+      "vectors": 3955461
+    },
+    {
+      "tier": "E",
+      "docs": 3411131,
+      "vectors": 13100195
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario": "TIER_A only",
+      "vectors": 13463085,
+      "fp32GiB": 172.8,
+      "halfvecGiB": 69.9
+    },
+    {
+      "scenario": "TIER_A + TIER_D",
+      "vectors": 17418546,
+      "fp32GiB": 223.5,
+      "halfvecGiB": 90.4
+    },
+    {
+      "scenario": "everything classified",
+      "vectors": 30518741,
+      "fp32GiB": 391.6,
+      "halfvecGiB": 158.4
+    }
+  ],
+  "inheritedLimit": "class populations and mean chars are CX1's 200-document, 20-cell purposive sample — order of magnitude only"
+}

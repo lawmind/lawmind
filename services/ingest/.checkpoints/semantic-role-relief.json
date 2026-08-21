@@ -1,0 +1,26 @@
+{
+ "tasks": [
+  "relief"
+ ],
+ "cursor": "fe415aa7-5b7c-4bfd-b1bf-cae01b607c0d",
+ "rows": 185,
+ "claims": 280,
+ "promotedRows": 41,
+ "byOutcome": {
+  "ROLE_UNPROVEN": 232,
+  "CANONICAL_ACCEPT": 46,
+  "ROLE_MISMATCH": 2
+ },
+ "byRoleOutcome": {
+  "relief:ROLE_UNPROVEN": 232,
+  "relief:CANONICAL_ACCEPT": 46,
+  "relief:ROLE_MISMATCH": 2
+ },
+ "byRule": {
+  "no_voice_marker_within_reach": 232,
+  "inside_a_recital_of_submissions": 46,
+  "nearest_voice_is_the_court": 2
+ },
+ "startedAt": "2026-08-21T22:05:55.053Z",
+ "updatedAt": "2026-08-21T22:05:55.634Z"
+}

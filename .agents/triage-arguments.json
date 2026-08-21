@@ -1,0 +1,50 @@
+{
+  "task": "arguments",
+  "claimsTotal": 621,
+  "claimsBad": 134,
+  "excerptMismatch": 0,
+  "buckets": {
+    "unexplained_drift": 53,
+    "ocr_spacing": 15,
+    "paraphrase": 17,
+    "source_page_furniture": 30,
+    "source_interpolation": 15,
+    "punctuation_only": 1,
+    "char_transcription": 3
+  },
+  "owners": {
+    "ingest": 101,
+    "model": 32,
+    "verifier": 1
+  },
+  "byKind": {
+    "argument_petitioner": {
+      "total": 382,
+      "bad": 83
+    },
+    "argument_respondent": {
+      "total": 239,
+      "bad": 51
+    }
+  },
+  "bucketByKind": {
+    "argument_petitioner": {
+      "unexplained_drift": 26,
+      "ocr_spacing": 10,
+      "paraphrase": 13,
+      "source_page_furniture": 21,
+      "punctuation_only": 1,
+      "source_interpolation": 10,
+      "char_transcription": 2
+    },
+    "argument_respondent": {
+      "unexplained_drift": 27,
+      "source_interpolation": 5,
+      "source_page_furniture": 9,
+      "ocr_spacing": 5,
+      "paraphrase": 4,
+      "char_transcription": 1
+    }
+  },
+  "examples": {}
+}

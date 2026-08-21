@@ -73,7 +73,24 @@ const QUERIES = [
 
 const url = process.env['DATABASE_URL'];
 if (!url) throw new Error('DATABASE_URL is not set');
-const sql = postgres(url, { max: 1, ssl: 'require', idle_timeout: 0, connect_timeout: 60 });
+/**
+ * A hard `ssl: 'require'` could not open the local cluster at all — the server
+ * runs `ssl = off` and the driver dies before the first query, so this tool has
+ * been unrunnable since the cutover rather than merely slow. LCC found it in the
+ * sweep that applied `services/harness/src/db-url.ts`'s `sslFor()` to 36 other
+ * tools (bus 0680); the local-host set is duplicated rather than imported, which
+ * is that file's own reasoning — two independent lists that agree are the
+ * intended shape, one shared list a later change loosens is not.
+ */
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]', '0.0.0.0']);
+const sslFor = (u) => {
+  try {
+    return LOCAL_HOSTS.has(new URL(u).hostname) ? false : 'require';
+  } catch {
+    return 'require';
+  }
+};
+const sql = postgres(url, { max: 1, ssl: sslFor(url), idle_timeout: 0, connect_timeout: 60 });
 const pct = (n) => (n * 100).toFixed(1) + '%';
 const quantile = (xs, q) => xs.slice().sort((a, b) => a - b)[Math.floor(xs.length * q)];
 

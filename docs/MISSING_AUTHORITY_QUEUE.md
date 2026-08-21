@@ -12,7 +12,7 @@ this queue is actually for.**
 
 ---
 
-## 0 · STALENESS WARNING, found and quantified 12 Aug 2026 (this refresh)
+## 0 · STALENESS WARNING, found and quantified 12 Aug 2026, RE-CHECKED 14 Aug — worse, not resolved
 
 **Re-ran this query fresh this session, expecting different numbers — got
 byte-identical ones**, which was the tell. Verified rather than shrugged
@@ -32,6 +32,23 @@ every hour NEW2's ingest continues outrunning it. **This is enrichment
 territory (LCC/NEW2), not this lane's to fix** — flagged on the bus, not
 actioned here. Re-run this query after citation extraction catches up
 before treating any ranking below as current.
+
+**RE-CHECKED 14 Aug 2026 — `external_citations` is still exactly frozen at
+the same timestamp, and the gap has widened dramatically, not narrowed.**
+Live query: `external_citations` — still **51,272 total rows**, latest row
+still `2026-08-11T00:34:11Z`, byte-identical to the check above three days
+earlier. Meanwhile `judgments` has grown to **3,192,920** (from 407,331) —
+the corpus has grown roughly **7.8x since this table last gained a row**,
+so the ranking below now reflects an even smaller fraction of the true
+picture than the original warning stated (roughly 35,000 of 3.19M
+judgments, ~1.1%, down from ~8.6%). `judgment_citations` (internal) has
+also fallen further behind its own earlier pace — latest row now
+`2026-08-13T06:55:41Z`, over a day stale against a corpus that kept
+growing. **Still not this lane's to fix — external-citation extraction is
+enrichment territory** — but the staleness is materially worse than when
+first flagged, not resolved by the intervening corpus growth, and worth
+re-surfacing rather than let the original "43 hours stale" figure imply a
+problem that's been sitting still rather than compounding.
 
 | | |
 | --- | --- |
@@ -104,14 +121,27 @@ unrelated populations.**
 defaulted to `cites`. Sampled 15 across 8 different courts, all identical
 in shape. Checked the overlap: **zero judgments carry both an empty
 sentinel row and a real citation edge** — it is exclusively one or the
-other, one sentinel row per judgment. This is almost certainly a "citation
-extraction ran, found nothing" completion marker from the enrichment
-pipeline, not a citation of any kind. **It has zero acquisition
-relevance** and should not be read as 625,748 authorities LawMind is
-missing. **Not this lane's file to fix** — flagging to LCC/NEW2, whoever
-owns the citation extractor, since a marker row living in the same
-`cited_judgment_id IS NULL` bucket as real unresolved citations will keep
-inflating this exact metric for anyone who queries it the obvious way.
+other, one sentinel row per judgment.
+
+**CORRECTED 13 Aug 2026 (bus 0307) — this is not a bug. It is deliberate.**
+`citations-cli.ts`'s own header documents it: one sentinel row per judgment
+where extraction found nothing, so the resumable pass can skip
+already-processed judgments instead of re-reading them forever.
+`--rescan` clears a sentinel when a judgment starts citing something. LCC
+confirmed the design is sound at 46x the scale it was first measured at.
+**It still has zero acquisition relevance and should not be read as
+625,748 missing authorities** — that conclusion stands unchanged — but
+there is nothing here for LCC or NEW2 to fix. Struck the earlier "flagging
+to fix" line; it was wrong to call this a defect.
+
+**The real failure was neither of us reading `SCHEMA_TRUTH.md` first.**
+CLAUDE.md names it the only authority on data shapes, and it already had
+a section on the sentinel before this thread started. LCC has since added
+the two side-by-side queries (naive vs sentinel-excluded) and the
+resulting figures there. **Standing rule for this lane, going forward:
+read a table's `SCHEMA_TRUTH.md` entry before computing a headline number
+from it** — sampling the rows caught this one, but the file would have
+answered it in the time it took to open it.
 
 **The real unresolved population is 598,759 — still ~11.7x the frozen
 51,272-row `external_citations` table, a genuine and substantial finding,
@@ -155,6 +185,250 @@ finish or individual verification, neither done here.
 `LIMIT` — the top-40 table in §2 below spans single-court patterns by
 design (frequency ranking), but this section's 200-citation sample was
 checked to span courts, not accidentally read as physical insertion order.
+
+---
+
+## 1d · RESOLVED 14 Aug 2026 — the ECT is in hand, and it closes 34.2% of this queue for £0
+
+**The concordance source this document has pointed at since 12 Aug has been
+fetched, parsed, measured and independently validated.** Full account:
+`SOURCE_REGISTRY.md` §5a-FETCHED. The headline, measured against the live
+`judgment_citations` table (not the frozen `external_citations` one):
+
+| | distinct | edges |
+| --- | --- | --- |
+| live unresolved population (sentinels excluded) | 231,546 | **598,766** |
+| present in the ECT | 42,335 | 322,160 |
+| **resolvable to a judgment ALREADY HELD** | **21,340** | **204,684 (34.2%)** |
+
+Per reporter, as a share of that reporter's own unresolved edges: **AIR
+63.1%**, **SCC 52.4%**, **SCALE 49.3%**.
+
+**This settles §1's central claim with a number.** The thesis was that this
+queue is an alias-resolution problem, not an acquisition problem — argued
+first from 32,383 frozen rows, then from a 200-citation sample in §1c. It is
+now measured across the whole 598,766-edge live population: **a third of it
+closes against judgments LawMind already holds, using a free official table,
+with zero documents acquired.**
+
+**Validated before being recommended, 99.42%.** Cross-checked against
+`judgment_citation_aliases` (4,394 corpus-derived pairings, each with ≥2
+corroborating citing judgments — an independent ground truth): 3,807
+comparable, **3,785 agree, 22 disagree**. The disagreements are ECT
+transcription slips (a `(2001)` for `(2011)`, an off-by-one page), not
+systematic error — so **promotion should corroborate rather than trust
+blindly**, the same two-sighting discipline the alias table already applies
+to itself.
+
+**Two limits, stated rather than left to be discovered:**
+
+1. **The ECT stops at `as on 12.03.2018`.** Nothing after March 2018. That is
+   a hard coverage edge, and the 2018–2026 span needs a different route.
+2. **It cannot help the 24,655 unresolved SCR citations** (34,253 edges,
+   0% resolvable). The ECT maps *into* S.C.R.; an unresolved S.C.R. citation
+   is already in the target form, so a failure there is a direct-matching or
+   genuine-absence problem, not a concordance one. **Separately queued.**
+
+**Licence NOT cleared** — an official Government of India publication is a
+*Government work*, a different category from a judgment. Filed to
+`FOUNDER_QUEUE.md`. **Nothing here is a cleared target for NEW2 yet**, and
+building the loader is LCC's territory regardless.
+
+**§3's instruction below is now obsolete on its first point.** "First move is
+resolving the IndianKanoon-purchase decision" was written before the ECT was
+in hand and before IndianKanoon was confirmed declined. The first move is the
+ECT, it is free, and it is already parsed.
+
+---
+
+## 1e · 14,374 UNRESOLVED SCR CITATIONS EXACTLY MATCH A JUDGMENT WE HOLD — 14 Aug 2026
+
+**Cheaper than the ECT and needing no external source, no licence and no
+founder decision.** §1d flagged the 24,655 unresolved SCR citations as the
+population the ECT provably cannot help with. Characterised them directly.
+Re-measured live: **26,270 distinct** (the number moves with ingest).
+
+| bucket | distinct | edges | what it means |
+| --- | --- | --- | --- |
+| unparsed form | 1,598 | — | normalisation gap |
+| **EXACT string match to a held judgment** | **14,374** | **14,374** | **we hold it; the link is simply not written** |
+| volume-agnostic match only | 4,207 | 10,391 | volume differs between citing text and our stored form |
+| no match at all | 6,056 | 9,518 | possibly genuinely absent |
+
+**18,581 of 26,270 (71%) point at judgments LawMind already holds.** Verified
+with concrete pairs, not asserted — e.g. `(2018) 9 SCR 419` is unresolved
+while we hold *All India Judges Association & Ors. v. Union of India* under
+exactly that citation; `(2023) 3 SCR 790` while we hold *Virendrasing v. The
+Additional Commissioner*.
+
+**The match is exact string equality on `normaliseCitation()` output against
+the held judgment's own `reporter_citations`** — not a fuzzy or heuristic
+match. There is no judgement call in it.
+
+### The timing evidence, which is the actionable part
+
+Sampled 500 of these matched-but-unresolved edges:
+
+    matched-but-unresolved, created   2026-08-06T15:19 .. 15:25   (all 500)
+    resolved edges overall, created   2026-08-06T15:19 .. 2026-08-14T18:22
+
+**They are all from the oldest citation batch, and the resolver has been
+writing resolved edges continuously since — including two minutes before this
+measurement.** So this is not a backlog waiting its turn. Either the resolver
+never revisits rows from an earlier pass, or its matching rule differs from
+exact normalised-string equality.
+
+**Which of those it is, is LCC's to determine — this lane does not own the
+resolver and did not read its matching rule.** Stated as the evidence, not as
+a diagnosis. Sent on the bus.
+
+**Acquisition consequence: none, and that is the point.** Of the SCR
+population, only the 6,056 no-match citations could conceivably be an
+acquisition question, and even those need the volume-mismatch and
+normalisation buckets ruled out first. Their year distribution skews recent
+(2023: 488, 2022: 485, 2018: 473, 2020: 472) rather than historical, which is
+not the shape of a corpus with a historical hole.
+
+---
+
+## 1g · THE 6,056/6,886 NO-MATCH BUCKET, CHARACTERISED — 62% of it is exactly the ECT's blind spot, and the rest is very likely metadata lag, not acquisition · 15 Aug 2026
+
+**Re-measured live (the number moves with ingest, per §1e's own note — now
+6,886 distinct / 10,359 edges against 38,342 held SC judgments, up from 6,056
+at the 14 Aug measurement).** Method: keyed every held SC judgment's
+`reporter_citations` into `(year, vol, page)` and `(year, page)` sets in
+memory (38,342 rows, the same "pull the small side, don't scan the big table"
+discipline `LANE_PROTOCOL.md` already documents), then classified all 36,421
+unresolved SCR-shaped `judgment_citations` edges against them. Read-only,
+temp script, deleted after use, no trace in `git status`.
+
+    exact match (year, vol, page)      15,113 edges / 14,676 distinct
+    volume-agnostic match (year, page) 10,949 edges /  4,727 distinct
+    NO MATCH AT ALL                    10,359 edges /  6,886 distinct
+
+**The headline: 62% of the no-match edges (6,372 of 10,359, 3,574 distinct)
+are dated 2018 or later** — exactly the span `SOURCE_REGISTRY.md` §5a-FETCHED
+and §1d above already established the Equivalent Citation Table CANNOT cover
+(it stops 12.03.2018). This is not a coincidence worth re-investigating as a
+new hole; it is the ECT's own documented edge, now visible from the other
+side. **The pre-2018 remainder (3,987 edges, 3,312 distinct) is very likely
+NOT a separate gap either** — it sits inside the ECT's 1950–2018 coverage
+window, so once the ECT licence clears (`FOUNDER_QUEUE.md`, still open) this
+whole pre-2018 slice is a candidate for automatic resolution, not a fresh
+acquisition target.
+
+**Why the 2018+ slice is very unlikely to be a genuine document gap: LawMind's
+own Supreme Court holdings are 99.98% complete** (`DATASETS.md`, `TREATMENT_
+GRAPH_GAP.md`). A no-match SCR citation to a 2018–2024 Supreme Court judgment
+is far more likely to mean **we hold the judgment (under its neutral
+citation) but our `reporter_citations` array has no S.C.R. entry for it yet**
+— the printed S.C.R. series assigns volume/page well after a judgment is
+delivered, so recent judgments are systematically under-cited in this one
+reporter form. This is a hypothesis, not verified against individual cases
+this pass (would need per-citation case-name cross-referencing, which the
+`citation_text` column alone does not carry) — stated as the strongest
+available reading of the evidence, not as confirmed.
+
+**Net for acquisition: nothing actionable here.** Every no-match SCR citation
+routes to either "wait for the ECT licence" (pre-2018) or "a
+metadata-assignment lag on judgments already held" (2018+), not to a new
+document LawMind needs to fetch. This sharpens rather than reverses §1's
+original thesis — the queue was never a document-acquisition problem, and
+this was the one bucket left that could conceivably have been one.
+
+**A separate, genuine, LCC-actionable finding surfaced while parsing this
+population, not an acquisition item:** `normaliseCitation()`
+(`services/ingest/src/citations.ts`) never inserts a space around a bare
+"SCR" token, so a citation typeset as `(2017) 11SCR1036` in source text
+normalises to a DIFFERENT key than `(2017) 11 SCR 1036` for the same
+authority — the extraction regex itself allows `\s*` (zero-or-more) around
+the reporter token, but the normaliser that is supposed to make spacing
+variants compare equal does not close that gap for "SCR" specifically (it
+already does for others via the year-first rewrite). **Measured: 1,648
+distinct unresolved citations carry this exact defect** — this excludes the
+legitimate volume-less form `(YYYY) SCR PAGE`, which is not a bug and
+already resolves correctly via volume-agnostic matching. Not fixed here —
+this lane does not touch `services/ingest` — flagged to LCC on the bus with
+the file and the count.
+
+**FIXED by LCC, 15 Aug 2026 (bus 0536) — and the real population was bigger
+than this section found.** LCC measured the actual vocabulary rather than
+patching the SCR token alone (this section's own §1g rule): **SCC carries the
+identical no-space defect at roughly 3.5x the scale of the SCR half found
+here** (SCC 1,749+1,588 digit/token-adjacency occurrences vs SCR's 450+481),
+and SCALE at a smaller scale — AIR, JT, CriLJ and SCC OnLine show none. Fixed
+and shipped, 35/35 new tests, 472/474 across `services/ingest`. **Inert until
+a backfill lands**, because `judgment_citations_unique_edge` is keyed on
+`normalised_citation` and every row written before the fix holds the OLD
+unspaced key — re-extracting now would write a second edge for the same
+authority rather than matching the old one. Tracked as LCC's Q1.60; **nothing
+should re-extract over already-processed judgments until it exists.** Also
+resolves the open question in §1e above about why the resolver's bulk sweep
+and the inline extraction path disagreed on some edges: the bulk sweep
+strips non-alphanumerics before comparing (never saw this defect), the
+inline resolver compares the normalised key directly (did) — two different
+code paths, same fingerprint, not evidence of a scheduling gap as originally
+framed there.
+
+---
+
+## 1h · THE 2018–2026 CONCORDANCE GAP — closed as a research question, no new source exists · 15 Aug 2026
+
+**Previously queued (Q1.47/bus 0488) as "the next lead once §1g's characterisation lands."**
+It has landed, and it changes what this item even is.
+
+Two candidate routes were named: e-SCR, and the internal 656-judgment
+paired-citation source. Both were already checked, in earlier sessions, and
+neither needed re-research:
+
+- **e-SCR (`scr.sci.gov.in`) is closed for good, fetched directly and
+  confirmed** (`docs/ACQUISITION_SESSION_LOG.md` session 8): its search form
+  offers only SCR and Neutral Citation fields — no SCC, no AIR. It cannot
+  serve the SCC/AIR → S.C.R. concordance problem for ANY year, 2018+
+  included. This was already settled 13 Aug 2026; not a live lead.
+- **The internal 656-judgment source** (`docs/ai/OVERRULED_GROUP_MARKERS.md`
+  §4/§4b) is real, sound (391 pairs verified from a 45-judgment sample,
+  proposed for a full 656-judgment harvest) — but it is LCC's build item,
+  already proposed there, not a NEW3 acquisition question. Nothing to
+  discover; it is already found and already queued.
+
+**And §1g above removes most of the reason to keep looking.** If the 2018+
+no-match SCR population is mostly metadata lag on judgments already held
+rather than genuinely unresolvable citations, there is no gap-shaped hole for
+a "newer SCR volumes" source to fill even if one existed. No such official
+post-2018 concordance publication was found this session or any prior one.
+
+**Closed, not abandoned:** if LCC's harvest of the 656-judgment source or the
+resolver's own SCC/AIR extraction later surfaces a genuine post-2018
+concordance shortfall with real numbers behind it, that is a new, evidenced
+item — this closes the version of the question that was open on
+speculation.
+
+---
+
+## 1f · JT — the extractor gap is REAL but the impact is NEGLIGIBLE. Measured, and it corrects my own flag.
+
+**`citations.ts` PATTERNS genuinely has no JT rule** — AIR, SCC, SCR, SCALE
+and neutral citations are matched; JT is not. `judgment_citations` contains
+**zero** rows referencing JT, confirming nothing is extracted.
+
+**I flagged this to LCC and NEW1 as a probable bug. Measurement says it is
+not worth fixing.** Sampled 1,632 judgments via `TABLESAMPLE BERNOULLI`
+(cross-court by construction, per this lane's own §3b finding):
+
+    judgments containing >= 1 JT citation :  1 / 1,632  (0.06%)
+    total JT occurrences in the sample     :  1
+    distinct courts citing JT              :  1  (Gujarat)
+
+**One occurrence in 1,632 judgments.** The ECT carries 89,372 JT atoms, so JT
+is a real reporter in the wider literature — but the courts in *our* corpus
+almost never cite it. **The absence of the pattern is certain; the cost of the
+absence is approximately zero.**
+
+Recorded because the correction is the useful part: *"the ECT has 89,372 JT
+atoms"* felt like strong evidence that we were missing a lot, and it was
+evidence about the wrong population. A reporter's prominence in a
+concordance says nothing about how often our judgments cite it.
 
 ---
 

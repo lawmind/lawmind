@@ -1,0 +1,97 @@
+{
+  "kind": "new1_expanded_hc_benchmark",
+  "generatedAt": "2026-08-20T04:11:47.032Z",
+  "goldSource": {
+    "file": "docs/ai/new3-semantic-expansion-gold.json",
+    "builtBy": "NEW3",
+    "method": "citation-edge (build-queries.ts redaction/rejection, reused not reimplemented), plus mechanical exact_citation/case_title variants — zero LLM paraphrase"
+  },
+  "note": "exact cosine, no ANN — the question is what the REPRESENTATION reaches, not index recall",
+  "goldAuthorities": 2,
+  "queries": 6,
+  "reachability": {
+    "in_judgments": 2,
+    "in_chunks": 0,
+    "in_stage": 2
+  },
+  "universeSizes": {
+    "chunks": 620300,
+    "stage": 129025
+  },
+  "overall": {
+    "stage": {
+      "n": 6,
+      "successAt5": 0.3333333333333333,
+      "recallAt20": 0.3333333333333333,
+      "mrr": 0.075,
+      "ndcgAt10": 0.13625489421798911
+    },
+    "chunks": {
+      "n": 6,
+      "successAt5": 0,
+      "recallAt20": 0,
+      "mrr": 0,
+      "ndcgAt10": 0
+    }
+  },
+  "byQueryType": {
+    "proposition": {
+      "stage": {
+        "n": 2,
+        "successAt5": 1,
+        "recallAt20": 1,
+        "mrr": 0.225,
+        "ndcgAt10": 0.40876468265396737
+      },
+      "chunks": {
+        "n": 2,
+        "successAt5": 0,
+        "recallAt20": 0,
+        "mrr": 0,
+        "ndcgAt10": 0
+      }
+    },
+    "exact_citation": {
+      "stage": {
+        "n": 2,
+        "successAt5": 0,
+        "recallAt20": 0,
+        "mrr": 0,
+        "ndcgAt10": 0
+      },
+      "chunks": {
+        "n": 2,
+        "successAt5": 0,
+        "recallAt20": 0,
+        "mrr": 0,
+        "ndcgAt10": 0
+      }
+    },
+    "case_title": {
+      "stage": {
+        "n": 2,
+        "successAt5": 0,
+        "recallAt20": 0,
+        "mrr": 0,
+        "ndcgAt10": 0
+      },
+      "chunks": {
+        "n": 2,
+        "successAt5": 0,
+        "recallAt20": 0,
+        "mrr": 0,
+        "ndcgAt10": 0
+      }
+    }
+  },
+  "latencyMs": {
+    "stage": {
+      "p50": 278,
+      "p95": 610
+    },
+    "chunks": {
+      "p50": 181,
+      "p95": 398
+    }
+  }
+}

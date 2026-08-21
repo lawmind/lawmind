@@ -1,0 +1,97 @@
+{
+  "task": "case_structure",
+  "claimsTotal": 1289,
+  "claimsBad": 233,
+  "excerptMismatch": 0,
+  "buckets": {
+    "source_page_furniture": 56,
+    "paraphrase": 31,
+    "internal_ellipsis": 1,
+    "unexplained_drift": 54,
+    "ocr_spacing": 26,
+    "verifier_min_length": 3,
+    "char_transcription": 14,
+    "fabrication": 30,
+    "source_interpolation": 17,
+    "punctuation_only": 1
+  },
+  "owners": {
+    "ingest": 150,
+    "model": 79,
+    "verifier": 4
+  },
+  "byKind": {
+    "fact": {
+      "total": 313,
+      "bad": 74
+    },
+    "issue": {
+      "total": 171,
+      "bad": 32
+    },
+    "procedural_history": {
+      "total": 285,
+      "bad": 49
+    },
+    "chronology": {
+      "total": 373,
+      "bad": 51
+    },
+    "relief_sought": {
+      "total": 147,
+      "bad": 27
+    }
+  },
+  "bucketByKind": {
+    "chronology": {
+      "source_page_furniture": 9,
+      "paraphrase": 8,
+      "internal_ellipsis": 1,
+      "unexplained_drift": 9,
+      "char_transcription": 5,
+      "ocr_spacing": 7,
+      "verifier_min_length": 2,
+      "source_interpolation": 1,
+      "fabrication": 9
+    },
+    "procedural_history": {
+      "unexplained_drift": 17,
+      "source_page_furniture": 14,
+      "paraphrase": 5,
+      "char_transcription": 2,
+      "fabrication": 7,
+      "ocr_spacing": 2,
+      "source_interpolation": 2
+    },
+    "relief_sought": {
+      "unexplained_drift": 5,
+      "ocr_spacing": 5,
+      "source_page_furniture": 7,
+      "char_transcription": 4,
+      "paraphrase": 2,
+      "fabrication": 2,
+      "source_interpolation": 2
+    },
+    "fact": {
+      "source_page_furniture": 20,
+      "paraphrase": 8,
+      "verifier_min_length": 1,
+      "ocr_spacing": 9,
+      "unexplained_drift": 14,
+      "source_interpolation": 10,
+      "fabrication": 10,
+      "punctuation_only": 1,
+      "char_transcription": 1
+    },
+    "issue": {
+      "paraphrase": 8,
+      "unexplained_drift": 9,
+      "fabrication": 2,
+      "source_interpolation": 2,
+      "ocr_spacing": 3,
+      "source_page_furniture": 6,
+      "char_transcription": 2
+    }
+  },
+  "examples": {}
+}

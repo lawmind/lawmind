@@ -1,0 +1,17 @@
+{
+  "kind": "new1_structured_gate",
+  "createdAt": "2026-08-18T21:05:05.331Z",
+  "sampleSize": 60,
+  "elapsedMs": 72699,
+  "thresholds": {
+    "structuredExactness": 1,
+    "fieldPrecision": 1
+  },
+  "structuredExactness": 1,
+  "fieldPrecision": 1,
+  "citationsTested": 120,
+  "fieldQueriesTested": 60,
+  "failures": [],
+  "contention": "independent re-verification of LCC's fix, seq 748",
+  "limit": "the citation fixture is drawn FROM the corpus, so it can only test names the corpus holds. A 1.0 does not mean every citation an advocate types will resolve — that is a coverage question."
+}

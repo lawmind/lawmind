@@ -1,0 +1,1011 @@
+{
+  "version": 2,
+  "builtAt": "2026-08-21T17:05:41.690Z",
+  "rejectedFrom": "docs/ai/new3-semantic-expansion-gold.json (v1)",
+  "count": 21,
+  "entries": [
+    {
+      "goldJudgmentId": "76927ba2-4dba-4a75-9baf-79c1b5462c72",
+      "citingJudgmentId": "4aa78bef-ae52-4799-add5-fd5f3b425ae4",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2026-01-12 is AFTER citing judgment_date 2025-12-22",
+        "TEXT_USABLE_FAIL: 1 row(s) contain >5 control chars (mojibake) in query text"
+      ],
+      "rowIds": [
+        "prop-76927ba2",
+        "cite-76927ba2",
+        "title-76927ba2"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2026-01-12",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2026-01-12",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_UNKNOWN",
+          "method": "no_independent_witness_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-12-22",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-12-22",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": "2026-01-12",
+        "citingWitnessDate": "2025-12-22",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "0255071c-6d5a-431f-b83c-98463454d35b",
+      "citingJudgmentId": "5ba51c70-7580-4755-82fc-67440f2d337c",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-11-21 is AFTER citing judgment_date 2025-03-02"
+      ],
+      "rowIds": [
+        "prop-0255071c",
+        "cite-0255071c",
+        "title-0255071c"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "document_prints_other_dates_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-11-21",
+              "agrees": false
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-03-03",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-03-02",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": null,
+        "citingWitnessDate": "2025-03-03",
+        "correctedChronologyPossible": null,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "2401baa2-dc2d-405d-8752-1d7d4387c551",
+      "citingJudgmentId": "ee6bfd8f-fb9a-4bfc-9437-e42578bf1c95",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2011-07-11 is AFTER citing judgment_date 2011-07-07"
+      ],
+      "rowIds": [
+        "prop-2401baa2",
+        "cite-2401baa2",
+        "title-2401baa2"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2011-07-11",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2011-07-11",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2011-07-07",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2011-07-07",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2011-07-11",
+        "citingWitnessDate": "2011-07-07",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "85644974-dfd4-467a-8bd7-ea91b21bff59",
+      "citingJudgmentId": "a086b375-9642-40f1-a51c-d73df5b8b838",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2011-12-08 is AFTER citing judgment_date 2011-12-07"
+      ],
+      "rowIds": [
+        "prop-85644974",
+        "cite-85644974",
+        "title-85644974"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2011-12-08",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2011-12-08",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2011-12-07",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2011-12-07",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2011-12-08",
+        "citingWitnessDate": "2011-12-07",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "36577431-c9bc-4f81-af18-9720c35e6238",
+      "citingJudgmentId": "dd2d0112-1946-4727-91a0-b4455361382e",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-09-22 is AFTER citing judgment_date 2025-07-07"
+      ],
+      "rowIds": [
+        "prop-36577431",
+        "cite-36577431",
+        "title-36577431"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-09-22",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-09-22",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_UNKNOWN",
+          "method": "no_independent_witness_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-07-07",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-07-07",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": "2025-09-22",
+        "citingWitnessDate": "2025-07-07",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "ff9f12ec-f7a7-4ba3-ba79-d7fe534dfda7",
+      "citingJudgmentId": "29d7d9ee-f64a-4cab-9504-8cd63660e10b",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-08-19 is AFTER citing judgment_date 2025-08-11"
+      ],
+      "rowIds": [
+        "prop-ff9f12ec",
+        "cite-ff9f12ec",
+        "title-ff9f12ec"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-08-19",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-08-19",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-08-11",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-08-11",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2025-08-19",
+        "citingWitnessDate": "2025-08-11",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "7b26a326-ab07-4fbe-92e9-75ccaa7e1844",
+      "citingJudgmentId": "fe8140c6-f8b6-452f-968b-903adeb71aad",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-02-06 is AFTER citing judgment_date 2025-01-23"
+      ],
+      "rowIds": [
+        "prop-7b26a326",
+        "cite-7b26a326",
+        "title-7b26a326"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-02-06",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-01-24",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-01-23",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": "2025-02-06",
+        "citingWitnessDate": "2025-01-24",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "1c2f8f13-3152-4b31-a487-ae06be7a3557",
+      "citingJudgmentId": "d2b733e6-4312-466c-8dee-c7b2f4b9ecb0",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-10-15 is AFTER citing judgment_date 2025-10-14"
+      ],
+      "rowIds": [
+        "prop-1c2f8f13",
+        "cite-1c2f8f13",
+        "title-1c2f8f13"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "document_prints_other_dates_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-10-15",
+              "agrees": false
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-10-15",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-10-14",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": null,
+        "citingWitnessDate": "2025-10-15",
+        "correctedChronologyPossible": null,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "929f5c4e-1321-4c90-8721-246f9d8f0e14",
+      "citingJudgmentId": "e0890c3e-2593-4ed5-bd17-45bdefe31c35",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-11-19 is AFTER citing judgment_date 2025-08-01"
+      ],
+      "rowIds": [
+        "prop-929f5c4e",
+        "cite-929f5c4e",
+        "title-929f5c4e"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "document_prints_other_dates_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-11-19",
+              "agrees": false
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-08-01",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": null,
+        "citingWitnessDate": "2025-08-01",
+        "correctedChronologyPossible": null,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "45e16fad-6e4c-4951-b883-9a7b5f5d33be",
+      "citingJudgmentId": "ab929504-39e3-41f3-a5b9-59e3b18ec785",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2012-03-02 is AFTER citing judgment_date 2012-02-15"
+      ],
+      "rowIds": [
+        "prop-45e16fad",
+        "cite-45e16fad",
+        "title-45e16fad"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2012-03-02",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2012-03-02",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2012-02-15",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2012-02-15",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2012-03-02",
+        "citingWitnessDate": "2012-02-15",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "0ff2b269-5a1f-4726-9af7-8a20b5837733",
+      "citingJudgmentId": "ec105801-685d-4564-9465-1bc6b2380a33",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2024-10-13 is AFTER citing judgment_date 2024-08-12"
+      ],
+      "rowIds": [
+        "prop-0ff2b269",
+        "cite-0ff2b269",
+        "title-0ff2b269"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-10-14",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-10-13",
+              "agrees": false
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-08-13",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-08-12",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": "2024-10-14",
+        "citingWitnessDate": "2024-08-13",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "cb3ebc3c-ada3-4db9-981a-4afbcafb87c0",
+      "citingJudgmentId": "4c1c3660-be69-4742-ac9b-a44d0ea7e7fc",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-09-01 is AFTER citing judgment_date 2025-07-18"
+      ],
+      "rowIds": [
+        "prop-cb3ebc3c",
+        "cite-cb3ebc3c",
+        "title-cb3ebc3c"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "document_prints_other_dates_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-09-01",
+              "agrees": false
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2025-07-18",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2025-07-18",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": null,
+        "citingWitnessDate": "2025-07-18",
+        "correctedChronologyPossible": null,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "ce1f0fb2-1352-482f-b6b0-d0a9cc7cb9fe",
+      "citingJudgmentId": "ce53293b-cc26-437b-bc19-9f92f0b7cc06",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2012-02-27 is AFTER citing judgment_date 2012-01-24"
+      ],
+      "rowIds": [
+        "prop-ce1f0fb2",
+        "cite-ce1f0fb2",
+        "title-ce1f0fb2"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2012-02-27",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2012-02-27",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2012-01-24",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2012-01-24",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2012-02-27",
+        "citingWitnessDate": "2012-01-24",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "a41a2072-2024-403e-b88f-dd256ff804aa",
+      "citingJudgmentId": "da4e92f0-7e17-4bb4-b4bb-87dc6a41712c",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2011-05-11 is AFTER citing judgment_date 2011-04-27"
+      ],
+      "rowIds": [
+        "prop-a41a2072",
+        "cite-a41a2072",
+        "title-a41a2072"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2011-05-11",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2011-05-11",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2011-04-27",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2011-04-27",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2011-05-11",
+        "citingWitnessDate": "2011-04-27",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "f10a9506-ce3d-4dc4-abef-a05743307ad5",
+      "citingJudgmentId": "da08d378-f0a1-4308-955b-cea8ed18df89",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2024-12-17 is AFTER citing judgment_date 2024-11-28"
+      ],
+      "rowIds": [
+        "prop-f10a9506",
+        "cite-f10a9506",
+        "title-f10a9506"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-12-17",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-12-17",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-11-28",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-11-28",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2024-12-17",
+        "citingWitnessDate": "2024-11-28",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "b4dc0341-a7e6-4885-999d-f3bc8642fc58",
+      "citingJudgmentId": "116cda4f-eaa0-476c-b384-2c468c6d330d",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2012-02-28 is AFTER citing judgment_date 2012-02-13"
+      ],
+      "rowIds": [
+        "prop-b4dc0341",
+        "cite-b4dc0341",
+        "title-b4dc0341"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2012-02-28",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2012-02-28",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2012-02-13",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2012-02-13",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2012-02-28",
+        "citingWitnessDate": "2012-02-13",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "ac5b1f31-2bd7-49bb-9538-18cda74da0d9",
+      "citingJudgmentId": "781d9839-7861-4829-b733-114297afdd71",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2024-10-13 is AFTER citing judgment_date 2024-09-17"
+      ],
+      "rowIds": [
+        "prop-ac5b1f31",
+        "cite-ac5b1f31",
+        "title-ac5b1f31"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-10-14",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-10-13",
+              "agrees": false
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-09-18",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-09-17",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": "2024-10-14",
+        "citingWitnessDate": "2024-09-18",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "e4b6fa99-90c1-4352-8485-47ed88033748",
+      "citingJudgmentId": "af757ae4-1b86-47e4-8f72-bca34605f497",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2024-11-11 is AFTER citing judgment_date 2024-10-17"
+      ],
+      "rowIds": [
+        "prop-e4b6fa99",
+        "cite-e4b6fa99",
+        "title-e4b6fa99"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2024-11-11",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "filename_disagrees_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-10-18",
+              "agrees": false
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-10-17",
+              "agrees": false
+            }
+          ]
+        },
+        "goldWitnessDate": "2024-11-11",
+        "citingWitnessDate": "2024-10-18",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "3e21e66b-4fed-441e-a80e-e92761cffd37",
+      "citingJudgmentId": "b59ffed5-0dc4-4846-81b5-0be88ccfeb31",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2025-11-19 is AFTER citing judgment_date 2025-06-05"
+      ],
+      "rowIds": [
+        "prop-3e21e66b",
+        "cite-3e21e66b",
+        "title-3e21e66b"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_SUSPECT",
+          "method": "document_prints_other_dates_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-11-19",
+              "agrees": false
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2025-06-05",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": null,
+        "citingWitnessDate": "2025-06-05",
+        "correctedChronologyPossible": null,
+        "recoveryDenied": null
+      }
+    },
+    {
+      "goldJudgmentId": "2cd14124-6298-42c7-9e8a-49ec0de36d6c",
+      "citingJudgmentId": "1ca720d3-af58-41ac-adea-0bf34c9428ef",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2024-08-12 is AFTER citing judgment_date 2024-07-16"
+      ],
+      "rowIds": [
+        "prop-2cd14124",
+        "cite-2cd14124",
+        "title-2cd14124"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2024-08-12",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "document_text",
+              "date": "2024-07-16",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2024-08-12",
+        "citingWitnessDate": "2024-07-16",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    },
+    {
+      "goldJudgmentId": "450e7997-c4fa-495c-b781-2069cc51680a",
+      "citingJudgmentId": "778f0ded-d45c-4b86-a0d8-61527cdbeedc",
+      "reasons": [
+        "DATE_PLAUSIBILITY_FAIL: cited judgment_date 2024-03-07 is AFTER citing judgment_date 2024-03-06"
+      ],
+      "rowIds": [
+        "prop-450e7997",
+        "cite-450e7997",
+        "title-450e7997"
+      ],
+      "dateQualityEvidence": {
+        "goldDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-03-07",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-03-07",
+              "agrees": true
+            }
+          ]
+        },
+        "citingDateQuality": {
+          "state": "DATE_VERIFIED",
+          "method": "printed_in_document_date-quality-v1.0",
+          "witnesses": [
+            {
+              "kind": "source_filename",
+              "date": "2024-03-06",
+              "agrees": true
+            },
+            {
+              "kind": "document_text",
+              "date": "2024-03-06",
+              "agrees": true
+            }
+          ]
+        },
+        "goldWitnessDate": "2024-03-07",
+        "citingWitnessDate": "2024-03-06",
+        "correctedChronologyPossible": false,
+        "recoveryDenied": "both endpoints DATE_VERIFIED by their own document text -- not a date defect"
+      }
+    }
+  ],
+  "recoveryPass": {
+    "appliedAt": "2026-08-21T22:03:00.850Z",
+    "method": "NEW2's date-quality.ts dateQuality(), re-verified live per authority; recovered only where an independent witness (not the stored date itself) makes the chronology possible AND at least one endpoint is not DATE_VERIFIED",
+    "candidatesChecked": 22,
+    "recovered": 1,
+    "stillQuarantined": 21
+  }
+}

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /** Read-only unpdf vs Poppler vs necessary-only OCR bake-off. */
+import { Buffer } from 'node:buffer';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import {
@@ -33,6 +34,15 @@ const DEVANAGARI = /[\u0900-\u097f]/u;
 const BASE = /[\u0904-\u0939\u0958-\u0961\u0972-\u097f]/u;
 const MATRA = /[\u093a-\u094c\u094e-\u094f\u0955-\u0957\u0962-\u0963]/u;
 const LATIN1 = /[\u00a0-\u00ff]/u;
+/**
+ * The control characters in this class are THE DEFECT BEING DETECTED, not an
+ * accident. `docs/DEVANAGARI_EXTRACTION_DEFECTS.md` section 3 records a raw
+ * control byte standing where a base consonant should be - the one defect class
+ * of the three that destroys information and cannot be repaired by any
+ * normalisation. A lint rule that removed them would silently disable the
+ * detector while it went on reporting zero.
+ */
+// eslint-disable-next-line no-control-regex
 const CONTROL = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f]/u;
 const CITATION_PATTERNS = [
   /\(\d{4}\)\s*\d+\s+(?:SCC|SCR)\s+\d+/giu,

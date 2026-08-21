@@ -51,6 +51,53 @@ acquisition target.
 
 ## 2 · Supreme AI — RESOLVED 12 Aug 2026, founder confirmed: Supreme AI = Supreme Today AI
 
+### 2-RESOLVED · Re-confirmed and made canonical by the founder, 16 Aug 2026
+
+**A second, more emphatic founder statement, addressed directly to this
+lane, unprompted:** *"Supreme Today AI and Supreme AI refer to the SAME
+provider/platform. From now on treat them as one competitor/provider
+identity. Do not create separate provider schemas, licensing assumptions,
+query queues or datasets for them. Preserve any historical aliases for
+auditability, but canonicalize future planning under one provider identity.
+This does not authorize any new operation beyond the permission already
+granted for that provider."*
+
+**Why it needed saying twice:** the 12 Aug answer below settled the identity
+question, but the 15 Aug session directive re-introduced doubt (*"Supreme AI
+and Supreme Today are different sources and must not be conflated,"*
+`FOUNDER_QUEUE.md` FQ-IK) — reasonably, since that instruction predates the
+founder's own 12 Aug confirmation and this file's job is exactly to catch a
+contradiction like that rather than silently pick a side. **The 16 Aug
+message resolves it a second time, more explicitly, and is the one to treat
+as current if the two ever appear to disagree again.**
+
+**What this changes, concretely:**
+
+- **One canonical provider identity going forward** — `Supreme Today`
+  (matching the product's own name and the already-negotiated licence in
+  `SUPREME_TODAY_LICENCE.md`) or `Supreme AI` (matching `CLAUDE.md` §6a's own
+  wording) — either is fine as the canonical label as long as only one is
+  used prospectively. This lane's own docs (`SOURCE_REGISTRY.md`,
+  `CORPUS_ACQUISITION_QUEUE.md`, `COMPETITOR_QUERY_INVENTORY.md`,
+  `R2_SOURCE_RETENTION_MATRIX.md`) already write these interchangeably with
+  a parenthetical cross-reference rather than as two separate rows — no
+  correction needed to anything already written by NEW3.
+- **No separate provider schema, licence row, or query queue for "Supreme
+  AI" as distinct from "Supreme Today."** When LCC's `provider_citation` /
+  `provider_treatment` / etc. tables (`FOUNDER_QUEUE.md` FQ-IK) are built,
+  they take **one** `provider_id`, with the OTHER name kept only as a
+  lookup alias for provenance/auditability — never a second row with its
+  own `license_scope`.
+- **Does not authorise anything new.** The account/payment blocker
+  (`FOUNDER_QUEUE.md` §6, still the one open item) is unaffected — this is
+  an identity clarification, not a new grant.
+- **Does not touch Indian Kanoon.** That is a separate, still-open question
+  (`FOUNDER_QUEUE.md` FQ-IK Q1) and this message does not address it.
+
+**Old "two possibilities" framing below is kept, unedited, as the record of
+why the question was asked rather than guessed — per this lane's own
+no-silent-conflation rule — not because either possibility is still live.**
+
 **The founder answered directly: "yes supreme ai = supreme today ai."** The
 question below is kept as the record of why it was asked rather than
 guessed, per the lane's own no-silent-conflation rule — but it is now
@@ -71,7 +118,8 @@ wording"* — not as two unrelated relationships.
   supersedes this lane's earlier IndianKanoon-for-tribunals idea, see §4
   below) → **3** head-noted Supreme Court judgments, only if cheap (e-SCR
   already gives free official ones) → **4** raw judgment text, **never**
-  (17.8M already free from AWS Open Data).
+  (20.5M already free from AWS Open Data — `FOUNDER_QUEUE.md` FQ-20M,
+  corrected 17 Aug 2026, 17.8M was the wrong figure).
 - **The harvester itself is built**: AIMD pacing engine
   (`services/ingest/src/harvest/pace.ts`, 15 tests), archive-then-parse
   discipline, `pnpm --filter @lawmind/ingest harvest:probe`. It **refuses
@@ -163,19 +211,41 @@ archive.org Gazette-of-India mirror, and SCC Online/Manupatra. **Re-checked
 against `docs/FOUNDER_QUEUE.md` in full this session — one of these needed a
 harder correction than "open decision":**
 
-**IndianKanoon is not merely unauthorized-pending-decision. It is already
-declined**, on the record, twice: *"We are NOT buying the Indian Kanoon
-API... the money is going to Supreme Today instead"* and *"Indian Kanoon is
-settled: no API"* (`docs/FOUNDER_QUEUE.md`, §"THE TOTAL" table and §A2, both
-8 Aug 2026, before this lane existed). **This session's earlier
-`docs/SOURCE_REGISTRY.md` §2 recommendation to acquire tribunals via a
-purchased IndianKanoon API was therefore recommending exactly what had
-already been settled against — a mistake, not a live option.** Corrected:
-tribunals move to the Supreme Today acquisition plan (§2 above,
-`HARVEST_ENGINE.md` priority 2), which needs no new purchase decision at
-all, only the account that's already the one open item. IndianKanoon stays
-in the registry as **`NOT_AUTHORIZED — DECLINED`**, not `NOT_AUTHORIZED —
-pending`, so it is not proposed a third time.
+**SUPERSEDED 17 Aug 2026, SETTLED 18 Aug 2026 — `docs/FOUNDER_QUEUE.md`
+FQ-IK-RESOLVED, closed by FQ-INDIANKANOON's resolution.** The declination
+below was correct for 8 Aug through 15 Aug (FQ-IK Q1). The founder confirmed,
+live, in session, twice: 17 Aug that IndianKanoon API/training rights are
+authorized (and that "Bharat Nyai" is BharatLaw, not a separate product); 18
+Aug, more explicitly, **written IndianKanoon permission/API access, a
+separate paid licence, and authorized agreed extraction/RAG/training use.**
+That second confirmation is what FQ-IK-RESOLVED flagged as still-open (scope
++ budget) — it is no longer GUESS. `FQ-INDIANKANOON`
+(`docs/FOUNDER_QUEUE.md`, filed by NEW2 18 Aug, asking whether IK is
+authorized at all) is answered by this and closed; see the resolution entry
+filed alongside it. **What remains open is not authorization but
+configuration** — `INDIANKANOON_API_TOKEN` is still unset in `.env`, so
+`services/ingest/src/harvest/indiankanoon.ts` refuses honestly until a
+credential exists, and the paid licence's actual per-call/subscription
+pricing (the client currently prices against the old ₹500 signup-credit
+schedule from `docs/DATA_SOURCES.md` §2, which may not be the paid licence's
+real rate) is unconfirmed. Both are credential/money items for
+`docs/FOUNDER_QUEUE.md`, not authorization questions — the founder's own
+instruction this session is explicit that a specific-operation question is
+still fair to ask, a blanket re-ask of "is IK settled" is not. `CLAUDE.md`
+§6a itself has not yet been updated (founder's own edit, not an agent one);
+this file and `FOUNDER_QUEUE.md` are the current record until it is.
+
+**Original 8-15 Aug declination, kept for provenance:** IndianKanoon was not
+merely unauthorized-pending-decision. It was declined, on the record, twice:
+*"We are NOT buying the Indian Kanoon API... the money is going to Supreme
+Today instead"* and *"Indian Kanoon is settled: no API"* (`docs/
+FOUNDER_QUEUE.md`, §"THE TOTAL" table and §A2, both 8 Aug 2026, before this
+lane existed). This session's earlier `docs/SOURCE_REGISTRY.md` §2
+recommendation to acquire tribunals via a purchased IndianKanoon API was
+therefore recommending exactly what had already been settled against — a
+mistake, not a live option then. Tribunals had moved to the Supreme Today
+acquisition plan (§2 above, `HARVEST_ENGINE.md` priority 2) for that reason;
+that plan still stands as the primary route regardless of this reversal.
 
 **The remaining items** (the SCI Equivalent Citation Table, the archive.org
 gazette mirror, SCC Online/Manupatra, state Acts/gazette portals, remaining

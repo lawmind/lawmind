@@ -34,13 +34,16 @@ large, unverified one.
 | # | source | scope | priority | cost/method | status |
 | --- | --- | --- | --- | --- | --- |
 | -1 | **INTERNAL — 656 judgments already print paired `S.C.R. : SCC` citations in their own text**, found by LCC 13 Aug resolving a single edge from this lane's queue | Same concordance the ECT would provide, for whatever share of the gap these 656 judgments cover | **P0, now ahead of the ECT** | £0, already held, no fetch, no licensing question. Building the harvester is LCC's (enrichment territory), not this lane's | VERIFIED — read directly from corpus text, not a source LawMind acquired. `docs/SOURCE_REGISTRY.md` §5a-pre, `docs/ai/OVERRULED_GROUP_MARKERS.md` §4 |
-| 0 | **Supreme Court of India's own Equivalent Citation Table (ECT)** — `main.sci.gov.in/pdf/ECT/` | SCC/AIR/JT/SCALE ↔ S.C.R. concordance, 1950–present, 4 official PDFs | **P1 — fallback for whatever the internal source above doesn't cover** | **£0 — official, free.** Fetch blocked from this session's tools (`sci.gov.in` DNS unreachable, archive.org fetch disabled); needs `agent-browser` or a different network path | VERIFIED_AVAILABLE by strong independent corroboration, **content not yet seen by any LawMind session** — `docs/SOURCE_REGISTRY.md` §5a |
-| 1 | ~~IndianKanoon API — purchase~~ **DECLINED, do not re-propose** | ~~citation concordance + tribunal doctypes~~ | — | — | **Settled against, before this lane existed** — `FOUNDER_QUEUE.md`: *"We are NOT buying the Indian Kanoon API... the money is going to Supreme Today instead."* Tribunals now go via Supreme Today (row 1a); concordance still needs the ECT (row 0) or another route |
+| 0 | **Supreme Court of India's own Equivalent Citation Table (ECT)** — live landing page `www.sci.gov.in/judges-library/`; content via Internet Archive (the Court's own links are dead) | SCC/AIR/JT/SCALE ↔ S.C.R. concordance, **1950 – 12.03.2018** (not "present" — the table carries a 2018 stamp), 4 official PDFs | **P0 for closing the citation gap — measured, not estimated** | **£0 — official, free, already fetched and parsed.** Plain `curl`; no browser, credential or CAPTCHA needed | **VERIFIED 14 Aug 2026 — fetched, parsed (235,807 pairs), measured (closes 204,684 of 598,766 unresolved edges = 34.2%), and independently validated at 99.42% against `judgment_citation_aliases`.** `SOURCE_REGISTRY.md` §5a-FETCHED. **Licence NOT cleared** (Government work) — `FOUNDER_QUEUE.md`. Loader is LCC's territory |
+| 1 | ~~IndianKanoon API — purchase~~ **SUPERSEDED 18 Aug 2026 — now AUTHORIZED, see below** | citation concordance + tribunal doctypes + missing-PDF recovery | — | paid licence, budget TBC | The 8 Aug decline quoted here (*"We are NOT buying the Indian Kanoon API..."*) is stale — founder confirmed written permission, a separate paid licence and agreed extraction/RAG/training use, 18 Aug (`FOUNDER_QUEUE.md` `FQ-INDIANKANOON-RESOLVED`; `AUTHORIZED_SOURCE_MAP.md` §4). Do not read this row's old text as current — it survived one correction pass and should not survive a second |
 | 1a | **Supreme Today (= Supreme AI, §6a-authorized, confirmed 12 Aug)** — account + first payment | Tribunals, HC headnotes/treatment, index-first per `HARVEST_ENGINE.md` | **P0, blocked on a credential not a decision** | ₹50,000/month, harvester already built | `FOUNDER_QUEUE.md` §6 "the one real decision" — needs an account, nothing else. Not this lane's blocker to solve |
-| 2 | archive.org gazette mirror | Gazette of India, notifications/rules, free | P1 | £0 — one `advancedsearch.php` API call confirms item count/date range | EXPERIMENTAL, `SOURCE_REGISTRY.md` §3 — confirm next |
-| 3 | indiacode.nic.in state Acts | State legislation, per-state | P1 | Free, government, already-licensed pattern (central Acts) | Structure unconfirmed — needs an `agent-browser`-driven fetch (indiacode 403'd bare WebFetch this session), not a new source decision |
-| 4 | District Court AWS Open Data bucket | District/subordinate judgments, bulk | P2 | Searched directly, not found — see `SOURCE_REGISTRY.md` §4 | **Negative evidence recorded, not proof of absence.** No confirmed bulk text source; NJDG covers only pendency stats |
-| 5 | SCC Online / Manupatra API or licensing tier | citation concordance, treatment | P2 | Existence confirmed, access model unknown | Marketing pages only checked; API/bulk terms not found by search — a direct account inquiry is the next step, not more searching |
+| 2 | archive.org gazette mirror (`collection:gazetteofindia`) | **Central Gazette of India: 171,942 docs, 1947-01-01–2026-08-11 (current to 3 days ago), confirmed 453 entries for July 2024 (BNS/BNSS/BSA commencement month).** Wider collection 805,433 docs incl. state gazettes — 13 of 25 HC jurisdictions now measured (Kerala 56.7k, Rajasthan 46.1k, Andhra Pradesh 22.5k, Maharashtra 21.9k, Karnataka 20.3k, Tamil Nadu 15.3k, Punjab 9.4k, Madhya Pradesh 9.4k, Gujarat 8.5k, Telangana 7.1k, Delhi 5.2k, Uttar Pradesh 3.8k, Bihar 0.7k, West Bengal 0.1k — last two possibly a naming-variant miss, unconfirmed) | P1 — highest-value unblocked item in this queue: official, current, no credential needed | £0 — `advancedsearch.php`/`metadata/<id>`/`download/<id>/<file>` all live-tested, straightforward bulk pattern | **VERIFIED_AVAILABLE 14 Aug 2026** — item-level provenance checked (sourced from official `egazette.gov.in` PDFs, carries the gazette's own control ID, mirrored by `sushant@indiankanoon.com`/`github.com/sushant354/egazette`). **Licence not yet cleared** — no `licenseurl` in item metadata, needs the same legal read as any new source before a bulk pull; not a `NOT_AUTHORIZED` source per se (not in the row-15 blanket list above, which predates this finding) but not yet founder-cleared either. Full detail: `SOURCE_REGISTRY.md` §3 |
+| 3 | indiacode.nic.in state Acts | State legislation, per-state | P1 | Free, government, already-licensed pattern (central Acts) | **RE-CHECKED 15 Aug 2026 with `agent-browser` (real browser, not `WebFetch`) — same result: "Access Denied."** This upgrades the finding from "WebFetch limitation, try a browser" to "the block is server-side and tool-independent" — a real browser session got the identical denial. Not a NEW3 fetch-method problem; consistent with the domain's other confirmed blocks this session (the bitstream PDF, `data.gov.in`). Next lead, if this stays worth pursuing: a different entry path (a specific state's own Act-portal URL, bypassing indiacode's `simple-search` handle route) or a residential/India-region IP, neither tried this session |
+| 4 | District Court AWS Open Data bucket | District/subordinate judgments, bulk | P2 | **RE-CHECKED 17 Aug 2026 — still no full-text source, confirmed by a genuinely new lead that turned out negative, not by re-running the old search.** DDL Judicial Data Portal (`devdatalab.org/judicial-data`, ODbL-1.0) was found and opened via `agent-browser` — its own page states plainly: *"a public dataset describing 81 million cases handled by the district courts in India from 2010-2018"* — **case metadata (status, filing/disposal, act sections, judges), not judgment/order text.** Same shape as NJDG's existing negative finding, not a new source of the thing we actually need. `openjustice-in/ecourts` (the actively-developed scraper this portal points at) **"currently supports services at the High Courts"** only, by its own GitHub description — does not reach District Courts yet | **Still no bulk text source. A separate, real finding below (not this row) governs why third-party scrapers don't close this either** |
+| 4b | Third-party eCourts District Court scrapers (`bharat-courts`, `CourtScraper`) | claim bulk access to 700+ District Courts via "automated CAPTCHA handling" | **NOT VIABLE — checked against our own authorization, not against the source. RE-CHECKED 17 Aug 2026 after a direct question naming "bharat-courts" specifically — same conclusion, more precisely grounded.** | N/A — this is a policy finding, not a fetch-method one | **Two independent reasons, both confirmed by reading the repo itself.** (1) **No affiliation with BharatLaw.** Owner `iamshouvikmitra`, MIT-licensed, zero mention of "BharatLaw"/`bharat.law` anywhere in the repo — the name match is coincidental, not the §6a-authorized BharatLaw entity. (2) **Not covered by our eCourts grant regardless.** `ECOURTS_AUTHORISATION.md`: our CAPTCHA-bypass scope is *"the bulk cause-list path in `ecourts.ts` alone"* — not general District Court order/judgment scraping — switch currently OFF. The tool's own docs confirm it solves eCourts' CAPTCHA itself (`ddddocr`-based auto-solver, ~75% accuracy, auto-retry on failure) with **no mention of any registrar authorization**, no fetch ledger, no rate limiter — an independent, unauthorized-access act under IT Act ss. 43/66 that our grant does not extend to. **Do not adopt, do not evaluate further** — not a licensing question for `FOUNDER_QUEUE.md`, already answered by the existing grant's own text |
+| 5 | SCC Online / Manupatra API or licensing tier | citation concordance, treatment | P2 | **RE-CHECKED 17 Aug 2026.** Manupatra: `manupatrafast.com/Regs/Terms.pdf` and a formal Subscriber Agreement exist (`manupatra.in/reg/license agreement - online.pdf`) — **subscriber/IP-based access plans, contact-sales pricing, no bulk API or per-call pricing tier found.** SCC Online: same shape, subscription-only (~₹30,000/yr full, subsidised advocate tiers ~₹800-1,000/mo per third-party summaries, not the vendor's own page) — **no API product found for either.** **The founder is separately contacting both re: student/API/data access — per that directive, capability research only below, no automation of either private service, and no assumption that an ordinary subscription authorizes extraction.** Capabilities found (public marketing pages, no login): **Manupatra** — human-editorial headnotes/citator (overruled/followed treatment), unique per-document citation ID, an AI/RAG layer ("Manuworks"). **SCC Online** — human-editorial headnotes/digest notes since 1968; **TruePrint™** (authenticated scanned-page PDFs, court-submittable — a product feature, not a data asset, hard to replicate from raw text); **Mercury** (real-time cross-court case tracking/alerts, SC+HC+District+Tribunal) — closer to Track B (live state) than to corpus acquisition; ~4M documents/19M pages claimed | Existence and rough pricing shape now confirmed for both; **neither offers a bulk/API acquisition path.** **When replies arrive, compare unique value against IndianKanoon/Supreme Today/BharatLaw/our own corpus before subscribing** — SCC's TruePrint and Mercury are the two features that don't obviously overlap with anything already authorized; both vendors' treatment/citator data is human-editorial (unlike NyaI's ambiguous computed-vs-curated status), which matters if benchmarking is ever authorized the way it was for IndianKanoon/BharatLaw |
+| 6 | RERA (Real Estate Regulatory Authority) tribunals | state Appellate Tribunal orders, new category, not in any prior queue | P2 | **Moved to `docs/RERA_STATE_MATRIX.md`, 17 Aug 2026 — a per-state field matrix (mechanism, CAPTCHA, raw/reasoned/Roznama counts, dates, licence), not a single-row summary, per the founder's ranked-by-reasoned-decisions directive.** Maharashtra CLOSED (NEW2): 7,376 reasoned of 49,167 raw. Delhi CLOSED (NEW3): 481 documents, CAPTCHA gates search-refinement only, base listing open. Karnataka: in progress, latency not access-control. 25+ states unstarted, template proven twice | See matrix file. Authorization **OPEN** — `FQ-CCI-PERMISSION`, covers CCI + CAT + RERA (all states) on one s.52(1)(q)(iv) ruling |
+| 7 | Central Information Commission (CIC) | RTI appeal decisions | P2 | **RE-CHECKED 17 Aug 2026 — unchanged.** No API or bulk-download mechanism found by search; the real search form (`dsscic.nic.in/cause-list-report-web/view-decision/1`) remains CAPTCHA-gated per `SOURCE_REGISTRY.md` §2b, 15 Aug. One landmark-decisions compilation PDF (74.0MB) exists on `cic.gov.in/cic_landmark` — a curated subset, not the full decision corpus, not yet fetched/sized | **Still closed to us** — CAPTCHA-gated, same as NCLT/CESTAT/ITAT/NGT, no bypass authorization extends here |
 
 ---
 
@@ -88,17 +91,78 @@ substantial. These two are individual missing documents within otherwise-
 covered years, not evidence of a systemic SC-source hole. Treat as a
 two-document fetch, not a source problem.
 
+**UPDATE 19 Aug 2026 (NEW3) — this section, `TREATMENT_GRAPH_GAP.md`'s own
+32/33/34 count, and the bus have been carrying interchangeable numbers.
+`docs/TREATMENT_MANIFEST_V1.md` is now the single canonical list: 32
+current-work rows, bucketed by disposition, plus 1 misattributed row
+(`(2017) 14 SCC 533`, a HC judgment's `(supra)` backreference wrongly
+attached) excluded and logged as an audit rejection, not a target. The 7
+identities below (§1c in that manifest) remain the correct provider-query
+list once Supreme Today access exists — nothing here changes, this is a
+pointer, not a correction.**
+
+**Eight more, 13 Aug 2026 — the RING_PROGRAM.md §3 "13 no-candidate"
+targets, identified and checked.** `overruled-resolve-cli.ts` re-run fresh
+against the current corpus named 13 `overruled`-relationship edges with no
+name-matching candidate at all. All 13 identified externally (never from
+memory), checked against `judgments` by name, loose title variants, and —
+where a decision date was independently confirmed — the exact date. Full
+account and method: `docs/TREATMENT_GRAPH_GAP.md` §3e.
+
+| case | citation | citing judgment | checked |
+| --- | --- | --- | --- |
+| Y.V. Rangaiah v. J. Sreenivasa Rao | `(1983) 3 SCC 284` | State of HP v. Raj Kumar | name + exact date (1983-03-24) — a different SC judgment holds that date |
+| Appa Narsappa Magdum v. Akubai Ganapati Nimbalkar | `(1999) 4 SCC 453` (independently reported as `443`) | Vasant Ganpat Padave | name + exact date (1999-05-04) — 8 other SC judgments hold that date, not this one |
+| HUDA v. Sunita | `(2005) 2 SCC 479` | HUDA v. Vidya Chetal | name + exact date (2005-01-14) — zero SC judgments held for that date |
+| S.H. Medical Centre Hospital v. State of Kerala | `(2014) 11 SCC 381` | Lisie Medical Institutions | name, loose variants — no false-positive near-match |
+| Velaxan Kumar v. Union of India | `(2015) 4 SCC 325` | Indore Development Authority v. Shailendra | name, with/without periods — no match |
+| Government (NCT of Delhi) v. Manav Dharam Trust | `[2017] 4 SCR 232` / `(2017) 6 SCC 751` — one target, two forms | Shiv Kumar v. Union of India | name match surfaced an unrelated 2025 Rajasthan HC case, checked and ruled out by subject matter |
+| N.V. International v. State of Assam | `(2020) 2 SCC 109` | Govt of Maharashtra v. Borse Brothers | name, with/without periods, exact-citation reporter-array check — no match |
+
+**M.K. Kunhimohammed v. P.A. Ahmedkutty (`AIR 1987 SC 2158`) struck from
+this table 13 Aug 2026 — not a gap.** NEW2 (bus 0340) found it already held
+in `judgments` under a source-side typo in AWS's own 1987 metadata
+("AHMEDKUITY" for "AHMEDKUTTY") and under its S.C.R. citation, not AIR —
+`[1987] 3 S.C.R. 1149`. Full account: `TREATMENT_GRAPH_GAP.md` §3e.
+
+**CLOSED 13 Aug 2026 (bus 0340, NEW2) — the remaining 7 are confirmed
+absent from AWS, not merely unmatched by name.** NEW2 checked each
+directly against AWS's own per-year SC parquet metadata (by exact decision
+date where known, by distinctive party-name substring otherwise) — zero
+hits for all 7. Genuinely-not-held-by-LawMind and confirmed-absent-from-
+AWS are now the same claim for this set: SC holdings are 38,341 of 38,351
+(99.97%, `DATASETS.md`), the existing 10-document gap already
+individually characterised (6 HTTP 404, 3 corrupt PDF, 1 unexplained,
+none of these 7 among them) — these 7 are a second, independently-verified
+absence, outside the authorized AWS source. **Not fetched — no gap-fill
+source exists** (`SOURCE_REGISTRY.md`); this is not NEW2 parity work, it
+is a genuine source-coverage limit. **Two related targets from the same
+13-row set are the opposite problem, not acquisition at all**: Sun Export
+Corporation v. Collector of Customs (target of `(1977) 6 SCC 564`,
+actually printed year is wrong — real citation `(1997) 6 SCC 564`) and
+SEBI v. Roofit Industries Ltd. (target of `(2016) 12 SCC 125`) are both
+**already held** and currently rendering as live good law despite being
+genuine overruled targets — a citation-linking defect for LCC's
+concordance work, flagged there not here.
+
 ---
 
 ## DOCUMENT_QUEUE — tribunals
 
 **CORRECTED 12 Aug 2026 — IndianKanoon is declined, not pending; Supreme AI
-= Supreme Today, confirmed by the founder.** The acquisition method for
-every row below is now **Supreme Today, once the account/payment blocker in
-`FOUNDER_QUEUE.md` §6 clears** — `docs/HARVEST_ENGINE.md` priority 2, no new
-purchase decision needed, the harvester is already built and refuses
-honestly for lack of an account. IndianKanoon doctype confirmations are kept
-as market intelligence only.
+= Supreme Today, confirmed by the founder.** **SUPERSEDED 18 Aug 2026 — the
+IndianKanoon half of this correction is now itself stale.** IndianKanoon is
+authorized (`FQ-INDIANKANOON-RESOLVED`, `AUTHORIZED_SOURCE_MAP.md` §4) —
+written permission, paid licence, extraction/RAG/training use. Supreme AI =
+Supreme Today still stands. The acquisition method for every row below
+remains **Supreme Today, once the account/payment blocker in
+`FOUNDER_QUEUE.md` §6 clears** — `docs/HARVEST_ENGINE.md` priority 2 is
+unchanged, IndianKanoon has not displaced it as the primary tribunal route.
+IndianKanoon doctype confirmations are no longer market-intelligence-only;
+they are a live, budgeted option, just not yet the recommended one for
+tribunals specifically (see `docs/INDIANKANOON_WORK_QUEUE.md` for where IK
+actually ranks — missing-PDF recovery and citation concordance, not
+tribunals).
 
 | tribunal | acquisition method | priority | status |
 | --- | --- | --- | --- |
@@ -111,6 +175,36 @@ as market intelligence only.
 **The one action item that isn't "wait for the account":** once Supreme
 Today harvesting starts, confirm early whether CCI/TDSAT/NGT/AFT are
 actually covered.
+
+### SUPERSEDING, 14 Aug 2026 — the tribunals publish their own orders, and two are verified open
+
+**Every row above assumes the acquisition method is Supreme Today. That
+assumption was never tested against the tribunals themselves.** It is wrong
+for at least two of them, and possibly more.
+
+**Supreme Today is an aggregator. The tribunals are the publishers.** All 14
+tribunal domains were probed directly this session and **two were verified
+end-to-end — a real judgment PDF downloaded and its text extracted:**
+
+| tribunal | status | verified artifact |
+| --- | --- | --- |
+| **NCLAT** | **VERIFIED OPEN**, free, no CAPTCHA, no account | order PDF, 56,049 bytes, 14 Aug 2026 |
+| **TDSAT** | **VERIFIED OPEN**, free, no CAPTCHA, no account | reasoned judgment PDF, 304,798 bytes, 13 Aug 2026 |
+| **CCI** | **CLOSED 17 Aug 2026 (NEW2, `TRIBUNAL_ACQUISITION_MEASUREMENT.md`) — bulk-enumerable, exact volume 1,231 orders, direct PDF fetch, no CAPTCHA.** Independently re-verified this lane, byte-identical (171,290 bytes). **Authorization OPEN — `FQ-CCI-PERMISSION`, one email**; site copyright policy requires prior written permission, arguable s.52(1)(q)(iv) exemption not yet founder-ruled | `POST /antitrust/orders/list` (DataTables) → `recordsTotal: 1231`; PDF path in `file_content` |
+| **CAT** | **CLOSED 17 Aug 2026 (NEW2) — bench × date range is a complete enumeration key**, 42 benches, no CSRF/CAPTCHA/session. **Authorization OPEN** — no restriction found, disclaimer unread | `GET fiorder_detail.php?benchCode3=100&from_date=...&to_date=...` → 15 Delhi orders July 2026, PDF verified 340,312 bytes/14pp |
+| NCLT · CESTAT · ITAT · NGT | **CAPTCHA-GATED — closed to us** | the eCourts bypass grant does not extend here |
+| CIC | reachable, no CAPTCHA, not chased to a PDF | |
+| NCDRC | reachable, no order link on homepage | needs a deeper path search |
+| SAT (503) · AFT · DRAT · IPAB | unreachable this session | not a verdict |
+
+**This does not cancel the Supreme Today item** — it still covers the
+CAPTCHA-gated four, plus headnotes and Authority Check treatment, which
+first-party sites do not provide. It does mean **the tribunal category is no
+longer wholly blocked on a ₹50,000/month credential.**
+
+**NOT AUTHORIZED yet** — neither host is §6a-named; filed to
+`FOUNDER_QUEUE.md`. Mechanism, request sequence and two path traps:
+`SOURCE_REGISTRY.md` §2b. Fetching is NEW2's territory once cleared.
 
 ---
 
@@ -160,3 +254,25 @@ Notified via a dated entry in `docs/FOUNDER_QUEUE.md` and
 (`docs/LANE_BUS.md` §1) and binding as LCC to send one message would be a
 false claim about which lane produced this work. `docs/
 ACQUISITION_SESSION_LOG.md` carries the full session record for continuity.
+
+---
+
+## HANDOFF, 15 Aug 2026 — Railway-exit-window deliverables
+
+**During NEW2/LCC's database migration window, per the founder's cost-aware
+directive, this lane produced two new documents rather than running further
+DB-heavy queries:**
+
+- **`docs/R2_SOURCE_RETENTION_MATRIX.md`** — every source in this queue and
+  in `SOURCE_REGISTRY.md`, classified by whether a raw copy belongs on R2.
+  Headline: AWS Open Data and archive.org mirrors are already more durable
+  than R2 and should never be duplicated onto it; single-webserver
+  `.gov.in` sources (the ECT, BPRD mapping PDFs, the Constitution PDF) have
+  the opposite property — three confirmed 403s/dead-links this session
+  alone — and should be retained on first successful fetch, reversing the
+  mission's stated "process in place" default for that specific class.
+- **`docs/COMPETITOR_QUERY_INVENTORY.md`** — the ranked, NOT-YET-RUN Supreme
+  Today query queue for the first month of access, built from this queue's
+  own measured gaps (the 40-item `MISSING_AUTHORITY_QUEUE.md` list, the 9
+  confirmed document gaps, the pre/post-2018 SCR no-match split). Nothing
+  in it has been queried — Supreme Today is still blocked on an account.

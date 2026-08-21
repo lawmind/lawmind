@@ -1,0 +1,49 @@
+{
+  "kind": "new1_representation_lab",
+  "createdAt": "2026-08-18T18:04:49.296Z",
+  "poolRequested": 4546,
+  "documentsWithText": 4546,
+  "queries": 283,
+  "headChars": 4800,
+  "salientMax": 4,
+  "chunker": "services/embed/src/chunk.ts chunkJudgment, defaultChunkOptions (maxChars 2400)",
+  "embedder": "BGE-M3 fp32 via the GPU sidecar, CLS-pooled and L2-normalised",
+  "pooling": "MAX over a document chunks, matching retrieve.ts",
+  "results": {
+    "ALL_CHUNKS": {
+      "n": 283,
+      "successAt5": 0.22968197879858657,
+      "recallAt20": 0.4169611307420495,
+      "mrr": 0.1468576683417401,
+      "ndcgAt5": 0.15283091156028217,
+      "ndcgAt20": 0.20715731152413727,
+      "vectors": 149211,
+      "vectorsPerDocument": 32.82248130224373
+    },
+    "HEAD": {
+      "n": 283,
+      "successAt5": 0.2049469964664311,
+      "recallAt20": 0.3992932862190813,
+      "mrr": 0.13763915670948906,
+      "ndcgAt5": 0.13940032524619164,
+      "ndcgAt20": 0.19540925476363902,
+      "vectors": 4546,
+      "vectorsPerDocument": 1
+    },
+    "SALIENT": {
+      "n": 283,
+      "successAt5": 0.1519434628975265,
+      "recallAt20": 0.3498233215547703,
+      "mrr": 0.11642194361059575,
+      "ndcgAt5": 0.11136587529261888,
+      "ndcgAt20": 0.16632690842045728,
+      "vectors": 18138,
+      "vectorsPerDocument": 3.9898812142542894
+    }
+  },
+  "note": "the pool is the union of every judgment the dense arm returned across the 283 eval queries, plus all gold — real hard negatives, not a random sample",
+  "limits": [
+    "exact search over an in-memory pool of ~4.5k documents, NOT an ANN index over 9.5M. Absolute figures are not comparable to the production baseline; the comparison BETWEEN representations is the measurement.",
+    "verified holding/issue/proposition vectors are not tested because that data does not exist yet — the proposition stage is PLANNED in RETRIEVAL_PROGRAM.md."
+  ]
+}

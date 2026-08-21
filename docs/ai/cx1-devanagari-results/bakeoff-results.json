@@ -2800,6 +2800,6 @@
       "pages": 4
     }
   ],
-  "reaggregatedAt": "2026-08-17T11:59:28.621Z",
+  "reaggregatedAt": "2026-08-17T23:38:23.166Z",
   "reaggregateNote": "Aggregates rescored 17 Aug 2026 to add usable/devanagariDropped. The original summary scored Poppler as defect-free when it had emitted no Devanagari at all. Per-document metrics are unchanged — only the reading of them."
 }

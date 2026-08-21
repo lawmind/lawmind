@@ -72,6 +72,41 @@
  * window, and a single hostile PDF is separately bounded by the extractor's own
  * timeout. Being wrong this way costs one restart from a checkpoint; being wrong
  * the other way cost 25 minutes and would have cost the rest of the run.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * AND THE HANG THAT PRINTS — why "silence" above was the wrong signal
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The paragraph above says a stalled worker's only signal is SILENCE. That is
+ * false for the most common hang this fleet actually has, and the counter-example
+ * was already documented one directory away before this watchdog was written.
+ *
+ * `hc-metadata.ts`'s `withTimeout` header records it: unpdf's bundled pdfjs
+ * repairs a malformed embedded font by calling `Math.sumPrecise`, which does not
+ * exist on Node v24.14.1. The failure is swallowed as a `warn()` rather than
+ * thrown, so the worker prints
+ *
+ *     Warning: TypeError: Math.sumPrecise is not a function
+ *
+ * **on a loop, forever, having stopped advancing.** Measured on the live fleet
+ * 18 Aug 2026: `hc-boot-36_29` last wrote at 2,295 documents and then produced
+ * nothing but that warning, while its log grew steadily and this watchdog saw a
+ * healthy worker the whole time. 7,363 of the last 7,395 lines of
+ * `hc-boot-hist-3_22.log` were the same one line.
+ *
+ * So a hang here does not go quiet — **it gets LOUDER**, and every byte-based
+ * liveness test scores it as the healthiest scope in the fleet.
+ *
+ * The fix is to watch what the worker emits when it has done WORK rather than
+ * what it emits at all. These workers print a progress line each batch, and that
+ * line is the only output that cannot be produced by a wedged extractor.
+ *
+ * **It degrades to the old behaviour rather than replacing it.** A worker that
+ * has never printed a recognised progress line is watched on raw output exactly
+ * as before — `supervise.mjs` also fronts LCC's paragraph and citation workers,
+ * whose progress lines have a different shape, and a watchdog that silently
+ * demanded one format would start SIGKILLing healthy workers in another lane.
+ * The stricter rule only switches on once a worker has proved it speaks it.
  */
 import { spawn } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
@@ -103,6 +138,22 @@ const TOO_FAST_MS = 20_000;
 const STALL_MS = Number(process.env['SUPERVISE_STALL_MS'] ?? 15 * 60_000);
 /** Cheap enough to run often; the check is one integer comparison. */
 const STALL_POLL_MS = 30_000;
+
+/**
+ * Output that can only exist because the worker finished a batch.
+ *
+ * Two shapes, because two lanes are supervised by this file and both were read
+ * off the live logs rather than assumed:
+ *
+ *   hc-load-cli      `[108,396] mapped=108,299 written=108,299 29.2 docs/s · 3_22/2013`
+ *   paragraphs-cli   `scanned 1,204,880 · 8,993,144 paragraphs (…) · 41.2/s`
+ *
+ * Deliberately NOT a loose `/\d/`: every line the hang emits contains digits,
+ * and a pattern that matches the failure is a watchdog that does nothing. What
+ * makes these two safe is that a wedged pdfjs cannot produce either — the
+ * counters come from the batch loop, which is the thing that has stopped.
+ */
+const PROGRESS_LINE = /(\[[\d,]+\]\s+mapped=|^\s*scanned\s[\d,]+\s·)/m;
 
 const finished = () =>
   existsSync(logPath) && /^RESULTS/m.test(readFileSync(logPath, 'utf8').slice(-4000));
@@ -204,9 +255,17 @@ for (;;) {
      * appended by whoever ran last — its mtime is not this child's liveness.
      */
     let lastOutputAt = Date.now();
+    /**
+     * Last time the child said something that PROVES it did work, and whether
+     * it has ever done so. `null` means "this worker has not shown me a
+     * progress line yet", which is what keeps the old raw-output rule in force
+     * for workers in other lanes that print a different shape.
+     */
+    let lastProgressAt = null;
     // Append rather than truncate: the log is the resume story across restarts.
     const append = (buf) => {
       lastOutputAt = Date.now();
+      if (PROGRESS_LINE.test(String(buf))) lastProgressAt = Date.now();
       try {
         appendFileSync(logPath, buf);
       } catch {
@@ -231,12 +290,21 @@ for (;;) {
      * reported and stopped rather than restarted forever.
      */
     const watchdog = setInterval(() => {
-      const silentFor = Date.now() - lastOutputAt;
-      if (silentFor < STALL_MS) return;
+      /**
+       * PROGRESS if this worker has ever shown any, RAW OUTPUT otherwise. See
+       * the header: the loud hang is invisible to the second test and the first
+       * test does not exist for every lane.
+       */
+      const watching = lastProgressAt === null ? 'output' : 'progress';
+      const idleFor = Date.now() - (lastProgressAt ?? lastOutputAt);
+      if (idleFor < STALL_MS) return;
       note(
-        `STALLED — no output for ${(silentFor / 60_000).toFixed(1)} min (limit ` +
+        `STALLED — no ${watching} for ${(idleFor / 60_000).toFixed(1)} min (limit ` +
           `${(STALL_MS / 60_000).toFixed(1)} min). A hang exits nothing, so killing it to ` +
-          'restart from the checkpoint.',
+          'restart from the checkpoint.' +
+          (watching === 'progress'
+            ? ' The log may still be GROWING — a wedged pdfjs prints `Math.sumPrecise` forever.'
+            : ''),
       );
       clearInterval(watchdog);
       try {

@@ -26,6 +26,42 @@ Rules:
 - Mappings are not always 1:1. Some sections split, some merge. Where the mapping
   is not clean, say so rather than picking one.
 
+## Four classes of statutory material — never collapsed into one
+
+**Government-published does not mean statutory.** The BPRD handbooks NEW3 found
+(bus 0568, 0604) are Ministry of Home Affairs work product, authored by a serving
+IPS officer, hosted on `bprd.nic.in` — official by every ordinary meaning of the
+word, and **still not the law**. They self-describe as *"commentaries added to
+provide the rationale behind the changes"*. A rationale for a section is not the
+section.
+
+The distinction is load-bearing rather than pedantic. An advocate quoting a
+handbook's paraphrase to a judge as the text of BNS s. 103 is in the same
+position as one citing a case that does not exist, and the four classes below
+travel through different parts of this system for that reason:
+
+| class | what it is | example | may be quoted as law | may be trained on |
+| --- | --- | --- | --- | --- |
+| **PRIMARY STATUTE** | the enacted text | BNS 358 sections, `statute_sections` | **yes** | yes |
+| **OFFICIAL EXPLANATORY MATERIAL** | government commentary on the text | BPRD handbooks — BNS 553,880 · BNSS 797,158 · BSA 257,046 chars | **no** | yes — it is a primary *government* source, not a model's commentary |
+| **CORRESPONDENCE TABLE** | official old↔new section mapping | BPRD comparison summaries, `statute_mappings` | as a mapping, **never as text** | yes |
+| **DERIVED LAWMIND OBJECT** | anything we computed | extracted section roles, chronologies | **no** | only with its evidence span |
+
+Rules:
+
+- **Explanatory material never populates `statute_sections`.** That table is the
+  enacted text and nothing else. A handbook paragraph appearing there is
+  indistinguishable from statute once it has been retrieved.
+- A handbook may be **retrieved and shown**, labelled as commentary, and may
+  answer *"why did this change"* — the question the bare correspondence table
+  cannot answer and the reason these documents are worth holding at all.
+- Its size is not evidence of importance: the BNSS handbook is **10.2x** its own
+  comparison table because prose is longer than a table, not because it says
+  more law.
+- **Never train on a model's commentary about law** (CLAUDE.md §6) is untouched
+  by this. A Ministry of Home Affairs handbook is a primary government source; a
+  frontier model's summary of it is not, and no amount of quoting makes it one.
+
 ## Court hierarchy
 Supreme Court → 25 High Courts → District and Sessions → Judicial Magistrate /
 Civil Judge. Tribunals sit outside this line; appeal routes differ by statute —

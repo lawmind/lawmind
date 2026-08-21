@@ -1,0 +1,4 @@
+# Model-output cache: derived, regenerable, and it grows. The provenance the
+# founder asked for lives in ds-calls.jsonl, which IS tracked — the cache only
+# saves tokens, it does not record anything.
+cache/

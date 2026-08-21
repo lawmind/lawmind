@@ -1,0 +1,120 @@
+{
+ "scope": "all",
+ "cursor": "680bcfd5-342d-4e2f-829e-543cf2222ceb",
+ "screened": 7602000,
+ "candidates": 696492,
+ "written": 696492,
+ "byState": {
+  "UNKNOWN": 6905508,
+  "OCR_CANDIDATE": 672548,
+  "LEGACY_FONT_SUSPECT": 23944
+ },
+ "byCourt": {
+  "33_10": {
+   "screened": 691043,
+   "written": 67
+  },
+  "9_13": {
+   "screened": 925250,
+   "written": 3287
+  },
+  "29_3": {
+   "screened": 387818,
+   "written": 199560
+  },
+  "10_8": {
+   "screened": 694182,
+   "written": 999
+  },
+  "27_1": {
+   "screened": 807601,
+   "written": 47631
+  },
+  "21_11": {
+   "screened": 322674,
+   "written": 4
+  },
+  "19_16": {
+   "screened": 166784,
+   "written": 17
+  },
+  "23_23": {
+   "screened": 264368,
+   "written": 3220
+  },
+  "3_22": {
+   "screened": 750739,
+   "written": 405724
+  },
+  "20_7": {
+   "screened": 187005,
+   "written": 95
+  },
+  "5_15": {
+   "screened": 95726,
+   "written": 341
+  },
+  "32_4": {
+   "screened": 421608,
+   "written": 514
+  },
+  "7_26": {
+   "screened": 154926,
+   "written": 252
+  },
+  "36_29": {
+   "screened": 424077,
+   "written": 520
+  },
+  "24_17": {
+   "screened": 171858,
+   "written": 78
+  },
+  "8_9": {
+   "screened": 444427,
+   "written": 20987
+  },
+  "2_5": {
+   "screened": 116852,
+   "written": 2108
+  },
+  "28_2": {
+   "screened": 123803,
+   "written": 51
+  },
+  "22_18": {
+   "screened": 231071,
+   "written": 7068
+  },
+  "18_6": {
+   "screened": 130621,
+   "written": 2250
+  },
+  "1_12": {
+   "screened": 46370,
+   "written": 310
+  },
+  "Supreme Court of India": {
+   "screened": 15605,
+   "written": 0
+  },
+  "16_20": {
+   "screened": 13808,
+   "written": 1398
+  },
+  "17_21": {
+   "screened": 5148,
+   "written": 9
+  },
+  "14_25": {
+   "screened": 7662,
+   "written": 0
+  },
+  "11_24": {
+   "screened": 974,
+   "written": 2
+  }
+ },
+ "startedAt": "2026-08-21T17:54:09.987Z",
+ "updatedAt": "2026-08-21T22:31:04.925Z"
+}

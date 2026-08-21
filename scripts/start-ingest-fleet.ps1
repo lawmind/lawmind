@@ -264,10 +264,64 @@ function Start-Worker {
     rule is about not looping WITHIN a run; a new boot is a new run. One
     generation is kept, so the completed run's tally is still readable.
   #>
+  <#
+    READ THE LAST FEW KILOBYTES, NOT THE LAST FORTY LINES.
+
+    This was `Get-Content $log -Tail 40`, and on 18 Aug it silently cost the
+    fleet half its width. A `-Only` list of 19 scopes started **9** and then
+    stopped: no error, no message, the launcher simply never came back. Two more
+    invocations did the same and seven orphaned `powershell.exe` processes were
+    left behind holding the same spot.
+
+    It hangs rather than fails. These logs reach 29 MB and carry raw
+    PDF-extractor bytes — NUL and other binary, which `grep` reports as "Binary
+    file … matches" — and Windows PowerShell 5.1's `Get-Content -Tail` against
+    that does not behave like a bounded read. A single scope did not return in
+    120 seconds. The scope it stopped on, `hc-boot-19_16-y2023`, simply has the
+    largest log in the repo.
+
+    A `FileStream` seek reads a fixed 64 KB from the end regardless of how large
+    the file is or what is in it. `RESULTS` is written near the end of a
+    completed run, so 64 KB is generous for the question being asked — and the
+    question is only ever "did this log end with a RESULTS block".
+
+    Latin-1 decoding on purpose: these bytes are not valid UTF-8 and decoding is
+    not the point. `RESULTS` is ASCII, and every byte maps to a character
+    without throwing, which UTF-8 decoding of binary does not guarantee.
+
+    VIA `GetEncoding(28591)`, NOT `[Text.Encoding]::Latin1`. The static property
+    is .NET 5+; Windows PowerShell 5.1 is .NET Framework, where it does not
+    exist. The first version used it, every open threw, and the catch below
+    dutifully logged `WARN … unreadable` for ten scopes in a row — harmless only
+    because the fallback starts the worker anyway. **This is the third time today
+    a .NET Core API has been assumed on a 5.1 host** (`ProcessStartInfo.ArgumentList`
+    in `start-local-canary.ps1` was the first, and it was fatal). Codepage 28591
+    is ISO-8859-1 and has been there since .NET Framework 1.
+  #>
   $log = Join-Path $script:repo "$Name.log"
   if (Test-Path $log) {
-    $tail = Get-Content $log -Tail 40 -ErrorAction SilentlyContinue
-    if ($tail -match '^RESULTS') {
+    $tail = ''
+    try {
+      $fs = [System.IO.File]::Open($log, 'Open', 'Read', 'ReadWrite')
+      try {
+        $want = [Math]::Min(65536, $fs.Length)
+        [void]$fs.Seek(-$want, 'End')
+        $buf = New-Object byte[] $want
+        [void]$fs.Read($buf, 0, $want)
+        $tail = [System.Text.Encoding]::GetEncoding(28591).GetString($buf)
+      } finally {
+        $fs.Dispose()
+      }
+    } catch {
+      <#
+        A log we cannot read is not a reason to skip a worker. The rotation is an
+        optimisation against supervise.mjs's RESULTS sentinel; failing to rotate
+        costs at most one scope that exits early and gets picked up next run.
+        Failing to START is what this whole block just cost us.
+      #>
+      Log "WARN    $Name.log unreadable for the RESULTS check — starting anyway"
+    }
+    if ($tail -match '(?m)^RESULTS') {
       Move-Item $log (Join-Path $script:repo "$Name.prev.log") -Force
       Log "ROTATE  $Name.log (carried a completed RESULTS block)"
     }
@@ -377,7 +431,48 @@ foreach ($c in @('9_13','33_10','3_22','10_8','27_1','8_9')) {
 #    is deliberately absent: it holds 6 pre-2016 documents but its ENTIRE
 #    pre-2016 source population is 296, so it is ~98% done (NEW3 bus 0504,
 #    verified independently against the matrix).
-foreach ($c in @('27_1','10_8','3_22','36_29','32_4','22_18','8_9','29_3')) {
+#
+#    33_10 (Madras) ADDED 18 Aug 2026, and its absence was the largest single
+#    acquisition hole in the corpus. Madras appeared ONLY in the 2016-2022 list
+#    above, so no scope has ever been configured for its pre-2016 band. Measured
+#    against docs/ops/migration/new2-coverage.json: 186,786 source records for
+#    1950-2015 and **1 document acquired** — one row, from 1953. Every year from
+#    1995 to 2018 reads zero held, which is 477,667 source records.
+#
+#    This is worse than a slow scope, and the reason is retrieval, not ingest: a
+#    court-year holding zero is indistinguishable at query time from a
+#    court-year that never existed. NEW3 confirmed the source partitions are
+#    real (bus 0709/0710), so every one of those years is an acquisition gap
+#    being silently served as an absence of law.
+#
+#    Madras 1998 is the one genuine source-zero and needs NO exclusion here.
+#    `hc-load-cli` builds its work from `listMetadataKeys()` and then filters by
+#    year, so a year with no source partition is never enumerated and cannot be
+#    retried. There is nothing to retire from the scheduler; a year list would
+#    be the only thing that could get this wrong, and this file does not use one.
+#
+#    SIX MORE ADDED 18 Aug 2026, and Madras was not a one-off — this list simply
+#    omitted half the courts. Measured against the DB and the source counts in
+#    docs/ops/migration/new2-coverage.json, pre-2016:
+#
+#      24_17   131,897 source      497 held   0.4%
+#      23_23   104,831 source        0 held   0.0%
+#      18_6     90,250 source        3 held   0.0%
+#      7_26     76,711 source        2 held   0.0%
+#      20_7     66,622 source        8 held   0.0%
+#      21_11    34,026 source       39 held   0.1%
+#      ────────────────────────────────────────────
+#              503,357 source records effectively unheld
+#
+#    None of these was a slow scope. No scope existed for any of them, exactly as
+#    with 33_10 — which went from 1 document to 185,589 (99.4% of source) in a
+#    single pass once it was added to this line.
+#
+#    A court at 0.0% outranks a court at 70% for the same reason the blackout work
+#    outranks everything else: retrieval cannot distinguish "we hold none" from
+#    "there are none", so an unheld court-year is served to an advocate as an
+#    absence of law rather than as a gap in our corpus.
+foreach ($c in @('27_1','10_8','3_22','36_29','32_4','22_18','8_9','29_3','33_10','24_17','23_23','18_6','7_26','20_7','21_11')) {
   Start-Worker "hc-boot-hist-$c" (HcArgs -Court $c -FromYear '1950' -ToYear '2015' -Concurrency '16')
 }
 foreach ($c in @('2_5','5_15')) {

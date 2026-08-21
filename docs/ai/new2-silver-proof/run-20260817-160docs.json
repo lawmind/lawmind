@@ -1,0 +1,35 @@
+{
+  "tool": "services/ingest/src/harvest/silver-ratio-cli.ts",
+  "takenAt": "2026-08-17T08:12:12.254Z",
+  "evidenceClass": "MEASURED — real source documents, bounded sample",
+  "documents": 160,
+  "courtYearCells": 16,
+  "scansSkippedNoTextLayer": 0,
+  "fetchFailures": 0,
+  "sourcePdfBytes": 26458908,
+  "extractedTextBytes": 1477031,
+  "zstdPerDocumentBytes": 491706,
+  "zstdConcatenatedBytes": 388297,
+  "ratioPerDocument": 3,
+  "ratioConcatenated": 3.8,
+  "compactionGain": 1.27,
+  "dictionary": {
+    "kind": "raw content, held out — NOT ZDICT-trained, so these figures are a FLOOR",
+    "dictionaryBytes": 114688,
+    "builtFromDocuments": 32,
+    "measuredOnDocuments": 128,
+    "heldOutTextBytes": 1207774,
+    "heldOutPerDocumentBytes": 393707,
+    "heldOutPerDocumentWithDictBytes": 341892,
+    "ratioPerDocument": 3.07,
+    "ratioPerDocumentWithDict": 3.53,
+    "dictionaryGain": 1.15
+  },
+  "caveats": [
+    "Source text, not our cleaned full_text — the real Silver ratio will differ.",
+    "No parquet written: columnar framing costs extra, so ratioConcatenated is an UPPER BOUND on a real export.",
+    "Bounded sample across a few court-year cells. Not a corpus projection, and must not be multiplied by the corpus size.",
+    "CX1's synthetic 117.88x is not comparable and is not used.",
+    "The dictionary is raw held-out content, not ZDICT-trained — a trained dictionary would do better, so its gain is a floor."
+  ]
+}

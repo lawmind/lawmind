@@ -1,0 +1,45 @@
+{
+  "kind": "new1_vectors_per_document",
+  "createdAt": "2026-08-18T04:18:01.620Z",
+  "measured": {
+    "documents": 40161,
+    "chunks": "620300",
+    "mean": 15.445332536540425,
+    "p50": 11,
+    "p90": 29,
+    "p99": 90,
+    "max": 1276
+  },
+  "bytesPerVector": {
+    "fp32": 13778.58,
+    "halfvec": 5571.26,
+    "source": "CX1 CX1_VECTOR_CAPACITY_BENCHMARK, ~600k scale"
+  },
+  "restatedScenarios": [
+    {
+      "scenario": "MINIMAL",
+      "documents": 1743908,
+      "cx1Vectors": 1743908,
+      "measuredVectors": 26935239,
+      "fp32GiB": 345.6,
+      "halfvecGiB": 139.8
+    },
+    {
+      "scenario": "BALANCED",
+      "documents": 2651123,
+      "cx1Vectors": 2651123,
+      "measuredVectors": 40947476,
+      "fp32GiB": 525.5,
+      "halfvecGiB": 212.5
+    },
+    {
+      "scenario": "AGGRESSIVE",
+      "documents": 5880811,
+      "cx1Vectors": 5880811,
+      "measuredVectors": 90831081,
+      "fp32GiB": 1165.6,
+      "halfvecGiB": 471.3
+    }
+  ],
+  "caveat": "chunks/doc is measured on a Supreme-Court-only embedded population; High Court documents are shorter on average (CX1 class means run 436-21,053 chars against SC), so this multiplier is an UPPER bound for a mixed pilot and must be re-measured per class before it sizes a purchase."
+}

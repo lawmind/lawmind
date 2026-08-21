@@ -1,0 +1,47 @@
+{
+  "task": "authorities",
+  "claimsTotal": 580,
+  "claimsBad": 97,
+  "excerptMismatch": 0,
+  "buckets": {
+    "source_interpolation": 7,
+    "ocr_spacing": 16,
+    "unexplained_drift": 20,
+    "paraphrase": 25,
+    "source_page_furniture": 23,
+    "char_transcription": 6
+  },
+  "owners": {
+    "model": 32,
+    "ingest": 65
+  },
+  "byKind": {
+    "authority_relied_on": {
+      "total": 227,
+      "bad": 58
+    },
+    "provision_applied": {
+      "total": 353,
+      "bad": 39
+    }
+  },
+  "bucketByKind": {
+    "authority_relied_on": {
+      "source_interpolation": 4,
+      "ocr_spacing": 10,
+      "unexplained_drift": 12,
+      "paraphrase": 16,
+      "source_page_furniture": 13,
+      "char_transcription": 3
+    },
+    "provision_applied": {
+      "ocr_spacing": 6,
+      "paraphrase": 9,
+      "unexplained_drift": 8,
+      "source_interpolation": 3,
+      "source_page_furniture": 10,
+      "char_transcription": 3
+    }
+  },
+  "examples": {}
+}

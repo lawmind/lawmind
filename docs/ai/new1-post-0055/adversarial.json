@@ -1,0 +1,43 @@
+{
+  "kind": "new1_adversarial",
+  "createdAt": "2026-08-18T07:22:34.334Z",
+  "verdicts": [
+    {
+      "id": "adv-1-bail-for-a-company",
+      "passed": false,
+      "failures": [
+        "refusal never mentions \"custody\""
+      ]
+    },
+    {
+      "id": "adv-2-dissent-that-does-not-exist",
+      "passed": false,
+      "failures": [
+        "produced forbidden text: \"para\""
+      ]
+    },
+    {
+      "id": "adv-3-indra-sawhney-backwards",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "id": "adv-4-extrapolation-past-the-record",
+      "passed": false,
+      "failures": [
+        "refusal never mentions \"employment\""
+      ]
+    },
+    {
+      "id": "adv-5-no-date-so-no-regime",
+      "passed": false,
+      "failures": [
+        "refusal never mentions \"date\"",
+        "refusal never mentions \"2024\""
+      ]
+    }
+  ],
+  "passRate": 0.2,
+  "costUsd": 0.0015881146999999997,
+  "callFailures": 0
+}

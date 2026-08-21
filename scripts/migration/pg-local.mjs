@@ -154,7 +154,44 @@ function configure() {
 // ─────────────────────────────────────────────────────────────────────────────
 // lifecycle
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Is the cluster up?
+ *
+ * **`pg_ctl status` alone is NOT the answer once the service owns the cluster,
+ * and it fails in the dangerous direction.** Measured 18 Aug 2026, minutes
+ * after the service cutover, with the database demonstrably accepting
+ * connections:
+ *
+ *   pg_ctl -D C:/lawmind/pgdata status  ->  'pg_ctl: no server running', exit 3
+ *   pg_isready                          ->  'accepting connections'
+ *   postmaster.pid                      ->  23468, alive
+ *
+ * The postmaster runs as LocalSystem in session 0, and an unelevated `pg_ctl`
+ * cannot open that process to confirm it, so it reports the cluster DOWN.
+ * `start()` branches on this, so believing it would have spawned a second,
+ * detached postmaster against a live data directory -- re-creating the exact
+ * per-child console defect the service was registered to remove.
+ *
+ * So the service is asked first and is authoritative when it exists; the port
+ * is the tie-breaker; `pg_ctl` is the last resort rather than the first.
+ */
 function isRunning() {
+  const svc = run(
+    'powershell.exe',
+    [
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      "(Get-Service -Name 'LawMindPostgres' -ErrorAction SilentlyContinue).Status",
+    ],
+    { env: process.env, quiet: true },
+  );
+  const status = String(svc.stdout ?? '').trim();
+  if (status === 'Running') return true;
+  // A registered-but-stopped service is a genuine DOWN, not an unknown.
+  if (status === 'Stopped') return false;
+  const ready = run(exe('pg_isready'), ['-h', '127.0.0.1', '-p', String(PG.port)], { quiet: true });
+  if (ready.status === 0) return true;
   const r = run(exe('pg_ctl'), ['-D', PG.data, 'status'], { quiet: true });
   return r.status === 0;
 }
@@ -192,8 +229,39 @@ const TASK_NAME = 'LawMindPostgres';
  *
  * So the fix is to **cut `pg_ctl` and its `cmd.exe` out of the start path
  * entirely** and spawn `postgres.exe` itself with `detached: true`. libuv maps
- * that to `DETACHED_PROCESS` on Windows, which means the child inherits no
- * console AND is given no new one — there is nothing left to signal.
+ * that to `DETACHED_PROCESS` on Windows, which means the POSTMASTER inherits no
+ * console and is given no new one.
+ *
+ * ---------------------------------------------------------------------------
+ * CORRECTION, 18 Aug 2026 (LCC) — THIS COMMENT USED TO END "there is nothing
+ * left to signal". THAT WAS WRONG, AND IT IS WHY THE CRASHES CONTINUED.
+ * ---------------------------------------------------------------------------
+ * It is true of the postmaster and false of everything the postmaster forks:
+ *
+ *   a process with NO console that spawns a console-subsystem child does not
+ *   pass a console down — WINDOWS ALLOCATES A NEW ONE FOR THE CHILD.
+ *
+ * So `DETACHED_PROCESS` moved the console from one place (the postmaster) to
+ * many (every backend, autovacuum worker, io_worker, wal_writer, bgworker).
+ * Each of those consoles is signalable, and on Windows 11 — where the default
+ * terminal application is Windows Terminal — each also surfaces as its own
+ * TASKBAR WINDOW titled `C:\lawmind\pgsql\pgsql\bin\postgres.exe`. 33 of
+ * the 43 visible windows on this desktop were database processes.
+ *
+ * The evidence was in the log the whole time: EVERY recorded kill hit a CHILD
+ * and never the postmaster, which is what this mechanism predicts.
+ *
+ *   2026-08-17 00:39:43  client backend     0xC000013A
+ *   2026-08-17 06:45:48  autovacuum worker  0xC000013A
+ *   2026-08-18 04:22:21  autovacuum worker  0xC000013A   <- after this "fix"
+ *
+ * Measured with a control that discriminates rather than reasoned about: a
+ * detached parent spawning three ordinary children produced 3 conhosts and 3
+ * visible windows; non-detached produced 0 — and died with its launcher, which
+ * is why simply dropping `detached` is not an available fix.
+ *
+ * DO NOT "fix" this by removing `detached: true`. The two options here are both
+ * bad and this is the less bad one; the real fix is below.
  *
  * MEASURED, with a control that discriminates rather than a claim that sounds
  * right. Two identical children, one flag apart, launched from a harness tool
@@ -209,11 +277,48 @@ const TASK_NAME = 'LawMindPostgres';
  * a bad config line, a stale lock file — are exactly the ones worth having, and
  * `'ignore'` would drop them on the floor.
  *
- * THIS IS THE INTERIM, NOT THE FIX. A Windows service runs with no console at
- * all and starts without anyone being logged in; `DETACHED_PROCESS` only removes
- * the console binding. FQ-PGSERVICE holds the one elevated command that ends
- * this properly, and it stays open until the founder runs it.
+ * THIS IS THE INTERIM, NOT THE FIX. A Windows service runs with no interactive
+ * desktop at all, so the child consoles above are never created and the windows
+ * never exist; `DETACHED_PROCESS` only moves the console binding down a level.
+ * FQ-PGSERVICE holds the one elevated command that ends this properly, and it
+ * stays open until the founder runs it. The unelevated session-0 alternative
+ * (`Register-ScheduledTask` with an S4U principal) was tried 18 Aug and refused
+ * with `Access is denied`, so there is no unelevated route to a console-free
+ * cluster.
+ *
+ * Until then `scripts/pg-hide-consoles.ps1 -Apply -Watch` hides the child
+ * windows with `ShowWindow(SW_HIDE)` — no signal, nothing terminated. That
+ * removes the ACCIDENT (a human closing one of 33 identical junk windows and
+ * restarting the cluster) and NOT the cause.
  */
+/**
+ * Is the cluster owned by the Windows service?
+ *
+ * **This is a REFUSAL gate, added 18 Aug 2026 when the service finally landed.**
+ * `spawnPostmaster()` starts a DETACHED postmaster, and a detached postmaster
+ * gives every backend it forks its own console and its own taskbar window —
+ * the defect the service exists to remove. So if this script ever ran while the
+ * service was registered but momentarily down, it would quietly re-create the
+ * failure class under a name that looks like a recovery.
+ *
+ * The scheduled task that used to call `spawn-detached` at logon is disabled
+ * for exactly this reason. The gate is here as well as there because a disabled
+ * task can be re-enabled by anyone, and a comment cannot stop it.
+ */
+function serviceOwnsCluster() {
+  const out = run(
+    'powershell.exe',
+    [
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      "$s = Get-Service -Name 'LawMindPostgres' -ErrorAction SilentlyContinue; if ($s) { 'yes' } else { 'no' }",
+    ],
+    { env: process.env, quiet: true },
+  );
+  return String(out.stdout ?? '').trim() === 'yes';
+}
+
 function spawnPostmaster() {
   const log = path.join(PG.logs, 'pg_ctl.log');
   fs.mkdirSync(PG.logs, { recursive: true });
@@ -233,7 +338,6 @@ function ensureTask() {
   const q = run('schtasks.exe', ['/query', '/tn', TASK_NAME], { env: process.env, quiet: true });
   if (q.status === 0) return false;
 
-  const log = path.join(PG.logs, 'pg_ctl.log');
   // `schtasks /create /sc ONLOGON` is refused unelevated ("ERROR: Access is
   // denied"), but the PowerShell scheduled-task cmdlets create the same
   // ONLOGON task for the current user without elevation. Tried in that order
@@ -296,6 +400,16 @@ function start() {
   // Started here, in-process, by the same console-free mechanism the task uses.
   // Not `schtasks /run`: that would make every manual start depend on the task
   // existing, and the task is precisely the artifact that has gone missing twice.
+  // Same refusal as `spawn-detached`. `start` is the command a human types, so
+  // it is the one most likely to be reached for during an incident -- exactly
+  // when quietly re-introducing the console defect would be hardest to notice.
+  if (serviceOwnsCluster()) {
+    console.error('start: REFUSING - the LawMindPostgres SERVICE owns this cluster.');
+    console.error('  Start it the right way:  sc start LawMindPostgres');
+    process.exitCode = 2;
+    return;
+  }
+
   const pid = spawnPostmaster();
   console.log(`start: postmaster spawned detached, pid ${pid} (no console, no cmd.exe parent)`);
 
@@ -331,6 +445,27 @@ function stop() {
   // `fast` rolls back open transactions and shuts down promptly. `smart` waits
   // for every client to disconnect, which on this machine means waiting for
   // whatever forgot to close its pool.
+  // Under the service the postmaster runs as LocalSystem in session 0, and an
+  // unelevated `pg_ctl` can neither see it nor signal it -- the same reason
+  // `isRunning()` stopped trusting `pg_ctl status`. Stopping the SERVICE is the
+  // only thing that works, and it still needs elevation, so this says so
+  // plainly rather than failing with a permissions error nobody can act on.
+  if (serviceOwnsCluster()) {
+    const r = run('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      "Stop-Service -Name 'LawMindPostgres' -Force -ErrorAction Stop",
+    ]);
+    if (r.status !== 0) {
+      console.error('stop: could not stop the LawMindPostgres service.');
+      console.error('  This needs an ELEVATED shell. From an admin prompt:');
+      console.error('    sc stop LawMindPostgres');
+      process.exit(1);
+    }
+    console.log('stop: LawMindPostgres service stopped');
+    return;
+  }
   const r = run(exe('pg_ctl'), ['-D', PG.data, '-m', 'fast', '-w', '-t', '120', 'stop']);
   if (r.status !== 0) process.exit(1);
 }
@@ -448,6 +583,17 @@ function main() {
     case 'spawn-detached': {
       if (isRunning()) {
         console.log('spawn-detached: already running');
+        return;
+      }
+      // See serviceOwnsCluster(). Starting a detached postmaster alongside a
+      // registered service re-creates the per-child consoles the service
+      // removed, so this refuses rather than "helpfully" recovering.
+      if (serviceOwnsCluster()) {
+        console.error('spawn-detached: REFUSING - the LawMindPostgres SERVICE owns this cluster.');
+        console.error('  A detached postmaster gives every backend its own console and its own');
+        console.error('  taskbar window, which is the defect the service exists to remove.');
+        console.error('  Start it the right way:  sc start LawMindPostgres');
+        process.exitCode = 2;
         return;
       }
       console.log(`spawn-detached: pid ${spawnPostmaster()}`);

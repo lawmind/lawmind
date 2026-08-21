@@ -62,7 +62,13 @@ export type TextExtractionMethod = 'unpdf' | 'pdftotext_fallback';
  * one, which is the difference between losing a court for hours and losing a
  * few seconds.
  */
-const DNS_ERRORS = new Set(['ENOTFOUND', 'EAI_AGAIN', 'ECONNRESET', 'ETIMEDOUT', 'UND_ERR_CONNECT_TIMEOUT']);
+const DNS_ERRORS = new Set([
+  'ENOTFOUND',
+  'EAI_AGAIN',
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'UND_ERR_CONNECT_TIMEOUT',
+]);
 
 export function transientNetworkCode(err: unknown): string | null {
   for (let e: unknown = err, depth = 0; e && depth < 4; depth++) {
@@ -157,6 +163,37 @@ export async function fetchPdfText(
   const res = await fetchWithRetry(url, signal);
   if (!res.ok) throw new Error(`GET ${url} → ${res.status}`);
   const bytes = new Uint8Array(await res.arrayBuffer());
+  /**
+   * THE SOFT 404, WHICH IS INDISTINGUISHABLE FROM A DOCUMENT UNTIL YOU READ IT.
+   *
+   * Measured 19 Aug 2026 on the condemned Bombay population, 360 of 360 sampled:
+   *
+   *   HTTP 200 · Content-Type: application/pdf · 124 bytes
+   *   "<!DOCTYPE html><html><body><center><strong>Welcome User Search Page not
+   *    Found here</strong></center></body></html>"
+   *
+   * The upstream stores its own error page under the PDF key and serves it with
+   * a 200 and a PDF content type. `res.ok` is true, the status check above
+   * passes, and the only thing that says the document is missing is the first
+   * five bytes. A real PDF begins `%PDF-`; a known-good Bombay judgment sampled
+   * beside these was 34,899 bytes.
+   *
+   * Without this check the failure reached `getDocumentProxy`, threw a parse
+   * error with no HTTP status in its message, and was recorded as `pdf_failed`
+   * — a RETRYABLE outcome. So the fleet re-fetched every one of them on every
+   * pass, three times each, and then condemned them for the wrong reason. It
+   * also put them in the retry queue instead of the provider-recovery
+   * population, which is where a document that does not exist at this source
+   * actually belongs.
+   *
+   * Thrown in the same `GET <url> → <status>` shape the caller already parses,
+   * with 404 as the status, because that is what the response MEANS. The
+   * caller maps 404 to `pdf_absent`, permanent on sight, which is correct: the
+   * next GET reads the same error page.
+   */
+  if (bytes.length < 5 || String.fromCharCode(...bytes.subarray(0, 5)) !== '%PDF-') {
+    throw new Error(`GET ${url} → 404`);
+  }
   const pdf = await getDocumentProxy(bytes);
   const { text, totalPages } = await extractText(pdf, { mergePages: true });
   const primary = normaliseWhitespace(text);
@@ -188,8 +225,16 @@ export async function fetchPdfText(
     return { text: primary, pages: totalPages || 1, method: 'unpdf' };
   }
   const recovered = await pdftotextFallback(bytes);
-  if (recovered !== null && recovered.length >= primary.length && classifyCorruption(recovered)?.corrupt === false) {
-    return { text: normaliseWhitespace(recovered), pages: totalPages || 1, method: 'pdftotext_fallback' };
+  if (
+    recovered !== null &&
+    recovered.length >= primary.length &&
+    classifyCorruption(recovered)?.corrupt === false
+  ) {
+    return {
+      text: normaliseWhitespace(recovered),
+      pages: totalPages || 1,
+      method: 'pdftotext_fallback',
+    };
   }
   return { text: primary, pages: totalPages || 1, method: 'unpdf' };
 }

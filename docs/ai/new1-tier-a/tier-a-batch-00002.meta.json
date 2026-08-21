@@ -1,0 +1,15 @@
+{
+  "job": "doc-vector-batches:A",
+  "tier": "A",
+  "batchIndex": 2,
+  "rows": 9987,
+  "idsHash": "25a074bc159f17dde17681ecacc81b2162aef297140b427c2622274d5e1883f1",
+  "contractVersion": "v1",
+  "definitionHash": "e76879ab6bbcd452",
+  "representationType": "document",
+  "includesText": false,
+  "caseIdentitiesCovered": 34545,
+  "firstId": "00959a5b-05d6-4f90-b8c9-a3d3025272d1",
+  "lastId": "00dffa9d-0c07-42c0-8083-14fe1c26762b",
+  "generatedAt": "2026-08-19T13:16:19.348Z"
+}

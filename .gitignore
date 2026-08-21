@@ -125,3 +125,26 @@ docs/ops/migration/new2-text-damage.jsonl
 docs/ops/migration/new2-text-damage.jsonl.cursor
 docs/ops/migration/new2-date-quality.jsonl
 docs/ops/migration/new2-date-quality.jsonl.cursor
+
+# ── Regenerable bulk that EXCEEDS GITHUB'S 100 MB PER-BLOB HARD LIMIT ──────────
+# These are not a judgement about what is worth keeping. GitHub REJECTS a push
+# containing any of them, so a repo that tracked them could not be pushed at all.
+# Each is derived, each is reproducible from the corpus plus a committed script,
+# and each changes every run — the exact profile the datasets/ and
+# document-vectors/ rules already cover.
+#
+#   arms-checkpoint.jsonl            611 MB  · `pnpm --filter @lawmind/harness arms`
+#   arms-checkpoint.pre0055.jsonl    387 MB  · a pre-migration snapshot of the same
+#   corpus-confirm.jsonl             130 MB  · LCC text-safety corpus confirmation
+#
+# The SUMMARIES stay tracked. Only the payloads are ignored.
+arms-checkpoint.jsonl
+arms-checkpoint.pre*.jsonl
+docs/ai/lcc-text-safety/corpus-confirm.jsonl
+
+# Ingest-fleet stderr dumps at the repo root — `hc-hist-*.err`, `hc-hist9-*.err`
+# and friends, ~72 MB of them. Transient run artifacts on one machine, exactly
+# like `services/harness/*.err` above, which is ignored for the same reason. The
+# `*.log` rule at the top of this file already covers their stdout counterparts;
+# this covers the stderr side that rule misses.
+/*.err

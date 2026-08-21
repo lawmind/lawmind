@@ -1,4 +1,68 @@
-# TREATMENT-GRAPH GAP — 34 unresolved overruled/doubted edges, all Supreme Court
+# TREATMENT-GRAPH GAP — 33 unresolved overruled/doubted edges, one NOT Supreme Court
+
+**Freshness check, 18 Aug 2026 (NEW3, source-frontier addendum item 3)** —
+re-ran the live count from `judgment_citations` directly, not from this
+file's own 14 Aug memory, per the founder's explicit instruction to resolve
+this discrepancy from source records only, never memory:
+
+```sql
+SELECT relationship, count(*) FROM judgment_citations
+WHERE relationship IN ('overruled','overruled_in_part','doubted')
+  AND cited_judgment_id IS NULL AND coalesce(citation_text,'') <> ''
+GROUP BY relationship;
+-- doubted 2 · overruled 26 · overruled_in_part 5  =  33
+```
+
+**33, not 32.** The 14 Aug freshness check's own claim — *"no new
+overruled-class rows have appeared"* — was true for 4 days and stopped being
+true since. Diffed the 33 live citation_texts against §2's 32-row list
+(after excluding the two already-fixed rows, Sun Export Corporation and
+SEBI v. Roofit Industries) and found exactly one row in neither the 32 nor
+a duplicate of them: **`doubted | (2017) 14 SCC 533`**, absent from every
+prior version of this file.
+
+**And it breaks this file's own title claim, which matters more than the
+count.** *"Every one of the 34 is a Supreme Court judgment declaring another
+Supreme Court judgment overruled/doubted"* — checked, not assumed, for this
+new row, and it is **false for this one**. The citing `judgment_citations`
+row points to `b076a999-d618-4bb3-bdb1-4176934510d2`, which is **The Caritas
+Ayurvedic Hospital Trust v. State of Kerala**, **High Court of Kerala**,
+2024-02-20 — not the Supreme Court. Its extracted text at the citation's
+`char_offset`:
+
+> *"…another two-Judge Bench of the Apex Court in Lisie Medical Institutions
+> v. State of Kerala [(2017) 14 SCC 533] doubted the correctness of certain
+> observations contained in S.H.Medical Centre Hospital (supra) and the
+> matter was placed before the three Judge Bench…"*
+
+**This is very likely a misextraction, not a new genuine target, and should
+not be run through the normal concordance resolver unreviewed.** `(2017) 14
+SCC 533` is *Lisie Medical Institutions v. State of Kerala*'s own reporter
+citation — the SC bench doing the doubting, already held in this corpus and
+already the CITING judgment on this file's other row (`overruled | (2014) 11
+SCC 381 | M/S. Lisie Medical Institutions v. The State of Kerala and Ors. |
+2023-02-09`). The actual doubted target is **S.H. Medical Centre Hospital**,
+referred to here only as `"(supra)"` — a backreference the extractor cannot
+resolve to a citation, so `doubted` attached to the nearest citation number
+instead, which belongs to the actor, not the object. Running the concordance
+resolver on `(2017) 14 SCC 533` as-is would link Lisie Medical Institutions
+to itself as a self-doubting edge — worse than leaving it unresolved.
+Flagged to LCC (owns `citations-cli.ts` / the extraction pipeline) rather
+than corrected here — this lane does not touch corpus tables or extraction
+code. `CLAUDE.md`'s zero-threshold rule on stale-overruled rendering is about
+the target of these edges, and a wrong target is exactly as unsafe as a
+missing one.
+
+**Old framing kept below, unedited, as the record of the 14 Aug state — read
+the correction above as current.**
+
+**32** (was 34; the 2 fixed are Sun Export Corporation and SEBI v. Roofit
+Industries, per §3e below). Essentially unchanged despite the corpus
+tripling — expected, not a stall: every one of these 34 rows is an SC
+judgment about another SC judgment, and the SC corpus itself has stayed
+flat at 38,342 all session while HC grew. **No new overruled-class rows
+have appeared; this document's picture remains the complete one for this
+highest-priority risk category.**
 
 **NEW3, 13 Aug 2026. Highest-priority finding this lane has produced.** Not
 a generic missing-authority item — this is a direct instance of the
@@ -162,6 +226,91 @@ event, cross-checked against the citation form independently. None was
 supplied from this lane's own recollection of Indian case law and then
 merely "confirmed" by a search that would happily agree with a wrong
 guess.
+
+---
+
+## 3e · THE 13 "NO CANDIDATE" TARGETS, IDENTIFIED AND CHECKED, 13 Aug 2026
+
+`overruled-resolve-cli.ts` re-run fresh against the current corpus (up
+from the count it was last measured against). Live classification,
+34 edges: **13 candidate, 1 ambiguous, 6 thin, 1 no-name-beside-citation,
+13 no-candidate at all** — same shape as before, exact citations now in
+hand rather than inferred from prose. `RING_PROGRAM.md` §3 names this the
+sharpest question this lane can answer: for a Supreme Court corpus at
+99.98% completeness, is a no-candidate target a name-extraction failure or
+genuine absence.
+
+**All 13 identified externally** — never from memory, each cross-checked
+against an independent source describing the actual overruling event, same
+discipline as §3b:
+
+| target citation | identified as | citing judgment (already held) | corpus status |
+| --- | --- | --- | --- |
+| `(1977) 6 SCC 564` | Sun Export Corporation v. Collector of Customs, Bombay — **citing text's printed year is wrong; real citation is `(1997) 6 SCC 564`** | Dilip Kumar & Co. (2018-07-30) | **HELD** — `overruled_status = 'none'`, renders as good law |
+| `(1983) 3 SCC 284` | Y.V. Rangaiah v. J. Sreenivasa Rao, decided 24 Mar 1983 | State of HP v. Raj Kumar (2022-05-20) | **Checked by exact decision date — a different, correctly-titled SC judgment exists for 1983-03-24. Genuinely not held.** |
+| `(1990) 1 SCC 109` | Synthetics and Chemicals Ltd. v. State of U.P. | already resolved, §3b | held, unaliased (per §3b) |
+| `(1999) 4 SCC 453` | Appa Narsappa Magdum v. Akubai Ganapati Nimbalkar, decided 4 May 1999 — **our printed page number may itself be wrong; independently reported as `(1999) 4 SCC 443`** | Vasant Ganpat Padave (2019-09-18) | **Checked by exact decision date — 8 other SC judgments held for 1999-05-04, none this one. Genuinely not held.** |
+| `(2005) 1 SCC 394` | E.V. Chinnaiah v. State of A.P. | already resolved, §3b | held, unaliased (per §3b) |
+| `(2005) 2 SCC 479` | HUDA v. Sunita, decided 14 Jan 2005 | HUDA v. Vidya Chetal (2019-09-16) | **Checked by exact decision date — zero SC judgments held for 2005-01-14 at all. Genuinely not held.** |
+| `(2014) 11 SCC 381` | S.H. Medical Centre Hospital v. State of Kerala | Lisie Medical Institutions (2023-02-09) | Not found by name (loose patterns tried, no false-positive near-matches). Genuinely not held. |
+| `(2015) 4 SCC 325` | Velaxan Kumar v. Union of India | Indore Development Authority v. Shailendra (2018-02-08) | Not found by name. Genuinely not held. |
+| `(2016) 12 SCC 125` | SEBI v. Roofit Industries Ltd. | Adjudicating Officer SEBI v. Bhavesh Pabari (2019-02-28) | **HELD** — `overruled_status = 'none'`, renders as good law. (A different Roofit Industries case, a 2015 customs matter, is also held and is not the target — confirmed by date and subject matter, not conflated.) |
+| `[2017] 4 SCR 232` / `(2017) 6 SCC 751` | Government (NCT of Delhi) v. Manav Dharam Trust, decided 4 May 2017 — **one target, both rows** | Shiv Kumar v. Union of India (2019-10-14) | Not held. A name-pattern match on "Manav Dharam" surfaced an unrelated 2025 Rajasthan HC case (`Manav Dharam Viklang Seva`) — checked and ruled out by subject matter, not conflated. |
+| `(2020) 2 SCC 109` | N.V. International v. State of Assam | Govt of Maharashtra v. Borse Brothers (2021-03-19) | Not found by name (with/without periods tried). Genuinely not held. |
+| `AIR 1987 SC 2158` | M.K. Kunhimohammed v. P.A. Ahmedkutty, decided 1 Sep 1987 | State of Punjab v. Bhajan Kaur (2008-05-08) | **RESOLVED 13 Aug (bus 0340, NEW2) — HELD, not a gap.** In `judgments` under a source-side typo (AWS 1987 metadata spells the respondent "AHMEDKUITY", TT→IT transposition) and under its S.C.R. citation, not AIR — `id d314cd69-58de-4afd-9ce6-319a373791e2`, `reporter_citations: ["[1987] 3 S.C.R. 1149"]`, decided 1987-09-01. The name search here found and discarded five unrelated Kerala HC matches, correctly, but never re-tried under the S.C.R. reporter series. |
+
+**RESOLVED 14 Aug 2026 (LCC) — Sun Export Corporation and SEBI v. Roofit
+Industries no longer render as good law.** Both `judgment_citations` rows had
+`cited_judgment_id IS NULL` because the citing text's printed citation does
+not exact-match anything held: Dilip Kumar & Co. prints the wrong year
+(`(1977) 6 SCC 564`, real citation `(1997) 6 SCC 564`), Bhavesh Pabari prints
+the SCC form of a judgment we hold only under its S.C.R. form (`(2016) 12 SCC
+125` vs held `[2015] 12 S.C.R. 190`). Both targets were already externally
+identified above by case identity and decision date, not by citation-string
+similarity, so this is not the fuzzy-resolution `DOMAIN_TRUTH.md` forbids.
+**Fix applied directly to the two specific `judgment_citations` rows** (not a
+general resolver change, not an alias-table write — no corroborated
+parallel-citation sighting exists for either, so `judgment_citation_aliases`
+was not the right mechanism): `cited_judgment_id` set on each row with an
+evidence note recording the correction and its verification basis, then
+`pnpm overruled --confirm` run (existing, sanctioned script) to backfill.
+Verified by direct read after: both judgments now carry
+`overruled_status = 'set_aside'`. The same run also backfilled 12 other
+judgments whose links had been resolved earlier but never applied — a
+pre-existing gap between resolution and backfill, not introduced by this fix.
+
+**Result: 2 of 13 were held and rendering as good law until today**
+(Sun Export Corporation, SEBI v. Roofit Industries) — a citation-linking gap,
+not acquisition, now closed. **3 of 13 were already resolved as held** in §3b and above
+(Kunhimohammed added 13 Aug). **7 distinct identities across the remaining
+8 rows are genuinely not held** — checked by name, by loose/garbled-title
+variants, and by exact decision date where a date was known, with no
+false-positive near-match accepted uncritically (Manav Dharam Trust
+surfaced a plausible-looking match that was checked and ruled out by
+subject matter before being discarded).
+
+**RESOLVED 13 Aug 2026 (bus 0340, NEW2) — independently confirmed against
+AWS's own SC bucket, not left open.** NEW2 checked all 8 (as they stood
+before Kunhimohammed's resolution above) directly against AWS's per-year
+SC parquet metadata (`sci.readYearMetadata`): by exact decision date where
+one was known (1983-03-24, 1999-05-04, 2005-01-14 — zero rows matching
+either party name on any of those dates) and by the most distinctive
+party-name substring for the rest (Velaxan, S.H. Medical, Manav Dharam,
+N.V. International — zero hits, re-checked with distinctive terms after
+an initial over-generic pass). **All 7 remaining targets are confirmed
+absent from what AWS Open Data itself currently holds for the Supreme
+Court** — a genuine source-coverage limit, not an ingest gap and not a
+name-matching failure on either side. Consistent with the existing
+99.97%/10-document characterisation in `DATASETS.md` — these 7 sit outside
+that already-explained 10, a second, independently-confirmed absence.
+
+**Acquisition status:** logged to `CORPUS_ACQUISITION_QUEUE.md`. **Closed,
+not fetched** — the 7 are outside the authorized AWS source and no
+gap-fill source exists (`SOURCE_REGISTRY.md`), so nothing is actionable
+without a new source; Kunhimohammed needed no acquisition, only the
+alias-lookup lesson recorded above. Per lane boundary, this lane does not
+touch corpus tables, and per `RING_PROGRAM.md` §4, "a refusal is a
+result."
 
 ---
 
