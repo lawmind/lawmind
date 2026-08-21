@@ -60,7 +60,37 @@ import { ENGLISH_RATE_FLOOR, englishRate } from './quality-state.ts';
  * `trust_advanced_by` on every promotion, so a row promoted under one version of
  * the rules can be found and re-judged when they change.
  */
-export const SEMANTIC_ROLE_VERSION = 'v1';
+export const SEMANTIC_ROLE_VERSION = 'v2';
+
+/**
+ * v1 → v2, 21 Aug 2026. **`relief` was adjudicated as an outcome and it is a
+ * prayer.**
+ *
+ * Found by following a cost number rather than by reading code. Tokens per
+ * `CANONICAL_ACCEPT` came out at 4,704 across all tasks and **390,070 for the
+ * `relief` task** — 132x the next worst. That is not a bad prompt. Reading the
+ * spans, every one sat in the first quarter of its document, and
+ * `enrich-atomic.ts` says why in as many words:
+ *
+ *     relief: 'RELIEF that was SOUGHT, and by whom'
+ *             'What was asked for, not what was granted — what the court
+ *              ordered is a court_action.'
+ *
+ * v1 put `relief` in the operative branch beside `relief_granted` and
+ * `court_action`. Consequences, all three of them real:
+ *
+ *   * 207 of 280 claims returned `ROLE_UNPROVEN` for having no operative
+ *     evidence, when a prayer is not supposed to have any;
+ *   * 40 returned `ROLE_MISMATCH` as "relief recited inside a submission",
+ *     which is exactly where a prayer belongs;
+ *   * **3 returned `CANONICAL_ACCEPT`** — three prayers certified as operative
+ *     directions. That is the dangerous direction and it is why this is a
+ *     version bump and a re-run rather than an edit.
+ *
+ * `relief` now sits in the party-submission branch, the mirror of
+ * `argument_petitioner`. No other task emits `kind: 'relief'`, so no promotion
+ * made under v1 for any other task is affected by this change.
+ */
 
 /**
  * The telemetry vocabulary. Six outcomes, and the distinctions between them are
@@ -89,6 +119,7 @@ export type SemanticRole =
   | 'reasoning'
   | 'reasoning_proposition'
   | 'proposition'
+  /** RELIEF SOUGHT — a prayer. Adjudicated as a party submission, not an outcome. */
   | 'relief'
   | 'relief_granted'
   | 'court_action'
@@ -400,7 +431,6 @@ export function verifyRole(input: {
      * WHAT THE COURT DID. Position is real evidence here in a way it is not for
      * a holding: an operative direction lives in the operative part.
      */
-    case 'relief':
     case 'relief_granted':
     case 'court_action': {
       if (inQuote) {
@@ -448,7 +478,13 @@ export function verifyRole(input: {
      * mirror: a span that satisfies BOTH is evidence of nothing.
      */
     case 'argument_petitioner':
-    case 'argument_respondent': {
+    case 'argument_respondent':
+    /**
+     * `relief` is RELIEF SOUGHT — a prayer, which is a party's position and not
+     * the court's. It belongs here and not with `relief_granted`, and putting it
+     * in the wrong branch certified three prayers as operative directions in v1.
+     */
+    case 'relief': {
       const nearArg = nearest(found, offset);
       if (nearArg === null) {
         return { ...OUT('ROLE_UNPROVEN', 'no_voice_marker_within_reach'), ...base };

@@ -151,6 +151,46 @@ describe('relief — a prayer is not a grant', () => {
   });
 });
 
+describe('relief SOUGHT is a prayer, and a prayer is a party submission', () => {
+  it('ACCEPTS a prayer recited inside a submission', () => {
+    const pleaded = [
+      'It is submitted by learned counsel for the petitioner that the impugned order',
+      'be set aside and the petition be allowed with costs.',
+    ].join('\n');
+    const v = verifyRole({
+      documentTextSafety: 'UNKNOWN',
+      fullText: pleaded,
+      role: 'relief',
+      span: 'the petition be allowed with costs',
+    });
+    assert.equal(v.outcome, 'CANONICAL_ACCEPT');
+  });
+
+  it('REFUSES a prayer certified from the operative part — the v1 defect', () => {
+    /**
+     * v1 put `relief` beside `relief_granted` and certified three prayers as
+     * operative directions. `enrich-atomic.ts`: "What was asked for, not what
+     * was granted — what the court ordered is a court_action."
+     */
+    const v = verifyRole({
+      ...ok,
+      role: 'relief',
+      span: 'this Civil Revision Petition stands dismissed',
+    });
+    assert.equal(v.outcome, 'ROLE_MISMATCH');
+    assert.equal(v.rule, 'nearest_voice_is_the_court');
+  });
+
+  it('relief_granted from the SAME span is still accepted — the two roles are mirrors', () => {
+    const v = verifyRole({
+      ...ok,
+      role: 'relief_granted',
+      span: 'this Civil Revision Petition stands dismissed',
+    });
+    assert.equal(v.outcome, 'CANONICAL_ACCEPT');
+  });
+});
+
 describe('issue — framing, and only framing', () => {
   it('ACCEPTS a question the court set itself', () => {
     const v = verifyRole({
