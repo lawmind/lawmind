@@ -1,0 +1,193 @@
+{
+  "kind": "new1_gold_reachability_ceiling",
+  "measuredAt": "2026-08-21T17:13:43.091Z",
+  "contract": "ELIGIBILITY_CONTRACT_V2 (bus 0919) read live from judgment_embedding_eligibility (a VIEW)",
+  "note": "The two golds are scored SEPARATELY. Their retrieval jobs differ and pooling them would hide both.",
+  "citedGold": {
+    "label": "citation-derived (NEW3 v2, 228 authorities)",
+    "goldAuthorities": 228,
+    "presentInCorpus": 228,
+    "missingFromCorpus": 0,
+    "staged": 198,
+    "quarantinedRefused": 0,
+    "semanticTier": {
+      "BAIL_ORDER_REACHABLE": 12,
+      "BROAD_SEARCHABLE": 199,
+      "NOT_ELIGIBLE": 16,
+      "UNRESOLVED_EXPERIMENTAL": 1
+    },
+    "ceiling": {
+      "refusedByContract": 16,
+      "refusedPct": 7,
+      "byFirstBindingClause": {
+        "TEXT_LENGTH_UNDER_2000": 15,
+        "TEXT_QUALITY_BELOW_0.85": 1
+      }
+    },
+    "refusedDetail": [
+      {
+        "id": "68bd105a-d054-433e-8bf2-868a6c613e16",
+        "court": "Madras High Court",
+        "class": null,
+        "script": null,
+        "tq": 0.93,
+        "chars": 1598,
+        "band": "brief"
+      },
+      {
+        "id": "84d78907-cb47-4b57-821e-9a2a145e012a",
+        "court": "Allahabad High Court",
+        "class": null,
+        "script": null,
+        "tq": 0.962,
+        "chars": 1373,
+        "band": "brief"
+      },
+      {
+        "id": "98c10bc8-0b2d-4a13-9328-d57d4e838567",
+        "court": "High Court of Jharkhand",
+        "class": null,
+        "script": null,
+        "tq": 0.96,
+        "chars": 741,
+        "band": "stub"
+      },
+      {
+        "id": "84fac34b-0519-4438-bdc6-5ed55c5fb16b",
+        "court": "Allahabad High Court",
+        "class": null,
+        "script": null,
+        "tq": 0.94,
+        "chars": 1187,
+        "band": "brief"
+      },
+      {
+        "id": "2bae7c68-d340-48b9-bd8d-d632c40a2335",
+        "court": "High Court Of Rajasthan",
+        "class": "bail_order",
+        "script": null,
+        "tq": 0.939,
+        "chars": 724,
+        "band": "stub"
+      },
+      {
+        "id": "7ac2ad6b-ba50-4568-82c7-7463f65e6b89",
+        "court": "High Court of Punjab and Haryana",
+        "class": null,
+        "script": null,
+        "tq": 0.955,
+        "chars": 1756,
+        "band": "brief"
+      },
+      {
+        "id": "33c05d9e-9d94-497d-acd6-8afb9670c86d",
+        "court": "Allahabad High Court",
+        "class": "procedural_disposal",
+        "script": null,
+        "tq": 0.963,
+        "chars": 1139,
+        "band": "brief"
+      },
+      {
+        "id": "309e32e6-d1b6-41ef-a343-2f8471c3b51c",
+        "court": "Allahabad High Court",
+        "class": null,
+        "script": null,
+        "tq": 0.968,
+        "chars": 1290,
+        "band": "brief"
+      },
+      {
+        "id": "d4fce0f8-b5b9-453d-a13f-986ce09b3be7",
+        "court": "Allahabad High Court",
+        "class": null,
+        "script": null,
+        "tq": 0.988,
+        "chars": 1662,
+        "band": "brief"
+      },
+      {
+        "id": "97931808-329d-4887-a68a-2170e77d8bcf",
+        "court": "High Court of Punjab and Haryana",
+        "class": null,
+        "script": null,
+        "tq": 0.977,
+        "chars": 981,
+        "band": "stub"
+      },
+      {
+        "id": "40c1f0a0-627c-48a9-9833-b1e9e978a893",
+        "court": "Bombay High Court",
+        "class": null,
+        "script": null,
+        "tq": 0.777,
+        "chars": 10639,
+        "band": "substantial"
+      },
+      {
+        "id": "b7c29125-01cd-424b-b0c3-03277bf8891f",
+        "court": "High Court of Punjab and Haryana",
+        "class": null,
+        "script": null,
+        "tq": 0.977,
+        "chars": 969,
+        "band": "stub"
+      },
+      {
+        "id": "07f01884-de14-4a31-8f08-1460182274f2",
+        "court": "Madras High Court",
+        "class": "procedural_disposal",
+        "script": null,
+        "tq": 0.961,
+        "chars": 1628,
+        "band": "brief"
+      },
+      {
+        "id": "945cca7e-338c-4586-8dd5-56df68e95f8b",
+        "court": "High Court of Jharkhand",
+        "class": null,
+        "script": null,
+        "tq": 0.973,
+        "chars": 1758,
+        "band": "brief"
+      },
+      {
+        "id": "24bf5096-924f-4ce2-ae9c-f9f21a486cf0",
+        "court": "High Court of Punjab and Haryana",
+        "class": "decided_brief",
+        "script": null,
+        "tq": 0.958,
+        "chars": 1025,
+        "band": "brief"
+      },
+      {
+        "id": "ffbed027-d220-4f71-9bd6-49cd3c1819ec",
+        "court": "High Court of Jharkhand",
+        "class": "bail_order",
+        "script": null,
+        "tq": 0.964,
+        "chars": 1897,
+        "band": "brief"
+      }
+    ]
+  },
+  "uncitedGold": {
+    "label": "uncited-authority (NEW3 v2, 175 authorities)",
+    "goldAuthorities": 175,
+    "presentInCorpus": 175,
+    "missingFromCorpus": 0,
+    "staged": 172,
+    "quarantinedRefused": 3,
+    "semanticTier": {
+      "UNRESOLVED_EXPERIMENTAL": 3,
+      "BROAD_SEARCHABLE": 168,
+      "BAIL_ORDER_REACHABLE": 4
+    },
+    "ceiling": {
+      "refusedByContract": 0,
+      "refusedPct": 0,
+      "byFirstBindingClause": {}
+    },
+    "refusedDetail": []
+  }
+}

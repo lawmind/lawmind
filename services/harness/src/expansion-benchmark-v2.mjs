@@ -54,10 +54,27 @@ const EF_SEARCH = Number(process.env.EF_SEARCH ?? 200);
  */
 const CAST = /_half_/.test(process.env.PROBE_TABLE ?? '') ? 'halfvec' : 'vector';
 const TOP_K = Number(process.env.TOP_K ?? 50);
-const GOLD = new URL('../../../docs/ai/new3-semantic-expansion-gold.json', import.meta.url);
+/**
+ * The gold FILE, not just the gold KIND.
+ *
+ * The default moved to v2 on 21 Aug 2026. v1 carries 22 authorities whose cited
+ * judgment_date is AFTER the citing one (bus 0904) and one mojibake row; NEW3
+ * quarantined exactly those and NEW1 re-verified the quarantine independently
+ * before the default was changed — the arithmetic closes (v1 = v2 + quarantined,
+ * by row id), 0 mojibake survivors, 0 date-order survivors. v1 is left on disk
+ * and remains selectable, because a superseded benchmark still has to be
+ * reproducible.
+ */
+const GOLD_FILE = process.env.GOLD_FILE ?? 'docs/ai/new3-semantic-expansion-gold-v2.json';
+const UNCITED_GOLD_FILE = process.env.UNCITED_GOLD_FILE ?? 'docs/ai/new3-uncited-authority-gold-v2.json';
+const GOLD = new URL('../../../' + GOLD_FILE, import.meta.url);
 // The arm is in the FILENAME. Without it the halfvec run silently overwrites the
 // fp32 report and the comparison is between a file and its own replacement.
-const ARM = (CAST === 'halfvec' ? '-halfvec' : '') + ((process.env.GOLD_KIND ?? 'expansion') === 'uncited' ? '-uncited' : '');
+// The arm carries the gold VERSION too. A v1 and a v2 run at the same milestone
+// would otherwise write the same filename, and the second would be read as the
+// first — the exact substitution the version bump exists to prevent.
+const GOLD_VER = /-v2\.json$/.test((process.env.GOLD_KIND ?? 'expansion') === 'uncited' ? UNCITED_GOLD_FILE : GOLD_FILE) ? '-goldv2' : '-goldv1';
+const ARM = (CAST === 'halfvec' ? '-halfvec' : '') + ((process.env.GOLD_KIND ?? 'expansion') === 'uncited' ? '-uncited' : '') + GOLD_VER;
 const OUT = new URL(`../../../docs/ai/new1-tier-a/expansion-benchmark-${LABEL}${ARM}.json`, import.meta.url);
 
 const sql = postgres(url, { ssl: false, max: 1, connection: { statement_timeout: 300_000 }, onnotice: () => {} });
@@ -66,7 +83,8 @@ const sql = postgres(url, { ssl: false, max: 1, connection: { statement_timeout:
 // measure an authority nobody has cited, and it has to run through the SAME
 // funnel and the SAME contract or its numbers are comparable with nothing.
 const GOLD_KIND = process.env.GOLD_KIND ?? 'expansion';
-const loaded = GOLD_KIND === 'uncited' ? loadUncitedGold() : loadNew3Gold(GOLD.pathname.replace(/^\//, ''));
+const GOLD_PATH_USED = GOLD_KIND === 'uncited' ? UNCITED_GOLD_FILE : GOLD_FILE;
+const loaded = GOLD_KIND === 'uncited' ? loadUncitedGold(UNCITED_GOLD_FILE) : loadNew3Gold(GOLD.pathname.replace(/^\//, ''));
 console.log(
   `gold[${GOLD_KIND}]: ${loaded.rows.length} usable of ${loaded.totals?.rowsInFile ?? loaded.rows.length + loaded.dropped.length} (${loaded.dropped.length} dropped)`,
 );
@@ -226,7 +244,7 @@ const report = {
   measuredAt: new Date().toISOString(),
   goldKind: GOLD_KIND,
   cautions,
-  goldFile: 'docs/ai/new3-semantic-expansion-gold.json',
+  goldFile: GOLD_PATH_USED,
   goldDropped: loaded.dropped.length,
   funnel,
   byQueryType: byType,

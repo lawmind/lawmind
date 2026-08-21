@@ -162,3 +162,90 @@ compaction. Update it as items move.
 | 500k / 1M / 2M milestones (P3) | TODO |  |
 | The 82.5%-unclassified purity audit (P1.5) | TODO | NEW2 is classifying ahead of the walk; the ineligible-rate trend in the milestone report is the signal to watch |
 | Scheduled task for the keeper | BLOCKED — founder | admin rights;  |
+
+---
+
+# NEW1 SESSION — 21 Aug 2026 (evening)
+
+## S0 — adoption, not duplication
+
+| # | task | state | evidence |
+| --- | --- | --- | --- |
+| S0.1 | Exactly ONE GPU sidecar | DONE | pid 23660 `services/embed/gpu/server.py --port 8799`; `/health` → `{"ok":true,"providers":["CUDAExecutionProvider",...]}`. The count of 5 my first query returned was my own PowerShell matching its own command text — the known self-match trap |
+| S0.2 | Exactly ONE keeper | DONE | pid 26100 `sidecar-keeper.mjs`, parent 25924 (the dead launcher) |
+| S0.3 | Exactly ONE logical coverage walk | DONE | ONE `stage-runner.sh` (pid 17320) and one batch worker beneath it. Lineage resolved: 25924 → 16232 → 27552 → 17320, Git-bash re-exec pairs are the same logical process, not duplicates |
+| S0.4 | GPU utilization | DONE | 100% / 7,075 MiB at adoption; dips to ~59% only while my own DB queries contend |
+| S0.5 | Staged-vector delta | DONE | 673,361 → **687,589** observed rising across the session, exact `count(*)`, not an estimate |
+| S0.6 | Contract hash asserted | DONE | `5efa4c8decef699e` on every batch, 8 consecutive assertions before adoption |
+| S0.7 | Coverage worklist, not highest batch | DONE | worklist **48/864**, batch lcc-00057. The batch NUMBER is 57 and the worklist POSITION is 48 — they are not the same and only the second is progress |
+| S0.8 | Production-route benchmark: at most one | DONE | ZERO alive. `production-route-benchmark.json` complete (228 case_title + 228 exact_citation). Finite job, finished once. **Not relaunched** — per the standing rule it does not become permanent background load |
+| S0.9 | Nothing launched | DONE | this session started no background job. Everything running was adopted |
+
+## S1 — zero silent holes, proved rather than assumed
+
+| # | task | state | evidence |
+| --- | --- | --- | --- |
+| S1.1 | Per-batch accounting closes | DONE | for every instrumented `STAGE DONE`: `inserted + alreadyStaged + nowIneligible + noText == rowsInBatch`. **114 of 114 close, 0 open.** 13 older records predate the counters and are excluded, not counted as passes |
+| S1.2 | Explain the `inserted: 0` batches | DONE — NOT a hole | batches 10–36 show `inserted 0` with `alreadyStaged ≈ 9,750` and the arithmetic closing. That is correct dedup on a re-walk. The same batches earlier showed `alreadyStaged 8,396 / ineligible 1,597`; ineligible then fell to ~236 and 1,359 rows inserted — bail orders becoming reachable under LCC 0066, which is the 29,349 vectors restored in bus 0930 |
+
+## S2 — trust composition (P2). NEW1 invents no tier and no private filter
+
+| # | task | state | evidence |
+| --- | --- | --- | --- |
+| S2.1 | Use the CANONICAL vocabulary | DONE | `judgment_embedding_eligibility.semantic_tier` is a **VIEW**, so ELIGIBILITY_CONTRACT_V2 is read live. Vocabulary: `VERIFIED_SEMANTIC_CORE · BAIL_ORDER_REACHABLE · BROAD_SEARCHABLE · UNRESOLVED_EXPERIMENTAL · NOT_ELIGIBLE` |
+| S2.2 | Composition of staged vectors | DONE | n=27,477 deterministic sample. **BROAD_SEARCHABLE 86.37% · BAIL_ORDER_REACHABLE 13.61% · UNRESOLVED_EXPERIMENTAL 0.03% · VERIFIED_SEMANTIC_CORE 0.00%.** `staged-trust-composition.json` |
+| S2.3 | **Why VERIFIED_SEMANTIC_CORE is zero** | DONE — root cause found | **`script_quality` is NULL on 100% of the sampled staged rows.** The tier requires `decided` AND `script_quality IN ('clean','mixed_script_ok')`; NULL never matches, so all 38.06% of staged rows already classified `decided` fall through to BROAD_SEARCHABLE. The zero is an UNPOPULATED INPUT, not a quality verdict |
+| S2.4 | Can canonical evidence identify the damaged rows today? | DONE — **NO** | the mid-turn instruction asked exactly this before any pause. `script_quality` is the canonical column and it is NULL for every staged row sampled, so it identifies nothing. My own 0936 estimate (50,108 of 542,980 unreadable, ~9.2%) came from an English-density method, which is precisely the private semantics I have been told not to act on |
+| S2.5 | Pause the walk for known text damage? | DONE — **NO, keep running** | evidence-driven: there is no canonical predicate to exclude ON, so a pause would stop ~91% good work to avoid ~9% waste with nothing to resume against. Decision recorded, not assumed. **On `TEXT_UNSAFE_CONTRACT_READY`: recompute coverage → quarantine affected vectors (never delete) → resume from the census.** Precondition asked of LCC/NEW2: populate `script_quality` on the staged ids |
+
+## S3 — GOLD_REACHABILITY_CEILING, now a first-class metric (P9)
+
+`docs/ai/new1-tier-a/gold-reachability-ceiling.json`. The two golds are scored
+SEPARATELY and never pooled — their retrieval jobs differ.
+
+| gold | authorities | staged | ceiling | first binding clause |
+| --- | --- | --- | --- | --- |
+| citation-derived (NEW3 v2) | 228 | **198 (86.8%)** | **16 = 7.0%** | `TEXT_LENGTH_UNDER_2000` 15 · `TEXT_QUALITY_BELOW_0.85` 1 |
+| uncited-authority (NEW3 v2) | 175 | **172 (98.3%)** | **0 = 0.0%** | — |
+
+**The ceiling closed from 13.2% to 7.0%** on the citation-derived set. LCC's
+BAIL_ORDER_REACHABLE recovered exactly the 12 bail orders bus 0916 priced, and
+they now show as a tier rather than a refusal. What remains is almost entirely
+the accepted length loss, so the residue is one decision, not a defect list.
+
+## S4 — NEW3 v2 gold, checked before use (P5)
+
+| check | verdict |
+| --- | --- |
+| arithmetic closes (v1 = v2 + quarantined, by row id) | **PASS** — nothing invented, nothing silently lost, no quarantined row survives |
+| the 22 chronologically-impossible authorities from bus 0904 | **PASS** — all 22 quarantined, 66 rows, with reasons |
+| mojibake / control chars in surviving query text (my own scan) | **PASS** — 0 survivors |
+| date plausibility on survivors | **PASS** — 0 survivors with cited > citing |
+| provenance method on every row | **PASS** |
+| prohibited feature families on every row | **FAIL on the citation-derived set** — 0 of 684 rows carry them; the uncited set carries them on 175 of 175. Enforcement still happens, but in MY adapter, not in NEW3's file |
+| redaction record on every row | **PARTIAL** — 228 `exact_citation` + 228 `case_title` rows have no `redacted` key at all |
+
+## S5 — frontier coupling, per class (the guidance's explicit ask)
+
+Sampled the eight batches the walk reaches NEXT, ~1,200 ids each:
+
+classified 52.5 · 53.7 · 54.8 · 56.6 · 52.0 · 55.6 · 54.3 · 54.4 %
+
+**Flat — no gradient.** The classifier is not pulling away and not being caught;
+~45% of what the walk is about to embed has never been looked at. That is P1.5's
+purity exposure restated on live upcoming work, and it is why 48.31% of staged
+rows carry a NULL class.
+
+Per-class refusal, from the walk's own counters, is the reading that matters:
+refusals are now **`procedural_disposal` ONLY, steady 2.03–2.65% across 25
+batches**. `bail_order` has left the refusal set entirely (48,567 historical
+refusals → 0). Pooled, that is a rate that "fell" — per class, nothing degraded
+and a policy changed. Exactly the confound bus 0935 corrected.
+
+## S6 — deferred with a reason, not forgotten
+
+| item | why deferred |
+| --- | --- |
+| halfvec ANN-vs-exact at ef_search=200 (P4) | needs an HNSW build; probe tables were dropped. Build ONCE at the 1M checkpoint and serve BOTH this and S7 from it — P4 says do not rebuild before a meaningful checkpoint |
+| expansion benchmark on v2 gold (P5/P6) | same index. `expansion-benchmark-v2.mjs` hardcodes the v1 gold path at lines 57/229 — parameterise before the checkpoint run |
+| 1M milestone (P3.4) | ~687,589 now, ~32k/hr → roughly 10h out |
