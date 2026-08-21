@@ -25,10 +25,20 @@
  * FOUR STRENGTHS, AND ONLY THE TOP TWO ARE PROMOTABLE
  * ─────────────────────────────────────────────────────────────────────────────
  *
- *   CNR_EXACT          Both rows carry the same CNR. The CNR is the eCourts
- *                      case identity: court establishment, filing number, year,
- *                      and a check. Two rows with one CNR are one case, and this
- *                      is the only strength that needs no corroboration.
+ *   CNR_EXACT          Same CNR **and same judgment date**.
+ *
+ *                      The date half is not decoration and it was added after a
+ *                      measurement, not before one. A CNR identifies a CASE, not
+ *                      a DECISION: one case produces interim orders, an
+ *                      injunction, a final judgment, each a separate row with a
+ *                      separate date, all correctly sharing one CNR.
+ *
+ *                      Measured 21 Aug 2026: **336,209 CNRs are carried by more
+ *                      than one row, involving 1,072,353 rows, and 272,095 of
+ *                      those groups have differing content hashes.** On CNR
+ *                      alone this module would have called all of them the same
+ *                      decision. Overwhelmingly they are the same CASE at
+ *                      different stages, which is the corpus being right.
  *
  *   CITATION_EXACT     Both rows carry the same neutral citation. A neutral
  *                      citation is assigned by the court to a DECISION, and
@@ -63,6 +73,9 @@ export const STRENGTHS = [
   'CITATION_EXACT',
   'REGISTRY_STRONG',
   'CAPTION_WEAK',
+  /* Not weaker than the others — a DIFFERENT relation. These two rows are one
+   * case at two stages, which is a timeline edge and never a duplicate. */
+  'SAME_CASE_DIFFERENT_DATE',
 ] as const;
 export type Strength = (typeof STRENGTHS)[number];
 
@@ -74,6 +87,32 @@ export type Strength = (typeof STRENGTHS)[number];
  * year, and a shared judgment date does not separate them.
  */
 export const PROMOTABLE: readonly Strength[] = ['CNR_EXACT', 'CITATION_EXACT'];
+
+/**
+ * The residual risk in `CNR_EXACT`, stated because it is real and small rather
+ * than left for someone to find.
+ *
+ * A court can pass two separate orders in one case on one day — an interim
+ * direction in the morning and a disposal in the afternoon — and both would
+ * carry the same CNR and the same `judgment_date`. `CNR_EXACT` would call them
+ * one decision and be wrong.
+ *
+ * It is kept promotable anyway, on two grounds. The pair is reported with
+ * `hashesDiffer`, so a consumer can require agreement before acting. And the
+ * failure is bounded and recoverable: a wrong link between two orders of the
+ * SAME case shows an advocate a document from their own matter, which is not the
+ * cross-matter contamination that would be unrecoverable.
+ *
+ * The corpus-wide count of (cnr, judgment_date) groups holding more than one row
+ * is the number that would settle whether this stays promotable, and it is
+ * running rather than assumed. Until it lands, nothing downstream should promote
+ * automatically — this constant says which strengths COULD be promoted, not that
+ * anything has been.
+ */
+export const CNR_EXACT_RESIDUAL_RISK =
+  'One court can pass two orders in one case on one day; both carry the same CNR ' +
+  'and the same judgment_date. Require hashesDiffer === false, or a human, before ' +
+  'treating a CNR_EXACT pair as a single decision.';
 
 export type IdentityRow = {
   id: string;
@@ -187,8 +226,36 @@ export function candidate(a: IdentityRow, b: IdentityRow): Candidate | null {
     sourcesDiffer: sourcePartition(a.sourceUrl) !== sourcePartition(b.sourceUrl),
   };
 
+  /**
+   * CNR **and** date. A CNR is the case; the date is what makes it a decision.
+   * Dropping the date here would have swept in 336,209 groups of orders that are
+   * correctly separate rows of one case.
+   */
+  if (
+    a.cnr &&
+    b.cnr &&
+    a.cnr === b.cnr &&
+    a.judgmentDate !== null &&
+    a.judgmentDate === b.judgmentDate
+  ) {
+    return {
+      ...common,
+      strength: 'CNR_EXACT',
+      evidence: { cnr: a.cnr, judgmentDate: a.judgmentDate },
+    };
+  }
+
+  /**
+   * Same CNR, different date: the same CASE at two stages. Reported so a
+   * consumer can build a case timeline from it, and never promotable — these are
+   * two real decisions and merging them would delete one.
+   */
   if (a.cnr && b.cnr && a.cnr === b.cnr) {
-    return { ...common, strength: 'CNR_EXACT', evidence: { cnr: a.cnr } };
+    return {
+      ...common,
+      strength: 'SAME_CASE_DIFFERENT_DATE',
+      evidence: { cnr: a.cnr, aDate: a.judgmentDate, bDate: b.judgmentDate },
+    };
   }
 
   if (a.neutralCitation && b.neutralCitation && a.neutralCitation === b.neutralCitation) {

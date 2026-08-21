@@ -4,7 +4,7 @@
 It exists because a plan held only in a todo tool does not survive compaction, a
 new session, or a fresh agent. **This file does.**
 
-Last updated **9 August 2026**, annotated through **19 August 2026**. **Read
+Last updated **9 August 2026**, annotated through **21 August 2026**. **Read
 §A first — it supersedes §2's ordering.** Owner: **LCC (server lane)**. RCC's
 plan is `docs/RCC_MASTER_PLAN.md` and is not duplicated here.
 
@@ -15,6 +15,94 @@ complete for both, client-side implementation for 002 briefed to RCC. Current,
 live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
+
+### 21 Aug 2026 (evening) — LCC: OD-14 CLOSED, THE CONTRACT GOT ITS MISSING WRITER, AND VERIFIED_SEMANTIC_CORE STOPPED BEING ZERO
+
+Six pieces landed. Every number below was measured, and the ones that are still
+unmeasured say so.
+
+**OD-14 is resolved on the founder's direction, and the finding underneath it is
+worse than the finding.** 73 judgments read `set_aside` for what their own
+verified edge calls `overruled`; not one row disagrees with its edge, so the
+evidence was never wrong — `overruled_status` had four values and no way to say
+"overruled". `precedential-effect.ts` splits the three layers permanently
+(verified edge → derived effect → product policy), the add-to-matter refusal
+moved onto the effect, and **73 refusals disappeared**. After the change **zero**
+judgments in the corpus derive a genuine `set_aside`: the one refusal in the
+product had fired 73 times and never once for the case it was written for. No
+warning weakened, no fifth wire value, nothing stored. Still owed and RCC's: the
+banner for an overruling still reads as a setting aside.
+
+**The eligibility contract had the rule and was missing the writer.**
+`axis_b_text` has been an allow-list since 0056, so a stored damage verdict has
+always been refused — but 99.7% of the corpus had no verdict at all, and NEW2's
+screen counts the larger damage mode in a variable called
+`zeroDevanagariBelowThreshold` without writing it. `text-safety-screen-cli.ts`
+writes it, importing NEW2's `quality-state.ts` rather than copying the floor.
+Staged pass: **701,805 rows, 62,215 damage verdicts, 8.86%** — Punjab and Haryana
+56.52%, Karnataka 48.57%, a third method within a point of NEW1 and NEW2.
+Corpus-wide pass still running. **UNKNOWN stays admitted**: a text screen can
+prove damage and can never prove health.
+
+**`VERIFIED_SEMANTIC_CORE` was 0 and is 1,344 rows / 125 documents.**
+`semantic-role.ts` adjudicates a span's ROLE from the document's own voice
+changes with no model involved. Its first cut refused 127 of 180 holdings as
+party submissions; five were read and all five were genuine court
+determinations, so markers gained a 600-character reach and `ROLE_MISMATCH`
+nearly halved while `ROLE_UNPROVEN` doubled — the correct direction. 24 accepts
+read, 22 correct; 6 core documents read, 6 correct. One adjudicator, who wrote
+the verifier, and NEW2's held-out method is asked for rather than assumed.
+
+**`CITED_AUTHORITY_REACHABLE`.** Every gold authority the contract still refused
+was audited one by one: **12 of 16 refused by the 2,000-character floor alone,
+and a judge had cited every one.** The floor did not move — a short order nobody
+cited is exactly as unreachable as it was. Being cited is now admissible
+evidence and outranks both the length heuristic and our own
+`hc_document_class`, which was measured at 15.6% precision for `decided_brief`.
+**7,935 documents, 0.04% of the corpus**, measured before the migration was
+written.
+
+**eCourts derivation exists before the first observation does.**
+`ecourts-derivation.ts` has no `HEARING_OCCURRED` and a test asserts no input can
+produce one — cases are listed and passed over. A changed next date is two facts
+and both are kept. An `order_ref` is a candidate, never a document. Pure, so all
+11 tests ran with zero live observations, which is what there are.
+
+**Decision identity, as candidates.** `decision-identity.ts` after Chipade.
+`CNR_EXACT` and `CITATION_EXACT` are promotable because neither can produce a
+false positive; `REGISTRY_STRONG` and `CAPTION_WEAK` are not, and `CAPTION_WEAK`
+is the common-order shape that must never be collapsed. No stemming, no token
+overlap, no edit distance, no merge.
+
+**Migrations:** `0067` text_safety · `0068` cited_authority matview · `0069`
+CITED_AUTHORITY_REACHABLE. Deployed view hash moved
+`5efa4c8d…` → `b64e1aa4…` → and again with 0069. `0067` failed once for a real
+reason worth keeping: **`CREATE OR REPLACE VIEW` matches columns by POSITION**,
+so a new column must be appended or it renames every column after it.
+
+**Two things found while working, neither of them mine:**
+
+- `eligibility-null-safety.test.ts` has been RED since `0066` reintroduced the
+  bare `hc_document_class = 'bail_order'` inside the `semantic_tier` CASE. Fixed
+  in `0069`.
+- The deployed view hash **cannot see** a population change: the view text was
+  unchanged while 62,215 documents became ineligible. NEW1's manifest identity is
+  hash-based and was told so directly.
+
+**FQ-ECOURTS-ACTOR no longer asks for a uuid.** `users` has no role column at
+all, all 55 rows are `subscription_tier = 'none'` / `enrolment_status =
+'unverified'`, and 54 of them appear in `audit_log` in six-action 30-second
+bursts — test fixtures. There is no founder account to find. `--actor-email`
+resolves an address to exactly one `users.id` and refuses on zero or on more than
+one, so the audit row still names a real person and the founder does not need a
+database session.
+
+**NEW1's durable-keeper item was never elevation-blocked.**
+`IsInRole(Administrator)` is False and `schtasks /Create` for the current user
+returns SUCCESS. A probe task's process traces `PING.EXE → cmd.exe →
+svchost.exe`, so the chain does not pass through an agent shell.
+`scripts/durable-job.ps1`, handed to NEW1 rather than run for them.
+
 
 ### 21 Aug 2026 — NEW1: A 670,000-DOCUMENT HOLE, A 13.2% RECALL CEILING, AND RERANKING IS STILL NOT THE ANSWER
 

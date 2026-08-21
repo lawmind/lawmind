@@ -92,17 +92,33 @@ describe('a decision is one court on one day', () => {
     );
   });
 
-  it('a CNR match overrides court and date, because a CNR IS the case', () => {
+  it('THE CORRECTION: a shared CNR on two dates is one CASE, not one decision', () => {
+    /**
+     * Measured before this test was written: 336,209 CNRs are carried by more
+     * than one row and 272,095 of those groups have differing content hashes.
+     * On CNR alone this module would have called every one of them a duplicate
+     * decision. They are overwhelmingly interim order, injunction and final
+     * judgment in one case — the corpus being right.
+     */
     const c = candidate(
-      row({ id: 'a', cnr: 'MHAU010012342021' }),
+      row({ id: 'a', cnr: 'MHAU010012342021', judgmentDate: '2021-06-14' }),
+      row({ id: 'b', cnr: 'MHAU010012342021', judgmentDate: '2021-09-02' }),
+    );
+    assert.equal(c?.strength, 'SAME_CASE_DIFFERENT_DATE');
+    assert.equal(isPromotable(c!), false);
+  });
+
+  it('a shared CNR on the SAME date is one decision, and is promotable', () => {
+    const c = candidate(
+      row({ id: 'a', cnr: 'MHAU010012342021', court: 'Bombay High Court' }),
       row({
         id: 'b',
         cnr: 'MHAU010012342021',
         court: 'Bombay High Court Aurangabad Bench',
-        judgmentDate: '2021-06-15',
       }),
     );
     assert.equal(c?.strength, 'CNR_EXACT');
+    assert.equal(isPromotable(c!), true);
   });
 
   it('a row never links to itself', () => {
