@@ -323,3 +323,40 @@ method still owed, the three benchmark invocations, the funnel, and the
 | 4. clean expanded gold benchmark | **GOLD READY, RUN DEFERRED** — v2 verified independently, both sets load 684/175 with 0 dropped; the run needs the index |
 | 5. fusion/ranking on leakage-safe diverse gold | **BLOCKED on 4** — same index |
 | 6. eligibility ceiling reduced without lowering purity | **MET** — 13.2% -> 7.0%, and the floor was NOT lowered; LCC's bail route did it |
+
+## S8 — LCC's 0912 leak flag, closed in code before it could fire
+
+`treatment_and_currentness` did not leak on any gold we hold, because every edge
+in `new3-semantic-expansion-gold` is a plain `cites` and the feature reads only
+adverse states. LCC's point was that the disjointness is a property of THAT
+GOLD, not of the feature — and P6 requires an adverse/currentness query class,
+which is precisely the gold that fires it.
+
+The ban is attached to the **EDGE**, not to the provenance type: a citation-edge
+gold is safe or unsafe depending on which edges built it, and only the row knows.
+`featurePolicy` composes provenance + query construction + edge.
+
+Proved by execution in both directions, on the real gold rather than a fixture:
+
+| | |
+| --- | --- |
+| relationships present in v2 gold | `['cites']` |
+| `treatment_and_currentness` allowed | **true** — LCC's analysis confirmed, no false positive |
+| same rows, ONE edge flipped to `overruled` | **false** — one adverse row bans the family for the whole run |
+
+`new3-gold-adapter.ts` already carried `relationship` into `goldEvidence`, so the
+guard was live on real data immediately instead of being dead code waiting on a
+schema change — checked, not assumed.
+
+Deliberate asymmetry: an ABSENT or non-string relationship does **not** ban.
+Unknown is not adverse. The opposite default would cost every gold that omits the
+field a legitimate feature — a silent quality loss dressed as a safety win.
+
+Tests 13 → 19, all green.
+
+**Not mine, and it makes the package red:**
+`new3-gold-v2-corrections-cli.ts:58` (TS2322) and
+`new3-noncitation-gold-cli.ts:138` (TS18047) are UNTRACKED NEW3 files and are the
+only two typecheck errors in `@lawmind/harness`. My files are clean under tsc.
+Reported in bus 0958 rather than edited — they are NEW3's tools and the fixes are
+judgment calls about their data.
