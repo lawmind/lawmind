@@ -26,7 +26,7 @@ compaction. Update it as items move.
 | 1.2 | What the manifest IS made of | DONE | uniform n=2,089: **82.5% never looked at** (class null, method null) · 8.5% a rule ran and declined (`unclassified_disposal:*`) · **6.9% `decided`** · 1.8% `bail_order` · 0.1% `procedural_disposal`. `docs/ai/new1-tier-a/purity-census.json` |
 | 1.3 | The manifest is STALE against a moving predicate — 1.9% of it now carries a refused class | DONE | fixed at embed time: `doc-vector-embed.mjs` re-reads `hc_document_class` and skips the four refused classes, counted in `skippedNowIneligible` |
 | 1.4 | Already-staged rows carrying a refused class | DONE | 34,370 moved to `new1_doc_vector_stage_refused` with `refused_class`, never deleted. Vindicated at 250k: 12 of 250 citation-verified gold authorities ARE bail orders |
-| 1.5 | The 82.5% unclassified population has NEVER been audited for precision | TODO | this, not `decided_brief`, is the real purity exposure |
+| 1.5 | The 82.5% unclassified population has NEVER been audited for precision | **RESTATED 21 Aug — the 82.5% figure is DEAD** | see S5 below. That census (n=2,089) was taken when the classifier was far behind; never-looked-at on live upcoming batches is now **0.5–0.8%**. The exposure did not vanish, it changed owner: ~45% was EXAMINED and the rules DECLINED to assign a class. That is vocabulary coverage, not a frontier gap, and no throughput touches it. Do not quote 82.5% again |
 
 ## P2 — one vector per canonical decision
 
