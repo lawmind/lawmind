@@ -196,6 +196,8 @@ try {
   let skippedNowIneligible = 0;
   /** Rows a refused class would have discarded, kept because the contract cites them. */
   let admittedCitedAuthority = 0;
+  /** Rows refused for PROVEN text damage — GPU time this check does not spend. */
+  let skippedTextUnsafe = 0;
   const byRefusedClass = new Map();
   let skippedAlreadyStaged = 0;
   let inserted = 0;
@@ -243,9 +245,11 @@ try {
     const texts = await sql`
       SELECT j.id, left(j.full_text, ${HEAD_CHARS}) AS head, length(j.full_text) AS len,
              j.hc_document_class AS cls,
-             (ca.judgment_id IS NOT NULL) AS is_cited_authority
+             (ca.judgment_id IS NOT NULL) AS is_cited_authority,
+             e.text_safety
       FROM judgments j
       LEFT JOIN cited_authority ca ON ca.judgment_id = j.id
+      JOIN judgment_embedding_eligibility e ON e.id = j.id
       WHERE j.id = ANY(${ids}::uuid[])
     `;
     const byId = new Map(texts.map((t) => [t.id, t]));
@@ -255,6 +259,27 @@ try {
       const t = byId.get(r.judgmentId);
       if (!t || !t.head || t.head.trim().length === 0) {
         skippedNoText += 1;
+        continue;
+      }
+      // PROVEN TEXT DAMAGE, checked before anything else and exempted by nothing.
+      //
+      // LCC's TEXT_UNSAFE_CONTRACT_READY (bus 0960) started writing
+      // `script_quality = 'damaged_other'`, and `axis_b_text` has refused a stored
+      // damage verdict since 0056 — the rule was never missing, the WRITER was.
+      // The screen is walking the corpus at ~1,800 rows/s WHILE this walk runs, so
+      // a document eligible when the batch started can be refused before the batch
+      // ends. Re-read per batch, exactly like the class.
+      //
+      // Unconditional, unlike the class check: `UNSAFE_VERIFIED` fails `axis_b_text`
+      // and lands in the FIRST branch of the tier CASE, ahead of the
+      // cited-authority exemption. Measured rather than assumed — of 63,757 such
+      // staged rows, 0 were still eligible.
+      //
+      // This is also what makes quarantine terminate. Without it the walk re-stages
+      // damaged documents as fast as they are moved out, which is what 88 rows
+      // returning within minutes of the first quarantine actually was.
+      if (t.text_safety === 'UNSAFE_VERIFIED') {
+        skippedTextUnsafe += 1;
         continue;
       }
       if (t.cls && REFUSED_CLASSES.has(t.cls)) {
@@ -313,6 +338,7 @@ try {
         '  noText ' + skippedNoText +
         '  ineligible ' + skippedNowIneligible +
         '  citedAuth ' + admittedCitedAuthority +
+        '  textUnsafe ' + skippedTextUnsafe +
         '  dup ' + skippedAlreadyStaged +
         '  ' + secs.toFixed(1) + 's' +
         '  ' + (tokensTotal / Math.max(secs, 0.001)).toFixed(0) + ' tok/s',
@@ -332,6 +358,7 @@ try {
     skippedNoText,
     skippedNowIneligible,
     admittedCitedAuthority,
+    skippedTextUnsafe,
     skippedByRefusedClass: Object.fromEntries(byRefusedClass),
     skippedAlreadyStaged,
     tableRows: n,

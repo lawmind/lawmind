@@ -92,6 +92,111 @@ if (RESTORE.length > 0) {
   process.exit(0);
 }
 
+/**
+ * `--text-unsafe` — quarantine on PROVEN TEXT DAMAGE rather than on document class.
+ *
+ * LCC's TEXT_UNSAFE_CONTRACT_READY (bus 0960) deployed a writer, not a new rule:
+ * `axis_b_text` has been an allow-list since 0056 and always refused a stored
+ * damage verdict — 99.7% of the corpus simply had no verdict. Now 63,565 of this
+ * lane's staged vectors carry one, and every one of them is `NOT_ELIGIBLE`.
+ *
+ * The predicate is read from the deployed view's own `text_safety` column
+ * (migration 0067), NOT from a copy of NEW2's 12-per-thousand English-density
+ * floor. This file has already watched a copied predicate drift twice — the
+ * bail-order episode and the CITED_AUTHORITY_REACHABLE exemption — and a third
+ * copy of a threshold nobody owns is how it happens again.
+ *
+ * `refused_class` records `text_unsafe:<script_quality>` rather than a bare class
+ * name, because these rows were NOT refused for their role and a later reader must
+ * not think they were. It also means `--restore text_unsafe:damaged_other` works
+ * through the existing path unchanged: `script_quality` is one column, and a
+ * document repaired by OCR walks straight back in when the verdict is cleared.
+ *
+ * NOT quarantined: `text_safety = 'UNKNOWN'`. That is 652,869 rows and absence of
+ * evidence is not evidence of damage — the same rule LCC's writer applies.
+ */
+if (process.argv.includes('--text-unsafe')) {
+  const beforeT = await sql`
+    SELECT e.text_safety, coalesce(e.script_quality, '(null)') AS sq, count(*)::int AS n
+    FROM new1_doc_vector_stage s
+    JOIN judgment_embedding_eligibility e ON e.id = s.judgment_id
+    WHERE e.text_safety = 'UNSAFE_VERIFIED'
+    GROUP BY 1, 2 ORDER BY n DESC
+  `;
+  const totalT = beforeT.reduce((a, r) => a + r.n, 0);
+  // A row that is UNSAFE_VERIFIED but still eligible would mean the two halves of
+  // the contract disagree, and quarantining it would be this lane acting on its
+  // own authority. Refuse rather than guess.
+  const [{ contradiction }] = await sql`
+    SELECT count(*)::int AS contradiction
+    FROM new1_doc_vector_stage s
+    JOIN judgment_embedding_eligibility e ON e.id = s.judgment_id
+    WHERE e.text_safety = 'UNSAFE_VERIFIED' AND e.semantic_tier <> 'NOT_ELIGIBLE'
+  `;
+  console.log(`text-unsafe rows currently in new1_doc_vector_stage: ${totalT}`);
+  for (const r of beforeT) console.log(`  ${r.sq.padEnd(22)} ${String(r.n).padStart(7)}`);
+  console.log(`UNSAFE_VERIFIED but still eligible (must be 0): ${contradiction}`);
+  if (contradiction > 0) {
+    console.error('REFUSING: the view calls these rows damaged AND eligible. Do not quarantine on a contradiction.');
+    await sql.end();
+    process.exit(1);
+  }
+  if (!APPLY) {
+    console.log('\ndry run — pass --apply to move them');
+    await sql.end();
+    process.exit(0);
+  }
+  await sql`
+    CREATE TABLE IF NOT EXISTS new1_doc_vector_stage_refused (
+      LIKE new1_doc_vector_stage INCLUDING DEFAULTS INCLUDING CONSTRAINTS
+    )
+  `;
+  await sql`ALTER TABLE new1_doc_vector_stage_refused ADD COLUMN IF NOT EXISTS refused_class text`;
+  await sql`ALTER TABLE new1_doc_vector_stage_refused ADD COLUMN IF NOT EXISTS quarantined_at timestamptz DEFAULT now()`;
+  // One statement, so the row is never in both tables and never in neither.
+  const movedT = await sql`
+    WITH doomed AS (
+      SELECT s.judgment_id, 'text_unsafe:' || coalesce(e.script_quality, 'unknown') AS reason
+      FROM new1_doc_vector_stage s
+      JOIN judgment_embedding_eligibility e ON e.id = s.judgment_id
+      WHERE e.text_safety = 'UNSAFE_VERIFIED'
+    ), lifted AS (
+      DELETE FROM new1_doc_vector_stage s
+      USING doomed d WHERE s.judgment_id = d.judgment_id
+      RETURNING s.*, d.reason
+    )
+    INSERT INTO new1_doc_vector_stage_refused
+      (judgment_id, content_hash, court, year, member_count, text_chars,
+       embedded_chars, tokens, recipe, model, embedding, created_at, refused_class)
+    SELECT judgment_id, content_hash, court, year, member_count, text_chars,
+           embedded_chars, tokens, recipe, model, embedding, created_at, reason
+    FROM lifted
+    ON CONFLICT DO NOTHING
+  `;
+  const [{ mainT }] = await sql`SELECT count(*)::int AS "mainT" FROM new1_doc_vector_stage`;
+  const [{ qT }] = await sql`SELECT count(*)::int AS "qT" FROM new1_doc_vector_stage_refused`;
+  writeFileSync(
+    new URL('../../../docs/ai/new1-tier-a/stage-quarantine-text-unsafe.json', import.meta.url),
+    JSON.stringify(
+      {
+        kind: 'new1_stage_quarantine_text_unsafe',
+        predicate: "judgment_embedding_eligibility.text_safety = 'UNSAFE_VERIFIED' (deployed view, migration 0067)",
+        note: 'UNKNOWN is NOT quarantined. Absence of evidence is not evidence of damage.',
+        movedRows: movedT.count ?? totalT,
+        stageRowsAfter: mainT,
+        quarantineRowsAfter: qT,
+        byScriptQualityBefore: beforeT,
+        appliedAt: new Date().toISOString(),
+      },
+      null,
+      2,
+    ) + '\n',
+  );
+  console.log(`\nmoved ${movedT.count ?? totalT}; stage now ${mainT}, quarantine now ${qT}`);
+  await sql.end();
+  process.exit(0);
+}
+
 const before = await sql`
   SELECT coalesce(j.hc_document_class, '(null)') AS cls, count(*)::int AS n
   FROM new1_doc_vector_stage s JOIN judgments j ON j.id = s.judgment_id
