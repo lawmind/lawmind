@@ -1,0 +1,51 @@
+{
+  "kind": "new1_failure_text_usability_stratification",
+  "measuredAt": "2026-08-21T17:31:10.055Z",
+  "source": "failure-classify-checkpoint.jsonl (288 cases, run 20 Aug 2026)",
+  "priorSource": "docs/ai/new1-tier-a/staged-readability.json — COURT-LEVEL rates, n=300/court, corpus 9.23%",
+  "warning": "The per-case stratum is canonical evidence. The expected-unusable COUNT is an ESTIMATE from court priors and is not evidence about any individual case. It sizes the exposure; it never excuses a miss.",
+  "byPrimary": {
+    "AUTHORITY_HELD_BUT_NOT_RETRIEVED": {
+      "cases": 140,
+      "byStratum": {
+        "TEXT_USABILITY_UNKNOWN": 140
+      },
+      "byCourt": {
+        "Supreme Court of India": 140
+      },
+      "expectedTextUnusable": 0,
+      "expectedRetrievalFail": 140,
+      "interpretation": "Of 140 cases charged to retrieval today, an estimated 0 (0.0%) are SOURCE_PRESENT_TEXT_UNUSABLE and 140 are RETRIEVAL_FAIL. Neither is removed from product coverage."
+    },
+    "SUCCESS": {
+      "cases": 50,
+      "byStratum": {
+        "TEXT_USABILITY_UNKNOWN": 50
+      },
+      "byCourt": {
+        "Supreme Court of India": 50
+      },
+      "expectedTextUnusable": 0,
+      "expectedRetrievalFail": 0
+    },
+    "AUTHORITY_RETRIEVED_BUT_BADLY_RANKED": {
+      "cases": 98,
+      "byStratum": {
+        "TEXT_USABILITY_UNKNOWN": 98
+      },
+      "byCourt": {
+        "Supreme Court of India": 98
+      },
+      "expectedTextUnusable": 0,
+      "expectedRetrievalFail": 0
+    }
+  },
+  "populationMismatch": {
+    "failureCaseCourts": [
+      "Supreme Court of India"
+    ],
+    "finding": "Every one of the 288 failure-classify cases is Supreme Court of India. The Supreme Court is 0.44% of staged rows (2409 of 542980) and its measured unreadable rate is 0% (0 of 300 sampled).",
+    "consequence": "P10 asks retrieval failures to be split from unreadable text. On THIS checkpoint the split is real but empty: the expected SOURCE_PRESENT_TEXT_UNUSABLE count is 0 because the population contains none of the affected courts. The text damage lives in Punjab and Haryana (56.0%) and Karnataka (49.7%), which contribute zero failure cases. The retrieval benchmark and the text-damage exposure DO NOT OVERLAP.",
+    "implication": "No conclusion about retrieval quality drawn from this checkpoint generalises to the High Court corpus, which is 99.56% of staged rows. NEW3 v2 gold is High Court (Allahabad, Jharkhand, Punjab and Haryana, Madras, Rajasthan, Bombay, Chhattisgarh) and is the first failure population drawn from the courts where the damage actually is. That is an additional reason the 1M checkpoint benchmark matters, independent of scale."
+  }
+}
