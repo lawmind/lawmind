@@ -168,6 +168,65 @@ function relaunchWalk() {
   });
   child.unref();
   note('WALK RELAUNCH issued (killed any survivors first)');
+  // ...and then CHECK, because "issued" is not "happened".
+  //
+  // On 21 Aug this function logged "RELAUNCH issued" 51 consecutive times, five
+  // minutes apart, while the walk stayed dead for four hours and twenty minutes.
+  // Every one of those lines was written unconditionally, immediately after
+  // `spawn` returned, with `stdio: 'ignore'` discarding anything PowerShell had to
+  // say about it. The log read exactly like 51 successful recoveries.
+  //
+  // That is the same shape as every other defect this lane found that week: a
+  // plausible message with no error path behind it. The cause of the failure is
+  // still unknown — a hand-run `Start-Process` with the same launcher worked
+  // immediately — so this does not claim to fix the relaunch. It makes the
+  // relaunch FALSIFIABLE, which is the part that was missing: 51 identical
+  // failures should have been visible in one.
+  setTimeout(() => {
+    verifyRelaunch().catch((e) => note('relaunch verification errored: ' + (e?.message ?? e)));
+  }, RELAUNCH_VERIFY_MS).unref?.();
+}
+
+/** How long to give Start-Process before asking whether anything actually started. */
+const RELAUNCH_VERIFY_MS = 20_000;
+
+/** Consecutive relaunches that produced no runner. Escalates the log, never silently. */
+let failedRelaunches = 0;
+
+/**
+ * Did the relaunch produce a live runner? Answered from the process table, not
+ * from the fact that `spawn` did not throw.
+ */
+async function verifyRelaunch() {
+  const ps = [
+    '@(Get-CimInstance Win32_Process |',
+    "Where-Object { $_.Name -ne 'powershell.exe' -and $_.CommandLine -match 'stage-runner|doc-vector-embed' }).Count",
+  ].join(' ');
+  const out = await new Promise((resolve) => {
+    let buf = '';
+    const c = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], {
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    c.stdout.on('data', (d) => (buf += d));
+    c.on('close', () => resolve(buf.trim()));
+    c.on('error', () => resolve(''));
+  });
+  const n = Number.parseInt(out, 10);
+  if (Number.isFinite(n) && n > 0) {
+    if (failedRelaunches > 0) note(`relaunch VERIFIED after ${failedRelaunches} failed attempt(s) — ${n} process(es)`);
+    else note(`relaunch VERIFIED — ${n} walk process(es) live`);
+    failedRelaunches = 0;
+    return;
+  }
+  failedRelaunches += 1;
+  // Deliberately loud and deliberately not fatal: the keeper's job is to keep
+  // trying, but a human reading this log must not have to count identical lines
+  // to notice that none of them worked.
+  note(
+    `relaunch DID NOT TAKE — no walk process ${RELAUNCH_VERIFY_MS / 1000}s after Start-Process ` +
+      `(consecutive failures: ${failedRelaunches}). The walk is NOT running. ` +
+      'Check the last FAILED line in stage-embed.log — a contract-hash refusal will fail every retry identically.',
+  );
 }
 
 function walkSilentFor() {
