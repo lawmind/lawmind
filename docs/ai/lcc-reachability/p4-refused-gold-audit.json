@@ -1,0 +1,258 @@
+{
+ "generatedAt": "2026-08-21T18:09:47.889Z",
+ "goldRefused": 16,
+ "goldRefusedWithInboundEdges": 16,
+ "goldRefusedOnLengthAlone": 12,
+ "goldRescuableByCitedAuthorityRoute": 12,
+ "corpusCost": {
+  "distinctCitedJudgments": 35890,
+  "identityAndTextSound": 35834,
+  "wouldBeNewlyAdmitted": 7894,
+  "ofWhichUnder1000Chars": 2424
+ },
+ "detail": [
+  {
+   "id": "07f01884-de14-4a31-8f08-1460182274f2",
+   "court": "Madras High Court",
+   "chars": 1628,
+   "band": "brief",
+   "textQuality": 0.961,
+   "textSafety": "UNKNOWN",
+   "hcClass": "procedural_disposal",
+   "inboundEdges": 2,
+   "distinctCiters": 2,
+   "firstBindingClause": "ROLE",
+   "allBindingClauses": [
+    "ROLE",
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "24bf5096-924f-4ce2-ae9c-f9f21a486cf0",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 1025,
+   "band": "brief",
+   "textQuality": 0.958,
+   "textSafety": "UNKNOWN",
+   "hcClass": "decided_brief",
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "ROLE",
+   "allBindingClauses": [
+    "ROLE",
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "2bae7c68-d340-48b9-bd8d-d632c40a2335",
+   "court": "High Court Of Rajasthan",
+   "chars": 724,
+   "band": "stub",
+   "textQuality": 0.939,
+   "textSafety": "UNKNOWN",
+   "hcClass": "bail_order",
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "309e32e6-d1b6-41ef-a343-2f8471c3b51c",
+   "court": "Allahabad High Court",
+   "chars": 1290,
+   "band": "brief",
+   "textQuality": 0.968,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "33c05d9e-9d94-497d-acd6-8afb9670c86d",
+   "court": "Allahabad High Court",
+   "chars": 1139,
+   "band": "brief",
+   "textQuality": 0.963,
+   "textSafety": "UNKNOWN",
+   "hcClass": "procedural_disposal",
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "ROLE",
+   "allBindingClauses": [
+    "ROLE",
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "40c1f0a0-627c-48a9-9833-b1e9e978a893",
+   "court": "Bombay High Court",
+   "chars": 10639,
+   "band": "substantial",
+   "textQuality": 0.777,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "TEXT",
+   "allBindingClauses": [
+    "TEXT"
+   ]
+  },
+  {
+   "id": "68bd105a-d054-433e-8bf2-868a6c613e16",
+   "court": "Madras High Court",
+   "chars": 1598,
+   "band": "brief",
+   "textQuality": 0.93,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 2,
+   "distinctCiters": 2,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "7ac2ad6b-ba50-4568-82c7-7463f65e6b89",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 1756,
+   "band": "brief",
+   "textQuality": 0.955,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "84d78907-cb47-4b57-821e-9a2a145e012a",
+   "court": "Allahabad High Court",
+   "chars": 1373,
+   "band": "brief",
+   "textQuality": 0.962,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 2,
+   "distinctCiters": 2,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "84fac34b-0519-4438-bdc6-5ed55c5fb16b",
+   "court": "Allahabad High Court",
+   "chars": 1187,
+   "band": "brief",
+   "textQuality": 0.94,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "945cca7e-338c-4586-8dd5-56df68e95f8b",
+   "court": "High Court of Jharkhand",
+   "chars": 1758,
+   "band": "brief",
+   "textQuality": 0.973,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "97931808-329d-4887-a68a-2170e77d8bcf",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 981,
+   "band": "stub",
+   "textQuality": 0.977,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "98c10bc8-0b2d-4a13-9328-d57d4e838567",
+   "court": "High Court of Jharkhand",
+   "chars": 741,
+   "band": "stub",
+   "textQuality": 0.96,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "b7c29125-01cd-424b-b0c3-03277bf8891f",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 969,
+   "band": "stub",
+   "textQuality": 0.977,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "d4fce0f8-b5b9-453d-a13f-986ce09b3be7",
+   "court": "Allahabad High Court",
+   "chars": 1662,
+   "band": "brief",
+   "textQuality": 0.988,
+   "textSafety": "UNKNOWN",
+   "hcClass": null,
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  },
+  {
+   "id": "ffbed027-d220-4f71-9bd6-49cd3c1819ec",
+   "court": "High Court of Jharkhand",
+   "chars": 1897,
+   "band": "brief",
+   "textQuality": 0.964,
+   "textSafety": "UNKNOWN",
+   "hcClass": "bail_order",
+   "inboundEdges": 1,
+   "distinctCiters": 1,
+   "firstBindingClause": "LENGTH_UNDER_2000",
+   "allBindingClauses": [
+    "LENGTH_UNDER_2000"
+   ]
+  }
+ ]
+}

@@ -85,6 +85,16 @@ describe('judgment_embedding_eligibility never returns a NULL boolean', () => {
         'the 93.7% of judgments with no class. Use IS NOT DISTINCT FROM. See 0058.',
     );
     /**
+     * NOTE, 21 Aug 2026: this assertion had been RED since `0066` and nobody
+     * noticed, because `0066` reintroduced the bare `hc_document_class =
+     * 'bail_order'` inside the `semantic_tier` CASE. Inside a CASE it is
+     * harmless — a NULL branch condition falls through exactly as `false` does —
+     * but the guard forbids the substring ANYWHERE, so it failed on a correct
+     * deployment. `0069` spells that branch null-safely too, which costs nothing
+     * and makes the guard green for the right reason rather than being widened
+     * to tolerate it.
+     */
+    /**
      * Matched against the form Postgres NORMALISES to, not the form 0058 is
      * written in. `pg_get_viewdef` re-prints `a IS NOT DISTINCT FROM b` as
      * `NOT a IS DISTINCT FROM b` — the same operator, spelled the way the parse
@@ -92,9 +102,22 @@ describe('judgment_embedding_eligibility never returns a NULL boolean', () => {
      * perfectly correct deployment, which is a test that lies in the safe
      * direction only by luck.
      */
+    /**
+     * The optional `\w+\.` is a TABLE ALIAS and it appeared for a real reason.
+     *
+     * While the view read `FROM judgments j` alone, `pg_get_viewdef` printed
+     * every column unqualified. `0069` added `LEFT JOIN cited_authority`, and
+     * with two relations in scope Postgres qualifies them: the deployed text now
+     * reads `NOT j.hc_document_class IS DISTINCT FROM 'bail_order'::text`.
+     *
+     * The property being asserted — null-safe equality — did not change. Only
+     * the printing did, and a guard that fails on a printing change is a guard
+     * that will be edited under pressure to make a release go out. So it
+     * tolerates the qualifier and nothing else.
+     */
     assert.match(
       row.def,
-      /NOT hc_document_class IS DISTINCT FROM 'bail_order'|hc_document_class IS NOT DISTINCT FROM 'bail_order'/,
+      /NOT (?:\w+\.)?hc_document_class IS DISTINCT FROM 'bail_order'|(?:\w+\.)?hc_document_class IS NOT DISTINCT FROM 'bail_order'/,
       'the null-safe bail-order comparison is gone from the deployed view',
     );
   });
