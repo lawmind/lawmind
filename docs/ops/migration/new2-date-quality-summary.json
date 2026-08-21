@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-08-21T17:35:03.163Z",
+  "lane": "NEW2",
+  "mode": "uniform-sample",
+  "detector": "date-quality-v1.0",
+  "span": 6000,
+  "drawn": 3000,
+  "states": {
+    "DATE_UNKNOWN": 915,
+    "DATE_VERIFIED": 1900,
+    "DATE_SUSPECT": 185
+  },
+  "suspectRatePct": 6.17,
+  "methods": {
+    "printed_in_document_date-quality-v1.0": 1900,
+    "no_independent_witness_date-quality-v1.0": 915,
+    "filename_disagrees_date-quality-v1.0": 108,
+    "document_prints_other_dates_date-quality-v1.0": 77
+  },
+  "filenameWitness": {
+    "present": 2810,
+    "agrees": 2685,
+    "disagreeRatePct": 4.45,
+    "buckets": {
+      "exact": 2685,
+      "off_by_one_day": 79,
+      "2_to_90_days": 24,
+      "over_a_year": 14,
+      "under_a_year": 8
+    }
+  },
+  "offByOneByCourt": {
+    "Allahabad High Court": 22,
+    "High Court Of Chhattisgarh": 21,
+    "High Court of Andhra Pradesh": 17,
+    "Gauhati High Court": 13,
+    "High Court of Punjab and Haryana": 2,
+    "High Court of Manipur": 2,
+    "Madras High Court": 1,
+    "High Court of Uttarakhand": 1
+  },
+  "caveats": [
+    "The S3 partition year is NOT used as a witness: it agrees with judgment_date 3,000/3,000, so it shares an origin with it and corroborates nothing.",
+    "DATE_VERIFIED requires the DOCUMENT to print the stored date. A filename match alone is the publisher agreeing with itself.",
+    "A document that prints no date is silent, not contradicting. Text-damaged documents therefore read DATE_UNKNOWN, not DATE_SUSPECT.",
+    "Nothing is corrected. No date is re-derived from a witness."
+  ]
+}
