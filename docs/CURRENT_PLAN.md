@@ -16,6 +16,64 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 21 Aug 2026 (night) — NEW2: THE CORPUS IS 8.65% UNREADABLE, `decided` IS 30% PROCEDURAL, AND OCR RECOVERS WHAT NO RE-EXTRACTION CAN
+
+Five findings, each measured, each with the artefact that proves it. Owner NEW2;
+nothing here changes another lane's contract, and two of the five are defects in
+NEW2's own work.
+
+**1. `TEXT_UNSAFE_VERIFIED` — 8.65% of the corpus is provably not text.**
+`services/ingest/src/text-damage.ts`, and a corpus-wide export walking now at
+`docs/ops/migration/new2-text-damage.jsonl`. On 2,000 uniform draws: 173 VERIFIED,
+45 SUSPECT, 1,782 UNKNOWN. Punjab & Haryana 57.2%, Karnataka 56.4%. **149 of the
+168 scored damaged rows sit at or above the 0.85 `text_quality` floor**, median
+1.000 — the metric is inverted on this population, not weak. There is no CLEAN
+state and there never will be: nothing in the module looks for evidence that an
+extraction was faithful.
+
+**2. OCR recovers it and a second extractor does not.** 40 PDFs, page 1, CPU only.
+MuPDF on the same bytes reproduces the glyph dump (median control density 0.7014);
+OCR recovers 20 of 20 at 3.7 s a page, verified against metadata the text never
+touched (20/20 case numbers, 18/18 dates). **6 of 20 render the year with a letter
+O for zero and all six are Karnataka** — so recovered text is safe for prose and
+unsafe for digits. `docs/ops/new2/TEXT_RECOVERY_POLICY.md`.
+**`TEXT_UNRECOVERABLE` must not be applied to this population.**
+
+**3. `judgment_date` is contradicted by the primary document on 4.45% of rows.**
+Two mechanisms: a same-direction off-by-one concentrated in four courts, and
+`judgment_date` tracking a case's FILING year. The document backs the filename
+date 33 times out of 34. Carried to the edge level this is 7.1–12.0%, against
+NEW3's measured 8.8% of gold citation edges being chronologically impossible.
+**Nothing is corrected** — `date-quality.ts` assigns a state and publishes
+evidence. The partition-year check agrees 3,000/3,000 and therefore proves
+nothing.
+
+**4. `decided` is 30% procedural [13.6, 46.4], and `decided_brief` is 60%.**
+90 rows of a 270-row stratified frame, labelled from primary documents:
+`docs/ops/new2/DOCUMENT_ROLE_GOLD_V2.md`. The mechanism is
+`isMerits(disposal_nature) -> decided`, which is exactly the arrow from
+DISPOSITION to CITABILITY that NEW2's own `DOCUMENT_QUALITY_VOCABULARY.md`
+forbids. ~171,000 documents inside NEW1's Tier A manifest are transfers,
+withdrawals and registry defaults. **Not fixed** — a fix reads the text for the
+operative act and needs its own precision measured. That is the next NEW2 task.
+
+**5. `VERIFIED_CORE_V1` is 27.5% non-substantive [13.7, 41.3].** Independent audit
+of 40 of the 125, LCC's labels unopened until the verdicts were on disk:
+`docs/ops/new2/VERIFIED_CORE_V1_INDEPENDENT_AUDIT.md`. Not a refutation of the
+role verifier — a finding about what the NAME promises. Nine of the eleven are
+shapes `hc_document_class` already names.
+
+**Fixed on the way through:** the bail phrase did not survive a PDF line break
+(11,024 documents reclassified, measured before and after); and the classifier
+died twice on `statement_timeout` because every restart re-scanned 4.1M
+already-classified rows — now a persisted cursor plus a transient-error retry on
+both the read and the write, with an end-of-run sweep from zero that shouts if the
+watermark was ever unsafe.
+
+**Still owed by NEW2, in order:** a text-reading replacement for
+`isMerits -> decided`; the remaining 180 rows of the gold frame; and eCourts,
+which is blocked on FQ-ECOURTS-ACTOR and on nothing else.
+
 ### 21 Aug 2026 (evening) — LCC: OD-14 CLOSED, THE CONTRACT GOT ITS MISSING WRITER, AND VERIFIED_SEMANTIC_CORE STOPPED BEING ZERO
 
 Six pieces landed. Every number below was measured, and the ones that are still
