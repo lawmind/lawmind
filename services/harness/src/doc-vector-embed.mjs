@@ -65,6 +65,33 @@ const LOG = new URL(process.env.STAGE_LOG_PATH ?? '../../../docs/ai/new1-tier-a/
  * a copy that will drift again, so `assertContractHash()` below now refuses to
  * run against a definition the file has not been reconciled with.
  */
+/**
+ * SECOND RECONCILIATION, 21 Aug 2026 — `5efa4c8decef699e` -> `6e87c83ac05da264`.
+ *
+ * The guard did its job again and stopped the walk mid-worklist rather than let
+ * it drift. What changed is that a refused CLASS is no longer refused
+ * unconditionally: the deployed view now exempts documents that other judgments
+ * have actually cited.
+ *
+ *   WHEN length(full_text) < 2000 THEN
+ *        CASE WHEN ca.judgment_id IS NOT NULL THEN 'CITED_AUTHORITY_REACHABLE'
+ *             ELSE 'NOT_ELIGIBLE' END
+ *   WHEN hc_document_class = ANY (decided_brief, procedural_disposal, reference_stub) THEN
+ *        CASE WHEN ca.judgment_id IS NOT NULL THEN 'CITED_AUTHORITY_REACHABLE'
+ *             ELSE 'UNRESOLVED_EXPERIMENTAL' END
+ *
+ * So the class list below is still exactly `axis_c_role`'s refusals, but it is
+ * now a NECESSARY and no longer a SUFFICIENT condition for skipping. Measured
+ * against the deployed view, 1,007 rows carrying one of these three classes are
+ * `CITED_AUTHORITY_REACHABLE` — documents a judge cited, which this file would
+ * have gone on discarding.
+ *
+ * That is the same failure shape as the bail-order episode above, one contract
+ * revision later: the counter goes up, the batches complete, the rate holds, and
+ * the only thing wrong is the population. Hence the exemption is read from the
+ * SAME materialised view the contract reads (`cited_authority`), not
+ * re-derived from a citation count of this file's own choosing.
+ */
 const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'decided_brief']);
 
 /**
@@ -72,7 +99,7 @@ const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'decid
  * this file: hashing a constant here would certify the copy, which is precisely
  * the thing that cannot drift from itself.
  */
-const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '5efa4c8decef699e';
+const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '6e87c83ac05da264';
 
 const log = (m) => {
   const line = new Date().toISOString() + '  ' + m + '\n';
@@ -167,6 +194,8 @@ try {
   let done = 0;
   let skippedNoText = 0;
   let skippedNowIneligible = 0;
+  /** Rows a refused class would have discarded, kept because the contract cites them. */
+  let admittedCitedAuthority = 0;
   const byRefusedClass = new Map();
   let skippedAlreadyStaged = 0;
   let inserted = 0;
@@ -212,9 +241,12 @@ try {
     // refusing it would silently shrink Tier A to the 6.9% that a rule has
     // positively labelled.
     const texts = await sql`
-      SELECT id, left(full_text, ${HEAD_CHARS}) AS head, length(full_text) AS len,
-             hc_document_class AS cls
-      FROM judgments WHERE id = ANY(${ids}::uuid[])
+      SELECT j.id, left(j.full_text, ${HEAD_CHARS}) AS head, length(j.full_text) AS len,
+             j.hc_document_class AS cls,
+             (ca.judgment_id IS NOT NULL) AS is_cited_authority
+      FROM judgments j
+      LEFT JOIN cited_authority ca ON ca.judgment_id = j.id
+      WHERE j.id = ANY(${ids}::uuid[])
     `;
     const byId = new Map(texts.map((t) => [t.id, t]));
     const toEmbed = [];
@@ -226,9 +258,16 @@ try {
         continue;
       }
       if (t.cls && REFUSED_CLASSES.has(t.cls)) {
-        skippedNowIneligible += 1;
-        byRefusedClass.set(t.cls, (byRefusedClass.get(t.cls) ?? 0) + 1);
-        continue;
+        // A cited authority is CITED_AUTHORITY_REACHABLE whatever its class, so
+        // the class alone no longer decides. Counted rather than silently kept:
+        // an exemption nobody can see is how the next drift hides.
+        if (t.is_cited_authority) {
+          admittedCitedAuthority += 1;
+        } else {
+          skippedNowIneligible += 1;
+          byRefusedClass.set(t.cls, (byRefusedClass.get(t.cls) ?? 0) + 1);
+          continue;
+        }
       }
       toEmbed.push({ meta: r, head: t.head, len: t.len });
     }
@@ -273,6 +312,7 @@ try {
         '  inserted ' + inserted +
         '  noText ' + skippedNoText +
         '  ineligible ' + skippedNowIneligible +
+        '  citedAuth ' + admittedCitedAuthority +
         '  dup ' + skippedAlreadyStaged +
         '  ' + secs.toFixed(1) + 's' +
         '  ' + (tokensTotal / Math.max(secs, 0.001)).toFixed(0) + ' tok/s',
@@ -291,6 +331,7 @@ try {
     inserted,
     skippedNoText,
     skippedNowIneligible,
+    admittedCitedAuthority,
     skippedByRefusedClass: Object.fromEntries(byRefusedClass),
     skippedAlreadyStaged,
     tableRows: n,
