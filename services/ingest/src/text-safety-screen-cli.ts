@@ -224,6 +224,16 @@ function pageStaged(sql: Awaited<ReturnType<typeof openDb>>, cursor: string, lim
 const sql = await openDb(url, 2, 10 * 60_000);
 const ckpt = loadCheckpoint();
 const started = Date.now();
+/**
+ * Rows screened by THIS invocation, which is not `ckpt.screened`.
+ *
+ * On the first resume the readout printed `823453/s`, because the checkpoint's
+ * 7.6M carried over while the clock restarted. A rate that large is obviously
+ * wrong and therefore harmless; a rate that is merely 40% too high after a
+ * restart is the kind that makes a stall unreadable, which is the failure this
+ * lane keeps hitting.
+ */
+let screenedThisRun = 0;
 
 mkdirSync(dirname(join(process.cwd(), JSONL_OUT)), { recursive: true });
 
@@ -284,22 +294,50 @@ for (;;) {
   }
 
   if (CONFIRM && verdicts.length > 0) {
-    /* One statement per batch from an unnested array. Row-at-a-time UPDATEs
-     * against `judgments` are what produced this repo's 45-minute lock
-     * holders. */
-    await sql`
-      UPDATE judgments AS j
-         SET script_quality = v.value,
-             script_quality_method = v.method,
-             script_quality_at = now()
-        FROM (
-          SELECT unnest(${verdicts.map((v) => v.id)}::uuid[]) AS id,
-                 unnest(${verdicts.map((v) => v.value)}::text[]) AS value,
-                 unnest(${verdicts.map((v) => v.method)}::text[]) AS method
-        ) AS v
-       WHERE j.id = v.id
-         -- Belt and braces against a concurrent writer between page and write.
-         AND j.script_quality IS NULL`;
+    /**
+     * One statement per batch from an unnested array. Row-at-a-time UPDATEs
+     * against `judgments` are what produced this repo's 45-minute lock holders.
+     *
+     * RETRIED, because it died once and the death was not a defect. At
+     * 22:31 the box was running a GPU walk, two classifiers and this screen at
+     * once, and a batch UPDATE hit the 10-minute `statement_timeout`:
+     *
+     *     PostgresError 57014: canceling statement due to statement timeout
+     *
+     * The process then exited on the unhandled rejection, ~7.6M rows in. The
+     * checkpoint made that cost nothing but the restart — but a resumable job
+     * that needs a human to resume it is only half resumable, and nobody was
+     * watching. Three attempts with a widening pause, and only for a timeout:
+     * anything else still throws, because a job that swallows every error is
+     * how a silent no-op runs all night.
+     */
+    for (let attempt = 1; ; attempt += 1) {
+      try {
+        await sql`
+          UPDATE judgments AS j
+             SET script_quality = v.value,
+                 script_quality_method = v.method,
+                 script_quality_at = now()
+            FROM (
+              SELECT unnest(${verdicts.map((v) => v.id)}::uuid[]) AS id,
+                     unnest(${verdicts.map((v) => v.value)}::text[]) AS value,
+                     unnest(${verdicts.map((v) => v.method)}::text[]) AS method
+            ) AS v
+           WHERE j.id = v.id
+             -- Belt and braces against a concurrent writer between page and write.
+             AND j.script_quality IS NULL`;
+        break;
+      } catch (err) {
+        const timedOut = (err as { code?: string })?.code === '57014';
+        if (!timedOut || attempt >= 3) throw err;
+        const pause = attempt * 30_000;
+        console.log(
+          `  batch UPDATE timed out (attempt ${attempt}/3) — the box is busy, ` +
+            `retrying in ${pause / 1000}s`,
+        );
+        await new Promise((r) => setTimeout(r, pause));
+      }
+    }
     ckpt.written += verdicts.length;
   }
   ckpt.candidates += verdicts.length;
@@ -308,12 +346,13 @@ for (;;) {
 
   ckpt.cursor = rows[rows.length - 1]!.id;
   ckpt.screened += rows.length;
+  screenedThisRun += rows.length;
   saveCheckpoint(ckpt);
 
   const secs = (Date.now() - started) / 1000;
   console.log(
     `  ${ckpt.screened.toLocaleString()} screened · ${ckpt.candidates.toLocaleString()} ` +
-      `${CONFIRM ? 'written' : 'would write'} · ${(ckpt.screened / Math.max(1, secs)).toFixed(0)}/s`,
+      `${CONFIRM ? 'written' : 'would write'} · ${(screenedThisRun / Math.max(1, secs)).toFixed(0)}/s`,
   );
 }
 
