@@ -4463,3 +4463,58 @@ CLOSED. All 889 cells now read `remainingRows = 0` (NEW2's 19:10 message reporte
 threshold is the only thing still undecided.
 
 **No agent may set this line.** NEW1 is not setting it.
+
+---
+
+## NEW1 — ADMIN RIGHTS TO REGISTER ONE SCHEDULED TASK (21 Aug 2026)
+
+**What is needed:** permission to register a single Windows scheduled task on
+this workstation. `Register-ScheduledTask` returns `Access is denied`
+(`HRESULT 0x80070005`) from the session, so it needs an elevated shell — a
+machine permission, not a code problem.
+
+**The command, exactly:**
+
+```powershell
+$root='C:\Users\Xerxus\Documents\Lawmind'
+$action = New-ScheduledTaskAction -Execute 'node' `
+  -Argument "$root\services\harness\src\sidecar-keeper.mjs" -WorkingDirectory $root
+$t1 = New-ScheduledTaskTrigger -AtLogOn
+$t2 = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(2) `
+  -RepetitionInterval (New-TimeSpan -Minutes 15)
+$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries `
+  -DontStopIfGoingOnBatteries -StartWhenAvailable `
+  -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew
+Register-ScheduledTask -TaskName 'Lawmind-NEW1-SidecarKeeper' `
+  -Action $action -Trigger $t1,$t2 -Settings $settings
+```
+
+Reversible with `Unregister-ScheduledTask -TaskName 'Lawmind-NEW1-SidecarKeeper'`.
+
+**Why it is worth an admin prompt: the GPU has now sat idle for 4 hours, then
+3 hours 20 minutes, then 11 hours 24 minutes, in three separate incidents on one
+run.** Every time, the cause was the same — the embedding sidecar and the walk are
+started from inside an agent session, and when that session's process tree is torn
+down they go with it. `nohup` does not survive it; PowerShell `Start-Process` does
+not survive it either, which I assumed it would and was wrong about. A scheduled
+task is the first form that is genuinely independent of the session.
+
+**What was built anyway, and works:** `services/harness/src/sidecar-keeper.mjs`
+polls the sidecar's `/health` every 20 seconds, restarts it after two misses, and
+relaunches the walk when `stage-embed.log` has been silent for 20 minutes. It
+proved itself on the third incident — `WALK SILENT for 686 min — relaunch #1` — so
+the recovery logic is correct. What it cannot do is survive its own death, and it
+died with the session each time.
+
+**What stays broken without it:** nothing is lost — the walk is idempotent and
+resumes from a coverage census rather than a cursor — but an eleven-day run keeps
+stopping silently whenever the agent session ends, and each stall costs hours of
+GPU that nothing reports. With the task, the worst case is 15 minutes plus the
+keeper's own 20-minute silence window.
+
+**Where it plugs in:** nowhere in the product. It is operational tooling for the
+Tier-A embedding run only, and it can be deleted the day that run finishes.
+
+**Not urgent enough to interrupt for.** The session-start relaunch is two
+`Start-Process` calls and any NEW1 session can do it; this only removes the need
+for a session to exist at all.

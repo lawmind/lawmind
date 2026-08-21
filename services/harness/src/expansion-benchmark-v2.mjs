@@ -83,15 +83,37 @@ for (const r of loaded.rows) assertFeatureAllowed(r, 'dense_similarity');
 
 // ── the funnel, computed once per distinct authority ─────────────────────────
 const authorities = [...new Set(loaded.rows.map((r) => r.goldAuthorityId))];
+/**
+ * `semantic_tier` is READ, not re-derived.
+ *
+ * This block used to inline the conjunction —
+ * `axis_a AND axis_b AND axis_c AND NOT is_bail_order AND value_band IN (...)`.
+ * Migration `0066` then made bail orders reachable and named `decided_brief` out
+ * of `axis_c_role`, and the transcription kept reporting the old predicate: the
+ * funnel's `eligible` count was about a definition that no longer existed, and
+ * nothing about it looked wrong.
+ *
+ * The view now exposes the answer as a column, so the honest thing is to read it.
+ * A second expression of a definition is the thing to avoid; where one is
+ * unavoidable it has to carry the deployed definition's hash, which is what
+ * `doc-vector-embed.mjs` does. Here it is avoidable.
+ *
+ * `NOT_ELIGIBLE` is the only tier that is not in Tier A. `BAIL_ORDER_REACHABLE`,
+ * `UNRESOLVED_EXPERIMENTAL`, `VERIFIED_SEMANTIC_CORE` and `BROAD_SEARCHABLE` are
+ * all reachable, and reporting them separately is the point — a funnel that
+ * collapses them back into a boolean throws away exactly the distinction the
+ * migration bought.
+ */
 const present = await sql`
   SELECT e.id,
-         (e.axis_a_identity AND e.axis_b_text AND e.axis_c_role
-          AND coalesce(e.is_bail_order, false) = false
-          AND e.value_band = ANY(ARRAY['standard','full','substantial'])) AS eligible,
+         e.semantic_tier,
+         e.semantic_tier <> 'NOT_ELIGIBLE' AS eligible,
          e.court, e.value_band, e.hc_document_class
   FROM judgment_embedding_eligibility e
   WHERE e.id = ANY(${authorities}::uuid[])
 `;
+const byTier = {};
+for (const r of present) byTier[r.semantic_tier] = (byTier[r.semantic_tier] ?? 0) + 1;
 const presentById = new Map(present.map((r) => [r.id, r]));
 const embedded = await sql.unsafe(
   `SELECT judgment_id FROM ${TABLE} WHERE judgment_id = ANY($1::uuid[])`,
@@ -104,10 +126,14 @@ const funnel = {
   sourcePresent: present.length,
   semanticEligible: present.filter((r) => r.eligible).length,
   embedded: embeddedIds.size,
+  byTier,
 };
 console.log(
   `funnel: source ${funnel.sourcePresent}/${funnel.goldAuthorities} · eligible ${funnel.semanticEligible} · embedded ${funnel.embedded}`,
 );
+for (const [t, n] of Object.entries(byTier).sort((a, b) => b[1] - a[1])) {
+  console.log(`  tier ${t.padEnd(24)} ${n}`);
+}
 
 // ── embed the queries once, on the same sidecar the corpus used ──────────────
 async function embedAll(texts) {
@@ -151,6 +177,7 @@ for (const [i, row] of loaded.rows.entries()) {
     sourcePresent: Boolean(e),
     semanticEligible: Boolean(e?.eligible),
     embedded: embeddedIds.has(row.goldAuthorityId),
+    semanticTier: e?.semantic_tier ?? null,
     rank: rank || null,
   });
   if ((i + 1) % 100 === 0) console.log(`  scored ${i + 1}/${loaded.rows.length}`);
