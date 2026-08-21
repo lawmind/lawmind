@@ -249,3 +249,46 @@ and a policy changed. Exactly the confound bus 0935 corrected.
 | halfvec ANN-vs-exact at ef_search=200 (P4) | needs an HNSW build; probe tables were dropped. Build ONCE at the 1M checkpoint and serve BOTH this and S7 from it — P4 says do not rebuild before a meaningful checkpoint |
 | expansion benchmark on v2 gold (P5/P6) | same index. `expansion-benchmark-v2.mjs` hardcodes the v1 gold path at lines 57/229 — parameterise before the checkpoint run |
 | 1M milestone (P3.4) | ~687,589 now, ~32k/hr → roughly 10h out |
+
+## S7 — the halfvec measurement is deferred BY THE GATE, with reasons
+
+Session target 3 (halfvec ANN/exact closed at meaningful scale) is **not closed**,
+and the reason is measured rather than preferred. We are past the `>=500k`
+threshold P4 named — 691,874 staged — so scale is no longer the blocker. The
+shared gate is:
+
+```
+DEFER  VECTOR_BUILD
+       - CPU 68.6% > 50%
+       - 13 active queries > 2
+       - longest active statement 1367s > 120s
+       - 17 ingest fleet process(es) writing — an index build wants the box to itself
+DEFER  DB_SCAN
+       - 13 active queries > 4
+       - longest active statement 1367s > 120s
+```
+
+Four independent reasons, none of them mine to clear. `GPU_EMBED` also reads
+DEFER at GPU 100% — correct, and it means "do not start a SECOND GPU job", not
+"stop the adopted one".
+
+**A trap worth recording:** run without `DATABASE_URL` exported and the gate
+returns DEFER for both classes on *unreadability* — "PostgreSQL unreadable
+(DATABASE_URL unset)". That is a different answer from DEFER on pressure and
+must never be filed as the same thing. My first reading had exactly this defect
+and the second reading replaced it.
+
+Deferred work is now EXECUTABLE rather than merely postponed:
+`docs/ai/new1-tier-a/CHECKPOINT_RUNBOOK_1M.md` — the gate check, snapshot
+discipline (never index the live stage table), the one ANN-recall-vs-exact
+method still owed, the three benchmark invocations, the funnel, and the
+`TEXT_UNSAFE_CONTRACT_READY` procedure.
+
+| session target | state |
+| --- | --- |
+| 1. GPU sustained with zero silent holes | **MET** — adopted not duplicated; 114/114 batches account closed, 0 open |
+| 2. >=1M useful staged vectors | **IN FLIGHT** — 691,874, ~32k/hr, roughly 10h out |
+| 3. halfvec ANN/exact closed at meaningful scale | **DEFERRED BY GATE** — scale reached, resources refused, runbook written |
+| 4. clean expanded gold benchmark | **GOLD READY, RUN DEFERRED** — v2 verified independently, both sets load 684/175 with 0 dropped; the run needs the index |
+| 5. fusion/ranking on leakage-safe diverse gold | **BLOCKED on 4** — same index |
+| 6. eligibility ceiling reduced without lowering purity | **MET** — 13.2% -> 7.0%, and the floor was NOT lowered; LCC's bail route did it |
