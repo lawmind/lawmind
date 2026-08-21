@@ -192,13 +192,34 @@ console.log(`  dup / ineligible / noText  ${throughput.skippedAlreadyStaged} / $
 console.log(`  last-10 tok/s          ${throughput.lastTenMeanTokensPerSecond?.toFixed(0) ?? 'n/a'}`);
 console.log(`  last-10 batch seconds  ${throughput.lastTenMeanBatchSeconds?.toFixed(0) ?? 'n/a'}`);
 if (ineligibleTrend.length > 0) {
-  const rates = ineligibleTrend.map((t) => t.ratePct);
-  const half = Math.ceil(rates.length / 2);
-  const mean = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  // POOLED, and PER CLASS. Two corrections, both learned the hard way on 21 Aug.
+  //
+  // Pooled because a mean of per-batch rates is dominated by re-walked batches
+  // whose `new` count is a couple of hundred residue rows: twelve of them read
+  // 100.0% and said nothing about the corpus.
+  //
+  // Per class because the pooled rate has a confound the first version of this
+  // readout did not anticipate. It fell from 16% to 2.4% and the cause was NOT
+  // the classifier falling behind — it was `bail_order` leaving the refusal
+  // policy under migration 0066. A change in what we REFUSE moves the same
+  // number as a change in what has been CLASSIFIED, and only the per-class split
+  // tells them apart: a class that vanishes from the breakdown left the policy,
+  // a class that thins across batches is the classifier losing ground.
+  const half = Math.ceil(ineligibleTrend.length / 2);
+  const pooled = (ts) => {
+    const n = ts.reduce((a, t) => a + t.newRows, 0);
+    const r = ts.reduce((a, t) => a + t.ineligible, 0);
+    return n === 0 ? 0 : (100 * r) / n;
+  };
   console.log(
-    `  ineligible rate        ${mean(rates.slice(0, half)).toFixed(1)}% -> ${mean(rates.slice(-half)).toFixed(1)}% over the last ${rates.length} batches`,
+    `  ineligible rate        ${pooled(ineligibleTrend.slice(0, half)).toFixed(1)}% -> ${pooled(ineligibleTrend.slice(-half)).toFixed(1)}% pooled over the last ${ineligibleTrend.length} batches`,
   );
-  console.log('    a FALLING rate means the walk has overtaken the classifier, not that the corpus got cleaner');
+  const classTotals = {};
+  for (const t of ineligibleTrend) {
+    for (const [c, n] of Object.entries(t.byClass)) classTotals[c] = (classTotals[c] ?? 0) + n;
+  }
+  console.log(`    by class: ${Object.entries(classTotals).map(([c, n]) => `${c} ${n}`).join(' · ') || '(none)'}`);
+  console.log('    a class LEAVING this list is a policy change; a class THINNING is the walk overtaking the classifier');
 }
 console.log(`  self-retrieval         ${selfFirst}/${docs.length} nearest, ${selfTop3}/${docs.length} in top 3`);
 console.log(`\nwrote ${OUT.pathname}`);

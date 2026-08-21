@@ -40,7 +40,7 @@ compaction. Update it as items move.
 | --- | --- | --- | --- |
 | 3.1 | 100k | DONE | 0822: 100,489 vectors, 40/40 exact self-retrieval, 0 malformed |
 | 3.2 | 250k | DONE | `milestone-250k.json`: 255,989 staged · 0 non-unit-norm · 0 null/zero-token · one recipe HEAD:4800 one model · 26 courts · self-retrieval 20/20 nearest, 20/20 top-3 |
-| 3.3 | 500k | TODO | |
+| 3.3 | 500k | DONE | `milestone-520k.json`: 537,306 staged · 0 non-unit-norm · 0 null/zero-token · 26 courts · one recipe · self-retrieval 10/10 nearest and 10/10 top-3 |
 | 3.4 | 1M | TODO | |
 | 3.5 | 2M | TODO | |
 
