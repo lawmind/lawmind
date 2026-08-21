@@ -42,8 +42,12 @@ unsafe for digits. `docs/ops/new2/TEXT_RECOVERY_POLICY.md`.
 **3. `judgment_date` is contradicted by the primary document on 4.45% of rows.**
 Two mechanisms: a same-direction off-by-one concentrated in four courts, and
 `judgment_date` tracking a case's FILING year. The document backs the filename
-date 33 times out of 34. Carried to the edge level this is 7.1–12.0%, against
-NEW3's measured 8.8% of gold citation edges being chronologically impossible.
+date 33 times out of 34. **The corpus rate stands; the attribution of NEW3's 22
+impossible gold edges to it does NOT** -- NEW3 ran `dateQuality()` against both
+endpoints of all 22 (bus 0979) and it explains ONE. Ten of the rest are
+`DATE_VERIFIED` on both ends, which is positive evidence against the date being
+their mechanism. Two numbers of the same magnitude were not a mechanism, and the
+corrected reasoning is recorded in `date-quality.ts` rather than deleted.
 **Nothing is corrected** — `date-quality.ts` assigns a state and publishes
 evidence. The partition-year check agrees 3,000/3,000 and therefore proves
 nothing.

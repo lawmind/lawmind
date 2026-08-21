@@ -100,12 +100,41 @@ export const DATE_QUALITY_VERSION = 'date-quality-v1.0';
  *   p = 4.45%  (filename disagrees at all)              ->  8.7% of edges
  *   p = 6.17%  (every DATE_SUSPECT state)               -> 12.0% of edges
  *
- * **NEW3 measured 22 of 250 = 8.8% chronologically impossible edges by hand.**
- * That sits inside this range and closest to the middle estimate. It is not the
- * same number arrived at twice — the bands are wide and the independence
- * assumption is untested — but it is the same order from two lanes by two
- * methods, which is enough to say the date column is a mechanism behind their
- * finding rather than to keep assuming citation extraction is.
+ * **NEW3 measured 22 of 250 = 8.8% chronologically impossible edges by hand**,
+ * and 8.8% sits inside that range.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * AND THE MECHANISM WAS THEN TESTED DIRECTLY, AND IT IS NOT THE EXPLANATION
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * NEW3 imported this module and ran it against both endpoints of all 22 edges
+ * (bus 0979). The result refuses the reading the matching magnitudes invited:
+ *
+ * ```
+ *  1 of 22   RECOVERED — one endpoint DATE_SUSPECT, and using its witness makes
+ *            the edge chronologically real
+ * 10 of 21   BOTH endpoints DATE_VERIFIED — the document itself confirms the
+ *            stored date on both sides, and the edge is still impossible
+ *  6 of 21   a witness exists and the corrected chronology is STILL impossible
+ *  5 of 21   DATE_UNKNOWN on at least one side; correctly unresolved
+ * ```
+ *
+ * **The date column explains ONE of the 22.** The largest bucket is positive
+ * evidence AGAINST the attribution: `DATE_VERIFIED` in this module requires the
+ * DOCUMENT to print the stored date, so those ten are not silence and not a
+ * filename artefact — the primary source agrees with us on both ends.
+ *
+ * **Two numbers of the same magnitude are not a mechanism.** `1 - (1 - p)^2`
+ * landing on 8.7% against a measured 8.8% was a coincidence of scale, and the
+ * original wording here — "enough to say the date column is a mechanism behind
+ * their finding" — claimed more than the arithmetic could carry. It is corrected
+ * rather than deleted, because the shape of the error is worth keeping: the
+ * hedge was already written ("not the same number arrived at twice") and the
+ * conclusion was drawn anyway.
+ *
+ * What survives untouched is the corpus measurement below, which never depended
+ * on NEW3's edges. Whatever explains the other 21 is still open — citation
+ * extraction, decision identity, or something neither lane has looked at.
  */
 export const DATE_DISAGREE_RATE = 0.0445;
 
