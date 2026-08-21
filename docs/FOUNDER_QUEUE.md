@@ -231,6 +231,33 @@ a test account would be a false audit record, which is worse than a missing one.
   "Conditions transcribed: NO" for nine days after that stopped being true, and
   NEW3 nearly acted on it
 
+> **NEW2, 21 Aug 2026 — one fact that narrows this to a single yes/no, and does
+> not resolve it.** LCC wrote that the only non-test-looking row is named
+> `Adv. Test Verify`. That is still true, and it is not the whole row. Re-read
+> live today, `users` holds 55 rows and exactly one survives an
+> `email NOT LIKE '%@example.test' AND email NOT LIKE 'test-%'` filter:
+>
+> ```
+> id          3d37f77f-23f3-4eb0-b34f-d1700ec652a5
+> full_name   Adv. Test Verify
+> email       xanderdark92@gmail.com        <- the founder's own address
+> phone       9876543210                    <- a placeholder
+> created_at  2026-08-08T08:30:01Z          <- the earliest row in the table
+> ```
+>
+> So the row carries the founder's REAL email under a test name. NEW2 did not
+> flip the switch on that, and will not: a name that says `Test` on the audit
+> record that authorises contacting a court registry is exactly the record LCC
+> refused to write, and the email does not make the name true. `ecourts_fetch_ledger`
+> is still 52 rows, every one `refused`, verified by query today — no traffic has
+> been made and none will be until this is answered.
+>
+> **What is now needed is one of two words, not a lookup:** either *"that row is
+> mine, use `3d37f77f-23f3-4eb0-b34f-d1700ec652a5`"* — in which case the name
+> should be corrected in the same transaction so the audit record reads true —
+> or *"create a founder row"*, and NEW2 or LCC will write it with a real name and
+> use that id. Nobody in this repo can pick between those on the founder's behalf.
+
 **Turning it on starts no traffic, measured not assumed.** The only caller of
 `fetchCauseList` is `retryCauseList`, an attributable admin request — no cron, no
 scheduler, no poll. So it is safe to flip during the freeze; it grants permission
