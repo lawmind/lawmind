@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-08-21T18:26:04.059Z",
+  "lane": "NEW2",
+  "purpose": "stratified frame for the expanded document-role gold; supersedes the uniform 87-row draw as an EVALUATION set, and does not supersede it as a rate estimate",
+  "strategy": "six document classes x two length bands, uniform within cell over judgments.id",
+  "lengthBandBoundaryChars": 1500,
+  "headChars": 4000,
+  "tailChars": 1500,
+  "perCellTarget": 30,
+  "totalRows": 270,
+  "cells": [
+    {
+      "cell": "decided:short",
+      "populationRowsEstimated": 0,
+      "drawn": 0,
+      "note": "estimated empty; no rows drawn"
+    },
+    {
+      "cell": "decided:long",
+      "populationRowsEstimated": 1087656,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.000027582250270306054,
+      "textUnsafeVerifiedInCell": 2
+    },
+    {
+      "cell": "decided_brief:short",
+      "populationRowsEstimated": 360540,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.00008320852055250458,
+      "textUnsafeVerifiedInCell": 2
+    },
+    {
+      "cell": "decided_brief:long",
+      "populationRowsEstimated": 0,
+      "drawn": 0,
+      "note": "estimated empty; no rows drawn"
+    },
+    {
+      "cell": "procedural_disposal:short",
+      "populationRowsEstimated": 376925,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.00007959143065596604,
+      "textUnsafeVerifiedInCell": 0
+    },
+    {
+      "cell": "procedural_disposal:long",
+      "populationRowsEstimated": 178466,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.0001680992457947172,
+      "textUnsafeVerifiedInCell": 0
+    },
+    {
+      "cell": "bail_order:short",
+      "populationRowsEstimated": 59981,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.0005001583834881046,
+      "textUnsafeVerifiedInCell": 0
+    },
+    {
+      "cell": "bail_order:long",
+      "populationRowsEstimated": 765442,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.00003919304140614181,
+      "textUnsafeVerifiedInCell": 0
+    },
+    {
+      "cell": "reference_stub:short",
+      "populationRowsEstimated": 183466,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.00016351803603937515,
+      "textUnsafeVerifiedInCell": 0
+    },
+    {
+      "cell": "reference_stub:long",
+      "populationRowsEstimated": 0,
+      "drawn": 0,
+      "note": "estimated empty; no rows drawn"
+    },
+    {
+      "cell": "unclassified:short",
+      "populationRowsEstimated": 4736173,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.000006334228078239541,
+      "textUnsafeVerifiedInCell": 5
+    },
+    {
+      "cell": "unclassified:long",
+      "populationRowsEstimated": 10911977,
+      "bandFractionDraws": 1500,
+      "drawn": 30,
+      "inclusionProbability": 0.000002749272657007983,
+      "textUnsafeVerifiedInCell": 4
+    }
+  ],
+  "realisedByCourt": {
+    "Allahabad High Court": 27,
+    "Patna High Court": 22,
+    "High Court of Madhya Pradesh": 21,
+    "High Court of Uttarakhand": 20,
+    "High Court of Punjab and Haryana": 19,
+    "High Court of Andhra Pradesh": 16,
+    "High Court of Kerala": 15,
+    "Madras High Court": 14,
+    "High Court Of Rajasthan": 14,
+    "Bombay High Court": 13,
+    "Calcutta High Court": 12,
+    "High Court Of Chhattisgarh": 10,
+    "High Court of Jharkhand": 10,
+    "High Court of Jammu and Kashmir": 10,
+    "High Court of Gujarat": 9,
+    "High Court  for State of Telangana": 9,
+    "High Court of Karnataka": 8,
+    "High Court of Tripura": 6,
+    "High Court of Himachal Pradesh": 4,
+    "High Court of Manipur": 3,
+    "High Court of Delhi": 3,
+    "Gauhati High Court": 3,
+    "Orissa High Court": 2
+  },
+  "realisedByYear": {
+    "2003": 2,
+    "2005": 1,
+    "2007": 1,
+    "2008": 1,
+    "2009": 3,
+    "2010": 3,
+    "2011": 3,
+    "2012": 2,
+    "2013": 4,
+    "2014": 4,
+    "2015": 7,
+    "2016": 14,
+    "2017": 7,
+    "2018": 14,
+    "2019": 14,
+    "2020": 7,
+    "2021": 12,
+    "2022": 25,
+    "2023": 26,
+    "2024": 24,
+    "2025": 31,
+    "2026": 65
+  },
+  "caveats": [
+    "STRATIFIED, NOT UNIFORM. An accuracy computed here is per class. A corpus figure requires re-weighting by stratumPopulationEstimated, and quoting a raw pooled number off this file overstates the rare classes by up to ~55x.",
+    "stratumPopulationEstimated is the EXACT class count times an ESTIMATED band fraction from 1,500 uniform draws inside the class (about +/-2 points). The class counts are exact; the band split is not, because there is no index on the length of the text and twelve exact counts did not finish in ten minutes on a loaded box.",
+    "storedClassAtFrameTime is evidence, not truth. The classifier is walking as this is cut.",
+    "Court and year are recorded, not stratified. Draws are over judgments.id (uuid v4), which is blind to both.",
+    "Text damage is recorded, not stratified. A TEXT_UNSAFE_VERIFIED row cannot be labelled for role from its text and should be given the TEXT_UNSAFE verdict rather than a guess.",
+    "No verdict field exists in this file by construction. The key is written separately by a labeller reading the primary document."
+  ]
+}

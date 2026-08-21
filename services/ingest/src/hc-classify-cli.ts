@@ -14,7 +14,7 @@
  */
 import type { Sql } from 'postgres';
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { openDb } from './db-host.ts';
@@ -101,14 +101,82 @@ function classifyPage(
   return updates;
 }
 
+/**
+ * Postgres error codes that mean "the server was busy", not "the query is wrong".
+ *
+ * `57014` is `statement_timeout`, and it is the one that has actually killed
+ * this walk: measured 21 Aug 2026, the process died after 706,000 rows when a
+ * `writeClasses` UPDATE waited ten minutes behind a full-text `ILIKE` scan that
+ * another job in this same lane was running, and the resulting rejection was an
+ * uncaughtException. **Fifty-five minutes of the walk that protects the GPU feed
+ * were lost to a transient lock queue.**
+ *
+ * The list is deliberately short. A constraint violation, a type error or a
+ * syntax error must still kill the run loudly on the first occurrence —
+ * retrying those is how a broken write becomes a broken write repeated eight
+ * times, and the second failure mode is much harder to see than the first.
+ */
+const TRANSIENT_PG_CODES = new Set([
+  '57014', // statement_timeout — the measured one
+  '40001', // serialization_failure
+  '40P01', // deadlock_detected
+  '55P03', // lock_not_available
+  '08006', // connection_failure
+  '08003', // connection_does_not_exist
+  '57P01', // admin_shutdown
+]);
+
+const WRITE_ATTEMPTS = 5;
+
+/**
+ * Retry a statement while the failure is the server being busy.
+ *
+ * One helper for the read and the write, so the two cannot drift into disagreeing
+ * about what "transient" means — which is how a guard ends up covering the half
+ * of the job that was never the one failing.
+ *
+ * Backoff is 2s, 4s, 8s, 16s rather than a fixed delay, because the thing being
+ * waited out is another job's minutes-long scan, and retrying into the queue it
+ * is stuck behind only makes that queue longer. Every retry is announced on
+ * stderr: a walk that quietly retries is a walk whose slowdown has no
+ * explanation, and this one has to be diagnosable at 3am by its log alone.
+ */
+async function withTransientRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await run();
+    } catch (err) {
+      const code = (err as { code?: string }).code;
+      if (attempt >= WRITE_ATTEMPTS || code === undefined || !TRANSIENT_PG_CODES.has(code)) throw err;
+      const waitMs = 2000 * 2 ** (attempt - 1);
+      console.error(
+        `\n  ${what} retry ${attempt}/${WRITE_ATTEMPTS - 1} after ${code} — waiting ${waitMs / 1000}s`,
+      );
+      await new Promise((r) => setTimeout(r, waitMs));
+    }
+  }
+}
+
 async function writeClasses(sql: Sql, updates: readonly Update[]): Promise<void> {
   for (let i = 0; i < updates.length; i += BATCH) {
     const slice = updates.slice(i, i + BATCH);
-    await sql`
-      UPDATE judgments AS j SET hc_document_class = v.cls, hc_class_method = v.method
-      FROM (VALUES ${sql(slice.map((u) => [u.id, u.cls, u.method] as const))})
-           AS v(id, cls, method)
-      WHERE j.id = v.id::uuid`;
+    /**
+     * Retry the SLICE, not the page.
+     *
+     * Each slice is its own statement and its own transaction, so a retry
+     * re-runs exactly the work that failed. The UPDATE is idempotent — it sets
+     * two columns to values computed from the row's own text — so a slice that
+     * partially succeeded and then timed out is safe to run again, and a slice
+     * the walk already wrote is safe to write identically.
+     */
+    await withTransientRetry(
+      'write',
+      () => sql`
+        UPDATE judgments AS j SET hc_document_class = v.cls, hc_class_method = v.method
+        FROM (VALUES ${sql(slice.map((u) => [u.id, u.cls, u.method] as const))})
+             AS v(id, cls, method)
+        WHERE j.id = v.id::uuid`,
+    );
   }
 }
 
@@ -198,6 +266,60 @@ async function main(): Promise<void> {
     const RESTALE = process.argv.includes('--restale');
     if (RESTALE && RESUME) {
       console.error('--restale and --resume select disjoint populations; pass one.');
+      process.exit(2);
+    }
+    /**
+     * `--restale-rule <name>` — re-assess the rows ONE NAMED RULE could now
+     * claim, after that rule changed.
+     *
+     * ─────────────────────────────────────────────────────────────────────────
+     * INTENT: code has `--restale`, which selects `unclassified_disposal:%`;
+     * the task after the 21 Aug bail fix expects rows the previous rule set
+     * claimed WRONGLY to be re-assessed; `--restale`'s own doc says its purpose
+     * is rows a previous rule set "could not claim". Those are different
+     * populations and the code could express only the first, so this adds the
+     * second rather than widening a flag whose meaning is documented.
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Narrow on purpose, in two independent ways, because the alternative is a
+     * full-text re-read of every `decided` row — the exact cost `--restale`
+     * exists to avoid.
+     *
+     * **The method filter is exact, not a guess.** `BAIL_PHRASE` is reached only
+     * inside the `isMerits` branch of `classifyHcDocument`, and that branch has
+     * exactly two outcomes: `disposal_nature_merits` and
+     * `disposal_nature_merits_short`. No row stamped anything else can change
+     * verdict because this rule changed. Verified by reading the function, and
+     * it is the ordering that makes it true — `isBail` and `isProcedural` both
+     * return before `isMerits` is reached.
+     *
+     * **The text prefilter is exact too.** Every alternative in `BAIL_PHRASE`
+     * contains the literal substring `bail`, so a document without it cannot
+     * match under any spacing. `ILIKE '%bail%'` is therefore a superset of the
+     * rule's precondition and can only cost work, never correctness. It is what
+     * keeps this from shipping a million documents' `full_text` over the wire
+     * to discover that 99.2% of them say nothing about bail.
+     *
+     * Kept as a NAMED TABLE rather than free-text arguments. A `--methods` and
+     * `--prefilter` pair would let a future caller pass a filter that is not a
+     * superset of the rule it claims to re-run, and silently re-classify the
+     * wrong population — a mistake with no error path, which is the failure
+     * shape this repo has hit four times.
+     */
+    const RULE_METHODS: Record<string, string[]> = {
+      bail: ['disposal_nature_merits', 'disposal_nature_merits_short'],
+    };
+    const RULE_PREFILTER: Record<string, string> = { bail: '%bail%' };
+    const ruleArgIndex = process.argv.indexOf('--restale-rule');
+    const RESTALE_RULE = ruleArgIndex >= 0 ? (process.argv[ruleArgIndex + 1] ?? null) : null;
+    if (RESTALE_RULE !== null && RULE_METHODS[RESTALE_RULE] === undefined) {
+      console.error(
+        `--restale-rule ${RESTALE_RULE} is not a known rule. Known: ${Object.keys(RULE_METHODS).join(', ')}`,
+      );
+      process.exit(2);
+    }
+    if (RESTALE_RULE !== null && (RESUME || RESTALE)) {
+      console.error('--restale-rule selects a population disjoint from --resume and --restale; pass one.');
       process.exit(2);
     }
     /**
@@ -316,7 +438,66 @@ async function main(): Promise<void> {
      * are already committed and `--resume` restarts from
      * `hc_class_method IS NULL`.
      */
-    let cursor = '00000000-0000-0000-0000-000000000000';
+    /**
+     * THE CURSOR IS PERSISTED, AND ONLY FOR `--resume`.
+     *
+     * ─────────────────────────────────────────────────────────────────────────
+     * INTENT: code starts every run at uuid zero; the task is to keep ONE
+     * classifier healthy through restarts; the module's own doc says an
+     * interrupted run is cheap because `--resume` restarts from
+     * `hc_class_method IS NULL`. The predicate is indeed cheap to satisfy — it
+     * is cheap to FIND that is the problem, and nothing said so.
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Measured 21 Aug 2026. The walk died at 706,000 rows and was restarted.
+     * Seventeen minutes later it had not emitted its first progress line,
+     * because starting at zero makes the first page index-scan past the
+     * **4.1 million rows already classified below the frontier** before it finds
+     * 2,000 that are not. That cost is not constant: it grows with the frontier,
+     * so at 50% walked a restart would scan nine million rows, and the job that
+     * has to stay ahead of a GPU is at its slowest exactly when it has most to
+     * protect.
+     *
+     * **Why a watermark is safe HERE, when it generally is not.** A NEW2 note
+     * records that an id watermark cannot see new rows — random uuids put every
+     * later arrival below it and the pass exits clean. Two things make this the
+     * exception, and both are checked rather than assumed:
+     *
+     *   1. historical bulk ingestion is CLOSED, so no row arrives below the
+     *      watermark while the walk runs;
+     *   2. the predicate is still `hc_class_method IS NULL`. The cursor only
+     *      says where to START LOOKING; it never says a row is done. Every row
+     *      the walk touches gets a method — including the ones it deliberately
+     *      refuses, which are stamped `unclassified_disposal:` — so after a page
+     *      commits, nothing below the cursor satisfies the predicate.
+     *
+     * And because assumption 1 is a fact about today rather than a property of
+     * the code, the run ENDS with a sweep from zero (`--no-sweep` to skip). If
+     * the sweep finds anything, the watermark was wrong and the walk says so
+     * instead of exiting clean.
+     *
+     * The checkpoint is written AFTER the page's write, never before. A crash
+     * between the two must re-do a page, never skip one — the same ordering the
+     * damage export uses, and the opposite of what the in-memory cursor did:
+     * it advanced before `writeClasses`, so the page that killed the run at
+     * 706,000 was already counted as walked.
+     */
+    const CURSOR_FILE = join(dirname(fileURLToPath(import.meta.url)), '../.checkpoints/hc-classify.cursor');
+    const ZERO = '00000000-0000-0000-0000-000000000000';
+    const usesCursor = RESUME && confirm && frameIds === null;
+    let cursor = ZERO;
+    if (usesCursor && existsSync(CURSOR_FILE)) {
+      const saved = readFileSync(CURSOR_FILE, 'utf8').trim();
+      if (/^[0-9a-f-]{36}$/i.test(saved)) {
+        cursor = saved;
+        console.log(`resuming from checkpoint ${cursor}`);
+      } else {
+        console.error(`checkpoint file is not a uuid (${JSON.stringify(saved.slice(0, 40))}); starting from zero`);
+      }
+    } else if (usesCursor) {
+      console.log('no checkpoint — starting from zero; the first page must scan past everything already classified');
+    }
+    let sweeping = false;
     for (;;) {
       /**
        * The frame restricts the SAME cursor walk rather than replacing it, so
@@ -324,22 +505,60 @@ async function main(): Promise<void> {
        * identically. A separate code path for the sampled run is how the two
        * would drift, and the sampled run is the one whose numbers get published.
        */
-      const page = await sql<Row[]>`
+      /**
+       * The READ is retried too, and it is not a symmetry flourish.
+       *
+       * The walk was killed twice on 21 Aug by `statement_timeout` [57014]: once
+       * in `writeClasses`, and once HERE, ten minutes into the first page after
+       * a restart. Guarding only the write would have caught one of the two.
+       *
+       * The read is trivially safe to repeat — it takes no locks and changes
+       * nothing — so unlike the write it needs no idempotence argument.
+       */
+      const page = await withTransientRetry('page read', () => sql<Row[]>`
         SELECT id, disposal_nature, case_number, full_text, length(full_text) AS len
         FROM judgments
         WHERE court <> 'Supreme Court of India' AND id > ${cursor}::uuid
           ${RESUME ? sql`AND hc_class_method IS NULL` : sql``}
           ${staleMethods === null ? sql`` : sql`AND hc_class_method = ANY(${staleMethods}::text[])`}
           ${frameIds === null ? sql`` : sql`AND id = ANY(${frameIds}::uuid[])`}
+          ${
+            RESTALE_RULE === null
+              ? sql``
+              : sql`AND hc_class_method = ANY(${RULE_METHODS[RESTALE_RULE]!}::text[])
+                    AND full_text ILIKE ${RULE_PREFILTER[RESTALE_RULE]!}`
+          }
         ORDER BY id
-        LIMIT ${PAGE}`;
-      if (page.length === 0) break;
+        LIMIT ${PAGE}`);
+      if (page.length === 0) {
+        /* Reached the end. If a checkpoint was used, the walk has only proved
+         * the corpus is clean ABOVE where it started, so sweep from zero once
+         * before claiming a full pass. */
+        if (usesCursor && !sweeping && cursor !== ZERO && !process.argv.includes('--no-sweep')) {
+          console.log(`\n  end of walk — sweeping from zero to verify nothing below ${cursor} was skipped`);
+          sweeping = true;
+          cursor = ZERO;
+          continue;
+        }
+        break;
+      }
+      if (sweeping) {
+        console.error(
+          `\n  SWEEP FOUND ${page.length} unclassified rows BELOW the checkpoint. ` +
+            `The watermark was not safe and these are being classified now — ` +
+            `report this, it means a row arrived below the cursor or a page write was lost.`,
+        );
+      }
       stopIfRequested();
-      cursor = page[page.length - 1]!.id;
+      const pageEnd = page[page.length - 1]!.id;
       total += page.length;
 
       const pageUpdates = classifyPage(page, byClass, byMethod, chars, samples, sampleN);
       if (confirm) await writeClasses(sql, pageUpdates);
+      /* Only now. The write is what makes the page done; the cursor records
+       * that fact and must not anticipate it. */
+      cursor = pageEnd;
+      if (usesCursor && !sweeping) writeFileSync(CURSOR_FILE, cursor);
 
       process.stdout.write(`\r  ${confirm ? 'classified + wrote' : 'classified'} ${total.toLocaleString()}`);
       if (page.length < PAGE) break;
@@ -348,7 +567,9 @@ async function main(): Promise<void> {
       ? ' (never assessed)'
       : RESTALE
         ? ' (previously unclassified_disposal, re-assessed against current rules)'
-        : '';
+        : RESTALE_RULE !== null
+          ? ` (re-assessed for the '${RESTALE_RULE}' rule only)`
+          : '';
     console.log(`\n${total} High Court documents${scopeLabel}\n`);
     if (total === 0) {
       console.log('nothing to classify.');
@@ -415,7 +636,9 @@ async function main(): Promise<void> {
           ? 'with no method — EXPECTED: --restale re-reads only rows a previous rule set refused, and can never reach a methodless row'
           : RESUME
             ? 'with no method — remaining backlog for this selector; --resume walks exactly these, so a non-zero figure is work left, not a defect'
-            : 'with no method (must be 0 after a full pass)';
+            : RESTALE_RULE !== null
+              ? `with no method — EXPECTED: --restale-rule ${RESTALE_RULE} re-reads only rows already stamped by the rule it belongs to, and can never reach a methodless row`
+              : 'with no method (must be 0 after a full pass)';
     console.log(
       `\nwritten: ${check?.classified} classified, ${check?.unclassified} deliberately unclassified, ` +
         `${check?.methodless} ${scopeNote}`,

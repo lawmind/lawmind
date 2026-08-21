@@ -6,8 +6,12 @@
  * same sample. A synthetic fixture would prove the thresholds are self
  * consistent and nothing else; these prove they separate the two populations
  * that actually exist in this corpus.
+ *
+ * `node:test`, not vitest: `package.json` runs `tsx --test src/*.test.ts`, so a
+ * vitest file in this directory is a file the suite globs and cannot run.
  */
-import { describe, expect, it } from 'vitest';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 import {
   DAMAGE_SPAN,
   MIN_CONTROL_RUN,
@@ -45,31 +49,27 @@ const base = { textLength: 4000 as number | null, storedScriptQuality: null };
 describe('damageVerdict — the VERIFIED class needs proof, not a density', () => {
   it('convicts a glyph dump on the control-character run', () => {
     const r = damageVerdict({ ...base, text: GLYPH_DUMP });
-    expect(r.verdict).toBe('TEXT_UNSAFE_VERIFIED');
-    expect(r.reasons).toContain('GLYPH_CODE_DUMP');
-    expect(r.evidence.longestControlRun).toBeGreaterThanOrEqual(MIN_CONTROL_RUN);
+    assert.equal(r.verdict, 'TEXT_UNSAFE_VERIFIED');
+    assert.ok(r.reasons.includes('GLYPH_CODE_DUMP'), 'reasons were ' + r.reasons.join(','));
+    assert.ok(r.evidence.longestControlRun >= MIN_CONTROL_RUN);
   });
 
   it('convicts destroyed word spacing', () => {
     const r = damageVerdict({ ...base, text: SPACING_DESTROYED });
-    expect(r.verdict).toBe('TEXT_UNSAFE_VERIFIED');
-    expect(r.reasons).toContain('WORD_SPACING_DESTROYED');
+    assert.equal(r.verdict, 'TEXT_UNSAFE_VERIFIED');
+    assert.ok(r.reasons.includes('WORD_SPACING_DESTROYED'));
   });
 
   it('convicts an empty text as NO_TEXT and reports nothing else', () => {
     const r = damageVerdict({ ...base, text: '', textLength: 0 });
-    expect(r.verdict).toBe('TEXT_UNSAFE_VERIFIED');
-    expect(r.reasons).toEqual(['NO_TEXT']);
+    assert.equal(r.verdict, 'TEXT_UNSAFE_VERIFIED');
+    assert.deepEqual([...r.reasons], ['NO_TEXT']);
   });
 
   it('promotes a stored legacy-font verdict, which was made with PDF evidence', () => {
-    const r = damageVerdict({
-      ...base,
-      text: PATNA_READABLE,
-      storedScriptQuality: 'legacy_font_ascii',
-    });
-    expect(r.verdict).toBe('TEXT_UNSAFE_VERIFIED');
-    expect(r.reasons).toContain('LEGACY_FONT_ASCII_STORED');
+    const r = damageVerdict({ ...base, text: PATNA_READABLE, storedScriptQuality: 'legacy_font_ascii' });
+    assert.equal(r.verdict, 'TEXT_UNSAFE_VERIFIED');
+    assert.ok(r.reasons.includes('LEGACY_FONT_ASCII_STORED'));
   });
 });
 
@@ -78,18 +78,18 @@ describe('damageVerdict — a screen alone can only ever say SUSPECT', () => {
    * This is the regression that matters most. Twelve readable Kerala writ
    * petitions fired the token-shape screen during the measurement. If a future
    * edit promotes that screen to the VERIFIED class, this test is what stops
-   * 800,000 readable documents being declared unreadable.
+   * roughly 800,000 readable documents being declared unreadable.
    */
   it('will not convict readable Kerala text on the token-shape screen', () => {
     const r = damageVerdict({ ...base, text: KERALA_READABLE, tokenShapeAnomaly: true });
-    expect(r.verdict).toBe('TEXT_DAMAGE_SUSPECT');
-    expect(r.reasons).toEqual(['TOKEN_SHAPE_ANOMALY']);
-    expect(r.reasons.some(isVerifiedReason)).toBe(false);
+    assert.equal(r.verdict, 'TEXT_DAMAGE_SUSPECT');
+    assert.deepEqual([...r.reasons], ['TOKEN_SHAPE_ANOMALY']);
+    assert.equal(r.reasons.some(isVerifiedReason), false);
   });
 
   it('will not convict on low English density alone', () => {
     const r = damageVerdict({ ...base, text: PATNA_READABLE, englishDensityLow: true });
-    expect(r.verdict).toBe('TEXT_DAMAGE_SUSPECT');
+    assert.equal(r.verdict, 'TEXT_DAMAGE_SUSPECT');
   });
 
   it('carries both screens when both fire, and still refuses to convict', () => {
@@ -100,8 +100,8 @@ describe('damageVerdict — a screen alone can only ever say SUSPECT', () => {
       tokenShapeAnomaly: true,
       legacyFontMarkers: true,
     });
-    expect(r.verdict).toBe('TEXT_DAMAGE_SUSPECT');
-    expect(r.reasons).toHaveLength(3);
+    assert.equal(r.verdict, 'TEXT_DAMAGE_SUSPECT');
+    assert.equal(r.reasons.length, 3);
   });
 });
 
@@ -109,31 +109,30 @@ describe('damageVerdict — UNKNOWN is a value, never a claim of cleanliness', (
   it('returns UNKNOWN with no reasons on ordinary readable text', () => {
     for (const text of [PATNA_READABLE, KERALA_READABLE]) {
       const r = damageVerdict({ ...base, text });
-      expect(r.verdict).toBe('UNKNOWN');
-      expect(r.reasons).toEqual([]);
+      assert.equal(r.verdict, 'UNKNOWN');
+      assert.deepEqual([...r.reasons], []);
     }
   });
 
   it('never returns a state that asserts the extraction was faithful', () => {
-    const states = new Set(
-      [PATNA_READABLE, KERALA_READABLE, GLYPH_DUMP, SPACING_DESTROYED].map(
-        (text) => damageVerdict({ ...base, text }).verdict,
-      ),
-    );
-    expect([...states].every((s) => s !== ('CLEAN' as string))).toBe(true);
+    for (const text of [PATNA_READABLE, KERALA_READABLE, GLYPH_DUMP, SPACING_DESTROYED]) {
+      const v: string = damageVerdict({ ...base, text }).verdict;
+      assert.notEqual(v, 'CLEAN');
+      assert.notEqual(v, 'KNOWN_GOOD');
+    }
   });
 });
 
 describe('damageVerdict — every verdict carries its span and its version', () => {
   it('reports the span it actually examined, not the span it was asked for', () => {
     const r = damageVerdict({ ...base, text: PATNA_READABLE, textLength: 91_000 });
-    expect(r.evidence.span).toBe(PATNA_READABLE.length);
-    expect(r.evidence.textLength).toBe(91_000);
-    expect(r.evidence.span).toBeLessThan(DAMAGE_SPAN);
+    assert.equal(r.evidence.span, PATNA_READABLE.length);
+    assert.equal(r.evidence.textLength, 91_000);
+    assert.ok(r.evidence.span < DAMAGE_SPAN);
   });
 
   it('stamps the detector version on every result', () => {
-    expect(damageVerdict({ ...base, text: PATNA_READABLE }).detector).toBe(TEXT_DAMAGE_VERSION);
-    expect(damageVerdict({ ...base, text: GLYPH_DUMP }).detector).toBe(TEXT_DAMAGE_VERSION);
+    assert.equal(damageVerdict({ ...base, text: PATNA_READABLE }).detector, TEXT_DAMAGE_VERSION);
+    assert.equal(damageVerdict({ ...base, text: GLYPH_DUMP }).detector, TEXT_DAMAGE_VERSION);
   });
 });
