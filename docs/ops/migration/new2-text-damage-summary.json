@@ -1,0 +1,135 @@
+{
+  "generatedAt": "2026-08-21T17:24:02.496Z",
+  "lane": "NEW2",
+  "mode": "uniform-sample",
+  "detector": "text-damage-v2.0",
+  "span": 20000,
+  "drawn": 2000,
+  "verdicts": {
+    "UNKNOWN": 1782,
+    "TEXT_UNSAFE_VERIFIED": 173,
+    "TEXT_DAMAGE_SUSPECT": 45
+  },
+  "verifiedRatePct": 8.65,
+  "reasons": {
+    "TOKEN_SHAPE_ANOMALY": 188,
+    "GLYPH_CODE_DUMP": 156,
+    "ENGLISH_DENSITY_LOW": 144,
+    "WORD_SPACING_DESTROYED": 8,
+    "LEGACY_FONT_ASCII_STORED": 7,
+    "LEGACY_FONT_MARKERS": 7,
+    "LEADING_CHAR_DELETION": 2
+  },
+  "textQualityOverVerifiedDamage": {
+    "scored": 168,
+    "atOrAboveEligibilityFloor": 149,
+    "note": "judgments.text_quality admits these; it is not a damage signal."
+  },
+  "byCourt": {
+    "High Court of Punjab and Haryana": {
+      "drawn": 180,
+      "verified": 103,
+      "pct": 57.2
+    },
+    "High Court of Karnataka": {
+      "drawn": 94,
+      "verified": 53,
+      "pct": 56.4
+    },
+    "Bombay High Court": {
+      "drawn": 218,
+      "verified": 10,
+      "pct": 4.6
+    },
+    "High Court Of Rajasthan": {
+      "drawn": 159,
+      "verified": 6,
+      "pct": 3.8
+    },
+    "High Court Of Chhattisgarh": {
+      "drawn": 69,
+      "verified": 1,
+      "pct": 1.4
+    },
+    "High Court  for State of Telangana": {
+      "drawn": 102,
+      "verified": 0,
+      "pct": 0
+    },
+    "Madras High Court": {
+      "drawn": 189,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Gujarat": {
+      "drawn": 38,
+      "verified": 0,
+      "pct": 0
+    },
+    "Patna High Court": {
+      "drawn": 199,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Jharkhand": {
+      "drawn": 51,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Madhya Pradesh": {
+      "drawn": 63,
+      "verified": 0,
+      "pct": 0
+    },
+    "Allahabad High Court": {
+      "drawn": 247,
+      "verified": 0,
+      "pct": 0
+    },
+    "Orissa High Court": {
+      "drawn": 78,
+      "verified": 0,
+      "pct": 0
+    },
+    "Calcutta High Court": {
+      "drawn": 43,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Delhi": {
+      "drawn": 30,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Kerala": {
+      "drawn": 112,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Andhra Pradesh": {
+      "drawn": 26,
+      "verified": 0,
+      "pct": 0
+    },
+    "Gauhati High Court": {
+      "drawn": 25,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Himachal Pradesh": {
+      "drawn": 27,
+      "verified": 0,
+      "pct": 0
+    },
+    "High Court of Uttarakhand": {
+      "drawn": 32,
+      "verified": 0,
+      "pct": 0
+    }
+  },
+  "caveats": [
+    "Draws are uniform over judgments.id, which is uuid v4. A future non-uniform id scheme silently breaks this sampler and nothing here would notice.",
+    "Every rate is over the first 20000 characters. A document damaged only after that span reads as UNKNOWN.",
+    "UNKNOWN is not clean. No detector here looks for evidence that an extraction was faithful."
+  ]
+}
