@@ -17,6 +17,7 @@ const cell = (over: Partial<CoverageCell>): CoverageCell => ({
   sourceEstimate: 100,
   sourceProvenance: 'HC_METADATA_SURVEY perCourtPerYear',
   heldShare: 1,
+  shortfallReason: 'NONE',
   reachability: 'EMBEDDED',
   embedded: 100,
   ...over,

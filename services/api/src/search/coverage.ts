@@ -78,6 +78,25 @@ export type CoverageCell = {
   /** Provenance of `sourceEstimate` — it counts parquet ROWS, not documents, and over-reports gaps. */
   sourceProvenance: string | null;
   heldShare: number | null;
+  /**
+   * WHY this cell falls short, and it must travel WITH `heldShare`.
+   *
+   * `coverage-cell-cli.ts` says of a `DENOMINATOR_SUSPECT` cell: *"A cell flagged
+   * here still reports its `held_share`. The flag does not make a gap disappear
+   * — it is what stops the share being read as a share of the law."* That design
+   * only works if the flag reaches the reader, and until now it did not: the
+   * wire carried the precise percentage and not the reason to distrust it.
+   *
+   * Measured 21 Aug 2026: **all 11 `DENOMINATOR_SUSPECT` cells carry a
+   * `held_share`**, and Allahabad reads a source-to-document ratio of 1.998 in
+   * 2018 and 1.988 in 2019 — a coverage figure does not land on 50.0% twice. A
+   * client rendering `heldShare` for those cells was rendering an artefact of
+   * double-counted parquet rows as a coverage percentage.
+   *
+   * `NONE` where nothing is short. Additive and optional, so a client that has
+   * not adopted it is unchanged.
+   */
+  shortfallReason: string | null;
   reachability: Reachability;
   embedded: number | null;
 };
@@ -153,6 +172,7 @@ type Row = {
   source_rows: string | null;
   source_provenance: string | null;
   held_share: string | null;
+  shortfall_reason: string | null;
   reachability: Reachability;
   embedded: string | null;
   updated_at: Date;
@@ -167,7 +187,7 @@ export async function coverageFor(sql: Sql, query: CoverageQuery): Promise<Cover
   const courts = query.courts?.filter((c) => c.trim() !== '') ?? [];
   const rows = await sql<Row[]>`
     SELECT court, year, source_state, held, source_rows, source_provenance,
-           held_share, reachability, embedded, updated_at
+           held_share, shortfall_reason, reachability, embedded, updated_at
       FROM coverage_cell
      WHERE TRUE
        ${courts.length > 0 ? sql`AND court = ANY(${courts as string[]})` : sql``}
@@ -183,6 +203,7 @@ export async function coverageFor(sql: Sql, query: CoverageQuery): Promise<Cover
     sourceEstimate: r.source_rows === null ? null : Number(r.source_rows),
     sourceProvenance: r.source_provenance,
     heldShare: r.held_share === null ? null : Number(r.held_share),
+    shortfallReason: r.shortfall_reason,
     reachability: r.reachability,
     embedded: r.embedded === null ? null : Number(r.embedded),
   }));
