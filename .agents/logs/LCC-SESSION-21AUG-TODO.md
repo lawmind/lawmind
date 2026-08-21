@@ -52,3 +52,25 @@ states: TODO / RUNNING / DONE(verified) / BLOCKED
 | 15 | P12 durable GPU runner assist | DONE | no elevation needed; parent chain proved; handed to NEW1 |
 | 16 | P13 premium backend readiness | NOT SIGNALLED | VERIFIED_CORE is 125 docs and eCourts has no observations |
 | 17 | background job registry | DONE | appended 3 lines to .agents/jobs/registry.jsonl |
+
+
+## SECOND PASS — after reading the bus (21 Aug, late)
+
+| # | task | state | evidence |
+|---|------|-------|----------|
+| 18 | migration journal: 0067/0068/0069 were unjournalled | DONE | check-migration-journal now OK, 70 migrations |
+| 19 | NEW2 0955 date quality absorbed into decision identity | DONE | SAME_CASE_ADJACENT_DATE, 17 tests |
+| 20 | P7 tokens per verified object | DONE | 4,403 tok/accept; TOKENS_PER_VERIFIED_OBJECT.md |
+| 21 | P7 found a category error: `relief` is a prayer | DONE | v2, 3 rows demoted and re-adjudicated, 23 tests |
+| 22 | VERIFIED_CORE_V1 restated from live rows | DONE | 128 documents; two "verified cores" share no rows |
+| 23 | P9 coverage: shortfallReason was not on the wire | DONE | all 11 DENOMINATOR_SUSPECT cells served a bare percentage |
+| 24 | P13 premium readiness | NOT SIGNALLED, deliberately | core is 128 docs and eCourts has zero observations |
+
+### Still not done, and why
+- **P8 beyond the classes.** The BPR&D parser reaches BNS 6.4% / BNSS 42.4% /
+  BSA 70.6% and the loader has already loaded everything it can ground (229 of
+  which 226 are stored). Pushing BNS higher is a fixed-width-table parse against
+  wrapped cells whose section number sits on the line BELOW its row — a real
+  project with legal-safety risk, not an afternoon.
+- **P13.** Signalling premium-ready on a 128-document core and an eCourts stream
+  with zero observations would be a claim the evidence does not support.
