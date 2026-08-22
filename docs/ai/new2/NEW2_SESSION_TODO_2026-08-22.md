@@ -76,7 +76,8 @@ All three mechanisms proven on the PDFs with an independent extractor (poppler, 
 ## P6 — targeted OCR
 - [x] **ADVOCATE-100 wired into the recovery queue** as a gold source — one line, because `goldIds()` already walks for `judgment_id` (`recovery-queue-cli.ts`). 281 gold ids now read; `tsc --noEmit` clean.
 - [x] **6 new CITED_AUTHORITY documents enqueued** — all newly convicted by the persist run I finished this session
-- [~] **Worker not run.** The gate went to CPU 82.6% / commit free 6.0% / GPU 99% when the queue was filled. OCR at 6.2s/page into that is the convoy P0 forbids. Queued, not started, deliberately.
+- [x] **Worker RUN, in the quiet window that came later** — the gate dropped to CPU 34% / GPU 0% and all six recovered. 3.8s/page LOCAL_CONTENDED. Across 73 recoveries: CROSSCHECKED 51 · SUSPECT 22 · UNVERIFIED 0 · control density 0.0000.
+- [x] **Two real bugs found by running it** — (1) the OCR engine died mid-batch on a full-width comma it could not encode to the Windows codepage, taking two documents with it; stdout is now UTF-8 at import. (2) The worker tallies output LINES, so the summary read "6 attempted · 4 recovered · 0 failed" and never noticed it summed to four. It now reconciles and says NO ENGINE OUTPUT. A third alarm was mine and false: the stranded rows were not leaked, the worker already reclaims stale RUNNING rows.
 - [x] Provenance rules already enforced by the existing pipeline: original text never overwritten, engine/version/page/digit_trust recorded, no promotion past `digit_trust`
 
 ## P7 — date quality
