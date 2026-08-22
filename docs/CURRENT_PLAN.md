@@ -12159,3 +12159,447 @@ recommendation (founder-gated, see `FQ-HOSTING`). Did not chase the case-name
 fuzzy-path finding to a fix — flagged for the P1 UX pass with real evidence
 instead. Left the local `services/api` dev server running on :3000 for
 continued hands-on verification this session.
+
+---
+
+## NEW3 · 22 Aug 2026 (continuation session) — P0 search truth, P2 currentness bug, P3 fail-closed, remainder queued
+
+**Founder's binding contract for this round**: turn the research engine into
+the best user experience in its category, worked as P0-P10 across search
+truth, currentness UX, env config, deletion, push, premium walkthrough,
+billing, analytics and store/release audit. This session completed P0/P2/P3
+with tests and typechecks; P1 assessed as already largely satisfied by the
+existing `ResultCard`; P4-P10 are queued below, not started, so as not to
+report shallow, unverified passes over enormous surfaces in one sitting.
+
+### P2 - a real OD-14 regression found and fixed client-side
+
+`citationRender`'s `MovedMark.blocksAddToMatter` was a static function of the
+`overruledStatus` banner alone: `status === 'set_aside'` always blocked.
+OD-14 (resolved 21 Aug) made the SAME `set_aside` banner also cover a
+proposition-level `overruled` authority (~73 judgments) that the server
+explicitly allows adding (`canAddToMatter: true`, `precedentialPolicy` in
+`services/api/src/judgments/precedential-effect.ts`). So every one of those 73
+authorities - addable from search and from judgment detail per the server -
+was being wrongly blocked on the client, silently re-introducing the exact
+bug OD-14 was written to fix.
+
+Fixed: `apps/mobile/src/api/contract.ts` gained `precedentialEffect`,
+`canAddToMatter`, `overruledStatusStored`, `unappliedTreatment` on
+`SearchResult` (all optional, additive - every live route already sends them
+except one, below). `renderState.ts`'s `movedMark`/`citationRender` now key
+`blocksAddToMatter` on `canAddToMatter` when the row carries it, falling back
+to the old conservative rule only when absent - conservative, not silently
+permissive, on an unconfirmed route. 4 new tests in `renderState.test.ts`
+(22 total), tsc clean, 570/570 mobile suite.
+
+**Found and NOT fixed (services/** is LCC's lane): `GET /briefings/:id`**
+still sends the raw `overruled_status` column and computes
+`addToMatterAllowed` directly off it - the exact pre-OD-14 shape, never
+migrated to `precedentialEffect`/`precedentialPolicy` the way
+`judgments/route.ts`, `matters/authorities.ts` and `search/route.ts` were. So
+the same 73 authorities remain wrongly blocked specifically from inside a
+briefing. Bus 1018 to LCC, with the exact shape that would close it.
+
+**Not attempted this session, flagged rather than rushed:** distinguishing
+`precedentialEffect: 'overruled'` from a genuine `set_aside` in the
+headline/copy itself (today both still say "no longer good law" / "cite this
+instead", which is accurate for the true set-aside and arguably overstated for
+the overruled-but-addable case). The type now carries `precedentialEffect` to
+make that fix possible; doing it well means new `MovedMark` copy and its own
+tests, which is a deliberate next step rather than a rushed addition to an
+already-large diff.
+
+### P3 - fail-closed env config, addendum to FQ-HOSTING
+
+Detailed in `docs/FOUNDER_QUEUE.md` FQ-HOSTING addendum. Summary: the prior
+session's override fix left a silent-wrong-URL hole in exactly the audit's
+#1 ship-brick shape (an EAS `preview`/`production` build with the var unset
+would compile, install, and silently call a dead URL forever). Closed at both
+the `eas build` config-resolution step (`app.config.ts` throws when
+`EAS_BUILD_PROFILE` is set and the var is not) and at import time in both
+`apps/mobile/src/api/client.ts` and `apps/admin/lib/api.ts`, with a genuine
+local default under `__DEV__`/`next dev` only. No channel URL invented -
+still entirely FQ-HOSTING's to set.
+
+### P0 - search UX truth, against the measured contract NEW1 shipped
+
+`docs/ai/new1-tier-a/SEARCH_CONTRACT_FOR_PRODUCT.md` (bus 1010/1014) named
+three client obligations against fields the server already sends and the
+client silently ignored: `degraded` and `ambiguous` were not even in
+`apps/mobile/src/api/contract.ts`'s `SearchResponse` type.
+
+- **Query cap**: `SEARCH_QUERY_MAX_CHARS = 500` (mirrors the server's
+  `z.string().max(500)`) enforced in `SearchScreen.run()` before any request
+  fires; `Input`'s `error` slot shows "N of 500 characters" live. Never
+  silently truncated - a shortened legal passage is a different question.
+- **Degraded results**: a restrained neutral dashed banner ("Showing partial
+  results - one search method could not complete in time"), shown whenever
+  `degraded.length > 0` regardless of `results.length`, styled deliberately
+  unlike the amber/red LAW MOVED marks (system uncertainty about the search,
+  not a legal-currentness fact). No automatic retry existed before and none
+  was added.
+- **No-results split**: `results.length === 0 && degraded.length > 0` now
+  renders "This search did not finish" (manual retry only) instead of "No
+  judgments matched" - the old copy was a false confirmed-zero claim over an
+  unproven one. The existing COMPLETE_NO_RESULTS / INSUFFICIENT_COVERAGE
+  (`unpopulatedCourtCategories`) and OFFLINE-vs-server-answer (`response.
+  error.code === 'network' | 'timeout'` vs anything else) distinctions were
+  built out the same way.
+- **Ambiguous citations**: the header now reads "This citation matches N
+  judgments - showing K. Pick the one you meant..." instead of an ordinary
+  tally. **Not fully closeable client-side**: `RESULT_LIMIT = 5` caps the
+  ambiguous branch too (NEW1 bus 1016 found this - up to 15+ judgments share
+  one neutral citation and only 5 are ever reachable), so "all candidates
+  must be reachable" per this round's P0.E is still not true. That is
+  `services/api/src/search/route.ts`'s `RESULT_LIMIT` / `structured.ts`'s
+  `runStructured`, LCC's lane - NEW1 already proposed raising the limit only
+  on the ambiguous branch (bus 1016) and it was not yet actioned as of this
+  session.
+- **Pagination (P0.D)**: not started. `docs/ai/audits/
+  LAWMIND_VALIDATION_DOSSIER_R1_2026-08-22.md` §6 specs
+  `SEARCH_PAGINATION_CONTRACT_V1` (a server-side snapshot + `/search/page`);
+  nothing on that shape exists on the server yet, so there is no wire contract
+  to build the client half against without guessing one. Queued for the
+  session `/search/page` actually ships.
+
+12 new/changed tests total (`renderState.test.ts` +4, `SearchScreen.test.tsx`
++6, both suites fully green), tsc clean on `apps/mobile` and `apps/admin`.
+
+### P1 - assessed, not changed
+
+`ResultCard.tsx` already carries case title, court/date/citation (via
+`citationDisplay`), an evidence passage with the operative paragraph (not a
+manufactured "why relevant" string), currentness (`citationRender`'s two
+independent marks), and add-to-matter - restrained, not overcrowded, per the
+founder's own "the existing visual system is already strong" framing. No
+redesign attempted; nothing measured this session that says otherwise.
+
+### P4-P10 - queued, not started this session
+
+Each is a substantial, independently-scoped body of work; attempting shallow
+passes at all seven in the same sitting as P0-P3 risks exactly the "reports
+are claims, not facts" failure this project's rules exist to prevent. Left
+for the next continuation, in the order the founder's contract implies:
+
+- **P4 deletion + privacy UX** - needs LCC's server-side deletion endpoint
+  shape first (unchecked this session whether one exists).
+- **P5 push** - `registerPushToken` exists with no caller (confirmed by the
+  validation dossier §21/26, not re-verified this session); wiring it needs a
+  real device or simulator push credential to prove receipt, not just code.
+- **P6 premium 10-matter walkthrough** - needs to be RUN, hands-on, against
+  the local API with seeded matters; this is observation work, not code, and
+  was not attempted this session.
+- **P7 billing architecture** - pricing is founder-undecided (§17 of the
+  dossier); the config-consolidation half is buildable without a decision,
+  RevenueCat sandbox wiring is not - unstarted.
+- **P8 analytics** - event contract + scrubbers, unstarted; must be built
+  scrubber-first per this round's own instruction, before any network send.
+- **P9 store/release audit** - bundle/version/permissions/deep-links audit,
+  unstarted this session.
+- **P10 best-app polish pass** - deliberately last; a polish pass over
+  screens whose functional gates (P0-P8) are still partly red would be
+  polishing the wrong layer first.
+
+### Founder correction addendum, same session — one copy fix, one real production bug found and fixed, outbox hardened
+
+**500-char cap copy (addendum A):** re-worded per the founder's explicit
+correction — "This search is too long for the current research mode
+(N of 500 characters)" instead of a bare character-count message, so the cap
+reads as today's mode limit rather than a permanent product ceiling. No other
+change; `SEARCH_QUERY_MAX_CHARS` stays a client-side mirror of the server's
+`z.string().max(500)`, not a new client-invented number.
+
+**A real production bug, found auditing the outbox per addendum (E):
+`recordCitationCopy` sent every request with no Authorization header, so
+every citation-copy record has been 401'ing forever.** `apps/mobile/src/api/
+client.ts`'s `once()` only attaches the bearer token when a call passes
+`auth: true`; `recordCitationCopy` was the one write call in the whole file
+missing it (32 sibling authenticated calls all have it; cross-checked against
+`services/api/src/app.ts` route-by-route — every other call's auth/no-auth
+status matches what its server route actually requires). Consequence: the
+outbox's `MAX_ATTEMPTS` retried a request that could never succeed, then left
+it stuck forever — quietly defeating `citation_copies`'
+`SCHEMA_TRUTH.md`-documented purpose of warning "the advocate at highest
+risk" when a copied-out authority later moves. Fixed with `auth: true`;
+proved the test would have caught it by reverting the fix and re-running
+(failed both new assertions), then restoring it (`client.recordCitationCopy.
+test.ts`, new file, 2 tests).
+
+**Outbox hardened per addendum (E)'s explicit ask — errors are now
+classified, and a permanently-failing entry no longer burns its full retry
+budget:** `NOT_FOUND`/`INVALID_REQUEST` (the judgment is gone, or the payload
+is malformed) are `NON_RETRYABLE` and marked `dead` on the FIRST failure;
+`AUTH_REQUIRED` reaching the outbox means `client.ts`'s own refresh-once
+already failed, so it is `AUTH_RECOVERABLE` — capped like a network blip,
+because signing back in is what makes the next attempt succeed, not an
+immediate tombstone; anything else (`network`/`timeout`/unrecognised) stays
+`RETRYABLE` up to the existing `MAX_ATTEMPTS`. A `dead` entry is skipped by
+every future `flush()` and excluded from `oldestPendingAge` (a permanently
+stuck entry's age growing forever said nothing actionable), with a new
+`deadCount()` selector for a future diagnostic surface. 7 new tests in
+`outbox.test.ts` (13 total), all previously-passing behaviour unchanged.
+
+**Expo-updates audited per addendum (F): not disabled, not installed at
+all.** `expo-updates` appears nowhere in `apps/mobile/package.json`,
+`app.config.ts` or `eas.json` — confirming the validation dossier's risk #12
+(store-review latency per hotfix). Documented rather than added: installing
+OTA-update capability is a real product/ops decision (what can ship remotely
+vs what needs store review) and adding it unprompted this session would be
+exactly the kind of casual enablement addendum (F) warns against ("Do not
+enable OTA changes casually"). Today, every fix — including the env-config
+and outbox fixes in this same session — needs a store submission to reach a
+device; there is no remote channel at all yet.
+
+576 -> 579 mobile tests (net +7 after the copy-text update also touched one
+existing assertion), tsc clean on `apps/mobile`.
+
+## NEW1 · 22 Aug 2026 — retrieval quality: three diagnoses that each say the same thing about what we have been measuring
+
+Round contract: MAKE LAWMIND FIND THE RIGHT LAW; embedding-walk progress is not
+retrieval quality. Everything below is measured on the frozen gold
+`ba9357cba2fbf297`, LOCAL_CONTENDED, artefacts in `docs/ai/new1-tier-a/`. The
+live checklist for this round is `NEW1_ROUND_TODO_2026-08-22.md`.
+
+### P0 — the walk died and the keeper could not restart it
+
+A fleet-wide restart at ~09:34Z killed the runner shell mid-`lcc-00092`. Batches
+89/90/91 had ended clean, so this was not a contract refusal. The GPU sidecar was
+healthy throughout (`/health` 22 ms, `/embed` 253 ms, CUDA) — **the sidecar was
+not the cause and restarting it would have been the wrong move.** The keeper's own
+relaunch failed silently twice, exactly as it did on 21 Aug; a hand-run
+`Start-Process` of the same launcher worked first try. Cause still UNKNOWN, so the
+fix is honesty rather than a guess: the relaunch's PowerShell output is no longer
+discarded (`.agents/logs/new1-walk-relaunch.log`).
+
+**Accounting closes** (`stage-accounting.json`): 113 batches, 1,119,642 rows
+walked — staged 386,572 · already staged 620,355 · refused TEXT_UNSAFE 81,692 ·
+refused class/tier 21,014 · **CURRENT_FORMAT_UNEXPLAINED 0**. The 10,009 residual
+rows are three 19-Aug batches whose log format predates the refusal counters.
+Stage 985,539 rows, quarantine 72,092. **The manifest denominator is stale** —
+generated under eligibility hash `e76879ab6bbcd452`, deployed is
+`2e7b53afe35fa81c`, and two revisions in between changed which documents are
+eligible — so no completion percentage is quoted against it.
+
+### P1 — case-title s@1 67.69% is the share of titles that are UNIQUE
+
+| population | n | rank 1 | in top 5 |
+| --- | --- | --- | --- |
+| title is unique in the corpus | 155 | 146 — **94.2%** | 149 |
+| title names 2–16 judgments | 74 | 9 — **12.2%** | 15 |
+
+`exactCaseTitle` returns NULL unless exactly one row matches, and 32.3% of real
+titles match more than one — `MANOHAR LAL Vs STATE OF HARYANA AND OTHERS` is 14
+different judgments, 2012–2024. The trigram fallback then breaks a `word_similarity`
+= 1.000 tie by physical row order. Two further routing bypasses: a title
+containing **AND** is parsed as a boolean and answered by `answerStructured`
+before `hybridSearch` runs (9 of 229, 5 lose gold), and a title containing
+**SECTION 1** routes to the statute lookup (1 of 229).
+
+Simulated fix (pin every exact normalised-title match, `judgment_date DESC, id`):
+**s@1 83.41%, coverage@5 95.63%, p50 1,608 ms → 1 ms.** Sent to LCC as bus 1021.
+
+### P2 — document-level vectors cannot answer sentence-level queries
+
+The ~13–15% dense figure is not the index (`ANN_MISS` 21 of 571), not a broken
+document vector (self-retrieval **68 of 68** at rank 1), and not query length.
+`QUERY_NOT_IN_GOLD = 0` — every gold query occurs verbatim inside its own answer —
+so each has a character offset there:
+
+| the query's own words are | n | s@5 |
+| --- | --- | --- |
+| INSIDE the embedded 4,800 chars | 332 | 17.47% |
+| BEYOND them | 198 | 9.60% |
+
+Truncation roughly doubles the failure rate and is worth a few points. The
+headline is the residual: **the whole embedded head text retrieves its document at
+rank 1, 68 times out of 68; one sentence from inside that same text retrieves it
+in the top 5 only 17.5% of the time.** That is a granularity mismatch, and it is
+the argument for passage-level indexing rather than a new model or a longer
+window. `DENSE_FAILURE_ANALYSIS.md`.
+
+### P4 — the bounded lexical policy, measured
+
+60 queries, production's own 15 s bound: current `sparse()` finds gold 16 times
+with 35 timeouts at p50 15,013 ms; **rarest-3 ANDed finds it 34 times with 4
+timeouts at p50 815 ms**. Deleting the all-common fallback — the dossier's
+LONG_QUERY_POLICY_V1 item (1) — is the WORST arm: 100% timeouts, zero gold, so
+that proposal is refuted. **Dense control: 0 of 60 gold authorities exist in
+`judgment_chunks` at all.** Sent to LCC as bus 1025.
+
+### P5 — pagination splits in two, on a measured gate
+
+Three executions per query: case_title 3/3 and citation 3/3 identical in set AND
+order; the two unstable rows are exactly the two where the degraded set varied.
+So deterministic re-execution is safe for exact-identity pages now, and hybrid
+pages wait on P4 — the cause is a timeout, not a ranking defect. Contract and
+fixtures in `PAGINATION_RANKING_CONTRACT.md`, sent as bus 1027.
+
+### P6 — the citation gate re-graded
+
+**UNIQUE_CITATION_EXACTNESS 100.00% s@1 (n=212).**
+**AMBIGUOUS_CITATION_CANDIDATE_COVERAGE (n=17): gold reachable 88.24%, false pins
+0.** The pooled 97.38% is retired — it averaged a perfect lookup with a question
+that has no single answer. NEW2's 1019 settles what the ambiguity is: a neutral
+citation names a **disposal event**, not a judgment.
+
+### What is NOT claimed
+
+No absolute launch threshold is invented. Every semantic number is
+CONDITIONAL_RECALL over a 256,998-row probe — not production, and **not High
+Court dense search**, which does not exist yet. Absolute usefulness waits for
+ADVOCATE-100 (NEW2) plus lawyer review; the three construction rules that gold
+now has to satisfy went to NEW2 as bus 1026.
+
+---
+
+## NEW2 · 22 Aug 2026 — the shared-citation question answered from source PDFs, ADVOCATE-100 bound, and `body_text_safe` measured
+
+**Round contract: data truth, citation identity, gold.** Nine workstreams, all
+landed. Checklist with evidence: `docs/ai/new2/NEW2_SESSION_TODO_2026-08-22.md`.
+
+### The headline: our corpus identity is not wrong
+
+NEW1's bus 1017 found ≥100,000 neutral citations naming more than one judgment
+and refused to say whether that was the courts or our extractor. It is the
+courts, and the true population is larger than the floor NEW1 could see:
+
+```
+citations carried by more than one judgment    155,388 groups / 361,045 judgments
+worst group                                      1,257  (NEW1's capped sample said 303)
+share of all citation-bearing rows                26.3%
+```
+
+1,786 groups sampled across 24 courts, **6,595 source documents read**, weighted
+back to the population:
+
+```
+DUPLICATE_DOCUMENT              53.89%  [53.78, 54.00]   ~194,577 rows
+CONNECTED_MATTER_COMMON_ORDER   30.74%  [23.22, 37.05]   ~110,978
+MULTIPLE_ORDERS_SAME_CASE       13.85%  [ 7.69, 21.47]   ~ 50,018
+COURT_SHARED_BATCH_CITATION      0.91%  [ 0.63,  1.31]   ~  3,296
+EXTRACTOR_STAMP_CONTAMINATION    0.11%  [ 0.04,  0.25]   ~    414
+NOT_A_CITATION                   0.10%                   ~    366
+```
+
+**99.4% is the courts' own doing or our duplicate ingestion. 0.21% is a citation
+defect.** All three mechanisms were proven on the PDFs themselves with poppler —
+a different extractor from the `unpdf` path used at ingest, so a shared bug
+cannot produce a shared answer:
+
+- `2025:PHHC:052490-DB` is **line 1 of 31** in each of **253** separate orders,
+  above the court's own name. 253 connected writ petitions, one common order,
+  one registry citation. Nothing is broken.
+- `2026:PHHC:027747-DB` is **line 27 of 53**, inside *"placed reliance upon the
+  Division Bench judgement of this Court in M/s Bansal Casting … "*. All fifteen
+  judgments carry an authority's citation, and those P&H orders print no citation
+  of their own at all.
+- `2011:AUGUST:23` is the Madras registry despatch stamp `DM::2011:AUGUST:23::`.
+  **383 rows corpus-wide** carry a month name in the court-code position.
+
+The provenance was settled from the code before a single document was read:
+`neutralCitationFrom` (`hc-load.ts:217`) takes the first citation-shaped token in
+the first 3,000 characters of the document's own text. **No batch-stamping code
+path exists**, so the hypothesis as NEW1 worded it was ruled out on the code, and
+the real failure mode is narrower — the first token is sometimes not the
+document's own.
+
+Corpus-wide, from a separate court-stratified sample of 2,647 documents:
+`neutral_citation` is **94.85%** the document's own, **0.14%** another
+judgment's, **0.03%** not a citation, **2.63%** metadata-sourced (94% of that is
+Supreme Court, where it legitimately is), **2.35%** undetermined. Madras is the
+one court whose citations should not be trusted: 26.3% own, 61.9% despatch stamp.
+
+### `body_text_safe` means "not proven damaged", 90.42% of the time on no evidence
+
+```
+judgments                                        18,698,968
+script_quality IS NOT NULL (convicted damaged)    1,792,321    9.58%
+script_quality IS NULL                           16,906,647   90.42%
+script_quality = 'clean' or 'mixed_script_ok'             0    0.00%
+```
+
+No writer has ever emitted `clean`; that branch of `judgment_quality_contract` is
+unreachable. The view answers the same question twice — `text_state` says
+TEXT_UNKNOWN for those 16.9M rows and `body_text_safe` says true — and the
+boolean is what `body-text-safety.ts`, `retrieve.ts`, `qlang/compile.ts` and
+NEW1's quarantine filter on. **The view was not changed**: `body-text-safety.test.ts`
+pins the expression against `pg_get_viewdef` deliberately, that tripwire worked,
+and exact consumer guidance plus an additive proposal went to LCC, NEW1 and NEW3
+instead (bus 1022–1024, `QUALITY_CONTRACT_CONSUMER_GUIDANCE_2026-08-22.md`).
+
+### ADVOCATE-100 exists
+
+100 tasks · 100 bound to held judgments · 281 distinct targets · 42 proposition
+families · 27 tasks expecting a refusal · 0 leakage failures. Six
+LONG_FACT_PATTERN / PASTED_PASSAGE tasks are marked PRODUCT_REQUIRED /
+CURRENTLY_UNSUPPORTED and **stay in the set** — the 500-character cap cannot run
+them and deleting them would delete the requirement. `ADVOCATE100.json`.
+
+### The citation battery, four numbers not one
+
+```
+A EXTRACTION PRECISION   100% printed in the citing judgment, 99.75% at the recorded offset
+B TARGET RESOLUTION      100% over 91 provable pins, 0 contradicted, 37 unprovable
+C AMBIGUITY SAFETY       1 materially unsafe pin of 17 different-authority cases
+D DAMAGED TEXT           no pseudo-citation reached the edge table in this sample
+```
+
+C is the one that would have lied as a single number: counting duplicate rows of
+one judgment as dangerous ambiguity reads 62.5% unsafe. Split by whether the
+candidates are the same authority or different ones, it is 5.9%.
+
+Exact edge census, replacing the "22M citation graph" line for good:
+
+```
+judgment_citations rows        22,322,047
+empty citation_text            16,090,200   72.08%   one placeholder per judgment
+real citation strings           6,231,847
+resolved to a held judgment       231,412    1.04% of rows, 3.71% of strings
+```
+
+### BNS / BNSS / BSA — three questions, kept apart
+
+LCC's `canonicalAct` repair (bus 1015) **audited and confirmed**: 273 spellings
+folded, **0 wrong**, State statutes correctly refused. Not reverted. It leaves 40
+keys / 592 references of OCR variants unreachable, three of which are genuinely
+ambiguous and must not be folded.
+
+The official correspondence table covers **196 of 1,059 sections = 18.51%**
+(BNS **2.23%**). 69 of 226 rows carry a mangled section number, 23 name a section
+that does not exist, and the old-section half has **no primary witness at all**
+because we hold none of IPC, CrPC or the Evidence Act. `OFFICIAL_NO_EQUIVALENT`,
+`NEW_PROVISION` and `REPEALED_NO_DIRECT_EQUIVALENT` are empty and stay empty.
+**No surface may describe BNS/BNSS/BSA transition as covered.**
+
+### Jobs
+
+`text-damage-persist` was stopped at line 578,845 on resource grounds. Resumed in
+a quiet window and **completed the full 1,626,762-row export**: 79,381
+`script_quality` claims (+51,265 this session), 56,641 refused as stored-echo-only.
+Six newly-convicted CITED_AUTHORITY documents were enqueued for OCR; the worker
+was **not** started, because the gate had gone to CPU 82.6% / commit free 6.0%.
+
+### Founder-queued
+
+- **FQ-DUPLICATE-DOCUMENTS** — 194,577 rows are one document held twice.
+  Recommendation: collapse at render, not in the corpus.
+- **FQ-BNS-CORRESPONDENCE-COVERAGE** — acquiring IPC/CrPC/IEA enacted text is
+  what makes the old-section half verifiable at all.
+
+### Five corrections to my own work, recorded because they are the interesting part
+
+1. Extraction precision 82.28% → **100%**: a newline inside `citation_text`
+   against a whitespace-collapsed haystack. My check, not the data.
+2. A "new damage class" that never existed: a read script passed an escaped
+   whitespace class through a JS template into a Postgres E-string, where the
+   backslash-s collapses to a literal `s` — so the regex was `s+` and it deleted
+   the letter s from every judgment it printed. Clean text looked like
+   glyph-dropped OCR. Caught because my own letter-frequency measurement
+   contradicted what I was reading; the screen built on that premise was killed
+   before it finished.
+3. Ambiguity safety 62.5% → 5.9%.
+4. Twelve BSA correspondence "contradictions" that were my reader's fault —
+   `3, para 8` is the BPR&D spelling of section 3 paragraph 8.
+5. `body_text_safe` 90.68% → 90.42%, because the job I resumed convicted 51,265
+   more rows while other lanes were reading the first figure. Both recorded.

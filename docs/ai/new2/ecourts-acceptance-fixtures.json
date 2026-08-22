@@ -1,0 +1,196 @@
+{
+ "artifact": "eCourts source/parser acceptance fixtures — NEW2, independent of the implementation",
+ "version": "1.0.0",
+ "authored_at": "2026-08-22",
+ "status": "NO LIVE REQUEST HAS BEEN MADE. `ecourts_fetch_ledger` holds refusals only, `FQ-ECOURTS-ACTOR` is unanswered, and nothing here fetches anything. These are the questions the first real canary must survive, written before the data exists so they cannot be shaped by it.",
+ "why_independent": "LCC owns `ecourts-derivation.ts` and its tests. A parser graded only by its author's fixtures is graded on the cases its author thought of. These are NEW2's, they are about SOURCE TRUTH rather than code paths, and every one of them encodes a way a registry page has already misled somebody.",
+ "acceptance_questions": [
+  {
+   "id": "EC-A1",
+   "question": "RAW RESPONSE TRUTH — is the bytes-as-received preserved, hashed, and recoverable independently of whatever the parser made of them?",
+   "pass": "every observation carries `payloadSha256` over the exact bytes, and the bytes are retrievable. A parser change must be re-runnable against the original response without a new request — the grant's daily cap makes re-fetching to re-parse a real cost, not a theoretical one.",
+   "fail": "the raw body is discarded after parsing, or the hash is computed over a normalised form."
+  },
+  {
+   "id": "EC-A2",
+   "question": "CNR IDENTITY — is the CNR treated as the identity, and is a malformed one refused rather than coerced?",
+   "pass": "a 16-character CNR matching the registry's own shape is the join key; anything else sets `extractionState` and yields EXTRACTION_UNUSABLE.",
+   "fail": "matching on case number and year, which repeat across establishments; or upper-casing/space-stripping a CNR into validity."
+  },
+  {
+   "id": "EC-A3",
+   "question": "NEXT-DATE INTERPRETATION — is a next date an observation of what a page showed, never a prediction of what will happen?",
+   "pass": "NEXT_DATE_OBSERVED carries the date and the observation it came from. A later page showing a different date yields NEXT_DATE_CHANGED, not a silent overwrite.",
+   "fail": "a single mutable `next_hearing_date` column on the matter that the newest fetch overwrites."
+  },
+  {
+   "id": "EC-A4",
+   "question": "BENCH FIELDS — is `bench` the judges who sat, and never the establishment code?",
+   "pass": "the coram string, or NULL.",
+   "fail": "`bench = 'phhc'` or `courtNumber` written into the coram. This exact confusion already shipped 40,705 rows in the corpus (migration 0040) and it is the same word for two things."
+  },
+  {
+   "id": "EC-A5",
+   "question": "LISTING SEMANTICS — LISTED is not HEARD.",
+   "pass": "appearing on a cause list yields LISTED_OBSERVED and nothing else. There is no projection meaning the hearing happened, because a website is not a courtroom.",
+   "fail": "any surface that tells an advocate a hearing took place because the case was listed."
+  },
+  {
+   "id": "EC-A6",
+   "question": "ORDER-LINK SEMANTICS — an order link is not a fresh order and is not a document.",
+   "pass": "ORDER_AVAILABILITY_CANDIDATE, carrying the reference only, joined to nothing in the corpus until the document itself is fetched and verified.",
+   "fail": "treating the appearance of a link as evidence that an order was passed on the listing date, or auto-linking it to a judgment by case number."
+  },
+  {
+   "id": "EC-A7",
+   "question": "DUPLICATE TRANSITIONS — does re-reading the same unchanged page produce a change?",
+   "pass": "two fetches of an unchanged page produce one state, not two transitions. Idempotence is on content, not on fetch count.",
+   "fail": "a notification per fetch — which, at the grant's 100/hour, is a notification storm rather than a product."
+  }
+ ],
+ "fixtures": [
+  {
+   "id": "F-01",
+   "name": "the same page fetched twice, unchanged",
+   "tests": ["EC-A7", "EC-A1"],
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-08-20T04:00:00Z","sourceAssertedAt":"2026-08-19T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-02","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"aaaa","extractionState":"ok"},
+    {"id":"o2","observationKind":"case_status","source":"ecourts","observedAt":"2026-08-21T04:00:00Z","sourceAssertedAt":"2026-08-19T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-02","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"aaaa","extractionState":"ok"}
+   ],
+   "expect": {
+    "next_date_changed_projections": 0,
+    "reason": "identical payload hash and identical asserted time. The second read is evidence of nothing new."
+   }
+  },
+  {
+   "id": "F-02",
+   "name": "the next date genuinely moves",
+   "tests": ["EC-A3"],
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-08-20T04:00:00Z","sourceAssertedAt":"2026-08-19T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-02","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"aaaa","extractionState":"ok"},
+    {"id":"o2","observationKind":"case_status","source":"ecourts","observedAt":"2026-08-27T04:00:00Z","sourceAssertedAt":"2026-08-26T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-16","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"bbbb","extractionState":"ok"}
+   ],
+   "expect": {
+    "next_date_changed_projections": 1,
+    "from": "2026-09-02",
+    "to": "2026-09-16",
+    "reason": "a change is a change in what the SOURCE asserted, evidenced by both observations."
+   }
+  },
+  {
+   "id": "F-03",
+   "name": "a stale page fetched after a fresher one",
+   "tests": ["EC-A3", "EC-A1"],
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-08-27T04:00:00Z","sourceAssertedAt":"2026-08-26T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-16","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"bbbb","extractionState":"ok"},
+    {"id":"o2","observationKind":"case_status","source":"ecourts","observedAt":"2026-08-28T04:00:00Z","sourceAssertedAt":"2026-08-19T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-02","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"aaaa","extractionState":"ok"}
+   ],
+   "expect": {
+    "latest_known_next_date": "2026-09-16",
+    "reason": "ordering is by the SOURCE's assertion time. A cached page served late must not roll the matter backwards."
+   }
+  },
+  {
+   "id": "F-04",
+   "name": "listed on a cause list, and nothing else",
+   "tests": ["EC-A5"],
+   "observations": [
+    {"id":"o1","observationKind":"cause_list","source":"ecourts","observedAt":"2026-09-02T02:00:00Z","sourceAssertedAt":"2026-09-02T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":"2026-09-02","nextListingDate":null,"disposalDate":null,"caseStatus":null,"bench":"HON'BLE MR. JUSTICE ROHIT KAPOOR","courtNumber":"12","itemNumber":41,"orderRef":null,"payloadSha256":"cccc","extractionState":"ok"}
+   ],
+   "expect": {
+    "projections": ["LISTED_OBSERVED"],
+    "must_not_contain": ["HEARING_OCCURRED", "ADJOURNED", "ORDER_PASSED"],
+    "reason": "the case was on a list. Whether it was called, heard, adjourned or passed over is not on the page."
+   }
+  },
+  {
+   "id": "F-05",
+   "name": "an order reference appears",
+   "tests": ["EC-A6"],
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-09-03T04:00:00Z","sourceAssertedAt":"2026-09-03T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-10-14","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":"orders/2026/PHHC/14997_02092026.pdf","payloadSha256":"dddd","extractionState":"ok"}
+   ],
+   "expect": {
+    "projections_include": ["ORDER_AVAILABILITY_CANDIDATE"],
+    "must_not": "join the reference to any judgment row, or assert that an order was passed on 2026-09-02",
+    "reason": "a link is a link. The document has not been fetched, verified, or matched to the corpus."
+   }
+  },
+  {
+   "id": "F-06",
+   "name": "the establishment code offered where the coram belongs",
+   "tests": ["EC-A4"],
+   "observations": [
+    {"id":"o1","observationKind":"cause_list","source":"ecourts","observedAt":"2026-09-02T02:00:00Z","sourceAssertedAt":"2026-09-02T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":"2026-09-02","nextListingDate":null,"disposalDate":null,"caseStatus":null,"bench":"phhc","courtNumber":"12","itemNumber":41,"orderRef":null,"payloadSha256":"eeee","extractionState":"ok"}
+   ],
+   "expect": {
+    "bench_rendered_to_an_advocate": null,
+    "reason": "`phhc` is the establishment, not the judges. NULL is the honest value and the corpus has already shipped 40,705 rows that said otherwise."
+   }
+  },
+  {
+   "id": "F-07",
+   "name": "two establishments, one case number, different CNRs",
+   "tests": ["EC-A2"],
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-09-01T04:00:00Z","sourceAssertedAt":"2026-09-01T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-20","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"ffff","extractionState":"ok"},
+    {"id":"o2","observationKind":"case_status","source":"ecourts","observedAt":"2026-09-01T04:05:00Z","sourceAssertedAt":"2026-09-01T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC020099992024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-11-11","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"3","itemNumber":null,"orderRef":null,"payloadSha256":"gggg","extractionState":"ok"}
+   ],
+   "expect": {
+    "distinct_matters": 2,
+    "conflicting_observations": 0,
+    "reason": "same case number, different CNR — two different matters at two establishments. Joining on case number merges two advocates' cases."
+   }
+  },
+  {
+   "id": "F-08",
+   "name": "two sources disagree at the same moment",
+   "tests": ["EC-A3"],
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-09-01T04:00:00Z","sourceAssertedAt":"2026-09-01T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":null,"nextListingDate":"2026-09-20","disposalDate":null,"caseStatus":"PENDING","bench":null,"courtNumber":"12","itemNumber":null,"orderRef":null,"payloadSha256":"hhhh","extractionState":"ok"},
+    {"id":"o2","observationKind":"cause_list","source":"ecourts","observedAt":"2026-09-01T04:00:00Z","sourceAssertedAt":"2026-09-01T00:00:00Z","court":"High Court of Punjab and Haryana","cnr":"PHHC010012342024","caseNumber":"CWP/14997/2026","listingDate":"2026-09-05","nextListingDate":"2026-09-05","disposalDate":null,"caseStatus":null,"bench":null,"courtNumber":"12","itemNumber":9,"orderRef":null,"payloadSha256":"iiii","extractionState":"ok"}
+   ],
+   "expect": {
+    "projections_include": ["CONFLICTING_OBSERVATIONS"],
+    "must_not": "pick one date and show it as the next hearing",
+    "reason": "two pages of the same registry, the same asserted moment, two answers. UNKNOWN stays UNKNOWN and the advocate is told both."
+   }
+  },
+  {
+   "id": "F-09",
+   "name": "the extraction failed",
+   "tests": ["EC-A1", "EC-A2"],
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-09-01T04:00:00Z","sourceAssertedAt":null,"court":null,"cnr":null,"caseNumber":null,"listingDate":null,"nextListingDate":null,"disposalDate":null,"caseStatus":null,"bench":null,"courtNumber":null,"itemNumber":null,"orderRef":null,"payloadSha256":"jjjj","extractionState":"parse_failed"}
+   ],
+   "expect": {
+    "projections": ["EXTRACTION_UNUSABLE"],
+    "must_not": "produce any statement about the case, including that nothing changed",
+    "reason": "a failed read says nothing about the matter. Silence from a broken parser must not render as a quiet week."
+   }
+  },
+  {
+   "id": "F-10",
+   "name": "a soft 404 served as a real page",
+   "tests": ["EC-A1"],
+   "raw_body_note": "124 bytes of HTML under a 200 status. The corpus has already seen this shape served under `Content-Type: application/pdf`; HEAD cannot see it and magic bytes can.",
+   "observations": [
+    {"id":"o1","observationKind":"case_status","source":"ecourts","observedAt":"2026-09-01T04:00:00Z","sourceAssertedAt":null,"court":null,"cnr":null,"caseNumber":null,"listingDate":null,"nextListingDate":null,"disposalDate":null,"caseStatus":null,"bench":null,"courtNumber":null,"itemNumber":null,"orderRef":null,"payloadSha256":"kkkk","extractionState":"soft_404"}
+   ],
+   "expect": {
+    "projections": ["EXTRACTION_UNUSABLE"],
+    "ledger_row_required": true,
+    "reason": "a 200 that is not the page still consumed one of 100 requests this hour and must be in the ledger as a request, whatever it turned out to contain."
+   }
+  }
+ ],
+ "grant_conditions_these_must_respect": {
+  "min_interval_ms": 2000,
+  "per_hour": 100,
+  "per_day": 1000,
+  "hours_ist": "00-24",
+  "captcha_bypass": "bulk cause-list harvesting only, while the grant is non-null and unexpired",
+  "expiry": "January 2029",
+  "note": "every fixture above assumes the request that produced it was itself permitted, ledgered and rate-limited. An acceptance suite that passes on responses obtained outside the grant has tested the wrong thing."
+ }
+}

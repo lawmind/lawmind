@@ -1,0 +1,200 @@
+{
+ "generatedAt": "2026-08-22T09:52:45.874Z",
+ "tool": "poppler pdftotext -layout (independent of the unpdf path used at ingest)",
+ "groups": [
+  {
+   "citation": "2026:PHHC:027747-DB",
+   "why": "suspected extractor contamination — 15 judgments, each naming it as an authority they relied on",
+   "documents": [
+    {
+     "case_number": "CWP/14997/2026",
+     "judgment_date": "Thu Jul 09",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=3_22/bench=phhc/PHHC010817032026_1_2026-07-09.pdf",
+     "pdf_bytes": 232067,
+     "pdf_chars": 3122,
+     "our_full_text_chars": 2118,
+     "our_position": 1113,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1114,
+     "pdf_line_index": 26,
+     "pdf_total_lines": 53,
+     "pdf_line": "Another; 2026:PHHC:027747-DB to submit that in such circumstances, the",
+     "pdf_first_line": "141",
+     "pdf_context": "or the petitioner has placed reliance upon the Division Bench judgement of this Court in M/s Bansal Casting, S.K. Enterprises Vs. Union of India and Another and M/s Shree Ram Industries V/s State of Haryana and Another; 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. SURESH KUMA"
+    },
+    {
+     "case_number": "CWP/18338/2026",
+     "judgment_date": "Fri Jul 10",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=3_22/bench=phhc/PHHC010962252026_1_2026-07-10.pdf",
+     "pdf_bytes": 150754,
+     "pdf_chars": 3275,
+     "our_full_text_chars": 2174,
+     "our_position": 1165,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1166,
+     "pdf_line_index": 26,
+     "pdf_total_lines": 55,
+     "pdf_line": "Industries vs. State of Haryana and Another; 2026:PHHC:027747-DB",
+     "pdf_first_line": "124 IN THE HIGH COURT OF PUNJAB AND HARYANA",
+     "pdf_context": "for the petitioner has placed reliance upon the Division Bench judgment of this Court in M/s Bansal Casting, S.K. Enterprises vs. Union of India and Another and M/s Shree Ram Industries vs. State of Haryana and Another; 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. 3. Learned "
+    },
+    {
+     "case_number": "CWP/20679/2026",
+     "judgment_date": "Fri Jul 10",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=3_22/bench=phhc/PHHC010947812026_1_2026-07-10.pdf",
+     "pdf_bytes": 148815,
+     "pdf_chars": 3224,
+     "our_full_text_chars": 2090,
+     "our_position": 1103,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1104,
+     "pdf_line_index": 26,
+     "pdf_total_lines": 54,
+     "pdf_line": "Industries vs. State of Haryana and Another; 2026:PHHC:027747-DB",
+     "pdf_first_line": "137 IN THE HIGH COURT OF PUNJAB AND HARYANA",
+     "pdf_context": "for the petitioner has placed reliance upon the Division Bench judgment of this Court in M/s Bansal Casting, S.K. Enterprises vs. Union of India and Another and M/s Shree Ram Industries vs. State of Haryana and Another; 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. 3. Learned "
+    },
+    {
+     "case_number": "CWP/16417/2025",
+     "judgment_date": "Mon Jul 13",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=3_22/bench=phhc/PHHC010895862025_1_2026-07-13.pdf",
+     "pdf_bytes": 150126,
+     "pdf_chars": 3826,
+     "our_full_text_chars": 2573,
+     "our_position": 1583,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1702,
+     "pdf_line_index": 41,
+     "pdf_total_lines": 63,
+     "pdf_line": "Industries vs. State of Haryana and Another; 2026:PHHC:027747-DB",
+     "pdf_first_line": "113 IN THE HIGH COURT OF PUNJAB AND HARYANA",
+     "pdf_context": "3 I attest to the accuracy and integrity of this document Punjab & Haryana High Court, CHD CWP-16417-2025 (O&M) 2 Enterprises vs. Union of India and Another and M/s Shree Ram Industries vs. State of Haryana and Another; 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. 5. Learned "
+    }
+   ]
+  },
+  {
+   "citation": "2025:PHHC:052490-DB",
+   "why": "suspected legitimate registry batch — 253 connected writ petitions, one common order",
+   "documents": [
+    {
+     "case_number": "CWP/21878/2024",
+     "judgment_date": "Thu Apr 24",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC011142462024_1_2025-04-24.pdf",
+     "pdf_bytes": 108837,
+     "pdf_chars": 1645,
+     "our_full_text_chars": 794,
+     "our_position": 1,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1,
+     "pdf_line_index": 0,
+     "pdf_total_lines": 31,
+     "pdf_line": "2025:PHHC:052490-DB",
+     "pdf_first_line": "2025:PHHC:052490-DB",
+     "pdf_context": " 2025:PHHC:052490-DB IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH CWP No.21878 of 2024 Date of Decisi"
+    },
+    {
+     "case_number": "CWP/18762/2024",
+     "judgment_date": "Thu Apr 24",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC011014962024_1_2025-04-24.pdf",
+     "pdf_bytes": 107876,
+     "pdf_chars": 1640,
+     "our_full_text_chars": 789,
+     "our_position": 1,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1,
+     "pdf_line_index": 0,
+     "pdf_total_lines": 31,
+     "pdf_line": "2025:PHHC:052490-DB",
+     "pdf_first_line": "2025:PHHC:052490-DB",
+     "pdf_context": " 2025:PHHC:052490-DB IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH CWP No.18762 of 2024 Date of Decisi"
+    },
+    {
+     "case_number": "CWP/20344/2024",
+     "judgment_date": "Thu Apr 24",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC010966782024_1_2025-04-24.pdf",
+     "pdf_bytes": 106993,
+     "pdf_chars": 1582,
+     "our_full_text_chars": 810,
+     "our_position": 1,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1,
+     "pdf_line_index": 0,
+     "pdf_total_lines": 31,
+     "pdf_line": "2025:PHHC:052490-DB",
+     "pdf_first_line": "2025:PHHC:052490-DB",
+     "pdf_context": " 2025:PHHC:052490-DB IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH CWP No.20344 of 2024 Date of Decisi"
+    },
+    {
+     "case_number": "CWP/16450/2024",
+     "judgment_date": "Thu Apr 24",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC010909402024_1_2025-04-24.pdf",
+     "pdf_bytes": 108855,
+     "pdf_chars": 1838,
+     "our_full_text_chars": 838,
+     "our_position": 1,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 1,
+     "pdf_line_index": 0,
+     "pdf_total_lines": 32,
+     "pdf_line": "2025:PHHC:052490-DB",
+     "pdf_first_line": "2025:PHHC:052490-DB",
+     "pdf_context": " 2025:PHHC:052490-DB IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH CWP No.16450 of 2024 Date of Decisi"
+    }
+   ]
+  },
+  {
+   "citation": "2011:AUGUST:23",
+   "why": "suspected not-a-citation — a Madras despatch stamp",
+   "documents": [
+    {
+     "case_number": "CRL OP(MD)/10047/2011",
+     "judgment_date": "Tue Aug 09",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011208042011_1_2011-08-09.pdf",
+     "pdf_bytes": 72224,
+     "pdf_chars": 3387,
+     "our_full_text_chars": 2464,
+     "our_position": 2336,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 2380,
+     "pdf_line_index": 49,
+     "pdf_total_lines": 52,
+     "pdf_line": "DM::2011:AUGUST:23::                                                                    Crl.O.P.(MD)No.10047 of 2011",
+     "pdf_first_line": "1",
+     "pdf_context": "of this Hon'ble Court dated 26/08/2011. /TRUE COPY/ gsr SUB ASST REGISTRAR TO:(To be substituted the order copy already despatched). https://ThcHsEervicJesU.eDcIouCrtsI.gAoLv.in/MhcAseGrvIicSesT/ RATE, THIRUVAIYARU. DM::2011:AUGUST:23:: Crl.O.P.(MD)No.10047 of 2011 1P:2C:: 09.08.2011 PA/05.09.2011/1P/2C "
+    },
+    {
+     "case_number": "CRL OP(MD)/10337/2011",
+     "judgment_date": "Wed Aug 10",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011211402011_1_2011-08-10.pdf",
+     "pdf_bytes": 81133,
+     "pdf_chars": 3258,
+     "our_full_text_chars": 2566,
+     "our_position": 2469,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 2511,
+     "pdf_line_index": 51,
+     "pdf_total_lines": 53,
+     "pdf_line": "DM::2011:AUGUST:23::                                                                       Crl.O.P.(MD)No.10337 of 2011",
+     "pdf_first_line": "1",
+     "pdf_context": "lice, Bodinaickanur Police Station, Theni District. 5.The Addl Public Prosecutor, Madurai Bench of Madras High Court,Madurai. https://1hcCsCervicTesO.ecMouRrts..goPv.i.n/hcKseRrvIicSesH/ NASAMY, ADVOCATE, SR: 27164: DM::2011:AUGUST:23:: Crl.O.P.(MD)No.10337 of 2011 1P:7C:: "
+    },
+    {
+     "case_number": "CRL OP(MD)/9423/2011",
+     "judgment_date": "Wed Aug 10",
+     "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011376282011_1_2011-08-10.pdf",
+     "pdf_bytes": 81520,
+     "pdf_chars": 3214,
+     "our_full_text_chars": 2136,
+     "our_position": 2030,
+     "evidence_class": "PRINTED_ON_DOCUMENT",
+     "pdf_position": 2030,
+     "pdf_line_index": 45,
+     "pdf_total_lines": 49,
+     "pdf_line": "DM::2011:AUGUST:23::                                          Crl.O.P.(MD)No.9423 of 2011",
+     "pdf_first_line": "1",
+     "pdf_context": "f Police,Madurai District. 3.The Sub-Inspector of Police,Oomatchikulam Police Station,Madurai Dist. Addl.Public Prosecutor,Madurai Bench of Madras High Court, Madurai. 1CC TO MR. S. SUBRAMANIAN, ADVOCATE,SR: 27127:: DM::2011:AUGUST:23:: Crl.O.P.(MD)No.9423 of 2011 10.8.2011 1P:5C:: https://hcservices.ecourts.gov.in/hcservi"
+    }
+   ]
+  }
+ ]
+}

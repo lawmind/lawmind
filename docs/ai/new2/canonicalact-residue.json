@@ -1,0 +1,282 @@
+[
+ {
+  "act_key": "BHARATIYA SURAKSHA NAGARIK SANHITA",
+  "refs": 280,
+  "sim_bnss": "1.000",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.304"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SURASKHA SANHITA",
+  "refs": 168,
+  "sim_bnss": "0.789",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.250"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SUREAKSHA SANHITA",
+  "refs": 43,
+  "sim_bnss": "0.865",
+  "sim_bns": "0.487",
+  "sim_bsa": "0.298"
+ },
+ {
+  "act_key": "BHARATIYA NAYAY SANHITA",
+  "refs": 22,
+  "sim_bnss": "0.526",
+  "sim_bns": "0.808",
+  "sim_bsa": "0.316"
+ },
+ {
+  "act_key": "BHARATIYA NAYAYA SANHITA",
+  "refs": 18,
+  "sim_bnss": "0.541",
+  "sim_bns": "0.840",
+  "sim_bsa": "0.324"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SANHITA",
+  "refs": 7,
+  "sim_bnss": "0.765",
+  "sim_bns": "0.633",
+  "sim_bsa": "0.300"
+ },
+ {
+  "act_key": "BHARATIYA NAYA SANHITA",
+  "refs": 5,
+  "sim_bnss": "0.556",
+  "sim_bns": "0.800",
+  "sim_bsa": "0.333"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SURKSHA SANHITA",
+  "refs": 5,
+  "sim_bnss": "0.861",
+  "sim_bns": "0.514",
+  "sim_bsa": "0.283"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SURUKSHA SANHITA",
+  "refs": 3,
+  "sim_bnss": "0.838",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.277"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SURKASHA SANHITA",
+  "refs": 3,
+  "sim_bnss": "0.789",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.250"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SURALSHA SANHITA",
+  "refs": 2,
+  "sim_bnss": "0.838",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.250"
+ },
+ {
+  "act_key": "BHARATIYA SURAKSHA ADHINIYAM",
+  "refs": 2,
+  "sim_bnss": "0.442",
+  "sim_bns": "0.275",
+  "sim_bsa": "0.688"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SULAKSHA SANHITA",
+  "refs": 2,
+  "sim_bnss": "0.838",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.304"
+ },
+ {
+  "act_key": "BHARATIYA NYANA SANHITA",
+  "refs": 2,
+  "sim_bnss": "0.487",
+  "sim_bns": "0.808",
+  "sim_bsa": "0.316"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIKSURAKSHA SANHITA",
+  "refs": 2,
+  "sim_bnss": "0.889",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.304"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SIURAKSHA SANHITA",
+  "refs": 2,
+  "sim_bnss": "0.865",
+  "sim_bns": "0.487",
+  "sim_bsa": "0.298"
+ },
+ {
+  "act_key": "BHARATIYA SAKSHYA ACT",
+  "refs": 2,
+  "sim_bnss": "0.341",
+  "sim_bns": "0.375",
+  "sim_bsa": "0.621"
+ },
+ {
+  "act_key": "BHARATIYA SANHITA",
+  "refs": 2,
+  "sim_bnss": "0.529",
+  "sim_bns": "0.783",
+  "sim_bsa": "0.375"
+ },
+ {
+  "act_key": "BHARATIYA NAGRIK SURALSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.718",
+  "sim_bns": "0.514",
+  "sim_bsa": "0.255"
+ },
+ {
+  "act_key": "BHARATIYA NAGRIK SURASKSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.744",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.277"
+ },
+ {
+  "act_key": "BHARATIYA NAGRIK SURKSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.737",
+  "sim_bns": "0.528",
+  "sim_bsa": "0.289"
+ },
+ {
+  "act_key": "BHARATIYA NAHAYA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.526",
+  "sim_bns": "0.741",
+  "sim_bsa": "0.316"
+ },
+ {
+  "act_key": "BHARATIYA NAYAHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.553",
+  "sim_bns": "0.714",
+  "sim_bsa": "0.308"
+ },
+ {
+  "act_key": "BHARATIYA NYAVA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.487",
+  "sim_bns": "0.808",
+  "sim_bsa": "0.316"
+ },
+ {
+  "act_key": "BHARATIYA NYAY'A SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.475",
+  "sim_bns": "0.846",
+  "sim_bsa": "0.342"
+ },
+ {
+  "act_key": "BHARATIYA NYAYA SANCHAR SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.452",
+  "sim_bns": "0.852",
+  "sim_bsa": "0.293"
+ },
+ {
+  "act_key": "BHARATIYA NYAYA SANCHITA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.463",
+  "sim_bns": "0.885",
+  "sim_bsa": "0.300"
+ },
+ {
+  "act_key": "BHARATIYA NYAYA SANHIT ARMS ACT",
+  "refs": 1,
+  "sim_bnss": "0.362",
+  "sim_bns": "0.656",
+  "sim_bsa": "0.302"
+ },
+ {
+  "act_key": "BHARATIYA NYAYA SURKHSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.548",
+  "sim_bns": "0.742",
+  "sim_bsa": "0.267"
+ },
+ {
+  "act_key": "BHARATIYA NYAYA. SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.500",
+  "sim_bns": "1.000",
+  "sim_bsa": "0.324"
+ },
+ {
+  "act_key": "BHARATIYA NYAYEIL SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.463",
+  "sim_bns": "0.815",
+  "sim_bsa": "0.300"
+ },
+ {
+  "act_key": "BHARATIYA SAKSHYA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.541",
+  "sim_bns": "0.643",
+  "sim_bsa": "0.531"
+ },
+ {
+  "act_key": "BHARATIYA SHAKSHYA ADHINIYAM",
+  "refs": 1,
+  "sim_bnss": "0.298",
+  "sim_bns": "0.282",
+  "sim_bsa": "0.828"
+ },
+ {
+  "act_key": "BHARATIYA SKASHYA ADHINIYAM",
+  "refs": 1,
+  "sim_bnss": "0.224",
+  "sim_bns": "0.289",
+  "sim_bsa": "0.733"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIC SUREKSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.744",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.277"
+ },
+ {
+  "act_key": "BHARATIYANAGARIK SURKASHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.675",
+  "sim_bns": "0.436",
+  "sim_bsa": "0.229"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK NAYAY SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.684",
+  "sim_bns": "0.656",
+  "sim_bsa": "0.273"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SRLAKSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.789",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.304"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SRRAKSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.838",
+  "sim_bns": "0.500",
+  "sim_bsa": "0.304"
+ },
+ {
+  "act_key": "BHARATIYA NAGARIK SRRREKSHA SANHITA",
+  "refs": 1,
+  "sim_bnss": "0.725",
+  "sim_bns": "0.487",
+  "sim_bsa": "0.271"
+ }
+]

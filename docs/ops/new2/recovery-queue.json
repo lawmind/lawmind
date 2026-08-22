@@ -1,18 +1,18 @@
 {
  "kind": "new2_recovery_queue",
  "confirmed": true,
- "at": "2026-08-22T05:22:51.524Z",
+ "at": "2026-08-22T15:39:31.274Z",
  "tranches": [
   {
    "reason": "CITED_AUTHORITY",
-   "found": 66,
-   "written": 4
+   "found": 72,
+   "written": 6
   },
   {
    "reason": "BENCHMARK_GOLD",
    "found": 4,
-   "written": 1,
-   "note": "426 distinct gold authorities read · new3-semantic-expansion-gold.json=250 new3-semantic-expansion-gold-v2.json=0 new3-uncited-authority-gold.json=26 new3-uncited-authority-gold-v2.json=150 new3-statute-transition-gold.json=0"
+   "written": 0,
+   "note": "707 distinct gold authorities read · new3-semantic-expansion-gold.json=250 new3-semantic-expansion-gold-v2.json=0 new3-uncited-authority-gold.json=26 new3-uncited-authority-gold-v2.json=150 new3-statute-transition-gold.json=0 ADVOCATE100.json=281"
   },
   {
    "reason": "MATTER_LINKED",
@@ -24,23 +24,18 @@
  "state": [
   {
    "state": "QUEUED",
-   "reason": "BENCHMARK_GOLD",
-   "n": 1
-  },
-  {
-   "state": "QUEUED",
    "reason": "CITED_AUTHORITY",
-   "n": 3
+   "n": 6
   },
   {
    "state": "RECOVERED",
    "reason": "BENCHMARK_GOLD",
-   "n": 3
+   "n": 4
   },
   {
    "state": "RECOVERED",
    "reason": "CITED_AUTHORITY",
-   "n": 60
+   "n": 63
   }
  ]
 }

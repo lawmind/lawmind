@@ -1,0 +1,758 @@
+[
+ {
+  "court": "Allahabad High Court",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 125,
+  "rows": 2299
+ },
+ {
+  "court": "Allahabad High Court",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 60288,
+  "rows": 120576
+ },
+ {
+  "court": "Allahabad High Court",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 68783,
+  "rows": 137566
+ },
+ {
+  "court": "Allahabad High Court",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 5,
+  "rows": 15
+ },
+ {
+  "court": "Allahabad High Court",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 1346,
+  "rows": 5397
+ },
+ {
+  "court": "Allahabad High Court",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 30,
+  "rows": 5973
+ },
+ {
+  "court": "Bombay High Court",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 22,
+  "rows": 364
+ },
+ {
+  "court": "Bombay High Court",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 21
+ },
+ {
+  "court": "Bombay High Court",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 430,
+  "rows": 860
+ },
+ {
+  "court": "Bombay High Court",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 118,
+  "rows": 236
+ },
+ {
+  "court": "Bombay High Court",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 185,
+  "rows": 762
+ },
+ {
+  "court": "Bombay High Court",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 11,
+  "rows": 43
+ },
+ {
+  "court": "Calcutta High Court",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 2,
+  "rows": 4
+ },
+ {
+  "court": "Calcutta High Court",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 4,
+  "rows": 8
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 19,
+  "rows": 324
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 11,
+  "rows": 199
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 404,
+  "rows": 808
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 688,
+  "rows": 1376
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 131,
+  "rows": 526
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 224,
+  "rows": 868
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "50p",
+  "identity": "byte_identical",
+  "groups": 2,
+  "rows": 138
+ },
+ {
+  "court": "Gauhati High Court",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 80
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 166,
+  "rows": 2764
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 32,
+  "rows": 546
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 2267,
+  "rows": 4534
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 465,
+  "rows": 930
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 1237,
+  "rows": 5342
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 222,
+  "rows": 959
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "50p",
+  "identity": "byte_identical",
+  "groups": 14,
+  "rows": 1808
+ },
+ {
+  "court": "High Court Of Chhattisgarh",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 3,
+  "rows": 297
+ },
+ {
+  "court": "High Court of Delhi",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 5,
+  "rows": 95
+ },
+ {
+  "court": "High Court of Delhi",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 8,
+  "rows": 112
+ },
+ {
+  "court": "High Court of Delhi",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 83,
+  "rows": 166
+ },
+ {
+  "court": "High Court of Delhi",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 28,
+  "rows": 56
+ },
+ {
+  "court": "High Court of Delhi",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 30,
+  "rows": 113
+ },
+ {
+  "court": "High Court of Delhi",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 24,
+  "rows": 111
+ },
+ {
+  "court": "High Court of Delhi",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 2,
+  "rows": 165
+ },
+ {
+  "court": "High Court of Himachal Pradesh",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 54,
+  "rows": 1092
+ },
+ {
+  "court": "High Court of Himachal Pradesh",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 9,
+  "rows": 172
+ },
+ {
+  "court": "High Court of Himachal Pradesh",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 502,
+  "rows": 1004
+ },
+ {
+  "court": "High Court of Himachal Pradesh",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 178,
+  "rows": 356
+ },
+ {
+  "court": "High Court of Himachal Pradesh",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 288,
+  "rows": 1323
+ },
+ {
+  "court": "High Court of Himachal Pradesh",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 63,
+  "rows": 268
+ },
+ {
+  "court": "High Court of Himachal Pradesh",
+  "size": "50p",
+  "identity": "byte_identical",
+  "groups": 9,
+  "rows": 1201
+ },
+ {
+  "court": "High Court of Jammu and Kashmir",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 2
+ },
+ {
+  "court": "High Court of Jharkhand",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 31,
+  "rows": 482
+ },
+ {
+  "court": "High Court of Jharkhand",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 708,
+  "rows": 1416
+ },
+ {
+  "court": "High Court of Jharkhand",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 160,
+  "rows": 320
+ },
+ {
+  "court": "High Court of Jharkhand",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 225,
+  "rows": 926
+ },
+ {
+  "court": "High Court of Jharkhand",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 19,
+  "rows": 70
+ },
+ {
+  "court": "High Court of Jharkhand",
+  "size": "50p",
+  "identity": "byte_identical",
+  "groups": 4,
+  "rows": 944
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 59,
+  "rows": 977
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 50,
+  "rows": 884
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 2446,
+  "rows": 4892
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 726,
+  "rows": 1452
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 680,
+  "rows": 2704
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 302,
+  "rows": 1243
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "50p",
+  "identity": "byte_identical",
+  "groups": 2,
+  "rows": 138
+ },
+ {
+  "court": "High Court of Karnataka",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 129
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 19,
+  "rows": 351
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 18
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 226,
+  "rows": 452
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 8,
+  "rows": 16
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 90,
+  "rows": 389
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 2,
+  "rows": 6
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "50p",
+  "identity": "byte_identical",
+  "groups": 2,
+  "rows": 124
+ },
+ {
+  "court": "High Court of Kerala",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 143
+ },
+ {
+  "court": "High Court of Manipur",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 10,
+  "rows": 20
+ },
+ {
+  "court": "High Court of Manipur",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 4,
+  "rows": 15
+ },
+ {
+  "court": "High Court of Meghalaya",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 2,
+  "rows": 54
+ },
+ {
+  "court": "High Court of Meghalaya",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 26
+ },
+ {
+  "court": "High Court of Meghalaya",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 33,
+  "rows": 66
+ },
+ {
+  "court": "High Court of Meghalaya",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 84,
+  "rows": 168
+ },
+ {
+  "court": "High Court of Meghalaya",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 9,
+  "rows": 34
+ },
+ {
+  "court": "High Court of Meghalaya",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 22,
+  "rows": 79
+ },
+ {
+  "court": "High Court of Punjab and Haryana",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 2,
+  "rows": 27
+ },
+ {
+  "court": "High Court of Punjab and Haryana",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 5,
+  "rows": 114
+ },
+ {
+  "court": "High Court of Punjab and Haryana",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 153,
+  "rows": 306
+ },
+ {
+  "court": "High Court of Punjab and Haryana",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 151,
+  "rows": 302
+ },
+ {
+  "court": "High Court of Punjab and Haryana",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 37,
+  "rows": 153
+ },
+ {
+  "court": "High Court of Punjab and Haryana",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 32,
+  "rows": 144
+ },
+ {
+  "court": "High Court of Punjab and Haryana",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 2,
+  "rows": 482
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 277,
+  "rows": 5235
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 11,
+  "rows": 230
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 6002,
+  "rows": 12004
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 504,
+  "rows": 1008
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 2335,
+  "rows": 9324
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 143,
+  "rows": 537
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "50p",
+  "identity": "byte_identical",
+  "groups": 33,
+  "rows": 5049
+ },
+ {
+  "court": "High Court Of Rajasthan",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 7,
+  "rows": 949
+ },
+ {
+  "court": "High Court of Sikkim",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 1,
+  "rows": 2
+ },
+ {
+  "court": "High Court of Sikkim",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 1,
+  "rows": 6
+ },
+ {
+  "court": "High Court of Tripura",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 8,
+  "rows": 16
+ },
+ {
+  "court": "High Court of Tripura",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 6,
+  "rows": 35
+ },
+ {
+  "court": "High Court of Uttarakhand",
+  "size": "10_49",
+  "identity": "byte_identical",
+  "groups": 58,
+  "rows": 1114
+ },
+ {
+  "court": "High Court of Uttarakhand",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 10,
+  "rows": 148
+ },
+ {
+  "court": "High Court of Uttarakhand",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 362,
+  "rows": 724
+ },
+ {
+  "court": "High Court of Uttarakhand",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 271,
+  "rows": 542
+ },
+ {
+  "court": "High Court of Uttarakhand",
+  "size": "3_9",
+  "identity": "byte_identical",
+  "groups": 252,
+  "rows": 1133
+ },
+ {
+  "court": "High Court of Uttarakhand",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 80,
+  "rows": 314
+ },
+ {
+  "court": "Madras High Court",
+  "size": "10_49",
+  "identity": "different_content",
+  "groups": 6,
+  "rows": 66
+ },
+ {
+  "court": "Madras High Court",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 1,
+  "rows": 2
+ },
+ {
+  "court": "Madras High Court",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 41,
+  "rows": 82
+ },
+ {
+  "court": "Madras High Court",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 53,
+  "rows": 234
+ },
+ {
+  "court": "Madras High Court",
+  "size": "50p",
+  "identity": "different_content",
+  "groups": 1,
+  "rows": 150
+ },
+ {
+  "court": "Supreme Court of India",
+  "size": "2",
+  "identity": "byte_identical",
+  "groups": 3,
+  "rows": 6
+ },
+ {
+  "court": "Supreme Court of India",
+  "size": "2",
+  "identity": "different_content",
+  "groups": 79,
+  "rows": 158
+ },
+ {
+  "court": "Supreme Court of India",
+  "size": "3_9",
+  "identity": "different_content",
+  "groups": 14,
+  "rows": 52
+ }
+]

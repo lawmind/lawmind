@@ -1,0 +1,150 @@
+{
+ "generatedAt": "2026-08-22T15:27:49.746Z",
+ "audits": {
+  "current_totals": [
+   {
+    "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+    "refs": 129295,
+    "distinct_named": 204
+   },
+   {
+    "act_key": "BHARATIYA NYAYA SANHITA",
+    "refs": 21175,
+    "distinct_named": 47
+   },
+   {
+    "act_key": "BHARATIYA SAKSHYA ADHINIYAM",
+    "refs": 496,
+    "distinct_named": 22
+   }
+  ],
+  "moved": {
+   "distinct_spellings_checked": 273,
+   "spellings_not_matching_their_key": 0,
+   "refs_not_matching_their_key": 0,
+   "examples": []
+  },
+  "refused": {
+   "distinct_keys_ending_sanhita_or_adhiniyam_left_alone": 200,
+   "refs_left_alone": 1360,
+   "refusals_that_should_have_merged": 1,
+   "wrong_refusal_examples": [
+    {
+     "act_key": "BHARATIYA NAGARIKSURAKSHA SANHITA",
+     "an_example": "Bharatiya NagarikSuraksha Sanhita, 2023",
+     "refs": 2
+    }
+   ],
+   "sample_correct_refusals": [
+    {
+     "act_key": "BHARATIYA SURAKSHA NAGARIK SANHITA",
+     "refs": 280
+    },
+    {
+     "act_key": "BHARATIYA NAGARIK SURASKHA SANHITA",
+     "refs": 168
+    },
+    {
+     "act_key": "CHHATTISGARH PANCHAYAT RAJ ADHINIYAM",
+     "refs": 62
+    },
+    {
+     "act_key": "MADHYA PRADESH RAJYA SURAKSHA ADHINIYAM",
+     "refs": 44
+    },
+    {
+     "act_key": "NAGAR TATHA GRAM NIVESH ADHINIYAM",
+     "refs": 43
+    },
+    {
+     "act_key": "BHARATIYA NAGARIK SUREAKSHA SANHITA",
+     "refs": 43
+    },
+    {
+     "act_key": "MADHYA PRADESH KRISHI UPAJ MANDI ADHINIYAM",
+     "refs": 39
+    },
+    {
+     "act_key": "MADHYA PRADESH VANIIYIK KAR ADHINIYAM",
+     "refs": 28
+    },
+    {
+     "act_key": "CHHATTISGARH ZILA YOJANA SAMITI ADHINIYAM",
+     "refs": 27
+    },
+    {
+     "act_key": "MADHYA PRADESH MADHYASTHAM ADHIKARAN ADHINIYAM",
+     "refs": 26
+    },
+    {
+     "act_key": "AYURVIGYAN ADHINIYAM",
+     "refs": 22
+    },
+    {
+     "act_key": "BHARATIYA NAYAY SANHITA",
+     "refs": 22
+    },
+    {
+     "act_key": "MP RAJYA SURAKSHA ADHINIYAM",
+     "refs": 22
+    },
+    {
+     "act_key": "BHARATIYA NAYAYA SANHITA",
+     "refs": 18
+    },
+    {
+     "act_key": "MADHYA PRADESH NAGAR TATHA GRAM NIVESH ADHINIYAM",
+     "refs": 16
+    },
+    {
+     "act_key": "RAJYA SURAKSHA ADHINIYAM",
+     "refs": 15
+    },
+    {
+     "act_key": "BHARTIYA NAYAY SANHITA",
+     "refs": 15
+    },
+    {
+     "act_key": "PANCHAYAT RAJ ADHINIYAM",
+     "refs": 14
+    },
+    {
+     "act_key": "PASHU KRURTA ADHINIYAM",
+     "refs": 11
+    },
+    {
+     "act_key": "MP NAGAR TATHA GRAM NIVESH ADHINIYAM",
+     "refs": 11
+    }
+   ]
+  },
+  "abbrev_and_title_share_one_key": [
+   {
+    "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+    "abbrev_spellings": 0,
+    "title_spellings": 129295
+   },
+   {
+    "act_key": "BHARATIYA NYAYA SANHITA",
+    "abbrev_spellings": 0,
+    "title_spellings": 21175
+   },
+   {
+    "act_key": "BHARATIYA SAKSHYA ADHINIYAM",
+    "abbrev_spellings": 0,
+    "title_spellings": 496
+   }
+  ],
+  "act_named_integrity": {
+   "refs": 150966,
+   "empty_named": 0
+  },
+  "strays_keyed_to_the_2023_codes": [
+   {
+    "act_named": "Bharatiya Sakhsya Adhiniyam, 2023",
+    "refs": 2
+   }
+  ]
+ },
+ "verdict": "REPAIR_HAS_EXCEPTIONS — see moved.examples, refused.wrong_refusal_examples and strays"
+}

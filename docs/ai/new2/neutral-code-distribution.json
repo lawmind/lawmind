@@ -1,0 +1,500 @@
+[
+ {
+  "code": "AHC",
+  "rows": 280164,
+  "courts": 6,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "AHC-LKO",
+  "rows": 278760,
+  "courts": 3,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "KHC",
+  "rows": 170558,
+  "courts": 1,
+  "a_court": "High Court of Karnataka"
+ },
+ {
+  "code": "RJ-JP",
+  "rows": 134494,
+  "courts": 2,
+  "a_court": "High Court of Delhi"
+ },
+ {
+  "code": "CGHC",
+  "rows": 106865,
+  "courts": 1,
+  "a_court": "High Court Of Chhattisgarh"
+ },
+ {
+  "code": "RJ-JD",
+  "rows": 61635,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "PHHC",
+  "rows": 56093,
+  "courts": 6,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "JHHC",
+  "rows": 51194,
+  "courts": 1,
+  "a_court": "High Court of Jharkhand"
+ },
+ {
+  "code": "BHC-AUG",
+  "rows": 48976,
+  "courts": 1,
+  "a_court": "Bombay High Court"
+ },
+ {
+  "code": "KHC-D",
+  "rows": 47953,
+  "courts": 1,
+  "a_court": "High Court of Karnataka"
+ },
+ {
+  "code": null,
+  "rows": 38215,
+  "courts": 1,
+  "a_court": "Supreme Court of India"
+ },
+ {
+  "code": "HHC",
+  "rows": 28329,
+  "courts": 1,
+  "a_court": "High Court of Himachal Pradesh"
+ },
+ {
+  "code": "UHC",
+  "rows": 21054,
+  "courts": 1,
+  "a_court": "High Court of Uttarakhand"
+ },
+ {
+  "code": "GAU-AS",
+  "rows": 20057,
+  "courts": 1,
+  "a_court": "Gauhati High Court"
+ },
+ {
+  "code": "KER",
+  "rows": 7086,
+  "courts": 2,
+  "a_court": "High Court of Delhi"
+ },
+ {
+  "code": "BHC-AS",
+  "rows": 6737,
+  "courts": 2,
+  "a_court": "Bombay High Court"
+ },
+ {
+  "code": "KHC-K",
+  "rows": 4400,
+  "courts": 1,
+  "a_court": "High Court of Karnataka"
+ },
+ {
+  "code": "DHC",
+  "rows": 2479,
+  "courts": 2,
+  "a_court": "High Court of Delhi"
+ },
+ {
+  "code": "MLHC",
+  "rows": 1638,
+  "courts": 1,
+  "a_court": "High Court of Meghalaya"
+ },
+ {
+  "code": "BHC-GOA",
+  "rows": 1447,
+  "courts": 1,
+  "a_court": "Bombay High Court"
+ },
+ {
+  "code": "GAU-NL",
+  "rows": 761,
+  "courts": 1,
+  "a_court": "Gauhati High Court"
+ },
+ {
+  "code": "GAU-AP",
+  "rows": 369,
+  "courts": 1,
+  "a_court": "Gauhati High Court"
+ },
+ {
+  "code": "BHC-OS",
+  "rows": 270,
+  "courts": 1,
+  "a_court": "Bombay High Court"
+ },
+ {
+  "code": "MHC",
+  "rows": 254,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "THC",
+  "rows": 241,
+  "courts": 1,
+  "a_court": "High Court of Tripura"
+ },
+ {
+  "code": "AUGUST",
+  "rows": 80,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "DECEMBER",
+  "rows": 68,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "NOVEMBER",
+  "rows": 62,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "SEPTEMBER",
+  "rows": 49,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "MNHC",
+  "rows": 43,
+  "courts": 1,
+  "a_court": "High Court of Manipur"
+ },
+ {
+  "code": "RT-JP",
+  "rows": 39,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "FEBRUARY",
+  "rows": 33,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "JULY",
+  "rows": 21,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "OCTOBER",
+  "rows": 18,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "JUNE",
+  "rows": 17,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "FU-JP",
+  "rows": 16,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "EU-JP",
+  "rows": 15,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "DEC",
+  "rows": 15,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "INSC",
+  "rows": 12,
+  "courts": 4,
+  "a_court": "Calcutta High Court"
+ },
+ {
+  "code": "GAU-MZ",
+  "rows": 12,
+  "courts": 1,
+  "a_court": "Gauhati High Court"
+ },
+ {
+  "code": "SHC",
+  "rows": 12,
+  "courts": 2,
+  "a_court": "High Court of Delhi"
+ },
+ {
+  "code": "SEP",
+  "rows": 11,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "JANUARY",
+  "rows": 11,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "MARCH",
+  "rows": 10,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "NCPHHC",
+  "rows": 10,
+  "courts": 1,
+  "a_court": "High Court of Punjab and Haryana"
+ },
+ {
+  "code": "JANURARY",
+  "rows": 9,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "FEB",
+  "rows": 8,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "APRIL",
+  "rows": 7,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "MAY",
+  "rows": 7,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "NOV",
+  "rows": 6,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "JKLHC-JMU",
+  "rows": 5,
+  "courts": 1,
+  "a_court": "High Court of Jammu and Kashmir"
+ },
+ {
+  "code": "CHC-AS",
+  "rows": 5,
+  "courts": 1,
+  "a_court": "Calcutta High Court"
+ },
+ {
+  "code": "JAN",
+  "rows": 5,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "CHC-OS",
+  "rows": 5,
+  "courts": 1,
+  "a_court": "Calcutta High Court"
+ },
+ {
+  "code": "RI-JP",
+  "rows": 4,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "IU-JP",
+  "rows": 3,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "OCT",
+  "rows": 3,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "CHC-JP",
+  "rows": 3,
+  "courts": 1,
+  "a_court": "Calcutta High Court"
+ },
+ {
+  "code": "AGT",
+  "rows": 2,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "IW-JP",
+  "rows": 2,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "EW-JP",
+  "rows": 2,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "CG",
+  "rows": 2,
+  "courts": 1,
+  "a_court": "High Court Of Chhattisgarh"
+ },
+ {
+  "code": "RJJP",
+  "rows": 2,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "CHA",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "FLJ-JP",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "CGLJ",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court Of Chhattisgarh"
+ },
+ {
+  "code": "OHC",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Orissa High Court"
+ },
+ {
+  "code": "AHA",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "PIHC",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court of Punjab and Haryana"
+ },
+ {
+  "code": "FLT-JP",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "RJ-JB",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "BHC-NAG",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court of Andhra Pradesh"
+ },
+ {
+  "code": "ARPIL",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "HER",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court of Kerala"
+ },
+ {
+  "code": "RLJP",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "JHHG",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court of Jharkhand"
+ },
+ {
+  "code": "HCK",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court of Karnataka"
+ },
+ {
+  "code": "AHCLKO",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "SEPTEMEBER",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Madras High Court"
+ },
+ {
+  "code": "AH",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "AHC-KO",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "Allahabad High Court"
+ },
+ {
+  "code": "ELT-JP",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court Of Rajasthan"
+ },
+ {
+  "code": "FBNCHG",
+  "rows": 1,
+  "courts": 1,
+  "a_court": "High Court  for State of Telangana"
+ }
+]

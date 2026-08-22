@@ -1,0 +1,563 @@
+{
+ "truth_set_version": "1.0.0",
+ "source_checked_at": "2026-08-22T10:09:56.655Z",
+ "normalizer_version_being_tested": "upper(regexp_replace(x,'[^A-Za-z0-9]','','g'))  // judgments_neutral_citation_key + judgment_citation_keys.citation_key",
+ "records": 406,
+ "A_extraction_precision": {
+  "question": "did the citing judgment actually print this string, and at the offset the edge claims?",
+  "printed_at_recorded_offset": 405,
+  "printed_elsewhere_in_doc": 1,
+  "not_printed_in_doc": 0,
+  "printed_in_doc_pct": 100,
+  "offset_trustworthy_pct": 99.75,
+  "note": "offset tolerance 200 characters; the first pass of this measure was wrong and its correction is recorded in .n2-p3-rebattery.mjs"
+ },
+ "B_target_resolution_precision": {
+  "question": "where cited_judgment_id is set, is it the right authority — judged by the party names printed beside the citation?",
+  "edges_with_a_stored_pin": 128,
+  "pin_corroborated": 91,
+  "pin_contradicted": 0,
+  "pin_unprovable_either_way": 37,
+  "precision_over_provable_pct": 100
+ },
+ "C_ambiguity_safety": {
+  "question": "where several targets are legitimate, did anything pick one — and did it matter?",
+  "records_with_more_than_one_candidate": 33,
+  "records_where_refusal_is_correct": 31,
+  "of_those_already_pinned": 11,
+  "split": {
+   "SAME_AUTHORITY_HELD_MORE_THAN_ONCE": {
+    "meaning": "the candidates are duplicate rows of one judgment — a pin on either is materially right, and the ambiguity is our duplicate-document population, not a legal one",
+    "records": 8,
+    "pinned": 7
+   },
+   "SAME_PARTIES_DIFFERENT_DATES": {
+    "meaning": "same parties, different decision dates — orders in one proceeding; a pin may be on the wrong order",
+    "records": 6,
+    "pinned": 3
+   },
+   "DIFFERENT_AUTHORITIES": {
+    "meaning": "genuinely different judgments share the citation — a pin here shows an advocate the wrong authority as a fact",
+    "records": 17,
+    "pinned": 1
+   }
+  },
+  "materially_unsafe_pin_rate_pct": 5.88,
+  "examples": [
+   {
+    "citation_text": "2025:AHC:20135-DB",
+    "candidates": 2,
+    "ambiguity_kind": "SAME_PARTIES_DIFFERENT_DATES",
+    "pinned_to": "69639a71-0889-40ce-ae32-2710659a3c88",
+    "reason": "2 held judgments carry this citation and the printed party names do not separate them"
+   },
+   {
+    "citation_text": "2025:AHC-LKO:38936-DB",
+    "candidates": 2,
+    "ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
+    "pinned_to": "058dcdd7-ab44-4eff-a3c6-60323691b6e1",
+    "reason": "one disposal event: 2 connected matters share this registry citation"
+   },
+   {
+    "citation_text": "2025:AHC-LKO:21773",
+    "candidates": 2,
+    "ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
+    "pinned_to": "650add6b-10c2-45af-990e-30f919d9a948",
+    "reason": "one disposal event: 2 connected matters share this registry citation"
+   },
+   {
+    "citation_text": "2025:AHC-LKO:20927",
+    "candidates": 2,
+    "ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
+    "pinned_to": "f9bf1f4b-af91-42a9-9bd9-3e3f19d007ba",
+    "reason": "one disposal event: 2 connected matters share this registry citation"
+   },
+   {
+    "citation_text": "2025:AHC-LKO:38132",
+    "candidates": 2,
+    "ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
+    "pinned_to": "099ba48e-d859-4845-81e4-3656a670be60",
+    "reason": "one disposal event: 2 connected matters share this registry citation"
+   }
+  ]
+ },
+ "D_damaged_text_behaviour": {
+  "question": "does corrupt text manufacture citations?",
+  "records_from_documents_below_text_quality_0_85": 5,
+  "of_those_span_unverified": 0,
+  "pseudo_citations_found": 0,
+  "pseudo_citation_forms": []
+ },
+ "E_by_form_class": {
+  "NEUTRAL_UNQUALIFIED": {
+   "records": 64,
+   "at_offset": 64,
+   "elsewhere": 0,
+   "not_printed": 0,
+   "not_held": 1,
+   "ambiguous": 14,
+   "pinned": 3,
+   "printed_in_doc_pct": 100,
+   "offset_wrong_pct": 0,
+   "not_printed_pct": 0,
+   "target_not_held_pct": 1.56,
+   "ambiguous_pct": 21.88
+  },
+  "NEUTRAL_BENCH_QUALIFIED": {
+   "records": 40,
+   "at_offset": 40,
+   "elsewhere": 0,
+   "not_printed": 0,
+   "not_held": 2,
+   "ambiguous": 16,
+   "pinned": 7,
+   "printed_in_doc_pct": 100,
+   "offset_wrong_pct": 0,
+   "not_printed_pct": 0,
+   "target_not_held_pct": 5,
+   "ambiguous_pct": 40
+  },
+  "INSC": {
+   "records": 33,
+   "at_offset": 33,
+   "elsewhere": 0,
+   "not_printed": 0,
+   "not_held": 4,
+   "ambiguous": 3,
+   "pinned": 29,
+   "printed_in_doc_pct": 100,
+   "offset_wrong_pct": 0,
+   "not_printed_pct": 0,
+   "target_not_held_pct": 12.12,
+   "ambiguous_pct": 9.09
+  },
+  "SCC": {
+   "records": 78,
+   "at_offset": 78,
+   "elsewhere": 0,
+   "not_printed": 0,
+   "not_held": 30,
+   "ambiguous": 0,
+   "pinned": 33,
+   "printed_in_doc_pct": 100,
+   "offset_wrong_pct": 0,
+   "not_printed_pct": 0,
+   "target_not_held_pct": 38.46,
+   "ambiguous_pct": 0
+  },
+  "AIR": {
+   "records": 46,
+   "at_offset": 45,
+   "elsewhere": 1,
+   "not_printed": 0,
+   "not_held": 45,
+   "ambiguous": 0,
+   "pinned": 1,
+   "printed_in_doc_pct": 100,
+   "offset_wrong_pct": 2.17,
+   "not_printed_pct": 0,
+   "target_not_held_pct": 97.83,
+   "ambiguous_pct": 0
+  },
+  "SCR": {
+   "records": 127,
+   "at_offset": 127,
+   "elsewhere": 0,
+   "not_printed": 0,
+   "not_held": 47,
+   "ambiguous": 0,
+   "pinned": 49,
+   "printed_in_doc_pct": 100,
+   "offset_wrong_pct": 0,
+   "not_printed_pct": 0,
+   "target_not_held_pct": 37.01,
+   "ambiguous_pct": 0
+  },
+  "OTHER": {
+   "records": 18,
+   "at_offset": 18,
+   "elsewhere": 0,
+   "not_printed": 0,
+   "not_held": 7,
+   "ambiguous": 0,
+   "pinned": 6,
+   "printed_in_doc_pct": 100,
+   "offset_wrong_pct": 0,
+   "not_printed_pct": 0,
+   "target_not_held_pct": 38.89,
+   "ambiguous_pct": 0
+  }
+ },
+ "F_stratification": {
+  "by_citing_court": {
+   "label": "the court whose judgment printed the citation",
+   "cells": {
+    "Allahabad High Court": {
+     "records": 46,
+     "printed_in_doc": 46,
+     "not_held": 13,
+     "ambiguous": 15,
+     "pinned": 20,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 28.26,
+     "resolved_pct": 43.48
+    },
+    "Gauhati High Court": {
+     "records": 9,
+     "printed_in_doc": 9,
+     "not_held": 3,
+     "ambiguous": 1,
+     "pinned": 1,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 33.33,
+     "resolved_pct": 11.11
+    },
+    "High Court Of Rajasthan": {
+     "records": 31,
+     "printed_in_doc": 31,
+     "not_held": 4,
+     "ambiguous": 7,
+     "pinned": 8,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 12.9,
+     "resolved_pct": 25.81
+    },
+    "High Court of Karnataka": {
+     "records": 34,
+     "printed_in_doc": 34,
+     "not_held": 10,
+     "ambiguous": 2,
+     "pinned": 1,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 29.41,
+     "resolved_pct": 2.94
+    },
+    "High Court of Uttarakhand": {
+     "records": 4,
+     "printed_in_doc": 4,
+     "not_held": 0,
+     "ambiguous": 0,
+     "pinned": 0,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 0,
+     "resolved_pct": 0
+    },
+    "High Court of Himachal Pradesh": {
+     "records": 19,
+     "printed_in_doc": 19,
+     "not_held": 7,
+     "ambiguous": 2,
+     "pinned": 3,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 36.84,
+     "resolved_pct": 15.79
+    },
+    "High Court Of Chhattisgarh": {
+     "records": 34,
+     "printed_in_doc": 34,
+     "not_held": 7,
+     "ambiguous": 3,
+     "pinned": 10,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 20.59,
+     "resolved_pct": 29.41
+    },
+    "Bombay High Court": {
+     "records": 18,
+     "printed_in_doc": 18,
+     "not_held": 12,
+     "ambiguous": 0,
+     "pinned": 4,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 66.67,
+     "resolved_pct": 22.22
+    },
+    "High Court of Jharkhand": {
+     "records": 14,
+     "printed_in_doc": 14,
+     "not_held": 7,
+     "ambiguous": 2,
+     "pinned": 2,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 50,
+     "resolved_pct": 14.29
+    },
+    "High Court of Jammu and Kashmir": {
+     "records": 1,
+     "printed_in_doc": 1,
+     "not_held": 0,
+     "ambiguous": 0,
+     "pinned": 0,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 0,
+     "resolved_pct": 0
+    },
+    "High Court of Punjab and Haryana": {
+     "records": 19,
+     "printed_in_doc": 19,
+     "not_held": 4,
+     "ambiguous": 1,
+     "pinned": 8,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 21.05,
+     "resolved_pct": 42.11
+    },
+    "Calcutta High Court": {
+     "records": 12,
+     "printed_in_doc": 12,
+     "not_held": 7,
+     "ambiguous": 0,
+     "pinned": 4,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 58.33,
+     "resolved_pct": 33.33
+    },
+    "High Court of Andhra Pradesh": {
+     "records": 8,
+     "printed_in_doc": 8,
+     "not_held": 6,
+     "ambiguous": 0,
+     "pinned": 2,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 75,
+     "resolved_pct": 25
+    },
+    "High Court of Delhi": {
+     "records": 13,
+     "printed_in_doc": 13,
+     "not_held": 4,
+     "ambiguous": 0,
+     "pinned": 9,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 30.77,
+     "resolved_pct": 69.23
+    },
+    "Patna High Court": {
+     "records": 7,
+     "printed_in_doc": 7,
+     "not_held": 2,
+     "ambiguous": 0,
+     "pinned": 3,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 28.57,
+     "resolved_pct": 42.86
+    },
+    "Supreme Court of India": {
+     "records": 104,
+     "printed_in_doc": 104,
+     "not_held": 36,
+     "ambiguous": 0,
+     "pinned": 39,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 34.62,
+     "resolved_pct": 37.5
+    },
+    "Madras High Court": {
+     "records": 6,
+     "printed_in_doc": 6,
+     "not_held": 3,
+     "ambiguous": 0,
+     "pinned": 2,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 50,
+     "resolved_pct": 33.33
+    },
+    "Orissa High Court": {
+     "records": 12,
+     "printed_in_doc": 12,
+     "not_held": 6,
+     "ambiguous": 0,
+     "pinned": 4,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 50,
+     "resolved_pct": 33.33
+    },
+    "High Court  for State of Telangana": {
+     "records": 7,
+     "printed_in_doc": 7,
+     "not_held": 3,
+     "ambiguous": 0,
+     "pinned": 3,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 42.86,
+     "resolved_pct": 42.86
+    },
+    "High Court of Kerala": {
+     "records": 3,
+     "printed_in_doc": 3,
+     "not_held": 1,
+     "ambiguous": 0,
+     "pinned": 2,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 33.33,
+     "resolved_pct": 66.67
+    },
+    "High Court of Gujarat": {
+     "records": 4,
+     "printed_in_doc": 4,
+     "not_held": 1,
+     "ambiguous": 0,
+     "pinned": 2,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 25,
+     "resolved_pct": 50
+    },
+    "High Court of Madhya Pradesh": {
+     "records": 1,
+     "printed_in_doc": 1,
+     "not_held": 0,
+     "ambiguous": 0,
+     "pinned": 1,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 0,
+     "resolved_pct": 100
+    }
+   }
+  },
+  "by_citing_decade": {
+   "label": "decade of the citing judgment",
+   "cells": {
+    "2020s": {
+     "records": 312,
+     "printed_in_doc": 312,
+     "not_held": 104,
+     "ambiguous": 33,
+     "pinned": 84,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 33.33,
+     "resolved_pct": 26.92
+    },
+    "2010s": {
+     "records": 65,
+     "printed_in_doc": 65,
+     "not_held": 19,
+     "ambiguous": 0,
+     "pinned": 32,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 29.23,
+     "resolved_pct": 49.23
+    },
+    "2000s": {
+     "records": 15,
+     "printed_in_doc": 15,
+     "not_held": 5,
+     "ambiguous": 0,
+     "pinned": 6,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 33.33,
+     "resolved_pct": 40
+    },
+    "1990s": {
+     "records": 4,
+     "printed_in_doc": 4,
+     "not_held": 2,
+     "ambiguous": 0,
+     "pinned": 2,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 50,
+     "resolved_pct": 50
+    },
+    "1960s": {
+     "records": 2,
+     "printed_in_doc": 2,
+     "not_held": 1,
+     "ambiguous": 0,
+     "pinned": 1,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 50,
+     "resolved_pct": 50
+    },
+    "1980s": {
+     "records": 2,
+     "printed_in_doc": 2,
+     "not_held": 1,
+     "ambiguous": 0,
+     "pinned": 1,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 50,
+     "resolved_pct": 50
+    },
+    "1970s": {
+     "records": 4,
+     "printed_in_doc": 4,
+     "not_held": 2,
+     "ambiguous": 0,
+     "pinned": 2,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 50,
+     "resolved_pct": 50
+    },
+    "1950s": {
+     "records": 2,
+     "printed_in_doc": 2,
+     "not_held": 2,
+     "ambiguous": 0,
+     "pinned": 0,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 100,
+     "resolved_pct": 0
+    }
+   }
+  },
+  "by_citing_text_quality": {
+   "label": "text quality of the citing document",
+   "cells": {
+    "at_or_above_0.85": {
+     "records": 401,
+     "printed_in_doc": 401,
+     "not_held": 136,
+     "ambiguous": 31,
+     "pinned": 128,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 33.92,
+     "resolved_pct": 31.92
+    },
+    "below_0.85": {
+     "records": 5,
+     "printed_in_doc": 5,
+     "not_held": 0,
+     "ambiguous": 2,
+     "pinned": 0,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 0,
+     "resolved_pct": 0
+    }
+   }
+  },
+  "by_citing_script_quality": {
+   "label": "proven script damage state of the citing document",
+   "cells": {
+    "script_quality_NULL_never_screened_or_clean": {
+     "records": 399,
+     "printed_in_doc": 399,
+     "not_held": 136,
+     "ambiguous": 30,
+     "pinned": 128,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 34.09,
+     "resolved_pct": 32.08
+    },
+    "legacy_font_ascii": {
+     "records": 6,
+     "printed_in_doc": 6,
+     "not_held": 0,
+     "ambiguous": 2,
+     "pinned": 0,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 0,
+     "resolved_pct": 0
+    },
+    "damaged_other": {
+     "records": 1,
+     "printed_in_doc": 1,
+     "not_held": 0,
+     "ambiguous": 1,
+     "pinned": 0,
+     "printed_in_doc_pct": 100,
+     "target_not_held_pct": 0,
+     "resolved_pct": 0
+    }
+   }
+  }
+ }
+}

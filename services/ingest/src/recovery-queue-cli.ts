@@ -79,6 +79,10 @@ const GOLD_FILES = [
   '../../docs/ai/new3-uncited-authority-gold.json',
   '../../docs/ai/new3-uncited-authority-gold-v2.json',
   '../../docs/ai/new3-statute-transition-gold.json',
+  /* ADVOCATE-100, bound 22 Aug 2026. Its targets sit under `judgment_id`, which
+   * `GOLD_ANSWER_KEYS` already names, so this file needs no reader of its own —
+   * which is the property the shape-tolerant walk above was built for. */
+  '../../docs/ai/new2/ADVOCATE100.json',
 ];
 
 const argOf = (name: string, dflt: string | null = null): string | null => {

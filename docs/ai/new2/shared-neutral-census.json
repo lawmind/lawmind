@@ -1,0 +1,182 @@
+{
+ "startedAt": "2026-08-22T08:34:29.959Z",
+ "steps": [
+  {
+   "name": "groups_table_built",
+   "at": "2026-08-22T08:35:23.725Z",
+   "seconds": 54
+  },
+  {
+   "name": "totals",
+   "at": "2026-08-22T08:35:24.789Z",
+   "groups": 155388,
+   "rows_in_groups": 361045,
+   "worst": 1257
+  },
+  {
+   "name": "shape",
+   "at": "2026-08-22T08:35:24.846Z",
+   "groups_multi_casenumber": 75660,
+   "groups_single_casenumber": 79728,
+   "groups_byte_identical": 80224,
+   "groups_cross_court": 11,
+   "groups_of_2": 146218,
+   "groups_3_9": 8072,
+   "groups_10_49": 984,
+   "groups_50_plus": 114
+  },
+  {
+   "name": "by_court",
+   "at": "2026-08-22T08:35:24.945Z",
+   "rows": [
+    {
+     "court": "Allahabad High Court",
+     "groups": 130577,
+     "rows": 271826,
+     "worst": 1257,
+     "byte_identical_groups": 60293
+    },
+    {
+     "court": "High Court Of Rajasthan",
+     "groups": 9312,
+     "rows": 34336,
+     "worst": 463,
+     "byte_identical_groups": 8647
+    },
+    {
+     "court": "High Court Of Chhattisgarh",
+     "groups": 4406,
+     "rows": 17180,
+     "worst": 845,
+     "byte_identical_groups": 3684
+    },
+    {
+     "court": "High Court of Karnataka",
+     "groups": 4266,
+     "rows": 12419,
+     "worst": 129,
+     "byte_identical_groups": 3187
+    },
+    {
+     "court": "Gauhati High Court",
+     "groups": 1480,
+     "rows": 4319,
+     "worst": 83,
+     "byte_identical_groups": 556
+    },
+    {
+     "court": "High Court of Jharkhand",
+     "groups": 1147,
+     "rows": 4158,
+     "worst": 399,
+     "byte_identical_groups": 968
+    },
+    {
+     "court": "High Court of Himachal Pradesh",
+     "groups": 1103,
+     "rows": 5416,
+     "worst": 483,
+     "byte_identical_groups": 853
+    },
+    {
+     "court": "High Court of Uttarakhand",
+     "groups": 1033,
+     "rows": 3975,
+     "worst": 47,
+     "byte_identical_groups": 672
+    },
+    {
+     "court": "Bombay High Court",
+     "groups": 767,
+     "rows": 2286,
+     "worst": 38,
+     "byte_identical_groups": 637
+    },
+    {
+     "court": "High Court of Punjab and Haryana",
+     "groups": 382,
+     "rows": 1528,
+     "worst": 253,
+     "byte_identical_groups": 192
+    },
+    {
+     "court": "High Court of Kerala",
+     "groups": 349,
+     "rows": 1499,
+     "worst": 143,
+     "byte_identical_groups": 337
+    },
+    {
+     "court": "High Court of Delhi",
+     "groups": 180,
+     "rows": 818,
+     "worst": 107,
+     "byte_identical_groups": 118
+    },
+    {
+     "court": "High Court of Meghalaya",
+     "groups": 151,
+     "rows": 427,
+     "worst": 40,
+     "byte_identical_groups": 44
+    },
+    {
+     "court": "Madras High Court",
+     "groups": 102,
+     "rows": 534,
+     "worst": 150,
+     "byte_identical_groups": 1
+    },
+    {
+     "court": "Supreme Court of India",
+     "groups": 96,
+     "rows": 216,
+     "worst": 7,
+     "byte_identical_groups": 3
+    },
+    {
+     "court": "High Court of Manipur",
+     "groups": 14,
+     "rows": 35,
+     "worst": 5,
+     "byte_identical_groups": 14
+    },
+    {
+     "court": "High Court of Tripura",
+     "groups": 14,
+     "rows": 51,
+     "worst": 9,
+     "byte_identical_groups": 14
+    },
+    {
+     "court": "Calcutta High Court",
+     "groups": 6,
+     "rows": 12,
+     "worst": 2,
+     "byte_identical_groups": 2
+    },
+    {
+     "court": "High Court of Sikkim",
+     "groups": 2,
+     "rows": 8,
+     "worst": 6,
+     "byte_identical_groups": 2
+    },
+    {
+     "court": "High Court of Jammu and Kashmir",
+     "groups": 1,
+     "rows": 2,
+     "worst": 2,
+     "byte_identical_groups": 0
+    }
+   ]
+  },
+  {
+   "name": "denominator",
+   "at": "2026-08-22T08:36:00.939Z",
+   "rows_with_neutral": 1370683,
+   "distinct_neutral": 1165026
+  }
+ ],
+ "finishedAt": "2026-08-22T08:36:00.940Z"
+}

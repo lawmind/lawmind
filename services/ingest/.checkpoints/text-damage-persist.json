@@ -1,8 +1,4 @@
 {
- "storedValue": "damaged_other",
- "method": "text-damage-v2.0",
- "confirmed": true,
- "upgradeScreen": false,
  "detector": "text-damage-v2.0",
  "line": 1626762,
  "read": 1626762,

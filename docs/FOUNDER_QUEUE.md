@@ -4701,6 +4701,22 @@ metadata, analytics event wiring, RevenueCat integration up to the point it
 needs a live receipt to validate, and anything verifiable against the
 local stack.
 
+**Addendum, same day, later session: the override was real but still not
+FAIL-CLOSED, and now it is.** The earlier fix meant an EAS `preview` or
+`production` build with no `EXPO_PUBLIC_API_URL` set (`eas.json` has no `env`
+block for either profile today — confirmed by reading it) would still compile
+clean, install clean, and silently call the same dead Railway URL forever,
+which is the audit's #1 ship-brick risk *reintroduced* rather than closed.
+Hardened both ends: `apps/mobile/app.config.ts` now throws at `eas build`
+config-resolution time when `EAS_BUILD_PROFILE` is set (i.e. a real EAS cloud
+build) and the var is unset, so the build never leaves the queue; `apps/mobile/
+src/api/client.ts` and `apps/admin/lib/api.ts` now throw at import time as a
+second line of defence, and give a genuine local default only under `__DEV__`
+/ `next dev` (mirroring `services/api`'s own default port, 3000). tsc clean on
+both apps, 570/570 mobile tests green, no channel URL invented anywhere — the
+actual per-channel value is still entirely yours to set, this only refuses to
+guess one.
+
 ## FQ-PARTLY-OVERRULED-UNREADABLE — what does an advocate see when a later court partly overruled an authority and we cannot say which paragraphs?
 
 **Raised 22 Aug 2026, LCC. Not a blocker — everything around it is built and
@@ -4750,3 +4766,80 @@ in the API; it is still silent in the UI, because the client has no state for it
 
 Not urgent at 2 judgments; it stops being a footnote the moment
 `propagate-treatment.ts` runs against more of the corpus.
+
+---
+
+## FQ-DUPLICATE-DOCUMENTS — 194,577 judgment rows are the same document held more than once, and deduplication is a product decision, not a cleanup
+
+**Raised 22 Aug 2026 · NEW2 · not urgent, not silent**
+
+Measured while answering NEW1's shared-citation question, from source documents:
+
+```
+neutral citations carried by more than one judgment    155,388 groups / 361,045 rows
+of those rows, byte-identical text                      53.89%  [53.78, 54.00]  ~194,577 rows
+```
+
+53.89% of the shared-citation population is **the same judgment text held twice
+or more under different `source_url`s**. LCC found the same population from the
+other side (`e7392c7`: 71.3% of Allahabad's same-CNR one-day-apart pairs are
+byte-identical). It is one population and it is roughly 1% of the corpus.
+
+**Why it is yours and not mine.** Three different answers are all defensible and
+they are product answers, not data answers:
+
+1. **Leave them.** They cost storage and they inflate result lists. Nothing is
+   wrong: the registry published the same order twice and we hold what it
+   published.
+2. **Collapse at render.** The advocate sees one result; both rows stay, joined
+   by `content_hash`. Cheapest honest fix, and reversible.
+3. **Deduplicate in the corpus.** Smallest index, largest risk — a "duplicate"
+   that is actually two orders in connected matters becomes one, and the
+   distinction between those two cases is exactly what this study had to read
+   source PDFs to establish.
+
+**My recommendation is (2)**, because it is the only one that cannot lose a
+document, and because the retrieval cost is where the advocate actually feels it.
+
+**What I did instead of deciding:** nothing. This round forbids deduplicating
+shared-citation groups and I did not. The measurement, the method and every
+sampled group are in `docs/ai/new2/shared-neutral-verdicts.json` and
+`docs/ai/new2/SHARED_NEUTRAL_CITATION_TRUTH_2026-08-22.md`.
+
+---
+
+## FQ-BNS-CORRESPONDENCE-COVERAGE — the official old↔new section mapping covers 2.23% of BNS, and the product cannot answer "what is section 302 now"
+
+**Raised 22 Aug 2026 · NEW2 · blocks a marketing claim, not a build**
+
+`statute_mappings` holds 226 official BPR&D correspondence rows against 1,059
+sections of enacted text:
+
+```
+                sections held   official rows   sections with a usable row   coverage
+BNS   (IPC)              358              14                            8      2.23%
+BNSS  (CrPC)             531              95                           87     16.38%
+BSA   (IEA)              170             117                          101     59.41%
+```
+
+and the rows themselves are not clean: **69 of 226 carry a mangled new-section
+number** (the parser glued the first letter of the heading to the digits —
+`531R` for section 531), **23 name a section that does not exist** in the enacted
+text, and the OLD section half — the half an advocate actually asks for — has a
+**5.3% measured error rate** against the rows' own evidence with **no primary
+witness available at all**, because we hold the enacted text of the three new
+codes and of none of the three they replaced.
+
+**The decision you own:** whether to fund acquiring the enacted text of IPC,
+CrPC and the Indian Evidence Act from indiacode. Without them the old-section
+half of every correspondence answer is unverifiable in principle, not just
+unverified. With them, the same audit that found the 5.3% becomes a repair.
+
+**What I did instead:** typed every row against the required vocabulary and left
+`OFFICIAL_NO_EQUIVALENT`, `NEW_PROVISION` and `REPEALED_NO_DIRECT_EQUIVALENT`
+**empty**, because no source evidence produced them and a model must never fill
+them. `docs/ai/new2/BNS_BNSS_BSA_INVENTORY_2026-08-22.md`.
+
+**Binding until you decide:** no surface may describe BNS/BNSS/BSA transition as
+covered. LCC's `canonicalAct` fix (bus 1015) is act-NAME normalization and is
+correct; it is not section correspondence and it is not temporal applicability.
