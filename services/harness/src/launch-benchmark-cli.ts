@@ -183,6 +183,22 @@ type ResultRow = {
   ms: number;
   timedOut: boolean;
   failureReason: FailureReason | null;
+  /**
+   * What the product actually put at rank 1.
+   *
+   * Recorded because the instrument could not otherwise see its own
+   * highest-severity failure. An exact-identity route that PINS THE WRONG
+   * JUDGMENT is far worse for an advocate than one that finds nothing: a miss
+   * sends them to look elsewhere, and a confident wrong pin sends them into
+   * court with the wrong case. Scoring only the gold's rank makes those two
+   * outcomes the same number.
+   *
+   * Null when nothing came back. `wrongPin` is deliberately narrow — it means
+   * an EXACT-ROUTE class returned something at rank 1 that is not the gold,
+   * which is the only place the product claims certainty rather than relevance.
+   */
+  topHitId?: string | null;
+  wrongPin: boolean;
   /** Present when the law has moved on the gold authority. */
   goldOverruledStatus: string | null;
   currentnessUnsafe: boolean;
@@ -346,6 +362,7 @@ async function main(): Promise<number> {
     let httpStatus = 0;
     let rank: number | null = null;
     let returned = 0;
+    let topHitId: string | null = null;
     let timedOut = false;
     let currentnessUnsafe = false;
 
@@ -362,6 +379,7 @@ async function main(): Promise<number> {
       returned = hits.length;
       const at = hits.findIndex((h) => h['judgmentId'] === g.goldAuthorityId);
       rank = at === -1 ? null : at + 1;
+      topHitId = hits.length > 0 ? String(hits[0]?.['judgmentId'] ?? '') || null : null;
 
       /**
        * CURRENTNESS, checked on what was actually returned rather than on the
@@ -414,6 +432,10 @@ async function main(): Promise<number> {
       ms,
       timedOut,
       failureReason,
+      topHitId,
+      // Only the exact classes can "pin". For a ranked class a non-gold first
+      // result is an ordinary ranking outcome, not a false claim of identity.
+      wrongPin: EXACT_ROUTE_CLASSES.includes(g.launchClass) && topHitId !== null && topHitId !== g.goldAuthorityId,
       goldOverruledStatus: state.overruledStatus,
       currentnessUnsafe,
     };
@@ -448,6 +470,16 @@ async function main(): Promise<number> {
       successAt20: pct(sub.filter((r) => r.rank !== null && r.rank <= TOP_K).length, sub.length),
       mrr: Number((sub.reduce((a, r) => a + (r.rank ? 1 / r.rank : 0), 0) / Math.max(1, sub.length)).toFixed(4)),
       timeouts: sub.filter((r) => r.timedOut).length,
+      /**
+       * NULL, not 0, when the field was never recorded.
+       *
+       * `topHitId` was added after the first runs, so a resumed checkpoint can
+       * hold rows that predate it. Counting `wrongPin` over those yields zero —
+       * and a check that answers zero for every input is not a check, it is a
+       * clean bill of health issued by a missing column. Reporting null forces
+       * a rerun to answer the question instead of letting silence answer it.
+       */
+      wrongPins: sub.some((r) => r.topHitId === undefined) ? null : sub.filter((r) => r.wrongPin).length,
       nonOkResponses: sub.filter((r) => r.httpStatus !== 200).length,
       latencyMs: { p50: quantile(lat, 0.5), p95: quantile(lat, 0.95), max: Math.max(0, ...lat) },
       failureReasons: reasons,
