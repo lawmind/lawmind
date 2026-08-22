@@ -325,7 +325,10 @@ const restoreSeconds = (Date.now() - restoreStarted) / 1000;
 console.log('\nVERIFY  table                          source     restored   match');
 let allMatch = true;
 for (const m of packing) {
-  let restored = 'MISSING';
+  // A table that cannot be counted did not restore. `MISSING` rather than 0,
+  // because "the table is not there" and "the table is empty" are the two
+  // states this whole exercise exists to tell apart.
+  let restored;
   try {
     restored = pg('psql', [...conn, '-d', SCRATCH, '-t', '-A', '-c', `SELECT count(*) FROM public.${m.table}`]).trim();
   } catch {
