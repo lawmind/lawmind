@@ -193,9 +193,29 @@ type ResultRow = {
    * court with the wrong case. Scoring only the gold's rank makes those two
    * outcomes the same number.
    *
-   * Null when nothing came back. `wrongPin` is deliberately narrow — it means
-   * an EXACT-ROUTE class returned something at rank 1 that is not the gold,
-   * which is the only place the product claims certainty rather than relevance.
+   * Null when nothing came back.
+   *
+   * ── WHAT `wrongPin` DOES AND DOES NOT PROVE ─────────────────────────────
+   *
+   * It means: an EXACT-ROUTE class returned something at rank 1 that is not the
+   * gold. It does NOT prove the result was PINNED. `caseNamePins` puts a pin at
+   * rank 1 with an infinite score, but an ordinary ranked first result looks
+   * identical from outside the HTTP response, and this harness only sees the
+   * response. Calling every one of these "the product pinned the wrong case"
+   * would be a claim the instrument cannot support.
+   *
+   * What makes it worth recording anyway is the shape of the ones inspected by
+   * hand: `RAHUL GANDHI Vs THE STATE OF JHARKHAND` returning `NARU MANDAL Vs
+   * UNION OF INDIA` first, and `POONAM Vs STATE OF U.P. AND 4 OTHERS`
+   * returning `NEERAJ Vs STATE OF HP AND OTHERS`. Different parties, different
+   * states, different cases — the boilerplate matched and the party name did
+   * not. `retrieve.ts` predicts exactly this in its own comment about
+   * `word_similarity` being reliable "only when the party names are
+   * distinctive".
+   *
+   * For a case-name search that distinction barely matters to the advocate:
+   * whether the wrong case arrived by a pin or by a ranker, it is at the top of
+   * the page under a query that named a different case.
    */
   topHitId?: string | null;
   wrongPin: boolean;
