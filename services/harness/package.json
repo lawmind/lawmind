@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "launch:bench": "tsx src/launch-benchmark-cli.ts",
+    "reach:docvec": "tsx src/document-vector-reachability-cli.ts",
     "test": "tsx --test --test-concurrency=1 src/*.test.ts",
     "harness": "tsx src/run-cli.ts",
     "corpus": "tsx src/corpus-cli.ts",

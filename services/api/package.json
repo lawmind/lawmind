@@ -8,6 +8,7 @@
   "//app-export": "Added by NEW1, 22 Aug 2026, additively, for the same reason as //llm-exports above. LAUNCH_BENCHMARK_V1 must measure the REAL production path, and the real path is the Hono app: the 500-char validator, answerStructured's exact-identity gate, embedQuery's 2s budget, THEN hybridSearch. A harness that imports only ./search/retrieve skips the first three and reports a number about a function rather than about the product -- production-route-benchmark.ts did exactly that and its dense arm never ran. Exporting the app is strictly additive; nothing in services/api changes behaviour, and createApp already takes its deps by injection so the harness supplies its own sql and embedQuery.",
   "exports": {
     "./app": "./src/app.ts",
+    "./judgments/precedential-effect": "./src/judgments/precedential-effect.ts",
     "./briefings/assemble": "./src/briefings/assemble.ts",
     "./push/expo": "./src/push/expo.ts",
     "./citations/fanout": "./src/citations/fanout.ts",

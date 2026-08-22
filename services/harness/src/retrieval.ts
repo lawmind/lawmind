@@ -16,6 +16,11 @@
  */
 import { expandByCitations } from '@lawmind/api/search/graph-expand';
 import {
+  precedentialEffect,
+  precedentialPolicy,
+  type OverruledStatus,
+} from '@lawmind/api/judgments/precedential-effect';
+import {
   hybridSearch,
   passagesForRerank,
   type RetrievalMode,
@@ -217,6 +222,11 @@ export async function scoreQuery(
       for (const s of fresh) {
         const row = byId.get(s.judgmentId);
         if (!row) continue;
+        const effectOf = precedentialEffect({
+          overruledStatus: row.overruled_status as OverruledStatus,
+          inboundRelationships: [],
+        });
+        const effectPolicy = precedentialPolicy(effectOf);
         results.push({
           judgmentId: row.id,
           caseTitle: row.case_title,
@@ -224,7 +234,26 @@ export async function scoreQuery(
           reporterCitations: [],
           court: '',
           judgmentDate: '',
-          overruledStatus: row.overruled_status,
+          /**
+           * Derived through `precedential-effect.ts`, not copied from the
+           * column, because LCC's OD-14 split made those two different
+           * questions: `overruled_status` is what is STORED and
+           * `policy.bannerStatus` is what RENDERS. A harness stub that copied
+           * the column would be the only place left still conflating them.
+           *
+           * `inboundRelationships: []` is honest rather than lazy. This is a
+           * SYNTHETIC graph-suggestion candidate assembled from a judgments
+           * read that never loaded citation edges, so the correct input is
+           * "no verified adverse edge was consulted" — which is exactly what an
+           * empty list means to the module. It cannot manufacture a treatment
+           * nobody read, and `unappliedTreatment` is therefore null rather than
+           * a guess.
+           */
+          overruledStatus: effectPolicy.bannerStatus,
+          overruledStatusStored: row.overruled_status,
+          precedentialEffect: effectOf,
+          canAddToMatter: effectPolicy.addToMatter === 'allow',
+          unappliedTreatment: null,
           overruledByJudgmentId: null,
           overruledParas: null,
           overruledNote: null,

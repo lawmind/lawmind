@@ -147,7 +147,23 @@ export function classifyFailure(input: {
 
   const s = input.state;
   if (!s.held) return 'AUTHORITY_NOT_HELD';
-  if (s.textSafety === 'UNSAFE_VERIFIED') return 'TEXT_UNSAFE';
+  /**
+   * TEXT_UNSAFE fires only where the BODY TEXT is the route to the document.
+   *
+   * NEW2's `judgment_quality_contract` (migration 0072, bus 1005) splits
+   * `body_text_safe` from `metadata_discoverable` and asks explicitly that the
+   * two not be collapsed. They are right, and the first cut of this cascade got
+   * it wrong: it charged every failure on a damaged document to TEXT_UNSAFE
+   * whatever the query was.
+   *
+   * A glyph-dumped judgment is still perfectly findable by its citation and by
+   * its case name, because `neutral_citation`, `case_title` and
+   * `judgment_citation_aliases` do not come from the body. Blaming a citation
+   * miss on body damage would send NEW2 to OCR a document whose identity fields
+   * were never damaged — a true statement about the row and a false one about
+   * the failure, which is exactly what this cascade exists to prevent.
+   */
+  if (s.textSafety === 'UNSAFE_VERIFIED' && !EXACT_ROUTE_CLASSES.includes(input.launchClass)) return 'TEXT_UNSAFE';
   if (s.semanticTier === 'NOT_ELIGIBLE' || s.semanticTier === 'UNRESOLVED_EXPERIMENTAL') return 'NOT_ELIGIBLE';
   // An exact-identity route needs no vector, so absence of one cannot be the
   // reason a citation or a title failed.

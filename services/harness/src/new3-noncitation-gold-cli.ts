@@ -135,7 +135,9 @@ async function main() {
 
     function containsOwnCitation(evidence: string, live: { case_title: string; neutral_citation: string | null; reporter_citations: string[] }): boolean {
       const hay = evidence.toLowerCase();
-      const candidates = [live.neutral_citation, ...live.reporter_citations].filter((s): s is string => Boolean(s) && s.length >= 6);
+      const candidates = [live.neutral_citation, ...live.reporter_citations].filter(
+        (s): s is string => s !== null && s.length >= 6,
+      );
       return candidates.some((c) => hay.includes(c.toLowerCase()));
     }
 

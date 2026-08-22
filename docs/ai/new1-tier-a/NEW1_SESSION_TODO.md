@@ -1,3 +1,22 @@
+# NEW1 SESSION — 22 Aug 2026 (public store launch program)
+
+Foreground responsibility this session: **whether a user finds the RIGHT LAW
+quickly.** The GPU walk is background infrastructure, not the product.
+
+| # | task | state | evidence |
+| --- | --- | --- | --- |
+| L1 | P0 — restore the coverage walk, killed by LCC's `0070` contract change | **DONE** | 30 keeper relaunches had failed identically since 23:27Z. Reconciled against `pg_get_viewdef`, not against bus 0995. Pin `2e7b53afe35fa81c`, commit `1789014`. `contract hash OK` on every batch since 03:30Z |
+| L2 | P1 — consolidate and FREEZE LAUNCH_BENCHMARK_V1 | **DONE** | `launch-gold.ts`. 1,029 rows, `frozenHash ba9357cba2fbf297`. citation 229 · case_title 229 · fact_passage 372 · nl_doctrine 199. 229 verbatim-passage rows excluded on CONSTRUCTION, 4 on the 500-char cap |
+| L3 | P7 — bare citations were not exploiting exact routing | **DONE** | 12,158 ms → 4–352 ms, and the ambiguous case now surfaces. `structured.ts`, commit `880f206`, 63/63 tests |
+| L4 | THE LAUNCH FINDING — production cannot see the corpus | **DONE (measured)** | `judgment_chunks` holds **40,161** judgments; `new1_doc_vector_stage` holds **675,711** production cannot read. **5 of 1,029** gold authorities have a chunk |
+| L5 | Act on NEW2 0072 — `TEXT_UNSAFE` must not fire for exact-route classes | TODO | body damage is no evidence against identity fields; `metadata_discoverable` and `body_text_safe` are separate booleans |
+| L6 | Sweep the 2,530 staged vectors on newly-convicted documents | TODO | NEW2 bus 1005; separate from the 64,083 already quarantined |
+| L7 | P1 — run the frozen benchmark end to end through the app | TODO | blocked on nothing but box contention; bounded and checkpointed |
+| L8 | P3/P7 — would the document vectors answer what production cannot | TODO | `document-vector-reachability-cli.ts` written; **DEFERRED by the resource gate** (GPU 100%, owned by the walk) |
+| L9 | P8 — hand NEW3/RCC one stable search contract | TODO | |
+
+---
+
 # NEW1 SESSION TODO — 20 Aug 2026
 
 State machine per item: `TODO` · `RUNNING` · `DONE` (observed) · `BLOCKED` (with

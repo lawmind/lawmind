@@ -55,7 +55,12 @@ async function main() {
     const sem = JSON.parse(readFileSync(semPath, 'utf8'));
 
     const uncitedIds: string[] = uncited.cases.map((c: { authority_id: string }) => c.authority_id);
-    const semIds: string[] = [...new Set(sem.rows.map((r: { goldJudgmentId: string }) => r.goldJudgmentId))];
+    // `sem` comes from an untyped `JSON.parse`, so `.map` is `any[]` and `new Set`
+    // of it widens to `Set<unknown>`. Annotating the Set rather than casting the
+    // spread keeps the element type asserted in one place.
+    const semIds: string[] = [
+      ...new Set<string>(sem.rows.map((r: { goldJudgmentId: string }) => r.goldJudgmentId)),
+    ];
     const allIds = [...new Set([...uncitedIds, ...semIds])];
 
     const staged = await sql<{ judgment_id: string }[]>`
