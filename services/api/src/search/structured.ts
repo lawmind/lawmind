@@ -41,6 +41,7 @@ import { QueryError } from './qlang/lex.ts';
 import { type StructuredHit, countStructured, runStructured } from './qlang/compile.ts';
 import type { Node } from './qlang/parse.ts';
 import { looksStructured, parse } from './qlang/parse.ts';
+import { classifyQuery, warrantsExactLookup } from './query-shape.ts';
 
 export type StructuredOutcome =
   /** Not a structured query at all. The caller runs semantic search as before. */
@@ -103,12 +104,66 @@ function isBareCitationTerm(node: Node): boolean {
  * reason: it requires a field name or an explicit operator, so lower-case "or"
  * in *"bail or parole"* stays a description.
  */
+/**
+ * A bare neutral citation, rewritten to the `cite:"..."` the parser understands.
+ *
+ * ── WHY THIS EXISTS — MEASURED, 22 Aug 2026, NEW1 ───────────────────────────
+ *
+ * `looksStructured` needs a field name, an operator or a quote, so
+ * `2023:AHC:170543` is prose to it. The advocate typing the same citation WITH
+ * `cite:` in front got a different pipeline, and the gap was not small:
+ *
+ *   cite:"2023:AHC:170543"   answerStructured          4 - 352 ms
+ *   2023:AHC:170543          hybridSearch          12,158 ms  (sparse arm alone)
+ *
+ * Same corpus, same box, same minute. The cause is the AND-first sparse arm:
+ * `plainto_tsquery` turns the citation into `'2023' & 'ahc' & '170543'`, and
+ * although the AND matches exactly ONE row, GIN must read the posting lists of
+ * the common lexemes to prove it — `EXPLAIN (ANALYZE, BUFFERS)` shows
+ * `read=150,912` blocks against a 16 GB `judgments_full_text_idx` and 2 GB of
+ * `shared_buffers`. An index eight times the size of the cache is read from disk
+ * every time. The bare citation was paying 1.2 GB of I/O to reach an answer the
+ * exact lookup already had.
+ *
+ * ── AND IT IS A SAFETY FIX BEFORE IT IS A SPEED FIX ─────────────────────────
+ *
+ * `2025:AHC:32900` resolves to TWO judgments. On this path that returns
+ * `ambiguous`, which the route renders as a disambiguation because
+ * `CITATION_HARNESS.md` §A3d.4 allows exactly one target or nothing. On the
+ * hybrid path it returned neither: `exactCitation` declines to pin when it finds
+ * two, so the advocate got an ordinary ranked list with no indication that the
+ * citation they typed names more than one case. The slow spelling was also the
+ * unsafe one.
+ *
+ * ── WHY A REWRITE AND NOT A NEW BRANCH ──────────────────────────────────────
+ *
+ * Everything downstream — `countStructured`, the `isBareCitationTerm`
+ * ambiguity rule, `explainQuery`'s interpretation — is already correct for
+ * `cite:`. A second code path would have to re-earn all of it, and the two would
+ * drift. This produces the identical AST, so the two spellings become the same
+ * query rather than two queries that agree today.
+ *
+ * `warrantsExactLookup` is the SAME guard `retrieve.ts` uses before pinning, so
+ * the two mechanisms cannot disagree about what a citation is. The quote is
+ * escaped because a citation is user input reaching a parser: no citation format
+ * contains a double quote, and a would-be injection therefore fails to parse and
+ * falls through to prose rather than becoming a query.
+ */
+function bareCitationAsField(query: string): string | null {
+  const shape = classifyQuery(query);
+  if (!warrantsExactLookup(shape) || shape.citation === null) return null;
+  if (shape.citation.includes('"')) return null;
+  return `cite:"${shape.citation}"`;
+}
+
 export async function answerStructured(
   sql: Sql,
   query: string,
   limit: number,
 ): Promise<StructuredOutcome> {
-  if (!looksStructured(query)) return { kind: 'not_structured' };
+  const asField = looksStructured(query) ? null : bareCitationAsField(query);
+  if (asField !== null) query = asField;
+  else if (!looksStructured(query)) return { kind: 'not_structured' };
 
   let ast;
   try {
