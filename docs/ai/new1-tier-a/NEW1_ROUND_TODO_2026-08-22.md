@@ -68,7 +68,17 @@ retrieval quality.
       because the recovery pilot is 67 documents and none are staged — not because
       anything would stop recovered text entering the GPU once NEW2 writes it into
       `full_text` at scale. That rule needs to exist before the recovery program grows.
-- [ ] **P0.7** One more liveness check before the session's final report
+- [x] **P0.7** FINAL liveness check — and it found the walk DEAD a second time, from a
+      different cause. The runner ABORTED `tier-a-batch-00112` at 16:37:33Z after three
+      `fetch failed` attempts. Root cause measured, not guessed: **the keeper spawned a
+      replacement sidecar on every health miss and never killed the one it replaced.**
+      After 15 restarts the box held **16 sidecar processes holding 7,872 MiB of
+      8,188 MiB of VRAM at 1% GPU utilisation** — none serving, all holding — so each
+      new spawn had no memory to load a model into and was unreachable too.
+      Fixed in `sidecar-keeper.mjs` (`killExistingSidecars()` before every spawn),
+      orphans cleared, keeper restarted on the fixed code, **one** sidecar,
+      VRAM 533 MiB, `/health` 24 ms, `/embed` 539 ms, walk relaunched and advancing
+      (`START lcc-00029`, 16:50Z).
 - [x] **P0.8** Walk verified healthy again at 15:15Z — batch `lcc-00110`, worklist
       89/864. Stage is **985,539 rows**, so the P7 1M checkpoint is close.
 
