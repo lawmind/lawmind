@@ -13,9 +13,14 @@
 -- at 23:00) has to answer exactly this question every night. A metric whose
 -- query cannot finish is a metric nobody reads.
 --
--- PARTIAL, and that is the whole point. Measured on the corpus, only 101
--- judgments carry a non-`none` status — 73 `set_aside`, 17 `doubted`, 8
--- `partly_set_aside`, plus 3 others. A full index would be 18.7M entries to
+-- PARTIAL, and that is the whole point. Measured on the corpus AFTER the index
+-- existed and the count could finally be run: exactly 98 judgments carry a
+-- non-`none` status — 73 `set_aside`, 17 `doubted`, 8 `partly_set_aside`, and
+-- no others. (An earlier note here said "101, plus 3 others"; that came from a
+-- join against `judgment_citations` and counted three judgments whose stored
+-- status is `none`. Corrected against the direct count.) The same query that
+-- was cancelled at 45,708 ms now returns in **247 ms**.
+-- A full index would be 18.7M entries to
 -- distinguish 101 rows; the partial index is a few kilobytes and answers the
 -- only question anyone asks of this column. Rows flipping INTO a non-`none`
 -- status enter the index on update, which is the direction that matters.

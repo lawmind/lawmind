@@ -1,0 +1,4053 @@
+{
+  "kind": "new1_document_vector_reachability",
+  "measuredAt": "2026-08-22T05:28:22.767Z",
+  "frozenHash": "ba9357cba2fbf297",
+  "probeTable": "new1_probe_half_250k",
+  "probeRows": 256998,
+  "conditions": "LOCAL_CONTENDED — the Tier-A walk and two other lanes were writing throughout",
+  "upperBoundBecause": [
+    "256,998 distractors, against 675,711 staged today and ~8.85M in a finished Tier A",
+    "the probe was cut value-ordered, so its membership correlates with inbound citations",
+    "dense arm alone — no sparse fusion, no RRF, no exact pinning"
+  ],
+  "productionComparison": {
+    "productionDenseIndex": "judgment_chunks",
+    "productionDistinctJudgments": 40161,
+    "goldAuthoritiesWithAChunk": 5,
+    "goldAuthoritiesTotal": 1029,
+    "note": "production cannot reach 99.5% of this gold at any rank, at any depth"
+  },
+  "efSearch": 200,
+  "topK": 20,
+  "byClass": {
+    "fact_passage": {
+      "queries": 372,
+      "goldPresentInIndex": 355,
+      "goldAbsentFromIndex": 17,
+      "scoredOn": 355,
+      "successAt1": 9.58,
+      "successAt5": 15.21,
+      "successAt20": 20.56,
+      "mrr": 0.1217,
+      "latencyMs": {
+        "p50": 715,
+        "p95": 4920,
+        "max": 6968
+      }
+    },
+    "nl_doctrine": {
+      "queries": 199,
+      "goldPresentInIndex": 195,
+      "goldAbsentFromIndex": 4,
+      "scoredOn": 195,
+      "successAt1": 9.23,
+      "successAt5": 13.33,
+      "successAt20": 16.41,
+      "mrr": 0.1106,
+      "latencyMs": {
+        "p50": 299,
+        "p95": 643,
+        "max": 891
+      }
+    }
+  },
+  "rows": [
+    {
+      "queryId": "ISSUE-001",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5508,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-002",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4867,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-003",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 5029,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-004",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5271,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-005",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 4935,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-006",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4671,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-007",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 6968,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-008",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5754,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-009",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5984,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-010",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5016,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-011",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4129,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-012",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3985,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-013",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4338,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-014",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 4107,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-015",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5364,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-016",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3713,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-017",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 5311,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-018",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4020,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-019",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4292,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-020",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3158,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-021",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3902,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-022",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4498,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-023",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2245,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-024",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4914,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-025",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2963,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-026",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2755,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-027",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3482,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-028",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2362,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-029",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 3494,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-030",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3729,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-031",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1752,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-032",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2116,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-033",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3138,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-034",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3540,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-035",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3736,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-036",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 3955,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-037",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2514,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-038",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3919,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-039",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3175,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-040",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2675,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-041",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4920,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-042",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 4380,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-043",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4296,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-044",
+      "launchClass": "fact_passage",
+      "rank": 12,
+      "ms": 5939,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-045",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3607,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-046",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3921,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-047",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 4893,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-048",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3396,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-049",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 6145,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-050",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3235,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-051",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4855,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-052",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4871,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-053",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4796,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-054",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5912,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-055",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5387,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-056",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3759,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-057",
+      "launchClass": "fact_passage",
+      "rank": 17,
+      "ms": 4723,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-058",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4092,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-059",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4660,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-060",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3789,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-061",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5087,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-062",
+      "launchClass": "fact_passage",
+      "rank": 17,
+      "ms": 4657,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-063",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3201,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-064",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3198,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-065",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 4095,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-066",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 6223,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-067",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 5983,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-068",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 6927,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-069",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2376,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-070",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2222,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-071",
+      "launchClass": "fact_passage",
+      "rank": 7,
+      "ms": 2311,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-072",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1706,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-073",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1764,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-074",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1765,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-075",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 620,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-076",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 2278,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-077",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2824,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-078",
+      "launchClass": "fact_passage",
+      "rank": 3,
+      "ms": 1425,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-079",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1598,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-080",
+      "launchClass": "fact_passage",
+      "rank": 20,
+      "ms": 1424,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-081",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1461,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-082",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1659,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-083",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1449,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-084",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2296,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-085",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 801,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-086",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1518,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-087",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1204,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-088",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 623,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-089",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 988,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-090",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 916,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-091",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1249,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-092",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1053,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-093",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2272,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-094",
+      "launchClass": "fact_passage",
+      "rank": 15,
+      "ms": 2144,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-095",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 1512,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-096",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1588,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-097",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 580,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-098",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 626,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-099",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1538,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-100",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1512,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-101",
+      "launchClass": "fact_passage",
+      "rank": 17,
+      "ms": 1405,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-102",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2642,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-103",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 2352,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-104",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 318,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-105",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 596,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-106",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1618,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-107",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1082,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-108",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1418,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-109",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 804,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-110",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1450,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-111",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1393,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-112",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1541,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-113",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 3228,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-114",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1333,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-115",
+      "launchClass": "fact_passage",
+      "rank": 5,
+      "ms": 1360,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-116",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1574,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-117",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 877,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-118",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 971,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-119",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1474,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-121",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 1558,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-122",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1659,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-123",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1229,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-124",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1734,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-125",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 335,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-126",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1394,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-127",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 659,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-128",
+      "launchClass": "fact_passage",
+      "rank": 20,
+      "ms": 1634,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-129",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1182,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-130",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1444,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-131",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 905,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-132",
+      "launchClass": "fact_passage",
+      "rank": 8,
+      "ms": 1600,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-133",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 748,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-134",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 427,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-135",
+      "launchClass": "fact_passage",
+      "rank": 13,
+      "ms": 1223,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-136",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 979,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-137",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 852,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-138",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1325,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-139",
+      "launchClass": "fact_passage",
+      "rank": 11,
+      "ms": 912,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-140",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1548,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-141",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 461,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-142",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 829,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-143",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1001,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-144",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 569,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-145",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 892,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-146",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1345,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-147",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 600,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-148",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 858,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-149",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1209,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-150",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 689,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-151",
+      "launchClass": "fact_passage",
+      "rank": 3,
+      "ms": 1154,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-152",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 705,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-153",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 434,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-154",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 977,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-155",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 784,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-156",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 797,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-157",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1067,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-158",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 793,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-159",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 539,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-160",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1815,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-161",
+      "launchClass": "fact_passage",
+      "rank": 20,
+      "ms": 774,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-162",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 999,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-163",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 379,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-164",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1049,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-165",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 381,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-166",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 545,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-167",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 315,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-168",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 457,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-169",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 972,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-170",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 981,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-171",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 667,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-172",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1054,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-173",
+      "launchClass": "fact_passage",
+      "rank": 4,
+      "ms": 606,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-174",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 668,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-175",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 246,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-176",
+      "launchClass": "fact_passage",
+      "rank": 8,
+      "ms": 745,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-177",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 341,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-178",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 412,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-179",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 494,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-180",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 477,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-181",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1109,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-182",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 285,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-183",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1019,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-184",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 223,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-185",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 708,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-186",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 118,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-187",
+      "launchClass": "fact_passage",
+      "rank": 9,
+      "ms": 766,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-188",
+      "launchClass": "fact_passage",
+      "rank": 4,
+      "ms": 1205,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-189",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 310,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-190",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1848,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-191",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 374,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-192",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 276,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-193",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1051,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-194",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1935,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-195",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1050,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-196",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 420,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-198",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 487,
+      "inIndex": false
+    },
+    {
+      "queryId": "ISSUE-199",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 825,
+      "inIndex": true
+    },
+    {
+      "queryId": "ISSUE-200",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 455,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-001",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 671,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-002",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1762,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-003",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 715,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-004",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 261,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-005",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 446,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-006",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 813,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-007",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 749,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-008",
+      "launchClass": "fact_passage",
+      "rank": 5,
+      "ms": 1036,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-009",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 857,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-010",
+      "launchClass": "fact_passage",
+      "rank": 4,
+      "ms": 742,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-011",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 584,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-012",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 815,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-013",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 718,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-014",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 628,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-015",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 949,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-016",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 994,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-017",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 1062,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-018",
+      "launchClass": "fact_passage",
+      "rank": 3,
+      "ms": 657,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-019",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 969,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-020",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 449,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-021",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 544,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-022",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1261,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-023",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 453,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-024",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 732,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-025",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 898,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-026",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1352,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-027",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 476,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-028",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 867,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-029",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 280,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-030",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 604,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-031",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 638,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-032",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 502,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-033",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 392,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-034",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 334,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-035",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 761,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-036",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 527,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-037",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 797,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-038",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 421,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-039",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 534,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-040",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 421,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-041",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 303,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-042",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 204,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-043",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 489,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-044",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 865,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-045",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 567,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-046",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 666,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-047",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 581,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-048",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 586,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-049",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 303,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-050",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 265,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-051",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 602,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-052",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 648,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-053",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 284,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-054",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 729,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-055",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 478,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-056",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 283,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-057",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 535,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-058",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 537,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-059",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 448,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-060",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 1152,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-061",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 304,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-062",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 433,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-063",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 281,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-064",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 308,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-065",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 637,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-066",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 487,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-067",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 456,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-068",
+      "launchClass": "fact_passage",
+      "rank": 10,
+      "ms": 284,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-069",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 211,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-070",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 402,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-071",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 305,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-072",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 497,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-073",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 434,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-074",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 461,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-075",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 718,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-076",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 262,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-077",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 698,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-078",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 630,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-079",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 364,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-080",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 344,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-081",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 610,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-082",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 478,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-083",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 256,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-084",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 392,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-085",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 289,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-086",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 385,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-087",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 246,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-088",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 258,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-089",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 237,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-090",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 217,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-091",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 224,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-092",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 238,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-093",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 458,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-094",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 291,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-095",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 268,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-096",
+      "launchClass": "fact_passage",
+      "rank": 6,
+      "ms": 403,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-097",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 345,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-098",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 459,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-099",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 499,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-100",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 281,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-101",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 338,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-102",
+      "launchClass": "fact_passage",
+      "rank": 3,
+      "ms": 516,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-103",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 772,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-104",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 339,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-105",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 159,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-106",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 455,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-107",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 545,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-108",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 925,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-109",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 331,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-110",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 330,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-111",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 262,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-112",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 384,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-113",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 469,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-114",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 338,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-115",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 609,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-116",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 389,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-117",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 528,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-118",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 432,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-119",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 392,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-120",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 327,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-121",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 317,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-122",
+      "launchClass": "fact_passage",
+      "rank": 11,
+      "ms": 411,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-123",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 521,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-125",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 313,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-126",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 348,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-127",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 283,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-128",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 554,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-129",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 329,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-130",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 359,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-131",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 396,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-132",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 384,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-133",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 331,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-134",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 208,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-135",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 293,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-136",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 190,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-137",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 166,
+      "inIndex": false
+    },
+    {
+      "queryId": "UAG2-138",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 257,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-139",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 779,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-140",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 628,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-141",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 153,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-142",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 473,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-143",
+      "launchClass": "fact_passage",
+      "rank": 17,
+      "ms": 538,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-144",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 381,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-145",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 409,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-146",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 460,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-147",
+      "launchClass": "fact_passage",
+      "rank": 9,
+      "ms": 363,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-148",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 362,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-149",
+      "launchClass": "fact_passage",
+      "rank": 3,
+      "ms": 672,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-150",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 498,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-151",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 315,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-152",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 455,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-153",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 334,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-154",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 396,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-155",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 281,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-156",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 222,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-157",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 391,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-158",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 394,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-159",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 421,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-160",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 216,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-161",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 177,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-162",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 300,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-163",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 285,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-164",
+      "launchClass": "fact_passage",
+      "rank": 2,
+      "ms": 347,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-165",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 228,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-166",
+      "launchClass": "fact_passage",
+      "rank": 5,
+      "ms": 278,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-167",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 406,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-168",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 256,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-169",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 306,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-170",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 162,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-171",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 366,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-172",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 401,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-173",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 343,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-174",
+      "launchClass": "fact_passage",
+      "rank": null,
+      "ms": 307,
+      "inIndex": true
+    },
+    {
+      "queryId": "UAG2-175",
+      "launchClass": "fact_passage",
+      "rank": 1,
+      "ms": 492,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-001",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 168,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-002",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 487,
+      "inIndex": false
+    },
+    {
+      "queryId": "PROP-003",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 891,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-004",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 225,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-005",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 429,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-006",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 365,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-007",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 564,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-008",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 260,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-009",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 518,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-010",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 219,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-011",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 461,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-012",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 408,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-013",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 629,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-014",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 547,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-015",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 539,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-016",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 435,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-017",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 321,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-018",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 802,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-019",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 445,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-020",
+      "launchClass": "nl_doctrine",
+      "rank": 9,
+      "ms": 386,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-021",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 378,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-022",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 608,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-023",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 398,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-024",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 306,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-025",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 225,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-026",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 372,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-027",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 212,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-028",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 426,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-029",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 293,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-030",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 456,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-031",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 366,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-032",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 666,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-033",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 749,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-034",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 225,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-035",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 212,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-036",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 229,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-037",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 330,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-038",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 641,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-039",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 732,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-040",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 453,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-041",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 512,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-042",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 181,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-043",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 333,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-044",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 340,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-045",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 214,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-046",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 242,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-047",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 385,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-048",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 573,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-049",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 365,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-050",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 275,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-051",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 144,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-052",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 259,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-053",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 374,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-054",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 483,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-055",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 405,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-056",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 228,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-057",
+      "launchClass": "nl_doctrine",
+      "rank": 3,
+      "ms": 268,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-058",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 176,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-059",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 128,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-060",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 201,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-061",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 270,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-062",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 191,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-063",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 600,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-064",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 643,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-065",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 333,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-066",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 306,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-067",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 250,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-068",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 523,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-069",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 389,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-070",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 272,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-071",
+      "launchClass": "nl_doctrine",
+      "rank": 2,
+      "ms": 412,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-072",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 168,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-073",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 342,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-074",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 158,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-075",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 405,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-076",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 244,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-077",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 265,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-078",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 235,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-079",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 240,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-080",
+      "launchClass": "nl_doctrine",
+      "rank": 19,
+      "ms": 748,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-081",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 431,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-082",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 277,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-083",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 276,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-084",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 383,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-085",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 223,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-086",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 192,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-087",
+      "launchClass": "nl_doctrine",
+      "rank": 2,
+      "ms": 225,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-088",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 220,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-089",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 534,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-090",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 343,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-091",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 267,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-092",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 413,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-093",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 471,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-094",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 250,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-095",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 444,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-096",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 437,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-097",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 318,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-098",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 602,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-099",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 441,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-100",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 522,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-101",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 814,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-102",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 483,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-103",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 588,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-104",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 216,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-105",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 230,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-106",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 407,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-107",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 299,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-108",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 423,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-109",
+      "launchClass": "nl_doctrine",
+      "rank": 3,
+      "ms": 516,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-110",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 374,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-111",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 193,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-112",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 447,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-113",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 491,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-114",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 365,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-115",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 404,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-116",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 244,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-117",
+      "launchClass": "nl_doctrine",
+      "rank": 20,
+      "ms": 157,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-118",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 241,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-119",
+      "launchClass": "nl_doctrine",
+      "rank": 11,
+      "ms": 152,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-120",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 227,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-121",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 589,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-122",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 500,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-123",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 299,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-124",
+      "launchClass": "nl_doctrine",
+      "rank": 2,
+      "ms": 359,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-125",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 158,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-126",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 192,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-127",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 404,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-128",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 258,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-129",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 332,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-130",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 394,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-131",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 304,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-132",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 222,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-133",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 389,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-134",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 285,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-135",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 282,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-136",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 155,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-137",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 208,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-138",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 244,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-139",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 358,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-140",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 173,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-141",
+      "launchClass": "nl_doctrine",
+      "rank": 4,
+      "ms": 112,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-142",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 145,
+      "inIndex": false
+    },
+    {
+      "queryId": "PROP-143",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 183,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-144",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 122,
+      "inIndex": false
+    },
+    {
+      "queryId": "PROP-145",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 346,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-146",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 729,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-147",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 289,
+      "inIndex": false
+    },
+    {
+      "queryId": "PROP-148",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 243,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-149",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 267,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-150",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 258,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-151",
+      "launchClass": "nl_doctrine",
+      "rank": 3,
+      "ms": 257,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-152",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 344,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-153",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 269,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-154",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 320,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-155",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 356,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-156",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 198,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-157",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 181,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-158",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 312,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-159",
+      "launchClass": "nl_doctrine",
+      "rank": 6,
+      "ms": 232,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-160",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 153,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-161",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 213,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-162",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 616,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-163",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 244,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-165",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 154,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-166",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 277,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-167",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 201,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-168",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 305,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-169",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 349,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-170",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 236,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-171",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 340,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-172",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 222,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-173",
+      "launchClass": "nl_doctrine",
+      "rank": 7,
+      "ms": 468,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-174",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 575,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-175",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 292,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-176",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 140,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-177",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 421,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-178",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 93,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-179",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 250,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-180",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 268,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-181",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 176,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-182",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 169,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-183",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 840,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-184",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 240,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-185",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 239,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-186",
+      "launchClass": "nl_doctrine",
+      "rank": 5,
+      "ms": 291,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-187",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 372,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-188",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 170,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-189",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 213,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-190",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 167,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-191",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 268,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-192",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 261,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-193",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 506,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-194",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 260,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-195",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 409,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-196",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 287,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-197",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 236,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-198",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 122,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-199",
+      "launchClass": "nl_doctrine",
+      "rank": 1,
+      "ms": 303,
+      "inIndex": true
+    },
+    {
+      "queryId": "PROP-200",
+      "launchClass": "nl_doctrine",
+      "rank": null,
+      "ms": 203,
+      "inIndex": true
+    }
+  ]
+}
