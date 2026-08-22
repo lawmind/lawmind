@@ -6,7 +6,20 @@ Lane question: *can the rest of LawMind trust the underlying evidence?*
 ---
 
 ## P0 — quality jobs without starving the box
-- [x] **P0.1 Checkpoints inspected** — date-quality COMPLETE (713,136 read = written; 86.90% VERIFIED / 8.41% UNKNOWN / 4.68% SUSPECT) · text-safety screen COMPLETE (18,698,968 screened) · hc-classify LIVE, cursor advancing · recovery worker idle with 67 documents recovered
+- [x] **P0.1 Checkpoints inspected** — date-quality COMPLETE (713,136 read = written; 86.90% VERIFIED / 8.41% UNKNOWN / 4.68% SUSPECT) · text-safety screen COMPLETE (18,698,968 screened) · recovery worker idle with 67 documents recovered
+- [x] **P0.1b hc-classify STOPPED mid-session — corrected, because I reported it as live**
+      When first inspected its cursor was advancing and I recorded it as LIVE. It is not.
+      It stopped at **4,865,352 of 18,698,968 classified (26.0%)**, 13,833,616 remaining,
+      last cursor write ~13:33 local. Its error log's write-cancellation retries
+      (`57014`) are stamped **10:24 — before my first heavy scan at ~12:34** — and the
+      text-damage persist I resumed did not start until ~14:11, well after it stopped.
+      **So I cannot attribute the stop to my own work, and I am not going to claim
+      either way.** [INFER, weak]
+      The cursor file is now empty. That is **safe by design**: an unparseable
+      checkpoint restarts from zero, and the walk's predicate is
+      `hc_class_method IS NULL`, so a zero restart redoes nothing and skips nothing —
+      it only pays a longer first page. Not restarted: the gate read CPU 90.2% /
+      commit free 3.3%.
 - [x] **P0.2 Gate read before every heavy step** — and `DATABASE_URL` exported first, or DB_SCAN reads DEFER for the wrong reason
 - [x] **P0.3 Resumed the one stopped job, in a quiet window** — text-damage persist had been stopped at line 578,845 on resource grounds. Resumed at CPU 28% / GPU 1% and **finished the full 1,626,762-row export in 2,328s**: 79,381 `script_quality` claims written (+51,265 this session), 56,641 refused as stored-echo-only, 1,490,740 already claimed. One orphaned 12m47s query from my own killed process was cancelled rather than left holding IO.
 - [x] **P0.4 Distinctions checked in the data** — and one is broken. `body_text_safe` collapses TEXT_UNSAFE vs UNKNOWN; see P9.

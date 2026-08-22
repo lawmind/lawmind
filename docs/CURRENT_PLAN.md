@@ -12580,6 +12580,17 @@ a quiet window and **completed the full 1,626,762-row export**: 79,381
 Six newly-convicted CITED_AUTHORITY documents were enqueued for OCR; the worker
 was **not** started, because the gate had gone to CPU 82.6% / commit free 6.0%.
 
+**`hc-classify` stopped during this session and needs restarting.** I recorded it
+as LIVE early on — its cursor was advancing when I looked — and it is not. It
+stopped at **4,865,352 of 18,698,968 classified (26.0%)**, 13,833,616 remaining.
+Its `57014` write-cancellation retries are stamped 10:24, before my first heavy
+scan at ~12:34, and the persist job I resumed did not start until ~14:11, well
+after it stopped — so I cannot attribute the stop to my work and am not claiming
+either way. The cursor file is empty, which is safe by design: an unparseable
+checkpoint restarts from zero and the predicate is `hc_class_method IS NULL`, so
+nothing is redone or skipped, only a longer first page. Left stopped because the
+gate read CPU 90.2% / commit free 3.3%.
+
 ### Founder-queued
 
 - **FQ-DUPLICATE-DOCUMENTS** — 194,577 rows are one document held twice.
