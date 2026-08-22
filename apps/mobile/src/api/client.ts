@@ -76,7 +76,16 @@ import type {
  *     `/judgments/:id/authorities`, which answers the same question and more.
  */
 
-const BASE_URL = 'https://api-production-1c0b4.up.railway.app';
+/**
+ * `EXPO_PUBLIC_API_URL` is inlined at build time by Metro (the `EXPO_PUBLIC_`
+ * prefix is what makes an env var reach client code at all — see
+ * https://docs.expo.dev/guides/environment-variables/). Set it per channel in
+ * `eas.json` build profiles, or in a local `.env` for `expo start`. The
+ * fallback below is today's only known deployment and stays wrong until
+ * FQ-HOSTING (docs/FOUNDER_QUEUE.md) lands a real one — it is a fallback, not
+ * an endorsement.
+ */
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://api-production-1c0b4.up.railway.app';
 
 /** Court corridors have terrible connectivity; a request that never returns is worse than one that fails. */
 const TIMEOUT_MS = 15_000;

@@ -11,7 +11,15 @@
  * callers render that message, they do not paper over it.
  */
 
-const BASE_URL = 'https://api-production-1c0b4.up.railway.app';
+/**
+ * `NEXT_PUBLIC_API_URL` is inlined at build time by Next.js (the
+ * `NEXT_PUBLIC_` prefix is what makes an env var reach browser code at all).
+ * Set it per environment in Railway/hosting config or a local `.env.local`.
+ * The fallback below is today's only known deployment and stays wrong until
+ * FQ-HOSTING (docs/FOUNDER_QUEUE.md) lands a real one — it is a fallback, not
+ * an endorsement.
+ */
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api-production-1c0b4.up.railway.app';
 
 const TIMEOUT_MS = 15_000;
 
