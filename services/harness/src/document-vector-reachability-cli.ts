@@ -68,7 +68,7 @@
  * does not enforce that — `scripts/resource-gate.mjs` is the check, and it said
  * DEFER GPU_EMBED at 100% GPU when this was written.
  */
-import { writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -81,6 +81,13 @@ import { sslFor } from './db-url.ts';
 const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 const OUT_REL = process.env['OUT'] ?? 'docs/ai/new1-tier-a/document-vector-reachability.json';
 const OUT = isAbsolute(OUT_REL) ? OUT_REL : join(ROOT, OUT_REL);
+/**
+ * Checkpointed per query. 485 CPU embeddings on a contended box is long enough
+ * that a teardown is a realistic outcome, and this lane has already lost 160 of
+ * 283 queries once by writing only at the end.
+ */
+const CKPT_REL = process.env['CKPT'] ?? 'docs/ai/new1-tier-a/document-vector-reachability.checkpoint.jsonl';
+const CKPT = isAbsolute(CKPT_REL) ? CKPT_REL : join(ROOT, CKPT_REL);
 
 /** Production's own value (`retrieve.ts`), so the ANN behaves as it ships. */
 const EF_SEARCH = Number(process.env['HNSW_EF_SEARCH'] ?? 200);
@@ -121,9 +128,25 @@ async function main(): Promise<number> {
 
   const embedder = await getEmbedder();
   const results: Row[] = [];
+  const done = new Set<string>();
+  if (existsSync(CKPT)) {
+    for (const line of readFileSync(CKPT, 'utf8').split('\n')) {
+      if (!line.trim()) continue;
+      try {
+        const r = JSON.parse(line) as Row & { frozenHash?: string };
+        if (r.frozenHash && r.frozenHash !== gold.frozenHash) continue;
+        done.add(r.queryId);
+        results.push(r);
+      } catch {
+        // a truncated final line from a killed run
+      }
+    }
+    if (done.size > 0) console.log(`  resuming: ${done.size} already measured`);
+  }
 
   try {
     for (const [i, g] of rows0.entries()) {
+      if (done.has(g.queryId)) continue;
       const inIndex = present.has(g.goldAuthorityId);
       const t = Date.now();
       const [e] = await embedder.embed([g.query]);
@@ -137,7 +160,9 @@ async function main(): Promise<number> {
         const at = hits.findIndex((h) => h['judgment_id'] === g.goldAuthorityId);
         rank = at === -1 ? null : at + 1;
       }
-      results.push({ queryId: g.queryId, launchClass: g.launchClass, rank, ms: Date.now() - t, inIndex });
+      const row: Row = { queryId: g.queryId, launchClass: g.launchClass, rank, ms: Date.now() - t, inIndex };
+      results.push(row);
+      appendFileSync(CKPT, JSON.stringify({ ...row, frozenHash: gold.frozenHash }) + '\n');
       if ((i + 1) % 50 === 0) console.log(`  ${i + 1}/${rows0.length}`);
     }
   } finally {
