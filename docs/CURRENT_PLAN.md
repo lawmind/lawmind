@@ -12763,11 +12763,25 @@ page — NEW1: *"or the second copy simply arrives on page 2."*
   treatment whose paragraphs are unreadable) and `currentnessClaim` scoped to
   `lawmind_resolved_sources` + `asOf`. No copy written in the server, and the
   founder-facing UX question stays OPEN.
-- **Backup**: `scripts/lcc-moat-backup.mjs` — 34 irreplaceable tables, **1.533 GB
-  compressed, 85 s to dump**, then restored into a disposable database and
-  verified by row count and content checksum. `judgments` (151 GB) and
+- **Backup, and it is PROVED restorable**: `scripts/lcc-moat-backup.mjs` — 34
+  irreplaceable tables, **1.533 GB compressed, 85 s to dump, 820.7 s to restore
+  into a disposable database and verify**. 31 of 34 tables exact including
+  22,322,047 citation rows, content checksum MATCH. `judgments` (151 GB) and
   `judgment_paragraphs` (92 GB) are excluded because they rebuild from the AWS
   buckets.
+
+  **The restore failed twice before it passed, and both failures were the
+  point.** First: six tables came back MISSING because `pg_dump -t` does not
+  carry the custom TYPES its columns need — every one of the six has an enum
+  column, every table without one restored perfectly, so the dump looked healthy
+  and the pack was not. That is invisible to a dump-only backup: the artefact
+  exists, its bytes are intact, its sha256 matches, and it will not restore.
+  Second: the verification itself reported three mismatches that were live
+  writes after the snapshot — this session's own test suites seeding users — and
+  then overwrote the manifest with the live figures, deleting the evidence by
+  the act of looking. A `--skip-dump` run now reads the counts recorded at dump
+  time and restores from a pack that already exists, which is the more honest
+  exercise anyway.
 - **Validation**: `dateFrom`/`dateTo` were `z.string()` — `"yesterday"` is a
   valid date literal to Postgres and meant something we never intended. Now ISO,
   refined against the real calendar (`2026-02-30` is rejected), with the range
