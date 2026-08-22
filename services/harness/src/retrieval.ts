@@ -254,6 +254,13 @@ export async function scoreQuery(
           precedentialEffect: effectOf,
           canAddToMatter: effectPolicy.addToMatter === 'allow',
           unappliedTreatment: null,
+          /**
+           * LCC's P0 field. This stub reads `judgments` without consulting
+           * `script_quality`, so the honest value is the unconvicted one and
+           * `evidenceWithheld: false` — a synthetic candidate carries no body
+           * passage to withhold in the first place.
+           */
+          bodyText: { state: 'TEXT_UNKNOWN' as const, grade: 'NONE' as const, evidenceWithheld: false },
           overruledByJudgmentId: null,
           overruledParas: null,
           overruledNote: null,

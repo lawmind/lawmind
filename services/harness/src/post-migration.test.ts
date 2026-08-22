@@ -100,6 +100,14 @@ function hit(judgmentId: string, caseTitle = 'SOME CASE') {
     overruledByJudgmentId: null,
     overruledParas: null,
     overruledNote: null,
+    /**
+     * LCC's P0 field, added to `StructuredHit` 22 Aug. `TEXT_UNKNOWN` is what an
+     * unconvicted document honestly is — there is no CLEAN state, because no
+     * writer in this corpus has ever proved an extraction faithful. A fixture
+     * asserting anything stronger would be asserting something the schema
+     * cannot represent.
+     */
+    bodyText: { state: 'TEXT_UNKNOWN' as const, grade: 'NONE' as const, evidenceWithheld: false },
   };
 }
 
