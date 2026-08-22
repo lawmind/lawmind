@@ -498,6 +498,20 @@
       "when": 1786442700000,
       "tag": "0070_text_safety_grade",
       "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "7",
+      "when": 1786442800000,
+      "tag": "0071_text_recovery_queue",
+      "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1786442900000,
+      "tag": "0072_quality_contract",
+      "breakpoints": true
     }
   ]
 }
