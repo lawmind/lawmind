@@ -42,6 +42,7 @@ import { type StructuredHit, countStructured, runStructured } from './qlang/comp
 import type { Node } from './qlang/parse.ts';
 import { looksStructured, parse } from './qlang/parse.ts';
 import { classifyQuery, warrantsExactLookup } from './query-shape.ts';
+import { FIELDS } from './qlang/parse.ts';
 
 export type StructuredOutcome =
   /** Not a structured query at all. The caller runs semantic search as before. */
@@ -156,6 +157,62 @@ function bareCitationAsField(query: string): string | null {
   return `cite:"${shape.citation}"`;
 }
 
+/**
+ * Did this query reach the parser ONLY because it contains a bare AND/OR/NOT?
+ *
+ * ── THE DEFECT THIS EXISTS FOR — MEASURED, 22 Aug 2026, NEW1 ────────────────
+ *
+ * `looksStructured` treats a bare `AND`/`OR`/`NOT` as an operator, and is
+ * case-SENSITIVE so that lower-case "or" in *"bail or parole"* stays prose. What
+ * it did not anticipate is that Indian case titles are stored in UPPER CASE and
+ * routinely contain the word AND:
+ *
+ *   POONAM Vs STATE OF U.P. AND 4 OTHERS
+ *   MANOHAR LAL Vs STATE OF HARYANA AND OTHERS
+ *   SMT. VINITA BAHUGUNA Vs UNION OF INDIA AND 2 OTHERS
+ *
+ * `AND ANOTHER`, `AND OTHERS`, `AND ORS` is registry formatting, not a boolean.
+ * **100 of 229 case-title queries in LAUNCH_BENCHMARK_V1 — 43.7% — were parsed
+ * as boolean expressions**, matched nothing, and the route returned ZERO
+ * results in about two milliseconds. Cross-tabulated against the outcome, which
+ * is the test that separates a mechanism from a coincidence of magnitudes:
+ *
+ *   misrouted here      n=100    found in top 20:   4  ( 4.0%)   median    2 ms
+ *   not misrouted       n=129    found in top 20:  97  (75.2%)   median 2,559 ms
+ *
+ * An advocate typing an ordinary case name got nothing, instantly, with no
+ * search performed at all.
+ *
+ * ── WHY THE FIX IS HERE AND NOT IN `looksStructured` ────────────────────────
+ *
+ * Returning zero for a structured query that matches nothing is CORRECT and is
+ * the route's deliberate contract: a filter is not a suggestion, and blending
+ * ranked results into `judge:"Kania" AND section:138` would answer a question
+ * nobody asked. That reasoning holds completely for a query with an explicit
+ * field in it.
+ *
+ * It does not hold when the "structured" reading was itself an INFERENCE. If
+ * the only evidence was an upper-case AND, then a zero match is much better
+ * evidence that the inference was wrong than that the corpus is empty. So the
+ * outcome is downgraded to `not_structured` and the caller runs ordinary
+ * search — which is what it would have done had the heuristic never fired.
+ *
+ * Narrow on purpose: a query carrying a field prefix, a quote, or NEAR/n is
+ * untouched, keeps its zero, and keeps its interpretation. Only the inferred
+ * case is allowed to fall through, and only when it found nothing.
+ */
+export function structuredOnlyByBareOperator(source: string): boolean {
+  // \\b inside a template literal, because \b there is a BACKSPACE character
+  // rather than a word boundary -- and the resulting regex then quietly matches
+  // nothing instead of failing loudly.
+  if (new RegExp(String.raw`\b(?:${FIELDS.join('|')}):`, 'i').test(source)) return false;
+  if (/NEAR\/\d/i.test(source)) return false;
+  if (/"/.test(source)) return false;
+  // The word boundaries are load-bearing: without them this fires on ANDHRA,
+  // NOTICE and ORDER, which appear in a large share of Indian case titles.
+  return /\b(?:AND|OR|NOT)\b/.test(source);
+}
+
 export async function answerStructured(
   sql: Sql,
   query: string,
@@ -186,7 +243,13 @@ export async function answerStructured(
     runStructured(sql, ast, limit),
   ]);
 
-  if (total === 0) return { kind: 'no_match', parsed };
+  if (total === 0) {
+    // An INFERRED boolean that matched nothing was probably never a query —
+    // fall through to ordinary search rather than answering zero. See
+    // `structuredOnlyByBareOperator`.
+    if (structuredOnlyByBareOperator(query)) return { kind: 'not_structured' };
+    return { kind: 'no_match', parsed };
+  }
 
   /**
    * A bare citation resolving to more than one judgment is ambiguity, not an
