@@ -213,3 +213,93 @@ four verified gold files. The hash covers the ordered
 `(queryId, class, query, goldAuthorityId)` tuples and nothing else, so a rerun
 after a corpus change is the same benchmark and a rerun after a gold change is
 loudly a different one.
+
+---
+
+## 8. ADDENDUM, 22 Aug 2026 — what a second round of measurement changed
+
+Everything above stands. These are the facts that were not known when it was
+written, each with the artefact it came from, all in `docs/ai/new1-tier-a/`.
+
+### 8.1 CASE-NAME SEARCH — the headline number was measuring the corpus, not the ranker
+
+`case-title-decomposition.json`, `case-title-routing.json`.
+
+| population | n | rank 1 | in top 5 |
+| --- | --- | --- | --- |
+| the title is UNIQUE in the corpus | 155 | **94.2%** | 96.1% |
+| the title names 2–16 judgments | 74 | **12.2%** | 20.3% |
+| pooled — the 67.69% previously quoted | 229 | 67.69% | 71.62% |
+
+**32.3% of real case titles are printed on more than one judgment**, and they are
+different cases, not copies: `MANOHAR LAL Vs STATE OF HARYANA AND OTHERS` is 14
+judgments between 2012 and 2024. So the product surface has to answer an identity
+question, not a relevance one: show the candidates with court, date and case
+number, and let the advocate choose. LCC landed the pin-all shape in `f3eb461`.
+
+**For launch language:** "finds the case you name" is honest for a unique title
+and dishonest for a shared one. The safe form is that LawMind shows every
+judgment printed under the title you typed.
+
+### 8.2 A CITATION NAMES A DISPOSAL EVENT, NOT A JUDGMENT
+
+`citation-ambiguity-regrade.json`, and NEW2's PDF study (bus 1019).
+
+- **UNIQUE_CITATION_EXACTNESS: 100.00% s@1** over 212 queries — an exact citation
+  that names one judgment is found, first, every time, at p50 5 ms.
+- **AMBIGUOUS_CITATION_CANDIDATE_COVERAGE: n=17, gold reachable 88.24%, false
+  pins 0**, largest set 15 judgments.
+- Corpus-wide, 155,388 neutral-citation groups cover 361,045 judgments: 53.9%
+  duplicate documents, 30.7% connected matters under ONE common order, 13.9%
+  multiple orders in one case. `2025:PHHC:052490-DB` is **253 connected writ
+  petitions**, and all 253 PDFs print it on line 1.
+
+**For launch language:** the honest surface for a shared citation is *"this
+citation covers 253 connected matters"*. Not a warning, not an error — a fact
+about how Indian registries number disposals. The previously reported pooled
+97.38% is retired: it averaged a perfect lookup with a question that has no
+single answer.
+
+### 8.3 CONCEPT SEARCH — the coverage statement has not improved, and one arm is doing all the work
+
+- The dense arm searches `judgment_chunks`: **40,161 distinct judgments**, 0.21%
+  of the corpus, effectively Supreme Court only. In a 60-query sample of the
+  semantic gold, **0 of 60 target authorities exist there at all.**
+- The lexical arm is therefore the whole of concept search for a High Court
+  judgment — and it times out **35 times in 60** under production's 15 s bound.
+- The bounded replacement measured (rarest-3 ANDed) finds gold 34 times in 60 at
+  p50 815 ms, with 4 timeouts. Sent to LCC as bus 1025.
+
+**For launch language, unchanged and reinforced: there is no High Court concept
+search yet.** A benchmark covering only the Supreme Court must never be described
+as HC search, and a timed-out arm renders DEGRADED — never "no law found".
+
+### 8.4 WHY MORE EMBEDDINGS WILL NOT FIX 8.3 BY THEMSELVES
+
+`dense-failure-decomposition.json`, `head-offset.json`.
+
+The document vectors being staged are one point per 4,800 characters. Measured on
+the same documents: the whole embedded head text retrieves its own document at
+**rank 1, 68 times out of 68**; **one sentence** from inside that same head text
+retrieves it in the top 5 only **17.5%** of the time. It is a granularity
+mismatch, not a quality problem — which is why finishing the walk does not by
+itself turn into a High Court concept search, and why the product must not
+promise one on the strength of a vector count.
+
+### 8.5 PAGINATION — measured stable for identity pages, not yet for hybrid
+
+`rank-stability.json`. Three executions per query: case_title 3/3 and citation
+3/3 identical in set AND order; the two unstable rows are exactly the two where
+the degraded arm set varied. So an identity result can be paged by deterministic
+re-execution today, and a hybrid page cannot until the lexical arm stops timing
+out. `PAGINATION_RANKING_CONTRACT.md` holds the ordering rules and the fixtures.
+
+### 8.6 THE 500-CHARACTER CAP IS A SAFETY BOUND, NOT THE PRODUCT VISION
+
+Recorded here because §2 above states the cap without stating what it is. The cap
+exists because the current lexical path cannot safely execute an arbitrarily long
+query. LawMind needs a real path for long fact patterns and pasted passages; the
+research for it (bounded input-size sweep, deterministic condensation, bounded
+keyword extraction, no corpus-wide sparse scan) is NEW1's and is specified in
+`long-passage-cli.ts`. Until it lands: reject and guide honestly, never silently
+truncate, and never imply long-passage research is supported.

@@ -307,10 +307,24 @@ s@5 71.62%, MRR 0.6947, timeouts 9, wrongPins 65, p50 1,608 ms / p95 19,196 ms.
 
 ## P9 — ADVOCATE-100  *(waiting on NEW2)*
 
-- [!] **P9.1** BLOCKED on NEW2's primary-source-bound gold artifact
-- [ ] **P9.2** On delivery: ENGINEERING metrics separated from
-      TASK_COMPLETION_WITH_SAFE_EVIDENCE; no target language in queries; paraphrases
-      grouped by target/proposition family; failure taxonomy, not just aggregates
+- [x] **P9.1** UNBLOCKED — NEW2 delivered `docs/ai/new2/ADVOCATE100.json` (bus 1028):
+      100 tasks, 281 held targets, 42 proposition families, 0 leakage failures,
+      27 tasks whose correct answer is a REFUSAL.
+- [x] **P9.2 EXECUTED** — `advocate100-results.json`, `pnpm advocate100`.
+      **ENGINEERING:** TARGET_AT_1 10 · TARGET_IN_5 7 · TARGET_IN_PAGE 6 ·
+      TARGET_MISSED 43 · NO_BOUND_TARGET 28 · HTTP_400 6.
+      Of the 66 tasks with a bound target, **17 reach the top 5 (25.8%)**;
+      **12 of 42 proposition families**.
+      **TASK_COMPLETION** kept separate: RESOLVED_AT_1 10 · RESOLVED_BELOW_1 10 ·
+      TARGET_MISSED 51 · REFUSED_HONESTLY 5 · LAW_MOVED_RENDERED 3 ·
+      DISPOSAL_EVENT_MISSED 1 · **UNGRADEABLE_BY_SEARCH 20** (declared, never scored
+      as passes — `/search` returns authorities, not an answer).
+      By class: citation 6/8 at rank 1 · case_number 4/4 in top 5 · overruled 3/5 ·
+      case_title 3/6 — and **doctrine 1/12, fact_pattern 0/10, supporting_authority
+      0/6, adverse_authority 0/4**. Identity resolves, every concept class fails,
+      on a gold NEW2 authored independently with a leakage guard.
+      Latency p50 1,716 ms, p95 25,106 ms (the statement bound = concept timeouts).
+      **No launch threshold invented.**
 
 ---
 

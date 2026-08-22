@@ -136,25 +136,6 @@ sentences are boilerplate or damaged, so even as the target's own words they do
 not distinguish the target from thousands of judgments containing the same
 sentence. The measured labels are in §2.3, and they are a small minority.
 
-### 2.4 The finding: document-level vectors cannot answer sentence-level queries
-
-Put the two measurements side by side, on the SAME documents:
-
-| the query is… | gold's rank |
-| --- | --- |
-| the document's whole embedded head text (4,800 chars) | **rank 1, 68 of 68 sampled** |
-| ONE SENTENCE from inside that same embedded head text | top-5 **17.5%**, top-1 ~10% |
-
-The vector is a single point for 4,800 characters of judgment. One sentence is a
-few percent of that text and shares its generic legal register with hundreds of
-thousands of other judgments, so the sentence's own vector lands in a crowded
-neighbourhood the document's centroid is not the nearest member of.
-
-**That is a granularity mismatch, not a quality problem, and it is not fixed by a
-better model or a longer window.** It is the argument for indexing PASSAGES —
-which is what production's `judgment_chunks` already does for the 40,161
-judgments it covers.
-
 ### 2.3 The measured query-side labels
 
 `semantic-query-audit.json` measures four properties per query, none assigned
@@ -181,6 +162,25 @@ other **79 exceeded their 20-second budget and are recorded UNMEASURED**, not
 counted as answerable. So the visible query-side defects are small, and the
 sample that could have shown them larger did not finish. What §2.4 establishes
 does not depend on this split either way.
+
+### 2.4 The finding: document-level vectors cannot answer sentence-level queries
+
+Put the two measurements side by side, on the SAME documents:
+
+| the query is… | gold's rank |
+| --- | --- |
+| the document's whole embedded head text (4,800 chars) | **rank 1, 68 of 68 sampled** |
+| ONE SENTENCE from inside that same embedded head text | top-5 **17.5%**, top-1 ~10% |
+
+The vector is a single point for 4,800 characters of judgment. One sentence is a
+few percent of that text and shares its generic legal register with hundreds of
+thousands of other judgments, so the sentence's own vector lands in a crowded
+neighbourhood the document's centroid is not the nearest member of.
+
+**That is a granularity mismatch, not a quality problem, and it is not fixed by a
+better model or a longer window.** It is the argument for indexing PASSAGES —
+which is what production's `judgment_chunks` already does for the 40,161
+judgments it covers.
 
 ---
 
@@ -234,3 +234,62 @@ refuted ones:
   `ef_search = 200` on the 257k probe, LOCAL_CONTENDED. Exact sequential scan for
   the diagnostic ranks cost 0.7–5 s per query and is a diagnostic cost, not a
   product path.
+
+---
+
+## 6. The P3 recommendation, and what it is NOT allowed to claim yet
+
+**Recommendation: index PASSAGES, not documents, and do not spend GPU on a
+second document-level recipe.**
+
+The evidence that supports it is §2.4 — the same document, retrieved by its whole
+embedded head text (rank 1, 68 of 68) and by one sentence from inside that same
+text (top-5 17.5%). Nothing else in the decomposition survives as a candidate:
+
+- the index is 3.7% of the loss
+- the stored vector is not defective; it self-retrieves perfectly
+- the window is worth about 8 points, measured by character offset
+- a reranker cannot help a candidate set whose answer sits 2,000 places away
+
+**What has NOT been measured, and must be before this becomes a build.** The
+paired experiment — the same document subset, the same distractors, document
+vectors against passage vectors — is written (`passage-vs-document-cli.ts`,
+`pnpm --filter @lawmind/harness rep:passage`) and was STOPPED rather than
+completed, for a reason worth recording:
+
+**`getEmbedder()` embeds in-process on the CPU by default** — `EMBED_DEVICE`
+defaults to `cpu` because production has no GPU (`services/embed/src/embed.ts`).
+It does not use the CUDA sidecar the Tier-A walk feeds. So a harness embedding
+run does not share the GPU with the walk, it competes for the CPU with everything
+on the box: the run reached **14,358 CPU-seconds across ~8 cores** and took the
+walk from ~8,800 tok/s to ~3,000. That is the real constraint on this experiment,
+and it is a scheduling fact rather than a scientific one.
+
+So the arm is **DEFERRED to a quiet window**, with its parameters recorded so the
+next run is a repeat and not a redesign:
+
+```
+EMBED_DEVICE=dml            # measured cosine-identical to cpu at fp32 (embed.ts)
+DISTRACTORS=2500            # 307 gold targets are in the probe
+PASSAGE_CHARS=1200 STRIDE=900
+pnpm --filter @lawmind/harness rep:passage
+```
+
+Its result decides one thing and no more: whether passage granularity moves s@5
+on a paired subset. **It cannot establish that LawMind's semantic search is
+good** — that is ADVOCATE-100 plus lawyer review, and no benchmark this lane
+currently holds can substitute for it.
+
+## 7. What would change this diagnosis
+
+Stated so it is falsifiable rather than merely argued:
+
+- if the paired arm shows passages NOT beating documents on the same subset, then
+  granularity is not the mechanism and §2.4 is wrong — go back to the exact-rank
+  distribution and look for a fourth explanation
+- if ADVOCATE-100 shows document vectors answering real advocate questions well,
+  then the sentence-level failure is an artefact of THIS gold's construction and
+  the product does not need passages
+- if the corpus-wide phrase probe (79 of 120 UNMEASURED here) shows most of these
+  queries occur in hundreds of judgments, a large part of the residual is the gold
+  and not the retrieval

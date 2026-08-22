@@ -46,7 +46,7 @@
  * It refuses to start if another keeper holds the lock, because two keepers race
  * to spawn two sidecars on one port and the loser's failure is silent.
  */
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync, statSync, writeFileSync, unlinkSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -122,7 +122,46 @@ async function healthy() {
   }
 }
 
+/**
+ * Kill any sidecar that is already running, and WAIT for the VRAM back.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE DEATH SPIRAL THIS ENDS, MEASURED 22 Aug 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `startSidecar` spawned a replacement and never killed the process it was
+ * replacing. Every unreachable-sidecar restart therefore ADDED one. After
+ * fifteen restarts the box held **16 sidecar processes holding 7,872 MiB of
+ * 8,188 MiB of VRAM**, at 1% GPU utilisation — none of them serving, all of them
+ * holding. The next spawn had no memory to load a model into, so it was
+ * unreachable too, so the keeper spawned another.
+ *
+ * The walk's runner aborted `tier-a-batch-00112` after its three attempts with
+ * `fetch failed`, which is exactly what a starved sidecar looks like from the
+ * outside, and the keeper's own log recorded fifteen confident recoveries while
+ * the thing it was recovering got monotonically worse.
+ *
+ * **A restart that does not free what it is replacing is not a restart.** This
+ * kills by the SAME command-line predicate the process table can see, excludes
+ * the querying shell (the trap this file already documents for the walk), and
+ * then waits for the memory rather than racing the next model load.
+ */
+function killExistingSidecars() {
+  const ps = [
+    'Get-CimInstance Win32_Process |',
+    "Where-Object { $_.Name -eq 'python.exe' -and $_.CommandLine -match 'embed..gpu..server\.py' } |",
+    'ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }',
+  ].join(' ');
+  try {
+    spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], { stdio: 'ignore' });
+    note('killed any existing sidecar before spawning — a restart that does not free VRAM is not a restart');
+  } catch (e) {
+    note('could not sweep existing sidecars: ' + (e?.message ?? e));
+  }
+}
+
 function startSidecar() {
+  killExistingSidecars();
   // Detached, with stdio to the log file: the sidecar must outlive whichever
   // shell the keeper was launched from, and its stderr is the only record of
   // why it died last time.

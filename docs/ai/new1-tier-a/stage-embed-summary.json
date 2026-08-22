@@ -1,22 +1,22 @@
 {
   "kind": "new1_doc_vector_stage_run",
-  "scriptQualityVerdictsAtStart": 1653141,
-  "batchFile": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/embedding-manifests/document-vectors/tier-a-batch-00065.jsonl",
-  "rowsInBatch": 9988,
-  "inserted": 8834,
+  "scriptQualityVerdictsAtStart": 1792321,
+  "batchFile": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/embedding-manifests/document-vectors/tier-a-batch-00026.jsonl",
+  "rowsInBatch": 9992,
+  "inserted": 0,
   "skippedNoText": 0,
-  "skippedNowIneligible": 230,
+  "skippedNowIneligible": 215,
   "admittedCitedAuthority": 0,
-  "skippedTextUnsafe": 917,
+  "skippedTextUnsafe": 886,
   "skippedByRefusedClass": {
-    "procedural_disposal": 230
+    "procedural_disposal": 215
   },
-  "skippedAlreadyStaged": 7,
-  "tableRows": 702180,
+  "skippedAlreadyStaged": 8891,
+  "tableRows": 1001954,
   "nonUnitNormVectors": 0,
-  "tokens": 8877105,
-  "elapsedSeconds": 1214.878,
-  "tokensPerSecond": 7306.992965548805,
+  "tokens": 0,
+  "elapsedSeconds": 3.859,
+  "tokensPerSecond": 0,
   "recipe": "HEAD:4800",
-  "finishedAt": "2026-08-22T05:34:34.971Z"
+  "finishedAt": "2026-08-22T16:49:49.409Z"
 }

@@ -7,6 +7,7 @@
     "typecheck": "tsc --noEmit",
     "launch:bench": "tsx src/launch-benchmark-cli.ts",
     "gold:queryaudit": "tsx --env-file=../../.env src/semantic-query-audit-cli.ts",
+    "advocate100": "tsx --env-file=../../.env src/advocate100-cli.ts",
     "long:passage": "tsx --env-file=../../.env src/long-passage-cli.ts",
     "rep:passage": "tsx --env-file=../../.env src/passage-vs-document-cli.ts",
     "head:offset": "tsx --env-file=../../.env src/head-offset-cli.ts",
