@@ -21,6 +21,21 @@ Pure stdin -> stdout JSON, so the caller owns retries, ordering and the queue.
 
     echo '{"judgmentId":"...","sourceUrl":"https://..."}' \
       | python scripts/new2-ocr-recover.py --max-pages 40
+
+THE TRANSPORT IS UTF-8 AND IT HAS TO BE SAID OUT LOUD
+-----------------------------------------------------
+`json.dumps(..., ensure_ascii=False)` below is deliberate — the output is meant
+to be readable — and on Windows Python's stdout defaults to the ANSI codepage.
+PP-OCRv4 is a multilingual model and returns full-width punctuation from Indian
+court PDFs often enough to matter: on 22 Aug 2026 a single U+FF0C FULLWIDTH
+COMMA raised `UnicodeEncodeError: 'charmap' codec can't encode character` and
+killed the process **mid-batch**, after 4 of 6 documents. The documents that had
+not yet been read produced no output line at all, so the caller counted them as
+neither recovered nor failed.
+
+A character the OCR is supposed to find must never be able to kill the process
+that found it. stdout is reconfigured to UTF-8 explicitly, at import, before
+anything can write to it.
 """
 import argparse
 import io
@@ -32,6 +47,11 @@ import urllib.request
 
 import pymupdf
 from rapidocr_onnxruntime import RapidOCR
+
+# Before anything can write a byte. See the module docstring: the default
+# Windows codepage cannot encode what this script exists to read.
+sys.stdout.reconfigure(encoding="utf-8", errors="strict")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 ENGINE = "rapidocr-onnxruntime/PP-OCRv4"
 

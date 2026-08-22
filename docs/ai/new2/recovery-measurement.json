@@ -1,19 +1,12 @@
 {
- "generatedAt": "2026-08-22T15:51:01.901Z",
+ "generatedAt": "2026-08-22T16:34:42.009Z",
  "queue": [
   {
    "state": "RECOVERED",
    "reason": "CITED_AUTHORITY",
-   "c": 63,
-   "attempts": 63,
+   "c": 69,
+   "attempts": 71,
    "with_error": 3
-  },
-  {
-   "state": "QUEUED",
-   "reason": "CITED_AUTHORITY",
-   "c": 6,
-   "attempts": 0,
-   "with_error": 0
   },
   {
    "state": "RECOVERED",
@@ -28,29 +21,29 @@
    "method": "OCR_RENDERED_PAGE",
    "engine_version": "rapidocr-onnxruntime/PP-OCRv4",
    "digit_trust": "CROSSCHECKED",
-   "c": 47,
-   "avg_chars": 2448,
+   "c": 51,
+   "avg_chars": 2493,
    "avg_pages": "2.7",
    "avg_control": "0.0000",
-   "avg_english": "35.7749"
+   "avg_english": "36.7684"
   },
   {
    "method": "OCR_RENDERED_PAGE",
    "engine_version": "rapidocr-onnxruntime/PP-OCRv4",
    "digit_trust": "SUSPECT",
-   "c": 20,
-   "avg_chars": 17387,
-   "avg_pages": "12.6",
+   "c": 22,
+   "avg_chars": 17835,
+   "avg_pages": "13.0",
    "avg_control": "0.0000",
-   "avg_english": "41.6940"
+   "avg_english": "41.5682"
   }
  ],
  "vs_original": {
-  "docs": 67,
-  "longer_than_original": 10,
-  "not_longer": 57,
-  "avg_ratio": "0.86"
+  "docs": 73,
+  "longer_than_original": 14,
+  "not_longer": 59,
+  "avg_ratio": "0.88"
  },
- "recovered_docs_still_convicted_damaged": 67,
+ "recovered_docs_still_convicted_damaged": 73,
  "note": "full_text is never overwritten — recovered text lives in judgment_text_recovery and the original conviction stands on judgments.script_quality. A recovered document is therefore still TEXT_DAMAGED in the contract, which is correct: the damage happened, and the recovery is a separate, provenanced artifact."
 }

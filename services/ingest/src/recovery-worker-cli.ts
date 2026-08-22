@@ -387,11 +387,34 @@ child.stdin.end();
 await done;
 await new Promise<void>((resolve) => child.on('close', () => resolve()));
 
+/**
+ * The tally counts OUTPUT LINES, so a document the engine never reached is
+ * counted nowhere. That is not hypothetical: on 22 Aug 2026 the OCR process
+ * died mid-batch on a U+FF0C it could not encode, and this summary read
+ * "6 attempted · 4 recovered · 0 unrecoverable · 0 failed" — four plus zero plus
+ * zero, against six.
+ *
+ * Nothing is lost: those rows are still `RUNNING` and `STALE_RUNNING_MINUTES`
+ * reclaims them, which is why the very next run reports an empty queue — they
+ * are invisible for the length of the stale window, not gone. (I read that as a
+ * permanent leak for a few minutes before re-reading the reclaim above. It is
+ * not one; `--stale-minutes 0` recovers them immediately.)
+ *
+ * What WAS lost was the SUMMARY's honesty, and a summary that can sum to less
+ * than it attempted will eventually be read as a clean run.
+ */
+const accountedFor = tally.recovered + tally.unrecoverable + tally.failed;
+const noOutput = tally.attempted - accountedFor;
+
 console.log(
   `\n${CONFIRM ? 'WROTE' : 'WOULD WRITE'} — ${tally.attempted} attempted\n` +
     `  recovered      ${tally.recovered}\n` +
     `  unrecoverable  ${tally.unrecoverable}\n` +
     `  failed         ${tally.failed}\n` +
+    (noOutput > 0
+      ? `  NO ENGINE OUTPUT ${noOutput}  — the engine produced no line for these; `
+        + `they stay QUEUED for retry. Read the engine's stderr before trusting the numbers above.\n`
+      : '') +
     `  digit trust    CROSSCHECKED ${tally.digitTrust['CROSSCHECKED'] ?? 0} · ` +
     `SUSPECT ${tally.digitTrust['SUSPECT'] ?? 0} · UNVERIFIED ${tally.digitTrust['UNVERIFIED'] ?? 0}\n` +
     `  cost           ${tally.pages} pages, ${tally.seconds.toFixed(0)}s ` +

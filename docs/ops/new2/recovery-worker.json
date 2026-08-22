@@ -1,115 +1,23 @@
 {
  "kind": "new2_recovery_worker",
  "confirmed": true,
- "at": "2026-08-22T05:29:04.145Z",
+ "at": "2026-08-22T16:34:27.157Z",
  "tally": {
-  "attempted": 4,
-  "recovered": 4,
+  "attempted": 2,
+  "recovered": 2,
   "unrecoverable": 0,
   "failed": 0,
   "digitTrust": {
-   "CROSSCHECKED": 2,
+   "CROSSCHECKED": 0,
    "SUSPECT": 2,
    "UNVERIFIED": 0
   },
-  "seconds": 354.4,
-  "pages": 57
+  "seconds": 129.2,
+  "pages": 34
  },
  "detail": [
   {
-   "judgmentId": "4639985f-de88-426a-812f-a4e031af9260",
-   "reason": "BENCHMARK_GOLD",
-   "court": "High Court of Punjab and Haryana",
-   "state": "RECOVERED",
-   "score": {
-    "chars": 39824,
-    "controlDensity": 0,
-    "englishRate": 65.81
-   },
-   "pagesRead": 24,
-   "pageCount": 24,
-   "truncated": false,
-   "digitTrust": "SUSPECT",
-   "witnesses": [
-    {
-     "field": "case_number",
-     "expected": "CR/4533/2018",
-     "found": "exact"
-    },
-    {
-     "field": "judgment_year",
-     "expected": "2023",
-     "found": "exact"
-    }
-   ],
-   "damagedNumbers": [
-    "23B",
-    "23D",
-    "23G",
-    "24B"
-   ],
-   "seconds": 153.6
-  },
-  {
-   "judgmentId": "e797805e-98f0-424e-be1a-249cf6b96af4",
-   "reason": "CITED_AUTHORITY",
-   "court": "High Court of Punjab and Haryana",
-   "state": "RECOVERED",
-   "score": {
-    "chars": 856,
-    "controlDensity": 0,
-    "englishRate": 33.88
-   },
-   "pagesRead": 1,
-   "pageCount": 1,
-   "truncated": false,
-   "digitTrust": "CROSSCHECKED",
-   "witnesses": [
-    {
-     "field": "case_number",
-     "expected": "RFA/14/2023",
-     "found": "exact"
-    },
-    {
-     "field": "judgment_year",
-     "expected": "2023",
-     "found": "exact"
-    }
-   ],
-   "damagedNumbers": [],
-   "seconds": 7.8
-  },
-  {
-   "judgmentId": "f24f92f4-ea11-4158-9850-ef1731dac7f1",
-   "reason": "CITED_AUTHORITY",
-   "court": "High Court of Punjab and Haryana",
-   "state": "RECOVERED",
-   "score": {
-    "chars": 856,
-    "controlDensity": 0,
-    "englishRate": 33.88
-   },
-   "pagesRead": 1,
-   "pageCount": 1,
-   "truncated": false,
-   "digitTrust": "CROSSCHECKED",
-   "witnesses": [
-    {
-     "field": "case_number",
-     "expected": "RFA/27/2023",
-     "found": "exact"
-    },
-    {
-     "field": "judgment_year",
-     "expected": "2023",
-     "found": "exact"
-    }
-   ],
-   "damagedNumbers": [],
-   "seconds": 3.3
-  },
-  {
-   "judgmentId": "1fed8c82-4b5a-44ed-ba5a-710424682ac8",
+   "judgmentId": "677bb925-7702-4d70-9947-940f8eba02ec",
    "reason": "CITED_AUTHORITY",
    "court": "Bombay High Court",
    "state": "RECOVERED",
@@ -125,8 +33,8 @@
    "witnesses": [
     {
      "field": "case_number",
-     "expected": "WP/12172/2025",
-     "found": "absent"
+     "expected": "WP/13321/2024",
+     "found": "exact"
     },
     {
      "field": "judgment_year",
@@ -137,7 +45,38 @@
    "damagedNumbers": [
     "1oo"
    ],
-   "seconds": 189.7
+   "seconds": 116.1
+  },
+  {
+   "judgmentId": "75ead632-7c9b-4bca-8b3b-6f7642301616",
+   "reason": "CITED_AUTHORITY",
+   "court": "Bombay High Court",
+   "state": "RECOVERED",
+   "score": {
+    "chars": 3165,
+    "controlDensity": 0,
+    "englishRate": 55.61
+   },
+   "pagesRead": 3,
+   "pageCount": 3,
+   "truncated": false,
+   "digitTrust": "SUSPECT",
+   "witnesses": [
+    {
+     "field": "case_number",
+     "expected": "WP/3396/2025",
+     "found": "absent"
+    },
+    {
+     "field": "judgment_year",
+     "expected": "2026",
+     "found": "exact"
+    }
+   ],
+   "damagedNumbers": [
+    "196l"
+   ],
+   "seconds": 13.1
   }
  ]
 }
