@@ -189,10 +189,19 @@ A field value is one token, so it searched reporter `1995` plus loose words
 opinion about citation formats. `cite:1995 murder` absorbs nothing.
 
 **9. `overruled_status` had no index.** Counting non-`none` rows was cancelled at
-45,708 ms. Migration `0073` adds a partial index (only 101 rows qualify).
+45,708 ms; with migration `0073`'s partial index it returns in **247 ms**. That
+query is what the nightly overruled re-check (`ADMIN_SURFACE.md` §15a, 22:30
+IST, before briefings are generated) has to run every night, and a metric whose
+query cannot finish is a metric nobody reads. Exactly **98** judgments qualify —
+73 `set_aside`, 17 `doubted`, 8 `partly_set_aside`, no others; an earlier count
+of "101 plus 3 others" was mine, came from a join against `judgment_citations`
+that counted three `none` rows, and is corrected in the file.
+
 **A plain build blocked four fleet writers within 130 seconds** and was
-cancelled; the live index is built `CONCURRENTLY` by hand and the migration file
-records why, so the next person to index this table does not repeat it.
+cancelled — my error, caught by watching `pg_stat_activity` rather than by the
+build failing. The live index was rebuilt `CONCURRENTLY` (1,289 s, non-blocking)
+and the migration file records the whole episode, so the next person to index
+this table does not repeat it.
 
 **Still open, honestly:** case-name lookup falls through on non-rare party names
 (`PRAKASH` needed 14,955 ms); the dense arm is now the latency floor on
