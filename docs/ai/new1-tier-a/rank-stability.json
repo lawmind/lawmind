@@ -1,0 +1,514 @@
+{
+  "kind": "new1_rank_stability",
+  "measuredAt": "2026-08-22T15:34:15.335Z",
+  "frozenHash": "ba9357cba2fbf297",
+  "conditions": "LOCAL_CONTENDED — the Tier-A walk and the sparse-arm run were live",
+  "reps": 3,
+  "queries": 12,
+  "sameSet": 10,
+  "sameOrder": 10,
+  "degradedVaried": 2,
+  "byClass": {
+    "case_title": {
+      "n": 3,
+      "sameSet": 3,
+      "sameOrder": 3
+    },
+    "citation": {
+      "n": 3,
+      "sameSet": 3,
+      "sameOrder": 3
+    },
+    "nl_doctrine": {
+      "n": 3,
+      "sameSet": 2,
+      "sameOrder": 2
+    },
+    "fact_passage": {
+      "n": 3,
+      "sameSet": 2,
+      "sameOrder": 2
+    }
+  },
+  "verdict": "UNSTABLE — re-execution alone cannot paginate; fix the cause (ties or degraded arms) before choosing a mechanism",
+  "rows": [
+    {
+      "queryId": "title-04d26d04",
+      "launchClass": "case_title",
+      "chars": 135,
+      "execs": [
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25150,
+          "status": 500
+        },
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25098,
+          "status": 500
+        },
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25061,
+          "status": 500
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "title-05b21017",
+      "launchClass": "case_title",
+      "chars": 41,
+      "execs": [
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25043,
+          "status": 500
+        },
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25036,
+          "status": 500
+        },
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25036,
+          "status": 500
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "title-06111105",
+      "launchClass": "case_title",
+      "chars": 59,
+      "execs": [
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25042,
+          "status": 500
+        },
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25043,
+          "status": 500
+        },
+        {
+          "ids": [],
+          "degraded": [],
+          "ms": 25076,
+          "status": 500
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "cite-04d26d04",
+      "launchClass": "citation",
+      "chars": 21,
+      "execs": [
+        {
+          "ids": [
+            "04d26d04-7e61-4ede-8727-98bed1f76533"
+          ],
+          "degraded": [],
+          "ms": 48,
+          "status": 200
+        },
+        {
+          "ids": [
+            "04d26d04-7e61-4ede-8727-98bed1f76533"
+          ],
+          "degraded": [],
+          "ms": 9,
+          "status": 200
+        },
+        {
+          "ids": [
+            "04d26d04-7e61-4ede-8727-98bed1f76533"
+          ],
+          "degraded": [],
+          "ms": 6,
+          "status": 200
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "cite-05b21017",
+      "launchClass": "citation",
+      "chars": 13,
+      "execs": [
+        {
+          "ids": [
+            "05b21017-b0f1-49ba-b6aa-39da1e6f56e4"
+          ],
+          "degraded": [],
+          "ms": 4,
+          "status": 200
+        },
+        {
+          "ids": [
+            "05b21017-b0f1-49ba-b6aa-39da1e6f56e4"
+          ],
+          "degraded": [],
+          "ms": 3,
+          "status": 200
+        },
+        {
+          "ids": [
+            "05b21017-b0f1-49ba-b6aa-39da1e6f56e4"
+          ],
+          "degraded": [],
+          "ms": 3,
+          "status": 200
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "cite-06111105",
+      "launchClass": "citation",
+      "chars": 18,
+      "execs": [
+        {
+          "ids": [
+            "06111105-07c4-48ea-a915-586dccdc8a4c"
+          ],
+          "degraded": [],
+          "ms": 4,
+          "status": 200
+        },
+        {
+          "ids": [
+            "06111105-07c4-48ea-a915-586dccdc8a4c"
+          ],
+          "degraded": [],
+          "ms": 4,
+          "status": 200
+        },
+        {
+          "ids": [
+            "06111105-07c4-48ea-a915-586dccdc8a4c"
+          ],
+          "degraded": [],
+          "ms": 3,
+          "status": 200
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "PROP-001",
+      "launchClass": "nl_doctrine",
+      "chars": 155,
+      "execs": [
+        {
+          "ids": [
+            "ee8a5b3b-b3d2-40b8-86bd-b3439d8a38e0",
+            "72723baf-9b2c-4387-bc7a-2d00f34c17e0",
+            "5f04e10c-25b9-451e-a7a9-2fd40d4a53d6",
+            "aedc06d7-4363-4dc3-abf6-91cabef4bec3",
+            "d5ec794e-44a0-4118-b507-fcee16b8bdbb"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25091,
+          "status": 200
+        },
+        {
+          "ids": [
+            "375a1b23-e56a-4a60-8616-7fb12fec9fd5",
+            "ee8a5b3b-b3d2-40b8-86bd-b3439d8a38e0",
+            "1abadfd0-411c-4fbb-8b88-2260f3e19099",
+            "72723baf-9b2c-4387-bc7a-2d00f34c17e0",
+            "5d1e8b9f-4133-4e57-a8ee-02f567eb749a"
+          ],
+          "degraded": [],
+          "ms": 13298,
+          "status": 200
+        },
+        {
+          "ids": [
+            "375a1b23-e56a-4a60-8616-7fb12fec9fd5",
+            "ee8a5b3b-b3d2-40b8-86bd-b3439d8a38e0",
+            "1abadfd0-411c-4fbb-8b88-2260f3e19099",
+            "72723baf-9b2c-4387-bc7a-2d00f34c17e0",
+            "5d1e8b9f-4133-4e57-a8ee-02f567eb749a"
+          ],
+          "degraded": [],
+          "ms": 9510,
+          "status": 200
+        }
+      ],
+      "sameSet": false,
+      "sameOrder": false,
+      "degradedVaried": true
+    },
+    {
+      "queryId": "PROP-002",
+      "launchClass": "nl_doctrine",
+      "chars": 271,
+      "execs": [
+        {
+          "ids": [
+            "5f60df26-78e4-4146-9a65-618a958d4fe1",
+            "87174392-2870-4959-aab8-de5a0ad4a55a",
+            "9618a5ac-1292-4ede-b285-bfe6392f804e",
+            "4c6ac66b-962b-41a4-bd6c-4205f9881433",
+            "5442b598-a43a-4234-aa69-78fb87da04cc"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25106,
+          "status": 200
+        },
+        {
+          "ids": [
+            "5f60df26-78e4-4146-9a65-618a958d4fe1",
+            "87174392-2870-4959-aab8-de5a0ad4a55a",
+            "9618a5ac-1292-4ede-b285-bfe6392f804e",
+            "4c6ac66b-962b-41a4-bd6c-4205f9881433",
+            "5442b598-a43a-4234-aa69-78fb87da04cc"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25106,
+          "status": 200
+        },
+        {
+          "ids": [
+            "5f60df26-78e4-4146-9a65-618a958d4fe1",
+            "87174392-2870-4959-aab8-de5a0ad4a55a",
+            "9618a5ac-1292-4ede-b285-bfe6392f804e",
+            "4c6ac66b-962b-41a4-bd6c-4205f9881433",
+            "5442b598-a43a-4234-aa69-78fb87da04cc"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25110,
+          "status": 200
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "PROP-003",
+      "launchClass": "nl_doctrine",
+      "chars": 369,
+      "execs": [
+        {
+          "ids": [
+            "0da7380d-d5b6-48e0-a66b-546208bcde1c",
+            "23cf8baa-a7ed-46aa-83f5-88ae3ad16284",
+            "d69b1953-17ce-44bf-be45-a85c9473d5e7",
+            "dca1ca32-9e54-4a45-bdf1-0005c92d9d64",
+            "fcc08c31-429a-479c-a569-8fee8d2e9616"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25118,
+          "status": 200
+        },
+        {
+          "ids": [
+            "0da7380d-d5b6-48e0-a66b-546208bcde1c",
+            "23cf8baa-a7ed-46aa-83f5-88ae3ad16284",
+            "d69b1953-17ce-44bf-be45-a85c9473d5e7",
+            "dca1ca32-9e54-4a45-bdf1-0005c92d9d64",
+            "fcc08c31-429a-479c-a569-8fee8d2e9616"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25115,
+          "status": 200
+        },
+        {
+          "ids": [
+            "0da7380d-d5b6-48e0-a66b-546208bcde1c",
+            "23cf8baa-a7ed-46aa-83f5-88ae3ad16284",
+            "d69b1953-17ce-44bf-be45-a85c9473d5e7",
+            "dca1ca32-9e54-4a45-bdf1-0005c92d9d64",
+            "fcc08c31-429a-479c-a569-8fee8d2e9616"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25104,
+          "status": 200
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "ISSUE-001",
+      "launchClass": "fact_passage",
+      "chars": 100,
+      "execs": [
+        {
+          "ids": [
+            "be566ecf-4583-4991-8afd-75ef5f8b4d62",
+            "c895d9d4-7294-4fb3-8a3c-64f80350729c",
+            "9fa7d509-88e0-4f83-afb1-0a3e40c710d1",
+            "96117e08-9199-4e96-ae9c-40fd66d0faba",
+            "b83bbdd5-338f-4ea8-a6a6-c7f74d8dedb5"
+          ],
+          "degraded": [
+            "sparse_timeout"
+          ],
+          "ms": 25086,
+          "status": 200
+        },
+        {
+          "ids": [
+            "79dbaca3-164d-499d-b121-269606006b95",
+            "be566ecf-4583-4991-8afd-75ef5f8b4d62",
+            "60d30ca3-b52f-4471-b39f-3b88df6c01a1",
+            "c895d9d4-7294-4fb3-8a3c-64f80350729c",
+            "79e4a454-9ba0-46b6-9c1f-de8c89f9c7b5"
+          ],
+          "degraded": [],
+          "ms": 18664,
+          "status": 200
+        },
+        {
+          "ids": [
+            "79dbaca3-164d-499d-b121-269606006b95",
+            "be566ecf-4583-4991-8afd-75ef5f8b4d62",
+            "60d30ca3-b52f-4471-b39f-3b88df6c01a1",
+            "c895d9d4-7294-4fb3-8a3c-64f80350729c",
+            "79e4a454-9ba0-46b6-9c1f-de8c89f9c7b5"
+          ],
+          "degraded": [],
+          "ms": 6216,
+          "status": 200
+        }
+      ],
+      "sameSet": false,
+      "sameOrder": false,
+      "degradedVaried": true
+    },
+    {
+      "queryId": "ISSUE-002",
+      "launchClass": "fact_passage",
+      "chars": 195,
+      "execs": [
+        {
+          "ids": [
+            "9618a5ac-1292-4ede-b285-bfe6392f804e",
+            "db4500fc-180a-40dd-aa9f-ab261f544278",
+            "e27f2371-1c9e-4cf4-bfef-a981fe8258ab",
+            "5f60df26-78e4-4146-9a65-618a958d4fe1",
+            "ddd80755-7851-4a2b-a8ef-b1351d4a2cd5"
+          ],
+          "degraded": [],
+          "ms": 4511,
+          "status": 200
+        },
+        {
+          "ids": [
+            "9618a5ac-1292-4ede-b285-bfe6392f804e",
+            "db4500fc-180a-40dd-aa9f-ab261f544278",
+            "e27f2371-1c9e-4cf4-bfef-a981fe8258ab",
+            "5f60df26-78e4-4146-9a65-618a958d4fe1",
+            "ddd80755-7851-4a2b-a8ef-b1351d4a2cd5"
+          ],
+          "degraded": [],
+          "ms": 1372,
+          "status": 200
+        },
+        {
+          "ids": [
+            "9618a5ac-1292-4ede-b285-bfe6392f804e",
+            "db4500fc-180a-40dd-aa9f-ab261f544278",
+            "e27f2371-1c9e-4cf4-bfef-a981fe8258ab",
+            "5f60df26-78e4-4146-9a65-618a958d4fe1",
+            "ddd80755-7851-4a2b-a8ef-b1351d4a2cd5"
+          ],
+          "degraded": [],
+          "ms": 1337,
+          "status": 200
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    },
+    {
+      "queryId": "ISSUE-003",
+      "launchClass": "fact_passage",
+      "chars": 141,
+      "execs": [
+        {
+          "ids": [
+            "00001274-0aca-4e15-a820-7dc194f3ebe8",
+            "fc99d17b-f1e0-4291-9662-9de311d5b10f",
+            "49342532-443c-4ff3-ab16-c3dda62d479e",
+            "95e119a4-a1b0-403c-a522-0b88b0dcff4a",
+            "515d916d-809d-41d3-8f6d-a0046c8e2a7d"
+          ],
+          "degraded": [],
+          "ms": 2706,
+          "status": 200
+        },
+        {
+          "ids": [
+            "00001274-0aca-4e15-a820-7dc194f3ebe8",
+            "fc99d17b-f1e0-4291-9662-9de311d5b10f",
+            "49342532-443c-4ff3-ab16-c3dda62d479e",
+            "95e119a4-a1b0-403c-a522-0b88b0dcff4a",
+            "515d916d-809d-41d3-8f6d-a0046c8e2a7d"
+          ],
+          "degraded": [],
+          "ms": 699,
+          "status": 200
+        },
+        {
+          "ids": [
+            "00001274-0aca-4e15-a820-7dc194f3ebe8",
+            "fc99d17b-f1e0-4291-9662-9de311d5b10f",
+            "49342532-443c-4ff3-ab16-c3dda62d479e",
+            "95e119a4-a1b0-403c-a522-0b88b0dcff4a",
+            "515d916d-809d-41d3-8f6d-a0046c8e2a7d"
+          ],
+          "degraded": [],
+          "ms": 673,
+          "status": 200
+        }
+      ],
+      "sameSet": true,
+      "sameOrder": true,
+      "degradedVaried": false
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "kind": "new1_stage_accounting",
+  "measuredAt": "2026-08-22T15:25:30.309Z",
+  "method": "summed from the walk’s own STAGE DONE lines; each disposition was decided against the LIVE eligibility view when that batch ran",
+  "deployedViewHash": "2e7b53afe35fa81c",
+  "batchesCompleted": 113,
+  "batchesPredatingRefusalFields": 24,
+  "walkedRows": 1119642,
+  "accounting": {
+    "STAGED_THIS_RUN": 386572,
+    "ALREADY_STAGED": 620355,
+    "REFUSED_TEXT_UNSAFE": 81692,
+    "REFUSED_CLASS_OR_TIER": 21014,
+    "NO_TEXT": 0,
+    "ADMITTED_AS_CITED_AUTHORITY": 0
+  },
+  "unattributedRows": 10009,
+  "unattributedByCause": {
+    "LEGACY_LOG_FORMAT": 10009,
+    "CURRENT_FORMAT_UNEXPLAINED": 0,
+    "note": "legacy = batches from 19 Aug written before the refusal counters existed; those rows were decided, the line cannot say how. Only the current-format figure is a hole."
+  },
+  "refusedByClass": {
+    "procedural_disposal": 21014
+  },
+  "liveTables": {
+    "stageRows": 985539,
+    "quarantineRows": 72092
+  },
+  "manifestReference": {
+    "rowsEmitted": 8846550,
+    "definitionHash": "e76879ab6bbcd452",
+    "generatedAt": "2026-08-19T22:26:30.723Z",
+    "deployedNow": "2e7b53afe35fa81c",
+    "stale": true,
+    "warning": "the manifest population was generated under an older eligibility definition, and two later revisions changed WHICH documents are eligible. A completion percentage against it would use the wrong denominator."
+  },
+  "corpusWidePopulation": "DEFERRED — the three-way join over 18.7M rows exceeded a 900s budget while the walk was staging. Take it in a quiet window; do not estimate it.",
+  "verdict": "EVERY walked document under the current log format is accounted for: staged, already staged, or refused by a named rule. 10009 rows sit in 19-Aug batches whose format could not record a refusal reason."
+}

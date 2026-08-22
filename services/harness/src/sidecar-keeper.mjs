@@ -56,6 +56,8 @@ const PORT = Number(process.env.SIDECAR_PORT ?? 8799);
 const HEALTH = `http://127.0.0.1:${PORT}/health`;
 const SERVER = join(ROOT, 'services', 'embed', 'gpu', 'server.py');
 const LOG = join(ROOT, '.agents', 'logs', 'new1-sidecar.log');
+/** Whatever PowerShell says about a relaunch. Separate file so it is not lost in the health chatter. */
+const RELAUNCH_LOG = join(ROOT, '.agents', 'logs', 'new1-walk-relaunch.log');
 const KEEPER_LOG = join(ROOT, '.agents', 'logs', 'new1-sidecar-keeper.log');
 const LOCK = join(ROOT, '.agents', 'logs', `new1-sidecar-keeper.${PORT}.lock`);
 
@@ -162,10 +164,40 @@ function relaunchWalk() {
     'Start-Sleep -Seconds 3;',
     `Start-Process -FilePath 'C:\\Program Files\\Git\\bin\\bash.exe' -ArgumentList '${WALK_LAUNCH.replace(/\\/g, '\\\\')}' -WorkingDirectory '${ROOT.replace(/\\/g, '\\\\')}' -WindowStyle Hidden`,
   ].join(' ');
+  /**
+   * PowerShell's OWN output is kept, because discarding it is what made the
+   * failure unexplainable.
+   *
+   * 22 Aug, second occurrence: a fleet-wide restart at 09:34Z killed the runner,
+   * this function fired twice, both verifications said DID NOT TAKE — and a
+   * hand-run `Start-Process` with this exact launcher started the walk on the
+   * first try, exactly as on 21 Aug. Two identical episodes and still no error
+   * text, because `stdio: 'ignore'` throws away the only witness: if
+   * `Start-Process` refuses (a session it cannot create a process in, a missing
+   * `bash.exe`, an execution policy), PowerShell says so on stderr and nobody
+   * was listening.
+   *
+   * `appendFileSync` on a path rather than a file descriptor: an fd held open
+   * across an unref'd detached child is a handle this process must then own for
+   * its lifetime, and the keeper is meant to be the thing that never dies of
+   * bookkeeping.
+   */
   const child = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], {
     detached: true,
-    stdio: 'ignore',
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
+  const capture = (stream, label) => {
+    stream?.on('data', (b) => {
+      const text = String(b).trim();
+      if (text.length > 0) appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  ${label}  ${text}\n`);
+    });
+  };
+  capture(child.stdout, 'relaunch stdout');
+  capture(child.stderr, 'relaunch STDERR');
+  child.on('error', (e) => appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  spawn error  ${e.message}\n`));
+  child.on('exit', (code) =>
+    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  powershell exited ${String(code)}\n`),
+  );
   child.unref();
   note('WALK RELAUNCH issued (killed any survivors first)');
   // ...and then CHECK, because "issued" is not "happened".
