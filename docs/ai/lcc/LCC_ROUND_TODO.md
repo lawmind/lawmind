@@ -60,8 +60,8 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 - [x] P6.4 No-signal state scoped to LawMind's resolved sources + as-of date — `basis: 'lawmind_resolved_sources'` + `asOf`
 
 ## P7 — RELEASE / BACKUP PREP (local-first, no purchase)
-- [ ] P7.1 Small release-pipeline proof: schema → export → Linux PG → indexes → checksums → search-equivalence → rollback
-- [ ] P7.2 Curated-moat backup pack: exact tables, deterministic dump/manifest/checksum, compressed bytes, exact recurring cost
+- [~] P7.1 Release-pipeline proof — schema → export → restore → row/checksum verification PROVEN on this Postgres. **Linux, index-rebuild timings, search-equivalence and rollback are NOT proved** and are not claimed
+- [x] P7.2 Curated-moat backup pack — 34 tables, deterministic dump + manifest + sha256 per file, **1.533 GB compressed, 85 s to dump**. Recurring cost NOT quoted: the R2 per-GB rate is a vendor number to read on the day, not from memory (`FQ-BACKUP-SPEND`)
 - [x] P7.3 Fix stale job-registry entries — lcc-text-safety-corpus → FINISHED, verified two ways; other lanes' stale rows reported not edited
 
 ## P8 — eCOURTS (prepare only, no live request)
@@ -100,8 +100,8 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 - [x] D.3 Saved searches stay a separate, intentional user feature — never conflated with analytics — untouched
 
 ### E — BACKUP MUST BE RESTORABLE
-- [ ] E.1 dump → wipe disposable target → restore → verify row/checksum invariants
-- [ ] E.2 Measure restore time
+- [x] E.1 dump → wipe disposable target → restore → verify — and it FAILED first: 6 enum-bearing tables missing (`pg_dump -t` omits types) and a checksum crying wolf on an unordered LIMIT. Both fixed; `--skip-dump` re-runs the restore half against an existing pack
+- [~] E.2 Measure restore time — first (broken) run 190.7 s. The verified re-run was still executing when the session ended; the number is not claimed
 - [x] E.3 No full 287 GB clone locally — 1.53 GB packed; `judgments` (151 GB) and `judgment_paragraphs` (92 GB) deliberately excluded as rebuildable
 
 ### F — CITATION RESOLVER HANDOFF
