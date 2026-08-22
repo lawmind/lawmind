@@ -126,13 +126,19 @@ disagreed, the document was right **33 times out of 34**. Corpus disagreement ra
 **4.45%**.
 
 On the value population — cited authorities ∪ recovery queue ∪ staged vectors,
-**699,398 documents** — under `date-quality-v1.1`:
+**713,136 documents**, completed run under `date-quality-v1.1`:
 
 ```
-DATE_VERIFIED   85.94%
-DATE_UNKNOWN     9.45%
-DATE_SUSPECT     4.61%
+DATE_VERIFIED   619,739   86.90%
+DATE_UNKNOWN     59,997    8.41%
+DATE_SUSPECT     33,400    4.68%
+off_by_one_day   26,180
 ```
+
+The population is resolved once at the start of each run, so it grows between
+runs as `cited_authority` and the staged vectors grow — 699,398 at the first pass,
+713,136 at this one. It is a lookup table, not a rate: **the corpus rate still
+comes from uniform draws**, never from this.
 
 ### The v1.0 numbers were wrong and here is how
 
@@ -166,7 +172,10 @@ its own blind spot.
 **`DATE_DISAGREE_RATE = 0.0445` is untouched** — it measures the FILENAME witness,
 which the blind spot never reached. Anything derived from *"every `DATE_SUSPECT`
 state = 6.17%"*, including the `1 - (1-p)^2` edge arithmetic, re-derives from
-4.61%.
+4.68%.
+
+Cited **Supreme Court** authorities, the population the defect hit hardest, land
+at **11.5% SUSPECT** under v1.1 against 43.0% under v1.0.
 
 **An absent row and `DATE_UNKNOWN` are different facts** and are deliberately not
 collapsed — this repo already made that mistake once with `hc_document_class`

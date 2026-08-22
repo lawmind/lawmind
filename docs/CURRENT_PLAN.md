@@ -62,8 +62,10 @@ layered on top, per this file's own convention, rather than rewritten.
    format the reader cannot parse is silence to that reader; the reader was
    convicting on its own blind spot. `date-quality-v1.1` reads month-name dates,
    six tests, and the whole population is being re-checked. On a 20,000-row prefix
-   the correction is **69.47/23.96/6.57 → 85.94 VERIFIED / 9.45 UNKNOWN / 4.61
-   SUSPECT**. `DATE_DISAGREE_RATE = 0.0445` is unaffected — it measures the
+   the correction was **69.47/23.96/6.57 → 85.94/9.45/4.61**; the completed run
+   over 713,136 documents lands at **86.90 VERIFIED / 8.41 UNKNOWN / 4.68
+   SUSPECT**, and cited Supreme Court authorities at **11.5% SUSPECT against
+   43.0%**. `DATE_DISAGREE_RATE = 0.0445` is unaffected — it measures the
    FILENAME witness, which the defect never touched.
 7. **NOT DONE — the damage export's last 5.4%.** Deliberately not resumed: the
    resource gate read `DEFER CPU_HEAVY, commit free 2.7%` with the GPU sidecar,
