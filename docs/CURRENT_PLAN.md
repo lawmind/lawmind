@@ -12614,3 +12614,177 @@ gate read CPU 90.2% / commit free 3.3%.
    `3, para 8` is the BPR&D spelling of section 3 paragraph 8.
 5. `body_text_safe` 90.68% → 90.42%, because the job I resumed convicted 51,265
    more rows while other lanes were reading the first figure. Both recorded.
+
+---
+
+## LCC · 22 Aug 2026 — DAMAGED TEXT IS REFUSED STRUCTURALLY, `/admin` WAS OPEN TO EVERY ADVOCATE, AND CASE-NAME SEARCH WENT 15,007ms → 9ms
+
+Owner LCC. Everything below is measured through the real Hono app against the
+local corpus, LOCAL_CONTENDED throughout — the ingest fleet, the GPU sidecar and
+the enrichment workers were writing during every number. Progress board:
+`docs/ai/lcc/LCC_ROUND_TODO.md`.
+
+### The finding that mattered most: 4,018,647 paragraphs of unfiltered damage
+
+`fillParagraphFallback` reads `judgment_paragraphs` and sets
+`operativeParagraphVerified: true` with a byte-exact `exactSpan` — the strongest
+evidence claim this API makes. It had no quality filter at all:
+
+```
+paragraphs whose judgment is CONVICTED damaged   4,018,647
+distinct documents                               1,736,980
+```
+
+Five orders of magnitude more exposure than the 24 damaged chunks NEW2 measured
+in the dense arm, because paragraph extraction ran over the whole corpus and
+embedding did not. One of them, verbatim, from a proof-grade `text-damage-v2.0`
+row: `!"# !$%&%"'((`.
+
+`judgment_chunks.text_quality` never had a chance of catching it — 22 of 24
+proven-damaged chunks score above its 0.85 floor. It is a ranking nudge and was
+never a safety gate.
+
+**The fix is one predicate, read LIVE from `judgments.script_quality`**, applied
+to sparse, dense, the reranker's input and paragraph evidence, plus a belt at the
+final read so a PINNED metadata hit (exact citation, exact title) returns the
+judgment with its body evidence withheld rather than being dropped. Live, not
+staged, is the point: NEW2's pass convicted 7,814 documents no screen had ever
+fired on, and a guarantee that holds because a batch job keeps up is not a
+guarantee. Proved end to end on `2023:PHHC:092818` — found by `cite:`, body
+withheld, no quarantine involved.
+
+`body-text-safety.test.ts` guards it three ways: unit, a structural SITES list
+that fails when a body-text path forgets the predicate, and a drift test against
+`pg_get_viewdef` on the DEPLOYED contract view.
+
+**The wire says `bodyText: { state, grade, evidenceWithheld }` and never
+"safe"** — NEW2's bus 1022, acted on before it shipped. No writer in this
+repository has ever emitted `clean`, so a boolean called `bodyTextSafe` would
+have been a positive claim 90.68% of the corpus cannot support.
+
+### `/admin/*` was open to every authenticated advocate
+
+`admin/audit.ts` had documented this honestly for two weeks: no `role` column
+existed, so every admin endpoint gated on "is anyone signed in". Any advocate who
+completed sign-up could read the audit ledger, list every user with their phone
+number, and flip the eCourts kill switch.
+
+Migration `0074` adds `users.role` with the DEFAULT as the enforcement, and
+`requireAdmin` mounts on the PREFIX so an admin route added next month is
+protected by existing rather than by remembering. 31/31 admin tests, including 10
+new route-level 403s and one asserting a refused write touches nothing.
+
+### Research can no longer starve the core paths
+
+Postgres was never the constraint — `max_connections` 100, 7 active. **The API's
+own pool of 10, shared by search and sign-in, was.** Split into core 8 / research
+6 with an admission gate in front. Measured both ways, same load:
+
+```
+one shared pool, 12 slow research statements   core p95 2,809 ms
+split pools, 8 slow research statements        core p95    69 ms
+```
+
+The 4th concurrent search waits 2 s then gets `503 SEARCH_BUSY` with
+`Retry-After` — an honest refusal, never an empty result page, which would be a
+silent drop wearing a success code.
+
+### Case-name search: 0 of 15 at 15,007 ms, then 15 of 15 at 9 ms
+
+NEW1's bus 1021 decomposed it: `exactCaseTitle` ABSTAINED whenever a title
+matched more than one judgment — 32.3% of real titles — and the trigram fallback
+then picked one at `word_similarity` 1.000 decided by physical row order.
+Abstention did not produce silence; it produced a guess one layer down.
+
+It pins the whole set now, ordered `judgment_date DESC, id DESC`, and reports
+`exactTitleCandidates` so the client can disambiguate. **NEW1 recommended
+AGAINST the tie-break that scores best** (`length(full_text) DESC`, gold-first in
+43 of 74) because none of them is relevance, and that reasoning is recorded next
+to the code.
+
+**And my first cut of it broke every case-title query into an HTTP 500.**
+Inlined into `EXPLAIN` by hand the new `ORDER BY` planned at cost 18.72; through
+the driver, with the title as a BIND PARAMETER, the planner walks
+`judgments_judgment_date_idx` backwards at cost 9,255,009 and is cancelled at
+15 s. Fixed with a `MATERIALIZED` fence — the same mechanism `dense()` already
+uses. **An inlined EXPLAIN is not evidence about a parameterised query.** The
+pins block is now inside `bounded()` too, so a slow exact lookup degrades
+(`pin_timeout`) instead of 500ing.
+
+### The sparse arm, from NEW1's evidence rather than from preference
+
+NEW1's bus 1025, 60 gold queries, four arms. The AND-first/OR-fallback shape
+found 16 of 60 and timed out 58% of the time. **Deleting the all-common fallback
+is the WORST arm** — 0 of 60, 100% timeouts — so that proposal is refuted, not
+deferred. The rarest-3 AND found 34 at p50 815 ms.
+
+It is now the ONLY sparse pass. Implementing it as a fallback changed nothing,
+measured, because the first pass was already spending the entire budget before
+the fallback could run. `SPARSE_RELAX_BELOW` and `SPARSE_AND_MAX_CHARS` are
+deleted rather than left as dead configuration.
+
+**It does not fix short common-term concept queries** — those still hit the 15 s
+ceiling here and report `degraded`. That is a finding for NEW1, not a fix, and
+NEW1's own control is the number that matters: dense reaches **0 of 60**. For
+High Court concept work the lexical arm is not one half of a hybrid, it is the
+whole of search.
+
+### Pagination, and why there is no snapshot
+
+Measured before designing: three identical requests, real query vector, order
+AND membership identical across all three. So re-running the rankers and slicing
+deeper is correct, and a snapshot buys nothing while costing a store, an expiry
+and stale-cursor bugs. NEW1's independent gate (bus 1027) agrees for exact
+identity and disagrees for hybrid — where the instability is the timing-out
+sparse arm, which is P2 rather than pagination.
+
+Duplicates now collapse over the WHOLE continuation before the slice, not per
+page — NEW1: *"or the second copy simply arrives on page 2."*
+
+### Everything else that landed
+
+- **Privacy**: `search_events` (migration `0075`) carries class, length, latency,
+  result count, degraded arms, zero-result and a keyed `subject_hash`. **There is
+  no query-text column.** `searches` stays unwired: wiring it would have created
+  a permanent, user-linked record of every legal question every advocate asked.
+- **Deletion**: real. Content deleted, identity anonymised (the `users` row
+  survives because `audit_log` is append-only and references it), R2 keys
+  returned so nothing can be reported complete while the files remain.
+- **Observability**: `GET /admin/metrics` — 5xx, search p50/p95, degraded rate,
+  zero-result rate, admission refusals, connection pressure, longest statement,
+  database size, corpus age — with the ALERT CONDITIONS in code (`ALERT_RULES`)
+  so a curl+jq poller is a complete alerting system and no vendor is activated.
+- **Dates**: `DATE_SUSPECT` on either side of the `as-at` subtraction now returns
+  `date_unreliable` rather than dating a legal event with a contradicted date.
+  `DATE_UNKNOWN` and an absent row do NOT refuse — silence is not a
+  contradiction, and refusing on it would repeat the `is_bail_order` NULL
+  failure.
+- **Currentness**: `treatmentScope` (`UNRESOLVED` for a verified adverse
+  treatment whose paragraphs are unreadable) and `currentnessClaim` scoped to
+  `lawmind_resolved_sources` + `asOf`. No copy written in the server, and the
+  founder-facing UX question stays OPEN.
+- **Backup**: `scripts/lcc-moat-backup.mjs` — 34 irreplaceable tables, **1.533 GB
+  compressed, 85 s to dump**, then restored into a disposable database and
+  verified by row count and content checksum. `judgments` (151 GB) and
+  `judgment_paragraphs` (92 GB) are excluded because they rebuild from the AWS
+  buckets.
+- **Validation**: `dateFrom`/`dateTo` were `z.string()` — `"yesterday"` is a
+  valid date literal to Postgres and meant something we never intended. Now ISO,
+  refined against the real calendar (`2026-02-30` is rejected), with the range
+  order checked.
+- **500 chars is documented as the CURRENT SAFE BOUND**, not a product limit,
+  with the intended long-passage route recorded and the rule that we reject and
+  say why rather than ever truncating.
+
+### Still open, honestly
+
+- **Concept search over High Court law is RED** and no amount of tuning moves it:
+  the vectors production can see are Supreme Court only.
+- Statute/BNS: correct but 2 of 5 probes hit the 15 s ceiling.
+- One pre-existing lint error in `qlang/parse.ts:341` (`no-useless-assignment`),
+  untouched by this round and not mine to silently fix.
+- `.agents/jobs/registry.jsonl` line 3 is unparseable JSON (a Windows path with
+  single backslashes) and four jobs read RUNNING against dead PIDs. Reported to
+  NEW2; I judged only my own row, verified two ways.
+- The release-pipeline proof covers export → restore → checksums on THIS
+  Postgres. Linux, index rebuild timings and search-equivalence are not proved.

@@ -193,6 +193,25 @@ pg('pg_dump', [...conn, '-d', DB, '-Fc', '--no-owner', '--no-acl', '-f', dumpPat
 });
 const dumpSeconds = (Date.now() - dumpStarted) / 1000;
 
+/**
+ * The SCHEMA, whole, separately — and the first restore proved why.
+ *
+ * `pg_dump -t table` does NOT carry the custom TYPES that table's columns
+ * depend on. Six tables came back MISSING from the first restore —
+ * `data_requests`, `verification_cache`, `citation_disputes`,
+ * `platform_config`, `statute_mappings`, `ecourts_fetch_ledger` — and every one
+ * of them has an enum column. The tables with no enums restored perfectly, so
+ * the dump looked fine and the pack was not.
+ *
+ * That is precisely the failure a dump-only backup cannot see: the artefact
+ * exists, its bytes are intact, its checksum matches, and it cannot be restored.
+ * The schema dump is DDL only, so it costs seconds.
+ */
+const schemaPath = join(OUT, 'schema.sql');
+pg('pg_dump', [...conn, '-d', DB, '--schema-only', '--no-owner', '--no-acl', '-f', schemaPath], {
+  stdio: ['ignore', 'inherit', 'inherit'],
+});
+
 // The verdict projection, as compressed CSV. Separate from the custom-format
 // dump on purpose: it is a QUERY, not a table, and a restore of it is a COPY
 // into whatever corpus exists at the time rather than a table replacement.
@@ -255,8 +274,15 @@ try {
 pg('createdb', [...conn, SCRATCH], { stdio: ['ignore', 'inherit', 'inherit'] });
 
 const restoreStarted = Date.now();
+// Types and tables first, from the schema dump; then the data. Errors are
+// expected here (extensions, roles) and the verification below is what decides.
 try {
-  pg('pg_restore', [...conn, '-d', SCRATCH, '--no-owner', '--no-acl', '-j', '2', dumpPath], {
+  pg('psql', [...conn, '-d', SCRATCH, '-q', '-f', schemaPath], { stdio: ['ignore', 'ignore', 'ignore'] });
+} catch {
+  /* DDL warnings are not the test */
+}
+try {
+  pg('pg_restore', [...conn, '-d', SCRATCH, '--no-owner', '--no-acl', '--data-only', '--disable-triggers', '-j', '2', dumpPath], {
     stdio: ['ignore', 'inherit', 'inherit'],
   });
 } catch (error) {
@@ -289,9 +315,19 @@ for (const m of packing) {
  * column, so one CONTENT checksum too, over the table whose loss would hurt
  * most and whose values are not integers.
  */
+/**
+ * DETERMINISTIC, and the first run was not.
+ *
+ * `LIMIT 100000` with no `ORDER BY` returns a hundred thousand arbitrary rows,
+ * and two databases pick different ones — so the first proof reported a checksum
+ * MISMATCH on data that was in fact identical. A verification that can cry wolf
+ * is worse than none: the next person learns to ignore it.
+ */
 const checksumSql = `SELECT md5(string_agg(t, '|' ORDER BY t)) FROM (
   SELECT coalesce(citing_judgment_id::text,'') || coalesce(cited_judgment_id::text,'') || coalesce(relationship,'')
-    AS t FROM public.judgment_citations LIMIT 100000) x`;
+    AS t FROM public.judgment_citations
+   ORDER BY citing_judgment_id, cited_judgment_id, relationship
+   LIMIT 100000) x`;
 const sourceSum = pg('psql', [...conn, '-d', DB, '-t', '-A', '-c', checksumSql]).trim();
 const restoredSum = pg('psql', [...conn, '-d', SCRATCH, '-t', '-A', '-c', checksumSql]).trim();
 const sumOk = sourceSum === restoredSum && sourceSum !== '';

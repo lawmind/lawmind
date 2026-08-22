@@ -37,7 +37,7 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 - [x] P3.1 Design continuation contract WITH NEW1 (bus) — NEW1 1027; stability gate measured before choosing re-run over snapshot
 - [x] P3.2 Result #6/#20 reachable — tested
 - [x] P3.3 Pins keep position; ordering stable across pages; no dupes/missing — tested; `score DESC, id ASC` total order
-- [ ] P3.4 Filters part of continuation identity
+- [x] P3.4 Filters part of continuation identity — tested — a filtered page returns only that court
 - [x] P3.5 ALL ambiguous citation candidates reachable — tested against a real 6-20 group
 - [x] P3.6 Honest total/count semantics — real `total` on the structured path; none invented on the hybrid path
 - [x] P3.7 Additive — existing clients unaffected — defaults unchanged; 7/7 pagination tests
@@ -55,7 +55,7 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 
 ## P6 — CURRENTNESS PRODUCT TRUTH
 - [x] P6.1 OD-14 three layers preserved; derived fields are the product source — briefings was the last raw-column surface; now derived
-- [ ] P6.2 Verified adverse treatment with unresolved scope never renders as "no adverse treatment"
+- [x] P6.2 Verified adverse treatment with unresolved scope never renders as "no adverse treatment" — server states `treatmentScope: UNRESOLVED`; the founder-facing UX stays OPEN and is NOT closed by this lane
 - [x] P6.3 Minimum structured field for NEW3; no badge copy in the server — `treatmentScope` + `currentnessClaim`, no copy
 - [x] P6.4 No-signal state scoped to LawMind's resolved sources + as-of date — `basis: 'lawmind_resolved_sources'` + `asOf`
 
@@ -85,8 +85,8 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 ### B — REQUEST VALIDATION GAPS
 - [x] B.1 `dateFrom` / `dateTo` really validated (V4 found them insufficient) — ISO + real-calendar-day refine + range order
 - [x] B.2 court / filter strings validated — bounded to 120 chars
-- [ ] B.3 pagination inputs validated once P3 lands
-- [ ] B.4 Plan changes ONLY where EXPLAIN shows material cost
+- [x] B.3 pagination inputs validated once P3 lands — page 1-100, pageSize 1-25, integers only; 5 rejection cases tested
+- [x] B.4 Plan changes ONLY where EXPLAIN shows material cost — the MATERIALIZED fence was chosen from a 9,255,009 vs 18.72 cost comparison
 
 ### C — SERVER OBSERVABILITY IS LCC'S
 - [x] C.1 Metrics interface: 5xx · search latency · degraded rate · timeouts · pool saturation · admission saturation · slow queries — `GET /admin/metrics`
@@ -102,23 +102,23 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 ### E — BACKUP MUST BE RESTORABLE
 - [ ] E.1 dump → wipe disposable target → restore → verify row/checksum invariants
 - [ ] E.2 Measure restore time
-- [ ] E.3 No full 287 GB clone locally
+- [x] E.3 No full 287 GB clone locally — 1.53 GB packed; `judgments` (151 GB) and `judgment_paragraphs` (92 GB) deliberately excluded as rebuildable
 
 ### F — CITATION RESOLVER HANDOFF
 - [x] F.1 Do NOT build a second resolver; wait for the fifth agent's canonicalization experiment — not built; NEW2's 26.3% constraint recorded
 
 ### G — LONG-QUERY FUTURE PATH
-- [ ] G.1 500 chars documented as the CURRENT SAFE BOUND, not a product limit
-- [ ] G.2 Reject/guide honestly; never silently truncate; never imply long-passage research works
+- [x] G.1 500 chars documented as the CURRENT SAFE BOUND, not a product limit — recorded at the schema with the intended long-passage route
+- [x] G.2 Reject/guide honestly; never silently truncate; never imply long-passage research works — 400 with an explicit message; nothing is shortened
 
 ### H — TEST COURT ROWS
-- [ ] H.1 IDs + origin evidence + safe cleanup script + pre/post invariants, NOT executed
+- [x] H.1 IDs + origin evidence + safe cleanup script + pre/post invariants, NOT executed — full census returns 0; `docs/ops/lcc/TEST_COURT_ROWS_FINDING.md`; NOT closed
 
 ### I — BILLING OWNERSHIP
-- [ ] I.1 Server entitlement truth is LCC's; contract agreed with NEW3 before either edits
+- [!] I.1 Server entitlement truth is LCC's; contract agreed with NEW3 before either edits — NOT STARTED. The addendum scopes this to "if/when billing work begins"; it has not.
 
 ### GLOBAL CORRECTIONS
-- [ ] G1 No founder-queue item marked closed on an agent's recommendation
-- [ ] G3 Every search claim reports QUALITY + SAFETY/COVERAGE + LATENCY (P9 shape)
-- [ ] G4 Release gates classed LEGAL_SECURITY / CORE_PRODUCT / FEATURE / COMMERCIAL_MEASUREMENT
-- [ ] G7 Quality state survives to where its legal meaning matters — and no further
+- [x] G1 No founder-queue item marked closed on an agent's recommendation — four entries filed, none closed
+- [x] G3 Every search claim reports QUALITY + SAFETY/COVERAGE + LATENCY (P9 shape) — the P9 table carries rank1, unsafe-evidence, zero, degraded and p50/p95/max
+- [x] G4 Release gates classed LEGAL_SECURITY / CORE_PRODUCT / FEATURE / COMMERCIAL_MEASUREMENT — `docs/ops/lcc/RELEASE_GATE_CLASSES.md`
+- [x] G7 Quality state survives to where its legal meaning matters — and no further — bodyText, dateQuality and treatmentScope reach the wire; nothing else internal does

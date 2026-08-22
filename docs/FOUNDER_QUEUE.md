@@ -4843,3 +4843,98 @@ them. `docs/ai/new2/BNS_BNSS_BSA_INVENTORY_2026-08-22.md`.
 **Binding until you decide:** no surface may describe BNS/BNSS/BSA transition as
 covered. LCC's `canonicalAct` fix (bus 1015) is act-NAME normalization and is
 correct; it is not section correspondence and it is not temporal applicability.
+
+---
+
+## FQ-DATA-REQUEST-SLA · What is our real response deadline for a DPDP data request? · LCC, 22 Aug 2026
+
+**What is built and working.** The whole path. An advocate can raise an export,
+correction or erasure request from the app (`POST /me/data-requests`), an
+operator sees it with a clock (`GET /admin/data-requests`), and an erasure
+actually erases — content deleted, identity anonymised, `audit_log` row written
+in the same transaction, R2 keys returned so nothing can be reported complete
+while the files remain. 6/6 tests, end to end, against the real database.
+
+**What is missing.** The number of days.
+
+`data_requests.due_at` is set to `now() + 30 days`, and **30 is our own service
+commitment, chosen conservatively — not a statutory figure.** The DPDP Act 2023
+does not itself fix a numeric deadline for responding to a data-principal
+request; the timelines live in Rules this repository has no counsel's opinion on.
+Writing a number into the product and calling it the legal deadline is exactly
+the invented-fact failure `CLAUDE.md` §7 forbids, and being wrong in the
+direction of "later" is a compliance failure rather than a cosmetic one.
+
+**What you decide.** Counsel confirms the window; the constant moves. It is one
+environment variable — `DATA_REQUEST_RESPONSE_DAYS` — and nothing else changes.
+
+**What stays broken without it.** Nothing breaks. Requests are accepted, tracked
+and honoured on a 30-day clock. If the real window is shorter, every request
+raised before you answer carries a `due_at` that is later than it should be.
+
+`services/api/src/auth/data-requests.ts`, `src/auth/erasure.ts`.
+
+---
+
+## FQ-BACKUP-SPEND · The moat pack is 1.53 GB compressed and proved restorable. Offsite storage is yours to authorise · LCC, 22 Aug 2026
+
+**What is built and measured.** `scripts/lcc-moat-backup.mjs` dumps the 34 tables
+that CANNOT be rebuilt from the AWS buckets — every advocate's matters, notes and
+annotations; every human Tier 3 verification vouch; the append-only audit ledger;
+and months of GPU and LLM work in the citation edges, date verdicts, damage
+verdicts and statute references — plus a projection of the verdict COLUMNS on
+`judgments`, keyed by `content_hash` so it can be re-joined to a rebuilt corpus.
+
+```
+tables packed          34
+compressed bytes       1,532,732,263   (1.533 GB)
+dump time              85 s
+```
+
+`judgments` (151 GB) and `judgment_paragraphs` (92 GB) are deliberately NOT in
+it: both are rebuildable from the AWS Open Data buckets we are authorised to use,
+and the mandate forbids a full local clone. What cannot be rebuilt is what is
+packed.
+
+**What you decide.** Whether the pack goes anywhere off this machine, and where.
+Cloudflare R2 is the stack's stated object store; at 1.53 GB this is a very small
+monthly line, but **I have not quoted a price** — the current per-GB rate is a
+vendor number that must be read from Cloudflare's pricing page on the day, not
+from an agent's memory. No bucket has been created, no credential read, no
+account touched.
+
+**What stays broken without it.** The pack exists only on the same disk as the
+database it protects. A disk failure loses both. That is the entire risk, stated
+plainly.
+
+---
+
+## FQ-ECOURTS-ACTOR (restated by LCC, 22 Aug 2026) · the canary is now a runbook, still not run
+
+Not a new item — `docs/ops/lcc/ECOURTS_CANARY_RUNBOOK.md` now exists so that when
+you resolve the actor and authorise a canary, it is a procedure rather than an
+improvisation against a bounded permission.
+
+**Nothing has been requested.** The gate has been observed refusing 52 times in
+`ecourts_fetch_ledger` without a single live call. The runbook states one gap
+honestly: a CUMULATIVE request cap across a window is not enforced in code, only
+answerable by query. For one canary it does not bind; before any repeated harvest
+it must be built.
+
+---
+
+## FQ-TEST-COURT-ROWS (LCC, 22 Aug 2026) · searched for, not found — closing it is yours, not mine
+
+`docs/ops/lcc/TEST_COURT_ROWS_FINDING.md`. A full census, not a sample:
+`SELECT count(*) FROM judgments WHERE court ILIKE '%test%'` returns **0**, and
+every other `court` column in the schema is also zero.
+
+The two obvious cleanup predicates both match REAL LAW and must never be used:
+`TEST.CAS.` is **Testamentary** (probate), and `case_title LIKE 'SYNTHETIC%'`
+returns eight genuine judgments including *Synthetics & Chemicals Ltd v State of
+U.P.*, `1989 INSC 321`, a Constitution Bench authority.
+
+I cannot tell whether the rows were deleted later or never committed. **I am not
+marking this closed** — an agent's finding is not founder approval, and "we
+looked and found nothing" is a finding. You may now close it against real
+numbers, or ask for a different search.
