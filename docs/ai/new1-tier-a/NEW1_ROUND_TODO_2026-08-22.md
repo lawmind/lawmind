@@ -278,6 +278,9 @@ s@5 71.62%, MRR 0.6947, timeouts 9, wrongPins 65, p50 1,608 ms / p95 19,196 ms.
              - commit free 7.1% < 35%
              - 6 ingest fleet process(es) writing — an index build wants the box to itself
       ```
+- [x] **P7.1a** THE 1M CHECKPOINT IS CROSSED — `tableRows` **1,001,954** at 16:50:42Z.
+      Gate re-read at that moment: still `DEFER VECTOR_BUILD` (CPU 54.6% > 50%, 11
+      active queries > 2, longest statement 253 s > 120 s).
 - [!] **P7.2/7.3 DEFERRED, and the refusal IS the record** (addendum E). The walk is
       healthy and must not be stopped to reach a round number. `CHECKPOINT_RUNBOOK_1M.md`
       already holds the executable form — what to run, in what order, and what would
