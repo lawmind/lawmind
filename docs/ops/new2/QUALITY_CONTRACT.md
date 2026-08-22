@@ -125,9 +125,48 @@ DATE_UNKNOWN    no independent witness — silence is not a contradiction
 disagreed, the document was right **33 times out of 34**. Corpus disagreement rate
 **4.45%**.
 
-On the value population (cited authorities ∪ recovery queue ∪ staged vectors,
-699,398 documents) the first 4,000 measured **69.4% VERIFIED · 25.0% UNKNOWN ·
-5.6% SUSPECT**.
+On the value population — cited authorities ∪ recovery queue ∪ staged vectors,
+**699,398 documents** — under `date-quality-v1.1`:
+
+```
+DATE_VERIFIED   85.94%
+DATE_UNKNOWN     9.45%
+DATE_SUSPECT     4.61%
+```
+
+### The v1.0 numbers were wrong and here is how
+
+The first pass returned **69.47 / 23.96 / 6.57**, and inside it something that was
+not a corpus fact:
+
+```
+cited authorities, DATE_SUSPECT      8,696 of 35,890    24.2%
+  Supreme Court of India             7,406 of 17,221    43.0%
+  Allahabad High Court               1,112 of 17,775     6.3%
+```
+
+43% of one court is a detector defect. `printedDates()` read `13.02.2024` and
+`2024-02-13` and nothing else — and **the Supreme Court prints its date in the
+cause title in words and never prints it numerically**:
+
+```
+"... v. JAI PRAKASH SINGH AND ANR.  MARCH 8, 2007  [DR. ARIJIT PASAYAT ...]"
+```
+
+So the judgment's own date was invisible while every date it CITES was visible:
+`printed.size > 0` held, `printed.has(jd)` did not, and that is exactly the branch
+returning `DATE_SUSPECT`. On a 60-row sample **51 of 60 print the stored date as a
+month-name date — ~85% false**.
+
+It inverted this module's own governing rule, which was right: *a document that
+prints no date at all is silent, not contradicting.* A date printed in a shape the
+reader cannot parse is silence **to that reader**. The reader was convicting on
+its own blind spot.
+
+**`DATE_DISAGREE_RATE = 0.0445` is untouched** — it measures the FILENAME witness,
+which the blind spot never reached. Anything derived from *"every `DATE_SUSPECT`
+state = 6.17%"*, including the `1 - (1-p)^2` edge arithmetic, re-derives from
+4.61%.
 
 **An absent row and `DATE_UNKNOWN` are different facts** and are deliberately not
 collapsed — this repo already made that mistake once with `hc_document_class`
@@ -157,6 +196,34 @@ damage is no evidence against them.
 Recovered text does **not** flip `body_text_safe`. A recovery lives in its own
 table with its own provenance, and a consumer that wants it asks for it by name.
 
+### Verified through the real product path, not inferred
+
+`POST /search` against the locally running `services/api`, a PROOF-grade damaged
+document that OCR has recovered:
+
+```
+contract row   text_state TEXT_DAMAGED · text_grade PROOF · recovery_state RECOVERED
+               digit_trust CROSSCHECKED · body_text_safe false
+               metadata_discoverable true
+
+POST /search  {"query":"caseno:\"LPA/338/2022\"","language":"en"}
+  -> 200, 5 results, TARGET PRESENT (position 3)
+     3001140a  SATINDER Vs STATE OF HARYANA AND OTHERS
+```
+
+The document's body is a proven glyph dump and it is still findable by its case
+number. That is the behaviour `metadata_discoverable` names, confirmed over HTTP
+rather than argued from the schema. **LOCAL_CONTENDED.**
+
+The reverse half — semantic retrieval REFUSING that body — is **not** enforced at
+query time. `retrieve.ts` down-ranks by `judgment_chunks.text_quality` and never
+excludes, and that penalty is inert on this population: of the 24 chunks whose
+judgment is proven damaged, **22 sit at or above 0.85 and take no penalty at
+all**, because `text_quality` is inverted here. The exposure is small only because
+NEW1's quarantine keeps up, not because anything structural refuses. Measured and
+sent to LCC (bus 1004) and NEW1 (bus 1005); `retrieve.ts` is LCC's file and NEW2
+has not edited it.
+
 ---
 
 ## 6. Recovery, and why the digits are a separate question
@@ -184,6 +251,22 @@ document that needed the substitution has demonstrated the defect, and every oth
 number in it is suspect for that reason.
 
 No numeric field may be taken from recovered text without a second witness.
+
+### `digit_trust` is confounded by page count, and a consumer must know it
+
+First 63 recoveries:
+
+```
+                 n    avg pages    max pages
+CROSSCHECKED    45        2.8         12
+SUSPECT         18       10.9         40
+```
+
+**A `CROSSCHECKED` verdict on a one-page order is weaker evidence than the same
+verdict on a forty-page judgment**, because every additional page is another
+chance to catch a glyph-damaged number. The states are not comparable across
+document lengths. This is a limitation of the measure, not a defect in it — but
+`CROSSCHECKED` on a short document must not be read as "these digits are safe".
 
 ---
 
@@ -241,5 +324,16 @@ verdict.
   assert a substantive authority — reading the operative span for whether an order
   DETERMINES anything — is identified and unbuilt, by both NEW2 and LCC, on
   purpose.
-- **The recovery figures are a 63-document tranche.** Cost is quoted
-  `LOCAL_CONTENDED` and is not a quiet-box figure.
+- **The recovery figures are a 63-document tranche.** 59 of 63 recovered on the
+  first pass, 63 of 63 after a threshold defect of mine was corrected; 0 failed.
+  321 pages, 14.2 s/page **LOCAL_CONTENDED** — the probe's 3.7 s/page is the
+  quiet-box figure and this box was running a GPU walk, two classifiers, LCC's
+  screen and two of my own passes.
+- **Four documents were briefly labelled `UNRECOVERABLE` and none of them were.**
+  An `englishRate >= 12` floor convicted clean text at control density 0.0000 —
+  *"IN THE HIGH COURT OF KARNATAKA, DHARWAD BENCH DATED THIS THE 16TH DAY OF
+  JANUARY, 2025"* scores 10.22, because a cause title has almost no function
+  words. The verdict now comes from `damageVerdict()`, the same detector that
+  convicted the original PDF, which discriminates on control density (0.7014 for a
+  glyph dump against 0.0000 for a recovery). `--readjudicate` re-grades stored
+  text when the rule changes again, without re-paying for the OCR.

@@ -1,0 +1,48 @@
+-- ───────────────────────────────────────────────────────────────────────────
+-- `overruled_status` HAD NO INDEX, AND IT IS THE ONE COLUMN READ AT EVERY RENDER
+-- ───────────────────────────────────────────────────────────────────────────
+--
+-- Found 22 Aug 2026 by LCC while verifying currentness through the real API.
+-- `SELECT overruled_status, count(*) FROM judgments WHERE overruled_status <>
+-- 'none' GROUP BY 1` was **cancelled at 45,708 ms**: no index existed, so any
+-- question about which judgments have moved sequentially scans 18,698,968 rows.
+--
+-- That matters more than an admin convenience. `CITATION_HARNESS.md` holds the
+-- stale-overruled rate at a threshold of ZERO, and the nightly overruled
+-- re-check (`ADMIN_SURFACE.md` §15a, 22:30 IST, before briefings are generated
+-- at 23:00) has to answer exactly this question every night. A metric whose
+-- query cannot finish is a metric nobody reads.
+--
+-- PARTIAL, and that is the whole point. Measured on the corpus, only 101
+-- judgments carry a non-`none` status — 73 `set_aside`, 17 `doubted`, 8
+-- `partly_set_aside`, plus 3 others. A full index would be 18.7M entries to
+-- distinguish 101 rows; the partial index is a few kilobytes and answers the
+-- only question anyone asks of this column. Rows flipping INTO a non-`none`
+-- status enter the index on update, which is the direction that matters.
+--
+-- NOT CONCURRENTLY HERE, AND THE LIVE DATABASE IS BUILT SEPARATELY.
+--
+-- `CREATE INDEX CONCURRENTLY` cannot run inside a transaction, and the Drizzle
+-- migrator wraps every migration in one. So this file stays plain — which is
+-- correct for what a migration file is FOR: building a schema from empty, as
+-- `ci:local` does against a scratch database, where nothing is writing and the
+-- table has no rows.
+--
+-- It is wrong for a live 18.7M-row corpus with the ingest fleet writing. Tried
+-- 22 Aug 2026 and measured: a plain build took the SHARE lock and **four fleet
+-- writers stacked up behind it within 130 seconds** — two `script_quality`
+-- updates, an `hc_document_class` update and a `DELETE` — before it was
+-- cancelled. The lesson is recorded here rather than in a commit message
+-- because the next person to add an index to this table will be one command
+-- away from repeating it.
+--
+-- The live index is therefore built by hand, outside any transaction:
+--
+--   CREATE INDEX CONCURRENTLY IF NOT EXISTS judgments_overruled_status_idx
+--     ON judgments (overruled_status) WHERE overruled_status <> 'none';
+--
+-- `IF NOT EXISTS` then makes this migration a no-op wherever that has already
+-- happened, which is exactly what it should be.
+CREATE INDEX IF NOT EXISTS judgments_overruled_status_idx
+  ON judgments (overruled_status)
+  WHERE overruled_status <> 'none';
