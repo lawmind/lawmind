@@ -184,14 +184,37 @@ if (missing.length > 0) {
 }
 
 // ── 1. DUMP ────────────────────────────────────────────────────────────────
-console.log(`dumping ${packing.length} tables + the judgments verdict projection\n`);
 const dumpPath = join(OUT, 'moat.dump');
-const tableArgs = packing.flatMap((m) => ['-t', `public.${m.table}`]);
-const dumpStarted = Date.now();
-pg('pg_dump', [...conn, '-d', DB, '-Fc', '--no-owner', '--no-acl', '-f', dumpPath, ...tableArgs], {
-  stdio: ['ignore', 'inherit', 'inherit'],
-});
-const dumpSeconds = (Date.now() - dumpStarted) / 1000;
+const schemaPath = join(OUT, 'schema.sql');
+
+/**
+ * `--skip-dump` restores from a pack that ALREADY EXISTS, and it is the more
+ * honest exercise of the two.
+ *
+ * A restore proved against a dump taken thirty seconds earlier proves that
+ * `pg_dump` and `pg_restore` agree. What anyone actually needs to know is
+ * whether the pack sitting on disk from last week can be brought back — and
+ * that is what this flag runs. It also makes the proof re-runnable after an
+ * interruption without paying for the dump twice.
+ */
+const SKIP_DUMP = args.includes('--skip-dump');
+if (SKIP_DUMP && !existsSync(dumpPath)) {
+  console.error(`--skip-dump given but ${dumpPath} does not exist`);
+  process.exit(2);
+}
+
+let dumpSeconds = 0;
+if (SKIP_DUMP) {
+  console.log(`restoring the EXISTING pack at ${OUT} — no dump taken\n`);
+} else {
+  console.log(`dumping ${packing.length} tables + the judgments verdict projection\n`);
+  const tableArgs = packing.flatMap((m) => ['-t', `public.${m.table}`]);
+  const dumpStarted = Date.now();
+  pg('pg_dump', [...conn, '-d', DB, '-Fc', '--no-owner', '--no-acl', '-f', dumpPath, ...tableArgs], {
+    stdio: ['ignore', 'inherit', 'inherit'],
+  });
+  dumpSeconds = (Date.now() - dumpStarted) / 1000;
+}
 
 /**
  * The SCHEMA, whole, separately — and the first restore proved why.
@@ -207,20 +230,24 @@ const dumpSeconds = (Date.now() - dumpStarted) / 1000;
  * exists, its bytes are intact, its checksum matches, and it cannot be restored.
  * The schema dump is DDL only, so it costs seconds.
  */
-const schemaPath = join(OUT, 'schema.sql');
-pg('pg_dump', [...conn, '-d', DB, '--schema-only', '--no-owner', '--no-acl', '-f', schemaPath], {
-  stdio: ['ignore', 'inherit', 'inherit'],
-});
+if (!SKIP_DUMP) {
+  pg('pg_dump', [...conn, '-d', DB, '--schema-only', '--no-owner', '--no-acl', '-f', schemaPath], {
+    stdio: ['ignore', 'inherit', 'inherit'],
+  });
 
-// The verdict projection, as compressed CSV. Separate from the custom-format
-// dump on purpose: it is a QUERY, not a table, and a restore of it is a COPY
-// into whatever corpus exists at the time rather than a table replacement.
-const verdictPath = join(OUT, 'judgment-verdicts.csv');
-pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_VERDICTS}) TO '${verdictPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
-  stdio: ['ignore', 'inherit', 'inherit'],
-});
-const verdictGz = `${verdictPath}.gz`;
-await pipeline(createReadStream(verdictPath), createGzip({ level: 9 }), createWriteStream(verdictGz));
+  // The verdict projection, as compressed CSV. Separate from the custom-format
+  // dump on purpose: it is a QUERY, not a table, and a restore of it is a COPY
+  // into whatever corpus exists at the time rather than a table replacement.
+  const verdictPath = join(OUT, 'judgment-verdicts.csv');
+  pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_VERDICTS}) TO '${verdictPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
+    stdio: ['ignore', 'inherit', 'inherit'],
+  });
+  await pipeline(
+    createReadStream(verdictPath),
+    createGzip({ level: 9 }),
+    createWriteStream(`${verdictPath}.gz`),
+  );
+}
 
 // ── 2. MANIFEST ────────────────────────────────────────────────────────────
 const rowCounts = JSON.parse(
