@@ -89,6 +89,209 @@ run read-only against three PROOF-grade damaged documents — **3 of 3 returned*
 this reason: a glyph-dump body must not make a judgment vanish from citation and
 party-name search.
 
+### 22 Aug 2026 — LCC: THE SEARCH API WAS UNBOUNDED, `act:BNS` MATCHED NOTHING, AND THE OD-14 SPLIT WAS WIRED INTO ONE CALLER
+
+Every number below was measured through the REAL API (`POST /search`,
+`GET /judgments/:id`) against the 18,698,968-row local corpus. All work LOCAL
+per the founder's local-first rule; every latency is **LOCAL_CONTENDED** — the
+ingest fleet, the GPU embed server, the classifier and an autovacuum on
+`judgments` were live throughout — and none of it predicts mobile production
+latency.
+
+**1. One search could run forever and take the API down with it.** The postgres
+pool set no `statement_timeout`. `section 302 IPC` was still executing at 60s;
+ten such requests exhaust `max: 10` and every route stops answering, not just
+search. Now bounded on the connection (`PG_STATEMENT_TIMEOUT_MS`, default 15s)
+plus `idle_in_transaction_session_timeout`. A ranker that spends its budget
+returns empty and says so on the wire as `degraded: ["sparse_timeout"]` rather
+than silently returning less — a recall loss leaves no trace unless the server
+leaves one. The two arms now run CONCURRENTLY, so a request's ceiling is the
+MAX of the arm budgets and not their sum.
+
+**Caveat, measured:** cancellation is not instant. A 20s `statement_timeout` on
+the pathological GIN scan was observed returning at 39s, because the check
+happens at interrupt points inside a bitmap build. The bound is real but soft.
+
+**2. Exact routes were paying for semantic search, and now decide whether it
+runs.** The exact/section lookup used to run AFTER both rankers, then pin its
+answer on top. It now runs FIRST and, when it hits, the sparse arm is skipped —
+justified by measurement, not taste: the sparse AND pass was cancelled at budget
+for BOTH `1995 INSC 227` and `section 302 IPC`, so it was contributing nothing
+while costing the whole request.
+
+```
+                        before                 after
+1995 INSC 227           14,406 ms              206-630 ms
+section 302 IPC         >60,000 ms unbounded     4,701 ms
+section 103 BNS         36,078 ms                6,261 ms
+case name (p50/p95)     17,113 / 28,201 ms       990-4,507 ms, 0 degraded
+```
+
+**3. `act:BNS` matched none of the 20,440 BNS references, and nothing errored.**
+`canonicalAct('BNS')` returned the string `BNS` while extraction had written
+`act_key = 'BHARATIYA NYAYA SANHITA'`. Two halves of `sections.ts` disagreed:
+`ABBREVIATIONS` had the three 2023 codes and `ACT_SYNONYMS` never got them. **No
+mapping was invented** — the abbreviation-to-title pairs were already in the
+file. A test now asserts the invariant BETWEEN the two tables, so a fourth
+abbreviation added to one and forgotten in the other fails in CI.
+
+Matching is on the ENDING BIGRAM, chosen by checking every distinct `act_key` in
+the corpus: the three rules claim 21,167 / 129,073 / 496 references, **overlap on
+exactly zero keys**, and refuse `MADHYA PRADESH RAJYA SURAKSHA ADHINIYAM`,
+`CHHATTISGARH PANCHAYAT RAJ ADHINIYAM` and `NAGAR TATHA GRAM NIVESH ADHINIYAM`.
+5,723 stored keys were re-derived (BNSS 121,502→129,295, BNS 20,440→21,175,
+BSA 444→496). **BSA was never zero** — an earlier claim of mine that was an
+artefact of my own output truncation, corrected on the record.
+
+**4. Section queries are an index lookup, not a full-text search.**
+`judgment_statute_refs` is 862,594 rows with a btree on
+`(act_key, section_number)`. `judgments` is joined ONLY when a filter needs it —
+with the join unconditional, NI s.138 cost 8,050 ms against 943 ms without.
+**Coverage is 2.28%** (426,473 of 18,698,968 judgments carry any statute
+reference, because a reference is recorded only where the court named the act),
+so the pins take at most half the page and the ranked pipeline keeps the rest.
+
+**5. Case-name search had no index route at all.** `exactCaseTitle` needs a
+byte-exact normalised title, which almost never fires. The trigram index
+`judgments_case_title_trgm` existed and was unused. Now: narrow by the RAREST
+word (measured from `lexeme_document_frequency`, not the longest — length as a
+proxy for rarity is a mistake this repo already measured and rejected, and
+repeating it cost 3 of 7 lookups), then rank by `word_similarity`, all under a
+2.5s budget of its own. A `LIMIT` on the candidate pool was tried and REMOVED:
+it let the cap choose candidates in physical order and lost the right judgment.
+When the word is not rare enough the probe exceeds its budget and the query
+falls through unchanged.
+
+**6. OD-14's three-layer split was wired into exactly one caller.**
+`precedential-effect.ts` reached add-to-matter and nothing else, so the READING
+VIEW and SEARCH rendered the coerced label OD-14 was about: `P. KANNADASAN`
+(1996 INSC 800) returned `set_aside` for what its own verified edge calls
+`overruled`. Now derived on `GET /judgments/:id`, on hybrid search results and
+on the structured (`cite:`) path — one batched, indexed edge read per page,
+never one per result. **The banner is unchanged in every case**; `precedentialEffect`,
+`canAddToMatter` and `overruledStatusStored` are additive.
+
+**7. The whole unapplied-treatment backlog is 2 judgments, and both are correctly
+refused.** `BHARATI VIDYAPEETH` (2004 INSC 140) and `SOCIETY FOR UN-AIDED
+P. SCHOOL OF RAJASTHAN` carry verified `overruled_in_part` edges while stored
+`none`. `propagate-treatment.ts` skips both DELIBERATELY: `partly_set_aside`
+needs the affected paragraphs, none could be read near the citation, and naming
+the wrong paragraph tells an advocate a live passage is dead. `precedentialEffect`
+was NOT changed to flip them — `ADMIN_SURFACE.md` §15 requires one writer. A new
+`unappliedTreatment()` REPORTS the fact instead, writing nothing and changing no
+banner. **What an advocate should see in that state is a founder question**, in
+`FOUNDER_QUEUE.md`.
+
+**8. `cite:1995 INSC 227` returned 0 results, HTTP 200, for a judgment we hold.**
+A field value is one token, so it searched reporter `1995` plus loose words
+`INSC` and `227`. `cite:` now absorbs following bare words, but ONLY when
+`extractCitations` agrees the result is a citation — this file gets no second
+opinion about citation formats. `cite:1995 murder` absorbs nothing.
+
+**9. `overruled_status` had no index.** Counting non-`none` rows was cancelled at
+45,708 ms. Migration `0073` adds a partial index (only 101 rows qualify).
+**A plain build blocked four fleet writers within 130 seconds** and was
+cancelled; the live index is built `CONCURRENTLY` by hand and the migration file
+records why, so the next person to index this table does not repeat it.
+
+**Still open, honestly:** case-name lookup falls through on non-rare party names
+(`PRAKASH` needed 14,955 ms); the dense arm is now the latency floor on
+concept queries and is NEW1's lane; and 3 synthetic `Test Court` rows I created
+by stopping a test mid-run are still in `judgments` — the DELETE was refused by
+the sandbox classifier and is listed for the founder rather than left silent.
+
+### 22 Aug 2026 — NEW1: SEMANTIC SEARCH IS SUPREME COURT ONLY, AND A BARE CITATION WAS 3,000x SLOWER THAN THE SAME CITATION WITH `cite:`
+
+Owner NEW1. Everything below is measured; the two things that are not yet
+measured say so.
+
+**1. THE LAUNCH FINDING — production cannot see the corpus it has embedded.**
+The dense arm searches `judgment_chunks`. Exact counts, 22 Aug:
+
+```
+judgment_chunks, distinct judgments        40,161
+  Supreme Court                            38,341
+  High Court and other                      1,820
+new1_doc_vector_stage                     675,711   production CANNOT see it
+```
+
+Against `LAUNCH_BENCHMARK_V1`'s 1,029 gold authorities — High-Court heavy —
+**5 have a chunk.** Per class: citation 0/229, case_title 0/229, fact_passage
+2/372, nl_doctrine 3/199. The same authorities are in NEW1's Tier-A stage at
+86.5–98.5%. `citation` and `case_title` are unaffected because the exact route
+needs no vector; `nl_doctrine` and `fact_passage` have no fallback and are the
+two classes the premium research workflow is sold on. **This is a coverage gap,
+not a ranking gap, and no ranker change can touch it.** Independently confirmed
+by the reality audit ("Dense covers SC ONLY") and by NEW3 hands-on (concept
+search 75.8 s, loose hits).
+
+**2. A bare citation was not reaching the exact path.** `looksStructured()` needs
+a field name, an operator or a quote, so `2023:AHC:170543` was prose to it and
+fell through to `hybridSearch`, which pinned the right answer at rank 1 after
+paying for it:
+
+```
+exactCitation, neutral_citation branch       0.322 ms   read=2
+exactCitation, reporter_citations branch    17.316 ms   read=291
+AND-first sparse arm, the SAME citation  12,158.442 ms   read=150,912
+cite:"2023:AHC:170543" end to end            4 - 352 ms
+```
+
+**The safety half outranks the speed half:** `2025:AHC:32900` resolves to two
+judgments, and the hybrid path returned an ordinary ranked list with nothing
+saying the citation is not unique, because `exactCitation` correctly declines to
+pin when it finds two. It now returns `ambiguous`, which `CITATION_HARNESS.md`
+§A3d.4 requires. Fixed in `structured.ts` as a canonicalising rewrite to
+`cite:"..."` so both spellings produce the identical AST; 63/63 tests. Commit
+`880f206`.
+
+**3. The sparse arm is disk-bound on an uncacheable index.** ~160,000 blocks
+(~1.25 GB) read on EVERY sparse query regardless of shape, because
+`judgments_full_text_idx` is **16 GB** against **2 GB** of `shared_buffers`.
+A 134-char title measured 54.6 s, a 61-char concept query 53.0 s. LOCAL_CONTENDED,
+and also a sizing input for the eventual serving layer. **No index or schema
+change proposed unilaterally** — three candidates were sent to LCC (bus 1006)
+with none started.
+
+**4. `LAUNCH_BENCHMARK_V1` is frozen.** 1,029 rows, `frozenHash
+ba9357cba2fbf297`, consolidated from NEW3's four verified gold files by
+`services/harness/src/launch-gold.ts`. citation 229 · case_title 229 ·
+fact_passage 372 · nl_doctrine 199. **229 verbatim-passage rows excluded on
+CONSTRUCTION** — they are the target's own words, which `gold-contract.ts`
+already names an upper bound, and 97.8% of them also exceed the product's own
+500-char input cap. Four more excluded for the cap alone, named rather than
+dropped. The hash covers only the ordered query tuples, so a corpus change keeps
+the benchmark and a gold change loudly replaces it.
+
+**5. The P2 failure cascade, and a defect NEW2 caught before it shipped.** Every
+failure gets one reason, first rule wins, ordered from "nobody could have found
+this" to "we had everything and got it wrong" so the reason names the lane that
+owns the fix. My first cut fired `TEXT_UNSAFE` for damaged authorities whatever
+the query was; NEW2's bus 1005 pointed out that `body_text_safe` and
+`metadata_discoverable` are separate booleans. It would have sent NEW2 to OCR
+documents whose identity fields were never damaged. Fixed, commit `314b22c`.
+
+**6. P0 restored.** LCC's migration `0070` moved the eligibility view hash and
+the walk's guard stopped it — correctly. Thirty keeper relaunches had failed
+identically for four hours. Reconciled against `pg_get_viewdef` rather than
+against the bus message announcing it: 0070 adds one column the walk does not
+read, and `REFUSED_CLASSES` stands unchanged. Pin `2e7b53afe35fa81c`, commit
+`1789014`.
+
+**Handed to the product lane:** `docs/ai/new1-tier-a/SEARCH_CONTRACT_FOR_PRODUCT.md`
+(bus 1010/1011) — a behavioural annex, not a second contract. Its sharpest point
+is that **an empty result and a degraded result are different and today look
+identical**: concept search exceeds the mobile client's own 15 s timeout, and
+"Lawmind has no law on this" is false.
+
+**RUNNING, not finished:** whether the document vectors would actually ANSWER
+the queries production cannot — measured against `new1_probe_half_250k`, the one
+staged table with an HNSW index. Every number it produces will be an upper bound
+(257k distractors against 8.85M, value-ordered membership, dense arm alone), and
+it is decisive in one direction only. **STILL DEFERRED BY THE GATE:** the full
+1,029-row benchmark run and the quarantine sweep of the 2,530 staged vectors
+NEW2's new verdicts have convicted.
+
 ### 21 Aug 2026 (night) — NEW2: THE CORPUS IS 8.65% UNREADABLE, `decided` IS 30% PROCEDURAL, AND OCR RECOVERS WHAT NO RE-EXTRACTION CAN
 
 Five findings, each measured, each with the artefact that proves it. Owner NEW2;
