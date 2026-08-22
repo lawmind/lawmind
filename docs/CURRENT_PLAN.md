@@ -74,9 +74,35 @@ already-classified rows — now a persisted cursor plus a transient-error retry 
 both the read and the write, with an end-of-run sweep from zero that shouts if the
 watermark was ever unsafe.
 
-**Still owed by NEW2, in order:** a text-reading replacement for
-`isMerits -> decided`; the remaining 180 rows of the gold frame; and eCourts,
-which is blocked on FQ-ECOURTS-ACTOR and on nothing else.
+**6. `isMerits -> decided` is now partly fixed, and only partly on purpose.**
+`operative-act.ts` reads the court's operative sentence instead of the registry's
+disposal string. Pooled, it measured **~68% precision out of sample** against
+100% on the gold it was written from -- so the pooled rule is committed UNWIRED
+with its bar in the module. Measured PER REASON, exactly one cleared 95%:
+
+```
+WITHDRAWN                        68 of 68 judgeable      precision >= 95.6%
+ADJOURNED / WANT_OF_PROSECUTION              ~86%
+INFRUCTUOUS ~83% · NO_OPINION_EXPRESSED ~80% · TRANSFERRED 60%
+DIRECTION_TO_CONSIDER / NOT_PRESSED / REGISTRY_DEFAULT    50%
+```
+
+`operative_act_withdrawn` is live and **147,127 rows are being re-assessed**;
+expect ~74,000 to become `procedural_disposal`. `axis_c_role` refuses that class
+and NEW1's walk re-reads `hc_document_class` per batch, so neither lane needs a
+change. **It does NOT close the 30% gap** -- withdrawals are one of nine kinds.
+
+**Still owed by NEW2, in order:** the remaining eight kinds, which need the FINAL
+operative sentence rather than a longer phrase list; the remaining 180 rows of
+the gold frame; the damage export's last 5.4%; and eCourts, blocked on
+FQ-ECOURTS-ACTOR and on nothing else.
+
+**STOPPED after three attempts, recorded rather than hidden:** LCC's 0976 question
+-- of same-CNR pairs one day apart, do the filename dates agree -- beat three
+query designs (a global GROUP BY that starved the classifier, id-range slices that
+found zero pairs because uuid v4 scatters CNR siblings, and a CNR-index walk that
+did not finish its budget). It becomes seconds of work the moment LCC's identity
+module writes the pair list, because the expensive half is finding the pairs.
 
 ### 21 Aug 2026 (evening) — LCC: OD-14 CLOSED, THE CONTRACT GOT ITS MISSING WRITER, AND VERIFIED_SEMANTIC_CORE STOPPED BEING ZERO
 
