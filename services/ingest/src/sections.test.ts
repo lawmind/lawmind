@@ -168,3 +168,86 @@ test('the new codes keep distinct keys from the ones they replaced', () => {
   // different numbering, and a search for one must never return the other.
   assert.notEqual(canonicalAct('Bharatiya Nyaya Sanhita, 2023'), canonicalAct('Indian Penal Code, 1860'));
 });
+
+/**
+ * The defect this asserts against, found 22 Aug 2026 by probing the real
+ * search API: `canonicalAct('BNS')` returned the string `BNS`, while extraction
+ * had written `act_key = 'BHARATIYA NYAYA SANHITA'` for all 20,440 BNS
+ * references in the corpus. `act:BNS` therefore matched nothing and said so
+ * silently — the exact shape of failure `CLAUDE.md` names for BNS/BNSS/BSA.
+ *
+ * It is asserted as an INVARIANT BETWEEN THE TWO TABLES rather than as three
+ * hardcoded strings: every abbreviation this module knows how to expand must
+ * canonicalise to the same key as the title it expands to. A fourth
+ * abbreviation added to one table and forgotten in the other now fails here
+ * instead of in production.
+ */
+test('every abbreviation canonicalises to the same key as the act it expands to', () => {
+  const pairs: readonly [string, string][] = [
+    ['IPC', 'Indian Penal Code, 1860'],
+    ['CrPC', 'Code of Criminal Procedure, 1973'],
+    ['CPC', 'Code of Civil Procedure, 1908'],
+    ['NI Act', 'Negotiable Instruments Act, 1881'],
+    ['Evidence Act', 'Indian Evidence Act, 1872'],
+    ['BNS', 'Bharatiya Nyaya Sanhita, 2023'],
+    ['BNSS', 'Bharatiya Nagarik Suraksha Sanhita, 2023'],
+    ['BSA', 'Bharatiya Sakshya Adhiniyam, 2023'],
+  ];
+  for (const [abbreviation, title] of pairs) {
+    assert.equal(
+      canonicalAct(abbreviation),
+      canonicalAct(title),
+      `${abbreviation} does not reach the same act_key as "${title}" — a search for it would match nothing`,
+    );
+  }
+});
+
+/**
+ * `Bhartiya` is how several High Courts print `Bharatiya`. Same word, same
+ * title, same statute — 2,857 references in the corpus under the variant. A
+ * spelling merge, which this table exists for; not a statute merge, which it
+ * forbids.
+ */
+test('the Bhartiya/Bharatiya transliteration variant is one key', () => {
+  assert.equal(
+    canonicalAct('Bhartiya Nagarik Suraksha Sanhita, 2023'),
+    canonicalAct('Bharatiya Nagarik Suraksha Sanhita, 2023'),
+  );
+});
+
+/**
+ * The transliteration tail, and — more importantly — what must NOT be swept
+ * into it.
+ *
+ * The courts spell these three titles 498 different ways in this corpus. The
+ * rules match on the ending bigram that identifies the statute, which recovers
+ * 5,493 references the full-title patterns missed. The risk that buys is
+ * over-merging, so the refusals are asserted first: a state security Act and a
+ * revenue Sanhita share a word with these codes and are different law.
+ */
+test('the 2023 codes absorb their transliteration variants', () => {
+  const bnss = canonicalAct('Bharatiya Nagarik Suraksha Sanhita, 2023');
+  for (const variant of [
+    'Bhartiya Nagrik Suraksha Sanhita',
+    'Bharatiya Nagarika Suraksha Sanhita',
+    'Bharatiya Nagarik Suraksha Sanhita Act',
+    'BNSS',
+  ]) {
+    assert.equal(canonicalAct(variant), bnss, `${variant} did not reach the BNSS key`);
+  }
+  const bns = canonicalAct('Bharatiya Nyaya Sanhita, 2023');
+  for (const variant of ['Bhartiya Nyaya Sanhita', 'Bharatiya Nyay Sanhita', 'BNS']) {
+    assert.equal(canonicalAct(variant), bns, `${variant} did not reach the BNS key`);
+  }
+});
+
+test('acts that merely share a word with the 2023 codes stay separate', () => {
+  const bnss = canonicalAct('Bharatiya Nagarik Suraksha Sanhita, 2023');
+  const bsa = canonicalAct('Bharatiya Sakshya Adhiniyam, 2023');
+  // Ends in ADHINIYAM, not SANHITA — a Madhya Pradesh state security Act.
+  assert.notEqual(canonicalAct('Madhya Pradesh Rajya Suraksha Adhiniyam'), bnss);
+  assert.notEqual(canonicalAct('Madhya Pradesh Rajya Suraksha Adhiniyam'), bsa);
+  // Ends in SANHITA but is a revenue code, not a criminal procedure code.
+  assert.notEqual(canonicalAct('Uttar Pradesh Rajaswa Sanhita'), bnss);
+  assert.notEqual(canonicalAct('Chhattisgarh Panchayat Raj Adhiniyam'), bsa);
+});

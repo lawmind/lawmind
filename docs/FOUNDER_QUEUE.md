@@ -4650,3 +4650,103 @@ for the 23.1% minority worth trying before OCR.
 **Not urgent.** ~700K documents' worth of consequence, zero documents
 fetched, zero spend proposed — flagging the scope boundary now so it is
 answered once rather than assumed under time pressure later.
+
+## FQ-HOSTING · STAGING_REQUIRED — public serving needs a remotely-reachable box eventually, but not yet, and not without your approval · NEW3, 22 Aug 2026, corrected same day
+
+**Founder direction received mid-session, stated plainly: stay local-first.**
+No Railway re-enable, no new managed cloud DB, no cloud GPU, no recurring
+infra spend without explicit approval. This entry records a real gap
+without proposing to spend around it — it is filed as **STAGING_REQUIRED**,
+the queue's own category for "needs a reachable environment eventually,"
+not as a request to act now.
+
+**What is actually true today, no action needed:** the Railway API has had
+**0 active deployments since 11 Aug 18:18 UTC** — every client request
+404s. Separately, both `apps/mobile/src/api/client.ts` and
+`apps/admin/lib/api.ts` had that dead URL **hardcoded with no override at
+all**, which is its own defect independent of whether Railway comes back or
+something else replaces it. I fixed that half myself, no spend, no
+decision needed: both files now read `EXPO_PUBLIC_API_URL` /
+`NEXT_PUBLIC_API_URL` at build/runtime and fall back to the same URL only
+when the env var is unset, so pointing the app at the LOCAL stack (or
+anywhere else) for verification is now a config change, not a code change.
+Per your instruction, "production path" for this session's work means the
+real API → service → retrieval → DB code path run **against the local
+Postgres**, not a deployment — I'll verify against that, labelled
+LOCAL_CONTENDED or LOCAL_QUIET as directed, not against Railway.
+
+**A separate, independent audit landed in the repo this session**
+(`docs/ai/audits/LAWMIND_REALITY_AUDIT_2026-08-22.md` and
+`LAWMIND_PUBLIC_LAUNCH_MASTER_PLAN_V2_2026-08-22.md`) and recommended
+decommissioning Railway for a dedicated Hetzner box (~€157/mo). That
+recommendation is **not adopted and not actioned** — it is exactly the kind
+of recurring spend this instruction says needs your explicit sign-off
+first, and I am not treating an audit's recommendation as that sign-off.
+Recorded here only so the reasoning (§3–6 of that document) is findable
+when you do want to look at it, not because anything is pending on it.
+
+**What genuinely cannot be done locally, whenever it comes up:** a few
+named things in this session's mandate structurally require a real
+publicly-reachable endpoint — TestFlight/Play internal builds need a URL
+Apple's and Google's servers and real testers' phones can reach; Apple
+IAP/Play Billing sandbox testing, OAuth/magic-link callback URLs, universal
+links, and push notification delivery all have the same requirement. None
+of that is being built or requested now. When one of them is the actual
+next step, I'll say so specifically rather than routing everything through
+this one entry.
+
+**What proceeds without any of this:** mobile UX, premium-workflow screens
+built against the contracts and fixtures that already exist, store listing
+metadata, analytics event wiring, RevenueCat integration up to the point it
+needs a live receipt to validate, and anything verifiable against the
+local stack.
+
+## FQ-PARTLY-OVERRULED-UNREADABLE — what does an advocate see when a later court partly overruled an authority and we cannot say which paragraphs?
+
+**Raised 22 Aug 2026, LCC. Not a blocker — everything around it is built and
+the population is 2 judgments. It needs a product answer, not more engineering.**
+
+**The state.** Two judgments carry a *verified* `overruled_in_part` edge while
+`judgments.overruled_status` still reads `none`:
+
+- `BHARATI VIDYAPEETH (DEEMED UNIVERSITY) v STATE OF MAHARASHTRA` (2004 INSC 140),
+  partly overruled by `MODERN DENTAL COLLEGE` (2016-05-02)
+- `SOCIETY FOR UN-AIDED P. SCHOOL OF RAJASTHAN v U.O.I.`, partly overruled by
+  `PRAMATI EDUCATIONAL & CULTURAL TRUST` (2014-05-06)
+
+**Why nothing has been applied, and why that is correct.**
+`propagate-treatment.ts` skips both deliberately: `partly_set_aside` is supposed
+to name the affected paragraphs, none could be read with confidence near the
+citation, and it refuses to widen to `set_aside` because naming the wrong
+paragraph tells an advocate that a live passage is dead. That refusal is right
+and I have not changed it.
+
+**The consequence, which is the question.** Every surface renders these two as
+`overruledStatus: "none"` — "no adverse treatment recorded" — when a later
+Supreme Court bench partly overruled them. `CITATION_HARNESS.md` holds
+stale-overruled at a threshold of ZERO and calls overruled law shown without the
+LAW MOVED mark as severe as a hallucination. So the product is currently silent
+about a change of standing it has verified evidence for.
+
+**What I did instead of deciding.** Added `unappliedTreatment()` — it REPORTS
+the edge on `GET /judgments/:id` and on search results, writes nothing, notifies
+nobody, and changes no banner or refusal. `applyOverruledChange` remains the
+single writer, as `ADMIN_SURFACE.md` §15 requires. The fact is no longer silent
+in the API; it is still silent in the UI, because the client has no state for it.
+
+**The decision you own — three options, my recommendation first:**
+
+1. **Show a fourth banner state: "partly overruled — paragraphs unknown."**
+   Honest, and matches how an advocate would want to be warned. Costs a new
+   client state and new copy; per the copy rule it must say what they can act on
+   ("A later court overruled part of this. We could not identify which
+   paragraphs"), never "verification failed".
+2. **Render `partly_set_aside` with an empty paragraph list.** No new state, but
+   the existing copy promises "the named paragraphs say which" and there are
+   none — the client would have to special-case it anyway.
+3. **Leave it silent until a human names the paragraphs.** Defensible at n=2,
+   and the admin dispute queue exists for exactly this. It fails the zero
+   threshold knowingly rather than accidentally, which is at least a choice.
+
+Not urgent at 2 judgments; it stops being a footnote the moment
+`propagate-treatment.ts` runs against more of the corpus.

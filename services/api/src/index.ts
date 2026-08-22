@@ -11,7 +11,22 @@ import { logger } from './logger.ts';
 import { runPreflight } from './preflight.ts';
 
 const db = createDatabase(env.databaseUrl());
-const rawSql = postgres(env.databaseUrl(), { max: 10 });
+/**
+ * Every statement this API sends is bounded — see `env.pgStatementTimeoutMs`.
+ *
+ * `idle_in_transaction_session_timeout` is the second half of the same
+ * guarantee: `statement_timeout` cancels a running statement, but a connection
+ * that opened a transaction and then stopped being driven holds its locks
+ * indefinitely and no statement timeout ever fires. Both are needed for "a
+ * request cannot monopolize Postgres" to be true rather than mostly true.
+ */
+const rawSql = postgres(env.databaseUrl(), {
+  max: 10,
+  connection: {
+    statement_timeout: env.pgStatementTimeoutMs(),
+    idle_in_transaction_session_timeout: 30_000,
+  },
+});
 
 /**
  * Fail closed, not open — REB §1. Every other degradation path in this file

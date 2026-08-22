@@ -281,3 +281,31 @@ test('a bare colon in prose is still NOT structured', () => {
     assert.equal(looksStructured(prose), false, `prose misread as structured: ${prose}`);
   }
 });
+
+/**
+ * `cite:1995 INSC 227` — found 22 Aug 2026 by probing the live API. The
+ * unquoted form returned **0 results, HTTP 200**, for a judgment in the corpus,
+ * because a field value is one token: it searched reporter `1995` plus the
+ * loose words `INSC` and `227`. A held judgment reported as not found is what
+ * `CITATION_HARNESS.md` holds at a zero threshold.
+ */
+test('cite: absorbs a spaced citation, and only when it IS one', () => {
+  const spaced = parse('cite:1995 INSC 227');
+  assert.equal(spaced.kind, 'term');
+  assert.equal((spaced as { field: string }).field, 'cite');
+  assert.equal((spaced as { value: string }).value, '1995 INSC 227');
+
+  // Quoted and unspaced forms are unchanged — they already worked.
+  assert.equal((parse('cite:"1995 INSC 227"') as { value: string }).value, '1995 INSC 227');
+
+  // NOT a citation, so nothing is absorbed and the words stay separate terms.
+  // `extractCitations` decides this, never a second pattern in the parser.
+  const notACitation = parse('cite:1995 murder');
+  assert.notEqual(notACitation.kind, 'term');
+});
+
+test('cite: absorption stops at a keyword rather than swallowing the query', () => {
+  const node = parse('cite:1995 INSC 227 AND court:"Supreme"');
+  // The AND survives as the root: absorption took only the citation words.
+  assert.equal(node.kind, 'and');
+});

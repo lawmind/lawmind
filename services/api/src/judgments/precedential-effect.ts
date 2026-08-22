@@ -189,6 +189,45 @@ export function strongestTreatment(
  * returned as one. A stored `set_aside` WITH an `overruled` edge is the OD-14
  * case: the edge is the evidence and the label was the coercion.
  */
+/**
+ * A verified adverse edge the CORPUS has not applied — reported, never acted on.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS IS A SEPARATE FUNCTION AND NOT A CHANGE TO {@link precedentialEffect}
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `precedentialEffect` returns `none` when the stored status is `none`, however
+ * strong the inbound edge, and its comment gives the reason: flipping standing
+ * there would be a second implementation of a status change, and
+ * `ADMIN_SURFACE.md` §15 requires exactly one — `applyOverruledChange`, which
+ * also fans out to everyone who saved, exported or copied the authority. That
+ * reasoning is correct and is not disturbed here.
+ *
+ * But the consequence was that the fact became invisible. Measured 22 Aug 2026,
+ * the whole population is **2 judgments** — `BHARATI VIDYAPEETH` (2004 INSC 140)
+ * and `SOCIETY FOR UN-AIDED P. SCHOOL OF RAJASTHAN` — each carrying a verified
+ * `overruled_in_part` edge while every surface rendered "no adverse treatment
+ * recorded". `propagate-treatment.ts` skips both DELIBERATELY and correctly:
+ * `partly_set_aside` needs the affected paragraph numbers, none could be read
+ * near the citation, and it refuses to widen to `set_aside` because naming the
+ * wrong paragraph tells an advocate a live passage is dead.
+ *
+ * So this reports and does not decide. It writes nothing, notifies nobody, and
+ * changes no banner or refusal — those stay with the one writer. What it removes
+ * is the silence, which `CITATION_HARNESS.md` holds at a zero threshold.
+ *
+ * **The open question it exposes is the founder's, not this module's:** what an
+ * advocate should see when a later court partly overruled an authority and we
+ * cannot say which paragraphs. Recorded in `docs/FOUNDER_QUEUE.md`.
+ */
+export function unappliedTreatment(input: {
+  overruledStatus: OverruledStatus;
+  inboundRelationships: readonly string[];
+}): TreatmentRelationship | null {
+  if (input.overruledStatus !== 'none') return null;
+  return strongestTreatment(input.inboundRelationships);
+}
+
 export function precedentialEffect(input: {
   overruledStatus: OverruledStatus;
   /** Every relationship on an inbound edge. Order irrelevant. */

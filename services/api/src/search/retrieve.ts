@@ -13,7 +13,21 @@
  */
 import type { Sql } from 'postgres';
 
-import { citationLookupKey, classifyQuery, warrantsExactLookup } from './query-shape.ts';
+import { canonicalAct } from '@lawmind/ingest/sections';
+
+import {
+  precedentialEffect,
+  precedentialPolicy,
+  unappliedTreatment,
+  type OverruledStatus,
+} from '../judgments/precedential-effect.ts';
+
+import {
+  citationLookupKey,
+  classifyQuery,
+  warrantsExactLookup,
+  warrantsSectionLookup,
+} from './query-shape.ts';
 
 import {
   cleanExtractedText,
@@ -22,6 +36,55 @@ import {
   resolveExactSpan,
   trimToSentenceStart,
 } from '../judgments/paragraphs.ts';
+
+/**
+ * Postgres `query_canceled`. This is what `statement_timeout` looks like when it
+ * reaches the driver, and it is the ONE database error a ranker is allowed to
+ * absorb — it means "this arm ran out of its budget", not "the data is wrong".
+ */
+const QUERY_CANCELED = '57014';
+
+/**
+ * Which half of the search stopped contributing, when one did.
+ *
+ * **A degraded search must never look like a complete one.** `CITATION_HARNESS.md`
+ * holds silent-drop at a zero threshold, and an arm that timed out has dropped
+ * authorities the advocate will never know existed. Reporting recall loss is the
+ * only honest option available: it cannot be recovered, so it must be visible.
+ */
+export type DegradedArm = 'sparse_timeout' | 'dense_timeout';
+
+function isQueryCanceled(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code?: unknown }).code === QUERY_CANCELED
+  );
+}
+
+/**
+ * Run one ranker; on ITS OWN timeout return nothing and say so.
+ *
+ * Half a hybrid is a usable search — the file already makes that trade for a
+ * cold embedder. What it must not do is silently make it. Any error that is not
+ * a cancellation is rethrown: a syntax error or a missing column is a defect,
+ * and swallowing it would turn a broken ranker into a permanently quiet one.
+ */
+async function bounded<T>(
+  arm: DegradedArm,
+  empty: T,
+  run: () => Promise<T>,
+  onDegrade: ((arm: DegradedArm) => void) | undefined,
+): Promise<T> {
+  try {
+    return await run();
+  } catch (error) {
+    if (!isQueryCanceled(error)) throw error;
+    onDegrade?.(arm);
+    return empty;
+  }
+}
 
 /** Standard RRF constant. Damps the influence of any single ranker's top hit. */
 const RRF_K = 60;
@@ -94,6 +157,14 @@ export type RetrievedJudgment = {
   court: string;
   judgmentDate: string;
   overruledStatus: string;
+  /** The stored column, beside the derived banner. Admin monitor only. */
+  overruledStatusStored: string;
+  /** Layer 2 of `precedential-effect.ts` — five values, not four. */
+  precedentialEffect: string;
+  /** Layer 3. False only for a genuine set aside or an unaccountable status. */
+  canAddToMatter: boolean;
+  /** A verified adverse edge the corpus has not applied. Never a banner. */
+  unappliedTreatment: string | null;
   overruledByJudgmentId: string | null;
   overruledParas: number[] | null;
   overruledNote: string | null;
@@ -629,6 +700,259 @@ async function exactCitation(
 }
 
 /**
+ * The party-name lookup, on the trigram index, under its OWN small budget.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THE BUDGET IS THE DESIGN AND NOT A PRECAUTION
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * {@link exactCaseTitle} matches a normalised title byte-for-byte, which almost
+ * never fires: an advocate types `Garware Nylons v Pimpri Chinchwad` and the
+ * corpus holds `M/S GARWARE NYLONS LTD. versus PIMPRI CHINCHWAD MAHANAGAR
+ * PALIKA AND ORS.` So case-name search fell entirely to the sparse full-text
+ * arm, measured at **p50 17.1s, p95 28.2s, every response degraded** — the
+ * worst path in the benchmark once citations and sections were routed.
+ *
+ * `judgments_case_title_trgm` was already there and unused by search.
+ * `word_similarity` — how well the query matches some CONTIGUOUS EXTENT of the
+ * title — is the right operator, because the stored title carries `M/S`,
+ * `LTD.` and `AND ORS.` that the advocate never types. It scored the correct
+ * judgment at 0.750 in 1,092 ms where plain `similarity()` took 13,360 ms.
+ *
+ * **But it is fast only when the party names are distinctive.** Measured on the
+ * same box: `Garware Nylons v Pimpri Chinchwad` 3.1s, and `Allen Berry & Co v
+ * Union of India` **cancelled at 30s** — `Union of India` is in a large share
+ * of Indian case titles, so its trigrams select an enormous candidate set. An
+ * unbudgeted trigram route would simply move the slowness, not remove it.
+ *
+ * So it gets a budget of its own, smaller than the request's. When it hits, it
+ * replaces a 17–28s ranker with a ~1–3s index probe. When it does not, it costs
+ * {@link CASE_TITLE_BUDGET_MS} and the query falls through to exactly the
+ * pipeline that handles it today. The worst case is bounded and small; the best
+ * case is most of the request.
+ *
+ * `SET LOCAL` inside a transaction, so the ceiling applies to this statement
+ * and is discarded with it — never leaked onto a pooled connection that the
+ * next request will reuse.
+ */
+/**
+ * Exact title first, trigram second — the cheaper and stricter answer wins.
+ *
+ * An exact normalised match is unambiguous and rides a btree; there is no
+ * reason to run a similarity probe when it fires. The trigram probe is the
+ * fallback for the ordinary case, where the advocate typed the party names and
+ * the corpus holds the registry's full title.
+ */
+async function caseNamePins(
+  sql: Sql,
+  queryText: string,
+  filters: SearchFilters,
+  limit: number,
+): Promise<string[]> {
+  const exact = await exactCaseTitle(sql, queryText, filters);
+  if (exact !== null) return [exact];
+  return caseTitleTrigram(sql, queryText, filters, limit);
+}
+
+const CASE_TITLE_BUDGET_MS = 2500;
+
+/**
+ * The lowest `word_similarity` that may be PINNED at the top of the page.
+ *
+ * Measured over seven real advocate-style queries against the corpus: every
+ * correct match scored 0.696–0.893, and the nearest wrong neighbours sat at
+ * 0.39–0.59. 0.65 separates them with room on both sides, and erring high is
+ * the safe direction — a query that pins nothing falls through to the ordinary
+ * pipeline, while a wrong pin puts another party's case at rank 1.
+ */
+const CASE_TITLE_MIN_SIMILARITY = 0.65;
+
+/**
+ * The rarest word in the query, by MEASURED document frequency.
+ *
+ * **Not the longest.** `sparseAny`'s comment already records this lane
+ * measuring and rejecting length as a proxy for rarity (bus 0664): `court` is
+ * five characters and appears in 90.6% of documents. Repeating the mistake here
+ * cost 3 of 7 lookups in testing — `Bharati Vidyapeeth v State of Maharashtra`
+ * selected `MAHARASHTRA` (11 characters) over `VIDYAPEETH` (10), and narrowed
+ * to a set of millions instead of a set of dozens. Reading
+ * `lexeme_document_frequency` instead fixed the token on all seven.
+ *
+ * **Absent means rare**, the same direction the sparse arm chose and for the
+ * same reason: a word nobody measured is far more likely to be a party's name
+ * than a word the corpus is saturated with, and failing the other way costs
+ * recall silently.
+ */
+async function rarestToken(sql: Sql, query: string): Promise<string | null> {
+  const words = [
+    ...new Set(
+      query
+        .toUpperCase()
+        .replace(/[^A-Z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length >= 4),
+    ),
+  ];
+  if (words.length === 0) return null;
+  const rows = await sql<{ lexeme: string; document_count: string }[]>`
+    SELECT lexeme, document_count FROM lexeme_document_frequency
+     WHERE lexeme = ANY(${words.map((w) => w.toLowerCase())})`;
+  const df = new Map(rows.map((r) => [r.lexeme, Number(r.document_count)]));
+  let best = words[0]!;
+  for (const w of words) {
+    if ((df.get(w.toLowerCase()) ?? 0) < (df.get(best.toLowerCase()) ?? 0)) best = w;
+  }
+  return best;
+}
+
+/**
+ * Party-name lookup: narrow on the trigram index by the rarest word, then rank
+ * what remains by `word_similarity`. Under its own budget throughout.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY NARROW-THEN-RANK, AND WHY THE POOL IS NOT CAPPED
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * {@link exactCaseTitle} matches a normalised title byte-for-byte, which almost
+ * never fires: an advocate types `Garware Nylons v Pimpri Chinchwad` and the
+ * corpus holds `M/S GARWARE NYLONS LTD. versus PIMPRI CHINCHWAD MAHANAGAR
+ * PALIKA AND ORS.` So case-name search fell entirely to the sparse full-text
+ * arm — measured **p50 17.1s, p95 28.2s, every response degraded**, the worst
+ * path in the benchmark once citations and sections were routed.
+ *
+ * `judgments_case_title_trgm` was already there and unused by search. An
+ * `ILIKE` on one rare word rides it and is selective: 46–414 ms for five of
+ * seven test queries, against 17–28 s through the ranker.
+ *
+ * **A `LIMIT` on the candidate pool was tried and removed.** Capping at 300
+ * rows before ranking made the cap decide which candidates existed, and it
+ * chose them in physical order — `U.O.I. v Jai Prakash Singh` missed its own
+ * judgment because the right row was not among the arbitrary 300. That is the
+ * same silent recall loss this file refuses in the sparse arm. Ranking the
+ * whole `ILIKE` set is correct, and {@link CASE_TITLE_BUDGET_MS} is what makes
+ * it safe: when the chosen word is not rare enough the query exceeds its budget
+ * and the search falls through to the pipeline that handles it today.
+ * `PRAKASH` did exactly that at 14,955 ms — bounded, honest, and no worse than
+ * the behaviour it replaced.
+ *
+ * **Same-named cases are not disambiguated here and must not be.** The corpus
+ * holds several `Kannadasan v State of Tamil Nadu` and several `Bharati
+ * Vidyapeeth v State of Maharashtra`. This returns up to half the page so the
+ * alternatives stay visible, rather than picking one reading for the advocate —
+ * the rule `exactCitation` follows when a lookup is not unique.
+ *
+ * `SET LOCAL` inside a transaction, so the ceiling is discarded with the
+ * statement and never leaks onto a pooled connection the next request reuses.
+ */
+async function caseTitleTrigram(
+  sql: Sql,
+  queryText: string,
+  filters: SearchFilters,
+  limit: number,
+): Promise<string[]> {
+  try {
+    return await sql.begin(async (tx) => {
+      await tx.unsafe(`SET LOCAL statement_timeout = ${CASE_TITLE_BUDGET_MS}`);
+      const token = await rarestToken(tx as unknown as Sql, queryText);
+      if (token === null) return [];
+      const rows = await tx<{ id: string }[]>`
+        SELECT j.id
+        FROM judgments j
+        WHERE j.case_title ILIKE ${'%' + token + '%'}
+          AND word_similarity(${queryText}, j.case_title) >= ${CASE_TITLE_MIN_SIMILARITY}
+          ${courtWhere(tx as unknown as Sql, filters)}
+          ${filters.dateFrom ? tx`AND j.judgment_date >= ${filters.dateFrom}` : tx``}
+          ${filters.dateTo ? tx`AND j.judgment_date <= ${filters.dateTo}` : tx``}
+          ${filters.caseType ? tx`AND j.case_type = ${filters.caseType}` : tx``}
+        ORDER BY word_similarity(${queryText}, j.case_title) DESC
+        LIMIT ${limit}`;
+      return rows.map((r) => r.id);
+    });
+  } catch (error) {
+    // Its own budget expiring on a word that is not rare enough is the expected
+    // outcome, not a fault. Anything else is a defect and must not be hidden.
+    if (!isQueryCanceled(error)) throw error;
+    return [];
+  }
+}
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A SECTION QUERY IS AN INDEX LOOKUP, NOT A FULL-TEXT SEARCH
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `section 302 IPC` was measured, through the real API on the 18,698,968-row
+ * corpus, **still executing at 60 seconds** (LOCAL_CONTENDED). The mechanism is
+ * the one {@link sparseAny}'s comment already names: `ORDER BY ts_rank(...)`
+ * must read the `full_text_tsv` of every row the match set contains, and
+ * `section`, `302` and `ipc` intersect on a very large one. It is not fixable
+ * by tuning the ranker — a candidate cap does not help either, because the GIN
+ * bitmap is built in full before any `LIMIT` applies (pool of 500 measured at
+ * 10.2s, pool of 20,000 at 26.7s: the cost is finding the rows, not ranking
+ * them).
+ *
+ * The query does not belong there at all. `judgment_statute_refs` is 862,594
+ * rows with a btree on `(act_key, section_number)` — the same question, asked
+ * of the index built to answer it:
+ *
+ * | | full-text | this |
+ * | --- | --- | --- |
+ * | IPC s.302 | >45,000 ms (cancelled) | 1,261 ms |
+ * | NI Act s.138 | — | 943 ms |
+ * | CrPC s.482 | — | 737 ms |
+ * | BNS s.103 | — | 759 ms |
+ *
+ * **`judgments` is joined ONLY when a filter needs it.** With the join present
+ * unconditionally, NI s.138 cost 8,050 ms against 943 ms without: every
+ * matching reference has to be resolved to its judgment before five can be
+ * returned. Ordering is therefore by `occurrences` — how much the judgment
+ * actually turns on the provision — and the date tie-break is dropped rather
+ * than paid for on every query that does not filter.
+ *
+ * **Coverage is 2.28% of the corpus and that is not hidden.** 426,473 of
+ * 18,698,968 judgments carry any statute reference, because `sections.ts`
+ * records a reference only where the court NAMED the act beside the section.
+ * These pins are therefore an addition to the ranked results, never a
+ * replacement for them — the remaining slots stay with the ordinary pipeline,
+ * so a judgment the extractor missed is still reachable.
+ */
+async function sectionJudgments(
+  sql: Sql,
+  act: string,
+  section: string,
+  filters: SearchFilters,
+  limit: number,
+): Promise<string[]> {
+  const needsJudgments =
+    filters.court !== undefined ||
+    filters.courts !== undefined ||
+    filters.dateFrom !== undefined ||
+    filters.dateTo !== undefined ||
+    filters.caseType !== undefined;
+
+  const key = canonicalAct(act);
+  const rows = needsJudgments
+    ? await sql<{ judgment_id: string }[]>`
+        SELECT r.judgment_id
+        FROM judgment_statute_refs r
+        JOIN judgments j ON j.id = r.judgment_id
+        WHERE r.act_key = ${key} AND upper(r.section_number) = ${section.toUpperCase()}
+          ${courtWhere(sql, filters)}
+          ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+          ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+          ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+        ORDER BY r.occurrences DESC
+        LIMIT ${limit}`
+    : await sql<{ judgment_id: string }[]>`
+        SELECT r.judgment_id
+        FROM judgment_statute_refs r
+        WHERE r.act_key = ${key} AND upper(r.section_number) = ${section.toUpperCase()}
+        ORDER BY r.occurrences DESC
+        LIMIT ${limit}`;
+  return rows.map((r) => r.judgment_id);
+}
+
+/**
  * Exact case-title lookup — the same architecture as {@link exactCitation},
  * for the query shape it does not cover.
  *
@@ -779,17 +1103,102 @@ export async function hybridSearch(
   filters: SearchFilters,
   limit: number,
   mode: RetrievalMode = 'hybrid',
+  /**
+   * Called once per arm that ran out of its statement budget. Optional and
+   * additive — every existing caller keeps its behaviour — but the search route
+   * passes it, because a response that cannot say it is incomplete is the
+   * silent drop this codebase measures at a zero threshold.
+   */
+  onDegrade?: (arm: DegradedArm) => void,
 ): Promise<RetrievedJudgment[]> {
   // Each arm is skipped rather than computed-and-discarded: an isolated-arm
   // measurement that still paid for the other half would report the fused
   // system's latency and call it the arm's.
-  const sparseRanked = mode === 'dense' ? [] : await sparse(sql, query, filters);
-  // A corpus with no embeddings yet still searches, lexically. Returning nothing
-  // because half the pipeline is cold would be worse than returning less.
-  const denseResult =
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE EXACT LOOKUP RUNS FIRST, AND DECIDES WHETHER THE SPARSE ARM RUNS AT ALL
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This block used to sit AFTER both rankers, so a citation query paid for the
+   * full-text scan and then had its answer pinned on top of it. This file's own
+   * header already argues why that is backwards — *"a citation is an exact-match
+   * problem ... a nearest-neighbour search is both slower and less accurate at
+   * finding it"* — but the code only acted on it at ranking time, not at routing
+   * time.
+   *
+   * **The measurement that decided it.** The sparse AND pass, timed directly
+   * against the 18,698,968-row corpus (LOCAL_CONTENDED, 22 Aug 2026):
+   *
+   * | query | sparse AND pass | exact lookup |
+   * | --- | --- | --- |
+   * | `1995 INSC 227` | cancelled at budget | ~30 ms |
+   * | `section 302 IPC` | cancelled at budget | 1,261 ms |
+   *
+   * On a quiet box the citation case completed in ~14 s instead of being
+   * cancelled. Either way the sparse arm spends the entire request budget on a
+   * query whose answer a unique index already holds.
+   *
+   * **What skipping it costs, stated plainly.** For `1995 INSC 227` the sparse
+   * arm's other hits are roughly "judgments containing 1995, INSC and 227" —
+   * mostly the cases CITING that judgment. That is a real question, and it has
+   * its own precise answer in the citation graph (`GET /judgments/:id/graph`,
+   * `judgment_citations`) rather than in a full-text coincidence of three
+   * tokens. The dense arm still runs, so related authorities still fill the
+   * page.
+   *
+   * The skip is conditional on the lookup actually HITTING. A citation that
+   * resolves to nothing, or to two judgments, pins nothing and falls through to
+   * the ordinary pipeline unchanged — the asymmetry {@link warrantsExactLookup}
+   * describes, preserved.
+   */
+  const shape = classifyQuery(query);
+  const pins =
+    warrantsExactLookup(shape) && shape.citation !== null
+      ? [await exactCitation(sql, shape.citation, filters)]
+      : warrantsSectionLookup(shape, query) && shape.act !== null && shape.section !== null
+        ? await sectionJudgments(sql, shape.act, shape.section, filters, Math.floor(limit / 2))
+        : shape.shape === 'case_name'
+          ? await caseNamePins(sql, query, filters, Math.floor(limit / 2))
+          : [];
+  const pinned: string[] = [];
+  for (const id of pins) if (id !== null && !pinned.includes(id)) pinned.push(id);
+
+  /**
+   * Skipped only for the two shapes whose answer came from an index, and only
+   * when it did. `case_name` is deliberately NOT here: the lexical ranker is
+   * genuinely strong on case titles, it is the arm that finds the party name
+   * spelled differently, and `Garware Nylons v Pimpri` was measured at 1.66 s —
+   * it is not the expensive shape.
+   */
+  const skipSparse =
+    pinned.length > 0 &&
+    (shape.shape === 'citation' || shape.shape === 'section' || shape.shape === 'case_name');
+
+  const emptyDense = { ranked: [] as Ranked[], bestChunk: new Map<string, BestChunk>() };
+  /**
+   * The two arms run CONCURRENTLY, and that is a boundedness fix rather than a
+   * speed one.
+   *
+   * Awaited one after the other, a request's worst case is the SUM of both
+   * statement budgets — 30s under a 15s cap, which is not a bound anyone would
+   * choose. Started together it is the MAX, so the ceiling the timeout promises
+   * is the ceiling the request actually has.
+   *
+   * Safe because the arms were always independent: each reads, neither sees the
+   * other's output, and fusion happens strictly after both. It costs a second
+   * pool connection for the overlap; the connection-SECONDS are unchanged,
+   * only their arrangement.
+   */
+  const [sparseRanked, denseResult] = await Promise.all([
+    mode === 'dense' || skipSparse
+      ? Promise.resolve([] as Ranked[])
+      : bounded('sparse_timeout', [] as Ranked[], () => sparse(sql, query, filters), onDegrade),
+    // A corpus with no embeddings yet still searches, lexically. Returning
+    // nothing because half the pipeline is cold would be worse than less.
     queryVector && mode !== 'sparse'
-      ? await dense(sql, queryVector, filters)
-      : { ranked: [] as Ranked[], bestChunk: new Map<string, BestChunk>() };
+      ? bounded('dense_timeout', emptyDense, () => dense(sql, queryVector, filters), onDegrade)
+      : Promise.resolve(emptyDense),
+  ]);
 
   /**
    * RRF over one list is not fusion, but it is order-preserving — `1/(k+rank)`
@@ -820,19 +1229,13 @@ export async function hybridSearch(
    * system nobody runs; leaving it in measures the real arms of the real
    * pipeline. `docs/ai/STAGES_9_20_PLAN.md` §10.
    */
-  const shape = classifyQuery(query);
-  const pinned =
-    warrantsExactLookup(shape) && shape.citation !== null
-      ? await exactCitation(sql, shape.citation, filters)
-      : shape.shape === 'case_name'
-        ? await exactCaseTitle(sql, query, filters)
-        : null;
-
+  const pinnedSet = new Set(pinned);
   const ordered = [...scores.entries()]
     .sort((a, b) => b[1] - a[1])
-    .filter(([id]) => id !== pinned)
-    .slice(0, pinned === null ? limit : Math.max(0, limit - 1));
-  if (pinned !== null) ordered.unshift([pinned, Number.POSITIVE_INFINITY]);
+    .filter(([id]) => !pinnedSet.has(id))
+    .slice(0, Math.max(0, limit - pinned.length));
+  // Reversed so the first pin ends up first after successive unshifts.
+  for (const id of [...pinned].reverse()) ordered.unshift([id, Number.POSITIVE_INFINITY]);
   if (ordered.length === 0) return [];
 
   const ids = ordered.map(([id]) => id);
@@ -853,6 +1256,39 @@ export async function hybridSearch(
   `;
 
   const byId = new Map<string, JudgmentRow>(rows.map((r) => [r.id, r]));
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE DERIVED PRECEDENTIAL EFFECT, ON THE SURFACE MOST AUTHORITIES ARE SEEN ON
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * OD-14 split treatment into three layers — verified edge → derived effect →
+   * product policy — and `precedential-effect.ts` was wired into add-to-matter
+   * alone. Search, which is where an advocate meets almost every authority,
+   * still rendered the stored column raw: `P. KANNADASAN` came back
+   * `set_aside` for what its own verified edge calls `overruled`.
+   *
+   * **ONE batched query for the whole page**, the same shape
+   * `fillParagraphFallback` and `passagesForRerank` use, and for the same
+   * reason: a per-result round trip inside a request already waiting on two
+   * rankers is how a 3-second budget is spent on bookkeeping. The predicate is
+   * an indexed `cited_judgment_id = ANY(...)` over at most `limit` ids.
+   *
+   * Read live, per request, never cached — `CITATION_HARNESS.md` §Overruled
+   * status is never cached. `bannerStatus` is still one of the same four wire
+   * values, so a client reading only `overruledStatus` is unaffected.
+   */
+  const edgeRows = await sql<{ cited_judgment_id: string; relationship: string }[]>`
+    SELECT DISTINCT cited_judgment_id, relationship
+      FROM judgment_citations
+     WHERE cited_judgment_id = ANY(${ids})
+       AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
+  const edgesById = new Map<string, string[]>();
+  for (const e of edgeRows) {
+    const list = edgesById.get(e.cited_judgment_id);
+    if (list) list.push(e.relationship);
+    else edgesById.set(e.cited_judgment_id, [e.relationship]);
+  }
   const results: RetrievedJudgment[] = [];
   /**
    * One slot per DOCUMENT, not per row.
@@ -920,6 +1356,17 @@ export async function hybridSearch(
       ? { text: rawSpan.text, charOffset: rawSpan.charOffset, charLength: rawSpan.text.length }
       : null;
 
+    const inbound = edgesById.get(r.id) ?? [];
+    const effect = precedentialEffect({
+      overruledStatus: r.overruled_status as OverruledStatus,
+      inboundRelationships: inbound,
+    });
+    const policy = precedentialPolicy(effect);
+    const unapplied = unappliedTreatment({
+      overruledStatus: r.overruled_status as OverruledStatus,
+      inboundRelationships: inbound,
+    });
+
     results.push({
       judgmentId: r.id,
       caseTitle: r.case_title,
@@ -927,7 +1374,12 @@ export async function hybridSearch(
       reporterCitations: r.reporter_citations,
       court: r.court,
       judgmentDate: r.judgment_date,
-      overruledStatus: r.overruled_status,
+      // Derived, not the stored column — see the batched edge read above.
+      overruledStatus: policy.bannerStatus,
+      overruledStatusStored: r.overruled_status,
+      precedentialEffect: effect,
+      canAddToMatter: policy.addToMatter === 'allow',
+      unappliedTreatment: unapplied,
       overruledByJudgmentId: r.overruled_by_judgment_id,
       overruledParas: r.overruled_paras,
       overruledNote: r.overruled_note,

@@ -218,3 +218,39 @@ export function citationLookupKey(citation: string): string {
 export function warrantsExactLookup(q: ClassifiedQuery): boolean {
   return q.shape === 'citation' && q.citation !== null;
 }
+
+/**
+ * Whether a section-shaped query should be answered from the statute index
+ * BEFORE the full-text ranker runs.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS IS SEPARATE FROM THE CLASSIFIER, AND WHY IT IS STRICT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `classifyQuery` returns `section` for anything containing a section
+ * reference, including a 900-character passage of reasoning that mentions one
+ * in passing — the exact looseness that put **37 wrong judgments at rank 1**
+ * when citations were pinned on mere presence (see {@link citationIsTheQuery}).
+ * Nothing routed on `section` until now, so the looseness was harmless. Pinning
+ * on it would make it the same bug a second time.
+ *
+ * So the same test is applied: the section reference must be what the query is
+ * ABOUT. `section 302 IPC` leaves nothing behind and is a lookup; a paragraph
+ * arguing about mens rea that cites s.302 leaves hundreds of characters and is
+ * a concept query that the hybrid pipeline already handles well.
+ *
+ * **An act must be named.** `sections.ts` states the rule this side of the
+ * index obeys too — *no act, no record* — because a bare `section 5` is as
+ * likely to be a clause of a contract or the judgment's own numbering. Without
+ * an act there is nothing to look up and guessing one returns the wrong statute
+ * with total confidence.
+ *
+ * Erring towards `false` costs a slower correct answer. Erring towards `true`
+ * puts judgments on the wrong provision at the top of the page.
+ */
+export function warrantsSectionLookup(q: ClassifiedQuery, raw: string): boolean {
+  if (q.shape !== 'section' || q.section === null || q.act === null) return false;
+  const match = SECTION_RE.exec(raw.trim());
+  if (!match) return false;
+  return raw.trim().replace(match[0], '').trim().length <= MAX_NON_CITATION_CHARS;
+}

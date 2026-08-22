@@ -41,12 +41,24 @@
  *   The user meant to exclude something *from* something, and forgot the second
  *   half; answering literally is unhelpful and expensive.
  */
+import { extractCitations } from '@lawmind/ingest/citations';
+
 import { type Token, QueryError, lex } from './lex.ts';
 
 /**
  * The closed set of searchable fields — **the single place this list exists**,
  * so the error message and the compiler can never disagree about what is legal.
  */
+/**
+ * How many bare words after `cite:` may be pulled into the citation.
+ *
+ * Four covers every printed Indian form — `(2019) 4 SCC 221` lexes to four
+ * words, `1995 INSC 227` to three — and stops a runaway from swallowing a
+ * sentence. The cap only bounds the search; `extractCitations` still has to
+ * agree at every step.
+ */
+const CITE_MAX_ABSORB = 4;
+
 export const FIELDS = [
   'party',
   'judge',
@@ -281,7 +293,69 @@ class Parser {
       throw new QueryError(`"${field}:" needs a word or a "quoted phrase".`, t.start);
     }
     this.next();
+
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * `cite:1995 INSC 227` — A CITATION HAS SPACES IN IT AND ADVOCATES TYPE THEM
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * A field value is one token, so the unquoted form lexed as `cite:1995` plus
+     * two loose words and compiled to *"Judgments reported as 1995, and
+     * containing INSC, and containing 227"*. Measured against the live corpus:
+     * **0 results**, HTTP 200, for a judgment we hold — `cite:"1995 INSC 227"`
+     * and `cite:1995INSC227` both return it. A held judgment reported as not
+     * found is precisely what `CITATION_HARNESS.md` puts at a zero threshold,
+     * and the echoed interpretation is not a defence: it is one line of prose
+     * under an empty result list.
+     *
+     * So the following bare words are absorbed — but **only when the result is
+     * a citation**, and only `extractCitations` decides that. `CLAUDE.md`
+     * forbids inventing a citation format, and this file must not acquire a
+     * second opinion about what one looks like; it asks the module that owns
+     * the patterns and believes the answer.
+     *
+     * `cite:1995 murder` therefore absorbs nothing: the combination is not a
+     * citation, so the words stay separate terms and the query behaves exactly
+     * as it does today. Keywords (`AND`, `NOT`), parentheses and further fields
+     * are not `word` tokens, so `cite:2019 INSC 4 AND court:"Supreme"` stops
+     * absorbing at `AND`.
+     */
+    if (field === 'cite' && t.kind === 'word') {
+      const absorbed = this.absorbCitationWords(t);
+      if (absorbed !== null) return this.makeTerm(field, absorbed);
+    }
     return this.makeTerm(field, t);
+  }
+
+  /**
+   * Greedily take following bare words while they keep forming a citation, and
+   * return the widened token — or null if the first word was already the whole
+   * citation and nothing more should be taken.
+   *
+   * Longest wins: `2019 4 SCC 221` must not stop at `2019 4` merely because a
+   * shorter prefix also parses. Each step is checked before it is committed, so
+   * a run that stops being a citation leaves the previous, valid one standing.
+   */
+  private absorbCitationWords(first: Token): Token | null {
+    let value = first.value;
+    let taken = 0;
+    let bestValue: string | null = null;
+    let bestTaken = 0;
+
+    for (let k = 0; k < CITE_MAX_ABSORB; k++) {
+      const nxt = this.tokens[this.pos + k];
+      if (!nxt || nxt.kind !== 'word') break;
+      value = `${value} ${nxt.value}`;
+      taken = k + 1;
+      if (extractCitations(value).some((cn) => cn.raw.trim() === value.trim())) {
+        bestValue = value;
+        bestTaken = taken;
+      }
+    }
+
+    if (bestValue === null) return null;
+    this.pos += bestTaken;
+    return { ...first, value: bestValue };
   }
 
   private parseRange(field: Field, fieldTok: Token): Node {

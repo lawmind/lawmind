@@ -14,8 +14,57 @@ import type { Sql } from 'postgres';
 import { fail, ok } from '../envelope.ts';
 import { logger } from '../logger.ts';
 import { COURT_CATEGORIES, expandCategories, unpopulatedCategories } from './court-category.ts';
-import { hybridSearch, type SearchFilters } from './retrieve.ts';
+import { hybridSearch, type DegradedArm, type SearchFilters } from './retrieve.ts';
 import { answerStructured } from './structured.ts';
+import {
+  precedentialEffect,
+  precedentialPolicy,
+  unappliedTreatment,
+  type OverruledStatus,
+} from '../judgments/precedential-effect.ts';
+
+/**
+ * The derived precedential layers for a page of structured hits, in ONE query.
+ *
+ * The structured path (`cite:`, `judge:`, `section:`) rendered
+ * `overruled_status` raw while hybrid search rendered it derived, so the SAME
+ * judgment carried different currentness depending on how it was found — and
+ * `cite:` is the citation surface above all others. One batched, indexed read
+ * over at most `RESULT_LIMIT` ids; never one per result.
+ */
+async function derivedEffects(
+  sql: Sql,
+  hits: readonly { judgmentId: string; overruledStatus: string }[],
+): Promise<Map<string, { banner: OverruledStatus; effect: string; canAdd: boolean; unapplied: string | null }>> {
+  const out = new Map<string, { banner: OverruledStatus; effect: string; canAdd: boolean; unapplied: string | null }>();
+  if (hits.length === 0) return out;
+  const edges = await sql<{ cited_judgment_id: string; relationship: string }[]>`
+    SELECT DISTINCT cited_judgment_id, relationship
+      FROM judgment_citations
+     WHERE cited_judgment_id = ANY(${hits.map((h) => h.judgmentId)})
+       AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
+  const byId = new Map<string, string[]>();
+  for (const e of edges) {
+    const list = byId.get(e.cited_judgment_id);
+    if (list) list.push(e.relationship);
+    else byId.set(e.cited_judgment_id, [e.relationship]);
+  }
+  for (const h of hits) {
+    const inbound = byId.get(h.judgmentId) ?? [];
+    const input = {
+      overruledStatus: h.overruledStatus as OverruledStatus,
+      inboundRelationships: inbound,
+    };
+    const effect = precedentialEffect(input);
+    out.set(h.judgmentId, {
+      banner: precedentialPolicy(effect).bannerStatus,
+      effect,
+      canAdd: precedentialPolicy(effect).addToMatter === 'allow',
+      unapplied: unappliedTreatment(input),
+    });
+  }
+  return out;
+}
 
 export const searchRequest = z.object({
   query: z.string().min(1).max(500),
@@ -125,6 +174,7 @@ export async function handleSearch(
   }
 
   if (structured.kind === 'matched') {
+    const derived = await derivedEffects(deps.sql, structured.hits);
     return ok(c, {
       results: structured.hits.map((h) => ({
         judgmentId: h.judgmentId,
@@ -141,8 +191,14 @@ export async function handleSearch(
         exactSpan: null,
         verificationState: 'verified' as const,
         verifiedBySource: 'corpus' as const,
-        // Read live from the row, never cached — CITATION_HARNESS.md.
-        overruledStatus: h.overruledStatus,
+        // Read live from the row, never cached — CITATION_HARNESS.md. DERIVED
+        // via `precedential-effect.ts`, so the same judgment carries the same
+        // currentness whether it was found by `cite:` or by hybrid search.
+        overruledStatus: derived.get(h.judgmentId)?.banner ?? h.overruledStatus,
+        overruledStatusStored: h.overruledStatus,
+        precedentialEffect: derived.get(h.judgmentId)?.effect ?? 'none',
+        canAddToMatter: derived.get(h.judgmentId)?.canAdd ?? true,
+        unappliedTreatment: derived.get(h.judgmentId)?.unapplied ?? null,
         // Found hardcoded null 11 Aug 2026: runStructured now selects all
         // three (compile.ts), so a partly_set_aside hit here can finally
         // name the affected paragraphs, matching hybrid search.
@@ -168,6 +224,7 @@ export async function handleSearch(
      * fourth concern's sibling gate — an exact-identity lookup that isn't
      * exact must say so, never silently pick one reading for the advocate.
      */
+    const derived = await derivedEffects(deps.sql, structured.hits);
     return ok(c, {
       results: structured.hits.map((h) => ({
         judgmentId: h.judgmentId,
@@ -184,7 +241,11 @@ export async function handleSearch(
         exactSpan: null,
         verificationState: 'verified' as const,
         verifiedBySource: 'corpus' as const,
-        overruledStatus: h.overruledStatus,
+        overruledStatus: derived.get(h.judgmentId)?.banner ?? h.overruledStatus,
+        overruledStatusStored: h.overruledStatus,
+        precedentialEffect: derived.get(h.judgmentId)?.effect ?? 'none',
+        canAddToMatter: derived.get(h.judgmentId)?.canAdd ?? true,
+        unappliedTreatment: derived.get(h.judgmentId)?.unapplied ?? null,
         overruledByJudgmentId: h.overruledByJudgmentId,
         overruledParas: h.overruledParas,
         overruledNote: h.overruledNote,
@@ -199,7 +260,28 @@ export async function handleSearch(
   }
 
   const queryVector = await deps.embedQuery(body.query);
-  const retrieved = await hybridSearch(deps.sql, body.query, queryVector, filters, RESULT_LIMIT);
+  /**
+   * Which ranker, if any, ran out of its statement budget on this request.
+   *
+   * Collected rather than logged-and-forgotten because the advocate is the one
+   * who loses by it: a timed-out sparse arm means authorities that exist were
+   * never ranked, and nothing else in the response would say so. Empty on a
+   * complete search, and the field is omitted entirely in that case so the
+   * ordinary shape is unchanged.
+   */
+  const degraded: DegradedArm[] = [];
+  const retrieved = await hybridSearch(
+    deps.sql,
+    body.query,
+    queryVector,
+    filters,
+    RESULT_LIMIT,
+    'hybrid',
+    (arm) => {
+      if (!degraded.includes(arm)) degraded.push(arm);
+      logger.warn({ arm, query_chars: body.query.length }, 'search arm exceeded its statement budget — results are incomplete');
+    },
+  );
 
   // `asOf` — the moment the SERVER read `overruled_status`, never the moment the
   // client received it. `docs/CITATION_HARNESS.md` requires an offline surface to
@@ -296,8 +378,23 @@ export async function handleSearch(
       exactSpan: r.exactSpan,
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
-      // Read live from the row on every request. Never cached.
+      // Read live from the row on every request. Never cached. DERIVED via
+      // `precedential-effect.ts` — still one of the four wire values, so a
+      // client reading only this field behaves exactly as it does today.
       overruledStatus: r.overruledStatus,
+      /** The stored column beside the derived banner. Admin monitor only. */
+      overruledStatusStored: r.overruledStatusStored,
+      /** Layer 2 — what happened, in five values rather than four. */
+      precedentialEffect: r.precedentialEffect,
+      /** Layer 3 — whether add-to-matter will accept this authority. */
+      canAddToMatter: r.canAddToMatter,
+      /**
+       * A later court's verified adverse edge that the corpus has not applied.
+       * NOT a banner and must never be rendered as one. Non-null for 2
+       * judgments today; it exists so the fact is not silent while
+       * `applyOverruledChange` stays the single writer.
+       */
+      unappliedTreatment: r.unappliedTreatment,
       overruledByJudgmentId: r.overruledByJudgmentId,
       overruledParas: r.overruledParas,
       overruledNote: r.overruledNote,
@@ -322,6 +419,17 @@ export async function handleSearch(
      * ingest lands the category stops being listed without a deploy.
      */
     unpopulatedCourtCategories: await unpopulatedCategories(deps.sql),
+    /**
+     * Present ONLY when a ranker ran out of its budget, so the ordinary
+     * response shape is byte-identical to what clients already parse.
+     *
+     * The same rule as `unpopulatedCourtCategories` one field above: absence
+     * has to state itself. A search whose sparse half timed out returns fewer
+     * authorities than exist, and the advocate has no other way to learn that
+     * — `CITATION_HARNESS.md`'s zero silent-drop threshold is about exactly
+     * this, and a recall loss leaves no trace unless the server leaves one.
+     */
+    ...(degraded.length > 0 ? { degraded } : {}),
     searchId,
   });
 }

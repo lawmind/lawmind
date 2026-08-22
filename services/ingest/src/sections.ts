@@ -128,6 +128,63 @@ const ACT_SYNONYMS: readonly { re: RegExp; key: string }[] = [
   { re: /^(?:INDIAN\s+)?EVIDENCE\s+ACT$/, key: 'INDIAN EVIDENCE ACT' },
   { re: /^(?:NEGOTIABLE\s+INSTRUMENTS?\s+ACT|NI\s+ACT)$/, key: 'NEGOTIABLE INSTRUMENTS ACT' },
   { re: /^CONSTITUTION(?:\s+OF\s+INDIA)?$/, key: 'CONSTITUTION OF INDIA' },
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE 2023 CODES — added 22 Aug 2026, and NOT a new mapping
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * {@link ABBREVIATIONS} above already states that `BNS`, `BNSS` and `BSA` are
+   * these three statutes, and its comment says they "must stay". This table
+   * never got the matching entries, so the two halves of one module disagreed:
+   * extraction expanded `BNS` to `Bharatiya Nyaya Sanhita, 2023` and stored
+   * `act_key = 'BHARATIYA NYAYA SANHITA'`, while `canonicalAct('BNS')` — what a
+   * SEARCH passes — returned the literal string `BNS`.
+   *
+   * **Measured on the live corpus before the fix:** the canonical keys hold
+   * 121,502 BNSS references, 20,440 BNS and 444 BSA. An advocate searching
+   * `act:BNS` matched none of the 20,440, and nothing errored — the query
+   * simply found the corpus empty on the code that replaced the IPC.
+   *
+   * No legal knowledge is invented here. The abbreviation-to-title pairs are
+   * the ones already in this file; these lines only make the matching key agree
+   * with the key extraction writes.
+   *
+   * `BHARTIYA` is a transliteration variant of the same word in the same title,
+   * printed by the courts themselves — 2,857 references. Folding it is a
+   * SPELLING merge, which is what this table is for, and not the statute merge
+   * the note above forbids.
+   */
+  /**
+   * **Matched on the ENDING BIGRAM, not on the full title, and the shape was
+   * chosen by measurement rather than by taste.** The courts transliterate
+   * these titles 498 different ways in this corpus — `BHARTIYA NAGRIK`,
+   * `BHARATIYA NAGARIKA`, `BHARATIYER`, and hundreds more one-off OCR
+   * manglings. Anchoring on the full title recovers the head and abandons the
+   * tail; anchoring on the two words that IDENTIFY the statute recovers both.
+   *
+   * Checked against every distinct `act_key` in the corpus before being
+   * written: the three rules claim 21,167 / 129,073 / 496 references,
+   * **overlap on exactly zero keys**, and refuse `MADHYA PRADESH RAJYA
+   * SURAKSHA ADHINIYAM`, `CHHATTISGARH PANCHAYAT RAJ ADHINIYAM` and
+   * `NAGAR TATHA GRAM NIVESH ADHINIYAM` — different statutes that share a
+   * word with these and must never merge into them. That refusal is the
+   * property being tested; the recovery is the by-product.
+   *
+   * `SURAKSHA ADHINIYAM` therefore does NOT reach BNSS: the discriminating
+   * word is `SANHITA`, and several state security Acts end in `ADHINIYAM`.
+   */
+  {
+    re: /(?:^|\s)NYAYA?A?\s+SANHITA(?:\s+ACT)?$|^BNS$/,
+    key: 'BHARATIYA NYAYA SANHITA',
+  },
+  {
+    re: /(?:^|\s)SURAK\w*\s+SANHITA(?:\s+ACT)?$|^BNSS$/,
+    key: 'BHARATIYA NAGARIK SURAKSHA SANHITA',
+  },
+  {
+    re: /(?:^|\s)SAK\w*\s+ADHINIYAM(?:\s+ACT)?$|^BSA$/,
+    key: 'BHARATIYA SAKSHYA ADHINIYAM',
+  },
 ];
 
 /**
