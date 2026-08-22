@@ -16,6 +16,77 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 22 Aug 2026 (morning) — NEW2: THE QUALITY CONTRACT IS QUERYABLE, `PROOF` IS REACHABLE, AND MY OWN DATE READER WAS CONVICTING THE SUPREME COURT
+
+**Session queue. Items 1-6 landed; 7-9 are the honest remainder.**
+
+1. **DONE — proof-grade damage is in the database.** 1,626,762 verdicts lived in a
+   1 GB JSONL nobody could join against. `text-damage-persist-cli.ts` writes
+   `script_quality = 'damaged_other'`, `script_quality_method = 'text-damage-v2.0'`.
+   **`text_safety_grade = 'PROOF'` was unreachable by design in `0070` and is
+   reachable now** — 141,044 rows at last count, pass still walking.
+   **The finding is the 4.7%:** of the first 158,000 proof verdicts replayed
+   against the live column, **7,814 had `script_quality IS NULL`** — proven glyph
+   dumps no screen had ever convicted, still eligible for the GPU. Two `*_STORED`
+   reasons are refused as circular (56,641 rows): they are the detector reading
+   back the column it would write.
+2. **DONE — the recovery queue exists and is worked by value, not by damage.**
+   `0071`: `judgment_recovery_queue` + `judgment_text_recovery`. 63 documents
+   queued (62 cited authorities, 3 benchmark gold, 2 overlapping). Recovered text
+   sits **beside** `full_text`, never over it. `digit_trust` defaults to
+   `UNVERIFIED`; `ocr-digit-trust.ts` adjudicates against `case_number` and
+   `judgment_date`, which arrive as source metadata and cannot agree by
+   construction. **A match that needed the `O`→`0` repair DOWNGRADES**, because a
+   document that needed it has demonstrated the defect. 4.1 s/page LOCAL_CONTENDED.
+3. **DONE — one contract, five questions.** `0072`: `judgment_quality_contract`.
+   text · recovery · date · role/citability · provenance, one row per judgment.
+   `docs/ops/new2/QUALITY_CONTRACT.md`. **No CLEAN text state and there never will
+   be** — nothing in this corpus looks for evidence an extraction was faithful.
+   **`citability` never says citable**: `decided` maps to `CITABILITY_UNKNOWN`
+   because it is 30% procedural [13.6, 46.4]. Only refusals are asserted.
+4. **DONE — `operative_act_withdrawn` finished.** 155,680 re-assessed:
+   `decided` 81,459 · **`procedural_disposal` 60,996 (39.2%)** · `decided_brief`
+   13,225. The other eight operative-act reasons stay unwired at 50-86%.
+5. **DONE — date states are published for the 699,398 documents consumers reach.**
+   Nothing rewrites `judgment_date`. `judgment_date_quality`, and an absent row
+   means NEVER LOOKED while `DATE_UNKNOWN` means looked and found no witness.
+6. **DONE, and it is a defect I shipped and then caught — `date-quality.ts` was
+   convicting the Supreme Court of a defect it does not have.** The reader parsed
+   numeric dates only. **The Supreme Court prints `MARCH 8, 2007` in the cause
+   title and never prints the date numerically**, so `printed.size > 0` and
+   `printed.has(jd)` was false — the exact branch that returns `DATE_SUSPECT`.
+   **43.0% of cited SC authorities read `DATE_SUSPECT`; on a 60-row sample 51 of
+   them print the stored date as a month-name date. ~85% false.**
+   That inverted this module's own governing rule, which was right: *a document
+   that prints no date at all is silent, not contradicting*. A date printed in a
+   format the reader cannot parse is silence to that reader; the reader was
+   convicting on its own blind spot. `date-quality-v1.1` reads month-name dates,
+   six tests, and the whole population is being re-checked. On a 20,000-row prefix
+   the correction is **69.47/23.96/6.57 → 85.94 VERIFIED / 9.45 UNKNOWN / 4.61
+   SUSPECT**. `DATE_DISAGREE_RATE = 0.0445` is unaffected — it measures the
+   FILENAME witness, which the defect never touched.
+7. **NOT DONE — the damage export's last 5.4%.** Deliberately not resumed: the
+   resource gate read `DEFER CPU_HEAVY, commit free 2.7%` with the GPU sidecar,
+   two classifiers, LCC's screen and two of my passes already on the box. A
+   document in that 5.4% that is a glyph dump reads `TEXT_UNKNOWN` today.
+8. **NOT DONE, founder-blocked — eCourts.** FQ-ECOURTS-ACTOR, unchanged: there is
+   no real founder account to name in `audit_log.actor_user_id`, and one will not
+   be fabricated. Nothing else blocks the canary.
+9. **NOT DONE — `retrieve.ts` does not refuse damaged text and it is LCC's file.**
+   The query-time defence down-ranks by `judgment_chunks.text_quality`, which is
+   inverted on this population: **22 of the 24 chunks whose judgment is proven
+   damaged sit at or above 0.85 and take no penalty at all.** Exposure is 24
+   chunks and is small only because NEW1's quarantine ran, not because anything
+   structural refuses. Measured, sent to LCC (bus 1004) and NEW1 (bus 1005), not
+   edited.
+
+**Verified through the real production path, not inferred:** a proven-damaged
+document is still discoverable by case number. `answerStructured()` imported and
+run read-only against three PROOF-grade damaged documents — **3 of 3 returned**.
+`body_text_safe` and `metadata_discoverable` are separate booleans for exactly
+this reason: a glyph-dump body must not make a judgment vanish from citation and
+party-name search.
+
 ### 21 Aug 2026 (night) — NEW2: THE CORPUS IS 8.65% UNREADABLE, `decided` IS 30% PROCEDURAL, AND OCR RECOVERS WHAT NO RE-EXTRACTION CAN
 
 Five findings, each measured, each with the artefact that proves it. Owner NEW2;
@@ -11789,3 +11860,88 @@ precisely so the fallback could not be depending on what was removed.
 - `statute_mappings` is empty. The BPRD parser exists and is report-only per the
   founder's "report first"; BSA-IEA parses 160 of 170, BNS and BNSS use a
   different column order (bus 0326). Loading it is a founder call, not a code gap.
+  **Stale as of 22 Aug — see below, `statute_mappings` now holds 226 rows.**
+
+---
+
+## NEW3 · 22 Aug 2026 — role changed to PRODUCT/MOBILE/PREMIUM/RELEASE, ship-brick #1 fixed, three P1 hard gates verified hands-on
+
+**Mission change, founder-directed.** NEW3 stops being a source-discovery lane
+(`SOURCE_REGISTRY.md`, `MISSING_AUTHORITY_QUEUE.md`) and becomes a PRODUCT lane:
+mobile UX, premium workflow, security/privacy release gates, billing, observability,
+App Store/Play readiness — the "PUBLIC STORE LAUNCH PROGRAM" mandate, cross-referenced
+against `docs/ai/audits/LAWMIND_REALITY_AUDIT_2026-08-22.md` and
+`LAWMIND_PUBLIC_LAUNCH_MASTER_PLAN_V2_2026-08-22.md` (independent read-only audits
+that landed in the repo this session — read in full before acting, per that audit's
+own §34 agent-allocation recommendation naming this exact pivot).
+
+**Founder correction received mid-session, binding:** stay LOCAL-FIRST. No Railway
+re-enable, no new cloud DB/GPU/search cluster without explicit approval. "Production
+path" for verification purposes means the real API→service→retrieval→DB code path
+run against the LOCAL Postgres, labelled LOCAL_CONTENDED/LOCAL_QUIET — not a
+deployment. The launch-plan audit's Hetzner recommendation is **recorded, not
+adopted** (`FQ-HOSTING`).
+
+### Fixed: the audit's #1 ship-brick risk
+
+`apps/mobile/src/api/client.ts:79` and `apps/admin/lib/api.ts:14` had the dead
+Railway URL (`api-production-1c0b4.up.railway.app`, 0 active deployments since
+11 Aug) **hardcoded with no override at all** — not an env var, a literal. Both
+now read `EXPO_PUBLIC_API_URL` / `NEXT_PUBLIC_API_URL` and fall back to the same
+URL only when unset. `tsc --noEmit` clean on both packages. Zero behaviour change
+today; pointing any channel anywhere is now a config change, not a code edit.
+`FQ-HOSTING` filed — the actual channel URLs (local/staging/prod) are a founder
+infra decision, not mine to invent.
+
+### Verified hands-on against the real local stack (LOCAL_CONTENDED — GPU sidecar,
+hc-classify, text-safety screen, citations-cli, withdrawn-restale all running
+concurrently during every measurement below)
+
+Started `services/api` locally (`DATABASE_URL` from repo `.env`, points at
+127.0.0.1 per the audit's finding; `AUTH_SECRET` had **no value anywhere in
+`.env`** — generated an ephemeral local-only one for this session, not a
+credential gap worth queuing). `/health` confirmed `database.reachable: true`.
+
+- **Citation search (`cite:"2026 INSC 145"`)** — 74ms, 1 exact hit,
+  `verificationState: verified`, `verifiedBySource: corpus`. PASSES the P1 hard
+  gate. First attempt without quoting the phrase returned 0 results — qlang's
+  `cite:` value grammar requires a quoted phrase for anything with spaces
+  (`parse.ts` — "needs a word or a quoted phrase"); that's correct parser
+  behaviour, not a defect, and worth a client-side hint since an advocate pasting
+  an unquoted citation would silently get zero results.
+- **Natural-language concept search (`"anticipatory bail under BNSS"`)** — 75.8s,
+  5 results, all `verificationState: verified`, real case titles/citations.
+  PASSES the P1 hard gate for correctness; **fails it for latency** on this box
+  right now — `apps/mobile/src/api/client.ts` `TIMEOUT_MS = 15_000`, so this
+  exact query would show a client-side timeout/error state today. Matches the
+  audit's own §21/§7 finding (p50 43s retrieval under concurrent vector queries)
+  independently reproduced, not assumed from the doc.
+- **Case-name search (`"Toofani Rai"`, no field prefix)** — 16.7s, 5 results, top
+  hits only loosely related (a Bihar bail case, then an unrelated Kasab v.
+  Maharashtra citation). `retrieve.ts:673` does an exact-normalized-string
+  equality on `case_title` first (`case-title equality→fuzzy` per the audit); a
+  partial party name never matches that equality clause, so the query falls
+  through to full hybrid retrieval rather than a dedicated fuzzy case-title path
+  — slow and loosely precise for what is probably the single most common way an
+  advocate actually types a case name. One sample, contended box — not filed as
+  a confirmed defect, flagged for the golden-set/P1 UX pass to check for real.
+- **`GET /statutes`** — 210ms, returns the full ~825-Act list. Confirmed by
+  reading `services/api/src/statutes/route.ts` that **no `act` or filter query
+  param exists at all** — my first test invented `?act=BNS` from memory and got
+  an unfiltered list back, which is MY error reproducing exactly the CLAUDE.md
+  §"never invent APIs" failure mode, not a product one. Filtering to a specific
+  act happens via `GET /statutes/sections?actId=...`, which takes a UUID, not a
+  short name — a real product gap if the mobile client doesn't already resolve
+  short-name → UUID somewhere (unchecked this session).
+- **`SubscriptionScreen.tsx`** read in full: matches the audit exactly — three
+  IAP tiers with an honest "Purchase isn't available in the app yet" stub, Firm
+  row correctly carries no price/button (App Store 3.1.1). No fakery found.
+
+### Not done this session, explicitly
+
+Did not touch `services/api` server internals (LCC's lane) beyond running it
+locally read-only. Did not action the launch-plan's Hetzner/Railway-decommission
+recommendation (founder-gated, see `FQ-HOSTING`). Did not chase the case-name
+fuzzy-path finding to a fix — flagged for the P1 UX pass with real evidence
+instead. Left the local `services/api` dev server running on :3000 for
+continued hands-on verification this session.

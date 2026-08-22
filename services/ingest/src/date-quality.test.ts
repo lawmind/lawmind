@@ -99,3 +99,52 @@ describe('dateQuality — UNKNOWN is a value', () => {
     assert.equal(r.witnesses.find((w) => w.kind === 'source_filename')?.date, '2025-03-07');
   });
 });
+
+/**
+ * Added 22 Aug 2026, after the numeric-only reader convicted 8,404 Supreme Court
+ * judgments of a date defect they do not have. 43.0% of cited SC authorities read
+ * DATE_SUSPECT; on a 60-row sample, 51 print the stored date as a month-name date
+ * the reader could not parse.
+ */
+describe('printedDates — month-name dates, the shape the Supreme Court prints', () => {
+  it('reads MARCH 8, 2007 from a Supreme Court cause title', () => {
+    /* Verbatim shape from 07fcaaf3: "... v. JAi PRAKASH SINGH AND ANR. MARCH 8, 2007 [DR. ARIJIT PASAYAT ...]" */
+    assert.ok(printedDates('v. JAI PRAKASH SINGH AND ANR. MARCH 8, 2007 [DR. ARIJIT PASAYAT').has('2007-03-08'));
+  });
+
+  it('reads APRIL 12, 2013 and 8th March, 2007 and 8th day of March, 2007', () => {
+    assert.ok(printedDates('(Civil Appeal Nos. 3838-3839 of 2013) APRIL 12, 2013').has('2013-04-12'));
+    assert.ok(printedDates('pronounced on 8th March, 2007 by the Bench').has('2007-03-08'));
+    assert.ok(printedDates('this the 8th day of March, 2007').has('2007-03-08'));
+  });
+
+  it('reads the abbreviations Supreme Court Reports uses', () => {
+    assert.ok(printedDates('Sept. 2, 1999').has('1999-09-02'));
+    assert.ok(printedDates('Feb. 23, 2022').has('2022-02-23'));
+    assert.ok(printedDates('2 Jan 2020').has('2020-01-02'));
+  });
+
+  it('a month-name date makes the SC document VERIFIED rather than SUSPECT', () => {
+    /* The regression itself: the document prints its own date in words AND prints
+     * other dates numerically. Before the fix this returned DATE_SUSPECT. */
+    const r = dateQuality({
+      judgmentDate: '2007-03-08',
+      sourceUrl: null,
+      text: 'U.O.I. v. JAI PRAKASH SINGH MARCH 8, 2007 ... impugned order dated 09.03.1999 ...',
+    });
+    assert.equal(r.state, 'DATE_VERIFIED');
+  });
+
+  it('does not invent a date from a month name with no day', () => {
+    assert.equal(printedDates('in March 2007 the policy was framed').size, 0);
+  });
+
+  it('still contradicts when the document prints a DIFFERENT month-name date', () => {
+    const r = dateQuality({
+      judgmentDate: '2007-03-08',
+      sourceUrl: null,
+      text: 'DECEMBER 12, 2007 [BENCH]',
+    });
+    assert.equal(r.state, 'DATE_SUSPECT');
+  });
+});

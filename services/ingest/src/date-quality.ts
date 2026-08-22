@@ -82,7 +82,7 @@
  */
 
 /** Bumped when a witness or a rule changes meaning. */
-export const DATE_QUALITY_VERSION = 'date-quality-v1.0';
+export const DATE_QUALITY_VERSION = 'date-quality-v1.1';
 
 /**
  * Share of documents whose `judgment_date` disagrees with the filename date.
@@ -166,6 +166,65 @@ const DMY = /\b(\d{1,2})[./-](\d{1,2})[./-](\d{4})\b/g;
 /** `2024-02-13`, which the digital-signature footer tends to use. */
 const YMD = /\b(\d{4})-(\d{2})-(\d{2})\b/g;
 
+/**
+ * `MARCH 8, 2007` · `8th March, 2007` · `8th day of March, 2007` · `Sept. 2, 1999`.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ADDED 22 AUG 2026 BECAUSE ITS ABSENCE CONVICTED 8,404 SUPREME COURT JUDGMENTS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The first version of this module read numeric dates only, on the stated
+ * assumption that *"an Indian order prints its date in the cause title"* — true,
+ * and true in the wrong FORMAT for one court. **The Supreme Court prints
+ * `MARCH 8, 2007` in the cause title and never prints the date numerically.**
+ *
+ * The consequence was not a missed verdict, it was a WRONG one. A judgment that
+ * prints its own date in a shape we could not read still printed OTHER dates —
+ * cited authorities, the impugned order, hearing dates — so `printed.size > 0`
+ * and `printed.has(jd)` was false, which is precisely the branch that returns
+ * `DATE_SUSPECT`. **43.0% of cited Supreme Court authorities read
+ * `DATE_SUSPECT`, and on a 60-row sample 51 of them print the stored date as a
+ * month-name date**: 85% false.
+ *
+ * That inverted this module's own governing rule, which is in the file above and
+ * was right: *"a document that prints no date at all is silent, not
+ * contradicting."* A date printed in a format the reader cannot parse is silence
+ * to that reader. The reader was convicting on its own blind spot.
+ *
+ * Abbreviations are included because Supreme Court Reports uses them (`Sept.`),
+ * and the trailing `\.?` is what makes `Sept.` and `Feb.` match without a
+ * separate alternation.
+ */
+const MONTHS = [
+  'jan(?:uary)?',
+  'feb(?:ruary)?',
+  'mar(?:ch)?',
+  'apr(?:il)?',
+  'may',
+  'jun(?:e)?',
+  'jul(?:y)?',
+  'aug(?:ust)?',
+  'sep(?:t(?:ember)?)?',
+  'oct(?:ober)?',
+  'nov(?:ember)?',
+  'dec(?:ember)?',
+];
+const MONTH_GROUP = `(${MONTHS.join('|')})\\.?`;
+/** `MARCH 8, 2007` — month first, the Supreme Court Reports shape. */
+const MDY = new RegExp(`\\b${MONTH_GROUP}\\s+(\\d{1,2})(?:st|nd|rd|th)?\\s*,?\\s*(\\d{4})\\b`, 'gi');
+/** `8th March, 2007` and `8th day of March, 2007` — the High Court shape. */
+const DMY_NAMED = new RegExp(
+  `\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:day\\s+of\\s+)?${MONTH_GROUP}\\s*,?\\s*(\\d{4})\\b`,
+  'gi',
+);
+
+/** Index of a month name, from any of its accepted spellings. */
+function monthIndex(raw: string): number {
+  const key = raw.toLowerCase().replace(/\./g, '').slice(0, 3);
+  const order = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  return order.indexOf(key) + 1;
+}
+
 export function filenameDate(sourceUrl: string | null): string | null {
   return sourceUrl === null ? null : (FILENAME_DATE.exec(sourceUrl)?.[1] ?? null);
 }
@@ -191,6 +250,17 @@ export function printedDates(text: string | null): Set<string> {
     if (a <= 12) out.add(`${y}-${String(a).padStart(2, '0')}-${String(b).padStart(2, '0')}`);
   }
   for (const m of text.matchAll(YMD)) out.add(m[0]);
+
+  /* Month-name dates. Unambiguous by construction — the month is spelled — so
+   * unlike the numeric branch above there is no both-ways emission. */
+  for (const m of text.matchAll(MDY)) {
+    const mm = monthIndex(m[1]!);
+    if (mm > 0) out.add(`${m[3]}-${String(mm).padStart(2, '0')}-${String(Number(m[2])).padStart(2, '0')}`);
+  }
+  for (const m of text.matchAll(DMY_NAMED)) {
+    const mm = monthIndex(m[2]!);
+    if (mm > 0) out.add(`${m[3]}-${String(mm).padStart(2, '0')}-${String(Number(m[1])).padStart(2, '0')}`);
+  }
   return out;
 }
 

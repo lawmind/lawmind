@@ -42,6 +42,7 @@ import { dirname } from 'node:path';
 import { openDb } from './db-host.ts';
 import { withTransientRetry } from './db-transient.ts';
 import { digitTrust } from './ocr-digit-trust.ts';
+import { DAMAGE_SPAN, damageVerdict } from './text-damage.ts';
 
 const argOf = (name: string, dflt: string | null = null): string | null => {
   const i = process.argv.indexOf(`--${name}`);
@@ -57,16 +58,47 @@ const SCRIPT = argOf('script', '../../scripts/new2-ocr-recover.py')!;
 const JSON_OUT = argOf('json', '../../docs/ops/new2/recovery-worker.json')!;
 
 /**
- * The floor a recovery must clear to be called RECOVERED.
+ * Is the recovered text text? Asked of the SAME detector that convicted the
+ * original.
  *
- * Taken from the probe rather than chosen: the twenty recovered suspects
- * measured median English rate 46.3 and control density 0, while every
- * unrecovered glyph dump measured control density ~0.70. The gap is enormous, so
- * the threshold does not need to be clever — it needs to be a threshold that
- * exists, and to be stated where a later reader can re-derive it.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE FIRST VERSION USED AN ENGLISH-RATE FLOOR AND IT CONVICTED FOUR CLEAN
+ * DOCUMENTS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `englishRate >= 12` marked 4 of the first 63 recoveries `UNRECOVERABLE`. All
+ * four are perfectly readable, at control density **0.0000**:
+ *
+ *     "IN THE HIGH COURT OF KARNATAKA, DHARWAD BENCH
+ *      DATED THIS THE 16TH DAY OF JANUARY, 2025"      englishRate 10.22
+ *
+ * English rate counts FUNCTION WORDS per thousand characters. A cause title is
+ * proper nouns, case numbers and party names — almost no function words — so a
+ * short order that is nothing but cause title scores low while being flawless.
+ * The measure is a damage screen borrowed for a job it was never measured on.
+ *
+ * That produced exactly the label `TEXT_RECOVERY_POLICY.md` §3 forbids and that
+ * `0071`'s own comment warns about: *`UNRECOVERABLE` … never applied to a
+ * document OCR has not been tried on … a label nobody re-tests would foreclose
+ * 1.6M documents on evidence that says the opposite.* Applying it to a document
+ * OCR **succeeded** on is the same error, one step worse.
+ *
+ * So the question is asked of `damageVerdict()` instead — the detector that
+ * convicted the original PDF. It is the right instrument twice over: it is what
+ * "this is not text" MEANS everywhere else in this service, and it discriminates
+ * on the signal the probe actually measured, control density **0.7014 for a glyph
+ * dump against 0.0000 for a recovery**. If the detector still convicts the
+ * recovered text, OCR genuinely failed. If it does not, the document is
+ * recovered — however few function words its cause title happens to contain.
  */
-const RECOVERED_MIN_ENGLISH_RATE = 12;
-const RECOVERED_MAX_CONTROL_DENSITY = 0.02;
+const stillNotText = (text: string): boolean =>
+  damageVerdict({
+    /* `DAMAGE_SPAN` because that is the span every other caller judges on, so a
+     * verdict here and a verdict in the export mean the same thing. */
+    text: text.slice(0, DAMAGE_SPAN),
+    textLength: text.length,
+    storedScriptQuality: null,
+  }).verdict === 'TEXT_UNSAFE_VERIFIED';
 
 type QueueRow = {
   judgment_id: string;
@@ -98,6 +130,83 @@ if (!url) {
   process.exit(2);
 }
 const sql = await openDb(url, 2, 10 * 60_000);
+
+/**
+ * Reclaim work a dead worker was holding.
+ *
+ * `RUNNING` is a state only a live process should be in, and nothing else ever
+ * clears it — so a worker killed mid-document (this box has killed several jobs
+ * with a console signal) strands its rows in `RUNNING` forever and the queue
+ * quietly stops being workable. `attempts` was already incremented at claim time,
+ * so a document that kills three workers stops being retried rather than becoming
+ * a poison pill that eats every run.
+ *
+ * The stale window is generous on purpose: a 12-page document measured **763
+ * seconds** on this contended box against 3.7 s a page quiet, so a short window
+ * risks reclaiming a document that is still being worked.
+ */
+const STALE_RUNNING_MINUTES = Number(argOf('stale-minutes', '60'));
+
+if (CONFIRM) {
+  const reclaimed = await sql`
+    UPDATE judgment_recovery_queue
+       SET state = 'QUEUED', started_at = NULL,
+           last_error = 'reclaimed: worker did not finish'
+     WHERE state = 'RUNNING'
+       AND started_at < now() - make_interval(mins => ${STALE_RUNNING_MINUTES})
+       AND attempts < 3
+    RETURNING 1`;
+  if (reclaimed.length > 0) {
+    console.log(
+      `  reclaimed ${reclaimed.length} row(s) stranded in RUNNING by a worker that died`,
+    );
+  }
+}
+
+/**
+ * Re-grade recoveries already on disk, without re-paying for the OCR.
+ *
+ * `RECOVERED` vs `UNRECOVERABLE` is a judgement about stored text, and the rule
+ * that makes it has already changed once — the English-rate floor above convicted
+ * four clean documents. Re-fetching and re-rendering 321 pages to apply a new
+ * threshold to text we already hold would be paying twice for nothing, and the
+ * expensive half (the pixels) cannot change when only the rule did.
+ *
+ * Only the STATE moves. No row in `judgment_text_recovery` is rewritten: the
+ * engine's output is what the engine produced, and a later verdict about it is
+ * not a correction to it.
+ */
+if (process.argv.includes('--readjudicate')) {
+  const stored = await sql<{ judgment_id: string; state: string; recovered_text: string | null }[]>`
+    SELECT q.judgment_id, q.state, r.recovered_text
+      FROM judgment_recovery_queue q
+      JOIN LATERAL (
+        SELECT tr.recovered_text FROM judgment_text_recovery tr
+         WHERE tr.judgment_id = q.judgment_id
+         ORDER BY tr.created_at DESC LIMIT 1
+      ) r ON true
+     WHERE q.state IN ('RECOVERED', 'UNRECOVERABLE')`;
+
+  let moved = 0;
+  for (const row of stored) {
+    const want = stillNotText(row.recovered_text ?? '') ? 'UNRECOVERABLE' : 'RECOVERED';
+    if (want === row.state) continue;
+    moved += 1;
+    console.log(`  ${row.judgment_id}  ${row.state} → ${want}`);
+    if (CONFIRM) {
+      await sql`
+        UPDATE judgment_recovery_queue
+           SET state = ${want}, finished_at = now(),
+               last_error = 'regraded: the is-this-text rule changed, the text did not'
+         WHERE judgment_id = ${row.judgment_id}`;
+    }
+  }
+  console.log(
+    `\n${CONFIRM ? 'REGRADED' : 'DRY RUN'} — ${stored.length} stored recoveries, ${moved} state(s) moved`,
+  );
+  await sql.end({ timeout: 5 });
+  process.exit(0);
+}
 
 /**
  * Claim work.
@@ -206,9 +315,7 @@ const done = (async () => {
     }
 
     const s = out.score ?? { chars: 0, controlDensity: 1, englishRate: 0 };
-    const recovered =
-      s.englishRate >= RECOVERED_MIN_ENGLISH_RATE &&
-      s.controlDensity <= RECOVERED_MAX_CONTROL_DENSITY;
+    const recovered = !stillNotText(out.text ?? '');
 
     const verdict = digitTrust({
       text: out.text ?? '',
