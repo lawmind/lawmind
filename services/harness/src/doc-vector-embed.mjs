@@ -99,7 +99,46 @@ const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'decid
  * this file: hashing a constant here would certify the copy, which is precisely
  * the thing that cannot drift from itself.
  */
-const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '6e87c83ac05da264';
+/**
+ * THIRD RECONCILIATION, 22 Aug 2026 — `6e87c83ac05da264` -> `2e7b53afe35fa81c`.
+ *
+ * Migration `0070` (LCC, bus 0995). The guard stopped the walk at 23:25:51Z on
+ * `tier-a-batch-00063` and the runner aborted after its three attempts, exactly
+ * as designed. **Unlike the two reconciliations above, the skip list does not
+ * change, and that was checked against the deployed definition rather than
+ * taken from the bus message that announced it.**
+ *
+ * What 0070 actually added, read from `pg_get_viewdef` this session:
+ *
+ *   CASE WHEN script_quality IS NULL
+ *          OR script_quality = ANY (clean, mixed_script_ok)      THEN 'NONE'
+ *        WHEN script_quality_method = ANY (ARRAY[]::text[])      THEN 'PROOF'
+ *        ELSE 'SCREEN'
+ *   END AS text_safety_grade
+ *
+ * One new column. Nothing in this file reads it. The three columns this file
+ * DOES read are unchanged:
+ *
+ *   axis_c_role     same three classes (procedural_disposal, reference_stub,
+ *                   decided_brief), so REFUSED_CLASSES stands as written
+ *   text_safety     same CASE, so `UNSAFE_VERIFIED` matches the same rows and
+ *                   the 64,083 already quarantined stay quarantined
+ *   semantic_tier   same CITED_AUTHORITY_REACHABLE exemption on both branches
+ *
+ * `PROOF` is unreachable by construction — the method allow-list is an empty
+ * array, so the middle branch is `= ANY (ARRAY[])`, which is false for every
+ * input including NULL. Every unsafe row therefore grades `SCREEN` today. That
+ * is deliberate on LCC's side and is NOT a filter this walk should adopt:
+ * switching the refusal to `text_safety_grade = 'PROOF'` would quarantine
+ * nothing at all and quietly re-admit 64,083 glyph dumps to the GPU.
+ *
+ * The reason this reconciliation is written out at length for a no-op change:
+ * "the hash moved but nothing I read moved" is the single most dangerous
+ * sentence available here, because it is the correct conclusion 99 times and
+ * the bail-order episode the 100th. The evidence for it belongs next to the
+ * pin, not in a bus message.
+ */
+const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '2e7b53afe35fa81c';
 
 const log = (m) => {
   const line = new Date().toISOString() + '  ' + m + '\n';
