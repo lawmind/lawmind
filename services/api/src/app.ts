@@ -22,6 +22,7 @@ import {
 import { getLlmCosts, llmCostsQuery } from './admin/llm-costs.ts';
 import { listOcrQueue, ocrQueueQuery } from './admin/ocr-queue.ts';
 import { runOverruledRecheck } from './admin/rechecks.ts';
+import { getMetrics } from './admin/metrics.ts';
 import {
   flagBody,
   getPlatform,
@@ -65,7 +66,7 @@ import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { acceptTerms, acceptTermsBody, getTerms, patchMe, patchMeBody } from './auth/account.ts';
 import { authMiddleware, profileIdFor } from './auth/middleware.ts';
 import { requireAdmin } from './auth/admin.ts';
-import { callerAddress, callerIdentity, rateLimit, RATE_LIMITS } from './rate-limit.ts';
+import { knownAddress, callerIdentity, rateLimit, RATE_LIMITS } from './rate-limit.ts';
 import {
   type AuthDeps,
   handleLogout,
@@ -272,17 +273,20 @@ export function createApp(deps: AppDeps) {
       rateLimit({
         name: 'magic-link-address',
         ...RATE_LIMITS.magicLinkPerAddress,
-        key: (c) => callerAddress(c),
+        // Null when no proxy has told us who is calling — see `callerIdentity`.
+        // A shared "everyone we cannot identify" bucket locks out honest callers
+        // and does not stop an abuser, who simply rotates the header.
+        key: (c) => knownAddress(c),
       }),
     );
     // Token exchange and refresh — credential grinding, not mail.
     app.use(
       '/auth/verify',
-      rateLimit({ name: 'auth-verify', ...RATE_LIMITS.authPerAddress, key: (c) => callerAddress(c) }),
+      rateLimit({ name: 'auth-verify', ...RATE_LIMITS.authPerAddress, key: (c) => knownAddress(c) }),
     );
     app.use(
       '/auth/refresh',
-      rateLimit({ name: 'auth-refresh', ...RATE_LIMITS.authPerAddress, key: (c) => callerAddress(c) }),
+      rateLimit({ name: 'auth-refresh', ...RATE_LIMITS.authPerAddress, key: (c) => knownAddress(c) }),
     );
     app.post('/auth/magic-link', validate('json', magicLinkRequest), (c) =>
       handleMagicLink(c, auth, c.req.valid('json')),
@@ -493,6 +497,16 @@ export function createApp(deps: AppDeps) {
     app.post('/admin/platform/flags/:key', validate('json', flagBody), async (c) =>
       setFlag(c, sql, c.req.param('key'), await userFor(c), c.req.valid('json')),
     );
+    /**
+     * Operational truth a machine can read — `admin/metrics.ts`.
+     *
+     * Admin-gated like everything else under this prefix, though there is
+     * nothing sensitive in it by construction: no query text, no identities.
+     * `alerts[]` carries the CONDITIONS as well as the numbers, so a poller as
+     * simple as curl+jq is a complete alerting system and no thresholds have to
+     * be duplicated into a vendor we have not bought.
+     */
+    app.get('/admin/metrics', (c) => getMetrics(c, sql, { admission: search.admission }));
     // The audit ledger — read-only, append-only at the database level.
     app.get('/admin/audit', validate('query', auditQuery), async (c) =>
       listAudit(c, sql, await userFor(c), c.req.valid('query')),

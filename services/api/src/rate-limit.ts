@@ -54,8 +54,12 @@ export type RateLimitRule = {
   name: string;
   limit: number;
   windowMs: number;
-  /** What counts as "one caller" for this rule. */
-  key: (c: Context) => string | Promise<string>;
+  /**
+   * What counts as "one caller" for this rule. **Null means the rule does not
+   * apply to this request** — see {@link callerIdentity} for why that is a
+   * deliberate outcome and not a failure to compute a key.
+   */
+  key: (c: Context) => string | null | Promise<string | null>;
 };
 
 type Bucket = { hits: number[] };
@@ -122,14 +126,45 @@ export function callerAddress(c: Context): string {
   return c.req.header('x-real-ip') ?? 'unknown';
 }
 
-/** Authenticated identity if there is one, otherwise the address. */
-export function callerIdentity(c: Context): string {
-  return c.get('authId') ?? `ip:${callerAddress(c)}`;
+/**
+ * Authenticated identity, or the address, or NULL when there is neither.
+ *
+ * **Null is the important case and it returns null on purpose.** The first
+ * version of this fell back to the literal string `ip:unknown`, which put every
+ * unidentifiable caller into ONE shared bucket — so 60 requests from anybody
+ * locked out everybody else who was signed out, on a route that deliberately
+ * works signed out. That is a self-inflicted outage, and it showed up
+ * immediately: the round measurement's own sixth query class came back 429
+ * because the previous five had spent the shared allowance.
+ *
+ * A shared bucket is also poor protection. `x-forwarded-for` is client-supplied,
+ * so an abuser rotates it and gets a fresh bucket per request while the honest
+ * anonymous users queue behind each other in the one bucket nobody can escape.
+ *
+ * So when we cannot tell callers apart, per-caller limiting is SKIPPED and the
+ * protection falls to the mechanisms that do not need identity: the admission
+ * gate's concurrency cap and `statement_timeout`. In production the API sits
+ * behind a proxy that sets `x-forwarded-for`, so this path is a deployment
+ * property to check rather than the normal case — recorded in `DEPLOYMENT.md`
+ * rather than assumed.
+ */
+export function callerIdentity(c: Context): string | null {
+  const authId = c.get('authId');
+  if (authId) return authId;
+  const address = callerAddress(c);
+  return address === 'unknown' ? null : `ip:${address}`;
 }
 
 export function rateLimit(rule: RateLimitRule) {
   return async (c: Context, next: Next): Promise<Response | void> => {
-    const key = `${rule.name}:${await rule.key(c)}`;
+    const subject = await rule.key(c);
+    if (subject === null) {
+      // No way to tell this caller from any other. Limiting them together is
+      // worse than not limiting them at all — see `callerIdentity`.
+      await next();
+      return;
+    }
+    const key = `${rule.name}:${subject}`;
     const result = hit(key, rule.limit, rule.windowMs);
     if (!result.allowed) {
       const retryAfter = Math.ceil(result.retryAfterMs / 1000);
@@ -173,4 +208,17 @@ export const RATE_LIMITS = {
 export function resetRateLimits(): void {
   buckets.clear();
   lastSweep = 0;
+}
+
+/**
+ * The caller's address, or null when nothing has told us one.
+ *
+ * The address-keyed rules use this rather than {@link callerAddress} for the
+ * same reason {@link callerIdentity} returns null: one bucket shared by every
+ * unidentifiable caller is an outage for honest users and no obstacle to an
+ * abuser.
+ */
+export function knownAddress(c: Context): string | null {
+  const address = callerAddress(c);
+  return address === 'unknown' ? null : address;
 }

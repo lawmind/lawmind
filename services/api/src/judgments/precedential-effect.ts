@@ -359,3 +359,108 @@ export function precedentialPolicy(effect: PrecedentialEffect): PrecedentialPoli
       };
   }
 }
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * LAYER 2b — HOW MUCH OF THE JUDGMENT THE ADVERSE TREATMENT REACHED
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * A separate axis from WHAT happened, and the binding addendum requires it:
+ *
+ *   > *"A verified adverse treatment whose affected proposition/paragraph is
+ *   > unresolved must NOT render as 'no adverse treatment.' Scope remains
+ *   > UNKNOWN; do not invent the affected paragraph."*
+ *
+ * The concrete population is small and real: judgments where the treatment is
+ * VERIFIED and the paragraphs it touched could not be read — an unreadable body
+ * (`body_text_safe = false`) or an overruling judgment that names no paragraph.
+ * Two of them today.
+ *
+ * The failure this prevents is precise. A `partly_set_aside` with no
+ * `overruled_paras` is *"part of this judgment has fallen and we cannot tell you
+ * which part"*. The tempting simplifications are both wrong: treating it as
+ * fully set aside overstates and blocks good law, treating it as unaffected
+ * understates and is the exact thing `CITATION_HARNESS.md` holds at a zero
+ * threshold.
+ *
+ * **No paragraph number is ever invented.** `UNRESOLVED` is a refusal to guess,
+ * and it is the honest output of a pipeline that read a document it could not
+ * parse.
+ *
+ * The server states the FACT. Copy — "review the later decision before relying
+ * on this" — is the client's, and deliberately not written here: the amber LAW
+ * MOVED mark and its wording belong to one place, and this module is not it.
+ */
+export type TreatmentScope =
+  /** No adverse treatment to scope. */
+  | 'NOT_APPLICABLE'
+  /** The whole judgment fell. There is nothing left to delimit. */
+  | 'WHOLE_JUDGMENT'
+  /** The affected paragraphs are recorded and can be shown. */
+  | 'RESOLVED'
+  /** Verified adverse treatment; WHICH propositions fell is not known. */
+  | 'UNRESOLVED';
+
+export function treatmentScope(input: {
+  effect: PrecedentialEffect;
+  /** `judgments.overruled_paras`. Null or empty means nothing was recorded. */
+  overruledParas: readonly number[] | null;
+}): TreatmentScope {
+  switch (input.effect) {
+    case 'none':
+      return 'NOT_APPLICABLE';
+    /**
+     * A full set-aside has no scope question: the judgment is gone, not partly
+     * gone. Recording `overruled_paras` on one would be a contradiction, and
+     * asking "which paragraphs" invites a client to render a narrowing that
+     * does not exist.
+     */
+    case 'set_aside':
+      return 'WHOLE_JUDGMENT';
+    /**
+     * `review_required` is already the state that means "we cannot account for
+     * this", so its scope is unresolved by construction rather than by
+     * inspection of a column.
+     */
+    case 'review_required':
+      return 'UNRESOLVED';
+    default:
+      return input.overruledParas !== null && input.overruledParas.length > 0
+        ? 'RESOLVED'
+        : 'UNRESOLVED';
+  }
+}
+
+/**
+ * The no-signal statement, scoped — the addendum's wording rule made into a
+ * value rather than left to prose.
+ *
+ * *"No adverse treatment found in LawMind's resolved sources as of [DATE]."*
+ * Never "good law", and never an unqualified negative: we can only speak for
+ * the sources we have resolved, and only as at the moment we read them.
+ *
+ * Returned as STRUCTURE, not as a sentence. The client owns the words; what the
+ * server owes it is the two facts that make the sentence honest — the scope of
+ * the claim and the instant it was true.
+ */
+export type CurrentnessClaim = {
+  /** `none` here means "nothing found", never "nothing exists". */
+  adverseTreatment: PrecedentialEffect;
+  scope: TreatmentScope;
+  /** What we searched. Never "all Indian courts". */
+  basis: 'lawmind_resolved_sources';
+  asOf: string;
+};
+
+export function currentnessClaim(input: {
+  effect: PrecedentialEffect;
+  overruledParas: readonly number[] | null;
+  asOf: string;
+}): CurrentnessClaim {
+  return {
+    adverseTreatment: input.effect,
+    scope: treatmentScope(input),
+    basis: 'lawmind_resolved_sources',
+    asOf: input.asOf,
+  };
+}

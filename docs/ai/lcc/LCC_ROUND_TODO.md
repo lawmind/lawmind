@@ -17,87 +17,87 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 - [x] P0.6 Paragraph/exact-span evidence suppressed for unsafe bodies (never invented, never silently shown) — fillParagraphFallback + final-read belt
 - [x] P0.7 Metadata routes (citation/title/case number) still find damaged judgments — with state visible — proved: `cite:` found it, `bodyTextSafe:false`
 - [x] P0.8 Generation inputs (counter-arguments, briefings) refuse unsafe bodies — counter.ts inherits + carries the flag; passagesForRerank filtered
-- [~] P0.9 Recovered text: honour `digit_trust`, never treat OCR digits as primary-exact — nothing in the API reads recovered text yet; the rule is recorded at the predicate as `RECOVERED_DIGITS_NOT_PRIMARY`
+- [x] P0.9 Recovered text: honour `digit_trust`, never treat OCR digits as primary-exact — nothing in the API reads recovered text; the rule is pinned at the predicate as `RECOVERED_DIGITS_NOT_PRIMARY` — nothing in the API reads recovered text yet; the rule is recorded at the predicate as `RECOVERED_DIGITS_NOT_PRIMARY`
 - [x] P0.10 Fixtures incl. NEW2's measured damaged-chunk population — row-for-row agreement over 1,000 rows incl. convicted
 - [x] P0.11 DONE proof: a newly-convicted damaged judgment is safe BEFORE NEW1 quarantine runs — 2023:PHHC:092818 — control-char paragraph withheld, no job involved
 
 ## P1 — SEARCH RESOURCE ISOLATION
 - [x] P1.1 Inspect ACTUAL pool/server limits first (no dossier percentages) — max_connections 100, shared_buffers 2GB — the API pool of 10 was the constraint
 - [x] P1.2 Minimum proven isolation: research admission control / separate pool / budgets — `pools.ts` + `search/admission.ts`
-- [~] P1.3 Core paths protected: auth · save-to-matter · exact citation · billing webhook · judgment read
+- [x] P1.3 Core paths protected: auth · save-to-matter · exact citation · billing webhook · judgment read — all on the CORE pool; no billing path exists yet to protect
 - [x] P1.4 Bounded slow-query test proving core stays responsive under deliberate research load — core p95 2,809 ms → 69 ms
-- [ ] P1.5 Coordinate with NEW1 before any sparse semantics change (bus)
+- [x] P1.5 Coordinate with NEW1 before any sparse semantics change (bus) — bus 1031; acted on NEW1's own 1025 evidence
 
 ## P2 — ALL-COMMON SPARSE FAILURE
-- [ ] P2.1 Read NEW1's paired evidence (current vs dense-only vs bounded rare-term)
-- [ ] P2.2 Implement the smallest safe policy from that evidence
-- [ ] P2.3 Wire reports WHY sparse was skipped; no empty result from an arm that did not run
+- [x] P2.1 Read NEW1's paired evidence (current vs dense-only vs bounded rare-term) — bus 1025 — 4 arms, 60 gold queries
+- [x] P2.2 Implement the smallest safe policy from that evidence — rarest-3 ANDed is now the ONLY sparse pass; arm C (delete the fallback) refuted
+- [x] P2.3 Wire reports WHY sparse was skipped; no empty result from an arm that did not run — `degraded` + new `pin_timeout`
 
 ## P3 — PAGINATION + AMBIGUITY (core product gate)
-- [ ] P3.1 Design continuation contract WITH NEW1 (bus)
-- [ ] P3.2 Result #6/#20 reachable
-- [ ] P3.3 Pins keep position; ordering stable across pages; no dupes/missing
+- [x] P3.1 Design continuation contract WITH NEW1 (bus) — NEW1 1027; stability gate measured before choosing re-run over snapshot
+- [x] P3.2 Result #6/#20 reachable — tested
+- [x] P3.3 Pins keep position; ordering stable across pages; no dupes/missing — tested; `score DESC, id ASC` total order
 - [ ] P3.4 Filters part of continuation identity
-- [ ] P3.5 ALL ambiguous citation candidates reachable
-- [ ] P3.6 Honest total/count semantics
-- [ ] P3.7 Additive — existing clients unaffected
+- [x] P3.5 ALL ambiguous citation candidates reachable — tested against a real 6-20 group
+- [x] P3.6 Honest total/count semantics — real `total` on the structured path; none invented on the hybrid path
+- [x] P3.7 Additive — existing clients unaffected — defaults unchanged; 7/7 pagination tests
 
 ## P4 — CASE-NAME SERVER PATH
-- [ ] P4.1 Regression guard for the uppercase AND/OTHERS parser defect
-- [ ] P4.2 Quality and latency reported separately
+- [x] P4.1 Regression guard for the uppercase AND/OTHERS parser defect — `answerStructured` refuses to pre-empt a case_name; 25/25 query-shape tests
+- [x] P4.2 Quality and latency reported separately — P9 table reports rank1, zero, degraded and p50/p95/max in separate columns
 
 ## P5 — SECURITY / PRIVACY BLOCKERS
-- [ ] P5.A Admin authorization: real roles, deny-by-default, advocate cannot reach `/admin/*`
-- [ ] P5.B Rate limiting: magic-link, auth, research/search, expensive routes
-- [ ] P5.C Query-log privacy: stop logging raw query text; keep class/length/latency/arms/zero-result/degraded/request-id
-- [ ] P5.D Account deletion / data requests: real backend (request → verify → cascade/anonymise → audit)
-- [ ] P5.E API compatibility: minimal N-1 / additive envelope-version strategy
+- [x] P5.A Admin authorization: real roles, deny-by-default, advocate cannot reach `/admin/*` — migration 0074, `requireAdmin` on the prefix, 31/31 admin tests incl. 10 new 403s
+- [x] P5.B Rate limiting: magic-link, auth, research/search, expensive routes — `rate-limit.ts`, 5/5 tests
+- [x] P5.C Query-log privacy: stop logging raw query text; keep class/length/latency/arms/zero-result/degraded/request-id — `search_events` (0075) — no query text column exists
+- [x] P5.D Account deletion / data requests: real backend (request → verify → cascade/anonymise → audit) — 6/6 erasure tests
+- [x] P5.E API compatibility: minimal N-1 / additive envelope-version strategy — `contract-version.ts`, reported on `/version`
 
 ## P6 — CURRENTNESS PRODUCT TRUTH
-- [ ] P6.1 OD-14 three layers preserved; derived fields are the product source
+- [x] P6.1 OD-14 three layers preserved; derived fields are the product source — briefings was the last raw-column surface; now derived
 - [ ] P6.2 Verified adverse treatment with unresolved scope never renders as "no adverse treatment"
-- [ ] P6.3 Minimum structured field for NEW3; no badge copy in the server
-- [ ] P6.4 No-signal state scoped to LawMind's resolved sources + as-of date
+- [x] P6.3 Minimum structured field for NEW3; no badge copy in the server — `treatmentScope` + `currentnessClaim`, no copy
+- [x] P6.4 No-signal state scoped to LawMind's resolved sources + as-of date — `basis: 'lawmind_resolved_sources'` + `asOf`
 
 ## P7 — RELEASE / BACKUP PREP (local-first, no purchase)
 - [ ] P7.1 Small release-pipeline proof: schema → export → Linux PG → indexes → checksums → search-equivalence → rollback
 - [ ] P7.2 Curated-moat backup pack: exact tables, deterministic dump/manifest/checksum, compressed bytes, exact recurring cost
-- [ ] P7.3 Fix stale job-registry entries
+- [x] P7.3 Fix stale job-registry entries — lcc-text-safety-corpus → FINISHED, verified two ways; other lanes' stale rows reported not edited
 
 ## P8 — eCOURTS (prepare only, no live request)
-- [ ] P8.1 Actor resolution · kill-switch · cap · ledger · one-canary runbook · raw observation preservation
-- [ ] P8.2 LISTED never implies HEARING_OCCURRED
+- [x] P8.1 Actor resolution · kill-switch · cap · ledger · one-canary runbook · raw observation preservation — runbook written; NO request made; the cumulative-cap gap is stated
+- [x] P8.2 LISTED never implies HEARING_OCCURRED — restated in the runbook; no code path writes heard from a cause list
 
 ## P9 — MEASURE (label LOCAL_CONTENDED / LOCAL_QUIET)
-- [ ] P9.1 citation unique · citation ambiguity · case-name · statute/BNS · concept · core txn under research load
-- [ ] P9.2 For each: quality status · p50 · p95 · max · degraded · timeouts
+- [x] P9.1 citation unique · citation ambiguity · case-name · statute/BNS · concept · core txn under research load — 6 classes measured through the real Hono app
+- [x] P9.2 For each: quality status · p50 · p95 · max · degraded · timeouts — reported, LOCAL_CONTENDED labelled
 
 ---
 
 ## ADDENDUM (binding, 22 Aug 2026) — corrections that override the prompt
 
 ### A — DATE QUALITY MUST AFFECT TEMPORAL CLAIMS
-- [ ] A.1 `DATE_SUSPECT` never treated as authoritative for currentness chronology / "later case" ordering
-- [ ] A.2 `DATE_UNKNOWN` ≠ `DATE_SUSPECT` ≠ absent row, all the way to the wire
-- [ ] A.3 `judgment_date` never rewritten; derived temporal claims qualified or refused
-- [ ] A.4 Bus NEW3 on product representation
+- [x] A.1 `DATE_SUSPECT` never treated as authoritative for currentness chronology / "later case" ordering — `as-at.ts` returns `date_unreliable`
+- [x] A.2 `DATE_UNKNOWN` ≠ `DATE_SUSPECT` ≠ absent row, all the way to the wire — `dateQuality` carries three values and a null
+- [x] A.3 `judgment_date` never rewritten; derived temporal claims qualified or refused — refused, not qualified
+- [x] A.4 Bus NEW3 on product representation — bus 1034
 
 ### B — REQUEST VALIDATION GAPS
-- [ ] B.1 `dateFrom` / `dateTo` really validated (V4 found them insufficient)
-- [ ] B.2 court / filter strings validated
+- [x] B.1 `dateFrom` / `dateTo` really validated (V4 found them insufficient) — ISO + real-calendar-day refine + range order
+- [x] B.2 court / filter strings validated — bounded to 120 chars
 - [ ] B.3 pagination inputs validated once P3 lands
 - [ ] B.4 Plan changes ONLY where EXPLAIN shows material cost
 
 ### C — SERVER OBSERVABILITY IS LCC'S
-- [ ] C.1 Metrics interface: 5xx · search latency · degraded rate · timeouts · pool saturation · admission saturation · slow queries
-- [ ] C.2 Job/cron failure · checkpoint stall · disk · connection pressure · release-data age
-- [ ] C.3 Alert CONDITIONS defined in code; no paid vendor activated
-- [ ] C.4 "Logs only" is not observability — an endpoint a machine can read
+- [x] C.1 Metrics interface: 5xx · search latency · degraded rate · timeouts · pool saturation · admission saturation · slow queries — `GET /admin/metrics`
+- [x] C.2 Job/cron failure · checkpoint stall · disk · connection pressure · release-data age — connection pressure, longest statement, db size, corpus age
+- [x] C.3 Alert CONDITIONS defined in code; no paid vendor activated — `ALERT_RULES` + evaluated `alerts[]`
+- [x] C.4 "Logs only" is not observability — an endpoint a machine can read — JSON, admin-gated, no identities in it
 
 ### D — SEARCH EVENT PERSISTENCE, PRIVACY FIRST
-- [ ] D.1 Define the minimum privacy-safe event (class · length · latency · result count · degraded · zero-result · release id)
-- [ ] D.2 Raw query text omitted by DEFAULT
-- [ ] D.3 Saved searches stay a separate, intentional user feature — never conflated with analytics
+- [x] D.1 Define the minimum privacy-safe event (class · length · latency · result count · degraded · zero-result · release id) — migration 0075
+- [x] D.2 Raw query text omitted by DEFAULT — there is no column for it; `searches` stays unwired
+- [x] D.3 Saved searches stay a separate, intentional user feature — never conflated with analytics — untouched
 
 ### E — BACKUP MUST BE RESTORABLE
 - [ ] E.1 dump → wipe disposable target → restore → verify row/checksum invariants
@@ -105,7 +105,7 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 - [ ] E.3 No full 287 GB clone locally
 
 ### F — CITATION RESOLVER HANDOFF
-- [ ] F.1 Do NOT build a second resolver; wait for the fifth agent's canonicalization experiment
+- [x] F.1 Do NOT build a second resolver; wait for the fifth agent's canonicalization experiment — not built; NEW2's 26.3% constraint recorded
 
 ### G — LONG-QUERY FUTURE PATH
 - [ ] G.1 500 chars documented as the CURRENT SAFE BOUND, not a product limit

@@ -61,7 +61,13 @@ const QUERY_CANCELED = '57014';
  * authorities the advocate will never know existed. Reporting recall loss is the
  * only honest option available: it cannot be recovered, so it must be visible.
  */
-export type DegradedArm = 'sparse_timeout' | 'dense_timeout';
+/**
+ * `pin_timeout` is the exact-lookup arm — citation, statute section, case
+ * title. It means the answer an INDEX should have held was not computed in
+ * time, which is a stronger statement than either ranker timing out: those lose
+ * candidates, this loses the answer.
+ */
+export type DegradedArm = 'sparse_timeout' | 'dense_timeout' | 'pin_timeout';
 
 function isQueryCanceled(error: unknown): boolean {
   return (
@@ -308,71 +314,88 @@ function rrf(lists: Ranked[][]): Map<string, number> {
   return scores;
 }
 
+/**
+ * `SPARSE_RELAX_BELOW` and `SPARSE_AND_MAX_CHARS` lived here and are gone.
+ *
+ * They were the two knobs of the AND-first / OR-fallback design: how few
+ * AND-matches meant "relax", and how long a query had to be before the AND pass
+ * was skipped entirely. Both were carefully measured against the workload of
+ * their day and both became unreachable the moment `sparse()` stopped having two
+ * passes — NEW1 bus 1025. Removed rather than left as dead configuration,
+ * because a constant with a long justification above it and no reader is how the
+ * next person concludes the AND pass still exists.
+ */
+
 /** Sparse half: lexical match over the full text, through the gin index. */
-/**
- * How few AND-matches means the AND was too strict. Below this, the OR pass
- * runs. Not zero: a ranker contributing three candidates to a fusion that takes
- * fifty is not contributing.
- */
-const SPARSE_RELAX_BELOW = 10;
-
-/**
- * Above this many characters, the AND pass is not attempted at all.
- *
- * **Measured 9 August 2026 over the first 30 evaluation queries** (200–900
- * characters each, the CLERC-style citing passages):
- *
- * | | |
- * | --- | --- |
- * | AND-pass candidates | **median 1 of 38,341**, max 2, never near the cap of 50 |
- * | queries falling below `SPARSE_RELAX_BELOW` | **30 of 30 — 100%** |
- *
- * So on this workload the AND pass runs, returns about one row, and is
- * discarded every single time. It is not a fast path that occasionally misses;
- * it is a guaranteed miss with a full index scan attached.
- *
- * **Skipping it cannot change a result.** The AND match set is a strict subset
- * of the OR match set, and {@link sparse} already keeps whichever pass returned
- * more — which, above this length, is always the OR pass. This is latency only.
- *
- * **Character count is a proxy for lexeme count, and it is honest about being
- * one.** The real predictor is how many lexemes `plainto_tsquery` will AND
- * together, but counting them costs the round trip this is trying to save. 200
- * characters sits well above anything an advocate types — the longest query in
- * `queries.hand.json` is far shorter — and well below the 200-character floor
- * `harness/build-queries.ts` puts on a derived passage.
- */
-const SPARSE_AND_MAX_CHARS = 200;
-
 async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
-  if (query.length > SPARSE_AND_MAX_CHARS) return sparseAny(sql, query, filters);
-  // Reads the STORED tsvector. Computing it here instead cost 20.8s per query —
-  // `docs/SCHEMA_TRUTH.md` §judgments records the measurement.
-  const rows = await sql<{ id: string }[]>`
-    SELECT j.id
-    FROM judgments j, plainto_tsquery('english', ${query}) AS q
-    WHERE j.full_text_tsv @@ q
-      -- A lexical match INSIDE a body that is known not to be text is not
-      -- evidence of anything. Metadata routes still find this judgment.
-      ${andBodyTextSafe(sql)}
-      ${courtWhere(sql, filters)}
-      ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
-      ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
-      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
-    ORDER BY ts_rank(j.full_text_tsv, q) DESC
-    LIMIT ${CANDIDATE_DEPTH}
-  `;
-  if (rows.length >= SPARSE_RELAX_BELOW) {
-    return rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
-  }
-
-  const relaxed = await sparseAny(sql, query, filters);
-  return relaxed.length > rows.length
-    ? relaxed
-    : rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THERE IS ONE SPARSE PASS NOW, AND IT IS THE RARE-TERM AND
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This used to run `plainto_tsquery` over EVERY term first and fall back to a
+   * relaxed pass only when that returned almost nothing. NEW1's arm A is exactly
+   * that shape, measured over 60 semantic gold queries: **58% timeouts, 16 of 60
+   * gold found, p50 15,013 ms.** The first pass was not a fast path that
+   * occasionally missed — it was spending the entire request budget before the
+   * relaxed pass could run at all, which is why implementing arm D as a FALLBACK
+   * changed nothing (measured here: concept p50 still 15,013 ms).
+   *
+   * NEW1 said "instead of, not in addition to" and meant it. So the rare-term
+   * AND is now the whole arm.
+   *
+   * **For a short query the two are the same query.** A three-word search has
+   * three lexemes, the three rarest of three is all of them, and this ANDs them
+   * exactly as `plainto_tsquery` did. Nothing is lost on the shape that already
+   * worked; what is removed is the full-AND pass over a long query, which is the
+   * shape that never worked.
+   */
+  return sparseAny(sql, query, filters);
 }
 
 /**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE RELAXED PASS IS AN **AND OVER THE THREE RAREST LEXEMES**, NOT AN OR OVER
+ * FORTY — NEW1 bus 1025, measured, 22 Aug 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * 60 semantic gold queries, every arm under production's own 15,000 ms
+ * `statement_timeout`, same session, same box:
+ *
+ *     arm                                found/60  @1  @5  timeouts   p50
+ *     A  what this function used to do        16    9  10   35 (58%)  15,013 ms
+ *     C  same, all-common fallback DELETED     0    0   0   60 (100%) 15,019 ms
+ *     D  rarest-3 ANDed        <- SHIPPED     34   17  22    4 ( 7%)     815 ms
+ *     E  rarest-3 ORed                         8    4   7   51        15,016 ms
+ *
+ * **2.1x the recall, 18x faster at p50, 9x fewer timeouts.** And two results
+ * that mattered more than the winner:
+ *
+ * **Deleting the all-common fallback is the WORST arm** (C: 100% timeouts, zero
+ * gold), so the proposal to remove it is refuted rather than deferred. The
+ * fallback was never what cost the time.
+ *
+ * **Arm E says it is the OR, not the lexeme count**: three ORed lexemes still
+ * timed out 51 times in 60. `ORDER BY ts_rank` must read the `full_text_tsv` of
+ * every matching row, and an OR over any number of terms makes that match set
+ * enormous — the 781,289 ms measurement in the note below is the same mechanism
+ * at 40 terms.
+ *
+ * **The control is the number that decides how much any of this matters.** Arm
+ * B, dense-only, reached **0 of 60** — those authorities have no chunk at all.
+ * For High Court concept queries the lexical arm is not one half of a hybrid, it
+ * is the whole of search. That is a coverage fact about the product and it
+ * belongs in launch language before any latency number does.
+ *
+ * What the AND costs, stated plainly: a judgment matching two of the three
+ * rarest terms is no longer reached. That is a real recall loss against arm A's
+ * OR — except that arm A timed out 58% of the time and reached 16, and this
+ * reaches 34. The loss is theoretical; the gain is measured.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * (Historical, and still true of why the ORIGINAL AND-first pass exists)
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
  * The same search with OR instead of AND, run only when AND returned almost
  * nothing.
  *
@@ -401,6 +424,16 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
  * gone, and each is `quote_literal`'d before it reaches `to_tsquery` — a raw
  * lexeme can carry an apostrophe or a colon, which are operators there.
  */
+/**
+ * How many of the rarest lexemes the relaxed pass ANDs together.
+ *
+ * Three, from NEW1's measurement rather than from taste, and explicitly ONE
+ * POINT rather than an optimum: *"an optimum on a grid edge is not an
+ * optimum"*. If this is tuned it should be swept against the same 60 queries,
+ * not argued.
+ */
+const SPARSE_RARE_LEXEMES = 3;
+
 async function sparseAny(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
   const rows = await sql<{ id: string }[]>`
     WITH scored AS (
@@ -449,12 +482,12 @@ async function sparseAny(sql: Sql, query: string, filters: SearchFilters): Promi
       -- where a length heuristic honestly belongs: it breaks ties between terms
       -- the corpus has never seen, where it is the only signal available.
       ORDER BY df ASC, length(lexeme) DESC
-      -- A cap, because a whole paragraph of terms turns the index scan into a
-      -- sequential one.
-      LIMIT 40
+      -- Three, not forty, and ANDed rather than ORed. NEW1 bus 1025 measured
+      -- the alternatives; the note above this function carries the table.
+      LIMIT ${SPARSE_RARE_LEXEMES}
     ),
     q AS (
-      SELECT to_tsquery('english', string_agg(quote_literal(lexeme), ' | ')) AS tsq FROM lex
+      SELECT to_tsquery('english', string_agg(quote_literal(lexeme), ' & ')) AS tsq FROM lex
     )
     SELECT j.id
     FROM judgments j, q
@@ -1160,18 +1193,59 @@ async function exactCaseTitle(
   queryText: string,
   filters: SearchFilters,
 ): Promise<string[]> {
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE MATERIALIZED FENCE IS LOAD-BEARING — MEASURED, NOT DEFENSIVE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The first version of this change put `ORDER BY judgment_date DESC LIMIT 10`
+   * directly on the equality query. Inlined into an `EXPLAIN` by hand it planned
+   * perfectly — index scan on `judgments_case_title_normalised_idx`, total cost
+   * 18.72. Through the driver it took **15 seconds and was cancelled**, on every
+   * case-title query, turning a working route into a 500.
+   *
+   * The difference is that the title arrives as a BIND PARAMETER. With a
+   * parameterised right-hand side and an `ORDER BY ... LIMIT 10` on top, the
+   * planner reasons that walking `judgments_judgment_date_idx` BACKWARDS and
+   * filtering will hit ten matches early — and for a title that appears once in
+   * 18.7M rows it never does:
+   *
+   *     Limit  (cost=1660.60..2649.33 rows=10)
+   *       ->  Incremental Sort  (cost=1660.60..9255009.45)
+   *             ->  Index Scan Backward using judgments_judgment_date_idx
+   *                   Filter: lower(btrim(regexp_replace(case_title, ...))) = $1
+   *
+   * Nine million cost units against eighteen. `MATERIALIZED` fences the match so
+   * the ordering cannot reach back into index selection — the same mechanism,
+   * and the same reason, as the CTE in {@link dense}: *"a plain subquery gets
+   * pulled up and the multiplier lands back in front of the index"*.
+   *
+   * The inner `LIMIT` is a second, independent bound: a normalised title shared
+   * by hundreds of judgments (they exist — NEW2 measured a neutral citation on
+   * 1,257) must not be materialised in full to return ten.
+   */
   const rows = await sql<{ id: string }[]>`
-    SELECT j.id
-    FROM judgments j
-    WHERE lower(btrim(regexp_replace(j.case_title, '\s+', ' ', 'g'))) =
-          lower(btrim(regexp_replace(${queryText}, '\s+', ' ', 'g')))
-      ${courtWhere(sql, filters)}
-      ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
-      ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
-      ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
-    -- See the note above: an ordering, not a ranking. The id makes it total, so
-    -- two identical requests cannot return two different pages.
-    ORDER BY j.judgment_date DESC, j.id DESC
+    WITH hits AS MATERIALIZED (
+      SELECT j.id, j.judgment_date
+      FROM judgments j
+      -- The regex needs TWO backslashes in TypeScript so the SQL text carries
+      -- one, byte-for-byte what judgments_case_title_normalised_idx was created
+      -- with. A single backslash is not a valid escape in a template literal,
+      -- silently becomes the LETTER s, and the expression then matches no index
+      -- at all: a sequential scan over 18.7M rows that still returns the right
+      -- answer, so nothing fails except the clock.
+      WHERE lower(btrim(regexp_replace(j.case_title, '\\s+', ' ', 'g'))) =
+            lower(btrim(regexp_replace(${queryText}, '\\s+', ' ', 'g')))
+        ${courtWhere(sql, filters)}
+        ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+        ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+        ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+      LIMIT ${EXACT_TITLE_MAX_PINS * 5}
+    )
+    -- An ordering, not a ranking. See the note on the function. The id makes it
+    -- total, so two identical requests cannot return two different pages.
+    SELECT id FROM hits
+    ORDER BY judgment_date DESC, id DESC
     LIMIT ${EXACT_TITLE_MAX_PINS}
   `;
   return rows.map((r) => r.id);
@@ -1360,14 +1434,36 @@ export async function hybridSearch(
    * describes, preserved.
    */
   const shape = classifyQuery(query);
-  const pins =
-    warrantsExactLookup(shape) && shape.citation !== null
-      ? [await exactCitation(sql, shape.citation, filters)]
-      : warrantsSectionLookup(shape, query) && shape.act !== null && shape.section !== null
-        ? await sectionJudgments(sql, shape.act, shape.section, filters, Math.floor(limit / 2))
-        : shape.shape === 'case_name'
-          ? await caseNamePins(sql, query, filters, Math.floor(limit / 2), signals)
-          : [];
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE EXACT LOOKUPS ARE BOUNDED TOO, AND THAT WAS LEARNED THE HARD WAY
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * These three routes are meant to be index scans measured in single-digit
+   * milliseconds, so for a long time nothing wrapped them. Then a plan changed
+   * — `exactCaseTitle`'s note records exactly how — and instead of a slow search
+   * the advocate got **HTTP 500 at fifteen seconds**, on every case-name query,
+   * because a `statement_timeout` cancellation from an unwrapped query is an
+   * unhandled error rather than a degraded arm.
+   *
+   * A pin that cannot be computed in time is a pin we do not have. That is a
+   * recall loss and it is reportable — `degraded` already exists to say so —
+   * and it is emphatically not a server fault to show an advocate. The rankers
+   * still run, so the page still fills.
+   */
+  const pins = await bounded(
+    'pin_timeout',
+    [] as (string | null)[],
+    async () =>
+      warrantsExactLookup(shape) && shape.citation !== null
+        ? [await exactCitation(sql, shape.citation, filters)]
+        : warrantsSectionLookup(shape, query) && shape.act !== null && shape.section !== null
+          ? await sectionJudgments(sql, shape.act, shape.section, filters, Math.floor(limit / 2))
+          : shape.shape === 'case_name'
+            ? await caseNamePins(sql, query, filters, Math.floor(limit / 2), signals)
+            : [],
+    onDegrade,
+  );
   const pinned: string[] = [];
   for (const id of pins) if (id !== null && !pinned.includes(id)) pinned.push(id);
 
@@ -1478,7 +1574,40 @@ export async function hybridSearch(
     ...pinned.map((id): [string, number] => [id, Number.POSITIVE_INFINITY]),
     ...fused,
   ];
-  const ordered = whole.slice(offset, offset + limit);
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE DUPLICATE COLLAPSE HAPPENS OVER THE WHOLE CONTINUATION, NOT PER PAGE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * NEW1's pagination contract names this exactly: *"content-hash collapse
+   * decided over the whole continuation, not per page, or the second copy simply
+   * arrives on page 2."* Which is what a per-page collapse does — it is not
+   * merely untidy, it hands the advocate the same judgment twice and spends a
+   * slot they were owed a distinct authority in.
+   *
+   * One indexed read over at most `REACHABLE_DEPTH` primary keys, before the
+   * slice, so the page boundaries are drawn on the DEDUPLICATED list.
+   *
+   * A null `content_hash` is never collapsed: absent is not equal. And this is
+   * a COLLAPSE, not a drop — the rows are byte-identical by sha256 and the one
+   * kept is the highest-ranked member of its own group, so the count of
+   * distinct authorities is unchanged and `CITATION_HARNESS.md`'s zero
+   * silent-drop threshold is untouched.
+   */
+  const hashRows = await sql<{ id: string; content_hash: string | null }[]>`
+    SELECT id, content_hash FROM judgments WHERE id = ANY(${whole.map(([id]) => id)})`;
+  const hashById = new Map(hashRows.map((r) => [r.id, r.content_hash]));
+  const seenHashGlobal = new Set<string>();
+  const deduped = whole.filter(([id]) => {
+    const hash = hashById.get(id) ?? null;
+    if (hash === null) return true;
+    if (seenHashGlobal.has(hash)) return false;
+    seenHashGlobal.add(hash);
+    return true;
+  });
+
+  const ordered = deduped.slice(offset, offset + limit);
   if (ordered.length === 0) return [];
 
   const ids = ordered.map(([id]) => id);
@@ -1559,14 +1688,11 @@ export async function hybridSearch(
    *
    * Rows with a NULL `content_hash` are never collapsed: absent is not equal.
    */
-  const seenHash = new Set<string>();
+  // The collapse already happened, over the whole continuation, before the
+  // slice — see the note above `hashRows`. Nothing to do per page.
   for (const id of ids) {
     const r = byId.get(id);
     if (!r) continue;
-    if (r.content_hash !== null) {
-      if (seenHash.has(r.content_hash)) continue;
-      seenHash.add(r.content_hash);
-    }
 
     /**
      * P0. Convicted body → no body evidence, on every route including the pins.

@@ -39,7 +39,8 @@
     "retrieval:regression": "tsx src/search/retrieval-regression-cli.ts",
     "overruled:audit": "tsx src/search/overruled-retrieval-audit-cli.ts",
     "kill-switch": "tsx src/admin/kill-switch-cli.ts",
-    "role": "tsx src/admin/role-cli.ts"
+    "role": "tsx src/admin/role-cli.ts",
+    "measure:round": "tsx src/search/round-measure-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",

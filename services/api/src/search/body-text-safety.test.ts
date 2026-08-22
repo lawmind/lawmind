@@ -63,8 +63,17 @@ describe('isBodyTextSafe', () => {
  * document. That distinction is the whole of P0 and it is why this list is
  * hand-maintained rather than a grep for the word "judgments".
  */
-const SITES: { file: string; fn: string; why: string }[] = [
-  { file: 'search/retrieve.ts', fn: 'sparse', why: 'lexical match over full_text_tsv' },
+const SITES: { file: string; fn: string; why: string; delegatesTo?: string }[] = [
+  {
+    file: 'search/retrieve.ts',
+    fn: 'sparse',
+    why: 'lexical match over full_text_tsv',
+    // Since NEW1 bus 1025 this is a one-line delegator: there is a single sparse
+    // pass and `sparseAny` is it. Recorded as a DELEGATION rather than removed
+    // from the list, so the day somebody gives `sparse` a query of its own again
+    // it has to satisfy the predicate rule itself.
+    delegatesTo: 'sparseAny',
+  },
   { file: 'search/retrieve.ts', fn: 'sparseAny', why: 'lexical match over full_text_tsv' },
   { file: 'search/retrieve.ts', fn: 'dense', why: 'vectors built from body text' },
   { file: 'search/retrieve.ts', fn: 'passagesForRerank', why: 'body text handed to a reranker' },
@@ -86,9 +95,29 @@ describe('every body-text path applies the predicate', () => {
       const rest = source.slice(start + 1);
       const nextDecl = rest.search(/\n(?:export )?(?:async )?function |\nconst [A-Za-z]+ = /);
       const body = nextDecl === -1 ? rest : rest.slice(0, nextDecl);
-      assert.match(
-        body,
-        /andBodyTextSafe\(/,
+      const applies = /andBodyTextSafe\(/.test(body);
+      if (site.delegatesTo) {
+        // Either it applies the predicate itself, or it does nothing but hand
+        // the work to a site that does. Anything else — a delegator that has
+        // grown its own query — fails.
+        // `includes`, not a RegExp: the function name is followed by a literal
+        // `(`, which is a group opener in a pattern and needs escaping that a
+        // template literal quietly eats.
+        const delegates = body.includes(`return ${site.delegatesTo}(`);
+        assert.ok(
+          applies || delegates,
+          `${site.fn} neither applies andBodyTextSafe nor delegates to ${site.delegatesTo}`,
+        );
+        if (delegates && !applies) {
+          assert.ok(
+            !/sql</.test(body),
+            `${site.fn} delegates to ${site.delegatesTo} but ALSO runs a query of its own — that query is unguarded`,
+          );
+        }
+        return;
+      }
+      assert.ok(
+        applies,
         `${site.fn} reads body text (${site.why}) but does not apply andBodyTextSafe`,
       );
     });

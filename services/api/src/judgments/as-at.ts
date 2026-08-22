@@ -79,12 +79,23 @@ type Row = {
   /** The overruling judgment's OWN delivery date. The fact this endpoint turns on. */
   overruled_on: string | null;
   overruled_by_title: string | null;
+  /** NEW2's `judgment_date_quality`. NULL means nothing has looked. */
+  overruler_date_state: string | null;
+  cited_date_state: string | null;
 };
 
 export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Promise<Response> {
-  const [subject] = await sql<{ id: string; case_title: string; judgment_date: string }[]>`
-    SELECT id, case_title, judgment_date::text AS judgment_date
-    FROM judgments WHERE id = ${id}
+  const [subject] = await sql<
+    { id: string; case_title: string; judgment_date: string; date_state: string | null }[]
+  >`
+    SELECT j.id, j.case_title, j.judgment_date::text AS judgment_date,
+           -- NULL means NOTHING HAS LOOKED, which is a different fact from
+           -- DATE_UNKNOWN (looked, found no independent witness). NEW2's
+           -- migration 0072 keeps them apart and so does this.
+           q.state AS date_state
+      FROM judgments j
+      LEFT JOIN judgment_date_quality q ON q.judgment_id = j.id
+     WHERE j.id = ${id}
   `;
   if (!subject) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
 
@@ -96,20 +107,62 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
            cited.overruled_by_judgment_id,
            -- The overruling bench's own delivery date, not our write time.
            overruler.judgment_date::text AS overruled_on,
-           overruler.case_title AS overruled_by_title
+           overruler.case_title AS overruled_by_title,
+           -- The date states of the TWO dates this endpoint subtracts.
+           oq.state AS overruler_date_state,
+           cq.state AS cited_date_state
     FROM judgment_citations c
     JOIN judgments cited ON cited.id = c.cited_judgment_id
     -- LEFT: an authority can carry a status with no overruling judgment
     -- recorded, and that case must reach the unknown state rather than vanish.
     LEFT JOIN judgments overruler ON overruler.id = cited.overruled_by_judgment_id
+    LEFT JOIN judgment_date_quality oq ON oq.judgment_id = overruler.id
+    LEFT JOIN judgment_date_quality cq ON cq.judgment_id = cited.id
     WHERE c.citing_judgment_id = ${id} AND c.cited_judgment_id IS NOT NULL
     ORDER BY cited.judgment_date DESC
   `;
 
   const deliveredAt = new Date(subject.judgment_date).getTime();
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * A CONTRADICTED DATE MAY NOT DECIDE A TEMPORAL CLAIM
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This endpoint's entire output is a SUBTRACTION between two dates, and NEW2
+   * measured that 4.45% of the corpus carries a date some independent witness
+   * contradicts (`judgment_date_quality`, migration 0072). On those rows the
+   * difference between `already_moved` — *this bench relied on an authority that
+   * had been dead for three years* — and `moved_since` — unremarkable, and true
+   * of a great deal of good law — turns on a date we have reason to doubt. The
+   * module note above already records what happened the last time this endpoint
+   * dated a legal event with the wrong column: it told an advocate the opposite
+   * of the fact.
+   *
+   * So `DATE_SUSPECT` on EITHER side of the comparison REFUSES the claim rather
+   * than qualifying it in prose a client may not render.
+   *
+   * **`DATE_UNKNOWN` and an absent row do NOT refuse**, and that distinction is
+   * NEW2's rather than a convenience: `DATE_UNKNOWN` means we looked and found
+   * no independent witness, an absent row means nothing has looked, and *silence
+   * is not a contradiction*. Refusing on those would refuse a quarter of the
+   * corpus on the strength of nobody having checked — the `is_bail_order` NULL
+   * failure this repository has already paid for once.
+   *
+   * `judgments.judgment_date` is never rewritten. The state is published beside
+   * it and the derived claim steps aside.
+   */
+  const dateContradicted = (state: string | null | undefined) => state === 'DATE_SUSPECT';
+  const subjectDateSuspect = dateContradicted(subject.date_state);
+
   const authorities = rows.map((r) => {
-    let standing: 'good_law_then' | 'already_moved' | 'overruled_here' | 'moved_since' | 'unknown';
+    let standing:
+      | 'good_law_then'
+      | 'already_moved'
+      | 'overruled_here'
+      | 'moved_since'
+      | 'date_unreliable'
+      | 'unknown';
     let daysBefore: number | null = null;
 
     if (r.overruled_status === 'none') {
@@ -126,6 +179,10 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
       // honest, so this is its own state — and NOT a fallback to
       // `overruled_status_changed_at`, which would date the law by our write.
       standing = 'unknown';
+    } else if (subjectDateSuspect || dateContradicted(r.overruler_date_state)) {
+      // One of the two dates being subtracted is actively contradicted by a
+      // witness. The ORDERING is the claim, and we cannot make it.
+      standing = 'date_unreliable';
     } else {
       const movedOn = new Date(r.overruled_on).getTime();
       if (movedOn <= deliveredAt) {
@@ -155,6 +212,21 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
       overruledOn: r.overruled_on,
       overruledByCaseTitle: r.overruled_by_title,
       /**
+       * The quality of the dates this row's `standingWhenRelied` rests on.
+       *
+       * Three distinct values and a null, never collapsed: `DATE_VERIFIED` (the
+       * document prints the stored date), `DATE_SUSPECT` (a witness contradicts
+       * it), `DATE_UNKNOWN` (looked, found no independent witness), and `null` —
+       * nothing has looked. A client showing its working needs all four apart; a
+       * client reading only `standingWhenRelied` sees `date_unreliable` and
+       * needs nothing else.
+       */
+      dateQuality: {
+        cited: r.cited_date_state,
+        overruler: r.overruler_date_state,
+        subject: subject.date_state,
+      },
+      /**
        * When OUR row changed, not when the law did. Kept for the stale-badge
        * metric in `SCHEMA_TRUTH.md` and for nothing else. **Never date a legal
        * event with this** — doing exactly that is what made `already_moved` read
@@ -180,8 +252,22 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
       /** Authorities THIS judgment overruled. Not a criticism of it — its holding. */
       overruledHere: tally('overruled_here'),
       movedSince: tally('moved_since'),
+      /**
+       * Authorities whose standing could not be dated because one of the two
+       * dates is CONTRADICTED by an independent witness. Counted separately
+       * from `unknown` on purpose: `unknown` means we hold no date for the
+       * legal event at all, this means we hold one and do not trust it. Rolling
+       * them together would hide a data-quality problem inside a coverage gap.
+       */
+      dateUnreliable: tally('date_unreliable'),
       unknown: tally('unknown'),
     },
+    /**
+     * The subject judgment's own date state — it is one half of every
+     * subtraction on this page, so a suspect value here disqualifies the whole
+     * response rather than individual rows.
+     */
+    deliveredOnDateState: subject.date_state,
     authorities,
     /**
      * Resolvable authorities only. A citation we could not resolve to a corpus

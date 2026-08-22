@@ -95,7 +95,38 @@ const isoDate = z
   }, 'not a real calendar date');
 
 export const searchRequest = z.object({
-  query: z.string().min(1).max(500),
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * 500 IS THE CURRENT SAFE BOUND, NOT A PRODUCT LIMIT
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The binding addendum is explicit that this must not be cemented into the
+   * contract as a permanent LawMind limitation. It exists for one measured
+   * reason: the current retrieval path cannot safely execute an arbitrarily
+   * large lexical query. NEW1's arm E measured three ORed lexemes timing out 51
+   * times in 60, and a pasted paragraph is dozens of lexemes.
+   *
+   * LawMind ultimately needs a safe path for long fact patterns, pasted
+   * passages and detailed natural-language descriptions. The intended shape,
+   * recorded here so the next person does not simply raise the number:
+   *
+   *     short / normal query  -> the ordinary research route
+   *     long fact or passage  -> a DEDICATED bounded passage-retrieval path,
+   *                              primarily semantic or structured extraction,
+   *                              never a corpus-wide sparse scan
+   *
+   * NEW1 researches that path; LCC implements it only once a measured design
+   * exists; NEW3 builds the UX only once the backend contract does. Until then
+   * the honest behaviour is the one below: **reject and say why. Never
+   * truncate**, because a silently shortened query returns results about a
+   * question the advocate did not ask, and never imply long-passage research
+   * works when it does not.
+   */
+  query: z.string().min(1).max(500, {
+    message:
+      'This search is longer than we can currently run safely (500 characters). ' +
+      'Nothing has been shortened — please search the key part of the passage instead.',
+  }),
   language: z.enum(['en', 'hi']),
   filters: z
     .object({
