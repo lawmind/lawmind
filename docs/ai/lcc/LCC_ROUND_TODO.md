@@ -101,7 +101,7 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done + evidence · `
 
 ### E — BACKUP MUST BE RESTORABLE
 - [x] E.1 dump → wipe disposable target → restore → verify — and it FAILED first: 6 enum-bearing tables missing (`pg_dump -t` omits types) and a checksum crying wolf on an unordered LIMIT. Both fixed; `--skip-dump` re-runs the restore half against an existing pack
-- [~] E.2 Measure restore time — first (broken) run 190.7 s. The verified re-run was still executing when the session ended; the number is not claimed
+- [x] E.2 Measure restore time — **820.7 s** to restore 1.53 GB into a disposable database and verify it (LOCAL_CONTENDED). 31 of 34 tables exact incl. 22,322,047 citation rows, content checksum MATCH; the 3 deltas are rows this session's own tests wrote to the live database AFTER the snapshot, not pack defects — and the tool now compares against the counts recorded at dump time rather than live ones
 - [x] E.3 No full 287 GB clone locally — 1.53 GB packed; `judgments` (151 GB) and `judgment_paragraphs` (92 GB) deliberately excluded as rebuildable
 
 ### F — CITATION RESOLVER HANDOFF

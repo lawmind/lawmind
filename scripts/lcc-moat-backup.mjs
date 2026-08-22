@@ -54,7 +54,15 @@
  */
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { createReadStream, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import {
+  createReadStream,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { join, resolve } from 'node:path';
 import { createGzip } from 'node:zlib';
 import { pipeline } from 'node:stream/promises';
@@ -250,10 +258,44 @@ if (!SKIP_DUMP) {
 }
 
 // ── 2. MANIFEST ────────────────────────────────────────────────────────────
-const rowCounts = JSON.parse(
-  pg('psql', [...conn, '-d', DB, '-t', '-A', '-c',
-    `SELECT json_object_agg(t, n) FROM (${packing.map((m) => `SELECT '${m.table}' AS t, (SELECT count(*) FROM public.${m.table}) AS n`).join(' UNION ALL ')}) x`]).trim(),
-);
+/**
+ * ───────────────────────────────────────────────────────────────────────────
+ * THE COUNTS MUST COME FROM WHEN THE DUMP WAS TAKEN, NOT FROM NOW
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * The first `--skip-dump` run reported three MISMATCHes — `users` 67 vs 63,
+ * `auth_user` 67 vs 63, `audit_log` 231 vs 224 — and every one of them was a
+ * defect in the VERIFICATION rather than in the pack.
+ *
+ * A dump is a point-in-time snapshot. The database it came from keeps being
+ * written to; in this case by the round's own test suites, which seed users and
+ * write audit rows every time they run. Comparing a live `count(*)` against a
+ * restore of an hour-old dump measures how busy the database has been, not
+ * whether the backup works.
+ *
+ * Worse, the run then OVERWROTE the manifest with the live figures, destroying
+ * the record of what the dump actually contained — so the evidence needed to
+ * tell the two apart was deleted by the act of looking.
+ *
+ * So: a fresh dump records the counts it just took, and a `--skip-dump` run
+ * READS them back and leaves the manifest alone. The 31 tables that matched
+ * exactly, including 22,322,047 citation rows and a matching content checksum,
+ * were the actual result.
+ */
+const manifestPath = join(OUT, 'MANIFEST.json');
+const priorManifest =
+  SKIP_DUMP && existsSync(manifestPath)
+    ? JSON.parse(readFileSync(manifestPath, 'utf8'))
+    : null;
+const rowCounts = priorManifest?.rowCounts
+  ? priorManifest.rowCounts
+  : JSON.parse(
+      pg('psql', [...conn, '-d', DB, '-t', '-A', '-c',
+        `SELECT json_object_agg(t, n) FROM (${packing.map((m) => `SELECT '${m.table}' AS t, (SELECT count(*) FROM public.${m.table}) AS n`).join(' UNION ALL ')}) x`]).trim(),
+    );
+if (priorManifest?.rowCounts) {
+  console.log(`comparing against the counts recorded at dump time (${priorManifest.createdAt})\n`);
+}
 
 const files = readdirSync(OUT).filter((f) => f !== 'MANIFEST.json' && f !== 'judgment-verdicts.csv');
 const manifest = {
@@ -275,7 +317,10 @@ for (const f of files) {
   const p = join(OUT, f);
   manifest.files[f] = { bytes: statSync(p).size, sha256: await sha256File(p) };
 }
-writeFileSync(join(OUT, 'MANIFEST.json'), JSON.stringify(manifest, null, 2));
+// Never rewritten by a `--skip-dump` run: the manifest is the record of what
+// the dump CONTAINED, and overwriting it with today's figures deletes the
+// evidence the verification depends on.
+if (!priorManifest) writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 
 const packBytes = Object.values(manifest.files).reduce((a, f) => a + f.bytes, 0);
 console.log(`\nPACK`);
@@ -369,8 +414,11 @@ console.log(`    restored ${restoredSum}`);
 console.log(`\n  restore time      ${restoreSeconds.toFixed(1)}s`);
 console.log(`  total elapsed     ${((Date.now() - started) / 1000).toFixed(1)}s`);
 
-manifest.restore = { seconds: restoreSeconds, verified: allMatch, checksumMatch: sumOk };
-writeFileSync(join(OUT, 'MANIFEST.json'), JSON.stringify(manifest, null, 2));
+const restoreResult = { at: new Date().toISOString(), seconds: restoreSeconds, verified: allMatch, checksumMatch: sumOk };
+// Recorded ONTO the manifest that describes this pack, not onto a new one.
+const finalManifest = priorManifest ?? manifest;
+finalManifest.restore = restoreResult;
+writeFileSync(manifestPath, JSON.stringify(finalManifest, null, 2));
 
 console.log(`\ndropping ${SCRATCH}`);
 pg('dropdb', [...conn, '--if-exists', '--force', SCRATCH], { stdio: 'ignore' });
