@@ -309,6 +309,19 @@ export const users = pgTable('users', {
   alertSavedAuthorityMoved: boolean('alert_saved_authority_moved').notNull().default(true),
   alertOwnMatterJudgment: boolean('alert_own_matter_judgment').notNull().default(true),
   alertUnknownListing: boolean('alert_unknown_listing').notNull().default(true),
+  /**
+   * `advocate` | `admin` — migration `0074`, and the ONLY thing in this schema
+   * that grants permission.
+   *
+   * **Deny-by-default lives in the DEFAULT.** A row created by any path is an
+   * advocate; becoming an admin takes a deliberate write through
+   * `admin/role-cli.ts`, which lands an `audit_log` row in the same transaction.
+   *
+   * Nothing reads this to decide PRODUCT entitlement. PD-2 is explicit that
+   * enrolment is a credential and not a gate, and the same holds here: this
+   * gates `/admin/*` and nothing else.
+   */
+  role: text('role').notNull().default('advocate'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

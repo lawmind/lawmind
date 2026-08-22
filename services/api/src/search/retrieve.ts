@@ -30,6 +30,15 @@ import {
 } from './query-shape.ts';
 
 import {
+  andBodyTextSafe,
+  bodyTextGrade,
+  bodyTextState,
+  isBodyTextSafe,
+  type BodyTextGrade,
+  type BodyTextState,
+} from './body-text-safety.ts';
+
+import {
   cleanExtractedText,
   locateParagraph,
   locateParagraphByOffset,
@@ -88,6 +97,21 @@ async function bounded<T>(
 
 /** Standard RRF constant. Damps the influence of any single ranker's top hit. */
 const RRF_K = 60;
+
+/**
+ * How far into the ranking a continuation can reach.
+ *
+ * Not a policy number — it is what the rankers actually produce. Each arm
+ * returns at most {@link CANDIDATE_DEPTH} candidates and fusion cannot invent
+ * more, so asking for result 200 of a hybrid search is asking for something
+ * that was never computed. The route reports `hasMore: false` at this boundary
+ * rather than returning an empty page, because "there are no more" and "we
+ * stopped looking" are different facts and only one of them is true here.
+ *
+ * The structured path has no such limit: it pages with SQL `OFFSET` over a
+ * total order, so every one of an ambiguous citation's candidates is reachable.
+ */
+export const REACHABLE_DEPTH = 100;
 
 /** How deep each ranker goes before fusion. */
 const CANDIDATE_DEPTH = 50;
@@ -213,6 +237,31 @@ export type RetrievedJudgment = {
    * enough. Never a guessed or clamped span.
    */
   exactSpan: { text: string; charOffset: number; charLength: number } | null;
+  /**
+   * The body-text quality state, in the quality contract's own vocabulary.
+   *
+   * **Deliberately not a boolean called `bodyTextSafe`.** NEW2 measured that no
+   * writer in this repository has ever emitted `clean`, so the eligibility
+   * boolean is true for 90.68% of the corpus on the strength of nothing having
+   * looked. A field named "safe" would hand a client a positive claim the data
+   * cannot support; `TEXT_UNKNOWN` says the true thing. `body-text-safety.ts`
+   * carries the numbers and NEW2's bus 1022 the request.
+   *
+   * `evidenceWithheld` is the ACTIONABLE half: true means the passage fields on
+   * this result are empty by REFUSAL rather than by absence. The result itself
+   * is still here — a damaged body is no evidence against `neutral_citation`,
+   * `case_title` or `case_number`, so the advocate searching by citation still
+   * finds the case.
+   *
+   * Additive. A client that ignores it renders exactly what it rendered before,
+   * minus a passage it should never have been shown.
+   */
+  bodyText: {
+    state: BodyTextState;
+    /** How well the damage is PROVEN. Never pooled with `state`. */
+    grade: BodyTextGrade;
+    evidenceWithheld: boolean;
+  };
 };
 
 type Ranked = { judgmentId: string; rank: number };
@@ -232,6 +281,10 @@ type JudgmentRow = {
   /** sha256 of `full_text`. Null means not yet computed, never "no duplicate". */
   content_hash: string | null;
   full_text: string | null;
+  /** The damage verdict itself, read live. See {@link isBodyTextSafe}. */
+  script_quality: string | null;
+  /** Which screen convicted it — PROOF vs SCREEN grade. Never pooled with the state. */
+  script_quality_method: string | null;
 };
 
 /**
@@ -299,6 +352,9 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
     SELECT j.id
     FROM judgments j, plainto_tsquery('english', ${query}) AS q
     WHERE j.full_text_tsv @@ q
+      -- A lexical match INSIDE a body that is known not to be text is not
+      -- evidence of anything. Metadata routes still find this judgment.
+      ${andBodyTextSafe(sql)}
       ${courtWhere(sql, filters)}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
@@ -404,6 +460,7 @@ async function sparseAny(sql: Sql, query: string, filters: SearchFilters): Promi
     FROM judgments j, q
     WHERE q.tsq IS NOT NULL
       AND j.full_text_tsv @@ q.tsq
+      ${andBodyTextSafe(sql)}
       ${courtWhere(sql, filters)}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
@@ -523,6 +580,12 @@ async function dense(
       FROM candidates c
       JOIN judgments j ON j.id = c.judgment_id
       WHERE TRUE
+        -- P0. A vector built from a glyph dump is a real vector pointing at
+        -- nothing, and text_quality does not catch it: 22 of 24 chunks whose
+        -- judgment is PROVEN damaged score above the 0.85 floor and take the
+        -- 1.0 multiplier above (NEW2, bus 1005). The multiplier stays as a
+        -- ranking nudge; the refusal is this line.
+        ${andBodyTextSafe(sql)}
         ${courtWhere(sql, filters)}
         ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
         ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
@@ -748,9 +811,23 @@ async function caseNamePins(
   queryText: string,
   filters: SearchFilters,
   limit: number,
+  signals?: RetrievalSignals,
 ): Promise<string[]> {
+  /**
+   * The exact set takes the PAGE, not `floor(limit/2)` slots.
+   *
+   * NEW1's second recommendation, and it follows from the first: when the exact
+   * title match IS the answer, budgeting two slots for it means an advocate
+   * asking for a title printed on 14 judgments is shown two of them and twelve
+   * unrelated fuzzy matches. 29 of 229 golds sat at probe rank 3-20 and could
+   * not be pinned at all under the old budget.
+   *
+   * The trigram probe still runs when the exact route finds NOTHING, which is
+   * the case it was written for - a title the advocate typed approximately.
+   */
   const exact = await exactCaseTitle(sql, queryText, filters);
-  if (exact !== null) return [exact];
+  if (signals) signals.exactTitleCandidates = exact.length;
+  if (exact.length > 0) return exact;
   return caseTitleTrigram(sql, queryText, filters, limit);
 }
 
@@ -794,13 +871,51 @@ async function rarestToken(sql: Sql, query: string): Promise<string | null> {
     ),
   ];
   if (words.length === 0) return null;
-  const rows = await sql<{ lexeme: string; document_count: string }[]>`
-    SELECT lexeme, document_count FROM lexeme_document_frequency
-     WHERE lexeme = ANY(${words.map((w) => w.toLowerCase())})`;
-  const df = new Map(rows.map((r) => [r.lexeme, Number(r.document_count)]));
-  let best = words[0]!;
-  for (const w of words) {
-    if ((df.get(w.toLowerCase()) ?? 0) < (df.get(best.toLowerCase()) ?? 0)) best = w;
+
+  /**
+   * **Each word is STEMMED before its frequency is looked up, because the table
+   * is keyed by lexemes and not by words.**
+   *
+   * The first version of this passed `w.toLowerCase()` straight to
+   * `lexeme_document_frequency`. That table is built from `to_tsvector` output,
+   * so it holds `other`, not `others`; `anoth`, not `another`. Every inflected
+   * word therefore missed, "absent means rare" fired, and the WORST possible
+   * token was chosen as the best.
+   *
+   * Measured on `POONAM Vs STATE OF U.P. AND 4 OTHERS` — an ordinary registry
+   * title — the chosen token was `OTHERS`, and the probe narrowed to every case
+   * title in the corpus containing "others" and then exceeded its budget. NEW1's
+   * launch benchmark saw the consequence from the outside: a query naming one
+   * case returning a different case at the top of the page.
+   *
+   * `LEFT JOIN LATERAL ... LIMIT 1` takes the first lexeme a word produces.
+   * A word that produces NONE is an english stopword — `AND`, `THROUGH`,
+   * `AGAINST` — and is DROPPED rather than kept: it is absent from the table
+   * because it is the commonest kind of word there is, which is the exact
+   * opposite of what "absent" is allowed to mean here.
+   *
+   * Absent WITH a lexeme still means rare, and that direction is unchanged: a
+   * party's surname the frequency sample never saw is genuinely rare, and
+   * failing the other way costs recall silently.
+   */
+  const rows = await sql<{ word: string; lexeme: string | null; document_count: string | null }[]>`
+    WITH w(word) AS (SELECT unnest(${words}::text[]))
+    SELECT w.word, l.lexeme, f.document_count
+      FROM w
+      LEFT JOIN LATERAL (
+        SELECT lexeme FROM unnest(to_tsvector('english', w.word)) AS lexeme LIMIT 1
+      ) l ON TRUE
+      LEFT JOIN lexeme_document_frequency f ON f.lexeme = l.lexeme`;
+
+  let best: string | null = null;
+  let bestDf = Number.POSITIVE_INFINITY;
+  for (const r of rows) {
+    if (r.lexeme === null) continue; // a stopword, not a rare word
+    const df = r.document_count === null ? 0 : Number(r.document_count);
+    if (df < bestDf) {
+      bestDf = df;
+      best = r.word;
+    }
   }
   return best;
 }
@@ -986,28 +1101,80 @@ async function sectionJudgments(
  * only fires when the query IS the title, verbatim, which is exactly the
  * measured failure this closes.
  */
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ABSTAINING ON AMBIGUITY WAS THE DOMINANT CASE-TITLE FAILURE — NEW1 bus 1021
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This used to take `LIMIT 2` and return `null` unless exactly one row came
+ * back, on `exactCitation`'s asymmetry: two matches means we do not know which
+ * was meant, so pin neither. **The reasoning was right and the outcome was the
+ * opposite of what it intended.**
+ *
+ * NEW1 decomposed 229 real case-title queries against frozen gold
+ * `ba9357cba2fbf297`:
+ *
+ *     the title is UNIQUE in the corpus     155    rank 1 in 146    94.2%
+ *     the title names 2+ judgments           74    rank 1 in   9    12.2%
+ *     pooled - the 67.69% we were quoting   229                     67.69%
+ *
+ * 32.3% of real titles are printed on more than one judgment, and they are not
+ * duplicates: `MANOHAR LAL Vs STATE OF HARYANA AND OTHERS` is **14** different
+ * cases between 2012 and 2024. On every one of those this function abstained,
+ * the query fell through to `caseTitleTrigram`, and because the query IS the
+ * title **every twin scored `word_similarity` = 1.000** - so `ORDER BY
+ * word_similarity DESC` was decided by physical row order. The advocate got an
+ * arbitrary member of the set at rank 1, presented as the answer.
+ *
+ * **That is an identity claim we cannot support, which is exactly what
+ * abstaining was meant to avoid.** Abstention did not produce silence; it
+ * produced a guess one layer down.
+ *
+ * So: pin the WHOLE matched set, bounded, and let the ambiguity reach the
+ * advocate as ambiguity - `exactCitation`'s own rule, which has always returned
+ * a candidate list rather than picking. Simulated by NEW1 on the same gold:
+ *
+ *     s@1          67.69%  ->  83.41%
+ *     coverage@5   71.62%  ->  95.63%
+ *     latency      p50 1,608 ms / p95 19,196 ms  ->  p50 1 ms / p95 1 ms
+ *
+ * The latency collapse is not a bonus, it is the same fact: the exact route is
+ * an index scan on `judgments_case_title_normalised_idx` at 0.8 ms, and every
+ * one of those 74 queries was paying a 2,500 ms trigram probe to answer a
+ * question the index had already answered.
+ *
+ * **Ordered by `judgment_date DESC, id`, and that is not a relevance claim.**
+ * NEW1 measured three candidate tie-breaks against gold - date-descending puts
+ * the gold judgment first in 20 of 74, `length(full_text) DESC` in 43 of 74,
+ * physical order in 31 of 74 - and recommended AGAINST the one that scores best,
+ * because none of them is relevance and picking the highest-scoring guess is
+ * still a guess. Date-descending is chosen for being the ordering a lawyer
+ * expects from a filtered list, the same reason `runStructured` uses it. The
+ * client shows court, date and case number on each row so the advocate can
+ * choose; that is the answer, not a better sort.
+ */
+const EXACT_TITLE_MAX_PINS = 10;
+
 async function exactCaseTitle(
   sql: Sql,
   queryText: string,
   filters: SearchFilters,
-): Promise<string | null> {
+): Promise<string[]> {
   const rows = await sql<{ id: string }[]>`
     SELECT j.id
     FROM judgments j
-    WHERE lower(btrim(regexp_replace(j.case_title, '\\s+', ' ', 'g'))) =
-          lower(btrim(regexp_replace(${queryText}, '\\s+', ' ', 'g')))
+    WHERE lower(btrim(regexp_replace(j.case_title, '\s+', ' ', 'g'))) =
+          lower(btrim(regexp_replace(${queryText}, '\s+', ' ', 'g')))
       ${courtWhere(sql, filters)}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
       ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
-    LIMIT 2
+    -- See the note above: an ordering, not a ranking. The id makes it total, so
+    -- two identical requests cannot return two different pages.
+    ORDER BY j.judgment_date DESC, j.id DESC
+    LIMIT ${EXACT_TITLE_MAX_PINS}
   `;
-  // Same asymmetry as exactCitation: two matches (two judgments printed with
-  // literally the same title -- not impossible, e.g. a common surname
-  // dispute pattern) means we do not know which the advocate meant, so
-  // neither is pinned. Both still reach them through the ordinary pipeline.
-  if (rows.length !== 1) return null;
-  return rows[0]!.id;
+  return rows.map((r) => r.id);
 }
 
 /**
@@ -1047,7 +1214,11 @@ export async function passagesForRerank(
   queryVector: string | null,
 ): Promise<string[]> {
   const missing = results
-    .map((r, i) => ({ i, id: r.judgmentId, empty: r.operativeParagraph.trim().length === 0 }))
+    .map((r, i) => ({
+      i,
+      id: r.judgmentId,
+      empty: r.operativeParagraph.trim().length === 0 && !r.bodyText.evidenceWithheld,
+    }))
     .filter((x) => x.empty);
   const passages = results.map((r) => r.operativeParagraph);
   if (missing.length === 0) return passages;
@@ -1058,16 +1229,23 @@ export async function passagesForRerank(
    * weak, but a cause title still beats an empty string, and returning nothing
    * here would silently keep the defect this function exists to remove.
    */
+  // P0. What a cross-encoder is handed is body text, so it is subject to the
+  // same refusal as what an advocate is shown — a damaged body cannot inform a
+  // ranking any more than it can support a citation.
   const rows = queryVector
     ? await sql<{ judgment_id: string; chunk_text: string }[]>`
         SELECT DISTINCT ON (c.judgment_id) c.judgment_id, c.chunk_text
           FROM judgment_chunks c
+          JOIN judgments j ON j.id = c.judgment_id
          WHERE c.judgment_id = ANY(${ids}) AND c.embedding IS NOT NULL
+           ${andBodyTextSafe(sql)}
          ORDER BY c.judgment_id, c.embedding <=> ${queryVector}::vector`
     : await sql<{ judgment_id: string; chunk_text: string }[]>`
         SELECT DISTINCT ON (c.judgment_id) c.judgment_id, c.chunk_text
           FROM judgment_chunks c
+          JOIN judgments j ON j.id = c.judgment_id
          WHERE c.judgment_id = ANY(${ids}) AND c.embedding IS NOT NULL
+           ${andBodyTextSafe(sql)}
          ORDER BY c.judgment_id, c.chunk_index`;
 
   const byId = new Map(rows.map((r) => [r.judgment_id, r.chunk_text]));
@@ -1096,6 +1274,22 @@ export async function passagesForRerank(
  */
 export type RetrievalMode = 'hybrid' | 'sparse' | 'dense';
 
+/**
+ * What the ranker learned that the RESPONSE has to say.
+ *
+ * `exactTitleCandidates` is the case-title sibling of the structured path's
+ * `ambiguous: true`. NEW1 bus 1021: 32.3% of real case-title queries name more
+ * than one judgment — `R.SARAVANAN Vs THE SUPERINTENDENT OF POLICE` is 16
+ * different cases — and until now the advocate was shown one of them at rank 1
+ * with nothing saying the others existed. That is an identity claim we cannot
+ * support. The number reaches the client so it can render a disambiguation
+ * instead of a result.
+ *
+ * 0 means the exact-title route did not fire at all; 1 means it resolved
+ * uniquely. Only >1 is ambiguity.
+ */
+export type RetrievalSignals = { exactTitleCandidates: number };
+
 export async function hybridSearch(
   sql: Sql,
   query: string,
@@ -1110,6 +1304,20 @@ export async function hybridSearch(
    * silent drop this codebase measures at a zero threshold.
    */
   onDegrade?: (arm: DegradedArm) => void,
+  /**
+   * P3. How many ranked results to skip — the continuation offset.
+   *
+   * Defaulted, so every existing caller (the harness, the benchmark, the
+   * counter-argument path) keeps the page it already had. Bounded by the
+   * candidate depth the rankers actually produce: see {@link REACHABLE_DEPTH}.
+   */
+  offset = 0,
+  /**
+   * Out-parameter for facts the CALLER must put on the wire but the ranker is
+   * the only thing that knows. Filled in place; absent for every existing
+   * caller, which then behaves exactly as before.
+   */
+  signals?: RetrievalSignals,
 ): Promise<RetrievedJudgment[]> {
   // Each arm is skipped rather than computed-and-discarded: an isolated-arm
   // measurement that still paid for the other half would report the fused
@@ -1158,7 +1366,7 @@ export async function hybridSearch(
       : warrantsSectionLookup(shape, query) && shape.act !== null && shape.section !== null
         ? await sectionJudgments(sql, shape.act, shape.section, filters, Math.floor(limit / 2))
         : shape.shape === 'case_name'
-          ? await caseNamePins(sql, query, filters, Math.floor(limit / 2))
+          ? await caseNamePins(sql, query, filters, Math.floor(limit / 2), signals)
           : [];
   const pinned: string[] = [];
   for (const id of pins) if (id !== null && !pinned.includes(id)) pinned.push(id);
@@ -1229,13 +1437,48 @@ export async function hybridSearch(
    * system nobody runs; leaving it in measures the real arms of the real
    * pipeline. `docs/ai/STAGES_9_20_PLAN.md` §10.
    */
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * P3 — ONE ORDERED LIST, THEN A WINDOW ONTO IT
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The whole ranking is built first and the page is a slice of it, rather than
+   * the page being built directly. That is what makes the pins keep their
+   * position on page 1 without special-casing, and what makes page 2 the
+   * genuinely next results rather than a second first page.
+   *
+   * **Re-running the rankers per page is correct here, and it was MEASURED
+   * before it was chosen.** The obvious worry is `dense()`'s
+   * `hnsw.iterative_scan = relaxed_order`: an approximate index under a relaxed
+   * order has no obligation to return the same neighbours twice, and a
+   * re-running design over an unstable ranker silently repeats and silently
+   * skips. Measured 22 Aug 2026 — three identical requests, real query vector,
+   * limit 20, across a concept query, a statutory query and a case name:
+   *
+   *     order identical across 3 runs   true, true, true
+   *     membership identical            true, true, true
+   *
+   * So the snapshot-a-cursor design buys nothing on this corpus and costs a
+   * store, an expiry and a class of stale-cursor bugs. The honest caveat is
+   * recorded rather than engineered away: a page turned WHILE ingest adds a
+   * matching judgment can shift, which is why `filters` are part of the
+   * continuation identity and why the client asks for a page number rather than
+   * being handed an opaque token that implies a frozen result set.
+   *
+   * The tie-break on id makes the sort a TOTAL order. Without it two judgments
+   * with equal RRF scores — common, since RRF scores are sums of a few
+   * reciprocals — could swap between calls and produce exactly the duplicate
+   * this measurement says does not otherwise happen.
+   */
   const pinnedSet = new Set(pinned);
-  const ordered = [...scores.entries()]
-    .sort((a, b) => b[1] - a[1])
+  const fused: [string, number][] = [...scores.entries()]
     .filter(([id]) => !pinnedSet.has(id))
-    .slice(0, Math.max(0, limit - pinned.length));
-  // Reversed so the first pin ends up first after successive unshifts.
-  for (const id of [...pinned].reverse()) ordered.unshift([id, Number.POSITIVE_INFINITY]);
+    .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+  const whole: [string, number][] = [
+    ...pinned.map((id): [string, number] => [id, Number.POSITIVE_INFINITY]),
+    ...fused,
+  ];
+  const ordered = whole.slice(offset, offset + limit);
   if (ordered.length === 0) return [];
 
   const ids = ordered.map(([id]) => id);
@@ -1251,6 +1494,14 @@ export async function hybridSearch(
            -- Fetched so the matched chunk can be mapped back to the paragraph the
            -- court actually printed. Bounded: see LOCATE_MAX_CHARS.
            content_hash,
+           -- P0's belt, behind the braces the arms already wear. Every arm
+           -- refuses damaged bodies at its own WHERE, but the PINS do not go
+           -- through an arm: an exact citation or an exact title resolves a
+           -- judgment from an indexed identity column, which is precisely the
+           -- metadata route that MUST keep working on a damaged document. So
+           -- the verdict is read here too, and the body evidence is withheld
+           -- row by row below rather than the row being dropped.
+           script_quality, script_quality_method,
            left(full_text, ${LOCATE_MAX_CHARS}) AS full_text
     FROM judgments WHERE id = ANY(${ids})
   `;
@@ -1317,11 +1568,23 @@ export async function hybridSearch(
       seenHash.add(r.content_hash);
     }
 
+    /**
+     * P0. Convicted body → no body evidence, on every route including the pins.
+     *
+     * `full_text` is blanked rather than the row dropped, so every expression
+     * below that reads it — paragraph location, the fuzzy probe, the exact span
+     * — degrades through the SAME honest path it already takes for a judgment
+     * too large to segment. No second branch, and therefore no second branch to
+     * forget when a new evidence field is added.
+     */
+    const bodySafe = isBodyTextSafe(r.script_quality);
+    if (!bodySafe) r.full_text = null;
+
     // Chunk -> printed paragraph. Falls back to the cleaned chunk when the
     // judgment is too large to segment in-request, or when the passage cannot be
     // located: showing clean text with a null number is honest, and inventing a
     // number is the one thing this must never do.
-    const best = denseResult.bestChunk.get(id);
+    const best = bodySafe ? denseResult.bestChunk.get(id) : undefined;
     const chunk = best?.text ?? '';
     /**
      * Exact position first, always — Stage 13. A chunk carrying a verified
@@ -1392,6 +1655,11 @@ export async function hybridSearch(
       operativeParagraphNumber: located?.paragraphNumber ?? null,
       operativeParagraphVerified: verified,
       exactSpan,
+      bodyText: {
+        state: bodyTextState(r.script_quality),
+        grade: bodyTextGrade(r.script_quality, r.script_quality_method),
+        evidenceWithheld: !bodySafe,
+      },
     });
   }
   await fillParagraphFallback(sql, results, query);
@@ -1429,13 +1697,38 @@ export async function hybridSearch(
  * DISPLAY only, never ranking or order, so it cannot bias the Stage 10
  * arm comparison the way a ranking change would.
  */
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * P0 — AND THIS IS THE PATH THAT MATTERED MOST
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Measured 22 Aug 2026 against the live corpus: `judgment_paragraphs` holds
+ * **4,018,647 paragraphs across 1,736,980 documents whose body text is
+ * convicted** — five orders of magnitude more exposure than the 24 damaged
+ * chunks in the dense arm, because paragraph extraction ran over the whole
+ * corpus and embedding did not. One of them, verbatim, from a proof-grade
+ * `text-damage-v2.0` row:
+ *
+ *     !"# !$%&%"'((
+ *     )*+ (((! % %"'!,&
+ *
+ * Nothing filtered it. It would have rendered as `operativeParagraph` with
+ * `operativeParagraphVerified: true` and a byte-exact `exactSpan` — the
+ * strongest evidence claim this API makes, on text that is not text.
+ */
 async function fillParagraphFallback(
   sql: Sql,
   results: RetrievedJudgment[],
   query: string,
 ): Promise<void> {
   const missing = results
-    .map((r, i) => ({ i, id: r.judgmentId, empty: r.operativeParagraph.trim().length === 0 }))
+    .map((r, i) => ({
+      i,
+      id: r.judgmentId,
+      // Two reasons a result is skipped here, and they are different facts: an
+      // already-filled passage needs nothing, a convicted body may have nothing.
+      empty: r.operativeParagraph.trim().length === 0 && !r.bodyText.evidenceWithheld,
+    }))
     .filter((x) => x.empty);
   if (missing.length === 0) return;
 
@@ -1449,12 +1742,16 @@ async function fillParagraphFallback(
       char_length: number;
     }[]
   >`
-    SELECT DISTINCT ON (judgment_id)
-      judgment_id, paragraph_text, paragraph_number, char_offset, char_length
-    FROM judgment_paragraphs
-    WHERE judgment_id = ANY(${ids})
-    ORDER BY judgment_id,
-      ts_rank(to_tsvector('english', paragraph_text), plainto_tsquery('english', ${query})) DESC
+    SELECT DISTINCT ON (p.judgment_id)
+      p.judgment_id, p.paragraph_text, p.paragraph_number, p.char_offset, p.char_length
+    FROM judgment_paragraphs p
+    JOIN judgments j ON j.id = p.judgment_id
+    WHERE p.judgment_id = ANY(${ids})
+      -- P0. See the note above this function: 4,018,647 paragraphs across
+      -- 1,736,980 convicted documents were reachable through this query.
+      ${andBodyTextSafe(sql)}
+    ORDER BY p.judgment_id,
+      ts_rank(to_tsvector('english', p.paragraph_text), plainto_tsquery('english', ${query})) DESC
   `;
   const byId = new Map(rows.map((r) => [r.judgment_id, r]));
   for (const m of missing) {

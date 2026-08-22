@@ -88,6 +88,13 @@ export async function handleCounter(
       operativeParagraphNumber: r.operativeParagraphNumber,
       operativeParagraphVerified: r.operativeParagraphVerified,
       exactSpan: r.exactSpan,
+      // P0. `evidenceWithheld` means the passage fields above are empty BY
+      // REFUSAL, not by absence — this judgment's body text is convicted, so
+      // nothing in it may be handed to an advocate as evidence or to a model as
+      // grounding. The authority is still named: its identity fields are
+      // undamaged. `state` is the contract's own vocabulary and never says
+      // "clean", because nothing in this corpus ever proved that.
+      bodyText: r.bodyText,
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
       overruledStatus: r.overruledStatus,

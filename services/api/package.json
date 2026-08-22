@@ -38,7 +38,8 @@
     "verify:exact-span": "tsx src/judgments/verify-exact-span-cli.ts",
     "retrieval:regression": "tsx src/search/retrieval-regression-cli.ts",
     "overruled:audit": "tsx src/search/overruled-retrieval-audit-cli.ts",
-    "kill-switch": "tsx src/admin/kill-switch-cli.ts"
+    "kill-switch": "tsx src/admin/kill-switch-cli.ts",
+    "role": "tsx src/admin/role-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",

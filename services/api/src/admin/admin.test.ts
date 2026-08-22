@@ -26,14 +26,20 @@ const app = createApp({
   auth: { auth: null as never, sql, secret: SECRET },
 });
 
-async function seedAdvocate(tag: string) {
+/**
+ * `role` defaults to `advocate` — migration `0074` — so a fixture that wants the
+ * admin surface must ASK for it. That default is the deny-by-default property
+ * under test, not a convenience: seeding an admin has to be a deliberate act
+ * here for the same reason it is a deliberate act in production.
+ */
+async function seedAdvocate(tag: string, role: 'advocate' | 'admin' = 'advocate') {
   const authId = `${TAG}-${tag}-${crypto.randomUUID()}`;
   const email = `${authId}@example.test`;
   await sql`INSERT INTO auth_user (id, name, email, email_verified)
             VALUES (${authId}, 'Adv', ${email}, true)`;
   const [u] = await sql<{ id: string }[]>`
-    INSERT INTO users (auth_id, full_name, phone, email, enrolment_status)
-    VALUES (${authId}, 'Adv', '+911111111111', ${email}, 'unverified') RETURNING id`;
+    INSERT INTO users (auth_id, full_name, phone, email, enrolment_status, role)
+    VALUES (${authId}, 'Adv', '+911111111111', ${email}, 'unverified', ${role}) RETURNING id`;
   return { authId, userId: u!.id, token: await signAccessToken({ sub: authId, email }, SECRET) };
 }
 
@@ -42,9 +48,11 @@ const json = { 'content-type': 'application/json' };
 
 describe('S6 admin', () => {
   let admin: Awaited<ReturnType<typeof seedAdvocate>>;
+  let ordinary: Awaited<ReturnType<typeof seedAdvocate>>;
 
   before(async () => {
-    admin = await seedAdvocate('admin');
+    admin = await seedAdvocate('admin', 'admin');
+    ordinary = await seedAdvocate('ordinary');
   });
 
   after(async () => {
@@ -77,6 +85,49 @@ describe('S6 admin', () => {
         assert.equal(res.status, 401);
       });
     }
+  });
+
+  /**
+   * The hole this closes, stated as a test rather than as a comment.
+   *
+   * Until migration `0074` every route below gated on "is anyone signed in",
+   * which the module note in `admin/audit.ts` recorded honestly as a known gap.
+   * An ordinary advocate — the overwhelming majority of this product's users —
+   * could read the audit ledger, list every user with their phone number, and
+   * flip the eCourts kill switch. `ordinary` is seeded with the DEFAULT role, so
+   * this suite fails the moment somebody makes admin the default or removes the
+   * prefix middleware.
+   */
+  describe('403 for an authenticated advocate who is not an admin', () => {
+    const routes: [string, string][] = [
+      ['GET', '/admin/platform'],
+      ['GET', '/admin/disputes'],
+      ['GET', '/admin/audit'],
+      ['GET', '/admin/citations'],
+      ['GET', '/admin/llm-costs'],
+      ['GET', '/admin/ocr-queue'],
+      ['GET', '/admin/users'],
+      ['GET', '/admin/data-requests'],
+      ['GET', '/admin/cause-lists'],
+    ];
+    for (const [method, path] of routes) {
+      it(`${method} ${path}`, async () => {
+        const res = await app.request(path, { method, headers: auth(ordinary.token) });
+        assert.equal(res.status, 403, `${path} let a non-admin through`);
+      });
+    }
+
+    it('a privileged WRITE is refused too, and writes nothing', async () => {
+      const before = await sql<{ n: string }[]>`SELECT count(*)::text AS n FROM audit_log`;
+      const res = await app.request('/admin/platform/kill-switches/signups', {
+        method: 'POST',
+        headers: { ...auth(ordinary.token), ...json },
+        body: JSON.stringify({ enabled: true, reason: 'should never apply' }),
+      });
+      assert.equal(res.status, 403);
+      const after2 = await sql<{ n: string }[]>`SELECT count(*)::text AS n FROM audit_log`;
+      assert.equal(after2[0]!.n, before[0]!.n, 'a refused admin write still touched the ledger');
+    });
   });
 
   describe('platform controls', () => {

@@ -16,6 +16,7 @@ import { z } from 'zod';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { writeAudit } from './audit.ts';
+import { eraseUser } from '../auth/erasure.ts';
 
 export const dataRequestsQuery = z.object({
   status: z.enum(['received', 'in_progress', 'completed', 'refused']).optional(),
@@ -158,4 +159,68 @@ export async function refuseDataRequest(
 
   if (!result) return fail(c, 'NOT_FOUND', 'no data request with that id', 404);
   return ok(c, { request: shape(result) });
+}
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * EXECUTE AN ERASURE — the one irreversible button on this surface
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Separate from `complete` on purpose. `complete` is a bookkeeping verb: it says
+ * an operator dealt with a request, and it is right for an export (the artefact
+ * was produced) and for a correction (the field was fixed). Erasure DESTROYS
+ * rows, cannot be undone, and must not be reachable by an operator who thought
+ * they were ticking a box.
+ *
+ * `--reason` equivalent is required for the same reason the kill switch requires
+ * one: `audit_log` is the only record that will survive, and "why" is the half
+ * of it that a later question actually needs.
+ *
+ * The erasure and the status change land in the SAME transaction as the audit
+ * row — `eraseUser` opens it — so a completed request always corresponds to work
+ * that actually happened.
+ */
+export const eraseRequestBody = z.object({ reason: z.string().min(1).max(1000) }).strict();
+
+export async function executeErasure(
+  c: Context,
+  sql: Sql,
+  id: string,
+  actorUserId: string | undefined,
+  body: z.infer<typeof eraseRequestBody>,
+): Promise<Response> {
+  if (!actorUserId) return fail(c, 'AUTH_REQUIRED', 'data requests are a privileged surface', 401);
+
+  const [request] = await sql<{ user_id: string; kind: string; status: string }[]>`
+    SELECT user_id, kind, status FROM data_requests WHERE id = ${id}`;
+  if (!request) return fail(c, 'NOT_FOUND', 'no data request with that id', 404);
+  if (request.kind !== 'erasure') {
+    // A wrong-kind request is a mistake, not an edge case: refusing loudly is
+    // the difference between "nothing happened" and "an export request deleted
+    // an account".
+    return fail(c, 'WRONG_KIND', `this request is a ${request.kind}, not an erasure`, 409);
+  }
+  if (request.status === 'completed') {
+    return fail(c, 'ALREADY_COMPLETED', 'this erasure has already been carried out', 409);
+  }
+
+  const result = await eraseUser(sql, request.user_id, { userId: actorUserId, role: 'admin' }, body.reason);
+
+  const [row] = await sql<DataRequestRow[]>`
+    UPDATE data_requests SET status = 'completed', completed_at = now()
+     WHERE id = ${id}
+     RETURNING id, user_id, kind, status, ${sql.unsafe(isoColumn('due_at'))} AS due_at,
+               ${sql.unsafe(isoColumn('completed_at'))} AS completed_at, refusal_reason,
+               artefact_storage_key, ${sql.unsafe(isoColumn('created_at'))} AS created_at`;
+
+  return ok(c, {
+    request: shape(row!),
+    deleted: result.deleted,
+    /**
+     * **The caller must delete these from R2.** Returned rather than silently
+     * skipped: reporting an erasure complete while the uploaded PDFs are still
+     * fetchable by key would be a false compliance claim.
+     */
+    storageKeysStillToDelete: result.erasedStorageKeys,
+  });
 }

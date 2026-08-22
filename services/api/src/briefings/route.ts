@@ -40,6 +40,12 @@ import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import {
+  precedentialEffect,
+  precedentialPolicy,
+  unappliedTreatment,
+  type OverruledStatus,
+} from '../judgments/precedential-effect.ts';
 
 type BriefingContent = { blocks?: { authorities?: { judgmentId: string }[] } };
 
@@ -163,6 +169,41 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
     WHERE j.id = ANY(${ids}::uuid[])
   `;
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * OD-14 REACHED THIS ROUTE LAST, AND UNTIL IT DID THE SAME AUTHORITY GAVE TWO
+   * DIFFERENT ANSWERS DEPENDING WHICH SCREEN IT WAS OPENED FROM
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * NEW3 found it (bus 1018) while building the client currentness pass. This
+   * module computed `addToMatterAllowed: r.overruled_status !== 'set_aside'`
+   * straight off the stored column — a THIRD independent reimplementation of
+   * the policy `precedential-effect.ts` centralises, and the one OD-14 never
+   * reached. `judgments/route.ts`, `matters/authorities.ts` and
+   * `search/route.ts` all went through the derived layers already.
+   *
+   * The consequence was precise and user-visible: the ~73 judgments OD-14 was
+   * written to unblock — stored `set_aside`, verified edge `overruled`, so the
+   * decision between the original parties stands and the authority IS addable —
+   * were addable from search and from the reading view, and refused from inside
+   * a briefing. Same case, same day, different answer per screen.
+   *
+   * One batched edge read for the whole briefing, the same shape and for the
+   * same reason as `search/route.ts`: a per-authority round trip inside a
+   * request that already re-read every judgment is how a wedge screen gets slow.
+   */
+  const edges = await sql<{ cited_judgment_id: string; relationship: string }[]>`
+    SELECT DISTINCT cited_judgment_id, relationship
+      FROM judgment_citations
+     WHERE cited_judgment_id = ANY(${ids}::uuid[])
+       AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
+  const inboundById = new Map<string, string[]>();
+  for (const e of edges) {
+    const list = inboundById.get(e.cited_judgment_id);
+    if (list) list.push(e.relationship);
+    else inboundById.set(e.cited_judgment_id, [e.relationship]);
+  }
+
   const byId = new Map(rows.map((r) => [r.id, r]));
   // Preserve the order the sweep chose, and NEVER silently drop an authority
   // whose row has gone: an authority that vanishes from a briefing is
@@ -177,6 +218,14 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
         note: 'This authority could not be read from the corpus just now. It has not been removed from your briefing.',
       };
     }
+    const inbound = inboundById.get(r.id) ?? [];
+    const input = {
+      overruledStatus: r.overruled_status as OverruledStatus,
+      inboundRelationships: inbound,
+    };
+    const effect = precedentialEffect(input);
+    const policy = precedentialPolicy(effect);
+    const unapplied = unappliedTreatment(input);
     return {
       judgmentId: r.id,
       available: true as const,
@@ -200,8 +249,18 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
       // the corpus, so it resolves to itself.
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
-      /** Read live, this request. Never the value the sweep saw last night. */
-      overruledStatus: r.overruled_status,
+      /**
+       * Read live, this request. Never the value the sweep saw last night — and
+       * now DERIVED through `precedential-effect.ts` like every other surface,
+       * so the same authority carries the same currentness wherever it is seen.
+       * Still one of the same four wire values; a client reading only this is
+       * unaffected.
+       */
+      overruledStatus: policy.bannerStatus,
+      /** The raw column beside the derived banner. Admin/debugging only. */
+      overruledStatusStored: r.overruled_status,
+      /** Layer 2 — what actually happened, in five values rather than four. */
+      precedentialEffect: effect,
       overruledByJudgmentId: r.overruled_by_judgment_id,
       overruledByTitle: r.overruled_by_title,
       overruledParas: r.overruled_paras,
@@ -210,8 +269,17 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
        * The one refusal in the product, restated where it is acted on. A
        * briefing may SHOW a set-aside authority — the advocate needs to know it
        * moved — but it must not be addable to the matter from here.
+       *
+       * Now the SAME decision `POST /matters/:id/authorities` will actually
+       * make, rather than a local re-derivation of it that drifted. Both names
+       * are sent: `addToMatterAllowed` is what this route has always called it
+       * and the client already reads it, `canAddToMatter` is what every other
+       * surface calls the identical fact.
        */
-      addToMatterAllowed: r.overruled_status !== 'set_aside',
+      addToMatterAllowed: policy.addToMatter === 'allow',
+      canAddToMatter: policy.addToMatter === 'allow',
+      /** A verified adverse edge the corpus has not applied. NEVER a banner. */
+      unappliedTreatment: unapplied,
     };
   });
 }

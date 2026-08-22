@@ -35,10 +35,17 @@ import {
   completeDataRequest,
   completeRequestBody,
   dataRequestsQuery,
+  eraseRequestBody,
+  executeErasure,
   listDataRequests,
   refuseDataRequest,
   refuseRequestBody,
 } from './admin/data-requests.ts';
+import {
+  createDataRequest,
+  dataRequestBody,
+  listOwnDataRequests,
+} from './auth/data-requests.ts';
 import { enrolmentBody, listUsers, patchEnrolment, usersQuery } from './admin/users.ts';
 import {
   alertsQuery,
@@ -57,6 +64,8 @@ import {
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { acceptTerms, acceptTermsBody, getTerms, patchMe, patchMeBody } from './auth/account.ts';
 import { authMiddleware, profileIdFor } from './auth/middleware.ts';
+import { requireAdmin } from './auth/admin.ts';
+import { callerAddress, callerIdentity, rateLimit, RATE_LIMITS } from './rate-limit.ts';
 import {
   type AuthDeps,
   handleLogout,
@@ -71,6 +80,7 @@ import {
 import { getBriefing, listMatterBriefings, markBriefingOpened } from './briefings/route.ts';
 import { courtLookupRequest, handleCourtLookup } from './court/lookup.ts';
 import { buildSha, deployedAt } from './build-info.ts';
+import { CONTRACT_VERSION, MIN_SUPPORTED_CONTRACT } from './contract-version.ts';
 import { getCitationCheck } from './citations/check.ts';
 import { copyRequest, recordCopy } from './citations/copies.ts';
 import {
@@ -210,6 +220,15 @@ export function createApp(deps: AppDeps) {
       deployedAt,
       environment: process.env['RAILWAY_ENVIRONMENT'] ?? process.env['NODE_ENV'] ?? 'development',
       imageDigest: null,
+      /**
+       * P5.E. Which wire contract this deployment speaks, and the oldest it
+       * still answers — so an installed app can say "update me" instead of
+       * failing to parse a response, and an operator can see from one endpoint
+       * whether a rollback moved the contract. `contract-version.ts` states the
+       * rule these two numbers encode.
+       */
+      contract: CONTRACT_VERSION,
+      minSupportedContract: MIN_SUPPORTED_CONTRACT,
     }),
   );
 
@@ -218,6 +237,53 @@ export function createApp(deps: AppDeps) {
     // Answers identically whether or not the address has an account: a different
     // reply for a known email turns this into a membership oracle, and for this
     // customer base the membership list is a client list.
+    /**
+     * ───────────────────────────────────────────────────────────────────────
+     * P5.B — THE MAIL CANNON, CLOSED
+     * ───────────────────────────────────────────────────────────────────────
+     *
+     * This endpoint sends an email through Resend to any address a stranger
+     * types, and it deliberately answers identically for known and unknown
+     * addresses (the note above says why). Both properties are right; together
+     * and unlimited they are a free mail cannon aimed at third parties and at
+     * our sending reputation.
+     *
+     * TWO keys, because they stop different attacks: per-EMAIL stops one
+     * address being flooded, per-ADDRESS stops one client walking a list.
+     * `rate-limit.ts` records why the second is the weaker of the two.
+     *
+     * The email is read from the already-validated body, so a malformed request
+     * is a 400 before it can occupy a bucket.
+     */
+    app.use(
+      '/auth/magic-link',
+      rateLimit({
+        name: 'magic-link-email',
+        ...RATE_LIMITS.magicLinkPerEmail,
+        key: async (c) => {
+          const body = await c.req.raw.clone().json().catch(() => null);
+          const email = (body as { email?: unknown } | null)?.email;
+          return typeof email === 'string' ? email.toLowerCase() : 'unparseable';
+        },
+      }),
+    );
+    app.use(
+      '/auth/magic-link',
+      rateLimit({
+        name: 'magic-link-address',
+        ...RATE_LIMITS.magicLinkPerAddress,
+        key: (c) => callerAddress(c),
+      }),
+    );
+    // Token exchange and refresh — credential grinding, not mail.
+    app.use(
+      '/auth/verify',
+      rateLimit({ name: 'auth-verify', ...RATE_LIMITS.authPerAddress, key: (c) => callerAddress(c) }),
+    );
+    app.use(
+      '/auth/refresh',
+      rateLimit({ name: 'auth-refresh', ...RATE_LIMITS.authPerAddress, key: (c) => callerAddress(c) }),
+    );
     app.post('/auth/magic-link', validate('json', magicLinkRequest), (c) =>
       handleMagicLink(c, auth, c.req.valid('json')),
     );
@@ -238,6 +304,19 @@ export function createApp(deps: AppDeps) {
     // PD-8. Consent is recorded, never inferred, and the version is stored
     // alongside the timestamp so that WHICH text was accepted stays answerable.
     app.get('/terms/current', (c) => getTerms(c));
+    /**
+     * DPDP intake — the half `admin/data-requests.ts` said was missing.
+     *
+     * Creating a request is all this does. Erasure EXECUTES from the admin
+     * surface only: it is irreversible, it destroys rows other advocates'
+     * shares depend on, and a mis-tap on a phone must not be able to do it.
+     */
+    app.post('/me/data-requests', validate('json', dataRequestBody), async (c) =>
+      createDataRequest(c, auth.sql, await profileIdFor(auth.sql, c.get('authId')), c.req.valid('json')),
+    );
+    app.get('/me/data-requests', async (c) =>
+      listOwnDataRequests(c, auth.sql, await profileIdFor(auth.sql, c.get('authId'))),
+    );
     app.post('/me/accept-terms', validate('json', acceptTermsBody), (c) =>
       acceptTerms(c, auth.sql, c.get('authId'), c.req.valid('json')),
     );
@@ -256,6 +335,46 @@ export function createApp(deps: AppDeps) {
      */
     const userFor = (c: Context) => profileIdFor(sql, c.get('authId'));
 
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * EVERY `/admin/*` ROUTE, DENIED UNLESS `users.role = 'admin'`
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Mounted BEFORE the routes it protects, on the prefix rather than on each
+     * one, so an admin endpoint added later is covered by existing. Until today
+     * every route below gated on "is anyone signed in", which meant any advocate
+     * who completed sign-up could read the audit ledger and flip a kill switch —
+     * `auth/admin.ts` carries the full note and `admin/audit.ts` had documented
+     * the gap since it was written.
+     *
+     * Conditional on `deps.auth` only because a test app constructed without
+     * authentication has no way to BE an admin; those tests already assert the
+     * unauthenticated behaviour of these routes.
+     */
+    if (deps.auth) app.use('/admin/*', requireAdmin(sql));
+
+    /**
+     * P5.B for the expensive half. `search/admission.ts` caps how many searches
+     * run AT ONCE, which protects the database; this caps how many one caller
+     * may run over time, which is the difference between an advocate reading
+     * results and a client harvesting the corpus.
+     */
+    app.use(
+      '/search',
+      rateLimit({
+        name: 'research',
+        ...RATE_LIMITS.researchPerIdentity,
+        key: (c) => callerIdentity(c),
+      }),
+    );
+    app.use(
+      '/arguments/counter',
+      rateLimit({
+        name: 'research',
+        ...RATE_LIMITS.researchPerIdentity,
+        key: (c) => callerIdentity(c),
+      }),
+    );
     app.post('/search', validate('json', searchRequest), (c) =>
       handleSearch(c, search, c.req.valid('json')),
     );
@@ -422,6 +541,13 @@ export function createApp(deps: AppDeps) {
     );
     app.post('/admin/data-requests/:id/refuse', validate('json', refuseRequestBody), async (c) =>
       refuseDataRequest(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    );
+    // The irreversible one. Deliberately NOT the same verb as `complete` —
+    // see admin/data-requests.ts. Requires a reason, writes audit_log inside the
+    // same transaction as the deletes, and RETURNS the R2 keys it could not
+    // reach so nobody can report an erasure complete while the files remain.
+    app.post('/admin/data-requests/:id/erase', validate('json', eraseRequestBody), async (c) =>
+      executeErasure(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // Matters — the retention moat, and what a briefing hangs off. Every
     // statement scopes by user_id in its own WHERE clause rather than through a

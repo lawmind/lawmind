@@ -35,6 +35,13 @@ import type { Sql } from 'postgres';
 import { canonicalAct } from '@lawmind/ingest/sections';
 
 import { citationLookupKey } from '../query-shape.ts';
+import {
+  bodyTextGrade,
+  bodyTextState,
+  isBodyTextSafe,
+  type BodyTextGrade,
+  type BodyTextState,
+} from '../body-text-safety.ts';
 import type { Field, Node } from './parse.ts';
 
 /** A nested `postgres.js` fragment. Composable, and always parameterised. */
@@ -337,6 +344,16 @@ export type StructuredHit = {
   overruledByJudgmentId: string | null;
   overruledParas: number[] | null;
   overruledNote: string | null;
+  /**
+   * P0. What is KNOWN about this judgment's body text. The row is still here on
+   * purpose — a structured query resolves identity fields, and identity fields
+   * are not damaged by a body that failed to extract.
+   *
+   * Never `CLEAN`: no writer in this repository has ever proved an extraction
+   * faithful, so `TEXT_UNKNOWN` is the honest value for a document nothing has
+   * convicted. `search/body-text-safety.ts` carries NEW2's measurement.
+   */
+  bodyText: { state: BodyTextState; grade: BodyTextGrade; evidenceWithheld: boolean };
 };
 
 /**
@@ -353,6 +370,17 @@ export async function runStructured(
   sql: Sql,
   node: Node,
   limit: number,
+  /**
+   * P3. How many rows to skip — the continuation offset, defaulted so every
+   * existing caller keeps the page it already got.
+   *
+   * An OFFSET rather than a keyset cursor, and the reason is the workload
+   * rather than fashion: the ambiguity case this exists for is a citation
+   * resolving to at most a few hundred judgments, where OFFSET reads a few
+   * hundred index entries. A keyset cursor would be the right answer for deep
+   * paging over millions and is the wrong complexity for this.
+   */
+  offset = 0,
 ): Promise<StructuredHit[]> {
   const rows = await sql<
     {
@@ -368,15 +396,25 @@ export async function runStructured(
       overruled_by_judgment_id: string | null;
       overruled_paras: number[] | null;
       overruled_note: string | null;
+      script_quality: string | null;
+      script_quality_method: string | null;
     }[]
   >`
     SELECT j.id, j.case_title, j.neutral_citation, j.reporter_citations,
            j.court, j.judgment_date::text AS judgment_date, j.case_number, j.bench,
            j.overruled_status::text AS overruled_status,
-           j.overruled_by_judgment_id, j.overruled_paras, j.overruled_note
+           j.overruled_by_judgment_id, j.overruled_paras, j.overruled_note,
+           -- P0. A structured query is a METADATA route and must keep finding a
+           -- judgment whose body failed to extract. The verdict rides along so
+           -- the client can say so; the row is never dropped for it.
+           j.script_quality, j.script_quality_method
       FROM judgments j
      WHERE ${compileWhere(sql, node)}
-     ORDER BY j.judgment_date DESC
+     -- j.id is a TIE-BREAK, not a second sort key anyone reads. judgment_date
+     -- alone is not a total order (15 judgments can share one citation and one
+     -- week), so a continuation built on it silently repeats and silently skips.
+     ORDER BY j.judgment_date DESC, j.id DESC
+     OFFSET ${offset}
      LIMIT ${limit}`;
 
   return rows.map((r) => ({
@@ -392,6 +430,11 @@ export async function runStructured(
     overruledByJudgmentId: r.overruled_by_judgment_id,
     overruledParas: r.overruled_paras,
     overruledNote: r.overruled_note,
+    bodyText: {
+      state: bodyTextState(r.script_quality),
+      grade: bodyTextGrade(r.script_quality, r.script_quality_method),
+      evidenceWithheld: !isBodyTextSafe(r.script_quality),
+    },
   }));
 }
 

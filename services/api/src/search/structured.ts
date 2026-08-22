@@ -217,10 +217,55 @@ export async function answerStructured(
   sql: Sql,
   query: string,
   limit: number,
+  /**
+   * P3. The continuation offset, in rows.
+   *
+   * This is the path where pagination is not a nicety. A bare citation can
+   * resolve to fifteen judgments — measured: `2026:PHHC:027747-DB` resolves to
+   * 15, and NEW1's launch benchmark found the case the advocate asked for was
+   * NOT among the five the route showed (bus 1016). A disambiguation list that
+   * cannot contain the answer is a "nothing" wearing a "something"'s clothes.
+   *
+   * `runStructured` orders by `judgment_date DESC, id DESC` — a TOTAL order —
+   * so paging here is exact: no row is repeated, none is skipped, and every
+   * candidate is reachable.
+   */
+  offset = 0,
 ): Promise<StructuredOutcome> {
   const asField = looksStructured(query) ? null : bareCitationAsField(query);
   if (asField !== null) query = asField;
   else if (!looksStructured(query)) return { kind: 'not_structured' };
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * AN INFERRED BOOLEAN MAY NOT PRE-EMPT AN EXACT IDENTITY ROUTE — NEW1 bus 1021
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `structuredOnlyByBareOperator` below already rescues the case where the
+   * inferred boolean matches NOTHING. NEW1 measured the other half:
+   *
+   *     `MATA DIN SINGH Vs D.D.C. AND OTHERS`
+   *       -> containing "MATA" AND "DIN" AND "SINGH" AND "Vs" AND "D.D.C."
+   *          AND "OTHERS"
+   *       -> matches 10 judgments, so the fall-through never fires
+   *       -> the request ends before `hybridSearch`, so `exactCaseTitle` NEVER
+   *          RUNS, and the judgment printed with EXACTLY that title is not among
+   *          the five returned
+   *
+   * 9 of 229 gold titles (3.9%), and 5 of those lose the gold judgment entirely.
+   * `ac1c7c4` fixed the zero-match case; this is the non-zero case, and no
+   * amount of ranking can reach it because the ranker is never asked.
+   *
+   * The rule stays narrow, exactly as the zero-match rescue does. A query
+   * carrying a real field prefix, a quote or NEAR/n is untouched — the advocate
+   * asked for a filter and gets one. This fires ONLY when the boolean was
+   * inferred from registry formatting AND the query independently reads as a
+   * case name, which is the population where an exact-title index scan has an
+   * answer the boolean cannot see.
+   */
+  if (structuredOnlyByBareOperator(query) && classifyQuery(query).shape === 'case_name') {
+    return { kind: 'not_structured' };
+  }
 
   let ast;
   try {
@@ -240,7 +285,7 @@ export async function answerStructured(
   const parsed = explainQuery(ast);
   const [total, hits] = await Promise.all([
     countStructured(sql, ast),
-    runStructured(sql, ast, limit),
+    runStructured(sql, ast, limit, offset),
   ]);
 
   if (total === 0) {

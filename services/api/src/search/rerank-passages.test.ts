@@ -14,7 +14,11 @@ import type { Sql } from 'postgres';
 
 import { type RetrievedJudgment, passagesForRerank } from './retrieve.ts';
 
-function candidate(id: string, operativeParagraph: string): RetrievedJudgment {
+function candidate(
+  id: string,
+  operativeParagraph: string,
+  evidenceWithheld = false,
+): RetrievedJudgment {
   return {
     judgmentId: id,
     caseTitle: `case ${id}`,
@@ -34,6 +38,7 @@ function candidate(id: string, operativeParagraph: string): RetrievedJudgment {
     operativeParagraphNumber: null,
     operativeParagraphVerified: false,
     exactSpan: null,
+    bodyText: { state: 'TEXT_UNKNOWN', grade: 'NONE', evidenceWithheld },
   };
 }
 

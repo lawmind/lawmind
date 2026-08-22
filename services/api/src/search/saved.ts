@@ -218,6 +218,7 @@ export async function getSavedSearchFeed(
       overruledParas: r.overruledParas,
       overruledNote: r.overruledNote,
       operativeParagraph: r.operativeParagraph,
+      bodyText: r.bodyText,
       unseen: r.judgmentDate > since.slice(0, 10),
     })),
   });

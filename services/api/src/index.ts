@@ -3,9 +3,10 @@ import { createAuth, mailerFrom } from '@lawmind/auth';
 import { createDatabase } from '@lawmind/db';
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import { sql } from 'drizzle-orm';
-import postgres from 'postgres';
 
 import { createApp } from './app.ts';
+import { createPools } from './pools.ts';
+import { createAdmission } from './search/admission.ts';
 import { env } from './env.ts';
 import { logger } from './logger.ts';
 import { runPreflight } from './preflight.ts';
@@ -20,13 +21,15 @@ const db = createDatabase(env.databaseUrl());
  * indefinitely and no statement timeout ever fires. Both are needed for "a
  * request cannot monopolize Postgres" to be true rather than mostly true.
  */
-const rawSql = postgres(env.databaseUrl(), {
-  max: 10,
-  connection: {
-    statement_timeout: env.pgStatementTimeoutMs(),
-    idle_in_transaction_session_timeout: 30_000,
-  },
-});
+/**
+ * TWO pools, not one — `pools.ts` holds the measurement that decided the sizes.
+ *
+ * `rawSql` is the CORE handle and keeps its name because every route below
+ * already takes it; what changed is that the rankers no longer share it.
+ */
+const pools = createPools(env.databaseUrl(), env.pgStatementTimeoutMs());
+const rawSql = pools.core;
+const admission = createAdmission();
 
 /**
  * Fail closed, not open — REB §1. Every other degradation path in this file
@@ -157,7 +160,7 @@ const app = createApp({
   ping: async () => {
     await db.execute(sql`SELECT 1`);
   },
-  search: { sql: rawSql, embedQuery },
+  search: { sql: rawSql, researchSql: pools.research, admission, embedQuery },
   auth: { auth, sql: rawSql, secret: authSecret },
 });
 

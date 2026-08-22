@@ -167,7 +167,31 @@ export function classifyQuery(raw: string): ClassifiedQuery {
   }
 
   const section = SECTION_RE.exec(text);
-  if (section) {
+  /**
+   * A case name BEATS a section token that sits inside it — NEW1 bus 1021, F3.
+   *
+   * Measured on one of 229 gold titles, and it is a pure routing accident
+   * rather than a ranking failure:
+   *
+   *     DR. MITHILESH KUMAR PANDEY AND 3 OTHERS Vs STATE OF U.P. THRU.
+   *     PRIN.SECY. LEGISLATIVE SECTION 1 GOVT
+   *
+   * `SECTION 1` is part of a RESPONDENT'S NAME — a department of the Uttar
+   * Pradesh government — and matching it first sent an exact case title to the
+   * statute-reference lookup, which has no answer for it.
+   *
+   * The precedence is the right way round on the evidence available: a query
+   * containing `X v Y` announces itself as an identity lookup, and an identity
+   * lookup has an exact index behind it. A section number inside a party string
+   * is a coincidence of vocabulary; a `v` between two parties is not.
+   *
+   * **Narrow: the section branch is unchanged for every query that is NOT also
+   * a case name.** `section 302 IPC` and `s.138 NI Act` route exactly as they
+   * did — `CASE_NAME_RE` requires `v`/`vs`/`versus` between two tokens, which
+   * neither has.
+   */
+  const looksLikeCaseName = CASE_NAME_RE.test(text);
+  if (section && !looksLikeCaseName) {
     return {
       shape: 'section',
       citation: null,
@@ -176,7 +200,7 @@ export function classifyQuery(raw: string): ClassifiedQuery {
     };
   }
 
-  if (CASE_NAME_RE.test(text)) {
+  if (looksLikeCaseName) {
     return { shape: 'case_name', citation: null, section: null, act: null };
   }
 
