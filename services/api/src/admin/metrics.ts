@@ -110,6 +110,7 @@ export async function getMetrics(
         degraded: string;
         zero: string;
         refused: string;
+        failed: string;
         p50: string | null;
         p95: string | null;
         max: string | null;
@@ -119,6 +120,7 @@ export async function getMetrics(
              count(*) FILTER (WHERE degraded <> '{}')::text AS degraded,
              count(*) FILTER (WHERE zero_result)::text AS zero,
              count(*) FILTER (WHERE NOT admitted)::text AS refused,
+             count(*) FILTER (WHERE http_status >= 500)::text AS failed,
              percentile_disc(0.5) WITHIN GROUP (ORDER BY latency_ms)::text AS p50,
              percentile_disc(0.95) WITHIN GROUP (ORDER BY latency_ms)::text AS p95,
              max(latency_ms)::text AS max
@@ -129,6 +131,12 @@ export async function getMetrics(
     const degradedRate = rate(Number(search?.degraded ?? 0), searchN);
     const zeroRate = rate(Number(search?.zero ?? 0), searchN);
     const refusedRate = rate(Number(search?.refused ?? 0), searchN);
+    /**
+     * Separated from `zeroResultRate` because they were indistinguishable and
+     * that cost us an hour. A 5xx is US being broken; a zero result is the
+     * corpus having nothing. Migration `0076` carries the incident.
+     */
+    const failedRate = rate(Number(search?.failed ?? 0), searchN);
 
     // Only alert on rates once there is enough traffic for a rate to mean
     // something. Three searches, one of them degraded, is 33% and is noise.
@@ -136,6 +144,7 @@ export async function getMetrics(
     if (searchN >= MIN_SAMPLE) {
       add('degradedRate', degradedRate, `${(degradedRate * 100).toFixed(1)}% of searches degraded`);
       add('zeroResultRate', zeroRate, `${(zeroRate * 100).toFixed(1)}% of searches returned nothing`);
+      add('serverErrorRate', failedRate, `${(failedRate * 100).toFixed(1)}% of searches returned 5xx`);
       add(
         'admissionRefusalRate',
         refusedRate,
@@ -221,6 +230,8 @@ export async function getMetrics(
         degraded: Number(search?.degraded ?? 0),
         zeroResult: Number(search?.zero ?? 0),
         refused: Number(search?.refused ?? 0),
+        failed5xx: Number(search?.failed ?? 0),
+        serverErrorRate: Number(failedRate.toFixed(3)),
         degradedRate: Number(degradedRate.toFixed(3)),
         zeroResultRate: Number(zeroRate.toFixed(3)),
         /** Below this the rates above are reported but NOT alerted on. */

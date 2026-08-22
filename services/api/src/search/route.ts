@@ -283,6 +283,7 @@ export async function handleSearch(
       // The one field that separates "we refused" from "nobody asked". Without
       // it a capacity incident is invisible in the very table meant to show it.
       admitted: false,
+      status: 503,
       requestId: c.get('requestId'),
       subject: c.get('authId'),
     });
@@ -313,6 +314,9 @@ export async function handleSearch(
       resultCount: outcome.resultCount,
       degraded: outcome.degraded,
       admitted: true,
+      // Read from the response, not assumed: a 500 from an unbounded query
+      // otherwise records as an ordinary zero-result search.
+      status: c.res.status,
       requestId: c.get('requestId'),
       subject: c.get('authId'),
     });

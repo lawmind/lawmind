@@ -36,6 +36,18 @@ export type SearchEvent = {
   degraded: readonly string[];
   /** False when the admission gate refused this request. */
   admitted: boolean;
+  /**
+   * The HTTP status the advocate actually got.
+   *
+   * Added after a real incident on this box: 48 case-name searches recorded
+   * `result_count = 0` and an EMPTY `degraded` array, which reads as "the corpus
+   * has nothing" — and were in fact 500s, from an unbounded query cancelled at
+   * the statement timeout while a backup saturated the database. Without the
+   * status there is no way to tell those two apart in this table, which is
+   * exactly the silent drop the wire exists to prevent, hiding in the telemetry
+   * instead of in the response.
+   */
+  status: number;
   requestId: string | undefined;
   /** The raw identity — hashed here, never stored. */
   subject: string | undefined;
@@ -68,10 +80,10 @@ export function recordSearchEvent(sql: Sql, event: SearchEvent): void {
   void sql`
     INSERT INTO search_events
       (query_class, query_chars, latency_ms, result_count, degraded, zero_result,
-       admitted, build_sha, request_id, subject_hash)
+       admitted, http_status, build_sha, request_id, subject_hash)
     VALUES
       (${event.queryClass}, ${event.queryChars}, ${event.latencyMs}, ${event.resultCount},
-       ${[...event.degraded]}, ${event.resultCount === 0}, ${event.admitted},
+       ${[...event.degraded]}, ${event.resultCount === 0}, ${event.admitted}, ${event.status},
        ${buildSha}, ${event.requestId ?? null}, ${subjectHash(event.subject)})
   `.catch((error: unknown) => {
     logger.warn({ err: error }, 'search telemetry write failed — the search itself was unaffected');
