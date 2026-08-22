@@ -1,0 +1,29 @@
+{
+ "detector": "text-damage-v2.0",
+ "storedValue": "damaged_other",
+ "method": "text-damage-v2.0",
+ "confirmed": true,
+ "upgradeScreen": false,
+ "line": 2001,
+ "read": 2000,
+ "intrinsic": 1901,
+ "refusedStoredEcho": 99,
+ "written": 89,
+ "upgraded": 0,
+ "alreadyClaimed": 1812,
+ "byCourt": {
+  "High Court of Karnataka": 559,
+  "High Court of Punjab and Haryana": 1194,
+  "Bombay High Court": 123,
+  "High Court of Himachal Pradesh": 6,
+  "Gauhati High Court": 6,
+  "High Court of Tripura": 3,
+  "High Court of Madhya Pradesh": 3,
+  "High Court of Gujarat": 2,
+  "High Court  for State of Telangana": 1,
+  "High Court of Kerala": 1,
+  "High Court Of Rajasthan": 3
+ },
+ "startedAt": "2026-08-22T03:30:54.560Z",
+ "updatedAt": "2026-08-22T03:30:55.673Z"
+}

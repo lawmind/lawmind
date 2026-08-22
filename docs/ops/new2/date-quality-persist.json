@@ -1,0 +1,17 @@
+{
+ "kind": "new2_date_quality_persist",
+ "confirmed": true,
+ "span": 6000,
+ "scope": "value",
+ "version": "date-quality-v1.1",
+ "cursor": "ffff7039-6819-4932-b63c-3ac47ad6a0eb",
+ "read": 713136,
+ "written": 713136,
+ "byState": {
+  "DATE_VERIFIED": 619739,
+  "DATE_UNKNOWN": 59997,
+  "DATE_SUSPECT": 33400
+ },
+ "startedAt": "2026-08-22T05:05:36.708Z",
+ "updatedAt": "2026-08-22T05:20:06.127Z"
+}
