@@ -124,8 +124,11 @@ SELECT c.*
                                                         -- not a registry despatch stamp
 ```
 
-Eligible population: **6,231,847** rows (6,000,435 unresolved + 231,412 already
-pinned, minus ~560 month stamps at the sampled rate).
+Eligible population: **6,231,847** rows before the month-stamp exclusion —
+6,000,435 unresolved + 231,412 already pinned. The exclusion removes on the order
+of **560** rows at the sampled rate (0.009%, 95% CI 0–0.03), which is an estimate
+and is stated as one; the two figures above are exact index-only counts and the
+subtraction is not, so they are not combined into a single number here.
 
 ### 2.2 MUST NEVER enter the resolver
 
