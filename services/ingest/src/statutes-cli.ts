@@ -5,6 +5,7 @@ import {
   CRIMINAL_CODE_HANDLES,
   fetchAct,
   fetchSections,
+  REPEALED_CRIMINAL_CODE_HANDLES,
   upsertAct,
 } from './statutes.ts';
 
@@ -14,10 +15,26 @@ async function main(): Promise<void> {
   const sql = postgres(url, { max: 2 });
 
   try {
-    for (const { handle, expectTitle } of CRIMINAL_CODE_HANDLES) {
+    /* `--repealed` loads IPC 1860 / CrPC 1973 / Indian Evidence Act 1872. They
+     * are a separate list and a separate flag because they are REPEALED law:
+     * they belong in the corpus so a correspondence row's old side can be
+     * verified and so a 2019 judgment's section reference resolves, and they
+     * must never be served as current law. `enforcement_date` and the repeal
+     * are what separate them; §P13 of the round contract. */
+    const handles = process.argv.includes('--repealed')
+      ? REPEALED_CRIMINAL_CODE_HANDLES
+      : CRIMINAL_CODE_HANDLES;
+
+    for (const entry of handles) {
+      const { handle, expectTitle } = entry;
+      const expectMinistry = 'expectMinistry' in entry ? entry.expectMinistry : undefined;
       const startedAt = Date.now();
       const { act, html } = await fetchAct(handle);
-      assertExpectedAct(act, expectTitle);
+      assertExpectedAct(act, expectTitle, expectMinistry);
+      // Recorded, never asserted, for the acts whose ministry has not been read.
+      if (expectMinistry === null) {
+        console.log(`  ministry as published: ${String(act.ministry)} · act id ${act.actId}`);
+      }
 
       const { sections, missing, duplicateSections } = await fetchSections(act.actId, html);
       const { sections: written } = await upsertAct(sql, act, sections);

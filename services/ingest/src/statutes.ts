@@ -44,18 +44,60 @@ export const CRIMINAL_CODE_HANDLES = [
 export const EXPECTED_MINISTRY = 'Ministry of Home Affairs';
 
 /**
+ * THE THREE REPEALED CODES — IPC 1860, CrPC 1973, Indian Evidence Act 1872.
+ *
+ * Measured 23 Aug 2026: **we hold none of them.** That is not a gap in a
+ * nice-to-have. `BNS_BNSS_BSA_INVENTORY` can type a correspondence row's NEW
+ * side against the enacted text and can say nothing at all about its OLD side,
+ * so 100% of the old half of every mapping is unverifiable in principle. The
+ * founder's round contract lifts the no-new-source rule for exactly this.
+ *
+ * **`expectMinistry` is null here, and that is deliberate rather than lax.**
+ * The Central codes of 2023 are Ministry of Home Affairs and their state copies
+ * are not, which is what makes that check the discriminator above. For the
+ * repealed codes I have not read what indiacode publishes as the administering
+ * ministry, and `CLAUDE.md` forbids inventing it as firmly as it forbids
+ * inventing a section number. So the ministry is RECORDED rather than asserted,
+ * and the Central-Act check is carried by the `AC_CEN_` act-id prefix instead —
+ * which is a property of the identifier, not of my memory.
+ *
+ * Handles are CANDIDATES until a fetch confirms them. `assertExpectedAct` is
+ * what confirms them, and it refuses on the title before anything is written.
+ */
+export const REPEALED_CRIMINAL_CODE_HANDLES = [
+  { handle: '123456789/2263', expectTitle: 'Indian Penal Code', expectMinistry: null },
+  { handle: '123456789/15272', expectTitle: 'Code of Criminal Procedure', expectMinistry: null },
+  { handle: '123456789/2188', expectTitle: 'Indian Evidence Act', expectMinistry: null },
+] as const;
+
+/**
  * Refuses an Act that is not the one asked for. Ingesting a state copy or a draft
  * under the name of a Central code would put the wrong statutory text behind every
  * BNS answer, which is the failure `DOMAIN_TRUTH.md` exists to prevent.
+ *
+ * `expectMinistry` defaults to Ministry of Home Affairs — the 2023 codes — and
+ * may be `null` for an Act whose administering ministry has not been read off
+ * the site. `null` does not mean "anything goes": the `AC_CEN_` prefix check
+ * below still refuses a State enactment.
  */
-export function assertExpectedAct(act: ActRecord, expectTitle: string): void {
+export function assertExpectedAct(
+  act: ActRecord,
+  expectTitle: string,
+  expectMinistry: string | null = EXPECTED_MINISTRY,
+): void {
   if (!act.shortTitle.toLowerCase().includes(expectTitle.toLowerCase())) {
     throw new Error(`expected "${expectTitle}", got "${act.shortTitle}"`);
   }
-  if (act.ministry !== EXPECTED_MINISTRY) {
+  if (expectMinistry !== null && act.ministry !== expectMinistry) {
     throw new Error(
-      `"${act.shortTitle}" is published by "${String(act.ministry)}", not ${EXPECTED_MINISTRY} — ` +
+      `"${act.shortTitle}" is published by "${String(act.ministry)}", not ${expectMinistry} — ` +
         'this is a state copy or a draft, not the Central Act',
+    );
+  }
+  if (expectMinistry === null && !act.actId.startsWith('AC_CEN_')) {
+    throw new Error(
+      `"${act.shortTitle}" has act id "${act.actId}", which is not a Central Act (AC_CEN_) — ` +
+        'refusing a State enactment under a Central code\'s name',
     );
   }
 }

@@ -45,6 +45,7 @@
  *     src/recovery-queue-cli.ts --confirm
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import { openDb } from './db-host.ts';
 import { withTransientRetry } from './db-transient.ts';
@@ -72,18 +73,29 @@ export const PRIORITY_OF: Readonly<Record<RecoveryReason, number>> = {
   CITED_AUTHORITY: 50,
 };
 
-/** Gold and benchmark artefacts that name a judgment as a right answer. */
-const GOLD_FILES = [
-  '../../docs/ai/new3-semantic-expansion-gold.json',
-  '../../docs/ai/new3-semantic-expansion-gold-v2.json',
-  '../../docs/ai/new3-uncited-authority-gold.json',
-  '../../docs/ai/new3-uncited-authority-gold-v2.json',
-  '../../docs/ai/new3-statute-transition-gold.json',
+/**
+ * Gold and benchmark artefacts that name a judgment as a right answer.
+ *
+ * **Resolved against THIS MODULE, never against the working directory.**
+ * These were relative paths, so `pnpm exec tsx src/recovery-queue-cli.ts` read
+ * the gold from `services/ingest` and read NOTHING from the repository root —
+ * where the same command printed `ADVOCATE100.json=ABSENT` and queued zero gold
+ * authorities. The queue reported it honestly and still did no work, which is
+ * the quiet half of that failure: a run that says ABSENT on one line and
+ * `BENCHMARK_GOLD queued 0` on the next looks like a corpus with no damaged
+ * gold in it.
+ */
+export const GOLD_FILES = [
+  'new3-semantic-expansion-gold.json',
+  'new3-semantic-expansion-gold-v2.json',
+  'new3-uncited-authority-gold.json',
+  'new3-uncited-authority-gold-v2.json',
+  'new3-statute-transition-gold.json',
   /* ADVOCATE-100, bound 22 Aug 2026. Its targets sit under `judgment_id`, which
    * `GOLD_ANSWER_KEYS` already names, so this file needs no reader of its own —
    * which is the property the shape-tolerant walk above was built for. */
-  '../../docs/ai/new2/ADVOCATE100.json',
-];
+  'new2/ADVOCATE100.json',
+].map((rel) => fileURLToPath(new URL(`../../../docs/ai/${rel}`, import.meta.url)));
 
 const argOf = (name: string, dflt: string | null = null): string | null => {
   const i = process.argv.indexOf(`--${name}`);

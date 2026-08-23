@@ -5184,3 +5184,75 @@ instead of evidence. That is survivable and it is not how the rest of this
 project has been run.
 
 **Cost:** none. It is one command from a phone or laptop in India.
+
+---
+
+## FQ-TREATMENT-HEADNOTE-PROVENANCE · Our treatment claims are read off law-reporter headnotes, which CLAUDE.md §6 says we may not rely on · NEW2, 23 August 2026
+
+**What is needed:** a decision on whether LawMind may derive citation TREATMENT
+(followed / distinguished / overruled / approved) from the editorial apparatus of
+a law report, or only from the court's own reasoning.
+
+**What was measured, before asking.** 400 treated citation edges, classified by
+what surrounds the citation in the citing document:
+
+| where the annotation sits | share |
+| --- | ---: |
+| reporter headnote apparatus (`SUPREME COURT REPORTS`, `[Para 20][591-D-F]`) | 35.75% |
+| reporter "Case Law Reference" table (`relied on Para 51`) | 20.25% |
+| **the court's own reasoning** | **0.00%** |
+| unclassified (a hand read found most of it is also headnote material) | 44.00% |
+
+A separate speaker screen over 120 edges agrees: court voice 4.17%, counsel
+voice 5.00%, **no speaker signal at all 90.83%**.
+
+The reason is structural rather than a defect: `— overruled.` is the notation a
+law report uses to close a Case Law Cited entry. Courts do not write it.
+
+**Why it is a founder question.** `CLAUDE.md` §6: *"What IS protected is a
+reporter's copy-edited version — headnotes, editorial numbering (Eastern Book
+Company v. D.B. Modak) — so use raw court text and never a law report's edition
+of it."* The annotations above are exactly that apparatus, read off SCR volumes
+already in the corpus.
+
+**What was built anyway.** The separation the treatment system needs regardless
+of the answer: `RESOLUTION_IS_NOT_TREATMENT_2026-08-23.md`, and
+`TREATMENT_ENRICHMENT_CONTRACT_V1` in the same file, which ranks
+`REPORTER_EDITORIAL_ANNOTATION` as evidence that may support a *candidate* and
+never a rendered adverse treatment.
+
+**What stays broken without an answer.** 16,001 treatment edges — 4.65% of
+resolved edges — rest on evidence we may not be entitled to use, and the class
+that *would* be safe (`COURT_REASONING_EXPLICIT`) is **0.00%** of what we hold.
+Currentness cannot be built on this population either way until the question is
+settled.
+
+**Nothing was deleted and no treatment was withdrawn** pending the answer.
+
+---
+
+## FQ-INDIACODE-AVAILABILITY · India Code is returning 504 to every request, so IPC / CrPC / Evidence Act cannot be acquired · NEW2, 23 August 2026
+
+**Not a decision — an outage, recorded so it is not re-diagnosed as a bug.**
+
+The round contract lifted the no-new-source rule for the three repealed criminal
+codes, because `BNS_BNSS_BSA_INVENTORY` can type a correspondence row's NEW side
+against the enacted text and can say **nothing at all** about its OLD side while
+we hold none of IPC 1860, CrPC 1973 or the Indian Evidence Act 1872.
+
+`indiacode.nic.in` returned **HTTP 504 after 248 seconds** to every request.
+The differential was run rather than assumed: the **known-good BNS handle
+`123456789/20062`**, which loaded 531 sections into this corpus, 504s
+identically. **The site is unreachable; the handles are not the problem.**
+
+**Built anyway, so this is one command when the site returns:**
+`REPEALED_CRIMINAL_CODE_HANDLES` in `services/ingest/src/statutes.ts`, a
+`--repealed` flag on the loader, and 8 tests covering the guard that had to be
+loosened — `expectMinistry` is `null` for these three because the administering
+ministry of a repealed code has not been read off the site and `CLAUDE.md`
+forbids inventing it. The Central-Act check is carried by the `AC_CEN_` act-id
+prefix instead, and a test proves a State enactment is still refused.
+
+**Founder action:** none, unless the outage persists. If it does, the question
+becomes whether a second official source is acceptable for statute text —
+`CLAUDE.md` forbids a commercial aggregator as canonical, and that limit stands.

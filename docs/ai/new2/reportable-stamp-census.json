@@ -1,0 +1,75 @@
+{
+ "generatedAt": "2026-08-23T10:29:45.821Z",
+ "sample": {
+  "n": 30000,
+  "documents_carrying_the_stamp": 630,
+  "stamp_prevalence_pct": 2.1,
+  "reportable_yes": 544,
+  "reportable_no": 86,
+  "yes_share_of_stamped_pct": 86.35,
+  "also_reasoned_speaking_yes": 73,
+  "note": "a stamp read off the last 1,400 characters; a document that carries it elsewhere is undercounted, so prevalence is a floor"
+ },
+ "by_court": {
+  "High Court of Punjab and Haryana": {
+   "stamped": 629,
+   "yes": 543,
+   "no": 86
+  },
+  "High Court Of Rajasthan": {
+   "stamped": 1,
+   "yes": 1,
+   "no": 0
+  }
+ },
+ "examples": [
+  {
+   "id": "0ffaa6a2-bd17-4f79-a34a-4a34f547898c",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 14719,
+   "hc_document_class": "decided",
+   "stamp": "Whether reportable Yes",
+   "tail": "y the insurance company, stands dismissed, whereas, FAO-2959-2015 filed by the appellants-claimants, stands allowed. December 21, 2023 (ARCHANA PURI) Vgulati JUDGE Whether speaking/reasoned Yes Whether reportable Yes/No VINEET GULATI 2023.12.22 15:00 I attest to the accuracy and authenticity of this document Chandigarh"
+  },
+  {
+   "id": "0ffaa884-a7e3-4565-b293-0310b9b03ce1",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 5382,
+   "hc_document_class": "bail_order",
+   "stamp": "Whether reportable: Yes",
+   "tail": "rected to proceed with the matter on its own merits, lest it may prejudice the trial. (HARPREET SINGH BRAR) JUDGE 01.08.2025 yakub Whether speaking/reasoned: Yes/No Whether reportable: Yes/No MOHD YAKUB 2025.08.01 14:43 I attest to the accuracy and authenticity of this document Punjab & Haryana High Court at Chandigarh"
+  },
+  {
+   "id": "4519a546-4761-4aef-9a68-9601bd4fd7cd",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 1004,
+   "hc_document_class": "procedural_disposal",
+   "stamp": "Whether Reportable Yes",
+   "tail": "appropriate stage. In view of the aforesaid request, the present petition is dismissed as withdrawn with liberty aforesaid. 04.8.2022 (GURVINDER SINGH GILL) mohan JUDGE Whether speaking /reasoned Yes / No Whether Reportable Yes / No MOHAN SINGH 2022.08.04 05:10 I attest to the accuracy and authenticity of this document"
+  },
+  {
+   "id": "000804da-ead2-4967-b382-8af0116c1d01",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 1998,
+   "hc_document_class": "decided",
+   "stamp": "Whether reportable : Yes",
+   "tail": "ence, the present appeal is dismissed. 5. The miscellaneous application(s) pending, if any, shall stand disposed of. (Anil Kshetarpal) Judge December 15, 2023 “DK” Whether speaking/reasoned :Yes/No Whether reportable : Yes/No DEEPAK KUMAR BHARDWAJ 2023.12.19 10:24 I attest to the accuracy and integrity of this document"
+  },
+  {
+   "id": "003104d6-61bc-453f-9e0c-9fcfe6d5c261",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 3286,
+   "hc_document_class": null,
+   "stamp": "Whether Reportable Yes",
+   "tail": "od, which shall be deposited in the bank account of the petitioner-landowner on monthly basis. C.W.P. No. 6395 of 2025 (O&M) [3] [7] Pending miscellaneous application(s), if any, shall also stand disposed off. August 19, 2025 ( HARKESH MANUJA ) 'dk kamra' JUDGE Whether Speaking/reasoned Yes/No Whether Reportable Yes/No"
+  },
+  {
+   "id": "35b9dfb2-93af-4913-abfa-f4376672a4ca",
+   "court": "High Court of Punjab and Haryana",
+   "chars": 1111,
+   "hc_document_class": null,
+   "stamp": "Whether reportable: Yes",
+   "tail": "e appeal, both the appeals are hereby disposed of, for want of prosecu on. Photocopy of this order be placed on the connected case file. December 10, 2025 (DEEPAK GUPTA) sarita JUDGE Whether reasoned/speaking: Yes/No Whether reportable: Yes/No Sarita Rani 2025.12.11 11:20 I attest to the accuracy of this document/order"
+  }
+ ]
+}
