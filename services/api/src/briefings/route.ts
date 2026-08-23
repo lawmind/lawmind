@@ -40,14 +40,20 @@ import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { loadPrecedentialState, type PrecedentialState } from '../judgments/treatment-lookup.ts';
 import {
-  precedentialEffect,
-  precedentialPolicy,
-  unappliedTreatment,
-  type OverruledStatus,
-} from '../judgments/precedential-effect.ts';
+  treatmentChecklistItems,
+  withLiveTreatmentItems,
+  type ChecklistItem,
+} from './treatment-checklist.ts';
 
-type BriefingContent = { blocks?: { authorities?: { judgmentId: string }[] } };
+type BriefingContent = {
+  blocks?: {
+    authorities?: { judgmentId: string }[];
+    checklist?: ChecklistItem[];
+    [k: string]: unknown;
+  };
+};
 
 type BriefingRow = {
   id: string;
@@ -146,7 +152,7 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
   const ids = (content?.blocks?.authorities ?? [])
     .map((a) => a.judgmentId)
     .filter((id): id is string => typeof id === 'string');
-  if (ids.length === 0) return [];
+  if (ids.length === 0) return { authorities: [], states: [] as PrecedentialState[] };
 
   const rows = await sql<
     {
@@ -188,28 +194,21 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
    * were addable from search and from the reading view, and refused from inside
    * a briefing. Same case, same day, different answer per screen.
    *
-   * One batched edge read for the whole briefing, the same shape and for the
+   * The read that feeds it is now `treatment-lookup.ts`, shared with every
+   * other surface that has to ask this question — including the GENERATED
+   * checklist, which was still branching on the stored column of its own until
+   * LCC-1. One batched read for the whole briefing, the same shape and for the
    * same reason as `search/route.ts`: a per-authority round trip inside a
    * request that already re-read every judgment is how a wedge screen gets slow.
    */
-  const edges = await sql<{ cited_judgment_id: string; relationship: string }[]>`
-    SELECT DISTINCT cited_judgment_id, relationship
-      FROM judgment_citations
-     WHERE cited_judgment_id = ANY(${ids}::uuid[])
-       AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
-  const inboundById = new Map<string, string[]>();
-  for (const e of edges) {
-    const list = inboundById.get(e.cited_judgment_id);
-    if (list) list.push(e.relationship);
-    else inboundById.set(e.cited_judgment_id, [e.relationship]);
-  }
+  const state = await loadPrecedentialState(sql, ids);
 
   const byId = new Map(rows.map((r) => [r.id, r]));
   // Preserve the order the sweep chose, and NEVER silently drop an authority
   // whose row has gone: an authority that vanishes from a briefing is
   // indistinguishable from one that was never cited, which is the silent-drop
   // failure wearing different clothes.
-  return ids.map((id) => {
+  const authorities = ids.map((id) => {
     const r = byId.get(id);
     if (!r) {
       return {
@@ -218,14 +217,11 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
         note: 'This authority could not be read from the corpus just now. It has not been removed from your briefing.',
       };
     }
-    const inbound = inboundById.get(r.id) ?? [];
-    const input = {
-      overruledStatus: r.overruled_status as OverruledStatus,
-      inboundRelationships: inbound,
-    };
-    const effect = precedentialEffect(input);
-    const policy = precedentialPolicy(effect);
-    const unapplied = unappliedTreatment(input);
+    /* Present whenever the row is, because both come from the same id set. */
+    const t = state.get(r.id)!;
+    const effect = t.effect;
+    const policy = t.policy;
+    const unapplied = t.unapplied;
     return {
       judgmentId: r.id,
       available: true as const,
@@ -282,6 +278,18 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
       unappliedTreatment: unapplied,
     };
   });
+
+  /**
+   * The SAME states, handed back so the caller can rewrite the stored
+   * checklist from them. Two reads of the same fact inside one request is how
+   * the render and the checklist drifted apart in the first place.
+   *
+   * In `ids` order, so a briefing's checklist does not reshuffle between reads.
+   */
+  return {
+    authorities,
+    states: ids.map((id) => state.get(id)).filter((s): s is PrecedentialState => s !== undefined),
+  };
 }
 
 export async function getBriefing(
@@ -302,6 +310,45 @@ export async function getBriefing(
   if (!row) return fail(c, 'NOT_FOUND', 'no briefing with that id', 404);
 
   const content = parseContent(row.content);
+  const live = await liveAuthorities(sql, content);
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE GENERATED CHECKLIST IS REWRITTEN HERE, NOT SERVED AS STORED
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `blocks.authorities` was always resolved live; `blocks.checklist` never
+   * was. So the two halves of the same briefing could say different things
+   * about the same authority the moment a status changed after the 23:00 sweep
+   * — and the failure was asymmetric in the dangerous direction: an authority
+   * SET ASIDE overnight got its live banner and **no checklist item at all**,
+   * because only the sweep ever wrote one.
+   *
+   * Fixing the sweep's derivation (LCC-1) closes the disagreement at
+   * generation. Only this closes it at render, which is where an advocate
+   * actually reads it. The items are rebuilt from the SAME `PrecedentialState`
+   * the authority block above was rendered from, by the SAME function the sweep
+   * calls, so there is no second interpretation left to drift.
+   *
+   * Every non-treatment item — the unconfirmed date, the missing order — is
+   * kept exactly as generated. Those are facts about the matter at 23:00 and
+   * re-deriving them here would be this route quietly regenerating a briefing.
+   *
+   * The stored copy is still written and still correct at generation: a
+   * briefing must be readable with the network off, and offline is the one case
+   * where a stale checklist is unavoidable. It is shown with `asOf`, never as
+   * current — the same answer `CITATION_HARNESS.md` already gives for a stale
+   * status.
+   */
+  const blocks = content.blocks
+    ? {
+        ...content.blocks,
+        checklist: withLiveTreatmentItems(
+          Array.isArray(content.blocks.checklist) ? content.blocks.checklist : [],
+          treatmentChecklistItems(live.states),
+        ),
+      }
+    : null;
 
   return ok(c, {
     briefing: {
@@ -314,8 +361,8 @@ export async function getBriefing(
       deliveredAt: row.delivered_at,
       openedAt: row.opened_at,
       dateConfidence: dateConfidence(row),
-      blocks: content.blocks ?? null,
-      authorities: await liveAuthorities(sql, content),
+      blocks,
+      authorities: live.authorities,
     },
     /**
      * When the statuses above were read — this request, not last night's sweep.

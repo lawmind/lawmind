@@ -29,6 +29,8 @@
 import type { Sql } from 'postgres';
 
 import { isoColumn } from '../iso-time.ts';
+import { loadPrecedentialState } from '../judgments/treatment-lookup.ts';
+import { treatmentChecklistItems } from './treatment-checklist.ts';
 
 export type BriefingBlocks = {
   lastOrder: {
@@ -139,24 +141,40 @@ export async function assembleBriefing(
     });
   }
 
-  // An authority that has moved is the single most important thing to say the
-  // night before. Read live HERE too — this is generation, not render, but a
-  // checklist item written from a stale status would be wrong in the blob.
+  /**
+   * An authority that has moved is the single most important thing to say the
+   * night before.
+   *
+   * ───────────────────────────────────────────────────────────────────────────
+   * OD-14 REACHED THE RENDER PATH AND NOT THIS ONE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This block used to read `overruled_status` and branch on the literal value:
+   * a stored `set_aside` produced *"has been set aside. Do not rely on it —
+   * find a replacement authority."*
+   *
+   * For the 73 judgments OD-14 exists for — stored `set_aside`, verified
+   * `overruled` edge — that sentence is false in both halves. A later bench
+   * held the PROPOSITION is no longer good law; nothing in that case was set
+   * aside, the decision between the original parties stands, and the authority
+   * is frequently still citable for propositions the overruling court never
+   * reached. `route.ts` says exactly that on the same screen and sends
+   * `canAddToMatter: true`. The generated checklist was the one surface still
+   * telling the advocate to drop it — in a blob written at 23:00 and read
+   * standing outside court.
+   *
+   * The fix is not a different `if`. Both the derivation and the SENTENCE are
+   * now shared — `treatment-lookup.ts` and `treatment-checklist.ts` — and
+   * `route.ts` rewrites these items from live state on every render, so a
+   * status that changes after generation cannot leave a stale instruction
+   * behind either.
+   */
   if (authorities.length > 0) {
-    const moved = await sql<{ id: string; case_title: string; overruled_status: string }[]>`
-      SELECT id, case_title, overruled_status FROM judgments
-      WHERE id = ANY(${authorities.map((a) => a.judgment_id)}::uuid[])
-        AND overruled_status <> 'none'`;
-    for (const m of moved) {
-      checklist.push({
-        id: `authority-moved-${m.id}`,
-        text:
-          m.overruled_status === 'set_aside'
-            ? `${m.case_title} has been set aside. Do not rely on it — find a replacement authority before the hearing.`
-            : `${m.case_title} carries a changed status (${m.overruled_status}). Check it before relying on it.`,
-        basis: `judgments.overruled_status = ${m.overruled_status}`,
-      });
-    }
+    const state = await loadPrecedentialState(
+      sql,
+      authorities.map((a) => a.judgment_id),
+    );
+    checklist.push(...treatmentChecklistItems(state.values()));
   } else {
     checklist.push({
       id: 'no-authorities',

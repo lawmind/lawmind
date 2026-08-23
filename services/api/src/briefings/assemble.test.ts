@@ -33,6 +33,8 @@ let matterId: string | null = null;
  * genuine law is ever touched.
  */
 let judgmentId: string | null = null;
+/** The LATER judgment, so an inbound treatment edge has somewhere to come from. */
+let overrulingId: string | null = null;
 
 describe('briefing assembly', () => {
   before(async () => {
@@ -61,6 +63,15 @@ describe('briefing assembly', () => {
               ${`test://assemble/${crypto.randomUUID()}`}, 'none')
       RETURNING id`;
     judgmentId = j!.id;
+
+    const [o] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, reporter_citations, court, judgment_date,
+                             full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Assembly Overruling Bench', '{}', 'Test Court', '2010-01-01',
+              'synthetic fixture owned by assemble.test.ts', 'en',
+              ${`test://assemble/${crypto.randomUUID()}`}, 'none')
+      RETURNING id`;
+    overrulingId = o!.id;
   });
 
   after(async () => {
@@ -72,7 +83,12 @@ describe('briefing assembly', () => {
     }
     if (judgmentId) {
       await sql`DELETE FROM judgment_annotations WHERE judgment_id = ${judgmentId}`;
+      await sql`DELETE FROM judgment_citations WHERE cited_judgment_id = ${judgmentId}`;
       await sql`DELETE FROM judgments WHERE id = ${judgmentId}`;
+    }
+    if (overrulingId) {
+      await sql`DELETE FROM judgment_citations WHERE citing_judgment_id = ${overrulingId}`;
+      await sql`DELETE FROM judgments WHERE id = ${overrulingId}`;
     }
     await sql`DELETE FROM users WHERE auth_id LIKE ${`${TAG}%`}`;
     await sql`DELETE FROM auth_user WHERE id LIKE ${`${TAG}%`}`;
@@ -172,6 +188,73 @@ describe('briefing assembly', () => {
       assert.match(item.text, /set aside/i);
       assert.match(item.text, /replacement/i);
     } finally {
+      await sql`UPDATE judgments SET overruled_status = 'none' WHERE id = ${j.id}`;
+    }
+  });
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE OD-14 REGRESSION — STORED STATE AND EDGE STATE DISAGREEING
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The exact shape of the 73 real judgments OD-14 exists for: `overruled_status
+   * = 'set_aside'` stored, and a verified inbound edge whose relationship is
+   * `overruled`. The stored word says the judgment's own decision was undone.
+   * The edge says a later bench held the PROPOSITION is no longer good law,
+   * which leaves the decision between the original parties standing and the
+   * authority frequently citable for propositions the later court never
+   * reached.
+   *
+   * Every render surface derives from the edge and says "usable". Before this
+   * fix the generated checklist branched on the stored column and said
+   * *"has been set aside. Do not rely on it — find a replacement authority."*
+   * Same authority, same briefing, two answers.
+   *
+   * Asserted on the WORDS the advocate reads, not on an internal field: the
+   * failure was never a wrong enum, it was a wrong instruction.
+   */
+  it('does not tell the advocate to replace an authority whose edge says overruled, not set aside', async () => {
+    const j = { id: judgmentId! };
+    await sql`UPDATE judgments SET overruled_status = 'set_aside' WHERE id = ${j.id}`;
+    await sql`INSERT INTO judgment_citations
+                (citing_judgment_id, cited_judgment_id, citation_text, normalised_citation,
+                 relationship, evidence, char_offset)
+              VALUES (${overrulingId}, ${j.id}, 'SYNTHETIC — Assembly Fixture',
+                      ${`test-norm-${crypto.randomUUID()}`}, 'overruled',
+                      'we hold that the proposition is no longer good law', 0)`;
+    try {
+      const b = await assembleBriefing(sql, matterId!, '2026-09-20');
+      const item = b!.blocks.checklist.find((c) => c.id === `authority-moved-${j.id}`);
+
+      // Still named. Nothing here makes an adverse treatment quieter.
+      assert.ok(item, 'an overruled authority must still be named the night before');
+
+      // The defect, stated as the two sentences it produced.
+      assert.doesNotMatch(
+        item.text,
+        /find a replacement authority/i,
+        'an overruled authority whose own decision stands must not be marked for replacement',
+      );
+      assert.doesNotMatch(
+        item.text,
+        /do not rely on it/i,
+        'the decision between the original parties stands — it may still be relied on',
+      );
+
+      // And what it must say instead: the act, and that something survives.
+      assert.match(item.text, /overruled the proposition/i);
+      assert.match(item.text, /propositions the later court did not reach/i);
+
+      // Scope is stated and never guessed: no paragraphs are recorded on this
+      // fixture, so it must say so rather than imply the whole judgment fell.
+      assert.match(item.text, /not recorded/i);
+
+      // Provenance names BOTH inputs, so a reader of the blob can tell a
+      // stored set_aside explained by an edge from one explained by nothing.
+      assert.match(item.basis, /precedentialEffect = overruled/);
+      assert.match(item.basis, /overruled_status = set_aside/);
+    } finally {
+      await sql`DELETE FROM judgment_citations WHERE cited_judgment_id = ${j.id}`;
       await sql`UPDATE judgments SET overruled_status = 'none' WHERE id = ${j.id}`;
     }
   });

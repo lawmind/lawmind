@@ -107,8 +107,30 @@ export async function handleCounter(
     slot?.release();
   }
 
-  const usable = retrieved.filter((r) => r.overruledStatus !== 'set_aside');
-  const excluded = retrieved.filter((r) => r.overruledStatus === 'set_aside');
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THIS FILTERED ON THE BANNER, AND THE BANNER FOR AN OVERRULING IS
+   * DELIBERATELY `set_aside`
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `retrieve.ts` sends `overruledStatus: policy.bannerStatus`, and
+   * `precedential-effect.ts` keeps an overruling at the STRONGEST banner class
+   * on purpose — a later bench held the proposition is no longer good law and
+   * an advocate must see that before anything else. So `overruledStatus ===
+   * 'set_aside'` here matched two different acts and excluded both.
+   *
+   * The consequence is the OD-14 defect pointed at the opposing side's case:
+   * the 73 judgments whose own decision was never disturbed were dropped out of
+   * `authorities[]` into `excluded[]` with `reason: 'set_aside'` — telling the
+   * advocate an authority their opponent CAN reach for is unusable, which is
+   * the more dangerous direction of this bug. It is not a refusal to act; it is
+   * a claim that adverse law is gone when it is not.
+   *
+   * `canAddToMatter` is layer 3 and is already on the row. Filtering on it
+   * means this surface and add-to-matter answer the same question the same way.
+   */
+  const usable = retrieved.filter((r) => r.canAddToMatter);
+  const excluded = retrieved.filter((r) => !r.canAddToMatter);
 
   // One citation_checks row per citation per surface, for BOTH lists. The
   // excluded ones are rendered too — as exclusions — so they are shown to the
@@ -175,7 +197,15 @@ export async function handleCounter(
       judgmentId: r.judgmentId,
       caseTitle: r.caseTitle,
       neutralCitation: r.neutralCitation,
+      /**
+       * Still `set_aside` on the wire — the contract's only exclusion reason,
+       * and widening it is a client-visible change RCC has not adopted. What
+       * changed is WHICH rows land here: only those whose own decision is gone
+       * or whose status nothing verified. `precedentialEffect` says which, and
+       * is sent beside it rather than in place of it.
+       */
       reason: 'set_aside' as const,
+      precedentialEffect: r.precedentialEffect,
       overruledByJudgmentId: r.overruledByJudgmentId,
       overruledNote: r.overruledNote,
       asOf,

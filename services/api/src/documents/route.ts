@@ -39,6 +39,7 @@ import { z } from 'zod';
 import { toWireSourceUnsafe } from '../citations/source-strength.ts';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { loadOnePrecedentialState } from '../judgments/treatment-lookup.ts';
 
 export const patchDocumentBody = z
   .object({
@@ -198,19 +199,35 @@ export async function addDocumentCitation(
   if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
 
   /**
-   * `set_aside` is refused here too.
+   * The same refusal as add-to-matter, for a stronger reason: a document is
+   * filed. An authority whose own decision was undone must not enter a draft at
+   * all, and the refusal names the status so the advocate can find a
+   * replacement.
    *
-   * The same rule as add-to-matter, for a stronger reason: a document is filed.
-   * An authority the court has set aside must not enter a draft at all, and the
-   * refusal names the status so the advocate can find a replacement.
+   * ───────────────────────────────────────────────────────────────────────────
+   * OD-14 DID NOT REACH HERE EITHER
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This read `overruled_status === 'set_aside'` off the stored column. For the
+   * 73 judgments whose verified edge says `overruled`, that refused a draft
+   * citation to an authority whose decision between the original parties
+   * stands and which the reading view, search, the matter and the briefing all
+   * say is usable. A draft is where an advocate acts on that answer, so it was
+   * the most expensive place to give a different one.
+   *
+   * `precedential-effect.ts` through `treatment-lookup.ts`, like everywhere
+   * else. `citableForUntouchedPropositions` is the right question for a draft —
+   * it is precisely "is there anything left of this authority to cite" — and it
+   * is false for exactly the two effects that refuse add-to-matter, so the two
+   * surfaces cannot diverge.
    */
-  if (judgment.overruled_status === 'set_aside') {
-    return fail(
-      c,
-      'AUTHORITY_SET_ASIDE',
-      `${judgment.case_title} has been set aside and cannot be cited in a draft. Find a replacement authority.`,
-      409,
-    );
+  const treatment = await loadOnePrecedentialState(sql, body.judgmentId);
+  if (treatment && !treatment.policy.citableForUntouchedPropositions) {
+    const what =
+      treatment.effect === 'set_aside'
+        ? 'has been set aside and cannot be cited in a draft. Find a replacement authority.'
+        : 'has a recorded change of status we could not confirm, so it cannot be cited in a draft yet.';
+    return fail(c, 'AUTHORITY_SET_ASIDE', `${judgment.case_title} ${what}`, 409);
   }
 
   const claimed = judgment.neutral_citation ?? judgment.case_title;

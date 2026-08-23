@@ -35,12 +35,17 @@ let token = '';
 let userId = '';
 let matterId = '';
 let judgmentId = '';
+let overrulingId = '';
 let briefingId = '';
+
+type ChecklistItem = { id: string; text: string; basis: string };
 
 type Authority = {
   judgmentId: string;
   available: boolean;
   overruledStatus?: string;
+  precedentialEffect?: string;
+  canAddToMatter?: boolean;
   addToMatterAllowed?: boolean;
   verificationState?: string;
   verifiedBySource?: string;
@@ -55,7 +60,12 @@ async function readBriefing() {
   assert.equal(res.status, 200);
   return (
     (await res.json()) as {
-      data: { briefing: { blocks: unknown; authorities: Authority[] } };
+      data: {
+        briefing: {
+          blocks: { checklist?: ChecklistItem[] } | null;
+          authorities: Authority[];
+        };
+      };
     }
   ).data.briefing;
 }
@@ -92,6 +102,14 @@ describe('briefing read path', () => {
               'x', 'en', ${`test://render/${crypto.randomUUID()}`}, 'none') RETURNING id`;
     judgmentId = j!.id;
 
+    /** The LATER bench, so an inbound treatment edge has somewhere to come from. */
+    const [o] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, reporter_citations, court, judgment_date, full_text,
+                             language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Render Overruling Bench', '{}', 'Test Court', '2015-01-01',
+              'x', 'en', ${`test://render/${crypto.randomUUID()}`}, 'none') RETURNING id`;
+    overrulingId = o!.id;
+
     await sql`INSERT INTO judgment_annotations
                 (user_id, judgment_id, matter_id, paragraph_number, paragraph_index, quote)
               VALUES (${userId}, ${judgmentId}, ${matterId}, 7, 6, 'relied upon')`;
@@ -106,7 +124,10 @@ describe('briefing read path', () => {
     await sql`DELETE FROM briefings WHERE matter_id = ${matterId}`;
     await sql`DELETE FROM matter_events WHERE matter_id = ${matterId}`;
     await sql`DELETE FROM judgment_annotations WHERE judgment_id = ${judgmentId}`;
+    await sql`DELETE FROM judgment_citations WHERE cited_judgment_id = ${judgmentId}`;
+    await sql`DELETE FROM judgment_citations WHERE citing_judgment_id = ${overrulingId}`;
     await sql`DELETE FROM judgments WHERE id = ${judgmentId}`;
+    await sql`DELETE FROM judgments WHERE id = ${overrulingId}`;
     await sql`DELETE FROM matters WHERE id = ${matterId}`;
     await sql`DELETE FROM users WHERE auth_id LIKE ${`${TAG}%`}`;
     await sql`DELETE FROM auth_user WHERE id LIKE ${`${TAG}%`}`;
@@ -206,6 +227,96 @@ describe('briefing read path', () => {
     });
     assert.equal(mine.status, 404);
     assert.equal(mine.status, missing.status, 'a resolving id leaks another advocate’s caseload');
+  });
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * LCC-1 — THE GENERATED CHECKLIST AND THE LIVE RENDER, ON ONE HTTP RESPONSE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The whole defect, asserted where an advocate meets it: ONE `GET
+   * /briefings/:id`, whose `authorities[]` says the authority may be added to a
+   * matter while whose `checklist[]` — until this round — told them to find a
+   * replacement. Both halves of the same JSON, disagreeing about the same case.
+   *
+   * The fixture is the real population's shape: stored `overruled_status =
+   * 'set_aside'` with a verified inbound `overruled` edge, which is what all 73
+   * of them look like.
+   */
+  it('checklist and live authorities cannot disagree about the same authority', async () => {
+    await sql`UPDATE judgments SET overruled_status = 'set_aside' WHERE id = ${judgmentId}`;
+    await sql`INSERT INTO judgment_citations
+                (citing_judgment_id, cited_judgment_id, citation_text, normalised_citation,
+                 relationship, evidence, char_offset)
+              VALUES (${overrulingId}, ${judgmentId}, 'SYNTHETIC — Render Fixture',
+                      ${`test-norm-${crypto.randomUUID()}`}, 'overruled',
+                      'the proposition is no longer good law', 0)`;
+    try {
+      const b = await readBriefing();
+      const a = b.authorities[0]!;
+      const item = b.blocks?.checklist?.find((c) => c.id === `authority-moved-${judgmentId}`);
+
+      // The render half, unchanged by this round and already correct.
+      assert.equal(a.precedentialEffect, 'overruled');
+      assert.equal(a.canAddToMatter, true);
+      assert.equal(a.addToMatterAllowed, true);
+      // The warning is NOT weakened: the banner stays at the strongest class.
+      assert.equal(a.overruledStatus, 'set_aside');
+
+      // The checklist half. Named, and no longer contradicting the line above.
+      assert.ok(item, 'an overruled authority must still be named the night before');
+      assert.doesNotMatch(
+        item.text,
+        /find a replacement authority/i,
+        'the checklist told the advocate to drop an authority this same response says is addable',
+      );
+      assert.match(item.text, /propositions the later court did not reach/i);
+    } finally {
+      await sql`DELETE FROM judgment_citations WHERE cited_judgment_id = ${judgmentId}`;
+      await sql`UPDATE judgments SET overruled_status = 'none' WHERE id = ${judgmentId}`;
+    }
+  });
+
+  /**
+   * The second half of the same defect, and the one generation alone cannot fix.
+   *
+   * `blocks.checklist` is written at 23:00 and stored. `blocks.authorities` is
+   * re-read on every request. So a status that changes AFTER the sweep left the
+   * two halves disagreeing no matter how correct the sweep was — and in the
+   * dangerous direction: an authority set aside overnight got its live banner
+   * and no checklist item at all, because only the sweep ever wrote one.
+   *
+   * This briefing is NOT regenerated between the two reads. Nothing but the
+   * judgment moves.
+   */
+  it('rewrites the stored checklist from live state, so a status that moves after the sweep is not missed', async () => {
+    const before = await readBriefing();
+    assert.ok(
+      !before.blocks?.checklist?.some((c) => c.id === `authority-moved-${judgmentId}`),
+      'precondition: nothing has moved yet',
+    );
+
+    await sql`UPDATE judgments SET overruled_status = 'set_aside' WHERE id = ${judgmentId}`;
+    try {
+      const after_ = await readBriefing();
+      const item = after_.blocks?.checklist?.find(
+        (c) => c.id === `authority-moved-${judgmentId}`,
+      );
+      assert.ok(
+        item,
+        'a judgment set aside after the sweep must still reach the checklist — the blob cannot know',
+      );
+      assert.match(item.text, /find a replacement authority/i);
+      assert.equal(after_.authorities[0]?.canAddToMatter, false);
+
+      // And the non-treatment items generated last night are untouched.
+      assert.ok(
+        after_.blocks?.checklist?.some((c) => c.id === 'date-unchecked'),
+        'only the treatment items are rewritten; the rest of the checklist is as generated',
+      );
+    } finally {
+      await sql`UPDATE judgments SET overruled_status = 'none' WHERE id = ${judgmentId}`;
+    }
   });
 
   it('records only the FIRST open', async () => {

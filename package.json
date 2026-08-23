@@ -20,7 +20,8 @@
     "judgment-safety-probe": "pnpm --filter @lawmind/harness deployed-judgment-safety",
     "lane:send": "node scripts/lane-send.mjs",
     "lane:inbox": "node scripts/lane-inbox.mjs",
-    "lane:status": "node scripts/lane-status.mjs"
+    "lane:status": "node scripts/lane-status.mjs",
+    "lane:lease": "node scripts/lane-lease.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

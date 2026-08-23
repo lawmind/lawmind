@@ -1,0 +1,299 @@
+#!/usr/bin/env node
+/**
+ * LANE LEASE — exactly one active owner per lane.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS EXISTS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `.agents/bus/.lane-<sessionId>` is a BINDING, not a LEASE: it records which
+ * lane a session thinks it is, and nothing stops two sessions writing `LCC`
+ * into two different files. That is exactly what happened — a duplicated LCC
+ * session, recorded in the master orchestration plan §4 as a process defect.
+ *
+ * A lease is the missing half: ONE file per lane, holding the owner's identity
+ * and a heartbeat, which a second binder must read and refuse.
+ *
+ * ONE FILE PER LANE, never one shared registry. Five lanes share one worktree;
+ * a single registry file is a lost-update race and every lane's rewrite drops
+ * another lane's line. `.agents/jobs/registry.jsonl` solves the same problem by
+ * being append-only. Here, only the lane's own owner ever writes its own file,
+ * so there is no shared writer at all.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT MAKES AN OWNER "HEALTHY"
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Two independent signals, and BOTH must fail before a takeover is allowed:
+ *
+ *   1. the recorded pid is still alive AND still the same process (start time
+ *      is compared, because pids are recycled), and
+ *   2. the heartbeat is younger than STALE_AFTER_MS.
+ *
+ * A live process with a cold heartbeat is a HUNG owner, not a dead one, and
+ * `.agents/logs` records what that costs: a keeper logged "relaunch issued" 51
+ * times over 4h20m while the walk was dead, because the check was liveness
+ * rather than progress. So a hung owner refuses a takeover by default and needs
+ * `--force`, which writes the reason into the superseded record.
+ *
+ * A dead process with a warm heartbeat is a crashed owner — the common case,
+ * since an agent session that is killed never gets to release. That one is
+ * recoverable without `--force`.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * COMMANDS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ *   acquire <LANE> --session <id> [--task "..."] [--force] [--reason "..."]
+ *   heartbeat <LANE> --session <id> [--task "..."] [--progress "..."]
+ *   status [LANE]
+ *   release <LANE> --session <id>
+ *
+ * Exit codes: 0 = held by you. 1 = refused (someone else holds it). 2 = usage.
+ */
+
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { hostname } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const LEASE_DIR = join(ROOT, '.agents', 'bus', 'leases');
+const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3'];
+
+/** A heartbeat older than this is cold. An agent turn can legitimately run for
+ *  a long time, so this is generous — it is a staleness floor, not a liveness
+ *  check. Liveness is the process table's job. */
+const STALE_AFTER_MS = 90 * 60 * 1000;
+
+const leasePath = (lane) => join(LEASE_DIR, `${lane}.json`);
+
+function readLease(lane) {
+  const p = leasePath(lane);
+  if (!existsSync(p)) return null;
+  try {
+    return JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+function writeLease(lane, record) {
+  mkdirSync(LEASE_DIR, { recursive: true });
+  writeFileSync(leasePath(lane), `${JSON.stringify(record, null, 2)}\n`, 'utf8');
+}
+
+/**
+ * Process identity, not just process existence. A pid alone is not an identity:
+ * Windows recycles them, so a lease naming pid 20228 can be "confirmed alive"
+ * by a completely unrelated process that inherited the number. Comparing the
+ * creation date as well makes the check an identity check.
+ */
+function inspectPid(pid) {
+  if (!pid) return { alive: false, reason: 'no pid recorded' };
+  try {
+    const out = execFileSync(
+      'powershell',
+      [
+        '-NoProfile',
+        '-Command',
+        // CreationDate is stamped as a round-trip string HERE rather than in
+        // node: ConvertTo-Json renders a DateTime as `/Date(1787500353189)/`,
+        // which `new Date()` cannot parse, and the resulting throw made every
+        // probe read as UNKNOWN.
+        `Get-CimInstance Win32_Process -Filter "ProcessId=${Number(pid)}" | Select-Object ProcessId,ParentProcessId,Name,@{n='Created';e={$_.CreationDate.ToString('o')}} | ConvertTo-Json -Compress`,
+      ],
+      { encoding: 'utf8', timeout: 20000 },
+    ).trim();
+    if (!out) return { alive: false, reason: 'not in process table' };
+    const o = JSON.parse(out);
+    return {
+      alive: true,
+      name: o.Name,
+      ppid: o.ParentProcessId,
+      createdAt: o.Created ?? null,
+    };
+  } catch (err) {
+    // An error here is NOT evidence of death. Say so rather than letting a
+    // failed probe read as a free takeover.
+    return { alive: null, reason: `probe failed: ${err.message.split('\n')[0]}` };
+  }
+}
+
+/** Walk up from this node process to the owning agent session process. */
+function findSessionPid() {
+  let pid = process.pid;
+  for (let i = 0; i < 12; i += 1) {
+    const info = inspectPid(pid);
+    if (!info.alive) return null;
+    if (String(info.name || '').toLowerCase().includes('claude')) {
+      return { pid, name: info.name, createdAt: info.createdAt };
+    }
+    if (!info.ppid) return null;
+    pid = info.ppid;
+  }
+  return null;
+}
+
+function health(lease) {
+  if (!lease) return { state: 'FREE' };
+  const proc = inspectPid(lease.pid);
+  const age = Date.now() - new Date(lease.heartbeatAt).getTime();
+  const heartbeatCold = age > STALE_AFTER_MS;
+
+  // pid recycled: same number, different process.
+  const sameProcess =
+    proc.alive === true &&
+    (!lease.pidCreatedAt || !proc.createdAt || lease.pidCreatedAt === proc.createdAt);
+
+  if (proc.alive === null) return { state: 'UNKNOWN', proc, age, note: proc.reason };
+  if (proc.alive && sameProcess && !heartbeatCold) return { state: 'HEALTHY', proc, age };
+  if (proc.alive && sameProcess && heartbeatCold) return { state: 'HUNG', proc, age };
+  if (proc.alive && !sameProcess) return { state: 'PID_RECYCLED', proc, age };
+  return { state: 'DEAD', proc, age };
+}
+
+const fmtAge = (ms) => `${Math.round(ms / 60000)}m`;
+
+function describe(lane, lease, h) {
+  if (!lease) return `${lane}: FREE`;
+  return [
+    `${lane}: ${h.state}${lease.state === 'RELEASED' ? ' (released)' : ''}`,
+    `  session   ${lease.sessionId}`,
+    `  pid       ${lease.pid} (${h.proc?.alive === true ? h.proc.name : (h.proc?.reason ?? 'unknown')})`,
+    `  host      ${lease.host}`,
+    `  acquired  ${lease.acquiredAt}`,
+    `  heartbeat ${lease.heartbeatAt}  (${fmtAge(h.age ?? 0)} ago)`,
+    `  task      ${lease.task ?? '-'}`,
+    `  progress  ${lease.progress ?? '-'}`,
+  ].join('\n');
+}
+
+function arg(name, argv) {
+  const i = argv.indexOf(`--${name}`);
+  return i === -1 ? undefined : argv[i + 1];
+}
+
+function main() {
+  const [cmd, ...rest] = process.argv.slice(2);
+  const lane = rest[0] && LANES.includes(rest[0].toUpperCase()) ? rest[0].toUpperCase() : undefined;
+  const sessionId = arg('session', rest);
+  const task = arg('task', rest);
+  const progress = arg('progress', rest);
+  const force = rest.includes('--force');
+  const reason = arg('reason', rest);
+
+  if (cmd === 'status') {
+    for (const l of lane ? [lane] : LANES) {
+      const lease = readLease(l);
+      console.log(describe(l, lease, health(lease)));
+      console.log('');
+    }
+    return 0;
+  }
+
+  if (!cmd || !lane || !sessionId) {
+    console.error(
+      'usage: lane-lease.mjs <acquire|heartbeat|release|status> <LANE> --session <id> [--task "..."] [--force --reason "..."]',
+    );
+    return 2;
+  }
+
+  const lease = readLease(lane);
+  const h = health(lease);
+  const mine = lease && lease.sessionId === sessionId;
+
+  if (cmd === 'release') {
+    if (!lease) {
+      console.log(`${lane}: already FREE`);
+      return 0;
+    }
+    if (!mine && !force) {
+      console.error(`REFUSED — ${lane} is held by ${lease.sessionId}, not by you.`);
+      return 1;
+    }
+    writeLease(lane, { ...lease, releasedAt: new Date().toISOString(), state: 'RELEASED' });
+    console.log(`${lane}: released by ${sessionId}`);
+    return 0;
+  }
+
+  if (cmd === 'heartbeat') {
+    if (!lease || !mine) {
+      console.error(`REFUSED — you do not hold ${lane}.`);
+      console.error(describe(lane, lease, h));
+      return 1;
+    }
+    writeLease(lane, {
+      ...lease,
+      heartbeatAt: new Date().toISOString(),
+      task: task ?? lease.task,
+      progress: progress ?? lease.progress,
+    });
+    console.log(`${lane}: heartbeat ok (${sessionId})`);
+    return 0;
+  }
+
+  if (cmd !== 'acquire') {
+    console.error(`unknown command: ${cmd}`);
+    return 2;
+  }
+
+  // ── acquire ────────────────────────────────────────────────────────────────
+  const released = lease?.state === 'RELEASED';
+
+  if (lease && !mine && !released) {
+    const blocking =
+      h.state === 'HEALTHY' ||
+      h.state === 'UNKNOWN' || // a failed probe is not evidence of death
+      (h.state === 'HUNG' && !force);
+    if (blocking) {
+      console.error(`REFUSED — ${lane} already has an owner. Do not run a second ${lane} session.`);
+      console.error(describe(lane, lease, h));
+      if (h.state === 'HUNG') {
+        console.error('\n  The owner process is ALIVE but its heartbeat is cold. That is a HUNG');
+        console.error('  owner, not a dead one. Confirm the process is abandoned, then re-run');
+        console.error('  with --force --reason "<what you verified>".');
+      }
+      if (h.state === 'UNKNOWN') {
+        console.error(`\n  Could not probe the owner process (${h.note}). A failed probe is not`);
+        console.error('  evidence of death — resolve the probe before taking over.');
+      }
+      return 1;
+    }
+  }
+
+  const self = findSessionPid();
+  const now = new Date().toISOString();
+  const record = {
+    lane,
+    sessionId,
+    pid: self?.pid ?? null,
+    pidName: self?.name ?? null,
+    pidCreatedAt: self?.createdAt ?? null,
+    host: hostname(),
+    acquiredAt: mine && lease ? lease.acquiredAt : now,
+    heartbeatAt: now,
+    task: task ?? null,
+    progress: progress ?? null,
+    state: 'HELD',
+    supersededOwner:
+      lease && !mine
+        ? {
+            sessionId: lease.sessionId,
+            pid: lease.pid,
+            health: h.state,
+            heartbeatAt: lease.heartbeatAt,
+            takeoverReason: reason ?? null,
+          }
+        : undefined,
+  };
+  writeLease(lane, record);
+  console.log(`${lane}: ACQUIRED by ${sessionId} (pid ${record.pid ?? 'unknown'})`);
+  if (record.supersededOwner) {
+    console.log(`  took over from ${lease.sessionId} — prior owner ${h.state}`);
+  }
+  return 0;
+}
+
+process.exit(main());

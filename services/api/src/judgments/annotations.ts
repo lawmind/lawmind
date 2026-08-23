@@ -22,6 +22,7 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { loadOnePrecedentialState } from './treatment-lookup.ts';
 
 export const annotationBody = z.object({
   /** What the court printed. Null on an unnumbered judgment — see the module note. */
@@ -126,23 +127,55 @@ export async function createAnnotation(
    * The response NAMES the judgment. "You cannot add this" with no reason sends
    * the advocate to check manually, which is the work the product exists to save.
    */
-  if (body.matterId && judgment.overruled_status === 'set_aside') {
-    const [overruler] = await sql<{ case_title: string; neutral_citation: string | null }[]>`
-      SELECT o.case_title, o.neutral_citation
-      FROM judgments j LEFT JOIN judgments o ON o.id = j.overruled_by_judgment_id
-      WHERE j.id = ${judgmentId} AND o.id IS NOT NULL`;
-    const displacedBy = overruler
-      ? ` It was set aside by ${overruler.case_title}${
-          overruler.neutral_citation ? ` ${overruler.neutral_citation}` : ''
-        }.`
-      : '';
-    return fail(
-      c,
-      'AUTHORITY_SET_ASIDE',
-      `${judgment.case_title} has been set aside and cannot be added to a matter.${displacedBy} ` +
-        'You can still save the passage on its own.',
-      409,
-    );
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * OD-14 NEVER REACHED THIS ROUTE, AND IT IS THE SAME REFUSAL AS
+   * `POST /matters/:id/authorities` — WHICH SAYS THE OPPOSITE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This was `judgment.overruled_status === 'set_aside'` read straight off the
+   * stored column: a FOURTH independent reimplementation of the one policy
+   * `precedential-effect.ts` centralises, and the one nobody noticed because
+   * annotating into a matter does not look like add-to-matter from the outside.
+   *
+   * It is. `matters/authorities.ts` derives the effect and ALLOWS the 73
+   * judgments carrying stored `set_aside` for what their verified edge calls
+   * `overruled`. This route refused them. Same authority, same matter, same
+   * second — allowed through one door and refused at the other, with a message
+   * asserting a set aside that did not happen.
+   *
+   * Now the same derivation, and the same two refusing effects: a genuine
+   * `set_aside`, and `review_required` — a stored adverse status no verified
+   * edge accounts for, where quietly becoming addable is the dangerous
+   * direction.
+   */
+  if (body.matterId) {
+    const state = await loadOnePrecedentialState(sql, judgmentId);
+    if (state && state.policy.addToMatter === 'refuse') {
+      const [overruler] = await sql<{ case_title: string; neutral_citation: string | null }[]>`
+        SELECT o.case_title, o.neutral_citation
+        FROM judgments j LEFT JOIN judgments o ON o.id = j.overruled_by_judgment_id
+        WHERE j.id = ${judgmentId} AND o.id IS NOT NULL`;
+      /* Copy is licence protection, not an audit: `review_required` does not
+       * claim a set aside that nothing verified. Same wording as
+       * `matters/authorities.ts`, for the same reason. */
+      const displacedBy =
+        state.effect === 'set_aside' && overruler
+          ? ` It was set aside by ${overruler.case_title}${
+              overruler.neutral_citation ? ` ${overruler.neutral_citation}` : ''
+            }.`
+          : '';
+      const what =
+        state.effect === 'set_aside'
+          ? 'has been set aside and cannot be added to a matter.'
+          : 'has a recorded change of status we could not confirm, so it cannot be added to a matter yet.';
+      return fail(
+        c,
+        'AUTHORITY_SET_ASIDE',
+        `${judgment.case_title} ${what}${displacedBy} You can still save the passage on its own.`,
+        409,
+      );
+    }
   }
 
   const [row] = await sql<Row[]>`
