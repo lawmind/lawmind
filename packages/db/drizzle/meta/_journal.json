@@ -554,6 +554,13 @@
       "when": 1786443500000,
       "tag": "0078_credit_direction_fix",
       "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1786443600000,
+      "tag": "0079_fk_delete_indexes",
+      "breakpoints": true
     }
   ]
 }

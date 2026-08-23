@@ -48,6 +48,21 @@ describe('matter authorities', () => {
   let matterId: string;
   let judgmentId: string;
   let setAsideJudgmentId: string;
+  /**
+   * The replacement fixture's id, CAPTURED rather than looked up by title.
+   *
+   * It was already being RETURNED at creation and thrown away, so both the
+   * teardown and the stale-overruled test re-found it with
+   * `WHERE case_title = 'SYNTHETIC — Replacement Fixture'`. That predicate has
+   * no usable index — `case_title`'s only index is `gin_trgm_ops`, which cannot
+   * serve an equality — so each one was a sequential scan of a 151 GB relation.
+   * Under load the teardown exceeded its budget and the whole suite hung there.
+   *
+   * It was also a cross-test hazard: deleting BY TITLE removes any concurrent
+   * run's fixture as well as this one's, and this repository is worked by
+   * several sessions against one database.
+   */
+  let replacementJudgmentId: string;
   /** Good law when saved, moved afterwards — the case RCC bus 0048 is about. */
   let movesJudgmentId: string;
   /** Pre-2013 shape: a reporter citation, no neutral one — RCC bus 0049. */
@@ -81,6 +96,7 @@ describe('matter authorities', () => {
               '2025-01-01', 'synthetic fixture', 'en',
               ${`test://authorities/${crypto.randomUUID()}`})
       RETURNING id`;
+    replacementJudgmentId = replacement!.id;
 
     const [sa] = await sql<{ id: string }[]>`
       INSERT INTO judgments (case_title, reporter_citations, court, judgment_date,
@@ -114,9 +130,15 @@ describe('matter authorities', () => {
   after(async () => {
     await sql`DELETE FROM matter_authorities WHERE matter_id = ${matterId}`;
     await sql`DELETE FROM matters WHERE id = ${matterId}`;
-    await sql`DELETE FROM judgments WHERE id = ${judgmentId} OR id = ${setAsideJudgmentId}
-              OR id = ${movesJudgmentId} OR id = ${reporterOnlyJudgmentId}
-              OR case_title = 'SYNTHETIC — Replacement Fixture'`;
+    // Every fixture by PRIMARY KEY. See `replacementJudgmentId` for why the
+    // title predicate that used to be here made this a 151 GB scan.
+    await sql`DELETE FROM judgments WHERE id = ANY(${[
+      judgmentId,
+      setAsideJudgmentId,
+      movesJudgmentId,
+      reporterOnlyJudgmentId,
+      replacementJudgmentId,
+    ]}::uuid[])`;
     for (const a of [owner, stranger]) {
       await sql`DELETE FROM users WHERE auth_id = ${a.authId}`;
       await sql`DELETE FROM auth_user WHERE id = ${a.authId}`;
@@ -302,12 +324,10 @@ describe('matter authorities', () => {
     // The world changes underneath a citation that is already relied on. This is
     // the whole of `CITATION_HARNESS.md`'s stale-overruled rule, and the reason
     // the status may never be copied onto `matter_authorities` at save time.
-    const [replacement] = await sql<{ id: string }[]>`
-      SELECT id FROM judgments WHERE case_title = 'SYNTHETIC — Replacement Fixture'`;
     await sql`
       UPDATE judgments
          SET overruled_status = 'doubted',
-             overruled_by_judgment_id = ${replacement!.id},
+             overruled_by_judgment_id = ${replacementJudgmentId},
              overruled_note = 'Doubted by a later coordinate bench.',
              overruled_status_changed_at = now()
        WHERE id = ${movesJudgmentId}`;
@@ -315,7 +335,7 @@ describe('matter authorities', () => {
     const after = await listAuthority(movesJudgmentId);
     assert.ok(after, 'a moved authority is never silently dropped from the list');
     assert.equal(after.overruledStatus, 'doubted', 'read LIVE, not as stored at save time');
-    assert.equal(after.overruledByJudgmentId, replacement!.id);
+    assert.equal(after.overruledByJudgmentId, replacementJudgmentId);
     assert.equal(
       after.overruledByTitle,
       'SYNTHETIC — Replacement Fixture',
