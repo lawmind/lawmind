@@ -207,3 +207,107 @@ Opened 23 Aug 2026. Same status key. Every `[x]` means OBSERVED.
 - [ ] R8.5 P10 release proof (Linux → indexes → search-equivalence → rollback) NOT advanced — another session was live in `services/api/src/p10-probe.ts` and I did not collide with it
 - [x] R8.6 P11 Test Court census — **RE-RUN, and the answer changed from 0 to 6.** Six `court = 'Test Court'` rows exist, all created **today between 02:41 and 02:51 UTC**, all carrying `source_url LIKE 'test://%'` and `case_title LIKE 'SYNTHETIC — %'`. They are leaked FIXTURES from a concurrent session's test run, not corpus data. **Nothing deleted.** This also explains the original "3 synthetic Test Court rows" claim the 22 Aug census could not reproduce: the population is transient, so a census answers 0 or N depending on whether a suite is mid-run. `docs/ops/lcc/TEST_COURT_ROWS_FINDING.md` §Re-census
 - [x] R8.7 Regressions this round, caused and fixed: three `_at` columns cast to Postgres text (Hermes renders that as Invalid Date; the repo's own guard caught it), then the SAME guard catching the pattern inside the explanatory comment written about it; and `admin/data-requests.test.ts` seeding an ordinary advocate against an admin route, 4 failures predating this round from `0074`'s deny-by-default — the test was the stale half, not the middleware
+
+### R8.7 — A SEARCH REQUEST CAN RUN THE DATABASE OUT OF MEMORY, AND IT IS NOT A CONTENTION ARTEFACT
+
+Surfaced by the full-suite run, not by looking for it. Two distinct Postgres
+errors, both on the search path, both raised to the client as 500s:
+
+```
+PostgresError: out of memory
+  code 53200 · detail "Failed on request of size 100663296 in memory context
+  \"ExecutorState\"" · mcxt.c:1167
+  at sparseAny (services/api/src/search/retrieve.ts:438)
+
+PostgresError: could not read blocks 7799946..7799946 in file
+  "base/81920/16384018": Invalid argument
+  code XX000 · md.c:2064 · md_readv_report
+  at sparseAny (services/api/src/search/retrieve.ts:438)
+  and at getCorpusCoverage (services/api/src/corpus/coverage.ts:54)
+```
+
+**KNOW:** 100663296 bytes is exactly 96 MiB, and it is a SINGLE allocation
+request, not a total. `ExecutorState` blew on one request of that size while the
+box still had 13.9 GiB of RAM free — so this is not the machine running out of
+memory, it is one operation asking for 96 MiB in one go.
+
+**INFER, and labelled as such:** the only thing in `sparseAny` that touches a
+per-row object of that order is `ORDER BY ts_rank(j.full_text_tsv, q.tsq)`.
+`ts_rank` must detoast the tsvector of every matching row, and the function's own
+comment already records that this is what cost 781,289 ms over 94.1% of the
+corpus. A single pathological judgment whose `full_text_tsv` detoasts to ~96 MiB
+would produce exactly this. **Not verified** — confirming it means finding the
+largest tsvector in `judgments`, which is a sequential scan of a 151 GB relation
+and was deferred on resource grounds.
+
+**Why it matters more than a flaky test.** The bound added this round is a
+`statement_timeout`, and a timeout does not bound MEMORY. A request that OOMs is
+not slow, it fails — and on a phone "the law is not here" and "our server broke"
+are indistinguishable, which is the exact failure `search_events.http_status`
+was added to stop being invisible. It is also not rate-limited into safety: one
+query shaped the wrong way is enough.
+
+**The block-read error is a separate fault and should not be folded in.**
+`Invalid argument` from `md_readv_report` is an I/O failure at the storage layer,
+seen in two different relations (`16384018` and `16384000`) and in two different
+call sites. It appeared under heavy concurrent load with 290 GB of disk free, and
+it is NOT explained by the memory theory. Recorded as unexplained rather than
+attributed.
+
+**Not fixed this round, deliberately.** A change to `sparseAny` is a change to
+the arm NEW1 measured and I shipped on their evidence eight hours ago; making it
+under contention, without being able to reproduce the OOM on demand, would be a
+guess dressed as a fix. What is needed first is the reproduction: the largest
+`full_text_tsv` in the corpus, measured on a quiet box.
+
+### R8.8 — A SEARCH REQUEST CAN RUN THE DATABASE OUT OF MEMORY, AND IT IS NOT A CONTENTION ARTEFACT
+
+Surfaced by the full-suite run, not by looking for it. Two distinct Postgres
+errors, both on the search path, both raised to the client as 500s:
+
+```
+PostgresError: out of memory
+  code 53200 · detail "Failed on request of size 100663296 in memory context
+  \"ExecutorState\"" · mcxt.c:1167
+  at sparseAny (services/api/src/search/retrieve.ts:438)
+
+PostgresError: could not read blocks 7799946..7799946 in file
+  "base/81920/16384018": Invalid argument
+  code XX000 · md.c:2064 · md_readv_report
+  at sparseAny (services/api/src/search/retrieve.ts:438)
+  and at getCorpusCoverage (services/api/src/corpus/coverage.ts:54)
+```
+
+**KNOW:** 100663296 bytes is exactly 96 MiB, and it is a SINGLE allocation
+request, not a total. `ExecutorState` blew on one request of that size while the
+box still had 13.9 GiB of RAM free — so this is not the machine running out of
+memory, it is one operation asking for 96 MiB in one go.
+
+**INFER, and labelled as such:** the only thing in `sparseAny` that touches a
+per-row object of that order is `ORDER BY ts_rank(j.full_text_tsv, q.tsq)`.
+`ts_rank` must detoast the tsvector of every matching row, and the function's own
+comment already records that this is what cost 781,289 ms over 94.1% of the
+corpus. A single pathological judgment whose `full_text_tsv` detoasts to ~96 MiB
+would produce exactly this. **Not verified** — confirming it means finding the
+largest tsvector in `judgments`, which is a sequential scan of a 151 GB relation
+and was deferred on resource grounds.
+
+**Why it matters more than a flaky test.** The bound added this round is a
+`statement_timeout`, and a timeout does not bound MEMORY. A request that OOMs is
+not slow, it fails — and on a phone "the law is not here" and "our server broke"
+are indistinguishable, which is the exact failure `search_events.http_status`
+was added to stop being invisible. It is also not rate-limited into safety: one
+query shaped the wrong way is enough.
+
+**The block-read error is a separate fault and should not be folded in.**
+`Invalid argument` from `md_readv_report` is an I/O failure at the storage layer,
+seen in two different relations (`16384018` and `16384000`) and in two different
+call sites. It appeared under heavy concurrent load with 290 GB of disk free, and
+it is NOT explained by the memory theory. Recorded as unexplained rather than
+attributed.
+
+**Not fixed this round, deliberately.** A change to `sparseAny` is a change to
+the arm NEW1 measured and I shipped on their evidence eight hours ago; making it
+under contention, without being able to reproduce the OOM on demand, would be a
+guess dressed as a fix. What is needed first is the reproduction: the largest
+`full_text_tsv` in the corpus, measured on a quiet box.
