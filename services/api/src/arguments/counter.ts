@@ -20,7 +20,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
-import { ok } from '../envelope.ts';
+import { fail, ok } from '../envelope.ts';
 import { hybridSearch } from '../search/retrieve.ts';
 
 export const counterRequest = z.object({
@@ -30,7 +30,44 @@ export const counterRequest = z.object({
 });
 
 export type CounterDeps = {
+  /**
+   * The CORE handle. Used for the citation_checks writes and nothing expensive.
+   */
   sql: Sql;
+  /**
+   * The pool the RANKER runs on, and the reason this type gained a field.
+   *
+   * ─────────────────────────────────────────────────────────────────────────
+   * P1's ISOLATION WAS WIRED INTO ONE CALLER, AND THIS WAS THE OTHER ONE
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * `/search` acquires an admission slot and runs its rankers on
+   * `deps.researchSql` — `search/route.ts` §"The pool the rankers run on", and
+   * `pools.ts` §"The core statement ceiling", which says in as many words that
+   * *nothing on the core path should take ten seconds*.
+   *
+   * **This route ran the SAME `hybridSearch` on the core pool with no admission
+   * slot.** So a counter-argument request took a connection out of the pool that
+   * `P1.3` protects for auth, save-to-matter, exact citation and judgment reads
+   * — the exact starvation `P1.4` measured (core p95 2,809 ms → 69 ms) and fixed
+   * for `/search` only. And because it never touched the admission gate, any
+   * number of them could be in flight at once.
+   *
+   * It is the same failure family as OD-14 being wired into one caller, and as
+   * NEW2's date states having zero consumers: a rule implemented at one call
+   * site is a rule the second call site does not have.
+   *
+   * Optional, and it falls back to `sql`, so every existing caller — tests, the
+   * harness, the benchmark — keeps working unchanged. Production passes both.
+   */
+  researchSql?: Sql | undefined;
+  /**
+   * The same concurrency gate `/search` uses. Optional for the same reason.
+   * When present and full, this route REFUSES rather than queueing behind an
+   * unknown wait, which is what `startJob` does for generation and what an
+   * advocate can actually act on.
+   */
+  admission?: { acquire: () => Promise<{ release: () => void } | null> } | undefined;
   embedQuery: (text: string) => Promise<string | null>;
 };
 
@@ -42,8 +79,33 @@ export async function handleCounter(
   body: z.infer<typeof counterRequest>,
 ): Promise<Response> {
   const asOf = new Date().toISOString();
-  const queryVector = await deps.embedQuery(body.position);
-  const retrieved = await hybridSearch(deps.sql, body.position, queryVector, {}, CANDIDATES);
+
+  // Refused, never queued invisibly — see `admission` on CounterDeps.
+  const slot = deps.admission ? await deps.admission.acquire() : null;
+  if (deps.admission && slot === null) {
+    return fail(
+      c,
+      'RESEARCH_BUSY',
+      'Research capacity is full. This is a deliberate bound, not an outage — nothing ' +
+        'was charged and the request can be retried.',
+      429,
+    );
+  }
+
+  let retrieved;
+  try {
+    const queryVector = await deps.embedQuery(body.position);
+    // The RESEARCH pool, falling back to core for callers that pass only one.
+    retrieved = await hybridSearch(
+      deps.researchSql ?? deps.sql,
+      body.position,
+      queryVector,
+      {},
+      CANDIDATES,
+    );
+  } finally {
+    slot?.release();
+  }
 
   const usable = retrieved.filter((r) => r.overruledStatus !== 'set_aside');
   const excluded = retrieved.filter((r) => r.overruledStatus === 'set_aside');

@@ -5,8 +5,31 @@ import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
 
-const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
-const app = createApp({ ping: async () => {}, search: { sql, embedQuery: async () => null } });
+/**
+ * A statement timeout, because production has one and this test did not.
+ *
+ * `/arguments/counter` runs the same `hybridSearch` as `/search`, and two of the
+ * positions below — "anticipatory bail", "bail in a dowry death case" — are
+ * short common-term concept queries, which is precisely the shape LCC measured
+ * as NOT rescued by the bounded rarest-3 arm (bus 1041 §2): the three rarest of
+ * four lexemes are still common legal vocabulary, so the AND match set is
+ * enormous and `ORDER BY ts_rank` reads every matching tsvector.
+ *
+ * Production bounds that on the research pool. This file opened a bare
+ * connection with NO timeout, so the same query that production cancels ran
+ * unbounded here — measured at **3,235,480 ms** in one full-suite run, which is
+ * why the whole suite could not complete. The bound is not a workaround; it
+ * makes the test exercise what production actually does.
+ */
+const sql = postgres(process.env['DATABASE_URL'] ?? '', {
+  max: 2,
+  onnotice: () => {},
+  connection: { statement_timeout: 20_000 },
+});
+const app = createApp({
+  ping: async () => {},
+  search: { sql, researchSql: sql, embedQuery: async () => null },
+});
 
 type Body = { ok: boolean; data?: Record<string, unknown>; error?: { code: string } };
 

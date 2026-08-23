@@ -422,7 +422,18 @@ export function createApp(deps: AppDeps) {
     // Counter-arguments. Grounded in retrieved corpus authorities only; set_aside
     // authorities are excluded AND named, never silently dropped.
     app.post('/arguments/counter', validate('json', counterRequest), (c) =>
-      handleCounter(c, { sql, embedQuery: search.embedQuery }, c.req.valid('json')),
+      handleCounter(
+        c,
+        {
+          sql,
+          // The SAME isolation /search gets. Until now this route ran the same
+          // ranker on the core pool with no admission slot — see CounterDeps.
+          researchSql: search.researchSql,
+          admission: search.admission,
+          embedQuery: search.embedQuery,
+        },
+        c.req.valid('json'),
+      ),
     );
     // What each verification tier did, and when. Unblocks the verification sheet
     // and the unverified-citation screen, both of which were on a mock because
