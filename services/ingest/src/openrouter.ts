@@ -28,6 +28,8 @@
  * recorded `costUsd = 0` truthfully, because the inferx grant is free.
  */
 
+import { assertPublicOnlyEgress, type EgressPayloadClass } from './llm-egress.ts';
+
 export type OpenRouterResult =
   | {
       readonly ok: true;
@@ -45,6 +47,11 @@ export type OpenRouterDeps = {
   readonly maxTokens?: number | undefined;
   readonly fetchImpl?: typeof fetch | undefined;
   readonly sleepImpl?: ((ms: number) => Promise<void>) | undefined;
+  /**
+   * What is in the prompt. Defaults to `PUBLIC_LEGAL_TEXT` — see the note on
+   * `InferxDeps.payloadClass` and `llm-egress.ts`.
+   */
+  readonly payloadClass?: EgressPayloadClass | undefined;
 };
 
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -85,6 +92,8 @@ export async function callOpenRouter(
   prompt: string,
   deps: OpenRouterDeps,
 ): Promise<OpenRouterResult> {
+  // Before the request is built, so a refused payload makes ZERO outbound calls.
+  assertPublicOnlyEgress(deps.payloadClass ?? 'PUBLIC_LEGAL_TEXT', 'openrouter');
   const doFetch = deps.fetchImpl ?? globalThis.fetch;
   const sleep = deps.sleepImpl ?? defaultSleep;
   const model = deps.model;

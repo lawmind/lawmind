@@ -1,0 +1,127 @@
+{
+ "generatedAt": "2026-08-23T01:42:19.027Z",
+ "by_relationship": {
+  "approved": {
+   "sampled": 61,
+   "inverted": 5,
+   "inverted_pct": 8.2,
+   "inverters": {
+    "DIS_PREFIX": 5
+   }
+  },
+  "followed": {
+   "sampled": 300,
+   "inverted": 0,
+   "inverted_pct": 0,
+   "inverters": {}
+  },
+  "overruled": {
+   "sampled": 117,
+   "inverted": 1,
+   "inverted_pct": 0.85,
+   "inverters": {
+    "DIS_PREFIX": 1
+   }
+  },
+  "distinguished": {
+   "sampled": 300,
+   "inverted": 2,
+   "inverted_pct": 0.67,
+   "inverters": {
+    "DIS_PREFIX": 2
+   }
+  },
+  "doubted": {
+   "sampled": 24,
+   "inverted": 0,
+   "inverted_pct": 0,
+   "inverters": {}
+  },
+  "overruled_in_part": {
+   "sampled": 23,
+   "inverted": 0,
+   "inverted_pct": 0,
+   "inverters": {}
+  }
+ },
+ "total": {
+  "sampled": 825,
+  "inverted": 8,
+  "inverted_pct": 0.97,
+  "meaning": "the stored relationship is the OPPOSITE of what the citing text says, or a refusal read as an adoption"
+ },
+ "examples": [
+  {
+   "relationship": "approved",
+   "inverter": "DIS_PREFIX",
+   "pinned": true,
+   "citation_text": "(1984) 3 S.C.R.\n31",
+   "evidence": ", approved",
+   "court": "Supreme Court of India",
+   "window": "akshi Shanna v. The Board of School Education Haryana & Ors., C.W.P. No. 1803 of 1993 decided on July 21, 1992 by the Punjab & Haryana High Court, approved & explained. Punjab University, Chandigarh v. Shri Sunder Singh, (1984) 3 S.C.R. 31, approved. Anil Kumar v. Board of Schon! Education, Haryana, Civil Misc. No. 6963 of 1990 and C.W.P."
+  },
+  {
+   "relationship": "approved",
+   "inverter": "DIS_PREFIX",
+   "pinned": true,
+   "citation_text": "2007 (10) SCR 1110",
+   "evidence": "- approved",
+   "court": "Supreme Court of India",
+   "window": " of the NI Act. (Para 42] [52-D-G] H Sarav Investment & Financial Consultancy Private Limited and Anr. v. L/yods Register of Shipping Indian Office YOGENDRA PRATAP SINGH v. SAVITRI PANDEY 29 Staff Provident Fund and Anr. 2007 (10) SCR 1110 : (2007) A 14 sec 753 - approved. Narsingh Das Tapadia v. Goverdhan Das Partani and Anr. 2000 (3) Su"
+  },
+  {
+   "relationship": "approved",
+   "inverter": "DIS_PREFIX",
+   "pinned": false,
+   "citation_text": "AIR 1991 SC 382",
+   "evidence": "-approved",
+   "court": "High Court of Sikkim",
+   "window": "t by presenting a writ petition to challenge his non- prom6tion which is usual,ly done by some officers belonging to the executive. The Honble Supreme Court in the Orissa Judicial Services Association vs. State of Orissa AIR 1991 SC 382 had dis-approved the conduct of judicial offlcers indulging in I.itigation as \"it does not bring credit"
+  },
+  {
+   "relationship": "approved",
+   "inverter": "DIS_PREFIX",
+   "pinned": false,
+   "citation_text": "(2004) 2 SCC 286",
+   "evidence": "-approved",
+   "court": "Bombay High Court",
+   "window": "o lead whatever evidence they want in support of their rival contentions. 13. The Apex Court in Krishi Utpadan Mandi Samiti, Sahaswan, District Badaun, through its Secretary V/s. Mohammed Ibrahim and another, reported in (2004) 2 SCC 286 has dis-approved the decision of the reference Court in relation to the market value of the land 9 acq"
+  },
+  {
+   "relationship": "approved",
+   "inverter": "DIS_PREFIX",
+   "pinned": false,
+   "citation_text": "1995 (2) SCC 736",
+   "evidence": "-approved",
+   "court": "High Court of Punjab and Haryana",
+   "window": " of the parties. Once the limitation begins to run, it runs in its full course until its running is interdicted by an order of the Court......” [9] However, in Union of India and another versus Pradeep Kumari and others, 1995 (2) SCC 736 three Judges Bench of the Hon'ble Supreme Court dis-approved the view taken in Babua Ram's case (supra"
+  },
+  {
+   "relationship": "overruled",
+   "inverter": "DIS_PREFIX",
+   "pinned": true,
+   "citation_text": "[2013] 12 SCR 807",
+   "evidence": "- overruled",
+   "court": "Supreme Court of India",
+   "window": "r (2008) 4 SCC 612 : [2008] 2 SCR 1096 - relied on. Kavita Vasant Solunke v. State of Maharashtra (2012) 8 SCC 430 : [2012] 7 SCR 251; Shalini Gajananrao Dalal v. New English High School Association (2013) C 16 SCC 526 : [2013] 12 SCR 807 - overruled. Arun Vishwanath Sonone v. State of Maharashtra (2015) l Mb L.J. 457 - disapproved. 2.1 T"
+  },
+  {
+   "relationship": "distinguished",
+   "inverter": "DIS_PREFIX",
+   "pinned": true,
+   "citation_text": "(2011) 6 SCC 739",
+   "evidence": "– distinguished",
+   "court": "Supreme Court of India",
+   "window": ": (2010) 9 SCC 183; Commissioner of Sales Tax, U.P., Lucknow v. Parson Tools and Plants, Kanpur [1975] 3 SCR 743 : (1975) 4 SCC 22 – relied on. Thirumalai Chemicals Limited v. Union of India and Others [2011] 4 SCR 838 : (2011) 6 SCC 739 – distinguished. Smt. Nupur Mitra v. Basubani Ltd., 1999 SCC OnLine Cal 47; Mackintosh Burn Ltd. v. Sa"
+  },
+  {
+   "relationship": "distinguished",
+   "inverter": "DIS_PREFIX",
+   "pinned": true,
+   "citation_text": "[2010] 2 SCR\n256",
+   "evidence": ": (2010) 3 SCC 104 – distinguished",
+   "court": "Supreme Court of India",
+   "window": "dia (2019) 20 SCC 17 – relied on. Sivananda CT v. High Court of Kerala [2023] 11 SCR 674 : (2024) 3 SCC 799; Hemani Malhotra v. High Court of Delhi [2008] 5 SCR 1066 : (2008) 7 SCC 11; Ramesh Kumar v. High Court of Delhi [2010] 2 SCR 256 : (2010) 3 SCC 104 – distinguished. AC Thalwal v. High Court of Himachal Pradesh [2000] Supp. 2 SCR 42"
+  }
+ ]
+}

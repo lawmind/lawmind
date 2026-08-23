@@ -1,0 +1,32 @@
+{
+ "generatedAt": "2026-08-23T10:00:43.017Z",
+ "question": "does any writer emit a CLEAN verdict, or does TEXT_UNKNOWN mean two different things?",
+ "script_quality_by_method": [
+  {
+   "v": "legacy_font_ascii",
+   "m": "text_marker_screen_v1",
+   "n": "58615"
+  },
+  {
+   "v": "damaged_other",
+   "m": "text-damage-v2.0",
+   "n": "469599"
+  },
+  {
+   "v": "<NULL>",
+   "m": "<NULL>",
+   "n": "16906663"
+  },
+  {
+   "v": "damaged_other",
+   "m": "english_density_screen_v1",
+   "n": "1264107"
+  }
+ ],
+ "recovery_queue_states": [
+  {
+   "s": "RECOVERED",
+   "n": "73"
+  }
+ ]
+}

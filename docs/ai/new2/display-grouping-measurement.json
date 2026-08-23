@@ -1,0 +1,182 @@
+{
+ "generatedAt": "2026-08-23T09:59:41.051Z",
+ "contract": "docs/ai/new2/DISPLAY_GROUPING_CONTRACT_2026-08-23.md",
+ "module": "services/ingest/src/display-group.ts",
+ "population": {
+  "groups": 155387,
+  "rows": 361044
+ },
+ "sample": {
+  "groups": 700,
+  "rows": 1533
+ },
+ "by_type": {
+  "BYTE_IDENTICAL_DUPLICATE": {
+   "groups": 337,
+   "rows": 782,
+   "hidden": 445,
+   "share_of_sampled_rows_pct": 51.01,
+   "ci95": [
+    48.51,
+    53.51
+   ]
+  },
+  "CONNECTED_MATTER_COMMON_ORDER": {
+   "groups": 267,
+   "rows": 559,
+   "hidden": 0,
+   "share_of_sampled_rows_pct": 36.46,
+   "ci95": [
+    34.09,
+    38.91
+   ]
+  },
+  "MULTIPLE_ORDERS_SAME_CASE": {
+   "groups": 16,
+   "rows": 32,
+   "hidden": 0,
+   "share_of_sampled_rows_pct": 2.09,
+   "ci95": [
+    1.48,
+    2.93
+   ]
+  },
+  "DISTINCT_JUDGMENTS_SHARED_CITATION": {
+   "groups": 80,
+   "rows": 160,
+   "hidden": 0,
+   "share_of_sampled_rows_pct": 10.44,
+   "ci95": [
+    9,
+    12.07
+   ]
+  }
+ },
+ "duplication_removed": {
+  "rows_sampled": 1533,
+  "rows_hidden_by_auto_collapse": 445,
+  "pct_of_shared_rows_removed": 29.03,
+  "ci95": [
+   26.81,
+   31.35
+  ],
+  "meaning": "the share of rows that disappear from a result page when ONLY the two document-evidence classes fold. Connected matters and multiple orders stay visible by contract."
+ },
+ "representative_stability": {
+  "note": "representative() is a total order over document properties, ending in content_hash then id. Two runs over the same members return the same id — pinned by display-group.test.ts."
+ },
+ "examples": [
+  {
+   "group_id": "dg_8945b98b_6",
+   "group_type": "CONNECTED_MATTER_COMMON_ORDER",
+   "members": 6,
+   "representative_id": "18fc0623-c1bf-49ee-a6fa-68c2e5dc789e",
+   "representative_reason": "only member",
+   "evidence": {
+    "members": 6,
+    "distinct_content_hashes": 6,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 6,
+    "distinct_courts": 1
+   }
+  },
+  {
+   "group_id": "dg_ac5df6e1_7",
+   "group_type": "BYTE_IDENTICAL_DUPLICATE",
+   "members": 7,
+   "representative_id": "0f37704b-9ef7-459a-99e4-c22b2f8ccb1c",
+   "representative_reason": "tied on every document property; lowest content_hash then lowest id",
+   "evidence": {
+    "members": 7,
+    "distinct_content_hashes": 1,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 7,
+    "distinct_courts": 1
+   }
+  },
+  {
+   "group_id": "dg_15a4874f_3",
+   "group_type": "CONNECTED_MATTER_COMMON_ORDER",
+   "members": 3,
+   "representative_id": "614c8115-f4ad-4efa-bad6-e7afa5c51c48",
+   "representative_reason": "longest full text",
+   "evidence": {
+    "members": 3,
+    "distinct_content_hashes": 3,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 3,
+    "distinct_courts": 1
+   }
+  },
+  {
+   "group_id": "dg_1e5e2a32_3",
+   "group_type": "BYTE_IDENTICAL_DUPLICATE",
+   "members": 3,
+   "representative_id": "2bbf4f64-83ca-4c65-98d7-eae62d278f03",
+   "representative_reason": "tied on every document property; lowest content_hash then lowest id",
+   "evidence": {
+    "members": 3,
+    "distinct_content_hashes": 1,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 3,
+    "distinct_courts": 1
+   }
+  },
+  {
+   "group_id": "dg_791b1127_4",
+   "group_type": "BYTE_IDENTICAL_DUPLICATE",
+   "members": 4,
+   "representative_id": "088e8fc5-5e9c-4123-99ec-89877328ac01",
+   "representative_reason": "only member",
+   "evidence": {
+    "members": 4,
+    "distinct_content_hashes": 1,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 4,
+    "distinct_courts": 1
+   }
+  },
+  {
+   "group_id": "dg_fbad0acd_3",
+   "group_type": "CONNECTED_MATTER_COMMON_ORDER",
+   "members": 3,
+   "representative_id": "9e6ab827-48e8-4f82-bfb0-cbee887d3772",
+   "representative_reason": "longest full text",
+   "evidence": {
+    "members": 3,
+    "distinct_content_hashes": 3,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 3,
+    "distinct_courts": 1
+   }
+  },
+  {
+   "group_id": "dg_426fc6e7_5",
+   "group_type": "BYTE_IDENTICAL_DUPLICATE",
+   "members": 5,
+   "representative_id": "26455f55-2f60-4504-aee2-9351bdcb25ac",
+   "representative_reason": "tied on every document property; lowest content_hash then lowest id",
+   "evidence": {
+    "members": 5,
+    "distinct_content_hashes": 1,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 5,
+    "distinct_courts": 1
+   }
+  },
+  {
+   "group_id": "dg_dfe03936_5",
+   "group_type": "BYTE_IDENTICAL_DUPLICATE",
+   "members": 5,
+   "representative_id": "2cd4012b-4d2e-4351-af01-4f9da6606105",
+   "representative_reason": "tied on every document property; lowest content_hash then lowest id",
+   "evidence": {
+    "members": 5,
+    "distinct_content_hashes": 1,
+    "distinct_dates": 1,
+    "distinct_case_numbers": 5,
+    "distinct_courts": 1
+   }
+  }
+ ]
+}

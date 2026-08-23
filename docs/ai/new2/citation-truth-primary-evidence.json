@@ -1,0 +1,507 @@
+{
+ "generatedAt": "2026-08-23T01:02:15.625Z",
+ "truth_set_version": "2.0.0",
+ "tool": "poppler pdftotext -layout, independent of the unpdf path used at ingest",
+ "checked": 26,
+ "citing_confirmed": 26,
+ "target_confirmed": 13,
+ "both_confirmed": 13,
+ "source_unavailable": 0,
+ "contradicted": 13,
+ "records": [
+  {
+   "truth_id": "T2-0011",
+   "raw_reference": "2026:GAU-AS:10422",
+   "stratum": "NEUTRAL_BENCH_QUALIFIED",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 32,
+    "pdf_chars": 4240,
+    "context": " Page No.# 1/3 GAHC010149782026 2026:GAU-AS:10422 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PR"
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 32,
+    "case_number_on_paper": true,
+    "case_title": "SMT. GAURI BHATTACHARJEE AND 4 ORS. Vs AHMED ALI",
+    "context": " Page No.# 1/3 GAHC010149782026 2026:GAU-AS:10422 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZO"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0012",
+   "raw_reference": "2026:GAU-AS:9760",
+   "stratum": "NEUTRAL_BENCH_QUALIFIED",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 32,
+    "pdf_chars": 3299,
+    "context": " Page No.# 1/3 GAHC010256852025 2026:GAU-AS:9760 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PR"
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 32,
+    "case_number_on_paper": true,
+    "case_title": "SHAHJAHAN ALI Vs BAHAJUDDIN AHMED AND 9 ORS",
+    "context": " Page No.# 1/3 GAHC010256852025 2026:GAU-AS:9760 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZO"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0013",
+   "raw_reference": "2026:GAU-AS:8673-DB",
+   "stratum": "NEUTRAL_BENCH_QUALIFIED",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 32,
+    "pdf_chars": 9359,
+    "context": " Page No.# 1/7 GAHC010161572023 2026:GAU-AS:8673-DB THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PR"
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 32,
+    "case_number_on_paper": true,
+    "case_title": "THE UNION BANK OF INDIA AND 5 ORS. Vs MANISH PURKAYASTHA @ MONISH PURKAYASTHA B",
+    "context": " Page No.# 1/7 GAHC010161572023 2026:GAU-AS:8673-DB THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZO"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0092",
+   "raw_reference": "2023 INSC 1008",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 2141,
+    "pdf_chars": 7826,
+    "context": " bail may be granted to the applicant. 7. Learned Advocate for the Applicant has relied on the judgment in the case of Priya Indoria vs The State Of Karnataka (2023 INSC 1008). 8. Learned Advocate Mr. R.C. Kodekar for Respondent No. 1 and Learned APP for"
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 24,
+    "case_number_on_paper": false,
+    "case_title": "PRIYA INDORIA versus STATE OF KARNATAKA AND ORS. ETC.",
+    "context": " [2023] 15 S.C.R. 525 : 2023 INSC 1008 CASE DETAILS PRIYA INDORIA v. STATE OF KARNATAKA AND ORS. E"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0093",
+   "raw_reference": "2024 INSC\n285",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 3199,
+    "pdf_chars": 7964,
+    "context": " CrPC]. [7.1] Keeping in mind the law laid down by the Hon'ble Supreme Court in the case of Khengarbhai Lakhabhai Dambhala vs. The State of Gujarat reported in 2024 INSC 285 as well as the provision of section 98(2) of the Prohibition Act (amended on 31"
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 23,
+    "case_number_on_paper": false,
+    "case_title": "KHENGARBHAI LAKHABHAI DAMBHALA versus THE STATE OF GUJARAT",
+    "context": " [2024] 4 S.C.R. 606 : 2024 INSC 285 Khengarbhai Lakhabhai Dambhala v. The State of Gujarat (Cri"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0094",
+   "raw_reference": "2010 INSC 428",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 104071,
+    "pdf_chars": 185236,
+    "context": "of availability of alternative remedy is well settled. In Satyawati Tondon [United Bank of India v. Satyawati Tondon, (2010) 8 SCC 110: (2010) 3 SCC (Civ) 260: 2010 INSC 428] , this Court observed thus : (SCC p. 123, paras 43-45) \"43. Unfortunately, the"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "UNITED BANK OF INDIA versus SATYAWATI TONDON AND OTHERS",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0095",
+   "raw_reference": "2024 INSC 932",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 6189,
+    "pdf_chars": 21198,
+    "context": "e dismissed on the ground of delay.\" 7. Recently, a Division Bench of the Hon'ble Supreme Court in the matter of State of Madhya Pradesh v. Ramkumar Choudhary, 2024 INSC 932, while considering the delay, issued some directions and observed as follows:- "
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 25,
+    "case_number_on_paper": false,
+    "case_title": "STATE OF MADHYA PRADESH versus RAMKUMAR CHOUDHARY",
+    "context": " [2024] 11 S.C.R. 1280 : 2024 INSC 932 State of Madhya Pradesh v. Ramkumar Choudhary (Special Leav"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0096",
+   "raw_reference": "2024 INSC 899",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 1895,
+    "pdf_chars": 8963,
+    "context": "this Court relies on the judgment of the Hon'ble Supreme Court in Criminal Appeal No(s).4758 of 2024: Sangram Sadashiv Suryavanshi versus State of Maharashtra: 2024 INSC 899. Paragraphs of the said judgment relied upon are reproduced herein: \"Before we "
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 25,
+    "case_number_on_paper": false,
+    "case_title": "SANGRAM SADASHIV SURYAVANSHI versus THE STATE OF MAHARASHTRA",
+    "context": " [2024] 11 S.C.R. 1321 : 2024 INSC 899 Sangram Sadashiv Suryavanshi v. The State of Maharashtra (C"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0097",
+   "raw_reference": "2025\nINSC 1296",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 38200,
+    "pdf_chars": 121953,
+    "context": "d counsel for the petitioners have also referred to the judgment of Hon'ble Supreme Court in case of Rohan Vijay Nahar vs. The State of Maharashtra reported in 2025 INSC 1296 and would refer to paragraphs 14.4 and 14.5 which reads as under: \"14.4 We find"
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 24,
+    "case_number_on_paper": false,
+    "case_title": "ROHAN VIJAY NAHAR & ORS. versus THE STATE OF MAHARASHTRA & ORS.",
+    "context": " [2025] 11 S.C.R. 500 : 2025 INSC 1296 Rohan Vijay Nahar & Ors. v. The State of Maharashtra & Ors."
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0099",
+   "raw_reference": "2025 INSC 1067",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 2099,
+    "pdf_chars": 5334,
+    "context": " anticipatory bail is maintainable. He relies upon the Judgment of the Hon'ble Supreme Court in the case of Kiran Vs. Rajkumar Jivraj Jain and Anr. reported in 2025 INSC 1067 and in the case of Hitesh Verma Vs. State of Uttarakhand reported in (2020) 10 "
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 23,
+    "case_number_on_paper": false,
+    "case_title": "KIRAN versus RAJKUMAR JIVRAJ JAIN & ANR.",
+    "context": " [2025] 9 S.C.R. 283 : 2025 INSC 1067 Kiran v. Rajkumar Jivraj Jain & Anr. (Criminal Appeal No. 3"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0100",
+   "raw_reference": "2025 INSC 804",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 1678,
+    "pdf_chars": 18117,
+    "context": ".C. has been granted by this Court on 01.12.2018, but recently the Supreme Court in the matter of M/s. Celestium Financial Vs. A. Gnanasekaran Etc. reported in 2025 INSC 804 held that the complainant in a complaint filed under section 138 of the Act of "
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 24,
+    "case_number_on_paper": false,
+    "case_title": "M/S CELESTIUM FINANCIAL versus A. GNANASEKARAN ETC",
+    "context": " [2025] 4 S.C.R. 2612 : 2025 INSC 804 M/s Celestium Financial v. A. Gnanasekaran Etc. (Criminal A"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0101",
+   "raw_reference": "2025 INSC 804",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 1770,
+    "pdf_chars": 18020,
+    "context": ".C. has been granted by this Court on 27.07.2012, but recently the Supreme Court in the matter of M/s. Celestium Financial Vs. A. Gnanasekaran Etc. reported in 2025 INSC 804 held that the complainant in a complaint filed under section 138 of the Act of "
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 24,
+    "case_number_on_paper": false,
+    "case_title": "M/S CELESTIUM FINANCIAL versus A. GNANASEKARAN ETC",
+    "context": " [2025] 4 S.C.R. 2612 : 2025 INSC 804 M/s Celestium Financial v. A. Gnanasekaran Etc. (Criminal A"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0102",
+   "raw_reference": "2024 INSC 960",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 26746,
+    "pdf_chars": 46025,
+    "context": " the 18 2025:HHC:23330 ingredients of \"cruelty\" under section 498A IPC, as recently observed in the case of Jaydedeepsinh Pravinsinh Chavda v. State of Gujarat 2024 INSC 960 and Rajesh Chaddha v. State of Uttar Pradesh 2025 INSC 671. The Complainant has"
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 24,
+    "case_number_on_paper": false,
+    "case_title": "JAYEDEEPSINH PRAVINSINH CHAVDA & ORS. versus STATE OF GUJARAT",
+    "context": " [2024] 12 S.C.R. 439 : 2024 INSC 960 Jayedeepsinh Pravinsinh Chavda & Ors. v. State of Gujarat ("
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0103",
+   "raw_reference": "2025 INSC 572",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 3664,
+    "pdf_chars": 6504,
+    "context": "n has since been clarified subsequently by the Hon'ble Supreme Court of India in the Judgment in Central Bureau of Investigation Vs. Surendra Patwa and Others, 2025 INSC 572, wherein it was held that, on the score the complaint need not be kept pending."
+   },
+   "target": {
+    "evidence_class": "PRINTS_THIS_CITATION_AS_ITS_OWN",
+    "pdf_position": 24,
+    "case_number_on_paper": false,
+    "case_title": "CENTRAL BUREAU OF INVESTIGATION versus SURENDRA PATWA & ORS",
+    "context": " [2025] 4 S.C.R. 1771 : 2025 INSC 572 Central Bureau of Investigation v. Surendra Patwa & Ors. (C"
+   },
+   "verdict": "PRIMARY_SOURCE_CONFIRMED"
+  },
+  {
+   "truth_id": "T2-0105",
+   "raw_reference": "2022 INSC\n690",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 3601,
+    "pdf_chars": 6633,
+    "context": "st be just and reasonable. The said principle has been recapitulated by the Supreme Court in Satender Kumar Antil Vs. Central Bureau of Investigation and Ors., 2022 INSC 690. 19. Reiterating the aforesaid view the Supreme Court in the case of Manish Sis"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "SATENDER KUMAR ANTIL versus CENTRAL BUREAU OF INVESTIGATION & ANR.",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0106",
+   "raw_reference": "2018:INSC:107",
+   "stratum": "INSC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 11005,
+    "pdf_chars": 34624,
+    "context": "lighted one of the factors for bail to be the public or the State's immense interest and similar other considera ons. In Dataram Singh v State of U5ar Pradesh, 2018:INSC:107 [Para 7], (2018) 3 SCC 22, (Para 6), Supreme Court held that the grant or refus"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "DATARAM SINGH versus STATE OF UTTAR PRADESH & ANR.",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0112",
+   "raw_reference": "(2009)5 SCC 462",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 3667,
+    "pdf_chars": 14443,
+    "context": " impugned judgment is set aside. [Para 9, 1O] A [395-D-H; 396-A] Ahmadsahab Abdul Mui/a (2) (Dead) by proposed Lrs. � 8 vs. Bibijan and ors. 2009 (5) SCR 476 : (2009)5 SCC 462; Church of Christ Charitable Trust and Educational Charitable Society represent"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "AHMMADSAHAB ABDUL MULLA (DEAD) BY PROPOSED LRS. versus BIBIJAN AND ORS.",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0113",
+   "raw_reference": "(1976) 1 SCC 128",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 153663,
+    "pdf_chars": 190725,
+    "context": "subject-matter of the enacting provision. Reliance is placed on the decision of this Court rendered by a four-Judge Bench in Dwarka Prasad v. Dwarka Das Saraf, (1976) 1 SCC 128 , the relevant para 18 of which reads thus: (SCC p. 137) \"18. ... A proviso mus"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "DWARKA PRASAD versus DWARKA DAS SARAF",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0114",
+   "raw_reference": "(2008) 13 SCC 80",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 3848,
+    "pdf_chars": 42966,
+    "context": "9) 19 SCC 9; Satyanarayana Construction Company v. Union of India and Ors. (2011) 15 SCC 101; Delhi Development Authority v. R.S. Sharma and Company, New Delhi (2008) 13 SCC 80 : [2008] 12 SCR 785; MMTC Ltd. v. Vedanta Ltd. (2019) 4 SCC 163 : [2019] 3 SCR "
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "DELHI DEVELOPMENT AUTHORITY versus M/S R.S. SHARMA & CO., NEW DELHI",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0115",
+   "raw_reference": "(2011) 14 SCC 770",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 7506,
+    "pdf_chars": 66852,
+    "context": " 190 : [2010] 9 SCR 1111; New India Assurance Co. Ltd. v. Krishna Kumar Pandey (2019) SCC Online 1786; State D of Punjab v. Davinder Pal Singh Bhullar and Ors. (2011) 14 SCC 770 : [2011] 15 SCR 540; Monica Kumar (Dr.) v. State of U.P. (2008) 8 SCC 781 : [20"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "STATE OF PUNJAB versus DAVINDER PAL SINGH BHULLAR & ORS. ETC",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0117",
+   "raw_reference": "(2001) 4 SCC 593",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 3535,
+    "pdf_chars": 145926,
+    "context": "ate of Karnataka & Ors v. M/s Pro Lab & Ors. [2015] 1 SCR 808 : (2015) 8 SCC 557; Associated Cement Companies Ltd v. Commissioner of Customs [2001] 1 SCR 608 : (2001) 4 SCC 593; Collector of Central Excise, New Delhi v. Ballarpur Industries Limited [1989] "
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "M/S ASSOCIATED CEMENT COMPANIES LTD. versus COMMISSIONER OF CUSTOMS",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0118",
+   "raw_reference": "(1977) 4 SCC 193",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 14303,
+    "pdf_chars": 198538,
+    "context": ": 1970 (2) SCR 666; Samsher Singh v. State of Punjab and Another (1974) 2 SCC 831: 1975 (1) SCR 814; Union of India v. Sankalchand Himatlal Sheth and Another B (1977) 4 SCC 193: 1978 (1) SCR 423; Supreme Court Advocates-on-Record Association and Others v. "
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "UNION OF INDIA versus SANKAL CHAND HIMATLAL SHETH AND ANR.",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0119",
+   "raw_reference": "(2003) 3 SCC 148",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 1674,
+    "pdf_chars": 19235,
+    "context": " SCC 236; National Insurance Co. Ltd. v. Indira Srivastava& Ors. (2008) 2 SCC 763 and Abati Bezbaruah v. Dy. Director General Geological Survey of India & Anr. (2003) 3 SCC 148, 81 . H 82 SUPREME COURT REPORTS [2009] 9 $.C.R. / ~ A referred to. ,;., Mallet"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "ABATI BEZBARUAH versus DIRECTOR GENERAL GEOLOGICAL SURVEY OF INDIA AND ANR.",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0120",
+   "raw_reference": "(1987) 4 SCC 398",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 6402,
+    "pdf_chars": 20632,
+    "context": "it ad, impossibilia, i.e. the law does not compel a man to do that what he cannot possibly perform. (279-C, DJ Raj Kumar Dey and Ors. v. Tarapada Dey and Ors., (1987) 4 SCC 398; G Gursharan Singh v. New Delhi Municipal Committees, [1996J 2 SCC 459 and Moha"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "RAJ KUMAR DEY AND OTHERS versus TARAPADA DEY AND OTHERS",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0121",
+   "raw_reference": "(2019) 5 SCC 725",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 11086,
+    "pdf_chars": 138837,
+    "context": "d v. Punjab State Water Supply and Sewerage Board and Anr. (2019) 4 SCC 401 : [2019] 2 SCR 984; Pioneer Urban Land and Infrastructure Ltd. v. Govindan Raghavan (2019) 5 SCC 725 : [2019] 5 G SCR 1169; State of Maharashtra & Ors. v. Salvation Army, Western I"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "PIONEER URBAN LAND & INFRASTRUCTURE LTD. versus GOVINDAN RAGHAVAN",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  },
+  {
+   "truth_id": "T2-0124",
+   "raw_reference": "(1974) 1 SCC 345",
+   "stratum": "SCC",
+   "citing": {
+    "evidence_class": "PRINTED_ON_DOCUMENT",
+    "pdf_position": 83137,
+    "pdf_chars": 206065,
+    "context": "nnot entitle the prosecution to raise a presumption under Section 54 of the Act. (9) That the judgment in Pooran Mal v. Director of Inspection (Investigation), (1974) 1 SCC 345, cannot be understood to have laid down that an illicit article seized during a"
+   },
+   "target": {
+    "evidence_class": "NOT_FOUND",
+    "pdf_position": -1,
+    "case_number_on_paper": false,
+    "case_title": "POORAN MAL ETC versus DIRECTOR OF INSPECTION (INVESTIGATION) OF INCOME-TAX MAYUR BHAVAN, NEW DELHI &",
+    "context": null
+   },
+   "verdict": "NOT_CONFIRMED_ON_PAPER"
+  }
+ ]
+}

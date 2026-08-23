@@ -62,6 +62,36 @@ describe('isTransientDbOrNetworkError — the one that killed the fleet', () => 
     }
   });
 
+  it('recognises the Windows block-read failure that killed a scan on 23 Aug', () => {
+    // Observed: `could not read blocks 1441792..1441807 in file
+    // "base/81920/16384000": Invalid argument`, SQLSTATE XX000, routine
+    // md_readv_report, while three lanes were reading a 22 GB table at once.
+    //
+    // It was NOT corruption: the same ctid range returned 114 rows seconds
+    // later and all 22 segment files were present at a full 1 GiB. On this box
+    // a concurrent read can fail at the OS layer and succeed on retry, and the
+    // job that hit it died outright with 1,200 groups still to measure.
+    assert.equal(
+      isTransientDbOrNetworkError(
+        pgError('XX000', 'could not read blocks 1441792..1441807 in file "base/81920/16384000": Invalid argument'),
+      ),
+      true,
+    );
+    assert.equal(
+      isTransientDbOrNetworkError(pgError('XX000', 'could not write block 900 of base/81920/16384000: Invalid argument')),
+      true,
+    );
+  });
+
+  it('does NOT swallow XX000 in general — only the storage-read wording', () => {
+    // XX000 is internal_error, the widest state Postgres has. Retrying it
+    // wholesale would turn a real server bug into ten silent retries and a
+    // three-minute delay before anyone hears about it.
+    assert.equal(isTransientDbOrNetworkError(pgError('XX000', 'unexpected chunk number 2 for toast value')), false);
+    assert.equal(isTransientDbOrNetworkError(pgError('XX001', 'invalid page in block 5 of relation base/1/2')), false);
+    assert.equal(isTransientDbOrNetworkError(pgError('XX002', 'index is corrupted')), false);
+  });
+
   it('is false for undefined and for a bare object', () => {
     assert.equal(isTransientDbOrNetworkError(undefined), false);
     assert.equal(isTransientDbOrNetworkError({}), false);

@@ -85,17 +85,41 @@ const TRANSIENT_SQLSTATE = new Set(['57P03', '57P01', '57P02', '08006', '08001',
 const TRANSIENT_MESSAGE =
   /not yet accepting connections|system is starting up|shutting down|in recovery mode|terminating connection|connection terminated/i;
 
+/**
+ * The Windows storage read that fails once and succeeds on retry.
+ *
+ * Observed 23 Aug 2026 while three lanes read the 22 GB `judgments` table at
+ * once: `could not read blocks 1441792..1441807 in file
+ * "base/81920/16384000": Invalid argument` — SQLSTATE **XX000**, routine
+ * `md_readv_report`. It killed a measurement 1,200 groups from the end.
+ *
+ * It was **not** corruption, and that was checked rather than assumed: the same
+ * ctid range returned 114 rows seconds later, and all 22 segment files were
+ * present at a full 1 GiB. This box produces OS-level read failures under
+ * contention, the same family as the console-signal deaths in `crash-guard.ts`.
+ *
+ * **Matched on the wording, never on the SQLSTATE.** `XX000` is
+ * `internal_error`, the widest state Postgres has; adding it wholesale would
+ * turn a genuine server bug into ten quiet retries. A real bad page reports
+ * `invalid page in block` under `XX001`/`XX002` and is deliberately left loud.
+ */
+const TRANSIENT_STORAGE_READ = /could not (read|write) blocks? [\d.]+ (of|in file) /i;
+
 export function isTransientDbOrNetworkError(error: unknown): boolean {
   const err = error as
     | (NodeJS.ErrnoException & { cause?: unknown; message?: string })
     | undefined;
   if (!err) return false;
   if (err.code && (TRANSIENT_ERRNO.has(err.code) || TRANSIENT_SQLSTATE.has(err.code))) return true;
-  if (err.message && TRANSIENT_MESSAGE.test(err.message)) return true;
+  if (err.message && (TRANSIENT_MESSAGE.test(err.message) || TRANSIENT_STORAGE_READ.test(err.message)))
+    return true;
   const cause = err.cause as (NodeJS.ErrnoException & { message?: string }) | undefined;
   if (cause?.code && (TRANSIENT_ERRNO.has(cause.code) || TRANSIENT_SQLSTATE.has(cause.code)))
     return true;
-  return cause?.message !== undefined && TRANSIENT_MESSAGE.test(cause.message);
+  return (
+    cause?.message !== undefined
+    && (TRANSIENT_MESSAGE.test(cause.message) || TRANSIENT_STORAGE_READ.test(cause.message))
+  );
 }
 
 /**

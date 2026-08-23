@@ -266,9 +266,18 @@ const MARKERS: readonly { pattern: RegExp; relationship: Relationship }[] = [
 /** How far past a citation the marker may sit. */
 const MARKER_WINDOW = 220;
 
-/** Matches the dash-and-marker that closes a Case Law Cited entry. */
+/**
+ * Matches the dash-and-marker that closes a Case Law Cited entry.
+ *
+ * **The dash may not follow a letter.** Measured 23 Aug 2026: 3 of the 61
+ * `approved` edges in the corpus were the word *dis-approved*, whose internal
+ * hyphen satisfied a bare `[-–—]` and stored the OPPOSITE of what the court
+ * did. A closing annotation dash follows the citation, which ends in a digit or
+ * a bracket — never in a letter — so the lookbehind costs nothing real and
+ * removes the only polarity inversion found in the treatment population.
+ */
 const MARKER_RE =
-  /[-–—]\s*(overruled\s+(?:to an extent|in part)|partly\s+overruled|overruled|dissented\s+from|doubted|distinguished|relied\s+on|approved|followed|referred\s+to)\b/i;
+  /(?<![A-Za-z])[-–—]\s*(overruled\s+(?:to an extent|in part)|partly\s+overruled|overruled|dissented\s+from|doubted|distinguished|relied\s+on|approved|followed|referred\s+to)\b/i;
 
 /**
  * Reads the court's annotation following a citation.

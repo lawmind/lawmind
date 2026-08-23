@@ -19,6 +19,8 @@
  * or its behaviour for `search`/`draft`/`briefing`/`extract`.
  */
 
+import { assertPublicOnlyEgress, type EgressPayloadClass } from './llm-egress.ts';
+
 export type InferxResult =
   | { readonly ok: true; readonly text: string; readonly inputTokens: number; readonly outputTokens: number }
   | { readonly ok: false; readonly reason: string };
@@ -95,6 +97,13 @@ export type InferxDeps = {
   readonly maxTokens?: number | undefined;
   /** Injectable for tests — real callers never pass this. */
   readonly sleepImpl?: ((ms: number) => Promise<void>) | undefined;
+  /**
+   * What is in the prompt. Defaults to `PUBLIC_LEGAL_TEXT` because that is the
+   * only thing this service holds; naming anything else here is refused by
+   * `llm-egress.ts` before a request is built. LCC's inventory (bus 1055) found
+   * this path outside the provider gate.
+   */
+  readonly payloadClass?: EgressPayloadClass | undefined;
 };
 
 const DEFAULT_BASE_URL = 'https://model.inferx.net/endpoints/v1';
@@ -141,6 +150,8 @@ async function defaultSleep(ms: number): Promise<void> {
  * `withRetry` already draws for transport errors.
  */
 export async function callInferx(prompt: string, deps: InferxDeps): Promise<InferxResult> {
+  // Before the request is built, so a refused payload makes ZERO outbound calls.
+  assertPublicOnlyEgress(deps.payloadClass ?? 'PUBLIC_LEGAL_TEXT', 'inferx');
   const baseUrl = deps.baseUrl ?? DEFAULT_BASE_URL;
   const model = deps.model ?? DEFAULT_MODEL;
   const doFetch = deps.fetchImpl ?? globalThis.fetch;

@@ -1,0 +1,65 @@
+{
+ "generatedAt": "2026-08-23T01:37:46.330Z",
+ "exact": {
+  "total_rows": 22322047,
+  "PLACEHOLDER_SENTINEL": 16090200,
+  "EXTRACTED_REFERENCE_unresolved": 6000435,
+  "RESOLVED_REFERENCE": 231412,
+  "sentinel_pct": 72.08,
+  "extracted_pct": 26.88,
+  "resolved_pct": 1.04,
+  "method": "count(*) over judgment_citations_unresolved_idx (partial, index-only) plus judgment_citations_cited_idx",
+  "sentinel_one_per_judgment": {
+   "rows_probed": 400000,
+   "distinct_citing_judgments": 400000,
+   "verdict": "ONE_PER_JUDGMENT_CONFIRMED",
+   "guaranteed_by": "unique index judgment_citations_unique_edge (citing_judgment_id, normalised_citation) — '' can occur at most once per judgment"
+  },
+  "LEGITIMATE_PARALLEL_REPORTER": {
+   "distinct_citing_target_pairs": 204651,
+   "pairs_carrying_more_than_one_row": 25877,
+   "rows_involved": 52638,
+   "worst_pair_rows": 4,
+   "meaning": "one citing judgment naming one target through more than one citation form — a parallel reporter citation, NOT a duplicate. Collapsing it would under-count nothing; counting it twice over-counts the treatment."
+  },
+  "DUPLICATE_REFERENCE": {
+   "count": 0,
+   "reason": "the unique index judgment_citations_unique_edge (citing_judgment_id, normalised_citation) makes an exact duplicate reference unrepresentable. A repeated citation inside one judgment is de-duplicated on first appearance by extractCitations() before insert.",
+   "verified_by": "pg_indexes + services/ingest/src/citations.ts extractCitations() seen Map"
+  }
+ },
+ "sampled": {
+  "form_mix": {
+   "sample_n": 21726,
+   "NOT_A_CITATION_month_stamp": {
+    "k": 2,
+    "pct": 0.009,
+    "ci95": [
+     0,
+     0.03
+    ]
+   },
+   "NEUTRAL": {
+    "k": 4747,
+    "pct": 21.85
+   },
+   "INSC": {
+    "k": 119,
+    "pct": 0.55
+   },
+   "REPORTER": {
+    "k": 16616,
+    "pct": 76.48
+   },
+   "OTHER": {
+    "k": 242,
+    "pct": 1.11
+   },
+   "char_offset_zero": {
+    "k": 376,
+    "pct": 1.731
+   }
+  }
+ },
+ "notes": []
+}

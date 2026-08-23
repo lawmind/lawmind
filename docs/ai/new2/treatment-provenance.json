@@ -1,0 +1,72 @@
+{
+ "generatedAt": "2026-08-23T01:41:25.451Z",
+ "sample": {
+  "n": 400,
+  "REPORTER_HEADNOTE_APPARATUS": {
+   "k": 143,
+   "pct": 35.75
+  },
+  "REPORTER_REFERENCE_TABLE": {
+   "k": 81,
+   "pct": 20.25
+  },
+  "COURT_REASONING": {
+   "k": 0,
+   "pct": 0
+  },
+  "UNCLASSIFIED": {
+   "k": 176,
+   "pct": 44
+  },
+  "reporter_apparatus_total_pct": 56
+ },
+ "by_relationship": {
+  "followed": {
+   "REPORTER_HEADNOTE_APPARATUS": 127,
+   "REPORTER_REFERENCE_TABLE": 77,
+   "COURT_REASONING": 0,
+   "UNCLASSIFIED": 120
+  },
+  "approved": {
+   "REPORTER_HEADNOTE_APPARATUS": 1,
+   "REPORTER_REFERENCE_TABLE": 0,
+   "COURT_REASONING": 0,
+   "UNCLASSIFIED": 42
+  },
+  "overruled": {
+   "REPORTER_HEADNOTE_APPARATUS": 2,
+   "REPORTER_REFERENCE_TABLE": 0,
+   "COURT_REASONING": 0,
+   "UNCLASSIFIED": 1
+  },
+  "distinguished": {
+   "REPORTER_HEADNOTE_APPARATUS": 13,
+   "REPORTER_REFERENCE_TABLE": 4,
+   "COURT_REASONING": 0,
+   "UNCLASSIFIED": 13
+  }
+ },
+ "examples": [
+  {
+   "relationship": "overruled",
+   "class": "UNCLASSIFIED",
+   "citation_text": "(2016) 12 SCC\n125",
+   "evidence": "– overruled [LCC correction, 14 Aug 2026: Citing text prints (2016) 12 SCC 125 for SEBI v. Roofit Industries Ltd. We hold this judgment only under its S.C.R. form ([2015] 12 S.C.R. 190, SEBI THROUGH ITS CHAIRMAN v. ROOFIT INDUSTRIES LTD., 2015-11-26, 2015 INSC 864) -- same case, SCC volume published a year after decision, standard reporter lag. Distinguished from the OTHER Roofit judgment held (COMMISSIONER, CUSTOMS AND CENTRAL EXCISE, AURANGABAD v. ROOFIT, 2015-04-23) by subject matter and date. Identified externally, verified by case identity + decision date, not by citation-string similarity. TREATMENT_GRAPH_GAP.md section 3e.]",
+   "window": "provision – Clarificatory Explanation – Explanation to s.15-J was introduced / added by Amendment Act No.7 of 2017 for removal of doubts created as a result of pronouncement in M/s. Roofit Industries Ltd. case – Explanation to s.15-J so added by Amendment Act No.7 of 2017 has clarified and vested in the Adjudicating Officer a discretion u/s.15-J on the quantum of penalty to be imposed while adjudicating defaults u/ss"
+  },
+  {
+   "relationship": "overruled",
+   "class": "REPORTER_HEADNOTE_APPARATUS",
+   "citation_text": "(1977) 6 SCC 564",
+   "evidence": "– overruled [LCC correction, 14 Aug 2026: Citing text prints (1977) 6 SCC 564 -- wrong year, real citation is (1997) 6 SCC 564, Sun Export Corporation v. Collector of Customs, Bombay (M/S SUN EXPORT CORPORATION BOMBAY v. COLLECTOR OF CUSTOMS, BOMBAY, 1997-07-07, 1997 INSC 516). Distinguished from the OTHER Sun Export judgment held (v. Board of Trustees of the Port of Bombay, 1997-10-23) by respondent and date. This is the case Commissioner of Customs v. Dilip Kumar and Co. (2018) is universally reported to have overruled -- settled legal history, not a similarity guess. TREATMENT_GRAPH_GAP.md section 3e.]",
+   "window": "tion. [Para 52] [1230-G] 2.6 When there is ambiguity in exemption notification which is subject to strict interpretation, the benefit of such ambiguity cannot be claimed by the subject/assessee and it must be interpreted in favour of the revenue. [Para 52] [1230-H] 2.7 The ratio in *Sun Export case is not correct and all the decisions which took similar view as in *Sun Export case stands over-ruled. [Para 52] [1231-A"
+  },
+  {
+   "relationship": "overruled",
+   "class": "REPORTER_HEADNOTE_APPARATUS",
+   "citation_text": "(2021) 4 SCC 379",
+   "evidence": "–\noverruled",
+   "window": "ver, clearly indicate the stamp duty paid as held in SMS Tea Estates. If it does not do so, the Court should not act on such a certified copy. [Para 112][375-A] 4. The provisions of Sections 33 and the bar under Section 35 of the Stamp Act, applicable to instruments chargeable to stamp duty under Section 3 read with the Schedule to the Stamp Act, would render the Arbitration Agreement contained in such instrument as "
+  }
+ ]
+}

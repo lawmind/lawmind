@@ -1,0 +1,51 @@
+{
+ "generatedAt": "2026-08-23T01:45:23.599Z",
+ "defect": "MARKER_RE read the hyphen inside \"dis-approved\" as the annotation dash; fixed in services/ingest/src/citations.ts by a (?<![A-Za-z]) lookbehind, 23 Aug 2026",
+ "approved_rows_total": 61,
+ "inverted_rows": 4,
+ "inverted_pct": 6.56,
+ "propagation": "approved is NOT in propagate-treatment.ts's IN ('overruled','overruled_in_part','doubted'), so no judgments.overruled_status and no LAW MOVED badge was ever driven by these rows",
+ "corrected_in_database": false,
+ "rows": [
+  {
+   "edge_id": "8596a583-64b1-4123-a2e2-8ab8eedf836f",
+   "citing_judgment_id": "ffcf59f6-007d-4e43-a846-b342784526c9",
+   "cited_judgment_id": null,
+   "citation_text": "(2004) 2 SCC 286",
+   "stored_evidence": "-approved",
+   "court": "Bombay High Court",
+   "case_title": "MUNICIPAL CORPN. OF GR. MUMBAI Vs STATE OF MAHARASHTRA AND 13 ORS.",
+   "text_after_citation": " (2004) 2 SCC 286 has dis-approved the decision of the reference Court in re"
+  },
+  {
+   "edge_id": "49a3f186-42d1-48ce-ba29-ae35bb341f61",
+   "citing_judgment_id": "cf1bb155-ae75-40b8-96d0-b3cfc114d97a",
+   "cited_judgment_id": null,
+   "citation_text": "AIR 1991 SC 382",
+   "stored_evidence": "-approved",
+   "court": "High Court of Sikkim",
+   "case_title": "Phurba Wangdi Pulger Vs State of Sikkim and Ors",
+   "text_after_citation": " AIR 1991 SC 382 had dis-approved the conduct of judicial offlcers indulgin"
+  },
+  {
+   "edge_id": "b118677d-11f3-4f19-8906-0816ebd6bc9e",
+   "citing_judgment_id": "daa18bfe-0bf1-4d41-9d73-e0c5e2b07bc6",
+   "cited_judgment_id": null,
+   "citation_text": "[1958] S.C.R. 828",
+   "stored_evidence": "-\napproved",
+   "court": "Supreme Court of India",
+   "case_title": "STATE OF PUNJAB versus KISHAN DASS",
+   "text_after_citation": " [1958] S.C.R. 828, dis- approved. Rupnarain Singh, State of Orissa, A.I.R. 1"
+  },
+  {
+   "edge_id": "75d39ba5-f460-4bfe-91c2-b8b4e30c787b",
+   "citing_judgment_id": "5fe2bfd5-4c8b-40f9-b849-a4058b862d03",
+   "cited_judgment_id": "4e769c4a-4916-482e-9128-6c9a6de6b6a4",
+   "citation_text": "[1977] 3 SCR 455",
+   "stored_evidence": "-\napproved",
+   "court": "Supreme Court of India",
+   "case_title": "MAHINDRA & MAHINDRA LTD. versus UNION OF INDIA & ANR.",
+   "text_after_citation": " [1977] 3 SCR 455; dis- approved. ( d) In a clase where a cl ause in agreeme"
+  }
+ ]
+}

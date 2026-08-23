@@ -243,6 +243,34 @@ describe('detectTreatment', () => {
     assert.equal(after(text, '2019 INSC 45').relationship, 'overruled');
   });
 
+  it('does NOT read the hyphen inside "dis-approved" as an annotation dash', () => {
+    // Measured 23 Aug 2026: 4 of the 61 `approved` edges in the corpus are this
+    // exact shape. MARKER_RE opens with `[-–—]\s*`, and the hyphen in
+    // "dis-approved" satisfies it, so the OPPOSITE of what the court did was
+    // stored. A polarity inversion is the one treatment error that actively
+    // misleads — it turns a rejection into an endorsement.
+    // Real rows, abridged: Bombay HC, an SCR headnote, Sikkim HC, Punjab & Haryana HC.
+    const cases: readonly (readonly [string, string])[] = [
+      ['Krishi Utpadan Mandi Samiti v. Mohammed Ibrahim, (2004) 2 SCC 286 has dis-approved the decision of the reference Court.', '(2004) 2 SCC 286'],
+      // The reporter hyphenates across a line break, so the space form is real too.
+      ['Ram Sarup, [1958] S.C.R. 828, dis- approved. Rupnarain Singh, State of Orissa.', '[1958] S.C.R. 828'],
+      ['Orissa Judicial Services Association vs. State of Orissa AIR 1991 SC 382 had dis-approved the conduct of judicial officers.', 'AIR 1991 SC 382'],
+      ["Union of India v. Pradeep Kumari, 1995 (2) SCC 736 three Judges Bench of the Hon'ble Supreme Court dis-approved the view taken in Babua Ram's case.", '1995 (2) SCC 736'],
+    ];
+    for (const [text, citation] of cases) {
+      const t = after(text, citation);
+      assert.notEqual(t.relationship, 'approved', text);
+      assert.equal(t.relationship, 'cites', text);
+    }
+  });
+
+  it('still reads a real annotation dash that follows a word', () => {
+    // The guard must not cost the legitimate form, which is what 57 of the 61
+    // rows are: a dash closing a Case Law Cited entry.
+    assert.equal(after('Sharma v. State, (2019) 4 SCC 221- approved.', '(2019) 4 SCC 221').relationship, 'approved');
+    assert.equal(after('Sharma v. State, (2019) 4 SCC 221 —approved.', '(2019) 4 SCC 221').relationship, 'approved');
+  });
+
   it('does NOT take a marker belonging to a later entry in the list', () => {
     // The marker after "Verma" describes Verma, not Sharma. A case name between
     // the two is the boundary.
