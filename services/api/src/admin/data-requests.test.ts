@@ -35,9 +35,20 @@ describe('DPDP data requests', () => {
     const email = `${authId}@example.test`;
     await sql`INSERT INTO auth_user (id, name, email, email_verified)
               VALUES (${authId}, 'Adv', ${email}, true)`;
+    /**
+     * `role = 'admin'`, added 23 Aug 2026 because this suite predates the column.
+     *
+     * Migration `0074` made every `/admin/*` route deny-by-default, and this
+     * fixture had been seeding an ordinary advocate and calling an admin route —
+     * so all four cases below started answering 403. The test was the stale half,
+     * not the middleware: `ADMIN_SURFACE.md` §15 and `0074` both say the refusal
+     * is correct. Seeding the role here keeps this suite testing what it is about
+     * (DPDP request handling) rather than re-testing authorisation, which
+     * `security/tenant-isolation.test.ts` now owns.
+     */
     const [u] = await sql<{ id: string }[]>`
-      INSERT INTO users (auth_id, full_name, phone, email, enrolment_status)
-      VALUES (${authId}, 'Adv', '+911111111111', ${email}, 'unverified') RETURNING id`;
+      INSERT INTO users (auth_id, full_name, phone, email, enrolment_status, role)
+      VALUES (${authId}, 'Adv', '+911111111111', ${email}, 'unverified', 'admin') RETURNING id`;
     admin = { authId, userId: u!.id, token: await signAccessToken({ sub: authId, email }, SECRET) };
 
     const [o] = await sql<{ id: string }[]>`

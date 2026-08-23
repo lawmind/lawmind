@@ -16,6 +16,166 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 23 August 2026 — LCC: THE DATE STATES REACHED THE CHRONOLOGY, TENANT ISOLATION IS PROVED RATHER THAN ASSUMED, AND THE TEST-COURT CENSUS ANSWERED 6 AFTER ANSWERING 0
+
+Full board with per-item evidence: `docs/ai/lcc/LCC_ROUND_TODO.md` §ROUND 2.
+Everything below was OBSERVED — run, measured or asserted — never inferred from
+reading code. Every latency is **LOCAL_CONTENDED**: three agent sessions, the
+ingest fleet and a GPU walk were live throughout, and the resource gate read
+`DEFER DB_SCAN` for most of the round.
+
+**1. NEW2's date states had one consumer and now have six.** A fifth-agent
+forensic pass found ZERO; `as-at.ts` had since become the first, with its rule
+written in a comment where no second route could reuse it. It is now
+`judgments/date-quality.ts`, and `dateQuality` reaches `GET /judgments/:id`,
+`/treatment`, `/graph`, `GET /citations/:id`, and the treatment PROPAGATION
+ordering.
+
+**The distinction that survives to the wire is the one that matters.**
+`DATE_UNKNOWN` is a measurement with a null result; `null` is no measurement.
+They are a string and a JSON null, never collapsed into three values — folding
+them is the `is_bail_order` NULL failure this repository has already paid for.
+**Only `DATE_SUSPECT` refuses anything**; refusing on silence would refuse a
+quarter of the corpus on the strength of nobody having checked.
+
+Observed on a real treatment page: row states
+`["DATE_VERIFIED","DATE_SUSPECT","DATE_VERIFIED","DATE_VERIFIED",null]` →
+`chronologyReliable: false`. Nothing is dropped or reordered — a treatment list
+that quietly omits a doubting bench is a far worse defect than one shown in the
+wrong position. The problem is derived certainty, not discoverability, and
+`judgment_date` is never rewritten.
+
+**In `propagate-treatment.ts` a contradicted date is DEMOTED, not excluded.**
+`DISTINCT ON` decides which citing judgment is shown to the advocate as the
+provenance of an overruling — "set aside by X on <date>" — and "the latest court
+to say it" is a chronology claim. A candidate whose citing date is contradicted
+now ranks below an equally strong one whose date is not. Where every candidate is
+suspect the strongest still applies, and the state travels with it.
+
+**2. Tenant isolation is now proved, and admin authorisation never proved it.**
+`security/tenant-isolation.test.ts`: USER_A, USER_B and ADMIN, real tokens, foreign
+rows by direct id. **33 cross-tenant attempts, 0 FAIL, 0 403-instead-of-404**,
+13/13 green. Matters, events, event visibility, authorities, shares, briefings,
+documents, document citations, saved searches, annotations.
+
+Three design points that are the whole value of it:
+
+- **Writes are checked at the ROW, not at the status.** A handler can answer 404
+  and still have run its UPDATE, and a status-only test passes that.
+- **400 is INCONCLUSIVE, never a pass.** A probe rejected by the body validator
+  never reached the ownership check. Three probes were doing exactly that and
+  were silently "passing"; the classifier now fails on it.
+- **The admin battery has a positive control.** Without one, a middleware that
+  refuses EVERYONE passes every negative assertion and takes the admin panel down
+  silently.
+
+**3. A deployment variable was making a confidentiality decision.** `route.ts`
+decided which MODEL by sensitivity and was correct. **Nothing decided which
+COMPANY'S SERVER** — `call.ts` chose between inferx.net, OpenRouter and Anthropic
+by whichever API key happened to be set. Now one contract,
+`canSendToProvider(payloadClass, provider)`, asked after the key resolves and
+before any byte is sent. Six payload classes; `PUBLIC_QUERY` is treated as
+private in substance because what an advocate types describes a client's
+position. **Retention and training-use read `UNVERIFIED` for all three
+providers**, which is the module working: a confidently wrong "30 days, no
+training" is worse than a blank because it is the sentence somebody quotes to a
+client. Proved by ZERO outbound requests with a counting fetch, 10/10.
+
+**4. The resolver is a component, not a backfill, and there is no `--apply`
+flag** — a flag that is only unsafe today is a flag somebody passes tomorrow.
+Bounded dry run over 8,000 unresolved edges, nothing written:
+
+```
+refused 73.2%  and EVERY refusal was an EMPTY row, not a placeholder string
+formed  2,142  hit 43.28% · unique 40.85% · ambiguous 2.43% · not-held 56.72%
+ambiguity size p50 2 · p90 38 · max 845
+34 ms per 1k references · 0 model calls · LOCAL_CONTENDED
+```
+
+That independently corroborates NEW2's "a large part of the 22M table is
+placeholders", arrived at from the other direction by someone who did not know
+the number — and verified by reading raw rows rather than trusting my own gate.
+The **max 845** is NEW2's 1019/1020 exactly: a neutral citation identifies a
+disposal event, not a judgment.
+
+**A resolved citation is not a legal treatment**, and it is enforced rather than
+documented: every result carries `relationship: 'UNKNOWN'` as a VALUE and
+`verifiedTreatmentEligible: false`. If resolver coverage rises tomorrow,
+currentness coverage has not moved by one document. **False-unique% is
+deliberately not reported** — it needs an independently adjudicated sample, and
+printing a plausible number for it is exactly what would let a backfill through.
+
+**5. The commerce spine exists and is inert.** Migrations `0077` and `0078`
+applied. Capability-based, provider-neutral, **no plan name, no price, no `PRO`
+boolean**. A recurring grant and a credit balance answer the same question at the
+same call site, so both revenue models fit without a migration.
+
+The invariants are unique indexes rather than careful code, because two taps on a
+phone with bad signal are two requests in flight and every check-then-write loses:
+**two simultaneous redemptions of one credit spend exactly one**; two simultaneous
+taps create **one** job; a redelivered purchase grants **once**. Asserted with
+`Promise.all` against the real database, because a sequential test proves nothing
+about a race.
+
+`adverse_treatment_visibility` is typed SAFETY_CRITICAL and `requireCapability`
+**refuses to gate it, in code**. Selling an advocate their own professional risk
+back to them is not a paywall decision that is available to us.
+
+**Every premium route is behind a `platform_config` flag that defaults OFF.**
+With no flag row at all, all four answer 404. A client carrying a paywall screen
+must never imply the backend will serve it, and a screen in a shipped build
+cannot be taken back.
+
+**6. `0078` exists because writing the test found a defect in `0077`.** The
+direction CHECK listed `refund_reversal` in two branches of one OR, so the one
+reason whose direction matters most had no direction at all — a refund recorded
+as `+1` would have handed a refunded customer a free hearing pack. Fixed
+forward-only and asserted against the live constraint.
+
+**7. The Test Court census answered 0 on 22 August and 6 today, and both are
+true.** The six are leaked FIXTURES — `source_url LIKE 'test://%'`,
+`case_title LIKE 'SYNTHETIC — %'`, all written in one ten-minute window this
+morning by a concurrent session, on the same morning a suite died with a Postgres
+`could not read blocks … Invalid argument`. **A killed process does not run its
+`after` hook.**
+
+That resolves the contradiction the round asked about: **the count is not a
+property of the corpus, it is a property of whether a suite was mid-run when
+somebody looked.** Nothing has been deleted. A guard now reports them — with the
+six enumerated by id so they cannot fail a build nobody is allowed to make green,
+and **a seventh still can**.
+
+**8. Three regressions of my own, caught by this repository's own guards.**
+Three `_at` columns cast to Postgres text, which Hermes renders as Invalid Date;
+then the SAME guard catching the pattern inside the explanatory comment I wrote
+about it, because the guard greps source text and a comment is source text. And
+`admin/data-requests.test.ts` was seeding an ordinary advocate against an admin
+route — 4 failures predating this round, from `0074`'s deny-by-default, where the
+TEST was the stale half rather than the middleware.
+
+**What is NOT done, and is not claimed:**
+
+- **The full API suite has not completed and is NOT claimed green.** Run 1 died
+  with a Postgres I/O error under three-session contention; run 2 is still
+  executing, at 75 pass / 0 fail, with individual tests taking up to 19 minutes on
+  a box this loaded. Every targeted suite passes: 13 tenant · 28 commerce ·
+  10 premium routes · 13 resolver · 10 provider policy · 6 date quality · 2
+  fixture guard · 12 as-at/citation-check · 5 data requests.
+- **P10, the release proof** (Linux → indexes → search-equivalence → rollback) is
+  not advanced. Another session was live in `services/api/src/p10-probe.ts` — six
+  seconds old when found — and two agents editing one proof is worse than a slow
+  one.
+- **NEW1's uncited-authority bias** (bus 1050): the eligibility view refuses
+  **40.09% of the corpus solely for want of an inbound citation**, and the rescue
+  fires for 11 documents in 40,000. The view is LCC's file and the class evidence
+  is NEW2's. **Not changed alone.** `FQ-ELIGIBILITY-UNCITED`.
+- **Nothing about the 24-hour briefing being safe to market.** That is NEW3's
+  10-matter walkthrough plus the fifth agent, not this lane.
+
+**Founder items filed this round:** `FQ-PROVIDER-TERMS`, `FQ-PREMIUM-MODEL`,
+`FQ-BILLING-PROVIDER`, `FQ-LOGOUT-TOKEN-WINDOW`, `FQ-STAGING-CORPUS-SIZE`,
+`FQ-ELIGIBILITY-UNCITED`. None closed on an agent's recommendation.
+
 ### 22 Aug 2026 (morning) — NEW2: THE QUALITY CONTRACT IS QUERYABLE, `PROOF` IS REACHABLE, AND MY OWN DATE READER WAS CONVICTING THE SUPREME COURT
 
 **Session queue. Items 1-6 landed; 7-9 are the honest remainder.**
