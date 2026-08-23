@@ -176,6 +176,114 @@ TEST was the stale half rather than the middleware.
 `FQ-BILLING-PROVIDER`, `FQ-LOGOUT-TOKEN-WINDOW`, `FQ-STAGING-CORPUS-SIZE`,
 `FQ-ELIGIBILITY-UNCITED`. None closed on an agent's recommendation.
 
+### 23 August 2026 — NEW2: THE RESOLVER TRUTH SET CORRECTS ITSELF, 72.08% OF THE CITATION TABLE IS NOT A CITATION, AND FOUR EDGES SAID THE OPPOSITE OF WHAT THE COURT DID
+
+**Owner: NEW2 (ingestion / data truth). Two commits: `ae8a8c7`, `57f29e3`.**
+728 ingest tests, 0 failures, `tsc --noEmit` clean.
+
+1. **DONE — the 22M citation table has named states and a predicate.**
+   Exact by index-only scan: 22,322,047 rows = **16,090,200 sentinels (72.08%)**
+   + 6,000,435 extracted references (26.88%) + 231,412 resolved (1.04%). The
+   sentinel is a per-judgment *"walked, found nothing"* marker written by
+   `citations-cli.ts:399-411`, one per judgment by unique index (probed 400,000
+   rows → 400,000 distinct judgments). **Deleting it would re-scan the corpus.**
+   LCC's resolver reached 73.2% from the API side without knowing the number.
+   `CITATION_TABLE_SEMANTICS_2026-08-23.md`.
+
+2. **DONE — resolver truth set v2.0.0, 283 records, and it corrects my own v1.**
+   All three of v1's "materially unsafe pins" are seeded in by edge id; with a
+   `content_hash` witness v1 lacked, **none is unsafe** — two byte-identical, one
+   sharing case title *and* number. **v1's 5.88% unsafe-pin rate is an
+   overstatement; the dangerous class is ONE record**, `2026:JHHC:16965`, two
+   different Jharkhand bail matters a month apart, currently unpinned.
+   Primary-source check with poppler: the citing document prints the reference
+   **26 of 26**; the target prints its own citation 13 of 26 — **13 of 16 for
+   court-assigned citations and 0 of 10 for reporter forms**, because a reporter
+   assigns its citation after publication. A reporter-form pin can never be
+   strengthened by the paper.
+
+3. **DONE — display-grouping contract (P2/P14).** Five classes; only the two
+   resting on document evidence collapse. 700 groups / 1,533 rows: byte-identical
+   51.01%, connected matter 36.46%, distinct 10.44%, several orders 2.09%.
+   **Auto-collapse removes 29.03% of shared rows and hides zero authorities.**
+   Representative is a total order ending in `content_hash` then `id` — one
+   picked off row order paginates a judgment onto two pages.
+   `services/ingest/src/display-group.ts`, 14 tests.
+
+4. **DONE — four `approved` edges recorded the opposite of what the court did.**
+   `MARKER_RE` opened with `[-–—]`, and the hyphen inside *dis-approved*
+   satisfied it. 4 of the 61 `approved` rows in the corpus. Fixed at the writer
+   with a lookbehind; two tests, one built from the four real corpus strings.
+   **Rows not corrected in the database** — `approved` never reaches
+   `propagate-treatment.ts`, so no LAW MOVED badge was driven by them.
+   An earlier pass of mine said 8 inversions including one `overruled`; **that was
+   my own screen**, using a window wider than the writer's reachable window.
+
+5. **DONE — the treatment finding under it, and a founder question.**
+   **0 of 400 treatment annotations sit in court reasoning; 56% sit in a law
+   reporter's headnote apparatus** — the copy-edited part `CLAUDE.md` §6 says we
+   may not rely on. `FQ-TREATMENT-HEADNOTE-PROVENANCE`. Nothing withdrawn.
+   `RESOLUTION_IS_NOT_TREATMENT_2026-08-23.md` carries the contract and
+   `TREATMENT_ENRICHMENT_CONTRACT_V1`; the number that would prove a breach is
+   `treated_and_pinned / resolved = 4.647%`, which must not move on a backfill.
+
+6. **DONE — uncited substantive authority (P6): the answer is UNKNOWN, with a
+   number.** 80 documents from NEW1's length-gated population read as primary
+   text, 40 train / 40 held out. Substantive base rate **3.75% [1.28, 10.45]**.
+   With 3 positives in 80 no rule's precision is estimable; ±10pp around 80%
+   needs ~62 rule-positives ≈ 1,650 documents adjudicated. **The classifier was
+   not built.** The one court-issued signal found — the `Whether reportable?`
+   stamp — was refuted: 630 of 30,000 documents carry it, **629 are Punjab &
+   Haryana**, and **86.35% say Yes**.
+
+7. **DONE — ingest egress is gated (founder correction 2).** `llm-egress.ts`:
+   ingest may send `PUBLIC_LEGAL_TEXT` and nothing else, to anybody. A private
+   payload makes **zero** outbound requests, asserted with a counting fetch.
+   Narrower than LCC's provider policy on purpose — `services/ingest` cannot
+   import `services/api` without a cycle, and a copied policy table drifts.
+
+8. **DONE — the OCR queue was reading gold from a directory that does not
+   exist.** `goldIds()` resolved relative paths against the working directory, so
+   the same command read 707 gold authorities from `services/ingest` and **zero**
+   from the repository root, printing `ADVOCATE100.json=ABSENT` beside
+   `BENCHMARK_GOLD queued 0`. Now module-relative. After the fix **there is no
+   backlog**: all 72 damaged cited authorities and 4 damaged benchmark gold are
+   already recovered.
+
+9. **DONE — a storage read that killed a scan is now survivable.**
+   `could not read blocks 1441792..1441807 … Invalid argument` (XX000). Not
+   corruption: the same ctid range returned 114 rows seconds later and all 22
+   segment files are a full 1 GiB. Matched on the **wording, never the SQLSTATE**
+   — XX000 is `internal_error` and retrying it wholesale hides server bugs.
+
+10. **PARTIAL — body-text evidence state (P3).** `text_state = TEXT_UNKNOWN` means
+    **never screened** for 16,906,663 rows (90.42%), and **no writer has ever
+    emitted `clean`** — that branch of the CASE is unreachable. The screening did
+    happen (18,698,968 in the checkpoint); the proof is in a JSON file nothing can
+    join against. DDL for `quality_screen_runs`, the view expression, and the
+    reason it must default to `NEVER_SCREENED` are handed to LCC. **Not applied
+    alone** — `body-text-safety.test.ts` pins the view on purpose.
+
+11. **BLOCKED — old criminal codes (P4/P13) and therefore the correspondence
+    recompute (P5).** `indiacode.nic.in` returns **504 after 248s** on every
+    request, twice, hours apart — including the **known-good BNS handle** that
+    loaded 531 sections from the same code path. The site is down; the handles
+    are not the problem. The whole path is built and tested behind `--repealed`.
+    `FQ-INDIACODE-AVAILABILITY`. Denominators restated honestly in the
+    `BNS_BNSS_BSA_INVENTORY` addendum: **0 of 226 correspondence rows have a
+    primary witness on their old side**, and 18.51% must not be quoted as
+    correspondence coverage.
+
+12. **DEFERRED — hc-classify (P9).** **43.78%** (8,186,750 of 18,698,984), up
+    from 26.0% on 22 Aug. **Not running** — process table checked, not just the
+    checkpoint. The gate read `DEFER` on 14 active queries with a 2,894-second
+    statement, so it stays stopped rather than competing with NEW1's walk.
+
+13. **NOT DONE, deliberately.** No corpus mutation. No placeholder deleted. No
+    fuzzy dedup. No corpus-wide OCR. No eCourts request. No treatment withdrawn.
+    ADVOCATE-100 leakage **not** self-graded — the fifth agent's audit has not
+    returned and `leakage_failures: 0` is labelled as the author's own number.
+
 ### 22 Aug 2026 (morning) — NEW2: THE QUALITY CONTRACT IS QUERYABLE, `PROOF` IS REACHABLE, AND MY OWN DATE READER WAS CONVICTING THE SUPREME COURT
 
 **Session queue. Items 1-6 landed; 7-9 are the honest remainder.**
@@ -13215,3 +13323,81 @@ is 27.
 - **Staging**: rewritten as the server-side INPUT to NEW3's package rather than
   a rival recommendation. The useful measurement is that **291 GB is the wrong
   number to size a machine against — 83% of it is rebuildable.**
+
+---
+
+# NEW1 ROUND — 23 Aug 2026 · RETRIEVAL SCIENCE
+
+Live checklist: `docs/ai/new1-tier-a/NEW1_ROUND_TODO_2026-08-23.md`.
+Decision document: `docs/ai/new1-tier-a/SEMANTIC_SEARCH_RELEASE_DECISION.md`.
+
+## The one sentence
+
+**Semantic search is not failing because ranking or representation is wrong. It
+is failing because the documents are not in the index** — and the production
+document-vector recipe is separately the worst of six representations measured.
+
+## The four findings that change decisions
+
+1. **DENSE REACHABILITY CEILING = 36.1%** (`dense-reachability-ceiling.json`).
+   The production dense arm reads `judgment_chunks`, which holds **40,161
+   distinct judgments — 0.2% of the corpus** and 11 of 27 ADVOCATE-100 targets.
+   `fact_pattern`, `supporting_authority`, `adverse_authority`, `long_narrative`,
+   `pasted_passage` and `statute` have **ZERO** reachable targets. A falsifier
+   fired and is reported: 5 top-5 hits came from unreachable targets via exact
+   routes, so the ceiling bounds **dense**, not the product.
+2. **THE LIVE REPRESENTATION IS THE WORST ARM** (`representation-lab-v2.json`,
+   45 tasks, 2,500-doc pool). `HEAD:4800` scores **s@5 20.0%**; a POOLED
+   whole-document vector at **identical storage** scores **73.3%** and reaches
+   100% recall@500 against 68.9%. Three vectors per document (6 KiB) is WORSE
+   than one pooled vector (2 KiB). **Do not promote the 8.85M staged vectors —
+   re-pool them.** The eligibility/screening/staging work is representation-
+   independent and is not wasted.
+3. **CANDIDATE RECALL IS THE CONSTRAINT, NOT ORDERING** (`two-stage-candidates.json`).
+   Lexical rarest-3 reaches **10.3–25.6%** recall@500 on concept queries; dense
+   reaches **83–100% at rank ≤20** where the target exists. **No reranker sprint.**
+4. **CASE-TITLE IS FIXED** (`CASE_TITLE_SEARCH_CONTRACT_V1.md`). Unique titles
+   **155/155 rank 1**, timeouts **9 → 0**, p95 **19,196 ms → ~1.3 s**. All 10
+   remaining misses are titles held by **16–200 judgments** — a page-shape
+   problem, not a ranking one.
+
+## Safety, measured
+
+- **FALSE_IDENTITY_RATE 0/6** — no exact route answered any fabricated identifier
+  confirmed absent from the corpus (`retrieval-safety.json`).
+- **0 date-bound violations** across 8 temporal probes (`temporal-correctness.json`).
+- **Long input**: the embedder reads 20,000 chars (not truncation); embedding a
+  raw narrative HALVES recall and deterministic condensation fully recovers it
+  (`LONG_FACT_SEARCH_CONTRACT_V1.md`).
+
+## Release decision: **C — semantic research stays hidden/experimental**
+
+Identity search (citation, case number, case title) is a **different product and
+is ready**; it should not be held back, and it must not ship under an AI label.
+
+## Corrections this lane made against itself
+
+- P5's headline (40.09% of the corpus refused solely for want of a citation)
+  stands, but the **threshold remedy does not**: among additions that HAVE a
+  class verdict, procedural-disposal chaff runs **26.5% → 40.1% → 53.4%** from
+  1,500 down to 800. **The 2,000 gate is closer to right than bus 1050 implied.**
+  77% of the band is unclassified, so this is a coverage question first.
+- LCC's OOM mechanism (bus 1060) is **refuted**: no tsvector in the corpus exceeds
+  4 MiB; the largest is ~388 KiB detoasted, against a 96 MiB allocation.
+- Three instrument bugs caught before publication: a `0/0` safety denominator, a
+  false temporal "leak" (filters sent un-nested), and 39/39 false dense
+  "timeouts". Each is recorded in the file that produced it.
+
+## Not done, and not claimed
+
+- **P6 1M halfvec checkpoint DEFERRED** on resource pressure. No 1M→8.85M
+  extrapolation is made. `CHECKPOINT_RUNBOOK_1M.md` holds the executable form.
+- **P13 query router deliberately not started** — routing to a path with 10–26%
+  candidate recall routes to a path that cannot answer.
+- **THE KEEPER'S WALK RELAUNCH IS BROKEN AND UNFIXED.** 21 consecutive relaunches
+  produced no walk; three hypotheses tested and refuted; stopped at the
+  three-cycle bound. **When the walk dies, relaunch it by hand and verify by a
+  NEW line in `stage-runner.log`, never by a process count.** The walk was dead
+  7h26m this session before anyone looked.
+- **ADVOCATE-100 latency is contaminated** (`LOCAL_CONTENDED`) and a clean-box
+  re-run is owed before any latency number from that file is quoted.
