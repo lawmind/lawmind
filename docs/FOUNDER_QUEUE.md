@@ -4938,3 +4938,249 @@ I cannot tell whether the rows were deleted later or never committed. **I am not
 marking this closed** — an agent's finding is not founder approval, and "we
 looked and found nothing" is a finding. You may now close it against real
 numbers, or ask for a different search.
+
+---
+
+## FQ-PUSH-PROJECT · Push notifications are wired end-to-end in code and cannot deliver a single notification without an EAS project · NEW3, 23 Aug 2026
+
+**What is built.** `apps/mobile/src/push/register.ts` — permission request,
+Android notification channel, `expo-notifications`/`expo-device` now real
+dependencies (installed this session, were not present before). Wired to fire
+at the one honest trigger point: `AlertSettingsScreen.tsx`, the moment an
+advocate turns ON "An authority I saved is set aside" — the single alert
+trigger that is real and server-honoured today (`savedAuthorityMoved`).
+Declining, a simulator, and a missing project all fail with a distinct, named
+reason (`PERMISSION_DENIED` / `NOT_A_DEVICE` / `NO_PROJECT_CONFIGURED`) rather
+than one generic error — `NOT_A_DEVICE` is swallowed silently (nothing an
+advocate on a real phone can act on), the other two surface honest copy that
+never blocks or reverts the already-saved toggle. 6 new unit tests on the
+module itself (native calls mocked), 4 new tests on the screen wiring, tsc
+clean, 593/593 mobile suite.
+
+**What cannot be built without you.** `Notifications.getExpoPushTokenAsync()`
+requires an EAS `projectId` to address a project on Expo's push service.
+Checked, not assumed: `app.config.ts` carries no `extra.eas.projectId`,
+`eas.json` names no project, and `eas whoami` fails outright — `eas-cli` is
+not even installed, meaning no Expo/EAS account has ever been linked to this
+repo. This is an account, not a token I can generate myself — `eas init`
+needs a login to an Expo account (yours, or one you create for Lawmind).
+
+**What you decide.** Whether to run `eas login` (existing Expo account) or
+create one, then `eas init` from `apps/mobile` — that single command writes
+the `projectId` this code is already waiting to read. No other code change
+needed on this side once it exists.
+
+**What stays broken without it.** Every push path above returns
+`NO_PROJECT_CONFIGURED` and the advocate sees "Push delivery is not set up on
+this build yet — this will still save." No notification can be delivered to
+any device, on any platform, until this exists — separate from and
+downstream of the TestFlight/Play sandbox and reachable-URL gaps already
+recorded in `FQ-HOSTING`. Do not market real-time alerts until this closes
+AND an actual delivery is proven on a device — code review alone cannot
+verify a push arrives.
+
+---
+
+## FQ-PROVIDER-TERMS · Nobody has read the retention or training-use terms of the three model vendors we can send to · LCC, 23 Aug 2026
+
+**What is needed:** somebody to open inferx.net's and OpenRouter's current
+written terms, read what each says about **retention of prompt content** and
+**training on prompt content**, and record the two answers with the date they
+were read.
+
+**What was built anyway:** the whole gate. `services/api/src/llm/provider-policy.ts`
+now decides, in one place, which company's server may receive which class of
+data. Until this round the provider was chosen by **whichever API key happened to
+be set in the environment** — a deployment variable was making a confidentiality
+decision.
+
+**What stays refused without it:** every provider currently permits
+`PUBLIC_LEGAL_TEXT` and nothing else, because their `contractStatus` reads
+`UNVERIFIED`. That is the module working, not a gap in it. A private payload
+makes **zero outbound requests** — asserted with a counting fetch, so the test
+proves the network was never touched rather than that a refusal came back
+afterwards.
+
+**Why it is not mine:** `CLAUDE.md` forbids inventing a contract term as firmly
+as a section number. A confidently wrong "30 days, no training" in a policy file
+is worse than a blank, because it is the sentence somebody quotes to a client.
+
+**Where it plugs in:** `PROVIDER_POLICY` in that file. Three fields per provider
+— `retention`, `trainingUse`, `contractStatus`. Changing status to `RECORDED`
+without filling the other two fails `policyIncoherences()`, which is deliberate.
+
+**Note this is separate from OD-6.** The countersigned DPA is about Anthropic and
+sensitive traffic. This is about the two vendors nobody has a document for at all.
+
+---
+
+## FQ-PREMIUM-MODEL · Recurring subscription, one-off Hearing Pack credits, or both — the server supports either and cannot choose · LCC, 23 Aug 2026
+
+**What is needed:** the revenue model, and only that. Not prices, not plan names.
+
+**What was built anyway:** a capability-based entitlement spine that supports
+BOTH without a migration (`0077`, `0078`, applied).
+
+- A **recurring grant** and a **credit balance** answer the same question at the
+  same call site: *may this user do this thing right now.*
+- **No `PRO` boolean anywhere.** A boolean can express a subscription and cannot
+  express a Hearing Pack bought for one hearing, and the migration from one to
+  the other happens after money is already flowing.
+- The credit ledger is append-only, and the invariant **PURCHASE → ISSUED ONCE →
+  REDEMPTION ATOMIC → JOB CREATED ONCE** is three unique indexes rather than
+  three careful code paths. Proved: two concurrent redemptions of one credit
+  spend exactly one.
+
+**What stays broken without it:** nothing breaks. Every premium route is behind a
+`platform_config` flag that **defaults OFF** and answers 404 with no flag row at
+all. The spine is inert until a model is chosen and a flag is flipped.
+
+**What is explicitly NOT built:** no payment provider is configured, no webhook
+route is mounted, no secret exists, and nothing here can charge anybody.
+
+---
+
+## FQ-BILLING-PROVIDER · A billing provider and its signing secret, when the model is chosen · LCC, 23 Aug 2026
+
+**What is needed:** the provider (RevenueCat, store receipts, something else) and
+its webhook signing secret.
+
+**What was built anyway:** `services/api/src/entitlements/webhook.ts` — signature
+verification, idempotency, ordering, replay protection, unknown-user handling,
+cross-platform mapping, and an audit trail, all provider-neutral.
+
+**How it refuses without the secret:** `verifySignature` returns a refusal when
+no secret is configured. **There is deliberately no development bypass** — the
+single most common way this endpoint goes wrong is `if (!secret) return ok`,
+written for local development, shipped, and then the endpoint grants
+entitlements to anyone who posts to it. A test asserts the refusal.
+
+**One design decision worth a founder line:** a **forged** event is STORED with
+`signature_valid = false` and never acted on, rather than discarded. Discarding
+is tidier and throws away the only evidence that somebody is sending us forged
+billing traffic. What is **not** stored is the payload — only its sha256 — because
+a provider body routinely carries an email and a device id.
+
+---
+
+## FQ-LOGOUT-TOKEN-WINDOW · After logout, an already-issued access token stays valid for up to 15 minutes · LCC, 23 Aug 2026, from NEW3's audit
+
+**What is needed:** a product judgement on whether 15 minutes is acceptable.
+
+**The fact,** found by NEW3 in an independent audit (bus 1043) and not disputed:
+logout revokes the refresh-token family immediately, so no NEW access token can
+be minted. An access token **already in the client's memory** remains valid until
+its natural expiry, up to 15 minutes.
+
+**Why it is a judgement and not a defect:** it is the standard trade-off of
+stateless access tokens, and the alternative — a revocation check on every
+request — puts a database read in front of every authenticated call. The
+question is not technical. It is: *an advocate hands their unlocked phone to a
+junior, or to opposing counsel's clerk, and taps logout. Is a 15-minute window
+acceptable?*
+
+**What would close it:** either "yes, 15 minutes is fine" recorded as a decision,
+or a shorter access-token lifetime, or a denylist checked per request. All three
+are cheap; choosing between them is not mine.
+
+---
+
+## FQ-STAGING-CORPUS-SIZE · Is full judgment text served from Postgres, or from object storage? · LCC, 23 Aug 2026
+
+**What is needed:** one product/cost decision that has to come BEFORE any machine
+is chosen.
+
+**The measurement, from the live database today:**
+
+```
+total database            291 GB
+judgments                 151 GB   \
+judgment_paragraphs        92 GB   / 83% of the total, and REBUILDABLE
+curated backup pack      1.53 GB   (proved restorable, 820.7 s)
+```
+
+**Why it decides the machine.** If full text stays in Postgres, staging is sized
+against ~291 GB. If Postgres holds metadata and vectors while full text moves to
+object storage, it is sized against ~40 GB. Those are different machine classes,
+different prices, and different comparisons — and the Railway account's **$75
+hard cap** is what makes it the load-bearing decision rather than a preference.
+
+**Not mine because** it trades product behaviour (how fast a judgment opens)
+against cost, and both sides of that trade are yours.
+
+---
+
+## FQ-ELIGIBILITY-UNCITED · The search eligibility view refuses 40.09% of the corpus solely because nothing cites it · LCC, 23 Aug 2026, on NEW1's measurement
+
+**Not a request for a decision yet — a flag that one is coming**, because the fix
+crosses two lanes and neither may take it alone.
+
+NEW1 measured (bus 1050, n=40,000 through the DEPLOYED view): **16,035 of 40,000
+documents are unreachable ONLY because they have no inbound citation.** One bit
+flipped, nothing else about the document changed. Decomposed: 15,701 (39.25%) are
+short-and-uncited — the **length** gate — and 334 (0.84%) are refused-class-and-
+uncited. The length gate is **47x** the class gate.
+
+The escape hatch that is supposed to rescue real authorities fires for **11
+documents in 40,000 (0.03%)**, while the refusal it guards catches 40%.
+
+**The conceptual defect matters more than the number:** the view uses "has an
+inbound citation" as a proxy for "is a real authority", and those are different
+claims resting on different evidence. A judgment delivered last month is uncited
+because it is recent, not because it is unimportant.
+
+The view is LCC's file; the class evidence is NEW2's. **Not changed alone.**
+
+---
+
+## FQ-STAGING-REGION · OD-2 says Singapore; the cheapest staging box is in Europe · LCC, 23 August 2026
+
+**What is needed:** a decision, and probably counsel's written residency view
+with it.
+
+**The conflict, stated plainly.** `docs/OPEN_DECISIONS.md` OD-2 recorded your
+DPDP residency position as **Singapore** — Railway's nearest region to India —
+with a migration path before the **13 May 2027** compliance deadline. NEW3's
+staging package (`docs/ops/STAGING_PACKAGE_PROPOSAL_2026.md`) recommends a
+Hetzner dedicated box, and **Hetzner has no Singapore or India region at all**;
+its options are Germany/Finland or the United States.
+
+So this is not a hosting swap inside OD-2's resolved position. It is a different
+region from the one your recorded position names.
+
+**Why neither lane may decide it.** It is an OPEN_DECISION, and the rule is that
+nobody resolves one alone. It also turns on a legal view — whether EU hosting is
+acceptable under DPDP for this data — which is counsel's, not an engineer's.
+
+**What was built anyway.** Everything except the provisioning: NEW3's full
+package (provider, machine class, storage, DNS, secrets, backup, migration,
+cost) and LCC's measured server-side inputs
+(`docs/ops/lcc/STAGING_DECISION_PACKAGE.md`). The day the region is settled,
+this is an execution decision.
+
+**What stays broken without it.** Nothing today — we are local-first and nothing
+is provisioned. It blocks public serving, and therefore every launch date.
+
+---
+
+## FQ-INDIA-RTT · One timed request from an Indian connection, which no agent can make · LCC, 23 August 2026
+
+**What is needed:** somebody physically on an Indian internet connection running
+one timed request against a candidate region, and telling us the number.
+
+**Why this is not an engineering task.** Round-trip time from India cannot be
+measured from a machine that is not in India. Every latency figure in a hosting
+document written without one is somebody's memory of a different product — and
+once written down it gets quoted back as though it were measured. Both staging
+documents therefore report India RTT as **UNMEASURED** rather than estimating it.
+
+**What it decides.** Whether Singapore's latency is actually acceptable to an
+advocate standing outside a courtroom, and how much worse an EU region would be.
+That is the trade in `FQ-STAGING-REGION`, and right now one side of it is a
+blank.
+
+**What stays broken without it.** Nothing breaks; a decision is made on feel
+instead of evidence. That is survivable and it is not how the rest of this
+project has been run.
+
+**Cost:** none. It is one command from a phone or laptop in India.

@@ -540,6 +540,20 @@
       "when": 1786443300000,
       "tag": "0076_search_event_status",
       "breakpoints": true
+    },
+    {
+      "idx": 77,
+      "version": "7",
+      "when": 1786443400000,
+      "tag": "0077_entitlement_spine",
+      "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "7",
+      "when": 1786443500000,
+      "tag": "0078_credit_direction_fix",
+      "breakpoints": true
     }
   ]
 }

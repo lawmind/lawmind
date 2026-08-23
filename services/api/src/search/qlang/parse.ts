@@ -338,7 +338,6 @@ class Parser {
    */
   private absorbCitationWords(first: Token): Token | null {
     let value = first.value;
-    let taken = 0;
     let bestValue: string | null = null;
     let bestTaken = 0;
 
@@ -346,10 +345,12 @@ class Parser {
       const nxt = this.tokens[this.pos + k];
       if (!nxt || nxt.kind !== 'word') break;
       value = `${value} ${nxt.value}`;
-      taken = k + 1;
+      // `k + 1` directly rather than through a `taken` variable whose initial
+      // value was never read — the linter's no-useless-assignment, and the
+      // shorter form makes the loop-count-to-consumed-token relation obvious.
       if (extractCitations(value).some((cn) => cn.raw.trim() === value.trim())) {
         bestValue = value;
-        bestTaken = taken;
+        bestTaken = k + 1;
       }
     }
 

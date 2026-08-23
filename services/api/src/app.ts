@@ -99,6 +99,14 @@ import {
   removeDocumentCitation,
   listDocuments,
 } from './documents/route.ts';
+import {
+  cancelPremiumJob,
+  getEntitlements,
+  getPremiumJob,
+  getPremiumPreview,
+  postPremiumJob,
+  startJobBody,
+} from './premium/route.ts';
 import { listDocumentTypes } from './documents/types.ts';
 import { fail, ok } from './envelope.ts';
 import {
@@ -675,6 +683,35 @@ export function createApp(deps: AppDeps) {
     // enforcement. A hand-edited citation is the hallucination failure arriving
     // through a different door. Changing an authority goes through the citations
     // route, which takes a judgmentId and never a string.
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * PREMIUM — PROVISIONAL, ADDITIVE, AND OFF BY DEFAULT
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * NEW3 owns the paywall; the server owns whether it is TRUE. Every route
+     * here is behind a `platform_config` flag that defaults OFF, so mounting
+     * them changes nothing for any existing client until somebody deliberately
+     * turns one on — a client carrying a paywall screen must never imply the
+     * backend will serve it. `premium/gate.ts`.
+     *
+     * `GET /me/entitlements` is the ONLY premium truth a client may read. A
+     * premium flag sent BY a client is a fact about what an app believes, and an
+     * app can believe things because it is stale, jailbroken, or replaying a
+     * receipt.
+     */
+    app.get('/me/entitlements', async (c) => getEntitlements(c, sql, await userFor(c)));
+    app.get('/matters/:id/premium-preview', async (c) =>
+      getPremiumPreview(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.post('/premium/jobs', validate('json', startJobBody), async (c) =>
+      postPremiumJob(c, sql, await userFor(c), c.req.valid('json')),
+    );
+    app.get('/premium/jobs/:id', async (c) =>
+      getPremiumJob(c, sql, c.req.param('id'), await userFor(c)),
+    );
+    app.post('/premium/jobs/:id/cancel', async (c) =>
+      cancelPremiumJob(c, sql, c.req.param('id'), await userFor(c)),
+    );
     app.get('/documents/types', (c) => listDocumentTypes(c));
     // The advocate's drafts, newest first. ADDITIVE — the Drafts tab could not
     // list anything because GET /documents/:id needs an id the client had no

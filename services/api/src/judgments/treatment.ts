@@ -24,6 +24,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
+import { dateQualityFor, isDateContradicted } from './date-quality.ts';
 
 export const treatmentQuery = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
@@ -97,6 +98,27 @@ export async function getTreatment(
   const page = hasMore ? rows.slice(0, q.limit) : rows;
   const total = Object.values(byRelationship).reduce((t, n) => t + n, 0);
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE ORDER OF THIS LIST IS ITSELF A CLAIM
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Within a relationship band the sort is `judgment_date DESC`, and what that
+   * renders to an advocate is *this is the latest word on this authority*. NEW2
+   * measured 4.68% of the corpus carrying a date some independent witness
+   * contradicts, so on those rows the ordering rests on a date we have reason to
+   * doubt.
+   *
+   * The response does NOT drop or reorder them — the problem is derived legal
+   * certainty, not discoverability, and a treatment list that quietly omits a
+   * doubting bench is a far worse defect than one shown in the wrong position.
+   * What it does is carry the state per row and say, once, whether the ordering
+   * claim survives: `datesContradicted > 0` means a client must not present this
+   * page as a reliable chronology. `date-quality.ts`.
+   */
+  const dateStates = await dateQualityFor(sql, page.map((r) => r.judgment_id));
+  const datesContradicted = page.filter((r) => isDateContradicted(dateStates.get(r.judgment_id))).length;
+
   return ok(c, {
     judgmentId: id,
     asOf,
@@ -121,6 +143,8 @@ export async function getTreatment(
       neutralCitation: r.neutral_citation,
       court: r.court,
       judgmentDate: r.judgment_date,
+      /** Four values, `null` = nothing has looked. `judgmentDate` is never rewritten. */
+      dateQuality: dateStates.get(r.judgment_id) ?? null,
       relationship: r.relationship,
       // The phrase the court printed. Present only for a real treatment, so any
       // row claiming one can be audited back to its own text.
@@ -134,6 +158,15 @@ export async function getTreatment(
     total,
     returned: page.length,
     truncated: hasMore,
+    /**
+     * How many rows ON THIS PAGE carry a date an independent witness
+     * contradicts. Counted rather than acted on: the server states the fact and
+     * writes no copy (`chronologyReliable` below is the same fact as a boolean,
+     * for a client that needs one bit).
+     */
+    datesContradicted,
+    /** `false` means: do not present this page's order as a chronology. */
+    chronologyReliable: datesContradicted === 0,
     nextCursor: hasMore ? String(offset + q.limit) : null,
   });
 }
@@ -209,6 +242,8 @@ export async function getGraph(
           FROM judgments WHERE id = ANY(${otherIds})
         `;
 
+  const nodeDateStates = await dateQualityFor(sql, nodes.map((n) => n.id));
+
   return ok(c, {
     rootId: id,
     asOf,
@@ -218,6 +253,8 @@ export async function getGraph(
       neutralCitation: n.neutral_citation,
       court: n.court,
       judgmentDate: n.judgment_date,
+      /** Same four values as the treatment list. Additive; nothing is hidden. */
+      dateQuality: nodeDateStates.get(n.id) ?? null,
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
       // Read live on every request. A graph node showing a stale overruled status

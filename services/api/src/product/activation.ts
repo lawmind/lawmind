@@ -1,0 +1,132 @@
+/**
+ * The funnel that comes BEFORE any paywall is worth tuning.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THE SERVER OWNS THIS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Premium conversion measured on users who never had a successful search is a
+ * measurement of nothing. If 60% of advocates never reach a first successful
+ * search, no paywall copy in the world moves the number, and every hour spent on
+ * the paywall is an hour spent on the wrong screen.
+ *
+ * The steps are recorded server-side because the server is the only place that
+ * knows whether a search actually SUCCEEDED. A client can record "user tapped
+ * search"; only the server knows the request returned results, was not degraded,
+ * and was not a 500 — and `search_events` already found 50 searches recorded as
+ * `result_count = 0` that were in fact server errors. A funnel built on client
+ * taps would have counted every one of them as activation.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * FIRST OCCURRENCE ONLY, AND NO IDENTITY BEYOND THE USER ID
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The primary key is `(user_id, step)`, so a twentieth search does not look like
+ * activation happening twenty times. `ON CONFLICT DO NOTHING` means recording is
+ * cheap, unconditional and safe to call from a hot path.
+ *
+ * There is no query text, no device id, no session, no screen sequence. This is
+ * a funnel, not a session recording, and the difference matters for the same
+ * reason `search_events` has no query-text column: what an advocate searches for
+ * is a fact about their client's case.
+ */
+import type { Sql } from 'postgres';
+
+/**
+ * The ordered funnel. Order is meaningful — `dropOff` reports between adjacent
+ * steps — and the values are duplicated in the `0077` CHECK constraint so a
+ * typo is a failed write rather than a step nobody counts.
+ */
+export const ACTIVATION_STEPS = [
+  'onboarded',
+  'first_successful_search',
+  'opened_primary_authority',
+  'saved_authority',
+  'created_matter',
+  'experienced_matter_value',
+  'premium_intent',
+] as const;
+
+export type ActivationStep = (typeof ACTIVATION_STEPS)[number];
+
+/**
+ * Record a step, at most once per user.
+ *
+ * Deliberately swallows nothing and returns nothing useful: a funnel write that
+ * failed must not take down the request it was measuring, but it also must not
+ * be silently discarded, so the error surfaces to the caller's logger rather
+ * than being caught here where there is no context to log with.
+ */
+export async function recordStep(
+  sql: Sql,
+  userId: string,
+  step: ActivationStep,
+): Promise<void> {
+  await sql`
+    INSERT INTO activation_events (user_id, step) VALUES (${userId}, ${step})
+    ON CONFLICT (user_id, step) DO NOTHING`;
+}
+
+export type FunnelRow = {
+  readonly step: ActivationStep;
+  readonly users: number;
+  /** Share of the users who reached the FIRST step. Null on the first step itself. */
+  readonly ofOnboarded: number | null;
+  /** Share of the users who reached the PREVIOUS step — where the drop actually is. */
+  readonly ofPrevious: number | null;
+};
+
+/**
+ * The funnel, with both denominators.
+ *
+ * Two ratios, not one, because they answer different questions and a single
+ * number hides the one that matters. `ofOnboarded` says how much of the top of
+ * the funnel survives to here — the headline. `ofPrevious` says where the floor
+ * gives way, which is the only one that tells you what to fix: a step at 80% of
+ * onboarded and 40% of the previous step is where users are being lost, and the
+ * headline number makes it look healthy.
+ */
+export async function funnel(sql: Sql, since?: Date): Promise<FunnelRow[]> {
+  const rows = await sql<{ step: string; users: string }[]>`
+    SELECT step, count(*)::text AS users FROM activation_events
+     ${since ? sql`WHERE occurred_at >= ${since}` : sql``}
+     GROUP BY step`;
+  const counts = new Map(rows.map((r) => [r.step, Number(r.users)]));
+  const top = counts.get(ACTIVATION_STEPS[0]) ?? 0;
+
+  return ACTIVATION_STEPS.map((step, i) => {
+    const users = counts.get(step) ?? 0;
+    const prev = i === 0 ? null : (counts.get(ACTIVATION_STEPS[i - 1]!) ?? 0);
+    return {
+      step,
+      users,
+      // Zero denominators return null rather than 0 or NaN — "no data" and "0%"
+      // are different facts and only one of them means something is broken.
+      ofOnboarded: i === 0 || top === 0 ? null : users / top,
+      ofPrevious: prev === null || prev === 0 ? null : users / prev,
+    };
+  });
+}
+
+/**
+ * The single number worth putting on a board: the largest fall between two
+ * adjacent steps, and where it happens.
+ *
+ * Returns null when there is not enough data to name one, rather than reporting
+ * the first step by default — a drop-off report that always names something is a
+ * report that names noise on an empty database.
+ */
+export async function worstDropOff(
+  sql: Sql,
+): Promise<{ from: ActivationStep; to: ActivationStep; retained: number } | null> {
+  const rows = await funnel(sql);
+  let worst: { from: ActivationStep; to: ActivationStep; retained: number } | null = null;
+  for (let i = 1; i < rows.length; i += 1) {
+    const retained = rows[i]!.ofPrevious;
+    if (retained === null) continue;
+    if (worst === null || retained < worst.retained) {
+      worst = { from: ACTIVATION_STEPS[i - 1]!, to: ACTIVATION_STEPS[i]!, retained };
+    }
+  }
+  return worst;
+}

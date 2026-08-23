@@ -31,6 +31,7 @@ import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { dateQualityOf } from '../judgments/date-quality.ts';
 import { toWireSourceUnsafe } from './source-strength.ts';
 
 /** What a tier did. Never collapsed — see the module note. */
@@ -102,6 +103,9 @@ export async function getCitationCheck(c: Context, sql: Sql, id: string): Promis
   if (!r) return fail(c, 'NOT_FOUND', 'no citation check with that id', 404);
 
   const one = tierOne(r);
+  const dateQuality = r.judgment_id_matched
+    ? await dateQualityOf(sql, r.judgment_id_matched)
+    : null;
 
   return ok(c, {
     citationCheckId: r.id,
@@ -128,6 +132,15 @@ export async function getCitationCheck(c: Context, sql: Sql, id: string): Promis
           neutralCitation: r.neutral_citation,
           court: r.court,
           judgmentDate: r.judgment_date,
+          /**
+           * NEW2's date state for the MATCHED judgment. A citation check is the
+           * surface an advocate reaches when they doubt a citation, so the one
+           * thing it must not do is present a contradicted date as sound. Four
+           * values, `null` = nothing has looked; the date itself is unchanged
+           * and the check is not failed by it — a doubted date is a data-quality
+           * fact, not a verification failure. `judgments/date-quality.ts`.
+           */
+          dateQuality,
         }
       : null,
 

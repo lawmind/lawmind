@@ -210,6 +210,30 @@ endpoint.
 | `POST /admin/data-requests/:id/complete` | BUILT |
 | `POST /admin/data-requests/:id/refuse` | BUILT |
 | `GET /admin/privacy/coverage` | SPECCED |
+| `GET /admin/metrics` | BUILT |
+| `POST /admin/data-requests/:id/erase` | BUILT |
+
+**Data requests** — DPDP export/correction/erasure. Live since before 23 Aug and
+absent from this table until then; the section below documented the shape, the
+table did not carry the rows.
+
+| endpoint | status |
+|---|---|
+| `POST /me/data-requests` | BUILT |
+| `GET /me/data-requests` | BUILT |
+
+**Entitlements and premium** — PROVISIONAL. Every one is BUILT *and* behind a
+`platform_config` flag that defaults OFF, so a caller with no flag set gets
+`404 NOT_ENABLED`. BUILT here means the route is mounted and the code path is
+real, never that the surface is on.
+
+| endpoint | status |
+|---|---|
+| `GET /me/entitlements` | BUILT |
+| `GET /matters/:id/premium-preview` | BUILT |
+| `POST /premium/jobs` | BUILT |
+| `GET /premium/jobs/:id` | BUILT |
+| `POST /premium/jobs/:id/cancel` | BUILT |
 
 <!-- END:status -->
 
@@ -1450,6 +1474,43 @@ let a notice change silently re-authorise everyone, or silently revoke everyone.
 never a coerced write — storing whatever string arrives would record agreement to
 a notice nobody can now produce.
 
+### Data requests — DPDP export/correction/erasure, undocumented until 23 Aug 2026
+
+**The route existed before this entry did.** `services/api/src/auth/
+data-requests.ts` and its mount in `app.ts:318-321` predate this section — the
+server side was built and never written into this contract, and the mobile
+client had no method calling it at all until `DeleteAccountScreen.tsx` (NEW3,
+23 Aug 2026). Recorded here to close that drift, not because anything changed
+server-side.
+
+```
+POST /me/data-requests  { kind: 'export'|'correction'|'erasure', note? }
+                         → { request, alreadyOpen }
+GET  /me/data-requests  → { requests: DataRequest[] }
+```
+
+```
+DataRequest = { id, kind, status, dueAt, completedAt, refusalReason, createdAt }
+status: 'received' | 'in_progress' | 'completed' | 'refused'
+```
+
+**Requesting is not executing.** `POST` creates a row; nothing on this surface
+deletes anything. Erasure runs only from the admin side
+(`POST /admin/data-requests/:id/erase`, `erasure.ts`'s `eraseUser`) — a
+mis-tapped button on a phone cannot destroy an account by itself. Client copy
+must say "request received", never "deleted" or "verification failed".
+
+**One open request per `kind`.** A second `POST` with the same `kind` while
+one is `received`/`in_progress` returns the existing row with
+`alreadyOpen: true` rather than creating a duplicate — not a rate limit, an
+idempotency guarantee so a repeated tap cannot create two audit trails or two
+chances to erase an account twice.
+
+**`dueAt` is our service commitment, not a statutory deadline.** `RESPONSE_DAYS`
+(`DATA_REQUEST_RESPONSE_DAYS` env, default 30) is Lawmind's own number — DPDP
+Rules do not fix one in this repository's counsel record. Never described in
+copy as a legal deadline. `docs/FOUNDER_QUEUE.md`.
+
 ### Citator alerts — PD-5, PD-6
 ```
 GET   /alerts            ?since   → { alerts, unreadCount }
@@ -1585,3 +1646,105 @@ GET  /admin/privacy/coverage            → { pseudonymisationCoverage, residual
 ```
 Coverage is **measured, not asserted**. We never claim complete PII removal —
 `PRIVACY_PII.md`.
+
+---
+
+## Date quality — LCC owns · ADDITIVE 23 August 2026
+
+NEW2's `judgment_date_quality` (migration `0072`, method `date-quality-v1.1`)
+had **zero consumers** in the API until 22 Aug, when `as-at.ts` became the
+first. It now reaches the wire on every surface where a judgment date supports
+a legal proposition.
+
+**Four values, never three.**
+
+| value | meaning |
+| --- | --- |
+| `"DATE_VERIFIED"` | the document itself prints the stored date |
+| `"DATE_SUSPECT"` | an independent witness **contradicts** the stored date |
+| `"DATE_UNKNOWN"` | we looked and found no independent witness |
+| `null` | **NOT_ANALYSED** — nothing has ever looked |
+
+`DATE_UNKNOWN` and `null` are a measurement with a null result and the absence
+of a measurement. **They must never be merged.** One is a quality fact, the
+other a coverage fact, and collapsing them hides each inside the other.
+
+```
+GET /judgments/:id              → { ..., dateQuality }
+GET /judgments/:id/treatment    → { ..., treatments: [{ ..., dateQuality }],
+                                    datesContradicted, chronologyReliable }
+GET /judgments/:id/graph        → { ..., nodes: [{ ..., dateQuality }] }
+GET /citations/:id              → { ..., judgment: { ..., dateQuality } }
+GET /judgments/:id/authorities  → dateQuality: { cited, overruler, subject }
+                                  and standingWhenRelied may be "date_unreliable"
+```
+
+**A suspect date never removes a judgment from anything.** The problem is
+derived legal certainty, not discoverability — 4.68% of the corpus reads
+SUSPECT and hiding that population would be a far larger defect. What it stops
+is a CLAIM: `chronologyReliable: false` means the page's ordering may not be
+presented as a chronology, and `standingWhenRelied: "date_unreliable"` means the
+subtraction between two dates was refused rather than made on a doubted one.
+
+`judgments.judgment_date` is never rewritten by any of this.
+
+---
+
+## Entitlements and premium — LCC owns server truth · PROVISIONAL, ADDITIVE 23 August 2026
+
+**Every route below is behind a `platform_config` feature flag that defaults
+OFF.** With no flag row, each answers `404 NOT_ENABLED`. A client carrying a
+paywall screen must never imply the backend will serve it — a shipped build
+cannot be taken back, so whether the paywall WORKS is a server fact.
+
+Flags: `premium_entitlements` · `premium_preview` · `premium_generation_jobs` ·
+`premium_credits`.
+
+```
+GET  /me/entitlements                   → { capabilities[], credits[], catalogue[], asOf }
+GET  /matters/:id/premium-preview       → { costClass: "cheap", ... }
+POST /premium/jobs                      { capability, idempotencyKey, matterId?, params }
+                                        → 201 { job, created: true } | 200 { job, created: false }
+GET  /premium/jobs/:id                  → { job }
+POST /premium/jobs/:id/cancel           → { cancelled }
+```
+
+**`GET /me/entitlements` is the ONLY premium truth a client may use.** A premium
+flag sent BY a client is a fact about what an app believes, and an app can
+believe things because it is stale, jailbroken, or replaying a receipt.
+
+**Capabilities, not a `PRO` boolean.** `matter_automation`, `hearing_pack`,
+`counterargument_analysis`, `continuous_monitoring`, `premium_generation` — every
+one marked `status: "PROVISIONAL"` on the wire until NEW3's product spec confirms
+it. No plan names and no prices appear anywhere in the server; PD-13's
+Practice/Chamber/Expert are untouched. A capability is a verb; a plan is a
+commercial bundle of verbs, and the bundle is the product's.
+
+`adverse_treatment_visibility` is `kind: "SAFETY_CRITICAL"` and
+`requireCapability` **refuses to gate it in code**. Seeing that an authority has
+been overruled is professional risk, not a feature.
+
+`idempotencyKey` is REQUIRED on `POST /premium/jobs`. A second tap returns the
+SAME job with `created: false` and HTTP **200**; a real create is **201**. The
+server additionally fingerprints the parameters, so a reinstalled app generating
+fresh keys cannot re-buy work already in flight. `429` means a concurrency cap
+was hit — refused, never silently queued. `402` means the capability is not held.
+
+### The preview is cheap by construction
+
+`costClass: "cheap"` is on the wire so `PREMIUM_GROWTH_SPEC_V1` §6 is a query
+rather than an assertion. A test asserts the endpoint writes **no `llm_calls`
+row**.
+
+```
+authorityCount · eventCount · adverseAuthorities · nextHearingDate
+unresolvedFilings · stanceNotComputed: true · notComputed[] · asOf
+```
+
+`adverseAuthorities` is a **live** `overruled_status` read and is returned to
+everyone, paid or not.
+
+**`stanceNotComputed` is a correction to SPEC_V1 §6, not an omission.** The spec
+lists supporting/contrary authority counts as cheap row counts;
+`matter_authorities` has **no stance column**, so the split is synthesis, not
+counting. Returning a fabricated split would be invented scarcity.

@@ -98,6 +98,13 @@ export type PropagationCandidate = {
   citingJudgmentId: string;
   citingTitle: string;
   citingDate: string;
+  /**
+   * `DATE_VERIFIED` | `DATE_SUSPECT` | `DATE_UNKNOWN` | `null` (nothing looked).
+   * `DATE_SUSPECT` means this provenance date is contradicted by an independent
+   * witness — the candidate is still applied, and an operator reading the dry run
+   * can see that the "overruled on" date it will publish is doubted.
+   */
+  citingDateState: string | null;
   evidence: string | null;
   /** Read from the citing judgment's own words. Null when nothing was legible. */
   overruledParas: number[] | null;
@@ -123,6 +130,7 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
       citing_judgment_id: string;
       citing_title: string;
       citing_date: string;
+      citing_date_state: string | null;
       evidence: string | null;
       char_offset: number;
       citing_full_text: string;
@@ -135,12 +143,16 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
            jc.citing_judgment_id,
            citing.case_title              AS citing_title,
            citing.judgment_date::text     AS citing_date,
+           cq.state                       AS citing_date_state,
            jc.evidence,
            jc.char_offset,
            citing.full_text               AS citing_full_text
       FROM judgment_citations jc
       JOIN judgments cited  ON cited.id  = jc.cited_judgment_id
       JOIN judgments citing ON citing.id = jc.citing_judgment_id
+      -- NEW2's date state for the CITING judgment. LEFT because an absent row
+      -- means nothing has looked, which must not remove a candidate.
+      LEFT JOIN judgment_date_quality cq ON cq.judgment_id = citing.id
      WHERE jc.cited_judgment_id IS NOT NULL
        AND jc.relationship IN ('overruled', 'overruled_in_part', 'doubted')
        -- Never downgrade or re-decide. Only judgments the corpus still calls
@@ -153,6 +165,22 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
                 WHEN 'overruled_in_part' THEN 2
                 ELSE 3
               END,
+              -- DISTINCT ON keeps the FIRST row, so this key decides which citing
+              -- judgment is shown to the advocate as the provenance of an
+              -- overruling: "set aside by X on <date>". "The latest court to say
+              -- it" is a chronology claim, and NEW2 measured 4.68% of the corpus
+              -- carrying a date an independent witness CONTRADICTS. A candidate
+              -- whose citing date is contradicted is therefore ranked BELOW an
+              -- equally strong one whose date is not, rather than winning on a
+              -- date we have reason to doubt.
+              --
+              -- It is a demotion, never an exclusion: where every candidate for a
+              -- treatment is suspect, the strongest one still applies and the
+              -- state travels with it as citingDateState. Silence does not
+              -- demote -- DATE_UNKNOWN and a NULL row rank with DATE_VERIFIED,
+              -- because we looked and found nothing, or never looked, and neither
+              -- is a contradiction.
+              (cq.state IS NOT DISTINCT FROM 'DATE_SUSPECT') ASC,
               citing.judgment_date DESC
   `;
 
@@ -191,6 +219,7 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
       citingJudgmentId: r.citing_judgment_id,
       citingTitle: r.citing_title,
       citingDate: r.citing_date,
+      citingDateState: r.citing_date_state,
       evidence: finding === null ? r.evidence : `${r.evidence ?? ''} · ${finding.evidence}`.trim(),
       overruledParas: finding?.paragraphs ?? null,
       toStatus,

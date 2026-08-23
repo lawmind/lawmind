@@ -22,6 +22,7 @@ import {
   type OverruledStatus,
 } from './precedential-effect.ts';
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
+import { dateQualityOf } from './date-quality.ts';
 
 export const judgmentParams = z.object({ id: z.string().uuid() });
 
@@ -104,6 +105,18 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
   // time. An offline surface renders the status it last read WITH this date.
   const asOf = new Date().toISOString();
 
+  /**
+   * NEW2's `judgment_date_quality`, on the surface where an advocate reads the
+   * date and copies it into a filing.
+   *
+   * Additive and purely a STATE — this route makes no chronology claim, so
+   * nothing here is refused and nothing is hidden. What it stops is the client
+   * having to treat every printed date as equally sound when 4.68% of them are
+   * contradicted by an independent witness. Four values, `null` meaning nothing
+   * has looked, never collapsed into three. `date-quality.ts`.
+   */
+  const dateQuality = await dateQualityOf(sql, row.id);
+
   const segmented = segmentParagraphs(row.full_text);
   // `citesJudgmentId` — REB §14 / V2 §39.3, RCC bus 0028/0032. Resolved through
   // the same three-source match `cite:` search uses (`citations.ts`), never
@@ -145,6 +158,12 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
      */
     bench: row.bench,
     judgmentDate: row.judgment_date,
+    /**
+     * `DATE_VERIFIED` | `DATE_SUSPECT` | `DATE_UNKNOWN` | `null` (nothing has
+     * looked). The stored `judgmentDate` above is NEVER rewritten by this —
+     * the state is published beside it.
+     */
+    dateQuality,
     caseNumber: row.case_number,
     caseType: row.case_type,
     language: row.language,

@@ -12802,3 +12802,256 @@ page — NEW1: *"or the second copy simply arrives on page 2."*
   NEW2; I judged only my own row, verified two ways.
 - The release-pipeline proof covers export → restore → checksums on THIS
   Postgres. Linux, index rebuild timings and search-equivalence are not proved.
+
+---
+
+## NEW3 · 23 Aug 2026 — deletion client shipped, push wired end-to-end (device-unverified), analytics contract built scrubber-first, tenant-isolation audit CLEAN, premium research + spec delivered, staging package proposed
+
+**Continuation of the 22 Aug NEW3 product/mobile/premium/release round**
+(P0–P3 shipped that session; P4–P10 queued). This session picked up the
+queue under a much larger founder mandate (P0–P26 "premium growth" +
+9 binding orchestrator corrections) and completed the bounded, verifiable
+subset below rather than attempt shallow passes across all 26 sections —
+same discipline the 22 Aug session itself named.
+
+### Shipped and verified (tsc clean, 604/604 mobile tests — 1 pre-existing unrelated flake in `CommandPalette.test.tsx`, confirmed passes in isolation, a timeout under full-suite CPU contention)
+
+- **Account deletion client (old-queue P4).** `POST/GET /me/data-requests`
+  (`services/api/src/auth/data-requests.ts`) existed, was live, and had
+  **zero** client caller anywhere and **zero** entry in `API_CONTRACTS.md` —
+  `SettingsScreen.tsx`'s own comment claiming no advocate-facing endpoint
+  existed was stale. Built `DeleteAccountScreen.tsx`: type-your-email
+  confirmation, consequence summary drawn from `eraseUser`'s own doc comment
+  (matters/drafts/searches/alerts/citation-copies deleted outright,
+  audit-ledger/shared rows anonymised not deleted, R2 objects disclosed as a
+  residual the API holds no credential for), pending/in-progress/refused
+  states, copy that only ever says "request received" — never "deleted,"
+  matching `data-requests.ts`'s own "requesting is not executing" rule. Added
+  the missing `API_CONTRACTS.md` §Data requests entry. 4 new tests.
+- **Tenant-isolation security audit, read-only, no code touched.** Full pass
+  against matters/matter_shares/briefings/documents/auth/admin/sessions/
+  webhooks/secrets, per the founder's "admin 403 does not prove tenant
+  isolation" instruction. **CLEAN across all 9 areas**, file:line evidence
+  each. One caveat (a signed-out access JWT stays valid ~15min until natural
+  expiry — stated tradeoff, not a defect) and one forward-looking note (no
+  document/OCR download route exists yet at all — nothing to audit, flagged
+  for whenever one is built). Relayed to LCC, bus 1043.
+- **Push notifications wired end-to-end, delivery UNVERIFIED (no device, no
+  EAS project — old-queue P5).** Installed `expo-notifications`/`expo-device`
+  (were not dependencies before). `src/push/register.ts`: permission
+  request, Android channel, three distinct honest failure reasons
+  (`NOT_A_DEVICE` / `PERMISSION_DENIED` / `NO_PROJECT_CONFIGURED`) rather
+  than one generic error. Wired to fire at the one real trigger:
+  `AlertSettingsScreen.tsx`, when an advocate turns ON "An authority I saved
+  is set aside" — the single alert trigger that is honoured server-side
+  today. **Cannot deliver a single notification without an EAS project** —
+  checked, not assumed (`eas whoami` fails, `eas-cli` isn't installed, no
+  `projectId` anywhere in `app.config.ts`/`eas.json`). Filed
+  `FQ-PUSH-PROJECT`: this is an account gap (`eas login`/`eas init`), not a
+  token I can generate myself. 10 new tests (6 module, 4 screen-wiring).
+- **Analytics event contract + scrubber, built scrubber-first, zero network
+  send (old-queue P8 / new-P12).** `src/analytics/events.ts`: closed,
+  typed event set covering the activation funnel (correction #7),
+  paywall/preview events with a `costClass: 'cheap'|'expensive'` field
+  (correction #3), purchase events, and **first-class churn events**
+  (`subscription_cancelled` with `cancelReason`, `refund`, `billing_failure`)
+  so an experiment cannot report conversion without also being able to
+  report what it cost — correction #4. `scrub.ts`: a second, independent
+  defence — any property that isn't a bounded id/enum-shaped scalar is
+  dropped whole (never partially redacted), so a hurried future event with a
+  free-text field cannot leak a matter note or client name. `track.ts`: an
+  in-memory buffer, `flush()` as the seam a real sink plugs into —
+  deliberately does NOT call any network endpoint, because no
+  `POST /analytics/events` exists on `services/api` yet and inventing one
+  would violate the never-invent-APIs rule. 11 new tests.
+- **Staging package proposal, prepared not deployed**
+  (`docs/ops/STAGING_PACKAGE_PROPOSAL_2026.md`, orchestrator correction #6).
+  Provider/region/machine-class/storage/API/DNS/cost/migration/secrets/
+  backup/rollback/India-latency, all named, nothing provisioned. **Found a
+  real pricing discrepancy** the existing 22 Aug audits didn't catch: their
+  Hetzner AX102 figure (€157/mo) vs. a corroborated current listing
+  (€259/mo, post-June-2026 price rise) — presented as a range, flagged
+  unresolved, not silently adopted either way. **Found a more important
+  region conflict**: the audits' Hetzner recommendation is EU
+  (Falkenstein/Helsinki); `OPEN_DECISIONS.md` OD-2's resolved DPDP position
+  is Singapore (via Railway). A move to Hetzner is a *different* region than
+  the one counsel's position was recorded against — named for the founder,
+  not resolved here.
+- **Premium research + spec** (orchestrator P0/P2/P3/P4/P6/P7).
+  `docs/product/PREMIUM_GROWTH_RESEARCH_2026.md` — Tinder/Hinge/Bumble/Match
+  Group/Duolingo/RevenueCat/Apple/Google, primary sources, each claim tagged
+  VERIFIED/VENDOR CLAIM/UNVERIFIED. `docs/product/PREMIUM_GROWTH_SPEC_V1.md`
+  — structure hypotheses compared (not decided) against the already-settled
+  PD-13 tier names, four "Likes You"-analog wireframes in LawMind's own
+  visual language gated only on real, already-computed data, a cost-control
+  table tying every preview to the new `costClass` analytics field, and an
+  explicit statement that **none of the synthesis features can call a real
+  model on real matter data yet** — sensitive-class routing (OD-6) still
+  needs the countersigned DPA. No price set. No screen built from it.
+
+### Founder-queued this session
+
+- **`FQ-PUSH-PROJECT`** — needs an Expo/EAS account + `eas init`; code is
+  ready and waiting.
+- **Staging region conflict** (Hetzner EU vs. OD-2's Singapore position) and
+  **re-pricing** (€157 vs €259) — both named in
+  `STAGING_PACKAGE_PROPOSAL_2026.md` §11, not filed as separate FQ entries
+  since `FQ-HOSTING` already owns this topic and stays the single entry.
+
+### Queued, not started this session — same discipline as 22 Aug's own queue
+
+P8/10-matter hands-on walkthrough (needs seeded synthetic matters, explicitly
+NOT real advocate data per correction #2), feature-flag infrastructure
+(checked — none exists; a prerequisite for shipping any paywall per
+correction #8, not built this session), store/release bundle-permissions
+audit, accessibility/low-end-device pass (correction #9), and the actual
+premium screens themselves (deliberately not built — `PREMIUM_GROWTH_SPEC_V1`
+is a design pass, not an implementation one, and §7 of that document names
+why the synthesis half can't be wired to a real model yet regardless).
+
+## LCC · 23 Aug 2026 — DATE QUALITY REACHED THE CHRONOLOGY, TENANT ISOLATION WAS NEVER TESTED, AND A DEPLOYMENT VARIABLE WAS CHOOSING WHICH COMPANY SAW OUR DATA
+
+Board: `docs/ai/lcc/LCC_ROUND_TODO.md` §ROUND 2. Every number measured through
+the real Hono app or read off the live database. **LOCAL_CONTENDED throughout** —
+two other agent sessions and the ingest fleet were live on this box for most of
+the round, and one of them was editing `services/api` at the same time.
+
+### 1. The three findings worth remembering
+
+**A deployment variable was making a confidentiality decision.** `llm/route.ts`
+decides which MODEL by data sensitivity and is correct. **Nothing decided which
+COMPANY'S SERVER** — `call.ts` picked between inferx.net, OpenRouter and
+Anthropic by `INFERX_API_KEY ?? OPENROUTER_API_KEY ?? ANTHROPIC_API_KEY`. It has
+leaked nothing, because the sensitive path is refused twice over (no
+countersigned DPA, no pseudonymiser). The shape is what matters: the day the DPA
+lands and the pseudonymiser ships, the provider would still be chosen by whoever
+last exported a variable. `llm/provider-policy.ts` now answers it once, and a
+private payload makes **zero outbound requests** — asserted with a counting
+fetch, not by checking that a refusal came back afterwards.
+
+**"Admin 403 works" proved nothing about tenant isolation, and nobody had
+checked.** Admin auth is one middleware; tenant isolation is the WHERE clause of
+every handler touching a user-owned table. `security/tenant-isolation.test.ts`
+runs **33 cross-tenant attempts with USER_B's real token against USER_A's real
+ids: 0 FAIL, 0 403-instead-of-404.** The interesting design choice is that a
+**400 is INCONCLUSIVE, never a pass** — a probe bounced by the body validator
+never reached the ownership check, and that is precisely how a security battery
+rots into decoration while staying green. Three probes bounced at 400 on the
+first run and were fixed rather than accepted.
+
+**73.2% of unresolved citation edges are empty rows.** Found while measuring the
+new resolver, not while looking for it, which is why it is worth something: it
+independently corroborates NEW2's placeholder finding from the API side.
+Verified by reading raw rows rather than trusting my own refusal gate — five of
+eight sampled rows were `{"citation_text":"","normalised_citation":""}`.
+
+### 2. Date quality now reaches every surface where a date supports a claim
+
+The fifth agent found NEW2's three date states had **zero consumers**;
+`as-at.ts` was the first. Now: `GET /judgments/:id`, `/treatment` (per row plus
+page-level `datesContradicted` and `chronologyReliable`), `/graph` (per node),
+`GET /citations/:id`, and `propagate-treatment.ts`, where a `DATE_SUSPECT`
+citing judgment is **demoted** below an equally strong candidate whose date is
+not contradicted — so "the latest court to say it" is not decided on a date a
+witness contradicts. A demotion, never an exclusion.
+
+**Four values, never three.** `DATE_UNKNOWN` is a measurement with a null
+result; `null` is no measurement. Observed on a real page:
+`["DATE_VERIFIED","DATE_SUSPECT","DATE_VERIFIED","DATE_VERIFIED",null]` →
+`chronologyReliable: false`. Only `DATE_SUSPECT` refuses anything; refusing on
+silence would refuse a quarter of the corpus on the strength of nobody having
+checked, which is the `is_bail_order` NULL failure again.
+
+**Nothing was removed from search.** The problem is derived legal certainty, not
+discoverability.
+
+### 3. The commerce spine, built for the failures that cost money
+
+Migrations `0077` and `0078`. Capabilities rather than a `PRO` boolean, because
+a boolean cannot express a one-off Hearing Pack credit and the migration from
+boolean to capability happens after money is already flowing. No plan name and
+no price appears anywhere in the server.
+
+The concurrency invariants are unique indexes, not checks, and every one is
+proven under `Promise.all` rather than sequentially — a sequential test proves
+nothing about a race:
+
+- two simultaneous deliveries of one purchase → **one** entitlement
+- **two simultaneous redemptions of one credit → exactly one spend**
+- two simultaneous taps → **one** job, one model bill
+- a retry returns the ORIGINAL redemption, never a second
+
+`0078` exists because writing the test found a defect I had shipped an hour
+earlier: `0077`'s direction CHECK listed `refund_reversal` in **both** the
+positive and negative branches, so the one reason whose direction matters most
+had no constraint at all. A refund written as `+1` would have handed a refunded
+customer a free hearing pack. Forward-only fix; `credit_ledger` was empty.
+
+`adverse_treatment_visibility` is `SAFETY_CRITICAL` and `requireCapability`
+**refuses to gate it in code**. A future engineer who paywalls the currentness
+surface hits a failing test rather than a launch.
+
+### 4. SPEC_V1 arrived mid-round, and its §6 has an error
+
+NEW3 delivered `PREMIUM_GROWTH_SPEC_V1`, so P8's wait ended and the preview was
+built against it. `costClass: 'cheap'` is on the wire and **a test asserts the
+preview writes no `llm_calls` row** — §6's rule enforced structurally rather
+than promised.
+
+**§6 classifies supporting/contrary authority counts as `cheap — matter_authorities
+row count, already computed`. There is no stance column anywhere in the
+database.** `matter_authorities` is `(id, matter_id, judgment_id,
+added_by_user_id, citation_check_id, added_at, removed_at, removed_by_user_id)`.
+The split is synthesis, not counting, and it lands in the spec's own `expensive`
+row two lines below. The endpoint returns one total plus
+`stanceNotComputed: true`; inventing the split would be the fabricated scarcity
+§0 forbids. Sent to NEW3 (bus 1053).
+
+### 5. The resolver measures and writes nothing
+
+`citation-resolver-v0.1`, a component, **no `--apply` flag exists**. n=8,000:
+refused 73.2% (all EMPTY) · formed 2,142 · hit 43.28% · unique 40.85% ·
+ambiguous 2.43% (p50 2, p90 38, **max 845**) · not-held 56.72% · 34 ms per 1k ·
+**0 model calls**.
+
+`relationship: 'UNKNOWN'` and `verifiedTreatmentEligible: false` on every
+result. A citation edge says A printed B's citation and nothing about what A did
+with it, so **resolver coverage rising must never be reported as currentness
+coverage rising**. Max ambiguity 845 is a common order — NEW2's 1019/1020
+exactly — and no winner is picked from it.
+
+**false-unique% is deliberately not reported.** It cannot be computed without an
+adjudicated sample, and a plausible number for it is what would let a backfill
+through.
+
+### 6. NEW1's uncited-authority bias reproduces, and I did not fix it
+
+Confirmed against the **deployed** `pg_get_viewdef`, not the migration file: two
+`ca.judgment_id IS NOT NULL` rescue sites, and the `length(full_text) < 2000`
+gate is the one guarding 40.09%. The view is my file and the class evidence is
+NEW2's, so it is filed (`FQ-ELIGIBILITY-UNCITED`) with one counterfactual table
+requested from NEW1, rather than patched to a number that feels right.
+
+Carried verbatim because it is the more useful half: **a landmark is the one
+document a rule refusing the uncited can never catch**, so ADVOCATE-100's 27/27
+clean zero is an instrument limit, not a clean bill. And its
+`distinct_target_judgments: 281` is one task carrying 253 targets — effective n
+is 27.
+
+### 7. What is NOT done, and is not claimed
+
+- **The full API suite did not complete and is not claimed green.** Run 1 died
+  with Postgres `could not read blocks ... Invalid argument` and `out of memory`
+  in `sparseAny` while three sessions hammered one database; run 2 stalled on
+  `arguments/counter`, which took **3,235,480 ms** in run 1. Every targeted
+  suite passes: 13 tenant · 28 entitlement · 10 premium · 13 resolver · 10
+  provider · 6 date-quality · 12 as-at/check · 42 qlang.
+- **P10 release proof not advanced.** Another session was live in
+  `services/api/src/p10-probe.ts`; I stayed off it rather than collide.
+- **P11 Test Court** — the existing finding stands and nothing was deleted.
+- **Three provider egress modules outside the gate** (`ingest/inferx.ts`,
+  `ingest/openrouter.ts`, `harness/generate.ts`). Corpus-only today, so no
+  exposure; sent rather than edited across lanes.
+- **Staging**: rewritten as the server-side INPUT to NEW3's package rather than
+  a rival recommendation. The useful measurement is that **291 GB is the wrong
+  number to size a machine against — 83% of it is rebuildable.**

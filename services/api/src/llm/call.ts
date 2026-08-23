@@ -25,6 +25,7 @@ import {
   assertOneDocument,
   routeCall,
 } from './route.ts';
+import { canSendToProvider, type PayloadClass, type Provider } from './provider-policy.ts';
 
 export type CallRequest = {
   readonly dataClass: DataClass;
@@ -37,6 +38,17 @@ export type CallRequest = {
    * one distinct id throws before anything is sent.
    */
   readonly documentIds?: readonly string[];
+  /**
+   * The FINE-GRAINED class of what is in `prompt`, for the provider gate.
+   *
+   * Optional so no existing caller breaks; absent means the gate derives it from
+   * `dataClass`, which maps `sensitive` to the most protective private class
+   * rather than the most permissive. A caller that knows it is sending a
+   * paragraph of published law should say `PUBLIC_LEGAL_TEXT`; one sending an
+   * advocate's own words should say so, and be refused until a provider's terms
+   * are recorded. `provider-policy.ts`.
+   */
+  readonly payloadClass?: PayloadClass;
 };
 
 export type CallResult =
@@ -173,6 +185,26 @@ export async function callModel(
       reason: `No API key for ${route.model}. The path is built and refuses rather than pretending.`,
     };
   }
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * WHICH COMPANY'S SERVER — ASKED HERE, ANSWERED IN ONE PLACE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Until this gate existed the provider was whichever key happened to be set.
+   * `route.ts` decided the MODEL by sensitivity and nothing decided the
+   * DESTINATION, so a deployment variable was making a confidentiality decision.
+   *
+   * The gate runs AFTER the key is resolved, because the key selection is what
+   * determines the provider, and BEFORE any bytes are sent. A refusal costs
+   * nothing and writes no ledger row — nothing left the system, so there is
+   * nothing to record. `provider-policy.ts`.
+   */
+  const provider: Provider = inferx ? 'inferx' : openRouter ? 'openrouter' : 'anthropic';
+  const payloadClass: PayloadClass =
+    req.payloadClass ?? (req.dataClass === 'public' ? 'PUBLIC_LEGAL_TEXT' : 'PRIVATE_CLIENT_FACTS');
+  const permitted = canSendToProvider(payloadClass, provider);
+  if (!permitted.ok) return { ok: false, reason: permitted.reason };
 
   let text = '';
   let inputTokens = 0;
