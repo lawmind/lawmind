@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-08-23T16:11:08.878Z",
+  "cursor": {
+    "CURSOR_AT": "2026-08-17 16:46:01.15+00",
+    "CURSOR_ID": "f9b55b00-8872-46ed-93d9-7ca38198ce1e"
+  },
+  "steps": [
+    {
+      "name": "above_cursor_with_neutral",
+      "ms": 23350,
+      "pg_active_before": 13,
+      "rows": [
+        {
+          "judgments_above_cursor": 10943187,
+          "with_neutral": 309130
+        }
+      ]
+    },
+    {
+      "name": "below_cursor_sample_missing_keys",
+      "ms": 2814,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "sampled": 20000,
+          "missing_key_row": 293
+        }
+      ]
+    }
+  ]
+}

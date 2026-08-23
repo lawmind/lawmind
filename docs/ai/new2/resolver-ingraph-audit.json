@@ -1,0 +1,229 @@
+{
+  "generated_at": "2026-08-23T16:08:27.757Z",
+  "steps": [
+    {
+      "name": "citation_edge_totals",
+      "ms": 1536,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "edges": 22322063,
+          "pinned": 231412,
+          "treated": 16001,
+          "pinned_and_treated": 10754
+        }
+      ]
+    },
+    {
+      "name": "pins_into_shared_groups",
+      "ms": 3635,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "pins": 231412,
+          "pins_with_neutral": 231203,
+          "pins_into_shared_group": 22469,
+          "into_byte_identical_group": 14533,
+          "into_same_matter_group": 2994,
+          "into_different_document_group": 4942
+        }
+      ]
+    },
+    {
+      "name": "pins_into_shared_groups_by_relationship",
+      "ms": 79,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "relationship": "followed",
+          "pins": 9442,
+          "into_shared_group": 76,
+          "into_different_document_group": 11
+        },
+        {
+          "relationship": "distinguished",
+          "pins": 1156,
+          "into_shared_group": 5,
+          "into_different_document_group": 3
+        },
+        {
+          "relationship": "overruled",
+          "pins": 97,
+          "into_shared_group": 0,
+          "into_different_document_group": 0
+        },
+        {
+          "relationship": "doubted",
+          "pins": 21,
+          "into_shared_group": 0,
+          "into_different_document_group": 0
+        },
+        {
+          "relationship": "approved",
+          "pins": 19,
+          "into_shared_group": 0,
+          "into_different_document_group": 0
+        },
+        {
+          "relationship": "overruled_in_part",
+          "pins": 19,
+          "into_shared_group": 0,
+          "into_different_document_group": 0
+        }
+      ]
+    },
+    {
+      "name": "concordance_columns",
+      "ms": 13,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "column_name": "id",
+          "data_type": "uuid",
+          "is_nullable": "NO",
+          "column_default": "gen_random_uuid()"
+        },
+        {
+          "column_name": "source",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "citation_key",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "citation_text",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "citation_year",
+          "data_type": "integer",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "context_evidence",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "candidates",
+          "data_type": "jsonb",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "candidate_judgment_id",
+          "data_type": "uuid",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "decision",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "confidence",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "deterministic_top_score",
+          "data_type": "numeric",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "deterministic_runner_up_score",
+          "data_type": "numeric",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "model_used",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "model_input_hash",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "model_output_hash",
+          "data_type": "text",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "model_reasoning",
+          "data_type": "text",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "contradictions",
+          "data_type": "text",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "signals_used",
+          "data_type": "ARRAY",
+          "is_nullable": "NO",
+          "column_default": "'{}'::text[]"
+        },
+        {
+          "column_name": "needs_human_review",
+          "data_type": "boolean",
+          "is_nullable": "NO",
+          "column_default": "true"
+        },
+        {
+          "column_name": "validation_status",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": "'unvalidated'::text"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "NO",
+          "column_default": "now()"
+        }
+      ]
+    },
+    {
+      "name": "concordance_rows",
+      "ms": 6,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "n": 156
+        }
+      ]
+    },
+    {
+      "name": "concordance_tables_present",
+      "ms": 2,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "tablename": "citation_concordance_resolutions"
+        }
+      ]
+    }
+  ]
+}

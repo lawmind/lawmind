@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-08-23T16:11:58.954Z",
+  "cursor": {
+    "CURSOR_AT": "2026-08-17 16:46:01.15+00",
+    "CURSOR_ID": "f9b55b00-8872-46ed-93d9-7ca38198ce1e"
+  },
+  "steps": [
+    {
+      "name": "collapse_repairable_by_backfill",
+      "ms": 16203,
+      "pg_active_before": 11,
+      "rows": [
+        {
+          "collapsed_groups": 33013,
+          "repaired_by_backfill": 33001,
+          "remaining_after_backfill": 12,
+          "remaining_different_documents": 0
+        }
+      ]
+    }
+  ]
+}
