@@ -311,3 +311,83 @@ the arm NEW1 measured and I shipped on their evidence eight hours ago; making it
 under contention, without being able to reproduce the OOM on demand, would be a
 guess dressed as a fix. What is needed first is the reproduction: the largest
 `full_text_tsv` in the corpus, measured on a quiet box.
+
+## R9 — WHAT THE HUNG SUITE WAS ACTUALLY HIDING
+
+Two production defects, both found by refusing to accept "the suite is slow" as
+an answer and sampling `pg_stat_activity` instead.
+
+- [x] R9.1 **Deleting ONE judgment sequentially scanned 151 GB.** `judgments` is
+  referenced by 22 foreign keys; three referencing columns had no index leading
+  with them, and `judgments.overruled_by_judgment_id` is self-referencing with
+  `NO ACTION`, so every delete scanned the largest relation in the database.
+  Observed: `pid 13464  00:03:15  DELETE FROM judgments WHERE id = ANY($1::uuid[])`
+  for five fixture rows
+- [x] R9.2 Fixed by migration `0079`, PARTIAL for `0073`'s reason (~98 judgments
+  carry an overruler). **16 kB.** Proven with a PARAMETERISED EXPLAIN:
+  `Index Only Scan using judgments_overruled_by_idx (cost=0.14..2.36 rows=1)`
+- [x] R9.3 End-to-end: `matters/authorities.test.ts` went from **hanging past
+  200 s to 15/15 in 2.3 s**
+- [x] R9.4 **It was silently blocking a queued product decision.**
+  `FQ-DUPLICATE-DOCUMENTS` records 194,577 duplicate judgment rows. At three
+  minutes a row that is ~406 days of scanning — discussed as a product question
+  while its implementation was blocked by a missing index nobody had looked for
+- [!] R9.5 **Debris I left:** `judgment_annotations_judgment_idx` is INVALID —
+  the CONCURRENTLY build was killed by a client timeout and the
+  `DROP INDEX CONCURRENTLY` then blocked behind the fleet's long transactions. An
+  invalid index is never used by a query and IS still maintained on every write.
+  Verified against `pg_index.indisvalid`, not inferred from the absence of an
+  error. Exact commands to finish it are at the bottom of `0079`
+- [x] R9.6 The teardown in `authorities.test.ts` deleted fixtures with
+  `OR case_title = '...'` — `case_title`'s only index is `gin_trgm_ops`, which
+  cannot serve an equality, so that was a SECOND sequential scan. It also deleted
+  by TITLE, which removes a concurrent session's fixture as well as its own on a
+  repository worked by several sessions against one database. The id was already
+  being RETURNED at creation and thrown away; captured now, every fixture deleted
+  by primary key
+
+- [x] R9.7 **`/arguments/counter` ran the research ranker on the CORE pool with
+  no admission slot.** `/search` acquires a slot and uses `deps.researchSql`;
+  the counter route called the same `hybridSearch` with `pools.core`. So a
+  counter-argument took a connection from the pool P1.3 protects for auth,
+  save-to-matter, exact citation and judgment reads — the exact starvation P1.4
+  measured (core p95 2,809 ms → 69 ms) and fixed **for `/search` only**
+- [x] R9.8 Same failure family as OD-14 wired into one caller and NEW2's date
+  states having zero consumers: **a rule implemented at one call site is a rule
+  the second call site does not have.** Both new deps are optional and fall back,
+  so the harness, the benchmark and every existing caller are unchanged
+- [x] R9.9 The counter TEST opened a bare connection with no `statement_timeout`,
+  so a query production cancels ran unbounded — **3,235,480 ms** in one
+  full-suite run, which is why the suite could never complete. Bounded at 20 s
+  like production: **7/7 in 113 s**
+- [x] R9.10 **And the number is the finding.** Those tests PASS while every
+  concept query hits the bound and returns degraded — two of the positions
+  ("anticipatory bail", "bail in a dowry death case") are short common-term
+  concept queries, exactly the shape bus 1041 §2 measured as NOT rescued by the
+  bounded rarest-3 arm. They assert shape, not recall. That is the concept-search
+  coverage fact NEW1 and I have both measured, arriving through a third door
+
+### The generalisable rule from R9
+
+**An unindexed foreign key costs nothing until someone deletes, and then it costs
+everything.** The query that finds them is worth keeping — swap `confrelid` for
+any table you delete from:
+
+```sql
+SELECT c.conrelid::regclass AS tbl, a.attname, c.confdeltype AS del
+  FROM pg_constraint c
+  JOIN unnest(c.conkey) AS k(attnum) ON true
+  JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = k.attnum
+ WHERE c.contype = 'f' AND c.confrelid = 'judgments'::regclass
+   AND NOT EXISTS (SELECT 1 FROM pg_index i
+                    WHERE i.indrelid = c.conrelid AND i.indkey[0] = a.attnum);
+```
+
+### Note on the concurrent session
+
+A second LCC session worked this same brief in this worktree throughout. The
+overlapping work — P1, P13, P14, P3, P7/P15/P16/P18 — was duplicated effort and
+landed once, in commits `811c7cc` and `479b87d`. Their `2f758d4` carries the
+fixture-leak guard and the Test Court enumeration, which I did not do. R9 above,
+`0079` and the counter-route isolation are not in their summary and are not
+duplicated.
