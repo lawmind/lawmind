@@ -114,18 +114,23 @@ response — never "the code exists".
 - [x] `docs/ai/lcc/OPS_ALERTING_PROOF.md`
 - [ ] founder: `OPS_ALERT_EMAIL` — the one value that is not mine to choose
 
-## LCC-6 — full API suite in a quiet window [P1] · **[~] RUNNING**
+## LCC-6 — full API suite in a quiet window [P1] · **[x] RUN, NOT CALLED GREEN**
 
 - [x] quiet window requested from NEW1/NEW2/NEW3 on the bus, with the contention
       I could see; nothing of another lane's paused without approval
 - [x] contention recorded at start: cpu 11.5%, ram free 39.4%, gpu 98%,
       postgres 6 active, **longest statement 1541s**, fleet 6
-- [~] suite running
-- [ ] wall time, failures, blocked queries recorded
-- [ ] classify remaining slow tests — `/corpus/coverage` already observed at
-      **71s and 30s** for single requests
+- [x] **1,026 s wall · 642 tests · 632 pass · 8 fail · 2 skipped**
+- [x] **NOT called green** — it ran under load, and the plan says a suite that
+      did has measured something other than what LCC-6 asks for
+- [x] 5 of the 8 were a broken test double, pre-existing, now fixed (7/7)
+- [x] the other 3 classified as corpus-state assertions, not code:
+      Allahabad coverage (the gap appears to have CLOSED), an unclassified new
+      court, and leaked `test://` fixtures — the last is itself a full scan,
+      which is why that guard costs 51 s
+- [ ] a genuinely quiet re-run — needs a lane to pause a job, and none replied
 
-## LCC-7 — release/export pipeline proof [P1 PRE-STAGING] · **[~] IN PROGRESS**
+## LCC-7 — release/export pipeline proof [P1 PRE-STAGING] · **[x] REHEARSED** — `975c449`
 
 - [x] Linux-like target: **WSL2 Ubuntu 26.04, PostgreSQL 18.6 + pgvector**, on
       the founder's own box. No cloud, no provisioning, no spend
@@ -140,11 +145,19 @@ response — never "the code exists".
       collation, extensions and schema version
 - [x] approved serving data ENUMERATED, never derived — and what was refused is
       named, including `judgment_chunks` / staged vectors (NEW1's decision)
-- [~] export running, bounded to 500 judgments (**no 291 GB clone**)
-- [ ] restore + verify against the manifest
-- [ ] simulated partial transfer (`--truncate-table`), rollback
-- [ ] exact-search equivalence battery
-- [ ] `docs/ai/lcc/RELEASE_PIPELINE_PROVEN_V1.md`
+- [x] export bounded to 500 judgments (**no 291 GB clone**)
+- [x] **RESTORE VERIFIED** — all 7 tables, row counts and checksums, on Linux
+- [x] `ANALYZE` after load, 375 ms
+- [x] **four cross-platform defects found, every one of which would have shipped**:
+      the collation cannot exist on Linux · generated columns break COPY ·
+      the live column ORDER has drifted from the migrations (a positional COPY
+      would write `cnr` into `native_text` silently) · and the verification
+      itself was platform-dependent three ways (TimeZone, LC_CTYPE quoting,
+      sort collation)
+- [ ] **NOT DONE**: partial-transfer simulation did not execute (stopped after
+      three attempts), no rollback drill, no search-equivalence battery, no
+      index-build timing
+- [x] `docs/ai/lcc/RELEASE_PIPELINE_PROVEN_V1.md`
 
 ## Unplanned, accepted from the bus
 
@@ -153,9 +166,11 @@ response — never "the code exists".
       `judgment_annotations` and never `matter_authorities`, so the ordinary
       save path was invisible. There are two writers and a briefing must read
       both. Fixed + 2 regression tests
-- [ ] NEW1 bus 1079 — `text_safety_grade='PROOF'` unreachable, the deployed view
-      tests `script_quality_method` against an EMPTY array (~470,000 documents
-      read as SCREEN). LCC's view. **Not yet started**
+- [x] **NEW1 bus 1079 — `text_safety_grade='PROOF'` was unreachable.** Fixed in
+      `0081`. Measured on NEW1's exact sample: PROOF **0 → 939**, SCREEN
+      3,614 → 2,675 — it fell by exactly the 939 that moved. My first attempt
+      rewrote the view from `0070`'s text and PostgreSQL refused with 42P16,
+      which saved **ten columns**: `0070` defines 8, the deployed view has 18
 
 ---
 
