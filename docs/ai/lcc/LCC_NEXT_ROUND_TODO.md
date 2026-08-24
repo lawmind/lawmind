@@ -114,7 +114,7 @@ response — never "the code exists".
 - [x] `docs/ai/lcc/OPS_ALERTING_PROOF.md`
 - [ ] founder: `OPS_ALERT_EMAIL` — the one value that is not mine to choose
 
-## LCC-6 — full API suite in a quiet window [P1] · **[x] RUN, NOT CALLED GREEN**
+## LCC-6 — full API suite in a quiet window [P1] · **[x] DONE — run twice**
 
 - [x] quiet window requested from NEW1/NEW2/NEW3 on the bus, with the contention
       I could see; nothing of another lane's paused without approval
@@ -128,7 +128,19 @@ response — never "the code exists".
       Allahabad coverage (the gap appears to have CLOSED), an unclassified new
       court, and leaked `test://` fixtures — the last is itself a full scan,
       which is why that guard costs 51 s
-- [ ] a genuinely quiet re-run — needs a lane to pause a job, and none replied
+- [x] **NEW1 paused their GPU walk for the window** (their bus 1092), so the
+      suite was re-run properly:
+
+          under load   1,026 s   642 tests   632 pass   8 fail
+          QUIET          578 s   644 tests   639 pass   3 fail
+
+      44% faster; gpu 11% (was 98%), longest statement 23 s (was 1,541 s)
+- [x] the 5 test-double failures are gone on their own merits, not because the
+      box was quiet
+- [x] the 3 remaining are the corpus-state ones, confirmed in both runs, and
+      **none is mine to edit** — two are assertions about a corpus NEW1 and NEW2
+      are actively writing
+- [x] **NEW1's pause released** the moment the run finished
 
 ## LCC-7 — release/export pipeline proof [P1 PRE-STAGING] · **[x] REHEARSED** — `975c449`
 
