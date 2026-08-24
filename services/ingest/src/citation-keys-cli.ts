@@ -156,10 +156,12 @@ async function derivePage(cursorAt: string, cursorId: string) {
       SELECT p.id AS judgment_id, 'neutral'::text AS source, p.neutral_citation AS source_text
       FROM page p
       WHERE p.neutral_citation IS NOT NULL AND p.neutral_citation <> ''
+        AND ${sql.unsafe(DESPATCH_STAMP_SQL.replace('SOURCE_TEXT', 'p.neutral_citation'))}
       UNION ALL
       SELECT p.id, 'reporter'::text, rc
       FROM page p, unnest(p.reporter_citations) rc
       WHERE rc IS NOT NULL AND rc <> ''
+        AND ${sql.unsafe(DESPATCH_STAMP_SQL.replace('SOURCE_TEXT', 'rc'))}
     ),
     keyed AS (
       SELECT f.judgment_id,
@@ -236,6 +238,36 @@ async function deriveAliases() {
     ON CONFLICT (citation_key, judgment_id, source, source_text) DO NOTHING`;
   return r.count;
 }
+
+/**
+ * A REGISTRY DESPATCH STAMP MUST NOT ENTER THE KEY INDEX.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A REGRESSION THIS TOOL CAUSED, AND THE HALF THE RESOLVER'S GATE CANNOT COVER
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `judgments.neutral_citation` on 431 Madras judgments holds a despatch stamp
+ * rather than a citation — `2011:NOVEMBER:12`, 165 distinct values, 2009-08-11
+ * to 2012-03-02. Before the 24 Aug catch-up they had no key row, so the resolver
+ * answered `TARGET_NOT_HELD` and they were harmless. This tool indexes
+ * `neutral_citation` WHOLESALE, so the catch-up turned all 431 into resolver
+ * inputs and **75 of them began resolving to exactly one judgment each** — a
+ * false pin, which `CITATION_HARNESS.md` forbids outright. NEW2 measured it
+ * (bus 1112).
+ *
+ * **The stamp is not even the judgment's date.** `2011:APRIL:05` keys a judgment
+ * decided 2011-03-24. They are despatch or upload timestamps.
+ *
+ * `resolver.ts` now refuses them too, and BOTH are wanted rather than either:
+ * the gate stops one bad key reaching an advocate, and this stops the index
+ * carrying it at all — `judgments.neutral_citation` is the second of three
+ * identity arms and anything else reading this table inherits whatever is in it.
+ *
+ * Written as SQL rather than TypeScript because the insert is a single
+ * server-side statement; a JS filter would mean pulling every row across the
+ * wire to reject 431 of 1.37 million.
+ */
+const DESPATCH_STAMP_SQL = `upper(regexp_replace(SOURCE_TEXT, '[^A-Za-z0-9]', '', 'g')) !~ '^[0-9]{4}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[0-9]{1,2}$'`;
 
 async function main() {
   console.log('CITATION KEY INDEX');

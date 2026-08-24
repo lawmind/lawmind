@@ -147,6 +147,33 @@ export type Refusal = { readonly refused: true; readonly why: string };
 export type Accepted = { readonly refused: false; readonly key: string };
 
 /**
+ * A REGISTRY DESPATCH STAMP, not a citation. `2011:NOVEMBER:12`.
+ *
+ * NEW2 found these (bus 1112) as a REGRESSION my own citation-keys rebuild
+ * caused. They sit in `judgments.neutral_citation` on 431 Madras judgments,
+ * 165 distinct stamps, 2009-08-11 to 2012-03-02. Before the rebuild they carried
+ * no key row, so the resolver answered `TARGET_NOT_HELD` and they were harmless.
+ * The rebuild indexed `neutral_citation` wholesale and made them resolver
+ * INPUTS — **75 of them now resolve to exactly one judgment each**, which is a
+ * false pin, the one thing `CITATION_HARNESS.md` forbids outright.
+ *
+ * Every other rule waves it through: `2011NOVEMBER12` has digits, has letters,
+ * and is far longer than {@link MIN_KEY_LENGTH}. Nothing about its SHAPE says
+ * "not a citation" — only the month name does.
+ *
+ * **And the stamp is not even the judgment's date.** `2011:APRIL:05` keys a
+ * judgment decided 2011-03-24; `2009:AUGUST:24` keys one decided 2009-08-11.
+ * They are despatch or upload timestamps, so resolving one would not give the
+ * right answer even by accident.
+ *
+ * Tested against the NORMALISED key rather than the raw string, because the
+ * corpus writes them with colons and `PLACEHOLDER_PATTERNS` above runs before
+ * normalisation. A pattern in that list would simply never have fired.
+ */
+const DESPATCH_STAMP_KEY =
+  /^[0-9]{4}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[0-9]{1,2}$/;
+
+/**
  * The refusal gate. **Pure** — no database, no clock, no network — so it can be
  * run over a million strings to estimate a batch before any query is issued.
  */
@@ -164,6 +191,9 @@ export function canonicalKeyFor(raw: string): Refusal | Accepted {
   }
   if (key.length > MAX_KEY_LENGTH) {
     return { refused: true, why: `key too long (${key.length} > ${MAX_KEY_LENGTH})` };
+  }
+  if (DESPATCH_STAMP_KEY.test(key)) {
+    return { refused: true, why: 'registry despatch stamp, not a citation' };
   }
   if (!/[0-9]/.test(key)) return { refused: true, why: 'no digit — a citation carries a number' };
   if (!/[A-Z]/.test(key)) {
