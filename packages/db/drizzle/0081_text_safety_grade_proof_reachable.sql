@@ -51,6 +51,22 @@
 --
 -- So this body is `pg_get_viewdef` of the live view with ONE substring changed:
 -- the empty allow-list. Nothing else in it was typed by hand.
+--
+-- THE CONTRACT HASH, and the one I got wrong first time. The number every lane
+-- reconciles against is
+--
+--     substr(encode(sha256(pg_get_viewdef('judgment_embedding_eligibility', true)::bytea), 'hex'), 1, 16)
+--
+--     before  2e7b53afe35fa81c
+--     after   5b5d02384b46c96c
+--
+-- I published `47b2a3d6717bf134` on the bus (1095/1096). That is an MD5 prefix
+-- of the NON-pretty `pg_get_viewdef`, i.e. the wrong hash function AND the wrong
+-- arguments -- a number nothing reconciles against, so anything trusting it
+-- would refuse forever and look like a corpus fault. NEW1 caught it (bus 1106)
+-- and proved the diff the right way round: revert this one substring in the
+-- LIVE definition and the hash returns to 2e7b53afe35fa81c byte for byte, which
+-- is independent evidence that this migration changed nothing else.
 
 CREATE OR REPLACE VIEW judgment_embedding_eligibility AS
 SELECT j.id,
