@@ -5343,3 +5343,77 @@ comma-separated list and no code changes.
 
 Not blocking anything this round — local development uses the console transport,
 which says out loud that it sent nothing.
+
+---
+
+## FQ-SEMANTIC-BUILD · Six GPU-days buys concept search a 17× better ceiling · NEW1, 24 August 2026
+
+**A decision about GPU weeks, not a research unknown any more.**
+
+### What was measured
+
+`SEMANTIC_REPRESENTATION_DECISION_V3.md`, from one run: 19,932 documents,
+67,618 chunks, 147 million characters, on real advocate-posed questions with a
+leakage guard capping shared wording at six words.
+
+| representation | posed s@5 | GPU-days to build corpus-wide | halfvec storage |
+| --- | ---: | ---: | ---: |
+| **HEAD:4800 — what the walk is producing now** | **2.2%** | 11.7 | 18 GB |
+| POOLED_ALL — one vector, whole document | 17.8% | 18.0 | 18 GB |
+| **ALL_CHUNKS — passage level** | **37.8%** | 18.0 | 61 GB |
+
+**The representation currently on disk answers about one advocate question in
+forty-five.** The passage build answers roughly three in eight, at
+19,932-document pool scale.
+
+### Why this is a founder question and not an engineering one
+
+The three candidate builds **cost the same GPU time**, because a pooled vector is
+the mean of the passage vectors — you must read every chunk either way. They
+differ only in what is kept. So the whole decision is:
+
+> **~6 additional GPU-days and 43 GB of disk, over the walk already running, to
+> move concept retrieval from 2.2% to 37.8%.**
+
+61 GB against 290 GB free. No purchase, no cloud, no vendor — this box, running
+longer.
+
+### The specific thing that needs deciding
+
+The Tier-A walk is **1,753,127 vectors into producing the 2.2% representation**
+and has roughly 7.1M documents to go. Three options, and the choice is about
+weeks of GPU rather than correctness:
+
+1. **Restart the walk on the whole-document recipe now.** Fastest to a useful
+   index; discards the head-only work in progress (it is superseded either way).
+2. **Let the head-only walk finish first, then re-embed.** ~11.7 + 18.0 GPU-days
+   in sequence, and nothing usable until the second pass.
+3. **Run passages only over a chosen slice.** I recommend **against** it: a
+   document absent from the index is unreachable by every method at every rank,
+   and 8 of 20 of my test targets are already in that state. Partial coverage is
+   the problem, not the mitigation.
+
+My recommendation is **(1)**, but the cost is measured in GPU weeks on the
+machine you are also using, so the call is yours. LCC has the sequencing detail
+(bus 1088).
+
+### What this does NOT promise
+
+- **Not a launchable feature.** 37.8% was measured against 0.23% of the corpus,
+  and every method was still losing ground as the pool grew. My honest
+  full-scale estimate is ~23% and I have labelled it weak because it is.
+- **Two question types score ZERO on every method tested** — "what is the
+  strongest authority against me" (0 of 4) and statute questions (0 of 3).
+  Nothing here fixes those, and any premium surface implying adverse-law
+  discovery is unsupported by anything measured.
+- **No latency measurement exists.** None. A 30M-vector index has its own build
+  time, memory footprint and query cost, and none of it is measured yet.
+- n = 45 posed questions carried by 20 distinct judgments. Wide intervals.
+
+### One correction the decision should be made on
+
+The previous round told this company that a free re-pooling would fix concept
+search. **It would not, and that answer came from a benchmark whose distractor
+set was silently empty.** Correcting it changed the recommendation from "cheap
+tweak" to "a real but bounded build". If a decision was already forming on the
+old number, it was forming on the wrong one.
