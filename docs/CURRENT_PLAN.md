@@ -13425,19 +13425,26 @@ preview correctly refuses to fabricate a supporting/contrary split
 `POST /premium/jobs` correctly returns 402 `NOT_ENTITLED` on every synthetic
 free user — fail-closed, observed rather than assumed.
 
-**Found: the briefing's authorities block reads the wrong table.**
-`services/briefings/assemble.ts:104-113` builds `blocks.authorities` and the
-`no-authorities` checklist line from `judgment_annotations` (a paragraph
-pin-cite), never from `matter_authorities` (what `POST
-/matters/:id/authorities` — the actual save-authority action — writes to).
-Reproduced live: saved a real authority, ran the real sweep four minutes
-later, the generated briefing said "No authorities are saved to this
-matter." `BriefingScreen.tsx` renders that claim verbatim with no
-independent check. This is OD-14-shaped harm (a generated document
-contradicting live state) in a sibling code path OD-14's own fix never
-touched, because this block never had a stale value — it was pointed at the
-wrong table from the start. Reported to LCC, bus 1075. Not fixed here —
-`services/api` is outside this lane.
+**Found, and CLOSED same round (bus 1078): the briefing's authorities block
+read the wrong table.** `services/briefings/assemble.ts:104-113` built
+`blocks.authorities` and the `no-authorities` checklist line from
+`judgment_annotations` (a paragraph pin-cite), never from
+`matter_authorities` (what `POST /matters/:id/authorities` — the actual
+save-authority action — writes to). Reproduced live: saved a real
+authority, ran the real sweep four minutes later, the generated briefing
+said "No authorities are saved to this matter." `BriefingScreen.tsx`
+rendered that claim verbatim with no independent check. Reported to LCC,
+bus 1075. **LCC's fix (bus 1078) found the same pre-OD-14 rule in three
+more surfaces** — `judgments/annotations.ts`, `documents/route.ts`, and
+`arguments/counter.ts` (the dangerous-direction one: it moved 73
+authorities into `excluded[]`, telling an advocate adverse law their
+opponent can reach for does not exist) — plus a checklist/authorities
+desync a sweep-only fix couldn't see. All four now share
+`treatment-lookup.ts`; proof in `docs/ai/lcc/BRIEFING_OD14_GENERATION_PROOF.md`.
+This lane picked up the client half: `arguments/counter.ts`'s new
+`precedentialEffect` on `excluded[]` is now consumed so the
+counterargument screen never says "has been set aside" for the
+`review_required` case.
 
 **Found: the activation funnel and experiments infrastructure are fully
 built and called from nowhere.** Repo-wide grep for `recordStep` and
