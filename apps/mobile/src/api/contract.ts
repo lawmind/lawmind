@@ -777,6 +777,18 @@ export type ExcludedAuthority = {
   overruledNote?: string | null;
   /** When the server read `overruled_status` for this row. */
   asOf?: string;
+  /**
+   * ADDED 24 Aug 2026, `services/api/src/arguments/counter.ts`. `reason` above
+   * stays the literal string `'set_aside'` for every row — LCC did not widen
+   * that enum, and this client has not adopted a wider one — but which rows
+   * land in this list changed: only those whose own decision is gone, OR whose
+   * status nothing verified. `precedentialEffect` says which. Its one case that
+   * changes what this screen should say is `review_required`: a stored
+   * `set_aside` a verified edge only weakly supports, where "this authority has
+   * been set aside" overclaims a certainty the server itself is refusing to
+   * assert. `exclusionReason` below reads it for exactly that case.
+   */
+  precedentialEffect?: PrecedentialEffect;
 };
 
 /**

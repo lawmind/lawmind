@@ -132,6 +132,25 @@ describe('CounterArguments — S2, once generation lands', () => {
     expect(screen.queryByText('We could not confirm this reference')).toBeNull();
   });
 
+  it('never says "has been set aside" for review_required — that overclaims a certainty the server refused to assert', async () => {
+    const reviewRequired: ExcludedAuthority = {
+      ...excluded[0]!,
+      precedentialEffect: 'review_required',
+    };
+    await render(
+      <CounterArguments data={{ ...s2, excluded: [reviewRequired] }} />
+    );
+
+    expect(
+      screen.queryByText(
+        'This authority has been set aside, so it is not offered as a counter-argument.'
+      )
+    ).toBeNull();
+    expect(
+      screen.getByText(/our records could not fully confirm/)
+    ).toBeTruthy();
+  });
+
   it('marks an unverified authority and offers the eCourts route', async () => {
     const withUnverified: CounterArgumentsResponse = {
       ...s2,

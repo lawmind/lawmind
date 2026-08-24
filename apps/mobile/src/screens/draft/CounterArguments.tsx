@@ -241,6 +241,22 @@ function Authority({ authority }: { authority: CounterAuthority }) {
  * the smaller true thing.
  */
 function exclusionReason(excluded: ExcludedAuthority): string {
+  /**
+   * `review_required` MUST NOT SAY "has been set aside" — added 24 Aug 2026.
+   *
+   * `services/api/src/judgments/precedential-effect.ts`'s own comment: this
+   * value is returned specifically when a stored `set_aside` is explained by
+   * only a WEAKER verified edge than the status implies, and the function
+   * refuses to guess rather than silently downgrade the warning. Printing our
+   * usual sentence here would assert a certainty the server itself declined to
+   * assert — the opposite direction of the OD-14 defect (that one showed too
+   * little confidence as too much refusal; this one would show too little
+   * evidence as too much confidence), but the same family of harm: adverse
+   * treatment stated more strongly than what was actually verified.
+   */
+  if (excluded.precedentialEffect === 'review_required') {
+    return 'This authority carries a set-aside status our records could not fully confirm against the verified case history — not offered as a counter-argument until that is resolved.';
+  }
   const note = excluded.overruledNote?.trim();
   return note
     ? `${note} — not offered as a counter-argument.`
