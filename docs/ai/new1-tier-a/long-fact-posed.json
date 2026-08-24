@@ -1,0 +1,543 @@
+{
+ "kind": "new1_long_fact_posed",
+ "measuredAt": "2026-08-24T15:21:17.529Z",
+ "goldSetVersion": "1.0.0",
+ "queryProvenance": "POSED. ADVOCATE-100 task.query, authored from the legal question under a <=6 shared-word leakage guard against the target text. This is the ONE variable changed from long-passage-cli.ts, whose queries were own_text_span substrings of their targets.",
+ "designHeldIdenticalToP4": [
+  "dilution construction: query held constant, irrelevant text from ONE unrelated judgment appended to each size",
+  "sizes 500/1000/2500/5000",
+  "condenser: rarest-lexeme sentences by measured document frequency, capped at 500 characters",
+  "probe new1_probe_half_250k, ef_search 200, top-K 20"
+ ],
+ "coverage": {
+  "probeTable": "new1_probe_half_250k",
+  "distinctTargets": 19,
+  "targetsPresentInProbe": 2,
+  "scorableTasks": 6,
+  "excludedForAbsence": [
+   {
+    "taskId": "A100-031",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-032",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-033",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-034",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-035",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-036",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-037",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-038",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-039",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-040",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-042",
+    "queryClass": "doctrine"
+   },
+   {
+    "taskId": "A100-043",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-044",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-045",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-046",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-048",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-049",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-050",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-052",
+    "queryClass": "fact_pattern"
+   },
+   {
+    "taskId": "A100-054",
+    "queryClass": "long_narrative"
+   },
+   {
+    "taskId": "A100-055",
+    "queryClass": "long_narrative"
+   },
+   {
+    "taskId": "A100-059",
+    "queryClass": "supporting_authority"
+   },
+   {
+    "taskId": "A100-060",
+    "queryClass": "supporting_authority"
+   },
+   {
+    "taskId": "A100-062",
+    "queryClass": "supporting_authority"
+   },
+   {
+    "taskId": "A100-063",
+    "queryClass": "supporting_authority"
+   },
+   {
+    "taskId": "A100-065",
+    "queryClass": "adverse_authority"
+   },
+   {
+    "taskId": "A100-066",
+    "queryClass": "adverse_authority"
+   },
+   {
+    "taskId": "A100-067",
+    "queryClass": "adverse_authority"
+   },
+   {
+    "taskId": "A100-068",
+    "queryClass": "adverse_authority"
+   },
+   {
+    "taskId": "A100-069",
+    "queryClass": "current_law"
+   },
+   {
+    "taskId": "A100-070",
+    "queryClass": "current_law"
+   },
+   {
+    "taskId": "A100-071",
+    "queryClass": "current_law"
+   },
+   {
+    "taskId": "A100-072",
+    "queryClass": "current_law"
+   }
+  ],
+  "note": "a target absent from the probe cannot be found by ANY arm at ANY size. Excluded from every rate, counted here. This is COVERAGE, not dilution."
+ },
+ "condensationDeterminism": {
+  "inputsCondensedTwice": 24,
+  "disagreements": 0,
+  "whyItMatters": "LONG_FACT_SEARCH_CONTRACT_V1 asserts the condensation is deterministic because a condensation that varies between identical requests breaks pagination. That was an assertion about the code; this is the measurement."
+ },
+ "bySize": [
+  {
+   "size": 500,
+   "n": 6,
+   "DIRECT": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONDENSED": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONTROL_500": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "LEXICAL_RAREST3": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "embedMsP50": 446,
+   "advocateWordRetentionMean": 0.924
+  },
+  {
+   "size": 1000,
+   "n": 6,
+   "DIRECT": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONDENSED": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONTROL_500": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "LEXICAL_RAREST3": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "embedMsP50": 390,
+   "advocateWordRetentionMean": 0.32
+  },
+  {
+   "size": 2500,
+   "n": 6,
+   "DIRECT": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONDENSED": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONTROL_500": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "LEXICAL_RAREST3": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "embedMsP50": 382,
+   "advocateWordRetentionMean": 0.244
+  },
+  {
+   "size": 5000,
+   "n": 6,
+   "DIRECT": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONDENSED": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "CONTROL_500": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "LEXICAL_RAREST3": {
+    "at5": "0/6",
+    "at20": "0/6"
+   },
+   "embedMsP50": 437,
+   "advocateWordRetentionMean": 0.244
+  }
+ ],
+ "rows": [
+  {
+   "taskId": "A100-041",
+   "queryClass": "doctrine",
+   "size": 500,
+   "directRank": null,
+   "directMs": 691,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-041",
+   "queryClass": "doctrine",
+   "size": 1000,
+   "directRank": null,
+   "directMs": 553,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-041",
+   "queryClass": "doctrine",
+   "size": 2500,
+   "directRank": null,
+   "directMs": 402,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-041",
+   "queryClass": "doctrine",
+   "size": 5000,
+   "directRank": null,
+   "directMs": 404,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-047",
+   "queryClass": "fact_pattern",
+   "size": 500,
+   "directRank": null,
+   "directMs": 990,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-047",
+   "queryClass": "fact_pattern",
+   "size": 1000,
+   "directRank": null,
+   "directMs": 279,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.3333333333333333
+  },
+  {
+   "taskId": "A100-047",
+   "queryClass": "fact_pattern",
+   "size": 2500,
+   "directRank": null,
+   "directMs": 180,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.3333333333333333
+  },
+  {
+   "taskId": "A100-047",
+   "queryClass": "fact_pattern",
+   "size": 5000,
+   "directRank": null,
+   "directMs": 278,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.3333333333333333
+  },
+  {
+   "taskId": "A100-051",
+   "queryClass": "fact_pattern",
+   "size": 500,
+   "directRank": null,
+   "directMs": 170,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-051",
+   "queryClass": "fact_pattern",
+   "size": 1000,
+   "directRank": null,
+   "directMs": 311,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.10526315789473684
+  },
+  {
+   "taskId": "A100-051",
+   "queryClass": "fact_pattern",
+   "size": 2500,
+   "directRank": null,
+   "directMs": 145,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.10526315789473684
+  },
+  {
+   "taskId": "A100-051",
+   "queryClass": "fact_pattern",
+   "size": 5000,
+   "directRank": null,
+   "directMs": 533,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.10526315789473684
+  },
+  {
+   "taskId": "A100-053",
+   "queryClass": "long_narrative",
+   "size": 500,
+   "directRank": null,
+   "directMs": 446,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.5411764705882353
+  },
+  {
+   "taskId": "A100-053",
+   "queryClass": "long_narrative",
+   "size": 1000,
+   "directRank": null,
+   "directMs": 633,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.4823529411764706
+  },
+  {
+   "taskId": "A100-053",
+   "queryClass": "long_narrative",
+   "size": 2500,
+   "directRank": null,
+   "directMs": 403,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.023529411764705882
+  },
+  {
+   "taskId": "A100-053",
+   "queryClass": "long_narrative",
+   "size": 5000,
+   "directRank": null,
+   "directMs": 683,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0.023529411764705882
+  },
+  {
+   "taskId": "A100-061",
+   "queryClass": "supporting_authority",
+   "size": 500,
+   "directRank": null,
+   "directMs": 408,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-061",
+   "queryClass": "supporting_authority",
+   "size": 1000,
+   "directRank": null,
+   "directMs": 365,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0
+  },
+  {
+   "taskId": "A100-061",
+   "queryClass": "supporting_authority",
+   "size": 2500,
+   "directRank": null,
+   "directMs": 382,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0
+  },
+  {
+   "taskId": "A100-061",
+   "queryClass": "supporting_authority",
+   "size": 5000,
+   "directRank": null,
+   "directMs": 376,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0
+  },
+  {
+   "taskId": "A100-064",
+   "queryClass": "supporting_authority",
+   "size": 500,
+   "directRank": null,
+   "directMs": 335,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 1
+  },
+  {
+   "taskId": "A100-064",
+   "queryClass": "supporting_authority",
+   "size": 1000,
+   "directRank": null,
+   "directMs": 390,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0
+  },
+  {
+   "taskId": "A100-064",
+   "queryClass": "supporting_authority",
+   "size": 2500,
+   "directRank": null,
+   "directMs": 363,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0
+  },
+  {
+   "taskId": "A100-064",
+   "queryClass": "supporting_authority",
+   "size": 5000,
+   "directRank": null,
+   "directMs": 437,
+   "condensedRank": null,
+   "controlRank": null,
+   "lexicalRank": null,
+   "condenseDeterministic": true,
+   "advocateWordRetention": 0
+  }
+ ],
+ "whatThisDoesNotClaim": [
+  "It does not re-measure the embedder truncation probe. P4 settled that: cosine to the 1,000-char prefix falls 1.0000 -> 0.6625 while cosine to the full text rises 0.6435 -> 1.0000, so the model reads long input and the 500-character cap protects the SPARSE arm, not the model.",
+  "It does not propose raising the 500-character API cap. That is a product decision resting on the lexical arm, not on this measurement.",
+  "advocateWordRetention counts word overlap, not meaning. A condenser can keep every word and still lose the question."
+ ]
+}
