@@ -192,3 +192,65 @@ The drawn id lists are in `eligibility-sampling-frame.json` under `draws`, keyed
 by stratum, ordered by `md5(id)` so the draw is reproducible. Re-running with the
 same `FRAME_SEED` reproduces the frame exactly; changing the seed produces a
 different, equally valid one, and the two must not be pooled.
+
+---
+
+## 8. RESULT — NEW2 used the frame, and the control changed the conclusion
+
+`UNCITED_SUBSTANTIVE_AUTHORITY_STUDY_V2.md` (NEW2, bus 1100). 140 documents read
+as primary text, drawn from the `draws` lists above, **plus a control this study
+never had**.
+
+| stratum | n | substantive | rate |
+| --- | ---: | ---: | ---: |
+| RESIDUAL_NO_NEGATIVE_MARKER — *refused* | 60 | 4 | 6.67% [2.62, 15.93] |
+| MARKER_CARRYING — *refused* | 40 | **0** | **0.00%** [0.00, 8.76] |
+| CONTROL, 2,000–3,000 chars — **already ADMITTED** | 40 | 3 | 7.50% [2.58, 19.86] |
+| **weighted refused population** | | | **2.87%** [0.15, 5.58] |
+
+Weighted with the estimator in §5, never pooled.
+
+### The control is the finding, and it is not the one I expected
+
+**What LawMind already admits in the band immediately above the gate scores the
+same as what it refuses just below it.** Both populations are ~93% procedural.
+
+At its own margin, **the 2,000-character gate is not separating authority from
+chaff — it is separating two populations that look alike.** That is not an
+argument for lowering it. It is an argument that its usual justification is
+wrong, and the 40.09% headline this lane published should never be restated
+without that sentence attached.
+
+### The stratifier validated, by someone who is not me
+
+§6 declared the markers UNMEASURED and warned they over-mark. Both held:
+
+- **`MARKER_CARRYING` scored 0 in 40**, upper bound 8.76%, across **57.0% of the
+  population.** The stratifier earns its keep as a *refusal*, which is a stronger
+  result than the hint it was designed to be.
+- The over-marking cost **efficiency, not correctness**, exactly as §6 predicted.
+- Keeping 30% of the budget on that stratum — described in §5 as being so its
+  rate is "estimated rather than assumed to be zero" — is what produced the 0/40.
+  An assumed zero would have looked identical and been an assumption.
+- The per-stratum variances now exist, so a later session can allocate optimally
+  instead of by the 70/30 judgement.
+
+### Two limits, both NEW2's and both worth carrying
+
+**An error they caught in themselves**: scoring the control they first marked
+substantive a shape they had already marked procedural in the refused set. Left
+uncorrected the control would have read **30% against 6.67%** and produced the
+opposite conclusion. A control scored more loosely than the treatment group is
+worse than no control.
+
+**A limit no frame can fix**: the most common shape in the refused population is
+a court *expressly declining to decide anything* — "without expressing any
+opinion on the merits", printed in the order. No retrieval rule turns that into
+authority, and no representation measured in
+`SEMANTIC_REPRESENTATION_DECISION_V3.md` would either.
+
+### Still no classifier, and that is the answer rather than a delay
+
+7 positives in 180 refused documents against the ~62 rule-positives precision
+needs. At a 2.87% base rate a rule admits roughly **34 procedural orders per
+authority rescued**, each arriving in search wearing the word *verified*.
