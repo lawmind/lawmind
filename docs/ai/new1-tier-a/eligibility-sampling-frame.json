@@ -1,0 +1,4381 @@
+{
+ "kind": "new1_eligibility_sampling_frame",
+ "generatedAt": "2026-08-24T15:03:22.677Z",
+ "forWhom": "NEW2 — UNCITED_SUBSTANTIVE_AUTHORITY_STUDY_V2 (§8 NEW2-4)",
+ "deployedEligibilityViewSha256Prefix": "2e7b53afe35fa81c",
+ "populationDefinition": "judgment_embedding_eligibility WHERE axis_a_identity AND axis_b_text AND NOT is_cited_authority AND 400 <= text_length < 2000 — i.e. refused by the LENGTH gate alone, exactly the population NEW2 measured at 3.75% [1.28, 10.45].",
+ "census": {
+  "tablesamplePct": 0.3,
+  "repeatableSeed": 11,
+  "sampledRows": 56876,
+  "inPopulation": 21416,
+  "scaleFactor": 333.33333333333337,
+  "estimatedPopulationSize": 7138667,
+  "estimateIsAnExtrapolation": "inPopulation x scaleFactor. TABLESAMPLE SYSTEM samples PAGES, not rows, so this is a page-clustered estimate and its true error is wider than a binomial interval would suggest. Three independent draws of the headline in this lane gave 40.09 / 38.77 / 38.61 percent; expect that order of variation here too."
+ },
+ "marginals": {
+  "byMarker": {
+   "RESIDUAL_NO_NEGATIVE_MARKER": 9201,
+   "M_BAIL": 3791,
+   "M_WITHDRAWAL": 4617,
+   "M_DEFAULT": 635,
+   "M_INFRUCTUOUS": 1285,
+   "M_COMPLIANCE": 900,
+   "M_ADJOURNMENT": 532,
+   "M_REPRESENTATION": 128,
+   "M_CONDONATION": 295,
+   "M_RECORD_CORRECTION": 25,
+   "M_RESTORATION": 7
+  },
+  "byLength": {
+   "1500-1999": 6201,
+   "800-1199": 5578,
+   "400-799": 5785,
+   "1200-1499": 3852
+  },
+  "byCourt": {
+   "HIGH_COURT": 21416
+  },
+  "byYear": {
+   "2015_2020": 6628,
+   "PRE_2015": 5004,
+   "2021_2024": 6512,
+   "RECENT_2025_PLUS": 3272
+  },
+  "byClass": {
+   "UNCLASSIFIED": 15757,
+   "bail_order": 1041,
+   "procedural_disposal": 2269,
+   "decided": 595,
+   "decided_brief": 1262,
+   "reference_stub": 492
+  }
+ },
+ "cells": [
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 707
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 640
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 604
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 538
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 530
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 518
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 517
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 505
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 448
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 422
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 418
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 412
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 392
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 379
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 370
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 340
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 338
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 328
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 320
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 298
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 294
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 251
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 236
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 234
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 215
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 204
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 197
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 197
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 188
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 185
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 184
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 178
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 173
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 168
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 166
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 165
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 139
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 134
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 134
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 132
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 128
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 128
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 125
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 120
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 117
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 116
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 116
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 113
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 110
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 109
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 103
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 100
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 97
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 95
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 95
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 95
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 95
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 92
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 90
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 88
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 87
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 86
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 84
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 84
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 83
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 82
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 79
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 78
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 76
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 75
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 74
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 74
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 74
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 74
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 73
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 73
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 73
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 72
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 72
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 72
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 72
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 71
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 65
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 63
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 62
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 61
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 60
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 59
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 58
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 57
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_WITHDRAWAL",
+   "n": 57
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 55
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 54
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 54
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 54
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 53
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 53
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 50
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 50
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 48
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 48
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 48
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 47
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "M_WITHDRAWAL",
+   "n": 47
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 45
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 44
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 44
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 43
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 43
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 43
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 42
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 41
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 40
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 40
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 39
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 38
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_BAIL",
+   "n": 37
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 35
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 34
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 34
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 33
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 33
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 33
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 33
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 33
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 32
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 32
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 32
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 31
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 31
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 30
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 30
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 29
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 29
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 29
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 29
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 28
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 27
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_WITHDRAWAL",
+   "n": 27
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 27
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 27
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_BAIL",
+   "n": 26
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 26
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "M_BAIL",
+   "n": 25
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 25
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 25
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 25
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 25
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 24
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "reference_stub",
+   "marker": "M_WITHDRAWAL",
+   "n": 24
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 24
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 24
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 24
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 23
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 23
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 23
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_BAIL",
+   "n": 23
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 23
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_DEFAULT",
+   "n": 23
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 22
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 22
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 21
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 20
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 20
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 20
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 20
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 19
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_ADJOURNMENT",
+   "n": 19
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 19
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 18
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 18
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_INFRUCTUOUS",
+   "n": 18
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 17
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 17
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 17
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 17
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_INFRUCTUOUS",
+   "n": 17
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 17
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 17
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 16
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 16
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 16
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 16
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 16
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 15
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_COMPLIANCE",
+   "n": 15
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 15
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 14
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 14
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 14
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 14
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 14
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 14
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 13
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 13
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 13
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 13
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 13
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 13
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_WITHDRAWAL",
+   "n": 13
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 13
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 13
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 12
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 12
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_INFRUCTUOUS",
+   "n": 12
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 12
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 12
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 12
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 11
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 11
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "M_DEFAULT",
+   "n": 11
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 11
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "M_INFRUCTUOUS",
+   "n": 11
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 11
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 11
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 11
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 11
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "M_INFRUCTUOUS",
+   "n": 11
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 11
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "M_BAIL",
+   "n": 10
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 10
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 10
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 10
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 10
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 10
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 10
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "M_ADJOURNMENT",
+   "n": 10
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 10
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 9
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 9
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 9
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 9
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 9
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 9
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 8
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 8
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_BAIL",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 8
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 8
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_WITHDRAWAL",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 8
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 8
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 8
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 8
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 8
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "reference_stub",
+   "marker": "M_DEFAULT",
+   "n": 8
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 8
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 8
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 8
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 8
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 8
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 7
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 7
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 7
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "M_WITHDRAWAL",
+   "n": 7
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 7
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 7
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 7
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "M_CONDONATION",
+   "n": 7
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 7
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 7
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 7
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "M_BAIL",
+   "n": 7
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided",
+   "marker": "M_BAIL",
+   "n": 7
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 7
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 7
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 7
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 7
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 7
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 7
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 7
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "reference_stub",
+   "marker": "M_INFRUCTUOUS",
+   "n": 7
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 7
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 6
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 6
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 6
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "M_DEFAULT",
+   "n": 6
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 6
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 6
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 6
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 6
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_INFRUCTUOUS",
+   "n": 6
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 6
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_CONDONATION",
+   "n": 6
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 6
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_DEFAULT",
+   "n": 6
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 6
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 6
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 6
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 6
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_CONDONATION",
+   "n": 6
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 5
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_WITHDRAWAL",
+   "n": 5
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_COMPLIANCE",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_ADJOURNMENT",
+   "n": 5
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 5
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 5
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 5
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 5
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 5
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_ADJOURNMENT",
+   "n": 5
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 5
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided",
+   "marker": "M_WITHDRAWAL",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "M_WITHDRAWAL",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 5
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 5
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 5
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "M_ADJOURNMENT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "M_COMPLIANCE",
+   "n": 4
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 4
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 4
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 4
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_ADJOURNMENT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_REPRESENTATION",
+   "n": 4
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 4
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 4
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 4
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 4
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 4
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 4
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_INFRUCTUOUS",
+   "n": 4
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_CONDONATION",
+   "n": 3
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided",
+   "marker": "M_DEFAULT",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 3
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 3
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 3
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 3
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 3
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 3
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "M_COMPLIANCE",
+   "n": 3
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 3
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_INFRUCTUOUS",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 3
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 3
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 3
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_BAIL",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 3
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 3
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 3
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 3
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 3
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 3
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_COMPLIANCE",
+   "n": 3
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 2
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided",
+   "marker": "M_INFRUCTUOUS",
+   "n": 2
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 2
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "M_COMPLIANCE",
+   "n": 2
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 2
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 2
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RESTORATION",
+   "n": 2
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 2
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 2
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 2
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_REPRESENTATION",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 2
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "M_CONDONATION",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 2
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "M_WITHDRAWAL",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 2
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 2
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 2
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_BAIL",
+   "n": 2
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_DEFAULT",
+   "n": 2
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 2
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 2
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_REPRESENTATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_RESTORATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "decided_brief",
+   "marker": "M_REPRESENTATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "bail_order",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "reference_stub",
+   "marker": "M_INFRUCTUOUS",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_DEFAULT",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "reference_stub",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "reference_stub",
+   "marker": "M_BAIL",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided",
+   "marker": "M_REPRESENTATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "procedural_disposal",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_REPRESENTATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_BAIL",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided_brief",
+   "marker": "M_WITHDRAWAL",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_CONDONATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "procedural_disposal",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_REPRESENTATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RESTORATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "procedural_disposal",
+   "marker": "M_REPRESENTATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_RESTORATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "bail_order",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "RECENT_2025_PLUS",
+   "documentClass": "decided",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "reference_stub",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "400-799",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "1500-1999",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided",
+   "marker": "M_DEFAULT",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_ADJOURNMENT",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "PRE_2015",
+   "documentClass": "decided_brief",
+   "marker": "M_DEFAULT",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RESTORATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2015_2020",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RESTORATION",
+   "n": 1
+  },
+  {
+   "lengthBand": "1200-1499",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "UNCLASSIFIED",
+   "marker": "M_RECORD_CORRECTION",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_COMPLIANCE",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "M_DEFAULT",
+   "n": 1
+  },
+  {
+   "lengthBand": "800-1199",
+   "courtTier": "HIGH_COURT",
+   "yearCohort": "2021_2024",
+   "documentClass": "reference_stub",
+   "marker": "RESIDUAL_NO_NEGATIVE_MARKER",
+   "n": 1
+  }
+ ],
+ "stratification": {
+  "strata": [
+   "RESIDUAL_NO_NEGATIVE_MARKER",
+   "MARKER_CARRYING"
+  ],
+  "residualCount": 9201,
+  "markerCarryingCount": 12215,
+  "residualShareOfPopulation": 0.4296320508031378,
+  "allocation": {
+   "budget": 600,
+   "RESIDUAL_NO_NEGATIVE_MARKER": 420,
+   "MARKER_CARRYING": 180
+  },
+  "estimator": "Stratified mean: rate = sum_h (N_h / N) * p_h, where N_h is the stratum size from the census and p_h the adjudicated positive rate in stratum h. Variance = sum_h (N_h/N)^2 * p_h(1-p_h)/n_h. Do NOT pool the two strata unweighted — the allocation is deliberately unequal and pooling would report the oversampled stratum as if it were the corpus."
+ },
+ "draws": {
+  "RESIDUAL_NO_NEGATIVE_MARKER": [
+   "9ed35788-cedb-437e-a484-a8670fdea923",
+   "a4bdc7ca-c08c-418b-a8ad-8ec663782bd0",
+   "6bdb02dd-997e-424c-b5de-1da8df7e7ec9",
+   "fe923000-e529-47d3-af17-575dfab6b753",
+   "e6ccc093-8687-4f05-acfd-f4b8956a9cd8",
+   "b7d0a2c5-2f9e-470d-b653-207db3134a1e",
+   "ad6cf0f7-4e27-462c-9e58-57a6bece7735",
+   "cfda6595-925c-417e-b92b-70ed5cbc72c7",
+   "6a737a1a-0831-4e4d-9180-af54b17c7da9",
+   "ad1ed110-76fb-46e3-8dbc-476a3501f69e",
+   "1e8bb90e-00f1-4b59-9b42-3b8b25d8cdbb",
+   "1bc2ed93-8c71-4ddf-85a6-745c5d8e919e",
+   "94b79024-7a77-44b0-b062-aa45794ee584",
+   "436f4902-ca44-44da-9d1a-e9ac22459c01",
+   "7b11733f-8613-4d7b-9895-d33b78a895d7",
+   "cb1a3fea-2b79-416b-899a-4311ab212b51",
+   "1f032350-e5c1-4b82-896c-9513c0e5ef57",
+   "123f8095-9d75-498e-bc80-171164e5fe4c",
+   "5d262f8e-d44a-43e2-90ac-7f1361c04cc9",
+   "637ece40-15b2-4d20-8a1d-6eb94d863ff8",
+   "732034be-e7d6-4f28-bf62-4cf712a6e860",
+   "358caf49-e334-4162-b1fc-0f9d23ee9ee8",
+   "ed450d7f-d155-4a7e-860d-de351791564c",
+   "6c81633b-7d4c-488e-95e1-2bb1e1db2893",
+   "3a21f3ac-1c72-4b05-b57d-b349bbd5d408",
+   "7cfdb57e-286d-41e5-8ffa-1e38c33f3187",
+   "2bb08134-a325-433b-b7bb-e51a9357906d",
+   "723ff0e1-1c8a-42dc-8ee7-8c8b06767613",
+   "9097d06e-b82a-4a88-a12b-12ac2033987e",
+   "a7f3755f-7b5c-4572-a7d3-5b3ae6faa796",
+   "c4e7c710-f434-4048-8727-e6d8a70aefb3",
+   "c0bc5604-5680-43a4-b0f3-c7cee4bfcbbb",
+   "317288e2-8b6b-46a3-831e-d119fa1d1f8c",
+   "9109ffcc-7fd7-4364-ae87-0cf2724fe08a",
+   "9aa5b082-d1ed-4b7b-87bb-0d4ff633ddef",
+   "2c74c3f2-8c0c-4e76-92b3-5daf8e4f20c1",
+   "9c395906-4521-4838-a72b-30c4c51f8048",
+   "12781fb3-3909-40db-afa4-0c81fcd7383a",
+   "12a14c15-6b0c-47c6-882b-a713cc078323",
+   "83c97d38-361a-4038-94ac-405bf90f8657",
+   "86e6b29e-803d-4695-8987-1502d5c374d9",
+   "e9545041-9269-4610-bc0e-341b5b287240",
+   "04202a96-b263-4be1-9ae4-1813aafe06fc",
+   "61c35091-1952-4b93-b8ea-b9d41dff06c2",
+   "e9298cb6-b0a1-40c6-bf58-24abfc0cec3e",
+   "f51791fb-6f8b-4c6e-934a-e8e1448c02cc",
+   "a3684e04-3592-47d7-906a-81eccd55d5f2",
+   "9ab82d6b-3b3c-491b-9a54-dd286d0e747f",
+   "320b4b6a-2816-4ceb-8058-e33911f161ef",
+   "51f91797-9aca-4de4-80dc-a5ebf3018f2b",
+   "ccd96254-6bb0-4a9f-acde-2fc69d40ef05",
+   "9e6e8373-7758-427f-95f7-c3c77244fcaa",
+   "78f8dc23-805f-438c-84d5-40599b92f4a0",
+   "27cc4efb-0c0f-4f47-b2ab-b452b3d6d82f",
+   "44a3fd95-6275-4492-acf6-4d51d3d952bf",
+   "f873d1e6-0b84-45f7-8a9c-ad228724c045",
+   "89e61801-3ae6-46b0-a634-c440af8684f4",
+   "557c0ffc-0805-4192-98ee-1b8ac8c65c09",
+   "ba4374cd-2e6f-4bac-9960-c414632195e3",
+   "856df5c8-d4f5-4a21-abcb-b759edf319b5",
+   "c4d1a220-53d9-4ce7-9b92-76fcbce933e6",
+   "4970b15c-cae3-4a00-9396-c64df1d217ee",
+   "86d542bb-52ab-4e0f-9bcc-3fdf51441a00",
+   "b3f97708-d541-4b0b-a957-9cf4125b1ef1",
+   "16e4e7c1-96ca-47d3-97f2-5cc00268f39a",
+   "a8b59edf-0a5f-48b9-8b84-80d2f14287eb",
+   "18371944-c12d-4dea-ba0e-3969ee8b6221",
+   "0177e797-51cd-49e1-9205-db98769dae9a",
+   "f6f7ca6e-7c28-4c34-a463-222206daba36",
+   "489ada31-cde0-46ac-965f-a74c43a186ed",
+   "486a6dde-c60c-4c5d-8029-fa416468b7ff",
+   "defd7ef4-3ecf-4798-b12b-50b5ac38c52c",
+   "3e4b5fa2-c0d7-4301-9e2e-fa4c1f84bf30",
+   "1c3e73ca-96fd-41c6-81de-1e8b2274053f",
+   "afdf5d56-9c06-4ccd-ba8d-387ecc7f1247",
+   "61bc37a1-f7f2-403e-80b5-326c31cf60c2",
+   "ac730e3e-fcde-4287-8c63-0406034f7b7b",
+   "9a66c21f-6fa1-4725-9c4d-a1e559c0598b",
+   "7cb7b167-5ae8-4931-b82b-543b110df940",
+   "c07c5987-fe9f-4514-af07-9bd351ef71d2",
+   "41ba540d-39e8-4052-a2c6-2ea565529092",
+   "9f852f2c-2176-4dc4-907b-c944e3b43a41",
+   "10997cad-dee5-403b-bd96-793a9b9e7aac",
+   "6cecb3c5-5ecf-4dbe-902f-7f5b3ade42e9",
+   "a9d443b5-f09a-476f-8bc1-510782e25df4",
+   "84695d69-8e03-4ebd-bcba-6feba0978f57",
+   "740b3e7f-d505-406d-b1c3-fd5c277f65d6",
+   "ecab3e1e-3972-44f6-8fbb-757c9fa80be7",
+   "bfab5c51-adf0-40ec-a535-63085dd03721",
+   "e981ce39-c271-4f36-b8e5-a9921cfb4eac",
+   "9e776c66-82e5-4b01-bcfa-84b49e6f93d9",
+   "a8ac6342-e413-4117-8487-537f1d3a48c8",
+   "9d098817-9a3d-47e6-814d-e288f17e49ff",
+   "0d99477b-3b20-40bc-b263-a2ba4c0d24aa",
+   "15bc10ed-6d49-4228-a725-19f1b7051135",
+   "c736789a-ae24-402c-b8af-5ea6e516eb6d",
+   "93216317-ecce-49ba-b4b9-90273ad1c4dd",
+   "6840abfe-d983-4976-90af-ffb96557cdd1",
+   "ec9c0898-9621-4a7c-aa65-2cdb85748a4c",
+   "03424c70-e575-483d-9e2c-e4b22a2eb22c",
+   "b85b2fbe-f044-4c42-81d9-456a81307b55",
+   "a1d29ead-4e1b-4e71-bf35-e1251fc8870b",
+   "671c2b9c-fcaa-425e-916a-7c22a643b187",
+   "5fadda4c-bba9-4338-9387-d49b652845e3",
+   "209d1b8d-3308-49f7-a8e2-73ba5ecf0360",
+   "bf231e22-d70f-44a4-a2e8-d0eaa62a6423",
+   "441a1ad9-f3f1-4798-983d-b080c88556d6",
+   "ea57a1cc-284b-4ac8-b615-3053dee3fa46",
+   "7eae35af-bf33-42e5-9bff-eb694aeb260a",
+   "0ece6fc3-1ac3-40fd-afe1-e5e5223ed910",
+   "01bee05e-853a-4e56-9f2b-3b0bc559226f",
+   "74c62bce-340b-4c3b-972d-2f0ee1eaab64",
+   "9a70b768-7d16-4e28-8463-56cb0f045c6b",
+   "81a8bb25-6879-4a0a-885f-575323185b7a",
+   "20e3ca10-8705-4ce5-96b1-f1dc8acfd667",
+   "d0855095-8f0c-4deb-babf-7988076e3cb9",
+   "0dbb9475-e0c2-49dd-bfce-853b8051722c",
+   "1dd08970-f920-490f-822b-094bdb89ecba",
+   "481a2026-7d40-4249-8bb7-109323cf3a89",
+   "60ec08d2-6327-4ccf-ba50-9e64c3c2811a",
+   "a00873cd-2d5f-4e2f-9501-1216293b086f",
+   "6ab0c0af-72bb-43e1-aec0-d395485293ae",
+   "f190b54f-e1b4-4133-b6ad-980582b26f32",
+   "9b670046-9e8d-4ca3-8021-3468a05478ed",
+   "41f3a1d3-7128-4070-929f-60e7cec87211",
+   "1adbe3b2-be81-40ad-9b33-2c3e70689f96",
+   "9a44e3a7-e690-4bb0-aa53-fcea817b0924",
+   "9da9dfce-5ced-4f8e-8253-d25f6d3913c1",
+   "b083c841-5ff9-4a59-be5b-8c567b08c0bd",
+   "a71db54c-074f-4aff-80fb-df735ef3685b",
+   "5d227b22-f495-4f48-99a1-4b6add9bf9e7",
+   "f54900ef-5198-4c3a-8119-a8a7958bc5fc",
+   "5cd74c7c-5ac6-4e52-8f3d-ff731073bc05",
+   "6ac086d5-fef1-48b8-a2e5-ed1fa97945b0",
+   "0336962d-9e7a-4ce7-81a8-7cb31f32641c",
+   "df1de7bb-d09d-463c-a305-eb656bbec8d5",
+   "7ba7dbcb-101e-49df-b196-0000816598e7",
+   "66d080b0-ca7d-41a5-a88e-55869545b808",
+   "194fce93-8a5f-471a-b0ad-9e9d2365d1c8",
+   "42b66ed4-caa9-4a83-99e6-a7dd85fa1e45",
+   "ce9ea929-d086-490d-811c-e69828d8c9dd",
+   "c7393b94-ee01-45a7-88f6-3d2d83063669",
+   "446f926e-63db-4c56-9502-2f90bfd87ce8",
+   "a447fe6f-e9fe-4c25-9193-ff647378cb85",
+   "becc153a-6ac1-4a03-86d6-cfae711ccf42",
+   "a741e16c-2ec8-49bc-b280-59690bf04dd1",
+   "2d28cfb0-486d-4e1b-9378-7ce688b985c9",
+   "426faeee-5871-45d4-8bf4-9da258fe8ef6",
+   "2d5a04ab-903d-4744-9316-9574d6d69183",
+   "e75baa91-66a1-468e-b9f3-c83500654246",
+   "b4f393c0-52b5-4130-9105-375112c6363d",
+   "d79e5146-e5a9-4fa7-b9a9-e4b533e57d5e",
+   "1eb1332e-414b-4761-ae90-d3f0d8a0d818",
+   "70953aac-74de-49ef-a47a-d1635dd0d95b",
+   "e6ca6c49-ff3d-4e75-8c4a-82e9cdb6bcc6",
+   "ac504989-2a6a-46d0-893c-456297ef43fa",
+   "a9149c7b-15b8-4919-97c0-cf8997581df4",
+   "c3b64e05-6787-4fc6-9856-7e45d29697ae",
+   "3d3ba58c-0280-4e3a-b410-4c288710e135",
+   "8786dd26-a189-4a4b-9563-f11c721fb73d",
+   "e0881d46-327c-44ee-8cc4-1d7e4684a19c",
+   "65be3b86-584a-4577-a1b3-c6f649a8d342",
+   "0cfaa580-867f-403b-bc8b-7d4f00961119",
+   "8abfeb69-eca5-4f5e-8f71-619e9a84dd9c",
+   "945b9fe5-b90e-449e-a749-1ada7a08a229",
+   "a0b55586-68b5-4f80-a0b6-5ac3911f34d6",
+   "d200d690-5e64-413b-84ac-47a92bae2b14",
+   "5d42effc-5cff-4d18-b7f6-f6ee7be9996b",
+   "c1252aea-dee1-46e4-ae1e-24fe6c32b33f",
+   "62b7d2d1-f5a8-41bc-bcb2-70f0a641a0fb",
+   "c178901c-fc52-47ef-9a64-876a08c80ca0",
+   "087eb40d-e39e-4832-8acf-81e0946c535d",
+   "9ecdf7b2-b512-42d5-82bd-3435eeeb9852",
+   "a62b5b33-344c-44eb-bdd9-c485399f9d22",
+   "fb809192-b330-4d71-9ebf-c6ad87125f0b",
+   "171f5872-68c4-4abd-895f-43142c0dd697",
+   "4efa3329-b8a8-47b3-9c8b-d942819d3c08",
+   "5d908264-3645-47e7-a792-d8e2d463ed92",
+   "2c35d618-37cb-460c-8840-5c3d65cd022e",
+   "5dbd3c68-26ae-4f1f-87f4-2dd76da16bd0",
+   "ee007edc-7398-4651-92d0-07a89ae89c32",
+   "2d505e53-9ad7-4320-849d-c5ae3cba69c0",
+   "552c27db-2f45-4fe7-ad3f-e550371dc647",
+   "c444c198-73dd-4b20-958e-77fd4651816a",
+   "cc73f428-cbbc-44eb-b6d7-d8ed83cb7c79",
+   "231af358-bb0e-4b1f-a82f-5c91aa18a007",
+   "aa6233ef-4c6b-48ae-95bd-23fefed75e06",
+   "f7712158-f4b0-420a-809f-9fa8d4fa81f7",
+   "315b9b48-b3da-49f5-87c3-3a5537613c71",
+   "fb9c4c9c-9887-487f-874e-849ceb9d5175",
+   "087e9bb5-0e4b-4480-b7cd-c8cf4978ea16",
+   "91437863-66c2-4aaf-9007-75dd164b7e74",
+   "6b24829a-0237-4727-b858-7721add50b1e",
+   "0ce1c8a9-3238-462b-b364-16f0cced071c",
+   "ddee9fe6-b444-4158-be4f-d5246ebe17a4",
+   "0a7d2317-2911-4571-ab01-44b230e656ef",
+   "7def7c4a-df02-4b0f-ad61-49758311fa58",
+   "00f69d0f-e8ae-4f33-9189-6ae543230752",
+   "3b6a481a-e240-4156-821b-8d6fffb552ec",
+   "3d011678-ba26-4e4a-beef-801caccf2d22",
+   "ad727ec3-609a-436a-bc11-4535f67d9fa7",
+   "90d829b0-a48b-429b-a071-15353eec0372",
+   "a1eb77a9-798a-4f2d-bae5-4e9627610936",
+   "e21ca785-4969-424f-a506-b2b360bd28f6",
+   "8131dbb5-ecad-413a-ae6d-92381ca4bec0",
+   "a23e3f64-b5c8-4a10-a959-f4c761530684",
+   "cc7c3456-092b-4c87-befd-88ef8c54807c",
+   "d5a65a3b-7e77-4e4f-b628-45215bf50124",
+   "9ac5c20a-7536-4391-854c-fb9a15a5c969",
+   "f6421396-ae3a-4913-a6a2-7571da788069",
+   "1e428444-7fec-48d1-bfb1-4ff45789ae72",
+   "a894a724-4b1e-4909-942d-a4282fb64a2b",
+   "20771d4e-881d-4f2c-bc7e-a76a97a0ba0c",
+   "59cd79dc-77cd-4270-a2b8-065c797bf83a",
+   "15a91d49-260d-4ef6-8d75-397d0cb143fe",
+   "97c77cca-7d5c-4a9f-ac9d-78f6dc397548",
+   "e0da70d9-64da-4331-a759-7a5bd65a55ec",
+   "c8b803f4-8abe-4629-a525-ca243fe57f7a",
+   "127e6a00-b058-4a1f-b80a-a80159fd0160",
+   "f660efb2-4852-4c12-a82a-aca786e98072",
+   "a0caa350-6895-44c2-9d29-6731205262b4",
+   "f7396fbe-afe9-4d34-9b2d-ba13bee3eef2",
+   "9baed3c1-c17c-459d-862a-9ae6df704da2",
+   "c299aaba-72b8-408f-a228-9be92f79ae31",
+   "ce6679c5-fefd-42e5-8268-c5efca6370c7",
+   "15ebd085-810a-45f8-b595-e951bd3b5914",
+   "3f50c143-e9ec-4cee-acdd-e0765ef45249",
+   "9cbf87dc-2575-4d31-b5ab-bd014472fd8b",
+   "d60ea86e-6386-46b0-b050-4991237cfac6",
+   "6b8580f8-bc25-4d03-a269-b2cc3af3c892",
+   "a6b9d829-3207-41a6-b9f7-f8ae76641be0",
+   "4e7f55b5-4019-4b2a-9c66-9370e2d8bbbc",
+   "44421dda-6d2f-498d-935e-7baecb5e908a",
+   "6cc097a8-24fe-4a4b-9d76-966c46dc8064",
+   "30aea524-685a-430b-b704-c518122a8d88",
+   "0cd37195-18f6-4370-bb79-d19debba0ea3",
+   "829e67bb-b5a1-4d04-8be6-d416fa6240c9",
+   "4178105d-e621-426f-8dc7-bd74824a9855",
+   "7007433f-cfd4-481f-93fa-329b30e7a652",
+   "7e892bce-5071-4197-a3ea-0aed3118df2e",
+   "4b99786a-9459-4ce3-83c4-31a40f091f96",
+   "d081605b-69fd-4f42-bbd0-af4a885b72c9",
+   "a9e2f026-4b63-4146-8921-1d542bb93fda",
+   "0fe78f71-1085-4a40-b3d2-de1a5318e07d",
+   "110ff7b4-9a7e-4692-bb61-1f79afe71f8c",
+   "de41f059-a7b1-4fe7-a6a2-dcf735e2e654",
+   "d715f477-c0be-45c9-85c6-7e375068413a",
+   "7d36c6e4-e97e-4230-8c73-d9ee5d6beaa0",
+   "640914da-be0e-449a-9975-36e81e538d5c",
+   "f8c67947-8065-4015-8786-556eeacd535e",
+   "b27af81f-642e-47d1-a4d8-0cd561cf67f1",
+   "2e8a5420-63fe-4ca0-97f4-b87a028040f5",
+   "b357ed48-a078-4dc9-8349-0852d086012f",
+   "07ab46f2-b18f-404c-a96e-f739b09c7748",
+   "edcddcc7-19ef-4495-855d-8916379b2b8c",
+   "e9842bf1-a7e6-4e12-ba33-8a391cdad429",
+   "0c599220-b183-4deb-9ae7-d2c881a1ec28",
+   "7817cbe7-39ab-47d3-9ce5-deeb1344962f",
+   "790ac248-99c7-4d49-8e48-18a3d9493fb1",
+   "6d5f34ee-5cd1-44fe-94f9-eb9bc09e52cb",
+   "abca364c-4a03-4312-a69a-2096319bef50",
+   "6e925e04-1630-421b-a297-e42f1fcf15e7",
+   "7c63d65f-94be-4a60-b5d7-6dd25ecba6d3",
+   "c675c57e-bb49-4b1e-acc1-9961f17c1a35",
+   "2356f080-c6ac-4639-a6ab-532c84aa0b60",
+   "d6ce9062-c4e3-4462-b30c-dc31ef368037",
+   "b21d1e5a-35eb-4046-b25e-46bb4426cffe",
+   "e964f060-68a9-42bf-a477-cf438d009f42",
+   "48237267-b741-44e3-9b75-8e64fcd74a48",
+   "0ffc193f-7ea9-4914-9244-4aa11bb31886",
+   "6c6425fc-5b50-4620-b7a8-a76f0da16617",
+   "a665ef67-786c-40ee-be92-68a4939e3449",
+   "153ad5d7-3873-44e1-910e-b46e52dd03c7",
+   "fc93a918-69d5-4298-908d-c6edc54ec54b",
+   "090935d8-65b9-4ea5-8806-912ba1f01a00",
+   "8afc66ee-11ad-43b6-a19d-4cdc25f72b2d",
+   "68b5c0cd-8a10-49e4-8923-3e6794a9188c",
+   "5d9d2c1a-8d78-4661-ada9-283102d504c6",
+   "62b8407b-308c-46ea-9726-1bc70b94720f",
+   "ef1e07bf-e6ed-4b67-9447-ae433c9640f7",
+   "a7123acf-3b94-4877-944a-c335adacd8b9",
+   "3a63d81a-ff2a-445f-ad13-1e0a360247e7",
+   "794341c5-00ee-4ae7-933f-9f6e7ddff981",
+   "7400f36e-3eae-4ed0-abba-640f56e23205",
+   "668a558e-0220-4a91-a34a-7634248742f7",
+   "73b182ff-2234-4297-b79a-f6f206f1df01",
+   "7f2367c4-23a2-4fc5-9e7c-ae155606ff50",
+   "f72b51fe-f615-4280-8227-7293be0ed249",
+   "c204c466-f8fb-4efe-ba77-16e507b33b05",
+   "4ae417b5-c16e-41fa-b9e2-38ec008b8a76",
+   "bd383951-9d7a-4b06-aac8-03ca516e8360",
+   "b39f72d0-9f39-40c7-a2d3-4db3932b177c",
+   "2dcff57a-f054-44ff-b12f-8b4975820bf4",
+   "fd4850ae-c944-4b04-8be5-da9b4e83c386",
+   "15996244-795d-49e8-b7c6-38802cd2e8f7",
+   "ee77df59-9000-4298-b264-aca38e6380aa",
+   "69ba4b4d-0608-44f5-ac85-daeb8eaea125",
+   "78d352cf-7925-49fd-9b67-8c0eac2bcd1b",
+   "581407fb-7418-4615-b26a-e9c7283cfe6e",
+   "549b6048-20aa-4211-b635-e1e42be7274e",
+   "1bfbc136-2c63-4f30-972e-85897a7cfb65",
+   "708acddb-7487-4ab7-a8cb-7d669123a362",
+   "aa9ffbc0-08b3-4263-83a6-503b6a4b537c",
+   "a20e82f0-41f0-420d-97f1-12ad364168e1",
+   "cab9c596-06d2-423f-a206-2b113bf4789d",
+   "5984dbc6-80f2-4a8c-8d0c-435bfed14fa6",
+   "4ba8e2f0-6cf2-47e0-b673-5d97635896e0",
+   "235a5277-1af2-4973-8288-e676a14c0b74",
+   "6cc65eba-2358-4dfd-8ce0-5cde5746b6ea",
+   "8a5cfef7-1586-4738-8189-a3c4f7f58806",
+   "ed005fb1-439b-4595-a9a6-7b33ec45c65b",
+   "134c600a-1f16-448b-8e3a-81919361d9cd",
+   "f04c8e37-4cf3-4e46-89c4-e59b5f005c60",
+   "36d80c77-64e5-40d3-8a3f-64dc73618723",
+   "3e22625d-a428-41ec-80cb-a258e1b802bb",
+   "9387bbc8-a25f-488d-9f7b-28479c140bf7",
+   "2a01873e-6892-4ad2-9851-4c922e3b8574",
+   "a425709a-3ef2-4af2-8921-5b4cb1bd4bc2",
+   "a8bce069-d24d-44d1-b157-161289c7b4c2",
+   "e37828c8-934d-4af6-a86c-67b01f514530",
+   "c41477c8-81ec-4356-8bf9-b9714a680cb8",
+   "00f77cc8-3bc7-4573-854b-2e157072e41a",
+   "38beeec2-6dd0-493d-9fd3-28cb80025717",
+   "33eb5992-f2bc-4282-aaaa-f1bdbb5d54ab",
+   "5881ee26-727b-4f76-a9a1-79305768586f",
+   "ce1fac46-fca1-4f25-b0ad-49103fed39b9",
+   "42d3ab7e-643e-40ad-8ccd-fda0f53c2760",
+   "b699464b-1754-41e1-aefb-4b2b6b7cb86d",
+   "7891c431-893e-40e3-a7b5-5a517df65944",
+   "417b8a85-e1c7-451f-90bc-b923443c21fd",
+   "14625aaa-a837-478d-8f4d-dbe06dcdc4a9",
+   "c4a8cf55-a9d1-4b8f-a565-fa89acc32a52",
+   "b4d9101a-ced5-4ae3-94fe-b18f3163ccee",
+   "d2df4424-2299-48f1-b370-d5bd1f8618f4",
+   "1a137e23-09cf-4565-9374-009fece64ca0",
+   "bf461a38-89ee-4dd1-aba1-45462513f037",
+   "8b484388-417c-418c-9e19-ea36dd4d14a1",
+   "2e6b7a67-4269-4a25-8091-f5f0c8a64fb1",
+   "a2dc0bee-5880-4fb4-913b-361c527b3a81",
+   "a3197fee-53c0-43b8-9e02-b63ee0f005c0",
+   "83ab22f5-075b-456a-b857-4be27f91b26d",
+   "4cbf6b2c-300e-4e20-b58e-79c1edc6bf56",
+   "e255384e-0c71-477b-b525-dcf644dcafd4",
+   "a9a16c17-2e5f-4b0b-b7ec-78e426c75078",
+   "9b650e6d-7d1b-447c-9884-8f788289608a",
+   "66331b7f-2555-45bc-93d6-18b5a29d1efa",
+   "1b33870c-6826-422b-8081-b3507c0e76b4",
+   "b1f23dfb-b1ed-4d30-a3c6-74e463ed9872",
+   "2b278673-7540-4b99-ab25-8e1c5355fe7f",
+   "31ae144e-3ac1-458e-9ec5-d8c46db10ed4",
+   "25cb82f3-f714-4a62-837b-ae7f172294cb",
+   "5d42e9f6-2eda-458a-be33-9b8e4820217a",
+   "1088ee5c-7a41-4740-95cf-6adcb1cf13f0",
+   "b01170ba-4ca9-4566-9ad8-cddeb5526ae8",
+   "2e0d1854-010a-41be-89cf-75f3c54b0fb8",
+   "8420ec27-be1b-44fd-a076-80cdbde8f862",
+   "079c0e10-6958-4b3c-a464-78dd1293862a",
+   "05c40822-b59f-4684-a720-b12e6f471667",
+   "43f375c4-02cd-4768-990f-3cd588ab759c",
+   "bc6cb4c1-0cf5-4ef7-a54e-8969aa2e52c3",
+   "55e2d982-ab20-47ac-b163-b225ad4d490c",
+   "56912f2f-848c-4269-8861-d606b4d74808",
+   "e0a4214b-af76-4f37-b38c-931416d47cdb",
+   "38f61ce8-ab4c-47a6-a9e7-25aa4faa44b4",
+   "0bebfa1b-0790-4edc-959c-57cc0a776292",
+   "7c457e9f-88b1-46c3-902c-e3dcd9e491f7",
+   "5c7b6c65-51db-4a27-b34d-d1be9d6b47b4",
+   "1275b66d-70d5-4ccd-9dff-0ef234571d14",
+   "e84c84ba-a7be-44e9-8a96-456efd77b1a6",
+   "728ce43c-de1a-49ab-aacb-6dec283fcca8",
+   "ef6a9499-33a4-495e-a022-a150e5cb4576",
+   "d9e8c165-1b02-4d0a-b30b-75dc40ad45dd",
+   "56d9f2b5-c01d-4736-a615-a03ca5f7289d",
+   "16dce88a-d248-4009-be7a-8dbe02e6c69f",
+   "2dd7c831-09f9-464c-b87d-2389131fd737",
+   "f6f1ace9-115a-49f9-95e4-7553f0750d71",
+   "9ac765f4-e51b-429c-8976-48146ee00dbf",
+   "ca419fea-7990-421d-b3e1-4cb3be63da4e",
+   "ba4d9f93-65d2-4867-b331-ec7410c5fe8e",
+   "cdcb825a-a837-4150-a5fb-b73e00da4646",
+   "c272a880-c1d5-417c-a126-642ef06c0460",
+   "778af414-f7c6-42ba-b4a6-ce4b2301d5ac",
+   "5be031cc-3aeb-470a-8b47-e58d113061b8",
+   "6522c21c-52e2-4889-aa9d-6e7ccef94159",
+   "50b77280-ff38-4053-b715-8c032c4d09c6",
+   "548a4387-4ba2-46d3-b400-cd84072539ab",
+   "3a9af97e-e3e9-4969-bc2d-b39d8da0b724",
+   "1a5805e6-b85e-41fa-b061-422efd8a4032",
+   "917bafa1-5fdc-465f-9d2d-9edf1a5b82c2",
+   "10d9d022-e109-4793-97cc-b8f8aeb49f95",
+   "f8d412ab-f724-47bb-927e-62b857b50550",
+   "744a1599-0187-4cb8-99a3-8aab9c0a2f9e",
+   "d2d24d1e-071b-4a0d-b277-abd4d05fa158",
+   "12539718-d3cf-4308-bfdf-9c2b00c7eeb4",
+   "7d13733a-a53f-4c0d-9ec1-c9723a29ec2f",
+   "ddbb6f10-604e-4ab0-ac47-b3d2356fd20a",
+   "ae62d59d-616d-469a-a0b5-2ce989f6ff22",
+   "6cd0ed49-4a36-406a-a407-fe177dbcc95c",
+   "0bdc2906-2a8d-4c9f-9b3b-a5fd230db285",
+   "decab51a-2095-47de-8399-9dffb8a5f485"
+  ],
+  "MARKER_CARRYING": [
+   "0cd36e2b-4942-4516-bf2c-82afc3e1cf62",
+   "8811f773-cff2-47dd-9e08-792f0e164bfa",
+   "dd2f25c3-f15a-4dfa-8e53-991ae4b262de",
+   "aea809b4-c822-487f-971c-dacdb5031692",
+   "2c51a1a0-1dbc-43fd-aaf7-18c62bb28baf",
+   "579d48ff-f68e-4544-9927-26d6f153938f",
+   "8c5a2376-ead7-4fd0-9baa-01a33e09200a",
+   "9c65a66e-6152-408a-bb57-643547587100",
+   "722b24e1-fc23-49de-8b6f-7d0833bfa41c",
+   "c5aa08ca-ba3e-4bda-9d9e-9ccc72b886d5",
+   "624aa31b-1ab1-46d1-8c3f-7be6ae4a9082",
+   "2a162635-e230-4f84-b1d3-c335a08acc16",
+   "2c80d137-5a3b-4d2d-82c8-e9f1e9145b81",
+   "07d8adb3-50c4-4262-aac6-a49dbd6e6475",
+   "6bf7d402-806d-436a-b540-c62c5b6230c7",
+   "d62f3a46-81f6-4c6f-ad28-bdddccbadf00",
+   "93dc4a98-9e00-49d3-9033-491903139283",
+   "5fed2774-0a66-40bf-bd8b-b1cd51114712",
+   "43322a35-bf7f-402f-81eb-b5bcb06262e9",
+   "db88a7d5-5b21-45d5-8bd2-b708c52eee73",
+   "b849d552-ee8b-4f50-93f3-0a9da5410983",
+   "2408024e-abb9-40ee-bd76-f0e9727553f6",
+   "4fcc79d4-79b6-4ef6-803e-322d086e525f",
+   "dc8b0b93-5374-464b-93af-edbe3ef084b3",
+   "933273d5-37fe-46d9-a464-f687f4d0c74e",
+   "b8e696bc-19df-4049-bb2f-0d9ce3128ad7",
+   "91b5f7e5-da1f-4ac9-b345-867f24cb5eb2",
+   "78a94b1f-9293-4a4c-84d3-908e00c712cc",
+   "b4eaaf30-3758-439d-a694-840cff6c8058",
+   "9b6f6b8e-ad69-4f58-8ded-40612e3f4b38",
+   "cb79ed4c-7dc5-44e6-a4f5-2068655c972b",
+   "185292d8-94e7-414e-88b2-7bce0ad91653",
+   "db7edbbf-61ff-45bf-b6fb-b362b33d2ed6",
+   "87aa1e1a-b9c2-4fb9-bb78-5f2bdeea8491",
+   "06262e4f-78f1-4314-a623-7eac23be70e2",
+   "f75e3382-86f8-40e8-b278-e9d2cf13080b",
+   "bcd8f330-4aea-4c8e-aeb8-aff4ab5dea7a",
+   "ba6eb0ba-a568-405e-bab9-317d5e2220d1",
+   "d34058c9-8bc3-438d-b1e6-42edb53d5455",
+   "ebcd8a7c-aa3f-47fd-9480-254d4c69f4d6",
+   "eb3cfe19-d634-4a48-897a-00dd894908bc",
+   "cbca8b0b-44b8-4c63-bcf6-ccbd4bbed60b",
+   "00311c4e-db51-4307-8c7d-ce8eac6eef8f",
+   "73ffcdb1-ffbd-43ea-9565-ada9d7230a28",
+   "bfdc634b-ea75-4b80-b980-a376f413c7ea",
+   "4c562996-25ef-423e-8b84-c86cbf56622f",
+   "e3f65219-220b-4293-bc9b-6c6364f7a0f7",
+   "da7ce6f4-cb5d-45e5-a79c-38695b2f8e8f",
+   "1e58aa10-3d82-4d2e-a7a2-3267a2a97423",
+   "3c517a18-36ef-4ac6-8fab-27439c699c24",
+   "113e3a93-c950-47c4-ab8b-e18228ffa623",
+   "9686d6bc-9a76-41e7-b545-d64895bdbaa4",
+   "6f4a6390-0300-4d99-bca0-5d81e5288ebf",
+   "d7e6118a-02aa-4a33-b1eb-713dac71c872",
+   "aa502be6-de97-4c2c-add8-956cea1efc05",
+   "45bc7581-82cb-43d4-b614-eefaaea7b1e0",
+   "f8024d87-32ea-47d3-8e4c-9ea033333cb2",
+   "d9fa9447-73e5-4f87-81f3-4866e776fe4b",
+   "0fcc7276-dbbc-45ea-a49d-75b096178470",
+   "55c235c9-ddda-4459-ad8e-d7c938944880",
+   "38bd5200-d26e-4f00-af73-b106128b5eb4",
+   "48154fdb-7845-47b8-8e26-8e69733bc71d",
+   "8af43702-6d30-4119-8818-bd1508968799",
+   "a3095ee1-b809-4431-ab0e-53c88f5df6c3",
+   "a2047a03-c891-4a1a-9ef0-18c424932917",
+   "1b47a87c-b47a-4c2e-85e5-0004b37e2149",
+   "3d8fc5b0-ee11-4688-aad7-a9cd112fd0b3",
+   "4bff7601-1058-4455-9608-a0386accf620",
+   "c30c2fa5-bebd-40b9-a122-aad08bed42f6",
+   "8d97c783-82e7-48ba-baee-c2a258b1e6bc",
+   "611f186e-d75e-4eb5-94c9-4f58ef95968a",
+   "64694b56-18ec-45c0-bf9e-16c07a96ed12",
+   "60378ee4-8544-4041-aa4d-5596d9d4955c",
+   "661b1acf-9edb-4b1b-9f24-629a984e0349",
+   "eaa870a2-1d25-4a03-9c02-f1ffe2ca90c4",
+   "50ceba55-b2fc-43cd-be6d-adaa7cfada32",
+   "f9e0f970-0bd1-4913-a3f7-f848fd1a805c",
+   "043dce89-c86f-40b7-b83b-9f2166432e66",
+   "c6468f86-8ef8-456c-8edb-f9d276222aff",
+   "2b7a37d0-82c4-42d6-97cb-539a1124bb3a",
+   "f2b891a2-34b7-4f59-8039-707bcc266dbf",
+   "8ac38ffe-6321-4ff4-8f48-54606fd60389",
+   "e4306740-1483-4b57-ba2f-51ac9613d7c0",
+   "f906df70-a98b-448b-b348-fc4256df8e32",
+   "666ef39e-4dfd-4b4b-a801-33f5a21caddb",
+   "78dcdd57-19c9-43aa-b7ef-ee6442da35be",
+   "12f103e9-291f-4e66-bfba-10fcb21d3446",
+   "02192bcf-a84d-4fba-b319-ffc576689450",
+   "25309803-157c-4df4-b3eb-10972a7a1453",
+   "b7e6f78d-7e89-4866-994c-8b5ad2170b43",
+   "0a50363f-1629-4a6b-b413-416f36b20e5f",
+   "f2832478-35e6-434a-aa8d-6e32b7966490",
+   "c28054ce-71b8-4ee1-9981-e7c6c9523527",
+   "ec34164c-0e8b-484c-b542-aa7593419ba9",
+   "88343522-63e3-46b9-a6a2-762bf1ec8c55",
+   "cef8b79a-92aa-44de-8cd4-034c4a7c5976",
+   "139075fe-17f6-429e-81da-e3b3c1e0b28b",
+   "93b07581-7d45-4006-ba20-a3d4cb81cecb",
+   "4d688133-11c0-4f3b-bdff-b09d88f50f0d",
+   "864c6f58-95b7-47cd-8b01-1eefb07eec98",
+   "0f0432b4-516f-4a0d-bb2e-fd2bf0fbd19c",
+   "ce000630-7df7-4ed1-98a8-18adac85191b",
+   "69e42c79-2cdb-4d00-b765-a13ba1251e51",
+   "99815c06-6e96-4751-bd43-beed11f499c4",
+   "11382592-aaf4-41b8-80d5-a4157061737c",
+   "f05e031d-31f3-4030-a037-0dc5f25fdc24",
+   "6e33f8b6-4b92-4871-8576-13414e150d9e",
+   "027a7735-ef11-4fa6-b75e-3fb8a5e16149",
+   "092a7a8f-a69b-474a-8bb9-c34fd63b5f3c",
+   "a2678c71-b9a7-497a-93b5-fda3b99a0536",
+   "4f67a86a-637b-47b4-87ef-b829675ae27c",
+   "c716d300-8536-4704-9d19-2958019408fa",
+   "8837dd17-b7f6-4e37-9c11-afdf0fc02b53",
+   "cfdb95a0-48d0-4015-a51b-9d679e3b1c4c",
+   "c633b75c-da5b-4296-aea9-41b9e8058352",
+   "c35fecd6-9509-4f0f-92de-5c14d88e617f",
+   "66c1bb91-f9b3-4d05-bb89-ac2ac8abddad",
+   "29658151-cf1b-41e0-9a90-53446ddab5fa",
+   "4d151a1c-6510-4d43-8a5f-30de0e07c4c3",
+   "2cfc4e2c-9066-4a83-8e1f-3b0747e3ce95",
+   "3f0b83b2-046d-4f3b-9bc6-e2c7e3c5d9ae",
+   "fc94b1ea-22da-45da-a881-9a2fe1bc94a7",
+   "84fdd2ee-ad83-49cb-87d8-924bd954a4b1",
+   "64915856-4844-4b71-88ed-165eb603dd4b",
+   "ab55709f-4bcf-4109-a262-6e1167506ad6",
+   "6e7d1286-b9ba-48c6-a3e8-86fe6a2cee68",
+   "6a5e9c63-3040-4847-9c99-dd89ba784d6a",
+   "94d0ae69-9d21-4b36-b59d-c5221de6eb96",
+   "44184929-a096-4842-b75f-041113497323",
+   "226c9d24-4a24-4e54-b9e0-0897489a1192",
+   "4f3841ba-3c5b-486a-92e3-2de8f370f25f",
+   "5c78926f-3c96-46d6-9382-ec4ab5e6e236",
+   "f6f81ec6-b4dd-43ad-b9d6-3c7b378d6541",
+   "7be6e110-7b3e-4e8d-802d-5b6f047ccb88",
+   "0c598ee8-c20f-458a-b052-49d24f812d47",
+   "67b5f73d-78be-412e-b967-c23b03d66aaa",
+   "8a7123cb-98b5-4152-8117-019b00f41da5",
+   "32f5a7c7-92df-4ce2-8e9a-c61def3587ec",
+   "a9ebe25c-0578-4f35-9a4e-a897af7f87c5",
+   "f6eebac4-32e4-41bf-8074-873d8a844262",
+   "b85ff239-9a37-4040-92f2-5a13b5197e6d",
+   "9362a93e-fe65-460b-9675-5286615e1399",
+   "e20d66b1-00c4-4abf-b7a7-6135dcaef674",
+   "d10a1f34-436c-43f7-9490-2f1e96398737",
+   "99a9ebdb-5502-4da9-9499-ff9d47fff31e",
+   "95f9eee6-f270-4949-840f-1723f39afafd",
+   "1a9912ef-9379-4ffd-86b1-433f78688b98",
+   "f0a0e255-6cd7-4c47-9ec5-1ee46315a5de",
+   "bbf25869-7cc3-448b-b043-a56aa6f79833",
+   "acc2f627-aade-4389-ba83-50152a3a719d",
+   "ab4f9cb4-9705-4cb6-9794-dd90bc62f77b",
+   "ec467dbe-f4ef-4473-81f6-f944c00a8f42",
+   "abe0bb86-503d-4ec8-8402-9191aee5cb13",
+   "f7bad806-ec57-47c5-a330-61bb9e87b061",
+   "ec14a8a5-e83e-4ce7-a7fd-1653d17431d2",
+   "6569422f-67d2-49f6-b873-854ea2621793",
+   "2cb7b382-86cb-4725-b151-de124973be37",
+   "e17bcd33-88c2-40dd-97cb-c035dabfb6c8",
+   "beeff827-7a8b-4b10-9fa8-968d4356c658",
+   "1d6b3d33-640e-4bef-8dea-e25aa14136e7",
+   "e654ce0f-6ec8-4a7f-b629-d387a7845136",
+   "01058328-c4cf-468e-8112-6145b11cc37a",
+   "05e2ad3f-a65c-4a2e-acc3-69bfd0702721",
+   "3d370d8e-a6e2-48b7-957f-5907cd67231d",
+   "c0c84a66-8c5a-4894-8e44-e2d711084db8",
+   "96d3d784-665a-4465-bb9a-cb2471fe1bbe",
+   "874d6cb8-cc6b-4eff-a378-fbc735b1e7a1",
+   "8846fc0d-8c29-4561-aed2-66b434b749f2",
+   "d916691d-26d5-4f33-b6e0-012534b966ba",
+   "218f162a-80b9-4462-8046-0b1f3387913e",
+   "954c8155-e06b-4a8c-928e-3f3dcc835ec0",
+   "d6e15e19-03c2-443d-81c9-078d53e08f5f",
+   "e61ae1ee-2649-46f3-be8c-f4290027781e",
+   "d33f860c-4fc6-4dd3-abff-e6879eae5cdf",
+   "3a07d559-9f7d-476b-8e3b-1b53fdfbe594",
+   "d1008fa8-8c10-48d6-b3f0-c800332f87a7",
+   "e7191cea-84a8-4a23-b0ed-8c851f69e02d",
+   "eaa15ef0-fff8-4208-92d4-2d0bb06b84eb",
+   "f554091b-2572-4a67-89ab-92dfae5134c9",
+   "928a701e-9211-4874-8af5-7e1e24ede06b"
+  ]
+ },
+ "whatThisDoesNotClaim": [
+  "The markers have NEVER been scored against a label. Their sensitivity and specificity in this file are UNMEASURED, and no number here depends on them being good.",
+  "They are stratification variables, not a classifier. A useless stratifier costs efficiency, never correctness — that asymmetry is the reason they are permitted at all.",
+  "The marker phrases were taken from NEW2 published CATEGORY NAMES, not from reading their 80 adjudicated documents, so they are not in-sample to that study. They are also not out-of-sample validated. They are unvalidated.",
+  "This frame cannot tell anyone whether the 2,000-character gate should move. It can only make the adjudication that would answer that cheaper.",
+  "A regex over full_text is a lexical test on English. It will systematically under-mark Devanagari and legacy-font documents, which is a coverage bias in the STRATIFIER, and therefore an efficiency loss concentrated in exactly those documents rather than a bias in the estimate."
+ ],
+ "costModel": {
+  "new2SimpleRandomRequirement": 1650,
+  "new2Rationale": "about 62 rule-positives are needed to estimate precision to +/-10 points around 80%; at a 3.75% base rate that is ~1,650 simple-random adjudications (NEW2, bus 1073).",
+  "whatStratificationBuys": "UNKNOWN until the first labels come back. If the residual stratum has a materially higher positive rate than the marker-carrying one, the same positives arrive for fewer reads; if it does not, the cost is unchanged and the estimate is still unbiased. The FIRST deliverable from these draws should therefore be the two per-stratum rates, not a threshold recommendation."
+ }
+}

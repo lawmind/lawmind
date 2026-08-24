@@ -65,7 +65,17 @@
     "safety:currentness": "tsx src/currentness-safety.mjs",
     "gold:transition": "tsx --env-file=../../.env src/statute-transition-gold-cli.ts",
     "rerank:safe": "tsx src/leakage-safe-rerank.mjs",
-    "arms:queryshape": "tsx src/query-shape-arms.mjs"
+    "arms:queryshape": "tsx src/query-shape-arms.mjs",
+    "title:battery": "tsx --env-file=../../.env src/case-title-battery-cli.ts",
+    "rep:lab2": "tsx --env-file=../../.env src/representation-lab-v2-cli.ts",
+    "bias:uncited": "tsx --env-file=../../.env src/uncited-authority-bias-cli.ts",
+    "safety:retrieval": "tsx --env-file=../../.env src/retrieval-safety-cli.ts",
+    "stage1:candidates": "tsx --env-file=../../.env src/two-stage-candidates-cli.ts",
+    "ceiling:dense": "tsx --env-file=../../.env src/dense-reachability-ceiling-cli.ts",
+    "safety:temporal": "tsx --env-file=../../.env src/temporal-correctness-cli.ts",
+    "rep:lab3": "tsx --env-file=../../.env src/representation-lab-v3-cli.ts",
+    "frame:eligibility": "tsx --env-file=../../.env src/eligibility-frame-cli.ts",
+    "long:posed": "tsx --env-file=../../.env src/long-fact-posed-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",

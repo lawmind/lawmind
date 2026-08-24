@@ -70,6 +70,8 @@ const WARMUP_MS = Number(process.env.KEEPER_WARMUP_MS ?? 45_000);
 const STAGE_LOG = join(ROOT, 'docs', 'ai', 'new1-tier-a', 'stage-embed.log');
 const WALK_LAUNCH = join(ROOT, 'services', 'harness', 'src', 'walk-launch.sh');
 const WATCH_WALK = (process.env.KEEPER_WATCH_WALK ?? '1') === '1';
+/** Presence of this file suspends walk relaunch. Its contents are the reason, and are logged. */
+const WALK_PAUSE = join(ROOT, '.agents', 'logs', 'new1-walk.pause');
 /**
  * Twenty minutes. A running batch appends a progress line every 200 documents,
  * which is about twenty seconds — so this is a fifty-fold margin and will not fire
@@ -188,71 +190,101 @@ function startSidecar() {
  * the tool; `Where-Object` on the command line finds every generation.
  */
 function relaunchWalk() {
-  // `$_.Name -ne 'powershell.exe'` is load-bearing, not defensive tidiness.
-  //
-  // A process query that matches on CommandLine MATCHES THE QUERYING SHELL: the
-  // PowerShell process running this very command has 'doc-vector-embed' in its own
-  // command line, so an unguarded filter selects it, `Stop-Process` kills the shell
-  // mid-pipeline, and the `Start-Process` that was supposed to relaunch the walk
-  // never runs. It exits 255 and prints nothing, which reads exactly like success.
-  // Verified by hand this session, three times, before the cause was obvious.
-  const ps = [
+  /**
+   * STEP 1 — kill any survivor. STILL PowerShell, because the process table is
+   * the only thing on this box that can find a hung descendant several
+   * generations below the runner (bash -> npx -> cmd -> node -> node).
+   *
+   * `$_.Name -ne 'powershell.exe'` is load-bearing, not defensive tidiness.
+   *
+   * A process query that matches on CommandLine MATCHES THE QUERYING SHELL: the
+   * PowerShell process running this very command has 'doc-vector-embed' in its own
+   * command line, so an unguarded filter selects it, `Stop-Process` kills the shell
+   * mid-pipeline, and the launch that was supposed to relaunch the walk never runs.
+   * It exits 255 and prints nothing, which reads exactly like success.
+   *
+   * `spawnSync`, not the old detached `spawn`: the kill must finish before the
+   * start, and a fire-and-forget kill raced the launch it was meant to precede.
+   */
+  const killPs = [
     'Get-CimInstance Win32_Process |',
     "Where-Object { $_.Name -ne 'powershell.exe' -and $_.CommandLine -match 'stage-runner|doc-vector-embed|walk-launch' } |",
-    'ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} };',
-    'Start-Sleep -Seconds 3;',
-    `Start-Process -FilePath 'C:\\Program Files\\Git\\bin\\bash.exe' -ArgumentList '${WALK_LAUNCH.replace(/\\/g, '\\\\')}' -WorkingDirectory '${ROOT.replace(/\\/g, '\\\\')}' -WindowStyle Hidden`,
+    'ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }',
   ].join(' ');
-  /**
-   * PowerShell's OWN output is kept, because discarding it is what made the
-   * failure unexplainable.
-   *
-   * 22 Aug, second occurrence: a fleet-wide restart at 09:34Z killed the runner,
-   * this function fired twice, both verifications said DID NOT TAKE — and a
-   * hand-run `Start-Process` with this exact launcher started the walk on the
-   * first try, exactly as on 21 Aug. Two identical episodes and still no error
-   * text, because `stdio: 'ignore'` throws away the only witness: if
-   * `Start-Process` refuses (a session it cannot create a process in, a missing
-   * `bash.exe`, an execution policy), PowerShell says so on stderr and nobody
-   * was listening.
-   *
-   * `appendFileSync` on a path rather than a file descriptor: an fd held open
-   * across an unref'd detached child is a handle this process must then own for
-   * its lifetime, and the keeper is meant to be the thing that never dies of
-   * bookkeeping.
-   */
-  const child = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], {
-    detached: true,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-  const capture = (stream, label) => {
-    stream?.on('data', (b) => {
-      const text = String(b).trim();
-      if (text.length > 0) appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  ${label}  ${text}\n`);
+  try {
+    const k = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', killPs], {
+      stdio: ['ignore', 'ignore', 'pipe'],
+      timeout: 60_000,
     });
-  };
-  capture(child.stdout, 'relaunch stdout');
-  capture(child.stderr, 'relaunch STDERR');
-  child.on('error', (e) => appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  spawn error  ${e.message}\n`));
-  child.on('exit', (code) =>
-    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  powershell exited ${String(code)}\n`),
+    const err = String(k.stderr ?? '').trim();
+    if (err.length > 0) appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  kill STDERR  ${err}
+`);
+  } catch (e) {
+    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  kill threw  ${e?.message ?? e}
+`);
+  }
+
+  /**
+   * STEP 2 — START THE WALK. THE CAUSE OF 21 SILENT FAILURES IS NOW MEASURED, AND
+   * IT WAS THE CALLER, EXACTLY AS THE PREVIOUS AGENT WROTE DOWN AND DID NOT TEST.
+   *
+   * Three variants of the SAME `Start-Process` command line, 23 Aug 2026, each
+   * launching one marker script that appends a line and sleeps:
+   *
+   *   node spawns bash.exe DIRECTLY, detached                    -> MARKER RAN
+   *   node spawns PowerShell `detached: true` -> Start-Process   -> NOTHING
+   *   node spawns PowerShell attached (a console) -> same cmd    -> MARKER RAN
+   *
+   * The command is identical in variants 2 and 3. The only difference is
+   * `detached: true`, which on Windows means DETACHED_PROCESS and therefore NO
+   * CONSOLE — and a PowerShell with no console cannot create a process through
+   * `Start-Process`, which goes via ShellExecute when `-WindowStyle` is given.
+   * It exits 0 and says nothing, which is why three earlier hypotheses about the
+   * command's quoting were all refuted: the command was never the problem.
+   *
+   * So PowerShell is removed from the launch path entirely. `child_process.spawn`
+   * calls CreateProcess directly — no shell, no ShellExecute, no window station —
+   * and a detached child of THIS keeper still outlives the session, which was the
+   * original reason `Start-Process` was reached for.
+   *
+   * `stdio: 'ignore'`: the runner already redirects its own output into
+   * stage-runner.log inside walk-launch.sh, and a pipe held open across an
+   * unref'd detached child is a handle this process would then own forever.
+   */
+  const bash = process.env.KEEPER_BASH ?? 'C:/Program Files/Git/bin/bash.exe';
+  appendFileSync(
+    RELAUNCH_LOG,
+    `${new Date().toISOString()}  relaunch COMMAND  spawn ${bash} ${WALK_LAUNCH} (cwd ${ROOT}, detached, no shell)
+`,
   );
-  child.unref();
+  try {
+    const child = spawn(bash, [WALK_LAUNCH], {
+      cwd: ROOT,
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+    child.on('error', (e) =>
+      appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  spawn error  ${e.message}
+`),
+    );
+    child.unref();
+    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  spawned walk pid ${String(child.pid)}
+`);
+  } catch (e) {
+    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  spawn threw  ${e?.message ?? e}
+`);
+  }
+
   note('WALK RELAUNCH issued (killed any survivors first)');
   // ...and then CHECK, because "issued" is not "happened".
   //
   // On 21 Aug this function logged "RELAUNCH issued" 51 consecutive times, five
   // minutes apart, while the walk stayed dead for four hours and twenty minutes.
-  // Every one of those lines was written unconditionally, immediately after
-  // `spawn` returned, with `stdio: 'ignore'` discarding anything PowerShell had to
-  // say about it. The log read exactly like 51 successful recoveries.
-  //
-  // That is the same shape as every other defect this lane found that week: a
-  // plausible message with no error path behind it. The cause of the failure is
-  // still unknown — a hand-run `Start-Process` with the same launcher worked
-  // immediately — so this does not claim to fix the relaunch. It makes the
-  // relaunch FALSIFIABLE, which is the part that was missing: 51 identical
-  // failures should have been visible in one.
+  // Every one of those lines was written unconditionally. The verification below
+  // is what turned 21 more identical failures into something diagnosable, and it
+  // STAYS now that the launch works — a launch that succeeds today can stop
+  // succeeding tomorrow, and the log must be the thing that notices.
   setTimeout(() => {
     verifyRelaunch().catch((e) => note('relaunch verification errored: ' + (e?.message ?? e)));
   }, RELAUNCH_VERIFY_MS).unref?.();
@@ -300,6 +332,29 @@ async function verifyRelaunch() {
   );
 }
 
+/**
+ * A DELIBERATE PAUSE, so that quieting the box for a measurement does not mean
+ * fighting the keeper.
+ *
+ * The walk and this lane's experiments are two GPU consumers on one sidecar, and
+ * that is already measured as the working limit on this box. When a
+ * decision-critical experiment needs the GPU, the walk has to stop — and until
+ * now the only way to stop it was to kill it and then watch the keeper faithfully
+ * restart it five minutes later, which is the keeper doing its job.
+ *
+ * The pause is a FILE, not an env var, because the keeper is started by Task
+ * Scheduler and nobody can hand it an environment. It holds a reason; an
+ * unexplained pause is how a walk stays down for a week.
+ */
+function walkPausedReason() {
+  try {
+    const reason = readFileSync(WALK_PAUSE, 'utf8').trim();
+    return reason.length > 0 ? reason : 'no reason recorded';
+  } catch {
+    return null;
+  }
+}
+
 function walkSilentFor() {
   try {
     return Date.now() - statSync(STAGE_LOG).mtimeMs;
@@ -332,6 +387,7 @@ async function main() {
   let restarts = 0;
   let walkRelaunches = 0;
   let walkQuietSince = 0;
+  let pauseAnnounced = false;
   let lastOk = Date.now();
 
   for (;;) {
@@ -357,8 +413,15 @@ async function main() {
     // The walk is judged only while the sidecar is answering. Relaunching a walk
     // into a dead sidecar burns its three retries and aborts it for good.
     if (WATCH_WALK && ok && Date.now() - walkQuietSince > WALK_GRACE_MS) {
+      const paused = walkPausedReason();
       const silent = walkSilentFor();
-      if (silent > WALK_SILENCE_MS) {
+      if (paused !== null) {
+        if (silent > WALK_SILENCE_MS && !pauseAnnounced) {
+          note(`walk relaunch PAUSED by ${WALK_PAUSE} — ${paused}. The walk is NOT running and that is deliberate.`);
+          pauseAnnounced = true;
+        }
+      } else if (silent > WALK_SILENCE_MS) {
+        pauseAnnounced = false;
         walkRelaunches += 1;
         note(
           `WALK SILENT for ${Math.round(silent / 60_000)} min — relaunch #${walkRelaunches}. ` +
