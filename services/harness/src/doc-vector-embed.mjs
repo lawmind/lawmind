@@ -138,7 +138,7 @@ const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'decid
  * the bail-order episode the 100th. The evidence for it belongs next to the
  * pin, not in a bus message.
  */
-const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '2e7b53afe35fa81c';
+const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '5b5d02384b46c96c';
 
 const log = (m) => {
   const line = new Date().toISOString() + '  ' + m + '\n';
@@ -196,6 +196,49 @@ async function embed(texts) {
  * `EXPECTED_VIEW_HASH` exists so that whoever reconciles the list next can run
  * once with the new hash before editing, rather than being blocked by their own
  * guard while they read the diff.
+ */
+
+/**
+ * FOURTH RECONCILIATION, 24 Aug 2026 — `2e7b53afe35fa81c` -> `5b5d02384b46c96c`.
+ *
+ * Migration `0081` (LCC, bus 1095), which exists because NEW1 reported in bus
+ * 1079 that `text_safety_grade = 'PROOF'` was UNREACHABLE: the allow-list was
+ * `ARRAY[]::text[]`, so the middle branch was `= ANY (ARRAY[])` — false for
+ * every input — and roughly 470,000 proof-graded documents graded `SCREEN`.
+ * The list now names `text-damage-v2.0` and nothing else.
+ *
+ * The guard stopped the walk at 18:25:09Z on `value-00001` and the runner
+ * aborted after three attempts, exactly as designed. Third time this mechanism
+ * has done its job.
+ *
+ * THE DIFF WAS PROVEN, NOT READ AND TRUSTED. Taking `pg_get_viewdef` of the
+ * live view and reverting THAT ONE SUBSTRING — one occurrence — hashes to
+ * `2e7b53afe35fa81c`, the previous contract exactly. So that CASE branch is
+ * provably the only difference, and no column, predicate or branch order moved.
+ * This is a stronger check than comparing two reported hashes, which is worth
+ * saying because LCC's message reported the new hash as `47b2a3d6717bf134`
+ * while `sha256(pg_get_viewdef(…, true))` — the function THIS file uses and has
+ * used for every prior reconciliation — gives `5b5d02384b46c96c`. The reverted
+ * -hash test settles which describes the deployed view; a bus message is a
+ * report, not the contract.
+ *
+ * Column count 18 -> 18, names unchanged, verified from `pg_attribute`.
+ *
+ * THE SKIP LIST DOES NOT CHANGE, and that was checked against the deployed
+ * definition rather than taken from the message announcing it. The three
+ * columns this file reads are untouched:
+ *
+ *   axis_c_role     same three classes, so REFUSED_CLASSES stands as written
+ *   text_safety     same CASE, so `UNSAFE_VERIFIED` matches the same rows
+ *   semantic_tier   same CITED_AUTHORITY_REACHABLE exemption on both branches
+ *
+ * `text_safety_grade` is the ONLY thing that moved and nothing here reads it.
+ * The note above it — that switching this walk's refusal to
+ * `text_safety_grade = 'PROOF'` would quarantine nothing — is now WRONG in its
+ * reasoning and still right in its conclusion: PROOF is reachable today, but it
+ * is reachable only for `text-damage-v2.0` rows, so refusing on PROOF alone
+ * would re-admit every document the density screen convicted. Refusal stays on
+ * `text_safety = UNSAFE_VERIFIED`, which covers both.
  */
 async function assertContractHash() {
   const [row] = await sql`SELECT pg_get_viewdef('judgment_embedding_eligibility'::regclass, true) AS def`;
