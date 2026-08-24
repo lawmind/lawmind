@@ -1,0 +1,6625 @@
+{
+  "kind": "new1_two_stage_candidate_recall",
+  "generatedAt": "2026-08-23T09:05:22.360Z",
+  "goldSetVersion": "1.0.0",
+  "origin": "LCC bus 1041: the rarest-3 AND shipped as the only sparse pass and did NOT move the concept class on short doctrinal probes. This measures that stratum.",
+  "bounds": {
+    "statementMs": 15000,
+    "candidateDepth": 500
+  },
+  "denseIndex": {
+    "table": "judgment_chunks",
+    "rows": 620300,
+    "targetsPresent": 4,
+    "targetsTotal": 19,
+    "note": "Dense generator numbers are CONDITIONAL_RECALL over targets present in this 1.4%-of-corpus index. Only the MATCHED table compares generators on one denominator."
+  },
+  "byStratum": {
+    "LONG_FULL__G1_RAREST3_AND": {
+      "n": 39,
+      "recallAt20": 2,
+      "recallAt20Pct": "5.1%",
+      "recallAt100": 2,
+      "recallAt100Pct": "5.1%",
+      "recallAt500": 4,
+      "recallAt500Pct": "10.3%",
+      "timeouts": 0,
+      "emptyCandidateSets": 2,
+      "candidatesP50": 500,
+      "msP50": 214,
+      "msP95": 568,
+      "medianRarestDf": 245
+    },
+    "LONG_FULL__G2_RAREST2_AND": {
+      "n": 39,
+      "recallAt20": 1,
+      "recallAt20Pct": "2.6%",
+      "recallAt100": 1,
+      "recallAt100Pct": "2.6%",
+      "recallAt500": 2,
+      "recallAt500Pct": "5.1%",
+      "timeouts": 0,
+      "emptyCandidateSets": 5,
+      "candidatesP50": 500,
+      "msP50": 114,
+      "msP95": 1038,
+      "medianRarestDf": 107
+    },
+    "LONG_FULL__G3_RAREST1": {
+      "n": 39,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 1,
+      "recallAt100Pct": "2.6%",
+      "recallAt500": 1,
+      "recallAt500Pct": "2.6%",
+      "timeouts": 0,
+      "emptyCandidateSets": 22,
+      "candidatesP50": 0,
+      "msP50": 3,
+      "msP95": 264,
+      "medianRarestDf": 0
+    },
+    "LONG_FULL__G4_DENSE_ANN": {
+      "n": 39,
+      "recallAt20": 5,
+      "recallAt20Pct": "12.8%",
+      "recallAt100": 6,
+      "recallAt100Pct": "15.4%",
+      "recallAt500": 6,
+      "recallAt500Pct": "15.4%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 112,
+      "msP50": 1099,
+      "msP95": 10185,
+      "medianRarestDf": 0
+    },
+    "LONG_FULL__G5_UNION": {
+      "n": 39,
+      "recallAt20": 6,
+      "recallAt20Pct": "15.4%",
+      "recallAt100": 8,
+      "recallAt100Pct": "20.5%",
+      "recallAt500": 8,
+      "recallAt500Pct": "20.5%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 1403,
+      "msP95": 10408,
+      "medianRarestDf": 245
+    },
+    "SHORT_FAMILY__G1_RAREST3_AND": {
+      "n": 39,
+      "recallAt20": 2,
+      "recallAt20Pct": "5.1%",
+      "recallAt100": 4,
+      "recallAt100Pct": "10.3%",
+      "recallAt500": 10,
+      "recallAt500Pct": "25.6%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 293,
+      "msP95": 1106,
+      "medianRarestDf": 901
+    },
+    "SHORT_FAMILY__G2_RAREST2_AND": {
+      "n": 39,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 4,
+      "recallAt100Pct": "10.3%",
+      "recallAt500": 7,
+      "recallAt500Pct": "17.9%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 188,
+      "msP95": 811,
+      "medianRarestDf": 556
+    },
+    "SHORT_FAMILY__G3_RAREST1": {
+      "n": 39,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 2,
+      "recallAt100Pct": "5.1%",
+      "recallAt500": 2,
+      "recallAt500Pct": "5.1%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 189,
+      "msP95": 643,
+      "medianRarestDf": 367
+    },
+    "SHORT_FAMILY__G4_DENSE_ANN": {
+      "n": 39,
+      "recallAt20": 6,
+      "recallAt20Pct": "15.4%",
+      "recallAt100": 6,
+      "recallAt100Pct": "15.4%",
+      "recallAt500": 6,
+      "recallAt500Pct": "15.4%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 108,
+      "msP50": 873,
+      "msP95": 3864,
+      "medianRarestDf": 0
+    },
+    "SHORT_FAMILY__G5_UNION": {
+      "n": 39,
+      "recallAt20": 5,
+      "recallAt20Pct": "12.8%",
+      "recallAt100": 10,
+      "recallAt100Pct": "25.6%",
+      "recallAt500": 10,
+      "recallAt500Pct": "25.6%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 1432,
+      "msP95": 4024,
+      "medianRarestDf": 901
+    }
+  },
+  "matched": {
+    "LONG_FULL__G1_RAREST3_AND": {
+      "n": 6,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 0,
+      "recallAt100Pct": "0.0%",
+      "recallAt500": 1,
+      "recallAt500Pct": "16.7%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 214,
+      "msP95": 224,
+      "medianRarestDf": 598
+    },
+    "LONG_FULL__G2_RAREST2_AND": {
+      "n": 6,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 0,
+      "recallAt100Pct": "0.0%",
+      "recallAt500": 1,
+      "recallAt500Pct": "16.7%",
+      "timeouts": 0,
+      "emptyCandidateSets": 1,
+      "candidatesP50": 500,
+      "msP50": 72,
+      "msP95": 230,
+      "medianRarestDf": 434
+    },
+    "LONG_FULL__G3_RAREST1": {
+      "n": 6,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 0,
+      "recallAt100Pct": "0.0%",
+      "recallAt500": 0,
+      "recallAt500Pct": "0.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 1,
+      "candidatesP50": 500,
+      "msP50": 123,
+      "msP95": 228,
+      "medianRarestDf": 261
+    },
+    "LONG_FULL__G4_DENSE_ANN": {
+      "n": 6,
+      "recallAt20": 5,
+      "recallAt20Pct": "83.3%",
+      "recallAt100": 6,
+      "recallAt100Pct": "100.0%",
+      "recallAt500": 6,
+      "recallAt500Pct": "100.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 109,
+      "msP50": 1083,
+      "msP95": 2110,
+      "medianRarestDf": 0
+    },
+    "LONG_FULL__G5_UNION": {
+      "n": 6,
+      "recallAt20": 5,
+      "recallAt20Pct": "83.3%",
+      "recallAt100": 6,
+      "recallAt100Pct": "100.0%",
+      "recallAt500": 6,
+      "recallAt500Pct": "100.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 1297,
+      "msP95": 2241,
+      "medianRarestDf": 598
+    },
+    "SHORT_FAMILY__G1_RAREST3_AND": {
+      "n": 6,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 0,
+      "recallAt100Pct": "0.0%",
+      "recallAt500": 3,
+      "recallAt500Pct": "50.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 293,
+      "msP95": 435,
+      "medianRarestDf": 935
+    },
+    "SHORT_FAMILY__G2_RAREST2_AND": {
+      "n": 6,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 0,
+      "recallAt100Pct": "0.0%",
+      "recallAt500": 3,
+      "recallAt500Pct": "50.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 74,
+      "msP95": 177,
+      "medianRarestDf": 901
+    },
+    "SHORT_FAMILY__G3_RAREST1": {
+      "n": 6,
+      "recallAt20": 0,
+      "recallAt20Pct": "0.0%",
+      "recallAt100": 0,
+      "recallAt100Pct": "0.0%",
+      "recallAt500": 0,
+      "recallAt500Pct": "0.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 150,
+      "msP95": 298,
+      "medianRarestDf": 145
+    },
+    "SHORT_FAMILY__G4_DENSE_ANN": {
+      "n": 6,
+      "recallAt20": 6,
+      "recallAt20Pct": "100.0%",
+      "recallAt100": 6,
+      "recallAt100Pct": "100.0%",
+      "recallAt500": 6,
+      "recallAt500Pct": "100.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 99,
+      "msP50": 1003,
+      "msP95": 1050,
+      "medianRarestDf": 0
+    },
+    "SHORT_FAMILY__G5_UNION": {
+      "n": 6,
+      "recallAt20": 5,
+      "recallAt20Pct": "83.3%",
+      "recallAt100": 6,
+      "recallAt100Pct": "100.0%",
+      "recallAt500": 6,
+      "recallAt500Pct": "100.0%",
+      "timeouts": 0,
+      "emptyCandidateSets": 0,
+      "candidatesP50": 500,
+      "msP50": 1343,
+      "msP95": 1443,
+      "medianRarestDf": 935
+    }
+  },
+  "measurements": [
+    {
+      "taskId": "A100-031",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": 126,
+      "candidateCount": 500,
+      "ms": 220,
+      "timedOut": false,
+      "termsUsed": [
+        "mandatory",
+        "preliminary",
+        "cognizable"
+      ],
+      "termDocumentFrequencies": [
+        719,
+        906,
+        1069
+      ]
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 72,
+      "timedOut": false,
+      "termsUsed": [
+        "mandatory",
+        "preliminary"
+      ],
+      "termDocumentFrequencies": [
+        719,
+        906
+      ]
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 151,
+      "timedOut": false,
+      "termsUsed": [
+        "mandatory"
+      ],
+      "termDocumentFrequencies": [
+        719
+      ]
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": 3,
+      "candidateCount": 70,
+      "ms": 634,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 6,
+      "candidateCount": 500,
+      "ms": 854,
+      "timedOut": false,
+      "termsUsed": [
+        "mandatory",
+        "preliminary",
+        "cognizable"
+      ],
+      "termDocumentFrequencies": [
+        719,
+        906,
+        1069
+      ]
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 157,
+      "candidateCount": 500,
+      "ms": 163,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari",
+        "registration"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304,
+        1933
+      ]
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": 450,
+      "candidateCount": 500,
+      "ms": 74,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304
+      ]
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 108,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita"
+      ],
+      "termDocumentFrequencies": [
+        145
+      ]
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": 7,
+      "candidateCount": 99,
+      "ms": 516,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-031",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 14,
+      "candidateCount": 500,
+      "ms": 679,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari",
+        "registration"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304,
+        1933
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 224,
+      "timedOut": false,
+      "termsUsed": [
+        "precede",
+        "preliminary",
+        "enquiry"
+      ],
+      "termDocumentFrequencies": [
+        842,
+        906,
+        1310
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": 490,
+      "candidateCount": 500,
+      "ms": 217,
+      "timedOut": false,
+      "termsUsed": [
+        "precede",
+        "preliminary"
+      ],
+      "termDocumentFrequencies": [
+        842,
+        906
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 228,
+      "timedOut": false,
+      "termsUsed": [
+        "precede"
+      ],
+      "termDocumentFrequencies": [
+        842
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": 5,
+      "candidateCount": 76,
+      "ms": 1063,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 10,
+      "candidateCount": 500,
+      "ms": 1287,
+      "timedOut": false,
+      "termsUsed": [
+        "precede",
+        "preliminary",
+        "enquiry"
+      ],
+      "termDocumentFrequencies": [
+        842,
+        906,
+        1310
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 157,
+      "candidateCount": 500,
+      "ms": 98,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari",
+        "registration"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304,
+        1933
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": 450,
+      "candidateCount": 500,
+      "ms": 49,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 50,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita"
+      ],
+      "termDocumentFrequencies": [
+        145
+      ]
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": 7,
+      "candidateCount": 99,
+      "ms": 241,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-032",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 14,
+      "candidateCount": 500,
+      "ms": 339,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari",
+        "registration"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304,
+        1933
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 265,
+      "timedOut": false,
+      "termsUsed": [
+        "itself",
+        "invalidate",
+        "irregularity"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        347,
+        587
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 365,
+      "timedOut": false,
+      "termsUsed": [
+        "itself",
+        "invalidate"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        347
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 3,
+      "timedOut": false,
+      "termsUsed": [
+        "itself"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 94,
+      "ms": 1056,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1321,
+      "timedOut": false,
+      "termsUsed": [
+        "itself",
+        "invalidate",
+        "irregularity"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        347,
+        587
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 559,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 280,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 401,
+      "timedOut": false,
+      "termsUsed": [
+        "defective"
+      ],
+      "termDocumentFrequencies": [
+        811
+      ]
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 116,
+      "ms": 620,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-033",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1179,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1416,
+      "timedOut": false,
+      "termsUsed": [
+        "while",
+        "same",
+        "suit"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        2202
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "while",
+        "same"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "while"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 127,
+      "ms": 1217,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 2633,
+      "timedOut": false,
+      "termsUsed": [
+        "while",
+        "same",
+        "suit"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        2202
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 766,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 350,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 382,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent"
+      ],
+      "termDocumentFrequencies": [
+        416
+      ]
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 108,
+      "ms": 959,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-034",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1725,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 129,
+      "timedOut": false,
+      "termsUsed": [
+        "there",
+        "parallel",
+        "contractual"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        85,
+        286
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 299,
+      "timedOut": false,
+      "termsUsed": [
+        "there",
+        "parallel"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        85
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "there"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 140,
+      "ms": 997,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1126,
+      "timedOut": false,
+      "termsUsed": [
+        "there",
+        "parallel",
+        "contractual"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        85,
+        286
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 128,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 32,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 106,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent"
+      ],
+      "termDocumentFrequencies": [
+        416
+      ]
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 108,
+      "ms": 245,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-035",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 373,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 285,
+      "timedOut": false,
+      "termsUsed": [
+        "out",
+        "instigation",
+        "abetment"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        138,
+        145
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 185,
+      "timedOut": false,
+      "termsUsed": [
+        "out",
+        "instigation"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        138
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "out"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 70,
+      "ms": 529,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 814,
+      "timedOut": false,
+      "termsUsed": [
+        "out",
+        "instigation",
+        "abetment"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        138,
+        145
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 242,
+      "timedOut": false,
+      "termsUsed": [
+        "rea",
+        "abetment",
+        "mens"
+      ],
+      "termDocumentFrequencies": [
+        94,
+        145,
+        273
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 142,
+      "timedOut": false,
+      "termsUsed": [
+        "rea",
+        "abetment"
+      ],
+      "termDocumentFrequencies": [
+        94,
+        145
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 228,
+      "timedOut": false,
+      "termsUsed": [
+        "rea"
+      ],
+      "termDocumentFrequencies": [
+        94
+      ]
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 70,
+      "ms": 967,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-036",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1209,
+      "timedOut": false,
+      "termsUsed": [
+        "rea",
+        "abetment",
+        "mens"
+      ],
+      "termDocumentFrequencies": [
+        94,
+        145,
+        273
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 98,
+      "ms": 69,
+      "timedOut": false,
+      "termsUsed": [
+        "psychiatric",
+        "abetment",
+        "suicide"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        145,
+        298
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 159,
+      "ms": 87,
+      "timedOut": false,
+      "termsUsed": [
+        "psychiatric",
+        "abetment"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        145
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 89,
+      "timedOut": false,
+      "termsUsed": [
+        "psychiatric"
+      ],
+      "termDocumentFrequencies": [
+        16
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 80,
+      "ms": 332,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 178,
+      "ms": 401,
+      "timedOut": false,
+      "termsUsed": [
+        "psychiatric",
+        "abetment",
+        "suicide"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        145,
+        298
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 7,
+      "timedOut": false,
+      "termsUsed": [
+        "rea",
+        "abetment",
+        "mens"
+      ],
+      "termDocumentFrequencies": [
+        94,
+        145,
+        273
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 9,
+      "timedOut": false,
+      "termsUsed": [
+        "rea",
+        "abetment"
+      ],
+      "termDocumentFrequencies": [
+        94,
+        145
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 23,
+      "timedOut": false,
+      "termsUsed": [
+        "rea"
+      ],
+      "termDocumentFrequencies": [
+        94
+      ]
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 70,
+      "ms": 124,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-037",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 131,
+      "timedOut": false,
+      "termsUsed": [
+        "rea",
+        "abetment",
+        "mens"
+      ],
+      "termDocumentFrequencies": [
+        94,
+        145,
+        273
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 118,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies",
+        "weigh",
+        "prima"
+      ],
+      "termDocumentFrequencies": [
+        268,
+        367,
+        1717
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 95,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies",
+        "weigh"
+      ],
+      "termDocumentFrequencies": [
+        268,
+        367
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 171,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies"
+      ],
+      "termDocumentFrequencies": [
+        268
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 137,
+      "ms": 1003,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1121,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies",
+        "weigh",
+        "prima"
+      ],
+      "termDocumentFrequencies": [
+        268,
+        367,
+        1717
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 780,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 195,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 215,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh"
+      ],
+      "termDocumentFrequencies": [
+        367
+      ]
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 161,
+      "ms": 1006,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-038",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1786,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 226,
+      "timedOut": false,
+      "termsUsed": [
+        "evidenced",
+        "lease",
+        "instrument"
+      ],
+      "termDocumentFrequencies": [
+        178,
+        391,
+        620
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 127,
+      "timedOut": false,
+      "termsUsed": [
+        "evidenced",
+        "lease"
+      ],
+      "termDocumentFrequencies": [
+        178,
+        391
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 100,
+      "timedOut": false,
+      "termsUsed": [
+        "evidenced"
+      ],
+      "termDocumentFrequencies": [
+        178
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 105,
+      "ms": 1045,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1271,
+      "timedOut": false,
+      "termsUsed": [
+        "evidenced",
+        "lease",
+        "instrument"
+      ],
+      "termDocumentFrequencies": [
+        178,
+        391,
+        620
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 155,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument",
+        "stamp"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620,
+        679
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 268,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 213,
+      "timedOut": false,
+      "termsUsed": [
+        "lease"
+      ],
+      "termDocumentFrequencies": [
+        391
+      ]
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 66,
+      "ms": 1240,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-039",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1395,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument",
+        "stamp"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620,
+        679
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 416,
+      "ms": 121,
+      "timedOut": false,
+      "termsUsed": [
+        "unsettle",
+        "decades",
+        "motu"
+      ],
+      "termDocumentFrequencies": [
+        50,
+        187,
+        231
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 57,
+      "timedOut": false,
+      "termsUsed": [
+        "unsettle",
+        "decades"
+      ],
+      "termDocumentFrequencies": [
+        50,
+        187
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 64,
+      "timedOut": false,
+      "termsUsed": [
+        "unsettle"
+      ],
+      "termDocumentFrequencies": [
+        50
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 88,
+      "ms": 1766,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1887,
+      "timedOut": false,
+      "termsUsed": [
+        "unsettle",
+        "decades",
+        "motu"
+      ],
+      "termDocumentFrequencies": [
+        50,
+        187,
+        231
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 413,
+      "candidateCount": 500,
+      "ms": 163,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo",
+        "entries"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314,
+        784
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 215,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 170,
+      "timedOut": false,
+      "termsUsed": [
+        "motu"
+      ],
+      "termDocumentFrequencies": [
+        231
+      ]
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 110,
+      "ms": 1632,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-040",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1795,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo",
+        "entries"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314,
+        784
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 218,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "staff"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        645
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 340,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 279,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching"
+      ],
+      "termDocumentFrequencies": [
+        207
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 60,
+      "ms": 709,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 927,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "staff"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        645
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 265,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "non"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        4575
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 16,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 44,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching"
+      ],
+      "termDocumentFrequencies": [
+        207
+      ]
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 75,
+      "ms": 228,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-041",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 493,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "non"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        4575
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 407,
+      "timedOut": false,
+      "termsUsed": [
+        "recall",
+        "defendant",
+        "arguments"
+      ],
+      "termDocumentFrequencies": [
+        614,
+        1297,
+        3062
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 98,
+      "timedOut": false,
+      "termsUsed": [
+        "recall",
+        "defendant"
+      ],
+      "termDocumentFrequencies": [
+        614,
+        1297
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 264,
+      "timedOut": false,
+      "termsUsed": [
+        "recall"
+      ],
+      "termDocumentFrequencies": [
+        614
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 135,
+      "ms": 1032,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1439,
+      "timedOut": false,
+      "termsUsed": [
+        "recall",
+        "defendant",
+        "arguments"
+      ],
+      "termDocumentFrequencies": [
+        614,
+        1297,
+        3062
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 419,
+      "timedOut": false,
+      "termsUsed": [
+        "recall",
+        "late",
+        "witness"
+      ],
+      "termDocumentFrequencies": [
+        614,
+        4077,
+        4520
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 132,
+      "timedOut": false,
+      "termsUsed": [
+        "recall",
+        "late"
+      ],
+      "termDocumentFrequencies": [
+        614,
+        4077
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 184,
+      "timedOut": false,
+      "termsUsed": [
+        "recall"
+      ],
+      "termDocumentFrequencies": [
+        614
+      ]
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 142,
+      "ms": 1013,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-042",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1432,
+      "timedOut": false,
+      "termsUsed": [
+        "recall",
+        "late",
+        "witness"
+      ],
+      "termDocumentFrequencies": [
+        614,
+        4077,
+        4520
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 23,
+      "ms": 26,
+      "timedOut": false,
+      "termsUsed": [
+        "into",
+        "bouncing",
+        "ifsc"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        36,
+        54
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 43,
+      "timedOut": false,
+      "termsUsed": [
+        "into",
+        "bouncing"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        36
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "into"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 116,
+      "ms": 1214,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 139,
+      "ms": 1240,
+      "timedOut": false,
+      "termsUsed": [
+        "into",
+        "bouncing",
+        "ifsc"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        36,
+        54
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 149,
+      "ms": 221,
+      "timedOut": false,
+      "termsUsed": [
+        "defunct",
+        "cheque",
+        "branch"
+      ],
+      "termDocumentFrequencies": [
+        5,
+        556,
+        1203
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 451,
+      "ms": 141,
+      "timedOut": false,
+      "termsUsed": [
+        "defunct",
+        "cheque"
+      ],
+      "termDocumentFrequencies": [
+        5,
+        556
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 27,
+      "timedOut": false,
+      "termsUsed": [
+        "defunct"
+      ],
+      "termDocumentFrequencies": [
+        5
+      ]
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 115,
+      "ms": 677,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-043",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 264,
+      "ms": 898,
+      "timedOut": false,
+      "termsUsed": [
+        "defunct",
+        "cheque",
+        "branch"
+      ],
+      "termDocumentFrequencies": [
+        5,
+        556,
+        1203
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 127,
+      "ms": 139,
+      "timedOut": false,
+      "termsUsed": [
+        "begun",
+        "insufficient",
+        "partner"
+      ],
+      "termDocumentFrequencies": [
+        44,
+        245,
+        496
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 114,
+      "timedOut": false,
+      "termsUsed": [
+        "begun",
+        "insufficient"
+      ],
+      "termDocumentFrequencies": [
+        44,
+        245
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 37,
+      "timedOut": false,
+      "termsUsed": [
+        "begun"
+      ],
+      "termDocumentFrequencies": [
+        44
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 147,
+      "ms": 807,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 274,
+      "ms": 946,
+      "timedOut": false,
+      "termsUsed": [
+        "begun",
+        "insufficient",
+        "partner"
+      ],
+      "termDocumentFrequencies": [
+        44,
+        245,
+        496
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 176,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 263,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 158,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh"
+      ],
+      "termDocumentFrequencies": [
+        367
+      ]
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 161,
+      "ms": 238,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-044",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 414,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 139,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "prosecutrix",
+        "testimony"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        406,
+        446
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 195,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "prosecutrix"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        406
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "only"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 122,
+      "ms": 834,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 973,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "prosecutrix",
+        "testimony"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        406,
+        446
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 631,
+      "timedOut": false,
+      "termsUsed": [
+        "acquittal",
+        "consent",
+        "appeal"
+      ],
+      "termDocumentFrequencies": [
+        517,
+        1900,
+        7958
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 364,
+      "timedOut": false,
+      "termsUsed": [
+        "acquittal",
+        "consent"
+      ],
+      "termDocumentFrequencies": [
+        517,
+        1900
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 239,
+      "timedOut": false,
+      "termsUsed": [
+        "acquittal"
+      ],
+      "termDocumentFrequencies": [
+        517
+      ]
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 187,
+      "ms": 910,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-045",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1541,
+      "timedOut": false,
+      "termsUsed": [
+        "acquittal",
+        "consent",
+        "appeal"
+      ],
+      "termDocumentFrequencies": [
+        517,
+        1900,
+        7958
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 381,
+      "timedOut": false,
+      "termsUsed": [
+        "client",
+        "beyond",
+        "statutory"
+      ],
+      "termDocumentFrequencies": [
+        354,
+        1370,
+        1899
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 214,
+      "timedOut": false,
+      "termsUsed": [
+        "client",
+        "beyond"
+      ],
+      "termDocumentFrequencies": [
+        354,
+        1370
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 134,
+      "timedOut": false,
+      "termsUsed": [
+        "client"
+      ],
+      "termDocumentFrequencies": [
+        354
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 104,
+      "ms": 1124,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1505,
+      "timedOut": false,
+      "termsUsed": [
+        "client",
+        "beyond",
+        "statutory"
+      ],
+      "termDocumentFrequencies": [
+        354,
+        1370,
+        1899
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 15,
+      "candidateCount": 460,
+      "ms": 241,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines",
+        "bnss",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        102,
+        1385,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": 34,
+      "candidateCount": 500,
+      "ms": 146,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines",
+        "bnss"
+      ],
+      "termDocumentFrequencies": [
+        102,
+        1385
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 115,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines"
+      ],
+      "termDocumentFrequencies": [
+        102
+      ]
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 108,
+      "ms": 1349,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-046",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 29,
+      "candidateCount": 500,
+      "ms": 1590,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines",
+        "bnss",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        102,
+        1385,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 109,
+      "timedOut": false,
+      "termsUsed": [
+        "out",
+        "adult",
+        "rape"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        107,
+        579
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 93,
+      "timedOut": false,
+      "termsUsed": [
+        "out",
+        "adult"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        107
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 2,
+      "timedOut": false,
+      "termsUsed": [
+        "out"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 82,
+      "ms": 770,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 879,
+      "timedOut": false,
+      "termsUsed": [
+        "out",
+        "adult",
+        "rape"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        107,
+        579
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 21,
+      "candidateCount": 500,
+      "ms": 115,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "consent"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        1900
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": 21,
+      "candidateCount": 500,
+      "ms": 22,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "consent"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        1900
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": 62,
+      "candidateCount": 500,
+      "ms": 127,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception"
+      ],
+      "termDocumentFrequencies": [
+        56
+      ]
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 68,
+      "ms": 593,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-047",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 40,
+      "candidateCount": 500,
+      "ms": 708,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "consent"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        1900
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 137,
+      "timedOut": false,
+      "termsUsed": [
+        "then",
+        "same",
+        "client"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        354
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "then",
+        "same"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "then"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 134,
+      "ms": 1447,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1584,
+      "timedOut": false,
+      "termsUsed": [
+        "then",
+        "same",
+        "client"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        354
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 640,
+      "timedOut": false,
+      "termsUsed": [
+        "refund",
+        "credited",
+        "already"
+      ],
+      "termDocumentFrequencies": [
+        617,
+        648,
+        6517
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 256,
+      "timedOut": false,
+      "termsUsed": [
+        "refund",
+        "credited"
+      ],
+      "termDocumentFrequencies": [
+        617,
+        648
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 328,
+      "timedOut": false,
+      "termsUsed": [
+        "refund"
+      ],
+      "termDocumentFrequencies": [
+        617
+      ]
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 123,
+      "ms": 873,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-048",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1513,
+      "timedOut": false,
+      "termsUsed": [
+        "refund",
+        "credited",
+        "already"
+      ],
+      "termDocumentFrequencies": [
+        617,
+        648,
+        6517
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "both",
+        "out",
+        "over"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "both",
+        "out"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "both"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 139,
+      "ms": 1511,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 139,
+      "ms": 1511,
+      "timedOut": false,
+      "termsUsed": [
+        "both",
+        "out",
+        "over"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1106,
+      "timedOut": false,
+      "termsUsed": [
+        "substantial",
+        "second",
+        "question"
+      ],
+      "termDocumentFrequencies": [
+        1673,
+        3790,
+        5020
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 811,
+      "timedOut": false,
+      "termsUsed": [
+        "substantial",
+        "second"
+      ],
+      "termDocumentFrequencies": [
+        1673,
+        3790
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 2523,
+      "timedOut": false,
+      "termsUsed": [
+        "substantial"
+      ],
+      "termDocumentFrequencies": [
+        1673
+      ]
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 98,
+      "ms": 613,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-049",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1719,
+      "timedOut": false,
+      "termsUsed": [
+        "substantial",
+        "second",
+        "question"
+      ],
+      "termDocumentFrequencies": [
+        1673,
+        3790,
+        5020
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 152,
+      "timedOut": false,
+      "termsUsed": [
+        "same",
+        "forged",
+        "client"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        342,
+        354
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 219,
+      "timedOut": false,
+      "termsUsed": [
+        "same",
+        "forged"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        342
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 3,
+      "timedOut": false,
+      "termsUsed": [
+        "same"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 130,
+      "ms": 1301,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1453,
+      "timedOut": false,
+      "termsUsed": [
+        "same",
+        "forged",
+        "client"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        342,
+        354
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 620,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 728,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 320,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent"
+      ],
+      "termDocumentFrequencies": [
+        416
+      ]
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 108,
+      "ms": 845,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-050",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1465,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 140,
+      "timedOut": false,
+      "termsUsed": [
+        "while",
+        "lab",
+        "sixty"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        105,
+        186
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 163,
+      "timedOut": false,
+      "termsUsed": [
+        "while",
+        "lab"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        105
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "while"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 71,
+      "ms": 819,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 959,
+      "timedOut": false,
+      "termsUsed": [
+        "while",
+        "lab",
+        "sixty"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        105,
+        186
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 353,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "non"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        4575
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 188,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 238,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching"
+      ],
+      "termDocumentFrequencies": [
+        207
+      ]
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 75,
+      "ms": 341,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-051",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 694,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "non"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        4575
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": 19,
+      "candidateCount": 500,
+      "ms": 69,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "inams",
+        "annulled"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        32,
+        76
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 154,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "inams"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        32
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "only"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 110,
+      "ms": 1036,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 37,
+      "candidateCount": 500,
+      "ms": 1105,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "inams",
+        "annulled"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        32,
+        76
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 413,
+      "candidateCount": 500,
+      "ms": 241,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo",
+        "entries"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314,
+        784
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 195,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 235,
+      "timedOut": false,
+      "termsUsed": [
+        "motu"
+      ],
+      "termDocumentFrequencies": [
+        231
+      ]
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 110,
+      "ms": 1411,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-052",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1652,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo",
+        "entries"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314,
+        784
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 301,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies",
+        "resisting",
+        "appreciate"
+      ],
+      "termDocumentFrequencies": [
+        268,
+        319,
+        1351
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 195,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies",
+        "resisting"
+      ],
+      "termDocumentFrequencies": [
+        268,
+        319
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 232,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies"
+      ],
+      "termDocumentFrequencies": [
+        268
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 147,
+      "ms": 1222,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1523,
+      "timedOut": false,
+      "termsUsed": [
+        "inconsistencies",
+        "resisting",
+        "appreciate"
+      ],
+      "termDocumentFrequencies": [
+        268,
+        319,
+        1351
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 713,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 742,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 376,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh"
+      ],
+      "termDocumentFrequencies": [
+        367
+      ]
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 161,
+      "ms": 5075,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-059",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 5788,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 501,
+      "timedOut": false,
+      "termsUsed": [
+        "same",
+        "answer",
+        "suit"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1111,
+        2202
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 507,
+      "timedOut": false,
+      "termsUsed": [
+        "same",
+        "answer"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1111
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "same"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 153,
+      "ms": 2372,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 2873,
+      "timedOut": false,
+      "termsUsed": [
+        "same",
+        "answer",
+        "suit"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1111,
+        2202
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 504,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 131,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 290,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent"
+      ],
+      "termDocumentFrequencies": [
+        416
+      ]
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 108,
+      "ms": 179,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-060",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 683,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": 6,
+      "candidateCount": 500,
+      "ms": 209,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "background",
+        "social"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        662,
+        989
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": 13,
+      "candidateCount": 500,
+      "ms": 90,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "background"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        662
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": 62,
+      "candidateCount": 500,
+      "ms": 114,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception"
+      ],
+      "termDocumentFrequencies": [
+        56
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 105,
+      "ms": 1433,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 11,
+      "candidateCount": 500,
+      "ms": 1642,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "background",
+        "social"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        662,
+        989
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 21,
+      "candidateCount": 500,
+      "ms": 160,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "consent"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        1900
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": 21,
+      "candidateCount": 500,
+      "ms": 26,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "consent"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        1900
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": 62,
+      "candidateCount": 500,
+      "ms": 17,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception"
+      ],
+      "termDocumentFrequencies": [
+        56
+      ]
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 68,
+      "ms": 3864,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-061",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 40,
+      "candidateCount": 500,
+      "ms": 4024,
+      "timedOut": false,
+      "termsUsed": [
+        "misconception",
+        "consent"
+      ],
+      "termDocumentFrequencies": [
+        56,
+        1900
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 274,
+      "timedOut": false,
+      "termsUsed": [
+        "reopening",
+        "decades",
+        "colourable"
+      ],
+      "termDocumentFrequencies": [
+        168,
+        187,
+        311
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 114,
+      "timedOut": false,
+      "termsUsed": [
+        "reopening",
+        "decades"
+      ],
+      "termDocumentFrequencies": [
+        168,
+        187
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 116,
+      "timedOut": false,
+      "termsUsed": [
+        "reopening"
+      ],
+      "termDocumentFrequencies": [
+        168
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 126,
+      "ms": 10720,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 10994,
+      "timedOut": false,
+      "termsUsed": [
+        "reopening",
+        "decades",
+        "colourable"
+      ],
+      "termDocumentFrequencies": [
+        168,
+        187,
+        311
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 413,
+      "candidateCount": 500,
+      "ms": 333,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo",
+        "entries"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314,
+        784
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 285,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 171,
+      "timedOut": false,
+      "termsUsed": [
+        "motu"
+      ],
+      "termDocumentFrequencies": [
+        231
+      ]
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 110,
+      "ms": 1779,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-062",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 2112,
+      "timedOut": false,
+      "termsUsed": [
+        "motu",
+        "suo",
+        "entries"
+      ],
+      "termDocumentFrequencies": [
+        231,
+        314,
+        784
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 223,
+      "timedOut": false,
+      "termsUsed": [
+        "itself",
+        "destroy",
+        "proposition"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        223,
+        591
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 161,
+      "timedOut": false,
+      "termsUsed": [
+        "itself",
+        "destroy"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        223
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 3,
+      "timedOut": false,
+      "termsUsed": [
+        "itself"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 166,
+      "ms": 10185,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 10408,
+      "timedOut": false,
+      "termsUsed": [
+        "itself",
+        "destroy",
+        "proposition"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        223,
+        591
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 519,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 164,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 331,
+      "timedOut": false,
+      "termsUsed": [
+        "defective"
+      ],
+      "termDocumentFrequencies": [
+        811
+      ]
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 116,
+      "ms": 1297,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-063",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1816,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 530,
+      "timedOut": false,
+      "termsUsed": [
+        "into",
+        "never",
+        "amending"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1204,
+        1745
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 540,
+      "timedOut": false,
+      "termsUsed": [
+        "into",
+        "never"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1204
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "into"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 150,
+      "ms": 2211,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 2741,
+      "timedOut": false,
+      "termsUsed": [
+        "into",
+        "never",
+        "amending"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1204,
+        1745
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 440,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "non"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        4575
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1166,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 331,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching"
+      ],
+      "termDocumentFrequencies": [
+        207
+      ]
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 75,
+      "ms": 850,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-064",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1290,
+      "timedOut": false,
+      "termsUsed": [
+        "teaching",
+        "superannuation",
+        "non"
+      ],
+      "termDocumentFrequencies": [
+        207,
+        377,
+        4575
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 249,
+      "timedOut": false,
+      "termsUsed": [
+        "because",
+        "strongest",
+        "arguing"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        4,
+        2249
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 202,
+      "timedOut": false,
+      "termsUsed": [
+        "because",
+        "strongest"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        4
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "because"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 141,
+      "ms": 1395,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1644,
+      "timedOut": false,
+      "termsUsed": [
+        "because",
+        "strongest",
+        "arguing"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        4,
+        2249
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 217,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 191,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 279,
+      "timedOut": false,
+      "termsUsed": [
+        "defective"
+      ],
+      "termDocumentFrequencies": [
+        811
+      ]
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 116,
+      "ms": 287,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-065",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 504,
+      "timedOut": false,
+      "termsUsed": [
+        "defective",
+        "cognizance",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        811,
+        1069,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "because",
+        "same",
+        "will"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "because",
+        "same"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "because"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 137,
+      "ms": 2084,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 137,
+      "ms": 2085,
+      "timedOut": false,
+      "termsUsed": [
+        "because",
+        "same",
+        "will"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 458,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 696,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 189,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent"
+      ],
+      "termDocumentFrequencies": [
+        416
+      ]
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 108,
+      "ms": 1371,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-066",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1829,
+      "timedOut": false,
+      "termsUsed": [
+        "concurrent",
+        "remedies",
+        "civil"
+      ],
+      "termDocumentFrequencies": [
+        416,
+        2005,
+        10149
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 101,
+      "ms": 110,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "strongest",
+        "sleeping"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        4,
+        108
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 70,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "strongest"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        4
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "only"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 110,
+      "ms": 1293,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 211,
+      "ms": 1403,
+      "timedOut": false,
+      "termsUsed": [
+        "only",
+        "strongest",
+        "sleeping"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        4,
+        108
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 522,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 447,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 125,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh"
+      ],
+      "termDocumentFrequencies": [
+        367
+      ]
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 161,
+      "ms": 1254,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-067",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1776,
+      "timedOut": false,
+      "termsUsed": [
+        "weigh",
+        "quash",
+        "cannot"
+      ],
+      "termDocumentFrequencies": [
+        367,
+        4839,
+        5743
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 266,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument",
+        "stamped"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620,
+        679
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 102,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 248,
+      "timedOut": false,
+      "termsUsed": [
+        "lease"
+      ],
+      "termDocumentFrequencies": [
+        391
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 75,
+      "ms": 1275,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1541,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument",
+        "stamped"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620,
+        679
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 53,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument",
+        "stamp"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620,
+        679
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 47,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 122,
+      "timedOut": false,
+      "termsUsed": [
+        "lease"
+      ],
+      "termDocumentFrequencies": [
+        391
+      ]
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 66,
+      "ms": 298,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-068",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 351,
+      "timedOut": false,
+      "termsUsed": [
+        "lease",
+        "instrument",
+        "stamp"
+      ],
+      "termDocumentFrequencies": [
+        391,
+        620,
+        679
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 112,
+      "timedOut": false,
+      "termsUsed": [
+        "displaced",
+        "mandatory",
+        "anything"
+      ],
+      "termDocumentFrequencies": [
+        59,
+        719,
+        982
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 15,
+      "timedOut": false,
+      "termsUsed": [
+        "displaced",
+        "mandatory"
+      ],
+      "termDocumentFrequencies": [
+        59,
+        719
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 21,
+      "timedOut": false,
+      "termsUsed": [
+        "displaced"
+      ],
+      "termDocumentFrequencies": [
+        59
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": 5,
+      "candidateCount": 112,
+      "ms": 945,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 10,
+      "candidateCount": 500,
+      "ms": 1057,
+      "timedOut": false,
+      "termsUsed": [
+        "displaced",
+        "mandatory",
+        "anything"
+      ],
+      "termDocumentFrequencies": [
+        59,
+        719,
+        982
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 157,
+      "candidateCount": 500,
+      "ms": 293,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari",
+        "registration"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304,
+        1933
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": 450,
+      "candidateCount": 500,
+      "ms": 112,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 89,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita"
+      ],
+      "termDocumentFrequencies": [
+        145
+      ]
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": 7,
+      "candidateCount": 99,
+      "ms": 1050,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-069",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 14,
+      "candidateCount": 500,
+      "ms": 1343,
+      "timedOut": false,
+      "termsUsed": [
+        "lalita",
+        "kumari",
+        "registration"
+      ],
+      "termDocumentFrequencies": [
+        145,
+        1304,
+        1933
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 214,
+      "timedOut": false,
+      "termsUsed": [
+        "doctrine",
+        "structure",
+        "binding"
+      ],
+      "termDocumentFrequencies": [
+        261,
+        434,
+        598
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 230,
+      "timedOut": false,
+      "termsUsed": [
+        "doctrine",
+        "structure"
+      ],
+      "termDocumentFrequencies": [
+        261,
+        434
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 123,
+      "timedOut": false,
+      "termsUsed": [
+        "doctrine"
+      ],
+      "termDocumentFrequencies": [
+        261
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": 42,
+      "candidateCount": 42,
+      "ms": 1083,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 84,
+      "candidateCount": 500,
+      "ms": 1297,
+      "timedOut": false,
+      "termsUsed": [
+        "doctrine",
+        "structure",
+        "binding"
+      ],
+      "termDocumentFrequencies": [
+        261,
+        434,
+        598
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 254,
+      "timedOut": false,
+      "termsUsed": [
+        "structure",
+        "basic"
+      ],
+      "termDocumentFrequencies": [
+        434,
+        910
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 57,
+      "timedOut": false,
+      "termsUsed": [
+        "structure",
+        "basic"
+      ],
+      "termDocumentFrequencies": [
+        434,
+        910
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 185,
+      "timedOut": false,
+      "termsUsed": [
+        "structure"
+      ],
+      "termDocumentFrequencies": [
+        434
+      ]
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": 12,
+      "candidateCount": 36,
+      "ms": 634,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-070",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 24,
+      "candidateCount": 500,
+      "ms": 888,
+      "timedOut": false,
+      "termsUsed": [
+        "structure",
+        "basic"
+      ],
+      "termDocumentFrequencies": [
+        434,
+        910
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 127,
+      "timedOut": false,
+      "termsUsed": [
+        "down",
+        "into",
+        "safeguards"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        286
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "down",
+        "into"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "down"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": 8,
+      "candidateCount": 122,
+      "ms": 1846,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 16,
+      "candidateCount": 500,
+      "ms": 1973,
+      "timedOut": false,
+      "termsUsed": [
+        "down",
+        "into",
+        "safeguards"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        0,
+        286
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 432,
+      "timedOut": false,
+      "termsUsed": [
+        "safeguards",
+        "arrest"
+      ],
+      "termDocumentFrequencies": [
+        286,
+        4964
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 67,
+      "timedOut": false,
+      "termsUsed": [
+        "safeguards",
+        "arrest"
+      ],
+      "termDocumentFrequencies": [
+        286,
+        4964
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 298,
+      "timedOut": false,
+      "termsUsed": [
+        "safeguards"
+      ],
+      "termDocumentFrequencies": [
+        286
+      ]
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": 5,
+      "candidateCount": 104,
+      "ms": 1011,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-071",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 10,
+      "candidateCount": 500,
+      "ms": 1443,
+      "timedOut": false,
+      "termsUsed": [
+        "safeguards",
+        "arrest"
+      ],
+      "termDocumentFrequencies": [
+        286,
+        4964
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 86,
+      "ms": 131,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace",
+        "replaced",
+        "1997"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        230,
+        480
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 249,
+      "ms": 63,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace",
+        "replaced"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        230
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 70,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace"
+      ],
+      "termDocumentFrequencies": [
+        16
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": 3,
+      "candidateCount": 109,
+      "ms": 2110,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": 6,
+      "candidateCount": 188,
+      "ms": 2241,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace",
+        "replaced",
+        "1997"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        230,
+        480
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 435,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace",
+        "harassment",
+        "guidelines"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        901,
+        935
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 177,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace",
+        "harassment"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        901
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 150,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace"
+      ],
+      "termDocumentFrequencies": [
+        16
+      ]
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": 1,
+      "candidateCount": 49,
+      "ms": 1003,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-072",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 2,
+      "candidateCount": 500,
+      "ms": 1438,
+      "timedOut": false,
+      "termsUsed": [
+        "workplace",
+        "harassment",
+        "guidelines"
+      ],
+      "termDocumentFrequencies": [
+        16,
+        901,
+        935
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": 477,
+      "candidateCount": 500,
+      "ms": 354,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "outer",
+        "completing"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        158,
+        4265
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 91,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "outer"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        158
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 5,
+      "timedOut": false,
+      "termsUsed": [
+        "now"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 80,
+      "ms": 1099,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1453,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "outer",
+        "completing"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        158,
+        4265
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": 15,
+      "candidateCount": 460,
+      "ms": 149,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines",
+        "bnss",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        102,
+        1385,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": 34,
+      "candidateCount": 500,
+      "ms": 235,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines",
+        "bnss"
+      ],
+      "termDocumentFrequencies": [
+        102,
+        1385
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 118,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines"
+      ],
+      "termDocumentFrequencies": [
+        102
+      ]
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 108,
+      "ms": 1624,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-078",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": 29,
+      "candidateCount": 500,
+      "ms": 1773,
+      "timedOut": false,
+      "termsUsed": [
+        "timelines",
+        "bnss",
+        "investigation"
+      ],
+      "termDocumentFrequencies": [
+        102,
+        1385,
+        5690
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 568,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "inherent",
+        "power"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        643,
+        3050
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1038,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "inherent"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        643
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 1,
+      "timedOut": false,
+      "termsUsed": [
+        "now"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 122,
+      "ms": 664,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1232,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "inherent",
+        "power"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        643,
+        3050
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 237,
+      "timedOut": false,
+      "termsUsed": [
+        "inherent",
+        "power",
+        "quash"
+      ],
+      "termDocumentFrequencies": [
+        643,
+        3050,
+        4839
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 173,
+      "timedOut": false,
+      "termsUsed": [
+        "inherent",
+        "power"
+      ],
+      "termDocumentFrequencies": [
+        643,
+        3050
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 206,
+      "timedOut": false,
+      "termsUsed": [
+        "inherent"
+      ],
+      "termDocumentFrequencies": [
+        643
+      ]
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 123,
+      "ms": 332,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-079",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 569,
+      "timedOut": false,
+      "termsUsed": [
+        "inherent",
+        "power",
+        "quash"
+      ],
+      "termDocumentFrequencies": [
+        643,
+        3050,
+        4839
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "LONG_FULL",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 492,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "old",
+        "previously"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1507,
+        1838
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "LONG_FULL",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 4099,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "old"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1507
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "LONG_FULL",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 0,
+      "ms": 0,
+      "timedOut": false,
+      "termsUsed": [
+        "now"
+      ],
+      "termDocumentFrequencies": [
+        0
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "LONG_FULL",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 84,
+      "ms": 910,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "LONG_FULL",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1402,
+      "timedOut": false,
+      "termsUsed": [
+        "now",
+        "old",
+        "previously"
+      ],
+      "termDocumentFrequencies": [
+        0,
+        1507,
+        1838
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G1_RAREST3_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1175,
+      "timedOut": false,
+      "termsUsed": [
+        "correspondence",
+        "provision",
+        "bail"
+      ],
+      "termDocumentFrequencies": [
+        901,
+        4478,
+        10448
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G2_RAREST2_AND",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 431,
+      "timedOut": false,
+      "termsUsed": [
+        "correspondence",
+        "provision"
+      ],
+      "termDocumentFrequencies": [
+        901,
+        4478
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G3_RAREST1",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 643,
+      "timedOut": false,
+      "termsUsed": [
+        "correspondence"
+      ],
+      "termDocumentFrequencies": [
+        901
+      ]
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G4_DENSE_ANN",
+      "rank": null,
+      "candidateCount": 203,
+      "ms": 761,
+      "timedOut": false,
+      "termsUsed": [],
+      "termDocumentFrequencies": []
+    },
+    {
+      "taskId": "A100-080",
+      "stratum": "SHORT_FAMILY",
+      "generator": "G5_UNION",
+      "rank": null,
+      "candidateCount": 500,
+      "ms": 1936,
+      "timedOut": false,
+      "termsUsed": [
+        "correspondence",
+        "provision",
+        "bail"
+      ],
+      "termDocumentFrequencies": [
+        901,
+        4478,
+        10448
+      ]
+    }
+  ]
+}

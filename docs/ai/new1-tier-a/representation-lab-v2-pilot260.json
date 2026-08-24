@@ -1,0 +1,540 @@
+{
+  "kind": "new1_representation_lab_v2",
+  "generatedAt": "2026-08-23T01:24:25.516Z",
+  "goldSetVersion": "1.0.0",
+  "classes": [
+    "doctrine",
+    "fact_pattern",
+    "supporting_authority",
+    "adverse_authority",
+    "long_narrative",
+    "pasted_passage",
+    "current_law",
+    "statute"
+  ],
+  "recallBasis": "CONDITIONAL_RECALL — scored only over gold present in the pool",
+  "pool": {
+    "documents": 260,
+    "gold": 20,
+    "hardNegatives": 240,
+    "tasks": 45,
+    "scorableTasks": 45
+  },
+  "latencyNote": "scoreMsPerQuery is EXHAUSTIVE in-memory cosine over the pool. It is NOT production latency and must not be quoted as a search time.",
+  "arms": [
+    {
+      "arm": "A_HEAD_4800",
+      "vectors": 260,
+      "documents": 260,
+      "vectorsPerDocument": 1,
+      "embedCharsPerDocument": 4352.465384615384,
+      "bytesPerDocument": 2048,
+      "n": 45,
+      "successAt1": 0.26666666666666666,
+      "successAt5": 0.37777777777777777,
+      "recallAt20": 0.5777777777777777,
+      "recallAt100": 0.8,
+      "recallAt500": 1,
+      "mrr": 0.3261732807965193,
+      "ndcgAt5": 0.3181673192290652,
+      "ndcgAt20": 0.3762198880301036,
+      "scoreMsPerQuery": 0.28888888888888886,
+      "buckets": {
+        "RANK_1": 12,
+        "RANK_6_20": 9,
+        "RANK_21_100": 10,
+        "RANK_101_500": 9,
+        "RANK_2_5": 5
+      }
+    },
+    {
+      "arm": "B_POOLED_ALL",
+      "vectors": 260,
+      "documents": 260,
+      "vectorsPerDocument": 1,
+      "embedCharsPerDocument": 29092.265384615384,
+      "bytesPerDocument": 2048,
+      "n": 45,
+      "successAt1": 0.5777777777777777,
+      "successAt5": 0.7333333333333333,
+      "recallAt20": 0.9333333333333333,
+      "recallAt100": 1,
+      "recallAt500": 1,
+      "mrr": 0.6705425566345106,
+      "ndcgAt5": 0.6670222640889795,
+      "ndcgAt20": 0.7289220620893426,
+      "scoreMsPerQuery": 0.26666666666666666,
+      "buckets": {
+        "RANK_1": 26,
+        "RANK_6_20": 9,
+        "RANK_2_5": 7,
+        "RANK_21_100": 3
+      }
+    },
+    {
+      "arm": "C_POOLED_SALIENT",
+      "vectors": 260,
+      "documents": 260,
+      "vectorsPerDocument": 1,
+      "embedCharsPerDocument": 7134.973076923077,
+      "bytesPerDocument": 2048,
+      "n": 45,
+      "successAt1": 0.5111111111111111,
+      "successAt5": 0.7555555555555555,
+      "recallAt20": 0.8666666666666667,
+      "recallAt100": 0.9777777777777777,
+      "recallAt500": 1,
+      "mrr": 0.6110246665400039,
+      "ndcgAt5": 0.6378355887942345,
+      "ndcgAt20": 0.6678005731420236,
+      "scoreMsPerQuery": 0.26666666666666666,
+      "buckets": {
+        "RANK_1": 23,
+        "RANK_6_20": 5,
+        "RANK_21_100": 5,
+        "RANK_2_5": 11,
+        "RANK_101_500": 1
+      }
+    },
+    {
+      "arm": "D_MULTI_3",
+      "vectors": 780,
+      "documents": 260,
+      "vectorsPerDocument": 3,
+      "embedCharsPerDocument": 15839.88076923077,
+      "bytesPerDocument": 6144,
+      "n": 45,
+      "successAt1": 0.6,
+      "successAt5": 0.7111111111111111,
+      "recallAt20": 0.8444444444444444,
+      "recallAt100": 0.9555555555555556,
+      "recallAt500": 1,
+      "mrr": 0.6676776992696533,
+      "ndcgAt5": 0.6627436848619503,
+      "ndcgAt20": 0.7052944731993365,
+      "scoreMsPerQuery": 0.8222222222222222,
+      "buckets": {
+        "RANK_1": 27,
+        "RANK_6_20": 6,
+        "RANK_21_100": 5,
+        "RANK_2_5": 5,
+        "RANK_101_500": 2
+      }
+    },
+    {
+      "arm": "F_ALL_CHUNKS",
+      "vectors": 3157,
+      "documents": 260,
+      "vectorsPerDocument": 12.142307692307693,
+      "embedCharsPerDocument": 29092.265384615384,
+      "bytesPerDocument": 24867.446153846155,
+      "n": 45,
+      "successAt1": 0.6888888888888889,
+      "successAt5": 0.8888888888888888,
+      "recallAt20": 0.9333333333333333,
+      "recallAt100": 1,
+      "recallAt500": 1,
+      "mrr": 0.7724025679682062,
+      "ndcgAt5": 0.7978412153608582,
+      "ndcgAt20": 0.808988245751682,
+      "scoreMsPerQuery": 5.333333333333333,
+      "buckets": {
+        "RANK_1": 31,
+        "RANK_2_5": 9,
+        "RANK_6_20": 2,
+        "RANK_21_100": 3
+      }
+    },
+    {
+      "arm": "E_LEXICAL_THEN_SEMANTIC",
+      "vectors": 260,
+      "documents": 260,
+      "vectorsPerDocument": 1,
+      "embedCharsPerDocument": 4352.465384615384,
+      "bytesPerDocument": 2048,
+      "n": 45,
+      "successAt1": 0.28888888888888886,
+      "successAt5": 0.37777777777777777,
+      "recallAt20": 0.37777777777777777,
+      "recallAt100": 0.37777777777777777,
+      "recallAt500": 0.37777777777777777,
+      "mrr": 0.32222222222222224,
+      "ndcgAt5": 0.33624288341269903,
+      "ndcgAt20": 0.33624288341269903,
+      "scoreMsPerQuery": 0.17777777777777778,
+      "buckets": {
+        "RANK_1": 13,
+        "ABSENT_FROM_POOL_RANKING": 28,
+        "RANK_2_5": 4
+      },
+      "candidates": {
+        "p50": 1,
+        "p95": 4,
+        "max": 10,
+        "emptyCandidateSets": 12
+      }
+    }
+  ],
+  "perTask": {
+    "A100-031": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-032": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-033": {
+      "A_HEAD_4800": 6,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-034": {
+      "A_HEAD_4800": 100,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 14,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 3
+    },
+    "A100-035": {
+      "A_HEAD_4800": 125,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 30,
+      "D_MULTI_3": 10,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-036": {
+      "A_HEAD_4800": 9,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-037": {
+      "A_HEAD_4800": 7,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-038": {
+      "A_HEAD_4800": 48,
+      "B_POOLED_ALL": 9,
+      "C_POOLED_SALIENT": 4,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-039": {
+      "A_HEAD_4800": 33,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 42,
+      "D_MULTI_3": 40,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-040": {
+      "A_HEAD_4800": 70,
+      "B_POOLED_ALL": 2,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 2,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-041": {
+      "A_HEAD_4800": 21,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-042": {
+      "A_HEAD_4800": 102,
+      "B_POOLED_ALL": 29,
+      "C_POOLED_SALIENT": 13,
+      "D_MULTI_3": 29,
+      "F_ALL_CHUNKS": 19,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-043": {
+      "A_HEAD_4800": 3,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 2,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-044": {
+      "A_HEAD_4800": 9,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-045": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-046": {
+      "A_HEAD_4800": 12,
+      "B_POOLED_ALL": 10,
+      "C_POOLED_SALIENT": 4,
+      "D_MULTI_3": 2,
+      "F_ALL_CHUNKS": 2,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-047": {
+      "A_HEAD_4800": 3,
+      "B_POOLED_ALL": 2,
+      "C_POOLED_SALIENT": 2,
+      "D_MULTI_3": 2,
+      "F_ALL_CHUNKS": 2,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-048": {
+      "A_HEAD_4800": 129,
+      "B_POOLED_ALL": 4,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 2
+    },
+    "A100-049": {
+      "A_HEAD_4800": 113,
+      "B_POOLED_ALL": 4,
+      "C_POOLED_SALIENT": 5,
+      "D_MULTI_3": 11,
+      "F_ALL_CHUNKS": 5,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-050": {
+      "A_HEAD_4800": 51,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-051": {
+      "A_HEAD_4800": 17,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 2,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-052": {
+      "A_HEAD_4800": 75,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-053": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-054": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-055": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-056": {
+      "A_HEAD_4800": 12,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 2,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-057": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-058": {
+      "A_HEAD_4800": 3,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-059": {
+      "A_HEAD_4800": 107,
+      "B_POOLED_ALL": 8,
+      "C_POOLED_SALIENT": 4,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-060": {
+      "A_HEAD_4800": 135,
+      "B_POOLED_ALL": 2,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 3,
+      "F_ALL_CHUNKS": 3,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-061": {
+      "A_HEAD_4800": 23,
+      "B_POOLED_ALL": 21,
+      "C_POOLED_SALIENT": 3,
+      "D_MULTI_3": 6,
+      "F_ALL_CHUNKS": 2,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-062": {
+      "A_HEAD_4800": 89,
+      "B_POOLED_ALL": 8,
+      "C_POOLED_SALIENT": 3,
+      "D_MULTI_3": 9,
+      "F_ALL_CHUNKS": 4,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-063": {
+      "A_HEAD_4800": 5,
+      "B_POOLED_ALL": 7,
+      "C_POOLED_SALIENT": 11,
+      "D_MULTI_3": 25,
+      "F_ALL_CHUNKS": 4,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-064": {
+      "A_HEAD_4800": 185,
+      "B_POOLED_ALL": 7,
+      "C_POOLED_SALIENT": 163,
+      "D_MULTI_3": 4,
+      "F_ALL_CHUNKS": 12,
+      "E_LEXICAL_THEN_SEMANTIC": 3
+    },
+    "A100-065": {
+      "A_HEAD_4800": 4,
+      "B_POOLED_ALL": 13,
+      "C_POOLED_SALIENT": 25,
+      "D_MULTI_3": 21,
+      "F_ALL_CHUNKS": 26,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-066": {
+      "A_HEAD_4800": 112,
+      "B_POOLED_ALL": 2,
+      "C_POOLED_SALIENT": 8,
+      "D_MULTI_3": 7,
+      "F_ALL_CHUNKS": 2,
+      "E_LEXICAL_THEN_SEMANTIC": 3
+    },
+    "A100-067": {
+      "A_HEAD_4800": 12,
+      "B_POOLED_ALL": 2,
+      "C_POOLED_SALIENT": 2,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-068": {
+      "A_HEAD_4800": 55,
+      "B_POOLED_ALL": 6,
+      "C_POOLED_SALIENT": 90,
+      "D_MULTI_3": 105,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-069": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-070": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-071": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 3,
+      "D_MULTI_3": 6,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-072": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-078": {
+      "A_HEAD_4800": 1,
+      "B_POOLED_ALL": 1,
+      "C_POOLED_SALIENT": 1,
+      "D_MULTI_3": 1,
+      "F_ALL_CHUNKS": 1,
+      "E_LEXICAL_THEN_SEMANTIC": 1
+    },
+    "A100-079": {
+      "A_HEAD_4800": 12,
+      "B_POOLED_ALL": 11,
+      "C_POOLED_SALIENT": 18,
+      "D_MULTI_3": 48,
+      "F_ALL_CHUNKS": 29,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    },
+    "A100-080": {
+      "A_HEAD_4800": 105,
+      "B_POOLED_ALL": 91,
+      "C_POOLED_SALIENT": 84,
+      "D_MULTI_3": 154,
+      "F_ALL_CHUNKS": 63,
+      "E_LEXICAL_THEN_SEMANTIC": null
+    }
+  }
+}

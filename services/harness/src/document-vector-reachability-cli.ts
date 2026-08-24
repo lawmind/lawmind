@@ -73,7 +73,10 @@ import { isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import postgres from 'postgres';
-import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
+import { toVectorLiteral } from '@lawmind/embed';
+// GPU sidecar, not the in-process CPU embedder. See harness-embedder.ts: the CPU
+// default is right for production and was silently starving the Tier-A walk here.
+import { getHarnessEmbedder } from './harness-embedder.ts';
 
 import { buildLaunchGold, type LaunchClass } from './launch-gold.ts';
 import { sslFor } from './db-url.ts';
@@ -126,7 +129,7 @@ async function main(): Promise<number> {
   }
   console.log(`  gold authorities present in the probe: ${present.size}/${ids.length}`);
 
-  const embedder = await getEmbedder();
+  const embedder = (await getHarnessEmbedder()).embedder;
   const results: Row[] = [];
   const done = new Set<string>();
   if (existsSync(CKPT)) {

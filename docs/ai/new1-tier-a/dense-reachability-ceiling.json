@@ -1,0 +1,138 @@
+{
+  "kind": "new1_dense_reachability_ceiling",
+  "generatedAt": "2026-08-23T09:00:38.335Z",
+  "goldSetVersion": "1.0.0",
+  "advocate100MeasuredAt": "2026-08-23T02:05:01.989Z",
+  "indexes": {
+    "judgment_chunks": {
+      "role": "PRODUCTION dense arm",
+      "targetsPresent": 11,
+      "distinctJudgmentsCorpusWide": 40161
+    },
+    "new1_probe_half_250k": {
+      "role": "probe",
+      "targetsPresent": 2
+    },
+    "new1_doc_vector_stage": {
+      "role": "Tier-A walk staging, not yet promoted",
+      "targetsPresent": 8
+    }
+  },
+  "targetsTotal": 27,
+  "byClass": {
+    "citation": {
+      "n": 6,
+      "reach": 5,
+      "hit": 6,
+      "hitReach": 5,
+      "hitNotReach": 1
+    },
+    "case_title": {
+      "n": 6,
+      "reach": 5,
+      "hit": 3,
+      "hitReach": 3,
+      "hitNotReach": 0
+    },
+    "misspelling": {
+      "n": 5,
+      "reach": 5,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "case_number": {
+      "n": 4,
+      "reach": 0,
+      "hit": 4,
+      "hitReach": 0,
+      "hitNotReach": 4
+    },
+    "cnr": {
+      "n": 1,
+      "reach": 0,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "doctrine": {
+      "n": 12,
+      "reach": 2,
+      "hit": 1,
+      "hitReach": 1,
+      "hitNotReach": 0
+    },
+    "fact_pattern": {
+      "n": 10,
+      "reach": 0,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "long_narrative": {
+      "n": 3,
+      "reach": 0,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "pasted_passage": {
+      "n": 3,
+      "reach": 0,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "supporting_authority": {
+      "n": 6,
+      "reach": 0,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "adverse_authority": {
+      "n": 4,
+      "reach": 0,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "current_law": {
+      "n": 4,
+      "reach": 4,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    },
+    "overruled": {
+      "n": 5,
+      "reach": 5,
+      "hit": 2,
+      "hitReach": 2,
+      "hitNotReach": 0
+    },
+    "statute": {
+      "n": 3,
+      "reach": 0,
+      "hit": 0,
+      "hitReach": 0,
+      "hitNotReach": 0
+    }
+  },
+  "total": {
+    "n": 72,
+    "reach": 26,
+    "hit": 16,
+    "hitReach": 11,
+    "hitNotReach": 5
+  },
+  "ceiling": {
+    "perfectDenseScore": 26,
+    "of": 72,
+    "pct": 0.3611111111111111,
+    "measured": 16,
+    "withinCeiling": 0.4230769230769231,
+    "hitsOnUnreachableTargets": 5,
+    "interpretation": "A ceiling is an UPPER BOUND, not a prediction. The gap between ceiling and measured is what representation and ranking work can address. Everything BELOW the ceiling is a coverage problem owned by the embedding walk and the eligibility contract, not by the ranker."
+  }
+}

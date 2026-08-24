@@ -70,7 +70,10 @@
  */
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 
-import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
+import { toVectorLiteral } from '@lawmind/embed';
+// GPU sidecar, not the in-process CPU embedder. See harness-embedder.ts: the CPU
+// default is right for production and was silently starving the Tier-A walk here.
+import { getHarnessEmbedder } from './harness-embedder.ts';
 import postgres from 'postgres';
 
 import { sslFor } from './db-url.js';
@@ -184,7 +187,7 @@ async function main(): Promise<void> {
   }
   process.stdout.write(`  in probe ${present.size}/${ids.length}; absent ${absent.length}\n`);
 
-  const embedder = await getEmbedder();
+  const embedder = (await getHarnessEmbedder()).embedder;
   // Deterministic self-retrieval sample: the first SELF_SAMPLE in gold order that miss.
   let selfBudget = SELF_SAMPLE;
 

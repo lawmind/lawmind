@@ -1,0 +1,917 @@
+{
+  "kind": "new1_long_passage",
+  "measuredAt": "2026-08-23T09:31:14.523Z",
+  "frozenHash": "ba9357cba2fbf297",
+  "design": "the query is held constant and irrelevant text is appended to reach each size, so what is measured is dilution by length. Own-text-span gold, so absolute numbers are an upper bound; the comparison across sizes and arms is the result.",
+  "truncationProbe": [
+    {
+      "chars": 500,
+      "cosineToPrefix1000": 0.9572,
+      "cosineToFullText": 0.6435
+    },
+    {
+      "chars": 1000,
+      "cosineToPrefix1000": 1,
+      "cosineToFullText": 0.6625
+    },
+    {
+      "chars": 2500,
+      "cosineToPrefix1000": 0.9421,
+      "cosineToFullText": 0.7081
+    },
+    {
+      "chars": 5000,
+      "cosineToPrefix1000": 0.8623,
+      "cosineToFullText": 0.8259
+    },
+    {
+      "chars": 10000,
+      "cosineToPrefix1000": 0.7799,
+      "cosineToFullText": 0.8952
+    },
+    {
+      "chars": 20000,
+      "cosineToPrefix1000": 0.6625,
+      "cosineToFullText": 1
+    }
+  ],
+  "sizes": [
+    500,
+    1000,
+    2500,
+    5000
+  ],
+  "sample": 25,
+  "bySize": [
+    {
+      "size": 500,
+      "n": 25,
+      "DIRECT": {
+        "at5": 8,
+        "at20": 8
+      },
+      "CONDENSED": {
+        "at5": 8,
+        "at20": 8
+      },
+      "CONTROL_500": {
+        "at5": 8,
+        "at20": 8
+      },
+      "embedMsP50": 556
+    },
+    {
+      "size": 1000,
+      "n": 25,
+      "DIRECT": {
+        "at5": 4,
+        "at20": 4
+      },
+      "CONDENSED": {
+        "at5": 8,
+        "at20": 8
+      },
+      "CONTROL_500": {
+        "at5": 8,
+        "at20": 8
+      },
+      "embedMsP50": 433
+    },
+    {
+      "size": 2500,
+      "n": 25,
+      "DIRECT": {
+        "at5": 4,
+        "at20": 4
+      },
+      "CONDENSED": {
+        "at5": 8,
+        "at20": 8
+      },
+      "CONTROL_500": {
+        "at5": 8,
+        "at20": 8
+      },
+      "embedMsP50": 408
+    },
+    {
+      "size": 5000,
+      "n": 25,
+      "DIRECT": {
+        "at5": 4,
+        "at20": 4
+      },
+      "CONDENSED": {
+        "at5": 8,
+        "at20": 8
+      },
+      "CONTROL_500": {
+        "at5": 8,
+        "at20": 8
+      },
+      "embedMsP50": 564
+    }
+  ],
+  "rows": [
+    {
+      "queryId": "ISSUE-001",
+      "size": 500,
+      "directRank": null,
+      "directMs": 1399,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-001",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 556,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-001",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 550,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-001",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 677,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-003",
+      "size": 500,
+      "directRank": 1,
+      "directMs": 828,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-003",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 545,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-003",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 496,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-003",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 559,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-004",
+      "size": 500,
+      "directRank": null,
+      "directMs": 765,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-004",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 476,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-004",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 447,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-004",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 543,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-005",
+      "size": 500,
+      "directRank": null,
+      "directMs": 556,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-005",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 323,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-005",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 405,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-005",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 851,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-006",
+      "size": 500,
+      "directRank": null,
+      "directMs": 338,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-006",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 595,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-006",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 148,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-006",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 324,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-007",
+      "size": 500,
+      "directRank": null,
+      "directMs": 620,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-007",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 434,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-007",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 425,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-007",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 702,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-008",
+      "size": 500,
+      "directRank": null,
+      "directMs": 619,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-008",
+      "size": 1000,
+      "directRank": 1,
+      "directMs": 476,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-008",
+      "size": 2500,
+      "directRank": 1,
+      "directMs": 149,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-008",
+      "size": 5000,
+      "directRank": 1,
+      "directMs": 370,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-009",
+      "size": 500,
+      "directRank": null,
+      "directMs": 861,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-009",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 391,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-009",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 483,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-009",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 529,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-010",
+      "size": 500,
+      "directRank": null,
+      "directMs": 515,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-010",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 398,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-010",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 431,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-010",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 689,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-011",
+      "size": 500,
+      "directRank": null,
+      "directMs": 517,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-011",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 443,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-011",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 186,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-011",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 345,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-012",
+      "size": 500,
+      "directRank": null,
+      "directMs": 684,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-012",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 528,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-012",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 312,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-012",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 568,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-013",
+      "size": 500,
+      "directRank": null,
+      "directMs": 559,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-013",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 323,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-013",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 393,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-013",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 617,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-014",
+      "size": 500,
+      "directRank": 1,
+      "directMs": 831,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-014",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 563,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-014",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 164,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-014",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 1062,
+      "condensedRank": 1,
+      "controlRank": 1
+    },
+    {
+      "queryId": "ISSUE-015",
+      "size": 500,
+      "directRank": null,
+      "directMs": 669,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-015",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 433,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-015",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 384,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-015",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 564,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-016",
+      "size": 500,
+      "directRank": null,
+      "directMs": 414,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-016",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 360,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-016",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 729,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-016",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 386,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-017",
+      "size": 500,
+      "directRank": null,
+      "directMs": 209,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-017",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 554,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-017",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 515,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-017",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 497,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-018",
+      "size": 500,
+      "directRank": null,
+      "directMs": 294,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-018",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 312,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-018",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 456,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-018",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 549,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-019",
+      "size": 500,
+      "directRank": null,
+      "directMs": 331,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-019",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 310,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-019",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 423,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-019",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 671,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-020",
+      "size": 500,
+      "directRank": null,
+      "directMs": 106,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-020",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 71,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-020",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 527,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-020",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 607,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-021",
+      "size": 500,
+      "directRank": null,
+      "directMs": 417,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-021",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 286,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-021",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 344,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-021",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 530,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-022",
+      "size": 500,
+      "directRank": null,
+      "directMs": 572,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-022",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 370,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-022",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 408,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-022",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 899,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-023",
+      "size": 500,
+      "directRank": null,
+      "directMs": 336,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-023",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 439,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-023",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 128,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-023",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 811,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-024",
+      "size": 500,
+      "directRank": null,
+      "directMs": 752,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-024",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 292,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-024",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 349,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-024",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 668,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-025",
+      "size": 500,
+      "directRank": null,
+      "directMs": 459,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-025",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 60,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-025",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 147,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-025",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 421,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-026",
+      "size": 500,
+      "directRank": null,
+      "directMs": 411,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-026",
+      "size": 1000,
+      "directRank": null,
+      "directMs": 461,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-026",
+      "size": 2500,
+      "directRank": null,
+      "directMs": 460,
+      "condensedRank": null,
+      "controlRank": null
+    },
+    {
+      "queryId": "ISSUE-026",
+      "size": 5000,
+      "directRank": null,
+      "directMs": 550,
+      "condensedRank": null,
+      "controlRank": null
+    }
+  ]
+}

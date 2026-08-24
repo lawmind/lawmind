@@ -1,0 +1,588 @@
+{
+  "kind": "new1_uncited_authority_bias",
+  "generatedAt": "2026-08-23T09:37:13.202Z",
+  "goldSetVersion": "1.0.0",
+  "deployedEligibilityViewSha256Prefix": "2e7b53afe35fa81c",
+  "treatmentSeparation": "cited_authority records that A CITES B. It establishes no treatment relationship (followed/relied_on/distinguished/doubted/overruled/set_aside/approved). Nothing here may be reported as currentness or treatment coverage.",
+  "denominatorBoundAuthorities": 27,
+  "substantiveTasks": 72,
+  "counts": {
+    "ELIGIBLE_NORMALLY": 27,
+    "NOT_HELD": 0
+  },
+  "stagedOfBound": 8,
+  "unreachableSolelyForWantOfACitation": 0,
+  "rescuedBecauseCited": 0,
+  "byQueryClass": {
+    "fact_pattern": {
+      "ELIGIBLE_NORMALLY": 10
+    },
+    "long_narrative": {
+      "ELIGIBLE_NORMALLY": 4
+    },
+    "supporting_authority": {
+      "ELIGIBLE_NORMALLY": 6
+    },
+    "citation": {
+      "ELIGIBLE_NORMALLY": 6
+    },
+    "case_number": {
+      "ELIGIBLE_NORMALLY": 4
+    },
+    "doctrine": {
+      "ELIGIBLE_NORMALLY": 9
+    },
+    "pasted_passage": {
+      "ELIGIBLE_NORMALLY": 3
+    },
+    "adverse_authority": {
+      "ELIGIBLE_NORMALLY": 4
+    },
+    "statute": {
+      "ELIGIBLE_NORMALLY": 4
+    },
+    "case_title": {
+      "ELIGIBLE_NORMALLY": 7
+    },
+    "misspelling": {
+      "ELIGIBLE_NORMALLY": 5
+    },
+    "current_law": {
+      "ELIGIBLE_NORMALLY": 4
+    },
+    "overruled": {
+      "ELIGIBLE_NORMALLY": 5
+    },
+    "cnr": {
+      "ELIGIBLE_NORMALLY": 1
+    }
+  },
+  "goldCannotSeeThisBias": "ADVOCATE-100 substantive tasks rest on a small number of distinct judgments and they are landmarks — long, `decided`, heavily cited. A landmark cannot be caught by a rule that refuses the uncited, so a gold of landmarks reports zero bias however large the bias is. The corpus census below is the measurement that can see it.",
+  "corpusCensus": {
+    "sampled": 40000,
+    "byTier": {
+      "BROAD_SEARCHABLE": 18485,
+      "NOT_ELIGIBLE": 19122,
+      "BAIL_ORDER_REACHABLE": 2026,
+      "UNRESOLVED_EXPERIMENTAL": 342,
+      "CITED_AUTHORITY_REACHABLE": 25
+    },
+    "unreachableSolelyForWantOfACitation": 15807,
+    "shareOfSample": 0.395175,
+    "counterfactualByTier": {
+      "NOT_ELIGIBLE__WOULD_BE_RESCUED": 15465,
+      "UNRESOLVED_EXPERIMENTAL__WOULD_BE_RESCUED": 342
+    },
+    "method": "TABLESAMPLE SYSTEM on judgments, then a lookup through the DEPLOYED judgment_embedding_eligibility view. A full aggregate over 18.7M rows through the cited_authority LEFT JOIN would starve the walk for a number a sample answers."
+  },
+  "thresholdCounterfactual": {
+    "origin": "LCC bus 1054 — the exact table that would let the 2,000-char gate be argued from evidence",
+    "thresholds": [
+      2000,
+      1500,
+      1200,
+      800
+    ],
+    "note": "Additions are documents already passing identity AND text safety; a shorter gate cannot rescue a document that fails an earlier axis. UNCLASSIFIED is reported separately because never-looked-at is not the same as clean.",
+    "rows": [
+      {
+        "threshold": 2000,
+        "additions": 0,
+        "cumulative": 0,
+        "note": "the deployed gate — the baseline, not an addition"
+      },
+      {
+        "threshold": 1500,
+        "band": "[1500, 2000)",
+        "additions": 4333,
+        "cumulative": 4333,
+        "proceduralDisposal": 241,
+        "refusedClassAny": 241,
+        "unclassified": 3422,
+        "classifiedAdditions": 911,
+        "proceduralDisposalShareOfAllAdditions": 0.05561966305100392,
+        "proceduralDisposalShareOfCLASSIFIEDAdditions": 0.2645444566410538,
+        "shareNote": "The share of ALL additions is a FLOOR, not a rate: ~77% of each band has no class verdict. The share of CLASSIFIED additions is the honest denominator for a threshold decision."
+      },
+      {
+        "threshold": 1200,
+        "band": "[1200, 1500)",
+        "additions": 2676,
+        "cumulative": 7009,
+        "proceduralDisposal": 212,
+        "refusedClassAny": 410,
+        "unclassified": 2147,
+        "classifiedAdditions": 529,
+        "proceduralDisposalShareOfAllAdditions": 0.07922272047832586,
+        "proceduralDisposalShareOfCLASSIFIEDAdditions": 0.4007561436672968,
+        "shareNote": "The share of ALL additions is a FLOOR, not a rate: ~77% of each band has no class verdict. The share of CLASSIFIED additions is the honest denominator for a threshold decision."
+      },
+      {
+        "threshold": 800,
+        "band": "[800, 1200)",
+        "additions": 3877,
+        "cumulative": 10886,
+        "proceduralDisposal": 463,
+        "refusedClassAny": 756,
+        "unclassified": 3010,
+        "classifiedAdditions": 867,
+        "proceduralDisposalShareOfAllAdditions": 0.11942223368583957,
+        "proceduralDisposalShareOfCLASSIFIEDAdditions": 0.5340253748558247,
+        "shareNote": "The share of ALL additions is a FLOOR, not a rate: ~77% of each band has no class verdict. The share of CLASSIFIED additions is the honest denominator for a threshold decision."
+      }
+    ]
+  },
+  "notHeld": [],
+  "detail": [
+    {
+      "id": "009522ce-e358-41f2-978f-593ed8bb4bde",
+      "queryClasses": [
+        "fact_pattern",
+        "long_narrative",
+        "supporting_authority"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 11025,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "0766f0c5-c009-4e5d-859f-8a5ebfdb2758",
+      "queryClasses": [
+        "citation",
+        "case_number",
+        "doctrine",
+        "pasted_passage",
+        "supporting_authority",
+        "adverse_authority",
+        "statute"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 24477,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "091590b9-5556-4404-be37-6e8a4e93744d",
+      "queryClasses": [
+        "citation",
+        "case_title",
+        "misspelling",
+        "doctrine",
+        "current_law"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 173688,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "13e6cee7-04d8-4a7d-94b1-41d6bd9a6894",
+      "queryClasses": [
+        "overruled"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 203549,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "1e3a4a63-e237-423e-b05b-9d7ee70a9c77",
+      "queryClasses": [
+        "long_narrative"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 14453,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "1f74f6c2-1a8d-49cf-ba61-6c1b9ee9f772",
+      "queryClasses": [
+        "case_number",
+        "fact_pattern"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 23068,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "2188d129-43c5-4dad-9ef9-c728b671607c",
+      "queryClasses": [
+        "case_number",
+        "fact_pattern",
+        "long_narrative",
+        "pasted_passage",
+        "statute"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 6749,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "232ea6ee-9a21-4e16-ba45-9c96f9bb6ceb",
+      "queryClasses": [
+        "overruled"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 21107,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "2b79bae6-2bab-4460-ad5b-ada491cac5cc",
+      "queryClasses": [
+        "doctrine",
+        "long_narrative",
+        "adverse_authority"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 17560,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "2bcf559d-b56c-49ca-901e-470487e7e232",
+      "queryClasses": [
+        "doctrine"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 12284,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "2e3d517c-7762-4b4e-9072-9bda3dc05c5a",
+      "queryClasses": [
+        "citation",
+        "case_title",
+        "misspelling",
+        "current_law"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 2878447,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "2fc3cb94-b398-4451-aa0a-550472c07dec",
+      "queryClasses": [
+        "statute"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 8344,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "31b66d98-8554-4ef3-81ab-c91e88423549",
+      "queryClasses": [
+        "overruled"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 17873,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "343940ea-9d38-43c3-b765-175e80964d22",
+      "queryClasses": [
+        "doctrine",
+        "fact_pattern",
+        "supporting_authority"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 14121,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "4c8118dd-c6fc-4cb6-ad1d-5a3296f9dc17",
+      "queryClasses": [
+        "citation",
+        "case_title",
+        "misspelling",
+        "current_law"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": null,
+      "textLength": 27602,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "510aa698-b81d-4e51-a1fa-565379496a93",
+      "queryClasses": [
+        "doctrine",
+        "fact_pattern",
+        "supporting_authority",
+        "adverse_authority"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 65000,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "5a52e215-47e7-455e-91c6-bfe933c4e161",
+      "queryClasses": [
+        "case_title",
+        "case_number",
+        "fact_pattern"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 14424,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "5b7aaf2f-4f48-452e-857c-33649df67268",
+      "queryClasses": [
+        "doctrine",
+        "fact_pattern",
+        "supporting_authority",
+        "adverse_authority"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 8122,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "755dda37-e50a-452b-94c1-a08e4fdfaa9c",
+      "queryClasses": [
+        "citation",
+        "case_title",
+        "misspelling",
+        "current_law"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 89631,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "7cef6ece-bb75-464d-ae4e-0a5f44834ca7",
+      "queryClasses": [
+        "overruled"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 38395,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "885b8bc3-bd48-41d8-a0f7-a5eeeab2f4a4",
+      "queryClasses": [
+        "overruled"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 104516,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "91e5aea6-d745-4eb4-9ce6-93dace9d9fa3",
+      "queryClasses": [
+        "citation",
+        "case_title",
+        "misspelling"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 529765,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "985fade2-03f2-47e6-ba5d-00629af76469",
+      "queryClasses": [
+        "fact_pattern"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 13624,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "b59e6700-4721-46bc-8427-f580a15e5550",
+      "queryClasses": [
+        "fact_pattern",
+        "statute"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 10722,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "c5714da7-393d-4736-9a6e-5c80bf9441ae",
+      "queryClasses": [
+        "doctrine",
+        "fact_pattern",
+        "supporting_authority"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": "decided",
+      "textLength": 29420,
+      "textSafety": "UNKNOWN",
+      "staged": true,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "d22bbacc-bf1d-403f-b7fd-4a9306a3d4d8",
+      "queryClasses": [
+        "case_title"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": true,
+      "hcDocumentClass": null,
+      "textLength": 99278,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    },
+    {
+      "id": "fc0e9876-6c60-42e1-9396-a2e5105ee471",
+      "queryClasses": [
+        "cnr",
+        "doctrine",
+        "pasted_passage"
+      ],
+      "bucket": "ELIGIBLE_NORMALLY",
+      "semanticTier": "BROAD_SEARCHABLE",
+      "tierIfCited": "BROAD_SEARCHABLE",
+      "isCitedAuthority": false,
+      "hcDocumentClass": "decided",
+      "textLength": 15741,
+      "textSafety": "UNKNOWN",
+      "staged": false,
+      "unreachableSolelyForWantOfACitation": false
+    }
+  ]
+}

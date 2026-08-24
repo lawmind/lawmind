@@ -54,7 +54,10 @@
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 import { createApp } from '@lawmind/api/app';
-import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
+import { toVectorLiteral } from '@lawmind/embed';
+// GPU sidecar, not the in-process CPU embedder. See harness-embedder.ts: the CPU
+// default is right for production and was silently starving the Tier-A walk here.
+import { getHarnessEmbedder } from './harness-embedder.ts';
 import postgres from 'postgres';
 
 import { sslFor } from './db-url.js';
@@ -106,7 +109,7 @@ async function main(): Promise<void> {
   const tasks = gold.tasks;
 
   const sql = postgres(url, { max: 4, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 25_000 } });
-  const embedder = await getEmbedder();
+  const embedder = (await getHarnessEmbedder()).embedder;
   /** Same budget shape production uses: a bound, and lexical-only rather than a hang. */
   const embedQuery = async (text: string): Promise<string | null> => {
     let timer: NodeJS.Timeout | undefined;

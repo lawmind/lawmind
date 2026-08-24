@@ -73,7 +73,10 @@ import { dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import postgres from 'postgres';
-import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
+import { toVectorLiteral } from '@lawmind/embed';
+// GPU sidecar, not the in-process CPU embedder. See harness-embedder.ts: the CPU
+// default is right for production and was silently starving the Tier-A walk here.
+import { getHarnessEmbedder } from './harness-embedder.ts';
 
 import { createApp } from '@lawmind/api/app';
 import { buildLaunchGold, EXACT_ROUTE_CLASSES, type LaunchClass, type LaunchGoldRow } from './launch-gold.ts';
@@ -355,7 +358,7 @@ async function main(): Promise<number> {
     });
     try {
       const embed = (async (): Promise<string | null> => {
-        const embedder = await getEmbedder();
+        const embedder = (await getHarnessEmbedder()).embedder;
         const [embedded] = await embedder.embed([text]);
         return embedded ? toVectorLiteral(embedded.vector) : null;
       })();

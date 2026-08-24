@@ -1,0 +1,133 @@
+{
+  "kind": "new1_temporal_correctness",
+  "generatedAt": "2026-08-23T09:20:06.294Z",
+  "scope": "Date-bound retrieval only. This does NOT test good-law status: overruled_status is never cached, is read live at render, and is a different system with different evidence. A date bound is not a currentness check.",
+  "dateStateColumnPresent": false,
+  "probes": 8,
+  "probesReturningResults": 8,
+  "probesReturningNothing": 0,
+  "dateBoundViolations": 0,
+  "unreliableDatesSurfaced": null,
+  "results": [
+    {
+      "id": "T-01",
+      "query": "anticipatory bail conditions",
+      "intent": "law as of March 2019",
+      "dateFrom": null,
+      "dateTo": "2019-03-31",
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 15138,
+      "timedOut": false,
+      "degraded": [
+        "sparse_timeout"
+      ]
+    },
+    {
+      "id": "T-02",
+      "query": "dying declaration corroboration",
+      "intent": "law as of end 2015",
+      "dateFrom": null,
+      "dateTo": "2015-12-31",
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 15233,
+      "timedOut": false,
+      "degraded": [
+        "sparse_timeout"
+      ]
+    },
+    {
+      "id": "T-03",
+      "query": "cheque dishonour statutory notice",
+      "intent": "cases before 2010",
+      "dateFrom": null,
+      "dateTo": "2010-01-01",
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 8822,
+      "timedOut": false,
+      "degraded": []
+    },
+    {
+      "id": "T-04",
+      "query": "quashing of criminal proceedings inherent powers",
+      "intent": "law as of mid-2020",
+      "dateFrom": null,
+      "dateTo": "2020-06-30",
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 15385,
+      "timedOut": false,
+      "degraded": [
+        "sparse_timeout"
+      ]
+    },
+    {
+      "id": "T-05",
+      "query": "default bail statutory period",
+      "intent": "cases before 2017",
+      "dateFrom": null,
+      "dateTo": "2017-01-01",
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 13336,
+      "timedOut": false,
+      "degraded": []
+    },
+    {
+      "id": "T-06",
+      "query": "compassionate appointment policy",
+      "intent": "law as of 2012",
+      "dateFrom": null,
+      "dateTo": "2012-12-31",
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 10162,
+      "timedOut": false,
+      "degraded": []
+    },
+    {
+      "id": "T-07",
+      "query": "anticipatory bail conditions",
+      "intent": "post-BNSS only",
+      "dateFrom": "2024-07-01",
+      "dateTo": null,
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 16227,
+      "timedOut": false,
+      "degraded": [
+        "sparse_timeout"
+      ]
+    },
+    {
+      "id": "T-08",
+      "query": "dying declaration corroboration",
+      "intent": "post-BSA only",
+      "dateFrom": "2024-07-01",
+      "dateTo": null,
+      "httpStatus": 200,
+      "returned": 5,
+      "violations": [],
+      "unreliableDates": [],
+      "ms": 12060,
+      "timedOut": false,
+      "degraded": []
+    }
+  ]
+}

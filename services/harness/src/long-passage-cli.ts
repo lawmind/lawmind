@@ -50,7 +50,10 @@
  */
 import { writeFileSync } from 'node:fs';
 
-import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
+import { toVectorLiteral } from '@lawmind/embed';
+// GPU sidecar, not the in-process CPU embedder. See harness-embedder.ts: the CPU
+// default is right for production and was silently starving the Tier-A walk here.
+import { getHarnessEmbedder } from './harness-embedder.ts';
 import postgres from 'postgres';
 
 import { sslFor } from './db-url.js';
@@ -74,7 +77,7 @@ async function main(): Promise<void> {
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
   const gold = buildLaunchGold();
   const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 60_000 } });
-  const embedder = await getEmbedder();
+  const embedder = (await getHarnessEmbedder()).embedder;
 
   // ── 1. Does the embedder read a long input at all? ────────────────────────
   const [longDoc] = await sql<{ t: string }[]>`

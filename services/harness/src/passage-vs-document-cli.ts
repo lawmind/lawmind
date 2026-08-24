@@ -51,7 +51,10 @@
  */
 import { writeFileSync } from 'node:fs';
 
-import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
+import { toVectorLiteral } from '@lawmind/embed';
+// GPU sidecar, not the in-process CPU embedder. See harness-embedder.ts: the CPU
+// default is right for production and was silently starving the Tier-A walk here.
+import { getHarnessEmbedder } from './harness-embedder.ts';
 import postgres from 'postgres';
 
 import { sslFor } from './db-url.js';
@@ -128,7 +131,7 @@ async function main(): Promise<void> {
   process.stdout.write(`arm DOC: ${docVecs.size} stored vectors read\n`);
 
   // ARM PASSAGE — the same documents' same head text, cut and embedded.
-  const embedder = await getEmbedder();
+  const embedder = (await getHarnessEmbedder()).embedder;
   const passageOwner: string[] = [];
   const passageVecs: number[][] = [];
   let embedded = 0;
