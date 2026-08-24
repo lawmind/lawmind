@@ -18,13 +18,23 @@ this lane.
 | 1 | **Treatment provenance program** (P0) | **DONE** | `TREATMENT_PROVENANCE_DECISION_INPUT_V1.md` · commit `a9bea22` |
 | 2 | **Resolver false-unique / collision truth** (P0) | **DONE** | `RESOLVER_FALSE_UNIQUE_AUDIT_V1.md` · commit `a819dca` |
 | 3 | **Body-text evidence state** (P0/P1) | **DONE** | `BODY_TEXT_EVIDENCE_STATE_V1.md` · commit `c4fe3f0` |
-| 4 | **Uncited substantive authority study V2** (P0/P1) | **RUNNING** | 140 documents drawn from NEW1's stratified frame + a new above-gate control; adjudication in progress |
-| 5 | **Historical treatment-regex correction** (P1) | **RUNNING** | all 16,001 re-derived against BOTH writers; 19 rows isolated, badge-impact check clear, apply decision pending |
-| 6 | India Code official old-code acquisition | **BLOCKED** | service returning 504; `FQ-INDIACODE-AVAILABILITY`. Do not hammer it |
+| 4 | **Uncited substantive authority study V2** (P0/P1) | **DONE** | `UNCITED_SUBSTANTIVE_AUTHORITY_STUDY_V2.md` · commit `a874ab5` |
+| 5 | **Historical treatment-regex correction** (P1) | **DONE** | 19 rows corrected, 0 badges moved · commit `be04734` |
+| 6 | India Code official old-code acquisition | **DIAGNOSIS CHANGED** | root 200, listing **404 not 504** — the site moved, our URL builder is stale. Two requests only · commit `95baa5d` |
 | 7 | eCourts | **NO TRAFFIC** | §8/NEW2-7. Not touched |
-| 8 | HC classifier / targeted OCR | **NOT RESUMED** | background only, and the box has had 2–13 concurrent queries all session |
-| 9 | Bus messages to LCC / NEW1 / NEW3 | **QUEUED** | after 4 and 5 land |
-| 10 | `CURRENT_PLAN.md` update + §16 report | **QUEUED** | last |
+| 8 | HC classifier / targeted OCR | **NOT RESUMED** | background only; the box carried 2–13 concurrent queries all session |
+| 9 | Bus messages to LCC / NEW1 / NEW3 | **DONE** | seq 1097–1103 |
+| 10 | `CURRENT_PLAN.md` update + §16 report | **RUNNING** | last |
+
+### Carried forward, for whoever holds this lane next
+
+| what | why it is not done |
+| --- | --- |
+| **Re-derive India Code's browse path** | bounded engineering, one session. The 404 says the path moved; §8 forbids hammering and forbids inventing mappings, so it was left rather than hunted |
+| **`modality` on treatment claims** | the 1985 dissent proves the mood of the verb is load-bearing and nothing records it. Needs the majority judgment read as primary evidence |
+| **14 pins into different-document groups** | 11 `followed`, 3 `distinguished`, named by id. Hand adjudication, not a batch |
+| **The 4 `dis-approved` rows' true treatment** | withdrawn to `cites`, which understates. Our vocabulary has no `disapproved` |
+| **A second reader for the 140 labels** | one adjudicator, no inter-rater figure. Every label carries its reason so a second reader can disagree specifically |
 
 ---
 
@@ -87,6 +97,27 @@ would certify 100% of the rows created since as screened. The watermark must be
 `body_text_evidence` then reads `SCREENED_NO_DAMAGE_FOUND` 16,906,647 and
 `NEVER_SCREENED` **16**, with damage refusal unchanged at 1,792,321 either side.
 
+### 4 · Uncited authority — **the control is the finding**
+
+| | n | substantive | rate |
+| --- | ---: | ---: | ---: |
+| RESIDUAL_NO_NEGATIVE_MARKER (refused) | 60 | 4 | 6.67% |
+| MARKER_CARRYING (refused) | 40 | **0** | 0.00% |
+| **CONTROL, ABOVE the gate** | 40 | 3 | **7.50%** |
+
+Weighted refused population **2.87%** [0.15, 5.58], NEW1's estimator, never
+pooled. **What LawMind already admits scores the same as what it refuses** — both
+about 93% procedural. The discriminator is the marker stratum, not the length.
+Still no classifier: 7 positives in 180 refused documents against the ~62
+precision needs.
+
+### 5 · Treatment correction — **19 rows, 0 badges moved**
+
+`MARKER_RE`'s bare dash matched a hyphen inside a word: `dis-approved`,
+**`contra-distinguished`**, `"un- doubted"`, `"deci- sions"`. Withdrawn to
+`cites`, the value both current writers return. `overruled` 117 and
+`overruled_in_part` 23 unchanged.
+
 ---
 
 ## Corrections this session made to its own work
@@ -101,7 +132,13 @@ Recorded here because a lane that only reports its wins is not reporting.
 2. **The provenance screen's `UNKNOWN` was not absence of signal.** Hand-reading
    all 42 showed 38 are under-detected reporter apparatus. The error is
    one-directional and makes the finding worse, not better.
-3. **The re-derivation nearly deleted 1,624 real treatment claims.** Diffing
+3. **I nearly scored the control looser than the treatment group.** Adjudicating
+   the uncited study I first marked a control document substantive whose shape I
+   had already marked *procedural* in the refused set. Uncorrected, the control
+   would have read **30%** against 6.67% and produced the opposite headline. A
+   control scored more loosely than the treatment group is worse than no control,
+   and the error always flatters whichever group was read second.
+4. **The re-derivation nearly deleted 1,624 real treatment claims.** Diffing
    against `detectTreatment` alone reported 1,680 rows "wrong". There are **two**
    treatment writers with different vocabularies — `detectTreatment`
    (`citations.ts`, narrow) and `readTreatment` (`treatment.ts`, wide, run by
@@ -112,8 +149,10 @@ Recorded here because a lane that only reports its wins is not reporting.
 
 ## Not done, and deliberately
 
-- **No corpus mutation of any kind so far.** No backfill, no treatment rewrite,
-  no resolver apply, no `quality_screen_runs` import.
+- **Exactly one corpus mutation, 19 rows.** The hyphen-inside-a-word withdrawals,
+  measured for badge impact first and re-asserted in the UPDATE's own WHERE
+  clause, 0 badges moved, prior values preserved by edge id. **No backfill, no
+  treatment rewrite, no resolver apply, no `quality_screen_runs` import.**
 - **No classifier built** on the uncited-authority question — §8 forbids it until
   there are enough positives to measure precision, and there are not.
 - **No eligibility threshold changed.** That is NEW1's gate.

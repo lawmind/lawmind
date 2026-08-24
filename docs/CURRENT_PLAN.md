@@ -16,6 +16,114 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 23 August 2026 — NEW2: THE RESOLVER'S FALSE UNIQUES ARE A STALE INDEX, 95.62% OF LAW MOVED IS A HEADNOTE, AND THE ELIGIBILITY GATE'S MARGIN SEPARATES NOTHING
+
+Round contract §8. Full board: `docs/ai/new2/NEW2_NEXT_ROUND_TODO.md`. All five
+§15 deliverables written. Every number OBSERVED — run, read or counted — never
+inferred. **LOCAL_CONTENDED throughout**: 2–13 concurrent PostgreSQL queries, and
+the resource gate read `DEFER DB_SCAN` for most of the session, so the work was
+kept to bounded indexed reads.
+
+**1. The resolver was graded against independent truth for the first time.**
+`RESOLVER_FALSE_UNIQUE_AUDIT_V1.md`. LCC declined to print a false-unique rate
+without an adjudicated sample; this lane owns the sample.
+
+```
+false unique, any severity   10/64 = 15.63%  [8.71, 26.43]
+MATERIALLY unsafe             0/64 =  0.00%  [0.00,  5.66]
+non-citations wrongly resolved   0 of 40      phantom pins 0
+```
+
+**The cause is not the rules — it is the index they read.** Of the 68 adjudicated
+candidates in the 34 misgraded records, 58 are reachable only through
+`judgments.neutral_citation` and 10 through `judgment_citation_keys`; the resolver
+counts candidates in the key table alone. Corpus-wide, **33,013 of 155,388
+shared-neutral groups collapse to a false UNIQUE, 99.5% of them Allahabad**,
+because that index is **309,130 neutral citations behind its own `(created_at,
+id)` cursor since 17 August**. Tested rather than assumed: 309,130 against a
+309,414 shortfall is 99.91% of the gap.
+
+**Re-running the existing builder repairs 33,001 of the 33,013 and leaves 0 of the
+different-document class** — stated as a falsifiable prediction with its number.
+**No backfill approved**, and the rate must be re-measured after the rebuild
+because the population changes in both directions.
+
+Already in the graph: 22,469 of 231,412 pins land in a shared group, but **0 of
+the 137 adverse treatments do**. LAW MOVED is clear of this contamination.
+`citation_concordance_resolutions` is 156 `gold_eval` rows, all unvalidated, and
+no production writer reads it.
+
+**2. 131 of the 137 edges behind LAW MOVED are a law reporter's headnote.**
+`TREATMENT_PROVENANCE_DECISION_INPUT_V1.md`. All 16,001 treated edges classified —
+not a sample — and all 137 badge-driving edges **hand-read**, because a phrase list
+scores well on the documents it was written from. The screen said 93 reporter / 42
+unknown; the read says **131 reporter (95.62%) / 5 court (3.65%) / 1 defect**. Its
+UNKNOWN class was under-detected reporter apparatus.
+
+**98 judgments render LAW MOVED** (a further 6 are Test Court synthetic fixtures
+sitting in the production corpus). **If reporter evidence may not promote to
+canonical, 5 survive.** Five surfaces promote on a bare `relationship IN (...)` and
+`judgment_citations` has no provenance column, so none of them could filter even if
+it wanted to — the gate is one line in `propagate-treatment.ts`, and the column is
+what is missing. `OFFICIAL_REGISTRY_STATUS` has no source: `ecourts_observation`
+holds 0 rows.
+
+A new defect class, found by reading: **MODALITY**. A 1985 dissent saying an
+authority *"is sought to be overruled by the judgment proposed to be delivered by
+my learned Brother"* is stored as `overruled` and is the sole driver of a
+`set_aside`. Polarity is the wrong verb; modality is the right verb in the wrong
+mood, and `MARKER_RE` guards neither.
+
+**3. The body-text screen already looked at 18,698,968 documents, so no rescan is
+needed — but the checkpoint's own watermark is unusable.**
+`BODY_TEXT_EVIDENCE_STATE_V1.md`. Judgments created before the run started number
+**18,698,968 exactly**, with a zero-width during-run band. But the walk pages by
+random uuid, so all 16 rows created since sort BELOW the final cursor and an id
+watermark would certify 100% of them as screened having never been looked at. The
+watermark must be `created_at`, and the run table therefore does not carry the
+cursor as a column at all. `body_text_evidence` then reads
+`SCREENED_NO_DAMAGE_FOUND` 16,906,647 and `NEVER_SCREENED` 16, with damage refusal
+unchanged at 1,792,321 either side. Table and view remain LCC's.
+
+**4. Documents just ABOVE the eligibility gate are as substantive as those just
+below it.** `UNCITED_SUBSTANTIVE_AUTHORITY_STUDY_V2.md`. 140 documents read as
+primary text, drawn from NEW1's stratified frame plus a control the study had
+never had.
+
+```
+RESIDUAL_NO_NEGATIVE_MARKER (refused)   4/60 = 6.67%  [2.62, 15.93]
+MARKER_CARRYING             (refused)   0/40 = 0.00%  [0.00,  8.76]
+CONTROL_ABOVE_GATE_2000_3000 (ADMITTED) 3/40 = 7.50%  [2.58, 19.86]
+weighted refused population                    2.87%  [0.15,  5.58]
+```
+
+**The control is the finding.** Both populations are about 93% procedural, so the
+gate's usual justification is wrong; the real discriminator is the negative-marker
+stratum, which scored **zero in forty**. This is not an argument for lowering the
+threshold. **Still no classifier** — 7 positives in 180 refused documents across V1
+and V2 against the ~62 rule-positives precision needs, so the founder's question
+stays **UNKNOWN**.
+
+**5. Nineteen treatment rows were made by a hyphen inside a word, and a
+single-writer diff would have deleted 1,624 real ones.** All 16,001 re-derived. The
+first attempt diffed against `detectTreatment` alone and reported 1,680 rows wrong;
+there are **two** treatment writers with different vocabularies — `detectTreatment`
+(`citations.ts`, narrow) and `readTreatment` (`treatment.ts`, wide, run by
+`citator-cli.ts` over resolved edges). Against both, the disagreement is 19 and **0
+rows are contradicted**. The 19 are `dis-approved`, **`contra-distinguished`**,
+`"un- doubted"`, `"deci- sions"`. Withdrawn to `cites`; badge impact measured first
+and re-asserted in the UPDATE's WHERE clause; **0 badges moved**; `overruled` 117
+and `overruled_in_part` 23 unchanged.
+
+**6. India Code is not down any more, it has moved.** Root answers 200, the Central
+Acts listing answers **404 rather than 504** — so our own URL builder is stale
+rather than the service being unavailable. Two requests, twenty seconds apart.
+`FQ-INDIACODE-AVAILABILITY` updated; the re-derivation is bounded engineering on
+NEW2's board, not a founder decision.
+
+**The only corpus mutation this session is those 19 rows.** No backfill, no
+treatment rewrite, no resolver apply, no eCourts traffic, no threshold change.
+
 ### 23 August 2026 — LCC: THE DATE STATES REACHED THE CHRONOLOGY, TENANT ISOLATION IS PROVED RATHER THAN ASSUMED, AND THE TEST-COURT CENSUS ANSWERED 6 AFTER ANSWERING 0
 
 Full board with per-item evidence: `docs/ai/lcc/LCC_ROUND_TODO.md` §ROUND 2.
