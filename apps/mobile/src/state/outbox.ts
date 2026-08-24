@@ -30,16 +30,63 @@ import type { CitationCopy } from '../api/contract';
 const STORAGE_KEY = 'lawmind.outbox.citationCopies.v1';
 
 /**
- * Give up re-sending after this many attempts, but NEVER DROP THE ENTRY. It
+ * Give up RE-SENDING after this many attempts, but NEVER DROP THE ENTRY. It
  * stays queued and stays counted: a copy we failed to record is precisely the
  * thing we must not quietly forget, and the count is what makes it visible.
+ *
+ * "Give up re-sending" is not the same claim as "keep retrying forever" —
+ * founder correction, 22 Aug 2026. A permanently-failing mutation (the
+ * judgment was deleted, or a malformed payload the server will always reject)
+ * gains nothing from eight identical attempts spread over days; it is marked
+ * `dead` on its FIRST failure instead, below.
  */
 const MAX_ATTEMPTS = 8;
+
+/**
+ * Not every failure means "try again later". `error.code` is the server's own
+ * word for what went wrong (`services/api/src/validate.ts`,
+ * `citations/copies.ts`) — the same classification `docs/CURRENT_PLAN.md`'s
+ * founder correction asked this queue to make explicit:
+ *
+ *   RETRYABLE          — `network`/`timeout` (this device's connection), or a
+ *                         code this client does not recognise yet. The safe
+ *                         default is "might still succeed", not "give up".
+ *   NON_RETRYABLE       — `INVALID_REQUEST` (malformed payload — retrying sends
+ *                         the same bytes to the same rejection) or `NOT_FOUND`
+ *                         (the judgment this copy names no longer exists —
+ *                         no replay makes that row reappear).
+ *   AUTH_RECOVERABLE    — `AUTH_REQUIRED` reaching HERE means `client.ts`'s own
+ *                         refresh-once already failed (`request()`), so the
+ *                         session is gone. Retrying the same request cannot
+ *                         fix that; only a fresh sign-in can. Treated as
+ *                         retryable-but-capped rather than immediately dead,
+ *                         because the advocate signing back in is exactly the
+ *                         event that makes the NEXT attempt succeed.
+ *
+ * `CONFLICT_REQUIRES_USER` has no member here: `copies.ts`'s own comment says
+ * a replayed copy is folded into a success (`ON CONFLICT ... DO UPDATE`)
+ * rather than answered with a 409, precisely so this queue never needs it.
+ */
+type FailureClass = 'RETRYABLE' | 'NON_RETRYABLE' | 'AUTH_RECOVERABLE';
+
+function classify(code: string | undefined): FailureClass {
+  if (code === 'INVALID_REQUEST' || code === 'NOT_FOUND') return 'NON_RETRYABLE';
+  if (code === 'AUTH_REQUIRED') return 'AUTH_RECOVERABLE';
+  return 'RETRYABLE';
+}
 
 export type PendingCopy = CitationCopy & {
   attempts: number;
   /** Set on the last failure, for diagnosis. Never shown to an advocate. */
   lastError?: string;
+  /**
+   * Present only once this entry will NEVER be retried again — either a
+   * `NON_RETRYABLE` failure on its first attempt, or `RETRYABLE`/
+   * `AUTH_RECOVERABLE` exhausting `MAX_ATTEMPTS`. Absent means still active.
+   * `oldestPendingAge` excludes dead entries deliberately: their age growing
+   * forever would say nothing actionable, unlike a genuinely pending one.
+   */
+  dead?: true;
 };
 
 type OutboxState = {
@@ -51,8 +98,15 @@ type OutboxState = {
   /** Queues the record and returns immediately. Never throws, never blocks. */
   enqueue: (copy: CitationCopy) => Promise<void>;
   flush: () => Promise<void>;
-  /** Age in ms of the oldest unsent copy, or null when the queue is empty. */
+  /**
+   * Age in ms of the oldest ACTIVE unsent copy, or null when nothing is still
+   * being retried. Deliberately excludes `dead` entries: their age growing
+   * forever would say nothing actionable, unlike a genuinely pending one that
+   * still might succeed on the next flush.
+   */
   oldestPendingAge: (now?: number) => number | null;
+  /** How many entries will never be retried again. See `PendingCopy.dead`. */
+  deadCount: () => number;
 };
 
 async function persist(pending: PendingCopy[]): Promise<void> {
@@ -106,10 +160,11 @@ export const useOutbox = create<OutboxState>((set, get) => ({
       // rather than mutating the list being walked.
       const queue = [...get().pending];
       const sent = new Set<string>();
-      const failures = new Map<string, string>();
+      const failures = new Map<string, { message: string; class: FailureClass }>();
 
       for (const entry of queue) {
-        if (entry.attempts >= MAX_ATTEMPTS) continue;
+        // Already known to never succeed, or exhausted its retryable budget.
+        if (entry.dead || entry.attempts >= MAX_ATTEMPTS) continue;
 
         const res = await api.recordCitationCopy({
           judgmentId: entry.judgmentId,
@@ -121,16 +176,27 @@ export const useOutbox = create<OutboxState>((set, get) => ({
         });
 
         if (res.ok) sent.add(entry.clientKey);
-        else failures.set(entry.clientKey, res.error.message);
+        else failures.set(entry.clientKey, { message: res.error.message, class: classify(res.error.code) });
       }
 
       const next = get()
         .pending.filter((p) => !sent.has(p.clientKey))
-        .map((p) =>
-          failures.has(p.clientKey)
-            ? { ...p, attempts: p.attempts + 1, lastError: failures.get(p.clientKey) }
-            : p
-        );
+        .map((p) => {
+          const failure = failures.get(p.clientKey);
+          if (!failure) return p;
+          const attempts = p.attempts + 1;
+          /**
+           * NON_RETRYABLE dies on its FIRST failure — no number of identical
+           * attempts changes a payload the server will always reject, or
+           * brings back a judgment that no longer exists. RETRYABLE and
+           * AUTH_RECOVERABLE still get their full budget, because a network
+           * blip clearing or the advocate signing back in are both real
+           * reasons the very next attempt could succeed.
+           */
+          const dead: true | undefined =
+            failure.class === 'NON_RETRYABLE' || attempts >= MAX_ATTEMPTS ? true : undefined;
+          return { ...p, attempts, lastError: failure.message, dead };
+        });
 
       set({ pending: next });
       await persist(next);
@@ -141,11 +207,14 @@ export const useOutbox = create<OutboxState>((set, get) => ({
 
   oldestPendingAge: (now = Date.now()) => {
     const times = get()
-      .pending.map((p) => new Date(p.copiedAt).getTime())
+      .pending.filter((p) => !p.dead)
+      .map((p) => new Date(p.copiedAt).getTime())
       .filter((t) => !Number.isNaN(t));
     if (times.length === 0) return null;
     return now - Math.min(...times);
   },
+
+  deadCount: () => get().pending.filter((p) => p.dead).length,
 }));
 
 /**

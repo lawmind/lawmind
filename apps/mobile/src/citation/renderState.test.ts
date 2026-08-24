@@ -111,7 +111,7 @@ describe('the law has moved — three states, never binary', () => {
     expect(moved.kind).toBe('moved');
   });
 
-  it('disables add-to-matter for set_aside, and only for set_aside', () => {
+  it('disables add-to-matter for set_aside when the server sends no canAddToMatter, and only for set_aside', () => {
     const setAside = citationRender({ ...base, overruledStatus: 'set_aside' });
     const partly = citationRender({ ...base, overruledStatus: 'partly_set_aside' });
     const doubted = citationRender({ ...base, overruledStatus: 'doubted' });
@@ -123,6 +123,37 @@ describe('the law has moved — three states, never binary', () => {
     expect(setAside.moved.blocksAddToMatter).toBe(true);
     expect(partly.moved.blocksAddToMatter).toBe(false);
     expect(doubted.moved.blocksAddToMatter).toBe(false);
+  });
+
+  /**
+   * OD-14, resolved 21 Aug 2026. An `overruled` (proposition-level) authority
+   * carries the SAME `set_aside` banner as a genuine set-aside — the strongest
+   * warning is unchanged — but the server's `canAddToMatter` is `true`, because
+   * the decision between the original parties was never disturbed. Before this
+   * fix `blocksAddToMatter` was a static function of the banner alone, so this
+   * exact case re-blocked every authority OD-14 was written to unblock.
+   */
+  it('does not block add-to-matter for an overruled-but-addable set_aside banner when canAddToMatter is true', () => {
+    const overruledButAddable = citationRender({
+      ...base,
+      overruledStatus: 'set_aside',
+      canAddToMatter: true,
+    });
+    if (overruledButAddable.moved.kind !== 'moved') throw new Error('expected a moved mark');
+    expect(overruledButAddable.moved.blocksAddToMatter).toBe(false);
+    // The warning itself is untouched — OD-14 changed the refusal, never the banner.
+    expect(overruledButAddable.moved.band).toBe('danger');
+    expect(overruledButAddable.moved.strikeTitle).toBe(true);
+  });
+
+  it('still blocks add-to-matter for a set_aside banner when the server explicitly says canAddToMatter: false', () => {
+    const genuineSetAside = citationRender({
+      ...base,
+      overruledStatus: 'set_aside',
+      canAddToMatter: false,
+    });
+    if (genuineSetAside.moved.kind !== 'moved') throw new Error('expected a moved mark');
+    expect(genuineSetAside.moved.blocksAddToMatter).toBe(true);
   });
 
   it('gives set_aside a danger band, a struck title and a mandatory replacement', () => {

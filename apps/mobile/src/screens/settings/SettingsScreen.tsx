@@ -33,16 +33,23 @@ import { color, space } from '../../theme/tokens';
  * "Coverage" — added 11 Aug 2026 — R3. `GET /corpus/coverage` answers a
  * question search itself cannot: an advocate who gets nothing from their own
  * High Court needs to know that is a gap in the corpus, not a failed search.
+ *
+ * "Delete account" — added 23 Aug 2026. `POST /me/data-requests` was real and
+ * unreached: this comment previously said no advocate-facing endpoint
+ * existed, checked once against the contract doc rather than the live route
+ * table (`services/api/src/app.ts:318-321`). `DeleteAccountScreen.tsx`.
  */
 export function SettingsScreen({
   onOpenAlerts,
   onOpenCoverage,
   onOpenTrainingConsent,
+  onOpenDeleteAccount,
   onSignedOut,
 }: {
   onOpenAlerts: () => void;
   onOpenCoverage: () => void;
   onOpenTrainingConsent: () => void;
+  onOpenDeleteAccount: () => void;
   onSignedOut: () => void;
 }) {
   const signOut = useSession((s) => s.signOut);
@@ -79,6 +86,13 @@ export function SettingsScreen({
           <Text variant="uiStrong" style={styles.signOut}>
             Sign out
           </Text>
+        </Pressable>
+
+        <Pressable onPress={onOpenDeleteAccount} style={styles.row}>
+          <Text variant="uiStrong" style={styles.signOut}>
+            Delete account
+          </Text>
+          <ChevronRight color={color.inkMuted} size={18} strokeWidth={1.5} />
         </Pressable>
       </View>
     </Screen>

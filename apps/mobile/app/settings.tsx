@@ -13,6 +13,7 @@ export default function Route() {
         onOpenAlerts={() => router.push('/alert-settings' as never)}
         onOpenCoverage={() => router.push('/coverage' as never)}
         onOpenTrainingConsent={() => router.push('/training-consent' as never)}
+        onOpenDeleteAccount={() => router.push('/delete-account' as never)}
         onSignedOut={() => router.replace('/sign-in' as never)}
       />
     </>

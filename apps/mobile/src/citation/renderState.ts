@@ -134,17 +134,35 @@ function movedMark(
   /** `null` is what the server actually sends for "no note", not `undefined`. */
   note: string | null | undefined,
   paras: number[] | null | undefined,
-  asOf: string | undefined
+  asOf: string | undefined,
+  /**
+   * OD-14 layer 3, straight off the row. `undefined` when the surface has not
+   * been confirmed to send it yet — falls back to the pre-OD-14 rule below,
+   * which is conservative (refuses more than it must) rather than wrong in the
+   * dangerous direction.
+   */
+  canAddToMatter: boolean | undefined
 ): MovedMark {
   if (status === 'none') return { kind: 'none' };
 
   const affected = affectedParagraphs(paras);
+  /**
+   * `set_aside` is the ONLY banner that used to mean an automatic refusal.
+   * OD-14 split that: the SAME banner now also covers a proposition-level
+   * `overruled` authority, whose own decision was never disturbed and which
+   * the server allows adding. `canAddToMatter`, when the route sends it, is
+   * the actual policy (`precedentialPolicy` in `precedential-effect.ts`) —
+   * using the banner alone here would silently re-block every authority OD-14
+   * was written to unblock.
+   */
+  const blocksSetAside = canAddToMatter === undefined ? true : !canAddToMatter;
 
   switch (status) {
     /**
      * DANGER RED, NOT CAUTION AMBER. The band replaces the header, the title is
-     * struck through, and the primary action is disabled — the only state where
-     * Lawmind refuses to let an authority be used.
+     * struck through, and the primary action is disabled ONLY when the server
+     * says so — a `set_aside` banner still renders at full strength either way,
+     * because OD-14 changed the ADD-TO-MATTER refusal, never the warning.
      */
     case 'set_aside':
       return {
@@ -152,7 +170,7 @@ function movedMark(
         status,
         headline: 'This judgment is no longer good law',
         chipLabel: 'Overruled',
-        blocksAddToMatter: true,
+        blocksAddToMatter: blocksSetAside,
         band: 'danger',
         strikeTitle: true,
         requiresReplacement: true,
@@ -243,7 +261,8 @@ export function citationRender(
             result.overruledStatus,
             result.overruledNote,
             result.overruledParas,
-            result.statusAsOf
+            result.statusAsOf,
+            result.canAddToMatter
           ),
   };
 }

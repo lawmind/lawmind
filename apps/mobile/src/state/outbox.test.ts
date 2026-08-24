@@ -140,3 +140,119 @@ it('reports the age of the oldest unsent copy, and null when there is nothing ow
   );
   expect(age).toBe(5 * 60 * 1000);
 });
+
+/**
+ * FOUNDER CORRECTION, 22 Aug 2026: "It must not retry forever." A permanently
+ * failing mutation gains nothing from eight identical attempts spread over
+ * days — `NOT_FOUND` (the judgment this copy names no longer exists) and
+ * `INVALID_REQUEST` (a payload shape the server will always reject) are
+ * classified `NON_RETRYABLE` and die on the FIRST failure, never the eighth.
+ */
+describe('a permanently-failing mutation does not retry forever', () => {
+  it('marks NOT_FOUND dead on the first attempt, not the eighth', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: { code: 'NOT_FOUND', message: 'no judgment with that id' },
+    } as never);
+
+    await useOutbox.getState().enqueue(copy());
+    await useOutbox.getState().flush();
+
+    expect(recordCitationCopy).toHaveBeenCalledTimes(1);
+    expect(useOutbox.getState().pending[0]?.attempts).toBe(1);
+    expect(useOutbox.getState().pending[0]?.dead).toBe(true);
+    expect(useOutbox.getState().deadCount()).toBe(1);
+  });
+
+  it('marks INVALID_REQUEST dead on the first attempt', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: { code: 'INVALID_REQUEST', message: 'clientKey: too long' },
+    } as never);
+
+    await useOutbox.getState().enqueue(copy());
+    await useOutbox.getState().flush();
+
+    expect(useOutbox.getState().pending[0]?.dead).toBe(true);
+  });
+
+  it('a dead entry is never sent again — a later flush does not call the server for it', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: { code: 'NOT_FOUND', message: 'no judgment with that id' },
+    } as never);
+
+    await useOutbox.getState().enqueue(copy());
+    await useOutbox.getState().flush();
+    recordCitationCopy.mockClear();
+
+    await useOutbox.getState().flush();
+    expect(recordCitationCopy).not.toHaveBeenCalled();
+  });
+
+  it('does NOT die on the first network failure — that is retryable, not permanent', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: { code: 'network', message: 'We could not reach Lawmind. You may be offline.' },
+    } as never);
+
+    await useOutbox.getState().enqueue(copy());
+    await useOutbox.getState().flush();
+
+    expect(useOutbox.getState().pending[0]?.attempts).toBe(1);
+    expect(useOutbox.getState().pending[0]?.dead).toBeFalsy();
+  });
+
+  it('still dies once a retryable failure exhausts its attempt budget', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: { code: 'network', message: 'offline' },
+    } as never);
+
+    // Placed directly, bypassing `enqueue`'s own fire-and-forget flush — this
+    // test is about `flush`'s attempt-budget bookkeeping across many calls,
+    // not about the auto-flush-on-enqueue race one await cannot deterministically settle.
+    useOutbox.setState({ pending: [{ ...copy(), attempts: 0 }] });
+
+    for (let i = 0; i < 8; i++) {
+      await useOutbox.getState().flush();
+    }
+
+    expect(useOutbox.getState().pending[0]?.attempts).toBe(8);
+    expect(useOutbox.getState().pending[0]?.dead).toBe(true);
+  });
+
+  /**
+   * `AUTH_REQUIRED` reaching the outbox means `client.ts`'s own refresh-once
+   * already failed — the session is gone, not the network. Still capped
+   * rather than immediately dead: signing back in is exactly the event that
+   * makes the next attempt succeed, so it deserves the same budget as a
+   * network blip, not a permanent tombstone on the first try.
+   */
+  it('treats AUTH_REQUIRED as retryable-but-capped, not immediately dead', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: { code: 'AUTH_REQUIRED', message: 'a copy record belongs to an advocate' },
+    } as never);
+
+    await useOutbox.getState().enqueue(copy());
+    await useOutbox.getState().flush();
+
+    expect(useOutbox.getState().pending[0]?.attempts).toBe(1);
+    expect(useOutbox.getState().pending[0]?.dead).toBeFalsy();
+  });
+
+  it('a dead entry is excluded from oldestPendingAge — its age growing forever is not actionable', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: { code: 'NOT_FOUND', message: 'no judgment with that id' },
+    } as never);
+
+    const copiedAt = new Date('2026-08-07T10:00:00.000Z').toISOString();
+    await useOutbox.getState().enqueue(copy({ copiedAt }));
+    await useOutbox.getState().flush();
+
+    expect(useOutbox.getState().pending[0]?.dead).toBe(true);
+    expect(useOutbox.getState().oldestPendingAge(new Date('2026-08-08T10:00:00.000Z').getTime())).toBeNull();
+  });
+});

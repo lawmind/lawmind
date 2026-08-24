@@ -14,6 +14,8 @@ import type {
   CounterArgumentsResponse,
   CourtLookupResult,
   CurrentTerms,
+  DataRequest,
+  DataRequestKind,
   DraftDocument,
   DraftListItem,
   EcourtsPath,
@@ -80,12 +82,35 @@ import type {
  * `EXPO_PUBLIC_API_URL` is inlined at build time by Metro (the `EXPO_PUBLIC_`
  * prefix is what makes an env var reach client code at all — see
  * https://docs.expo.dev/guides/environment-variables/). Set it per channel in
- * `eas.json` build profiles, or in a local `.env` for `expo start`. The
- * fallback below is today's only known deployment and stays wrong until
- * FQ-HOSTING (docs/FOUNDER_QUEUE.md) lands a real one — it is a fallback, not
- * an endorsement.
+ * `eas.json` build profiles (`env`), or in a local `.env` for `expo start`.
+ *
+ * FAIL CLOSED, NOT SILENTLY WRONG. Until 22 Aug 2026 a missing var fell back to
+ * `api-production-1c0b4.up.railway.app` — 0 active deployments since 11 Aug —
+ * in EVERY channel including a real EAS `preview`/`production` build. That is
+ * the audit's #1 ship-brick risk: a build that compiles clean, installs clean,
+ * and then fails every request forever with nothing in the code saying why.
+ *
+ * `__DEV__` is Metro's own dev-vs-bundled flag, true only under `expo start` —
+ * never true in an EAS build, simulator or store binary. Dev alone gets a
+ * local default (`docs/CURRENT_PLAN.md`'s LOCAL-FIRST posture: the API's own
+ * default port, `services/api/src/env.ts`). Every other bundle throws at
+ * import time rather than silently pointing at a URL nobody chose — the crash
+ * is the honest behaviour; `app.config.ts` also fails the EAS build itself
+ * before that binary can even be produced. FQ-HOSTING (docs/FOUNDER_QUEUE.md)
+ * still owns the actual channel URLs — this only refuses to guess one.
  */
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://api-production-1c0b4.up.railway.app';
+function resolveBaseUrl(): string {
+  const configured = process.env.EXPO_PUBLIC_API_URL;
+  if (configured) return configured;
+  if (__DEV__) return 'http://localhost:3000';
+  throw new Error(
+    'EXPO_PUBLIC_API_URL is not set on a non-dev build. Refusing to fall back to a ' +
+      'guessed API URL — set it in the eas.json build profile (or the hosting ' +
+      'environment) for this channel. See docs/FOUNDER_QUEUE.md FQ-HOSTING.'
+  );
+}
+
+const BASE_URL = resolveBaseUrl();
 
 /** Court corridors have terrible connectivity; a request that never returns is worse than one that fails. */
 const TIMEOUT_MS = 15_000;
@@ -311,6 +336,23 @@ export const api = {
   /** s. 6(4)–(6): withdrawal must be as easy as granting. Idempotent — succeeds even where nothing was granted. */
   withdrawTrainingConsent: () =>
     request<TrainingConsent>('/me/training-consent', { method: 'DELETE', auth: true }),
+
+  /**
+   * `POST /me/data-requests` — DPDP export/correction/erasure. Creates a
+   * REQUEST, never executes one (`DataRequest`'s own doc comment).
+   * `alreadyOpen: true` means an identical open request already existed and
+   * this returned it rather than opening a second — the server's own
+   * idempotency, not a client-side guess.
+   */
+  createDataRequest: (kind: DataRequestKind, note?: string) =>
+    send<{ request: DataRequest; alreadyOpen: boolean }>(
+      '/me/data-requests',
+      note ? { kind, note } : { kind },
+      { auth: true },
+    ),
+
+  /** Every request this advocate has ever raised, newest first. */
+  listDataRequests: () => get<{ requests: DataRequest[] }>('/me/data-requests', { auth: true }),
 
   /* --------------------------------------------------------------- matters */
 
@@ -594,11 +636,23 @@ export const api = {
    * that lands in half a second still lands after the screen has been drawn —
    * and on a court-corridor connection it is a great deal longer than that.
    */
-  search: (query: string, language: 'en' | 'hi', filters?: SearchFilters) =>
+  /**
+   * `page` is 1-based and additive — omitted means page 1, byte-identical to
+   * every existing caller. Passing it re-runs the SAME query against the
+   * server's `page`/`pageSize` params (`docs/API_CONTRACTS.md` §Search), not a
+   * cursor: the rankers re-run per page, so page 2 of a query typed a minute
+   * ago is the next slice of the current ranking, never a stale snapshot.
+   */
+  search: (query: string, language: 'en' | 'hi', filters?: SearchFilters, page?: number) =>
     request<SearchResponse>('/search', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ query, language, filters: serverFilters(filters) }),
+      body: JSON.stringify({
+        query,
+        language,
+        filters: serverFilters(filters),
+        ...(page && page > 1 ? { page } : {}),
+      }),
     }),
 
   /**
@@ -708,11 +762,24 @@ export const api = {
    * whether this request lands; a failed analytics write must never cost the
    * advocate the thing they asked for. `clientKey` makes the retry idempotent.
    */
+  /**
+   * `auth: true` IS LOAD-BEARING, NOT DECORATIVE — found 22 Aug 2026 while
+   * auditing the outbox's permanent-failure handling. `recordCopy` in
+   * `services/api/src/citations/copies.ts` requires `userId` and returns 401
+   * `AUTH_REQUIRED` without one; `once()` in this file attaches the bearer
+   * token ONLY when `options.auth` is `true`. Without this flag EVERY copy
+   * record was sent with no Authorization header, so every one 401'd, forever
+   * — `useOutbox`'s `MAX_ATTEMPTS` retried a request that could never succeed,
+   * then left it queued permanently, silently defeating the one mechanism
+   * `SCHEMA_TRUTH.md#citation_copies` exists for: warning "the advocate at
+   * highest risk" when an authority they copied out of the app later moves.
+   */
   recordCitationCopy: (copy: CitationCopy) =>
     request<{ ok: true }>('/citations/copies', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(copy),
+      auth: true,
     }),
 
   /**

@@ -12,7 +12,14 @@ import { Screen } from '../../components/Screen';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { StaggerIn } from '../../components/StaggerIn';
-import type { CourtCategory, HiddenResult, SearchFilters, SearchResult } from '../../api/contract';
+import {
+  SEARCH_QUERY_MAX_CHARS,
+  type CourtCategory,
+  type DegradedArm,
+  type HiddenResult,
+  type SearchFilters,
+  type SearchResult,
+} from '../../api/contract';
 import { api } from '../../api/client';
 import { DEFAULT_FILTERS } from '../../api/mock';
 import { attentionCount } from '../../citation/renderState';
@@ -145,6 +152,37 @@ export function SearchScreen({
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
+  /**
+   * `network`/`timeout` from `api/client.ts` mean OFFLINE — no request reached
+   * the server at all. Anything else (e.g. `INVALID_QUERY`) is a real answer
+   * FROM the server and must not be told to the advocate as connectivity.
+   */
+  const [failureOffline, setFailureOffline] = useState(false);
+  /**
+   * Which ranker ran out of its statement budget, if any. NEVER treated as
+   * "no results" — `results` on a degraded response is incomplete, not proven
+   * empty, whatever its length. `docs/CURRENT_PLAN.md`, NEW1 bus 1010/1014.
+   */
+  const [degraded, setDegraded] = useState<DegradedArm[]>([]);
+  /**
+   * A citation that legitimately identifies more than one judgment. The
+   * ordinary result list is repurposed as a disambiguation — every row real
+   * and verified, `total` naming the true count even where it exceeds what a
+   * capped page can show.
+   */
+  const [ambiguous, setAmbiguous] = useState(false);
+  /**
+   * PAGINATION — additive. `hasMore` and `pageNumber` come straight off the
+   * server's `page` object (`docs/API_CONTRACTS.md` §Search); absent means
+   * treat as "no further pages", so a response from before this field existed
+   * behaves exactly as it always did. `loadingMore` is separate from `phase`
+   * because appending a page must not swap the list back to a loading
+   * skeleton — the five results already on screen stay visible while the
+   * next five load in behind them.
+   */
+  const [hasMore, setHasMore] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
   /** The row awaiting a matter choice. `null` closes the picker. */
   const [saveFor, setSaveFor] = useState<SearchResult | null>(null);
   /** The judgment just saved, so the toast can confirm it and then clear. */
@@ -170,8 +208,18 @@ export function SearchScreen({
   const run = useCallback(
     async (nextFilters: SearchFilters = filters, nextQuery: string = query) => {
       if (!nextQuery.trim()) return;
+      // The server rejects this with a 400 before retrieval runs at all — refuse
+      // it here instead, so a long paste gets guidance rather than a request
+      // that was always going to fail. Never silently truncated: a shortened
+      // legal passage is a different question and would return different law.
+      if (nextQuery.length > SEARCH_QUERY_MAX_CHARS) return;
       setPhase('loading');
       setFailure(null);
+      setFailureOffline(false);
+      setDegraded([]);
+      setAmbiguous(false);
+      setHasMore(false);
+      setPageNumber(1);
 
       const response = await api.search(nextQuery, language, nextFilters);
 
@@ -182,9 +230,15 @@ export function SearchScreen({
        * authority. If we simply could not reach the corpus, that sentence is a
        * lie with real consequences — they would stop looking. The two states are
        * kept apart deliberately.
+       *
+       * AND A REACHABILITY FAILURE IS NOT A VALIDATION FAILURE EITHER. `network`
+       * and `timeout` (`api/client.ts`) mean no request reached the server;
+       * anything else is a real answer the server gave, and telling the
+       * advocate "we could not reach the corpus" about it would be false.
        */
       if (!response.ok) {
         setFailure(response.error.message);
+        setFailureOffline(response.error.code === 'network' || response.error.code === 'timeout');
         setPhase('failed');
         return;
       }
@@ -195,6 +249,9 @@ export function SearchScreen({
       setParsed(response.data.parsed ?? null);
       setTotal(response.data.total ?? null);
       setUnpopulatedCourtCategories(response.data.unpopulatedCourtCategories ?? []);
+      setDegraded(response.data.degraded ?? []);
+      setAmbiguous(response.data.ambiguous ?? false);
+      setHasMore(response.data.page?.hasMore ?? false);
 
       /**
        * The reliability filters run here, against the three citation fields the
@@ -220,6 +277,46 @@ export function SearchScreen({
     },
     [filters, language, query]
   );
+
+  /**
+   * RESULT #6+, REACHABLE — the server has supported this since the P3/P5
+   * pagination work; nothing on this screen asked for it until now.
+   *
+   * A manual "Show more" rather than `onEndReached` infinite scroll,
+   * deliberately, matching this screen's existing rule for `degraded` (no
+   * auto-retry): a further page is a further full-cost query against the
+   * SAME ranking, and the advocate's own tap is what pays for it — not a
+   * scroll gesture they may not have meant as a request for more.
+   *
+   * Appends rather than replaces, and re-applies the same two reliability
+   * filters this screen already applies to page 1, so a second page cannot
+   * silently skip the "only verified" / "good law only" rules the advocate
+   * already chose.
+   */
+  const loadMore = useCallback(async () => {
+    if (!hasMore || loadingMore || !query.trim()) return;
+    setLoadingMore(true);
+    const nextPage = pageNumber + 1;
+    const response = await api.search(query, language, filters, nextPage);
+    setLoadingMore(false);
+    if (!response.ok) return; // the page already on screen stays usable; no error UI for a "more" tap
+
+    const kept: SearchResult[] = [];
+    const removed: HiddenResult[] = [];
+    for (const r of response.data.results) {
+      if (filters.onlyVerified && r.verificationState !== 'verified') {
+        removed.push({ result: r, hiddenBy: '"only verified authorities"' });
+      } else if (filters.excludeSetAsideOrDoubted && r.overruledStatus !== 'none') {
+        removed.push({ result: r, hiddenBy: '"good law only"' });
+      } else {
+        kept.push(r);
+      }
+    }
+    setResults((prev) => [...prev, ...kept]);
+    setHidden((prev) => [...prev, ...removed]);
+    setPageNumber(nextPage);
+    setHasMore(response.data.page?.hasMore ?? false);
+  }, [hasMore, loadingMore, query, language, filters, pageNumber]);
 
   /**
    * The full candidate set for this query — what is shown PLUS what the current
@@ -250,6 +347,21 @@ export function SearchScreen({
     <Screen topInset>
       <View style={styles.head}>
         <Input
+          /**
+           * THE CAP IS A CURRENT SAFETY BOUND, NOT A PERMANENT PRODUCT VISION —
+           * founder correction addendum, 22 Aug 2026. Today's lexical retrieval
+           * cannot safely execute an arbitrarily long query (`SEARCH_QUERY_MAX_
+           * CHARS`, mirroring the server's own cap), so this is deliberately
+           * worded as a mode limit ("the current research mode") rather than a
+           * ceiling on what an advocate may ever paste. When NEW1/LCC ship a
+           * dedicated bounded passage/fact route, this message is REPLACED by
+           * that real workflow, not extended with a bigger number.
+           */
+          error={
+            query.length > SEARCH_QUERY_MAX_CHARS
+              ? `This search is too long for the current research mode (${query.length} of ${SEARCH_QUERY_MAX_CHARS} characters). Shorten it, or search for the key facts rather than pasting the whole passage.`
+              : undefined
+          }
           label="Search"
           onChangeText={setQuery}
           onSubmitEditing={() => run()}
@@ -283,20 +395,30 @@ export function SearchScreen({
         {phase === 'done' && results.length > 0 ? (
           <Text variant="ui" style={styles.count}>
             {/*
-              `total` is the FULL match count, not the page length — a
-              structured query can match far more than the five rows in
-              `results` (`section:138 act:"NI Act"` → 359). Falling back to
-              `results.length` when `total` is absent covers the ordinary
-              semantic path, which never carries it.
+              AMBIGUOUS — a citation that legitimately identifies more than one
+              judgment. The ordinary tally would read as an ordinary ranking;
+              this must read as a disambiguation instead, and must say when the
+              page cannot show every candidate (`RESULT_LIMIT` today).
             */}
-            {total !== null && total > results.length
-              ? `${results.length} of ${total} judgments`
-              : results.length === 1
-                ? '1 judgment'
-                : `${results.length} judgments`}
-            {attention > 0
-              ? ` · ${attention === 1 ? '1 needs your attention' : `${attention} need your attention`}`
-              : ''}
+            {ambiguous
+              ? total !== null && total > results.length
+                ? `This citation matches ${total} judgments — showing ${results.length}. Pick the one you meant, or add a court or date to narrow it further.`
+                : `This citation matches ${results.length} judgments. Pick the one you meant.`
+              : /*
+                  `total` is the FULL match count, not the page length — a
+                  structured query can match far more than the five rows in
+                  `results` (`section:138 act:"NI Act"` → 359). Falling back to
+                  `results.length` when `total` is absent covers the ordinary
+                  semantic path, which never carries it.
+                */
+                (total !== null && total > results.length
+                  ? `${results.length} of ${total} judgments`
+                  : results.length === 1
+                    ? '1 judgment'
+                    : `${results.length} judgments`) +
+                (attention > 0
+                  ? ` · ${attention === 1 ? '1 needs your attention' : `${attention} need your attention`}`
+                  : '')}
           </Text>
         ) : null}
 
@@ -312,6 +434,25 @@ export function SearchScreen({
             {parsed}
           </Text>
         ) : null}
+
+        {/*
+          DEGRADED IS NEVER "NO LAW FOUND". A ranker running out of its budget
+          means authorities the corpus holds were never ranked — shown whatever
+          `results.length` is, in restrained neutral ink (system uncertainty
+          about THIS search, never amber/red LAW MOVED styling, which is a
+          legal-currentness fact about a judgment). No retry action here,
+          deliberately: a retried timeout is a second full-cost query, not a
+          cheap correction — `Try again` in the failed/empty states below is
+          the advocate's own choice to pay that cost again.
+        */}
+        {phase === 'done' && degraded.length > 0 ? (
+          <View style={styles.degradedBanner}>
+            <CircleAlert color={color.ink} size={16} strokeWidth={1.5} />
+            <Text variant="ui" style={styles.degradedText}>
+              Showing partial results — one search method could not complete in time.
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       {phase === 'loading' ? (
@@ -325,7 +466,7 @@ export function SearchScreen({
           <EmptyState
             actions={[{ label: 'Try again', onPress: () => void run() }]}
             body={`${failure ?? 'Something went wrong.'} Your saved matters and anything you have already opened stay readable.`}
-            title="We could not reach the corpus"
+            title={failureOffline ? 'You appear to be offline' : 'This search could not complete'}
           />
         </View>
       ) : phase === 'idle' ? (
@@ -333,6 +474,22 @@ export function SearchScreen({
           <EmptyState
             body="Ask the way you would ask a junior. Every citation you get back has been checked against the reported record before you see it."
             title="Search the corpus"
+          />
+        </View>
+      ) : results.length === 0 && degraded.length > 0 ? (
+        /**
+         * PARTIAL_RESULTS WITH ZERO SHOWN IS NOT COMPLETE_NO_RESULTS. A ranker
+         * ran out of its budget and returned nothing it could rank — the
+         * corpus was never proven to hold no answer, so "No judgments
+         * matched" would be the exact false claim `docs/CURRENT_PLAN.md`
+         * warns against. Manual retry only — the advocate's own choice to pay
+         * for a second full-cost query, never automatic.
+         */
+        <View style={styles.list}>
+          <EmptyState
+            actions={[{ label: 'Try again', onPress: () => void run() }]}
+            body="One search method could not finish in time, so this is not a confirmed answer. Try again, or narrow the search — a citation, court or date filter usually completes faster."
+            title="This search did not finish"
           />
         </View>
       ) : results.length === 0 ? (
@@ -414,6 +571,26 @@ export function SearchScreen({
           keyExtractor={(r) => r.judgmentId}
           ListFooterComponent={
             <View style={styles.footer}>
+              {/*
+                RESULT #6+ — the server holds more than one page for most
+                queries; this is the only control that reaches it. Absent
+                when the current page is the last one, never a disabled
+                greyed-out button pretending there is more to see.
+              */}
+              {hasMore ? (
+                <Pressable
+                  accessibilityRole="button"
+                  disabled={loadingMore}
+                  onPress={() => void loadMore()}
+                >
+                  <View style={styles.loadMoreButton}>
+                    <Text variant="uiStrong" style={styles.loadMoreLabel}>
+                      {loadingMore ? 'Loading…' : 'Show more results'}
+                    </Text>
+                  </View>
+                </Pressable>
+              ) : null}
+
               {/*
                 A FILTER NEVER HIDES SOMETHING SILENTLY. The excluded result is
                 named, with a one-tap escape. The advocate always knows what
@@ -652,8 +829,35 @@ const styles = StyleSheet.create({
   filterLabel: { color: color.ink },
   count: { color: color.inkMuted },
   parsed: { color: color.inkMuted, fontStyle: 'italic' },
+  /**
+   * RESTRAINED NEUTRAL, DELIBERATELY NOT `cardCaution`/`cardDanger`. Those
+   * colours mean a legal-currentness fact about a judgment (LAW MOVED); this
+   * is the app being honest that ONE OF ITS OWN SEARCH METHODS did not finish
+   * — a different kind of uncertainty, and shouting the wrong one at the
+   * advocate would teach them to ignore the real warning.
+   */
+  degradedBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: space.xs,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: color.rule,
+    borderRadius: radius.base,
+    padding: space.sm,
+  },
+  degradedText: { flex: 1, color: color.inkMuted },
   list: { padding: space.sm, gap: space.sm, paddingBottom: space.xxl },
   footer: { gap: space.sm, paddingTop: space.sm },
+  loadMoreButton: {
+    borderWidth: 1,
+    borderColor: color.rule,
+    borderRadius: radius.base,
+    paddingVertical: space.sm,
+    alignItems: 'center',
+    backgroundColor: color.card,
+  },
+  loadMoreLabel: { color: color.ink },
   hiddenCard: {
     borderWidth: 1,
     borderStyle: 'dashed',

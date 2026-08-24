@@ -7,6 +7,8 @@ import { Switch } from '../../components/Switch';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { AlertSettings } from '../../api/contract';
+import { registerForPushNotifications } from '../../push/register';
+import { useSession } from '../../state/session';
 import { color, space } from '../../theme/tokens';
 
 /**
@@ -33,10 +35,22 @@ import { color, space } from '../../theme/tokens';
  * server on every load, never hard-coded: when trigger 3 or 4 ships, the key
  * drops out and the row reverts to an ordinary switch on its own.
  */
+/**
+ * The one reason not shown to an advocate: `NOT_A_DEVICE` (a simulator) is not
+ * theirs to fix and would only confuse. The other three name something real.
+ */
+const PUSH_FAILURE_COPY: Record<string, string> = {
+  PERMISSION_DENIED:
+    'Notifications are off for Lawmind in your phone settings — turn them on there to receive this.',
+  NO_PROJECT_CONFIGURED: 'Push delivery is not set up on this build yet — this will still save.',
+  UNKNOWN: 'Could not confirm notifications are set up on this device — this will still save.',
+};
+
 export function AlertSettingsScreen({ onBack }: { onBack: () => void }) {
   const [settings, setSettings] = useState<AlertSettings | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const registerPushToken = useSession((s) => s.registerPushToken);
 
   useEffect(() => {
     void api.alertSettings().then((r) => {
@@ -54,6 +68,21 @@ export function AlertSettingsScreen({ onBack }: { onBack: () => void }) {
     else {
       setSettings(previous);
       setNote(r.error.message);
+      return;
+    }
+
+    // Ask for push exactly here: the advocate just turned on the one alert
+    // trigger that is real today, so declining now has a concrete cost
+    // ("you will not hear about it") instead of an abstract one at first
+    // launch. Never blocks or reverts the toggle itself — the setting is
+    // already saved server-side regardless of whether a token is obtained.
+    if (key === 'savedAuthorityMoved' && next && !previous.savedAuthorityMoved) {
+      const push = await registerForPushNotifications();
+      if (push.ok) {
+        await registerPushToken(push.token);
+      } else if (push.reason !== 'NOT_A_DEVICE') {
+        setNote(PUSH_FAILURE_COPY[push.reason] ?? null);
+      }
     }
   }
 

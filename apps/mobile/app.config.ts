@@ -24,6 +24,26 @@ import type { ExpoConfig } from 'expo/config';
  * advocates work in daylight — and a dark default would be a design decision
  * taken by a config file.
  */
+/**
+ * FAIL THE BUILD, NOT THE FIRST REQUEST. `EAS_BUILD_PROFILE` is set by EAS
+ * Build itself for every cloud build (`preview`, `production`) and absent
+ * under local `expo start` — so this only fires for a real release artefact,
+ * never for a developer's dev server. `src/api/client.ts` carries the same
+ * refusal at import time as a second line of defence (a local `eas build
+ * --local` or a differently-invoked bundler), but failing here means a
+ * misconfigured build never leaves the EAS queue at all. FQ-HOSTING
+ * (docs/FOUNDER_QUEUE.md) owns the real per-channel URL; this only refuses to
+ * guess one.
+ */
+if (process.env.EAS_BUILD_PROFILE && !process.env.EXPO_PUBLIC_API_URL) {
+  throw new Error(
+    `EXPO_PUBLIC_API_URL is not set for the "${process.env.EAS_BUILD_PROFILE}" EAS build ` +
+      'profile. Set it in eas.json (build.<profile>.env) or as an EAS secret before building — ' +
+      'see docs/FOUNDER_QUEUE.md FQ-HOSTING. Refusing to build a binary that would silently ' +
+      'call a guessed API URL.'
+  );
+}
+
 const config: ExpoConfig = {
   name: 'Lawmind',
   slug: 'lawmind',
@@ -55,6 +75,12 @@ const config: ExpoConfig = {
     'expo-font',
     'expo-secure-store',
     ['expo-splash-screen', { image: './assets/splash-icon.png' }],
+    /**
+     * No icon/color override — same reasoning as the splash screen note
+     * above: a copied hex here is a second palette. Android gets the
+     * platform-default small icon until a real one is designed.
+     */
+    'expo-notifications',
   ],
   experiments: { typedRoutes: true },
 };

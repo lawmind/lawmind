@@ -390,3 +390,180 @@ describe('saving a result to a matter', () => {
     ).toBeTruthy();
   });
 });
+
+describe('SearchScreen — a degraded ranker is never "no law found"', () => {
+  beforeEach(() => {
+    search.mockReset();
+  });
+
+  it('shows a restrained partial-results banner alongside real results, never suppressing them', async () => {
+    search.mockResolvedValue({
+      ok: true,
+      data: response({ results: [MOCK_RESULTS[0]!], degraded: ['sparse_timeout'] }),
+    });
+    await render(<SearchScreen />);
+    await runSearch('anticipatory bail under BNSS');
+
+    expect(
+      await screen.findByText('Showing partial results — one search method could not complete in time.')
+    ).toBeTruthy();
+    expect(screen.getByText(MOCK_RESULTS[0]!.caseTitle)).toBeTruthy();
+  });
+
+  it('never renders "No judgments matched" when the ranker timed out with zero rows — that is an unproven zero, not a confirmed one', async () => {
+    search.mockResolvedValue({
+      ok: true,
+      data: response({ results: [], degraded: ['sparse_timeout', 'dense_timeout'] }),
+    });
+    await render(<SearchScreen />);
+    await runSearch('anticipatory bail under BNSS');
+
+    expect(await screen.findByText('This search did not finish')).toBeTruthy();
+    expect(screen.queryByText('No judgments matched')).toBeNull();
+  });
+});
+
+describe('SearchScreen — an ambiguous citation is a disambiguation, not an ordinary ranking', () => {
+  beforeEach(() => {
+    search.mockReset();
+  });
+
+  it('states the true count and that the page cannot show all of them', async () => {
+    search.mockResolvedValue({
+      ok: true,
+      data: response({
+        results: [MOCK_RESULTS[0]!],
+        ambiguous: true,
+        total: 15,
+        parsed: 'The judgment cited as "2026:PHHC:027747-DB".',
+      }),
+    });
+    await render(<SearchScreen />);
+    await runSearch('cite:"2026:PHHC:027747-DB"');
+
+    expect(
+      await screen.findByText(
+        'This citation matches 15 judgments — showing 1. Pick the one you meant, or add a court or date to narrow it further.'
+      )
+    ).toBeTruthy();
+  });
+});
+
+describe('SearchScreen — the 500-character query cap is enforced before the request is sent', () => {
+  beforeEach(() => {
+    search.mockReset();
+  });
+
+  it('refuses to call the server over the limit, and says why', async () => {
+    await render(<SearchScreen />);
+    await runSearch('x'.repeat(501));
+
+    expect(
+      await screen.findByText(
+        'This search is too long for the current research mode (501 of 500 characters). ' +
+          'Shorten it, or search for the key facts rather than pasting the whole passage.'
+      )
+    ).toBeTruthy();
+    expect(search).not.toHaveBeenCalled();
+  });
+});
+
+describe('SearchScreen — a reachability failure reads differently from a server answer', () => {
+  beforeEach(() => {
+    search.mockReset();
+  });
+
+  it('tells the advocate they are offline when the request never reached the server', async () => {
+    search.mockResolvedValue({
+      ok: false,
+      error: { code: 'network', message: 'We could not reach Lawmind. You may be offline.' },
+    });
+    await render(<SearchScreen />);
+    await runSearch('anything');
+
+    expect(await screen.findByText('You appear to be offline')).toBeTruthy();
+  });
+
+  it('does not claim offline for a real answer the server gave', async () => {
+    search.mockResolvedValue({
+      ok: false,
+      error: { code: 'INVALID_QUERY', message: 'Unbalanced quote in the query.' },
+    });
+    await render(<SearchScreen />);
+    await runSearch('judge:"unterminated');
+
+    expect(await screen.findByText('This search could not complete')).toBeTruthy();
+    expect(screen.queryByText('You appear to be offline')).toBeNull();
+  });
+});
+
+describe('SearchScreen — pagination: result #6+ is reachable', () => {
+  beforeEach(() => {
+    search.mockReset();
+  });
+
+  it('does not offer "Show more results" when the server says there is no further page', async () => {
+    search.mockResolvedValue({
+      ok: true,
+      data: response({ results: [MOCK_RESULTS[0]!], page: { page: 1, pageSize: 5, hasMore: false } }),
+    });
+    await render(<SearchScreen />);
+    await runSearch('anticipatory bail');
+
+    await screen.findByText('1 judgment');
+    expect(screen.queryByText('Show more results')).toBeNull();
+  });
+
+  it('offers "Show more results" when the server says a further page exists, tapping it appends page 2, and it asks for page 2 of the SAME query', async () => {
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({
+        results: MOCK_RESULTS.slice(0, 5),
+        page: { page: 1, pageSize: 5, hasMore: true },
+      }),
+    });
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({
+        results: MOCK_RESULTS.slice(5, 8),
+        page: { page: 2, pageSize: 5, hasMore: false },
+      }),
+    });
+    await render(<SearchScreen />);
+    await runSearch('anticipatory bail');
+
+    const button = await screen.findByText('Show more results');
+    expect(await screen.findByText('Mock Petitioner v. Mock State')).toBeTruthy();
+    expect(screen.queryByText('Mock Interim v. Mock Registrar')).toBeNull();
+
+    await fireEvent.press(button);
+
+    // The 6th–8th results now appear alongside the original 5, not replacing them.
+    expect(await screen.findByText('Mock Interim v. Mock Registrar')).toBeTruthy();
+    expect(screen.getByText('Mock Petitioner v. Mock State')).toBeTruthy();
+    // The button itself follows the server's page-2 hasMore, so it disappears
+    // once the last page has been fetched — never left dangling.
+    expect(screen.queryByText('Show more results')).toBeNull();
+
+    expect(search).toHaveBeenNthCalledWith(2, 'anticipatory bail', 'en', expect.anything(), 2);
+  });
+
+  it('a fresh search resets pagination — the load-more button from a previous query does not carry over', async () => {
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({ results: [MOCK_RESULTS[0]!], page: { page: 1, pageSize: 5, hasMore: true } }),
+    });
+    await render(<SearchScreen />);
+    await runSearch('first query');
+    await screen.findByText('Show more results');
+
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({ results: [MOCK_RESULTS[1]!], page: { page: 1, pageSize: 5, hasMore: false } }),
+    });
+    await runSearch('second query');
+
+    await screen.findByText('Mock Applicant v. Mock Respondent');
+    expect(screen.queryByText('Show more results')).toBeNull();
+  });
+});

@@ -39,6 +39,22 @@ export type VerificationState = 'verified' | 'unverified' | 'failed';
  */
 export type VerifiedBySource = 'corpus' | 'public_x2' | 'ecourts' | 'ecourts_bulk' | 'none';
 export type OverruledStatus = 'none' | 'set_aside' | 'partly_set_aside' | 'doubted';
+/**
+ * OD-14, resolved 21 Aug 2026 — `services/api/src/judgments/precedential-effect.ts`.
+ * The finer fact underneath `overruledStatus`: SEVEN values against the wire
+ * enum's four, because `set_aside` alone cannot distinguish "this decision was
+ * undone" from "a later bench overruled the proposition; this decision stands".
+ * `overruledStatus` is unchanged and still the only value a client that has
+ * never seen this may render as a banner — this rides alongside it, additive.
+ */
+export type PrecedentialEffect =
+  | 'none'
+  | 'overruled'
+  | 'overruled_in_part'
+  | 'set_aside'
+  | 'partly_set_aside'
+  | 'doubted'
+  | 'review_required';
 
 export type SearchResult = {
   judgmentId: string;
@@ -123,6 +139,39 @@ export type SearchResult = {
   overruledByJudgmentId?: string | null;
   overruledParas?: number[] | null;
   overruledNote?: string | null;
+  /**
+   * OD-14 LAYER 2 — additive alongside `overruledStatus`, which stays the
+   * banner. Optional because not every route that carries a citation has been
+   * confirmed to send it (`docs/CURRENT_PLAN.md` NEW3 22 Aug: briefings does
+   * not yet — flagged to LCC). Absent means "treat this like before OD-14",
+   * never "none".
+   */
+  precedentialEffect?: PrecedentialEffect;
+  /**
+   * OD-14 LAYER 3 — THE ONE FIELD THAT MAY ACTUALLY DIFFER FROM
+   * `overruledStatus === 'none'`. An `overruled` (not `set_aside`) authority
+   * carries `overruledStatus: 'set_aside'` (still the strongest banner) AND
+   * `canAddToMatter: true` (the decision between the original parties stands).
+   * `docs/CITATION_HARNESS.md` + `precedential-effect.ts`. THIS is the field
+   * `citationRender`'s `blocksAddToMatter` must key on when present — deriving
+   * the refusal from `overruledStatus` alone reintroduces the exact bug OD-14
+   * fixed server-side. Absent falls back to the pre-OD-14 conservative rule
+   * (refuse on any non-`none` `overruledStatus`), which is safe, not correct.
+   */
+  canAddToMatter?: boolean;
+  /**
+   * The raw stored column, for the admin monitor only. NEVER render this as a
+   * banner or use it to decide anything an advocate sees — `overruledStatus`
+   * above is already the derived value a surface must show.
+   */
+  overruledStatusStored?: OverruledStatus;
+  /**
+   * A verified adverse edge the corpus has not yet applied to this row's own
+   * `overruledStatus` (`unappliedTreatment` in `precedential-effect.ts`). NOT
+   * a banner — never render this where `moved` renders. Non-null for 2
+   * judgments today; exists so the fact is not silent.
+   */
+  unappliedTreatment?: string | null;
   /**
    * NOT IN `docs/API_CONTRACTS.md` — CLIENT ASSUMPTION, FLAGGED FOR LCC.
    *
@@ -1223,7 +1272,64 @@ export type SearchResponse = {
    * as before.
    */
   unpopulatedCourtCategories?: CourtCategory[];
+  /**
+   * PRESENT ONLY WHEN A RANKER RAN OUT OF ITS STATEMENT BUDGET — additive,
+   * 22 Aug 2026 (`services/api/src/search/route.ts`). `results` on a degraded
+   * response is INCOMPLETE, not empty by proof: authorities the corpus holds
+   * were never ranked, and this is the only signal that tells the advocate so.
+   *
+   * NEVER RENDER "no law found" WHEN THIS IS PRESENT, whatever `results.length`
+   * is — that is the single most damaging false statement this product can
+   * make (`docs/CURRENT_PLAN.md`, NEW1 bus 1010). Show a restrained neutral
+   * state ("showing partial results"), never amber/red LAW MOVED styling —
+   * this is system uncertainty about the SEARCH, not a legal-currentness fact.
+   * NEVER auto-retry a degraded response: a retried 15s-timeout query is a
+   * second full-cost query, not a cheap correction.
+   */
+  degraded?: DegradedArm[];
+  /**
+   * STRUCTURED SEARCH — a citation that legitimately identifies more than one
+   * judgment. `total` is the true count; `results` is capped at the ordinary
+   * page size (today's server-side `RESULT_LIMIT`), so `total > results.length`
+   * is possible and must be stated rather than presented as the full set.
+   * Every row in `results` here is real and verified — nothing invented — this
+   * flag only says the list is a disambiguation, never an ordinary ranking.
+   */
+  ambiguous?: boolean;
+  /**
+   * PAGINATION — additive, `services/api/src/search/route.ts`. Absent means
+   * treat as page 1 with no further pages (the response shape every caller
+   * already handles), so an old client that ignores this field behaves
+   * exactly as before.
+   *
+   * `hasMore` is OBSERVED server-side by over-fetching one extra result, never
+   * inferred from a full page — a page of exactly `pageSize` results is
+   * ambiguous on its own and the server does not make the client guess.
+   * RESULT_LIMIT (5) is the server's default `pageSize`, not a hard cap:
+   * requesting `page: 2` on the same query returns the next slice of the
+   * SAME ranking, not a fresh search — the rankers re-run per page over a
+   * corpus ingest is still writing to, so this is a page number, not a
+   * cursor over a frozen set.
+   */
+  page?: { page: number; pageSize: number; hasMore: boolean };
 };
+
+/**
+ * `services/api/src/search/route.ts`'s `searchRequest` — `z.string().min(1).max(500)`.
+ * A query over this is REJECTED (400) before retrieval ever runs. Enforced
+ * client-side too so a long paste gets clear guidance before it is sent,
+ * rather than a mysterious validation error after — NEW1 bus 1010: "Show a
+ * counter; do not silently truncate, because a truncated legal passage is a
+ * different question and returns different law."
+ */
+export const SEARCH_QUERY_MAX_CHARS = 500;
+
+/**
+ * The two ways a ranker can run out of its statement budget mid-request —
+ * `services/api/src/search/retrieve.ts`. Neither means the corpus was
+ * searched to completion.
+ */
+export type DegradedArm = 'sparse_timeout' | 'dense_timeout';
 
 export type SearchRequest = {
   query: string;
@@ -1237,6 +1343,15 @@ export type SearchRequest = {
     caseType?: string;
   };
   matterId?: string;
+  /**
+   * 1-based, additive — `services/api/src/search/route.ts`. Omitted means
+   * page 1, byte-identical to today's behaviour. NOT a cursor: the rankers
+   * re-run per page over a corpus ingest is still writing to, so this
+   * promises "the next slice of the current ranking", not a frozen result set.
+   */
+  page?: number;
+  /** Server caps at 25; omitted means the server's own default (`RESULT_LIMIT`, 5 today). */
+  pageSize?: number;
 };
 
 /* ---------------------------------------------------------------------- auth */
@@ -1422,6 +1537,34 @@ export type TrainingConsent = {
    * silently revoke everyone.
    */
   isCurrent: boolean;
+};
+
+/**
+ * `POST/GET /me/data-requests` — DPDP Act obligations with a visible clock.
+ * `services/api/src/auth/data-requests.ts`'s own module note is the spec:
+ * **requesting is not executing.** `POST { kind: 'erasure' }` creates a
+ * REQUEST; an operator completes it from the admin side
+ * (`POST /admin/data-requests/:id/erase`, `erasure.ts`). There is no route on
+ * this surface that deletes anything — a mis-tapped button on a phone must
+ * not be able to. Copy anywhere this type is rendered must say "request
+ * received", never "your account has been deleted".
+ *
+ * Not documented in `docs/API_CONTRACTS.md` prior to 23 Aug 2026 — the server
+ * route existed and the client had no method for it at all. Added here to
+ * close that drift, not to change server behaviour.
+ */
+export type DataRequestKind = 'export' | 'correction' | 'erasure';
+export type DataRequestStatus = 'received' | 'in_progress' | 'completed' | 'refused';
+
+export type DataRequest = {
+  id: string;
+  kind: DataRequestKind;
+  status: DataRequestStatus;
+  /** Our own service commitment (`RESPONSE_DAYS`), never described as a statutory deadline. */
+  dueAt: string;
+  completedAt: string | null;
+  refusalReason: string | null;
+  createdAt: string;
 };
 
 /* -------------------------------------------------------------------- matters */

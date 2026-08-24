@@ -318,7 +318,8 @@ merely displayed.
 POST /search
   { query, language: 'en'|'hi', matterId?,
     filters?: { court?, dateFrom?, dateTo?, caseType?,
-                courts?: ('sc'|'hc'|'district'|'tribunal')[] } }   // added 11 Aug 2026, RCC bus 0046
+                courts?: ('sc'|'hc'|'district'|'tribunal')[] },   // added 11 Aug 2026, RCC bus 0046
+    page?: number, pageSize?: number }   // added 23 Aug 2026, NEW3 — see below
   → { results: [ { judgmentId, caseTitle, neutralCitation, reporterCitations,
                    court, judgmentDate, holding,
                    operativeParagraph, operativeParagraphNumber,
@@ -331,9 +332,27 @@ POST /search
       unverifiedReferences: [ { citationClaimed, reason } ],
       unpopulatedCourtCategories: ('sc'|'hc'|'district'|'tribunal')[],  // added 11 Aug 2026
       searchId,
-      parsed?, total?, ambiguous?: true }
+      parsed?, total?, ambiguous?: true,
+      page?: { page: number, pageSize: number, hasMore: boolean } }   // added 23 Aug 2026
 ```
 Every field from the `judgments` row. Never from model output.
+
+**`page` (request and response) — added 23 Aug 2026, NEW3, `SearchScreen.tsx`.**
+The server (`services/api/src/search/route.ts`) has supported `page`/`pageSize`
+and returned a `page` object (`{ page, pageSize, hasMore }`, `hasMore` OBSERVED
+by over-fetching one extra row, never inferred from a full page) since NEW1's
+P3/P5 work — the mobile contract and client never declared the fields, so
+`RESULT_LIMIT` (5) was a hard ceiling on the app regardless of what the server
+could serve. `SearchScreen.tsx` now shows a manual "Show more results" control
+(never `onEndReached` auto-paging, matching this screen's existing rule that a
+further page is a further full-cost query and the advocate's own tap pays for
+it, same as the `degraded` no-auto-retry rule) when `hasMore` is true, and
+appends page 2+ to the existing list — never replaces it — re-applying the same
+client-side reliability filters (`onlyVerified`, `excludeSetAsideOrDoubted`) to
+each new page. `page` is a page NUMBER over the CURRENT ranking, not a cursor
+over a frozen result set: the rankers re-run per page against a corpus ingest
+is still writing to, so page 2 of a query typed a minute ago is the next slice
+of the ranking as it stands now.
 
 **`filters.courts` — added 11 Aug 2026, RCC bus 0046.** Category CODES, never
 court names. `filters.court` (singular) was an exact match on a printed name
