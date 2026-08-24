@@ -183,3 +183,45 @@ Until then NEW1 applies **no private text filter**. The ~9.2% unreadable estimat
 (50,108 of 542,980, bus 0936) came from an English-density screen. It is a number
 to act on only through a shared contract, and the canonical column that would
 express it is currently NULL for every staged row sampled.
+
+---
+
+## REFUSAL RECORD — 24 Aug 2026, 16:35Z
+
+§7 NEW1-7 says the 1M halfvec checkpoint runs "only in a safe quiet window and
+only after the more important representation experiment". The representation
+experiment is **done** (`SEMANTIC_REPRESENTATION_DECISION_V3.md`), so the
+precondition is satisfied and the gate was asked. It refused, and the refusal is
+the record rather than a summary line:
+
+```
+DEFER  VECTOR_BUILD
+  - 6 active queries > 2
+  - longest active statement 1,012s > 120s
+  - commit free 27.4% < 35%
+  - 7 ingest fleet process(es) writing — an index build wants the box to itself
+```
+
+`DATABASE_URL` was exported first, so this is `DEFER` on **pressure**, not the
+`DEFER` on unreadability that §0 above warns must never be recorded as the same
+thing. Four independent reasons.
+
+The 1,012 s statement is **LCC's**, from `services/api/src/search/retrieve.ts`,
+stuck in `IO/DataFileRead`, with a live client. Reported as bus 1091 and not
+touched.
+
+### One thing this round changed about what the checkpoint is FOR
+
+The runbook was written when the candidate serving artefact was **8.85M document
+vectors**. The representation decision has moved the candidate to **30.0M passage
+vectors** (measured 3.392 chunks/document). That makes halfvec-vs-fp32 *more*
+decision-relevant, not less — 30M × 4 KiB fp32 is ~123 GB against ~61 GB halfvec
+— and it means the 1M checkpoint should be built over **passage vectors**, not
+document vectors, or it will be answering a question about an architecture nobody
+is proposing any more.
+
+A 250k halfvec/fp32 comparison already exists from 20 Aug
+(`expansion-benchmark-250k-halfvec.json` / `expansion-benchmark-250k.json`) and
+is close on both arms — fp32 better on `case_title` (5.70% vs 3.51% s@5),
+halfvec better on `proposition` (22.81% vs 21.49%). **Neither is a scale result
+and neither is over passages.** Do not quote them as settling the question.
