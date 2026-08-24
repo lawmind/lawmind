@@ -2,13 +2,13 @@
   "lane": "NEW2",
   "session_id": "f210633e-8dce-4695-ba42-4b1073e0ca59",
   "acquired_at": "2026-08-23T20:00:00+04:00",
-  "acquired_by": "NEW2 next-round master orchestration plan 2026-08-23, §8",
+  "acquired_by": "NEW2 next-round master orchestration plan 2026-08-23, \u00a78",
   "prior_owner_evidence": "registry.jsonl claimed new2-date-quality-recheck pid=23780, new2-hc-classify-walk pid=2536, new2-withdrawn-restale pid=26088 as RUNNING. None of those pids exist in Win32_Process. Newest NEW2 log write is 2026-08-22 20:34 (new2-recovery-worker4.log), >23h stale. Prior owner is dead; takeover is safe.",
-  "current_task": "NEW2-1 treatment provenance program",
-  "heartbeat": "2026-08-23T20:00:00+04:00",
-  "last_progress_marker": "lease acquired; nothing executed yet",
+  "current_task": "round complete \u2014 all five \u00a715 deliverables written",
+  "heartbeat": "2026-08-23T23:30:00+04:00",
+  "last_progress_marker": "commits a819dca a9bea22 c4fe3f0 be04734 a874ab5 95baa5d 6c2a33a e9b5a56; bus 1097-1103; one corpus mutation (19 rows, 0 badges moved)",
   "not_owned_by_me": [
-    "new1-sidecar-keeper / new1-gpu-sidecar (pid 14660 / 24812) — NEW1",
-    "services/ingest/src/citations-cli.ts (pid 21696/23196, started 2026-08-23T19:55) — owner unidentified, NOT started by NEW2, left running"
+    "new1-sidecar-keeper / new1-gpu-sidecar (pid 14660 / 24812) \u2014 NEW1",
+    "services/ingest/src/citations-cli.ts (pid 21696/23196, started 2026-08-23T19:55) \u2014 owner unidentified, NOT started by NEW2, left running"
   ]
 }
