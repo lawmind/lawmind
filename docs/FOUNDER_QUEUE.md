@@ -5229,6 +5229,39 @@ settled.
 
 **Nothing was deleted and no treatment was withdrawn** pending the answer.
 
+### UPDATE, 23 August 2026 — the question is now sized exactly, and the answer costs 93 of 98 badges
+
+The sample above has been replaced by the whole population, and by a hand read of
+every span that matters. `TREATMENT_PROVENANCE_DECISION_INPUT_V1.md`.
+
+- **All 16,001 treated edges classified** — not a sample. Canonical-safe 0.67%,
+  reporter 70.87%, unsupported 28.46%.
+- **The 137 edges that actually render LAW MOVED were read by hand, every one.**
+  **131 (95.62%) are law-report editorial apparatus. 5 (3.65%) are the court's
+  own words.**
+- **98 judgments render LAW MOVED** (a further 6 are Test Court fixtures).
+  If reporter apparatus may not promote to canonical, **5 survive**.
+
+**So the decision is now concrete rather than abstract:**
+
+| the founder chooses | LawMind's currentness coverage becomes |
+| --- | ---: |
+| reporter apparatus MAY be canonical | 98 judgments |
+| reporter apparatus may only be a CANDIDATE | **5 judgments** |
+
+Two further facts that belong with the choice:
+
+1. **`OFFICIAL_REGISTRY_STATUS` is not an escape route.** The only table that
+   could carry a registry disposal record, `ecourts_observation`, holds **0
+   rows**, and this round forbids live eCourts traffic.
+2. **Enforcement is one line, but the column it needs does not exist.**
+   `judgment_citations` has no provenance column, and all five rendering
+   surfaces promote on a bare `relationship IN (...)` check. Whichever way the
+   answer goes, the class of the evidence has to be recorded before it can be
+   honoured.
+
+**Still nothing deleted, still no treatment withdrawn.**
+
 ---
 
 ## FQ-INDIACODE-AVAILABILITY · India Code is returning 504 to every request, so IPC / CrPC / Evidence Act cannot be acquired · NEW2, 23 August 2026

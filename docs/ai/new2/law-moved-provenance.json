@@ -1,0 +1,113 @@
+{
+  "generated_at": "2026-08-23T16:20:18.403Z",
+  "judgments_carrying_law_moved": 104,
+  "judgments_with_at_least_one_driving_edge": 98,
+  "judgments_with_a_state_but_no_driving_edge": 6,
+  "adjudicated_driving_edges": {
+    "REPORTER_EDITORIAL_ANNOTATION": 131,
+    "COURT_REASONING_EXPLICIT": 5,
+    "MODALITY_DEFECT": 1
+  },
+  "per_judgment": {
+    "survives_on_court_evidence_alone": 5,
+    "would_lose_the_badge_if_reporter_evidence_were_withdrawn": 92,
+    "rests_only_on_the_modality_defect": 1
+  },
+  "modality_defect_judgments": [
+    {
+      "judgment_id": "f83d0700-eaf5-4075-9744-2e20faacedc9",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 0,
+      "defect": 1
+    }
+  ],
+  "by_state_of_losers": {
+    "set_aside": 68,
+    "doubted": 16,
+    "partly_set_aside": 8
+  },
+  "losers_sample": [
+    {
+      "judgment_id": "00222d6a-796b-44bb-b9e0-9c2619406a7c",
+      "state": "set_aside",
+      "edges": 2,
+      "court": 0,
+      "reporter": 2,
+      "defect": 0
+    },
+    {
+      "judgment_id": "01b1a470-4166-4b64-bd01-9874f0ff0dd1",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    },
+    {
+      "judgment_id": "02467ce4-09bf-413c-bcfb-4a4fc9db4ff3",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    },
+    {
+      "judgment_id": "084da4fe-bb74-4203-943b-88d822136be7",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    },
+    {
+      "judgment_id": "099d543c-8e2d-4397-8788-16696279a9ad",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    },
+    {
+      "judgment_id": "0c53b65f-576f-4eca-80ce-c8312d8e8136",
+      "state": "set_aside",
+      "edges": 3,
+      "court": 0,
+      "reporter": 3,
+      "defect": 0
+    },
+    {
+      "judgment_id": "0d538021-7fcf-48fe-ab64-4f868abcc12b",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    },
+    {
+      "judgment_id": "13e6cee7-04d8-4a7d-94b1-41d6bd9a6894",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    },
+    {
+      "judgment_id": "17c0252d-c6e5-4f2a-9f27-41c59c7fa4a1",
+      "state": "doubted",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    },
+    {
+      "judgment_id": "1b0b1ac3-7e2b-4577-975b-c0f8d3039aec",
+      "state": "set_aside",
+      "edges": 1,
+      "court": 0,
+      "reporter": 1,
+      "defect": 0
+    }
+  ]
+}

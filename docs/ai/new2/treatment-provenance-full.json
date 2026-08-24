@@ -1,0 +1,360 @@
+{
+  "generated_at": "2026-08-23T16:17:44.071Z",
+  "population": "ALL treatment-bearing edges — not a sample",
+  "n_treated_edges": 16001,
+  "read_ms": 8615,
+  "registry_source_availability": {
+    "ecourts_observation_rows": 0,
+    "judgments_carrying_law_moved": 104
+  },
+  "precedence": "REPORTER > COUNSEL > COURT_REASONING > DISPOSITIVE > UNKNOWN (pessimistic by design)",
+  "overall": {
+    "COURT_REASONING_EXPLICIT": {
+      "n": 7,
+      "pct": 0.04
+    },
+    "COURT_ORDER_DISPOSITIVE": {
+      "n": 100,
+      "pct": 0.62
+    },
+    "OFFICIAL_REGISTRY_STATUS": {
+      "n": 0,
+      "pct": 0
+    },
+    "REPORTER_EDITORIAL_ANNOTATION": {
+      "n": 11340,
+      "pct": 70.87
+    },
+    "COUNSEL_ARGUMENT": {
+      "n": 51,
+      "pct": 0.32
+    },
+    "UNKNOWN": {
+      "n": 4503,
+      "pct": 28.14
+    }
+  },
+  "buckets": {
+    "canonical_safe": {
+      "n": 107,
+      "pct": 0.67
+    },
+    "candidate_only_reporter": {
+      "n": 11340,
+      "pct": 70.87
+    },
+    "unsupported": {
+      "n": 4554,
+      "pct": 28.46
+    }
+  },
+  "by_relationship": {
+    "followed": {
+      "COURT_REASONING_EXPLICIT": 5,
+      "COURT_ORDER_DISPOSITIVE": 80,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 10066,
+      "COUNSEL_ARGUMENT": 37,
+      "UNKNOWN": 3836
+    },
+    "distinguished": {
+      "COURT_REASONING_EXPLICIT": 1,
+      "COURT_ORDER_DISPOSITIVE": 20,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 1158,
+      "COUNSEL_ARGUMENT": 12,
+      "UNKNOWN": 561
+    },
+    "doubted": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 16,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 7
+    },
+    "overruled": {
+      "COURT_REASONING_EXPLICIT": 1,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 80,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 36
+    },
+    "approved": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 1,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 59
+    },
+    "overruled_in_part": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 19,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 4
+    }
+  },
+  "by_court": {
+    "Supreme Court of India": {
+      "COURT_REASONING_EXPLICIT": 7,
+      "COURT_ORDER_DISPOSITIVE": 100,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 11338,
+      "COUNSEL_ARGUMENT": 39,
+      "UNKNOWN": 4439
+    },
+    "High Court Of Rajasthan": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 2
+    },
+    "High Court of Jammu and Kashmir": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 2
+    },
+    "High Court of Kerala": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 4,
+      "UNKNOWN": 7
+    },
+    "High Court of Karnataka": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 1
+    },
+    "High Court Of Chhattisgarh": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 34
+    },
+    "High Court of Sikkim": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 1
+    },
+    "Orissa High Court": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 0
+    },
+    "Bombay High Court": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 5
+    },
+    "High Court of Jharkhand": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 0
+    },
+    "High Court of Punjab and Haryana": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 2
+    },
+    "Allahabad High Court": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 2,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 0
+    },
+    "High Court of Gujarat": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 1
+    },
+    "High Court of Madhya Pradesh": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 1
+    },
+    "High Court of Delhi": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 2,
+      "UNKNOWN": 1
+    },
+    "High Court of Himachal Pradesh": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 1
+    },
+    "Madras High Court": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 5
+    },
+    "Patna High Court": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 1
+    }
+  },
+  "by_decade": {
+    "2010s": {
+      "COURT_REASONING_EXPLICIT": 2,
+      "COURT_ORDER_DISPOSITIVE": 44,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 6029,
+      "COUNSEL_ARGUMENT": 19,
+      "UNKNOWN": 2210
+    },
+    "2020s": {
+      "COURT_REASONING_EXPLICIT": 2,
+      "COURT_ORDER_DISPOSITIVE": 40,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 4756,
+      "COUNSEL_ARGUMENT": 17,
+      "UNKNOWN": 1053
+    },
+    "2000s": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 8,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 382,
+      "COUNSEL_ARGUMENT": 8,
+      "UNKNOWN": 357
+    },
+    "1970s": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 2,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 24,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 179
+    },
+    "1990s": {
+      "COURT_REASONING_EXPLICIT": 2,
+      "COURT_ORDER_DISPOSITIVE": 5,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 92,
+      "COUNSEL_ARGUMENT": 2,
+      "UNKNOWN": 377
+    },
+    "1980s": {
+      "COURT_REASONING_EXPLICIT": 1,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 31,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 165
+    },
+    "1960s": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 1,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 24,
+      "COUNSEL_ARGUMENT": 3,
+      "UNKNOWN": 147
+    },
+    "1950s": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 2,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 15
+    }
+  },
+  "by_source_document_type": {
+    "null": {
+      "COURT_REASONING_EXPLICIT": 7,
+      "COURT_ORDER_DISPOSITIVE": 100,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 11340,
+      "COUNSEL_ARGUMENT": 51,
+      "UNKNOWN": 4501
+    },
+    "View Judgement": {
+      "COURT_REASONING_EXPLICIT": 0,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 0,
+      "COUNSEL_ARGUMENT": 0,
+      "UNKNOWN": 2
+    }
+  },
+  "law_moved": {
+    "judgments_carrying_a_state": 104,
+    "by_state": {
+      "set_aside": 76,
+      "partly_set_aside": 11,
+      "doubted": 17
+    },
+    "driving_edges": 137,
+    "provenance_of_driving_edges": {
+      "COURT_REASONING_EXPLICIT": 1,
+      "COURT_ORDER_DISPOSITIVE": 0,
+      "OFFICIAL_REGISTRY_STATUS": 0,
+      "REPORTER_EDITORIAL_ANNOTATION": 93,
+      "COUNSEL_ARGUMENT": 1,
+      "UNKNOWN": 42
+    },
+    "ms": 26
+  },
+  "steps": [
+    {
+      "name": "registry_source_availability",
+      "ms": 66,
+      "pg_active_after": 6,
+      "rows": {
+        "ecourts_observation_rows": 0,
+        "judgments_carrying_law_moved": 104
+      }
+    }
+  ]
+}
