@@ -1,0 +1,226 @@
+{
+  "applied_at": "2026-08-24T17:42:27.246Z",
+  "defect": "MARKER_RE read a hyphen INSIDE a word as the closing annotation dash",
+  "fixed_in_writer": "services/ingest/src/citations.ts, (?<![A-Za-z]) lookbehind, 23 Aug 2026",
+  "rows_expected": 19,
+  "rows_applied": 19,
+  "badges_moved": 0,
+  "prior_values": [
+    {
+      "edge_id": "15cb0a7e-70d0-49cc-9990-204c7519baf2",
+      "relationship": "approved",
+      "evidence": "-\napproved",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "1bdba53d-bc45-42dc-a6ae-de5bb4df9a39",
+      "relationship": "doubted",
+      "evidence": "-\ndoubted",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": true,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "1c0212c1-f333-4a23-ae4c-6d34e70f6f4b",
+      "relationship": "distinguished",
+      "evidence": "-distinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "40aae210-9a6e-4bbf-80af-2a70ed863455",
+      "relationship": "distinguished",
+      "evidence": "-distinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "47f3097f-c4f5-4ed1-afb6-c9c0db0b9eb8",
+      "relationship": "doubted",
+      "evidence": "-\ndoubted",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": true,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "49a3f186-42d1-48ce-ba29-ae35bb341f61",
+      "relationship": "approved",
+      "evidence": "-approved",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "4c3d2652-f6cb-496f-aa3e-4c9adefde69c",
+      "relationship": "approved",
+      "evidence": "-\napproved",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "624e5e19-9763-4d1c-979c-8c6a240423e7",
+      "relationship": "distinguished",
+      "evidence": "- distinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "69a0b351-6b56-4f35-ba13-31aedf7c355d",
+      "relationship": "distinguished",
+      "evidence": "-distinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "75d39ba5-f460-4bfe-91c2-b8b4e30c787b",
+      "relationship": "approved",
+      "evidence": "-\napproved",
+      "pinned": true,
+      "target_overruled_status": "none",
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "80ea57f3-db0f-45b5-b796-9d025806c9fd",
+      "relationship": "distinguished",
+      "evidence": "-distinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "8596a583-64b1-4123-a2e2-8ab8eedf836f",
+      "relationship": "approved",
+      "evidence": "-approved",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "9398d7d6-d428-4503-8c7f-6aa975452fb0",
+      "relationship": "distinguished",
+      "evidence": "-\ndistinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "96a68c2d-abee-4b1c-960d-bc3ddeb41281",
+      "relationship": "followed",
+      "evidence": "-\nfollowed",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "ac041a8f-795a-4e6c-8e15-ac8143dba753",
+      "relationship": "distinguished",
+      "evidence": "-distinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "c546c782-d446-4ce8-9cef-da2bed46bf2b",
+      "relationship": "distinguished",
+      "evidence": "-\ndistinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "c6269726-bc47-4710-a14c-50fa6c045c88",
+      "relationship": "distinguished",
+      "evidence": "-distinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "f646277f-df05-4697-b31a-22744ca4ba56",
+      "relationship": "distinguished",
+      "evidence": "-\ndistinguished",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    },
+    {
+      "edge_id": "fa16cd81-6fe0-42f6-9f40-9e8d3a8f6648",
+      "relationship": "approved",
+      "evidence": "-approved",
+      "pinned": false,
+      "target_overruled_status": null,
+      "drivers_on_target": 0,
+      "is_adverse": false,
+      "would_remove_a_badge": false
+    }
+  ],
+  "treatment_population_after": [
+    {
+      "relationship": "followed",
+      "n": 14023
+    },
+    {
+      "relationship": "distinguished",
+      "n": 1742
+    },
+    {
+      "relationship": "overruled",
+      "n": 117
+    },
+    {
+      "relationship": "approved",
+      "n": 55
+    },
+    {
+      "relationship": "overruled_in_part",
+      "n": 23
+    },
+    {
+      "relationship": "doubted",
+      "n": 22
+    }
+  ]
+}
