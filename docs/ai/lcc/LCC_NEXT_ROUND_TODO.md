@@ -231,6 +231,40 @@ response — never "the code exists".
       verified; **the destructive run was blocked by the permission classifier
       and needs a human**
 
+## Round 3 — the regression my own fix caused, and the cleanup
+
+- [x] **NEW2 1112 — my citation-keys rebuild made 79 registry date stamps
+      resolve to exactly ONE judgment.** A false pin, which
+      `CITATION_HARNESS.md` forbids outright. `2011:NOVEMBER:12` sat in
+      `neutral_citation` on 441 Madras judgments; before the rebuild they had no
+      key row and answered `TARGET_NOT_HELD`, and the rebuild indexed
+      `neutral_citation` wholesale and made them resolver inputs. Fixed in BOTH
+      places NEW2 named — the resolver gate and the key builder — and the 441
+      rows deleted (0 remain, `judgments` untouched, 1,370,088 still keyed).
+      **The gate had to test the NORMALISED key**: I put it in
+      `PLACEHOLDER_PATTERNS` first, which runs before normalisation, so it would
+      have been inert with a green test beside it
+- [x] **NEW2's own correction is the more useful number**: 33,013 → **99**, not
+      the ~12 they predicted, and the residual is a **flow** rather than a
+      leftover — new ingest keeps creating members the index has not reached, so
+      the catch-up needs to be recurring. **Not scheduled**: a recurring corpus
+      job on a shared box should be visible to every lane before it exists
+- [x] **NEW1 1115 — 19 leaked processes of mine, killed.** 11 orphaned
+      `tail -f` follows (4.7–6.9 h), 2 bash watch wrappers, 6 wedged
+      `release-export-cli` processes. Each re-verified by command line at the
+      moment of the kill, and the server side checked separately: **zero
+      orphaned COPY statements, zero idle-in-transaction**
+- [x] **`citations-backlog-walk` adjudicated**, which NEW1's disowning line asked
+      LCC to do. Alive **19.5 hours**, zero rows in 90 s and again over 4 more
+      minutes, and **holding no database connection at all**. Launched with no
+      log redirect, so liveness was the only available signal — the exact failure
+      the registry README warns about. Its supervisor
+      (`scripts/enrich-worker.cmd`, founder-approved) relaunches it, so killing
+      children changes nothing; **not disabled**, flagged for its owner
+- [x] **NEW1 1106 — the view hash I published was an MD5 prefix of the wrong
+      viewdef.** The contract is `sha256(pg_get_viewdef(…, true))` =
+      `5b5d02384b46c96c`. Corrected in `0081`'s comment and on the bus
+
 ## Founder queue opened this round
 
 - `FQ-CREDIT-LEDGER-ERASURE` — does erasure destroy the purchase record?
