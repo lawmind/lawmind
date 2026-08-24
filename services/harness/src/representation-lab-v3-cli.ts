@@ -662,6 +662,39 @@ async function main(): Promise<number> {
       snapshots.set(`${arm}#${poolSize}`, ranks);
     }
     console.log(`\n  — snapshot at pool size ${poolSize} (${processed} documents processed)`);
+    /**
+     * EVERY SNAPSHOT IS WRITTEN TO DISK IMMEDIATELY.
+     *
+     * The first V3 run took three and a half hours and wrote its artefact only
+     * at the end, which is the exact shape that cost this lane 160 of 283
+     * queries to a teardown once already. A snapshot is a complete, scoreable
+     * result for ONE pool size; there is no reason for it to live only in
+     * memory while the next pool size is being computed.
+     *
+     * Deliberately a SEPARATE path from OUT: a partial artefact must never be
+     * mistaken for the finished one by anything reading the expected file.
+     */
+    try {
+      mkdirSync(dirname(OUT), { recursive: true });
+      writeFileSync(
+        `${OUT}.partial-${poolSize}.json`,
+        JSON.stringify(
+          {
+            kind: 'new1_representation_lab_v3_partial',
+            poolSize,
+            documentsProcessed: processed,
+            generatedAt: new Date().toISOString(),
+            warning: 'PARTIAL — one pool size only. The finished artefact is at the un-suffixed path.',
+            ranksByArm: Object.fromEntries(ARMS.map((arm) => [arm, snapshots.get(`${arm}#${poolSize}`) ?? null])),
+            tasks: tasks.map((t) => ({ taskId: t.taskId, provenance: t.provenance, queryClass: t.queryClass })),
+          },
+          null,
+          1,
+        ),
+      );
+    } catch (e) {
+      console.log(`  partial snapshot write failed (continuing): ${e instanceof Error ? e.message : String(e)}`);
+    }
   };
 
   for (let i = 0; i < pool.length; i += BLOCK) {

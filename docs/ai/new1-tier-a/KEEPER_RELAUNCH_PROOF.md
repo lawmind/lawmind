@@ -175,6 +175,16 @@ Task Scheduler and nobody can hand it an environment. It holds a reason because
 an unexplained pause is how a walk stays down for a week. The keeper announces
 the pause **once** rather than every poll.
 
+Observed, at the first silence check after the file was written:
+
+```
+2026-08-24T15:10:31.792Z  walk relaunch PAUSED by …\.agents\logs\new1-walk.pause
+  — NEW1, 23 Aug 2026 16:26Z — representation lab V3 needs the GPU sidecar to itself.
+```
+
+The reason travels with the pause into the log, so the next reader of that file
+learns *why* the walk is down without asking anyone.
+
 ## 7. What this does NOT claim
 
 - It does not claim the walk cannot die again. It claims that when it does, the
