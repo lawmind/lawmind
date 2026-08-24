@@ -216,7 +216,10 @@ per document. The walk's own accounting gives ~993 tokens per 4,800-character
 head and ~8,700 tok/s sustained on this GPU.
 
 Against the Tier-A deduplicated population of **8,854,281 documents** (prior
-lane measurement, not re-derived here):
+lane measurement, not re-derived here — corroborated to within 2.4% by an
+independent artefact of the running walk: its coverage-driven worklist is **864
+batches of ~9,992 rows ≈ 8.63M documents**, which is a different instrument
+answering the same question):
 
 | build | vectors | halfvec storage | GPU-days @ 8,700 tok/s | posed s@5 @19,932 |
 | --- | ---: | ---: | ---: | ---: |
