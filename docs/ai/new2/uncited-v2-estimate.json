@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-08-24T17:50:11.360Z",
+  "labelling_rule": "SUBSTANTIVE = the court decided a contested question ON ITS MERITS and gave a reason another case could use. Applying settled law to facts is NOT deciding a question of law. BORDERLINE recorded separately and NOT counted as substantive.",
+  "per_stratum": {
+    "RESIDUAL_NO_NEGATIVE_MARKER": {
+      "n": 60,
+      "substantive": 4,
+      "borderline": 2,
+      "rate": 0.06666666666666667,
+      "ci95": [
+        0.026228698542249244,
+        0.15925357408741433
+      ],
+      "rate_incl_borderline": 0.1,
+      "ci95_incl_borderline": [
+        0.04664283420129568,
+        0.2014946482260861
+      ]
+    },
+    "MARKER_CARRYING": {
+      "n": 40,
+      "substantive": 0,
+      "borderline": 1,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.08762160245846368
+      ],
+      "rate_incl_borderline": 0.025,
+      "ci95_incl_borderline": [
+        0.004426831453704345,
+        0.12881369088183614
+      ]
+    },
+    "CONTROL_ABOVE_GATE_2000_3000": {
+      "n": 40,
+      "substantive": 3,
+      "borderline": 3,
+      "rate": 0.075,
+      "ci95": [
+        0.025836025573262467,
+        0.19864233651643162
+      ],
+      "rate_incl_borderline": 0.15,
+      "ci95_incl_borderline": [
+        0.0706118767610743,
+        0.29072324495985025
+      ]
+    }
+  },
+  "refused_population_weighted": {
+    "weights": {
+      "RESIDUAL_NO_NEGATIVE_MARKER": 0.43,
+      "MARKER_CARRYING": 0.57
+    },
+    "rate": 0.028666666666666667,
+    "rate_pct": 2.87,
+    "normal_se": 0.013847315557469908,
+    "normal_ci95": [
+      0.0015259281740256474,
+      0.05580740515930768
+    ],
+    "rate_incl_borderline_pct": 5.73,
+    "note": "MARKER_CARRYING scored 0/40, so its variance contribution is 0 by construction. The honest bound on that stratum is its Wilson upper limit, carried separately."
+  },
+  "control_vs_refused": {
+    "control_rate_pct": 7.5,
+    "residual_refused_rate_pct": 6.67,
+    "weighted_refused_rate_pct": 2.87
+  }
+}

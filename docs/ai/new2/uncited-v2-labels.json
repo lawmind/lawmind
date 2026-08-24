@@ -1,0 +1,566 @@
+{
+ "labelling_rule": "SUBSTANTIVE = the court decided a contested question ON ITS MERITS and gave a reason another case could use. Applying settled law to facts is NOT deciding a question of law. BORDERLINE recorded separately and NOT counted as substantive.",
+ "adjudicator": "NEW2 session f210633e, by reading primary text",
+ "labels": {
+  "1": [
+   "PROCEDURAL",
+   "direction to police to complete investigation in 2 months, at the GA's own request"
+  ],
+  "2": [
+   "PROCEDURAL",
+   "bail granted on the facts - not named in FIR, no recovery"
+  ],
+  "3": [
+   "PROCEDURAL",
+   "stood over at counsel's request"
+  ],
+  "4": [
+   "PROCEDURAL",
+   "allowed in terms of an earlier common order; no reasoning of its own"
+  ],
+  "5": [
+   "PROCEDURAL",
+   "direction to decide a representation, expressly without any opinion on merits"
+  ],
+  "6": [
+   "PROCEDURAL",
+   "dismissed for default"
+  ],
+  "7": [
+   "PROCEDURAL",
+   "part-heard, interim stay two weeks, posted"
+  ],
+  "8": [
+   "BORDERLINE",
+   "mutation entries from a lis pendens sale do not preclude an injunction and are to be decided irrespective of them - a usable proposition, but an application of lis pendens"
+  ],
+  "9": [
+   "PROCEDURAL",
+   "restoration application"
+  ],
+  "10": [
+   "PROCEDURAL",
+   "board not reached, stood over"
+  ],
+  "11": [
+   "PROCEDURAL",
+   "direction to University to decide representations"
+  ],
+  "12": [
+   "PROCEDURAL",
+   "time granted to file reply"
+  ],
+  "13": [
+   "PROCEDURAL",
+   "cannot be said no cognizable offence is made out - settled quashing law applied to the FIR"
+  ],
+  "14": [
+   "PROCEDURAL",
+   "reference stub - see my order in another writ"
+  ],
+  "15": [
+   "PROCEDURAL",
+   "dismissed for want of prosecution"
+  ],
+  "16": [
+   "PROCEDURAL",
+   "dismissed in terms of another order"
+  ],
+  "17": [
+   "PROCEDURAL",
+   "expressly without expressing any opinion on the merits"
+  ],
+  "18": [
+   "PROCEDURAL",
+   "reference stub - see detailed reasons in another RFA"
+  ],
+  "19": [
+   "PROCEDURAL",
+   "direction to expedite family court proceedings"
+  ],
+  "20": [
+   "PROCEDURAL",
+   "condonation of delay, unopposed"
+  ],
+  "21": [
+   "PROCEDURAL",
+   "dismissed for non-prosecution"
+  ],
+  "22": [
+   "PROCEDURAL",
+   "349-day delay condoned"
+  ],
+  "23": [
+   "PROCEDURAL",
+   "restoration allowed on bonafide absence, with costs"
+  ],
+  "24": [
+   "PROCEDURAL",
+   "notice of motion"
+  ],
+  "25": [
+   "PROCEDURAL",
+   "compliance recorded"
+  ],
+  "26": [
+   "SUBSTANTIVE",
+   "a Gaon Sabha writ filed through a counsel who is not its panel lawyer will not be entertained - a rule another case can use"
+  ],
+  "27": [
+   "SUBSTANTIVE",
+   "s.41-A CrPC protection is statutorily available where the sentence is seven years or less; the police are obliged to extend it wherever attracted and no specific direction is required"
+  ],
+  "28": [
+   "PROCEDURAL",
+   "direction to consider a GPF proposal"
+  ],
+  "29": [
+   "PROCEDURAL",
+   "dismissed for want of prosecution"
+  ],
+  "30": [
+   "PROCEDURAL",
+   "direction to approach the SSP"
+  ],
+  "31": [
+   "PROCEDURAL",
+   "police closed the case as civil in nature; closure report directed"
+  ],
+  "32": [
+   "SUBSTANTIVE",
+   "a one-year diploma cannot be equated with a three-year diploma for Sub Inspector Motor Vehicle - a contested equivalence decided on merits with a reason"
+  ],
+  "33": [
+   "PROCEDURAL",
+   "grievance redressed by the Government Pleader's statement"
+  ],
+  "34": [
+   "PROCEDURAL",
+   "covered by an earlier judgment; benefit extended"
+  ],
+  "35": [
+   "PROCEDURAL",
+   "not inclined to entertain at a belated stage"
+  ],
+  "36": [
+   "SUBSTANTIVE",
+   "a rule change allowing a third attempt means the directorate's removal direction does not apply to teachers who failed twice, though the obligation to pass subsists - a reason a class of cases can use"
+  ],
+  "37": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "38": [
+   "PROCEDURAL",
+   "time granted"
+  ],
+  "39": [
+   "PROCEDURAL",
+   "substitution of legal representatives"
+  ],
+  "40": [
+   "PROCEDURAL",
+   "impleadment application"
+  ],
+  "41": [
+   "PROCEDURAL",
+   "dismissed for want of prosecution"
+  ],
+  "42": [
+   "PROCEDURAL",
+   "reference stub - see order of even date in another RSA"
+  ],
+  "43": [
+   "PROCEDURAL",
+   "extension of time to deposit"
+  ],
+  "44": [
+   "PROCEDURAL",
+   "parties compromised; cause of action does not survive"
+  ],
+  "45": [
+   "PROCEDURAL",
+   "direction to the Tahasildar to decide"
+  ],
+  "46": [
+   "PROCEDURAL",
+   "name not on the voter list, so not entitled to contest - statute applied to an admitted fact"
+  ],
+  "47": [
+   "PROCEDURAL",
+   "covered by an order passed the same day in another appeal"
+  ],
+  "48": [
+   "PROCEDURAL",
+   "dismissed for want of prosecution"
+  ],
+  "49": [
+   "PROCEDURAL",
+   "dismissed for want of prosecution"
+  ],
+  "50": [
+   "PROCEDURAL",
+   "appeal does not survive once the delay application was dismissed"
+  ],
+  "51": [
+   "PROCEDURAL",
+   "mediation ongoing; adjourned"
+  ],
+  "52": [
+   "PROCEDURAL",
+   "no cause of action survives; consigned to record"
+  ],
+  "53": [
+   "PROCEDURAL",
+   "arbitrator appointed by consent under s.11(6)"
+  ],
+  "54": [
+   "BORDERLINE",
+   "impugned order set aside for non-compliance with an earlier direction to issue notice - a merits outcome, but the reason is compliance with this court's own order"
+  ],
+  "55": [
+   "PROCEDURAL",
+   "dismissed for default for non-appearance"
+  ],
+  "56": [
+   "PROCEDURAL",
+   "direction to consider a form VI-A application"
+  ],
+  "57": [
+   "PROCEDURAL",
+   "fully covered by our own earlier decision"
+  ],
+  "58": [
+   "PROCEDURAL",
+   "covered by an LPA judgment; disposed in the same terms"
+  ],
+  "59": [
+   "PROCEDURAL",
+   "squarely covered by a common judgment; consequential directions"
+  ],
+  "60": [
+   "PROCEDURAL",
+   "direction to dispose of a pending revision"
+  ],
+  "61": [
+   "PROCEDURAL",
+   "appeal withdrawn with liberty to file a separate suit"
+  ],
+  "62": [
+   "PROCEDURAL",
+   "bail - no rape allegation against these petitioners"
+  ],
+  "63": [
+   "PROCEDURAL",
+   "bail refused on the facts of impersonation"
+  ],
+  "64": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "65": [
+   "PROCEDURAL",
+   "infructuous - selection process already over"
+  ],
+  "66": [
+   "PROCEDURAL",
+   "infructuous - final report submitted"
+  ],
+  "67": [
+   "PROCEDURAL",
+   "bail rejected on the facts"
+  ],
+  "68": [
+   "PROCEDURAL",
+   "appeal dismissed as infructuous"
+  ],
+  "69": [
+   "PROCEDURAL",
+   "no occasion to look into a 1993 dismissal after 17 years - laches applied to the facts"
+  ],
+  "70": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "71": [
+   "PROCEDURAL",
+   "bail - implicated only on a co-accused statement"
+  ],
+  "72": [
+   "PROCEDURAL",
+   "restoration after a 227-day delay"
+  ],
+  "73": [
+   "PROCEDURAL",
+   "direction to make a representation on the transfer"
+  ],
+  "74": [
+   "PROCEDURAL",
+   "dismissed in default and for non-prosecution"
+  ],
+  "75": [
+   "PROCEDURAL",
+   "withdrawn"
+  ],
+  "76": [
+   "PROCEDURAL",
+   "direction to decide a pending appeal in 8 weeks"
+  ],
+  "77": [
+   "PROCEDURAL",
+   "withdrawn with liberty to file afresh"
+  ],
+  "78": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "79": [
+   "PROCEDURAL",
+   "contempt dropped after compliance"
+  ],
+  "80": [
+   "PROCEDURAL",
+   "withdrawn"
+  ],
+  "81": [
+   "PROCEDURAL",
+   "withdrawn"
+  ],
+  "82": [
+   "PROCEDURAL",
+   "dismissed for non-prosecution"
+  ],
+  "83": [
+   "PROCEDURAL",
+   "bail - victim went of her own will on her s.164 statement"
+  ],
+  "84": [
+   "PROCEDURAL",
+   "mandamus to decide a mutation case"
+  ],
+  "85": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "86": [
+   "PROCEDURAL",
+   "anticipatory bail"
+  ],
+  "87": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "88": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "89": [
+   "PROCEDURAL",
+   "infructuous on subsequent developments"
+  ],
+  "90": [
+   "PROCEDURAL",
+   "contempt dismissed for default"
+  ],
+  "91": [
+   "PROCEDURAL",
+   "bail on the period of custody undergone"
+  ],
+  "92": [
+   "PROCEDURAL",
+   "dismissed for default"
+  ],
+  "93": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "94": [
+   "PROCEDURAL",
+   "contempt infructuous - order complied with"
+  ],
+  "95": [
+   "PROCEDURAL",
+   "NDPS bail"
+  ],
+  "96": [
+   "PROCEDURAL",
+   "infructuous - charge sheet filed"
+  ],
+  "97": [
+   "PROCEDURAL",
+   "withdrawn - settled amicably"
+  ],
+  "98": [
+   "BORDERLINE",
+   "a ground of delay in the memo is not a prayer for condonation; without a Notice of Motion the appeals are barred by limitation - usable, but limitation practice applied"
+  ],
+  "99": [
+   "PROCEDURAL",
+   "withdrawn"
+  ],
+  "100": [
+   "PROCEDURAL",
+   "withdrawn"
+  ],
+  "101": [
+   "PROCEDURAL",
+   "MACT compensation held just and reasonable on the evidence - quantum applied to facts"
+  ],
+  "102": [
+   "PROCEDURAL",
+   "withdrawn"
+  ],
+  "103": [
+   "PROCEDURAL",
+   "no arrest till the s.173(2) report, with a fair-investigation direction"
+  ],
+  "104": [
+   "PROCEDURAL",
+   "direction to decide a representation, expressly without any opinion on merits"
+  ],
+  "105": [
+   "PROCEDURAL",
+   "deletion of co-accused names does not make the charge against A-1 false - the same shape as #13, settled quashing law applied to the charge sheet"
+  ],
+  "106": [
+   "PROCEDURAL",
+   "survey directed to demarcate a boundary, with conditional outcomes"
+  ],
+  "107": [
+   "BORDERLINE",
+   "no stay of investigation under the SC/ST Act but protection against arrest may be granted - a usable rule, stated without reasons"
+  ],
+  "108": [
+   "PROCEDURAL",
+   "infructuous - licence already returned"
+  ],
+  "109": [
+   "SUBSTANTIVE",
+   "respondents 1 to 4 have no jurisdiction over the tank; a direction could lie only against the Panchayat Union - a jurisdictional holding with a reason"
+  ],
+  "110": [
+   "PROCEDURAL",
+   "referred to mediation on terms"
+  ],
+  "111": [
+   "PROCEDURAL",
+   "alternate remedy available; errors correctable by the appellate authority"
+  ],
+  "112": [
+   "PROCEDURAL",
+   "infructuous by efflux of time"
+  ],
+  "113": [
+   "PROCEDURAL",
+   "contentions left open; direction to represent"
+  ],
+  "114": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "115": [
+   "PROCEDURAL",
+   "disposed in terms of a Division Bench judgment"
+  ],
+  "116": [
+   "PROCEDURAL",
+   "warrant kept in abeyance pending disposal"
+  ],
+  "117": [
+   "PROCEDURAL",
+   "withdrawn"
+  ],
+  "118": [
+   "PROCEDURAL",
+   "anticipatory bail"
+  ],
+  "119": [
+   "BORDERLINE",
+   "challenge to continuation of proceedings is premature; the remedy is s.239 Cr.P.C. before the trial court - thin, but a rule about stage"
+  ],
+  "120": [
+   "PROCEDURAL",
+   "direction to consider on re-enrolment"
+  ],
+  "121": [
+   "PROCEDURAL",
+   "anticipatory bail"
+  ],
+  "122": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "123": [
+   "SUBSTANTIVE",
+   "an N.R.I. cannot be served by proclamation at a village address, so the service is a nullity and the partition proceedings are void - a proposition with a reason"
+  ],
+  "124": [
+   "PROCEDURAL",
+   "no locus standi, following four cited judgments - settled locus law applied"
+  ],
+  "125": [
+   "PROCEDURAL",
+   "direction to submit an application in the prescribed format"
+  ],
+  "126": [
+   "PROCEDURAL",
+   "direction to decide a reference, no opinion on merits"
+  ],
+  "127": [
+   "PROCEDURAL",
+   "direction to make a representation"
+  ],
+  "128": [
+   "PROCEDURAL",
+   "anticipatory bail"
+  ],
+  "129": [
+   "PROCEDURAL",
+   "remitted for reconsideration in terms of another order"
+  ],
+  "130": [
+   "PROCEDURAL",
+   "contempt closed after compliance"
+  ],
+  "131": [
+   "PROCEDURAL",
+   "direction to apply afresh for an educational loan"
+  ],
+  "132": [
+   "PROCEDURAL",
+   "order set aside and appeal remanded to be heard afresh"
+  ],
+  "133": [
+   "SUBSTANTIVE",
+   "under s.114 CPC review lies only if no appeal has been filed against an appealable order; a Misc Appeal having been filed against the Order 40 Rule 1 order, the review was not maintainable"
+  ],
+  "134": [
+   "PROCEDURAL",
+   "direction to dispose of the case in three weeks"
+  ],
+  "135": [
+   "PROCEDURAL",
+   "the impugned GO was modified, so nothing survives"
+  ],
+  "136": [
+   "PROCEDURAL",
+   "infructuous - the accused was acquitted"
+  ],
+  "137": [
+   "BORDERLINE",
+   "a writ pleading no acquisition is self-contradictory where the plaint admits it - reasoning, but on this pleading and deferred to a pending suit"
+  ],
+  "138": [
+   "PROCEDURAL",
+   "bail"
+  ],
+  "139": [
+   "PROCEDURAL",
+   "transfer on convenience and disability - fact bound"
+  ],
+  "140": [
+   "PROCEDURAL",
+   "reference stub - see a separate detailed order of even date"
+  ]
+ }
+}
