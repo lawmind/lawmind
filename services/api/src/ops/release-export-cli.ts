@@ -1,310 +1,458 @@
-/**
- * RELEASE EXPORT — a versioned, checksummed slice of APPROVED SERVING DATA.
- *
- * ─────────────────────────────────────────────────────────────────────────────
- * WHY THIS IS NOT `pg_dump`
- * ─────────────────────────────────────────────────────────────────────────────
- *
- * Three independent reasons, and each one alone would be enough:
- *
- * 1. **A whole-database dump exports the advocates.** `matters`, `documents`,
- *    `judgment_annotations` and `users` hold client names, case notes and
- *    uploaded files. A serving release must carry the LAW and nothing else, and
- *    the safest way to guarantee that is a list of tables that is enumerated
- *    here rather than a filter applied to everything.
- *
- * 2. **`pg_dump -t` omits enum types.** A table-scoped dump does not emit the
- *    `CREATE TYPE` its own columns depend on, so the restore fails on exactly
- *    the enum-bearing tables and succeeds on the rest — a half-restored schema
- *    that looks like a partial success. `docs/ai/lcc` carries the incident.
- *
- * 3. **The schema should arrive the way it arrives in production.** By running
- *    the migrations. A release that builds its schema from a dump is a release
- *    whose schema has never been tested against the migration path that every
- *    real deployment uses.
- *
- * So: **migrations build the schema, this builds the data.** `COPY ... TO
- * STDOUT` per approved table, into one file each, with a manifest.
- *
- * ─────────────────────────────────────────────────────────────────────────────
- * WHAT THE MANIFEST IS FOR
- * ─────────────────────────────────────────────────────────────────────────────
- *
- * A restore that "worked" is not a release. The manifest records what a correct
- * restore must be able to reproduce, so the target can be CHECKED rather than
- * trusted:
- *
- *   * row count per table;
- *   * a content checksum per table, computed the same way on both sides;
- *   * the schema version (the highest migration in the journal);
- *   * the extensions the source actually had, read from `pg_extension`;
- *   * **the source collation**, because it is the one thing a Linux target
- *     cannot reproduce and the one whose difference is silent.
- *
- * ─────────────────────────────────────────────────────────────────────────────
- * THE COLLATION PROBLEM, STATED HERE BECAUSE IT IS DISCOVERED HERE
- * ─────────────────────────────────────────────────────────────────────────────
- *
- * This corpus was built on Windows and its database collation is
- * `English_United States.1252`. **No Linux PostgreSQL can offer that
- * collation.** A Linux target gets `en_US.UTF-8` or `C`, and text ordering
- * differs between them — which means `ORDER BY case_title`, every btree index
- * on a text column, and therefore keyset pagination, can all order differently
- * on the serving box than they did in the factory.
- *
- * That is why a cross-platform PHYSICAL copy of the data directory is refused
- * outright, and why a logical restore has to REBUILD its indexes rather than
- * receive them. The manifest carries both collations so the rehearsal can show
- * the difference instead of discovering it in production.
- */
-import { createHash } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { createWriteStream } from 'node:fs';
-import { join } from 'node:path';
-
-import postgres from 'postgres';
-
-/**
- * THE APPROVED SERVING SET — enumerated, never derived.
- *
- * A rule like "everything that is not user data" is a rule that silently
- * includes the next table somebody adds. This list is the decision, and adding
- * to it is a deliberate edit with a reviewer.
- *
- * `orderBy` exists so the export is DETERMINISTIC: the checksum has to be
- * comparable across two machines, and `COPY (SELECT * FROM t)` has no defined
- * order at all.
- */
-export const SERVING_TABLES: readonly { table: string; orderBy: string }[] = [
-  { table: 'judgments', orderBy: 'id' },
-  { table: 'judgment_citations', orderBy: 'id' },
-  { table: 'judgment_judges', orderBy: 'judgment_id, judge_name' },
-  { table: 'judgment_statute_refs', orderBy: 'id' },
-  { table: 'statutes', orderBy: 'id' },
-  { table: 'statute_sections', orderBy: 'id' },
-  { table: 'lexeme_document_frequency', orderBy: 'lexeme' },
-];
-
-/** Named so a reader can see what was CONSIDERED and refused, not just what won. */
-export const DELIBERATELY_EXCLUDED = [
-  'users / auth_user / auth_session / refresh_tokens — identity',
-  'matters / matter_events / matter_authorities / matter_shares — client detail',
-  'documents / ocr_jobs — uploaded files',
-  'judgment_annotations / saved_searches / searches / alerts — an advocate’s work',
-  'audit_log / citation_disputes / data_requests — platform records, not law',
-  'llm_calls / search_events — telemetry',
-  'judgment_chunks / new1_doc_vector_stage — retrieval representations, NOT YET APPROVED (NEW1 owns the decision; the master plan forbids promoting the staged vectors)',
-];
-
-type Manifest = {
-  releaseVersion: string;
-  createdAt: string;
-  source: {
-    database: string;
-    serverVersion: string;
-    /** The one thing a Linux target cannot reproduce. */
-    collation: string;
-    ctype: string;
-    encoding: string;
-    extensions: { name: string; version: string }[];
-  };
-  schemaVersion: { highestMigration: string; migrationCount: number };
-  bounded: { judgmentLimit: number | null };
-  tables: { table: string; rows: number; checksum: string; bytes: number; file: string }[];
-  excluded: readonly string[];
-};
-
-/**
- * One checksum per table, order-stable and computed IN SQL so both sides agree.
- *
- * **Per-row `md5` first, then an aggregate over the digests.** The obvious
- * version — `md5(string_agg(row::text, ...))` — concatenates every row into ONE
- * server-side value before hashing it, and `judgments` carries `full_text` and a
- * tsvector: five thousand rows is hundreds of megabytes in a single string, and
- * the first version of this function did not return inside two minutes. Hashing
- * each row to 32 characters first bounds the aggregate by the ROW COUNT rather
- * than by the content size.
- *
- * Not cryptographic and does not need to be — the question is "did every byte
- * arrive", and the threat model is a truncated transfer, not an adversary.
- */
-async function checksum(
-  sql: postgres.Sql,
-  table: string,
-  orderBy: string,
-  where: string,
-): Promise<{ rows: number; checksum: string }> {
-  const [row] = await sql.unsafe<{ n: string; ck: string | null }[]>(
-    `SELECT count(*)::text AS n,
-            md5(coalesce(string_agg(t.h, '' ORDER BY t.ord), '')) AS ck
-       FROM (SELECT row_number() OVER (ORDER BY ${orderBy}) AS ord,
-                    md5(${table}::text) AS h
-               FROM ${table} ${where}) t`,
-  );
-  return { rows: Number(row?.n ?? 0), checksum: row?.ck ?? '' };
-}
-
-async function main(): Promise<void> {
-  const argv = process.argv.slice(2);
-  const arg = (n: string) => {
-    const i = argv.indexOf(`--${n}`);
-    return i === -1 ? undefined : argv[i + 1];
-  };
-  const outDir = arg('out') ?? 'release';
-  /**
-   * Bounded by default. The plan is explicit: prove the pipeline on a small
-   * Linux-like rehearsal, do NOT clone the 291 GB factory. An unbounded export
-   * is also a DB_SCAN, which the resource gate has been deferring all round.
-   */
-  const judgmentLimit = arg('judgment-limit') ? Number(arg('judgment-limit')) : 500;
-
-  const url = process.env['DATABASE_URL'];
-  if (!url) throw new Error('DATABASE_URL is required');
-  const sql = postgres(url, { max: 2, onnotice: () => {} });
-
-  await mkdir(outDir, { recursive: true });
-
-  const [meta] = await sql<
-    { db: string; ver: string; collate: string; ctype: string; enc: string }[]
-  >`
-    SELECT current_database() AS db,
-           current_setting('server_version') AS ver,
-           datcollate AS collate, datctype AS ctype,
-           pg_encoding_to_char(encoding) AS enc
-      FROM pg_database WHERE datname = current_database()`;
-
-  const extensions = await sql<{ extname: string; extversion: string }[]>`
-    SELECT extname, extversion FROM pg_extension ORDER BY extname`;
-
-  const journal = (await import('node:fs/promises')).readFile;
-  const journalText = await journal(
-    new URL('../../../../packages/db/drizzle/meta/_journal.json', import.meta.url),
-    'utf8',
-  );
-  const entries = (JSON.parse(journalText) as { entries: { tag: string }[] }).entries;
-
-  const releaseVersion = `${new Date().toISOString().slice(0, 10)}.${Date.now().toString(36)}`;
-
-  /**
-   * The bound is applied to `judgments` and then FOLLOWED through the tables
-   * that reference it. A citation edge pointing at a judgment that was not
-   * exported is a dangling reference, and a release whose referential integrity
-   * depends on nobody looking is not a release.
-   */
-  /**
-   * The id set is RESOLVED ONCE and then bound as a literal array.
-   *
-   * The first version left it as a correlated `IN (SELECT ... LIMIT n)` in every
-   * dependent table's WHERE. On `judgments` that is an index range read; on
-   * `judgment_citations` — tens of millions of rows — the planner would not use
-   * `judgment_citations_citing_idx` for it and the export did not return in two
-   * minutes. `= ANY(array)` on 500 literal uuids does use the index.
-   *
-   * It also makes the slice STABLE. A repeated subquery is re-evaluated per
-   * table, so a concurrent insert could put a different 500 judgments in front
-   * of one table than another and the export would be internally inconsistent
-   * — the kind of corruption that only shows up as a dangling reference weeks
-   * later on the serving box.
-   */
-  const boundIds =
-    judgmentLimit > 0
-      ? (
-          await sql<{ id: string }[]>`
-            SELECT id FROM judgments ORDER BY id LIMIT ${judgmentLimit}`
-        ).map((r) => r.id)
-      : null;
-
-  const idList = boundIds === null ? '' : `'{${boundIds.join(',')}}'::uuid[]`;
-  const whereFor = (table: string): string => {
-    if (boundIds === null) return '';
-    if (table === 'judgments') return `WHERE id = ANY(${idList})`;
-    /**
-     * Only edges whose BOTH ends are in the slice. An edge pointing at a
-     * judgment that was not exported is a dangling reference, and a release
-     * whose referential integrity depends on nobody looking is not a release.
-     * Unresolved edges (`cited_judgment_id IS NULL`) are real data and are kept.
-     */
-    if (table === 'judgment_citations')
-      return `WHERE citing_judgment_id = ANY(${idList}) AND (cited_judgment_id IS NULL OR cited_judgment_id = ANY(${idList}))`;
-    if (table === 'judgment_judges' || table === 'judgment_statute_refs')
-      return `WHERE judgment_id = ANY(${idList})`;
-    return '';
-  };
-
-  const tables: Manifest['tables'] = [];
-  for (const { table, orderBy } of SERVING_TABLES) {
-    const where = whereFor(table);
-    const { rows, checksum: ck } = await checksum(sql, table, orderBy, where);
-
-    const file = `${table}.copy`;
-    const path = join(outDir, file);
-    const query = `COPY (SELECT * FROM ${table} ${where} ORDER BY ${orderBy}) TO STDOUT`;
-    const readable = await sql.unsafe(query).readable();
-    /**
-     * `pipeline()` NEVER RESOLVES here, and that cost an hour.
-     *
-     * postgres.js's COPY readable does not settle `stream/promises.pipeline`,
-     * so the first table hung forever and the export looked like a slow query
-     * against `judgment_citations` — which it was not: the same predicate
-     * measured 23 ms on its own. Waiting on the readable's own `end` is what
-     * actually completes.
-     */
-    await new Promise<void>((resolve, reject) => {
-      const dest = createWriteStream(path);
-      /**
-       * `finish` on the DESTINATION, not `end` on the source.
-       *
-       * `end` fires when the last byte leaves postgres.js, which for an empty
-       * table is before `createWriteStream` has opened the file at all — so the
-       * `stat` below threw ENOENT on a table that had simply produced no rows.
-       * A zero-row table is a legitimate export and must still leave a file.
-       */
-      dest.on('finish', resolve);
-      dest.on('error', reject);
-      readable.on('error', reject);
-      readable.pipe(dest);
-    });
-
-    const { size } = await (await import('node:fs/promises')).stat(path);
-    tables.push({ table, rows, checksum: ck, bytes: size, file });
-    console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${size} bytes`);
-  }
-
-  const manifest: Manifest = {
-    releaseVersion,
-    createdAt: new Date().toISOString(),
-    source: {
-      database: meta?.db ?? '',
-      serverVersion: meta?.ver ?? '',
-      collation: meta?.collate ?? '',
-      ctype: meta?.ctype ?? '',
-      encoding: meta?.enc ?? '',
-      extensions: extensions.map((e) => ({ name: e.extname, version: e.extversion })),
-    },
-    schemaVersion: {
-      highestMigration: entries.at(-1)?.tag ?? 'unknown',
-      migrationCount: entries.length,
-    },
-    bounded: { judgmentLimit: judgmentLimit > 0 ? judgmentLimit : null },
-    tables,
-    excluded: DELIBERATELY_EXCLUDED,
-  };
-
-  const manifestJson = `${JSON.stringify(manifest, null, 2)}\n`;
-  await writeFile(join(outDir, 'MANIFEST.json'), manifestJson, 'utf8');
-  /** The manifest's own checksum, so a tampered or truncated manifest is visible. */
-  await writeFile(
-    join(outDir, 'MANIFEST.sha256'),
-    `${createHash('sha256').update(manifestJson).digest('hex')}  MANIFEST.json\n`,
-    'utf8',
-  );
-
-  console.log(`\nrelease ${releaseVersion} written to ${outDir}`);
-  console.log(`source collation: ${manifest.source.collation}  (a Linux target CANNOT match this)`);
-  await sql.end();
-}
-
-main().catch((err: unknown) => {
-  console.error(err);
-  process.exit(1);
-});
+/**
+ * RELEASE EXPORT — a versioned, checksummed slice of APPROVED SERVING DATA.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS IS NOT `pg_dump`
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Three independent reasons, and each one alone would be enough:
+ *
+ * 1. **A whole-database dump exports the advocates.** `matters`, `documents`,
+ *    `judgment_annotations` and `users` hold client names, case notes and
+ *    uploaded files. A serving release must carry the LAW and nothing else, and
+ *    the safest way to guarantee that is a list of tables that is enumerated
+ *    here rather than a filter applied to everything.
+ *
+ * 2. **`pg_dump -t` omits enum types.** A table-scoped dump does not emit the
+ *    `CREATE TYPE` its own columns depend on, so the restore fails on exactly
+ *    the enum-bearing tables and succeeds on the rest — a half-restored schema
+ *    that looks like a partial success. `docs/ai/lcc` carries the incident.
+ *
+ * 3. **The schema should arrive the way it arrives in production.** By running
+ *    the migrations. A release that builds its schema from a dump is a release
+ *    whose schema has never been tested against the migration path that every
+ *    real deployment uses.
+ *
+ * So: **migrations build the schema, this builds the data.** `COPY ... TO
+ * STDOUT` per approved table, into one file each, with a manifest.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT THE MANIFEST IS FOR
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * A restore that "worked" is not a release. The manifest records what a correct
+ * restore must be able to reproduce, so the target can be CHECKED rather than
+ * trusted:
+ *
+ *   * row count per table;
+ *   * a content checksum per table, computed the same way on both sides;
+ *   * the schema version (the highest migration in the journal);
+ *   * the extensions the source actually had, read from `pg_extension`;
+ *   * **the source collation**, because it is the one thing a Linux target
+ *     cannot reproduce and the one whose difference is silent.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE COLLATION PROBLEM, STATED HERE BECAUSE IT IS DISCOVERED HERE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This corpus was built on Windows and its database collation is
+ * `English_United States.1252`. **No Linux PostgreSQL can offer that
+ * collation.** A Linux target gets `en_US.UTF-8` or `C`, and text ordering
+ * differs between them — which means `ORDER BY case_title`, every btree index
+ * on a text column, and therefore keyset pagination, can all order differently
+ * on the serving box than they did in the factory.
+ *
+ * That is why a cross-platform PHYSICAL copy of the data directory is refused
+ * outright, and why a logical restore has to REBUILD its indexes rather than
+ * receive them. The manifest carries both collations so the rehearsal can show
+ * the difference instead of discovering it in production.
+ */
+import { createHash } from 'node:crypto';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { createWriteStream } from 'node:fs';
+import { join } from 'node:path';
+
+import postgres from 'postgres';
+
+/**
+ * THE APPROVED SERVING SET — enumerated, never derived.
+ *
+ * A rule like "everything that is not user data" is a rule that silently
+ * includes the next table somebody adds. This list is the decision, and adding
+ * to it is a deliberate edit with a reviewer.
+ *
+ * `orderBy` exists so the export is DETERMINISTIC: the checksum has to be
+ * comparable across two machines, and `COPY (SELECT * FROM t)` has no defined
+ * order at all.
+ */
+export const SERVING_TABLES: readonly { table: string; orderBy: string }[] = [
+  { table: 'judgments', orderBy: 'id' },
+  { table: 'judgment_citations', orderBy: 'id' },
+  // `COLLATE "C"` on every TEXT sort key: byte order is the one ordering a
+  // Windows source and a Linux target agree on. Without it the digest is
+  // aggregated in a different sequence on each side and mismatches on a
+  // perfectly correct restore.
+  { table: 'judgment_judges', orderBy: 'judgment_id, judge_name COLLATE "C"' },
+  { table: 'judgment_statute_refs', orderBy: 'id' },
+  { table: 'statutes', orderBy: 'id' },
+  { table: 'statute_sections', orderBy: 'id' },
+  { table: 'lexeme_document_frequency', orderBy: 'lexeme COLLATE "C"' },
+];
+
+/** Named so a reader can see what was CONSIDERED and refused, not just what won. */
+export const DELIBERATELY_EXCLUDED = [
+  'users / auth_user / auth_session / refresh_tokens — identity',
+  'matters / matter_events / matter_authorities / matter_shares — client detail',
+  'documents / ocr_jobs — uploaded files',
+  'judgment_annotations / saved_searches / searches / alerts — an advocate’s work',
+  'audit_log / citation_disputes / data_requests — platform records, not law',
+  'llm_calls / search_events — telemetry',
+  'judgment_chunks / new1_doc_vector_stage — retrieval representations, NOT YET APPROVED (NEW1 owns the decision; the master plan forbids promoting the staged vectors)',
+];
+
+/**
+ * The columns a restore can actually WRITE.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * GENERATED COLUMNS ARE THE TRAP, AND THE REHEARSAL CAUGHT IT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `judgments.full_text_tsv` is `GENERATED ALWAYS AS (...) STORED`. `COPY (SELECT
+ * * FROM judgments) TO STDOUT` INCLUDES it; `COPY judgments FROM STDIN` EXCLUDES
+ * it, because PostgreSQL refuses to be told the value of a generated column. So
+ * the two sides disagree about the column count and the restore failed with:
+ *
+ *     22P04  extra data after last expected column
+ *     COPY judgments, line 1: "00000057-499a-...
+ *
+ * Erroring is the GOOD outcome. The same mismatch in a table where the extra
+ * column happens to land inside another column's type would load silently and
+ * wrongly.
+ *
+ * So the column list is enumerated from the catalogue on the export side and
+ * WRITTEN INTO THE MANIFEST, and the restore names the same columns. Neither
+ * side infers it, and a schema change that adds a generated column cannot
+ * quietly desynchronise them.
+ */
+async function writableColumns(sql: postgres.Sql, table: string): Promise<string[]> {
+  const rows = await sql<{ attname: string }[]>`
+    SELECT a.attname
+      FROM pg_attribute a
+     WHERE a.attrelid = ${table}::regclass
+       AND a.attnum > 0
+       AND NOT a.attisdropped
+       -- '' is an ordinary column; 's' is STORED GENERATED, which COPY refuses.
+       AND a.attgenerated = ''
+     ORDER BY a.attnum`;
+  return rows.map((r) => r.attname);
+}
+
+type Manifest = {
+  releaseVersion: string;
+  createdAt: string;
+  source: {
+    database: string;
+    serverVersion: string;
+    /** The one thing a Linux target cannot reproduce. */
+    collation: string;
+    ctype: string;
+    encoding: string;
+    extensions: { name: string; version: string }[];
+  };
+  schemaVersion: { highestMigration: string; migrationCount: number };
+  bounded: { judgmentLimit: number | null };
+  tables: {
+    table: string;
+    rows: number;
+    checksum: string;
+    bytes: number;
+    file: string;
+    /** Named on BOTH sides. Generated columns are absent by construction. */
+    columns: string[];
+  }[];
+  excluded: readonly string[];
+};
+
+/**
+ * Both sides must render the row IDENTICALLY, or the checksum measures the
+ * session rather than the data.
+ *
+ * Two settings, each found by a restore that reported a mismatch on a load
+ * where every row had arrived:
+ *
+ * 1. **`TimeZone`.** `row::text` renders `timestamptz` in the session's zone.
+ *    The source session rendered `2026-08-07 09:31:01.666724+00` and the target
+ *    `2026-08-07 13:31:01.666724+04` — the same instant, a different string, and
+ *    a checksum that says the release is corrupt when it is not.
+ * 2. **`DateStyle`.** Same class of problem for dates, and it is one line to
+ *    remove the possibility.
+ *
+ * The COLLATION cannot be pinned this way — a Linux target has no
+ * `English_United States.1252` — so the ordering is fixed at the query instead,
+ * with `COLLATE "C"` on any text sort key. `C` is byte order and is the one
+ * collation both platforms agree on.
+ */
+async function pinSessionRendering(sql: postgres.Sql): Promise<void> {
+  await sql.unsafe(`SET TimeZone = 'UTC'`);
+  await sql.unsafe(`SET DateStyle = 'ISO, YMD'`);
+}
+
+/**
+ * One checksum per table, order-stable and computed IN SQL so both sides agree.
+ *
+ * **Per-row `md5` first, then an aggregate over the digests.** The obvious
+ * version — `md5(string_agg(row::text, ...))` — concatenates every row into ONE
+ * server-side value before hashing it, and `judgments` carries `full_text` and a
+ * tsvector: five thousand rows is hundreds of megabytes in a single string, and
+ * the first version of this function did not return inside two minutes. Hashing
+ * each row to 32 characters first bounds the aggregate by the ROW COUNT rather
+ * than by the content size.
+ *
+ * Not cryptographic and does not need to be — the question is "did every byte
+ * arrive", and the threat model is a truncated transfer, not an adversary.
+ */
+/**
+ * The checksum is taken over a NAME-ORDERED projection, never over `row::text`.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE LIVE SCHEMA'S COLUMN ORDER HAS DRIFTED FROM THE MIGRATIONS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Measured during the first rehearsal, not assumed. `judgments` has the SAME 38
+ * columns on both sides — nothing missing, nothing extra — but eight of them sit
+ * at different ordinals on the live database than in a database built by running
+ * the migrations from empty:
+ *
+ *     cnr, native_text, petitioner, respondent,
+ *     parties_extraction_method, disposal_nature,
+ *     source_bench_code, hc_document_class
+ *
+ * `row::text` renders columns in ORDINAL order, so a perfectly correct restore
+ * produced a different string and the checksum called it corrupt.
+ *
+ * The much more serious consequence is the one this file already avoids: a
+ * POSITIONAL `COPY table FROM STDIN` — the spelling without a column list —
+ * would have loaded each value into whatever column now sits at that ordinal.
+ * That does not error. It silently writes `cnr` into `native_text`.
+ *
+ * So: columns are named explicitly on both sides for the COPY, and sorted BY
+ * NAME for the checksum. Neither depends on an ordinal agreeing across two
+ * machines that were built by different routes.   *
+   * ─────────────────────────────────────────────────────────────────────────
+   * AND THE COMPOSITE RENDERING ITSELF IS PLATFORM-DEPENDENT
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * `ROW(...)::text` quotes a field when it "needs" quoting, and the test for
+   * needing it includes `isspace()`, which is **LC_CTYPE-dependent**. Measured
+   * on one real row, byte-identical data, both sessions pinned to UTC:
+   *
+   *     source (Windows-1252 ctype)  ("2026-08-17 23:19:21.945366+00",3,"aiàiáªàåzéã",40537)
+   *     target (C.UTF-8 ctype)       ("2026-08-17 23:19:21.945366+00",3,aiàiáªàåzéã,40537)
+   *
+   * Two bytes of difference, no data difference at all. So the digest is taken
+   * over `concat_ws` of the columns cast individually — `::text` on a text
+   * column is the identity and adds no quoting — with a unit separator that
+   * cannot occur in the data, and NULL rendered explicitly so that
+   * `(NULL, 'a')` and `('a', NULL)` cannot collide.
+ */
+async function checksum(
+  sql: postgres.Sql,
+  table: string,
+  orderBy: string,
+  where: string,
+  columns: readonly string[],
+): Promise<{ rows: number; checksum: string }> {
+  const canonical = [...columns]
+    .sort()
+    // chr(31) as the separator and chr(30) for NULL, because they are
+    // PostgreSQL FUNCTIONS rather than escape strings: nothing has to survive
+    // a JS template literal, a shell, or a file encoding on the way here. The
+    // first attempt used E'\x00' and the server rejected it outright -- a NUL
+    // byte is not a legal value in a text field.
+    .map((c) => `coalesce("${c}"::text, chr(30))`)
+    .join(', chr(31), ');
+  const [row] = await sql.unsafe<{ n: string; ck: string | null }[]>(
+    `SELECT count(*)::text AS n,
+            md5(coalesce(string_agg(t.h, '' ORDER BY t.ord), '')) AS ck
+       FROM (SELECT row_number() OVER (ORDER BY ${orderBy}) AS ord,
+                    md5(concat_ws('', ${canonical})) AS h
+               FROM ${table} ${where}) t`,
+  );
+  return { rows: Number(row?.n ?? 0), checksum: row?.ck ?? '' };
+}
+
+async function main(): Promise<void> {
+  const argv = process.argv.slice(2);
+  const arg = (n: string) => {
+    const i = argv.indexOf(`--${n}`);
+    return i === -1 ? undefined : argv[i + 1];
+  };
+  const outDir = arg('out') ?? 'release';
+  /**
+   * Bounded by default. The plan is explicit: prove the pipeline on a small
+   * Linux-like rehearsal, do NOT clone the 291 GB factory. An unbounded export
+   * is also a DB_SCAN, which the resource gate has been deferring all round.
+   */
+  const judgmentLimit = arg('judgment-limit') ? Number(arg('judgment-limit')) : 500;
+
+  const url = process.env['DATABASE_URL'];
+  if (!url) throw new Error('DATABASE_URL is required');
+  const sql = postgres(url, { max: 2, onnotice: () => {} });
+  await pinSessionRendering(sql);
+
+  await mkdir(outDir, { recursive: true });
+
+  const [meta] = await sql<
+    { db: string; ver: string; collate: string; ctype: string; enc: string }[]
+  >`
+    SELECT current_database() AS db,
+           current_setting('server_version') AS ver,
+           datcollate AS collate, datctype AS ctype,
+           pg_encoding_to_char(encoding) AS enc
+      FROM pg_database WHERE datname = current_database()`;
+
+  const extensions = await sql<{ extname: string; extversion: string }[]>`
+    SELECT extname, extversion FROM pg_extension ORDER BY extname`;
+
+  const journal = (await import('node:fs/promises')).readFile;
+  const journalText = await journal(
+    new URL('../../../../packages/db/drizzle/meta/_journal.json', import.meta.url),
+    'utf8',
+  );
+  const entries = (JSON.parse(journalText) as { entries: { tag: string }[] }).entries;
+
+  const releaseVersion = `${new Date().toISOString().slice(0, 10)}.${Date.now().toString(36)}`;
+
+  /**
+   * The bound is applied to `judgments` and then FOLLOWED through the tables
+   * that reference it. A citation edge pointing at a judgment that was not
+   * exported is a dangling reference, and a release whose referential integrity
+   * depends on nobody looking is not a release.
+   */
+  /**
+   * The id set is RESOLVED ONCE and then bound as a literal array.
+   *
+   * The first version left it as a correlated `IN (SELECT ... LIMIT n)` in every
+   * dependent table's WHERE. On `judgments` that is an index range read; on
+   * `judgment_citations` — tens of millions of rows — the planner would not use
+   * `judgment_citations_citing_idx` for it and the export did not return in two
+   * minutes. `= ANY(array)` on 500 literal uuids does use the index.
+   *
+   * It also makes the slice STABLE. A repeated subquery is re-evaluated per
+   * table, so a concurrent insert could put a different 500 judgments in front
+   * of one table than another and the export would be internally inconsistent
+   * — the kind of corruption that only shows up as a dangling reference weeks
+   * later on the serving box.
+   */
+  const boundIds =
+    judgmentLimit > 0
+      ? (
+          await sql<{ id: string }[]>`
+            SELECT id FROM judgments ORDER BY id LIMIT ${judgmentLimit}`
+        ).map((r) => r.id)
+      : null;
+
+  const idList = boundIds === null ? '' : `'{${boundIds.join(',')}}'::uuid[]`;
+  const whereFor = (table: string): string => {
+    if (boundIds === null) return '';
+    if (table === 'judgments') return `WHERE id = ANY(${idList})`;
+    /**
+     * Only edges whose BOTH ends are in the slice. An edge pointing at a
+     * judgment that was not exported is a dangling reference, and a release
+     * whose referential integrity depends on nobody looking is not a release.
+     * Unresolved edges (`cited_judgment_id IS NULL`) are real data and are kept.
+     */
+    if (table === 'judgment_citations')
+      return `WHERE citing_judgment_id = ANY(${idList}) AND (cited_judgment_id IS NULL OR cited_judgment_id = ANY(${idList}))`;
+    if (table === 'judgment_judges' || table === 'judgment_statute_refs')
+      return `WHERE judgment_id = ANY(${idList})`;
+    return '';
+  };
+
+  const tables: Manifest['tables'] = [];
+  for (const { table, orderBy } of SERVING_TABLES) {
+    const where = whereFor(table);
+    const columns = await writableColumns(sql, table);
+    const { rows, checksum: ck } = await checksum(sql, table, orderBy, where, columns);
+
+    const columnList = columns.map((c) => `"${c}"`).join(', ');
+
+    const file = `${table}.copy`;
+    const path = join(outDir, file);
+    const query = `COPY (SELECT ${columnList} FROM ${table} ${where} ORDER BY ${orderBy}) TO STDOUT`;
+    /**
+     * ONE CONNECTION PER COPY, OPENED AND CLOSED HERE.
+     *
+     * A COPY leaves its connection in copy-out mode, and postgres.js does not
+     * always return it to the pool cleanly. Sharing the main pool wedged it:
+     * `pg_stat_activity` showed the NEXT statement sitting `idle` in
+     * `Client/ClientRead` for 224 seconds — the server had finished and the
+     * client never read the result. From the outside that is indistinguishable
+     * from a slow query, which is how twenty minutes went into looking at the
+     * wrong table.
+     *
+     * A dedicated connection per table costs seven handshakes and cannot wedge
+     * anything the next statement needs.
+     */
+    const copyConn = postgres(url, { max: 1, onnotice: () => {} });
+    await pinSessionRendering(copyConn);
+    const readable = await copyConn.unsafe(query).readable();
+    /**
+     * `pipeline()` NEVER RESOLVES here, and that cost an hour.
+     *
+     * postgres.js's COPY readable does not settle `stream/promises.pipeline`,
+     * so the first table hung forever and the export looked like a slow query
+     * against `judgment_citations` — which it was not: the same predicate
+     * measured 23 ms on its own. Waiting on the readable's own `end` is what
+     * actually completes.
+     */
+    await new Promise<void>((resolve, reject) => {
+      const dest = createWriteStream(path);
+      /**
+       * `finish` on the DESTINATION, not `end` on the source.
+       *
+       * `end` fires when the last byte leaves postgres.js, which for an empty
+       * table is before `createWriteStream` has opened the file at all — so the
+       * `stat` below threw ENOENT on a table that had simply produced no rows.
+       * A zero-row table is a legitimate export and must still leave a file.
+       */
+      dest.on('finish', resolve);
+      dest.on('error', reject);
+      readable.on('error', reject);
+      readable.pipe(dest);
+    });
+    await copyConn.end();
+
+    const { size } = await (await import('node:fs/promises')).stat(path);
+    tables.push({ table, rows, checksum: ck, bytes: size, file, columns });
+    console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${size} bytes`);
+  }
+
+  const manifest: Manifest = {
+    releaseVersion,
+    createdAt: new Date().toISOString(),
+    source: {
+      database: meta?.db ?? '',
+      serverVersion: meta?.ver ?? '',
+      collation: meta?.collate ?? '',
+      ctype: meta?.ctype ?? '',
+      encoding: meta?.enc ?? '',
+      extensions: extensions.map((e) => ({ name: e.extname, version: e.extversion })),
+    },
+    schemaVersion: {
+      highestMigration: entries.at(-1)?.tag ?? 'unknown',
+      migrationCount: entries.length,
+    },
+    bounded: { judgmentLimit: judgmentLimit > 0 ? judgmentLimit : null },
+    tables,
+    excluded: DELIBERATELY_EXCLUDED,
+  };
+
+  const manifestJson = `${JSON.stringify(manifest, null, 2)}\n`;
+  await writeFile(join(outDir, 'MANIFEST.json'), manifestJson, 'utf8');
+  /** The manifest's own checksum, so a tampered or truncated manifest is visible. */
+  await writeFile(
+    join(outDir, 'MANIFEST.sha256'),
+    `${createHash('sha256').update(manifestJson).digest('hex')}  MANIFEST.json\n`,
+    'utf8',
+  );
+
+  console.log(`\nrelease ${releaseVersion} written to ${outDir}`);
+  console.log(`source collation: ${manifest.source.collation}  (a Linux target CANNOT match this)`);
+  await sql.end();
+}
+
+main().catch((err: unknown) => {
+  console.error(err);
+  process.exit(1);
+});
