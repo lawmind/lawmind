@@ -43,6 +43,11 @@ import {
   type BodyTextState,
 } from '../body-text-safety.ts';
 import type { Field, Node } from './parse.ts';
+import {
+  caseNumberSuffixPattern,
+  normaliseTypeToken,
+  parseCaseNumber,
+} from '../case-number.ts';
 
 /** A nested `postgres.js` fragment. Composable, and always parameterised. */
 type Frag = ReturnType<Sql>;
@@ -201,8 +206,38 @@ function fieldMatch(sql: Sql, field: Field, value: string, phrase: boolean, wild
     case 'cite':
       return citationMatchFragment(sql, citationLookupKey(value));
 
-    case 'caseno':
-      return sql`j.case_number ILIKE ${likePattern(value, wildcard)}`;
+    /**
+     * A REGISTRY SERIAL, matched the way one behaves.
+     *
+     * This used to be `case_number ILIKE '%<value>%'`, which required the
+     * advocate to type the eCourts stored spelling character for character —
+     * `CWJC/2231/2006`, never `CWJC 2231 of 2006`. Measured on 60 judgments
+     * through the real route: the stored form found 96.7% and the printed form
+     * found 10.3%. See `case-number.ts` for the numbers and the mechanism.
+     *
+     * Now: the SERIAL and YEAR carry the match, anchored so
+     * `judgments_case_number_trgm` can serve it, and the type token filters the
+     * small candidate set that comes back. Both spellings compile to the same
+     * predicate, and neither is faster than the other by accident.
+     *
+     * The unparsed input keeps the old substring behaviour rather than
+     * returning nothing — `caseno:"CWJC"` is a legitimate "show me the writs"
+     * query and this is not the place to take it away.
+     */
+    case 'caseno': {
+      const parsed = wildcard ? null : parseCaseNumber(value);
+      if (parsed === null) return sql`j.case_number ILIKE ${likePattern(value, wildcard)}`;
+      const suffix: Frag = sql`j.case_number LIKE ${caseNumberSuffixPattern(parsed)}`;
+      if (parsed.typeToken === null) return suffix;
+      /**
+       * Punctuation stripped from BOTH sides, because the stored token is not
+       * normalised: Patna stores `CR. MISC./606/2011` and Orissa stores
+       * `CRLMC/999/2021`. A dictionary mapping one registry's spelling to
+       * another's would have to be invented, and `CLAUDE.md` forbids that.
+       */
+      return sql`(${suffix} AND upper(regexp_replace(split_part(j.case_number, '/', 1),
+                 '[^A-Za-z0-9]', '', 'g')) = ${normaliseTypeToken(parsed.typeToken)})`;
+    }
 
     /**
      * The eCourts Case Number Record — `docs/ai/CANONICAL_IDENTITY.md`'s

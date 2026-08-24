@@ -41,6 +41,7 @@ import { QueryError } from './qlang/lex.ts';
 import { type StructuredHit, countStructured, runStructured } from './qlang/compile.ts';
 import type { Node } from './qlang/parse.ts';
 import { looksStructured, parse } from './qlang/parse.ts';
+import { isCnr, parseCaseNumber } from './case-number.ts';
 import { classifyQuery, warrantsExactLookup } from './query-shape.ts';
 import { FIELDS } from './qlang/parse.ts';
 
@@ -91,9 +92,26 @@ export type StructuredOutcome =
       readonly validFields?: readonly string[];
     };
 
-/** A single, bare `cite:"..."` term — not wrapped in AND/OR/NOT/range/near. */
+/**
+ * A single, bare identity term — `cite:`, `caseno:` or `cnr:` — not wrapped in
+ * AND/OR/NOT/range/near.
+ *
+ * `caseno:` joined this list on evidence, not by analogy. A case number is a
+ * REGISTRY SERIAL and is unique only within a court: serial 2231 of 2006 exists
+ * in 13 courts and 17 case types, serial 1 of 2019 in 24 courts and 172 types.
+ * So more than one match is not a ranked list to be shown confidently — it is
+ * the same "a citation is supposed to identify ONE judgment" problem, and the
+ * caller must render a disambiguation rather than a winner.
+ *
+ * `cnr:` is here for completeness rather than expectation: it is a national key
+ * and resolved to exactly one judgment in 60 of 60 probes. If it ever resolves
+ * to two — a common order filed under one CNR would do it — the right answer is
+ * still to show both rather than to pick.
+ */
+const IDENTITY_FIELDS = new Set(['cite', 'caseno', 'cnr']);
+
 function isBareCitationTerm(node: Node): boolean {
-  return node.kind === 'term' && node.field === 'cite';
+  return node.kind === 'term' && IDENTITY_FIELDS.has(node.field);
 }
 
 /**
@@ -155,6 +173,40 @@ function bareCitationAsField(query: string): string | null {
   if (!warrantsExactLookup(shape) || shape.citation === null) return null;
   if (shape.citation.includes('"')) return null;
   return `cite:"${shape.citation}"`;
+}
+
+/**
+ * A bare CNR or a bare case number, rewritten to the operator that answers it.
+ *
+ * ── THE DEFECT THIS EXISTS FOR — MEASURED, 24 Aug 2026, LCC ─────────────────
+ *
+ * Same shape as the bare-citation rewrite above and found the same way: by
+ * asking the real route for judgments we already knew were in the corpus.
+ * 60 judgments, four spellings each:
+ *
+ *     caseno:"CWJC/2231/2006"    96.7% found   p50   917 ms
+ *     CWJC/2231/2006              1.7% found   p50     3 ms   95.0% returned ZERO
+ *     CWJC 2231 of 2006          10.3% found   p50    83 ms   34.5% multi-court
+ *     cnr:"BRHC010328902006"    100.0% found   p50     2 ms
+ *
+ * **An advocate typing their own case number got an empty result set in three
+ * milliseconds.** `full_text_tsv` is built from `full_text` alone, so the case
+ * number is not in the searchable text and nothing routed the query to the
+ * column holding it. The typed form was worse than empty: `plainto_tsquery`
+ * split it into `'cwjc' & '2231' & '2006'` and ANDed those against body text,
+ * so a third of them returned a plausible ranked list of unrelated judgments
+ * from other courts.
+ *
+ * CNR is checked FIRST because it is unambiguous — a 16-character national key,
+ * btree-indexed, one judgment or none. A case number is a registry serial and
+ * is only unique within a court; it goes through `caseno:`, whose bare-term
+ * ambiguity rule below refuses to pin.
+ */
+function bareIdentifierAsField(query: string): string | null {
+  const text = query.trim();
+  if (text.includes('"')) return null;
+  if (isCnr(text)) return `cnr:"${text.toUpperCase()}"`;
+  return parseCaseNumber(text) === null ? null : `caseno:"${text}"`;
 }
 
 /**
@@ -232,7 +284,12 @@ export async function answerStructured(
    */
   offset = 0,
 ): Promise<StructuredOutcome> {
-  const asField = looksStructured(query) ? null : bareCitationAsField(query);
+  /* Citation first, then CNR / case number. A neutral citation and a case
+   * number cannot both parse from one string, but the order is fixed anyway so
+   * the routing is a rule rather than a race between two regexes. */
+  const asField = looksStructured(query)
+    ? null
+    : (bareCitationAsField(query) ?? bareIdentifierAsField(query));
   if (asField !== null) query = asField;
   else if (!looksStructured(query)) return { kind: 'not_structured' };
 

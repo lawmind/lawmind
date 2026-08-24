@@ -67,7 +67,19 @@ const QUERY_CANCELED = '57014';
  * time, which is a stronger statement than either ranker timing out: those lose
  * candidates, this loses the answer.
  */
-export type DegradedArm = 'sparse_timeout' | 'dense_timeout' | 'pin_timeout';
+export type DegradedArm =
+  | 'sparse_timeout'
+  | 'dense_timeout'
+  | 'pin_timeout'
+  /**
+   * The sparse arm REFUSED to rank, before running, because the match set it
+   * would have had to rank is unbounded. Distinct from `sparse_timeout`: a
+   * timeout is a query that was tried and ran out of clock, this is a query
+   * that was never going to fit in memory and was not attempted.
+   *
+   * See {@link SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY}.
+   */
+  | 'sparse_unbounded';
 
 function isQueryCanceled(error: unknown): boolean {
   return (
@@ -327,7 +339,12 @@ function rrf(lists: Ranked[][]): Map<string, number> {
  */
 
 /** Sparse half: lexical match over the full text, through the gin index. */
-async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
+async function sparse(
+  sql: Sql,
+  query: string,
+  filters: SearchFilters,
+  onDegrade?: (arm: DegradedArm) => void,
+): Promise<Ranked[]> {
   /**
    * ───────────────────────────────────────────────────────────────────────────
    * THERE IS ONE SPARSE PASS NOW, AND IT IS THE RARE-TERM AND
@@ -350,7 +367,7 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
    * worked; what is removed is the full-AND pass over a long query, which is the
    * shape that never worked.
    */
-  return sparseAny(sql, query, filters);
+  return sparseAny(sql, query, filters, onDegrade);
 }
 
 /**
@@ -434,7 +451,121 @@ async function sparse(sql: Sql, query: string, filters: SearchFilters): Promise<
  */
 const SPARSE_RARE_LEXEMES = 3;
 
-async function sparseAny(sql: Sql, query: string, filters: SearchFilters): Promise<Ranked[]> {
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE BOUND ON THE RANKED SET — WHAT THE 96 MiB OUT-OF-MEMORY ACTUALLY NEEDED
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `statement_timeout` bounds TIME. It does not bound MEMORY, and the incident
+ * that produced this constant was not slow — it 500'd:
+ *
+ *     PostgresError: out of memory   code 53200
+ *     "Failed on request of size 100663296 in memory context ExecutorState"
+ *
+ * Two mechanisms have been proposed and BOTH are refuted by measurement, which
+ * is why this bound is stated in terms of the match SET and not of either:
+ *
+ *   * *one pathological judgment whose tsvector detoasts to 96 MiB* — NEW1
+ *     measured the corpus (bus 1063): no tsvector exceeds 4 MiB and the largest
+ *     detoasts to about 388 KiB. No such judgment exists.
+ *   * *the `ORDER BY ts_rank` sort growing its memtuples array* — refuted here.
+ *     `EXPLAIN (ANALYZE, BUFFERS)` on the real shape reports **`Sort Method:
+ *     top-N heapsort  Memory: 31kB`**. The sort is bounded by the `LIMIT` and
+ *     is three orders of magnitude too small.
+ *
+ * What is NOT refuted, and is measured, is that everything else in this plan
+ * scales with the number of MATCHING ROWS, in `ExecutorState`, which is the
+ * context the error names. On a match set of 13,492 rows the arm read 42,797
+ * blocks (~334 MB) and took 9,018 ms, because `ts_rank` detoasts the tsvector
+ * of every matching row.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * AND THE PLANNER CANNOT HELP, BY CONSTRUCTION
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The tsquery is built INSIDE the query from a bind parameter, so the planner
+ * never sees the lexemes. `EXPLAIN` returns the identical plan and the identical
+ * estimate — **`rows=84744`** — for every query, against measured upper bounds
+ * of:
+ *
+ *     anticipatory bail / dowry / harassment      295,681      3.5x the estimate
+ *     appeal / judgment                         3,670,878       43x
+ *     court                                    16,965,472      200x
+ *
+ * So there is no statistics fix and no plan hint. The size has to be bounded by
+ * us, from data we already hold.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY DOCUMENT FREQUENCY IS THE RIGHT BOUND, AND WHY 0.05
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The lexemes are ANDed, so **the match set cannot exceed the document count of
+ * the RAREST of them.** That is a hard upper bound, it is already read by this
+ * function from `lexeme_document_frequency`, and it costs one index scan.
+ *
+ * 0.05 is ~935,000 documents. At the measured 0.67 ms per ranked row that is
+ * over ten minutes of `ts_rank` — far outside any request budget and squarely
+ * inside the region where a match-set-proportional allocation reaches tens of
+ * MiB. The threshold is stated as an upper bound on a cost that was measured
+ * before it was chosen, not fitted to an outcome afterwards.
+ *
+ * **This does not delete the all-common fallback.** NEW1 measured that removing
+ * it is the worst available arm (bus 1025: 100% timeouts, zero gold). The
+ * fallback still runs and still ranks — it is only refused when its own rarest
+ * term is common enough that the ranking could not have completed anyway. A
+ * query refused here previously returned a 500 or a timeout; it now returns the
+ * dense arm's results and says `sparse_unbounded`, which is a degradation the
+ * contract already knows how to render and an advocate can act on.
+ */
+const SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY = 0.05;
+
+async function sparseAny(
+  sql: Sql,
+  query: string,
+  filters: SearchFilters,
+  onDegrade?: (arm: DegradedArm) => void,
+): Promise<Ranked[]> {
+  /**
+   * The lexeme selection, lifted out of the ranking query so its answer can be
+   * INSPECTED before anything is ranked.
+   *
+   * It is the same three CTEs, unchanged, and it is cheap: an index scan on
+   * `lexeme_document_frequency` per term, measured at single-digit milliseconds.
+   * Splitting it costs one round trip and buys the only bound available.
+   */
+  const lexemes = await sql<{ lexeme: string; df: string }[]>`
+    WITH scored AS (
+      SELECT
+        l.lexeme,
+        coalesce(f.document_count::numeric / nullif(f.sampled_documents, 0), 0) AS df
+      FROM unnest(to_tsvector('english', ${query})) AS l
+      LEFT JOIN lexeme_document_frequency f ON f.lexeme = l.lexeme
+    ),
+    discriminating AS (
+      SELECT lexeme, df FROM scored WHERE df <= ${SPARSE_MAX_DOCUMENT_FREQUENCY}
+    )
+    SELECT lexeme, df::text AS df FROM (
+      SELECT lexeme, df FROM discriminating
+      UNION ALL
+      SELECT lexeme, df FROM scored WHERE NOT EXISTS (SELECT 1 FROM discriminating)
+    ) candidates
+    ORDER BY df ASC, length(lexeme) DESC
+    LIMIT ${SPARSE_RARE_LEXEMES}`;
+
+  if (lexemes.length === 0) return [];
+
+  /**
+   * ANDed terms, so the rarest bounds the match set. `df = 0` means the corpus
+   * sample never saw the lexeme, which `scored` above treats as RARE on purpose
+   * — failing that way costs latency, failing the other way costs recall, and a
+   * recall failure leaves no trace.
+   */
+  const rarestDf = Math.min(...lexemes.map((l) => Number(l.df)));
+  if (rarestDf > SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY) {
+    onDegrade?.('sparse_unbounded');
+    return [];
+  }
+
   const rows = await sql<{ id: string }[]>`
     WITH scored AS (
       -- MEASURED document frequency, not length. The rule here used to be
@@ -1496,7 +1627,14 @@ export async function hybridSearch(
   const [sparseRanked, denseResult] = await Promise.all([
     mode === 'dense' || skipSparse
       ? Promise.resolve([] as Ranked[])
-      : bounded('sparse_timeout', [] as Ranked[], () => sparse(sql, query, filters), onDegrade),
+      : bounded(
+          'sparse_timeout',
+          [] as Ranked[],
+          // `onDegrade` is passed BOTH ways on purpose: `bounded` reports the
+          // clock running out, and the arm itself reports refusing to start.
+          () => sparse(sql, query, filters, onDegrade),
+          onDegrade,
+        ),
     // A corpus with no embeddings yet still searches, lexically. Returning
     // nothing because half the pipeline is cold would be worse than less.
     queryVector && mode !== 'sparse'
