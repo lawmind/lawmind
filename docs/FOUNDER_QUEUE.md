@@ -5317,3 +5317,29 @@ intact against an anonymised user, (b) null the `user_id` and keep the money
 record, or (c) delete it outright. If (b) or (c), one line changes in
 `services/api/src/auth/erasure.ts` and a test asserts it. If the answer needs
 counsel, that is the same conversation as the DPDP retention schedule.
+
+---
+
+## FQ-OPS-ALERT-EMAIL · Which address should an operational page wake? · LCC, 24 August 2026
+
+**One value, and the alerting path is live.**
+
+LCC-5 built delivery end to end: conditions are evaluated in `ALERT_RULES`, a
+poller delivers `page` severity through Resend, every attempt is recorded in
+`ops_alert_deliveries` including failures, and a cooldown stops a persistent
+condition becoming a mailing list. It was proven with an injected drill and it
+caught a real condition on the first run.
+
+**It refuses to run in production until `OPS_ALERT_EMAIL` is set.** That refusal
+is deliberate — falling back to the console transport would record every page as
+delivered while nobody was ever told, and the absence of a page reads as
+"nothing is wrong".
+
+`RESEND_API_KEY` is already present. The only missing value is **who to wake.**
+
+**Founder action:** set `OPS_ALERT_EMAIL` to an address that is actually read
+outside working hours. If it should be more than one person, Resend accepts a
+comma-separated list and no code changes.
+
+Not blocking anything this round — local development uses the console transport,
+which says out loud that it sent nothing.
