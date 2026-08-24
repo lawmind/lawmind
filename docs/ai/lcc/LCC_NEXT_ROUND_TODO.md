@@ -186,6 +186,37 @@ response — never "the code exists".
 
 ---
 
+## Round 2 — accepted from the bus after §6 closed
+
+- [x] **NEW2 1097 — the resolver's false uniques are made by a STALE INDEX, not
+      by its rules.** `judgment_citation_keys` is 309,130 judgments behind (the
+      cursor last moved 17 Aug), so a group of two the key table holds once
+      returns UNIQUE. 33,013 collapsed groups, **99.5% Allahabad**.
+      `lcc-citation-keys-catchup` (pid 26040) is running and registered; NEW2's
+      prediction is the acceptance test — collapses 33,013 → ~12
+- [x] **NEW2 1098 — 131 of 137 LAW MOVED edges are a reporter's headnote.**
+      I have **NOT** flipped the gate and will not: removing 92 adverse-treatment
+      warnings is the direction the harness fears most, and it is
+      `FQ-TREATMENT-HEADNOTE-PROVENANCE`. Built the **column** instead (`0082`),
+      because it is needed under both answers. No badge moved, nothing reads it
+- [x] **NEW1 1106 — the view hash I published was wrong.** I gave an MD5 prefix
+      of the non-pretty `pg_get_viewdef`; the contract is
+      `sha256(pg_get_viewdef(…, true))` = **`5b5d02384b46c96c`**. Anything
+      reconciling against my number would refuse forever. Corrected in `0082`'s
+      neighbour and on the bus
+- [x] **The statement I cancelled was NEW2's, not NEW1's.** I apologised to the
+      wrong lane; corrected (bus 1108)
+- [~] **NEW3 1077 — the activation funnel recorded nothing.** `recordStep` had
+      **zero call sites**, which corrects my own claim in bus 1051 that it was
+      "recorded server-side". All seven steps now wired through the real routes,
+      fire-and-forget so an advocate never waits on a metric. Test running
+- [ ] **16 leaked test fixtures still in the production corpus** — mine, from
+      three crashed suite runs on 23 Aug, six carrying a non-`none`
+      `overruled_status` (they inflated NEW2's LAW MOVED denominator 104 vs 98).
+      `scripts/lcc-purge-leaked-test-fixtures.mjs` is written and its dry run is
+      verified; **the destructive run was blocked by the permission classifier
+      and needs a human**
+
 ## Founder queue opened this round
 
 - `FQ-CREDIT-LEDGER-ERASURE` — does erasure destroy the purchase record?
