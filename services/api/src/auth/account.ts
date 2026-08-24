@@ -24,6 +24,8 @@ import { z } from 'zod';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { bindPendingShares } from '../matters/shares.ts';
+import { logger } from '../logger.ts';
+import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 
 /**
  * The terms an advocate is asked to accept.
@@ -181,6 +183,22 @@ export async function acceptTerms(
       409,
     );
   }
+
+  /**
+   * Funnel step 1. Accepting the terms IS onboarding — it is the one action
+   * every advocate takes exactly once, and `users.terms_accepted_at` is already
+   * the row that records it (PD-8 as superseded).
+   */
+  recordStepForAuthIdInBackground(
+    sql,
+    authId,
+    'onboarded',
+    (err) =>
+      logger.error(
+        { request_id: c.get('requestId'), err, step: 'onboarded' },
+        'activation step not recorded',
+      ),
+  );
 
   return ok(c, { termsAcceptedAt: row.terms_accepted_at, termsVersion: row.terms_version });
 }

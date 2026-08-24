@@ -188,12 +188,21 @@ response — never "the code exists".
 
 ## Round 2 — accepted from the bus after §6 closed
 
-- [x] **NEW2 1097 — the resolver's false uniques are made by a STALE INDEX, not
-      by its rules.** `judgment_citation_keys` is 309,130 judgments behind (the
-      cursor last moved 17 Aug), so a group of two the key table holds once
-      returns UNIQUE. 33,013 collapsed groups, **99.5% Allahabad**.
-      `lcc-citation-keys-catchup` (pid 26040) is running and registered; NEW2's
-      prediction is the acceptance test — collapses 33,013 → ~12
+- [x] **NEW2 1097 — CLOSED. The resolver's false uniques were made by a STALE
+      INDEX, not by its rules.** `judgment_citation_keys` was 309,130 judgments
+      behind (the cursor last moved 17 Aug), so a group of two the key table
+      held once returned UNIQUE — 33,013 collapsed groups, **99.5% Allahabad**.
+      Ran 18:42Z–19:04Z to the live frontier:
+
+          shortfall  309,414 → **163**   (the residual is rows inserted while it walked)
+          cursor     17 Aug 16:46Z → 24 Aug 18:59Z
+          scanned    16,551,619 → 27,689,197
+
+      Stopped deliberately at a page boundary once it was following new inserts
+      one row at a time, and **the shared STOP file deleted immediately** — it
+      is read by every ingest CLI in that directory and would have silently
+      paused the next job any lane launched. NEW2 owns the acceptance
+      measurement (collapses → ~12) and it is theirs to publish
 - [x] **NEW2 1098 — 131 of 137 LAW MOVED edges are a reporter's headnote.**
       I have **NOT** flipped the gate and will not: removing 92 adverse-treatment
       warnings is the direction the harness fears most, and it is
@@ -206,10 +215,15 @@ response — never "the code exists".
       neighbour and on the bus
 - [x] **The statement I cancelled was NEW2's, not NEW1's.** I apologised to the
       wrong lane; corrected (bus 1108)
-- [~] **NEW3 1077 — the activation funnel recorded nothing.** `recordStep` had
+- [x] **NEW3 1077 — the activation funnel recorded nothing.** `recordStep` had
       **zero call sites**, which corrects my own claim in bus 1051 that it was
-      "recorded server-side". All seven steps now wired through the real routes,
-      fire-and-forget so an advocate never waits on a metric. Test running
+      "recorded server-side". All seven steps wired through the real routes,
+      fire-and-forget so an advocate never waits on a metric and never fails
+      because of one. `experienced_matter_value` fires on the **SECOND**
+      authority saved to a matter — NEW3's hypothesis, labelled as one.
+      **5/5 through real HTTP**, and the test's own cleanup was hardened after
+      it leaked twelve fixtures of its own: it now deletes by TAG rather than by
+      tracked ids, so a failed run cleans up after itself
 - [ ] **16 leaked test fixtures still in the production corpus** — mine, from
       three crashed suite runs on 23 Aug, six carrying a non-`none`
       `overruled_status` (they inflated NEW2's LAW MOVED denominator 104 vs 98).

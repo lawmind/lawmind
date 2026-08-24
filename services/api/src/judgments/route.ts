@@ -23,6 +23,8 @@ import {
 } from './precedential-effect.ts';
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
 import { dateQualityOf } from './date-quality.ts';
+import { logger } from '../logger.ts';
+import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 
 export const judgmentParams = z.object({ id: z.string().uuid() });
 
@@ -135,6 +137,24 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
             ${row.neutral_citation ?? row.reporter_citations[0] ?? row.case_title},
             ${row.id}, 'verified', 'corpus', true, ${policy.bannerStatus}, 'judgment_detail')
   `;
+
+  /**
+   * Funnel step 3. Opening the full text of a judgment is the moment an
+   * advocate stops looking at a result list and reads the primary source, which
+   * is the thing this product exists to put in front of them.
+   *
+   * Only reached after the 404, so a bad id counts nothing.
+   */
+  recordStepForAuthIdInBackground(
+    sql,
+    c.get('authId'),
+    'opened_primary_authority',
+    (err) =>
+      logger.error(
+        { request_id: c.get('requestId'), err, step: 'opened_primary_authority' },
+        'activation step not recorded',
+      ),
+  );
 
   return ok(c, {
     judgmentId: row.id,

@@ -29,6 +29,8 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { recordStepInBackground } from '../product/activation.ts';
+import { logger } from '../logger.ts';
 
 export const createMatterBody = z.object({
   caseTitle: z.string().min(1).max(300),
@@ -210,6 +212,22 @@ export async function createMatter(
             'manual')
     RETURNING ${sql.unsafe(MATTER_COLUMNS)}
   `;
+  /**
+   * Funnel step 5. Fire-and-forget: an advocate's matter must not fail to be
+   * created because a metric could not be written. NEW3 bus 1077 — this and six
+   * others were never wired, so `activation_events` was empty everywhere.
+   */
+  recordStepInBackground(
+    sql,
+    userId!,
+    'created_matter',
+    (err) =>
+        logger.error(
+          { request_id: c.get('requestId'), err, step: 'created_matter' },
+          'activation step not recorded',
+        ),
+  );
+
   return ok(c, { matter: shapeMatter(row!) }, 201);
 }
 

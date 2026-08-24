@@ -30,6 +30,7 @@ import {
   unappliedTreatment,
   type OverruledStatus,
 } from '../judgments/precedential-effect.ts';
+import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 
 /**
  * The derived precedential layers for a page of structured hits, in ONE query.
@@ -320,6 +321,30 @@ export async function handleSearch(
       requestId: c.get('requestId'),
       subject: c.get('authId'),
     });
+
+    /**
+     * Funnel step 2, and the adjective is load-bearing: SUCCESSFUL.
+     *
+     * A search that returned nothing is not the moment an advocate found the
+     * law, and a search that 500'd certainly is not — counting either would
+     * make the funnel's widest step the one that measures least. So: signed in,
+     * a 2xx, and at least one result.
+     *
+     * In `finally`, after the response, and in the background: an advocate must
+     * not wait on a metric, and must never fail because of one.
+     */
+    if (c.res.status < 400 && outcome.resultCount > 0) {
+      recordStepForAuthIdInBackground(
+        deps.sql,
+        c.get('authId'),
+        'first_successful_search',
+        (err) =>
+          logger.error(
+            { request_id: c.get('requestId'), err, step: 'first_successful_search' },
+            'activation step not recorded',
+          ),
+      );
+    }
   }
 }
 

@@ -34,6 +34,8 @@ import { entitlementWire, requireCapability } from '../entitlements/entitlements
 import { PREMIUM_FLAGS, disabledReason, premiumEnabled } from './gate.ts';
 import { cancelJob, getJob, startJob } from './jobs.ts';
 import { hearingPackPreview } from './preview.ts';
+import { logger } from '../logger.ts';
+import { recordStepInBackground } from '../product/activation.ts';
 
 export const startJobBody = z
   .object({
@@ -82,6 +84,23 @@ export async function getPremiumPreview(
   const [matter] = await sql<{ id: string }[]>`
     SELECT id FROM matters WHERE id = ${matterId} AND user_id = ${userId}`;
   if (!matter) return fail(c, 'NOT_FOUND', 'no matter with that id', 404);
+
+  /**
+   * Funnel step 7. Opening the preview is INTENT, not purchase, and the step is
+   * named for what it is — `PREMIUM_STRATEGY` is explicit that a premium moment
+   * is contextual, so an advocate reaching this screen is the signal, whatever
+   * they do next.
+   */
+  recordStepInBackground(
+    sql,
+    userId,
+    'premium_intent',
+    (err) =>
+      logger.error(
+        { request_id: c.get('requestId'), err, step: 'premium_intent' },
+        'activation step not recorded',
+      ),
+  );
 
   return ok(c, await hearingPackPreview(sql, matterId));
 }

@@ -74,6 +74,8 @@ import {
   precedentialPolicy,
   type OverruledStatus,
 } from '../judgments/precedential-effect.ts';
+import { logger } from '../logger.ts';
+import { recordStepInBackground } from '../product/activation.ts';
 
 export const addAuthorityBody = z.object({
   judgmentId: z.string().uuid(),
@@ -285,6 +287,48 @@ export async function addAuthority(
   `;
 
   if (row) {
+    /**
+     * Funnel steps 4 and 6, and the second is the ACTIVATION HYPOTHESIS.
+     *
+     * NEW3's `ACTIVATION_FUNNEL_V1.md` recommends `AUTHORITY_SAVED_TO_MATTER` —
+     * specifically a SECOND authority on a matter that already had one — over
+     * "two briefings opened", because it is cheaper to compute and does not
+     * depend on the briefing feature that this round's own evidence (their
+     * 10-matter walkthrough, bus 1075) says is not trustworthy yet.
+     *
+     * It is a HYPOTHESIS and is labelled as one. The old metric is not deleted.
+     *
+     * The count is taken AFTER the insert, so "2 or more" means this save is the
+     * one that crossed the line. `recordStep` is idempotent per user and step,
+     * so a third and fourth save cost one no-op insert each.
+     */
+    recordStepInBackground(
+      sql,
+      userId,
+      'saved_authority',
+      (err) =>
+        logger.error(
+          { request_id: c.get('requestId'), err, step: 'saved_authority' },
+          'activation step not recorded',
+        ),
+    );
+
+    const [saved] = await sql<{ n: string }[]>`
+      SELECT count(*)::text AS n FROM matter_authorities
+       WHERE matter_id = ${matterId} AND removed_at IS NULL`;
+    if (Number(saved?.n ?? 0) >= 2) {
+      recordStepInBackground(
+        sql,
+        userId,
+        'experienced_matter_value',
+        (err) =>
+        logger.error(
+          { request_id: c.get('requestId'), err, step: 'experienced_matter_value' },
+          'activation step not recorded',
+        ),
+      );
+    }
+
     return ok(
       c,
       {

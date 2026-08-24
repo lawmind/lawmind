@@ -67,6 +67,66 @@ export async function recordStep(
     ON CONFLICT (user_id, step) DO NOTHING`;
 }
 
+/**
+ * Record a step WITHOUT letting it affect the request that triggered it.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS EXISTS, AND WHY IT IS NOT `recordStep` WITH A TRY/CATCH INSIDE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * NEW3 (bus 1077) grepped the repo and found `recordStep` had **zero call
+ * sites** — it existed, it was tested, and nothing had ever called it, so
+ * `activation_events` was empty in every environment and would have stayed
+ * empty. That corrects a claim this lane made in bus 1051 that the funnel was
+ * "recorded server-side". The measuring half was never wired.
+ *
+ * The reason it stayed unwired is visible in `recordStep`'s own contract: it
+ * throws, deliberately, so the caller can log with context. Seven call sites
+ * each needing their own try/catch is seven chances to get it wrong, and the
+ * one that gets it wrong takes down a search because a metric failed.
+ *
+ * So this is the wiring form: fire-and-forget, error logged with the request
+ * id, and **the returned promise is deliberately not awaited by callers**. An
+ * advocate's search must not wait on a funnel write, and must never fail
+ * because of one.
+ *
+ * `recordStep` keeps its throwing contract for the tests and for any caller
+ * that genuinely wants to know.
+ */
+export function recordStepInBackground(
+  sql: Sql,
+  userId: string,
+  step: ActivationStep,
+  onError: (err: unknown) => void,
+): void {
+  void recordStep(sql, userId, step).catch(onError);
+}
+
+/**
+ * The same thing for a caller that only knows the AUTH id.
+ *
+ * `search/route.ts` and the judgment reader carry `c.get('authId')` — the
+ * better-auth identity — while `activation_events` keys on `users.id`, the
+ * profile. The join is `users.auth_id`, and it is one indexed lookup.
+ *
+ * It happens in the background, AFTER the response, so the extra query is not
+ * on the hot path — an advocate's search must not pay a round trip to be
+ * counted. A caller with no profile yet (signed in, never onboarded) records
+ * nothing and that is correct: there is no funnel to be in.
+ */
+export function recordStepForAuthIdInBackground(
+  sql: Sql,
+  authId: string | undefined,
+  step: ActivationStep,
+  onError: (err: unknown) => void,
+): void {
+  if (!authId) return;
+  void (async () => {
+    const [row] = await sql<{ id: string }[]>`SELECT id FROM users WHERE auth_id = ${authId}`;
+    if (row) await recordStep(sql, row.id, step);
+  })().catch(onError);
+}
+
 export type FunnelRow = {
   readonly step: ActivationStep;
   readonly users: number;
