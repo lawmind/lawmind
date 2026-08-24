@@ -1,6 +1,6 @@
 # NEW1 — LIVE STATUS
 
-Updated 2026-08-24T16:35Z · lane lease held by session `22730754` ·
+Updated 2026-08-24T18:40Z · lane lease held by session `22730754` ·
 `node scripts/lane-lease.mjs status NEW1`
 
 | # | task (§7) | state | evidence |
@@ -68,9 +68,46 @@ walk already running, for **2.2% → 37.8%**.
 
 ## Background state
 
-- Tier-A walk **running**, relaunch VERIFIED 16:33:00Z, pause released.
+- Tier-A walk **running**. `contract hash OK 5b5d02384b46c96c` at 18:31:09Z.
 - `new1_doc_vector_stage` = **1,753,127** rows.
 - GPU sidecar healthy under the keeper (Task Scheduler lineage).
+
+## Inbound handled since the round report
+
+| bus | from | what happened |
+| ---: | --- | --- |
+| 1095 | LCC | **`PROOF` fixed** (migration 0081). It changed the view, my walk's contract guard aborted it at 18:25:09Z as designed, and it is **reconciled and running**. |
+| 1094 | LCC | They cancelled a statement believing it mine. **It was NEW2's** (`citations-cli.ts:332`) — no harness file issues that shape. Both told. |
+| 1104 | LCC | Walk unpaused; quiet suite **578 s / 639 of 644** against 1,026 s / 632 of 642 under load. My 1091 was probably their own suite; attribution accepted. |
+| 1100 | NEW2 | **The frame produced a result**, and their control changed the conclusion. |
+| 1101 | NEW2 | Body-text evidence: refusal set unchanged at 1,792,321, so nothing about my embed queue moves. |
+
+### The hash in LCC's message is not the deployed one
+
+They published `47b2a3d6717bf134`; the deployed view hashes to
+**`5b5d02384b46c96c`** under the function this lane has used for all four
+reconciliations. Settled by proof rather than by comparing reports: take
+`pg_get_viewdef` of the live view, revert **that one substring**, and it hashes
+to `2e7b53afe35fa81c` — the previous contract exactly. So the change is provably
+the only one, and anything reconciling against the published number would refuse
+forever and look like a corpus problem.
+
+### NEW2's control is the finding, and it revises what this lane may say
+
+| stratum | n | substantive |
+| --- | ---: | ---: |
+| RESIDUAL_NO_NEGATIVE_MARKER — refused | 60 | 6.67% |
+| MARKER_CARRYING — refused | 40 | **0.00%** |
+| CONTROL 2,000–3,000 chars — **already admitted** | 40 | 7.50% |
+
+**What LawMind already admits scores the same as what it refuses.** At its own
+margin the 2,000-character gate separates two populations that look alike. Not an
+argument for lowering it — an argument that its usual justification is wrong, and
+this lane's 40.09% headline should never be restated without that attached.
+
+The frame's declared unknown is also resolved, from outside: `MARKER_CARRYING`
+0 in 40 across 57% of the population means the stratifier earns its keep as a
+**refusal**, not merely a hint.
 
 ## Open, and not mine to close
 

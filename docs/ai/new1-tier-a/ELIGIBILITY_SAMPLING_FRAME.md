@@ -4,7 +4,17 @@
 **Artefact:** `docs/ai/new1-tier-a/eligibility-sampling-frame.json`
 **Instrument:** `services/harness/src/eligibility-frame-cli.ts` ·
 `pnpm --filter @lawmind/harness frame:eligibility`
-**Deployed eligibility view:** sha256 prefix `2e7b53afe35fa81c`
+**Eligibility view this census was taken against:** sha256 prefix
+`2e7b53afe35fa81c`
+
+> **The deployed view has since changed** to `5b5d02384b46c96c` (LCC migration
+> `0081`, 24 Aug, closing NEW1 bus 1079). The census above is deliberately left
+> at the hash it was measured under. The change is provably confined to the
+> `text_safety_grade` CASE branch — reverting that one substring reproduces
+> `2e7b53afe35fa81c` byte for byte — and **this frame reads none of it**: the
+> population predicate uses `axis_a_identity`, `axis_b_text`,
+> `is_cited_authority` and `text_length`, all unchanged. So the numbers stand and
+> a re-run under the new hash would reproduce them.
 
 ---
 
