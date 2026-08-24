@@ -1,0 +1,150 @@
+{
+  "generated_at": "2026-08-24T23:39:43.126Z",
+  "pattern": "^[0-9]{4}(JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER|JAN|FEB|MAR|APR|JUN|JUL|AUG|SEP|SEPT|OCT|NOV|DEC)[0-9]{1,2}$",
+  "totals": {
+    "stamp_key_rows": 431,
+    "distinct_stamp_keys": 165,
+    "judgments_carrying_one": 431
+  },
+  "by_group_size": [
+    {
+      "held": 1,
+      "keys": 75
+    },
+    {
+      "held": 2,
+      "keys": 33
+    },
+    {
+      "held": 3,
+      "keys": 18
+    },
+    {
+      "held": 4,
+      "keys": 17
+    },
+    {
+      "held": 5,
+      "keys": 7
+    },
+    {
+      "held": 6,
+      "keys": 2
+    },
+    {
+      "held": 7,
+      "keys": 3
+    },
+    {
+      "held": 8,
+      "keys": 2
+    },
+    {
+      "held": 9,
+      "keys": 2
+    },
+    {
+      "held": 10,
+      "keys": 4
+    },
+    {
+      "held": 12,
+      "keys": 1
+    },
+    {
+      "held": 14,
+      "keys": 1
+    }
+  ],
+  "unique_examples": [
+    {
+      "citation_key": "2009AUGUST24",
+      "source_text": "2009:AUGUST:24",
+      "court": "Madras High Court",
+      "date": "2009-08-11",
+      "title": "MALAYALA KANDAR Vs ILANGO"
+    },
+    {
+      "citation_key": "2011APRIL05",
+      "source_text": "2011:APRIL:05",
+      "court": "Madras High Court",
+      "date": "2011-03-24",
+      "title": "A. KAADAPPAN, S/O.ALAGAPPAN, Vs THE JOINT COMMISSION"
+    },
+    {
+      "citation_key": "2011APRIL06",
+      "source_text": "2011:APRIL:06",
+      "court": "Madras High Court",
+      "date": "2011-02-24",
+      "title": "J.RATHINASAMY, Vs THE SPECIAL THASILDHAR"
+    },
+    {
+      "citation_key": "2011APRIL08",
+      "source_text": "2011:APRIL:08",
+      "court": "Madras High Court",
+      "date": "2011-04-05",
+      "title": "C.RAJESHKUMAR, Vs THE DISTRICT COLLECTOR"
+    },
+    {
+      "citation_key": "2011APRIL21",
+      "source_text": "2011:APRIL:21",
+      "court": "Madras High Court",
+      "date": "2011-04-18",
+      "title": "M.BALAKRISHNAN Vs THE EXECUTIVE ENGINEER"
+    },
+    {
+      "citation_key": "2011APRIL27",
+      "source_text": "2011:APRIL:27",
+      "court": "Madras High Court",
+      "date": "2011-04-06",
+      "title": "AAMS S.SUDARSAN, Vs THE VICE CHANCELLOR,"
+    },
+    {
+      "citation_key": "2011AUGUST01",
+      "source_text": "2011:AUGUST:01",
+      "court": "Madras High Court",
+      "date": "2011-07-29",
+      "title": "CHELLAPPANKOTTAI KANMOI FISH- Vs THE DISTRICT COLLEC"
+    },
+    {
+      "citation_key": "2011AUGUST17",
+      "source_text": "2011:AUGUST:17",
+      "court": "Madras High Court",
+      "date": "2011-08-11",
+      "title": "MRS. ANNAMANI Vs THE DISTRICT COLLECTOR"
+    },
+    {
+      "citation_key": "2011DEC01",
+      "source_text": "2011:DEC:01",
+      "court": "Madras High Court",
+      "date": "2011-11-17",
+      "title": "MR. T.LINGA PANDI, Vs THE DISTRICT COLLECTOR,"
+    },
+    {
+      "citation_key": "2011DEC10",
+      "source_text": "2011:DEC:10",
+      "court": "Madras High Court",
+      "date": "2011-12-09",
+      "title": "M. MURUGANANTHAM, Vs DIVISIONAL ENGINEER (H),"
+    },
+    {
+      "citation_key": "2011DEC15",
+      "source_text": "2011:DEC:15",
+      "court": "Madras High Court",
+      "date": "2011-12-07",
+      "title": "GANESAN Vs THE DEPUTY SUPERINTENDENT OF"
+    },
+    {
+      "citation_key": "2011DEC16",
+      "source_text": "2011:DEC:16",
+      "court": "Madras High Court",
+      "date": "2011-12-09",
+      "title": "KALIRAJ Vs THE DISTRICT REVENUE OFFICER"
+    }
+  ],
+  "spread": {
+    "courts": 1,
+    "first": "2009-08-11",
+    "last": "2012-03-02"
+  }
+}

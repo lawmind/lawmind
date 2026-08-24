@@ -14,6 +14,91 @@ adjudicated sample, so this document is where the number is allowed to come from
 
 ---
 
+## 0-A · UPDATE, 25 August 2026 — LCC REBUILT THE INDEX. THE RATE IS NOW 0.00%, AND THE REBUILD INTRODUCED A REGRESSION.
+
+**Everything in §0 to §7 below was measured against the stale index and is kept
+as the historical record.** `lcc-citation-keys-catchup` ran on 24 Aug; the
+checkpoint moved from `2026-08-17 16:46` / 16,551,619 scanned to
+`2026-08-24 18:59` / 27,689,197. §7 said the rate must be re-measured afterwards.
+It has been.
+
+### The prediction held, and my number was wrong
+
+| | before | predicted | **actual** |
+| --- | ---: | ---: | ---: |
+| `collapses_to_false_unique` | 33,013 | ~12 | **99** |
+| of which different-document | 15,898 | 0 | **40** |
+| invisible → `TARGET_NOT_HELD` | 77,222 | — | **0** |
+| fully visible → correct `AMBIGUOUS` | 44,956 | — | **155,276** |
+
+**33,013 → 99 is a 99.70% reduction; I predicted 99.96%.** The residual is not a
+leftover, it is a **flow** — new ingest keeps creating group members the index has
+not reached, so the collapse count is a function of index lag and regenerates.
+The catch-up has to be recurring, not one-off. 40 different-document collapses
+remain, so applying the adjudicated 8.33% [1.49, 35.39] shape rate leaves roughly
+**3 groups [1, 14]** where a pin could name a different authority — against a
+point estimate of ~1,300 before.
+
+### The resolver rate, re-measured
+
+| | before | after |
+| --- | ---: | ---: |
+| FALSE_UNIQUE any | 10/64 = 15.63% | **0/60 = 0.00%** [0.00, 6.02] |
+| FALSE_UNIQUE material | 0/64 = 0.00% | **0/60 = 0.00%** |
+| RECALL_MISS | 24 | **0** |
+| CORRECT_AMBIGUOUS_REFUSAL | 5 | **39** |
+| `ALLAHABAD_LKO_AUR` uniques | 4 | **0** |
+| `SEED_UNSAFE_AMBIGUITY` uniques | 3 | **0** |
+
+### THE REGRESSION — and my acceptance test could not see it
+
+| | before | after |
+| --- | ---: | ---: |
+| `CORRECT_REJECTED_NON_CITATION` | 40 | **10** |
+| **`FALSE_RESOLVE_NON_CITATION`** | **0** | **30** |
+
+All 30 are `PSEUDO_MONTH_STAMP_KEY` — Madras registry despatch stamps such as
+`2011:NOVEMBER:12` living in `judgments.neutral_citation`. Before the rebuild
+they carried no key row, so the resolver answered `TARGET_NOT_HELD` and they were
+harmless. **The rebuild indexed `neutral_citation` wholesale, so they are now
+resolver inputs.** 24 answer `AMBIGUOUS`; **6 of the 30 answer `UNIQUE`.**
+
+Corpus-wide:
+
+| | |
+| --- | ---: |
+| judgments now carrying a month-stamp key row | **431** |
+| distinct stamp keys | **165** |
+| **of those keys, resolving `UNIQUE`** | **75** |
+| courts | **1 — Madras** |
+| range | 2009-08-11 … 2012-03-02 |
+
+**The stamp is not even the judgment's date.** `2011:APRIL:05` keys a judgment
+decided **2011-03-24**; `2009:AUGUST:24` keys one decided **2009-08-11**. These
+are despatch stamps.
+
+`canonicalKeyFor` cannot catch them: `2011NOVEMBER12` has digits, has letters and
+is well over five characters, so it passes every existing refusal rule. Fix
+belongs in the key builder (exclude the pattern at source) **and** the resolver's
+`PLACEHOLDER_PATTERNS` (so a future index mistake cannot reach an advocate).
+Neither is this lane's to write; both are reported in bus 1112.
+
+### What I got wrong, and it is the transferable part
+
+§7 of this document says a rebuild "changes the population in **BOTH**
+directions" and calls newly-resolvable references "a new risk surface nobody has
+measured" — and then hands LCC an acceptance test that measured only the collapse
+direction. **A one-sided acceptance test on a two-sided change is how a
+regression ships behind a green check.** `.n2c-p2-reconcile.ts` is the two-sided
+test and should be the gate; the collapse census alone should not be.
+
+**A backfill is now LESS approved than it was yesterday:** 75 keys that are not
+citations at all currently resolve to exactly one judgment each.
+
+Artifact: `resolver-monthstamp-regression.json`.
+
+---
+
 ## 0 · The answer, before the working
 
 | question | answer |

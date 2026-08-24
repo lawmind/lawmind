@@ -1,44 +1,44 @@
 {
-  "generated_at": "2026-08-23T16:03:19.400Z",
+  "generated_at": "2026-08-24T23:38:43.032Z",
   "truth_set_version": "2.0.0",
   "resolver_version": "citation-resolver-v0.1",
   "n_records": 283,
   "n_adjudicated": 201,
   "n_unadjudicated": 82,
   "resolver_state_counts": {
-    "UNIQUE": 133,
-    "AMBIGUOUS": 7,
-    "TARGET_NOT_HELD": 133,
+    "UNIQUE": 142,
+    "AMBIGUOUS": 65,
+    "TARGET_NOT_HELD": 66,
     "REFUSED": 10
   },
   "verdicts": {
     "CORRECT_UNIQUE": 54,
-    "CORRECT_AMBIGUOUS_REFUSAL": 5,
+    "CORRECT_AMBIGUOUS_REFUSAL": 39,
     "CORRECT_TARGET_NOT_HELD": 66,
-    "CORRECT_REJECTED_NON_CITATION": 40,
+    "CORRECT_REJECTED_NON_CITATION": 10,
     "FALSE_UNIQUE_MATERIAL": 0,
-    "FALSE_UNIQUE_STRUCTURAL": 3,
-    "FALSE_UNIQUE_BENIGN": 7,
+    "FALSE_UNIQUE_STRUCTURAL": 0,
+    "FALSE_UNIQUE_BENIGN": 0,
     "FALSE_UNIQUE_PHANTOM": 0,
-    "FALSE_RESOLVE_NON_CITATION": 0,
+    "FALSE_RESOLVE_NON_CITATION": 30,
     "CONSERVATIVE_MISS": 2,
-    "RECALL_MISS": 24,
+    "RECALL_MISS": 0,
     "UNADJUDICATED": 82
   },
   "false_unique": {
     "denominator_definition": "resolver answered UNIQUE, over ADJUDICATED records only",
-    "denominator": 64,
-    "any": 10,
-    "any_rate": 0.15625,
+    "denominator": 60,
+    "any": 0,
+    "any_rate": 0,
     "any_ci95": [
-      0.0871484229808731,
-      0.26428061870604036
+      0,
+      0.060171853034227174
     ],
     "material": 0,
     "material_rate": 0,
     "material_ci95": [
       0,
-      0.05662406063551054
+      0.060171853034227174
     ]
   },
   "by_stratum": {
@@ -50,8 +50,8 @@
     },
     "ALLAHABAD_LKO_AUR": {
       "n": 20,
-      "unique": 4,
-      "falseUnique": 4,
+      "unique": 0,
+      "falseUnique": 0,
       "material": 0
     },
     "INSC": {
@@ -68,14 +68,14 @@
     },
     "NEUTRAL_BENCH_QUALIFIED": {
       "n": 16,
-      "unique": 4,
-      "falseUnique": 1,
+      "unique": 3,
+      "falseUnique": 0,
       "material": 0
     },
     "NEUTRAL_UNQUALIFIED": {
       "n": 4,
-      "unique": 2,
-      "falseUnique": 2,
+      "unique": 0,
+      "falseUnique": 0,
       "material": 0
     },
     "OCR_DAMAGED_CITING": {
@@ -104,7 +104,7 @@
     },
     "PSEUDO_MONTH_STAMP_KEY": {
       "n": 30,
-      "unique": 0,
+      "unique": 6,
       "falseUnique": 0,
       "material": 0
     },
@@ -122,570 +122,12 @@
     },
     "SEED_UNSAFE_AMBIGUITY": {
       "n": 3,
-      "unique": 3,
-      "falseUnique": 3,
+      "unique": 0,
+      "falseUnique": 0,
       "material": 0
     }
   },
   "failures": [
-    {
-      "truth_id": "T2-0002",
-      "verdict": "FALSE_UNIQUE_BENIGN",
-      "why": "collapsed SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC:23921-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2025AHC23921DB",
-      "resolver_held": 1,
-      "resolver_pinned": "f3bd2b69-c028-4717-bf17-4b77e93f75c0",
-      "correct_target_ids": [
-        "f3bd2b69-c028-4717-bf17-4b77e93f75c0",
-        "1d2800c9-21f3-42b3-86a0-8e3d95f31f05"
-      ],
-      "stored_cited_judgment_id": "f3bd2b69-c028-4717-bf17-4b77e93f75c0"
-    },
-    {
-      "truth_id": "T2-0003",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:71037-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO71037DB",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "c15d2e32-e8c1-4037-b6de-56bb66584105",
-        "792a6551-00f9-41c1-92ed-204baa529f31"
-      ],
-      "stored_cited_judgment_id": "c15d2e32-e8c1-4037-b6de-56bb66584105"
-    },
-    {
-      "truth_id": "T2-0004",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:37086",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO37086",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "f564d6c8-37be-46f0-a9fc-3385d0fd83ef",
-        "90febe3f-2c6d-410d-96e9-f8d9da642b2b"
-      ],
-      "stored_cited_judgment_id": "f564d6c8-37be-46f0-a9fc-3385d0fd83ef"
-    },
-    {
-      "truth_id": "T2-0005",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:5413-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO5413DB",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "dbcaf6dc-2a87-4cd6-95c9-40e1b26d3436",
-        "344eaa99-36d8-44bc-8a3e-327bd8ea2c8d"
-      ],
-      "stored_cited_judgment_id": "344eaa99-36d8-44bc-8a3e-327bd8ea2c8d"
-    },
-    {
-      "truth_id": "T2-0006",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:48348",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO48348",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "56ea5824-3236-4f23-bf35-9e25268460a8",
-        "c77990a2-21f2-4347-aa6a-83b6aa80f8a9"
-      ],
-      "stored_cited_judgment_id": "56ea5824-3236-4f23-bf35-9e25268460a8"
-    },
-    {
-      "truth_id": "T2-0007",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:14430",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO14430",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "81c76c5e-2ab4-4b85-9e97-e199cd2554f9",
-        "aad944f2-d783-4729-9892-e1405fe7772e"
-      ],
-      "stored_cited_judgment_id": "81c76c5e-2ab4-4b85-9e97-e199cd2554f9"
-    },
-    {
-      "truth_id": "T2-0008",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:49521",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO49521",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "7bab6939-7bf4-4a0e-a49a-d28e539bb30f",
-        "57f42a43-bca1-498b-934b-733ef8c6ddc7"
-      ],
-      "stored_cited_judgment_id": "7bab6939-7bf4-4a0e-a49a-d28e539bb30f"
-    },
-    {
-      "truth_id": "T2-0009",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:18826",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO18826",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "3d494287-36d2-47c4-94bf-5e628da9883f",
-        "cb8b6596-9919-45f5-8b87-a947dbbf2e8e"
-      ],
-      "stored_cited_judgment_id": "cb8b6596-9919-45f5-8b87-a947dbbf2e8e"
-    },
-    {
-      "truth_id": "T2-0010",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "NEUTRAL_BENCH_QUALIFIED",
-      "raw_reference": "2025:AHC-LKO:5576",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO5576",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "f0982fc9-38fc-4ccf-afe0-455d8a4f30a1",
-        "4bd882d3-f4df-4298-9b0f-79bff270aada"
-      ],
-      "stored_cited_judgment_id": "f0982fc9-38fc-4ccf-afe0-455d8a4f30a1"
-    },
-    {
-      "truth_id": "T2-0028",
-      "verdict": "FALSE_UNIQUE_BENIGN",
-      "why": "collapsed SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "stratum": "NEUTRAL_UNQUALIFIED",
-      "raw_reference": "2025:AHC:128680",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2025AHC128680",
-      "resolver_held": 1,
-      "resolver_pinned": "b8a9f45e-ff63-4eeb-8472-e2bd3980f015",
-      "correct_target_ids": [
-        "b8a9f45e-ff63-4eeb-8472-e2bd3980f015",
-        "1f118d00-d96f-4e3c-a76e-b3cacc9c39f0"
-      ],
-      "stored_cited_judgment_id": "b8a9f45e-ff63-4eeb-8472-e2bd3980f015"
-    },
-    {
-      "truth_id": "T2-0029",
-      "verdict": "FALSE_UNIQUE_BENIGN",
-      "why": "collapsed SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "stratum": "NEUTRAL_UNQUALIFIED",
-      "raw_reference": "2025:AHC:51089",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2025AHC51089",
-      "resolver_held": 1,
-      "resolver_pinned": "f8e131a3-473b-463f-8638-93bd8bcfa642",
-      "correct_target_ids": [
-        "f8e131a3-473b-463f-8638-93bd8bcfa642",
-        "3ae9bc50-0dab-44b2-a388-edea1a48f3bd"
-      ],
-      "stored_cited_judgment_id": "f8e131a3-473b-463f-8638-93bd8bcfa642"
-    },
-    {
-      "truth_id": "T2-0047",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2025:AHC-LKO:22720",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO22720",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "ef4ca2cb-3f21-4d86-abdf-0edf76b50710",
-        "45155c94-6b3c-41ce-8879-7386b6b2780f"
-      ],
-      "stored_cited_judgment_id": "45155c94-6b3c-41ce-8879-7386b6b2780f"
-    },
-    {
-      "truth_id": "T2-0048",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2025:AHC-LKO:9603",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO9603",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "b6369689-5d13-4bd2-9382-da351ebbe148",
-        "4dd83702-074c-40d2-9001-7153cf3552a3"
-      ],
-      "stored_cited_judgment_id": "b6369689-5d13-4bd2-9382-da351ebbe148"
-    },
-    {
-      "truth_id": "T2-0049",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2025:AHC-LKO:20918",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO20918",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "dbfaba9d-cbe4-44af-8e9e-744a857deee4",
-        "b5d409a6-bdd5-4bf3-bdd3-c1b538387bfd"
-      ],
-      "stored_cited_judgment_id": "dbfaba9d-cbe4-44af-8e9e-744a857deee4"
-    },
-    {
-      "truth_id": "T2-0050",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2025:AHC-LKO:47407",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2025AHCLKO47407",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "16701ed7-70ac-4b8e-88ed-e682f63b96ff",
-        "a7f58614-e629-45a8-b436-360edc4d07a2"
-      ],
-      "stored_cited_judgment_id": "16701ed7-70ac-4b8e-88ed-e682f63b96ff"
-    },
-    {
-      "truth_id": "T2-0053",
-      "verdict": "FALSE_UNIQUE_STRUCTURAL",
-      "why": "collapsed a common order over connected matters",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:85962",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2024AHCLKO85962",
-      "resolver_held": 1,
-      "resolver_pinned": "1051bfdf-e202-44ea-ba2e-f79be0ce44e6",
-      "correct_target_ids": [
-        "1051bfdf-e202-44ea-ba2e-f79be0ce44e6",
-        "814760d2-425e-4a9d-8714-e4395212fa6a"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0054",
-      "verdict": "FALSE_UNIQUE_BENIGN",
-      "why": "collapsed SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:83529",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2024AHCLKO83529",
-      "resolver_held": 1,
-      "resolver_pinned": "2ca73fca-0a24-4319-8d48-c27ffcc84c66",
-      "correct_target_ids": [
-        "2ca73fca-0a24-4319-8d48-c27ffcc84c66",
-        "f6210517-5266-42cd-a701-2ec9ca97d9e6"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0056",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:83304",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO83304",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "6f868b20-6e26-4001-8fe4-905dcdb2db6a",
-        "8389b002-24c9-4e47-889d-3b0fc1d36cac"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0057",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:82237",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO82237",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "622108c3-d6b3-47f6-8e1c-c784277b3e12",
-        "19136bb8-276b-45b3-9cc1-5f103328c3d6"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0058",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:81179-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO81179DB",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "3fc774d1-ef3d-45c2-abe9-4b90dbb1205d",
-        "084ec3dd-87ff-49ee-9025-7dfedd4acc86"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0059",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:78793",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO78793",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "37fdb7ba-3545-450d-9097-3dfdda22e806",
-        "66ff47a5-1542-4e4e-bbf5-a9eba39b1da7"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0060",
-      "verdict": "FALSE_UNIQUE_STRUCTURAL",
-      "why": "collapsed a common order over connected matters",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:77833",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2024AHCLKO77833",
-      "resolver_held": 1,
-      "resolver_pinned": "4becd3b9-0bfa-4d78-826f-b1b76d2db04d",
-      "correct_target_ids": [
-        "4becd3b9-0bfa-4d78-826f-b1b76d2db04d",
-        "861cb5b0-7975-4fd6-ba1a-e4d2f1f81aa1"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0061",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:76912-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO76912DB",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "bd344857-c4dc-4daa-9e04-44c0af2ea732",
-        "d0b05556-d5f7-499a-883d-dce0354d76a9"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0063",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:71105",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO71105",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "dc8e880e-4522-4fd5-be65-e857ab6014c0",
-        "7eb3b37f-2c5f-4c83-b548-942d8a4b9850"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0064",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:69526",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO69526",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "86fb0aab-35b5-46c4-99a7-9deb6e58c4b6",
-        "0ca851bd-c25c-4b1b-9628-2340cff54789"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0065",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:68731",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO68731",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "2894efab-4a9e-42c7-b176-9aba9eb252b3",
-        "94b2283b-b37a-4515-bacf-958e663e0622"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0066",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:68624",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO68624",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "152eab39-ab88-43a8-877e-28e16900c3ce",
-        "5e8892d9-b64d-45bc-9905-61a401e69ed0"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0067",
-      "verdict": "FALSE_UNIQUE_STRUCTURAL",
-      "why": "collapsed a common order over connected matters",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:67075",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2024AHCLKO67075",
-      "resolver_held": 1,
-      "resolver_pinned": "31afa282-7c11-43cd-8354-45a0fcca7bdb",
-      "correct_target_ids": [
-        "31afa282-7c11-43cd-8354-45a0fcca7bdb",
-        "4c714a59-acbe-4092-b688-2a04e3a0f263"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0068",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:67368",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO67368",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "f828a5ee-f1b9-4d30-93f8-54861a8a5b6e",
-        "31edcb0d-510a-4537-a889-4e4defe1abe8"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0069",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:66144-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "CONNECTED_MATTER_COMMON_ORDER",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO66144DB",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "fd888eb2-4843-48e4-ad90-e021fcb03c35",
-        "25394b70-099c-459d-9f54-ada68956687e"
-      ],
-      "stored_cited_judgment_id": null
-    },
-    {
-      "truth_id": "T2-0070",
-      "verdict": "RECALL_MISS",
-      "why": "TARGET_NOT_HELD on a group we do hold",
-      "stratum": "ALLAHABAD_LKO_AUR",
-      "raw_reference": "2024:AHC-LKO:65727-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "TARGET_NOT_HELD",
-      "resolver_key": "2024AHCLKO65727DB",
-      "resolver_held": 0,
-      "resolver_pinned": null,
-      "correct_target_ids": [
-        "7dc3cbc3-11fd-4d45-870e-7459f9191acb",
-        "28b6217d-ea84-4aba-aea7-cbcab36a8ba5"
-      ],
-      "stored_cited_judgment_id": null
-    },
     {
       "truth_id": "T2-0100",
       "verdict": "CONSERVATIVE_MISS",
@@ -721,58 +163,454 @@
       "stored_cited_judgment_id": "93773037-862f-4481-b25f-34b649dc5087"
     },
     {
-      "truth_id": "T2-0251",
-      "verdict": "FALSE_UNIQUE_BENIGN",
-      "why": "collapsed SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "stratum": "SEED_UNSAFE_AMBIGUITY",
-      "raw_reference": "2025:AHC:20135-DB",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2025AHC20135DB",
-      "resolver_held": 1,
-      "resolver_pinned": "69639a71-0889-40ce-ae32-2710659a3c88",
-      "correct_target_ids": [
-        "69639a71-0889-40ce-ae32-2710659a3c88",
-        "10b63fa2-329d-4c8b-b496-785394abd344"
-      ],
-      "stored_cited_judgment_id": "69639a71-0889-40ce-ae32-2710659a3c88"
+      "truth_id": "T2-0254",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:NOVEMBER:12",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011NOVEMBER12",
+      "resolver_held": 8,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
     },
     {
-      "truth_id": "T2-0252",
-      "verdict": "FALSE_UNIQUE_BENIGN",
-      "why": "collapsed SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "stratum": "SEED_UNSAFE_AMBIGUITY",
-      "raw_reference": "2025:AHC:52350",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "resolver_state": "UNIQUE",
-      "resolver_key": "2025AHC52350",
-      "resolver_held": 1,
-      "resolver_pinned": "3f06e7f0-11f8-41b9-90bd-eed59a574205",
-      "correct_target_ids": [
-        "3f06e7f0-11f8-41b9-90bd-eed59a574205",
-        "a1b75560-2573-4156-b823-dff907df13b9"
-      ],
-      "stored_cited_judgment_id": "3f06e7f0-11f8-41b9-90bd-eed59a574205"
+      "truth_id": "T2-0255",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:SEPTEMBER:19",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011SEPTEMBER19",
+      "resolver_held": 4,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
     },
     {
-      "truth_id": "T2-0253",
-      "verdict": "FALSE_UNIQUE_BENIGN",
-      "why": "collapsed SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
-      "stratum": "SEED_UNSAFE_AMBIGUITY",
-      "raw_reference": "2025:AHC:119408",
-      "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "truth_ambiguity_kind": "SAME_AUTHORITY_HELD_MORE_THAN_ONCE",
+      "truth_id": "T2-0256",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:AUGUST:16",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011AUGUST16",
+      "resolver_held": 4,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0257",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "UNIQUE on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:AUGUST:17",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
       "resolver_state": "UNIQUE",
-      "resolver_key": "2025AHC119408",
+      "resolver_key": "2011AUGUST17",
       "resolver_held": 1,
-      "resolver_pinned": "4e5a25a4-ba93-44fe-a578-f4c9931ec4cf",
-      "correct_target_ids": [
-        "4e5a25a4-ba93-44fe-a578-f4c9931ec4cf",
-        "09741c25-9240-4b90-a446-6b6ad06c7de2"
-      ],
-      "stored_cited_judgment_id": "4e5a25a4-ba93-44fe-a578-f4c9931ec4cf"
+      "resolver_pinned": "28a660b5-249c-4db7-b8de-d09fcfbe93a1",
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0258",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:NOVEMBER:21",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011NOVEMBER21",
+      "resolver_held": 3,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0259",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:DECEMBER:21",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011DECEMBER21",
+      "resolver_held": 8,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0260",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:NOV:18",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011NOV18",
+      "resolver_held": 4,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0261",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:MAY:18",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011MAY18",
+      "resolver_held": 2,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0262",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:DECEMBER:22",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011DECEMBER22",
+      "resolver_held": 6,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0263",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:NOVEMBER:18",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011NOVEMBER18",
+      "resolver_held": 10,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0264",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:MARCH:30",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011MARCH30",
+      "resolver_held": 3,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0265",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:SEPTEMBER:26",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011SEPTEMBER26",
+      "resolver_held": 7,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0266",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:NOVEMBER:01",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011NOVEMBER01",
+      "resolver_held": 2,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0267",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:NOVEMBER:23",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011NOVEMBER23",
+      "resolver_held": 7,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0268",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "UNIQUE on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:APRIL:08",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "UNIQUE",
+      "resolver_key": "2011APRIL08",
+      "resolver_held": 1,
+      "resolver_pinned": "1a22ad60-61d3-4017-b6b1-75173dc0c6fe",
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0269",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:AUGUST:04",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011AUGUST04",
+      "resolver_held": 7,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0270",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:DECEMBER:09",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011DECEMBER09",
+      "resolver_held": 4,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0271",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "UNIQUE on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:SEP:28",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "UNIQUE",
+      "resolver_key": "2011SEP28",
+      "resolver_held": 1,
+      "resolver_pinned": "220ad52d-5b66-44f2-92de-58059775c000",
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0272",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:AUGUST:08",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011AUGUST08",
+      "resolver_held": 2,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0273",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:OCTOBER:12",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011OCTOBER12",
+      "resolver_held": 3,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0274",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:DECEMBER:16",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011DECEMBER16",
+      "resolver_held": 4,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0275",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:AUGUST:23",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011AUGUST23",
+      "resolver_held": 10,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0276",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:DECEMBER:19",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011DECEMBER19",
+      "resolver_held": 5,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0277",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:NOVEMBER:17",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011NOVEMBER17",
+      "resolver_held": 4,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0278",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2012:FEBRUARY:06",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2012FEBRUARY06",
+      "resolver_held": 4,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0279",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2011:DECEMBER:29",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2011DECEMBER29",
+      "resolver_held": 12,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0280",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "UNIQUE on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2012:JANUARY:20",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "UNIQUE",
+      "resolver_key": "2012JANUARY20",
+      "resolver_held": 1,
+      "resolver_pinned": "c8b46ee9-aa2c-451c-9757-bc3370296a7e",
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0281",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "UNIQUE on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2012:JANUARY:19",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "UNIQUE",
+      "resolver_key": "2012JANUARY19",
+      "resolver_held": 1,
+      "resolver_pinned": "74fcbabd-b95e-4cb8-a979-e8270d2ac1fb",
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0282",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "AMBIGUOUS on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2012:FEBRUARY:28",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "AMBIGUOUS",
+      "resolver_key": "2012FEBRUARY28",
+      "resolver_held": 3,
+      "resolver_pinned": null,
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
+    },
+    {
+      "truth_id": "T2-0283",
+      "verdict": "FALSE_RESOLVE_NON_CITATION",
+      "why": "UNIQUE on a non-citation",
+      "stratum": "PSEUDO_MONTH_STAMP_KEY",
+      "raw_reference": "2012:MARCH:01",
+      "truth_relationship": "NOT_A_CITATION",
+      "truth_ambiguity_kind": null,
+      "resolver_state": "UNIQUE",
+      "resolver_key": "2012MARCH01",
+      "resolver_held": 1,
+      "resolver_pinned": "b4dc0341-a7e6-4885-999d-f3bc8642fc58",
+      "correct_target_ids": [],
+      "stored_cited_judgment_id": null
     }
   ],
   "every_record": [
@@ -787,64 +625,64 @@
       "truth_id": "T2-0002",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_BENIGN"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0003",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0004",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0005",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0006",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0007",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0008",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0009",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0010",
       "stratum": "NEUTRAL_BENCH_QUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0011",
@@ -969,15 +807,15 @@
       "truth_id": "T2-0028",
       "stratum": "NEUTRAL_UNQUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_BENIGN"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0029",
       "stratum": "NEUTRAL_UNQUALIFIED",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_BENIGN"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0030",
@@ -1102,29 +940,29 @@
       "truth_id": "T2-0047",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0048",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0049",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0050",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0051",
@@ -1144,140 +982,140 @@
       "truth_id": "T2-0053",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_STRUCTURAL"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0054",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_BENIGN"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0055",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0056",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0057",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0058",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0059",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0060",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_STRUCTURAL"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0061",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0062",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0063",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0064",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0065",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0066",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0067",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_STRUCTURAL"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0068",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0069",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0070",
       "stratum": "ALLAHABAD_LKO_AUR",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "RECALL_MISS"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0071",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0072",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
@@ -1291,14 +1129,14 @@
       "truth_id": "T2-0074",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0075",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
@@ -1312,49 +1150,49 @@
       "truth_id": "T2-0077",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0078",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0079",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0080",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0081",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0082",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "SOURCE_UNAVAILABLE",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
       "truth_id": "T2-0083",
       "stratum": "PH_SHARED_COMMON_ORDER",
       "truth_relationship": "UNKNOWN",
-      "resolver_state": "TARGET_NOT_HELD",
+      "resolver_state": "UNIQUE",
       "verdict": "UNADJUDICATED"
     },
     {
@@ -2530,232 +2368,232 @@
       "truth_id": "T2-0251",
       "stratum": "SEED_UNSAFE_AMBIGUITY",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_BENIGN"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0252",
       "stratum": "SEED_UNSAFE_AMBIGUITY",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_BENIGN"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0253",
       "stratum": "SEED_UNSAFE_AMBIGUITY",
       "truth_relationship": "LEGITIMATE_MULTI_TARGET",
-      "resolver_state": "UNIQUE",
-      "verdict": "FALSE_UNIQUE_BENIGN"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "CORRECT_AMBIGUOUS_REFUSAL"
     },
     {
       "truth_id": "T2-0254",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0255",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0256",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0257",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "UNIQUE",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0258",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0259",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0260",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0261",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0262",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0263",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0264",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0265",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0266",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0267",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0268",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "UNIQUE",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0269",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0270",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0271",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "UNIQUE",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0272",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0273",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0274",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0275",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0276",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0277",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0278",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0279",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0280",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "UNIQUE",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0281",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "UNIQUE",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0282",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "AMBIGUOUS",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     },
     {
       "truth_id": "T2-0283",
       "stratum": "PSEUDO_MONTH_STAMP_KEY",
       "truth_relationship": "NOT_A_CITATION",
-      "resolver_state": "TARGET_NOT_HELD",
-      "verdict": "CORRECT_REJECTED_NON_CITATION"
+      "resolver_state": "UNIQUE",
+      "verdict": "FALSE_RESOLVE_NON_CITATION"
     }
   ]
 }

@@ -1,239 +1,211 @@
 {
-  "generated_at": "2026-08-23T16:07:06.291Z",
+  "generated_at": "2026-08-24T23:38:15.201Z",
   "steps": [
     {
       "name": "key_convention_agreement",
-      "ms": 237,
-      "pg_active_before": 7,
-      "pg_active_after": 7,
+      "ms": 143,
+      "pg_active_before": 1,
+      "pg_active_after": 1,
       "rows": [
         {
           "groups_probed": 2000,
-          "groups_with_at_least_one_key_row": 1902
+          "groups_with_at_least_one_key_row": 2000
         }
       ]
     },
     {
       "name": "denominators",
-      "ms": 7086,
-      "pg_active_before": 7,
-      "pg_active_after": 2,
+      "ms": 4381,
+      "pg_active_before": 1,
+      "pg_active_after": 1,
       "rows": [
         {
           "shared_groups": 155388,
           "rows_in_shared_groups": 361045,
-          "judgments_with_neutral_key_row": 1061269
+          "judgments_with_neutral_key_row": 1370399
         }
       ]
     },
     {
       "name": "collapse_by_visibility",
-      "ms": 5008,
-      "pg_active_before": 2,
-      "pg_active_after": 7,
+      "ms": 7111,
+      "pg_active_before": 1,
+      "pg_active_after": 1,
       "rows": [
         {
           "groups": 155388,
-          "invisible_target_not_held": 77222,
-          "collapses_to_false_unique": 33013,
-          "partial_ambiguous": 197,
-          "fully_visible": 44956,
-          "false_unique_benign_duplicate": 14321,
-          "false_unique_same_matter": 2794,
-          "false_unique_different_documents": 15898
+          "invisible_target_not_held": 0,
+          "collapses_to_false_unique": 99,
+          "partial_ambiguous": 13,
+          "fully_visible": 155276,
+          "false_unique_benign_duplicate": 16,
+          "false_unique_same_matter": 43,
+          "false_unique_different_documents": 40
         }
       ]
     },
     {
       "name": "collapse_by_court",
-      "ms": 3198,
-      "pg_active_before": 7,
-      "pg_active_after": 7,
+      "ms": 2438,
+      "pg_active_before": 1,
+      "pg_active_after": 1,
       "rows": [
         {
           "court": "Allahabad High Court",
           "groups": 130577,
-          "collapses": 32853,
-          "collapses_different_documents": 15878,
-          "invisible": 76601
+          "collapses": 82,
+          "collapses_different_documents": 39,
+          "invisible": 0
         },
         {
           "court": "High Court of Karnataka",
           "groups": 4266,
-          "collapses": 99,
-          "collapses_different_documents": 9,
-          "invisible": 242
-        },
-        {
-          "court": "High Court of Punjab and Haryana",
-          "groups": 382,
-          "collapses": 28,
-          "collapses_different_documents": 5,
-          "invisible": 122
-        },
-        {
-          "court": "Bombay High Court",
-          "groups": 767,
-          "collapses": 27,
-          "collapses_different_documents": 0,
-          "invisible": 156
-        },
-        {
-          "court": "High Court of Delhi",
-          "groups": 180,
-          "collapses": 4,
-          "collapses_different_documents": 4,
-          "invisible": 2
-        },
-        {
-          "court": "Madras High Court",
-          "groups": 102,
-          "collapses": 2,
-          "collapses_different_documents": 2,
-          "invisible": 94
+          "collapses": 17,
+          "collapses_different_documents": 1,
+          "invisible": 0
         }
       ]
     },
     {
       "name": "different_document_collapse_examples",
-      "ms": 19,
-      "pg_active_before": 7,
-      "pg_active_after": 7,
+      "ms": 44,
+      "pg_active_before": 1,
+      "pg_active_after": 1,
       "rows": [
         {
-          "k": "2025AHCLKO44647DB",
-          "sample_raw": "2025:AHC-LKO:44647-DB",
-          "a_court": "Allahabad High Court",
-          "true_size": 28,
-          "held": 1,
-          "distinct_case_numbers": 18,
-          "distinct_content_hashes": 22
-        },
-        {
-          "k": "2025AHC179271",
-          "sample_raw": "2025:AHC:179271",
-          "a_court": "Allahabad High Court",
-          "true_size": 18,
-          "held": 1,
-          "distinct_case_numbers": 17,
-          "distinct_content_hashes": 18
-        },
-        {
-          "k": "2025AHC65284",
-          "sample_raw": "2025:AHC:65284",
-          "a_court": "Allahabad High Court",
-          "true_size": 11,
-          "held": 1,
-          "distinct_case_numbers": 6,
-          "distinct_content_hashes": 6
-        },
-        {
-          "k": "2023AHCLKO65518DB",
-          "sample_raw": "2023:AHC-LKO:65518-DB",
-          "a_court": "Allahabad High Court",
-          "true_size": 7,
-          "held": 1,
-          "distinct_case_numbers": 7,
-          "distinct_content_hashes": 7
-        },
-        {
-          "k": "2025AHC45317DB",
-          "sample_raw": "2025:AHC:45317-DB",
-          "a_court": "Allahabad High Court",
-          "true_size": 7,
-          "held": 1,
-          "distinct_case_numbers": 6,
-          "distinct_content_hashes": 7
-        },
-        {
-          "k": "2023AHC169934DB",
-          "sample_raw": "2023:AHC:169934-DB",
-          "a_court": "Allahabad High Court",
-          "true_size": 5,
-          "held": 1,
-          "distinct_case_numbers": 5,
-          "distinct_content_hashes": 5
-        },
-        {
-          "k": "2025AHC85472",
-          "sample_raw": "2025:AHC:85472",
-          "a_court": "Allahabad High Court",
-          "true_size": 5,
-          "held": 1,
-          "distinct_case_numbers": 5,
-          "distinct_content_hashes": 5
-        },
-        {
-          "k": "2025MHC1162",
-          "sample_raw": "2025:MHC:1162",
-          "a_court": "Madras High Court",
-          "true_size": 5,
-          "held": 1,
-          "distinct_case_numbers": 5,
-          "distinct_content_hashes": 5
-        },
-        {
-          "k": "2024AHCLKO1982",
-          "sample_raw": "2024:AHC-LKO:1982",
-          "a_court": "Allahabad High Court",
-          "true_size": 4,
-          "held": 1,
-          "distinct_case_numbers": 4,
-          "distinct_content_hashes": 4
-        },
-        {
-          "k": "2024AHCLKO5501",
-          "sample_raw": "2024:AHC-LKO:5501",
-          "a_court": "Allahabad High Court",
-          "true_size": 4,
-          "held": 1,
-          "distinct_case_numbers": 4,
-          "distinct_content_hashes": 4
-        },
-        {
-          "k": "2024AHCLKO55437",
-          "sample_raw": "2024:AHC-LKO:55437",
-          "a_court": "Allahabad High Court",
-          "true_size": 4,
-          "held": 1,
-          "distinct_case_numbers": 4,
-          "distinct_content_hashes": 4
-        },
-        {
-          "k": "2024AHCLKO83463",
-          "sample_raw": "2024:AHC-LKO:83463",
-          "a_court": "Allahabad High Court",
-          "true_size": 4,
+          "k": "2023KHCD14139",
+          "sample_raw": "2023:KHC-D:14139",
+          "a_court": "High Court of Karnataka",
+          "true_size": 2,
           "held": 1,
           "distinct_case_numbers": 2,
-          "distinct_content_hashes": 4
+          "distinct_content_hashes": 2
         },
         {
-          "k": "2025AHC12010",
-          "sample_raw": "2025:AHC:12010",
+          "k": "2024AHCLKO1177",
+          "sample_raw": "2024:AHC-LKO:1177",
           "a_court": "Allahabad High Court",
-          "true_size": 4,
+          "true_size": 2,
           "held": 1,
-          "distinct_case_numbers": 4,
-          "distinct_content_hashes": 4
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
         },
         {
-          "k": "2025AHC25732DB",
-          "sample_raw": "2025:AHC:25732-DB",
+          "k": "2024AHCLKO1180",
+          "sample_raw": "2024:AHC-LKO:1180",
           "a_court": "Allahabad High Court",
-          "true_size": 4,
+          "true_size": 2,
           "held": 1,
-          "distinct_case_numbers": 4,
-          "distinct_content_hashes": 4
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
         },
         {
-          "k": "2024AHCLKO108",
-          "sample_raw": "2024:AHC-LKO:108",
+          "k": "2024AHCLKO1196",
+          "sample_raw": "2024:AHC-LKO:1196",
           "a_court": "Allahabad High Court",
-          "true_size": 3,
+          "true_size": 2,
           "held": 1,
-          "distinct_case_numbers": 3,
-          "distinct_content_hashes": 3
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1222",
+          "sample_raw": "2024:AHC-LKO:1222",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1252",
+          "sample_raw": "2024:AHC-LKO:1252",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1275",
+          "sample_raw": "2024:AHC-LKO:1275",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1276",
+          "sample_raw": "2024:AHC-LKO:1276",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1287",
+          "sample_raw": "2024:AHC-LKO:1287",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1310",
+          "sample_raw": "2024:AHC-LKO:1310",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1321",
+          "sample_raw": "2024:AHC-LKO:1321",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO13787",
+          "sample_raw": "2024:AHC-LKO:13787",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1397",
+          "sample_raw": "2024:AHC-LKO:1397",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1605",
+          "sample_raw": "2024:AHC-LKO:1605",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
+        },
+        {
+          "k": "2024AHCLKO1609",
+          "sample_raw": "2024:AHC-LKO:1609",
+          "a_court": "Allahabad High Court",
+          "true_size": 2,
+          "held": 1,
+          "distinct_case_numbers": 2,
+          "distinct_content_hashes": 2
         }
       ]
     }

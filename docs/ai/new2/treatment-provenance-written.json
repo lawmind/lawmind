@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-08-24T23:43:00.065Z",
+  "mode": "APPLY",
+  "policy": "HAND for the 137 badge drivers; SCREEN only for REPORTER (one-directional error); everything else left NULL = NOT CLASSIFIED",
+  "tally": {
+    "treated": 15982,
+    "hand": 137,
+    "screen_reporter": 11442,
+    "left_null": 4403
+  },
+  "by_class": {
+    "REPORTER_EDITORIAL_ANNOTATION": 11573,
+    "COURT_REASONING_EXPLICIT": 5,
+    "MODALITY_DEFECT": 1
+  }
+}
