@@ -13401,3 +13401,101 @@ is ready**; it should not be held back, and it must not ship under an AI label.
   7h26m this session before anyone looked.
 - **ADVOCATE-100 latency is contaminated** (`LOCAL_CONTENDED`) and a clean-box
   re-run is owed before any latency number from that file is quoted.
+
+## NEW3 · 23-24 Aug 2026 — the 10-matter walkthrough ran, found a P0 the OD-14
+fix didn't reach, and result #6+ is now actually reachable from the app
+
+**Lane lease:** bound cleanly — 4 concurrent sessions this round (LCC, NEW1,
+NEW2, NEW3), no collision, confirmed via `.agents/bus/.lane-*` timestamps and
+`ListAgents`.
+
+**1. The 10 synthetic-matter walkthrough (P0, the round's top priority) ran
+end to end against the real local API**, not simulated: 10 throwaway
+accounts, real magic-link auth, real search/save/treatment/timeline/premium-
+preview/counterargument/alerts/entitlement calls, real briefing sweep
+(`pnpm --filter @lawmind/cron sweep`, the actual cron entrypoint). Full
+writeup: `docs/product/PREMIUM_10_MATTER_WALKTHROUGH_V1.md`. All synthetic
+data deleted from the local DB afterward; premium flags (temporarily flipped
+on for the test) restored to their default-off, no-row state.
+
+**Free-tier mechanics WORK, cleanly, on real data**: search, save-authority,
+treatment/currentness, timeline, hearing state — 10/10 each. The premium
+preview correctly refuses to fabricate a supporting/contrary split
+(`stanceNotComputed: true`, matching LCC's SPEC_V1 §6 correction) and
+`POST /premium/jobs` correctly returns 402 `NOT_ENTITLED` on every synthetic
+free user — fail-closed, observed rather than assumed.
+
+**Found: the briefing's authorities block reads the wrong table.**
+`services/briefings/assemble.ts:104-113` builds `blocks.authorities` and the
+`no-authorities` checklist line from `judgment_annotations` (a paragraph
+pin-cite), never from `matter_authorities` (what `POST
+/matters/:id/authorities` — the actual save-authority action — writes to).
+Reproduced live: saved a real authority, ran the real sweep four minutes
+later, the generated briefing said "No authorities are saved to this
+matter." `BriefingScreen.tsx` renders that claim verbatim with no
+independent check. This is OD-14-shaped harm (a generated document
+contradicting live state) in a sibling code path OD-14's own fix never
+touched, because this block never had a stale value — it was pointed at the
+wrong table from the start. Reported to LCC, bus 1075. Not fixed here —
+`services/api` is outside this lane.
+
+**Found: the activation funnel and experiments infrastructure are fully
+built and called from nowhere.** Repo-wide grep for `recordStep` and
+`ACTIVATION_STEPS` returns one hit — the definition in
+`services/api/src/product/activation.ts`. No route calls it; no admin route
+reads `funnel()`/`worstDropOff()` back. Same shape in `experiments.ts`.
+`activation_events` has zero rows in every environment today and will stay
+at zero until something writes to it. Reported to LCC, bus 1077, with
+`docs/product/ACTIVATION_FUNNEL_V1.md` recommending `AUTHORITY_SAVED_TO_MATTER`
+(a SECOND save on a matter that already has one) over "two briefings opened"
+for the one undecided step, `experienced_matter_value` — cheaper to compute,
+and doesn't depend on the briefing feature the walkthrough above says isn't
+trustworthy yet.
+
+**Found and fixed (in-lane): result #6+ was unreachable from the app.**
+The server has supported real pagination (`page`/`pageSize` request,
+`page: {page, pageSize, hasMore}` response, `hasMore` observed by
+over-fetching one row, never inferred) since NEW1's P3/P5 work — the mobile
+contract never declared the fields and the client never sent `page`, so
+`RESULT_LIMIT` (5) was a hard ceiling on the app regardless of what the
+server could serve. Confirmed by grep: zero occurrences of `hasMore`/
+`pageSize` anywhere in `apps/mobile/src/api/`. Fixed: `SearchScreen.tsx` now
+shows a manual "Show more results" control (never auto-paging on scroll,
+matching this screen's own no-auto-retry rule for `degraded`) when `hasMore`
+is true, appends further pages to the existing list, and re-applies the same
+two client-side reliability filters to each page. Additive on the wire,
+documented in `API_CONTRACTS.md` §Search. tsc clean, 607/607 mobile tests
+(+3 new pagination tests, `SearchScreen.test.tsx`).
+
+**Found (informational, NEW1's lane): one counterargument miss in 10.** A
+commercial breach-of-contract position returned an IPC §394 robbery
+conviction as its only authority — real judgment, real span, zero domain
+relevance. 9/10 other matters returned strong, correctly-matched precedent
+(three landmark SC judgments matched exactly to their stated question).
+n=10 is not evidence of anything systemic; reported to NEW1 as one data
+point, bus 1076.
+
+**Landed alongside, previously uncommitted from this and the prior NEW3
+session** (all now committed, `331d1e6`): account deletion client
+(`DeleteAccountScreen.tsx`, consequence copy drawn from `eraseUser`'s own doc
+comment, "request received" never "deleted"), push notification wiring
+(`src/push/register.ts`, three distinct honest failure reasons, fires on the
+one real trigger — still undeliverable without an EAS project,
+`FQ-PUSH-PROJECT`), the analytics event contract (`src/analytics/`,
+scrubber-first — drops any non-bounded field whole rather than partially
+redact), `PREMIUM_GROWTH_RESEARCH_2026.md`/`PREMIUM_GROWTH_SPEC_V1.md`
+(Tinder/Hinge/Duolingo/RevenueCat research, ranked hypotheses, no prices
+set), and `STAGING_PACKAGE_PROPOSAL_2026.md` (a Hetzner price discrepancy
+and a region conflict with OD-2 the prior audits missed, both flagged
+unresolved for the founder).
+
+**Not done this session**: the premium commercial decision package
+(NEW3-5 — model A/B/C comparison), the mobile release-quality pass
+(NEW3-8 — device/accessibility/network audit), and truthful premium-preview
+UI on the client (the server contract is ready and honest per the
+walkthrough above; no mobile screen calls `/matters/:id/premium-preview`
+yet — confirmed by grep, zero hits). Queued next.
+
+**Founder queue**: nothing new this session — `FQ-PUSH-PROJECT` and the
+staging region/pricing conflict were already queued by the prior session and
+remain open.
