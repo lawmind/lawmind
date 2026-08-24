@@ -13506,3 +13506,102 @@ yet — confirmed by grep, zero hits). Queued next.
 **Founder queue**: nothing new this session — `FQ-PUSH-PROJECT` and the
 staging region/pricing conflict were already queued by the prior session and
 remain open.
+
+---
+
+### 24 Aug 2026 — NEW1: PASSAGES WIN, THE PREVIOUS ROUND'S ANSWER WAS AN ARTEFACT, AND THE KEEPER WAS WORTH 655,099 VECTORS
+
+**Added by NEW1 (retrieval lane).** Round bound to §7 of
+`LAWMIND_NEXT_ROUND_MASTER_ORCHESTRATION_PLAN_2026-08-23.md`. Lane lease read
+`NEW1: FREE` before binding; no collision. Deliverables:
+`SEMANTIC_REPRESENTATION_DECISION_V3.md`, `HC_PASSAGE_COVERAGE_EXPERIMENT.md`,
+`LONG_FACT_VALIDATION_V2.md`, `ELIGIBILITY_SAMPLING_FRAME.md`,
+`KEEPER_RELAUNCH_PROOF.md`, `NEW1_NEXT_ROUND_TODO.md`.
+
+**THE RESULT.** Posed advocate questions, 19,932-document pool with real hard
+negatives, one run of 67,618 chunks and 147M characters:
+
+| representation | vec/doc | posed s@5 | recall@500 | GPU-days | halfvec |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| A HEAD:4800 — **what is staged today** | 1.00 | **2.2%** | 35.6% | 11.7 | 18 GB |
+| B POOLED_ALL | 1.00 | 17.8% | **95.6%** | 18.0 | 18 GB |
+| D MULTI_3 | 3.00 | 28.9% | 80.0% | 18.0 | 54 GB |
+| **F ALL_CHUNKS** | 3.39 | **37.8%** | 91.1% | 18.0 | **61 GB** |
+
+**B, D and F cost the SAME GPU time** — a pooled vector is the mean of the chunk
+vectors, so you read every chunk either way. The whole decision is **+6.3
+GPU-days and +43 GB** over the head-only walk already running, for 2.2% → 37.8%.
+Queued as `FQ-SEMANTIC-BUILD`; the sequencing detail went to LCC as bus 1088.
+
+**FOUR THINGS THIS REPO BELIEVED THAT ARE NOW MEASURED OTHERWISE.**
+
+1. **The round brief's premise for NEW1-1 is wrong.** V2 already used posed
+   advocate queries — leakage guard ≤6 shared words, max observed 5, zero
+   failures. The lifted gold is a different set of files, and it is what
+   `LONG_FACT_SEARCH_CONTRACT_V1` rests on.
+2. **V2 drew ZERO hard negatives.** `SET LOCAL …; SELECT …` with bound
+   parameters is a prepared statement; PostgreSQL refuses multiple commands in
+   one. Every call threw, every throw was swallowed, and the artefact's
+   `hardNegatives` field is pool-minus-gold so nothing in the output could reveal
+   it. Same tasks, same arm, same 2,500 pool: **B falls 73.3% → 24.4%.** V2 is
+   now marked superseded and its SQL fixed so a re-run cannot repeat it.
+3. **"More vectors per document is NOT the lever" is REVERSED.** D beats B
+   everywhere, F beats both, and the passage arms decay *slowest* with pool
+   growth (per-decade 0.838 vs B's 0.722) — the opposite of V2's stated property.
+4. **The passage build was never 40–45M vectors.** Measured **3.392 chunks per
+   document**, so 30.0M vectors and 61 GB, not 100+ GB and 50+ GPU-days.
+
+**Production's own vectors are faithful — the collapse is the pool.** 25 staged
+documents re-embedded at HEAD:4800 match the stored vectors at cosine ≥ 0.999336,
+median 1.000000, all unit-norm. No recipe drift.
+
+**LONG-FACT ON POSED QUERIES: 0/6 for every arm at every size**, including at 500
+characters where there is no dilution. P4's 8/25 → 4/25 curve was the decay of a
+near-duplicate vector, not of a fact pattern. The coverage wall is the real
+finding: **2 of 19 target judgments are in the index search actually queries.**
+Also measured: the condenser discards three quarters of the advocate's own words
+as input grows (retention 0.924 → 0.244), invisible in a lifted benchmark.
+
+**KEEPER RELAUNCH FIXED, AND IT WAS WORTH 655,099 VECTORS.** 22 consecutive
+failed relaunches; three hypotheses about the command had already been refuted.
+The cause was the caller: the keeper spawned PowerShell `detached: true`, so that
+shell had **no console**, and `Start-Process` cannot create a process from one.
+Three verified relaunches since — the mechanism proof, an unattended recovery of
+a cold rebooted box, and a resume from a deliberate pause — and the walk ran
+**20 h 46 m unattended, 1,097,864 → 1,753,127.** A pause file now lets a
+measurement quiet the box without fighting the keeper.
+
+**ELIGIBILITY FRAME FOR NEW2** (bus 1081): 21,416 rows censused in the exact
+population NEW2 measured at 3.75% [1.28, 10.45]. **Zero Supreme Court rows** in
+the entire length-gated uncited population; **73.6% carry no class verdict**;
+43.0% carry no procedural marker; 2025+ cohort 15.3%. 580 ids drawn, two strata,
+with the reweighting estimator stated. **The 2,000-character gate was not lowered
+and I do not propose lowering it** — my own counterfactual and NEW2's base rate
+agree from opposite directions, against my earlier 40.09% headline.
+
+**FOUND FOR OTHER LANES, NOT ACTED ON.** `text_safety_grade = 'PROOF'` is
+**unreachable**: the deployed eligibility view tests `script_quality_method = ANY
+(ARRAY[]::text[])`, an empty array, so the branch is dead code. PROOF returns 0
+rows while 939 rows in the same 0.2% sample carry `text-damage-v2.0` — on the
+order of 470,000 documents whose proof-grade evidence reads as a screen. It
+collapses `PROVEN_DAMAGED` into `SCREENED`, which is NEW2-3's P0 (bus
+1079/1080). Separately, a `retrieve.ts` sparse query was found **live at 1,012 s
+in IO/DataFileRead** — the LCC-4 shape reproducing itself while it could still be
+sampled (bus 1091).
+
+**NOT DONE, deliberately.** NEW1-7 (1M halfvec) deferred on a **measured** gate
+refusal — `DEFER VECTOR_BUILD` on four independent grounds with `DATABASE_URL`
+exported first, so pressure and not unreadability. NEW1-8 (clean-box rerun) waits
+on architecture selection. **No reranker started**, no HEAD:4800 promotion, no
+passage program built, no threshold invented after seeing results.
+
+**STILL RED, and named rather than smoothed:** `adverse_authority` 0/4 and
+`statute` 0/3 for **every** representation tested — not diagnosed, and any
+premium surface implying adverse-law discovery is unsupported. **8 of 20 posed
+targets have no production vector at all.** And 19,932 documents is 0.23% of Tier
+A; every arm was still losing ground at the largest pool measured.
+
+**Walk state:** PAUSED at 16:40Z for LCC-6's quiet window (bus 1085/1092), with
+nothing lost — it resumes by re-running the coverage census, never from a batch
+number. `new1_doc_vector_stage` = 1,753,127. Delete
+`.agents/logs/new1-walk.pause` to give it back.
