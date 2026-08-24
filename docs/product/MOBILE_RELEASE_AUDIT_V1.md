@@ -132,10 +132,19 @@ slug gracefully.
 consequence summary sourced from `eraseUser`'s own doc comment rather than
 invented copy, copy that only ever says "request received" — never
 "deleted" — matching `data-requests.ts`'s own "requesting is not executing"
-rule. 4 tests passing. **Separately**: the prior session's tenant-isolation
-audit (bus 1043) found account erasure does not yet terminate a
-pre-erasure refresh token — a server-side gap, LCC's to close, not
-re-litigated here.
+rule. 4 tests passing.
+
+**Update, same round (bus 1078):** the prior session's tenant-isolation
+audit (bus 1043) found account erasure did not terminate a pre-erasure
+refresh token. **LCC closed this during this round** —
+`docs/ai/lcc/ACCOUNT_ERASURE_TERMINATION_PROOF.md`, proven with live
+assertions: a pre-erasure refresh token now fails to rotate, `auth_user`/
+`auth_account`/`auth_verification` are destroyed, a still-valid access
+token reaches a profile-less shell. Checked this screen's own copy against
+LCC's one remaining caveat (an already-issued access token stays
+cryptographically valid until it naturally expires, so "signed out
+everywhere instantly" would be an overclaim) — grepped
+`DeleteAccountScreen.tsx` for that phrasing: **absent**, no change needed.
 
 ## Hidden/off premium states
 
@@ -162,7 +171,7 @@ pattern in this codebase to copy from yet.
 |---|---|
 | production build cannot use localhost/dead URL | Already fixed, 22 Aug session (bus 1000) |
 | real-device push if marketed | Blocked on `FQ-PUSH-PROJECT`, unchanged |
-| deletion flow | VERIFIED client-side; server token-termination gap open with LCC |
+| deletion flow | VERIFIED client-side and server-side (LCC closed the token-termination gap this round, bus 1078) |
 | accessibility pass | **PARTIAL** — 28/71 files labelled, no screen-reader run performed |
 | low-end Android pass | **UNVERIFIED** — no device |
 | poor-network/degraded-state pass | **VERIFIED at code level** — strongest area of this audit |

@@ -56,7 +56,31 @@ what the API actually returned, not assumed.
 | Alerts / monitoring | **PARTIAL** | `PATCH /me/alert-settings` and `GET /alerts` both 200 on all 10; `alertsList` count is 0 on every matter, which is *correct* (nothing has moved yet on a matter created seconds ago) but means monitoring itself was not observed firing in this run — only that the settings and read paths work. Push delivery is separately known UNVERIFIED (no EAS project, `FQ-PUSH-PROJECT`), so an alert firing server-side would not reach a device today regardless. |
 | Premium job start (entitlement gate) | **WORKS — correctly refuses** | `POST /premium/jobs` with a real `idempotencyKey`, real `matterId`, capability `matter_automation` → **402 `NOT_ENTITLED`** on a free-tier synthetic user, every time. This is the fail-closed behaviour the plan requires, observed rather than assumed. `GET /me/entitlements` correctly returns `capabilities: []` and a `catalogue` where every premium capability is marked `PROVISIONAL`. |
 
-## Finding #1 (P0, LCC-owned) — the briefing's authority list and checklist read the wrong table
+## Finding #1 (P0, LCC-owned) — the briefing's authority list and checklist read the wrong table — **CLOSED, bus 1078**
+
+**Update, same round:** LCC fixed this and found it was not confined to the
+briefing. The same pre-OD-14 rule was running stale in three more DECISION
+paths — `judgments/annotations.ts` (annotating into a matter was refusing
+what `POST /matters/:id/authorities` allowed, same authority, same matter,
+same second, one door open and one shut), `documents/route.ts` (the draft
+citation surface), and `arguments/counter.ts` (the most dangerous of the
+four: it filtered on the raw `overruledStatus !== 'set_aside'` banner, which
+moved 73 authorities from `authorities[]` into `excluded[]` — telling an
+advocate that adverse law their opponent can reach for does not exist,
+which is the opposite direction of a refusal-to-act bug). All four now
+share `judgments/treatment-lookup.ts`. LCC also found and fixed the half a
+sweep-only fix could not see: `blocks.checklist` was served verbatim from
+the stored blob while `authorities[]` beside it was read live, so a status
+that moved after the 23:00 sweep left the two halves disagreeing —
+asymmetrically, in the dangerous direction (an authority set aside
+overnight got its live banner and no checklist item at all). `GET
+/briefings/:id` now rewrites the checklist's authority-moved items from the
+same state the authority block renders from. Proof:
+`docs/ai/lcc/BRIEFING_OD14_GENERATION_PROOF.md`, a regression fixture proven
+to FAIL under deliberately restored pre-OD-14 semantics first. This
+walkthrough's own reproduction below is left as originally written — it is
+what found the defect and it is still accurate as a description of the bug
+that existed, not of the code as it now stands.
 
 **`services/api/src/briefings/assemble.ts:104-113`** builds the briefing's
 "authorities" block and its "no authorities saved" checklist item from
@@ -98,10 +122,15 @@ file's comment at line 149) **did not reach this block**, because this block
 never queries `matter_authorities` at all — there is no stale value to
 correct, the query is simply pointed at the wrong table.
 
-**Not something this lane fixes** — `services/briefings/assemble.ts` is
-server logic, LCC's file. Reported to LCC on the bus (this session, seq
-pending) with the exact reproduction above so it does not need to be
-re-derived.
+**Was not something this lane fixes** — `services/briefings/assemble.ts` is
+server logic, LCC's file. Reported to LCC on the bus (seq 1075) with the
+exact reproduction above; closed same-round, bus 1078, per the update at the
+top of this section. This client also picked up its own half of the fix —
+`arguments/counter.ts`'s new `precedentialEffect` field on `excluded[]`
+entries is now consumed so the counter-argument screen never says an
+authority "has been set aside" when the server's own `review_required`
+value means it explicitly would not assert that (see
+`apps/mobile/src/screens/draft/CounterArguments.tsx`'s `exclusionReason`).
 
 ## Finding #2 (P1, NEW1/retrieval-owned, informational) — one matter's counterargument authority was wrong-domain
 
@@ -157,12 +186,14 @@ Free-tier product mechanics (search, save, treatment, timeline, hearing
 state) are solid — every one of them WORKS against real data with no
 fabrication observed. The premium spine correctly refuses to lie in two
 different ways in this run (no fabricated stance split; no free generation
-without entitlement) and that discipline is real, not asserted. The one
-finding that actually blocks a marketing claim is finding #1, and it blocks
-specifically "the briefing" — not search, not save, not currentness, not the
-premium preview. **The other three named-in-the-plan reasons to hold the
-briefing back — retrieval breadth, adverse-authority discovery reliability —
-were not newly tested here; NEW1's own numbers already say those are not
-ready.** This run adds a fourth, narrower, fully-reproduced reason that is
-independent of retrieval quality: even a perfect retrieval layer would still
-hand this specific document a false "no authorities" claim today.
+without entitlement) and that discipline is real, not asserted. **Finding
+#1, the one defect that actually blocked a "the briefing is trustworthy"
+claim, is now closed** — LCC fixed it same-round (bus 1078) and found it
+was three defects wider than this walkthrough alone showed. **What remains
+holding the briefing/Hearing Pack back is exactly what the plan's §1.3
+already named before this round started: retrieval breadth and
+adverse-authority discovery reliability** — NEW1's own numbers (concept
+classes at or near zero reachability) are the standing reason, untouched by
+this fix, and `PREMIUM_COMMERCIAL_DECISION_PACKAGE_V2.md` §2 treats that as
+the live blocker on Model B/C now that this round's own defect is off the
+list.

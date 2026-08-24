@@ -90,12 +90,17 @@ being a real, sellable unit of value *today or soon*; Model A does not.
 This is not a new finding — the plan's own §1.3 already says not to
 publicly market a "hearing pack that claims it automatically finds the
 relevant law" — but it is now evidenced from three independent angles in
-one round (this walkthrough, NEW1's reachability numbers, and the
-now-fixed-but-was-real briefing defect), which changes it from a standing
-caution to a concrete blocker with a paper trail: **any model that puts
-revenue weight on the Hearing Pack before LCC's fix to finding #1 ships and
-NEW1's retrieval numbers materially improve is pricing a product that does
-not yet do the thing its name promises.**
+one round (this walkthrough, NEW1's reachability numbers, and the briefing
+defect). **Update: LCC closed the briefing defect same-round (bus 1078),
+including three sibling surfaces this walkthrough alone did not find.**
+That removes one of the three angles as a live blocker. **What is left
+holding Model B/C back is NEW1's retrieval numbers alone** — concept-class
+reachability at or near zero — which this round's fix does not and cannot
+touch, since it corrected which table a query reads, not what the corpus
+can find. The conclusion is unchanged: **any model that puts revenue weight
+on the Hearing Pack before NEW1's retrieval numbers materially improve is
+pricing a product that does not yet do the thing its name promises** — the
+paper trail is now one document shorter, not the conclusion.
 
 ## 3. Model comparison
 
