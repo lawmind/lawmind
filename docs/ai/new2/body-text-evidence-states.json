@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-08-24T15:08:11.285Z",
+  "watermark": "2026-08-21T17:54:09.987Z",
+  "steps": [
+    {
+      "name": "null_text_exact",
+      "ms": 22086,
+      "pg_active_before": 11,
+      "rows": [
+        {
+          "corpus": 18698984,
+          "null_text": 0
+        }
+      ]
+    },
+    {
+      "name": "empty_text_bounded_sample",
+      "ms": 29253,
+      "pg_active_before": 11,
+      "rows": [
+        {
+          "sampled": 94818,
+          "empty_text": 0
+        }
+      ]
+    },
+    {
+      "name": "body_text_evidence_today_and_after_import",
+      "ms": 25667,
+      "pg_active_before": 11,
+      "rows": [
+        {
+          "proven_damaged": 469599,
+          "screened_damaged": 1322722,
+          "unconvicted_today_never_screened": 16906663,
+          "after_import_screened_no_damage_found": 16906647,
+          "after_import_never_screened": 16
+        }
+      ]
+    }
+  ]
+}

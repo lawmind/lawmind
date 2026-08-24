@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-08-24T14:55:10.078Z",
+  "checkpoint": {
+    "STARTED": "2026-08-21T17:54:09.987Z",
+    "UPDATED": "2026-08-22T05:55:26.326Z",
+    "CURSOR": "ffffff40-1694-46f8-8dc7-f9532537609d",
+    "CLAIMED": 18698968
+  },
+  "steps": [
+    {
+      "name": "time_watermark_reconciliation",
+      "ms": 38853,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "corpus_now": 18698984,
+          "created_before_run_started": 18698968,
+          "created_during_run": 0,
+          "created_after_run": 16
+        }
+      ]
+    },
+    {
+      "name": "id_watermark_falsifier",
+      "ms": 2,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "created_after_the_run": 16,
+          "would_be_falsely_certified_as_screened": 16
+        }
+      ]
+    },
+    {
+      "name": "current_quality_columns",
+      "ms": 18004,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "script_quality": null,
+          "script_quality_method": null,
+          "rows": 16906663
+        },
+        {
+          "script_quality": "damaged_other",
+          "script_quality_method": "english_density_screen_v1",
+          "rows": 1264107
+        },
+        {
+          "script_quality": "damaged_other",
+          "script_quality_method": "text-damage-v2.0",
+          "rows": 469599
+        },
+        {
+          "script_quality": "legacy_font_ascii",
+          "script_quality_method": "text_marker_screen_v1",
+          "rows": 58615
+        }
+      ]
+    }
+  ]
+}
