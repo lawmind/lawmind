@@ -175,7 +175,22 @@ const CLAUSE_END = /[.;]|\bPara\.?\s*\d+|\bv\.?\s+\p{Lu}/u;
  * `following` is the text starting AT the citation. **Returns null far more
  * often than not**, which is correct: most citations are neutral references, and
  * `cites` is the honest answer for them.
- */
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE OTHER TREATMENT WRITER IS `detectTreatment` IN `citations.ts`
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Different vocabulary, different trigger, both legitimate: that one runs at
+ * EXTRACTION on every edge with a dash plus ten markers; this one runs over
+ * RESOLVED edges only and is much wider.
+ *
+ * NEW2 (bus 1099) re-derived all 16,001 treatment-bearing edges against
+ * `detectTreatment` alone and it reported 1,680 rows "wrong" — this function's
+ * legitimate output read as corruption. Applying that diff would have deleted
+ * **1,624 real treatment claims**. Against both writers the real number is 19.
+ *
+ * Never audit treatment against a single writer.
+ * */
 export function readTreatment(citation: string, following: string): Treatment | null {
   const flat = following.replace(/\s+/g, ' ');
   const cite = citation.replace(/\s+/g, ' ').trim();

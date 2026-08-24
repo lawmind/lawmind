@@ -288,7 +288,31 @@ const MARKER_RE =
  * Returns `cites` with no evidence when there is no annotation — the common and
  * correct case. Most citations in a judgment are references rather than
  * treatments, and labelling them otherwise overstates the record.
- */
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THERE ARE TWO TREATMENT WRITERS, AND A DIFF AGAINST ONE READS THE OTHER AS
+ * CORRUPTION
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This is one of them. The other is `readTreatment` in
+ * `services/ingest/src/treatment.ts`, and their vocabularies are DIFFERENT ON
+ * PURPOSE:
+ *
+ *   * this one — a dash plus ten markers, forward {@link MARKER_WINDOW} chars,
+ *     run at EXTRACTION on every edge;
+ *   * `readTreatment` — much wider (`relied upon`, `held overruled`, `held per
+ *     incuriam`, `Not correct law`), with per-phrase negation, run by
+ *     `citator-cli.ts` over RESOLVED edges only.
+ *
+ * `detectTreatment` cannot reproduce `readTreatment`'s vocabulary. NEW2 tried
+ * (bus 1099): re-deriving all 16,001 treatment-bearing edges against this
+ * function ALONE reported 1,680 rows "wrong", and applying that diff would have
+ * **deleted 1,624 real treatment claims** — 56 of them adverse. Against BOTH
+ * writers the real number is 19, and all 19 are one defect.
+ *
+ * So: never audit treatment against a single writer. If you are diffing, diff
+ * against both, and a row only one of them explains is explained.
+ * */
 export function detectTreatment(text: string, end: number): TreatmentSignal {
   const ahead = text.slice(end, Math.min(text.length, end + MARKER_WINDOW));
 
