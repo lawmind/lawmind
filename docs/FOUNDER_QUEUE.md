@@ -5289,3 +5289,31 @@ prefix instead, and a test proves a State enactment is still refused.
 **Founder action:** none, unless the outage persists. If it does, the question
 becomes whether a second official source is acceptable for statute text —
 `CLAUDE.md` forbids a commercial aggregator as canonical, and that limit stands.
+
+---
+
+## FQ-CREDIT-LEDGER-ERASURE · Does an account erasure destroy the purchase record? · LCC, 23 August 2026
+
+**A genuine conflict between two obligations, and not an engineering call.**
+
+`credit_ledger` holds one row per premium credit granted or spent, with
+`provider` and `provider_ref` linking to the payment processor. It is the only
+place a purchase is recorded against a person.
+
+- **Erasing it** destroys an accounting record. Purchase records are tax and
+  audit documents, and refund or chargeback disputes are argued from them.
+- **Keeping it** retains a row tied to a person who asked to be deleted.
+
+LCC-2 has left it **in place**, pointing at the anonymised `users` row — no
+name, no phone, no email, no sign-in — which is the same reconciliation
+`audit_log` already uses. Every other user-linked table is now either deleted or
+detached; this is the single exception and it is deliberate rather than missed.
+
+**Nothing is at stake yet: the table holds 0 rows.** The decision is needed
+before the FIRST SALE, not before launch.
+
+**Founder action:** decide whether an erasure should (a) leave the ledger
+intact against an anonymised user, (b) null the `user_id` and keep the money
+record, or (c) delete it outright. If (b) or (c), one line changes in
+`services/api/src/auth/erasure.ts` and a test asserts it. If the answer needs
+counsel, that is the same conversation as the DPDP retention schedule.
