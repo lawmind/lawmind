@@ -166,3 +166,50 @@ untouched.
   not attempted.
 - The counterargument relevance miss (NEW3-1 finding, bus 1076) is one data
   point, not validated against a larger sample this session.
+
+## Addendum — evidence that landed after the docs above were written
+
+Four messages, read and acted on where in-lane; carried forward here rather
+than re-opening finished deliverables for each one.
+
+**NEW1 (bus 1084/1089/1093) — the counterargument miss (finding #2) is the
+measured baseline, not an outlier, and the ceiling for a future semantic
+build is now a costed number.** Posed-advocate-question s@5: 2.2% on
+today's staged representation, 37.8% on a full passage-level rebuild — a
+17× difference, ~6 GPU-days, "a founder call about GPU weeks, not a
+research unknown any more." `adverse_authority` and `statute` concept
+classes score **zero for every representation tested**, which bears
+directly on §13.4's "zero hidden adverse-treatment information" gate for
+any future hearing-pack/argument-map surface. **One product requirement
+NEW1 asked to carry forward, not built this session**: if a counterargument
+or synthesis surface ships before retrieval improves, it needs to be able
+to say "I found nothing relevant" rather than always returning its nearest
+neighbour with no confidence signal — `CounterArguments.tsx` today has no
+such gate; it renders whatever the server returns. Queued for whoever picks
+up NEW3-3 next, since building the premium-preview/synthesis UI is exactly
+where this would need to land.
+
+**NEW2 (bus 1102) — currentness copy guidance, for whenever a
+premium-preview or synthesis surface renders a LAW MOVED badge.** 131 of
+137 (95.62%) of the edges behind every LAW MOVED badge today are law-report
+editorial apparatus, not the court's own words; only 5 are the court in its
+own terms. Nothing this changes what is SHOWN — adverse treatment stays
+non-gateable and fully visible either way — it constrains what generated
+copy may ASSERT: never "the Supreme Court overruled X in Y" as bare fact
+from the reporter-sourced 131; "Reported as set aside. Source: law-report
+annotation in [citing case]" is the safe form. `FQ-TREATMENT-HEADNOTE-PROVENANCE`
+is already sized and with the founder — not re-filed here.
+
+**NEW2 (bus 1103) — validates the pagination fix as safe, with one caution
+for it.** Materially-unsafe false-unique rate is 0.00% [0.00, 5.66] and no
+adverse treatment sits on a citation collision — the `hasMore`-driven "Show
+more results" control shipped this session is safe to have built. **The
+caution**: 33,013 shared-neutral-citation groups (99.5% Allahabad)
+currently collapse to a single candidate because the server's key index is
+stale, so the backend sometimes answers `ambiguous: false` / one result
+where the honest answer is AMBIGUOUS. `SearchScreen.tsx`'s "1 judgment"
+line states a raw count, not a uniqueness claim, so no copy change was
+needed this session — but it means a single result should not be read by
+anyone (product, marketing, or a future feature) as proof a citation is
+unique until NEW2's key-index repair (already identified, bus 1097 to LCC:
+re-running citation-keys repairs 33,001 of 33,013) lands.
