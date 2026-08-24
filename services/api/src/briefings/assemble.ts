@@ -151,7 +151,9 @@ export async function assembleBriefing(
              1 AS source_rank
         FROM matter_authorities
        WHERE matter_id = ${matterId} AND removed_at IS NULL
-    ) both
+    -- The alias is NOT "both": that is a reserved word (TRIM(BOTH ...)) and
+    -- Postgres rejects it as a subquery alias. tsc cannot see that; the test did.
+    ) saved_to_matter
     ORDER BY judgment_id, source_rank ASC, created_at DESC`;
 
   // ---- block 4: preparation checklist --------------------------------------

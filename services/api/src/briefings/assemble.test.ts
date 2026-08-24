@@ -195,6 +195,15 @@ describe('briefing assembly', () => {
    */
   it('finds an authority added through matter_authorities, not only through an annotation', async () => {
     const j = { id: judgmentId! };
+    /**
+     * The annotation is removed and PUT BACK, because an earlier test in this
+     * file created it and the OD-14 tests below still need it. A fixture that
+     * deletes another test's setup and does not restore it turns one failure
+     * into four, in a file where the order is not obvious.
+     */
+    const kept = await sql<{ paragraph_number: number; paragraph_index: number; quote: string }[]>`
+      SELECT paragraph_number, paragraph_index, quote FROM judgment_annotations
+       WHERE matter_id = ${matterId}`;
     await sql`DELETE FROM judgment_annotations WHERE matter_id = ${matterId}`;
     await sql`INSERT INTO matter_authorities (matter_id, judgment_id, added_by_user_id)
               VALUES (${matterId}::uuid, ${j.id}::uuid, ${userId}::uuid)`;
@@ -212,6 +221,12 @@ describe('briefing assembly', () => {
       );
     } finally {
       await sql`DELETE FROM matter_authorities WHERE matter_id = ${matterId}`;
+      for (const a of kept) {
+        await sql`INSERT INTO judgment_annotations
+                    (user_id, judgment_id, matter_id, paragraph_number, paragraph_index, quote)
+                  VALUES (${userId}, ${j.id}, ${matterId}, ${a.paragraph_number},
+                          ${a.paragraph_index}, ${a.quote})`;
+      }
     }
   });
 
