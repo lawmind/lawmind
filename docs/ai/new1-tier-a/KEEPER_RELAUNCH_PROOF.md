@@ -139,10 +139,34 @@ Twenty minutes of that interval were the census re-walking batches 1–101 and
 skipping them, which is the resume contract working, not the walk idling. The
 acceptance is met on both limbs: a new stage-runner line **and** a row delta.
 
-### 5a. A second, unplanned occurrence — the stronger one
+### 5a. What the fix was actually worth: 655,099 vectors, unattended
 
-The workstation was off overnight. On resume the keeper came back through Task
-Scheduler and recovered a **cold** box, unprompted, with no agent watching:
+The +164 above is the proof of the mechanism. It is not the value.
+
+With the keeper working, **the walk ran for 20 hours 46 minutes with nobody
+watching it**, from the verified relaunch at 23 Aug 16:04:01Z until the
+workstation rebooted:
+
+| at | `count(*) FROM new1_doc_vector_stage` |
+| --- | ---: |
+| 23 Aug 16:04:01Z — the relaunch | 1,097,864 |
+| 23 Aug 16:24:28Z — mechanism proof | 1,098,028 |
+| 24 Aug 12:50Z — the reboot | **1,753,127** |
+
+**+655,099 staged vectors.** Under the old keeper that interval would have been
+`relaunch DID NOT TAKE` roughly 250 times and an idle GPU, which is exactly what
+the four hours before the fix looked like.
+
+### 5b. A second occurrence, and a correction to my own first account
+
+I first wrote that "the workstation was off overnight". **That was an inference
+from a stale lock, and it is wrong.** `LastBootUpTime` says the box rebooted at
+**24 Aug 12:50:36Z**, in the middle of the day — which is also the moment the
+walk went silent, matching the keeper's own "WALK SILENT for 120 min" at
+14:49:37Z. The box was up and working the whole night; it went down at midday.
+
+The substance survives the correction, and is if anything better: the keeper
+recovered a **cold, freshly rebooted** box with no agent present.
 
 ```
 2026-08-24T14:48:02.806Z  stale lock from pid 3112 (not running) — taking it over
@@ -157,8 +181,32 @@ Both halves in one episode — sidecar death **and** walk death — recovered
 without intervention, ending in a running walk. This is the case the keeper
 exists for and had never once handled.
 
-**Total: 22 consecutive failed relaunches before the change; 2 verified
-progressing relaunches after it, the second across a machine restart.**
+One thing this does **not** explain and I am not going to pretend it does: the
+reboot was at 12:50:36Z and the keeper's first line is at 14:48:02Z, **an
+unexplained gap of one hour 58 minutes.** The Task Scheduler trigger fires every
+five minutes, so either the box sat somewhere the task could not run, or the task
+did not fire. That is a durability question worth its own look; it is not this
+defect, and the keeper did the right thing the moment it ran.
+
+### 5c. A third occurrence, on the pause release
+
+Deleting the pause file at 16:28Z:
+
+```
+2026-08-24T16:28:47.704Z  WALK SILENT for 98 min — relaunch #2.
+2026-08-24T16:29:45.355Z  WALK RELAUNCH issued (killed any survivors first)
+2026-08-24T16:33:00.942Z  relaunch VERIFIED — 7 walk process(es) live
+```
+
+Process chain confirmed from the table, keeper to embedder:
+`node sidecar-keeper.mjs (9696) → bash walk-launch.sh (12916) → bash
+stage-runner.sh (28808) → … → node doc-vector-embed.mjs (24020)`, and
+`stage-runner.log` advancing.
+
+**Total: 22 consecutive failed relaunches before the change; 3 verified
+progressing relaunches after it — one proving the mechanism, one recovering a
+cold rebooted box unattended, one resuming from a deliberate pause — and 655,099
+vectors staged in between with nobody watching.**
 
 ## 6. A second thing this closes: the walk can now be paused deliberately
 
