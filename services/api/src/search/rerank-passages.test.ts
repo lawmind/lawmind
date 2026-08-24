@@ -48,9 +48,40 @@ function spySql(rows: { judgment_id: string; chunk_text: string }[]): {
   calls: number;
 } {
   const state = { calls: 0 };
-  const sql = ((_s: TemplateStringsArray, ..._v: unknown[]) => {
-    state.calls++;
+  /**
+   * Only a QUERY is counted, not a fragment.
+   *
+   * `postgres.js` uses the same tagged template for both: a SELECT is executed,
+   * an `AND (...)` fragment interpolated into another template is not.
+   * `passagesForRerank` builds one of each — the second through
+   * `andBodyTextSafe` — so a double that counted every template call reported
+   * two round trips where the code makes one, and the assertion that this
+   * function does not query per candidate would have failed for the wrong
+   * reason.
+   *
+   * `SELECT` is the discriminator because it is the thing being counted: a
+   * statement that reads. It is a property of the string the caller wrote, not
+   * a guess about intent.
+   */
+  const fn = (s: TemplateStringsArray, ..._v: unknown[]) => {
+    if (s.join(' ').includes('SELECT')) state.calls++;
     return Promise.resolve(rows);
+  };
+  /**
+   * `sql.unsafe` is part of the double because the code under test reaches it.
+   *
+   * `passagesForRerank` interpolates `andBodyTextSafe(sql)`, which calls
+   * `sql.unsafe(...)` to name a column — and a bare tagged-template function has
+   * no such method, so five tests in this file were failing with
+   * `TypeError: sql.unsafe is not a function` rather than with an assertion.
+   * A double that is missing a method the real object has does not test less,
+   * it tests nothing, and the failure looks like a bug in the code.
+   *
+   * It returns a template-literal-shaped fragment because that is all the
+   * caller does with it: interpolate it into another tagged template.
+   */
+  const sql = Object.assign(fn, {
+    unsafe: (text: string) => text,
   }) as unknown as Sql;
   return { sql, get calls() { return state.calls; } };
 }

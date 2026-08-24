@@ -101,16 +101,58 @@ export async function assembleBriefing(
       )
     ORDER BY f.event_date ASC`;
 
-  // ---- block 3: authorities ------------------------------------------------
-  // What the advocate saved to this matter. IDs and anchors only.
+  /**
+   * ── block 3: authorities ─────────────────────────────────────────────────
+   *
+   * What the advocate saved to this matter. IDs and anchors only.
+   *
+   * ───────────────────────────────────────────────────────────────────────────
+   * THERE ARE TWO WAYS TO PUT AN AUTHORITY ON A MATTER, AND THIS READ ONE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * NEW3 found it (bus 1075) during the 10-matter walkthrough and reproduced it
+   * through the real sweep rather than by reading the code: save an authority
+   * with `POST /matters/:id/authorities` — the ordinary way, the one the client
+   * uses, confirmed in `matter_authorities`, confirmed by `GET
+   * /matters/:id/authorities`, counted by the premium preview — then generate
+   * the briefing. `blocks.authorities` came back `[]` and the checklist said
+   * **"No authorities are saved to this matter."**
+   *
+   * This block read only `judgment_annotations`, which is the OTHER writer:
+   * `POST /judgments/:id/annotations` with a `matterId`, the highlight-and-pin
+   * path. Both are real, both mean "this authority is on this case" — LCC-1
+   * established exactly that when it found the same route enforcing
+   * add-to-matter policy — and a briefing must read both or it is telling an
+   * advocate their own work is missing, on the one document meant to be
+   * trustworthy the night before a hearing.
+   *
+   * `removed_at IS NULL` and `deleted_at IS NULL` are the two tables' own words
+   * for the same thing. The union is deduplicated on `judgment_id` because an
+   * authority added AND annotated is one authority, and the annotation is
+   * preferred when both exist — only it carries the paragraph the advocate
+   * actually pinned.
+   */
   const authorities = await sql<
     { judgment_id: string; created_at: string; paragraph_number: number | null }[]
   >`
-    SELECT DISTINCT ON (judgment_id)
-           judgment_id, ${sql.unsafe(isoColumn('created_at'))} AS created_at, paragraph_number
-    FROM judgment_annotations
-    WHERE matter_id = ${matterId} AND deleted_at IS NULL
-    ORDER BY judgment_id, created_at DESC`;
+    SELECT DISTINCT ON (judgment_id) judgment_id, created_at, paragraph_number
+    FROM (
+      SELECT judgment_id,
+             ${sql.unsafe(isoColumn('created_at'))} AS created_at,
+             paragraph_number,
+             -- Prefer the annotation: it is the row that knows the paragraph.
+             0 AS source_rank
+        FROM judgment_annotations
+       WHERE matter_id = ${matterId} AND deleted_at IS NULL
+      UNION ALL
+      SELECT judgment_id,
+             ${sql.unsafe(isoColumn('added_at'))} AS created_at,
+             NULL::integer AS paragraph_number,
+             1 AS source_rank
+        FROM matter_authorities
+       WHERE matter_id = ${matterId} AND removed_at IS NULL
+    ) both
+    ORDER BY judgment_id, source_rank ASC, created_at DESC`;
 
   // ---- block 4: preparation checklist --------------------------------------
   const checklist: BriefingBlocks['checklist'] = [];
@@ -179,7 +221,10 @@ export async function assembleBriefing(
     checklist.push({
       id: 'no-authorities',
       text: 'No authorities are saved to this matter.',
-      basis: 'no annotations reference this matter',
+      /* Both writers named, because the previous wording ("no annotations
+       * reference this matter") was true and the SENTENCE above it was false —
+       * the basis line was the only clue that the block had read one table. */
+      basis: 'no matter_authorities row and no annotation reference this matter',
     });
   }
 

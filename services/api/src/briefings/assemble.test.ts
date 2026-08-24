@@ -178,6 +178,61 @@ describe('briefing assembly', () => {
     assert.ok(row?.still_opened, 'a regenerated briefing must not look unread again');
   });
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * TWO WRITERS, ONE MATTER — NEW3 bus 1075
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `POST /matters/:id/authorities` writes `matter_authorities`.
+   * `POST /judgments/:id/annotations` with a matterId writes
+   * `judgment_annotations`. Both mean "this authority is on this case", and
+   * this block used to read only the second — so an advocate who saved an
+   * authority the ordinary way got a briefing that said their own work was
+   * missing, on the one document meant to be trustworthy the night before a
+   * hearing.
+   *
+   * NEW3 reproduced it through the real sweep. This holds it.
+   */
+  it('finds an authority added through matter_authorities, not only through an annotation', async () => {
+    const j = { id: judgmentId! };
+    await sql`DELETE FROM judgment_annotations WHERE matter_id = ${matterId}`;
+    await sql`INSERT INTO matter_authorities (matter_id, judgment_id, added_by_user_id)
+              VALUES (${matterId}::uuid, ${j.id}::uuid, ${userId}::uuid)`;
+    try {
+      const b = await assembleBriefing(sql, matterId!, '2026-09-20');
+      assert.equal(
+        b!.blocks.authorities.length,
+        1,
+        'an authority saved the ordinary way did not reach the briefing',
+      );
+      assert.equal(b!.blocks.authorities[0]?.judgmentId, j.id);
+      assert.ok(
+        !b!.blocks.checklist.some((c) => c.id === 'no-authorities'),
+        'the checklist told the advocate nothing was saved while something was',
+      );
+    } finally {
+      await sql`DELETE FROM matter_authorities WHERE matter_id = ${matterId}`;
+    }
+  });
+
+  it('counts an authority both added AND annotated once, keeping the pinned paragraph', async () => {
+    const j = { id: judgmentId! };
+    await sql`INSERT INTO matter_authorities (matter_id, judgment_id, added_by_user_id)
+              VALUES (${matterId}::uuid, ${j.id}::uuid, ${userId}::uuid)`;
+    await sql`INSERT INTO judgment_annotations
+                (user_id, judgment_id, matter_id, paragraph_number, paragraph_index, quote)
+              VALUES (${userId}, ${j.id}, ${matterId}, 12, 11, 'the passage relied on')`;
+    try {
+      const b = await assembleBriefing(sql, matterId!, '2026-09-20');
+      assert.equal(b!.blocks.authorities.length, 1, 'one authority became two');
+      // The annotation wins: it is the only row that knows which paragraph.
+      assert.equal(b!.blocks.authorities[0]?.paragraphNumber, 12);
+    } finally {
+      await sql`DELETE FROM matter_authorities WHERE matter_id = ${matterId}`;
+      await sql`DELETE FROM judgment_annotations WHERE matter_id = ${matterId} AND paragraph_number = 12`;
+    }
+  });
+
   it('names an authority that has moved, in the checklist', async () => {
     const j = { id: judgmentId! };
     await sql`UPDATE judgments SET overruled_status = 'set_aside' WHERE id = ${j.id}`;

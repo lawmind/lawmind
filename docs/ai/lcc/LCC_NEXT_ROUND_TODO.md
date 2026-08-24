@@ -76,7 +76,7 @@ response — never "the code exists".
 - [ ] queued, not attempted: a btree on `(court, normalised case_number)` would
       turn ~800 ms into an index lookup. `DEFER DB_SCAN` stood all round
 
-## LCC-4 — sparse memory / OOM incident [P0] · **[~] fix in, write-up pending**
+## LCC-4 — sparse memory / OOM incident [P0] · **[x] DONE** — `63128b4`
 
 - [x] did **not** patch the refuted mechanism
 - [x] **second** mechanism refuted, this time my own: `Sort Method: top-N
@@ -93,33 +93,69 @@ response — never "the code exists".
 - [x] the all-common fallback is **not** deleted (NEW1 bus 1025: deleting it is
       the worst arm)
 - [x] regression test 3/3
-- [ ] `docs/ai/lcc/SPARSE_MEMORY_INCIDENT_RCA.md`
-- [ ] tell RCC/NEW3 the wire gained a `degraded` value
+- [x] `docs/ai/lcc/SPARSE_MEMORY_INCIDENT_RCA.md`
+- [ ] tell RCC/NEW3 the wire gained a `degraded` value — in the closing bus message
 
-## LCC-5 — operational alert delivery [P1 RELEASE] · **[ ] NOT STARTED**
+## LCC-5 — operational alert delivery [P1 RELEASE] · **[x] DONE** — `344d0b4` `a9714a7`
 
-- [ ] expose disk / free space
-- [ ] poller over alert rules
-- [ ] deliver `page` severity to a human (Resend)
-- [ ] briefing sweep health: ran / expected work vs zero write / delivery / failure visible
-- [ ] API + search health page conditions
-- [ ] dedup + cooldown
-- [ ] inject a condition and prove notification **through the same path**
+- [x] `diskFreeFraction` — read with `statfs`, not a spawned process
+- [x] poller over the SAME rules the endpoint renders (`collectMetrics` lifted out)
+- [x] Resend delivery behind a `Notifier`; console transport NAMES itself as
+      having sent nothing; production refuses to start without both env vars
+- [x] briefing sweep health — four separate questions, and the denominator that
+      makes "zero briefings" mean something
+- [x] dedup + 120-minute cooldown, keyed on the rule not the message
+- [x] **injected a condition and proved the notification through the same path** —
+      and it caught a REAL one on the first run (`longestStatementSeconds` 1245s)
+- [x] second run delivered 0 and suppressed both — cooldown observed
+- [x] the test found a gap the design missed: a ledger we cannot read must not
+      silence the page, because the database being down is when it matters most
+- [x] 8/8 poller · 31/31 admin · migration journalled and tracked
+- [x] `docs/ai/lcc/OPS_ALERTING_PROOF.md`
+- [ ] founder: `OPS_ALERT_EMAIL` — the one value that is not mine to choose
 
-## LCC-6 — full API suite in a quiet window [P1] · **[ ] NOT STARTED**
+## LCC-6 — full API suite in a quiet window [P1] · **[~] RUNNING**
 
-- [ ] coordinate the window; pause only jobs whose owners approve
+- [x] quiet window requested from NEW1/NEW2/NEW3 on the bus, with the contention
+      I could see; nothing of another lane's paused without approval
+- [x] contention recorded at start: cpu 11.5%, ram free 39.4%, gpu 98%,
+      postgres 6 active, **longest statement 1541s**, fleet 6
+- [~] suite running
 - [ ] wall time, failures, blocked queries recorded
-- [ ] **not green if interrupted**
+- [ ] classify remaining slow tests — `/corpus/coverage` already observed at
+      **71s and 30s** for single requests
 
-## LCC-7 — release/export pipeline proof [P1 PRE-STAGING] · **[ ] NOT STARTED**
+## LCC-7 — release/export pipeline proof [P1 PRE-STAGING] · **[~] IN PROGRESS**
 
-- [ ] versioned release manifest
-- [ ] export approved serving data only
-- [ ] restore into a Linux-target PostgreSQL; extensions; indexes
-- [ ] counts / checksums / invariants; exact-search equivalence
-- [ ] partial-transfer and bad-release simulations; rollback
-- [ ] **no production deploy, no 291 GB clone**
+- [x] Linux-like target: **WSL2 Ubuntu 26.04, PostgreSQL 18.6 + pgvector**, on
+      the founder's own box. No cloud, no provisioning, no spend
+- [x] **all 81 migrations applied clean to an empty Linux database**, pgvector
+      and pg_trgm verified from `pg_extension` — the schema path works
+- [x] **FINDING, already: the source collation is `English_United States.1252`
+      and no Linux PostgreSQL can offer it.** The target is `C.UTF-8`. Text
+      ordering is not identical, which reaches `ORDER BY case_title`, every
+      btree index on text, and therefore keyset pagination. This is why a
+      cross-platform physical copy is refused and indexes must be REBUILT
+- [x] versioned manifest with per-table row counts + checksums, source
+      collation, extensions and schema version
+- [x] approved serving data ENUMERATED, never derived — and what was refused is
+      named, including `judgment_chunks` / staged vectors (NEW1's decision)
+- [~] export running, bounded to 500 judgments (**no 291 GB clone**)
+- [ ] restore + verify against the manifest
+- [ ] simulated partial transfer (`--truncate-table`), rollback
+- [ ] exact-search equivalence battery
+- [ ] `docs/ai/lcc/RELEASE_PIPELINE_PROVEN_V1.md`
+
+## Unplanned, accepted from the bus
+
+- [x] **NEW3 bus 1075 — the briefing showed "No authorities are saved to this
+      matter" for an authority that WAS saved.** Not OD-14-shaped: the block read
+      `judgment_annotations` and never `matter_authorities`, so the ordinary
+      save path was invisible. There are two writers and a briefing must read
+      both. Fixed + 2 regression tests
+- [ ] NEW1 bus 1079 — `text_safety_grade='PROOF'` unreachable, the deployed view
+      tests `script_quality_method` against an EMPTY array (~470,000 documents
+      read as SCREEN). LCC's view. **Not yet started**
 
 ---
 
@@ -127,8 +163,13 @@ response — never "the code exists".
 
 - `FQ-CREDIT-LEDGER-ERASURE` — does erasure destroy the purchase record?
   Money vs privacy. 0 rows today; needed before the first sale, not before launch.
+- `FQ-OPS-ALERT-EMAIL` — which address should an operational page wake? One
+  value, and the alerting path is live. `RESEND_API_KEY` is already present.
 
 ## Bus
 
 - `1078 LCC → NEW3` — OD-14 was four surfaces, not one; and deletion did not
   delete. Both proofs linked.
+- `1084-1086 LCC → NEW1/NEW2/NEW3` — quiet-window request for LCC-6, with the
+  contention I could see and an explicit "I will not call it green if it runs
+  under load".
