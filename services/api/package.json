@@ -38,6 +38,7 @@
     "verify:exact-span": "tsx src/judgments/verify-exact-span-cli.ts",
     "retrieval:regression": "tsx src/search/retrieval-regression-cli.ts",
     "overruled:audit": "tsx src/search/overruled-retrieval-audit-cli.ts",
+    "ops:alert-poll": "tsx src/ops/alert-poller-cli.ts",
     "kill-switch": "tsx src/admin/kill-switch-cli.ts",
     "role": "tsx src/admin/role-cli.ts",
     "measure:round": "tsx src/search/round-measure-cli.ts",

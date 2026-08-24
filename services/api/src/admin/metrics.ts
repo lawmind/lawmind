@@ -37,6 +37,8 @@
  * anything. This endpoint is admin-gated, but the reason there is nothing
  * sensitive in it is not the gate — it is that operations does not need it.
  */
+import { statfs } from 'node:fs/promises';
+
 import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 
@@ -74,17 +76,70 @@ export const ALERT_RULES = {
   longestStatementSeconds: { watch: 300, page: 900 },
   /** How stale the corpus may get before someone should look at ingest. */
   releaseDataAgeHours: { watch: 48, page: 168 },
+  /**
+   * Free disk, as a FRACTION of the filesystem holding this service.
+   *
+   * Added because it was the one resource nothing here watched, and it is the
+   * one whose exhaustion is not graceful: PostgreSQL stops accepting writes,
+   * the ingest fleet dies mid-batch, and the first symptom is a 500 rather
+   * than a slowdown. `direction: 'below'` — this alerts when the number is
+   * SMALL, which is why `add` takes a direction at all.
+   */
+  diskFreeFraction: { watch: 0.15, page: 0.07 },
+  /**
+   * Hours since the newest briefing was generated.
+   *
+   * The sweep runs at 23:00 IST, so anything under 24 is normal and 30 gives
+   * it a margin for a slow night. `page` at 50 is two consecutive misses —
+   * one missed sweep costs a briefing, two is a broken cron.
+   *
+   * **This is the wedge.** A briefing that does not arrive is the product not
+   * happening, and it fails SILENTLY: nobody complains about an email they did
+   * not know to expect.
+   */
+  briefingSweepAgeHours: { watch: 30, page: 50 },
+  /**
+   * Briefings generated but never delivered, as a fraction.
+   *
+   * Generation and delivery are different jobs and they fail separately. A
+   * sweep that assembles a hundred briefings and delivers none looks perfectly
+   * healthy to every rule above it.
+   */
+  briefingUndeliveredRate: { watch: 0.2, page: 0.6 },
 } as const;
 
 function rate(numerator: number, denominator: number): number {
   return denominator === 0 ? 0 : numerator / denominator;
 }
 
-export async function getMetrics(
-  c: Context,
+export type MetricsSnapshot = {
+  payload: Record<string, unknown>;
+  alerts: Alert[];
+};
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * COLLECTION IS SEPARATE FROM THE ROUTE, SO THE POLLER CANNOT DISAGREE WITH IT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `GET /admin/metrics` used to be the only caller and the evaluation lived
+ * inside the handler. Then `ops/alert-poller.ts` needed the same verdicts, and
+ * there were exactly two options: give the poller its own copy of the
+ * thresholds, or lift the evaluation out.
+ *
+ * A second copy is how the endpoint and the pager end up saying different
+ * things about the same minute — the identical failure `precedential-effect.ts`
+ * was written to end, one level down the stack. So there is one collector, the
+ * route renders it, and the poller acts on it.
+ *
+ * Throws on failure. The ROUTE turns that into a 503; the poller has to treat a
+ * collector that cannot run as its own alert, because "no alerts" and "could
+ * not look" are the same silence.
+ */
+export async function collectMetrics(
   sql: Sql,
   deps: MetricsDeps = {},
-): Promise<Response> {
+): Promise<MetricsSnapshot> {
   const alerts: Alert[] = [];
   const add = (
     key: keyof typeof ALERT_RULES,
@@ -98,7 +153,7 @@ export async function getMetrics(
     else if (breached(rule.watch)) alerts.push({ severity: 'watch', rule: key, detail });
   };
 
-  try {
+  {
     /**
      * A 15-minute window everywhere, so every rate on this page describes the
      * same period. Mixing windows is how "the error rate is fine" and "we are
@@ -192,9 +247,120 @@ export async function getMetrics(
     const ageHours = Number(freshness?.hours ?? 0);
     add('releaseDataAgeHours', ageHours, `newest corpus row was written ${Math.round(ageHours)}h ago`);
 
+    /**
+     * Free disk. `statfs` rather than a shelled-out `df`/`wmic`: it is in the
+     * standard library, it works on both platforms this repo runs on, and a
+     * metrics endpoint that spawns a process during an incident is a metrics
+     * endpoint that stops working during an incident.
+     *
+     * Reported as a FRACTION as well as bytes, because the threshold has to
+     * hold on a 500 GB workstation and on a small serving box without being
+     * re-tuned per host.
+     */
+    let disk: { totalBytes: number; freeBytes: number; freeFraction: number } | null = null;
+    try {
+      const fsStat = await statfs(process.cwd());
+      const totalBytes = Number(fsStat.blocks) * Number(fsStat.bsize);
+      const freeBytes = Number(fsStat.bavail) * Number(fsStat.bsize);
+      if (totalBytes > 0) {
+        const freeFraction = freeBytes / totalBytes;
+        disk = { totalBytes, freeBytes, freeFraction };
+        add(
+          'diskFreeFraction',
+          freeFraction,
+          `${(freeFraction * 100).toFixed(1)}% free (${Math.round(freeBytes / 1024 ** 3)} GiB)`,
+          'below',
+        );
+      }
+    } catch {
+      /* An unreadable filesystem is not an alert about disk space. It is
+       * reported as `disk: null`, which is honestly different from "plenty". */
+    }
+
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * BRIEFING SWEEP HEALTH — THE WEDGE, AND IT FAILS SILENTLY
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Four questions, because they fail separately and each one alone looks
+     * healthy:
+     *
+     *   1. did the job RUN?            — newest `generated_at`
+     *   2. was there work to do?       — matters with a hearing date ahead
+     *   3. did it WRITE anything?      — briefings for those dates
+     *   4. did DELIVERY happen?        — `delivered_at`
+     *
+     * (2) is what makes (3) meaningful. "Zero briefings written" is correct on
+     * a night when no matter has a hearing, and is an outage on a night when
+     * fifty do — and without the denominator those two are the same number.
+     */
+    const [briefing] = await sql<
+      {
+        newest_hours: string | null;
+        due_matters: string;
+        generated_for_due: string;
+        recent: string;
+        undelivered: string;
+      }[]
+    >`
+      SELECT
+        EXTRACT(EPOCH FROM (now() - max(b.generated_at))) / 3600 AS newest_hours,
+        (SELECT count(*) FROM matters m
+          WHERE m.status = 'active'
+            AND m.next_hearing_date IS NOT NULL
+            AND m.next_hearing_date BETWEEN current_date AND current_date + 1)::text
+          AS due_matters,
+        (SELECT count(*) FROM briefings b2
+          WHERE b2.hearing_date BETWEEN current_date AND current_date + 1)::text
+          AS generated_for_due,
+        count(*) FILTER (WHERE b.generated_at > now() - interval '48 hours')::text AS recent,
+        count(*) FILTER (WHERE b.generated_at > now() - interval '48 hours'
+                           AND b.delivered_at IS NULL)::text AS undelivered
+      FROM briefings b`;
+
+    const dueMatters = Number(briefing?.due_matters ?? 0);
+    const generatedForDue = Number(briefing?.generated_for_due ?? 0);
+    const recentBriefings = Number(briefing?.recent ?? 0);
+    const undelivered = Number(briefing?.undelivered ?? 0);
+    const briefingAgeHours = briefing?.newest_hours === null ? null : Number(briefing?.newest_hours);
+
+    /**
+     * Only alerted on once a briefing has EVER been generated. On a database
+     * where the feature has never run, `max(generated_at)` is null and an
+     * infinite age would page about a job that was never scheduled.
+     */
+    if (briefingAgeHours !== null) {
+      add(
+        'briefingSweepAgeHours',
+        briefingAgeHours,
+        `newest briefing was generated ${Math.round(briefingAgeHours)}h ago`,
+      );
+      if (recentBriefings > 0) {
+        const undeliveredRate = rate(undelivered, recentBriefings);
+        add(
+          'briefingUndeliveredRate',
+          undeliveredRate,
+          `${undelivered} of ${recentBriefings} briefings in 48h were never delivered`,
+        );
+      }
+    }
+
+    /**
+     * Expected work versus zero write, stated as its own alert rather than as a
+     * threshold — it is not a rate, it is a contradiction. Matters are listed
+     * for tomorrow and nothing was assembled for them.
+     */
+    if (dueMatters > 0 && generatedForDue === 0) {
+      alerts.push({
+        severity: 'page',
+        rule: 'briefingSweepZeroWrite',
+        detail: `${dueMatters} matter(s) are listed for today or tomorrow and NO briefing exists for those dates`,
+      });
+    }
+
     const admission = deps.admission?.stats();
 
-    return ok(c, {
+    const payload = {
       collectedAt: new Date().toISOString(),
       build: { sha: buildSha },
       process: {
@@ -221,7 +387,15 @@ export async function getMetrics(
         pressure: Number(pressure.toFixed(3)),
         longestStatementSeconds: Math.round(longest),
       },
-      storage: { databaseBytes: Number(db?.db_bytes ?? 0) },
+      storage: { databaseBytes: Number(db?.db_bytes ?? 0), disk },
+      briefingSweep: {
+        newestGeneratedAgeHours:
+          briefingAgeHours === null ? null : Number(briefingAgeHours.toFixed(1)),
+        mattersListedNext48h: dueMatters,
+        briefingsForThoseDates: generatedForDue,
+        generatedLast48h: recentBriefings,
+        undeliveredLast48h: undelivered,
+      },
       search15m: {
         requests: searchN,
         p50Ms: Number(search?.p50 ?? 0),
@@ -245,9 +419,25 @@ export async function getMetrics(
        */
       alerts,
       alertRules: ALERT_RULES,
-    });
+    };
+    return { payload, alerts };
+  }
+}
+
+/**
+ * The route. Renders the collector, and turns a collector that cannot run into
+ * a 503 rather than a 500 — a metrics endpoint that fails during an incident is
+ * worse than useless.
+ */
+export async function getMetrics(
+  c: Context,
+  sql: Sql,
+  deps: MetricsDeps = {},
+): Promise<Response> {
+  try {
+    const { payload } = await collectMetrics(sql, deps);
+    return ok(c, payload);
   } catch (error) {
-    // A metrics endpoint that 500s during an incident is worse than useless.
     return fail(
       c,
       'METRICS_UNAVAILABLE',
