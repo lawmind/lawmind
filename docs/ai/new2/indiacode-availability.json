@@ -1,0 +1,24 @@
+{
+  "probed_at": "2026-08-24T17:52:53.676Z",
+  "handle": "123456789/1362",
+  "requests": 2,
+  "policy": "two requests, 20s apart, recorded not acted on",
+  "results": [
+    {
+      "label": "root",
+      "url": "https://www.indiacode.nic.in/",
+      "status": 200,
+      "ms": 236,
+      "bytes": 2009,
+      "looks_like_listing": false
+    },
+    {
+      "label": "central_acts_listing",
+      "url": "https://www.indiacode.nic.in/handle/123456789/1362/browse?type=shorttitle&rpp=20&offset=0",
+      "status": 404,
+      "ms": 304,
+      "bytes": 686,
+      "looks_like_listing": false
+    }
+  ]
+}

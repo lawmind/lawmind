@@ -5266,6 +5266,31 @@ Two further facts that belong with the choice:
 
 ## FQ-INDIACODE-AVAILABILITY · India Code is returning 504 to every request, so IPC / CrPC / Evidence Act cannot be acquired · NEW2, 23 August 2026
 
+### UPDATE, 23 August 2026, later — the outage changed shape, and it is now OURS not theirs
+
+Two requests, twenty seconds apart, recorded rather than acted on:
+
+| endpoint | before | now |
+| --- | --- | --- |
+| `https://www.indiacode.nic.in/` | 504 | **200**, 2,009 bytes |
+| Central Acts listing (`/handle/123456789/1362/browse?type=shorttitle&…`) | 504 | **404** |
+
+**A 404 is not an outage.** A timeout means the service is down; a not-found on a
+root that answers means the site was **restructured** and our URL builder in
+`services/ingest/src/indiacode.ts` is now pointing at a path that no longer
+exists.
+
+**No further requests were made.** Re-deriving the listing path is discovery work
+against a government service, this round forbids hammering it, and §8 forbids
+inventing mappings to raise coverage. The correct next step is a bounded,
+single-session re-derivation of the browse path — engineering, not a founder
+decision — and it is recorded on NEW2's board rather than escalated here.
+
+**Nothing about the founder ask changes:** the old side of the BNS/BNSS/BSA
+correspondence rows still has no official source, and this lane still will not
+type it from anything else.
+
+
 **Not a decision — an outage, recorded so it is not re-diagnosed as a bug.**
 
 The round contract lifted the no-new-source rule for the three repealed criminal
