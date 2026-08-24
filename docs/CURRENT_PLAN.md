@@ -13713,3 +13713,80 @@ A; every arm was still losing ground at the largest pool measured.
 nothing lost — it resumes by re-running the coverage census, never from a batch
 number. `new1_doc_vector_stage` = 1,753,127. Delete
 `.agents/logs/new1-walk.pause` to give it back.
+
+---
+
+## LCC — next-round §6, all eight items closed · 24 August 2026
+
+**Lease:** `scripts/lane-lease.mjs`, session `fa117007`. Built this round because
+none existed: one file per lane, a second binder REFUSES and names the owner, and
+health is process IDENTITY (pid **and** creation date, because pids recycle) plus
+heartbeat age. It proved itself at the end of the round — it caught this
+session's own process restart as `DEAD` with a warm heartbeat.
+
+**Four P0s, every one reproduced before it was fixed.**
+
+`LCC-1` The generated briefing checklist branched on the stored `overruled_status`
+column, so the 73 judgments OD-14 exists for were told *"has been set aside. Do
+not rely on it"* in the same JSON that said `canAddToMatter: true`. And fixing
+generation was not sufficient: the checklist is served **verbatim from the blob**
+while the authorities beside it are read live, so an authority set aside overnight
+got its banner and **no checklist item at all**. The render path now rewrites the
+treatment items from live state. The repo-wide search found **three more surfaces**
+running the same stale rule — `judgments/annotations.ts` (annotating into a matter
+IS add-to-matter, and `POST /matters/:id/authorities` allowed what it refused),
+`documents/route.ts`, and `arguments/counter.ts`, which filtered on the BANNER and
+therefore dropped adverse authorities **the opponent can reach for** into
+`excluded[]`.
+
+`LCC-2` Account deletion returned 200 and left the advocate able to sign in
+indefinitely. Three independent mechanisms; the transferable one is that the
+anonymisation **destroys the key the identity cleanup needs** — the `auth_session`
+delete resolved `auth_id` after the same transaction rewrote it, matched zero rows
+and reported zero. Seven user-linked tables the function never named are now
+handled; `credit_ledger` is escalated because a purchase record is a tax document.
+
+`LCC-3` Both prior positions were partly right. `caseno:"<stored form>"` found
+96.7%; **typed bare it returned zero in 3 ms, 95% of the time**, because
+`full_text_tsv` is built from `full_text` alone and nothing routed to the column.
+A case number is a **registry serial** — serial 1 of 2019 exists in 24 courts and
+172 case types — so it is now a disambiguation, never a pin (**31.7% report
+ambiguous**). CNR is the real identifier: 100% at p50 2 ms. Bare 1.7% → 96.7%,
+typed 10.3% → 98.3%.
+
+`LCC-4` Not reproduced, and **two** mechanisms refuted — NEW1's tsvector theory
+and my own sort theory (`Sort Method: top-N heapsort, 31kB`). The classifiable
+cause is a planner misestimate **by construction**: the tsquery is built from a
+bind parameter inside the query, so `EXPLAIN` returns the identical `rows=84744`
+against measured upper bounds of 295,681 / 3,670,878 / **16,965,472**.
+
+`LCC-5` The alert conditions had been evaluated since the day they were written
+and **nothing ever delivered one**. Proven end to end with an injected drill that
+travels the same cooldown, transport and ledger — and it caught a **real**
+condition on its first run.
+
+`LCC-6` Run twice. Under load 1,026 s / 8 fail; in the window **NEW1 gave up their
+GPU walk for**, 578 s / 644 tests / **639 pass** / 3 fail. The three are
+corpus-state assertions, not code.
+
+`LCC-7` Export → migrate → restore → **VERIFIED** on WSL2 PostgreSQL 18.6 with
+pgvector, 500 judgments, no cloud and no spend. **Four cross-platform defects, all
+of which would have shipped** — the source collation cannot exist on Linux;
+generated columns break COPY; the live column ORDER has drifted from the
+migrations (a positional COPY would write `cnr` into `native_text` silently); and
+the verification itself was platform-dependent three ways.
+
+**Accepted from the bus, not planned:** NEW3's 1075 (the briefing said "no
+authorities are saved" about authorities that WERE saved — it read
+`judgment_annotations` and never `matter_authorities`) and NEW1's 1079
+(`text_safety_grade='PROOF'` unreachable; **0 → 939** in their exact sample).
+
+**A mistake of mine, recorded:** I cancelled one of NEW1's statements with a
+`pg_cancel_backend` filtered on a table name that their query also contained.
+Told them (bus 1094).
+
+**NOT DONE and named:** the partial-transfer simulation did not execute — stopped
+after three attempts rather than a fourth; no rollback drill; no search-equivalence
+battery; no `(court, case_number)` index (`DEFER DB_SCAN` stood all round).
+
+**Founder queue:** `FQ-CREDIT-LEDGER-ERASURE`, `FQ-OPS-ALERT-EMAIL`.
