@@ -123,47 +123,75 @@ try {
   }
   console.log(`strata cells: ${cells.length}  ·  target ${TARGET.toLocaleString()}`);
 
+  /**
+   * ONE PASS, NOT SEVENTY-FIVE.
+   *
+   * The first version issued one query per stratum cell. Measured against the
+   * live box, a single cell took 88 seconds — `judgment_embedding_eligibility`
+   * is a computed view over ~15.9M rows, so every cell paid for its own
+   * evaluation, and 75 of them is roughly two hours of scanning while my own
+   * embedding walk reads the same disk. I killed it rather than finish it.
+   *
+   * This does the whole draw in one statement: partition by (court group, era),
+   * number the rows inside each partition, and keep those under the cell's
+   * quota. The view is evaluated once. The quota table is passed in as a VALUES
+   * join so the allocation still lives in JavaScript where it can be read,
+   * rather than being encoded into SQL by hand.
+   *
+   * `ORDER BY id` inside the partition is a deterministic, effectively-random
+   * pick because ids are uuids — and the chosen ids are frozen into the artifact
+   * regardless, so the draw only has to be repeatable long enough to write it.
+   */
   const picked = [];
   const cellReport = [];
 
-  for (const c of cells) {
-    // Gold-blind: no reference to goldIds anywhere in this draw.
-    // ORDER BY id is a deterministic, effectively-random pick (ids are uuids),
-    // and the row set is frozen into the artifact anyway.
-    const rows =
-      c.court === '__OTHER__'
-        ? await sql`
-            SELECT id::text AS id, court, judgment_date, text_length, script_quality,
-                   axis_c_role, value_band, semantic_tier, is_cited_authority
-            FROM judgment_embedding_eligibility
-            WHERE judgment_date >= ${c.from}::date AND judgment_date < ${c.to}::date
-              AND NOT (court = ANY(${named}))
-            ORDER BY id LIMIT ${c.quota}`
-        : await sql`
-            SELECT id::text AS id, court, judgment_date, text_length, script_quality,
-                   axis_c_role, value_band, semantic_tier, is_cited_authority
-            FROM judgment_embedding_eligibility
-            WHERE court = ${c.court}
-              AND judgment_date >= ${c.from}::date AND judgment_date < ${c.to}::date
-            ORDER BY id LIMIT ${c.quota}`;
+  const quotaRows = cells.map((c) => [c.court, c.era, c.from, c.to, c.quota]);
+  console.log('drawing the whole tranche in ONE pass over the eligibility view…');
 
-    const shortfall = c.quota - rows.length;
+  const rows = await sql`
+    WITH quota(court_key, era, era_from, era_to, quota) AS (
+      SELECT * FROM ${sql(quotaRows)}
+    ),
+    labelled AS (
+      SELECT e.id::text AS id, e.court, e.judgment_date, e.text_length, e.script_quality,
+             e.axis_c_role, e.value_band, e.semantic_tier, e.is_cited_authority,
+             q.court_key AS stratum_court, q.era AS stratum_era, q.quota,
+             row_number() OVER (PARTITION BY q.court_key, q.era ORDER BY e.id) AS rn
+      FROM judgment_embedding_eligibility e
+      JOIN quota q
+        ON e.judgment_date >= q.era_from::date
+       AND e.judgment_date <  q.era_to::date
+       AND ( (q.court_key <> '__OTHER__' AND e.court = q.court_key)
+          OR (q.court_key =  '__OTHER__' AND NOT (e.court = ANY(${named}))) )
+    )
+    SELECT id, court, judgment_date, text_length, script_quality, axis_c_role,
+           value_band, semantic_tier, is_cited_authority, stratum_court, stratum_era
+    FROM labelled WHERE rn <= quota`;
+
+  for (const r of rows) {
+    picked.push({ ...r, stratumCourt: r.stratum_court, stratumEra: r.stratum_era });
+  }
+
+  // Per-cell fill, computed from what actually came back.
+  const filledBy = new Map();
+  for (const r of rows) {
+    const k = `${r.stratum_court}#${r.stratum_era}`;
+    filledBy.set(k, (filledBy.get(k) ?? 0) + 1);
+  }
+  for (const c of cells) {
+    const filled = filledBy.get(`${c.court}#${c.era}`) ?? 0;
+    const shortfall = c.quota - filled;
     cellReport.push({
       court: c.court,
       era: c.era,
       quota: c.quota,
-      filled: rows.length,
+      filled,
       shortfall,
       // Reported, NEVER redistributed. A quota quietly moved to whichever cell
       // had rows is how an aggregate check passes with dead scopes underneath.
       note: shortfall > 0 ? 'UNDERFILLED — not redistributed, by design' : null,
     });
-    for (const r of rows) picked.push({ ...r, stratumCourt: c.court, stratumEra: c.era });
-    process.stdout.write(
-      `\r  ${cellReport.length}/${cells.length} cells · picked ${picked.length.toLocaleString()}   `,
-    );
   }
-  process.stdout.write('\n');
 
   const underfilled = cellReport.filter((c) => c.shortfall > 0);
   console.log(`cells underfilled: ${underfilled.length}/${cellReport.length}`);
