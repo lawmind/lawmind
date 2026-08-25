@@ -178,12 +178,26 @@ is solved.
 Already implemented by LCC (`outcome.ts`, commit `241ad20`). This benchmark supplies the
 scale: it is **29.2% of common practice queries**, not an edge case.
 
-### 5.2 `coverage_unknown` must be derived from `rarestDf`, never from a length heuristic
+### 5.2 `coverage_unknown` is derived from `rarestDf`, never from a length heuristic — SHIPPED
 
 If the server infers "short query, therefore degraded", it will mislabel the 12-term
 anticipatory-bail sentence as answerable and the 5-term arbitration query as degraded.
 `rarestDf` is already computed before ranking, in the same statement, and it *is* the
-refusal cause. Ship that as the reason.
+refusal cause.
+
+**LCC shipped this in commit `a0873d7` and I verified it in the code rather than taking
+the report** (`OBSERVED_BY_CODE`): `rarestDf` leaves `sparseAny` on `RetrievalSignals`
+(`retrieve.ts:581,585`) and reaches `retrievalOutcome` at **all five** return sites in
+`outcome.ts` — including the `coverage_unknown` branch, which is where `sparse_unbounded`
+actually lands and which their first pass missed.
+
+Two details of their implementation worth preserving, both better than what I asked for:
+
+- **`rarestDf` is recorded whether or not the query is refused.** A df published only on
+  refusal makes the field's *presence* the signal, and then nobody can distinguish a query
+  that passed comfortably from one that nearly did not.
+- **LCC also issued a `CORRECTION_OF` their own 1173.** The length story was theirs and
+  they withdrew it in the same message that shipped the fix.
 
 ### 5.3 The passage arm is the remedy, and its scope must be stated with it
 
