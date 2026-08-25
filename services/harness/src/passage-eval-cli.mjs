@@ -191,6 +191,10 @@ try {
 
     const [{ heap }] = await sql`SELECT pg_total_relation_size('new1_tranche_passages')::text AS heap`;
     const wal0 = await sql`SELECT pg_current_wal_lsn() AS lsn`;
+    // R7 lists temp and peak RAM among the required index-build measurements.
+    // temp_bytes is cumulative per database, so only the DELTA across the build
+    // means anything -- an absolute reading would be every sort since startup.
+    const [{ temp0 }] = await sql`SELECT temp_bytes::text AS temp0 FROM pg_stat_database WHERE datname = current_database()`;
 
     await sql.unsafe(`DROP INDEX IF EXISTS new1_tranche_passages_hnsw`);
     // maintenance_work_mem is the single knob that decides whether HNSW builds in
@@ -211,6 +215,26 @@ try {
     const wal1 = await sql`SELECT pg_current_wal_lsn() AS lsn`;
     const [{ walbytes }] = await sql`
       SELECT pg_wal_lsn_diff(${wal1[0].lsn}::pg_lsn, ${wal0[0].lsn}::pg_lsn)::text AS walbytes`;
+    const [{ temp1 }] = await sql`SELECT temp_bytes::text AS temp1 FROM pg_stat_database WHERE datname = current_database()`;
+    /**
+     * Peak RSS of the Postgres backends, sampled at the END of the build.
+     *
+     * Labelled a SAMPLE and not a peak, because that is what it is: a single
+     * observation after the fact cannot see a transient high-water mark earlier in
+     * the build. Reported anyway because an order of magnitude is decision-relevant
+     * for the full-corpus question, and a number with an honest name beats a blank.
+     */
+    let backendRssMiB = null;
+    try {
+      const { execSync } = await import('node:child_process');
+      const out = execSync(
+        'powershell -NoProfile -Command "(Get-Process postgres -ErrorAction SilentlyContinue | Measure-Object WorkingSet64 -Maximum).Maximum"',
+        { encoding: 'utf8', timeout: 30_000 },
+      ).trim();
+      if (out) backendRssMiB = Math.round(Number(out) / 2 ** 20);
+    } catch {
+      /* not fatal: the measurement is nice-to-have, the build is not */
+    }
 
     const body = {
       kind: 'new1_passage_index_build',
@@ -221,6 +245,12 @@ try {
       indexBytes: Number(idx),
       buildSeconds,
       walBytesDuringBuild: Number(walbytes),
+      tempBytesDuringBuild: Number(temp1) - Number(temp0),
+      tempNote:
+        'DELTA of pg_stat_database.temp_bytes across the build. The absolute value is cumulative since server start and means nothing here. Zero means no sort spilled to disk.',
+      largestBackendRssMiBSample: backendRssMiB,
+      rssNote:
+        'A SAMPLE taken after the build, not a peak. One observation after the fact cannot see a transient high-water mark mid-build. Reported because the order of magnitude matters for the full-corpus decision.',
       params: {
         m: Number(process.env.HNSW_M ?? 16),
         efConstruction: Number(process.env.HNSW_EFC ?? 64),
@@ -238,6 +268,8 @@ try {
     log(`  index        ${(Number(idx) / 2 ** 30).toFixed(2)} GiB`);
     log(`  build        ${buildSeconds}s`);
     log(`  WAL          ${(Number(walbytes) / 2 ** 30).toFixed(2)} GiB`);
+    log(`  temp         ${((Number(temp1) - Number(temp0)) / 2 ** 20).toFixed(1)} MiB (delta)`);
+    log(`  backend RSS  ${backendRssMiB === null ? 'NOT_MEASURED' : backendRssMiB + ' MiB (sample, not peak)'}`);
     process.exit(0);
   }
 
