@@ -16,6 +16,97 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 25 August 2026 — NEW3: THE 10-MATTER TEST IS PERMANENT NOW, ITS CONTROL MATTER FAILED, AND THERE IS NO WEBSITE
+
+Sprint plan V2 §10. Full board: `docs/product/NEW3_ROUND_TODO.md`. All seven §10
+items delivered; NEW3-7 deferred because RCC has landed nothing to review.
+**Zero writes under `apps/**`** — CLIENT_APPS is RCC's and was not contended for.
+
+**1. The 10-matter walkthrough is a regression test rather than a report.**
+`docs/product/TEN_MATTER_PRODUCT_REGRESSION_SPEC_V1.md`,
+`pnpm --filter @lawmind/harness product:ten`. The 23 Aug run found a P0 and threw
+its evidence away — scratch driver, scratch JSON, random accounts. This one pins
+every matter to a real corpus judgment id, **re-asserts the property the scenario
+is named for before scoring**, retains raw artifacts, and runs on one command.
+Nine of the ten are selected for a FAILURE MODE rather than an area of law.
+
+**10/10 matters, zero fixture drift.** Dense arm disabled (NEW1 owns dense; GPU
+at 100%), premium flags left OFF, box LOCAL_CONTENDED.
+
+**2. The control failed, and `retrieve.ts` is not at fault.** `"anticipatory
+bail"` returns `results: []`, HTTP 200, 4 ms, `degraded: ["sparse_unbounded"]`.
+`sparseAny` refuses to rank when its rarest lexeme exceeds df 0.05 because
+`ts_rank` over ~935,000 documents is over ten minutes — correct, and measured
+before the threshold was chosen. Measured against `lexeme_document_frequency`:
+
+```
+REFUSES  rarest df 0.06902   anticipatory bail
+REFUSES  rarest df 0.25774   bail application
+REFUSES  rarest df 0.11922   quashing of FIR
+ranks    rarest df 0.00089   cheque bounce section 138
+```
+
+`bail` alone is in **25.77%** of the sampled corpus. For that class dense is the
+only remaining arm and NEW1 measured its reach at **40,161 of 18.7M (0.21%)**.
+When dense is unavailable at all — a state `index.ts` logs as "search is
+lexical-only" and keeps serving — the advocate gets an empty 200 that renders as
+"no law found". Filed as `FQ-SEARCH-COVERAGE-COMMERCIAL`: it bears on the
+subscription model, not only on retrieval.
+
+**3. `GET /judgments/:id` returned 500 after 40,024 ms** on one Allahabad
+judgment. Uncharacterised at n=1; sent to LCC.
+
+**4. Provenance reaches no surface.** `treatmentProvenanceOnWire: false` on all
+ten. **M02 (Synthetics & Chemicals, `set_aside` on a reporter headnote) and M03
+(S. N. Dutt, `set_aside` on the court's own words — one of only five such edges
+corpus-wide) render identically to an advocate.** Confirms migration 0082's own
+comment, now from the product surface rather than the schema.
+
+**5. `/arguments/counter` has no abstention field.** Keys are exactly `position,
+asOf, authorities, excluded, unverifiedReferences`. It returns 12 nearest or 0.
+The 0 case is real — two genuinely unmatched positions returned zero authorities.
+The dangerous shape is the middle: **M06 reproduced the 23 Aug wrong-domain miss
+exactly** — the same IPC §394 robbery conviction for a commercial breach position,
+deterministically, two days later.
+
+**6. Two artifacts now bind public copy.**
+`docs/product/WEBSITE_CLAIM_EVIDENCE_MATRIX.md` — 22 rows, four statuses, a
+verifying owner and exact allowed wording per row, 8 rows `BLOCKED`.
+`docs/product/WEBSITE_PRODUCT_SPEC_V1.md` — and its §0 is the finding: **`apps/`
+holds `mobile` and `admin` and nothing else. There is no website.** `lawmind.co`
+is verified and serves nothing. Both stores reject a submission without a privacy
+policy URL, so this is a store gate. `FQ-SITE`.
+
+Positioning verified from primary source: *Pooja Ramesh Singh v. Jammu & Kashmir
+Bank*, **2026 INSC 668**, 2 July 2026, read from the judgment's own text in our
+corpus. The spec requires quoting **para 17** and forbids the SCR headnote — the
+same rule the matrix applies to LAW MOVED, applied to our own marketing.
+
+**7. Generation cost does not exist.** All-time `llm_calls`: **40,124 calls,
+$0.1232**, entirely DeepSeek V4 Flash, **zero calls ever to Sonnet or Haiku**, no
+Hearing Pack ever generated. `PREMIUM_COMMERCIAL_DECISION_PACKAGE_V3.md` prints
+no COGS figure and specifies what would produce one.
+
+**8. Three absolute store blockers, none a code problem** — no website; no
+reviewer can complete magic-link sign-in and no test-account bypass exists
+anywhere (grepped, zero hits); `FQ-HOSTING` blocks any production build.
+
+**Closed:** LCC's 1111 verified — all seven activation steps have real call
+sites. My V1 grep missed them because the export was renamed.
+`ACTIVATION_FUNNEL_V2.md`. New, smaller gap: `funnel()`/`worstDropOff()` have
+zero non-test consumers.
+
+**Corrected against my own first draft:** the modality defect does **not** block
+add-to-matter. OD-14 derives the effect from the edge; M02/M03/M04 all saved at
+201. The harm is narrower and still real — a 1975 Supreme Court authority carries
+a LAW MOVED mark whose whole evidence is a subjunctive in a dissent.
+
+**Not claimed:** no device testing, briefing quality UNMEASURED (`N/A`, not pass),
+monitoring `ALERT_PATH_ONLY`, drafting not exercised, `advocate_would_prefer`
+blank on all ten because it needs a real advocate.
+
+Bus 1141 (LCC) · 1142 (NEW1) · 1143 (NEW2) · 1147 (RCC).
+
 ### 25 August 2026 — NEW1: THE KEEPER'S SIDECAR SWEEP MATCHED ZERO PROCESSES AND LOGGED SUCCESS, AND V3 COULD NOT BE REPLAYED
 
 Convergence sprint V2 §7. Board: `docs/ai/new1-convergence/TODO.md`. Every number
