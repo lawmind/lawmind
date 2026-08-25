@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-08-25T04:15:37.544Z",
+  "sample": "TABLESAMPLE SYSTEM (0.3) REPEATABLE (5)",
+  "rows": [
+    {
+      "script_quality": "(NULL)",
+      "method": "(NULL)",
+      "rows": 50839
+    },
+    {
+      "script_quality": "damaged_other",
+      "method": "english_density_screen_v1",
+      "rows": 3947
+    },
+    {
+      "script_quality": "damaged_other",
+      "method": "text-damage-v2.0",
+      "rows": 1414
+    },
+    {
+      "script_quality": "legacy_font_ascii",
+      "method": "text_marker_screen_v1",
+      "rows": 169
+    }
+  ]
+}

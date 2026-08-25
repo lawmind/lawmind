@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-08-25T04:22:03.400Z",
+  "runs": [
+    {
+      "method": "english_density_screen_v1",
+      "scope": "staged",
+      "covers_corpus": false,
+      "started_at": "2026-08-21T17:22:27.892Z",
+      "rows_screened": "701805",
+      "convicted": "62215"
+    },
+    {
+      "method": "english_density_screen_v1",
+      "scope": "all",
+      "covers_corpus": true,
+      "started_at": "2026-08-21T17:54:09.987Z",
+      "rows_screened": "18698968",
+      "convicted": "1712802"
+    },
+    {
+      "method": "text-damage-v2.0",
+      "scope": "all",
+      "covers_corpus": false,
+      "started_at": "2026-08-22T03:34:09.563Z",
+      "rows_screened": "1626762",
+      "convicted": "79381"
+    }
+  ],
+  "states_after": [
+    {
+      "body_text_evidence": "SCREENED_NO_DAMAGE_FOUND",
+      "rows": 33783
+    },
+    {
+      "body_text_evidence": "SCREENED_DAMAGED",
+      "rows": 2675
+    },
+    {
+      "body_text_evidence": "PROVEN_DAMAGED",
+      "rows": 939
+    }
+  ]
+}

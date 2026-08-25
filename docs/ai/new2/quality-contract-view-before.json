@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-08-25T04:14:54.764Z",
+  "view": "judgment_quality_contract",
+  "sha256_prefix": "29dfd7de29214b4d",
+  "column_count": 23,
+  "columns": [
+    "1. id uuid",
+    "2. court text",
+    "3. judgment_date date",
+    "4. text_state text",
+    "5. text_value text",
+    "6. text_method text",
+    "7. text_at timestamp with time zone",
+    "8. text_grade text",
+    "9. recovery_state text",
+    "10. recovery_reason text",
+    "11. recovery_method text",
+    "12. recovery_engine text",
+    "13. recovery_chars integer",
+    "14. recovered_at timestamp with time zone",
+    "15. digit_trust text",
+    "16. date_state text",
+    "17. date_method text",
+    "18. off_by_one_day boolean",
+    "19. role_class text",
+    "20. role_method text",
+    "21. citability text",
+    "22. body_text_safe boolean",
+    "23. metadata_discoverable boolean"
+  ],
+  "quality_screen_runs_exists": null,
+  "viewdef": " SELECT j.id,\n    j.court,\n    j.judgment_date,\n        CASE\n            WHEN j.script_quality IS NULL THEN 'TEXT_UNKNOWN'::text\n            WHEN j.script_quality = ANY (ARRAY['clean'::text, 'mixed_script_ok'::text]) THEN 'TEXT_UNKNOWN'::text\n            ELSE 'TEXT_DAMAGED'::text\n        END AS text_state,\n    j.script_quality AS text_value,\n    j.script_quality_method AS text_method,\n    j.script_quality_at AS text_at,\n        CASE\n            WHEN j.script_quality IS NULL OR (j.script_quality = ANY (ARRAY['clean'::text, 'mixed_script_ok'::text])) THEN 'NONE'::text\n            WHEN j.script_quality_method = 'text-damage-v2.0'::text THEN 'PROOF'::text\n            ELSE 'SCREEN'::text\n        END AS text_grade,\n    COALESCE(q.state, 'NOT_QUEUED'::text) AS recovery_state,\n    q.reason AS recovery_reason,\n    r.method AS recovery_method,\n    r.engine_version AS recovery_engine,\n    r.char_count AS recovery_chars,\n    r.created_at AS recovered_at,\n    r.digit_trust,\n    d.state AS date_state,\n    d.method AS date_method,\n    d.off_by_one_day,\n    j.hc_document_class AS role_class,\n    j.hc_class_method AS role_method,\n        CASE\n            WHEN j.hc_document_class = ANY (ARRAY['procedural_disposal'::text, 'reference_stub'::text]) THEN 'NOT_CITABLE'::text\n            WHEN j.hc_document_class = 'bail_order'::text THEN 'BAIL_ORDER'::text\n            ELSE 'CITABILITY_UNKNOWN'::text\n        END AS citability,\n    j.script_quality IS NULL OR (j.script_quality = ANY (ARRAY['clean'::text, 'mixed_script_ok'::text])) AS body_text_safe,\n    j.content_hash IS NOT NULL AND j.case_number IS NOT NULL AND j.court IS NOT NULL AND length(COALESCE(j.case_title, ''::text)) > 3 AS metadata_discoverable\n   FROM judgments j\n     LEFT JOIN judgment_recovery_queue q ON q.judgment_id = j.id\n     LEFT JOIN LATERAL ( SELECT tr.method,\n            tr.engine_version,\n            tr.char_count,\n            tr.digit_trust,\n            tr.created_at\n           FROM judgment_text_recovery tr\n          WHERE tr.judgment_id = j.id\n          ORDER BY tr.created_at DESC\n         LIMIT 1) r ON true\n     LEFT JOIN judgment_date_quality d ON d.judgment_id = j.id;"
+}

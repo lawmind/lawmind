@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-08-25T04:26:57.754Z",
+  "watermark": "2026-08-21T17:54:09.987Z",
+  "post_run": {
+    "created_after_the_run": 16,
+    "still_never_screened": 16,
+    "wrongly_certified": 0
+  },
+  "corpus": {
+    "proven_damaged": 469599,
+    "screened_damaged": 1322722,
+    "screened_no_damage_found": 16906647,
+    "never_screened": 16,
+    "corpus": 18698984
+  }
+}

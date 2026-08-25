@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-08-25T04:18:19.352Z",
+  "sample": "TABLESAMPLE SYSTEM (0.2) REPEATABLE (5)",
+  "run_rows": 0,
+  "states": [
+    {
+      "body_text_evidence": "NEVER_SCREENED",
+      "rows": 33783
+    },
+    {
+      "body_text_evidence": "SCREENED_DAMAGED",
+      "rows": 2675
+    },
+    {
+      "body_text_evidence": "PROVEN_DAMAGED",
+      "rows": 939
+    }
+  ]
+}
