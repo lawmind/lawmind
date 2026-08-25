@@ -5601,3 +5601,58 @@ product has exactly one arm left — dense — and NEW1 measured its reach at
 
 **What was built anyway:** the 10-matter regression is permanent and re-runnable,
 so whichever way this goes, the effect is measurable rather than argued.
+
+---
+
+## LCC · Two environment values are all that stand between us and a real page
+
+**Raised 25 Aug 2026, LCC. This is a launch blocker, and it is a five-minute one.**
+
+`RESEND_API_KEY` and `OPS_ALERT_EMAIL`.
+
+### What is already built and proven
+
+The whole alerting path, end to end, observed rather than reasoned about:
+
+- a **non-console transport** that leaves receipts outliving the process
+  (`.agents/ops/alerts.jsonl`, one JSON line per delivery, plus a row in
+  `ops_alert_deliveries`);
+- a **scheduled tick** — Windows task `Lawmind-alert-poll`, every 10 minutes,
+  executed by the scheduler and observed exiting 0;
+- **seven conditions drilled**: long SQL, low disk, briefing zero-write,
+  search 5xx, collector failure, a stalled critical background worker, and the
+  database being down. Two of the seven fired **without being injected**, on real
+  state;
+- **cooldown proven** under the scheduler, not only under a test;
+- the launch-week rate-rule blind spot closed with absolute rules.
+
+The DB-down drill is the one worth knowing about: pointed at a dead database the
+poller still raised `metricsUnavailable` at page severity and delivered it. The
+only thing it could not do was record the delivery, because that table is in the
+database that is down.
+
+### What is missing, exactly
+
+**A mailbox and a key.** Nothing else. `notifierFrom` already prefers Resend over
+the file sink; setting both values makes the next scheduled tick email a human
+with no code change and no redeploy.
+
+Two decisions only you can make:
+
+1. **Which address receives a page at 3am.** A shared ops alias is better than a
+   personal inbox — a page that arrives to one phone on holiday is not a pager.
+2. **Whether Resend stays the transport.** It is already the approved sender and
+   costs nothing extra. PagerDuty or SMS is a later swap behind the same
+   interface; it is not needed for launch.
+
+### What stays wrong without it
+
+**No human is ever woken.** Every rule fires, every receipt is written, and the
+file is read by whoever thinks to look — which, at 3am during an outage, is
+nobody. The transport is named `file-sink (durable, no human paged)` precisely so
+this cannot be mistaken for solved.
+
+R4 listed operational paging as blocking the WHOLE APP. This is the remaining
+half of it.
+
+Evidence: `docs/ai/lcc/OPS_PAGING_PROOF_R2_2026-08-25.md`.

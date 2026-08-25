@@ -45,6 +45,9 @@
  */
 
 /** An alert that has already been judged. This file does not evaluate rules. */
+import { appendFileSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+
 export type OpsAlert = {
   severity: 'page' | 'watch';
   /** The `ALERT_RULES` key. The cooldown is keyed on this. */
@@ -149,6 +152,59 @@ export function resendNotifier(apiKey: string, from: string, to: string): Notifi
  * The name is what lands in `ops_alert_deliveries.channel`, so a query for
  * "were we ever actually paged" cannot be answered wrongly by this transport.
  */
+/**
+ * A DURABLE sink on disk. The controlled mailbox, until there is a real one.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THIS IS NOT consoleNotifier WITH EXTRA STEPS
+ * ---------------------------------------------------------------------------
+ *
+ * R4's alerting verdict was PARTIAL, and the sentence that mattered was
+ * "Nothing was emailed... no human acknowledged a page." Eight assertions passed
+ * against a test notifier that existed only for the length of the test. The
+ * console transport is weaker still: its output goes to a terminal nobody is
+ * watching, and when the process exits no evidence remains that a page was ever
+ * raised.
+ *
+ * This writes one JSON line per delivery to a file that OUTLIVES the process, so
+ * "were we ever actually paged, and for what" is answerable by reading a file
+ * rather than by trusting somebody's memory of a terminal. That is the property
+ * a drill needs and the only one the console cannot provide.
+ *
+ * ---------------------------------------------------------------------------
+ * IT DOES NOT PRETEND TO BE A HUMAN
+ * ---------------------------------------------------------------------------
+ *
+ * The name lands in ops_alert_deliveries.channel, so it says so in the name: a
+ * query asking "did a page reach a person" must never be answerable "yes" by
+ * this transport. RESEND_API_KEY plus OPS_ALERT_EMAIL remain the only pair that
+ * reaches an inbox, and notifierFrom still refuses to start in production
+ * without them.
+ */
+export function fileSinkNotifier(path: string): Notifier {
+  return {
+    name: `file-sink (durable, no human paged): ${path}`,
+    async send(alerts, context) {
+      const { text } = alertBody(alerts, context);
+      const record = {
+        at: new Date().toISOString(),
+        environment: context.environment,
+        build: context.buildSha,
+        injected: context.injected,
+        pages: alerts.filter((a) => a.severity === 'page').map((a) => a.rule),
+        watches: alerts.filter((a) => a.severity === 'watch').map((a) => a.rule),
+        subject: alertSubject(alerts, context),
+        alerts,
+        text,
+      };
+      mkdirSync(dirname(path), { recursive: true });
+      /* Append, never rewrite. The file IS the receipt history, and rewriting it
+       * would destroy the evidence of every earlier drill. */
+      appendFileSync(path, JSON.stringify(record) + '\n', 'utf8');
+    },
+  };
+}
+
 export function consoleNotifier(log: (s: string) => void): Notifier {
   return {
     name: 'console (nothing was sent)',
@@ -169,6 +225,8 @@ export function notifierFrom(
   env: {
     resendApiKey: string | undefined;
     opsAlertEmail: string | undefined;
+    /** `OPS_ALERT_SINK` — a file that outlives the process. Never a human. */
+    opsAlertSinkPath?: string | undefined;
     mailFrom: string;
     nodeEnv: string;
   },
@@ -177,6 +235,16 @@ export function notifierFrom(
   if (env.resendApiKey && env.opsAlertEmail) {
     return resendNotifier(env.resendApiKey, env.mailFrom, env.opsAlertEmail);
   }
+  /**
+   * No inbox configured. Prefer the DURABLE sink over the console, because the
+   * difference between them is whether a page leaves any evidence at all once
+   * the process exits — and a drill whose only record was a terminal buffer is
+   * exactly what R4 called `PARTIAL`.
+   *
+   * Still not production-eligible: the refusal below is unchanged. This is the
+   * named controlled sink, and it says so in its own name.
+   */
+  if (env.opsAlertSinkPath) return fileSinkNotifier(env.opsAlertSinkPath);
   if (env.nodeEnv !== 'production') return consoleNotifier(log);
   throw new Error(
     'RESEND_API_KEY and OPS_ALERT_EMAIL must both be set when NODE_ENV is production. ' +

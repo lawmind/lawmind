@@ -28,6 +28,19 @@ import { notifierFrom } from './notify.ts';
 async function main(): Promise<number> {
   const argv = process.argv.slice(2);
   const inject = argv.includes('--inject');
+  /**
+   * Name the injected condition, so a drill matrix leaves a receipt per
+   * condition instead of six identical `injectedDrill` lines.
+   *
+   * `--inject-rule lowDisk` reads back out of `.agents/ops/alerts.jsonl` as
+   * `lowDisk`, which is what makes "which conditions have we actually drilled"
+   * a question the file can answer.
+   */
+  const ruleIndex = argv.indexOf('--inject-rule');
+  const injectRule = ruleIndex === -1 ? undefined : argv[ruleIndex + 1];
+  const injectDetail = injectRule
+    ? `DRILL of ${injectRule}, injected by alert-poller-cli --inject-rule`
+    : undefined;
 
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is required');
@@ -43,6 +56,10 @@ async function main(): Promise<number> {
     {
       resendApiKey: process.env['RESEND_API_KEY'],
       opsAlertEmail: process.env['OPS_ALERT_EMAIL'],
+      /* Defaulted rather than left unset: a scheduled tick with no sink writes
+       * its pages to a console nobody reads, which is indistinguishable from not
+       * having run. */
+      opsAlertSinkPath: process.env['OPS_ALERT_SINK'] ?? '.agents/ops/alerts.jsonl',
       mailFrom: process.env['MAIL_FROM'] ?? 'alerts@lawmind.in',
       nodeEnv: process.env['NODE_ENV'] ?? 'development',
     },
@@ -51,14 +68,16 @@ async function main(): Promise<number> {
 
   try {
     const result = await pollAndDeliver(sql, notifier, {
-      inject: inject
-        ? {
-            severity: 'page',
-            rule: 'injectedDrill',
-            detail:
-              'deliberately injected by alert-poller-cli --inject to prove the delivery path',
-          }
-        : undefined,
+      inject:
+        inject || injectRule
+          ? {
+              severity: 'page',
+              rule: injectRule ?? 'injectedDrill',
+              detail:
+                injectDetail ??
+                'deliberately injected by alert-poller-cli --inject to prove the delivery path',
+            }
+          : undefined,
     });
 
     console.log(
