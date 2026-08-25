@@ -84,6 +84,30 @@ The plan lists "generation cost" as an input. It does not exist yet. From
 model call in this product's history is DeepSeek V4 Flash on the free pool, plus
 138 paid calls totalling twelve cents.
 
+### 3.1 The dollar figure alone is misleading, and this section previously gave it alone
+
+**$0.1232 bought 70,777,435 tokens** — 64,644,894 input and 6,132,541 output
+across those same 40,124 calls. (`document_enrichments` accounts for 67.2M of
+them; LCC's bus 984 reports 17.8M for the eight enrichment tasks it tabulates,
+which is a subset of the same traffic, not a second bill.)
+
+**Corrected 25 Aug.** Printing $0.1232 without the token count invites the exact
+wrong inference — *"AI cost is negligible, price on the other variables."* It is
+negligible **only because 70.8M tokens went to a free DeepSeek pool**. The
+premium path does not: `CLAUDE.md` §5 routes drafting and briefings to Claude
+Sonnet 4.6, which is not free, and sensitive-class matter content may not be
+routed to the public-class provider at all.
+
+So the honest reading of this table is not "generation is cheap". It is:
+
+> **We have never paid for a single token on the routing path a paid tier would
+> actually use, and we have consumed 70.8 million tokens on the one that is
+> free.**
+
+Which is the same conclusion by a firmer route: the unit cost of the thing
+Model B would sell is **unmeasured**, and no number in this table stands in for
+it.
+
 Drafting and briefings route to Sonnet by `CLAUDE.md` §5, and **no Hearing Pack
 has ever been generated**. So the unit cost of the thing Model B would sell is a
 projection from list prices, not a measurement, and this package will not print a
