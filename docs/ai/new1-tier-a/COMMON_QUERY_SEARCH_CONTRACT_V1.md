@@ -128,9 +128,46 @@ Scored mechanically: a hit is a result carrying the forbidden domain's vocabular
 **none** of the query's own. That is the failure mode NEW3 saw — an answer from another
 branch of law that the advocate cannot see is from another branch of law.
 
-**Do not over-read this.** Four probes is a smoke test, not a rate. It says the obvious
-cross-domain failure does not reproduce on the passage index; it does not say wrong-domain
-retrieval is solved.
+### NEW3's pinned regression case, run properly
+
+The four probes above are my own wording. NEW3's bus 1142 supplies something better: a
+**deterministic, twice-reproduced, real product failure** with an exact judgment attached
+— an IPC §394 robbery conviction returned at **rank 1 of 12** for the commercial position
+*"Om Industries breached the supply agreement and is liable for consequential damages"*.
+Critically, the sparse arm did **not** refuse that query (rarest df 0.0153). It ran, it
+ranked, and it put a robbery conviction first. That is a ranking failure and no coverage
+fix may be credited for it.
+
+```
+sparse / lexical arm (NEW3)     the robbery conviction at  #1 of 12
+passage representation (NEW1)   the same judgment at     #137 of 137   (dead last)
+
+  offender best passage similarity   0.4038
+  tranche rank-1 similarity          0.6201
+  tranche rank-10 similarity         0.5670
+```
+
+Passage top 10 for that exact position: **0 wrong-domain results**; rank 1 is
+*Mahanagar Telephone Nigam Ltd v M/s Mafatlal Industries*, a real commercial supply
+dispute.
+
+**The first version of this test was worthless and was discarded.** The offending
+judgment is not in the tranche at all, so an index that does not contain the wrong
+answer cannot be credited for not returning it — absence is not a fix, and reporting it
+as one is the same error as counting a forced-gold target as a hit. It was also **not**
+inserted into `new1_tranche_passages` to make the test work: the manifest names exactly
+which documents are in the index and its content hash is what FIFTH checks, so adding a
+document to pass a regression test is the fixture contamination R7 warns about. Instead
+the judgment was chunked with the same `chunk.ts`, embedded in memory through the same
+sidecar, and scored against the same query vector. **Nothing was written to any table.**
+
+Nothing about the data changed between rank 1 and rank 137. Only the representation did.
+
+**Do not over-read any of this.** Five probes including NEW3's is still a smoke test, not
+a rate, and the passage index is 81,720 documents of 18.7M — a full-scale index has vastly
+more chances to find a better wrong answer. This says the obvious cross-domain failure
+does not reproduce on the passage representation. It does not say wrong-domain retrieval
+is solved.
 
 ---
 
