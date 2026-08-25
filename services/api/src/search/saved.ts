@@ -159,6 +159,27 @@ export async function getSavedSearchFeed(
   userId: string | undefined,
   query: z.infer<typeof feedQuery>,
   embedQuery: (text: string) => Promise<string | null>,
+  /**
+   * The research admission gate. Optional so tests can run without one, exactly
+   * as `/search` and `/arguments/counter` take it.
+   *
+   * IT WAS MISSING HERE UNTIL 25 AUG 2026, and this is the third route to make
+   * the same mistake. `counter.ts` carries the note about the second: it ran the
+   * SAME `hybridSearch` with no admission slot, so the concurrency bound that
+   * exists to stop research retrieval from exhausting the pool applied to
+   * `/search` only.
+   *
+   * This feed is the easiest of the three to overlook because it does not look
+   * like a search — it is a saved-searches read, mounted next to a list and a
+   * delete. It is nonetheless the identical query on the identical pool, and a
+   * client polling several saved searches on app open issues several of them at
+   * once.
+   *
+   * The SPARSE preflight was never bypassed by any of the three: it lives inside
+   * `hybridSearch`. What was bypassed is the concurrency half of the same
+   * contract.
+   */
+  admission?: { acquire: () => Promise<{ release: () => void } | null> } | undefined,
 ): Promise<Response> {
   const denied = requireUser(c, userId);
   if (denied) return denied;
@@ -179,14 +200,26 @@ export async function getSavedSearchFeed(
    */
   const since = query.since ?? saved.last_seen_at;
 
-  const vector = await embedQuery(saved.query_text);
-  const results = await hybridSearch(
-    sql,
-    saved.query_text,
-    vector,
-    saved.filters ?? {},
-    FEED_LIMIT,
-  );
+  /* Refused, never queued invisibly — the same shape and the same reason as
+   * `/search` and `/arguments/counter`. A feed that silently waits behind a full
+   * research pool looks to the advocate like a feed with nothing new in it. */
+  const slot = admission ? await admission.acquire() : null;
+  if (admission && slot === null) {
+    return fail(
+      c,
+      'SEARCH_BUSY',
+      'Research capacity is full. Try this feed again in a moment.',
+      503,
+    );
+  }
+
+  let results;
+  try {
+    const vector = await embedQuery(saved.query_text);
+    results = await hybridSearch(sql, saved.query_text, vector, saved.filters ?? {}, FEED_LIMIT);
+  } finally {
+    slot?.release();
+  }
 
   const unseen = results.filter((r) => r.judgmentDate > since.slice(0, 10));
 

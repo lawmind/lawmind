@@ -471,6 +471,8 @@ export function createApp(deps: AppDeps) {
         await userFor(c),
         c.req.valid('query'),
         search.embedQuery,
+        /* The third caller of hybridSearch, and the last one to get the gate. */
+        search.admission,
       ),
     );
     // Cause list sync health. Built now and useful before a single cause list
