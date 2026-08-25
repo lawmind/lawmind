@@ -1,0 +1,108 @@
+{
+  "generated_at": "2026-08-25T04:08:30.903Z",
+  "note": "Scored against a CENSUS of every alphabetic token in the dddd<ALPHA>dd shape corpus-wide, not a sample. Exact for the corpus as it stands; re-run after any ingest that adds a court code.",
+  "tokens_examined": 34,
+  "deployed": {
+    "rule": "deployed prefix + [A-Z]*",
+    "refused_tokens": 20,
+    "kept_tokens": 14,
+    "refused_judgments": 441,
+    "kept_judgments": 7903,
+    "false_positives": [],
+    "misses": [
+      {
+        "token": "ARPIL",
+        "judgments": 1
+      }
+    ]
+  },
+  "proposed": {
+    "rule": "abbrev exact + Damerau<=1 on full months (len>=4)",
+    "refused_tokens": 21,
+    "kept_tokens": 13,
+    "refused_judgments": 442,
+    "kept_judgments": 7902,
+    "false_positives": [],
+    "misses": []
+  },
+  "headroom_of_proposed_rule": [
+    {
+      "token": "MHC",
+      "judgments": 3,
+      "nearest_month": "MAY",
+      "distance": 2
+    },
+    {
+      "token": "KHC",
+      "judgments": 248,
+      "nearest_month": "MAY",
+      "distance": 3
+    },
+    {
+      "token": "UHC",
+      "judgments": 158,
+      "nearest_month": "MAY",
+      "distance": 3
+    },
+    {
+      "token": "MLHC",
+      "judgments": 109,
+      "nearest_month": "MARCH",
+      "distance": 3
+    },
+    {
+      "token": "JHHC",
+      "judgments": 85,
+      "nearest_month": "JUNE",
+      "distance": 3
+    },
+    {
+      "token": "HHC",
+      "judgments": 73,
+      "nearest_month": "MAY",
+      "distance": 3
+    },
+    {
+      "token": "AHC",
+      "judgments": 19,
+      "nearest_month": "MARCH",
+      "distance": 3
+    },
+    {
+      "token": "SHC",
+      "judgments": 9,
+      "nearest_month": "MAY",
+      "distance": 3
+    },
+    {
+      "token": "MNHC",
+      "judgments": 7,
+      "nearest_month": "MARCH",
+      "distance": 3
+    },
+    {
+      "token": "INSC",
+      "judgments": 7062,
+      "nearest_month": "MARCH",
+      "distance": 4
+    },
+    {
+      "token": "CGHC",
+      "judgments": 126,
+      "nearest_month": "MARCH",
+      "distance": 4
+    },
+    {
+      "token": "PHHC",
+      "judgments": 2,
+      "nearest_month": "MARCH",
+      "distance": 4
+    },
+    {
+      "token": "FBNCHG",
+      "judgments": 1,
+      "nearest_month": "MARCH",
+      "distance": 4
+    }
+  ]
+}
