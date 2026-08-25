@@ -190,6 +190,18 @@ export async function handleCounter(
       // first for the advocate about to argue against it.
       overruledByJudgmentId: r.overruledByJudgmentId,
       overruledNote: r.overruledNote,
+      /**
+       * WHO said the law moved. Straight through from `retrieve.ts`, which is
+       * where it was derived — this surface must not re-derive it, because two
+       * derivations of the same fact is how the counterargument screen and the
+       * search results end up disagreeing about one authority.
+       *
+       * Load-bearing HERE in particular: this is the screen an advocate reads
+       * while preparing to argue AGAINST these authorities, and "a reporter
+       * records that this was overruled" is a very different thing to walk into
+       * court with than "the Supreme Court held it was".
+       */
+      treatmentAttribution: r.treatmentAttribution,
       asOf,
     })),
     /** Named, never dropped. `set_aside` is the one state that disables use. */
@@ -206,6 +218,10 @@ export async function handleCounter(
        */
       reason: 'set_aside' as const,
       precedentialEffect: r.precedentialEffect,
+      /* Excluded rows carry it too. An authority kept OUT of an argument on a
+       * reporter's editorial note is exactly the exclusion an advocate might
+       * want to challenge, and they cannot challenge what they cannot see. */
+      treatmentAttribution: r.treatmentAttribution,
       overruledByJudgmentId: r.overruledByJudgmentId,
       overruledNote: r.overruledNote,
       asOf,

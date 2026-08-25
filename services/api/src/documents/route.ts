@@ -39,7 +39,11 @@ import { z } from 'zod';
 import { toWireSourceUnsafe } from '../citations/source-strength.ts';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
-import { loadOnePrecedentialState } from '../judgments/treatment-lookup.ts';
+import {
+  loadOnePrecedentialState,
+  loadPrecedentialState,
+  type PrecedentialState,
+} from '../judgments/treatment-lookup.ts';
 
 export const patchDocumentBody = z
   .object({
@@ -260,6 +264,14 @@ export async function addDocumentCitation(
         verifiedBySource: 'corpus' as const,
         /** Read live from the row. A judgment can be verified AND overruled. */
         overruledStatus: judgment.overruled_status,
+        /**
+         * WHO said the law moved, for the citation just attached to a draft.
+         *
+         * Reuses `treatment` from the citability gate a few lines above rather
+         * than reading again — two reads of the same fact in one handler is how
+         * a refusal and a badge end up disagreeing about one judgment.
+         */
+        treatmentAttribution: treatment?.attribution ?? 'UNKNOWN',
       },
     },
     201,
@@ -326,6 +338,26 @@ async function readDocument(sql: Sql, documentId: string) {
     WHERE cc.document_id = ${documentId}
     ORDER BY cc.created_at`;
 
+  /**
+   * The derived layers, from the SAME function the judgment screen, the search
+   * results and the briefing checklist use.
+   *
+   * Two things were wrong with sending `j.overruled_status` straight out. It is
+   * the STORED column, so an OD-14 authority — stored `set_aside`, verified
+   * `overruled` edge — told an advocate in the draft footer that a judgment had
+   * been set aside when the decision between the parties stands. And it carried
+   * no provenance, so a reporter's editorial note and a later court's own
+   * holding read identically on the one surface that ends up in a filing.
+   *
+   * `loadPrecedentialState` is a single batched read over at most the citations
+   * on this draft — the same shape `treatment-lookup.ts` was written for.
+   */
+  const matched = citations
+    .map((c) => c.judgment_id_matched)
+    .filter((id): id is string => id !== null);
+  const derived: Map<string, PrecedentialState> =
+    matched.length > 0 ? await loadPrecedentialState(sql, matched) : new Map();
+
   return {
     documentId: doc!.id,
     documentType: doc!.document_type,
@@ -340,7 +372,18 @@ async function readDocument(sql: Sql, documentId: string) {
       caseTitle: cc.case_title,
       verificationState: cc.verification_state,
       verifiedBySource: toWireSourceUnsafe(cc.verified_by_source),
-      overruledStatus: cc.overruled_status,
+      /* The DERIVED banner, not the stored column. Same four wire values, so a
+       * client reading only this behaves as before — it is simply now right for
+       * the authorities OD-14 was about. Falls back to the stored value when the
+       * citation matched no judgment, where there is nothing to derive from. */
+      overruledStatus:
+        (cc.judgment_id_matched
+          ? derived.get(cc.judgment_id_matched)?.policy.bannerStatus
+          : null) ?? cc.overruled_status,
+      /** Layer 4 — WHO. Additive; never changes the banner above it. */
+      treatmentAttribution:
+        (cc.judgment_id_matched ? derived.get(cc.judgment_id_matched)?.attribution : null) ??
+        'UNKNOWN',
     })),
     /**
      * "4 of 4 citations verified" — derived at read time, rendered in the draft

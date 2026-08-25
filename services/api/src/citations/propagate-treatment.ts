@@ -155,6 +155,24 @@ export async function findUnappliedTreatment(sql: Sql): Promise<PropagationCandi
       LEFT JOIN judgment_date_quality cq ON cq.judgment_id = citing.id
      WHERE jc.cited_judgment_id IS NOT NULL
        AND jc.relationship IN ('overruled', 'overruled_in_part', 'doubted')
+       -- A KNOWN-BROKEN edge may not write the law. Added 25 Aug 2026.
+       --
+       -- NEW2 hand-read all 137 badge-driving edges and found one whose evidence
+       -- is a 1985 DISSENT saying an authority "is sought to be overruled by the
+       -- judgment proposed to be delivered by my learned Brother" -- stored as
+       -- overruled, and the sole driver of a live set_aside. The polarity is
+       -- right and the MOOD is wrong: nothing was overruled, somebody proposed
+       -- to overrule, and MARKER_RE guards neither.
+       --
+       -- IS DISTINCT FROM, not <>. treatment_provenance is NULL on most adverse
+       -- edges, and a bare <> makes the comparison NULL and drops every
+       -- unclassified one -- which would silently stop propagation for most of
+       -- the corpus. Unclassified is unknown; unknown still propagates exactly
+       -- as it did before this line existed.
+       --
+       -- This is the ONLY place provenance changes what is WRITTEN. The read
+       -- surfaces use it for wording; nothing here weakens a warning.
+       AND jc.treatment_provenance IS DISTINCT FROM 'MODALITY_DEFECT'
        -- Never downgrade or re-decide. Only judgments the corpus still calls
        -- good law are candidates.
        AND cited.overruled_status = 'none'

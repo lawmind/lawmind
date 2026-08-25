@@ -20,6 +20,11 @@ import {
   precedentialPolicy,
   unappliedTreatment,
   type OverruledStatus,
+  attributionOf,
+  precedentialEffectFromEdges,
+  type TreatmentEdge,
+  type TreatmentAttribution,
+  type TreatmentProvenance,
 } from '../judgments/precedential-effect.ts';
 
 import {
@@ -207,6 +212,16 @@ export type RetrievedJudgment = {
   canAddToMatter: boolean;
   /** A verified adverse edge the corpus has not applied. Never a banner. */
   unappliedTreatment: string | null;
+  /**
+   * WHO the adverse treatment came from — COURT, REPORTER, DEFECTIVE, UNKNOWN.
+   *
+   * ADDITIVE. It never changes `overruledStatus`, and a client that ignores it
+   * behaves exactly as before. What it enables is honest WORDING: 95.62% of the
+   * edges behind a LAW MOVED badge are a law reporter's headnote, and "reported
+   * as overruled" and "the Supreme Court held" are different claims. Only
+   * `COURT` may be stated as a holding — `mayStateAsHolding()`.
+   */
+  treatmentAttribution: TreatmentAttribution;
   overruledByJudgmentId: string | null;
   overruledParas: number[] | null;
   overruledNote: string | null;
@@ -1796,16 +1811,22 @@ export async function hybridSearch(
    * status is never cached. `bannerStatus` is still one of the same four wire
    * values, so a client reading only `overruledStatus` is unaffected.
    */
-  const edgeRows = await sql<{ cited_judgment_id: string; relationship: string }[]>`
-    SELECT DISTINCT cited_judgment_id, relationship
+  const edgeRows = await sql<
+    { cited_judgment_id: string; relationship: string; treatment_provenance: string | null }[]
+  >`
+    SELECT DISTINCT cited_judgment_id, relationship, treatment_provenance
       FROM judgment_citations
      WHERE cited_judgment_id = ANY(${ids})
        AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
-  const edgesById = new Map<string, string[]>();
+  const edgesById = new Map<string, TreatmentEdge[]>();
   for (const e of edgeRows) {
+    const edge: TreatmentEdge = {
+      relationship: e.relationship,
+      provenance: e.treatment_provenance as TreatmentProvenance | null,
+    };
     const list = edgesById.get(e.cited_judgment_id);
-    if (list) list.push(e.relationship);
-    else edgesById.set(e.cited_judgment_id, [e.relationship]);
+    if (list) list.push(edge);
+    else edgesById.set(e.cited_judgment_id, [edge]);
   }
   const results: RetrievedJudgment[] = [];
   /**
@@ -1884,15 +1905,19 @@ export async function hybridSearch(
       : null;
 
     const inbound = edgesById.get(r.id) ?? [];
-    const effect = precedentialEffect({
+    const effect = precedentialEffectFromEdges({
       overruledStatus: r.overruled_status as OverruledStatus,
-      inboundRelationships: inbound,
+      edges: inbound,
     });
     const policy = precedentialPolicy(effect);
+    /* Bare relationships on purpose — see the note in `search/route.ts`: this
+     * asks whether an unapplied adverse edge exists at all, and a defective one
+     * is still worth a human's eye. */
     const unapplied = unappliedTreatment({
       overruledStatus: r.overruled_status as OverruledStatus,
-      inboundRelationships: inbound,
+      inboundRelationships: inbound.map((e) => e.relationship),
     });
+    const treatmentAttribution = attributionOf(inbound);
 
     results.push({
       judgmentId: r.id,
@@ -1907,6 +1932,7 @@ export async function hybridSearch(
       precedentialEffect: effect,
       canAddToMatter: policy.addToMatter === 'allow',
       unappliedTreatment: unapplied,
+      treatmentAttribution,
       overruledByJudgmentId: r.overruled_by_judgment_id,
       overruledParas: r.overruled_paras,
       overruledNote: r.overruled_note,

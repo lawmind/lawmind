@@ -20,6 +20,10 @@ import {
   precedentialPolicy,
   unappliedTreatment,
   type OverruledStatus,
+  attributionOf,
+  precedentialEffectFromEdges,
+  type TreatmentEdge,
+  type TreatmentProvenance,
 } from './precedential-effect.ts';
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
 import { dateQualityOf } from './date-quality.ts';
@@ -86,14 +90,23 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
    * Read live, per request, never cached — `CITATION_HARNESS.md` §Overruled
    * status is never cached.
    */
-  const treatment = await sql<{ relationship: string }[]>`
-    SELECT DISTINCT relationship
+  const treatment = await sql<{ relationship: string; treatment_provenance: string | null }[]>`
+    SELECT DISTINCT relationship, treatment_provenance
       FROM judgment_citations
      WHERE cited_judgment_id = ${row.id}
        AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
-  const effect = precedentialEffect({
+  /* WHO said it, carried alongside WHAT was said. 95.62% of the edges behind a
+   * LAW MOVED badge are a reporter's headnote rather than the later court's own
+   * words, and the wording has to be able to tell the difference. The banner is
+   * unchanged either way -- see `precedential-effect.ts` §A FOURTH LAYER. */
+  const edges = treatment.map((t) => ({
+    relationship: t.relationship,
+    provenance: t.treatment_provenance as TreatmentProvenance | null,
+  }));
+  const attribution = attributionOf(edges);
+  const effect = precedentialEffectFromEdges({
     overruledStatus: row.overruled_status as OverruledStatus,
-    inboundRelationships: treatment.map((t) => t.relationship),
+    edges,
   });
   const policy = precedentialPolicy(effect);
   /* A verified adverse edge the corpus has not applied. Reported, never acted
@@ -227,6 +240,17 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
      * `applyOverruledChange` remains the single writer.
      */
     unappliedTreatment: unapplied,
+    /**
+     * Layer 4 — WHO the adverse treatment came from. ADDITIVE; the banner and
+     * `canAddToMatter` are untouched by it, so a client reading only
+     * `overruledStatus` behaves exactly as before.
+     *
+     * It exists because 95.62% of what drives LAW MOVED is a law reporter's
+     * headnote and 3.65% is the later court's own reasoning, and the on-tap
+     * detail must be able to say which. `COURT` is the only value that may be
+     * worded as a holding.
+     */
+    treatmentAttribution: attribution,
     overruledByJudgmentId: row.overruled_by_judgment_id,
     overruledParas: row.overruled_paras,
     overruledNote: row.overruled_note,

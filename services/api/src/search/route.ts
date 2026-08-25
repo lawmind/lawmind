@@ -29,6 +29,11 @@ import {
   precedentialPolicy,
   unappliedTreatment,
   type OverruledStatus,
+  attributionOf,
+  precedentialEffectFromEdges,
+  type TreatmentEdge,
+  type TreatmentAttribution,
+  type TreatmentProvenance,
 } from '../judgments/precedential-effect.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 
@@ -41,35 +46,56 @@ import { recordStepForAuthIdInBackground } from '../product/activation.ts';
  * `cite:` is the citation surface above all others. One batched, indexed read
  * over at most `RESULT_LIMIT` ids; never one per result.
  */
+type DerivedEffect = {
+  banner: OverruledStatus;
+  effect: string;
+  canAdd: boolean;
+  unapplied: string | null;
+  /** WHO the adverse treatment came from. Governs wording, never the banner. */
+  attribution: TreatmentAttribution;
+};
+
 async function derivedEffects(
   sql: Sql,
   hits: readonly { judgmentId: string; overruledStatus: string }[],
-): Promise<Map<string, { banner: OverruledStatus; effect: string; canAdd: boolean; unapplied: string | null }>> {
-  const out = new Map<string, { banner: OverruledStatus; effect: string; canAdd: boolean; unapplied: string | null }>();
+): Promise<Map<string, DerivedEffect>> {
+  const out = new Map<string, DerivedEffect>();
   if (hits.length === 0) return out;
-  const edges = await sql<{ cited_judgment_id: string; relationship: string }[]>`
-    SELECT DISTINCT cited_judgment_id, relationship
+  const edges = await sql<
+    { cited_judgment_id: string; relationship: string; treatment_provenance: string | null }[]
+  >`
+    SELECT DISTINCT cited_judgment_id, relationship, treatment_provenance
       FROM judgment_citations
      WHERE cited_judgment_id = ANY(${hits.map((h) => h.judgmentId)})
        AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
-  const byId = new Map<string, string[]>();
+  const byId = new Map<string, TreatmentEdge[]>();
   for (const e of edges) {
+    const edge: TreatmentEdge = {
+      relationship: e.relationship,
+      provenance: e.treatment_provenance as TreatmentProvenance | null,
+    };
     const list = byId.get(e.cited_judgment_id);
-    if (list) list.push(e.relationship);
-    else byId.set(e.cited_judgment_id, [e.relationship]);
+    if (list) list.push(edge);
+    else byId.set(e.cited_judgment_id, [edge]);
   }
   for (const h of hits) {
     const inbound = byId.get(h.judgmentId) ?? [];
-    const input = {
-      overruledStatus: h.overruledStatus as OverruledStatus,
-      inboundRelationships: inbound,
-    };
-    const effect = precedentialEffect(input);
+    const overruledStatus = h.overruledStatus as OverruledStatus;
+    const effect = precedentialEffectFromEdges({ overruledStatus, edges: inbound });
+    const policy = precedentialPolicy(effect);
     out.set(h.judgmentId, {
-      banner: precedentialPolicy(effect).bannerStatus,
+      banner: policy.bannerStatus,
       effect,
-      canAdd: precedentialPolicy(effect).addToMatter === 'allow',
-      unapplied: unappliedTreatment(input),
+      canAdd: policy.addToMatter === 'allow',
+      /* `unappliedTreatment` keeps taking bare relationships: it answers "is
+       * there an adverse edge the corpus has NOT applied", and a defective edge
+       * is still an edge somebody should look at. Narrowing it here would hide
+       * the exact rows most worth reviewing. */
+      unapplied: unappliedTreatment({
+        overruledStatus,
+        inboundRelationships: inbound.map((e) => e.relationship),
+      }),
+      attribution: attributionOf(inbound),
     });
   }
   return out;

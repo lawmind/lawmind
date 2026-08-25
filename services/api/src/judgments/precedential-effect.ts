@@ -103,6 +103,140 @@ export type TreatmentRelationship =
 export type OverruledStatus = 'none' | 'set_aside' | 'partly_set_aside' | 'doubted';
 
 /**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A FOURTH LAYER: WHO SAYS SO
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The three layers above answer *what happened* and *what it means*. They do not
+ * answer **who we heard it from**, and until 25 Aug 2026 nothing in production
+ * did — `judgment_citations.treatment_provenance` was written by NEW2 and read
+ * by nobody, which R4 recorded as `PROVEN_BY_LIVE_DB` storage and `FALSE`
+ * consumption.
+ *
+ * It matters because the corpus is not what anyone assumed. NEW2 hand-read every
+ * one of the 137 edges that drive a LAW MOVED badge:
+ *
+ *     REPORTER_EDITORIAL_ANNOTATION   131   (95.62%)
+ *     COURT_REASONING_EXPLICIT          5   ( 3.65%)
+ *     MODALITY_DEFECT                   1
+ *
+ * So the overwhelming majority of what Lawmind shows as "the law has moved" is a
+ * **law reporter's headnote saying a later court overruled this**, not the later
+ * court's own words. Both are useful. They are not the same claim, and saying
+ * the second when we only have the first is exactly the overstatement that ends
+ * a legal product.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT THIS DOES **NOT** DO — READ THIS BEFORE "SIMPLIFYING" IT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * It does not remove a single warning. If reporter evidence were demoted out of
+ * the badge, 98 LAW MOVED marks would become 5, and an advocate would file on 93
+ * authorities a reporter has recorded as overruled. **That is a catastrophic
+ * direction to move in and it is not what "provenance-aware" means here.**
+ *
+ * `bannerStatus` and `addToMatter` are therefore UNCHANGED for reporter-derived
+ * and unknown-provenance treatment. What changes is that the wire now carries
+ * WHO said it, so the wording can be honest — "reported as overruled" rather
+ * than "the Supreme Court held" — and so the admin monitor can see the split.
+ *
+ * The ONE behaviour that does change is `MODALITY_DEFECT`, and only in the
+ * direction of not making a claim: see `attributionOf` below.
+ */
+export type TreatmentProvenance =
+  | 'COURT_REASONING_EXPLICIT'
+  | 'REPORTER_EDITORIAL_ANNOTATION'
+  | 'MODALITY_DEFECT';
+
+export type TreatmentAttribution =
+  /** The later court's own reasoning. The only class that may be stated as a holding. */
+  | 'COURT'
+  /** A law reporter's editorial note. Shown, and shown AS a reported signal. */
+  | 'REPORTER'
+  /** The evidence is known-broken. Never the basis of a claim about the law. */
+  | 'DEFECTIVE'
+  /** Nobody has classified it. Unknown is not reporter and it is not court. */
+  | 'UNKNOWN';
+
+/** One inbound adverse edge, with the provenance that was previously discarded. */
+export type TreatmentEdge = {
+  relationship: string;
+  /** `null` means unclassified — 4,403 edges today. Never read as "court". */
+  provenance: TreatmentProvenance | null;
+};
+
+const ATTRIBUTION_FOR: Readonly<Record<TreatmentProvenance, TreatmentAttribution>> = {
+  COURT_REASONING_EXPLICIT: 'COURT',
+  REPORTER_EDITORIAL_ANNOTATION: 'REPORTER',
+  MODALITY_DEFECT: 'DEFECTIVE',
+};
+
+/**
+ * The strongest ATTRIBUTION among the edges behind a treatment.
+ *
+ * "Strongest" is COURT > REPORTER > UNKNOWN > DEFECTIVE, and the ordering is the
+ * whole design:
+ *
+ *   * COURT wins because one edge carrying the later court's own reasoning is
+ *     enough to state the holding, whatever else is also present.
+ *   * DEFECTIVE ranks LAST, not first. A broken edge alongside a good one does
+ *     not poison the good one — it is simply the least useful thing we hold.
+ *     Only when it is ALL we hold does it decide the answer, and then it decides
+ *     it as `DEFECTIVE`, which claims nothing.
+ *   * UNKNOWN sits above DEFECTIVE and below REPORTER. It is not evidence, but
+ *     it is not known-broken either, and collapsing the two would either
+ *     manufacture confidence or destroy 4,403 edges' worth of signal.
+ *
+ * An empty list is `UNKNOWN`, never `COURT`. Absence of evidence is the thing
+ * this file exists to stop reading as evidence.
+ */
+const ATTRIBUTION_RANK: Readonly<Record<TreatmentAttribution, number>> = {
+  COURT: 1,
+  REPORTER: 2,
+  UNKNOWN: 3,
+  DEFECTIVE: 4,
+};
+
+export function attributionOf(edges: readonly TreatmentEdge[]): TreatmentAttribution {
+  const adverse = edges.filter((e) => EDGE_RANK[e.relationship] !== undefined);
+  if (adverse.length === 0) return 'UNKNOWN';
+  let best: TreatmentAttribution = 'DEFECTIVE';
+  for (const e of adverse) {
+    const a = e.provenance === null ? 'UNKNOWN' : (ATTRIBUTION_FOR[e.provenance] ?? 'UNKNOWN');
+    if (ATTRIBUTION_RANK[a] < ATTRIBUTION_RANK[best]) best = a;
+  }
+  return best;
+}
+
+/**
+ * May this treatment be worded as something the later COURT held?
+ *
+ * Only `COURT`. Everything else is reported, unclassified, or broken, and the
+ * copy has to say so — `CLAUDE.md`: copy is licence protection, not an audit.
+ * This governs WORDING only; it never governs whether the warning appears.
+ */
+export function mayStateAsHolding(attribution: TreatmentAttribution): boolean {
+  return attribution === 'COURT';
+}
+
+/**
+ * Edges that may DRIVE a currentness determination.
+ *
+ * `MODALITY_DEFECT` is excluded, and this is the one place provenance changes
+ * behaviour rather than wording. The class exists because NEW2 found a 1985
+ * DISSENT saying an authority *"is sought to be overruled by the judgment
+ * proposed to be delivered by my learned Brother"* stored as `overruled` — and
+ * it is the sole driver of a live `set_aside`. Polarity is right and mood is
+ * wrong: nothing was overruled, somebody proposed to overrule.
+ *
+ * A defective edge is therefore not evidence of anything and cannot propagate.
+ * It is still RETURNED and still visible; it just cannot make a claim.
+ */
+export function edgesThatMayDrive(edges: readonly TreatmentEdge[]): TreatmentEdge[] {
+  return edges.filter((e) => e.provenance !== 'MODALITY_DEFECT');
+}
+
+/**
  * Layer 2. What the act means for this authority's standing.
  *
  * `set_aside` and `partly_set_aside` are about THIS case. `overruled` and
@@ -226,6 +360,50 @@ export function unappliedTreatment(input: {
 }): TreatmentRelationship | null {
   if (input.overruledStatus !== 'none') return null;
   return strongestTreatment(input.inboundRelationships);
+}
+
+/**
+ * The provenance-aware entry point. Prefer this over `precedentialEffect`.
+ *
+ * `precedentialEffect` still exists and still takes bare relationship strings,
+ * because five surfaces called it before provenance existed and a flag-day
+ * rewrite of all of them in one commit is how a currentness bug ships. What it
+ * now does is delegate here with every edge marked `UNKNOWN` — which is the
+ * honest reading of a caller that did not ask about provenance, and which
+ * produces byte-identical behaviour to before for every case except the one
+ * below.
+ *
+ * THE ONE BEHAVIOURAL CHANGE, and why it is not a weakening:
+ *
+ * When a stored adverse status is backed ONLY by `MODALITY_DEFECT` edges, the
+ * old code dropped those edges, found no edge at all, and fell into the branch
+ * commented *"A human determination with no edge behind it. Taken at its word."*
+ * — which is false twice over. It was not a human determination, and the edge it
+ * was taken from is known-broken. That path granted a defect the authority of an
+ * admin's deliberate decision.
+ *
+ * It now returns `review_required`, which refuses `addToMatter` and keeps the
+ * banner. Strictly MORE cautious, and it says the true thing: the recorded
+ * treatment could not be verified against a usable edge.
+ */
+export function precedentialEffectFromEdges(input: {
+  overruledStatus: OverruledStatus;
+  edges: readonly TreatmentEdge[];
+}): PrecedentialEffect {
+  const usable = edgesThatMayDrive(input.edges);
+  const hadAdverseEdges = input.edges.some((e) => EDGE_RANK[e.relationship] !== undefined);
+  const hasUsableAdverse = usable.some((e) => EDGE_RANK[e.relationship] !== undefined);
+
+  /* Every adverse edge behind a stored status is defective. Not silence — a
+   * broken witness, which is a different answer from no witness. */
+  if (input.overruledStatus !== 'none' && hadAdverseEdges && !hasUsableAdverse) {
+    return 'review_required';
+  }
+
+  return precedentialEffect({
+    overruledStatus: input.overruledStatus,
+    inboundRelationships: usable.map((e) => e.relationship),
+  });
 }
 
 export function precedentialEffect(input: {

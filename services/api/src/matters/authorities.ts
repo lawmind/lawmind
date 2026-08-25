@@ -73,6 +73,11 @@ import {
   precedentialEffect,
   precedentialPolicy,
   type OverruledStatus,
+  attributionOf,
+  mayStateAsHolding,
+  precedentialEffectFromEdges,
+  type TreatmentEdge,
+  type TreatmentProvenance,
 } from '../judgments/precedential-effect.ts';
 import { logger } from '../logger.ts';
 import { recordStepInBackground } from '../product/activation.ts';
@@ -238,15 +243,24 @@ export async function addAuthority(
    *
    * The banner is UNCHANGED in every case. Nothing here weakens a warning.
    */
-  const treatment = await sql<{ relationship: string }[]>`
-    SELECT DISTINCT relationship
+  const treatment = await sql<{ relationship: string; treatment_provenance: string | null }[]>`
+    SELECT DISTINCT relationship, treatment_provenance
       FROM judgment_citations
      WHERE cited_judgment_id = ${body.judgmentId}
        AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
 
-  const effect = precedentialEffect({
+  /* Provenance-aware, and it can only ever REFUSE more here, never less: the
+   * single case it changes is a stored adverse status whose only evidence is a
+   * MODALITY_DEFECT edge, which used to be read as a deliberate human
+   * determination and is now `review_required`. */
+  const edges = treatment.map((t) => ({
+    relationship: t.relationship,
+    provenance: t.treatment_provenance as TreatmentProvenance | null,
+  }));
+  const attribution = attributionOf(edges);
+  const effect = precedentialEffectFromEdges({
     overruledStatus: judgment.overruled_status as OverruledStatus,
-    inboundRelationships: treatment.map((t) => t.relationship),
+    edges,
   });
   const policy = precedentialPolicy(effect);
 
@@ -256,7 +270,14 @@ export async function addAuthority(
      * aside that nothing verified. */
     const what =
       effect === 'set_aside'
-        ? 'was set aside and cannot be added to a matter.'
+        ? mayStateAsHolding(attribution)
+          ? 'was set aside and cannot be added to a matter.'
+          : /* Reporter-derived, unclassified or defective. The refusal STANDS —
+             * this is the one place Lawmind declines to let an authority be
+             * used, and weakening it on provenance would be the dangerous
+             * direction. What changes is only that we do not assert the later
+             * court's holding when what we hold is a reporter's note. */
+            'is recorded as set aside and cannot be added to a matter.'
         : 'has a recorded change of status we could not confirm, so it cannot be added to a matter yet.';
     return fail(
       c,

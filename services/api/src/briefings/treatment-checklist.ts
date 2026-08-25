@@ -100,11 +100,34 @@ export function treatmentChecklistItems(
           ? ' Which propositions were affected is not recorded — read the later decision.'
           : '';
 
+    /**
+     * WHO said it, in the advocate's own words — and the item is NEVER dropped
+     * for any value of it.
+     *
+     * 95.62% of the edges behind a LAW MOVED item are a law reporter's headnote
+     * rather than the later court's own reasoning. Both are worth telling an
+     * advocate at 23:00 the night before a hearing. They are not the same claim,
+     * and stating the second while holding only the first is the overstatement
+     * that ends a legal product.
+     *
+     * Phrasing follows `CLAUDE.md`: copy is licence protection, not an audit. It
+     * says what we HOLD — "a law reporter's editorial note" — never what we
+     * failed to do, and never the word "unverified".
+     */
+    const sourceLine =
+      m.attribution === 'COURT'
+        ? ' The later court said so in its own reasoning.'
+        : m.attribution === 'REPORTER'
+          ? " This is a law reporter's editorial note rather than the later court's own words — read the later decision before you rely on it either way."
+          : m.attribution === 'DEFECTIVE'
+            ? ' The evidence behind this is a known defect in our record — treat the move itself as unconfirmed and read the later decision.'
+            : ' Whether this comes from the later court or from a law reporter is not established — read the later decision.';
+
     items.push({
       id: `${TREATMENT_ITEM_PREFIX}${m.judgmentId}`,
       text: survives
-        ? `${m.caseTitle} has moved: ${m.policy.because}.${scopeLine} It may still be relied on for propositions the later court did not reach — check which before the hearing.`
-        : `${m.caseTitle} has moved: ${m.policy.because}.${scopeLine} Do not rely on it — find a replacement authority before the hearing.`,
+        ? `${m.caseTitle} has moved: ${m.policy.because}.${scopeLine}${sourceLine} It may still be relied on for propositions the later court did not reach — check which before the hearing.`
+        : `${m.caseTitle} has moved: ${m.policy.because}.${scopeLine}${sourceLine} Do not rely on it — find a replacement authority before the hearing.`,
       /**
        * PROVENANCE, not a restatement of the verdict. Both inputs are named,
        * because a stored `set_aside` explained by an `overruled` edge and a
@@ -113,7 +136,8 @@ export function treatmentChecklistItems(
        */
       basis:
         `precedentialEffect = ${m.effect} ` +
-        `(judgments.overruled_status = ${m.storedStatus}; scope ${m.scope})`,
+        `(judgments.overruled_status = ${m.storedStatus}; scope ${m.scope}; ` +
+        `attribution ${m.attribution})`,
     });
   }
 

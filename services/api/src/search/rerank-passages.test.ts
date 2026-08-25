@@ -31,6 +31,7 @@ function candidate(
     precedentialEffect: 'none',
     canAddToMatter: true,
     unappliedTreatment: null,
+  treatmentAttribution: 'UNKNOWN' as const,
     overruledByJudgmentId: null,
     overruledParas: null,
     overruledNote: null,

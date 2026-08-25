@@ -51,7 +51,11 @@
 import type { Sql } from 'postgres';
 
 import {
-  precedentialEffect,
+  precedentialEffectFromEdges,
+  attributionOf,
+  type TreatmentEdge,
+  type TreatmentProvenance,
+  type TreatmentAttribution,
   precedentialPolicy,
   treatmentScope,
   unappliedTreatment,
@@ -80,6 +84,16 @@ export type PrecedentialState = {
   overruledParas: number[] | null;
   /** A verified adverse edge the corpus has not applied. Reported, never acted on. */
   unapplied: TreatmentRelationship | null;
+  /**
+   * Layer 4 — WHO said it. COURT, REPORTER, DEFECTIVE or UNKNOWN.
+   *
+   * Governs WORDING, never the banner and never `policy`. A checklist item may
+   * say "reported as overruled" for REPORTER and "the later court held" only for
+   * COURT; both still appear, because removing the reporter-derived warnings
+   * would take LAW MOVED from 98 judgments to 5 and put an advocate in front of
+   * a bench relying on 93 authorities a reporter has recorded as overruled.
+   */
+  attribution: TreatmentAttribution;
 };
 
 /**
@@ -114,34 +128,45 @@ export async function loadPrecedentialState(
   /* One batched edge read for the whole set, the same shape and for the same
    * reason as `search/route.ts`: a per-authority round trip inside a request
    * that already re-read every judgment is how a wedge screen gets slow. */
-  const edges = await sql<{ cited_judgment_id: string; relationship: string }[]>`
-    SELECT DISTINCT cited_judgment_id, relationship
+  const edges = await sql<
+    { cited_judgment_id: string; relationship: string; treatment_provenance: string | null }[]
+  >`
+    SELECT DISTINCT cited_judgment_id, relationship, treatment_provenance
       FROM judgment_citations
      WHERE cited_judgment_id = ANY(${ids}::uuid[])
        AND relationship IN ${sql(STANDING_RELATIONSHIPS)}`;
 
-  const inboundById = new Map<string, string[]>();
+  const inboundById = new Map<string, TreatmentEdge[]>();
   for (const e of edges) {
+    const edge: TreatmentEdge = {
+      relationship: e.relationship,
+      provenance: e.treatment_provenance as TreatmentProvenance | null,
+    };
     const list = inboundById.get(e.cited_judgment_id);
-    if (list) list.push(e.relationship);
-    else inboundById.set(e.cited_judgment_id, [e.relationship]);
+    if (list) list.push(edge);
+    else inboundById.set(e.cited_judgment_id, [edge]);
   }
 
   for (const r of rows) {
-    const input = {
-      overruledStatus: r.overruled_status as OverruledStatus,
-      inboundRelationships: inboundById.get(r.id) ?? [],
-    };
-    const effect = precedentialEffect(input);
+    const overruledStatus = r.overruled_status as OverruledStatus;
+    const inbound = inboundById.get(r.id) ?? [];
+    /* This function is the SHARED derivation behind the briefing checklist and
+     * the treatment checklist, so provenance entering here is what reaches the
+     * 23:00 blob an advocate reads standing outside court. */
+    const effect = precedentialEffectFromEdges({ overruledStatus, edges: inbound });
     out.set(r.id, {
       judgmentId: r.id,
       caseTitle: r.case_title,
-      storedStatus: input.overruledStatus,
+      storedStatus: overruledStatus,
       effect,
       policy: precedentialPolicy(effect),
       scope: treatmentScope({ effect, overruledParas: r.overruled_paras }),
       overruledParas: r.overruled_paras,
-      unapplied: unappliedTreatment(input),
+      unapplied: unappliedTreatment({
+        overruledStatus,
+        inboundRelationships: inbound.map((e) => e.relationship),
+      }),
+      attribution: attributionOf(inbound),
     });
   }
 
