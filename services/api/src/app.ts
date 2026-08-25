@@ -42,11 +42,7 @@ import {
   refuseDataRequest,
   refuseRequestBody,
 } from './admin/data-requests.ts';
-import {
-  createDataRequest,
-  dataRequestBody,
-  listOwnDataRequests,
-} from './auth/data-requests.ts';
+import { createDataRequest, dataRequestBody, listOwnDataRequests } from './auth/data-requests.ts';
 import { enrolmentBody, listUsers, patchEnrolment, usersQuery } from './admin/users.ts';
 import {
   alertsQuery,
@@ -270,7 +266,10 @@ export function createApp(deps: AppDeps) {
         name: 'magic-link-email',
         ...RATE_LIMITS.magicLinkPerEmail,
         key: async (c) => {
-          const body = await c.req.raw.clone().json().catch(() => null);
+          const body = await c.req.raw
+            .clone()
+            .json()
+            .catch(() => null);
           const email = (body as { email?: unknown } | null)?.email;
           return typeof email === 'string' ? email.toLowerCase() : 'unparseable';
         },
@@ -290,11 +289,19 @@ export function createApp(deps: AppDeps) {
     // Token exchange and refresh — credential grinding, not mail.
     app.use(
       '/auth/verify',
-      rateLimit({ name: 'auth-verify', ...RATE_LIMITS.authPerAddress, key: (c) => knownAddress(c) }),
+      rateLimit({
+        name: 'auth-verify',
+        ...RATE_LIMITS.authPerAddress,
+        key: (c) => knownAddress(c),
+      }),
     );
     app.use(
       '/auth/refresh',
-      rateLimit({ name: 'auth-refresh', ...RATE_LIMITS.authPerAddress, key: (c) => knownAddress(c) }),
+      rateLimit({
+        name: 'auth-refresh',
+        ...RATE_LIMITS.authPerAddress,
+        key: (c) => knownAddress(c),
+      }),
     );
     app.post('/auth/magic-link', validate('json', magicLinkRequest), (c) =>
       handleMagicLink(c, auth, c.req.valid('json')),
@@ -324,7 +331,12 @@ export function createApp(deps: AppDeps) {
      * shares depend on, and a mis-tap on a phone must not be able to do it.
      */
     app.post('/me/data-requests', validate('json', dataRequestBody), async (c) =>
-      createDataRequest(c, auth.sql, await profileIdFor(auth.sql, c.get('authId')), c.req.valid('json')),
+      createDataRequest(
+        c,
+        auth.sql,
+        await profileIdFor(auth.sql, c.get('authId')),
+        c.req.valid('json'),
+      ),
     );
     app.get('/me/data-requests', async (c) =>
       listOwnDataRequests(c, auth.sql, await profileIdFor(auth.sql, c.get('authId'))),
@@ -760,9 +772,81 @@ export function createApp(deps: AppDeps) {
     );
   }
 
+  /**
+   * PostgreSQL `57014 query_canceled` — what `statement_timeout` raises.
+   *
+   * Duck-typed on `code` rather than on an instanceof, because the error crosses
+   * a driver boundary and arrives as a plain object often enough that an
+   * instanceof check would silently stop matching. A missed match here is not
+   * loud: it degrades to the old 500, which is exactly the behaviour being fixed.
+   *
+   * The nested `cause` walk matters for the same reason `retrieve.ts` has its own
+   * copy of this test: a timeout raised inside a `sql.begin()` transaction is
+   * re-thrown wrapped, and the outer error carries no `code` of its own.
+   */
+  function isStatementTimeout(error: unknown): boolean {
+    for (let e: unknown = error, depth = 0; e && depth < 4; depth += 1) {
+      if (typeof e === 'object' && 'code' in e && (e as { code?: unknown }).code === '57014') {
+        return true;
+      }
+      e = typeof e === 'object' && 'cause' in e ? (e as { cause?: unknown }).cause : null;
+    }
+    return false;
+  }
+
   app.notFound((c) => fail(c, 'NOT_FOUND', `no route for ${c.req.method} ${c.req.path}`, 404));
 
   app.onError((error, c) => {
+    /**
+     * ───────────────────────────────────────────────────────────────────────
+     * A STATEMENT TIMEOUT IS A CAPACITY ANSWER, NOT A FAULT — M09
+     * ───────────────────────────────────────────────────────────────────────
+     *
+     * `GET /judgments/:id` returned **500 after 40,024 ms** in the ten-matter
+     * replay (M07, `0f4788ed-5399-4891-bc2b-327a71fcf47b`), and the body was
+     * `INTERNAL / "something went wrong"` — indistinguishable from a genuine
+     * bug in the reader.
+     *
+     * It was not a bug in the reader. Measured on the same row, this box, at
+     * rest: the judgment SELECT plans at cost **2.78** (`Index Scan using
+     * judgments_pkey`) and runs in **41 ms cold, 1 ms warm**; the treatment
+     * query plans at **5.76** and runs in 3 ms. The document is 42,046
+     * characters, 24 kB stored. Nothing about that request is slow.
+     *
+     * What made it 40 seconds is the queue in front of it. `pools.ts` says it
+     * in its own opening comment: *"`postgres.js` then makes every other caller
+     * WAIT. Not fail: wait, with no timeout of its own."* `CORE_STATEMENT_TIMEOUT_MS`
+     * is 10 s and it bounds a STATEMENT; nothing bounds the wait for a core
+     * connection. 40,024 ms against a 10 s statement cap is arithmetically
+     * inconsistent with one slow query and entirely consistent with queue wait
+     * plus a statement. The two-pool split stopped research starving core; it
+     * did not make the core queue finite, and only research has an admission gate.
+     *
+     * So the advocate is told the server is broken when the true answer is that
+     * it is busy. `/search` already gets this right — `SEARCH_BUSY`, 503, with a
+     * `Retry-After` — and `pools.ts` argues for it explicitly: an admission gate
+     * "makes exceeding it an ANSWER instead of a hang". This gives every other
+     * route the same honesty, in one place rather than at thirty call sites.
+     *
+     * 503 rather than 500 is the load-bearing part. A 500 tells a client to
+     * give up and tells an operator to look for a bug; a 503 with `Retry-After`
+     * tells both the truth. It is also what keeps a capacity incident visible
+     * as a capacity incident in the metrics rather than buried in the 5xx rate.
+     */
+    if (isStatementTimeout(error)) {
+      logger.warn(
+        { request_id: c.get('requestId'), path: c.req.path, method: c.req.method },
+        'statement timeout — the request exceeded its budget, almost always queue wait under contention',
+      );
+      c.header('Retry-After', '2');
+      return fail(
+        c,
+        'TIMEOUT',
+        'That took longer than we allow and was stopped. Nothing is wrong with the ' +
+          'record — the server is busy. Please try again in a moment.',
+        503,
+      );
+    }
     logger.error({ request_id: c.get('requestId'), err: error }, 'unhandled error');
     return fail(c, 'INTERNAL', 'something went wrong', 500);
   });
