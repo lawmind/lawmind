@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-08-25T04:09:20.090Z",
+  "steps": {
+    "provenance_distribution": {
+      "ms": 1458,
+      "rows": [
+        {
+          "provenance": "REPORTER_EDITORIAL_ANNOTATION",
+          "edges": 11573
+        },
+        {
+          "provenance": "(NULL = NOT CLASSIFIED)",
+          "edges": 4403
+        },
+        {
+          "provenance": "COURT_REASONING_EXPLICIT",
+          "edges": 5
+        },
+        {
+          "provenance": "MODALITY_DEFECT",
+          "edges": 1
+        }
+      ]
+    },
+    "badge_population": {
+      "ms": 15,
+      "rows": [
+        {
+          "overruled_status": "set_aside",
+          "judgments": 76
+        },
+        {
+          "overruled_status": "doubted",
+          "judgments": 17
+        },
+        {
+          "overruled_status": "partly_set_aside",
+          "judgments": 11
+        }
+      ]
+    },
+    "driving_edges_by_provenance": {
+      "ms": 28,
+      "rows": [
+        {
+          "provenance": "REPORTER_EDITORIAL_ANNOTATION",
+          "relationship": "overruled",
+          "driving_edges": 92,
+          "judgments_affected": 68
+        },
+        {
+          "provenance": "REPORTER_EDITORIAL_ANNOTATION",
+          "relationship": "doubted",
+          "driving_edges": 20,
+          "judgments_affected": 16
+        },
+        {
+          "provenance": "REPORTER_EDITORIAL_ANNOTATION",
+          "relationship": "overruled_in_part",
+          "driving_edges": 16,
+          "judgments_affected": 9
+        },
+        {
+          "provenance": "COURT_REASONING_EXPLICIT",
+          "relationship": "overruled",
+          "driving_edges": 4,
+          "judgments_affected": 4
+        },
+        {
+          "provenance": "COURT_REASONING_EXPLICIT",
+          "relationship": "doubted",
+          "driving_edges": 1,
+          "judgments_affected": 1
+        },
+        {
+          "provenance": "MODALITY_DEFECT",
+          "relationship": "overruled",
+          "driving_edges": 1,
+          "judgments_affected": 1
+        }
+      ]
+    },
+    "badges_surviving_a_court_only_gate": {
+      "ms": 2,
+      "rows": [
+        {
+          "badged_judgments": 104,
+          "survive_court_only_gate": 5,
+          "lose_badge_under_court_only_gate": 99
+        }
+      ]
+    }
+  }
+}

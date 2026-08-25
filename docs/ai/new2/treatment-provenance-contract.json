@@ -1,0 +1,190 @@
+{
+  "contract": "TREATMENT_PROVENANCE_CONSUMER_CONTRACT",
+  "version": "1.0.0",
+  "owner_lane": "NEW2",
+  "written_at": "2026-08-25",
+  "prose_twin": "docs/ai/new2/TREATMENT_PROVENANCE_CONSUMER_CONTRACT_V1.md",
+  "evidence": [
+    "docs/ai/new2/TREATMENT_PROVENANCE_DECISION_INPUT_V1.md",
+    "docs/ai/new2/treatment-contract-state.json"
+  ],
+  "column": "judgment_citations.treatment_provenance (migration 0082, text + CHECK)",
+  "single_enforcement_point": "services/api/src/citations/propagate-treatment.ts:157 -- the only writer of judgments.overruled_status; the other four surfaces read what it writes",
+  "canonical_classes": [
+    "COURT_REASONING_EXPLICIT",
+    "COURT_ORDER_DISPOSITIVE",
+    "OFFICIAL_REGISTRY_STATUS"
+  ],
+  "measured_state_2026_08_25": {
+    "treatment_bearing_edges": 15982,
+    "by_provenance": {
+      "REPORTER_EDITORIAL_ANNOTATION": 11573,
+      "NULL_NOT_CLASSIFIED": 4403,
+      "COURT_REASONING_EXPLICIT": 5,
+      "MODALITY_DEFECT": 1
+    },
+    "badged_judgments": 104,
+    "badged_judgments_note": "98 real + 6 leaked SYNTHETIC test fixtures LCC could not purge (destructive run blocked by a permission classifier)",
+    "badges_backed_by_court_class_edge": 5,
+    "add_to_matter_refusals_today": 76,
+    "add_to_matter_refusals_on_reporter_evidence_alone": 72
+  },
+  "states": [
+    {
+      "state": "COURT_REASONING_EXPLICIT",
+      "population_edges": 5,
+      "evidence_requirement": "the citing court's own sentence, in its own voice, naming the authority AND the act performed on it. Not a heading, not a list entry, not a marker-terminated Case Law Cited line.",
+      "allowed_product_wording": "may name the acting court and assert the act, e.g. 'Set aside in <citing case>.' Attribution to a court is permitted only here and in COURT_ORDER_DISPOSITIVE.",
+      "wording_forbidden": [
+        "any 'set aside by X on <date>' provenance line where the citing span does not itself name the acting judgment -- 2 of the 5 spans do not, and the line must be omitted rather than filled from citing_judgment_id"
+      ],
+      "currentness_propagation": "MAY write judgments.overruled_status. Canonical.",
+      "matter_workflow_may_rely": true,
+      "matter_workflow_note": "may disable add-to-matter on set_aside",
+      "briefing_may_rely": true,
+      "counterargument_may_rely": true,
+      "law_moved_strength": "FULL",
+      "law_moved_note": "amber #B4690E, the reserved colour"
+    },
+    {
+      "state": "COURT_ORDER_DISPOSITIVE",
+      "population_edges": 0,
+      "evidence_requirement": "the operative order -- set aside, quashed, reversed.",
+      "allowed_product_wording": "as COURT_REASONING_EXPLICIT",
+      "currentness_propagation": "MAY write judgments.overruled_status. Canonical.",
+      "matter_workflow_may_rely": true,
+      "briefing_may_rely": true,
+      "counterargument_may_rely": true,
+      "law_moved_strength": "FULL"
+    },
+    {
+      "state": "OFFICIAL_REGISTRY_STATUS",
+      "population_edges": 0,
+      "unusable": true,
+      "evidence_requirement": "a court registry record of appellate outcome.",
+      "allowed_product_wording": "NONE. MUST NOT appear in product copy, coverage claims, admin figures, or website/founder material as a source LawMind has.",
+      "currentness_propagation": "MUST NOT -- zero available evidence. ecourts_observation holds 0 rows and the round forbids live eCourts traffic.",
+      "matter_workflow_may_rely": false,
+      "briefing_may_rely": false,
+      "counterargument_may_rely": false,
+      "law_moved_strength": "NONE",
+      "note": "kept in the vocabulary so a future registry feed has somewhere to land. Naming an evidence class we cannot populate is how a capability gets claimed by accident."
+    },
+    {
+      "state": "REPORTER_EDITORIAL_ANNOTATION",
+      "population_edges": 11573,
+      "drives_badges": 99,
+      "drives_add_to_matter_refusals": 72,
+      "evidence_requirement": "a law report's editorial apparatus -- headnote, Case Law Cited entry, marker-terminated list line, column letters, page-and-line pins.",
+      "allowed_product_wording": "MUST attribute to the reporter and MUST NOT attribute to a court. Permitted: 'A law report records this as overruled. We have not confirmed this against the deciding court.'",
+      "wording_forbidden": [
+        "Set aside in <case>",
+        "the Court overruled",
+        "verified",
+        "confirmed",
+        "any phrasing whose grammatical subject is a court"
+      ],
+      "currentness_propagation": "MUST NOT write judgments.overruled_status. Render-time signal derived live from the edge, never a stored canonical status.",
+      "matter_workflow_may_rely": "SHOW_ONLY",
+      "matter_workflow_note": "MAY be shown on the authority inside a matter. MUST NOT disable add-to-matter -- a refusal is a claim, and this evidence cannot carry a refusal.",
+      "briefing_may_rely": "QUALIFIED",
+      "briefing_note": "MAY appear, qualified. MUST NOT be silently omitted. MUST NOT be stated as a fact about what a court held.",
+      "counterargument_may_rely": "QUALIFIED",
+      "counterargument_note": "MAY raise the point ('opposing counsel may say this has been overruled; a law report records it so'). MUST NOT assert it has been.",
+      "law_moved_strength": "QUALIFIED",
+      "law_moved_note": "visible, unmissable, explicitly sourced to the reporter, and visually distinguishable from FULL. Nothing is removed.",
+      "interim_product_direction": "remains visible as a SAFETY SIGNAL, explicitly qualified, never presented as though the later court itself has been independently verified to have so held"
+    },
+    {
+      "state": "COUNSEL_ARGUMENT",
+      "population_edges": 0,
+      "evidence_requirement": "the span is counsel's submission -- 'learned counsel placed reliance on X'.",
+      "allowed_product_wording": "NONE. MUST NOT surface as treatment at all.",
+      "currentness_propagation": "MUST NOT",
+      "matter_workflow_may_rely": false,
+      "briefing_may_rely": false,
+      "counterargument_may_rely": "ARGUMENT_ONLY",
+      "counterargument_note": "MAY be read as evidence that an argument was made, never as evidence of what was decided. The one place this class has value.",
+      "law_moved_strength": "NONE",
+      "note": "classifier precedence is deliberately pessimistic -- a span carrying both counsel voice and court voice is classified COUNSEL_ARGUMENT, costing coverage rather than risking a false promotion."
+    },
+    {
+      "state": "MODALITY_DEFECT",
+      "population_edges": 1,
+      "quarantine": true,
+      "evidence_requirement": "the verb is right and its MOOD is wrong -- 'is sought to be overruled', 'proposed to be delivered', a dissent describing what the majority is about to do.",
+      "allowed_product_wording": "NONE, pending re-adjudication. MUST NOT surface in any advocate-facing surface.",
+      "currentness_propagation": "MUST NOT write judgments.overruled_status.",
+      "matter_workflow_may_rely": false,
+      "briefing_may_rely": false,
+      "counterargument_may_rely": false,
+      "law_moved_strength": "NONE",
+      "instance": {
+        "edge_id": "9de8fd68-e248-4e0d-8cef-cfa79220e735",
+        "court": "Supreme Court",
+        "year": 1985,
+        "speaker": "THAKKAR, J., dissenting",
+        "stored_relationship": "overruled",
+        "drives": "a live set_aside, as sole driving edge"
+      },
+      "note": "a quarantine, not a verdict: the claim has been read and found unsafe in a way the vocabulary could not previously express. The badge it drives is probably right and is right by luck. Re-adjudication needs the MAJORITY judgment read as primary evidence (NEW2-1b)."
+    },
+    {
+      "state": "UNKNOWN",
+      "population_edges": 0,
+      "evidence_requirement": "a reader or writer examined the span and could not attribute a speaker.",
+      "allowed_product_wording": "NONE",
+      "currentness_propagation": "MUST NOT",
+      "matter_workflow_may_rely": false,
+      "briefing_may_rely": false,
+      "counterargument_may_rely": false,
+      "law_moved_strength": "NONE",
+      "hard_rule": "UNKNOWN MUST NOT be promoted to any other class, in any direction, by any process -- not to reporter, not to court, and above all not to a clean state. UNKNOWN -> anything is the same failure as SCREENED_NO_DAMAGE_FOUND -> 'clean'."
+    },
+    {
+      "state": "NULL",
+      "population_edges": 4403,
+      "evidence_requirement": "NONE -- nothing has looked at this edge.",
+      "allowed_product_wording": "NONE",
+      "currentness_propagation": "MUST NOT",
+      "matter_workflow_may_rely": false,
+      "briefing_may_rely": false,
+      "counterargument_may_rely": false,
+      "law_moved_strength": "NONE",
+      "hard_rule": "NULL and UNKNOWN are different and MUST NEVER be merged. NULL is NOT LOOKED AT; UNKNOWN is LOOKED AT AND UNDECIDABLE. They want opposite work -- NULL wants a classifier run, UNKNOWN wants a human. A NULL edge is not evidence of safety."
+    }
+  ],
+  "forbidden_implementations": [
+    "mass treatment rewrite -- forbidden by the round, and unnecessary: the column is already populated for the classes that matter",
+    "deleting reporter evidence, in the row or on screen",
+    "migrating treatment_provenance to an enum -- the vocabulary is still moving; MODALITY_DEFECT was added by READING, after the screen had run"
+  ],
+  "founder_questions": [
+    {
+      "id": "FQ-TREATMENT-HEADNOTE-PROVENANCE",
+      "filed_by": "LCC",
+      "question": "May a law reporter's editorial annotation independently make an authority non-canonical in LawMind?",
+      "new2_recommendation": "NO, and it stays visible -- court-only canonical, reporter qualified",
+      "priced": {
+        "today_reporter_promotes": { "law_moved_badges": 104, "add_to_matter_refusals": 76 },
+        "recommended_court_only_canonical_reporter_qualified": { "law_moved_badges_canonical": 5, "law_moved_badges_qualified": 99, "hidden": 0, "add_to_matter_refusals": 4 },
+        "rejected_reporter_removed": { "law_moved_badges": 5, "hidden": 99, "add_to_matter_refusals": 4 }
+      },
+      "why_third_row_refused": "removing 99 warnings is the direction CLAUDE.md is most afraid of"
+    },
+    {
+      "id": "FQ-FALSE-REFUSAL-SYMMETRY",
+      "question": "Is a false refusal acceptable where a false confirmation is not?",
+      "today_implicit_answer": "yes -- 72 of 76 add-to-matter refusals rest on headnotes",
+      "new2_recommendation": "no -- both are wrong answers about the same authority, and the advocate cannot tell either from a correct one"
+    }
+  ],
+  "honest_limits": [
+    "the 5 court-class edges are 0.03% of the population -- this contract makes currentness honest, not broad",
+    "detectTreatment searches forward 220 characters for a dash-and-marker, which is law-report notation courts do not use, so the 0.03% is structural and no corpus growth changes it",
+    "11,573 reporter labels come from a screen, not from reading; the screen's error is one-directional (hand-reading moved 38 spans INTO reporter and none out) so the class is under-counted -- the safe direction, but not proof for any individual edge",
+    "one adjudicator, no inter-rater figure for the 137 badge-drivers",
+    "6 leaked SYNTHETIC fixtures remain inside the 104",
+    "extractor recall is unmeasured and unmeasurable from what we hold -- nothing here is a coverage claim"
+  ]
+}

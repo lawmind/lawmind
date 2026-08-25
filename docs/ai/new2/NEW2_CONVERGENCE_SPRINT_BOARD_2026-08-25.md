@@ -21,7 +21,7 @@ garbage, or false treatment.
 | # | task | pri | status | acceptance (what makes it DONE) |
 | --- | --- | --- | --- | --- |
 | **N2-0** | Acquire NEW2 lease; declare resource posture; do not disturb NEW1's tranche | P0 | **DONE** | lease held by `37711162`; zero NEW2 jobs running (bus 1113); quiet-window answer already given to LCC |
-| **N2-1** | **Treatment provenance CONSUMER CONTRACT** — convert `TREATMENT_PROVENANCE_DECISION_INPUT_V1` research into an exact structured contract for LCC | P0 | **QUEUED** | one artefact + bus to LCC defining, per state, the seven cells: evidence requirement · allowed product wording · allowed currentness propagation · matter / briefing / counterargument reliance · LAW MOVED strength |
+| **N2-1** | **Treatment provenance CONSUMER CONTRACT** for LCC-3 | P0 | **DONE** | `TREATMENT_PROVENANCE_CONSUMER_CONTRACT_V1.md` + machine-readable twin: 8 states × 7 cells. Headline: **72 of 76 add-to-matter refusals rest on a headnote alone**. Bus 1144 (LCC) · 1145 (NEW3 copy) · 1146 (RCC render) |
 | **N2-1b** | Re-adjudicate the MODALITY_DEFECT edge and its near variants | P0 | **QUEUED** | the 1985 dissent re-read against the **majority** judgment as primary evidence; variant scan over the treated-edge population; verdicts published, no mass rewrite |
 | **N2-1c** | Populate/repair `judgment_citations.treatment_provenance` (0082) where the contract changes a verdict | P0 | **QUEUED** | delta measured **before** apply; badge impact stated; `NULL` ≠ `UNKNOWN` preserved |
 | **N2-2** | **Resolver freshness truth** — publish the acceptance test LCC left to me | P0 | **DONE** | collapses 33,013 → 99 (99.70%, predicted 99.96%); residual is a FLOW not a leftover; false-unique 15.63% → 0.00%; published bus 1112 |
