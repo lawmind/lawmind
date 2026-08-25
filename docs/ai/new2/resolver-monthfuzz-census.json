@@ -1,0 +1,268 @@
+{
+  "generated_at": "2026-08-25T03:35:48.998Z",
+  "steps": {
+    "alpha_token_census": {
+      "ms": 35965,
+      "rows": [
+        {
+          "token": "INSC",
+          "judgments": 7062,
+          "courts": 1,
+          "first_decided": "1950-03-14",
+          "last_decided": "2026-01-16"
+        },
+        {
+          "token": "KHC",
+          "judgments": 248,
+          "courts": 1,
+          "first_decided": "2023-11-07",
+          "last_decided": "2026-01-05"
+        },
+        {
+          "token": "UHC",
+          "judgments": 158,
+          "courts": 1,
+          "first_decided": "2025-01-02",
+          "last_decided": "2026-02-20"
+        },
+        {
+          "token": "CGHC",
+          "judgments": 126,
+          "courts": 1,
+          "first_decided": "2025-01-01",
+          "last_decided": "2026-01-05"
+        },
+        {
+          "token": "MLHC",
+          "judgments": 109,
+          "courts": 1,
+          "first_decided": "2025-01-29",
+          "last_decided": "2026-02-21"
+        },
+        {
+          "token": "JHHC",
+          "judgments": 85,
+          "courts": 1,
+          "first_decided": "2026-01-05",
+          "last_decided": "2026-01-06"
+        },
+        {
+          "token": "AUGUST",
+          "judgments": 80,
+          "courts": 1,
+          "first_decided": "2009-08-11",
+          "last_decided": "2011-08-30"
+        },
+        {
+          "token": "HHC",
+          "judgments": 73,
+          "courts": 1,
+          "first_decided": "2024-07-30",
+          "last_decided": "2026-01-01"
+        },
+        {
+          "token": "DECEMBER",
+          "judgments": 68,
+          "courts": 1,
+          "first_decided": "2011-02-28",
+          "last_decided": "2011-12-28"
+        },
+        {
+          "token": "NOVEMBER",
+          "judgments": 62,
+          "courts": 1,
+          "first_decided": "2011-10-18",
+          "last_decided": "2011-11-24"
+        },
+        {
+          "token": "SEPTEMBER",
+          "judgments": 49,
+          "courts": 1,
+          "first_decided": "2011-08-16",
+          "last_decided": "2011-09-30"
+        },
+        {
+          "token": "FEBRUARY",
+          "judgments": 33,
+          "courts": 1,
+          "first_decided": "2011-01-20",
+          "last_decided": "2012-02-27"
+        },
+        {
+          "token": "JULY",
+          "judgments": 21,
+          "courts": 1,
+          "first_decided": "2011-06-14",
+          "last_decided": "2011-07-18"
+        },
+        {
+          "token": "AHC",
+          "judgments": 19,
+          "courts": 1,
+          "first_decided": "2025-01-01",
+          "last_decided": "2025-01-02"
+        },
+        {
+          "token": "OCTOBER",
+          "judgments": 18,
+          "courts": 1,
+          "first_decided": "2011-09-20",
+          "last_decided": "2011-10-11"
+        },
+        {
+          "token": "JUNE",
+          "judgments": 17,
+          "courts": 1,
+          "first_decided": "2011-06-01",
+          "last_decided": "2011-06-21"
+        },
+        {
+          "token": "DEC",
+          "judgments": 15,
+          "courts": 1,
+          "first_decided": "2011-11-17",
+          "last_decided": "2011-12-23"
+        },
+        {
+          "token": "JANUARY",
+          "judgments": 11,
+          "courts": 1,
+          "first_decided": "2012-01-02",
+          "last_decided": "2012-01-25"
+        },
+        {
+          "token": "SEP",
+          "judgments": 11,
+          "courts": 1,
+          "first_decided": "2011-09-05",
+          "last_decided": "2011-09-27"
+        },
+        {
+          "token": "MARCH",
+          "judgments": 10,
+          "courts": 1,
+          "first_decided": "2011-03-04",
+          "last_decided": "2012-03-02"
+        },
+        {
+          "token": "JANURARY",
+          "judgments": 9,
+          "courts": 1,
+          "first_decided": "2011-01-07",
+          "last_decided": "2011-06-14"
+        },
+        {
+          "token": "SHC",
+          "judgments": 9,
+          "courts": 1,
+          "first_decided": "2003-05-01",
+          "last_decided": "2011-08-09"
+        },
+        {
+          "token": "FEB",
+          "judgments": 8,
+          "courts": 1,
+          "first_decided": "2011-01-28",
+          "last_decided": "2012-02-23"
+        },
+        {
+          "token": "APRIL",
+          "judgments": 7,
+          "courts": 1,
+          "first_decided": "2011-02-24",
+          "last_decided": "2011-04-18"
+        },
+        {
+          "token": "MAY",
+          "judgments": 7,
+          "courts": 1,
+          "first_decided": "2011-04-11",
+          "last_decided": "2011-05-11"
+        },
+        {
+          "token": "MNHC",
+          "judgments": 7,
+          "courts": 1,
+          "first_decided": "2025-01-09",
+          "last_decided": "2025-04-03"
+        },
+        {
+          "token": "NOV",
+          "judgments": 6,
+          "courts": 1,
+          "first_decided": "2011-11-01",
+          "last_decided": "2011-11-22"
+        },
+        {
+          "token": "JAN",
+          "judgments": 5,
+          "courts": 1,
+          "first_decided": "2011-01-10",
+          "last_decided": "2011-01-21"
+        },
+        {
+          "token": "OCT",
+          "judgments": 3,
+          "courts": 1,
+          "first_decided": "2011-09-30",
+          "last_decided": "2011-10-21"
+        },
+        {
+          "token": "MHC",
+          "judgments": 3,
+          "courts": 1,
+          "first_decided": "2026-07-07",
+          "last_decided": "2026-07-20"
+        },
+        {
+          "token": "PHHC",
+          "judgments": 2,
+          "courts": 1,
+          "first_decided": "2024-01-23",
+          "last_decided": "2025-01-16"
+        },
+        {
+          "token": "ARPIL",
+          "judgments": 1,
+          "courts": 1,
+          "first_decided": "2011-03-24",
+          "last_decided": "2011-03-24"
+        },
+        {
+          "token": "SEPTEMEBER",
+          "judgments": 1,
+          "courts": 1,
+          "first_decided": "2011-09-22",
+          "last_decided": "2011-09-22"
+        },
+        {
+          "token": "FBNCHG",
+          "judgments": 1,
+          "courts": 1,
+          "first_decided": "2008-09-09",
+          "last_decided": "2008-09-09"
+        }
+      ]
+    },
+    "shape_rows_still_indexed": {
+      "ms": 255562,
+      "rows": [
+        {
+          "key_rows": 7903,
+          "judgments": 7903
+        }
+      ]
+    },
+    "never_walked_batches": {
+      "ms": 66726,
+      "rows": [
+        {
+          "batches_examined": 125025,
+          "never_walked_batches": 169,
+          "judgments_stranded": 732,
+          "rows_in_those_batches": 16707
+        }
+      ]
+    }
+  }
+}

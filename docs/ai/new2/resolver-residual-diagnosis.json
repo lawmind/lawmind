@@ -1,0 +1,175 @@
+{
+  "generated_at": "2026-08-25T03:26:33.440Z",
+  "steps": {
+    "batch_size_of_missing_rows": {
+      "ms": 29694,
+      "rows": [
+        {
+          "created_at": "2026-08-17T16:41:48.689Z",
+          "missing_here": 83,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-17T16:43:48.146Z",
+          "missing_here": 53,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-17T16:43:30.293Z",
+          "missing_here": 48,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-17T16:44:05.717Z",
+          "missing_here": 39,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-17T16:44:42.110Z",
+          "missing_here": 30,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-17T16:43:23.942Z",
+          "missing_here": 24,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-17T16:42:41.177Z",
+          "missing_here": 14,
+          "judgments_sharing_this_created_at": 99
+        },
+        {
+          "created_at": "2026-08-18T17:55:10.195Z",
+          "missing_here": 1,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-18T17:55:11.414Z",
+          "missing_here": 1,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-18T17:55:38.985Z",
+          "missing_here": 1,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-18T17:56:59.791Z",
+          "missing_here": 1,
+          "judgments_sharing_this_created_at": 100
+        },
+        {
+          "created_at": "2026-08-18T17:57:02.635Z",
+          "missing_here": 1,
+          "judgments_sharing_this_created_at": 100
+        }
+      ]
+    },
+    "missing_id_vs_walked_id_in_same_batch": {
+      "ms": 240168,
+      "rows": [
+        {
+          "missing_examined": 303,
+          "below_a_walked_id": 0,
+          "above_every_walked_id": 0,
+          "batch_never_walked_at_all": 303
+        }
+      ]
+    },
+    "court_spread": {
+      "ms": 40962,
+      "rows": [
+        {
+          "court": "High Court of Karnataka",
+          "missing": 170
+        },
+        {
+          "court": "Allahabad High Court",
+          "missing": 83
+        },
+        {
+          "court": "Bombay High Court",
+          "missing": 24
+        },
+        {
+          "court": "High Court of Punjab and Haryana",
+          "missing": 14
+        },
+        {
+          "court": "Madras High Court",
+          "missing": 12
+        }
+      ]
+    },
+    "shape_sample": {
+      "ms": 25208,
+      "rows": [
+        {
+          "neutral_citation": "2011:JANURARY:19",
+          "n": 2
+        },
+        {
+          "neutral_citation": "2023:KHC-D:10924",
+          "n": 2
+        },
+        {
+          "neutral_citation": "2023:KHC-D:12094-DB",
+          "n": 2
+        },
+        {
+          "neutral_citation": "2024:MHC:1405",
+          "n": 2
+        },
+        {
+          "neutral_citation": "2023:KHC-D:7438",
+          "n": 2
+        },
+        {
+          "neutral_citation": "2011:JANURARY:25",
+          "n": 2
+        },
+        {
+          "neutral_citation": "2011:JANURARY:12",
+          "n": 2
+        },
+        {
+          "neutral_citation": "2011:SEPTEMEBER:26",
+          "n": 1
+        },
+        {
+          "neutral_citation": "2023:KHC-D:10306",
+          "n": 1
+        },
+        {
+          "neutral_citation": "2011:JANURARY:28",
+          "n": 1
+        },
+        {
+          "neutral_citation": "2023:KHC-D:10283",
+          "n": 1
+        },
+        {
+          "neutral_citation": "2023:KHC-D:10388-DB",
+          "n": 1
+        },
+        {
+          "neutral_citation": "2023:KHC-D:10437",
+          "n": 1
+        },
+        {
+          "neutral_citation": "2023:KHC-D:10480",
+          "n": 1
+        },
+        {
+          "neutral_citation": "2023:KHC-D:10264",
+          "n": 1
+        }
+      ]
+    },
+    "other_source_keys": {
+      "ms": 154847,
+      "rows": []
+    }
+  }
+}

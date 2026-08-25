@@ -1,0 +1,202 @@
+{
+  "generated_at": "2026-08-25T03:23:14.047Z",
+  "checkpoint": {
+    "cursorAt": "2026-08-24 18:59:19.088501+00",
+    "cursorId": "1d5375fc-d9ec-44bc-8709-c1238fb322ab",
+    "scanned": 27689197,
+    "updatedAt": "2026-08-24T19:02:27.493Z"
+  },
+  "steps": {
+    "frontier_lag": {
+      "ms": 15,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "key_frontier": "2026-08-24T18:59:19.088Z",
+          "lag_time": "08:23:55.003088",
+          "judgments_above_frontier": 0,
+          "lag_rows_with_neutral": 0,
+          "newest_ingest": null
+        }
+      ]
+    },
+    "corpus_shortfall": {
+      "ms": 22628,
+      "pg_active_before": 6,
+      "rows": [
+        {
+          "with_neutral_citation": 1370692,
+          "distinct_judgments_keyed": 1369958
+        }
+      ]
+    },
+    "residual_decomposed": {
+      "ms": 24755,
+      "pg_active_before": 7,
+      "rows": [
+        {
+          "missing_total": 734,
+          "correctly_refused_despatch_stamp": 431,
+          "above_frontier_unwalked": 0,
+          "unexplained": 303
+        }
+      ]
+    },
+    "unexplained_sample": {
+      "ms": 26267,
+      "pg_active_before": 7,
+      "rows": [
+        {
+          "court": "Allahabad High Court",
+          "neutral_citation": "2024:AHC-LKO:85302",
+          "created_at": "2026-08-17T16:41:48.689Z",
+          "title": "SMT. NIRMALA DEVI VS STATE OF U.P. THRU. ADDL. CHIEF SECY. H"
+        },
+        {
+          "court": "Bombay High Court",
+          "neutral_citation": "2024:BHC-GOA:1170-DB",
+          "created_at": "2026-08-17T16:43:23.942Z",
+          "title": "ADITYA JAYWANT CHOWGULE AND ANR Vs UNION OF INDIA THR. CABIN"
+        },
+        {
+          "court": "Allahabad High Court",
+          "neutral_citation": "2024:AHC-LKO:1729",
+          "created_at": "2026-08-17T16:41:48.689Z",
+          "title": "M/S SHREE GANESH ENTERPRISES THRU. PROPRIETOR DEEPAK JAISWAL"
+        },
+        {
+          "court": "Allahabad High Court",
+          "neutral_citation": "2024:AHC-LKO:84798",
+          "created_at": "2026-08-17T16:41:48.689Z",
+          "title": "GYANENDRA NATH MISHRA VS STATE OF U.P. THRU. PRIN. SECY. HOM"
+        },
+        {
+          "court": "High Court of Punjab and Haryana",
+          "neutral_citation": "2024:PHHC:033468",
+          "created_at": "2026-08-17T16:42:41.177Z",
+          "title": "ARSHDEEP SINGH AND ANOTHER Vs STATE OF PUNJAB AND OTHERS"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:11551",
+          "created_at": "2026-08-17T16:43:30.293Z",
+          "title": "SHRI. SACHIN S/O GANGARAM HALADANAKAR Vs MR. AJIT S/O SHREEM"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:8199",
+          "created_at": "2026-08-17T16:43:30.293Z",
+          "title": "SMT. NAGAWWA KUDLEPPA JOGI Vs THE STATE OF KARNATAKA"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:14755",
+          "created_at": "2026-08-17T16:44:05.717Z",
+          "title": "SHRI VITTAL S/O RAMAPPA KARIDEMANNAVAR Vs SHRI SHIDDAPPA S/O"
+        },
+        {
+          "court": "High Court of Punjab and Haryana",
+          "neutral_citation": "2024:PHHC:054984",
+          "created_at": "2026-08-17T16:42:41.177Z",
+          "title": "PARSHURAM Vs STATE OF HARYANA"
+        },
+        {
+          "court": "Allahabad High Court",
+          "neutral_citation": "2024:AHC-LKO:85963",
+          "created_at": "2026-08-17T16:41:48.689Z",
+          "title": "HERITAGE COMMODITIES PVT. LTD. THRU. ITS DIRECTOR MR. HARINA"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:11399-DB",
+          "created_at": "2026-08-17T16:44:05.717Z",
+          "title": "THE DIVISIONAL MANAGER Vs SMT SHOBHA K JAGATAP"
+        },
+        {
+          "court": "Bombay High Court",
+          "neutral_citation": "2024:BHC-GOA:1544",
+          "created_at": "2026-08-17T16:43:23.942Z",
+          "title": "MAHABLESHWAR PANDURANG HALANKAR Vs DAMODAR PANDURANG HALANKA"
+        },
+        {
+          "court": "Allahabad High Court",
+          "neutral_citation": "2024:AHC-LKO:1614",
+          "created_at": "2026-08-17T16:41:48.689Z",
+          "title": "ASHISH KUMAR BANSAL VS STATE OF U.P. THRU. ITS SECY. HOME, L"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:6609",
+          "created_at": "2026-08-17T16:43:30.293Z",
+          "title": "SRI. VEERAPPA S/O. FAKKIRAPPA ULLEGADDI Vs THE MANAGEMENT OF"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:14744-DB",
+          "created_at": "2026-08-17T16:44:42.110Z",
+          "title": "SRI. GIRIDHAR S/O. YALAGURADACHARYA HUNNUR, Vs THE SPECIAL L"
+        },
+        {
+          "court": "High Court of Punjab and Haryana",
+          "neutral_citation": "2024:PHHC:055027",
+          "created_at": "2026-08-17T16:42:41.177Z",
+          "title": "CHIRANJI Vs STATE OF HARYANA AND ANOTHER"
+        },
+        {
+          "court": "Allahabad High Court",
+          "neutral_citation": "2024:AHC-LKO:85922",
+          "created_at": "2026-08-17T16:41:48.689Z",
+          "title": "HARI PRASAD MISHRA VS STATE OF U.P. THRU. PRIN. SECY. HOME D"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:9392",
+          "created_at": "2026-08-17T16:43:30.293Z",
+          "title": "DODDAWWA W/O. SHIVAPPA SHIDNAL, Vs RUDRAPPA VEERAPPA KALHAL,"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:12399",
+          "created_at": "2026-08-17T16:44:05.717Z",
+          "title": "GURUNATH Vs MR.MOHAMMED HANIF"
+        },
+        {
+          "court": "High Court of Karnataka",
+          "neutral_citation": "2023:KHC-D:12343-DB",
+          "created_at": "2026-08-17T16:43:48.146Z",
+          "title": "M/S KARNATAKA VIKAS GRAMEENA BANK Vs ASST. COMMISSIONER OF I"
+        },
+        {
+          "court": "Bombay High Court",
+          "neutral_citation": "2024:BHC-GOA:1328",
+          "created_at": "2026-08-17T16:43:23.942Z",
+          "title": "M/S. COSMED ANALYTICAL AND CENTRAL SERVICES PVT. LTD., THR. "
+        },
+        {
+          "court": "Madras High Court",
+          "neutral_citation": "2011:JANURARY:24",
+          "created_at": "2026-08-18T17:46:34.683Z",
+          "title": "M.K. MUTHULAKSHMI, Vs THE ASSISTANT ELEMENTARY"
+        },
+        {
+          "court": "Madras High Court",
+          "neutral_citation": "2011:JANURARY:12",
+          "created_at": "2026-08-18T17:49:50.811Z",
+          "title": "M.E.M.JEYARAMAN Vs RANJITH @ SEKAR"
+        },
+        {
+          "court": "Madras High Court",
+          "neutral_citation": "2011:JANURARY:25",
+          "created_at": "2026-08-18T17:50:35.278Z",
+          "title": "P.SUDHARSANAN, Vs THE DISTRICT REVENUE OFFICER,"
+        },
+        {
+          "court": "Madras High Court",
+          "neutral_citation": "2011:JANURARY:19",
+          "created_at": "2026-08-18T17:55:10.195Z",
+          "title": "DHANRAJ Vs SUB INSPECTOR OF POLICE"
+        }
+      ]
+    }
+  }
+}

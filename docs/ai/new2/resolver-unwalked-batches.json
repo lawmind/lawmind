@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-08-25T03:50:11.723Z",
+  "steps": {
+    "batch_causes_split": {
+      "ms": 100316,
+      "rows": [
+        {
+          "unwalked_batches": 9,
+          "real_citations_stranded": 293,
+          "stamp_only_batches_correctly_zero": 160,
+          "stamps_correctly_unkeyed": 439
+        }
+      ]
+    },
+    "the_one_indexed_misspelling": {
+      "ms": 141376,
+      "rows": [
+        {
+          "id": "bda91b26-b20a-44d3-ac9a-f292a6451544",
+          "neutral_citation": "2011:ARPIL:05",
+          "court": "Madras High Court",
+          "decided": "2011-03-24",
+          "citation_key": "2011ARPIL05",
+          "source_text": "2011:ARPIL:05",
+          "judgments_holding_that_key": 1
+        }
+      ]
+    }
+  }
+}

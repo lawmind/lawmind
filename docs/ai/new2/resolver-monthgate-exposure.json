@@ -1,0 +1,135 @@
+{
+  "generated_at": "2026-08-25T03:42:57.839Z",
+  "months_from_corpus_census": [
+    "JANUARY",
+    "FEBRUARY",
+    "MARCH",
+    "APRIL",
+    "MAY",
+    "JUNE",
+    "JULY",
+    "AUGUST",
+    "SEPTEMBER",
+    "OCTOBER",
+    "NOVEMBER",
+    "DECEMBER",
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "SEPT",
+    "OCT",
+    "NOV",
+    "DEC",
+    "JANURARY",
+    "ARPIL",
+    "SEPTEMEBER"
+  ],
+  "steps": {
+    "month_stamps_still_indexed": {
+      "ms": 219463,
+      "rows": [
+        {
+          "any_month_token": 1,
+          "misspelt_only": 1
+        }
+      ]
+    },
+    "month_stamp_population": {
+      "ms": 90471,
+      "rows": [
+        {
+          "all_month_stamps": 442,
+          "missed_by_current_gate": 11,
+          "courts": 1
+        }
+      ]
+    },
+    "misspelt_rows": {
+      "ms": 67996,
+      "rows": [
+        {
+          "neutral_citation": "2011:ARPIL:05",
+          "court": "Madras High Court",
+          "decided": "2011-03-24",
+          "title": "G.LATHA Vs THE DIRECTOR OF ELEMENTARY",
+          "indexed": true
+        },
+        {
+          "neutral_citation": "2011:JANURARY:10",
+          "court": "Madras High Court",
+          "decided": "2011-06-14",
+          "title": "SUBA. KARUPAYEE, Vs THE DISTRICT COLLECTOR,",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:12",
+          "court": "Madras High Court",
+          "decided": "2011-01-10",
+          "title": "P.SIVASAMY Vs INSPECTOR OF POLICE",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:12",
+          "court": "Madras High Court",
+          "decided": "2011-01-22",
+          "title": "M.E.M.JEYARAMAN Vs RANJITH @ SEKAR",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:19",
+          "court": "Madras High Court",
+          "decided": "2011-01-10",
+          "title": "DHANRAJ Vs SUB INSPECTOR OF POLICE",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:19",
+          "court": "Madras High Court",
+          "decided": "2011-01-10",
+          "title": "B.SIVA Vs INSPECTOR OF POLICE",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:24",
+          "court": "Madras High Court",
+          "decided": "2011-01-21",
+          "title": "M.K. MUTHULAKSHMI, Vs THE ASSISTANT ELEMENTARY",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:25",
+          "court": "Madras High Court",
+          "decided": "2011-01-24",
+          "title": "MURUGAN Vs SUB INSPECTOR OF POLICE",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:25",
+          "court": "Madras High Court",
+          "decided": "2011-01-24",
+          "title": "P.SUDHARSANAN, Vs THE DISTRICT REVENUE OFFICER,",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:JANURARY:28",
+          "court": "Madras High Court",
+          "decided": "2011-01-07",
+          "title": "CHENTHAMARAI KANNAN Vs MEENAKSHI",
+          "indexed": false
+        },
+        {
+          "neutral_citation": "2011:SEPTEMEBER:26",
+          "court": "Madras High Court",
+          "decided": "2011-09-22",
+          "title": "T. GANAPATHY Vs THE DIRECTOR",
+          "indexed": false
+        }
+      ]
+    }
+  }
+}
