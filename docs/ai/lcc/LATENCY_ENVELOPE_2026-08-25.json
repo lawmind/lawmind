@@ -1,0 +1,123 @@
+{
+  "startedAt": "2026-08-25T09:23:52.476Z",
+  "finishedAt": "2026-08-25T09:24:12.119Z",
+  "repeats": 3,
+  "denseArmExercised": false,
+  "shapes": [
+    {
+      "shape": "citation/exact",
+      "note": "exact identity — must not fall through to the ranker",
+      "query": "(1950) 1 SCR 1008",
+      "n": 3,
+      "p50Ms": 33,
+      "p95Ms": 62,
+      "maxMs": 62,
+      "httpStatus": 200,
+      "results": 1,
+      "degraded": [],
+      "error": null
+    },
+    {
+      "shape": "case number",
+      "note": "ambiguity is expected and correct here",
+      "query": "caseno:CRL.P/1448/2017",
+      "n": 3,
+      "p50Ms": 238,
+      "p95Ms": 1449,
+      "maxMs": 1449,
+      "httpStatus": 200,
+      "results": 2,
+      "degraded": [],
+      "error": null
+    },
+    {
+      "shape": "title",
+      "note": "a name, not a concept",
+      "query": "Kesavananda Bharati",
+      "n": 3,
+      "p50Ms": 125,
+      "p95Ms": 899,
+      "maxMs": 899,
+      "httpStatus": 200,
+      "results": 5,
+      "degraded": [],
+      "error": null
+    },
+    {
+      "shape": "normal concept",
+      "note": "the ordinary advocate query",
+      "query": "anticipatory bail in economic offences",
+      "n": 3,
+      "p50Ms": 248,
+      "p95Ms": 2589,
+      "maxMs": 2589,
+      "httpStatus": 200,
+      "results": 5,
+      "degraded": [],
+      "error": null
+    },
+    {
+      "shape": "long rare",
+      "note": "rare lexemes, long input — the shape that stayed enabled at 10.7s in R4",
+      "query": "departmental proceedings following acquittal on the criminal charge where the delinquent employee was dismissed by the disciplinary authority without a fresh enquiry into the same allegations",
+      "n": 3,
+      "p50Ms": 463,
+      "p95Ms": 6661,
+      "maxMs": 6661,
+      "httpStatus": 200,
+      "results": 5,
+      "degraded": [],
+      "error": null
+    },
+    {
+      "shape": "all-common",
+      "note": "THE CATASTROPHIC ONE — must be refused before ranking, sparse_unbounded",
+      "query": "the court of the state in a case of the order",
+      "n": 3,
+      "p50Ms": 2,
+      "p95Ms": 16,
+      "maxMs": 16,
+      "httpStatus": 200,
+      "results": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "error": null
+    },
+    {
+      "shape": "saved-search",
+      "note": "the feed shape; gated only since today",
+      "query": "bail anticipatory",
+      "n": 3,
+      "p50Ms": 1,
+      "p95Ms": 2,
+      "maxMs": 2,
+      "httpStatus": 200,
+      "results": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "error": null
+    },
+    {
+      "shape": "counterargument",
+      "note": "the shape R4 measured at 8.4s / 20.0s / 13.8s",
+      "query": "breach of contract damages for delayed delivery of goods",
+      "n": 3,
+      "p50Ms": 237,
+      "p95Ms": 5534,
+      "maxMs": 5534,
+      "httpStatus": 200,
+      "results": 5,
+      "degraded": [],
+      "error": null
+    }
+  ],
+  "resource": {
+    "connectionsBefore": 2,
+    "connectionsAfter": 4,
+    "maxConnections": 100,
+    "longestStatementSeconds": 1208,
+    "tempBytesDelta": 0
+  }
+}

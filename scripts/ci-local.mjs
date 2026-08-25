@@ -103,6 +103,11 @@ const STEPS = [
   // built correctly from the journal it could see, agreed with itself, and said
   // so. Static, opens no socket, runs in milliseconds.
   ['migration journal', 'node', ['scripts/check-migration-journal.mjs']],
+  // A config that does not parse is DISCARDED, not partially applied. NEW3
+  // suggested this after I shipped a .vscode/settings.json with a missing comma,
+  // which made 141 lines of watcher exclusions inert while looking like they
+  // simply were not aggressive enough.
+  ['json configs', 'node', ['scripts/check-json-configs.mjs']],
   // Twice: the first proves migrations apply to an empty database, the second
   // proves a re-run is a no-op. Both are real failures we have shipped before.
   ['migrate (fresh)', 'pnpm', ['--filter', '@lawmind/db', 'migrate']],

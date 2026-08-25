@@ -779,6 +779,46 @@ async function runSearch(
      */
     ...(degraded.length > 0 ? { degraded } : {}),
     /**
+     * ───────────────────────────────────────────────────────────────────────
+     * WHY THIS PAGE IS EMPTY, WHEN "NOTHING MATCHED" IS NOT THE TRUE ANSWER
+     * ───────────────────────────────────────────────────────────────────────
+     *
+     * Present ONLY when there are zero results AND the reason is that we
+     * DECLINED TO RUN the lexical ranker. Absent otherwise, so the ordinary
+     * response is byte-identical to what clients already parse.
+     *
+     * Measured 25 Aug 2026, through the real route:
+     *
+     *     "bail"                                    0 results, sparse_unbounded
+     *     "anticipatory bail"                       0 results, sparse_unbounded
+     *     "anticipatory bail in economic offences"  5 results, not degraded
+     *
+     * `bail` is 0.2577 of the sampled corpus against a
+     * `SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY` of 0.05, so the sparse arm refuses
+     * before ranking — correctly; that match set is the OOM shape. The dense arm
+     * is supposed to answer instead, and when it cannot (embedder cold, past its
+     * 2s budget, or past `EMBEDDER_FAILURE_LIMIT`) the advocate gets an empty
+     * screen for one of the commonest searches in Indian criminal practice.
+     *
+     * An empty screen says "there is no law on this". The truth is "we did not
+     * look". This field is the same rule `unpopulatedCourtCategories` above
+     * applies to a filter, and `CITATION_HARNESS.md` applies to a dropped
+     * citation: ABSENCE HAS TO STATE ITSELF.
+     *
+     * It carries no copy. NEW3 owns what an advocate reads; this is the fact
+     * the copy must be written from, and adding more terms genuinely fixes it.
+     */
+    ...(retrieved.length === 0 && degraded.includes('sparse_unbounded')
+      ? {
+          emptyBecause: {
+            reason: 'query_too_broad_to_rank' as const,
+            /* Actionable and TRUE — four terms returns results where one does
+             * not, so this is a remedy rather than an apology. */
+            remedy: 'add_more_terms' as const,
+          },
+        }
+      : {}),
+    /**
      * P3. Where this page sits, and whether there is another.
      *
      * No `total` on the hybrid path, and that is honesty rather than an
