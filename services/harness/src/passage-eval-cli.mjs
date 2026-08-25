@@ -76,6 +76,22 @@ const CKPT = P('docs/ai/new1-tier-a/passage-eval.checkpoint.jsonl');
 const INDEX_OUT = P('docs/ai/new1-tier-a/PASSAGE_INDEX_BUILD.json');
 
 const INDEX_ONLY = process.argv.includes('--index');
+/**
+ * Build the HEAD baseline: the SAME documents, represented as one whole-document
+ * vector instead of passages.
+ *
+ * This exists because "passages beat HEAD" is otherwise an unfalsifiable claim.
+ * The tranche is 74.5% documents that HEAD has never reached, so comparing the
+ * passage index against production HEAD would compare COVERAGE and call it
+ * REPRESENTATION. The only honest comparison is over documents present in BOTH,
+ * which is the 20,749 tranche documents that already carry a HEAD vector.
+ *
+ * `new1_doc_vector_stage` has no vector index — only a PK — so querying it
+ * directly would seq-scan 2M rows and 8 GB per query. Copying the tranche's own
+ * rows into a small table with its own HNSW keeps the comparison bounded and
+ * leaves the production stage untouched.
+ */
+const HEAD_BASELINE = process.argv.includes('--head-baseline');
 const GPU = (process.env.EMBED_GPU_URL ?? 'http://127.0.0.1:8799').replace(/\/embed\/?$/, '');
 /** Production runs 200. The probe harness runs 40. Both, always, both labelled. */
 const EF_PROD = Number(process.env.EF_PROD ?? 200);
@@ -141,6 +157,30 @@ async function embedAll(texts) {
 const sql = postgres(url, { max: 1, idle_timeout: 60, connect_timeout: 30 });
 
 try {
+  if (HEAD_BASELINE) {
+    const tr = JSON.parse(readFileSync(TRANCHE, 'utf8'));
+    const ids = [...tr.documents.map((d) => d.id), ...tr.gold.forcedIds];
+    log(`HEAD baseline over ${ids.length.toLocaleString()} tranche documents`);
+    await sql.unsafe('DROP TABLE IF EXISTS new1_head_baseline');
+    await sql.unsafe(`
+      CREATE TABLE new1_head_baseline AS
+      SELECT s.judgment_id, s.embedding
+      FROM new1_doc_vector_stage s
+      WHERE s.judgment_id = ANY($1::uuid[])`, [ids]);
+    const [{ n }] = await sql`SELECT count(*)::text AS n FROM new1_head_baseline`;
+    await sql.unsafe('ALTER TABLE new1_head_baseline ADD PRIMARY KEY (judgment_id)');
+    const t0 = Date.now();
+    await sql.unsafe(`
+      CREATE INDEX new1_head_baseline_hnsw ON new1_head_baseline
+      USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`);
+    const [{ idx }] = await sql`SELECT pg_relation_size('new1_head_baseline_hnsw')::text AS idx`;
+    log('');
+    log('HEAD BASELINE BUILT');
+    log(`  documents  ${Number(n).toLocaleString()} of ${ids.length.toLocaleString()} tranche (the rest have no HEAD vector)`);
+    log(`  index      ${(Number(idx) / 2 ** 20).toFixed(0)} MiB in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+    process.exit(0);
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // INDEX BUILD — measured, because the full-build decision turns on these
   // ═══════════════════════════════════════════════════════════════════════════
@@ -270,10 +310,36 @@ try {
     log(`checkpoint: ${done.size} usable scored tasks` + (stale > 0 ? `, ${stale} DISCARDED as scored against a different index size` : ''));
   }
 
+  const headExists =
+    (await sql`SELECT to_regclass('new1_head_baseline') IS NOT NULL AS ok`)[0].ok === true;
+  if (!headExists) log('new1_head_baseline absent - HEAD arm SKIPPED. Run --head-baseline to enable the comparison.');
+
+  /**
+   * EACH ARM IS SCORED AGAINST WHAT *IT* HOLDS, NOT AGAINST WHAT THE PASSAGE
+   * INDEX HOLDS.
+   *
+   * The first four-arm run scored HEAD's CONDITIONAL against the passage index's
+   * document set, and HEAD came out ~7x worse. Part of that gap was real and part
+   * was an artefact: the passage index covers every tranche document, the HEAD
+   * baseline covers only the 20,947 that already had a HEAD vector, so HEAD was
+   * being charged for targets it never had a chance at. CONDITIONAL means "given
+   * the target is in the index" -- and "the index" has to mean the arm's own.
+   *
+   * This is the same unavailable-target-as-miss rule R7 sets for END_TO_END,
+   * applied where it is easiest to get wrong: between two arms of one comparison.
+   */
+  const headIndexed = headExists
+    ? new Set((await sql`SELECT judgment_id::text AS id FROM new1_head_baseline`).map((r) => r.id))
+    : new Set();
+  const indexedFor = (armName) => (armName.startsWith('head_') ? headIndexed : indexed);
+  if (headExists)
+    log(`HEAD baseline holds ${headIndexed.size.toLocaleString()} documents; passage index holds ${indexed.size.toLocaleString()}. Each arm is scored against its own.`);
+
   const ARMS = [
     { name: 'ann_ef200', kind: 'ann', ef: EF_PROD },
     { name: 'ann_ef40', kind: 'ann', ef: EF_PROBE },
     { name: 'exact', kind: 'exact', ef: null },
+    ...(headExists ? [{ name: 'head_ef200', kind: 'head', ef: EF_PROD }] : []),
   ];
 
   const results = [];
@@ -295,6 +361,19 @@ try {
             SELECT judgment_id::text AS id, chunk_index, char_offset, body_length,
                    1 - (embedding <=> ${vec}::vector) AS sim
             FROM new1_tranche_passages
+            ORDER BY embedding <=> ${vec}::vector
+            LIMIT ${PASSAGE_DEPTH}`;
+        });
+      } else if (arm.kind === 'head') {
+        rows = await sql.begin(async (tx) => {
+          await tx.unsafe(`SET LOCAL hnsw.ef_search = ${arm.ef}`);
+          // ONE vector per document, so there is nothing to aggregate. Shaped to
+          // match the passage rows so the SAME scoring code runs on both -- a
+          // second scorer is a second chance to score them differently.
+          return tx`
+            SELECT judgment_id::text AS id, 0 AS chunk_index, -1 AS char_offset, 0 AS body_length,
+                   1 - (embedding <=> ${vec}::vector) AS sim
+            FROM new1_head_baseline
             ORDER BY embedding <=> ${vec}::vector
             LIMIT ${PASSAGE_DEPTH}`;
         });
@@ -374,12 +453,12 @@ try {
     .filter((r) => r.indexPassages === Number(passageCount));
   const byId = new Map(all.map((r) => [r.taskId, r]));
 
-  const score = (task, armRow) => {
+  const score = (task, armRow, armIndexed) => {
     const targets = task.targets;
     const ranked = armRow.topDocuments;
     // Where did each target come from? This is the whole END_TO_END rule.
-    const anyNatural = targets.some((x) => naturalGold.has(x) && indexed.has(x));
-    const anyIndexed = targets.some((x) => indexed.has(x));
+    const anyNatural = targets.some((x) => naturalGold.has(x) && armIndexed.has(x));
+    const anyIndexed = targets.some((x) => armIndexed.has(x));
     let bestRank = Infinity;
     for (const x of targets) {
       const p = ranked.indexOf(x);
@@ -408,7 +487,7 @@ try {
     const s = { taskId: t.taskId, queryClass: t.queryClass, provenance: t.provenance, split: t.split, arms: {} };
     for (const a of armNames)
       s.arms[a] = {
-        ...score(t, r.arms[a]),
+        ...score(t, r.arms[a], indexedFor(a)),
         latencyMs: r.arms[a].latencyMs,
         topSim: r.arms[a].topSim,
         simGap: r.arms[a].simGap,
@@ -490,6 +569,18 @@ try {
       forcedAndIndexed: [...forcedGold].filter((x) => indexed.has(x)).length,
       rule: 'END_TO_END counts a FORCED target as a MISS. CONDITIONAL may include it. Reporting one without the other is not permitted.',
     },
+    armCoverage: Object.fromEntries(
+      armNames.map((a) => [
+        a,
+        {
+          documentsInArmIndex: indexedFor(a).size,
+          note:
+            a.startsWith('head_')
+              ? 'HEAD holds only tranche documents that already had a whole-document vector. CONDITIONAL for this arm is scored against THIS set, never against the passage index.'
+              : 'Passage index. CONDITIONAL for this arm is scored against this set.',
+        },
+      ]),
+    ),
     arms: Object.fromEntries(armNames.map((a) => [a, agg(scored, a)])),
     byFamily: Object.fromEntries(
       Object.entries(families).map(([fam, rowsIn]) => [fam, Object.fromEntries(armNames.map((a) => [a, agg(rowsIn, a)]))]),
