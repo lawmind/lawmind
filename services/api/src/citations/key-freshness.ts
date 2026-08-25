@@ -93,9 +93,107 @@ export type KeyFreshness = {
   /** When the adjudicated risk set was last replayed, and what it said. */
   lastRiskReplayAt: string | null;
   lastRiskReplayFalseUniqueRate: number | null;
+  /**
+   * How many records that replay actually graded. Load-bearing: a rate of 0 over
+   * 0 records is not a passing check, and only the denominator can say so.
+   */
+  lastRiskReplayRecords: number | null;
+  /** The cursor the replay was run against, so "which index did it vouch for" is answerable. */
+  lastRiskReplayFrontierAt: string | null;
   /** Every reason the state is not CURRENT. Empty when it is. */
   because: string[];
 };
+
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * RISK EVIDENCE IS A SEPARATE QUESTION FROM INDEX LAG
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Until 25 Aug 2026 this file READ `resolver_risk_replay`, RETURNED it, and
+ * never consulted it. NEW2 ran the gate against the live database and got:
+ *
+ *     resolver_risk_replay rows       0
+ *     freshness state                 CURRENT
+ *     lastRiskReplayAt                null
+ *     because                         []
+ *     mayAssertUnique                 TRUE
+ *
+ * **An empty risk table and a clean risk table were the same reading.** The gate
+ * bounded how far the index had fallen behind and never asked whether anyone had
+ * ever checked what the resolver actually answers. That is the same shape as the
+ * incident this file was written for: a gate reading CURRENT while telling the
+ * truth about the wrong thing.
+ *
+ * §G4 and §8.3 both require the replay to be nonempty AND current before a
+ * UNIQUE is served. Five distinct ways it is not, each named separately so an
+ * operator sees which one fired:
+ *
+ *   1. no replay at all           — nobody has ever adjudicated this resolver
+ *   2. a replay that graded zero  — a run that checked nothing vouches for nothing
+ *   3. replay older than the index— it vouched for a cursor that has since moved
+ *   4. replay of a DIFFERENT index— `frontier_at` disagrees with the live cursor
+ *   5. the replay found damage    — direct evidence, not a staleness proxy
+ *
+ * (2) is the non-vacuity guard, and it is the one worth stating out loud: a
+ * check that returns "0 defects" over 0 records is not a passing check.
+ */
+function riskReplayReasons(
+  replay:
+    | {
+        ran_at: string;
+        records: number;
+        false_unique: number;
+        materially_unsafe: number;
+        frontier_at: string | null;
+      }
+    | undefined,
+  frontier: { cursor_at: string; updated_at: string } | undefined,
+): string[] {
+  if (!replay) {
+    return [
+      'resolver_risk_replay is empty — no adjudicated risk evidence exists for this resolver at all, ' +
+        'and an empty risk table must never read the same as a clean one',
+    ];
+  }
+
+  const reasons: string[] = [];
+
+  if (replay.records <= 0) {
+    reasons.push(
+      'the newest resolver_risk_replay graded 0 records — a run that adjudicated nothing ' +
+        'vouches for nothing, however clean its counters look',
+    );
+  }
+
+  if (replay.false_unique > 0 || replay.materially_unsafe > 0) {
+    reasons.push(
+      `the newest risk replay found ${replay.false_unique} false UNIQUE and ` +
+        `${replay.materially_unsafe} materially unsafe of ${replay.records} — ` +
+        'direct evidence of unsafety, not a staleness proxy',
+    );
+  }
+
+  if (frontier) {
+    if (Date.parse(replay.ran_at) < Date.parse(frontier.updated_at)) {
+      reasons.push(
+        `the risk replay ran ${replay.ran_at} but the key builder has published since ` +
+          `(${frontier.updated_at}) — the replay predates the index it is vouching for`,
+      );
+    }
+    if (
+      replay.frontier_at === null ||
+      Date.parse(replay.frontier_at) !== Date.parse(frontier.cursor_at)
+    ) {
+      reasons.push(
+        `the risk replay was run against cursor ${replay.frontier_at ?? 'unrecorded'} ` +
+          `and the live cursor is ${frontier.cursor_at} — it vouches for a different index`,
+      );
+    }
+  }
+
+  return reasons;
+}
 
 /**
  * Read it. One bounded query per component, no scans.
@@ -111,13 +209,23 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
   >`SELECT cursor_at::text, scanned::text, updated_at::text, run_id FROM citation_key_frontier`;
 
   const [replay] = await sql<
-    { ran_at: string; records: number; false_unique: number }[]
-  >`SELECT ran_at::text, records, false_unique
+    {
+      ran_at: string;
+      records: number;
+      false_unique: number;
+      materially_unsafe: number;
+      frontier_at: string | null;
+      truth_set: string | null;
+    }[]
+  >`SELECT ran_at::text, records, false_unique, materially_unsafe,
+           frontier_at::text, truth_set
       FROM resolver_risk_replay ORDER BY ran_at DESC LIMIT 1`;
 
   const lastRiskReplayAt = replay?.ran_at ?? null;
   const lastRiskReplayFalseUniqueRate =
     replay && replay.records > 0 ? replay.false_unique / replay.records : null;
+  const lastRiskReplayRecords = replay?.records ?? null;
+  const lastRiskReplayFrontierAt = replay?.frontier_at ?? null;
 
   if (!frontier) {
     return {
@@ -128,9 +236,14 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
       lagHours: null,
       lastRiskReplayAt,
       lastRiskReplayFalseUniqueRate,
+      lastRiskReplayRecords,
+      lastRiskReplayFrontierAt,
       because: [
         'citation_key_frontier is empty — the key builder has never published a cursor, ' +
           'so how much of the corpus the index has seen is not known',
+        // UNKNOWN already fails closed. The risk reasons ride along so an
+        // operator fixing the frontier does not then discover a second gate.
+        ...riskReplayReasons(replay, undefined),
       ],
     };
   }
@@ -157,6 +270,11 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
     );
   }
 
+  // Index lag and risk evidence are different questions and either one alone
+  // leaves the gate open. A perfectly current index still says nothing about
+  // what the resolver ANSWERS from it.
+  because.push(...riskReplayReasons(replay, frontier));
+
   return {
     state: because.length === 0 ? 'CURRENT' : 'STALE',
     frontierAt: frontier.cursor_at,
@@ -165,6 +283,8 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
     lagHours,
     lastRiskReplayAt,
     lastRiskReplayFalseUniqueRate,
+    lastRiskReplayRecords,
+    lastRiskReplayFrontierAt,
     because,
   };
 }

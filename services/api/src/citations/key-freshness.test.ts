@@ -184,3 +184,90 @@ describe('the gate changes the resolver answer, on a real citation', () => {
     );
   });
 });
+
+describe('risk evidence gates UNIQUE, separately from index lag', () => {
+  /**
+   * NEW2 ran this gate against the live database on 25 Aug 2026 and got
+   * CURRENT / mayAssertUnique TRUE / because [] with `resolver_risk_replay`
+   * holding ZERO rows. The table was read, returned, and never consulted: an
+   * empty risk table and a clean risk table were the same reading.
+   *
+   * Every probe below mutates inside a transaction and throws to roll back, so
+   * the live row is never touched. Each asserts a DIFFERENT reason fires —
+   * a single "it is STALE" assertion would pass even if one gate were deleted.
+   */
+  const probe = async (mutate: (tx: typeof sql) => Promise<unknown>): Promise<KeyFreshness> => {
+    let seen: KeyFreshness | null = null;
+    await sql
+      .begin(async (tx) => {
+        await mutate(tx as unknown as typeof sql);
+        seen = await readKeyFreshness(tx as unknown as typeof sql);
+        throw new Error('ROLLBACK');
+      })
+      .catch((e: Error) => {
+        if (e.message !== 'ROLLBACK') throw e;
+      });
+    assert.ok(seen, 'the probe never read a freshness value');
+    return seen;
+  };
+
+  it('an EMPTY risk table is not CURRENT, at any lag', async () => {
+    const f = await probe((tx) => tx`DELETE FROM resolver_risk_replay`);
+    assert.equal(f.state, 'STALE');
+    assert.equal(mayAssertUnique(f.state), false);
+    assert.ok(
+      f.because.some((b) => b.includes('resolver_risk_replay is empty')),
+      `expected the empty-table reason, got: ${JSON.stringify(f.because)}`,
+    );
+  });
+
+  it('a replay that graded ZERO records vouches for nothing', async () => {
+    /** The non-vacuity guard: 0 defects out of 0 records is not a passing check. */
+    const f = await probe((tx) => tx`UPDATE resolver_risk_replay SET records = 0`);
+    assert.equal(mayAssertUnique(f.state), false);
+    assert.ok(
+      f.because.some((b) => b.includes('graded 0 records')),
+      `expected the zero-record reason, got: ${JSON.stringify(f.because)}`,
+    );
+  });
+
+  it('a replay that FOUND false uniques closes the gate on direct evidence', async () => {
+    const f = await probe((tx) => tx`UPDATE resolver_risk_replay SET false_unique = 3`);
+    assert.equal(mayAssertUnique(f.state), false);
+    assert.ok(
+      f.because.some((b) => b.includes('false UNIQUE')),
+      `expected the damage reason, got: ${JSON.stringify(f.because)}`,
+    );
+  });
+
+  it('a replay run against a DIFFERENT cursor does not vouch for this index', async () => {
+    const f = await probe(
+      (tx) => tx`UPDATE resolver_risk_replay SET frontier_at = frontier_at - interval '3 days'`,
+    );
+    assert.equal(mayAssertUnique(f.state), false);
+    assert.ok(
+      f.because.some((b) => b.includes('different index')),
+      `expected the wrong-index reason, got: ${JSON.stringify(f.because)}`,
+    );
+  });
+
+  it('is NOT vacuous — the live row does not trip any of them', async () => {
+    /**
+     * The assertion that makes the four above mean something. If the gate fired
+     * unconditionally every test here would pass and the resolver would never
+     * answer UNIQUE again.
+     */
+    const f = await readKeyFreshness(sql);
+    const riskReasons = f.because.filter(
+      (b) =>
+        b.includes('resolver_risk_replay is empty') ||
+        b.includes('graded 0 records') ||
+        b.includes('different index'),
+    );
+    assert.deepEqual(
+      riskReasons,
+      [],
+      `the live risk replay should satisfy the gate; it reported: ${JSON.stringify(f.because)}`,
+    );
+  });
+});
