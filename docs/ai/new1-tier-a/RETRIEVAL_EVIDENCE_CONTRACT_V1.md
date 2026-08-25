@@ -206,11 +206,97 @@ by saying less, never by asserting more than it can evidence.
   as read on HEAD `0762d281` and in the live shape of `judgment_chunks` /
   `new1_tranche_passages`, but no request has yet been rejected for violating it.
   `OBSERVED_BY_CODE`, not `OBSERVED_BY_EXECUTION`.
-- **`exactSpan` null rate is `NOT_MEASURED` corpus-wide.** It is null for any chunk
-  without a verified `char_offset`, and `backfill-offsets-cli.ts` exists because that set
-  was once large. The rate matters — it is the ceiling on how much of the corpus can ever
-  be citation-grade evidence — and it is measured in the 100k validation, not here.
+- **`exactSpan` null rate: MEASURED, and it has a single deterministic cause.** See §8.
 - **The `passageRole` blocker is the load-bearing one.** Without it the system cannot
   distinguish a holding from a submission the court merely recorded, and *"the Court
   held"* applied to counsel's argument is a fabrication with a real span behind it — the
   most dangerous failure this contract still permits.
+
+---
+
+## 8. The verified-span ceiling — measured, and it is one narrow chunker bug
+
+`NOT_MEASURED` in the first draft of this file. Now measured on 78,732 real tranche
+passages over 26,000 documents:
+
+```
+passages with a verified span   76,407 of 78,732   97.05%
+passages with char_offset = -1   2,325             2.95%
+```
+
+97% sounds fine. It is not the useful number, because **the loss is document-shaped,
+not passage-shaped**:
+
+```
+documents with every span verified   23,675
+documents partly verified                968
+documents with NO span verified        1,357   <- can never be citation-grade evidence
+```
+
+### The cause, narrowed to a 320-character window
+
+Every one of the 1,357 documents has **exactly 1.00 passages** and none has any
+blank-line paragraph structure. Their length distribution gives the mechanism away:
+
+```
+                    docs    min    median    max     over maxChars
+NOT verified       1,369   2,401    2,509   2,714    1,369 of 1,369  (100%)
+verified           4,367   2,000    2,195   2,615        2 of 4,367
+```
+
+`min = 2401` against `chunk.ts` `maxChars = 2400`, and `max = 2714` against
+`maxChars + minChars = 2720`. The trigger is exact:
+
+1. a document just over `maxChars` with no paragraph boundary to split on
+2. `splitLongParagraph` splits it mid-paragraph; the tail is under `minChars` (320)
+3. the tail merges back as `` `${last.text}
+
+${buffer.text}` `` — a canonical `
+
+`
+   **that was never in the source**, because the split was mid-paragraph
+4. `fullText.slice(offset, offset + bodyLength) === body.text` correctly fails
+5. `offset` becomes `-1`
+
+Confirmed by partition, with no false positives anywhere:
+
+```
+in band 2401-2720   2,977 docs   1,369 lose every span   45.99%
+outside the band   23,223 docs       0 lose every span    0.00%
+```
+
+**Zero outside the band.** 46% inside it — the other 54% happen to have a paragraph
+boundary near the split.
+
+### Scale
+
+A bounded `TABLESAMPLE SYSTEM (0.05)` over `judgments` (n = 9,404) puts **6.14%** of the
+corpus in the 2401–2720 band. At the measured 46% loss rate that is **≈2.8% of the
+corpus — on the order of 500,000 documents — that can never supply a pinpoint citation**,
+for a reason that has nothing to do with the law, the OCR, or the model.
+
+### The fix, and why it is NOT being applied in this sprint
+
+The merge should reconstruct from the source rather than synthesise a separator:
+
+```
+// instead of:  `${last.text}
+
+${buffer.text}`
+// slice what is actually there:
+fullText.slice(last.start, buffer.start + buffer.text.length)
+```
+
+Then the chunk text IS the real span by construction and verification cannot fail.
+
+**Deliberately not applied now.** `chunk.ts` defines the segmentation identity of both
+`judgment_chunks` and the running 100k passage build. Changing it mid-build would alter
+`chunk.ts/defaults@F_ALL_CHUNKS` underneath an eight-hour job and invalidate the tranche
+the entire R7 G3 gate rests on. R7 §16's scope-stop rule and the one-experiment rule both
+point the same way: record it, hand it over, change it deliberately afterwards with a
+segmentation version bump and a re-chunk.
+
+`OBSERVED_BY_LIVE_DB` and `OBSERVED_BY_CODE`. The verification logic in `chunk.ts` is
+**correct and is not the bug** — it is the only reason this was findable at all. A
+chunker that trusted its own arithmetic would have emitted 2,325 confidently wrong spans
+instead of 2,325 honest nulls.

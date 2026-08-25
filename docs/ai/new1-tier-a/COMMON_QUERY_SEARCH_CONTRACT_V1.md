@@ -1,0 +1,203 @@
+# COMMON_QUERY_SEARCH_CONTRACT_V1
+
+**Owner:** NEW1 · **Consumer:** LCC · **Date:** 25 Aug 2026 · **HEAD:** `0cd7a65`
+**Mandate:** R7 §9 NEW1-P0 — bounded, representative benchmark for high-frequency Indian legal concepts.
+**Artifacts:** `COMMON_QUERY_BENCHMARK.json` (frozen questions, `1af9ed42fc7d3efa…`) · `COMMON_QUERY_ARMS.json` (answers)
+
+---
+
+## 1. The headline, and it is a product finding rather than a ranking one
+
+**14 of 48 (29.2%) of the most common queries in Indian legal practice are refused
+before ranking. Passage ANN answers every one of them, on-concept.**
+
+The refused set is not a tail of odd inputs. In order:
+
+| concept | queries refused | example |
+| --- | --- | --- |
+| bail | **4 of 4** | `bail`, and `grant of bail in a criminal case` |
+| anticipatory bail | **3 of 4** | `when may a court grant anticipatory bail to a person apprehending arrest` |
+| quashing of FIR | **3 of 4** | `quash the FIR` |
+| limitation | 2 of 4 | `appeal barred by limitation` |
+| writ maintainability | 2 of 4 | `writ petition not maintainable` |
+
+Never refused: cheque dishonour, specific performance, arbitration interim relief,
+maintenance, murder, service termination, injunction.
+
+The split is corpus frequency. **The more common the practice area, the more certainly
+we refuse it** — which is the exact inverse of what a research product should do.
+
+---
+
+## 2. Query length is not the mechanism. Minimum term document frequency is.
+
+This corrects the inference in LCC bus 1173 (*"one or two terms leaves an estimated set
+in the millions, four terms cuts it to something bounded"*).
+
+```
+REFUSAL RATE BY QUERY LENGTH
+  1-2 terms    6/13 refused  (46%)
+  3-5 terms    4/20 refused  (20%)
+  6+ terms     4/15 refused  (27%)
+```
+
+Not monotone, so length is not the driver. The actual rule, read from
+`services/api/src/search/retrieve.ts` and reproduced — not modelled — in the arms
+harness:
+
+1. `lexemes = to_tsvector('english', query)`
+2. `df` per lexeme from `lexeme_document_frequency` (128,243 lexemes over a
+   40,537-document sample) — a precomputed table, not a scan
+3. prefer lexemes with `df <= SPARSE_MAX_DOCUMENT_FREQUENCY` (0.50)
+4. keep the `SPARSE_RARE_LEXEMES` (3) rarest
+5. **refuse when `min(df) > SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY` (0.05)**
+
+```
+rarestDf 0.2577  [ 1 term ]  "bail"
+rarestDf 0.2577  [ 7 terms]  "grant of bail in a criminal case"
+rarestDf 0.0908  [10 terms]  "considerations for granting regular bail to an accused in custody"
+rarestDf 0.0564  [12 terms]  "when may a court grant anticipatory bail to a person apprehending arrest"
+```
+
+A twelve-word, perfectly well-formed sentence is refused, because only the **three
+rarest** lexemes are kept and every lexeme in a sentence about anticipatory bail is
+common in a corpus of criminal judgments. Adding words helps only when the added words
+are *rare*: `anticipatory bail in economic offences` succeeded in LCC's envelope
+because *economic* and *offences* are rarer than *bail*, not because it had four terms.
+
+The 0.50 cap is a red herring. `bail` at 0.2577 passes it comfortably and is refused by
+the 0.05 ranking cap five lines later.
+
+---
+
+## 3. The bounded arms, and the fusion I nearly skipped for the wrong reason
+
+R7 permits four: the current sparse guard, passage ANN, a bounded phrase/proximity
+lexical path, and **at most one** fusion *if complementary*.
+
+| arm | queries answered | mean on-concept @10 | note |
+| --- | --- | --- | --- |
+| `sparse_guard` | 34 of 48 | — | reproduces the production **refusal decision**, not production ranking |
+| `passage_ann` | **48 of 48** | **0.892** | HNSW over the tranche at production `ef_search = 200` |
+| `lexical_phrase` | 32 of 48 | — | LIMIT-capped, joined to the tranche so it can never exceed it |
+| `fusion_rrf` | 48 of 48 | **0.911** | RRF, k=60, over ANN + lexical |
+
+### CORRECTION_OF an earlier draft of this file
+
+The first draft **skipped the fusion arm** and gave this reason: *"annLexOverlapAtN mean
+0.033 — fusion is only justified when the arms are complementary."*
+
+That reading was **inverted.** An overlap of 0.033 means the two arms return almost
+entirely *different* documents — which is the definition of complementary, and exactly
+the condition R7 makes the fusion arm conditional on. A **high** overlap would have
+justified skipping it. I had written the guard so that the more complementary the arms
+were, the more certainly fusion would be skipped.
+
+Fusion was then implemented and run:
+
+```
+mean on-concept delta vs passage ANN alone   +0.0188
+recommendation                               SHIP-CANDIDATE
+```
+
+The decision rule was written before the number was known — fusion ships only if it does
+not *lose* on-concept precision — so it is not fitted to the outcome.
+
+**Read the gain honestly: +0.019 is marginal.** Complementary is not the same as useful,
+and the lexical arm contributes few documents (32 of 48 queries answered). The
+recommendation is SHIP-CANDIDATE, not SHIP: it earns a place in a bake-off against the
+full-scale index, not a place in production on this evidence.
+
+No full-corpus unbounded rank was performed. No external search engine was introduced.
+
+---
+
+## 4. Wrong-domain adversarial: zero false-confident hits
+
+Four probes, including NEW3's real instance from bus 1076 (a commercial-breach query
+that returned an IPC 394 robbery judgment).
+
+| probe | returned | forbidden-domain hits |
+| --- | --- | --- |
+| commercial supply contract vs robbery/homicide | 10 | **0** |
+| input tax credit vs bail/custody | 10 | **0** |
+| restitution of conjugal rights vs company winding-up | 10 | **0** |
+| land acquisition compensation vs criminal trespass | 10 | **0** |
+
+Scored mechanically: a hit is a result carrying the forbidden domain's vocabulary and
+**none** of the query's own. That is the failure mode NEW3 saw — an answer from another
+branch of law that the advocate cannot see is from another branch of law.
+
+**Do not over-read this.** Four probes is a smoke test, not a rate. It says the obvious
+cross-domain failure does not reproduce on the passage index; it does not say wrong-domain
+retrieval is solved.
+
+---
+
+## 5. The contract
+
+### 5.1 A refusal is `coverage_unknown` and may never render as "no results"
+
+Already implemented by LCC (`outcome.ts`, commit `241ad20`). This benchmark supplies the
+scale: it is **29.2% of common practice queries**, not an edge case.
+
+### 5.2 `coverage_unknown` must be derived from `rarestDf`, never from a length heuristic
+
+If the server infers "short query, therefore degraded", it will mislabel the 12-term
+anticipatory-bail sentence as answerable and the 5-term arbitration query as degraded.
+`rarestDf` is already computed before ranking, in the same statement, and it *is* the
+refusal cause. Ship that as the reason.
+
+### 5.3 The passage arm is the remedy, and its scope must be stated with it
+
+Passage ANN answered all 14 refused queries at 0.8–1.0 on-concept. That is the strongest
+argument in this sprint for a passage index — but it is measured on the **tranche**, and
+the tranche is 81,720 documents of an 18,698,984-document corpus. Coverage numbers from
+it are directional. The **refusal** numbers carry no such caveat: they are production's
+own rule on production's own table.
+
+### 5.4 On-concept is topicality, not correctness
+
+A result is on-concept when its text contains a `requiredAny` term. This measures whether
+the system is in the right area of law. It says nothing about whether the authority is
+good, current, or applicable, and **no accuracy claim may be quoted from it.**
+
+---
+
+## 6. Anchors came from the database, never from memory
+
+`CLAUDE.md` §6 forbids inventing a section number; `DOMAIN_TRUTH.md` holds no section
+numbers for most of these areas. So each concept declares plain-English search terms for
+`statutes.short_title` and `statute_sections.heading`, and the benchmark **resolves** them
+against `statute_sections`. Every anchor in the artifact carries the statute, the section
+number and the heading it came from, and any of them can be checked against the row.
+
+11 of 12 concepts anchored. One did not:
+
+> **`CQ-09-service-termination` is `NOT_ANCHORABLE`.** The corpus holds *The Industrial
+> Disputes (Banking and Insurance Companies) Act, 1949* but **not the Industrial Disputes
+> Act, 1947** itself. Emitted as `NOT_ANCHORABLE` rather than anchored to the near-miss.
+> **NEW2: this is a statute-acquisition gap** — service and labour matters are a large
+> part of High Court writ work, and the principal statute is missing.
+
+---
+
+## 7. Caveats
+
+- **The `sparse_guard` arm reproduces the refusal DECISION, not production ranking.** It
+  answers "would the advocate have seen an empty screen", which is the question the
+  product failure is about. It does not tell you how good the results would have been had
+  it not refused.
+- **The first version of this arm was wrong** and was replaced. It invented an
+  independence-product estimate over `ILIKE` document frequencies; production uses
+  `min(df)` from a precomputed table. An arm that behaves differently from production
+  tells you nothing about production. `CORRECTION_OF` an earlier draft of this file.
+- **`requiredAny` terms are English.** A Devanagari judgment about the same concept scores
+  as off-concept, so per-concept relevance is a **floor**, not an estimate.
+- **The 12 concepts are 10 named in R7 plus 2 chosen by NEW1** (a bare single word, and an
+  IPC/BNS transition probe). They are representative of high-frequency practice, not a
+  random sample of query traffic — we have no query traffic.
+- **ANN coverage was measured on a 27% prefix of the passage build** (66,155 passages over
+  21,800 documents). The prefix is a uniform sample of the tranche by construction, because
+  the embed runs in global priority-hash order — but it is still a prefix, and the numbers
+  will be re-run at full scale before this contract is quoted as final.

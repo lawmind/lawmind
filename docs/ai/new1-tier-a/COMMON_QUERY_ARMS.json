@@ -1,21 +1,25 @@
 {
   "kind": "new1_common_query_arms",
   "version": 1,
-  "builtAt": "2026-08-25T14:03:31.121Z",
+  "builtAt": "2026-08-25T14:12:44.747Z",
   "benchmarkContentSha256": "1af9ed42fc7d3efacc40ecd68d940bd2dbbc59ed77074e1ac625fb9837758497",
   "indexState": {
-    "passages": 68618,
-    "documents": 22600
+    "passages": 72680,
+    "documents": 24000
   },
   "armsRun": [
     "sparse_guard",
     "passage_ann",
-    "lexical_phrase"
+    "lexical_phrase",
+    "fusion_rrf"
   ],
   "fusionArm": {
-    "run": false,
-    "reason": "annLexOverlapAtN mean 0.033 — fusion is only justified when the arms are COMPLEMENTARY. Recorded so the decision to skip it is visible rather than silent.",
-    "rule": "R7 permits ONE fusion arm and only if complementary. Fusing two arms that return the same documents is ceremony that costs latency and buys nothing."
+    "run": true,
+    "annLexOverlapMean": 0.0313,
+    "complementarity": "annLexOverlapAtN mean 0.031 — the arms return almost entirely DIFFERENT documents, which is what makes them complementary and is R7's condition for running a fusion arm at all.",
+    "correctionOf": "An earlier draft of this file SKIPPED fusion and cited the same 0.033 overlap as the reason. That reading was inverted: low overlap is high complementarity. A HIGH overlap would have justified skipping.",
+    "meanOnConceptDeltaVsAnn": 0.0188,
+    "shipRecommendation": "SHIP-CANDIDATE: fusion does not lose on-concept precision (mean delta 0.0188) while drawing on a complementary arm."
   },
   "summary": {
     "conceptQueries": 48,
@@ -51,14 +55,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 15,
+              "latencyMs": 69,
               "onConceptAtN": 1,
               "topSim": 0.6172
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1149,
+              "latencyMs": 1000,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -83,14 +94,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 19,
+              "latencyMs": 39,
               "onConceptAtN": 1,
               "topSim": 0.7169
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 90,
+              "latencyMs": 88,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -123,14 +141,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 15,
+              "latencyMs": 30,
               "onConceptAtN": 1,
               "topSim": 0.7259
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 90,
+              "latencyMs": 111,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -163,14 +188,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 24,
+              "latencyMs": 67,
               "onConceptAtN": 1,
               "topSim": 0.6948
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 169,
+              "latencyMs": 160,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -206,14 +238,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 15,
+              "latencyMs": 34,
               "onConceptAtN": 1,
               "topSim": 0.7198
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 4513,
+              "latencyMs": 4040,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -246,14 +285,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 53,
+              "latencyMs": 66,
               "onConceptAtN": 1,
               "topSim": 0.7285
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 538,
+              "latencyMs": 510,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -286,14 +332,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 17,
+              "latencyMs": 23,
               "onConceptAtN": 1,
               "topSim": 0.6943
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 552,
+              "latencyMs": 497,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -326,14 +379,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 12,
+              "latencyMs": 22,
               "onConceptAtN": 1,
               "topSim": 0.7465
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 526,
+              "latencyMs": 525,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -369,14 +429,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 20,
+              "latencyMs": 34,
               "onConceptAtN": 1,
               "topSim": 0.6919
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 17560,
+              "latencyMs": 20754,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -405,14 +472,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 15,
+              "latencyMs": 31,
               "onConceptAtN": 1,
               "topSim": 0.6956
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1654,
+              "latencyMs": 3354,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -445,14 +519,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 50,
+              "latencyMs": 177,
               "onConceptAtN": 1,
               "topSim": 0.7525
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1663,
+              "latencyMs": 1797,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -485,14 +566,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 27,
+              "latencyMs": 106,
               "onConceptAtN": 1,
               "topSim": 0.696
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1533,
+              "latencyMs": 1873,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.1
@@ -524,14 +612,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 30,
+              "latencyMs": 235,
               "onConceptAtN": 1,
               "topSim": 0.627
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1787,
+              "latencyMs": 2094,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -560,14 +655,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 42,
+              "latencyMs": 247,
               "onConceptAtN": 1,
               "topSim": 0.6649
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1711,
+              "latencyMs": 2411,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.2
@@ -600,14 +702,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 24,
+              "latencyMs": 61,
               "onConceptAtN": 0.8,
               "topSim": 0.6463
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1831,
+              "latencyMs": 2771,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0.2
             }
           },
           "annLexOverlapAtN": 0.2
@@ -640,14 +749,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 19,
+              "latencyMs": 76,
               "onConceptAtN": 0.9,
               "topSim": 0.6549
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2158,
+              "latencyMs": 2383,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0.1
             }
           },
           "annLexOverlapAtN": 0.1
@@ -679,14 +795,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 48,
+              "latencyMs": 52,
               "onConceptAtN": 0.9,
               "topSim": 0.6042
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1855,
+              "latencyMs": 2022,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.9,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -715,14 +838,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 32,
+              "latencyMs": 95,
               "onConceptAtN": 1,
               "topSim": 0.7088
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1937,
+              "latencyMs": 2074,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -755,14 +885,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 26,
-              "onConceptAtN": 0.8,
+              "latencyMs": 50,
+              "onConceptAtN": 0.9,
               "topSim": 0.6207
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2399,
+              "latencyMs": 2207,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.9,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -795,14 +932,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 19,
+              "latencyMs": 27,
               "onConceptAtN": 1,
               "topSim": 0.7273
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2456,
+              "latencyMs": 2206,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -838,14 +982,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 27,
+              "latencyMs": 60,
               "onConceptAtN": 0.8,
               "topSim": 0.5697
             },
             "lexical_phrase": {
               "documents": 1,
-              "latencyMs": 1963,
+              "latencyMs": 2420,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.8,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.1
@@ -878,14 +1029,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 24,
+              "latencyMs": 76,
               "onConceptAtN": 0.7,
               "topSim": 0.5706
             },
             "lexical_phrase": {
               "documents": 1,
-              "latencyMs": 3315,
+              "latencyMs": 2216,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.7,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.1
@@ -918,14 +1076,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 71,
+              "latencyMs": 80,
               "onConceptAtN": 0.6,
               "topSim": 0.6554
             },
             "lexical_phrase": {
               "documents": 1,
-              "latencyMs": 3740,
+              "latencyMs": 2053,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.6,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.1
@@ -958,14 +1123,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 71,
+              "latencyMs": 66,
               "onConceptAtN": 0.6,
               "topSim": 0.6334
             },
             "lexical_phrase": {
               "documents": 1,
-              "latencyMs": 2856,
+              "latencyMs": 2122,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.6,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1005,14 +1177,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 20,
+              "latencyMs": 42,
               "onConceptAtN": 1,
               "topSim": 0.6705
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2328,
+              "latencyMs": 2097,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1045,14 +1224,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 24,
+              "latencyMs": 46,
               "onConceptAtN": 0.7,
               "topSim": 0.6596
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2085,
+              "latencyMs": 2375,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.7,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1085,14 +1271,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 10,
+              "latencyMs": 22,
               "onConceptAtN": 0.8,
               "topSim": 0.6392
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2111,
+              "latencyMs": 2116,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.8,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1125,14 +1318,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 32,
+              "latencyMs": 52,
               "onConceptAtN": 0.6,
               "topSim": 0.6723
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2387,
+              "latencyMs": 2282,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.6,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1168,14 +1368,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 21,
+              "latencyMs": 42,
               "onConceptAtN": 1,
               "topSim": 0.5705
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2011,
+              "latencyMs": 2093,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1208,17 +1415,24 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 21,
+              "latencyMs": 105,
               "onConceptAtN": 0.9,
               "topSim": 0.614
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2074,
+              "latencyMs": 2028,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0.1
             }
           },
-          "annLexOverlapAtN": 0.3
+          "annLexOverlapAtN": 0.2
         },
         {
           "query": "dishonour of cheque complaint",
@@ -1248,14 +1462,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 14,
+              "latencyMs": 26,
               "onConceptAtN": 1,
               "topSim": 0.7183
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2130,
+              "latencyMs": 2051,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.1
@@ -1288,14 +1509,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 9,
+              "latencyMs": 19,
               "onConceptAtN": 1,
               "topSim": 0.7597
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2325,
+              "latencyMs": 2004,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1331,14 +1559,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 19,
+              "latencyMs": 78,
               "onConceptAtN": 0.8,
               "topSim": 0.6115
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2203,
+              "latencyMs": 2141,
               "onConceptAtN": 0.8
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0.2
             }
           },
           "annLexOverlapAtN": 0.1
@@ -1367,14 +1602,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 29,
+              "latencyMs": 67,
               "onConceptAtN": 0.9,
               "topSim": 0.6045
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2298,
+              "latencyMs": 2113,
               "onConceptAtN": 0.8
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0.1
             }
           },
           "annLexOverlapAtN": 0.1
@@ -1407,14 +1649,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 35,
+              "latencyMs": 88,
               "onConceptAtN": 0.8,
               "topSim": 0.6436
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2181,
+              "latencyMs": 2076,
               "onConceptAtN": 0.8
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0.2
             }
           },
           "annLexOverlapAtN": 0
@@ -1447,14 +1696,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 22,
+              "latencyMs": 71,
               "onConceptAtN": 1,
               "topSim": 0.6352
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2258,
+              "latencyMs": 2203,
               "onConceptAtN": 0.8
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1490,14 +1746,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 26,
+              "latencyMs": 48,
               "onConceptAtN": 1,
               "topSim": 0.6407
             },
             "lexical_phrase": {
               "documents": 3,
-              "latencyMs": 1955,
+              "latencyMs": 2034,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.1
@@ -1526,14 +1789,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 46,
+              "latencyMs": 77,
               "onConceptAtN": 1,
               "topSim": 0.695
             },
             "lexical_phrase": {
               "documents": 3,
-              "latencyMs": 2345,
+              "latencyMs": 2155,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1566,14 +1836,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 38,
+              "latencyMs": 54,
               "onConceptAtN": 1,
               "topSim": 0.6285
             },
             "lexical_phrase": {
               "documents": 3,
-              "latencyMs": 1646,
+              "latencyMs": 2123,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1606,14 +1883,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 21,
+              "latencyMs": 41,
               "onConceptAtN": 1,
               "topSim": 0.7282
             },
             "lexical_phrase": {
               "documents": 3,
-              "latencyMs": 1638,
+              "latencyMs": 2259,
               "onConceptAtN": 1
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1645,14 +1929,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 24,
+              "latencyMs": 182,
               "onConceptAtN": 0.7,
               "topSim": 0.5825
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1634,
+              "latencyMs": 2153,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.7,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1685,14 +1976,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 37,
+              "latencyMs": 116,
               "onConceptAtN": 0.6,
               "topSim": 0.6438
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1731,
+              "latencyMs": 2204,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.6,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1725,14 +2023,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 29,
-              "onConceptAtN": 0.6,
+              "latencyMs": 91,
+              "onConceptAtN": 0.5,
               "topSim": 0.5643
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1749,
+              "latencyMs": 2088,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.5,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1765,14 +2070,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 48,
+              "latencyMs": 82,
               "onConceptAtN": 0.3,
               "topSim": 0.5502
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1696,
+              "latencyMs": 1709,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 0.3,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1804,14 +2116,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 20,
+              "latencyMs": 48,
               "onConceptAtN": 1,
               "topSim": 0.6131
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1768,
+              "latencyMs": 1785,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1844,14 +2163,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 16,
+              "latencyMs": 44,
               "onConceptAtN": 1,
               "topSim": 0.6619
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1778,
+              "latencyMs": 1726,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1884,14 +2210,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 8,
+              "latencyMs": 24,
               "onConceptAtN": 1,
               "topSim": 0.6648
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1774,
+              "latencyMs": 1739,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1924,14 +2257,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 17,
+              "latencyMs": 30,
               "onConceptAtN": 1,
               "topSim": 0.6821
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2538,
+              "latencyMs": 1778,
               "onConceptAtN": null
+            },
+            "fusion_rrf": {
+              "documents": 10,
+              "onConceptAtN": 1,
+              "scoreKind": "rrf",
+              "k": 60,
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1992,5 +2332,5 @@
     "The passage_ann arm searches the TRANCHE, which is 81,720 documents of an 18.7M corpus. Its coverage is not production coverage and must never be quoted as such.",
     "requiredAny terms are English, so a Devanagari judgment about the same concept scores as off-concept. Per-concept relevance is a FLOOR."
   ],
-  "contentSha256": "da267572da9c8479af72681ea9f9c6e218f5e83b19a4ee1ff8181dd83a8bce02"
+  "contentSha256": "6acf41ba4916c22c867e3f106e1d3d8435fa227e48ca47232d8e6556a5175410"
 }

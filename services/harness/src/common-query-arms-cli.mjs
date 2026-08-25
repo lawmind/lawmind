@@ -212,14 +212,41 @@ try {
       const t1 = Date.now();
       const annRows = await passageAnn(vecs[i]);
       const annMs = Date.now() - t1;
-      const annDocs = [...new Map(annRows.map((r) => [r.id, r.sim])).keys()].slice(0, TOPN);
+      const annRanked = [...new Map(annRows.map((r) => [r.id, r.sim])).keys()];
+      const annDocs = annRanked.slice(0, TOPN);
 
       const t2 = Date.now();
       const lexRows = await lexicalPhrase(c.concept);
       const lexMs = Date.now() - t2;
-      const lexDocs = lexRows.map((r) => r.id).slice(0, TOPN);
+      const lexRanked = lexRows.map((r) => r.id);
+      const lexDocs = lexRanked.slice(0, TOPN);
 
-      await loadTexts([...annDocs, ...lexDocs]);
+      /**
+       * ARM 4 — RRF FUSION, run because the arms turned out to be complementary.
+       *
+       * The first version of this file SKIPPED fusion and justified it with
+       * `annLexOverlapAtN mean 0.033`. That reasoning was backwards: 0.033 overlap
+       * means the two arms return almost entirely DIFFERENT documents, which is
+       * the definition of complementary and precisely the condition R7 makes the
+       * fusion arm conditional on. A high overlap would have justified skipping it.
+       *
+       * Whether complementary is USEFUL is a separate question and is measured
+       * rather than assumed: if the lexical arm contributes only off-concept
+       * documents, fusion trades precision for nothing. So the fused list is scored
+       * on the same on-concept rule as the arms it fuses, and the contract reports
+       * the delta.
+       *
+       * Standard RRF, k = 60. The score is 1/(k+rank) and is NOT a similarity —
+       * RETRIEVAL_EVIDENCE_CONTRACT_V1 requires it to travel with scoreKind 'rrf'
+       * for exactly that reason.
+       */
+      const RRF_K = 60;
+      const fused = new Map();
+      annRanked.forEach((id, i) => fused.set(id, (fused.get(id) ?? 0) + 1 / (RRF_K + i + 1)));
+      lexRanked.forEach((id, i) => fused.set(id, (fused.get(id) ?? 0) + 1 / (RRF_K + i + 1)));
+      const fusedDocs = [...fused.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => id).slice(0, TOPN);
+
+      await loadTexts([...annDocs, ...lexDocs, ...fusedDocs]);
 
       const overlap = annDocs.filter((x) => lexDocs.includes(x)).length;
       perQuery.push({
@@ -248,6 +275,17 @@ try {
             documents: lexDocs.length,
             latencyMs: lexMs,
             onConceptAtN: onConcept(lexDocs, c.requiredAny),
+          },
+          fusion_rrf: {
+            documents: fusedDocs.length,
+            onConceptAtN: onConcept(fusedDocs, c.requiredAny),
+            scoreKind: 'rrf',
+            k: RRF_K,
+            // The only number that decides whether fusion ships.
+            deltaVsAnn:
+              annDocs.length === 0
+                ? null
+                : Number(((onConcept(fusedDocs, c.requiredAny) ?? 0) - (onConcept(annDocs, c.requiredAny) ?? 0)).toFixed(4)),
           },
         },
         annLexOverlapAtN: annDocs.length === 0 ? null : Number((overlap / annDocs.length).toFixed(4)),
@@ -307,11 +345,16 @@ try {
     builtAt: new Date().toISOString(),
     benchmarkContentSha256: bench.contentSha256,
     indexState: { passages: Number(n), documents: Number(d) },
-    armsRun: ['sparse_guard', 'passage_ann', 'lexical_phrase'],
+    armsRun: ['sparse_guard', 'passage_ann', 'lexical_phrase', 'fusion_rrf'],
     fusionArm: {
-      run: false,
-      reason: `annLexOverlapAtN mean ${meanOverlap.toFixed(3)} — fusion is only justified when the arms are COMPLEMENTARY. Recorded so the decision to skip it is visible rather than silent.`,
-      rule: 'R7 permits ONE fusion arm and only if complementary. Fusing two arms that return the same documents is ceremony that costs latency and buys nothing.',
+      run: true,
+      annLexOverlapMean: Number(meanOverlap.toFixed(4)),
+      complementarity:
+        `annLexOverlapAtN mean ${meanOverlap.toFixed(3)} — the arms return almost entirely DIFFERENT documents, which is what makes them complementary and is R7's condition for running a fusion arm at all.`,
+      correctionOf:
+        'An earlier draft of this file SKIPPED fusion and cited the same 0.033 overlap as the reason. That reading was inverted: low overlap is high complementarity. A HIGH overlap would have justified skipping.',
+      meanOnConceptDeltaVsAnn: null,
+      shipRecommendation: null,
     },
     summary: {
       conceptQueries: allQueries.length,
@@ -337,6 +380,16 @@ try {
     ],
   };
 
+  const deltas = allQueries.map((q) => q.arms.fusion_rrf.deltaVsAnn).filter((x) => typeof x === 'number');
+  const meanDelta = deltas.reduce((a, b) => a + b, 0) / Math.max(1, deltas.length);
+  body.fusionArm.meanOnConceptDeltaVsAnn = Number(meanDelta.toFixed(4));
+  // The decision rule is stated BEFORE the number is known, so it cannot be fitted
+  // to the outcome: fusion ships only if it does not LOSE on-concept precision.
+  body.fusionArm.shipRecommendation =
+    meanDelta >= 0
+      ? `SHIP-CANDIDATE: fusion does not lose on-concept precision (mean delta ${meanDelta.toFixed(4)}) while drawing on a complementary arm.`
+      : `DO NOT SHIP: fusion costs ${Math.abs(meanDelta).toFixed(4)} on-concept precision against passage ANN alone. Complementary is not the same as useful, and the lexical arm is contributing off-concept documents.`;
+
   const { builtAt: _b, ...invariant } = body;
   const contentSha256 = createHash('sha256').update(JSON.stringify(invariant)).digest('hex');
   writeFileSync(OUT, JSON.stringify({ ...body, contentSha256 }, null, 2) + '\n');
@@ -349,6 +402,8 @@ try {
   log(`  passage ANN answered    ${body.summary.annAnsweredAll ? 'ALL' : 'not all'}`);
   log(`  mean onConcept (ANN)    ${body.summary.meanOnConceptAnn}`);
   log(`  wrong-domain hits       ${body.summary.wrongDomainFalseConfident}`);
+  log(`  fusion delta vs ANN     ${body.fusionArm.meanOnConceptDeltaVsAnn}`);
+  log(`  fusion recommendation   ${body.fusionArm.shipRecommendation}`);
 } finally {
   await sql.end({ timeout: 10 });
 }
