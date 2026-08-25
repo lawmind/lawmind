@@ -21,6 +21,8 @@
     "lane:send": "node scripts/lane-send.mjs",
     "lane:inbox": "node scripts/lane-inbox.mjs",
     "lane:status": "node scripts/lane-status.mjs",
+    "job:health": "node scripts/job-health.mjs",
+    "job:health:publish": "node scripts/job-health.mjs --publish",
     "lane:lease": "node scripts/lane-lease.mjs"
   },
   "devDependencies": {

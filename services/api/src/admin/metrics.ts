@@ -106,6 +106,55 @@ export const ALERT_RULES = {
    * healthy to every rule above it.
    */
   briefingUndeliveredRate: { watch: 0.2, page: 0.6 },
+  /**
+   * Critical background jobs that are alive and not working, or that the
+   * registry declares RUNNING over a process that is not there.
+   *
+   * Read from `ops_job_current`, published by `scripts/job-health.mjs`. ONE is
+   * a page: these are counted jobs, not a rate, and the two on this list that
+   * matter most (the GPU document walk, the citation walk) fail exactly once
+   * and then stay failed silently for days.
+   */
+  stalledCriticalJobs: { watch: 1, page: 1 },
+  /**
+   * How stale the control plane's own feed is.
+   *
+   * Without this rule, killing `job-health` makes every job read healthy
+   * forever — the failure mode where absence of evidence is served as evidence
+   * of absence. The publisher is expected on a schedule; two missed ticks is a
+   * watch and a long silence is a page, because a pager that cannot see the
+   * workers is itself an outage.
+   */
+  jobObservationAgeHours: { watch: 2, page: 12 },
+} as const;
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ABSOLUTE RULES — WHAT A RATE CANNOT SEE AT LAUNCH TRAFFIC
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Every search rule above is a RATE, and every rate is gated behind
+ * `MIN_SAMPLE` because three requests with one failure is 33% and is noise.
+ * That gate is right, and it has a hole the size of the first week of launch:
+ * with nineteen searches in fifteen minutes, ALL NINETEEN can 5xx and no rule
+ * fires, because the denominator never arrived.
+ *
+ * So the rates keep their sample gate and these two absolute conditions sit
+ * underneath it, where the numbers are small enough to read directly:
+ *
+ *   ANY_SERVER_ERROR   a 5xx is a defect at n=1. metrics.ts has always said so
+ *                      in a comment above `serverErrorRate`; this is that
+ *                      sentence made executable.
+ *   TOTAL_SEARCH_FAILURE  every search in the window failed. At n=2 that is a
+ *                      100% rate the sample gate refuses to look at, and it is
+ *                      the exact shape of a route that is simply down.
+ *
+ * Neither is a threshold, so neither goes in ALERT_RULES: they are
+ * contradictions, judged the way `briefingSweepZeroWrite` is.
+ */
+export const LOW_TRAFFIC_ABSOLUTE = {
+  /** Below this many requests the rate rules stay silent and these take over. */
+  appliesBelowSample: 20,
 } as const;
 
 function rate(numerator: number, denominator: number): number {
@@ -195,7 +244,8 @@ export async function collectMetrics(
 
     // Only alert on rates once there is enough traffic for a rate to mean
     // something. Three searches, one of them degraded, is 33% and is noise.
-    const MIN_SAMPLE = 20;
+    const MIN_SAMPLE = LOW_TRAFFIC_ABSOLUTE.appliesBelowSample;
+    const failedCount = Number(search?.failed ?? 0);
     if (searchN >= MIN_SAMPLE) {
       add('degradedRate', degradedRate, `${(degradedRate * 100).toFixed(1)}% of searches degraded`);
       add('zeroResultRate', zeroRate, `${(zeroRate * 100).toFixed(1)}% of searches returned nothing`);
@@ -205,6 +255,16 @@ export async function collectMetrics(
         refusedRate,
         `${(refusedRate * 100).toFixed(1)}% of searches refused at the admission gate`,
       );
+    } else if (failedCount > 0) {
+      /* The launch-week hole. See LOW_TRAFFIC_ABSOLUTE: below the sample gate
+       * the rates say nothing at all, so the raw count has to speak. */
+      alerts.push({
+        severity: searchN > 0 && failedCount === searchN ? 'page' : 'watch',
+        rule: failedCount === searchN ? 'searchTotalFailureLowTraffic' : 'searchErrorLowTraffic',
+        detail:
+          `${failedCount} of ${searchN} searches in 15m returned 5xx — below the ` +
+          `${MIN_SAMPLE}-request sample gate, so no rate rule can see this`,
+      });
     }
 
     const [db] = await sql<
@@ -358,6 +418,90 @@ export async function collectMetrics(
       });
     }
 
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * BACKGROUND JOB HEALTH — FROM THE CONTROL PLANE, NOT FROM A PID
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * `ops_job_current` is the latest reading per job published by
+     * `scripts/job-health.mjs`. Its `state` is derived from whether the job's
+     * own checkpoint CHANGED between two readings — never from the process
+     * being alive, never from GPU utilisation, never from Task Scheduler having
+     * fired. All three of those have been true here while nothing moved.
+     *
+     * TWO conditions, and the second is the one that is easy to forget:
+     *
+     *   1. a critical job is RUNNING_STALLED or FAILED  → something is broken;
+     *   2. the feed itself has gone quiet               → we cannot SEE whether
+     *      anything is broken, which must not read as "nothing is broken".
+     *
+     * The table may be absent on a database where the migration has not run
+     * (a fresh restore, a rehearsal target). That is reported as null and is
+     * not an alert: a missing table is a deployment fact, not an incident, and
+     * paging on it would make every restore drill wake somebody.
+     */
+    let jobs: {
+      observedAgeHours: number | null;
+      critical: number;
+      stalled: { job_id: string; owner_lane: string; state: string; why: string | null }[];
+    } | null = null;
+    try {
+      const rows = await sql<
+        {
+          job_id: string;
+          owner_lane: string;
+          state: string;
+          why: string | null;
+          age_hours: string | null;
+        }[]
+      >`
+        SELECT job_id, owner_lane, state, why,
+               (EXTRACT(EPOCH FROM (now() - observed_at)) / 3600)::text AS age_hours
+          FROM ops_job_current
+         WHERE critical`;
+
+      const stalled = rows.filter((r) => r.state === 'RUNNING_STALLED' || r.state === 'FAILED');
+      /* The NEWEST reading, because a single job that stopped being published
+       * is a stale row, while the whole feed stopping is the outage this
+       * measures. min() of the ages is the freshest tick anything got. */
+      const ages = rows
+        .map((r) => (r.age_hours === null ? null : Number(r.age_hours)))
+        .filter((n): n is number => n !== null);
+      const observedAgeHours = ages.length === 0 ? null : Math.min(...ages);
+
+      jobs = {
+        observedAgeHours,
+        critical: rows.length,
+        stalled: stalled.map((r) => ({
+          job_id: r.job_id,
+          owner_lane: r.owner_lane,
+          state: r.state,
+          why: r.why,
+        })),
+      };
+
+      if (stalled.length > 0) {
+        add(
+          'stalledCriticalJobs',
+          stalled.length,
+          stalled
+            .map((r) => `${r.job_id} (${r.owner_lane}) ${r.state}${r.why ? ': ' + r.why : ''}`)
+            .join(' | '),
+        );
+      }
+      if (observedAgeHours !== null) {
+        add(
+          'jobObservationAgeHours',
+          observedAgeHours,
+          `the job control plane last published ${observedAgeHours.toFixed(1)}h ago — ` +
+            `while it is quiet, every worker reads healthy whether or not it is`,
+        );
+      }
+    } catch {
+      /* No ops_job_current on this database. Reported as null below, which is
+       * honestly different from "no stalled jobs". */
+    }
+
     const admission = deps.admission?.stats();
 
     const payload = {
@@ -412,6 +556,12 @@ export async function collectMetrics(
         minSampleForAlerting: MIN_SAMPLE,
       },
       corpus: { newestRowAgeHours: Number(ageHours.toFixed(1)) },
+      /**
+       * null means the control plane has never published to THIS database —
+       * not that every job is fine. The distinction is the entire point of the
+       * `jobObservationAgeHours` rule above it.
+       */
+      backgroundJobs: jobs,
       /**
        * The whole point. Empty means every rule above is inside its threshold
        * right now — not that nothing is wrong, only that nothing we know how to
