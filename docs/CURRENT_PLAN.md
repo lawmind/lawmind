@@ -16,6 +16,64 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 25 August 2026 — NEW1: THE KEEPER'S SIDECAR SWEEP MATCHED ZERO PROCESSES AND LOGGED SUCCESS, AND V3 COULD NOT BE REPLAYED
+
+Convergence sprint V2 §7. Board: `docs/ai/new1-convergence/TODO.md`. Every number
+below was OBSERVED — run, read or counted.
+
+**The GPU factory IS progressing, and it was proved the only way that counts.**
+`new1_doc_vector_stage` went 1,996,134 → 1,997,735 over a real 330.6s interval,
+and the DB delta (+1,601) equals the walk log's own `inserted` delta **exactly**.
+GPU utilisation was 93–99% throughout and is *not* what established this;
+`services/harness/src/new1-progress-probe.mjs` now reports GPU as context only.
+
+**The keeper's restart has never once worked against the failure it exists for.**
+`killExistingSidecars` filtered on `embed..gpu..server\.py` — each `..` is two
+regex wildcards, and the real command line has ONE character between `embed` and
+`gpu`. Measured live: the old pattern matched **0 of 2** running sidecars, the
+fixed one matched 2. So the sweep killed nothing, PowerShell exited 0, and the
+keeper logged "killed any existing sidecar before spawning" over a sweep that
+killed nobody. RESTART #2 then spawned a sidecar that could not bind port 8799
+and did 18 CPU-seconds of nothing in four hours. The one restart that "worked" is
+the one where there was nothing to replace. Fixed in `067d5c8`; the sweep now
+counts survivors and logs SWEEP INCOMPLETE, because "I killed it" and "I could
+not kill it" were producing the same log line.
+
+**Same bug, second face:** that `spawnSync` had no timeout, so RESTART #3 wedged
+the keeper for **535 seconds** inside a hung PowerShell. Keeper restarted onto the
+fixed code (pid 28060).
+
+**A worker belonging to no lane is IO-saturating the box.** An orphaned `cmd /K`
+loop runs `citations-cli --concurrency 12` with no scheduled task, no registry
+record and a dead parent; a second runs `paragraphs`. Measured cost to the
+embedding walk: **8,412 → 494 tok/s, a 17× penalty, with the GPU at 0–2%** — not
+GPU-starved, starved behind that job. Reported to LCC (bus 1127, corrected 1131).
+
+**V3 could not be replayed, and a seed is not the fix.** Two unseeded sites:
+`representation-lab-v3-cli.ts:359` (`Math.random()` in the bootstrap) and `:623`
+(`TABLESAMPLE SYSTEM (3)` with no `REPEATABLE`). `REPEATABLE` does not help
+because the fill source is written by the live walk and `TABLESAMPLE SYSTEM`
+samples *physical pages* — it would convert visible drift into silent drift.
+**V3.1 freezes identity to an artifact instead**: 295 query hashes, 213 targets,
+211 clusters, 25,000 pool ids, segmentation version, model digests, strata.
+Two independent freezes agreed byte-for-byte on all of it.
+
+**`case_type` cannot carry the criminal/civil stratum: it is NULL for 75.6% of
+the corpus** (`hc_document_class` 74.3%). The case-number registry prefix covers
+98.7% and is the only signal that can. Also: the corpus is **96.5% post-2010**, so
+a proportional 100k sample would hold ~48 pre-1990 documents and the tranche's era
+mix is deliberately skewed, with both proportions recorded.
+
+**Not done, and why:** the 100k tranche is DESIGNED and its selector BUILT
+(`tranche-select-cli.mjs`, gold-blind, one eligibility definition, underfill
+reported never rebalanced) but **not built into vectors** — that needs a GPU quiet
+window the box has not had. Abstention is **pre-registered** before any score
+exists (`ABSTENTION_PREREGISTRATION.md`) but not fitted, for the same reason.
+**No HEAD-vs-passage recommendation is offered yet**, because the plan makes it
+conditional on tranche evidence and that evidence does not exist.
+
+Commits: `067d5c8` `79a2efa` `7a9600c` `95823a5` `661ce1b` `bd6cf6c` `06a6402`.
+
 ### 23 August 2026 — NEW2: THE RESOLVER'S FALSE UNIQUES ARE A STALE INDEX, 95.62% OF LAW MOVED IS A HEADNOTE, AND THE ELIGIBILITY GATE'S MARGIN SEPARATES NOTHING
 
 Round contract §8. Full board: `docs/ai/new2/NEW2_NEXT_ROUND_TODO.md`. All five
