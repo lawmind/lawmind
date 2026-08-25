@@ -14,7 +14,7 @@
 ```
 T0  process health / prove GPU factory   ████████████████████  8/8    DONE
 T1  V3.1 reproducible freeze             ████████████████████ 10/10   DONE
-T2  100k passage tranche                 █████░░░░░░░░░░░░░░░  4/15   design+selector done, BUILD blocked
+T2  100k passage tranche                 █████░░░░░░░░░░░░░░░  4/15   design+embedder done · SELECTION BLOCKED (3 cycles, stopped)
 T3  safe abstention                      ████████░░░░░░░░░░░░  3/8    pre-registered, eval blocked
 T4  long facts (deferred by plan)        ████████████████████  3/3   DONE
 T5  HEAD-vs-passage recommendation       ████████████████░░░░  5/6   inputs done, T5.4 owed after tranche
@@ -74,8 +74,8 @@ T7  bus / reporting                      █████████████
 > to produce latency figures nobody should trust.
 
 - [x] **T2.1** Resource-safety check + quiet-window coordination — *requested from LCC (bus 1127/1131); DB quiet as of 04:06Z but the orphaned loops WILL respawn*
-- [~] **T2.2** Select ≥100k tranche with mandated strata — *selector built, dry-run in flight* (SC + major HCs · recent+older · criminal/civil/commercial/constitutional/service/property/family · supporting- and adverse-authority · statute · long narrative · known wrong-domain commercial miss · currently-unreachable targets)
-- [~] **T2.3** Freeze tranche selection SQL + id manifest — *`tranche-select-cli.mjs`; writes `TRANCHE_100K_MANIFEST.json` with `contentSha256`*
+- [!] **T2.2** Select ≥100k tranche — **BLOCKED after 3 failed attempts, stopped at the bound.** 88s/cell → TypeError → 40min timeout. `EXPLAIN` cost 1,845,467 for ONE cell: scan driven by the least-selective dimension (`judgment_date`, 96.5% post-2010) while `judgments_court_idx` sits unused, feeding a 1.88M-row Sort for `row_number()` that cannot stream. Diagnosis + tie-breaker in `TRANCHE_100K_DESIGN.md` §8 (SC + major HCs · recent+older · criminal/civil/commercial/constitutional/service/property/family · supporting- and adverse-authority · statute · long narrative · known wrong-domain commercial miss · currently-unreachable targets)
+- [!] **T2.3** Freeze tranche id manifest — blocked by T2.2 — *`tranche-select-cli.mjs`; writes `TRANCHE_100K_MANIFEST.json` with `contentSha256`*
 - [x] **T2.4** Count gold coverage **honestly** — *natural-vs-forced rule implemented and enforced in the selector* — forced gold = artificial reachability, must be reported as such
 - [ ] **T2.5** Segment to passages, record segmentation version
 - [ ] **T2.6** Embed tranche; record GPU-hours + tokens/sec
