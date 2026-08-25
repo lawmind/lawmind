@@ -25,6 +25,7 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { dateQualityFor, isDateContradicted } from './date-quality.ts';
+import { attributionOf, type TreatmentProvenance } from './precedential-effect.ts';
 
 export const treatmentQuery = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
@@ -45,6 +46,7 @@ type CitingRow = {
   relationship: string;
   evidence: string | null;
   overruled_status: string;
+  treatment_provenance: string | null;
 };
 
 async function judgmentExists(sql: Sql, id: string): Promise<boolean> {
@@ -77,7 +79,7 @@ export async function getTreatment(
   const rows = await sql<CitingRow[]>`
     SELECT j.id AS judgment_id, j.case_title, j.neutral_citation, j.court,
            j.judgment_date::text AS judgment_date,
-           c.relationship, c.evidence, j.overruled_status
+           c.relationship, c.evidence, j.overruled_status, c.treatment_provenance
     FROM judgment_citations c
     JOIN judgments j ON j.id = c.citing_judgment_id
     WHERE c.cited_judgment_id = ${id}
@@ -146,6 +148,24 @@ export async function getTreatment(
       /** Four values, `null` = nothing has looked. `judgmentDate` is never rewritten. */
       dateQuality: dateStates.get(r.judgment_id) ?? null,
       relationship: r.relationship,
+      /**
+       * WHO said it, on the row that shows WHAT was said.
+       *
+       * Requested by NEW3 (bus 1169) and it is the sharpest case for the whole
+       * provenance layer: on this screen a reporter's editorial headnote and the
+       * later court's own reasoning were rendering IDENTICALLY, side by side, in
+       * a list whose entire purpose is to show an advocate how the law moved.
+       *
+       * Additive. `relationship` is unchanged, so no client switch breaks. Only
+       * `COURT` may be worded as something the later court held —
+       * `mayStateAsHolding()` — and 95.62% of these rows are `REPORTER`.
+       */
+      treatmentAttribution: attributionOf([
+        {
+          relationship: r.relationship,
+          provenance: r.treatment_provenance as TreatmentProvenance | null,
+        },
+      ]),
       // The phrase the court printed. Present only for a real treatment, so any
       // row claiming one can be audited back to its own text.
       evidence: r.evidence,

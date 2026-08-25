@@ -93,12 +93,34 @@ export async function recordStep(
  * `recordStep` keeps its throwing contract for the tests and for any caller
  * that genuinely wants to know.
  */
+/**
+ * The process-wide outbox, installed by `index.ts` at boot.
+ *
+ * Null in tests and in any process that never installs one, and the fallback is
+ * the ORIGINAL fire-and-forget — a funnel write must not start failing because
+ * nobody wired a queue. What changes when it IS installed is that loss becomes a
+ * counted number instead of a silence. See `activation-outbox.ts`.
+ */
+let outbox: { enqueue: (userId: string, step: ActivationStep) => void } | null = null;
+
+export function installActivationOutbox(
+  next: { enqueue: (userId: string, step: ActivationStep) => void } | null,
+): void {
+  outbox = next;
+}
+
 export function recordStepInBackground(
   sql: Sql,
   userId: string,
   step: ActivationStep,
   onError: (err: unknown) => void,
 ): void {
+  if (outbox) {
+    /* Enqueue and return. Same non-blocking contract as the `void` below, with
+     * retry and a loss count behind it. */
+    outbox.enqueue(userId, step);
+    return;
+  }
   void recordStep(sql, userId, step).catch(onError);
 }
 
@@ -123,7 +145,11 @@ export function recordStepForAuthIdInBackground(
   if (!authId) return;
   void (async () => {
     const [row] = await sql<{ id: string }[]>`SELECT id FROM users WHERE auth_id = ${authId}`;
-    if (row) await recordStep(sql, row.id, step);
+    if (!row) return;
+    /* The id lookup still has to happen inline — the outbox holds a users.id and
+     * this path is given an auth_id. Only the WRITE goes through the queue. */
+    if (outbox) outbox.enqueue(row.id, step);
+    else await recordStep(sql, row.id, step);
   })().catch(onError);
 }
 

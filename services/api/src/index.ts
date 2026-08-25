@@ -6,6 +6,8 @@ import { sql } from 'drizzle-orm';
 
 import { createApp } from './app.ts';
 import { createPools } from './pools.ts';
+import { ActivationOutbox, type OutboxStats } from './product/activation-outbox.ts';
+import { installActivationOutbox } from './product/activation.ts';
 import { createAdmission } from './search/admission.ts';
 import { env } from './env.ts';
 import { logger } from './logger.ts';
@@ -199,3 +201,41 @@ serve({ fetch: app.fetch, port: env.port }, (info) => {
       logger.error({ err: error }, 'embedder warm failed — search stays lexical-only');
     });
 });
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ACTIVATION OUTBOX — INSTALLED HERE, FLUSHED ON THE WAY OUT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * R4 hidden risk #17: activation writes were `void promise.catch(log)`, so every
+ * in-flight write vanished on a deploy and NOTHING COUNTED IT. A funnel with
+ * unmeasured loss cannot carry a paywall experiment — "this variant converts
+ * worse" and "this variant's writes were dropped during a deploy" are the same
+ * numbers.
+ *
+ * Installed after `serve`, deliberately, for the same reason the embedder warm
+ * is: nothing here may delay `/health` answering.
+ */
+const activationOutbox = new ActivationOutbox(rawSql);
+installActivationOutbox(activationOutbox);
+
+/**
+ * Flush on the way out. The ordinary deploy then loses nothing at all.
+ *
+ * `once`, because SIGTERM followed by SIGINT during a slow shutdown would
+ * otherwise run the flush twice and double-count the loss. The deadline is
+ * bounded: a shutdown that waits indefinitely for a database that is already
+ * gone turns a clean deploy into a hung one, and anything still queued when it
+ * passes is COUNTED as lost rather than quietly forgotten.
+ */
+let flushed = false;
+const flushActivation = (signal: string) => {
+  if (flushed) return;
+  flushed = true;
+  void activationOutbox.flush(5_000).then((stats: OutboxStats) => {
+    logger.info({ signal, ...stats }, 'activation outbox flushed');
+    process.exit(0);
+  });
+};
+process.once('SIGTERM', () => flushActivation('SIGTERM'));
+process.once('SIGINT', () => flushActivation('SIGINT'));
