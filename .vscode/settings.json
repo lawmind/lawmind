@@ -45,7 +45,7 @@
     "excluded, because measurement says every one over 256 KB is a run artifact and",
     "none is hand-edited. Excluding a path from the WATCHER does not hide it, does",
     "not stop anyone opening it, and does not stop git seeing it -- it only stops the",
-    "IDE being told, several times a second, that a 6 MB file changed again."
+    "IDE being told, several times a second, that a 6 MB file changed again.",
     "",
     "If a new lane artifact starts killing the language server again, the answer is",
     "another line in watcherExclude, not a smaller artifact."

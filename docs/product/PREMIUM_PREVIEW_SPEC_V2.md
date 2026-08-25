@@ -86,12 +86,25 @@ otherwise is the fake-scarcity failure. **No CTA to purchase in this state.**
 > **6 authorities · 4 events · hearing on 1 March**
 >
 > **Generate a structured matter review** →
-> *Issues, counter-positions and unresolved risks, written from what you have saved.*
-> *LawMind does not store whether an authority helps or hurts your case — the review works that out.*
+> *Issues, counter-positions and unresolved risks, drawn together from what you
+> have saved. LawMind will say where it could not find relevant authority rather
+> than filling the gap.*
 
-The third line is required, not optional. It is what converts an absence into an
-honest statement of scope rather than letting the reader assume a stance split
-exists behind the button.
+Plus the server's `notComputed[]` list, rendered — not summarised, not dropped.
+It names the four things that require generation, and it is what converts the CTA
+from an unbounded promise into a statement of scope.
+
+**Corrected 25 Aug, and the correction came from reviewing someone else's work.**
+This copy previously read *"LawMind does not store whether an authority helps or
+hurts your case — the review works that out."* Reviewing RCC's client headline
+("See which help and which hurt") against §1.1 made it obvious that my own line
+was the same promise one clause later. Both are untenable on the evidence:
+NEW1 bus 1093 — `adverse_authority` scores **zero for every representation
+tested**; bus 1150 — held-out abstention evidence will cover 6 of 8 posed
+classes.
+
+**The paid promise is assembly, never adjudication.** The review draws together
+what the advocate saved; it does not rule on which way an authority cuts.
 
 ### State C — something has moved (`adverseAuthorities > 0`)
 
@@ -154,6 +167,36 @@ paid for it has more reason to trust it, not less.
 carry a first-class *"No sufficiently relevant authority found"* state, and the
 review must render it rather than its nearest neighbour. Until then the
 `matter_automation` capability stays behind its OFF-by-default flag.
+
+**And the state must be derived from a server signal, not from an empty array.**
+Measured both runs, `POST /arguments/counter` returns exactly `position, asOf,
+authorities, excluded, unverifiedReferences` — no abstention field. RCC ships the
+right phrase today but infers it from `authorities.length === 0`, which is
+correct when the server found nothing (M07, M08) and silently wrong when it found
+twelve wrong-domain authorities (M06). NEW1 bus 1150 commits to an explicit
+abstention outcome on the wire, *"distinct from 'zero results' and distinct from
+'degraded'"*. The derivation changes when that lands.
+
+### 4.1 The hole in the abstention evidence, and the copy it forbids
+
+NEW1 bus 1150, pre-registered before any score was computed: the development /
+held-out split is by **target cluster**, and two classes have too few independent
+clusters to divide at all —
+
+```
+statute          3 development / 0 held-out
+pasted_passage   3 development / 0 held-out
+```
+
+So held-out abstention evidence will cover **6 of the 8 posed classes**, and
+NEW1 will publish no held-out abstention claim for `statute` or
+`pasted_passage`. `statute` also scores **0 for every representation tested**.
+
+**Therefore: no copy — in the preview, in a generated review, in the store
+listing or on the website — may imply that LawMind checked a statutory question
+and found nothing.** That is precisely the class where the product most needs to
+abstain and where our evidence that abstention works will be weakest. A silence
+we cannot vouch for must not be sold as a finding.
 
 This is a **precondition on selling**, not on building. The entitlement spine,
 the preview and the job pipeline may all ship dark.
