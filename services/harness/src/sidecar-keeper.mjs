@@ -96,9 +96,34 @@ function note(line) {
 function claimLock() {
   if (existsSync(LOCK)) {
     const held = readFileSync(LOCK, 'utf8').trim();
-    // A stale lock from a killed keeper must not block the replacement forever,
-    // so the pid is checked rather than trusted.
-    const pid = Number(held.split(/\s+/)[0]);
+    const [pidText, , startedAtText] = held.split(/\s+/);
+    const pid = Number(pidText);
+
+    /**
+     * A LIVE PID IS NOT THE SAME PROCESS. THIS COST THE LANE ITS SUPERVISOR.
+     *
+     * This used to be `process.kill(pid, 0)` and nothing else. On 25 Aug the
+     * keeper died holding the lock; Windows then recycled its pid to
+     * `smartscreen.exe`, and every subsequent 5-minute task run found a LIVE
+     * process 18368 and refused:
+     *
+     *     lock file        18368  2026-08-25T05:16:03Z   (keeper, 09:16 local)
+     *     pid 18368 today  smartscreen.exe, created 12:45:47 local
+     *
+     *     08:48:01  another keeper holds ... (pid 18368) — refusing to start
+     *     08:53:01  another keeper holds ... (pid 18368) — refusing to start
+     *
+     * The lane had no keeper and no sidecar for hours, the scheduled task was
+     * firing correctly the whole time, and it would never have recovered on its
+     * own — the refusal is permanent once the pid is reused, because nothing
+     * ages out.
+     *
+     * `scripts/lane-lease.mjs` already carries this lesson in its header: the
+     * recorded pid must be alive AND STILL THE SAME PROCESS, "because pids are
+     * recycled". That knowledge existed in the repo and this file did not have
+     * it. So the lock now records the process START TIME and compares it, and a
+     * mismatch is treated as stale rather than as a live owner.
+     */
     let alive = false;
     try {
       process.kill(pid, 0);
@@ -106,14 +131,60 @@ function claimLock() {
     } catch {
       alive = false;
     }
-    if (alive) {
+
+    let sameProcess = true;
+    if (alive && startedAtText) {
+      const actual = processStartedAt(pid);
+      if (actual === null) {
+        // Could not read it. Prefer taking over: a keeper that will not start is
+        // a worse failure than a brief second keeper, and the sidecar port is
+        // now guarded by SO_EXCLUSIVEADDRUSE anyway.
+        note(`could not read start time for pid ${pid}; treating the lock as stale rather than blocking forever`);
+        sameProcess = false;
+      } else {
+        const drift = Math.abs(Date.parse(actual) - Date.parse(startedAtText));
+        // The lock is written moments after the process starts, so a few seconds
+        // of drift is expected and minutes of it is a different process.
+        sameProcess = Number.isFinite(drift) && drift < 120_000;
+        if (!sameProcess) {
+          note(
+            `pid ${pid} is ALIVE but started ${actual}, while the lock was written at ${startedAtText} — ` +
+              'this is a RECYCLED pid, not the old keeper. Taking the lock over.',
+          );
+        }
+      }
+    }
+
+    if (alive && sameProcess) {
       note(`another keeper holds ${LOCK} (pid ${pid}) — refusing to start a second one`);
       return false;
     }
-    note(`stale lock from pid ${pid} (not running) — taking it over`);
+    if (!alive) note(`stale lock from pid ${pid} (not running) — taking it over`);
   }
-  writeFileSync(LOCK, `${process.pid} ${new Date().toISOString()}\n`);
+  // pid, lock-write time, and the PROCESS START TIME, which is the field that
+  // makes the pid meaningful on a machine that reuses them.
+  writeFileSync(LOCK, `${process.pid} ${new Date().toISOString()} ${processStartedAt(process.pid) ?? 'unknown'}\n`);
   return true;
+}
+
+/** ISO start time of a pid from the OS, or null if it cannot be determined. */
+function processStartedAt(pid) {
+  try {
+    const r = spawnSync(
+      'powershell.exe',
+      [
+        '-NoProfile',
+        '-NonInteractive',
+        '-Command',
+        `$p = Get-CimInstance Win32_Process -Filter "ProcessId=${Number(pid)}"; if ($p) { $p.CreationDate.ToUniversalTime().ToString("o") }`,
+      ],
+      { encoding: 'utf8', timeout: 30_000 },
+    );
+    const out = String(r.stdout ?? '').trim();
+    return out.length > 0 && !Number.isNaN(Date.parse(out)) ? out : null;
+  } catch {
+    return null;
+  }
 }
 
 async function healthy() {
