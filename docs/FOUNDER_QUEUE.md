@@ -5656,3 +5656,158 @@ R4 listed operational paging as blocking the WHOLE APP. This is the remaining
 half of it.
 
 Evidence: `docs/ai/lcc/OPS_PAGING_PROOF_R2_2026-08-25.md`.
+
+---
+
+# FQ-N2-R7 — NEW2, R7 §10 data-moat round, 25 August 2026
+
+Five items. Four are decisions only you can make; one is a legal question I am
+not qualified to answer and must not answer by default. **Everything else this
+round found was engineering and is either fixed or queued inside the lane** —
+`docs/ai/new2-r7/DATA_GAP_PRIORITY_QUEUE_V1.md` is the full work order.
+
+Full evidence for every number: `docs/ai/new2-r7/`.
+
+---
+
+## FQ-N2-1 · The eCourts harvest is authorised, built, and has never run
+
+`ecourts_observation`, `cause_list_syncs` and `harvest_fetches` are **all zero
+rows**. The registrar's authorisation has been on file since 7 Aug 2026 and runs
+to January 2029. The rate limiter, the fetch ledger and the narrowly-scoped
+CAPTCHA bypass are all built.
+
+**What is missing is one thing and it is not code:** the grant letter's specific
+numeric conditions. `docs/ECOURTS_AUTHORISATION.md` still says
+`STATUS: AWAITING THE LETTER'S NUMBERS`, and `CLAUDE.md` §6 is unambiguous —
+*"If the authorisation's terms are not in the repo, the switch stays off."*
+**The switch is off and I have left it off.**
+
+**What stays wrong without it.** eCourts is the only source that can make the
+corpus current. The last real judgment entered on **19 August**; it is now
+25 August. It is also the source that would close the largest coverage hole in
+the corpus:
+
+```
+Madras High Court                 1,696,697 documents     258 neutral citations
+Patna High Court                  1,706,788                 1
+High Court for State of Telangana 1,042,408                 3
+Orissa High Court                   794,461                 3
+High Court of Madhya Pradesh        650,704                 0
+High Court of Gujarat               422,014                 0
+```
+
+**Six High Courts, 4,922,537 judgments, effectively no citation identity.** An
+advocate in Chennai, Patna, Hyderabad, Cuttack, Jabalpur or Ahmedabad cannot look
+their own High Court's judgment up by citation, because we hold no citation for
+it. eCourts case-status carries it, along with the coram we are missing for
+18,660,626 documents.
+
+**Needed:** the rate/volume conditions from the registrar's letter, in the repo.
+
+---
+
+## FQ-N2-2 · The Supreme Court corpus is a law reporter's edition — a legal question
+
+**35,570 of our 38,342 Supreme Court judgments (92.77%) carry the running head
+`SUPREME COURT REPORTS`. 15,691 (40.92%) contain headnote prose.** Our High Court
+corpus is raw court text — 2 of 93,175 sampled documents show any reporter
+apparatus — so this is specific to the Supreme Court set.
+
+`CLAUDE.md` §6 says: *"What IS protected is a reporter's copy-edited version —
+headnotes, editorial numbering (Eastern Book Company v. D.B. Modak) — so use raw
+court text and never a law report's edition of it."*
+
+**Why I am not deciding it.** SCR is the **Supreme Court's own official**
+reporter, published by the Court, not a private publisher like SCC. Whether the
+*D.B. Modak* reasoning reaches a government reporter's headnotes is a real legal
+question with a real answer, and guessing it in either direction is the kind of
+thing this queue exists to prevent. The source is AWS Open Data under
+CC-BY-4.0, which is a separate question from copyright in the headnote.
+
+**Where it bites:** licensing exposure · `docs/DATASETS.md` forbids training on a
+reporter's edition and this is 38,342 documents · passage safety, because the
+Supreme Court subset carries **43.9% of all resolved citations** and is where
+authority-bearing retrieval will concentrate.
+
+**Needed:** counsel's view, or a decision to strip the apparatus and keep only
+the judgment text. The second is engineering and I can do it once told.
+
+---
+
+## FQ-N2-3 · IPC, CrPC and the Indian Evidence Act are not in the corpus, and no authorised source holds them
+
+| statute | references | judgments citing it | text held |
+| --- | ---: | ---: | --- |
+| **Code of Criminal Procedure, 1973** | **280,027** | **186,382** | **none** |
+| **Indian Penal Code, 1860** | 93,881 | 58,599 | **none** |
+| **Indian Evidence Act, 1872** | 17,576 | 11,355 | **none** |
+
+**The CrPC is the single most-cited statute in the entire corpus and we hold none
+of it.** BNS, BNSS and BSA are complete (358 / 531 / 170 sections) — but they
+commenced on 1 July 2024, and essentially every judgment we hold predates them.
+
+I fixed the India Code adapter (the site migrated to DSpace 7; the old handles
+404 and the new host answers HTTP 200 with an empty JavaScript shell) and then
+measured what is actually there:
+
+- **CrPC** — every exact-title item has **zero attachments**. Not available.
+- **IPC** — one PDF exists; it is *Chandigarh's Model Jail Department* copy, 58
+  pages, sections 1–120B of 511, and its s. 1 still reads *"except the State of
+  Jammu and Kashmir"*, so it predates the 2019 reorganisation. Partial and stale.
+- **Evidence Act** — obtainable. I fixed three parser defects and got section
+  recall from 138 to **171 of 183**. **I did not write it**, because 93.4% means
+  s. 105 (burden of proof for exceptions) would be silently missing, and a table
+  that claims to hold the Act while missing s. 105 is worse than no table.
+
+**Needed:** a source decision. I have not proposed and will not use any
+unauthorised portal or scraper-reseller. Two government routes are unprobed and
+cheap — India Code's own bulk/archive endpoints, and the Ministry of Law
+e-Gazette. Say the word and I will probe both.
+
+---
+
+## FQ-N2-4 · "Supreme AI" and "Supreme Today" — one name or two?
+
+A one-line confirmation, not a research task.
+
+- **`CLAUDE.md` §6a, in-repo now:** *"`Supreme AI` and `Supreme Today` are
+  different sources."*
+- **`docs/AUTHORIZED_SOURCE_MAP.md` §2**, recording your own direct statement of
+  **16 Aug 2026:** *"Supreme Today AI and Supreme AI refer to the SAME
+  provider/platform… treat them as one."*
+
+Your statement post-dates the §6a wording. **I have not picked a side**, because
+the two readings differ in how many authorisations exist, and R7 forbids
+broadening a permission from memory. If the 16 Aug statement stands, §6a's naming
+paragraph should be updated so the next agent does not re-open this.
+
+---
+
+## FQ-N2-5 · We keep no source document for any judgment
+
+`storage_key IS NOT NULL` is true for **0 of 18,698,984** documents. The whole
+corpus is derived text with no retained original.
+
+Consequences: **"show me the PDF" is impossible, not slow**, for every judgment.
+Re-extracting the 469,599 documents we can prove are damaged has nothing local to
+work from. And a redaction or takedown, if one were ever required, has no source
+to prove itself against — there is no suppression capability at all today
+(`SUPPRESSION_REDACTION_CAPABILITY_AUDIT_V1`).
+
+`docs/R2_SOURCE_RETENTION_MATRIX.md` describes a retention policy the corpus does
+not implement. Re-fetching from AWS is permitted and costs storage.
+
+**Needed:** whether to spend on retention, and where. Cost is LCC's to size once
+the answer is yes.
+
+---
+
+## Not queued, deliberately
+
+These looked like founder items and are not, so I did them or filed them in the
+lane instead: the 293 stranded citations (fixed, 293 → 0); the 61 live false pins
+(reported to LCC, a 61-row reversible `UPDATE`); the ~24,500 ambiguous citation
+pins (a deterministic repair); linking 323,524 statute references (a join, no
+acquisition); OCR for 469,599 damaged documents (compute, not money); and coram
+recovery from our own header text (a hypothesis I can test without any source).

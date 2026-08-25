@@ -1,0 +1,1561 @@
+{
+ "pass": "keys",
+ "generated_at": "2026-08-25T11:14:53.894Z",
+ "ms": 45300,
+ "row_count": 194,
+ "sql": "\n    SELECT j.court AS court,\n  CASE WHEN j.judgment_date IS NULL THEN 'unknown'\n       ELSE extract(year FROM j.judgment_date)::int::text END AS year,\n      count(*) FILTER (WHERE j.neutral_citation IS NOT NULL AND j.neutral_citation <> '' AND upper(regexp_replace(j.neutral_citation,'[^A-Za-z0-9]','','g')) !~ '^[0-9]{4}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[0-9]{1,2}$')::bigint AS real_neutral,\n      count(*) FILTER (WHERE j.neutral_citation IS NOT NULL AND j.neutral_citation <> '' AND upper(regexp_replace(j.neutral_citation,'[^A-Za-z0-9]','','g')) !~ '^[0-9]{4}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[0-9]{1,2}$' AND EXISTS (SELECT 1 FROM judgment_citation_keys k WHERE k.judgment_id = j.id AND k.source='neutral'))::bigint AS keyed_neutral,\n      count(*) FILTER (WHERE coalesce(array_length(j.reporter_citations,1),0) > 0)::bigint AS has_reporter,\n      count(*) FILTER (WHERE coalesce(array_length(j.reporter_citations,1),0) > 0 AND EXISTS (SELECT 1 FROM judgment_citation_keys k WHERE k.judgment_id = j.id AND k.source='reporter'))::bigint AS keyed_reporter\n    FROM judgments j\n    WHERE (j.neutral_citation IS NOT NULL AND j.neutral_citation <> '')\n       OR coalesce(array_length(j.reporter_citations,1),0) > 0\n    GROUP BY 1,2",
+ "rows": [
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2025",
+   "real_neutral": "55955",
+   "keyed_neutral": "55955",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2011",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2015",
+   "real_neutral": "759",
+   "keyed_neutral": "759",
+   "has_reporter": "761",
+   "keyed_reporter": "761"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2025",
+   "real_neutral": "884",
+   "keyed_neutral": "884",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2025",
+   "real_neutral": "29216",
+   "keyed_neutral": "29216",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2024",
+   "real_neutral": "453",
+   "keyed_neutral": "453",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2003",
+   "real_neutral": "17",
+   "keyed_neutral": "17",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2023",
+   "real_neutral": "34360",
+   "keyed_neutral": "34190",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2024",
+   "real_neutral": "81669",
+   "keyed_neutral": "81669",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1964",
+   "real_neutral": "294",
+   "keyed_neutral": "294",
+   "has_reporter": "295",
+   "keyed_reporter": "295"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1973",
+   "real_neutral": "257",
+   "keyed_neutral": "257",
+   "has_reporter": "257",
+   "keyed_reporter": "257"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2024",
+   "real_neutral": "204",
+   "keyed_neutral": "204",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2022",
+   "real_neutral": "28",
+   "keyed_neutral": "28",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2017",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1958",
+   "real_neutral": "124",
+   "keyed_neutral": "124",
+   "has_reporter": "144",
+   "keyed_reporter": "144"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2008",
+   "real_neutral": "1507",
+   "keyed_neutral": "1507",
+   "has_reporter": "1508",
+   "keyed_reporter": "1508"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2005",
+   "real_neutral": "631",
+   "keyed_neutral": "631",
+   "has_reporter": "631",
+   "keyed_reporter": "631"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1999",
+   "real_neutral": "572",
+   "keyed_neutral": "572",
+   "has_reporter": "572",
+   "keyed_reporter": "572"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1954",
+   "real_neutral": "127",
+   "keyed_neutral": "127",
+   "has_reporter": "127",
+   "keyed_reporter": "127"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2023",
+   "real_neutral": "11",
+   "keyed_neutral": "11",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1984",
+   "real_neutral": "242",
+   "keyed_neutral": "242",
+   "has_reporter": "242",
+   "keyed_reporter": "242"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1967",
+   "real_neutral": "304",
+   "keyed_neutral": "304",
+   "has_reporter": "304",
+   "keyed_reporter": "304"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1952",
+   "real_neutral": "81",
+   "keyed_neutral": "81",
+   "has_reporter": "81",
+   "keyed_reporter": "81"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2003",
+   "real_neutral": "749",
+   "keyed_neutral": "749",
+   "has_reporter": "750",
+   "keyed_reporter": "750"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2026",
+   "real_neutral": "29880",
+   "keyed_neutral": "29880",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2025",
+   "real_neutral": "12274",
+   "keyed_neutral": "12274",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2023",
+   "real_neutral": "178528",
+   "keyed_neutral": "178528",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1960",
+   "real_neutral": "276",
+   "keyed_neutral": "276",
+   "has_reporter": "277",
+   "keyed_reporter": "277"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2023",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2025",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2023",
+   "real_neutral": "2",
+   "keyed_neutral": "2",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1955",
+   "real_neutral": "83",
+   "keyed_neutral": "83",
+   "has_reporter": "83",
+   "keyed_reporter": "83"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2025",
+   "real_neutral": "217800",
+   "keyed_neutral": "217800",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2022",
+   "real_neutral": "1017",
+   "keyed_neutral": "1017",
+   "has_reporter": "1017",
+   "keyed_reporter": "1017"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2011",
+   "real_neutral": "847",
+   "keyed_neutral": "847",
+   "has_reporter": "847",
+   "keyed_reporter": "847"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1972",
+   "real_neutral": "313",
+   "keyed_neutral": "313",
+   "has_reporter": "313",
+   "keyed_reporter": "313"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2026",
+   "real_neutral": "8341",
+   "keyed_neutral": "8341",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2026",
+   "real_neutral": "27",
+   "keyed_neutral": "27",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1977",
+   "real_neutral": "244",
+   "keyed_neutral": "244",
+   "has_reporter": "244",
+   "keyed_reporter": "244"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2014",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2026",
+   "real_neutral": "372",
+   "keyed_neutral": "372",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1969",
+   "real_neutral": "344",
+   "keyed_neutral": "344",
+   "has_reporter": "344",
+   "keyed_reporter": "344"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2015",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2021",
+   "real_neutral": "707",
+   "keyed_neutral": "707",
+   "has_reporter": "708",
+   "keyed_reporter": "708"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2017",
+   "real_neutral": "723",
+   "keyed_neutral": "723",
+   "has_reporter": "732",
+   "keyed_reporter": "732"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2023",
+   "real_neutral": "8",
+   "keyed_neutral": "8",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2023",
+   "real_neutral": "52741",
+   "keyed_neutral": "52741",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2023",
+   "real_neutral": "5840",
+   "keyed_neutral": "5840",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1950",
+   "real_neutral": "43",
+   "keyed_neutral": "43",
+   "has_reporter": "43",
+   "keyed_reporter": "43"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1981",
+   "real_neutral": "211",
+   "keyed_neutral": "211",
+   "has_reporter": "211",
+   "keyed_reporter": "211"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1976",
+   "real_neutral": "342",
+   "keyed_neutral": "342",
+   "has_reporter": "342",
+   "keyed_reporter": "342"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2022",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2025",
+   "real_neutral": "42",
+   "keyed_neutral": "42",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2024",
+   "real_neutral": "1783",
+   "keyed_neutral": "1783",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2025",
+   "real_neutral": "77293",
+   "keyed_neutral": "77293",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2006",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2003",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2004",
+   "real_neutral": "728",
+   "keyed_neutral": "728",
+   "has_reporter": "728",
+   "keyed_reporter": "728"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2025",
+   "real_neutral": "277",
+   "keyed_neutral": "277",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2011",
+   "real_neutral": "2",
+   "keyed_neutral": "2",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2026",
+   "real_neutral": "21975",
+   "keyed_neutral": "21975",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2024",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1983",
+   "real_neutral": "205",
+   "keyed_neutral": "205",
+   "has_reporter": "205",
+   "keyed_reporter": "205"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2024",
+   "real_neutral": "745",
+   "keyed_neutral": "745",
+   "has_reporter": "782",
+   "keyed_reporter": "782"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1991",
+   "real_neutral": "351",
+   "keyed_neutral": "351",
+   "has_reporter": "351",
+   "keyed_reporter": "351"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1998",
+   "real_neutral": "490",
+   "keyed_neutral": "490",
+   "has_reporter": "491",
+   "keyed_reporter": "491"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2019",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2019",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2002",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1953",
+   "real_neutral": "94",
+   "keyed_neutral": "94",
+   "has_reporter": "95",
+   "keyed_reporter": "95"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1990",
+   "real_neutral": "401",
+   "keyed_neutral": "401",
+   "has_reporter": "401",
+   "keyed_reporter": "401"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2009",
+   "real_neutral": "1322",
+   "keyed_neutral": "1322",
+   "has_reporter": "1324",
+   "keyed_reporter": "1324"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2026",
+   "real_neutral": "5",
+   "keyed_neutral": "5",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2019",
+   "real_neutral": "1047",
+   "keyed_neutral": "1047",
+   "has_reporter": "1049",
+   "keyed_reporter": "1049"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2024",
+   "real_neutral": "71209",
+   "keyed_neutral": "71209",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2024",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2002",
+   "real_neutral": "578",
+   "keyed_neutral": "578",
+   "has_reporter": "578",
+   "keyed_reporter": "578"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2026",
+   "real_neutral": "232",
+   "keyed_neutral": "232",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2008",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2024",
+   "real_neutral": "166",
+   "keyed_neutral": "166",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1985",
+   "real_neutral": "258",
+   "keyed_neutral": "258",
+   "has_reporter": "258",
+   "keyed_reporter": "258"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2026",
+   "real_neutral": "17187",
+   "keyed_neutral": "17187",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2012",
+   "real_neutral": "621",
+   "keyed_neutral": "621",
+   "has_reporter": "622",
+   "keyed_reporter": "622"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2026",
+   "real_neutral": "2978",
+   "keyed_neutral": "2978",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2007",
+   "real_neutral": "1321",
+   "keyed_neutral": "1321",
+   "has_reporter": "1323",
+   "keyed_reporter": "1323"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1979",
+   "real_neutral": "279",
+   "keyed_neutral": "279",
+   "has_reporter": "279",
+   "keyed_reporter": "279"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1992",
+   "real_neutral": "358",
+   "keyed_neutral": "358",
+   "has_reporter": "362",
+   "keyed_reporter": "362"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2024",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2021",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1971",
+   "real_neutral": "352",
+   "keyed_neutral": "352",
+   "has_reporter": "352",
+   "keyed_reporter": "352"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2020",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2024",
+   "real_neutral": "9",
+   "keyed_neutral": "9",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2018",
+   "real_neutral": "789",
+   "keyed_neutral": "789",
+   "has_reporter": "795",
+   "keyed_reporter": "795"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1961",
+   "real_neutral": "362",
+   "keyed_neutral": "362",
+   "has_reporter": "363",
+   "keyed_reporter": "363"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1993",
+   "real_neutral": "397",
+   "keyed_neutral": "397",
+   "has_reporter": "397",
+   "keyed_reporter": "397"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2009",
+   "real_neutral": "0",
+   "keyed_neutral": "0",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2025",
+   "real_neutral": "26099",
+   "keyed_neutral": "26099",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2024",
+   "real_neutral": "18446",
+   "keyed_neutral": "18432",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2005",
+   "real_neutral": "4",
+   "keyed_neutral": "4",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2026",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1965",
+   "real_neutral": "309",
+   "keyed_neutral": "309",
+   "has_reporter": "309",
+   "keyed_reporter": "309"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2022",
+   "real_neutral": "9",
+   "keyed_neutral": "9",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2024",
+   "real_neutral": "20984",
+   "keyed_neutral": "20984",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1968",
+   "real_neutral": "347",
+   "keyed_neutral": "347",
+   "has_reporter": "347",
+   "keyed_reporter": "347"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1962",
+   "real_neutral": "394",
+   "keyed_neutral": "394",
+   "has_reporter": "394",
+   "keyed_reporter": "394"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2023",
+   "real_neutral": "7",
+   "keyed_neutral": "7",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2006",
+   "real_neutral": "5",
+   "keyed_neutral": "5",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1963",
+   "real_neutral": "267",
+   "keyed_neutral": "267",
+   "has_reporter": "267",
+   "keyed_reporter": "267"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2025",
+   "real_neutral": "10675",
+   "keyed_neutral": "10675",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2026",
+   "real_neutral": "40048",
+   "keyed_neutral": "40048",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2008",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2022",
+   "real_neutral": "2",
+   "keyed_neutral": "2",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2006",
+   "real_neutral": "1028",
+   "keyed_neutral": "1028",
+   "has_reporter": "1028",
+   "keyed_reporter": "1028"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1959",
+   "real_neutral": "168",
+   "keyed_neutral": "168",
+   "has_reporter": "168",
+   "keyed_reporter": "168"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2005",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2012",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2013",
+   "real_neutral": "4",
+   "keyed_neutral": "4",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1994",
+   "real_neutral": "623",
+   "keyed_neutral": "623",
+   "has_reporter": "624",
+   "keyed_reporter": "624"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2024",
+   "real_neutral": "9306",
+   "keyed_neutral": "9306",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Test Court",
+   "year": "2024",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2023",
+   "real_neutral": "29",
+   "keyed_neutral": "29",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1966",
+   "real_neutral": "270",
+   "keyed_neutral": "270",
+   "has_reporter": "270",
+   "keyed_reporter": "270"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2026",
+   "real_neutral": "199",
+   "keyed_neutral": "199",
+   "has_reporter": "199",
+   "keyed_reporter": "199"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1986",
+   "real_neutral": "286",
+   "keyed_neutral": "286",
+   "has_reporter": "286",
+   "keyed_reporter": "286"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2025",
+   "real_neutral": "44619",
+   "keyed_neutral": "44619",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2000",
+   "real_neutral": "607",
+   "keyed_neutral": "607",
+   "has_reporter": "608",
+   "keyed_reporter": "608"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2022",
+   "real_neutral": "6",
+   "keyed_neutral": "6",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1996",
+   "real_neutral": "1533",
+   "keyed_neutral": "1533",
+   "has_reporter": "1534",
+   "keyed_reporter": "1534"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2026",
+   "real_neutral": "7",
+   "keyed_neutral": "7",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2016",
+   "real_neutral": "583",
+   "keyed_neutral": "583",
+   "has_reporter": "587",
+   "keyed_reporter": "587"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1974",
+   "real_neutral": "282",
+   "keyed_neutral": "282",
+   "has_reporter": "282",
+   "keyed_reporter": "282"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2025",
+   "real_neutral": "897",
+   "keyed_neutral": "897",
+   "has_reporter": "897",
+   "keyed_reporter": "897"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1988",
+   "real_neutral": "370",
+   "keyed_neutral": "370",
+   "has_reporter": "370",
+   "keyed_reporter": "370"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2023",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2023",
+   "real_neutral": "1918",
+   "keyed_neutral": "1918",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1956",
+   "real_neutral": "83",
+   "keyed_neutral": "83",
+   "has_reporter": "83",
+   "keyed_reporter": "83"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2014",
+   "real_neutral": "782",
+   "keyed_neutral": "782",
+   "has_reporter": "791",
+   "keyed_reporter": "791"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2019",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2024",
+   "real_neutral": "180",
+   "keyed_neutral": "178",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2005",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2013",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2004",
+   "real_neutral": "19",
+   "keyed_neutral": "19",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2025",
+   "real_neutral": "1167",
+   "keyed_neutral": "1167",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2025",
+   "real_neutral": "6586",
+   "keyed_neutral": "6586",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2010",
+   "real_neutral": "2",
+   "keyed_neutral": "2",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1987",
+   "real_neutral": "385",
+   "keyed_neutral": "385",
+   "has_reporter": "385",
+   "keyed_reporter": "385"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2010",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2020",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2023",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2024",
+   "real_neutral": "3093",
+   "keyed_neutral": "3093",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2025",
+   "real_neutral": "7",
+   "keyed_neutral": "7",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1989",
+   "real_neutral": "398",
+   "keyed_neutral": "398",
+   "has_reporter": "398",
+   "keyed_reporter": "398"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2024",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2007",
+   "real_neutral": "4",
+   "keyed_neutral": "4",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2024",
+   "real_neutral": "22505",
+   "keyed_neutral": "22481",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2026",
+   "real_neutral": "90",
+   "keyed_neutral": "90",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2022",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2024",
+   "real_neutral": "162192",
+   "keyed_neutral": "162109",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1980",
+   "real_neutral": "241",
+   "keyed_neutral": "241",
+   "has_reporter": "241",
+   "keyed_reporter": "241"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2025",
+   "real_neutral": "10829",
+   "keyed_neutral": "10829",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1957",
+   "real_neutral": "116",
+   "keyed_neutral": "116",
+   "has_reporter": "116",
+   "keyed_reporter": "116"
+  },
+  {
+   "court": "Test Court",
+   "year": "2023",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1975",
+   "real_neutral": "336",
+   "keyed_neutral": "336",
+   "has_reporter": "336",
+   "keyed_reporter": "336"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2024",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2026",
+   "real_neutral": "7120",
+   "keyed_neutral": "7120",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2024",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2026",
+   "real_neutral": "7086",
+   "keyed_neutral": "7086",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2022",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2013",
+   "real_neutral": "849",
+   "keyed_neutral": "849",
+   "has_reporter": "851",
+   "keyed_reporter": "851"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1978",
+   "real_neutral": "266",
+   "keyed_neutral": "266",
+   "has_reporter": "266",
+   "keyed_reporter": "266"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2011",
+   "real_neutral": "6",
+   "keyed_neutral": "6",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1970",
+   "real_neutral": "257",
+   "keyed_neutral": "257",
+   "has_reporter": "257",
+   "keyed_reporter": "257"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2023",
+   "real_neutral": "19",
+   "keyed_neutral": "19",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2026",
+   "real_neutral": "589",
+   "keyed_neutral": "589",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2020",
+   "real_neutral": "571",
+   "keyed_neutral": "571",
+   "has_reporter": "571",
+   "keyed_reporter": "571"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2009",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2023",
+   "real_neutral": "36237",
+   "keyed_neutral": "36237",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2012",
+   "real_neutral": "0",
+   "keyed_neutral": "0",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2017",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1997",
+   "real_neutral": "831",
+   "keyed_neutral": "831",
+   "has_reporter": "843",
+   "keyed_reporter": "843"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2012",
+   "real_neutral": "12",
+   "keyed_neutral": "12",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2025",
+   "real_neutral": "8",
+   "keyed_neutral": "8",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2026",
+   "real_neutral": "246",
+   "keyed_neutral": "246",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2015",
+   "real_neutral": "1",
+   "keyed_neutral": "1",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1951",
+   "real_neutral": "64",
+   "keyed_neutral": "64",
+   "has_reporter": "64",
+   "keyed_reporter": "64"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2026",
+   "real_neutral": "34",
+   "keyed_neutral": "34",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2001",
+   "real_neutral": "611",
+   "keyed_neutral": "611",
+   "has_reporter": "612",
+   "keyed_reporter": "612"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2010",
+   "real_neutral": "895",
+   "keyed_neutral": "895",
+   "has_reporter": "896",
+   "keyed_reporter": "896"
+  },
+  {
+   "court": "Test Court",
+   "year": "2001",
+   "real_neutral": "0",
+   "keyed_neutral": "0",
+   "has_reporter": "3",
+   "keyed_reporter": "3"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1995",
+   "real_neutral": "914",
+   "keyed_neutral": "914",
+   "has_reporter": "916",
+   "keyed_reporter": "916"
+  },
+  {
+   "court": "Test Court",
+   "year": "2025",
+   "real_neutral": "3",
+   "keyed_neutral": "3",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2023",
+   "real_neutral": "854",
+   "keyed_neutral": "854",
+   "has_reporter": "854",
+   "keyed_reporter": "854"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2026",
+   "real_neutral": "9",
+   "keyed_neutral": "9",
+   "has_reporter": "0",
+   "keyed_reporter": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1982",
+   "real_neutral": "104",
+   "keyed_neutral": "104",
+   "has_reporter": "104",
+   "keyed_reporter": "104"
+  }
+ ]
+}

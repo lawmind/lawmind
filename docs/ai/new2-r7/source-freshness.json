@@ -1,0 +1,134 @@
+{
+ "artifact": "SOURCE_FRESHNESS_AND_DRIFT_V1",
+ "generated_at": "2026-08-25T14:38:14.509Z",
+ "adapters": [
+  {
+   "adapter": "aws_open_data_hc",
+   "kind": "bulk_dump",
+   "state": "FRESH",
+   "documents_held": 18660626,
+   "last_useful_document": "2026-08-19 23:05:38.04583+00",
+   "age_days": 5.65,
+   "staleness_horizon_days": 30,
+   "parser_signature": "parquet -> judgments(source_url LIKE %indian-high-court-judgments%)",
+   "expected": "periodic bulk refresh; long quiet periods are normal",
+   "error": null
+  },
+  {
+   "adapter": "aws_open_data_sc",
+   "kind": "bulk_dump",
+   "state": "FRESH",
+   "documents_held": 38342,
+   "last_useful_document": "2026-08-11 09:52:23.341728+00",
+   "age_days": 14.2,
+   "staleness_horizon_days": 30,
+   "parser_signature": "parquet -> judgments(source_url LIKE %indian-supreme-court-judgments%)",
+   "expected": "periodic bulk refresh; long quiet periods are normal",
+   "error": null
+  },
+  {
+   "adapter": "indiacode_statutes",
+   "kind": "http_api",
+   "state": "FRESH",
+   "documents_held": 846,
+   "last_useful_document": "2026-08-13 00:31:27.689748+00",
+   "age_days": 12.59,
+   "staleness_horizon_days": 180,
+   "parser_signature": "DSpace 7 REST /server/api/discover/search/objects -> statutes/statute_sections",
+   "expected": "on-demand; a statute library changes rarely",
+   "error": null
+  },
+  {
+   "adapter": "ecourts",
+   "kind": "http_api",
+   "state": "NEVER_INGESTED",
+   "documents_held": 0,
+   "last_useful_document": null,
+   "age_days": null,
+   "staleness_horizon_days": 2,
+   "parser_signature": "services/api/src/court/ecourts.ts -> ecourts_observation / cause_list_syncs",
+   "expected": "live; the only source that can make the corpus current",
+   "error": null
+  }
+ ],
+ "ingest_failure_ledger": [
+  {
+   "outcome": "pdf_absent",
+   "permanent": true,
+   "n": "217794",
+   "newest": "2026-08-19 23:05:18.868186+00"
+  },
+  {
+   "outcome": "no_text",
+   "permanent": false,
+   "n": "10062",
+   "newest": "2026-08-19 22:46:06.398204+00"
+  },
+  {
+   "outcome": "pdf_failed",
+   "permanent": false,
+   "n": "2794",
+   "newest": "2026-08-19 23:05:25.591145+00"
+  },
+  {
+   "outcome": "no_text",
+   "permanent": true,
+   "n": "218",
+   "newest": "2026-08-19 22:45:58.189516+00"
+  },
+  {
+   "outcome": "pdf_timeout",
+   "permanent": false,
+   "n": "60",
+   "newest": "2026-08-19 19:02:56.449555+00"
+  },
+  {
+   "outcome": "no_title",
+   "permanent": true,
+   "n": "3",
+   "newest": "2026-08-19 00:11:16.306765+00"
+  }
+ ],
+ "ingest_cadence_21d": [
+  {
+   "day": "2026-08-04",
+   "ingested": "38341"
+  },
+  {
+   "day": "2026-08-11",
+   "ingested": "100261"
+  },
+  {
+   "day": "2026-08-12",
+   "ingested": "558383"
+  },
+  {
+   "day": "2026-08-13",
+   "ingested": "650442"
+  },
+  {
+   "day": "2026-08-14",
+   "ingested": "4251202"
+  },
+  {
+   "day": "2026-08-15",
+   "ingested": "1697439"
+  },
+  {
+   "day": "2026-08-17",
+   "ingested": "1107452"
+  },
+  {
+   "day": "2026-08-18",
+   "ingested": "9423960"
+  },
+  {
+   "day": "2026-08-19",
+   "ingested": "871488"
+  },
+  {
+   "day": "2026-08-23",
+   "ingested": "16"
+  }
+ ]
+}

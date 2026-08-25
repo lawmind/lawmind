@@ -134,9 +134,53 @@ export type ParsedSection = {
  * followed by asterisks, and/or an opening bracket. Ordinary numbered prose
  * still cannot match, which the existing test asserts and which is the only
  * reason this is a fix rather than a loosening.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A THIRD DEFECT, FOUND BY COUNTING WHAT CAME OUT, 25 Aug 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * **A long heading wraps, and the rule required it not to.** India Code's
+ * Indian Evidence Act sets section 32 as
+ *
+ *     32. Cases in which statement of relevant fact by person who is dead or cannot be found, etc., is
+ *     relevant. –– Statements, written or verbal, …
+ *
+ * `[^\n]` cannot cross that line break, so the heading never terminated and the
+ * section was not a section. It is not one lost heading: **29 of the Act's
+ * sections were missing, s. 32 — dying declarations — among them.** A corpus
+ * that holds the Evidence Act without s. 32 is worse than one that holds no
+ * Evidence Act at all, because a search for it returns a confident empty from a
+ * table that claims to hold the Act.
+ *
+ * The repair is one OPTIONAL, LAZY group allowing a single wrapped line. Lazy
+ * and optional together make it **strictly additive**: the engine still tries to
+ * terminate the heading within its own line first and only reaches for the next
+ * line when that fails, so every heading that parsed before parses identically.
+ * A blank line is not crossed — a paragraph break is never a wrap — and the
+ * continuation is capped well below the first line's budget.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A FOURTH DEFECT, SAME DAY, SAME METHOD
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * **The footnote marker does not always carry an asterisk.** Defect 2 above was
+ * found on the IPC, which prints `4*[18. "India".--…`. India Code's Evidence Act
+ * is a later typesetting and prints the same apparatus as `2[65A. Special
+ * provisions as to evidence relating to electronic record. –– …` — digit,
+ * bracket, no asterisk. `\*+` requires at least one, so every section inserted
+ * by amendment was invisible. That is not a marginal set: it is **s. 65A and
+ * s. 65B (electronic records), s. 113A (abetment of suicide by a married woman),
+ * s. 113B (dowry death) and s. 114A** — the provisions an Indian criminal
+ * practitioner reaches for most often, absent precisely because they are the
+ * modern ones.
+ *
+ * The new alternative consumes the digits ONLY when a bracket immediately
+ * follows (a lookahead, so the bracket is still matched by the existing `\[?`).
+ * Ordinary numbered prose — "2. The witness deposed…" — has no bracket and
+ * still cannot match, which the prose-guard test asserts.
  */
 const SECTION_HEADING =
-  /^[ \t]*(?:\d{1,2}\*+[ \t]*)?\[?[ \t]*(\d{1,3}[A-Z]{0,3})\.[ \t]+(["“]?[A-Z][^\n]{2,150}?)\.[ \t]*(?:[—–-]{1,2}|\n)/gm;
+  /^[ \t]*(?:\d{1,2}\*+[ \t]*|\d{1,2}(?=\[))?\[?[ \t]*(\d{1,3}[A-Z]{0,3})\.[ \t]+(["“]?[A-Z][^\n]{2,150}?(?:\n[ \t]*[^\s][^\n]{0,100}?)?)\.[ \t]*(?:[—–-]{1,2}|\n)/gm;
 
 /**
  * Amendment footnotes, which are the reason the first real parse produced
@@ -243,7 +287,7 @@ export function parseSections(rawText: string): ParsedSection[] {
 export function keepAscendingRun(sections: readonly ParsedSection[]): ParsedSection[] {
   if (sections.length === 0) return [];
 
-  const value = (s: ParsedSection) => Number.parseInt(s.number, 10);
+  const value = (s: ParsedSection) => sectionOrdinal(s.number);
   const n = sections.length;
   // tails[k] = index into `sections` of the smallest possible tail of an
   // increasing run of length k+1.
@@ -302,8 +346,35 @@ export function dropTableOfContents(sections: readonly ParsedSection[]): ParsedS
 
 /** Ordering the number the way a lawyer reads it: 302 before 302A before 303. */
 export function compareSectionNumbers(a: string, b: string): number {
-  const na = Number.parseInt(a, 10);
-  const nb = Number.parseInt(b, 10);
-  if (na !== nb) return na - nb;
-  return a.localeCompare(b);
+  const d = sectionOrdinal(a) - sectionOrdinal(b);
+  return d !== 0 ? d : a.localeCompare(b);
+}
+
+/**
+ * One total order over section numbers, defined once and used by BOTH the
+ * comparator above and the ascending rule below.
+ *
+ * **The suffix is part of the number, and treating it as decoration cost the
+ * Evidence Act 30 sections.** `keepAscendingRun` ranked a section by
+ * `parseInt`, so `65`, `65A` and `65B` were all 65 — and a strictly increasing
+ * run can hold only one value, so the rule silently chose one of the three and
+ * discarded the rest. It was not visible as a parse failure because the
+ * surviving section looked perfectly correct; only counting the Act's own
+ * arrangement of sections against the body showed it. Section 65B is how
+ * electronic evidence is admitted in India; it is not a variant of 65.
+ *
+ * Scaled so the base number always dominates: `65 < 65A < 65B < 66`. The
+ * suffix is ranked in base 26, which orders `A < B < … < Z < AA`, and is capped
+ * far below the scale factor so no suffix can ever reach the next section.
+ */
+export function sectionOrdinal(number: string): number {
+  const base = Number.parseInt(number, 10);
+  if (Number.isNaN(base)) return Number.NaN;
+  const suffix = number.slice(String(base).length).toUpperCase();
+  let rank = 0;
+  for (const ch of suffix) {
+    if (ch < 'A' || ch > 'Z') continue;
+    rank = rank * 26 + (ch.charCodeAt(0) - 64);
+  }
+  return base * 1000 + Math.min(rank, 999);
 }

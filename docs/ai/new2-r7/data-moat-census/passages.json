@@ -1,0 +1,13 @@
+{
+ "pass": "passages",
+ "generated_at": "2026-08-25T11:47:58.283Z",
+ "ms": 281843,
+ "row_count": 1,
+ "sql": "\n    SELECT count(*)::bigint AS paragraph_rows,\n           count(DISTINCT judgment_id)::bigint AS documents_with_paragraphs\n    FROM judgment_paragraphs",
+ "rows": [
+  {
+   "paragraph_rows": "91231179",
+   "documents_with_paragraphs": "18675491"
+  }
+ ]
+}

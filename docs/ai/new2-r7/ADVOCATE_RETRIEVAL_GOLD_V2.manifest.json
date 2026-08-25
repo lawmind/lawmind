@@ -1,0 +1,63 @@
+{
+ "artifact": "ADVOCATE_RETRIEVAL_GOLD_V2",
+ "version": "2.0.0",
+ "generated_at": "2026-08-25T14:55:11.325Z",
+ "lane": "NEW2",
+ "holdout_owner": "FIFTH",
+ "rules": {
+  "primary_source_bound": "every query derives from the target judgment’s own text or structured metadata; no model description, no reporter headnote",
+  "unavailable_target": "a target that cannot be retrieved stays in the set and counts as an END-TO-END MISS",
+  "split_key": "target judgment id, so all queries about one authority share a split",
+  "split_ratio": "60 train / 20 dev / 20 holdout",
+  "no_query_property_the_server_lacks": "nothing routes on a field production cannot compute at query time"
+ },
+ "totals": {
+  "n": 480,
+  "by_family": {
+   "exact_identity": 60,
+   "case_title_identity": 60,
+   "statute": 60,
+   "pasted_passage": 60,
+   "long_narrative": 60,
+   "supporting_authority": 60,
+   "adverse_authority": 60,
+   "criminal_code_transition": 60
+  },
+  "retrievable_today": 308,
+  "body_safe": 462
+ },
+ "train": {
+  "n": 304,
+  "by_family": {
+   "exact_identity": 46,
+   "case_title_identity": 34,
+   "statute": 36,
+   "pasted_passage": 36,
+   "long_narrative": 35,
+   "supporting_authority": 46,
+   "adverse_authority": 41,
+   "criminal_code_transition": 30
+  },
+  "retrievable_today": 200,
+  "body_safe": 296
+ },
+ "dev": {
+  "n": 90,
+  "by_family": {
+   "exact_identity": 8,
+   "case_title_identity": 15,
+   "statute": 7,
+   "pasted_passage": 13,
+   "long_narrative": 12,
+   "supporting_authority": 4,
+   "adverse_authority": 9,
+   "criminal_code_transition": 22
+  },
+  "retrievable_today": 49,
+  "body_safe": 84
+ },
+ "holdout": {
+  "n": 86,
+  "note": "contents withheld — see advocate-gold-v2-HOLDOUT.json, FIFTH only"
+ }
+}

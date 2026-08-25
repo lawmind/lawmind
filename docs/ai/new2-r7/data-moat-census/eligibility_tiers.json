@@ -1,0 +1,1044 @@
+{
+ "pass": "eligibility_tiers",
+ "generated_at": "2026-08-25T13:43:55.621Z",
+ "ms": 11347,
+ "row_count": 115,
+ "sql": "\n    SELECT e.court AS court,\n      e.semantic_tier,\n      e.text_safety,\n      count(*)::bigint AS sampled_rows,\n      count(*) FILTER (WHERE e.axis_a_identity)::bigint AS axis_a_identity,\n      count(*) FILTER (WHERE e.axis_b_text)::bigint AS axis_b_text,\n      count(*) FILTER (WHERE e.axis_c_role)::bigint AS axis_c_role\n    FROM judgments t TABLESAMPLE SYSTEM (0.25) REPEATABLE (20260825)\n    JOIN judgment_embedding_eligibility e ON e.id = t.id\n    GROUP BY 1,2,3",
+ "rows": [
+  {
+   "court": "Patna High Court",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "14",
+   "axis_a_identity": "14",
+   "axis_b_text": "14",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "7",
+   "axis_a_identity": "7",
+   "axis_b_text": "7",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "2",
+   "axis_a_identity": "2",
+   "axis_b_text": "0",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "High Court of Manipur",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "414",
+   "axis_a_identity": "414",
+   "axis_b_text": "0",
+   "axis_c_role": "373"
+  },
+  {
+   "court": "Calcutta High Court",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "semantic_tier": "CITED_AUTHORITY_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "High Court of Kerala",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2085",
+   "axis_a_identity": "2085",
+   "axis_b_text": "2085",
+   "axis_c_role": "2085"
+  },
+  {
+   "court": "Orissa High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "2",
+   "axis_a_identity": "2",
+   "axis_b_text": "0",
+   "axis_c_role": "2"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2",
+   "axis_a_identity": "2",
+   "axis_b_text": "2",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "169",
+   "axis_a_identity": "169",
+   "axis_b_text": "169",
+   "axis_c_role": "169"
+  },
+  {
+   "court": "Orissa High Court",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "35",
+   "axis_a_identity": "35",
+   "axis_b_text": "35",
+   "axis_c_role": "35"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "491",
+   "axis_a_identity": "491",
+   "axis_b_text": "491",
+   "axis_c_role": "491"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "116",
+   "axis_a_identity": "116",
+   "axis_b_text": "116",
+   "axis_c_role": "116"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "0",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1194",
+   "axis_a_identity": "1194",
+   "axis_b_text": "1184",
+   "axis_c_role": "1041"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "337",
+   "axis_a_identity": "337",
+   "axis_b_text": "333",
+   "axis_c_role": "226"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "176",
+   "axis_a_identity": "176",
+   "axis_b_text": "176",
+   "axis_c_role": "114"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "1321",
+   "axis_a_identity": "1321",
+   "axis_b_text": "0",
+   "axis_c_role": "1257"
+  },
+  {
+   "court": "Bombay High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2827",
+   "axis_a_identity": "2826",
+   "axis_b_text": "2812",
+   "axis_c_role": "2309"
+  },
+  {
+   "court": "Patna High Court",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1842",
+   "axis_a_identity": "1842",
+   "axis_b_text": "1842",
+   "axis_c_role": "1842"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "18",
+   "axis_a_identity": "18",
+   "axis_b_text": "18",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1120",
+   "axis_a_identity": "1120",
+   "axis_b_text": "1120",
+   "axis_c_role": "1120"
+  },
+  {
+   "court": "High Court of Tripura",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2",
+   "axis_a_identity": "2",
+   "axis_b_text": "2",
+   "axis_c_role": "2"
+  },
+  {
+   "court": "Calcutta High Court",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "31",
+   "axis_a_identity": "31",
+   "axis_b_text": "31",
+   "axis_c_role": "31"
+  },
+  {
+   "court": "Gauhati High Court",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "11",
+   "axis_a_identity": "11",
+   "axis_b_text": "11",
+   "axis_c_role": "11"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "40",
+   "axis_a_identity": "40",
+   "axis_b_text": "40",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "16",
+   "axis_a_identity": "16",
+   "axis_b_text": "16",
+   "axis_c_role": "16"
+  },
+  {
+   "court": "High Court of Tripura",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "33",
+   "axis_a_identity": "33",
+   "axis_b_text": "33",
+   "axis_c_role": "33"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "909",
+   "axis_a_identity": "909",
+   "axis_b_text": "909",
+   "axis_c_role": "909"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "845",
+   "axis_a_identity": "845",
+   "axis_b_text": "845",
+   "axis_c_role": "845"
+  },
+  {
+   "court": "Bombay High Court",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1410",
+   "axis_a_identity": "1410",
+   "axis_b_text": "1410",
+   "axis_c_role": "1410"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "23",
+   "axis_a_identity": "23",
+   "axis_b_text": "23",
+   "axis_c_role": "23"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "13",
+   "axis_a_identity": "13",
+   "axis_b_text": "0",
+   "axis_c_role": "10"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "639",
+   "axis_a_identity": "639",
+   "axis_b_text": "639",
+   "axis_c_role": "639"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "0",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "Patna High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1745",
+   "axis_a_identity": "1745",
+   "axis_b_text": "1744",
+   "axis_c_role": "1504"
+  },
+  {
+   "court": "Gauhati High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "327",
+   "axis_a_identity": "327",
+   "axis_b_text": "325",
+   "axis_c_role": "272"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "49",
+   "axis_a_identity": "49",
+   "axis_b_text": "49",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "3",
+   "axis_a_identity": "3",
+   "axis_b_text": "3",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "80",
+   "axis_a_identity": "80",
+   "axis_b_text": "80",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "6",
+   "axis_a_identity": "6",
+   "axis_b_text": "0",
+   "axis_c_role": "6"
+  },
+  {
+   "court": "High Court of Manipur",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "13",
+   "axis_a_identity": "13",
+   "axis_b_text": "13",
+   "axis_c_role": "13"
+  },
+  {
+   "court": "Calcutta High Court",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "399",
+   "axis_a_identity": "399",
+   "axis_b_text": "399",
+   "axis_c_role": "399"
+  },
+  {
+   "court": "High Court of Delhi",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "364",
+   "axis_a_identity": "364",
+   "axis_b_text": "361",
+   "axis_c_role": "358"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "65",
+   "axis_a_identity": "65",
+   "axis_b_text": "65",
+   "axis_c_role": "65"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "169",
+   "axis_a_identity": "169",
+   "axis_b_text": "169",
+   "axis_c_role": "169"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2",
+   "axis_a_identity": "2",
+   "axis_b_text": "2",
+   "axis_c_role": "2"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "750",
+   "axis_a_identity": "750",
+   "axis_b_text": "750",
+   "axis_c_role": "487"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "2680",
+   "axis_a_identity": "2680",
+   "axis_b_text": "0",
+   "axis_c_role": "2380"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "362",
+   "axis_a_identity": "362",
+   "axis_b_text": "359",
+   "axis_c_role": "252"
+  },
+  {
+   "court": "Madras High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "871",
+   "axis_a_identity": "859",
+   "axis_b_text": "817",
+   "axis_c_role": "710"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "140",
+   "axis_a_identity": "140",
+   "axis_b_text": "0",
+   "axis_c_role": "130"
+  },
+  {
+   "court": "Gauhati High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "17",
+   "axis_a_identity": "17",
+   "axis_b_text": "0",
+   "axis_c_role": "15"
+  },
+  {
+   "court": "Gauhati High Court",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "449",
+   "axis_a_identity": "449",
+   "axis_b_text": "449",
+   "axis_c_role": "449"
+  },
+  {
+   "court": "High Court of Manipur",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "38",
+   "axis_a_identity": "38",
+   "axis_b_text": "37",
+   "axis_c_role": "11"
+  },
+  {
+   "court": "Allahabad High Court",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2024",
+   "axis_a_identity": "2024",
+   "axis_b_text": "2024",
+   "axis_c_role": "2024"
+  },
+  {
+   "court": "Supreme Court of India",
+   "semantic_tier": "CITED_AUTHORITY_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "407",
+   "axis_a_identity": "407",
+   "axis_b_text": "407",
+   "axis_c_role": "407"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "197",
+   "axis_a_identity": "197",
+   "axis_b_text": "197",
+   "axis_c_role": "102"
+  },
+  {
+   "court": "High Court of Tripura",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "19",
+   "axis_a_identity": "19",
+   "axis_b_text": "0",
+   "axis_c_role": "18"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "58",
+   "axis_a_identity": "58",
+   "axis_b_text": "58",
+   "axis_c_role": "58"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "20",
+   "axis_a_identity": "20",
+   "axis_b_text": "20",
+   "axis_c_role": "20"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "713",
+   "axis_a_identity": "713",
+   "axis_b_text": "713",
+   "axis_c_role": "713"
+  },
+  {
+   "court": "Orissa High Court",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "3",
+   "axis_a_identity": "3",
+   "axis_b_text": "3",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "122",
+   "axis_a_identity": "122",
+   "axis_b_text": "122",
+   "axis_c_role": "122"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "83",
+   "axis_a_identity": "83",
+   "axis_b_text": "83",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "679",
+   "axis_a_identity": "679",
+   "axis_b_text": "679",
+   "axis_c_role": "679"
+  },
+  {
+   "court": "Allahabad High Court",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "487",
+   "axis_a_identity": "487",
+   "axis_b_text": "487",
+   "axis_c_role": "487"
+  },
+  {
+   "court": "Allahabad High Court",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "15",
+   "axis_a_identity": "15",
+   "axis_b_text": "15",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "30",
+   "axis_a_identity": "30",
+   "axis_b_text": "30",
+   "axis_c_role": "13"
+  },
+  {
+   "court": "Allahabad High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "20",
+   "axis_a_identity": "20",
+   "axis_b_text": "0",
+   "axis_c_role": "20"
+  },
+  {
+   "court": "High Court of Kerala",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "4",
+   "axis_a_identity": "4",
+   "axis_b_text": "0",
+   "axis_c_role": "3"
+  },
+  {
+   "court": "Calcutta High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "623",
+   "axis_a_identity": "623",
+   "axis_b_text": "623",
+   "axis_c_role": "480"
+  },
+  {
+   "court": "Bombay High Court",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "51",
+   "axis_a_identity": "51",
+   "axis_b_text": "51",
+   "axis_c_role": "51"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "12",
+   "axis_a_identity": "12",
+   "axis_b_text": "12",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "29",
+   "axis_a_identity": "29",
+   "axis_b_text": "29",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "3",
+   "axis_a_identity": "3",
+   "axis_b_text": "0",
+   "axis_c_role": "3"
+  },
+  {
+   "court": "Supreme Court of India",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "329",
+   "axis_a_identity": "329",
+   "axis_b_text": "329",
+   "axis_c_role": "278"
+  },
+  {
+   "court": "Orissa High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1367",
+   "axis_a_identity": "1367",
+   "axis_b_text": "1366",
+   "axis_c_role": "1250"
+  },
+  {
+   "court": "High Court of Kerala",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "423",
+   "axis_a_identity": "423",
+   "axis_b_text": "403",
+   "axis_c_role": "338"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "159",
+   "axis_a_identity": "159",
+   "axis_b_text": "158",
+   "axis_c_role": "114"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "semantic_tier": "CITED_AUTHORITY_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "Supreme Court of India",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "114",
+   "axis_a_identity": "114",
+   "axis_b_text": "114",
+   "axis_c_role": "114"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "580",
+   "axis_a_identity": "580",
+   "axis_b_text": "577",
+   "axis_c_role": "505"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "6",
+   "axis_a_identity": "6",
+   "axis_b_text": "6",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "1",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "38",
+   "axis_a_identity": "37",
+   "axis_b_text": "0",
+   "axis_c_role": "33"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1724",
+   "axis_a_identity": "1724",
+   "axis_b_text": "1724",
+   "axis_c_role": "1724"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "470",
+   "axis_a_identity": "470",
+   "axis_b_text": "409",
+   "axis_c_role": "382"
+  },
+  {
+   "court": "Allahabad High Court",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2816",
+   "axis_a_identity": "2816",
+   "axis_b_text": "2808",
+   "axis_c_role": "2113"
+  },
+  {
+   "court": "Allahabad High Court",
+   "semantic_tier": "CITED_AUTHORITY_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "19",
+   "axis_a_identity": "19",
+   "axis_b_text": "19",
+   "axis_c_role": "17"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2",
+   "axis_a_identity": "2",
+   "axis_b_text": "2",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "10",
+   "axis_a_identity": "10",
+   "axis_b_text": "10",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "7",
+   "axis_a_identity": "7",
+   "axis_b_text": "7",
+   "axis_c_role": "7"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "220",
+   "axis_a_identity": "220",
+   "axis_b_text": "220",
+   "axis_c_role": "220"
+  },
+  {
+   "court": "Madras High Court",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "2947",
+   "axis_a_identity": "2947",
+   "axis_b_text": "2947",
+   "axis_c_role": "2947"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "40",
+   "axis_a_identity": "40",
+   "axis_b_text": "40",
+   "axis_c_role": "40"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "9",
+   "axis_a_identity": "9",
+   "axis_b_text": "9",
+   "axis_c_role": "9"
+  },
+  {
+   "court": "Bombay High Court",
+   "semantic_tier": "UNRESOLVED_EXPERIMENTAL",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "67",
+   "axis_a_identity": "67",
+   "axis_b_text": "67",
+   "axis_c_role": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "94",
+   "axis_a_identity": "94",
+   "axis_b_text": "94",
+   "axis_c_role": "94"
+  },
+  {
+   "court": "High Court of Delhi",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "646",
+   "axis_a_identity": "646",
+   "axis_b_text": "646",
+   "axis_c_role": "646"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "9",
+   "axis_a_identity": "9",
+   "axis_b_text": "9",
+   "axis_c_role": "9"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "1104",
+   "axis_a_identity": "1104",
+   "axis_b_text": "1102",
+   "axis_c_role": "856"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "16",
+   "axis_a_identity": "16",
+   "axis_b_text": "16",
+   "axis_c_role": "13"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "891",
+   "axis_a_identity": "890",
+   "axis_b_text": "888",
+   "axis_c_role": "709"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "19",
+   "axis_a_identity": "19",
+   "axis_b_text": "0",
+   "axis_c_role": "18"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "239",
+   "axis_a_identity": "239",
+   "axis_b_text": "239",
+   "axis_c_role": "239"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "374",
+   "axis_a_identity": "374",
+   "axis_b_text": "374",
+   "axis_c_role": "374"
+  },
+  {
+   "court": "High Court of Delhi",
+   "semantic_tier": "NOT_ELIGIBLE",
+   "text_safety": "UNSAFE_VERIFIED",
+   "sampled_rows": "1",
+   "axis_a_identity": "1",
+   "axis_b_text": "0",
+   "axis_c_role": "1"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "semantic_tier": "BAIL_ORDER_REACHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "141",
+   "axis_a_identity": "141",
+   "axis_b_text": "141",
+   "axis_c_role": "141"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "781",
+   "axis_a_identity": "781",
+   "axis_b_text": "781",
+   "axis_c_role": "781"
+  },
+  {
+   "court": "Orissa High Court",
+   "semantic_tier": "BROAD_SEARCHABLE",
+   "text_safety": "UNKNOWN",
+   "sampled_rows": "615",
+   "axis_a_identity": "615",
+   "axis_b_text": "615",
+   "axis_c_role": "615"
+  }
+ ]
+}

@@ -1,0 +1,327 @@
+{
+ "artifact": "DECISION_IDENTITY_CENSUS_V1",
+ "generated_at": "2026-08-25T13:44:47.852Z",
+ "steps": {
+  "hash_group_composition": {
+   "ms": 105435,
+   "sql": "\n    WITH g AS (\n      SELECT content_hash,\n             count(*)                                        AS members,\n             count(DISTINCT court)                           AS courts,\n             count(DISTINCT case_number)                     AS case_numbers,\n             count(DISTINCT judgment_date)                   AS dates,\n             count(DISTINCT cnr)                             AS cnrs,\n             count(DISTINCT nullif(neutral_citation,''))     AS neutrals\n      FROM judgments\n      WHERE content_hash IS NOT NULL\n      GROUP BY content_hash\n      HAVING count(*) > 1\n    )\n    SELECT CASE\n             WHEN members >= 100                    THEN 'f_EXTRACTOR_CONTAMINATION_SUSPECT (>=100 identical)'\n             WHEN courts > 1                        THEN 'e_NOT_SAME_DECISION (same text, different courts)'\n             WHEN case_numbers > 1 AND dates = 1    THEN 'c_COMMON_ORDER_CONNECTED_MATTERS (one court, one date, many case numbers)'\n             WHEN case_numbers > 1 AND dates > 1    THEN 'd_UNKNOWN (many case numbers AND many dates)'\n             WHEN case_numbers = 1 AND dates > 1    THEN 'b_UNKNOWN (one case number, many dates)'\n             ELSE                                        'a_EXACT_DOCUMENT_DUPLICATE (one court, one case number, one date)'\n           END AS state,\n           count(*)::bigint            AS groups,\n           sum(members)::bigint        AS documents,\n           sum(members - 1)::bigint    AS documents_beyond_first,\n           max(members)::bigint        AS largest_group\n    FROM g GROUP BY 1 ORDER BY 1",
+   "rows": [
+    {
+     "state": "a_EXACT_DOCUMENT_DUPLICATE (one court, one case number, one date)",
+     "groups": "91522",
+     "documents": "183310",
+     "documents_beyond_first": "91788",
+     "largest_group": "14"
+    },
+    {
+     "state": "b_UNKNOWN (one case number, many dates)",
+     "groups": "41944",
+     "documents": "83908",
+     "documents_beyond_first": "41964",
+     "largest_group": "5"
+    },
+    {
+     "state": "c_COMMON_ORDER_CONNECTED_MATTERS (one court, one date, many case numbers)",
+     "groups": "354081",
+     "documents": "1249978",
+     "documents_beyond_first": "895897",
+     "largest_group": "99"
+    },
+    {
+     "state": "d_UNKNOWN (many case numbers AND many dates)",
+     "groups": "12447",
+     "documents": "53378",
+     "documents_beyond_first": "40931",
+     "largest_group": "99"
+    },
+    {
+     "state": "f_EXTRACTOR_CONTAMINATION_SUSPECT (>=100 identical)",
+     "groups": "545",
+     "documents": "131056",
+     "documents_beyond_first": "130511",
+     "largest_group": "7160"
+    }
+   ]
+  },
+  "largest_groups": {
+   "ms": 580949,
+   "sql": "\n    WITH g AS (\n      SELECT content_hash, count(*) AS members\n      FROM judgments WHERE content_hash IS NOT NULL\n      GROUP BY content_hash HAVING count(*) > 500\n    )\n    SELECT g.members::bigint,\n           (SELECT count(DISTINCT j.court) FROM judgments j WHERE j.content_hash = g.content_hash)::int AS courts,\n           (SELECT min(j.case_title) FROM judgments j WHERE j.content_hash = g.content_hash) AS a_title,\n           (SELECT min(j.court) FROM judgments j WHERE j.content_hash = g.content_hash) AS a_court,\n           (SELECT min(j.judgment_date)::text FROM judgments j WHERE j.content_hash = g.content_hash) AS first_date,\n           (SELECT max(j.judgment_date)::text FROM judgments j WHERE j.content_hash = g.content_hash) AS last_date\n    FROM g ORDER BY g.members DESC LIMIT 25",
+   "rows": [
+    {
+     "members": "7160",
+     "courts": 1,
+     "a_title": "A Jayaranjani Vs Radhakrishnan I.A.S.",
+     "a_court": "Madras High Court",
+     "first_date": "2022-04-04",
+     "last_date": "2023-03-11"
+    },
+    {
+     "members": "2457",
+     "courts": 1,
+     "a_title": "GAIL (INDIA) LTD Vs COMPETENT AUTHORITY",
+     "a_court": "High Court of Gujarat",
+     "first_date": "2015-08-11",
+     "last_date": "2015-08-11"
+    },
+    {
+     "members": "2153",
+     "courts": 1,
+     "a_title": "JOHN HAMILTION CHRITIAN Vs TAPTI CORPORATION",
+     "a_court": "High Court of Gujarat",
+     "first_date": "1997-05-07",
+     "last_date": "1997-05-07"
+    },
+    {
+     "members": "1533",
+     "courts": 1,
+     "a_title": "AACHI DEVI AND ANR Vs STATE EDUCATION DEPARTMENTORS",
+     "a_court": "High Court Of Rajasthan",
+     "first_date": "2013-10-03",
+     "last_date": "2014-11-26"
+    },
+    {
+     "members": "1407",
+     "courts": 1,
+     "a_title": "63 MOONS TECHNOLOGIES LIMITED Vs DEPUTY SUPERINTENDENT OF POLICE",
+     "a_court": "Madras High Court",
+     "first_date": "2022-02-18",
+     "last_date": "2023-02-11"
+    },
+    {
+     "members": "1375",
+     "courts": 1,
+     "a_title": ". Vs Andhra Pradesh Electicity Regulatory Commission,",
+     "a_court": "High Court  for State of Telangana",
+     "first_date": "2011-04-15",
+     "last_date": "2011-07-29"
+    },
+    {
+     "members": "1081",
+     "courts": 1,
+     "a_title": "3 EYE AGRO MERCHANTS PVT LTD Vs Union of India AND ORS",
+     "a_court": "Calcutta High Court",
+     "first_date": "2022-01-17",
+     "last_date": "2022-01-17"
+    },
+    {
+     "members": "1054",
+     "courts": 1,
+     "a_title": "52 WEEK ENTERTAINMENT LTD Vs ASSISTANT COMMISSIONER OF INCOME TAX -4(3)(1) MUMBAI AND 3 ORS",
+     "a_court": "Bombay High Court",
+     "first_date": "2022-03-22",
+     "last_date": "2022-03-29"
+    },
+    {
+     "members": "1020",
+     "courts": 1,
+     "a_title": "BABLU DISCRETIONARY FAMILY TRUST Vs INCOME TAX OFFICER",
+     "a_court": "High Court of Gujarat",
+     "first_date": "2008-06-26",
+     "last_date": "2008-06-26"
+    },
+    {
+     "members": "962",
+     "courts": 1,
+     "a_title": "ABHIJIT S/O RAMCHANDRA KAHAD Vs THE STATE OF MAHARASHTRA AND ANOTHER",
+     "a_court": "Bombay High Court",
+     "first_date": "2022-12-16",
+     "last_date": "2022-12-16"
+    },
+    {
+     "members": "944",
+     "courts": 1,
+     "a_title": "A BRAMHANDAM Vs THE STATE OF ANDHRA PRADESH",
+     "a_court": "High Court of Andhra Pradesh",
+     "first_date": "2021-10-05",
+     "last_date": "2021-10-05"
+    },
+    {
+     "members": "937",
+     "courts": 1,
+     "a_title": "AAKASH POLYFILMS LTD THROUGH DIRECTOR PAVANKUMAR TULSIANI Vs UNION OF INDIA THROUGH SECRETARY, GOVERNMENT OF INDIA",
+     "a_court": "High Court of Gujarat",
+     "first_date": "2022-05-05",
+     "last_date": "2022-05-05"
+    },
+    {
+     "members": "927",
+     "courts": 1,
+     "a_title": "A.BHAGYALAXMI Vs STATE OF GUJARAT",
+     "a_court": "High Court of Gujarat",
+     "first_date": "2008-01-09",
+     "last_date": "2008-01-09"
+    },
+    {
+     "members": "908",
+     "courts": 1,
+     "a_title": "AARADHNA DURGAM Vs STATE OF CHHATTISGARH",
+     "a_court": "High Court Of Chhattisgarh",
+     "first_date": "2023-11-03",
+     "last_date": "2023-11-03"
+    },
+    {
+     "members": "901",
+     "courts": 1,
+     "a_title": "A. Dhanasekaran, Vs The Tamil Nadu Electricity",
+     "a_court": "Madras High Court",
+     "first_date": "2022-03-24",
+     "last_date": "2024-06-13"
+    },
+    {
+     "members": "850",
+     "courts": 1,
+     "a_title": "A P OIL MILLS Vs UNION OF INDIA AND OTHERS",
+     "a_court": "High Court of Punjab and Haryana",
+     "first_date": "2025-04-28",
+     "last_date": "2026-07-15"
+    },
+    {
+     "members": "845",
+     "courts": 1,
+     "a_title": "AANCHAL NAVNEET SHASTRI Vs STATE OF CHHATTISGARH",
+     "a_court": "High Court Of Chhattisgarh",
+     "first_date": "2025-11-23",
+     "last_date": "2025-11-23"
+    },
+    {
+     "members": "839",
+     "courts": 1,
+     "a_title": "A.Abdul Jabbar Vs The District Collector",
+     "a_court": "Madras High Court",
+     "first_date": "2017-06-05",
+     "last_date": "2024-07-01"
+    },
+    {
+     "members": "833",
+     "courts": 1,
+     "a_title": "AARIF KHAN S/O NUROODIN Vs STATE OF RAJASTHAN",
+     "a_court": "High Court Of Rajasthan",
+     "first_date": "2021-12-01",
+     "last_date": "2021-12-01"
+    },
+    {
+     "members": "826",
+     "courts": 1,
+     "a_title": "A. Jameelammal Vs Abdul Rehman",
+     "a_court": "Madras High Court",
+     "first_date": "2022-06-13",
+     "last_date": "2023-07-08"
+    },
+    {
+     "members": "778",
+     "courts": 1,
+     "a_title": "AARTI AND ORS Vs STATE PANCHAYATI RAJ DEP ORS",
+     "a_court": "High Court Of Rajasthan",
+     "first_date": "2012-04-02",
+     "last_date": "2012-05-11"
+    },
+    {
+     "members": "723",
+     "courts": 1,
+     "a_title": "A KUMAR AND CO. Vs UNION OF INDIA",
+     "a_court": "High Court of Gujarat",
+     "first_date": "2022-05-06",
+     "last_date": "2022-05-06"
+    },
+    {
+     "members": "706",
+     "courts": 1,
+     "a_title": "5TATE Vs GANPATU DEVI",
+     "a_court": "High Court of Himachal Pradesh",
+     "first_date": "2007-06-19",
+     "last_date": "2012-05-31"
+    },
+    {
+     "members": "693",
+     "courts": 1,
+     "a_title": "A. Baskar Vs The State of Tamil Nadu",
+     "a_court": "Madras High Court",
+     "first_date": "2019-02-07",
+     "last_date": "2022-10-11"
+    },
+    {
+     "members": "684",
+     "courts": 1,
+     "a_title": "AEBHABHAI RAMJIBHAI Vs SPECIAL LAND ACQUISITION OFFICER",
+     "a_court": "High Court of Gujarat",
+     "first_date": "2015-07-13",
+     "last_date": "2015-07-13"
+    }
+   ]
+  },
+  "cnr_collisions": {
+   "ms": 112190,
+   "sql": "\n    WITH c AS (\n      SELECT cnr, count(*) AS rows,\n             count(DISTINCT content_hash) AS hashes,\n             count(DISTINCT court) AS courts,\n             count(DISTINCT judgment_date) AS dates\n      FROM judgments WHERE cnr IS NOT NULL AND cnr <> ''\n      GROUP BY cnr HAVING count(*) > 1\n    )\n    SELECT CASE\n             WHEN courts > 1                  THEN 'd_UNKNOWN (same CNR, different courts)'\n             WHEN hashes = 1                  THEN 'a_EXACT_DOCUMENT_DUPLICATE (same CNR, same text)'\n             WHEN dates > 1                   THEN 'c_SAME_CASE_DIFFERENT_DATE (same CNR, different text, different date)'\n             ELSE                                  'b_SAME_DECISION_DIFFERENT_SOURCE candidate (same CNR, same date, different text)'\n           END AS state,\n           count(*)::bigint         AS cnr_groups,\n           sum(rows)::bigint        AS documents,\n           sum(rows - 1)::bigint    AS documents_beyond_first\n    FROM c GROUP BY 1 ORDER BY 1",
+   "rows": [
+    {
+     "state": "a_EXACT_DOCUMENT_DUPLICATE (same CNR, same text)",
+     "cnr_groups": "64114",
+     "documents": "128236",
+     "documents_beyond_first": "64122"
+    },
+    {
+     "state": "b_SAME_DECISION_DIFFERENT_SOURCE candidate (same CNR, same date, different text)",
+     "cnr_groups": "63602",
+     "documents": "127227",
+     "documents_beyond_first": "63625"
+    },
+    {
+     "state": "c_SAME_CASE_DIFFERENT_DATE (same CNR, different text, different date)",
+     "cnr_groups": "208493",
+     "documents": "816890",
+     "documents_beyond_first": "608397"
+    }
+   ]
+  },
+  "neutral_collisions": {
+   "ms": 27093,
+   "sql": "\n    WITH c AS (\n      SELECT upper(regexp_replace(neutral_citation,'[^A-Za-z0-9]','','g')) AS k,\n             count(*) AS rows,\n             count(DISTINCT content_hash) AS hashes,\n             count(DISTINCT court) AS courts,\n             count(DISTINCT case_number) AS case_numbers\n      FROM judgments\n      WHERE neutral_citation IS NOT NULL AND neutral_citation <> ''\n        AND upper(regexp_replace(neutral_citation,'[^A-Za-z0-9]','','g'))\n            !~ '^[0-9]{4}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[0-9]{1,2}$'\n      GROUP BY 1 HAVING count(*) > 1\n    )\n    SELECT CASE\n             WHEN courts > 1                        THEN 'e_SHARED_CITATION_AMBIGUOUS (different courts)'\n             WHEN hashes = 1 AND case_numbers = 1   THEN 'a_EXACT_DOCUMENT_DUPLICATE'\n             WHEN hashes = 1 AND case_numbers > 1   THEN 'c_COMMON_ORDER_CONNECTED_MATTERS'\n             WHEN case_numbers > 1                  THEN 'd_SHARED_CITATION_AMBIGUOUS (same court, many case numbers, different text)'\n             ELSE                                        'b_SAME_DECISION_DIFFERENT_SOURCE candidate'\n           END AS state,\n           count(*)::bigint      AS citation_keys,\n           sum(rows)::bigint     AS documents,\n           sum(rows - 1)::bigint AS documents_beyond_first\n    FROM c GROUP BY 1 ORDER BY 1",
+   "rows": [
+    {
+     "state": "a_EXACT_DOCUMENT_DUPLICATE",
+     "citation_keys": "58908",
+     "documents": "117821",
+     "documents_beyond_first": "58913"
+    },
+    {
+     "state": "b_SAME_DECISION_DIFFERENT_SOURCE candidate",
+     "citation_keys": "20823",
+     "documents": "41671",
+     "documents_beyond_first": "20848"
+    },
+    {
+     "state": "c_COMMON_ORDER_CONNECTED_MATTERS",
+     "citation_keys": "21316",
+     "documents": "75118",
+     "documents_beyond_first": "53802"
+    },
+    {
+     "state": "d_SHARED_CITATION_AMBIGUOUS (same court, many case numbers, different text)",
+     "citation_keys": "54240",
+     "documents": "126052",
+     "documents_beyond_first": "71812"
+    },
+    {
+     "state": "e_SHARED_CITATION_AMBIGUOUS (different courts)",
+     "citation_keys": "11",
+     "documents": "30",
+     "documents_beyond_first": "19"
+    }
+   ]
+  },
+  "identity_arms": {
+   "ms": 23803,
+   "sql": "\n    SELECT\n      count(*)::bigint AS documents,\n      count(*) FILTER (WHERE cnr IS NOT NULL AND cnr <> '')::bigint AS has_cnr,\n      count(*) FILTER (WHERE case_number IS NOT NULL AND case_number <> '')::bigint AS has_case_number,\n      count(*) FILTER (WHERE neutral_citation IS NOT NULL AND neutral_citation <> ''\n        AND upper(regexp_replace(neutral_citation,'[^A-Za-z0-9]','','g'))\n            !~ '^[0-9]{4}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[0-9]{1,2}$')::bigint AS has_real_neutral,\n      count(*) FILTER (WHERE content_hash IS NOT NULL)::bigint AS has_content_hash,\n      count(*) FILTER (WHERE (cnr IS NULL OR cnr = '') AND (case_number IS NULL OR case_number = ''))::bigint AS no_registry_identifier\n    FROM judgments",
+   "rows": [
+    {
+     "documents": "18698984",
+     "has_cnr": "18698968",
+     "has_case_number": "18698965",
+     "has_real_neutral": "1370251",
+     "has_content_hash": "18698968",
+     "no_registry_identifier": "16"
+    }
+   ]
+  }
+ }
+}

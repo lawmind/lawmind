@@ -1,0 +1,91 @@
+{
+ "artifact": "PASSAGE_SAFETY_ROLE_SAMPLE_V1",
+ "generated_at": "2026-08-25T13:54:04.522Z",
+ "frame": "paragraphs of documents carrying a staged document vector (new1_doc_vector_stage), deterministic md5 sample. SUBSTITUTE for NEW1 100k tranche, which is BLOCKED (their bus 1175).",
+ "sampled_paragraphs": 13944,
+ "distinct_documents": 2042,
+ "rules": [
+  {
+   "role": "DAMAGED_OR_OCR_SUSPECT",
+   "why": "control characters, replacement characters, or a collapsed-glyph run"
+  },
+  {
+   "role": "REPORTER_EDITORIAL",
+   "why": "headnote / editorial apparatus vocabulary"
+  },
+  {
+   "role": "PARTY_SUBMISSION",
+   "why": "attributed to counsel or a party, not to the court"
+  },
+  {
+   "role": "QUOTED_PRECEDENT",
+   "why": "block quotation introduced as another court's words"
+  },
+  {
+   "role": "PROCEDURAL_HISTORY",
+   "why": "registry / listing / disposal apparatus rather than adjudication"
+  },
+  {
+   "role": "CASE_HEADER",
+   "why": "the caption block a judgment opens with — parties, counsel, coram"
+  },
+  {
+   "role": "HOLDING_OPERATIVE",
+   "why": "the operative order the court actually makes"
+  },
+  {
+   "role": "COURT_REASONING",
+   "why": "first-person judicial reasoning vocabulary"
+  },
+  {
+   "role": "FACTS",
+   "why": "narrative of the underlying events / prosecution case"
+  }
+ ],
+ "role_counts": {
+  "OTHER_UNKNOWN": 10387,
+  "CASE_HEADER": 950,
+  "HOLDING_OPERATIVE": 232,
+  "PARTY_SUBMISSION": 1570,
+  "DAMAGED_OR_OCR_SUSPECT": 90,
+  "COURT_REASONING": 261,
+  "FACTS": 187,
+  "QUOTED_PRECEDENT": 134,
+  "PROCEDURAL_HISTORY": 119,
+  "REPORTER_EDITORIAL": 14
+ },
+ "role_share_pct": {
+  "OTHER_UNKNOWN": 74.49,
+  "CASE_HEADER": 6.81,
+  "HOLDING_OPERATIVE": 1.66,
+  "PARTY_SUBMISSION": 11.26,
+  "DAMAGED_OR_OCR_SUSPECT": 0.65,
+  "COURT_REASONING": 1.87,
+  "FACTS": 1.34,
+  "QUOTED_PRECEDENT": 0.96,
+  "PROCEDURAL_HISTORY": 0.85,
+  "REPORTER_EDITORIAL": 0.1
+ },
+ "non_authoritative_share_pct": 19.99,
+ "damage_cross": {
+  "doc_screened_ok_passage_damaged": 90,
+  "doc_damaged_passage_ok": 0,
+  "agree_ok": 13854,
+  "agree_damaged": 0
+ },
+ "usable_passages_inside_screen_damaged_documents": {
+  "passages": 0,
+  "not_damaged_themselves": 0
+ },
+ "neighbour_role_of_court_reasoning": {
+  "CASE_HEADER": 17,
+  "OTHER_UNKNOWN": 326,
+  "COURT_REASONING": 32,
+  "QUOTED_PRECEDENT": 6,
+  "FACTS": 6,
+  "PARTY_SUBMISSION": 45,
+  "HOLDING_OPERATIVE": 10,
+  "DAMAGED_OR_OCR_SUSPECT": 1,
+  "PROCEDURAL_HISTORY": 1
+ }
+}

@@ -77,6 +77,40 @@ type RetrievalOutcome = {
 Reasons, R7 §7.1 verbatim: `sparse_unbounded` · `semantic_index_insufficient` · `unsafe_body`
 · `low_relevance` · `ambiguous_identity` · `timeout` · `date_unreliable` · `source_stale`.
 
+### `rarestDf` — the measured cause, added after a correction
+
+`CORRECTION_OF` LCC bus 1173. I had inferred that query **length** drove the sparse refusal.
+NEW1's 1222 measured it over 48 common legal queries at four lengths each, running production's
+own rule:
+
+```
+1-2 terms   6/13 refused (46%)
+3-5 terms   4/20 refused (20%)
+6+  terms   4/15 refused (27%)
+```
+
+Not monotone, not the driver. **`min(df)` is.** A twelve-word, well-formed sentence — *"when may
+a court grant anticipatory bail to a person apprehending arrest"* — is refused at `rarestDf`
+0.0564, because every lexeme in it is common in a corpus of criminal judgments. Adding words
+helps only when the added words are rare.
+
+So the outcome carries the **measured** cause, not a category: `rarestDf`, straight from the
+statement that refuses. Recorded whether or not it refuses — a df published only on refusal
+would make the field's presence the signal. Absent, never `0`, when the arm did not run: `0.0`
+means a lexeme nothing in the corpus contains, which is the rarest possible and always rankable.
+
+Four tests lock it, one structural: **`RetrievalOutcomeInput` carries no query text, no length
+and no term count**, so a length heuristic cannot return without adding a field — and adding one
+is the review moment.
+
+**Scale, which changes the urgency rather than the design.** 14 of 48 (29.2%) of the commonest
+queries in Indian practice are refused: all four bail queries, three of four anticipatory bail,
+three of four quashing-FIR, two of four limitation, two of four writ maintainability. Never
+refused: cheque dishonour, specific performance, arbitration, maintenance, murder, service
+termination, injunction. The split is exactly corpus frequency — the more common the practice
+area, the more certainly we refuse it. This is not a tail of odd queries; it is the daily work
+of a criminal and a writ practice.
+
 ### Array length is never confidence — in both directions
 
 R7 says it in those words, and it is the load-bearing rule.

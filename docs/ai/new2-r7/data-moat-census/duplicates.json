@@ -1,0 +1,15 @@
+{
+ "pass": "duplicates",
+ "generated_at": "2026-08-25T11:13:00.351Z",
+ "ms": 122170,
+ "row_count": 1,
+ "sql": "\n    WITH h AS (\n      SELECT content_hash, count(*) AS n\n      FROM judgments WHERE content_hash IS NOT NULL\n      GROUP BY content_hash HAVING count(*) > 1\n    )\n    SELECT count(*)::bigint AS duplicate_hash_groups,\n           coalesce(sum(n),0)::bigint AS documents_in_a_duplicate_group,\n           coalesce(sum(n - 1),0)::bigint AS documents_beyond_the_first_in_their_group,\n           coalesce(max(n),0)::bigint AS largest_group\n    FROM h",
+ "rows": [
+  {
+   "duplicate_hash_groups": "500539",
+   "documents_in_a_duplicate_group": "1701630",
+   "documents_beyond_the_first_in_their_group": "1201091",
+   "largest_group": "7160"
+  }
+ ]
+}

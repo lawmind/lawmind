@@ -1,0 +1,1683 @@
+{
+ "pass": "statutes",
+ "generated_at": "2026-08-25T11:42:47.455Z",
+ "ms": 18290,
+ "row_count": 279,
+ "sql": "\n    SELECT j.court AS court,\n  CASE WHEN j.judgment_date IS NULL THEN 'unknown'\n       ELSE extract(year FROM j.judgment_date)::int::text END AS year,\n      count(s.id)::bigint AS statute_refs,\n      count(DISTINCT s.judgment_id)::bigint AS documents_with_statute_ref\n    FROM judgments j JOIN judgment_statute_refs s ON s.judgment_id = j.id\n    GROUP BY 1,2",
+ "rows": [
+  {
+   "court": "Allahabad High Court",
+   "year": "2025",
+   "statute_refs": "9038",
+   "documents_with_statute_ref": "5419"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2026",
+   "statute_refs": "34820",
+   "documents_with_statute_ref": "25362"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1950",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1954",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1958",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1964",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1966",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1969",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1970",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1975",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "3"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1976",
+   "statute_refs": "5",
+   "documents_with_statute_ref": "5"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1984",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1985",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1988",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1989",
+   "statute_refs": "7",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1991",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1992",
+   "statute_refs": "10",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1993",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1994",
+   "statute_refs": "7",
+   "documents_with_statute_ref": "6"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1995",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1998",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2000",
+   "statute_refs": "6",
+   "documents_with_statute_ref": "6"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2001",
+   "statute_refs": "11",
+   "documents_with_statute_ref": "3"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2002",
+   "statute_refs": "6",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2003",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2004",
+   "statute_refs": "5",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2026",
+   "statute_refs": "1464",
+   "documents_with_statute_ref": "642"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2025",
+   "statute_refs": "3923",
+   "documents_with_statute_ref": "1905"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2026",
+   "statute_refs": "22889",
+   "documents_with_statute_ref": "11191"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2025",
+   "statute_refs": "16822",
+   "documents_with_statute_ref": "7401"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2026",
+   "statute_refs": "11807",
+   "documents_with_statute_ref": "5678"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1993",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1994",
+   "statute_refs": "4",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2025",
+   "statute_refs": "13529",
+   "documents_with_statute_ref": "8634"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2026",
+   "statute_refs": "14065",
+   "documents_with_statute_ref": "8283"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2020",
+   "statute_refs": "901",
+   "documents_with_statute_ref": "480"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2021",
+   "statute_refs": "10703",
+   "documents_with_statute_ref": "4918"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2025",
+   "statute_refs": "198",
+   "documents_with_statute_ref": "144"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2026",
+   "statute_refs": "24433",
+   "documents_with_statute_ref": "16262"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2026",
+   "statute_refs": "28407",
+   "documents_with_statute_ref": "8961"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "1960",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2025",
+   "statute_refs": "3042",
+   "documents_with_statute_ref": "1105"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2026",
+   "statute_refs": "23019",
+   "documents_with_statute_ref": "9632"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1992",
+   "statute_refs": "4",
+   "documents_with_statute_ref": "3"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1993",
+   "statute_refs": "625",
+   "documents_with_statute_ref": "126"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1994",
+   "statute_refs": "16",
+   "documents_with_statute_ref": "5"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1995",
+   "statute_refs": "234",
+   "documents_with_statute_ref": "124"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2022",
+   "statute_refs": "13564",
+   "documents_with_statute_ref": "8276"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2023",
+   "statute_refs": "3331",
+   "documents_with_statute_ref": "1736"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2024",
+   "statute_refs": "1129",
+   "documents_with_statute_ref": "708"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2025",
+   "statute_refs": "7367",
+   "documents_with_statute_ref": "2326"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2026",
+   "statute_refs": "5056",
+   "documents_with_statute_ref": "1956"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "1978",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2016",
+   "statute_refs": "7463",
+   "documents_with_statute_ref": "3033"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2017",
+   "statute_refs": "5479",
+   "documents_with_statute_ref": "2274"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2018",
+   "statute_refs": "6781",
+   "documents_with_statute_ref": "3072"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2019",
+   "statute_refs": "7742",
+   "documents_with_statute_ref": "3415"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2024",
+   "statute_refs": "4220",
+   "documents_with_statute_ref": "1414"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2025",
+   "statute_refs": "3520",
+   "documents_with_statute_ref": "1116"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2026",
+   "statute_refs": "11904",
+   "documents_with_statute_ref": "3649"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2016",
+   "statute_refs": "132",
+   "documents_with_statute_ref": "68"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2017",
+   "statute_refs": "1310",
+   "documents_with_statute_ref": "621"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2018",
+   "statute_refs": "1679",
+   "documents_with_statute_ref": "686"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2019",
+   "statute_refs": "1549",
+   "documents_with_statute_ref": "759"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2022",
+   "statute_refs": "275",
+   "documents_with_statute_ref": "128"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2023",
+   "statute_refs": "3830",
+   "documents_with_statute_ref": "1864"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2024",
+   "statute_refs": "3326",
+   "documents_with_statute_ref": "1644"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2025",
+   "statute_refs": "4453",
+   "documents_with_statute_ref": "1742"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2026",
+   "statute_refs": "1810",
+   "documents_with_statute_ref": "853"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "1989",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "1992",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "1993",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "1994",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2024",
+   "statute_refs": "4183",
+   "documents_with_statute_ref": "2258"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2025",
+   "statute_refs": "2472",
+   "documents_with_statute_ref": "1331"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2026",
+   "statute_refs": "12152",
+   "documents_with_statute_ref": "6600"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2025",
+   "statute_refs": "7663",
+   "documents_with_statute_ref": "3331"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2026",
+   "statute_refs": "39081",
+   "documents_with_statute_ref": "18462"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1956",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1958",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1978",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1985",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2016",
+   "statute_refs": "19968",
+   "documents_with_statute_ref": "11440"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2022",
+   "statute_refs": "7996",
+   "documents_with_statute_ref": "4164"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2024",
+   "statute_refs": "14704",
+   "documents_with_statute_ref": "7364"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2025",
+   "statute_refs": "5687",
+   "documents_with_statute_ref": "2547"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2026",
+   "statute_refs": "12",
+   "documents_with_statute_ref": "7"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2022",
+   "statute_refs": "48106",
+   "documents_with_statute_ref": "28090"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2023",
+   "statute_refs": "98736",
+   "documents_with_statute_ref": "54205"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2024",
+   "statute_refs": "11528",
+   "documents_with_statute_ref": "6428"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2025",
+   "statute_refs": "74",
+   "documents_with_statute_ref": "44"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2026",
+   "statute_refs": "30",
+   "documents_with_statute_ref": "15"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2017",
+   "statute_refs": "69",
+   "documents_with_statute_ref": "54"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2018",
+   "statute_refs": "148",
+   "documents_with_statute_ref": "94"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2019",
+   "statute_refs": "615",
+   "documents_with_statute_ref": "237"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2020",
+   "statute_refs": "284",
+   "documents_with_statute_ref": "112"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2021",
+   "statute_refs": "439",
+   "documents_with_statute_ref": "166"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2022",
+   "statute_refs": "756",
+   "documents_with_statute_ref": "341"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2023",
+   "statute_refs": "674",
+   "documents_with_statute_ref": "267"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2024",
+   "statute_refs": "461",
+   "documents_with_statute_ref": "179"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2025",
+   "statute_refs": "716",
+   "documents_with_statute_ref": "236"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2026",
+   "statute_refs": "530",
+   "documents_with_statute_ref": "163"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2010",
+   "statute_refs": "5",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2011",
+   "statute_refs": "18",
+   "documents_with_statute_ref": "9"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2012",
+   "statute_refs": "40",
+   "documents_with_statute_ref": "15"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2013",
+   "statute_refs": "188",
+   "documents_with_statute_ref": "69"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2014",
+   "statute_refs": "171",
+   "documents_with_statute_ref": "84"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2015",
+   "statute_refs": "192",
+   "documents_with_statute_ref": "54"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2016",
+   "statute_refs": "96",
+   "documents_with_statute_ref": "57"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2017",
+   "statute_refs": "211",
+   "documents_with_statute_ref": "102"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2018",
+   "statute_refs": "230",
+   "documents_with_statute_ref": "133"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2019",
+   "statute_refs": "320",
+   "documents_with_statute_ref": "172"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2020",
+   "statute_refs": "517",
+   "documents_with_statute_ref": "149"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2021",
+   "statute_refs": "288",
+   "documents_with_statute_ref": "112"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2022",
+   "statute_refs": "660",
+   "documents_with_statute_ref": "252"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2023",
+   "statute_refs": "750",
+   "documents_with_statute_ref": "291"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2024",
+   "statute_refs": "754",
+   "documents_with_statute_ref": "218"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2025",
+   "statute_refs": "632",
+   "documents_with_statute_ref": "235"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2026",
+   "statute_refs": "505",
+   "documents_with_statute_ref": "210"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1950",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "3"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1988",
+   "statute_refs": "4",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1989",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1990",
+   "statute_refs": "4",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1991",
+   "statute_refs": "6",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1992",
+   "statute_refs": "4",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1993",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1994",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2025",
+   "statute_refs": "1309",
+   "documents_with_statute_ref": "676"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2026",
+   "statute_refs": "4983",
+   "documents_with_statute_ref": "2551"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "1992",
+   "statute_refs": "4",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2025",
+   "statute_refs": "13163",
+   "documents_with_statute_ref": "8132"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2026",
+   "statute_refs": "10195",
+   "documents_with_statute_ref": "6374"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2001",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2003",
+   "statute_refs": "112",
+   "documents_with_statute_ref": "24"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2004",
+   "statute_refs": "89",
+   "documents_with_statute_ref": "35"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2005",
+   "statute_refs": "83",
+   "documents_with_statute_ref": "20"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2006",
+   "statute_refs": "88",
+   "documents_with_statute_ref": "20"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2007",
+   "statute_refs": "15",
+   "documents_with_statute_ref": "9"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2008",
+   "statute_refs": "34",
+   "documents_with_statute_ref": "14"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2009",
+   "statute_refs": "98",
+   "documents_with_statute_ref": "25"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2010",
+   "statute_refs": "68",
+   "documents_with_statute_ref": "27"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2011",
+   "statute_refs": "24",
+   "documents_with_statute_ref": "8"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2012",
+   "statute_refs": "32",
+   "documents_with_statute_ref": "7"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2013",
+   "statute_refs": "144",
+   "documents_with_statute_ref": "22"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2014",
+   "statute_refs": "83",
+   "documents_with_statute_ref": "30"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2015",
+   "statute_refs": "183",
+   "documents_with_statute_ref": "46"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2016",
+   "statute_refs": "256",
+   "documents_with_statute_ref": "51"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2017",
+   "statute_refs": "483",
+   "documents_with_statute_ref": "87"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2018",
+   "statute_refs": "319",
+   "documents_with_statute_ref": "61"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2019",
+   "statute_refs": "482",
+   "documents_with_statute_ref": "90"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2020",
+   "statute_refs": "332",
+   "documents_with_statute_ref": "66"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2021",
+   "statute_refs": "276",
+   "documents_with_statute_ref": "75"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2022",
+   "statute_refs": "245",
+   "documents_with_statute_ref": "63"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2023",
+   "statute_refs": "189",
+   "documents_with_statute_ref": "60"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2024",
+   "statute_refs": "255",
+   "documents_with_statute_ref": "69"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2025",
+   "statute_refs": "214",
+   "documents_with_statute_ref": "66"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2026",
+   "statute_refs": "88",
+   "documents_with_statute_ref": "29"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2011",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2012",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2013",
+   "statute_refs": "298",
+   "documents_with_statute_ref": "189"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2014",
+   "statute_refs": "849",
+   "documents_with_statute_ref": "488"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2015",
+   "statute_refs": "1039",
+   "documents_with_statute_ref": "593"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2016",
+   "statute_refs": "1217",
+   "documents_with_statute_ref": "577"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2017",
+   "statute_refs": "1226",
+   "documents_with_statute_ref": "532"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2018",
+   "statute_refs": "1869",
+   "documents_with_statute_ref": "664"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2019",
+   "statute_refs": "2023",
+   "documents_with_statute_ref": "653"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2020",
+   "statute_refs": "2224",
+   "documents_with_statute_ref": "654"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2021",
+   "statute_refs": "2542",
+   "documents_with_statute_ref": "795"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2022",
+   "statute_refs": "1720",
+   "documents_with_statute_ref": "640"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2023",
+   "statute_refs": "1458",
+   "documents_with_statute_ref": "578"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2024",
+   "statute_refs": "2263",
+   "documents_with_statute_ref": "776"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2025",
+   "statute_refs": "1841",
+   "documents_with_statute_ref": "647"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2026",
+   "statute_refs": "1134",
+   "documents_with_statute_ref": "387"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "1950",
+   "statute_refs": "18",
+   "documents_with_statute_ref": "9"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2016",
+   "statute_refs": "3596",
+   "documents_with_statute_ref": "2188"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2017",
+   "statute_refs": "4759",
+   "documents_with_statute_ref": "2753"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2018",
+   "statute_refs": "3175",
+   "documents_with_statute_ref": "1730"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2023",
+   "statute_refs": "3936",
+   "documents_with_statute_ref": "2131"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2024",
+   "statute_refs": "4701",
+   "documents_with_statute_ref": "2566"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2025",
+   "statute_refs": "8039",
+   "documents_with_statute_ref": "4631"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2026",
+   "statute_refs": "3462",
+   "documents_with_statute_ref": "2044"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2026",
+   "statute_refs": "26936",
+   "documents_with_statute_ref": "15899"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "1976",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "1978",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "1992",
+   "statute_refs": "5",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2026",
+   "statute_refs": "12256",
+   "documents_with_statute_ref": "6065"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1967",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1977",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1978",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1979",
+   "statute_refs": "3",
+   "documents_with_statute_ref": "3"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1982",
+   "statute_refs": "1",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1986",
+   "statute_refs": "2",
+   "documents_with_statute_ref": "2"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1988",
+   "statute_refs": "5",
+   "documents_with_statute_ref": "1"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1989",
+   "statute_refs": "20",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1990",
+   "statute_refs": "20",
+   "documents_with_statute_ref": "6"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1991",
+   "statute_refs": "11",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1992",
+   "statute_refs": "9",
+   "documents_with_statute_ref": "5"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1993",
+   "statute_refs": "41",
+   "documents_with_statute_ref": "15"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1994",
+   "statute_refs": "13",
+   "documents_with_statute_ref": "4"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1995",
+   "statute_refs": "17",
+   "documents_with_statute_ref": "3"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2024",
+   "statute_refs": "219",
+   "documents_with_statute_ref": "165"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2026",
+   "statute_refs": "39331",
+   "documents_with_statute_ref": "25857"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1950",
+   "statute_refs": "159",
+   "documents_with_statute_ref": "34"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1951",
+   "statute_refs": "183",
+   "documents_with_statute_ref": "49"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1952",
+   "statute_refs": "227",
+   "documents_with_statute_ref": "68"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1953",
+   "statute_refs": "260",
+   "documents_with_statute_ref": "69"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1954",
+   "statute_refs": "293",
+   "documents_with_statute_ref": "89"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1955",
+   "statute_refs": "269",
+   "documents_with_statute_ref": "58"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1956",
+   "statute_refs": "208",
+   "documents_with_statute_ref": "68"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1957",
+   "statute_refs": "377",
+   "documents_with_statute_ref": "100"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1958",
+   "statute_refs": "438",
+   "documents_with_statute_ref": "112"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1959",
+   "statute_refs": "506",
+   "documents_with_statute_ref": "138"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1960",
+   "statute_refs": "750",
+   "documents_with_statute_ref": "229"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1961",
+   "statute_refs": "897",
+   "documents_with_statute_ref": "268"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1962",
+   "statute_refs": "957",
+   "documents_with_statute_ref": "279"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1963",
+   "statute_refs": "779",
+   "documents_with_statute_ref": "206"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1964",
+   "statute_refs": "725",
+   "documents_with_statute_ref": "209"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1965",
+   "statute_refs": "795",
+   "documents_with_statute_ref": "229"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1966",
+   "statute_refs": "649",
+   "documents_with_statute_ref": "194"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1967",
+   "statute_refs": "716",
+   "documents_with_statute_ref": "226"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1968",
+   "statute_refs": "886",
+   "documents_with_statute_ref": "242"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1969",
+   "statute_refs": "672",
+   "documents_with_statute_ref": "226"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1970",
+   "statute_refs": "495",
+   "documents_with_statute_ref": "164"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1971",
+   "statute_refs": "753",
+   "documents_with_statute_ref": "248"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1972",
+   "statute_refs": "684",
+   "documents_with_statute_ref": "211"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1973",
+   "statute_refs": "565",
+   "documents_with_statute_ref": "173"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1974",
+   "statute_refs": "596",
+   "documents_with_statute_ref": "182"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1975",
+   "statute_refs": "710",
+   "documents_with_statute_ref": "205"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1976",
+   "statute_refs": "877",
+   "documents_with_statute_ref": "228"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1977",
+   "statute_refs": "548",
+   "documents_with_statute_ref": "168"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1978",
+   "statute_refs": "698",
+   "documents_with_statute_ref": "184"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1979",
+   "statute_refs": "737",
+   "documents_with_statute_ref": "184"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1980",
+   "statute_refs": "615",
+   "documents_with_statute_ref": "152"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1981",
+   "statute_refs": "628",
+   "documents_with_statute_ref": "149"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1982",
+   "statute_refs": "206",
+   "documents_with_statute_ref": "67"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1983",
+   "statute_refs": "432",
+   "documents_with_statute_ref": "123"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1984",
+   "statute_refs": "392",
+   "documents_with_statute_ref": "130"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1985",
+   "statute_refs": "621",
+   "documents_with_statute_ref": "156"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1986",
+   "statute_refs": "612",
+   "documents_with_statute_ref": "178"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1987",
+   "statute_refs": "688",
+   "documents_with_statute_ref": "238"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1988",
+   "statute_refs": "736",
+   "documents_with_statute_ref": "208"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1989",
+   "statute_refs": "707",
+   "documents_with_statute_ref": "235"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1990",
+   "statute_refs": "744",
+   "documents_with_statute_ref": "223"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1991",
+   "statute_refs": "740",
+   "documents_with_statute_ref": "200"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1992",
+   "statute_refs": "718",
+   "documents_with_statute_ref": "227"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1993",
+   "statute_refs": "743",
+   "documents_with_statute_ref": "233"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1994",
+   "statute_refs": "1194",
+   "documents_with_statute_ref": "348"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1995",
+   "statute_refs": "1388",
+   "documents_with_statute_ref": "471"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1996",
+   "statute_refs": "2112",
+   "documents_with_statute_ref": "725"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1997",
+   "statute_refs": "1341",
+   "documents_with_statute_ref": "407"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1998",
+   "statute_refs": "1032",
+   "documents_with_statute_ref": "291"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1999",
+   "statute_refs": "1455",
+   "documents_with_statute_ref": "381"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2000",
+   "statute_refs": "1417",
+   "documents_with_statute_ref": "394"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2001",
+   "statute_refs": "1492",
+   "documents_with_statute_ref": "408"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2002",
+   "statute_refs": "1314",
+   "documents_with_statute_ref": "387"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2003",
+   "statute_refs": "1760",
+   "documents_with_statute_ref": "479"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2004",
+   "statute_refs": "1823",
+   "documents_with_statute_ref": "508"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2005",
+   "statute_refs": "1448",
+   "documents_with_statute_ref": "406"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2006",
+   "statute_refs": "2178",
+   "documents_with_statute_ref": "622"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2007",
+   "statute_refs": "2521",
+   "documents_with_statute_ref": "816"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2008",
+   "statute_refs": "3240",
+   "documents_with_statute_ref": "1038"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2009",
+   "statute_refs": "3031",
+   "documents_with_statute_ref": "910"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2010",
+   "statute_refs": "2438",
+   "documents_with_statute_ref": "639"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2011",
+   "statute_refs": "2500",
+   "documents_with_statute_ref": "569"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2012",
+   "statute_refs": "2196",
+   "documents_with_statute_ref": "464"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2013",
+   "statute_refs": "2842",
+   "documents_with_statute_ref": "635"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2014",
+   "statute_refs": "2537",
+   "documents_with_statute_ref": "554"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2015",
+   "statute_refs": "2245",
+   "documents_with_statute_ref": "569"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2016",
+   "statute_refs": "1626",
+   "documents_with_statute_ref": "414"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2017",
+   "statute_refs": "1910",
+   "documents_with_statute_ref": "475"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2018",
+   "statute_refs": "2160",
+   "documents_with_statute_ref": "516"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2019",
+   "statute_refs": "3222",
+   "documents_with_statute_ref": "724"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2020",
+   "statute_refs": "2413",
+   "documents_with_statute_ref": "421"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2021",
+   "statute_refs": "2741",
+   "documents_with_statute_ref": "524"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2022",
+   "statute_refs": "3594",
+   "documents_with_statute_ref": "734"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2023",
+   "statute_refs": "3213",
+   "documents_with_statute_ref": "649"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2024",
+   "statute_refs": "3182",
+   "documents_with_statute_ref": "580"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2025",
+   "statute_refs": "3589",
+   "documents_with_statute_ref": "705"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2026",
+   "statute_refs": "661",
+   "documents_with_statute_ref": "144"
+  }
+ ]
+}

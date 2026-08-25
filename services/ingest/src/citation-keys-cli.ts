@@ -38,6 +38,42 @@
  * failure `CITATION_HARNESS` exists to prevent one table earlier.
  *
  * ─────────────────────────────────────────────────────────────────────────────
+ * `(${x}::text)::timestamptz` AND NEVER `${x}::timestamptz` — READ THIS BEFORE
+ * "SIMPLIFYING" IT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * **postgres.js truncates a timestamptz bind parameter to MILLISECONDS.** Given
+ * `${'2026-08-17 16:46:59.812119+00'}::timestamptz` the driver infers the
+ * parameter type from the cast, routes the string through a JavaScript `Date` —
+ * which has millisecond resolution — and PostgreSQL receives
+ * `2026-08-17 16:46:59.812`. Measured, on this database:
+ *
+ *     SELECT ${AT}::timestamptz::text          ->  2026-08-17 16:46:59.812+00
+ *     SELECT (${AT}::text)::timestamptz::text  ->  2026-08-17 16:46:59.812119+00
+ *
+ * `judgments.created_at` carries full microseconds, so the truncated cursor sits
+ * strictly BEFORE the rows it was supposed to have passed. Those rows then
+ * satisfy `created_at > cursor` on the very next page — whatever their id,
+ * because the tuple comparison never reaches the id once the timestamps differ.
+ * **The page returns the same rows for ever and the walk does not terminate.**
+ *
+ * This is not theoretical. A `--recheck` over a range holding roughly 75,000
+ * judgments reported **266,124,061 judgments re-walked** with its cursor frozen
+ * at the range's last timestamp, and had to be killed. It is very probably also
+ * what LCC saw on 24 Aug (bus 1110) and read as "following new inserts one row at
+ * a time": a finite job that reaches the end of its input and never stops.
+ *
+ * **It cannot skip a row** — truncation moves the cursor backwards, so the
+ * failure is re-reading and non-termination, never data loss, and
+ * `ON CONFLICT DO NOTHING` absorbs the duplicates. That is the only reason this
+ * cost time rather than correctness.
+ *
+ * Casting the parameter to `text` first makes the driver send it as text and
+ * lets PostgreSQL do the parse, at full precision. Every timestamptz parameter
+ * in this file is written that way, including the one in `publishFrontier` —
+ * which otherwise publishes a cursor up to a millisecond behind the file.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
  * INCREMENTAL, AND WHAT "INCREMENTAL" IS ALLOWED TO MEAN HERE
  * ─────────────────────────────────────────────────────────────────────────────
  *
@@ -61,6 +97,32 @@ const ONE_JUDGMENT = (() => {
   return i === -1 ? null : (process.argv[i + 1] ?? null);
 })();
 const PAGE = Number(process.env['CITATION_KEYS_PAGE'] ?? 20_000);
+
+/**
+ * `--recheck <fromISO> <toISO>` — re-walk a bounded `created_at` range WITHOUT
+ * touching the checkpoint or the published frontier.
+ *
+ * This exists because the forward walk cannot repair its own past. A row that
+ * became visible below the cursor is below the cursor forever; the 24 Aug
+ * catch-up ran from 16:46Z and could not have reached the nine batches at
+ * 16:41–16:44 no matter how far it walked. `--rebuild` would fix them and costs
+ * a truncate plus 27.7M rows re-derived to recover 899.
+ *
+ * It moves neither cursor deliberately. A repair is not progress, and a repair
+ * that advanced the frontier would report the index as fresher than the walk
+ * has actually made it.
+ */
+const RECHECK = (() => {
+  const i = process.argv.indexOf('--recheck');
+  if (i === -1) return null;
+  const from = process.argv[i + 1];
+  const to = process.argv[i + 2];
+  if (!from || !to) {
+    console.error('--recheck needs two timestamps: --recheck <fromISO> <toISO>');
+    process.exit(2);
+  }
+  return { from, to };
+})();
 
 /**
  * The fleet's stop switch, honoured here for the same reason as `enrich-cli.ts`:
@@ -151,7 +213,7 @@ async function publishFrontier(c: Omit<Checkpoint, 'updatedAt'>, runId: string):
   try {
     await sql`
       INSERT INTO citation_key_frontier (id, cursor_at, cursor_id, scanned, updated_at, run_id)
-      VALUES (true, ${c.cursorAt}::timestamptz, ${c.cursorId}::uuid, ${c.scanned}, now(), ${runId})
+      VALUES (true, (${c.cursorAt}::text)::timestamptz, ${c.cursorId}::uuid, ${c.scanned}, now(), ${runId})
       ON CONFLICT (id) DO UPDATE
         SET cursor_at = EXCLUDED.cursor_at,
             cursor_id = EXCLUDED.cursor_id,
@@ -164,6 +226,86 @@ async function publishFrontier(c: Omit<Checkpoint, 'updatedAt'>, runId: string):
         `the freshness reading will go STALE, which is the right visible outcome`,
     );
   }
+}
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE SAFE FRONTIER — WHY THE WALK MUST NOT TOUCH THE LIVE EDGE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `judgments.created_at` defaults to `now()`, and **`now()` is TRANSACTION START
+ * TIME**, not commit time. A loader that begins at 16:43:23.94, inserts a
+ * hundred rows and commits 250 ms later writes a hundred rows stamped
+ * 16:43:23.94 that did not exist, for any reader, until 16:43:24.19.
+ *
+ * The keyset cursor is monotonic. So a row that becomes visible BELOW the cursor
+ * is below the cursor forever — no later run of this walk can ever see it, and
+ * nothing reports the loss, because a batch that produced no key rows is
+ * indistinguishable from a batch that had no citations.
+ *
+ * THIS ALREADY HAPPENED. On 17 Aug 2026 the walk caught up to live ingest and
+ * rode it with 150–250 ms of lag from 16:41:08 to 16:46:00 — the only window in
+ * the corpus's whole history where the lag was under a minute. Nine loader
+ * transactions were slower than one page interval. 899 judgments were never
+ * walked and 293 of them carry a real neutral citation. Measured, not inferred:
+ * `docs/ai/new2-r7/CITATION_BATCH_GAP_RCA.md`.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE BOUND IS EXACT, NOT A GUESS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The tempting fix is `created_at < now() - interval '5 minutes'`, and it is a
+ * guess: it is simultaneously too slow for the resolver and still wrong for any
+ * loader transaction that runs six minutes.
+ *
+ * PostgreSQL can answer the question exactly. Every transaction that could still
+ * insert a row below some timestamp is, by definition, already running — and its
+ * `now()` is its `pg_stat_activity.xact_start`. So the oldest `xact_start` among
+ * OTHER backends is a hard floor: no row can ever appear with a `created_at`
+ * below it that is not already visible. A transaction that has not begun yet
+ * will take its `now()` after this reading, so it is above the bound too.
+ *
+ * Our own backend is excluded — this walk's statement is itself in
+ * `pg_stat_activity`, and including it would pin the bound to the present
+ * instant and provide no safety at all.
+ *
+ * WHEN THE EXACT BOUND IS UNAVAILABLE, SAY SO AND BE CONSERVATIVE. A
+ * non-superuser without `pg_read_all_stats` sees other backends' `xact_start` as
+ * NULL, which is indistinguishable from "no transactions are running" and would
+ * silently restore the unsafe behaviour. In that case the walk falls back to a
+ * fixed interval and PRINTS which rule it is using, because a safety bound
+ * nobody can tell the provenance of is not a safety bound.
+ */
+const FALLBACK_LAG_SECONDS = Number(process.env['CITATION_KEYS_FALLBACK_LAG_S'] ?? 300);
+
+type Frontier = { bound: string; exact: boolean };
+
+async function safeFrontier(): Promise<Frontier> {
+  const [row] = await sql<{ bound: string; exact: boolean }[]>`
+    WITH others AS (
+      SELECT min(xact_start) AS oldest
+      FROM pg_stat_activity
+      WHERE pid <> pg_backend_pid()
+        AND datname = current_database()
+        AND xact_start IS NOT NULL
+    ),
+    /* Can we actually SEE other backends' transaction times? If any other
+     * backend exists at all and every one of them reports a NULL xact_start,
+     * the reading is masked rather than empty, and the exact bound is a lie. */
+    visible AS (
+      SELECT count(*) FILTER (WHERE pid <> pg_backend_pid() AND datname = current_database()) AS peers,
+             count(*) FILTER (WHERE pid <> pg_backend_pid() AND datname = current_database()
+                                AND (xact_start IS NOT NULL OR state IS NOT NULL)) AS readable
+      FROM pg_stat_activity
+    )
+    SELECT CASE
+             WHEN v.peers > 0 AND v.readable = 0
+               THEN (now() - make_interval(secs => ${FALLBACK_LAG_SECONDS}))::text
+             ELSE coalesce(o.oldest, now())::text
+           END AS bound,
+           NOT (v.peers > 0 AND v.readable = 0) AS exact
+    FROM others o, visible v`;
+  return row ?? { bound: new Date(Date.now() - FALLBACK_LAG_SECONDS * 1000).toISOString(), exact: false };
 }
 
 /**
@@ -183,12 +325,13 @@ async function publishFrontier(c: Omit<Checkpoint, 'updatedAt'>, runId: string):
  */
 const YEAR_RE = '(1[89][0-9][0-9]|20[0-9][0-9])';
 
-async function derivePage(cursorAt: string, cursorId: string) {
+async function derivePage(cursorAt: string, cursorId: string, upperBound: string) {
   return sql<{ created_at: string; id: string; n: number }[]>`
     WITH page AS (
       SELECT id, created_at, neutral_citation, reporter_citations
       FROM judgments
-      WHERE (created_at, id) > (${cursorAt}::timestamptz, ${cursorId}::uuid)
+      WHERE (created_at, id) > ((${cursorAt}::text)::timestamptz, ${cursorId}::uuid)
+        AND created_at < (${upperBound}::text)::timestamptz
       ORDER BY created_at, id
       LIMIT ${PAGE}
     ),
@@ -235,12 +378,13 @@ async function derivePage(cursorAt: string, cursorId: string) {
 }
 
 /** Rows the CHECK constraints would have refused. Counted, never silently dropped. */
-async function countOversized(cursorAt: string, cursorId: string) {
+async function countOversized(cursorAt: string, cursorId: string, upperBound: string) {
   const [r] = await sql<{ n: number }[]>`
     WITH page AS (
       SELECT id, created_at, neutral_citation, reporter_citations
       FROM judgments
-      WHERE (created_at, id) > (${cursorAt}::timestamptz, ${cursorId}::uuid)
+      WHERE (created_at, id) > ((${cursorAt}::text)::timestamptz, ${cursorId}::uuid)
+        AND created_at < (${upperBound}::text)::timestamptz
       ORDER BY created_at, id
       LIMIT ${PAGE}
     ),
@@ -347,6 +491,40 @@ async function main() {
     return;
   }
 
+  if (RECHECK) {
+    /* The repair walk. Same derivation, bounded range, and the checkpoint and
+     * the published frontier are both left exactly where the forward walk put
+     * them — see the RECHECK comment above. */
+    console.log(`--recheck ${RECHECK.from} .. ${RECHECK.to}  (checkpoint and frontier NOT moved)`);
+    const before = await sql<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM judgment_citation_keys k
+      JOIN judgments j ON j.id = k.judgment_id
+      WHERE j.created_at >= (${RECHECK.from}::text)::timestamptz AND j.created_at < (${RECHECK.to}::text)::timestamptz`;
+    let at = RECHECK.from;
+    let id = EPOCH.cursorId;
+    let seen = 0;
+    for (;;) {
+      stopIfRequested();
+      const [page] = await derivePage(at, id, RECHECK.to);
+      const n = page?.n ?? 0;
+      if (n === 0) break;
+      at = page!.created_at;
+      id = page!.id;
+      seen += n;
+      console.log(`  ${seen.toLocaleString().padStart(10)} judgments re-walked · at ${at}`);
+    }
+    const after = await sql<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM judgment_citation_keys k
+      JOIN judgments j ON j.id = k.judgment_id
+      WHERE j.created_at >= (${RECHECK.from}::text)::timestamptz AND j.created_at < (${RECHECK.to}::text)::timestamptz`;
+    console.log(
+      `\nre-walked ${seen.toLocaleString()} judgments · key rows in range ` +
+        `${before[0]?.n?.toLocaleString()} -> ${after[0]?.n?.toLocaleString()} ` +
+        `(+${((after[0]?.n ?? 0) - (before[0]?.n ?? 0)).toLocaleString()})`,
+    );
+    return;
+  }
+
   if (REBUILD) {
     // TRUNCATE, not DELETE: this table is derived and can hold tens of millions
     // of rows, and a DELETE would leave that much dead tuple behind for
@@ -367,10 +545,27 @@ async function main() {
 
   const started = Date.now();
   let oversized = 0;
+  let announcedBound = false;
   for (;;) {
     stopIfRequested();
-    oversized += await countOversized(cursorAt, cursorId);
-    const [page] = await derivePage(cursorAt, cursorId);
+    /* Recomputed every page, not once: the oldest in-flight transaction ends and
+     * the bound advances with it, so a walk that started while a slow loader was
+     * running catches up as soon as that loader commits. Computed once, the
+     * bound would freeze at whatever happened to be running at launch. */
+    const frontier = await safeFrontier();
+    if (!announcedBound) {
+      console.log(
+        frontier.exact
+          ? `safe frontier ${frontier.bound} — the oldest in-flight transaction in this database. ` +
+              `Rows at or above it may still be uncommitted and are left for a later page.`
+          : `safe frontier ${frontier.bound} — FALLBACK, ${FALLBACK_LAG_SECONDS}s behind now. ` +
+              `Other backends' xact_start is not readable by this role, so the exact bound is ` +
+              `unavailable; grant pg_read_all_stats to restore it.`,
+      );
+      announcedBound = true;
+    }
+    oversized += await countOversized(cursorAt, cursorId, frontier.bound);
+    const [page] = await derivePage(cursorAt, cursorId, frontier.bound);
     const n = page?.n ?? 0;
     if (n === 0) break;
 

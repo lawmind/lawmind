@@ -1,0 +1,4095 @@
+{
+ "pass": "vectors",
+ "generated_at": "2026-08-25T11:43:16.439Z",
+ "ms": 28983,
+ "row_count": 681,
+ "sql": "\n    WITH staged AS (\n      SELECT DISTINCT judgment_id FROM new1_doc_vector_stage\n    ), chunked AS (\n      SELECT DISTINCT judgment_id FROM judgment_chunks\n    )\n    SELECT j.court AS court,\n      CASE WHEN j.judgment_date IS NULL THEN 'unknown' ELSE extract(year FROM j.judgment_date)::int::text END AS year,\n      count(*) FILTER (WHERE s.judgment_id IS NOT NULL)::bigint AS documents_with_staged_vector,\n      count(*) FILTER (WHERE c.judgment_id IS NOT NULL)::bigint AS documents_with_chunks\n    FROM judgments j\n    LEFT JOIN staged  s ON s.judgment_id = j.id\n    LEFT JOIN chunked c ON c.judgment_id = j.id\n    WHERE s.judgment_id IS NOT NULL OR c.judgment_id IS NOT NULL\n    GROUP BY 1,2",
+ "rows": [
+  {
+   "court": "Allahabad High Court",
+   "year": "2017",
+   "documents_with_staged_vector": "167",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2018",
+   "documents_with_staged_vector": "28456",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2019",
+   "documents_with_staged_vector": "31329",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2020",
+   "documents_with_staged_vector": "19641",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2021",
+   "documents_with_staged_vector": "23274",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2022",
+   "documents_with_staged_vector": "34193",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2023",
+   "documents_with_staged_vector": "32454",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2024",
+   "documents_with_staged_vector": "25251",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2025",
+   "documents_with_staged_vector": "55982",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Allahabad High Court",
+   "year": "2026",
+   "documents_with_staged_vector": "9468",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1983",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1984",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1990",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1992",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1993",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1994",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1995",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1996",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1997",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1998",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "1999",
+   "documents_with_staged_vector": "10",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2000",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2001",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2002",
+   "documents_with_staged_vector": "77",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2003",
+   "documents_with_staged_vector": "135",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2004",
+   "documents_with_staged_vector": "1279",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2005",
+   "documents_with_staged_vector": "3833",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2006",
+   "documents_with_staged_vector": "3186",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2007",
+   "documents_with_staged_vector": "3374",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2008",
+   "documents_with_staged_vector": "3567",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2009",
+   "documents_with_staged_vector": "5157",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2010",
+   "documents_with_staged_vector": "6053",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2011",
+   "documents_with_staged_vector": "5666",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2012",
+   "documents_with_staged_vector": "5580",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2013",
+   "documents_with_staged_vector": "6901",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2014",
+   "documents_with_staged_vector": "6971",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2015",
+   "documents_with_staged_vector": "7082",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2016",
+   "documents_with_staged_vector": "6952",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2017",
+   "documents_with_staged_vector": "5735",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2018",
+   "documents_with_staged_vector": "6095",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2019",
+   "documents_with_staged_vector": "5549",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2020",
+   "documents_with_staged_vector": "1403",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2021",
+   "documents_with_staged_vector": "3707",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2022",
+   "documents_with_staged_vector": "5232",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2023",
+   "documents_with_staged_vector": "6574",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2024",
+   "documents_with_staged_vector": "10693",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2025",
+   "documents_with_staged_vector": "14105",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Bombay High Court",
+   "year": "2026",
+   "documents_with_staged_vector": "4739",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "1950",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2016",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2017",
+   "documents_with_staged_vector": "8",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2018",
+   "documents_with_staged_vector": "12",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2019",
+   "documents_with_staged_vector": "145",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2020",
+   "documents_with_staged_vector": "782",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2021",
+   "documents_with_staged_vector": "4341",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2022",
+   "documents_with_staged_vector": "7454",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2023",
+   "documents_with_staged_vector": "7827",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2024",
+   "documents_with_staged_vector": "6206",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2025",
+   "documents_with_staged_vector": "6234",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Calcutta High Court",
+   "year": "2026",
+   "documents_with_staged_vector": "3326",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2001",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2002",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2003",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2004",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2006",
+   "documents_with_staged_vector": "17",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2007",
+   "documents_with_staged_vector": "185",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2008",
+   "documents_with_staged_vector": "152",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2009",
+   "documents_with_staged_vector": "187",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2010",
+   "documents_with_staged_vector": "479",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2011",
+   "documents_with_staged_vector": "782",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2012",
+   "documents_with_staged_vector": "1108",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2013",
+   "documents_with_staged_vector": "1129",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2014",
+   "documents_with_staged_vector": "1185",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2015",
+   "documents_with_staged_vector": "1537",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2018",
+   "documents_with_staged_vector": "195",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2019",
+   "documents_with_staged_vector": "3785",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2020",
+   "documents_with_staged_vector": "2410",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2021",
+   "documents_with_staged_vector": "3130",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2022",
+   "documents_with_staged_vector": "4247",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2023",
+   "documents_with_staged_vector": "4466",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2024",
+   "documents_with_staged_vector": "4266",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2025",
+   "documents_with_staged_vector": "4445",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Gauhati High Court",
+   "year": "2026",
+   "documents_with_staged_vector": "2534",
+   "documents_with_chunks": "492"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1994",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1995",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1996",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1997",
+   "documents_with_staged_vector": "6",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1998",
+   "documents_with_staged_vector": "10",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "1999",
+   "documents_with_staged_vector": "11",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2000",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2001",
+   "documents_with_staged_vector": "18",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2002",
+   "documents_with_staged_vector": "18",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2003",
+   "documents_with_staged_vector": "44",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2004",
+   "documents_with_staged_vector": "3948",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2005",
+   "documents_with_staged_vector": "4722",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2006",
+   "documents_with_staged_vector": "3057",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2007",
+   "documents_with_staged_vector": "3693",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2008",
+   "documents_with_staged_vector": "4626",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2009",
+   "documents_with_staged_vector": "4303",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2010",
+   "documents_with_staged_vector": "6223",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2011",
+   "documents_with_staged_vector": "6644",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2012",
+   "documents_with_staged_vector": "7322",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2013",
+   "documents_with_staged_vector": "6553",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2014",
+   "documents_with_staged_vector": "7695",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2015",
+   "documents_with_staged_vector": "6285",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2016",
+   "documents_with_staged_vector": "6178",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2017",
+   "documents_with_staged_vector": "6028",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2018",
+   "documents_with_staged_vector": "6834",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2019",
+   "documents_with_staged_vector": "3666",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2020",
+   "documents_with_staged_vector": "3694",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2021",
+   "documents_with_staged_vector": "6923",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2022",
+   "documents_with_staged_vector": "13366",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2023",
+   "documents_with_staged_vector": "12142",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2024",
+   "documents_with_staged_vector": "7413",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2025",
+   "documents_with_staged_vector": "7300",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "year": "2026",
+   "documents_with_staged_vector": "1944",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2020",
+   "documents_with_staged_vector": "1006",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2021",
+   "documents_with_staged_vector": "3295",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2022",
+   "documents_with_staged_vector": "417",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2023",
+   "documents_with_staged_vector": "8158",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2024",
+   "documents_with_staged_vector": "8475",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2025",
+   "documents_with_staged_vector": "9388",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "year": "2026",
+   "documents_with_staged_vector": "4054",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "1999",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2000",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2001",
+   "documents_with_staged_vector": "87",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2002",
+   "documents_with_staged_vector": "44",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2003",
+   "documents_with_staged_vector": "234",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2004",
+   "documents_with_staged_vector": "225",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2005",
+   "documents_with_staged_vector": "683",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2006",
+   "documents_with_staged_vector": "1069",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2007",
+   "documents_with_staged_vector": "1455",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2008",
+   "documents_with_staged_vector": "1007",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2009",
+   "documents_with_staged_vector": "1398",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2010",
+   "documents_with_staged_vector": "2199",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2011",
+   "documents_with_staged_vector": "2459",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2012",
+   "documents_with_staged_vector": "3213",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2013",
+   "documents_with_staged_vector": "2793",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2014",
+   "documents_with_staged_vector": "2845",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2015",
+   "documents_with_staged_vector": "2419",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2016",
+   "documents_with_staged_vector": "4074",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2017",
+   "documents_with_staged_vector": "4543",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2018",
+   "documents_with_staged_vector": "5528",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2019",
+   "documents_with_staged_vector": "6278",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2020",
+   "documents_with_staged_vector": "4104",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2021",
+   "documents_with_staged_vector": "5030",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2022",
+   "documents_with_staged_vector": "5415",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2023",
+   "documents_with_staged_vector": "6091",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2024",
+   "documents_with_staged_vector": "7486",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2025",
+   "documents_with_staged_vector": "9595",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "year": "2026",
+   "documents_with_staged_vector": "4470",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "1999",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2000",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2002",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2003",
+   "documents_with_staged_vector": "8",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2004",
+   "documents_with_staged_vector": "10",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2005",
+   "documents_with_staged_vector": "13",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2006",
+   "documents_with_staged_vector": "51",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2007",
+   "documents_with_staged_vector": "273",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2008",
+   "documents_with_staged_vector": "590",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2009",
+   "documents_with_staged_vector": "1053",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2010",
+   "documents_with_staged_vector": "1483",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2011",
+   "documents_with_staged_vector": "2419",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2012",
+   "documents_with_staged_vector": "2073",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2013",
+   "documents_with_staged_vector": "1761",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2014",
+   "documents_with_staged_vector": "1507",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2015",
+   "documents_with_staged_vector": "2760",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2017",
+   "documents_with_staged_vector": "2102",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2018",
+   "documents_with_staged_vector": "4716",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2019",
+   "documents_with_staged_vector": "3238",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2020",
+   "documents_with_staged_vector": "2015",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2021",
+   "documents_with_staged_vector": "981",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2022",
+   "documents_with_staged_vector": "1201",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2023",
+   "documents_with_staged_vector": "1952",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2024",
+   "documents_with_staged_vector": "8563",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2025",
+   "documents_with_staged_vector": "7830",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Delhi",
+   "year": "2026",
+   "documents_with_staged_vector": "4498",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1992",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1993",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1994",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1995",
+   "documents_with_staged_vector": "62",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1996",
+   "documents_with_staged_vector": "886",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1997",
+   "documents_with_staged_vector": "843",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1998",
+   "documents_with_staged_vector": "991",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "1999",
+   "documents_with_staged_vector": "877",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2000",
+   "documents_with_staged_vector": "1700",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2001",
+   "documents_with_staged_vector": "1274",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2002",
+   "documents_with_staged_vector": "1088",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2003",
+   "documents_with_staged_vector": "862",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2004",
+   "documents_with_staged_vector": "1199",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2005",
+   "documents_with_staged_vector": "1242",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2006",
+   "documents_with_staged_vector": "1300",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2007",
+   "documents_with_staged_vector": "1337",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2008",
+   "documents_with_staged_vector": "1626",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2009",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2011",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2012",
+   "documents_with_staged_vector": "2180",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2013",
+   "documents_with_staged_vector": "1976",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2014",
+   "documents_with_staged_vector": "2410",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2015",
+   "documents_with_staged_vector": "1055",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2016",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2017",
+   "documents_with_staged_vector": "29",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2018",
+   "documents_with_staged_vector": "5274",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2019",
+   "documents_with_staged_vector": "6275",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2020",
+   "documents_with_staged_vector": "4184",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2021",
+   "documents_with_staged_vector": "6527",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2022",
+   "documents_with_staged_vector": "6340",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2023",
+   "documents_with_staged_vector": "465",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2024",
+   "documents_with_staged_vector": "172",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2025",
+   "documents_with_staged_vector": "610",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Gujarat",
+   "year": "2026",
+   "documents_with_staged_vector": "492",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "1997",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "1998",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "1999",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2000",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2001",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2002",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2003",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2004",
+   "documents_with_staged_vector": "7",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2005",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2006",
+   "documents_with_staged_vector": "130",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2007",
+   "documents_with_staged_vector": "572",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2008",
+   "documents_with_staged_vector": "799",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2009",
+   "documents_with_staged_vector": "768",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2010",
+   "documents_with_staged_vector": "1669",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2011",
+   "documents_with_staged_vector": "1579",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2012",
+   "documents_with_staged_vector": "2228",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2013",
+   "documents_with_staged_vector": "1136",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2014",
+   "documents_with_staged_vector": "1009",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2015",
+   "documents_with_staged_vector": "969",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2016",
+   "documents_with_staged_vector": "1122",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2017",
+   "documents_with_staged_vector": "956",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2018",
+   "documents_with_staged_vector": "1207",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2019",
+   "documents_with_staged_vector": "1340",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2020",
+   "documents_with_staged_vector": "956",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2021",
+   "documents_with_staged_vector": "1516",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2022",
+   "documents_with_staged_vector": "2017",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2023",
+   "documents_with_staged_vector": "2418",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2024",
+   "documents_with_staged_vector": "2991",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2025",
+   "documents_with_staged_vector": "4999",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "year": "2026",
+   "documents_with_staged_vector": "1678",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2016",
+   "documents_with_staged_vector": "61",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2017",
+   "documents_with_staged_vector": "541",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2018",
+   "documents_with_staged_vector": "493",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2019",
+   "documents_with_staged_vector": "765",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2020",
+   "documents_with_staged_vector": "603",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2021",
+   "documents_with_staged_vector": "977",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2022",
+   "documents_with_staged_vector": "1108",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2023",
+   "documents_with_staged_vector": "1296",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2024",
+   "documents_with_staged_vector": "1166",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2025",
+   "documents_with_staged_vector": "1310",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "year": "2026",
+   "documents_with_staged_vector": "541",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "1992",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "1999",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2000",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2001",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2005",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2006",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2007",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2011",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2012",
+   "documents_with_staged_vector": "426",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2013",
+   "documents_with_staged_vector": "971",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2014",
+   "documents_with_staged_vector": "1338",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2015",
+   "documents_with_staged_vector": "2025",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2017",
+   "documents_with_staged_vector": "171",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2018",
+   "documents_with_staged_vector": "3003",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2019",
+   "documents_with_staged_vector": "5485",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2020",
+   "documents_with_staged_vector": "3208",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2021",
+   "documents_with_staged_vector": "4076",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2022",
+   "documents_with_staged_vector": "4138",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2023",
+   "documents_with_staged_vector": "4679",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2024",
+   "documents_with_staged_vector": "4663",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2025",
+   "documents_with_staged_vector": "3800",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "year": "2026",
+   "documents_with_staged_vector": "1615",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "1997",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "1998",
+   "documents_with_staged_vector": "135",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2004",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2008",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2009",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2010",
+   "documents_with_staged_vector": "29",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2011",
+   "documents_with_staged_vector": "248",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2012",
+   "documents_with_staged_vector": "2438",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2013",
+   "documents_with_staged_vector": "1941",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2014",
+   "documents_with_staged_vector": "1468",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2015",
+   "documents_with_staged_vector": "641",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2016",
+   "documents_with_staged_vector": "775",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2017",
+   "documents_with_staged_vector": "852",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2018",
+   "documents_with_staged_vector": "1180",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2019",
+   "documents_with_staged_vector": "2316",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2020",
+   "documents_with_staged_vector": "4208",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2021",
+   "documents_with_staged_vector": "9169",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2022",
+   "documents_with_staged_vector": "10334",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2023",
+   "documents_with_staged_vector": "12514",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2024",
+   "documents_with_staged_vector": "14883",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2025",
+   "documents_with_staged_vector": "16558",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "year": "2026",
+   "documents_with_staged_vector": "7786",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1951",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1954",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1955",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1956",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1958",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1970",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1985",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "1987",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2000",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2001",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2005",
+   "documents_with_staged_vector": "16",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2006",
+   "documents_with_staged_vector": "981",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2007",
+   "documents_with_staged_vector": "9373",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2008",
+   "documents_with_staged_vector": "10833",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2009",
+   "documents_with_staged_vector": "9961",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2010",
+   "documents_with_staged_vector": "10216",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2011",
+   "documents_with_staged_vector": "10375",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2012",
+   "documents_with_staged_vector": "11055",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2013",
+   "documents_with_staged_vector": "10436",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2014",
+   "documents_with_staged_vector": "10496",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2015",
+   "documents_with_staged_vector": "11427",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2016",
+   "documents_with_staged_vector": "7289",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2018",
+   "documents_with_staged_vector": "12093",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2019",
+   "documents_with_staged_vector": "14087",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2020",
+   "documents_with_staged_vector": "9713",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2021",
+   "documents_with_staged_vector": "10825",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2022",
+   "documents_with_staged_vector": "14096",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2023",
+   "documents_with_staged_vector": "15610",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2024",
+   "documents_with_staged_vector": "8070",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2025",
+   "documents_with_staged_vector": "1127",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Kerala",
+   "year": "2026",
+   "documents_with_staged_vector": "8",
+   "documents_with_chunks": "3"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2000",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2009",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2010",
+   "documents_with_staged_vector": "8",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2011",
+   "documents_with_staged_vector": "202",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2012",
+   "documents_with_staged_vector": "1557",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2013",
+   "documents_with_staged_vector": "1645",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2014",
+   "documents_with_staged_vector": "2502",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2015",
+   "documents_with_staged_vector": "4744",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2016",
+   "documents_with_staged_vector": "1097",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2017",
+   "documents_with_staged_vector": "3662",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2018",
+   "documents_with_staged_vector": "5193",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2019",
+   "documents_with_staged_vector": "6088",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2020",
+   "documents_with_staged_vector": "4334",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2021",
+   "documents_with_staged_vector": "6171",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2022",
+   "documents_with_staged_vector": "9645",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2023",
+   "documents_with_staged_vector": "10865",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2024",
+   "documents_with_staged_vector": "1085",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2025",
+   "documents_with_staged_vector": "26",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Madhya Pradesh",
+   "year": "2026",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "3"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2017",
+   "documents_with_staged_vector": "33",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2018",
+   "documents_with_staged_vector": "154",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2019",
+   "documents_with_staged_vector": "227",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2020",
+   "documents_with_staged_vector": "102",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2021",
+   "documents_with_staged_vector": "160",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2022",
+   "documents_with_staged_vector": "264",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2023",
+   "documents_with_staged_vector": "163",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2024",
+   "documents_with_staged_vector": "177",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2025",
+   "documents_with_staged_vector": "252",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Manipur",
+   "year": "2026",
+   "documents_with_staged_vector": "119",
+   "documents_with_chunks": "46"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2010",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2011",
+   "documents_with_staged_vector": "6",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2012",
+   "documents_with_staged_vector": "7",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2013",
+   "documents_with_staged_vector": "49",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2014",
+   "documents_with_staged_vector": "75",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2015",
+   "documents_with_staged_vector": "42",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2016",
+   "documents_with_staged_vector": "51",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2017",
+   "documents_with_staged_vector": "91",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2018",
+   "documents_with_staged_vector": "76",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2019",
+   "documents_with_staged_vector": "124",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2020",
+   "documents_with_staged_vector": "58",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2021",
+   "documents_with_staged_vector": "57",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2022",
+   "documents_with_staged_vector": "157",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2023",
+   "documents_with_staged_vector": "164",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2024",
+   "documents_with_staged_vector": "186",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2025",
+   "documents_with_staged_vector": "199",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "year": "2026",
+   "documents_with_staged_vector": "136",
+   "documents_with_chunks": "58"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1983",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1986",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1987",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1989",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1990",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1991",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1992",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1993",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1994",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1995",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1996",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1997",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1998",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "1999",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2000",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2001",
+   "documents_with_staged_vector": "14",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2002",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2003",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2004",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2005",
+   "documents_with_staged_vector": "10",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2006",
+   "documents_with_staged_vector": "757",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2007",
+   "documents_with_staged_vector": "1053",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2008",
+   "documents_with_staged_vector": "2001",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2009",
+   "documents_with_staged_vector": "4782",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2010",
+   "documents_with_staged_vector": "6061",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2011",
+   "documents_with_staged_vector": "6294",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2012",
+   "documents_with_staged_vector": "7729",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2013",
+   "documents_with_staged_vector": "5702",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2014",
+   "documents_with_staged_vector": "2865",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2015",
+   "documents_with_staged_vector": "2829",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2016",
+   "documents_with_staged_vector": "287",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2017",
+   "documents_with_staged_vector": "2655",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2018",
+   "documents_with_staged_vector": "3045",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2019",
+   "documents_with_staged_vector": "2704",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2020",
+   "documents_with_staged_vector": "1579",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2021",
+   "documents_with_staged_vector": "1964",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2022",
+   "documents_with_staged_vector": "3447",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2023",
+   "documents_with_staged_vector": "4544",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2024",
+   "documents_with_staged_vector": "6289",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2025",
+   "documents_with_staged_vector": "6781",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "year": "2026",
+   "documents_with_staged_vector": "4210",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "1989",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "1990",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "1996",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2001",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2002",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2004",
+   "documents_with_staged_vector": "53",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2005",
+   "documents_with_staged_vector": "243",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2006",
+   "documents_with_staged_vector": "896",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2007",
+   "documents_with_staged_vector": "1388",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2008",
+   "documents_with_staged_vector": "1682",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2009",
+   "documents_with_staged_vector": "1719",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2010",
+   "documents_with_staged_vector": "1416",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2011",
+   "documents_with_staged_vector": "2030",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2012",
+   "documents_with_staged_vector": "2613",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2013",
+   "documents_with_staged_vector": "2392",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2014",
+   "documents_with_staged_vector": "4563",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2015",
+   "documents_with_staged_vector": "5231",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2017",
+   "documents_with_staged_vector": "7761",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2018",
+   "documents_with_staged_vector": "10040",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2019",
+   "documents_with_staged_vector": "7256",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2020",
+   "documents_with_staged_vector": "7022",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2021",
+   "documents_with_staged_vector": "9064",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2022",
+   "documents_with_staged_vector": "8680",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2023",
+   "documents_with_staged_vector": "10647",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2024",
+   "documents_with_staged_vector": "8756",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2025",
+   "documents_with_staged_vector": "4116",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "year": "2026",
+   "documents_with_staged_vector": "1462",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2000",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2001",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2002",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2003",
+   "documents_with_staged_vector": "11",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2004",
+   "documents_with_staged_vector": "17",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2005",
+   "documents_with_staged_vector": "8",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2006",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2007",
+   "documents_with_staged_vector": "6",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2008",
+   "documents_with_staged_vector": "10",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2009",
+   "documents_with_staged_vector": "7",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2010",
+   "documents_with_staged_vector": "15",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2011",
+   "documents_with_staged_vector": "7",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2012",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2013",
+   "documents_with_staged_vector": "5",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2014",
+   "documents_with_staged_vector": "20",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2015",
+   "documents_with_staged_vector": "13",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2016",
+   "documents_with_staged_vector": "13",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2017",
+   "documents_with_staged_vector": "28",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2018",
+   "documents_with_staged_vector": "15",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2019",
+   "documents_with_staged_vector": "27",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2020",
+   "documents_with_staged_vector": "12",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2021",
+   "documents_with_staged_vector": "33",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2022",
+   "documents_with_staged_vector": "25",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2023",
+   "documents_with_staged_vector": "26",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2024",
+   "documents_with_staged_vector": "20",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2025",
+   "documents_with_staged_vector": "15",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "year": "2026",
+   "documents_with_staged_vector": "10",
+   "documents_with_chunks": "10"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2011",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2013",
+   "documents_with_staged_vector": "36",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2014",
+   "documents_with_staged_vector": "92",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2015",
+   "documents_with_staged_vector": "229",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2016",
+   "documents_with_staged_vector": "198",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2017",
+   "documents_with_staged_vector": "203",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2018",
+   "documents_with_staged_vector": "282",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2019",
+   "documents_with_staged_vector": "423",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2020",
+   "documents_with_staged_vector": "301",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2021",
+   "documents_with_staged_vector": "338",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2022",
+   "documents_with_staged_vector": "375",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2023",
+   "documents_with_staged_vector": "406",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2024",
+   "documents_with_staged_vector": "420",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2025",
+   "documents_with_staged_vector": "288",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Tripura",
+   "year": "2026",
+   "documents_with_staged_vector": "153",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "1950",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "1997",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "1998",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2000",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2001",
+   "documents_with_staged_vector": "18",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2002",
+   "documents_with_staged_vector": "28",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2003",
+   "documents_with_staged_vector": "171",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2004",
+   "documents_with_staged_vector": "330",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2005",
+   "documents_with_staged_vector": "350",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2006",
+   "documents_with_staged_vector": "976",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2007",
+   "documents_with_staged_vector": "280",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2008",
+   "documents_with_staged_vector": "638",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2009",
+   "documents_with_staged_vector": "450",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2010",
+   "documents_with_staged_vector": "928",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2011",
+   "documents_with_staged_vector": "622",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2012",
+   "documents_with_staged_vector": "840",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2013",
+   "documents_with_staged_vector": "1048",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2014",
+   "documents_with_staged_vector": "618",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2015",
+   "documents_with_staged_vector": "626",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2016",
+   "documents_with_staged_vector": "647",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2017",
+   "documents_with_staged_vector": "861",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2018",
+   "documents_with_staged_vector": "751",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2019",
+   "documents_with_staged_vector": "1225",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2020",
+   "documents_with_staged_vector": "813",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2021",
+   "documents_with_staged_vector": "979",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2022",
+   "documents_with_staged_vector": "1440",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2023",
+   "documents_with_staged_vector": "1242",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2024",
+   "documents_with_staged_vector": "1247",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2025",
+   "documents_with_staged_vector": "1516",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "year": "2026",
+   "documents_with_staged_vector": "1032",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2001",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2002",
+   "documents_with_staged_vector": "171",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2003",
+   "documents_with_staged_vector": "218",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2004",
+   "documents_with_staged_vector": "239",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2005",
+   "documents_with_staged_vector": "131",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2006",
+   "documents_with_staged_vector": "531",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2007",
+   "documents_with_staged_vector": "705",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2008",
+   "documents_with_staged_vector": "788",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2009",
+   "documents_with_staged_vector": "995",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2010",
+   "documents_with_staged_vector": "1232",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2011",
+   "documents_with_staged_vector": "4356",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2012",
+   "documents_with_staged_vector": "1726",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2013",
+   "documents_with_staged_vector": "6018",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2014",
+   "documents_with_staged_vector": "7663",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2015",
+   "documents_with_staged_vector": "12209",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2016",
+   "documents_with_staged_vector": "17125",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2017",
+   "documents_with_staged_vector": "18316",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2018",
+   "documents_with_staged_vector": "21291",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2019",
+   "documents_with_staged_vector": "23525",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2020",
+   "documents_with_staged_vector": "18083",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2021",
+   "documents_with_staged_vector": "27790",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2022",
+   "documents_with_staged_vector": "29209",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2023",
+   "documents_with_staged_vector": "31050",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2024",
+   "documents_with_staged_vector": "31696",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2025",
+   "documents_with_staged_vector": "39205",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Madras High Court",
+   "year": "2026",
+   "documents_with_staged_vector": "16990",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "1974",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "1996",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "1999",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2000",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2002",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2004",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2005",
+   "documents_with_staged_vector": "8",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2006",
+   "documents_with_staged_vector": "16",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2007",
+   "documents_with_staged_vector": "4",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2008",
+   "documents_with_staged_vector": "14",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2009",
+   "documents_with_staged_vector": "31",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2010",
+   "documents_with_staged_vector": "98",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2011",
+   "documents_with_staged_vector": "118",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2012",
+   "documents_with_staged_vector": "118",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2013",
+   "documents_with_staged_vector": "196",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2014",
+   "documents_with_staged_vector": "204",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2015",
+   "documents_with_staged_vector": "1160",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2016",
+   "documents_with_staged_vector": "2068",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2017",
+   "documents_with_staged_vector": "1584",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2018",
+   "documents_with_staged_vector": "1074",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2019",
+   "documents_with_staged_vector": "2720",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2020",
+   "documents_with_staged_vector": "3141",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2021",
+   "documents_with_staged_vector": "6561",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2022",
+   "documents_with_staged_vector": "8088",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2023",
+   "documents_with_staged_vector": "10633",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2024",
+   "documents_with_staged_vector": "10323",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2025",
+   "documents_with_staged_vector": "4481",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Orissa High Court",
+   "year": "2026",
+   "documents_with_staged_vector": "5799",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1979",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1982",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1986",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1989",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1990",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1992",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1993",
+   "documents_with_staged_vector": "7",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1994",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1997",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1998",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "1999",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2000",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2001",
+   "documents_with_staged_vector": "3",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2002",
+   "documents_with_staged_vector": "1",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2004",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2005",
+   "documents_with_staged_vector": "2",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2006",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2007",
+   "documents_with_staged_vector": "9",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2008",
+   "documents_with_staged_vector": "1590",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2009",
+   "documents_with_staged_vector": "3597",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2010",
+   "documents_with_staged_vector": "6287",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2011",
+   "documents_with_staged_vector": "6222",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2012",
+   "documents_with_staged_vector": "7948",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2013",
+   "documents_with_staged_vector": "7960",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2014",
+   "documents_with_staged_vector": "6860",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2015",
+   "documents_with_staged_vector": "9361",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2016",
+   "documents_with_staged_vector": "2863",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2017",
+   "documents_with_staged_vector": "15660",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2018",
+   "documents_with_staged_vector": "19977",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2019",
+   "documents_with_staged_vector": "19602",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2020",
+   "documents_with_staged_vector": "9846",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2021",
+   "documents_with_staged_vector": "7796",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2022",
+   "documents_with_staged_vector": "19414",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2023",
+   "documents_with_staged_vector": "15030",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2024",
+   "documents_with_staged_vector": "24189",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2025",
+   "documents_with_staged_vector": "13447",
+   "documents_with_chunks": "0"
+  },
+  {
+   "court": "Patna High Court",
+   "year": "2026",
+   "documents_with_staged_vector": "3789",
+   "documents_with_chunks": "1208"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1950",
+   "documents_with_staged_vector": "11",
+   "documents_with_chunks": "43"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1951",
+   "documents_with_staged_vector": "12",
+   "documents_with_chunks": "64"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1952",
+   "documents_with_staged_vector": "28",
+   "documents_with_chunks": "81"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1953",
+   "documents_with_staged_vector": "24",
+   "documents_with_chunks": "95"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1954",
+   "documents_with_staged_vector": "32",
+   "documents_with_chunks": "127"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1955",
+   "documents_with_staged_vector": "12",
+   "documents_with_chunks": "83"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1956",
+   "documents_with_staged_vector": "19",
+   "documents_with_chunks": "83"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1957",
+   "documents_with_staged_vector": "25",
+   "documents_with_chunks": "116"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1958",
+   "documents_with_staged_vector": "36",
+   "documents_with_chunks": "144"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1959",
+   "documents_with_staged_vector": "43",
+   "documents_with_chunks": "168"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1960",
+   "documents_with_staged_vector": "91",
+   "documents_with_chunks": "277"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1961",
+   "documents_with_staged_vector": "98",
+   "documents_with_chunks": "363"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1962",
+   "documents_with_staged_vector": "96",
+   "documents_with_chunks": "394"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1963",
+   "documents_with_staged_vector": "67",
+   "documents_with_chunks": "267"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1964",
+   "documents_with_staged_vector": "67",
+   "documents_with_chunks": "295"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1965",
+   "documents_with_staged_vector": "82",
+   "documents_with_chunks": "309"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1966",
+   "documents_with_staged_vector": "56",
+   "documents_with_chunks": "270"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1967",
+   "documents_with_staged_vector": "75",
+   "documents_with_chunks": "304"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1968",
+   "documents_with_staged_vector": "102",
+   "documents_with_chunks": "347"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1969",
+   "documents_with_staged_vector": "82",
+   "documents_with_chunks": "344"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1970",
+   "documents_with_staged_vector": "78",
+   "documents_with_chunks": "257"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1971",
+   "documents_with_staged_vector": "90",
+   "documents_with_chunks": "352"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1972",
+   "documents_with_staged_vector": "75",
+   "documents_with_chunks": "313"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1973",
+   "documents_with_staged_vector": "64",
+   "documents_with_chunks": "257"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1974",
+   "documents_with_staged_vector": "79",
+   "documents_with_chunks": "282"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1975",
+   "documents_with_staged_vector": "98",
+   "documents_with_chunks": "336"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1976",
+   "documents_with_staged_vector": "104",
+   "documents_with_chunks": "342"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1977",
+   "documents_with_staged_vector": "70",
+   "documents_with_chunks": "244"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1978",
+   "documents_with_staged_vector": "69",
+   "documents_with_chunks": "266"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1979",
+   "documents_with_staged_vector": "76",
+   "documents_with_chunks": "279"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1980",
+   "documents_with_staged_vector": "63",
+   "documents_with_chunks": "241"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1981",
+   "documents_with_staged_vector": "56",
+   "documents_with_chunks": "211"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1982",
+   "documents_with_staged_vector": "29",
+   "documents_with_chunks": "104"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1983",
+   "documents_with_staged_vector": "52",
+   "documents_with_chunks": "205"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1984",
+   "documents_with_staged_vector": "62",
+   "documents_with_chunks": "242"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1985",
+   "documents_with_staged_vector": "62",
+   "documents_with_chunks": "258"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1986",
+   "documents_with_staged_vector": "66",
+   "documents_with_chunks": "286"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1987",
+   "documents_with_staged_vector": "93",
+   "documents_with_chunks": "385"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1988",
+   "documents_with_staged_vector": "90",
+   "documents_with_chunks": "370"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1989",
+   "documents_with_staged_vector": "102",
+   "documents_with_chunks": "398"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1990",
+   "documents_with_staged_vector": "117",
+   "documents_with_chunks": "401"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1991",
+   "documents_with_staged_vector": "92",
+   "documents_with_chunks": "351"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1992",
+   "documents_with_staged_vector": "89",
+   "documents_with_chunks": "362"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1993",
+   "documents_with_staged_vector": "108",
+   "documents_with_chunks": "397"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1994",
+   "documents_with_staged_vector": "160",
+   "documents_with_chunks": "624"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1995",
+   "documents_with_staged_vector": "231",
+   "documents_with_chunks": "916"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1996",
+   "documents_with_staged_vector": "367",
+   "documents_with_chunks": "1534"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1997",
+   "documents_with_staged_vector": "196",
+   "documents_with_chunks": "843"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1998",
+   "documents_with_staged_vector": "130",
+   "documents_with_chunks": "491"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "1999",
+   "documents_with_staged_vector": "174",
+   "documents_with_chunks": "572"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2000",
+   "documents_with_staged_vector": "157",
+   "documents_with_chunks": "608"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2001",
+   "documents_with_staged_vector": "165",
+   "documents_with_chunks": "612"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2002",
+   "documents_with_staged_vector": "156",
+   "documents_with_chunks": "577"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2003",
+   "documents_with_staged_vector": "200",
+   "documents_with_chunks": "750"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2004",
+   "documents_with_staged_vector": "190",
+   "documents_with_chunks": "728"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2005",
+   "documents_with_staged_vector": "164",
+   "documents_with_chunks": "631"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2006",
+   "documents_with_staged_vector": "262",
+   "documents_with_chunks": "1028"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2007",
+   "documents_with_staged_vector": "350",
+   "documents_with_chunks": "1323"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2008",
+   "documents_with_staged_vector": "395",
+   "documents_with_chunks": "1508"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2009",
+   "documents_with_staged_vector": "358",
+   "documents_with_chunks": "1324"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2010",
+   "documents_with_staged_vector": "231",
+   "documents_with_chunks": "896"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2011",
+   "documents_with_staged_vector": "214",
+   "documents_with_chunks": "847"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2012",
+   "documents_with_staged_vector": "166",
+   "documents_with_chunks": "622"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2013",
+   "documents_with_staged_vector": "231",
+   "documents_with_chunks": "851"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2014",
+   "documents_with_staged_vector": "198",
+   "documents_with_chunks": "791"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2015",
+   "documents_with_staged_vector": "180",
+   "documents_with_chunks": "761"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2016",
+   "documents_with_staged_vector": "165",
+   "documents_with_chunks": "587"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2017",
+   "documents_with_staged_vector": "196",
+   "documents_with_chunks": "732"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2018",
+   "documents_with_staged_vector": "203",
+   "documents_with_chunks": "795"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2019",
+   "documents_with_staged_vector": "262",
+   "documents_with_chunks": "1049"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2020",
+   "documents_with_staged_vector": "148",
+   "documents_with_chunks": "571"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2021",
+   "documents_with_staged_vector": "171",
+   "documents_with_chunks": "708"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2022",
+   "documents_with_staged_vector": "274",
+   "documents_with_chunks": "1017"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2023",
+   "documents_with_staged_vector": "226",
+   "documents_with_chunks": "854"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2024",
+   "documents_with_staged_vector": "225",
+   "documents_with_chunks": "782"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2025",
+   "documents_with_staged_vector": "210",
+   "documents_with_chunks": "897"
+  },
+  {
+   "court": "Supreme Court of India",
+   "year": "2026",
+   "documents_with_staged_vector": "44",
+   "documents_with_chunks": "199"
+  }
+ ]
+}

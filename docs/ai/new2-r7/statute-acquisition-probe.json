@@ -1,0 +1,121 @@
+{
+ "artifact": "STATUTE_ACQUISITION_PROBE_V1",
+ "generated_at": "2026-08-25T14:33:56.394Z",
+ "writes_to_statutes_tables": 0,
+ "source": {
+  "host": "indiacode.gov.in",
+  "api": "https://indiacode.gov.in/server/api",
+  "platform": "DSpace 7 REST"
+ },
+ "legacy_host_probe": [
+  {
+   "url": "https://www.indiacode.nic.in/handle/123456789/11091",
+   "status": 404,
+   "bytes": 686,
+   "body": "500 Server Error/404 Page Not Found"
+  },
+  {
+   "url": "https://www.indiacode.nic.in/handle/123456789/4221",
+   "status": 404,
+   "bytes": 686
+  },
+  {
+   "url": "https://www.indiacode.nic.in/handle/123456789/4218",
+   "status": 404,
+   "bytes": 686
+  },
+  {
+   "url": "https://indiacode.gov.in/handle/123456789/11091",
+   "status": 200,
+   "bytes": 2338,
+   "note": "Angular SPA shell — HTTP 200 with no content. FAILED_SOURCE_SHAPE."
+  }
+ ],
+ "items": {
+  "ipc": {
+   "handle": "123456789/547803",
+   "uuid": "7c0e72eb-a65d-43af-ad0d-b053be707df7",
+   "state_name": "Chandigarh",
+   "act_id": "AC_CH_60_1313_00014_00014_1563339518623",
+   "verdict": "PARTIAL — 58 pages, sections 1..120B, pre-2019 s.1 text"
+  },
+  "iea_modern": {
+   "handle": "123456789/547821",
+   "uuid": "e51341fa-7528-4327-9a57-5d194e16db6f",
+   "verdict": "COMPLETE document; 171 of 183 sections parsed"
+  },
+  "iea_original": {
+   "handle": "123456789/550883",
+   "uuid": "61e8abcf-f926-4e3f-93c4-4b684d7d223d",
+   "verdict": "PROVEN_DAMAGED — 1872 print scan, OCR unusable"
+  },
+  "crpc": {
+   "handles": [
+    "123456789/548830",
+    "123456789/601601",
+    "123456789/567989",
+    "123456789/548981"
+   ],
+   "verdict": "NOT AVAILABLE — every exact-title item has zero bitstreams"
+  }
+ },
+ "files": [
+  {
+   "name": "ipc-547803-chandigarh.pdf",
+   "bytes": 191038,
+   "sha256": "4e861464e71d4cfe2c6e80913c1900f6adbda1af380114c352c0b10bb04485fe"
+  },
+  {
+   "name": "iea-547821.pdf",
+   "bytes": 452020,
+   "sha256": "a36ef40d2f3b2c61fce6eafe74c5e2b66a1916daf1ba997557e8c8a68c3f5172"
+  },
+  {
+   "name": "iea-550883.pdf",
+   "bytes": 8602305,
+   "sha256": "403ae31e1420d82d21a82dc162af1a9701ddc34cfa2040f109d9b7c48e2287a2"
+  },
+  {
+   "name": "ipc-547803-chandigarh.txt",
+   "bytes": 107363,
+   "sha256": "e67667b6ebb59d7dbdc3ec624bd19eb342ffa2544ab7cf7631d7830c159e50db"
+  },
+  {
+   "name": "iea-547821.txt",
+   "bytes": 101122,
+   "sha256": "54712b2658e946f343cc4c6a6b7b363a24bd1ddf7a7efe1bd377bcaf5c62af3c"
+  },
+  {
+   "name": "iea-550883.txt",
+   "bytes": 164774,
+   "sha256": "2fbd8b2fbb45138a8f57b2eecdbd75ddab30107660ad28f08ac129a223b33197"
+  }
+ ],
+ "parse_recall": {
+  "evidence_act": {
+   "toc_sections": 183,
+   "parsed_before_fixes": 138,
+   "parsed_after_fixes": 171,
+   "fabricated": 0,
+   "missing": [
+    "13",
+    "17",
+    "18",
+    "82",
+    "86",
+    "105",
+    "123",
+    "131",
+    "145",
+    "146",
+    "158",
+    "161"
+   ]
+  },
+  "ipc": {
+   "parsed": 115,
+   "last_real_section": "120B",
+   "note": "source document is partial"
+  }
+ }
+}
