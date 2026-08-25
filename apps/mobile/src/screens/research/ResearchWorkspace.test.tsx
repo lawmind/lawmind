@@ -56,7 +56,7 @@ const atWidth = (width: number) =>
   dimensions.mockReturnValue({ width, height: 900, scale: 2, fontScale: 1 });
 
 const search = api.search as jest.MockedFunction<typeof api.search>;
-const PLACEHOLDER = 'Ask in plain language, or paste a citation';
+const PLACEHOLDER = 'Ask, or enter a CNR, case number, or citation';
 const PHONE = 390;
 const DESKTOP = 1400;
 
@@ -110,9 +110,7 @@ describe('below the breakpoint — the phone must be untouched', () => {
       pane instead, PD-15's "mobile is not redesigned around desktop" has been
       broken.
     */
-    expect(mockPush).toHaveBeenCalledWith(
-      expect.objectContaining({ pathname: '/judgment/[id]' }),
-    );
+    expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/judgment/[id]' }));
     expect(screen.getByText(first.caseTitle)).toBeTruthy();
   });
 

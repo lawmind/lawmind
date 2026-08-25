@@ -146,9 +146,9 @@ export function SearchScreen({
   const [phase, setPhase] = useState<Phase>('idle');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [hidden, setHidden] = useState<HiddenResult[]>([]);
-  const [unverifiedRefs, setUnverifiedRefs] = useState<{ citationClaimed: string; reason: string }[]>(
-    []
-  );
+  const [unverifiedRefs, setUnverifiedRefs] = useState<
+    { citationClaimed: string; reason: string }[]
+  >([]);
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -183,6 +183,13 @@ export function SearchScreen({
   const [hasMore, setHasMore] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
+  /**
+   * A failed request for page 2+ must not disappear. Page 1 remains useful,
+   * but swallowing the failure makes a dead connection look like the corpus
+   * simply ended at result five. This state keeps the existing rows and gives
+   * the advocate an explicit, manual retry.
+   */
+  const [loadMoreFailure, setLoadMoreFailure] = useState<string | null>(null);
   /** The row awaiting a matter choice. `null` closes the picker. */
   const [saveFor, setSaveFor] = useState<SearchResult | null>(null);
   /** The judgment just saved, so the toast can confirm it and then clear. */
@@ -201,9 +208,7 @@ export function SearchScreen({
    * query matched nothing" apart from "we hold none of this court", and a
    * structured zero-match is already the trusted former case (A2.7).
    */
-  const [unpopulatedCourtCategories, setUnpopulatedCourtCategories] = useState<CourtCategory[]>(
-    []
-  );
+  const [unpopulatedCourtCategories, setUnpopulatedCourtCategories] = useState<CourtCategory[]>([]);
 
   const run = useCallback(
     async (nextFilters: SearchFilters = filters, nextQuery: string = query) => {
@@ -220,6 +225,7 @@ export function SearchScreen({
       setAmbiguous(false);
       setHasMore(false);
       setPageNumber(1);
+      setLoadMoreFailure(null);
 
       const response = await api.search(nextQuery, language, nextFilters);
 
@@ -275,7 +281,7 @@ export function SearchScreen({
       setUnverifiedRefs(response.data.unverifiedReferences);
       setPhase('done');
     },
-    [filters, language, query]
+    [filters, language, query],
   );
 
   /**
@@ -296,10 +302,14 @@ export function SearchScreen({
   const loadMore = useCallback(async () => {
     if (!hasMore || loadingMore || !query.trim()) return;
     setLoadingMore(true);
+    setLoadMoreFailure(null);
     const nextPage = pageNumber + 1;
     const response = await api.search(query, language, filters, nextPage);
     setLoadingMore(false);
-    if (!response.ok) return; // the page already on screen stays usable; no error UI for a "more" tap
+    if (!response.ok) {
+      setLoadMoreFailure(response.error.message);
+      return;
+    }
 
     const kept: SearchResult[] = [];
     const removed: HiddenResult[] = [];
@@ -323,10 +333,7 @@ export function SearchScreen({
    * filters removed. Counting against only the visible rows would make the
    * sheet's button count the filter it is about to replace.
    */
-  const candidates = useMemo(
-    () => [...results, ...hidden.map((h) => h.result)],
-    [results, hidden]
-  );
+  const candidates = useMemo(() => [...results, ...hidden.map((h) => h.result)], [results, hidden]);
 
   /** Counts against a draft so the sheet's button is honest before commit. */
   const countFor = useCallback(
@@ -336,7 +343,7 @@ export function SearchScreen({
         if (draft.excludeSetAsideOrDoubted && r.overruledStatus !== 'none') return false;
         return true;
       }).length,
-    [candidates]
+    [candidates],
   );
 
   const attention = attentionCount(results);
@@ -366,7 +373,9 @@ export function SearchScreen({
           onChangeText={setQuery}
           onSubmitEditing={() => run()}
           placeholder={
-            language === 'hi' ? 'सवाल हिन्दी में पूछें' : 'Ask in plain language, or paste a citation'
+            language === 'hi'
+              ? 'सवाल, CNR, केस नंबर या citation डालें'
+              : 'Ask, or enter a CNR, case number, or citation'
           }
           returnKeyType="search"
           value={query}
@@ -382,7 +391,11 @@ export function SearchScreen({
               </Text>
             </View>
           </Pressable>
-          <Pressable accessibilityLabel="Filters" accessibilityRole="button" onPress={() => setFiltersOpen(true)}>
+          <Pressable
+            accessibilityLabel="Filters"
+            accessibilityRole="button"
+            onPress={() => setFiltersOpen(true)}
+          >
             <View style={styles.filterButton}>
               <SlidersHorizontal color={color.ink} size={18} strokeWidth={1.5} />
               <Text variant="ui" style={styles.filterLabel}>
@@ -395,15 +408,16 @@ export function SearchScreen({
         {phase === 'done' && results.length > 0 ? (
           <Text variant="ui" style={styles.count}>
             {/*
-              AMBIGUOUS — a citation that legitimately identifies more than one
-              judgment. The ordinary tally would read as an ordinary ranking;
-              this must read as a disambiguation instead, and must say when the
-              page cannot show every candidate (`RESULT_LIMIT` today).
+              AMBIGUOUS — an identifier (citation, CNR, case number or title)
+              that legitimately identifies more than one judgment. The
+              ordinary tally would read as an ordinary ranking; this must read
+              as a disambiguation instead, and must say when the page cannot
+              show every candidate (`RESULT_LIMIT` today).
             */}
             {ambiguous
               ? total !== null && total > results.length
-                ? `This citation matches ${total} judgments — showing ${results.length}. Pick the one you meant, or add a court or date to narrow it further.`
-                : `This citation matches ${results.length} judgments. Pick the one you meant.`
+                ? `This identifier matches ${total} judgments — showing ${results.length}. Pick the one you meant, or add a court or date to narrow it further.`
+                : `This identifier matches ${results.length} judgments. Pick the one you meant.`
               : /*
                   `total` is the FULL match count, not the page length — a
                   structured query can match far more than the five rows in
@@ -556,7 +570,9 @@ export function SearchScreen({
                     `We hold no ${filters.courts
                       .filter((c) => unpopulatedCourtCategories.includes(c))
                       .map((c) => COURT_CATEGORY_LABEL[c])
-                      .join(' or ')} judgments yet. Clearing that filter searches everything we hold.`
+                      .join(
+                        ' or ',
+                      )} judgments yet. Clearing that filter searches everything we hold.`
                   : hasActiveFilters(filters)
                     ? `Nothing matched “${query}” with these filters. Clearing them searches everything we hold.`
                     : `Nothing matched “${query}”. Search currently matches the words in a judgment rather than their meaning, so exact legal terms find more than a paraphrase does.`
@@ -589,6 +605,19 @@ export function SearchScreen({
                     </Text>
                   </View>
                 </Pressable>
+              ) : null}
+
+              {loadMoreFailure ? (
+                <View style={styles.loadMoreFailure}>
+                  <Text variant="ui" style={styles.loadMoreFailureText}>
+                    {loadMoreFailure} The results already shown are still available.
+                  </Text>
+                  <Pressable accessibilityRole="button" onPress={() => void loadMore()}>
+                    <Text variant="uiStrong" style={styles.hiddenAction}>
+                      Try loading more again
+                    </Text>
+                  </Pressable>
+                </View>
               ) : null}
 
               {/*
@@ -676,24 +705,24 @@ export function SearchScreen({
                         neutralCitation: item.neutralCitation,
                       })
                     : /**
-                   * THE PASSAGE OPENS WHERE IT CAME FROM — `?read=1&para=N`.
-                   *
-                   * PD-9 makes paragraph anchors linkable rather than local
-                   * state, so tapping the operative paragraph on a card lands
-                   * the advocate on that paragraph in the reading view instead
-                   * of at the top of a judgment they must then re-find it in.
-                   * The verification handle still travels, for the same reason
-                   * it does on the card tap.
-                   */
-                  router.push({
-                    pathname: '/judgment/[id]',
-                    params: {
-                      id: item.judgmentId,
-                      read: '1',
-                      para: String(paragraphNumber),
-                      ...(item.citationCheckId ? { check: item.citationCheckId } : {}),
-                    },
-                  })
+                       * THE PASSAGE OPENS WHERE IT CAME FROM — `?read=1&para=N`.
+                       *
+                       * PD-9 makes paragraph anchors linkable rather than local
+                       * state, so tapping the operative paragraph on a card lands
+                       * the advocate on that paragraph in the reading view instead
+                       * of at the top of a judgment they must then re-find it in.
+                       * The verification handle still travels, for the same reason
+                       * it does on the card tap.
+                       */
+                      router.push({
+                        pathname: '/judgment/[id]',
+                        params: {
+                          id: item.judgmentId,
+                          read: '1',
+                          para: String(paragraphNumber),
+                          ...(item.citationCheckId ? { check: item.citationCheckId } : {}),
+                        },
+                      })
                 }
                 /**
                  * SAVING AN AUTHORITY WITHOUT LEAVING THE RESULTS.
@@ -858,6 +887,15 @@ const styles = StyleSheet.create({
     backgroundColor: color.card,
   },
   loadMoreLabel: { color: color.ink },
+  loadMoreFailure: {
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: color.rule,
+    borderRadius: radius.base,
+    padding: space.sm,
+    gap: space.xs,
+  },
+  loadMoreFailureText: { color: color.inkMuted },
   hiddenCard: {
     borderWidth: 1,
     borderStyle: 'dashed',

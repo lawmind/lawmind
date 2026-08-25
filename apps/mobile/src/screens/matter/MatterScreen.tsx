@@ -16,7 +16,9 @@ import type {
   MatterAuthority,
   MatterBundleBriefing,
   MatterEvent,
+  PremiumPreview,
 } from '../../api/contract';
+import { fire } from '../../analytics/track';
 import { citationDisplay, NO_CITATION_MARK } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
@@ -31,6 +33,7 @@ import {
   todayCivil,
 } from '../../theme/hearingDate';
 import { color, radius, space } from '../../theme/tokens';
+import { PremiumPreviewCard } from './PremiumPreviewCard';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -97,6 +100,7 @@ export function MatterScreen({
   onOpenCounterArguments,
   onOpenJudgment,
   onRecordAdjournment,
+  onOpenPremiumPlans,
   onSendClientUpdate,
   onShare,
 }: {
@@ -116,6 +120,8 @@ export function MatterScreen({
   /** Opens a saved authority. The matter file is a route INTO the law, not a dead list. */
   onOpenJudgment: (judgmentId: string) => void;
   onRecordAdjournment: () => void;
+  /** Existing plan surface; no purchase is implied or attempted here. */
+  onOpenPremiumPlans?: () => void;
   onSendClientUpdate: () => void;
   /** PD-3 — "Who can see this matter". Owner-side only, see MatterSharingScreen's own note. */
   onShare: () => void;
@@ -138,6 +144,12 @@ export function MatterScreen({
    * it here keeps the client honest about which route owns what.
    */
   const [authorities, setAuthorities] = useState<MatterAuthority[] | null>(null);
+  /**
+   * Present only when the server's OFF-by-default premium_preview flag is on.
+   * NOT_ENABLED, shared access and network failures all leave the core matter
+   * untouched; the preview is an enhancement, never a loading dependency.
+   */
+  const [premiumPreview, setPremiumPreview] = useState<PremiumPreview | null>(null);
   /**
    * Set while a removal is in flight, so the row cannot be tapped twice. The
    * second tap would 404 — the server only removes a row whose `removed_at` is
@@ -190,6 +202,34 @@ export function MatterScreen({
     };
   }, [matterId]);
 
+  const premiumMatterId =
+    bundle && onOpenPremiumPlans && (bundle.access ?? 'owner') === 'owner'
+      ? bundle.matter.matterId
+      : null;
+
+  useEffect(() => {
+    let alive = true;
+    setPremiumPreview(null);
+    if (!premiumMatterId)
+      return () => {
+        alive = false;
+      };
+
+    void api.premiumPreview(premiumMatterId).then((r) => {
+      if (!alive || !r.ok) return;
+      setPremiumPreview(r.data);
+      fire({
+        name: 'premium_preview_seen',
+        context: 'hearing_prep_value',
+        costClass: r.data.costClass,
+      });
+    });
+
+    return () => {
+      alive = false;
+    };
+  }, [premiumMatterId]);
+
   /**
    * TAKE ONE AUTHORITY BACK OUT OF THE MATTER.
    *
@@ -212,8 +252,8 @@ export function MatterScreen({
     if (r.ok) {
       setAuthorities((current) =>
         (current ?? []).map((a) =>
-          a.authorityId === authorityId ? { ...a, removedAt: r.data.removedAt } : a
-        )
+          a.authorityId === authorityId ? { ...a, removedAt: r.data.removedAt } : a,
+        ),
       );
     } else {
       setRemoveError(r.error.message);
@@ -289,7 +329,12 @@ export function MatterScreen({
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.body}>
-        <Pressable onPress={onBack} style={styles.back}>
+        <Pressable
+          accessibilityLabel="Back to matters"
+          accessibilityRole="button"
+          onPress={onBack}
+          style={styles.back}
+        >
           <Text variant="ui" style={styles.link}>
             ‹ Matters
           </Text>
@@ -330,6 +375,17 @@ export function MatterScreen({
           {isOwner ? <Button label="Record the next date" onPress={onRecordAdjournment} /> : null}
         </Card>
 
+        {premiumPreview && onOpenPremiumPlans ? (
+          <PremiumPreviewCard
+            preview={premiumPreview}
+            onOpenPlans={() => {
+              fire({ name: 'premium_preview_opened', context: 'hearing_prep_value' });
+              fire({ name: 'premium_intent_signalled', context: 'hearing_prep_value' });
+              onOpenPremiumPlans();
+            }}
+          />
+        ) : null}
+
         <View style={styles.actions}>
           {isOwner ? <Button label="Add event" onPress={() => setAddEventOpen(true)} /> : null}
           {/*
@@ -360,8 +416,8 @@ export function MatterScreen({
               deliberate, legible grant rather than a vague one.
             */
             <Text variant="ui" style={styles.muted}>
-              This matter was shared with you. You can read the file and its shared notes; only
-              the advocate who owns it can add to it.
+              This matter was shared with you. You can read the file and its shared notes; only the
+              advocate who owns it can add to it.
             </Text>
           )}
         </View>
@@ -371,6 +427,8 @@ export function MatterScreen({
             <SectionRule label="Briefings" />
             {briefings.map((b) => (
               <Pressable
+                accessibilityLabel={`Open briefing for ${describeHearingDate(b.hearingDate, today)}`}
+                accessibilityRole="button"
                 key={b.briefingId}
                 onPress={() => onOpenBriefing(b.briefingId)}
                 style={styles.row}
@@ -386,9 +444,7 @@ export function MatterScreen({
                     the list anyway; what distinguishes one row from another is
                     the hearing it was prepared for.
                   */}
-                  <Text variant="uiStrong">
-                    {describeHearingDate(b.hearingDate, today)}
-                  </Text>
+                  <Text variant="uiStrong">{describeHearingDate(b.hearingDate, today)}</Text>
                   {/*
                     AN UNCONFIRMED LISTING IS SAID HERE TOO, and from three
                     states, not a boolean. `never_checked` — both timestamps
@@ -449,6 +505,8 @@ export function MatterScreen({
                 });
                 return (
                   <Pressable
+                    accessibilityLabel={`Open ${a.caseTitle}`}
+                    accessibilityRole="button"
                     key={a.authorityId}
                     onPress={() => onOpenJudgment(a.judgmentId)}
                     style={[styles.row, moved.kind === 'moved' && styles.rowMoved]}
@@ -461,7 +519,9 @@ export function MatterScreen({
                       <Text
                         variant="legal"
                         scale="holding"
-                        style={moved.kind === 'moved' && moved.strikeTitle ? styles.struck : undefined}
+                        style={
+                          moved.kind === 'moved' && moved.strikeTitle ? styles.struck : undefined
+                        }
                       >
                         {a.caseTitle}
                       </Text>
@@ -608,7 +668,7 @@ export function MatterScreen({
             setAddEventOpen(false);
             setAddEventError(null);
             setBundle((current) =>
-              current ? { ...current, events: [r.data.event, ...current.events] } : current
+              current ? { ...current, events: [r.data.event, ...current.events] } : current,
             );
           } else {
             setAddEventError(r.error.message);
@@ -667,12 +727,10 @@ function TimelineEvent({ event, matterId }: { event: MatterEvent; matterId: stri
                    * a failure puts the switch back where it was. There is no
                    * "saved" toast: the position of the switch IS the state.
                    */
-                  void api
-                    .setNoteVisibility(matterId, event.eventId, value)
-                    .then((r) => {
-                      setSaving(false);
-                      if (!r.ok) setVisibility(event.noteVisibility);
-                    });
+                  void api.setNoteVisibility(matterId, event.eventId, value).then((r) => {
+                    setSaving(false);
+                    if (!r.ok) setVisibility(event.noteVisibility);
+                  });
                 }}
               />
             </View>

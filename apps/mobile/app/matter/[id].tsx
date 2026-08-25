@@ -25,12 +25,9 @@ export default function Route() {
         onOpenJudgment={(judgmentId) =>
           router.push({ pathname: '/judgment/[id]', params: { id: judgmentId } })
         }
-        onRecordAdjournment={() =>
-          router.push({ pathname: '/adjournment/[id]', params: { id } })
-        }
-        onSendClientUpdate={() =>
-          router.push({ pathname: '/client-update/[id]', params: { id } })
-        }
+        onRecordAdjournment={() => router.push({ pathname: '/adjournment/[id]', params: { id } })}
+        onOpenPremiumPlans={() => router.push('/subscription' as never)}
+        onSendClientUpdate={() => router.push({ pathname: '/client-update/[id]', params: { id } })}
         onShare={() =>
           // `as never`: new route, matches the pattern used elsewhere for a
           // route the generated typed-route union has not been regenerated

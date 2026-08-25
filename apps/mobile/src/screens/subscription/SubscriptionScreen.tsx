@@ -35,7 +35,12 @@ export function SubscriptionScreen({ onBack }: { onBack: () => void }) {
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.body}>
-        <Pressable onPress={onBack} style={styles.back}>
+        <Pressable
+          accessibilityLabel="Back to profile"
+          accessibilityRole="button"
+          onPress={onBack}
+          style={styles.back}
+        >
           <Text variant="ui" style={styles.link}>
             ‹ Profile
           </Text>
@@ -78,6 +83,8 @@ export function SubscriptionScreen({ onBack }: { onBack: () => void }) {
             5–10 advocates, shared matters
           </Text>
           <Pressable
+            accessibilityLabel="Email LawMind about the Firm plan"
+            accessibilityRole="link"
             onPress={() => void Linking.openURL('mailto:hello@lawmind.in?subject=Firm plan')}
             style={styles.talkToUs}
           >
@@ -88,8 +95,8 @@ export function SubscriptionScreen({ onBack }: { onBack: () => void }) {
         </Card>
 
         <Text variant="ui" style={styles.footnote}>
-          Firm and Enterprise never show a price or a purchase link in the app — App Store
-          guideline 3.1.1. Enterprise is not shown here at all.
+          Firm and Enterprise never show a price or a purchase link in the app — App Store guideline
+          3.1.1. Enterprise is not shown here at all.
         </Text>
       </ScrollView>
     </Screen>

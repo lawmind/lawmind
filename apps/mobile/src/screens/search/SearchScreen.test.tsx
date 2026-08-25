@@ -15,7 +15,11 @@ import type { SearchResponse } from '../../api/contract';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: (...args: unknown[]) => mockPush(...args), back: jest.fn(), replace: jest.fn() }),
+  useRouter: () => ({
+    push: (...args: unknown[]) => mockPush(...args),
+    back: jest.fn(),
+    replace: jest.fn(),
+  }),
 }));
 
 jest.mock('../../api/client', () => ({
@@ -40,7 +44,7 @@ const search = api.search as jest.MockedFunction<typeof api.search>;
 const addAuthority = api.addAuthorityToMatter as jest.MockedFunction<
   typeof api.addAuthorityToMatter
 >;
-const PLACEHOLDER = 'Ask in plain language, or paste a citation';
+const PLACEHOLDER = 'Ask, or enter a CNR, case number, or citation';
 
 function response(over: Partial<SearchResponse> = {}): SearchResponse {
   return {
@@ -77,7 +81,9 @@ describe('SearchScreen — structured search (R2)', () => {
     await runSearch('judge:"Kania" AND section:138');
 
     expect(
-      await screen.findByText('Judgments decided by a judge matching "Kania", and referring to section 138.')
+      await screen.findByText(
+        'Judgments decided by a judge matching "Kania", and referring to section 138.',
+      ),
     ).toBeTruthy();
     // total > results shown — the count states both, not just the page length.
     expect(screen.getByText('1 of 214 judgments')).toBeTruthy();
@@ -94,12 +100,14 @@ describe('SearchScreen — structured search (R2)', () => {
     expect(await screen.findByText('Judgments citing "(2099) 9 SCC 9999".')).toBeTruthy();
     expect(
       screen.getByText(
-        'No judgment in the corpus matches this. The query was understood correctly — this is not a search problem.'
-      )
+        'No judgment in the corpus matches this. The query was understood correctly — this is not a search problem.',
+      ),
     ).toBeTruthy();
     // The semantic-path copy, which implies the corpus was merely not tried
     // hard enough, must not appear for an understood structured query.
-    expect(screen.queryByText(/matches the words in a judgment rather than their meaning/)).toBeNull();
+    expect(
+      screen.queryByText(/matches the words in a judgment rather than their meaning/),
+    ).toBeNull();
   });
 
   it('never offers "Clear the filters" on a structured zero-match — filters are not applied to a structured query', async () => {
@@ -249,7 +257,7 @@ describe('why a search came back empty', () => {
 
     const chip = await screen.findByText('Constitution Bench');
     expect(
-      screen.getByText('Bench does not narrow a search yet. Everything else does.')
+      screen.getByText('Bench does not narrow a search yet. Everything else does.'),
     ).toBeTruthy();
     expect(chip).toBeTruthy();
   });
@@ -268,8 +276,8 @@ describe('why a search came back empty', () => {
       expect(search).toHaveBeenLastCalledWith(
         'anything',
         'en',
-        expect.objectContaining({ courts: ['sc'] })
-      )
+        expect.objectContaining({ courts: ['sc'] }),
+      ),
     );
   });
 
@@ -362,7 +370,7 @@ describe('saving a result to a matter', () => {
     await fireEvent.press(await screen.findByText('Mock Client v. Mock Opponent'));
 
     expect(addAuthority).toHaveBeenCalledWith(
-      expect.objectContaining({ matterId: 'mat_1', judgmentId: MOCK_RESULTS[0]!.judgmentId })
+      expect.objectContaining({ matterId: 'mat_1', judgmentId: MOCK_RESULTS[0]!.judgmentId }),
     );
   });
 
@@ -386,7 +394,7 @@ describe('saving a result to a matter', () => {
     await fireEvent.press(await screen.findByText('Mock Client v. Mock Opponent'));
 
     expect(
-      await screen.findByText('That authority has been set aside. Cite Mock Later Bench instead.')
+      await screen.findByText('That authority has been set aside. Cite Mock Later Bench instead.'),
     ).toBeTruthy();
   });
 });
@@ -405,7 +413,9 @@ describe('SearchScreen — a degraded ranker is never "no law found"', () => {
     await runSearch('anticipatory bail under BNSS');
 
     expect(
-      await screen.findByText('Showing partial results — one search method could not complete in time.')
+      await screen.findByText(
+        'Showing partial results — one search method could not complete in time.',
+      ),
     ).toBeTruthy();
     expect(screen.getByText(MOCK_RESULTS[0]!.caseTitle)).toBeTruthy();
   });
@@ -423,7 +433,7 @@ describe('SearchScreen — a degraded ranker is never "no law found"', () => {
   });
 });
 
-describe('SearchScreen — an ambiguous citation is a disambiguation, not an ordinary ranking', () => {
+describe('SearchScreen — an ambiguous identifier is a disambiguation, not an ordinary ranking', () => {
   beforeEach(() => {
     search.mockReset();
   });
@@ -443,10 +453,24 @@ describe('SearchScreen — an ambiguous citation is a disambiguation, not an ord
 
     expect(
       await screen.findByText(
-        'This citation matches 15 judgments — showing 1. Pick the one you meant, or add a court or date to narrow it further.'
-      )
+        'This identifier matches 15 judgments — showing 1. Pick the one you meant, or add a court or date to narrow it further.',
+      ),
     ).toBeTruthy();
   });
+
+  it.each([
+    ['CNR', 'DLHC010123452026'],
+    ['case number', 'CRL.A. 221/2018'],
+  ])(
+    'sends a bare %s unchanged so the server can use its exact identity path',
+    async (_kind, identifier) => {
+      search.mockResolvedValue({ ok: true, data: response() });
+      await render(<SearchScreen />);
+      await runSearch(identifier);
+
+      expect(search).toHaveBeenCalledWith(identifier, 'en', expect.anything());
+    },
+  );
 });
 
 describe('SearchScreen — the 500-character query cap is enforced before the request is sent', () => {
@@ -461,8 +485,8 @@ describe('SearchScreen — the 500-character query cap is enforced before the re
     expect(
       await screen.findByText(
         'This search is too long for the current research mode (501 of 500 characters). ' +
-          'Shorten it, or search for the key facts rather than pasting the whole passage.'
-      )
+          'Shorten it, or search for the key facts rather than pasting the whole passage.',
+      ),
     ).toBeTruthy();
     expect(search).not.toHaveBeenCalled();
   });
@@ -505,7 +529,10 @@ describe('SearchScreen — pagination: result #6+ is reachable', () => {
   it('does not offer "Show more results" when the server says there is no further page', async () => {
     search.mockResolvedValue({
       ok: true,
-      data: response({ results: [MOCK_RESULTS[0]!], page: { page: 1, pageSize: 5, hasMore: false } }),
+      data: response({
+        results: [MOCK_RESULTS[0]!],
+        page: { page: 1, pageSize: 5, hasMore: false },
+      }),
     });
     await render(<SearchScreen />);
     await runSearch('anticipatory bail');
@@ -551,7 +578,10 @@ describe('SearchScreen — pagination: result #6+ is reachable', () => {
   it('a fresh search resets pagination — the load-more button from a previous query does not carry over', async () => {
     search.mockResolvedValueOnce({
       ok: true,
-      data: response({ results: [MOCK_RESULTS[0]!], page: { page: 1, pageSize: 5, hasMore: true } }),
+      data: response({
+        results: [MOCK_RESULTS[0]!],
+        page: { page: 1, pageSize: 5, hasMore: true },
+      }),
     });
     await render(<SearchScreen />);
     await runSearch('first query');
@@ -559,11 +589,91 @@ describe('SearchScreen — pagination: result #6+ is reachable', () => {
 
     search.mockResolvedValueOnce({
       ok: true,
-      data: response({ results: [MOCK_RESULTS[1]!], page: { page: 1, pageSize: 5, hasMore: false } }),
+      data: response({
+        results: [MOCK_RESULTS[1]!],
+        page: { page: 1, pageSize: 5, hasMore: false },
+      }),
     });
     await runSearch('second query');
 
     await screen.findByText('Mock Applicant v. Mock Respondent');
     expect(screen.queryByText('Show more results')).toBeNull();
+  });
+
+  it('keeps page 1 visible and offers an explicit retry when page 2 fails offline', async () => {
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({
+        results: MOCK_RESULTS.slice(0, 5),
+        page: { page: 1, pageSize: 5, hasMore: true },
+      }),
+    });
+    search.mockResolvedValueOnce({
+      ok: false,
+      error: { code: 'network', message: 'We could not reach Lawmind. You may be offline.' },
+    });
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({
+        results: MOCK_RESULTS.slice(5, 8),
+        page: { page: 2, pageSize: 5, hasMore: false },
+      }),
+    });
+
+    await render(<SearchScreen />);
+    await runSearch('anticipatory bail');
+    await fireEvent.press(await screen.findByText('Show more results'));
+
+    expect(await screen.findByText(/The results already shown are still available/)).toBeTruthy();
+    expect(screen.getByText('Mock Petitioner v. Mock State')).toBeTruthy();
+
+    await fireEvent.press(screen.getByText('Try loading more again'));
+    expect(await screen.findByText('Mock Interim v. Mock Registrar')).toBeTruthy();
+    expect(search).toHaveBeenNthCalledWith(3, 'anticipatory bail', 'en', expect.anything(), 2);
+  });
+
+  it('renders distinct judgments with duplicate titles and never deduplicates by title', async () => {
+    const duplicateTitle = 'Mock Same Name v. Mock State';
+    search.mockResolvedValue({
+      ok: true,
+      data: response({
+        results: [
+          { ...MOCK_RESULTS[0]!, judgmentId: 'jdg_same_1', caseTitle: duplicateTitle },
+          { ...MOCK_RESULTS[1]!, judgmentId: 'jdg_same_2', caseTitle: duplicateTitle },
+        ],
+      }),
+    });
+
+    await render(<SearchScreen />);
+    await runSearch(duplicateTitle);
+
+    expect(await screen.findAllByText(duplicateTitle)).toHaveLength(2);
+  });
+
+  it('keeps appended results mounted after opening a judgment, so stack back returns to the same list', async () => {
+    const onOpenJudgment = jest.fn();
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({
+        results: MOCK_RESULTS.slice(0, 5),
+        page: { page: 1, pageSize: 5, hasMore: true },
+      }),
+    });
+    search.mockResolvedValueOnce({
+      ok: true,
+      data: response({
+        results: MOCK_RESULTS.slice(5, 8),
+        page: { page: 2, pageSize: 5, hasMore: false },
+      }),
+    });
+
+    await render(<SearchScreen onOpenJudgment={onOpenJudgment} />);
+    await runSearch('anticipatory bail');
+    await fireEvent.press(await screen.findByText('Show more results'));
+    await fireEvent.press(await screen.findByText('Mock Interim v. Mock Registrar'));
+
+    expect(onOpenJudgment).toHaveBeenCalled();
+    expect(screen.getByText('Mock Petitioner v. Mock State')).toBeTruthy();
+    expect(screen.getByText('Mock Interim v. Mock Registrar')).toBeTruthy();
   });
 });

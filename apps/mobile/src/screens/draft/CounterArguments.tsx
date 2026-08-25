@@ -4,7 +4,11 @@ import { CitationMark, movedTone } from '../../components/CitationMark';
 import { Text } from '../../components/Text';
 import { citationDisplay } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
-import type { CounterArgumentsResponse, CounterAuthority, ExcludedAuthority } from '../../api/contract';
+import type {
+  CounterArgumentsResponse,
+  CounterAuthority,
+  ExcludedAuthority,
+} from '../../api/contract';
 import { color, radius, space } from '../../theme/tokens';
 
 /**
@@ -105,7 +109,7 @@ export function CounterArguments({ data }: { data: CounterArgumentsResponse }) {
             </View>
           ) : (
             <Text variant="ui" style={styles.muted}>
-              We found no authority in the corpus on this point.
+              No sufficiently relevant authority found.
             </Text>
           )}
 

@@ -76,8 +76,8 @@ describe('CounterArguments — S1, authorities only', () => {
 
     expect(
       screen.getByText(
-        'These are authorities on the point, not the argument against you. We do not draft the opposing case yet.'
-      )
+        'These are authorities on the point, not the argument against you. We do not draft the opposing case yet.',
+      ),
     ).toBeTruthy();
   });
 
@@ -97,14 +97,14 @@ describe('CounterArguments — S1, authorities only', () => {
   it('says so rather than rendering an empty card when nothing was found', async () => {
     await render(<CounterArguments data={{ ...s1, authorities: [], excluded: [] }} />);
 
-    expect(screen.getByText('We found no authority in the corpus on this point.')).toBeTruthy();
+    expect(screen.getByText('No sufficiently relevant authority found.')).toBeTruthy();
   });
 
   it('survives a response carrying none of the optional keys', async () => {
     await render(<CounterArguments data={{}} />);
 
     expect(screen.getByText('AUTHORITIES ON THIS POINT')).toBeTruthy();
-    expect(screen.getByText('We found no authority in the corpus on this point.')).toBeTruthy();
+    expect(screen.getByText('No sufficiently relevant authority found.')).toBeTruthy();
   });
 });
 
@@ -121,8 +121,8 @@ describe('CounterArguments — S2, once generation lands', () => {
 
     expect(
       screen.getByText(
-        'This authority has been set aside, so it is not offered as a counter-argument.'
-      )
+        'This authority has been set aside, so it is not offered as a counter-argument.',
+      ),
     ).toBeTruthy();
   });
 
@@ -137,24 +137,22 @@ describe('CounterArguments — S2, once generation lands', () => {
       ...excluded[0]!,
       precedentialEffect: 'review_required',
     };
-    await render(
-      <CounterArguments data={{ ...s2, excluded: [reviewRequired] }} />
-    );
+    await render(<CounterArguments data={{ ...s2, excluded: [reviewRequired] }} />);
 
     expect(
       screen.queryByText(
-        'This authority has been set aside, so it is not offered as a counter-argument.'
-      )
+        'This authority has been set aside, so it is not offered as a counter-argument.',
+      ),
     ).toBeNull();
-    expect(
-      screen.getByText(/our records could not fully confirm/)
-    ).toBeTruthy();
+    expect(screen.getByText(/our records could not fully confirm/)).toBeTruthy();
   });
 
   it('marks an unverified authority and offers the eCourts route', async () => {
     const withUnverified: CounterArgumentsResponse = {
       ...s2,
-      arguments: [{ ...argument, authorities: [{ ...authority, verificationState: 'unverified' }] }],
+      arguments: [
+        { ...argument, authorities: [{ ...authority, verificationState: 'unverified' }] },
+      ],
     };
 
     await render(<CounterArguments data={withUnverified} />);
@@ -174,7 +172,9 @@ describe('CounterArguments — S2, once generation lands', () => {
   it('lists a reference no tier confirmed rather than stripping it', async () => {
     const withStripped: CounterArgumentsResponse = {
       ...s2,
-      unverifiedReferences: [{ citationClaimed: 'Mock Ghost v. Nobody', reason: 'no tier matched' }],
+      unverifiedReferences: [
+        { citationClaimed: 'Mock Ghost v. Nobody', reason: 'no tier matched' },
+      ],
     };
 
     await render(<CounterArguments data={withStripped} />);
@@ -231,9 +231,7 @@ describe('an authority whose law has moved', () => {
    * screen-wide match would have been satisfied by the wrong element.
    */
   it('draws nothing at all on an authority that is still good law', async () => {
-    await render(
-      <CounterArguments data={{ ...s1, authorities: [authority], excluded: [] }} />
-    );
+    await render(<CounterArguments data={{ ...s1, authorities: [authority], excluded: [] }} />);
 
     expect(screen.queryByText('Doubted · referred')).toBeNull();
     expect(screen.queryByText(/set aside/i)).toBeNull();
@@ -255,7 +253,7 @@ describe('an authority whose law has moved', () => {
     });
 
     expect(
-      screen.getByText('The directions on maintenance survive; only the arrest guidelines fell.')
+      screen.getByText('The directions on maintenance survive; only the arrest guidelines fell.'),
     ).toBeTruthy();
   });
 
@@ -283,17 +281,17 @@ describe('an authority whose law has moved', () => {
  */
 describe('the exclusion reason', () => {
   const withNote = (overruledNote: string | null) =>
-    render(
-      <CounterArguments data={{ ...s1, excluded: [{ ...excluded[0]!, overruledNote }] }} />
-    );
+    render(<CounterArguments data={{ ...s1, excluded: [{ ...excluded[0]!, overruledNote }] }} />);
 
   it('names what was set aside and where, when the server sent the note', async () => {
-    await withNote('The relevant directions in this authority were set aside in Mock Social Action Forum (2018)');
+    await withNote(
+      'The relevant directions in this authority were set aside in Mock Social Action Forum (2018)',
+    );
 
     expect(
       screen.getByText(
-        'The relevant directions in this authority were set aside in Mock Social Action Forum (2018) — not offered as a counter-argument.'
-      )
+        'The relevant directions in this authority were set aside in Mock Social Action Forum (2018) — not offered as a counter-argument.',
+      ),
     ).toBeTruthy();
   });
 
@@ -302,8 +300,8 @@ describe('the exclusion reason', () => {
 
     expect(
       screen.getByText(
-        'This authority has been set aside, so it is not offered as a counter-argument.'
-      )
+        'This authority has been set aside, so it is not offered as a counter-argument.',
+      ),
     ).toBeTruthy();
   });
 
@@ -313,8 +311,8 @@ describe('the exclusion reason', () => {
 
     expect(
       screen.getByText(
-        'This authority has been set aside, so it is not offered as a counter-argument.'
-      )
+        'This authority has been set aside, so it is not offered as a counter-argument.',
+      ),
     ).toBeTruthy();
   });
 });

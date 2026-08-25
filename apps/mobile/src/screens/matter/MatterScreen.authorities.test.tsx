@@ -46,6 +46,12 @@ const BUNDLE = {
 jest.mock('../../api/client', () => ({
   api: {
     matterAuthorities: jest.fn(),
+    premiumPreview: jest.fn(() =>
+      Promise.resolve({
+        ok: false,
+        error: { code: 'NOT_ENABLED', message: 'premium preview is disabled' },
+      }),
+    ),
     removeAuthorityFromMatter: jest.fn(),
     matter: jest.fn(() => Promise.resolve({ ok: true, data: BUNDLE })),
   },
@@ -91,10 +97,11 @@ const draw = async (onOpenJudgment = jest.fn()) => {
       onOpenBriefing={() => {}}
       onOpenCounterArguments={() => {}}
       onOpenJudgment={onOpenJudgment}
+      onOpenPremiumPlans={() => {}}
       onRecordAdjournment={() => {}}
       onSendClientUpdate={() => {}}
       onShare={() => {}}
-    />
+    />,
   );
   return { onOpenJudgment };
 };
@@ -138,7 +145,11 @@ describe('the saved authorities appear in the matter', () => {
       ok: true,
       data: {
         authorities: [
-          authority({ authorityId: 'auth_gone', caseTitle: 'Mock Removed v. State', removedAt: '2026-08-11T01:00:00.000Z' }),
+          authority({
+            authorityId: 'auth_gone',
+            caseTitle: 'Mock Removed v. State',
+            removedAt: '2026-08-11T01:00:00.000Z',
+          }),
           authority(),
         ],
         asOf: '2026-08-11T00:00:00.000Z',
@@ -194,9 +205,7 @@ describe('taking an authority back out of the matter', () => {
 
     await fireEvent.press(await screen.findByText('Remove from this matter'));
 
-    await waitFor(() =>
-      expect(screen.queryByText('Mock Appellant v. Union of India')).toBeNull()
-    );
+    await waitFor(() => expect(screen.queryByText('Mock Appellant v. Union of India')).toBeNull());
   });
 
   /**
@@ -240,7 +249,7 @@ describe('taking an authority back out of the matter', () => {
     removeAuthorityFromMatter.mockReturnValue(
       new Promise((resolve) => {
         settle = resolve;
-      }) as ReturnType<typeof api.removeAuthorityFromMatter>
+      }) as ReturnType<typeof api.removeAuthorityFromMatter>,
     );
 
     await draw();
@@ -250,9 +259,7 @@ describe('taking an authority back out of the matter', () => {
     expect(screen.getByText('Removing…')).toBeTruthy();
 
     settle({ ok: true, data: { removedAt: '2026-08-11T02:00:00.000Z' } });
-    await waitFor(() =>
-      expect(screen.queryByText('Mock Appellant v. Union of India')).toBeNull()
-    );
+    await waitFor(() => expect(screen.queryByText('Mock Appellant v. Union of India')).toBeNull());
   });
 });
 
@@ -299,9 +306,7 @@ describe('good-law status, live from bus 0048/0049 (LCC dd9871b)', () => {
 
     expect(screen.queryByText(/law has moved/i)).toBeNull();
     expect(screen.queryByText('Overruled')).toBeNull();
-    expect(
-      screen.queryByText(/does not yet show whether an authority/)
-    ).toBeNull();
+    expect(screen.queryByText(/does not yet show whether an authority/)).toBeNull();
   });
 
   it('draws the LAW MOVED mark, strikes the title and names the replacement for a set-aside authority', async () => {

@@ -37,8 +37,15 @@ export function track(event: AnalyticsEvent): void {
   if (buffer.length > MAX_BUFFER) buffer.shift();
 }
 
+/** Distribute `Omit` across the event union so each name keeps its own props. */
+type EventAtFireTime = AnalyticsEvent extends infer E
+  ? E extends AnalyticsEvent
+    ? Omit<E, 'at'>
+    : never
+  : never;
+
 /** `at` is set here, once, so every call site fires `track({ name: '...', ...props })` without threading a timestamp through every screen. */
-export function fire<E extends AnalyticsEvent>(event: Omit<E, 'at'>): void {
+export function fire(event: EventAtFireTime): void {
   track({ ...event, at: new Date().toISOString() } as AnalyticsEvent);
 }
 

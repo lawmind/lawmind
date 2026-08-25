@@ -29,6 +29,7 @@ import type {
   PrecedentGraph,
   Profile,
   ProfilePatch,
+  PremiumPreview,
   SearchFilters,
   SearchResponse,
   Session,
@@ -106,7 +107,7 @@ function resolveBaseUrl(): string {
   throw new Error(
     'EXPO_PUBLIC_API_URL is not set on a non-dev build. Refusing to fall back to a ' +
       'guessed API URL — set it in the eas.json build profile (or the hosting ' +
-      'environment) for this channel. See docs/FOUNDER_QUEUE.md FQ-HOSTING.'
+      'environment) for this channel. See docs/FOUNDER_QUEUE.md FQ-HOSTING.',
   );
 }
 
@@ -277,7 +278,7 @@ export const api = {
     send<{ accessToken: string; refreshToken: string }>(
       '/auth/refresh',
       { refreshToken },
-      { isRefresh: true }
+      { isRefresh: true },
     ),
 
   signOut: () => send<{ ok: true }>('/auth/logout', {}, { auth: true }),
@@ -319,7 +320,7 @@ export const api = {
     send<{ termsAcceptedAt: string; termsVersion: string }>(
       '/me/accept-terms',
       { version },
-      { auth: true }
+      { auth: true },
     ),
 
   /**
@@ -400,8 +401,18 @@ export const api = {
   matterAuthorities: (matterId: string) =>
     get<{ authorities: MatterAuthority[]; asOf: string }>(
       `/matters/${encodeURIComponent(matterId)}/authorities`,
-      { auth: true }
+      { auth: true },
     ),
+
+  /**
+   * Deterministic premium preview only. The server flag defaults OFF and
+   * answers `NOT_ENABLED`; callers hide the card in that state. A successful
+   * read also records the durable `premium_intent` activation step server-side.
+   */
+  premiumPreview: (matterId: string) =>
+    get<PremiumPreview>(`/matters/${encodeURIComponent(matterId)}/premium-preview`, {
+      auth: true,
+    }),
 
   /**
    * NAMED ARGUMENTS, DELIBERATELY. `matterId` and `judgmentId` are both plain
@@ -421,13 +432,13 @@ export const api = {
         judgmentId: args.judgmentId,
         ...(args.citationCheckId ? { citationCheckId: args.citationCheckId } : {}),
       },
-      { auth: true }
+      { auth: true },
     ),
 
   removeAuthorityFromMatter: (matterId: string, authorityId: string) =>
     request<{ removedAt: string }>(
       `/matters/${encodeURIComponent(matterId)}/authorities/${encodeURIComponent(authorityId)}`,
-      { method: 'DELETE', auth: true }
+      { method: 'DELETE', auth: true },
     ),
 
   createMatter: (matter: Omit<Matter, 'matterId'>) =>
@@ -459,8 +470,11 @@ export const api = {
       orderText?: string;
       notes?: string;
       noteVisibility?: 'private' | 'shared';
-    }
-  ) => send<{ event: MatterEvent }>(`/matters/${encodeURIComponent(matterId)}/events`, event, { auth: true }),
+    },
+  ) =>
+    send<{ event: MatterEvent }>(`/matters/${encodeURIComponent(matterId)}/events`, event, {
+      auth: true,
+    }),
 
   /**
    * PD-4 — FLIP ONE NOTE'S VISIBILITY. This is a PATCH on an existing event and
@@ -476,7 +490,7 @@ export const api = {
         auth: true,
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ noteVisibility }),
-      }
+      },
     ),
 
   /* ------------------------------------------------- matter sharing · PD-3 */
@@ -528,7 +542,7 @@ export const api = {
   revokeMatterShare: (matterId: string, shareId: string) =>
     request<{ revokedAt: string }>(
       `/matters/${encodeURIComponent(matterId)}/shares/${encodeURIComponent(shareId)}`,
-      { method: 'DELETE', auth: true }
+      { method: 'DELETE', auth: true },
     ),
 
   /* ------------------------------------------------------------- briefings */
@@ -563,7 +577,7 @@ export const api = {
     send<{ ok: true; openedAt: string }>(
       `/briefings/${encodeURIComponent(briefingId)}/opened`,
       {},
-      { auth: true }
+      { auth: true },
     ),
 
   /* ---------------------------------------------------------------- drafting */
@@ -609,7 +623,7 @@ export const api = {
   alerts: (since?: string) =>
     get<{ alerts: Alert[]; unreadCount: number }>(
       since ? `/alerts?since=${encodeURIComponent(since)}` : '/alerts',
-      { auth: true }
+      { auth: true },
     ),
 
   markAlertRead: (alertId: string) =>
@@ -665,7 +679,7 @@ export const api = {
   treatment: (judgmentId: string, limit = 50, cursor?: string) =>
     get<TreatmentResponse>(
       `/judgments/${encodeURIComponent(judgmentId)}/treatment?limit=${limit}` +
-        (cursor ? `&cursor=${encodeURIComponent(cursor)}` : '')
+        (cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''),
     ),
 
   /**
@@ -678,7 +692,7 @@ export const api = {
    */
   precedentGraph: (judgmentId: string, depth: 1 | 2 = 1, limit = 40) =>
     get<PrecedentGraph>(
-      `/judgments/${encodeURIComponent(judgmentId)}/graph?depth=${depth}&limit=${limit}`
+      `/judgments/${encodeURIComponent(judgmentId)}/graph?depth=${depth}&limit=${limit}`,
     ),
 
   judgment: (judgmentId: string) =>
@@ -717,9 +731,13 @@ export const api = {
    * `matterId` to save the passage on its own.
    */
   createAnnotation: (judgmentId: string, draft: AnnotationDraft) =>
-    send<{ annotation: Annotation }>(`/judgments/${encodeURIComponent(judgmentId)}/annotations`, draft, {
-      auth: true,
-    }),
+    send<{ annotation: Annotation }>(
+      `/judgments/${encodeURIComponent(judgmentId)}/annotations`,
+      draft,
+      {
+        auth: true,
+      },
+    ),
 
   /** Soft delete — `deleted_at`, scoped to the owner server-side. */
   deleteAnnotation: (annotationId: string) =>
@@ -826,7 +844,8 @@ export const api = {
    * missing from it. See `StatuteCoverage` for the three fields that must not
    * be read naively.
    */
-  statutes: () => get<{ statutes: Statute[]; coverage: StatuteCoverage; asOf: string }>('/statutes'),
+  statutes: () =>
+    get<{ statutes: Statute[]; coverage: StatuteCoverage; asOf: string }>('/statutes'),
 
   /**
    * `limit` caps at 600 — enough for BNSS at 531, so a whole Act arrives in one
@@ -838,6 +857,6 @@ export const api = {
    */
   statuteSections: (actId: string, limit = 600) =>
     get<{ sections: StatuteSection[]; total: number }>(
-      `/statutes/sections?actId=${encodeURIComponent(actId)}&limit=${Math.min(limit, 600)}`
+      `/statutes/sections?actId=${encodeURIComponent(actId)}&limit=${Math.min(limit, 600)}`,
     ),
 };

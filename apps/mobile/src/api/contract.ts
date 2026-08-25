@@ -11,8 +11,7 @@
 
 /** Every response. There is no bare payload and no bare error string. */
 export type ApiResponse<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: { code: string; message: string } };
+  { ok: true; data: T } | { ok: false; error: { code: string; message: string } };
 
 /* ------------------------------------------------------------------ citation */
 
@@ -269,7 +268,6 @@ export type JudgmentParagraph = {
    * see, which is the exact failure `cite:` search exists to prevent.
    */
   citesJudgmentId?: string;
-
 };
 
 /**
@@ -430,12 +428,7 @@ export type JudgmentDetail = Omit<
  * `TreatmentCard` does, and a test holds it there.
  */
 export type TreatmentRelationship =
-  | 'cites'
-  | 'followed'
-  | 'distinguished'
-  | 'doubted'
-  | 'overruled'
-  | 'overruled_in_part';
+  'cites' | 'followed' | 'distinguished' | 'doubted' | 'overruled' | 'overruled_in_part';
 
 export type Treatment = {
   judgmentId: string;
@@ -588,11 +581,7 @@ export type PrecedentGraph = {
  * the bench that killed it, on the landmarks an advocate is most likely to open.
  */
 export type AuthorityStanding =
-  | 'good_law_then'
-  | 'already_moved'
-  | 'overruled_here'
-  | 'moved_since'
-  | 'unknown';
+  'good_law_then' | 'already_moved' | 'overruled_here' | 'moved_since' | 'unknown';
 
 export type PointInTimeAuthority = {
   judgmentId: string;
@@ -1634,6 +1623,28 @@ export type Matter = {
 
 /** `owner` writes; `shared` reads. `none` never reaches a client — it 404s. */
 export type MatterAccess = 'owner' | 'shared';
+
+/**
+ * `GET /matters/:id/premium-preview` — the deterministic, no-generation half
+ * of NEW3's approved premium preview. The route is server-flagged OFF by
+ * default, so a client may consume it without making the surface public.
+ *
+ * `stanceNotComputed: true` is load-bearing: the database stores no
+ * supporting/contrary classification, and a client that split
+ * `authorityCount` would fabricate paid value and legal meaning at once.
+ */
+export type PremiumPreview = {
+  matterId: string;
+  costClass: 'cheap';
+  authorityCount: number;
+  eventCount: number;
+  adverseAuthorities: number;
+  nextHearingDate: string | null;
+  unresolvedFilings: number;
+  stanceNotComputed: true;
+  notComputed: readonly string[];
+  asOf: string;
+};
 
 export type MatterEvent = {
   /** Wire field is `eventId`, same drift as `Matter.matterId` above. */
