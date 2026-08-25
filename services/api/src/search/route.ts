@@ -126,6 +126,55 @@ const isoDate = z
     );
   }, 'not a real calendar date');
 
+
+/**
+ * ───────────────────────────────────────────────────────────────────────────
+ * THE STRUCTURED BRANCHES NEED THE SAME VERDICT THE HYBRID BRANCH GIVES
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * FIFTH's cross-route battery (bus 1257) sent one 18-character exact-identity
+ * query through `/search` and `/arguments/counter` and got:
+ *
+ *     search   200, 2 results, ambiguous:true, retrievalOutcome ABSENT
+ *     counter  200, 4 authorities, retrievalOutcome.state=degraded, safeForGeneration:false
+ *
+ * Two routes, one query, and only one of them published a verdict. The comment
+ * eighty lines below this one says the field is ALWAYS present; three of the
+ * four branches returned before reaching it. The coverage checker passed because
+ * it counted `search/route.ts` as one caller — file-level, not branch-level —
+ * and the file does contain a call.
+ *
+ * `structured.kind === 'ambiguous'` is the branch that most needed it: an exact
+ * citation resolving to several judgments is precisely where a downstream
+ * consumer must be told not to generate. `ambiguous: true` in the body says
+ * "render a disambiguation"; it does not say "do not argue from this", and a
+ * generator reading only the results would never learn the difference.
+ *
+ * Derived through the SAME `deriveRetrievalOutcome` as hybrid — §8.5 forbids a
+ * second vocabulary, and a hand-built object here would be exactly that.
+ *
+ * `semanticDependent: false` because the structured path answers from an
+ * identity predicate and never embeds anything. Reporting
+ * `semantic_index_insufficient` on `cite:"(2019) 5 SCC 1"` would be true and
+ * useless, and it is how a field gets ignored by every consumer.
+ */
+function structuredOutcome(input: {
+  resultCount: number;
+  /** Distinct judgments an exact-identity lookup matched. >1 is the ambiguity. */
+  candidates?: number | undefined;
+}) {
+  return deriveRetrievalOutcome({
+    resultCount: input.resultCount,
+    // The structured path runs no rankers, so there are no arms to degrade.
+    // This is a real empty rather than an uncollected one.
+    degradedArms: [],
+    semanticAvailable: false,
+    semanticIndexSufficient: SEMANTIC_INDEX_SUFFICIENT,
+    semanticDependent: false,
+    ...(input.candidates === undefined ? {} : { exactTitleCandidates: input.candidates }),
+  });
+}
+
 export const searchRequest = z
   .object({
     /**
@@ -469,6 +518,10 @@ async function runSearch(
       searchId: null,
       parsed: structured.parsed,
       total: 0,
+      // We looked with an exact predicate and it matched nothing. That is
+      // `abstained` — an honest empty — and it must never reach a phone as
+      // "there is no law on this".
+      retrievalOutcome: structuredOutcome({ resultCount: 0 }),
       page: { page, pageSize, hasMore: false },
     });
   }
@@ -517,6 +570,7 @@ async function runSearch(
       searchId: null,
       parsed: structured.parsed,
       total: structured.total,
+      retrievalOutcome: structuredOutcome({ resultCount: structured.hits.length }),
       // `total` is a real COUNT(*) over the same predicate, so `hasMore` here is
       // exact rather than a guess from a full page.
       page: { page, pageSize, hasMore: offset + structured.hits.length < structured.total },
@@ -577,6 +631,18 @@ async function runSearch(
        * is now reachable — the ordering is total, so paging cannot skip one.
        */
       page: { page, pageSize, hasMore: offset + structured.hits.length < structured.total },
+      /**
+       * `ambiguous: true` tells a client to RENDER a disambiguation. It does not
+       * tell a generator not to argue from these, and those are different
+       * instructions to different consumers. `structured.total` rather than
+       * `hits.length` is the candidate count deliberately: the ambiguity is over
+       * every judgment claiming this citation, not over the page of them this
+       * request happened to ask for. FIFTH bus 1257.
+       */
+      retrievalOutcome: structuredOutcome({
+        resultCount: structured.hits.length,
+        candidates: structured.total,
+      }),
       ambiguous: true,
     });
   }
