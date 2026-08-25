@@ -68,6 +68,31 @@ export function treatmentChecklistItems(
     if (m.effect === 'none') continue;
 
     /**
+     * `evidence_defect` gets its OWN sentence, and it is not a warning.
+     *
+     * The generic wording below opens with "<case> has moved", which is exactly
+     * the claim this effect exists to withdraw — the authority did not move, our
+     * parser misread a verb's mood. Falling through to it would reintroduce the
+     * false statement one layer down from where it was removed.
+     *
+     * It is still SAID. Dropping the item entirely would hide a known defect in
+     * our own record from the one person who might notice it is wrong.
+     */
+    if (m.effect === 'evidence_defect') {
+      items.push({
+        id: `${TREATMENT_ITEM_PREFIX}${m.judgmentId}`,
+        text:
+          `${m.caseTitle} is recorded in our data as having a change of status, and that ` +
+          `record is a defect in our own reading rather than an act of any court. ` +
+          `Treat the authority as undisturbed, and read the later decision if you want to be sure.`,
+        basis:
+          `precedentialEffect = evidence_defect ` +
+          `(judgments.overruled_status = ${m.storedStatus}; every adverse edge is MODALITY_DEFECT)`,
+      });
+      continue;
+    }
+
+    /**
      * Two sentences, and which comes second is the whole point.
      *
      * `citableForUntouchedPropositions` is layer 3 asking the only question an

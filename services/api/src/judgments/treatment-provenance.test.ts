@@ -123,7 +123,69 @@ describe('propagation — only a defective edge is refused', () => {
     assert.ok(driving.some((e) => e.provenance === 'REPORTER_EDITORIAL_ANNOTATION'));
   });
 
-  it('a stored status backed ONLY by a defect is review_required, not a human determination', () => {
+  it('a stored status backed ONLY by a defect ALLOWS the save and asserts no banner', () => {
+    /**
+     * The correction NEW3's 10-matter regression caught four hours after the
+     * first version shipped.
+     *
+     * My first attempt returned `review_required` here, reasoning that dropping
+     * the defective edge must not let a stored status read as a deliberate human
+     * determination. True, and it produced a worse bug: `review_required`
+     * REFUSES add-to-matter, so a real 1975 Supreme Court authority —
+     * *Divisional Personnel Officer, Southern Railway v. T. R. Challappan*,
+     * 1975 INSC 212 — became unsaveable, and the reason was a verb's mood in a
+     * 1985 dissent.
+     *
+     * `evidence_defect` separates the two facts. "A later court may have done
+     * something we cannot confirm" is ambiguity and refusing is cautious. "We
+     * recorded something that was never a change of status" is a fact about our
+     * parser, and a defect in our own reading must SUBTRACT a warning rather
+     * than ADD a prohibition.
+     */
+    const effect = precedentialEffectFromEdges({
+      overruledStatus: 'set_aside',
+      edges: [defect('overruled')],
+    });
+    assert.equal(effect, 'evidence_defect');
+    const policy = precedentialPolicy(effect);
+    assert.equal(policy.addToMatter, 'allow', 'a parser defect may not deny an advocate good law');
+    assert.equal(
+      policy.bannerStatus,
+      'none',
+      'asserting LAW MOVED from a subjunctive is a hallucination in the direction nobody watches for',
+    );
+    assert.equal(policy.citableForUntouchedPropositions, true);
+  });
+
+  it('the defect is still DISCLOSED — allowed is not silent', () => {
+    // Removing the false claim must not remove the visibility. The attribution
+    // says DEFECTIVE on every surface, and the checklist still emits an item.
+    const edges = [defect('overruled')];
+    assert.equal(attributionOf(edges), 'DEFECTIVE');
+    const effect = precedentialEffectFromEdges({ overruledStatus: 'set_aside', edges });
+    const items = treatmentChecklistItems([
+      {
+        judgmentId: 'j-defect',
+        caseTitle: 'Challappan',
+        storedStatus: 'set_aside' as const,
+        effect,
+        policy: precedentialPolicy(effect),
+        scope: treatmentScope({ effect, overruledParas: null }),
+        overruledParas: null,
+        unapplied: null,
+        attribution: 'DEFECTIVE' as const,
+      },
+    ]);
+    assert.equal(items.length, 1, 'a known defect in our record must still be said out loud');
+    assert.match(items[0]!.text, /defect in our own reading/);
+    assert.doesNotMatch(
+      items[0]!.text,
+      /has moved/,
+      'the authority did NOT move — that is the claim this effect exists to withdraw',
+    );
+  });
+
+  it('genuine ambiguity still refuses — review_required is untouched', () => {
     /**
      * The one behavioural change, and the reason it is not a weakening.
      *
@@ -133,14 +195,16 @@ describe('propagation — only a defective edge is refused', () => {
      * `review_required` says the true thing and refuses add-to-matter, which is
      * strictly more cautious than what it replaced.
      */
+    // An edge whose RELATIONSHIP is not one we map, with real provenance. That
+    // is genuine "something happened and we cannot account for it", which is the
+    // case refusing was designed for and still serves.
     const effect = precedentialEffectFromEdges({
       overruledStatus: 'set_aside',
-      edges: [defect('overruled')],
+      edges: [{ relationship: 'approved', provenance: 'COURT_REASONING_EXPLICIT' }],
     });
-    assert.equal(effect, 'review_required');
-    const policy = precedentialPolicy(effect);
-    assert.equal(policy.addToMatter, 'refuse');
-    assert.equal(policy.bannerStatus, 'set_aside', 'the warning is UNCHANGED');
+    assert.equal(effect, 'set_aside', 'no usable ADVERSE edge at all is still taken at its word');
+    assert.equal(precedentialPolicy('review_required').addToMatter, 'refuse');
+    assert.equal(precedentialPolicy('review_required').bannerStatus, 'set_aside');
   });
 
   it('a genuine admin determination with no edges at all is still taken at its word', () => {

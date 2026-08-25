@@ -251,7 +251,31 @@ export type PrecedentialEffect =
   | 'set_aside'
   | 'partly_set_aside'
   | 'doubted'
-  | 'review_required';
+  | 'review_required'
+  /**
+   * The stored adverse status has NO usable evidence behind it — every adverse
+   * edge is a `MODALITY_DEFECT`, which NEW2 adjudicated as *not a treatment at
+   * all*.
+   *
+   * DISTINCT FROM `review_required`, and the distinction is the whole point.
+   * `review_required` means "a later court may have done something and we cannot
+   * confirm what" — genuine ambiguity, and refusing is the cautious side.
+   * `evidence_defect` means "we recorded something that was never a change of
+   * status", which is a fact about OUR PARSER and not a fact about the law.
+   *
+   * The live instance is *Divisional Personnel Officer, Southern Railway v.
+   * T. R. Challappan*, 1975 INSC 212 — one adverse edge, and its evidence is
+   * Tulsiram Patel's DISSENT saying the case "is sought to be overruled by the
+   * judgment proposed to be delivered by my learned Brother". A subjunctive. The
+   * mood was read as a holding.
+   *
+   * A defect in our own parsing must SUBTRACT a warning, never ADD a prohibition.
+   * Refusing here told an advocate on a departmental-penalty-after-acquittal
+   * matter that the leading authority on it could not be saved, because of a
+   * verb's mood in a 1985 dissent. NEW3's 10-matter regression caught it four
+   * hours after it shipped.
+   */
+  | 'evidence_defect';
 
 /** Layer 3. What the product does, and nothing about what happened. */
 export type PrecedentialPolicy = {
@@ -394,10 +418,16 @@ export function precedentialEffectFromEdges(input: {
   const hadAdverseEdges = input.edges.some((e) => EDGE_RANK[e.relationship] !== undefined);
   const hasUsableAdverse = usable.some((e) => EDGE_RANK[e.relationship] !== undefined);
 
-  /* Every adverse edge behind a stored status is defective. Not silence — a
-   * broken witness, which is a different answer from no witness. */
+  /**
+   * Every adverse edge behind a stored status is defective.
+   *
+   * Not silence — a broken witness, which is a different answer from no witness.
+   * And not `review_required` either: that would refuse add-to-matter, and a
+   * defect in our own parsing is not grounds to tell an advocate that good law
+   * is unusable. See `evidence_defect`.
+   */
   if (input.overruledStatus !== 'none' && hadAdverseEdges && !hasUsableAdverse) {
-    return 'review_required';
+    return 'evidence_defect';
   }
 
   return precedentialEffect({
@@ -535,6 +565,32 @@ export function precedentialPolicy(effect: PrecedentialEffect): PrecedentialPoli
         citableForUntouchedPropositions: false,
         because: 'the recorded treatment of this authority could not be verified against an edge',
       };
+
+    case 'evidence_defect':
+      /**
+       * ALLOW, and no banner.
+       *
+       * Both halves are deliberate and both are the opposite of the cautious
+       * reflex. The stored status exists only because our parser read a
+       * subjunctive as a holding, so:
+       *
+       *   * showing LAW MOVED would be asserting a change in the law that never
+       *     happened — a hallucination in the direction nobody watches for; and
+       *   * refusing add-to-matter would deny an advocate good law over a
+       *     grammatical mood.
+       *
+       * The disclosure is NOT lost. `treatmentAttribution` is `DEFECTIVE` on
+       * every surface, and the briefing checklist still emits an item saying the
+       * evidence is a known defect in our record. What goes away is the false
+       * claim and the false prohibition, not the visibility.
+       */
+      return {
+        addToMatter: 'allow',
+        bannerStatus: 'none',
+        citableForUntouchedPropositions: true,
+        because:
+          'the only recorded treatment of this authority is a defect in our own reading, not an act of any court',
+      };
   }
 }
 
@@ -602,6 +658,13 @@ export function treatmentScope(input: {
      */
     case 'review_required':
       return 'UNRESOLVED';
+    /**
+     * There is no scope question, because there was no treatment. Asking "which
+     * paragraphs were affected" of an edge that turned out to be a subjunctive
+     * invites a client to render a narrowing of something that never narrowed.
+     */
+    case 'evidence_defect':
+      return 'NOT_APPLICABLE';
     default:
       return input.overruledParas !== null && input.overruledParas.length > 0
         ? 'RESOLVED'
