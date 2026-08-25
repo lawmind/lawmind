@@ -71,6 +71,7 @@ import {
   type KeyFreshness,
   mayAssertUnique,
   readKeyFreshness,
+  collidingKeysInUnwalkedWindow,
 } from './key-freshness.ts';
 import type { Sql } from 'postgres';
 
@@ -149,7 +150,10 @@ export type Resolution = {
  * degenerate key like `NA` or `0` can collide with something real.
  */
 const PLACEHOLDER_PATTERNS: readonly { readonly re: RegExp; readonly why: string }[] = [
-  { re: /^(n\.?\s*a\.?|nil|none|null|not\s*available|not\s*applicable)$/i, why: 'placeholder token' },
+  {
+    re: /^(n\.?\s*a\.?|nil|none|null|not\s*available|not\s*applicable)$/i,
+    why: 'placeholder token',
+  },
   { re: /^(ibid|id\.?|supra|infra|op\.?\s*cit\.?)$/i, why: 'back-reference, not a citation' },
   { re: /^[\W_]+$/, why: 'punctuation only' },
   { re: /^0+$/, why: 'zeros only' },
@@ -262,14 +266,35 @@ export async function resolveBatch(
    */
   freshness?: KeyFreshness,
 ): Promise<Resolution[]> {
-  const state = freshness?.state ?? (await readKeyFreshness(sql)).state;
+  const fresh = freshness ?? (await readKeyFreshness(sql));
+  const state = fresh.state;
   const unique = mayAssertUnique(state);
   const gated = raws.map((raw) => ({ raw, gate: canonicalKeyFor(raw) }));
-  const keys = [...new Set(gated.filter((g) => !g.gate.refused).map((g) => (g.gate as Accepted).key))];
+  const keys = [
+    ...new Set(gated.filter((g) => !g.gate.refused).map((g) => (g.gate as Accepted).key)),
+  ];
 
   if (keys.length === 0) {
     return gated.map((g) => refused(g.raw, (g.gate as Refusal).why));
   }
+
+  /**
+   * The per-key half of the freshness gate. See
+   * `key-freshness.ts` §THE EXACT FRONTIER CHECK for the reproduction.
+   *
+   * `mayAssertUnique` answers a question about the CORPUS: has the index fallen
+   * far enough behind that uniqueness is generally unsafe? This answers the
+   * question about THIS citation: is there something in the unwalked window that
+   * claims it? A single newly-ingested collision passes the first and fails the
+   * second, which is exactly the window R7 §8 named and which was measured open.
+   *
+   * Skipped entirely when the frontier reports nothing unwalked, which is the
+   * ordinary case, so a healthy index pays one boolean.
+   */
+  const collidingUnwalked = await collidingKeysInUnwalkedWindow(sql, fresh, keys, (citation) => {
+    const gate = canonicalKeyFor(citation);
+    return gate.refused ? null : gate.key;
+  });
 
   /**
    * The one query. `= ANY($1)` over the indexed `citation_key`, and a hard LIMIT
@@ -325,7 +350,11 @@ export async function resolveBatch(
       candidates.length === 0
         ? 'TARGET_NOT_HELD'
         : candidates.length === 1
-          ? unique
+          ? /* Both gates must pass. The corpus-wide one says the index is not
+             * broadly behind; the per-key one says nothing in the unwalked
+             * window claims THIS citation. A collision small enough to slip
+             * under the threshold is caught by the second. */
+            unique && !collidingUnwalked.has(gate.key)
             ? 'UNIQUE'
             : 'UNIQUE_UNCONFIRMED_STALE_INDEX'
           : 'AMBIGUOUS';

@@ -67,7 +67,7 @@ suite('M09 — a timeout must not poison the next legal-truth request', () => {
     // deliberate and is what makes this test meaningful — every query is forced
     // onto the SAME physical connection, so a session left dirty by the timeout
     // has no way to hide behind a fresh one.
-    sql = postgres(url!, { max: 1, onnotice: () => {}, connection: { statement_timeout: '800' } });
+    sql = postgres(url!, { max: 1, onnotice: () => {}, connection: { statement_timeout: 800 } });
   });
 
   after(async () => {

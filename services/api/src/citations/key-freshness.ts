@@ -179,3 +179,84 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
 export function mayAssertUnique(state: KeyFreshnessState): boolean {
   return state === 'CURRENT';
 }
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE EXACT FRONTIER CHECK — because a global threshold cannot see ONE collision
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * R7 §8 predicted this in one sentence: *"A small newly ingested collision may
+ * not remain confidently UNIQUE because global backlog is below a broad
+ * threshold."*
+ *
+ * It is not a prediction. Reproduced against the live database on 25 Aug 2026,
+ * inside a rolled-back transaction:
+ *
+ *     freshness BEFORE                CURRENT · lagRows 0 · lagHours 19.1
+ *     resolve "1950 INSC 1"           UNIQUE · 1 candidate
+ *     insert a colliding judgment     same neutral citation, no key row yet
+ *     freshness AFTER                 CURRENT · lagRows 1 · because []
+ *     resolve "1950 INSC 1"           **UNIQUE · 1 candidate**
+ *
+ * Two judgments claim that citation and the resolver says exactly one. The
+ * threshold gate did nothing, and it was right not to by its own terms: 1 is a
+ * very long way below `MAX_LAG_ROWS = 25,000`.
+ *
+ * That is the structural problem with a global bound. `MAX_LAG_ROWS` answers
+ * *"how much damage might there be across the whole corpus"*, which is the right
+ * question for an operator and the wrong one for a single answer handed to an
+ * advocate. The advocate's citation does not care that the other 24,999 unwalked
+ * rows are irrelevant to it.
+ *
+ * So this asks the exact question instead: **is there anything in the unwalked
+ * window that claims THIS key?** The unwalked window is bounded by the frontier
+ * cursor and is normally empty, so the check is cheap precisely when it is
+ * uninformative and does real work exactly when it matters.
+ *
+ * Canonicalisation happens in JS with `keyOf` — the caller passes the same
+ * function the resolver and the key builder use. Reimplementing it in SQL would
+ * be a second definition of citation identity, and two definitions of identity
+ * is how a resolver and its index come to disagree about the same citation.
+ *
+ * Returns the set of keys that MUST NOT be answered UNIQUE.
+ */
+export async function collidingKeysInUnwalkedWindow(
+  sql: Sql,
+  frontier: KeyFreshness,
+  keys: readonly string[],
+  keyOf: (citation: string) => string | null,
+): Promise<Set<string>> {
+  const unsafe = new Set<string>();
+  if (keys.length === 0) return unsafe;
+  // Nothing unwalked, nothing to hide. The overwhelmingly common case.
+  if (!frontier.frontierAt || frontier.lagRows === 0) return unsafe;
+
+  /**
+   * A ceiling on how much of the unwalked window we will read.
+   *
+   * Above it the honest answer is that we cannot check exactly, and the
+   * threshold gate — which will already have said STALE at 25,000 — is the
+   * backstop. Below it, this is exact. The bound exists so that a builder which
+   * has been down for a week cannot turn every citation lookup into a scan of
+   * everything ingested since.
+   */
+  const WINDOW_CAP = 50_000;
+  if (frontier.lagRows > WINDOW_CAP) return unsafe;
+
+  const rows = await sql<{ neutral_citation: string | null; reporter_citations: string[] }[]>`
+    SELECT neutral_citation, reporter_citations
+      FROM judgments
+     WHERE created_at > ${frontier.frontierAt}
+     LIMIT ${WINDOW_CAP}`;
+
+  const wanted = new Set(keys);
+  for (const row of rows) {
+    const citations = [row.neutral_citation, ...(row.reporter_citations ?? [])];
+    for (const citation of citations) {
+      if (!citation) continue;
+      const key = keyOf(citation);
+      if (key && wanted.has(key)) unsafe.add(key);
+    }
+  }
+  return unsafe;
+}
