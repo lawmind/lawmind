@@ -192,27 +192,72 @@ function killExistingSidecars() {
     '$ids = ($before | ForEach-Object { $_.ProcessId }) -join "|";',
     'Write-Output ("SWEEP matched=" + $before.Count + " survived=" + $after.Count + " pids=" + $ids)',
   ].join(' ');
+  /**
+   * SUCCESS IS THE NARROW PATH. EVERY OTHER OUTCOME IS A FAILURE, LOUDLY.
+   *
+   * The first version of this verification had the same defect it was written to
+   * kill, reached by a third route. On 25 Aug at 03:58:13Z the keeper logged
+   * RESTART #1 and at 03:59:23Z logged `swept existing sidecars — (no output)`.
+   * Seventy seconds, against a 60s `spawnSync` timeout: PowerShell was killed
+   * mid-run, `stdout` came back empty, `survived` parsed as `NaN`, and
+   * `NaN > 0` is **false** — so it fell through to the success branch and
+   * announced a sweep that had timed out. Sidecar 20452 survived, a second
+   * sidecar was spawned that could not bind, and the log said everything was
+   * fine.
+   *
+   * `Get-CimInstance Win32_Process` is not fast on a box under IO pressure, and
+   * this one was: the walk was at 494 tok/s behind a saturated disk at the time.
+   * So the timeout is raised — but raising it is the small half of the fix.
+   *
+   * The real rule is that this function may only report success when it has
+   * POSITIVELY READ `survived=0`. A timeout, a signal, a non-zero exit, stderr
+   * output, or a line it cannot parse are each a distinct failure and each says
+   * so. "I killed it" and "I could not tell whether I killed it" must not
+   * produce the same log line — which is the entire lesson of the bug above.
+   */
   try {
     const r = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], {
       encoding: 'utf8',
-      timeout: 60_000,
+      timeout: 180_000,
     });
-    const line =
-      String(r.stdout ?? '')
-        .trim()
-        .split(/\r?\n/)
-        .filter(Boolean)
-        .at(-1) ?? '(no output)';
-    const survived = Number(line.match(/survived=(\d+)/)?.[1] ?? NaN);
-    if (survived > 0) {
+
+    const stdout = String(r.stdout ?? '').trim();
+    const stderr = String(r.stderr ?? '').trim();
+    const line = stdout.split(/\r?\n/).filter(Boolean).at(-1) ?? '';
+    const m = line.match(/SWEEP matched=(\d+) survived=(\d+)/);
+
+    if (r.error) {
+      note(`SWEEP FAILED — could not run: ${r.error.message}. Assume the old sidecar is STILL ALIVE.`);
+      return;
+    }
+    if (r.signal) {
       note(
-        `SWEEP INCOMPLETE — ${line}. A restart that does not free VRAM is not a restart, and this one did not.`,
+        `SWEEP FAILED — PowerShell killed by ${r.signal} (timeout ${180_000 / 1000}s). ` +
+          'This is the 03:59Z failure mode: no output is NOT a clean sweep. Assume the old sidecar is STILL ALIVE.',
       );
+      return;
+    }
+    if (r.status !== 0) {
+      note(`SWEEP FAILED — PowerShell exited ${r.status}. stderr: ${stderr.slice(0, 300) || '(none)'}`);
+      return;
+    }
+    if (!m) {
+      note(
+        `SWEEP FAILED — unparseable result ${JSON.stringify(line) || '(empty)'}. ` +
+          `stderr: ${stderr.slice(0, 300) || '(none)'}. Not treating this as success.`,
+      );
+      return;
+    }
+
+    const matched = Number(m[1]);
+    const survived = Number(m[2]);
+    if (survived > 0) {
+      note(`SWEEP INCOMPLETE — ${line}. A restart that does not free the port is not a restart, and this one did not.`);
     } else {
-      note(`swept existing sidecars before spawning — ${line}`);
+      note(`swept ${matched} existing sidecar(s), 0 survived — ${line}`);
     }
   } catch (e) {
-    note('could not sweep existing sidecars: ' + (e?.message ?? e));
+    note('SWEEP FAILED — threw: ' + (e?.message ?? e) + '. Assume the old sidecar is STILL ALIVE.');
   }
 }
 

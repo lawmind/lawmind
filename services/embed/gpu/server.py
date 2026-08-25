@@ -33,6 +33,7 @@ import argparse
 import json
 import os
 import site
+import socket
 import sys
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -245,6 +246,77 @@ def make_handler(embedder: Embedder):
     return Handler
 
 
+class ExclusiveThreadingHTTPServer(ThreadingHTTPServer):
+    """A sidecar that REFUSES to start when one is already listening.
+
+    THE DEFAULT WAS SILENTLY LETTING TWO SIDECARS SHARE ONE PORT.
+
+    `http.server.HTTPServer` sets `allow_reuse_address = 1`, and on Windows
+    `SO_REUSEADDR` does not mean what it means on Unix. On Unix it only permits
+    binding a port stuck in TIME_WAIT. **On Windows it permits binding a port
+    that is actively listening**, and the OS then hands new connections to
+    whichever socket it likes.
+
+    Observed on this box, 25 Aug 2026, with three sidecars alive at once:
+
+        Listen         pid 21080
+        Established    pid 20452   (created 09:03, actively serving the walk)
+
+    Two processes, one port, connections split between them, and nothing
+    anywhere reporting a problem. Every "duplicate sidecar" incident in
+    `.agents/logs/new1-sidecar-keeper.log` has this at the bottom of it: the
+    keeper's restart spawns a replacement, the replacement binds *successfully*
+    instead of failing with EADDRINUSE, and the stalled original keeps answering.
+    The keeper cannot detect a failure the operating system refuses to report.
+
+    `SO_EXCLUSIVEADDRUSE` is the Windows-specific opposite: it makes the bind
+    fail while another socket holds the address. That turns a silent duplicate
+    into a loud, immediate crash with a diagnosable message — which is the whole
+    point. A second sidecar SHOULD die.
+
+    This is safe for restarts. `SO_EXCLUSIVEADDRUSE` blocks rebinding while
+    another socket holds the address; a *listening* socket that closes does not
+    enter TIME_WAIT (only established connections do), so a genuine
+    kill-then-respawn rebinds immediately.
+
+    On non-Windows the option does not exist and plain `allow_reuse_address =
+    False` already gives the desired behaviour.
+    """
+
+    # Never inherit HTTPServer's `= 1`.
+    allow_reuse_address = False
+
+    def server_bind(self) -> None:
+        if sys.platform == "win32":
+            # 0x80000000 == SO_EXCLUSIVEADDRUSE. Not exposed by the socket module
+            # on every Python build, so it is written out rather than imported.
+            exclusive = getattr(socket, "SO_EXCLUSIVEADDRUSE", 0x80000000)
+            try:
+                self.socket.setsockopt(socket.SOL_SOCKET, exclusive, 1)
+            except OSError as err:
+                # Do not fail the sidecar over a missing socket option; say so and
+                # continue, because a working sidecar without the guard beats no
+                # sidecar. But it must be VISIBLE that the guard is off.
+                print(
+                    f"WARNING: could not set SO_EXCLUSIVEADDRUSE ({err}); "
+                    "a duplicate sidecar could bind this port silently",
+                    file=sys.stderr,
+                    flush=True,
+                )
+        try:
+            super().server_bind()
+        except OSError as err:
+            print(
+                f"FATAL: port {self.server_address[1]} is already held by another sidecar ({err}). "
+                "Refusing to start a duplicate. Kill the existing sidecar first — "
+                "this refusal is deliberate and replaces the silent port-sharing "
+                "that produced three concurrent sidecars on 25 Aug 2026.",
+                file=sys.stderr,
+                flush=True,
+            )
+            raise
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8799)
@@ -257,7 +329,7 @@ def main() -> None:
     args = parser.parse_args()
 
     embedder = Embedder(require_gpu=not args.cpu, use_tf32=args.tf32)
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(embedder))
+    server = ExclusiveThreadingHTTPServer(("127.0.0.1", args.port), make_handler(embedder))
     print(f"listening on http://127.0.0.1:{args.port}", flush=True)
     server.serve_forever()
 
