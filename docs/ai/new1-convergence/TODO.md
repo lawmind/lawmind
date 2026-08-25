@@ -18,7 +18,7 @@ T2  100k passage tranche                 █████░░░░░░░░
 T3  safe abstention                      ████████░░░░░░░░░░░░  3/8    pre-registered, eval blocked
 T4  long facts (deferred by plan)        █████████████░░░░░░░  2/3
 T5  HEAD-vs-passage recommendation       ████░░░░░░░░░░░░░░░░  1/6
-T6  continuous process health            ████████████████░░░░  6/7    ongoing
+T6  continuous process health            ████████████████░░░░  6/7    ongoing (10 findings)
 T7  bus / reporting                      ██████████░░░░░░░░░░  2/4
                                          ─────────────────────
                                          35 / 61
@@ -150,11 +150,19 @@ T7  bus / reporting                      ██████████░░░
 | 4 | Orphaned `cmd /K` loop running `citations-cli --concurrency 12` — no scheduled task, no registry record, **dead parent** | **REPORTED** to LCC |
 | 5 | Walk throughput **8,412 → 494 tok/s (17×)** with GPU at **0–2%** — IO-starved behind #4, not GPU-bound | **REPORTED**; blocks T2 |
 | 6 | Two batch attempts lost to `fetch failed` (00224, 00226) inside the stall windows | observed |
+| 7 | **My own sweep fix reported success on a TIMEOUT** — 70s run vs 60s `spawnSync` limit → empty stdout → `NaN > 0` false → success branch | **FIXED** `ea3f570` |
+| 8 | **The sidecar let a SECOND process bind a LIVE port.** `allow_reuse_address=True`; on Windows `SO_REUSEADDR` permits binding an *actively listening* port. Controlled test: old settings → second bind **SUCCEEDS**; `SO_EXCLUSIVEADDRUSE` → **refused (WinError 10048)**. Root cause of every duplicate-sidecar incident | **FIXED** `ea3f570` |
+| 9 | **Keeper restarted sidecars that were merely STARTING** — fixed 45s warm-up vs a measured **49.8s** model load; spawn 05:10:06 → RESTART 05:11:11. Replaced with a bounded wait-for-health (180s ceiling) | **FIXED** `ee673d2` |
+| 10 | Observed **3 concurrent sidecars** on port 8799; 21080 held the listener while 20452 served connections created 09:03. Cleaned to one; VRAM 7,130 → 876 MiB | resolved |
 
-### Corrections I made to my own claims
+### Corrections I made to my own claims — including two to my own FIXES
 
 - **Withdrew** the "orphan sidecar was starving VRAM" claim — measured release was **122 MiB**, not starvation. The orphan died at bind and never loaded the model. Real cost was the false-success restart, which is worse.
 - **Refused** to claim pool drift from the drift probe — table was static (+0 rows), so the run proves *determinism only*. Zero drift against zero new rows is evidence of nothing.
+- **My first keeper fix was itself defective** and I found it by reading the log it produced: it logged `(no output)` and took the success path. Fixed; success now requires a positively parsed `survived=0`, and timeout / signal / non-zero exit / stderr / unparseable are five distinct, loud failures.
+- **A test of mine gave a false negative** — a bash heredoc ate one backslash, so my repro tested `[\/]` (forward slash only) instead of the real `[\/]`, and reported `matched=0` against two live sidecars. The *real* command, extracted from source rather than retyped, matched correctly.
+- **My orphan-detector disowned my own statement** — I matched ownership against a `left(query,70)` preview, and the view name sat past the cut, so a 149s statement of mine read as somebody else's. Cancelled properly with `pg_cancel_backend`.
+- **I ran an unbounded full-table `GROUP BY`** on 15.9M rows while criticising another lane for exactly that, watched it degrade my own walk for ten minutes, and killed it. Re-did it as a bounded `TABLESAMPLE`.
 
 ---
 
