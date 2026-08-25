@@ -232,3 +232,67 @@ Two cautions on that estimate:
   justify it.
 - It does **not** report an aggregate gain without the per-class table beneath
   it.
+
+---
+
+## 8. THE SELECTION DOES NOT RUN YET — three attempts, stopped at the bound
+
+**Status: BLOCKED. Stopped deliberately after three failed fix-verify cycles,
+per the hard bound. No fourth attempt was made.**
+
+### The three attempts, and what each actually produced
+
+| # | approach | result |
+| --- | --- | --- |
+| 1 | one query per stratum cell (75 queries) | **88 seconds for a single cell.** ~2 hours projected, against my own walk. Killed rather than finished. |
+| 2 | single pass, quota table via `sql(arrayOfArrays)` | `TypeError: str.replace is not a function` — postgres.js reads that helper as a list of IDENTIFIERS. Failed before sending anything. |
+| 3 | single pass, quota via `unnest` of typed arrays | Ran **40 minutes**, then killed by its own timeout. `exit 143`. No orphaned backends left behind (checked and confirmed). |
+
+### The mechanism, from `EXPLAIN` with the real binds
+
+Not an inlined EXPLAIN — a bind parameter has moved a cost from 18.72 to
+9,255,009 on this database before, so the plan below was taken through the same
+parameterised path the code uses.
+
+```
+Subquery Scan on labelled  (cost=1770336.42..1845467.52 rows=626093)
+  Filter: (rn <= quota)
+  ->  WindowAgg  (cost=1770336.42..1821989.04 rows=1878278)
+        Window: PARTITION BY court_key, era ORDER BY j.id
+        ->  Sort  (cost=1770336.40..1775032.09 rows=1878278)
+              Sort Key: court_key, era, j.id
+              ->  Nested Loop
+                    ->  Function Scan on unnest
+                    ->  Index Scan using judgments_judgment_date_idx
+                          Index Cond: judgment_date >= $ AND judgment_date < $
+                          Filter: court = $ ...
+```
+
+**That is the cost for ONE cell.** Two things are wrong with it:
+
+1. **The scan is driven by `judgment_date`, and the court is only a filter.** The
+   date ranges are the *least* selective dimension available — the corpus is 96.5%
+   post-2010, so `ERA_2010S` and `ERA_2020S` each sweep millions of rows and then
+   throw nearly all of them away on the court predicate. `judgments_court_idx`
+   exists and is far more selective per cell, and the planner is not using it.
+2. **A 1.88M-row `Sort` feeds the window function.** `row_number()` over
+   `PARTITION BY court, era ORDER BY id` cannot stream; it materialises and sorts
+   the whole joined relation before a single row is emitted. That is why the run
+   produced no partial output in forty minutes — there is nothing to emit until
+   the sort completes.
+
+### Best hypothesis, and what would break the tie
+
+The window function is the expensive half and it is avoidable: the tranche does
+not need a global ranking, only *n* rows per cell. Driving off the court index and
+taking a bounded slice per cell — a `LATERAL` join, or a materialised
+court+date+id projection with its own index — should turn a 1.88M-row sort into
+75 short index scans.
+
+**The tie-breaker is one measurement, not an opinion:** `EXPLAIN` a single-cell
+`LATERAL` form and compare its cost against the 1,845,467 above. If it is not
+orders of magnitude cheaper, the frame itself is wrong and the tranche should be
+drawn from a materialised snapshot of the eligibility view rather than from the
+view directly.
+
+**Not attempted this session.** Three cycles is the bound and it was reached.
