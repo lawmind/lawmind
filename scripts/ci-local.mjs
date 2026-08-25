@@ -189,6 +189,23 @@ const STEPS = [
   // run by hand once the local database is live.
   ['railway static audit', 'node', ['scripts/migration/new2-railway-static-audit.mjs']],
   // ───────────────────────────────────────────────────────────────────────────
+  // WIRED 25 Aug 2026 — LCC, R7 §8 LCC-P0
+  // ───────────────────────────────────────────────────────────────────────────
+  //
+  // The process-control plane's identity rules. It reported another lane's GPU
+  // sidecar as STARTING on a pid Windows had recycled into a stranger 25ms
+  // earlier, because a registry line with no recorded creation time
+  // short-circuited the recycling check to TRUE — the ABSENCE of the check
+  // scored as the check passing. The test builds that condition deliberately
+  // against a known-alive non-LawMind process, since nobody can ask Windows to
+  // recycle a pid to order. Opens no socket beyond a process sweep.
+  ['job health identity', 'node', ['scripts/job-health.test.mjs']],
+  // The screened-vs-clean vocabulary guard. NEW2 (bus 1177) pointed out it was
+  // proven non-vacuous and wired NOWHERE, which is the same "a guard nobody runs
+  // is not a guard" argument that put the two 11 Aug entries above in this list.
+  // It is LCC's file and LCC's omission.
+  ['screened not clean', 'node', ['scripts/check-screened-not-clean.mjs']],
+  // ───────────────────────────────────────────────────────────────────────────
   // WIRED 11 Aug 2026 — `docs/ai/tasks/001-p0-citation-query-safety.md`
   // ───────────────────────────────────────────────────────────────────────────
   //

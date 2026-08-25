@@ -57,6 +57,7 @@
  *   node scripts/check-migration-journal.mjs
  */
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -197,6 +198,76 @@ if (tracked) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// 8 — the content of an applied migration must never change
+// ───────────────────────────────────────────────────────────────────────────
+//
+// Added 25 Aug 2026 (LCC, R7 §8 LCC-P0: "historical hash change without explicit
+// supersession"). The other seven checks all ask whether a migration EXISTS in
+// the right places. None of them notices when an existing one is quietly edited,
+// and that is the most expensive edit in the repository.
+//
+// Migrations are forward-only for a mechanical reason, not a stylistic one: a
+// database that has already run `0042` will never run it again. Change its SQL
+// and every existing database keeps the old schema while every new one gets the
+// new — and nothing anywhere reports a problem. The two diverge permanently and
+// silently, and the first symptom is a restore that behaves differently from
+// production.
+//
+// `drizzle.__drizzle_migrations.hash` is the sha256 of the file's bytes, so the
+// live database already holds this evidence. It is duplicated into a committed
+// lockfile on purpose: this guard must run in CI with no database, and a check
+// that needs production to tell you production has drifted is not much of a check.
+//
+// To change an applied migration deliberately: update `meta/_hashes.json` in the
+// SAME commit and add a `supersededReason`. That makes the act visible in review,
+// which is all this asks for. An UNEXPLAINED change is what it refuses.
+const HASHES = join(DRIZZLE_DIR, 'meta', '_hashes.json');
+try {
+  const lock = JSON.parse(readFileSync(HASHES, 'utf8'));
+  const recorded = lock.hashes ?? {};
+  const reasons = lock.supersededReason ?? {};
+
+  for (const tag of files) {
+    const actual = createHash('sha256')
+      .update(readFileSync(join(DRIZZLE_DIR, `${tag}.sql`)))
+      .digest('hex');
+    const expected = recorded[tag];
+    if (expected === undefined) {
+      fail(
+        'migration has no recorded hash',
+        `${tag}.sql is journalled but absent from meta/_hashes.json — add it in the commit that adds the migration`,
+      );
+    } else if (expected !== actual) {
+      fail(
+        'applied migration was edited',
+        `${tag}.sql content changed: recorded ${expected.slice(0, 16)}…, now ${actual.slice(0, 16)}…. ` +
+          (reasons[tag]
+            ? `A supersededReason is present ("${reasons[tag]}") but the recorded hash was not updated to match.`
+            : 'Every database that already ran this migration will NEVER run it again and now differs from a fresh install. ' +
+              'If the change is deliberate, update meta/_hashes.json in this commit and add a supersededReason.'),
+      );
+    }
+  }
+  for (const tag of Object.keys(recorded)) {
+    if (!files.includes(tag)) {
+      fail(
+        'recorded hash for a migration that no longer exists',
+        `meta/_hashes.json names ${tag} and there is no ${tag}.sql — a migration file was deleted or renamed`,
+      );
+    }
+  }
+} catch (error) {
+  if (error.code === 'ENOENT') {
+    fail(
+      'migration hash lock missing',
+      `${REL_DRIZZLE}/meta/_hashes.json does not exist — regenerate it, or this guard is silently doing nothing`,
+    );
+  } else {
+    throw error;
+  }
+}
+
 if (failures.length > 0) {
   console.error(`migration journal: ${failures.length} problem(s)\n`);
   for (const line of failures) console.error(`  ${line}`);
@@ -208,4 +279,6 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`migration journal: OK — ${files.length} migrations, journalled, ordered and tracked`);
+console.log(
+  `migration journal: OK — ${files.length} migrations, journalled, ordered, tracked and unedited since they were recorded`,
+);
