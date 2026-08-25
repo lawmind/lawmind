@@ -148,15 +148,69 @@ async function healthy() {
  * the querying shell (the trap this file already documents for the walk), and
  * then waits for the memory rather than racing the next model load.
  */
+/**
+ * THE PREDICATE IS THE WHOLE FUNCTION, AND IT WAS WRONG FOR THE WORST REASON.
+ *
+ * Until 25 Aug 2026 the filter read `'embed..gpu..server\.py'`. Each `..` is TWO
+ * regex wildcards, but the command line this has to match is
+ *
+ *   python C:\...\services\embed\gpu\server.py --port 8799
+ *
+ * which has exactly ONE character — a single backslash — between `embed` and
+ * `gpu`. So the predicate matched NOTHING, `Stop-Process` was handed nothing,
+ * PowerShell exited 0, and the line below logged a confident "killed any
+ * existing sidecar" over a sweep that had killed nobody. Measured on the live
+ * box: the old pattern matched 0 of 2 running sidecars, the fixed one matched 2.
+ *
+ * The cost was not theoretical. Keeper RESTART #2 at 02:46Z spawned pid 28592
+ * while pid 20452 still held port 8799, so the new process could not bind, did
+ * ~18 CPU-seconds of nothing for four hours, and sat on a CUDA context on an
+ * 8 GiB card that was already at 7,360 MiB — starving the very tranche build the
+ * restart existed to protect.
+ *
+ * `[\/]` rather than `.`: the separator is a backslash today and a forward
+ * slash the moment anything launches this through Git Bash, and a wildcard that
+ * matches whatever happens to be there is how the first version got it wrong.
+ *
+ * AND THE SWEEP NOW VERIFIES ITSELF. Logging success unconditionally is the
+ * defect, not a detail of it: this counts the survivors afterwards and says so,
+ * because "I killed it" and "I could not kill it" must not produce the same log.
+ */
 function killExistingSidecars() {
+  // String.raw, not a quoted literal: the pattern PowerShell must receive is
+  // `embed[\/]gpu[\/]server\.py` — a character class of backslash-or-slash and
+  // an ESCAPED dot — and every attempt to write that through ordinary JS string
+  // escapes lost a level somewhere and silently produced a class that matched
+  // only a forward slash. String.raw hands the regex over byte for byte.
+  const PATTERN = String.raw`embed[\\/]gpu[\\/]server\.py`;
+  const MATCH = `$_.Name -eq 'python.exe' -and $_.CommandLine -match '${PATTERN}'`;
   const ps = [
-    'Get-CimInstance Win32_Process |',
-    "Where-Object { $_.Name -eq 'python.exe' -and $_.CommandLine -match 'embed..gpu..server\.py' } |",
-    'ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }',
+    `$before = @(Get-CimInstance Win32_Process | Where-Object { ${MATCH} });`,
+    '$before | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} };',
+    'Start-Sleep -Milliseconds 1500;',
+    `$after = @(Get-CimInstance Win32_Process | Where-Object { ${MATCH} });`,
+    '$ids = ($before | ForEach-Object { $_.ProcessId }) -join "|";',
+    'Write-Output ("SWEEP matched=" + $before.Count + " survived=" + $after.Count + " pids=" + $ids)',
   ].join(' ');
   try {
-    spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], { stdio: 'ignore' });
-    note('killed any existing sidecar before spawning — a restart that does not free VRAM is not a restart');
+    const r = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', ps], {
+      encoding: 'utf8',
+      timeout: 60_000,
+    });
+    const line =
+      String(r.stdout ?? '')
+        .trim()
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .at(-1) ?? '(no output)';
+    const survived = Number(line.match(/survived=(\d+)/)?.[1] ?? NaN);
+    if (survived > 0) {
+      note(
+        `SWEEP INCOMPLETE — ${line}. A restart that does not free VRAM is not a restart, and this one did not.`,
+      );
+    } else {
+      note(`swept existing sidecars before spawning — ${line}`);
+    }
   } catch (e) {
     note('could not sweep existing sidecars: ' + (e?.message ?? e));
   }
