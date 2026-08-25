@@ -856,6 +856,8 @@ async function runSearch(
       semanticAvailable: queryVector !== null,
       semanticIndexSufficient: SEMANTIC_INDEX_SUFFICIENT,
       exactTitleCandidates: signals.exactTitleCandidates,
+      // The measured refusal cause, not a re-derivation. NEW1 bus 1222.
+      rarestDf: signals.sparseRarestDf,
       // An exact citation or case-number query is answered by an identity
       // predicate and does not need the dense arm; saying otherwise would put a
       // whole class of working queries into `coverage_unknown`.

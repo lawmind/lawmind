@@ -139,6 +139,20 @@ export type RetrievalOutcome = {
    * says what it means. It is never the confidence signal.
    */
   resultCount: number;
+  /**
+   * The measured cause behind a `sparse_unbounded` reason, when there is one:
+   * the document frequency of the rarest lexeme the lexical arm kept.
+   *
+   * A number rather than a category, and that is NEW1's correction (bus 1222)
+   * made structural. A server that decided "short query, therefore degraded"
+   * would mislabel a twelve-word anticipatory-bail sentence as answerable
+   * (rarestDf 0.0564, refused) and a five-term arbitration query as degraded.
+   * Length is not the driver; `min(df)` is, and it is already computed in the
+   * same statement that refuses.
+   *
+   * Absent when the lexical arm did not run. Never invented.
+   */
+  rarestDf?: number | undefined;
   /** Bumped when the meaning of a state changes, never when one is added. */
   contractVersion: 1;
 };
@@ -171,6 +185,8 @@ export type RetrievalOutcomeInput = {
   withheldUnsafeBody?: number | undefined;
   /** A date driving this answer is suspect or unknown. */
   dateUnreliable?: boolean | undefined;
+  /** The rarest-lexeme document frequency the sparse arm measured, if it ran. */
+  rarestDf?: number | undefined;
   /** The adapter behind this answer is outside its expected freshness band. */
   sourceStale?: boolean | undefined;
   /**
@@ -220,6 +236,7 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
       // The one case where exact identity is NOT usable — identity is the doubt.
       exactIdentityUsable: false,
       resultCount: input.resultCount,
+      ...(input.rarestDf === undefined ? {} : { rarestDf: input.rarestDf }),
       contractVersion: 1,
     };
   }
@@ -247,6 +264,7 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
         safeForGeneration: false,
         exactIdentityUsable: true,
         resultCount: 0,
+        ...(input.rarestDf === undefined ? {} : { rarestDf: input.rarestDf }),
         contractVersion: 1,
       };
     }
@@ -257,6 +275,7 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
       safeForGeneration: false,
       exactIdentityUsable: true,
       resultCount: 0,
+      ...(input.rarestDf === undefined ? {} : { rarestDf: input.rarestDf }),
       contractVersion: 1,
     };
   }
@@ -271,6 +290,7 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
       safeForGeneration: false,
       exactIdentityUsable: true,
       resultCount: input.resultCount,
+      ...(input.rarestDf === undefined ? {} : { rarestDf: input.rarestDf }),
       contractVersion: 1,
     };
   }
@@ -282,6 +302,7 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
     safeForGeneration: true,
     exactIdentityUsable: true,
     resultCount: input.resultCount,
+    ...(input.rarestDf === undefined ? {} : { rarestDf: input.rarestDf }),
     contractVersion: 1,
   };
 }

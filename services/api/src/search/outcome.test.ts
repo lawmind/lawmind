@@ -263,3 +263,64 @@ describe('the other R7 reasons are reachable', () => {
     assert.deepEqual(deriveRetrievalOutcome(base()).reasons, []);
   });
 });
+
+describe('the refusal cause is measured, never inferred from query length', () => {
+  /**
+   * NEW1's bus 1222 corrected a diagnosis of mine that would have shaped the
+   * wrong fix. I had inferred from the latency envelope that query LENGTH drove
+   * the sparse refusal. Measured over 48 common legal queries at four lengths
+   * each, running production's own rule against production's own
+   * `lexeme_document_frequency`:
+   *
+   *     1-2 terms   6/13 refused (46%)
+   *     3-5 terms   4/20 refused (20%)
+   *     6+  terms   4/15 refused (27%)
+   *
+   * Not monotone, not the driver. `min(df)` is. A twelve-word, well-formed
+   * sentence — "when may a court grant anticipatory bail to a person
+   * apprehending arrest" — is refused at rarestDf 0.0564, because every lexeme in
+   * it is common in a corpus of criminal judgments.
+   *
+   * These tests exist so the fix cannot drift back: the outcome must carry the
+   * MEASURED cause, and must reach the same verdict for a long query and a short
+   * one when the measured cause is the same.
+   */
+  it('carries the measured rarestDf through to the outcome', () => {
+    const outcome = deriveRetrievalOutcome(
+      base({ resultCount: 0, degradedArms: ['sparse_unbounded'], rarestDf: 0.2577 }),
+    );
+    assert.equal(outcome.state, 'coverage_unknown');
+    assert.equal(outcome.rarestDf, 0.2577);
+  });
+
+  it('is absent, never zero, when the lexical arm did not run', () => {
+    // Unmeasured and 0.0 are opposite facts: 0.0 means a lexeme nothing in the
+    // corpus contains, which is the RAREST possible and always rankable.
+    const outcome = deriveRetrievalOutcome(base({ resultCount: 0 }));
+    assert.equal(outcome.rarestDf, undefined);
+  });
+
+  it('a twelve-word query and a one-word query with the same cause get the same verdict', () => {
+    // The two ends of NEW1's measurement. If anything ever reintroduces a length
+    // heuristic these diverge, and this fails.
+    const oneWord = deriveRetrievalOutcome(
+      base({ resultCount: 0, degradedArms: ['sparse_unbounded'], rarestDf: 0.2577 }),
+    );
+    const twelveWord = deriveRetrievalOutcome(
+      base({ resultCount: 0, degradedArms: ['sparse_unbounded'], rarestDf: 0.0564 }),
+    );
+    assert.equal(oneWord.state, twelveWord.state);
+    assert.equal(twelveWord.state, 'coverage_unknown');
+    assert.ok(twelveWord.reasons.includes('sparse_unbounded'));
+  });
+
+  it('the outcome takes no query text at all, so length cannot leak in', () => {
+    // Structural rather than behavioural: the derivation's input has no query
+    // string on it. A length heuristic would have to add one, and adding one is
+    // the review moment this asserts.
+    const input = base();
+    assert.ok(!('query' in input), 'RetrievalOutcomeInput must never carry the query text');
+    assert.ok(!('queryLength' in input));
+    assert.ok(!('terms' in input));
+  });
+});

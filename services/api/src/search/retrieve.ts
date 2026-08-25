@@ -359,6 +359,7 @@ async function sparse(
   query: string,
   filters: SearchFilters,
   onDegrade?: (arm: DegradedArm) => void,
+  signals?: RetrievalSignals,
 ): Promise<Ranked[]> {
   /**
    * ───────────────────────────────────────────────────────────────────────────
@@ -382,7 +383,7 @@ async function sparse(
    * worked; what is removed is the full-AND pass over a long query, which is the
    * shape that never worked.
    */
-  return sparseAny(sql, query, filters, onDegrade);
+  return sparseAny(sql, query, filters, onDegrade, signals);
 }
 
 /**
@@ -539,6 +540,8 @@ async function sparseAny(
   query: string,
   filters: SearchFilters,
   onDegrade?: (arm: DegradedArm) => void,
+  /** Out-parameter: the refusal cause, carried to the response rather than re-derived. */
+  signals?: RetrievalSignals,
 ): Promise<Ranked[]> {
   /**
    * The lexeme selection, lifted out of the ranking query so its answer can be
@@ -576,6 +579,10 @@ async function sparseAny(
    * recall failure leaves no trace.
    */
   const rarestDf = Math.min(...lexemes.map((l) => Number(l.df)));
+  // Recorded whether or not it refuses. A df only ever published on refusal
+  // would make the field's presence the signal, and then nobody could tell a
+  // query that comfortably passed from one that nearly did not.
+  if (signals && Number.isFinite(rarestDf)) signals.sparseRarestDf = rarestDf;
   if (rarestDf > SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY) {
     onDegrade?.('sparse_unbounded');
     return [];
@@ -1508,7 +1515,39 @@ export type RetrievalMode = 'hybrid' | 'sparse' | 'dense';
  * 0 means the exact-title route did not fire at all; 1 means it resolved
  * uniquely. Only >1 is ambiguity.
  */
-export type RetrievalSignals = { exactTitleCandidates: number };
+export type RetrievalSignals = {
+  exactTitleCandidates: number;
+  /**
+   * The document frequency of the RAREST lexeme the sparse arm kept, and the
+   * number that actually decides whether it will rank at all.
+   *
+   * Surfaced because NEW1's 1222 corrected a diagnosis of mine that would
+   * otherwise have shaped the wrong fix. I inferred from the envelope that query
+   * LENGTH drove the refusal — "one or two terms leaves an estimated set in the
+   * millions, four terms cuts it to something bounded". Measured over 48 common
+   * legal queries at four lengths each, running production's own rule:
+   *
+   *     1-2 terms   6/13 refused (46%)
+   *     3-5 terms   4/20 refused (20%)
+   *     6+  terms   4/15 refused (27%)
+   *
+   * Not monotone, not the driver. `min(df)` is. A twelve-word, perfectly
+   * well-formed sentence — *"when may a court grant anticipatory bail to a person
+   * apprehending arrest"* — is refused at rarestDf 0.0564, because
+   * `SPARSE_RARE_LEXEMES` keeps only the three rarest and every lexeme in it is
+   * common in a corpus of criminal judgments. Adding words helps only when the
+   * added words are RARE.
+   *
+   * So this is carried to the response rather than re-derived there. NEW1's
+   * warning is the reason it is a number and not a category: a server that
+   * decides "short query, therefore degraded" mislabels that twelve-word sentence
+   * as answerable and a five-term arbitration query as degraded. The refusal
+   * cause is exact, already computed in the same statement, and free.
+   *
+   * Null when the sparse arm did not run or reached no lexeme scoring.
+   */
+  sparseRarestDf?: number | undefined;
+};
 
 export async function hybridSearch(
   sql: Sql,
@@ -1647,7 +1686,7 @@ export async function hybridSearch(
           [] as Ranked[],
           // `onDegrade` is passed BOTH ways on purpose: `bounded` reports the
           // clock running out, and the arm itself reports refusing to start.
-          () => sparse(sql, query, filters, onDegrade),
+          () => sparse(sql, query, filters, onDegrade, signals),
           onDegrade,
         ),
     // A corpus with no embeddings yet still searches, lexically. Returning
