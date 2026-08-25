@@ -132,8 +132,11 @@ async function build(): Promise<Fixture> {
                     now() + interval '10 minutes')`;
 
   const [m] = await sql<{ id: string }[]>`
-    INSERT INTO matters (user_id, title, status, next_hearing_date)
-    VALUES (${userId}::uuid, 'Fixture v. State', 'active', current_date + 1)
+    INSERT INTO matters (user_id, case_title, court, case_type, parties, client_name,
+                         our_side, next_hearing_date, status, source)
+    VALUES (${userId}::uuid, 'Fixture v. State', 'Bombay High Court', 'criminal',
+            ${sql.json({ petitioner: 'Fixture', respondent: 'State' })}, 'Fixture Client',
+            'accused', current_date + 1, 'active', 'manual')
     RETURNING id`;
   const matterId = m!.id;
 
@@ -141,47 +144,65 @@ async function build(): Promise<Fixture> {
   const ocrKey = `fixture/${userId}/capture.jpg`;
   const artefactKey = `fixture/${userId}/export.zip`;
 
-  await sql`INSERT INTO documents (user_id, matter_id, filename, storage_key, mime_type)
-            VALUES (${userId}::uuid, ${matterId}::uuid, 'upload.pdf', ${documentKey},
-                    'application/pdf')`;
+  await sql`INSERT INTO documents (user_id, matter_id, document_type, input_params,
+                                   generated_content, language, storage_key)
+            VALUES (${userId}::uuid, ${matterId}::uuid, 'bail',
+                    ${sql.json({ ground: 'fixture' })}, 'fixture draft body', 'en',
+                    ${documentKey})`;
   await sql`INSERT INTO ocr_jobs (user_id, matter_id, source_type, storage_key, engine, status)
-            VALUES (${userId}::uuid, ${matterId}::uuid, 'upload', ${ocrKey}, 'tesseract', 'queued')`;
+            VALUES (${userId}::uuid, ${matterId}::uuid, 'image', ${ocrKey}, 'tesseract', 'queued')`;
 
+  /* A judgment is BORROWED from the corpus, never inserted: this is the live
+   * database, and a test that writes to `judgments` can leave corpus debris. */
   const [judgment] = await sql<{ id: string }[]>`SELECT id FROM judgments LIMIT 1`;
   if (judgment) {
-    await sql`INSERT INTO judgment_annotations (user_id, judgment_id, matter_id, note)
-              VALUES (${userId}::uuid, ${judgment.id}::uuid, ${matterId}::uuid, 'fixture note')`;
-    await sql`INSERT INTO citation_copies (user_id, matter_id, judgment_id, client_key, format)
-              VALUES (${userId}::uuid, ${matterId}::uuid, ${judgment.id}::uuid,
-                      ${`fixture-${crypto.randomUUID()}`}, 'plain')`;
+    await sql`INSERT INTO judgment_annotations
+                (user_id, judgment_id, matter_id, paragraph_index, quote, note)
+              VALUES (${userId}::uuid, ${judgment.id}::uuid, ${matterId}::uuid, 1,
+                      'fixture quote', 'fixture note')`;
+    await sql`INSERT INTO citation_copies
+                (user_id, judgment_id, matter_id, overruled_status_at_copy, surface, client_key)
+              VALUES (${userId}::uuid, ${judgment.id}::uuid, ${matterId}::uuid, 'none', 'matter',
+                      ${`fixture-${crypto.randomUUID()}`})`;
+    await sql`INSERT INTO alerts (user_id, kind, severity, judgment_id, matter_id, payload, dedupe_key)
+              VALUES (${userId}::uuid, 'saved_authority_moved', 'batched', ${judgment.id}::uuid,
+                      ${matterId}::uuid, ${sql.json({ fixture: true })},
+                      ${`fixture-${crypto.randomUUID()}`})`;
   }
 
-  await sql`INSERT INTO saved_searches (user_id, name, query)
-            VALUES (${userId}::uuid, 'fixture search', 'bail')`;
-  await sql`INSERT INTO searches (user_id, matter_id, query)
-            VALUES (${userId}::uuid, ${matterId}::uuid, 'fixture query')`;
-  await sql`INSERT INTO alerts (user_id, matter_id, kind, dedupe_key)
-            VALUES (${userId}::uuid, ${matterId}::uuid, 'overruled',
-                    ${`fixture-${crypto.randomUUID()}`})`;
-  await sql`INSERT INTO training_consent_events (user_id, consented, version)
-            VALUES (${userId}::uuid, true, 'v1')`;
+  await sql`INSERT INTO saved_searches (user_id, query_text, query_language)
+            VALUES (${userId}::uuid, 'bail anticipatory', 'en')`;
+  await sql`INSERT INTO searches (user_id, matter_id, query_text, query_language,
+                                  results_returned, model_used)
+            VALUES (${userId}::uuid, ${matterId}::uuid, 'fixture query', 'en', 3, 'fixture')`;
+  await sql`INSERT INTO training_consent_events (user_id, action, version)
+            VALUES (${userId}::uuid, 'granted', 'v1')`;
   await sql`INSERT INTO activation_events (user_id, step)
-            VALUES (${userId}::uuid, 'FIRST_SEARCH')`;
-  await sql`INSERT INTO experiment_assignments (user_id, experiment, variant)
+            VALUES (${userId}::uuid, 'first_successful_search')`;
+  await sql`INSERT INTO experiment_assignments (user_id, experiment_id, variant)
             VALUES (${userId}::uuid, 'fixture-exp', 'control')`;
-  await sql`INSERT INTO experiment_exposures (user_id, experiment, variant)
-            VALUES (${userId}::uuid, 'fixture-exp', 'control')`;
-  await sql`INSERT INTO premium_jobs (user_id, matter_id, kind, status, idempotency_key)
-            VALUES (${userId}::uuid, ${matterId}::uuid, 'hearing_pack', 'queued',
-                    ${`fixture-${crypto.randomUUID()}`})`;
-  await sql`INSERT INTO entitlements (user_id, product, state)
-            VALUES (${userId}::uuid, 'premium', 'active')`;
-  await sql`INSERT INTO entitlement_events (user_id, product, kind)
-            VALUES (${userId}::uuid, 'premium', 'granted')`;
-  await sql`INSERT INTO llm_calls (user_id, provider, model, data_class, pseudonymised)
-            VALUES (${userId}::uuid, 'openrouter', 'deepseek-v4-flash', 'public', false)`;
-  await sql`INSERT INTO credit_ledger (user_id, direction, amount_paise, reason)
-            VALUES (${userId}::uuid, 'credit', 10000, 'fixture purchase')`;
+  await sql`INSERT INTO experiment_exposures (user_id, experiment_id, variant, surface)
+            VALUES (${userId}::uuid, 'fixture-exp', 'control', 'fixture')`;
+  await sql`INSERT INTO premium_jobs (user_id, matter_id, capability, idempotency_key, params_hash)
+            VALUES (${userId}::uuid, ${matterId}::uuid, 'hearing_pack',
+                    ${`fixture-${crypto.randomUUID()}`}, 'fixture-hash')`;
+  await sql`INSERT INTO entitlements (user_id, capability, state, source)
+            VALUES (${userId}::uuid, 'hearing_pack', 'active', 'trial')`;
+  await sql`INSERT INTO entitlement_events
+              (provider, provider_event_id, event_type, user_id, capability,
+               payload_hash, signature_valid)
+            VALUES ('fixture', ${`fixture-${crypto.randomUUID()}`}, 'granted',
+                    ${userId}::uuid, 'hearing_pack', 'fixture-hash', true)`;
+  await sql`INSERT INTO llm_calls (user_id, feature, model, input_tokens, output_tokens,
+                                   cost_usd, latency_ms, data_class, pseudonymised)
+            VALUES (${userId}::uuid, 'search', 'deepseek-v4-flash', 10, 20, 0.0001, 120,
+                    'public', false)`;
+  /* `reason` is constrained AND its sign is constrained with it:
+   * `credit_ledger_direction_ck` requires a positive delta for purchase-shaped
+   * reasons and a negative one for redemption-shaped reasons. 'test' is the
+   * allowed positive reason, so the fixture uses it rather than inventing one. */
+  await sql`INSERT INTO credit_ledger (user_id, capability, delta, reason)
+            VALUES (${userId}::uuid, 'hearing_pack', 1, 'test')`;
 
   const [r] = await sql<{ id: string }[]>`
     INSERT INTO data_requests (user_id, kind, status, due_at, artefact_storage_key)
@@ -258,10 +279,23 @@ describe('one comprehensive erasure fixture', () => {
     await sql`DELETE FROM erasure_objects WHERE data_request_id = ${fx.requestId}::uuid`;
     await sql`DELETE FROM credit_ledger WHERE user_id = ${fx.userId}::uuid`;
     await sql`DELETE FROM data_requests WHERE user_id = ${fx.userId}::uuid`;
-    await sql`DELETE FROM entitlement_events WHERE product = 'premium' AND user_id IS NULL
-                AND created_at > now() - interval '1 hour'`;
-    await sql`DELETE FROM audit_log WHERE target_id = ${fx.userId}`;
-    await sql`DELETE FROM users WHERE id = ${fx.userId}::uuid`;
+    await sql`DELETE FROM entitlement_events WHERE provider = 'fixture'`;
+    /**
+     * The audit row and the pseudonymised `users` shell are DELIBERATELY left
+     * behind, and this comment is here so nobody "fixes" the leak.
+     *
+     * `audit_log` refuses DELETE at the database — `audit_log_append_only()`
+     * raises 23001 — and that refusal is the feature: an erasure that could
+     * erase its own record of having happened is not an audit log. The `users`
+     * shell then cannot go either, because `audit_log.actor_user_id` is a plain
+     * FOREIGN KEY with no ON DELETE action, so removing the shell would break
+     * the row that must survive.
+     *
+     * The residue per run is exactly what production leaves behind for a real
+     * erased advocate: one `users` row with no identity in it (findable as
+     * `email LIKE 'erased+%@invalid'`) and one audit row. Nothing about a
+     * person, by construction — which is the property the test above asserts.
+     */
     await sql`DELETE FROM auth_user WHERE id LIKE ${`${TAG}-%`}`;
     await sql.end({ timeout: 5 });
   });

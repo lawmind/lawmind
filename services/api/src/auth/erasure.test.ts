@@ -140,13 +140,32 @@ describe('account deletion', () => {
     });
     assert.equal(res.status, 200);
     const body = (await res.json()) as {
-      data: { deleted: Record<string, number>; storageKeysStillToDelete: string[] };
+      data: {
+        deleted: Record<string, number>;
+        objects: { total: number; deleted: number; complete: boolean };
+      };
     };
     assert.equal(body.data.deleted['matters'], 1);
     assert.equal(body.data.deleted['saved_searches'], 1);
-    // Present and empty is the honest answer for a user with no uploads; the
-    // field must exist either way so a caller cannot mistake absence for "none".
-    assert.deepEqual(body.data.storageKeysStillToDelete, []);
+    /**
+     * `storageKeysStillToDelete` used to be asserted here, empty. The field is
+     * gone — 25 Aug 2026 — and the reason it had to go is the reason this
+     * assertion changed rather than being deleted.
+     *
+     * That array was a TO-DO LIST handed to a caller who never read it, while
+     * this same handler stamped the request `completed`. R4 classified the
+     * result as a whole-app release blocker: the compliance claim was being made
+     * by a status column with nothing behind it.
+     *
+     * `objects` is the same information as FACT rather than as homework, and
+     * `complete` is the single value the status column is now set from — so the
+     * response and the record cannot disagree. For a user with no uploads it is
+     * `total: 0, complete: true`, which is the honest answer and is still
+     * distinguishable from an absent field.
+     */
+    assert.equal(body.data.objects.total, 0);
+    assert.equal(body.data.objects.deleted, 0);
+    assert.equal(body.data.objects.complete, true);
 
     const matters = await sql`SELECT id FROM matters WHERE id = ${matterId}::uuid`;
     assert.equal(matters.length, 0, 'the matter survived — a soft delete is not deletion');

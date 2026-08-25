@@ -5442,3 +5442,56 @@ search. **It would not, and that answer came from a benchmark whose distractor
 set was silently empty.** Correcting it changed the recommendation from "cheap
 tweak" to "a real but bounded build". If a decision was already forming on the
 old number, it was forming on the wrong one.
+
+---
+
+## LCC · Credit-ledger retention after an account erasure — LEGAL, NOT TECHNICAL
+
+**Raised 25 Aug 2026, LCC. Blocks nothing today; blocks a truthful privacy page.**
+
+Account erasure now completes only when the external objects are actually gone
+(migration `0084`, `erasure_objects`). Two things survive an erasure on purpose,
+and one of them has no recorded decision behind it.
+
+| Survives | Why | Decided? |
+|---|---|---|
+| `audit_log` | the record that the erasure was asked for and carried out; append-only at the database, `DELETE` raises 23001 | yes, by design |
+| `data_requests` | the statutory clock and the record of the request | yes, by design |
+| `users` shell | pseudonymised; `audit_log.actor_user_id` is a plain FK with no ON DELETE action, so it cannot go | yes, by design |
+| **`credit_ledger`** | **money** | **NO** |
+
+### The specific thing that needs deciding
+
+`credit_ledger` rows stay **linked to the pseudonymised user row**, not detached
+the way `llm_calls` and `entitlement_events` are. That is a deliberate hold, not
+an oversight — a purchase record is a financial and tax artefact and deleting it
+on request is its own kind of exposure. But nobody has written down:
+
+1. **How long** a credit row is retained after erasure. Indian tax record-keeping
+   has its own period; whichever it is, it should be the number in the privacy
+   page rather than "indefinitely".
+2. **Whether it stays LINKED or becomes DETACHED.** `llm_calls` and
+   `entitlement_events` both have `user_id` set to NULL — the row survives, the
+   person does not. If the accounting purpose is served by a detached row, that
+   is strictly better for the advocate and costs nothing to implement. If
+   reconciliation genuinely needs the link, it needs it, and the privacy page has
+   to say so plainly.
+
+### What was built anyway
+
+Everything except the answer. The erasure fixture
+(`services/api/src/auth/erasure-fixture.test.ts`) asserts `credit_ledger` as
+`RETAINED` **by name, with the reason in the assertion message**, so the day the
+policy changes the test fails and points at this entry. Flipping it to DETACHED
+is one `UPDATE ... SET user_id = NULL` line in `eraseUser` next to the two that
+already do it.
+
+### What stays wrong without it
+
+The privacy disclosure cannot honestly describe what survives an erasure, and R4
+listed "credit-ledger retention is linked, not merely retained" as an open risk.
+Not a launch blocker for the app; it is a blocker for the Trust/Privacy page copy
+NEW3 owns.
+
+**This is a question for counsel, not for an agent.** No agent should pick a
+retention period.
