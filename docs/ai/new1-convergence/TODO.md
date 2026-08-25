@@ -16,12 +16,12 @@ T0  process health / prove GPU factory   █████████████
 T1  V3.1 reproducible freeze             ████████████████████ 10/10   DONE
 T2  100k passage tranche                 █████░░░░░░░░░░░░░░░  4/15   design+selector done, BUILD blocked
 T3  safe abstention                      ████████░░░░░░░░░░░░  3/8    pre-registered, eval blocked
-T4  long facts (deferred by plan)        █████████████░░░░░░░  2/3
-T5  HEAD-vs-passage recommendation       ████░░░░░░░░░░░░░░░░  1/6
+T4  long facts (deferred by plan)        ████████████████████  3/3   DONE
+T5  HEAD-vs-passage recommendation       ████████████████░░░░  5/6   inputs done, T5.4 owed after tranche
 T6  continuous process health            ████████████████████  7/7    11 findings, 5 fixed
 T7  bus / reporting                      ███████████████░░░░░  3/4
                                          ─────────────────────
-                                         38 / 61
+                                         42 / 61
 ```
 
 ---
@@ -122,18 +122,18 @@ T7  bus / reporting                      █████████████
 
 - [-] **T4.1** No new 500/1000/2500/5000 input-length sweep — *deliberately not done, per plan*
 - [x] **T4.2** State the reachability precondition — **12 of 213 gold (5.6%) have no production vector**; for the 20 POSED targets in V3 it was **8 of 20 = 40%**
-- [ ] **T4.3** Re-confirm to NEW3 that fact-pattern / "paste your facts" stays hidden and out of launch copy
+- [x] **T4.3** Re-confirmed to NEW3 (bus 1150) and corrected the 37.8% figure (bus 1162)
 
 ---
 
 ## T5 — NEW1-5 · HEAD-vs-PASSAGE RECOMMENDATION · 1/6
 
 - [x] **T5.1** Current HEAD walk completion — **worklist 205/864 (23.7%)**, ~2.00M staged rows
-- [ ] **T5.2** Retrieval gain of passage vs HEAD from T2 evidence
-- [ ] **T5.3** HNSW build/serve resource cost at full scale
-- [ ] **T5.4** ONE recommendation from {A continue · B pause/pivot · C HEAD coarse-only · D larger validation · E full build}
-- [ ] **T5.5** Explicitly refuse to optimise for sunk compute; say what would change the answer
-- [ ] **T5.6** Record that a full 30M build needs tranche + fifth-agent audit + **founder** approval
+- [x] **T5.2** Retrieval gain — **2.2% vs 24.4% END-TO-END**; recall@500 **35.6% vs 91.1%**
+- [x] **T5.3** Cost — HEAD **7.9 GPU-days** left · full passage build **16.1 GPU-days** (29.3M vectors) · **tranche 4.5 GPU-hours**
+- [ ] **T5.4** ONE recommendation — **owed after the tranche**; provisional position recorded (pause HEAD, spend 4.5 GPU-hours, let it decide)
+- [x] **T5.5** Sunk compute excluded; three named falsifiers in `HEAD_VS_PASSAGE_SEQUENCING.md` §6
+- [x] **T5.6** Recorded — full build needs tranche + fifth-agent audit + **founder** approval, in that order
 
 ---
 
