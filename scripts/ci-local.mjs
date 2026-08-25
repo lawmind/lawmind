@@ -205,6 +205,13 @@ const STEPS = [
   // is not a guard" argument that put the two 11 Aug entries above in this list.
   // It is LCC's file and LCC's omission.
   ['screened not clean', 'node', ['scripts/check-screened-not-clean.mjs']],
+  // Every SERVING caller of `hybridSearch` must collect the degradation signal
+  // and publish a retrieval outcome. Written because `onDegrade` was added for
+  // `/search` and the two surfaces where incompleteness matters most --
+  // counter-arguments and the saved-search feed -- were still discarding it
+  // weeks later. The same "a rule implemented at one call site is a rule the
+  // second call site does not have" failure as the admission gate and OD-14.
+  ['retrieval outcome coverage', 'node', ['scripts/check-retrieval-outcome-coverage.mjs']],
   // ───────────────────────────────────────────────────────────────────────────
   // WIRED 11 Aug 2026 — `docs/ai/tasks/001-p0-citation-query-safety.md`
   // ───────────────────────────────────────────────────────────────────────────

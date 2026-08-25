@@ -22,6 +22,11 @@ import {
 } from './retrieve.ts';
 import type { Admission } from './admission.ts';
 import { recordSearchEvent } from './event.ts';
+import {
+  deriveRetrievalOutcome,
+  isExactIdentityShape,
+  SEMANTIC_INDEX_SUFFICIENT,
+} from './outcome.ts';
 import { classifyQuery } from './query-shape.ts';
 import { answerStructured } from './structured.ts';
 import {
@@ -121,105 +126,109 @@ const isoDate = z
     );
   }, 'not a real calendar date');
 
-export const searchRequest = z.object({
-  /**
-   * ───────────────────────────────────────────────────────────────────────────
-   * 500 IS THE CURRENT SAFE BOUND, NOT A PRODUCT LIMIT
-   * ───────────────────────────────────────────────────────────────────────────
-   *
-   * The binding addendum is explicit that this must not be cemented into the
-   * contract as a permanent LawMind limitation. It exists for one measured
-   * reason: the current retrieval path cannot safely execute an arbitrarily
-   * large lexical query. NEW1's arm E measured three ORed lexemes timing out 51
-   * times in 60, and a pasted paragraph is dozens of lexemes.
-   *
-   * LawMind ultimately needs a safe path for long fact patterns, pasted
-   * passages and detailed natural-language descriptions. The intended shape,
-   * recorded here so the next person does not simply raise the number:
-   *
-   *     short / normal query  -> the ordinary research route
-   *     long fact or passage  -> a DEDICATED bounded passage-retrieval path,
-   *                              primarily semantic or structured extraction,
-   *                              never a corpus-wide sparse scan
-   *
-   * NEW1 researches that path; LCC implements it only once a measured design
-   * exists; NEW3 builds the UX only once the backend contract does. Until then
-   * the honest behaviour is the one below: **reject and say why. Never
-   * truncate**, because a silently shortened query returns results about a
-   * question the advocate did not ask, and never imply long-passage research
-   * works when it does not.
-   */
-  query: z.string().min(1).max(500, {
-    message:
-      'This search is longer than we can currently run safely (500 characters). ' +
-      'Nothing has been shortened — please search the key part of the passage instead.',
-  }),
-  language: z.enum(['en', 'hi']),
-  filters: z
-    .object({
-      /**
-       * A court NAME, matched with `=` against `judgments.court`. Bounded
-       * because it is a user-supplied string that reaches a query: the longest
-       * court name in the corpus is well under 120 characters, and an
-       * unbounded one is a free way to make us hash a megabyte per request.
-       */
-      court: z.string().min(1).max(120).optional(),
-      /**
-       * Category codes, not court names — RCC bus 0046. The client's chips are
-       * `sc`/`hc`/`district`/`tribunal`; `judgments.court` holds printed names
-       * like `High Court  for State of Telangana`. The expansion is ours
-       * because the column is ours: a client hardcoding those strings returns
-       * zero results silently on the first one it gets wrong, and a search that
-       * says "nothing matched" when it never asked is the same failure as a
-       * filter that does nothing. `search/court-category.ts`.
-       */
-      courts: z.array(z.enum(COURT_CATEGORIES)).optional(),
-      /**
-       * ─────────────────────────────────────────────────────────────────────
-       * DATES ARE VALIDATED, WHICH THEY WERE NOT
-       * ─────────────────────────────────────────────────────────────────────
-       *
-       * These were `z.string()`. Anything at all passed the validator and
-       * landed in the `judgment_date >=` comparison, where Postgres decided
-       * what to do with it. `"yesterday"` is a **valid** date literal to
-       * Postgres and silently means something we never intended; `"nonsense"`
-       * is a 500 that reads to the client as a server fault rather than as
-       * their own malformed request.
-       *
-       * ISO calendar dates only. `refine` rather than a regex alone because
-       * `2026-02-30` matches the regex and is not a day — and a filter that
-       * silently rolls to 2 March is the kind of wrong an advocate would never
-       * see and could not explain.
-       */
-      dateFrom: isoDate.optional(),
-      dateTo: isoDate.optional(),
-      caseType: z.enum(['criminal', 'civil']).optional(),
-    })
-    .optional(),
-  matterId: z.string().uuid().optional(),
-  /**
-   * ───────────────────────────────────────────────────────────────────────────
-   * P3 — CONTINUATION. 1-BASED, ADDITIVE, AND NOT AN OPAQUE TOKEN
-   * ───────────────────────────────────────────────────────────────────────────
-   *
-   * Both fields are optional and both default to today's behaviour, so a client
-   * that sends neither gets byte-identical responses to the ones it parses now.
-   *
-   * A page NUMBER rather than a cursor, deliberately. A cursor implies a frozen
-   * result set, and this one is not frozen: the rankers re-run per page (proved
-   * stable — `retrieve.ts`'s note carries the measurement) over a corpus that
-   * ingest is still writing to. A number promises exactly what is true — "the
-   * next slice of the current ranking" — where a token would promise more.
-   *
-   * The upper bounds are not taste. `pageSize` is capped because every result
-   * costs a `full_text` read and a paragraph location; `page` is capped because
-   * the hybrid rankers produce at most `REACHABLE_DEPTH` candidates and asking
-   * for result 500 is asking for something never computed. The structured path
-   * pages with SQL and is bounded only by its own total.
-   */
-  page: z.number().int().min(1).max(100).optional(),
-  pageSize: z.number().int().min(1).max(25).optional(),
-})
+export const searchRequest = z
+  .object({
+    /**
+     * ───────────────────────────────────────────────────────────────────────────
+     * 500 IS THE CURRENT SAFE BOUND, NOT A PRODUCT LIMIT
+     * ───────────────────────────────────────────────────────────────────────────
+     *
+     * The binding addendum is explicit that this must not be cemented into the
+     * contract as a permanent LawMind limitation. It exists for one measured
+     * reason: the current retrieval path cannot safely execute an arbitrarily
+     * large lexical query. NEW1's arm E measured three ORed lexemes timing out 51
+     * times in 60, and a pasted paragraph is dozens of lexemes.
+     *
+     * LawMind ultimately needs a safe path for long fact patterns, pasted
+     * passages and detailed natural-language descriptions. The intended shape,
+     * recorded here so the next person does not simply raise the number:
+     *
+     *     short / normal query  -> the ordinary research route
+     *     long fact or passage  -> a DEDICATED bounded passage-retrieval path,
+     *                              primarily semantic or structured extraction,
+     *                              never a corpus-wide sparse scan
+     *
+     * NEW1 researches that path; LCC implements it only once a measured design
+     * exists; NEW3 builds the UX only once the backend contract does. Until then
+     * the honest behaviour is the one below: **reject and say why. Never
+     * truncate**, because a silently shortened query returns results about a
+     * question the advocate did not ask, and never imply long-passage research
+     * works when it does not.
+     */
+    query: z
+      .string()
+      .min(1)
+      .max(500, {
+        message:
+          'This search is longer than we can currently run safely (500 characters). ' +
+          'Nothing has been shortened — please search the key part of the passage instead.',
+      }),
+    language: z.enum(['en', 'hi']),
+    filters: z
+      .object({
+        /**
+         * A court NAME, matched with `=` against `judgments.court`. Bounded
+         * because it is a user-supplied string that reaches a query: the longest
+         * court name in the corpus is well under 120 characters, and an
+         * unbounded one is a free way to make us hash a megabyte per request.
+         */
+        court: z.string().min(1).max(120).optional(),
+        /**
+         * Category codes, not court names — RCC bus 0046. The client's chips are
+         * `sc`/`hc`/`district`/`tribunal`; `judgments.court` holds printed names
+         * like `High Court  for State of Telangana`. The expansion is ours
+         * because the column is ours: a client hardcoding those strings returns
+         * zero results silently on the first one it gets wrong, and a search that
+         * says "nothing matched" when it never asked is the same failure as a
+         * filter that does nothing. `search/court-category.ts`.
+         */
+        courts: z.array(z.enum(COURT_CATEGORIES)).optional(),
+        /**
+         * ─────────────────────────────────────────────────────────────────────
+         * DATES ARE VALIDATED, WHICH THEY WERE NOT
+         * ─────────────────────────────────────────────────────────────────────
+         *
+         * These were `z.string()`. Anything at all passed the validator and
+         * landed in the `judgment_date >=` comparison, where Postgres decided
+         * what to do with it. `"yesterday"` is a **valid** date literal to
+         * Postgres and silently means something we never intended; `"nonsense"`
+         * is a 500 that reads to the client as a server fault rather than as
+         * their own malformed request.
+         *
+         * ISO calendar dates only. `refine` rather than a regex alone because
+         * `2026-02-30` matches the regex and is not a day — and a filter that
+         * silently rolls to 2 March is the kind of wrong an advocate would never
+         * see and could not explain.
+         */
+        dateFrom: isoDate.optional(),
+        dateTo: isoDate.optional(),
+        caseType: z.enum(['criminal', 'civil']).optional(),
+      })
+      .optional(),
+    matterId: z.string().uuid().optional(),
+    /**
+     * ───────────────────────────────────────────────────────────────────────────
+     * P3 — CONTINUATION. 1-BASED, ADDITIVE, AND NOT AN OPAQUE TOKEN
+     * ───────────────────────────────────────────────────────────────────────────
+     *
+     * Both fields are optional and both default to today's behaviour, so a client
+     * that sends neither gets byte-identical responses to the ones it parses now.
+     *
+     * A page NUMBER rather than a cursor, deliberately. A cursor implies a frozen
+     * result set, and this one is not frozen: the rankers re-run per page (proved
+     * stable — `retrieve.ts`'s note carries the measurement) over a corpus that
+     * ingest is still writing to. A number promises exactly what is true — "the
+     * next slice of the current ranking" — where a token would promise more.
+     *
+     * The upper bounds are not taste. `pageSize` is capped because every result
+     * costs a `full_text` read and a paragraph location; `page` is capped because
+     * the hybrid rankers produce at most `REACHABLE_DEPTH` candidates and asking
+     * for result 500 is asking for something never computed. The structured path
+     * pages with SQL and is bounded only by its own total.
+     */
+    page: z.number().int().min(1).max(100).optional(),
+    pageSize: z.number().int().min(1).max(25).optional(),
+  })
   /**
    * A range that cannot contain anything is a mistake, not a search. Answering
    * it with an empty result set teaches the advocate that we hold nothing on
@@ -360,15 +369,11 @@ export async function handleSearch(
      * not wait on a metric, and must never fail because of one.
      */
     if (c.res.status < 400 && outcome.resultCount > 0) {
-      recordStepForAuthIdInBackground(
-        deps.sql,
-        c.get('authId'),
-        'first_successful_search',
-        (err) =>
-          logger.error(
-            { request_id: c.get('requestId'), err, step: 'first_successful_search' },
-            'activation step not recorded',
-          ),
+      recordStepForAuthIdInBackground(deps.sql, c.get('authId'), 'first_successful_search', (err) =>
+        logger.error(
+          { request_id: c.get('requestId'), err, step: 'first_successful_search' },
+          'activation step not recorded',
+        ),
       );
     }
   }
@@ -605,7 +610,10 @@ async function runSearch(
     'hybrid',
     (arm) => {
       if (!degraded.includes(arm)) degraded.push(arm);
-      logger.warn({ arm, query_chars: body.query.length }, 'search arm exceeded its statement budget — results are incomplete');
+      logger.warn(
+        { arm, query_chars: body.query.length },
+        'search arm exceeded its statement budget — results are incomplete',
+      );
     },
     offset,
     signals,
@@ -818,6 +826,41 @@ async function runSearch(
           },
         }
       : {}),
+    /**
+     * ───────────────────────────────────────────────────────────────────────
+     * THE SERVER-AUTHORITATIVE RETRIEVAL OUTCOME — R7 §7.1
+     * ───────────────────────────────────────────────────────────────────────
+     *
+     * ALWAYS present, unlike every optional field above it, and that is the
+     * point. `degraded`, `emptyBecause`, `unpopulatedCourtCategories` and
+     * `ambiguous` are each correct and each was added for a real defect — but
+     * four optional fields mean four consumers each writing their own rule for
+     * what they add up to, and the moment two differ, one surface is
+     * confidently wrong about the law.
+     *
+     * RCC said exactly this in bus 1128: the client cannot tell "there is no
+     * law on this" from "we could not search". NEW3 found the live version in
+     * 1141: `anticipatory bail` returns an empty 200 BY DESIGN, and an empty
+     * 200 renders as "no law found" on a phone.
+     *
+     * The signals above stay — they are the evidence. This is the verdict, and
+     * it is derived in ONE place (`search/outcome.ts`) so no two consumers can
+     * disagree about it. Additive: every existing field is unchanged, so a
+     * parked client keeps parsing exactly what it parsed before.
+     */
+    retrievalOutcome: deriveRetrievalOutcome({
+      resultCount: retrieved.length,
+      degradedArms: degraded,
+      // `embedQuery` returns null when the model is cold, past its budget, or
+      // past its failure limit. A lexical-only search does not know what it missed.
+      semanticAvailable: queryVector !== null,
+      semanticIndexSufficient: SEMANTIC_INDEX_SUFFICIENT,
+      exactTitleCandidates: signals.exactTitleCandidates,
+      // An exact citation or case-number query is answered by an identity
+      // predicate and does not need the dense arm; saying otherwise would put a
+      // whole class of working queries into `coverage_unknown`.
+      semanticDependent: !isExactIdentityShape(outcome.queryClass),
+    }),
     /**
      * P3. Where this page sits, and whether there is another.
      *

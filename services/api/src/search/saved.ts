@@ -26,7 +26,8 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
-import { hybridSearch, type SearchFilters } from './retrieve.ts';
+import { deriveRetrievalOutcome, SEMANTIC_INDEX_SUFFICIENT } from './outcome.ts';
+import { type DegradedArm, hybridSearch, type SearchFilters } from './retrieve.ts';
 
 export const savedSearchBody = z.object({
   query: z.string().min(1).max(500),
@@ -214,9 +215,32 @@ export async function getSavedSearchFeed(
   }
 
   let results;
+  /**
+   * The same `onDegrade` this call site never passed — see the long note in
+   * `arguments/counter.ts`. It matters differently here and arguably more.
+   *
+   * A saved-search feed is the one surface an advocate does NOT re-read
+   * critically: they open it to see whether anything new has landed, and an
+   * empty feed means "nothing new". A degraded arm makes an empty feed look
+   * identical to a quiet week. `unseenCount: 0` derived from a ranking that did
+   * not finish is a claim about the law that nobody asked the server to make.
+   */
+  const degradedArms: DegradedArm[] = [];
+  let semanticAvailable = false;
   try {
     const vector = await embedQuery(saved.query_text);
-    results = await hybridSearch(sql, saved.query_text, vector, saved.filters ?? {}, FEED_LIMIT);
+    semanticAvailable = vector !== null;
+    results = await hybridSearch(
+      sql,
+      saved.query_text,
+      vector,
+      saved.filters ?? {},
+      FEED_LIMIT,
+      'hybrid',
+      (arm) => {
+        if (!degradedArms.includes(arm)) degradedArms.push(arm);
+      },
+    );
   } finally {
     slot?.release();
   }
@@ -236,6 +260,20 @@ export async function getSavedSearchFeed(
     since,
     // In-app ordering only. PD-5/PD-6: never a badge, never a notification.
     unseenCount: unseen.length,
+    /**
+     * R7 §7.1, same derivation as `/search` and `/arguments/counter`.
+     *
+     * Read `unseenCount` WITH this and never without it: a zero next to
+     * `coverage_unknown` means the feed could not be computed, not that nothing
+     * new was decided.
+     */
+    retrievalOutcome: deriveRetrievalOutcome({
+      resultCount: results.length,
+      degradedArms,
+      semanticAvailable,
+      semanticIndexSufficient: SEMANTIC_INDEX_SUFFICIENT,
+      semanticDependent: true,
+    }),
     results: results.map((r) => ({
       judgmentId: r.judgmentId,
       caseTitle: r.caseTitle,

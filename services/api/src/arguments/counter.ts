@@ -21,7 +21,8 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
-import { hybridSearch } from '../search/retrieve.ts';
+import { deriveRetrievalOutcome, SEMANTIC_INDEX_SUFFICIENT } from '../search/outcome.ts';
+import { type DegradedArm, hybridSearch } from '../search/retrieve.ts';
 
 export const counterRequest = z.object({
   position: z.string().min(1).max(2000),
@@ -93,8 +94,31 @@ export async function handleCounter(
   }
 
   let retrieved;
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THIS ROUTE THREW THE INCOMPLETENESS SIGNAL AWAY
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `hybridSearch` has taken an `onDegrade` callback since the search route
+   * needed one, and this call site never passed it. So the arm that ran out of
+   * its statement budget was logged inside the ranker and forgotten, and this
+   * response could not say it was incomplete.
+   *
+   * That is the wrong surface to lose it on. An advocate reading a SEARCH page
+   * can see five results and judge for themselves; a COUNTERARGUMENT is a claim
+   * about what the other side can reach for, and an authority that was never
+   * ranked is exactly the one that loses the case. NEW3's 1076 — a commercial
+   * breach-of-contract position returning an IPC 394 robbery judgment — is the
+   * same family: this route answers confidently from whatever it got.
+   *
+   * R7 §7.1 and §8: one server-authoritative outcome, and a semantic-dependent
+   * workflow may not answer confidently when retrieval says otherwise.
+   */
+  const degradedArms: DegradedArm[] = [];
+  let semanticAvailable = false;
   try {
     const queryVector = await deps.embedQuery(body.position);
+    semanticAvailable = queryVector !== null;
     // The RESEARCH pool, falling back to core for callers that pass only one.
     retrieved = await hybridSearch(
       deps.researchSql ?? deps.sql,
@@ -102,6 +126,10 @@ export async function handleCounter(
       queryVector,
       {},
       CANDIDATES,
+      'hybrid',
+      (arm) => {
+        if (!degradedArms.includes(arm)) degradedArms.push(arm);
+      },
     );
   } finally {
     slot?.release();
@@ -230,5 +258,30 @@ export async function handleCounter(
     // ARE corpus rows, but the key is always present so the client never has to
     // distinguish "absent" from "none".
     unverifiedReferences: [],
+    /**
+     * The same server-authoritative verdict the search route sends, derived by
+     * the same function — R7 §7.1. Always present.
+     *
+     * `safeForGeneration` is the field that matters on THIS route. When it is
+     * false, nothing downstream may turn these authorities into a confident
+     * claim about what the opposing side can rely on: the set is either
+     * incomplete, unlooked-at, or ambiguous, and a counterargument built on it
+     * omits the authority that would have changed it.
+     *
+     * `semanticDependent` is hard-coded true and that is not laziness: a
+     * counterargument is posed as a POSITION in prose, never as a citation or a
+     * section, so this route is semantic-dependent by construction. There is no
+     * exact-identity shape to exempt.
+     */
+    retrievalOutcome: deriveRetrievalOutcome({
+      resultCount: usable.length,
+      degradedArms,
+      semanticAvailable,
+      semanticIndexSufficient: SEMANTIC_INDEX_SUFFICIENT,
+      /* Withheld bodies are a real reason this answer is thinner than it looks:
+       * the authority is named and its reasoning may not be quoted. */
+      withheldUnsafeBody: retrieved.filter((r) => r.bodyText?.evidenceWithheld === true).length,
+      semanticDependent: true,
+    }),
   });
 }
