@@ -1,0 +1,491 @@
+{
+  "kind": "new1_v31_reanalysis_of_v3",
+  "poolSize": 19932,
+  "k": 5,
+  "seed": "lawmind-new1-v3.1-2026-08-25#bootstrap",
+  "iterations": 4000,
+  "arms": {
+    "POSED#A_HEAD_4800_PRODUCTION": {
+      "published": {
+        "successAt5": 0.022222222222222223,
+        "ci": {
+          "lo": 0,
+          "hi": 0.06666666666666667
+        },
+        "n": 45
+      },
+      "byTask": {
+        "point": 0.022222222222222223,
+        "lo": 0,
+        "hi": 0.06666666666666667,
+        "n": 45,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.02127659574468085,
+        "lo": 0,
+        "hi": 0.06451612903225806,
+        "n": 20,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.022222222222222223,
+        "lo": 0,
+        "hi": 0.06976744186046512,
+        "n": 18,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.0465116279069768,
+      "endToEnd": {
+        "point": 0.022222222222222223,
+        "lo": 0,
+        "hi": 0.07142857142857142,
+        "n": 18,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.03571428571428571,
+        "lo": 0,
+        "hi": 0.10714285714285714,
+        "n": 11,
+        "iterations": 4000
+      },
+      "conditionalTasks": 28,
+      "excludedFromConditional": 17
+    },
+    "POSED#B_POOLED_ALL": {
+      "published": {
+        "successAt5": 0.17777777777777778,
+        "ci": {
+          "lo": 0.06666666666666667,
+          "hi": 0.28888888888888886
+        },
+        "n": 45
+      },
+      "byTask": {
+        "point": 0.17777777777777778,
+        "lo": 0.06666666666666667,
+        "hi": 0.28888888888888886,
+        "n": 45,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.19148936170212766,
+        "lo": 0.08,
+        "hi": 0.30357142857142855,
+        "n": 20,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.17777777777777778,
+        "lo": 0.06976744186046512,
+        "hi": 0.28308625336927246,
+        "n": 18,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 0.959934651789633,
+      "endToEnd": {
+        "point": 0.1111111111111111,
+        "lo": 0.023255813953488372,
+        "hi": 0.20512820512820512,
+        "n": 18,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.17857142857142858,
+        "lo": 0.04162500000000001,
+        "hi": 0.3076923076923077,
+        "n": 11,
+        "iterations": 4000
+      },
+      "conditionalTasks": 28,
+      "excludedFromConditional": 17
+    },
+    "POSED#C_POOLED_SALIENT": {
+      "published": {
+        "successAt5": 0.15555555555555556,
+        "ci": {
+          "lo": 0.06666666666666667,
+          "hi": 0.26666666666666666
+        },
+        "n": 45
+      },
+      "byTask": {
+        "point": 0.15555555555555556,
+        "lo": 0.06666666666666667,
+        "hi": 0.26666666666666666,
+        "n": 45,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.1702127659574468,
+        "lo": 0.0625,
+        "hi": 0.3111111111111111,
+        "n": 20,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.15555555555555556,
+        "lo": 0.05660377358490566,
+        "hi": 0.3076923076923077,
+        "n": 18,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.2554426705370103,
+      "endToEnd": {
+        "point": 0.1111111111111111,
+        "lo": 0.021739130434782608,
+        "hi": 0.23255813953488372,
+        "n": 18,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.17857142857142858,
+        "lo": 0.04,
+        "hi": 0.35714285714285715,
+        "n": 11,
+        "iterations": 4000
+      },
+      "conditionalTasks": 28,
+      "excludedFromConditional": 17
+    },
+    "POSED#D_MULTI_3": {
+      "published": {
+        "successAt5": 0.28888888888888886,
+        "ci": {
+          "lo": 0.15555555555555556,
+          "hi": 0.4222222222222222
+        },
+        "n": 45
+      },
+      "byTask": {
+        "point": 0.28888888888888886,
+        "lo": 0.15555555555555556,
+        "hi": 0.4222222222222222,
+        "n": 45,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.2978723404255319,
+        "lo": 0.1578689370485036,
+        "hi": 0.4583333333333333,
+        "n": 20,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.28888888888888886,
+        "lo": 0.1453896103896104,
+        "hi": 0.4594594594594595,
+        "n": 18,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.177761934011934,
+      "endToEnd": {
+        "point": 0.15555555555555556,
+        "lo": 0.0425531914893617,
+        "hi": 0.2894736842105263,
+        "n": 18,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.25,
+        "lo": 0.08333333333333333,
+        "hi": 0.42857142857142855,
+        "n": 11,
+        "iterations": 4000
+      },
+      "conditionalTasks": 28,
+      "excludedFromConditional": 17
+    },
+    "POSED#F_ALL_CHUNKS": {
+      "published": {
+        "successAt5": 0.37777777777777777,
+        "ci": {
+          "lo": 0.24444444444444444,
+          "hi": 0.5333333333333333
+        },
+        "n": 45
+      },
+      "byTask": {
+        "point": 0.37777777777777777,
+        "lo": 0.24444444444444444,
+        "hi": 0.5333333333333333,
+        "n": 45,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.3829787234042553,
+        "lo": 0.24444444444444444,
+        "hi": 0.5384615384615384,
+        "n": 20,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.37777777777777777,
+        "lo": 0.24488662131519273,
+        "hi": 0.5384615384615384,
+        "n": 18,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.016220867045043,
+      "endToEnd": {
+        "point": 0.24444444444444444,
+        "lo": 0.10909090909090909,
+        "hi": 0.4,
+        "n": 18,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.39285714285714285,
+        "lo": 0.23076923076923078,
+        "hi": 0.5555555555555556,
+        "n": 11,
+        "iterations": 4000
+      },
+      "conditionalTasks": 28,
+      "excludedFromConditional": 17
+    },
+    "LIFTED#A_HEAD_4800_PRODUCTION": {
+      "published": {
+        "successAt5": 0.232,
+        "ci": {
+          "lo": 0.18,
+          "hi": 0.284
+        },
+        "n": 250
+      },
+      "byTask": {
+        "point": 0.232,
+        "lo": 0.18,
+        "hi": 0.284,
+        "n": 250,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.232,
+        "lo": 0.17786561264822134,
+        "hi": 0.29032592691741405,
+        "n": 193,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.232,
+        "lo": 0.17829065059787216,
+        "hi": 0.2868525896414343,
+        "n": 193,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.0438647984957898,
+      "endToEnd": {
+        "point": 0.232,
+        "lo": 0.17785912677217025,
+        "hi": 0.2880817707526216,
+        "n": 193,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.23577235772357724,
+        "lo": 0.18032786885245902,
+        "hi": 0.29388355342136857,
+        "n": 189,
+        "iterations": 4000
+      },
+      "conditionalTasks": 246,
+      "excludedFromConditional": 4
+    },
+    "LIFTED#B_POOLED_ALL": {
+      "published": {
+        "successAt5": 0.404,
+        "ci": {
+          "lo": 0.344,
+          "hi": 0.464
+        },
+        "n": 250
+      },
+      "byTask": {
+        "point": 0.404,
+        "lo": 0.344,
+        "hi": 0.464,
+        "n": 250,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.404,
+        "lo": 0.34,
+        "hi": 0.46695558691124106,
+        "n": 193,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.404,
+        "lo": 0.34089046199701933,
+        "hi": 0.46747967479674796,
+        "n": 193,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.0549101066644047,
+      "endToEnd": {
+        "point": 0.4,
+        "lo": 0.33890871829903507,
+        "hi": 0.4606447854732445,
+        "n": 193,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.4065040650406504,
+        "lo": 0.34285714285714286,
+        "hi": 0.4708333333333333,
+        "n": 189,
+        "iterations": 4000
+      },
+      "conditionalTasks": 246,
+      "excludedFromConditional": 4
+    },
+    "LIFTED#C_POOLED_SALIENT": {
+      "published": {
+        "successAt5": 0.392,
+        "ci": {
+          "lo": 0.332,
+          "hi": 0.452
+        },
+        "n": 250
+      },
+      "byTask": {
+        "point": 0.392,
+        "lo": 0.332,
+        "hi": 0.452,
+        "n": 250,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.392,
+        "lo": 0.32806324110671936,
+        "hi": 0.4574984147114775,
+        "n": 193,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.392,
+        "lo": 0.32841049919933163,
+        "hi": 0.45493504335717455,
+        "n": 193,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.0543712013153577,
+      "endToEnd": {
+        "point": 0.388,
+        "lo": 0.3248749186971531,
+        "hi": 0.44898991985458153,
+        "n": 193,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.3943089430894309,
+        "lo": 0.3306122448979592,
+        "hi": 0.4571459096459096,
+        "n": 189,
+        "iterations": 4000
+      },
+      "conditionalTasks": 246,
+      "excludedFromConditional": 4
+    },
+    "LIFTED#D_MULTI_3": {
+      "published": {
+        "successAt5": 0.484,
+        "ci": {
+          "lo": 0.424,
+          "hi": 0.544
+        },
+        "n": 250
+      },
+      "byTask": {
+        "point": 0.484,
+        "lo": 0.42,
+        "hi": 0.544,
+        "n": 250,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.484,
+        "lo": 0.42063492063492064,
+        "hi": 0.5491912776873984,
+        "n": 193,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.484,
+        "lo": 0.42168176839589766,
+        "hi": 0.5510204081632653,
+        "n": 193,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.0430535465110284,
+      "endToEnd": {
+        "point": 0.48,
+        "lo": 0.41633385214007784,
+        "hi": 0.5454545454545454,
+        "n": 193,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.4878048780487805,
+        "lo": 0.42338333221790925,
+        "hi": 0.5542725229626735,
+        "n": 189,
+        "iterations": 4000
+      },
+      "conditionalTasks": 246,
+      "excludedFromConditional": 4
+    },
+    "LIFTED#F_ALL_CHUNKS": {
+      "published": {
+        "successAt5": 0.532,
+        "ci": {
+          "lo": 0.472,
+          "hi": 0.596
+        },
+        "n": 250
+      },
+      "byTask": {
+        "point": 0.532,
+        "lo": 0.472,
+        "hi": 0.596,
+        "n": 250,
+        "iterations": 4000
+      },
+      "byDistinctTarget": {
+        "point": 0.532,
+        "lo": 0.465806342780027,
+        "hi": 0.5969157685762905,
+        "n": 193,
+        "iterations": 4000
+      },
+      "byTargetCluster": {
+        "point": 0.532,
+        "lo": 0.4637069737980472,
+        "hi": 0.59690069855867,
+        "n": 193,
+        "iterations": 4000
+      },
+      "clusterVsTaskWidthRatio": 1.0741429416179258,
+      "endToEnd": {
+        "point": 0.524,
+        "lo": 0.45912782024269083,
+        "hi": 0.5882413459210846,
+        "n": 193,
+        "iterations": 4000
+      },
+      "conditional": {
+        "point": 0.532520325203252,
+        "lo": 0.4669195849546044,
+        "hi": 0.6,
+        "n": 189,
+        "iterations": 4000
+      },
+      "conditionalTasks": 246,
+      "excludedFromConditional": 4
+    }
+  },
+  "endToEndCaveat": "END-TO-END here uses targetInProduction = \"has a HEAD:4800 vector in new1_doc_vector_stage\". For arm A that is the true production reachability. For arms B/C/D/F it is the SCENARIO \"passages shipped over exactly today's staged population\" — not a bound on a full-corpus passage build, which would cover more documents. Do not quote the end-to-end number without this condition.",
+  "widthFinding": "Cluster resampling widened intervals by only 0.96x-1.26x on the real correlation structure, NOT the 2.11x seen on synthetic maximally-correlated data. V3 published task-level intervals and they were NOT materially too tight. This refutes the concern that motivated the check."
+}
