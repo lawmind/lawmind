@@ -18,7 +18,7 @@ T2  100k passage tranche                 █████░░░░░░░░
 T3  safe abstention                      ████████░░░░░░░░░░░░  3/8    pre-registered, eval blocked
 T4  long facts (deferred by plan)        █████████████░░░░░░░  2/3
 T5  HEAD-vs-passage recommendation       ████░░░░░░░░░░░░░░░░  1/6
-T6  continuous process health            ████████████████░░░░  6/7    ongoing (10 findings)
+T6  continuous process health            ████████████████████  7/7    11 findings, 5 fixed
 T7  bus / reporting                      ██████████░░░░░░░░░░  2/4
                                          ─────────────────────
                                          35 / 61
@@ -138,7 +138,7 @@ T7  bus / reporting                      ██████████░░░
 - [x] **T6.4** VRAM + DB contention sampled with **every** timing
 - [x] **T6.5** Verify restarts actually produced progress — **they did not**; keeper is 0-for-1 against real stalls
 - [x] **T6.6** Systemic failures sent to LCC — bus **1127**, **1131**
-- [~] **T6.7** Session-end report of all background jobs + startup mechanisms
+- [x] **T6.7** Session-end report of all background jobs + startup mechanisms — *see inventory below*
 
 ### Findings this session
 
@@ -154,6 +154,23 @@ T7  bus / reporting                      ██████████░░░
 | 8 | **The sidecar let a SECOND process bind a LIVE port.** `allow_reuse_address=True`; on Windows `SO_REUSEADDR` permits binding an *actively listening* port. Controlled test: old settings → second bind **SUCCEEDS**; `SO_EXCLUSIVEADDRUSE` → **refused (WinError 10048)**. Root cause of every duplicate-sidecar incident | **FIXED** `ea3f570` |
 | 9 | **Keeper restarted sidecars that were merely STARTING** — fixed 45s warm-up vs a measured **49.8s** model load; spawn 05:10:06 → RESTART 05:11:11. Replaced with a bounded wait-for-health (180s ceiling) | **FIXED** `ee673d2` |
 | 10 | Observed **3 concurrent sidecars** on port 8799; 21080 held the listener while 20452 served connections created 09:03. Cleaned to one; VRAM 7,130 → 876 MiB | resolved |
+| 11 | My warm-up ceiling log **asserted a cause it cannot see** ("genuine failure, not a slow model load") and was wrong the first time it fired — the sidecar answered at 200s under GPU contention | **FIXED** `6fe319f` |
+
+### Session-end process inventory (T6.7)
+
+| what | state |
+| --- | --- |
+| `Lawmind-new1-sidecar-keeper` (scheduled task) | **Running** — the only NEW1 startup mechanism |
+| keeper `sidecar-keeper.mjs` pid 18368 | running the fixed code |
+| GPU sidecar pid 21704 | **sole** sidecar, owns port 8799, `HEALTH 200`, 4,078 MiB resident |
+| HEAD embedding walk | **deliberately PAUSED** via `.agents/logs/new1-walk.pause` for LCC-4 (bus 1153/1156) |
+| `LawMindPostgres` (scheduled task) | Disabled, not NEW1's |
+| `cmd /K enrich-worker.cmd citations` pid 7308 | **NOT NEW1's** — orphaned loop, dead parent, no task, no registry record |
+| `cmd /K enrich-worker.cmd paragraphs` pid 8776 | **NOT NEW1's** — same shape |
+
+Walk state at pause: worklist **208/864**, `new1_doc_vector_stage` **2,026,872** rows.
+Batch `00229` aborted after 3 attempts at 05:10:30Z — collateral from my own sidecar
+cleanup, recoverable, resumes by re-running the coverage census.
 
 ### Corrections I made to my own claims — including two to my own FIXES
 
