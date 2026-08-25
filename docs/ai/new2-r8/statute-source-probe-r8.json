@@ -1,0 +1,99 @@
+{
+  "artifact": "NEW2_STATUTE_SOURCE_PROBE_R8",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.15",
+  "generated_at": "2026-08-25T19:09:23.591Z",
+  "writes_to_statutes_tables": 0,
+  "downloads": 0,
+  "supersedes_nothing": "R7 STATUTE_ACQUISITION_PROBE_V1 stands; this adds the two hosts it never touched",
+  "rule_applied": "HTTP 200 with no usable content is FAILED_SOURCE_SHAPE, never success",
+  "probes": [
+    {
+      "label": "CrPC — discover, free text",
+      "url": "https://indiacode.gov.in/server/api/discover/search/objects?query=Criminal%20Procedure%201973&size=5",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bytes": 56606,
+      "verdict": "JSON_OK",
+      "evidence": "totalElements=4169"
+    },
+    {
+      "label": "CrPC — discover, act number 2 of 1974",
+      "url": "https://indiacode.gov.in/server/api/discover/search/objects?query=%222%20of%201974%22&size=5",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bytes": 59838,
+      "verdict": "JSON_OK",
+      "evidence": "totalElements=3086"
+    },
+    {
+      "label": "IPC — discover, act number 45 of 1860",
+      "url": "https://indiacode.gov.in/server/api/discover/search/objects?query=%2245%20of%201860%22&size=5",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bytes": 55091,
+      "verdict": "JSON_OK",
+      "evidence": "totalElements=3034"
+    },
+    {
+      "label": "IEA — discover, act number 1 of 1872",
+      "url": "https://indiacode.gov.in/server/api/discover/search/objects?query=%221%20of%201872%22&size=5",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bytes": 46411,
+      "verdict": "JSON_OK",
+      "evidence": "totalElements=620"
+    },
+    {
+      "label": "Legislative Dept — root",
+      "url": "https://legislative.gov.in/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 6593,
+      "verdict": "HTML_OK",
+      "evidence": "<!DOCTYPE html><html class=\"default-theme\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link rel=\"icon\" href=\"/favicon.svg\"/><link data-n"
+    },
+    {
+      "label": "Legislative Dept — A2Z index of central Acts",
+      "url": "https://legislative.gov.in/documents/acts/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 7698,
+      "verdict": "HTML_OK",
+      "evidence": "<!DOCTYPE html><html class=\"default-theme\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link rel=\"icon\" href=\"/favicon.svg\"/><link data-n"
+    },
+    {
+      "label": "Legislative Dept — alternate host",
+      "url": "https://www.indiacode.nic.in/",
+      "status": 200,
+      "contentType": "text/html;charset=ISO-8859-1",
+      "bytes": 2009,
+      "verdict": "HTML_OK",
+      "evidence": "<!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\"> <meta http-equiv=\"refresh\" content=\"3;url=https://indiacode.gov.in\"> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> <title>India Code"
+    },
+    {
+      "label": "eGazette — root",
+      "url": "https://egazette.gov.in/",
+      "status": null,
+      "contentType": null,
+      "bytes": 0,
+      "verdict": "NO_RESPONSE — timeout, DNS or TLS failure",
+      "error": "fetch failed"
+    },
+    {
+      "label": "eGazette — search entry",
+      "url": "https://egazette.gov.in/(S(x))/Default.aspx",
+      "status": null,
+      "contentType": null,
+      "bytes": 0,
+      "verdict": "NO_RESPONSE — timeout, DNS or TLS failure",
+      "error": "fetch failed"
+    }
+  ],
+  "r7_verdicts_carried_forward": {
+    "ipc": "PARTIAL — Chandigarh item, ss. 1-120B, 115 sections parsed",
+    "iea_modern": "COMPLETE document, 171 of 183 sections parsed, 0 fabricated",
+    "iea_1872_original": "PROVEN_DAMAGED — 1872 print scan, OCR unusable",
+    "crpc": "NOT AVAILABLE on exact-title matching — re-tested here by search"
+  }
+}
