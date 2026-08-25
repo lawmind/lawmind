@@ -5803,6 +5803,52 @@ the answer is yes.
 
 ---
 
+## Gold V3 needs practising advocates writing their own queries — 25 Aug 2026, NEW2
+
+**Needed:** a set of real search queries written by practising Indian advocates,
+with provenance recorded — who wrote it, when, and what they were trying to find.
+Roughly 300–500 queries, spread across criminal and civil, covering: a short
+legal concept ("anticipatory bail"), a doctrine, a fact pattern, "find me
+authority that SUPPORTS this position", "find me authority AGAINST it", and a
+statute question.
+
+**Why no one here can write them.** A model asked to invent an advocate's
+question invents the question the corpus can already answer. That is not a
+benchmark, it is a mirror. R8.1 §7.12 forbids a model-written final Gold for
+exactly this reason.
+
+**What was built anyway.** `ADVOCATE_RETRIEVAL_GOLD_V2` — 480 rows, 430 live
+targets, eight families, splits that are genuinely disjoint on six independent
+identity axes. It is real evidence and NEW1 uses it. Its 430 verified targets can
+be reused by V3 even though the queries cannot.
+
+**What stays broken without it.** Four things, each measured this week and each
+in `docs/ai/new2-r8/GOLD_V3_LINEAGE_V1.md`:
+
+1. The 86-row holdout is committed to this repository, so every implementation
+   lane could read it while tuning retrieval. It cannot be the one-shot final
+   hidden set, and deleting the file does not undo that.
+2. `supporting_authority` and `adverse_authority` were built from citation text.
+   They test cited-case identity, not "what supports my position". **Zero of the
+   480 rows are a human asking for supporting or adverse law.**
+3. 90 of 480 queries (21 of them in the holdout) exceed the 500-character bound
+   `POST /search` enforces, so they cannot enter the route they are meant to
+   score.
+4. 31 of the 60 `exact_identity` keys map to more than one judgment, so the
+   family's own premise is false today.
+
+Until V3 exists, LawMind can report retrieval quality as **development
+evidence** and must not report it as a release claim or a public number.
+
+**Where it plugs in.** Same schema as V2 (`docs/ai/new2-r7/ADVOCATE_RETRIEVAL_GOLD_V2.md`),
+held outside this repository, membership known to FIFTH alone. NEW2 builds the
+train/dev split and hands the holdout over unseen, exactly as for V2.
+
+**Cheapest honest version:** twenty advocates, twenty queries each, one sitting.
+It does not need a platform or a budget line — it needs access to advocates.
+
+---
+
 ## Not queued, deliberately
 
 These looked like founder items and are not, so I did them or filed them in the

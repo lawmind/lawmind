@@ -1,0 +1,85 @@
+{
+  "artifact": "NEW2_GOLD_V2_AUDIT_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.12",
+  "generated_at": "2026-08-25T18:53:10.844Z",
+  "re_measuring": [
+    "FIFTH bus 1256",
+    "FIFTH bus 1258",
+    "FIFTH bus 1264"
+  ],
+  "splits": {
+    "train": 304,
+    "dev": 90,
+    "holdout": 86,
+    "total": 480
+  },
+  "findings": {
+    "exact_identity_uniqueness": {
+      "fifth_claim": "60 keys present, 29 unique, 31 with peers, max 9",
+      "measured": {
+        "rows": 60,
+        "distinct_keys": 60,
+        "keys_present_in_index": 60,
+        "unique_rows": 29,
+        "ambiguous_rows": 31,
+        "absent_rows": 0,
+        "max_peers": 9
+      },
+      "normaliser": "services/api/src/search/query-shape.ts :: citationLookupKey",
+      "peer_histogram": {
+        "1": 29,
+        "2": 29,
+        "5": 1,
+        "9": 1
+      },
+      "ambiguous_by_split": {
+        "train": 26,
+        "dev": 3,
+        "holdout": 2
+      }
+    },
+    "route_compatibility": {
+      "fifth_claim": "90/480 exceed POST /search query.max(500); long_narrative 43, pasted_passage 47, max 1800",
+      "measured": {
+        "limit": 500,
+        "over_limit": 90,
+        "of_total": 480,
+        "pct": 18.75,
+        "by_family": {
+          "pasted_passage": 47,
+          "long_narrative": 43
+        },
+        "by_split": {
+          "train": 52,
+          "dev": 17,
+          "holdout": 21
+        },
+        "max_length": 1800,
+        "over_and_body_safe": 89,
+        "over_and_retrievable_today": 35
+      },
+      "control_char_rows": 1
+    },
+    "query_string_leakage": {
+      "fifth_claim": "train/dev 4, train/holdout 4, dev/holdout 1 — 9 crossing strings",
+      "measured": {
+        "distinct_normalised_queries": 447,
+        "crossing_split_boundaries": 9,
+        "by_pair": {
+          "train|dev": 4,
+          "train|holdout": 4,
+          "dev|holdout": 1,
+          "all_three": 0
+        }
+      },
+      "note": "counts only; no membership, query text or target is recorded in this artifact"
+    },
+    "supporting_adverse_semantics": {
+      "rows": 120,
+      "state": "NOT_HUMAN_AUTHORED",
+      "why": "derived from citation text and tests cited-case identity, not a human request for supporting or adverse law",
+      "consequence": "cannot be scored as a semantic-retrieval family in a release claim"
+    }
+  }
+}

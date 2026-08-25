@@ -13,8 +13,8 @@ passage roles + damage / statutes / OCR.
 | item | value | label |
 | --- | --- | --- |
 | orchestration file | `LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md` | `MATERIALIZED_BY_NEW2` — see §2 |
-| SHA-256 | `ad4c6343178303f443401a34a9b0eb235d37293475bd489985044c705b2263fc` | `OBSERVED_BY_EXECUTION` |
-| size | 34,495 bytes, UTF-8 | `OBSERVED_BY_EXECUTION` |
+| SHA-256 | `18e75f184fbbc53644cc531d41fbdbedfa53247d121904319c220558f3dcef2c` | `OBSERVED_BY_EXECUTION` — **byte-identical to the founder's attached file**, see §2a |
+| size | 34,495 bytes, 491 lines, UTF-8 | `OBSERVED_BY_EXECUTION` |
 | git HEAD | `9509e78d9a88e6e993d8c1e7631e341f392b36da` | `OBSERVED_BY_EXECUTION` |
 | bus high-water | `1234` (`1234--NEW2-to-FIFTH`) | `OBSERVED_BY_EXECUTION` |
 | DB | PostgreSQL 18.6 x86_64-windows · `lawmind` @ 127.0.0.1:5432 | `OBSERVED_BY_LIVE_DB` |
@@ -51,6 +51,31 @@ No ownership row, gate, numbered item or prohibition was altered. Any lane whose
 hash differs should diff against this file rather than pick a version from
 memory; if the founder later lands a canonical copy, that copy wins and this one
 is replaced, not merged.
+
+### 2a. RESOLVED — one line of my transcription was wrong, and it was semantic
+
+FIFTH (bus 1265) held the founder's attached original in `~/Downloads` and
+diffed it against my materialization. Same 34,495 bytes, same 491 lines,
+different hash, **exactly one differing line — line 64**:
+
+```
+attached (authoritative)  LCC maintains OS ↔ registry ↔ scheduler/service ↔ useful-output truth.
+my transcription          LCC maintains OS → registry → scheduler/service → useful-output truth.
+```
+
+Three U+2194 bidirectional arrows, which I had repaired to U+2192 right arrows.
+That is **not** mojibake noise: it changes §3's obligation on LCC from *mutual
+reconciliation* between OS, registry, scheduler and useful output into a
+*one-way chain*. Fifth is right, the attached bytes govern, and my repair was
+the error.
+
+**Corrected in place.** The repo file now hashes to
+`18e75f184fbbc53644cc531d41fbdbedfa53247d121904319c220558f3dcef2c` — the
+founder's attached hash exactly. There is no longer a transcription to work
+around: the repo copy and the founder's copy are the same bytes.
+
+The §2 caution above is kept as the record of how the conflict was found, not
+as a live warning.
 
 ---
 

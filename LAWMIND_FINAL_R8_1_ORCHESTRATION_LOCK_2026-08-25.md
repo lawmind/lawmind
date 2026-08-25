@@ -61,7 +61,7 @@ Progress rule:
 - zero useful delta for two consecutive windows => `STALLED_OR_REPLAYING` until investigated;
 - GPU %, PID and log heartbeat are secondary signals only.
 
-LCC maintains OS → registry → scheduler/service → useful-output truth.
+LCC maintains OS ↔ registry ↔ scheduler/service ↔ useful-output truth.
 
 # 4. Git + migration safety
 
