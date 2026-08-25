@@ -16,6 +16,76 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 25 August 2026 (R7) — NEW1: THE ELIGIBILITY VIEW FILTERS NOTHING, A 320-CHARACTER WINDOW COSTS 500,000 DOCUMENTS THEIR PINPOINT CITATION, AND 29% OF COMMON LEGAL QUERIES ARE REFUSED
+
+R7 §9. Commits `0cd7a65`, `a3d975b`, `9aa7eab`, `ba67b6e`. Artifacts under
+`docs/ai/new1-tier-a/`.
+
+**The HEAD walk was paused, and it was producing nothing.** Alive, GPU resident,
+keeper healthy, checkpoint advancing — and `new1_doc_vector_stage` sat at 2,026,872
+rows for 65 minutes. `stage-runner.sh` re-reads its worklist file faithfully every
+run, but the CENSUS that WRITES that file was last run five days earlier, so it was
+replaying ~119 finished batches. **Re-reading a file nobody regenerates is not
+freshness.** The pause file now makes re-running the census a required step 1 of any
+resume. `NEW1_GPU_PROCESS_TRUTH_R7.md`.
+
+**`judgment_embedding_eligibility` has no WHERE clause.** The tranche selector's
+first run reported 240,181 of 240,181 candidates surviving revalidation, so it was
+fed inputs that must be refused: fabricated uuids were refused, quarantined ids were
+NOT, random judgments were NOT, and `count(*)` over the view equals `count(*)` over
+`judgments` — 18,698,984. It is a LABELLING view; joining to it proves existence, not
+eligibility. The operative predicate lives in `doc-vector-embed.mjs` and is now
+reproduced in the selector. Survival drops to 93.86% and is court-shaped: **Karnataka
+2010s 14.6%, Supreme Court 100%.** Anything reading "eligible" as "present in the
+eligibility view" is counting the whole corpus.
+
+**Tranche selection succeeded on attempt #4, after three failures.** `row_number()
+OVER (PARTITION BY ...)` cannot stream — it materialises and sorts the whole joined
+relation before emitting a row, which is why attempt #3 produced no partial output in
+40 minutes. #4 commits to the 888 local frame files by hash, draws with a seeded
+per-cell bounded heap, and asks the DB only "is this id still eligible" — an Index
+Only Scan at **0.203 ms/id**. 8.85M rows to a frozen **81,510-document** manifest in
+~3 minutes, two runs byte-identical. Architecture approved by FIFTH (bus 1176), ACKed
+(1185). **32 of 75 strata cells underfilled and NOT redistributed:** pre-1990 filled
+598 of 5,000, and the Supreme Court filled every cell while High Courts did not — a
+High Court acquisition gap, not an age gap.
+
+**~500,000 documents can never supply a pinpoint citation, and the cause is one
+line.** 97.05% of tranche passages carry a verified span, which is the wrong number:
+the loss is document-shaped, and 1,357 documents have none at all. Every one has 1.00
+passages and no paragraph structure, min length 2,401 against `maxChars` 2400, max
+2,714 against `maxChars + minChars` 2720. A document just over the limit splits
+mid-paragraph, the short tail merges back with a canonical `
+
+` that was never in
+the source, and the slice-and-compare correctly refuses to certify the span.
+**In band: 45.99% lose every span. Outside: 0.00%.** ~6.14% of the corpus is in the
+band. The one-line fix is written down and deliberately NOT applied — `chunk.ts` is
+the segmentation identity of `judgment_chunks` and of the running build.
+`RETRIEVAL_EVIDENCE_CONTRACT_V1.md` §8.
+
+**14 of 48 of the most common Indian legal queries are refused before ranking.** All
+four bail queries, three of four anticipatory bail, three of four quashing-FIR, two of
+four limitation, two of four writ maintainability. **Length is not the mechanism —
+minimum term document frequency is**, and a twelve-word anticipatory-bail sentence is
+refused too. That corrects LCC's 1173 inference. Passage ANN answers all 14
+on-concept. `COMMON_QUERY_SEARCH_CONTRACT_V1.md`.
+
+**Two of my own errors, corrected in place.** The fusion guard was inverted — it
+skipped the arm citing 0.033 overlap as "not complementary", when 0.033 overlap IS
+high complementarity; run properly it gives +0.019, so SHIP-CANDIDATE not SHIP. And
+the first four-arm HEAD comparison scored HEAD against the PASSAGE index's document
+set, charging it for targets it never held; scored against its own index the gap is
+2.8x on s@5, not 7x. The target-cluster bootstrap then said even that is **not yet
+claimable** — the 95% intervals overlap at this sample size.
+
+**Still running:** the 100k passage build (~33% at the time of writing, resumable,
+reported by durable row delta). Gated on it: full family metrics, held-out abstention,
+`PASSAGE_100K_VALIDATION_V1`, `HEAD_VS_PASSAGE_DECISION_V2`.
+
+Bus 1181–1184 (START_STATE) · 1185 (FIFTH ACK) · 1222 (sparse guard) · 1224–1227
+(span ceiling) · 1228 (contention).
+
 ### 25 August 2026 — NEW3: THE 10-MATTER TEST IS PERMANENT NOW, ITS CONTROL MATTER FAILED, AND THERE IS NO WEBSITE
 
 Sprint plan V2 §10. Full board: `docs/product/NEW3_ROUND_TODO.md`. All seven §10
