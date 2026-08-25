@@ -329,6 +329,16 @@ function readObservations() {
 // ───────────────────────────────────────────────────────────────────────────
 
 /**
+ * PowerShell writes stdout in the console's ANSI codepage, not UTF-8. One
+ * non-ASCII character in ANY live process command line therefore makes this
+ * sweep unparseable — and a failed sweep is UNKNOWN for EVERY job, not just
+ * for that one process. Measured 25 Aug 2026: a single section sign in one
+ * command line took the whole control plane blind with "Bad control
+ * character in string literal". This repo handles Devanagari paths.
+ */
+const UTF8_PREAMBLE = '[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ';
+
+/**
  * ONE sweep, not one probe per job. Per-pid probing costs ~700ms each and made
  * the report slow enough that nobody would run it, which is the only way a
  * control plane truly fails.
@@ -344,7 +354,7 @@ function sweepProcesses() {
       [
         '-NoProfile',
         '-Command',
-        "Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,CommandLine,@{n='Created';e={$_.CreationDate.ToString('o')}} | ConvertTo-Json -Compress -Depth 3",
+        `${UTF8_PREAMBLE}Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,CommandLine,@{n='Created';e={$_.CreationDate.ToString('o')}} | ConvertTo-Json -Compress -Depth 3`,
       ],
       { encoding: 'utf8', timeout: 60000, maxBuffer: 64 * 1024 * 1024 },
     ).trim();

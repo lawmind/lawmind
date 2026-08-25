@@ -84,6 +84,11 @@ import { randomUUID } from 'node:crypto';
 
 import postgres from 'postgres';
 
+// PowerShell emits stdout in the ANSI codepage: one non-ASCII character in any
+// live command line makes ConvertTo-Json unparseable and every probe UNKNOWN.
+// Measured 25 Aug 2026; see scripts/lib/process-identity.mjs.
+const UTF8_PREAMBLE = '[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ';
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CLAIM_DIR = join(ROOT, '.agents', 'resource');
 
@@ -152,7 +157,7 @@ function sleep(ms) {
 function ps(command) {
   const r = spawnSync(
     'powershell.exe',
-    ['-NoProfile', '-NonInteractive', '-Command', command + ' | ConvertTo-Json -Depth 3 -Compress'],
+    ['-NoProfile', '-NonInteractive', '-Command', UTF8_PREAMBLE + command + ' | ConvertTo-Json -Depth 3 -Compress'],
     { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true },
   );
   if (r.status !== 0) return { ok: false, error: (r.stderr || r.stdout || '').trim().slice(0, 300) };
