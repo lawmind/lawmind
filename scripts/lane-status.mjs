@@ -35,7 +35,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BUS = join(ROOT, '.agents', 'bus');
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3'];
+const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
 /** Who each lane feeds. RCC sits outside the ring. */
 const DOWNSTREAM = { NEW3: 'NEW2', NEW2: 'LCC', LCC: 'NEW1', NEW1: 'NEW3', RCC: '—' };
 

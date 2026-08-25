@@ -153,3 +153,6 @@ docs/ai/lcc-text-safety/corpus-confirm.jsonl
 # the committed selector + TRANCHE_FRAME_COMMITMENT.json. The summary IS committed.
 docs/ai/new1-tier-a/TRANCHE_100K_MANIFEST.json
 docs/ai/new1-tier-a/passage-eval.checkpoint.jsonl
+
+# Resource-lease mutexes are live OS state, never repository content.
+.agents/bus/leases/*.lock

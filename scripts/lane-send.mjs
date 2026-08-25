@@ -59,7 +59,7 @@ const BUS = join(ROOT, '.agents', 'bus');
  * assumption — and fans out to one file per recipient so every lane's cursor
  * advances independently.
  */
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3'];
+const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
 /** Who each lane feeds, so `--downstream` needs no argument. */
 const DOWNSTREAM = { NEW3: 'NEW2', NEW2: 'LCC', LCC: 'NEW1', NEW1: 'NEW3', RCC: 'LCC' };
 
@@ -68,7 +68,7 @@ let to = (toRaw ?? '').toUpperCase();
 const subject = subjectParts.join(' ').trim();
 
 if ((!LANES.includes(to) && to !== 'ALL' && to !== '--DOWNSTREAM') || subject === '') {
-  console.error('usage: node scripts/lane-send.mjs <LCC|RCC|NEW1|NEW2|NEW3|ALL|--downstream> <subject>   # body on stdin');
+  console.error('usage: node scripts/lane-send.mjs <LCC|RCC|NEW1|NEW2|NEW3|FIFTH|ALL|--downstream> <subject>   # body on stdin');
   console.error('  e.g. node scripts/lane-send.mjs NEW1 "treatment coverage is live" < msg.md');
   console.error('       node scripts/lane-send.mjs --downstream "batch ready" < msg.md   # to the next lane in the ring');
   console.error('       node scripts/lane-send.mjs ALL "migration 0045 applied" < msg.md');

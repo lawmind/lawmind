@@ -34,7 +34,7 @@ const cursor = (lane) => {
  * Each keeps its own cursor, so "did they ever read it" is answerable per lane
  * rather than per bus.
  */
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3'];
+const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
 const cursors = Object.fromEntries(LANES.map((l) => [l, cursor(l)]));
 const files = readdirSync(BUS)
   .filter((f) => /^\d{4}--/.test(f))

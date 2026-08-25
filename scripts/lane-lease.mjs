@@ -52,20 +52,19 @@
  * Exit codes: 0 = held by you. 1 = refused (someone else holds it). 2 = usage.
  */
 
-import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { hostname } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { STALE_AFTER_MS, findSessionPid, health } from './lib/process-identity.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LEASE_DIR = join(ROOT, '.agents', 'bus', 'leases');
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3'];
+const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
 
 /** A heartbeat older than this is cold. An agent turn can legitimately run for
  *  a long time, so this is generous — it is a staleness floor, not a liveness
  *  check. Liveness is the process table's job. */
-const STALE_AFTER_MS = 90 * 60 * 1000;
 
 const leasePath = (lane) => join(LEASE_DIR, `${lane}.json`);
 
@@ -82,76 +81,6 @@ function readLease(lane) {
 function writeLease(lane, record) {
   mkdirSync(LEASE_DIR, { recursive: true });
   writeFileSync(leasePath(lane), `${JSON.stringify(record, null, 2)}\n`, 'utf8');
-}
-
-/**
- * Process identity, not just process existence. A pid alone is not an identity:
- * Windows recycles them, so a lease naming pid 20228 can be "confirmed alive"
- * by a completely unrelated process that inherited the number. Comparing the
- * creation date as well makes the check an identity check.
- */
-function inspectPid(pid) {
-  if (!pid) return { alive: false, reason: 'no pid recorded' };
-  try {
-    const out = execFileSync(
-      'powershell',
-      [
-        '-NoProfile',
-        '-Command',
-        // CreationDate is stamped as a round-trip string HERE rather than in
-        // node: ConvertTo-Json renders a DateTime as `/Date(1787500353189)/`,
-        // which `new Date()` cannot parse, and the resulting throw made every
-        // probe read as UNKNOWN.
-        `Get-CimInstance Win32_Process -Filter "ProcessId=${Number(pid)}" | Select-Object ProcessId,ParentProcessId,Name,@{n='Created';e={$_.CreationDate.ToString('o')}} | ConvertTo-Json -Compress`,
-      ],
-      { encoding: 'utf8', timeout: 20000 },
-    ).trim();
-    if (!out) return { alive: false, reason: 'not in process table' };
-    const o = JSON.parse(out);
-    return {
-      alive: true,
-      name: o.Name,
-      ppid: o.ParentProcessId,
-      createdAt: o.Created ?? null,
-    };
-  } catch (err) {
-    // An error here is NOT evidence of death. Say so rather than letting a
-    // failed probe read as a free takeover.
-    return { alive: null, reason: `probe failed: ${err.message.split('\n')[0]}` };
-  }
-}
-
-/** Walk up from this node process to the owning agent session process. */
-function findSessionPid() {
-  let pid = process.pid;
-  for (let i = 0; i < 12; i += 1) {
-    const info = inspectPid(pid);
-    if (!info.alive) return null;
-    if (String(info.name || '').toLowerCase().includes('claude')) {
-      return { pid, name: info.name, createdAt: info.createdAt };
-    }
-    if (!info.ppid) return null;
-    pid = info.ppid;
-  }
-  return null;
-}
-
-function health(lease) {
-  if (!lease) return { state: 'FREE' };
-  const proc = inspectPid(lease.pid);
-  const age = Date.now() - new Date(lease.heartbeatAt).getTime();
-  const heartbeatCold = age > STALE_AFTER_MS;
-
-  // pid recycled: same number, different process.
-  const sameProcess =
-    proc.alive === true &&
-    (!lease.pidCreatedAt || !proc.createdAt || lease.pidCreatedAt === proc.createdAt);
-
-  if (proc.alive === null) return { state: 'UNKNOWN', proc, age, note: proc.reason };
-  if (proc.alive && sameProcess && !heartbeatCold) return { state: 'HEALTHY', proc, age };
-  if (proc.alive && sameProcess && heartbeatCold) return { state: 'HUNG', proc, age };
-  if (proc.alive && !sameProcess) return { state: 'PID_RECYCLED', proc, age };
-  return { state: 'DEAD', proc, age };
 }
 
 const fmtAge = (ms) => `${Math.round(ms / 60000)}m`;
@@ -268,7 +197,7 @@ function main() {
   const record = {
     lane,
     sessionId,
-    pid: self?.pid ?? null,
+    pid: self?.unresolved ? null : (self?.pid ?? null),
     pidName: self?.name ?? null,
     pidCreatedAt: self?.createdAt ?? null,
     host: hostname(),
