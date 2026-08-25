@@ -110,6 +110,7 @@ if exist "%REPO%\services\ingest\.checkpoints\STOP" (
   exit /b 0
 )
 
+set WAIT=30
 :loop
 if exist "%REPO%\services\ingest\.checkpoints\STOP" (
   echo [%DATE% %TIME%] %NAME% PAUSED by services/ingest/.checkpoints/STOP -- not restarting >> "%LOG%"
@@ -117,8 +118,29 @@ if exist "%REPO%\services\ingest\.checkpoints\STOP" (
 )
 echo [%DATE% %TIME%] starting %NAME% >> "%LOG%"
 call npx tsx --env-file=.env %1 %2 %3 %4 %5 %6 %7 >> "%LOG%" 2>&1
-echo [%DATE% %TIME%] %NAME% exited ^(%ERRORLEVEL%^), restarting in 30s >> "%LOG%"
+echo [%DATE% %TIME%] %NAME% exited ^(%ERRORLEVEL%^), restarting in %WAIT%s >> "%LOG%"
 REM A crash-loop must not spin the CPU or hammer the shared proxy. 30s keeps a
 REM persistent failure obvious in the log rather than buried under retry noise.
-timeout /t 30 /nobreak > nul
+timeout /t %WAIT% /nobreak > nul
+REM  ---------------------------------------------------------------------------
+REM  BACK OFF WHEN THERE IS NOTHING TO DO -- LCC, 25 Aug 2026
+REM  ---------------------------------------------------------------------------
+REM  A flat 30s restart is right while there is a backlog and wrong the moment
+REM  there is not. The citations frontier closed and this loop kept running:
+REM  every cycle rebuilt a 1,203,378-form resolution index, printed "judgments
+REM  needing extraction: 0", exited 0 and restarted 30 seconds later -- roughly
+REM  every 3.5 minutes, for days, against the same PostgreSQL every other lane
+REM  was measuring on. The log reached 56.5 MB saying nothing, and a direct
+REM  count confirmed the frontier: 0 judgments pending extraction.
+REM
+REM  It looked healthy by every signal anyone was using -- the process existed,
+REM  the log grew, the launcher "fired". That is the exact shape
+REM  scripts/job-health.mjs now refuses to accept as progress.
+REM
+REM  So the wait doubles each cycle, 30s -> 1h. A finished frontier costs one
+REM  poll an hour instead of seventeen, and a REOPENED one is still picked up
+REM  within the hour without anyone re-enabling anything -- which is why this is
+REM  a backoff and not a refusal to start.
+set /a WAIT=%WAIT%*2
+if %WAIT% GTR 3600 set WAIT=3600
 goto loop

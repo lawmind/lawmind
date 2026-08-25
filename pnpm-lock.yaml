@@ -257,6 +257,9 @@ importers:
       '@lawmind/ingest':
         specifier: workspace:*
         version: link:../ingest
+      '@lawmind/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(kysely@0.29.4)(postgres@3.4.9)
@@ -308,6 +311,9 @@ importers:
       '@lawmind/api':
         specifier: workspace:*
         version: link:../api
+      '@lawmind/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@lawmind/db':
         specifier: workspace:*
         version: link:../../packages/db

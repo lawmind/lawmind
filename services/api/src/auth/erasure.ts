@@ -96,6 +96,15 @@ export type ErasureResult = {
    * an empty array means there were none, never "we handled it".
    */
   erasedStorageKeys: string[];
+  /**
+   * The same keys, carrying the column each came from.
+   *
+   * Provenance is kept because "one object survived" and "a whole SOURCE of
+   * objects was never collected" are different bugs with the same symptom, and
+   * only the source can tell them apart. That is not hypothetical — it is
+   * exactly how `ocr_jobs.storage_key` went uncollected.
+   */
+  pendingObjects: { source: string; storageKey: string }[];
 };
 
 /**
@@ -162,10 +171,39 @@ export async function eraseUser(
      */
     const artefacts = await tx<{ artefact_storage_key: string | null }[]>`
       SELECT artefact_storage_key FROM data_requests WHERE user_id = ${userId}::uuid`;
-    const erasedStorageKeys = [
-      ...docs.map((d) => d.storage_key),
-      ...artefacts.map((a) => a.artefact_storage_key),
-    ].filter((k): k is string => k !== null);
+    /**
+     * `ocr_jobs.storage_key` was MISSING from this collection until 25 Aug 2026,
+     * and the column is `NOT NULL` — so every OCR job had an object, its row was
+     * deleted a few lines below, and the object was orphaned silently. It is a
+     * separate source from `documents`, not a duplicate of it: `source_type`
+     * covers captures that were never registered as a document, so those keys
+     * were not recoverable from the documents table once the row was gone.
+     *
+     * Read here, with the other two, for the reason stated above them — the row
+     * is the only thing that knows the key.
+     */
+    const ocr = await tx<{ storage_key: string }[]>`
+      SELECT storage_key FROM ocr_jobs WHERE user_id = ${userId}::uuid`;
+
+    const sourced = [
+      ...docs.map((d) => ({ source: 'documents.storage_key', storageKey: d.storage_key })),
+      ...ocr.map((o) => ({ source: 'ocr_jobs.storage_key', storageKey: o.storage_key })),
+      ...artefacts.map((a) => ({
+        source: 'data_requests.artefact_storage_key',
+        storageKey: a.artefact_storage_key,
+      })),
+    ].filter((o): o is { source: string; storageKey: string } => o.storageKey !== null);
+
+    /* Deduplicated on the KEY, keeping the first source that named it. Two rows
+     * may legitimately point at one object (a document that was also OCR'd), and
+     * the lifecycle table is unique per key, not per source. */
+    const seen = new Set<string>();
+    const pendingObjects = sourced.filter((o) => {
+      if (seen.has(o.storageKey)) return false;
+      seen.add(o.storageKey);
+      return true;
+    });
+    const erasedStorageKeys = pendingObjects.map((o) => o.storageKey);
 
     /**
      * ── CONTENT THE ADVOCATE CREATED — deleted outright ──────────────────────
@@ -344,6 +382,6 @@ export async function eraseUser(
       reason,
     });
 
-    return { userId, deleted, erasedStorageKeys };
+    return { userId, deleted, erasedStorageKeys, pendingObjects };
   });
 }

@@ -11,12 +11,18 @@
  */
 import type { Context } from 'hono';
 import type { Sql } from 'postgres';
+import { type ObjectStore, objectStoreFromEnv } from '@lawmind/storage/r2';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { writeAudit } from './audit.ts';
 import { eraseUser } from '../auth/erasure.ts';
+import {
+  erasureObjectStatus,
+  recordErasureObjects,
+  sweepErasureObjects,
+} from '../auth/erasure-objects.ts';
 
 export const dataRequestsQuery = z.object({
   status: z.enum(['received', 'in_progress', 'completed', 'refused']).optional(),
@@ -188,6 +194,14 @@ export async function executeErasure(
   id: string,
   actorUserId: string | undefined,
   body: z.infer<typeof eraseRequestBody>,
+  /**
+   * Injected rather than constructed here, so a test can supply a store that
+   * fails on purpose. Defaults to whatever the environment allows — which is
+   * `refusingStore` when no credential is configured, and that is deliberate:
+   * an erasure against an unconfigured store must FAIL to complete, not quietly
+   * complete with nothing deleted.
+   */
+  store: ObjectStore = objectStoreFromEnv(),
 ): Promise<Response> {
   if (!actorUserId) return fail(c, 'AUTH_REQUIRED', 'data requests are a privileged surface', 401);
 
@@ -206,8 +220,44 @@ export async function executeErasure(
 
   const result = await eraseUser(sql, request.user_id, { userId: actorUserId, role: 'admin' }, body.reason);
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE REQUEST DOES NOT COMPLETE UNTIL THE OBJECTS ARE ACTUALLY GONE
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This function used to `UPDATE ... status = 'completed'` on the next line and
+   * hand the surviving R2 keys back to the caller under the name
+   * `storageKeysStillToDelete`. Nothing consumed them. R4 classified the result
+   * as a whole-app release blocker, and correctly: the compliance claim was
+   * being made by a status column while the advocate's uploaded PDFs were still
+   * fetchable by key.
+   *
+   * Three steps now, in this order, and the order is the point:
+   *
+   *   1. RECORD what is owed, so a failure anywhere below is recoverable. This
+   *      is written after `eraseUser`'s transaction has committed the row
+   *      deletions, which is safe because `eraseUser` captured the keys BEFORE
+   *      deleting and returned them — the keys cannot be lost, only delayed.
+   *   2. SWEEP once, inline. The common case is a handful of objects and it
+   *      finishes here.
+   *   3. COMPLETE only if every object is DELETED. Otherwise the request stays
+   *      `in_progress` with a visible reason, and `erasure-objects-cli.ts`
+   *      keeps trying.
+   *
+   * A dead letter does NOT complete the request. An erasure that cannot finish
+   * must stay visibly unfinished; a PERMANENT_FAILURE that quietly counted as
+   * done would be the same false claim with more machinery in front of it.
+   */
+  const bucket = process.env['R2_BUCKET'] ?? 'unconfigured';
+  await recordErasureObjects(sql, id, bucket, result.pendingObjects);
+
+  const sweep = await sweepErasureObjects(sql, store, { dataRequestId: id });
+  const objects = await erasureObjectStatus(sql, id);
+
   const [row] = await sql<DataRequestRow[]>`
-    UPDATE data_requests SET status = 'completed', completed_at = now()
+    UPDATE data_requests
+       SET status = ${objects.complete ? 'completed' : 'in_progress'},
+           completed_at = ${objects.complete ? sql`now()` : null}
      WHERE id = ${id}
      RETURNING id, user_id, kind, status, ${sql.unsafe(isoColumn('due_at'))} AS due_at,
                ${sql.unsafe(isoColumn('completed_at'))} AS completed_at, refusal_reason,
@@ -217,10 +267,20 @@ export async function executeErasure(
     request: shape(row!),
     deleted: result.deleted,
     /**
-     * **The caller must delete these from R2.** Returned rather than silently
-     * skipped: reporting an erasure complete while the uploaded PDFs are still
-     * fetchable by key would be a false compliance claim.
+     * The external half, stated as fact rather than as a to-do list. `complete`
+     * is the only thing that may be read as "the erasure is finished", and it is
+     * the same value the status column above was set from — one source, so the
+     * response and the record cannot disagree.
      */
-    storageKeysStillToDelete: result.erasedStorageKeys,
+    objects: {
+      channel: sweep.channel,
+      total: objects.total,
+      deleted: objects.deleted,
+      pending: objects.pending,
+      retryable: objects.retryable,
+      permanent: objects.permanent,
+      complete: objects.complete,
+      deadLettered: objects.deadLettered,
+    },
   });
 }
