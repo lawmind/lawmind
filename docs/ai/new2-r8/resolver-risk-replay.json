@@ -1,0 +1,78 @@
+{
+  "artifact": "NEW2_RESOLVER_RISK_REPLAY_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.4",
+  "generated_at": "2026-08-25T19:01:27.409Z",
+  "mode": "WRITE",
+  "truth_set": "NEW2_CITATION_TRUTH_SET",
+  "totals": {
+    "records": 406,
+    "false_unique": 0,
+    "materially_unsafe": 0
+  },
+  "false_unique_rate": 0,
+  "notes": {
+    "truth_set_version": "1.0.0",
+    "resolver_freshness_state": "CURRENT",
+    "frontier_at": "2026-08-24 18:59:19.088+00",
+    "by_class": {
+      "COURT_DATE_COLLISION": {
+        "records": 6,
+        "false_unique": 0,
+        "materially_unsafe": 0
+      },
+      "SHARED_NEUTRAL_SAME_AUTHORITY": {
+        "records": 8,
+        "false_unique": 0,
+        "materially_unsafe": 0
+      },
+      "NEUTRAL_FORM": {
+        "records": 97,
+        "false_unique": 0,
+        "materially_unsafe": 0
+      },
+      "SHARED_NEUTRAL_DIFFERENT_AUTHORITIES": {
+        "records": 19,
+        "false_unique": 0,
+        "materially_unsafe": 0
+      },
+      "TARGET_NOT_HELD": {
+        "records": 136,
+        "false_unique": 0,
+        "materially_unsafe": 0
+      },
+      "REPORTER_ALIAS": {
+        "records": 129,
+        "false_unique": 0,
+        "materially_unsafe": 0
+      },
+      "OTHER": {
+        "records": 11,
+        "false_unique": 0,
+        "materially_unsafe": 0
+      }
+    },
+    "confusion": {
+      "REFUSE_AMBIGUOUS -> AMBIGUOUS": 31,
+      "RESOLVE_UNIQUE_TITLE_UNCONFIRMED -> UNIQUE": 147,
+      "REFUSE_TARGET_NOT_HELD -> TARGET_NOT_HELD": 136,
+      "RESOLVE_UNIQUE -> AMBIGUOUS": 2,
+      "RESOLVE_UNIQUE -> UNIQUE": 90
+    },
+    "despatch_stamp_class": {
+      "stamp_rows": 827,
+      "materialized_pins": 0,
+      "state": "CLEAN"
+    },
+    "old_row_mutation_class": {
+      "judgments_newer_than_cursor": 0,
+      "state": "CLEAN"
+    },
+    "classes_not_covered_by_this_truth_set": [
+      "CROSS_COURT_ALIAS_COLLISION"
+    ],
+    "evidence_strength": "IN_SAMPLE — this truth set drove the resolver fix it is testing",
+    "non_vacuity": "detector proven able to fire; run with --selftest to reproduce"
+  },
+  "rows_that_failed": []
+}

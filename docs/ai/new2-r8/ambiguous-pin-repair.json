@@ -1,0 +1,53 @@
+{
+  "artifact": "NEW2_AMBIGUOUS_PIN_REPAIR_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.3",
+  "generated_at": "2026-08-25T19:04:20.638Z",
+  "mode": "DRY_RUN",
+  "identity_contract": "docs/ai/new2-r7/DECISION_IDENTITY_CONTRACT_V1.md",
+  "resolved_pins_total": 231351,
+  "ambiguous_pins": 21652,
+  "ambiguous_pct": 9.36,
+  "pins_whose_key_is_absent_from_index": 10,
+  "by_identity_state": {
+    "EXACT_DOCUMENT_DUPLICATE": {
+      "pins": 14525,
+      "disposition": "KEEP",
+      "max_peers": 135
+    },
+    "DIFFERENT_COURTS": {
+      "pins": 3646,
+      "disposition": "CLEAR",
+      "max_peers": 3
+    },
+    "SAME_DECISION_DIFFERENT_SOURCE": {
+      "pins": 2439,
+      "disposition": "KEEP",
+      "max_peers": 2
+    },
+    "UNKNOWN": {
+      "pins": 393,
+      "disposition": "CLEAR",
+      "max_peers": 350
+    },
+    "DIFFERENT_DATES": {
+      "pins": 649,
+      "disposition": "CLEAR",
+      "max_peers": 18
+    }
+  },
+  "to_clear": 4688,
+  "to_keep": 16964,
+  "what_is_preserved": [
+    "citation_text",
+    "normalised_citation",
+    "char_offset",
+    "relationship",
+    "evidence",
+    "treatment_provenance",
+    "citing_judgment_id"
+  ],
+  "what_changes": [
+    "cited_judgment_id -> NULL"
+  ]
+}
