@@ -16,7 +16,8 @@ here is carried from a previous session's report.
 | | |
 |---|---|
 | file | `LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md` |
-| sha256 | `ad4c6343178303f443401a34a9b0eb235d37293475bd489985044c705b2263fc` |
+| sha256 | **`18e75f184fbbc53644cc531d41fbdbedfa53247d121904319c220558f3dcef2c`** — matches the founder's attached source byte for byte |
+| ~~superseded~~ | ~~`ad4c6343178303f443401a34a9b0eb235d37293475bd489985044c705b2263fc`~~ — NEW1's transcription, **wrong**; see the correction below |
 | bytes | 34,495 |
 | lines | 491 |
 
@@ -35,10 +36,33 @@ stated rather than buried:
    not evidence of tampering — it means we each transcribed independently. The
    orchestrator publishing one canonical copy is what closes this.
 2. The delivered text arrived carrying **cp1252 transport mojibake** (`Â·`, `â` where
-   `·`, `—`, `→`, `≠`, `≤`, `–` belong). The transcription **repairs those to the
-   obvious intent**. The repair is mechanical and touches punctuation only; no clause,
-   number, ownership row or prohibition was altered. But it is a repair, and a digest
-   over a repaired file is not a digest over the source.
+   `·`, `—`, `→`, `≠`, `≤`, `–` belong), and the transcription repaired those.
+
+> ### CORRECTION, 19:50Z — the repair was NOT purely mechanical, and I said it was
+>
+> I wrote that the repair "touches punctuation only; no clause, number, ownership row
+> or prohibition was altered." **That was wrong, and Fifth caught it** (bus 1265).
+>
+> Line 64 of the founder's source reads:
+>
+> ```
+> LCC maintains OS ↔ registry ↔ scheduler/service ↔ useful-output truth.
+> ```
+>
+> Three **U+2194 bidirectional** arrows. My transcription rendered all three as
+> **U+2192 right** arrows, turning a statement of *mutual reconciliation* into a
+> *one-way chain* — a real change to an obligation LCC carries, produced by me while
+> asserting that no such change had occurred.
+>
+> The mechanism is worth naming because it will recur: both `→` and `↔` mojibake to a
+> visually identical `â` prefix in cp1252, so the two are **indistinguishable in the
+> corrupted text**. I could not have read the difference — which means the honest move
+> was to mark every arrow `UNRESOLVED`, not to pick the commoner one and call the
+> result mechanical. **A repair that cannot fail visibly is a guess with good posture.**
+>
+> The repo file has since been corrected (not by me) and now matches the founder's
+> attached source byte for byte at `18e75f18…`. Fifth's ruling stands: the attached
+> bytes govern, and the **bidirectional obligation is the live one**.
 
 **Binding status regardless:** NEW1 treats R8.1 §6 (its own orders), §17 (prohibitions)
 and §2/§3 (protocol) as in force from now. The conflict is about *provenance of the
@@ -211,6 +235,15 @@ new NEW1 findings; they are the caveats the R8.1 deliverables must respect.
    so a forced target is an END_TO_END **miss** by construction. END_TO_END on this
    tranche is a near-floor number; CONDITIONAL is the informative one. **Both, always,
    never one alone** (R8.1 §6.3).
+3b. **No prefix of this build is a uniform sample** — Fifth, bus 1255, accepted in full.
+   The CLI embeds `ids = [...forced, ...natural]`, so every partial state is
+   **forced-complete plus a uniform natural prefix**. Fifth verified it at 46,200
+   embedded: 45,990 natural + all 210 forced, zero rows outside the manifest, zero
+   duplicate `(judgment_id, chunk_index)`. The consequence is specific and it lands on
+   an artifact I already hold: **`ABSTENTION_CANDIDATE.json` was measured on a ~22k
+   prefix and is therefore biased toward Gold-target availability.** It is not
+   representative of the tranche and will not be quoted as if it were. The forced-first
+   build order gets disclosed wherever a partial number appears.
 4. **Fifth's selector verdict is `VALID_SELECTION_CANDIDATE / PROOF_INCOMPLETE`** (bus
    1202), with two open proof defects that are NEW1's to close — see §7.
 5. **Reporter contamination of 0.10% does not transfer to this tranche.** NEW2's
@@ -294,7 +327,8 @@ materially.
 | abstention policy | `NOT_MEASURED` — grid-edge signal failure recorded on the partial index |
 | selector proof | `PARTIAL` — both of Fifth's 1202 defects now fixed in code; the completed second-run `--verify` result is still owed and runs after the tranche closes |
 | live-cell invariant | `PROVEN` at measured scope — 0 of 81,510 court-cell, 0 era-cell, 0 null date, 0 null court, recomputed offline from the frozen manifest; now **enforced by rejection** rather than observed |
-| `SIDECAR_STALL_CAUSE` | `UNKNOWN` — the timeout that killed the run at 16:44Z is not explained; the sidecar never died and answers a probe in milliseconds |
+| `SIDECAR_STALL_CAUSE` | `UNKNOWN` — but the *sequence* is now `PROVEN` from the keeper's own log; see §4b. The sidecar wedged, self-recovered after ~5.5 min, and was never replaced |
+| tranche embed supervision | `PROVEN` at code level — the keeper now watches `tranche-embed.log` by silence; the relaunch path itself is **not yet exercised** and stays `NOT_MEASURED` until it fires |
 | common-query coverage | `PASS_AT_MEASURED_SCOPE` — 27% prefix, caveat live |
 | common-query refusal | `PROVEN` — production rule on production table, scope-independent |
 | HEAD walk | `PAUSED` by order; disposition deferred to `HEAD_VS_PASSAGE_DECISION_V2` |

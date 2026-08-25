@@ -76,6 +76,32 @@ const WARMUP_POLL_MS = Number(process.env.KEEPER_WARMUP_POLL_MS ?? 3_000);
 const STAGE_LOG = join(ROOT, 'docs', 'ai', 'new1-tier-a', 'stage-embed.log');
 const WALK_LAUNCH = join(ROOT, 'services', 'harness', 'src', 'walk-launch.sh');
 const WATCH_WALK = (process.env.KEEPER_WATCH_WALK ?? '1') === '1';
+
+/**
+ * THE TRANCHE EMBED IS THE SECOND GPU CONSUMER, AND IT HAD NO KEEPER AT ALL.
+ *
+ * 25 Aug, and it is the reason this block exists. The sidecar wedged at 16:44Z.
+ * This keeper noticed within 90 seconds and had it answering again by 16:49:50 —
+ * that half worked exactly as designed. But the tranche embedder had already died
+ * on the stalled request (an uncaught `AbortSignal.timeout`), and **nothing
+ * watched it**, because everything here watches `stage-embed.log` and the tranche
+ * writes to `tranche-embed.log`. So the sidecar was healthy from 16:49 and the GPU
+ * sat at zero until a human restarted the embedder at 17:02.
+ *
+ * Thirteen idle minutes because the keeper was fixing the dependency and nobody
+ * was watching the dependent. Overnight that is not thirteen minutes.
+ *
+ * Same discipline as the walk, and one rule the walk does not need:
+ * **`TRANCHE EMBED DONE` means never relaunch.** A finished job's log goes silent
+ * forever, and silence is this keeper's only signal — without that check it would
+ * restart a completed tranche every ten minutes until someone noticed.
+ */
+const TRANCHE_LOG = join(ROOT, 'docs', 'ai', 'new1-tier-a', 'tranche-embed.log');
+const TRANCHE_LAUNCH = join(ROOT, 'services', 'harness', 'src', 'tranche-embed-launch.sh');
+const TRANCHE_PAUSE = join(ROOT, '.agents', 'logs', 'new1-tranche-embed.pause');
+const WATCH_TRANCHE = (process.env.KEEPER_WATCH_TRANCHE ?? '1') === '1';
+/** It writes a progress line about every two minutes; five intervals of quiet is dead or hung. */
+const TRANCHE_SILENCE_MS = Number(process.env.KEEPER_TRANCHE_SILENCE_MS ?? 10 * 60_000);
 /** Presence of this file suspends walk relaunch. Its contents are the reason, and are logged. */
 const WALK_PAUSE = join(ROOT, '.agents', 'logs', 'new1-walk.pause');
 /**
@@ -539,6 +565,92 @@ function walkSilentFor() {
   }
 }
 
+function tranchePausedReason() {
+  try {
+    const reason = readFileSync(TRANCHE_PAUSE, 'utf8').trim();
+    return reason.length > 0 ? reason : 'no reason recorded';
+  } catch {
+    return null;
+  }
+}
+
+function trancheSilentFor() {
+  try {
+    return Date.now() - statSync(TRANCHE_LOG).mtimeMs;
+  } catch {
+    // No log at all is NOT "dead and needs relaunching" — it is "never started".
+    // Relaunching on an absent file would start a tranche embed on any box that
+    // simply has not run one.
+    return Number.NEGATIVE_INFINITY;
+  }
+}
+
+/**
+ * Has the tranche already finished? Read from the log's own tail, because that is
+ * the only durable statement the job makes about itself.
+ *
+ * Deliberately generous about how much tail it reads: the CLI writes a summary
+ * block after `TRANCHE EMBED DONE`, so the marker is not guaranteed to be the very
+ * last line.
+ */
+function trancheFinished() {
+  try {
+    const text = readFileSync(TRANCHE_LOG, 'utf8');
+    return text.slice(-4000).includes('TRANCHE EMBED DONE');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Kill any survivor, then relaunch. Structurally the same as `relaunchWalk`, and
+ * the `$_.Name -ne 'powershell.exe'` guard is load-bearing for the same reason:
+ * the querying shell's own command line contains the pattern it is matching on, so
+ * an unguarded filter kills the shell mid-pipeline and exits 255 printing nothing,
+ * which reads exactly like success.
+ */
+function relaunchTranche() {
+  const killPs = [
+    'Get-CimInstance Win32_Process |',
+    "Where-Object { $_.Name -ne 'powershell.exe' -and $_.CommandLine -match 'tranche-embed-cli|tranche-embed-launch' } |",
+    'ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }',
+  ].join(' ');
+  try {
+    const k = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', killPs], {
+      stdio: ['ignore', 'ignore', 'pipe'],
+      timeout: 60_000,
+    });
+    const err = String(k.stderr ?? '').trim();
+    if (err.length > 0)
+      appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  tranche kill STDERR  ${err}\n`);
+  } catch (e) {
+    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  tranche kill threw  ${e?.message ?? e}\n`);
+  }
+
+  const bash = process.env.KEEPER_BASH ?? 'C:/Program Files/Git/bin/bash.exe';
+  appendFileSync(
+    RELAUNCH_LOG,
+    `${new Date().toISOString()}  tranche relaunch COMMAND  spawn ${bash} ${TRANCHE_LAUNCH} (cwd ${ROOT}, detached, no shell)\n`,
+  );
+  try {
+    const child = spawn(bash, [TRANCHE_LAUNCH], {
+      cwd: ROOT,
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+    child.on('error', (e) =>
+      appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  tranche spawn error  ${e.message}\n`),
+    );
+    child.unref();
+    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  spawned tranche pid ${String(child.pid)}\n`);
+  } catch (e) {
+    appendFileSync(RELAUNCH_LOG, `${new Date().toISOString()}  tranche spawn threw  ${e?.message ?? e}\n`);
+  }
+
+  note('TRANCHE EMBED RELAUNCH issued (killed any survivors first). It resumes from the last committed batch.');
+}
+
 async function main() {
   if (!claimLock()) return 1;
   const release = () => {
@@ -558,12 +670,22 @@ async function main() {
       ? `watching the walk too — ${STAGE_LOG} silent for ${WALK_SILENCE_MS / 60_000} min means relaunch`
       : 'walk watching DISABLED (KEEPER_WATCH_WALK=0)',
   );
+  note(
+    WATCH_TRANCHE
+      ? `watching the tranche embed — ${TRANCHE_LOG} silent for ${TRANCHE_SILENCE_MS / 60_000} min means relaunch, ` +
+          'unless it is paused or has already written TRANCHE EMBED DONE'
+      : 'tranche watching DISABLED (KEEPER_WATCH_TRANCHE=0)',
+  );
 
   let misses = 0;
   let restarts = 0;
   let walkRelaunches = 0;
   let walkQuietSince = 0;
   let pauseAnnounced = false;
+  let trancheRelaunches = 0;
+  let trancheQuietSince = 0;
+  let tranchePauseAnnounced = false;
+  let trancheDoneAnnounced = false;
   let lastOk = Date.now();
 
   for (;;) {
@@ -578,7 +700,7 @@ async function main() {
       if (misses >= MISSES_BEFORE_RESTART) {
         restarts += 1;
         note(`RESTART #${restarts} — sidecar unreachable`);
-        startSidecar();
+        const spawnedPid = startSidecar();
         misses = 0;
         /**
          * WAIT FOR IT TO ANSWER, DO NOT SLEEP A GUESS.
@@ -605,7 +727,39 @@ async function main() {
           await new Promise((r) => setTimeout(r, WARMUP_POLL_MS));
           if (await healthy()) {
             warmedUp = true;
-            note(`sidecar answered ${Math.round((Date.now() - (warmupDeadline - WARMUP_CEILING_MS)) / 1000)}s after spawn`);
+            const secs = Math.round((Date.now() - (warmupDeadline - WARMUP_CEILING_MS)) / 1000);
+            /**
+             * DID MY SPAWN ACTUALLY TAKE, OR DID THE OLD ONE RECOVER?
+             *
+             * 25 Aug, 16:49:50Z, this line read "sidecar answered 3s after spawn"
+             * and it was crediting itself for someone else's recovery. The sweep
+             * had just logged `SWEEP FAILED — ETIMEDOUT. Assume the old sidecar is
+             * STILL ALIVE`, so the incumbent still held port 8799 — and
+             * `server.py` sets `SO_EXCLUSIVEADDRUSE`, so the newly spawned process
+             * could not bind and exited. The health that came back was the OLD
+             * sidecar un-wedging on its own after ~5.5 minutes.
+             *
+             * The distinction is not cosmetic. "My restart fixed it" and "it
+             * recovered by itself and my restart did nothing" imply opposite
+             * things about whether this keeper is load-bearing, and a log that
+             * cannot tell them apart will keep reporting a working restart path
+             * long after it has stopped working.
+             */
+            let mine = true;
+            if (spawnedPid) {
+              try {
+                process.kill(spawnedPid, 0);
+              } catch {
+                mine = false;
+              }
+            }
+            note(
+              mine
+                ? `sidecar answered ${secs}s after spawn (spawned pid ${String(spawnedPid)} is alive — this restart took)`
+                : `sidecar answered ${secs}s after spawn, but spawned pid ${String(spawnedPid)} is GONE — ` +
+                    'it could not bind the port and exited. The INCUMBENT recovered on its own; this restart did nothing. ' +
+                    'Do not read this as a working restart path.',
+            );
             break;
           }
         }
@@ -650,6 +804,33 @@ async function main() {
         );
         relaunchWalk();
         walkQuietSince = Date.now();
+      }
+    }
+
+    // Same rule as the walk: judged only while the sidecar answers. Relaunching an
+    // embedder into a dead sidecar burns its retries and aborts it for good.
+    if (WATCH_TRANCHE && ok && Date.now() - trancheQuietSince > WALK_GRACE_MS) {
+      const paused = tranchePausedReason();
+      const silent = trancheSilentFor();
+      if (trancheFinished()) {
+        if (!trancheDoneAnnounced) {
+          note('tranche embed reports TRANCHE EMBED DONE — not watched further. A finished job is silent by definition.');
+          trancheDoneAnnounced = true;
+        }
+      } else if (paused !== null) {
+        if (silent > TRANCHE_SILENCE_MS && !tranchePauseAnnounced) {
+          note(`tranche relaunch PAUSED by ${TRANCHE_PAUSE} — ${paused}. It is NOT running and that is deliberate.`);
+          tranchePauseAnnounced = true;
+        }
+      } else if (silent > TRANCHE_SILENCE_MS) {
+        tranchePauseAnnounced = false;
+        trancheRelaunches += 1;
+        note(
+          `TRANCHE EMBED SILENT for ${Math.round(silent / 60_000)} min — relaunch #${trancheRelaunches}. ` +
+            'Hung and dead look identical from here and want the same treatment.',
+        );
+        relaunchTranche();
+        trancheQuietSince = Date.now();
       }
     }
 
