@@ -1,0 +1,547 @@
+{
+  "artifact": "NEW2_SYNTHETIC_FIXTURE_MANIFEST_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.1",
+  "generated_at": "2026-08-25T16:54:12.048Z",
+  "database": {
+    "name": "lawmind",
+    "server_version": "18.6"
+  },
+  "head": null,
+  "marker_populations": {
+    "court_is_test_court": 16,
+    "source_url_is_test_scheme": 16,
+    "title_is_synthetic_marked": 21,
+    "no_content_hash": 16
+  },
+  "predicate_safety": {
+    "loose_predicate": "case_title LIKE 'SYNTHETIC%' AND court <> 'Test Court'",
+    "matched": 8,
+    "all_real_judgments": true,
+    "rows": [
+      {
+        "id": "4af08bfe-b82e-44c6-829d-edc43a1552ff",
+        "court": "Allahabad High Court",
+        "case_title": "SYNTHETICS AND CHEMICALS and SUPERVISOR S WELFARE ASSO. and ORS. Vs STATE OF U.P. AND OTHERS",
+        "neutral_citation": null,
+        "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2018/court=9_13/bench=cisdb_16012018/UPHC010146052003_1_2018-05-04.pdf"
+      },
+      {
+        "id": "6a12ee54-921c-4c7b-9bcf-edb993a8bc52",
+        "court": "Bombay High Court",
+        "case_title": "SYNTHETIC AND CHEMICALS LTD. AND ANR. Vs UNION OF INDIA AND ORS.",
+        "neutral_citation": null,
+        "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2007/court=27_1/bench=newas/HCBM010213182005_1_2007-07-30.pdf"
+      },
+      {
+        "id": "96764d32-84bc-4755-9064-ec68c87083a3",
+        "court": "Bombay High Court",
+        "case_title": "SYNTHETIC COLOUR CHEM INDUSTRIES, THROUGH PARNTER, SURENDRA R. CHAUDHARY AND ANR Vs COMMISSIONER OF CUSTOMS (APPEALS)",
+        "neutral_citation": null,
+        "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2013/court=27_1/bench=newas/HCBM010079112013_1_2013-05-06.pdf"
+      },
+      {
+        "id": "db1822a9-1a36-4816-b0b9-f6abab9adaca",
+        "court": "Bombay High Court",
+        "case_title": "SYNTHETIC COLOUR CHEM INDUSTRIES, THROUGH PARTNER, SHRI. SURENDRA R. CHAUDHARY AND ANR Vs COMMISSIONER OF CUSTOMS (APPEALS)",
+        "neutral_citation": null,
+        "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2014/court=27_1/bench=newas/HCBM010265802013_1_2014-09-22.pdf"
+      },
+      {
+        "id": "8ace5a92-c518-47a7-9f7a-7f9fd1086d07",
+        "court": "High Court of Delhi",
+        "case_title": "SYNTHETIC AND RAYON TEXTILES EXPORT PROMOTION COUNCIL Vs SMITA BHARADWAJ AND ANR",
+        "neutral_citation": null,
+        "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=7_26/bench=dhcdb/DLHC010227562013_1_2026-02-24.pdf"
+      },
+      {
+        "id": "d8a0ed59-2645-4d75-a252-6288685d2a57",
+        "court": "High Court of Madhya Pradesh",
+        "case_title": "SYNTHETICS SHRAMIK KARMACHARI PARISHAND Vs SECRETARY AND 2 ORS.",
+        "neutral_citation": null,
+        "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=23_23/bench=mphc_db_ind/MPHC020099202011_1_2023-09-25.pdf"
+      },
+      {
+        "id": "e6585d21-c0d9-4f63-a68e-d0154c76bdd6",
+        "court": "High Court Of Rajasthan",
+        "case_title": "SYNTHETIC WEAVING MILLS ASSOCIATION Vs STATE OF RAJASTHAN",
+        "neutral_citation": "2023:RJ-JD:24573",
+        "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=8_9/bench=rhcjodh240618/RJHC010515982023_1_2023-08-02.pdf"
+      },
+      {
+        "id": "deacdf12-5bb9-49b7-b7ac-a8bec74ee877",
+        "court": "Supreme Court of India",
+        "case_title": "SYNTHETICS & CHEMICALS LTD. ETC. versus STATE OF U.P. AND ORS.",
+        "neutral_citation": "1989 INSC 321",
+        "source_url": "https://indian-supreme-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=1989/english/S_1989_1_623_691_EN.pdf"
+      }
+    ]
+  },
+  "manifest": [
+    {
+      "id": "6fd21632-11bb-4aec-be28-3de62befb65f",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Assembly Fixture",
+      "judgment_date": "2000-01-01",
+      "neutral_citation": null,
+      "reporter_citations": [],
+      "source_url": "test://assemble/8c10973f-d957-4edf-b5a3-ddeb568601b6",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T02:41:54.140Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "d4ca2129-d6f8-44c6-b9f9-b8a913bad0b8",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Authorities Fixture",
+      "judgment_date": "2024-01-01",
+      "neutral_citation": "FIX 2024 INSC 1",
+      "reporter_citations": [],
+      "source_url": "test://authorities/9435f3e6-4175-48f1-a8ab-67e88e68aeaa",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T02:51:46.753Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "194290da-dcb2-4d0f-bd78-e51880a522fd",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Replacement Fixture",
+      "judgment_date": "2025-01-01",
+      "neutral_citation": "FIX 2025 INSC 2",
+      "reporter_citations": [],
+      "source_url": "test://authorities/a539a320-7017-4177-a679-17501bde0813",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T02:51:46.773Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "00d958ce-6d32-4599-8516-5a6cc0379bc3",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Set Aside Fixture",
+      "judgment_date": "2020-01-01",
+      "neutral_citation": null,
+      "reporter_citations": [],
+      "source_url": "test://authorities/2d7830fb-526d-40ed-89bb-848fd9181317",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "set_aside",
+      "created_at": "2026-08-23T02:51:46.774Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "d990e6a7-209a-4e1f-b1d1-c46792b05ea6",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Still Good Law For Now",
+      "judgment_date": "2023-01-01",
+      "neutral_citation": "FIX 2023 INSC 3",
+      "reporter_citations": [],
+      "source_url": "test://authorities/d501ae6d-e173-4411-bd90-efe97a42f9ce",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "partly_set_aside",
+      "created_at": "2026-08-23T02:51:46.779Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "7d75f737-4834-4f8d-9ea5-c0f5ba3f6d03",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Reporter Citation Only",
+      "judgment_date": "2001-01-01",
+      "neutral_citation": null,
+      "reporter_citations": [
+        "(2001) 3 SCC 111"
+      ],
+      "source_url": "test://authorities/3b53a156-31a9-4466-9002-29513eb89fca",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T02:51:46.780Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "9ba4769c-2e15-41f7-9dab-1e329579ef62",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Authorities Fixture",
+      "judgment_date": "2024-01-01",
+      "neutral_citation": "FIX 2024 INSC 1",
+      "reporter_citations": [],
+      "source_url": "test://authorities/5f0f22c8-4c2d-452f-bd48-680cae098b04",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T09:11:40.102Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "bb39ea0b-d154-41c8-85c9-2393f306f0b0",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Replacement Fixture",
+      "judgment_date": "2025-01-01",
+      "neutral_citation": "FIX 2025 INSC 2",
+      "reporter_citations": [],
+      "source_url": "test://authorities/4348377a-bffc-46d7-9edc-64e4a0e87c94",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T09:11:40.123Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "1c8cd748-35f4-4055-b3eb-6bc79f107611",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Set Aside Fixture",
+      "judgment_date": "2020-01-01",
+      "neutral_citation": null,
+      "reporter_citations": [],
+      "source_url": "test://authorities/0e1bddba-4a68-45e9-9a35-9d03506d0310",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "set_aside",
+      "created_at": "2026-08-23T09:11:40.125Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "44f68fce-8774-4ae6-9d0c-28c1ec6dbcce",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Still Good Law For Now",
+      "judgment_date": "2023-01-01",
+      "neutral_citation": "FIX 2023 INSC 3",
+      "reporter_citations": [],
+      "source_url": "test://authorities/34074728-97e4-4e21-bebb-8fe583a80e91",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "partly_set_aside",
+      "created_at": "2026-08-23T09:11:40.130Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "3292c5dd-2c99-4ccf-9667-8d97b9373b88",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Reporter Citation Only",
+      "judgment_date": "2001-01-01",
+      "neutral_citation": null,
+      "reporter_citations": [
+        "(2001) 3 SCC 111"
+      ],
+      "source_url": "test://authorities/3ed5e0d8-4ef3-4255-a7da-18f5026e3463",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T09:11:40.132Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "c90239ff-7b82-4d07-8e77-f45a04b15a90",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Authorities Fixture",
+      "judgment_date": "2024-01-01",
+      "neutral_citation": "FIX 2024 INSC 1",
+      "reporter_citations": [],
+      "source_url": "test://authorities/2477e34f-1b95-43dc-9b5b-30348472e78a",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T09:14:34.685Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "83e59641-eff9-4b35-b76a-09bc4645c77e",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Replacement Fixture",
+      "judgment_date": "2025-01-01",
+      "neutral_citation": "FIX 2025 INSC 2",
+      "reporter_citations": [],
+      "source_url": "test://authorities/879f91ff-e0e3-41ab-a835-1f400fc3bdc6",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T09:14:34.700Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "70a6ecbc-49f0-42a3-850b-1c00815977f0",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Set Aside Fixture",
+      "judgment_date": "2020-01-01",
+      "neutral_citation": null,
+      "reporter_citations": [],
+      "source_url": "test://authorities/c6d01511-44e4-4413-9e88-4592bdec05e2",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "set_aside",
+      "created_at": "2026-08-23T09:14:34.702Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "2293139d-198c-4486-a4e1-ca66388b274b",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Still Good Law For Now",
+      "judgment_date": "2023-01-01",
+      "neutral_citation": "FIX 2023 INSC 3",
+      "reporter_citations": [],
+      "source_url": "test://authorities/cb9df535-f8ec-491d-a20a-b5930b6f2a34",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "partly_set_aside",
+      "created_at": "2026-08-23T09:14:34.707Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    },
+    {
+      "id": "54626473-6e3b-48e4-a30f-facbc2c75982",
+      "court": "Test Court",
+      "case_number": null,
+      "case_title": "SYNTHETIC — Reporter Citation Only",
+      "judgment_date": "2001-01-01",
+      "neutral_citation": null,
+      "reporter_citations": [
+        "(2001) 3 SCC 111"
+      ],
+      "source_url": "test://authorities/3aed55c7-4f62-4570-aa1e-5178f6fac58d",
+      "content_hash": null,
+      "text_quality": null,
+      "overruled_status": "none",
+      "created_at": "2026-08-23T09:14:34.709Z",
+      "synthetic_origin_proof": {
+        "court_is_test_court": true,
+        "source_url_is_test_scheme": true,
+        "title_is_synthetic_marked": true,
+        "no_content_hash": true,
+        "date_is_synthetic_placeholder": true
+      }
+    }
+  ],
+  "dependents": {
+    "alerts.judgment_id": {
+      "rows": 0,
+      "delete_rule": "NO ACTION"
+    },
+    "citation_checks.judgment_id_matched": {
+      "rows": 5,
+      "delete_rule": "NO ACTION"
+    },
+    "citation_concordance_resolutions.candidate_judgment_id": {
+      "rows": 0,
+      "delete_rule": "SET NULL"
+    },
+    "citation_copies.judgment_id": {
+      "rows": 0,
+      "delete_rule": "NO ACTION"
+    },
+    "citation_disputes.judgment_id": {
+      "rows": 0,
+      "delete_rule": "NO ACTION"
+    },
+    "citation_fanouts.judgment_id": {
+      "rows": 0,
+      "delete_rule": "NO ACTION"
+    },
+    "document_duplicate_members.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "document_enrichments.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "external_citations.cited_judgment_id": {
+      "rows": 0,
+      "delete_rule": "SET NULL"
+    },
+    "hc_class_candidate.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_annotations.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_chunks.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_citation_aliases.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_citation_keys.judgment_id": {
+      "rows": 12,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_citations.cited_judgment_id": {
+      "rows": 0,
+      "delete_rule": "SET NULL"
+    },
+    "judgment_citations.citing_judgment_id": {
+      "rows": 16,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_judges.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_paragraphs.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "judgment_statute_refs.judgment_id": {
+      "rows": 0,
+      "delete_rule": "CASCADE"
+    },
+    "judgments.overruled_by_judgment_id": {
+      "rows": 6,
+      "delete_rule": "NO ACTION"
+    },
+    "matter_authorities.judgment_id": {
+      "rows": 0,
+      "delete_rule": "NO ACTION"
+    },
+    "verification_cache.judgment_id": {
+      "rows": 0,
+      "delete_rule": "NO ACTION"
+    }
+  },
+  "dependent_totals": {
+    "NO ACTION": 11,
+    "SET NULL": 0,
+    "CASCADE": 28
+  },
+  "blocking_constraints": [
+    {
+      "constraint": "citation_checks.judgment_id_matched",
+      "rows": 5
+    },
+    {
+      "constraint": "judgments.overruled_by_judgment_id",
+      "rows": 6
+    }
+  ],
+  "user_data_touched": {
+    "matter_authorities": 0,
+    "judgment_annotations": 0,
+    "alerts": 0
+  },
+  "verdict": {
+    "manifest_size": 16,
+    "two_safe_predicates_agree": true,
+    "predicates": {
+      "court_is_test_court": 16,
+      "source_url_is_test_scheme": 16
+    },
+    "partial_marker_rows": 0,
+    "total_dependent_rows": 39,
+    "blocking_constraint_count": 2,
+    "state": "PROVEN"
+  },
+  "partial_marker_rows": []
+}
