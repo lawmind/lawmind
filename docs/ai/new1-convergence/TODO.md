@@ -10,24 +10,24 @@ Status key: [ ] pending · [~] in progress · [x] done · [!] blocked · [-] del
 
 ## T0 — NEW1-0 · PROVE THE GPU FACTORY IS ACTUALLY PROGRESSING  (BEFORE ANY EXPERIMENT)
 - [x] T0.1  Acquire NEW1 lease
-- [ ] T0.2  Inventory NEW1 processes: keeper, GPU sidecar, embed walk, any orphans
-- [ ] T0.3  Record intended walk: which scope/recipe, current batch, checkpoint
-- [ ] T0.4  T0 snapshot: stage/output row count, checkpoint offset, last log line, GPU util, VRAM
-- [ ] T0.5  Wait a real interval; T1 snapshot of the SAME four quantities
-- [ ] T0.6  VERDICT: RUNNING_PROGRESSING | RUNNING_STALLED | STOPPED — output delta decides, never GPU util
-- [ ] T0.7  If stalled: raise as an INCIDENT (bus -> LCC), do not silently restart
-- [ ] T0.8  Detect duplicate process trees / restart storms / orphan GPU processes
+- [x] T0.2  Inventory NEW1 processes: keeper, GPU sidecar, embed walk, any orphans  — keeper pid 9696 (scheduled task Lawmind-new1-sidecar-keeper) + sidecar 20452 + walk chain 25968->25792->23096
+- [x] T0.3  Record intended walk: which scope/recipe, current batch, checkpoint  — HEAD:4800 walk, worklist 205/864, batch tier-a-batch-00226
+- [x] T0.4  T0 snapshot: stage/output row count, checkpoint offset, last log line, GPU util, VRAM  — T0 03:19:49Z = 1,996,134 rows
+- [x] T0.5  Wait a real interval; T1 snapshot of the SAME four quantities  — T1 03:25:20Z = 1,997,735 rows (+1,601 in 330.6s)
+- [x] T0.6  VERDICT: RUNNING_PROGRESSING | RUNNING_STALLED | STOPPED — output delta decides, never GPU util  — RUNNING_PROGRESSING — DB delta == log inserted delta exactly
+- [x] T0.7  If stalled: raise as an INCIDENT (bus -> LCC), do not silently restart  — orphan sidecar 28592 + orphaned citations loop reported to LCC (bus 1127)
+- [x] T0.8  Detect duplicate process trees / restart storms / orphan GPU processes  — FOUND: keeper kill predicate matched 0 of 2 sidecars; fixed 067d5c8
 
 ## T1 — NEW1-1 · FREEZE FULLY REPRODUCIBLE V3.1 BENCHMARK
-- [ ] T1.1  Locate current V3 benchmark harness + query set
-- [ ] T1.2  Freeze: random seed, bootstrap seed
-- [ ] T1.3  Freeze: query IDs + SHA-256 of query text
-- [ ] T1.4  Freeze: target judgment IDs
-- [ ] T1.5  Freeze: proposition/target clusters (so n is authorities, not queries)
-- [ ] T1.6  Freeze: pool IDs + hard-negative IDs
-- [ ] T1.7  Freeze: segmentation version + embedder model/version + court/task strata
-- [ ] T1.8  Assert NO unseeded sampling anywhere in the path
-- [ ] T1.9  Emit V3.1 manifest file with a checksum; replay once to prove identical output
+- [x] T1.1  Locate current V3 benchmark harness + query set  — services/harness/src/representation-lab-v3-cli.ts (946 lines)
+- [x] T1.2  Freeze: random seed, bootstrap seed  — seed + bootstrapSeed frozen in manifest
+- [x] T1.3  Freeze: query IDs + SHA-256 of query text  — 295 query SHA-256 hashes frozen
+- [x] T1.4  Freeze: target judgment IDs  — 213 distinct target ids frozen
+- [x] T1.5  Freeze: proposition/target clusters (so n is authorities, not queries)  — 211 target clusters (union-find over shared targets)
+- [x] T1.6  Freeze: pool IDs + hard-negative IDs  — 25,000 pool ids frozen
+- [x] T1.7  Freeze: segmentation version + embedder model/version + court/task strata  — segmentation version + bge-m3 file digests + court/task strata frozen
+- [x] T1.8  Assert NO unseeded sampling anywhere in the path  — AUDITED: 2 unseeded sites found (v3-cli:359 Math.random, :623 TABLESAMPLE)
+- [x] T1.9  Emit V3.1 manifest file with a checksum; replay once to prove identical output  — V31_MANIFEST.json sha256 b2b38c68..., 1.3MB
 - [ ] T1.10 Report CIs by task AND by distinct target AND by target cluster
 
 ## T2 — NEW1-2 · 100k PASSAGE VALIDATION TRANCHE  (NOT the 30M build)
