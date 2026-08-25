@@ -1,6 +1,6 @@
 {
   "contract": "TREATMENT_PROVENANCE_CONSUMER_CONTRACT",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "owner_lane": "NEW2",
   "written_at": "2026-08-25",
   "prose_twin": "docs/ai/new2/TREATMENT_PROVENANCE_CONSUMER_CONTRACT_V1.md",
@@ -26,8 +26,11 @@
     "badged_judgments": 104,
     "badged_judgments_note": "98 real + 6 leaked SYNTHETIC test fixtures LCC could not purge (destructive run blocked by a permission classifier)",
     "badges_backed_by_court_class_edge": 5,
-    "add_to_matter_refusals_today": 76,
-    "add_to_matter_refusals_on_reporter_evidence_alone": 72
+    "add_to_matter_refusals_computed": 3,
+    "add_to_matter_refusals_synthetic": 3,
+    "add_to_matter_refusals_real": 0,
+    "set_aside_column": 76,
+    "add_to_matter_note": "WITHDRAWN: 'add_to_matter_refusals_today: 76' and 'on_reporter_evidence_alone: 72'. Those counted the column, not the product behaviour."
   },
   "states": [
     {
@@ -74,7 +77,7 @@
       "state": "REPORTER_EDITORIAL_ANNOTATION",
       "population_edges": 11573,
       "drives_badges": 99,
-      "drives_add_to_matter_refusals": 72,
+      "drives_add_to_matter_refusals": 0,
       "evidence_requirement": "a law report's editorial apparatus -- headnote, Case Law Cited entry, marker-terminated list line, column letters, page-and-line pins.",
       "allowed_product_wording": "MUST attribute to the reporter and MUST NOT attribute to a court. Permitted: 'A law report records this as overruled. We have not confirmed this against the deciding court.'",
       "wording_forbidden": [
@@ -86,7 +89,7 @@
       ],
       "currentness_propagation": "MUST NOT write judgments.overruled_status. Render-time signal derived live from the edge, never a stored canonical status.",
       "matter_workflow_may_rely": "SHOW_ONLY",
-      "matter_workflow_note": "MAY be shown on the authority inside a matter. MUST NOT disable add-to-matter -- a refusal is a claim, and this evidence cannot carry a refusal.",
+      "matter_workflow_note": "MAY be shown on the authority inside a matter. MUST NOT disable add-to-matter -- a refusal is a claim, and this evidence cannot carry one. Today it already does not: OD-14's edge-derived policy allows every reporter-backed badge. The rule is written so a future change cannot reintroduce it.",
       "briefing_may_rely": "QUALIFIED",
       "briefing_note": "MAY appear, qualified. MUST NOT be silently omitted. MUST NOT be stated as a fact about what a court held.",
       "counterargument_may_rely": "QUALIFIED",
@@ -166,17 +169,31 @@
       "question": "May a law reporter's editorial annotation independently make an authority non-canonical in LawMind?",
       "new2_recommendation": "NO, and it stays visible -- court-only canonical, reporter qualified",
       "priced": {
-        "today_reporter_promotes": { "law_moved_badges": 104, "add_to_matter_refusals": 76 },
-        "recommended_court_only_canonical_reporter_qualified": { "law_moved_badges_canonical": 5, "law_moved_badges_qualified": 99, "hidden": 0, "add_to_matter_refusals": 4 },
-        "rejected_reporter_removed": { "law_moved_badges": 5, "hidden": 99, "add_to_matter_refusals": 4 }
+        "today_reporter_promotes": {
+          "law_moved_badges": 104,
+          "add_to_matter_refusals_real": 0
+        },
+        "recommended_court_only_canonical_reporter_qualified": {
+          "law_moved_badges_canonical": 5,
+          "law_moved_badges_qualified": 99,
+          "hidden": 0,
+          "add_to_matter_refusals_real": 0
+        },
+        "rejected_reporter_removed": {
+          "law_moved_badges": 5,
+          "hidden": 99,
+          "add_to_matter_refusals_real": 0
+        },
+        "note": "CORRECTED. The refusal column is ZERO in every row -- OD-14 already removed that cost. The recommended row changes exactly one thing: who we say said it."
       },
       "why_third_row_refused": "removing 99 warnings is the direction CLAUDE.md is most afraid of"
     },
     {
       "id": "FQ-FALSE-REFUSAL-SYMMETRY",
       "question": "Is a false refusal acceptable where a false confirmation is not?",
-      "today_implicit_answer": "yes -- 72 of 76 add-to-matter refusals rest on headnotes",
-      "new2_recommendation": "no -- both are wrong answers about the same authority, and the advocate cannot tell either from a correct one"
+      "today_implicit_answer": "CORRECTED: no real judgment is refused add-to-matter at all. The V1 claim of 72 is withdrawn.",
+      "new2_recommendation": "no -- both are wrong answers about the same authority, and the advocate cannot tell either from a correct one",
+      "status": "HYPOTHETICAL, not a live defect"
     }
   ],
   "honest_limits": [
@@ -186,5 +203,23 @@
     "one adjudicator, no inter-rater figure for the 137 badge-drivers",
     "6 leaked SYNTHETIC fixtures remain inside the 104",
     "extractor recall is unmeasured and unmeasurable from what we hold -- nothing here is a coverage claim"
+  ],
+  "corrections": [
+    {
+      "at": "2026-08-25",
+      "raised_by": "NEW3 bus 1151",
+      "withdrawn_claim": "72 of 76 add-to-matter refusals rest on a law reporter headnote alone",
+      "what_was_wrong": "counted judgments.overruled_status='set_aside' (76, correctly) and called it add-to-matter refusals, from the remembered CLAUDE.md rule rather than from precedentialEffectFromEdges + precedentialPolicy which actually compute it",
+      "why": "OD-14 resolved 21 Aug: the refusal derives from the EDGE, not the stored column. An 'overruled' edge maps to effect 'overruled' whose policy is 'allow'. Only a bare set_aside with no usable edge refuses.",
+      "measured": {
+        "badged": 104,
+        "set_aside_column": 76,
+        "refusals_computed": 3,
+        "refusals_synthetic": 3,
+        "refusals_real": 0
+      },
+      "effect_on_recommendation": "strengthens it -- the priced cost of court-only-canonical was 72 refusals and that cost does not exist. The remaining real cost is DISPLAY only: 99 of 104 badges move from asserted to attributed.",
+      "evidence": "docs/ai/new2/add-to-matter-refusal-audit.json"
+    }
   ]
 }

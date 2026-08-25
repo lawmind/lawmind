@@ -1,0 +1,58 @@
+{
+  "generated_at": "2026-08-25T08:49:19.271Z",
+  "method": "every badge-bearing judgment through the SHIPPED precedentialEffectFromEdges + precedentialPolicy with its real inbound edges",
+  "badged": 104,
+  "set_aside_column": 76,
+  "refusals": 3,
+  "refusals_synthetic": 3,
+  "refusals_real": 0,
+  "refusals_court_backed": 0,
+  "by_path": {
+    "set_aside         -> overruled          -> allow": 73,
+    "set_aside         -> set_aside          -> refuse": 3,
+    "doubted           -> doubted            -> allow": 17,
+    "partly_set_aside  -> partly_set_aside   -> allow": 3,
+    "partly_set_aside  -> overruled_in_part  -> allow": 8
+  },
+  "refusal_rows": [
+    {
+      "id": "00d958ce-6d32-4599-8516-5a6cc0379bc3",
+      "case_title": "SYNTHETIC — Set Aside Fixture",
+      "court": "Test Court",
+      "synthetic": true,
+      "overruled_status": "set_aside",
+      "edges": 0,
+      "adverse_edges": 0,
+      "court_class_edges": 0,
+      "effect": "set_aside",
+      "add_to_matter": "refuse",
+      "banner_status": "set_aside"
+    },
+    {
+      "id": "1c8cd748-35f4-4055-b3eb-6bc79f107611",
+      "case_title": "SYNTHETIC — Set Aside Fixture",
+      "court": "Test Court",
+      "synthetic": true,
+      "overruled_status": "set_aside",
+      "edges": 0,
+      "adverse_edges": 0,
+      "court_class_edges": 0,
+      "effect": "set_aside",
+      "add_to_matter": "refuse",
+      "banner_status": "set_aside"
+    },
+    {
+      "id": "70a6ecbc-49f0-42a3-850b-1c00815977f0",
+      "case_title": "SYNTHETIC — Set Aside Fixture",
+      "court": "Test Court",
+      "synthetic": true,
+      "overruled_status": "set_aside",
+      "edges": 0,
+      "adverse_edges": 0,
+      "court_class_edges": 0,
+      "effect": "set_aside",
+      "add_to_matter": "refuse",
+      "banner_status": "set_aside"
+    }
+  ]
+}

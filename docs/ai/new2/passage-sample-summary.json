@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-08-25T08:56:53.273Z",
+  "source": "docs/ai/new2/passage-sample.jsonl",
+  "chunker": "services/embed/src/chunk.ts chunkJudgment @ defaultChunkOptions (2400/320/240)",
+  "frame": "judgments (NOT new1_doc_vector_stage), md5(id)-ordered, full_text >= 2000, 8 courts x 4 eras",
+  "documents": 351,
+  "passages": 1327,
+  "chunks_per_document": {
+    "mean": 3.78,
+    "median": 2,
+    "min": 1,
+    "max": 145,
+    "p90": 7
+  },
+  "passages_beyond_head_4800": 561,
+  "share_beyond_head_4800": 0.4228,
+  "documents_in_production_stage": 79,
+  "doc_evidence_mix": {
+    "SCREENED_NO_DAMAGE_FOUND": 329,
+    "SCREENED_DAMAGED": 18,
+    "PROVEN_DAMAGED": 4
+  },
+  "passages_by_doc_evidence": {
+    "SCREENED_NO_DAMAGE_FOUND": 1275,
+    "SCREENED_DAMAGED": 40,
+    "PROVEN_DAMAGED": 12
+  },
+  "by_era": {
+    "PRE_2000": 470,
+    "2000_2009": 373,
+    "2010_2019": 254,
+    "2020_PLUS": 230
+  },
+  "by_court": {
+    "Allahabad High Court": 68,
+    "Bombay High Court": 135,
+    "High Court of Punjab and Haryana": 189,
+    "Patna High Court": 214,
+    "Madras High Court": 149,
+    "High Court Of Rajasthan": 159,
+    "High Court  for State of Telangana": 152,
+    "High Court of Kerala": 261
+  },
+  "chars": {
+    "mean": 2216,
+    "min": 572,
+    "max": 2931
+  },
+  "damage": {
+    "passages_control_char_density_gt_0_05": 31,
+    "passages_control_char_density_gt_0_2": 31,
+    "passages_english_density_lt_0_5": 60,
+    "passages_english_density_lt_0_3": 35,
+    "passages_with_devanagari": 10
+  }
+}

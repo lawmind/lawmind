@@ -1,0 +1,400 @@
+{
+  "probed_at": "2026-08-25T05:23:36.948Z",
+  "base": "https://indiacode.gov.in/server/api",
+  "top_communities": [
+    {
+      "name": "Acts Not Enforced",
+      "handle": "123456789/617387",
+      "uuid": "500e8c30-1eeb-4313-9361-39eb76bee358",
+      "items": -1
+    },
+    {
+      "name": "All Amendments",
+      "handle": "123456789/160429",
+      "uuid": "d9e3d9e2-891a-496b-8e31-8e69447f0133",
+      "items": -1
+    },
+    {
+      "name": "Andaman and Nicobar Islands",
+      "handle": "123456789/1553",
+      "uuid": "aa4dba27-9551-49ed-92de-b3b32b5b0333",
+      "items": -1
+    },
+    {
+      "name": "Andhra Pradesh",
+      "handle": "123456789/4",
+      "uuid": "bd41570a-ba81-4bef-987c-20a1cda1689f",
+      "items": -1
+    },
+    {
+      "name": "Arunachal Pradesh",
+      "handle": "123456789/5",
+      "uuid": "37fc613b-7fef-4e7e-a87b-fc96d394c5ff",
+      "items": -1
+    },
+    {
+      "name": "Assam",
+      "handle": "123456789/6",
+      "uuid": "0b5fa463-16d8-4694-8755-acbc6558b7ed",
+      "items": -1
+    },
+    {
+      "name": "Bihar",
+      "handle": "123456789/7",
+      "uuid": "374b519b-fe97-474e-898d-31b55a6ead70",
+      "items": -1
+    },
+    {
+      "name": "CENTRAL",
+      "handle": "123456789/1",
+      "uuid": "f467b316-98f0-4c08-a722-a2627e45bc19",
+      "items": -1
+    },
+    {
+      "name": "Chandigarh",
+      "handle": "123456789/8",
+      "uuid": "412d78e1-9110-411f-b5b4-537f4da907f1",
+      "items": -1
+    },
+    {
+      "name": "Chhattisgarh",
+      "handle": "123456789/9",
+      "uuid": "ea554ae4-28f2-4981-a7c3-7e4b07da4d67",
+      "items": -1
+    },
+    {
+      "name": "Constitution of India",
+      "handle": "123456789/618378",
+      "uuid": "8897f9c9-e0bf-4369-8f49-ebd766018a78",
+      "items": -1
+    },
+    {
+      "name": "Dadra and Nagar Haveli and Daman and Diu",
+      "handle": "123456789/10",
+      "uuid": "f88fc48f-31cf-444f-82b1-34a5c918e3c3",
+      "items": -1
+    },
+    {
+      "name": "Delhi",
+      "handle": "123456789/11",
+      "uuid": "3669f28b-fc9d-4d11-8f50-ae6a9040aea6",
+      "items": -1
+    },
+    {
+      "name": "Goa",
+      "handle": "123456789/12",
+      "uuid": "5787502c-6e12-4733-88e3-ec8a9844a0c8",
+      "items": -1
+    },
+    {
+      "name": "Gujarat",
+      "handle": "123456789/13",
+      "uuid": "298a0601-b69d-4a07-9d0b-1fe30a6012bc",
+      "items": -1
+    },
+    {
+      "name": "Haryana",
+      "handle": "123456789/14",
+      "uuid": "c1328da3-1cca-4124-b94b-e1ac407b764a",
+      "items": -1
+    },
+    {
+      "name": "Himachal Pradesh",
+      "handle": "123456789/15",
+      "uuid": "2f5dfe13-848a-4494-a0d2-256792bc5344",
+      "items": -1
+    },
+    {
+      "name": "Jammu and Kashmir",
+      "handle": "123456789/16",
+      "uuid": "e3af9c56-7593-4fec-9ea7-d44c3e360447",
+      "items": -1
+    },
+    {
+      "name": "Jharkhand",
+      "handle": "123456789/17",
+      "uuid": "d38a1b83-a1d9-424c-97a9-63144b4e7611",
+      "items": -1
+    },
+    {
+      "name": "Karnataka",
+      "handle": "123456789/18",
+      "uuid": "a273b32e-ea24-4b73-ae62-7b0fd613c5e3",
+      "items": -1
+    },
+    {
+      "name": "Kerala",
+      "handle": "123456789/19",
+      "uuid": "638d29d3-d254-4fb7-ab87-47012d0dcc7f",
+      "items": -1
+    },
+    {
+      "name": "Ladakh",
+      "handle": "123456789/20",
+      "uuid": "ba7c6bfc-e000-40b4-b3fe-0edda573b49e",
+      "items": -1
+    },
+    {
+      "name": "Lakshadweep",
+      "handle": "123456789/21",
+      "uuid": "486141fd-a11c-41c2-8eb4-264d1e7d32a5",
+      "items": -1
+    },
+    {
+      "name": "Madhya Pradesh",
+      "handle": "123456789/22",
+      "uuid": "6122ce0b-a8b9-40ab-b48a-e215839beda2",
+      "items": -1
+    },
+    {
+      "name": "Maharashtra",
+      "handle": "123456789/23",
+      "uuid": "a7d86087-8156-4e75-915c-745b930bcab4",
+      "items": -1
+    },
+    {
+      "name": "Manipur",
+      "handle": "123456789/24",
+      "uuid": "2809e55a-baac-4e04-b4ff-17010dbccf0a",
+      "items": -1
+    },
+    {
+      "name": "Meghalaya",
+      "handle": "123456789/25",
+      "uuid": "822afe65-8c01-43fe-9e2c-a17e1a3abe80",
+      "items": -1
+    },
+    {
+      "name": "Mizoram",
+      "handle": "123456789/26",
+      "uuid": "6c0d2522-bd5a-479b-bda6-68da90301ad5",
+      "items": -1
+    },
+    {
+      "name": "Nagaland",
+      "handle": "123456789/27",
+      "uuid": "25361ec3-e3ac-4fc1-9202-fafae0613dd6",
+      "items": -1
+    },
+    {
+      "name": "Odisha",
+      "handle": "123456789/28",
+      "uuid": "0520eb78-194f-44b6-b0fd-a5249c627ae9",
+      "items": -1
+    },
+    {
+      "name": "Ordinance",
+      "handle": "123456789/617383",
+      "uuid": "c5250f4d-0d93-4d43-97e0-025fa962a713",
+      "items": -1
+    },
+    {
+      "name": "Puducherry",
+      "handle": "123456789/29",
+      "uuid": "75b8f931-4f0b-434d-a62b-a325817a7ba1",
+      "items": -1
+    },
+    {
+      "name": "Punjab",
+      "handle": "123456789/30",
+      "uuid": "81a9a476-09e5-4c08-b75e-b0d01eab4a9e",
+      "items": -1
+    },
+    {
+      "name": "Rajasthan",
+      "handle": "123456789/31",
+      "uuid": "1ff54a39-9b71-49f0-baf8-8e76d5a879c0",
+      "items": -1
+    },
+    {
+      "name": "Regulation Under Article 240",
+      "handle": "123456789/617385",
+      "uuid": "a1ca4151-69f2-47fb-9b13-6e39fb946797",
+      "items": -1
+    },
+    {
+      "name": "Repeal",
+      "handle": "123456789/487806",
+      "uuid": "19f5eb45-15da-461e-a796-a69424691881",
+      "items": -1
+    },
+    {
+      "name": "Sikkim",
+      "handle": "123456789/32",
+      "uuid": "a3332b34-1b52-483d-87d1-22f810ca1a1e",
+      "items": -1
+    },
+    {
+      "name": "Spent",
+      "handle": "123456789/487808",
+      "uuid": "3eab9a73-a9ce-478c-b4ad-dc3afa69f940",
+      "items": -1
+    },
+    {
+      "name": "Tamil Nadu",
+      "handle": "123456789/33",
+      "uuid": "5192bc04-1a44-4a14-809e-d959d6f17413",
+      "items": -1
+    },
+    {
+      "name": "Telangana",
+      "handle": "123456789/34",
+      "uuid": "63a13e3c-4624-41c4-b765-a3dc8cec7315",
+      "items": -1
+    }
+  ],
+  "central_acts": {
+    "name": "CENTRAL",
+    "handle": "123456789/1",
+    "uuid": "f467b316-98f0-4c08-a722-a2627e45bc19"
+  },
+  "central_collections": [
+    {
+      "name": "Acts",
+      "handle": "123456789/2",
+      "uuid": "69a0c1fb-7b22-4481-b16a-1dc59b5d02e6"
+    },
+    {
+      "name": "Annexure",
+      "handle": "123456789/134",
+      "uuid": "fc9fc8d5-2f04-4174-9868-3bf586bfa1fa"
+    },
+    {
+      "name": "Appendix",
+      "handle": "123456789/135",
+      "uuid": "d29784c1-4be6-4958-aff5-20bf7cd54786"
+    },
+    {
+      "name": "Circular",
+      "handle": "123456789/136",
+      "uuid": "f21fcf2d-39f9-4c81-99ce-f67e1fe59276"
+    },
+    {
+      "name": "Form",
+      "handle": "123456789/137",
+      "uuid": "b826bfab-6422-4d80-ac9a-0f8d32afc3ab"
+    },
+    {
+      "name": "Legislative History",
+      "handle": "123456789/160421",
+      "uuid": "5e92f184-0376-4272-8794-4be8a238fe9b"
+    },
+    {
+      "name": "Notification",
+      "handle": "123456789/138",
+      "uuid": "2dc61937-74ce-4961-a098-7446a07d1063"
+    },
+    {
+      "name": "Order",
+      "handle": "123456789/139",
+      "uuid": "d146af66-cbea-460f-a32f-c68183142e25"
+    },
+    {
+      "name": "Order Footnote",
+      "handle": "123456789/140",
+      "uuid": "0f5c0558-ce6f-4107-8e3e-1c71778fdfdc"
+    },
+    {
+      "name": "Ordinance",
+      "handle": "123456789/141",
+      "uuid": "5d29c5ee-7656-4400-97bf-f4ef22ee2d97"
+    },
+    {
+      "name": "Preamble",
+      "handle": "123456789/142",
+      "uuid": "16547733-89ab-4be9-9989-61a35b95bdae"
+    },
+    {
+      "name": "Regulation",
+      "handle": "123456789/143",
+      "uuid": "a263e968-8733-4776-af8e-7aab521858e4"
+    },
+    {
+      "name": "Rule",
+      "handle": "123456789/144",
+      "uuid": "da7bfea8-3973-4961-b873-d99e9f48512f"
+    },
+    {
+      "name": "Schedule",
+      "handle": "123456789/145",
+      "uuid": "d903af19-5f67-412a-bf91-746219562bb1"
+    },
+    {
+      "name": "Schedule Order",
+      "handle": "123456789/146",
+      "uuid": "c965d622-16b3-40f0-b9b5-9d69b89d309c"
+    },
+    {
+      "name": "Schordrule",
+      "handle": "123456789/147",
+      "uuid": "acd67435-8fcb-4f89-840f-bddd27bd3dc7"
+    },
+    {
+      "name": "Section",
+      "handle": "123456789/148",
+      "uuid": "9a5b5f4a-4ccf-4cef-9820-0d33f8a6707f"
+    },
+    {
+      "name": "Statute",
+      "handle": "123456789/151",
+      "uuid": "e0de65c2-e02f-4a9f-b7b1-3aec12d416f1"
+    }
+  ],
+  "central_item_total": 51648,
+  "sample_items": [
+    {
+      "name": "Suspension of registration.",
+      "handle": "123456789/523143",
+      "uuid": "22d0082e-73c1-44c6-80ae-362c323fcb05"
+    },
+    {
+      "name": "Control by the Central Government.",
+      "handle": "123456789/520469",
+      "uuid": "22d1d99b-fc9d-4a74-9937-cac4312a0cb6"
+    },
+    {
+      "name": "Amendment of specification before Appellate Board or High Court.",
+      "handle": "123456789/516107",
+      "uuid": "22d39ee1-b686-4d54-9072-cbaa737c3295"
+    },
+    {
+      "name": "The Companies (cost records and audit) Rules, 2014",
+      "handle": "123456789/508683",
+      "uuid": "22d3fda3-e71c-4151-978c-79056fb9ad19"
+    },
+    {
+      "name": "Original jurisdiction of District Judge.",
+      "handle": "123456789/535964",
+      "uuid": "22d4c6ff-2a31-4c96-a5d4-14ac28be4ef1"
+    }
+  ],
+  "requests": [
+    {
+      "label": "communities_top",
+      "url": "https://indiacode.gov.in/server/api/core/communities/search/top?size=40",
+      "status": 200,
+      "content_type": "application/json;charset=UTF-8",
+      "ms": 338,
+      "bytes": 66601,
+      "json_ok": true
+    },
+    {
+      "label": "central_collections",
+      "url": "https://indiacode.gov.in/server/api/core/communities/f467b316-98f0-4c08-a722-a2627e45bc19/collections?size=40",
+      "status": 200,
+      "content_type": "application/json;charset=UTF-8",
+      "ms": 997,
+      "bytes": 54786,
+      "json_ok": true
+    },
+    {
+      "label": "discover_scoped",
+      "url": "https://indiacode.gov.in/server/api/discover/search/objects?scope=f467b316-98f0-4c08-a722-a2627e45bc19&dsoType=item&size=5",
+      "status": 200,
+      "content_type": "application/json;charset=UTF-8",
+      "ms": 227,
+      "bytes": 61217,
+      "json_ok": true
+    }
+  ]
+}

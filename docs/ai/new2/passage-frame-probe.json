@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-08-25T05:04:15.116Z",
+  "steps": {
+    "stage_exists": {
+      "ms": 50,
+      "rows": [
+        {
+          "stage": "new1_doc_vector_stage",
+          "chunks": "judgment_chunks"
+        }
+      ]
+    },
+    "frame_shape": {
+      "ms": 1667,
+      "rows": [
+        {
+          "sampled": 9719,
+          "above_gate": 5421,
+          "courts": 25,
+          "pre_2010": 601
+        }
+      ]
+    }
+  }
+}

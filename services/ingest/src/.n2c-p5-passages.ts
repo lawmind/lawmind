@@ -29,7 +29,7 @@
  *
  * READ ONLY. Writes only artefacts under docs/ai/new2/.
  */
-import { writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
 import postgres from 'postgres';
 
@@ -42,6 +42,9 @@ const sql = postgres(process.env['DATABASE_URL'] ?? '', {
   idle_timeout: 0,
   onnotice: () => {},
 });
+
+/** Newline, named so an inserted literal one cannot break the source. */
+const NL = String.fromCharCode(10);
 
 /** Documents per stratum. Small on purpose: every passage here is meant to be READ. */
 const PER_STRATUM = Number(process.env['N2_PER_STRATUM'] ?? 12);
@@ -88,6 +91,39 @@ function damageSignals(text: string) {
   };
 }
 
+function passageRow(
+  d: Row,
+  stratum: string,
+  c: { index: number; text: string; offset: number },
+  chunkCount: number,
+) {
+  return {
+    passage_id: `${d.id}#${c.index}`,
+    judgment_id: d.id,
+    chunk_index: c.index,
+    chunk_count: chunkCount,
+    court: d.court,
+    judgment_date: d.judgment_date,
+    case_number: d.case_number,
+    stratum,
+    doc_body_text_evidence: d.body_text_evidence,
+    in_production_stage: d.in_production_stage,
+    /* Position as a FRACTION — role correlates with where you are in a judgment,
+     * and an absolute index cannot be compared across documents of very
+     * different lengths. */
+    position: chunkCount > 1 ? +(c.index / (chunkCount - 1)).toFixed(3) : 0,
+    /* HEAD:4800 is today's production recipe. A passage beyond it is text the
+     * current embedder has NEVER READ — precisely the new surface a passage
+     * build creates, and the reason NEW1's bus 1090 says the quality gates
+     * become load-bearing on a bigger surface. */
+    beyond_head_4800: c.offset >= 0 && c.offset >= 4800,
+    chars: c.text.length,
+    offset: c.offset,
+    ...damageSignals(c.text),
+    text: c.text,
+  };
+}
+
 async function main() {
   /* The strata. Court and era are the two the corpus actually holds as
    * first-class facts — NEW1 measured `case_type` NULL at 75.6%, so it cannot
@@ -107,9 +143,30 @@ async function main() {
   const courts = courtRows.map((c) => c.court);
   console.log('courts in frame:', courts.join(' | '));
 
+  /* CHECKPOINT PER STRATUM, not at the end.
+   *
+   * The first run of this script was killed at 26 of 32 strata and wrote
+   * NOTHING, because the only write was after the loop -- the same failure this
+   * repo already recorded once (160 of 283 queries lost to a teardown). A long
+   * job whose artefact appears only on success has no partial result, and its
+   * progress is invisible while it runs, which is also why it looked dead. */
+  const JSONL = 'docs/ai/new2/passage-sample.jsonl';
+  const DONE = 'docs/ai/new2/.passage-strata-done.json';
+  const done: Record<string, true> = existsSync(DONE)
+    ? (JSON.parse(readFileSync(DONE, 'utf8')) as Record<string, true>)
+    : {};
+  if (Object.keys(done).length === 0 && existsSync(JSONL)) rmSync(JSONL);
+
   const docs: (Row & { stratum: string })[] = [];
   for (const court of courts) {
     for (const [era, from, to] of eras) {
+      const stratum = `${court} | ${era}`;
+      /* Checked BEFORE the query, so a resume costs nothing rather than
+       * re-running the expensive sort it already paid for. */
+      if (done[stratum] === true) {
+        console.log(`  ${stratum}: already checkpointed, skipping`);
+        continue;
+      }
       const rows = await sql<Row[]>`
         SELECT j.id::text, j.court, j.judgment_date::text, j.case_number, j.full_text,
                e.body_text_evidence,
@@ -121,45 +178,29 @@ async function main() {
            AND j.full_text IS NOT NULL AND length(j.full_text) >= 2000
          ORDER BY md5(j.id::text)
          LIMIT ${PER_STRATUM}`;
-      for (const r of rows) docs.push({ ...r, stratum: `${court} | ${era}` });
-      console.log(`  ${court} / ${era}: ${rows.length}`);
+      for (const r of rows) docs.push({ ...r, stratum });
+      /* Chunk and flush THIS stratum before moving on. */
+      let wrote = 0;
+      for (const d of rows) {
+        const chunks = chunkJudgment(d.full_text, defaultChunkOptions);
+        for (const c of chunks) {
+          appendFileSync(JSONL, JSON.stringify(passageRow(d, stratum, c, chunks.length)) + NL);
+          wrote++;
+        }
+      }
+      done[stratum] = true;
+      writeFileSync(DONE, JSON.stringify(done, null, 1));
+      console.log(`  ${stratum}: ${rows.length} docs -> ${wrote} passages (flushed)`);
     }
   }
   console.log(`\ndocuments drawn: ${docs.length}`);
 
-  const passages: Record<string, unknown>[] = [];
-  const perDoc: number[] = [];
-  for (const d of docs) {
-    const chunks = chunkJudgment(d.full_text, defaultChunkOptions);
-    perDoc.push(chunks.length);
-    for (const c of chunks) {
-      passages.push({
-        passage_id: `${d.id}#${c.index}`,
-        judgment_id: d.id,
-        chunk_index: c.index,
-        chunk_count: chunks.length,
-        court: d.court,
-        judgment_date: d.judgment_date,
-        case_number: d.case_number,
-        stratum: d.stratum,
-        doc_body_text_evidence: d.body_text_evidence,
-        in_production_stage: d.in_production_stage,
-        /* Position as a FRACTION — role correlates with where you are in a
-         * judgment, and an absolute index cannot be compared across documents
-         * of very different lengths. */
-        position: chunks.length > 1 ? +(c.index / (chunks.length - 1)).toFixed(3) : 0,
-        /* HEAD:4800 is today's production recipe. A passage beyond it is text
-         * the current embedder has NEVER READ — precisely the new surface a
-         * passage build creates, and the reason NEW1's bus 1090 says the
-         * quality gates become load-bearing on a bigger surface. */
-        beyond_head_4800: c.offset >= 0 && c.offset >= 4800,
-        chars: c.text.length,
-        offset: c.offset,
-        ...damageSignals(c.text),
-        text: c.text,
-      });
-    }
-  }
+  /* Read back what was flushed, so the summary describes the ARTEFACT rather
+   * than an in-memory copy that might disagree with it. */
+  const passages = readFileSync(JSONL, 'utf8').trim().split(NL).filter(Boolean)
+    .map((l) => JSON.parse(l) as Record<string, unknown>);
+  const perDoc = [...new Set(passages.map((p) => p['judgment_id'] as string))]
+    .map((id) => passages.filter((p) => p['judgment_id'] === id).length);
 
   const summary = {
     generated_at: new Date().toISOString(),

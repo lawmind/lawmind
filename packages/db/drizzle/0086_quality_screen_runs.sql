@@ -1,4 +1,12 @@
--- 0083 — QUALITY SCREEN RUNS: make completed screen coverage answerable by
+-- 0086 — QUALITY SCREEN RUNS:
+--
+-- RENUMBERED from 0083 on 25 Aug 2026. LCC announced `0083_ops_job_observations`
+-- on the bus at 03:27Z and I announced this one later the same morning; two
+-- files claiming one ordinal is ambiguous to anyone replaying the folder, so the
+-- later announcement moves. The body is unchanged and is idempotent
+-- (`CREATE TABLE IF NOT EXISTS`, `CREATE OR REPLACE VIEW`), so the rename is a
+-- rename and nothing else.
+-- make completed screen coverage answerable by
 -- query instead of by rescanning 18.7 million rows.
 --
 -- Owner: NEW2 (data truth / provenance). Round: LAUNCH CONVERGENCE SPRINT V2 §8

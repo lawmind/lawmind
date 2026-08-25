@@ -13,15 +13,15 @@
 
 ```
 T0  process health / prove GPU factory   ████████████████████  8/8    DONE
-T1  V3.1 reproducible freeze             ██████████████████░░  9/10   1 left
+T1  V3.1 reproducible freeze             ████████████████████ 10/10   DONE
 T2  100k passage tranche                 █████░░░░░░░░░░░░░░░  4/15   design+selector done, BUILD blocked
 T3  safe abstention                      ████████░░░░░░░░░░░░  3/8    pre-registered, eval blocked
 T4  long facts (deferred by plan)        █████████████░░░░░░░  2/3
 T5  HEAD-vs-passage recommendation       ████░░░░░░░░░░░░░░░░  1/6
 T6  continuous process health            ████████████████████  7/7    11 findings, 5 fixed
-T7  bus / reporting                      ██████████░░░░░░░░░░  2/4
+T7  bus / reporting                      ███████████████░░░░░  3/4
                                          ─────────────────────
-                                         35 / 61
+                                         38 / 61
 ```
 
 ---
@@ -52,7 +52,14 @@ T7  bus / reporting                      ██████████░░░
 - [x] **T1.7** Freeze segmentation version · bge-m3 file digests · court/task strata
 - [x] **T1.8** Audit for unseeded sampling — **2 sites found:** `v3-cli:359` `Math.random()`, `v3-cli:623` `TABLESAMPLE` with no `REPEATABLE`
 - [x] **T1.9** Emit manifest + checksum + prove replay — **two freezes byte-identical** across tasks, clusters, strata, seeds, config, embedder, all 25,000 pool ids
-- [ ] **T1.10** Report CIs by task / distinct target / target cluster — *needs the lab rewired to consume the manifest (T2 quiet window)*
+- [x] **T1.10** Report CIs by task / distinct target / target cluster — **DONE without DB or GPU**: V3 stored per-task ranks, so its published result was re-analysed from files (`V31_REANALYSIS.md`, `bd905eb`)
+
+**T1.10 results:**
+- V3's point estimates and intervals **reproduce exactly** under a seeded bootstrap; arm ordering unchanged
+- **My own concern REFUTED**: cluster resampling widens intervals only **0.96×–1.26×** on the real data, not the **2.11×** seen on synthetic maximally-correlated data. V3's intervals were *not* materially too tight
+- **New number V3 never reported** — POSED, pool 19,932: passages score **24.4% END-TO-END** vs **39.3% CONDITIONAL**; production arm A scores **2.2%** vs 3.6%. **17 of 45 posed targets are not in the index at all**
+- **37.8% is a CONDITIONAL figure** and I had propagated it unqualified (bus 1088/1089/1150) — corrected to LCC (1163) and NEW3 (1162)
+- The **LIFTED benchmark cannot see the reachability problem** (52.4% vs 53.3%) because its gold is drawn from already-indexed documents
 
 **Built:** `v31-freeze-cli.ts` · `v31-pool-drift-probe.mjs` · `V31_MANIFEST.json` (1.3 MB) · `V31_REPRODUCIBILITY.md`
 **Key result:** a seed is **not** the fix — the fill table is written by the live walk, so `TABLESAMPLE REPEATABLE` fixes *which pages* are read, not *what is on them*. Identity is frozen to the artifact instead.
@@ -185,6 +192,7 @@ cleanup, recoverable, resumes by re-running the coverage census.
 
 ## T7 — BUS / REPORTING · 1/4
 
+- [x] **T7.1b** Granted LCC's LCC-4 quiet window (1156) · answered NEW2 0083 (1157) · corrected 37.8% to NEW3 (1162) and LCC (1163)
 - [x] **T7.1** Answer LCC **1085** (quiet window) — walk **can** pause, resumes losslessly via `.agents/logs/new1-walk.pause`; nothing else of mine runs
 - [ ] **T7.2** Read + close pending inbound: 1094, 1095, 1104, 1117, 1073, 1100, 1101
 - [x] **T7.3** Reply to RCC **1133/1135** (bus 1139) — collision confirmed + contention caveat on their recall numbers; NEW3 1076 already answered in 1093

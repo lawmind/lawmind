@@ -31,15 +31,47 @@ open cell, and marks the cells only the founder may close.
 | `MODALITY_DEFECT` | **1** · 0.01% |
 | judgments rendering a LAW MOVED state | **104** (98 real + 6 leaked `SYNTHETIC` fixtures) |
 | of those, backed by any court-class edge | **5** |
-| **add-to-matter refusals live today** | **76** |
-| **of those, resting on a law reporter's headnote alone** | **72** |
+| judgments carrying `overruled_status = 'set_aside'` | 76 |
+| **add-to-matter refusals the product actually computes** | **3** |
+| **of those, leaked `SYNTHETIC` test fixtures** | **3** |
+| **REAL judgments an advocate could be refused** | **0** |
 
-> **72 of 76 times LawMind refuses to let an advocate put an authority in a
-> matter, the only evidence is a law reporter's editorial annotation.**
+> **CORRECTED 25 Aug 2026, on NEW3's bus 1151, and the correction removes this
+> contract's original headline.**
 >
-> That is the sentence this contract exists to fix. It is not a badge-wording
-> problem. It is a hard product refusal — the one place `CLAUDE.md` says LawMind
-> stops an advocate using an authority — resting on apparatus no court wrote.
+> V1 as first sent said *"72 of 76 add-to-matter refusals rest on a headnote
+> alone"*. **That was wrong.** I counted `judgments.overruled_status =
+> 'set_aside'` — 76, correctly — and then called it "add-to-matter refusals"
+> because `CLAUDE.md` says `set_aside` disables add-to-matter. I asserted a
+> product behaviour from a rule I remembered instead of from the function that
+> implements it.
+>
+> Since **OD-14 resolved on 21 August**, the refusal is computed by
+> `precedentialEffectFromEdges` + `precedentialPolicy` from the **EDGE**, not
+> from the stored column. An `overruled` edge maps to effect `overruled`, and
+> that policy is `allow`. Only a bare `set_aside` with **no usable edge at all**
+> refuses — which is exactly the state a synthetic fixture with zero edges is in.
+>
+> Re-derived independently by running all 104 badge-bearing judgments through the
+> shipped functions (`add-to-matter-refusal-audit.json`):
+>
+> ```
+>  73  set_aside        -> overruled         -> allow
+>  17  doubted          -> doubted           -> allow
+>   8  partly_set_aside -> overruled_in_part -> allow
+>   3  partly_set_aside -> partly_set_aside  -> allow
+>   3  set_aside        -> set_aside         -> REFUSE   <- all three SYNTHETIC, 0 edges
+> ```
+>
+> **What this does to the recommendation: it strengthens it and weakens my
+> argument for it.** Court-only-canonical was priced against a cost of 72
+> advocates-refused-by-a-headnote. That cost does not exist; OD-14 already
+> removed it. So the option is cheaper than V1 said — and the sharp sentence
+> this contract was built around was not true.
+>
+> **The remaining real cost is DISPLAY, not refusal:** 99 of 104 badges move
+> from asserted to attributed. That is the whole of it, and it is what the
+> founder should price.
 
 ---
 
@@ -110,11 +142,11 @@ evidence class we cannot populate is how a capability gets claimed by accident.
 | **Evidence requirement** | a law report's editorial apparatus: a headnote, a *Case Law Cited* entry, a marker-terminated list line, column letters, page-and-line pins |
 | **Allowed product wording** | **MUST** attribute to the reporter and **MUST NOT** attribute to a court. Permitted: *"A law report records this as overruled. We have not confirmed this against the deciding court."* Forbidden: *"Set aside in \<case\>"*, *"the Court overruled"*, *"verified"*, *"confirmed"*, and any phrasing whose subject is a court |
 | **Currentness propagation** | **MUST NOT** write `judgments.overruled_status`. It is a render-time signal derived live from the edge, never a stored canonical status |
-| **Matter workflow** | **MAY** be shown on the authority inside a matter. **MUST NOT** disable add-to-matter. A refusal is a claim, and this evidence cannot carry a refusal |
+| **Matter workflow** | **MAY** be shown on the authority inside a matter. **MUST NOT** disable add-to-matter. A refusal is a claim, and this evidence cannot carry a refusal. *(Today it already does not — see §0. The rule is stated so a future change cannot reintroduce it.)* |
 | **Briefing** | **MAY** appear, qualified, and **MUST NOT** be silently omitted. **MUST NOT** be stated as a fact about what a court held |
 | **Counterargument** | **MAY** be used to raise the point — *"opposing counsel may say this has been overruled; a law report records it so"*. **MUST NOT** be used as an assertion that it has been |
 | **LAW MOVED strength** | **QUALIFIED.** Visible, unmissable, explicitly sourced to the reporter, and visually distinguishable from 2.1 |
-| **Population** | **11,573 edges** · **99 of the 104 badges** · **72 of the 76 add-to-matter refusals** |
+| **Population** | **11,573 edges** · **99 of the 104 badges** · **0 add-to-matter refusals** (corrected — see §0) |
 
 **This is the interim product direction, stated as a rule:** the reporter signal
 stays **visible as a safety signal**, explicitly qualified, and is never
@@ -129,10 +161,12 @@ Three things that follow and are not optional:
 2. **It stops being canonical.** The stored `overruled_status` is written only
    from court-class evidence; the reporter signal is derived at render from the
    edge, which it must be anyway — `overruled_status` is never cached.
-3. **It stops refusing.** 72 add-to-matter refusals become warnings. An advocate
-   blocked from using a live authority on a headnote's say-so is a false refusal,
-   and a false refusal is not the safe side of anything — it is the same error
-   pointing the other way.
+3. **It never starts refusing.** No advocate is refused add-to-matter on
+   reporter evidence today — OD-14's edge-derived policy already prevents it, and
+   my V1 claim that 72 were is withdrawn. The rule is written down anyway,
+   because the reason still holds: a false refusal is not the safe side of
+   anything, it is the same error pointing the other way, and the advocate cannot
+   tell it from a correct one.
 
 ### 2.5 `COUNSEL_ARGUMENT`
 
@@ -248,21 +282,23 @@ question is a licence-risk question, not an engineering one.
 
 Priced both ways, from today's numbers:
 
-| | LAW MOVED badges | add-to-matter refusals |
+| | LAW MOVED badges | add-to-matter refusals (REAL judgments) |
 | --- | ---: | ---: |
-| **today** — reporter promotes | 104 (98 real) | 76 |
-| **court-only canonical, reporter qualified** *(recommended)* | 5 canonical + 99 qualified, **nothing hidden** | **4** |
-| **court-only, reporter removed** *(rejected)* | 5 | 4 |
+| **today** — reporter promotes | 104 (98 real) | **0** |
+| **court-only canonical, reporter qualified** *(recommended)* | 5 canonical + 99 qualified, **nothing hidden** | **0** |
+| **court-only, reporter removed** *(rejected)* | 5, **99 hidden** | **0** |
 
 The third row is the one to refuse: removing 99 warnings is the direction
-`CLAUDE.md` is most afraid of. The recommended row keeps every warning and
-changes only two things — who we say said it, and whether it refuses.
+`CLAUDE.md` is most afraid of. **The refusal column is zero in every row** — that
+is the correction — so the recommended row changes exactly one thing: *who we say
+said it.*
 
-**A second, narrower founder question this raises.** *Is a false refusal
-acceptable where a false confirmation is not?* Today's implicit answer is yes —
-72 refusals rest on headnotes. This contract's answer is no: both are wrong
-answers about the same authority, and the advocate cannot tell either from a
-correct one.
+**A second, narrower question, now hypothetical rather than live.** *Is a false
+refusal acceptable where a false confirmation is not?* V1 said today's implicit
+answer was yes, 72 times. **That was wrong**: the answer today is that no real
+judgment is refused at all. The principle is kept in the contract because the
+next change could reintroduce the failure, but it is not a live defect and must
+not be priced as one.
 
 ---
 
