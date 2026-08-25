@@ -64,8 +64,14 @@ const LOCK = join(ROOT, '.agents', 'logs', `new1-sidecar-keeper.${PORT}.lock`);
 const POLL_MS = Number(process.env.KEEPER_POLL_MS ?? 20_000);
 /** Two consecutive misses, not one: a single slow reply during a 240k-char batch is not a death. */
 const MISSES_BEFORE_RESTART = Number(process.env.KEEPER_MISSES ?? 2);
-/** Loading BGE-M3 onto the GPU took 3.8 s cold; give it room before the first poll counts. */
-const WARMUP_MS = Number(process.env.KEEPER_WARMUP_MS ?? 45_000);
+/**
+ * Warm-up is now a BOUNDED WAIT, not a fixed sleep. `KEEPER_WARMUP_MS` was 45s
+ * against a measured 49.8s model load and lost the race — see the restart branch
+ * in main(). The ceiling is generous because the cost of waiting is idle time,
+ * and the cost of not waiting is a restart storm against a healthy process.
+ */
+const WARMUP_CEILING_MS = Number(process.env.KEEPER_WARMUP_CEILING_MS ?? 180_000);
+const WARMUP_POLL_MS = Number(process.env.KEEPER_WARMUP_POLL_MS ?? 3_000);
 
 const STAGE_LOG = join(ROOT, 'docs', 'ai', 'new1-tier-a', 'stage-embed.log');
 const WALK_LAUNCH = join(ROOT, 'services', 'harness', 'src', 'walk-launch.sh');
@@ -503,7 +509,40 @@ async function main() {
         note(`RESTART #${restarts} — sidecar unreachable`);
         startSidecar();
         misses = 0;
-        await new Promise((r) => setTimeout(r, WARMUP_MS));
+        /**
+         * WAIT FOR IT TO ANSWER, DO NOT SLEEP A GUESS.
+         *
+         * This was `setTimeout(WARMUP_MS)` with WARMUP_MS = 45s, and the model
+         * takes longer than that to load: measured on this box, "model loaded in
+         * 49.8s" under IO pressure and 27.0s clean. So the keeper resumed
+         * counting misses BEFORE the sidecar could possibly answer, hit two
+         * misses in 40s, and restarted a process whose only fault was still
+         * starting. Observed 25 Aug: spawn 05:10:06 → RESTART #2 at 05:11:11,
+         * a storm forming out of nothing but a stopwatch set too short.
+         *
+         * A fixed sleep is the wrong shape regardless of its value — it is
+         * either too short on a loaded box or wasted time on an idle one. This
+         * polls for the answer and proceeds the moment it arrives, with a
+         * ceiling so a sidecar that will NEVER answer still gets escalated.
+         *
+         * The keeper exists to restart a STALLED sidecar. A STARTING one is not
+         * stalled, and the two must not look the same.
+         */
+        const warmupDeadline = Date.now() + WARMUP_CEILING_MS;
+        let warmedUp = false;
+        while (Date.now() < warmupDeadline) {
+          await new Promise((r) => setTimeout(r, WARMUP_POLL_MS));
+          if (await healthy()) {
+            warmedUp = true;
+            note(`sidecar answered ${Math.round((Date.now() - (warmupDeadline - WARMUP_CEILING_MS)) / 1000)}s after spawn`);
+            break;
+          }
+        }
+        if (!warmedUp) {
+          note(
+            `sidecar STILL not answering ${WARMUP_CEILING_MS / 1000}s after spawn — this is a genuine failure, not a slow model load.`,
+          );
+        }
         lastOk = Date.now();
         continue;
       }
