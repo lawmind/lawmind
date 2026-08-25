@@ -34,7 +34,7 @@
  *
  * USAGE
  *   DATABASE_URL=... pnpm --filter @lawmind/embed exec tsx src/tranche-embed-cli.ts
- *   TRANCHE_BATCH=200 EMBED_GPU_URL=http://127.0.0.1:8799/embed tsx src/tranche-embed-cli.ts
+ *   TRANCHE_BATCH=200 EMBED_GPU_URL=http://127.0.0.1:8799 tsx src/tranche-embed-cli.ts
  */
 import { appendFileSync, readFileSync } from 'node:fs';
 import postgres from 'postgres';
@@ -46,7 +46,20 @@ const ROOT = new URL('../../../', import.meta.url);
 const MANIFEST = new URL('docs/ai/new1-tier-a/TRANCHE_100K_MANIFEST.json', ROOT);
 const LOG = new URL('docs/ai/new1-tier-a/tranche-embed.log', ROOT);
 
-const GPU_URL = process.env['EMBED_GPU_URL'] ?? 'http://127.0.0.1:8799/embed';
+/**
+ * The sidecar BASE, not its route.
+ *
+ * `getRemoteEmbedder` appends `/embed` itself. The previous default here was
+ * `http://127.0.0.1:8799/embed`, which made the request `/embed/embed` and the
+ * run died on its first batch with `embed sidecar 404: {"ok": false}` — a
+ * healthy sidecar, a correct route, and a 404 anyway.
+ *
+ * The confusion is real and shared: `doc-vector-embed.mjs` reads the SAME env
+ * var and `fetch`es it directly, so `EMBED_GPU_URL` legitimately carries the
+ * full route for the walk. Rather than demand that every caller remember which
+ * convention it is under, a trailing `/embed` is stripped here.
+ */
+const GPU_URL = (process.env['EMBED_GPU_URL'] ?? 'http://127.0.0.1:8799').replace(/\/embed\/?$/, '');
 /** Documents fetched and embedded per transaction. Small enough that a kill is cheap. */
 const BATCH = Number(process.env['TRANCHE_BATCH'] ?? 200);
 /** Chunks handed to the GPU in one request. The sidecar batches by chars internally. */
@@ -80,11 +93,55 @@ async function main(): Promise<void> {
     actualSize: number;
     eligibilityViewSha256: string;
     contentSha256: string;
-    documents: { id: string; inProductionStage: boolean }[];
+    documents: { id: string; priority: string; inProductionStage: boolean }[];
+    gold: { forcedIds: string[]; naturalIds: string[] };
   };
-  const ids = manifest.documents.map((d) => d.id);
+
+  /**
+   * FORCED GOLD IS EMBEDDED TOO, AND IT IS EMBEDDED FIRST.
+   *
+   * The manifest's `documents` array is the NATURAL draw only — 81,510 ids. The
+   * 210 gold targets that did not land naturally live in `gold.forcedIds` and
+   * appear nowhere in `documents`. Embedding `documents` alone would leave every
+   * one of them out of the index, which does not just weaken END_TO_END (they are
+   * MISSES by rule anyway) — it makes CONDITIONAL **impossible to compute at
+   * all**, because CONDITIONAL asks how a target ranks GIVEN that it is in the
+   * index. Two hundred and ten of 213 targets absent means the one metric that
+   * measures ranking quality would have three data points.
+   *
+   * Putting them first costs 210 documents of a ~450,000-passage build and makes
+   * the ranking metric available from the first hour. It cannot flatter the
+   * result: `forced` is recorded in the manifest, and a forced target is an
+   * END_TO_END MISS however early it was embedded.
+   */
+  const forced = manifest.gold.forcedIds;
+
+  /**
+   * THE NATURAL TRANCHE IS EMBEDDED IN GLOBAL PRIORITY-HASH ORDER, NOT CELL ORDER.
+   *
+   * `documents` arrives grouped by stratum cell — all of Supreme Court PRE_1990,
+   * then all of Supreme Court ERA_1990S, and so on. A build interrupted at any
+   * point would then hold a tranche made of whole early cells and none of the
+   * late ones, and every metric computed on it would be a statement about the
+   * Supreme Court's older docket rather than about the corpus.
+   *
+   * Measured, not hypothetical: the first 200 documents in cell order averaged
+   * 35,500 characters and 14.6 chunks each, against a tranche-wide mean of
+   * 10,648 characters. Cell order front-loads the longest documents in the
+   * corpus, so it also makes the early throughput number a lie about the rest.
+   *
+   * `priority` is SHA256(seed | judgmentId), already frozen into the manifest.
+   * Sorting on it globally is a uniform random permutation of the tranche that
+   * is identical on every re-run, so ANY prefix of this build is a valid
+   * stratified sample of the whole tranche and its cell mix matches the
+   * tranche's own in expectation. That makes stopping early an honest,
+   * reportable choice rather than a biased one.
+   */
+  const natural = [...manifest.documents].sort((a, b) => (a.priority < b.priority ? -1 : a.priority > b.priority ? 1 : 0)).map((d) => d.id);
+
+  const ids = [...forced, ...natural];
   note(
-    `TRANCHE EMBED START — ${ids.length.toLocaleString()} documents · manifest ${manifest.contentSha256.slice(0, 16)} · segmentation ${SEGMENTATION}`,
+    `TRANCHE EMBED START — ${ids.length.toLocaleString()} documents (${forced.length} forced gold first, then ${natural.length.toLocaleString()} natural in priority order) · manifest ${manifest.contentSha256.slice(0, 16)} · segmentation ${SEGMENTATION}`,
   );
 
   const sql = postgres(url, { max: 4, idle_timeout: 30, connect_timeout: 30, ssl: sslFor(url) });

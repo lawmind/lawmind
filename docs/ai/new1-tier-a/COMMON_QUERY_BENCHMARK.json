@@ -1,0 +1,799 @@
+{
+  "kind": "new1_common_query_benchmark",
+  "version": 1,
+  "builtAt": "2026-08-25T11:46:39.926Z",
+  "seed": "lawmind-new1-common-query-2026-08-25",
+  "purpose": "Bounded, representative benchmark for the high-frequency Indian legal concepts an advocate actually types. Measures COVERAGE (did the backend refuse) separately from ANCHORED RELEVANCE (was what came back about the concept), because LCC bus 1173 measured a 0-result response for \"anticipatory bail\" that is a refusal, not a ranking miss.",
+  "boundedArmsOnly": "Arms compared are: (1) the current sparse guard, (2) passage ANN over new1_tranche_passages, (3) a bounded phrase/proximity lexical path, (4) at most one fusion if the first three prove complementary. NO full-corpus unbounded rank, and no new external search engine.",
+  "concepts": [
+    {
+      "id": "CQ-01-bail",
+      "concept": "bail",
+      "queries": [
+        {
+          "query": "bail",
+          "terms": 1,
+          "querySha256": "fa881abf4b4d8eb115c489f355b3fc39654a49ef8f88d11f7ea61994a571d9e4"
+        },
+        {
+          "query": "bail application",
+          "terms": 2,
+          "querySha256": "09f02ceb385b51c87f94e9c03b5ed52bc8269718aed36b4bce2a8f4758fc95d0"
+        },
+        {
+          "query": "grant of bail in a criminal case",
+          "terms": 7,
+          "querySha256": "62e65bc2f48c5d4d94725e37e228f5476e244edfbc93266dd05a2d7c60420fc7"
+        },
+        {
+          "query": "considerations for granting regular bail to an accused in custody",
+          "terms": 10,
+          "querySha256": "628734cb05a468cb6097c46a214496963e7b2c6af9396cb7d98310a9b557ae5f"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "430",
+          "heading": "Suspension of sentence pending appeal; release of appellant on bail"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "47",
+          "heading": "Person arrested to be informed of grounds of arrest and of right to bail"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "478",
+          "heading": "In what cases bail to be taken"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "480",
+          "heading": "When bail may be taken in case of non-bailable offence"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "481",
+          "heading": "Bail to require accused to appear before next Appellate Court"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "482",
+          "heading": "Direction for grant of bail to person apprehending arrest"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "483",
+          "heading": "Special powers of High Court or Court of Session regarding bail"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "488",
+          "heading": "Power to order sufficient bail when that first taken is insufficient"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "492",
+          "heading": "Cancellation of bond and bail bond"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "91",
+          "heading": "Power to take bond or bail bond for appearance"
+        },
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "92",
+          "heading": "Arrest on breach of bond or bail bond for appearance"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "bail"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9121,
+        "hits": 2265,
+        "ratePct": 24.833,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-02-anticipatory-bail",
+      "concept": "anticipatory bail",
+      "queries": [
+        {
+          "query": "anticipatory bail",
+          "terms": 2,
+          "querySha256": "8d148bd124c271664af1cc8e73d5b7960d01e3447c4973e2c10bf916588291ac"
+        },
+        {
+          "query": "anticipatory bail rejected",
+          "terms": 3,
+          "querySha256": "1430353646e6b6b9050ab471de14ec62a4f92682e9efd6a6272080703f0ff734"
+        },
+        {
+          "query": "anticipatory bail in economic offences",
+          "terms": 5,
+          "querySha256": "02f00b5b87428056477c564c261c264927a7560690d0b247cfce46f11707f695"
+        },
+        {
+          "query": "when may a court grant anticipatory bail to a person apprehending arrest",
+          "terms": 12,
+          "querySha256": "6a958b2835a0d8f84ade26f688a06d417f7cd4f9f59ba7712e958f556d7b23c6"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "482",
+          "heading": "Direction for grant of bail to person apprehending arrest"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "anticipatory bail"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9328,
+        "hits": 625,
+        "ratePct": 6.7,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-03-quashing-fir",
+      "concept": "quashing of FIR",
+      "queries": [
+        {
+          "query": "quashing FIR",
+          "terms": 2,
+          "querySha256": "c918154472d109ddaae59ffb04a9c87229fa22bcc5e097ae796eafa8d7b84e0d"
+        },
+        {
+          "query": "quash the FIR",
+          "terms": 3,
+          "querySha256": "03dd14110574f558a257ce1ea28be5ce27d8e783c3cf92d3ff542ff247103776"
+        },
+        {
+          "query": "petition to quash a first information report",
+          "terms": 7,
+          "querySha256": "5f7912185a122f081e7421a76b4294901e78c66341fbc585b39e0b91732b5dbe"
+        },
+        {
+          "query": "inherent power of the High Court to quash criminal proceedings on a settlement",
+          "terms": 13,
+          "querySha256": "4be29ab9130a32a6eb4524ad29e7e42103b9077b97451bc465078fe91fb8253f"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "528",
+          "heading": "Saving of inherent powers of High Court"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "quash",
+        "first information report",
+        "f.i.r"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9681,
+        "hits": 1153,
+        "ratePct": 11.91,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-04-injunction",
+      "concept": "temporary injunction",
+      "queries": [
+        {
+          "query": "injunction",
+          "terms": 1,
+          "querySha256": "e6b0f7ea82503f9d1ac6dba5096e6485763f147d57c5bcc3b777094e0e7047d1"
+        },
+        {
+          "query": "temporary injunction",
+          "terms": 2,
+          "querySha256": "eb7fca2cb371bccf2c530a10107cbf5d68bb138e6a624deba48257e3234a2a19"
+        },
+        {
+          "query": "grant of temporary injunction",
+          "terms": 4,
+          "querySha256": "e40fec81757af55183bdfbd13901e0e0d23074ce353060c58973072112c5a742"
+        },
+        {
+          "query": "principles governing the grant of a temporary injunction pending suit",
+          "terms": 10,
+          "querySha256": "2215d0ef162ce46e1a58b33277314d0280f0584de7c4d5e0521ec004c3b61b25"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Code of Civil Procedure, 1908",
+          "section": "95",
+          "heading": "Compensation for obtaining arrest, attachment or injunction on insufficient ground"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "37",
+          "heading": "Temporary and perpetual injunctions"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "38",
+          "heading": "Perpetual injunction when granted"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "39",
+          "heading": "Mandatory injunctions"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "40",
+          "heading": "Damages in lieu of, or in addition to, injunction"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "41",
+          "heading": "Injunction when refused"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "42",
+          "heading": "Injunction to perform negative agreement"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "injunction"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 8873,
+        "hits": 170,
+        "ratePct": 1.916,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-05-limitation",
+      "concept": "limitation and condonation of delay",
+      "queries": [
+        {
+          "query": "limitation",
+          "terms": 1,
+          "querySha256": "f86e4b17a89f8d27fad4b800b20693fbafc124306e577c2a6079933848a3276d"
+        },
+        {
+          "query": "condonation of delay",
+          "terms": 3,
+          "querySha256": "d78718cdbca7b38f6b527f61b847104f5c877062a77f97eb7d4c3cf686da9c47"
+        },
+        {
+          "query": "appeal barred by limitation",
+          "terms": 4,
+          "querySha256": "84ef48746fe995fde622c6232814baee052d33bf6f6fa2f69728e4227f68a7b7"
+        },
+        {
+          "query": "sufficient cause for condoning delay in filing an appeal",
+          "terms": 9,
+          "querySha256": "1d1a9b4937d8716c76868710071d30fba1df867963dc56ef3058cbc529f123b9"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Delimitation Act, 2002",
+          "section": "10A",
+          "heading": "Deferment of delimitation in certain cases"
+        },
+        {
+          "statute": "The Delimitation Act, 2002",
+          "section": "10B",
+          "heading": "Delimitation Commission's order with respect to the State of Jharkhand not to have any legal effect"
+        },
+        {
+          "statute": "The Delimitation Act, 2002",
+          "section": "11",
+          "heading": "Power to maintain delimitation orders up-to-date"
+        },
+        {
+          "statute": "The Delimitation Act, 2002",
+          "section": "3",
+          "heading": "Constitution of Delimitation Commission"
+        },
+        {
+          "statute": "The Delimitation Act, 2002",
+          "section": "9",
+          "heading": "Delimitation of constituencies"
+        },
+        {
+          "statute": "The Limitation Act, 1963",
+          "section": "3",
+          "heading": "Bar of limitation"
+        },
+        {
+          "statute": "The Limitation Act, 1963",
+          "section": "30",
+          "heading": "Provision for suits, etc., for which the prescribed period is shorter than the period prescribed by the Indian Limitation Act, 1908"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "limitation",
+        "condonation of delay",
+        "condone"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9215,
+        "hits": 235,
+        "ratePct": 2.55,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-06-specific-performance",
+      "concept": "specific performance of a contract",
+      "queries": [
+        {
+          "query": "specific performance",
+          "terms": 2,
+          "querySha256": "858b410b3b01e1e023073155eba856899acd9b5a34bea896d8d44aad83e871b2"
+        },
+        {
+          "query": "suit for specific performance",
+          "terms": 4,
+          "querySha256": "dcd00deedae02db34b87915617dc8da879a89911861f0117810cc71dbca55469"
+        },
+        {
+          "query": "readiness and willingness specific performance",
+          "terms": 5,
+          "querySha256": "4594e15969940bff5d4dc7d9393b1a44b2736e6251632a93b61f00aeeb8616e5"
+        },
+        {
+          "query": "when will a court decree specific performance of an agreement to sell immovable property",
+          "terms": 14,
+          "querySha256": "f341c9c4b89c9088507f0ca437932c5d2959bdaac7324c655e7eb48eb9c79304"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "10",
+          "heading": "Cases in which specific performance of contract enforceable"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "11",
+          "heading": "Cases in which specific performance of contracts connected with trusts enforceable"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "12",
+          "heading": "Specific performance of part of contract"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "15",
+          "heading": "Who may obtain specific performance"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "23",
+          "heading": "Liquidation of damages not a bar to specific performance"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "24",
+          "heading": "Bar of suit for compensation for breach after dismissal of suit for specific performance"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "28",
+          "heading": "Rescission in certain circumstances of contracts for the sale or lease of immovable property, the specific performance of which has been decreed"
+        },
+        {
+          "statute": "The Specific Relief Act, 1963",
+          "section": "29",
+          "heading": "Alternative prayer for rescission in suit for specific performance"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "specific performance"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9364,
+        "hits": 26,
+        "ratePct": 0.278,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-07-arbitration-interim",
+      "concept": "interim relief in arbitration",
+      "queries": [
+        {
+          "query": "section 9 arbitration",
+          "terms": 3,
+          "querySha256": "5aa3479f4de2f9027b2978f23179fecf4f15f643b7fd92239d83011b223a65e3"
+        },
+        {
+          "query": "interim relief arbitration",
+          "terms": 3,
+          "querySha256": "a60b3ac3779a9c745a6342d3ab42f6bb258068c4583e1d06964b2232a13f40a8"
+        },
+        {
+          "query": "interim measures by court arbitration",
+          "terms": 5,
+          "querySha256": "d5eeac06393e91abb3618d0aa71970b8aa568fc10be03ffc7b5a3dbc7aab4dbd"
+        },
+        {
+          "query": "interim protection of assets pending an arbitral award",
+          "terms": 8,
+          "querySha256": "38c645bba52d454b8512ee76baad28d2a56104d735885816439b2b4ebfafc8c5"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Arbitration and Conciliation Act, 1996",
+          "section": "17",
+          "heading": "Interim measures ordered by arbitral tribunal"
+        },
+        {
+          "statute": "The Arbitration and Conciliation Act, 1996",
+          "section": "9",
+          "heading": "Interim measures, etc., by Court"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "arbitral",
+        "arbitration"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9633,
+        "hits": 31,
+        "ratePct": 0.322,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-08-cheque-dishonour",
+      "concept": "dishonour of cheque",
+      "queries": [
+        {
+          "query": "cheque bounce",
+          "terms": 2,
+          "querySha256": "d8156a59f4754ee0cf8459dd37a30758fc01c027926b81953b41f823d2b33203"
+        },
+        {
+          "query": "section 138 NI Act",
+          "terms": 4,
+          "querySha256": "3ace40063e9f1cf0d9cceac285dd2caa4b9b4ab59d47cabf8c3586188e475277"
+        },
+        {
+          "query": "dishonour of cheque complaint",
+          "terms": 4,
+          "querySha256": "51c538678f2dc2f66b8161d84b96f85459aa9c89491d326b27490fd0f1e8297b"
+        },
+        {
+          "query": "complaint for dishonour of a cheque for insufficiency of funds",
+          "terms": 10,
+          "querySha256": "03bc53122ea02867f2e9d4308186e83af9a509a95fdfdae83409cc0d84a8fc20"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Negotiable Instruments Act, 1881",
+          "section": "138",
+          "heading": "Dishonour of cheque for insufficiency, etc., of funds in the account"
+        },
+        {
+          "statute": "The Negotiable Instruments Act, 1881",
+          "section": "139",
+          "heading": "Presumption in favour of holder"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "cheque"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 8965,
+        "hits": 151,
+        "ratePct": 1.684,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-09-service-termination",
+      "concept": "termination of service",
+      "queries": [
+        {
+          "query": "termination of service",
+          "terms": 3,
+          "querySha256": "2584597dc7d8c5857c346017bcafc60e7f45c37a4ba323b1bf25c77e75da030e"
+        },
+        {
+          "query": "illegal termination",
+          "terms": 2,
+          "querySha256": "877c715d4cc100784f1b6c25cf5fe1195096ffcb452723f004b11c3180d93299"
+        },
+        {
+          "query": "wrongful dismissal from service",
+          "terms": 4,
+          "querySha256": "f3adfc1dbcbe1041940f211a495cd4180db9f45a179605b8841822cb13445a41"
+        },
+        {
+          "query": "termination of a workman without holding a departmental enquiry",
+          "terms": 9,
+          "querySha256": "d8fe840e4133e386b6a808c8f23fdf3376f462f614ee5b07bb12280abed6d519"
+        }
+      ],
+      "statuteAnchors": [],
+      "anchorState": "NOT_ANCHORABLE",
+      "requiredAny": [
+        "termination",
+        "dismissal",
+        "retrench"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9310,
+        "hits": 223,
+        "ratePct": 2.395,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-10-writ-maintainability",
+      "concept": "maintainability of a writ petition",
+      "queries": [
+        {
+          "query": "writ maintainability",
+          "terms": 2,
+          "querySha256": "d699a5c0897ab1ff0f710e65671c8be87b106693cb8654716ff12c748a196e37"
+        },
+        {
+          "query": "writ petition not maintainable",
+          "terms": 4,
+          "querySha256": "a72316387e0e3b0a5c271a9bba8de7a48a5b44ec2eacb9d6ab7414e5aa73c20a"
+        },
+        {
+          "query": "alternative remedy writ petition",
+          "terms": 4,
+          "querySha256": "20664fbe1db88a31ba66d4d8bd4b9a215c2776db1e4b16df80a7bccab963346d"
+        },
+        {
+          "query": "whether a writ petition is maintainable when an efficacious alternative remedy exists",
+          "terms": 12,
+          "querySha256": "431263b3465d17785259a8dd06535ad86fee413d6084679239c5f79b9951a47d"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Constitution of India",
+          "section": "226",
+          "heading": "Power of High Courts to issue certain writs"
+        },
+        {
+          "statute": "The Constitution of India",
+          "section": "32",
+          "heading": "Remedies for enforcement of rights conferred by this Part"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "writ",
+        "maintainab"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9574,
+        "hits": 3832,
+        "ratePct": 40.025,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-11-murder-transition",
+      "concept": "murder under the old and new criminal codes",
+      "queries": [
+        {
+          "query": "murder",
+          "terms": 1,
+          "querySha256": "fc3086f6d1e06809f75e0cc0a4b15ac7cb250744496f92c38989e3c13a12ad3d"
+        },
+        {
+          "query": "section 302 IPC",
+          "terms": 3,
+          "querySha256": "0cceded371edaea7c09bfb25fb646f550e6b8881a8594c761326ed5f0b423762"
+        },
+        {
+          "query": "punishment for murder BNS",
+          "terms": 4,
+          "querySha256": "b99c975e290654af9395d5a5c9ea543908af819ebdc882c827f473cd0a47fd92"
+        },
+        {
+          "query": "conviction for murder where the offence was committed before 1 July 2024",
+          "terms": 12,
+          "querySha256": "111841bd28401090c74e9533d9a46f6972ad6862af867fa5d543707d3e252710"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Bharatiya Nyaya Sanhita, 2023",
+          "section": "103",
+          "heading": "Punishment for murder"
+        },
+        {
+          "statute": "The Bharatiya Nyaya Sanhita, 2023",
+          "section": "104",
+          "heading": "Punishment for murder by life-convict"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "murder"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 9022,
+        "hits": 146,
+        "ratePct": 1.618,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    },
+    {
+      "id": "CQ-12-maintenance",
+      "concept": "maintenance of wife and children",
+      "queries": [
+        {
+          "query": "maintenance",
+          "terms": 1,
+          "querySha256": "8589c63b0943a62bfda9b35dccc71a30f5677386f6f7c644c3307465ce2cfa55"
+        },
+        {
+          "query": "interim maintenance wife",
+          "terms": 3,
+          "querySha256": "9e57dc06ee9b0e8ffc0defff34a63e8647bc19f759efc506a4d9c1a5a2d52361"
+        },
+        {
+          "query": "maintenance to wife and minor children",
+          "terms": 6,
+          "querySha256": "7dc88143e3ba2561324a297902236f8560f62f4c45092b3bc2bebf365af902a0"
+        },
+        {
+          "query": "quantum of interim maintenance payable to a wife unable to maintain herself",
+          "terms": 12,
+          "querySha256": "8bc700d8e32ad98341c0d80ed78076afb067657db8f254d0487f2ce10bf9cdb0"
+        }
+      ],
+      "statuteAnchors": [
+        {
+          "statute": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "section": "144",
+          "heading": "Order for maintenance of wives, children and parents"
+        }
+      ],
+      "anchorState": "ANCHORED_FROM_DB",
+      "requiredAny": [
+        "maintenance"
+      ],
+      "primaryTermDocumentFrequency": {
+        "sampled": 8860,
+        "hits": 147,
+        "ratePct": 1.659,
+        "method": "TABLESAMPLE SYSTEM (0.05) over judgments, ILIKE on full_text. An ESTIMATE with a stated denominator, never a corpus total."
+      },
+      "relevanceRule": "A result is ON-CONCEPT when its retrieved text contains at least one requiredAny term, case-insensitively. This measures TOPICALITY, never legal correctness, and no accuracy claim may be quoted from it."
+    }
+  ],
+  "wrongDomain": [
+    {
+      "id": "WD-01-commercial-vs-robbery",
+      "query": "breach of a commercial supply agreement and recovery of the outstanding invoice amount",
+      "domain": "commercial contract",
+      "expectedAny": [
+        "contract",
+        "agreement",
+        "supply",
+        "invoice",
+        "recovery"
+      ],
+      "forbiddenAny": [
+        "robbery",
+        "dacoity",
+        "culpable homicide",
+        "rape",
+        "murder"
+      ],
+      "provenance": "NEW3 bus 1076 — the IPC 394 robbery judgment returned for a commercial-breach query",
+      "querySha256": "132048552a7977af7f10e67e7a1b5257b165b60fde5e1d3ed4ee17d6f2d12bbb",
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    },
+    {
+      "id": "WD-02-tax-vs-bail",
+      "query": "input tax credit denied on the ground that the supplier did not deposit the tax",
+      "domain": "indirect tax",
+      "expectedAny": [
+        "tax credit",
+        "goods and services",
+        "gst",
+        "assessee",
+        "input tax"
+      ],
+      "forbiddenAny": [
+        "bail",
+        "anticipatory bail",
+        "custody",
+        "chargesheet"
+      ],
+      "provenance": "NEW1 — probes whether the sparse guard falls back to the largest population in the corpus",
+      "querySha256": "02e766697dea6e63ec7477d8871662eb58a15b970ecbe98b87c8374c49a3366f",
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    },
+    {
+      "id": "WD-03-matrimonial-vs-company",
+      "query": "restitution of conjugal rights and the wife declining to return to the matrimonial home",
+      "domain": "matrimonial",
+      "expectedAny": [
+        "conjugal",
+        "matrimonial",
+        "husband",
+        "wife",
+        "marriage"
+      ],
+      "forbiddenAny": [
+        "winding up",
+        "oppression and mismanagement",
+        "debenture",
+        "insolvency"
+      ],
+      "provenance": "NEW1 — matrimonial vocabulary overlaps civil-suit vocabulary heavily",
+      "querySha256": "55cc9b5e680d9499b67396896353b6707fd689e3f2d60a6ef058ed9ffcbd3a02",
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    },
+    {
+      "id": "WD-04-land-acquisition-vs-criminal-trespass",
+      "query": "compensation for land acquired for a national highway and the market value on the date of notification",
+      "domain": "land acquisition",
+      "expectedAny": [
+        "acquisition",
+        "compensation",
+        "market value",
+        "notification",
+        "award"
+      ],
+      "forbiddenAny": [
+        "criminal trespass",
+        "house-breaking",
+        "mischief",
+        "cognizable offence"
+      ],
+      "provenance": "NEW1 — \"land\" and \"possession\" appear in both branches",
+      "querySha256": "abd222e2cafef0a3ad4972f3bda3558fef49f8f5513adbb1f73b6168ecf112f3",
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    }
+  ],
+  "limits": [
+    "Topicality is not legal correctness. A judgment mentioning \"bail\" is on-concept by this rule even if it is useless to the advocate.",
+    "requiredAny terms are English. A Hindi or Devanagari judgment about the same concept scores as off-concept, so per-concept relevance is a FLOOR, not an estimate.",
+    "primaryTermDocumentFrequency is a 0.05% TABLESAMPLE and counts a passing mention the same as a holding. It is an estimate with a denominator, not a corpus count.",
+    "No arm result is recorded in this file. This artifact is the FROZEN QUESTION SET; answers live in COMMON_QUERY_SEARCH_CONTRACT_V1."
+  ],
+  "contentSha256": "1af9ed42fc7d3efacc40ecd68d940bd2dbbc59ed77074e1ac625fb9837758497"
+}

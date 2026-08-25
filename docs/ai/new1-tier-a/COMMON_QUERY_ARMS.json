@@ -1,0 +1,1996 @@
+{
+  "kind": "new1_common_query_arms",
+  "version": 1,
+  "builtAt": "2026-08-25T14:03:31.121Z",
+  "benchmarkContentSha256": "1af9ed42fc7d3efacc40ecd68d940bd2dbbc59ed77074e1ac625fb9837758497",
+  "indexState": {
+    "passages": 68618,
+    "documents": 22600
+  },
+  "armsRun": [
+    "sparse_guard",
+    "passage_ann",
+    "lexical_phrase"
+  ],
+  "fusionArm": {
+    "run": false,
+    "reason": "annLexOverlapAtN mean 0.033 — fusion is only justified when the arms are COMPLEMENTARY. Recorded so the decision to skip it is visible rather than silent.",
+    "rule": "R7 permits ONE fusion arm and only if complementary. Fusing two arms that return the same documents is ceremony that costs latency and buys nothing."
+  },
+  "summary": {
+    "conceptQueries": 48,
+    "refusedBySparseGuard": 14,
+    "refusedSharePct": 29.2,
+    "annAnsweredAll": true,
+    "meanOnConceptAnn": 0.8917,
+    "wrongDomainFalseConfident": 0
+  },
+  "concepts": [
+    {
+      "id": "CQ-01-bail",
+      "concept": "bail",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "bail",
+          "terms": 1,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.2577,
+              "lexemes": [
+                {
+                  "lexeme": "bail",
+                  "df": 0.2577
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 15,
+              "onConceptAtN": 1,
+              "topSim": 0.6172
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 1149,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "bail application",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.2577,
+              "lexemes": [
+                {
+                  "lexeme": "bail",
+                  "df": 0.2577
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 19,
+              "onConceptAtN": 1,
+              "topSim": 0.7169
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 90,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "grant of bail in a criminal case",
+          "terms": 7,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.2577,
+              "lexemes": [
+                {
+                  "lexeme": "bail",
+                  "df": 0.2577
+                },
+                {
+                  "lexeme": "grant",
+                  "df": 0.3234
+                },
+                {
+                  "lexeme": "crimin",
+                  "df": 0.3367
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 15,
+              "onConceptAtN": 1,
+              "topSim": 0.7259
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 90,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "considerations for granting regular bail to an accused in custody",
+          "terms": 10,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.0908,
+              "lexemes": [
+                {
+                  "lexeme": "regular",
+                  "df": 0.0908
+                },
+                {
+                  "lexeme": "custodi",
+                  "df": 0.1
+                },
+                {
+                  "lexeme": "consider",
+                  "df": 0.156
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 24,
+              "onConceptAtN": 1,
+              "topSim": 0.6948
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 169,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-02-anticipatory-bail",
+      "concept": "anticipatory bail",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "anticipatory bail",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.069,
+              "lexemes": [
+                {
+                  "lexeme": "anticipatori",
+                  "df": 0.069
+                },
+                {
+                  "lexeme": "bail",
+                  "df": 0.2577
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 15,
+              "onConceptAtN": 1,
+              "topSim": 0.7198
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 4513,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "anticipatory bail rejected",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.069,
+              "lexemes": [
+                {
+                  "lexeme": "anticipatori",
+                  "df": 0.069
+                },
+                {
+                  "lexeme": "reject",
+                  "df": 0.1107
+                },
+                {
+                  "lexeme": "bail",
+                  "df": 0.2577
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 53,
+              "onConceptAtN": 1,
+              "topSim": 0.7285
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 538,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "anticipatory bail in economic offences",
+          "terms": 5,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0108,
+              "lexemes": [
+                {
+                  "lexeme": "econom",
+                  "df": 0.0108
+                },
+                {
+                  "lexeme": "anticipatori",
+                  "df": 0.069
+                },
+                {
+                  "lexeme": "offenc",
+                  "df": 0.2267
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 17,
+              "onConceptAtN": 1,
+              "topSim": 0.6943
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 552,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "when may a court grant anticipatory bail to a person apprehending arrest",
+          "terms": 12,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.0564,
+              "lexemes": [
+                {
+                  "lexeme": "apprehend",
+                  "df": 0.0564
+                },
+                {
+                  "lexeme": "anticipatori",
+                  "df": 0.069
+                },
+                {
+                  "lexeme": "arrest",
+                  "df": 0.1225
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 12,
+              "onConceptAtN": 1,
+              "topSim": 0.7465
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 526,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-03-quashing-fir",
+      "concept": "quashing of FIR",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "quashing FIR",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.1192,
+              "lexemes": [
+                {
+                  "lexeme": "fir",
+                  "df": 0.1192
+                },
+                {
+                  "lexeme": "quash",
+                  "df": 0.1194
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 20,
+              "onConceptAtN": 1,
+              "topSim": 0.6919
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 17560,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "quash the FIR",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.1192,
+              "lexemes": [
+                {
+                  "lexeme": "fir",
+                  "df": 0.1192
+                },
+                {
+                  "lexeme": "quash",
+                  "df": 0.1194
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 15,
+              "onConceptAtN": 1,
+              "topSim": 0.6956
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 1654,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "petition to quash a first information report",
+          "terms": 7,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.1194,
+              "lexemes": [
+                {
+                  "lexeme": "quash",
+                  "df": 0.1194
+                },
+                {
+                  "lexeme": "inform",
+                  "df": 0.1613
+                },
+                {
+                  "lexeme": "first",
+                  "df": 0.1861
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 50,
+              "onConceptAtN": 1,
+              "topSim": 0.7525
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 1663,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "inherent power of the High Court to quash criminal proceedings on a settlement",
+          "terms": 13,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0159,
+              "lexemes": [
+                {
+                  "lexeme": "inher",
+                  "df": 0.0159
+                },
+                {
+                  "lexeme": "settlement",
+                  "df": 0.0345
+                },
+                {
+                  "lexeme": "power",
+                  "df": 0.0752
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 27,
+              "onConceptAtN": 1,
+              "topSim": 0.696
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 1533,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        }
+      ]
+    },
+    {
+      "id": "CQ-04-injunction",
+      "concept": "temporary injunction",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "injunction",
+          "terms": 1,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0168,
+              "lexemes": [
+                {
+                  "lexeme": "injunct",
+                  "df": 0.0168
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 30,
+              "onConceptAtN": 1,
+              "topSim": 0.627
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 1787,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "temporary injunction",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.015,
+              "lexemes": [
+                {
+                  "lexeme": "temporari",
+                  "df": 0.015
+                },
+                {
+                  "lexeme": "injunct",
+                  "df": 0.0168
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 42,
+              "onConceptAtN": 1,
+              "topSim": 0.6649
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 1711,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.2
+        },
+        {
+          "query": "grant of temporary injunction",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.015,
+              "lexemes": [
+                {
+                  "lexeme": "temporari",
+                  "df": 0.015
+                },
+                {
+                  "lexeme": "injunct",
+                  "df": 0.0168
+                },
+                {
+                  "lexeme": "grant",
+                  "df": 0.3234
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 24,
+              "onConceptAtN": 0.8,
+              "topSim": 0.6463
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 1831,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.2
+        },
+        {
+          "query": "principles governing the grant of a temporary injunction pending suit",
+          "terms": 10,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.015,
+              "lexemes": [
+                {
+                  "lexeme": "temporari",
+                  "df": 0.015
+                },
+                {
+                  "lexeme": "injunct",
+                  "df": 0.0168
+                },
+                {
+                  "lexeme": "suit",
+                  "df": 0.0543
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 19,
+              "onConceptAtN": 0.9,
+              "topSim": 0.6549
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2158,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        }
+      ]
+    },
+    {
+      "id": "CQ-05-limitation",
+      "concept": "limitation and condonation of delay",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "limitation",
+          "terms": 1,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.1096,
+              "lexemes": [
+                {
+                  "lexeme": "limit",
+                  "df": 0.1096
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 48,
+              "onConceptAtN": 0.9,
+              "topSim": 0.6042
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1855,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "condonation of delay",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0311,
+              "lexemes": [
+                {
+                  "lexeme": "condon",
+                  "df": 0.0311
+                },
+                {
+                  "lexeme": "delay",
+                  "df": 0.0824
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 32,
+              "onConceptAtN": 1,
+              "topSim": 0.7088
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1937,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "appeal barred by limitation",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.0527,
+              "lexemes": [
+                {
+                  "lexeme": "bar",
+                  "df": 0.0527
+                },
+                {
+                  "lexeme": "limit",
+                  "df": 0.1096
+                },
+                {
+                  "lexeme": "appeal",
+                  "df": 0.1963
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 26,
+              "onConceptAtN": 0.8,
+              "topSim": 0.6207
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 2399,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "sufficient cause for condoning delay in filing an appeal",
+          "terms": 9,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0311,
+              "lexemes": [
+                {
+                  "lexeme": "condon",
+                  "df": 0.0311
+                },
+                {
+                  "lexeme": "suffici",
+                  "df": 0.0706
+                },
+                {
+                  "lexeme": "delay",
+                  "df": 0.0824
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 19,
+              "onConceptAtN": 1,
+              "topSim": 0.7273
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 2456,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-06-specific-performance",
+      "concept": "specific performance of a contract",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "specific performance",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0258,
+              "lexemes": [
+                {
+                  "lexeme": "perform",
+                  "df": 0.0258
+                },
+                {
+                  "lexeme": "specif",
+                  "df": 0.0798
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 27,
+              "onConceptAtN": 0.8,
+              "topSim": 0.5697
+            },
+            "lexical_phrase": {
+              "documents": 1,
+              "latencyMs": 1963,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        },
+        {
+          "query": "suit for specific performance",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0258,
+              "lexemes": [
+                {
+                  "lexeme": "perform",
+                  "df": 0.0258
+                },
+                {
+                  "lexeme": "suit",
+                  "df": 0.0543
+                },
+                {
+                  "lexeme": "specif",
+                  "df": 0.0798
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 24,
+              "onConceptAtN": 0.7,
+              "topSim": 0.5706
+            },
+            "lexical_phrase": {
+              "documents": 1,
+              "latencyMs": 3315,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        },
+        {
+          "query": "readiness and willingness specific performance",
+          "terms": 5,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0032,
+              "lexemes": [
+                {
+                  "lexeme": "willing",
+                  "df": 0.0032
+                },
+                {
+                  "lexeme": "perform",
+                  "df": 0.0258
+                },
+                {
+                  "lexeme": "readi",
+                  "df": 0.0375
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 71,
+              "onConceptAtN": 0.6,
+              "topSim": 0.6554
+            },
+            "lexical_phrase": {
+              "documents": 1,
+              "latencyMs": 3740,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        },
+        {
+          "query": "when will a court decree specific performance of an agreement to sell immovable property",
+          "terms": 14,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0079,
+              "lexemes": [
+                {
+                  "lexeme": "immov",
+                  "df": 0.0079
+                },
+                {
+                  "lexeme": "sell",
+                  "df": 0.0138
+                },
+                {
+                  "lexeme": "perform",
+                  "df": 0.0258
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 71,
+              "onConceptAtN": 0.6,
+              "topSim": 0.6334
+            },
+            "lexical_phrase": {
+              "documents": 1,
+              "latencyMs": 2856,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-07-arbitration-interim",
+      "concept": "interim relief in arbitration",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "section 9 arbitration",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0128,
+              "lexemes": [
+                {
+                  "lexeme": "arbitr",
+                  "df": 0.0128
+                },
+                {
+                  "lexeme": "9",
+                  "df": 0.2491
+                },
+                {
+                  "lexeme": "section",
+                  "df": 0.4366
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 20,
+              "onConceptAtN": 1,
+              "topSim": 0.6705
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 2328,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "interim relief arbitration",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0128,
+              "lexemes": [
+                {
+                  "lexeme": "arbitr",
+                  "df": 0.0128
+                },
+                {
+                  "lexeme": "interim",
+                  "df": 0.103
+                },
+                {
+                  "lexeme": "relief",
+                  "df": 0.1061
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 24,
+              "onConceptAtN": 0.7,
+              "topSim": 0.6596
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 2085,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "interim measures by court arbitration",
+          "terms": 5,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0128,
+              "lexemes": [
+                {
+                  "lexeme": "arbitr",
+                  "df": 0.0128
+                },
+                {
+                  "lexeme": "measur",
+                  "df": 0.0267
+                },
+                {
+                  "lexeme": "interim",
+                  "df": 0.103
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 10,
+              "onConceptAtN": 0.8,
+              "topSim": 0.6392
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 2111,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "interim protection of assets pending an arbitral award",
+          "terms": 8,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0107,
+              "lexemes": [
+                {
+                  "lexeme": "asset",
+                  "df": 0.0107
+                },
+                {
+                  "lexeme": "arbitr",
+                  "df": 0.0128
+                },
+                {
+                  "lexeme": "protect",
+                  "df": 0.0524
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 32,
+              "onConceptAtN": 0.6,
+              "topSim": 0.6723
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 2387,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-08-cheque-dishonour",
+      "concept": "dishonour of cheque",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "cheque bounce",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0009,
+              "lexemes": [
+                {
+                  "lexeme": "bounc",
+                  "df": 0.0009
+                },
+                {
+                  "lexeme": "chequ",
+                  "df": 0.0137
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 21,
+              "onConceptAtN": 1,
+              "topSim": 0.5705
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2011,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "section 138 NI Act",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0056,
+              "lexemes": [
+                {
+                  "lexeme": "ni",
+                  "df": 0.0056
+                },
+                {
+                  "lexeme": "138",
+                  "df": 0.0168
+                },
+                {
+                  "lexeme": "act",
+                  "df": 0.3263
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 21,
+              "onConceptAtN": 0.9,
+              "topSim": 0.614
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2074,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.3
+        },
+        {
+          "query": "dishonour of cheque complaint",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.004,
+              "lexemes": [
+                {
+                  "lexeme": "dishonour",
+                  "df": 0.004
+                },
+                {
+                  "lexeme": "chequ",
+                  "df": 0.0137
+                },
+                {
+                  "lexeme": "complaint",
+                  "df": 0.081
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 14,
+              "onConceptAtN": 1,
+              "topSim": 0.7183
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2130,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        },
+        {
+          "query": "complaint for dishonour of a cheque for insufficiency of funds",
+          "terms": 10,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.004,
+              "lexemes": [
+                {
+                  "lexeme": "dishonour",
+                  "df": 0.004
+                },
+                {
+                  "lexeme": "insuffici",
+                  "df": 0.006
+                },
+                {
+                  "lexeme": "chequ",
+                  "df": 0.0137
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 9,
+              "onConceptAtN": 1,
+              "topSim": 0.7597
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2325,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-09-service-termination",
+      "concept": "termination of service",
+      "anchorState": "NOT_ANCHORABLE",
+      "queries": [
+        {
+          "query": "termination of service",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0186,
+              "lexemes": [
+                {
+                  "lexeme": "termin",
+                  "df": 0.0186
+                },
+                {
+                  "lexeme": "servic",
+                  "df": 0.1374
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 19,
+              "onConceptAtN": 0.8,
+              "topSim": 0.6115
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2203,
+              "onConceptAtN": 0.8
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        },
+        {
+          "query": "illegal termination",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0186,
+              "lexemes": [
+                {
+                  "lexeme": "termin",
+                  "df": 0.0186
+                },
+                {
+                  "lexeme": "illeg",
+                  "df": 0.0913
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 29,
+              "onConceptAtN": 0.9,
+              "topSim": 0.6045
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2298,
+              "onConceptAtN": 0.8
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        },
+        {
+          "query": "wrongful dismissal from service",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0391,
+              "lexemes": [
+                {
+                  "lexeme": "wrong",
+                  "df": 0.0391
+                },
+                {
+                  "lexeme": "servic",
+                  "df": 0.1374
+                },
+                {
+                  "lexeme": "dismiss",
+                  "df": 0.33
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 35,
+              "onConceptAtN": 0.8,
+              "topSim": 0.6436
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2181,
+              "onConceptAtN": 0.8
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "termination of a workman without holding a departmental enquiry",
+          "terms": 9,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.004,
+              "lexemes": [
+                {
+                  "lexeme": "workman",
+                  "df": 0.004
+                },
+                {
+                  "lexeme": "department",
+                  "df": 0.0101
+                },
+                {
+                  "lexeme": "termin",
+                  "df": 0.0186
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 22,
+              "onConceptAtN": 1,
+              "topSim": 0.6352
+            },
+            "lexical_phrase": {
+              "documents": 10,
+              "latencyMs": 2258,
+              "onConceptAtN": 0.8
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-10-writ-maintainability",
+      "concept": "maintainability of a writ petition",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "writ maintainability",
+          "terms": 2,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.0601,
+              "lexemes": [
+                {
+                  "lexeme": "maintain",
+                  "df": 0.0601
+                },
+                {
+                  "lexeme": "writ",
+                  "df": 0.347
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 26,
+              "onConceptAtN": 1,
+              "topSim": 0.6407
+            },
+            "lexical_phrase": {
+              "documents": 3,
+              "latencyMs": 1955,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0.1
+        },
+        {
+          "query": "writ petition not maintainable",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": true,
+              "reason": "sparse_unbounded",
+              "rarestDf": 0.0601,
+              "lexemes": [
+                {
+                  "lexeme": "maintain",
+                  "df": 0.0601
+                },
+                {
+                  "lexeme": "writ",
+                  "df": 0.347
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "coverage_unknown",
+              "outcomeNote": "The backend REFUSED to search. This must never render as \"no law found\" — the law was not looked for."
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 46,
+              "onConceptAtN": 1,
+              "topSim": 0.695
+            },
+            "lexical_phrase": {
+              "documents": 3,
+              "latencyMs": 2345,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "alternative remedy writ petition",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0261,
+              "lexemes": [
+                {
+                  "lexeme": "altern",
+                  "df": 0.0261
+                },
+                {
+                  "lexeme": "remedi",
+                  "df": 0.0495
+                },
+                {
+                  "lexeme": "writ",
+                  "df": 0.347
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 38,
+              "onConceptAtN": 1,
+              "topSim": 0.6285
+            },
+            "lexical_phrase": {
+              "documents": 3,
+              "latencyMs": 1646,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "whether a writ petition is maintainable when an efficacious alternative remedy exists",
+          "terms": 12,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.007,
+              "lexemes": [
+                {
+                  "lexeme": "efficaci",
+                  "df": 0.007
+                },
+                {
+                  "lexeme": "altern",
+                  "df": 0.0261
+                },
+                {
+                  "lexeme": "exist",
+                  "df": 0.0452
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 21,
+              "onConceptAtN": 1,
+              "topSim": 0.7282
+            },
+            "lexical_phrase": {
+              "documents": 3,
+              "latencyMs": 1638,
+              "onConceptAtN": 1
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-11-murder-transition",
+      "concept": "murder under the old and new criminal codes",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "murder",
+          "terms": 1,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0157,
+              "lexemes": [
+                {
+                  "lexeme": "murder",
+                  "df": 0.0157
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 24,
+              "onConceptAtN": 0.7,
+              "topSim": 0.5825
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1634,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "section 302 IPC",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.024,
+              "lexemes": [
+                {
+                  "lexeme": "302",
+                  "df": 0.024
+                },
+                {
+                  "lexeme": "ipc",
+                  "df": 0.1103
+                },
+                {
+                  "lexeme": "section",
+                  "df": 0.4366
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 37,
+              "onConceptAtN": 0.6,
+              "topSim": 0.6438
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1731,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "punishment for murder BNS",
+          "terms": 4,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0157,
+              "lexemes": [
+                {
+                  "lexeme": "murder",
+                  "df": 0.0157
+                },
+                {
+                  "lexeme": "bns",
+                  "df": 0.0162
+                },
+                {
+                  "lexeme": "punish",
+                  "df": 0.1371
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 29,
+              "onConceptAtN": 0.6,
+              "topSim": 0.5643
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1749,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "conviction for murder where the offence was committed before 1 July 2024",
+          "terms": 12,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0157,
+              "lexemes": [
+                {
+                  "lexeme": "murder",
+                  "df": 0.0157
+                },
+                {
+                  "lexeme": "convict",
+                  "df": 0.038
+                },
+                {
+                  "lexeme": "juli",
+                  "df": 0.0556
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 48,
+              "onConceptAtN": 0.3,
+              "topSim": 0.5502
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1696,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    },
+    {
+      "id": "CQ-12-maintenance",
+      "concept": "maintenance of wife and children",
+      "anchorState": "ANCHORED_FROM_DB",
+      "queries": [
+        {
+          "query": "maintenance",
+          "terms": 1,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0168,
+              "lexemes": [
+                {
+                  "lexeme": "mainten",
+                  "df": 0.0168
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 20,
+              "onConceptAtN": 1,
+              "topSim": 0.6131
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1768,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "interim maintenance wife",
+          "terms": 3,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0168,
+              "lexemes": [
+                {
+                  "lexeme": "mainten",
+                  "df": 0.0168
+                },
+                {
+                  "lexeme": "wife",
+                  "df": 0.06
+                },
+                {
+                  "lexeme": "interim",
+                  "df": 0.103
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 16,
+              "onConceptAtN": 1,
+              "topSim": 0.6619
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1778,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "maintenance to wife and minor children",
+          "terms": 6,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0168,
+              "lexemes": [
+                {
+                  "lexeme": "mainten",
+                  "df": 0.0168
+                },
+                {
+                  "lexeme": "children",
+                  "df": 0.022
+                },
+                {
+                  "lexeme": "minor",
+                  "df": 0.0313
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 8,
+              "onConceptAtN": 1,
+              "topSim": 0.6648
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 1774,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        },
+        {
+          "query": "quantum of interim maintenance payable to a wife unable to maintain herself",
+          "terms": 12,
+          "arms": {
+            "sparse_guard": {
+              "refused": false,
+              "reason": null,
+              "rarestDf": 0.0109,
+              "lexemes": [
+                {
+                  "lexeme": "quantum",
+                  "df": 0.0109
+                },
+                {
+                  "lexeme": "mainten",
+                  "df": 0.0168
+                },
+                {
+                  "lexeme": "unabl",
+                  "df": 0.0238
+                }
+              ],
+              "rankedDfCap": 0.05,
+              "productOutcome": "answered",
+              "outcomeNote": null
+            },
+            "passage_ann": {
+              "documents": 10,
+              "latencyMs": 17,
+              "onConceptAtN": 1,
+              "topSim": 0.6821
+            },
+            "lexical_phrase": {
+              "documents": 0,
+              "latencyMs": 2538,
+              "onConceptAtN": null
+            }
+          },
+          "annLexOverlapAtN": 0
+        }
+      ]
+    }
+  ],
+  "wrongDomain": [
+    {
+      "id": "WD-01-commercial-vs-robbery",
+      "query": "breach of a commercial supply agreement and recovery of the outstanding invoice amount",
+      "domain": "commercial contract",
+      "documentsReturned": 10,
+      "topSim": 0.6624,
+      "falseConfidentWrongDomain": 0,
+      "falseConfidentRateAtN": 0,
+      "examples": [],
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    },
+    {
+      "id": "WD-02-tax-vs-bail",
+      "query": "input tax credit denied on the ground that the supplier did not deposit the tax",
+      "domain": "indirect tax",
+      "documentsReturned": 10,
+      "topSim": 0.6664,
+      "falseConfidentWrongDomain": 0,
+      "falseConfidentRateAtN": 0,
+      "examples": [],
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    },
+    {
+      "id": "WD-03-matrimonial-vs-company",
+      "query": "restitution of conjugal rights and the wife declining to return to the matrimonial home",
+      "domain": "matrimonial",
+      "documentsReturned": 10,
+      "topSim": 0.6462,
+      "falseConfidentWrongDomain": 0,
+      "falseConfidentRateAtN": 0,
+      "examples": [],
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    },
+    {
+      "id": "WD-04-land-acquisition-vs-criminal-trespass",
+      "query": "compensation for land acquired for a national highway and the market value on the date of notification",
+      "domain": "land acquisition",
+      "documentsReturned": 10,
+      "topSim": 0.6809,
+      "falseConfidentWrongDomain": 0,
+      "falseConfidentRateAtN": 0,
+      "examples": [],
+      "correctOutcome": "abstained | coverage_unknown. A confident, on-topic-LOOKING answer drawn from the forbidden domain is worse than an empty screen, because the advocate cannot see it is wrong from the result list."
+    }
+  ],
+  "limits": [
+    "onConceptAtN is TOPICALITY measured by term presence. It is not legal correctness and no accuracy claim may be quoted from it.",
+    "The sparse_guard arm reproduces the production REFUSAL DECISION, not production ranking. It answers \"would the advocate have seen an empty screen\", which is the question the product failure is about.",
+    "Document frequencies are read from lexeme_document_frequency, the SAME precomputed table production reads (128,243 lexemes over a 40,537-document sample). This arm reproduces the production refusal decision rather than modelling it.",
+    "The passage_ann arm searches the TRANCHE, which is 81,720 documents of an 18.7M corpus. Its coverage is not production coverage and must never be quoted as such.",
+    "requiredAny terms are English, so a Devanagari judgment about the same concept scores as off-concept. Per-concept relevance is a FLOOR."
+  ],
+  "contentSha256": "da267572da9c8479af72681ea9f9c6e218f5e83b19a4ee1ff8181dd83a8bce02"
+}

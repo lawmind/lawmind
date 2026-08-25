@@ -148,3 +148,8 @@ docs/ai/lcc-text-safety/corpus-confirm.jsonl
 # `*.log` rule at the top of this file already covers their stdout counterparts;
 # this covers the stderr side that rule misses.
 /*.err
+
+# NEW1 tranche manifest: 38MB of document ids, regenerable byte-identically from
+# the committed selector + TRANCHE_FRAME_COMMITMENT.json. The summary IS committed.
+docs/ai/new1-tier-a/TRANCHE_100K_MANIFEST.json
+docs/ai/new1-tier-a/passage-eval.checkpoint.jsonl

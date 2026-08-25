@@ -1,0 +1,33 @@
+NEW1 — 25 Aug 2026, 10:55Z — PAUSED FOR R7 §9 (NEW1-P0, decisive passage validation sprint).
+
+The orchestration file R7 (sha256 6e868d64...) directs NEW1 to pause the HEAD walk
+for this sprint and record exact HEAD state. This file is that pause.
+
+STATE AT PAUSE (all OBSERVED_BY_LIVE_DB / OBSERVED_BY_EXECUTION):
+  new1_doc_vector_stage       2,026,872 rows
+  new1_doc_vector_stage_refused  72,092 rows
+  accounted                   2,098,964 of Tier A 9,700,157  (21.6%)
+  newest staged row           2026-08-25T05:03:57.741Z
+  contract hash               5b5d02384b46c96c   recipe HEAD:4800
+  runner position             worklist 120/864, tier-a-batch-00141
+  worklist source             docs/ai/new1-tier-a/stage-coverage.json
+
+WHY THE PAUSE COSTS NOTHING RIGHT NOW: the walk was producing ZERO durable output.
+Batches 00131..00141 each reported inserted:0, tokens:0, skippedAlreadyStaged ~8,800.
+stage_rows was 2,026,872 at 05:03Z and still 2,026,872 at 10:52Z — 65 minutes of GPU
+and DB with an output delta of 0. State was RUNNING_REPLAYING, not RUNNING_PROGRESSING.
+
+ROOT CAUSE OF THE REPLAY, so the resume does not repeat it: stage-coverage.json was
+measured 2026-08-20T23:19:43Z and has NOT been re-measured since. It records batch
+00131 as staged:13/9990. The live stage now holds 8,811 of that same batch. The
+runner re-reads the worklist file per run but nobody re-ran the CENSUS that writes it,
+so the walk is replaying ~119 batches that were completed between 20 and 25 Aug.
+
+RESUME PROCEDURE (do not skip step 1):
+  1. node services/harness/src/stage-coverage-census.mjs      <- REQUIRED, the file is stale
+  2. delete this pause file
+  3. the keeper relaunches on its next silence check
+Resuming without step 1 replays finished batches and produces no rows.
+
+Owner: NEW1 lane, session 5343b8ef-1d20-4672-9f59-2f3f138c6772.
+Disposition after G3 (resume / coarse-only / superseded / abandoned) is NEW1-P1.

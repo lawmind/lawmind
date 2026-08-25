@@ -1,0 +1,120 @@
+{
+  "kind": "new1_abstention_candidate",
+  "version": 1,
+  "builtAt": "2026-08-25T13:58:40.534Z",
+  "arm": "ann_ef200",
+  "trancheContentSha256": "b8b97735833f66c9e4b8c12dcbeac51ba585d468dff56773b9ddb29f8267589a",
+  "indexState": {
+    "passages": 66867,
+    "documentsIndexed": 22000,
+    "trancheSelected": 81510,
+    "forcedGold": 210,
+    "buildComplete": false,
+    "note": "documentsIndexed is read from the DB, never from the manifest. If buildComplete is false these metrics describe a PREFIX of the tranche — and because the embed order is global priority-hash order, that prefix is a uniform sample of it."
+  },
+  "discipline": {
+    "tunedOn": "DEVELOPMENT only",
+    "heldOutUse": "scored ONCE from the frozen thresholds, to report. Never to choose.",
+    "splitUnit": "TARGET CLUSTER, never the task — two tasks sharing an authority are not independent.",
+    "fifthOwnsHiddenHoldout": true,
+    "note": "If DEVELOPMENT and HELD_OUT disagree, the disagreement is the finding. It is not a reason to re-tune."
+  },
+  "objective": {
+    "formula": "usefulCoverageRate - W * falseConfidentRate",
+    "falseConfidentWeight": 4,
+    "why": "A false-confident answer costs an advocate their credibility in open court. A false abstention costs them one search. A symmetric objective ships the expensive error."
+  },
+  "thresholds": {
+    "answer": 0.2,
+    "review": 0.2,
+    "gap": 0.08
+  },
+  "thresholdOnGridEdge": [
+    "answer"
+  ],
+  "thresholdEdgeNote": "THE CHOSEN THRESHOLD SITS ON A GRID EDGE (answer). An optimum on a boundary is the search saying the answer lies outside where it looked. This candidate must NOT be deployed on this evidence: ask what shape question the edge is really posing.",
+  "signalDistribution": {
+    "topSim": {
+      "p05": 0.6219,
+      "p50": 0.6847,
+      "p95": 0.7672,
+      "n": 24
+    },
+    "simGap": {
+      "p05": 0.0056,
+      "p50": 0.0306,
+      "p95": 0.1225,
+      "n": 24
+    }
+  },
+  "development": {
+    "tasks": 24,
+    "answeredRight": 5,
+    "answeredWrong": 0,
+    "abstainedRight": 0,
+    "abstainedWrong": 0,
+    "reviewRequired": 19,
+    "coverageUnknown": 0,
+    "falseConfidentRate": 0,
+    "falseAbstentionRate": 0,
+    "usefulCoverageRate": 0.2083
+  },
+  "heldOut": {
+    "tasks": 16,
+    "answeredRight": 2,
+    "answeredWrong": 0,
+    "abstainedRight": 0,
+    "abstainedWrong": 0,
+    "reviewRequired": 14,
+    "coverageUnknown": 0,
+    "falseConfidentRate": 0,
+    "falseAbstentionRate": 0,
+    "usefulCoverageRate": 0.125
+  },
+  "heldOutByFamily": {
+    "doctrine": {
+      "tasks": 5,
+      "answeredRight": 1,
+      "answeredWrong": 0,
+      "abstainedRight": 0,
+      "abstainedWrong": 0,
+      "reviewRequired": 4,
+      "coverageUnknown": 0,
+      "falseConfidentRate": 0,
+      "falseAbstentionRate": 0,
+      "usefulCoverageRate": 0.2
+    },
+    "fact_pattern": {
+      "tasks": 4,
+      "state": "NOT_MEASURED — fewer than 5 tasks, a rate over this would be noise"
+    },
+    "long_narrative": {
+      "tasks": 1,
+      "state": "NOT_MEASURED — fewer than 5 tasks, a rate over this would be noise"
+    },
+    "supporting_authority": {
+      "tasks": 2,
+      "state": "NOT_MEASURED — fewer than 5 tasks, a rate over this would be noise"
+    },
+    "adverse_authority": {
+      "tasks": 2,
+      "state": "NOT_MEASURED — fewer than 5 tasks, a rate over this would be noise"
+    },
+    "current_law": {
+      "tasks": 2,
+      "state": "NOT_MEASURED — fewer than 5 tasks, a rate over this would be noise"
+    }
+  },
+  "outcomeMapping": {
+    "answered": "topSim >= answer AND simGap >= gap",
+    "review_required": "topSim >= review, but not answered",
+    "abstained": "topSim < review",
+    "coverage_unknown": "STRUCTURAL, never a score: the query was refused before ranking, or its target population is knowably outside the index. A similarity threshold CANNOT produce this state, and conflating it with abstained is what turns a backend refusal into \"no law found\" on the advocate's screen."
+  },
+  "limits": [
+    "The V3.1 task set is almost entirely tasks that SHOULD be answered, so falseAbstentionRate is well estimated and falseConfidentRate is estimated over a thin negative set.",
+    "Wrong-domain and false-premise negatives live in COMMON_QUERY_BENCHMARK.json and ADVOCATE100 and are scored separately — an aggregate here would hide how thin they are.",
+    "These thresholds are calibrated against the TRANCHE index, not production. They are a candidate, not a deployable setting: the score distribution of a 249k-passage index is not that of the production document index."
+  ],
+  "contentSha256": "2bc25517c6e46e19b91c25d7f5cd1b846fe29fe1665f8f89a25122fe06bffca5"
+}

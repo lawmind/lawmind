@@ -1,0 +1,17 @@
+{
+  "kind": "new1_passage_index_build",
+  "builtAt": "2026-08-25T13:53:17.158Z",
+  "passages": 64960,
+  "documents": 21400,
+  "heapBytes": 371105792,
+  "indexBytes": 531357696,
+  "buildSeconds": 62.5,
+  "walBytesDuringBuild": 262790936,
+  "params": {
+    "m": 16,
+    "efConstruction": 64,
+    "maintenanceWorkMem": "1GB",
+    "maxParallelMaintenanceWorkers": 1
+  },
+  "note": "Build time and index size are the numbers the full-corpus passage decision turns on. maintenance_work_mem is recorded because a build time quoted without it is not reproducible."
+}
