@@ -539,8 +539,20 @@ async function main() {
           }
         }
         if (!warmedUp) {
+          /**
+           * Deliberately does NOT claim this is a failure.
+           *
+           * The first wording said "this is a genuine failure, not a slow model
+           * load", and the very first time it fired it was wrong: the sidecar
+           * answered at ~200s because another GPU consumer was competing for the
+           * card during its load. The ceiling cannot distinguish a dead sidecar
+           * from a very slow one — that is precisely what it does not know — so
+           * it reports the fact and hands the judgement back to normal polling
+           * rather than asserting a cause it cannot see.
+           */
           note(
-            `sidecar STILL not answering ${WARMUP_CEILING_MS / 1000}s after spawn — this is a genuine failure, not a slow model load.`,
+            `sidecar has not answered ${WARMUP_CEILING_MS / 1000}s after spawn — resuming normal health polling. ` +
+              'This may be a dead sidecar or a very slow load under GPU contention; this line cannot tell them apart.',
           );
         }
         lastOk = Date.now();
