@@ -75,7 +75,8 @@
     "safety:temporal": "tsx --env-file=../../.env src/temporal-correctness-cli.ts",
     "rep:lab3": "tsx --env-file=../../.env src/representation-lab-v3-cli.ts",
     "frame:eligibility": "tsx --env-file=../../.env src/eligibility-frame-cli.ts",
-    "long:posed": "tsx --env-file=../../.env src/long-fact-posed-cli.ts"
+    "long:posed": "tsx --env-file=../../.env src/long-fact-posed-cli.ts",
+    "product:ten": "tsx --env-file=../../.env src/new3-ten-matter-cli.ts"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",
@@ -83,6 +84,7 @@
     "postgres": "3.4.9",
     "tsx": "4.23.1",
     "@lawmind/embed": "workspace:*",
-    "@lawmind/ingest": "workspace:*"
+    "@lawmind/ingest": "workspace:*",
+    "@lawmind/auth": "workspace:*"
   }
 }
