@@ -113,6 +113,51 @@ beside it. Any class whose coverage is too thin is reported as
 **No derived subject label may ever reach the product.** It exists to stratify an
 experiment.
 
+### 3.1 The measurement that settles it
+
+A bounded `TABLESAMPLE SYSTEM (0.1)` over `judgments` — 18,567 rows, deliberately
+*not* a full-table scan, because an unbounded aggregate on 15.9M rows while my own
+walk reads the same disk is precisely what I reported to LCC:
+
+| signal | populated | null | verdict |
+| --- | ---: | ---: | --- |
+| `case_number` registry prefix | **98.7%** | 1.3% | ✅ usable |
+| `case_type` (criminal/civil) | **24.1%** | **75.6%** | ❌ cannot carry the stratum |
+| `hc_document_class` | **25.7%** | **74.3%** | ❌ cannot carry the stratum |
+
+**`case_type` is NULL for three quarters of the corpus.** This kills option (a)
+outright: stratifying criminal/civil on the enum would silently restrict the
+tranche to the 24% that happens to be classified, and that 24% is not a random
+quarter — it is whatever the classifier has reached. The registry prefix covers
+98.7% and is the only signal that can carry subject at all.
+
+Note also that NULL here is **two populations, not one** — never classified, and
+looked at but refused. Neither is "civil". Any count that treats
+`case_type IS NULL` as a subject class is wrong twice over.
+
+Top prefixes in the sample: `WP` 17.8%, then a long criminal tail
+(`CR.`, `CRM`, `BAIL`, `CRL`, `MCRC`, `CRLP`, `CRLMB`, `CRL.P`, `BA`, `ABLAPL`).
+
+### 3.2 The corpus is 96.5% post-2010, and "older" must be oversampled
+
+| decade | share of sample |
+| --- | ---: |
+| 2020s | 54.8% |
+| 2010s | 41.7% |
+| 2000s | 5.6% |
+| 1990s | 0.18% |
+| 1980s and earlier | **0.08%** |
+
+A *proportional* 100k sample would contain roughly **48 pre-1990 documents** —
+not enough to say anything about older authority, which is exactly the material an
+advocate cites for settled propositions.
+
+So the era stratum is **deliberately oversampled** away from proportional, and
+the tranche manifest records both the sampled and the corpus proportions so that
+nobody later mistakes the tranche's era mix for the corpus's. Oversampling is the
+right call for measuring *reachability by era*; it would be the wrong call for
+estimating a corpus-wide rate, and no corpus-wide rate will be quoted from it.
+
 ---
 
 ## 4. Mandated inclusions, named
