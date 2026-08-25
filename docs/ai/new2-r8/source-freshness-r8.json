@@ -1,0 +1,141 @@
+{
+  "artifact": "NEW2_SOURCE_FRESHNESS_R8",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.17",
+  "generated_at": "2026-08-25T20:04:45.511Z",
+  "supersedes": "docs/ai/new2-r7/source-freshness.json — adds authorization, parser hash, and legal-currency completeness",
+  "legal_currency": {
+    "newest_legal_date": "2026-08-18",
+    "oldest_legal_date": "1950-01-01",
+    "naive_lag_days": 8,
+    "naive_reading": "max(judgment_date) says the corpus is 8 days behind",
+    "baseline_documents_per_month": 117332,
+    "baseline_built_from": [
+      "2026-06-01",
+      "2026-05-01",
+      "2026-04-01",
+      "2026-03-01",
+      "2026-02-01",
+      "2026-01-01"
+    ],
+    "months": [
+      {
+        "month": "2026-08-01",
+        "documents": 480,
+        "ratio_to_baseline": 0.0041,
+        "state": "EFFECTIVELY_ABSENT"
+      },
+      {
+        "month": "2026-07-01",
+        "documents": 93340,
+        "ratio_to_baseline": 0.7955,
+        "state": "COMPLETE_ENOUGH"
+      },
+      {
+        "month": "2026-06-01",
+        "documents": 70694,
+        "ratio_to_baseline": 0.6025,
+        "state": "COMPLETE_ENOUGH"
+      },
+      {
+        "month": "2026-05-01",
+        "documents": 100182,
+        "ratio_to_baseline": 0.8538,
+        "state": "COMPLETE_ENOUGH"
+      },
+      {
+        "month": "2026-04-01",
+        "documents": 142926,
+        "ratio_to_baseline": 1.2181,
+        "state": "COMPLETE_ENOUGH"
+      },
+      {
+        "month": "2026-03-01",
+        "documents": 123263,
+        "ratio_to_baseline": 1.0505,
+        "state": "COMPLETE_ENOUGH"
+      }
+    ],
+    "honest_frontier_month": "2026-07-01",
+    "real_lag_days": 56,
+    "why_they_differ": "a month containing a single document has a newest date but no coverage; currency is a completeness ratio, never a max"
+  },
+  "sources": [
+    {
+      "adapter": "aws_open_data_hc",
+      "kind": "bulk_dump",
+      "authorization": {
+        "state": "AUTHORIZED",
+        "basis": "CC-BY-4.0 open data; no copyright in a judgment, Copyright Act s.52(1)(q)(iv)",
+        "expires": null
+      },
+      "parser": {
+        "path": "services/ingest/src/hc-ingest.ts",
+        "sha256": null,
+        "bytes": null
+      },
+      "staleness_horizon_days": 30,
+      "never_ingested": false
+    },
+    {
+      "adapter": "aws_open_data_sc",
+      "kind": "bulk_dump",
+      "authorization": {
+        "state": "AUTHORIZED",
+        "basis": "CC-BY-4.0 open data; same statutory basis",
+        "expires": null
+      },
+      "parser": {
+        "path": "services/ingest/src/sc-ingest.ts",
+        "sha256": null,
+        "bytes": null
+      },
+      "staleness_horizon_days": 30,
+      "never_ingested": false
+    },
+    {
+      "adapter": "indiacode_statutes",
+      "kind": "http_api",
+      "authorization": {
+        "state": "AUTHORIZED",
+        "basis": "Government of India official publication",
+        "expires": null
+      },
+      "parser": {
+        "path": "services/ingest/src/statutes.ts",
+        "sha256": "a3d6f26d4ece533d1845a37a236f2f4e",
+        "bytes": 9968
+      },
+      "staleness_horizon_days": 180,
+      "never_ingested": false
+    },
+    {
+      "adapter": "ecourts",
+      "kind": "http_api",
+      "authorization": {
+        "state": "AUTHORIZED",
+        "basis": "registrar's written grant, 7 Aug 2026; CLAUDE.md §6a",
+        "expires": "2029-01-01"
+      },
+      "parser": {
+        "path": "services/api/src/court/ecourts.ts",
+        "sha256": "ad55f82aa6bb20ea4705b4e5fb3615a9",
+        "bytes": 5654
+      },
+      "staleness_horizon_days": 2,
+      "never_ingested": true
+    }
+  ],
+  "ecourts_observations": 0,
+  "thresholds": {
+    "partial_month_floor": 0.6,
+    "empty_month_floor": 0.1,
+    "baseline_months": 6,
+    "note": "chosen by this lane and NOT validated against a court publication calendar; see NOT_MEASURED"
+  },
+  "not_measured": [
+    "newest item AT SOURCE — needs a listing fetch per adapter, not done here",
+    "listing fingerprint per adapter — designed, not implemented",
+    "court publication calendars, which would say whether a thin month is our gap or a real vacation"
+  ]
+}
