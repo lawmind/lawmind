@@ -582,6 +582,34 @@
       "when": 1786443900000,
       "tag": "0082_treatment_provenance_column",
       "breakpoints": true
+    },
+    {
+      "idx": 83,
+      "version": "7",
+      "when": 1786444000000,
+      "tag": "0083_ops_job_observations",
+      "breakpoints": true
+    },
+    {
+      "idx": 84,
+      "version": "7",
+      "when": 1786444100000,
+      "tag": "0084_erasure_objects",
+      "breakpoints": true
+    },
+    {
+      "idx": 85,
+      "version": "7",
+      "when": 1786444200000,
+      "tag": "0085_citation_key_freshness",
+      "breakpoints": true
+    },
+    {
+      "idx": 86,
+      "version": "7",
+      "when": 1786444300000,
+      "tag": "0086_quality_screen_runs",
+      "breakpoints": true
     }
   ]
 }

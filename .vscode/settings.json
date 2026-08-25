@@ -1,3 +1,138 @@
 {
-    "git.ignoreLimitWarning": true
+  "//": [
+    "WHY THIS FILE GREW -- LCC, 25 Aug 2026.",
+    "",
+    "The IDE language server was dying repeatedly with",
+    "  'Notify file events failed. Client is not running. Code: -32096'",
+    "  'Sending document notification textDocument/didOpen failed.'",
+    "",
+    "-32096 is a JSON-RPC transport error: the notification could not be delivered",
+    "because the server process is gone. It is a SYMPTOM. The server had already",
+    "died; every later file event then failed the same way, which is why the errors",
+    "arrive in bursts of identical lines.",
+    "",
+    "WHAT KILLED IT, measured rather than guessed. The errors landed at 12:58:22,",
+    "12:58:29 and 12:58:44. The files written at 12:58:11, seconds earlier:",
+    "",
+    "  6.3 MB  docs/ai/new3/ten-matter-regression-run2.json",
+    "  6.2 MB  docs/ai/new3/ten-matter-regression-run2.checkpoint.jsonl",
+    "  3.9 MB  docs/ai/new2/passage-sample.json      (12:56)",
+    "  3.8 MB  docs/ai/new2/passage-sample.jsonl     (12:56)",
+    "",
+    "A checkpointed run rewrites its artifact every iteration. Each rewrite is a",
+    "file event; the watcher forwards it; the language server re-parses a 6 MB JSON",
+    "for IntelliSense it will never be asked for. Do that in a loop and the server",
+    "dies, and it takes the whole session's LSP with it.",
+    "",
+    "AND THE WATCHER WAS WATCHING EVERYTHING. This file previously contained one",
+    "line, `git.ignoreLimitWarning`. VS Code's file watcher DOES NOT read",
+    ".gitignore -- `files.watcherExclude` is a separate setting and it was empty --",
+    "so the watcher was following roughly 9 GB of generated artifacts:",
+    "",
+    "  2.2 GB  .models/**/model.onnx_data          (x2, embedder + reranker)",
+    "  1.0 GB  docs/ops/migration/new2-text-damage.jsonl",
+    "  612 MB  arms-checkpoint.jsonl               (gitignored, watched anyway)",
+    "  322 MB  docs/ai/lcc-text-safety/corpus-confirm.jsonl",
+    "  212 MB  apps/mobile/android/**/libreactnative.so",
+    "",
+    "THE RULE THIS ENCODES: a lane's RUN ARTIFACT is not source. Checkpoints,",
+    "samples, corpus dumps, model weights and build intermediates are excluded from",
+    "watching and searching.",
+    "",
+    "Every .md a lane writes STAYS WATCHED, and that is the important half: the bus,",
+    "the contracts, the plans and the dossiers are how the five lanes talk to each",
+    "other, and they are all Markdown. The .json files under docs/ai and docs/ops are",
+    "excluded, because measurement says every one over 256 KB is a run artifact and",
+    "none is hand-edited. Excluding a path from the WATCHER does not hide it, does",
+    "not stop anyone opening it, and does not stop git seeing it -- it only stops the",
+    "IDE being told, several times a second, that a 6 MB file changed again."
+    "",
+    "If a new lane artifact starts killing the language server again, the answer is",
+    "another line in watcherExclude, not a smaller artifact."
+  ],
+
+  "git.ignoreLimitWarning": true,
+
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+
+    "**/.models/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+
+    "**/*.onnx": true,
+    "**/*.onnx_data": true,
+    "**/*.safetensors": true,
+    "**/*.bin": true,
+    "**/*.so": true,
+    "**/*.parquet": true,
+
+    "**/*.jsonl": true,
+    "**/*-checkpoint.json": true,
+    "**/*.checkpoint.jsonl": true,
+
+    "//run-artifacts": "Every .json over 256 KB in this repo lives under docs/ai or docs/ops and is a lane RUN ARTIFACT -- 16.7 MB adjacent-date-pairs, 12.5 MB treatment-provenance-spans, 8.4 MB shared-neutral-verdicts, 6.3 MB ten-matter-regression-run2. watcherExclude is glob-only and cannot filter on size, so the rule is by path. This stops file-change NOTIFICATIONS; it does not hide the files, and every .md a lane writes to communicate stays watched.",
+    "**/docs/ai/**/*.json": true,
+    "**/docs/ops/**/*.json": true,
+    "**/*.log": true,
+    "**/*.log.err": true,
+
+    "**/.checkpoints/**": true,
+    "**/.agents/logs/**": true,
+    "**/.agents/jobs/observations.jsonl": true,
+    "**/.agents/ops/**": true,
+    "**/.scratch/**": true,
+
+    "**/docs/ops/migration/**": true,
+    "**/apps/mobile/android/**/build/**": true,
+    "**/apps/mobile/android/.gradle/**": true,
+    "**/apps/mobile/ios/Pods/**": true,
+    "**/apps/**/.expo/**": true,
+    "**/dist/**": true,
+    "**/.turbo/**": true
+  },
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.models": true,
+    "**/*.jsonl": true,
+    "**/*.onnx": true,
+    "**/*.onnx_data": true,
+    "**/*.parquet": true,
+    "**/*.log": true,
+    "**/.checkpoints": true,
+    "**/.agents/logs": true,
+    "**/docs/ops/migration": true,
+    "**/apps/mobile/android/**/build": true,
+    "**/dist": true
+  },
+
+  "//json-limit": [
+    "Above this size the JSON language service stops offering IntelliSense for a",
+    "file rather than parsing it. 512 KB is far above any hand-written config here",
+    "and far below every artifact listed at the top."
+  ],
+  "json.maxItemsComputed": 5000,
+
+  "//large-file-guard": [
+    "Stops the editor tokenising a huge artifact if somebody opens one by accident,",
+    "which is the other way the same crash arrives."
+  ],
+  "editor.largeFileOptimizations": true,
+
+  "//typescript": [
+    "The TS server is the process that was dying. Give it headroom and keep it out",
+    "of the generated trees; auto-imports across a repo this size is what makes it",
+    "walk directories it has no business in."
+  ],
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsc.autoDetect": "off",
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+
+  "files.exclude": {
+    "**/.turbo": true,
+    "**/__pycache__": true
+  }
 }
