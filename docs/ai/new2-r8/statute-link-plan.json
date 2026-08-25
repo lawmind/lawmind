@@ -1,0 +1,5027 @@
+{
+  "artifact": "NEW2_STATUTE_LINK_PLAN_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.2",
+  "generated_at": "2026-08-25T17:09:18.570Z",
+  "mode": "DRY_RUN — writes nothing",
+  "canonical_act_key_implementation": "@lawmind/ingest/sections :: canonicalAct",
+  "unit_of_classification": "(act_key, act_named) pair — the key alone cannot see the year the court printed",
+  "held_acts": 846,
+  "held_act_keys_after_normalisation": 833,
+  "held_acts_colliding_under_normalisation": [
+    {
+      "act_key": "BANKING COMPANIES (ACQUISITION AND TRANSFER OF UNDERTAKINGS) ACT",
+      "targets": [
+        "The Banking Companies (Acquisition and Transfer of Undertakings) Act, 1970 (1970)",
+        "The Banking Companies (Acquisition and Transfer of Undertakings) Act, 1980 (1980)"
+      ]
+    },
+    {
+      "act_key": "BENGAL BONDED WAREHOUSE ASSOCIATION ACT",
+      "targets": [
+        "The Bengal Bonded Warehouse Association Act, 1838 (1838)",
+        "The Bengal Bonded Warehouse Association Act, 1854 (1854)"
+      ]
+    },
+    {
+      "act_key": "INDIAN TOLLS ACT",
+      "targets": [
+        "The Indian Tolls Act, 1851 (1851)",
+        "The Indian Tolls Act, 1864 (1864)"
+      ]
+    },
+    {
+      "act_key": "KING OF OUDH'S ESTATE ACT",
+      "targets": [
+        "The King of Oudh's Estate Act, 1887 (1887)",
+        "The King of Oudh's Estate Act, 1888 (1888)"
+      ]
+    },
+    {
+      "act_key": "POLICE ACT",
+      "targets": [
+        "The Police Act, 1861 (1861)",
+        "The Police Act, 1949 (1949)"
+      ]
+    },
+    {
+      "act_key": "REPEALING AND AMENDING (SECOND) ACT",
+      "targets": [
+        "The Repealing and Amending (Second) Act, 2015 (2015)",
+        "The Repealing and Amending (Second) Act, 2017 (2018)"
+      ]
+    },
+    {
+      "act_key": "REPEALING AND AMENDING ACT",
+      "targets": [
+        "The Repealing and Amending Act, 2015 (2015)",
+        "The Repealing and Amending Act, 2016 (2016)",
+        "The Repealing and Amending Act, 2017 (2018)",
+        "The Repealing and Amending Act, 2019 (2019)",
+        "The Repealing and Amending Act, 2023 (2023)",
+        "The Repealing and Amending Act, 2025 (2025)"
+      ]
+    },
+    {
+      "act_key": "REPRESENTATION OF THE PEOPLE ACT",
+      "targets": [
+        "The Representation of the People Act, 1950 (1950)",
+        "The Representation of the People Act, 1951 (1951)"
+      ]
+    },
+    {
+      "act_key": "SCHEDULED AREAS (ASSIMILATION OF LAWS) ACT",
+      "targets": [
+        "The Scheduled Areas (Assimilation of Laws) Act, 1951 (1951)",
+        "The Scheduled Areas (Assimilation of Laws) Act, 1953 (1953)"
+      ]
+    }
+  ],
+  "reference_rows_total": 862594,
+  "distinct_pairs": 16582,
+  "tally": {
+    "LINK_YEAR_CONFIRMED": {
+      "pairs": 721,
+      "refs": 246131
+    },
+    "LINK_NAME_ONLY": {
+      "pairs": 340,
+      "refs": 74449
+    },
+    "LINK_YEAR_RESOLVED": {
+      "pairs": 4,
+      "refs": 149
+    },
+    "REFUSE_YEAR_CONFLICT": {
+      "pairs": 470,
+      "refs": 2445
+    },
+    "REFUSE_AMBIGUOUS": {
+      "pairs": 2,
+      "refs": 244
+    },
+    "REFUSE_UNHELD": {
+      "pairs": 15045,
+      "refs": 539176
+    },
+    "REFUSE_NULL_KEY": {
+      "pairs": 0,
+      "refs": 0
+    }
+  },
+  "linkable_refs": 320729,
+  "linkable_pct": 37.18,
+  "section_text_coverage": {
+    "distinct_acts_linked": 265,
+    "acts_with_no_held_section": 4,
+    "refs_whose_act_has_held_sections": 320532
+  },
+  "year_conflict_shape": {
+    "DIGIT_EDIT_1": {
+      "pairs": 247,
+      "refs": 873,
+      "note": "candidate for adjudication, NEVER linked by this plan"
+    },
+    "PREDECESSOR_CANDIDATE": {
+      "pairs": 223,
+      "refs": 1572,
+      "note": "the corpus cites a statute we do not hold; holding its successor is not holding it"
+    }
+  },
+  "year_conflicts": [
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "Consumer Protection Act, 1986",
+      "refs": 326,
+      "printed": 1986,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1939",
+      "refs": 243,
+      "printed": 1939,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1908",
+      "refs": 149,
+      "printed": 1908,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "EPIDEMIC DISEASES ACT",
+      "act_named": "Epidemic Diseases Act, 1987",
+      "refs": 125,
+      "printed": 1987,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1995",
+      "refs": 72,
+      "printed": 1995,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1877",
+      "refs": 72,
+      "printed": 1877,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1956",
+      "refs": 60,
+      "printed": 1956,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INFORMATION TECHNOLOGY ACT",
+      "act_named": "Information Technology Act, 2008",
+      "refs": 46,
+      "printed": 2008,
+      "held": [
+        "2000"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1955",
+      "refs": 43,
+      "printed": 1955,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CANTONMENTS ACT",
+      "act_named": "Cantonments Act, 1924",
+      "refs": 42,
+      "printed": 1924,
+      "held": [
+        "2006"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "UNIVERSITY GRANTS COMMISSION ACT",
+      "act_named": "University Grants Commission Act, 1958",
+      "refs": 34,
+      "printed": 1958,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 1983",
+      "refs": 33,
+      "printed": 1983,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1998",
+      "refs": 32,
+      "printed": 1998,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act, 1977",
+      "refs": 30,
+      "printed": 1977,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 1910",
+      "refs": 29,
+      "printed": 1910,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN FOREST ACT",
+      "act_named": "Indian Forest Act, 1878",
+      "refs": 26,
+      "printed": 1878,
+      "held": [
+        "1927"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1981",
+      "refs": 24,
+      "printed": 1981,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 1969",
+      "refs": 20,
+      "printed": 1969,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MERCHANT SHIPPING ACT",
+      "act_named": "Merchant Shipping Act, 1958",
+      "refs": 19,
+      "printed": 1958,
+      "held": [
+        "2025"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act, 1940",
+      "refs": 19,
+      "printed": 1940,
+      "held": [
+        "1999"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1878",
+      "refs": 17,
+      "printed": 1878,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "Consumer Protection Act 1986",
+      "refs": 17,
+      "printed": 1986,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act 1939",
+      "refs": 16,
+      "printed": 1939,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1973",
+      "refs": 15,
+      "printed": 1973,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1980",
+      "refs": 15,
+      "printed": 1980,
+      "held": [
+        "1955"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1934",
+      "refs": 15,
+      "printed": 1934,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1989",
+      "refs": 15,
+      "printed": 1989,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1887",
+      "refs": 14,
+      "printed": 1887,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PORTS ACT",
+      "act_named": "Indian Ports Act, 1908",
+      "refs": 13,
+      "printed": 1908,
+      "held": [
+        "2025"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "RAILWAYS ACT",
+      "act_named": "Railways Act, 1890",
+      "refs": 13,
+      "printed": 1890,
+      "held": [
+        "1989"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagrik Suraksha Sanhita, 2024",
+      "refs": 12,
+      "printed": 2024,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL EXCISE ACT",
+      "act_named": "Central Excise Act, 1994",
+      "refs": 11,
+      "printed": 1994,
+      "held": [
+        "1944"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1958",
+      "refs": 10,
+      "printed": 1958,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1977",
+      "refs": 10,
+      "printed": 1977,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act, 1994",
+      "refs": 10,
+      "printed": 1994,
+      "held": [
+        "1999"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1882",
+      "refs": 9,
+      "printed": 1882,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instrument Act, 1981",
+      "refs": 9,
+      "printed": 1981,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 1961",
+      "refs": 9,
+      "printed": 1961,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL SALES TAX ACT",
+      "act_named": "Central Sales Tax Act, 1957",
+      "refs": 8,
+      "printed": 1957,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 1960",
+      "refs": 8,
+      "printed": 1960,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "COMPANIES ACT",
+      "act_named": "The Companies Act, 1956",
+      "refs": 8,
+      "printed": 1956,
+      "held": [
+        "2013"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1954",
+      "refs": 8,
+      "printed": 1954,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1972",
+      "refs": 8,
+      "printed": 1972,
+      "held": [
+        "1872"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NATIONAL HIGHWAYS ACT",
+      "act_named": "National Highways Act, 1954",
+      "refs": 8,
+      "printed": 1954,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NATIONAL HIGHWAYS ACT",
+      "act_named": "National Highways Act, 1964",
+      "refs": 8,
+      "printed": 1964,
+      "held": [
+        "1956"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1882",
+      "refs": 8,
+      "printed": 1882,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1906",
+      "refs": 7,
+      "printed": 1906,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1987",
+      "refs": 7,
+      "printed": 1987,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1956",
+      "refs": 7,
+      "printed": 1956,
+      "held": [
+        "1925"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1986",
+      "refs": 7,
+      "printed": 1986,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1988",
+      "refs": 7,
+      "printed": 1988,
+      "held": [
+        "1881"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act 1877",
+      "refs": 7,
+      "printed": 1877,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 1948",
+      "refs": 6,
+      "printed": 1948,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act 1908",
+      "refs": 6,
+      "printed": 1908,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1973",
+      "refs": 6,
+      "printed": 1973,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1980",
+      "refs": 6,
+      "printed": 1980,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 2011",
+      "refs": 6,
+      "printed": 2011,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act, 2009",
+      "refs": 6,
+      "printed": 2009,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Civil Procedure Code, 1882",
+      "refs": 5,
+      "printed": 1882,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act 1910",
+      "refs": 5,
+      "printed": 1910,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU SUCCESSION ACT",
+      "act_named": "Hindu Succession Act, 2005",
+      "refs": 5,
+      "printed": 2005,
+      "held": [
+        "1956"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1968",
+      "refs": 5,
+      "printed": 1968,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1994",
+      "refs": 5,
+      "printed": 1994,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "PATENTS ACT",
+      "act_named": "Patents Act 1990",
+      "refs": 5,
+      "printed": 1990,
+      "held": [
+        "1970"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act 1983",
+      "refs": 5,
+      "printed": 1983,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 2007",
+      "refs": 5,
+      "printed": 2007,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1898",
+      "refs": 4,
+      "printed": 1898,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ASSAM RIFLES ACT",
+      "act_named": "Assam Rifles Act, 1941",
+      "refs": 4,
+      "printed": 1941,
+      "held": [
+        "2006"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CANTONMENTS ACT",
+      "act_named": "Cantonments Act, 1974",
+      "refs": 4,
+      "printed": 1974,
+      "held": [
+        "2006"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CENTRAL SALES TAX ACT",
+      "act_named": "Central Sales Tax Act, 1944",
+      "refs": 4,
+      "printed": 1944,
+      "held": [
+        "1956"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "The Consumer Protection Act, 1986",
+      "refs": 4,
+      "printed": 1986,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1961",
+      "refs": 4,
+      "printed": 1961,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI MUNICIPAL CORPORATION ACT",
+      "act_named": "Delhi Municipal Corporation Act, 1959",
+      "refs": 4,
+      "printed": 1959,
+      "held": [
+        "1957"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELIMITATION ACT",
+      "act_named": "Delimitation Act, 1972",
+      "refs": 4,
+      "printed": 1972,
+      "held": [
+        "2002"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1995",
+      "refs": 4,
+      "printed": 1995,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "EXPLOSIVE SUBSTANCES ACT",
+      "act_named": "Explosive Substances Act, 1884",
+      "refs": 4,
+      "printed": 1884,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1894",
+      "refs": 4,
+      "printed": 1894,
+      "held": [
+        "1984"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN TRUST ACT",
+      "act_named": "Indian Trust Act, 1982",
+      "refs": 4,
+      "printed": 1982,
+      "held": [
+        "1882"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1962",
+      "refs": 4,
+      "printed": 1962,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1973",
+      "refs": 4,
+      "printed": 1973,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1881",
+      "refs": 4,
+      "printed": 1881,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1957",
+      "refs": 4,
+      "printed": 1957,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1977",
+      "refs": 4,
+      "printed": 1977,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1950",
+      "refs": 3,
+      "printed": 1950,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1969",
+      "refs": 3,
+      "printed": 1969,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Suraksha Sanhita, 2024",
+      "refs": 3,
+      "printed": 2024,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Suraksha Sanhita, 2025",
+      "refs": 3,
+      "printed": 2025,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "Consumer Protection Act, 1996",
+      "refs": 3,
+      "printed": 1996,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1969",
+      "refs": 3,
+      "printed": 1969,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1972",
+      "refs": 3,
+      "printed": 1972,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1982",
+      "refs": 3,
+      "printed": 1982,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DESIGNS ACT",
+      "act_named": "Designs Act, 1911",
+      "refs": 3,
+      "printed": 1911,
+      "held": [
+        "2000"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "DOWRY PROHIBITION ACT",
+      "act_named": "Dowry Prohibition Act, 1960",
+      "refs": 3,
+      "printed": 1960,
+      "held": [
+        "1961"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2006",
+      "refs": 3,
+      "printed": 2006,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2010",
+      "refs": 3,
+      "printed": 2010,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act 1904",
+      "refs": 3,
+      "printed": 1904,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1904",
+      "refs": 3,
+      "printed": 1904,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act 1956",
+      "refs": 3,
+      "printed": 1956,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act 1980",
+      "refs": 3,
+      "printed": 1980,
+      "held": [
+        "1955"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU SUCCESSION ACT",
+      "act_named": "Hindu Succession Act, 1925",
+      "refs": 3,
+      "printed": 1925,
+      "held": [
+        "1956"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1882",
+      "refs": 3,
+      "printed": 1882,
+      "held": [
+        "1872"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INLAND VESSELS ACT",
+      "act_named": "The Inland Vessels Act, 1917",
+      "refs": 3,
+      "printed": 1917,
+      "held": [
+        "2021"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INTEREST ACT",
+      "act_named": "Interest Act, 1839",
+      "refs": 3,
+      "printed": 1839,
+      "held": [
+        "1978"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1995",
+      "refs": 3,
+      "printed": 1995,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1935",
+      "refs": 3,
+      "printed": 1935,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1966",
+      "refs": 3,
+      "printed": 1966,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NATIONAL HIGHWAYS ACT",
+      "act_named": "National Highways Act, 1996",
+      "refs": 3,
+      "printed": 1996,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1888",
+      "refs": 3,
+      "printed": 1888,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "OATHS ACT",
+      "act_named": "Oaths Act, 1873",
+      "refs": 3,
+      "printed": 1873,
+      "held": [
+        "1969"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 1890",
+      "refs": 3,
+      "printed": 1890,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "POST OFFICE ACT",
+      "act_named": "Post Office Act, 1898",
+      "refs": 3,
+      "printed": 1898,
+      "held": [
+        "2023"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act, 1958",
+      "refs": 3,
+      "printed": 1958,
+      "held": [
+        "1999"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act 1878",
+      "refs": 2,
+      "printed": 1878,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act 1950",
+      "refs": 2,
+      "printed": 1950,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1956",
+      "refs": 2,
+      "printed": 1956,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMY ACT",
+      "act_named": "Army Act, 1959",
+      "refs": 2,
+      "printed": 1959,
+      "held": [
+        "1950"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Suraksha Sanhita, 2003",
+      "refs": 2,
+      "printed": 2003,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Suraksha Sanhita, 2022",
+      "refs": 2,
+      "printed": 2022,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CANTONMENTS ACT",
+      "act_named": "Cantonments Act 1924",
+      "refs": 2,
+      "printed": 1924,
+      "held": [
+        "2006"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CENTRAL SALES TAX ACT",
+      "act_named": "Central Sales Tax Act, 1965",
+      "refs": 2,
+      "printed": 1965,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CINEMATOGRAPH ACT",
+      "act_named": "Cinematograph Act, 1918",
+      "refs": 2,
+      "printed": 1918,
+      "held": [
+        "1952"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 1935",
+      "refs": 2,
+      "printed": 1935,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1877",
+      "refs": 2,
+      "printed": 1877,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1980",
+      "refs": 2,
+      "printed": 1980,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "Consumer Protection Act, 1987",
+      "refs": 2,
+      "printed": 1987,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "Consumer Protection Act,1986",
+      "refs": 2,
+      "printed": 1986,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act 1901",
+      "refs": 2,
+      "printed": 1901,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act 1952",
+      "refs": 2,
+      "printed": 1952,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1952",
+      "refs": 2,
+      "printed": 1952,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1963",
+      "refs": 2,
+      "printed": 1963,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1964",
+      "refs": 2,
+      "printed": 1964,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1975",
+      "refs": 2,
+      "printed": 1975,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS TARIFF ACT",
+      "act_named": "Customs Tariff Act, 1976",
+      "refs": 2,
+      "printed": 1976,
+      "held": [
+        "1975"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI SALES TAX ACT",
+      "act_named": "Delhi Sales Tax Act, 1978",
+      "refs": 2,
+      "printed": 1978,
+      "held": [
+        "1975"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DIVORCE ACT",
+      "act_named": "Divorce Act, 1954",
+      "refs": 2,
+      "printed": 1954,
+      "held": [
+        "1869"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2005",
+      "refs": 2,
+      "printed": 2005,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2013",
+      "refs": 2,
+      "printed": 2013,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2019",
+      "refs": 2,
+      "printed": 2019,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2023",
+      "refs": 2,
+      "printed": 2023,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1959",
+      "refs": 2,
+      "printed": 1959,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1968",
+      "refs": 2,
+      "printed": 1968,
+      "held": [
+        "1955"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1985",
+      "refs": 2,
+      "printed": 1985,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "EXPLOSIVES ACT",
+      "act_named": "Explosives Act, 1984",
+      "refs": 2,
+      "printed": 1984,
+      "held": [
+        "1884"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "EXTRADITION ACT",
+      "act_named": "Extradition Act, 1870",
+      "refs": 2,
+      "printed": 1870,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1954",
+      "refs": 2,
+      "printed": 1954,
+      "held": [
+        "1984"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1964",
+      "refs": 2,
+      "printed": 1964,
+      "held": [
+        "1984"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1985",
+      "refs": 2,
+      "printed": 1985,
+      "held": [
+        "1984"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1986",
+      "refs": 2,
+      "printed": 1986,
+      "held": [
+        "1984"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1994",
+      "refs": 2,
+      "printed": 1994,
+      "held": [
+        "1984"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1868",
+      "refs": 2,
+      "printed": 1868,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1879",
+      "refs": 2,
+      "printed": 1879,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1958",
+      "refs": 2,
+      "printed": 1958,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU SUCCESSION ACT",
+      "act_named": "Hindu Succession Act, 1955",
+      "refs": 2,
+      "printed": 1955,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1985",
+      "refs": 2,
+      "printed": 1985,
+      "held": [
+        "1899"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1865",
+      "refs": 2,
+      "printed": 1865,
+      "held": [
+        "1925"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1923",
+      "refs": 2,
+      "printed": 1923,
+      "held": [
+        "1925"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN TELEGRAPH ACT",
+      "act_named": "Indian Telegraph Act, 1985",
+      "refs": 2,
+      "printed": 1985,
+      "held": [
+        "1885"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN TELEGRAPH ACT",
+      "act_named": "Indian Telegraph Act, 2003",
+      "refs": 2,
+      "printed": 2003,
+      "held": [
+        "1885"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INFORMATION TECHNOLOGY ACT",
+      "act_named": "Information Technology Act, 2002",
+      "refs": 2,
+      "printed": 2002,
+      "held": [
+        "2000"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INLAND VESSELS ACT",
+      "act_named": "Inland Vessels Act, 1917",
+      "refs": 2,
+      "printed": 1917,
+      "held": [
+        "2021"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INSURANCE ACT",
+      "act_named": "Insurance Act, 1935",
+      "refs": 2,
+      "printed": 1935,
+      "held": [
+        "1938"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INSURANCE ACT",
+      "act_named": "Insurance Act, 1939",
+      "refs": 2,
+      "printed": 1939,
+      "held": [
+        "1938"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1877",
+      "refs": 2,
+      "printed": 1877,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1939",
+      "refs": 2,
+      "printed": 1939,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1965",
+      "refs": 2,
+      "printed": 1965,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1980",
+      "refs": 2,
+      "printed": 1980,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1993",
+      "refs": 2,
+      "printed": 1993,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act 1966",
+      "refs": 2,
+      "printed": 1966,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1983",
+      "refs": 2,
+      "printed": 1983,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1985",
+      "refs": 2,
+      "printed": 1985,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 2019",
+      "refs": 2,
+      "printed": 2019,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1886",
+      "refs": 2,
+      "printed": 1886,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "OFFICIAL SECRETS ACT",
+      "act_named": "Official Secrets Act, 1927",
+      "refs": 2,
+      "printed": 1927,
+      "held": [
+        "1923"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 1862",
+      "refs": 2,
+      "printed": 1862,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 1868",
+      "refs": 2,
+      "printed": 1868,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PRISONERS ACT",
+      "act_named": "Prisoners Act, 1894",
+      "refs": 2,
+      "printed": 1894,
+      "held": [
+        "1900"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "RAILWAY CLAIMS TRIBUNAL ACT",
+      "act_named": "Railway Claims Tribunal Act, 1989",
+      "refs": 2,
+      "printed": 1989,
+      "held": [
+        "1987"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act, 1906",
+      "refs": 2,
+      "printed": 1906,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "REVENUE RECOVERY ACT",
+      "act_named": "Revenue Recovery Act, 1854",
+      "refs": 2,
+      "printed": 1854,
+      "held": [
+        "1890"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REVENUE RECOVERY ACT",
+      "act_named": "Revenue Recovery Act, 1968",
+      "refs": 2,
+      "printed": 1968,
+      "held": [
+        "1890"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SOCIETIES REGISTRATION ACT",
+      "act_named": "Societies Registration Act, 1960",
+      "refs": 2,
+      "printed": 1960,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SOCIETIES REGISTRATION ACT",
+      "act_named": "Societies Registration Act, 2001",
+      "refs": 2,
+      "printed": 2001,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1953",
+      "refs": 2,
+      "printed": 1953,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1964",
+      "refs": 2,
+      "printed": 1964,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 2018",
+      "refs": 2,
+      "printed": 2018,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act 1940",
+      "refs": 2,
+      "printed": 1940,
+      "held": [
+        "1999"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act 1958",
+      "refs": 2,
+      "printed": 1958,
+      "held": [
+        "1999"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act, 1938",
+      "refs": 2,
+      "printed": 1938,
+      "held": [
+        "1999"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ADMINISTRATIVE TRIBUNALS ACT",
+      "act_named": "Administrative Tribunals Act, 1986",
+      "refs": 1,
+      "printed": 1986,
+      "held": [
+        "1985"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ADVOCATES ACT",
+      "act_named": "Advocates Act 1981",
+      "refs": 1,
+      "printed": 1981,
+      "held": [
+        "1961"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ADVOCATES ACT",
+      "act_named": "Advocates Act, 1950",
+      "refs": 1,
+      "printed": 1950,
+      "held": [
+        "1961"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ADVOCATES ACT",
+      "act_named": "Advocates Act, 1951",
+      "refs": 1,
+      "printed": 1951,
+      "held": [
+        "1961"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "AIR FORCE ACT",
+      "act_named": "Air Force Act, 1982",
+      "refs": 1,
+      "printed": 1982,
+      "held": [
+        "1950"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act 1955",
+      "refs": 1,
+      "printed": 1955,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1925",
+      "refs": 1,
+      "printed": 1925,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1949",
+      "refs": 1,
+      "printed": 1949,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1959"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 1980",
+      "refs": 1,
+      "printed": 1980,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 2016",
+      "refs": 1,
+      "printed": 2016,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "Arms Act, 2026",
+      "refs": 1,
+      "printed": 2026,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMS ACT",
+      "act_named": "The Arms Act 1878",
+      "refs": 1,
+      "printed": 1878,
+      "held": [
+        "1959"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMY ACT",
+      "act_named": "Army Act, 1881",
+      "refs": 1,
+      "printed": 1881,
+      "held": [
+        "1950"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ARMY ACT",
+      "act_named": "Army Act, 1930",
+      "refs": 1,
+      "printed": 1930,
+      "held": [
+        "1950"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ARMY ACT",
+      "act_named": "Army Act, 1956",
+      "refs": 1,
+      "printed": 1956,
+      "held": [
+        "1950"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ASSAM RIFLES ACT",
+      "act_named": "Assam Rifles Act, 2010",
+      "refs": 1,
+      "printed": 2010,
+      "held": [
+        "2006"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "BANKING REGULATION ACT",
+      "act_named": "Banking Regulation Act, 1945",
+      "refs": 1,
+      "printed": 1945,
+      "held": [
+        "1949"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BANKING REGULATION ACT",
+      "act_named": "Banking Regulation Act, 1959",
+      "refs": 1,
+      "printed": 1959,
+      "held": [
+        "1949"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BANKING REGULATION ACT",
+      "act_named": "Banking Regulation Act, 1984",
+      "refs": 1,
+      "printed": 1984,
+      "held": [
+        "1949"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Suraksha Sanhita, 2019",
+      "refs": 1,
+      "printed": 2019,
+      "held": [
+        "2023"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Suraksha Sanhita, 2021",
+      "refs": 1,
+      "printed": 2021,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Suraksha Sanhita, 2026",
+      "refs": 1,
+      "printed": 2026,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bharatiya Nagarik Surakshya Sanhita, 2003",
+      "refs": 1,
+      "printed": 2003,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bhartiya Nagarik Suraksha Sanhita, 2026",
+      "refs": 1,
+      "printed": 2026,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NAGARIK SURAKSHA SANHITA",
+      "act_named": "Bhartiya Nagrik Suraksha Sanhita, 2025",
+      "refs": 1,
+      "printed": 2025,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NYAYA SANHITA",
+      "act_named": "Bharatiya Nyaya Sanhita, 2025",
+      "refs": 1,
+      "printed": 2025,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NYAYA SANHITA",
+      "act_named": "Bhartiya Nyay Sanhita 2024",
+      "refs": 1,
+      "printed": 2024,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA NYAYA SANHITA",
+      "act_named": "Bhartiya Nyaya Sanhita, 2003",
+      "refs": 1,
+      "printed": 2003,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BHARATIYA SAKSHYA ADHINIYAM",
+      "act_named": "Bharatiya Sakshya Adhiniyam, 2003",
+      "refs": 1,
+      "printed": 2003,
+      "held": [
+        "2023"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BORDER SECURITY FORCE ACT",
+      "act_named": "Border Security Force Act, 1964",
+      "refs": 1,
+      "printed": 1964,
+      "held": [
+        "1968"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BORDER SECURITY FORCE ACT",
+      "act_named": "Border Security Force Act, 1969",
+      "refs": 1,
+      "printed": 1969,
+      "held": [
+        "1968"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "BORDER SECURITY FORCE ACT",
+      "act_named": "Border Security Force Act, 1986",
+      "refs": 1,
+      "printed": 1986,
+      "held": [
+        "1968"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CANTONMENTS ACT",
+      "act_named": "Cantonments Act, 1910",
+      "refs": 1,
+      "printed": 1910,
+      "held": [
+        "2006"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CENSUS ACT",
+      "act_named": "Census Act, 1940",
+      "refs": 1,
+      "printed": 1940,
+      "held": [
+        "1948"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL EXCISE ACT",
+      "act_named": "Central Excise Act 1954",
+      "refs": 1,
+      "printed": 1954,
+      "held": [
+        "1944"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL EXCISE ACT",
+      "act_named": "Central Excise Act, 1955",
+      "refs": 1,
+      "printed": 1955,
+      "held": [
+        "1944"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CENTRAL EXCISE ACT",
+      "act_named": "Central Excise Act,1994",
+      "refs": 1,
+      "printed": 1994,
+      "held": [
+        "1944"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL PROVINCES TENANCY ACT",
+      "act_named": "Central Provinces Tenancy Act, 1920",
+      "refs": 1,
+      "printed": 1920,
+      "held": [
+        "1898"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CENTRAL SALES TAX ACT",
+      "act_named": "Central Sales Tax Act 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL SALES TAX ACT",
+      "act_named": "Central Sales Tax Act, 1954",
+      "refs": 1,
+      "printed": 1954,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL SALES TAX ACT",
+      "act_named": "Central Sales Tax Act, 1955",
+      "refs": 1,
+      "printed": 1955,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CENTRAL SALES TAX ACT",
+      "act_named": "Central Sales Tax Act, 1958",
+      "refs": 1,
+      "printed": 1958,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CITIZENSHIP ACT",
+      "act_named": "Citizenship Act 1995",
+      "refs": 1,
+      "printed": 1995,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CITIZENSHIP ACT",
+      "act_named": "Citizenship Act, 1951",
+      "refs": 1,
+      "printed": 1951,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 1959",
+      "refs": 1,
+      "printed": 1959,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 1974",
+      "refs": 1,
+      "printed": 1974,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 1983",
+      "refs": 1,
+      "printed": 1983,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 2006",
+      "refs": 1,
+      "printed": 2006,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act, 2007",
+      "refs": 1,
+      "printed": 2007,
+      "held": [
+        "1912"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Civil Procedure Code, 1859",
+      "refs": 1,
+      "printed": 1859,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Civil Procedure Code, 1889",
+      "refs": 1,
+      "printed": 1889,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Civil Procedure Code, 1988",
+      "refs": 1,
+      "printed": 1988,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1809",
+      "refs": 1,
+      "printed": 1809,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1861",
+      "refs": 1,
+      "printed": 1861,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1890",
+      "refs": 1,
+      "printed": 1890,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1898",
+      "refs": 1,
+      "printed": 1898,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1900",
+      "refs": 1,
+      "printed": 1900,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1903",
+      "refs": 1,
+      "printed": 1903,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1905",
+      "refs": 1,
+      "printed": 1905,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1909",
+      "refs": 1,
+      "printed": 1909,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1911",
+      "refs": 1,
+      "printed": 1911,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1918",
+      "refs": 1,
+      "printed": 1918,
+      "held": [
+        "1908"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1920",
+      "refs": 1,
+      "printed": 1920,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1971",
+      "refs": 1,
+      "printed": 1971,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 1976",
+      "refs": 1,
+      "printed": 1976,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CIVIL PROCEDURE",
+      "act_named": "Code of Civil Procedure, 2002",
+      "refs": 1,
+      "printed": 2002,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "COMMERCIAL COURTS ACT",
+      "act_named": "Commercial Courts Act, 1908",
+      "refs": 1,
+      "printed": 1908,
+      "held": [
+        "2015/2016"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "COMMERCIAL COURTS ACT",
+      "act_named": "Commercial Courts Act, 2014",
+      "refs": 1,
+      "printed": 2014,
+      "held": [
+        "2015/2016"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "COMPETITION ACT",
+      "act_named": "Competition Act, 1998",
+      "refs": 1,
+      "printed": 1998,
+      "held": [
+        "2002/2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "Consumer Protection Act, 1985",
+      "refs": 1,
+      "printed": 1985,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CONSUMER PROTECTION ACT",
+      "act_named": "Consumer Protection Act, 1988",
+      "refs": 1,
+      "printed": 1988,
+      "held": [
+        "2019"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "COPYRIGHT ACT",
+      "act_named": "Copyright Act, 1911",
+      "refs": 1,
+      "printed": 1911,
+      "held": [
+        "1957"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1901",
+      "refs": 1,
+      "printed": 1901,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1950",
+      "refs": 1,
+      "printed": 1950,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1956",
+      "refs": 1,
+      "printed": 1956,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1965",
+      "refs": 1,
+      "printed": 1965,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1967",
+      "refs": 1,
+      "printed": 1967,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS ACT",
+      "act_named": "Customs Act, 1992",
+      "refs": 1,
+      "printed": 1992,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CUSTOMS TARIFF ACT",
+      "act_named": "Customs Tariff Act, 1985",
+      "refs": 1,
+      "printed": 1985,
+      "held": [
+        "1975"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI DEVELOPMENT ACT",
+      "act_named": "Delhi Development Act, 1954",
+      "refs": 1,
+      "printed": 1954,
+      "held": [
+        "1957"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI DEVELOPMENT ACT",
+      "act_named": "Delhi Development Act, 1956",
+      "refs": 1,
+      "printed": 1956,
+      "held": [
+        "1957"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI HIGH COURT ACT",
+      "act_named": "Delhi High Court Act, 1996",
+      "refs": 1,
+      "printed": 1996,
+      "held": [
+        "1966"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI RENT CONTROL ACT",
+      "act_named": "Delhi Rent Control Act, 1951",
+      "refs": 1,
+      "printed": 1951,
+      "held": [
+        "1958"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI RENT CONTROL ACT",
+      "act_named": "Delhi Rent Control Act, 1952",
+      "refs": 1,
+      "printed": 1952,
+      "held": [
+        "1958"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI RENT CONTROL ACT",
+      "act_named": "Delhi Rent Control Act, 1953",
+      "refs": 1,
+      "printed": 1953,
+      "held": [
+        "1958"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI RENT CONTROL ACT",
+      "act_named": "Delhi Rent Control Act, 1956",
+      "refs": 1,
+      "printed": 1956,
+      "held": [
+        "1958"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI RENT CONTROL ACT",
+      "act_named": "Delhi Rent Control Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1958"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI SPECIAL POLICE ESTABLISHMENT ACT",
+      "act_named": "Delhi Special Police Establishment Act, 1944",
+      "refs": 1,
+      "printed": 1944,
+      "held": [
+        "1946"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELHI SPECIAL POLICE ESTABLISHMENT ACT",
+      "act_named": "Delhi Special Police Establishment Act, 1947",
+      "refs": 1,
+      "printed": 1947,
+      "held": [
+        "1946"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DELIMITATION ACT",
+      "act_named": "Delimitation Act, 1952",
+      "refs": 1,
+      "printed": 1952,
+      "held": [
+        "2002"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "DISASTER MANAGEMENT ACT",
+      "act_named": "Disaster Management Act, 2025",
+      "refs": 1,
+      "printed": 2025,
+      "held": [
+        "2005"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DIVORCE ACT",
+      "act_named": "Divorce Act, 1969",
+      "refs": 1,
+      "printed": 1969,
+      "held": [
+        "1869"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "DOWRY PROHIBITION ACT",
+      "act_named": "Dowry Prohibition Act, 1986",
+      "refs": 1,
+      "printed": 1986,
+      "held": [
+        "1961"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "DOWRY PROHIBITION ACT",
+      "act_named": "Dowry Prohibition Act,1981",
+      "refs": 1,
+      "printed": 1981,
+      "held": [
+        "1961"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act 2010",
+      "refs": 1,
+      "printed": 2010,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act 2013",
+      "refs": 1,
+      "printed": 2013,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 1947",
+      "refs": 1,
+      "printed": 1947,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 1988",
+      "refs": 1,
+      "printed": 1988,
+      "held": [
+        "2003"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2007",
+      "refs": 1,
+      "printed": 2007,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2008",
+      "refs": 1,
+      "printed": 2008,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ELECTRICITY ACT",
+      "act_named": "Electricity Act, 2073",
+      "refs": 1,
+      "printed": 2073,
+      "held": [
+        "2003"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "EPIDEMIC DISEASES ACT",
+      "act_named": "The Epidemic Diseases Act, 1857",
+      "refs": 1,
+      "printed": 1857,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act 1995",
+      "refs": 1,
+      "printed": 1995,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1947",
+      "refs": 1,
+      "printed": 1947,
+      "held": [
+        "1955"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1950",
+      "refs": 1,
+      "printed": 1950,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1956",
+      "refs": 1,
+      "printed": 1956,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 1965",
+      "refs": 1,
+      "printed": 1965,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "ESSENTIAL COMMODITIES ACT",
+      "act_named": "Essential Commodities Act, 2006",
+      "refs": 1,
+      "printed": 2006,
+      "held": [
+        "1955"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "EXPENDITURE-TAX ACT",
+      "act_named": "Expenditure-tax Act, 1947",
+      "refs": 1,
+      "printed": 1947,
+      "held": [
+        "1987"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "EXPENDITURE-TAX ACT",
+      "act_named": "Expenditure-tax Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1987"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "EXPLOSIVE SUBSTANCES ACT",
+      "act_named": "Explosive Substances Act, 1984",
+      "refs": 1,
+      "printed": 1984,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "EXTRADITION ACT",
+      "act_named": "Extradition Act, 1903",
+      "refs": 1,
+      "printed": 1903,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "EXTRADITION ACT",
+      "act_named": "Extradition Act, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1962"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "EXTRADITION ACT",
+      "act_named": "Extradition Act, 2003",
+      "refs": 1,
+      "printed": 2003,
+      "held": [
+        "1962"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1948",
+      "refs": 1,
+      "printed": 1948,
+      "held": [
+        "1984"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "FAMILY COURTS ACT",
+      "act_named": "Family Courts Act, 1955",
+      "refs": 1,
+      "printed": 1955,
+      "held": [
+        "1984"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "FATAL ACCIDENTS ACT",
+      "act_named": "Fatal Accidents Act 1976",
+      "refs": 1,
+      "printed": 1976,
+      "held": [
+        "1855"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "FATAL ACCIDENTS ACT",
+      "act_named": "Fatal Accidents Act, 1939",
+      "refs": 1,
+      "printed": 1939,
+      "held": [
+        "1855"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act 1899",
+      "refs": 1,
+      "printed": 1899,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act 1953",
+      "refs": 1,
+      "printed": 1953,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1857",
+      "refs": 1,
+      "printed": 1857,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1873",
+      "refs": 1,
+      "printed": 1873,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1891",
+      "refs": 1,
+      "printed": 1891,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1892",
+      "refs": 1,
+      "printed": 1892,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1894",
+      "refs": 1,
+      "printed": 1894,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1896",
+      "refs": 1,
+      "printed": 1896,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1977",
+      "refs": 1,
+      "printed": 1977,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "General Clauses Act, 1992",
+      "refs": 1,
+      "printed": 1992,
+      "held": [
+        "1897"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "The General Clauses Act, 1887",
+      "refs": 1,
+      "printed": 1887,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GENERAL CLAUSES ACT",
+      "act_named": "The General Clauses Act, 1987",
+      "refs": 1,
+      "printed": 1987,
+      "held": [
+        "1897"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "GUARDIANS AND WARDS ACT",
+      "act_named": "The Guardians And Wards Act, 1980",
+      "refs": 1,
+      "printed": 1980,
+      "held": [
+        "1890"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1951",
+      "refs": 1,
+      "printed": 1951,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1953",
+      "refs": 1,
+      "printed": 1953,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 1988",
+      "refs": 1,
+      "printed": 1988,
+      "held": [
+        "1955"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act, 2026",
+      "refs": 1,
+      "printed": 2026,
+      "held": [
+        "1955"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act,1915",
+      "refs": 1,
+      "printed": 1915,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU MARRIAGE ACT",
+      "act_named": "Hindu Marriage Act,1995",
+      "refs": 1,
+      "printed": 1995,
+      "held": [
+        "1955"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU SUCCESSION ACT",
+      "act_named": "Hindu Succession Act 1958",
+      "refs": 1,
+      "printed": 1958,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU SUCCESSION ACT",
+      "act_named": "Hindu Succession Act, 1954",
+      "refs": 1,
+      "printed": 1954,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU SUCCESSION ACT",
+      "act_named": "Hindu Succession Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "HINDU SUCCESSION ACT",
+      "act_named": "Hindu Succession Act, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1956"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act 1972",
+      "refs": 1,
+      "printed": 1972,
+      "held": [
+        "1872"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1881",
+      "refs": 1,
+      "printed": 1881,
+      "held": [
+        "1872"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1892",
+      "refs": 1,
+      "printed": 1892,
+      "held": [
+        "1872"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1923",
+      "refs": 1,
+      "printed": 1923,
+      "held": [
+        "1872"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1925",
+      "refs": 1,
+      "printed": 1925,
+      "held": [
+        "1872"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1982",
+      "refs": 1,
+      "printed": 1982,
+      "held": [
+        "1872"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1987",
+      "refs": 1,
+      "printed": 1987,
+      "held": [
+        "1872"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN CONTRACT ACT",
+      "act_named": "Indian Contract Act, 1992",
+      "refs": 1,
+      "printed": 1992,
+      "held": [
+        "1872"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN EASEMENTS ACT",
+      "act_named": "Indian Easements Act, 1982",
+      "refs": 1,
+      "printed": 1982,
+      "held": [
+        "1882"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN FOREST ACT",
+      "act_named": "Indian Forest Act, 1923",
+      "refs": 1,
+      "printed": 1923,
+      "held": [
+        "1927"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN FOREST ACT",
+      "act_named": "Indian Forest Act, 1947",
+      "refs": 1,
+      "printed": 1947,
+      "held": [
+        "1927"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN FOREST ACT",
+      "act_named": "Indian Forest Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1927"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN FOREST ACT",
+      "act_named": "Indian Forest Act, 1972",
+      "refs": 1,
+      "printed": 1972,
+      "held": [
+        "1927"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN FOREST ACT",
+      "act_named": "Indian Forest Act, 2023",
+      "refs": 1,
+      "printed": 2023,
+      "held": [
+        "1927"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN PORTS ACT",
+      "act_named": "Indian Ports Act 1908",
+      "refs": 1,
+      "printed": 1908,
+      "held": [
+        "2025"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1879",
+      "refs": 1,
+      "printed": 1879,
+      "held": [
+        "1899"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1881",
+      "refs": 1,
+      "printed": 1881,
+      "held": [
+        "1899"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1889",
+      "refs": 1,
+      "printed": 1889,
+      "held": [
+        "1899"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1986",
+      "refs": 1,
+      "printed": 1986,
+      "held": [
+        "1899"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1988",
+      "refs": 1,
+      "printed": 1988,
+      "held": [
+        "1899"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1989",
+      "refs": 1,
+      "printed": 1989,
+      "held": [
+        "1899"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN STAMP ACT",
+      "act_named": "Indian Stamp Act, 1999",
+      "refs": 1,
+      "printed": 1999,
+      "held": [
+        "1899"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act 1985",
+      "refs": 1,
+      "printed": 1985,
+      "held": [
+        "1925"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1928",
+      "refs": 1,
+      "printed": 1928,
+      "held": [
+        "1925"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1955",
+      "refs": 1,
+      "printed": 1955,
+      "held": [
+        "1925"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1959",
+      "refs": 1,
+      "printed": 1959,
+      "held": [
+        "1925"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1925"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN SUCCESSION ACT",
+      "act_named": "Indian Succession Act, 1968",
+      "refs": 1,
+      "printed": 1968,
+      "held": [
+        "1925"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN TELEGRAPH ACT",
+      "act_named": "Indian Telegraph Act 1985",
+      "refs": 1,
+      "printed": 1985,
+      "held": [
+        "1885"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN TELEGRAPH ACT",
+      "act_named": "Indian Telegraph Act, 1886",
+      "refs": 1,
+      "printed": 1886,
+      "held": [
+        "1885"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN TELEGRAPH ACT",
+      "act_named": "Indian Telegraph Act, 1933",
+      "refs": 1,
+      "printed": 1933,
+      "held": [
+        "1885"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN TELEGRAPH ACT",
+      "act_named": "Indian Telegraph Act, 1948",
+      "refs": 1,
+      "printed": 1948,
+      "held": [
+        "1885"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INFORMATION TECHNOLOGY ACT",
+      "act_named": "Information Technology Act 2008",
+      "refs": 1,
+      "printed": 2008,
+      "held": [
+        "2000"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INFORMATION TECHNOLOGY ACT",
+      "act_named": "Information Technology Act, 2001",
+      "refs": 1,
+      "printed": 2001,
+      "held": [
+        "2000"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INSECTICIDES ACT",
+      "act_named": "Insecticides Act, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1968"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INSECTICIDES ACT",
+      "act_named": "Insecticides Act, 1986",
+      "refs": 1,
+      "printed": 1986,
+      "held": [
+        "1968"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INSURANCE ACT",
+      "act_named": "Insurance Act 1932",
+      "refs": 1,
+      "printed": 1932,
+      "held": [
+        "1938"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INSURANCE ACT",
+      "act_named": "Insurance Act, 1958",
+      "refs": 1,
+      "printed": 1958,
+      "held": [
+        "1938"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INTEREST ACT",
+      "act_named": "Interest Act 1839",
+      "refs": 1,
+      "printed": 1839,
+      "held": [
+        "1978"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INTEREST ACT",
+      "act_named": "Interest Act, 1939",
+      "refs": 1,
+      "printed": 1939,
+      "held": [
+        "1978"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INTEREST ACT",
+      "act_named": "Interest Act, 1974",
+      "refs": 1,
+      "printed": 1974,
+      "held": [
+        "1978"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INTEREST ACT",
+      "act_named": "Interest Act, 1987",
+      "refs": 1,
+      "printed": 1987,
+      "held": [
+        "1978"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LEGAL SERVICES AUTHORITIES ACT",
+      "act_named": "Legal Services Authorities Act, 1997",
+      "refs": 1,
+      "printed": 1997,
+      "held": [
+        "1987"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIFE INSURANCE CORPORATION ACT",
+      "act_named": "Life Insurance Corporation Act, 1968",
+      "refs": 1,
+      "printed": 1968,
+      "held": [
+        "1956"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act 1953",
+      "refs": 1,
+      "printed": 1953,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act 1964",
+      "refs": 1,
+      "printed": 1964,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act 1980",
+      "refs": 1,
+      "printed": 1980,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1936",
+      "refs": 1,
+      "printed": 1936,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1972",
+      "refs": 1,
+      "printed": 1972,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act, 1996",
+      "refs": 1,
+      "printed": 1996,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act,1908",
+      "refs": 1,
+      "printed": 1908,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "LIMITATION ACT",
+      "act_named": "Limitation Act,1996",
+      "refs": 1,
+      "printed": 1996,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MAJORITY ACT",
+      "act_named": "Majority Act 1997",
+      "refs": 1,
+      "printed": 1997,
+      "held": [
+        "1875"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MANIPUR MUNICIPALITIES ACT",
+      "act_named": "Manipur Municipalities Act, 1976",
+      "refs": 1,
+      "printed": 1976,
+      "held": [
+        "1994"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MANIPUR UNIVERSITY ACT",
+      "act_named": "Manipur University Act, 1980",
+      "refs": 1,
+      "printed": 1980,
+      "held": [
+        "2005"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MERCHANT SHIPPING ACT",
+      "act_named": "Merchant Shipping Act, 1951",
+      "refs": 1,
+      "printed": 1951,
+      "held": [
+        "2025"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MERCHANT SHIPPING ACT",
+      "act_named": "Merchant Shipping Act, 1970",
+      "refs": 1,
+      "printed": 1970,
+      "held": [
+        "2025"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MERCHANT SHIPPING ACT",
+      "act_named": "The Merchant Shipping Act, 1958",
+      "refs": 1,
+      "printed": 1958,
+      "held": [
+        "2025"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act 1994",
+      "refs": 1,
+      "printed": 1994,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1888",
+      "refs": 1,
+      "printed": 1888,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1908",
+      "refs": 1,
+      "printed": 1908,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1914",
+      "refs": 1,
+      "printed": 1914,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1948",
+      "refs": 1,
+      "printed": 1948,
+      "held": [
+        "1988"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1959",
+      "refs": 1,
+      "printed": 1959,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MOTOR VEHICLES ACT",
+      "act_named": "Motor Vehicles Act,1939",
+      "refs": 1,
+      "printed": 1939,
+      "held": [
+        "1988"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "MULTI-STATE CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Multi-State Co-operative Societies Act, 1984",
+      "refs": 1,
+      "printed": 1984,
+      "held": [
+        "2002"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NATIONAL HIGHWAYS ACT",
+      "act_named": "National Highways Act 1985",
+      "refs": 1,
+      "printed": 1985,
+      "held": [
+        "1956"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NATIONAL HIGHWAYS ACT",
+      "act_named": "National Highways Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NATIONAL HIGHWAYS ACT",
+      "act_named": "National Highways Act, 1986",
+      "refs": 1,
+      "printed": 1986,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NATIONAL SECURITY ACT",
+      "act_named": "National Security Act, 1918",
+      "refs": 1,
+      "printed": 1918,
+      "held": [
+        "1980"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NATIONAL SECURITY ACT",
+      "act_named": "National Security Act, 1933",
+      "refs": 1,
+      "printed": 1933,
+      "held": [
+        "1980"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NATIONAL SECURITY ACT",
+      "act_named": "National Security Act, 1939",
+      "refs": 1,
+      "printed": 1939,
+      "held": [
+        "1980"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NATIONAL SECURITY ACT",
+      "act_named": "National Security Act, 1950",
+      "refs": 1,
+      "printed": 1950,
+      "held": [
+        "1980"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instrument Act, 1880",
+      "refs": 1,
+      "printed": 1880,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instrument Act, 1882",
+      "refs": 1,
+      "printed": 1882,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instrument Act, 1988",
+      "refs": 1,
+      "printed": 1988,
+      "held": [
+        "1881"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act 1950",
+      "refs": 1,
+      "printed": 1950,
+      "held": [
+        "1881"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1880",
+      "refs": 1,
+      "printed": 1880,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1887",
+      "refs": 1,
+      "printed": 1887,
+      "held": [
+        "1881"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1959",
+      "refs": 1,
+      "printed": 1959,
+      "held": [
+        "1881"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NEGOTIABLE INSTRUMENTS ACT",
+      "act_named": "Negotiable Instruments Act, 1973",
+      "refs": 1,
+      "printed": 1973,
+      "held": [
+        "1881"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "NOTARIES ACT",
+      "act_named": "Notaries Act 1953",
+      "refs": 1,
+      "printed": 1953,
+      "held": [
+        "1952"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "OFFICIAL SECRETS ACT",
+      "act_named": "Official Secrets Act 1911",
+      "refs": 1,
+      "printed": 1911,
+      "held": [
+        "1923"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "OFFICIAL SECRETS ACT",
+      "act_named": "Official Secrets Act, 1920",
+      "refs": 1,
+      "printed": 1920,
+      "held": [
+        "1923"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PASSPORTS ACT",
+      "act_named": "Passports Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1967"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PASSPORTS ACT",
+      "act_named": "Passports Act, 1965",
+      "refs": 1,
+      "printed": 1965,
+      "held": [
+        "1967"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PASSPORTS ACT",
+      "act_named": "Passports Act, 1976",
+      "refs": 1,
+      "printed": 1976,
+      "held": [
+        "1967"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PASSPORTS ACT",
+      "act_named": "The Passports Act 1867",
+      "refs": 1,
+      "printed": 1867,
+      "held": [
+        "1967"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PATENTS ACT",
+      "act_named": "Patents Act 1977",
+      "refs": 1,
+      "printed": 1977,
+      "held": [
+        "1970"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PATENTS ACT",
+      "act_named": "Patents Act, 1907",
+      "refs": 1,
+      "printed": 1907,
+      "held": [
+        "1970"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PATENTS ACT",
+      "act_named": "Patents Act, 1917",
+      "refs": 1,
+      "printed": 1917,
+      "held": [
+        "1970"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "PATENTS ACT",
+      "act_named": "Patents Act, 1977",
+      "refs": 1,
+      "printed": 1977,
+      "held": [
+        "1970"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act 1888",
+      "refs": 1,
+      "printed": 1888,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act 1891",
+      "refs": 1,
+      "printed": 1891,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act, 1891",
+      "refs": 1,
+      "printed": 1891,
+      "held": [
+        "1861",
+        "1949"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PROVIDENT FUNDS ACT",
+      "act_named": "Provident Funds Act, 1952",
+      "refs": 1,
+      "printed": 1952,
+      "held": [
+        "1925"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PROVINCIAL SMALL CAUSE COURTS ACT",
+      "act_named": "Provincial Small Cause Courts Act, 1857",
+      "refs": 1,
+      "printed": 1857,
+      "held": [
+        "1887"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PUBLIC GAMBLING ACT",
+      "act_named": "Public Gambling Act, 1967",
+      "refs": 1,
+      "printed": 1967,
+      "held": [
+        "1867"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "PUBLIC GAMBLING ACT",
+      "act_named": "Public Gambling Act, 1976",
+      "refs": 1,
+      "printed": 1976,
+      "held": [
+        "1867"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "PUNJAB REORGANISATION ACT",
+      "act_named": "Punjab Reorganisation Act, 1986",
+      "refs": 1,
+      "printed": 1986,
+      "held": [
+        "1966"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "RAILWAYS ACT",
+      "act_named": "Railways Act 1890",
+      "refs": 1,
+      "printed": 1890,
+      "held": [
+        "1989"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "RAILWAYS ACT",
+      "act_named": "Railways Act 1985",
+      "refs": 1,
+      "printed": 1985,
+      "held": [
+        "1989"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "RAILWAYS ACT",
+      "act_named": "Railways Act 1987",
+      "refs": 1,
+      "printed": 1987,
+      "held": [
+        "1989"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "RAILWAYS ACT",
+      "act_named": "Railways Act, 1987",
+      "refs": 1,
+      "printed": 1987,
+      "held": [
+        "1989"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "RAILWAYS ACT",
+      "act_named": "Railways Act, 1999",
+      "refs": 1,
+      "printed": 1999,
+      "held": [
+        "1989"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act 1977",
+      "refs": 1,
+      "printed": 1977,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act, 1866",
+      "refs": 1,
+      "printed": 1866,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act, 1882",
+      "refs": 1,
+      "printed": 1882,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act, 1991",
+      "refs": 1,
+      "printed": 1991,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act, 2008",
+      "refs": 1,
+      "printed": 2008,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REGISTRATION ACT",
+      "act_named": "Registration Act,1977",
+      "refs": 1,
+      "printed": 1977,
+      "held": [
+        "1908"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REVENUE RECOVERY ACT",
+      "act_named": "Revenue Recovery Act 1864",
+      "refs": 1,
+      "printed": 1864,
+      "held": [
+        "1890"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REVENUE RECOVERY ACT",
+      "act_named": "Revenue Recovery Act 1968",
+      "refs": 1,
+      "printed": 1968,
+      "held": [
+        "1890"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "REVENUE RECOVERY ACT",
+      "act_named": "Revenue Recovery Act, 1864",
+      "refs": 1,
+      "printed": 1864,
+      "held": [
+        "1890"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SOCIETIES REGISTRATION ACT",
+      "act_named": "Societies Registration Act, 1935",
+      "refs": 1,
+      "printed": 1935,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SOCIETIES REGISTRATION ACT",
+      "act_named": "Societies Registration Act, 1973",
+      "refs": 1,
+      "printed": 1973,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SOCIETIES REGISTRATION ACT",
+      "act_named": "Societies Registration Act, 1980",
+      "refs": 1,
+      "printed": 1980,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SOCIETIES REGISTRATION ACT",
+      "act_named": "Societies Registration Act, 2006",
+      "refs": 1,
+      "printed": 2006,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SPECIAL MARRIAGE ACT",
+      "act_named": "Special Marriage Act, 1955",
+      "refs": 1,
+      "printed": 1955,
+      "held": [
+        "1954"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIAL MARRIAGE ACT",
+      "act_named": "Special Marriage Act, 1956",
+      "refs": 1,
+      "printed": 1956,
+      "held": [
+        "1954"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIAL MARRIAGE ACT",
+      "act_named": "Special Marriage Act, 1972",
+      "refs": 1,
+      "printed": 1972,
+      "held": [
+        "1954"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1960",
+      "refs": 1,
+      "printed": 1960,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1961",
+      "refs": 1,
+      "printed": 1961,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1968",
+      "refs": 1,
+      "printed": 1968,
+      "held": [
+        "1963"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "SPECIFIC RELIEF ACT",
+      "act_named": "Specific Relief Act, 1997",
+      "refs": 1,
+      "printed": 1997,
+      "held": [
+        "1963"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "SPICES BOARD ACT",
+      "act_named": "Spices Board Act, 1996",
+      "refs": 1,
+      "printed": 1996,
+      "held": [
+        "1986"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "STATE FINANCIAL CORPORATIONS ACT",
+      "act_named": "State Financial Corporations Act, 1959",
+      "refs": 1,
+      "printed": 1959,
+      "held": [
+        "1951"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "TEA ACT",
+      "act_named": "Tea Act, 1853",
+      "refs": 1,
+      "printed": 1853,
+      "held": [
+        "1953"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "The Trade Marks Act, 1940",
+      "refs": 1,
+      "printed": 1940,
+      "held": [
+        "1999"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act 1905",
+      "refs": 1,
+      "printed": 1905,
+      "held": [
+        "1999"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act, 1991",
+      "refs": 1,
+      "printed": 1991,
+      "held": [
+        "1999"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "TRADE MARKS ACT",
+      "act_named": "Trade Marks Act, 1995",
+      "refs": 1,
+      "printed": 1995,
+      "held": [
+        "1999"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "UNIVERSITY GRANTS COMMISSION ACT",
+      "act_named": "University Grants Commission Act, 1957",
+      "refs": 1,
+      "printed": 1957,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "UNIVERSITY GRANTS COMMISSION ACT",
+      "act_named": "University Grants Commission Act, 1966",
+      "refs": 1,
+      "printed": 1966,
+      "held": [
+        "1956"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    }
+  ],
+  "truly_ambiguous": [
+    {
+      "act_key": "POLICE ACT",
+      "act_named": "Police Act",
+      "refs": 243,
+      "targets": [
+        "The Police Act, 1861 (1861)",
+        "The Police Act, 1949 (1949)"
+      ]
+    },
+    {
+      "act_key": "INDIAN TOLLS ACT",
+      "act_named": "Indian Tolls Act",
+      "refs": 1,
+      "targets": [
+        "The Indian Tolls Act, 1851 (1851)",
+        "The Indian Tolls Act, 1864 (1864)"
+      ]
+    }
+  ],
+  "unheld_keys_top": [
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "refs": 280027
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "refs": 93881
+    },
+    {
+      "act_key": "INDIAN EVIDENCE ACT",
+      "refs": 17576
+    },
+    {
+      "act_key": "LAND ACQUISITION ACT",
+      "refs": 8095
+    },
+    {
+      "act_key": "POCSO ACT",
+      "refs": 7220
+    },
+    {
+      "act_key": "INCOME TAX ACT",
+      "refs": 6218
+    },
+    {
+      "act_key": "EXCISE ACT",
+      "refs": 3648
+    },
+    {
+      "act_key": "INDUSTRIAL DISPUTES ACT",
+      "refs": 3314
+    },
+    {
+      "act_key": "CGST ACT",
+      "refs": 3282
+    },
+    {
+      "act_key": "IT ACT",
+      "refs": 2932
+    },
+    {
+      "act_key": "SARFAESI ACT",
+      "refs": 2836
+    },
+    {
+      "act_key": "INCOME-TAX ACT",
+      "refs": 2110
+    },
+    {
+      "act_key": "BIHAR EXCISE ACT",
+      "refs": 1787
+    },
+    {
+      "act_key": "CONTRACT ACT",
+      "refs": 1609
+    },
+    {
+      "act_key": "FINANCE ACT",
+      "refs": 1341
+    },
+    {
+      "act_key": "MOTOR VEHICLE ACT",
+      "refs": 1256
+    },
+    {
+      "act_key": "GST ACT",
+      "refs": 1084
+    },
+    {
+      "act_key": "ABKARI ACT",
+      "refs": 1028
+    },
+    {
+      "act_key": "LA ACT",
+      "refs": 967
+    },
+    {
+      "act_key": "PC ACT",
+      "refs": 932
+    },
+    {
+      "act_key": "DSE ACT",
+      "refs": 884
+    },
+    {
+      "act_key": "MMDR ACT",
+      "refs": 857
+    },
+    {
+      "act_key": "RTE ACT",
+      "refs": 840
+    },
+    {
+      "act_key": "INDIAN INCOME-TAX ACT",
+      "refs": 742
+    },
+    {
+      "act_key": "RPWD ACT",
+      "refs": 673
+    },
+    {
+      "act_key": "COTP ACT",
+      "refs": 651
+    },
+    {
+      "act_key": "GUJARAT POLICE ACT",
+      "refs": 635
+    },
+    {
+      "act_key": "MP EXCISE ACT",
+      "refs": 615
+    },
+    {
+      "act_key": "LAND REVENUE ACT",
+      "refs": 608
+    },
+    {
+      "act_key": "M. P. EXCISE ACT",
+      "refs": 585
+    },
+    {
+      "act_key": "JJ ACT",
+      "refs": 575
+    },
+    {
+      "act_key": "FOREIGNERS ACT",
+      "refs": 560
+    },
+    {
+      "act_key": "KARNATAKA LAND REVENUE ACT",
+      "refs": 560
+    },
+    {
+      "act_key": "CENTRAL ACT",
+      "refs": 544
+    },
+    {
+      "act_key": "ID ACT",
+      "refs": 535
+    },
+    {
+      "act_key": "KVAT ACT",
+      "refs": 527
+    },
+    {
+      "act_key": "INDIAN LIMITATION ACT",
+      "refs": 521
+    },
+    {
+      "act_key": "FSS ACT",
+      "refs": 513
+    },
+    {
+      "act_key": "FAMILY COURT ACT",
+      "refs": 508
+    },
+    {
+      "act_key": "DOMESTIC VIOLENCE ACT",
+      "refs": 498
+    }
+  ],
+  "link_plan_size": 1065
+}
