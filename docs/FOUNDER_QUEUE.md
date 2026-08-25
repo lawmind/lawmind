@@ -5495,3 +5495,109 @@ NEW3 owns.
 
 **This is a question for counsel, not for an agent.** No agent should pick a
 retention period.
+
+---
+
+## FQ-STORE-REVIEWER-ACCOUNT — a reviewer cannot sign in, and nobody owns it
+
+**Raised 25 Aug 2026, NEW3.** `docs/product/STORE_RELEASE_CHECKLIST_V1.md` §5.
+
+Both app stores require working credentials so a human reviewer can use the app.
+LawMind authenticates by magic link (better-auth). **There is no test-account
+bypass anywhere** — grepped `services/api/src/auth/` and `packages/auth/src/`
+for `DEMO`, `TEST_ACCOUNT`, `bypassMagicLink`, `E2E`: zero hits.
+
+So a reviewer at Apple or Google enters an email, waits for a link they will
+never receive, and rejects the submission. **This is a hard submission blocker
+and it currently has no owner.**
+
+Two ways out, and the choice is the founder's because one of them weakens auth:
+
+1. **A real mailbox in the review notes.** No code change. Someone must own a
+   monitored inbox for the duration of review, and the credentials sit in a
+   store console.
+2. **A server-side fixed test account** that skips the link for one known
+   address, behind a flag defaulting OFF. Cheaper for review, and it is an
+   authentication bypass living in production — exactly the kind of thing that
+   is switched on for a review and never switched off.
+
+NEW3 recommends (1). It costs nothing structural, and the risk is a person
+forgetting to watch an inbox rather than a permanent hole in sign-in.
+
+**What was built anyway:** the whole review path works — account creation,
+matters, saved authorities. §5 of the checklist specifies what the demo account
+must be pre-populated with and, importantly, **which query the reviewer should
+be told to type**: `cheque bounce section 138` (rarest lexeme df 0.00089, ranks
+normally) and never `anticipatory bail` (df 0.069 — the sparse arm refuses to
+rank it and the app returns an empty result). A reviewer whose first search
+returns nothing concludes the app does not work.
+
+---
+
+## FQ-SITE — there is no website, and it is a store gate rather than a marketing nicety
+
+**Raised 25 Aug 2026, NEW3.** `docs/product/WEBSITE_PRODUCT_SPEC_V1.md` §0.
+
+`apps/` contains `mobile` and `admin`. There is no marketing site, no landing
+page, no public surface of any kind. `lawmind.co` is verified with DNS written
+through the Spaceship API and serves nothing.
+
+**Both stores reject a submission without a reachable privacy policy URL.** So
+the website is not a launch nicety that can slip — it is one of three absolute
+blockers on any submission at all.
+
+**What was built anyway, so this is a build task and not a thinking task:**
+`WEBSITE_PRODUCT_SPEC_V1.md` is a finished specification — 7-page IA, homepage
+section by section with exact copy, screenshot list with what must not be in
+frame, CTA and download story, premium story, acceptance criteria. Every copy
+block cites its row in `WEBSITE_CLAIM_EVIDENCE_MATRIX.md`, a finished 22-row
+binding matrix with named owners. RCC implements; nothing further is owed from
+product.
+
+**No decision is asked for here** beyond whether RCC's sprint capacity goes to
+it. NEW3's recommendation, implementation call RCC's: `apps/site`, Next.js
+static export — Next 14 is already in the repo for `apps/admin`, so no new
+vendor and no new framework, and a launch site needs no backend.
+
+---
+
+## FQ-SEARCH-COVERAGE-COMMERCIAL — the commonest query class in the market has one working arm
+
+**Raised 25 Aug 2026, NEW3.** A commercial decision wearing a research decision's
+clothes, which is why it is here and not only on NEW1's board.
+`docs/product/TEN_MATTER_PRODUCT_REGRESSION_SPEC_V1.md` §4.2 and
+`PREMIUM_COMMERCIAL_DECISION_PACKAGE_V3.md` §2.2.
+
+`retrieve.ts` refuses to rank a query whose rarest lexeme exceeds document
+frequency 0.05, because `ts_rank` over ~935,000 documents is over ten minutes.
+That engineering is correct and its cost was measured before the threshold was
+chosen. The consequence, measured against `lexeme_document_frequency`:
+
+```
+REFUSES  rarest df 0.06902   anticipatory bail
+REFUSES  rarest df 0.25774   bail application
+REFUSES  rarest df 0.11922   quashing of FIR
+ranks    rarest df 0.00089   cheque bounce section 138
+```
+
+`bail` alone appears in **25.77%** of the sampled corpus, and bail is the
+highest-volume thing in Indian criminal practice. For that whole class the
+product has exactly one arm left — dense — and NEW1 measured its reach at
+**40,161 judgments of 18.7 million (0.21%)**.
+
+**Two decisions, both the founder's:**
+
+1. **Fund NEW1's passage build, or accept the gap as a launch condition.**
+   ~6 GPU-days to the measured improvement, ~18 GPU-days and 61 GB for the full
+   build (NEW1 bus 1088); 2.2% to 37.8% on posed advocate questions. A
+   subscription's revenue durability rests on the daily loop and the daily loop
+   is search, so this is not only a retrieval question.
+2. **Permit ten internal Hearing Pack generations** so the unit cost of what a
+   paid tier would sell becomes a measurement. Today it is unmeasured: all-time
+   `llm_calls` is 40,124 calls and **$0.1232**, entirely DeepSeek V4 Flash, with
+   **zero calls ever made to Claude Sonnet 4.6 or Haiku 4.5**. Nothing is sold
+   and nothing is shown to a user — ten generations against the ten regression
+   matters, read back from `llm_calls`.
+
+**What was built anyway:** the 10-matter regression is permanent and re-runnable,
+so whichever way this goes, the effect is measurable rather than argued.
