@@ -92,6 +92,10 @@ const sql = postgres(url, {
 });
 
 type Checkpoint = { cursorAt: string; cursorId: string; scanned: number; updatedAt: string };
+
+/** Identifies THIS run in `citation_key_frontier.run_id`, so two overlapping
+ * builders show up as two ids alternating rather than as one healthy walk. */
+const RUN_ID = `citation-keys-${process.pid}-${new Date().toISOString()}`;
 const CHECKPOINT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '.checkpoints');
 const CHECKPOINT_FILE = join(CHECKPOINT_DIR, 'citation-keys.json');
 const EPOCH = { cursorAt: '1970-01-01T00:00:00.000Z', cursorId: '00000000-0000-0000-0000-000000000000' };
@@ -123,6 +127,42 @@ function writeCheckpoint(c: Omit<Checkpoint, 'updatedAt'>): void {
   } catch (err) {
     /* A checkpoint that cannot be written is a slow restart, not a wrong one. */
     console.log(`    checkpoint write failed (${err instanceof Error ? err.message : String(err)}) — continuing`);
+  }
+}
+
+/**
+ * The same cursor, in the DATABASE.
+ *
+ * The file above is what THIS process needs in order to resume. This row is what
+ * everything else needs in order to know whether the index can be trusted: the
+ * resolver, `admin/metrics.ts`, and the alert poller all live in another process
+ * and cannot read a file in the ingest service's working directory.
+ *
+ * It is the cursor and not a subtraction on purpose. A judgment citing nothing
+ * never produces a key row, so "newest judgment that has a key" drifts with the
+ * data rather than with the walk, and reads healthy while the walk is stopped.
+ * NEW2's 309,130-citation gap was invisible for a week for exactly that reason.
+ *
+ * A failure here is logged and swallowed, like the file write: losing the ability
+ * to REPORT progress must never stop the work that is making it. The freshness
+ * reading then goes stale, which is the correct and visible outcome.
+ */
+async function publishFrontier(c: Omit<Checkpoint, 'updatedAt'>, runId: string): Promise<void> {
+  try {
+    await sql`
+      INSERT INTO citation_key_frontier (id, cursor_at, cursor_id, scanned, updated_at, run_id)
+      VALUES (true, ${c.cursorAt}::timestamptz, ${c.cursorId}::uuid, ${c.scanned}, now(), ${runId})
+      ON CONFLICT (id) DO UPDATE
+        SET cursor_at = EXCLUDED.cursor_at,
+            cursor_id = EXCLUDED.cursor_id,
+            scanned   = EXCLUDED.scanned,
+            updated_at = EXCLUDED.updated_at,
+            run_id     = EXCLUDED.run_id`;
+  } catch (err) {
+    console.log(
+      `    frontier publish failed (${err instanceof Error ? err.message : String(err)}) — continuing; ` +
+        `the freshness reading will go STALE, which is the right visible outcome`,
+    );
   }
 }
 
@@ -338,6 +378,7 @@ async function main() {
     cursorId = page!.id;
     scanned += n;
     writeCheckpoint({ cursorAt, cursorId, scanned });
+    await publishFrontier({ cursorAt, cursorId, scanned }, RUN_ID);
 
     const rate = scanned / Math.max((Date.now() - started) / 1000, 1);
     console.log(

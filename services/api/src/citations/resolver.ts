@@ -67,6 +67,11 @@
  * asked for, not the size of the corpus. `resolveBatch` is the only entry point
  * that touches the database for exactly this reason.
  */
+import {
+  type KeyFreshness,
+  mayAssertUnique,
+  readKeyFreshness,
+} from './key-freshness.ts';
 import type { Sql } from 'postgres';
 
 import { citationLookupKey } from '../search/query-shape.ts';
@@ -81,7 +86,26 @@ import { citationLookupKey } from '../search/query-shape.ts';
  */
 export const RESOLVER_VERSION = 'citation-resolver-v0.1';
 
-export type ResolutionState = 'UNIQUE' | 'AMBIGUOUS' | 'TARGET_NOT_HELD' | 'REFUSED';
+export type ResolutionState =
+  | 'UNIQUE'
+  | 'AMBIGUOUS'
+  | 'TARGET_NOT_HELD'
+  | 'REFUSED'
+  /**
+   * Exactly one candidate was found, and the index is too far behind ingest for
+   * that to mean "exactly one exists".
+   *
+   * A separate state rather than a downgrade to AMBIGUOUS, because AMBIGUOUS is
+   * a claim — "we hold more than one" — and we do not hold more than one. What
+   * we have is one candidate and no right to call it the only one. NEW2 measured
+   * what happens when those are conflated: 33,013 shared-neutral groups answered
+   * UNIQUE with total confidence from an index 309,130 citations behind.
+   *
+   * A consumer must handle it. Enrichment should fail closed on it; a UI should
+   * show the candidate WITHOUT the claim of uniqueness. It must never be widened
+   * back to UNIQUE by anything downstream.
+   */
+  | 'UNIQUE_UNCONFIRMED_STALE_INDEX';
 
 export type ResolverCandidate = {
   readonly judgmentId: string;
@@ -224,7 +248,22 @@ function refused(raw: string, why: string): Resolution {
  * plus 500 plans. Order is preserved, and every input produces exactly one
  * output — a caller can zip the arrays without matching on the string.
  */
-export async function resolveBatch(sql: Sql, raws: readonly string[]): Promise<Resolution[]> {
+export async function resolveBatch(
+  sql: Sql,
+  raws: readonly string[],
+  /**
+   * The index's own freshness. Read once by the caller and passed in, rather
+   * than read per batch — a resolver run walks thousands of batches and the
+   * frontier does not move underneath it in a way that matters.
+   *
+   * OMITTING IT READS THE FRESHNESS ITSELF. It does not default to "fresh": a
+   * safety gate whose default is "off" is a gate that is off in exactly the code
+   * path nobody remembered to update.
+   */
+  freshness?: KeyFreshness,
+): Promise<Resolution[]> {
+  const state = freshness?.state ?? (await readKeyFreshness(sql)).state;
+  const unique = mayAssertUnique(state);
   const gated = raws.map((raw) => ({ raw, gate: canonicalKeyFor(raw) }));
   const keys = [...new Set(gated.filter((g) => !g.gate.refused).map((g) => (g.gate as Accepted).key))];
 
@@ -272,8 +311,24 @@ export async function resolveBatch(sql: Sql, raws: readonly string[]): Promise<R
      * two copies of one common order. Choosing among them needs evidence this
      * module does not have.
      */
+    /**
+     * Staleness can only ever HIDE a candidate; it can never invent one. So it
+     * falsifies exactly one of these four answers.
+     *
+     * AMBIGUOUS already says "more than one, choose" — a hidden candidate makes
+     * it more so. TARGET_NOT_HELD already says "we do not hold this". REFUSED
+     * was decided before any lookup. Only UNIQUE makes a claim about the WHOLE
+     * corpus from an index that has not read all of it, and only UNIQUE is
+     * therefore gated.
+     */
     const state: ResolutionState =
-      candidates.length === 0 ? 'TARGET_NOT_HELD' : candidates.length === 1 ? 'UNIQUE' : 'AMBIGUOUS';
+      candidates.length === 0
+        ? 'TARGET_NOT_HELD'
+        : candidates.length === 1
+          ? unique
+            ? 'UNIQUE'
+            : 'UNIQUE_UNCONFIRMED_STALE_INDEX'
+          : 'AMBIGUOUS';
 
     return {
       raw,

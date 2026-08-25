@@ -43,6 +43,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
+import { readKeyFreshness } from '../citations/key-freshness.ts';
 import { buildSha } from '../build-info.ts';
 import { CORE_POOL_MAX, RESEARCH_POOL_MAX, RESEARCH_CONCURRENCY } from '../pools.ts';
 import type { Admission } from '../search/admission.ts';
@@ -126,6 +127,30 @@ export const ALERT_RULES = {
    * workers is itself an outage.
    */
   jobObservationAgeHours: { watch: 2, page: 12 },
+  /**
+   * Judgments the citation-key index has provably not walked.
+   *
+   * The resolver answers UNIQUE from this index, and UNIQUE is a claim about the
+   * WHOLE corpus. NEW2 measured what a lagging index does to it: 309,130
+   * unindexed citations produced 33,013 false uniques, roughly one wrong
+   * confident answer per nine unwalked rows.
+   *
+   * `page` matches `MAX_LAG_ROWS` in `citations/key-freshness.ts` — the point at
+   * which the resolver stops asserting UNIQUE. Paging at the same number the
+   * behaviour changes at means the alert and the product never disagree about
+   * whether the index is trustworthy. `watch` is a fifth of it, so somebody sees
+   * it climbing rather than only when it arrives.
+   */
+  citationKeyLagRows: { watch: 5_000, page: 25_000 },
+  /**
+   * Hours since the key builder last published its cursor at all.
+   *
+   * The row count cannot see a DEAD builder. With ingest idle, a lag of zero
+   * rows is equally consistent with "fully caught up" and "nothing has run for a
+   * week and nothing has arrived either" — and the first of those is the reading
+   * a dashboard shows you.
+   */
+  citationKeyBuilderQuietHours: { watch: 24, page: 72 },
 } as const;
 
 /**
@@ -502,6 +527,48 @@ export async function collectMetrics(
        * honestly different from "no stalled jobs". */
     }
 
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * RESOLVER INDEX FRESHNESS
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Same reading the resolver itself gates on — `citations/key-freshness.ts`,
+     * imported rather than reimplemented, so the pager cannot say the index is
+     * fine while `resolveBatch` is refusing to assert UNIQUE from it.
+     *
+     * Absent tables mean this database predates migration 0085 (a fresh restore,
+     * a rehearsal target). Reported as null, which is honestly different from
+     * "the index is current".
+     */
+    let citationKeys: Awaited<ReturnType<typeof readKeyFreshness>> | null = null;
+    try {
+      citationKeys = await readKeyFreshness(sql);
+      add(
+        'citationKeyLagRows',
+        citationKeys.lagRows,
+        `${citationKeys.lagRows.toLocaleString()} judgments are newer than the citation-key ` +
+          `cursor — the resolver answers UNIQUE from this index`,
+      );
+      if (citationKeys.lagHours !== null) {
+        add(
+          'citationKeyBuilderQuietHours',
+          citationKeys.lagHours,
+          `the citation-key builder last published ${Math.round(citationKeys.lagHours)}h ago`,
+        );
+      }
+      if (citationKeys.state === 'UNKNOWN') {
+        alerts.push({
+          severity: 'watch',
+          rule: 'citationKeyFrontierMissing',
+          detail:
+            'citation_key_frontier is empty — the key builder has never published a cursor, ' +
+            'so the resolver is refusing to assert UNIQUE and nobody can see how far behind it is',
+        });
+      }
+    } catch {
+      /* No frontier table on this database. Null below, not "fine". */
+    }
+
     const admission = deps.admission?.stats();
 
     const payload = {
@@ -562,6 +629,11 @@ export async function collectMetrics(
        * `jobObservationAgeHours` rule above it.
        */
       backgroundJobs: jobs,
+      /**
+       * null means migration 0085 has not run here — NOT that the index is
+       * current. The same distinction `backgroundJobs` above it makes.
+       */
+      citationKeys,
       /**
        * The whole point. Empty means every rule above is inside its threshold
        * right now — not that nothing is wrong, only that nothing we know how to
