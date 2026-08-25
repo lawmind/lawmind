@@ -94,8 +94,24 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const REGISTRY = join(REPO, '.agents', 'jobs', 'registry.jsonl');
-const OBSERVATIONS = join(REPO, '.agents', 'jobs', 'observations.jsonl');
+/**
+ * Both files are overridable so the control plane can be TESTED against a
+ * fixture instead of only against whatever the box happens to be doing.
+ *
+ * That is not a convenience. The defect this file was rewritten to fix — a
+ * recycled pid adopted as a healthy job — is unreproducible on demand against
+ * the live registry: it needs a pid that is alive AND is not the job, and you
+ * cannot ask Windows to recycle a number to order. With a fixture registry it is
+ * two lines and runs in a second, so the guard has an actual failing case behind
+ * it rather than a comment claiming it works.
+ */
+const argvRaw = process.argv.slice(2);
+function argOf(name, fallback) {
+  const i = argvRaw.indexOf('--' + name);
+  return i === -1 || !argvRaw[i + 1] ? fallback : argvRaw[i + 1];
+}
+const REGISTRY = resolve(REPO, argOf('registry', join('.agents', 'jobs', 'registry.jsonl')));
+const OBSERVATIONS = resolve(REPO, argOf('observations', join('.agents', 'jobs', 'observations.jsonl')));
 
 /** A process younger than this with no progress reading is STARTING, not stalled. */
 const STARTING_GRACE_MS = 5 * 60 * 1000;
@@ -121,6 +137,78 @@ const STALL_WINDOW_MS = {
 const TERMINAL = new Set(['FINISHED', 'STOPPED', 'PAUSED']);
 
 /**
+ * How long a job may hold a live process, a moving checkpoint and ZERO durable
+ * output before that combination is called REPLAYING rather than progressing.
+ *
+ * R7 §4 requires the distinction and NEW1's 1181 is why the number is not
+ * generous: their HEAD walk held the GPU, advanced its checkpoint and grew its
+ * log for 65 minutes while `new1_doc_vector_stage` sat at 2,026,872 rows — the
+ * delta was exactly 0. Every signal anyone was watching said healthy. A replay
+ * IS legitimate for a while (a resumed walk re-reads its skip prefix), so this
+ * is a window and not a threshold; past it, the honest word is REPLAYING.
+ */
+const REPLAY_WINDOW_MS = 30 * 60 * 1000;
+
+/**
+ * Words in a command line that vary between two runs of the SAME job and must
+ * not enter its signature: pids, ports chosen at runtime, temp paths, dates.
+ * Everything else — the interpreter, the script path, the subcommand, the
+ * meaningful flags — is what makes two processes the same job.
+ */
+function commandSignature(cmd) {
+  if (!cmd) return null;
+  return (
+    String(cmd)
+      .toLowerCase()
+      // Absolute paths differ between a launcher's copy and the repo's copy of
+      // the same script; the tail is what identifies it.
+      .replace(/[a-z]:\\[^"'\s]*[\\/]/g, '')
+      .replace(/\\/g, '/')
+      .replace(/"/g, '')
+      // Volatile: pids, epoch stamps, uuids, ports.
+      .replace(/\b\d{4,}\b/g, '#')
+      .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/g, '#')
+      .replace(/\s+/g, ' ')
+      .trim() || null
+  );
+}
+
+/**
+ * Do two command lines describe the same job?
+ *
+ * Deliberately NOT string equality. The keeper's wrapper is launched by absolute
+ * path and then runs `node services/harness/src/sidecar-keeper.mjs` relative —
+ * the same job, two command lines with almost nothing in common textually. What
+ * they DO share is the script path, and a script path is the strongest identity
+ * signal a command line carries. So the test is: does the declared signature's
+ * most distinctive token (its script path) appear in the observed one, or the
+ * other way round.
+ */
+function signatureMatches(a, b) {
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const script = (s) => (s.match(/[\w.-]+\.(mjs|mts|ts|js|py|cmd|ps1|sh)\b/g) || []).pop();
+  const sa = script(a);
+  const sb = script(b);
+  if (sa && sb) return sa === sb;
+  return a.includes(b) || b.includes(a);
+}
+
+/**
+ * The instance id. R7 §4 requires one, and it exists because a pid is not an
+ * identity: pids are recycled, and this box recycled 23660 into a stranger
+ * within four days (see `.agents/jobs/observations.jsonl` @ 11:04:09.169Z,
+ * where THIS tool adopted that stranger and reported NEW1's GPU sidecar as
+ * STARTING). pid alone is a name that another process can inherit; pid PLUS
+ * creation time cannot be inherited by anything.
+ */
+function instanceIdOf(pid, createdAt) {
+  if (!pid) return null;
+  if (!createdAt) return `${pid}@unrecorded`;
+  return `${pid}@${String(createdAt).replace(/[-:]/g, '').slice(0, 15)}`;
+}
+
+/**
  * Which jobs are worth waking a human for.
  *
  * This list is LCC's, because LCC owns paging — and owning the paging decision
@@ -139,6 +227,44 @@ const CRITICAL_BY_DEFAULT = new Set([
   'citations-backlog-walk',
   'new2-hc-classify-walk',
 ]);
+
+/**
+ * Default output probes, LCC's, on the same footing as `CRITICAL_BY_DEFAULT`:
+ * a lane's own `output_probe` on its registry line wins outright, and this only
+ * supplies one for the jobs whose silence has already cost real time.
+ *
+ * Declaring these here rather than editing another lane's registry line is
+ * deliberate. The registry holds what a LANE DECLARED; rewriting NEW1's line to
+ * add a field LCC wants would be taking ownership of their job by side effect,
+ * which is the thing `observations.jsonl` exists to avoid.
+ *
+ * Every table named here was confirmed present with `to_regclass` before being
+ * written down. None of them is a `count(*)` over the 18.7M-row `judgments`
+ * heap: a probe that is itself a DB_SCAN turns the monitor into a competitor of
+ * the work it monitors, and would need a heavy window of its own.
+ *
+ * `new1-gpu-sidecar` shares the walk's probe on purpose. A stateless HTTP
+ * service has no output of its own, so `/health` returning 200 is the only thing
+ * it can prove about itself — and 200 with CUDA resident is exactly what was
+ * true for the 65 minutes NEW1 produced nothing. The only honest measure of a
+ * sidecar's usefulness is whether its CONSUMER's rows moved.
+ */
+const OUTPUT_PROBE_BY_DEFAULT = {
+  'new1-doc-vector-embed': {
+    kind: 'sql',
+    label: 'staged_vectors',
+    query: 'select count(*)::bigint from new1_doc_vector_stage',
+  },
+  'new1-gpu-sidecar': {
+    kind: 'sql',
+    label: 'consumer_vectors',
+    query: 'select count(*)::bigint from new1_doc_vector_stage',
+  },
+};
+
+function outputSpecOf(job) {
+  return job.output_probe ?? OUTPUT_PROBE_BY_DEFAULT[job.job_id] ?? null;
+}
 
 function isCritical(job) {
   // The lane's own declaration wins outright — it owns the job.
@@ -354,30 +480,296 @@ function fingerprint(job) {
 }
 
 // ───────────────────────────────────────────────────────────────────────────
+// durable output — the only thing that is evidence of WORK
+// ───────────────────────────────────────────────────────────────────────────
+
+/**
+ * A checkpoint says where a worker has READ to. Only the output says what it
+ * WROTE, and R7 §4 accepts nothing else:
+ *
+ *   embedding/passage jobs   new durable vectors/passages
+ *   citation-key builder     real key coverage / lag closure
+ *   classifier               newly classified rows
+ *   OCR                      queue -> recovery delta
+ *   alert poller             tick + evaluated conditions + delivery result
+ *
+ * A registry line declares this as `output_probe`:
+ *
+ *   { "kind": "sql",   "label": "staged_vectors", "query": "select count(*) from new1_doc_vector_stage" }
+ *   { "kind": "lines", "label": "strata",         "path":  "docs/ai/new2-r7/data-moat-census.jsonl" }
+ *   { "kind": "bytes", "label": "artifact",       "path":  "docs/ops/.../result.json" }
+ *
+ * SQL probes are OFF by default and run only under `--with-output`. A health
+ * check that silently issues counts against a 22 GB heap becomes a DB_SCAN, and
+ * a monitoring tool that competes with the work it monitors is its own defect.
+ * Without the flag the probe is reported as `NOT_MEASURED`, never as zero —
+ * unmeasured and zero are opposite facts and this file has already been burned
+ * once by a check that returned 0 for every input.
+ */
+async function outputProbe(job, prev, now, enabled) {
+  const spec = outputSpecOf(job);
+  if (!spec) return { declared: false, measured: false, label: null, value: null, delta: null };
+
+  const label = spec.label || spec.kind || 'output';
+  const prevValue = prev?.output_value ?? null;
+  const prevAt = prev?.last_output_change_at ? Date.parse(prev.last_output_change_at) : null;
+
+  const settle = (value) => {
+    if (value === null || value === undefined) {
+      return { declared: true, measured: false, label, value: null, delta: null, why: 'probe returned nothing' };
+    }
+    const delta = prevValue === null || prevValue === undefined ? null : Number(value) - Number(prevValue);
+    const changed = delta === null ? true : delta !== 0;
+    return {
+      declared: true,
+      measured: true,
+      label,
+      value: Number(value),
+      delta,
+      lastOutputAt: changed ? now : prevAt,
+    };
+  };
+
+  try {
+    if (spec.kind === 'lines' || spec.kind === 'bytes') {
+      const p = resolve(REPO, spec.path);
+      if (!existsSync(p)) return settle(0);
+      if (spec.kind === 'bytes') return settle(statSync(p).size);
+      const body = readFileSync(p, 'utf8');
+      return settle(body.split('\n').filter((l) => l.trim()).length);
+    }
+    if (spec.kind === 'sql') {
+      if (!enabled) {
+        return {
+          declared: true,
+          measured: false,
+          label,
+          value: null,
+          delta: null,
+          why: 'NOT_MEASURED — SQL probe skipped; pass --with-output to run it',
+        };
+      }
+      const value = await runSqlProbe(spec.query);
+      return settle(value);
+    }
+  } catch (err) {
+    return {
+      declared: true,
+      measured: false,
+      label,
+      value: null,
+      delta: null,
+      why: 'probe failed: ' + err.message.split('\n')[0],
+    };
+  }
+  return { declared: true, measured: false, label, value: null, delta: null, why: 'unknown probe kind' };
+}
+
+let sqlHandle = null;
+async function runSqlProbe(query) {
+  if (!sqlHandle) {
+    const { default: postgres } = await import(
+      '../services/ingest/node_modules/postgres/src/index.js'
+    );
+    const url =
+      process.env.DATABASE_URL ??
+      (readFileSync(join(REPO, '.env'), 'utf8').match(/^DATABASE_URL=(.+)$/m) ?? [])[1];
+    if (!url) throw new Error('no DATABASE_URL');
+    // A monitoring query may never outlive the interval it monitors.
+    //
+    // The bound is set on the CONNECTION, not with `SET LOCAL`. `SET LOCAL`
+    // outside an explicit transaction emits a warning and applies to nothing —
+    // measured here on 25 Aug 2026, when the first version of this probe ran
+    // past 120 seconds against a database another lane was scanning, with a
+    // "20s timeout" that was never in force. A timeout that does not apply is
+    // worse than none: it is a bound everyone believes in.
+    sqlHandle = postgres(url.trim(), {
+      max: 1,
+      onnotice: () => {},
+      connect_timeout: 10,
+      connection: { statement_timeout: '20000' },
+    });
+  }
+  const rows = await sqlHandle.unsafe(query);
+  const last = Array.isArray(rows) ? rows[rows.length - 1] : rows;
+  const first = Array.isArray(last) ? last[0] : last;
+  if (!first) return null;
+  const v = Object.values(first)[0];
+  return v === null || v === undefined ? null : Number(v);
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// identity — pid + creation time + command signature + instance id
+// ───────────────────────────────────────────────────────────────────────────
+
+/**
+ * WHY THIS REPLACED A ONE-LINE `byPid.get(pid)` LOOKUP
+ * ─────────────────────────────────────────────────────
+ * On 25 Aug 2026 at 11:04:09.169Z this tool reported NEW1's GPU sidecar as
+ * `STARTING`, age 0m, pid 23660 alive. pid 23660 had been dead for days. What
+ * it found was a transient shell that Windows had recycled the number into,
+ * created — per the tool's own recorded observation — at
+ * `2026-08-25T15:04:09.1427650+04:00`, i.e. 25 milliseconds before the sweep
+ * that read it, and four days after the registry's `started_at`.
+ *
+ * The old code could not have caught it. `sameProcess` read
+ * `!job.pid_created_at || job.pid_created_at === osProc.Created`, so a registry
+ * line with NO recorded creation time — which is most of them, because the
+ * schema never required one — short-circuited to TRUE. Absence of the check was
+ * scored as the check passing. That is the same inversion as the stale lock file
+ * that made "already running" mean "nothing is running", and it is worse here,
+ * because the tool's entire purpose is to refuse to infer.
+ *
+ * So identity is now decided in this order, and the verdict is carried out to
+ * the report rather than collapsed into a boolean:
+ *
+ *   CONFIRMED_BY_CREATION   pid alive AND its creation time equals the recorded one.
+ *                           Nothing can forge this; a recycled pid has a later birth.
+ *   CONFIRMED_BY_SIGNATURE  pid alive, no creation time on record, but the live
+ *                           command line names the same script. Weaker, honest, useful.
+ *   PID_RECYCLED            pid alive and it is demonstrably somebody else.
+ *   REDISCOVERED            the recorded pid is gone, but exactly one live process
+ *                           runs this job's command. The job moved, not died —
+ *                           this is what turns the keeper chain from four UNKNOWN
+ *                           orphans into one attributed job.
+ *   ABSENT                  no live process matches by pid or by signature.
+ *   UNVERIFIABLE            the sweep itself failed. Never death.
+ */
+function identify(job, sweep, live) {
+  if (!sweep.ok) {
+    return {
+      probeFailed: true,
+      identity: 'UNVERIFIABLE',
+      alive: false,
+      pid: job.pid ? Number(job.pid) : null,
+      osProc: null,
+      name: null,
+      createdAt: null,
+      instanceId: null,
+      sameProcess: false,
+    };
+  }
+
+  const declaredSig = commandSignature(job.command);
+  const declaredPid = job.pid ? Number(job.pid) : null;
+  const atPid = declaredPid ? sweep.byPid.get(declaredPid) : undefined;
+
+  const shape = (p, identity) => ({
+    probeFailed: false,
+    identity,
+    alive: identity === 'CONFIRMED_BY_CREATION' || identity === 'CONFIRMED_BY_SIGNATURE'
+      || identity === 'REDISCOVERED',
+    pid: p ? Number(p.ProcessId) : declaredPid,
+    osProc: p ?? null,
+    name: p?.Name ?? null,
+    createdAt: p?.Created ?? null,
+    parentPid: p ? Number(p.ParentProcessId) : null,
+    commandLine: p?.CommandLine ?? null,
+    instanceId: p ? instanceIdOf(Number(p.ProcessId), p.Created) : null,
+    sameProcess: identity === 'CONFIRMED_BY_CREATION',
+  });
+
+  if (atPid) {
+    if (job.pid_created_at) {
+      if (job.pid_created_at === atPid.Created) return shape(atPid, 'CONFIRMED_BY_CREATION');
+      return shape(atPid, 'PID_RECYCLED');
+    }
+    // No creation time on record. The command line is the only evidence left,
+    // and it is real evidence — it is what separates NEW1's python sidecar from
+    // a shell that inherited its number.
+    if (signatureMatches(declaredSig, commandSignature(atPid.CommandLine))) {
+      return shape(atPid, 'CONFIRMED_BY_SIGNATURE');
+    }
+    return shape(atPid, 'PID_RECYCLED');
+  }
+
+  // The recorded pid is not there. Before calling it dead, ask whether the job
+  // is running under a different pid — a keeper restart, a logon relaunch, a
+  // supervise.mjs respawn. A job that moved is not a job that failed.
+  if (declaredSig) {
+    const candidates = live.filter((p) =>
+      signatureMatches(declaredSig, commandSignature(p.CommandLine)),
+    );
+    if (candidates.length === 1) return shape(candidates[0], 'REDISCOVERED');
+    if (candidates.length > 1) {
+      const newest = candidates
+        .slice()
+        .sort((a, b) => Date.parse(b.Created || 0) - Date.parse(a.Created || 0))[0];
+      const out = shape(newest, 'REDISCOVERED');
+      out.duplicates = candidates.map((p) => Number(p.ProcessId));
+      return out;
+    }
+  }
+
+  return shape(null, 'ABSENT');
+}
+
+/**
+ * A shell that outlived its batch.
+ *
+ * `cmd /K` keeps the console open after the script it was given returns. The
+ * paragraphs launcher uses it, so on 25 Aug 2026 `cmd 20124` sat alive from
+ * 12:45:50 onward with its log's final line reading `PAUSED by
+ * services/ingest/.checkpoints/STOP -- not starting`. The batch had EXITED. Any
+ * check asking "is the cmd alive" scored a dead console as a healthy worker.
+ *
+ * The mechanical tell is that a shell doing real work has a worker child; a
+ * shell whose batch returned has nothing under it but its own conhost. That is
+ * what is tested here — never the log text, which is job-specific.
+ */
+function isEmptyShell(proc, sweep) {
+  if (!proc.osProc) return false;
+  if (!/^(cmd|powershell|pwsh)\.exe$/i.test(proc.name || '')) return false;
+  const pid = Number(proc.pid);
+  for (const p of sweep.all) {
+    if (Number(p.ParentProcessId) !== pid) continue;
+    if (/^conhost\.exe$/i.test(p.Name || '')) continue;
+    return false;
+  }
+  return true;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
 // the state machine
 // ───────────────────────────────────────────────────────────────────────────
 
-function classify(job, proc, fp, prev, now) {
+function classify(job, proc, fp, prev, now, out, sweep, startup) {
   const declared = String(job.status || 'UNKNOWN').toUpperCase();
 
   if (proc.probeFailed) {
     return { state: 'UNKNOWN', why: 'process sweep failed; absence is not death' };
   }
 
-  const alive = proc.alive === true && proc.sameProcess === true;
-  const recycled = proc.alive === true && proc.sameProcess === false;
-
   if (declared === 'PAUSED') return { state: 'PAUSED', why: 'declared paused by its lane' };
 
-  if (!alive) {
-    if (recycled) {
-      return {
-        state: TERMINAL.has(declared) ? 'STOPPED' : 'FAILED',
-        why: `pid ${job.pid} is now a different process (${proc.name}); recorded start ${job.pid_created_at || 'unrecorded'}`,
-      };
-    }
+  // A cadence job is not supposed to have a pid. Judging it by one reports
+  // LCC's own ten-minute pager as FAILED for nine minutes out of every ten.
+  if (job.kind === 'cadence') return classifyCadence(job, prev, now, out, startup);
+
+  if (proc.identity === 'PID_RECYCLED') {
+    return {
+      state: TERMINAL.has(declared) ? 'STOPPED' : 'FAILED',
+      why:
+        `pid ${proc.pid} is now a DIFFERENT process (${proc.name}, born ${proc.createdAt}) — ` +
+        `recorded start ${job.pid_created_at || 'unrecorded'}, declared command "${String(job.command || '').slice(0, 60)}". ` +
+        'Identity refused: a recycled pid is not this job.',
+    };
+  }
+
+  if (!proc.alive) {
     if (TERMINAL.has(declared)) return { state: 'STOPPED', why: `declared ${declared}` };
-    return { state: 'FAILED', why: `declared ${declared} but no such process` };
+    return { state: 'FAILED', why: `declared ${declared} but no process matches by pid or by command signature` };
+  }
+
+  // A shell whose batch returned. Alive, and finished — which is a different
+  // fact from alive-and-stuck, and the two want opposite responses.
+  if (sweep && isEmptyShell(proc, sweep)) {
+    return {
+      state: 'STOPPED',
+      why:
+        `console shell alive with no worker child — the batch exited and \`cmd /K\` held the window open. ` +
+        'processAlive=true, outputDelta=0, and the honest state is finished, not stalled.',
+    };
   }
 
   // Alive from here on. The only question left is whether it is working.
@@ -405,15 +797,143 @@ function classify(job, proc, fp, prev, now) {
   }
 
   const sinceMs = now - lastProgressAt;
-  if (sinceMs <= stallMs) {
+  if (sinceMs > stallMs) {
     return {
-      state: 'RUNNING_PROGRESSING',
-      why: `checkpoint moved ${Math.round(sinceMs / 60000)}m ago`,
+      state: 'RUNNING_STALLED',
+      why: `alive, but nothing moved for ${Math.round(sinceMs / 60000)}m (window ${Math.round(stallMs / 60000)}m)`,
     };
   }
+
+  // ── The checkpoint moved. That is NOT the same as work being done. ──
+  //
+  // R7 §4: "Progress = new durable vector/passages + consistent checkpoint/log
+  // movement." Both halves. A resumed walk re-reading its skip prefix advances
+  // its checkpoint, grows its log and inserts nothing, and that is precisely how
+  // NEW1 lost 65 GPU-minutes on 25 Aug with `outputDelta` exactly 0.
+  //
+  // So when a job declares an output probe, the probe decides. When it does not,
+  // the state is still RUNNING_PROGRESSING but the reason says which evidence it
+  // rests on, because "checkpoint moved" is a weaker claim than "rows appeared"
+  // and the report should not let the two look alike.
+  if (out && out.measured) {
+    if (out.delta === null) {
+      return {
+        state: 'RUNNING_PROGRESSING',
+        why: `checkpoint moved ${Math.round(sinceMs / 60000)}m ago; output ${out.label}=${out.value}, first reading — no prior value to difference`,
+      };
+    }
+    if (out.delta > 0) {
+      return {
+        state: 'RUNNING_PROGRESSING',
+        why: `durable output moved: ${out.label} +${out.delta} (now ${out.value})`,
+      };
+    }
+    const replayMs = now - (out.lastOutputAt ?? lastProgressAt);
+    if (replayMs > REPLAY_WINDOW_MS) {
+      return {
+        state: 'RUNNING_REPLAYING',
+        why:
+          `checkpoint and log are moving but ${out.label} has not changed in ${Math.round(replayMs / 60000)}m ` +
+          `(still ${out.value}). Alive, resident, advancing — and producing nothing. ` +
+          'A bounded replay is legitimate; past the window it must be declared, not inferred.',
+      };
+    }
+    return {
+      state: 'RUNNING_REPLAYING',
+      why: `output flat at ${out.value} for ${Math.round(replayMs / 60000)}m — inside the ${Math.round(REPLAY_WINDOW_MS / 60000)}m replay window, not yet a stall`,
+    };
+  }
+
   return {
-    state: 'RUNNING_STALLED',
-    why: `alive, but nothing moved for ${Math.round(sinceMs / 60000)}m (window ${Math.round(stallMs / 60000)}m)`,
+    state: 'RUNNING_PROGRESSING',
+    why: `checkpoint moved ${Math.round(sinceMs / 60000)}m ago — no output probe declared, so this rests on checkpoint motion alone`,
+  };
+}
+
+/**
+ * A tick job's health, which has nothing to do with a process table.
+ *
+ * Three independent facts, and R7 §4 wants all three kept apart rather than
+ * collapsed into "the poller is fine":
+ *
+ *   DID IT FIRE          the scheduler's own LastRunTime, inside cadence x tolerance
+ *   DID IT SUCCEED       the scheduler's LastTaskResult
+ *   DID IT DO ANYTHING   receipts appended since the last observation
+ *
+ * The middle one is the trap. A task can report `rc=0` having exited early on a
+ * missing environment variable, and "Task Scheduler fired" is on this file's own
+ * list of sentences that are not proof of work. So a fired-and-rc-0 tick with no
+ * receipt movement is reported as firing-but-not-producing, not as healthy.
+ */
+function classifyCadence(job, prev, now, out, startup) {
+  const task = (startup || []).find(
+    (s) => s.kind === 'SCHEDULED_TASK' && s.name === job.scheduler_task,
+  );
+
+  if (!task) {
+    return {
+      state: 'FAILED',
+      why: `declares scheduled task "${job.scheduler_task}" and no such task is registered — nothing will ever fire it`,
+    };
+  }
+  if (/disabled/i.test(task.state || '')) {
+    return { state: 'STOPPED', why: `scheduled task "${task.name}" is Disabled` };
+  }
+
+  const lastRun = task.lastRun ? Date.parse(task.lastRun) : NaN;
+  const toleranceMs = (job.cadence_seconds ?? 600) * (job.cadence_tolerance ?? 2) * 1000;
+
+  if (Number.isNaN(lastRun)) {
+    return { state: 'UNKNOWN', why: `scheduled task "${task.name}" reports no last-run time` };
+  }
+
+  const sinceRun = now - lastRun;
+  if (sinceRun > toleranceMs) {
+    return {
+      state: 'RUNNING_STALLED',
+      why:
+        `scheduled task "${task.name}" last fired ${Math.round(sinceRun / 60000)}m ago, ` +
+        `cadence ${Math.round((job.cadence_seconds ?? 600) / 60)}m x tolerance ${job.cadence_tolerance ?? 2}` +
+        (task.boots === false ? ' — and its principal is Interactive, so a locked machine fires it never' : ''),
+    };
+  }
+
+  const rc = String(task.result ?? '');
+  if (rc && rc !== '0' && rc !== '267009') {
+    return {
+      state: 'FAILED',
+      why: `scheduled task "${task.name}" fired ${Math.round(sinceRun / 60000)}m ago and returned rc=${rc}`,
+    };
+  }
+
+  if (out && out.measured) {
+    if (out.delta === null) {
+      return {
+        state: 'RUNNING_PROGRESSING',
+        why: `tick ${Math.round(sinceRun / 60000)}m ago, rc=0, ${out.label}=${out.value} — first reading, no delta yet`,
+      };
+    }
+    if (out.delta > 0) {
+      return {
+        state: 'RUNNING_PROGRESSING',
+        why: `tick ${Math.round(sinceRun / 60000)}m ago, rc=0, ${out.label} +${out.delta}`,
+      };
+    }
+    // Ticking and writing nothing is the NORMAL case for a pager: no condition
+    // fired, or every condition was inside its cooldown. It is only worth a word
+    // when it has been true long enough that "the pager works" is untested.
+    const quietMs = now - (out.lastOutputAt ?? lastRun);
+    return {
+      state: 'RUNNING_PROGRESSING',
+      why:
+        `tick ${Math.round(sinceRun / 60000)}m ago, rc=0, ${out.label} unchanged at ${out.value} ` +
+        `for ${Math.round(quietMs / 60000)}m — evaluated and had nothing to deliver, or everything was inside cooldown`,
+    };
+  }
+
+  return {
+    state: 'RUNNING_PROGRESSING',
+    why: `tick ${Math.round(sinceRun / 60000)}m ago, rc=0 — receipts NOT read, so this is "it fired", not "it worked"`,
   };
 }
 
@@ -446,16 +966,72 @@ function progressSince(fp, prev, now) {
 function startupMechanisms() {
   const found = [];
 
+  // ── Windows services ───────────────────────────────────────────────────
+  //
+  // Added 25 Aug 2026, and the omission it fixes was actively misleading rather
+  // than merely incomplete. This inventory listed exactly one Postgres entry:
+  // the scheduled task `LawMindPostgres`, State `Disabled`, last run 18 Aug. Read
+  // literally, the control plane said the database has no working startup
+  // mechanism. The truth is the opposite — Postgres runs as a Windows SERVICE,
+  // `StartMode=Auto`, `LocalSystem`, and it came up 13 seconds after the 25 Aug
+  // boot with nobody logged in. The disabled task is a fossil of how it used to
+  // be started.
+  //
+  // This is the one component on the box that genuinely survives a reboot
+  // unattended, and it was the one the dashboard could not see.
+  const svc =
+    "Get-CimInstance Win32_Service | Where-Object { $_.Name -match 'lawmind|postgres' } | ForEach-Object { ($_.Name + '|' + $_.State + '|' + $_.StartMode + '|' + $_.StartName) }";
+  try {
+    const out = execFileSync('powershell', ['-NoProfile', '-Command', svc], {
+      encoding: 'utf8',
+      timeout: 40000,
+    }).trim();
+    for (const line of out.split('\n')) {
+      const [name, state, startMode, account] = line.trim().split('|');
+      if (!name) continue;
+      found.push({
+        kind: 'WINDOWS_SERVICE',
+        name,
+        state,
+        startMode,
+        boots: /auto/i.test(startMode || ''),
+        note: /auto/i.test(startMode || '')
+          ? `starts at BOOT as ${account} — recovers with nobody logged in`
+          : `StartMode ${startMode} — does NOT come back on its own`,
+      });
+    }
+  } catch (err) {
+    found.push({ kind: 'WINDOWS_SERVICE', name: '(query failed)', state: err.message.split('\n')[0] });
+  }
+
+  // ── Scheduled tasks ────────────────────────────────────────────────────
+  //
+  // LogonType is carried because it is the whole answer to "does this recover
+  // unattended". A task with a time trigger LOOKS like a boot mechanism; if its
+  // principal is `Interactive` it does not fire until somebody logs in, and R7
+  // §4 forbids calling that unattended recovery.
   const fmt =
-    "Get-ScheduledTask | Where-Object { $_.TaskName -match 'awmind' } | ForEach-Object { $i = $_ | Get-ScheduledTaskInfo; ($_.TaskName + '|' + $_.State + '|' + $i.LastRunTime + '|' + $i.LastTaskResult) }";
+    "Get-ScheduledTask | Where-Object { $_.TaskName -match 'awmind' } | ForEach-Object { $i = $_ | Get-ScheduledTaskInfo; ($_.TaskName + '|' + $_.State + '|' + $i.LastRunTime + '|' + $i.LastTaskResult + '|' + $_.Principal.LogonType) }";
   try {
     const out = execFileSync('powershell', ['-NoProfile', '-Command', fmt], {
       encoding: 'utf8',
       timeout: 40000,
     }).trim();
     for (const line of out.split('\n')) {
-      const [name, state, lastRun, result] = line.trim().split('|');
-      if (name) found.push({ kind: 'SCHEDULED_TASK', name, state, lastRun, result });
+      const [name, state, lastRun, result, logonType] = line.trim().split('|');
+      if (!name) continue;
+      found.push({
+        kind: 'SCHEDULED_TASK',
+        name,
+        state,
+        lastRun,
+        result,
+        logonType,
+        boots: !/interactive/i.test(logonType || ''),
+        note: /interactive/i.test(logonType || '')
+          ? 'LogonType Interactive — fires only after a human logs in, NOT at boot'
+          : null,
+      });
     }
   } catch (err) {
     found.push({
@@ -481,6 +1057,7 @@ function startupMechanisms() {
           kind: 'LOGON_LAUNCHER',
           name,
           state: /\.disabled/i.test(name) ? 'Disabled' : 'Enabled',
+          boots: false,
           note: 'fires at LOGON, not at boot — a machine sitting at the lock screen runs nothing',
         });
       }
@@ -529,7 +1106,47 @@ function listDir(dir) {
 // rendering
 // ───────────────────────────────────────────────────────────────────────────
 
-const ATTENTION = new Set(['FAILED', 'RUNNING_STALLED', 'UNKNOWN']);
+/**
+ * `RUNNING_REPLAYING` is in this set on purpose. It is not an error state — a
+ * resumed walk legitimately replays — but it is the state that has cost this
+ * project the most time while looking healthy, and the whole point of naming it
+ * is that somebody sees it.
+ */
+const ATTENTION = new Set(['FAILED', 'RUNNING_STALLED', 'RUNNING_REPLAYING', 'UNKNOWN']);
+
+/**
+ * R7 §8 LCC-P0 item 6: "add alert condition for critical process alive/GPU busy
+ * with zero output beyond justified window".
+ *
+ * Kept separate from the state machine because it answers a different question.
+ * The state machine asks *what is this job doing*; this asks *is it worth waking
+ * someone*. A non-critical job replaying for an hour is a note. A critical job
+ * holding a GPU and producing nothing for an hour is the 65 minutes NEW1 lost.
+ */
+function pageable(r) {
+  if (!r.critical) return null;
+  if (r.state === 'FAILED') {
+    return { severity: 'PAGE', reason: `critical job ${r.job_id} declared RUNNING and is not there — ${r.why}` };
+  }
+  if (r.state === 'RUNNING_STALLED') {
+    return { severity: 'PAGE', reason: `critical job ${r.job_id} is alive and nothing has moved — ${r.why}` };
+  }
+  if (r.state === 'RUNNING_REPLAYING' && r.output_delta === 0) {
+    const heavy = r.resource_class === 'GPU_EMBED' || r.resource_class === 'VECTOR_BUILD';
+    return {
+      severity: heavy ? 'PAGE' : 'WARN',
+      reason:
+        `critical job ${r.job_id} is alive${heavy ? ' and holding the GPU' : ''} with ${r.output_label} delta 0 — ${r.why}`,
+    };
+  }
+  if (r.output_state === 'NOT_MEASURED' && r.state.startsWith('RUNNING')) {
+    return {
+      severity: 'WARN',
+      reason: `critical job ${r.job_id} reports RUNNING but its output was NOT MEASURED — run with --with-output before believing it`,
+    };
+  }
+  return null;
+}
 
 function ago(ms) {
   if (ms === null || ms === undefined || Number.isNaN(ms)) return '-';
@@ -545,37 +1162,43 @@ function pad(s, n) {
   return t.length > n ? t.slice(0, n - 1) + '~' : t.padEnd(n);
 }
 
+/**
+ * The columns R7 §8 LCC-P0 names, in its order:
+ *   JOB | OWNER | INSTANCE | PID | STATE | HEARTBEAT | LAST OUTPUT | OUTPUT DELTA
+ *       | CHECKPOINT | STARTUP | RESTARTS | RESOURCE
+ *
+ * OUTPUT DELTA is deliberately adjacent to STATE, because the pair is the whole
+ * argument: `RUNNING_*` next to a delta of `0` is the shape that cost NEW1 65
+ * GPU-minutes, and it should be readable in one glance rather than derived.
+ * `n/m` means the job declares no output probe; `?` means one is declared and
+ * was not measured on this run. Neither is ever printed as a zero.
+ */
+function outputCell(r) {
+  if (r.output_state === 'NOT_DECLARED') return 'n/m';
+  if (r.output_state === 'NOT_MEASURED') return '?';
+  if (r.output_delta === null) return 'first';
+  return (r.output_delta > 0 ? '+' : '') + r.output_delta;
+}
+
 function table(rows) {
-  const head = [
-    pad('JOB', 28),
-    pad('OWNER', 5),
-    pad('PID', 6),
-    pad('AGE', 5),
-    pad('STATE', 20),
-    pad('HEARTBT', 7),
-    pad('PROGRESS', 8),
-    pad('METRIC', 30),
-    pad('STARTUP', 15),
-    pad('RS', 2),
-    pad('RESOURCE', 11),
-  ].join(' ');
+  const cols = [
+    ['JOB', 26, (r) => r.job_id],
+    ['OWNER', 5, (r) => r.owner_lane],
+    ['INSTANCE', 20, (r) => r.instance ?? '-'],
+    ['PID', 6, (r) => r.pid ?? '-'],
+    ['STATE', 20, (r) => r.state],
+    ['HEARTBT', 7, (r) => r.heartbeat],
+    ['LASTOUT', 8, (r) => (r.output_value === null ? '-' : String(r.output_value))],
+    ['ODELTA', 7, outputCell],
+    ['CHECKPOINT', 26, (r) => r.checkpoint ?? '-'],
+    ['STARTUP', 15, (r) => r.startup],
+    ['RS', 2, (r) => r.restarts ?? '-'],
+    ['RESOURCE', 11, (r) => r.resource_class],
+  ];
+  const head = cols.map(([name, w]) => pad(name, w)).join(' ');
   const lines = [head, '-'.repeat(head.length)];
   for (const r of rows) {
-    lines.push(
-      [
-        pad(r.job_id, 28),
-        pad(r.owner_lane, 5),
-        pad(r.pid ?? '-', 6),
-        pad(r.age, 5),
-        pad(r.state, 20),
-        pad(r.heartbeat, 7),
-        pad(r.progress, 8),
-        pad(r.metric, 30),
-        pad(r.startup, 15),
-        pad(r.restarts ?? '-', 2),
-        pad(r.resource_class, 11),
-      ].join(' '),
-    );
+    lines.push(cols.map(([, w, get]) => pad(get(r), w)).join(' '));
   }
   return lines.join('\n');
 }
@@ -653,6 +1276,7 @@ async function main() {
   const quiet = argv.includes('--quiet');
   const strict = argv.includes('--strict');
   const record = !argv.includes('--no-record');
+  const withOutput = argv.includes('--with-output');
   const now = Date.now();
   const nowIso = new Date(now).toISOString();
 
@@ -660,30 +1284,23 @@ async function main() {
   const prevObs = readObservations();
   const sweep = sweepProcesses();
   const live = lawmindProcesses(sweep);
+  // Hoisted above the job loop: a cadence job's liveness IS its scheduler row.
+  const startup = startupMechanisms();
 
   const rows = [];
   const observations = [];
   const claimedPids = new Set();
 
   for (const job of jobs.values()) {
-    const pid = job.pid ? Number(job.pid) : null;
-    const osProc = pid ? sweep.byPid.get(pid) : undefined;
-    if (pid && osProc) claimedPids.add(pid);
-
-    const proc = {
-      probeFailed: !sweep.ok,
-      alive: pid ? Boolean(osProc) : false,
-      name: osProc?.Name ?? null,
-      createdAt: osProc?.Created ?? null,
-      // Without a recorded creation time we cannot rule out recycling. The
-      // registry schema does not require one, so this is recorded as an
-      // assumption rather than a check that was made.
-      sameProcess: osProc ? !job.pid_created_at || job.pid_created_at === osProc.Created : false,
-    };
+    const proc = identify(job, sweep, live);
+    const pid = proc.pid;
+    const osProc = proc.osProc;
+    if (proc.pid) claimedPids.add(proc.pid);
 
     const fp = fingerprint(job);
     const prev = prevObs.get(job.job_id);
-    const verdict = classify(job, proc, fp, prev, now);
+    const out = await outputProbe(job, prev, now, withOutput);
+    const verdict = classify(job, proc, fp, prev, now, out, sweep, startup);
     const lastProgressAt = progressSince(fp, prev, now);
 
     const declaredProgressAt = job.last_verified_progress?.at
@@ -701,10 +1318,19 @@ async function main() {
         ? new Date(lastProgressAt).toISOString()
         : (prev?.last_progress_at ?? null),
       age: proc.createdAt ? ago(now - Date.parse(proc.createdAt)) : '-',
+      instance: proc.instanceId ?? (job.instance_id ?? null),
+      identity: proc.identity,
+      duplicates: proc.duplicates ?? null,
       state: verdict.state,
       declared: job.status,
       heartbeat: declaredProgressAt ? ago(now - declaredProgressAt) : '-',
       progress: lastProgressAt ? ago(now - lastProgressAt) : '-',
+      output_label: out.label,
+      output_value: out.measured ? out.value : null,
+      output_delta: out.measured ? out.delta : null,
+      output_state: out.declared ? (out.measured ? 'MEASURED' : 'NOT_MEASURED') : 'NOT_DECLARED',
+      output_why: out.why ?? null,
+      last_output_change_at: out.lastOutputAt ? new Date(out.lastOutputAt).toISOString() : null,
       metric: job.progress_invariant ?? null,
       checkpoint: job.checkpoint ?? null,
       log: job.log ?? null,
@@ -727,11 +1353,22 @@ async function main() {
       pid,
       pid_alive: proc.alive,
       pid_created_at: proc.createdAt,
+      identity: proc.identity,
+      instance_id: proc.instanceId ?? null,
       fingerprint: fp.value,
       log_bytes: fp.logBytes,
       last_progress_at: lastProgressAt
         ? new Date(lastProgressAt).toISOString()
         : (prev?.last_progress_at ?? null),
+      // Carried forward when unmeasured, NOT reset to null: a run without
+      // --with-output must not erase the last real reading, or the next run
+      // computes its delta against nothing and calls a frozen job healthy.
+      output_label: out.label ?? prev?.output_label ?? null,
+      output_value: out.measured ? out.value : (prev?.output_value ?? null),
+      output_delta: out.measured ? out.delta : null,
+      last_output_change_at: out.lastOutputAt
+        ? new Date(out.lastOutputAt).toISOString()
+        : (prev?.last_output_change_at ?? null),
       why: verdict.why,
       observer: 'LCC job-health',
     });
@@ -750,28 +1387,72 @@ async function main() {
         if (claimedPids.has(ppid)) return false;
         ppid = Number(sweep.byPid.get(ppid)?.ParentProcessId ?? 0);
       }
+      // ...and neither is an ANCESTOR of one. The keeper is launched as
+      // `cmd -> node sidecar-keeper.mjs -> python server.py`. Rediscovery
+      // attributes the node and the python to their jobs, and the wrapper `cmd`
+      // was then reported as an unregistered orphan — the launcher of a job we
+      // had just identified, listed as a process nobody declared. Walking down
+      // as well as up costs one bounded pass and removes a permanent false
+      // positive that would have trained everyone to ignore this list.
+      const kin = new Set([Number(p.ProcessId)]);
+      for (let pass = 0; pass < 6; pass += 1) {
+        let added = 0;
+        for (const q of sweep.all) {
+          const qp = Number(q.ProcessId);
+          if (kin.has(qp)) continue;
+          if (kin.has(Number(q.ParentProcessId))) {
+            if (claimedPids.has(qp)) return false;
+            kin.add(qp);
+            added += 1;
+          }
+        }
+        if (!added) break;
+      }
       return true;
     })
-    .map((p) => ({
-      job_id: '(unregistered)',
-      owner_lane: '?',
-      pid: Number(p.ProcessId),
-      age: p.Created ? ago(now - Date.parse(p.Created)) : '-',
-      state: 'UNKNOWN',
-      heartbeat: '-',
-      progress: '-',
-      metric: 'no registry record — nobody declared this',
-      startup: `ppid ${p.ParentProcessId}`,
-      restarts: null,
-      resource_class: null,
-      command: (p.CommandLine || '').slice(0, 220),
-      why: 'live LawMind process with no job_id; owner unknown, NOT adjudicated',
-      parent: Number(p.ParentProcessId),
-    }));
+    .map((p) => {
+      const pid = Number(p.ProcessId);
+      const proc = {
+        pid,
+        name: p.Name,
+        osProc: p,
+        alive: true,
+        identity: 'UNREGISTERED',
+        createdAt: p.Created,
+      };
+      // A console shell that outlived its batch is not an orphan worker, and
+      // calling it one buries the real orphans. Say which it is.
+      const shell = isEmptyShell(proc, sweep);
+      return {
+        job_id: '(unregistered)',
+        owner_lane: '?',
+        pid,
+        instance: instanceIdOf(pid, p.Created),
+        identity: 'UNREGISTERED',
+        age: p.Created ? ago(now - Date.parse(p.Created)) : '-',
+        state: shell ? 'STOPPED' : 'UNKNOWN',
+        heartbeat: '-',
+        progress: '-',
+        output_value: null,
+        output_delta: null,
+        output_state: 'NOT_DECLARED',
+        checkpoint: null,
+        metric: 'no registry record — nobody declared this',
+        startup: `ppid ${p.ParentProcessId}`,
+        restarts: null,
+        resource_class: null,
+        critical: false,
+        command: (p.CommandLine || '').slice(0, 220),
+        why: shell
+          ? 'console shell with no worker child — its batch exited and `cmd /K` held the window open. Alive, and finished.'
+          : 'live LawMind process with no job_id; owner unknown, NOT adjudicated',
+        parent: Number(p.ParentProcessId),
+      };
+    });
 
   const all = [...rows, ...orphans];
   const attention = all.filter((r) => ATTENTION.has(r.state));
-  const startup = startupMechanisms();
+  const pages = rows.map((r) => pageable(r)).filter(Boolean);
 
   if (record && observations.length) {
     appendFileSync(OBSERVATIONS, observations.map((o) => JSON.stringify(o)).join('\n') + '\n');
@@ -821,13 +1502,29 @@ async function main() {
       }
       console.log('');
     }
+    if (pages.length) {
+      console.log(`PAGEABLE (${pages.length}):`);
+      for (const p of pages) console.log(`  ${p.severity.padEnd(5)} ${p.reason}`);
+      console.log('');
+    }
     console.log('STARTUP MECHANISMS:');
     for (const s of startup) {
+      const when = s.boots === true ? 'BOOT ' : s.boots === false ? 'LOGON' : '  ?  ';
       const tail = s.lastRun ? `last ${s.lastRun} rc=${s.result}` : (s.note ?? '');
       console.log(
-        `  ${s.kind.padEnd(16)} ${String(s.name).padEnd(44)} ${String(s.state ?? '').padEnd(9)} ${tail}`,
+        `  ${when} ${s.kind.padEnd(16)} ${String(s.name).padEnd(44)} ${String(s.state ?? '').padEnd(9)} ${tail}`,
       );
     }
+    // The one line that answers "does this box come back on its own".
+    const bootable = startup.filter((s) => s.boots === true && !/disabled/i.test(s.state || ''));
+    const logon = startup.filter((s) => s.boots === false && !/disabled/i.test(s.state || ''));
+    console.log('');
+    console.log(
+      `  UNATTENDED RECOVERY: ${bootable.length} mechanism(s) start at BOOT, ${logon.length} need an interactive LOGON.` +
+        (logon.length
+          ? ' A rebooted machine sitting at the lock screen runs only the first group.'
+          : ''),
+    );
     if (malformed.length) {
       console.log('');
       console.log(
