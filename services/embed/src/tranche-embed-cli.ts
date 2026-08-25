@@ -82,6 +82,63 @@ function note(line: string): void {
   process.stdout.write(stamped);
 }
 
+/**
+ * ONE TRANSIENT TIMEOUT MUST NOT COST FIVE HOURS.
+ *
+ * This run died at 46,200/81,720 documents — 18,480 seconds of GPU — on a single
+ * uncaught `DOMException [TimeoutError]: The operation was aborted due to timeout`.
+ * That is `AbortSignal.timeout()` inside `getRemoteEmbedder`, and the bound is
+ * correct: its own comment says an unbounded fetch is how a long run dies quietly.
+ * The bound was never the problem. **Letting the rejection reach the top of the
+ * process was.** The purpose of the timeout is to SURFACE a stalled socket, and a
+ * surfaced stall should cost one slice and a retry, not the whole tranche.
+ *
+ * Retried here rather than in `embed.ts` on purpose. `getRemoteEmbedder` is shared
+ * with the document walk and with incremental chunking; changing its failure
+ * semantics would change two other lanes' jobs without asking them. This wrapper
+ * is local to the tranche CLI and changes nothing outside it.
+ *
+ * Bounded, and it gives up. Four attempts, then the run stops — a sidecar that is
+ * genuinely dead must halt the job, not spin against it forever writing nothing.
+ * Every retry is written to the durable log, because a retry nobody can see turns
+ * a degraded run into one that merely looks healthy and slow.
+ */
+const EMBED_ATTEMPTS = Number(process.env['TRANCHE_EMBED_ATTEMPTS'] ?? 4);
+const RETRY_BACKOFF_MS = [5_000, 15_000, 45_000];
+
+async function embedWithRetry(
+  embed: { embed: (texts: string[]) => Promise<{ vector: Float32Array; tokenCount: number }[]> },
+  texts: string[],
+  batchNo: number,
+  sliceNo: number,
+): Promise<{ vector: Float32Array; tokenCount: number }[]> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= EMBED_ATTEMPTS; attempt += 1) {
+    try {
+      const out = await embed.embed(texts);
+      if (attempt > 1)
+        note(`  embed RECOVERED on attempt ${attempt}/${EMBED_ATTEMPTS} · batch ${batchNo} slice ${sliceNo}`);
+      return out;
+    } catch (error) {
+      lastError = error;
+      const name = error instanceof Error ? error.name : 'unknown';
+      const message = error instanceof Error ? error.message : String(error);
+      if (attempt === EMBED_ATTEMPTS) break;
+      const wait = RETRY_BACKOFF_MS[attempt - 1] ?? RETRY_BACKOFF_MS[RETRY_BACKOFF_MS.length - 1] ?? 45_000;
+      note(
+        `  embed FAILED attempt ${attempt}/${EMBED_ATTEMPTS} · batch ${batchNo} slice ${sliceNo} · ${name}: ${message.slice(0, 160)} · retrying in ${wait / 1000}s`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, wait));
+    }
+  }
+  const name = lastError instanceof Error ? lastError.name : 'unknown';
+  const message = lastError instanceof Error ? lastError.message : String(lastError);
+  note(
+    `  embed EXHAUSTED ${EMBED_ATTEMPTS} attempts · batch ${batchNo} slice ${sliceNo} · ${name}: ${message.slice(0, 200)} · stopping. Progress is committed per batch; a restart resumes from the last committed document.`,
+  );
+  throw lastError;
+}
+
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (!url) {
@@ -218,7 +275,7 @@ async function main(): Promise<void> {
       const embedded: { vector: Float32Array; tokenCount: number }[] = [];
       for (let s = 0; s < pending.length; s += EMBED_SLICE) {
         const part = pending.slice(s, s + EMBED_SLICE);
-        const out = await embed.embed(part.map((p) => p.text));
+        const out = await embedWithRetry(embed, part.map((p) => p.text), i / BATCH, s / EMBED_SLICE);
         if (out.length !== part.length) {
           throw new Error(
             `embedder returned ${out.length} vectors for ${part.length} chunks — refusing to write a misaligned slice`,

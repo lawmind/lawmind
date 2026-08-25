@@ -1,0 +1,20 @@
+{
+  "lane": "NEW1",
+  "sessionId": "a6437eea-0678-4b1d-95ea-e93bfab9bbde",
+  "pid": 22688,
+  "pidName": "claude.exe",
+  "pidCreatedAt": "2026-08-25T20:24:47.1935720+04:00",
+  "host": "XC",
+  "acquiredAt": "2026-08-25T16:46:33.574Z",
+  "heartbeatAt": "2026-08-25T16:46:33.574Z",
+  "task": "R8.1 NEW1 + HEAVY_BOX owner: finish bounded passage program, HNSW rebuild, 295-task 4-arm eval, common-query rerun, abstention freeze, candidate freeze",
+  "progress": null,
+  "state": "HELD",
+  "supersededOwner": {
+    "sessionId": "c2792141-074b-4500-b39a-be06760ea644",
+    "pid": null,
+    "health": "DEAD",
+    "heartbeatAt": "2026-08-25T03:28:16.074Z",
+    "takeoverReason": "prior owner c2792141 DEAD (798m stale heartbeat, no pid); its detached tranche-embed job PID 9820 is still RUNNING_PROGRESSING and is adopted, not restarted"
+  }
+}

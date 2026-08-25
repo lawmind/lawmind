@@ -1,0 +1,10 @@
+{
+  "domain": "GIT_COMMIT",
+  "holder": "NEW1",
+  "sessionId": "a6437eea-0678-4b1d-95ea-e93bfab9bbde",
+  "host": "XC",
+  "acquiredAt": "2026-08-25T17:08:00.000Z",
+  "task": "R8.1 NEW1: START_STATE artifact, R8.1 lock transcription, selector live-cell enforcement, embed retry",
+  "sequence": "re-read HEAD -> status -> exact-path stage -> inspect staged -> abort on foreign paths -> commit -> release",
+  "state": "HELD"
+}

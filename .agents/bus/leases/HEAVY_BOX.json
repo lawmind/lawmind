@@ -1,0 +1,23 @@
+{
+  "domain": "HEAVY_BOX",
+  "holder": "NEW1",
+  "sessionId": "a6437eea-0678-4b1d-95ea-e93bfab9bbde",
+  "pid": 22688,
+  "pidName": "claude.exe",
+  "host": "XC",
+  "acquiredAt": "2026-08-25T16:45:00.000Z",
+  "heartbeatAt": "2026-08-25T16:45:00.000Z",
+  "task": "R8.1 §3/§6 -- initial HEAVY_BOX owner. Bounded 100k passage tranche: finish embedding, rebuild HNSW on the complete table, 295-task four-arm eval, common-query rerun, abstention calibration, candidate freeze.",
+  "authority": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §3: 'Initial HEAVY_BOX owner: NEW1.'",
+  "registeredJobs": ["new1-tranche-embed"],
+  "durableOutputMetric": "select count(*) from new1_tranche_passages",
+  "contentionClass": "GPU_SIDECAR + DB_WRITE + DB_SCAN",
+  "constraints": [
+    "no full-corpus passage build",
+    "no new vector DB, model bakeoff, HyDE, graph ranking or broad reranker",
+    "chunk.ts is frozen for the duration of this tranche",
+    "no self-allocated migration ordinals; MIGRATION_SLOT is LCC's"
+  ],
+  "notes": "Other lanes: a corpus-wide sequential aggregate is NOT light on this box. max_parallel_workers_per_gather=4, so one 'single pass' becomes five workers saturating DataFileRead. Set it to 1 for the session or say the number out loud when requesting a window.",
+  "state": "HELD"
+}

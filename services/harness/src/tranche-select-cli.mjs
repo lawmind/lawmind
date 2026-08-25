@@ -490,6 +490,43 @@ try {
   const survivors = new Map();
   const refusals = { absent: 0, noText: 0, textUnsafe: 0, refusedClass: 0, admittedCitedAuthority: 0 };
   const refusedByClass = new Map();
+
+  /**
+   * THE LIVE-CELL INVARIANT — ENFORCED, not merely observed.
+   *
+   * Fifth's audit (bus 1202, defect 1) was right and this is the fix. The
+   * revalidation query has always returned live `court` and `judgment_date`,
+   * and the loop below has always tested only `survivors.has(id)`. The output
+   * happened to contain zero cell mismatches — I re-confirmed 0/81,510 offline
+   * against the frozen manifest before touching this — but *happened to* is not
+   * an invariant. A frame is a 19 Aug snapshot; if a court name is normalised or
+   * a date corrected in the corpus afterwards, a document drawn for
+   * `Madras High Court#ERA_2010S` could arrive as something else and quietly
+   * fill a stratum it does not belong to. The stratification is the whole point
+   * of the draw, so a silent stratum lie is worse than a smaller tranche.
+   *
+   * Enforcement is REJECTION, and rejection is counted by kind. A rejected
+   * candidate does not consume its cell's quota; the cell underfills and says so
+   * through the existing shortfall machinery, which never redistributes.
+   *
+   * At the time of writing this rejects nothing. That is the point: it is a
+   * tripwire for the NEXT frame, and its count is published whether it fires or
+   * not — a counter that appears only when it is non-zero makes its own absence
+   * unreadable.
+   */
+  const candidateById = new Map(candidates.map((c) => [c.id, c]));
+  const cellMismatch = { total: 0, courtCell: 0, eraCell: 0, liveCourtNull: 0, liveDateNull: 0, unmappableYear: 0 };
+  const cellMismatchExamples = [];
+  const liveCellOf = (court, date) => {
+    if (!court) return { cell: null, reason: 'liveCourtNull' };
+    if (date === null || date === undefined || date === '') return { cell: null, reason: 'liveDateNull' };
+    const year = new Date(date).getUTCFullYear();
+    if (!Number.isFinite(year)) return { cell: null, reason: 'liveDateNull' };
+    const era = eraFor(year);
+    if (!era) return { cell: null, reason: 'unmappableYear' };
+    return { cell: `${NAMED.has(court) ? court : '__OTHER__'}#${era}`, reason: null };
+  };
+
   const revalT0 = Date.now();
   for (let i = 0; i < candidates.length; i += PK_BATCH) {
     const slice = candidates.slice(i, i + PK_BATCH);
@@ -543,6 +580,34 @@ try {
           continue;
         }
       }
+      // LIVE-CELL INVARIANT. Checked last, after the production predicate, so a
+      // row refused for text or class is counted as that and not as a stratum
+      // defect — two different failures must not share one counter.
+      const cand = candidateById.get(r.id);
+      const live = liveCellOf(r.court, r.judgment_date);
+      if (!cand || live.cell !== cand.cell) {
+        cellMismatch.total += 1;
+        if (live.reason) cellMismatch[live.reason] += 1;
+        else {
+          const [frameCourt, frameEra] = String(cand?.cell ?? '#').split('#');
+          const [liveCourt, liveEra] = live.cell.split('#');
+          if (liveCourt !== frameCourt) cellMismatch.courtCell += 1;
+          if (liveEra !== frameEra) cellMismatch.eraCell += 1;
+        }
+        if (cellMismatchExamples.length < 50)
+          cellMismatchExamples.push({
+            id: r.id,
+            frameCell: cand?.cell ?? null,
+            frameCourt: cand?.court ?? null,
+            frameYear: cand?.year ?? null,
+            liveCell: live.cell,
+            liveCourt: r.court ?? null,
+            liveDate: r.judgment_date ?? null,
+            reason: live.reason ?? 'CELL_MOVED',
+          });
+        continue;
+      }
+
       survivors.set(r.id, r);
     }
     for (const s of slice) if (!back.has(s.id)) refusals.absent += 1;
@@ -555,6 +620,13 @@ try {
   log(
     `revalidation done in ${revalSeconds}s · ${survivors.size.toLocaleString()}/${candidates.length.toLocaleString()} survived (${((100 * survivors.size) / Math.max(1, candidates.length)).toFixed(2)}%)`,
   );
+  log(
+    `LIVE_CELL_METADATA_MISMATCH ${cellMismatch.total} (court ${cellMismatch.courtCell} · era ${cellMismatch.eraCell} · null court ${cellMismatch.liveCourtNull} · null date ${cellMismatch.liveDateNull} · unmappable year ${cellMismatch.unmappableYear})`,
+  );
+  if (cellMismatch.total > 0)
+    log(
+      '  ^ these were REJECTED, not silently admitted. Their cells underfill and the shortfall is reported. Read the examples in the manifest before rerunning.',
+    );
 
   // ═════════════════════════════════════════════════════════════════════════
   // PHASE 3 — FILL IN HASH ORDER, REPORT UNDERFILL
@@ -654,6 +726,21 @@ try {
         refusedByClass: Object.fromEntries(refusedByClass),
         admittedAsCitedAuthorityDespiteClass: refusals.admittedCitedAuthority,
       },
+      liveCellInvariant: {
+        enforced: true,
+        rule: 'A retained candidate survives only if its LIVE court and judgment_date map to the SAME strata cell the frame drew it for. Enforced by rejection, never by observation.',
+        LIVE_CELL_METADATA_MISMATCH: cellMismatch.total,
+        byKind: {
+          courtCellMoved: cellMismatch.courtCell,
+          eraCellMoved: cellMismatch.eraCell,
+          liveCourtNull: cellMismatch.liveCourtNull,
+          liveDateNull: cellMismatch.liveDateNull,
+          unmappableYear: cellMismatch.unmappableYear,
+        },
+        examples: cellMismatchExamples,
+        note:
+          'Published whether or not it fires. A counter that appears only when non-zero makes its own absence unreadable — and zero here is a measured zero, not an unmeasured one. Rejected candidates do not consume their cell quota; the cell underfills through the existing shortfall path, which never redistributes.',
+      },
       pkBatchSize: PK_BATCH,
       statementTimeoutMs: PK_TIMEOUT_MS,
       elapsedSeconds: revalSeconds,
@@ -731,13 +818,45 @@ try {
   manifest = { ...body, contentSha256 };
 
   if (VERIFY) {
+    /**
+     * TWO QUESTIONS, TWO VERDICTS. Fifth's defect 2 was that the comparator
+     * hashed elapsed wall time; excluding it (above) fixes the false failure,
+     * but a single verdict still conflates two different things:
+     *
+     *   SELECTION IDENTITY — did the program choose the SAME DOCUMENTS?
+     *     `naturalContentSha256`, over the sorted selected ids, computed before
+     *     gold is ever opened. This is the one R7 requires to be byte-identical
+     *     and the one that must NEVER differ across two correct runs of the same
+     *     frame and seed.
+     *
+     *   MANIFEST SHAPE — is the whole recorded contract byte-identical?
+     *     `contentSha256`. This one legitimately moves when the contract gains
+     *     a field, as it did when the live-cell invariant was added. Treating
+     *     that as a determinism failure would train the next reader to ignore a
+     *     red verdict, which is how a real one gets waved through.
+     *
+     * So: selection drift is a FAILURE. Shape drift with identical selection is
+     * reported as CONTRACT_CHANGED and is not, by itself, an error.
+     */
     const prior = JSON.parse(readFileSync(OUT, 'utf8'));
-    const same = prior.contentSha256 === contentSha256;
+    const selectionSame = prior.goldBlindProof?.naturalContentSha256 === naturalContentSha256;
+    const shapeSame = prior.contentSha256 === contentSha256;
     log('');
-    log(`DETERMINISM ${same ? 'PASS' : 'FAIL'}`);
-    log(`  prior  ${prior.contentSha256}`);
-    log(`  rerun  ${contentSha256}`);
-    if (!same) process.exitCode = 1;
+    log(`SELECTION IDENTITY ${selectionSame ? 'PASS' : 'FAIL'}`);
+    log(`  prior naturalContentSha256  ${prior.goldBlindProof?.naturalContentSha256 ?? '(absent)'}`);
+    log(`  rerun naturalContentSha256  ${naturalContentSha256}`);
+    log(`MANIFEST SHAPE ${shapeSame ? 'IDENTICAL' : 'CONTRACT_CHANGED'}`);
+    log(`  prior contentSha256  ${prior.contentSha256}`);
+    log(`  rerun contentSha256  ${contentSha256}`);
+    if (!selectionSame) {
+      log('');
+      log('  Selection drift is a real failure: the same frame and seed chose different documents.');
+      process.exitCode = 1;
+    } else if (!shapeSame) {
+      log('');
+      log('  Same documents, different recorded contract. Diff the manifests and confirm the');
+      log('  change was deliberate before overwriting; this is NOT a determinism failure.');
+    }
   } else {
     writeFileSync(OUT, JSON.stringify(manifest, null, 2) + '\n');
     log('');
