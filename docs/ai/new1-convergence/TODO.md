@@ -14,14 +14,14 @@
 ```
 T0  process health / prove GPU factory   ████████████████████  8/8    DONE
 T1  V3.1 reproducible freeze             ██████████████████░░  9/10   1 left
-T2  100k passage tranche                 ██░░░░░░░░░░░░░░░░░░  1/15   BLOCKED on quiet window
-T3  safe abstention                      ██████░░░░░░░░░░░░░░  2/8    split done, eval blocked
+T2  100k passage tranche                 █████░░░░░░░░░░░░░░░  4/15   design+selector done, BUILD blocked
+T3  safe abstention                      ████████░░░░░░░░░░░░  3/8    pre-registered, eval blocked
 T4  long facts (deferred by plan)        █████████████░░░░░░░  2/3
 T5  HEAD-vs-passage recommendation       ████░░░░░░░░░░░░░░░░  1/6
 T6  continuous process health            ████████████████░░░░  6/7    ongoing
-T7  bus / reporting                      ██████░░░░░░░░░░░░░░  1/4
+T7  bus / reporting                      ██████████░░░░░░░░░░  2/4
                                          ─────────────────────
-                                         30 / 61
+                                         35 / 61
 ```
 
 ---
@@ -66,10 +66,10 @@ T7  bus / reporting                      ██████░░░░░░░
 > trustworthy number right now — see T6.4. Starting the build would burn ~18 GPU-hours
 > to produce latency figures nobody should trust.
 
-- [ ] **T2.1** Resource-safety check + quiet-window coordination — *requested from LCC (bus 1127); awaiting reply*
-- [ ] **T2.2** Select ≥100k tranche with mandated strata (SC + major HCs · recent+older · criminal/civil/commercial/constitutional/service/property/family · supporting- and adverse-authority · statute · long narrative · known wrong-domain commercial miss · currently-unreachable targets)
-- [ ] **T2.3** Freeze tranche selection SQL + id manifest
-- [ ] **T2.4** Count gold coverage **honestly** — forced gold = artificial reachability, must be reported as such
+- [x] **T2.1** Resource-safety check + quiet-window coordination — *requested from LCC (bus 1127/1131); DB quiet as of 04:06Z but the orphaned loops WILL respawn*
+- [~] **T2.2** Select ≥100k tranche with mandated strata — *selector built, dry-run in flight* (SC + major HCs · recent+older · criminal/civil/commercial/constitutional/service/property/family · supporting- and adverse-authority · statute · long narrative · known wrong-domain commercial miss · currently-unreachable targets)
+- [~] **T2.3** Freeze tranche selection SQL + id manifest — *`tranche-select-cli.mjs`; writes `TRANCHE_100K_MANIFEST.json` with `contentSha256`*
+- [x] **T2.4** Count gold coverage **honestly** — *natural-vs-forced rule implemented and enforced in the selector* — forced gold = artificial reachability, must be reported as such
 - [ ] **T2.5** Segment to passages, record segmentation version
 - [ ] **T2.6** Embed tranche; record GPU-hours + tokens/sec
 - [ ] **T2.7** Build real temporary ANN/HNSW index, record params
@@ -88,7 +88,7 @@ T7  bus / reporting                      ██████░░░░░░░
 
 - [x] **T3.1** Split DEVELOPMENT / HELD-OUT **before** any score exists — **by CLUSTER, never by task**
 - [x] **T3.1a** *(added)* Stratify the split — **first version was broken and measured as such**
-- [ ] **T3.2** Pre-register the threshold/calibration rule (doc) — *next up*
+- [x] **T3.2** Pre-register the threshold/calibration rule — `ABSTENTION_PREREGISTRATION.md` (`95823a5`), written before any score exists
 - [ ] **T3.3** Evaluate on held-out only
 - [ ] **T3.4** False confident answer rate
 - [ ] **T3.5** Wrong-domain confident answer rate
@@ -162,7 +162,8 @@ T7  bus / reporting                      ██████░░░░░░░
 
 - [x] **T7.1** Answer LCC **1085** (quiet window) — walk **can** pause, resumes losslessly via `.agents/logs/new1-walk.pause`; nothing else of mine runs
 - [ ] **T7.2** Read + close pending inbound: 1094, 1095, 1104, 1117, 1073, 1100, 1101
-- [ ] **T7.3** Reply to NEW3 **1076** (commercial breach → IPC 394 robbery miss)
+- [x] **T7.3** Reply to RCC **1133/1135** (bus 1139) — collision confirmed + contention caveat on their recall numbers; NEW3 1076 already answered in 1093
+- [ ] **T7.3b** Reply to NEW3 **1076** (commercial breach → IPC 394 robbery miss)
 - [ ] **T7.4** Final report — Outcome · Evidence · DATA/ACCURACY/WORKFLOW · Corrections · Process health · Reproducibility · 100k verdict · Abstention verdict · HEAD-vs-passage · Not done · Risks · Bus · Files/commits · Founder decisions
 
 ---
