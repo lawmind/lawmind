@@ -484,7 +484,7 @@ try {
   for (const t of tasks) {
     const r = byId.get(t.taskId);
     if (!r) continue;
-    const s = { taskId: t.taskId, queryClass: t.queryClass, provenance: t.provenance, split: t.split, arms: {} };
+    const s = { taskId: t.taskId, clusterId: t.clusterId, queryClass: t.queryClass, provenance: t.provenance, split: t.split, arms: {} };
     for (const a of armNames)
       s.arms[a] = {
         ...score(t, r.arms[a], indexedFor(a)),
@@ -525,6 +525,61 @@ try {
     o.latencyP95 = lat[Math.floor(lat.length * 0.95)] ?? null;
     return o;
   };
+
+
+  /**
+   * TARGET-CLUSTER BOOTSTRAP (R7 §9).
+   *
+   * Resamples CLUSTERS, not tasks. Two tasks pointing at the same authority are
+   * not independent observations, so a task-level bootstrap would treat one
+   * authority's luck as several and report an interval far too tight. The split
+   * is already made at cluster level for the same reason; the confidence interval
+   * has to agree with it.
+   *
+   * Reported for the metric the passage decision actually turns on -- cond_s@5 --
+   * because a point estimate over ~100 clusters without an interval invites a
+   * comparison between two arms that the data cannot support.
+   */
+  const BOOT_SEED = process.env.BOOT_SEED ?? 'lawmind-new1-r7-bootstrap';
+  const BOOT_N = Number(process.env.BOOT_N ?? 2000);
+  function bootstrapCondS5(rowsIn, arm) {
+    const byCluster = new Map();
+    for (const r of rowsIn) {
+      if (!r.arms[arm].anyIndexed) continue;
+      const k = r.clusterId ?? `task:${r.taskId}`;
+      (byCluster.get(k) ?? byCluster.set(k, []).get(k)).push(r.arms[arm]['cond@5']);
+    }
+    const clusters = [...byCluster.values()];
+    if (clusters.length < 5) return { state: 'NOT_MEASURED', clusters: clusters.length, why: 'fewer than 5 target clusters; an interval here would be theatre' };
+    // Deterministic PRNG so the interval is reproducible from the seed.
+    let h = 0;
+    for (const c of BOOT_SEED) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0;
+    let state = h >>> 0 || 1;
+    const rnd = () => {
+      state ^= state << 13; state >>>= 0;
+      state ^= state >> 17;
+      state ^= state << 5; state >>>= 0;
+      return state / 4294967296;
+    };
+    const means = [];
+    for (let b = 0; b < BOOT_N; b += 1) {
+      let hit = 0, n = 0;
+      for (let i = 0; i < clusters.length; i += 1) {
+        const c = clusters[Math.floor(rnd() * clusters.length)];
+        for (const v of c) { hit += v; n += 1; }
+      }
+      means.push(n === 0 ? 0 : hit / n);
+    }
+    means.sort((a, b) => a - b);
+    return {
+      point: Number((clusters.flat().reduce((a, b) => a + b, 0) / clusters.flat().length).toFixed(4)),
+      ci95Low: Number(means[Math.floor(BOOT_N * 0.025)].toFixed(4)),
+      ci95High: Number(means[Math.floor(BOOT_N * 0.975)].toFixed(4)),
+      clusters: clusters.length,
+      resamples: BOOT_N,
+      unit: 'TARGET CLUSTER, never the task -- tasks sharing an authority are not independent.',
+    };
+  }
 
   // ANN-vs-EXACT: what did the index LOSE? Measured as top-k document overlap
   // against the exact arm, per task, then averaged.
@@ -591,6 +646,16 @@ try {
         Object.fromEntries(armNames.map((a) => [a, agg(scored.filter((r) => r.split === s), a)])),
       ]),
     ),
+    condS5Bootstrap: Object.fromEntries(armNames.map((a) => [a, bootstrapCondS5(scored, a)])),
+    zeroResult: Object.fromEntries(
+      armNames.map((a) => [
+        a,
+        {
+          tasksReturningNothing: scored.filter((r) => (byId.get(r.taskId)?.arms[a].documentsAfterAggregation ?? 0) === 0).length,
+          ofTasks: scored.length,
+        },
+      ]),
+    ),
     annVsExact: annLoss,
     perTask: scored,
   };
@@ -616,6 +681,12 @@ try {
   }
   log('');
   for (const [a, v] of Object.entries(annLoss)) log(`  ANN vs EXACT  ${a}: recall@100 ${v.recallAt100VsExact}`);
+  log('');
+  log('  cond_s@5 with 95% CI, bootstrapped over TARGET CLUSTERS:');
+  for (const a of armNames) {
+    const b = body.condS5Bootstrap[a];
+    log(b.state ? `    ${a.padEnd(11)} ${b.state} (${b.clusters} clusters)` : `    ${a.padEnd(11)} ${b.point}  [${b.ci95Low}, ${b.ci95High}]  over ${b.clusters} clusters`);
+  }
 } finally {
   await sql.end({ timeout: 15 });
 }
