@@ -39,9 +39,12 @@ editing the matrix first.
 
 ### 2.1 Short description (Play, 80 chars)
 
-> Indian case law you can verify — and that tells you when the law has moved.
+> Indian case law with the source of every line, and every treatment recorded.
 
-`[B1] [B2]` · 74 chars.
+`[B1] [B2a]` · 76 chars. **The earlier draft — "tells you when the law has
+moved" — is `BLOCKED` by NEW2 bus 1145**: 99 of 104 badge-bearing judgments rest
+on a law reporter's annotation we have not confirmed, so that sentence puts a
+court where a reporter belongs.
 
 ### 2.2 Subtitle (App Store, 30 chars)
 
@@ -57,10 +60,12 @@ editing the matrix first.
 > a citation or a name matches more than one judgment, LawMind shows you all of
 > them. It does not pick one for you. `[A1] [A2] [A4]`
 >
-> When an authority you have saved has been overruled, set aside or doubted,
-> LawMind marks it — read fresh every time you open it, not cached from when we
-> last checked. If an authority has been set aside, LawMind will not let you add
-> it to a matter by accident. `[B2] [C2]`
+> When a later judgment or a law report records that an authority you saved was
+> overruled, set aside or doubted, LawMind marks it and shows you the record it
+> came from — read fresh every time you open it, not cached from when we last
+> checked. Most of those records are law-report annotations rather than a court's
+> own reasoning, and LawMind says so rather than telling you the court said it.
+> `[B2a] [B3]`
 >
 > Keep the authorities, hearing dates, notes and orders for a case together in
 > one matter. `[C1]`
@@ -200,8 +205,14 @@ all.
 
 **Launch visible:** citation / case-name / case-number search, ambiguity
 disambiguation, the judgment reader, LAW MOVED in all three states, save to
-matter, the set-aside refusal, matters with timeline and hearing dates, saved
-searches, account deletion.
+matter, matters with timeline and hearing dates, saved searches, account
+deletion.
+
+The set-aside refusal **ships in the code and is not advertised**. It is real and
+correct, and measured 25 Aug it fires for exactly 3 judgments in the corpus, all
+three being the same leaked test fixture — 73 of the 76 `set_aside` rows map to
+effect `overruled` and are allowed, per OD-14's resolution. A safeguard no
+advocate can encounter is not a listing claim. `[C2]`
 
 **Hidden at launch, each for a measured reason:**
 

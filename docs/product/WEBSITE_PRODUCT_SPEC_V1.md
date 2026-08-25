@@ -106,8 +106,9 @@ sentence can appear.
 > # Research you can hand to a judge.
 >
 > LawMind searches 18.7 million Indian judgments, shows you the source of every
-> line, and marks the authorities that have been overruled, set aside or doubted
-> — every time you look at them.
+> line, and tells you when a later judgment or a law report has recorded that an
+> authority was overruled, set aside or doubted — read fresh every time you open
+> it.
 >
 > **[Download for iPhone] [Download for Android]**
 
@@ -116,9 +117,14 @@ separated by a full clause from anything about search reach. It may never be
 written as "18.7 million searchable authorities" and may never sit beside AI or
 semantic language.
 
-`[B2]` governs the second clause. "Every time you look at them" is literally
-true and is the technical differentiator: `overruled_status` is never cached and
-is read live at render on every surface.
+`[B2a]` governs the second clause, and the phrasing is not decoration. **The
+earlier draft said "marks the authorities that have been overruled" — which makes
+a court the implicit subject of a sentence a law reporter is the source of, 99
+times out of 104** (NEW2 bus 1145). "a later judgment or a law report has
+recorded" is the honest subject, and it is the same discipline `[B3]` enforces
+inside the product. "Read fresh every time you open it" stays: `overruled_status`
+is never cached and is read live at render on every surface, and that is the
+technical differentiator.
 
 **No sub-headline with a statistic. No "AI-powered". No superlative** `[D3]`.
 
@@ -149,13 +155,19 @@ with an ambiguity flag — measured, 25 Aug. This is a **genuine differentiator*
 and the safest strong claim we own `[A2]`.
 
 **2 · Know when the law has moved**
-> If an authority you saved has been overruled, set aside or doubted, LawMind
-> marks it — read fresh every time, not cached from when we last checked. `[B2]`
+> If a later judgment or a law report records that an authority you saved was
+> overruled, set aside or doubted, LawMind marks it and tells you who recorded it
+> — read fresh every time, not cached from when we last checked. `[B2a]`
 
 **3 · Keep the case together**
-> Authorities, hearing dates, notes and orders for one matter in one place. If an
-> authority has been set aside, LawMind will not let you file it by accident.
-> `[C1] [C2]`
+> Authorities, hearing dates, notes and orders for one matter in one place.
+> `[C1]`
+
+The set-aside refusal has been **cut from this block**. The mechanism is real and
+correct, but measured 25 Aug there are exactly **3** add-to-matter refusals in the
+corpus and all three are the same leaked test fixture — zero real judgments are
+refused. Advertising a safeguard no advocate can encounter is a claim about a
+code path, not about the product. `[C2]` is `BLOCKED`.
 
 ### 3.4 What LawMind will not do — a real section, above the fold on mobile
 
@@ -225,17 +237,28 @@ surface — measured 25 Aug, `treatmentProvenanceOnWire: false` on all ten regre
 matters, so today a reporter's annotation and a Constitution Bench's own holding
 render identically.
 
-**So the page ships in the qualified form only:**
+**NEW2's bus 1145 makes this sharper than the earlier draft.** Canonical-safe
+coverage is **five judgments in 18.7 million** — not five per cent, five. So the
+page may not say we verify whether a case is still good law `[B3a]`, and it may
+not put a court in the grammatical subject of a sentence a reporter is the
+source of.
 
-> When a later judgment records that an authority has been overruled, set aside
-> or doubted, LawMind marks it. We show you the case that did it and the words
-> that record it, so you can read the source and decide for yourself. Where that
-> record is a law reporter's annotation rather than the court's own reasoning, we
-> will say so.
+**The page ships in the attributed form only:**
 
-The last sentence is future tense **on purpose** and may only become present
-tense when `[B4]` opens. RCC should build the page so that one sentence is the
-only edit.
+> When a later judgment or a law report records that an authority was overruled,
+> set aside or doubted, LawMind marks it and shows you the record it came from —
+> so you can read the source and decide for yourself.
+>
+> Most of these records are law-report annotations rather than a court's own
+> reasoning. Where that is so, LawMind says so, and does not tell you the court
+> said it. We have not confirmed those against the deciding court.
+
+The second paragraph is **present tense and ships as written** — it is a
+statement about what the copy does, not about a capability. What is still future
+is the *in-product rendering* of the distinction, which `[B4]` gates: today
+`treatmentProvenanceOnWire` is `false` and the two states look identical on the
+screen. **So the site is more honest than the app until RCC-5 lands**, and that
+asymmetry is deliberate: the safe direction is the site under-claiming.
 
 ### 4.3 `/matters`
 
@@ -276,7 +299,8 @@ record.
 | 2 | **Ambiguity** | `2023:AHC:169979` returning **both** judgments | anything implying we picked one |
 | 3 | Judgment reader with LAW MOVED | the amber mark, the citing case `[B2]` | wording asserting a court said it, where the source is a headnote `[B3]` |
 | 4 | Matter with saved authorities | authorities, hearing date, timeline `[C1]` | a briefing, a Hearing Pack, a price `[C3] [E1]` |
-| 5 | Set-aside refusal | the refusal, and its plain reason `[C2]` | — |
+| 5 | ~~Set-aside refusal~~ **CUT** | — | `[C2]` is `BLOCKED`: measured 25 Aug there are **3** add-to-matter refusals in the whole corpus and all three are the same leaked test fixture. There is no real judgment to shoot it against, and shooting the fixture would put a `Test Court` row in a store screenshot. |
+| 5 | **Treatment with its source named** (replacement) | the mark, the citing case, and the line saying whether a court or a law report recorded it `[B2a] [B3]` | a court as the subject where the source is a reporter. **Blocked until `[B4]` opens** — `treatmentProvenanceOnWire` is `false`, so this shot cannot be taken yet. Four screenshots at launch is correct; a fifth that misstates provenance is not. |
 
 **Shot 2 is the hero screenshot.** It is the only one no competitor's marketing
 shows, because showing it means admitting your identifier resolution is
