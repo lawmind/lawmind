@@ -90,15 +90,31 @@ CNR is a court-issued case identifier, so a CNR shared across rows with
 *different* text is exactly what a byte-hash misses. 18,698,968 of 18,698,984
 documents carry one.
 
-| state | CNR groups | documents | beyond first |
-| --- | ---: | ---: | ---: |
-| `EXACT_DOCUMENT_DUPLICATE` — same CNR, same text | 64,114 | 128,236 | 64,122 |
-| **`SAME_DECISION_DIFFERENT_SOURCE` candidate** — same CNR, **same date**, different text | **63,602** | **127,227** | 63,625 |
-| `SAME_CASE_DIFFERENT_DATE` — same CNR, different date, different text | 208,493 | 816,890 | 608,397 |
-| same CNR, different courts | **0** | 0 | 0 |
+**`CORRECTION_OF` this document's own first draft, on FIFTH's bus 1191.**
 
-**63,602 candidate pairs of the *Chipade* kind.** The single case NEW3 and LCC
-found by hand is a class of sixty-three thousand: one court case, one decision
+- **old claim:** 63,602 `SAME_DECISION_DIFFERENT_SOURCE` candidates.
+- **new fact:** **91,699**, across **183,711 documents**.
+- **evidence:** I grouped by `cnr` alone and then tested `dates > 1` at CNR
+  level. That classifies an entire multi-date CNR as `SAME_CASE_DIFFERENT_DATE`
+  and **swallows same-date collisions inside it**. Grouping by
+  `(cnr, judgment_date)` — Fifth's key, and the correct one — finds 28,097
+  further groups my key could not see. Reproduced exactly: 91,699.
+- **affected downstream:** §3's denominators, corrected there too.
+
+Grouped correctly, on `(cnr, judgment_date)` with more than one row:
+
+| state | groups | documents | beyond first |
+| --- | ---: | ---: | ---: |
+| `EXACT_DOCUMENT_DUPLICATE` — same CNR + date, same text | 43,411 | 87,522 | 44,111 |
+| **`SAME_DECISION_DIFFERENT_SOURCE` candidate** — same CNR + date, **different text** | **91,699** | **183,711** | **92,012** |
+| same CNR + date, different courts | **0** | 0 | 0 |
+| | **135,110** | 271,233 | |
+
+Separately, grouping by `cnr` alone, **208,493 CNRs span more than one date**
+(816,890 documents). Those are `SAME_CASE_DIFFERENT_DATE`.
+
+**91,699 candidate pairs of the *Chipade* kind.** The single case NEW3 and LCC
+found by hand is a class of ninety-one thousand: one court case, one decision
 date, two different texts held. The content hash sees none of them.
 
 **208,493 groups (816,890 documents) are `SAME_CASE_DIFFERENT_DATE`** — one case,
@@ -133,14 +149,16 @@ raw documents                                                18,698,984
 
   minus EXACT_DOCUMENT_DUPLICATE beyond first (hash)              91,788
   minus EXTRACTOR_CONTAMINATION beyond first                     130,511
-  minus SAME_DECISION_DIFFERENT_SOURCE beyond first (CNR)         63,625
+  minus SAME_DECISION_DIFFERENT_SOURCE beyond first (CNR+date)    92,012
                                                              ───────────
-  DISTINCT MATTER IDENTITIES                              ≈  18,413,060
+  DISTINCT MATTER IDENTITIES                              ≈  18,384,673
 
   minus COMMON_ORDER members beyond the first in each group      895,897
                                                              ───────────
-  DISTINCT LEGAL AUTHORITIES (decision texts)             ≈  17,517,163
+  DISTINCT LEGAL AUTHORITIES (decision texts)             ≈  17,488,776
 ```
+
+*(Corrected from 18,413,060 / 17,517,163 on FIFTH's 1191 — see §2.3.)*
 
 **Both figures are approximate in a stated way and neither may be quoted as
 exact.** The three subtracted classes are measured on three *different* keys —

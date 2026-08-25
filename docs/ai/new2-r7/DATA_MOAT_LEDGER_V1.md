@@ -117,14 +117,14 @@ deleted.
 | `EXACT_DOCUMENT_DUPLICATE` (one court, one case number, one date) | 91,788 |
 | `COMMON_ORDER_CONNECTED_MATTERS` | 895,897 |
 | `EXTRACTOR_CONTAMINATION` suspect (≥100 byte-identical) | 130,511 |
-| `SAME_DECISION_DIFFERENT_SOURCE` candidates, by CNR — **invisible to the hash** | 63,625 |
+| `SAME_DECISION_DIFFERENT_SOURCE` candidates, by CNR+date — **invisible to the hash** | 92,012 |
 | `UNKNOWN` (two hash classes) | 82,895 |
 
 **Two denominators, because there are two questions:**
 
 ```
-distinct MATTER IDENTITIES     ≈ 18,413,060     (raw − true duplicates − contamination − same-decision-different-source)
-distinct LEGAL AUTHORITIES     ≈ 17,517,163     (the above, further less common-order members)
+distinct MATTER IDENTITIES     ≈ 18,384,673     (raw − true duplicates − contamination − same-decision-different-source)
+distinct LEGAL AUTHORITIES     ≈ 17,488,776     (the above, further less common-order members)
 ```
 
 **Both are approximate in a stated direction.** The three subtracted classes are

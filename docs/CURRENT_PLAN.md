@@ -14009,3 +14009,66 @@ after three attempts rather than a fourth; no rollback drill; no search-equivale
 battery; no `(court, case_number)` index (`DEFER DB_SCAN` stood all round).
 
 **Founder queue:** `FQ-CREDIT-LEDGER-ERASURE`, `FQ-OPS-ALERT-EMAIL`.
+
+### 25 August 2026 — NEW2: THE MOAT IS MEASURED, AND 72% OF THE "22M CITATION GRAPH" IS EMPTY ROWS
+
+R7 §10. Fourteen deliverables in `docs/ai/new2-r7/`. Every number OBSERVED on the
+live DB; four corrections filed against my own claims, one of them Fifth's.
+
+**Three defects found and fixed.**
+
+**1. 293 real citations were stranded in nine ingest batches, and the cause was
+`now()`.** `judgments.created_at` defaults to `now()`, which is *transaction
+start* time, so a loader committing 250 ms later writes rows that were invisible
+when the monotonic cursor passed them. Proven from
+`judgment_citation_keys.created_at`, which reconstructs the walk riding live
+ingest at 121–250 ms lag — the only such window in the corpus's history,
+17 Aug 16:40:07–16:46:00. Repaired **293 → 0** with a new non-mutating
+`--recheck`; prevented with an **exact** safe frontier (`min(xact_start)` of
+other backends), not a guessed interval. Regression test proven non-vacuous.
+
+**2. postgres.js truncates a `timestamptz` bind parameter to milliseconds.**
+`${x}::timestamptz` routes through a JS `Date`; `(${x}::text)::timestamptz` does
+not. The truncated cursor sits *before* the rows it passed, so they match again
+for ever. A `--recheck` over ~75,000 judgments reported **266,124,061 re-walked**
+and was killed at 56 minutes; it now finishes in **1.5 s**. Very probably also
+what LCC saw on 24 Aug (bus 1110). The same pattern is in six of LCC's files
+including `key-freshness.ts` and admin audit pagination — reported (1231), not
+edited. **A `>` comparison re-reads; a `<` comparison skips.**
+
+**3. Three section-parser defects.** Evidence Act recall 138 → **171** of its own
+183-section arrangement. The worst was silent: `keepAscendingRun` ranked by
+`parseInt`, so 65, 65A and 65B collapsed to one value and 30 sections vanished
+with nothing looking wrong.
+
+**What the measurement says.**
+
+- **72.08% of `judgment_citations` is empty sentinels**, one per citing judgment.
+  Real population **6,231,847**, resolving at **3.71%** — not 22.3M at 1.04%.
+- **61 live false pins** — despatch stamps resolved to judgments, in a third
+  store LCC's 24 Aug purge did not cover. Reported; LCC unpinned all 61 (1230).
+- **~10.6% of existing resolutions are ambiguous pins.** Bulk resolution is
+  **CONDITIONAL GO**: unique-only enforced in the write path, and repair first.
+  Yield if done: 231,412 → ~2,735,781, an 11.8× graph.
+- **`storage_key` is non-null on 0 of 18,698,984.** No source document retained.
+- **Bench/coram exists for 38,326 documents, all Supreme Court.** No bindingness
+  classifier is possible for the other 99.8%.
+- **92.77% of our Supreme Court corpus is the SCR reporter edition.** Legal
+  question, `FQ-N2-2`.
+- **IPC, CrPC and the Evidence Act are absent** and the CrPC is the most-cited
+  statute in the corpus. India Code holds none of the three.
+- **73.5% of what a content-hash dedup would delete are common orders.**
+- Treatment enrichment pilot: **0 of 11** hand-adjudicated candidates survived.
+  **DO NOT SCALE.** Nothing written.
+- **eCourts has never run** — authorised since 7 Aug, built, zero rows. Last real
+  ingest was 19 August.
+
+**Highest-value next item needs no source and no permission:** every one of the
+862,594 statute references has `statute_id IS NULL`, and **323,524 of them match
+an Act we already hold** on a deterministic join. `DATA_GAP_PRIORITY_QUEUE_V1`.
+
+Founder items: `FQ-N2-1..5`. Bus 1177–1180, 1216, 1217, 1223, 1231, 1233, 1234.
+
+**Cross-lane note for Fifth's §3 audit:** NEW2's 51 files were swept into LCC's
+commit `e6ade19` — staged and committed in one call, with another lane's commit
+landing between. Nothing lost; the attribution in the log is wrong.
